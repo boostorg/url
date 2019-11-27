@@ -1,0 +1,78 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/vinniefalco/uri
+]
+
+[library Boost.URI
+    [id uri]
+    [quickbook 1.6]
+    [copyright 2019 Vinnie Falco]
+    [purpose URI Library]
+    [license
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file LICENSE_1_0.txt or copy at
+        [@http://www.boost.org/LICENSE_1_0.txt])
+    ]
+    [authors [Falco, Vinnie]]
+    [category template]
+    [category generic]
+]
+
+[template mdash[] '''&mdash; ''']
+[template indexterm1[term1] '''<indexterm><primary>'''[term1]'''</primary></indexterm>''']
+[template indexterm2[term1 term2] '''<indexterm><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
+
+[template include_file[path][^<'''<ulink url="https://github.com/vinniefalco/json/blob/master/include/'''[path]'''">'''[path]'''</ulink>'''>]]
+[template issue[n] '''<ulink url="https://github.com/vinniefalco/json/issues/'''[n]'''">#'''[n]'''</ulink>''']
+
+[/ Named Requirements ]
+
+[def __Allocator__              [@https://en.cppreference.com/w/cpp/named_req/Allocator ['Allocator]]]
+[def __CopyAssignable__         [@https://en.cppreference.com/w/cpp/named_req/CopyAssignable ['CopyAssignable]]]
+[def __CopyConstructible__      [@https://en.cppreference.com/w/cpp/named_req/CopyConstructible ['CopyConstructible]]]
+[def __DefaultConstructible__   [@https://en.cppreference.com/w/cpp/named_req/DefaultConstructible ['DefaultConstructible]]]
+[def __Hash__                   [@https://en.cppreference.com/w/cpp/named_req/Hash ['Hash]]]
+[def __InputIterator__          [@https://en.cppreference.com/w/cpp/named_req/InputIterator ['InputIterator]]]
+[def __MoveAssignable__         [@https://en.cppreference.com/w/cpp/named_req/MoveAssignable ['MoveAssignable]]]
+[def __MoveConstructible__      [@https://en.cppreference.com/w/cpp/named_req/MoveConstructible ['MoveConstructible]]]
+[def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
+
+[def __Copyable__               [@https://en.cppreference.com/w/cpp/concepts/copyable ['Copyable]]]
+[def __SemiRegular__            [@https://en.cppreference.com/w/cpp/concepts/semiregular ['SemiRegular]]]
+
+[/ Dingbats ]
+
+[def __good__ [role green \u2714]]
+[def __bad__  [role red   \u2718]]
+
+[/-----------------------------------------------------------------------------]
+
+[import ../../test/snippets.cpp]
+
+[/-----------------------------------------------------------------------------]
+
+[variablelist
+    [[
+        [link uri.overview Overview]
+    ][
+        A review of the requirements and features included in Boost.URI,
+        rationale and design information, answers to frequently
+        asked questions, and credits.
+    ]]
+    [[
+        [link uri.ref Reference]
+    ][
+        Detailed function and type reference.
+    ]]
+]
+
+[section:ref Reference]
+[xinclude quickref.xml]
+[include reference.qbk]
+[endsect]
+
+[xinclude index.xml]

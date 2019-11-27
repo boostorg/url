@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN" "../../../../tools/boostbook/dtd/boostbook.dtd">
+
+<!--
+  Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+  Distributed under the Boost Software License, Version 1.0. (See accompanying
+  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+  Official repository: https://github.com/vinniefalco/uri
+-->
+
+<informaltable frame="all">
+  <tgroup cols="5">
+    <colspec colname="a"/><colspec colname="b"/><colspec colname="c"/><colspec colname="d"/><colspec colname="e"/>
+    <thead><row>
+      <entry valign="center" namest="a" nameend="e"><bridgehead renderas="sect2">JSON</bridgehead></entry>
+    </row></thead>
+    <tbody><row>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Classes</bridgehead>
+        <simplelist type="vert" columns="1">
+        </simplelist>
+      </entry>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Functions</bridgehead>
+        <simplelist type="vert" columns="1">
+        </simplelist>
+        <bridgehead renderas="sect3">Type Traits</bridgehead>
+        <simplelist type="vert" columns="1">
+        </simplelist>
+      </entry>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Operators</bridgehead>
+        <simplelist type="vert" columns="1">
+        </simplelist>
+      </entry>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Constants</bridgehead>
+        <simplelist type="vert" columns="1">
+        </simplelist>
+      </entry>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Aliases</bridgehead>
+        <simplelist type="vert" columns="1">
+        </simplelist>
+      </entry>
+    </row></tbody>
+  </tgroup>
+</informaltable>
