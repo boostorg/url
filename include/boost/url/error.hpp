@@ -4,18 +4,18 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_ERROR_HPP
-#define BOOST_URI_ERROR_HPP
+#ifndef BOOST_URL_ERROR_HPP
+#define BOOST_URL_ERROR_HPP
 
-#include <boost/uri/config.hpp>
+#include <boost/url/config.hpp>
 
 namespace boost {
-namespace uri {
+namespace url {
 
-/** Error codes returned by URI operations
+/** Error codes returned by URL operations
 */
 enum class error
 {
@@ -34,12 +34,12 @@ enum class condition
     parse_error = 1
 };
 
-} // uri
+} // url
 } // boost
 
-#include <boost/uri/impl/error.hpp>
-#ifdef BOOST_URI_HEADER_ONLY
-#include <boost/uri/impl/error.ipp>
+#include <boost/url/impl/error.hpp>
+#ifdef BOOST_URL_HEADER_ONLY
+#include <boost/url/impl/error.ipp>
 #endif
 
 #endif

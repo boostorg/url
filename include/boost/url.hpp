@@ -4,12 +4,12 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/json
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_JSON_HPP
-#define BOOST_JSON_HPP
+#ifndef BOOST_URL_HPP
+#define BOOST_URL_HPP
 
-#include <boost/uri/config.hpp>
+#include <boost/url/config.hpp>
 
 #endif

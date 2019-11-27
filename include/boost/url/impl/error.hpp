@@ -4,25 +4,25 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_IMPL_ERROR_HPP
-#define BOOST_URI_IMPL_ERROR_HPP
+#ifndef BOOST_URL_IMPL_ERROR_HPP
+#define BOOST_URL_IMPL_ERROR_HPP
 
 #include <type_traits>
 
-#ifndef BOOST_URI_STANDALONE
+#ifndef BOOST_URL_STANDALONE
 
 namespace boost {
 namespace system {
 template<>
-struct is_error_code_enum<::boost::uri::error>
+struct is_error_code_enum<::boost::url::error>
 {
     static bool const value = true;
 };
 template<>
-struct is_error_condition_enum<::boost::uri::condition>
+struct is_error_condition_enum<::boost::url::condition>
 {
     static bool const value = true;
 };
@@ -33,12 +33,12 @@ struct is_error_condition_enum<::boost::uri::condition>
 
 namespace std {
 template<>
-struct is_error_code_enum<::boost::uri::error>
+struct is_error_code_enum<::boost::url::error>
 {
     static bool const value = true;
 };
 template<>
-struct is_error_condition_enum<::boost::uri::condition>
+struct is_error_condition_enum<::boost::url::condition>
 {
     static bool const value = true;
 };
@@ -47,17 +47,17 @@ struct is_error_condition_enum<::boost::uri::condition>
 #endif
 
 namespace boost {
-namespace uri {
+namespace url {
 
-BOOST_URI_DECL
+BOOST_URL_DECL
 error_code
 make_error_code(error e);
 
-BOOST_URI_DECL
+BOOST_URL_DECL
 error_condition
 make_error_condition(condition c);
 
-} // uri
+} // url
 } // boost
 
 #endif

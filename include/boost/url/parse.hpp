@@ -4,19 +4,19 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_PARSE_HPP
-#define BOOST_URI_PARSE_HPP
+#ifndef BOOST_URL_PARSE_HPP
+#define BOOST_URL_PARSE_HPP
 
 #include <boost/beast/core/error.hpp>
 #include <boost/beast/core/string.hpp>
-#include <boost/beast/uri/buffer.hpp>
+#include <boost/beast/url/buffer.hpp>
 
 namespace boost {
 namespace beast {
-namespace uri {
+namespace url {
 
 /*
     5.3 Request Target
@@ -29,14 +29,14 @@ namespace uri {
 
     origin-form     = absolute-path [ "?" query ]
 
-    absolute-form   = absolute-URI
+    absolute-form   = absolute-URL
 
     authority-form  = authority
  
     asterisk-form   = "*"
 */        
         
-/*  Parse a URI in origin form.
+/*  Parse a URL in origin form.
 
     The origin form is used in direct requests to an
     origin server, except for CONNECT or OPTIONS *.
@@ -59,17 +59,17 @@ namespace uri {
 void
 parse_origin_form(error_code& ec);
 
-/** Parse a URI string in absolute form.
+/** Parse a URL string in absolute form.
 
     Absolute form is used in HTTP requests to a proxy,
     except for CONNECT or OPTIONS *
 
-    absolute-URI    = scheme ":" hier-part [ "?" query ]
+    absolute-URL    = scheme ":" hier-part [ "?" query ]
 
     https://tools.ietf.org/html/rfc3986#section-4.3
 
-    To allow for transition to absoluteURIs in all requests in future
-    versions of HTTP, all HTTP/1.1 servers MUST accept the absoluteURI
+    To allow for transition to absoluteURLs in all requests in future
+    versions of HTTP, all HTTP/1.1 servers MUST accept the absoluteURL
     form in requests, even though HTTP/1.1 clients will only generate
     them in requests to proxies.
 */
@@ -97,10 +97,10 @@ parse_authority_form(error_code& ec);
 void
 parse_asterisk_form(error_code& ec);
 
-} // uri
+} // url
 } // beast
 } // boost
 
-#include <boost/beast/uri/impl/parse.ipp>
+#include <boost/beast/url/impl/parse.ipp>
 
 #endif

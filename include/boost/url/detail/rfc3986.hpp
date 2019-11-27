@@ -4,21 +4,19 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_DETAIL_TYPES_HPP
-#define BOOST_URI_DETAIL_TYPES_HPP
-
-#include <boost/beast/core/string.hpp>
-#include <boost/beast/uri/scheme.hpp>
-#include <boost/assert.hpp>
+#ifndef BOOST_URL_DETAIL_RFC3986_HPP
+#define BOOST_URL_DETAIL_RFC3986_HPP
 
 namespace boost {
 namespace beast {
-namespace uri {
+namespace url {
+namespace detail {
 
-} // uri
+} // detail
+} // url
 } // beast
 } // boost
 

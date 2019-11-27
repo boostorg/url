@@ -4,19 +4,19 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_BUFFER_HPP
-#define BOOST_URI_BUFFER_HPP
+#ifndef BOOST_URL_BUFFER_HPP
+#define BOOST_URL_BUFFER_HPP
 
-#include <boost/beast/uri/view.hpp>
+#include <boost/beast/url/view.hpp>
 #include <cstdlib>
 #include <iterator>
 
 namespace boost {
 namespace beast {
-namespace uri {
+namespace url {
 
 class buffer : public view
 {
@@ -331,7 +331,7 @@ public:
     }
 };
 
-} // uri
+} // url
 } // beast
 } // boost
 
@@ -340,7 +340,7 @@ public:
 
 namespace boost {
 namespace beast {
-namespace uri {
+namespace url {
 
 template<class Allocator>
 class dynamic_buffer : public buffer
@@ -366,7 +366,7 @@ public:
     }
 };
 
-} // uri
+} // url
 } // beast
 } // boost
 

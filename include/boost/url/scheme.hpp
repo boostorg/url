@@ -4,20 +4,20 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_SCHEME_HPP
-#define BOOST_URI_SCHEME_HPP
+#ifndef BOOST_URL_SCHEME_HPP
+#define BOOST_URL_SCHEME_HPP
 
 #include <boost/beast/core/detail/config.hpp>
 #include <boost/beast/core/string.hpp>
 
 namespace boost {
 namespace beast {
-namespace uri {
+namespace url {
 
-/** Identifies a known URI scheme
+/** Identifies a known URL scheme
 */
 enum class known_scheme : unsigned char
 {
@@ -54,10 +54,10 @@ to_string(known_scheme s);
 bool
 is_special(known_scheme s);
 
-} // uri
+} // url
 } // beast
 } // boost
 
-#include <boost/beast/uri/impl/scheme.ipp>
+#include <boost/beast/url/impl/scheme.ipp>
 
 #endif

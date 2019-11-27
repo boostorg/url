@@ -1,10 +1,10 @@
 #
-# Copyright (c) 2013-2019 Vinnie Falco (vinnie.falco@gmail.com)
+# Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
-# Official repository: https://github.com/vinniefalco/uri
+# Official repository: https://github.com/vinniefalco/url
 #
 
 import testing ;
@@ -15,17 +15,18 @@ STANDALONE = [ os.environ STANDALONE ] ;
 if $(STANDALONE)
 {
     LIB =
-        <define>BOOST_JSON_STANDALONE=1
+        <define>BOOST_URL_STANDALONE=1
         <source>../src/src.cpp
         ;
 }
 else
 {
-    LIB = <library>/boost/uri//boost_uri ;
+    LIB = <library>/boost/url//boost_url ;
 }
 
 local SOURCES =
     error.cpp
+    sandbox.cpp
     ;
 
 local LIMIT_SOURCES =

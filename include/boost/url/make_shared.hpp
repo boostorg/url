@@ -4,13 +4,13 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_MAKE_SHARED_HPP
-#define BOOST_URI_MAKE_SHARED_HPP
+#ifndef BOOST_URL_MAKE_SHARED_HPP
+#define BOOST_URL_MAKE_SHARED_HPP
 
-#include <boost/beast/uri/view.hpp>
+#include <boost/beast/url/view.hpp>
 #include <boost/beast/core/detail/allocator.hpp>
 #include <boost/beast/core/detail/empty_base_optimization.hpp>
 #include <boost/assert.hpp>
@@ -20,7 +20,7 @@
 
 namespace boost {
 namespace beast {
-namespace uri {
+namespace url {
 
 namespace detail {
 
@@ -171,7 +171,7 @@ make_shared(
     return p;
 }
 
-} // uri
+} // url
 } // beast
 } // boost
 

@@ -4,17 +4,17 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_IMPL_SCHEME_IPP
-#define BOOST_URI_IMPL_SCHEME_IPP
+#ifndef BOOST_URL_IMPL_SCHEME_IPP
+#define BOOST_URL_IMPL_SCHEME_IPP
 
-#include <boost/beast/uri/detail/rfc3986.hpp>
+#include <boost/beast/url/detail/rfc3986.hpp>
 
 namespace boost {
 namespace beast {
-namespace uri {
+namespace url {
 
 namespace detail {
 
@@ -160,7 +160,7 @@ is_special(known_scheme s)
     return detail::is_special(s);
 }
 
-} // uri
+} // url
 } // beast
 } // boost
 

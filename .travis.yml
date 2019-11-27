@@ -169,7 +169,7 @@ jobs:
         - B2_TOOLSET=gcc-8
         - B2_CXXSTD=11,14
         - B2_CXXFLAGS="undefined-sanitizer=norecover"
-        - B2_DEFINES="define=BOOST_NO_STRESS_TEST=1 define=BOOST_JSON_HEADER_ONLY"
+        - B2_DEFINES="define=BOOST_NO_STRESS_TEST=1 define=BOOST_URL_HEADER_ONLY"
         - B2_LINKFLAGS="linkflags=-fuse-ld=gold"
         - UBSAN_OPTIONS=print_stacktrace=1
       addons: *gcc-8
@@ -182,7 +182,7 @@ jobs:
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-7
         - B2_CXXSTD=17
-        - B2_DEFINES="define=BOOST_JSON_STANDALONE=1"
+        - B2_DEFINES="define=BOOST_URL_STANDALONE=1"
       addons: *gcc-7
 
     - os: "linux"
@@ -192,7 +192,7 @@ jobs:
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=clang-7
         - B2_CXXSTD=17
-        - B2_DEFINES="define=BOOST_JSON_STANDALONE=1"
+        - B2_DEFINES="define=BOOST_URL_STANDALONE=1"
       addons: *clang-7
 
     # libstdc++

@@ -4,9 +4,9 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_HEADER_ONLY
-#include <boost/uri/src.hpp>
+#ifndef BOOST_URL_HEADER_ONLY
+#include <boost/url/src.hpp>
 #endif

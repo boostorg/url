@@ -4,16 +4,16 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_IMPL_ERROR_IPP
-#define BOOST_URI_IMPL_ERROR_IPP
+#ifndef BOOST_URL_IMPL_ERROR_IPP
+#define BOOST_URL_IMPL_ERROR_IPP
 
-#include <boost/uri/error.hpp>
+#include <boost/url/error.hpp>
 
 namespace boost {
-namespace uri {
+namespace url {
 
 error_code
 make_error_code(error e)
@@ -23,7 +23,7 @@ make_error_code(error e)
         const char*
         name() const noexcept override
         {
-            return "boost.uri";
+            return "boost.url";
         }
 
         std::string
@@ -68,7 +68,7 @@ make_error_condition(condition c)
         const char*
         name() const noexcept override
         {
-            return "boost.uri";
+            return "boost.url";
         }
 
         std::string
@@ -87,7 +87,7 @@ make_error_condition(condition c)
         std::underlying_type<condition>::type>(c), cat};
 }
 
-} // uri
+} // url
 } // boost
 
 #endif

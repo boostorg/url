@@ -4,25 +4,25 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_IMPL_PARSE_IPP
-#define BOOST_URI_IMPL_PARSE_IPP
+#ifndef BOOST_URL_IMPL_PARSE_IPP
+#define BOOST_URL_IMPL_PARSE_IPP
 
-#include <boost/beast/uri/error.hpp>
-#include <boost/beast/uri/input.hpp>
+#include <boost/beast/url/error.hpp>
+#include <boost/beast/url/input.hpp>
 #include <stdexcept>
 
 namespace boost {
 namespace beast {
-namespace uri {
+namespace url {
 
 namespace detail {
 
 /*  References:
 
-    Uniform Resource Identifier (URI): Generic Syntax
+    Uniform Resource Identifier (URL): Generic Syntax
     https://tools.ietf.org/html/rfc3986
 
     Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content
@@ -34,16 +34,16 @@ namespace detail {
     URL Living Standard
     https://url.spec.whatwg.org
 
-    java.net Class URI
-    https://docs.oracle.com/javase/7/docs/api/java/net/URI.html
+    java.net Class URL
+    https://docs.oracle.com/javase/7/docs/api/java/net/URL.html
 
 
 
-    Generic URI
+    Generic URL
 
         [scheme:]scheme-specific-part[#fragment]
 
-    Hierarchical URI
+    Hierarchical URL
 
         [scheme:][//authority][path][?query][#fragment]
 
@@ -157,7 +157,7 @@ struct parser_impl
         if(d2 == -1)
         {
             // invalid hex digit
-            ec = uri::error::invalid;
+            ec = url::error::invalid;
             return;
         }
         c = static_cast<char>(
@@ -233,12 +233,12 @@ struct parser_impl
 
         /*  VFALCO Small problem here
             https://tools.ietf.org/html/rfc3986#section-2.2
-            URI producing applications should percent-encode data octets that
+            URL producing applications should percent-encode data octets that
             correspond to characters in the reserved set unless these characters
-            are specifically allowed by the URI scheme to represent data in that
+            are specifically allowed by the URL scheme to represent data in that
             component.
 
-            How do we know if the URI scheme considers `c` a delimiter?
+            How do we know if the URL scheme considers `c` a delimiter?
             Maybe we need to use CRTP or something as a customization point.
         */
         append_pct_encoded(out, c);
@@ -297,12 +297,12 @@ struct parser_impl
 
         /*  VFALCO Small problem here
             https://tools.ietf.org/html/rfc3986#section-2.2
-            URI producing applications should percent-encode data octets that
+            URL producing applications should percent-encode data octets that
             correspond to characters in the reserved set unless these characters
-            are specifically allowed by the URI scheme to represent data in that
+            are specifically allowed by the URL scheme to represent data in that
             component.
 
-            How do we know if the URI scheme considers `c` a delimiter?
+            How do we know if the URL scheme considers `c` a delimiter?
             Maybe we need to use CRTP or something as a customization point.
         */
         append_pct_encoded(out, c);
@@ -340,7 +340,7 @@ struct parser_impl
         https://tools.ietf.org/html/rfc3986#section-3.2
         The authority component is preceded by a double slash ("//") and is
         terminated by the next slash ("/"), question mark ("?"), or number
-        sign ("#") character, or by the end of the URI.
+        sign ("#") character, or by the end of the URL.
     */
     void
     parse_authority(
@@ -500,12 +500,12 @@ struct parser_impl
     //--------------------------------------------------------------------------
 
     /*
-        absolute-URI    = scheme ":" hier-part [ "?" query ]
+        absolute-URL    = scheme ":" hier-part [ "?" query ]
 
         https://tools.ietf.org/html/rfc3986#section-4.3
 
-        To allow for transition to absoluteURIs in all requests in future
-        versions of HTTP, all HTTP/1.1 servers MUST accept the absoluteURI
+        To allow for transition to absoluteURLs in all requests in future
+        versions of HTTP, all HTTP/1.1 servers MUST accept the absoluteURL
         form in requests, even though HTTP/1.1 clients will only generate
         them in requests to proxies.
     */
@@ -570,12 +570,12 @@ using parser = parser_impl<void>;
 //------------------------------------------------------------------------------
 
 /*
-    absolute-URI    = scheme ":" hier-part [ "?" query ]
+    absolute-URL    = scheme ":" hier-part [ "?" query ]
 
     https://tools.ietf.org/html/rfc3986#section-4.3
 
-    To allow for transition to absoluteURIs in all requests in future
-    versions of HTTP, all HTTP/1.1 servers MUST accept the absoluteURI
+    To allow for transition to absoluteURLs in all requests in future
+    versions of HTTP, all HTTP/1.1 servers MUST accept the absoluteURL
     form in requests, even though HTTP/1.1 clients will only generate
     them in requests to proxies.
 */
@@ -600,7 +600,7 @@ parse_absolute_form(
     }
 }
 
-} // uri
+} // url
 } // beast
 } // boost
 

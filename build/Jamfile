@@ -1,31 +1,31 @@
 #
-# Copyright (c) 2019 Vinnie Falco (vinnie dot falco at gmail dot com)
+# Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
-# Official repository: https://github.com/boostorg/json
+# Official repository: https://github.com/vinniefalco/url
 #
 
-project boost/uri
+project boost/url
     : requirements
-      <link>shared:<define>BOOST_URI_DYN_LINK=1
-      <link>static:<define>BOOST_URI_STATIC_LINK=1
-      <define>BOOST_JSON_SOURCE
+      <link>shared:<define>BOOST_URL_DYN_LINK=1
+      <link>static:<define>BOOST_URL_STATIC_LINK=1
+      <define>BOOST_URL_SOURCE
     : usage-requirements
-      <link>shared:<define>BOOST_URI_DYN_LINK=1
-      <link>static:<define>BOOST_URI_STATIC_LINK=1
+      <link>shared:<define>BOOST_URL_DYN_LINK=1
+      <link>static:<define>BOOST_URL_STATIC_LINK=1
     : source-location ../src
     ;
 
-alias uri_sources
+alias url_sources
    : src.cpp
    ;
 
-explicit uri_sources ;
+explicit url_sources ;
 
-lib boost_uri
-   : uri_sources
+lib boost_url
+   : url_sources
    ;
 
-boost-install boost_uri ;
+boost-install boost_url ;

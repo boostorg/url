@@ -4,7 +4,7 @@
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
-# Official repository: https://github.com/vinniefalco/uri
+# Official repository: https://github.com/vinniefalco/url
 #
 
 cmake_minimum_required (VERSION 3.5.1)
@@ -36,11 +36,11 @@ endfunction()
 
 #-------------------------------------------------------------------------------
 #
-# URI
+# URL
 #
 #-------------------------------------------------------------------------------
 
-project (URI VERSION 1)
+project (URL VERSION 1)
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -144,8 +144,8 @@ endif()
 #
 
 file (GLOB_RECURSE PROJECT_FILES
-    ${PROJECT_SOURCE_DIR}/include/boost/uri/*.hpp
-    ${PROJECT_SOURCE_DIR}/include/boost/uri/*.ipp
+    ${PROJECT_SOURCE_DIR}/include/boost/url/*.hpp
+    ${PROJECT_SOURCE_DIR}/include/boost/url/*.ipp
 )
 
 add_subdirectory (example)

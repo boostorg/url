@@ -4,18 +4,18 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/uri
+// Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URI_CONFIG_HPP
-#define BOOST_URI_CONFIG_HPP
+#ifndef BOOST_URL_CONFIG_HPP
+#define BOOST_URL_CONFIG_HPP
 
-#include <boost/uri/detail/config.hpp>
+#include <boost/url/detail/config.hpp>
 
 namespace boost {
-namespace uri {
+namespace url {
 
-#ifndef BOOST_URI_STANDALONE
+#ifndef BOOST_URL_STANDALONE
 
 /// The type of string view used by the library.
 using string_view = boost::string_view;
@@ -51,7 +51,7 @@ using std::generic_category;
 
 #endif
 
-} // uri
+} // url
 } // boost
 
 #endif
