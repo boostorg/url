@@ -32,9 +32,23 @@ make_error_code(error e)
             switch(static_cast<error>(ev))
             {
             default:
-    case error::mismatch: return "mismatch";
-    case error::syntax: return "syntax";
-    case error::invalid: return "invalid";
+case error::mismatch: return "mismatch";
+case error::syntax: return "syntax";
+case error::invalid: return "invalid";
+
+case error::missing_scheme: return "missing scheme";
+case error::bad_scheme_start_char: return "bad scheme start char";
+case error::bad_scheme_char: return "bad scheme char";
+case error::bad_username_char: return "bad username char";
+case error::bad_userinfo_char: return "bad userinfo char";
+case error::bad_port_char: return "bad port char";
+case error::port_overflow: return "port overflow";
+case error::missing_hostname: return "missing hostname";
+case error::missing_port: return "missing port";
+
+case error::bad_pct_encoding_digit: return "bad pct-encoding digit";
+case error::incomplete_pct_encoding: return "incomplete pct-encoding";
+case error::illegal_reserved_char: return "illegal reserved char";
             }
         }
 
@@ -47,10 +61,24 @@ make_error_code(error e)
             default:
                 return {ev, *this};
 
-            case error::mismatch:
-            case error::syntax:
-            case error::invalid:
-                return condition::parse_error;
+case error::mismatch:
+case error::syntax:
+case error::invalid:
+
+case error::missing_scheme:
+case error::bad_scheme_start_char:
+case error::bad_scheme_char:
+case error::bad_username_char:
+case error::bad_userinfo_char:
+case error::bad_port_char:
+case error::port_overflow:
+case error::missing_hostname:
+case error::missing_port:
+
+case error::bad_pct_encoding_digit:
+case error::incomplete_pct_encoding:
+case error::illegal_reserved_char:
+    return condition::parse_error;
             }
         }
     };

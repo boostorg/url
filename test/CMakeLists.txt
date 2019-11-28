@@ -21,8 +21,13 @@ add_executable (url-tests
     ${PROJECT_SOURCE_DIR}/src/src.cpp
     Jamfile
     main.cpp
+    _detail_char_type.cpp
     error.cpp
     sandbox.cpp
+    scheme.cpp
+    static_pool.cpp
+    value.cpp
+    view.cpp
 )
 
 add_test(url-tests url-tests)

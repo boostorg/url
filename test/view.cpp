@@ -7,15 +7,5 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_HPP
-#define BOOST_URL_HPP
-
-#include <boost/url/config.hpp>
-
-#include <boost/url/error.hpp>
-#include <boost/url/scheme.hpp>
-#include <boost/url/static_pool.hpp>
-#include <boost/url/value.hpp>
+// Test that header file is self-contained.
 #include <boost/url/view.hpp>
-
-#endif

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016-2017 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,7 +26,49 @@ enum class error
     syntax,
 
     /// The parser encountered an invalid input
-    invalid
+    invalid,
+
+    //---
+
+    /// The scheme is missing.
+    missing_scheme,
+
+    /// The scheme does not start with a letter.
+    bad_scheme_start_char,
+
+    /// The scheme contains an invalid character.
+    bad_scheme_char,
+
+    /** The username contains an invalid character.
+
+        This error is returned when attempting to set
+        the username with a string containing a colon (':').
+    */
+    bad_username_char,
+
+    /// The userinfo contains an invalid character.
+    bad_userinfo_char,
+
+    /// The port contains an invalid character.
+    bad_port_char,
+
+    /// The port number is too large.
+    port_overflow,
+
+    /// The hostname is missing
+    missing_hostname,
+
+    /// The port is missing
+    missing_port,
+
+    /// The percent-encoding digit is invalid.
+    bad_pct_encoding_digit,
+
+    /// The percent-encoded sequence is incomplete.
+    incomplete_pct_encoding,
+
+    /// Illegal reserved character in encoded string.
+    illegal_reserved_char
 };
 
 enum class condition

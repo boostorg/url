@@ -10,14 +10,18 @@
 #ifndef BOOST_URL_DETAIL_CONFIG_HPP
 #define BOOST_URL_DETAIL_CONFIG_HPP
 
-#include <boost/config.hpp>
 #ifndef BOOST_URL_STANDALONE
+# include <boost/config.hpp>
 # include <boost/assert.hpp>
+# include <boost/optional.hpp>
+# include <boost/static_assert.hpp>
+# include <boost/throw_exception.hpp>
 # include <boost/system/error_code.hpp>
 # include <boost/system/system_error.hpp>
 # include <boost/utility/string_view.hpp>
 #else
 # include <cassert>
+# include <optional>
 # include <string_view>
 # include <system_error>
 #endif
@@ -53,19 +57,21 @@
 # endif
 #endif
 
-#ifndef BOOST_NO_EXCEPTIONS
-# define BOOST_URL_THROW(x) throw(x)
-#else
-# define BOOST_URL_THROW(x) do{}while(0)
+#ifdef BOOST_URL_STANDALONE
+# ifndef BOOST_ASSERT
+# define BOOST_ASSERT assert
+# endif
+# ifndef BOOST_STATIC_ASSERT
+# define BOOST_STATIC_ASSERT( ... ) static_assert(__VA_ARGS__, #__VA_ARGS__)
+# endif
+# ifndef BOOST_THROW_EXCEPTION
+#  ifndef BOOST_NO_EXCEPTIONS
+#   define BOOST_THROW_EXCEPTION(x) throw(x)
+#  else
+#   define BOOST_THROW_EXCEPTION(x) do{}while(0)
+#  endif
+# endif
 #endif
-
-#ifndef BOOST_URL_STANDALONE
-# define BOOST_URL_ASSERT BOOST_ASSERT
-#else
-# define BOOST_URL_ASSERT assert
-#endif
-
-#define BOOST_URL_STATIC_ASSERT( ... ) static_assert(__VA_ARGS__, #__VA_ARGS__)
 
 #ifndef BOOST_URL_NO_SSE2
 # if (defined(_M_IX86) && _M_IX86_FP == 2) || \
@@ -78,7 +84,7 @@
 # if defined(GENERATING_DOCUMENTATION)
 #  define BOOST_URL_DECL
 # elif defined(BOOST_URL_HEADER_ONLY)
-#  define BOOST_URL_DECL  inline
+#  define BOOST_URL_DECL inline
 # else
 #  if (defined(BOOST_URL_DYN_LINK) || defined(BOOST_ALL_DYN_LINK)) && !defined(BOOST_URL_STATIC_LINK)
 #   if defined(BOOST_URL_SOURCE)
@@ -96,12 +102,12 @@
 #   if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_URL_DYN_LINK)
 #    define BOOST_DYN_LINK
 #   endif
-//#   include <boost/config/auto_link.hpp>
-#  endif  // auto-linking disabled
+#   include <boost/config/auto_link.hpp>
+#  endif
 # endif
 #else
 # ifdef BOOST_URL_HEADER_ONLY
-#  define BOOST_URL_DECL  inline
+#  define BOOST_URL_DECL inline
 # else
 #  define BOOST_URL_DECL
 # endif

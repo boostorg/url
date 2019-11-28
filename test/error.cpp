@@ -50,6 +50,20 @@ public:
         check(condition::parse_error, error::mismatch);
         check(condition::parse_error, error::syntax);
         check(condition::parse_error, error::invalid);
+
+        check(condition::parse_error, error::missing_scheme);
+        check(condition::parse_error, error::bad_scheme_start_char);
+        check(condition::parse_error, error::bad_scheme_char);
+        check(condition::parse_error, error::bad_username_char);
+        check(condition::parse_error, error::bad_userinfo_char);
+        check(condition::parse_error, error::bad_port_char);
+        check(condition::parse_error, error::port_overflow);
+        check(condition::parse_error, error::missing_hostname);
+        check(condition::parse_error, error::missing_port);
+
+        check(condition::parse_error, error::bad_pct_encoding_digit);
+        check(condition::parse_error, error::incomplete_pct_encoding);
+        check(condition::parse_error, error::illegal_reserved_char);
     }
 };
 

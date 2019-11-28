@@ -32,6 +32,10 @@ using error_category = boost::system::error_category;
 /// The type of error condition used by the library.
 using error_condition = boost::system::error_condition;
 
+/// The type of optional used by the library.
+template<class T>
+using optional = boost::optional<T>;
+
 #ifdef GENERATING_DOCUMENTATION
 /// Returns the generic error category used by the library.
 error_category const&
@@ -48,6 +52,9 @@ using error_condition = std::error_condition;
 using string_view = std::string_view;
 using system_error = std::system_error;
 using std::generic_category;
+
+template<class T>
+using optional = std::optional<T>;
 
 #endif
 

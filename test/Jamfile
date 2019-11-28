@@ -25,8 +25,13 @@ else
 }
 
 local SOURCES =
+    _detail_char_type.cpp
     error.cpp
     sandbox.cpp
+    scheme.cpp
+    static_pool.cpp
+    value.cpp
+    view.cpp
     ;
 
 local LIMIT_SOURCES =

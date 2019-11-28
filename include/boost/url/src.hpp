@@ -24,5 +24,9 @@ in a translation unit of the program.
 #endif
 
 #include <boost/url/impl/error.ipp>
+#include <boost/url/impl/parse.ipp>
+#include <boost/url/impl/scheme.ipp>
+#include <boost/url/impl/value.ipp>
+#include <boost/url/impl/view.ipp>
 
 #endif

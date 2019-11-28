@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016-2017 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -10,22 +10,19 @@
 #ifndef BOOST_URL_SCHEME_HPP
 #define BOOST_URL_SCHEME_HPP
 
-#include <boost/beast/core/detail/config.hpp>
-#include <boost/beast/core/string.hpp>
+#include <boost/url/config.hpp>
 
 namespace boost {
-namespace beast {
 namespace url {
 
-/** Identifies a known URL scheme
+/** Identifies a special URL scheme.
 */
-enum class known_scheme : unsigned char
+enum class scheme : unsigned char
 {
     unknown = 0,
 
     ftp,
     file,
-    gopher,
     http,
     https,
     ws,
@@ -34,30 +31,37 @@ enum class known_scheme : unsigned char
 
 /** Return the scheme for a non-normalized string, if known
 */
-known_scheme
-string_to_scheme(string_view s);
+BOOST_URL_DECL
+scheme
+string_to_scheme(string_view s) noexcept;
 
 /** Return the normalized string for a known scheme
 */
+BOOST_URL_DECL
 string_view
-to_string(known_scheme s);
+to_string(scheme s) noexcept;
 
-/** Return `true` if the known scheme is a special scheme
+/** Return `true` if the scheme string is a special scheme.
 
     The list of special schemes is as follows:
-    ftp, file, gopher, http, https, ws, wss.
+    ftp, file, http, https, ws, wss.
 
-    @param s The known-scheme constant to check
+    @param s The string constant to check
 
     @return `true` if the scheme is special
 */
+inline
 bool
-is_special(known_scheme s);
+is_special(string_view s) noexcept
+{
+    return string_to_scheme(s) != scheme::unknown;
+}
 
 } // url
-} // beast
 } // boost
 
-#include <boost/beast/url/impl/scheme.ipp>
+#ifdef BOOST_URL_HEADER_ONLY
+#include <boost/url/impl/scheme.ipp>
+#endif
 
 #endif
