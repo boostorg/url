@@ -21,13 +21,6 @@
 namespace boost {
 namespace url {
 
-/*
-
-URL:    scheme    authority        path        query        fragment
-        foo:   // example.com:8042 /over/there ?name=ferret #nose
-        urn:                       example:animal:ferret:nose
-*/
-
 class value : public view
 {
     char* begin_ = nullptr;
@@ -35,24 +28,32 @@ class value : public view
     std::size_t capacity_ = 0;
 
 public:
-    using view::domain;
-    using view::subdomain;
-    using view::tld;
-    using view::path;
-    using view::directory;
-    using view::filename;
-    using view::suffix;
-    using view::segment;
-    using view::segment_coded;
-    using view::search;
-    using view::query;
-    using view::fragment;
-    using view::resource;
-
     value() = default;
 
     BOOST_URL_DECL
+    explicit
+    value(string_view s);
+
+    BOOST_URL_DECL
     ~value();
+
+    //------------------------------------------------------
+
+    BOOST_URL_DECL
+    value&
+    set_encoded_uri_reference(
+        string_view s);
+
+    BOOST_URL_DECL
+    value&
+    set_encoded_origin(
+        string_view s);
+
+    //------------------------------------------------------
+    //
+    // scheme
+    //
+    //------------------------------------------------------
 
     /** Set the scheme.
 
@@ -62,9 +63,44 @@ public:
     value&
     set_scheme(string_view s);
 
+    //------------------------------------------------------
+    //
+    // authority
+    //
+    //------------------------------------------------------
+
+    BOOST_URL_DECL
+    value&
+    set_encoded_authority(
+        string_view s);
+
+    //
+    // userinfo
+    //
+
+    /** Set the userinfo.
+
+        Sets the userinfo of the URL to the given decoded
+        string. The behavior then varies depending on the
+        presence or absence of a colon (':')
+
+        @li If one or more colons exist, then everything
+        up to but not including the first colon will become
+        the username, and everything beyond the first colon
+        will become the password (including any subsequent
+        colons).
+
+        @li If no colons exist, then the username will be
+        set to the passed userinfo, and the password will
+        be empty.
+    */
+    BOOST_URL_DECL
+    value&
+    set_encoded_userinfo(
+        string_view s);
+
     /** Set the username.
 
-        The username is 
         The username may not include a colon.
     */
     BOOST_URL_DECL
@@ -93,25 +129,13 @@ public:
     set_encoded_password(
         string_view s);
 
-    /** Set the userinfo.
+    //
+    // host
+    //
 
-        Sets the userinfo of the URL to the given decoded
-        string. The behavior then varies depending on the
-        presence or absence of a colon (':')
-
-        @li If one or more colons exist, then everything
-        up to but not including the first colon will become
-        the username, and everything beyond the first colon
-        will become the password (including any subsequent
-        colons).
-
-        @li If no colons exist, then the username will be
-        set to the passed userinfo, and the password will
-        be empty.
-    */
     BOOST_URL_DECL
     value&
-    set_encoded_userinfo(
+    set_encoded_host(
         string_view s);
 
     BOOST_URL_DECL
@@ -133,69 +157,40 @@ public:
     value&
     set_port_string(string_view s);
 
+    //------------------------------------------------------
+    //
+    // path
+    //
+    //------------------------------------------------------
+
     BOOST_URL_DECL
     value&
-    set_encoded_host(
+    set_encoded_path(
         string_view s);
-
-    BOOST_URL_DECL
-    value&
-    set_encoded_authority(
-        string_view s);
-
-    // ?
-    BOOST_URL_DECL
-    value&
-    origin(string_view s);
-
-    BOOST_URL_DECL
-    value&
-    set_domain(string_view s);
-
-    BOOST_URL_DECL
-    value&
-    set_subdomain(string_view s);
-
-    BOOST_URL_DECL
-    value&
-    set_tld(string_view s);
-
-    BOOST_URL_DECL
-    value&
-    set_path(string_view s);
-
-    BOOST_URL_DECL
-    value&
-    set_directory(string_view s);
-
-    BOOST_URL_DECL
-    value&
-    set_filename(string_view s);
-
-    BOOST_URL_DECL
-    value&
-    set_suffix(string_view s);
 
     BOOST_URL_DECL
     value&
     set_segment(
-        int pos,
+        int index,
         string_view s);
 
     BOOST_URL_DECL
     value&
-    set_search(
+    set_encoded_segment(
+        int index,
         string_view s);
 
-    BOOST_URL_DECL
-    value&
-    set_query(
-        string_view s);
+    //------------------------------------------------------
+    //
+    // query
+    //
+    //------------------------------------------------------
 
-    BOOST_URL_DECL
-    value&
-    set_hash(
-        string_view s);
+    //------------------------------------------------------
+    //
+    // fragment
+    //
+    //------------------------------------------------------
 
     BOOST_URL_DECL
     value&
@@ -204,8 +199,14 @@ public:
 
     BOOST_URL_DECL
     value&
-    set_resource(
+    set_encoded_fragment(
         string_view s);
+
+    //------------------------------------------------------
+    //
+    // normalization
+    //
+    //------------------------------------------------------
 
     /** Normalize everything.
     */
@@ -217,88 +218,29 @@ public:
     value&
     normalize_scheme();
 
+    //------------------------------------------------------
+
 private:
     using view::offset;
 
-    struct write_parts;
+    // Returns the upper limit on the
+    // number of allocated bytes.
+    static constexpr std::size_t max_size() noexcept;
 
-    static
-    std::size_t
-    max_size() noexcept
-    {
-        return size_type(-1);
-    }
-
-    inline
-    size_type&
-    offset(id_type id) noexcept;
-
-    inline
-    std::size_t
-    size() const noexcept;
-
-    inline
-    std::size_t
-    capacity() const noexcept;
-
-    inline
-    void
-    merge(
-        id_type first,
-        id_type last) noexcept;
-
-    inline
-    void
-    split(
-        id_type id,
-        std::size_t n) noexcept;
-
-    inline
-    void
-    split_suffix(
-        id_type id,
-        std::size_t n) noexcept;
-
-    inline
-    void
-    maybe_init();
-
-    inline
-    void
-    reserve(
-        std::size_t char_capacity,
-        id_type offset_capacity);
-
-    inline
-    void
-    reserve(
-        std::size_t char_capacity);
-
-    inline
-    void
-    realloc(size_type capacity);
-
-    inline
-    char*
-    resize(
-        id_type id,
-        std::size_t needed);
-
-    inline
-    void
-    set(
-        id_type id,
-        string_view s);
-
-    inline
-    void
-    set_encoded(id_type id,
-        string_view s,
-        detail::pct_encoding e);
-
-    inline
-    void
-    erase(id_type id) noexcept;
+    inline std::size_t size() const noexcept;
+    inline std::size_t capacity() const noexcept;
+    inline size_type& offset(id_type id) noexcept;
+    inline void null_term() noexcept;
+    inline void merge(id_type first, id_type last) noexcept;
+    inline char* resize_and_merge(
+        id_type first, id_type last, std::size_t nchar, std::size_t nid);
+    inline void split(id_type id, std::size_t n) noexcept;
+    inline void maybe_init();
+    inline void reserve(std::size_t char_cap, std::size_t id_cap);
+    inline void reserve(std::size_t char_cap);
+    inline char* resize(id_type id, std::size_t needed);
+    inline void erase(id_type id) noexcept;
+    inline void erase(id_type first, id_type last) noexcept;
 };
 
 } // url

@@ -96,7 +96,7 @@ is_scheme_char(
 
 class pct_encoding
 {
-    char const* const tab_;
+    char const* tab_;
 
     char
     needed(char c) const noexcept
@@ -118,6 +118,9 @@ class pct_encoding
     }
 
 public:
+    pct_encoding(pct_encoding const&) = default;
+    pct_encoding& operator=(pct_encoding const&) = default;
+
     explicit
     pct_encoding(
         char const* tab) noexcept
@@ -182,11 +185,71 @@ public:
         return n;
     }
 
+    void
+    validate(string_view s) const
+    {
+        error_code ec;
+        decoded_size(s, ec);
+        if(ec)
+            invalid_part::raise();
+    }
+
+    char const*
+    parse(
+        char const* const begin,
+        char const* const end,
+        error_code& ec) const noexcept
+    {
+        auto p = begin;
+        while(p < end)
+        {
+            if(*p == '%')
+            {
+                check_escape(
+                    p + 1, end, ec);
+                if(ec)
+                    return p;
+                p += 3;
+            }
+            else if(is_special(*p))
+            {
+                break;
+            }
+            ++p;
+        }
+        return p;
+    }
+
+    // unchecked
+    static
+    std::size_t
+    raw_decoded_size(
+        string_view s) noexcept
+    {
+        std::size_t n = 0;
+        auto p = s.data();
+        auto const p1 = p + s.size();
+        while(p < p1)
+        {
+            auto c = *p;
+            if(c != '%')
+            {
+                ++p;
+                ++n;
+                continue;
+            }
+            p += 3;
+            ++n;
+        }
+        return n;
+    }
+
     // Precondition: s is a valid encoded string
+    static
     char*
     decode(
         char* dest,
-        string_view s) const noexcept
+        string_view s) noexcept
     {
         auto p = s.begin();
         auto const p1 = s.end();
@@ -247,24 +310,6 @@ public:
 
 inline
 pct_encoding
-reg_name_pct_set() noexcept
-{
-    // unreserved / subdelims
-    static constexpr char tab[] =
-        "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" //   0...31
-        "\3\1\3\3\1\3\1\1\1\1\1\1\1\1\1\3" "\1\1\1\1\1\1\1\1\1\1\3\1\3\1\3\3" //  32...63
-        "\3\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1" "\1\1\1\1\1\1\1\1\1\1\1\3\3\3\3\1" //  64...95
-        "\3\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1" "\1\1\1\1\1\1\1\1\1\1\1\3\3\3\1\3" //  96..127
-        "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" // 128..159
-        "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" // 160..191
-        "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" // 192..223
-        "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" // 224..255
-        ;
-    return pct_encoding(tab);
-}
-
-inline
-pct_encoding
 userinfo_pct_set() noexcept
 {
     // unreserved / subdelims / ':'
@@ -283,10 +328,9 @@ userinfo_pct_set() noexcept
 
 inline
 pct_encoding
-username_pct_set() noexcept
+reg_name_pct_set() noexcept
 {
     // unreserved / subdelims
-    // This is userinfo_pct_set without ':'
     static constexpr char tab[] =
         "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" //   0...31
         "\3\1\3\3\1\3\1\1\1\1\1\1\1\1\1\3" "\1\1\1\1\1\1\1\1\1\1\3\1\3\1\3\3" //  32...63
@@ -300,6 +344,14 @@ username_pct_set() noexcept
     return pct_encoding(tab);
 }
 
+// userinfo_pct_set without ':'
+inline
+pct_encoding
+userinfo_nc_pct_set() noexcept
+{
+    return reg_name_pct_set();
+}
+
 inline
 pct_encoding
 pchar_pct_set() noexcept
@@ -308,6 +360,24 @@ pchar_pct_set() noexcept
     static constexpr char tab[] =
         "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" //   0...31
         "\3\1\3\3\1\3\1\1\1\1\1\1\1\1\1\3" "\1\1\1\1\1\1\1\1\1\1\1\1\3\1\3\3" //  32...63
+        "\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1" "\1\1\1\1\1\1\1\1\1\1\1\3\3\3\3\1" //  64...95
+        "\3\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1" "\1\1\1\1\1\1\1\1\1\1\1\3\3\3\1\3" //  96..127
+        "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" // 128..159
+        "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" // 160..191
+        "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" // 192..223
+        "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" // 224..255
+        ;
+    return pct_encoding(tab);
+}
+
+inline
+pct_encoding
+pchar_nc_pct_set() noexcept
+{
+    // unreserved / subdelims / '@'
+    static constexpr char tab[] =
+        "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" //   0...31
+        "\3\1\3\3\1\3\1\1\1\1\1\1\1\1\1\3" "\1\1\1\1\1\1\1\1\1\1\3\1\3\1\3\3" //  32...63
         "\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1" "\1\1\1\1\1\1\1\1\1\1\1\3\3\3\3\1" //  64...95
         "\3\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1" "\1\1\1\1\1\1\1\1\1\1\1\3\3\3\1\3" //  96..127
         "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" "\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3" // 128..159

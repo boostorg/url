@@ -10,31 +10,31 @@
 // Test that header file is self-contained.
 #include <boost/url/scheme.hpp>
 
-#include <boost/beast/_experimental/unit_test/suite.hpp>
+#include "test_suite.hpp"
 
 namespace boost {
 namespace url {
 
-class scheme_test : public beast::unit_test::suite
+class scheme_test
 {
 public:
     void
-    run() override
+    run()
     {
-        BEAST_EXPECT(is_special("ftp"));
-        BEAST_EXPECT(is_special("file"));
-        BEAST_EXPECT(is_special("http"));
-        BEAST_EXPECT(is_special("https"));
-        BEAST_EXPECT(is_special("ws"));
-        BEAST_EXPECT(is_special("wss"));
+        BOOST_TEST(is_special("ftp"));
+        BOOST_TEST(is_special("file"));
+        BOOST_TEST(is_special("http"));
+        BOOST_TEST(is_special("https"));
+        BOOST_TEST(is_special("ws"));
+        BOOST_TEST(is_special("wss"));
 
-        BEAST_EXPECT(! is_special("gopher"));
-        BEAST_EXPECT(! is_special("magnet"));
-        BEAST_EXPECT(! is_special("mailto"));
+        BOOST_TEST(! is_special("gopher"));
+        BOOST_TEST(! is_special("magnet"));
+        BOOST_TEST(! is_special("mailto"));
     }
 };
 
-BEAST_DEFINE_TESTSUITE(boost,url,scheme);
+TEST_SUITE(scheme_test, "boost.url.scheme");
 
 } // url
 } // boost

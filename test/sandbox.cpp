@@ -7,12 +7,12 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#include <boost/beast/_experimental/unit_test/suite.hpp>
+#include "test_suite.hpp"
 
 namespace boost {
 namespace url {
 
-class sandbox_test : public beast::unit_test::suite
+class sandbox_test
 {
 public:
     void
@@ -54,14 +54,13 @@ public:
     }
 
     void
-    run() override
+    run()
     {
         doSandbox();
-        pass();
     }
 };
 
-BEAST_DEFINE_TESTSUITE(boost,url,sandbox);
+TEST_SUITE(sandbox_test, "boost.url.sandbox");
 
 } // url
 } // boost

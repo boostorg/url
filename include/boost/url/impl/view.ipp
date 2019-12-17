@@ -18,115 +18,152 @@ namespace boost {
 namespace url {
 
 //----------------------------------------------------------
+//
+// scheme
+//
+//----------------------------------------------------------
 
-void
+string_view
 view::
-serialize_userinfo(
-    detail::any_buffer& b) const
-{
-    string_view s;
-    s = get(id_username);
-    if(! s.empty())
-        b.encode(s,
-            detail::userinfo_pct_set());
-    s = get(id_password);
-    if(! s.empty())
-    {
-        b.append(':');
-        b.encode(s,
-            detail::userinfo_pct_set());
-    }
-}
-
-void
-view::
-serialize_host(
-    detail::any_buffer& b) const
-{
-    string_view s;
-    if(! is_reset())
-    {
-        s = get(id_hostname);
-        if(! s.empty())
-            b.encode(s,
-                detail::reg_name_pct_set());
-    }
-    if(port_.has_value())
-    {
-        b.append(':');
-        detail::port_string ps(*port_);
-        b.append(ps.data(), ps.size());
-    }
-}
-
-void
-view::
-serialize_authority(
-    detail::any_buffer& b) const
-{
-    serialize_userinfo(b);
-    if( ! empty(id_username) ||
-        ! empty(id_password))
-        b.append('@');
-    serialize_host(b);
-}
-
-void
-view::
-serialize_origin(
-    detail::any_buffer& b) const
+scheme() const noexcept
 {
     auto s = get(id_scheme);
-    if(! s.empty())
-    {
-        b.append(s.data(), s.size());
-        b.append("://", 3);
-    }
-    serialize_host(b);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(s.back() == ':');
+    s.remove_suffix(1); // ':'
+    return s;
 }
 
-void
+//----------------------------------------------------------
+//
+// authority
+//
+//----------------------------------------------------------
+
+string_view
 view::
-serialize_href(
-    detail::any_buffer& b) const
+encoded_authority() const noexcept
 {
-    string_view s;
-    
-    s = get(id_scheme);
+    auto s = get(
+        id_username,
+        id_path);
     if(! s.empty())
     {
-        b.append(s.data(), s.size());
-        b.append(':');
+        BOOST_ASSERT(s.size() >= 2);
+        s.remove_prefix(2);
     }
+    return s;
+}
 
-    if(! empty(id_hostname))
-    {
-        b.append("//", 2);
-        serialize_authority(b);
-    }
-    else if(
-        string_to_scheme(s) ==
-        url::scheme::file)
-    {
-        b.append("//", 2);
-    }
+//
+// userinfo
+//
 
-    s = get(id_query());
+string_view
+view::
+encoded_userinfo() const noexcept
+{
+    auto s = get(
+        id_username,
+        id_hostname);
+    if(s.empty())
+        return s;
+    if(s.back() == '@')
+        s.remove_suffix(1);
+    BOOST_ASSERT(s.size() >= 2);
+    BOOST_ASSERT(
+        s.substr(0, 2) == "//");
+    s.remove_prefix(2);
+    return s;
+}
+
+string_view
+view::
+encoded_username() const noexcept
+{
+    auto s = get(id_username);
     if(! s.empty())
     {
-        b.append('?');
-        b.encode(s,
-            detail::query_pct_set());
+        BOOST_ASSERT(s.size() >= 2);
+        BOOST_ASSERT(
+            s.substr(0, 2) == "//");
+        s.remove_prefix(2);
     }
+    return s;
+}
 
-    s = get(id_fragment());
-    if(! s.empty())
+string_view
+view::
+encoded_password() const noexcept
+{
+    auto s = get(id_password);
+    switch(s.size())
     {
-        b.append('#');
-        b.encode(s,
-            detail::frag_pct_set());
+    case 1:
+        BOOST_ASSERT(s.front() == '@');
+    case 0:
+        return {};
+    default:
+        BOOST_ASSERT(s.back() == '@');
+        s.remove_suffix(1);
+        if(s.front() == ':')
+            s.remove_prefix(1);
+        return s;
     }
 }
+
+//
+// host
+//
+
+string_view
+view::
+encoded_hostname() const noexcept
+{
+    return get(id_hostname);
+}
+
+string_view
+view::
+port_string() const noexcept
+{
+    auto s = get(id_port);
+    BOOST_ASSERT(
+        s.empty() || s.front() == ':');
+    if(! s.empty())
+        s.remove_prefix(1);
+    return s;
+}
+
+//----------------------------------------------------------
+//
+// path
+//
+//----------------------------------------------------------
+
+string_view
+view::
+encoded_segment(
+    int pos) const
+{
+    auto s = get(id_segment(pos));
+    if(! s.empty())
+        s = s.substr(1);
+    return s;
+}
+
+//----------------------------------------------------------
+//
+// query
+//
+//----------------------------------------------------------
+
+//----------------------------------------------------------
+//
+// fragment
+//
+//----------------------------------------------------------
 
 } // url
 } // boost

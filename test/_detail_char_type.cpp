@@ -9,7 +9,8 @@
 
 #include <boost/url/detail/char_type.hpp>
 
-#include <boost/beast/_experimental/unit_test/suite.hpp>
+#include "test_suite.hpp"
+
 #include <algorithm>
 #include <string>
 
@@ -17,7 +18,7 @@ namespace boost {
 namespace url {
 namespace detail {
 
-class char_type_test : public beast::unit_test::suite
+class char_type_test
 {
 public:
     static
@@ -45,11 +46,11 @@ public:
             if(c == *p)
             {
                 ++p;
-                BEAST_EXPECT(! e.is_special(c));
+                BOOST_TEST(! e.is_special(c));
             }
             else
             {
-                BEAST_EXPECT(e.is_special(c));
+                BOOST_TEST(e.is_special(c));
             }
         }
     }
@@ -127,13 +128,13 @@ public:
     }
 
     void
-    run() override
+    run()
     {
         testEncodings();
     }
 };
 
-BEAST_DEFINE_TESTSUITE(boost,url,char_type);
+TEST_SUITE(char_type_test, "boost.url.char_type");
 
 } // detail
 } // url

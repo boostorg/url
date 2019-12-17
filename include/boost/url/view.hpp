@@ -11,420 +11,358 @@
 #define BOOST_URL_VIEW_HPP
 
 #include <boost/url/config.hpp>
-#include <boost/url/detail/buffer.hpp>
+#include <boost/url/detail/view_base.hpp>
 #include <string>
 
 namespace boost {
 namespace url {
 
-/*
-
-URL:    scheme    authority        path        query        fragment
-        foo:   // example.com:8042 /over/there ?name=ferret #nose
-        urn:                       example:animal:ferret:nose
-*/
-
-class view
+class path : protected detail::view_base
 {
-protected:
-    using size_type = uint32_t;
-    using id_type = unsigned;
+    friend class view;
 
-    char const* view_begin_ = nullptr;
-    size_type const* view_end_ = nullptr;
-    unsigned n_path_ = 1;
-    unsigned n_query_ = 1;
-    optional<unsigned short> port_;
-
-    enum
+    path(detail::view_base const& v) noexcept
     {
-        // one-based
-
-        id_scheme = 1,
-        id_username,
-        id_password, // trailing ':'
-        id_hostname,
-        id_path
-    };
-
-    bool
-    is_reset() const noexcept
-    {
-        return view_begin_ == nullptr;
-    }
-
-    id_type
-    id_query() const noexcept
-    {
-        return id_path + n_path_;
-    }
-
-    id_type
-    id_fragment() const noexcept
-    {
-        return id_query() + n_query_;
-    }
-
-    id_type
-    id_end() const noexcept
-    {
-        return id_fragment() + 1;
+        static_cast<
+            detail::view_base&
+                >(*this) = v;
     }
 
 public:
-    /// The string alias template return type for allocating member functions.
-    template<class Allocator>
-    using string_type =
-        std::basic_string<char,
-            std::char_traits<char>, Allocator>;
-
-    //------------------------------------------------------
-
-    /** Return the scheme.
-    */
-    string_view
-    scheme() const noexcept
+    class const_iterator
     {
-        if(is_reset())
-            return "";
-        return get(id_scheme);
-    }
+        friend path;
 
-    //------------------------------------------------------
+        path const* path_ = nullptr;
+        unsigned i_ = 0;
 
-    /** Return the username, if any.
-    */
-    string_view
-    username() const noexcept
-    {
-        if(is_reset())
-            return "";
-        return get(id_username);
-    }
-
-    /** Return the percent-encoded username.
-    */
-    template<class Allocator = std::allocator<char>>
-    string_type<Allocator>
-    encoded_username(
-        Allocator const& a = {}) const
-    {
-        return get_encoded(id_username, a,
-            detail::userinfo_pct_set());
-    }
-
-    string_view
-    password() const noexcept
-    {
-        if(is_reset())
-            return "";
-        return get(id_password);
-    }
-
-    template<class Allocator = std::allocator<char>>
-    string_type<Allocator>
-    encoded_password(
-        Allocator const& a = {}) const
-    {
-        return get_encoded(id_password, a,
-            detail::userinfo_pct_set());
-    }
-
-    /** Return the encoded userinfo.
-    */
-    template<class Allocator = std::allocator<char>>
-    string_type<Allocator>
-    encoded_userinfo(
-        Allocator const& a = {}) const
-    {
-        detail::string_buffer<
-            Allocator> b(a);
-        if(! is_reset())
+        const_iterator(
+            path const& p,
+            unsigned i)
+            : path_(&p)
+            , i_(i)
         {
-            detail::counting_buffer b0;
-            serialize_userinfo(b0);
-            b.prepare(b0.result());
-            serialize_userinfo(b);
         }
-        return b.result();
+
+    public:
+        using value_type = string_view;
+
+        const_iterator() = default;
+
+        value_type
+        operator*() const noexcept
+        {
+            return path_->get(
+                id_path + i_);
+        }
+
+        bool
+        operator==(
+            const_iterator other) const noexcept
+        {
+            return
+                path_ == other.path_ &&
+                i_ == other.i_;
+        }
+
+        bool
+        operator!=(
+            const_iterator other) const noexcept
+        {
+            return !(*this == other);
+        }
+
+        const_iterator&
+        operator++() noexcept
+        {
+            ++i_;
+            return *this;
+        }
+
+        const_iterator
+        operator++(int) noexcept
+        {
+            auto tmp = *this;
+            ++*this;
+            return tmp;
+        }
+    };
+
+    using iterator = const_iterator;
+
+    std::size_t
+    size() const noexcept
+    {
+        return n_seg_;
     }
+
+    const_iterator
+    begin() const noexcept
+    {
+        return const_iterator(*this, 0);
+    }
+
+    const_iterator
+    end() const noexcept
+    {
+        return const_iterator(
+            *this, n_seg_);
+    }
+};
 
     //------------------------------------------------------
 
-    string_view
-    hostname() const noexcept
+class view
+#ifndef BOOST_URL_DOCS
+    : protected detail::view_base
+#endif
+{
+public:
+    /** Return the encoded URL as a null-terminated string.
+    */
+    char const*
+    c_str() const noexcept
     {
-        if(is_reset())
-            return "";
-        return get(id_hostname);
-    }
-
-    template<class Allocator = std::allocator<char>>
-    string_type<Allocator>
-    encoded_hostname(
-        Allocator const& a = {}) const
-    {
-        return get_encoded(id_hostname, a,
-            detail::reg_name_pct_set());
-    }
-
-    optional<unsigned short>
-    port() const noexcept
-    {
-        return port_;
-    }
-
-    template<class Allocator = std::allocator<char>>
-    string_type<Allocator>
-    encoded_host(
-        Allocator const& a = {}) const
-    {
-        detail::string_buffer<
-            Allocator> b(a);
-        detail::counting_buffer b0;
-        serialize_host(b0);
-        b.prepare(b0.result());
-        serialize_host(b);
-        return b.result();
-    }
-
-    //------------------------------------------------------
-
-    template<class Allocator = std::allocator<char>>
-    string_type<Allocator>
-    encoded_authority(
-        Allocator const& a = {}) const
-    {
-        detail::string_buffer<
-            Allocator> b(a);
         if(! is_reset())
-        {
-            detail::counting_buffer b0;
-            serialize_authority(b0);
-            b.prepare(b0.result());
-            serialize_authority(b);
-        }
-        return b.result();
-    }
-
-    template<class Allocator = std::allocator<char>>
-    string_type<Allocator>
-    encoded_origin(
-        Allocator const& a = {}) const
-    {
-        detail::string_buffer<
-            Allocator> b(a);
-        if(! is_reset())
-        {
-            detail::counting_buffer b0;
-            serialize_origin(b0);
-            b.prepare(b0.result());
-            serialize_origin(b);
-        }
-        return b.result();
-    }
-
-    // "example.org"
-    string_view
-    domain(bool ignoreSLD = false) const noexcept;
-
-    // "www"
-    string_view
-    subdomain() const noexcept;
-
-    // "org"
-    string_view
-    tld(bool ignoreSLD = false) const noexcept;
-
-    // "/foo/hello.html"
-    // VFALCO returns decoded
-    string_view
-    path() const noexcept
-    {
-        return get(id_path, id_query());
-    }
-
-    // "/foo"
-    // VFALCO returns decoded
-    string_view
-    directory() const noexcept;
-
-    // "hello.html"
-    // VFALCO returns decoded
-    string_view
-    filename() const noexcept;
-
-    // "html"
-    // VFALCO returns decoded
-    string_view
-    suffix() const noexcept;
-
-    string_view
-    segment(int pos) const;
-
-    string_view
-    segment_coded(int pos) const;
-
-    // ?cols=80
-    string_view
-    search() const noexcept
-    {
-        return get(
-            id_query(), id_fragment());
-    }
-
-    // cols=80
-    string_view
-    query() const noexcept
-    {
-        auto sv = search();
-        if(sv.size() < 2)
             return "";
-        return sv.substr(1);
+        BOOST_ASSERT(
+            view_begin_[id_end()] == 0);
+        return view_begin_;
     }
 
-    // #frag
+    /** Return the complete serialized URL.
+    */
     string_view
-    hash() const noexcept
+    encoded_href() const
     {
-        return get(
-            id_fragment(), id_end());
+        return get(id_scheme, id_end());
     }
 
-    // frag
+    /** Return the encoded origin.
+    */
+    BOOST_URL_DECL
     string_view
-    fragment() const noexcept
+    encoded_origin() const noexcept
     {
-        auto sv = hash();
-        if(sv.size() < 2)
-            return "";
-        return sv.substr(1);
+        return get(id_scheme, id_path);
     }
 
-    // /foo/hello.html?cols=80#frag
     string_view
-    resource() const noexcept
+    encoded_resource() const noexcept
     {
         return get(
             id_path, id_end());
     }
 
     //------------------------------------------------------
+    //
+    // scheme
+    //
+    //------------------------------------------------------
 
-    /** Return the complete serialized URL.
+    /** Return the scheme.
     */
-    template<class Allocator = std::allocator<char>>
+    BOOST_URL_DECL
+    string_view
+    scheme() const noexcept;
+
+    //------------------------------------------------------
+    //
+    // authority
+    //
+    //------------------------------------------------------
+
+    /** Return the encoded authority.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_authority() const noexcept;
+
+    //
+    // userinfo
+    //
+
+    /** Return the userinfo.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_userinfo() const noexcept;
+
+    /** Return the username.
+    */
+    template<
+        class Allocator =
+            std::allocator<char>>
     string_type<Allocator>
-    encoded_href(Allocator const& a = {}) const
+    username(
+        Allocator const& a = {}) const
     {
-        detail::string_buffer<
-            Allocator> b(a);
-        if(! is_reset())
-        {
-            detail::counting_buffer b0;
-            serialize_href(b0);
-            b.prepare(b0.result());
-            serialize_href(b);
-        }
-        return b.result();
+        return decode(
+            encoded_username(), a);
+    }
+
+    /** Return the username.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_username() const noexcept;
+
+    /** Return the password.
+    */
+    template<
+        class Allocator =
+        std::allocator<char>>
+    string_type<Allocator>
+    password(
+        Allocator const& a = {}) const
+    {
+        return decode(
+            encoded_password(), a);
+    }
+
+    /** Return the password.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_password() const noexcept;
+
+    //
+    // host
+    //
+
+    /** Return the encoded host.
+    */
+    string_view
+    encoded_host() const noexcept
+    {
+        return get(
+            id_hostname,
+            id_path);
+    }
+
+
+    /** Return the hostname.
+    */
+    template<
+        class Allocator =
+            std::allocator<char>>
+    string_type<Allocator>
+    hostname(
+        Allocator const& a = {}) const
+    {
+        return decode(
+            encoded_hostname(), a);
+    }
+
+    /** Return the encoded hostname.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_hostname() const noexcept;
+
+    /** Return the port, if any.
+    */
+    optional<unsigned short>
+    port() const noexcept
+    {
+        return port_;
+    }
+
+    /** Return the port as a string, or "" if no port.
+    */
+    BOOST_URL_DECL
+    string_view
+    port_string() const noexcept;
+
+    //------------------------------------------------------
+    //
+    // path
+    //
+    //------------------------------------------------------
+
+    /** Return the encoded path.
+    */
+    string_view
+    encoded_path() const noexcept
+    {
+        return get(id_path, id_query());
+    }
+
+    /** Return the path as a range.
+    */
+    url::path
+    segments() const noexcept
+    {
+        return url::path(static_cast<
+            view_base const&>(*this));
+    }
+
+    /** Return a path segment.
+    */
+    template<
+        class Allocator =
+            std::allocator<char>>
+    BOOST_URL_DECL
+    string_type<Allocator>
+    segment(
+        int pos,
+        Allocator const& a = {}) const
+    {
+        return decode(
+            encoded_segment(pos, a));
+    }
+
+    /** Return an encoded path segment.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_segment(int pos) const;
+
+    //------------------------------------------------------
+    //
+    // query
+    //
+    //------------------------------------------------------
+
+    string_view
+    encoded_query() const noexcept
+    {
+        auto s = get(
+            id_query(), id_fragment());
+        if(! s.empty())
+            s = s.substr(1);
+        return s;
     }
 
     //------------------------------------------------------
+    //
+    // fragment
+    //
+    //------------------------------------------------------
 
-protected:
-    // returns offset of piece
-    size_type
-    offset(id_type id) const noexcept
-    {
-        return *(view_end_ - id);
-    }
-
-    // returns length of piece
-    size_type
-    length(id_type id) const noexcept
-    {
-        return
-            offset(id + 1) -
-            offset(id);
-    }
-
-    // returns true if piece is empty
-    bool
-    empty(id_type id) const noexcept
-    {
-        return
-            offset(id) ==
-            offset(id + 1);
-    }
-
-    // return piece as string
-    string_view
-    get(id_type id) const noexcept
-    {
-        if(! view_begin_)
-            return "";
-        return {
-            view_begin_ + offset(id),
-            length(id) };
-    }
-
-    // return [first, last) as string
-    string_view
-    get(id_type first,
-        id_type last) const noexcept
-    {
-        BOOST_ASSERT(first <= id_end());
-        BOOST_ASSERT(last <= id_end());
-        if(! view_begin_)
-            return "";
-        return {
-            view_begin_ + offset(first),
-            offset(last) - offset(first) };
-    }
-
-    template<class Allocator>
+    /** Return the fragment.
+    */
+    template<
+        class Allocator =
+            std::allocator<char>>
+    BOOST_URL_DECL
     string_type<Allocator>
-    get_encoded(
-        id_type id,
-        Allocator const& a,
-        detail::pct_encoding e) const
+    fragment(
+        Allocator const& a = {}) const
     {
-        detail::string_buffer<
-            Allocator> b(a);
-        if(! is_reset())
-        {
-            auto const s = get(id);
-            b.prepare(e.encoded_size(s));
-            b.encode(s, e);
-        }
-        return b.result();
+        return decode(
+            encoded_fragment(), a);
+
     }
 
-private:
-    BOOST_URL_DECL
-    void
-    serialize_userinfo(
-        detail::any_buffer& b) const;
-
-    BOOST_URL_DECL
-    void
-    serialize_host(
-        detail::any_buffer& b) const;
-
-    BOOST_URL_DECL
-    void
-    serialize_authority(
-        detail::any_buffer& b) const;
-
-    BOOST_URL_DECL
-    void
-    serialize_origin(
-        detail::any_buffer& b) const;
-
-    BOOST_URL_DECL
-    void
-    serialize_href(
-        detail::any_buffer& b) const;
+    /** Return the fragment.
+    */
+    string_view
+    encoded_fragment() const noexcept
+    {
+        return get(
+            id_fragment(), id_end());
+    }
 };
 
 } // url

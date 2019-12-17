@@ -26,6 +26,7 @@ else
 
 local SOURCES =
     _detail_char_type.cpp
+    _detail_parser.cpp
     error.cpp
     sandbox.cpp
     scheme.cpp

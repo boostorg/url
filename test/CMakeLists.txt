@@ -14,14 +14,17 @@ GroupSources(test "/")
 
 add_definitions(-DBOOST_URL_HEADER_ONLY=1)
 
+include_directories(.)
+
 add_executable (url-tests
-    ${BEAST_FILES}
     ${PROJECT_FILES}
     ${PROJECT_SOURCE_DIR}/include/boost/url.hpp
     ${PROJECT_SOURCE_DIR}/src/src.cpp
     Jamfile
     main.cpp
+    test_suite.hpp
     _detail_char_type.cpp
+    _detail_parser.cpp
     error.cpp
     sandbox.cpp
     scheme.cpp

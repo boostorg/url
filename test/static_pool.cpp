@@ -10,23 +10,23 @@
 // Test that header file is self-contained.
 #include <boost/url/static_pool.hpp>
 
-#include <boost/beast/_experimental/unit_test/suite.hpp>
+#include "test_suite.hpp"
+
 #include <iostream>
 
 namespace boost {
 namespace url {
 
-class static_pool_test : public beast::unit_test::suite
+class static_pool_test
 {
 public:
     void
-    run() override
+    run()
     {
-        pass();
     }
 };
 
-BEAST_DEFINE_TESTSUITE(boost,url,static_pool);
+TEST_SUITE(static_pool_test, "boost.url.static_pool");
 
 } // url
 } // boost

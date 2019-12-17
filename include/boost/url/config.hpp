@@ -11,9 +11,16 @@
 #define BOOST_URL_CONFIG_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <string>
 
 namespace boost {
 namespace url {
+
+/// The string alias template return type for allocating member functions.
+template<class Allocator>
+using string_type =
+    std::basic_string<char,
+        std::char_traits<char>, Allocator>;
 
 #ifndef BOOST_URL_STANDALONE
 
@@ -36,7 +43,7 @@ using error_condition = boost::system::error_condition;
 template<class T>
 using optional = boost::optional<T>;
 
-#ifdef GENERATING_DOCUMENTATION
+#ifdef BOOST_URL_DOCS
 /// Returns the generic error category used by the library.
 error_category const&
 generic_category();

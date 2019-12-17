@@ -11,16 +11,69 @@
 #define BOOST_URL_ERROR_HPP
 
 #include <boost/url/config.hpp>
+#include <stdexcept>
 
 namespace boost {
 namespace url {
+
+struct BOOST_SYMBOL_VISIBLE
+    parse_error : std::invalid_argument
+{
+    BOOST_URL_DECL
+    parse_error();
+
+#ifndef BOOST_URL_DOCS
+    BOOST_URL_DECL
+    static BOOST_NORETURN void raise();
+#endif
+
+};
+
+struct BOOST_SYMBOL_VISIBLE
+    invalid_part : std::invalid_argument
+{
+    BOOST_URL_DECL
+    invalid_part();
+
+#ifndef BOOST_URL_DOCS
+    BOOST_URL_DECL
+    static BOOST_NORETURN void raise();
+#endif
+
+};
+
+struct BOOST_SYMBOL_VISIBLE
+    too_large : std::length_error
+{
+    BOOST_URL_DECL
+    too_large();
+
+#ifndef BOOST_URL_DOCS
+    BOOST_URL_DECL
+    static BOOST_NORETURN void raise();
+#endif
+};
+
+struct BOOST_SYMBOL_VISIBLE
+    out_of_range : std::out_of_range
+{
+    BOOST_URL_DECL
+    out_of_range();
+
+#ifndef BOOST_URL_DOCS
+    BOOST_URL_DECL
+    static BOOST_NORETURN void raise();
+#endif
+};
+
+//----------------------------------------------------------
 
 /** Error codes returned by URL operations
 */
 enum class error
 {
     /// An input did not match a structural element (soft error)
-    mismatch = 1,
+    no_match = 1,
 
     /// A syntax error occurred
     syntax,

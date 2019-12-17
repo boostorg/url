@@ -15,6 +15,74 @@
 namespace boost {
 namespace url {
 
+parse_error::
+parse_error()
+    : std::invalid_argument(
+        "parse error")
+{
+}
+
+void
+parse_error::
+raise()
+{
+    BOOST_THROW_EXCEPTION(
+        parse_error());
+}
+    
+//---
+
+invalid_part::
+invalid_part()
+    : std::invalid_argument(
+        "bad url argument")
+{
+}
+
+void
+invalid_part::
+raise()
+{
+    BOOST_THROW_EXCEPTION(
+        invalid_part());
+}
+    
+//---
+
+too_large::
+too_large()
+    : std::length_error(
+        "too large")
+{
+}
+
+void
+too_large::
+raise()
+{
+    BOOST_THROW_EXCEPTION(
+        too_large());
+}
+    
+//---
+
+out_of_range::
+out_of_range()
+    : std::out_of_range(
+        "out of range")
+{
+}
+
+void
+out_of_range::
+raise()
+{
+    BOOST_THROW_EXCEPTION(
+        out_of_range());
+}
+    
+//----------------------------------------------------------
+
 error_code
 make_error_code(error e)
 {
@@ -32,7 +100,7 @@ make_error_code(error e)
             switch(static_cast<error>(ev))
             {
             default:
-case error::mismatch: return "mismatch";
+case error::no_match: return "no match for element";
 case error::syntax: return "syntax";
 case error::invalid: return "invalid";
 
@@ -61,7 +129,7 @@ case error::illegal_reserved_char: return "illegal reserved char";
             default:
                 return {ev, *this};
 
-case error::mismatch:
+case error::no_match:
 case error::syntax:
 case error::invalid:
 
