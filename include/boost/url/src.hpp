@@ -25,6 +25,7 @@ in a translation unit of the program.
 
 #include <boost/url/detail/view_base.ipp>
 #include <boost/url/impl/error.ipp>
+#include <boost/url/impl/params.ipp>
 #include <boost/url/impl/scheme.ipp>
 #include <boost/url/impl/value.ipp>
 #include <boost/url/impl/view.ipp>

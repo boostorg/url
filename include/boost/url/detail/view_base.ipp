@@ -27,14 +27,14 @@ id_segment(
     {
         index = -index;
         if(static_cast<id_type>(
-            index) > n_seg_)
+            index) > nseg_)
             out_of_range::raise();
         return static_cast<id_type>(
             id_query() - index);
     }
 
     if(static_cast<id_type>(
-        index) >= n_seg_)
+        index) >= nseg_)
         out_of_range::raise();
     return static_cast<id_type>(
         id_path + index);

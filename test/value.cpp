@@ -243,9 +243,9 @@ public:
     //------------------------------------------------------
 
     void
-    print(path const& p)
+    print(segments const& ss)
     {
-        for(auto const e : p)
+        for(auto const e : ss)
             log << "\"" << e << "\"" << std::endl;
     }
 
@@ -307,6 +307,13 @@ public:
     //------------------------------------------------------
 
     void
+    testQuery()
+    {
+    }
+
+    //------------------------------------------------------
+
+    void
     testFragment()
     {
         BOOST_TEST(value("").fragment().empty());
@@ -336,6 +343,8 @@ public:
     void
     run()
     {
+        //value u("foof://:;@[::]/@;:??:;@/~@;://#//:;@~/@;:\\?\\?//:foof");
+        //dump(u);
         testCtor();
         testScheme();
         testUsername();
@@ -347,6 +356,7 @@ public:
         testAuthority();
         testOrigin();
         testPath();
+        testQuery();
         testFragment();
     }
 };

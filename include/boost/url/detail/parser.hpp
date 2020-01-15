@@ -102,9 +102,9 @@ struct parser
     std::size_t nhost = 0;
     std::size_t nport = 0;
     std::size_t npath = 0;
-    std::size_t npath_seg = 0;
+    std::size_t nseg = 0;
     std::size_t nquery = 0;
-    std::size_t nquery_kvp = 1;
+    std::size_t nparam = 0;
     std::size_t nfrag = 0;
     optional<unsigned short> port;
 
@@ -132,12 +132,11 @@ struct parser
 
     //------------------------------------------------------
 
-    // URI-reference
+    // URL (a.k.a. URI-reference)
     void
-    parse_uri_reference(
+    parse_url(
         error_code& ec) noexcept
     {
-        auto p0 = p_;
         parse_scheme(ec);
         if(! ec && maybe_literal(":"))
         {
@@ -149,15 +148,23 @@ struct parser
         {
             // rewind
             ec = {};
-            p_ = p0;
-            nscheme = 0;
 
             // relative-ref
             parse_relative_part(ec);
             if(ec)
                 return;
         }
-        parse_query_and_fragment(ec);
+
+        parse_query(ec);
+        if(ec)
+            return;
+  
+        parse_fragment(ec);
+        if(ec)
+            return;
+
+        if(p_ != end_)
+            ec = error::syntax;
     }
 
     // origin
@@ -401,6 +408,7 @@ struct parser
     parse_path_abempty(
         error_code& ec) noexcept
     {
+        // *( "/" segment )
         auto const p0 = p_;
         auto const e =
             pchar_pct_set();
@@ -412,7 +420,7 @@ struct parser
                 p_ + 1, end_, ec);
             if(ec)
                 return;
-            ++npath_seg;
+            ++nseg;
         }
         npath = p_ - p0;
     }
@@ -422,6 +430,7 @@ struct parser
     parse_path_absolute(
         error_code& ec) noexcept
     {
+        // "/" [ segment-nz *( "/" segment ) ]
         if(p_ == end_)
         {
             ec = error::no_match;
@@ -466,7 +475,7 @@ struct parser
             ec = error::no_match;
             return;
         }
-        ++npath_seg;
+        ++nseg;
         while(p_ < end_)
         {
             if(*p_ != '/')
@@ -475,7 +484,7 @@ struct parser
                 p_ + 1, end_, ec);
             if(ec)
                 return;
-            ++npath_seg;
+            ++nseg;
         }
         npath += p_ - p0;
     }
@@ -497,7 +506,7 @@ struct parser
             ec = error::no_match;
             return;
         }
-        ++npath_seg;
+        ++nseg;
         e = pchar_pct_set();
         while(p_ < end_)
         {
@@ -507,13 +516,13 @@ struct parser
                 p_ + 1, end_, ec);
             if(ec)
                 return;
-            ++npath_seg;
+            ++nseg;
         }
         npath += p_ - p0;
     }
 
     void
-    write_path_offsets(
+    write_segments(
         size_type* base) noexcept
     {
         auto const e = pchar_pct_set();
@@ -526,6 +535,11 @@ struct parser
         auto const end = p + npath;
         *base-- = static_cast<
             size_type>(p - begin_);
+        if(nseg == 0)
+        {
+            *base = base[1];
+            return;
+        }
         while(p < end)
         {
             if(*p != '/')
@@ -540,45 +554,132 @@ struct parser
     }
 
     //------------------------------------------------------
+    //
+    // query
+    //
+    //------------------------------------------------------
 
     void
-    parse_query_and_fragment(
+    parse_query(
         error_code& ec) noexcept
     {
         if(p_ == end_)
             return;
-
-        // query
-        if(*p_ == '?')
+        if(*p_ != '?')
+            return;
+        auto const p0 = p_;
+        auto const ek =
+            qkey_pct_set();
+        auto const ev =
+            qval_pct_set();
+        std::size_t n = 0;
+        for(;;)
         {
-            auto const p0 = p_;
-            ++p_;
-            auto const e =
-                query_pct_set();
-            p_ = e.parse(p_, end_, ec);
+            ++n;
+            p_ = ek.parse(
+                p_, end_, ec);
             if(ec)
                 return;
-            nquery = p_ - p0;
-            if(p_ == end_)
-                return;
-        }
-
-        // fragment
-        if(*p_ == '#')
-        {
-            auto const p0 = p_;
+            if(p_ >= end_)
+                break;
+            if(*p_ != '=')
+                break;
             ++p_;
-            auto const e =
-                frag_pct_set();
-            p_ = e.parse(p_, end_, ec);
+            if(p_ >= end_)
+                break;
+            p_ = ev.parse(
+                p_, end_, ec);
             if(ec)
                 return;
-            nfrag = p_ - p0;
-            if(p_ == end_)
-                return;
+            if(p_ >= end_)
+                break;
+            if(*p_ != '&')
+                break;
+            ++p_;
         }
+        nquery = static_cast<
+            size_type>(p_ - p0);
+        nparam = n;
+    }
 
-        ec = error::invalid;
+    void
+    write_params(
+        size_type* base) noexcept
+    {
+        BOOST_ASSERT(nparam > 0);
+        BOOST_ASSERT(nquery > 0);
+        auto const ek =
+            qkey_pct_set();
+        auto const ev =
+            qval_pct_set();
+        auto p = begin_ +
+            nscheme +
+            nuser +
+            npass +
+            nhost +
+            nport +
+            npath;
+        auto const end = p + nquery;
+        *base-- = static_cast<
+            size_type>(p - begin_);
+        for(;;)
+        {
+            error_code ec;
+            p = ek.parse(
+                p, end, ec);
+            BOOST_ASSERT(! ec);
+            *base-- = static_cast<
+                size_type>(p - begin_);
+            if(p == end)
+            {
+                *base = base[1];
+                return;
+            }
+            if(*p == '&')
+            {
+                *base = base[1];
+                continue;
+            }
+            if(*p != '=')
+            {
+                *base = base[1];
+                break;
+            }
+            p = ev.parse(
+                p, end, ec);
+            BOOST_ASSERT(! ec);
+            *base-- = static_cast<
+                size_type>(p - begin_);
+            if(p == end)
+                return;
+            if(*p != '&')
+                break;
+        }
+    }
+
+    //------------------------------------------------------
+    //
+    // fragment
+    //
+    //------------------------------------------------------
+
+    void
+    parse_fragment(
+        error_code& ec) noexcept
+    {
+        if(p_ == end_)
+            return;
+        if(*p_ != '#')
+            return;
+        auto const p0 = p_;
+        ++p_;
+        auto const e =
+            frag_pct_set();
+        p_ = e.parse(
+            p_, end_, ec);
+        if(ec)
+            return;
+        nfrag = p_ - p0;
     }
 
     //------------------------------------------------------

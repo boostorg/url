@@ -26,8 +26,10 @@ add_executable (url-tests
     _detail_char_type.cpp
     _detail_parser.cpp
     error.cpp
+    params.cpp
     sandbox.cpp
     scheme.cpp
+    segments.cpp
     static_pool.cpp
     value.cpp
     view.cpp

@@ -27,7 +27,7 @@ public:
     {
         error_code ec;
         parser pr(s);
-        pr.parse_uri_reference(ec);
+        pr.parse_url(ec);
         BOOST_TEST(! ec);
     }
 
@@ -37,7 +37,7 @@ public:
     {
         error_code ec;
         parser pr(s);
-        pr.parse_uri_reference(ec);
+        pr.parse_url(ec);
         BOOST_TEST(!! ec);
     }
 
@@ -59,6 +59,7 @@ public:
         good_uri_ref("http://example.com:443/path/to/file.txt#frag");
         good_uri_ref("http://example.com:443/path/to/file.txt?query#frag");
 
+        bad_uri_ref("ws://%X9");
         bad_uri_ref("1badscheme://");
     }
 

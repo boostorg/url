@@ -58,7 +58,7 @@ public:
     void
     testEncodings()
     {
-        // reg-name
+        // reg_name
         {
             auto const special = sort(
                 // unreserved
@@ -74,6 +74,7 @@ public:
         }
 
         // userinfo
+        // userinfo_nc
         {
             auto const special = sort(
                 // unreserved
@@ -107,7 +108,25 @@ public:
                 special, pchar_pct_set());
         }
 
-        // query / fragment
+        // pchar_nc
+        {
+            auto const special = sort(
+                // unreserved
+                "0123456789"
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "abcdefghijklmnopqrstuvwxyz"
+                "-._~"
+                // sub-delims
+                "!$&'()*+,;="
+                // '@'
+                "@"
+            );
+            check_encoding(
+                special, pchar_nc_pct_set());
+        }
+
+        // query
+        // fragment
         {
             auto const special = sort(
                 // unreserved
@@ -124,6 +143,40 @@ public:
                 special, frag_pct_set());
             check_encoding(
                 special, query_pct_set());
+        }
+
+        // qkey
+        {
+            auto const special = sort(
+                // unreserved
+                "0123456789"
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "abcdefghijklmnopqrstuvwxyz"
+                "-._~"
+                // sub-delims
+                "!$&'()*+,;" // minus '='
+                // ':' / '@' / '/' / '?'
+                ":@/?"
+            );
+            check_encoding(
+                special, qkey_pct_set());
+        }
+
+        // qval
+        {
+            auto const special = sort(
+                // unreserved
+                "0123456789"
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "abcdefghijklmnopqrstuvwxyz"
+                "-._~"
+                // sub-delims
+                "!$'()*+,;=" // minus '&'
+                // ':' / '@' / '/' / '?'
+                ":@/?"
+            );
+            check_encoding(
+                special, qval_pct_set());
         }
     }
 

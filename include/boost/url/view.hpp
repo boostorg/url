@@ -12,111 +12,23 @@
 
 #include <boost/url/config.hpp>
 #include <boost/url/detail/view_base.hpp>
+#include <boost/url/segments.hpp>
 #include <string>
 
 namespace boost {
 namespace url {
 
-class path : protected detail::view_base
-{
-    friend class view;
+class params;
 
-    path(detail::view_base const& v) noexcept
-    {
-        static_cast<
-            detail::view_base&
-                >(*this) = v;
-    }
-
-public:
-    class const_iterator
-    {
-        friend path;
-
-        path const* path_ = nullptr;
-        unsigned i_ = 0;
-
-        const_iterator(
-            path const& p,
-            unsigned i)
-            : path_(&p)
-            , i_(i)
-        {
-        }
-
-    public:
-        using value_type = string_view;
-
-        const_iterator() = default;
-
-        value_type
-        operator*() const noexcept
-        {
-            return path_->get(
-                id_path + i_);
-        }
-
-        bool
-        operator==(
-            const_iterator other) const noexcept
-        {
-            return
-                path_ == other.path_ &&
-                i_ == other.i_;
-        }
-
-        bool
-        operator!=(
-            const_iterator other) const noexcept
-        {
-            return !(*this == other);
-        }
-
-        const_iterator&
-        operator++() noexcept
-        {
-            ++i_;
-            return *this;
-        }
-
-        const_iterator
-        operator++(int) noexcept
-        {
-            auto tmp = *this;
-            ++*this;
-            return tmp;
-        }
-    };
-
-    using iterator = const_iterator;
-
-    std::size_t
-    size() const noexcept
-    {
-        return n_seg_;
-    }
-
-    const_iterator
-    begin() const noexcept
-    {
-        return const_iterator(*this, 0);
-    }
-
-    const_iterator
-    end() const noexcept
-    {
-        return const_iterator(
-            *this, n_seg_);
-    }
-};
-
-    //------------------------------------------------------
+//----------------------------------------------------------
 
 class view
 #ifndef BOOST_URL_DOCS
     : protected detail::view_base
 #endif
 {
+    friend class params;
+
 public:
     /** Return the encoded URL as a null-terminated string.
     */
@@ -197,7 +109,7 @@ public:
     username(
         Allocator const& a = {}) const
     {
-        return decode(
+        return detail::decode(
             encoded_username(), a);
     }
 
@@ -216,7 +128,7 @@ public:
     password(
         Allocator const& a = {}) const
     {
-        return decode(
+        return detail::decode(
             encoded_password(), a);
     }
 
@@ -250,7 +162,7 @@ public:
     hostname(
         Allocator const& a = {}) const
     {
-        return decode(
+        return detail::decode(
             encoded_hostname(), a);
     }
 
@@ -290,10 +202,10 @@ public:
 
     /** Return the path as a range.
     */
-    url::path
+    url::segments
     segments() const noexcept
     {
-        return url::path(static_cast<
+        return url::segments(static_cast<
             view_base const&>(*this));
     }
 
@@ -308,7 +220,7 @@ public:
         int pos,
         Allocator const& a = {}) const
     {
-        return decode(
+        return detail::decode(
             encoded_segment(pos, a));
     }
 
@@ -324,15 +236,31 @@ public:
     //
     //------------------------------------------------------
 
+    template<
+        class Allocator =
+            std::allocator<char>>
+    BOOST_URL_DECL
+    string_type<Allocator>
+    query(
+        Allocator const& a = {}) const
+    {
+        return detail::decode(
+            encoded_query(), a);
+    }
+
     string_view
     encoded_query() const noexcept
     {
-        auto s = get(
+        return get(
             id_query(), id_fragment());
-        if(! s.empty())
-            s = s.substr(1);
-        return s;
     }
+
+    /** Return the query parameters as a read-only container.
+    */
+    // VFALCO Definition in impl/params.hpp
+    inline
+    url::params
+    params() const noexcept;
 
     //------------------------------------------------------
     //
@@ -350,7 +278,7 @@ public:
     fragment(
         Allocator const& a = {}) const
     {
-        return decode(
+        return detail::decode(
             encoded_fragment(), a);
 
     }

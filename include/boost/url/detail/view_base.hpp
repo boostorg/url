@@ -23,8 +23,8 @@ struct view_base
 
     char const* view_begin_ = nullptr;
     size_type const* view_end_ = nullptr;
-    unsigned n_seg_ = 1;
-    unsigned n_query_ = 1;
+    unsigned nseg_ = 0;
+    unsigned nparam_ = 0;
     optional<unsigned short> port_;
 
     enum
@@ -51,13 +51,16 @@ struct view_base
     id_type
     id_query() const noexcept
     {
-        return id_path + n_seg_;
+        // This can overlap with id_fragment()
+        if(nseg_ == 0)
+            return id_path + 1;
+        return id_path + nseg_;
     }
 
     id_type
     id_fragment() const noexcept
     {
-        return id_query() + n_query_;
+        return id_query() + 2 * nparam_;
     }
 
     id_type
@@ -71,7 +74,7 @@ struct view_base
     id_segment(int index) const;
 
     // returns offset of piece
-    size_type
+    size_type const&
     offset(id_type id) const noexcept
     {
         return *(view_end_ - id);
@@ -148,21 +151,6 @@ struct view_base
         return {
             view_begin_ + offset(first),
             offset(last) - offset(first) };
-    }
-
-    template<class Allocator>
-    string_type<Allocator>
-    decode(
-        string_view sv,
-        Allocator const& a) const
-    {
-        string_type<Allocator> s(a);
-        s.resize(
-            detail::pct_encoding::
-                raw_decoded_size(sv));
-        detail::pct_encoding::
-            decode(&s[0], sv);
-        return s;
     }
 
     template<class Allocator>

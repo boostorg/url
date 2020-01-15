@@ -42,21 +42,21 @@ set_encoded_uri_reference(
 {
     error_code ec;
     detail::parser pr(s);
-    pr.parse_uri_reference(ec);
+    pr.parse_url(ec);
     if(ec)
         parse_error::raise();
 
     reserve(
         s.size(),
         id_path +
-            pr.npath_seg +
-            pr.nquery_kvp
+            (pr.nseg ? pr.nseg : 1) +
+            2 * pr.nparam +
+            1
     );
-
-    n_seg_ = static_cast<
-        unsigned>(pr.npath_seg);
-    n_query_ = static_cast<
-        unsigned>(pr.nquery_kvp);
+    nseg_ = static_cast<
+        unsigned>(pr.nseg);
+    nparam_ = static_cast<
+        unsigned>(pr.nparam);
     for(id_type id = 2;
         id <= id_end(); ++id)
         offset(id) = static_cast<
@@ -67,9 +67,11 @@ set_encoded_uri_reference(
     split(id_password, pr.npass);
     split(id_hostname, pr.nhost);
     split(id_port, pr.nport);
-    pr.write_path_offsets(&offset(id_path));
-    split(id_query(), pr.nquery);
-    //split(id_fragment(), pr.nfrag);
+    pr.write_segments(&offset(id_path));
+    if(nparam_ > 0)
+        pr.write_params(&offset(id_query()));
+    BOOST_ASSERT(
+        length(id_fragment()) == pr.nfrag);
     offset(id_end()) =
         static_cast<size_type>(s.size());
     null_term();
@@ -608,14 +610,14 @@ set_encoded_path(
     maybe_init();
     auto dest = resize_and_merge(
         id_path, id_query(),
-        s.size(), pr.npath_seg);
+        s.size(), pr.nseg);
     s.copy(dest, s.size());
     auto const e =
         detail::pchar_pct_set();
     auto p = s.begin();
     auto p0 = p;
     for(id_type i = id_path;
-        i < id_path + pr.npath_seg; ++i)
+        i < id_path + pr.nseg; ++i)
     {
         BOOST_ASSERT(
             p < s.end() && *p0 == '/');
@@ -1040,8 +1042,8 @@ resize_and_merge(
         BOOST_ASSERT(
             first >= id_path);
         BOOST_ASSERT(
-            n_seg_ >= nid0);
-        n_seg_ += static_cast<
+            nseg_ >= nid0);
+        nseg_ += static_cast<
             id_type>(nid - nid0);
     }
     else
@@ -1051,8 +1053,8 @@ resize_and_merge(
         BOOST_ASSERT(
             first >= id_query());
         BOOST_ASSERT(
-            n_query_ >= nid0);
-        n_query_ += static_cast<
+            nparam_ >= nid0);
+        nparam_ += static_cast<
             id_type>(nid - nid0);
     }
     last = static_cast<
