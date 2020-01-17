@@ -23,7 +23,6 @@ class view;
 */
 class params
 {
-    using size_type = std::uint32_t;
     using id_type = unsigned;
 
     view const* v_ = nullptr;

@@ -7,18 +7,5 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_DETAIL_VIEW_BASE_IPP
-#define BOOST_URL_DETAIL_VIEW_BASE_IPP
-
-#include <boost/url/detail/view_base.hpp>
-#include <boost/url/error.hpp>
-
-namespace boost {
-namespace url {
-namespace detail {
-
-} // detail
-} // url
-} // boost
-
-#endif
+// Test that header file is self-contained.
+#include <boost/url/host_type.hpp>

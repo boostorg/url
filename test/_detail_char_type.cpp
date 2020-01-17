@@ -71,10 +71,11 @@ public:
             );
             check_encoding(
                 special, reg_name_pct_set());
+            check_encoding(special,
+                userinfo_nc_pct_set());
         }
 
         // userinfo
-        // userinfo_nc
         {
             auto const special = sort(
                 // unreserved

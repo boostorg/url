@@ -30,6 +30,7 @@ class value_test
 public:
     test_suite::log_type log;
 
+#if 0
     void
     dump(view const& u)
     {
@@ -253,6 +254,7 @@ public:
     testPath()
     {
         BOOST_TEST(value("/path/to/file.txt").encoded_path() == "/path/to/file.txt");
+#if 0
         BOOST_TEST(
             value("/path/to/file.txt")
             .set_encoded_segment(0, "p")
@@ -285,6 +287,7 @@ public:
             value("/path/to/file.txt")
             .set_encoded_segment(0, "path/from"),
             invalid_part);
+#endif
 
 #if 0
         value u;
@@ -339,10 +342,12 @@ public:
     }
 
     //------------------------------------------------------
+#endif
 
     void
     run()
     {
+#if 0
         //value u("foof://:;@[::]/@;:??:;@/~@;://#//:;@~/@;:\\?\\?//:foof");
         //dump(u);
         testCtor();
@@ -358,6 +363,7 @@ public:
         testPath();
         testQuery();
         testFragment();
+#endif
     }
 };
 

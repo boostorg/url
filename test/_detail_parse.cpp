@@ -7,7 +7,7 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#include <boost/url/detail/parser.hpp>
+#include <boost/url/detail/parse.hpp>
 
 #include "test_suite.hpp"
 
@@ -26,8 +26,8 @@ public:
         string_view s)
     {
         error_code ec;
-        parser pr(s);
-        pr.parse_url(ec);
+        parts pt;
+        parse_url(pt, s, ec);
         BOOST_TEST(! ec);
     }
 
@@ -36,8 +36,8 @@ public:
         string_view s)
     {
         error_code ec;
-        parser pr(s);
-        pr.parse_url(ec);
+        parts pt;
+        parse_url(pt, s, ec);
         BOOST_TEST(!! ec);
     }
 
@@ -70,7 +70,7 @@ public:
     }
 };
 
-TEST_SUITE(parse_test, "boost.url.parser");
+TEST_SUITE(parse_test, "boost.url.parse");
 
 } // detail
 } // url

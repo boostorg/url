@@ -92,7 +92,7 @@ value_type::
 encoded_key() const noexcept
 {
     auto s = v_->get(
-        v_->id_query() +
+        v_->detail::id_query +
             2 * i_);
     BOOST_ASSERT(! s.empty());
     BOOST_ASSERT(
@@ -107,7 +107,7 @@ value_type::
 encoded_value() const noexcept
 {
     auto s = v_->get(
-        v_->id_query() +
+        v_->detail::id_query +
             2 * i_ + 1);
     if(s.empty())
         return s;

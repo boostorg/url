@@ -78,7 +78,7 @@ enum class error
     /// A syntax error occurred
     syntax,
 
-    /// The parser encountered an invalid input
+    /// The parts encountered an invalid input
     invalid,
 
     //---

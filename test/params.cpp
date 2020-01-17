@@ -7,6 +7,8 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
+#if 0
+
 // Test that header file is self-contained.
 #include <boost/url/params.hpp>
 #include <boost/url/static_pool.hpp>
@@ -138,3 +140,5 @@ TEST_SUITE(params_test, "boost.url.params");
 
 } // url
 } // boost
+
+#endif

@@ -11,11 +11,42 @@
 #define BOOST_URL_IMPL_VIEW_IPP
 
 #include <boost/url/view.hpp>
-#include <boost/url/scheme.hpp>
-#include <boost/url/detail/char_type.hpp>
+#include <boost/url/error.hpp>
+#include <boost/url/detail/parse.hpp>
 
 namespace boost {
 namespace url {
+
+view::
+view(string_view s)
+    : s_(s.data())
+{
+    detail::parser pr(s);
+    error_code ec;
+    detail::parse_url(pt_, s, ec);
+    if(ec)
+        invalid_part::raise();
+}
+
+string_view
+view::
+encoded_href() const
+{
+    return pt_.get(
+        detail::id_scheme,
+        detail::id_end,
+        s_);
+}
+
+string_view
+view::
+encoded_origin() const noexcept
+{
+    return pt_.get(
+        detail::id_scheme,
+        detail::id_path,
+        s_);
+}
 
 //----------------------------------------------------------
 //
@@ -27,7 +58,9 @@ string_view
 view::
 scheme() const noexcept
 {
-    auto s = get(id_scheme);
+    auto s = pt_.get(
+        detail::id_scheme,
+        s_);
     if(s.empty())
         return s;
     BOOST_ASSERT(s.back() == ':');
@@ -45,28 +78,34 @@ string_view
 view::
 encoded_authority() const noexcept
 {
-    auto s = get(
-        id_username,
-        id_path);
+    auto s = pt_.get(
+        detail::id_username,
+        detail::id_path,
+        s_);
     if(! s.empty())
     {
         BOOST_ASSERT(s.size() >= 2);
+        BOOST_ASSERT(
+            s.substr(0, 2) == "//");
         s.remove_prefix(2);
     }
     return s;
 }
 
+//----------------------------------------------------------
 //
 // userinfo
 //
+//----------------------------------------------------------
 
 string_view
 view::
 encoded_userinfo() const noexcept
 {
-    auto s = get(
-        id_username,
-        id_hostname);
+    auto s = pt_.get(
+        detail::id_username,
+        detail::id_hostname,
+        s_);
     if(s.empty())
         return s;
     if(s.back() == '@')
@@ -82,7 +121,9 @@ string_view
 view::
 encoded_username() const noexcept
 {
-    auto s = get(id_username);
+    auto s = pt_.get(
+        detail::id_username,
+        s_);
     if(! s.empty())
     {
         BOOST_ASSERT(s.size() >= 2);
@@ -97,7 +138,9 @@ string_view
 view::
 encoded_password() const noexcept
 {
-    auto s = get(id_password);
+    auto s = pt_.get(
+        detail::id_password,
+        s_);
     switch(s.size())
     {
     case 1:
@@ -113,22 +156,38 @@ encoded_password() const noexcept
     }
 }
 
+//----------------------------------------------------------
 //
 // host
 //
+//----------------------------------------------------------
+
+string_view
+view::
+encoded_host() const noexcept
+{
+    return pt_.get(
+        detail::id_hostname,
+        detail::id_path,
+        s_);
+}
 
 string_view
 view::
 encoded_hostname() const noexcept
 {
-    return get(id_hostname);
+    return pt_.get(
+        detail::id_hostname,
+        s_);
 }
 
 string_view
 view::
 port_string() const noexcept
 {
-    auto s = get(id_port);
+    auto s = pt_.get(
+        detail::id_port,
+        s_);
     BOOST_ASSERT(
         s.empty() || s.front() == ':');
     if(! s.empty())
@@ -142,15 +201,23 @@ port_string() const noexcept
 //
 //----------------------------------------------------------
 
+bool
+view::
+is_relative() const noexcept
+{
+    auto const s = pt_.get(
+        detail::id_path, s_);
+    return ! s.empty() &&
+        s.front() != '/';
+}
+
 string_view
 view::
-encoded_segment(
-    int pos) const
+encoded_path() const noexcept
 {
-    auto s = get(id_segment(pos));
-    if(! s.empty())
-        s = s.substr(1);
-    return s;
+    return pt_.get(
+        detail::id_path,
+        s_);
 }
 
 //----------------------------------------------------------
@@ -159,11 +226,426 @@ encoded_segment(
 //
 //----------------------------------------------------------
 
+string_view
+view::
+encoded_query() const noexcept
+{
+    return pt_.get(
+        detail::id_query,
+        detail::id_frag,
+        s_);
+}
+
 //----------------------------------------------------------
 //
 // fragment
 //
 //----------------------------------------------------------
+
+string_view
+view::
+encoded_fragment() const noexcept
+{
+    return pt_.get(
+        detail::id_frag,
+        detail::id_end,
+        s_);
+}
+
+//----------------------------------------------------------
+//
+// segments_type
+//
+//----------------------------------------------------------
+
+view::
+segments_type::
+iterator::
+iterator() noexcept
+    : v_(nullptr)
+    , off_(0)
+    , n_(0)
+{
+}
+
+view::
+segments_type::
+iterator::
+iterator(
+    view const* v,
+    bool end) noexcept
+    : v_(v)
+{
+    if( end ||
+        v_->pt_.nseg == 0)
+    {
+        off_ = v_->pt_.offset[
+            detail::id_query];
+        n_ = 0;
+    }
+    else
+    {
+        off_ = v_->pt_.offset[
+            detail::id_path];
+        parse();
+    }
+}
+
+auto
+view::
+segments_type::
+iterator::
+operator*() const noexcept ->
+    value_type
+{
+    string_view s = {
+        v_->s_ + off_, n_ };
+    if(! s.empty() &&
+        s.front() == '/')
+        s = s.substr(1);    
+    return value_type(s);
+}
+
+auto
+view::
+segments_type::
+iterator::
+operator++() noexcept ->
+    iterator&
+{
+    BOOST_ASSERT(
+        off_ != v_->pt_.offset[
+            detail::id_frag]);
+    off_ = off_ + n_;
+    if(off_ == v_->pt_.offset[
+        detail::id_frag])
+    {
+        // end
+        n_ = 0;
+    }
+    else
+    {
+        parse();
+    }
+    return *this;
+}
+
+auto
+view::
+segments_type::
+iterator::
+operator--() noexcept ->
+    iterator&
+{
+    BOOST_ASSERT(
+        off_ != v_->pt_.offset[
+            detail::id_path]);
+    auto const begin =
+        v_->s_ + v_->pt_.offset[
+            detail::id_path];
+    auto p = v_->s_ + off_;
+    while(--p > begin)
+    {
+        if(*p == '/')
+        {
+            off_ = p - v_->s_;
+            parse();
+            return *this;
+        }
+    }
+    // fails for relative-uri
+    //BOOST_ASSERT(*p == '/');
+    auto const off = p - v_->s_;
+    n_ = off_ - off;
+    off_ = off;
+    return *this;
+}
+
+void
+view::
+segments_type::
+iterator::
+parse() noexcept
+{
+    BOOST_ASSERT(off_ !=
+        v_->pt_.offset[
+            detail::id_frag]);
+    auto const end =
+        v_->s_ + v_->pt_.offset[
+            detail::id_frag];
+    auto const p0 =
+        v_->s_ + off_;
+    auto p = p0;
+    if(*p == '/')
+        ++p;
+    while(p < end)
+    {
+        if(*p == '/')
+            break;
+        ++p;
+    }
+    n_ = p - p0;
+}
+
+//----------------------------------------------------------
+
+auto
+view::
+segments_type::
+begin() const noexcept ->
+    iterator
+{
+    BOOST_ASSERT(v_);
+    return iterator(v_, false);
+}
+
+auto
+view::
+segments_type::
+end() const noexcept ->
+    iterator
+{
+    BOOST_ASSERT(v_);
+    return iterator(v_, true);
+}
+
+//----------------------------------------------------------
+//
+// params_type
+//
+//----------------------------------------------------------
+
+view::
+params_type::
+iterator::
+iterator() noexcept
+    : v_(nullptr)
+    , off_(0)
+    , nk_(0)
+    , nv_(0)
+{
+}
+
+view::
+params_type::
+iterator::
+iterator(
+    view const* v,
+    bool end) noexcept
+    : v_(v)
+{
+    if( end ||
+        v_->pt_.nparam == 0)
+    {
+        off_ = v_->pt_.offset[
+            detail::id_frag];
+        nk_ = 0;
+        nv_ = 0;
+    }
+    else
+    {
+        off_ = v_->pt_.offset[
+            detail::id_query];
+        parse();
+    }
+}
+
+auto
+view::
+params_type::
+iterator::
+operator*() const noexcept ->
+    value_type
+{
+    BOOST_ASSERT(nk_ > 0);
+    BOOST_ASSERT(
+        off_ == v_->pt_.offset[
+            detail::id_query] ?
+        v_->s_[off_] == '?' :
+        v_->s_[off_] == '&');
+    string_view const k = {
+        v_->s_ + off_ + 1,
+        nk_ - 1 };
+
+    BOOST_ASSERT(nv_ == 0 ||
+        v_->s_[off_ + nk_] == '=');
+    string_view const v = {
+        v_->s_ + off_ + nk_ + 1,
+        nv_ - 1};
+
+    return { k, v };
+}
+
+auto
+view::
+params_type::
+iterator::
+operator++() noexcept ->
+    iterator&
+{
+    BOOST_ASSERT(
+        off_ != v_->pt_.offset[
+            detail::id_frag]);
+    off_ = off_ + nv_ + nk_;
+    if(off_ == v_->pt_.offset[
+        detail::id_frag])
+    {
+        // end
+        nv_ = 0;
+        nk_ = 0;
+    }
+    else
+    {
+        parse();
+    }
+    return *this;
+}
+
+auto
+view::
+params_type::
+iterator::
+operator--() noexcept ->
+    iterator&
+{
+    BOOST_ASSERT(
+        off_ != v_->pt_.offset[
+            detail::id_query]);
+    auto const begin =
+        v_->s_ + v_->pt_.offset[
+            detail::id_query];
+    auto p = v_->s_ + off_;
+    while(--p > begin)
+    {
+        if(*p == '&')
+        {
+            off_ = p - v_->s_;
+            parse();
+            return *this;
+        }
+    }
+    BOOST_ASSERT(*p == '?');
+    off_ = p - v_->s_;
+    return *this;
+}
+
+void
+view::
+params_type::
+iterator::
+parse() noexcept
+{
+    auto const end =
+        v_->s_ + v_->pt_.offset[
+            detail::id_end];
+    auto p = v_->s_ + off_;
+    BOOST_ASSERT(
+        ( off_ == v_->pt_.offset[
+            detail::id_query] &&
+            *p == '?' ) ||
+        ( off_ != v_->pt_.offset[
+            detail::id_query] &&
+            *p == '&' ));
+    auto p0 = p++;
+    auto const ek =
+        detail::qkey_pct_set();
+    error_code ec;
+    p = ek.parse(p, end, ec);
+    BOOST_ASSERT(! ec);
+    nk_ = p - p0;
+    if(p == end)
+    {
+        nv_ = 0;
+        return;
+    }
+    auto const ev =
+        detail::qval_pct_set();
+    BOOST_ASSERT(*p == '=');
+    p0 = p++;
+    p = ev.parse(p, end, ec);
+    BOOST_ASSERT(! ec);
+    nv_ = p - p0;
+}
+
+//----------------------------------------------------------
+
+auto
+view::
+params_type::
+begin() const noexcept ->
+    iterator
+{
+    BOOST_ASSERT(v_);
+    return iterator(v_, false);
+}
+
+auto
+view::
+params_type::
+end() const noexcept ->
+    iterator
+{
+    BOOST_ASSERT(v_);
+    return iterator(v_, true);
+}
+
+bool
+view::
+params_type::
+contains(string_view key) const noexcept
+{
+    BOOST_ASSERT(v_);
+    for(auto e : *this)
+        if(detail::key_equal(
+            e.encoded_key(),
+            key))
+            return true;
+    return false;
+}
+
+std::size_t
+view::
+params_type::
+count(string_view key) const noexcept
+{
+    BOOST_ASSERT(v_);
+    std::size_t n = 0;
+    for(auto e : *this)
+        if(detail::key_equal(
+            e.encoded_key(),
+            key))
+            ++n;
+    return n;
+}
+
+auto
+view::
+params_type::
+find(string_view key) const noexcept ->
+    iterator
+{
+    BOOST_ASSERT(v_);
+    auto it = begin();
+    for(auto const last = end();
+        it != last; ++it)
+        if(detail::key_equal(
+            it->encoded_key(),
+            key))
+            break;
+    return it;
+}
+
+std::string
+view::
+params_type::
+operator[](string_view key) const
+{
+    BOOST_ASSERT(v_);
+    auto const it = find(key);
+    if(it == end())
+        return "";
+    return it->value();
+}
 
 } // url
 } // boost

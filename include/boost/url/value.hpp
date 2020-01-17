@@ -21,15 +21,16 @@
 namespace boost {
 namespace url {
 
-class value : public view
+class value //: public view
 {
     char* begin_ = nullptr;
-    size_type* end_ = nullptr;
+    std::size_t* end_ = nullptr;
     std::size_t capacity_ = 0;
 
 public:
     value() = default;
 
+#if 0
     BOOST_URL_DECL
     explicit
     value(string_view s);
@@ -229,7 +230,7 @@ private:
 
     inline std::size_t size() const noexcept;
     inline std::size_t capacity() const noexcept;
-    inline size_type& offset(id_type id) noexcept;
+    inline std::size_t& offset(id_type id) noexcept;
     inline void null_term() noexcept;
     inline void merge(id_type first, id_type last) noexcept;
     inline char* resize_and_merge(
@@ -241,6 +242,7 @@ private:
     inline char* resize(id_type id, std::size_t needed);
     inline void erase(id_type id) noexcept;
     inline void erase(id_type first, id_type last) noexcept;
+#endif
 };
 
 } // url

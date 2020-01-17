@@ -11,6 +11,7 @@
 #define BOOST_URL_DETAIL_VIEW_BASE_HPP
 
 #include <boost/url/detail/char_type.hpp>
+#include <boost/url/detail/parts.hpp>
 
 namespace boost {
 namespace url {
@@ -18,26 +19,13 @@ namespace detail {
 
 struct view_base
 {
-    using size_type = uint32_t;
     using id_type = unsigned;
 
     char const* view_begin_ = nullptr;
-    size_type const* view_end_ = nullptr;
+    std::size_t const* view_end_ = nullptr;
     unsigned nseg_ = 0;
     unsigned nparam_ = 0;
     optional<unsigned short> port_;
-
-    enum
-    {
-        // one-based
-
-        id_scheme = 1,      // trailing ':'
-        id_username,        // leading "//"
-        id_password,        // leading ':', trailing '@'
-        id_hostname,
-        id_port,            // leading ':'
-        id_path
-    };
 
     view_base() = default;
     view_base(view_base const&) = default;
@@ -48,40 +36,15 @@ struct view_base
         return view_begin_ == nullptr;
     }
 
-    id_type
-    id_query() const noexcept
-    {
-        // This can overlap with id_fragment()
-        if(nseg_ == 0)
-            return id_path + 1;
-        return id_path + nseg_;
-    }
-
-    id_type
-    id_fragment() const noexcept
-    {
-        return id_query() + 2 * nparam_;
-    }
-
-    id_type
-    id_end() const noexcept
-    {
-        return id_fragment() + 1;
-    }
-
-    inline
-    id_type
-    id_segment(int index) const;
-
     // returns offset of piece
-    size_type const&
+    std::size_t const&
     offset(id_type id) const noexcept
     {
         return *(view_end_ - id);
     }
 
     // returns length of piece
-    size_type
+    std::size_t
     length(id_type id) const noexcept
     {
         return
@@ -90,13 +53,13 @@ struct view_base
     }
 
     // returns length of range
-    size_type
+    std::size_t
     length(
         id_type first,
         id_type last) const noexcept
     {
         BOOST_ASSERT(first <= last);
-        BOOST_ASSERT(last <= id_end());
+        BOOST_ASSERT(last <= detail::id_end);
         if(! view_begin_)
             return 0;
         return
@@ -119,7 +82,7 @@ struct view_base
         id_type last) const noexcept
     {
         BOOST_ASSERT(first <= last);
-        BOOST_ASSERT(last <= id_end());
+        BOOST_ASSERT(last <= detail::id_end);
         if(! view_begin_)
             return true;
         while(first < last)
@@ -145,7 +108,7 @@ struct view_base
         id_type last) const noexcept
     {
         BOOST_ASSERT(first <= last);
-        BOOST_ASSERT(last <= id_end());
+        BOOST_ASSERT(last <= detail::id_end);
         if(is_reset())
             return "";
         return {

@@ -24,8 +24,9 @@ add_executable (url-tests
     main.cpp
     test_suite.hpp
     _detail_char_type.cpp
-    _detail_parser.cpp
+    _detail_parse.cpp
     error.cpp
+    host_type.cpp
     params.cpp
     sandbox.cpp
     scheme.cpp

@@ -53,7 +53,7 @@ public:
         operator*() const noexcept
         {
             return path_->get(
-                id_path + i_);
+                detail::id_path + i_);
         }
 
         bool

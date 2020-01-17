@@ -11,60 +11,40 @@
 #define BOOST_URL_VIEW_HPP
 
 #include <boost/url/config.hpp>
-#include <boost/url/detail/view_base.hpp>
-#include <boost/url/segments.hpp>
+#include <boost/url/detail/parts.hpp>
+#include <memory>
 #include <string>
+#include <utility>
 
 namespace boost {
 namespace url {
 
-class params;
-
-//----------------------------------------------------------
-
 class view
-#ifndef BOOST_URL_DOCS
-    : protected detail::view_base
-#endif
 {
-    friend class params;
+    char const* s_ = "";
+    detail::parts pt_;
 
 public:
-    /** Return the encoded URL as a null-terminated string.
-    */
-    char const*
-    c_str() const noexcept
-    {
-        if(! is_reset())
-            return "";
-        BOOST_ASSERT(
-            view_begin_[id_end()] == 0);
-        return view_begin_;
-    }
+    class segments_type;
+    class params_type;
+
+    view() = default;
+
+    BOOST_URL_DECL
+    explicit
+    view(string_view s);
 
     /** Return the complete serialized URL.
     */
+    BOOST_URL_DECL
     string_view
-    encoded_href() const
-    {
-        return get(id_scheme, id_end());
-    }
+    encoded_href() const;
 
-    /** Return the encoded origin.
+    /** Return the origin.
     */
     BOOST_URL_DECL
     string_view
-    encoded_origin() const noexcept
-    {
-        return get(id_scheme, id_path);
-    }
-
-    string_view
-    encoded_resource() const noexcept
-    {
-        return get(
-            id_path, id_end());
-    }
+    encoded_origin() const noexcept;
 
     //------------------------------------------------------
     //
@@ -138,20 +118,25 @@ public:
     string_view
     encoded_password() const noexcept;
 
+    //------------------------------------------------------
     //
     // host
     //
+    //------------------------------------------------------
+
+    /** Return the type of host present, if any.
+    */
+    host_type
+    host() const noexcept
+    {
+        return pt_.host;
+    }
 
     /** Return the encoded host.
     */
+    BOOST_URL_DECL
     string_view
-    encoded_host() const noexcept
-    {
-        return get(
-            id_hostname,
-            id_path);
-    }
-
+    encoded_host() const noexcept;
 
     /** Return the hostname.
     */
@@ -177,7 +162,7 @@ public:
     optional<unsigned short>
     port() const noexcept
     {
-        return port_;
+        return pt_.port;
     }
 
     /** Return the port as a string, or "" if no port.
@@ -192,43 +177,23 @@ public:
     //
     //------------------------------------------------------
 
+    /** Return `true` if this is a relative-ref.
+    */
+    BOOST_URL_DECL
+    bool
+    is_relative() const noexcept;
+
     /** Return the encoded path.
     */
-    string_view
-    encoded_path() const noexcept
-    {
-        return get(id_path, id_query());
-    }
-
-    /** Return the path as a range.
-    */
-    url::segments
-    segments() const noexcept
-    {
-        return url::segments(static_cast<
-            view_base const&>(*this));
-    }
-
-    /** Return a path segment.
-    */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    BOOST_URL_DECL
-    string_type<Allocator>
-    segment(
-        int pos,
-        Allocator const& a = {}) const
-    {
-        return detail::decode(
-            encoded_segment(pos, a));
-    }
-
-    /** Return an encoded path segment.
-    */
     BOOST_URL_DECL
     string_view
-    encoded_segment(int pos) const;
+    encoded_path() const noexcept;
+
+    /** Return the path segments as a read-only container.
+    */
+    inline
+    segments_type
+    segments() const noexcept;
 
     //------------------------------------------------------
     //
@@ -248,18 +213,14 @@ public:
             encoded_query(), a);
     }
 
+    BOOST_URL_DECL
     string_view
-    encoded_query() const noexcept
-    {
-        return get(
-            id_query(), id_fragment());
-    }
+    encoded_query() const noexcept;
 
     /** Return the query parameters as a read-only container.
     */
-    // VFALCO Definition in impl/params.hpp
     inline
-    url::params
+    params_type
     params() const noexcept;
 
     //------------------------------------------------------
@@ -285,17 +246,253 @@ public:
 
     /** Return the fragment.
     */
+    BOOST_URL_DECL
     string_view
-    encoded_fragment() const noexcept
+    encoded_fragment() const noexcept;
+};
+
+//----------------------------------------------------------
+
+/** A read-only view to the path segments.
+*/
+class view::segments_type
+{
+    view const* v_ = nullptr;
+
+public:
+    class value_type;
+    class iterator;
+    using const_iterator = iterator;
+
+    segments_type() = default;
+    segments_type(segments_type const&) = default;
+    segments_type& operator=(
+        segments_type const&) = default;
+
+    explicit
+    segments_type(view const& v)
+        : v_(&v)
     {
-        return get(
-            id_fragment(), id_end());
+    }
+
+    inline
+    bool
+    empty() const noexcept
+    {
+        return size() == 0;
+    }
+
+    inline
+    std::size_t
+    size() const noexcept
+    {
+        return (v_ == nullptr) ? 0 :
+            v_->pt_.nseg;
+    }
+
+    BOOST_URL_DECL
+    iterator
+    begin() const noexcept;
+
+    BOOST_URL_DECL
+    iterator
+    end() const noexcept;
+};
+
+//----------------------------------------------------------
+
+class view::segments_type::value_type
+{
+    string_view s_;
+
+    friend class segments_type;
+
+    explicit
+    value_type(
+        string_view s) noexcept
+        : s_(s)
+    {
+    }
+
+public:
+    value_type() = delete;
+    value_type& operator=(
+        value_type const&) = delete;
+
+    value_type(
+        value_type const&) = default;
+
+    string_view
+    encoded_string() const noexcept
+    {
+        return s_;
+    }
+
+    template<
+        class Allocator =
+            std::allocator<char>>
+    string_type<Allocator>
+    string(Allocator const& a = {}) const
+    {
+        return detail::decode(
+            encoded_string(), a);
+    }
+
+    value_type const*
+    operator->() const noexcept
+    {
+        return this;
+    }
+};
+
+//----------------------------------------------------------
+
+/** A read-only view to the URL query parameters.
+*/
+class view::params_type
+{
+    view const* v_ = nullptr;
+
+public:
+    class value_type;
+    class iterator;
+    using const_iterator = iterator;
+
+    params_type() = default;
+    params_type(
+        params_type const&) = default;
+    params_type& operator=(
+        params_type const&) = default;
+
+    explicit
+    params_type(view const& v)
+        : v_(&v)
+    {
+    }
+
+    inline
+    bool
+    empty() const noexcept
+    {
+        return size() == 0;
+    }
+
+    inline
+    std::size_t
+    size() const noexcept
+    {
+        return (v_ == nullptr) ? 0 :
+            v_->pt_.nparam;
+    }
+
+    BOOST_URL_DECL
+    iterator
+    begin() const noexcept;
+
+    BOOST_URL_DECL
+    iterator
+    end() const noexcept;
+
+    BOOST_URL_DECL
+    bool
+    contains(string_view key) const noexcept;
+
+    BOOST_URL_DECL
+    std::size_t
+    count(string_view key) const noexcept;
+
+    BOOST_URL_DECL
+    iterator
+    find(string_view key) const noexcept;
+
+    BOOST_URL_DECL
+    std::string
+    operator[](string_view key) const;
+
+    template<class Allocator =
+        std::allocator<char>>
+    BOOST_URL_DECL
+    string_type<Allocator>
+    at( string_view key,
+        Allocator const& a = {}) const;
+};
+
+//----------------------------------------------------------
+
+class view::params_type::value_type
+{
+    string_view k_;
+    string_view v_;
+
+    friend class params_type;
+
+    value_type(
+        string_view k,
+        string_view v) noexcept
+        : k_(k)
+        , v_(v)
+    {
+    }
+
+public:
+    value_type() = delete;
+    value_type& operator=(
+        value_type const&) = delete;
+
+    value_type(
+        value_type const&) = default;
+
+    string_view
+    encoded_key() const noexcept
+    {
+        return k_;
+    }
+
+    string_view
+    encoded_value() const noexcept
+    {
+        return v_;
+    }
+
+    template<
+        class Allocator =
+            std::allocator<char>>
+    string_type<Allocator>
+    key(Allocator const& a = {}) const
+    {
+        return detail::decode(
+            encoded_key(), a);
+    }
+
+    template<
+        class Allocator =
+            std::allocator<char>>
+    string_type<Allocator>
+    value(Allocator const& a = {}) const
+    {
+        return detail::decode(
+            encoded_value(), a);
+    }
+
+    value_type const*
+    operator->() const noexcept
+    {
+        return this;
+    }
+
+    operator
+    std::pair<
+        std::string const,
+        std::string>() const
+    {
+        return { key(), value() };
     }
 };
 
 } // url
 } // boost
 
+#include <boost/url/impl/view.hpp>
 #ifdef BOOST_URL_HEADER_ONLY
 #include <boost/url/impl/view.ipp>
 #endif

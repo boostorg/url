@@ -7,50 +7,165 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
+#include <boost/url/config.hpp>
+#include <boost/url/error.hpp>
+
 #include "test_suite.hpp"
 
 namespace boost {
 namespace url {
 
+namespace detail {
+
+enum
+{
+    id_scheme = 0, // trailing ':'
+    id_username,   // leading "//"
+    id_password,   // leading ':', trailing '@'
+    id_hostname,
+    id_port,       // leading ':'
+    id_path,
+    id_query,      // leading '?'
+    id_frag,        // leading '#'
+    id_end         // one past the end
+};
+
+struct parts
+{
+    std::size_t offset[detail::id_end + 1];
+    std::size_t nseg = 0;
+    std::size_t nparam = 0;
+    optional<unsigned short> port;
+
+    parts()
+    {
+        std::fill(
+            offset,
+            offset + detail::id_end + 1, 0);
+    }
+
+    string_view
+    get(int i, char const* s) const noexcept
+    {
+        return {
+            s + offset[i],
+            offset[i + 1] - offset[i] };
+    }
+};
+
+} // detail
+
+//----------------------------------------------------------
+
+class view2
+{
+    //char const* s_;
+    detail::parts pt_;
+};
+
+//----------------------------------------------------------
+
+class basic_value
+{
+    char* s_ = nullptr;
+    detail::parts pt_;
+
+public:
+    char const*
+    c_str() const noexcept
+    {
+        if(! s_)
+            return "";
+        return s_;
+    }
+
+    std::size_t
+    size() const noexcept
+    {
+        return pt_.offset[
+            detail::id_end];
+    }
+
+    virtual
+    std::size_t
+    max_size() const noexcept = 0;
+
+    virtual
+    std::size_t
+    capacity() const noexcept = 0;
+
+private:
+    virtual
+    char*
+    reserve(
+        char* s,
+        std::size_t n) = 0;
+};
+
+//----------------------------------------------------------
+
+template<class Allocator>
+class value2
+{
+    Allocator a_;
+    std::size_t cap_ = 0;
+
+public:
+    std::size_t
+    max_size() const noexcept
+    {
+        return a_.max_size();
+    }
+
+    std::size_t
+    capacity() const noexcept
+    {
+        return cap_;
+    }
+};
+
+//----------------------------------------------------------
+
+template<std::size_t N>
+class static_value
+{
+    char buf_[N];
+
+public:
+    std::size_t
+    max_size() const noexcept
+    {
+        return N;
+    }
+
+    std::size_t
+    capacity() const noexcept
+    {
+        return N;
+    }
+
+private:
+    char*
+    reserve(
+        char* s,
+        std::size_t n)
+    {
+        if(n > N)
+            too_large::raise();
+        return s;
+    }
+};
+
+//----------------------------------------------------------
+
 class sandbox_test
 {
 public:
+
     void
     doSandbox()
     {
-        //auto u = parse("https://www.boost.org/index.html");
-        /*
-
-        value v("https://www.boost.org/index.html");
-
-        - Return the decoded string
-        - Return the encoded string as std::string
-        - Return the encoded string without dynamic alloc
-        - Set the value using encoded string
-        - Set the value using plain string
-        - Set the value using safe string (encoded == plain)
-
-        // Return the hostname as a plain string
-        string_view
-        hostname() const noexcept;
-
-        // Return the encoded hostname as a string
-        template<class Alloc = std::allocator<char>>
-        std::basic_string<char, Alloc>
-        encoded_hostname( Alloc const& = Alloc{} );
-
-        // Set the hostname to the encoded string
-        v.hostname(encoded( "boost%2Eorg" ));
-
-        // Set the hostname to the plain string
-        v.hostname(plain( "boost%2Eorg" ));
-
-        // Set the hostname to the plain string without validating
-        v.hostname(unchecked( "boost%2Eorg" ));
-
-        // Set the hostname to the string, detecting its encoding
-        v.hostname( "boost%2Eorg" );
-        */
+        //detail::id_frag;
     }
 
     void
