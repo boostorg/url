@@ -8,7 +8,7 @@
 ]
 
 [library Boost.URI
-    [id uri]
+    [id url]
     [quickbook 1.6]
     [copyright 2019 Vinnie Falco]
     [purpose URI Library]
@@ -26,8 +26,8 @@
 [template indexterm1[term1] '''<indexterm><primary>'''[term1]'''</primary></indexterm>''']
 [template indexterm2[term1 term2] '''<indexterm><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
 
-[template include_file[path][^<'''<ulink url="https://github.com/vinniefalco/json/blob/master/include/'''[path]'''">'''[path]'''</ulink>'''>]]
-[template issue[n] '''<ulink url="https://github.com/vinniefalco/json/issues/'''[n]'''">#'''[n]'''</ulink>''']
+[template include_file[path][^<'''<ulink url="https://github.com/vinniefalco/url/blob/master/include/'''[path]'''">'''[path]'''</ulink>'''>]]
+[template issue[n] '''<ulink url="https://github.com/vinniefalco/url/issues/'''[n]'''">#'''[n]'''</ulink>''']
 
 [/ Named Requirements ]
 
@@ -51,20 +51,18 @@
 
 [/-----------------------------------------------------------------------------]
 
-[import ../../test/snippets.cpp]
-
 [/-----------------------------------------------------------------------------]
 
 [variablelist
     [[
-        [link uri.overview Overview]
+        [link url.overview Overview]
     ][
         A review of the requirements and features included in Boost.URI,
         rationale and design information, answers to frequently
         asked questions, and credits.
     ]]
     [[
-        [link uri.ref Reference]
+        [link url.ref Reference]
     ][
         Detailed function and type reference.
     ]]

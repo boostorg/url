@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------
 
 INPUT = \
-        $(LIB_DIR)/include/boost/uri
+        $(LIB_DIR)/include/boost/url
 
 
 ALIASES               += esafe="@par Exception Safety"
@@ -37,11 +37,11 @@ INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = \
                         GENERATING_DOCUMENTATION \
-                        BOOST_URI_DECL \
-                        BOOST_URI_PUBLIC \
-                        BOOST_URI_FORCEINLINE \
-                        "BOOST_URI_NODISCARD=[[nodiscard]]" \
-                        "BOOST_URI_INLINE_VARIABLE(v, t)=constexpr t v;"
+                        BOOST_URL_DECL \
+                        BOOST_URL_PUBLIC \
+                        BOOST_URL_FORCEINLINE \
+                        "BOOST_URL_NODISCARD=[[nodiscard]]" \
+                        "BOOST_URL_INLINE_VARIABLE(v, t)=constexpr t v;"
 
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES

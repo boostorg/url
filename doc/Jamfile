@@ -4,10 +4,10 @@
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
-# Official repository: https://github.com/vinniefalco/uri
+# Official repository: https://github.com/vinniefalco/url
 #
 
-project uri/doc ;
+project url/doc ;
 
 import os ;
 import path ;
@@ -29,7 +29,7 @@ path-constant out : . ;
 # docs can be rebuild if any of the header files change.
 #
 
-local sources = [ path.glob-tree ../include/boost/uri : *.hpp *.ipp : detail impl ] ;
+local sources = [ path.glob-tree ../include/boost/url : *.hpp *.ipp : detail impl ] ;
 
 # Get the configured paths to doxygen and xsltproc
 
@@ -288,12 +288,12 @@ install images
     :
         [ glob images/*.png ]
     :
-        <location>html/uri/images
+        <location>html/url/images
     ;
 
 explicit images ;
 
-xml uri_doc
+xml url_doc
     :
         qbk/main.qbk
     :
@@ -301,7 +301,7 @@ xml uri_doc
 #        <include>$(broot)/tools/boostbook/dtd
     ;
 
-explicit uri_doc ;
+explicit url_doc ;
 
 #-------------------------------------------------------------------------------
 #
@@ -309,9 +309,9 @@ explicit uri_doc ;
 #
 #-------------------------------------------------------------------------------
 
-boostbook uri
+boostbook url
     :
-        uri_doc
+        url_doc
     :
         <xsl:param>boost.image.src=images/doc-logo.png
         <xsl:param>boost.image.alt="Boost.URI Logo"
@@ -339,5 +339,5 @@ boostbook uri
 alias boostdoc ;
 explicit boostdoc ;
 
-alias boostrelease : uri ;
+alias boostrelease : url ;
 explicit boostrelease ;
