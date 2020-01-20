@@ -120,6 +120,17 @@ struct parts
                 offset[i] -= d;
         }
     }
+
+    void
+    split(
+        int id,
+        std::size_t n) noexcept
+    {
+        BOOST_ASSERT(id < detail::id_end - 1);
+        BOOST_ASSERT(n <= length(id));
+        offset[id + 1] = offset[id] +
+            static_cast<std::size_t>(n);
+    }
 };
 
 } // detail

@@ -7,10 +7,11 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_VIEW_HPP
-#define BOOST_URL_VIEW_HPP
+#ifndef BOOST_URL_BASIC_VALUE_HPP
+#define BOOST_URL_BASIC_VALUE_HPP
 
 #include <boost/url/config.hpp>
+#include <boost/url/view.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <boost/url/detail/char_type.hpp>
 #include <memory>
@@ -20,22 +21,38 @@
 namespace boost {
 namespace url {
 
-class basic_value;
+namespace detail {
 
-class view
+struct storage
 {
-    char const* s_ = "";
+    virtual std::size_t capacity() const noexcept = 0;
+    virtual char* resize(std::size_t n) = 0;
+};
+
+} // detail
+
+class basic_value
+{
+    friend class view::segments_type;
+    friend class view::params_type;
+
+    detail::storage& a_;
     detail::parts pt_;
+    char* s_;
+
+protected:
+    BOOST_URL_DECL
+    basic_value(
+        detail::storage& a);
+
+    BOOST_URL_DECL
+    basic_value(
+        detail::storage& a,
+        string_view s);
 
 public:
     class segments_type;
     class params_type;
-
-    view() = default;
-
-    BOOST_URL_DECL
-    explicit
-    view(string_view s);
 
     /** Return the number of characters in the URL.
     */
@@ -47,11 +64,23 @@ public:
     }
 
     /** Return a pointer to the characters in the URL.
+
+        The string is null terminated.
     */
     char const*
     data() const noexcept
     {
-        return s_;
+        if(s_)
+            return s_;
+        return "";
+    }
+
+    /** Return the number of characters that may be stored without a reallocation.
+    */
+    std::size_t
+    capacity() const noexcept
+    {
+        return a_.capacity();
     }
 
     //------------------------------------------------------
@@ -68,6 +97,16 @@ public:
     string_view
     encoded_origin() const noexcept;
 
+    BOOST_URL_DECL
+    basic_value&
+    set_encoded_uri_reference(
+        string_view s);
+
+    BOOST_URL_DECL
+    basic_value&
+    set_encoded_origin(
+        string_view s);
+
     //------------------------------------------------------
     //
     // scheme
@@ -79,6 +118,14 @@ public:
     BOOST_URL_DECL
     string_view
     scheme() const noexcept;
+
+    /** Set the scheme.
+
+        No escapes, only [a-z0-9.+-] are valid.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_scheme(string_view s);
 
     //------------------------------------------------------
     //
@@ -92,6 +139,11 @@ public:
     string_view
     encoded_authority() const noexcept;
 
+    BOOST_URL_DECL
+    basic_value&
+    set_encoded_authority(
+        string_view s);
+
     //
     // userinfo
     //
@@ -101,6 +153,27 @@ public:
     BOOST_URL_DECL
     string_view
     encoded_userinfo() const noexcept;
+
+    /** Set the userinfo.
+
+        Sets the userinfo of the URL to the given decoded
+        string. The behavior then varies depending on the
+        presence or absence of a colon (':')
+
+        @li If one or more colons exist, then everything
+        up to but not including the first colon will become
+        the username, and everything beyond the first colon
+        will become the password (including any subsequent
+        colons).
+
+        @li If no colons exist, then the username will be
+        set to the passed userinfo, and the password will
+        be empty.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_encoded_userinfo(
+        string_view s);
 
     /** Return the username.
     */
@@ -121,6 +194,22 @@ public:
     string_view
     encoded_username() const noexcept;
 
+    /** Set the username.
+
+        The username may not include a colon.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_username(
+        string_view s);
+
+    /** Set the encoded username.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_encoded_username(
+        string_view s);
+
     /** Return the password.
     */
     template<
@@ -140,11 +229,23 @@ public:
     string_view
     encoded_password() const noexcept;
 
-    //------------------------------------------------------
+    /** Set the password.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_password(
+        string_view s);
+
+    /** Set the encoded password.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_encoded_password(
+        string_view s);
+
     //
     // host
     //
-    //------------------------------------------------------
 
     /** Return the type of host present, if any.
     */
@@ -159,6 +260,11 @@ public:
     BOOST_URL_DECL
     string_view
     encoded_host() const noexcept;
+
+    BOOST_URL_DECL
+    basic_value&
+    set_encoded_host(
+        string_view s);
 
     /** Return the hostname.
     */
@@ -179,6 +285,16 @@ public:
     string_view
     encoded_hostname() const noexcept;
 
+    BOOST_URL_DECL
+    basic_value&
+    set_hostname(
+        string_view s);
+
+    BOOST_URL_DECL
+    basic_value&
+    set_encoded_hostname(
+        string_view s);
+
     /** Return the port, if any.
     */
     optional<unsigned short>
@@ -192,6 +308,15 @@ public:
     BOOST_URL_DECL
     string_view
     port_string() const noexcept;
+
+    BOOST_URL_DECL
+    basic_value&
+    set_port(
+        optional<unsigned short> num);
+
+    BOOST_URL_DECL
+    basic_value&
+    set_port_string(string_view s);
 
     //------------------------------------------------------
     //
@@ -211,11 +336,22 @@ public:
     string_view
     encoded_path() const noexcept;
 
+    BOOST_URL_DECL
+    basic_value&
+    set_encoded_path(
+        string_view s);
+
     /** Return the path segments as a read-only container.
     */
     inline
-    segments_type
+    view::segments_type
     segments() const noexcept;
+
+    /** Return the path segments as a modifiable container.
+    */
+    inline
+    segments_type
+    segments() noexcept;
 
     //------------------------------------------------------
     //
@@ -242,8 +378,14 @@ public:
     /** Return the query parameters as a read-only container.
     */
     inline
-    params_type
+    view::params_type
     params() const noexcept;
+
+    /** Return the query parameters as a modifiable container.
+    */
+    inline
+    params_type
+    params() noexcept;
 
     //------------------------------------------------------
     //
@@ -271,16 +413,47 @@ public:
     BOOST_URL_DECL
     string_view
     encoded_fragment() const noexcept;
+
+    BOOST_URL_DECL
+    basic_value&
+    set_fragment(
+        string_view s);
+
+    BOOST_URL_DECL
+    basic_value&
+    set_encoded_fragment(
+        string_view s);
+
+    //------------------------------------------------------
+    //
+    // normalization
+    //
+    //------------------------------------------------------
+
+    /** Normalize everything.
+    */
+#if 0
+    BOOST_URL_DECL
+    basic_value&
+    normalize();
+
+    BOOST_URL_DECL
+    basic_value&
+    normalize_scheme();
+#endif
+
+private:
+    inline char* resize(int id, std::size_t new_size);
+    inline char* resize(int first, int last, std::size_t new_size);
 };
 
 //----------------------------------------------------------
 
 /** A read-only view to the path segments.
 */
-class view::segments_type
+class basic_value::segments_type
 {
-    char const* s_ = nullptr;
-    detail::parts const* pt_ = nullptr;
+    basic_value* v_ = nullptr;
 
 public:
     class value_type;
@@ -293,16 +466,10 @@ public:
         segments_type const&) = default;
 
     explicit
-    segments_type(view const& v) noexcept
-        : s_(v.s_)
-        , pt_(&v.pt_)
+    segments_type(basic_value& v)
+        : v_(&v)
     {
     }
-
-    inline
-    explicit
-    segments_type(
-        basic_value const& v) noexcept;
 
     inline
     bool
@@ -315,8 +482,8 @@ public:
     std::size_t
     size() const noexcept
     {
-        return (pt_ == nullptr) ? 0 :
-            pt_->nseg;
+        return (v_ == nullptr) ? 0 :
+            v_->pt_.nseg;
     }
 
     BOOST_URL_DECL
@@ -330,7 +497,7 @@ public:
 
 //----------------------------------------------------------
 
-class view::segments_type::value_type
+class basic_value::segments_type::value_type
 {
     string_view s_;
 
@@ -376,12 +543,11 @@ public:
 
 //----------------------------------------------------------
 
-/** A read-only view to the URL query parameters.
+/** A modifiable view to the URL query parameters.
 */
-class view::params_type
+class basic_value::params_type
 {
-    char const* s_ = nullptr;
-    detail::parts const* pt_ = nullptr;
+    basic_value* v_ = nullptr;
 
 public:
     class value_type;
@@ -395,16 +561,10 @@ public:
         params_type const&) = default;
 
     explicit
-    params_type(view const& v)
-        : s_(v.s_)
-        , pt_(&v.pt_)
+    params_type(basic_value& v)
+        : v_(&v)
     {
     }
-
-    inline
-    explicit
-    params_type(
-        basic_value const& v) noexcept;
 
     inline
     bool
@@ -417,8 +577,8 @@ public:
     std::size_t
     size() const noexcept
     {
-        return (pt_ == nullptr) ? 0 :
-            pt_->nparam;
+        return (v_ == nullptr) ? 0 :
+            v_->pt_.nparam;
     }
 
     BOOST_URL_DECL
@@ -455,7 +615,7 @@ public:
 
 //----------------------------------------------------------
 
-class view::params_type::value_type
+class basic_value::params_type::value_type
 {
     string_view k_;
     string_view v_;
@@ -504,7 +664,7 @@ public:
         class Allocator =
             std::allocator<char>>
     string_type<Allocator>
-    value(Allocator const& a = {}) const
+    basic_value(Allocator const& a = {}) const
     {
         return detail::decode(
             encoded_value(), a);
@@ -521,16 +681,16 @@ public:
         std::string const,
         std::string>() const
     {
-        return { key(), value() };
+        return { key(), basic_value() };
     }
 };
 
 } // url
 } // boost
 
-#include <boost/url/impl/view.hpp>
+#include <boost/url/impl/basic_value.hpp>
 #ifdef BOOST_URL_HEADER_ONLY
-#include <boost/url/impl/view.ipp>
+#include <boost/url/impl/basic_value.ipp>
 #endif
 
 #endif

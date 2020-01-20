@@ -262,7 +262,8 @@ view::
 segments_type::
 iterator::
 iterator() noexcept
-    : v_(nullptr)
+    : s_(nullptr)
+    , pt_(nullptr)
     , off_(0)
     , n_(0)
 {
@@ -272,20 +273,21 @@ view::
 segments_type::
 iterator::
 iterator(
-    view const* v,
+    segments_type const* v,
     bool end) noexcept
-    : v_(v)
+    : s_(v->s_)
+    , pt_(v->pt_)
 {
     if( end ||
-        v_->pt_.nseg == 0)
+        pt_->nseg == 0)
     {
-        off_ = v_->pt_.offset[
+        off_ = pt_->offset[
             detail::id_query];
         n_ = 0;
     }
     else
     {
-        off_ = v_->pt_.offset[
+        off_ = pt_->offset[
             detail::id_path];
         parse();
     }
@@ -299,7 +301,7 @@ operator*() const noexcept ->
     value_type
 {
     string_view s = {
-        v_->s_ + off_, n_ };
+        s_ + off_, n_ };
     if(! s.empty() &&
         s.front() == '/')
         s = s.substr(1);    
@@ -314,10 +316,10 @@ operator++() noexcept ->
     iterator&
 {
     BOOST_ASSERT(
-        off_ != v_->pt_.offset[
+        off_ != pt_->offset[
             detail::id_frag]);
     off_ = off_ + n_;
-    if(off_ == v_->pt_.offset[
+    if(off_ == pt_->offset[
         detail::id_frag])
     {
         // end
@@ -338,24 +340,24 @@ operator--() noexcept ->
     iterator&
 {
     BOOST_ASSERT(
-        off_ != v_->pt_.offset[
+        off_ != pt_->offset[
             detail::id_path]);
     auto const begin =
-        v_->s_ + v_->pt_.offset[
+        s_ + pt_->offset[
             detail::id_path];
-    auto p = v_->s_ + off_;
+    auto p = s_ + off_;
     while(--p > begin)
     {
         if(*p == '/')
         {
-            off_ = p - v_->s_;
+            off_ = p - s_;
             parse();
             return *this;
         }
     }
     // fails for relative-uri
     //BOOST_ASSERT(*p == '/');
-    auto const off = p - v_->s_;
+    auto const off = p - s_;
     n_ = off_ - off;
     off_ = off;
     return *this;
@@ -368,13 +370,12 @@ iterator::
 parse() noexcept
 {
     BOOST_ASSERT(off_ !=
-        v_->pt_.offset[
+        pt_->offset[
             detail::id_frag]);
     auto const end =
-        v_->s_ + v_->pt_.offset[
+        s_ + pt_->offset[
             detail::id_frag];
-    auto const p0 =
-        v_->s_ + off_;
+    auto const p0 = s_ + off_;
     auto p = p0;
     if(*p == '/')
         ++p;
@@ -395,8 +396,8 @@ segments_type::
 begin() const noexcept ->
     iterator
 {
-    BOOST_ASSERT(v_);
-    return iterator(v_, false);
+    BOOST_ASSERT(pt_);
+    return iterator(this, false);
 }
 
 auto
@@ -405,8 +406,8 @@ segments_type::
 end() const noexcept ->
     iterator
 {
-    BOOST_ASSERT(v_);
-    return iterator(v_, true);
+    BOOST_ASSERT(pt_);
+    return iterator(this, true);
 }
 
 //----------------------------------------------------------
@@ -419,7 +420,8 @@ view::
 params_type::
 iterator::
 iterator() noexcept
-    : v_(nullptr)
+    : s_(nullptr)
+    , pt_(nullptr)
     , off_(0)
     , nk_(0)
     , nv_(0)
@@ -430,21 +432,22 @@ view::
 params_type::
 iterator::
 iterator(
-    view const* v,
+    params_type const* v,
     bool end) noexcept
-    : v_(v)
+    : s_(v->s_)
+    , pt_(v->pt_)
 {
     if( end ||
-        v_->pt_.nparam == 0)
+        pt_->nparam == 0)
     {
-        off_ = v_->pt_.offset[
+        off_ = pt_->offset[
             detail::id_frag];
         nk_ = 0;
         nv_ = 0;
     }
     else
     {
-        off_ = v_->pt_.offset[
+        off_ = pt_->offset[
             detail::id_query];
         parse();
     }
@@ -459,18 +462,18 @@ operator*() const noexcept ->
 {
     BOOST_ASSERT(nk_ > 0);
     BOOST_ASSERT(
-        off_ == v_->pt_.offset[
+        off_ == pt_->offset[
             detail::id_query] ?
-        v_->s_[off_] == '?' :
-        v_->s_[off_] == '&');
+        s_[off_] == '?' :
+        s_[off_] == '&');
     string_view const k = {
-        v_->s_ + off_ + 1,
+        s_ + off_ + 1,
         nk_ - 1 };
 
     BOOST_ASSERT(nv_ == 0 ||
-        v_->s_[off_ + nk_] == '=');
+        s_[off_ + nk_] == '=');
     string_view const v = {
-        v_->s_ + off_ + nk_ + 1,
+        s_ + off_ + nk_ + 1,
         nv_ - 1};
 
     return { k, v };
@@ -484,10 +487,10 @@ operator++() noexcept ->
     iterator&
 {
     BOOST_ASSERT(
-        off_ != v_->pt_.offset[
+        off_ != pt_->offset[
             detail::id_frag]);
     off_ = off_ + nv_ + nk_;
-    if(off_ == v_->pt_.offset[
+    if(off_ == pt_->offset[
         detail::id_frag])
     {
         // end
@@ -509,23 +512,23 @@ operator--() noexcept ->
     iterator&
 {
     BOOST_ASSERT(
-        off_ != v_->pt_.offset[
+        off_ != pt_->offset[
             detail::id_query]);
     auto const begin =
-        v_->s_ + v_->pt_.offset[
+        s_ + pt_->offset[
             detail::id_query];
-    auto p = v_->s_ + off_;
+    auto p = s_ + off_;
     while(--p > begin)
     {
         if(*p == '&')
         {
-            off_ = p - v_->s_;
+            off_ = p - s_;
             parse();
             return *this;
         }
     }
     BOOST_ASSERT(*p == '?');
-    off_ = p - v_->s_;
+    off_ = p - s_;
     return *this;
 }
 
@@ -536,14 +539,14 @@ iterator::
 parse() noexcept
 {
     auto const end =
-        v_->s_ + v_->pt_.offset[
+        s_ + pt_->offset[
             detail::id_end];
-    auto p = v_->s_ + off_;
+    auto p = s_ + off_;
     BOOST_ASSERT(
-        ( off_ == v_->pt_.offset[
+        ( off_ == pt_->offset[
             detail::id_query] &&
             *p == '?' ) ||
-        ( off_ != v_->pt_.offset[
+        ( off_ != pt_->offset[
             detail::id_query] &&
             *p == '&' ));
     auto p0 = p++;
@@ -575,8 +578,8 @@ params_type::
 begin() const noexcept ->
     iterator
 {
-    BOOST_ASSERT(v_);
-    return iterator(v_, false);
+    BOOST_ASSERT(pt_);
+    return iterator(this, false);
 }
 
 auto
@@ -585,8 +588,8 @@ params_type::
 end() const noexcept ->
     iterator
 {
-    BOOST_ASSERT(v_);
-    return iterator(v_, true);
+    BOOST_ASSERT(pt_);
+    return iterator(this, true);
 }
 
 bool
@@ -594,7 +597,7 @@ view::
 params_type::
 contains(string_view key) const noexcept
 {
-    BOOST_ASSERT(v_);
+    BOOST_ASSERT(pt_);
     for(auto e : *this)
         if(detail::key_equal(
             e.encoded_key(),
@@ -608,7 +611,7 @@ view::
 params_type::
 count(string_view key) const noexcept
 {
-    BOOST_ASSERT(v_);
+    BOOST_ASSERT(pt_);
     std::size_t n = 0;
     for(auto e : *this)
         if(detail::key_equal(
@@ -624,7 +627,7 @@ params_type::
 find(string_view key) const noexcept ->
     iterator
 {
-    BOOST_ASSERT(v_);
+    BOOST_ASSERT(pt_);
     auto it = begin();
     for(auto const last = end();
         it != last; ++it)
@@ -640,7 +643,7 @@ view::
 params_type::
 operator[](string_view key) const
 {
-    BOOST_ASSERT(v_);
+    BOOST_ASSERT(pt_);
     auto const it = find(key);
     if(it == end())
         return "";

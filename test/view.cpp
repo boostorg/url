@@ -24,8 +24,6 @@ public:
     void
     testView()
     {
-        view v("http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2#frag");
-
         BOOST_TEST(view().host() == host_type::none);
         BOOST_TEST(view("//").host() == host_type::none);
         BOOST_TEST(view("//127.0.0.1").host() == host_type::ipv4);
@@ -37,9 +35,8 @@ public:
         BOOST_TEST(view("//example.com").host() == host_type::name);
         BOOST_TEST(view("//127.0.0.1.9").host() == host_type::name);
 
-        //dump(v);
-
-        BOOST_TEST(v.encoded_href() == "http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2#frag");
+        view const v("http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
+        BOOST_TEST(v.encoded_href() == "http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
         BOOST_TEST(v.encoded_origin() == "http://user:pass@example.com:80");
         BOOST_TEST(v.encoded_authority() == "user:pass@example.com:80");
         BOOST_TEST(v.scheme() == "http");
@@ -51,13 +48,13 @@ public:
         BOOST_TEST(*v.port() == 80);
         BOOST_TEST(v.encoded_path() == "/path/to/file.txt");
         BOOST_TEST(v.encoded_query() == "?k1=v1&k2=v2");
-        BOOST_TEST(v.encoded_fragment() == "#frag");
+        BOOST_TEST(v.encoded_fragment() == "");
 
         BOOST_TEST(v.username() == "user");
         BOOST_TEST(v.password() == "pass");
         BOOST_TEST(v.hostname() == "example.com");
         BOOST_TEST(v.query() == "?k1=v1&k2=v2");
-        BOOST_TEST(v.fragment() == "#frag");
+        BOOST_TEST(v.fragment() == "");
     }
 
     void
@@ -141,8 +138,8 @@ public:
             BOOST_TEST(ps.size() == 0);
         }
         {
-            view v("/path/to/file.txt");
-            auto ps = v.segments();
+            view const v("/path/to/file.txt");
+            auto const ps = v.segments();
             BOOST_TEST(! ps.empty());
             BOOST_TEST(ps.size() == 3);
             BOOST_TEST(ps.begin() != ps.end());
@@ -178,7 +175,7 @@ public:
             BOOST_TEST(qp.size() == 0);
         }
         {
-            view v("?x=1&y=2&y=3&z");
+            view const v("?x=1&y=2&y=3&z");
             auto qp = v.params();
             BOOST_TEST(! qp.empty());
             BOOST_TEST(qp.size() == 4);
