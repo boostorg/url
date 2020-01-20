@@ -424,6 +424,21 @@ struct parser
         return v;
     }
 
+    // return `true` if the hex
+    // word could be 0..255 if
+    // interpreted as decimal
+    bool
+    maybe_octet(long word)
+    {
+        if(word > 0x255)
+            return false;
+        if(((word >>  4) & 0xf) > 9)
+            return false;
+        if((word & 0xf) > 9)
+            return false;
+        return true;
+    }
+
     void
     parse_ip_v6(
         error_code& ec) noexcept
@@ -492,6 +507,12 @@ struct parser
                 if(! b && n > 1)
                 {
                     // not enough words
+                    ec = error::syntax;
+                    return;
+                }
+                if(! maybe_octet(word))
+                {
+                    // invalid octet
                     ec = error::syntax;
                     return;
                 }

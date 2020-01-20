@@ -104,6 +104,7 @@ public:
         BOOST_TEST_THROWS(view("//[0:1.2.3.4]"), invalid_part);
         BOOST_TEST_THROWS(view("//[0:0:0:0:0:0:0::1.2.3.4]"), invalid_part);
         BOOST_TEST_THROWS(view("http://[0:0:0:0:0:0:0:1.2.3.4]"), invalid_part);
+        BOOST_TEST_THROWS(view("http://[::FFFF:999.2.3.4]"), invalid_part);
 
         // coverage
         BOOST_TEST_THROWS(view("//["), invalid_part);
