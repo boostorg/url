@@ -30,9 +30,146 @@ class value_test
 public:
     test_suite::log_type log;
 
-#if 0
     void
-    dump(view const& u)
+    testConstValue()
+    {
+        BOOST_TEST(value().host() == host_type::none);
+        BOOST_TEST(value("//").host() == host_type::none);
+        BOOST_TEST(value("//127.0.0.1").host() == host_type::ipv4);
+        BOOST_TEST(value("//0.0.0.0").host() == host_type::ipv4);
+        BOOST_TEST(value("//255.255.255.255").host() == host_type::ipv4);
+        BOOST_TEST(value("//0.0.0.").host() == host_type::name);
+        BOOST_TEST(value("//127.00.0.1").host() == host_type::name);
+        BOOST_TEST(value("//999.0.0.0").host() == host_type::name);
+        BOOST_TEST(value("//example.com").host() == host_type::name);
+        BOOST_TEST(value("//127.0.0.1.9").host() == host_type::name);
+
+        {
+            value const v("http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
+            BOOST_TEST(v.encoded_href() == "http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
+            BOOST_TEST(v.encoded_origin() == "http://user:pass@example.com:80");
+            BOOST_TEST(v.encoded_authority() == "user:pass@example.com:80");
+            BOOST_TEST(v.scheme() == "http");
+            BOOST_TEST(v.encoded_username() == "user");
+            BOOST_TEST(v.encoded_password() == "pass");
+            BOOST_TEST(v.encoded_userinfo() == "user:pass");
+            BOOST_TEST(v.encoded_hostname() == "example.com");
+            BOOST_TEST(v.port_string() == "80");
+            BOOST_TEST(*v.port() == 80);
+            BOOST_TEST(v.encoded_path() == "/path/to/file.txt");
+            BOOST_TEST(v.encoded_query() == "?k1=v1&k2=v2");
+            BOOST_TEST(v.encoded_fragment() == "");
+
+            BOOST_TEST(v.username() == "user");
+            BOOST_TEST(v.password() == "pass");
+            BOOST_TEST(v.hostname() == "example.com");
+            BOOST_TEST(v.query() == "?k1=v1&k2=v2");
+            BOOST_TEST(v.fragment() == "");
+        }
+    }
+
+    void
+    testIPv6()
+    {
+        BOOST_TEST(value("//[::]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[0000:0000:0000:0000:0000:0000:0000:0000]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[1234:5678:9ABC:DEF0:0000:0000:0000:0000]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[3FFE:1900:4545:3:200:F8FF:FE21:67CF]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[FE80:0:0:0:200:F8FF:FE21:67CF]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[2001:0DB8:0A0B:12F0:0000:0000:0000:0001]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[2001:DB8:3333:4444:5555:6666:7777:8888]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[2001:DB8:3333:4444:CCCC:DDDD:EEEE:FFFF]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[::]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[2001:DB8::]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[::1234:5678]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[2001:DB8::1234:5678]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[2001:0DB8:0001:0000:0000:0AB9:C0A8:0102]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[2001:DB8:1::AB9:C0A8:102]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[684D:1111:222:3333:4444:5555:6:77]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[0:0:0:0:0:0:0:0]").host() == host_type::ipv6);
+            
+        BOOST_TEST(value("//[::1:2:3:4:5]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[0:0:0:1:2:3:4:5]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[1:2::3:4:5]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[1:2:0:0:0:3:4:5]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[1:2:3:4:5::]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[1:2:3:4:5:0:0:0]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[0:0:0:0:0:FFFF:102:405]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[::]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[::0]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[::1]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[0:0:0::1]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[FFFF::1]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[FFFF:0:0:0:0:0:0:1]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[2001:0DB8:0A0B:12F0:0:0:0:1]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[2001:DB8:A0B:12F0::1]").host() == host_type::ipv6);
+
+        BOOST_TEST(value("//[::FFFF:1.2.3.4]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[0:0:0:0:0:0:1.2.3.4]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[::1.2.3.4]").host() == host_type::ipv6);
+
+        BOOST_TEST_THROWS(value("http://[0]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[0:1.2.3.4]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[0:0:0:0:0:0:0::1.2.3.4]"), invalid_part);
+        BOOST_TEST_THROWS(value("http://[0:0:0:0:0:0:0:1.2.3.4]"), invalid_part);
+        BOOST_TEST_THROWS(value("http://[::FFFF:999.2.3.4]"), invalid_part);
+
+        // coverage
+        BOOST_TEST_THROWS(value("//["), invalid_part);
+        BOOST_TEST_THROWS(value("//[::"), invalid_part);
+        BOOST_TEST_THROWS(value("//[0"), invalid_part);
+        BOOST_TEST_THROWS(value("//[:"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::0::]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[:0::]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[0::0:x]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[x::]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[0:12"), invalid_part);
+        BOOST_TEST_THROWS(value("//[0:123"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::1.]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::1.2]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::1.2"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::1.2x]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::1.2.]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::1.2.3"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::1.2.3]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::1.2.3x]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::1.2.3.]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::1.2.3.4x]"), invalid_part);
+
+        BOOST_TEST(value("//[1:2:3:4:5:6::7]").host() == host_type::ipv6);
+        BOOST_TEST(value("//[1:2:3:4:5:6:7::]").host() == host_type::ipv6);
+    }
+
+    void
+    testSegments()
+    {
+        // segments() const
+        {
+            value const v("/path/to/file.txt");
+            auto ps = v.segments();
+            static_assert(
+                std::is_same<decltype(ps),
+                    view::segments_type>::value, "");
+        }
+    }
+
+    void
+    testParams()
+    {
+        // params() const
+        {
+            value const v("?x=1&y=2&y=3&z");
+            auto qp = v.params();
+            static_assert(
+                std::is_same<decltype(qp),
+                    view::params_type>::value, "");
+        }
+    }
+
+    //------------------------------------------------------
+
+    void
+    dump(value const& u)
     {
         (void)u;
 #if 0
@@ -55,17 +192,9 @@ public:
     void
     testCtor()
     {
-        dump(value("http:?query#fragment"));
-        dump(value("http://user:pass@example.com/path/to/file.txt?query#fragment"));
-        dump(value("http://?query#fragment"));
-        dump(value("http:?query#fragment@example"));
-        dump(value("http://?query#fragment@example"));
-
         BOOST_TEST(value().encoded_href() == "");
     }
-
-    //------------------------------------------------------
-    
+  
     void
     testScheme()
     {
@@ -84,7 +213,55 @@ public:
         BOOST_TEST_THROWS(value().set_scheme("http:s"), invalid_part);
     }
 
+    void
+    testOrigin()
+    {
+        BOOST_TEST(value().encoded_origin() == "");
+        BOOST_TEST(value("http://user:pass@example.com/path/to/file.txt?q").encoded_origin() ==
+                         "http://user:pass@example.com");
+        BOOST_TEST(value("http://user:pass@example.com/path/to/file.txt?q"
+            ).set_encoded_origin("ws://x.com").encoded_href() == "ws://x.com/path/to/file.txt?q");
+        BOOST_TEST(
+            value("http://host:80/")
+            .set_encoded_origin("http://host:443/")
+            .port_string() == "443");
+    }
+
     //------------------------------------------------------
+
+    void
+    testAuthority()
+    {
+        BOOST_TEST(value().encoded_authority() == "");
+        BOOST_TEST(value("http://@").encoded_authority() == "@");
+        BOOST_TEST(value("http://:@").encoded_authority() == ":@");
+        BOOST_TEST(value("http://user@").encoded_authority() == "user@");
+        BOOST_TEST(value("http://:pass@").encoded_authority() == ":pass@");
+        BOOST_TEST(value("http://user:pass@").encoded_authority() == "user:pass@");
+        BOOST_TEST(value("http://localhost").encoded_authority() == "localhost");
+        BOOST_TEST(value("http://local%20host").encoded_authority() == "local%20host");
+        BOOST_TEST(value("http://localhost:443").encoded_authority() == "localhost:443");
+        BOOST_TEST(value("http://:443").encoded_authority() == ":443");
+        BOOST_TEST(value("http://user:pass@example.com").encoded_authority() == "user:pass@example.com");
+        BOOST_TEST(value("http://@").set_encoded_authority("user:pass@example.com").encoded_href() == "http://user:pass@example.com");
+    }
+
+    void
+    testUserinfo()
+    {
+        BOOST_TEST(value().set_encoded_userinfo("").encoded_userinfo() == "");
+        BOOST_TEST(value().set_encoded_userinfo("user:").encoded_userinfo() == "user:");
+        BOOST_TEST(value().set_encoded_userinfo(":pass").encoded_userinfo() == ":pass");
+        BOOST_TEST(value().set_encoded_userinfo("user:pass").encoded_userinfo() == "user:pass");
+
+        BOOST_TEST(value("http://x:y@").set_encoded_userinfo("").encoded_userinfo() == "");
+        BOOST_TEST(value("http://user:pass@").set_encoded_userinfo("user").encoded_userinfo() == "user");
+        BOOST_TEST(value("http://user:pass@").set_encoded_userinfo(":pass").encoded_userinfo() == ":pass");
+        BOOST_TEST(value("http://:pass@").set_encoded_userinfo("user").encoded_userinfo() == "user");
+        BOOST_TEST(value("http://user:@").set_encoded_userinfo(":pass").encoded_userinfo() == ":pass");
+        BOOST_TEST(value("http://z.com/").set_encoded_userinfo("").encoded_href() == "http://z.com/");
+        BOOST_TEST(value("http://x:y@z.com").set_encoded_userinfo("").encoded_href() == "http://z.com");
+    }
 
     void
     testUsername()
@@ -137,20 +314,17 @@ public:
     }
 
     void
-    testUserinfo()
+    testHost()
     {
-        BOOST_TEST(value().set_encoded_userinfo("").encoded_userinfo() == "");
-        BOOST_TEST(value().set_encoded_userinfo("user:").encoded_userinfo() == "user:");
-        BOOST_TEST(value().set_encoded_userinfo(":pass").encoded_userinfo() == ":pass");
-        BOOST_TEST(value().set_encoded_userinfo("user:pass").encoded_userinfo() == "user:pass");
+        BOOST_TEST(value().set_encoded_host("example.com").encoded_href() == "//example.com");
+        BOOST_TEST(value().set_encoded_host("x:1").encoded_href() == "//x:1");
+        BOOST_TEST(value().set_encoded_host("x:1").set_encoded_host("").encoded_href() == "//");
+        BOOST_TEST(value().set_encoded_host("x:1").set_encoded_host("example.com:443").encoded_href() == "//example.com:443");
+        BOOST_TEST(value().set_encoded_host("local%20host%3A443").encoded_href() == "//local%20host%3A443");
+        BOOST_TEST(! value().set_encoded_host("local%20host%3A443").port().has_value());
 
-        BOOST_TEST(value("http://x:y@").set_encoded_userinfo("").encoded_userinfo() == "");
-        BOOST_TEST(value("http://user:pass@").set_encoded_userinfo("user").encoded_userinfo() == "user");
-        BOOST_TEST(value("http://user:pass@").set_encoded_userinfo(":pass").encoded_userinfo() == ":pass");
-        BOOST_TEST(value("http://:pass@").set_encoded_userinfo("user").encoded_userinfo() == "user");
-        BOOST_TEST(value("http://user:@").set_encoded_userinfo(":pass").encoded_userinfo() == ":pass");
-        BOOST_TEST(value("http://z.com/").set_encoded_userinfo("").encoded_href() == "http://z.com/");
-        BOOST_TEST(value("http://x:y@z.com").set_encoded_userinfo("").encoded_href() == "http://z.com");
+        BOOST_TEST(value().set_encoded_host(":").encoded_href() == "//:");
+        BOOST_TEST(value().set_encoded_host(":").set_port({}).encoded_host() == "");
     }
 
     void
@@ -194,66 +368,13 @@ public:
         BOOST_TEST_THROWS(value().set_port_string("9999999"), invalid_part);
     }
 
-    void
-    testHost()
-    {
-        BOOST_TEST(value().set_encoded_host("example.com").encoded_href() == "//example.com");
-        BOOST_TEST(value().set_encoded_host("x:1").encoded_href() == "//x:1");
-        BOOST_TEST(value().set_encoded_host("x:1").set_encoded_host("").encoded_href() == "//");
-        BOOST_TEST(value().set_encoded_host("x:1").set_encoded_host("example.com:443").encoded_href() == "//example.com:443");
-        BOOST_TEST(value().set_encoded_host("local%20host%3A443").encoded_href() == "//local%20host%3A443");
-        BOOST_TEST(! value().set_encoded_host("local%20host%3A443").port().has_value());
-
-        BOOST_TEST(value().set_encoded_host(":").encoded_href() == "//:");
-        BOOST_TEST(value().set_encoded_host(":").set_port({}).encoded_host() == "");
-    }
-
-    void
-    testAuthority()
-    {
-        BOOST_TEST(value().encoded_authority() == "");
-        BOOST_TEST(value("http://@").encoded_authority() == "@");
-        BOOST_TEST(value("http://:@").encoded_authority() == ":@");
-        BOOST_TEST(value("http://user@").encoded_authority() == "user@");
-        BOOST_TEST(value("http://:pass@").encoded_authority() == ":pass@");
-        BOOST_TEST(value("http://user:pass@").encoded_authority() == "user:pass@");
-        BOOST_TEST(value("http://localhost").encoded_authority() == "localhost");
-        BOOST_TEST(value("http://local%20host").encoded_authority() == "local%20host");
-        BOOST_TEST(value("http://localhost:443").encoded_authority() == "localhost:443");
-        BOOST_TEST(value("http://:443").encoded_authority() == ":443");
-        BOOST_TEST(value("http://user:pass@example.com").encoded_authority() == "user:pass@example.com");
-        BOOST_TEST(value("http://@").set_encoded_authority("user:pass@example.com").encoded_href() == "http://user:pass@example.com");
-    }
-
     //------------------------------------------------------
-
-    void
-    testOrigin()
-    {
-        BOOST_TEST(value().encoded_origin() == "");
-        BOOST_TEST(value("http://user:pass@example.com/path/to/file.txt?q#f").encoded_origin() ==
-                         "http://user:pass@example.com");
-        BOOST_TEST(value("http://user:pass@example.com/path/to/file.txt?q#f"
-            ).set_encoded_origin("ws://x.com").encoded_href() == "ws://x.com/path/to/file.txt?q#f");
-        BOOST_TEST(
-            value("http://host:80/")
-            .set_encoded_origin("http://host:443/")
-            .port_string() == "443");
-    }
-
-    //------------------------------------------------------
-
-    void
-    print(segments const& ss)
-    {
-        for(auto const e : ss)
-            log << "\"" << e << "\"" << std::endl;
-    }
 
     void
     testPath()
     {
         BOOST_TEST(value("/path/to/file.txt").encoded_path() == "/path/to/file.txt");
+        BOOST_TEST(value("http://example.com/path/to/file.txt?query").set_encoded_path("/a/b/c").encoded_path() == "/a/b/c");
 #if 0
         BOOST_TEST(
             value("/path/to/file.txt")
@@ -335,35 +456,35 @@ public:
         BOOST_TEST(value().set_fragment("x").fragment() == "#x");
         BOOST_TEST(value().set_encoded_fragment("#x").fragment() == "#x");
         BOOST_TEST(value().set_encoded_fragment("x").fragment() == "#x");
-        BOOST_TEST(value("http://#").set_fragment("").encoded_href() == "http://");
-        BOOST_TEST(value("http://").set_fragment("#").encoded_href() == "http://#");
-        BOOST_TEST(value("http://").set_fragment("##").encoded_href() == "http://#%23");
+        BOOST_TEST(value("//#").set_fragment("").encoded_href() == "//");
+        BOOST_TEST(value("//").set_fragment("#").encoded_href() == "//#");
+        BOOST_TEST(value("//").set_fragment("##").encoded_href() == "//#%23");
         BOOST_TEST(value().set_encoded_fragment("%23").encoded_href() == "#%23");
     }
 
     //------------------------------------------------------
-#endif
 
     void
     run()
     {
-#if 0
-        //value u("foof://:;@[::]/@;:??:;@/~@;://#//:;@~/@;:\\?\\?//:foof");
-        //dump(u);
+        testConstValue();
+        testIPv6();
+        testSegments();
+        testParams();
+
         testCtor();
         testScheme();
+        testOrigin();
+        testAuthority();
+        testUserinfo();
         testUsername();
         testPassword();
-        testUserinfo();
         testHostname();
         testPort();
         testHost();
-        testAuthority();
-        testOrigin();
         testPath();
         testQuery();
         testFragment();
-#endif
     }
 };
 

@@ -89,16 +89,6 @@ struct parts
                 offset[begin] };
     }
 
-    template<class Allocator>
-    string_type<Allocator>
-    get_decoded(
-        int id,
-        char const* s,
-        Allocator const& a) const
-    {
-        return decode(get(id, s), a);
-    }
-
     void
     resize(
         int id,
@@ -119,6 +109,17 @@ struct parts
                 i <= id_end; ++i)
                 offset[i] -= d;
         }
+    }
+
+    void
+    split(
+        int id,
+        std::size_t n) noexcept
+    {
+        BOOST_ASSERT(id < detail::id_end - 1);
+        BOOST_ASSERT(n <= length(id));
+        offset[id + 1] = offset[id] +
+            static_cast<std::size_t>(n);
     }
 };
 

@@ -12,10 +12,11 @@
 
 #include <boost/url/config.hpp>
 
+#include <boost/url/basic_value.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/host_type.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/static_pool.hpp>
-#include <boost/url/value.hpp>
 #include <boost/url/view.hpp>
 
 #endif

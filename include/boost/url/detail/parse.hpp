@@ -837,9 +837,13 @@ parse_url(
     if( pr.match_scheme() &&
         pr.match_literal(":"))
     {
-        // URI
+        // absolute-URI
         pr.mark(pt, id_scheme);
         pr.parse_hier_part(pt, ec);
+
+        pr.parse_query(pt, ec);
+        if(ec)
+            return;
     }
     else
     {
@@ -850,15 +854,15 @@ parse_url(
         pr.parse_relative_part(pt, ec);
         if(ec)
             return;
-    }
 
-    pr.parse_query(pt, ec);
-    if(ec)
-        return;
+        pr.parse_query(pt, ec);
+        if(ec)
+            return;
   
-    pr.parse_fragment(pt, ec);
-    if(ec)
-        return;
+        pr.parse_fragment(pt, ec);
+        if(ec)
+            return;
+    }
 
     if(! pr.done())
         ec = error::syntax;

@@ -22,7 +22,7 @@ class parse_test
 {
 public:
     void
-    good_uri_ref(
+    good(
         string_view s)
     {
         error_code ec;
@@ -32,7 +32,7 @@ public:
     }
 
     void
-    bad_uri_ref(
+    bad(
         string_view s)
     {
         error_code ec;
@@ -44,23 +44,27 @@ public:
     void
     testParse()
     {
-        good_uri_ref("http:");
-        good_uri_ref("http://");
-        good_uri_ref("http://:");
-        good_uri_ref("http://example.com");
-        good_uri_ref("http://example.com:");
-        good_uri_ref("http://example.com:443");
-        good_uri_ref("http://:443");
-        good_uri_ref("http://example.com/");
-        good_uri_ref("example://a/.//b/%2E%2E%2F/b/c/");
-        good_uri_ref("http://example.com:443/path");
-        good_uri_ref("http://example.com:443/path/to/file.txt");
-        good_uri_ref("http://example.com:443/path/to/file.txt?query");
-        good_uri_ref("http://example.com:443/path/to/file.txt#frag");
-        good_uri_ref("http://example.com:443/path/to/file.txt?query#frag");
+        good("http:");
+        good("http://");
+        good("http://:");
+        good("http://example.com");
+        good("http://example.com:");
+        good("http://example.com:443");
+        good("http://:443");
+        good("http://example.com/");
+        good("example://a/.//b/%2E%2E%2F/b/c/");
+        good("http://example.com:443/path");
+        good("http://example.com:443/path/to/file.txt");
+        good("http://example.com:443/path/to/file.txt?query");
+        good("http://example.com:443/path/to/file.txt");
+        good("http://example.com:443/path/to/file.txt?query");
 
-        bad_uri_ref("ws://%X9");
-        bad_uri_ref("1badscheme://");
+        good("http://example.com:443/path/to/file.txt?query");
+
+        good("/path/to/file.txt?query#frag");
+
+        bad("ws://%X9");
+        bad("1badscheme://");
     }
 
     void

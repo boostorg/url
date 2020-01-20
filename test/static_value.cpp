@@ -7,18 +7,26 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_DETAIL_VIEW_BASE_IPP
-#define BOOST_URL_DETAIL_VIEW_BASE_IPP
+// Test that header file is self-contained.
+#include <boost/url/static_value.hpp>
 
-#include <boost/url/detail/view_base.hpp>
-#include <boost/url/error.hpp>
+#include "test_suite.hpp"
 
 namespace boost {
 namespace url {
-namespace detail {
 
-} // detail
+class static_value_test
+{
+public:
+    //------------------------------------------------------
+
+    void
+    run()
+    {
+    }
+};
+
+TEST_SUITE(static_value_test, "boost.url.static_value");
+
 } // url
 } // boost
-
-#endif
