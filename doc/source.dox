@@ -36,7 +36,7 @@ INCLUDE_PATH           = ../
 INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = \
-                        GENERATING_DOCUMENTATION \
+                        BOOST_URL_DOCS \
                         BOOST_URL_DECL \
                         BOOST_URL_PUBLIC \
                         BOOST_URL_FORCEINLINE \

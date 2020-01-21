@@ -231,7 +231,26 @@ struct parser
         parts& pt,
         error_code& ec) noexcept
     {
-        // hostname
+        parse_hostname(pt, ec);
+        if(ec)
+            return;
+
+        // port
+        if( p_ >= end_ ||
+            *p_ != ':')
+            return;
+        ++p_;
+        parse_port(pt, ec);
+        if(ec)
+            return;
+        mark(pt, id_port);
+    }
+
+    void
+    parse_hostname(
+        parts& pt,
+        error_code& ec) noexcept
+    {
         parse_ip_literal(pt, ec);
         if(ec)
         {
@@ -243,16 +262,6 @@ struct parser
                 return;
         }
         mark(pt, id_hostname);
-
-        // port
-        if( p_ >= end_ ||
-            *p_ != ':')
-            return;
-        ++p_;
-        parse_port(pt, ec);
-        if(ec)
-            return;
-        mark(pt, id_port);
     }
 
     void
@@ -840,10 +849,6 @@ parse_url(
         // absolute-URI
         pr.mark(pt, id_scheme);
         pr.parse_hier_part(pt, ec);
-
-        pr.parse_query(pt, ec);
-        if(ec)
-            return;
     }
     else
     {
@@ -854,15 +859,15 @@ parse_url(
         pr.parse_relative_part(pt, ec);
         if(ec)
             return;
-
-        pr.parse_query(pt, ec);
-        if(ec)
-            return;
-  
-        pr.parse_fragment(pt, ec);
-        if(ec)
-            return;
     }
+
+    pr.parse_query(pt, ec);
+    if(ec)
+        return;
+  
+    pr.parse_fragment(pt, ec);
+    if(ec)
+        return;
 
     if(! pr.done())
         ec = error::syntax;
@@ -944,6 +949,21 @@ parse_host(
     parser pr(s);
     error_code ec;
     pr.parse_host(pt, ec);
+    if(ec)
+        invalid_part::raise();
+    if(! pr.done())
+        invalid_part::raise();
+}
+
+inline
+void
+parse_hostname(
+    parts& pt,
+    string_view s)
+{
+    parser pr(s);
+    error_code ec;
+    pr.parse_hostname(pt, ec);
     if(ec)
         invalid_part::raise();
     if(! pr.done())

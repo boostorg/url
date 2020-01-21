@@ -30,7 +30,7 @@ view(string_view s)
 
 string_view
 view::
-encoded_href() const
+encoded_url() const
 {
     return pt_.get(
         detail::id_scheme,

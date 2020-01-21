@@ -23,7 +23,7 @@ namespace url {
 
 basic_value::
 basic_value(
-    detail::storage& a)
+    detail::storage& a) noexcept
     : a_(a)
     , s_(nullptr)
 {
@@ -35,12 +35,12 @@ basic_value(
     string_view s)
     : a_(a)
 {
-    set_encoded_uri_reference(s);
+    set_encoded_url(s);
 }
 
 string_view
 basic_value::
-encoded_href() const
+encoded_url() const
 {
     return pt_.get(
         detail::id_scheme,
@@ -60,7 +60,7 @@ encoded_origin() const noexcept
 
 basic_value&
 basic_value::
-set_encoded_uri_reference(
+set_encoded_url(
     string_view s)
 {
     if(s.empty())
@@ -604,6 +604,7 @@ set_encoded_host(
     BOOST_ASSERT(pt_.length(
         detail::id_port) == pt.length(
             detail::id_port));
+    pt_.host = pt.host;
     pt_.port = pt.port;
     return *this;
 }
@@ -634,6 +635,10 @@ set_hostname(
         detail::id_hostname,
         e.encoded_size(s));
     e.encode(dest, s);
+    detail::parts pt;
+    detail::parse_hostname(
+        pt, encoded_host());
+    pt_.host = pt.host;
     return *this;
 }
 
@@ -645,13 +650,13 @@ set_encoded_hostname(
     if(s.empty())
         return set_hostname(s);
 
-    auto const e =
-        detail::reg_name_pct_set();
-    e.validate(s);
+    detail::parts pt;
+    detail::parse_hostname(pt, s);
     auto const dest = resize(
         detail::id_hostname,
         s.size());
     s.copy(dest, s.size());
+    pt_.host = pt.host;
     return *this;
 }
 
@@ -790,6 +795,57 @@ encoded_query() const noexcept
         detail::id_query,
         detail::id_frag,
         s_);
+}
+
+basic_value&
+basic_value::
+set_query(
+    string_view s)
+{
+    if(s.empty())
+    {
+        resize(detail::id_query, 0);
+        return *this;
+    }
+
+    if(s.front() == '?')
+        s = s.substr(1);
+    auto const e =
+        detail::query_pct_set();
+    auto const n =
+        e.encoded_size(s);
+
+    auto const dest = resize(
+        detail::id_query,
+        1 + n);
+    dest[0] = '?';
+    e.encode(dest + 1, s);
+    return *this;
+}
+
+basic_value&
+basic_value::
+set_encoded_query(
+    string_view s)
+{
+    if(s.empty())
+    {
+        resize(detail::id_query, 0);
+        return *this;
+    }
+
+    if(s.front() == '?')
+        s = s.substr(1);
+    auto const e =
+        detail::query_pct_set();
+    e.validate(s);
+
+    auto const dest = resize(
+        detail::id_query,
+        1 + s.size());
+    dest[0] = '?';
+    s.copy(dest + 1, s.size());
+    return *this;
 }
 
 //----------------------------------------------------------
@@ -1250,7 +1306,7 @@ operator[](string_view key) const
     auto const it = find(key);
     if(it == end())
         return "";
-    return it->basic_value();
+    return it->value();
 }
 
 //----------------------------------------------------------

@@ -210,7 +210,7 @@ at( string_view key,
     auto const it = find(key);
     if(it == end())
         out_of_range::raise();
-    return it->basic_value(a);
+    return it->value(a);
 }
 
 //----------------------------------------------------------

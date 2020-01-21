@@ -22,6 +22,20 @@
 namespace boost {
 namespace url {
 
+/** A modifiable container for a URL.
+
+    Objects of this type hold URLs which may be
+    inspected and modified. The derived class
+    is responsible for providing storage.
+
+    The underlying string stored in the container
+    is always null-terminated.
+
+    @see value, dynamic_value, static_value
+
+    @see
+        @li <a href="https://tools.ietf.org/html/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>
+*/
 class basic_value
 {
     friend class view::segments_type;
@@ -31,11 +45,30 @@ class basic_value
     detail::parts pt_;
     char* s_ = nullptr;
 
-protected:
+private:
+    template<class Allocator>
+    friend class dynamic_value;
+
+    template<std::size_t>
+    friend class static_value;
+
+    /** Construct an empty URL with the specified storage.
+    */
     BOOST_URL_DECL
     basic_value(
-        detail::storage& a);
+        detail::storage& a) noexcept;
 
+    /** Construct a parsed URL with the specified storage.
+
+        If `s` is not a valid URL (a <em>URI-absolute</em>
+        or a <em>relative-ref</em>), an exception is thrown.
+
+        @param a The storage to use.
+        
+        @param s The URL to parse.
+
+        @throw std::exception parse error.
+    */
     BOOST_URL_DECL
     basic_value(
         detail::storage& a,
@@ -46,6 +79,16 @@ public:
     class params_type;
 
     /** Return the number of characters in the URL.
+
+        The value returned does not include the
+        null terminator.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @return The number of characters in the
+        URL.
     */
     std::size_t
     size() const noexcept
@@ -57,6 +100,10 @@ public:
     /** Return a pointer to the characters in the URL.
 
         The string is null terminated.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     char const*
     data() const noexcept
@@ -67,6 +114,14 @@ public:
     }
 
     /** Return the number of characters that may be stored without a reallocation.
+
+        This function returns the maximum number of
+        characters which may be stored in the URL before
+        a reallocation is necessary.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     std::size_t
     capacity() const noexcept
@@ -76,23 +131,68 @@ public:
 
     //------------------------------------------------------
 
-    /** Return the complete serialized URL.
+    /** Return the URL.
+
+        All special characters appearing in corresponding
+        parts of the URL will appear percent-encoded.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
-    encoded_href() const;
+    encoded_url() const;
 
     /** Return the origin.
+
+        The origin consists of the everything from the
+        beginning of the URL up to but not including
+        the path. Any special or reserved characters in
+        the origin will be returned in percent-encoded
+        form.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
     encoded_origin() const noexcept;
 
+    /** Set the URL.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The URL to set. The contents must
+        meet the syntactic requirements of a
+        <em>URI-reference</em>.
+
+        @throw std::exception parsing error.
+    */
     BOOST_URL_DECL
     basic_value&
-    set_encoded_uri_reference(
+    set_encoded_url(
         string_view s);
 
+    /** Set the origin to the specified value.
+
+        The origin consists of the everything from the
+        beginning of the URL up to but not including
+        the path.
+        
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The origin to set. Special characters
+        must be percent-encoded, or an exception is
+        thrown.
+    */
     BOOST_URL_DECL
     basic_value&
     set_encoded_origin(
@@ -105,6 +205,14 @@ public:
     //------------------------------------------------------
 
     /** Return the scheme.
+
+        If there is no scheme, an empty string is
+        returned. Otherwise the scheme is returned,
+        without a trailing colon (':').
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
@@ -112,7 +220,32 @@ public:
 
     /** Set the scheme.
 
-        No escapes, only [a-z0-9.+-] are valid.
+        This function sets the scheme to the specified
+        string:
+
+        @li If the string is empty, any existing scheme
+        is removed along with the trailing colon (':'),
+        otherwise:
+
+        @li The scheme is set to the string, which must
+        contain a valid scheme. A trailing colon is
+        automatically added.
+
+        @par ABNF
+        @code
+        scheme        = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The scheme to set. This string must
+        not include a trailing colon, otherwise an
+        exception is thrown.
+
+        @throw std::exception invalid scheme.
     */
     BOOST_URL_DECL
     basic_value&
@@ -124,12 +257,33 @@ public:
     //
     //------------------------------------------------------
 
-    /** Return the encoded authority.
+    /** Return the authority.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @return The authority string, with special
+        characters escaped using percent-encoding.
     */
     BOOST_URL_DECL
     string_view
     encoded_authority() const noexcept;
 
+    /** Set the authority.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The authority to set. This string
+        must meed the syntactic requirements for
+        the components of the authority, otherwise
+        an exception is thrown.
+
+        @throw std::exception invalid authority.
+    */
     BOOST_URL_DECL
     basic_value&
     set_encoded_authority(
@@ -140,6 +294,10 @@ public:
     //
 
     /** Return the userinfo.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
@@ -160,6 +318,18 @@ public:
         @li If no colons exist, then the username will be
         set to the passed userinfo, and the password will
         be empty.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The userinfo to set. This string
+        must meed the syntactic requirements for
+        the components of the userinfo, otherwise
+        an exception is thrown.
+
+        @throw std::exception invalid userinfo.
     */
     BOOST_URL_DECL
     basic_value&
@@ -167,6 +337,19 @@ public:
         string_view s);
 
     /** Return the username.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
     */
     template<
         class Allocator =
@@ -180,6 +363,10 @@ public:
     }
 
     /** Return the username.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
@@ -202,6 +389,19 @@ public:
         string_view s);
 
     /** Return the password.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
     */
     template<
         class Allocator =
@@ -215,6 +415,10 @@ public:
     }
 
     /** Return the password.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
@@ -239,6 +443,10 @@ public:
     //
 
     /** Return the type of host present, if any.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     host_type
     host() const noexcept
@@ -247,6 +455,10 @@ public:
     }
 
     /** Return the encoded host.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
@@ -258,6 +470,19 @@ public:
         string_view s);
 
     /** Return the hostname.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
     */
     template<
         class Allocator =
@@ -271,22 +496,38 @@ public:
     }
 
     /** Return the encoded hostname.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
     encoded_hostname() const noexcept;
 
+    /** Set the hostname.
+    */
     BOOST_URL_DECL
     basic_value&
     set_hostname(
         string_view s);
 
+    /** Set the hostname.
+    */
     BOOST_URL_DECL
     basic_value&
     set_encoded_hostname(
         string_view s);
 
-    /** Return the port, if any.
+    /** Return the port.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @return An optional value with the port
+        number if the port is set, otherwise the
+        nullopt value.
     */
     optional<unsigned short>
     port() const noexcept
@@ -294,7 +535,14 @@ public:
         return pt_.port;
     }
 
-    /** Return the port as a string, or "" if no port.
+    /** Return the port.
+
+        If present, the port is returned as a string.
+        Otherwise, the empty string is returned.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
@@ -305,6 +553,14 @@ public:
     set_port(
         optional<unsigned short> num);
 
+    /** Set the port.
+
+        This function sets the port to the given
+        string, which must represent a valid unsigned
+        integer in the range of values allowed for
+        ports (0 to 65535).
+
+    */
     BOOST_URL_DECL
     basic_value&
     set_port_string(string_view s);
@@ -316,29 +572,81 @@ public:
     //------------------------------------------------------
 
     /** Return `true` if this is a relative-ref.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     bool
     is_relative() const noexcept;
 
-    /** Return the encoded path.
+    /** Return the path.
+
+        If the URL has a path, it is returned in
+        encoded form. Otherwise, an empty string
+        is returned.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
     encoded_path() const noexcept;
 
+    /** Set the path.
+
+        Sets the path of the URL to the specified
+        encoded string. If this string is empty,
+        any existing path is removed.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The encoded oath. If this string
+        is not syntactically correct, an exception is
+        thrown.
+
+        @throws std::exception invalid path.
+
+    */
     BOOST_URL_DECL
     basic_value&
     set_encoded_path(
         string_view s);
 
-    /** Return the path segments as a read-only container.
+    /** Return the path.
+
+        This function returns the path segments
+        as a lightweight, non-owning reference to
+        the existing data, with the interface of
+        a read-only container.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @see view::segments_type
     */
     inline
     view::segments_type
     segments() const noexcept;
 
-    /** Return the path segments as a modifiable container.
+    /** Return the path.
+
+        This function returns the path segments
+        as a lightweight, non-owning reference to
+        the existing data, with the interface of
+        a modifiable container.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @see segments_type
     */
     inline
     segments_type
@@ -350,6 +658,25 @@ public:
     //
     //------------------------------------------------------
 
+    /** Return the query.
+
+        If the URL has a query, it is returned in
+        decoded form, with a leading question mark ('?').
+        Otherwise, an empty string is returned.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
     template<
         class Allocator =
             std::allocator<char>>
@@ -361,17 +688,112 @@ public:
             encoded_query(), a);
     }
 
+    /** Return the query.
+
+        If the URL has a query, it is returned in
+        encoded form, with a leading question mark ('?').
+        Otherwise, an empty string is returned.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @return The encoded query.
+    */
     BOOST_URL_DECL
     string_view
     encoded_query() const noexcept;
 
-    /** Return the query parameters as a read-only container.
+    /** Set the query.
+
+        Sets the query of the URL to the specified
+        plain string:
+
+        @li If the string is empty, any existing query
+        is removed including the leading question mark ('?'),
+        otherwise:
+
+        @li If the string starts with a question mark it
+        is first removed. Then the query is set to the string.
+        The URL will always include at least a question mark
+        if the passed string is not empty.
+
+        Any special or reserved characters in the
+        passed string are automatically percent-encoded
+        into the URL's query.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The query. This string may contain
+        any characters, including nulls.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_query(
+        string_view s);
+
+    /** Set the query.
+
+        Sets the query of the URL to the specified
+        encoded string:
+
+        @li If the string is empty, any existing query
+        is removed including the leading question mark ('?'),
+        otherwise:
+
+        @li If the string starts with a question mark it
+        is first removed. Then the query is set to the string.
+        The URL will always include at least a question mark
+        if the passed string is not empty.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The encoded query. If this string
+        is not syntactically correct, an exception is
+        thrown.
+
+        @throws std::exception invalid query.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_encoded_query(
+        string_view s);
+
+    /** Return the query.
+
+        This function returns the query parameters
+        as a lightweight, non-owning reference to
+        the existing data, with the interface of
+        a read-only associative container.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @see view::params_type
     */
     inline
     view::params_type
     params() const noexcept;
 
-    /** Return the query parameters as a modifiable container.
+    /** Return the query.
+
+        This function returns the query parameters
+        as a lightweight, non-owning reference to
+        the existing data, with the interface of
+        a modifiable associative container.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @see params_type
     */
     inline
     params_type
@@ -384,6 +806,23 @@ public:
     //------------------------------------------------------
 
     /** Return the fragment.
+
+        If the URL has a fragment, it is returned in
+        decoded form, with a leading hash mark ('#').
+        Otherwise, an empty string is returned.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
     */
     template<
         class Allocator =
@@ -398,16 +837,79 @@ public:
     }
 
     /** Return the fragment.
+
+        If the URL has a fragment, it is returned in
+        encoded form, with a leading hash mark ('#').
+        Otherwise, an empty string is returned.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @return The encoded fragment.
     */
     BOOST_URL_DECL
     string_view
     encoded_fragment() const noexcept;
 
+    /** Set the fragment.
+
+        Sets the fragment of the URL to the specified
+        plain string:
+
+        @li If the string is empty, the fragment is
+        cleared including the leading hash mark ('#'),
+        otherwise:
+        
+        @li If the string starts with a hash mark it
+        is first removed. Then the fragment is set to
+        the string. The URL will always include at
+        least a hash mark if the passed string is
+        not empty.
+
+        Any special or reserved characters in the
+        passed string are automatically percent-encoded
+        into the URL's fragment.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The fragment. This string may contain
+        any characters, including nulls.
+    */
     BOOST_URL_DECL
     basic_value&
     set_fragment(
         string_view s);
 
+    /** Set the fragment.
+
+        Sets the fragment of the URL to the specified
+        encoded string:
+
+        @li If the string is empty, the fragment is
+        cleared including the leading hash mark ('#'),
+        otherwise:
+        
+        @li If the string starts with a hash mark it
+        is first removed. Then the fragment is set to
+        the string. The URL will always include at
+        least a hash mark if the passed string is
+        not empty.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The encoded fragment. If this string
+        is not syntactically correct, an exception is
+        thrown.
+
+        @throws std::exception invalid fragment.
+    */
     BOOST_URL_DECL
     basic_value&
     set_encoded_fragment(
@@ -419,9 +921,9 @@ public:
     //
     //------------------------------------------------------
 
+#if 0
     /** Normalize everything.
     */
-#if 0
     BOOST_URL_DECL
     basic_value&
     normalize();
@@ -513,6 +1015,21 @@ public:
         return s_;
     }
 
+    /** Return the segment string.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
     template<
         class Allocator =
             std::allocator<char>>
@@ -594,6 +1111,21 @@ public:
     std::string
     operator[](string_view key) const;
 
+    /** Return the param matching the given key.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
     template<class Allocator =
         std::allocator<char>>
     string_type<Allocator>
@@ -638,6 +1170,21 @@ public:
         return v_;
     }
 
+    /** Return the key.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
     template<
         class Allocator =
             std::allocator<char>>
@@ -648,11 +1195,26 @@ public:
             encoded_key(), a);
     }
 
+    /** Return the value.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
     template<
         class Allocator =
             std::allocator<char>>
     string_type<Allocator>
-    basic_value(Allocator const& a = {}) const
+    value(Allocator const& a = {}) const
     {
         return detail::decode(
             encoded_value(), a);
@@ -669,7 +1231,7 @@ public:
         std::string const,
         std::string>() const
     {
-        return { key(), basic_value() };
+        return { key(), value() };
     }
 };
 

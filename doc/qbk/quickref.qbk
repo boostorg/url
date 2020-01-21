@@ -1,0 +1,60 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/vinniefalco/uri
+]
+
+[table Quick Reference
+    [
+        [Name]
+        [Description]
+    ]
+    [
+        [[link url.ref.boost__url__basic_value `basic_value`]]
+        [
+            A modifiable container for a URL.
+        ]
+    ]
+    [
+        [[link url.ref.boost__url__dynamic_value `dynamic_value`]]
+        [
+            A modifiable container for a URL, using an __Allocator__.
+        ]
+    ]
+    [
+        [[link url.ref.boost__url__host_type `host_type`]]
+        [
+            An enumeration indicating the type of host in a URL.
+        ]
+    ]
+    [
+        [[link url.ref.boost__url__static_pool `static_pool`]]
+        [
+            A memory pool which allocates from the stack.
+        ]
+    ]
+    [
+        [[link url.ref.boost__url__static_value `static_value`]]
+        [
+            A modifiable container for a URL, using fixed
+            capacity storage.
+        ]
+    ]
+    [
+        [[link url.ref.boost__url__value `value`]]
+        [
+            A modifiable container for a URL, using the
+            standard allocator.
+        ]
+    ]
+    [
+        [[link url.ref.boost__url__view `view`]]
+        [
+            A parsed reference to a URL string.
+        ]
+    ]
+]
+

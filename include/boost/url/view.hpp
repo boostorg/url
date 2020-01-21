@@ -22,6 +22,8 @@ namespace url {
 
 class basic_value;
 
+/** A parsed reference to a URL string.
+*/
 class view
 {
     char const* s_ = "";
@@ -60,7 +62,7 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    encoded_href() const;
+    encoded_url() const;
 
     /** Return the origin.
     */

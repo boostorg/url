@@ -7,11 +7,11 @@
     Official repository: https://github.com/vinniefalco/uri
 ]
 
-[library Boost.URI
+[library Boost.URL
     [id url]
     [quickbook 1.6]
     [copyright 2019 Vinnie Falco]
-    [purpose URI Library]
+    [purpose URL Library]
     [license
         Distributed under the Boost Software License, Version 1.0.
         (See accompanying file LICENSE_1_0.txt or copy at
@@ -55,11 +55,17 @@
 
 [variablelist
     [[
-        [link url.overview Overview]
+        [link url.intro Introduction]
     ][
-        A review of the requirements and features included in Boost.URI,
+        An explanation of what the library does, its requirements, features,
         rationale and design information, answers to frequently
         asked questions, and credits.
+    ]]
+    [[
+        [link url.usage Usage]
+    ][
+        Information on how the library works, and how to use it in
+        various contexts.
     ]]
     [[
         [link url.ref Reference]
@@ -68,8 +74,12 @@
     ]]
 ]
 
+[include intro.qbk]
+[include usage.qbk]
+
 [section:ref Reference]
-[xinclude quickref.xml]
+[/ [xinclude quickref.xml] ]
+[include quickref.qbk]
 [include reference.qbk]
 [endsect]
 

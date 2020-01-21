@@ -36,7 +36,7 @@ public:
         BOOST_TEST(view("//127.0.0.1.9").host() == host_type::name);
 
         view const v("http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
-        BOOST_TEST(v.encoded_href() == "http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
+        BOOST_TEST(v.encoded_url() == "http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
         BOOST_TEST(v.encoded_origin() == "http://user:pass@example.com:80");
         BOOST_TEST(v.encoded_authority() == "user:pass@example.com:80");
         BOOST_TEST(v.scheme() == "http");
