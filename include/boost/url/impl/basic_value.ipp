@@ -281,19 +281,21 @@ set_encoded_userinfo(
     }
 
     error_code ec;
+    auto const begin = s.data();
+    auto const end =
+        s.data() + s.size();
     auto e =
         detail::userinfo_nc_pct_set();
-    auto p = e.parse(
-        s.begin(), s.end(), ec);
+    auto p = e.parse(begin, end, ec);
     if(ec)
         invalid_part::raise();
     auto const n0 = static_cast<
-        std::size_t>(p - s.begin());
+        std::size_t>(p - begin);
     e = detail::userinfo_pct_set();
-    p = e.parse(p, s.end(), ec);
+    p = e.parse(p, end, ec);
     if(ec)
         invalid_part::raise();
-    if(p != s.end())
+    if(p != end)
         invalid_part::raise();
 
     auto dest = resize(
