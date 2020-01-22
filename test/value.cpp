@@ -460,26 +460,51 @@ public:
     void
     testFragment()
     {
-        BOOST_TEST(value("").fragment().empty());
-        BOOST_TEST(value("#").fragment() == "#");
-        BOOST_TEST(value("#x").fragment() == "#x");
+        BOOST_TEST(value("").fragment() == "");
+        BOOST_TEST(value("#").fragment() == "");
+        BOOST_TEST(value("#x").fragment() == "x");
 
-        BOOST_TEST(value("").encoded_fragment().empty());
-        BOOST_TEST(value("#").encoded_fragment() == "#");
-        BOOST_TEST(value("#x").encoded_fragment() == "#x");
+        BOOST_TEST(value("").encoded_fragment() == "");
+        BOOST_TEST(value("#").encoded_fragment() == "");
+        BOOST_TEST(value("#x").encoded_fragment() == "x");
 
-        BOOST_TEST(value().set_fragment("#").fragment() == "#");
-        BOOST_TEST(value().set_fragment("#").encoded_fragment() == "#");
-        BOOST_TEST(value().set_encoded_fragment("#").fragment() == "#");
-        BOOST_TEST(value().set_encoded_fragment("#").encoded_fragment() == "#");
-        BOOST_TEST(value().set_fragment("#x").fragment() == "#x");
-        BOOST_TEST(value().set_fragment("x").fragment() == "#x");
-        BOOST_TEST(value().set_encoded_fragment("#x").fragment() == "#x");
-        BOOST_TEST(value().set_encoded_fragment("x").fragment() == "#x");
+        BOOST_TEST(value("").fragment_part() == "");
+        BOOST_TEST(value("#").fragment_part() == "#");
+        BOOST_TEST(value("#x").fragment_part() == "#x");
+
+        BOOST_TEST(value().set_fragment("").fragment_part() == "");
+        BOOST_TEST(value().set_fragment("#").fragment_part() == "#%23");
+        BOOST_TEST(value().set_fragment("#x").fragment_part() == "#%23x");
+
+        BOOST_TEST(value().set_encoded_fragment("").fragment_part() == "");
+        BOOST_TEST(value().set_encoded_fragment("x").fragment_part() == "#x");
+        BOOST_TEST(value().set_encoded_fragment("%23").fragment_part() == "#%23");
+        BOOST_TEST_THROWS(value().set_encoded_fragment("#"), invalid_part);
+        BOOST_TEST_THROWS(value().set_encoded_fragment("#x"), invalid_part);
+
+        BOOST_TEST(value().set_fragment_part("").fragment_part() == "");
+        BOOST_TEST(value().set_fragment_part("#").fragment_part() == "#");
+        BOOST_TEST(value().set_fragment_part("#x").fragment_part() == "#x");
+        BOOST_TEST(value().set_fragment_part("#%23x").fragment_part() == "#%23x");
+        BOOST_TEST_THROWS(value().set_fragment_part("x"), invalid_part);
+        BOOST_TEST_THROWS(value().set_fragment_part("%23"), invalid_part);
+
         BOOST_TEST(value("//#").set_fragment("").encoded_url() == "//");
-        BOOST_TEST(value("//").set_fragment("#").encoded_url() == "//#");
-        BOOST_TEST(value("//").set_fragment("##").encoded_url() == "//#%23");
-        BOOST_TEST(value().set_encoded_fragment("%23").encoded_url() == "#%23");
+        BOOST_TEST(value("//#x").set_fragment("").encoded_url() == "//");
+        BOOST_TEST(value("//#xy").set_fragment("y").encoded_url() == "//#y");
+        BOOST_TEST(value("//").set_fragment("#").encoded_url() == "//#%23");
+        BOOST_TEST(value("//").set_fragment("##").encoded_url() == "//#%23%23");
+
+        BOOST_TEST(value("//#").set_encoded_fragment("").encoded_url() == "//");
+        BOOST_TEST(value("//#x").set_encoded_fragment("").encoded_url() == "//");
+        BOOST_TEST(value("//#xy").set_encoded_fragment("y").encoded_url() == "//#y");
+        BOOST_TEST_THROWS(value("//").set_encoded_fragment("#"), invalid_part);
+        BOOST_TEST_THROWS(value("//").set_encoded_fragment("##"), invalid_part);
+
+        BOOST_TEST(value("//#").set_fragment_part("").encoded_url() == "//");
+        BOOST_TEST(value("//#x").set_fragment_part("").encoded_url() == "//");
+        BOOST_TEST_THROWS(value("//#xy").set_fragment_part("y"), invalid_part);
+        BOOST_TEST(value("//#xy").set_fragment_part("#y").encoded_url() == "//#y");
     }
 
     //------------------------------------------------------

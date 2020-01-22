@@ -246,10 +246,30 @@ string_view
 view::
 encoded_fragment() const noexcept
 {
-    return pt_.get(
+    auto s = pt_.get(
         detail::id_frag,
         detail::id_end,
         s_);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        s.front() == '#');
+    return s.substr(1);
+}
+
+string_view
+view::
+fragment_part() const noexcept
+{
+    auto s = pt_.get(
+        detail::id_frag,
+        detail::id_end,
+        s_);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        s.front() == '#');
+    return s;
 }
 
 //----------------------------------------------------------

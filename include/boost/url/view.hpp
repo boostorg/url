@@ -253,6 +253,36 @@ public:
     //------------------------------------------------------
 
     /** Return the fragment.
+
+        This function returns the fragment of the URL:
+
+        * If a fragment is present, it is returned in
+        decoded form without a leading hash mark ('#'),
+        otherwise:
+
+        * If there is no fragment, an empty string is
+        returned.
+
+        Note that if the URL contains a hash mark
+        followed by an empty query string, this
+        function still returns an empty string.
+        To detect this case, use @ref fragment_part
+        instead.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+
+        @see encoded_fragment, fragment_part
     */
     template<
         class Allocator =
@@ -263,14 +293,67 @@ public:
     {
         return detail::decode(
             encoded_fragment(), a);
-
     }
 
     /** Return the fragment.
+
+        This function returns the fragment of the URL:
+
+        * If a fragment is present, it is returned in
+        encoded form without a leading hash mark ('#'),
+        otherwise:
+
+        * If there is no fragment, an empty string is
+        returned.
+
+        Note that if the URL contains a hash mark
+        followed by an empty query string, this
+        function still returns an empty string.
+        To detect this case, use @ref fragment_part
+        instead.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+
+        @see fragment, fragment_part
     */
     BOOST_URL_DECL
     string_view
     encoded_fragment() const noexcept;
+
+    /** Return the fragment.
+
+        This function returns the fragment of the URL:
+
+        * If a fragment is present, it is returned
+        in encoded form including the leading hash
+        mark ('#'), otherwise:
+
+        * If there is no fragment, an empty string is
+        returned.
+
+        Note that if the URL contains a hash mark
+        followed by an empty query string, this
+        function returns "#".
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @see fragment, encoded_fragment
+    */
+    BOOST_URL_DECL
+    string_view
+    fragment_part() const noexcept;
 };
 
 //----------------------------------------------------------

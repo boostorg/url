@@ -230,12 +230,29 @@ public:
     }
 
     void
+    testFragment()
+    {
+        BOOST_TEST(view("").fragment() == "");
+        BOOST_TEST(view("#").fragment() == "");
+        BOOST_TEST(view("#x").fragment() == "x");
+
+        BOOST_TEST(view("").encoded_fragment() == "");
+        BOOST_TEST(view("#").encoded_fragment() == "");
+        BOOST_TEST(view("#x").encoded_fragment() == "x");
+
+        BOOST_TEST(view("").fragment_part() == "");
+        BOOST_TEST(view("#").fragment_part() == "#");
+        BOOST_TEST(view("#x").fragment_part() == "#x");
+    }
+
+    void
     run()
     {
         testView();
         testIPv6();
         testSegments();
         testParams();
+        testFragment();
     }
 };
 

@@ -807,9 +807,20 @@ public:
 
     /** Return the fragment.
 
-        If the URL has a fragment, it is returned in
-        decoded form, with a leading hash mark ('#').
-        Otherwise, an empty string is returned.
+        This function returns the fragment of the URL:
+
+        * If a fragment is present, it is returned in
+        decoded form without a leading hash mark ('#'),
+        otherwise:
+
+        * If there is no fragment, an empty string is
+        returned.
+
+        Note that if the URL contains a hash mark
+        followed by an empty query string, this
+        function still returns an empty string.
+        To detect this case, use @ref fragment_part
+        instead.
 
         @par Exception Safety
 
@@ -823,6 +834,8 @@ public:
 
         @return A `std::basic_string` using the
         specified allocator.
+
+        @see encoded_fragment, fragment_part
     */
     template<
         class Allocator =
@@ -833,24 +846,67 @@ public:
     {
         return detail::decode(
             encoded_fragment(), a);
-
     }
 
     /** Return the fragment.
 
-        If the URL has a fragment, it is returned in
-        encoded form, with a leading hash mark ('#').
-        Otherwise, an empty string is returned.
+        This function returns the fragment of the URL:
+
+        * If a fragment is present, it is returned in
+        encoded form without a leading hash mark ('#'),
+        otherwise:
+
+        * If there is no fragment, an empty string is
+        returned.
+
+        Note that if the URL contains a hash mark
+        followed by an empty query string, this
+        function still returns an empty string.
+        To detect this case, use @ref fragment_part
+        instead.
 
         @par Exception Safety
 
         No-throw guarantee.
 
-        @return The encoded fragment.
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+
+        @see fragment, fragment_part
     */
     BOOST_URL_DECL
     string_view
     encoded_fragment() const noexcept;
+
+    /** Return the fragment.
+
+        This function returns the fragment of the URL:
+
+        * If a fragment is present, it is returned
+        in encoded form including the leading hash
+        mark ('#'), otherwise:
+
+        * If there is no fragment, an empty string is
+        returned.
+
+        Note that if the URL contains a hash mark
+        followed by an empty query string, this
+        function returns "#".
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @see fragment, encoded_fragment
+    */
+    BOOST_URL_DECL
+    string_view
+    fragment_part() const noexcept;
 
     /** Set the fragment.
 
@@ -860,24 +916,20 @@ public:
         @li If the string is empty, the fragment is
         cleared including the leading hash mark ('#'),
         otherwise:
-        
-        @li If the string starts with a hash mark it
-        is first removed. Then the fragment is set to
-        the string. The URL will always include at
-        least a hash mark if the passed string is
-        not empty.
 
+        @li If the string is not empty, the fragment
+        is set to given string, with a leading hash
+        mark added.
         Any special or reserved characters in the
-        passed string are automatically percent-encoded
-        into the URL's fragment.
+        string are automatically percent-encoded.
 
         @par Exception Safety
 
         Strong guarantee.
         Calls to allocate may throw.
 
-        @param s The fragment. This string may contain
-        any characters, including nulls.
+        @param s The string to set. This string may
+        contain any characters, including nulls.
     */
     BOOST_URL_DECL
     basic_value&
@@ -892,27 +944,65 @@ public:
         @li If the string is empty, the fragment is
         cleared including the leading hash mark ('#'),
         otherwise:
-        
-        @li If the string starts with a hash mark it
-        is first removed. Then the fragment is set to
-        the string. The URL will always include at
-        least a hash mark if the passed string is
-        not empty.
+
+        @li If the string is not empty, the fragment
+        is set to given string, with a leading hash
+        mark added.
+        The string must meet the syntactic requirements
+        of <em>fragment</em> otherwise an exception is
+        thrown.
+
+        @par ABNF
+        @code
+        fragment      = *( pchar / "/" / "?" )
+        @endcode
 
         @par Exception Safety
 
         Strong guarantee.
         Calls to allocate may throw.
 
-        @param s The encoded fragment. If this string
-        is not syntactically correct, an exception is
-        thrown.
+        @param s The string to set.
 
-        @throws std::exception invalid fragment.
+        @throws std::exception invalid string.
     */
     BOOST_URL_DECL
     basic_value&
     set_encoded_fragment(
+        string_view s);
+
+    /** Set the fragment.
+
+        Sets the fragment of the URL to the specified
+        encoded string.
+
+        @li If the string is empty, the fragment is
+        cleared including the leading hash mark ('#'),
+        otherwise:
+        
+        @li If the string is not empty, the fragment
+        is set to given string.
+        The string must meet the syntactic requirements
+        of <em>fragment-part</em> otherwise an exception
+        is thrown.
+
+        @par ABNF
+        @code
+        fragment-part = "#" *( pchar / "/" / "?" )
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
+
+        @throws std::exception invalid string.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_fragment_part(
         string_view s);
 
     //------------------------------------------------------

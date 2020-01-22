@@ -858,10 +858,30 @@ string_view
 basic_value::
 encoded_fragment() const noexcept
 {
-    return pt_.get(
+    auto s = pt_.get(
         detail::id_frag,
         detail::id_end,
         s_);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        s.front() == '#');
+    return s.substr(1);
+}
+
+string_view
+basic_value::
+fragment_part() const noexcept
+{
+    auto s = pt_.get(
+        detail::id_frag,
+        detail::id_end,
+        s_);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        s.front() == '#');
+    return s;
 }
 
 basic_value&
@@ -874,14 +894,10 @@ set_fragment(
         resize(detail::id_frag, 0);
         return *this;
     }
-
-    if(s.front() == '#')
-        s = s.substr(1);
     auto const e =
         detail::frag_pct_set();
     auto const n =
         e.encoded_size(s);
-
     auto const dest = resize(
         detail::id_frag, 1 + n);
     dest[0] = '#';
@@ -899,13 +915,30 @@ set_encoded_fragment(
         resize(detail::id_frag, 0);
         return *this;
     }
-
-    if(s.front() == '#')
-        s = s.substr(1);
     auto const e =
         detail::frag_pct_set();
     e.validate(s);
+    auto const dest = resize(
+        detail::id_frag,
+        1 + s.size());
+    dest[0] = '#';
+    s.copy(dest + 1, s.size());
+    return *this;
+}
 
+basic_value&
+basic_value::
+set_fragment_part(
+    string_view s)
+{
+    if(s.empty())
+        return set_fragment(s);
+    if(s.front() != '#')
+        invalid_part::raise();
+    s = s.substr(1);
+    auto const e =
+        detail::frag_pct_set();
+    e.validate(s);
     auto const dest = resize(
         detail::id_frag,
         1 + s.size());
