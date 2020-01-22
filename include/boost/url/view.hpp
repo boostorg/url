@@ -225,6 +225,38 @@ public:
     //
     //------------------------------------------------------
 
+    /** Return the query.
+
+        This function returns the query of the URL:
+
+        * If a query is present, it is returned
+        in decoded form without a leading question
+        mark ('?'), otherwise:
+
+        * If there is no query, an empty string is
+        returned.
+
+        Note that if the URL contains a question mark
+        followed by an empty query string, this
+        function still returns an empty string.
+        To detect this case, use @ref query_part
+        instead.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+
+        @see encoded_query, query_part
+    */
     template<
         class Allocator =
             std::allocator<char>>
@@ -236,9 +268,65 @@ public:
             encoded_query(), a);
     }
 
+    /** Return the query.
+
+        This function returns the query of the URL:
+
+        * If a query is present, it is returned
+        in encoded form without a leading question
+        mark ('#'), otherwise:
+
+        * If there is no query, an empty string is
+        returned.
+
+        Note that if the URL contains a question
+        mark followed by an empty query string,
+        this function still returns an empty string.
+        To detect this case, use @ref query_part
+        instead.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+
+        @see query, query_part
+    */
     BOOST_URL_DECL
     string_view
     encoded_query() const noexcept;
+
+    /** Return the query.
+
+        This function returns the query of the URL:
+
+        * If a query is present, it is returned
+        in encoded form including the leading hash
+        mark ('?'), otherwise:
+
+        * If there is no query, an empty string is
+        returned.
+
+        Note that if the URL contains a question
+        mark followed by an empty query string,
+        this function returns "#".
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @see query, encoded_query
+    */
+    BOOST_URL_DECL
+    string_view
+    query_part() const noexcept;
 
     /** Return the query parameters as a read-only container.
     */

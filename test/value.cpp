@@ -57,13 +57,13 @@ public:
             BOOST_TEST(v.port_string() == "80");
             BOOST_TEST(*v.port() == 80);
             BOOST_TEST(v.encoded_path() == "/path/to/file.txt");
-            BOOST_TEST(v.encoded_query() == "?k1=v1&k2=v2");
+            BOOST_TEST(v.encoded_query() == "k1=v1&k2=v2");
             BOOST_TEST(v.encoded_fragment() == "");
 
             BOOST_TEST(v.username() == "user");
             BOOST_TEST(v.password() == "pass");
             BOOST_TEST(v.hostname() == "example.com");
-            BOOST_TEST(v.query() == "?k1=v1&k2=v2");
+            BOOST_TEST(v.query() == "k1=v1&k2=v2");
             BOOST_TEST(v.fragment() == "");
         }
     }
@@ -433,26 +433,53 @@ public:
     void
     testQuery()
     {
-        BOOST_TEST(value("").query().empty());
-        BOOST_TEST(value("?").query() == "?");
-        BOOST_TEST(value("?x").query() == "?x");
+        BOOST_TEST(value("").query() == "");
+        BOOST_TEST(value("?").query() == "");
+        BOOST_TEST(value("?x").query() == "x");
 
-        BOOST_TEST(value("").encoded_query().empty());
-        BOOST_TEST(value("?").encoded_query() == "?");
-        BOOST_TEST(value("?x").encoded_query() == "?x");
+        BOOST_TEST(value("").encoded_query() == "");
+        BOOST_TEST(value("?").encoded_query() == "");
+        BOOST_TEST(value("?x").encoded_query() == "x");
 
-        BOOST_TEST(value().set_query("?").query() == "?");
-        BOOST_TEST(value().set_query("?").encoded_query() == "?");
-        BOOST_TEST(value().set_encoded_query("?").query() == "?");
-        BOOST_TEST(value().set_encoded_query("?").encoded_query() == "?");
-        BOOST_TEST(value().set_query("?x").query() == "?x");
-        BOOST_TEST(value().set_query("x").query() == "?x");
-        BOOST_TEST(value().set_encoded_query("?x").query() == "?x");
-        BOOST_TEST(value().set_encoded_query("x").query() == "?x");
+        BOOST_TEST(value("").query_part() == "");
+        BOOST_TEST(value("?").query_part() == "?");
+        BOOST_TEST(value("?x").query_part() == "?x");
+
+        BOOST_TEST(value().set_query("").query_part() == "");
+        BOOST_TEST(value().set_query("?").query_part() == "??");
+        BOOST_TEST(value().set_query("?x").query_part() == "??x");
+        BOOST_TEST(value().set_query("#").query_part() == "?%23");
+
+        BOOST_TEST(value().set_encoded_query("").query_part() == "");
+        BOOST_TEST(value().set_encoded_query("x").query_part() == "?x");
+        BOOST_TEST(value().set_encoded_query("?").query_part() == "??");
+        BOOST_TEST(value().set_encoded_query("%23").query() == "#");
+        BOOST_TEST_THROWS(value().set_encoded_query("#"), invalid_part);
+        BOOST_TEST_THROWS(value().set_encoded_query("#x"), invalid_part);
+
+        BOOST_TEST(value().set_query_part("").query_part() == "");
+        BOOST_TEST(value().set_query_part("?").query_part() == "?");
+        BOOST_TEST(value().set_query_part("?x").query_part() == "?x");
+        BOOST_TEST(value().set_query_part("??x").query_part() == "??x");
+        BOOST_TEST_THROWS(value().set_query_part("x"), invalid_part);
+        BOOST_TEST_THROWS(value().set_query_part("%3F"), invalid_part);
+
         BOOST_TEST(value("//?").set_query("").encoded_url() == "//");
-        BOOST_TEST(value("//").set_query("?").encoded_url() == "//?");
-        BOOST_TEST(value("//").set_query("??").encoded_url() == "//??");
-        BOOST_TEST(value().set_encoded_query("%3F").encoded_url() == "?%3F");
+        BOOST_TEST(value("//?x").set_query("").encoded_url() == "//");
+        BOOST_TEST(value("//?xy").set_query("y").encoded_url() == "//?y");
+        BOOST_TEST(value("//").set_query("?").encoded_url() == "//??");
+        BOOST_TEST(value("//").set_query("??").encoded_url() == "//???");
+
+        BOOST_TEST(value("//?").set_encoded_query("").encoded_url() == "//");
+        BOOST_TEST(value("//?x").set_encoded_query("").encoded_url() == "//");
+        BOOST_TEST(value("//?xy").set_encoded_query("y").encoded_url() == "//?y");
+        BOOST_TEST_THROWS(value("//").set_encoded_query("#"), invalid_part);
+        BOOST_TEST_THROWS(value("//").set_encoded_query("#?"), invalid_part);
+
+        BOOST_TEST(value("//?").set_query_part("").encoded_url() == "//");
+        BOOST_TEST(value("//?x").set_query_part("").encoded_url() == "//");
+        BOOST_TEST_THROWS(value("//?xy").set_query_part("y"), invalid_part);
+        BOOST_TEST(value("//?xy").set_query_part("?y").encoded_url() == "//?y");
     }
 
     //------------------------------------------------------

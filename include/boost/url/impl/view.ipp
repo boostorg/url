@@ -230,10 +230,26 @@ string_view
 view::
 encoded_query() const noexcept
 {
-    return pt_.get(
-        detail::id_query,
-        detail::id_frag,
-        s_);
+    auto s = pt_.get(
+        detail::id_query, s_);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        s.front() == '?');
+    return s.substr(1);
+}
+
+string_view
+view::
+query_part() const noexcept
+{
+    auto s = pt_.get(
+        detail::id_query, s_);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        s.front() == '?');
+    return s;
 }
 
 //----------------------------------------------------------
@@ -247,9 +263,7 @@ view::
 encoded_fragment() const noexcept
 {
     auto s = pt_.get(
-        detail::id_frag,
-        detail::id_end,
-        s_);
+        detail::id_frag, s_);
     if(s.empty())
         return s;
     BOOST_ASSERT(
@@ -262,9 +276,7 @@ view::
 fragment_part() const noexcept
 {
     auto s = pt_.get(
-        detail::id_frag,
-        detail::id_end,
-        s_);
+        detail::id_frag, s_);
     if(s.empty())
         return s;
     BOOST_ASSERT(

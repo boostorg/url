@@ -47,13 +47,13 @@ public:
         BOOST_TEST(v.port_string() == "80");
         BOOST_TEST(*v.port() == 80);
         BOOST_TEST(v.encoded_path() == "/path/to/file.txt");
-        BOOST_TEST(v.encoded_query() == "?k1=v1&k2=v2");
+        BOOST_TEST(v.encoded_query() == "k1=v1&k2=v2");
         BOOST_TEST(v.encoded_fragment() == "");
 
         BOOST_TEST(v.username() == "user");
         BOOST_TEST(v.password() == "pass");
         BOOST_TEST(v.hostname() == "example.com");
-        BOOST_TEST(v.query() == "?k1=v1&k2=v2");
+        BOOST_TEST(v.query() == "k1=v1&k2=v2");
         BOOST_TEST(v.fragment() == "");
     }
 
@@ -230,6 +230,22 @@ public:
     }
 
     void
+    testQuery()
+    {
+        BOOST_TEST(view("").query() == "");
+        BOOST_TEST(view("?").query() == "");
+        BOOST_TEST(view("?x").query() == "x");
+
+        BOOST_TEST(view("").encoded_query() == "");
+        BOOST_TEST(view("?").encoded_query() == "");
+        BOOST_TEST(view("?x").encoded_query() == "x");
+
+        BOOST_TEST(view("").query_part() == "");
+        BOOST_TEST(view("?").query_part() == "?");
+        BOOST_TEST(view("?x").query_part() == "?x");
+    }
+
+    void
     testFragment()
     {
         BOOST_TEST(view("").fragment() == "");
@@ -252,6 +268,7 @@ public:
         testIPv6();
         testSegments();
         testParams();
+        testQuery();
         testFragment();
     }
 };

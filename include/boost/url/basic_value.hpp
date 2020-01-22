@@ -660,9 +660,20 @@ public:
 
     /** Return the query.
 
-        If the URL has a query, it is returned in
-        decoded form, with a leading question mark ('?').
-        Otherwise, an empty string is returned.
+        This function returns the query of the URL:
+
+        * If a query is present, it is returned
+        in decoded form without a leading question
+        mark ('?'), otherwise:
+
+        * If there is no query, an empty string is
+        returned.
+
+        Note that if the URL contains a question mark
+        followed by an empty query string, this
+        function still returns an empty string.
+        To detect this case, use @ref query_part
+        instead.
 
         @par Exception Safety
 
@@ -676,6 +687,8 @@ public:
 
         @return A `std::basic_string` using the
         specified allocator.
+
+        @see encoded_query, query_part
     */
     template<
         class Allocator =
@@ -690,45 +703,86 @@ public:
 
     /** Return the query.
 
-        If the URL has a query, it is returned in
-        encoded form, with a leading question mark ('?').
-        Otherwise, an empty string is returned.
+        This function returns the query of the URL:
+
+        * If a query is present, it is returned
+        in encoded form without a leading question
+        mark ('#'), otherwise:
+
+        * If there is no query, an empty string is
+        returned.
+
+        Note that if the URL contains a question
+        mark followed by an empty query string,
+        this function still returns an empty string.
+        To detect this case, use @ref query_part
+        instead.
 
         @par Exception Safety
 
         No-throw guarantee.
 
-        @return The encoded query.
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+
+        @see query, query_part
     */
     BOOST_URL_DECL
     string_view
     encoded_query() const noexcept;
+
+    /** Return the query.
+
+        This function returns the query of the URL:
+
+        * If a query is present, it is returned
+        in encoded form including the leading hash
+        mark ('?'), otherwise:
+
+        * If there is no query, an empty string is
+        returned.
+
+        Note that if the URL contains a question
+        mark followed by an empty query string,
+        this function returns "#".
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @see query, encoded_query
+    */
+    BOOST_URL_DECL
+    string_view
+    query_part() const noexcept;
 
     /** Set the query.
 
         Sets the query of the URL to the specified
         plain string:
 
-        @li If the string is empty, any existing query
-        is removed including the leading question mark ('?'),
-        otherwise:
+        @li If the string is empty, the query is
+        cleared including the leading question
+        mark ('?'), otherwise:
 
-        @li If the string starts with a question mark it
-        is first removed. Then the query is set to the string.
-        The URL will always include at least a question mark
-        if the passed string is not empty.
-
+        @li If the string is not empty, the query
+        is set to given string, with a leading
+        question mark added.
         Any special or reserved characters in the
-        passed string are automatically percent-encoded
-        into the URL's query.
+        string are automatically percent-encoded.
 
         @par Exception Safety
 
         Strong guarantee.
         Calls to allocate may throw.
 
-        @param s The query. This string may contain
-        any characters, including nulls.
+        @param s The string to set. This string may
+        contain any characters, including nulls.
     */
     BOOST_URL_DECL
     basic_value&
@@ -740,29 +794,68 @@ public:
         Sets the query of the URL to the specified
         encoded string:
 
-        @li If the string is empty, any existing query
-        is removed including the leading question mark ('?'),
+        @li If the string is empty, the query is
+        cleared including the leading question mark ('?'),
         otherwise:
 
-        @li If the string starts with a question mark it
-        is first removed. Then the query is set to the string.
-        The URL will always include at least a question mark
-        if the passed string is not empty.
+        @li If the string is not empty, the fragment
+        is set to given string, with a leading question
+        mark added.
+        The string must meet the syntactic requirements
+        of <em>query</em> otherwise an exception is
+        thrown.
+
+        @par ABNF
+        @code
+        query         = *( pchar / "/" / "?" )
+        @endcode
 
         @par Exception Safety
 
         Strong guarantee.
         Calls to allocate may throw.
 
-        @param s The encoded query. If this string
-        is not syntactically correct, an exception is
-        thrown.
+        @param s The string to set.
 
-        @throws std::exception invalid query.
+        @throws std::exception invalid string.
     */
     BOOST_URL_DECL
     basic_value&
     set_encoded_query(
+        string_view s);
+
+    /** Set the query.
+
+        Sets the query of the URL to the specified
+        encoded string.
+
+        @li If the string is empty, the query is
+        cleared including the leading question
+        mark ('?'), otherwise:
+        
+        @li If the string is not empty, the query
+        is set to given string.
+        The string must meet the syntactic requirements
+        of <em>query-part</em> otherwise an exception
+        is thrown.
+
+        @par ABNF
+        @code
+        query-part    = "#" *( pchar / "/" / "?" )
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
+
+        @throws std::exception invalid string.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_query_part(
         string_view s);
 
     /** Return the query.

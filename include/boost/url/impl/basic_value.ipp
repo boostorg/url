@@ -791,10 +791,26 @@ string_view
 basic_value::
 encoded_query() const noexcept
 {
-    return pt_.get(
-        detail::id_query,
-        detail::id_frag,
-        s_);
+    auto s = pt_.get(
+        detail::id_query, s_);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        s.front() == '?');
+    return s.substr(1);
+}
+
+string_view
+basic_value::
+query_part() const noexcept
+{
+    auto s = pt_.get(
+        detail::id_query, s_);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        s.front() == '?');
+    return s;
 }
 
 basic_value&
@@ -807,14 +823,10 @@ set_query(
         resize(detail::id_query, 0);
         return *this;
     }
-
-    if(s.front() == '?')
-        s = s.substr(1);
     auto const e =
         detail::query_pct_set();
     auto const n =
         e.encoded_size(s);
-
     auto const dest = resize(
         detail::id_query,
         1 + n);
@@ -833,13 +845,33 @@ set_encoded_query(
         resize(detail::id_query, 0);
         return *this;
     }
-
-    if(s.front() == '?')
-        s = s.substr(1);
     auto const e =
         detail::query_pct_set();
     e.validate(s);
+    auto const dest = resize(
+        detail::id_query,
+        1 + s.size());
+    dest[0] = '?';
+    s.copy(dest + 1, s.size());
+    return *this;
+}
 
+basic_value&
+basic_value::
+set_query_part(
+    string_view s)
+{
+    if(s.empty())
+    {
+        resize(detail::id_query, 0);
+        return *this;
+    }
+    if(s.front() != '?')
+        invalid_part::raise();
+    s = s.substr(1);
+    auto const e =
+        detail::query_pct_set();
+    e.validate(s);
     auto const dest = resize(
         detail::id_query,
         1 + s.size());
@@ -859,9 +891,7 @@ basic_value::
 encoded_fragment() const noexcept
 {
     auto s = pt_.get(
-        detail::id_frag,
-        detail::id_end,
-        s_);
+        detail::id_frag, s_);
     if(s.empty())
         return s;
     BOOST_ASSERT(
@@ -874,9 +904,7 @@ basic_value::
 fragment_part() const noexcept
 {
     auto s = pt_.get(
-        detail::id_frag,
-        detail::id_end,
-        s_);
+        detail::id_frag, s_);
     if(s.empty())
         return s;
     BOOST_ASSERT(
@@ -932,7 +960,10 @@ set_fragment_part(
     string_view s)
 {
     if(s.empty())
-        return set_fragment(s);
+    {
+        resize(detail::id_frag, 0);
+        return *this;
+    }
     if(s.front() != '#')
         invalid_part::raise();
     s = s.substr(1);
