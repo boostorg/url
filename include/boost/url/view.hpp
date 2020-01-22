@@ -638,7 +638,7 @@ class view::params_type::value_type
         : k_(k)
         , v_(v)
     {
-    }
+        }
 
 public:
     value_type() = delete;

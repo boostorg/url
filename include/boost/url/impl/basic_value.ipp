@@ -1194,13 +1194,13 @@ operator*() const noexcept ->
     string_view const k = {
         v_->s_ + off_ + 1,
         nk_ - 1 };
-
-    BOOST_ASSERT(nv_ == 0 ||
+    if(nv_ == 0)
+        return { k, { } };
+    BOOST_ASSERT(
         v_->s_[off_ + nk_] == '=');
     string_view const v = {
         v_->s_ + off_ + nk_ + 1,
         nv_ - 1};
-
     return { k, v };
 }
 
