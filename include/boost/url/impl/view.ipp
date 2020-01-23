@@ -74,6 +74,15 @@ scheme() const noexcept
 //
 //----------------------------------------------------------
 
+bool
+view::
+has_authority() const noexcept
+{
+    return pt_.length(
+        detail::id_username,
+        detail::id_path) != 0;
+}
+
 string_view
 view::
 encoded_authority() const noexcept

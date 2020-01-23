@@ -13,20 +13,20 @@
 
 The design of the mutable container achieves these goals:
 
-* The caller can produce all possible valid URLs using the
+The caller can produce all possible valid URLs using the
   modification functions.
 
-* The URL always remains syntactically valid after modification:
+The URL always remains syntactically valid after modification:
 
-    - The library adds separators when needed, in the cases
-      where the user's intent is unambiguous, or
+The library adds separators when needed, in the cases
+  where the user's intent is unambiguous, or
 
-    - The library throws an exception when an ambiguous
-      modification would leave the URL in a syntactically
-      invalid state.
+The library throws an exception when an ambiguous
+  modification would leave the URL in a syntactically
+  invalid state.
 
-* Perform modifications using a pre-allocated buffer
+Perform modifications using a pre-allocated buffer
 
-    - Avoid all dynamic allocations
+Avoid all dynamic allocations
 
 [endsect]

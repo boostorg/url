@@ -104,6 +104,25 @@ public:
     test_suite::log_type log;
 
     void
+    dump(value const& u)
+    {
+        (void)u;
+        log <<
+            "href     : " << u.encoded_url() << "\n"
+            "scheme   : " << u.scheme() << "\n"
+            "user     : " << u.encoded_username() << "\n"
+            "password : " << u.encoded_password() << "\n"
+            "hostname : " << u.encoded_hostname() << "\n"
+            "port     : " << u.port_part() << "\n" <<
+            "path     : " << u.encoded_path() << "\n"
+            "query    : " << u.query_part() << "\n"
+            "fragment : " << u.fragment_part() << "\n"
+            //"resource : " << u.encoded_resource() << "\n"
+            ;
+        log.flush();
+    }
+
+    void
     testConstValue()
     {
         BOOST_TEST(value().host() == host_type::none);
@@ -240,27 +259,6 @@ public:
     }
 
     //------------------------------------------------------
-
-    void
-    dump(value const& u)
-    {
-        (void)u;
-#if 0
-        log <<
-            "href     : " << u.encoded_url() << "\n"
-            "scheme   : " << u.scheme() << "\n"
-            "user     : " << u.encoded_username() << "\n"
-            "password : " << u.encoded_password() << "\n"
-            "hostname : " << u.encoded_hostname() << "\n"
-            "port     : " << u.port() << "\n" <<
-            "path     : " << u.encoded_path() << "\n"
-            "query    : " << u.encoded_query() << "\n"
-            "fragment : " << u.encoded_fragment() << "\n"
-            "resource : " << u.encoded_resource() << "\n"
-            ;
-        log.flush();
-#endif
-    }
 
     void
     testCtor()
@@ -473,8 +471,49 @@ public:
     void
     testPath()
     {
-        BOOST_TEST(value("/path/to/file.txt").encoded_path() == "/path/to/file.txt");
-        BOOST_TEST(value("http://x.com/path/to/file.txt?query").set_encoded_path("/a/b/c").encoded_path() == "/a/b/c");
+        BOOST_TEST(value().encoded_path() == "");
+        BOOST_TEST(value("x:a").encoded_path() == "a");
+        BOOST_TEST(value("x:/a").encoded_path() == "/a");
+        BOOST_TEST(value("x://y/a").encoded_path() == "/a");
+
+        // path-empty
+        BOOST_TEST(value("").set_encoded_path("").encoded_url() == "");
+        BOOST_TEST(value("//x#").set_encoded_path("").encoded_url() == "//x#");
+
+        // path-abempty
+        BOOST_TEST(value("//x#").set_encoded_path("/").encoded_url() == "//x/#");
+        BOOST_TEST(value("//x#").set_encoded_path("//").encoded_url() == "//x//#");
+        BOOST_TEST(value("//x#").set_encoded_path("/y").encoded_url() == "//x/y#");
+        BOOST_TEST_THROWS(value("//x#").set_encoded_path("x"), invalid_part);
+        BOOST_TEST_THROWS(value("//x#").set_encoded_path("x/"), invalid_part);
+        BOOST_TEST_THROWS(value("//x#").set_encoded_path("/%A"), invalid_part);
+        BOOST_TEST_THROWS(value("//x#").set_encoded_path("/#"), invalid_part);
+
+        // path-absolute
+        BOOST_TEST(value("?#").set_encoded_path("/x").encoded_url() == "/x?#");
+        BOOST_TEST_THROWS(value("?").set_encoded_path("//x"), invalid_part);
+        BOOST_TEST_THROWS(value("?").set_encoded_path("/x%A"), invalid_part);
+
+        // path-noscheme
+        BOOST_TEST(value("").set_encoded_path("x").encoded_url() == "x");
+        BOOST_TEST(value("").set_encoded_path("x/").encoded_url() == "x/");
+        BOOST_TEST(value("").set_encoded_path("x//").encoded_url() == "x//");
+        BOOST_TEST(value("?#").set_encoded_path("x").encoded_url() == "x?#");
+        BOOST_TEST(value("?#").set_encoded_path("x/").encoded_url() == "x/?#");
+        BOOST_TEST(value("?#").set_encoded_path("x//").encoded_url() == "x//?#");
+        BOOST_TEST(value("yz/?#").set_encoded_path("x").encoded_url() == "x?#");
+        BOOST_TEST(value("yz/?#").set_encoded_path("x/").encoded_url() == "x/?#");
+        BOOST_TEST(value("yz/?#").set_encoded_path("x//").encoded_url() == "x//?#");
+        BOOST_TEST_THROWS(value("yz/?#").set_encoded_path(":"), invalid_part);
+        BOOST_TEST_THROWS(value("yz/?#").set_encoded_path("x:"), invalid_part);
+        BOOST_TEST_THROWS(value("yz/?#").set_encoded_path("x:/q"), invalid_part);
+
+        // path-rootless
+        BOOST_TEST(value("x:?#").set_encoded_path("y").encoded_url() == "x:y?#");
+        BOOST_TEST(value("x:?#").set_encoded_path("y/").encoded_url() == "x:y/?#");
+        BOOST_TEST(value("x:?#").set_encoded_path("y//").encoded_url() == "x:y//?#");
+        BOOST_TEST_THROWS(value("x:?#").set_encoded_path("/"), invalid_part);
+        BOOST_TEST_THROWS(value("x:?#").set_encoded_path("%A"), invalid_part);
     }
 
     //------------------------------------------------------

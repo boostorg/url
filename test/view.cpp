@@ -239,7 +239,16 @@ public:
         BOOST_TEST(view("//x:80/").port() == "80");
         BOOST_TEST(view("//x:80/").port_part() == ":80");
     }
-    
+
+    void
+    testPath()
+    {
+        BOOST_TEST(view().encoded_path() == "");
+        BOOST_TEST(view("x:a").encoded_path() == "a");
+        BOOST_TEST(view("x:/a").encoded_path() == "/a");
+        BOOST_TEST(view("x://y/a").encoded_path() == "/a");
+    }
+
     void
     testQuery()
     {
@@ -281,6 +290,7 @@ public:
         testParams();
 
         testPort();
+        testPath();
         testQuery();
         testFragment();
     }

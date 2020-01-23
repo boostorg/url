@@ -173,6 +173,15 @@ set_scheme(
 //
 //----------------------------------------------------------
 
+bool
+basic_value::
+has_authority() const noexcept
+{
+    return pt_.length(
+        detail::id_username,
+        detail::id_path) != 0;
+}
+
 string_view
 basic_value::
 encoded_authority() const noexcept
@@ -784,20 +793,36 @@ basic_value::
 set_encoded_path(
     string_view s)
 {
+    // path-empty
     if(s.empty())
     {
         resize(
-            detail::id_path,
-            detail::id_query, 0);
+            detail::id_path, 0);
         return *this;
     }
-
-    detail::parts pt;
-    detail::parse_path_abempty(pt, s);
+    if(has_authority())
+    {
+        // path-abempty
+        detail::match_path_abempty(s);
+    }
+    else if(s.front() == '/')
+    {
+        // path-absolute
+        detail::match_path_absolute(s);
+    }
+    else if(pt_.length(
+        detail::id_scheme) == 0)
+    {
+        // path-noscheme
+        detail::match_path_noscheme(s);
+    }
+    else
+    {
+        // path-rootless
+        detail::match_path_rootless(s);
+    }
     auto const dest = resize(
-        detail::id_path,
-        detail::id_query,
-        s.size());
+        detail::id_path, s.size());
     s.copy(dest, s.size());
     return *this;
 }

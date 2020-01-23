@@ -257,6 +257,21 @@ public:
     //
     //------------------------------------------------------
 
+    /** Return true if an authority is present.
+
+        This function returns
+        @code
+        ! this->encoded_authority().empty();
+        @endcode
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
+    BOOST_URL_DECL
+    bool
+    has_authority() const noexcept;
+
     /** Return the authority.
 
         @par Exception Safety
@@ -671,9 +686,25 @@ public:
         encoded string. If this string is empty,
         any existing path is removed.
 
-        The string must meet the syntactic requirements
-        of <em>path</em> otherwise an exception is
-        thrown.
+        The string must meet the syntactic requirements,
+        which vary depending on the existing contents
+        of the URL:
+
+        @li If an authority is present (@ref has_authority
+        returns `true`), the path syntax must match
+        <em>path-abempty</em>, else
+
+        @li If the new path starts with a forward
+        slash ('/'), the path syntax must match
+        <em>path-absolute</em>, else
+
+        @li If a scheme is present, the path syntax
+        must match <em>path-rootless</em>, otherwise
+
+        @li The path syntax must match <em>path-noscheme</em>.
+
+        If the path does not meet the syntactic
+        requirements, an exception is thrown.
 
         @par ABNF
         @code

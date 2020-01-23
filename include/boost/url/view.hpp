@@ -88,6 +88,21 @@ public:
     //
     //------------------------------------------------------
 
+    /** Return true if an authority is present.
+
+        This function returns
+        @code
+        !this->encoded_authority().empty();
+        @endcode
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
+    BOOST_URL_DECL
+    bool
+    has_authority() const noexcept;
+
     /** Return the encoded authority.
     */
     BOOST_URL_DECL

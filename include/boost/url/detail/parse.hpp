@@ -658,38 +658,6 @@ struct parser
         parse_path_rootless(pt, ec);
     }
 
-    // path-rootless
-    void
-    parse_path_rootless(
-        parts& pt,
-        error_code& ec) noexcept
-    {
-        auto const p0 = p_;
-        auto const e =
-            pchar_pct_set();
-        p_ = e.parse(p0, end_, ec);
-        if(ec)
-            return;
-        if(p_ == p0)
-        {
-            // first segment can't be empty
-            ec = error::no_match;
-            return;
-        }
-        ++pt.nseg;
-        while(p_ < end_)
-        {
-            if(*p_ != '/')
-                break;
-            p_ = e.parse(
-                p_ + 1, end_, ec);
-            if(ec)
-                return;
-            ++pt.nseg;
-        }
-        mark(pt, id_path);
-    }
-
     // path-noscheme
     void
     parse_path_noscheme(
@@ -710,6 +678,38 @@ struct parser
         }
         ++pt.nseg;
         e = pchar_pct_set();
+        while(p_ < end_)
+        {
+            if(*p_ != '/')
+                break;
+            p_ = e.parse(
+                p_ + 1, end_, ec);
+            if(ec)
+                return;
+            ++pt.nseg;
+        }
+        mark(pt, id_path);
+    }
+
+    // path-rootless
+    void
+    parse_path_rootless(
+        parts& pt,
+        error_code& ec) noexcept
+    {
+        auto const p0 = p_;
+        auto const e =
+            pchar_pct_set();
+        p_ = e.parse(p0, end_, ec);
+        if(ec)
+            return;
+        if(p_ == p0)
+        {
+            // first segment can't be empty
+            ec = error::no_match;
+            return;
+        }
+        ++pt.nseg;
         while(p_ < end_)
         {
             if(*p_ != '/')
@@ -833,6 +833,7 @@ parse_url(
     {
         // rewind
         ec = {};
+        pr.p_ = pr.begin_;
 
         // relative-ref
         pr.parse_relative_part(pt, ec);
@@ -962,13 +963,54 @@ match_port(string_view s)
 
 inline
 void
-parse_path_abempty(
-    parts& pt,
-    string_view s)
+match_path_abempty(string_view s)
 {
+    parts pt;
     parser pr(s);
     error_code ec;
     pr.parse_path_abempty(pt, ec);
+    if(ec)
+        invalid_part::raise();
+    if(! pr.done())
+        invalid_part::raise();
+}
+
+inline
+void
+match_path_absolute(string_view s)
+{
+    parts pt;
+    parser pr(s);
+    error_code ec;
+    pr.parse_path_absolute(pt, ec);
+    if(ec)
+        invalid_part::raise();
+    if(! pr.done())
+        invalid_part::raise();
+}
+
+inline
+void
+match_path_noscheme(string_view s)
+{
+    parts pt;
+    parser pr(s);
+    error_code ec;
+    pr.parse_path_noscheme(pt, ec);
+    if(ec)
+        invalid_part::raise();
+    if(! pr.done())
+        invalid_part::raise();
+}
+
+inline
+void
+match_path_rootless(string_view s)
+{
+    parts pt;
+    parser pr(s);
+    error_code ec;
+    pr.parse_path_rootless(pt, ec);
     if(ec)
         invalid_part::raise();
     if(! pr.done())
