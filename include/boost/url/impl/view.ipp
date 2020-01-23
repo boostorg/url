@@ -201,16 +201,6 @@ port_string() const noexcept
 //
 //----------------------------------------------------------
 
-bool
-view::
-is_relative() const noexcept
-{
-    auto const s = pt_.get(
-        detail::id_path, s_);
-    return ! s.empty() &&
-        s.front() != '/';
-}
-
 string_view
 view::
 encoded_path() const noexcept

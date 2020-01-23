@@ -15,11 +15,84 @@
 #include "test_suite.hpp"
 
 /*
-
     https://nodejs.org/api/url.html
     https://medialize.github.io/URI.js/
     https://developer.mozilla.org/en-US/docs/Web/API/URL
     https://docs.microsoft.com/en-us/dotnet/api/system.uri?view=netframework-4.8
+
+    request-target = origin-form
+                   / absolute-form
+                   / authority-form
+                   / asterisk-form
+
+    URI-reference   = URI / relative-ref
+    URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+    absolute-URI    = scheme ":" hier-part [ "?" query ]
+    relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
+    origin-form     = absolute-path [ "?" query ]
+    absolute_form   = absolute-URI
+    authority-form  = host [ ":" port ]
+        
+    kind::url           URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+    http://www.example.com:80/path/to/file.txt?query#fragment
+
+    kind::absolute      absolute-URI  = scheme ":" hier-part [ "?" query ]
+
+    hier-part
+        "//" authority path-abempty
+            //
+            //example.com
+            //example.com/
+            //example.com/path/to/file.txt
+        path-absolute
+            /
+            /path
+            /path/to/file.txt
+        path-rootless
+            path
+            path/to/file.txt
+        path-empty
+            "" (empty)
+
+    relative-part
+        "//" authority path-abempty
+            //
+            //example.com
+            //example.com/
+            //example.com/path/to/file.txt
+        path-absolute
+            /
+            /path
+            /path/to/file.txt
+        path-noscheme
+            path
+            path/to/file.txt
+        path-empty
+            "" (empty)
+
+    If a URI contains an authority component, then the path component
+    must either be empty or begin with a slash ("/") character.  If a URI
+    does not contain an authority component, then the path cannot begin
+    with two slash characters ("//").  In addition, a URI reference
+    (Section 4.1) may be a relative-path reference, in which case the
+    first path segment cannot contain a colon (":") character.  The ABNF
+    requires five separate rules to disambiguate these cases, only one of
+    which will match the path substring within a given URI reference.  We
+    use the generic term "path component" to describe the URI substring
+    matched by the parser to one of these rules.
+
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+
 */
 
 namespace boost {

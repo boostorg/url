@@ -9,4 +9,22 @@
 
 [section Usage]
 
+[heading Nomenclature]
+
+This library standardizes on the term "URL" to refer to all strings which
+follow the URI generic syntax. The reason is that the terms URI and IRI
+are just confusing. In practice a single algorithm is used for both so
+keeping them distinct is not helping anyone. 
+
+[heading Syntax]
+
+This documentation uses the Augmented Backus-Naur Form (ABNF)
+notation of
+[@https://tools.ietf.org/html/rfc2234 [RFC2234]]
+including the following core ABNF syntax rules defined by that specification:
+ALPHA (letters), CR (carriage return), DIGIT (decimal digits), DQUOTE (double
+quote), HEXDIG (hexadecimal digits), LF (line feed), and SP (space).  The
+complete URI syntax is described in
+__RFC3986__.
+
 [endsect]

@@ -201,12 +201,6 @@ public:
     //
     //------------------------------------------------------
 
-    /** Return `true` if this is a relative-ref.
-    */
-    BOOST_URL_DECL
-    bool
-    is_relative() const noexcept;
-
     /** Return the encoded path.
     */
     BOOST_URL_DECL

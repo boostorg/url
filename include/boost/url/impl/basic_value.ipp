@@ -741,16 +741,6 @@ set_port_string(string_view s)
 //
 //----------------------------------------------------------
 
-bool
-basic_value::
-is_relative() const noexcept
-{
-    auto const s = pt_.get(
-        detail::id_path, s_);
-    return ! s.empty() &&
-        s.front() != '/';
-}
-
 string_view
 basic_value::
 encoded_path() const noexcept

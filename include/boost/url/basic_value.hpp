@@ -571,21 +571,10 @@ public:
     //
     //------------------------------------------------------
 
-    /** Return `true` if this is a relative-ref.
-
-        @par Exception Safety
-
-        No-throw guarantee.
-    */
-    BOOST_URL_DECL
-    bool
-    is_relative() const noexcept;
-
     /** Return the path.
 
-        If the URL has a path, it is returned in
-        encoded form. Otherwise, an empty string
-        is returned.
+        This function returns the path of the URL
+        as a percent-encoded string.
 
         @par Exception Safety
 
@@ -601,14 +590,31 @@ public:
         encoded string. If this string is empty,
         any existing path is removed.
 
+        The string must meet the syntactic requirements
+        of <em>path</em> otherwise an exception is
+        thrown.
+
+        @par ABNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+        @endcode
+
         @par Exception Safety
 
         Strong guarantee.
         Calls to allocate may throw.
 
-        @param s The encoded oath. If this string
-        is not syntactically correct, an exception is
-        thrown.
+        @param s The string to set.
 
         @throws std::exception invalid path.
 
@@ -662,11 +668,11 @@ public:
 
         This function returns the query of the URL:
 
-        * If a query is present, it is returned
+        @li If a query is present, it is returned
         in decoded form without a leading question
         mark ('?'), otherwise:
 
-        * If there is no query, an empty string is
+        @li If there is no query, an empty string is
         returned.
 
         Note that if the URL contains a question mark
@@ -705,11 +711,11 @@ public:
 
         This function returns the query of the URL:
 
-        * If a query is present, it is returned
+        @li If a query is present, it is returned
         in encoded form without a leading question
         mark ('#'), otherwise:
 
-        * If there is no query, an empty string is
+        @li If there is no query, an empty string is
         returned.
 
         Note that if the URL contains a question
@@ -740,11 +746,11 @@ public:
 
         This function returns the query of the URL:
 
-        * If a query is present, it is returned
+        @li If a query is present, it is returned
         in encoded form including the leading hash
         mark ('?'), otherwise:
 
-        * If there is no query, an empty string is
+        @li If there is no query, an empty string is
         returned.
 
         Note that if the URL contains a question
@@ -841,7 +847,7 @@ public:
 
         @par ABNF
         @code
-        query-part    = "#" *( pchar / "/" / "?" )
+        query-part    = [ "#" *( pchar / "/" / "?" ) ]
         @endcode
 
         @par Exception Safety
@@ -902,11 +908,11 @@ public:
 
         This function returns the fragment of the URL:
 
-        * If a fragment is present, it is returned in
+        @li If a fragment is present, it is returned in
         decoded form without a leading hash mark ('#'),
         otherwise:
 
-        * If there is no fragment, an empty string is
+        @li If there is no fragment, an empty string is
         returned.
 
         Note that if the URL contains a hash mark
@@ -945,11 +951,11 @@ public:
 
         This function returns the fragment of the URL:
 
-        * If a fragment is present, it is returned in
+        @li If a fragment is present, it is returned in
         encoded form without a leading hash mark ('#'),
         otherwise:
 
-        * If there is no fragment, an empty string is
+        @li If there is no fragment, an empty string is
         returned.
 
         Note that if the URL contains a hash mark
@@ -980,11 +986,11 @@ public:
 
         This function returns the fragment of the URL:
 
-        * If a fragment is present, it is returned
+        @li If a fragment is present, it is returned
         in encoded form including the leading hash
         mark ('#'), otherwise:
 
-        * If there is no fragment, an empty string is
+        @li If there is no fragment, an empty string is
         returned.
 
         Note that if the URL contains a hash mark
@@ -1081,7 +1087,7 @@ public:
 
         @par ABNF
         @code
-        fragment-part = "#" *( pchar / "/" / "?" )
+        fragment-part = [ "#" *( pchar / "/" / "?" ) ]
         @endcode
 
         @par Exception Safety

@@ -29,6 +29,8 @@
 [template include_file[path][^<'''<ulink url="https://github.com/vinniefalco/url/blob/master/include/'''[path]'''">'''[path]'''</ulink>'''>]]
 [template issue[n] '''<ulink url="https://github.com/vinniefalco/url/issues/'''[n]'''">#'''[n]'''</ulink>''']
 
+[def __RFC3986__                [@https://tools.ietf.org/html/rfc3986 [RFC3986]]]
+
 [/ Named Requirements ]
 
 [def __Allocator__              [@https://en.cppreference.com/w/cpp/named_req/Allocator ['Allocator]]]
