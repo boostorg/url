@@ -127,8 +127,8 @@ public:
             BOOST_TEST(v.encoded_password() == "pass");
             BOOST_TEST(v.encoded_userinfo() == "user:pass");
             BOOST_TEST(v.encoded_hostname() == "example.com");
-            BOOST_TEST(v.port_string() == "80");
-            BOOST_TEST(*v.port() == 80);
+            BOOST_TEST(v.port_part() == ":80");
+            BOOST_TEST(v.port() == "80");
             BOOST_TEST(v.encoded_path() == "/path/to/file.txt");
             BOOST_TEST(v.encoded_query() == "k1=v1&k2=v2");
             BOOST_TEST(v.encoded_fragment() == "");
@@ -252,7 +252,7 @@ public:
             "user     : " << u.encoded_username() << "\n"
             "password : " << u.encoded_password() << "\n"
             "hostname : " << u.encoded_hostname() << "\n"
-            "port     : " << u.port_string() << "\n" <<
+            "port     : " << u.port() << "\n" <<
             "path     : " << u.encoded_path() << "\n"
             "query    : " << u.encoded_query() << "\n"
             "fragment : " << u.encoded_fragment() << "\n"
@@ -297,7 +297,7 @@ public:
         BOOST_TEST(
             value("http://host:80/")
             .set_encoded_origin("http://host:443/")
-            .port_string() == "443");
+            .port() == "443");
     }
 
     //------------------------------------------------------
@@ -394,10 +394,10 @@ public:
         BOOST_TEST(value().set_encoded_host("x:1").set_encoded_host("").encoded_url() == "//");
         BOOST_TEST(value().set_encoded_host("x:1").set_encoded_host("example.com:443").encoded_url() == "//example.com:443");
         BOOST_TEST(value().set_encoded_host("local%20host%3A443").encoded_url() == "//local%20host%3A443");
-        BOOST_TEST(! value().set_encoded_host("local%20host%3A443").port().has_value());
+        BOOST_TEST(value().set_encoded_host("local%20host%3A443").port_part() == "");
 
         BOOST_TEST(value().set_encoded_host(":").encoded_url() == "//:");
-        BOOST_TEST(value().set_encoded_host(":").set_port({}).encoded_host() == "");
+        BOOST_TEST(value().set_encoded_host(":").set_port("").encoded_host() == "");
     }
 
     void
@@ -420,25 +420,52 @@ public:
         BOOST_TEST_THROWS(value().set_encoded_hostname("local host"), invalid_part);
     }
 
+    //------------------------------------------------------
+
     void
     testPort()
     {
-        BOOST_TEST(! value().port().has_value());
-        BOOST_TEST(value().port_string() == "");
-        BOOST_TEST(value().set_port({}).port_string() == "");
-        BOOST_TEST(value().set_port({}).encoded_url() == "");
-        BOOST_TEST(value().set_port_string("80").port_string() == "80");
-        BOOST_TEST(*value().set_port_string("80").port() == 80);
-        BOOST_TEST(value().set_port_string("80").encoded_url() == "//:80");
-        BOOST_TEST(value().set_port(80).encoded_url() == "//:80");
-        BOOST_TEST(value("http://:80").set_port_string("").encoded_url() == "http://");
-        BOOST_TEST(value("http://:80").set_port_string("").set_port(443).encoded_url() == "http://:443");
-        BOOST_TEST(value("http://x.com:80").set_port_string("").encoded_url() == "http://x.com");
-        BOOST_TEST(value("http://x.com:80").set_port(443).encoded_url() == "http://x.com:443");
-        BOOST_TEST(value("http://x.com:80").set_port({}).port().has_value() == false);
+        BOOST_TEST(value().port() == "");
+        BOOST_TEST(value().port_part() == "");
+        BOOST_TEST(value("//x:/").port() == "");
+        BOOST_TEST(value("//x:/").port_part() == ":");
+        BOOST_TEST(value("//x:80/").port() == "80");
+        BOOST_TEST(value("//x:80/").port_part() == ":80");
 
-        BOOST_TEST_THROWS(value().set_port_string("12bad"), invalid_part);
-        BOOST_TEST_THROWS(value().set_port_string("9999999"), invalid_part);
+        BOOST_TEST(value().set_port(80).encoded_url() == "//:80");
+        BOOST_TEST(value("//:443/").set_port(80).encoded_url() == "//:80/");
+        BOOST_TEST(value("//:80/").set_port(443).encoded_url() == "//:443/");
+
+        BOOST_TEST(value().set_port("80").encoded_url() == "//:80");
+        BOOST_TEST(value("//:443/").set_port("80").encoded_url() == "//:80/");
+        BOOST_TEST(value("//:80/").set_port("443").encoded_url() == "//:443/");
+        BOOST_TEST_THROWS(value().set_port("x"), invalid_part);
+        BOOST_TEST(value("http://:443/").set_port("").encoded_url() == "http:/");
+
+        BOOST_TEST(value().set_port_part(":80").encoded_url() == "//:80");
+        BOOST_TEST(value("//:443/").set_port_part(":80").encoded_url() == "//:80/");
+        BOOST_TEST(value("//:80/").set_port_part(":443").encoded_url() == "//:443/");
+        BOOST_TEST(value("//:80/").set_port_part(":").encoded_url() == "//:/");
+        BOOST_TEST(value("//:80/").set_port_part("").encoded_url() == "/");
+        BOOST_TEST_THROWS(value().set_port_part("80"), invalid_part);
+
+#if 0
+        BOOST_TEST(value().port() == "");
+        BOOST_TEST(value().set_port({}).port() == "");
+        BOOST_TEST(value().set_port({}).encoded_url() == "");
+        BOOST_TEST(value().set_port("80").port() == "80");
+        BOOST_TEST(value().set_port(80).port() == "80");
+        BOOST_TEST(value().set_port("80").encoded_url() == "//:80");
+        BOOST_TEST(value().set_port(80).encoded_url() == "//:80");
+        BOOST_TEST(value("http://:80").set_port("").encoded_url() == "http://");
+        BOOST_TEST(value("http://:80").set_port("").set_port(443).encoded_url() == "http://:443");
+        BOOST_TEST(value("http://x.com:80").set_port("").encoded_url() == "http://x.com");
+        BOOST_TEST(value("http://x.com:80").set_port(443).encoded_url() == "http://x.com:443");
+        BOOST_TEST(value("http://x.com:80/").clear_port().encoded_url() == "http://x.com/");
+
+        BOOST_TEST_THROWS(value().set_port("12bad"), invalid_part);
+        BOOST_TEST_THROWS(value().set_port("9999999"), invalid_part);
+#endif
     }
 
     //------------------------------------------------------
@@ -447,58 +474,7 @@ public:
     testPath()
     {
         BOOST_TEST(value("/path/to/file.txt").encoded_path() == "/path/to/file.txt");
-        BOOST_TEST(value("http://example.com/path/to/file.txt?query").set_encoded_path("/a/b/c").encoded_path() == "/a/b/c");
-#if 0
-        BOOST_TEST(
-            value("/path/to/file.txt")
-            .set_encoded_segment(0, "p")
-            .encoded_url() == "/p/to/file.txt");
-        BOOST_TEST(
-            value("/path/to/file.txt")
-            .set_encoded_segment(1, "from")
-            .encoded_url() == "/path/from/file.txt");
-        BOOST_TEST(
-            value("/path/to/file.txt")
-            .set_encoded_segment(2, "index.htm")
-            .encoded_url() == "/path/to/index.htm");
-        BOOST_TEST(
-            value("/path/to/file.txt")
-            .encoded_segment(2) == "file.txt");
-        BOOST_TEST(
-            value("/path/to/file.txt")
-            .encoded_segment(-1) == "file.txt");
-        BOOST_TEST(
-            value("/path/to/file.txt")
-            .encoded_segment(-2) == "to");
-        BOOST_TEST(
-            value("/path/to/file.txt")
-            .encoded_segment(-3) == "path");
-        BOOST_TEST(
-            value("/path/to/file.txt")
-            .set_segment(0, "pa th")
-            .encoded_url() == "/pa%20th/to/file.txt");
-        BOOST_TEST_THROWS(
-            value("/path/to/file.txt")
-            .set_encoded_segment(0, "path/from"),
-            invalid_part);
-#endif
-
-#if 0
-        value u;
-        u.set_scheme("http");
-        u.set_encoded_userinfo("user:password");
-        u.set_encoded_host("example.com:443");
-        u.set_encoded_path("/");
-        log << u.encoded_url() << std::endl;
-
-        u.set_encoded_path("/path/to/file.txt");
-        log << u.encoded_url() << std::endl;
-        print(u.segments());
-        u.set_segment(0, "pa th");
-        log << u.encoded_url() << std::endl;
-        u.set_segment(1, "teux");
-        log << u.encoded_url() << std::endl;
-#endif
+        BOOST_TEST(value("http://x.com/path/to/file.txt?query").set_encoded_path("/a/b/c").encoded_path() == "/a/b/c");
     }
 
     //------------------------------------------------------
@@ -625,8 +601,9 @@ public:
         testUsername();
         testPassword();
         testHostname();
-        testPort();
         testHost();
+
+        testPort();
         testPath();
         testQuery();
         testFragment();

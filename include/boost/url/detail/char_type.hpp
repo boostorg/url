@@ -505,20 +505,22 @@ key_equal(
 
 struct port_string
 {
-    char buf_[5];
+    static unsigned constexpr N = 10;
+    char buf_[N];
     unsigned char len_;
 
 public:
+    explicit
     port_string(
-        unsigned short port) noexcept
+        unsigned n) noexcept
     {
         len_ = 1;
         for(;;)
         {
-            buf_[5 - len_] =
-                '0' + (port % 10);
-            port /= 10;
-            if(! port)
+            buf_[N - len_] =
+                '0' + (n % 10);
+            n /= 10;
+            if(! n)
                 break;
             ++len_;
         }
@@ -527,7 +529,7 @@ public:
     char const*
     data() const noexcept
     {
-        return &buf_[5 - len_];
+        return &buf_[N - len_];
     }
 
     unsigned char

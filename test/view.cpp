@@ -44,8 +44,8 @@ public:
         BOOST_TEST(v.encoded_password() == "pass");
         BOOST_TEST(v.encoded_userinfo() == "user:pass");
         BOOST_TEST(v.encoded_hostname() == "example.com");
-        BOOST_TEST(v.port_string() == "80");
-        BOOST_TEST(*v.port() == 80);
+        BOOST_TEST(v.port_part() == ":80");
+        BOOST_TEST(v.port() == "80");
         BOOST_TEST(v.encoded_path() == "/path/to/file.txt");
         BOOST_TEST(v.encoded_query() == "k1=v1&k2=v2");
         BOOST_TEST(v.encoded_fragment() == "");
@@ -230,6 +230,17 @@ public:
     }
 
     void
+    testPort()
+    {
+        BOOST_TEST(view().port() == "");
+        BOOST_TEST(view().port_part() == "");
+        BOOST_TEST(view("//x:/").port() == "");
+        BOOST_TEST(view("//x:/").port_part() == ":");
+        BOOST_TEST(view("//x:80/").port() == "80");
+        BOOST_TEST(view("//x:80/").port_part() == ":80");
+    }
+    
+    void
     testQuery()
     {
         BOOST_TEST(view("").query() == "");
@@ -268,6 +279,8 @@ public:
         testIPv6();
         testSegments();
         testParams();
+
+        testPort();
         testQuery();
         testFragment();
     }

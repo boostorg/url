@@ -181,19 +181,35 @@ public:
     string_view
     encoded_hostname() const noexcept;
 
-    /** Return the port, if any.
-    */
-    optional<unsigned short>
-    port() const noexcept
-    {
-        return pt_.port;
-    }
+    /** Return the port.
 
-    /** Return the port as a string, or "" if no port.
+        If the URL contains a port, this function
+        returns the port string without a leading
+        colon (':'). Otherwise, an empty string
+        is returned.
+        
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
-    port_string() const noexcept;
+    port() const noexcept;
+
+    /** Return the port.
+
+        If the URL contains a port, this function
+        returns the port string including a leading
+        colon (':'). Otherwise, an empty string
+        is returned.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
+    BOOST_URL_DECL
+    string_view
+    port_part() const noexcept;
 
     //------------------------------------------------------
     //

@@ -521,24 +521,25 @@ public:
 
     /** Return the port.
 
+        If the URL contains a port, this function
+        returns the port string without a leading
+        colon (':'). Otherwise, an empty string
+        is returned.
+        
         @par Exception Safety
 
         No-throw guarantee.
-
-        @return An optional value with the port
-        number if the port is set, otherwise the
-        nullopt value.
     */
-    optional<unsigned short>
-    port() const noexcept
-    {
-        return pt_.port;
-    }
+    BOOST_URL_DECL
+    string_view
+    port() const noexcept;
 
     /** Return the port.
 
-        If present, the port is returned as a string.
-        Otherwise, the empty string is returned.
+        If the URL contains a port, this function
+        returns the port string including a leading
+        colon (':'). Otherwise, an empty string
+        is returned.
 
         @par Exception Safety
 
@@ -546,24 +547,104 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    port_string() const noexcept;
-
-    BOOST_URL_DECL
-    basic_value&
-    set_port(
-        optional<unsigned short> num);
+    port_part() const noexcept;
 
     /** Set the port.
 
-        This function sets the port to the given
-        string, which must represent a valid unsigned
-        integer in the range of values allowed for
-        ports (0 to 65535).
+        The port of the URL is set to the specified
+        integer, replacing any previous port.
 
+        If the URL previously did not contain an
+        authority (@ref has_authority returns `false`),
+        then the authority is added including the
+        leading double slash ('//').
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param n The port number to set.
     */
     BOOST_URL_DECL
     basic_value&
-    set_port_string(string_view s);
+    set_port(unsigned n);
+
+    /** Set the port.
+
+        The port of the URL is set to the specified string.
+
+        @li If the string is empty, the port is
+        cleared including the leading colon (':'). If
+        the port was the last remaining portion of
+        the authority, then the entire authority is
+        removed including the leading double slash ('//').
+        Otherwise,
+
+        @li If the string is not empty then the port
+        is set to the given string, with a leading
+        colon added.
+        If the URL previously did not contain an
+        authority (@ref has_authority returns `false`),
+        then the authority is added including the
+        leading double slash ('//').
+        The string must meet the syntactic requirements
+        of <em>port</em> otherwise an exception is
+        thrown.
+
+        @par ABNF
+        @code
+        port          = *DIGIT
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_port(string_view s);
+
+    /** Set the port.
+
+        The port of the URL is set to the specified string.
+
+        @li If the string is empty, the port is
+        cleared including the leading colon (':'). If
+        the port was the last remaining portion of
+        the authority, then the entire authority is
+        removed including the leading double slash ('//').
+        Otherwise,
+
+        @li If the string is not empty then the port
+        is set to the given string, which must have
+        a starting colon.
+        If the URL previously did not contain an
+        authority (@ref has_authority returns `false`),
+        then the authority is added including the
+        leading double slash ('//').
+        The string must meet the syntactic requirements
+        of <em>port-part</em> otherwise an exception is
+        thrown.
+
+        @par ABNF
+        @code
+        port-part     = [ ':' *DIGIT ]
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_port_part(string_view s);
 
     //------------------------------------------------------
     //

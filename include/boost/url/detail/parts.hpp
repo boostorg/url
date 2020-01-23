@@ -40,7 +40,6 @@ struct parts
     std::size_t nseg = 0;
     std::size_t nparam = 0;
     host_type host = host_type::none;
-    optional<unsigned short> port;
 
     parts()
     {

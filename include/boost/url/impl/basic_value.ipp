@@ -95,7 +95,6 @@ set_encoded_origin(
         resize(
             detail::id_scheme,
             detail::id_path, 0);
-        pt_.port = {};
         return *this;
     }
 
@@ -124,7 +123,6 @@ set_encoded_origin(
         pt.length(detail::id_hostname));
     pt_.split(
         detail::id_port, pt.length(detail::id_port));
-    pt_.port = pt.port;
     return *this;
 }
 
@@ -203,7 +201,6 @@ set_encoded_authority(
         resize(
             detail::id_username,
             detail::id_path, 0);
-        pt_.port = {};
         return *this;
     }
 
@@ -229,7 +226,6 @@ set_encoded_authority(
     BOOST_ASSERT(
         pt_.length(detail::id_port) ==
             pt.length(detail::id_port));
-    pt_.port = pt.port;
     return *this;
 }
 
@@ -565,7 +561,6 @@ set_encoded_host(
         resize(
             detail::id_hostname,
             detail::id_path, 0);
-        pt_.port = {};
         return *this;
     }
 
@@ -607,7 +602,6 @@ set_encoded_host(
         detail::id_port) == pt.length(
             detail::id_port));
     pt_.host = pt.host;
-    pt_.port = pt.port;
     return *this;
 }
 
@@ -664,31 +658,64 @@ set_encoded_hostname(
 
 string_view
 basic_value::
-port_string() const noexcept
+port() const noexcept
 {
     auto s = pt_.get(
         detail::id_port,
         s_);
-    BOOST_ASSERT(
-        s.empty() || s.front() == ':');
+    BOOST_ASSERT(s.empty() ||
+        s.front() == ':');
     if(! s.empty())
         s.remove_prefix(1);
     return s;
 }
 
+string_view
+basic_value::
+port_part() const noexcept
+{
+    auto s = pt_.get(
+        detail::id_port,
+        s_);
+    BOOST_ASSERT(s.empty() ||
+        s.front() == ':');
+    return s;
+}
+
 basic_value&
 basic_value::
-set_port(
-    optional<unsigned short> num)
+set_port(unsigned n)
 {
-    if(! num.has_value())
+    detail::port_string s(n);
+    return set_port(s.get());
+}
+
+basic_value&
+basic_value::
+set_port(string_view s)
+{
+    if(s.empty())
     {
-        resize(detail::id_port, 0);
-        pt_.port = {};
+        if(pt_.length(
+            detail::id_username,
+            detail::id_port) == 2)
+        {
+            // remove authority
+            BOOST_ASSERT(pt_.get(
+                detail::id_username, s_).substr(
+                    0, 2) == "//");
+            resize(
+                detail::id_username,
+                detail::id_path, 0);
+        }
+        else
+        {
+            resize(detail::id_port, 0);
+        }
         return *this;
     }
-
-    detail::port_string s(*num);
+    detail::match_port(s);
+    // VFALCO add bool has_authority()
     if(pt_.length(
         detail::id_username,
         detail::id_path) == 0)
@@ -706,8 +733,7 @@ set_port(
             detail::id_password, 0);
         pt_.split(
             detail::id_hostname, 0);
-        s.get().copy(
-            dest + 3, s.size());
+        s.copy(dest + 3, s.size());
     }
     else
     {
@@ -715,23 +741,26 @@ set_port(
             detail::id_port,
             1 + s.size());
         dest[0] = ':';
-        s.get().copy(
-            dest + 1, s.size());
+        s.copy(dest + 1, s.size());
     }
-    pt_.port = num;
     return *this;
 }
 
 basic_value&
 basic_value::
-set_port_string(string_view s)
+set_port_part(string_view s)
 {
     if(s.empty())
-        return set_port({});
-
-    detail::parts pt;
-    detail::parse_port(pt, s);
-    set_port(pt.port);
+    {
+        set_port(s);
+        return *this;
+    }
+    if(s.front() != ':')
+        invalid_part::raise();
+    if(s.size() > 1)
+        return set_port(s.substr(1));
+    resize(
+        detail::id_port, 1)[0] = ':';
     return *this;
 }
 

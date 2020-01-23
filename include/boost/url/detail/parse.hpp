@@ -154,9 +154,6 @@ struct parser
             parse_authority(pt, ec);
             if(ec)
                 return;
-            pt.resize(
-                id_username,
-                pt.length(id_username) + 2);
             // path-abempty
             parse_path_abempty(pt, ec);
             if(ec)
@@ -240,9 +237,7 @@ struct parser
             *p_ != ':')
             return;
         ++p_;
-        parse_port(pt, ec);
-        if(ec)
-            return;
+        match_port();
         mark(pt, id_port);
     }
 
@@ -594,32 +589,16 @@ struct parser
 
     // port = *DIGIT
     void
-    parse_port(
-        parts& pt,
-        error_code& ec) noexcept
+    match_port() noexcept
     {
-        auto const p0 = p_;
-        unsigned long v = 0;
         while(p_ < end_)
         {
             auto const digit = static_cast<
                 unsigned char>(*p_ - '0');
             if(digit > 9)
                 break;
-            v = 10 * v + digit;
-            if(v > 65535)
-            {
-                ec = error::port_overflow;
-                return;
-            }
             ++p_;
         }
-        if(p_ == p0)
-            pt.port = {};
-        else
-            pt.port = static_cast<
-                unsigned short>(v);
-        mark(pt, id_port);
     }
 
     //------------------------------------------------------
@@ -972,15 +951,11 @@ parse_hostname(
 
 inline
 void
-parse_port(
-    parts& pt,
-    string_view s)
+match_port(string_view s)
 {
     parser pr(s);
     error_code ec;
-    pr.parse_port(pt, ec);
-    if(ec)
-        invalid_part::raise();
+    pr.match_port();
     if(! pr.done())
         invalid_part::raise();
 }

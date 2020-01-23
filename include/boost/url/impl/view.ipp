@@ -183,15 +183,25 @@ encoded_hostname() const noexcept
 
 string_view
 view::
-port_string() const noexcept
+port() const noexcept
 {
     auto s = pt_.get(
-        detail::id_port,
-        s_);
-    BOOST_ASSERT(
-        s.empty() || s.front() == ':');
+        detail::id_port, s_);
+    BOOST_ASSERT(s.empty()
+        || s.front() == ':');
     if(! s.empty())
         s.remove_prefix(1);
+    return s;
+}
+
+string_view
+view::
+port_part() const noexcept
+{
+    auto const s = pt_.get(
+        detail::id_port, s_);
+    BOOST_ASSERT(s.empty() ||
+        s.front() == ':');
     return s;
 }
 
