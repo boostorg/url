@@ -119,8 +119,8 @@ set_encoded_origin(
         detail::id_password,
         pt.length(detail::id_password));
     pt_.split(
-        detail::id_hostname,
-        pt.length(detail::id_hostname));
+        detail::id_host,
+        pt.length(detail::id_host));
     pt_.split(
         detail::id_port, pt.length(detail::id_port));
     return *this;
@@ -230,8 +230,8 @@ set_encoded_authority(
         detail::id_password,
         pt.length(detail::id_password));
     pt_.split(
-        detail::id_hostname,
-        pt.length(detail::id_hostname));
+        detail::id_host,
+        pt.length(detail::id_host));
     BOOST_ASSERT(
         pt_.length(detail::id_port) ==
             pt.length(detail::id_port));
@@ -248,7 +248,7 @@ encoded_userinfo() const noexcept
 {
     auto s = pt_.get(
         detail::id_username,
-        detail::id_hostname,
+        detail::id_host,
         s_);
     if(s.empty())
         return s;
@@ -269,19 +269,19 @@ set_encoded_userinfo(
     if(s.empty())
     {
         if(pt_.length(
-            detail::id_hostname,
+            detail::id_host,
             detail::id_path) == 0)
         {
             // no authority
             resize(
                 detail::id_username,
-                detail::id_hostname, 0);
+                detail::id_host, 0);
             return *this;
         }
         // keep "//"
         resize(
             detail::id_username,
-            detail::id_hostname, 2);
+            detail::id_host, 2);
         return *this;
     }
 
@@ -305,7 +305,7 @@ set_encoded_userinfo(
 
     auto dest = resize(
         detail::id_username,
-        detail::id_hostname,
+        detail::id_host,
         2 + s.size() + 1);
     dest[0] = '/';
     dest[1] = '/';
@@ -357,7 +357,7 @@ set_username(
             // remove '@'
             resize(
                 detail::id_username,
-                detail::id_hostname, 2);
+                detail::id_host, 2);
         }
         else
         {
@@ -498,7 +498,7 @@ set_password(
     }
     auto const dest = resize(
         detail::id_username,
-        detail::id_hostname,
+        detail::id_host,
         2 + 1 + n + 1);
     dest[0] = '/';
     dest[1] = '/';
@@ -535,7 +535,7 @@ set_encoded_password(
     }
     auto const dest = resize(
         detail::id_username,
-        detail::id_hostname,
+        detail::id_host,
         2 + 1 + n + 1);
     dest[0] = '/';
     dest[1] = '/';
@@ -555,9 +555,93 @@ basic_value::
 encoded_host() const noexcept
 {
     return pt_.get(
-        detail::id_hostname,
-        detail::id_path,
+        detail::id_host,
         s_);
+}
+
+basic_value&
+basic_value::
+set_host(
+    string_view s)
+{
+    if(s.empty())
+    {
+        // just hostname
+        if( pt_.length(
+            detail::id_username,
+            detail::id_host) == 2 &&
+            pt_.length(detail::id_port) == 0)
+        {
+            BOOST_ASSERT(pt_.get(
+                detail::id_username, s_
+                    ) == "//");
+            // remove authority
+            resize(
+                detail::id_username,
+                detail::id_path, 0);
+        }
+        else
+        {
+            resize(detail::id_host, 0);
+        }
+        return *this;
+    }
+    detail::parts pt;
+    detail::parse_plain_hostname(pt, s);
+    BOOST_ASSERT(
+        pt.host != url::host_type::none);
+    if(pt.host != url::host_type::name)
+    {
+        if(! has_authority())
+        {
+            // add authority
+            auto const dest = resize(
+                detail::id_username,
+                2 + s.size());
+            dest[0] = '/';
+            dest[1] = '/';
+            pt_.split(
+                detail::id_username, 2);
+            pt_.split(
+                detail::id_password, 0);
+            s.copy(dest + 2, s.size());
+        }
+        else
+        {
+            auto const dest = resize(
+                detail::id_host,
+                s.size());
+            s.copy(dest, s.size());
+        }
+    }
+    else
+    {
+        auto const e =
+            detail::reg_name_pct_set();
+        if(! has_authority())
+        {
+            // add authority
+            auto const dest = resize(
+                detail::id_username,
+                2 + e.encoded_size(s));
+            dest[0] = '/';
+            dest[1] = '/';
+            pt_.split(
+                detail::id_username, 2);
+            pt_.split(
+                detail::id_password, 0);
+            e.encode(dest + 2, s);
+        }
+        else
+        {
+            auto const dest = resize(
+                detail::id_host,
+                e.encoded_size(s));
+            e.encode(dest, s);
+        }
+    }
+    pt_.host = pt.host;
+    return *this;
 }
 
 basic_value&
@@ -566,23 +650,10 @@ set_encoded_host(
     string_view s)
 {
     if(s.empty())
-    {
-        resize(
-            detail::id_hostname,
-            detail::id_path, 0);
-        return *this;
-    }
-
-    error_code ec;
+        return set_host(s);
     detail::parts pt;
-    detail::parse_host(pt, s);
-    BOOST_ASSERT(s.size() ==
-        pt.length(detail::id_hostname) +
-        pt.length(detail::id_port));
-
-    if(pt_.length(
-        detail::id_username,
-        detail::id_path) == 0)
+    detail::parse_hostname(pt, s);
+    if(! has_authority())
     {
         // add authority
         auto const dest = resize(
@@ -590,77 +661,19 @@ set_encoded_host(
             2 + s.size());
         dest[0] = '/';
         dest[1] = '/';
+        pt_.split(
+            detail::id_username, 2);
+        pt_.split(
+            detail::id_password, 0);
         s.copy(dest + 2, s.size());
-        pt_.split(detail::id_username, 2);
-        pt_.split(detail::id_password, 0);
-        pt_.split(detail::id_hostname,
-            pt.length(detail::id_hostname));
     }
     else
     {
         auto const dest = resize(
-            detail::id_hostname,
-            detail::id_path,
+            detail::id_host,
             s.size());
         s.copy(dest, s.size());
-        pt_.split(
-            detail::id_hostname,
-            pt.length(detail::id_hostname));
     }
-    BOOST_ASSERT(pt_.length(
-        detail::id_port) == pt.length(
-            detail::id_port));
-    pt_.host = pt.host;
-    return *this;
-}
-
-string_view
-basic_value::
-encoded_hostname() const noexcept
-{
-    return pt_.get(
-        detail::id_hostname,
-        s_);
-}
-
-basic_value&
-basic_value::
-set_hostname(
-    string_view s)
-{
-    if(s.empty())
-    {
-        resize(detail::id_hostname, 0);
-        return *this;
-    }
-
-    auto const e =
-        detail::reg_name_pct_set();
-    auto const dest = resize(
-        detail::id_hostname,
-        e.encoded_size(s));
-    e.encode(dest, s);
-    detail::parts pt;
-    detail::parse_hostname(
-        pt, encoded_host());
-    pt_.host = pt.host;
-    return *this;
-}
-
-basic_value&
-basic_value::
-set_encoded_hostname(
-    string_view s)
-{
-    if(s.empty())
-        return set_hostname(s);
-
-    detail::parts pt;
-    detail::parse_hostname(pt, s);
-    auto const dest = resize(
-        detail::id_hostname,
-        s.size());
-    s.copy(dest, s.size());
     pt_.host = pt.host;
     return *this;
 }
@@ -705,6 +718,7 @@ set_port(string_view s)
 {
     if(s.empty())
     {
+        // just port
         if(pt_.length(
             detail::id_username,
             detail::id_port) == 2)
@@ -724,10 +738,7 @@ set_port(string_view s)
         return *this;
     }
     detail::match_port(s);
-    // VFALCO add bool has_authority()
-    if(pt_.length(
-        detail::id_username,
-        detail::id_path) == 0)
+    if(! has_authority())
     {
         // add authority
         auto const dest = resize(
@@ -741,7 +752,7 @@ set_port(string_view s)
         pt_.split(
             detail::id_password, 0);
         pt_.split(
-            detail::id_hostname, 0);
+            detail::id_host, 0);
         s.copy(dest + 3, s.size());
     }
     else
@@ -771,6 +782,16 @@ set_port_part(string_view s)
     resize(
         detail::id_port, 1)[0] = ':';
     return *this;
+}
+
+string_view
+basic_value::
+encoded_host_and_port() const noexcept
+{
+    return pt_.get(
+        detail::id_host,
+        detail::id_path,
+        s_);
 }
 
 //----------------------------------------------------------

@@ -463,28 +463,17 @@ public:
 
         No-throw guarantee.
     */
-    host_type
-    host() const noexcept
+    url::host_type
+    host_type() const noexcept
     {
         return pt_.host;
     }
 
-    /** Return the encoded host.
+    /** Return the host.
 
-        @par Exception Safety
-
-        No-throw guarantee.
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_host() const noexcept;
-
-    BOOST_URL_DECL
-    basic_value&
-    set_encoded_host(
-        string_view s);
-
-    /** Return the hostname.
+        This function returns the host portion of
+        the authority as a decoded string if present,
+        otherwise it returns an empty string.
 
         @par Exception Safety
 
@@ -503,14 +492,25 @@ public:
         class Allocator =
             std::allocator<char>>
     string_type<Allocator>
-    hostname(
+    host(
         Allocator const& a = {}) const
     {
+        if(pt_.host != host_type::name)
+        {
+            auto const s =  pt_.get(
+                detail::id_host, s_);
+            return string_type<Allocator>(
+                s.data(), s.size(), a);
+        }
         return detail::decode(
-            encoded_hostname(), a);
+            encoded_host(), a);
     }
 
-    /** Return the encoded hostname.
+    /** Return the host.
+
+        This function returns the host portion of
+        the authority as an encoded string if present,
+        otherwise it returns an empty string.
 
         @par Exception Safety
 
@@ -518,20 +518,129 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    encoded_hostname() const noexcept;
+    encoded_host() const noexcept;
 
-    /** Set the hostname.
+    /** Set the host.
+
+        The host is set to the specified string,
+        replacing any previous host:
+
+        @li If the string is empty, the host is cleared.
+        cleared. If the host was the last remaining
+        portion of the authority, then the authority
+        is removed including the leading double
+        slash ("//"), else
+
+        @li If the string is a valid <em>IPv4Address</em>,
+        the host is set to the new string and
+        @ref host_type will return
+        @ref host_type::ipv4, otherwise
+
+        @li If the string is a valid <em>IPv6Address</em>,
+        the host is set to the new string and
+        @ref host_type will return
+        @ref host_type::ipv6, else
+
+        @li If the string is a valid <em>IPv6Future</em>,
+        the host is set to the new string and
+        @ref host_type will return
+        @ref host_type::ipvfuture, else
+
+        @li The host is set to the new string.
+        Any special or reserved characters in the
+        string are automatically percent-encoded.
+
+        In all cases where the string is valid and not empty,
+        if the URL previously did not contain an
+        authority (@ref has_authority returns `false`),
+        and `s` is not empty, then the authority is added
+        including a leading double slash ("//").
+
+        @par ABNF
+        @code
+        IPv4address   = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+        IPv6address   =                            6( h16 ":" ) ls32
+                      /                       "::" 5( h16 ":" ) ls32
+                      / [               h16 ] "::" 4( h16 ":" ) ls32
+                      / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+                      / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+                      / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+                      / [ *4( h16 ":" ) h16 ] "::"              ls32
+                      / [ *5( h16 ":" ) h16 ] "::"              h16
+                      / [ *6( h16 ":" ) h16 ] "::"
+
+        IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set. This string may
+        contain any characters, including nulls.
     */
     BOOST_URL_DECL
     basic_value&
-    set_hostname(
+    set_host(
         string_view s);
 
-    /** Set the hostname.
+    /** Set the host.
+
+        The host is set to the specified encoded string,
+        replacing any previous host:
+
+        @li If the string is empty, the host is cleared.
+        If the host was the last remaining portion of
+        the authority, then the entire authority is
+        removed including the leading double
+        slash ("//"). Otherwise,
+
+        @li If the string is not empty, the host
+        is set to the new string.
+        The string must meet the syntactic requirements
+        of <em>host</em> otherwise an exception is
+        thrown.
+        If the URL previously did not contain an
+        authority (@ref has_authority returns `false`),
+        then the authority is added including the
+        leading double slash ("//").
+
+        @par ABNF
+        @code
+        host          = IP-literal / IPv4address / reg-name
+
+        reg-name      = *( unreserved / pct-encoded / sub-delims )
+
+        IP-literal    = "[" ( IPv6address / IPvFuture  ) "]"
+
+        IPv4address   = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+        IPv6address   =                            6( h16 ":" ) ls32
+                      /                       "::" 5( h16 ":" ) ls32
+                      / [               h16 ] "::" 4( h16 ":" ) ls32
+                      / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+                      / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+                      / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+                      / [ *4( h16 ":" ) h16 ] "::"              ls32
+                      / [ *5( h16 ":" ) h16 ] "::"              h16
+                      / [ *6( h16 ":" ) h16 ] "::"
+
+        IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
     */
     BOOST_URL_DECL
     basic_value&
-    set_encoded_hostname(
+    set_encoded_host(
         string_view s);
 
     /** Return the port.
@@ -572,7 +681,7 @@ public:
         If the URL previously did not contain an
         authority (@ref has_authority returns `false`),
         then the authority is added including the
-        leading double slash ('//').
+        leading double slash ("//").
 
         @par Exception Safety
 
@@ -593,7 +702,7 @@ public:
         cleared including the leading colon (':'). If
         the port was the last remaining portion of
         the authority, then the entire authority is
-        removed including the leading double slash ('//').
+        removed including the leading double slash ("//").
         Otherwise,
 
         @li If the string is not empty then the port
@@ -602,7 +711,7 @@ public:
         If the URL previously did not contain an
         authority (@ref has_authority returns `false`),
         then the authority is added including the
-        leading double slash ('//').
+        leading double slash ("//").
         The string must meet the syntactic requirements
         of <em>port</em> otherwise an exception is
         thrown.
@@ -631,7 +740,7 @@ public:
         cleared including the leading colon (':'). If
         the port was the last remaining portion of
         the authority, then the entire authority is
-        removed including the leading double slash ('//').
+        removed including the leading double slash ("//").
         Otherwise,
 
         @li If the string is not empty then the port
@@ -640,7 +749,7 @@ public:
         If the URL previously did not contain an
         authority (@ref has_authority returns `false`),
         then the authority is added including the
-        leading double slash ('//').
+        leading double slash ("//").
         The string must meet the syntactic requirements
         of <em>port-part</em> otherwise an exception is
         thrown.
@@ -660,6 +769,22 @@ public:
     BOOST_URL_DECL
     basic_value&
     set_port_part(string_view s);
+
+    /** Return the host.
+
+        This function returns the encoded host and port,
+        or an empty string if there is no host or port.
+        The returned value includes both the host if present,
+        and a port, with a colon separating the host and port
+        if either component is non-empty.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_host_and_port() const noexcept;
 
     //------------------------------------------------------
     //
@@ -889,7 +1014,7 @@ public:
         mark ('?'), otherwise:
 
         @li If the string is not empty, the query
-        is set to given string, with a leading
+        is set to the given string, with a leading
         question mark added.
         Any special or reserved characters in the
         string are automatically percent-encoded.

@@ -23,7 +23,7 @@ enum
     id_scheme = 0,  // trailing ':'
     id_username,    // leading "//"
     id_password,    // leading ':', trailing '@'
-    id_hostname,
+    id_host,
     id_port,        // leading ':'
     id_path,
     id_query,       // leading '?'

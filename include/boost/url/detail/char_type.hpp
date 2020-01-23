@@ -210,11 +210,10 @@ public:
                 if(ec)
                     return p;
                 p += 3;
+                continue;
             }
-            else if(is_special(*p))
-            {
+            if(is_special(*p))
                 break;
-            }
             ++p;
         }
         return p;

@@ -113,7 +113,7 @@ encoded_userinfo() const noexcept
 {
     auto s = pt_.get(
         detail::id_username,
-        detail::id_hostname,
+        detail::id_host,
         s_);
     if(s.empty())
         return s;
@@ -176,17 +176,7 @@ view::
 encoded_host() const noexcept
 {
     return pt_.get(
-        detail::id_hostname,
-        detail::id_path,
-        s_);
-}
-
-string_view
-view::
-encoded_hostname() const noexcept
-{
-    return pt_.get(
-        detail::id_hostname,
+        detail::id_host,
         s_);
 }
 
@@ -212,6 +202,16 @@ port_part() const noexcept
     BOOST_ASSERT(s.empty() ||
         s.front() == ':');
     return s;
+}
+
+string_view
+view::
+encoded_host_and_port() const noexcept
+{
+    return pt_.get(
+        detail::id_host,
+        detail::id_path,
+        s_);
 }
 
 //----------------------------------------------------------

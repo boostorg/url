@@ -252,11 +252,11 @@ struct parser
             if(ec != error::no_match)
                 return;
             ec = {};
-            parse_ip_or_domain(pt, ec);
+            parse_ipv4_or_domain(pt, ec);
             if(ec)
                 return;
         }
-        mark(pt, id_hostname);
+        mark(pt, id_host);
     }
 
     void
@@ -293,7 +293,7 @@ struct parser
     }
 
     void
-    parse_ip_or_domain(
+    parse_ipv4_or_domain(
         parts& pt,
         error_code& ec)
     {
@@ -643,19 +643,34 @@ struct parser
             return;
         }
         ++p_;
-        if(p_ == end_)
+        if(p_ != end_)
         {
-            // first segment can't be empty
-            ec = error::invalid;
-            return;
+            if(*p_ == '/')
+            {
+                // begins with "/" but not "//"
+                ec = error::invalid;
+                return;
+            }
+            auto const e =
+                pchar_pct_set();
+            // segment-nz
+            p_ = e.parse(
+                p_ + 1, end_, ec);
+            if(ec)
+                return;
+            ++pt.nseg;
+            while(p_ < end_)
+            {
+                if(*p_ != '/')
+                    break;
+                p_ = e.parse(
+                    p_ + 1, end_, ec);
+                if(ec)
+                    return;
+                ++pt.nseg;
+            }
         }
-        if(*p_ == '/')
-        {
-            // begins with "/" but not "//"
-            ec = error::invalid;
-            return;
-        }
-        parse_path_rootless(pt, ec);
+        mark(pt, id_path);
     }
 
     // path-noscheme
@@ -948,6 +963,41 @@ parse_hostname(
         invalid_part::raise();
     if(! pr.done())
         invalid_part::raise();
+}
+
+inline
+void
+parse_plain_hostname(
+    parts& pt,
+    string_view s)
+{
+    parser pr(s);
+    error_code ec;
+    pr.parse_ip_literal(pt, ec);
+    if(ec)
+    {
+        if(ec != error::no_match)
+        {
+            pt.host = host_type::name;
+            return;
+        }
+        ec = {};
+        if(pr.match_ip_v4())
+        {
+            if(pr.done())
+            {
+                pt.host = host_type::ipv4;
+                return;
+            }
+            pt.host = host_type::name;
+            return;
+        }
+    }
+    else if(pr.done())
+    {
+        return;
+    }
+    pt.host = host_type::name;
 }
 
 inline

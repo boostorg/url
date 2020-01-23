@@ -33,13 +33,17 @@ enum class host_type
     */
     name,
 
-    /** A host is specified by IPv4 address.
+    /** A host is specified by IPv4address.
     */
     ipv4,
 
-    /** A host is specified by IPv6 address.
+    /** A host is specified by IPv6address.
     */
-    ipv6
+    ipv6,
+
+    /** A host is specified by IPvFuture.
+    */
+    ipvfuture
 };
 
 } // url

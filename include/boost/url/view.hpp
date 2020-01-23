@@ -164,37 +164,67 @@ public:
     //------------------------------------------------------
 
     /** Return the type of host present, if any.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
-    host_type
-    host() const noexcept
+    url::host_type
+    host_type() const noexcept
     {
         return pt_.host;
     }
 
-    /** Return the encoded host.
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_host() const noexcept;
+    /** Return the host.
 
-    /** Return the hostname.
+        This function returns the host portion of
+        the authority as a decoded string if present,
+        otherwise it returns an empty string.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
     */
     template<
         class Allocator =
             std::allocator<char>>
     string_type<Allocator>
-    hostname(
+    host(
         Allocator const& a = {}) const
     {
+        if(pt_.host != host_type::name)
+        {
+            auto const s =  pt_.get(
+                detail::id_host, s_);
+            return string_type<Allocator>(
+                s.data(), s.size(), a);
+        }
         return detail::decode(
-            encoded_hostname(), a);
+            encoded_host(), a);
     }
 
-    /** Return the encoded hostname.
+    /** Return the host.
+
+        This function returns the host portion of
+        the authority as an encoded string if present,
+        otherwise it returns an empty string.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
-    encoded_hostname() const noexcept;
+    encoded_host() const noexcept;
 
     /** Return the port.
 
@@ -225,6 +255,12 @@ public:
     BOOST_URL_DECL
     string_view
     port_part() const noexcept;
+
+    /** Return the encoded host.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_host_and_port() const noexcept;
 
     //------------------------------------------------------
     //
