@@ -14,87 +14,6 @@
 
 #include "test_suite.hpp"
 
-/*
-    https://nodejs.org/api/url.html
-    https://medialize.github.io/URI.js/
-    https://developer.mozilla.org/en-US/docs/Web/API/URL
-    https://docs.microsoft.com/en-us/dotnet/api/system.uri?view=netframework-4.8
-
-    request-target = origin-form
-                   / absolute-form
-                   / authority-form
-                   / asterisk-form
-
-    URI-reference   = URI / relative-ref
-    URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-    absolute-URI    = scheme ":" hier-part [ "?" query ]
-    relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
-    origin-form     = absolute-path [ "?" query ]
-    absolute_form   = absolute-URI
-    authority-form  = host [ ":" port ]
-        
-    kind::url           URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-    http://www.example.com:80/path/to/file.txt?query#fragment
-
-    kind::absolute      absolute-URI  = scheme ":" hier-part [ "?" query ]
-
-    hier-part
-        "//" authority path-abempty
-            //
-            //example.com
-            //example.com/
-            //example.com/path/to/file.txt
-        path-absolute
-            /
-            /path
-            /path/to/file.txt
-        path-rootless
-            path
-            path/to/file.txt
-        path-empty
-            "" (empty)
-
-    relative-part
-        "//" authority path-abempty
-            //
-            //example.com
-            //example.com/
-            //example.com/path/to/file.txt
-        path-absolute
-            /
-            /path
-            /path/to/file.txt
-        path-noscheme
-            path
-            path/to/file.txt
-        path-empty
-            "" (empty)
-
-    If a URI contains an authority component, then the path component
-    must either be empty or begin with a slash ("/") character.  If a URI
-    does not contain an authority component, then the path cannot begin
-    with two slash characters ("//").  In addition, a URI reference
-    (Section 4.1) may be a relative-path reference, in which case the
-    first path segment cannot contain a colon (":") character.  The ABNF
-    requires five separate rules to disambiguate these cases, only one of
-    which will match the path substring within a given URI reference.  We
-    use the generic term "path component" to describe the URI substring
-    matched by the parser to one of these rules.
-
-        path          = path-abempty    ; begins with "/" or is empty
-                      / path-absolute   ; begins with "/" but not "//"
-                      / path-noscheme   ; begins with a non-colon segment
-                      / path-rootless   ; begins with a segment
-                      / path-empty      ; zero characters
-
-        path-abempty  = *( "/" segment )
-        path-absolute = "/" [ segment-nz *( "/" segment ) ]
-        path-noscheme = segment-nz-nc *( "/" segment )
-        path-rootless = segment-nz *( "/" segment )
-        path-empty    = 0<pchar>
-
-*/
-
 namespace boost {
 namespace url {
 
@@ -298,6 +217,12 @@ public:
         BOOST_TEST(value("//256.255.255.255").host_type() == host_type::name);
         BOOST_TEST(value("//256.255.255.").host_type() == host_type::name);
         BOOST_TEST(value("//00.0.0.0").host_type() == host_type::name);
+        BOOST_TEST(value("//1").host_type() == host_type::name);
+        BOOST_TEST(value("//1.").host_type() == host_type::name);
+        BOOST_TEST(value("//1.2").host_type() == host_type::name);
+        BOOST_TEST(value("//1.2.").host_type() == host_type::name);
+        BOOST_TEST(value("//1.2.3").host_type() == host_type::name);
+        BOOST_TEST(value("//1.2.3.").host_type() == host_type::name);
     }
 
     void
@@ -319,7 +244,7 @@ public:
         BOOST_TEST(value("//[2001:DB8:1::AB9:C0A8:102]").host_type() == host_type::ipv6);
         BOOST_TEST(value("//[684D:1111:222:3333:4444:5555:6:77]").host_type() == host_type::ipv6);
         BOOST_TEST(value("//[0:0:0:0:0:0:0:0]").host_type() == host_type::ipv6);
-            
+
         BOOST_TEST(value("//[::1:2:3:4:5]").host_type() == host_type::ipv6);
         BOOST_TEST(value("//[0:0:0:1:2:3:4:5]").host_type() == host_type::ipv6);
         BOOST_TEST(value("//[1:2::3:4:5]").host_type() == host_type::ipv6);
@@ -339,12 +264,15 @@ public:
         BOOST_TEST(value("//[::FFFF:1.2.3.4]").host_type() == host_type::ipv6);
         BOOST_TEST(value("//[0:0:0:0:0:0:1.2.3.4]").host_type() == host_type::ipv6);
         BOOST_TEST(value("//[::1.2.3.4]").host_type() == host_type::ipv6);
+        BOOST_TEST_THROWS(value("//[::1A0.2.3.4]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[::10A.2.3.4]"), invalid_part);
 
         BOOST_TEST_THROWS(value("http://[0]"), invalid_part);
         BOOST_TEST_THROWS(value("//[0:1.2.3.4]"), invalid_part);
         BOOST_TEST_THROWS(value("//[0:0:0:0:0:0:0::1.2.3.4]"), invalid_part);
         BOOST_TEST_THROWS(value("http://[0:0:0:0:0:0:0:1.2.3.4]"), invalid_part);
         BOOST_TEST_THROWS(value("http://[::FFFF:999.2.3.4]"), invalid_part);
+        BOOST_TEST_THROWS(value("//[0:"), invalid_part);
 
         // coverage
         BOOST_TEST_THROWS(value("//["), invalid_part);
@@ -407,6 +335,7 @@ public:
         BOOST_TEST(value("z://x").set_host("[::]").encoded_host() == "[::]");
         BOOST_TEST(value("z://x").set_host("[::]x").host_type() == host_type::name);
         BOOST_TEST(value("z://x").set_host("[::]x").encoded_host() == "%5B%3A%3A%5Dx");
+        BOOST_TEST(value("z://x").set_host("[::").encoded_host() == "%5B%3A%3A");
 
         BOOST_TEST(value().set_encoded_host("x").encoded_url() == "//x");
         BOOST_TEST(value().set_encoded_host("local%20host").host() == "local host");
@@ -427,6 +356,7 @@ public:
         BOOST_TEST(value("z://x").set_encoded_host("[::]").host_type() == host_type::ipv6);
         BOOST_TEST(value("z://x").set_encoded_host("[::]").encoded_host() == "[::]");
         BOOST_TEST_THROWS(value("z://x").set_encoded_host("[::]x"), invalid_part);
+        BOOST_TEST_THROWS(value("z://x").set_encoded_host("[::"), invalid_part);
 
         testIPv4();
         testIPv6();
@@ -505,6 +435,8 @@ public:
         BOOST_TEST(value("x:?#").set_encoded_path("/").encoded_url() == "x:/?#");
         BOOST_TEST_THROWS(value("?").set_encoded_path("//x"), invalid_part);
         BOOST_TEST_THROWS(value("?").set_encoded_path("/x%A"), invalid_part);
+        BOOST_TEST_THROWS(value("x:?#").set_encoded_path("/x?"), invalid_part);
+        BOOST_TEST_THROWS(value("/x/%"), invalid_part);
 
         // path-noscheme
         BOOST_TEST(value("").set_encoded_path("x").encoded_url() == "x");
@@ -519,12 +451,15 @@ public:
         BOOST_TEST_THROWS(value("yz/?#").set_encoded_path(":"), invalid_part);
         BOOST_TEST_THROWS(value("yz/?#").set_encoded_path("x:"), invalid_part);
         BOOST_TEST_THROWS(value("yz/?#").set_encoded_path("x:/q"), invalid_part);
+        BOOST_TEST_THROWS(value("y/%"), invalid_part);
 
         // path-rootless
         BOOST_TEST(value("x:?#").set_encoded_path("y").encoded_url() == "x:y?#");
         BOOST_TEST(value("x:?#").set_encoded_path("y/").encoded_url() == "x:y/?#");
         BOOST_TEST(value("x:?#").set_encoded_path("y//").encoded_url() == "x:y//?#");
         BOOST_TEST_THROWS(value("x:?#").set_encoded_path("%A"), invalid_part);
+        BOOST_TEST_THROWS(value("x:?#").set_encoded_path("y?"), invalid_part);
+        BOOST_TEST_THROWS(value("x:y/%"), invalid_part);
 
         testSegments();
     }
@@ -631,6 +566,11 @@ public:
         BOOST_TEST(value("//?x").set_query_part("").encoded_url() == "//");
         BOOST_TEST_THROWS(value("//?xy").set_query_part("y"), invalid_part);
         BOOST_TEST(value("//?xy").set_query_part("?y").encoded_url() == "//?y");
+
+        BOOST_TEST_THROWS(value("?%"), invalid_part);
+        BOOST_TEST(value("?x=").encoded_url() == "?x=");
+        BOOST_TEST_THROWS(value("?x=%"), invalid_part);
+        BOOST_TEST(value("?x=#").encoded_url() == "?x=#");
 
         testParams();
     }
@@ -766,6 +706,8 @@ public:
         BOOST_TEST(value("//#x").set_fragment_part("").encoded_url() == "//");
         BOOST_TEST_THROWS(value("//#xy").set_fragment_part("y"), invalid_part);
         BOOST_TEST(value("//#xy").set_fragment_part("#y").encoded_url() == "//#y");
+
+        BOOST_TEST_THROWS(value("#%"), invalid_part);
     }
 
     //------------------------------------------------------

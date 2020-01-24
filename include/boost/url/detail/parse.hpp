@@ -383,11 +383,7 @@ struct parser
     parse_word(
         error_code& ec) noexcept
     {
-        if(p_ == end_)
-        {
-            ec = error::syntax;
-            return -1;
-        }
+        BOOST_ASSERT(p_ != end_);
         auto digit =
             hex_digit(*p_);
         if(digit == -1)
@@ -929,21 +925,6 @@ parse_authority(
     parser pr(s);
     error_code ec;
     pr.parse_authority(pt, ec);
-    if(ec)
-        invalid_part::raise();
-    if(! pr.done())
-        invalid_part::raise();
-}
-
-inline
-void
-parse_host(
-    parts& pt,
-    string_view s)
-{
-    parser pr(s);
-    error_code ec;
-    pr.parse_host(pt, ec);
     if(ec)
         invalid_part::raise();
     if(! pr.done())

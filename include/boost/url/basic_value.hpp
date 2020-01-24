@@ -495,7 +495,7 @@ public:
     host(
         Allocator const& a = {}) const
     {
-        if(pt_.host != host_type::name)
+        if(pt_.host != url::host_type::name)
         {
             auto const s =  pt_.get(
                 detail::id_host, s_);

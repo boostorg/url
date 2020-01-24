@@ -208,7 +208,7 @@ public:
     testSegments()
     {
         {
-            view::segments_type const ps;
+            view::segments_type const ps{};
             BOOST_TEST(ps.empty());
             BOOST_TEST(ps.size() == 0);
             BOOST_TEST(ps.begin() == ps.end());
@@ -269,7 +269,7 @@ public:
     testParams()
     {
         {
-            view::params_type const qp;
+            view::params_type const qp{};
             BOOST_TEST(qp.empty());
             BOOST_TEST(qp.size() == 0);
             BOOST_TEST(qp.begin() == qp.end());
