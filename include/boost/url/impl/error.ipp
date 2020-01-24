@@ -107,7 +107,7 @@ case error::invalid: return "invalid";
 case error::missing_scheme: return "missing scheme";
 case error::bad_scheme_start_char: return "bad scheme start char";
 case error::bad_scheme_char: return "bad scheme char";
-case error::bad_username_char: return "bad username char";
+case error::bad_username_char: return "bad user char";
 case error::bad_userinfo_char: return "bad userinfo char";
 case error::bad_port_char: return "bad port char";
 case error::port_overflow: return "port overflow";

@@ -18,6 +18,9 @@ The caller can produce all possible valid URLs using the
 
 The URL always remains syntactically valid after modification:
 
+The order of modification of URL parts generally does
+not affect the resulting URL.
+
 The library adds separators when needed, in the cases
   where the user's intent is unambiguous, or
 

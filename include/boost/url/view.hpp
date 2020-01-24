@@ -109,34 +109,103 @@ public:
     string_view
     encoded_authority() const noexcept;
 
+    //------------------------------------------------------
     //
     // userinfo
     //
+    //------------------------------------------------------
+
+    /** Return `true` if a userinfo is present.
+
+        This function returns `true` if there are
+        any characters in the URL's userinfo, including
+        the at sign ('@') separator.
+    */
+    BOOST_URL_DECL
+    bool
+    has_userinfo() const noexcept;
 
     /** Return the userinfo.
+
+        Returns the userinfo of the URL as an encoded
+        string. The userinfo includes the user and
+        password, with a colon separating the components
+        if the password is not empty.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
     encoded_userinfo() const noexcept;
 
-    /** Return the username.
+    /** Return the userinfo.
+
+        Returns the userinfo part of the URL as an
+        encoded string. The userinfo part includes the
+        user and password, with a colon separating the
+        components if the password is not empty, and
+        a trailing at sign ('@') if either component
+        is not empty.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
+    BOOST_URL_DECL
+    string_view
+    userinfo_part() const noexcept;
+
+    /** Return the user.
+
+        This function returns the user portion of
+        the userinfo if present, as a decoded string.
+        The user portion is defined by all of the
+        characters in the userinfo up to but not
+        including the first colon (':"), or the
+        entire userinfo if no colon is present.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
     */
     template<
         class Allocator =
             std::allocator<char>>
     string_type<Allocator>
-    username(
+    user(
         Allocator const& a = {}) const
     {
         return detail::decode(
-            encoded_username(), a);
+            encoded_user(), a);
     }
 
-    /** Return the username.
+    /** Return the user.
+
+        This function returns the user portion of
+        the userinfo if present, as an encoded string.
+        The user portion is defined by all of the
+        characters in the userinfo up to but not
+        including the first colon (':"), or the
+        entire userinfo if no colon is present.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
-    encoded_username() const noexcept;
+    encoded_user() const noexcept;
 
     /** Return the password.
     */
@@ -174,6 +243,22 @@ public:
     {
         return pt_.host;
     }
+
+    /** Return the host and port.
+
+        This function returns the encoded host and port,
+        or an empty string if there is no host or port.
+        The returned value includes both the host if present,
+        and a port, with a colon separating the host and port
+        if either component is non-empty.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_host_and_port() const noexcept;
 
     /** Return the host.
 
@@ -255,12 +340,6 @@ public:
     BOOST_URL_DECL
     string_view
     port_part() const noexcept;
-
-    /** Return the encoded host.
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_host_and_port() const noexcept;
 
     //------------------------------------------------------
     //

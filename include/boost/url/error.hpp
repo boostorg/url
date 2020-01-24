@@ -92,10 +92,10 @@ enum class error
     /// The scheme contains an invalid character.
     bad_scheme_char,
 
-    /** The username contains an invalid character.
+    /** The user contains an invalid character.
 
         This error is returned when attempting to set
-        the username with a string containing a colon (':').
+        the user with a string containing a colon (':').
     */
     bad_username_char,
 

@@ -113,8 +113,8 @@ set_encoded_origin(
         detail::id_scheme,
         pt.length(detail::id_scheme));
     pt_.split(
-        detail::id_username,
-        pt.length(detail::id_username));
+        detail::id_user,
+        pt.length(detail::id_user));
     pt_.split(
         detail::id_password,
         pt.length(detail::id_password));
@@ -178,7 +178,7 @@ basic_value::
 has_authority() const noexcept
 {
     return pt_.length(
-        detail::id_username,
+        detail::id_user,
         detail::id_path) != 0;
 }
 
@@ -187,7 +187,7 @@ basic_value::
 encoded_authority() const noexcept
 {
     auto s = pt_.get(
-        detail::id_username,
+        detail::id_user,
         detail::id_path,
         s_);
     if(! s.empty())
@@ -208,7 +208,7 @@ set_encoded_authority(
     if(s.empty())
     {
         resize(
-            detail::id_username,
+            detail::id_user,
             detail::id_path, 0);
         return *this;
     }
@@ -216,7 +216,7 @@ set_encoded_authority(
     detail::parts pt;
     detail::parse_authority(pt, s);
     auto const dest = resize(
-        detail::id_username,
+        detail::id_user,
         detail::id_path,
         2 + s.size());
     //---
@@ -224,8 +224,8 @@ set_encoded_authority(
     dest[1] = '/';
     s.copy(dest + 2, s.size());
     pt_.split(
-        detail::id_username,
-        2 + pt.length(detail::id_username));
+        detail::id_user,
+        2 + pt.length(detail::id_user));
     pt_.split(
         detail::id_password,
         pt.length(detail::id_password));
@@ -238,26 +238,76 @@ set_encoded_authority(
     return *this;
 }
 
+//----------------------------------------------------------
 //
 // userinfo
 //
+//----------------------------------------------------------
+
+bool
+basic_value::
+has_userinfo() const noexcept
+{
+/*
+    //@     true
+    //x@    true
+    //x     false
+*/
+    if(pt_.length(
+        detail::id_user) == 0)
+    {
+        BOOST_ASSERT(pt_.length(
+            detail::id_user,
+            detail::id_path) == 0);
+        return false;
+    }
+    BOOST_ASSERT(pt_.get(
+        detail::id_user, s_).substr(
+            0, 2) == "//");
+    if(pt_.length(
+        detail::id_user) > 2)
+        return true;
+    if(pt_.length(
+        detail::id_password) > 0)
+    {
+        BOOST_ASSERT(pt_.get(
+            detail::id_password,
+                s_).back() == '@');
+        return true;
+    }
+    return false;
+}
 
 string_view
 basic_value::
 encoded_userinfo() const noexcept
 {
+    auto s = userinfo_part();
+    if(! s.empty())
+    {
+        BOOST_ASSERT(s.back() == '@');
+        s.remove_suffix(1);
+    }
+    return s;
+}
+
+string_view
+basic_value::
+userinfo_part() const noexcept
+{
     auto s = pt_.get(
-        detail::id_username,
+        detail::id_user,
         detail::id_host,
         s_);
     if(s.empty())
         return s;
-    if(s.back() == '@')
-        s.remove_suffix(1);
     BOOST_ASSERT(s.size() >= 2);
     BOOST_ASSERT(
         s.substr(0, 2) == "//");
     s.remove_prefix(2);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(s.back() == '@');
     return s;
 }
 
@@ -274,54 +324,54 @@ set_encoded_userinfo(
         {
             // no authority
             resize(
-                detail::id_username,
+                detail::id_user,
                 detail::id_host, 0);
             return *this;
         }
         // keep "//"
         resize(
-            detail::id_username,
+            detail::id_user,
             detail::id_host, 2);
         return *this;
     }
 
-    error_code ec;
-    auto const begin = s.data();
-    auto const end =
-        s.data() + s.size();
-    auto e =
-        detail::userinfo_nc_pct_set();
-    auto p = e.parse(begin, end, ec);
-    if(ec)
-        invalid_part::raise();
-    auto const n0 = static_cast<
-        std::size_t>(p - begin);
-    e = detail::userinfo_pct_set();
-    p = e.parse(p, end, ec);
-    if(ec)
-        invalid_part::raise();
-    if(p != end)
-        invalid_part::raise();
-
+    detail::parts pt;
+    detail::parse_userinfo(pt, s);
     auto dest = resize(
-        detail::id_username,
+        detail::id_user,
         detail::id_host,
         2 + s.size() + 1);
     dest[0] = '/';
     dest[1] = '/';
     dest += 2;
     s.copy(dest, s.size());
-    pt_.split(detail::id_username, n0);
+    pt_.split(
+        detail::id_user,
+        pt.length(detail::id_user));
     dest[s.size()] = '@';
     return *this;
 }
 
+basic_value&
+basic_value::
+set_userinfo_part(
+    string_view s)
+{
+    if(! s.empty())
+    {
+        if(s.back() != '@')
+            invalid_part::raise();
+        s.remove_suffix(1);
+    }
+    return set_encoded_userinfo(s);
+}
+
 string_view
 basic_value::
-encoded_username() const noexcept
+encoded_user() const noexcept
 {
     auto s = pt_.get(
-        detail::id_username,
+        detail::id_user,
         s_);
     if(! s.empty())
     {
@@ -335,33 +385,33 @@ encoded_username() const noexcept
 
 basic_value&
 basic_value::
-set_username(
+set_user(
     string_view s)
 {
     if(s.empty())
     {
         if(pt_.length(
-            detail::id_username) == 0)
+            detail::id_user) == 0)
             return *this;
         BOOST_ASSERT(pt_.get(
             detail::id_password, s_).back() == '@');
         BOOST_ASSERT(pt_.get(
-            detail::id_username, s_).size() >= 2);
+            detail::id_user, s_).size() >= 2);
         BOOST_ASSERT(pt_.get(
-            detail::id_username, s_)[0] == '/');
+            detail::id_user, s_)[0] == '/');
         BOOST_ASSERT(pt_.get(
-            detail::id_username, s_)[1] == '/');
+            detail::id_user, s_)[1] == '/');
         if(pt_.length(
             detail::id_password) == 1)
         {
             // remove '@'
             resize(
-                detail::id_username,
+                detail::id_user,
                 detail::id_host, 2);
         }
         else
         {
-            resize(detail::id_username, 2);
+            resize(detail::id_user, 2);
         }
         return *this;
     }
@@ -375,19 +425,19 @@ set_username(
             detail::id_password, s_).back() == '@');
         // preserve "//"
         auto const dest = resize(
-            detail::id_username,
+            detail::id_user,
             2 + e.encoded_size(s));
         e.encode(dest + 2, s);
         return *this;
     }
     auto const n = e.encoded_size(s);
     auto const dest = resize(
-        detail::id_username, 2 + n + 1);
+        detail::id_user, 2 + n + 1);
     dest[0] = '/';
     dest[1] = '/';
     dest[2 + n] = '@';
     pt_.split(
-        detail::id_username,
+        detail::id_user,
         2 + n);
     e.encode(dest + 2, s);
     return *this;
@@ -395,11 +445,11 @@ set_username(
 
 basic_value&
 basic_value::
-set_encoded_username(
+set_encoded_user(
     string_view s)
 {
     if(s.empty())
-        return set_username(s);
+        return set_user(s);
 
     auto const e =
         detail::userinfo_nc_pct_set();
@@ -412,20 +462,20 @@ set_encoded_username(
             detail::id_password, s_).back() == '@');
         // preserve "//"
         auto const dest = resize(
-            detail::id_username, 2 + n);
+            detail::id_user, 2 + n);
         s.copy(dest + 2, n);
         return *this;
     }
 
     // add '@'
     auto const dest = resize(
-        detail::id_username,
+        detail::id_user,
         2 + n + 1);
     dest[0] = '/';
     dest[1] = '/';
     dest[2 + n] = '@';
     pt_.split(
-        detail::id_username,
+        detail::id_user,
         2 + n);
     s.copy(dest + 2, n);
     return *this;
@@ -436,21 +486,33 @@ basic_value::
 encoded_password() const noexcept
 {
     auto s = pt_.get(
-        detail::id_password,
-        s_);
-    switch(s.size())
+        detail::id_password, s_);
+    if(! s.empty())
     {
-    case 1:
-        BOOST_ASSERT(s.front() == '@');
-    case 0:
-        return {};
-    default:
+        if(s.front() == ':')
+        {
+            BOOST_ASSERT(
+                s.size() >= 2);
+            s.remove_prefix(1);
+        }
         BOOST_ASSERT(s.back() == '@');
         s.remove_suffix(1);
-        if(s.front() == ':')
-            s.remove_prefix(1);
-        return s;
     }
+    return s;
+}
+
+string_view
+basic_value::
+password_part() const noexcept
+{
+    auto s = pt_.get(
+        detail::id_password, s_);
+    if(! s.empty())
+    {
+        BOOST_ASSERT(s.front() == '@');
+        s.remove_suffix(1);
+    }
+    return s;
 }
 
 basic_value&
@@ -467,12 +529,12 @@ set_password(
         BOOST_ASSERT(pt_.get(
             detail::id_password, s_).back() == '@');
         BOOST_ASSERT(pt_.get(
-            detail::id_username, s_).size() >= 2);
+            detail::id_user, s_).size() >= 2);
         BOOST_ASSERT(pt_.get(
-            detail::id_username, s_)[0] == '/');
+            detail::id_user, s_)[0] == '/');
         BOOST_ASSERT(pt_.get(
-            detail::id_username, s_)[1] == '/');
-        if(pt_.length(detail::id_username) == 2)
+            detail::id_user, s_)[1] == '/');
+        if(pt_.length(detail::id_user) == 2)
         {
             // remove '@'
             resize(detail::id_password, 0);
@@ -487,7 +549,7 @@ set_password(
         detail::userinfo_pct_set();
     auto const n =
         e.encoded_size(s);
-    if(pt_.length(detail::id_username) != 0)
+    if(pt_.length(detail::id_user) != 0)
     {
         auto const dest = resize(
             detail::id_password, 1 + n + 1);
@@ -497,7 +559,7 @@ set_password(
         return *this;
     }
     auto const dest = resize(
-        detail::id_username,
+        detail::id_user,
         detail::id_host,
         2 + 1 + n + 1);
     dest[0] = '/';
@@ -505,7 +567,7 @@ set_password(
     dest[2] = ':';
     dest[2 + n + 1] = '@';
     e.encode(dest + 3, s);
-    pt_.split(detail::id_username, 2);
+    pt_.split(detail::id_user, 2);
     return *this;
 }
 
@@ -524,7 +586,7 @@ set_encoded_password(
     e.validate(s);
 
     auto const n = s.size();
-    if(pt_.length(detail::id_username) != 0)
+    if(pt_.length(detail::id_user) != 0)
     {
         auto const dest = resize(
             detail::id_password, 1 + n + 1);
@@ -534,7 +596,7 @@ set_encoded_password(
         return *this;
     }
     auto const dest = resize(
-        detail::id_username,
+        detail::id_user,
         detail::id_host,
         2 + 1 + n + 1);
     dest[0] = '/';
@@ -542,13 +604,60 @@ set_encoded_password(
     dest[2] = ':';
     dest[2 + n + 1] = '@';
     s.copy(dest + 3, n);
-    pt_.split(detail::id_username, 2);
+    pt_.split(detail::id_user, 2);
     return *this;
 }
 
+basic_value&
+basic_value::
+set_password_part(
+    string_view s)
+{
+    if(s.empty())
+        return set_password(s);
+    if(s.size() == 1)
+    {
+        if(s.front() != ':')
+            invalid_part::raise();
+        if(pt_.length(
+            detail::id_user) != 0)
+        {
+            auto const dest = resize(
+                detail::id_password, 2);
+            dest[0] = ':';
+            dest[1] = '@';
+            return *this;
+        }
+        auto const dest = resize(
+            detail::id_user,
+            detail::id_host, 4);
+        dest[0] = '/';
+        dest[1] = '/';
+        dest[2] = ':';
+        dest[3] = '@';
+        pt_.split(
+            detail::id_user, 2);
+    }
+    set_encoded_password(
+        s.substr(1));
+    return *this;
+}
+
+//----------------------------------------------------------
 //
 // host
 //
+//----------------------------------------------------------
+
+string_view
+basic_value::
+encoded_host_and_port() const noexcept
+{
+    return pt_.get(
+        detail::id_host,
+        detail::id_path,
+        s_);
+}
 
 string_view
 basic_value::
@@ -568,16 +677,16 @@ set_host(
     {
         // just hostname
         if( pt_.length(
-            detail::id_username,
+            detail::id_user,
             detail::id_host) == 2 &&
             pt_.length(detail::id_port) == 0)
         {
             BOOST_ASSERT(pt_.get(
-                detail::id_username, s_
+                detail::id_user, s_
                     ) == "//");
             // remove authority
             resize(
-                detail::id_username,
+                detail::id_user,
                 detail::id_path, 0);
         }
         else
@@ -596,12 +705,12 @@ set_host(
         {
             // add authority
             auto const dest = resize(
-                detail::id_username,
+                detail::id_user,
                 2 + s.size());
             dest[0] = '/';
             dest[1] = '/';
             pt_.split(
-                detail::id_username, 2);
+                detail::id_user, 2);
             pt_.split(
                 detail::id_password, 0);
             s.copy(dest + 2, s.size());
@@ -622,12 +731,12 @@ set_host(
         {
             // add authority
             auto const dest = resize(
-                detail::id_username,
+                detail::id_user,
                 2 + e.encoded_size(s));
             dest[0] = '/';
             dest[1] = '/';
             pt_.split(
-                detail::id_username, 2);
+                detail::id_user, 2);
             pt_.split(
                 detail::id_password, 0);
             e.encode(dest + 2, s);
@@ -657,12 +766,12 @@ set_encoded_host(
     {
         // add authority
         auto const dest = resize(
-            detail::id_username,
+            detail::id_user,
             2 + s.size());
         dest[0] = '/';
         dest[1] = '/';
         pt_.split(
-            detail::id_username, 2);
+            detail::id_user, 2);
         pt_.split(
             detail::id_password, 0);
         s.copy(dest + 2, s.size());
@@ -720,15 +829,15 @@ set_port(string_view s)
     {
         // just port
         if(pt_.length(
-            detail::id_username,
+            detail::id_user,
             detail::id_port) == 2)
         {
             // remove authority
             BOOST_ASSERT(pt_.get(
-                detail::id_username, s_).substr(
+                detail::id_user, s_).substr(
                     0, 2) == "//");
             resize(
-                detail::id_username,
+                detail::id_user,
                 detail::id_path, 0);
         }
         else
@@ -742,13 +851,13 @@ set_port(string_view s)
     {
         // add authority
         auto const dest = resize(
-            detail::id_username,
+            detail::id_user,
             3 + s.size());
         dest[0] = '/';
         dest[1] = '/';
         dest[2] = ':';
         pt_.split(
-            detail::id_username, 2);
+            detail::id_user, 2);
         pt_.split(
             detail::id_password, 0);
         pt_.split(
@@ -782,16 +891,6 @@ set_port_part(string_view s)
     resize(
         detail::id_port, 1)[0] = ':';
     return *this;
-}
-
-string_view
-basic_value::
-encoded_host_and_port() const noexcept
-{
-    return pt_.get(
-        detail::id_host,
-        detail::id_path,
-        s_);
 }
 
 //----------------------------------------------------------
@@ -1042,6 +1141,39 @@ set_fragment_part(
         1 + s.size());
     dest[0] = '#';
     s.copy(dest + 1, s.size());
+    return *this;
+}
+
+//----------------------------------------------------------
+
+basic_value&
+basic_value::
+normalize()
+{
+    normalize_scheme();
+    return *this;
+}
+
+basic_value&
+basic_value::
+normalize_scheme() noexcept
+{
+    auto n = pt_.length(
+        detail::id_scheme);
+    if(n == 0)
+        return *this;
+    --n;
+    BOOST_ASSERT(s_[pt_.offset[
+        detail::id_scheme] + n] == ':');
+    auto p = s_ + pt_.offset[
+        detail::id_scheme];
+    while(n-- > 0)
+    {
+        if(static_cast<unsigned char>(
+            *p - 65) < 26)
+            *p += 32;
+        ++p;
+    }
     return *this;
 }
 

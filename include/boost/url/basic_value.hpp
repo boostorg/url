@@ -31,10 +31,17 @@ namespace url {
     The underlying string stored in the container
     is always null-terminated.
 
+    @par Exception Safety
+
+    @li Functions marked `noexcept` provide the
+    no-throw guarantee, otherwise:
+
+    @li Functions which throw offer the strong
+    exception safety guarantee.
+
     @see value, dynamic_value, static_value
 
-    @see
-        @li <a href="https://tools.ietf.org/html/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>
+    @see @li <a href="https://tools.ietf.org/html/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>
 */
 class basic_value
 {
@@ -78,14 +85,14 @@ public:
     class segments_type;
     class params_type;
 
+    //
+    // Observers
+    //
+
     /** Return the number of characters in the URL.
 
         The value returned does not include the
         null terminator.
-
-        @par Exception Safety
-
-        No-throw guarantee.
 
         @return The number of characters in the
         URL.
@@ -100,10 +107,6 @@ public:
     /** Return a pointer to the characters in the URL.
 
         The string is null terminated.
-
-        @par Exception Safety
-
-        No-throw guarantee.
     */
     char const*
     data() const noexcept
@@ -118,10 +121,6 @@ public:
         This function returns the maximum number of
         characters which may be stored in the URL before
         a reallocation is necessary.
-
-        @par Exception Safety
-
-        No-throw guarantee.
     */
     std::size_t
     capacity() const noexcept
@@ -304,11 +303,27 @@ public:
     set_encoded_authority(
         string_view s);
 
+    //------------------------------------------------------
     //
     // userinfo
     //
+    //------------------------------------------------------
+
+    /** Return `true` if a userinfo is present.
+
+        This function returns `true` if there are
+        any characters in the URL's userinfo.
+    */
+    BOOST_URL_DECL
+    bool
+    has_userinfo() const noexcept;
 
     /** Return the userinfo.
+
+        Returns the userinfo of the URL as an encoded
+        string. The userinfo includes the user and
+        password, with a colon separating the components
+        if the password is not empty.
 
         @par Exception Safety
 
@@ -318,40 +333,109 @@ public:
     string_view
     encoded_userinfo() const noexcept;
 
+    /** Return the userinfo.
+
+        Returns the userinfo part of the URL as an
+        encoded string. The userinfo part includes the
+        user and password, with a colon separating the
+        components if the password is not empty, and
+        a trailing at sign ('@') if either component
+        is not empty.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
+    BOOST_URL_DECL
+    string_view
+    userinfo_part() const noexcept;
+
     /** Set the userinfo.
 
-        Sets the userinfo of the URL to the given decoded
-        string. The behavior then varies depending on the
-        presence or absence of a colon (':')
+        Sets the userinfo of the URL to the given
+        encoded string:
 
-        @li If one or more colons exist, then everything
-        up to but not including the first colon will become
-        the username, and everything beyond the first colon
-        will become the password (including any subsequent
-        colons).
+        @li If the string is empty, the userinfo is
+        cleared, else
 
-        @li If no colons exist, then the username will be
-        set to the passed userinfo, and the password will
-        be empty.
+        @li If the string is not empty, then the userinfo
+        is set to the given string. The user is set to
+        the characters up to the first colon if any,
+        while the password is set to the remaining
+        characters if any.
+        If the URL previously did not have an authority
+        (@ref has_authority returns `false`), a double
+        slash ("//") is prepended to the userinfo.
+        The string must meet the syntactic requirements
+        of <em>userinfo</em> otherwise an exception is
+        thrown.
+
+        @par ABNF
+        @code
+        userinfo      = [ [ user ] [ ':' password ] ]
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
 
         @par Exception Safety
 
         Strong guarantee.
         Calls to allocate may throw.
 
-        @param s The userinfo to set. This string
-        must meed the syntactic requirements for
-        the components of the userinfo, otherwise
-        an exception is thrown.
-
-        @throw std::exception invalid userinfo.
+        @param s The string to set.
     */
     BOOST_URL_DECL
     basic_value&
     set_encoded_userinfo(
         string_view s);
 
-    /** Return the username.
+    /** Set the userinfo.
+
+        Sets the userinfo of the URL to the given
+        encoded string:
+
+        @li If the string is empty, the userinfo is
+        cleared, else
+
+        @li If the string is not empty, then the userinfo
+        is set to the given string. The user is set to
+        the characters up to the first colon if any,
+        while the password is set to the remaining
+        characters if any.
+        If the URL previously did not have an authority
+        (@ref has_authority returns `false`), a double
+        slash ("//") is prepended to the userinfo.
+        The string must meet the syntactic requirements
+        of <em>userinfo-part</em> otherwise an exception
+        is thrown.
+
+        @par ABNF
+        @code
+        userinfo-part = [ [ user ] [ ':' password ] '@' ]
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_userinfo_part(
+        string_view s);
+
+    /** Return the user.
+
+        This function returns the user portion of
+        the userinfo if present, as a decoded string.
+        The user portion is defined by all of the
+        characters in the userinfo up to but not
+        including the first colon (':"), or the
+        entire userinfo if no colon is present.
 
         @par Exception Safety
 
@@ -370,14 +454,21 @@ public:
         class Allocator =
             std::allocator<char>>
     string_type<Allocator>
-    username(
+    user(
         Allocator const& a = {}) const
     {
         return detail::decode(
-            encoded_username(), a);
+            encoded_user(), a);
     }
 
-    /** Return the username.
+    /** Return the user.
+
+        This function returns the user portion of
+        the userinfo if present, as an encoded string.
+        The user portion is defined by all of the
+        characters in the userinfo up to but not
+        including the first colon (':"), or the
+        entire userinfo if no colon is present.
 
         @par Exception Safety
 
@@ -385,22 +476,68 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    encoded_username() const noexcept;
+    encoded_user() const noexcept;
 
-    /** Set the username.
+    /** Set the user.
 
-        The username may not include a colon.
+        The user is set to the specified string,
+        replacing any previous user:
+
+        @li If the string is empty, the user is cleared.
+
+        @li If the string is not empty then the
+        user is set to the new string.
+        Any special or reserved characters in the
+        string are automatically percent-encoded.
+        If the URL previously did not have an authority
+        (@ref has_authority returns `false`), a double
+        slash ("//") is prepended to the userinfo.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set. This string may
+        contain any characters, including nulls.
     */
     BOOST_URL_DECL
     basic_value&
-    set_username(
+    set_user(
         string_view s);
 
-    /** Set the encoded username.
+    /** Set the user.
+
+        The user is set to the specified encoded
+        string, replacing any previous user:
+
+        @li If the string is empty, the user is cleared.
+
+        @li If the string is not empty then the
+        user is set to the given string.
+        If the URL previously did not have an authority
+        (@ref has_authority returns `false`), a double
+        slash ("//") is prepended to the userinfo.
+        The string must meet the syntactic requirements
+        of <em>user</em> otherwise an exception is
+        thrown.
+
+        @li
+        @par ABNF
+        @code
+        user          = *( unreserved / pct-encoded / sub-delims )
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
     */
     BOOST_URL_DECL
     basic_value&
-    set_encoded_username(
+    set_encoded_user(
         string_view s);
 
     /** Return the password.
@@ -431,6 +568,12 @@ public:
 
     /** Return the password.
 
+        This function returns the password portion of
+        the userinfo if present, as an encoded string.
+        The password portion is defined by all the
+        characters in the userinfo after the first
+        colon (':').
+
         @par Exception Safety
 
         No-throw guarantee.
@@ -439,23 +582,129 @@ public:
     string_view
     encoded_password() const noexcept;
 
+    /** Return the password.
+
+        This function returns the password part of
+        the userinfo if present, as an encoded string.
+        This will include any leading colon (':')
+        The password portion is defined by all the
+        characters in the userinfo after the first
+        colon (':').
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
+    BOOST_URL_DECL
+    string_view
+    password_part() const noexcept;
+
     /** Set the password.
+
+        This function sets the password to the specified
+        string, replacing any previous password:
+
+        @li If the string is empty, the password is
+        cleared, and the first occurring colon (':') is
+        removed from the userinfo if present, otherwise
+
+        @li If ths string is not empty then the password
+        is set to the new string.
+        Any special or reserved characters in the
+        string are automatically percent-encoded.
+        If the URL previously did not have an authority
+        (@ref has_authority returns `false`), a double
+        slash ("//") is prepended to the userinfo.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set. This string may
+        contain any characters, including nulls.
     */
     BOOST_URL_DECL
     basic_value&
     set_password(
         string_view s);
 
-    /** Set the encoded password.
+    /** Set the password.
+
+        The password is set to the encoded string `s`,
+        replacing any previous password:
+
+        @li If the string is empty, the password is
+        cleared, and the first occurring colon (':') is
+        removed from the userinfo if present, otherwise
+
+        @li If ths string is not empty then the password
+        is set to the new string.
+        If the URL previously did not have an authority
+        (@ref has_authority returns `false`), a double
+        slash ("//") is prepended to the userinfo.
+        The string must meet the syntactic requirements
+        of <em>password</em> otherwise an exception is
+        thrown.
+
+        @par ANBF
+        @code
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
     */
     BOOST_URL_DECL
     basic_value&
     set_encoded_password(
         string_view s);
 
+    /** Set the password.
+
+        The password part is set to the encoded string
+        `s`, replacing any previous password:
+
+        @li If the string is empty, the password is
+        cleared, and the first occurring colon (':') is
+        removed from the userinfo if present, otherwise
+
+        @li If ths string is not empty then the password
+        is set to the new string, which must include a
+        leading colon.
+        If the URL previously did not have an authority
+        (@ref has_authority returns `false`), a double
+        slash ("//") is prepended to the userinfo.
+        The string must meet the syntactic requirements
+        of <em>password-part</em> otherwise an exception is
+        thrown.
+
+        @par ANBF
+        @code
+        password-part = [ ':' *( unreserved / pct-encoded / sub-delims / ":" ) ]
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
+    */
+    BOOST_URL_DECL
+    basic_value&
+    set_password_part(
+        string_view s);
+
+    //------------------------------------------------------
     //
     // host
     //
+    //------------------------------------------------------
 
     /** Return the type of host present, if any.
 
@@ -468,6 +717,22 @@ public:
     {
         return pt_.host;
     }
+
+    /** Return the host and port.
+
+        This function returns the encoded host and port,
+        or an empty string if there is no host or port.
+        The returned value includes both the host if present,
+        and a port, with a colon separating the host and port
+        if either component is non-empty.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_host_and_port() const noexcept;
 
     /** Return the host.
 
@@ -526,10 +791,9 @@ public:
         replacing any previous host:
 
         @li If the string is empty, the host is cleared.
-        cleared. If the host was the last remaining
-        portion of the authority, then the authority
-        is removed including the leading double
-        slash ("//"), else
+        If there are no more remaining elements in the
+        authority, then the authority is removed including
+        the leading double slash ("//"), else
 
         @li If the string is a valid <em>IPv4Address</em>,
         the host is set to the new string and
@@ -592,10 +856,9 @@ public:
         replacing any previous host:
 
         @li If the string is empty, the host is cleared.
-        If the host was the last remaining portion of
-        the authority, then the entire authority is
-        removed including the leading double
-        slash ("//"). Otherwise,
+        If there are no more remaining elements in the
+        authority, then the authority is removed including
+        the leading double slash ("//"), else
 
         @li If the string is not empty, the host
         is set to the new string.
@@ -699,11 +962,10 @@ public:
         The port of the URL is set to the specified string.
 
         @li If the string is empty, the port is
-        cleared including the leading colon (':'). If
-        the port was the last remaining portion of
-        the authority, then the entire authority is
-        removed including the leading double slash ("//").
-        Otherwise,
+        cleared including the leading colon (':').
+        If there are no more remaining elements in the
+        authority, then the authority is removed including
+        the leading double slash ("//"), else
 
         @li If the string is not empty then the port
         is set to the given string, with a leading
@@ -737,11 +999,10 @@ public:
         The port of the URL is set to the specified string.
 
         @li If the string is empty, the port is
-        cleared including the leading colon (':'). If
-        the port was the last remaining portion of
-        the authority, then the entire authority is
-        removed including the leading double slash ("//").
-        Otherwise,
+        cleared including the leading colon (':').
+        If there are no more remaining elements in the
+        authority, then the authority is removed including
+        the leading double slash ("//"), else
 
         @li If the string is not empty then the port
         is set to the given string, which must have
@@ -769,22 +1030,6 @@ public:
     BOOST_URL_DECL
     basic_value&
     set_port_part(string_view s);
-
-    /** Return the host.
-
-        This function returns the encoded host and port,
-        or an empty string if there is no host or port.
-        The returned value includes both the host if present,
-        and a port, with a colon separating the host and port
-        if either component is non-empty.
-
-        @par Exception Safety
-
-        No-throw guarantee.
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_host_and_port() const noexcept;
 
     //------------------------------------------------------
     //
@@ -1266,6 +1511,8 @@ public:
 
         @param s The string to set. This string may
         contain any characters, including nulls.
+
+        @see set_encoded_fragment, set_fragment_part
     */
     BOOST_URL_DECL
     basic_value&
@@ -1301,6 +1548,8 @@ public:
         @param s The string to set.
 
         @throws std::exception invalid string.
+
+        @see set_fragment, set_fragment_part
     */
     BOOST_URL_DECL
     basic_value&
@@ -1335,6 +1584,8 @@ public:
         @param s The string to set.
 
         @throws std::exception invalid string.
+
+        @see set_fragment, set_encoded_fragment
     */
     BOOST_URL_DECL
     basic_value&
@@ -1347,7 +1598,6 @@ public:
     //
     //------------------------------------------------------
 
-#if 0
     /** Normalize everything.
     */
     BOOST_URL_DECL
@@ -1356,8 +1606,7 @@ public:
 
     BOOST_URL_DECL
     basic_value&
-    normalize_scheme();
-#endif
+    normalize_scheme() noexcept;
 
 private:
     inline char* resize(int id, std::size_t new_size);

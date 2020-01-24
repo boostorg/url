@@ -79,7 +79,7 @@ view::
 has_authority() const noexcept
 {
     return pt_.length(
-        detail::id_username,
+        detail::id_user,
         detail::id_path) != 0;
 }
 
@@ -88,7 +88,7 @@ view::
 encoded_authority() const noexcept
 {
     auto s = pt_.get(
-        detail::id_username,
+        detail::id_user,
         detail::id_path,
         s_);
     if(! s.empty())
@@ -107,31 +107,82 @@ encoded_authority() const noexcept
 //
 //----------------------------------------------------------
 
+bool
+view::
+has_userinfo() const noexcept
+{
+    if(pt_.length(
+        detail::id_user) == 0)
+    {
+        BOOST_ASSERT(pt_.length(
+            detail::id_user,
+            detail::id_host) == 0);
+        return false;
+    }
+    BOOST_ASSERT(pt_.get(
+        detail::id_user, s_).substr(
+            0, 2) == "//");
+    if(pt_.length(
+        detail::id_user) > 2)
+        return true;
+    if(pt_.length(
+        detail::id_password) > 0)
+    {
+        BOOST_ASSERT(pt_.get(
+            detail::id_password,
+                s_).back() == '@');
+        return true;
+    }
+    return false;
+}
+
 string_view
 view::
 encoded_userinfo() const noexcept
 {
     auto s = pt_.get(
-        detail::id_username,
+        detail::id_user,
         detail::id_host,
         s_);
     if(s.empty())
         return s;
-    if(s.back() == '@')
-        s.remove_suffix(1);
     BOOST_ASSERT(s.size() >= 2);
     BOOST_ASSERT(
         s.substr(0, 2) == "//");
     s.remove_prefix(2);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(s.back() == '@');
+    s.remove_suffix(1);
     return s;
 }
 
 string_view
 view::
-encoded_username() const noexcept
+userinfo_part() const noexcept
 {
     auto s = pt_.get(
-        detail::id_username,
+        detail::id_user,
+        detail::id_host,
+        s_);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(s.size() >= 2);
+    BOOST_ASSERT(
+        s.substr(0, 2) == "//");
+    s.remove_prefix(2);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(s.back() == '@');
+    return s;
+}
+
+string_view
+view::
+encoded_user() const noexcept
+{
+    auto s = pt_.get(
+        detail::id_user,
         s_);
     if(! s.empty())
     {
@@ -173,6 +224,16 @@ encoded_password() const noexcept
 
 string_view
 view::
+encoded_host_and_port() const noexcept
+{
+    return pt_.get(
+        detail::id_host,
+        detail::id_path,
+        s_);
+}
+
+string_view
+view::
 encoded_host() const noexcept
 {
     return pt_.get(
@@ -202,16 +263,6 @@ port_part() const noexcept
     BOOST_ASSERT(s.empty() ||
         s.front() == ':');
     return s;
-}
-
-string_view
-view::
-encoded_host_and_port() const noexcept
-{
-    return pt_.get(
-        detail::id_host,
-        detail::id_path,
-        s_);
 }
 
 //----------------------------------------------------------

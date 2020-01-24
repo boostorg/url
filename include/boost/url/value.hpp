@@ -18,17 +18,34 @@
 namespace boost {
 namespace url {
 
+namespace detail {
+
+template<class Allocator>
+struct storage_member
+{
+    alloc_storage<Allocator> st_;
+
+    explicit
+    storage_member(
+        Allocator const& alloc)
+        : st_(alloc)
+    {
+    }
+};
+
+} // detail
+
 template<class Allocator>
 class dynamic_value
-    : private detail::alloc_storage<Allocator>
+    : private detail::storage_member<Allocator>
     , public basic_value
 {
 public:
     dynamic_value() noexcept
-        : detail::alloc_storage<
+        : detail::storage_member<
             Allocator>(Allocator{})
         , basic_value(static_cast<
-            detail::storage&>(*this))
+            detail::storage&>(this->st_))
     {
     }
 
@@ -36,16 +53,18 @@ public:
     dynamic_value(
         string_view s,
         Allocator const& a = {})
-        : detail::alloc_storage<Allocator>(a)
-        , basic_value(*this, s)
+        : detail::storage_member<
+            Allocator>(a)
+        , basic_value(this->st_, s)
     {
     }
 
     explicit
     dynamic_value(
         Allocator const& a) noexcept
-        : detail::alloc_storage<Allocator>(a)
-        , basic_value(*this)
+        : detail::storage_member<
+            Allocator>(a)
+        , basic_value(this->st_)
     {
     }
 

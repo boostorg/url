@@ -40,7 +40,7 @@ public:
         BOOST_TEST(v.encoded_origin() == "http://user:pass@example.com:80");
         BOOST_TEST(v.encoded_authority() == "user:pass@example.com:80");
         BOOST_TEST(v.scheme() == "http");
-        BOOST_TEST(v.encoded_username() == "user");
+        BOOST_TEST(v.encoded_user() == "user");
         BOOST_TEST(v.encoded_password() == "pass");
         BOOST_TEST(v.encoded_userinfo() == "user:pass");
         BOOST_TEST(v.encoded_host() == "example.com");
@@ -51,7 +51,7 @@ public:
         BOOST_TEST(v.encoded_query() == "k1=v1&k2=v2");
         BOOST_TEST(v.encoded_fragment() == "");
 
-        BOOST_TEST(v.username() == "user");
+        BOOST_TEST(v.user() == "user");
         BOOST_TEST(v.password() == "pass");
         BOOST_TEST(v.host() == "example.com");
         BOOST_TEST(v.query() == "k1=v1&k2=v2");
@@ -59,6 +59,65 @@ public:
     }
 
     //------------------------------------------------------
+
+    void
+    testUserinfo()
+    {
+        BOOST_TEST(view().encoded_userinfo() == "");
+        BOOST_TEST(view("//x/").encoded_userinfo() == "");
+        BOOST_TEST(view("//x@/").encoded_userinfo() == "x");
+        BOOST_TEST(view("//x:@/").encoded_userinfo() == "x:");
+        BOOST_TEST(view("//x:y@/").encoded_userinfo() == "x:y");
+        BOOST_TEST(view("//:y@/").encoded_userinfo() == ":y");
+        BOOST_TEST(view("//:@/").encoded_userinfo() == ":");
+        BOOST_TEST(view("//@/").encoded_userinfo() == "");
+
+        BOOST_TEST(view().userinfo_part() == "");
+        BOOST_TEST(view("//x/").userinfo_part() == "");
+        BOOST_TEST(view("//x@/").userinfo_part() == "x@");
+        BOOST_TEST(view("//x:@/").userinfo_part() == "x:@");
+        BOOST_TEST(view("//x:y@/").userinfo_part() == "x:y@");
+        BOOST_TEST(view("//:y@/").userinfo_part() == ":y@");
+        BOOST_TEST(view("//:@/").userinfo_part() == ":@");
+        BOOST_TEST(view("//@/").userinfo_part() == "@");
+    }
+
+    void
+    testUser()
+    {
+        BOOST_TEST(view().user() == "");
+        BOOST_TEST(view("//x/").user() == "");
+        BOOST_TEST(view("//x@/").user() == "x");
+        BOOST_TEST(view("//x:@/").user() == "x");
+        BOOST_TEST(view("//x:y@/").user() == "x");
+        BOOST_TEST(view("//:y@/").user() == "");
+        BOOST_TEST(view("//:@/").user() == "");
+        BOOST_TEST(view("//@/").user() == "");
+        BOOST_TEST(view("//%3A@/").user() == ":");
+
+        BOOST_TEST(view().encoded_user() == "");
+        BOOST_TEST(view("//x/").encoded_user() == "");
+        BOOST_TEST(view("//x@/").encoded_user() == "x");
+        BOOST_TEST(view("//x:@/").encoded_user() == "x");
+        BOOST_TEST(view("//x:y@/").encoded_user() == "x");
+        BOOST_TEST(view("//:y@/").encoded_user() == "");
+        BOOST_TEST(view("//:@/").encoded_user() == "");
+        BOOST_TEST(view("//@/").encoded_user() == "");
+        BOOST_TEST(view("//%3A@/").encoded_user() == "%3A");
+    }
+
+    //------------------------------------------------------
+
+    void
+    testHostAndPort()
+    {
+        BOOST_TEST(view().encoded_host_and_port() == "");
+        BOOST_TEST(view("//").encoded_host_and_port() == "");
+        BOOST_TEST(view("//x").encoded_host_and_port() == "x");
+        BOOST_TEST(view("//x:").encoded_host_and_port() == "x:");
+        BOOST_TEST(view("//x:0").encoded_host_and_port() == "x:0");
+        BOOST_TEST(view("//x:0/").encoded_host_and_port() == "x:0");
+    }
 
     void
     testIPv4()
@@ -172,17 +231,6 @@ public:
         BOOST_TEST(view("//x:/").port_part() == ":");
         BOOST_TEST(view("//x:80/").port() == "80");
         BOOST_TEST(view("//x:80/").port_part() == ":80");
-    }
-
-    void
-    testHostAndPort()
-    {
-        BOOST_TEST(view().encoded_host_and_port() == "");
-        BOOST_TEST(view("//").encoded_host_and_port() == "");
-        BOOST_TEST(view("//x").encoded_host_and_port() == "x");
-        BOOST_TEST(view("//x:").encoded_host_and_port() == "x:");
-        BOOST_TEST(view("//x:0").encoded_host_and_port() == "x:0");
-        BOOST_TEST(view("//x:0/").encoded_host_and_port() == "x:0");
     }
 
     //------------------------------------------------------
@@ -360,9 +408,10 @@ public:
     {
         testView();
 
+        testUserinfo();
+        testHostAndPort();
         testHost();
         testPort();
-        testHostAndPort();
         testPath();
         testQuery();
         testFragment();

@@ -21,7 +21,7 @@ namespace detail {
 enum
 {
     id_scheme = 0,  // trailing ':'
-    id_username,    // leading "//"
+    id_user,        // leading "//"
     id_password,    // leading ':', trailing '@'
     id_host,
     id_port,        // leading ':'

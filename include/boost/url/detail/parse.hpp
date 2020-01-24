@@ -183,6 +183,7 @@ struct parser
         parts& pt,
         error_code& ec) noexcept
     {
+        auto const p0 = p_;
         parse_userinfo(pt, ec);
         if(ec == error::no_match)
         {
@@ -192,6 +193,18 @@ struct parser
         else if(ec)
         {
             return;
+        }
+        else if(match_literal("@"))
+        {
+            // add '@'
+            mark(pt, id_password);
+        }
+        else
+        {
+            // requires backtracking
+            p_ = p0;
+            mark(pt, id_user);
+            mark(pt, id_password);
         }
         parse_host(pt, ec);
     }
@@ -206,20 +219,12 @@ struct parser
         p_ = e.parse(p0, end_, ec);
         if(ec)
             return;
-        mark(pt, id_username);
+        mark(pt, id_user);
         auto const p1 = p_;
         e = userinfo_pct_set();
         p_ = e.parse(p1, end_, ec);
         if(ec)
             return;
-        if(! match_literal("@"))
-        {
-            // requires backtracking
-            p_ = p0;
-            mark(pt, id_username);
-            ec = error::no_match;
-            return;
-        }
         mark(pt, id_password);
     }
 
@@ -895,8 +900,8 @@ parse_origin(
     pr.parse_authority(pt, ec);
     if(ec)
         return;
-    pt.resize(id_username,
-        pt.length(id_username) + 1);
+    pt.resize(id_user,
+        pt.length(id_user) + 1);
 
     if(! pr.done())
         ec = error::syntax;
@@ -925,6 +930,21 @@ parse_authority(
     parser pr(s);
     error_code ec;
     pr.parse_authority(pt, ec);
+    if(ec)
+        invalid_part::raise();
+    if(! pr.done())
+        invalid_part::raise();
+}
+
+inline
+void
+parse_userinfo(
+    parts& pt,
+    string_view s)
+{
+    parser pr(s);
+    error_code ec;
+    pr.parse_userinfo(pt, ec);
     if(ec)
         invalid_part::raise();
     if(! pr.done())
