@@ -208,9 +208,13 @@ public:
     testSegments()
     {
         {
-            view::segments_type ps;
+            view::segments_type const ps;
             BOOST_TEST(ps.empty());
             BOOST_TEST(ps.size() == 0);
+            BOOST_TEST(ps.begin() == ps.end());
+            BOOST_TEST(
+                view::segments_type::iterator() ==
+                view::segments_type::iterator());
         }
         {
             view const v("/path/to/file.txt");
@@ -265,9 +269,18 @@ public:
     testParams()
     {
         {
-            view::params_type qp;
+            view::params_type const qp;
             BOOST_TEST(qp.empty());
             BOOST_TEST(qp.size() == 0);
+            BOOST_TEST(qp.begin() == qp.end());
+            BOOST_TEST(! qp.contains("x"));
+            BOOST_TEST(qp.count("x") == 0);
+            BOOST_TEST(qp.find("x") == qp.end());
+            BOOST_TEST_THROWS(qp.at("x"), out_of_range);
+
+            BOOST_TEST(
+                view::params_type::iterator() ==
+                view::params_type::iterator());
         }
         {
             view const v("?x=1&y=2&y=3&z");

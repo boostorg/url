@@ -545,6 +545,10 @@ public:
             value::segments_type ps;
             BOOST_TEST(ps.empty());
             BOOST_TEST(ps.size() == 0);
+            BOOST_TEST(ps.begin() == ps.end());
+            BOOST_TEST(
+                value::segments_type::iterator() ==
+                value::segments_type::iterator());
         }
         {
             value v("/path/to/file.txt");
@@ -647,6 +651,15 @@ public:
             value::params_type qp;
             BOOST_TEST(qp.empty());
             BOOST_TEST(qp.size() == 0);
+            BOOST_TEST(qp.begin() == qp.end());
+            BOOST_TEST(! qp.contains("x"));
+            BOOST_TEST(qp.count("x") == 0);
+            BOOST_TEST(qp.find("x") == qp.end());
+            BOOST_TEST_THROWS(qp.at("x"), out_of_range);
+
+            BOOST_TEST(
+                value::params_type::iterator() ==
+                value::params_type::iterator());
         }
         {
             value v("?x=1&y=2&y=3&z");

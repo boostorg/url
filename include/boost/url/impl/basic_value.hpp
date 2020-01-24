@@ -119,10 +119,10 @@ class basic_value::params_type::iterator
 {
     friend params_type;
 
-    basic_value* v_ = nullptr;
-    std::size_t off_ = 0;
-    std::size_t nk_ = 0;
-    std::size_t nv_ = 0;
+    basic_value* v_;
+    std::size_t off_;
+    std::size_t nk_;
+    std::size_t nv_;
 
     BOOST_URL_DECL
     iterator(
@@ -206,7 +206,6 @@ params_type::
 at( string_view key,
     Allocator const& a) const
 {
-    BOOST_ASSERT(v_);
     auto const it = find(key);
     if(it == end())
         out_of_range::raise();

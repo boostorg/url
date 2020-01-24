@@ -319,7 +319,12 @@ iterator(
     : s_(v->s_)
     , pt_(v->pt_)
 {
-    if( end ||
+    if(! pt_)
+    {
+        off_ = 0;
+        n_ = 0;
+    }
+    else if( end ||
         pt_->nseg == 0)
     {
         off_ = pt_->offset[
@@ -437,7 +442,6 @@ segments_type::
 begin() const noexcept ->
     iterator
 {
-    BOOST_ASSERT(pt_);
     return iterator(this, false);
 }
 
@@ -447,7 +451,6 @@ segments_type::
 end() const noexcept ->
     iterator
 {
-    BOOST_ASSERT(pt_);
     return iterator(this, true);
 }
 
@@ -478,8 +481,14 @@ iterator(
     : s_(v->s_)
     , pt_(v->pt_)
 {
-    if( end ||
-        pt_->nparam == 0)
+    if(! pt_)
+    {
+        off_ = 0;
+        nk_ = 0;
+        nv_ = 0;
+    }
+    else if( end ||
+            pt_->nparam == 0)
     {
         off_ = pt_->offset[
             detail::id_frag];
@@ -501,6 +510,8 @@ iterator::
 operator*() const noexcept ->
     value_type
 {
+    BOOST_ASSERT(pt_);
+    BOOST_ASSERT(pt_->nparam > 0);
     BOOST_ASSERT(nk_ > 0);
     BOOST_ASSERT(
         off_ == pt_->offset[
@@ -527,6 +538,8 @@ iterator::
 operator++() noexcept ->
     iterator&
 {
+    BOOST_ASSERT(pt_);
+    BOOST_ASSERT(pt_->nparam > 0);
     BOOST_ASSERT(
         off_ != pt_->offset[
             detail::id_frag]);
@@ -552,6 +565,8 @@ iterator::
 operator--() noexcept ->
     iterator&
 {
+    BOOST_ASSERT(pt_);
+    BOOST_ASSERT(pt_->nparam > 0);
     BOOST_ASSERT(
         off_ != pt_->offset[
             detail::id_query]);
@@ -579,6 +594,8 @@ params_type::
 iterator::
 parse() noexcept
 {
+    BOOST_ASSERT(pt_);
+    BOOST_ASSERT(pt_->nparam > 0);
     auto const end =
         s_ + pt_->offset[
             detail::id_end];
@@ -619,7 +636,6 @@ params_type::
 begin() const noexcept ->
     iterator
 {
-    BOOST_ASSERT(pt_);
     return iterator(this, false);
 }
 
@@ -629,7 +645,6 @@ params_type::
 end() const noexcept ->
     iterator
 {
-    BOOST_ASSERT(pt_);
     return iterator(this, true);
 }
 
@@ -638,7 +653,6 @@ view::
 params_type::
 contains(string_view key) const noexcept
 {
-    BOOST_ASSERT(pt_);
     for(auto e : *this)
         if(detail::key_equal(
             e.encoded_key(),
@@ -652,7 +666,6 @@ view::
 params_type::
 count(string_view key) const noexcept
 {
-    BOOST_ASSERT(pt_);
     std::size_t n = 0;
     for(auto e : *this)
         if(detail::key_equal(
@@ -668,7 +681,6 @@ params_type::
 find(string_view key) const noexcept ->
     iterator
 {
-    BOOST_ASSERT(pt_);
     auto it = begin();
     for(auto const last = end();
         it != last; ++it)
@@ -684,7 +696,6 @@ view::
 params_type::
 operator[](string_view key) const
 {
-    BOOST_ASSERT(pt_);
     auto const it = find(key);
     if(it == end())
         return "";
