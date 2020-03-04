@@ -7,11 +7,11 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_BASIC_VALUE_HPP
-#define BOOST_URL_BASIC_VALUE_HPP
+#ifndef BOOST_URL_URL_BASE_HPP
+#define BOOST_URL_URL_BASE_HPP
 
 #include <boost/url/config.hpp>
-#include <boost/url/view.hpp>
+#include <boost/url/url_view.hpp>
 #include <boost/url/detail/char_type.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <boost/url/detail/storage.hpp>
@@ -20,7 +20,7 @@
 #include <utility>
 
 namespace boost {
-namespace url {
+namespace urls {
 
 /** A modifiable container for a URL.
 
@@ -39,14 +39,14 @@ namespace url {
     @li Functions which throw offer the strong
     exception safety guarantee.
 
-    @see value, dynamic_value, static_value
+    @see value, basic_url, static_url
 
     @see @li <a href="https://tools.ietf.org/html/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>
 */
-class basic_value
+class url_base
 {
-    friend class view::segments_type;
-    friend class view::params_type;
+    friend class url_view::segments_type;
+    friend class url_view::params_type;
 
     detail::storage& a_;
     detail::parts pt_;
@@ -54,15 +54,15 @@ class basic_value
 
 private:
     template<class Allocator>
-    friend class dynamic_value;
+    friend class basic_url;
 
     template<std::size_t>
-    friend class static_value;
+    friend class static_url;
 
     /** Construct an empty URL with the specified storage.
     */
     BOOST_URL_DECL
-    basic_value(
+    url_base(
         detail::storage& a) noexcept;
 
     /** Construct a parsed URL with the specified storage.
@@ -77,7 +77,7 @@ private:
         @throw std::exception parse error.
     */
     BOOST_URL_DECL
-    basic_value(
+    url_base(
         detail::storage& a,
         string_view s);
 
@@ -173,7 +173,7 @@ public:
         @throw std::exception parsing error.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_encoded_url(
         string_view s);
 
@@ -193,7 +193,7 @@ public:
         thrown.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_encoded_origin(
         string_view s);
 
@@ -247,7 +247,7 @@ public:
         @throw std::exception invalid scheme.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_scheme(string_view s);
 
     //------------------------------------------------------
@@ -299,7 +299,7 @@ public:
         @throw std::exception invalid authority.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_encoded_authority(
         string_view s);
 
@@ -385,7 +385,7 @@ public:
         @param s The string to set.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_encoded_userinfo(
         string_view s);
 
@@ -424,7 +424,7 @@ public:
         @param s The string to set.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_userinfo_part(
         string_view s);
 
@@ -502,7 +502,7 @@ public:
         contain any characters, including nulls.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_user(
         string_view s);
 
@@ -536,7 +536,7 @@ public:
         @param s The string to set.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_encoded_user(
         string_view s);
 
@@ -625,7 +625,7 @@ public:
         contain any characters, including nulls.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_password(
         string_view s);
 
@@ -660,7 +660,7 @@ public:
         @param s The string to set.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_encoded_password(
         string_view s);
 
@@ -696,7 +696,7 @@ public:
         @param s The string to set.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_password_part(
         string_view s);
 
@@ -712,7 +712,7 @@ public:
 
         No-throw guarantee.
     */
-    url::host_type
+    urls::host_type
     host_type() const noexcept
     {
         return pt_.host;
@@ -760,7 +760,7 @@ public:
     host(
         Allocator const& a = {}) const
     {
-        if(pt_.host != url::host_type::name)
+        if(pt_.host != urls::host_type::name)
         {
             auto const s =  pt_.get(
                 detail::id_host, s_);
@@ -846,7 +846,7 @@ public:
         contain any characters, including nulls.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_host(
         string_view s);
 
@@ -902,7 +902,7 @@ public:
         @param s The string to set.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_encoded_host(
         string_view s);
 
@@ -954,7 +954,7 @@ public:
         @param n The port number to set.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_port(unsigned n);
 
     /** Set the port.
@@ -991,7 +991,7 @@ public:
         @param s The string to set.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_port(string_view s);
 
     /** Set the port.
@@ -1028,7 +1028,7 @@ public:
         @param s The string to set.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_port_part(string_view s);
 
     //------------------------------------------------------
@@ -1102,7 +1102,7 @@ public:
 
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_encoded_path(
         string_view s);
 
@@ -1117,10 +1117,10 @@ public:
 
         No-throw guarantee.
 
-        @see view::segments_type
+        @see url_view::segments_type
     */
     inline
-    view::segments_type
+    url_view::segments_type
     segments() const noexcept;
 
     /** Return the path.
@@ -1273,7 +1273,7 @@ public:
         contain any characters, including nulls.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_query(
         string_view s);
 
@@ -1308,7 +1308,7 @@ public:
         @throws std::exception invalid string.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_encoded_query(
         string_view s);
 
@@ -1342,7 +1342,7 @@ public:
         @throws std::exception invalid string.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_query_part(
         string_view s);
 
@@ -1357,10 +1357,10 @@ public:
 
         No-throw guarantee.
 
-        @see view::params_type
+        @see url_view::params_type
     */
     inline
-    view::params_type
+    url_view::params_type
     params() const noexcept;
 
     /** Return the query.
@@ -1515,7 +1515,7 @@ public:
         @see set_encoded_fragment, set_fragment_part
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_fragment(
         string_view s);
 
@@ -1552,7 +1552,7 @@ public:
         @see set_fragment, set_fragment_part
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_encoded_fragment(
         string_view s);
 
@@ -1588,7 +1588,7 @@ public:
         @see set_fragment, set_encoded_fragment
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     set_fragment_part(
         string_view s);
 
@@ -1601,11 +1601,11 @@ public:
     /** Normalize everything.
     */
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     normalize();
 
     BOOST_URL_DECL
-    basic_value&
+    url_base&
     normalize_scheme() noexcept;
 
 private:
@@ -1617,9 +1617,9 @@ private:
 
 /** A read-only view to the path segments.
 */
-class basic_value::segments_type
+class url_base::segments_type
 {
-    basic_value* v_ = nullptr;
+    url_base* v_ = nullptr;
 
 public:
     class value_type;
@@ -1632,7 +1632,7 @@ public:
         segments_type const&) = default;
 
     explicit
-    segments_type(basic_value& v)
+    segments_type(url_base& v)
         : v_(&v)
     {
     }
@@ -1663,7 +1663,7 @@ public:
 
 //----------------------------------------------------------
 
-class basic_value::segments_type::value_type
+class url_base::segments_type::value_type
 {
     string_view s_;
 
@@ -1726,9 +1726,9 @@ public:
 
 /** A modifiable view to the URL query parameters.
 */
-class basic_value::params_type
+class url_base::params_type
 {
-    basic_value* v_ = nullptr;
+    url_base* v_ = nullptr;
 
 public:
     class value_type;
@@ -1742,7 +1742,7 @@ public:
         params_type const&) = default;
 
     explicit
-    params_type(basic_value& v)
+    params_type(url_base& v)
         : v_(&v)
     {
     }
@@ -1810,7 +1810,7 @@ public:
 
 //----------------------------------------------------------
 
-class basic_value::params_type::value_type
+class url_base::params_type::value_type
 {
     string_view k_;
     string_view v_;
@@ -1910,12 +1910,12 @@ public:
     }
 };
 
-} // url
+} // urls
 } // boost
 
-#include <boost/url/impl/basic_value.hpp>
+#include <boost/url/impl/url_base.hpp>
 #ifdef BOOST_URL_HEADER_ONLY
-#include <boost/url/impl/basic_value.ipp>
+#include <boost/url/impl/url_base.ipp>
 #endif
 
 #endif

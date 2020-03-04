@@ -165,7 +165,7 @@
 #endif
 
 namespace boost {
-namespace url {
+namespace urls {
 
 #ifndef BOOST_URL_STANDALONE
 using string_view = boost::string_view;
@@ -259,7 +259,7 @@ constexpr T static_const<T>::value;
     namespace \
     { \
         constexpr auto& name = \
-            ::boost::url::detail::static_const<type>::value; \
+            ::boost::urls::detail::static_const<type>::value; \
     }
 
 struct primary_template
@@ -277,7 +277,7 @@ using remove_cr =
     typename remove_reference<T>::type>::type;
 
 } // detail
-} // url
+} // urls
 } // boost
 
 #endif

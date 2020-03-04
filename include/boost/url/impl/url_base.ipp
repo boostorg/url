@@ -7,30 +7,30 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_IMPL_BASIC_VALUE_IPP
-#define BOOST_URL_IMPL_BASIC_VALUE_IPP
+#ifndef BOOST_URL_IMPL_URL_BASE_IPP
+#define BOOST_URL_IMPL_URL_BASE_IPP
 
 #include <boost/url/error.hpp>
-#include <boost/url/basic_value.hpp>
+#include <boost/url/url_base.hpp>
 #include <boost/url/detail/parse.hpp>
 #include <cstring>
 #include <stdexcept>
 
 namespace boost {
-namespace url {
+namespace urls {
 
 //----------------------------------------------------------
 
-basic_value::
-basic_value(
+url_base::
+url_base(
     detail::storage& a) noexcept
     : a_(a)
     , s_(nullptr)
 {
 }
 
-basic_value::
-basic_value(
+url_base::
+url_base(
     detail::storage& a,
     string_view s)
     : a_(a)
@@ -39,7 +39,7 @@ basic_value(
 }
 
 string_view
-basic_value::
+url_base::
 encoded_url() const
 {
     return pt_.get(
@@ -49,7 +49,7 @@ encoded_url() const
 }
 
 string_view
-basic_value::
+url_base::
 encoded_origin() const noexcept
 {
     return pt_.get(
@@ -58,8 +58,8 @@ encoded_origin() const noexcept
         s_);
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_encoded_url(
     string_view s)
 {
@@ -85,8 +85,8 @@ set_encoded_url(
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_encoded_origin(
     string_view s)
 {
@@ -133,7 +133,7 @@ set_encoded_origin(
 //----------------------------------------------------------
 
 string_view
-basic_value::
+url_base::
 scheme() const noexcept
 {
     auto s = pt_.get(
@@ -146,8 +146,8 @@ scheme() const noexcept
     return s;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_scheme(
     string_view s)
 {
@@ -174,7 +174,7 @@ set_scheme(
 //----------------------------------------------------------
 
 bool
-basic_value::
+url_base::
 has_authority() const noexcept
 {
     return pt_.length(
@@ -183,7 +183,7 @@ has_authority() const noexcept
 }
 
 string_view
-basic_value::
+url_base::
 encoded_authority() const noexcept
 {
     auto s = pt_.get(
@@ -200,8 +200,8 @@ encoded_authority() const noexcept
     return s;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_encoded_authority(
     string_view s)
 {
@@ -245,7 +245,7 @@ set_encoded_authority(
 //----------------------------------------------------------
 
 bool
-basic_value::
+url_base::
 has_userinfo() const noexcept
 {
 /*
@@ -279,7 +279,7 @@ has_userinfo() const noexcept
 }
 
 string_view
-basic_value::
+url_base::
 encoded_userinfo() const noexcept
 {
     auto s = userinfo_part();
@@ -292,7 +292,7 @@ encoded_userinfo() const noexcept
 }
 
 string_view
-basic_value::
+url_base::
 userinfo_part() const noexcept
 {
     auto s = pt_.get(
@@ -311,8 +311,8 @@ userinfo_part() const noexcept
     return s;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_encoded_userinfo(
     string_view s)
 {
@@ -352,8 +352,8 @@ set_encoded_userinfo(
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_userinfo_part(
     string_view s)
 {
@@ -367,7 +367,7 @@ set_userinfo_part(
 }
 
 string_view
-basic_value::
+url_base::
 encoded_user() const noexcept
 {
     auto s = pt_.get(
@@ -383,8 +383,8 @@ encoded_user() const noexcept
     return s;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_user(
     string_view s)
 {
@@ -443,8 +443,8 @@ set_user(
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_encoded_user(
     string_view s)
 {
@@ -482,7 +482,7 @@ set_encoded_user(
 }
 
 string_view
-basic_value::
+url_base::
 encoded_password() const noexcept
 {
     auto s = pt_.get(
@@ -502,7 +502,7 @@ encoded_password() const noexcept
 }
 
 string_view
-basic_value::
+url_base::
 password_part() const noexcept
 {
     auto s = pt_.get(
@@ -515,8 +515,8 @@ password_part() const noexcept
     return s;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_password(
     string_view s)
 {
@@ -571,8 +571,8 @@ set_password(
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_encoded_password(
     string_view s)
 {
@@ -608,8 +608,8 @@ set_encoded_password(
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_password_part(
     string_view s)
 {
@@ -650,7 +650,7 @@ set_password_part(
 //----------------------------------------------------------
 
 string_view
-basic_value::
+url_base::
 encoded_host_and_port() const noexcept
 {
     return pt_.get(
@@ -660,7 +660,7 @@ encoded_host_and_port() const noexcept
 }
 
 string_view
-basic_value::
+url_base::
 encoded_host() const noexcept
 {
     return pt_.get(
@@ -668,8 +668,8 @@ encoded_host() const noexcept
         s_);
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_host(
     string_view s)
 {
@@ -698,8 +698,8 @@ set_host(
     detail::parts pt;
     detail::parse_plain_hostname(pt, s);
     BOOST_ASSERT(
-        pt.host != url::host_type::none);
-    if(pt.host != url::host_type::name)
+        pt.host != urls::host_type::none);
+    if(pt.host != urls::host_type::name)
     {
         if(! has_authority())
         {
@@ -753,8 +753,8 @@ set_host(
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_encoded_host(
     string_view s)
 {
@@ -788,7 +788,7 @@ set_encoded_host(
 }
 
 string_view
-basic_value::
+url_base::
 port() const noexcept
 {
     auto s = pt_.get(
@@ -802,7 +802,7 @@ port() const noexcept
 }
 
 string_view
-basic_value::
+url_base::
 port_part() const noexcept
 {
     auto s = pt_.get(
@@ -813,16 +813,16 @@ port_part() const noexcept
     return s;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_port(unsigned n)
 {
     detail::port_string s(n);
     return set_port(s.get());
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_port(string_view s)
 {
     if(s.empty())
@@ -875,8 +875,8 @@ set_port(string_view s)
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_port_part(string_view s)
 {
     if(s.empty())
@@ -900,7 +900,7 @@ set_port_part(string_view s)
 //----------------------------------------------------------
 
 string_view
-basic_value::
+url_base::
 encoded_path() const noexcept
 {
     return pt_.get(
@@ -908,8 +908,8 @@ encoded_path() const noexcept
         s_);
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_encoded_path(
     string_view s)
 {
@@ -954,7 +954,7 @@ set_encoded_path(
 //----------------------------------------------------------
 
 string_view
-basic_value::
+url_base::
 encoded_query() const noexcept
 {
     auto s = pt_.get(
@@ -967,7 +967,7 @@ encoded_query() const noexcept
 }
 
 string_view
-basic_value::
+url_base::
 query_part() const noexcept
 {
     auto s = pt_.get(
@@ -979,8 +979,8 @@ query_part() const noexcept
     return s;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_query(
     string_view s)
 {
@@ -1001,8 +1001,8 @@ set_query(
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_encoded_query(
     string_view s)
 {
@@ -1022,8 +1022,8 @@ set_encoded_query(
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_query_part(
     string_view s)
 {
@@ -1053,7 +1053,7 @@ set_query_part(
 //----------------------------------------------------------
 
 string_view
-basic_value::
+url_base::
 encoded_fragment() const noexcept
 {
     auto s = pt_.get(
@@ -1066,7 +1066,7 @@ encoded_fragment() const noexcept
 }
 
 string_view
-basic_value::
+url_base::
 fragment_part() const noexcept
 {
     auto s = pt_.get(
@@ -1078,8 +1078,8 @@ fragment_part() const noexcept
     return s;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_fragment(
     string_view s)
 {
@@ -1099,8 +1099,8 @@ set_fragment(
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_encoded_fragment(
     string_view s)
 {
@@ -1120,8 +1120,8 @@ set_encoded_fragment(
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 set_fragment_part(
     string_view s)
 {
@@ -1146,16 +1146,16 @@ set_fragment_part(
 
 //----------------------------------------------------------
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 normalize()
 {
     normalize_scheme();
     return *this;
 }
 
-basic_value&
-basic_value::
+url_base&
+url_base::
 normalize_scheme() noexcept
 {
     auto n = pt_.length(
@@ -1183,7 +1183,7 @@ normalize_scheme() noexcept
 //
 //----------------------------------------------------------
 
-basic_value::
+url_base::
 segments_type::
 iterator::
 iterator() noexcept
@@ -1193,11 +1193,11 @@ iterator() noexcept
 {
 }
 
-basic_value::
+url_base::
 segments_type::
 iterator::
 iterator(
-    basic_value* v,
+    url_base* v,
     bool end) noexcept
     : v_(v)
 {
@@ -1222,7 +1222,7 @@ iterator(
 }
 
 auto
-basic_value::
+url_base::
 segments_type::
 iterator::
 operator*() const noexcept ->
@@ -1237,7 +1237,7 @@ operator*() const noexcept ->
 }
 
 auto
-basic_value::
+url_base::
 segments_type::
 iterator::
 operator++() noexcept ->
@@ -1261,7 +1261,7 @@ operator++() noexcept ->
 }
 
 auto
-basic_value::
+url_base::
 segments_type::
 iterator::
 operator--() noexcept ->
@@ -1292,7 +1292,7 @@ operator--() noexcept ->
 }
 
 void
-basic_value::
+url_base::
 segments_type::
 iterator::
 parse() noexcept
@@ -1320,7 +1320,7 @@ parse() noexcept
 //----------------------------------------------------------
 
 auto
-basic_value::
+url_base::
 segments_type::
 begin() const noexcept ->
     iterator
@@ -1329,7 +1329,7 @@ begin() const noexcept ->
 }
 
 auto
-basic_value::
+url_base::
 segments_type::
 end() const noexcept ->
     iterator
@@ -1343,7 +1343,7 @@ end() const noexcept ->
 //
 //----------------------------------------------------------
 
-basic_value::
+url_base::
 params_type::
 iterator::
 iterator() noexcept
@@ -1354,11 +1354,11 @@ iterator() noexcept
 {
 }
 
-basic_value::
+url_base::
 params_type::
 iterator::
 iterator(
-    basic_value* v,
+    url_base* v,
     bool end) noexcept
     : v_(v)
 {
@@ -1385,7 +1385,7 @@ iterator(
 }
 
 auto
-basic_value::
+url_base::
 params_type::
 iterator::
 operator*() const noexcept ->
@@ -1413,7 +1413,7 @@ operator*() const noexcept ->
 }
 
 auto
-basic_value::
+url_base::
 params_type::
 iterator::
 operator++() noexcept ->
@@ -1440,7 +1440,7 @@ operator++() noexcept ->
 }
 
 auto
-basic_value::
+url_base::
 params_type::
 iterator::
 operator--() noexcept ->
@@ -1470,7 +1470,7 @@ operator--() noexcept ->
 }
 
 void
-basic_value::
+url_base::
 params_type::
 iterator::
 parse() noexcept
@@ -1512,7 +1512,7 @@ parse() noexcept
 //----------------------------------------------------------
 
 auto
-basic_value::
+url_base::
 params_type::
 begin() const noexcept ->
     iterator
@@ -1521,7 +1521,7 @@ begin() const noexcept ->
 }
 
 auto
-basic_value::
+url_base::
 params_type::
 end() const noexcept ->
     iterator
@@ -1530,7 +1530,7 @@ end() const noexcept ->
 }
 
 bool
-basic_value::
+url_base::
 params_type::
 contains(string_view key) const noexcept
 {
@@ -1543,7 +1543,7 @@ contains(string_view key) const noexcept
 }
 
 std::size_t
-basic_value::
+url_base::
 params_type::
 count(string_view key) const noexcept
 {
@@ -1557,7 +1557,7 @@ count(string_view key) const noexcept
 }
 
 auto
-basic_value::
+url_base::
 params_type::
 find(string_view key) const noexcept ->
     iterator
@@ -1573,7 +1573,7 @@ find(string_view key) const noexcept ->
 }
 
 std::string
-basic_value::
+url_base::
 params_type::
 operator[](string_view key) const
 {
@@ -1586,7 +1586,7 @@ operator[](string_view key) const
 //----------------------------------------------------------
 
 char*
-basic_value::
+url_base::
 resize(
     int id,
     std::size_t new_size)
@@ -1634,7 +1634,7 @@ resize(
 }
 
 char*
-basic_value::
+url_base::
 resize(
     int first,
     int last,
@@ -1691,7 +1691,7 @@ resize(
     return s_ + pt_.offset[first];
 }
 
-} // url
+} // urls
 } // boost
 
 #endif

@@ -15,7 +15,7 @@
 #include <string>
 
 namespace boost {
-namespace url {
+namespace urls {
 namespace detail {
 
 class parse_test
@@ -77,5 +77,5 @@ public:
 TEST_SUITE(parse_test, "boost.url.parse");
 
 } // detail
-} // url
+} // urls
 } // boost

@@ -15,7 +15,7 @@
 #include <cstdint>
 
 namespace boost {
-namespace url {
+namespace urls {
 namespace detail {
 
 inline
@@ -545,7 +545,7 @@ public:
 };
 
 } // detail
-} // url
+} // urls
 } // boost
 
 #endif

@@ -7,26 +7,43 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_IMPL_VIEW_HPP
-#define BOOST_URL_IMPL_VIEW_HPP
+#ifndef BOOST_URL_IMPL_URL_BASE_HPP
+#define BOOST_URL_IMPL_URL_BASE_HPP
 
 namespace boost {
-namespace url {
+namespace urls {
+
+url_view::
+segments_type::
+segments_type(
+    url_base const& v) noexcept
+    : s_(v.s_)
+    , pt_(&v.pt_)
+{
+}
+
+url_view::
+params_type::
+params_type(
+    url_base const& v) noexcept
+    : s_(v.s_)
+    , pt_(&v.pt_)
+{
+}
 
 //----------------------------------------------------------
 
-class view::segments_type::iterator
+class url_base::segments_type::iterator
 {
     friend segments_type;
 
-    char const* s_;
-    detail::parts const* pt_;
+    url_base* v_;
     std::size_t off_;
     std::size_t n_;
 
     BOOST_URL_DECL
     iterator(
-        segments_type const* v,
+        url_base* v,
         bool end) noexcept;
 
 public:
@@ -51,11 +68,11 @@ public:
         iterator const& other) const noexcept
     {
         BOOST_ASSERT(
-            pt_ != other.pt_ ||
+            v_ != other.v_ ||
             off_ != other.off_ || 
             n_ == other.n_);
         return
-            pt_ == other.pt_ &&
+            v_ == other.v_ &&
             off_ == other.off_;
     }
 
@@ -98,19 +115,18 @@ private:
 
 //----------------------------------------------------------
 
-class view::params_type::iterator
+class url_base::params_type::iterator
 {
     friend params_type;
 
-    char const* s_;
-    detail::parts const* pt_;
+    url_base* v_;
     std::size_t off_;
     std::size_t nk_;
     std::size_t nv_;
 
     BOOST_URL_DECL
     iterator(
-        params_type const* v,
+        url_base* v,
         bool end) noexcept;
 
 public:
@@ -135,12 +151,12 @@ public:
         iterator const& other) const noexcept
     {
         BOOST_ASSERT(
-            pt_ != other.pt_ ||
+            v_ != other.v_ ||
             off_ != other.off_ || (
                 nk_ == other.nk_ &&
                 nv_ == other.nv_));
         return
-            pt_ == other.pt_ &&
+            v_ == other.v_ &&
             off_ == other.off_;
     }
 
@@ -185,7 +201,7 @@ private:
 
 template<class Allocator>
 string_type<Allocator>
-view::
+url_base::
 params_type::
 at( string_view key,
     Allocator const& a) const
@@ -199,22 +215,38 @@ at( string_view key,
 //----------------------------------------------------------
 
 auto
-view::
+url_base::
 segments() const noexcept ->
+    url_view::segments_type
+{
+    return url_view::segments_type(*this);
+}
+
+auto
+url_base::
+segments() noexcept ->
     segments_type
 {
     return segments_type(*this);
 }
 
 auto
-view::
+url_base::
 params() const noexcept ->
+    url_view::params_type
+{
+    return url_view::params_type(*this);
+}
+
+auto
+url_base::
+params() noexcept ->
     params_type
 {
     return params_type(*this);
 }
 
-} // url
+} // urls
 } // boost
 
 #endif

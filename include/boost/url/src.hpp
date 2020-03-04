@@ -23,9 +23,9 @@ in a translation unit of the program.
 # error Do not compile library source with the header only macro defined
 #endif
 
-#include <boost/url/impl/basic_value.ipp>
+#include <boost/url/impl/url_base.ipp>
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/scheme.ipp>
-#include <boost/url/impl/view.ipp>
+#include <boost/url/impl/url_view.ipp>
 
 #endif

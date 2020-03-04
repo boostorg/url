@@ -13,7 +13,7 @@
 #include "test_suite.hpp"
 
 namespace boost {
-namespace url {
+namespace urls {
 
 class scheme_test
 {
@@ -36,5 +36,5 @@ public:
 
 TEST_SUITE(scheme_test, "boost.url.scheme");
 
-} // url
+} // urls
 } // boost

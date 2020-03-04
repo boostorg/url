@@ -7,18 +7,18 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_IMPL_VIEW_IPP
-#define BOOST_URL_IMPL_VIEW_IPP
+#ifndef BOOST_URL_IMPL_URL_VIEW_IPP
+#define BOOST_URL_IMPL_URL_VIEW_IPP
 
-#include <boost/url/view.hpp>
+#include <boost/url/url_view.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/detail/parse.hpp>
 
 namespace boost {
-namespace url {
+namespace urls {
 
-view::
-view(string_view s)
+url_view::
+url_view(string_view s)
     : s_(s.data())
 {
     detail::parser pr(s);
@@ -29,7 +29,7 @@ view(string_view s)
 }
 
 string_view
-view::
+url_view::
 encoded_url() const
 {
     return pt_.get(
@@ -39,7 +39,7 @@ encoded_url() const
 }
 
 string_view
-view::
+url_view::
 encoded_origin() const noexcept
 {
     return pt_.get(
@@ -55,7 +55,7 @@ encoded_origin() const noexcept
 //----------------------------------------------------------
 
 string_view
-view::
+url_view::
 scheme() const noexcept
 {
     auto s = pt_.get(
@@ -75,7 +75,7 @@ scheme() const noexcept
 //----------------------------------------------------------
 
 bool
-view::
+url_view::
 has_authority() const noexcept
 {
     return pt_.length(
@@ -84,7 +84,7 @@ has_authority() const noexcept
 }
 
 string_view
-view::
+url_view::
 encoded_authority() const noexcept
 {
     auto s = pt_.get(
@@ -108,7 +108,7 @@ encoded_authority() const noexcept
 //----------------------------------------------------------
 
 bool
-view::
+url_view::
 has_userinfo() const noexcept
 {
     if(pt_.length(
@@ -137,7 +137,7 @@ has_userinfo() const noexcept
 }
 
 string_view
-view::
+url_view::
 encoded_userinfo() const noexcept
 {
     auto s = pt_.get(
@@ -158,7 +158,7 @@ encoded_userinfo() const noexcept
 }
 
 string_view
-view::
+url_view::
 userinfo_part() const noexcept
 {
     auto s = pt_.get(
@@ -178,7 +178,7 @@ userinfo_part() const noexcept
 }
 
 string_view
-view::
+url_view::
 encoded_user() const noexcept
 {
     auto s = pt_.get(
@@ -195,7 +195,7 @@ encoded_user() const noexcept
 }
 
 string_view
-view::
+url_view::
 encoded_password() const noexcept
 {
     auto s = pt_.get(
@@ -223,7 +223,7 @@ encoded_password() const noexcept
 //----------------------------------------------------------
 
 string_view
-view::
+url_view::
 encoded_host_and_port() const noexcept
 {
     return pt_.get(
@@ -233,7 +233,7 @@ encoded_host_and_port() const noexcept
 }
 
 string_view
-view::
+url_view::
 encoded_host() const noexcept
 {
     return pt_.get(
@@ -242,7 +242,7 @@ encoded_host() const noexcept
 }
 
 string_view
-view::
+url_view::
 port() const noexcept
 {
     auto s = pt_.get(
@@ -255,7 +255,7 @@ port() const noexcept
 }
 
 string_view
-view::
+url_view::
 port_part() const noexcept
 {
     auto const s = pt_.get(
@@ -272,7 +272,7 @@ port_part() const noexcept
 //----------------------------------------------------------
 
 string_view
-view::
+url_view::
 encoded_path() const noexcept
 {
     return pt_.get(
@@ -287,7 +287,7 @@ encoded_path() const noexcept
 //----------------------------------------------------------
 
 string_view
-view::
+url_view::
 encoded_query() const noexcept
 {
     auto s = pt_.get(
@@ -300,7 +300,7 @@ encoded_query() const noexcept
 }
 
 string_view
-view::
+url_view::
 query_part() const noexcept
 {
     auto s = pt_.get(
@@ -319,7 +319,7 @@ query_part() const noexcept
 //----------------------------------------------------------
 
 string_view
-view::
+url_view::
 encoded_fragment() const noexcept
 {
     auto s = pt_.get(
@@ -332,7 +332,7 @@ encoded_fragment() const noexcept
 }
 
 string_view
-view::
+url_view::
 fragment_part() const noexcept
 {
     auto s = pt_.get(
@@ -350,7 +350,7 @@ fragment_part() const noexcept
 //
 //----------------------------------------------------------
 
-view::
+url_view::
 segments_type::
 iterator::
 iterator() noexcept
@@ -361,7 +361,7 @@ iterator() noexcept
 {
 }
 
-view::
+url_view::
 segments_type::
 iterator::
 iterator(
@@ -391,7 +391,7 @@ iterator(
 }
 
 auto
-view::
+url_view::
 segments_type::
 iterator::
 operator*() const noexcept ->
@@ -406,7 +406,7 @@ operator*() const noexcept ->
 }
 
 auto
-view::
+url_view::
 segments_type::
 iterator::
 operator++() noexcept ->
@@ -430,7 +430,7 @@ operator++() noexcept ->
 }
 
 auto
-view::
+url_view::
 segments_type::
 iterator::
 operator--() noexcept ->
@@ -461,7 +461,7 @@ operator--() noexcept ->
 }
 
 void
-view::
+url_view::
 segments_type::
 iterator::
 parse() noexcept
@@ -488,7 +488,7 @@ parse() noexcept
 //----------------------------------------------------------
 
 auto
-view::
+url_view::
 segments_type::
 begin() const noexcept ->
     iterator
@@ -497,7 +497,7 @@ begin() const noexcept ->
 }
 
 auto
-view::
+url_view::
 segments_type::
 end() const noexcept ->
     iterator
@@ -511,7 +511,7 @@ end() const noexcept ->
 //
 //----------------------------------------------------------
 
-view::
+url_view::
 params_type::
 iterator::
 iterator() noexcept
@@ -523,7 +523,7 @@ iterator() noexcept
 {
 }
 
-view::
+url_view::
 params_type::
 iterator::
 iterator(
@@ -555,7 +555,7 @@ iterator(
 }
 
 auto
-view::
+url_view::
 params_type::
 iterator::
 operator*() const noexcept ->
@@ -583,7 +583,7 @@ operator*() const noexcept ->
 }
 
 auto
-view::
+url_view::
 params_type::
 iterator::
 operator++() noexcept ->
@@ -610,7 +610,7 @@ operator++() noexcept ->
 }
 
 auto
-view::
+url_view::
 params_type::
 iterator::
 operator--() noexcept ->
@@ -640,7 +640,7 @@ operator--() noexcept ->
 }
 
 void
-view::
+url_view::
 params_type::
 iterator::
 parse() noexcept
@@ -682,7 +682,7 @@ parse() noexcept
 //----------------------------------------------------------
 
 auto
-view::
+url_view::
 params_type::
 begin() const noexcept ->
     iterator
@@ -691,7 +691,7 @@ begin() const noexcept ->
 }
 
 auto
-view::
+url_view::
 params_type::
 end() const noexcept ->
     iterator
@@ -700,7 +700,7 @@ end() const noexcept ->
 }
 
 bool
-view::
+url_view::
 params_type::
 contains(string_view key) const noexcept
 {
@@ -713,7 +713,7 @@ contains(string_view key) const noexcept
 }
 
 std::size_t
-view::
+url_view::
 params_type::
 count(string_view key) const noexcept
 {
@@ -727,7 +727,7 @@ count(string_view key) const noexcept
 }
 
 auto
-view::
+url_view::
 params_type::
 find(string_view key) const noexcept ->
     iterator
@@ -743,7 +743,7 @@ find(string_view key) const noexcept ->
 }
 
 std::string
-view::
+url_view::
 params_type::
 operator[](string_view key) const
 {
@@ -753,7 +753,7 @@ operator[](string_view key) const
     return it->value();
 }
 
-} // url
+} // urls
 } // boost
 
 #endif

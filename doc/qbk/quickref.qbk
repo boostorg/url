@@ -13,45 +13,45 @@
         [Description]
     ]
     [
-        [[link url.ref.boost__url__basic_value `basic_value`]]
-        [
-            A modifiable container for a URL.
-        ]
-    ]
-    [
-        [[link url.ref.boost__url__dynamic_value `dynamic_value`]]
+        [[link url.ref.boost__urls__basic_url `basic_url`]]
         [
             A modifiable container for a URL, using an __Allocator__.
         ]
     ]
     [
-        [[link url.ref.boost__url__host_type `host_type`]]
+        [[link url.ref.boost__urls__host_type `host_type`]]
         [
             An enumeration indicating the type of host in a URL.
         ]
     ]
     [
-        [[link url.ref.boost__url__static_pool `static_pool`]]
+        [[link url.ref.boost__urls__static_pool `static_pool`]]
         [
             A memory pool which allocates from the stack.
         ]
     ]
     [
-        [[link url.ref.boost__url__static_value `static_value`]]
+        [[link url.ref.boost__urls__static_url `static_url`]]
         [
             A modifiable container for a URL, using fixed
             capacity storage.
         ]
     ]
     [
-        [[link url.ref.boost__url__value `value`]]
+        [[link url.ref.boost__urls__url `url`]]
         [
             A modifiable container for a URL, using the
             standard allocator.
         ]
     ]
     [
-        [[link url.ref.boost__url__view `view`]]
+        [[link url.ref.boost__urls__url_base `url_base`]]
+        [
+            Base class for a modifiable URL container.
+        ]
+    ]
+    [
+        [[link url.ref.boost__urls__url_view `url_view`]]
         [
             A parsed reference to a URL string.
         ]

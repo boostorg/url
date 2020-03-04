@@ -15,7 +15,7 @@
 #include <string>
 
 namespace boost {
-namespace url {
+namespace urls {
 namespace detail {
 
 class char_type_test
@@ -191,5 +191,5 @@ public:
 TEST_SUITE(char_type_test, "boost.url.char_type");
 
 } // detail
-} // url
+} // urls
 } // boost

@@ -14,7 +14,7 @@
 #include <boost/url/detail/char_type.hpp>
 
 namespace boost {
-namespace url {
+namespace urls {
 
 scheme
 string_to_scheme(
@@ -105,7 +105,7 @@ to_string(scheme s) noexcept
     return "<unknown>";
 }
 
-} // url
+} // urls
 } // boost
 
 #endif

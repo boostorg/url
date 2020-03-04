@@ -7,8 +7,8 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_VIEW_HPP
-#define BOOST_URL_VIEW_HPP
+#ifndef BOOST_URL_URL_VIEW_HPP
+#define BOOST_URL_URL_VIEW_HPP
 
 #include <boost/url/config.hpp>
 #include <boost/url/detail/parts.hpp>
@@ -18,13 +18,13 @@
 #include <utility>
 
 namespace boost {
-namespace url {
+namespace urls {
 
-class basic_value;
+class url_base;
 
 /** A parsed reference to a URL string.
 */
-class view
+class url_view
 {
     char const* s_ = "";
     detail::parts pt_;
@@ -33,11 +33,15 @@ public:
     class segments_type;
     class params_type;
 
-    view() = default;
+    url_view() = default;
 
+    /** Constructor.
+
+        @param s The string to construct from.
+    */
     BOOST_URL_DECL
     explicit
-    view(string_view s);
+    url_view(string_view s);
 
     /** Return the number of characters in the URL.
     */
@@ -238,7 +242,7 @@ public:
 
         No-throw guarantee.
     */
-    url::host_type
+    urls::host_type
     host_type() const noexcept
     {
         return pt_.host;
@@ -286,7 +290,7 @@ public:
     host(
         Allocator const& a = {}) const
     {
-        if(pt_.host != url::host_type::name)
+        if(pt_.host != urls::host_type::name)
         {
             auto const s =  pt_.get(
                 detail::id_host, s_);
@@ -588,7 +592,7 @@ public:
 
 /** A read-only view to the path segments.
 */
-class view::segments_type
+class url_view::segments_type
 {
     char const* s_ = nullptr;
     detail::parts const* pt_ = nullptr;
@@ -604,7 +608,7 @@ public:
         segments_type const&) = default;
 
     explicit
-    segments_type(view const& v) noexcept
+    segments_type(url_view const& v) noexcept
         : s_(v.s_)
         , pt_(&v.pt_)
     {
@@ -613,7 +617,7 @@ public:
     inline
     explicit
     segments_type(
-        basic_value const& v) noexcept;
+        url_base const& v) noexcept;
 
     inline
     bool
@@ -641,7 +645,7 @@ public:
 
 //----------------------------------------------------------
 
-class view::segments_type::value_type
+class url_view::segments_type::value_type
 {
     string_view s_;
 
@@ -689,7 +693,7 @@ public:
 
 /** A read-only view to the URL query parameters.
 */
-class view::params_type
+class url_view::params_type
 {
     char const* s_ = nullptr;
     detail::parts const* pt_ = nullptr;
@@ -706,7 +710,7 @@ public:
         params_type const&) = default;
 
     explicit
-    params_type(view const& v)
+    params_type(url_view const& v)
         : s_(v.s_)
         , pt_(&v.pt_)
     {
@@ -715,7 +719,7 @@ public:
     inline
     explicit
     params_type(
-        basic_value const& v) noexcept;
+        url_base const& v) noexcept;
 
     inline
     bool
@@ -765,7 +769,7 @@ public:
 
 //----------------------------------------------------------
 
-class view::params_type::value_type
+class url_view::params_type::value_type
 {
     string_view k_;
     string_view v_;
@@ -835,12 +839,12 @@ public:
     }
 };
 
-} // url
+} // urls
 } // boost
 
-#include <boost/url/impl/view.hpp>
+#include <boost/url/impl/url_view.hpp>
 #ifdef BOOST_URL_HEADER_ONLY
-#include <boost/url/impl/view.ipp>
+#include <boost/url/impl/url_view.ipp>
 #endif
 
 #endif

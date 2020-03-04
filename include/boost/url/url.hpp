@@ -7,17 +7,19 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_HPP
-#define BOOST_URL_HPP
+#ifndef BOOST_URL_URL_HPP
+#define BOOST_URL_URL_HPP
 
 #include <boost/url/config.hpp>
+#include <boost/url/basic_url.hpp>
+#include <memory>
 
-#include <boost/url/url_base.hpp>
-#include <boost/url/error.hpp>
-#include <boost/url/host_type.hpp>
-#include <boost/url/scheme.hpp>
-#include <boost/url/static_pool.hpp>
-#include <boost/url/url_view.hpp>
-#include <boost/url/urls.hpp>
+namespace boost {
+namespace urls {
+
+using url = basic_url<std::allocator<char>>;
+
+} // urls
+} // boost
 
 #endif

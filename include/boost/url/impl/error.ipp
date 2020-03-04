@@ -13,7 +13,7 @@
 #include <boost/url/error.hpp>
 
 namespace boost {
-namespace url {
+namespace urls {
 
 parse_error::
 parse_error()
@@ -183,7 +183,7 @@ make_error_condition(condition c)
         std::underlying_type<condition>::type>(c), cat};
 }
 
-} // url
+} // urls
 } // boost
 
 #endif

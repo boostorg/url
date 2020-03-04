@@ -13,7 +13,7 @@
 #include <boost/url/config.hpp>
 
 namespace boost {
-namespace url {
+namespace urls {
 
 /** Identifies the type of host in a URL.
 
@@ -21,7 +21,7 @@ namespace url {
     and containers to indicate the type of host
     present in a URL.
 
-    @see view::host, basic_value::host
+    @see url_view::host, url_base::host
 */
 enum class host_type
 {
@@ -46,7 +46,7 @@ enum class host_type
     ipvfuture
 };
 
-} // url
+} // urls
 } // boost
 
 #endif

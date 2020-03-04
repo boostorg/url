@@ -14,7 +14,7 @@
 #include <cstdlib>
 
 namespace boost {
-namespace url {
+namespace urls {
 
 class basic_static_pool
 {
@@ -162,7 +162,7 @@ public:
     }
 };
 
-} // url
+} // urls
 } // boost
 
 #endif

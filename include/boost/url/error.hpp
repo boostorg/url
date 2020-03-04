@@ -14,7 +14,7 @@
 #include <stdexcept>
 
 namespace boost {
-namespace url {
+namespace urls {
 
 struct BOOST_SYMBOL_VISIBLE
     parse_error : std::invalid_argument
@@ -129,7 +129,7 @@ enum class condition
     parse_error = 1
 };
 
-} // url
+} // urls
 } // boost
 
 #include <boost/url/impl/error.hpp>

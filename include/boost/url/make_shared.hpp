@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_MAKE_SHARED_HPP
 #define BOOST_URL_MAKE_SHARED_HPP
 
-#include <boost/beast/url/view.hpp>
+#include <boost/beast/url/url_view.hpp>
 #include <boost/beast/core/detail/allocator.hpp>
 #include <boost/beast/core/detail/empty_base_optimization.hpp>
 #include <boost/assert.hpp>
@@ -20,7 +20,7 @@
 
 namespace boost {
 namespace beast {
-namespace url {
+namespace urls {
 
 namespace detail {
 
@@ -141,10 +141,10 @@ public:
     }
 };
 
-struct shared_view_impl : view
+struct shared_view_impl : url_view
 {
-    shared_view_impl(view const& v)
-        : view(v.cparts(),
+    shared_view_impl(url_view const& v)
+        : url_view(v.cparts(),
             reinterpret_cast<
                 char const*>(this + 1))
     {
@@ -155,9 +155,9 @@ struct shared_view_impl : view
 
 template<
     class Allocator = std::allocator<char>>
-std::shared_ptr<view>
+std::shared_ptr<url_view>
 make_shared(
-    view const& v,
+    url_view const& v,
     Allocator const& alloc = Allocator{})
 {
     using T = detail::shared_view_impl;
@@ -171,7 +171,7 @@ make_shared(
     return p;
 }
 
-} // url
+} // urls
 } // beast
 } // boost
 

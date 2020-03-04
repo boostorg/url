@@ -15,7 +15,7 @@
 #include <memory>
 
 namespace boost {
-namespace url {
+namespace urls {
 
 class error_test
 {
@@ -70,5 +70,5 @@ public:
 
 TEST_SUITE(error_test, "boost.url.error");
 
-} // url
+} // urls
 } // boost

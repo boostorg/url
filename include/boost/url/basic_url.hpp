@@ -7,89 +7,71 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_VALUE_HPP
-#define BOOST_URL_VALUE_HPP
+#ifndef BOOST_URL_BASIC_URL_HPP
+#define BOOST_URL_BASIC_URL_HPP
 
 #include <boost/url/config.hpp>
-#include <boost/url/basic_value.hpp>
+#include <boost/url/url_base.hpp>
 #include <boost/url/detail/storage.hpp>
 #include <utility>
 
 namespace boost {
-namespace url {
+namespace urls {
 
-namespace detail {
-
+/** A container for storing a URL.
+*/
 template<class Allocator>
-struct storage_member
-{
-    alloc_storage<Allocator> st_;
-
-    explicit
-    storage_member(
-        Allocator const& alloc)
-        : st_(alloc)
-    {
-    }
-};
-
-} // detail
-
-template<class Allocator>
-class dynamic_value
+class basic_url
     : private detail::storage_member<Allocator>
-    , public basic_value
+    , public url_base
 {
 public:
-    dynamic_value() noexcept
+    basic_url() noexcept
         : detail::storage_member<
             Allocator>(Allocator{})
-        , basic_value(static_cast<
+        , url_base(static_cast<
             detail::storage&>(this->st_))
     {
     }
 
     explicit
-    dynamic_value(
+    basic_url(
         string_view s,
         Allocator const& a = {})
         : detail::storage_member<
             Allocator>(a)
-        , basic_value(this->st_, s)
+        , url_base(this->st_, s)
     {
     }
 
     explicit
-    dynamic_value(
+    basic_url(
         Allocator const& a) noexcept
         : detail::storage_member<
             Allocator>(a)
-        , basic_value(this->st_)
+        , url_base(this->st_)
     {
     }
 
-    dynamic_value(
-        dynamic_value&&) noexcept
+    basic_url(
+        basic_url&&) noexcept
     {
     }
 
-    dynamic_value(
-        dynamic_value const&)
+    basic_url(
+        basic_url const&)
     {
     }
 
-    dynamic_value&
+    basic_url&
     operator=(
-        dynamic_value const&)
+        basic_url const&)
     {
         return *this;
     }
 };
 
-using value = dynamic_value<
-    std::allocator<char>>;
-
-} // url
+} // urls
 } // boost
 
 #endif

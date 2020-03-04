@@ -15,7 +15,7 @@
 #include <memory>
 
 namespace boost {
-namespace url {
+namespace urls {
 namespace detail {
 
 struct storage
@@ -87,12 +87,26 @@ public:
         p_ = p;
         cap_ = cap;
         size_ = n;
+        p_[n] = 0;
         return p_;
     }
 };
 
+template<class Allocator>
+struct storage_member
+{
+    alloc_storage<Allocator> st_;
+
+    explicit
+    storage_member(
+        Allocator const& alloc)
+        : st_(alloc)
+    {
+    }
+};
+
 } // detail
-} // url
+} // urls
 } // boost
 
 #endif

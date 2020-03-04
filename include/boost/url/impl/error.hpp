@@ -17,12 +17,12 @@
 namespace boost {
 namespace system {
 template<>
-struct is_error_code_enum<::boost::url::error>
+struct is_error_code_enum<::boost::urls::error>
 {
     static bool const value = true;
 };
 template<>
-struct is_error_condition_enum<::boost::url::condition>
+struct is_error_condition_enum<::boost::urls::condition>
 {
     static bool const value = true;
 };
@@ -33,12 +33,12 @@ struct is_error_condition_enum<::boost::url::condition>
 
 namespace std {
 template<>
-struct is_error_code_enum<::boost::url::error>
+struct is_error_code_enum<::boost::urls::error>
 {
     static bool const value = true;
 };
 template<>
-struct is_error_condition_enum<::boost::url::condition>
+struct is_error_condition_enum<::boost::urls::condition>
 {
     static bool const value = true;
 };
@@ -47,7 +47,7 @@ struct is_error_condition_enum<::boost::url::condition>
 #endif
 
 namespace boost {
-namespace url {
+namespace urls {
 
 BOOST_URL_DECL
 error_code
@@ -57,7 +57,7 @@ BOOST_URL_DECL
 error_condition
 make_error_condition(condition c);
 
-} // url
+} // urls
 } // boost
 
 #endif

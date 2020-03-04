@@ -13,7 +13,7 @@
 #include <boost/url/config.hpp>
 
 namespace boost {
-namespace url {
+namespace urls {
 
 /** Identifies a special URL scheme.
 */
@@ -57,7 +57,7 @@ is_special(string_view s) noexcept
     return string_to_scheme(s) != scheme::unknown;
 }
 
-} // url
+} // urls
 } // boost
 
 #ifdef BOOST_URL_HEADER_ONLY

@@ -15,7 +15,7 @@
 #include <boost/url/error.hpp>
 
 namespace boost {
-namespace url {
+namespace urls {
 namespace detail {
 
 enum
@@ -123,7 +123,7 @@ struct parts
 };
 
 } // detail
-} // url
+} // urls
 } // boost
 
 #endif

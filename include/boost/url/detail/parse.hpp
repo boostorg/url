@@ -15,7 +15,7 @@
 #include <boost/url/error.hpp>
 
 namespace boost {
-namespace url {
+namespace urls {
 namespace detail {
 
 // https://tools.ietf.org/html/rfc3986#section-3.2
@@ -1069,7 +1069,7 @@ match_path_rootless(string_view s)
 }
 
 } // detail
-} // url
+} // urls
 } // boost
 
 #endif

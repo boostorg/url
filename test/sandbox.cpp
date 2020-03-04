@@ -7,17 +7,32 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-// Test that header file is self-contained.
-#include <boost/url/static_pool.hpp>
-
 #include "test_suite.hpp"
 
-#include <iostream>
+#if 0
+namespace boost {
+namespace urls {
+
+class url_view;
+
+class url_base;
+
+template<class Allocator>
+class basic_url;
+
+template<std::size_t N>
+class static_url;
+
+using url = basic_url<std::allocator<char>>;
+
+} // urls
+} // boost
+#endif
 
 namespace boost {
 namespace urls {
 
-class static_pool_test
+class sandbox_test
 {
 public:
     void
@@ -26,7 +41,7 @@ public:
     }
 };
 
-TEST_SUITE(static_pool_test, "boost.url.static_pool");
+TEST_SUITE(sandbox_test, "boost.url.sandbox");
 
 } // urls
 } // boost

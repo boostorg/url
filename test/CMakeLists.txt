@@ -7,7 +7,8 @@
 # Official repository: https://github.com/vinniefalco/url
 #
 
-source_group (url FILES ${PROJECT_SOURCE_DIR}/include/boost/url.hpp)
+source_group (boost FILES ${PROJECT_SOURCE_DIR}/include/boost/url.hpp)
+source_group (_lib FILES ${PROJECT_SOURCE_DIR}/src/src.cpp)
 source_group (TREE ${PROJECT_SOURCE_DIR}/include/boost/url PREFIX url FILES ${PROJECT_FILES})
 
 GroupSources(test "/")
@@ -25,14 +26,17 @@ add_executable (url-tests
     test_suite.hpp
     _detail_char_type.cpp
     _detail_parse.cpp
-    basic_value.cpp
+    basic_url.cpp
     error.cpp
     host_type.cpp
+    sandbox.cpp
     scheme.cpp
     static_pool.cpp
-    static_value.cpp
-    value.cpp
-    view.cpp
+    static_url.cpp
+    url.cpp
+    url_base.cpp
+    url_view.cpp
+    urls.cpp
 )
 
 add_test(url-tests url-tests)

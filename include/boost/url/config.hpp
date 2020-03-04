@@ -14,7 +14,7 @@
 #include <string>
 
 namespace boost {
-namespace url {
+namespace urls {
 
 /// The string alias template return type for allocating member functions.
 template<class Allocator>
@@ -65,7 +65,7 @@ using optional = std::optional<T>;
 
 #endif
 
-} // url
+} // urls
 } // boost
 
 #endif
