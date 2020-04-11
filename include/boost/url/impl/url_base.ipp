@@ -38,6 +38,16 @@ url_base(
     set_encoded_url(s);
 }
 
+url_base::
+url_base(
+  detail::storage& a,
+  string_view s,
+  error_code& ec)
+  : a_(a)
+{
+  set_encoded_url(s, ec);
+}
+
 string_view
 url_base::
 encoded_url() const
@@ -60,28 +70,37 @@ encoded_origin() const noexcept
 
 url_base&
 url_base::
-set_encoded_url(
-    string_view s)
+set_encoded_url(string_view s)
 {
+  error_code ec;
+  set_encoded_url(s, ec);
+  if (ec)
+  {
+    invalid_part::raise();
+  }
+  return *this;
+}
+
+url_base&
+url_base::
+set_encoded_url(string_view s, error_code& ec)
+{
+    pt_ = detail::parts{};
     if(s.empty())
     {
         if(s_)
-            resize(
-                detail::id_scheme,
-                detail::id_end, 0);
+            clear();
         return *this;
     }
-    error_code ec;
-    detail::parser pr(s);
     detail::parts pt;
     detail::parse_url(pt, s, ec);
-    if(ec)
-        invalid_part::raise();
-    s_ = a_.resize(s.size());
-    //---
-    pt_ = pt;
-    std::memcpy(
-        s_, s.data(), s.size());
+    if(!ec)
+    {
+        s_ = a_.resize(s.size());
+        //---
+        pt_ = pt;
+        std::memcpy(s_, s.data(), s.size());
+    }
     return *this;
 }
 
@@ -1631,6 +1650,14 @@ resize(
         i <= detail::id_end; ++i)
         pt_.offset[i] += n;
     return s_ + pt_.offset[id];
+}
+
+void
+url_base::clear()
+{
+  resize(
+    detail::id_scheme,
+    detail::id_end, 0);
 }
 
 char*

@@ -81,6 +81,12 @@ private:
         detail::storage& a,
         string_view s);
 
+    BOOST_URL_DECL
+    url_base(
+        detail::storage& a,
+        string_view s,
+        error_code& ec);
+
 public:
     class segments_type;
     class params_type;
@@ -102,6 +108,14 @@ public:
     {
         return pt_.offset[
             detail::id_end];
+    }
+
+    /** Return the number of characters in the URL.
+    */
+    std::size_t
+    empty() const noexcept
+    {
+      return size() == 0U;
     }
 
     /** Return a pointer to the characters in the URL.
@@ -176,6 +190,23 @@ public:
     url_base&
     set_encoded_url(
         string_view s);
+
+    /** Set the URL.
+
+        @par Exception Safety
+
+        Strong guarantee.
+
+        @param s The URL to set. The contents must
+        meet the syntactic requirements of a
+        <em>URI-reference</em>.
+        @param ec error code
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_encoded_url(
+      string_view s,
+      error_code& ec);
 
     /** Set the origin to the specified value.
 
@@ -1607,6 +1638,11 @@ public:
     BOOST_URL_DECL
     url_base&
     normalize_scheme() noexcept;
+
+    BOOST_URL_DECL
+    void
+    clear();
+
 
 private:
     inline char* resize(int id, std::size_t new_size);

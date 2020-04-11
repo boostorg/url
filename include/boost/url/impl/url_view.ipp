@@ -21,11 +21,18 @@ url_view::
 url_view(string_view s)
     : s_(s.data())
 {
-    detail::parser pr(s);
     error_code ec;
     detail::parse_url(pt_, s, ec);
     if(ec)
         invalid_part::raise();
+}
+
+url_view::url_view(string_view s, error_code& ec) noexcept
+  : s_(s.data())
+{
+    detail::parse_url(pt_, s, ec);
+    if (ec)
+        pt_ = detail::parts{};
 }
 
 string_view

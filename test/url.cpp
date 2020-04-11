@@ -93,6 +93,40 @@ public:
     testCtor()
     {
         BOOST_TEST(url().encoded_url() == "");
+
+        auto expectSuccess = [](const std::string& fullUrl) {
+          error_code ec;
+          url u(fullUrl, ec);
+          BOOST_TEST(!ec);
+          BOOST_TEST(!u.empty());
+          u.clear();
+          BOOST_TEST(u.empty());
+        };
+
+        auto expectInvalid = [](const std::string& fullUrl, error expected) {
+          error_code ec;
+          url u(fullUrl, ec);
+          BOOST_TEST(ec == expected);
+          BOOST_TEST(u.empty());
+        };
+
+        expectSuccess("http://www.boost.org");
+        expectSuccess("http+ssl://www.boost.org");
+
+        expectInvalid("http://\u00e9"         , error::syntax                 );
+        expectInvalid("http://www.boost.org/ ", error::syntax                 );
+        expectInvalid("http://@@@"            , error::syntax                 );
+        expectInvalid("http://%2R"            , error::bad_pct_encoding_digit );
+        expectInvalid("http://%"              , error::incomplete_pct_encoding);
+
+      {
+        error_code ec;
+        url u("https://www.boost.org", ec);
+        BOOST_TEST(!ec);
+        BOOST_TEST(!u.empty());
+        u.set_encoded_url("https://think-async.com/Asio/");
+        BOOST_TEST(!u.empty());
+      }
     }
   
     void

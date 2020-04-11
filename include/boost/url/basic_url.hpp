@@ -38,11 +38,21 @@ public:
     basic_url(
         string_view s,
         Allocator const& a = {})
-        : detail::storage_member<
-            Allocator>(a)
+        : detail::storage_member<Allocator>(a)
         , url_base(this->st_, s)
     {
     }
+
+    explicit
+    basic_url(
+        string_view s,
+        error_code& ec,
+        Allocator const& a = {})
+        : detail::storage_member<Allocator>(a)
+        , url_base(this->st_, s, ec)
+    {
+    }
+
 
     explicit
     basic_url(

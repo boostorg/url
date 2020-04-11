@@ -403,11 +403,40 @@ public:
         BOOST_TEST(url_view("#x").fragment_part() == "#x");
     }
 
+
+    void
+      testCtor()
+    {
+      auto expectSuccess = [](const std::string& fullUrl) {
+        error_code ec;
+        url_view u(fullUrl, ec);
+        BOOST_TEST(!ec);
+        BOOST_TEST(!u.empty());
+      };
+
+      auto expectInvalid = [](const std::string& fullUrl, error expected) {
+        error_code ec;
+        url_view u(fullUrl, ec);
+        BOOST_TEST(ec == expected);
+        BOOST_TEST(u.empty());
+      };
+
+      expectSuccess("http://www.boost.org"    );
+      expectSuccess("http+ssl://www.boost.org");
+
+      expectInvalid("http://\u00e9"         , error::syntax                 );
+      expectInvalid("http://www.boost.org/ ", error::syntax                 );
+      expectInvalid("http://@@@"            , error::syntax                 );
+      expectInvalid("http://%2R"            , error::bad_pct_encoding_digit );
+      expectInvalid("http://%"              , error::incomplete_pct_encoding);
+    }
+
     void
     run()
     {
         testView();
 
+        testCtor();
         testUserinfo();
         testHostAndPort();
         testHost();

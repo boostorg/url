@@ -43,6 +43,10 @@ public:
     explicit
     url_view(string_view s);
 
+    BOOST_URL_DECL
+    explicit
+    url_view(string_view s, error_code& ec) noexcept;
+
     /** Return the number of characters in the URL.
     */
     std::size_t
@@ -50,6 +54,14 @@ public:
     {
         return pt_.offset[
             detail::id_end];
+    }
+
+    /** Return whether url is empty.
+    */
+    std::size_t
+    empty() const noexcept
+    {
+      return size() == 0U;
     }
 
     /** Return a pointer to the characters in the URL.

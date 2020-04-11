@@ -9,6 +9,9 @@
 
 cmake_minimum_required (VERSION 3.5.1)
 
+
+enable_testing() 
+
 if (POLICY CMP0074)
     cmake_policy (SET CMP0074 NEW)
 endif()
@@ -102,7 +105,12 @@ include_directories (include)
 #
 #-------------------------------------------------------------------------------
 
-get_filename_component (BOOST_ROOT ../../ ABSOLUTE)
+if (NOT DEFINED BOOST_ROOT)
+    get_filename_component (BOOST_ROOT ../../ ABSOLUTE)
+else()
+    get_filename_component (BOOST_ROOT ${BOOST_ROOT} ABSOLUTE)
+endif()
+
 
 # VFALCO I want static but "b2 stage" builds a minimal set which excludes static
 add_definitions (-DBOOST_ALL_STATIC_LINK=1)
