@@ -117,6 +117,7 @@ jobs:
     - os: linux
       env:
         - COMMENT=codecov.io
+        - LCOV_BRANCH_COVERAGE=0
         - B2_CXXSTD=11
         #- B2_CXXFLAGS="inlining=off"
         - B2_TOOLSET=gcc-8
@@ -124,7 +125,7 @@ jobs:
       addons: *gcc-8
       script:
         - cd $BOOST_ROOT/libs/$SELF
-        - tools/codecov.sh
+        - ci/travis/codecov.sh
 
     - { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=17,2a"    ], addons: *clang-8   }
 
