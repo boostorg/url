@@ -94,7 +94,7 @@ public:
     {
         BOOST_TEST(url().encoded_url() == "");
     }
-  
+
     void
     testScheme()
     {
@@ -566,6 +566,7 @@ public:
             BOOST_TEST(ps.size() == 3);
             BOOST_TEST(ps.begin() != ps.end());
             BOOST_TEST(ps.end() == ps.end());
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 3);
 
             static_pool<4000> sp;
             {
@@ -585,6 +586,96 @@ public:
             BOOST_TEST(it->encoded_string() == "to");
             it--;
             BOOST_TEST(it->encoded_string() == "path");
+        }
+        {
+            url u("http://user:pass@example.com:80?k1=v1&k2=v2");
+            auto ps = u.segments();
+            BOOST_TEST(ps.empty());
+            ps.insert_encoded_segment(
+                ps.insert_encoded_segment(
+                    ps.insert_encoded_segment(
+                        ps.insert_encoded_segment(
+                            ps.insert_encoded_segment(ps.end(), "a" ), "b" ), "c" ), "d" ), "file.txt" );
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 5);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 5);
+            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt");
+
+            {
+                auto e = ps.begin();
+                ++e;
+                ++e;
+                ps.erase( ps.begin(), e );
+            }
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 3);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 3);
+            BOOST_TEST(u.encoded_path() == "/c/d/file.txt");
+
+            auto const after = ps.insert_encoded_segment(ps.begin(), "a");
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 4);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 4);
+            BOOST_TEST(u.encoded_path() == "/a/c/d/file.txt");
+            ps.insert_encoded_segment(after, "b");
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 5);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 5);
+            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt");
+
+            ps.insert_encoded_segment(ps.begin(), "");
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 6);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
+            BOOST_TEST(u.encoded_path() == "//a/b/c/d/file.txt");
+
+            ps.erase(ps.begin());
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 5);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 5);
+            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt");
+
+            ps.insert_encoded_segment(ps.end(), "");
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 6);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
+            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt/");
+
+            {
+                auto e = ps.end();
+                --e;
+                ps.erase(e);
+            }
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 5);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 5);
+            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt");
+
+            BOOST_TEST_THROWS(ps.insert_encoded_segment(ps.begin(), "/"), invalid_part);
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 5);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 5);
+            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt");
+
+            ps.insert_segment(ps.begin(), "/");
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 6);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
+            BOOST_TEST(u.encoded_path() == "/%2F/a/b/c/d/file.txt");
+
+            ps.replace_encoded_segment(ps.begin(), "a0");
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 6);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
+            BOOST_TEST(u.encoded_path() == "/a0/a/b/c/d/file.txt");
+
+            ps.replace_segment(ps.begin(), "/");
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 6);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
+            BOOST_TEST(u.encoded_path() == "/%2F/a/b/c/d/file.txt");
+
+            BOOST_TEST_THROWS(ps.replace_encoded_segment(ps.begin(), "/"), invalid_part);
         }
     }
 

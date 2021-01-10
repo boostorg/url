@@ -71,7 +71,7 @@ private:
         or a <em>relative-ref</em>), an exception is thrown.
 
         @param a The storage to use.
-        
+
         @param s The URL to parse.
 
         @throw std::exception parse error.
@@ -182,7 +182,7 @@ public:
         The origin consists of the everything from the
         beginning of the URL up to but not including
         the path.
-        
+
         @par Exception Safety
 
         Strong guarantee.
@@ -912,7 +912,7 @@ public:
         returns the port string without a leading
         colon (':'). Otherwise, an empty string
         is returned.
-        
+
         @par Exception Safety
 
         No-throw guarantee.
@@ -1320,7 +1320,7 @@ public:
         @li If the string is empty, the query is
         cleared including the leading question
         mark ('?'), otherwise:
-        
+
         @li If the string is not empty, the query
         is set to given string.
         The string must meet the syntactic requirements
@@ -1564,7 +1564,7 @@ public:
         @li If the string is empty, the fragment is
         cleared including the leading hash mark ('#'),
         otherwise:
-        
+
         @li If the string is not empty, the fragment
         is set to given string.
         The string must meet the syntactic requirements
@@ -1615,7 +1615,7 @@ private:
 
 //----------------------------------------------------------
 
-/** A read-only view to the path segments.
+/** A read/write view to the path segments.
 */
 class url_base::segments_type
 {
@@ -1659,6 +1659,34 @@ public:
     BOOST_URL_DECL
     iterator
     end() const noexcept;
+
+    BOOST_URL_DECL
+    iterator
+    erase( iterator b, iterator e ) noexcept;
+
+    BOOST_URL_DECL
+    iterator
+    erase( iterator at ) noexcept;
+
+    // Strong guarantee.
+    BOOST_URL_DECL
+    iterator
+    insert_encoded_segment( iterator at, string_view encoded_segment );
+
+    // Strong guarantee.
+    BOOST_URL_DECL
+    iterator
+    insert_segment( iterator at, string_view segment );
+
+    // Basic guarantee.
+    BOOST_URL_DECL
+    iterator
+    replace_encoded_segment( iterator at, string_view encoded_segment );
+
+    // Basic guarantee.
+    BOOST_URL_DECL
+    iterator
+    replace_segment( iterator at, string_view segment );
 };
 
 //----------------------------------------------------------
