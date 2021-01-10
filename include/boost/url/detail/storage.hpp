@@ -21,7 +21,7 @@ namespace detail {
 struct storage
 {
     virtual std::size_t capacity() const noexcept = 0;
-    virtual char* resize(std::size_t n) = 0;
+    [[nodiscard]] virtual char* resize(std::size_t n) = 0;
 };
 
 template<class Allocator>
@@ -58,6 +58,7 @@ public:
         return cap_;
     }
 
+    [[nodiscard]]
     char*
     resize(std::size_t n) override
     {
