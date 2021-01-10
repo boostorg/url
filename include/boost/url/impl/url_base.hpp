@@ -47,8 +47,20 @@ class url_base::segments_type::iterator
         bool end) noexcept;
 
 public:
+    using iterator_category =
+        std::bidirectional_iterator_tag;
+
     using value_type =
         segments_type::value_type;
+
+    using pointer =
+        value_type *;
+
+    using reference =
+        value_type &;
+
+    using difference_type =
+        std::ptrdiff_t;
 
     BOOST_URL_DECL
     iterator() noexcept;
@@ -69,7 +81,7 @@ public:
     {
         BOOST_ASSERT(
             v_ != other.v_ ||
-            off_ != other.off_ || 
+            off_ != other.off_ ||
             n_ == other.n_);
         return
             v_ == other.v_ &&
