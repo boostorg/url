@@ -1913,9 +1913,24 @@ class url_base::params_type
     url_base* v_ = nullptr;
 
 public:
+
     class value_type;
     class iterator;
     using const_iterator = iterator;
+
+private:
+
+    // Strong guarantee.
+    BOOST_URL_DECL
+    iterator
+    insert_encoded_impl( iterator pos, string_view sk, string_view sv );
+
+    // Strong guarantee.
+    BOOST_URL_DECL
+    iterator
+    insert_impl( iterator pos, string_view sk, std::size_t nk, string_view sv, std::size_t nv );
+
+public:
 
     params_type() = default;
     params_type(
@@ -1986,6 +2001,34 @@ public:
     string_type<Allocator>
     at( string_view key,
         Allocator const& a = {}) const;
+
+    BOOST_URL_DECL
+    iterator
+    erase( iterator b, iterator e ) noexcept;
+
+    BOOST_URL_DECL
+    iterator
+    erase( iterator at ) noexcept;
+
+    // Strong guarantee.
+    BOOST_URL_DECL
+    iterator
+    insert_encoded( iterator pos, value_type p );
+
+    // Strong guarantee.
+    BOOST_URL_DECL
+    iterator
+    insert( iterator pos, value_type p );
+
+    // Strong guarantee.
+    BOOST_URL_DECL
+    iterator
+    replace_encoded( iterator pos, value_type p );
+
+    // Strong guarantee.
+    BOOST_URL_DECL
+    iterator
+    replace( iterator pos, value_type p );
 };
 
 //----------------------------------------------------------
@@ -1997,6 +2040,12 @@ class url_base::params_type::value_type
 
     friend class params_type;
 
+public:
+
+    value_type() = delete;
+    value_type& operator=(
+        value_type const&) = delete;
+
     value_type(
         string_view k,
         string_view v) noexcept
@@ -2004,11 +2053,6 @@ class url_base::params_type::value_type
         , v_(v)
     {
     }
-
-public:
-    value_type() = delete;
-    value_type& operator=(
-        value_type const&) = delete;
 
     value_type(
         value_type const&) = default;
@@ -2107,8 +2151,20 @@ class url_base::params_type::iterator
         bool end) noexcept;
 
 public:
+    using iterator_category =
+        std::bidirectional_iterator_tag;
+
     using value_type =
         params_type::value_type;
+
+    /// A pointer to an element
+    using pointer = value_type const*;
+
+    /// A reference to an element
+    using reference = value_type const&;
+
+    /// The difference_type for this iterator
+    using difference_type = std::ptrdiff_t;
 
     BOOST_URL_DECL
     iterator() noexcept;

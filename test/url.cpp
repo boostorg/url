@@ -854,6 +854,122 @@ public:
             it--;
             BOOST_TEST(it->encoded_key() == "x");
         }
+
+        {
+            url u("http://user:pass@example.com:80/file.txt");
+            auto qp = u.params();
+            BOOST_TEST(qp.empty());
+            qp.insert_encoded(
+                qp.insert_encoded(
+                    qp.insert_encoded(
+                        qp.insert_encoded(
+                            qp.insert_encoded(qp.end(), {"e", "5"} ), {"d", "4"} ), {"c", "3"} ), {"b", "2"} ), {"a", "1"} );
+            BOOST_TEST(!qp.empty());
+            BOOST_TEST(qp.size() == 5);
+            BOOST_TEST(std::distance(qp.begin(), qp.end()) == 5);
+            BOOST_TEST(u.encoded_query() == "a=1&b=2&c=3&d=4&e=5");
+
+            {
+                auto e = qp.begin();
+                ++e;
+                ++e;
+                qp.erase( qp.begin(), e );
+            }
+            BOOST_TEST(!qp.empty());
+            BOOST_TEST(qp.size() == 3);
+            BOOST_TEST(std::distance(qp.begin(), qp.end()) == 3);
+            BOOST_TEST(u.encoded_query() == "c=3&d=4&e=5");
+
+            auto after = qp.insert_encoded(qp.begin(), {"a","1"});
+            ++after;
+            BOOST_TEST(!qp.empty());
+            BOOST_TEST(qp.size() == 4);
+            BOOST_TEST(std::distance(qp.begin(), qp.end()) == 4);
+            BOOST_TEST(u.encoded_query() == "a=1&c=3&d=4&e=5");
+            qp.insert_encoded(after, {"b","2"});
+            BOOST_TEST(!qp.empty());
+            BOOST_TEST(qp.size() == 5);
+            BOOST_TEST(std::distance(qp.begin(), qp.end()) == 5);
+            BOOST_TEST(u.encoded_query() == "a=1&b=2&c=3&d=4&e=5");
+
+            qp.insert_encoded(qp.begin(), {"",""});
+            BOOST_TEST(!qp.empty());
+            BOOST_TEST(qp.size() == 6);
+            BOOST_TEST(std::distance(qp.begin(), qp.end()) == 6);
+            BOOST_TEST(u.encoded_query() == "&a=1&b=2&c=3&d=4&e=5");
+
+            qp.erase(qp.begin());
+            BOOST_TEST(!qp.empty());
+            BOOST_TEST(qp.size() == 5);
+            BOOST_TEST(std::distance(qp.begin(), qp.end()) == 5);
+            BOOST_TEST(u.encoded_query() == "a=1&b=2&c=3&d=4&e=5");
+
+            qp.insert_encoded(qp.end(), {"",""});
+            BOOST_TEST(!qp.empty());
+            BOOST_TEST(qp.size() == 6);
+            BOOST_TEST(std::distance(qp.begin(), qp.end()) == 6);
+            BOOST_TEST(u.encoded_query() == "a=1&b=2&c=3&d=4&e=5&");
+
+            {
+                auto e = qp.end();
+                --e;
+                qp.erase(e);
+            }
+            BOOST_TEST(!qp.empty());
+            BOOST_TEST(qp.size() == 5);
+            BOOST_TEST(std::distance(qp.begin(), qp.end()) == 5);
+            BOOST_TEST(u.encoded_query() == "a=1&b=2&c=3&d=4&e=5");
+
+            {
+                auto n = u.capacity();
+                std::string k(n - u.size() + qp.begin()->key().size(), 'a');
+                std::string v = qp.begin()->value();
+                qp.replace_encoded(qp.begin(), {k,v});
+                BOOST_TEST(n == u.capacity());
+                BOOST_TEST(u.size() == u.capacity());
+                BOOST_TEST(!qp.empty());
+                BOOST_TEST(qp.size() == 5);
+                BOOST_TEST(std::distance(qp.begin(), qp.end()) == 5);
+                BOOST_TEST(u.encoded_query() == k + "=1&b=2&c=3&d=4&e=5");
+
+                k += 'a';
+                qp.replace_encoded(qp.begin(), {k,v});
+                BOOST_TEST(n < u.capacity());
+                BOOST_TEST(!qp.empty());
+                BOOST_TEST(qp.size() == 5);
+                BOOST_TEST(std::distance(qp.begin(), qp.end()) == 5);
+                BOOST_TEST(u.encoded_query() == k + "=1&b=2&c=3&d=4&e=5");
+
+                qp.replace_encoded(qp.begin(), {"a","1"});
+            }
+
+            BOOST_TEST_THROWS(qp.replace_encoded(qp.begin(), {" ",""}), invalid_part);
+
+            BOOST_TEST(!qp.empty());
+            BOOST_TEST(qp.size() == 5);
+            BOOST_TEST(std::distance(qp.begin(), qp.end()) == 5);
+            BOOST_TEST(u.encoded_query() == "a=1&b=2&c=3&d=4&e=5");
+
+            {
+                auto n = u.capacity();
+                std::string k(n - u.size() + qp.begin()->key().size(), 'a');
+                std::string v = qp.begin()->value();
+                qp.replace(qp.begin(), {k,v});
+                BOOST_TEST(n == u.capacity());
+                BOOST_TEST(u.size() == u.capacity());
+                BOOST_TEST(!qp.empty());
+                BOOST_TEST(qp.size() == 5);
+                BOOST_TEST(std::distance(qp.begin(), qp.end()) == 5);
+                BOOST_TEST(u.encoded_query() == k + "=1&b=2&c=3&d=4&e=5");
+
+                qp.replace(qp.begin(), {k+' ',v});
+                BOOST_TEST(n < u.capacity());
+                BOOST_TEST(!qp.empty());
+                BOOST_TEST(qp.size() == 5);
+                BOOST_TEST(std::distance(qp.begin(), qp.end()) == 5);
+                BOOST_TEST(u.encoded_query() == k + "%20=1&b=2&c=3&d=4&e=5");
+            }
+        }
     }
 
     //------------------------------------------------------

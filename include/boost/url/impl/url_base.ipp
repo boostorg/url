@@ -1640,8 +1640,12 @@ parse() noexcept
     BOOST_ASSERT(v_->pt_.nparam > 0);
     auto const end =
         v_->s_ + v_->pt_.offset[
-            detail::id_end];
+            detail::id_frag];
     char const* p = v_->s_ + off_;
+    nk_ = 0;
+    nv_ = 0;
+    if(p == end)
+        return;
     BOOST_ASSERT(
         ( off_ == v_->pt_.offset[
             detail::id_query] &&
@@ -1650,21 +1654,24 @@ parse() noexcept
             detail::id_query] &&
             *p == '&' ));
     auto p0 = p++;
-    auto const ek =
-        detail::qkey_pct_set();
-    error_code ec;
-    p = ek.parse(p, end, ec);
-    BOOST_ASSERT(! ec);
-    nk_ = p - p0;
-    if(p == end)
+    if(p != end &&
+        *p != '=' &&
+        *p != '&')
     {
-        nv_ = 0;
-        return;
+        auto const ek =
+            detail::qkey_pct_set();
+        error_code ec;
+        p = ek.parse(p, end, ec);
+        BOOST_ASSERT(! ec);
     }
+    nk_ = p - p0;
+    if(p == end || *p == '&')
+        return;
+    BOOST_ASSERT(*p == '=');
     auto const ev =
         detail::qval_pct_set();
-    BOOST_ASSERT(*p == '=');
     p0 = p++;
+    error_code ec;
     p = ev.parse(p, end, ec);
     BOOST_ASSERT(! ec);
     nv_ = p - p0;
@@ -1742,6 +1749,287 @@ operator[](string_view key) const
     if(it == end())
         return "";
     return it->value();
+}
+
+auto
+url_base::
+params_type::
+erase( iterator pos ) noexcept ->
+    iterator
+{
+    auto last = pos;
+    return erase(pos, ++last);
+}
+
+auto
+url_base::
+params_type::
+erase( iterator first, iterator last ) noexcept ->
+    iterator
+{
+    BOOST_ASSERT(v_ != nullptr);
+    url_base & v = *v_;
+    BOOST_ASSERT(v.size() == v.a_.size());
+    BOOST_ASSERT(first.v_ == &v);
+    BOOST_ASSERT(last.v_ == &v);
+    BOOST_ASSERT(first.off_ >= v.pt_.offset[detail::id_query]);
+    BOOST_ASSERT(last.off_ >= v.pt_.offset[detail::id_query]);
+    BOOST_ASSERT(first.off_ <= v.pt_.offset[detail::id_frag]);
+    BOOST_ASSERT(last.off_ <= v.pt_.offset[detail::id_frag]);
+    auto const d = last.off_ - first.off_;
+    if( d == 0 )
+        return first;
+    BOOST_ASSERT(d > 0);
+
+    // Count delimiters
+    int c = (first.off_ == v.pt_.offset[detail::id_query]);
+    for( auto i = v.s_ + first.off_, e = v.s_ + last.off_; i != e; ++i )
+        c += (*i == '&');
+    BOOST_ASSERT(c > 0);
+
+    // Move bytes, adjust the parts index, resize the storage
+    BOOST_ASSERT(v.pt_.nparam >= c);
+    v.pt_.nparam -= c;
+    std::memmove(
+        v.s_ + first.off_,
+        v.s_ + last.off_,
+        v.pt_.offset[detail::id_end] - last.off_ + 1);
+    v.pt_.resize(
+        detail::id_query,
+        v.pt_.length(detail::id_query, detail::id_frag) - d);
+    BOOST_ASSERT(v.size() + d == v.a_.size());
+    auto const s = v.a_.resize(v.size());
+    BOOST_ASSERT(v.s_ == s);
+
+    // Ensure the first delimiter is a '?'
+    auto const q0 = v.pt_.offset[detail::id_query];
+    if( first.off_ == q0 && q0 != v.pt_.offset[detail::id_frag] )
+        v.s_[q0] = '?';
+
+    // Return a valid iterator.
+    BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
+    first.parse();
+    return first;
+}
+
+auto
+url_base::
+params_type::
+insert_encoded_impl( iterator pos, string_view sk, string_view sv ) ->
+    iterator
+{
+    BOOST_ASSERT(detail::pchar_pct_set().check(sk));
+    BOOST_ASSERT(detail::pchar_pct_set().check(sv));
+    BOOST_ASSERT(v_ != nullptr);
+    url_base & v = *v_;
+    BOOST_ASSERT(v.size() == v.a_.size());
+    BOOST_ASSERT(pos.v_ == &v);
+    BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_query]);
+    BOOST_ASSERT(pos.off_ <= v.pt_.offset[detail::id_frag]);
+
+    auto const n0 = v.pt_.offset[detail::id_end];
+    auto const nk = sk.size();
+    auto const nv = sv.size();
+    auto const n = 1 + nk + (nv!=0) + nv; // Delimiter, key, =, value
+
+    // Resize the storage, move bytes, adjust the parts index.
+    v.s_ = v.a_.resize(v.size() + n);
+    v.pt_.resize(
+        detail::id_query,
+        v.pt_.length(detail::id_query, detail::id_frag) + n);
+    std::memmove(
+        v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0,
+        v.s_ + pos.off_,
+        n0 - pos.off_ + 1);
+    ++v.pt_.nparam;
+
+    // Key
+    std::memcpy(
+        v.s_ + pos.off_ + 1,
+        sk.data(),
+        nk);
+
+    // Value
+    if( nv )
+    {
+        v.s_[pos.off_ + 1 + nk] = '=';
+        std::memcpy(
+            v.s_ + pos.off_ + 1 + nk + 1,
+            sv.data(),
+            nv);
+    }
+    BOOST_ASSERT(pos.off_ + n <= v.pt_.offset[detail::id_frag]);
+
+    // Deal with delimiters
+    if( pos.off_ != v.pt_.offset[detail::id_query] )
+    {
+        v.s_[pos.off_] = '&';
+    }
+    else
+    {
+        v.s_[pos.off_] = '?';
+        if( pos.off_ + n != v.pt_.offset[detail::id_frag] )
+            v.s_[pos.off_ + n] = '&';
+    }
+
+    // Return a valid iterator.
+    BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
+    pos.parse();
+    return pos;
+}
+
+auto
+url_base::
+params_type::
+insert_impl( iterator pos, string_view sk, std::size_t const nk, string_view sv, std::size_t const nv ) ->
+    iterator
+{
+    BOOST_ASSERT(v_ != nullptr);
+    url_base & v = *v_;
+    BOOST_ASSERT(v.size() == v.a_.size());
+    BOOST_ASSERT(pos.v_ == &v);
+    BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_query]);
+    BOOST_ASSERT(pos.off_ <= v.pt_.offset[detail::id_frag]);
+    auto const pct = detail::pchar_pct_set();
+    BOOST_ASSERT(pct.encoded_size(sk) == nk);
+    BOOST_ASSERT(pct.encoded_size(sv) == nv);
+
+    auto const n0 = v.pt_.offset[detail::id_end];
+    auto const n = 1 + nk + (nv!=0) + nv; // Delimiter, key, =, value
+
+    // Resize the storage, move bytes, adjust the parts index.
+    v.s_ = v.a_.resize(v.size() + n);
+    v.pt_.resize(
+        detail::id_query,
+        v.pt_.length(detail::id_query, detail::id_frag) + n);
+    std::memmove(
+        v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0,
+        v.s_ + pos.off_,
+        n0 - pos.off_ + 1);
+    BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
+    ++v.pt_.nparam;
+
+    // Key
+    v.s_[pos.off_] = "?&"[pos.off_ > v.pt_.offset[detail::id_query]];
+    pct.encode(v.s_ + pos.off_ + 1, sk.data());
+
+    // Value
+    if( nv )
+    {
+        v.s_[pos.off_ + 1 + nk] = '=';
+        pct.encode(v.s_ + pos.off_ + 1 + nk + 1, sv.data());
+    }
+    BOOST_ASSERT(pos.off_ + n <= v.pt_.offset[detail::id_frag]);
+
+    // Deal with delimiters
+    if( pos.off_ != v.pt_.offset[detail::id_query] )
+    {
+        v.s_[pos.off_] = '&';
+    }
+    else
+    {
+        v.s_[pos.off_] = '?';
+        if( pos.off_ + n != v.pt_.offset[detail::id_frag] )
+            v.s_[pos.off_ + n] = '&';
+    }
+
+    // Return a valid iterator.
+    pos.parse();
+    return pos;
+}
+
+auto
+url_base::
+params_type::
+insert_encoded( iterator pos, value_type p ) ->
+    iterator
+{
+    auto const pct = detail::pchar_pct_set();
+    pct.validate(p.k_);
+    pct.validate(p.v_);
+    return insert_encoded_impl(pos, p.k_, p.v_);
+}
+
+auto
+url_base::
+params_type::
+insert( iterator pos, value_type p ) ->
+    iterator
+{
+    auto const pct = detail::pchar_pct_set();
+    auto const nk = pct.encoded_size(p.k_);
+    auto const nv = pct.encoded_size(p.v_);
+    return insert_impl(pos, p.k_, nk, p.v_, nv);
+}
+
+auto
+url_base::
+params_type::
+replace_encoded( iterator pos, value_type p ) ->
+    iterator
+{
+    (void) detail::pchar_pct_set().validate(p.k_);
+    (void) detail::pchar_pct_set().validate(p.v_);
+    BOOST_ASSERT(v_ != nullptr);
+    url_base & v = *v_;
+    BOOST_ASSERT(v.size() == v.a_.size());
+
+    auto const nk = p.k_.size();
+    auto const nv = p.v_.size();
+    auto const n0 = pos.nk_ + pos.nv_;
+    auto const n = 1 + nk + (nv!=0) + nv; // Delimiter, key, =, value
+
+    // Reserve just enough memory for the replacement
+    if( n0 < n )
+        v.s_ = v.a_.reserve(v.a_.size() + n - n0);
+
+    // Erase, then insert
+    auto const cap = v.a_.capacity();
+    auto r = insert_encoded_impl(
+        erase(pos),
+        p.k_,
+        p.v_);
+
+    // If the reserve was exceeded, we have a strong guarantee violation
+    BOOST_ASSERT(v.a_.capacity() == cap);
+    (void) cap;
+
+    return r;
+}
+
+auto
+url_base::
+params_type::
+replace( iterator pos, value_type p ) ->
+    iterator
+{
+    BOOST_ASSERT(v_ != nullptr);
+    url_base & v = *v_;
+    BOOST_ASSERT(v.size() == v.a_.size());
+
+    auto const pct = detail::pchar_pct_set();
+    auto const nk = pct.encoded_size(p.k_);
+    auto const nv = pct.encoded_size(p.v_);
+    auto const n0 = pos.nk_ + pos.nv_;
+    auto const n = 1 + nk + (nv!=0) + nv; // Delimiter, key, =, value
+
+    // Reserve just enough memory for the replacement
+    if( n0 < n )
+        v.s_ = v.a_.reserve(v.a_.size() + n - n0);
+
+    // Erase, then insert
+    auto const cap = v.a_.capacity();
+    auto r = insert_impl(
+        erase(pos),
+        p.k_,
+        nk,
+        p.v_,
+        nv);
+
+    // If the reserve was exceeded, we have a strong guarantee violation
+    BOOST_ASSERT(v.a_.capacity() == cap);
+    (void) cap;
+    return r;
 }
 
 //----------------------------------------------------------
