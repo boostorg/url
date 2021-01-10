@@ -189,7 +189,7 @@ public:
     validate(string_view s) const
     {
         error_code ec;
-        decoded_size(s, ec);
+        (void) decoded_size(s, ec);
         if(ec)
             invalid_part::raise();
     }
@@ -497,7 +497,7 @@ key_equal(
         if(ch != *p1++)
             return false;
         p0 += 3;
-    }       
+    }
 }
 
 //----------------------------------------------------------
