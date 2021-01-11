@@ -1366,7 +1366,7 @@ erase( url_base::segments_type::iterator b, url_base::segments_type::iterator e 
     BOOST_ASSERT(slcount > 0);
     BOOST_ASSERT(v.pt_.nseg >= slcount);
     v.pt_.nseg -= slcount;
-    std::copy(v.s_ + e.off_, v.s_ + v.pt_.offset[detail::id_end] + 1, v.s_ + b.off_);
+    std::memmove(v.s_ + b.off_, v.s_ + e.off_, v.pt_.offset[detail::id_end] - e.off_ + 1);
     v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) - d);
     BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
     b.parse();
@@ -1388,10 +1388,10 @@ insert_encoded_segment( segments_type::iterator at, string_view const enseg )
     auto const enseg_s1 = enseg.size() + 1;
     v.s_ = v.a_.resize(v.size() + enseg_s1);
     v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + enseg_s1);
-    std::copy_backward(v.s_ + at.off_, v.s_ + id_end0 + 1, v.s_ + v.pt_.offset[detail::id_end] + 1);
+    std::memmove(v.s_ + v.pt_.offset[detail::id_end] + at.off_ - id_end0, v.s_ + at.off_, id_end0 - at.off_ + 1);
     BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
     v.s_[at.off_] = '/';
-    std::copy(enseg.begin(), enseg.end(), v.s_ + at.off_ + 1);
+    std::memcpy(v.s_ + at.off_ + 1, enseg.data(), enseg.size());
     ++v.pt_.nseg;
     at.off_ += enseg_s1;
     at.parse();
@@ -1413,7 +1413,7 @@ insert_segment( segments_type::iterator at, string_view const seg )
     auto const enseg_s1 = e.encoded_size(seg) + 1;
     v.s_ = v.a_.resize(v.size() + enseg_s1);
     v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + enseg_s1);
-    std::copy_backward(v.s_ + at.off_, v.s_ + id_end0 + 1, v.s_ + v.pt_.offset[detail::id_end] + 1);
+    std::memmove(v.s_ + v.pt_.offset[detail::id_end] + at.off_ - id_end0, v.s_ + at.off_, id_end0 - at.off_ + 1);
     BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
     v.s_[at.off_] = '/';
     e.encode(v.s_ + at.off_ + 1, seg);
