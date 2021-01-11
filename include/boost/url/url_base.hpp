@@ -1622,9 +1622,19 @@ class url_base::segments_type
     url_base* v_ = nullptr;
 
 public:
+
     class value_type;
     class iterator;
     using const_iterator = iterator;
+
+private:
+
+    // Strong guarantee.
+    BOOST_URL_DECL
+    iterator
+    insert_encoded_segment_( iterator pos, string_view s );
+
+public:
 
     segments_type() = default;
     segments_type(segments_type const&) = default;
@@ -1671,22 +1681,22 @@ public:
     // Strong guarantee.
     BOOST_URL_DECL
     iterator
-    insert_encoded_segment( iterator at, string_view encoded_segment );
+    insert_encoded_segment( iterator pos, string_view s );
 
     // Strong guarantee.
     BOOST_URL_DECL
     iterator
-    insert_segment( iterator at, string_view segment );
+    insert_segment( iterator pos, string_view s );
 
-    // Basic guarantee.
+    // Strong guarantee.
     BOOST_URL_DECL
     iterator
-    replace_encoded_segment( iterator at, string_view encoded_segment );
+    replace_encoded_segment( iterator pos, string_view s );
 
-    // Basic guarantee.
+    // Strong guarantee.
     BOOST_URL_DECL
     iterator
-    replace_segment( iterator at, string_view segment );
+    replace_segment( iterator pos, string_view s );
 };
 
 //----------------------------------------------------------

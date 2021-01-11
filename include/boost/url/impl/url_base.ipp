@@ -1340,103 +1340,130 @@ end() const noexcept ->
 url_base::segments_type::iterator
 url_base::
 segments_type::
-erase( url_base::segments_type::iterator at ) noexcept
+erase( url_base::segments_type::iterator pos ) noexcept
 {
-    auto e = at;
-    return erase(at, ++e);
+    auto last = pos;
+    return erase(pos, ++last);
 }
 
-url_base::segments_type::iterator
+auto
 url_base::
 segments_type::
-erase( url_base::segments_type::iterator b, url_base::segments_type::iterator e ) noexcept
+erase( url_base::segments_type::iterator first, url_base::segments_type::iterator last ) noexcept ->
+    iterator
 {
     BOOST_ASSERT(v_ != nullptr);
     url_base & v = *v_;
-    BOOST_ASSERT(b.v_ == &v);
-    BOOST_ASSERT(e.v_ == &v);
-    BOOST_ASSERT(b.off_ >= v.pt_.offset[detail::id_path]);
-    BOOST_ASSERT(e.off_ >= v.pt_.offset[detail::id_path]);
-    BOOST_ASSERT(b.off_ <= v.pt_.offset[detail::id_query]);
-    BOOST_ASSERT(e.off_ <= v.pt_.offset[detail::id_query]);
-    if( b.off_ == e.off_ ) return b;
-    auto const d = e.off_ - b.off_;
+    BOOST_ASSERT(first.v_ == &v);
+    BOOST_ASSERT(last.v_ == &v);
+    BOOST_ASSERT(first.off_ >= v.pt_.offset[detail::id_path]);
+    BOOST_ASSERT(last.off_ >= v.pt_.offset[detail::id_path]);
+    BOOST_ASSERT(first.off_ <= v.pt_.offset[detail::id_query]);
+    BOOST_ASSERT(last.off_ <= v.pt_.offset[detail::id_query]);
+    auto const d = last.off_ - first.off_;
+    if( d == 0 )
+        return first;
     BOOST_ASSERT(d > 0);
-    auto slcount = std::count(v.s_ + b.off_, v.s_ + e.off_, '/');
-    BOOST_ASSERT(slcount > 0);
-    BOOST_ASSERT(v.pt_.nseg >= slcount);
-    v.pt_.nseg -= slcount;
-    std::memmove(v.s_ + b.off_, v.s_ + e.off_, v.pt_.offset[detail::id_end] - e.off_ + 1);
+    int c = 0;
+    for( auto i = v.s_ + first.off_, e = v.s_ + last.off_; i != e; ++i )
+        c += (*i == '/');
+    BOOST_ASSERT(c > 0);
+    BOOST_ASSERT(v.pt_.nseg >= c);
+    v.pt_.nseg -= c;
+    std::memmove(v.s_ + first.off_, v.s_ + last.off_, v.pt_.offset[detail::id_end] - last.off_ + 1);
     v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) - d);
     BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
-    b.parse();
-    return b;
+    first.parse();
+    return first;
 }
 
-url_base::segments_type::iterator
+auto
 url_base::
 segments_type::
-insert_encoded_segment( segments_type::iterator at, string_view const enseg )
+insert_encoded_segment_( segments_type::iterator pos, string_view const s ) ->
+    iterator
 {
-    detail::pchar_pct_set().validate(enseg);
+    BOOST_ASSERT(detail::pchar_pct_set().check(s));
     BOOST_ASSERT(v_ != nullptr);
     url_base & v = *v_;
-    BOOST_ASSERT(at.v_ == &v);
-    BOOST_ASSERT(at.off_ >= v.pt_.offset[detail::id_path]);
-    BOOST_ASSERT(at.off_ <= v.pt_.offset[detail::id_query]);
-    auto const id_end0 = v.pt_.offset[detail::id_end];
-    auto const enseg_s1 = enseg.size() + 1;
-    v.s_ = v.a_.resize(v.size() + enseg_s1);
-    v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + enseg_s1);
-    std::memmove(v.s_ + v.pt_.offset[detail::id_end] + at.off_ - id_end0, v.s_ + at.off_, id_end0 - at.off_ + 1);
+    BOOST_ASSERT(pos.v_ == &v);
+    BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_path]);
+    BOOST_ASSERT(pos.off_ <= v.pt_.offset[detail::id_query]);
+    auto const n0 = v.pt_.offset[detail::id_end];
+    auto const n = s.size() + 1;
+    v.s_ = v.a_.resize(v.size() + n);
+    v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + n);
+    std::memmove(v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0, v.s_ + pos.off_, n0 - pos.off_ + 1);
     BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
-    v.s_[at.off_] = '/';
-    std::memcpy(v.s_ + at.off_ + 1, enseg.data(), enseg.size());
+    v.s_[pos.off_] = '/';
+    std::memcpy(v.s_ + pos.off_ + 1, s.data(), s.size());
     ++v.pt_.nseg;
-    at.off_ += enseg_s1;
-    at.parse();
-    return at;
+    pos.off_ += n;
+    pos.parse();
+    return pos;
 }
 
-url_base::segments_type::iterator
+auto
 url_base::
 segments_type::
-insert_segment( segments_type::iterator at, string_view const seg )
+insert_encoded_segment( segments_type::iterator pos, string_view const s ) ->
+    iterator
+{
+    return insert_encoded_segment_(pos, detail::pchar_pct_set().validate(s));
+}
+
+auto
+url_base::
+segments_type::
+insert_segment( segments_type::iterator pos, string_view const s ) ->
+    iterator
 {
     BOOST_ASSERT(v_ != nullptr);
     url_base & v = *v_;
-    BOOST_ASSERT(at.v_ == &v);
-    BOOST_ASSERT(at.off_ >= v.pt_.offset[detail::id_path]);
-    BOOST_ASSERT(at.off_ <= v.pt_.offset[detail::id_query]);
-    auto const e = detail::pchar_pct_set();
-    auto const id_end0 = v.pt_.offset[detail::id_end];
-    auto const enseg_s1 = e.encoded_size(seg) + 1;
-    v.s_ = v.a_.resize(v.size() + enseg_s1);
-    v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + enseg_s1);
-    std::memmove(v.s_ + v.pt_.offset[detail::id_end] + at.off_ - id_end0, v.s_ + at.off_, id_end0 - at.off_ + 1);
+    BOOST_ASSERT(pos.v_ == &v);
+    BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_path]);
+    BOOST_ASSERT(pos.off_ <= v.pt_.offset[detail::id_query]);
+    auto const pct = detail::pchar_pct_set();
+    auto const n0 = v.pt_.offset[detail::id_end];
+    auto const n = pct.encoded_size(s) + 1;
+    v.s_ = v.a_.resize(v.size() + n);
+    v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + n);
+    std::memmove(v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0, v.s_ + pos.off_, n0 - pos.off_ + 1);
     BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
-    v.s_[at.off_] = '/';
-    e.encode(v.s_ + at.off_ + 1, seg);
+    v.s_[pos.off_] = '/';
+    pct.encode(v.s_ + pos.off_ + 1, s);
     ++v.pt_.nseg;
-    at.off_ += enseg_s1;
-    at.parse();
-    return at;
+    pos.off_ += n;
+    pos.parse();
+    return pos;
 }
 
-url_base::segments_type::iterator
+auto
 url_base::
 segments_type::
-replace_encoded_segment( segments_type::iterator at, string_view const enseg )
+replace_encoded_segment( segments_type::iterator pos, string_view const s ) ->
+    iterator
 {
-    return insert_encoded_segment(erase(at), enseg);
+    detail::pchar_pct_set().validate(s);
+    BOOST_ASSERT(v_ != nullptr);
+    url_base & v = *v_;
+    if( pos.n_ < s.size() )
+        v.s_ = v.a_.reserve(s.size() - pos.n_);
+    return insert_encoded_segment_(erase(pos), s);
 }
 
-url_base::segments_type::iterator
+auto
 url_base::
 segments_type::
-replace_segment( segments_type::iterator at, string_view const seg )
+replace_segment( segments_type::iterator pos, string_view const s ) ->
+    iterator
 {
-    return insert_segment(erase(at), seg);
+    BOOST_ASSERT(v_ != nullptr);
+    url_base & v = *v_;
+    auto n = detail::pchar_pct_set().encoded_size(s);
+    if( pos.n_ < n )
+        v.s_ = v.a_.reserve(n - pos.n_);
+    return insert_segment(erase(pos), s);
 }
 
 //----------------------------------------------------------

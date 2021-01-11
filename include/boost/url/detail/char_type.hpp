@@ -185,13 +185,20 @@ public:
         return n;
     }
 
-    void
-    validate(string_view s) const
+    bool
+    check(string_view s) const noexcept
     {
         error_code ec;
         (void) decoded_size(s, ec);
-        if(ec)
+        return !ec;
+    }
+
+    string_view
+    validate(string_view s) const
+    {
+        if( !check(s) )
             invalid_part::raise();
+        return s;
     }
 
     char const*

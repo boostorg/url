@@ -676,6 +676,10 @@ public:
             BOOST_TEST(u.encoded_path() == "/%2F/a/b/c/d/file.txt");
 
             BOOST_TEST_THROWS(ps.replace_encoded_segment(ps.begin(), "/"), invalid_part);
+            BOOST_TEST(!ps.empty());
+            BOOST_TEST(ps.size() == 6);
+            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
+            BOOST_TEST(u.encoded_path() == "/%2F/a/b/c/d/file.txt");
         }
     }
 
