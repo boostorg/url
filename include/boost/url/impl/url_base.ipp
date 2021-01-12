@@ -1447,7 +1447,7 @@ replace_encoded_segment( segments_type::iterator pos, string_view const s ) ->
     detail::pchar_pct_set().validate(s);
     BOOST_ASSERT(v_ != nullptr);
     url_base & v = *v_;
-    if( pos.n_ < s.size() )
+    if( pos.n_ < s.size() + 1 )
         v.s_ = v.a_.reserve(s.size() - pos.n_);
     return insert_encoded_segment_(erase(pos), s);
 }
@@ -1461,7 +1461,7 @@ replace_segment( segments_type::iterator pos, string_view const s ) ->
     BOOST_ASSERT(v_ != nullptr);
     url_base & v = *v_;
     auto n = detail::pchar_pct_set().encoded_size(s);
-    if( pos.n_ < n )
+    if( pos.n_ < n + 1 )
         v.s_ = v.a_.reserve(n - pos.n_);
     return insert_segment(erase(pos), s);
 }
