@@ -9,17 +9,17 @@ export GIT_COMMIT=$DRONE_COMMIT
 export REPO_NAME=$DRONE_REPO
 export PATH=~/.local/bin:/usr/local/bin:$PATH
 
-echo '==================================> BEFORE_INSTALL'
-
-. .drone/before-install.sh
+# echo '==================================> BEFORE_INSTALL'
+# 
+# . .drone/before-install.sh
 
 echo '==================================> INSTALL'
 
 pip install --user cmake
 
-echo '==================================> BEFORE_SCRIPT'
-
-. $DRONE_BUILD_DIR/.drone/before-script.sh
+# echo '==================================> BEFORE_SCRIPT'
+# 
+# . $DRONE_BUILD_DIR/.drone/before-script.sh
 
 echo '==================================> SCRIPT'
 
@@ -31,6 +31,6 @@ cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
 cmake --build .
 cmake --build . --target check
 
-echo '==================================> AFTER_SUCCESS'
-
-. $DRONE_BUILD_DIR/.drone/after-success.sh
+# echo '==================================> AFTER_SUCCESS'
+# 
+# . $DRONE_BUILD_DIR/.drone/after-success.sh
