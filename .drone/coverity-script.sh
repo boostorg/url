@@ -9,9 +9,9 @@ export GIT_COMMIT=$DRONE_COMMIT
 export REPO_NAME=$DRONE_REPO
 export PATH=~/.local/bin:/usr/local/bin:$PATH
 
-echo '==================================> BEFORE_INSTALL'
-
-. .drone/before-install.sh
+# echo '==================================> BEFORE_INSTALL'
+# 
+# . .drone/before-install.sh
 
 echo '==================================> INSTALL'
 
@@ -29,9 +29,9 @@ export BOOST_CI_SRC_FOLDER=$(pwd)
 
 . ./ci/common_install.sh
 
-echo '==================================> BEFORE_SCRIPT'
-
-. $DRONE_BUILD_DIR/.drone/before-script.sh
+# echo '==================================> BEFORE_SCRIPT'
+# 
+# . $DRONE_BUILD_DIR/.drone/before-script.sh
 
 echo '==================================> SCRIPT'
 
@@ -40,6 +40,6 @@ cd $BOOST_ROOT/libs/$SELF
 ci/travis/coverity.sh
 fi
 
-echo '==================================> AFTER_SUCCESS'
-
-. $DRONE_BUILD_DIR/.drone/after-success.sh
+# echo '==================================> AFTER_SUCCESS'
+# 
+# . $DRONE_BUILD_DIR/.drone/after-success.sh
