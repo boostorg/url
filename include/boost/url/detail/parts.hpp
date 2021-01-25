@@ -94,20 +94,10 @@ struct parts
         std::size_t n) noexcept
     {
         auto const n0 = length(id);
-        if(n > n0)
-        {
-            auto const d = n - n0;
-            for(auto i = id + 1;
-                i <= id_end; ++i)
-                offset[i] += d;
-        }
-        else
-        {
-            auto const d = n0 - n;
-            for(auto i = id + 1;
-                i <= id_end; ++i)
-                offset[i] -= d;
-        }
+        auto const d = n - n0;
+        for(auto i = id + 1;
+            i <= id_end; ++i)
+            offset[i] += d;
     }
 
     void

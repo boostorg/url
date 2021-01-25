@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_DETAIL_STORAGE_HPP
 #define BOOST_URL_DETAIL_STORAGE_HPP
 
+#include <boost/url/config.hpp>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -21,7 +22,10 @@ namespace detail {
 struct storage
 {
     virtual std::size_t capacity() const noexcept = 0;
-    virtual char* resize(std::size_t n) = 0;
+    BOOST_URL_NODISCARD virtual char* reserve(std::size_t n) = 0;
+
+    virtual std::size_t size() const noexcept = 0;
+    BOOST_URL_NODISCARD virtual char* resize(std::size_t n) = 0;
 };
 
 template<class Allocator>
@@ -58,15 +62,12 @@ public:
         return cap_;
     }
 
+    BOOST_URL_NODISCARD
     char*
-    resize(std::size_t n) override
+    reserve(std::size_t n) override
     {
         if(n <= cap_)
-        {
-            size_ = n;
-            p_[n] = 0;
             return p_;
-        }
 
         std::size_t cap =
             traits::max_size(a_);
@@ -83,12 +84,31 @@ public:
                 p, p_, size_ + 1);
             a_.deallocate(
                 p_, cap_ + 1);
+            p[size_] = 0;
         }
         p_ = p;
         cap_ = cap;
-        size_ = n;
-        p_[n] = 0;
         return p_;
+    }
+
+    std::size_t
+    size() const noexcept override
+    {
+        return size_;
+    }
+
+    BOOST_URL_NODISCARD
+    char*
+    resize(std::size_t n) override
+    {
+        if( char* p = reserve(n) )
+        {
+            size_ = n;
+            p[n] = 0;
+            return p;
+        }
+        else
+            return p;
     }
 };
 

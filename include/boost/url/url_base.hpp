@@ -71,7 +71,7 @@ private:
         or a <em>relative-ref</em>), an exception is thrown.
 
         @param a The storage to use.
-        
+
         @param s The URL to parse.
 
         @throw std::exception parse error.
@@ -182,7 +182,7 @@ public:
         The origin consists of the everything from the
         beginning of the URL up to but not including
         the path.
-        
+
         @par Exception Safety
 
         Strong guarantee.
@@ -912,7 +912,7 @@ public:
         returns the port string without a leading
         colon (':'). Otherwise, an empty string
         is returned.
-        
+
         @par Exception Safety
 
         No-throw guarantee.
@@ -1320,7 +1320,7 @@ public:
         @li If the string is empty, the query is
         cleared including the leading question
         mark ('?'), otherwise:
-        
+
         @li If the string is not empty, the query
         is set to given string.
         The string must meet the syntactic requirements
@@ -1564,7 +1564,7 @@ public:
         @li If the string is empty, the fragment is
         cleared including the leading hash mark ('#'),
         otherwise:
-        
+
         @li If the string is not empty, the fragment
         is set to given string.
         The string must meet the syntactic requirements
@@ -1615,16 +1615,31 @@ private:
 
 //----------------------------------------------------------
 
-/** A read-only view to the path segments.
+/** A read/write view to the path segments.
 */
 class url_base::segments_type
 {
     url_base* v_ = nullptr;
 
 public:
+
     class value_type;
     class iterator;
     using const_iterator = iterator;
+
+private:
+
+    // Strong guarantee.
+    BOOST_URL_DECL
+    iterator
+    insert_encoded_impl( iterator pos, string_view s );
+
+    // Strong guarantee.
+    BOOST_URL_DECL
+    iterator
+    insert_impl( iterator pos, string_view s, std::size_t ns );
+
+public:
 
     segments_type() = default;
     segments_type(segments_type const&) = default;
@@ -1659,6 +1674,91 @@ public:
     BOOST_URL_DECL
     iterator
     end() const noexcept;
+
+    /** Erase the specified sequence of path segments.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @param first The first segment to be erased.
+
+        @param last One past the last segment to be erased.
+    */
+    BOOST_URL_DECL
+    iterator
+    erase( iterator first, iterator last ) noexcept;
+
+    /** Erase the specified path segment
+
+        @param pos The path segment to erase
+
+        This function is equivalent to:
+        @code
+        auto last = pos;
+        ++last;
+        erase(pos, last);
+        @endcode
+    */
+    BOOST_URL_DECL
+    iterator
+    erase( iterator pos ) noexcept;
+
+    /** Insert an encoded path segment at the specified position.
+
+        @par Exception Safety
+
+        Strong guarantee. Calls to allocate may throw.
+
+        @param pos The new path segment is inserted before this position.
+
+        @param s The encoded path segment to be inserted.
+    */
+    BOOST_URL_DECL
+    iterator
+    insert_encoded( iterator pos, string_view s );
+
+    /** Encode an unencoded path segment and insert it at the specified position.
+
+        @par Exception Safety
+
+        Strong guarantee. Calls to allocate may throw.
+
+        @param pos The new path segment is inserted before this position.
+
+        @param s The unencoded path segment to be inserted.
+    */
+    BOOST_URL_DECL
+    iterator
+    insert( iterator pos, string_view s );
+
+    /** Replace the path segment at the specified position with the specified encoded path segment.
+
+        @par Exception Safety
+
+        Strong guarantee. Calls to allocate may throw.
+
+        @param pos The path segment to be replaced.
+
+        @param s The encoded to replace the segment at pos.
+    */
+    BOOST_URL_DECL
+    iterator
+    replace_encoded( iterator pos, string_view s );
+
+    /** Replace the path segment at the specified position with the specified unencoded path segment.
+
+        @par Exception Safety
+
+        Strong guarantee. Calls to allocate may throw.
+
+        @param pos The path segment to be replaced.
+
+        @param s The unencoded segment to replace the segment at pos.
+    */
+    BOOST_URL_DECL
+    iterator
+    replace( iterator pos, string_view s );
 };
 
 //----------------------------------------------------------

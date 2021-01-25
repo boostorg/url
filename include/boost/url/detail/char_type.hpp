@@ -185,13 +185,20 @@ public:
         return n;
     }
 
-    void
-    validate(string_view s) const
+    bool
+    check(string_view s) const noexcept
     {
         error_code ec;
-        decoded_size(s, ec);
-        if(ec)
+        (void) decoded_size(s, ec);
+        return !ec;
+    }
+
+    string_view
+    validate(string_view s) const
+    {
+        if( !check(s) )
             invalid_part::raise();
+        return s;
     }
 
     char const*
@@ -497,7 +504,7 @@ key_equal(
         if(ch != *p1++)
             return false;
         p0 += 3;
-    }       
+    }
 }
 
 //----------------------------------------------------------
