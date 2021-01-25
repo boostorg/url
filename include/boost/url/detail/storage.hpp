@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_DETAIL_STORAGE_HPP
 #define BOOST_URL_DETAIL_STORAGE_HPP
 
+#include <boost/url/config.hpp>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -21,7 +22,10 @@ namespace detail {
 struct storage
 {
     virtual std::size_t capacity() const noexcept = 0;
-    virtual char* resize(std::size_t n) = 0;
+    BOOST_URL_NODISCARD virtual char* reserve(std::size_t n) = 0;
+
+    virtual std::size_t size() const noexcept = 0;
+    BOOST_URL_NODISCARD virtual char* resize(std::size_t n) = 0;
 };
 
 template<class Allocator>
@@ -58,37 +62,53 @@ public:
         return cap_;
     }
 
+    BOOST_URL_NODISCARD
+    char*
+    reserve(std::size_t n) override
+    {
+        if(n > cap_)
+        {
+            std::size_t cap =
+                traits::max_size(a_);
+            if(cap_ < cap - cap_)
+            {
+                cap = 2 * cap_;
+                if( cap < n)
+                    cap = n;
+            }
+            auto p = a_.allocate(cap + 1);
+            if(p_)
+            {
+                std::memcpy(
+                    p, p_, size_ + 1);
+                a_.deallocate(
+                    p_, cap_ + 1);
+                p[size_] = 0;
+            }
+            p_ = p;
+            cap_ = cap;
+        }
+        return p_;
+    }
+
+    std::size_t
+    size() const noexcept override
+    {
+        return size_;
+    }
+
+    BOOST_URL_NODISCARD
     char*
     resize(std::size_t n) override
     {
-        if(n <= cap_)
+        if( char * p = reserve(n) )
         {
             size_ = n;
-            p_[n] = 0;
-            return p_;
+            p[n] = 0;
+            return p;
         }
-
-        std::size_t cap =
-            traits::max_size(a_);
-        if(cap_ < cap - cap_)
-        {
-            cap = 2 * cap_;
-            if( cap < n)
-                cap = n;
-        }
-        auto p = a_.allocate(cap + 1);
-        if(p_)
-        {
-            std::memcpy(
-                p, p_, size_ + 1);
-            a_.deallocate(
-                p_, cap_ + 1);
-        }
-        p_ = p;
-        cap_ = cap;
-        size_ = n;
-        p_[n] = 0;
-        return p_;
+        else
+            return p;
     }
 };
 
