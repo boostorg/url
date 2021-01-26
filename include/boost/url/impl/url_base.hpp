@@ -53,8 +53,34 @@ public:
     using value_type =
         segments_type::value_type;
 
+    /** The pointer type of segments_type::iterator.
+
+        Defined as:
+
+        @code
+        using pointer = value_type const*;
+        @endcode
+    */
     using pointer = value_type const*;
+
+    /** The reference type of segments_type::iterator.
+
+        Defined as:
+
+        @code
+        using reference = value_type const&;
+        @endcode
+    */
     using reference = value_type const&;
+
+    /** The difference_type of segments_type::iterator.
+
+        Defined as:
+
+        @code
+        using difference_type = std::ptrdiff_t;
+        @endcode
+    */
     using difference_type = std::ptrdiff_t;
 
     BOOST_URL_DECL

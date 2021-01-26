@@ -1675,30 +1675,95 @@ public:
     iterator
     end() const noexcept;
 
+    /** Erase the specified sequence of path segments.
+
+        @param first The first segment to be erased.
+
+        @param last One past the last segment to be erased.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
     BOOST_URL_DECL
     iterator
-    erase( iterator b, iterator e ) noexcept;
+    erase( iterator first, iterator last ) noexcept;
 
+    /** Erase the specified path segment
+
+        @param pos The path segment to erase
+
+        This function is equivalent to:
+        @code
+        auto last = pos;
+        ++last;
+        erase(pos, last);
+        @endcode
+    */
     BOOST_URL_DECL
     iterator
-    erase( iterator at ) noexcept;
+    erase( iterator pos ) noexcept;
 
-    // Strong guarantee.
+    /** Insert an encoded path segment at the specified position.
+
+        @param pos The new path segment is inserted before this position.
+
+        @param s The encoded path segment to be inserted.
+
+        @throws std::exception invalid path.
+
+        @par Exception Safety
+
+        Strong guarantee.
+    */
     BOOST_URL_DECL
     iterator
     insert_encoded( iterator pos, string_view s );
 
-    // Strong guarantee.
+    /** Encode an unencoded path segment and insert it at the specified position.
+
+        @param pos The new path segment is inserted before this position.
+
+        @param s The unencoded path segment to be inserted.
+
+        @throws std::bad_alloc
+
+        @par Exception Safety
+
+        Strong guarantee.
+    */
     BOOST_URL_DECL
     iterator
     insert( iterator pos, string_view s );
 
-    // Strong guarantee.
+    /** Replace the path segment at the specified position with the specified encoded path segment.
+
+        @param pos The path segment to be replaced.
+
+        @param s The encoded to replace the segment at pos.
+
+        @throws std::bad_alloc, std::exception invalid path.
+
+        @par Exception Safety
+
+        Strong guarantee.
+    */
     BOOST_URL_DECL
     iterator
     replace_encoded( iterator pos, string_view s );
 
-    // Strong guarantee.
+    /** Replace the path segment at the specified position with the specified unencoded path segment.
+
+        @param pos The path segment to be replaced.
+
+        @param s The unencoded segment to replace the segment at pos.
+
+        @throws std::bad_alloc
+
+        @par Exception Safety
+
+        Strong guarantee.
+    */
     BOOST_URL_DECL
     iterator
     replace( iterator pos, string_view s );
