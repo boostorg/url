@@ -1354,7 +1354,7 @@ erase( iterator first, iterator last ) noexcept ->
     iterator
 {
     BOOST_ASSERT(v_ != nullptr);
-    url_base & v = *v_;
+    url_base& v = *v_;
     BOOST_ASSERT(v.size() == v.a_.size());
     BOOST_ASSERT(first.v_ == &v);
     BOOST_ASSERT(last.v_ == &v);
@@ -1384,12 +1384,12 @@ erase( iterator first, iterator last ) noexcept ->
 auto
 url_base::
 segments_type::
-insert_encoded_segment_impl( iterator pos, string_view s ) ->
+insert_encoded_impl( iterator pos, string_view s ) ->
     iterator
 {
     BOOST_ASSERT(detail::pchar_pct_set().check(s));
     BOOST_ASSERT(v_ != nullptr);
-    url_base & v = *v_;
+    url_base& v = *v_;
     BOOST_ASSERT(v.size() == v.a_.size());
     BOOST_ASSERT(pos.v_ == &v);
     BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_path]);
@@ -1411,11 +1411,11 @@ insert_encoded_segment_impl( iterator pos, string_view s ) ->
 auto
 url_base::
 segments_type::
-insert_segment_impl( iterator pos, string_view s, std::size_t const ns ) ->
+insert_impl( iterator pos, string_view s, std::size_t const ns ) ->
     iterator
 {
     BOOST_ASSERT(v_ != nullptr);
-    url_base & v = *v_;
+    url_base& v = *v_;
     BOOST_ASSERT(v.size() == v.a_.size());
     BOOST_ASSERT(pos.v_ == &v);
     BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_path]);
@@ -1439,30 +1439,30 @@ insert_segment_impl( iterator pos, string_view s, std::size_t const ns ) ->
 auto
 url_base::
 segments_type::
-insert_encoded_segment( iterator pos, string_view s ) ->
+insert_encoded( iterator pos, string_view s ) ->
     iterator
 {
-    return insert_encoded_segment_impl(pos, detail::pchar_pct_set().validate(s));
+    return insert_encoded_impl(pos, detail::pchar_pct_set().validate(s));
 }
 
 auto
 url_base::
 segments_type::
-insert_segment( iterator pos, string_view s ) ->
+insert( iterator pos, string_view s ) ->
     iterator
 {
-    return insert_segment_impl(pos, s, detail::pchar_pct_set().encoded_size(s));
+    return insert_impl(pos, s, detail::pchar_pct_set().encoded_size(s));
 }
 
 auto
 url_base::
 segments_type::
-replace_encoded_segment( iterator pos, string_view s ) ->
+replace_encoded( iterator pos, string_view s ) ->
     iterator
 {
     detail::pchar_pct_set().validate(s);
     BOOST_ASSERT(v_ != nullptr);
-    url_base & v = *v_;
+    url_base& v = *v_;
     BOOST_ASSERT(v.size() == v.a_.size());
     auto const ns = s.size();
     auto const n0 = pos.n_;
@@ -1470,7 +1470,7 @@ replace_encoded_segment( iterator pos, string_view s ) ->
     if( n0 < n )
         v.s_ = v.a_.reserve(v.a_.size() + n - n0);
     auto const cap = v.a_.capacity();
-    auto r = insert_encoded_segment_impl(erase(pos), s);
+    auto r = insert_encoded_impl(erase(pos), s);
     BOOST_ASSERT(v.a_.capacity() == cap); // Strong guarantee violation
     (void) cap;
     return r;
@@ -1479,11 +1479,11 @@ replace_encoded_segment( iterator pos, string_view s ) ->
 auto
 url_base::
 segments_type::
-replace_segment( iterator pos, string_view s ) ->
+replace( iterator pos, string_view s ) ->
     iterator
 {
     BOOST_ASSERT(v_ != nullptr);
-    url_base & v = *v_;
+    url_base& v = *v_;
     BOOST_ASSERT(v.size() == v.a_.size());
     auto const ns = detail::pchar_pct_set().encoded_size(s);
     auto const n0 = pos.n_;
@@ -1491,7 +1491,7 @@ replace_segment( iterator pos, string_view s ) ->
     if( n0 < n )
         v.s_ = v.a_.reserve(v.a_.size() + n - n0);
     auto const cap = v.a_.capacity();
-    auto r = insert_segment_impl(erase(pos), s, ns);
+    auto r = insert_impl(erase(pos), s, ns);
     BOOST_ASSERT(v.a_.capacity() == cap); // Strong guarantee violation
     (void) cap;
     return r;

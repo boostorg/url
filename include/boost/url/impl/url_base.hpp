@@ -53,13 +53,9 @@ public:
     using value_type =
         segments_type::value_type;
 
-    using pointer = value_type *;
-
-    using reference =
-        value_type &;
-
-    using difference_type =
-        std::ptrdiff_t;
+    using pointer = value_type const*;
+    using reference = value_type const&;
+    using difference_type = std::ptrdiff_t;
 
     BOOST_URL_DECL
     iterator() noexcept;

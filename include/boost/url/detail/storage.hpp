@@ -101,7 +101,7 @@ public:
     char*
     resize(std::size_t n) override
     {
-        if( char * p = reserve(n) )
+        if( char* p = reserve(n) )
         {
             size_ = n;
             p[n] = 0;

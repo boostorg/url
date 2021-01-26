@@ -1632,12 +1632,12 @@ private:
     // Strong guarantee.
     BOOST_URL_DECL
     iterator
-    insert_encoded_segment_impl( iterator pos, string_view s );
+    insert_encoded_impl( iterator pos, string_view s );
 
     // Strong guarantee.
     BOOST_URL_DECL
     iterator
-    insert_segment_impl( iterator pos, string_view s, std::size_t ns );
+    insert_impl( iterator pos, string_view s, std::size_t ns );
 
 public:
 
@@ -1686,22 +1686,22 @@ public:
     // Strong guarantee.
     BOOST_URL_DECL
     iterator
-    insert_encoded_segment( iterator pos, string_view s );
+    insert_encoded( iterator pos, string_view s );
 
     // Strong guarantee.
     BOOST_URL_DECL
     iterator
-    insert_segment( iterator pos, string_view s );
+    insert( iterator pos, string_view s );
 
     // Strong guarantee.
     BOOST_URL_DECL
     iterator
-    replace_encoded_segment( iterator pos, string_view s );
+    replace_encoded( iterator pos, string_view s );
 
     // Strong guarantee.
     BOOST_URL_DECL
     iterator
-    replace_segment( iterator pos, string_view s );
+    replace( iterator pos, string_view s );
 };
 
 //----------------------------------------------------------
