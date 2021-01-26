@@ -53,8 +53,7 @@ public:
     using value_type =
         segments_type::value_type;
 
-    using pointer =
-        value_type *;
+    using pointer = value_type *;
 
     using reference =
         value_type &;

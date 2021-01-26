@@ -66,28 +66,28 @@ public:
     char*
     reserve(std::size_t n) override
     {
-        if(n > cap_)
+        if(n <= cap_)
+            return p_;
+
+        std::size_t cap =
+            traits::max_size(a_);
+        if(cap_ < cap - cap_)
         {
-            std::size_t cap =
-                traits::max_size(a_);
-            if(cap_ < cap - cap_)
-            {
-                cap = 2 * cap_;
-                if( cap < n)
-                    cap = n;
-            }
-            auto p = a_.allocate(cap + 1);
-            if(p_)
-            {
-                std::memcpy(
-                    p, p_, size_ + 1);
-                a_.deallocate(
-                    p_, cap_ + 1);
-                p[size_] = 0;
-            }
-            p_ = p;
-            cap_ = cap;
+            cap = 2 * cap_;
+            if( cap < n)
+                cap = n;
         }
+        auto p = a_.allocate(cap + 1);
+        if(p_)
+        {
+            std::memcpy(
+                p, p_, size_ + 1);
+            a_.deallocate(
+                p_, cap_ + 1);
+            p[size_] = 0;
+        }
+        p_ = p;
+        cap_ = cap;
         return p_;
     }
 
