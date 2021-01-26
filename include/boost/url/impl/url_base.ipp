@@ -1368,7 +1368,7 @@ erase( iterator first, iterator last ) noexcept ->
     BOOST_ASSERT(d > 0);
     int c = 0;
     for( auto i = v.s_ + first.off_, e = v.s_ + last.off_; i != e; ++i )
-        c += (*i == '/'); // std::count(v.s_ + first.off_, v.s_ + last.off_, '/')
+        c += (*i == '/'); // Count the number of segments in the range
     BOOST_ASSERT(c > 0);
     BOOST_ASSERT(v.pt_.nseg >= c);
     v.pt_.nseg -= c;

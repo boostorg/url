@@ -1677,13 +1677,13 @@ public:
 
     /** Erase the specified sequence of path segments.
 
-        @param first The first segment to be erased.
-
-        @param last One past the last segment to be erased.
-
         @par Exception Safety
 
         No-throw guarantee.
+
+        @param first The first segment to be erased.
+
+        @param last One past the last segment to be erased.
     */
     BOOST_URL_DECL
     iterator
@@ -1706,15 +1706,13 @@ public:
 
     /** Insert an encoded path segment at the specified position.
 
+        @par Exception Safety
+
+        Strong guarantee. Calls to allocate may throw.
+
         @param pos The new path segment is inserted before this position.
 
         @param s The encoded path segment to be inserted.
-
-        @throws std::exception invalid path.
-
-        @par Exception Safety
-
-        Strong guarantee.
     */
     BOOST_URL_DECL
     iterator
@@ -1722,15 +1720,13 @@ public:
 
     /** Encode an unencoded path segment and insert it at the specified position.
 
+        @par Exception Safety
+
+        Strong guarantee. Calls to allocate may throw.
+
         @param pos The new path segment is inserted before this position.
 
         @param s The unencoded path segment to be inserted.
-
-        @throws std::bad_alloc
-
-        @par Exception Safety
-
-        Strong guarantee.
     */
     BOOST_URL_DECL
     iterator
@@ -1738,15 +1734,13 @@ public:
 
     /** Replace the path segment at the specified position with the specified encoded path segment.
 
+        @par Exception Safety
+
+        Strong guarantee. Calls to allocate may throw.
+
         @param pos The path segment to be replaced.
 
         @param s The encoded to replace the segment at pos.
-
-        @throws std::bad_alloc, std::exception invalid path.
-
-        @par Exception Safety
-
-        Strong guarantee.
     */
     BOOST_URL_DECL
     iterator
@@ -1754,15 +1748,13 @@ public:
 
     /** Replace the path segment at the specified position with the specified unencoded path segment.
 
+        @par Exception Safety
+
+        Strong guarantee. Calls to allocate may throw.
+
         @param pos The path segment to be replaced.
 
         @param s The unencoded segment to replace the segment at pos.
-
-        @throws std::bad_alloc
-
-        @par Exception Safety
-
-        Strong guarantee.
     */
     BOOST_URL_DECL
     iterator
