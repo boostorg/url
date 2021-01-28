@@ -13,173 +13,21 @@
 namespace boost {
 namespace urls {
 
-//----------------------------------------------------------
-
-class url_view::segments_type::iterator
+bool
+url_view::
+segments_type::
+iterator::
+operator==(
+    iterator other) const noexcept
 {
-    friend segments_type;
-
-    char const* s_;
-    detail::parts const* pt_;
-    std::size_t off_;
-    std::size_t n_;
-
-    BOOST_URL_DECL
-    iterator(
-        segments_type const* v,
-        bool end) noexcept;
-
-public:
-    using value_type =
-        segments_type::value_type;
-
-    BOOST_URL_DECL
-    iterator() noexcept;
-
-    BOOST_URL_DECL
-    value_type
-    operator*() const noexcept;
-
-    value_type
-    operator->() const noexcept
-    {
-        return operator*();
-    }
-
-    bool
-    operator==(
-        iterator const& other) const noexcept
-    {
-        BOOST_ASSERT(
-            pt_ != other.pt_ ||
-            off_ != other.off_ || 
-            n_ == other.n_);
-        return
-            pt_ == other.pt_ &&
-            off_ == other.off_;
-    }
-
-    bool
-    operator!=(
-        iterator const& other) const noexcept
-    {
-        return !(*this == other);
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator++() noexcept;
-
-    iterator
-    operator++(int) noexcept
-    {
-        auto tmp = *this;
-        ++*this;
-        return tmp;
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator--() noexcept;
-
-    iterator
-    operator--(int) noexcept
-    {
-        auto tmp = *this;
-        --*this;
-        return tmp;
-    }
-
-private:
-    inline
-    void
-    parse() noexcept;
-};
-
-//----------------------------------------------------------
-
-class url_view::params_type::iterator
-{
-    friend params_type;
-
-    char const* s_;
-    detail::parts const* pt_;
-    std::size_t off_;
-    std::size_t nk_;
-    std::size_t nv_;
-
-    BOOST_URL_DECL
-    iterator(
-        params_type const* v,
-        bool end) noexcept;
-
-public:
-    using value_type =
-        params_type::value_type;
-
-    BOOST_URL_DECL
-    iterator() noexcept;
-
-    BOOST_URL_DECL
-    value_type
-    operator*() const noexcept;
-
-    value_type
-    operator->() const noexcept
-    {
-        return operator*();
-    }
-
-    bool
-    operator==(
-        iterator const& other) const noexcept
-    {
-        BOOST_ASSERT(
-            pt_ != other.pt_ ||
-            off_ != other.off_ || (
-                nk_ == other.nk_ &&
-                nv_ == other.nv_));
-        return
-            pt_ == other.pt_ &&
-            off_ == other.off_;
-    }
-
-    bool
-    operator!=(
-        iterator const& other) const noexcept
-    {
-        return !(*this == other);
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator++() noexcept;
-
-    iterator
-    operator++(int) noexcept
-    {
-        auto tmp = *this;
-        ++*this;
-        return tmp;
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator--() noexcept;
-
-    iterator
-    operator--(int) noexcept
-    {
-        auto tmp = *this;
-        --*this;
-        return tmp;
-    }
-
-private:
-    inline
-    void
-    parse() noexcept;
-};
+    BOOST_ASSERT(
+        pt_ != other.pt_ ||
+        off_ != other.off_ ||
+        n_ == other.n_);
+    return
+        pt_ == other.pt_ &&
+        off_ == other.off_;
+}
 
 //----------------------------------------------------------
 
@@ -194,6 +42,25 @@ at( string_view key,
     if(it == end())
         out_of_range::raise();
     return it->value(a);
+}
+
+//----------------------------------------------------------
+
+bool
+url_view::
+params_type::
+iterator::
+operator==(
+    iterator other) const noexcept
+{
+    BOOST_ASSERT(
+        pt_ != other.pt_ ||
+        off_ != other.off_ || (
+            nk_ == other.nk_ &&
+            nv_ == other.nv_));
+    return
+        pt_ == other.pt_ &&
+        off_ == other.off_;
 }
 
 //----------------------------------------------------------

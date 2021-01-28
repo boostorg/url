@@ -1629,12 +1629,10 @@ public:
 
 private:
 
-    // Strong guarantee.
     BOOST_URL_DECL
     iterator
     insert_encoded_impl( iterator pos, string_view s );
 
-    // Strong guarantee.
     BOOST_URL_DECL
     iterator
     insert_impl( iterator pos, string_view s, std::size_t ns );
@@ -1652,14 +1650,12 @@ public:
     {
     }
 
-    inline
     bool
     empty() const noexcept
     {
         return size() == 0;
     }
 
-    inline
     std::size_t
     size() const noexcept
     {
@@ -1824,6 +1820,92 @@ public:
 
 //----------------------------------------------------------
 
+class url_base::segments_type::iterator
+{
+    friend segments_type;
+
+    url_base* v_;
+    std::size_t off_;
+    std::size_t n_;
+
+    BOOST_URL_DECL
+    iterator(
+        url_base* v,
+        bool end) noexcept;
+
+public:
+    using iterator_category =
+        std::bidirectional_iterator_tag;
+
+    using value_type =
+        segments_type::value_type;
+
+    /// A pointer to an element
+    using pointer = value_type const*;
+
+    /// A reference to an element
+    using reference = value_type const&;
+
+    /// The difference_type for this iterator
+    using difference_type = std::ptrdiff_t;
+
+    BOOST_URL_DECL
+    iterator() noexcept;
+
+    BOOST_URL_DECL
+    value_type
+    operator*() const noexcept;
+
+    value_type
+    operator->() const noexcept
+    {
+        return operator*();
+    }
+
+    inline
+    bool
+    operator==(
+    iterator other) const noexcept;
+
+    bool
+    operator!=(
+        iterator other) const noexcept
+    {
+        return !(*this == other);
+    }
+
+    BOOST_URL_DECL
+    iterator&
+    operator++() noexcept;
+
+    iterator
+    operator++(int) noexcept
+    {
+        auto tmp = *this;
+        ++*this;
+        return tmp;
+    }
+
+    BOOST_URL_DECL
+    iterator&
+    operator--() noexcept;
+
+    iterator
+    operator--(int) noexcept
+    {
+        auto tmp = *this;
+        --*this;
+        return tmp;
+    }
+
+private:
+    inline
+    void
+    parse() noexcept;
+};
+
+//----------------------------------------------------------
+
 /** A modifiable view to the URL query parameters.
 */
 class url_base::params_type
@@ -1847,14 +1929,12 @@ public:
     {
     }
 
-    inline
     bool
     empty() const noexcept
     {
         return size() == 0;
     }
 
-    inline
     std::size_t
     size() const noexcept
     {
@@ -2008,6 +2088,81 @@ public:
     {
         return { key(), value() };
     }
+};
+
+//----------------------------------------------------------
+
+class url_base::params_type::iterator
+{
+    friend params_type;
+
+    url_base* v_;
+    std::size_t off_;
+    std::size_t nk_;
+    std::size_t nv_;
+
+    BOOST_URL_DECL
+    iterator(
+        url_base* v,
+        bool end) noexcept;
+
+public:
+    using value_type =
+        params_type::value_type;
+
+    BOOST_URL_DECL
+    iterator() noexcept;
+
+    BOOST_URL_DECL
+    value_type
+    operator*() const noexcept;
+
+    value_type
+    operator->() const noexcept
+    {
+        return operator*();
+    }
+
+    inline
+    bool
+    operator==(
+    iterator other) const noexcept;
+
+    bool
+    operator!=(
+        iterator other) const noexcept
+    {
+        return !(*this == other);
+    }
+
+    BOOST_URL_DECL
+    iterator&
+    operator++() noexcept;
+
+    iterator
+    operator++(int) noexcept
+    {
+        auto tmp = *this;
+        ++*this;
+        return tmp;
+    }
+
+    BOOST_URL_DECL
+    iterator&
+    operator--() noexcept;
+
+    iterator
+    operator--(int) noexcept
+    {
+        auto tmp = *this;
+        --*this;
+        return tmp;
+    }
+
+private:
+    inline
+    void
+    parse() noexcept;
 };
 
 } // urls

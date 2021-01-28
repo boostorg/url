@@ -1375,7 +1375,8 @@ erase( iterator first, iterator last ) noexcept ->
     std::memmove(v.s_ + first.off_, v.s_ + last.off_, v.pt_.offset[detail::id_end] - last.off_ + 1);
     v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) - d);
     BOOST_ASSERT(v.size() + d == v.a_.size());
-    v.a_.resize(v.size());
+    auto const s = v.a_.resize(v.size());
+    BOOST_ASSERT(v.s_ == s);
     BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
     first.parse();
     return first;

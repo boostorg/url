@@ -321,7 +321,7 @@ public:
         returns the port string without a leading
         colon (':'). Otherwise, an empty string
         is returned.
-        
+
         @par Exception Safety
 
         No-throw guarantee.
@@ -616,17 +616,14 @@ public:
 
     inline
     explicit
-    segments_type(
-        url_base const& v) noexcept;
+    segments_type( url_base const& v) noexcept;
 
-    inline
     bool
     empty() const noexcept
     {
         return size() == 0;
     }
 
-    inline
     std::size_t
     size() const noexcept
     {
@@ -691,6 +688,81 @@ public:
 
 //----------------------------------------------------------
 
+class url_view::segments_type::iterator
+{
+    friend segments_type;
+
+    char const* s_;
+    detail::parts const* pt_;
+    std::size_t off_;
+    std::size_t n_;
+
+    BOOST_URL_DECL
+    iterator(
+        segments_type const* v,
+        bool end) noexcept;
+
+public:
+    using value_type =
+        segments_type::value_type;
+
+    BOOST_URL_DECL
+    iterator() noexcept;
+
+    BOOST_URL_DECL
+    value_type
+    operator*() const noexcept;
+
+    value_type
+    operator->() const noexcept
+    {
+        return operator*();
+    }
+
+    inline
+    bool
+    operator==(
+        iterator other) const noexcept;
+
+    bool
+    operator!=(
+        iterator other) const noexcept
+    {
+        return !(*this == other);
+    }
+
+    BOOST_URL_DECL
+    iterator&
+    operator++() noexcept;
+
+    iterator
+    operator++(int) noexcept
+    {
+        auto tmp = *this;
+        ++*this;
+        return tmp;
+    }
+
+    BOOST_URL_DECL
+    iterator&
+    operator--() noexcept;
+
+    iterator
+    operator--(int) noexcept
+    {
+        auto tmp = *this;
+        --*this;
+        return tmp;
+    }
+
+private:
+    inline
+    void
+    parse() noexcept;
+};
+
+//----------------------------------------------------------
+
 /** A read-only view to the URL query parameters.
 */
 class url_view::params_type
@@ -721,14 +793,12 @@ public:
     params_type(
         url_base const& v) noexcept;
 
-    inline
     bool
     empty() const noexcept
     {
         return size() == 0;
     }
 
-    inline
     std::size_t
     size() const noexcept
     {
@@ -837,6 +907,82 @@ public:
     {
         return { key(), value() };
     }
+};
+
+//----------------------------------------------------------
+
+class url_view::params_type::iterator
+{
+    friend params_type;
+
+    char const* s_;
+    detail::parts const* pt_;
+    std::size_t off_;
+    std::size_t nk_;
+    std::size_t nv_;
+
+    BOOST_URL_DECL
+    iterator(
+        params_type const* v,
+        bool end) noexcept;
+
+public:
+    using value_type =
+        params_type::value_type;
+
+    BOOST_URL_DECL
+    iterator() noexcept;
+
+    BOOST_URL_DECL
+    value_type
+    operator*() const noexcept;
+
+    value_type
+    operator->() const noexcept
+    {
+        return operator*();
+    }
+
+    inline
+    bool
+    operator==(
+        iterator other) const noexcept;
+
+    bool
+    operator!=(
+        iterator other) const noexcept
+    {
+        return !(*this == other);
+    }
+
+    BOOST_URL_DECL
+    iterator&
+    operator++() noexcept;
+
+    iterator
+    operator++(int) noexcept
+    {
+        auto tmp = *this;
+        ++*this;
+        return tmp;
+    }
+
+    BOOST_URL_DECL
+    iterator&
+    operator--() noexcept;
+
+    iterator
+    operator--(int) noexcept
+    {
+        auto tmp = *this;
+        --*this;
+        return tmp;
+    }
+
+private:
+    inline
+    void
+    parse() noexcept;
 };
 
 } // urls

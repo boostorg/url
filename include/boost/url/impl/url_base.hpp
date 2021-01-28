@@ -22,209 +22,21 @@ segments_type(
 {
 }
 
-url_view::
-params_type::
-params_type(
-    url_base const& v) noexcept
-    : s_(v.s_)
-    , pt_(&v.pt_)
-{
-}
-
-//----------------------------------------------------------
-
-class url_base::segments_type::iterator
-{
-    friend segments_type;
-
-    url_base* v_;
-    std::size_t off_;
-    std::size_t n_;
-
-    BOOST_URL_DECL
-    iterator(
-        url_base* v,
-        bool end) noexcept;
-
-public:
-    using iterator_category =
-        std::bidirectional_iterator_tag;
-
-    using value_type =
-        segments_type::value_type;
-
-    /// A pointer to an element
-    using pointer = value_type const*;
-
-    /// A reference to an element
-    using reference = value_type const&;
-
-    /// The difference_type for this iterator
-    using difference_type = std::ptrdiff_t;
-
-    BOOST_URL_DECL
-    iterator() noexcept;
-
-    BOOST_URL_DECL
-    value_type
-    operator*() const noexcept;
-
-    value_type
-    operator->() const noexcept
-    {
-        return operator*();
-    }
-
-    bool
-    operator==(
-        iterator const& other) const noexcept
-    {
-        BOOST_ASSERT(
-            v_ != other.v_ ||
-            off_ != other.off_ ||
-            n_ == other.n_);
-        return
-            v_ == other.v_ &&
-            off_ == other.off_;
-    }
-
-    bool
-    operator!=(
-        iterator const& other) const noexcept
-    {
-        return !(*this == other);
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator++() noexcept;
-
-    iterator
-    operator++(int) noexcept
-    {
-        auto tmp = *this;
-        ++*this;
-        return tmp;
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator--() noexcept;
-
-    iterator
-    operator--(int) noexcept
-    {
-        auto tmp = *this;
-        --*this;
-        return tmp;
-    }
-
-private:
-    inline
-    void
-    parse() noexcept;
-};
-
-//----------------------------------------------------------
-
-class url_base::params_type::iterator
-{
-    friend params_type;
-
-    url_base* v_;
-    std::size_t off_;
-    std::size_t nk_;
-    std::size_t nv_;
-
-    BOOST_URL_DECL
-    iterator(
-        url_base* v,
-        bool end) noexcept;
-
-public:
-    using value_type =
-        params_type::value_type;
-
-    BOOST_URL_DECL
-    iterator() noexcept;
-
-    BOOST_URL_DECL
-    value_type
-    operator*() const noexcept;
-
-    value_type
-    operator->() const noexcept
-    {
-        return operator*();
-    }
-
-    bool
-    operator==(
-        iterator const& other) const noexcept
-    {
-        BOOST_ASSERT(
-            v_ != other.v_ ||
-            off_ != other.off_ || (
-                nk_ == other.nk_ &&
-                nv_ == other.nv_));
-        return
-            v_ == other.v_ &&
-            off_ == other.off_;
-    }
-
-    bool
-    operator!=(
-        iterator const& other) const noexcept
-    {
-        return !(*this == other);
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator++() noexcept;
-
-    iterator
-    operator++(int) noexcept
-    {
-        auto tmp = *this;
-        ++*this;
-        return tmp;
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator--() noexcept;
-
-    iterator
-    operator--(int) noexcept
-    {
-        auto tmp = *this;
-        --*this;
-        return tmp;
-    }
-
-private:
-    inline
-    void
-    parse() noexcept;
-};
-
-//----------------------------------------------------------
-
-template<class Allocator>
-string_type<Allocator>
+bool
 url_base::
-params_type::
-at( string_view key,
-    Allocator const& a) const
+segments_type::
+iterator::
+operator==(
+    iterator other) const noexcept
 {
-    auto const it = find(key);
-    if(it == end())
-        out_of_range::raise();
-    return it->value(a);
+    BOOST_ASSERT(
+        v_ != other.v_ ||
+        off_ != other.off_ ||
+        n_ == other.n_);
+    return
+        v_ == other.v_ &&
+        off_ == other.off_;
 }
-
-//----------------------------------------------------------
 
 auto
 url_base::
@@ -240,6 +52,47 @@ segments() noexcept ->
     segments_type
 {
     return segments_type(*this);
+}
+
+//----------------------------------------------------------
+
+url_view::
+params_type::
+params_type(
+    url_base const& v) noexcept
+    : s_(v.s_)
+    , pt_(&v.pt_)
+{
+}
+
+template<class Allocator>
+string_type<Allocator>
+url_base::
+params_type::
+at( string_view key,
+    Allocator const& a) const
+{
+    auto const it = find(key);
+    if(it == end())
+        out_of_range::raise();
+    return it->value(a);
+}
+
+bool
+url_base::
+params_type::
+iterator::
+operator==(
+    iterator other) const noexcept
+{
+    BOOST_ASSERT(
+        v_ != other.v_ ||
+        off_ != other.off_ || (
+            nk_ == other.nk_ &&
+            nv_ == other.nv_));
+    return
+        v_ == other.v_ &&
+        off_ == other.off_;
 }
 
 auto
