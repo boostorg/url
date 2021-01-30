@@ -595,7 +595,7 @@ public:
                 ps.insert_encoded(
                     ps.insert_encoded(
                         ps.insert_encoded(
-                            ps.insert_encoded(ps.end(), "a" ), "b" ), "c" ), "d" ), "file.txt" );
+                            ps.insert_encoded(ps.end(), "file.txt" ), "d" ), "c" ), "b" ), "a" );
             BOOST_TEST(!ps.empty());
             BOOST_TEST(ps.size() == 5);
             BOOST_TEST(std::distance(ps.begin(), ps.end()) == 5);
@@ -612,7 +612,8 @@ public:
             BOOST_TEST(std::distance(ps.begin(), ps.end()) == 3);
             BOOST_TEST(u.encoded_path() == "/c/d/file.txt");
 
-            auto const after = ps.insert_encoded(ps.begin(), "a");
+            auto after = ps.insert_encoded(ps.begin(), "a");
+            ++after;
             BOOST_TEST(!ps.empty());
             BOOST_TEST(ps.size() == 4);
             BOOST_TEST(std::distance(ps.begin(), ps.end()) == 4);

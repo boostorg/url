@@ -1362,21 +1362,34 @@ erase( iterator first, iterator last ) noexcept ->
     BOOST_ASSERT(last.off_ >= v.pt_.offset[detail::id_path]);
     BOOST_ASSERT(first.off_ <= v.pt_.offset[detail::id_query]);
     BOOST_ASSERT(last.off_ <= v.pt_.offset[detail::id_query]);
+
+    // Count segments and adjust segments count
     auto const d = last.off_ - first.off_;
     if( d == 0 )
         return first;
     BOOST_ASSERT(d > 0);
     int c = 0;
     for( auto i = v.s_ + first.off_, e = v.s_ + last.off_; i != e; ++i )
-        c += (*i == '/'); // Count the number of segments in the range
+        c += (*i == '/');
     BOOST_ASSERT(c > 0);
     BOOST_ASSERT(v.pt_.nseg >= c);
     v.pt_.nseg -= c;
-    std::memmove(v.s_ + first.off_, v.s_ + last.off_, v.pt_.offset[detail::id_end] - last.off_ + 1);
-    v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) - d);
+
+    // Move memory, adjust parts index
+    std::memmove(
+        v.s_ + first.off_,
+        v.s_ + last.off_,
+        v.pt_.offset[detail::id_end] - last.off_ + 1);
+    v.pt_.resize(
+        detail::id_path,
+        v.pt_.length(detail::id_path, detail::id_query) - d);
     BOOST_ASSERT(v.size() + d == v.a_.size());
+
+    // Shrink storage
     auto const s = v.a_.resize(v.size());
     BOOST_ASSERT(v.s_ == s);
+
+    // Done, ensure a valid iterator is returned
     BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
     first.parse();
     return first;
@@ -1395,16 +1408,27 @@ insert_encoded_impl( iterator pos, string_view s ) ->
     BOOST_ASSERT(pos.v_ == &v);
     BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_path]);
     BOOST_ASSERT(pos.off_ <= v.pt_.offset[detail::id_query]);
+
     auto const n0 = v.pt_.offset[detail::id_end];
     auto const n = s.size() + 1;
+
+    // Resize, move memory, adjust parts index
     v.s_ = v.a_.resize(v.size() + n);
-    v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + n);
-    std::memmove(v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0, v.s_ + pos.off_, n0 - pos.off_ + 1);
-    BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
+    v.pt_.resize(
+        detail::id_path,
+        v.pt_.length(detail::id_path, detail::id_query) + n);
+    std::memmove(
+        v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0,
+        v.s_ + pos.off_,
+        n0 - pos.off_ + 1);
+
+    // Delimiter + copy the new segment
     v.s_[pos.off_] = '/';
     std::memcpy(v.s_ + pos.off_ + 1, s.data(), s.size());
+
+    // Done, ensure a valid iterator is returned
     ++v.pt_.nseg;
-    pos.off_ += n;
+    BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
     pos.parse();
     return pos;
 }
@@ -1421,18 +1445,30 @@ insert_impl( iterator pos, string_view s, std::size_t const ns ) ->
     BOOST_ASSERT(pos.v_ == &v);
     BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_path]);
     BOOST_ASSERT(pos.off_ <= v.pt_.offset[detail::id_query]);
+
     auto const pct = detail::pchar_pct_set();
     BOOST_ASSERT(pct.encoded_size(s) == ns);
     auto const n0 = v.pt_.offset[detail::id_end];
     auto const n = ns + 1;
+
+    // Resize, move memory, adjust parts index
     v.s_ = v.a_.resize(v.size() + n);
-    v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + n);
-    std::memmove(v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0, v.s_ + pos.off_, n0 - pos.off_ + 1);
-    BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
+    v.pt_.resize(
+        detail::id_path,
+        v.pt_.length(detail::id_path,
+        detail::id_query) + n);
+    std::memmove(
+        v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0,
+        v.s_ + pos.off_,
+        n0 - pos.off_ + 1);
+
+    // Delimiter + encode new segment into target buffer
     v.s_[pos.off_] = '/';
     pct.encode(v.s_ + pos.off_ + 1, s);
+
+    // Done, ensure a valid iterator is returned
     ++v.pt_.nseg;
-    pos.off_ += n;
+    BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
     pos.parse();
     return pos;
 }
@@ -1465,15 +1501,23 @@ replace_encoded( iterator pos, string_view s ) ->
     BOOST_ASSERT(v_ != nullptr);
     url_base& v = *v_;
     BOOST_ASSERT(v.size() == v.a_.size());
+
     auto const ns = s.size();
     auto const n0 = pos.n_;
     auto const n = ns + 1;
+
+    // Reserve just enough memory for the replacement segment
     if( n0 < n )
         v.s_ = v.a_.reserve(v.a_.size() + n - n0);
+
+    // Erase, then insert the new segment
     auto const cap = v.a_.capacity();
     auto r = insert_encoded_impl(erase(pos), s);
-    BOOST_ASSERT(v.a_.capacity() == cap); // Strong guarantee violation
+
+    // If the reserve was exceeded, we have a strong guarantee violation
+    BOOST_ASSERT(v.a_.capacity() == cap);
     (void) cap;
+
     return r;
 }
 
@@ -1486,15 +1530,23 @@ replace( iterator pos, string_view s ) ->
     BOOST_ASSERT(v_ != nullptr);
     url_base& v = *v_;
     BOOST_ASSERT(v.size() == v.a_.size());
+
     auto const ns = detail::pchar_pct_set().encoded_size(s);
     auto const n0 = pos.n_;
     auto const n = ns + 1;
+
+    // Reserve just enough memory for the replacement segment
     if( n0 < n )
         v.s_ = v.a_.reserve(v.a_.size() + n - n0);
+
+    // Erase, then insert the new segment
     auto const cap = v.a_.capacity();
     auto r = insert_impl(erase(pos), s, ns);
+
+    // If the reserve was exceeded, we have a strong guarantee violation
     BOOST_ASSERT(v.a_.capacity() == cap); // Strong guarantee violation
     (void) cap;
+
     return r;
 }
 
