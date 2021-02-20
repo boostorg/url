@@ -17,8 +17,7 @@ url_view::
 segments_type::
 segments_type(
     url_base const& v) noexcept
-    : s_(v.s_)
-    , pt_(&v.pt_)
+    : pt_(&v.pt_)
 {
 }
 
@@ -30,11 +29,11 @@ operator==(
     iterator other) const noexcept
 {
     BOOST_ASSERT(
-        v_ != other.v_ ||
+        pt_ != other.pt_ ||
         off_ != other.off_ ||
         n_ == other.n_);
     return
-        v_ == other.v_ &&
+        pt_ == other.pt_ &&
         off_ == other.off_;
 }
 
@@ -60,8 +59,7 @@ url_view::
 params_type::
 params_type(
     url_base const& v) noexcept
-    : s_(v.s_)
-    , pt_(&v.pt_)
+    : pt_(&v.pt_)
 {
 }
 
@@ -86,12 +84,12 @@ operator==(
     iterator other) const noexcept
 {
     BOOST_ASSERT(
-        v_ != other.v_ ||
+        pt_ != other.pt_ ||
         off_ != other.off_ || (
             nk_ == other.nk_ &&
             nv_ == other.nv_));
     return
-        v_ == other.v_ &&
+        pt_ == other.pt_ &&
         off_ == other.off_;
 }
 

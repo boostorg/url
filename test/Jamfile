@@ -60,4 +60,6 @@ for local f in $(LIMIT_SOURCES)
         ] ;
 }
 
+run indexed_string.cpp main.cpp ;
+
 alias run-tests : $(RUN_TESTS) ;

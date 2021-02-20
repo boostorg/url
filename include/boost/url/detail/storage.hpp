@@ -11,8 +11,6 @@
 #define BOOST_URL_DETAIL_STORAGE_HPP
 
 #include <boost/url/config.hpp>
-#include <cstdlib>
-#include <cstring>
 #include <memory>
 
 namespace boost {
@@ -21,11 +19,8 @@ namespace detail {
 
 struct storage
 {
-    virtual std::size_t capacity() const noexcept = 0;
-    BOOST_URL_NODISCARD virtual char* reserve(std::size_t n) = 0;
-
-    virtual std::size_t size() const noexcept = 0;
-    BOOST_URL_NODISCARD virtual char* resize(std::size_t n) = 0;
+    virtual char* allocate( size_t ) = 0;
+    virtual void deallocate( char*, size_t ) = 0;
 };
 
 template<class Allocator>
@@ -33,9 +28,6 @@ class alloc_storage
     : public storage
 {
     Allocator a_;
-    char* p_ = nullptr;
-    std::size_t size_ = 0;
-    std::size_t cap_ = 0;
 
     using traits =
         std::allocator_traits<
@@ -49,66 +41,14 @@ public:
     {
     }
 
-    ~alloc_storage()
+    char* allocate( size_t s ) final override
     {
-        if(p_)
-            traits::deallocate(a_,
-                p_, cap_ + 1);
+        return a_.allocate(s);
     }
 
-    std::size_t
-    capacity() const noexcept override
+    void deallocate( char* p, size_t s ) final override
     {
-        return cap_;
-    }
-
-    BOOST_URL_NODISCARD
-    char*
-    reserve(std::size_t n) override
-    {
-        if(n <= cap_)
-            return p_;
-
-        std::size_t cap =
-            traits::max_size(a_);
-        if(cap_ < cap - cap_)
-        {
-            cap = 2 * cap_;
-            if( cap < n)
-                cap = n;
-        }
-        auto p = a_.allocate(cap + 1);
-        if(p_)
-        {
-            std::memcpy(
-                p, p_, size_ + 1);
-            a_.deallocate(
-                p_, cap_ + 1);
-            p[size_] = 0;
-        }
-        p_ = p;
-        cap_ = cap;
-        return p_;
-    }
-
-    std::size_t
-    size() const noexcept override
-    {
-        return size_;
-    }
-
-    BOOST_URL_NODISCARD
-    char*
-    resize(std::size_t n) override
-    {
-        if( char* p = reserve(n) )
-        {
-            size_ = n;
-            p[n] = 0;
-            return p;
-        }
-        else
-            return p;
+        a_.deallocate(p, s);
     }
 };
 

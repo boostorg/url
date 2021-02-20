@@ -24,8 +24,7 @@ namespace urls {
 url_base::
 url_base(
     detail::storage& a) noexcept
-    : a_(a)
-    , s_(nullptr)
+    : pt_(a)
 {
 }
 
@@ -33,7 +32,7 @@ url_base::
 url_base(
     detail::storage& a,
     string_view s)
-    : a_(a)
+    : pt_(a)
 {
     set_encoded_url(s);
 }
@@ -44,8 +43,7 @@ encoded_url() const
 {
     return pt_.get(
         detail::id_scheme,
-        detail::id_end,
-        s_);
+        detail::id_end);
 }
 
 string_view
@@ -54,8 +52,7 @@ encoded_origin() const noexcept
 {
     return pt_.get(
         detail::id_scheme,
-        detail::id_path,
-        s_);
+        detail::id_path);
 }
 
 url_base&
@@ -65,10 +62,7 @@ set_encoded_url(
 {
     if(s.empty())
     {
-        if(s_)
-            resize(
-                detail::id_scheme,
-                detail::id_end, 0);
+        pt_.clear_all();
         return *this;
     }
     error_code ec;
@@ -77,11 +71,8 @@ set_encoded_url(
     detail::parse_url(pt, s, ec);
     if(ec)
         invalid_part::raise();
-    s_ = a_.resize(s.size());
-    //---
-    pt_ = pt;
-    std::memcpy(
-        s_, s.data(), s.size());
+    pt_.copy_all(
+        pt, s );
     return *this;
 }
 
@@ -92,9 +83,9 @@ set_encoded_origin(
 {
     if(s.empty())
     {
-        resize(
+        pt_.clear(
             detail::id_scheme,
-            detail::id_path, 0);
+            detail::id_path);
         return *this;
     }
 
@@ -103,26 +94,11 @@ set_encoded_origin(
     detail::parse_origin(pt, s, ec);
     if(ec)
         invalid_part::raise();
-    auto const dest =
-        resize(
-            detail::id_scheme,
-            detail::id_path,
-            s.size());
-    s.copy(dest, s.size());
-    pt_.split(
+    pt_.copy(
+        pt,
+        s,
         detail::id_scheme,
-        pt.length(detail::id_scheme));
-    pt_.split(
-        detail::id_user,
-        pt.length(detail::id_user));
-    pt_.split(
-        detail::id_password,
-        pt.length(detail::id_password));
-    pt_.split(
-        detail::id_host,
-        pt.length(detail::id_host));
-    pt_.split(
-        detail::id_port, pt.length(detail::id_port));
+        detail::id_path);
     return *this;
 }
 
@@ -137,8 +113,7 @@ url_base::
 scheme() const noexcept
 {
     auto s = pt_.get(
-        detail::id_scheme,
-        s_);
+        detail::id_scheme);
     if(s.empty())
         return s;
     BOOST_ASSERT(s.back() == ':');
@@ -153,7 +128,7 @@ set_scheme(
 {
     if(s.empty())
     {
-        resize(detail::id_scheme, 0);
+        pt_.clear(detail::id_scheme);
         return *this;
     }
 
@@ -188,8 +163,7 @@ encoded_authority() const noexcept
 {
     auto s = pt_.get(
         detail::id_user,
-        detail::id_path,
-        s_);
+        detail::id_path);
     if(! s.empty())
     {
         BOOST_ASSERT(s.size() >= 2);
@@ -207,9 +181,9 @@ set_encoded_authority(
 {
     if(s.empty())
     {
-        resize(
+        pt_.clear(
             detail::id_user,
-            detail::id_path, 0);
+            detail::id_path);
         return *this;
     }
 
@@ -262,7 +236,7 @@ has_userinfo() const noexcept
         return false;
     }
     BOOST_ASSERT(pt_.get(
-        detail::id_user, s_).substr(
+        detail::id_user).substr(
             0, 2) == "//");
     if(pt_.length(
         detail::id_user) > 2)
@@ -271,8 +245,7 @@ has_userinfo() const noexcept
         detail::id_password) > 0)
     {
         BOOST_ASSERT(pt_.get(
-            detail::id_password,
-                s_).back() == '@');
+            detail::id_password).back() == '@');
         return true;
     }
     return false;
@@ -297,8 +270,7 @@ userinfo_part() const noexcept
 {
     auto s = pt_.get(
         detail::id_user,
-        detail::id_host,
-        s_);
+        detail::id_host);
     if(s.empty())
         return s;
     BOOST_ASSERT(s.size() >= 2);
@@ -323,9 +295,9 @@ set_encoded_userinfo(
             detail::id_path) == 0)
         {
             // no authority
-            resize(
+            pt_.clear(
                 detail::id_user,
-                detail::id_host, 0);
+                detail::id_host);
             return *this;
         }
         // keep "//"
@@ -371,8 +343,7 @@ url_base::
 encoded_user() const noexcept
 {
     auto s = pt_.get(
-        detail::id_user,
-        s_);
+        detail::id_user);
     if(! s.empty())
     {
         BOOST_ASSERT(s.size() >= 2);
@@ -394,13 +365,13 @@ set_user(
             detail::id_user) == 0)
             return *this;
         BOOST_ASSERT(pt_.get(
-            detail::id_password, s_).back() == '@');
+            detail::id_password).back() == '@');
         BOOST_ASSERT(pt_.get(
-            detail::id_user, s_).size() >= 2);
+            detail::id_user).size() >= 2);
         BOOST_ASSERT(pt_.get(
-            detail::id_user, s_)[0] == '/');
+            detail::id_user)[0] == '/');
         BOOST_ASSERT(pt_.get(
-            detail::id_user, s_)[1] == '/');
+            detail::id_user)[1] == '/');
         if(pt_.length(
             detail::id_password) == 1)
         {
@@ -422,7 +393,7 @@ set_user(
         detail::id_password) != 0)
     {
         BOOST_ASSERT(pt_.get(
-            detail::id_password, s_).back() == '@');
+            detail::id_password).back() == '@');
         // preserve "//"
         auto const dest = resize(
             detail::id_user,
@@ -459,7 +430,7 @@ set_encoded_user(
     if(pt_.length(detail::id_password) != 0)
     {
         BOOST_ASSERT(pt_.get(
-            detail::id_password, s_).back() == '@');
+            detail::id_password).back() == '@');
         // preserve "//"
         auto const dest = resize(
             detail::id_user, 2 + n);
@@ -486,7 +457,7 @@ url_base::
 encoded_password() const noexcept
 {
     auto s = pt_.get(
-        detail::id_password, s_);
+        detail::id_password);
     if(! s.empty())
     {
         if(s.front() == ':')
@@ -506,7 +477,7 @@ url_base::
 password_part() const noexcept
 {
     auto s = pt_.get(
-        detail::id_password, s_);
+        detail::id_password);
     if(! s.empty())
     {
         BOOST_ASSERT(s.front() == '@');
@@ -527,17 +498,17 @@ set_password(
         if(n == 0)
             return *this;
         BOOST_ASSERT(pt_.get(
-            detail::id_password, s_).back() == '@');
+            detail::id_password).back() == '@');
         BOOST_ASSERT(pt_.get(
-            detail::id_user, s_).size() >= 2);
+            detail::id_user).size() >= 2);
         BOOST_ASSERT(pt_.get(
-            detail::id_user, s_)[0] == '/');
+            detail::id_user)[0] == '/');
         BOOST_ASSERT(pt_.get(
-            detail::id_user, s_)[1] == '/');
+            detail::id_user)[1] == '/');
         if(pt_.length(detail::id_user) == 2)
         {
             // remove '@'
-            resize(detail::id_password, 0);
+            pt_.clear(detail::id_password);
             return *this;
         }
         // retain '@'
@@ -655,8 +626,7 @@ encoded_host_and_port() const noexcept
 {
     return pt_.get(
         detail::id_host,
-        detail::id_path,
-        s_);
+        detail::id_path);
 }
 
 string_view
@@ -664,8 +634,7 @@ url_base::
 encoded_host() const noexcept
 {
     return pt_.get(
-        detail::id_host,
-        s_);
+        detail::id_host);
 }
 
 url_base&
@@ -682,16 +651,15 @@ set_host(
             pt_.length(detail::id_port) == 0)
         {
             BOOST_ASSERT(pt_.get(
-                detail::id_user, s_
-                    ) == "//");
+                detail::id_user) == "//");
             // remove authority
-            resize(
+            pt_.clear(
                 detail::id_user,
-                detail::id_path, 0);
+                detail::id_path);
         }
         else
         {
-            resize(detail::id_host, 0);
+            pt_.clear(detail::id_host);
         }
         return *this;
     }
@@ -792,8 +760,7 @@ url_base::
 port() const noexcept
 {
     auto s = pt_.get(
-        detail::id_port,
-        s_);
+        detail::id_port);
     BOOST_ASSERT(s.empty() ||
         s.front() == ':');
     if(! s.empty())
@@ -806,8 +773,7 @@ url_base::
 port_part() const noexcept
 {
     auto s = pt_.get(
-        detail::id_port,
-        s_);
+        detail::id_port);
     BOOST_ASSERT(s.empty() ||
         s.front() == ':');
     return s;
@@ -834,15 +800,15 @@ set_port(string_view s)
         {
             // remove authority
             BOOST_ASSERT(pt_.get(
-                detail::id_user, s_).substr(
+                detail::id_user).substr(
                     0, 2) == "//");
-            resize(
+            pt_.clear(
                 detail::id_user,
-                detail::id_path, 0);
+                detail::id_path);
         }
         else
         {
-            resize(detail::id_port, 0);
+            pt_.clear(detail::id_port);
         }
         return *this;
     }
@@ -904,8 +870,7 @@ url_base::
 encoded_path() const noexcept
 {
     return pt_.get(
-        detail::id_path,
-        s_);
+        detail::id_path);
 }
 
 url_base&
@@ -916,8 +881,8 @@ set_encoded_path(
     // path-empty
     if(s.empty())
     {
-        resize(
-            detail::id_path, 0);
+        pt_.clear(
+            detail::id_path);
         return *this;
     }
     if(has_authority())
@@ -958,7 +923,7 @@ url_base::
 encoded_query() const noexcept
 {
     auto s = pt_.get(
-        detail::id_query, s_);
+        detail::id_query);
     if(s.empty())
         return s;
     BOOST_ASSERT(
@@ -971,7 +936,7 @@ url_base::
 query_part() const noexcept
 {
     auto s = pt_.get(
-        detail::id_query, s_);
+        detail::id_query);
     if(s.empty())
         return s;
     BOOST_ASSERT(
@@ -986,7 +951,7 @@ set_query(
 {
     if(s.empty())
     {
-        resize(detail::id_query, 0);
+        pt_.clear(detail::id_query);
         return *this;
     }
     auto const e =
@@ -1008,7 +973,7 @@ set_encoded_query(
 {
     if(s.empty())
     {
-        resize(detail::id_query, 0);
+        pt_.clear(detail::id_query);
         return *this;
     }
     auto const e =
@@ -1029,7 +994,7 @@ set_query_part(
 {
     if(s.empty())
     {
-        resize(detail::id_query, 0);
+        pt_.clear(detail::id_query);
         return *this;
     }
     if(s.front() != '?')
@@ -1057,7 +1022,7 @@ url_base::
 encoded_fragment() const noexcept
 {
     auto s = pt_.get(
-        detail::id_frag, s_);
+        detail::id_frag);
     if(s.empty())
         return s;
     BOOST_ASSERT(
@@ -1070,7 +1035,7 @@ url_base::
 fragment_part() const noexcept
 {
     auto s = pt_.get(
-        detail::id_frag, s_);
+        detail::id_frag);
     if(s.empty())
         return s;
     BOOST_ASSERT(
@@ -1085,7 +1050,7 @@ set_fragment(
 {
     if(s.empty())
     {
-        resize(detail::id_frag, 0);
+        pt_.clear(detail::id_frag);
         return *this;
     }
     auto const e =
@@ -1106,7 +1071,7 @@ set_encoded_fragment(
 {
     if(s.empty())
     {
-        resize(detail::id_frag, 0);
+        pt_.clear(detail::id_frag);
         return *this;
     }
     auto const e =
@@ -1127,7 +1092,7 @@ set_fragment_part(
 {
     if(s.empty())
     {
-        resize(detail::id_frag, 0);
+        pt_.clear(detail::id_frag);
         return *this;
     }
     if(s.front() != '#')
@@ -1163,10 +1128,8 @@ normalize_scheme() noexcept
     if(n == 0)
         return *this;
     --n;
-    BOOST_ASSERT(s_[pt_.offset[
-        detail::id_scheme] + n] == ':');
-    auto p = s_ + pt_.offset[
-        detail::id_scheme];
+    auto p = pt_.ptr(detail::id_scheme);
+    BOOST_ASSERT(p[n] == ':');
     while(n-- > 0)
     {
         if(static_cast<unsigned char>(
@@ -1187,7 +1150,7 @@ url_base::
 segments_type::
 iterator::
 iterator() noexcept
-    : v_(nullptr)
+    : pt_(nullptr)
     , off_(0)
     , n_(0)
 {
@@ -1197,26 +1160,26 @@ url_base::
 segments_type::
 iterator::
 iterator(
-    url_base* v,
+    detail::parts_string* pt,
     bool end) noexcept
-    : v_(v)
+    : pt_(pt)
 {
-    if(! v_)
+    if(! pt_)
     {
         off_ = 0;
         n_ = 0;
     }
     else if( end ||
-        v_->pt_.nseg == 0)
+        pt_->nseg == 0)
     {
-        off_ = v_->pt_.offset[
-            detail::id_query];
+        off_ = pt_->offset(
+            detail::id_query);
         n_ = 0;
     }
     else
     {
-        off_ = v_->pt_.offset[
-            detail::id_path];
+        off_ = pt_->offset(
+            detail::id_path);
         parse();
     }
 }
@@ -1229,7 +1192,7 @@ operator*() const noexcept ->
     value_type
 {
     string_view s = {
-        v_->s_ + off_, n_ };
+        ptr(), n_ };
     if(! s.empty() &&
         s.front() == '/')
         s = s.substr(1);
@@ -1244,11 +1207,11 @@ operator++() noexcept ->
     iterator&
 {
     BOOST_ASSERT(
-        off_ != v_->pt_.offset[
-            detail::id_frag]);
+        off_ != pt_->offset(
+            detail::id_frag));
     off_ = off_ + n_;
-    if(off_ == v_->pt_.offset[
-        detail::id_frag])
+    if(off_ == pt_->offset(
+        detail::id_frag))
     {
         // end
         n_ = 0;
@@ -1268,24 +1231,24 @@ operator--() noexcept ->
     iterator&
 {
     BOOST_ASSERT(
-        off_ != v_->pt_.offset[
-            detail::id_path]);
+        off_ != pt_->offset(
+            detail::id_path));
     auto const begin =
-        v_->s_ + v_->pt_.offset[
-            detail::id_path];
-    auto p = v_->s_ + off_;
+        pt_->ptr(
+            detail::id_path);
+    auto p = ptr();
     while(--p > begin)
     {
         if(*p == '/')
         {
-            off_ = p - v_->s_;
+            off_ = p - pt_->data();
             parse();
             return *this;
         }
     }
     // fails for relative-uri
     //BOOST_ASSERT(*p == '/');
-    auto const off = p - v_->s_;
+    auto const off = p - pt_->data();
     n_ = off_ - off;
     off_ = off;
     return *this;
@@ -1298,13 +1261,11 @@ iterator::
 parse() noexcept
 {
     BOOST_ASSERT(off_ !=
-        v_->pt_.offset[
-            detail::id_frag]);
-    auto const end =
-        v_->s_ + v_->pt_.offset[
-            detail::id_query];
-    auto const p0 =
-        v_->s_ + off_;
+        pt_->offset(
+            detail::id_frag));
+    auto const end = pt_->ptr(
+        detail::id_query);
+    auto const p0 =ptr();
     auto p = p0;
     if(*p == '/')
         ++p;
@@ -1325,7 +1286,7 @@ segments_type::
 begin() const noexcept ->
     iterator
 {
-    return iterator(v_, false);
+    return iterator(pt_, false);
 }
 
 auto
@@ -1334,7 +1295,7 @@ segments_type::
 end() const noexcept ->
     iterator
 {
-    return iterator(v_, true);
+    return iterator(pt_, true);
 }
 
 auto
@@ -1353,88 +1314,25 @@ segments_type::
 erase( iterator first, iterator last ) noexcept ->
     iterator
 {
-    BOOST_ASSERT(v_ != nullptr);
-    url_base& v = *v_;
-    BOOST_ASSERT(v.size() == v.a_.size());
-    BOOST_ASSERT(first.v_ == &v);
-    BOOST_ASSERT(last.v_ == &v);
-    BOOST_ASSERT(first.off_ >= v.pt_.offset[detail::id_path]);
-    BOOST_ASSERT(last.off_ >= v.pt_.offset[detail::id_path]);
-    BOOST_ASSERT(first.off_ <= v.pt_.offset[detail::id_query]);
-    BOOST_ASSERT(last.off_ <= v.pt_.offset[detail::id_query]);
-    auto const d = last.off_ - first.off_;
-    if( d == 0 )
-        return first;
-    BOOST_ASSERT(d > 0);
+    BOOST_ASSERT( first.pt_ == pt_ );
+    BOOST_ASSERT( last.pt_ == pt_ );
+    BOOST_ASSERT( first.off_ >= pt_->offset(detail::id_path) );
+    BOOST_ASSERT( last.off_ >= pt_->offset(detail::id_path) );
+    BOOST_ASSERT( first.off_ <= pt_->offset(detail::id_query) );
+    BOOST_ASSERT( last.off_ <= pt_->offset(detail::id_query) );
+    char* p = pt_->data();
     int c = 0;
-    for( auto i = v.s_ + first.off_, e = v.s_ + last.off_; i != e; ++i )
+    for( auto i = p + first.off_, e = p + last.off_; i != e; ++i )
         c += (*i == '/'); // Count the number of segments in the range
-    BOOST_ASSERT(c > 0);
-    BOOST_ASSERT(v.pt_.nseg >= c);
-    v.pt_.nseg -= c;
-    std::memmove(v.s_ + first.off_, v.s_ + last.off_, v.pt_.offset[detail::id_end] - last.off_ + 1);
-    v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) - d);
-    BOOST_ASSERT(v.size() + d == v.a_.size());
-    auto const s = v.a_.resize(v.size());
-    BOOST_ASSERT(v.s_ == s);
-    BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
+    pt_->change_part(
+        pt_->reserve_change_part(
+            detail::id_path,
+            p + first.off_,
+            last.off_ - first.off_,
+            0));
+    pt_->nseg -= c;
     first.parse();
     return first;
-}
-
-auto
-url_base::
-segments_type::
-insert_encoded_impl( iterator pos, string_view s ) ->
-    iterator
-{
-    BOOST_ASSERT(detail::pchar_pct_set().check(s));
-    BOOST_ASSERT(v_ != nullptr);
-    url_base& v = *v_;
-    BOOST_ASSERT(v.size() == v.a_.size());
-    BOOST_ASSERT(pos.v_ == &v);
-    BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_path]);
-    BOOST_ASSERT(pos.off_ <= v.pt_.offset[detail::id_query]);
-    auto const n0 = v.pt_.offset[detail::id_end];
-    auto const n = s.size() + 1;
-    v.s_ = v.a_.resize(v.size() + n);
-    v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + n);
-    std::memmove(v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0, v.s_ + pos.off_, n0 - pos.off_ + 1);
-    BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
-    v.s_[pos.off_] = '/';
-    std::memcpy(v.s_ + pos.off_ + 1, s.data(), s.size());
-    ++v.pt_.nseg;
-    pos.off_ += n;
-    pos.parse();
-    return pos;
-}
-
-auto
-url_base::
-segments_type::
-insert_impl( iterator pos, string_view s, std::size_t const ns ) ->
-    iterator
-{
-    BOOST_ASSERT(v_ != nullptr);
-    url_base& v = *v_;
-    BOOST_ASSERT(v.size() == v.a_.size());
-    BOOST_ASSERT(pos.v_ == &v);
-    BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_path]);
-    BOOST_ASSERT(pos.off_ <= v.pt_.offset[detail::id_query]);
-    auto const pct = detail::pchar_pct_set();
-    BOOST_ASSERT(pct.encoded_size(s) == ns);
-    auto const n0 = v.pt_.offset[detail::id_end];
-    auto const n = ns + 1;
-    v.s_ = v.a_.resize(v.size() + n);
-    v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + n);
-    std::memmove(v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0, v.s_ + pos.off_, n0 - pos.off_ + 1);
-    BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
-    v.s_[pos.off_] = '/';
-    pct.encode(v.s_ + pos.off_ + 1, s);
-    ++v.pt_.nseg;
-    pos.off_ += n;
-    pos.parse();
-    return pos;
 }
 
 auto
@@ -1443,7 +1341,20 @@ segments_type::
 insert_encoded( iterator pos, string_view s ) ->
     iterator
 {
-    return insert_encoded_impl(pos, detail::pchar_pct_set().validate(s));
+    auto pct = detail::pchar_pct_set();
+    pct.validate(s);
+    std::size_t const n = s.size() + 1;
+    pt_->change_part(
+        pt_->reserve_change_part(
+            detail::id_path,
+            pos.ptr(),
+            0,
+            n ) )
+    .copy( s, 1 )[0] = '/';
+    ++pt_->nseg;
+    pos.off_ += n;
+    pos.parse();
+    return pos;
 }
 
 auto
@@ -1452,7 +1363,19 @@ segments_type::
 insert( iterator pos, string_view s ) ->
     iterator
 {
-    return insert_impl(pos, s, detail::pchar_pct_set().encoded_size(s));
+    auto pct = detail::pchar_pct_set();
+    std::size_t const n = pct.encoded_size(s) + 1;
+    pt_->change_part(
+        pt_->reserve_change_part(
+            detail::id_path,
+            pos.ptr(),
+            0,
+            n ) )
+    .encode( pct, s, 1 )[0] = '/';
+    ++pt_->nseg;
+    pos.off_ += n;
+    pos.parse();
+    return pos;
 }
 
 auto
@@ -1461,20 +1384,17 @@ segments_type::
 replace_encoded( iterator pos, string_view s ) ->
     iterator
 {
-    detail::pchar_pct_set().validate(s);
-    BOOST_ASSERT(v_ != nullptr);
-    url_base& v = *v_;
-    BOOST_ASSERT(v.size() == v.a_.size());
-    auto const ns = s.size();
-    auto const n0 = pos.n_;
-    auto const n = ns + 1;
-    if( n0 < n )
-        v.s_ = v.a_.reserve(v.a_.size() + n - n0);
-    auto const cap = v.a_.capacity();
-    auto r = insert_encoded_impl(erase(pos), s);
-    BOOST_ASSERT(v.a_.capacity() == cap); // Strong guarantee violation
-    (void) cap;
-    return r;
+    auto pct = detail::pchar_pct_set();
+    pct.validate(s);
+    pt_->change_part(
+        pt_->reserve_change_part(
+            detail::id_path,
+            pos.ptr(),
+            pos.n_,
+            s.size() + 1 ) )
+    .copy( s, 1 )[0] = '/';
+    pos.parse();
+    return pos;
 }
 
 auto
@@ -1483,19 +1403,16 @@ segments_type::
 replace( iterator pos, string_view s ) ->
     iterator
 {
-    BOOST_ASSERT(v_ != nullptr);
-    url_base& v = *v_;
-    BOOST_ASSERT(v.size() == v.a_.size());
-    auto const ns = detail::pchar_pct_set().encoded_size(s);
-    auto const n0 = pos.n_;
-    auto const n = ns + 1;
-    if( n0 < n )
-        v.s_ = v.a_.reserve(v.a_.size() + n - n0);
-    auto const cap = v.a_.capacity();
-    auto r = insert_impl(erase(pos), s, ns);
-    BOOST_ASSERT(v.a_.capacity() == cap); // Strong guarantee violation
-    (void) cap;
-    return r;
+    auto pct = detail::pchar_pct_set();
+    pt_->change_part(
+        pt_->reserve_change_part(
+            detail::id_path,
+            pos.ptr(),
+            pos.n_,
+            pct.encoded_size(s) + 1 ) )
+    .encode( pct, s, 1 )[0] = '/';
+    pos.parse();
+    return pos;
 }
 
 //----------------------------------------------------------
@@ -1508,7 +1425,7 @@ url_base::
 params_type::
 iterator::
 iterator() noexcept
-    : v_(nullptr)
+    : pt_(nullptr)
     , off_(0)
     , nk_(0)
     , nv_(0)
@@ -1519,28 +1436,28 @@ url_base::
 params_type::
 iterator::
 iterator(
-    url_base* v,
+    detail::parts_string* pt,
     bool end) noexcept
-    : v_(v)
+    : pt_(pt)
 {
-    if(! v_)
+    if(! pt_)
     {
         off_ = 0;
         nk_ = 0;
         nv_ = 0;
     }
     else if( end ||
-            v_->pt_.nparam == 0)
+            pt_->nparam == 0)
     {
-        off_ = v_->pt_.offset[
-            detail::id_frag];
+        off_ = pt_->offset(
+            detail::id_frag);
         nk_ = 0;
         nv_ = 0;
     }
     else
     {
-        off_ = v_->pt_.offset[
-            detail::id_query];
+        off_ = pt_->offset(
+            detail::id_query);
         parse();
     }
 }
@@ -1552,23 +1469,25 @@ iterator::
 operator*() const noexcept ->
     value_type
 {
-    BOOST_ASSERT(v_);
-    BOOST_ASSERT(v_->pt_.nparam > 0);
+    BOOST_ASSERT(pt_);
+    BOOST_ASSERT(pt_->nparam > 0);
     BOOST_ASSERT(nk_ > 0);
+    char const* p = ptr();
     BOOST_ASSERT(
-        off_ == v_->pt_.offset[
-            detail::id_query] ?
-        v_->s_[off_] == '?' :
-        v_->s_[off_] == '&');
+        *p == (
+            off_ == pt_->offset(
+                detail::id_query) ?
+            '?' :
+            '&'));
     string_view const k = {
-        v_->s_ + off_ + 1,
+        p + 1,
         nk_ - 1 };
     if(nv_ == 0)
         return { k, { } };
     BOOST_ASSERT(
-        v_->s_[off_ + nk_] == '=');
+        p[nk_] == '=');
     string_view const v = {
-        v_->s_ + off_ + nk_ + 1,
+        p + nk_ + 1,
         nv_ - 1};
     return { k, v };
 }
@@ -1580,14 +1499,14 @@ iterator::
 operator++() noexcept ->
     iterator&
 {
-    BOOST_ASSERT(v_);
-    BOOST_ASSERT(v_->pt_.nparam > 0);
+    BOOST_ASSERT(pt_);
+    BOOST_ASSERT(pt_->nparam > 0);
     BOOST_ASSERT(
-        off_ != v_->pt_.offset[
-            detail::id_frag]);
+        off_ != pt_->offset(
+            detail::id_frag));
     off_ = off_ + nv_ + nk_;
-    if(off_ == v_->pt_.offset[
-        detail::id_frag])
+    if(off_ == pt_->offset(
+        detail::id_frag))
     {
         // end
         nv_ = 0;
@@ -1607,26 +1526,25 @@ iterator::
 operator--() noexcept ->
     iterator&
 {
-    BOOST_ASSERT(v_);
-    BOOST_ASSERT(v_->pt_.nparam > 0);
+    BOOST_ASSERT(pt_);
+    BOOST_ASSERT(pt_->nparam > 0);
     BOOST_ASSERT(
-        off_ != v_->pt_.offset[
-            detail::id_query]);
-    auto const begin =
-        v_->s_ + v_->pt_.offset[
-            detail::id_query];
-    auto p = v_->s_ + off_;
+        off_ != pt_->offset(
+            detail::id_query));
+    auto const begin = pt_->ptr(
+        detail::id_query);
+    auto p = ptr();
     while(--p > begin)
     {
         if(*p == '&')
         {
-            off_ = p - v_->s_;
+            off_ = p - pt_->data();
             parse();
             return *this;
         }
     }
     BOOST_ASSERT(*p == '?');
-    off_ = p - v_->s_;
+    off_ = p - pt_->data();
     return *this;
 }
 
@@ -1636,18 +1554,17 @@ params_type::
 iterator::
 parse() noexcept
 {
-    BOOST_ASSERT(v_);
-    BOOST_ASSERT(v_->pt_.nparam > 0);
-    auto const end =
-        v_->s_ + v_->pt_.offset[
-            detail::id_end];
-    char const* p = v_->s_ + off_;
+    BOOST_ASSERT(pt_);
+    BOOST_ASSERT(pt_->nparam > 0);
+    auto const end = pt_->ptr(
+        detail::id_end);
+    char const* p = ptr();
     BOOST_ASSERT(
-        ( off_ == v_->pt_.offset[
-            detail::id_query] &&
+        ( off_ == pt_->offset(
+            detail::id_query) &&
             *p == '?' ) ||
-        ( off_ != v_->pt_.offset[
-            detail::id_query] &&
+        ( off_ != pt_->offset(
+            detail::id_query) &&
             *p == '&' ));
     auto p0 = p++;
     auto const ek =
@@ -1678,7 +1595,7 @@ params_type::
 begin() const noexcept ->
     iterator
 {
-    return iterator(v_, false);
+    return iterator(pt_, false);
 }
 
 auto
@@ -1687,7 +1604,7 @@ params_type::
 end() const noexcept ->
     iterator
 {
-    return iterator(v_, true);
+    return iterator(pt_, true);
 }
 
 bool
@@ -1752,46 +1669,9 @@ resize(
     int id,
     std::size_t new_size)
 {
-    auto const len = pt_.length(id);
-    if(len == new_size)
-        return s_ + pt_.offset[id];
-
-    // shrink
-    if(new_size <= len)
-    {
-        auto const n = static_cast<
-            std::size_t>(len - new_size);
-        auto const pos = pt_.offset[id + 1];
-        std::memmove(
-            s_ + pos - n,
-            s_ + pos,
-            pt_.offset[
-                detail::id_end] - pos + 1);
-        for(auto i = id + 1;
-            i <= detail::id_end; ++i)
-            pt_.offset[i] -= n;
-        return s_ + pt_.offset[id];
-    }
-
-    // grow
-    if(new_size - len > (
-        (std::size_t)-1)- size())
-        too_large::raise();
-    s_ = a_.resize(
-        size() - len + new_size);
-    auto const n = static_cast<
-        std::size_t>(new_size - len);
-    auto const pos =
-        pt_.offset[id + 1];
-    std::memmove(
-        s_ + pos + n,
-        s_ + pos,
-        pt_.offset[detail::id_end] -
-            pos + 1);
-    for(auto i = id + 1;
-        i <= detail::id_end; ++i)
-        pt_.offset[i] += n;
-    return s_ + pt_.offset[id];
+    return pt_.resize(
+        id,
+        new_size);
 }
 
 char*
@@ -1801,55 +1681,10 @@ resize(
     int last,
     std::size_t new_size)
 {
-    auto const len =
-        pt_.length(first, last);
-    if(new_size == 0 && len == 0)
-        return s_ + pt_.offset[first];
-
-    // shrink
-    if(new_size <= len)
-    {
-        auto const n = static_cast<
-            std::size_t>(len - new_size);
-        auto const pos = pt_.offset[last];
-        std::memmove(
-            s_ + pos - n,
-            s_ + pos,
-            pt_.offset[
-                detail::id_end] - pos + 1);
-        for(auto i = first + 1;
-            i < last; ++i)
-            pt_.offset[i] =
-                pt_.offset[last] - n;
-        for(auto i = last;
-            i <= detail::id_end; ++i)
-            pt_.offset[i] -= n;
-        return s_ + pt_.offset[first];
-    }
-
-    // grow
-    if(new_size - len > (
-        (std::size_t)-1)- size())
-        too_large::raise();
-    s_ = a_.resize(
-        size() - len + new_size);
-    auto const n = static_cast<
-        std::size_t>(new_size - len);
-    auto const pos =
-        pt_.offset[last];
-    std::memmove(
-        s_ + pos + n,
-        s_ + pos,
-        pt_.offset[detail::id_end] -
-            pos + 1);
-    for(auto i = first + 1;
-        i < last; ++i)
-        pt_.offset[i] =
-            pt_.offset[last] + n;
-    for(auto i = last;
-        i <= detail::id_end; ++i)
-        pt_.offset[i] += n;
-    return s_ + pt_.offset[first];
+    return pt_.resize(
+        first,
+        last,
+        new_size);
 }
 
 } // urls

@@ -48,9 +48,7 @@ class url_base
     friend class url_view::segments_type;
     friend class url_view::params_type;
 
-    detail::storage& a_;
-    detail::parts pt_;
-    char* s_ = nullptr;
+    detail::parts_string pt_;
 
 private:
     template<class Allocator>
@@ -100,8 +98,7 @@ public:
     std::size_t
     size() const noexcept
     {
-        return pt_.offset[
-            detail::id_end];
+        return pt_.length_all();
     }
 
     /** Return a pointer to the characters in the URL.
@@ -111,9 +108,7 @@ public:
     char const*
     data() const noexcept
     {
-        if(s_)
-            return s_;
-        return "";
+        return pt_.c_str();
     }
 
     /** Return the number of characters that may be stored without a reallocation.
@@ -125,7 +120,7 @@ public:
     std::size_t
     capacity() const noexcept
     {
-        return a_.capacity();
+        return pt_.capacity();
     }
 
     //------------------------------------------------------
@@ -260,7 +255,7 @@ public:
 
         This function returns
         @code
-        ! this->encoded_authority().empty();
+        !this->encoded_authority().empty();
         @endcode
 
         @par Exception Safety
@@ -312,7 +307,8 @@ public:
     /** Return `true` if a userinfo is present.
 
         This function returns `true` if there are
-        any characters in the URL's userinfo.
+        any characters in the URL's userinfo, including
+        the at sign ('@') separator.
     */
     BOOST_URL_DECL
     bool
@@ -763,7 +759,7 @@ public:
         if(pt_.host != urls::host_type::name)
         {
             auto const s =  pt_.get(
-                detail::id_host, s_);
+                detail::id_host);
             return string_type<Allocator>(
                 s.data(), s.size(), a);
         }
@@ -1619,7 +1615,7 @@ private:
 */
 class url_base::segments_type
 {
-    url_base* v_ = nullptr;
+    detail::parts_string* pt_ = nullptr;
 
 public:
 
@@ -1646,7 +1642,7 @@ public:
 
     explicit
     segments_type(url_base& v)
-        : v_(&v)
+        : pt_(&v.pt_)
     {
     }
 
@@ -1659,8 +1655,8 @@ public:
     std::size_t
     size() const noexcept
     {
-        return (v_ == nullptr) ? 0 :
-            v_->pt_.nseg;
+        return (pt_ == nullptr) ? 0 :
+            pt_->nseg;
     }
 
     BOOST_URL_DECL
@@ -1824,14 +1820,22 @@ class url_base::segments_type::iterator
 {
     friend segments_type;
 
-    url_base* v_;
+    detail::parts_string* pt_;
     std::size_t off_;
     std::size_t n_;
 
     BOOST_URL_DECL
     iterator(
-        url_base* v,
+        detail::parts_string* pt,
         bool end) noexcept;
+
+    char*
+    ptr() const noexcept
+    {
+        BOOST_ASSERT(pt_ || off_==0);
+        BOOST_ASSERT(off_<=pt_->offset(detail::id_end));
+        return pt_->data() + off_;
+    }
 
 public:
     using iterator_category =
@@ -1865,7 +1869,7 @@ public:
     inline
     bool
     operator==(
-    iterator other) const noexcept;
+        iterator other) const noexcept;
 
     bool
     operator!=(
@@ -1910,7 +1914,7 @@ private:
 */
 class url_base::params_type
 {
-    url_base* v_ = nullptr;
+    detail::parts_string* pt_ = nullptr;
 
 public:
     class value_type;
@@ -1925,7 +1929,7 @@ public:
 
     explicit
     params_type(url_base& v)
-        : v_(&v)
+        : pt_(&v.pt_)
     {
     }
 
@@ -1938,8 +1942,8 @@ public:
     std::size_t
     size() const noexcept
     {
-        return (v_ == nullptr) ? 0 :
-            v_->pt_.nparam;
+        return (pt_ == nullptr) ? 0 :
+            pt_->nparam;
     }
 
     BOOST_URL_DECL
@@ -2096,15 +2100,23 @@ class url_base::params_type::iterator
 {
     friend params_type;
 
-    url_base* v_;
+    detail::parts_string* pt_;
     std::size_t off_;
     std::size_t nk_;
     std::size_t nv_;
 
     BOOST_URL_DECL
     iterator(
-        url_base* v,
+        detail::parts_string* pt,
         bool end) noexcept;
+
+    char*
+    ptr() const noexcept
+    {
+        BOOST_ASSERT(pt_ || off_==0);
+        BOOST_ASSERT(off_<=pt_->offset(detail::id_end));
+        return pt_->data() + off_;
+    }
 
 public:
     using value_type =
@@ -2126,7 +2138,7 @@ public:
     inline
     bool
     operator==(
-    iterator other) const noexcept;
+        iterator other) const noexcept;
 
     bool
     operator!=(
