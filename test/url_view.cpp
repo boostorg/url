@@ -150,7 +150,7 @@ public:
         BOOST_TEST(url_view("//[2001:DB8:1::AB9:C0A8:102]").host_type() == host_type::ipv6);
         BOOST_TEST(url_view("//[684D:1111:222:3333:4444:5555:6:77]").host_type() == host_type::ipv6);
         BOOST_TEST(url_view("//[0:0:0:0:0:0:0:0]").host_type() == host_type::ipv6);
-            
+
         BOOST_TEST(url_view("//[::1:2:3:4:5]").host_type() == host_type::ipv6);
         BOOST_TEST(url_view("//[0:0:0:1:2:3:4:5]").host_type() == host_type::ipv6);
         BOOST_TEST(url_view("//[1:2::3:4:5]").host_type() == host_type::ipv6);
@@ -255,6 +255,17 @@ public:
     void
     testSegments()
     {
+        BOOST_TEST(url_view().segments().size() == 0);
+        BOOST_TEST(url_view("x:a").segments().size() == 1);
+        BOOST_TEST(url_view("x:/a").segments().size() == 1);
+        BOOST_TEST(url_view("x://y/a").segments().size() == 1);
+
+        BOOST_TEST(url_view("x").segments().size() == 1);
+        BOOST_TEST(url_view("x/").segments().size() == 2);
+        BOOST_TEST(url_view("x//").segments().size() == 3);
+
+        BOOST_TEST(url_view("/").segments().size() == 1);
+
         {
             url_view::segments_type const ps{};
             BOOST_TEST(ps.empty());

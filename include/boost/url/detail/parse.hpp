@@ -643,6 +643,7 @@ struct parser
             ec = error::no_match;
             return;
         }
+        ++pt.nseg;
         ++p_;
         if(p_ != end_)
         {
@@ -659,7 +660,6 @@ struct parser
                 p_ + 1, end_, ec);
             if(ec)
                 return;
-            ++pt.nseg;
             while(p_ < end_)
             {
                 if(*p_ != '/')
@@ -860,7 +860,7 @@ parse_url(
     pr.parse_query(pt, ec);
     if(ec)
         return;
-  
+
     pr.parse_fragment(pt, ec);
     if(ec)
         return;
@@ -879,7 +879,7 @@ parse_origin(
     error_code& ec)
 {
     parser pr(s);
-    
+
     // scheme ":" [ "//" authority ]
     if(! pr.match_scheme())
     {
