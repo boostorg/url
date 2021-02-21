@@ -40,7 +40,7 @@ url_base(
 
 string_view
 url_base::
-encoded_url() const
+encoded_url() const noexcept
 {
     return pt_.get(
         detail::id_scheme,

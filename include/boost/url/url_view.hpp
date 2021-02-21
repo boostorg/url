@@ -45,6 +45,18 @@ public:
 
     /** Return the number of characters in the URL.
     */
+    //
+    // Observers
+    //
+
+    /** Return the number of characters in the URL.
+
+        The value returned does not include the
+        null terminator.
+
+        @return The number of characters in the
+        URL.
+    */
     std::size_t
     size() const noexcept
     {
@@ -53,6 +65,8 @@ public:
     }
 
     /** Return a pointer to the characters in the URL.
+
+        The string is null terminated.
     */
     char const*
     data() const noexcept
@@ -62,13 +76,30 @@ public:
 
     //------------------------------------------------------
 
-    /** Return the complete serialized URL.
+    /** Return the URL.
+
+        All special characters appearing in corresponding
+        parts of the URL will appear percent-encoded.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
-    encoded_url() const;
+    encoded_url() const noexcept;
 
     /** Return the origin.
+
+        The origin consists of the everything from the
+        beginning of the URL up to but not including
+        the path. Any special or reserved characters in
+        the origin will be returned in percent-encoded
+        form.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
@@ -81,6 +112,14 @@ public:
     //------------------------------------------------------
 
     /** Return the scheme.
+
+        If there is no scheme, an empty string is
+        returned. Otherwise the scheme is returned,
+        without a trailing colon (':').
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
@@ -107,7 +146,14 @@ public:
     bool
     has_authority() const noexcept;
 
-    /** Return the encoded authority.
+    /** Return the authority.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @return The authority string, with special
+        characters escaped using percent-encoding.
     */
     BOOST_URL_DECL
     string_view
@@ -212,6 +258,19 @@ public:
     encoded_user() const noexcept;
 
     /** Return the password.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
     */
     template<
         class Allocator =
@@ -225,6 +284,16 @@ public:
     }
 
     /** Return the password.
+
+        This function returns the password portion of
+        the userinfo if present, as an encoded string.
+        The password portion is defined by all the
+        characters in the userinfo after the first
+        colon (':').
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
@@ -351,7 +420,14 @@ public:
     //
     //------------------------------------------------------
 
-    /** Return the encoded path.
+    /** Return the path.
+
+        This function returns the path of the URL
+        as a percent-encoded string.
+
+        @par Exception Safety
+
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
@@ -373,11 +449,11 @@ public:
 
         This function returns the query of the URL:
 
-        * If a query is present, it is returned
+        @li If a query is present, it is returned
         in decoded form without a leading question
         mark ('?'), otherwise:
 
-        * If there is no query, an empty string is
+        @li If there is no query, an empty string is
         returned.
 
         Note that if the URL contains a question mark
@@ -416,11 +492,11 @@ public:
 
         This function returns the query of the URL:
 
-        * If a query is present, it is returned
+        @li If a query is present, it is returned
         in encoded form without a leading question
         mark ('#'), otherwise:
 
-        * If there is no query, an empty string is
+        @li If there is no query, an empty string is
         returned.
 
         Note that if the URL contains a question
@@ -451,11 +527,11 @@ public:
 
         This function returns the query of the URL:
 
-        * If a query is present, it is returned
+        @li If a query is present, it is returned
         in encoded form including the leading hash
         mark ('?'), otherwise:
 
-        * If there is no query, an empty string is
+        @li If there is no query, an empty string is
         returned.
 
         Note that if the URL contains a question
@@ -472,7 +548,18 @@ public:
     string_view
     query_part() const noexcept;
 
-    /** Return the query parameters as a read-only container.
+    /** Return the query.
+
+        This function returns the query parameters
+        as a lightweight, non-owning reference to
+        the existing data, with the interface of
+        a read-only associative container.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+
+        @see url_view::params_type
     */
     inline
     params_type
@@ -488,11 +575,11 @@ public:
 
         This function returns the fragment of the URL:
 
-        * If a fragment is present, it is returned in
+        @li If a fragment is present, it is returned in
         decoded form without a leading hash mark ('#'),
         otherwise:
 
-        * If there is no fragment, an empty string is
+        @li If there is no fragment, an empty string is
         returned.
 
         Note that if the URL contains a hash mark
@@ -531,11 +618,11 @@ public:
 
         This function returns the fragment of the URL:
 
-        * If a fragment is present, it is returned in
+        @li If a fragment is present, it is returned in
         encoded form without a leading hash mark ('#'),
         otherwise:
 
-        * If there is no fragment, an empty string is
+        @li If there is no fragment, an empty string is
         returned.
 
         Note that if the URL contains a hash mark
@@ -566,11 +653,11 @@ public:
 
         This function returns the fragment of the URL:
 
-        * If a fragment is present, it is returned
+        @li If a fragment is present, it is returned
         in encoded form including the leading hash
         mark ('#'), otherwise:
 
-        * If there is no fragment, an empty string is
+        @li If there is no fragment, an empty string is
         returned.
 
         Note that if the URL contains a hash mark
@@ -669,6 +756,21 @@ public:
         return s_;
     }
 
+    /** Return the segment string.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
     template<
         class Allocator =
             std::allocator<char>>
@@ -703,8 +805,20 @@ class url_view::segments_type::iterator
         bool end) noexcept;
 
 public:
+    using iterator_category =
+        std::bidirectional_iterator_tag;
+
     using value_type =
         segments_type::value_type;
+
+    /// A pointer to an element
+    using pointer = value_type const*;
+
+    /// A reference to an element
+    using reference = value_type const&;
+
+    /// The difference_type for this iterator
+    using difference_type = std::ptrdiff_t;
 
     BOOST_URL_DECL
     iterator() noexcept;
@@ -830,6 +944,21 @@ public:
     std::string
     operator[](string_view key) const;
 
+    /** Return the param matching the given key.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
     template<class Allocator =
         std::allocator<char>>
     string_type<Allocator>
@@ -852,7 +981,7 @@ class url_view::params_type::value_type
         : k_(k)
         , v_(v)
     {
-        }
+    }
 
 public:
     value_type() = delete;
@@ -874,6 +1003,21 @@ public:
         return v_;
     }
 
+    /** Return the key.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
     template<
         class Allocator =
             std::allocator<char>>
@@ -884,6 +1028,21 @@ public:
             encoded_key(), a);
     }
 
+    /** Return the value.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
     template<
         class Allocator =
             std::allocator<char>>

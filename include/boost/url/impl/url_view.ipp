@@ -30,7 +30,7 @@ url_view(string_view s)
 
 string_view
 url_view::
-encoded_url() const
+encoded_url() const noexcept
 {
     return pt_.get(
         detail::id_scheme,
@@ -401,7 +401,7 @@ operator*() const noexcept ->
         s_ + off_, n_ };
     if(! s.empty() &&
         s.front() == '/')
-        s = s.substr(1);    
+        s = s.substr(1);
     return value_type(s);
 }
 

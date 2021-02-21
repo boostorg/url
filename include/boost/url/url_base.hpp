@@ -11,9 +11,9 @@
 #define BOOST_URL_URL_BASE_HPP
 
 #include <boost/url/config.hpp>
-#include <boost/url/url_view.hpp>
-#include <boost/url/detail/char_type.hpp>
 #include <boost/url/detail/parts.hpp>
+#include <boost/url/detail/char_type.hpp>
+#include <boost/url/url_view.hpp>
 #include <boost/url/detail/storage.hpp>
 #include <memory>
 #include <string>
@@ -141,7 +141,7 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    encoded_url() const;
+    encoded_url() const noexcept;
 
     /** Return the origin.
 
@@ -260,7 +260,7 @@ public:
 
         This function returns
         @code
-        ! this->encoded_authority().empty();
+        !this->encoded_authority().empty();
         @endcode
 
         @par Exception Safety
@@ -312,7 +312,8 @@ public:
     /** Return `true` if a userinfo is present.
 
         This function returns `true` if there are
-        any characters in the URL's userinfo.
+        any characters in the URL's userinfo, including
+        the at sign ('@') separator.
     */
     BOOST_URL_DECL
     bool
@@ -1865,7 +1866,7 @@ public:
     inline
     bool
     operator==(
-    iterator other) const noexcept;
+        iterator other) const noexcept;
 
     bool
     operator!=(
@@ -2126,7 +2127,7 @@ public:
     inline
     bool
     operator==(
-    iterator other) const noexcept;
+        iterator other) const noexcept;
 
     bool
     operator!=(
