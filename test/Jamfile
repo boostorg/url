@@ -27,12 +27,11 @@ else
 local SOURCES =
     _detail_char_type.cpp
     _detail_parse.cpp
-    basic_url.cpp
     error.cpp
     host_type.cpp
     scheme.cpp
     static_pool.cpp
-    static_url.cpp
+    storage_ptr.cpp
     url.cpp
     url_base.cpp
     url_view.cpp

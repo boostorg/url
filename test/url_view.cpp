@@ -9,6 +9,7 @@
 
 // Test that header file is self-contained.
 #include <boost/url/url_view.hpp>
+
 #include <boost/url/static_pool.hpp>
 
 #include "test_suite.hpp"

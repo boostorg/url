@@ -8,25 +8,4 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/static_url.hpp>
-
-#include "test_suite.hpp"
-
-namespace boost {
-namespace urls {
-
-class static_url_test
-{
-public:
-    //------------------------------------------------------
-
-    void
-    run()
-    {
-    }
-};
-
-TEST_SUITE(static_url_test, "boost.url.static_url");
-
-} // urls
-} // boost
+#include <boost/url/storage_ptr.hpp>

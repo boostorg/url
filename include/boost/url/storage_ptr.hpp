@@ -7,21 +7,20 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#include "test_suite.hpp"
+#ifndef BOOST_URL_STORAGE_PTR_HPP
+#define BOOST_URL_STORAGE_PTR_HPP
+
+#include <boost/url/config.hpp>
+#include <boost/json/storage_ptr.hpp>
 
 namespace boost {
 namespace urls {
 
-class sandbox_test
-{
-public:
-    void
-    run()
-    {
-    }
-};
-
-TEST_SUITE(sandbox_test, "boost.url.sandbox");
+/** A type alias for `boost::json::storage_ptr`
+*/
+using storage_ptr = ::boost::json::storage_ptr;
 
 } // urls
 } // boost
+
+#endif

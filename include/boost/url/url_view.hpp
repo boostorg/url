@@ -20,7 +20,7 @@
 namespace boost {
 namespace urls {
 
-class url_base;
+class url;
 
 /** A parsed reference to a URL string.
 */
@@ -616,7 +616,7 @@ public:
 
     inline
     explicit
-    segments_type( url_base const& v) noexcept;
+    segments_type( url const& v) noexcept;
 
     bool
     empty() const noexcept
@@ -791,7 +791,7 @@ public:
     inline
     explicit
     params_type(
-        url_base const& v) noexcept;
+        url const& v) noexcept;
 
     bool
     empty() const noexcept

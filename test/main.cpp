@@ -9,6 +9,8 @@
 
 #include "test_suite.hpp"
 
+#include <boost/json/src.hpp>
+
 #include <iostream>
 #ifdef _MSC_VER
 #include <crtdbg.h>

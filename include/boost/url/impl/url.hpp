@@ -7,8 +7,8 @@
 // Official repository: https://github.com/vinniefalco/url
 //
 
-#ifndef BOOST_URL_IMPL_URL_BASE_HPP
-#define BOOST_URL_IMPL_URL_BASE_HPP
+#ifndef BOOST_URL_IMPL_URL_HPP
+#define BOOST_URL_IMPL_URL_HPP
 
 namespace boost {
 namespace urls {
@@ -16,14 +16,14 @@ namespace urls {
 url_view::
 segments_type::
 segments_type(
-    url_base const& v) noexcept
+    url const& v) noexcept
     : s_(v.s_)
     , pt_(&v.pt_)
 {
 }
 
 bool
-url_base::
+url::
 segments_type::
 iterator::
 operator==(
@@ -39,7 +39,7 @@ operator==(
 }
 
 auto
-url_base::
+url::
 segments() const noexcept ->
     url_view::segments_type
 {
@@ -47,7 +47,7 @@ segments() const noexcept ->
 }
 
 auto
-url_base::
+url::
 segments() noexcept ->
     segments_type
 {
@@ -59,7 +59,7 @@ segments() noexcept ->
 url_view::
 params_type::
 params_type(
-    url_base const& v) noexcept
+    url const& v) noexcept
     : s_(v.s_)
     , pt_(&v.pt_)
 {
@@ -67,7 +67,7 @@ params_type(
 
 template<class Allocator>
 string_type<Allocator>
-url_base::
+url::
 params_type::
 at( string_view key,
     Allocator const& a) const
@@ -79,7 +79,7 @@ at( string_view key,
 }
 
 bool
-url_base::
+url::
 params_type::
 iterator::
 operator==(
@@ -96,7 +96,7 @@ operator==(
 }
 
 auto
-url_base::
+url::
 params() const noexcept ->
     url_view::params_type
 {
@@ -104,7 +104,7 @@ params() const noexcept ->
 }
 
 auto
-url_base::
+url::
 params() noexcept ->
     params_type
 {

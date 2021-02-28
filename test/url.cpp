@@ -534,8 +534,6 @@ public:
         BOOST_TEST_THROWS(url("x:?#").set_encoded_path("%A"), invalid_part);
         BOOST_TEST_THROWS(url("x:?#").set_encoded_path("y?"), invalid_part);
         BOOST_TEST_THROWS(url("x:y/%"), invalid_part);
-
-        testSegments();
     }
 
     void
@@ -550,15 +548,6 @@ public:
                     url_view::segments_type>::value, "");
         }
 
-        {
-            url::segments_type ps;
-            BOOST_TEST(ps.empty());
-            BOOST_TEST(ps.size() == 0);
-            BOOST_TEST(ps.begin() == ps.end());
-            BOOST_TEST(
-                url::segments_type::iterator() ==
-                url::segments_type::iterator());
-        }
         {
             url v("/path/to/file.txt");
             auto ps = v.segments();
@@ -771,8 +760,6 @@ public:
         BOOST_TEST(url("?x=").encoded_url() == "?x=");
         BOOST_TEST_THROWS(url("?x=%"), invalid_part);
         BOOST_TEST(url("?x=#").encoded_url() == "?x=#");
-
-        testParams();
     }
 
     void
@@ -787,20 +774,6 @@ public:
                     url_view::params_type>::value, "");
         }
 
-        {
-            url::params_type qp;
-            BOOST_TEST(qp.empty());
-            BOOST_TEST(qp.size() == 0);
-            BOOST_TEST(qp.begin() == qp.end());
-            BOOST_TEST(! qp.contains("x"));
-            BOOST_TEST(qp.count("x") == 0);
-            BOOST_TEST(qp.find("x") == qp.end());
-            BOOST_TEST_THROWS(qp.at("x"), out_of_range);
-
-            BOOST_TEST(
-                url::params_type::iterator() ==
-                url::params_type::iterator());
-        }
         {
             url v("?x=1&y=2&y=3&z");
             auto qp = v.params();
@@ -946,7 +919,9 @@ public:
         testHost();
         testPort();
         testPath();
+        testSegments();
         testQuery();
+        testParams();
         testFragment();
 
         testNormalize();

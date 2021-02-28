@@ -12,7 +12,7 @@
 
 #include <boost/url/host_type.hpp>
 #include <boost/url/detail/char_type.hpp>
-#include <boost/url/error.hpp>
+#include <cstring>
 
 namespace boost {
 namespace urls {
@@ -35,22 +35,25 @@ enum
 
 struct parts
 {
-    std::size_t offset[
-        detail::id_end + 1];
+    std::size_t offset[id_end + 1];
     std::size_t nseg = 0;
     std::size_t nparam = 0;
     host_type host = host_type::none;
 
-    parts()
+    parts() noexcept
     {
-        std::fill(
-            offset,
-            offset + id_end + 1, 0);
+        clear();
+    }
+
+    void
+    clear() noexcept
+    {
+        for(int i = 0; i <= id_end; ++i)
+            offset[i] = 0;
     }
 
     std::size_t
-    length(
-        int id) const noexcept
+    length(int id) const noexcept
     {
         return offset[id + 1] -
             offset[id];
