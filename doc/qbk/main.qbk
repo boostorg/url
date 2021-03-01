@@ -26,8 +26,8 @@
 [template indexterm1[term1] '''<indexterm><primary>'''[term1]'''</primary></indexterm>''']
 [template indexterm2[term1 term2] '''<indexterm><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
 
-[template include_file[path][^<'''<ulink url="https://github.com/vinniefalco/url/blob/master/include/'''[path]'''">'''[path]'''</ulink>'''>]]
-[template issue[n] '''<ulink url="https://github.com/vinniefalco/url/issues/'''[n]'''">#'''[n]'''</ulink>''']
+[template include_file[path][^<'''<ulink url="https://github.com/CPPalliance/url/blob/master/include/'''[path]'''">'''[path]'''</ulink>'''>]]
+[template issue[n] '''<ulink url="https://github.com/CPPalliance/url/issues/'''[n]'''">#'''[n]'''</ulink>''']
 
 [def __RFC3986__                [@https://tools.ietf.org/html/rfc3986 [RFC3986]]]
 

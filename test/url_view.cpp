@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/url
+// Official repository: https://github.com/CPPalliance/url
 //
 
 // Test that header file is self-contained.
@@ -150,7 +150,7 @@ public:
         BOOST_TEST(url_view("//[2001:DB8:1::AB9:C0A8:102]").host_type() == host_type::ipv6);
         BOOST_TEST(url_view("//[684D:1111:222:3333:4444:5555:6:77]").host_type() == host_type::ipv6);
         BOOST_TEST(url_view("//[0:0:0:0:0:0:0:0]").host_type() == host_type::ipv6);
-            
+
         BOOST_TEST(url_view("//[::1:2:3:4:5]").host_type() == host_type::ipv6);
         BOOST_TEST(url_view("//[0:0:0:1:2:3:4:5]").host_type() == host_type::ipv6);
         BOOST_TEST(url_view("//[1:2::3:4:5]").host_type() == host_type::ipv6);

@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/url
+// Official repository: https://github.com/CPPalliance/url
 //
 
 #ifndef BOOST_URL_IMPL_ERROR_IPP
@@ -29,7 +29,7 @@ raise()
     BOOST_THROW_EXCEPTION(
         parse_error());
 }
-    
+
 //---
 
 invalid_part::
@@ -46,7 +46,7 @@ raise()
     BOOST_THROW_EXCEPTION(
         invalid_part());
 }
-    
+
 //---
 
 too_large::
@@ -63,7 +63,7 @@ raise()
     BOOST_THROW_EXCEPTION(
         too_large());
 }
-    
+
 //---
 
 out_of_range::
@@ -80,7 +80,7 @@ raise()
     BOOST_THROW_EXCEPTION(
         out_of_range());
 }
-    
+
 //----------------------------------------------------------
 
 error_code

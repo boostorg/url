@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/url
+// Official repository: https://github.com/CPPalliance/url
 //
 
 #ifndef BOOST_URL_DETAIL_PARSE_HPP
@@ -860,7 +860,7 @@ parse_url(
     pr.parse_query(pt, ec);
     if(ec)
         return;
-  
+
     pr.parse_fragment(pt, ec);
     if(ec)
         return;
@@ -879,7 +879,7 @@ parse_origin(
     error_code& ec)
 {
     parser pr(s);
-    
+
     // scheme ":" [ "//" authority ]
     if(! pr.match_scheme())
     {

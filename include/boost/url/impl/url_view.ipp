@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/url
+// Official repository: https://github.com/CPPalliance/url
 //
 
 #ifndef BOOST_URL_IMPL_URL_VIEW_IPP
@@ -401,7 +401,7 @@ operator*() const noexcept ->
         s_ + off_, n_ };
     if(! s.empty() &&
         s.front() == '/')
-        s = s.substr(1);    
+        s = s.substr(1);
     return value_type(s);
 }
 
