@@ -101,6 +101,10 @@ public:
         BOOST_TEST(url().scheme() == "");
         BOOST_TEST(url("http:").scheme() == "http");
         BOOST_TEST(url("http:").encoded_url() == "http:");
+        BOOST_TEST(url("http3:").scheme() == "http3");
+        BOOST_TEST(url("http3:").encoded_url() == "http3:");
+        BOOST_TEST(url("example.+-impl:").scheme() == "example.+-impl");
+        BOOST_TEST(url("example.+-impl:").encoded_url() == "example.+-impl:");
         BOOST_TEST(url("http:").set_scheme("").scheme() == "");
         BOOST_TEST(url("http:").set_scheme("").encoded_url() == "");
         BOOST_TEST(url("http:").set_scheme("ftp").encoded_url() == "ftp:");
