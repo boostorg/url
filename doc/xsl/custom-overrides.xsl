@@ -4,8 +4,8 @@
   exclude-result-prefixes="xs"
   expand-text="yes">
 
-  <xsl:variable name="doc-ref" select="'json.ref'"/>
-  <xsl:variable name="doc-ns" select="'boost::json'"/>
+  <xsl:variable name="doc-ref" select="'url.ref'"/>
+  <xsl:variable name="doc-ns" select="'boost::url'"/>
   <xsl:variable name="include-private-members" select="false()"/>
 
   <xsl:template mode="includes-template-footer" match="location">
@@ -19,7 +19,7 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template mode="convenience-header" match="@file[contains(., 'boost/json')]">json.hpp</xsl:template>
+  <xsl:template mode="convenience-header" match="@file[contains(., 'boost/url')]">url.hpp</xsl:template>
   <xsl:template mode="convenience-header" match="@file"/>
 
 </xsl:stylesheet>
