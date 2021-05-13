@@ -28,8 +28,8 @@ tools/osxdocs.sh
 
 ## Windows
 
-TODO
-
-
-
+Run the powershell script windowsdocs.ps1 which can be found in the doc/tools directory:
+```
+.\tools\windowsdocs.ps1
+```
 
