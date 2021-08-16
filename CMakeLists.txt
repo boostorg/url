@@ -109,20 +109,22 @@ else()
 endif()
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR AND NOT BOOST_URL_IN_BOOST_TREE)
+    include(GNUInstallDirs)
+
     set_target_properties(boost_url PROPERTIES EXPORT_NAME url)
     install(TARGETS boost_url EXPORT boost_url_targets)
 
     install(EXPORT boost_url_targets
         FILE boost_url-targets.cmake
         NAMESPACE Boost::
-        DESTINATION lib/cmake/boost_url
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/boost_url
     )
 
     include(CMakePackageConfigHelpers)
 
     configure_package_config_file(cmake/config.cmake.in
         ${CMAKE_CURRENT_BINARY_DIR}/boost_url-config.cmake
-        INSTALL_DESTINATION lib/cmake/boost_url
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/boost_url
     )
 
     write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/boost_url-config-version.cmake
@@ -132,10 +134,10 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR AND NOT BOOST_URL_IN_BOOST
     install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/boost_url-config.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/boost_url-config-version.cmake
-        DESTINATION lib/cmake/boost_url
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/boost_url
     )
 
-    install(DIRECTORY include/ DESTINATION include)
+    install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 endif()
 
 if(BOOST_URL_BUILD_TESTS)
