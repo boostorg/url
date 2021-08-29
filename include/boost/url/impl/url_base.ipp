@@ -23,15 +23,19 @@ namespace urls {
 
 url_base::
 url_base(
-    detail::storage& a) noexcept
+    detail::storage* a) noexcept
     : a_(a)
     , s_(nullptr)
 {
+    // hackx ?
+    if (a_->size() > 0)
+        set_encoded_url(string_view{a_->reserve(0)});
+
 }
 
 url_base::
 url_base(
-    detail::storage& a,
+    detail::storage* a,
     string_view s)
     : a_(a)
 {
@@ -77,7 +81,7 @@ set_encoded_url(
     detail::parse_url(pt, s, ec);
     if(ec)
         invalid_part::raise();
-    s_ = a_.resize(s.size());
+    s_ = a_->resize(s.size());
     //---
     pt_ = pt;
     std::memcpy(
@@ -1355,7 +1359,7 @@ erase( iterator first, iterator last ) noexcept ->
 {
     BOOST_ASSERT(v_ != nullptr);
     url_base& v = *v_;
-    BOOST_ASSERT(v.size() == v.a_.size());
+    BOOST_ASSERT(v.size() == v.a_->size());
     BOOST_ASSERT(first.v_ == &v);
     BOOST_ASSERT(last.v_ == &v);
     BOOST_ASSERT(first.off_ >= v.pt_.offset[detail::id_path]);
@@ -1366,7 +1370,7 @@ erase( iterator first, iterator last ) noexcept ->
     if( d == 0 )
         return first;
     BOOST_ASSERT(d > 0);
-    int c = 0;
+    std::size_t c = 0;
     for( auto i = v.s_ + first.off_, e = v.s_ + last.off_; i != e; ++i )
         c += (*i == '/'); // Count the number of segments in the range
     BOOST_ASSERT(c > 0);
@@ -1374,8 +1378,8 @@ erase( iterator first, iterator last ) noexcept ->
     v.pt_.nseg -= c;
     std::memmove(v.s_ + first.off_, v.s_ + last.off_, v.pt_.offset[detail::id_end] - last.off_ + 1);
     v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) - d);
-    BOOST_ASSERT(v.size() + d == v.a_.size());
-    auto const s = v.a_.resize(v.size());
+    BOOST_ASSERT(v.size() + d == v.a_->size());
+    auto const s = v.a_->resize(v.size());
     BOOST_ASSERT(v.s_ == s);
     BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
     first.parse();
@@ -1391,13 +1395,13 @@ insert_encoded_impl( iterator pos, string_view s ) ->
     BOOST_ASSERT(detail::pchar_pct_set().check(s));
     BOOST_ASSERT(v_ != nullptr);
     url_base& v = *v_;
-    BOOST_ASSERT(v.size() == v.a_.size());
+    BOOST_ASSERT(v.size() == v.a_->size());
     BOOST_ASSERT(pos.v_ == &v);
     BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_path]);
     BOOST_ASSERT(pos.off_ <= v.pt_.offset[detail::id_query]);
     auto const n0 = v.pt_.offset[detail::id_end];
     auto const n = s.size() + 1;
-    v.s_ = v.a_.resize(v.size() + n);
+    v.s_ = v.a_->resize(v.size() + n);
     v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + n);
     std::memmove(v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0, v.s_ + pos.off_, n0 - pos.off_ + 1);
     BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
@@ -1417,7 +1421,7 @@ insert_impl( iterator pos, string_view s, std::size_t const ns ) ->
 {
     BOOST_ASSERT(v_ != nullptr);
     url_base& v = *v_;
-    BOOST_ASSERT(v.size() == v.a_.size());
+    BOOST_ASSERT(v.size() == v.a_->size());
     BOOST_ASSERT(pos.v_ == &v);
     BOOST_ASSERT(pos.off_ >= v.pt_.offset[detail::id_path]);
     BOOST_ASSERT(pos.off_ <= v.pt_.offset[detail::id_query]);
@@ -1425,7 +1429,7 @@ insert_impl( iterator pos, string_view s, std::size_t const ns ) ->
     BOOST_ASSERT(pct.encoded_size(s) == ns);
     auto const n0 = v.pt_.offset[detail::id_end];
     auto const n = ns + 1;
-    v.s_ = v.a_.resize(v.size() + n);
+    v.s_ = v.a_->resize(v.size() + n);
     v.pt_.resize(detail::id_path, v.pt_.length(detail::id_path, detail::id_query) + n);
     std::memmove(v.s_ + v.pt_.offset[detail::id_end] + pos.off_ - n0, v.s_ + pos.off_, n0 - pos.off_ + 1);
     BOOST_ASSERT(v.s_[v.pt_.offset[detail::id_end]] == '\0');
@@ -1464,15 +1468,15 @@ replace_encoded( iterator pos, string_view s ) ->
     detail::pchar_pct_set().validate(s);
     BOOST_ASSERT(v_ != nullptr);
     url_base& v = *v_;
-    BOOST_ASSERT(v.size() == v.a_.size());
+    BOOST_ASSERT(v.size() == v.a_->size());
     auto const ns = s.size();
     auto const n0 = pos.n_;
     auto const n = ns + 1;
     if( n0 < n )
-        v.s_ = v.a_.reserve(v.a_.size() + n - n0);
-    auto const cap = v.a_.capacity();
+        v.s_ = v.a_->reserve(v.a_->size() + n - n0);
+    auto const cap = v.a_->capacity();
     auto r = insert_encoded_impl(erase(pos), s);
-    BOOST_ASSERT(v.a_.capacity() == cap); // Strong guarantee violation
+    BOOST_ASSERT(v.a_->capacity() == cap); // Strong guarantee violation
     (void) cap;
     return r;
 }
@@ -1485,15 +1489,15 @@ replace( iterator pos, string_view s ) ->
 {
     BOOST_ASSERT(v_ != nullptr);
     url_base& v = *v_;
-    BOOST_ASSERT(v.size() == v.a_.size());
+    BOOST_ASSERT(v.size() == v.a_->size());
     auto const ns = detail::pchar_pct_set().encoded_size(s);
     auto const n0 = pos.n_;
     auto const n = ns + 1;
     if( n0 < n )
-        v.s_ = v.a_.reserve(v.a_.size() + n - n0);
-    auto const cap = v.a_.capacity();
+        v.s_ = v.a_->reserve(v.a_->size() + n - n0);
+    auto const cap = v.a_->capacity();
     auto r = insert_impl(erase(pos), s, ns);
-    BOOST_ASSERT(v.a_.capacity() == cap); // Strong guarantee violation
+    BOOST_ASSERT(v.a_->capacity() == cap); // Strong guarantee violation
     (void) cap;
     return r;
 }
@@ -1777,7 +1781,7 @@ resize(
     if(new_size - len > (
         (std::size_t)-1)- size())
         too_large::raise();
-    s_ = a_.resize(
+    s_ = a_->resize(
         size() - len + new_size);
     auto const n = static_cast<
         std::size_t>(new_size - len);
@@ -1831,7 +1835,7 @@ resize(
     if(new_size - len > (
         (std::size_t)-1)- size())
         too_large::raise();
-    s_ = a_.resize(
+    s_ = a_->resize(
         size() - len + new_size);
     auto const n = static_cast<
         std::size_t>(new_size - len);

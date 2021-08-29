@@ -25,12 +25,13 @@ class basic_url
     : private detail::storage_member<Allocator>
     , public url_base
 {
+  using storage_t = detail::storage_member<Allocator>;
 public:
     basic_url() noexcept
         : detail::storage_member<
             Allocator>(Allocator{})
         , url_base(static_cast<
-            detail::storage&>(this->st_))
+            detail::storage*>(&this->st_))
     {
     }
 
@@ -38,37 +39,56 @@ public:
     basic_url(
         string_view s,
         Allocator const& a = {})
-        : detail::storage_member<
-            Allocator>(a)
-        , url_base(this->st_, s)
+        : storage_t(a)
+        , url_base(&this->st_, s)
     {
     }
 
     explicit
     basic_url(
         Allocator const& a) noexcept
-        : detail::storage_member<
-            Allocator>(a)
-        , url_base(this->st_)
+        : storage_t(a)
+        , url_base(&this->st_)
     {
     }
 
-    basic_url(
-        basic_url&&) noexcept
+    basic_url(basic_url&& other) noexcept
+      : storage_t(std::move(other)),
+      url_base(&this->st_)
     {
+      other.operator=(basic_url());
     }
 
     basic_url(
-        basic_url const&)
+      basic_url const& other)
+        : storage_t(other)
+        , url_base(
+          static_cast<detail::storage*>(&this->st_)
+            , other.encoded_url())
     {
     }
 
     basic_url&
     operator=(
-        basic_url const&)
+      basic_url &&other)
     {
-        return *this;
+      storage_t::operator=(std::move(other));
+      url_base::operator=(url_base(&this->st_));
+
+      other.storage_t::operator=(storage_t(Allocator{}));
+      other.url_base::operator=(url_base(&other.st_));
+      return *this;
     }
+
+    basic_url&
+    operator=(
+        basic_url const&other)
+    {
+      storage_t::operator=(other);
+      url_base::operator=(url_base(&this->st_));
+      return *this;
+    }
+
 };
 
 } // urls

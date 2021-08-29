@@ -48,11 +48,11 @@ class url_base
     friend class url_view::segments_type;
     friend class url_view::params_type;
 
-    detail::storage& a_;
+    detail::storage* a_ = nullptr;
     detail::parts pt_;
     char* s_ = nullptr;
 
-private:
+public:
     template<class Allocator>
     friend class basic_url;
 
@@ -63,7 +63,7 @@ private:
     */
     BOOST_URL_DECL
     url_base(
-        detail::storage& a) noexcept;
+        detail::storage* a) noexcept;
 
     /** Construct a parsed URL with the specified storage.
 
@@ -78,8 +78,20 @@ private:
     */
     BOOST_URL_DECL
     url_base(
-        detail::storage& a,
+        detail::storage* a,
         string_view s);
+
+    BOOST_URL_DECL
+    url_base(url_base const &) = delete;
+
+    BOOST_URL_DECL
+    url_base& operator=(url_base const &) = delete;
+
+    BOOST_URL_DECL
+    url_base(url_base &&) = delete;
+
+    BOOST_URL_DECL
+    url_base& operator=(url_base &&) = default;
 
 public:
     class segments_type;
@@ -125,7 +137,7 @@ public:
     std::size_t
     capacity() const noexcept
     {
-        return a_.capacity();
+        return a_->capacity();
     }
 
     //------------------------------------------------------

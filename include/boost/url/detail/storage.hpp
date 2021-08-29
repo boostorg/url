@@ -15,6 +15,8 @@
 #include <cstring>
 #include <memory>
 
+#include <iostream>
+
 namespace boost {
 namespace urls {
 namespace detail {
@@ -42,6 +44,13 @@ class alloc_storage
             Allocator>;
 
 public:
+    using allocator_type = Allocator;
+
+    constexpr allocator_type get_allocator() const noexcept
+    {
+        return a_;
+    }
+
     explicit
     alloc_storage(
         Allocator const& a)
@@ -49,11 +58,77 @@ public:
     {
     }
 
+    alloc_storage(alloc_storage const &other)
+       : a_(traits::select_on_container_copy_construction(other.a_))
+       , p_(nullptr)
+       , size_(0)
+       , cap_(0)
+    {
+        p_ = resize(other.size());
+        copy(other.p_);
+    }
+
+    alloc_storage(alloc_storage && other) noexcept
+    {
+        destroy();
+        a_ = std::move(other.a_);
+        p_ = std::move(other.p_);
+        size_ = std::move(other.size_);
+        cap_ = std::move(other.cap_);
+        other.clear();
+    }
+
+
+    alloc_storage& operator=(alloc_storage const &other)
+    {
+        if (this != &other)
+        {
+            if (this->get_allocator() != other.get_allocator())
+                destroy();
+            BOOST_IF_CONSTEXPR(traits::propagate_on_container_copy_assignment::value)
+                a_ = other.a_;
+            resize(other.size_);
+            copy(other.p_);
+        }
+        return *this;
+    }
+
+    alloc_storage& operator=(alloc_storage &&other) noexcept(traits::propagate_on_container_move_assignment::value)
+    {
+        if (this->get_allocator() != other.get_allocator())
+            destroy();
+        BOOST_IF_CONSTEXPR (traits::propagate_on_container_move_assignment::value)
+            a_ = std::move(other.a_);
+        if (this->get_allocator() != other.get_allocator())
+        {
+            resize(other.size_);
+            copy(other.p_);
+            other.destroy();
+        }
+        else 
+        {
+            destroy();
+            cap_ = std::move(other.cap_);
+            size_ = std::move(other.size_);
+            p_ = std::move(other.p_);
+            other.clear();
+        }
+        return *this;
+    }
+
     ~alloc_storage()
     {
-        if(p_)
-            traits::deallocate(a_,
-                p_, cap_ + 1);
+        destroy();
+    }
+
+    void copy(char * other_p)
+    {
+        if (size_)
+        {
+            std::memcpy(
+                p_, other_p, size_ + 1);
+            p_[size_] = 0;
+        }
     }
 
     std::size_t
@@ -77,7 +152,7 @@ public:
             if( cap < n)
                 cap = n;
         }
-        auto p = a_.allocate(cap + 1);
+        auto p = traits::allocate(a_, cap + 1);
         if(p_)
         {
             std::memcpy(
@@ -110,7 +185,52 @@ public:
         else
             return p;
     }
+
+    void swap(alloc_storage &b) noexcept
+    {
+        BOOST_IF_CONSTEXPR (traits::propagate_on_container_swap::value)
+        {
+           using std::swap;
+           swap(this->a_, b.a_);
+        }
+        do_swap(b);
+    }
+
+private:
+
+    void destroy()
+    {
+        if(p_)
+        {
+            traits::deallocate(a_,
+                p_, cap_ + 1);
+            clear();
+        }
+    }
+
+    void clear()
+    {
+        size_ = 0;
+        cap_ = 0;
+        p_ = nullptr;
+    }
+
+    void do_swap(alloc_storage &b) noexcept
+    {
+        using std::swap;
+        swap(this->p_, b.p_);
+        swap(this->size_, b.size_);
+        swap(this->cap_, b.cap_);
+    }
+
 };
+
+
+template<typename Allocator>
+void swap(alloc_storage<Allocator> &a, alloc_storage<Allocator> &b) noexcept
+{
+    a.swap(b);
+}
 
 template<class Allocator>
 struct storage_member
