@@ -21,4 +21,17 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/urls.hpp>
 
+#include <boost/url/bnf/char_set.hpp>
+#include <boost/url/bnf/char_sets.hpp>
+#include <boost/url/bnf/origin_form.hpp>
+#include <boost/url/bnf/path_abempty.hpp>
+#include <boost/url/bnf/path_absolute.hpp>
+#include <boost/url/bnf/path_absolute.hpp>
+#include <boost/url/bnf/path_noscheme.hpp>
+#include <boost/url/bnf/path_rootless.hpp>
+#include <boost/url/bnf/pchar.hpp>
+#include <boost/url/bnf/pct_encoded.hpp>
+#include <boost/url/bnf/scheme.hpp>
+#include <boost/url/bnf/segment.hpp>
+
 #endif

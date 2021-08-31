@@ -82,15 +82,16 @@ struct BOOST_SYMBOL_VISIBLE
 
 //----------------------------------------------------------
 
-/** Error codes returned by URL operations
+/** Error codes returned the library
 */
 enum class error
 {
-    /// An input did not match a structural element (soft error)
-    no_match = 1,
-
-    /// A syntax error occurred
+    need_more = 1,
+    end,
     syntax,
+
+    /// An input did not match a structural element (soft error)
+    no_match,
 
     /// The parts encountered an invalid input
     invalid,

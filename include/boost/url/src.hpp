@@ -27,9 +27,21 @@ in a translation unit of the program.
 
 #include <boost/url/config.hpp>
 
+#include <boost/url/detail/impl/except.ipp>
+
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/scheme.ipp>
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_view.ipp>
+
+#include <boost/url/bnf/impl/origin_form.ipp>
+#include <boost/url/bnf/impl/path_abempty.ipp>
+#include <boost/url/bnf/impl/path_absolute.ipp>
+#include <boost/url/bnf/impl/path_noscheme.ipp>
+#include <boost/url/bnf/impl/path_rootless.ipp>
+#include <boost/url/bnf/impl/pchar.ipp>
+#include <boost/url/bnf/impl/pct_encoded.ipp>
+#include <boost/url/bnf/impl/scheme.ipp>
+#include <boost/url/bnf/impl/segment.ipp>
 
 #endif
