@@ -33,5 +33,6 @@
 #include <boost/url/bnf/pct_encoded.hpp>
 #include <boost/url/bnf/scheme.hpp>
 #include <boost/url/bnf/segment.hpp>
+#include <boost/url/bnf/userinfo.hpp>
 
 #endif

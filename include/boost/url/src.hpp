@@ -43,5 +43,6 @@ in a translation unit of the program.
 #include <boost/url/bnf/impl/pct_encoded.ipp>
 #include <boost/url/bnf/impl/scheme.ipp>
 #include <boost/url/bnf/impl/segment.ipp>
+#include <boost/url/bnf/impl/userinfo.ipp>
 
 #endif
