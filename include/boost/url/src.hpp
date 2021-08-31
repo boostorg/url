@@ -25,12 +25,11 @@ in a translation unit of the program.
 // using src.hpp as their main header file
 #include <boost/url.hpp>
 
-#include <boost/url/config.hpp>
-
 #include <boost/url/detail/impl/except.ipp>
 
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/scheme.ipp>
+#include <boost/url/impl/static_pool.ipp>
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_view.ipp>
 

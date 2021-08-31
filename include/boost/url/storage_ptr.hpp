@@ -10,13 +10,13 @@
 #ifndef BOOST_URL_STORAGE_PTR_HPP
 #define BOOST_URL_STORAGE_PTR_HPP
 
-#include <boost/url/config.hpp>
+#include <boost/url/detail/config.hpp>
 #include <boost/json/storage_ptr.hpp>
 
 namespace boost {
 namespace urls {
 
-/** A type alias for `boost::json::storage_ptr`
+/** The type of storage_ptr used by the library
 */
 using storage_ptr = ::boost::json::storage_ptr;
 

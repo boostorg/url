@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_HOST_TYPE_HPP
 #define BOOST_URL_HOST_TYPE_HPP
 
-#include <boost/url/config.hpp>
+#include <boost/url/detail/config.hpp>
 
 namespace boost {
 namespace urls {

@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_DETAIL_STORAGE_HPP
 #define BOOST_URL_DETAIL_STORAGE_HPP
 
-#include <boost/url/config.hpp>
+#include <boost/url/detail/config.hpp>
 #include <cstdlib>
 #include <cstring>
 #include <memory>

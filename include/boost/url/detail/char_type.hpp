@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_DETAIL_CHAR_TYPE_HPP
 #define BOOST_URL_DETAIL_CHAR_TYPE_HPP
 
-#include <boost/url/config.hpp>
+#include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
 #include <cstdint>

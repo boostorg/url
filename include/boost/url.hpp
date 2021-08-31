@@ -10,8 +10,6 @@
 #ifndef BOOST_URL_HPP
 #define BOOST_URL_HPP
 
-#include <boost/url/config.hpp>
-
 #include <boost/url/error.hpp>
 #include <boost/url/host_type.hpp>
 #include <boost/url/scheme.hpp>

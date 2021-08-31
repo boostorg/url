@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_SCHEME_HPP
 #define BOOST_URL_SCHEME_HPP
 
-#include <boost/url/config.hpp>
+#include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
 
 namespace boost {

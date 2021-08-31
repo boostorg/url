@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_ERROR_HPP
 #define BOOST_URL_ERROR_HPP
 
-#include <boost/url/config.hpp>
+#include <boost/url/detail/config.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/system/system_error.hpp>
 #include <stdexcept>

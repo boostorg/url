@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_URLS_HPP
 #define BOOST_URL_URLS_HPP
 
-#include <boost/url/config.hpp>
+#include <boost/url/detail/config.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/url_view.hpp>
 
