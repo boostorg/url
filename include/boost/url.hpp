@@ -21,6 +21,7 @@
 
 #include <boost/url/bnf/char_set.hpp>
 #include <boost/url/bnf/char_sets.hpp>
+#include <boost/url/bnf/ip_v4address.hpp>
 #include <boost/url/bnf/origin_form.hpp>
 #include <boost/url/bnf/path_abempty.hpp>
 #include <boost/url/bnf/path_absolute.hpp>

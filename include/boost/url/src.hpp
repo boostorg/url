@@ -33,6 +33,7 @@ in a translation unit of the program.
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_view.ipp>
 
+#include <boost/url/bnf/impl/ip_v4address.ipp>
 #include <boost/url/bnf/impl/origin_form.ipp>
 #include <boost/url/bnf/impl/path_abempty.ipp>
 #include <boost/url/bnf/impl/path_absolute.ipp>
