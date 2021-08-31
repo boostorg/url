@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/url
+// Official repository: https://github.com/CPPAlliance/url
 //
 
 #ifndef BOOST_URL_SRC_HPP
@@ -17,11 +17,15 @@ in a translation unit of the program.
 
 */
 
-#include <boost/url/config.hpp>
-
-#if defined(BOOST_URL_HEADER_ONLY)
-# error Do not compile library source with the header only macro defined
+#ifndef BOOST_URL_SOURCE
+#define BOOST_URL_SOURCE
 #endif
+
+// We include this in case someone is
+// using src.hpp as their main header file
+#include <boost/url.hpp>
+
+#include <boost/url/config.hpp>
 
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/scheme.ipp>

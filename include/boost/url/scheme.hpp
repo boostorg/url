@@ -4,13 +4,14 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/url
+// Official repository: https://github.com/CPPAlliance/url
 //
 
 #ifndef BOOST_URL_SCHEME_HPP
 #define BOOST_URL_SCHEME_HPP
 
 #include <boost/url/config.hpp>
+#include <boost/url/string.hpp>
 
 namespace boost {
 namespace urls {
@@ -59,9 +60,5 @@ is_special(string_view s) noexcept
 
 } // urls
 } // boost
-
-#ifdef BOOST_URL_HEADER_ONLY
-#include <boost/url/impl/scheme.ipp>
-#endif
 
 #endif

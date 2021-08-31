@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/vinniefalco/url
+// Official repository: https://github.com/CPPAlliance/url
 //
 
 #ifndef BOOST_URL_HPP
@@ -16,6 +16,7 @@
 #include <boost/url/host_type.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/static_pool.hpp>
+#include <boost/url/string.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/urls.hpp>
