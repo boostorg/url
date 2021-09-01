@@ -172,6 +172,19 @@ public:
         BOOST_TEST(url_view("//[0:0:0:0:0:0:1.2.3.4]").host_type() == host_type::ipv6);
         BOOST_TEST(url_view("//[::1.2.3.4]").host_type() == host_type::ipv6);
 
+        BOOST_TEST_NO_THROW(url_view("//[fe80:0:0:0:200:f8ff:fe21:67cf]"));
+        BOOST_TEST_NO_THROW(url_view("//[2001:0db8:0a0b:12f0:0000:0000:0000:0001]"));
+        BOOST_TEST_NO_THROW(url_view("//[2001:db8:3333:4444:5555:6666:7777:8888]"));
+        BOOST_TEST_NO_THROW(url_view("//[2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF]"));
+        BOOST_TEST_NO_THROW(url_view("//[::]"));
+        BOOST_TEST_NO_THROW(url_view("//[2001:db8::]"));
+        BOOST_TEST_NO_THROW(url_view("//[::1234:5678]"));
+        BOOST_TEST_NO_THROW(url_view("//[2001:db8::1234:5678]"));
+        BOOST_TEST_NO_THROW(url_view("//[2001:0db8:0001:0000:0000:0ab9:C0A8:0102]"));
+        BOOST_TEST_NO_THROW(url_view("//[2001:db8:1::ab9:C0A8:102]"));
+        BOOST_TEST_NO_THROW(url_view("//[684D:1111:222:3333:4444:5555:6:77]"));
+        BOOST_TEST_NO_THROW(url_view("//[0:0:0:0:0:0:0:0]"));
+
         BOOST_TEST_THROWS(url_view("http://[0]"), invalid_part);
         BOOST_TEST_THROWS(url_view("//[0:1.2.3.4]"), invalid_part);
         BOOST_TEST_THROWS(url_view("//[0:0:0:0:0:0:0::1.2.3.4]"), invalid_part);

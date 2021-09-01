@@ -38,6 +38,8 @@ is_hexdig(char c) noexcept
     {
     case 'A': case 'B': case 'C':
     case 'D': case 'E': case 'F':
+    case 'a': case 'b': case 'c':
+    case 'd': case 'e': case 'f':
         return true;
     default:
         break;

@@ -52,8 +52,19 @@ is_digit(char c) noexcept;
 
     @par BNF
     @code
-    HEXDIG  =  DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
+    HEXDIG  =  DIGIT
+            / "A" / "B" / "C" / "D" / "E" / "F"
+            / "a" / "b" / "c" / "d" / "e" / "f"
     @endcode
+
+    @note The RFCs are inconsistent on the case
+    sensitivity of hexadecimal digits.
+
+    @see
+        https://datatracker.ietf.org/doc/html/rfc7230#section-1.2
+        https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1
+        https://datatracker.ietf.org/doc/html/rfc5952#section-2.3
+        https://datatracker.ietf.org/doc/html/rfc5952#section-4.3
 */
 inline
 bool
