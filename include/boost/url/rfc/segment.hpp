@@ -14,7 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/rfc/pchar.hpp>
-#include <boost/url/bnf/sequence.hpp>
+#include <boost/url/bnf/repeat.hpp>
 
 namespace boost {
 namespace urls {

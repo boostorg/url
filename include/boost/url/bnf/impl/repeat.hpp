@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_BNF_IMPL_SEQUENCE_HPP
-#define BOOST_URL_BNF_IMPL_SEQUENCE_HPP
+#ifndef BOOST_URL_BNF_IMPL_REPEAT_HPP
+#define BOOST_URL_BNF_IMPL_REPEAT_HPP
 
 #include <boost/url/error.hpp>
 #include <boost/assert.hpp>
@@ -22,7 +22,7 @@ template<
     std::size_t N,
     std::size_t M>
 char const*
-sequence<Element, N, M>::
+repeat<Element, N, M>::
 begin(
     char const* start,
     char const* end,
@@ -38,7 +38,7 @@ template<
     std::size_t N,
     std::size_t M>
 char const*
-sequence<Element, N, M>::
+repeat<Element, N, M>::
 increment(
     char const* start,
     char const* end,

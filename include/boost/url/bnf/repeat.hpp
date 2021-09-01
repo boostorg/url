@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_BNF_SEQUENCE_HPP
-#define BOOST_URL_BNF_SEQUENCE_HPP
+#ifndef BOOST_URL_BNF_REPEAT_HPP
+#define BOOST_URL_BNF_REPEAT_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -47,7 +47,7 @@ template<
     class Element,
     std::size_t N = 0,
     std::size_t M = std::size_t(-1)>
-class sequence
+class repeat
 {
     BOOST_STATIC_ASSERT(M > 0);
     BOOST_STATIC_ASSERT(M >= N);
@@ -85,17 +85,17 @@ public:
 /** A BNF rule for zero or more repetitions of element
 */
 template<class Element>
-using zero_or_more = sequence<Element>;
+using zero_or_more = repeat<Element>;
 
 /** A BNF rule for one or more repetitions of element
 */
 template<class Element>
-using one_or_more = sequence<Element, 1>;
+using one_or_more = repeat<Element, 1>;
 
 } // bnf
 } // urls
 } // boost
 
-#include <boost/url/bnf/impl/sequence.hpp>
+#include <boost/url/bnf/impl/repeat.hpp>
 
 #endif

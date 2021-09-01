@@ -25,7 +25,7 @@
 #include <boost/url/bnf/char_sets.hpp>
 #include <boost/url/bnf/literal.hpp>
 #include <boost/url/bnf/range.hpp>
-#include <boost/url/bnf/sequence.hpp>
+#include <boost/url/bnf/repeat.hpp>
 #include <boost/url/bnf/type_traits.hpp>
 
 #include <boost/url/rfc/ip_v4address.hpp>
