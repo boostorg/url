@@ -82,6 +82,27 @@ consume(
 
 //------------------------------------------------
 
+// Consume a sequence of BNFs
+template<
+    class B0,
+    class B1,
+    class... Bn>
+char const*
+consume(
+    char const* start,
+    char const* end,
+    error_code& ec)
+{
+    auto it = consume<B0>(
+        start, end, ec);
+    if(ec)
+        return start;
+    return consume<B1, Bn...>(
+        it, end, ec);
+}
+
+//------------------------------------------------
+
 /** Require the specified character
 */
 inline
