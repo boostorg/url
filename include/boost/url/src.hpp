@@ -33,16 +33,16 @@ in a translation unit of the program.
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_view.ipp>
 
-#include <boost/url/bnf/impl/ip_v4address.ipp>
-#include <boost/url/bnf/impl/origin_form.ipp>
-#include <boost/url/bnf/impl/path_abempty.ipp>
-#include <boost/url/bnf/impl/path_absolute.ipp>
-#include <boost/url/bnf/impl/path_noscheme.ipp>
-#include <boost/url/bnf/impl/path_rootless.ipp>
-#include <boost/url/bnf/impl/pchar.ipp>
-#include <boost/url/bnf/impl/pct_encoded.ipp>
-#include <boost/url/bnf/impl/scheme.ipp>
-#include <boost/url/bnf/impl/segment.ipp>
-#include <boost/url/bnf/impl/userinfo.ipp>
+#include <boost/url/rfc/impl/ip_v4address.ipp>
+#include <boost/url/rfc/impl/origin_form.ipp>
+#include <boost/url/rfc/impl/path_abempty.ipp>
+#include <boost/url/rfc/impl/path_absolute.ipp>
+#include <boost/url/rfc/impl/path_noscheme.ipp>
+#include <boost/url/rfc/impl/path_rootless.ipp>
+#include <boost/url/rfc/impl/pchar.ipp>
+#include <boost/url/rfc/impl/pct_encoded.ipp>
+#include <boost/url/rfc/impl/scheme.ipp>
+#include <boost/url/rfc/impl/segment.ipp>
+#include <boost/url/rfc/impl/userinfo.ipp>
 
 #endif

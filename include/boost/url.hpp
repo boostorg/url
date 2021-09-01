@@ -19,19 +19,26 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/urls.hpp>
 
+#include <boost/url/bnf/algorithm.hpp>
+#include <boost/url/bnf/arrow_proxy.hpp>
 #include <boost/url/bnf/char_set.hpp>
 #include <boost/url/bnf/char_sets.hpp>
-#include <boost/url/bnf/ip_v4address.hpp>
-#include <boost/url/bnf/origin_form.hpp>
-#include <boost/url/bnf/path_abempty.hpp>
-#include <boost/url/bnf/path_absolute.hpp>
-#include <boost/url/bnf/path_absolute.hpp>
-#include <boost/url/bnf/path_noscheme.hpp>
-#include <boost/url/bnf/path_rootless.hpp>
-#include <boost/url/bnf/pchar.hpp>
-#include <boost/url/bnf/pct_encoded.hpp>
-#include <boost/url/bnf/scheme.hpp>
-#include <boost/url/bnf/segment.hpp>
-#include <boost/url/bnf/userinfo.hpp>
+#include <boost/url/bnf/literal.hpp>
+#include <boost/url/bnf/range.hpp>
+#include <boost/url/bnf/sequence.hpp>
+#include <boost/url/bnf/type_traits.hpp>
+
+#include <boost/url/rfc/ip_v4address.hpp>
+#include <boost/url/rfc/origin_form.hpp>
+#include <boost/url/rfc/path_abempty.hpp>
+#include <boost/url/rfc/path_absolute.hpp>
+#include <boost/url/rfc/path_absolute.hpp>
+#include <boost/url/rfc/path_noscheme.hpp>
+#include <boost/url/rfc/path_rootless.hpp>
+#include <boost/url/rfc/pchar.hpp>
+#include <boost/url/rfc/pct_encoded.hpp>
+#include <boost/url/rfc/scheme.hpp>
+#include <boost/url/rfc/segment.hpp>
+#include <boost/url/rfc/userinfo.hpp>
 
 #endif
