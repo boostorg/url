@@ -82,10 +82,16 @@ public:
         }
     };
 
-    value_type
-    value() const noexcept
+    value_type const&
+    operator*() const noexcept
     {
         return v_;
+    }
+
+    value_type const*
+    operator->() const noexcept
+    {
+        return &v_;
     }
 
     BOOST_URL_DECL
@@ -96,8 +102,8 @@ public:
         error_code& ec);
 
 private:
-    struct uchar;
-    struct uchar_nc;
+    class uchar;
+    class uchar_nc;
 
     value_type v_;
 };

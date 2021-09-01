@@ -31,25 +31,12 @@ namespace rfc {
 class host
 {
 public:
-    struct value_type
-    {
-    };
-
-    value_type const&
-    value() const noexcept
-    {
-        return v_;
-    }
-
     BOOST_URL_DECL
     char const*
     parse(
         char const* const start,
         char const* const end,
         error_code& ec);
-
-private:
-    value_type v_;
 };
 
 } // rfc

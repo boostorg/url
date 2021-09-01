@@ -76,14 +76,6 @@ using segment_nz = bnf::one_or_more<pchar>;
 class segment_nz_nc
 {
 public:
-    using value_type = string_view;
-
-    value_type
-    value() const noexcept
-    {
-        return v_;
-    }
-
     BOOST_URL_DECL
     char const*
     parse(
@@ -93,8 +85,6 @@ public:
 
 private:
     class pchar_nc;
-
-    value_type v_;
 };
 
 } // rfc

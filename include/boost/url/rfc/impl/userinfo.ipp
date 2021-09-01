@@ -21,16 +21,9 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-struct userinfo::uchar
+class userinfo::uchar
 {
-    using value_type = void;
-
-    value_type
-    value() const noexcept
-    {
-        return;
-    }
-
+public:
     char const*
     parse(
         char const* const start,
@@ -64,16 +57,9 @@ struct userinfo::uchar
     }
 };
 
-struct userinfo::uchar_nc
+class userinfo::uchar_nc
 {
-    using value_type = void;
-
-    value_type
-    value() const noexcept
-    {
-        return;
-    }
-
+public:
     char const*
     parse(
         char const* const start,

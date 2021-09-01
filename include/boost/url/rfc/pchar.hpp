@@ -31,14 +31,6 @@ namespace rfc {
 class pchar
 {
 public:
-    using value_type = void;
-
-    value_type
-    value() const noexcept
-    {
-        return;
-    }
-
     BOOST_URL_DECL
     char const*
     parse(

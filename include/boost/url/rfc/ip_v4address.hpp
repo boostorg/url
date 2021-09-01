@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <array>
 #include <cstdint>
 
 namespace boost {
@@ -37,15 +38,19 @@ namespace rfc {
 class ip_v4address
 {
 public:
-    struct value_type
-    {
-        std::uint8_t addr[4];
-    };
+    using value_type =
+        std::array<std::uint8_t, 4>;
 
     value_type const&
-    value() const noexcept
+    operator*() const noexcept
     {
         return v_;
+    }
+
+    value_type const*
+    operator->() const noexcept
+    {
+        return &v_;
     }
 
     BOOST_URL_DECL

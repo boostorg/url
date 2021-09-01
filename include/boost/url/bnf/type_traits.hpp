@@ -21,6 +21,11 @@ namespace bnf {
 
 /** Alias for std::true_type if T satisfies Element
 
+    To satisfy _Element_, T must satisfy
+    _DefaultConstructible_, _CopyConstructible_,
+    _CopyAssignable_, and also meet these
+    requirements:
+
     @par Valid expressions
     @code
         char const*
@@ -32,12 +37,9 @@ namespace bnf {
 
     @par Exemplar
     @code
-    struct element
+    struct T
     {
-        using value_type = ...;
-        value_type const& value() const noexcept;
-        char const* parse(
-            char const*, char const*, error_code& );
+        char const* parse( char const*, char const*, error_code& );
     };
     @endcode
 */
@@ -51,8 +53,10 @@ struct is_element : std::false_type {};
 
 template<class T>
 struct is_element<T, boost::void_t<
-    typename T::value_type,
+    //typename T::value_type,
     decltype(
+    //std::declval<T const&>.operator->(),
+    //std::declval<T const&>.operator*(),
     std::declval<char const*&>() = std::declval<T&>().parse(
         std::declval<char const*>(),
         std::declval<char const*>(),
@@ -66,7 +70,12 @@ struct is_element<T, boost::void_t<
 
 #endif
 
-/** Alias for std::true_type if T satisfies Element
+/** Alias for std::true_type if T satisfies List
+
+    To satisfy _List_, T must satisfy
+    _DefaultConstructible_, _CopyConstructible_,
+    _CopyAssignable_, and also meet these
+    requirements:
 
     @par Valid expressions
     @code
@@ -81,6 +90,15 @@ struct is_element<T, boost::void_t<
             char const* start,
             char const* end,
             error_code& ec);
+    @endcode
+
+    @par Exemplar
+    @code
+    struct T
+    {
+        char const* begin( char const*, char const*, error_code& );
+        char const* increment( char const*, char const*, error_code& );
+    };
     @endcode
 */
 #if BOOST_URL_DOCS
@@ -115,6 +133,36 @@ struct is_list<T, boost::void_t<decltype(
 template<class T>
 using is_bnf = std::integral_constant<bool,
     is_element<T>::value || is_list<T>::value>;
+
+/** Alias for std::true_type if T is a bnf with a value
+
+    @par Valid expressions
+    @code
+        auto
+        T::operator->();
+
+        auto
+        T::operator*();
+    @endcode
+*/
+#if BOOST_URL_DOCS
+template<class T>
+using has_value = __see_below__;
+
+#else
+template<class T, class = void>
+struct has_value : std::false_type {};
+
+template<class T>
+struct has_value<T, boost::void_t<decltype(
+    std::declval<T&>().operator->(),
+    std::declval<T&>().operator*()
+        )>> : std::integral_constant<bool,
+    is_bnf<T>::value>
+{
+};
+
+#endif
 
 } // bnf
 } // urls

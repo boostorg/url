@@ -50,8 +50,6 @@ parse(
     }
     scheme_char_set cs;
     it = cs.skip(it + 1, end);
-    v_ = string_view(
-        start, it - start);
     return it;
 }
 

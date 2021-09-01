@@ -24,7 +24,8 @@ bool
 is_scheme_char(char c) noexcept;
 
 using scheme_char_set =
-    bnf::char_set_function<&is_scheme_char>;
+    bnf::char_set_function<
+        &is_scheme_char>;
 
 /** BNF for scheme
 
@@ -39,23 +40,12 @@ using scheme_char_set =
 class scheme
 {
 public:
-    using value_type = string_view;
-
-    value_type const&
-    value() const noexcept
-    {
-        return v_;
-    }
-
     BOOST_URL_DECL
     char const*
     parse(
         char const* const start,
         char const* const end,
         error_code& ec);
-
-private:
-    value_type v_;
 };
 
 } // rfc

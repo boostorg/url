@@ -39,9 +39,9 @@ public:
         if(ec)
             detail::throw_system_error(ec,
                 BOOST_CURRENT_LOCATION);
-        BOOST_TEST(p.value().encoded_userinfo() == s1);
-        BOOST_TEST(p.value().user() == s2);
-        BOOST_TEST(p.value().password() == s3);
+        BOOST_TEST(p->encoded_userinfo() == s1);
+        BOOST_TEST(p->user() == s2);
+        BOOST_TEST(p->password() == s3);
     }
 
     void

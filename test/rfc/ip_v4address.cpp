@@ -35,13 +35,13 @@ public:
             return;
         std::uint32_t v1 =
             (static_cast<std::uint32_t>(
-                p.value().addr[0]) << 24) |
+                (*p)[0]) << 24) |
             (static_cast<std::uint32_t>(
-                p.value().addr[1]) << 16) |
+                (*p)[1]) << 16) |
             (static_cast<std::uint32_t>(
-                p.value().addr[2]) <<  8) |
+                (*p)[2]) <<  8) |
             (static_cast<std::uint32_t>(
-                p.value().addr[3])      );
+                (*p)[3])      );
         BOOST_TEST(v1 == v);
     }
 

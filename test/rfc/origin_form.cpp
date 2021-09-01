@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/bnf/origin_form.hpp>
+#include <boost/url/rfc/origin_form.hpp>
 
 #include "test_suite.hpp"
 

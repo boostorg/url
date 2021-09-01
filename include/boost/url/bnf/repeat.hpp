@@ -51,21 +51,26 @@ class repeat
 {
     BOOST_STATIC_ASSERT(M > 0);
     BOOST_STATIC_ASSERT(M >= N);
-    BOOST_STATIC_ASSERT(
-        is_element<Element>::value);
+    //BOOST_STATIC_ASSERT(
+    //  is_element<Element>::value);
 
-    Element element_;
+    Element e_;
     std::size_t n_;
 
 public:
-    using value_type =
-        typename Element::value_type;
-
-    value_type
-    value() const noexcept
+#if 0
+    decltype(e_.operator*())
+    operator*() const noexcept
     {
-        return element_.value();
+        return *e_;
     }
+
+    decltype(e_.operator->())
+    operator->() const noexcept
+    {
+        return e_.operator->();
+    }
+#endif
 
     char const*
     begin(

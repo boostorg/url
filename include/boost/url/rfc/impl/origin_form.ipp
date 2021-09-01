@@ -19,21 +19,21 @@ namespace rfc {
 char const*
 origin_form::
 parse(
-    char const* const start,
-    char const* const end,
-    error_code& ec)
+    char const* const,
+    char const* const,
+    error_code&)
 {
-    return start;
+    return nullptr;
 }
 
 char const*
 absolute_uri::
 parse(
-    char const* const start,
-    char const* const end,
-    error_code& ec)
+    char const* const,
+    char const* const,
+    error_code&)
 {
-    return start;
+    return nullptr;
 }
 
 } // rfc

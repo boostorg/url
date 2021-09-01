@@ -24,14 +24,6 @@ namespace rfc {
 class segment_nz_nc::pchar_nc
 {
 public:
-    using value_type = void;
-
-    value_type
-    value() const noexcept
-    {
-        return;
-    }
-
     char const*
     parse(
         char const* const start,

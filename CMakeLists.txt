@@ -49,6 +49,7 @@ if(BOOST_URL_IS_ROOT)
         exception
         json
         mp11
+        optional
         system
         throw_exception
         utility
@@ -104,6 +105,7 @@ function(boost_url_setup_properties target)
             Boost::exception
             Boost::json
             Boost::mp11
+            Boost::optional
             Boost::system
             Boost::throw_exception
             Boost::utility

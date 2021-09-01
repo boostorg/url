@@ -17,72 +17,38 @@ namespace boost {
 namespace urls {
 namespace bnf {
 
-namespace detail {
-
-template<char Ch>
-char const*
-parse_literal(
-    char const* const start,
-    char const* const end,
-    error_code& ec) noexcept
-{
-    if(start == end)
-    {
-        ec = error::need_more;
-        return start;
-    }
-    if(*start != Ch)
-    {
-        ec = error::syntax;
-        return start;
-    }
-    return start + 1;
-}
-
-template<char C0, char C1, char...Cn>
-char const*
-parse_literal(
-    char const* const start,
-    char const* const end,
-    error_code& ec) noexcept
-{
-    auto it = parse_literal<C0>(
-        start, end, ec);
-    if(ec)
-        return start;
-    return parse_literal<
-        C1, Cn...>(start, end, ec);
-}
-
-} // detail
-
 /** BNF for literal string
 */
-template<char C0, char...Cn>
+template<char...Cn>
 class literal
 {
 public:
-    using value_type = void;
-
-    value_type
-    value() const noexcept
+    string_view const&
+    operator*() const noexcept
     {
-        return;
+        return s_;
+    }
+
+    string_view const*
+    operator->() const noexcept
+    {
+        return s_;
     }
 
     char const*
     parse(
         char const* const start,
         char const* const end,
-        error_code& ec) noexcept
-    {
-        return detail::parse_literal<
-            C0, Cn...>(start, end, ec);
-    }
+        error_code& ec) noexcept;
+
+private:
+    string_view s_;
 };
 
 } // bnf
 } // urls
 } // boost
+
+#include <boost/url/bnf/impl/literal.hpp>
 
 #endif

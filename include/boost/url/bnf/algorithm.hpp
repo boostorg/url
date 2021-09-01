@@ -28,7 +28,7 @@ template<class Element>
 char const*
 #else
 typename std::enable_if<
-    is_element<Element>::value,
+    ! is_list<Element>::value,
     char const*>::type
 #endif
 consume(

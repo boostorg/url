@@ -13,6 +13,8 @@
 #include <boost/url/rfc/ip_v4address.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/char_sets.hpp>
+#include <boost/url/bnf/literal.hpp>
+#include <boost/url/bnf/sequence.hpp>
 
 namespace boost {
 namespace urls {
@@ -21,10 +23,14 @@ namespace rfc {
 class ip_v4address::dec_octet
 {
 public:
-    using value_type = std::uint8_t;
+    std::uint8_t const*
+    operator->() const noexcept
+    {
+        return &v_;
+    }
 
-    value_type
-    value() const noexcept
+    std::uint8_t
+    operator*() const noexcept
     {
         return v_;
     }
@@ -105,7 +111,7 @@ public:
     }
 
 private:
-    value_type v_;
+    std::uint8_t v_;
 };
 
 char const*
@@ -115,62 +121,20 @@ parse(
     char const* const end,
     error_code& ec)
 {
-    dec_octet p;
-
+    using namespace bnf;
+    sequence<
+        dec_octet, literal<'.'>,
+        dec_octet, literal<'.'>,
+        dec_octet, literal<'.'>,
+        dec_octet> p;
     auto it = p.parse(
         start, end, ec);
     if(ec)
         return start;
-    v_.addr[0] = p.value();
-    if(it == end)
-    {
-        ec = error::need_more;
-        return start;
-    }
-    if(*it != '.')
-    {
-        ec = error::syntax;
-        return start;
-    }
-    ++it;
-
-    it = p.parse(it, end, ec);
-    if(ec)
-        return start;
-    v_.addr[1] = p.value();
-    if(it == end)
-    {
-        ec = error::need_more;
-        return start;
-    }
-    if(*it != '.')
-    {
-        ec = error::syntax;
-        return start;
-    }
-    ++it;
-
-    it = p.parse(it, end, ec);
-    if(ec)
-        return start;
-    v_.addr[2] = p.value();
-    if(it == end)
-    {
-        ec = error::need_more;
-        return start;
-    }
-    if(*it != '.')
-    {
-        ec = error::syntax;
-        return start;
-    }
-    ++it;
-
-    it = p.parse(it, end, ec);
-    if(ec)
-        return start;
-    v_.addr[3] = p.value();
-    ec = {};
+    v_[0] = *get<0>(p);
+    v_[1] = *get<2>(p);
+    v_[2] = *get<4>(p);
+    v_[3] = *get<6>(p);
     return it;
 }
 

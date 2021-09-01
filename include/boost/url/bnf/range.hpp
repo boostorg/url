@@ -14,7 +14,6 @@
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/url/bnf/arrow_proxy.hpp>
 #include <cstddef>
 #include <iterator>
 #include <memory>
@@ -158,22 +157,20 @@ public:
         return !(*this == other);
     }
 
-    value_type
-    operator*() const noexcept
-    {
-        return impl_.value();
-    }
-
-    arrow_proxy<value_type>
+    decltype(T::operator->())
     operator->() const noexcept
     {
-        return arrow_proxy<
-            value_type>{ impl_.value() };
+        return impl_.operator->();
+    }
+
+    decltype(T::operator*())
+    operator*() const noexcept
+    {
+        return impl_.operator*();
     }
 
     void
-    increment(
-        error_code& ec)
+    increment(error_code& ec)
     {
         next_ = impl_.increment(
             next_, end_, ec);
@@ -314,7 +311,7 @@ valid_prefix(
 }
 
 } // bnf
-} // http_proto
+} // urls
 } // boost
 
 #endif

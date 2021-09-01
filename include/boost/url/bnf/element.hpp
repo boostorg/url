@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_PATH_ABEMPTY_HPP
-#define BOOST_URL_RFC_PATH_ABEMPTY_HPP
+#ifndef BOOST_URL_BNF_ELEMENT_HPP
+#define BOOST_URL_BNF_ELEMENT_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -16,55 +16,64 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
+namespace bnf {
 
-/** BNF for path-abempty
-
-    @par BNF
-    @code
-    path-abempty  = *( "/" segment )
-    @endcode
-
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.3
+/** Adapt a List into an element
 */
-class path_abempty
+template<class List>
+class element
 {
 public:
     string_view const&
     operator*() const noexcept
     {
-        return v_;
+        return s_;
     }
 
     string_view const*
     operator->() const noexcept
     {
-        return &v_;
+        return &s_;
     }
 
     char const*
-    begin(
+    parse(
         char const* const start,
         char const* const end,
         error_code& ec)
     {
-        return increment(
+        List e_;
+        auto it = e_.begin(
             start, end, ec);
+        if(ec == error::end)
+        {
+            ec = {};
+            return start;
+        }
+        if(ec)
+            return start;
+        for(;;)
+        {
+            it = e_.increment(
+                it, end, ec);
+            if(ec == error::end)
+            {
+                ec = {};
+                break;
+            }
+            if(ec)
+                return start;
+        }
+        s_ = string_view(
+            start, it - start);
+        return it;
     }
 
-    BOOST_URL_DECL
-    char const*
-    increment(
-        char const* const start,
-        char const* const end,
-        error_code& ec);
-
 private:
-    string_view v_;
+    string_view s_;
 };
 
-} // rfc
+} // bnf
 } // urls
 } // boost
 

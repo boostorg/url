@@ -54,7 +54,7 @@ increment(
         ec = error::end;
         return start;
     }
-    auto it = element_.parse(
+    auto it = e_.parse(
         start, end, ec);
     if(ec == error::need_more)
         return it;

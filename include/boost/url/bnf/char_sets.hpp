@@ -100,7 +100,7 @@ bool
 is_unreserved(char c) noexcept;
 
 } // bnf
-} // http_proto
+} // urls
 } // boost
 
 #include <boost/url/bnf/impl/char_sets.hpp>

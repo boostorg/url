@@ -13,7 +13,8 @@
 #include <boost/url/rfc/path_abempty.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/bnf/algorithm.hpp>
+#include <boost/url/bnf/literal.hpp>
+#include <boost/url/bnf/sequence.hpp>
 #include <boost/url/rfc/segment.hpp>
 
 namespace boost {
@@ -27,22 +28,18 @@ increment(
     char const* const end,
     error_code& ec)
 {
-    if(start == end)
-    {
-        v_ = {};
-        ec = error::end;
-        return start;
-    }
-    auto it = start;
-    if(*it != '/')
+    using namespace bnf;
+    sequence<
+        literal<'/'>,
+        element<segment>> p;
+    auto it = p.parse(
+        start, end, ec);
+    if(ec)
     {
         v_ = {};
         ec = error::end;
         return it;
     }
-    ++it;
-    it = bnf::consume<
-        segment>(it, end, ec);
     v_ = string_view(
         start, it - start);
     return it;

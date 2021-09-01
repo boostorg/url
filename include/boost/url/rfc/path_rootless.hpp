@@ -34,12 +34,16 @@ namespace rfc {
 class path_rootless
 {
 public:
-    using value_type = string_view;
-
-    value_type
-    value() const noexcept
+    string_view const&
+    operator*() const noexcept
     {
         return v_;
+    }
+
+    string_view const*
+    operator->() const noexcept
+    {
+        return &v_;
     }
 
     BOOST_URL_DECL
@@ -57,7 +61,7 @@ public:
         error_code& ec);
 
 private:
-    value_type v_;
+    string_view v_;
 };
 
 } // rfc
