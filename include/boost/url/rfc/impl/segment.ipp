@@ -13,74 +13,60 @@
 #include <boost/url/rfc/segment.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/bnf/algorithm.hpp>
 #include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/pct_encoding.hpp>
 
 namespace boost {
 namespace urls {
 namespace rfc {
 
-class segment_nz_nc::pchar_nc
+char const*
+segment::
+parse(
+    char const* const start,
+    char const* const end,
+    error_code& ec)
 {
-public:
-    using value_type = string_view;
+    masked_char_set<
+        unreserved_char_mask +
+        sub_delims_char_mask +
+        colon_char_mask +
+        at_char_mask> cs;
+    auto it = parse_pct_encoded(
+        cs, start, end, ec);
+    if(ec)
+        return start;
+    v_.s_ = string_view(
+        start, it - start);
+    return it;
+}
 
-    value_type const&
-    operator*() const noexcept
+char const*
+segment_nz::
+parse(
+    char const* const start,
+    char const* const end,
+    error_code& ec)
+{
+    masked_char_set<
+        unreserved_char_mask +
+        sub_delims_char_mask +
+        colon_char_mask +
+        at_char_mask> cs;
+    auto it = parse_pct_encoded(
+        cs, start, end, ec);
+    if(ec)
+        return start;
+    if(it == start)
     {
-        return s_;
+        // expected pchar
+        ec = error::syntax;
+        return start;
     }
-
-    value_type const*
-    operator->() const noexcept
-    {
-        return &s_;
-    }
-
-    char const*
-    parse(
-        char const* const start,
-        char const* const end,
-        error_code& ec)
-    {
-        auto it = start;
-        for(;;)
-        {
-            if(it == end)
-            {
-                ec = error::need_more;
-                return start;
-            }
-            if(is_unreserved(*it))
-            {
-                ++it;
-                break;
-            }
-            if(is_sub_delims(*it))
-            {
-                ++it;
-                break;
-            }
-            if(*it == '@')
-            {
-                ++it;
-                break;
-            }
-            it = bnf::consume<
-                pct_encoded0>(
-                    it, end, ec);
-            if(ec)
-                return start;
-            break;
-        }
-        s_ = string_view(
-            start, it - start);
-        return it;
-    }
-
-private:
-    string_view s_;
-};
+    v_.s_ = string_view(
+        start, it - start);
+    return it;
+}
 
 char const*
 segment_nz_nc::
@@ -89,12 +75,21 @@ parse(
     char const* const end,
     error_code& ec)
 {
-    auto it = bnf::consume<
-        bnf::one_or_more<pchar_nc>>(
-            start, end, ec);
+    masked_char_set<
+        unreserved_char_mask +
+        sub_delims_char_mask +
+        at_char_mask> cs;
+    auto it = parse_pct_encoded(
+        cs, start, end, ec);
     if(ec)
         return start;
-    s_ = string_view(
+    if(it == start)
+    {
+        // expected pchar
+        ec = error::syntax;
+        return start;
+    }
+    v_.s_ = string_view(
         start, it - start);
     return it;
 }

@@ -20,27 +20,6 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-/** BNF for pct-encoded
-
-    @par BNF
-    @code
-    pct-encoded   = "%" HEXDIG HEXDIG
-    @endcode
-
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-2.1
-*/
-class pct_encoded0
-{
-public:
-    BOOST_URL_DECL
-    char const*
-    parse(
-        char const* const start,
-        char const* const end,
-        error_code& ec);
-};
-
 /** Base type for a percent-encoded BNF element
 */
 class pct_encoded_base

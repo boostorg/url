@@ -31,7 +31,7 @@ increment(
     using namespace bnf;
     sequence<
         literal<'/'>,
-        element<segment>> p;
+        segment> p;
     auto it = p.parse(
         start, end, ec);
     if(ec)
