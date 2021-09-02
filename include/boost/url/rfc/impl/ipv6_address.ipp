@@ -12,8 +12,8 @@
 
 #include <boost/url/rfc/ipv6_address.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/detail/char_type.hpp>
 #include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/hexdig.hpp>
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <array>
 #include <memory>
@@ -68,7 +68,6 @@ public:
         char const* const end,
         error_code& ec)
     {
-        using urls::detail::hex_digit;
         std::uint16_t v;
         auto it = start;
         for(;;)
@@ -132,7 +131,6 @@ parse(
     char const* const end,
     error_code& ec)
 {
-    using urls::detail::hex_digit;
     h16 hp;
     int  n = 8;     // words needed
     int  b = -1;    // value of n

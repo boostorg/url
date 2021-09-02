@@ -20,6 +20,13 @@ template<class Derived>
 class char_set
 {
 public:
+    bool
+    operator()(char c) const noexcept
+    {
+        return static_cast<Derived
+            const*>(this)->contains(c);
+    }
+
     template<class Char>
     Char*
     skip(

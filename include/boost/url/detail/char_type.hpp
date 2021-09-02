@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/rfc/hexdig.hpp>
 #include <cstdint>
 
 namespace boost {
@@ -47,31 +48,6 @@ is_alpha(
     if(u >= 'A')
         return true;
     return false;
-}
-
-inline
-char
-hex_digit(char c) noexcept
-{
-    static constexpr char tab[] =
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" //   0...15
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" //  16...31
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" //  32...47
-        "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\xff\xff\xff\xff\xff\xff" //  48...63
-        "\xff\x0a\x0b\x0c\x0d\x0e\x0f\xff\xff\xff\xff\xff\xff\xff\xff\xff" //  64...79
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" //  80...95
-        "\xff\x0a\x0b\x0c\x0d\x0e\x0f\xff\xff\xff\xff\xff\xff\xff\xff\xff" //  96..111
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" // 112..127
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" // 128..143
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" // 144..159
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" // 160..175
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" // 176..191
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" // 192..207
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" // 208..223
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" // 224..239
-        "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" // 240..255
-        ;
-    return tab[static_cast<unsigned char>(c)];
 }
 
 inline
@@ -148,8 +124,8 @@ public:
             ec = error::incomplete_pct_encoding;
         }
         else if(
-            hex_digit(p[0]) == -1 ||
-            hex_digit(p[1]) == -1)
+            rfc::hex_digit(p[0]) == -1 ||
+            rfc::hex_digit(p[1]) == -1)
         {
             ec = error::bad_pct_encoding_digit;
         }
@@ -269,9 +245,9 @@ public:
             }
             *dest++ = static_cast<char>(
                 (static_cast<unsigned char>(
-                    hex_digit(p[1])) << 4) +
+                    rfc::hex_digit(p[1])) << 4) +
                 static_cast<unsigned char>(
-                    hex_digit(p[2])));
+                    rfc::hex_digit(p[2])));
             p += 3;
         }
         return dest;
@@ -499,9 +475,9 @@ key_equal(
         BOOST_ASSERT(e0 - p0 >= 3);
         auto const ch = static_cast<char>(
             (static_cast<unsigned char>(
-                hex_digit(p0[1])) << 4) +
+                rfc::hex_digit(p0[1])) << 4) +
             static_cast<unsigned char>(
-                hex_digit(p0[2])));
+                rfc::hex_digit(p0[2])));
         if(ch != *p1++)
             return false;
         p0 += 3;

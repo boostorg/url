@@ -30,24 +30,6 @@ is_digit(char c) noexcept
 }
 
 bool
-is_hexdig(char c) noexcept
-{
-    if(is_digit(c))
-        return true;
-    switch(c)
-    {
-    case 'A': case 'B': case 'C':
-    case 'D': case 'E': case 'F':
-    case 'a': case 'b': case 'c':
-    case 'd': case 'e': case 'f':
-        return true;
-    default:
-        break;
-    }
-    return false;
-}
-
-bool
 is_sub_delims(char c) noexcept
 {
     switch(c)

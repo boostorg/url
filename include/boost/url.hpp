@@ -29,6 +29,7 @@
 #include <boost/url/bnf/type_traits.hpp>
 
 #include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/hexdig.hpp>
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <boost/url/rfc/ipv6_address.hpp>
 #include <boost/url/rfc/origin_form.hpp>
@@ -39,6 +40,7 @@
 #include <boost/url/rfc/path_rootless.hpp>
 #include <boost/url/rfc/pchar.hpp>
 #include <boost/url/rfc/pct_encoded.hpp>
+#include <boost/url/rfc/pct_encoding.hpp>
 #include <boost/url/rfc/scheme.hpp>
 #include <boost/url/rfc/segment.hpp>
 #include <boost/url/rfc/userinfo.hpp>

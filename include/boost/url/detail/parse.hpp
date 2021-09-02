@@ -11,8 +11,9 @@
 #define BOOST_URL_DETAIL_PARSE_HPP
 
 #include <boost/url/detail/char_type.hpp>
-#include <boost/url/detail/parts.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/rfc/hexdig.hpp>
+#include <boost/url/detail/parts.hpp>
 
 namespace boost {
 namespace urls {
@@ -390,7 +391,7 @@ struct parser
     {
         BOOST_ASSERT(p_ != end_);
         auto digit =
-            hex_digit(*p_);
+            rfc::hex_digit(*p_);
         if(digit == -1)
         {
             ec = error::syntax;
@@ -402,7 +403,7 @@ struct parser
         if(p_ == end_)
             return v;
         digit =
-            hex_digit(*p_);
+            rfc::hex_digit(*p_);
         if(digit == -1)
             return v;
         v = 16 * v + digit;
@@ -411,7 +412,7 @@ struct parser
         if(p_ == end_)
             return v;
         digit =
-            hex_digit(*p_);
+            rfc::hex_digit(*p_);
         if(digit == -1)
             return v;
         v = 16 * v + digit;
@@ -420,7 +421,7 @@ struct parser
         if(p_ == end_)
             return v;
         digit =
-            hex_digit(*p_);
+            rfc::hex_digit(*p_);
         if(digit == -1)
             return v;
         v = 16 * v + digit;
@@ -564,7 +565,7 @@ struct parser
                 }
                 return;
             }
-            else if(b && hex_digit(*p_) == -1)
+            else if(b && rfc::hex_digit(*p_) == -1)
             {
                 // end in "::"
                 break;
