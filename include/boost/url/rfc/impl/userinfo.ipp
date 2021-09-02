@@ -14,7 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/bnf/algorithm.hpp>
-#include <boost/url/bnf/char_sets.hpp>
+#include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/pct_encoded.hpp>
 
 namespace boost {
@@ -52,12 +52,12 @@ public:
                 ec = error::need_more;
                 return start;
             }
-            if(bnf::is_unreserved(*it))
+            if(is_unreserved(*it))
             {
                 ++it;
                 break;
             }
-            if(bnf::is_sub_delims(*it))
+            if(is_sub_delims(*it))
             {
                 ++it;
                 break;
@@ -113,12 +113,12 @@ public:
                 ec = error::need_more;
                 return start;
             }
-            if(bnf::is_unreserved(*it))
+            if(is_unreserved(*it))
             {
                 ++it;
                 break;
             }
-            if(bnf::is_sub_delims(*it))
+            if(is_sub_delims(*it))
             {
                 ++it;
                 break;

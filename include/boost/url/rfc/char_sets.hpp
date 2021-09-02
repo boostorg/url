@@ -7,16 +7,17 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_BNF_CHAR_SETS_HPP
-#define BOOST_URL_BNF_CHAR_SETS_HPP
+#ifndef BOOST_URL_RFC_CHAR_SETS_HPP
+#define BOOST_URL_RFC_CHAR_SETS_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/string.hpp>
 #include <boost/url/bnf/char_set.hpp>
+#include <boost/url/rfc/detail/char_table.hpp>
+#include <cstdint>
 
 namespace boost {
 namespace urls {
-namespace bnf {
+namespace rfc {
 
 /** Return true if c is a low-ASCII letter
 
@@ -99,10 +100,52 @@ inline
 bool
 is_unreserved(char c) noexcept;
 
-} // bnf
+//------------------------------------------------
+
+template<std::uint8_t Mask>
+class masked_char_set
+    : public bnf::char_set<
+        masked_char_set<Mask>>
+{
+    std::uint8_t const* tab_ =
+        detail::char_table;
+
+public:
+    bool
+    contains(char c) const noexcept
+    {
+        return (tab_[static_cast<
+            std::uint8_t>(c)] & Mask) != 0;
+    }
+};
+
+//------------------------------------------------
+
+constexpr std::uint8_t
+    unreserved_char_mask = 0x01;
+
+constexpr std::uint8_t
+    sub_delims_char_mask = 0x02;
+
+constexpr std::uint8_t
+    gen_delims_char_mask = 0x04;
+
+constexpr std::uint8_t
+    question_char_mask = 0x08;
+
+constexpr std::uint8_t
+    colon_char_mask = 0x10;
+
+constexpr std::uint8_t
+    slash_char_mask = 0x20;
+
+constexpr std::uint8_t
+    at_char_mask = 0x40;
+
+} // rfc
 } // urls
 } // boost
 
-#include <boost/url/bnf/impl/char_sets.hpp>
+#include <boost/url/rfc/impl/char_sets.hpp>
 
 #endif

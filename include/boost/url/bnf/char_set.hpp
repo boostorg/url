@@ -16,9 +16,35 @@ namespace boost {
 namespace urls {
 namespace bnf {
 
+template<class Derived>
+class char_set
+{
+public:
+    template<class Char>
+    Char*
+    skip(
+        Char* first,
+        char const* const end)
+            const noexcept
+    {
+        auto const& self =
+            *static_cast<Derived
+                const*>(this);
+        while(first != end)
+        {
+            if(! self.contains(
+                    *first))
+                break;
+            ++first;
+        }
+        return first;
+    }
+};
+
 /** A table-driven character set
 */
 class char_set_table
+    : public char_set<char_set_table>
 {
     char const* const tab_;
 
@@ -37,27 +63,13 @@ public:
             unsigned char>(c);
         return tab_[u] != 0;
     }
-
-    template<class Char>
-    Char*
-    skip(
-        Char* first,
-        char const* end) const noexcept
-    {
-        while(first != end)
-        {
-            if(! contains(*first))
-                break;
-            ++first;
-        }
-        return first;
-    }
 };
 
 //------------------------------------------------
 
 template<bool (*F)(char)>
 class char_set_function
+    : public char_set<char_set_function<F>>
 {
 public:
     bool
@@ -67,21 +79,6 @@ public:
         auto const u = static_cast<
             unsigned char>(c);
         return F(u) != 0;
-    }
-
-    template<class Char>
-    Char*
-    skip(
-        Char* first,
-        char const* end) const noexcept
-    {
-        while(first != end)
-        {
-            if(! contains(*first))
-                break;
-            ++first;
-        }
-        return first;
     }
 };
 

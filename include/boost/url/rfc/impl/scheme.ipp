@@ -13,7 +13,7 @@
 #include <boost/url/rfc/scheme.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/bnf/char_sets.hpp>
+#include <boost/url/rfc/char_sets.hpp>
 
 namespace boost {
 namespace urls {
@@ -23,8 +23,8 @@ bool
 is_scheme_char(char c) noexcept
 {
     return
-        bnf::is_alpha(c) ||
-        bnf::is_digit(c) ||
+        is_alpha(c) ||
+        is_digit(c) ||
         c == '+' ||
         c == '-' ||
         c == '.';
@@ -43,7 +43,7 @@ parse(
         ec = error::need_more;
         return start;
     }
-    if(! bnf::is_alpha(*it))
+    if(! is_alpha(*it))
     {
         ec = error::syntax;
         return start;

@@ -12,9 +12,9 @@
 
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/bnf/char_sets.hpp>
 #include <boost/url/bnf/literal.hpp>
 #include <boost/url/bnf/sequence.hpp>
+#include <boost/url/rfc/char_sets.hpp>
 
 namespace boost {
 namespace urls {
@@ -47,7 +47,7 @@ public:
             return start;
         }
         auto it = start;
-        if(! bnf::is_digit(*it))
+        if(! is_digit(*it))
         {
             ec = error::syntax;
             return start;
@@ -61,7 +61,7 @@ public:
             ec = {};
             return it;
         }
-        if(! bnf::is_digit(*it))
+        if(! is_digit(*it))
         {
             v_ = static_cast<
                 std::uint8_t>(v);
@@ -83,7 +83,7 @@ public:
             ec = {};
             return it;
         }
-        if(! bnf::is_digit(*it))
+        if(! is_digit(*it))
         {
             v_ = static_cast<
                 std::uint8_t>(v);

@@ -13,7 +13,7 @@
 #include <boost/url/rfc/pct_encoded.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/bnf/char_sets.hpp>
+#include <boost/url/rfc/char_sets.hpp>
 
 namespace boost {
 namespace urls {
@@ -43,7 +43,7 @@ parse(
         ec = error::need_more;
         return start;
     }
-    if(! bnf::is_hexdig(*it))
+    if(! is_hexdig(*it))
     {
         ec = error::syntax;
         return start;
@@ -54,7 +54,7 @@ parse(
         ec = error::need_more;
         return start;
     }
-    if(! bnf::is_hexdig(*it))
+    if(! is_hexdig(*it))
     {
         ec = error::syntax;
         return start;

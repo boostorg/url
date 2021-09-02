@@ -66,8 +66,8 @@ public:
         user(
             Allocator const& a = {}) const
         {
-            return detail::decode(
-                user_, a);
+            using urls::detail::decode;
+            return decode(user_, a);
         }
 
         template<
@@ -77,8 +77,8 @@ public:
         password(
             Allocator const& a = {}) const
         {
-            return detail::decode(
-                password_, a);
+            using urls::detail::decode;
+            return decode(password_, a);
         }
     };
 

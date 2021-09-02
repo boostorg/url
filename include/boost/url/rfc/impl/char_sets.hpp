@@ -7,12 +7,12 @@
 // Official repository: https://github.com/CPPAlliance/urls
 //
 
-#ifndef BOOST_URL_BNF_IMPL_CHAR_SETS_HPP
-#define BOOST_URL_BNF_IMPL_CHAR_SETS_HPP
+#ifndef BOOST_URL_RFC_IMPL_CHAR_SETS_HPP
+#define BOOST_URL_RFC_IMPL_CHAR_SETS_HPP
 
 namespace boost {
 namespace urls {
-namespace bnf {
+namespace rfc {
 
 bool
 is_alpha(char c) noexcept

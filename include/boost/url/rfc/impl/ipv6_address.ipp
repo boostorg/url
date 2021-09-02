@@ -13,7 +13,7 @@
 #include <boost/url/rfc/ipv6_address.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/detail/char_type.hpp>
-#include <boost/url/bnf/char_sets.hpp>
+#include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <array>
 #include <memory>
