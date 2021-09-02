@@ -14,6 +14,9 @@
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/bnf/literal.hpp>
+#include <boost/url/bnf/sequence.hpp>
+#include <boost/url/bnf/zero_or_one.hpp>
 #include <boost/url/rfc/pct_encoded.hpp>
 #include <boost/url/rfc/pct_encoding.hpp>
 
@@ -28,54 +31,30 @@ parse(
     char const* const end,
     error_code& ec)
 {
-    char const* it;
     // *( unreserved / pct-encoded / sub-delims )
-    {
-        masked_char_set<
-            unreserved_char_mask +
-            sub_delims_char_mask> cs;
-        it = parse_pct_encoded(
-            cs, start, end, ec);
-        if(ec)
-            return start;
-        v_.user_ = string_view(
-            start, it - start);
-    }
-    if( it == end ||
-        *it != ':')
-    {
-        // just user
-        v_.userinfo_ = string_view(
-            start, it - start);
-        v_.password_ = {};
-        return it;
-    }
-    ++it;
-    if(it == end)
-    {
-        // just ( user ':' )
-        v_.userinfo_ = string_view(
-            start, it - start);
-        v_.password_ = {};
-        return it;
-    }
+    constexpr auto cs_nc_mask =
+        unreserved_char_mask +
+        sub_delims_char_mask;
+
     // *( unreserved / pct-encoded / sub-delims / ":" )
-    {
-        // ( user ":" pass )
-        masked_char_set<
-            unreserved_char_mask +
-            sub_delims_char_mask +
-            colon_char_mask> cs;
-        auto it0 = it;
-        it = parse_pct_encoded(
-            cs, it0, end, ec);
-        if(ec)
-            return start;
-        v_.userinfo_ = string_view(
-            start, it - start);
-        v_.password_ = string_view(
-            it0, it - it0);
-    }
+    constexpr auto cs_mask =
+        unreserved_char_mask +
+        sub_delims_char_mask +
+        colon_char_mask;
+
+    bnf::sequence<
+        pct_encoded<cs_nc_mask>,
+        bnf::zero_or_one<bnf::literal<':'>>,
+        bnf::zero_or_one<pct_encoded<cs_mask>>> p;
+    auto it = p.parse(
+        start, end, ec);
+    if(ec)
+        return start;
+
+    v_.userinfo_ = string_view(start, it - start);
+    v_.user_ = get<0>(p)->encoded_str();
+    v_.password_ = get<2>(p)->value_or(
+        pct_encoded_base::value_type()).encoded_str();
     return it;
 }
 

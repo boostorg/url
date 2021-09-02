@@ -15,7 +15,6 @@
 #include <boost/url/string.hpp>
 #include <boost/url/bnf/algorithm.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/pct_encoded.hpp>
 
 namespace boost {
 namespace urls {
@@ -68,7 +67,7 @@ public:
                 break;
             }
             it = bnf::consume<
-                pct_encoded>(
+                pct_encoded0>(
                     it, end, ec);
             if(ec)
                 return start;

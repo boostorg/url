@@ -23,6 +23,8 @@ template<char...Cn>
 class literal
 {
 public:
+    using value_type = string_view;
+
     string_view const&
     operator*() const noexcept
     {

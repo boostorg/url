@@ -57,7 +57,7 @@ parse(
             break;
         }
         it = bnf::consume<
-            pct_encoded>(it, end, ec);
+            pct_encoded0>(it, end, ec);
         if(ec)
             return start;
         break;

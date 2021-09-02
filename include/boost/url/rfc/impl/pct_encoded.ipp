@@ -20,7 +20,7 @@ namespace urls {
 namespace rfc {
 
 char const*
-pct_encoded::
+pct_encoded0::
 parse(
     char const* const start,
     char const* const end,
