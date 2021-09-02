@@ -28,6 +28,7 @@ public:
         string_view s2,
         string_view s3)
     {
+        using urls::detail::throw_system_error;
         userinfo p;
         error_code ec;
         auto const end =
@@ -37,7 +38,7 @@ public:
         if(! ec && it != end)
             ec = error::syntax;
         if(ec)
-            detail::throw_system_error(ec,
+            throw_system_error(ec,
                 BOOST_CURRENT_LOCATION);
         BOOST_TEST(p->encoded_userinfo() == s1);
         BOOST_TEST(p->user() == s2);

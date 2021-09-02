@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/detail/char_type.hpp>
+#include <boost/url/rfc/pct_encoding.hpp>
 
 namespace boost {
 namespace urls {
@@ -66,8 +66,8 @@ public:
         user(
             Allocator const& a = {}) const
         {
-            using urls::detail::decode;
-            return decode(user_, a);
+            return pct_decode_unchecked(
+                user_, a);
         }
 
         template<
@@ -77,8 +77,8 @@ public:
         password(
             Allocator const& a = {}) const
         {
-            using urls::detail::decode;
-            return decode(password_, a);
+            return pct_decode_unchecked(
+                password_, a);
         }
     };
 
@@ -102,9 +102,6 @@ public:
         error_code& ec);
 
 private:
-    class uchar;
-    class uchar_nc;
-
     value_type v_;
 };
 
