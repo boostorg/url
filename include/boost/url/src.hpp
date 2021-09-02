@@ -33,7 +33,8 @@ in a translation unit of the program.
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_view.ipp>
 
-#include <boost/url/rfc/impl/ip_v4address.ipp>
+#include <boost/url/rfc/impl/ipv4_address.ipp>
+#include <boost/url/rfc/impl/ipv6_address.ipp>
 #include <boost/url/rfc/impl/origin_form.ipp>
 #include <boost/url/rfc/impl/path_abempty.ipp>
 #include <boost/url/rfc/impl/path_absolute.ipp>

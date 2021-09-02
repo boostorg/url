@@ -31,19 +31,21 @@ class sequence
     std::array<
         string_view,
         sizeof...(Bn)> v_;
-    string_view s_;
 
 public:
-    string_view const&
+    using value_type =
+        urls::detail::tuple<Bn...>;
+
+    value_type const&
     operator*() const noexcept
     {
-        return s_;
+        return t_;
     }
 
-    string_view const*
+    value_type const*
     operator->() const noexcept
     {
-        return &s_;
+        return &t_;
     }
 
     /** Return the matching string for the Ith element

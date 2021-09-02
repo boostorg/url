@@ -31,12 +31,29 @@ namespace rfc {
 class pchar
 {
 public:
+    using value_type = string_view;
+
+    value_type const&
+    operator*() const noexcept
+    {
+        return s_;
+    }
+
+    value_type const*
+    operator->() const noexcept
+    {
+        return &s_;
+    }
+
     BOOST_URL_DECL
     char const*
     parse(
         char const* const start,
         char const* const end,
         error_code& ec);
+
+private:
+    string_view s_;
 };
 
 } // rfc

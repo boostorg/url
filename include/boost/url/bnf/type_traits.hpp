@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/type_traits/make_void.hpp>
+#include <boost/type_traits/remove_cv.hpp>
 #include <type_traits>
 
 namespace boost {

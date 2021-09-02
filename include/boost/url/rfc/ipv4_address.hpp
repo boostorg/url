@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IP_V4ADDRESS_HPP
-#define BOOST_URL_RFC_IP_V4ADDRESS_HPP
+#ifndef BOOST_URL_RFC_IPV4_ADDRESS_HPP
+#define BOOST_URL_RFC_IPV4_ADDRESS_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -35,7 +35,7 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
 */
-class ip_v4address
+class ipv4_address
 {
 public:
     using value_type =

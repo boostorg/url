@@ -30,9 +30,7 @@ class zero_or_one
 {
 public:
     using value_type = optional<
-        typename remove_cv<decltype(std
-            ::declval<Element>(
-                ).operator*())>::type>;
+        typename Element::value_type>;
 
     value_type const&
     operator*() const noexcept

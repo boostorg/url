@@ -29,7 +29,8 @@
 #include <boost/url/bnf/sequence.hpp>
 #include <boost/url/bnf/type_traits.hpp>
 
-#include <boost/url/rfc/ip_v4address.hpp>
+#include <boost/url/rfc/ipv4_address.hpp>
+#include <boost/url/rfc/ipv6_address.hpp>
 #include <boost/url/rfc/origin_form.hpp>
 #include <boost/url/rfc/path_abempty.hpp>
 #include <boost/url/rfc/path_absolute.hpp>

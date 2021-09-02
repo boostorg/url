@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/rfc/ip_v4address.hpp>
+#include <boost/url/rfc/ipv4_address.hpp>
 
 #include "test_suite.hpp"
 #include "test_bnf.hpp"
@@ -24,7 +24,7 @@ public:
     check(string_view s, std::uint32_t v)
     {
         error_code ec;
-        ip_v4address p;
+        ipv4_address p;
         auto const end =
             s.data() + s.size();
         auto it = p.parse(
@@ -48,19 +48,19 @@ public:
     void
     run()
     {
-        bad <ip_v4address>("0");
-        bad <ip_v4address>("0.");
-        bad <ip_v4address>("0.0");
-        bad <ip_v4address>("0.0.");
-        bad <ip_v4address>("0.0.0");
-        bad <ip_v4address>("0.0.0.");
-        bad <ip_v4address>("0.0.0.256");
-        bad <ip_v4address>("1.2.3.4.");
-        bad <ip_v4address>("1.2.3.4x");
-        bad <ip_v4address>("1.2.3.300");
+        bad <ipv4_address>("0");
+        bad <ipv4_address>("0.");
+        bad <ipv4_address>("0.0");
+        bad <ipv4_address>("0.0.");
+        bad <ipv4_address>("0.0.0");
+        bad <ipv4_address>("0.0.0.");
+        bad <ipv4_address>("0.0.0.256");
+        bad <ipv4_address>("1.2.3.4.");
+        bad <ipv4_address>("1.2.3.4x");
+        bad <ipv4_address>("1.2.3.300");
 
-        good<ip_v4address>("0.0.0.0");
-        good<ip_v4address>("1.2.3.4");
+        good<ipv4_address>("0.0.0.0");
+        good<ipv4_address>("1.2.3.4");
 
         check("0.0.0.0", 0x00000000);
         check("1.2.3.4", 0x01020304);
@@ -71,7 +71,7 @@ public:
 
 TEST_SUITE(
     ip_v4address_test,
-    "boost.url.ip_v4address");
+    "boost.url.ipv4_address");
 
 } // rfc
 } // urls

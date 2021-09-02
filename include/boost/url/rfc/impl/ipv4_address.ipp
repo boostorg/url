@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_RFC_IMPL_IP_V4ADDRESS_IPP
 #define BOOST_URL_RFC_IMPL_IP_V4ADDRESS_IPP
 
-#include <boost/url/rfc/ip_v4address.hpp>
+#include <boost/url/rfc/ipv4_address.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/char_sets.hpp>
 #include <boost/url/bnf/literal.hpp>
@@ -20,7 +20,7 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-class ip_v4address::dec_octet
+class ipv4_address::dec_octet
 {
 public:
     std::uint8_t const*
@@ -115,7 +115,7 @@ private:
 };
 
 char const*
-ip_v4address::
+ipv4_address::
 parse(
     char const* const start,
     char const* const end,

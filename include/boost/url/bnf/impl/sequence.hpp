@@ -86,8 +86,6 @@ parse(
             std::size_t, 0>{}, t_);
     if(ec)
         return start;
-    s_ = string_view(
-        start, it - start);
     return it;
 }
 

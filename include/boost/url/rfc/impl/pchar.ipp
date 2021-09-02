@@ -29,31 +29,41 @@ parse(
     error_code& ec)
 {
     auto it = start;
-    if(it == end)
+    for(;;)
     {
-        ec = error::need_more;
-        return start;
-    }
-    if(bnf::is_unreserved(*it))
-    {
-        ++it;
-        return it;
-    }
-    if(bnf::is_sub_delims(*it))
-    {
-        ++it;
-        return it;
-    }
-    switch(*it)
-    {
-    case ':': case '@':
-        ++it;
-        return it;
-    default:
+        if(it == end)
+        {
+            ec = error::need_more;
+            return start;
+        }
+        if(bnf::is_unreserved(*it))
+        {
+            ++it;
+            break;
+        }
+        if(bnf::is_sub_delims(*it))
+        {
+            ++it;
+            break;
+        }
+        if(*it == ':')
+        {
+            ++it;
+            break;
+        }
+        if(*it == '@')
+        {
+            ++it;
+            break;
+        }
+        it = bnf::consume<
+            pct_encoded>(it, end, ec);
+        if(ec)
+            return start;
         break;
     }
-    it = bnf::consume<
-        pct_encoded>(it, end, ec);
+    s_ = string_view(
+        start, it - start);
     return it;
 }
 

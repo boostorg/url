@@ -24,6 +24,20 @@ namespace rfc {
 class userinfo::uchar
 {
 public:
+    using value_type = string_view;
+
+    value_type const&
+    operator*() const noexcept
+    {
+        return s_;
+    }
+
+    value_type const*
+    operator->() const noexcept
+    {
+        return &s_;
+    }
+
     char const*
     parse(
         char const* const start,
@@ -31,35 +45,60 @@ public:
         error_code& ec) noexcept
     {
         auto it = start;
-        if(it == end)
+        for(;;)
         {
-            ec = {};
-            return start;
+            if(it == end)
+            {
+                ec = error::need_more;
+                return start;
+            }
+            if(bnf::is_unreserved(*it))
+            {
+                ++it;
+                break;
+            }
+            if(bnf::is_sub_delims(*it))
+            {
+                ++it;
+                break;
+            }
+            if(*it == ':')
+            {
+                ++it;
+                break;
+            }
+            it = bnf::consume<pct_encoded>(
+                it, end, ec);
+            if(ec)
+                return start;
+            break;
         }
-        if(bnf::is_unreserved(*it))
-        {
-            ++it;
-            return it;
-        }
-        if(bnf::is_sub_delims(*it))
-        {
-            ++it;
-            return it;
-        }
-        if(*it == ':')
-        {
-            ++it;
-            return it;
-        }
-        it = bnf::consume<pct_encoded>(
-            it, end, ec);
+        s_ = string_view(
+            start, it - start);
         return it;
     }
+
+private:
+    string_view s_;
 };
 
 class userinfo::uchar_nc
 {
 public:
+    using value_type = string_view;
+
+    value_type const&
+    operator*() const noexcept
+    {
+        return s_;
+    }
+
+    value_type const*
+    operator->() const noexcept
+    {
+        return &s_;
+    }
+
     char const*
     parse(
         char const* const start,
@@ -67,25 +106,36 @@ public:
         error_code& ec) noexcept
     {
         auto it = start;
-        if(it == end)
+        for(;;)
         {
-            ec = {};
-            return start;
+            if(it == end)
+            {
+                ec = error::need_more;
+                return start;
+            }
+            if(bnf::is_unreserved(*it))
+            {
+                ++it;
+                break;
+            }
+            if(bnf::is_sub_delims(*it))
+            {
+                ++it;
+                break;
+            }
+            it = bnf::consume<pct_encoded>(
+                it, end, ec);
+            if(ec)
+                return start;
+            break;
         }
-        if(bnf::is_unreserved(*it))
-        {
-            ++it;
-            return it;
-        }
-        if(bnf::is_sub_delims(*it))
-        {
-            ++it;
-            return it;
-        }
-        it = bnf::consume<pct_encoded>(
-            it, end, ec);
+        s_ = string_view(
+            start, it - start);
         return it;
     }
+
+private:
+    string_view s_;
 };
 
 char const*

@@ -23,12 +23,44 @@ template<
     std::size_t M>
 char const*
 repeat<Element, N, M>::
+parse(
+    char const* start,
+    char const* end,
+    error_code& ec)
+{
+    auto it = begin(
+        start, end, ec);
+    if(ec == error::end)
+    {
+        ec = {};
+        return start;
+    }
+    for(;;)
+    {
+        it = increment(
+            it, end, ec);
+        if(ec == error::end)
+            break;
+        if(ec)
+            return start;
+    }
+    ec = {};
+    return it;
+}
+
+template<
+    class Element,
+    std::size_t N,
+    std::size_t M>
+char const*
+repeat<Element, N, M>::
 begin(
     char const* start,
     char const* end,
     error_code& ec)
 {
     n_ = 0;
+    v_.clear();
     return increment(
         start, end, ec);
 }
@@ -57,9 +89,15 @@ increment(
     auto it = e_.parse(
         start, end, ec);
     if(ec == error::need_more)
-        return it;
+        return start;
     if(! ec)
     {
+        if(n_ < v_.capacity())
+        {
+            BOOST_ASSERT(
+                v_.size() == n_);
+            v_.push_back(*e_);
+        }
         ++n_;
         if(n_ <= M)
             return it;
@@ -71,11 +109,11 @@ increment(
     {
         // treat as end
         ec = error::end;
-        return it;
+        return start;
     }
     // too few elements
     ec = error::syntax;
-    return it;
+    return start;
 }
 
 } // bnf

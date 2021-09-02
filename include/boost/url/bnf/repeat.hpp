@@ -13,7 +13,9 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/type_traits.hpp>
+#include <boost/container/static_vector.hpp>
 #include <boost/static_assert.hpp>
+#include <array>
 #include <cstddef>
 
 namespace boost {
@@ -49,28 +51,29 @@ template<
     std::size_t M = std::size_t(-1)>
 class repeat
 {
-    BOOST_STATIC_ASSERT(M > 0);
-    BOOST_STATIC_ASSERT(M >= N);
-    //BOOST_STATIC_ASSERT(
-    //  is_element<Element>::value);
-
-    Element e_;
-    std::size_t n_;
-
 public:
-#if 0
-    decltype(e_.operator*())
+    using value_type =
+        boost::container::static_vector<
+            typename Element::value_type,
+                M < 20 ? M : 0>;
+
+    value_type const&
     operator*() const noexcept
     {
-        return *e_;
+        return v_;
     }
 
-    decltype(e_.operator->())
+    value_type const*
     operator->() const noexcept
     {
-        return e_.operator->();
+        return &v_;
     }
-#endif
+
+    char const*
+    parse(
+        char const* start,
+        char const* end,
+        error_code& ec);
 
     char const*
     begin(
@@ -83,6 +86,16 @@ public:
         char const* start,
         char const* end,
         error_code& ec);
+
+private:
+    BOOST_STATIC_ASSERT(M > 0);
+    BOOST_STATIC_ASSERT(M >= N);
+    //BOOST_STATIC_ASSERT(
+    //  is_element<Element>::value);
+
+    Element e_;
+    std::size_t n_;
+    value_type v_;
 };
 
 //------------------------------------------------
