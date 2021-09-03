@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/detail/tuple.hpp>
+#include <boost/url/bnf/tuple.hpp>
 #include <boost/assert.hpp>
 #include <array>
 
@@ -27,14 +27,13 @@ template<
     class... Bn>
 class sequence
 {
-    urls::detail::tuple<Bn...> t_;
+    tuple<Bn...> t_;
     std::array<
         string_view,
         sizeof...(Bn)> v_;
 
 public:
-    using value_type =
-        urls::detail::tuple<Bn...>;
+    using value_type = tuple<Bn...>;
 
     value_type const&
     operator*() const noexcept
@@ -71,7 +70,7 @@ public:
     friend
     auto
     get(sequence<Bn...>& e) ->
-        urls::detail::tuple_element<
+        tuple_element<
             I, sequence<Bn...>>&;
 
     /** Return the Ith element of the sequence `e`
@@ -81,7 +80,7 @@ public:
     friend
     auto
     get(sequence<Bn...> const& e) ->
-        urls::detail::tuple_element<
+        tuple_element<
             I, sequence<Bn...>> const&;
 };
 

@@ -23,9 +23,11 @@
 #include <boost/url/bnf/char_set.hpp>
 #include <boost/url/bnf/element.hpp>
 #include <boost/url/bnf/literal.hpp>
+#include <boost/url/bnf/parse.hpp>
 #include <boost/url/bnf/range.hpp>
 #include <boost/url/bnf/repeat.hpp>
 #include <boost/url/bnf/sequence.hpp>
+#include <boost/url/bnf/tuple.hpp>
 #include <boost/url/bnf/type_traits.hpp>
 
 #include <boost/url/rfc/char_sets.hpp>

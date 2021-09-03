@@ -70,6 +70,21 @@ parse(
     return it;
 }
 
+template<char...Cn>
+char const*
+parse(
+    char const* const start,
+    char const* const end,
+    error_code& ec,
+    literal<Cn...> const&) noexcept
+{
+    auto it = detail::parse_literal<
+        Cn...>(start, end, ec);
+    if(ec)
+        return start;
+    return it;
+}
+
 } // bnf
 } // urls
 } // boost

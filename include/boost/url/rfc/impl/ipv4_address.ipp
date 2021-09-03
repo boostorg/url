@@ -13,6 +13,7 @@
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/literal.hpp>
+#include <boost/url/bnf/parse.hpp>
 #include <boost/url/bnf/sequence.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 
@@ -20,26 +21,19 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-class ipv4_address::dec_octet
+namespace detail {
+
+struct dec_octet
 {
-public:
-    std::uint8_t const*
-    operator->() const noexcept
-    {
-        return &v_;
-    }
+    std::uint8_t value;
 
-    std::uint8_t
-    operator*() const noexcept
-    {
-        return v_;
-    }
-
+    friend
     char const*
     parse(
         char const* const start,
         char const* const end,
-        error_code& ec)
+        error_code& ec,
+        dec_octet& t)
     {
         if(start == end)
         {
@@ -56,14 +50,14 @@ public:
         ++it;
         if(it == end)
         {
-            v_ = static_cast<
+            t.value = static_cast<
                 std::uint8_t>(v);
             ec = {};
             return it;
         }
         if(! is_digit(*it))
         {
-            v_ = static_cast<
+            t.value = static_cast<
                 std::uint8_t>(v);
             ec = {};
             return it;
@@ -78,14 +72,14 @@ public:
         ++it;
         if(it == end)
         {
-            v_ = static_cast<
+            t.value = static_cast<
                 std::uint8_t>(v);
             ec = {};
             return it;
         }
         if(! is_digit(*it))
         {
-            v_ = static_cast<
+            t.value = static_cast<
                 std::uint8_t>(v);
             ec = {};
             return it;
@@ -104,37 +98,37 @@ public:
             return start;
         }
         ++it;
-        v_ = static_cast<
+        t.value = static_cast<
             std::uint8_t>(v);
         ec = {};
         return it;
     }
-
-private:
-    std::uint8_t v_;
 };
 
+} // detail
+
 char const*
-ipv4_address::
 parse(
     char const* const start,
     char const* const end,
-    error_code& ec)
+    error_code& ec,
+    ipv4_address& t)
 {
     using namespace bnf;
-    sequence<
-        dec_octet, literal<'.'>,
-        dec_octet, literal<'.'>,
-        dec_octet, literal<'.'>,
-        dec_octet> p;
-    auto it = p.parse(
-        start, end, ec);
+    using bnf::parse;
+    detail::dec_octet ip[4];
+    auto it = parse(
+        start, end, ec,
+        ip[0], '.',
+        ip[1], '.',
+        ip[2], '.',
+        ip[3]);
     if(ec)
         return start;
-    v_[0] = *get<0>(p);
-    v_[1] = *get<2>(p);
-    v_[2] = *get<4>(p);
-    v_[3] = *get<6>(p);
+    t.octets[0] = ip[0].value;
+    t.octets[1] = ip[1].value;
+    t.octets[2] = ip[2].value;
+    t.octets[3] = ip[3].value;
     return it;
 }
 

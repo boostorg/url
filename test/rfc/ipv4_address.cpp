@@ -24,43 +24,43 @@ public:
     check(string_view s, std::uint32_t v)
     {
         error_code ec;
-        ipv4_address p;
+        ipv4_address t;
         auto const end =
             s.data() + s.size();
-        auto it = p.parse(
-            s.data(), end, ec);
+        auto it = parse(
+            s.data(), end, ec, t);
         if(! BOOST_TEST(! ec))
             return;
         if(! BOOST_TEST(it == end))
             return;
         std::uint32_t v1 =
             (static_cast<std::uint32_t>(
-                (*p)[0]) << 24) |
+                t.octets[0]) << 24) |
             (static_cast<std::uint32_t>(
-                (*p)[1]) << 16) |
+                t.octets[1]) << 16) |
             (static_cast<std::uint32_t>(
-                (*p)[2]) <<  8) |
+                t.octets[2]) <<  8) |
             (static_cast<std::uint32_t>(
-                (*p)[3])      );
+                t.octets[3])      );
         BOOST_TEST(v1 == v);
     }
 
     void
     run()
     {
-        bad <ipv4_address>("0");
-        bad <ipv4_address>("0.");
-        bad <ipv4_address>("0.0");
-        bad <ipv4_address>("0.0.");
-        bad <ipv4_address>("0.0.0");
-        bad <ipv4_address>("0.0.0.");
-        bad <ipv4_address>("0.0.0.256");
-        bad <ipv4_address>("1.2.3.4.");
-        bad <ipv4_address>("1.2.3.4x");
-        bad <ipv4_address>("1.2.3.300");
+        bad_ <ipv4_address>("0");
+        bad_ <ipv4_address>("0.");
+        bad_ <ipv4_address>("0.0");
+        bad_ <ipv4_address>("0.0.");
+        bad_ <ipv4_address>("0.0.0");
+        bad_ <ipv4_address>("0.0.0.");
+        bad_ <ipv4_address>("0.0.0.256");
+        bad_ <ipv4_address>("1.2.3.4.");
+        bad_ <ipv4_address>("1.2.3.4x");
+        bad_ <ipv4_address>("1.2.3.300");
 
-        good<ipv4_address>("0.0.0.0");
-        good<ipv4_address>("1.2.3.4");
+        good_<ipv4_address>("0.0.0.0");
+        good_<ipv4_address>("1.2.3.4");
 
         check("0.0.0.0", 0x00000000);
         check("1.2.3.4", 0x01020304);

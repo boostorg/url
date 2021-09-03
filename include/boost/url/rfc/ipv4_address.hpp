@@ -35,35 +35,21 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
 */
-class ipv4_address
+struct ipv4_address
 {
-public:
     using value_type =
         std::array<std::uint8_t, 4>;
 
-    value_type const&
-    operator*() const noexcept
-    {
-        return v_;
-    }
-
-    value_type const*
-    operator->() const noexcept
-    {
-        return &v_;
-    }
+    value_type octets;
 
     BOOST_URL_DECL
+    friend
     char const*
     parse(
         char const* const start,
         char const* const end,
-        error_code& ec);
-
-private:
-    class dec_octet;
-
-    value_type v_;
+        error_code& ec,
+        ipv4_address& t);
 };
 
 } // rfc

@@ -42,39 +42,20 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
 */
-class ipv6_address
+struct ipv6_address
 {
-public:
-    struct value_type
-    {
-        std::array<
-            std::uint8_t, 16> octets;
-        bool trailing_ipv4;
-    };
-
-    value_type const&
-    operator*() const noexcept
-    {
-        return v_;
-    }
-
-    value_type const*
-    operator->() const noexcept
-    {
-        return &v_;
-    }
+    std::array<
+        std::uint8_t, 16> octets;
+    bool trailing_ipv4;
 
     BOOST_URL_DECL
+    friend
     char const*
     parse(
         char const* const start,
         char const* const end,
-        error_code& ec);
-
-private:
-    class h16;
-
-    value_type v_;
+        error_code& ec,
+        ipv6_address& t);
 };
 
 } // rfc

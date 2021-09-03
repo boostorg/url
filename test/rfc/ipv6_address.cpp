@@ -35,28 +35,28 @@ public:
              static_cast<std::uint64_t>(p[7]);
     }
 
-    ipv6_address::value_type
+    ipv6_address
     check(
         string_view s,
         std::uint64_t u0,
         std::uint64_t u1)
     {
         error_code ec;
-        ipv6_address p;
-        auto it = p.parse(
-            s.data(), s.data() +
-                s.size(), ec);
+        ipv6_address t;
+        auto const end =
+            s.data() + s.size();
+        auto it = parse(
+            s.data(), end, ec, t);
         if( ! BOOST_TEST(
             ! ec.failed()))
             return {};
-        if(! BOOST_TEST(it ==
-            s.data() + s.size()))
+        if(! BOOST_TEST(it == end))
             return {};
         BOOST_TEST(get_u64(
-            &p->octets[0]) == u0);
+            &t.octets[0]) == u0);
         BOOST_TEST(get_u64(
-            &p->octets[8]) == u1);
-        return *p;
+            &t.octets[8]) == u1);
+        return t;
     }
 
     void
@@ -65,7 +65,7 @@ public:
         auto const bad =
             [](string_view s)
             {
-                urls::bad<ipv6_address>(s);
+                bad_<ipv6_address>(s);
             };
 
         check("0:0:0:0:0:0:0:0", 0, 0);

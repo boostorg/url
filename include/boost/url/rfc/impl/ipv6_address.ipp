@@ -12,6 +12,7 @@
 
 #include <boost/url/rfc/ipv6_address.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/hexdig.hpp>
 #include <boost/url/rfc/ipv4_address.hpp>
@@ -22,25 +23,14 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-//------------------------------------------------
+namespace detail {
 
-class ipv6_address::h16
+struct h16
 {
-public:
     using value_type = std::array<
         std::uint8_t, 2>;
 
-    value_type const&
-    operator*() const noexcept
-    {
-        return v_;
-    }
-
-    value_type const*
-    operator->() const noexcept
-    {
-        return &v_;
-    }
+    value_type octets;
 
     // return `true` if the hex
     // word could be 0..255 if
@@ -50,9 +40,9 @@ public:
     {
         unsigned short word =
             static_cast<unsigned short>(
-                v_[0]) * 256 +
+                octets[0]) * 256 +
             static_cast<unsigned short>(
-                v_[1]);
+                octets[1]);
         if(word > 0x255)
             return false;
         if(((word >>  4) & 0xf) > 9)
@@ -62,11 +52,13 @@ public:
         return true;
     }
 
+    friend
     char const*
     parse(
         char const* const start,
         char const* const end,
-        error_code& ec)
+        error_code& ec,
+        h16& t)
     {
         std::uint16_t v;
         auto it = start;
@@ -109,36 +101,35 @@ public:
             break;
         }
         ec = {};
-        v_[0] = static_cast<
+        t.octets[0] = static_cast<
             std::uint8_t>(
                 v / 256);
-        v_[1] = static_cast<
+        t.octets[1] = static_cast<
             std::uint8_t>(
                 v % 256);
         return it;
     }
-
-private:
-    value_type v_;
 };
+
+} // detail
 
 //------------------------------------------------
 
 char const*
-ipv6_address::
 parse(
     char const* const start,
     char const* const end,
-    error_code& ec)
+    error_code& ec,
+    ipv6_address& t)
 {
-    h16 hp;
-    int  n = 8;     // words needed
-    int  b = -1;    // value of n
+    detail::h16 w;
+    int n = 8;      // words needed
+    int b = -1;     // value of n
                     // when '::' seen
     bool c = false; // need colon
     auto prev = start;
     auto it = start;
-    v_.trailing_ipv4 = false;
+    t.trailing_ipv4 = false;
     for(;;)
     {
         if(it == end)
@@ -180,14 +171,14 @@ parse(
             if(c)
             {
                 prev = it;
-                it = hp.parse(
-                    it, end, ec);
+                it = parse(
+                    it, end, ec, w);
                 if(ec)
                     return start;
-                v_.octets[2*(8-n)+0] =
-                    (*hp)[0];
-                v_.octets[2*(8-n)+1] =
-                    (*hp)[1];
+                t.octets[2*(8-n)+0] =
+                    w.octets[0];
+                t.octets[2*(8-n)+1] =
+                    w.octets[1];
                 --n;
                 if(n == 0)
                     break;
@@ -205,23 +196,28 @@ parse(
                 ec = error::syntax;
                 return start;
             }
-            if(! hp.is_octet())
+            if(! w.is_octet())
             {
                 // invalid octet
                 ec = error::syntax;
             }
             // rewind the h16 and
             // parse it as ipv4
-            ipv4_address p;
-            it = p.parse(
-                prev, end, ec);
+            ipv4_address v4;
+            using bnf::parse;
+            it = parse(
+                prev, end, ec, v4);
             if(ec)
                 return start;
-            v_.octets[2*(7-n)+0] = (*p)[0];
-            v_.octets[2*(7-n)+1] = (*p)[1];
-            v_.octets[2*(7-n)+2] = (*p)[2];
-            v_.octets[2*(7-n)+3] = (*p)[3];
-            v_.trailing_ipv4 = true;
+            t.octets[2*(7-n)+0] =
+                v4.octets[0];
+            t.octets[2*(7-n)+1] =
+                v4.octets[1];
+            t.octets[2*(7-n)+2] =
+                v4.octets[2];
+            t.octets[2*(7-n)+3] =
+                v4.octets[3];
+            t.trailing_ipv4 = true;
             --n;
             break;
         }
@@ -234,14 +230,13 @@ parse(
         if(! c)
         {
             prev = it;
-            it = hp.parse(
-                it, end, ec);
+            it = parse(it, end, ec, w);
             if(ec)
                 return start;
-            v_.octets[2*(8-n)+0] =
-                (*hp)[0];
-            v_.octets[2*(8-n)+1] =
-                (*hp)[1];
+            t.octets[2*(8-n)+0] =
+                w.octets[0];
+            t.octets[2*(8-n)+1] =
+                w.octets[1];
             --n;
             if(n == 0)
                 break;
@@ -260,7 +255,7 @@ parse(
         auto const i =
             2 * (7 - n);
         std::memset(
-            &v_.octets[i],
+            &t.octets[i],
             0, 16 - i);
     }
     else if(b == 7)
@@ -269,11 +264,11 @@ parse(
         auto const i =
             2 * (b - n);
         std::memmove(
-            &v_.octets[16 - i],
-            &v_.octets[2],
+            &t.octets[16 - i],
+            &t.octets[2],
             i);
         std::memset(
-            &v_.octets[0],
+            &t.octets[0],
             0, 16 - i);
     }
     else
@@ -284,11 +279,11 @@ parse(
         auto const i1 =
             2 * (b - n);
         std::memmove(
-            &v_.octets[16 - i1],
-            &v_.octets[i0 + 2],
+            &t.octets[16 - i1],
+            &t.octets[i0 + 2],
             i1);
         std::memset(
-            &v_.octets[i0],
+            &t.octets[i0],
             0, 16 - (i0 + i1));
     }
     return it;

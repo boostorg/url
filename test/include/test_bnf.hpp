@@ -11,6 +11,7 @@
 #define BOOST_URL_TEST_TEST_BNF_HPP
 
 #include <boost/url/bnf/algorithm.hpp>
+#include <boost/url/bnf/parse.hpp>
 #include <boost/url/string.hpp>
 
 #include "test_suite.hpp"
@@ -35,6 +36,25 @@ good(string_view s)
     BOOST_TEST_NO_THROW(
         bnf::validate<T>(s));
     BOOST_TEST(bnf::is_valid<T>(s));
+}
+
+template<class T>
+void
+bad_(string_view s)
+{
+    BOOST_TEST_THROWS(
+        bnf::validate_<T>(s),
+        std::exception);
+    BOOST_TEST(! bnf::is_valid_<T>(s));
+}
+
+template<class T>
+void
+good_(string_view s)
+{
+    BOOST_TEST_NO_THROW(
+        bnf::validate_<T>(s));
+    BOOST_TEST(bnf::is_valid_<T>(s));
 }
 
 } // urls

@@ -43,6 +43,15 @@ public:
         char const* const end,
         error_code& ec) noexcept;
 
+    template<char...Cn>
+    friend
+    char const*
+    parse(
+        char const* const start,
+        char const* const end,
+        error_code& ec,
+        literal<Cn...> const&) noexcept;
+
 private:
     string_view s_;
 };
