@@ -222,6 +222,13 @@ private:
     value_type v_;
 };
 
+#if 0
+struct segments
+{
+
+};
+#endif
+
 } // rfc
 } // urls
 } // boost

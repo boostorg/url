@@ -22,34 +22,30 @@ namespace rfc {
 
 /** Base type for a percent-encoded BNF element
 */
-class pct_encoded_base
+class pct_encoded_value
 {
+    template<std::uint8_t>
+    friend class pct_encoded;
+
+    string_view s_;
+    std::size_t n_ = 0;
+
 public:
-    class value_type
+    /** Return the percent-encoded string
+    */
+    string_view
+    str() const noexcept
     {
-        template<std::uint8_t>
-        friend class pct_encoded;
+        return s_;
+    }
 
-        string_view s_;
-        std::size_t n_ = 0;
-
-    public:
-        /** Return the percent-encoded string
-        */
-        string_view
-        str() const noexcept
-        {
-            return s_;
-        }
-
-        /** Return the number of bytes in the decoded representation of the string
-        */
-        std::size_t
-        decoded_size() const noexcept
-        {
-            return n_;
-        }
-    };
+    /** Return the number of bytes in the decoded representation of the string
+    */
+    std::size_t
+    decoded_size() const noexcept
+    {
+        return n_;
+    }
 };
 
 /** BNF for a string of percent-encoded, reserved characters
@@ -59,18 +55,20 @@ public:
 */
 template<std::uint8_t CharMask>
 class pct_encoded
-    : public pct_encoded_base
 {
-    value_type v_;
+    pct_encoded_value v_;
 
 public:
-    value_type const&
+    using value_type =
+        pct_encoded_value;
+
+    pct_encoded_value const&
     operator*() const noexcept
     {
         return v_;
     }
 
-    value_type const*
+    pct_encoded_value const*
     operator->() const noexcept
     {
         return &v_;
@@ -82,7 +80,7 @@ public:
         char const* const end,
         error_code& ec) noexcept;
 };
-
+    
 } // rfc
 } // urls
 } // boost
