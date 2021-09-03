@@ -28,13 +28,22 @@ parse(
     authority& t)
 {
     using bnf::parse;
-    optional<bnf::tuple<
-        userinfo,
-        bnf::literal<'@'>>> uo;
+    userinfo u;
+    auto it = parse(start,
+        end, ec, u, '@');
+    bool got_userinfo;
+    if(! ec.failed())
+    {
+        got_userinfo = true;
+    }
+    else
+    {
+        got_userinfo = false;
+        ec = {};
+    }
     host h;
-    auto it = parse(
-        start, end, ec,
-        uo, h);
+    it = parse(
+        start, end, ec, h);
     if(ec)
         return start;
     return it;
