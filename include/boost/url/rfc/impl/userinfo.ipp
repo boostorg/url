@@ -25,11 +25,11 @@ namespace urls {
 namespace rfc {
 
 char const*
-userinfo::
 parse(
     char const* const start,
     char const* const end,
-    error_code& ec)
+    error_code& ec,
+    userinfo& t)
 {
     // *( unreserved / pct-encoded / sub-delims )
     constexpr auto cs_nc_mask =
@@ -42,19 +42,22 @@ parse(
         sub_delims_char_mask +
         colon_char_mask;
 
-    bnf::sequence<
-        pct_encoded<cs_nc_mask>,
-        bnf::zero_or_one<bnf::literal<':'>>,
-        bnf::zero_or_one<pct_encoded<cs_mask>>> p;
-    auto it = p.parse(
-        start, end, ec);
+    pct_encoded<cs_nc_mask> user;
+    pct_encoded<cs_mask> pass;
+    optional<
+        bnf::literal<':'>> colon;
+    auto it = parse(start, end, ec,
+        user, colon, pass);
     if(ec)
         return start;
 
-    v_.userinfo_ = string_view(start, it - start);
-    v_.user_ = get<0>(p)->str();
-    v_.password_ = get<2>(p)->value_or(
-        pct_encoded_value()).str();
+    t.str_ = string_view(
+        start, it - start);
+    t.user_ = user.value();
+    if(colon.has_value())
+        t.pass_ = pass.value();
+    else
+        t.pass_.reset();
     return it;
 }
 

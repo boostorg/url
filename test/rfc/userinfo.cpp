@@ -26,50 +26,57 @@ public:
         string_view s,
         string_view s1,
         string_view s2,
-        string_view s3)
+        optional<
+            string_view> s3)
     {
         using urls::detail::throw_system_error;
         userinfo p;
         error_code ec;
         auto const end =
             s.data() + s.size();
-        auto it = p.parse(
-            s.data(), end, ec);
+        auto it = parse(
+            s.data(), end, ec, p);
         if(! ec && it != end)
             ec = error::syntax;
         if(ec)
             throw_system_error(ec,
                 BOOST_CURRENT_LOCATION);
-        BOOST_TEST(p->encoded_userinfo() == s1);
-        BOOST_TEST(p->user() == s2);
-        BOOST_TEST(p->password() == s3);
+        BOOST_TEST(p.str() == s1);
+        BOOST_TEST(p.user().str() == s2);
+        if(s3.has_value())
+            BOOST_TEST(
+                p.password().has_value() &&
+                p.password()->str() == *s3);
+        else
+            BOOST_TEST(! p.password().has_value());
     }
 
     void
     run()
     {
-        bad <userinfo>("@");
+        bad_ <userinfo>("@");
 
-        good<userinfo>("");
-        good<userinfo>("x");
-        good<userinfo>("xy");
-        good<userinfo>("x:");
-        good<userinfo>("x:y");
-        good<userinfo>("x:y:");
-        good<userinfo>("x:y:z");
-        good<userinfo>("%41");
+        good_<userinfo>("");
+        good_<userinfo>("x");
+        good_<userinfo>("xy");
+        good_<userinfo>("x:");
+        good_<userinfo>("x:y");
+        good_<userinfo>("x:y:");
+        good_<userinfo>("x:y:z");
+        good_<userinfo>("%41");
 
-        check("x", "x", "x", "");
-        check("x:", "x:", "x", "");
-        check(":", ":", "", "");
-        check("::", "::", "", ":");
-        check(":x", ":x", "", "x");
-        check("x:y", "x:y", "x", "y");
-        check("xy:zz:", "xy:zz:", "xy", "zz:");
+        using T = optional<string_view>;
+        check("x",      "x",      "x",  boost::none);
+        check("x:",     "x:",     "x",  T(""));
+        check(":",      ":",      "",   T(""));
+        check("::",     "::",     "",   T(":"));
+        check(":x",     ":x",     "",   T("x"));
+        check("x:y",    "x:y",    "x",  T("y"));
+        check("xy:zz:", "xy:zz:", "xy", T("zz:"));
         check(
             "%41%42:%43%44",
             "%41%42:%43%44",
-            "AB", "CD");
+            "%41%42", T("%43%44"));
     }
 };
 

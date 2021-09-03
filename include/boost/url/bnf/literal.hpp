@@ -26,6 +26,12 @@ public:
     using value_type = string_view;
 
     string_view const&
+    match() const noexcept
+    {
+        return s_;
+    }
+
+    string_view const&
     operator*() const noexcept
     {
         return s_;

@@ -13,7 +13,8 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/rfc/pct_encoding.hpp>
+#include <boost/url/rfc/pct_encoded.hpp>
+#include <boost/optional.hpp>
 
 namespace boost {
 namespace urls {
@@ -23,7 +24,10 @@ namespace rfc {
 
     @par BNF
     @code
-    userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
+    userinfo    = user [ ":" [ password ] ]
+
+    user        = *( unreserved / pct-encoded / sub-delims )
+    password    = *( unreserved / pct-encoded / sub-delims / ":" )
     @endcode
 
     @see
@@ -31,78 +35,39 @@ namespace rfc {
 */
 class userinfo
 {
+    string_view str_;
+    pct_encoded_value user_;
+    optional<
+        pct_encoded_value> pass_;
+
 public:
-    class value_type
+    string_view
+    str() const noexcept
     {
-        friend class userinfo;
-
-        string_view userinfo_;
-        string_view user_;
-        string_view password_;
-
-    public:
-        string_view
-        encoded_userinfo() const noexcept
-        {
-            return userinfo_;
-        }
-
-        string_view
-        encoded_user() const noexcept
-        {
-            return user_;
-        }
-
-        string_view
-        encoded_password() const noexcept
-        {
-            return password_;
-        }
-
-        template<
-            class Allocator =
-                std::allocator<char>>
-        string_type<Allocator>
-        user(
-            Allocator const& a = {}) const
-        {
-            return pct_decode_unchecked(
-                user_, a);
-        }
-
-        template<
-            class Allocator =
-                std::allocator<char>>
-        string_type<Allocator>
-        password(
-            Allocator const& a = {}) const
-        {
-            return pct_decode_unchecked(
-                password_, a);
-        }
-    };
-
-    value_type const&
-    operator*() const noexcept
-    {
-        return v_;
+        return str_;
     }
 
-    value_type const*
-    operator->() const noexcept
+    pct_encoded_value const&
+    user() const noexcept
     {
-        return &v_;
+        return user_;
+    }
+
+    optional<
+        pct_encoded_value> const&
+    password() const noexcept
+    {
+        return pass_;
     }
 
     BOOST_URL_DECL
+    friend
     char const*
     parse(
         char const* const start,
         char const* const end,
-        error_code& ec);
-
-private:
-    value_type v_;
+        error_code& ec,
+        userinfo& t);
 };
 
 } // rfc
