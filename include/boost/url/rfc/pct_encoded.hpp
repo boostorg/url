@@ -62,6 +62,12 @@ public:
     using value_type =
         pct_encoded_value;
 
+    value_type const&
+    value() const noexcept
+    {
+        return v_;
+    }
+
     pct_encoded_value const&
     operator*() const noexcept
     {
@@ -79,6 +85,15 @@ public:
         char const* const start,
         char const* const end,
         error_code& ec) noexcept;
+
+    template<std::uint8_t CharMask>
+    friend
+    char const*
+    parse(
+        char const* const start,
+        char const* const end,
+        error_code& ec,
+        pct_encoded<CharMask>& t) noexcept;
 };
     
 } // rfc

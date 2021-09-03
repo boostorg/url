@@ -45,6 +45,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/ipv4_address.cpp
     rfc/ipv6_address.cpp
     rfc/origin_form.cpp
+    rfc/path.cpp
     rfc/path_abempty.cpp
     rfc/path_absolute.cpp
     rfc/path_noscheme.cpp

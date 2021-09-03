@@ -35,6 +35,7 @@
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <boost/url/rfc/ipv6_address.hpp>
 #include <boost/url/rfc/origin_form.hpp>
+#include <boost/url/rfc/path.hpp>
 #include <boost/url/rfc/path_abempty.hpp>
 #include <boost/url/rfc/path_absolute.hpp>
 #include <boost/url/rfc/path_absolute.hpp>

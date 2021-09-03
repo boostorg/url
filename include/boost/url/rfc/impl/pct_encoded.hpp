@@ -37,6 +37,17 @@ parse(
     return it;
 }
 
+template<std::uint8_t CharMask>
+char const*
+parse(
+    char const* const start,
+    char const* const end,
+    error_code& ec,
+    pct_encoded<CharMask>& t) noexcept
+{
+    return t.parse(start, end, ec);
+}
+
 } // rfc
 } // urls
 } // boost

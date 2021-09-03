@@ -38,6 +38,7 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/ipv4_address.ipp>
 #include <boost/url/rfc/impl/ipv6_address.ipp>
 #include <boost/url/rfc/impl/origin_form.ipp>
+#include <boost/url/rfc/impl/path.ipp>
 #include <boost/url/rfc/impl/path_abempty.ipp>
 #include <boost/url/rfc/impl/path_absolute.ipp>
 #include <boost/url/rfc/impl/path_noscheme.ipp>

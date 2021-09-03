@@ -31,6 +31,14 @@ namespace rfc {
 class path_abempty
 {
 public:
+    /*
+    range<segment_> const&
+    path() const noexcept
+    {
+        return r_;
+    }
+    */
+
     string_view const&
     operator*() const noexcept
     {
