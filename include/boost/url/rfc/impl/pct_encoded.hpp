@@ -11,6 +11,7 @@
 #define BOOST_URL_RFC_IMPL_PCT_ENCODED_HPP
 
 #include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/detail/pct_encoding.hpp>
 
 namespace boost {
 namespace urls {
@@ -25,12 +26,14 @@ parse(
     error_code& ec) noexcept
 {
     masked_char_set<CharMask> cs;
-    auto it = parse_pct_encoded(
-        cs, start, end, ec);
+    std::size_t needed;
+    auto it = detail::parse_pct_encoded_impl(
+        needed, cs, start, end, ec);
     if(ec)
         return start;
     v_.s_ = string_view(
         start, it - start);
+    v_.n_ = needed;
     return it;
 }
 

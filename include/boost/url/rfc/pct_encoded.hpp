@@ -31,23 +31,23 @@ public:
         friend class pct_encoded;
 
         string_view s_;
+        std::size_t n_ = 0;
 
     public:
+        /** Return the percent-encoded string
+        */
         string_view
-        encoded_str() const noexcept
+        str() const noexcept
         {
             return s_;
         }
 
-        template<
-            class Allocator =
-                std::allocator<char>>
-        string_type<Allocator>
-        str(
-            Allocator const& a = {}) const
+        /** Return the number of bytes in the decoded representation of the string
+        */
+        std::size_t
+        decoded_size() const noexcept
         {
-            return pct_decode_unchecked(
-                s_, a);
+            return n_;
         }
     };
 };

@@ -14,7 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/pct_encoding.hpp>
+#include <boost/url/rfc/pct_encoded.hpp>
 
 namespace boost {
 namespace urls {
@@ -27,17 +27,16 @@ parse(
     char const* const end,
     error_code& ec)
 {
-    masked_char_set<
+    pct_encoded<
         unreserved_char_mask +
         sub_delims_char_mask +
         colon_char_mask +
-        at_char_mask> cs;
-    auto it = parse_pct_encoded(
-        cs, start, end, ec);
+        at_char_mask> p;
+    auto it = p.parse(
+        start, end, ec);
     if(ec)
         return start;
-    v_.s_ = string_view(
-        start, it - start);
+    v_.s_ = p->str();
     return it;
 }
 
@@ -48,13 +47,13 @@ parse(
     char const* const end,
     error_code& ec)
 {
-    masked_char_set<
+    pct_encoded<
         unreserved_char_mask +
         sub_delims_char_mask +
         colon_char_mask +
-        at_char_mask> cs;
-    auto it = parse_pct_encoded(
-        cs, start, end, ec);
+        at_char_mask> p;
+    auto it = p.parse(
+        start, end, ec);
     if(ec)
         return start;
     if(it == start)
@@ -63,8 +62,7 @@ parse(
         ec = error::syntax;
         return start;
     }
-    v_.s_ = string_view(
-        start, it - start);
+    v_.s_ = p->str();
     return it;
 }
 
@@ -75,12 +73,12 @@ parse(
     char const* const end,
     error_code& ec)
 {
-    masked_char_set<
+    pct_encoded<
         unreserved_char_mask +
         sub_delims_char_mask +
-        at_char_mask> cs;
-    auto it = parse_pct_encoded(
-        cs, start, end, ec);
+        at_char_mask> p;
+    auto it = p.parse(
+        start, end, ec);
     if(ec)
         return start;
     if(it == start)
@@ -89,8 +87,7 @@ parse(
         ec = error::syntax;
         return start;
     }
-    v_.s_ = string_view(
-        start, it - start);
+    v_.s_ = p->str();
     return it;
 }
 

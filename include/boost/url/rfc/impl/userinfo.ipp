@@ -52,9 +52,9 @@ parse(
         return start;
 
     v_.userinfo_ = string_view(start, it - start);
-    v_.user_ = get<0>(p)->encoded_str();
+    v_.user_ = get<0>(p)->str();
     v_.password_ = get<2>(p)->value_or(
-        pct_encoded_base::value_type()).encoded_str();
+        pct_encoded_base::value_type()).str();
     return it;
 }
 

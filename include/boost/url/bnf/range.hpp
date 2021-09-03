@@ -57,7 +57,7 @@ public:
     */
     explicit
     range(
-        string_view s)
+        string_view s) noexcept
         : s_(s)
     {
     }
