@@ -12,6 +12,9 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/string.hpp>
+#include <boost/optional.hpp>
+#include <cstdint>
 
 namespace boost {
 namespace urls {
@@ -27,12 +30,27 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
 */
-struct ipv4_address
+class port
 {
-    using value_type =
-        std::array<std::uint8_t, 4>;
+    string_view s_;
+    optional<
+        std::uint16_t> v_;
 
-    value_type octets;
+public:
+    using number_type =
+        std::uint16_t;
+
+    string_view
+    str() const noexcept
+    {
+        return s_;
+    }
+
+    optional<number_type> const&
+    as_number() const noexcept
+    {
+        return v_;
+    }
 
     BOOST_URL_DECL
     friend
@@ -41,7 +59,7 @@ struct ipv4_address
         char const* const start,
         char const* const end,
         error_code& ec,
-        ipv4_address& t);
+        port& t);
 };
 
 } // rfc

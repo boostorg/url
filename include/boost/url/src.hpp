@@ -48,6 +48,7 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/path_noscheme.ipp>
 #include <boost/url/rfc/impl/path_rootless.ipp>
 #include <boost/url/rfc/impl/pct_encoding.ipp>
+#include <boost/url/rfc/impl/port.ipp>
 #include <boost/url/rfc/impl/scheme.ipp>
 #include <boost/url/rfc/impl/segment.ipp>
 #include <boost/url/rfc/impl/userinfo.ipp>

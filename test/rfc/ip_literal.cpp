@@ -25,7 +25,9 @@ public:
     {
         using T = ip_literal;
         bad_ <T>("::");
+        bad_ <T>("[v8]");
         good_<T>("[::]");
+        good_<T>("[v1.0]");
     }
 };
 

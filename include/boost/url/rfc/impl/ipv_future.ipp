@@ -51,6 +51,8 @@ parse(
         ec = error::syntax;
         return start;
     }
+    t.s_ = string_view(
+        start, it - start);
     return it;
 }
 

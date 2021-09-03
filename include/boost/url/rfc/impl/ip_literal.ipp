@@ -12,6 +12,7 @@
 
 #include <boost/url/rfc/host.hpp>
 #include <boost/url/bnf/parse.hpp>
+#include <boost/url/rfc/ipv_future.hpp>
 
 namespace boost {
 namespace urls {
@@ -24,6 +25,7 @@ parse(
     error_code& ec,
     ip_literal& t)
 {
+    using bnf::parse;
     if(start == end)
     {
         ec = error::need_more;
@@ -46,9 +48,8 @@ parse(
     if(*it != 'v')
     {
         // IPv6address
-        using bnf::parse;
-        it = parse(it,
-            end, ec, t.ipv6_, ']');
+        it = parse(it, end, ec,
+            t.ipv6_, ']');
         if(ec)
             return start;
         t.is_ipv6_ = true;
@@ -56,9 +57,11 @@ parse(
     }
     // IPvFuture
     ipv_future v;
-    it = parse(it, end, ec, v);
+    it = parse(
+        it, end, ec, v, ']');
     if(ec)
         return start;
+    t.s_ = v.str();
     t.is_ipv6_ = false;
     return it;
 }

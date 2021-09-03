@@ -56,6 +56,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/path_rootless.cpp
     rfc/pct_encoded.cpp
     rfc/pct_encoding.cpp
+    rfc/port.cpp
     rfc/scheme.cpp
     rfc/segment.cpp
     rfc/userinfo.cpp
