@@ -54,9 +54,12 @@ parse(
         t.is_ipv6_ = true;
         return it;
     }
-
     // IPvFuture
-    ec = error::syntax;
+    ipv_future v;
+    it = parse(it, end, ec, v);
+    if(ec)
+        return start;
+    t.is_ipv6_ = false;
     return it;
 }
 

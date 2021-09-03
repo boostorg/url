@@ -21,19 +21,21 @@
 
 #include <boost/url/bnf/algorithm.hpp>
 #include <boost/url/bnf/char_set.hpp>
-#include <boost/url/bnf/element.hpp>
 #include <boost/url/bnf/literal.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/bnf/range.hpp>
 #include <boost/url/bnf/repeat.hpp>
 #include <boost/url/bnf/sequence.hpp>
+#include <boost/url/bnf/token.hpp>
 #include <boost/url/bnf/tuple.hpp>
 #include <boost/url/bnf/type_traits.hpp>
 
+#include <boost/url/rfc/authority.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/hexdig.hpp>
 #include <boost/url/rfc/host.hpp>
 #include <boost/url/rfc/ip_literal.hpp>
+#include <boost/url/rfc/ipv_future.hpp>
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <boost/url/rfc/ipv6_address.hpp>
 #include <boost/url/rfc/origin_form.hpp>

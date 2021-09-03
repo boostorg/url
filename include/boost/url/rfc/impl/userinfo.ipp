@@ -16,7 +16,6 @@
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/bnf/literal.hpp>
 #include <boost/url/bnf/sequence.hpp>
-#include <boost/url/bnf/zero_or_one.hpp>
 #include <boost/url/rfc/pct_encoded.hpp>
 #include <boost/url/rfc/pct_encoding.hpp>
 

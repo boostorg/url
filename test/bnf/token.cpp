@@ -8,4 +8,28 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/bnf/element.hpp>
+#include <boost/url/bnf/token.hpp>
+
+#include "test_suite.hpp"
+#include "test_bnf.hpp"
+
+namespace boost {
+namespace urls {
+namespace rfc {
+
+class token_test
+{
+public:
+    void
+    run()
+    {
+    }
+};
+
+TEST_SUITE(
+    token_test,
+    "boost.url.token");
+
+} // rfc
+} // urls
+} // boost

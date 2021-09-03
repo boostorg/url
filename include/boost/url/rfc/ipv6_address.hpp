@@ -37,7 +37,8 @@ namespace rfc {
                 ; least-significant 32 bits of address
 
     h16         = 1*4HEXDIG
-                ; 16 bits of address represented in hexadecimal    @endcode
+                ; 16 bits of address represented in hexadecimal
+    @endcode
 
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2

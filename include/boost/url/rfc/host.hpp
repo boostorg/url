@@ -57,7 +57,9 @@ class host
     void destroy();
 
 public:
-    host() = default;
+    host()
+    {
+    }
 
     BOOST_URL_DECL
     ~host();

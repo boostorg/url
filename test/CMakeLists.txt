@@ -34,16 +34,18 @@ set(BOOST_URL_TESTS_FILES
     urls.cpp
     bnf/algorithm.cpp
     bnf/char_set.cpp
-    bnf/element.cpp
     bnf/range.cpp
     bnf/repeat.cpp
     bnf/sequence.cpp
+    bnf/token.cpp
     bnf/tuple.cpp
     bnf/type_traits.cpp
+    rfc/authority.cpp
     rfc/char_sets.cpp
     rfc/hexdig.cpp
     rfc/host.cpp
     rfc/ip_literal.cpp
+    rfc/ipv_future.cpp
     rfc/ipv4_address.cpp
     rfc/ipv6_address.cpp
     rfc/origin_form.cpp

@@ -205,16 +205,14 @@ parse_tuple(
         std::size_t, I>,
     tuple<Args...>& t)
 {
+    using bnf::parse;
     auto it = parse(
         start, end, ec,
             get<I>(t));
     if(ec)
         return start;
-    it = parse(
-        it, end, ec,
-        std::integral_constant<
-            std::size_t, I+1>{},
-        t);
+    it = parse(it, end, ec,
+        get<I+1>(t));
     if(ec)
         return start;
     return it;
