@@ -14,8 +14,47 @@ if(NOT TARGET tests)
     set_property(TARGET tests PROPERTY FOLDER _deps)
 endif()
 
-
-file(GLOB_RECURSE BOOST_URL_TESTS_FILES CONFIGURE_DEPENDS Jamfile *.cpp *.hpp)
+set(BOOST_URL_TESTS_FILES
+    CMakeLists.txt
+    Jamfile
+    include/main.cpp
+    include/test_suite.hpp
+    include/test_bnf.hpp
+    _detail_char_type.cpp
+    _detail_parse.cpp
+    error.cpp
+    host_type.cpp
+    sandbox.cpp
+    scheme.cpp
+    static_pool.cpp
+    storage_ptr.cpp
+    string.cpp
+    url.cpp
+    url_view.cpp
+    urls.cpp
+    bnf/algorithm.cpp
+    bnf/char_set.cpp
+    bnf/element.cpp
+    bnf/range.cpp
+    bnf/repeat.cpp
+    bnf/sequence.cpp
+    bnf/tuple.cpp
+    bnf/type_traits.cpp
+    rfc/char_sets.cpp
+    rfc/hexdig.cpp
+    rfc/ipv4_address.cpp
+    rfc/ipv6_address.cpp
+    rfc/origin_form.cpp
+    rfc/path_abempty.cpp
+    rfc/path_absolute.cpp
+    rfc/path_noscheme.cpp
+    rfc/path_rootless.cpp
+    rfc/pct_encoded.cpp
+    rfc/pct_encoding.cpp
+    rfc/scheme.cpp
+    rfc/segment.cpp
+    rfc/userinfo.cpp
+    )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "" FILES ${BOOST_URL_TESTS_FILES})
 add_executable(boost_url_tests ${BOOST_URL_TESTS_FILES})
