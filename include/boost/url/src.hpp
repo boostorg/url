@@ -35,6 +35,8 @@ in a translation unit of the program.
 
 #include <boost/url/rfc/detail/impl/char_table.ipp>
 
+#include <boost/url/rfc/impl/host.ipp>
+#include <boost/url/rfc/impl/ip_literal.ipp>
 #include <boost/url/rfc/impl/ipv4_address.ipp>
 #include <boost/url/rfc/impl/ipv6_address.ipp>
 #include <boost/url/rfc/impl/origin_form.ipp>

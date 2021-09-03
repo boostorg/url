@@ -42,6 +42,8 @@ set(BOOST_URL_TESTS_FILES
     bnf/type_traits.cpp
     rfc/char_sets.cpp
     rfc/hexdig.cpp
+    rfc/host.cpp
+    rfc/ip_literal.cpp
     rfc/ipv4_address.cpp
     rfc/ipv6_address.cpp
     rfc/origin_form.cpp

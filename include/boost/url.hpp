@@ -32,6 +32,8 @@
 
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/hexdig.hpp>
+#include <boost/url/rfc/host.hpp>
+#include <boost/url/rfc/ip_literal.hpp>
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <boost/url/rfc/ipv6_address.hpp>
 #include <boost/url/rfc/origin_form.hpp>

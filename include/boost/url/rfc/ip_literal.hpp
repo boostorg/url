@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/rfc/ipv6_address.hpp>
 
 namespace boost {
 namespace urls {
@@ -30,13 +30,30 @@ namespace rfc {
 */
 class ip_literal
 {
+    ipv6_address ipv6_;
+    bool is_ipv6_ = false;
+
 public:
+    bool
+    is_ipv6() const noexcept
+    {
+        return is_ipv6_;
+    }
+
+    ipv6_address const&
+    get_ipv6_address() const noexcept
+    {
+        return ipv6_;
+    }
+
     BOOST_URL_DECL
+    friend
     char const*
     parse(
         char const* const start,
         char const* const end,
-        error_code& ec);
+        error_code& ec,
+        ip_literal& t);
 };
 
 } // rfc
