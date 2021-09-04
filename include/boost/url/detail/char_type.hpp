@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/rfc/hexdig.hpp>
+#include <boost/url/bnf/char_set.hpp>
 #include <cstdint>
 
 namespace boost {
@@ -124,8 +124,8 @@ public:
             ec = error::incomplete_pct_encoding;
         }
         else if(
-            rfc::hex_digit(p[0]) == -1 ||
-            rfc::hex_digit(p[1]) == -1)
+            bnf::hexdig_value(p[0]) == -1 ||
+            bnf::hexdig_value(p[1]) == -1)
         {
             ec = error::bad_pct_encoding_digit;
         }
@@ -245,9 +245,9 @@ public:
             }
             *dest++ = static_cast<char>(
                 (static_cast<unsigned char>(
-                    rfc::hex_digit(p[1])) << 4) +
+                    bnf::hexdig_value(p[1])) << 4) +
                 static_cast<unsigned char>(
-                    rfc::hex_digit(p[2])));
+                    bnf::hexdig_value(p[2])));
             p += 3;
         }
         return dest;
@@ -475,9 +475,9 @@ key_equal(
         BOOST_ASSERT(e0 - p0 >= 3);
         auto const ch = static_cast<char>(
             (static_cast<unsigned char>(
-                rfc::hex_digit(p0[1])) << 4) +
+                bnf::hexdig_value(p0[1])) << 4) +
             static_cast<unsigned char>(
-                rfc::hex_digit(p0[2])));
+                bnf::hexdig_value(p0[2])));
         if(ch != *p1++)
             return false;
         p0 += 3;

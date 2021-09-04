@@ -25,14 +25,14 @@ public:
     {
         using T = ipv_future;
 
-        bad_ <T>("v");
-        bad_ <T>("v1");
-        bad_ <T>("v1.");
-        bad_ <T>("v1.@$");
-        bad_ <T>("v.1");
+        bad <T>("v");
+        bad <T>("v1");
+        bad <T>("v1.");
+        bad <T>("v1.@$");
+        bad <T>("v.1");
 
-        good_<T>("v1.0");
-        good_<T>("v1.minor");
+        good<T>("v1.0");
+        good<T>("v1.minor");
     }
 };
 

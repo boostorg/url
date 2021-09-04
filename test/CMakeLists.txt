@@ -33,14 +33,12 @@ set(BOOST_URL_TESTS_FILES
     url_view.cpp
     urls.cpp
     bnf/char_set.cpp
+    bnf/parse.cpp
     bnf/range.cpp
     bnf/repeat.cpp
     bnf/token.cpp
-    bnf/tuple.cpp
-    bnf/type_traits.cpp
     rfc/authority.cpp
     rfc/char_sets.cpp
-    rfc/hexdig.cpp
     rfc/hier_part.cpp
     rfc/host.cpp
     rfc/ip_literal.cpp
@@ -51,6 +49,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/pct_encoded.cpp
     rfc/pct_encoding.cpp
     rfc/port.cpp
+    rfc/query.cpp
     rfc/scheme.cpp
     rfc/userinfo.cpp
     )

@@ -12,10 +12,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/bnf/type_traits.hpp>
-#include <boost/container/static_vector.hpp>
+#include <boost/url/string.hpp>
 #include <boost/static_assert.hpp>
-#include <array>
 #include <cstddef>
 
 namespace boost {
@@ -29,7 +27,7 @@ namespace bnf {
 
     @par BNF
     @code
-    sequence          =  <n>*<m>element
+    sequence        =  <n>*<m>element
 
     *<m>element     => <0>*<m>element
     <n>*element     => <n>*<inf.>element
@@ -41,74 +39,33 @@ namespace bnf {
     @see
         https://datatracker.ietf.org/doc/html/rfc5234#section-3.6
 
-    @tparam Element The element type to repeat
+    @tparam T The element type to repeat
     @tparam N The minimum number of repetitions, which may be zero
     @tparam M The maximum number of repetitions.
 */
 template<
-    class Element,
+    class T,
     std::size_t N = 0,
     std::size_t M = std::size_t(-1)>
-class repeat
+struct repeat
 {
-public:
-    using value_type =
-        boost::container::static_vector<
-            typename Element::value_type,
-                M < 20 ? M : 0>;
+    BOOST_STATIC_ASSERT(M > 0);
+    BOOST_STATIC_ASSERT(M >= N);
 
-    value_type const&
-    operator*() const noexcept
-    {
-        return v_;
-    }
+    string_view& v;
 
-    value_type const*
-    operator->() const noexcept
-    {
-        return &v_;
-    }
-
+    template<
+        class T,
+        std::size_t N,
+        std::size_t M>
+    friend
     char const*
     parse(
         char const* start,
         char const* end,
-        error_code& ec);
-
-    char const*
-    begin(
-        char const* start,
-        char const* end,
-        error_code& ec);
-
-    char const*
-    increment(
-        char const* start,
-        char const* end,
-        error_code& ec);
-
-private:
-    BOOST_STATIC_ASSERT(M > 0);
-    BOOST_STATIC_ASSERT(M >= N);
-    //BOOST_STATIC_ASSERT(
-    //  is_element<Element>::value);
-
-    Element e_;
-    std::size_t n_;
-    value_type v_;
+        error_code& ec,
+        repeat<T, N, M> const& t);
 };
-
-//------------------------------------------------
-
-/** A BNF rule for zero or more repetitions of element
-*/
-template<class Element>
-using zero_or_more = repeat<Element>;
-
-/** A BNF rule for one or more repetitions of element
-*/
-template<class Element>
-using one_or_more = repeat<Element, 1>;
 
 } // bnf
 } // urls

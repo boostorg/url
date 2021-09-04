@@ -11,9 +11,9 @@
 #define BOOST_URL_BNF_IMPL_IPV_FUTURE_IPP
 
 #include <boost/url/rfc/ipv_future.hpp>
+#include <boost/url/bnf/char_set.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/hexdig.hpp>
 
 namespace boost {
 namespace urls {
@@ -26,26 +26,26 @@ parse(
     error_code& ec,
     ipv_future& t)
 {
-    using bnf::parse;
-    bnf::token<
-        bnf::char_set_function<
-            &is_hexdig>> v0;
-    bnf::token<
-        masked_char_set<
+    using namespace bnf;
+    string_view v0;
+    string_view v1;
+    auto it = parse(start, end, ec,
+        'v',
+        token<hexdig_chars>{v0},
+        '.',
+        token<masked_char_set<
             unreserved_char_mask |
             sub_delims_char_mask |
-            colon_char_mask>> v1;
-    auto it = parse(start, end, ec,
-        'v', v0, '.', v1);
+            colon_char_mask>>{v1});
     if(ec)
         return start;
-    if(v0.str().empty())
+    if(v0.empty())
     {
         // can't be empty
         ec = error::syntax;
         return start;
     }
-    if(v1.str().empty())
+    if(v1.empty())
     {
         // can't be empty
         ec = error::syntax;

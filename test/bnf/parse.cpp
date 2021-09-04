@@ -8,4 +8,27 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/bnf/tuple.hpp>
+#include <boost/url/bnf/parse.hpp>
+
+#include "test_suite.hpp"
+
+namespace boost {
+namespace urls {
+namespace bnf {
+
+class parse_test
+{
+public:
+    void
+    run()
+    {
+    }
+};
+
+TEST_SUITE(
+    parse_test,
+    "boost.url.parse");
+
+} // bnf
+} // urls
+} // boost

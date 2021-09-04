@@ -46,7 +46,7 @@ public:
         using T = optional<
             port::number_type>;
 
-        bad_ <port>("x");
+        bad <port>("x");
 
         // VFALCO TODO
         check("0", "0", boost::none);//T(0));

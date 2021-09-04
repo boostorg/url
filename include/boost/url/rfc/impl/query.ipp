@@ -7,35 +7,40 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_PORT_IPP
-#define BOOST_URL_RFC_IMPL_PORT_IPP
+#ifndef BOOST_URL_RFC_IMPL_QUERY_IPP
+#define BOOST_URL_RFC_IMPL_QUERY_IPP
 
-#include <boost/url/rfc/port.hpp>
-#include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/query.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/bnf/token.hpp>
+#include <boost/url/rfc/detail/paths.hpp>
+#include <boost/url/rfc/char_sets.hpp>
 
 namespace boost {
 namespace urls {
 namespace rfc {
 
 char const*
-parse(
+query::
+begin(
     char const* const start,
     char const* const end,
     error_code& ec,
-    port& t)
+    query_param& t) noexcept
 {
-    using namespace bnf;
-    string_view s;
-    auto it = parse(
-        start, end, ec,
-        token<digit_chars>{s});
-    if(ec)
-        return start;
-    t.s_ = s;
-    t.v_.reset();
-    return it;
+    return increment(
+        start, end, ec, t);
+}
+
+char const*
+query::
+increment(
+    char const* const start,
+    char const* const end,
+    error_code& ec,
+    query_param& t) noexcept
+{
+    //pct_encoded<pchar
+    return nullptr;
 }
 
 } // rfc

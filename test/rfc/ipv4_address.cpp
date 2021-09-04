@@ -48,19 +48,19 @@ public:
     void
     run()
     {
-        bad_ <ipv4_address>("0");
-        bad_ <ipv4_address>("0.");
-        bad_ <ipv4_address>("0.0");
-        bad_ <ipv4_address>("0.0.");
-        bad_ <ipv4_address>("0.0.0");
-        bad_ <ipv4_address>("0.0.0.");
-        bad_ <ipv4_address>("0.0.0.256");
-        bad_ <ipv4_address>("1.2.3.4.");
-        bad_ <ipv4_address>("1.2.3.4x");
-        bad_ <ipv4_address>("1.2.3.300");
+        bad <ipv4_address>("0");
+        bad <ipv4_address>("0.");
+        bad <ipv4_address>("0.0");
+        bad <ipv4_address>("0.0.");
+        bad <ipv4_address>("0.0.0");
+        bad <ipv4_address>("0.0.0.");
+        bad <ipv4_address>("0.0.0.256");
+        bad <ipv4_address>("1.2.3.4.");
+        bad <ipv4_address>("1.2.3.4x");
+        bad <ipv4_address>("1.2.3.300");
 
-        good_<ipv4_address>("0.0.0.0");
-        good_<ipv4_address>("1.2.3.4");
+        good<ipv4_address>("0.0.0.0");
+        good<ipv4_address>("1.2.3.4");
 
         check("0.0.0.0", 0x00000000);
         check("1.2.3.4", 0x01020304);

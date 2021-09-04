@@ -11,7 +11,9 @@
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/string.hpp>
 
+#include "test_bnf.hpp"
 #include "test_suite.hpp"
+
 #include <array>
 #include <iostream>
 
@@ -38,12 +40,9 @@ public:
         string_view sub_delims = "!$&'()*+,;=";
         string_view gen_delims = ":/?#[]@";
         string_view question = "?";
+        string_view equals = "=";
         string_view colon = ":";
         string_view slash = "/";
-        string_view alnum =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "abcdefghijklmnopqrstuvwxyz"
-            "0123456789";
         string_view at = "@";
 
         v = {};
@@ -51,9 +50,9 @@ public:
         for(std::uint8_t c : sub_delims) v[c] |= 0x02;
         for(std::uint8_t c : gen_delims) v[c] |= 0x04;
         for(std::uint8_t c : question)   v[c] |= 0x08;
-        for(std::uint8_t c : colon)      v[c] |= 0x10;
-        for(std::uint8_t c : slash)      v[c] |= 0x20;
-        for(std::uint8_t c : alnum)      v[c] |= 0x40;
+        for(std::uint8_t c : equals)     v[c] |= 0x10;
+        for(std::uint8_t c : colon)      v[c] |= 0x20;
+        for(std::uint8_t c : slash)      v[c] |= 0x40;
         for(std::uint8_t c : at)         v[c] |= 0x80;
     }
 
@@ -85,66 +84,43 @@ public:
         dout.flush();
     }
 
-    // Verify that a char_set contains
-    // exactly the specified characters
-    template<class T>
-    void
-    check(T cs, string_view s)
-    {
-        int n = 0;
-        unsigned char u = 0;
-        do
-        {
-            char const c =
-                static_cast<char>(u);
-            if(cs.contains(c))
-                ++n;
-        }
-        while(++u != 0);
-        BOOST_TEST(n == s.size());
-        for(char c : s)
-            BOOST_TEST(cs.contains(c));
-    }
-
     void
     run()
     {
         //print_table();
 
-        check(masked_char_set<
+        test_char_set(masked_char_set<
             unreserved_char_mask>(),
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz"
             "0123456789"
             "-._~");
 
-        check(masked_char_set<
+        test_char_set(masked_char_set<
             sub_delims_char_mask>(),
             "!$&'()*+,;=");
 
-        check(masked_char_set<
+        test_char_set(masked_char_set<
             gen_delims_char_mask>(),
             ":/?#[]@");
 
-        check(masked_char_set<
+        test_char_set(masked_char_set<
+            equals_char_mask>(),
+            "=");
+
+        test_char_set(masked_char_set<
             colon_char_mask>(),
             ":");
 
-        check(masked_char_set<
+        test_char_set(masked_char_set<
             at_char_mask>(),
             "@");
 
-        check(masked_char_set<
+        test_char_set(masked_char_set<
             slash_char_mask>(),
             "/");
 
-        check(masked_char_set<
-            alnum_char_mask>(),
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "abcdefghijklmnopqrstuvwxyz"
-            "0123456789");
-
-        check(masked_char_set<
+        test_char_set(masked_char_set<
             question_char_mask>(),
             "?");
     }

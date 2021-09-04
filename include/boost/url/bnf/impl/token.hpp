@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_BNF_IMPL_TOKEN_HPP
 #define BOOST_URL_BNF_IMPL_TOKEN_HPP
 
-#include <boost/url/bnf/tuple.hpp>
+#include <boost/url/bnf/char_set.hpp>
 
 namespace boost {
 namespace urls {
@@ -22,12 +22,11 @@ parse(
     char const* const start,
     char const* const end,
     error_code& ec,
-    token<CharSet>& t)
+    token<CharSet> const& t)
 {
-    CharSet cs;
-    auto it = cs.skip(
-        start, end);
-    t.s_ = string_view(
+    auto it = find_if_not(
+        start, end, CharSet{});
+    t.v = string_view(
         start, it - start);
     ec = {};
     return it;

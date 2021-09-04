@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/char_type.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/rfc/hexdig.hpp>
+#include <boost/url/bnf/char_set.hpp>
 #include <boost/url/detail/parts.hpp>
 
 namespace boost {
@@ -391,7 +391,7 @@ struct parser
     {
         BOOST_ASSERT(p_ != end_);
         auto digit =
-            rfc::hex_digit(*p_);
+            bnf::hexdig_value(*p_);
         if(digit == -1)
         {
             ec = error::syntax;
@@ -403,7 +403,7 @@ struct parser
         if(p_ == end_)
             return v;
         digit =
-            rfc::hex_digit(*p_);
+            bnf::hexdig_value(*p_);
         if(digit == -1)
             return v;
         v = 16 * v + digit;
@@ -412,7 +412,7 @@ struct parser
         if(p_ == end_)
             return v;
         digit =
-            rfc::hex_digit(*p_);
+            bnf::hexdig_value(*p_);
         if(digit == -1)
             return v;
         v = 16 * v + digit;
@@ -421,7 +421,7 @@ struct parser
         if(p_ == end_)
             return v;
         digit =
-            rfc::hex_digit(*p_);
+            bnf::hexdig_value(*p_);
         if(digit == -1)
             return v;
         v = 16 * v + digit;
@@ -565,7 +565,8 @@ struct parser
                 }
                 return;
             }
-            else if(b && rfc::hex_digit(*p_) == -1)
+            else if(b &&
+                bnf::hexdig_value(*p_) == -1)
             {
                 // end in "::"
                 break;

@@ -54,9 +54,9 @@ pct_decode_unchecked(
         }
         *dest++ = static_cast<char>(
             (static_cast<unsigned char>(
-                rfc::hex_digit(it[1])) << 4) +
+                bnf::hexdig_value(it[1])) << 4) +
             static_cast<unsigned char>(
-                rfc::hex_digit(it[2])));
+                bnf::hexdig_value(it[2])));
         it += 3;
     }
     return dest;

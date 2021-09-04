@@ -54,16 +54,16 @@ public:
     void
     run()
     {
-        bad_ <userinfo>("@");
+        bad <userinfo>("@");
 
-        good_<userinfo>("");
-        good_<userinfo>("x");
-        good_<userinfo>("xy");
-        good_<userinfo>("x:");
-        good_<userinfo>("x:y");
-        good_<userinfo>("x:y:");
-        good_<userinfo>("x:y:z");
-        good_<userinfo>("%41");
+        good<userinfo>("");
+        good<userinfo>("x");
+        good<userinfo>("xy");
+        good<userinfo>("x:");
+        good<userinfo>("x:y");
+        good<userinfo>("x:y:");
+        good<userinfo>("x:y:z");
+        good<userinfo>("%41");
 
         using T = optional<string_view>;
         check("x",      "x",      "x",  boost::none);

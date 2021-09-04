@@ -33,9 +33,8 @@ in a translation unit of the program.
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_view.ipp>
 
-#include <boost/url/rfc/detail/impl/char_table.ipp>
-
 #include <boost/url/rfc/impl/authority.ipp>
+#include <boost/url/rfc/impl/char_sets.ipp>
 #include <boost/url/rfc/impl/hier_part.ipp>
 #include <boost/url/rfc/impl/host.ipp>
 #include <boost/url/rfc/impl/ip_literal.ipp>
@@ -45,6 +44,7 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/origin_form.ipp>
 #include <boost/url/rfc/impl/pct_encoding.ipp>
 #include <boost/url/rfc/impl/port.ipp>
+#include <boost/url/rfc/impl/query.ipp>
 #include <boost/url/rfc/impl/scheme.ipp>
 #include <boost/url/rfc/impl/userinfo.ipp>
 

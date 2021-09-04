@@ -23,9 +23,9 @@ public:
     void
     run()
     {
-        good_<authority>("me@you.com");
-        good_<authority>("user:pass@");
-        good_<authority>("user:1234");
+        good<authority>("me@you.com");
+        good<authority>("user:pass@");
+        good<authority>("user:1234");
     }
 };
 

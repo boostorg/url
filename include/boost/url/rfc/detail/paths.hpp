@@ -33,11 +33,7 @@ struct segment
         error_code& ec,
         segment const& t)
     {
-        pct_encoded<
-            unreserved_char_mask |
-            sub_delims_char_mask |
-            colon_char_mask |
-            at_char_mask> p;
+        pct_encoded<pchar_mask> p;
         using bnf::parse;
         auto it = parse(
             start, end, ec, p);
@@ -62,11 +58,7 @@ struct segment_nz
         error_code& ec,
         segment_nz const& t)
     {
-        pct_encoded<
-            unreserved_char_mask |
-            sub_delims_char_mask |
-            colon_char_mask |
-            at_char_mask> p;
+        pct_encoded<pchar_mask> p;
         using bnf::parse;
         auto it = parse(
             start, end, ec, p);
@@ -98,9 +90,8 @@ struct segment_nz_nc
         segment_nz_nc const& t)
     {
         pct_encoded<
-            unreserved_char_mask |
-            sub_delims_char_mask |
-            at_char_mask> p;
+            pchar_mask &
+            ~colon_char_mask> p;
         using bnf::parse;
         auto it = parse(
             start, end, ec, p);

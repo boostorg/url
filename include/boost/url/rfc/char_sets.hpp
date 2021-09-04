@@ -12,81 +12,41 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/bnf/char_set.hpp>
-#include <boost/url/rfc/detail/char_table.hpp>
 #include <cstdint>
 
 namespace boost {
 namespace urls {
 namespace rfc {
 
-/** Return true if c is a low-ASCII letter
+#ifndef BOOST_URL_DOCS
+namespace detail {
+BOOST_URL_DECL
+extern
+std::uint8_t
+char_set_flags[256];
+} // detail
+#endif
 
-    @par BNF
-    @code
-    ALPHA   =  %x41-5A / %x61-7A
-            ; A-Z / a-z
-    @endcode
-
-    @see
-        https://datatracker.ietf.org/doc/html/rfc2234#section-6.1
+/** Character set using bitmasks for membership
 */
-inline
-bool
-is_alpha(char c) noexcept;
+template<std::uint8_t Mask>
+class masked_char_set
+{
+    std::uint8_t const* tab_ =
+        detail::char_set_flags;
 
-/** Return true if c is a decimal digit
+public:
+    bool
+    operator()(char c) const noexcept
+    {
+        return (tab_[static_cast<
+            std::uint8_t>(c)] & Mask) != 0;
+    }
+};
 
-    @par BNF
-    @code
-    DIGIT   = %x30-39
-            ; 0-9
-    @endcode
+//------------------------------------------------
 
-    @see
-        https://datatracker.ietf.org/doc/html/rfc2234#section-6.1
-*/
-inline
-bool
-is_digit(char c) noexcept;
-
-/** Return true if c is a hexadecimal digit
-
-    @par BNF
-    @code
-    HEXDIG  =  DIGIT
-            / "A" / "B" / "C" / "D" / "E" / "F"
-            / "a" / "b" / "c" / "d" / "e" / "f"
-    @endcode
-
-    @note The RFCs are inconsistent on the case
-    sensitivity of hexadecimal digits.
-
-    @see
-        https://datatracker.ietf.org/doc/html/rfc7230#section-1.2
-        https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1
-        https://datatracker.ietf.org/doc/html/rfc5952#section-2.3
-        https://datatracker.ietf.org/doc/html/rfc5952#section-4.3
-*/
-inline
-bool
-is_hexdig(char c) noexcept;
-
-/** Return true if c is in sub-delims
-
-    @par BNF
-    @code
-    sub-delims  = "!" / "$" / "&" / "'" / "(" / ")"
-                / "*" / "+" / "," / ";" / "="
-    @endcode
-
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
-*/
-inline
-bool
-is_sub_delims(char c) noexcept;
-
-/** Return true if c is unreserved
+/** Mask for the unreserved character set
 
     @par BNF
     @code
@@ -96,59 +56,123 @@ is_sub_delims(char c) noexcept;
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-2.3
 */
-inline
-bool
-is_unreserved(char c) noexcept;
-
-//------------------------------------------------
-
-template<std::uint8_t Mask>
-class masked_char_set
-    : public bnf::char_set<
-        masked_char_set<Mask>>
-{
-    std::uint8_t const* tab_ =
-        detail::char_table;
-
-public:
-    bool
-    contains(char c) const noexcept
-    {
-        return (tab_[static_cast<
-            std::uint8_t>(c)] & Mask) != 0;
-    }
-};
-
-//------------------------------------------------
-
 constexpr std::uint8_t
     unreserved_char_mask = 0x01;
 
+/** Mask for character set of sub-delims
+
+    @par BNF
+    @code
+    sub-delims  = "!" / "$" / "&" / "'" / "(" / ")"
+                / "*" / "+" / "," / ";" / "="
+    @endcode
+
+    @see
+        @ref masked_char_set
+        https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
+*/
 constexpr std::uint8_t
     sub_delims_char_mask = 0x02;
 
+/** Mask for character set of gen-delims
+
+    @par BNF
+    @code
+    gen-delims    = ":" / "/" / "?" / "#" / "[" / "]" / "@"
+    @endcode
+
+    @see
+        @ref masked_char_set
+        https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
+*/
 constexpr std::uint8_t
     gen_delims_char_mask = 0x04;
 
+/** Mask for a character set containing '?'
+
+    @par BNF
+    @code
+    QUESTION    = "?"
+    @endcode
+
+    @see
+        @ref masked_char_set
+*/
 constexpr std::uint8_t
     question_char_mask = 0x08;
 
-constexpr std::uint8_t
-    colon_char_mask = 0x10;
+/** Mask for a character set containing '='
 
-constexpr std::uint8_t
-    slash_char_mask = 0x20;
+    @par BNF
+    @code
+    EQUALS    = "="
+    @endcode
 
+    @see
+        @ref masked_char_set
+*/
 constexpr std::uint8_t
-    alnum_char_mask = 0x40;
+    equals_char_mask = 0x10;
 
+/** Mask for a character set containing ':'
+
+    @par BNF
+    @code
+    COLON       = ":"
+    @endcode
+
+    @see
+        @ref masked_char_set
+*/
+constexpr std::uint8_t
+    colon_char_mask = 0x20;
+
+/** Mask for a character set containing '/'
+
+    @par BNF
+    @code
+    SLASH       = "/"
+    @endcode
+
+    @see
+        @ref masked_char_set
+*/
+constexpr std::uint8_t
+    slash_char_mask = 0x40;
+
+/** Mask for a character set containing '@'
+
+    @par BNF
+    @code
+    AT        = "Q"
+    @endcode
+
+    @see
+        @ref masked_char_set
+*/
 constexpr std::uint8_t
     at_char_mask = 0x80;
+
+/** Mask for a character set containing pchars
+
+    @par BNF
+    @code
+    pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+    @endcode
+
+    @see
+        @ref masked_char_set
+        @ref pct_encoded
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3.3
+*/
+constexpr std::uint8_t pchar_mask =
+    unreserved_char_mask |
+    sub_delims_char_mask |
+    colon_char_mask |
+    at_char_mask;
 
 } // rfc
 } // urls
 } // boost
-
-#include <boost/url/rfc/impl/char_sets.hpp>
 
 #endif

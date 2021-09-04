@@ -12,9 +12,9 @@
 
 #include <boost/url/rfc/ipv6_address.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/bnf/char_set.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/hexdig.hpp>
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <array>
 #include <memory>
@@ -70,7 +70,8 @@ struct h16
                 ec = error::syntax;
                 return start;
             }
-            auto d = hex_digit(*it);
+            auto d =
+                bnf::hexdig_value(*it);
             if(d == -1)
             {
                 ec = error::syntax;
@@ -80,21 +81,21 @@ struct h16
             ++it;
             if(it == end)
                 break;
-            d = hex_digit(*it);
+            d = bnf::hexdig_value(*it);
             if(d == -1)
                 break;
             v = (16 * v) + d;
             ++it;
             if(it == end)
                 break;
-            d = hex_digit(*it);
+            d = bnf::hexdig_value(*it);
             if(d == -1)
                 break;
             v = (16 * v) + d;
             ++it;
             if(it == end)
                 break;
-            d = hex_digit(*it);
+            d = bnf::hexdig_value(*it);
             if(d == -1)
                 break;
             v = (16 * v) + d;
@@ -225,7 +226,7 @@ parse(
             break;
         }
         if( b != -1 &&
-            hex_digit(*it) == -1)
+            bnf::hexdig_value(*it) == -1)
         {
             // ends in "::"
             break;

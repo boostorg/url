@@ -10,8 +10,9 @@
 #ifndef BOOST_URL_RFC_DETAIL_PCT_ENCODING_HPP
 #define BOOST_URL_RFC_DETAIL_PCT_ENCODING_HPP
 
-#include <boost/url/rfc/hexdig.hpp>
+#include <boost/url/bnf/char_set.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/bnf/char_set.hpp>
 #include <cstdlib>
 
 namespace boost {
@@ -28,12 +29,14 @@ parse_pct_encoded_impl(
     char const* const end,
     error_code& ec) noexcept
 {
+    using namespace bnf;
     std::size_t n = 0;
     auto it = start;
     char const* it0;
 skip:
     it0 = it;
-    it = cs.skip(it0, end);
+    it = find_if_not(
+        it0, end, cs);
     n += it - it0;
     if(it == end)
         goto finish;
@@ -48,7 +51,7 @@ skip:
             ec = error::syntax;
             return start;
         }
-        if(hex_digit(*it) == -1)
+        if(hexdig_value(*it) == -1)
         {
             // expected HEXDIG
             ec = error::bad_pct_encoding_digit;
@@ -61,7 +64,7 @@ skip:
             ec = error::syntax;
             return start;
         }
-        if(hex_digit(*it) == -1)
+        if(hexdig_value(*it) == -1)
         {
             // expected HEXDIG
             ec = error::bad_pct_encoding_digit;

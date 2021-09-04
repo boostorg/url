@@ -25,12 +25,9 @@
 #include <boost/url/bnf/range.hpp>
 #include <boost/url/bnf/repeat.hpp>
 #include <boost/url/bnf/token.hpp>
-#include <boost/url/bnf/tuple.hpp>
-#include <boost/url/bnf/type_traits.hpp>
 
 #include <boost/url/rfc/authority.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/hexdig.hpp>
 #include <boost/url/rfc/hier_part.hpp>
 #include <boost/url/rfc/host.hpp>
 #include <boost/url/rfc/ip_literal.hpp>
@@ -41,6 +38,7 @@
 #include <boost/url/rfc/pct_encoded.hpp>
 #include <boost/url/rfc/pct_encoding.hpp>
 #include <boost/url/rfc/port.hpp>
+#include <boost/url/rfc/query.hpp>
 #include <boost/url/rfc/scheme.hpp>
 #include <boost/url/rfc/userinfo.hpp>
 

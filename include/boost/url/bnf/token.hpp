@@ -13,6 +13,8 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/bnf/detail/char_set.hpp>
+#include <boost/static_assert.hpp>
 
 namespace boost {
 namespace urls {
@@ -21,16 +23,13 @@ namespace bnf {
 /** BNF for a series of characters in a char set
 */
 template<class CharSet>
-class token
+struct token
 {
-    string_view s_;
+    BOOST_STATIC_ASSERT(
+        detail::is_char_set_pred<
+            CharSet>::value);
 
-public:
-    string_view
-    str() const noexcept
-    {
-        return s_;
-    }
+    string_view& v;
 
     template<class CharSet>
     friend
@@ -39,7 +38,7 @@ public:
         char const* start,
         char const* end,
         error_code& ec,
-        token<CharSet>& t);
+        token<CharSet> const& t);
 };
 
 } // bnf

@@ -34,6 +34,7 @@ struct dec_octet
         error_code& ec,
         dec_octet& t)
     {
+        bnf::digit_chars dc;
         if(start == end)
         {
             // expected DIGIT
@@ -41,7 +42,7 @@ struct dec_octet
             return start;
         }
         auto it = start;
-        if(! is_digit(*it))
+        if(! dc(*it))
         {
             ec = error::syntax;
             return start;
@@ -55,7 +56,7 @@ struct dec_octet
             ec = {};
             return it;
         }
-        if(! is_digit(*it))
+        if(! dc(*it))
         {
             t.value = static_cast<
                 std::uint8_t>(v);
@@ -77,7 +78,7 @@ struct dec_octet
             ec = {};
             return it;
         }
-        if(! is_digit(*it))
+        if(! dc(*it))
         {
             t.value = static_cast<
                 std::uint8_t>(v);

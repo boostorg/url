@@ -24,10 +24,10 @@ public:
     run()
     {
         using T = ip_literal;
-        bad_ <T>("::");
-        bad_ <T>("[v8]");
-        good_<T>("[::]");
-        good_<T>("[v1.0]");
+        bad <T>("::");
+        bad <T>("[v8]");
+        good<T>("[::]");
+        good<T>("[v1.0]");
     }
 };
 
