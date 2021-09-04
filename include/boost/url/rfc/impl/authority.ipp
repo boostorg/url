@@ -36,18 +36,18 @@ parse(
             ec, u, '@');
         if(! ec.failed())
         {
-            t.u_.emplace(u);
+            t.userinfo.emplace(u);
         }
         else
         {
             ec = {};
             it = start;
-            t.u_.reset();
+            t.userinfo.reset();
         }
     }
     // host
     it = parse(
-        it, end, ec, t.h_);
+        it, end, ec, t.host);
     if(ec)
         return start;
     // [ ":" port ]
@@ -55,12 +55,12 @@ parse(
         // ":"
         if(it == end)
         {
-            t.p_.reset();
+            t.port.reset();
             return it;
         }
         if(*it != ':')
         {
-            t.p_.reset();
+            t.port.reset();
             return it;
         }
         ++it;
@@ -75,7 +75,7 @@ parse(
                 ! ec.failed());
             return start;
         }
-        t.p_.emplace(p);
+        t.port.emplace(p);
     }
     return it;
 }

@@ -34,27 +34,14 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3
 */
-class hier_part
+struct hier_part
 {
     using path_type =
         bnf::range<pct_encoded_str>;
-    path_type v_;
-    optional<rfc::authority> a_;
 
-public:
+    path_type path;
     optional<
-        rfc::authority> const&
-    authority() const noexcept
-    {
-        return a_;
-    }
-
-    bnf::range<
-        pct_encoded_str> const&
-    path() const noexcept
-    {
-        return v_;
-    }
+        rfc::authority> authority;
 
     BOOST_URL_DECL
     friend

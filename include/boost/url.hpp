@@ -35,7 +35,6 @@
 #include <boost/url/rfc/ipv_future.hpp>
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <boost/url/rfc/ipv6_address.hpp>
-#include <boost/url/rfc/origin_form.hpp>
 #include <boost/url/rfc/pct_encoded.hpp>
 #include <boost/url/rfc/pct_encoding.hpp>
 #include <boost/url/rfc/port.hpp>

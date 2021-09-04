@@ -34,6 +34,7 @@ destroy()
         ipv6_.~ipv6_address();
         break;
     case host_kind::ipv_future:
+        fut_.~string_view();
         break;
     case host_kind::named:
         name_.~pct_encoded_str();
@@ -68,17 +69,19 @@ parse(
             // bad ip-literal
             return start;
         }
-        if(v.is_ipv6())
+        if(v.is_ipv6)
         {
             // IPv6address
-            ::new(&t.ipv6_) ipv6_address(
-                v.get_ipv6_address());
+            ::new(&t.ipv6_)
+                ipv6_address(v.ipv6);
             t.kind_ = host_kind::ipv6;
             return it;
         }
         // VFALCO TODO
         // IPvFuture
-        ec = error::syntax;
+        ::new(&t.fut_) string_view(
+            v.fut_str);
+        t.kind_ = host_kind::ipv_future;
         return start;
     }
     // IPv4address

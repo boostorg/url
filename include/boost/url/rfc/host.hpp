@@ -52,6 +52,7 @@ class host
         ipv4_address ipv4_;
         ipv6_address ipv6_;
         pct_encoded_str name_{};
+        string_view fut_;
     };
 
     void destroy();
@@ -84,6 +85,14 @@ public:
         BOOST_ASSERT(kind_ ==
             host_kind::ipv6);
         return ipv6_;
+    }
+
+    string_view
+    get_ipv_future() const noexcept
+    {
+        BOOST_ASSERT(kind_ ==
+            host_kind::ipv_future);
+        return fut_;
     }
 
     pct_encoded_str

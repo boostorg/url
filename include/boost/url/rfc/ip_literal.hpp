@@ -29,32 +29,11 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
 */
-class ip_literal
+struct ip_literal
 {
-    ipv6_address ipv6_;
-    string_view s_;
-    bool is_ipv6_ = false;
-
-public:
-    bool
-    is_ipv6() const noexcept
-    {
-        return is_ipv6_;
-    }
-
-    ipv6_address const&
-    get_ipv6_address() const noexcept
-    {
-        BOOST_ASSERT(is_ipv6_);
-        return ipv6_;
-    }
-
-    string_view
-    get_ipv_future() const noexcept
-    {
-        BOOST_ASSERT(! is_ipv6_);
-        return s_;
-    }
+    bool is_ipv6;
+    ipv6_address ipv6;
+    string_view fut_str;
 
     BOOST_URL_DECL
     friend

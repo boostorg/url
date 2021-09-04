@@ -51,7 +51,7 @@ public:
         using bnf::parse;
         parse("/1/2/3/4/5", ec, p);
         std::string s;
-        for(auto const& t : p.path())
+        for(auto const& t : p.path)
         {
             s.push_back('/');
             s.append(

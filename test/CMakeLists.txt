@@ -46,7 +46,6 @@ set(BOOST_URL_TESTS_FILES
     rfc/ipv_future.cpp
     rfc/ipv4_address.cpp
     rfc/ipv6_address.cpp
-    rfc/origin_form.cpp
     rfc/pct_encoded.cpp
     rfc/pct_encoding.cpp
     rfc/port.cpp

@@ -33,31 +33,11 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.2
 */
-class authority
+struct authority
 {
-    rfc::host h_;
-    optional<rfc::port> p_;
-    optional<rfc::userinfo> u_;
-
-public:
-    optional<
-        rfc::userinfo> const&
-    userinfo() const noexcept
-    {
-        return u_;
-    }
-
-    rfc::host const&
-    host() const noexcept
-    {
-        return h_;
-    }
-
-    optional<rfc::port> const&
-    port() const noexcept
-    {
-        return p_;
-    }
+    rfc::host host;
+    optional<rfc::port> port;
+    optional<rfc::userinfo> userinfo;
 
     BOOST_URL_DECL
     friend

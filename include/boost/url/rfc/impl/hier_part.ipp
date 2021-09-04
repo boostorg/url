@@ -18,51 +18,6 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-namespace detail {
-
-//------------------------------------------------
-
-// path-rootless = segment-nz *( "/" segment )
-struct old_path_rootless
-{
-    string_view& v;
-
-    friend
-    char const*
-    parse(
-        char const* const start,
-        char const* const end,
-        error_code& ec,
-        old_path_rootless const& t)
-    {
-        using bnf::parse;
-        pct_encoded_str p;
-        // segment-nz
-        auto it = parse(
-            start, end, ec,
-            segment_nz{p});
-        if(ec)
-            return start;
-        // *( "/" segment )
-        for(;;)
-        {
-            it = parse(
-                it, end, ec, '/',
-                segment{p});
-            if(ec)
-            {
-                ec = {};
-                break;
-            }
-        }
-        t.v = string_view(
-            start, it - start);
-        return it;
-    }
-};
-
-} // detail
-
 char const*
 parse(
     char const* const start,
@@ -77,9 +32,9 @@ parse(
     if(it == end)
     {
         // path-empty
-        t.a_.reset();
+        t.authority.reset();
         it = parse(start, end, ec,
-            detail::path_empty{t.v_});
+            detail::path_empty{t.path});
         ec = {};
         return it;
     }
@@ -87,10 +42,10 @@ parse(
     {
         // path-rootless
         it = parse(it, end, ec,
-            detail::path_rootless{t.v_});
+            detail::path_rootless{t.path});
         if(ec)
             return start;
-        t.a_.reset();
+        t.authority.reset();
         return it;
     }
     if( end - it == 1 ||
@@ -98,8 +53,8 @@ parse(
     {
         // path-absolute
         it = parse(it, end, ec,
-            detail::path_absolute{t.v_});
-        t.a_.reset();
+            detail::path_absolute{t.path});
+        t.authority.reset();
         ec = {};
         return it;
     }
@@ -110,10 +65,10 @@ parse(
     it = parse(it, end, ec, a);
     if(ec)
         return start;
-    t.a_.emplace(a);
+    t.authority.emplace(a);
     // path-abempty
     it = parse(it, end, ec,
-        detail::path_abempty{t.v_});
+        detail::path_abempty{t.path});
     if(ec)
         return start;
     return it;

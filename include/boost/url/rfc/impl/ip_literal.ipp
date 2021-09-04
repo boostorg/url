@@ -44,10 +44,10 @@ parse(
     {
         // IPv6address
         it = parse(it, end, ec,
-            t.ipv6_, ']');
+            t.ipv6, ']');
         if(ec)
             return start;
-        t.is_ipv6_ = true;
+        t.is_ipv6 = true;
         return it;
     }
     // IPvFuture
@@ -56,8 +56,8 @@ parse(
         it, end, ec, v, ']');
     if(ec)
         return start;
-    t.s_ = v.str();
-    t.is_ipv6_ = false;
+    t.fut_str = v.str();
+    t.is_ipv6 = false;
     return it;
 }
 
