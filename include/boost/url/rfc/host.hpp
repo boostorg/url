@@ -51,7 +51,7 @@ class host
     {
         ipv4_address ipv4_;
         ipv6_address ipv6_;
-        pct_encoded_value name_{};
+        pct_encoded_str name_{};
     };
 
     void destroy();
@@ -86,7 +86,7 @@ public:
         return ipv6_;
     }
 
-    pct_encoded_value
+    pct_encoded_str
     get_name() const noexcept
     {
         BOOST_ASSERT(kind_ ==

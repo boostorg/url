@@ -7,39 +7,28 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_USERINFO_HPP
-#define BOOST_URL_RFC_USERINFO_HPP
+#ifndef BOOST_URL_RFC_URI_HPP
+#define BOOST_URL_RFC_URI_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/string.hpp>
-#include <boost/url/rfc/pct_encoded.hpp>
-#include <boost/optional.hpp>
 
 namespace boost {
 namespace urls {
 namespace rfc {
 
-/** BNF for userinfo
+/** BNF for URI
 
     @par BNF
     @code
-    userinfo    = user [ ":" [ password ] ]
-
-    user        = *( unreserved / pct-encoded / sub-delims )
-    password    = *( unreserved / pct-encoded / sub-delims / ":" )
+    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
     @endcode
 
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.3
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3
 */
-struct userinfo
+struct uri
 {
-    string_view str;
-    pct_encoded_str user;
-    optional<
-        pct_encoded_str> pass;
-
     BOOST_URL_DECL
     friend
     char const*
@@ -47,7 +36,7 @@ struct userinfo
         char const* const start,
         char const* const end,
         error_code& ec,
-        userinfo& t);
+        uri& t);
 };
 
 } // rfc

@@ -28,16 +28,9 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
 */
-class scheme
+struct scheme
 {
-    string_view s_;
-
-public:
-    string_view
-    str() const noexcept
-    {
-        return s_;
-    };
+    string_view& s;
 
     BOOST_URL_DECL
     friend
@@ -46,7 +39,7 @@ public:
         char const* const start,
         char const* const end,
         error_code& ec,
-        scheme& t);
+        scheme const& t);
 };
 
 } // rfc

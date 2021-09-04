@@ -37,7 +37,7 @@ namespace rfc {
 class hier_part
 {
     using path_type =
-        bnf::range<pct_encoded_value>;
+        bnf::range<pct_encoded_str>;
     path_type v_;
     optional<rfc::authority> a_;
 
@@ -50,7 +50,7 @@ public:
     }
 
     bnf::range<
-        pct_encoded_value> const&
+        pct_encoded_str> const&
     path() const noexcept
     {
         return v_;

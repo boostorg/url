@@ -29,25 +29,26 @@ parse(
     error_code& ec,
     userinfo& t)
 {
-    pct_encoded<
-        unsub_char_mask> user;
-    pct_encoded<
-        unsub_char_mask |
-        colon_char_mask> pass;
+    pct_encoded_str user;
+    pct_encoded_str pass;
     optional<
         bnf::literal<':'>> colon;
     auto it = parse(start, end, ec,
-        user, colon, pass);
+        pct_encoded<
+            unsub_char_mask>{user},
+        colon,
+        pct_encoded<
+            unsub_char_mask |
+            colon_char_mask>{pass});
     if(ec)
         return start;
-
-    t.str_ = string_view(
+    t.str = string_view(
         start, it - start);
-    t.user_ = user.value();
+    t.user = user;
     if(colon.has_value())
-        t.pass_ = pass.value();
+        t.pass = pass;
     else
-        t.pass_.reset();
+        t.pass.reset();
     return it;
 }
 

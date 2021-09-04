@@ -36,7 +36,7 @@ struct old_path_rootless
         old_path_rootless const& t)
     {
         using bnf::parse;
-        pct_encoded_value p;
+        pct_encoded_str p;
         // segment-nz
         auto it = parse(
             start, end, ec,

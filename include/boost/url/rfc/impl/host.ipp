@@ -36,7 +36,7 @@ destroy()
     case host_kind::ipv_future:
         break;
     case host_kind::named:
-        name_.~pct_encoded_value();
+        name_.~pct_encoded_str();
         break;
     }
 }
@@ -94,15 +94,17 @@ parse(
         ec = {};
     }
     // reg-name
-    pct_encoded<unsub_char_mask> v;
-    it = parse(it, end, ec, v);
+    pct_encoded_str ns;
+    it = parse(it, end, ec,
+        pct_encoded<
+            unsub_char_mask>{ns});
     if(ec)
     {
         // bad reg-name
         return start;
     }
-    ::new(&t.name_) pct_encoded_value(
-        v.value());
+    ::new(&t.name_)
+        pct_encoded_str(ns);
     t.kind_ = host_kind::named;
     return it;
 }

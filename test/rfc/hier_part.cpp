@@ -55,8 +55,8 @@ public:
         {
             s.push_back('/');
             s.append(
-                t.str().data(),
-                t.str().size());
+                t.str.data(),
+                t.str.size());
         }
         BOOST_TEST(s == "/1/2/3/4/5");
     }

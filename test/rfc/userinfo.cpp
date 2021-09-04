@@ -41,14 +41,14 @@ public:
         if(ec)
             throw_system_error(ec,
                 BOOST_CURRENT_LOCATION);
-        BOOST_TEST(p.str() == s1);
-        BOOST_TEST(p.user().str() == s2);
+        BOOST_TEST(p.str == s1);
+        BOOST_TEST(p.user.str == s2);
         if(s3.has_value())
             BOOST_TEST(
-                p.password().has_value() &&
-                p.password()->str() == *s3);
+                p.pass.has_value() &&
+                p.pass->str == *s3);
         else
-            BOOST_TEST(! p.password().has_value());
+            BOOST_TEST(! p.pass.has_value());
     }
 
     void

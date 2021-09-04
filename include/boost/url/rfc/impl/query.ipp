@@ -29,10 +29,11 @@ begin(
     query_param& t) noexcept
 {
     using bnf::parse;
-    pct_encoded<
-        query_char_mask> k;
+    pct_encoded_str k;
     auto it = parse(
-        start, end, ec, k);
+        start, end, ec,
+        pct_encoded<
+            query_char_mask>{k});
     if(ec)
         return start;
     it = parse(
@@ -43,7 +44,7 @@ begin(
         {
             // key with no value
             ec = {};
-            t.key = k.value();
+            t.key = k;
             t.value.reset();
             return it;
         }
@@ -51,16 +52,17 @@ begin(
         ec = error::end;
         return start;
     }
-    pct_encoded<
-        query_char_mask> v;
-    it = parse(it, end, ec, v);
+    pct_encoded_str v;
+    it = parse(it, end, ec,
+        pct_encoded<
+            query_char_mask>{v});
     if(ec)
     {
         // VFALCO what about the key?
         return start;
     }
-    t.key = k.value();
-    t.value.emplace(v.value());
+    t.key = k;
+    t.value.emplace(v);
     return it;
 }
 

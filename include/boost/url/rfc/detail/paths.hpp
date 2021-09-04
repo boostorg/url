@@ -23,7 +23,7 @@ namespace detail {
 
 struct segment
 {
-    pct_encoded_value& v;
+    pct_encoded_str& v;
 
     friend
     char const*
@@ -33,13 +33,13 @@ struct segment
         error_code& ec,
         segment const& t)
     {
-        pct_encoded<pchar_mask> p;
         using bnf::parse;
         auto it = parse(
-            start, end, ec, p);
+            start, end, ec,
+            pct_encoded<
+                pchar_mask>{t.v});
         if(ec)
             return start;
-        t.v = p.value();
         return it;
     }
 };
@@ -48,7 +48,7 @@ struct segment
 
 struct segment_nz
 {
-    pct_encoded_value& v;
+    pct_encoded_str& v;
 
     friend
     char const*
@@ -58,10 +58,11 @@ struct segment_nz
         error_code& ec,
         segment_nz const& t)
     {
-        pct_encoded<pchar_mask> p;
         using bnf::parse;
         auto it = parse(
-            start, end, ec, p);
+            start, end, ec,
+            pct_encoded<
+                pchar_mask>{t.v});
         if(ec)
             return start;
         if(it == start)
@@ -70,7 +71,6 @@ struct segment_nz
             ec = error::syntax;
             return start;
         }
-        t.v = p.value();
         return it;
     }
 };
@@ -79,7 +79,7 @@ struct segment_nz
 
 struct segment_nz_nc
 {
-    pct_encoded_value& v;
+    pct_encoded_str& v;
 
     friend
     char const*
@@ -89,12 +89,12 @@ struct segment_nz_nc
         error_code& ec,
         segment_nz_nc const& t)
     {
-        pct_encoded<
-            pchar_mask &
-            ~colon_char_mask> p;
         using bnf::parse;
         auto it = parse(
-            start, end, ec, p);
+            start, end, ec,
+            pct_encoded<
+                pchar_mask &
+                ~colon_char_mask>{t.v});
         if(ec)
             return start;
         if(it == start)
@@ -103,7 +103,6 @@ struct segment_nz_nc
             ec = error::syntax;
             return start;
         }
-        t.v = p.value();
         return it;
     }
 };
@@ -114,7 +113,7 @@ struct segment_nz_nc
 struct path_abempty
 {
     bnf::range<
-        pct_encoded_value>& v;
+        pct_encoded_str>& v;
 
     static
     char const*
@@ -122,7 +121,7 @@ struct path_abempty
         char const* const start,
         char const* const end,
         error_code& ec,
-        pct_encoded_value& t) noexcept
+        pct_encoded_str& t) noexcept
     {
         return increment(
             start, end, ec, t);
@@ -134,7 +133,7 @@ struct path_abempty
         char const* const start,
         char const* const end,
         error_code& ec,
-        pct_encoded_value& t) noexcept
+        pct_encoded_str& t) noexcept
     {
         using bnf::parse;
         auto it = parse(
@@ -168,7 +167,7 @@ struct path_abempty
 struct path_absolute
 {
     bnf::range<
-        pct_encoded_value>& v;
+        pct_encoded_str>& v;
 
     static
     char const*
@@ -176,7 +175,7 @@ struct path_absolute
         char const* const start,
         char const* const end,
         error_code& ec,
-        pct_encoded_value& t) noexcept
+        pct_encoded_str& t) noexcept
     {
         using bnf::parse;
         auto it = parse(
@@ -197,7 +196,7 @@ struct path_absolute
         char const* const start,
         char const* const end,
         error_code& ec,
-        pct_encoded_value& t) noexcept
+        pct_encoded_str& t) noexcept
     {
         using bnf::parse;
         auto it = parse(
@@ -231,7 +230,7 @@ struct path_absolute
 struct path_noscheme
 {
     bnf::range<
-        pct_encoded_value>& v;
+        pct_encoded_str>& v;
 
     static
     char const*
@@ -239,7 +238,7 @@ struct path_noscheme
         char const* const start,
         char const* const end,
         error_code& ec,
-        pct_encoded_value& t) noexcept
+        pct_encoded_str& t) noexcept
     {
         using bnf::parse;
         auto it = parse(
@@ -260,7 +259,7 @@ struct path_noscheme
         char const* const start,
         char const* const end,
         error_code& ec,
-        pct_encoded_value& t) noexcept
+        pct_encoded_str& t) noexcept
     {
         using bnf::parse;
         auto it = parse(
@@ -294,7 +293,7 @@ struct path_noscheme
 struct path_rootless
 {
     bnf::range<
-        pct_encoded_value>& v;
+        pct_encoded_str>& v;
 
     static
     char const*
@@ -302,7 +301,7 @@ struct path_rootless
         char const* const start,
         char const* const end,
         error_code& ec,
-        pct_encoded_value& t) noexcept
+        pct_encoded_str& t) noexcept
     {
         using bnf::parse;
         return parse(
@@ -316,7 +315,7 @@ struct path_rootless
         char const* const start,
         char const* const end,
         error_code& ec,
-        pct_encoded_value& t) noexcept
+        pct_encoded_str& t) noexcept
     {
         using bnf::parse;
         auto it = parse(
@@ -349,7 +348,7 @@ struct path_rootless
 struct path_empty
 {
     bnf::range<
-        pct_encoded_value>& v;
+        pct_encoded_str>& v;
 
     static
     char const*
@@ -357,7 +356,7 @@ struct path_empty
         char const* const start,
         char const* const,
         error_code& ec,
-        pct_encoded_value&) noexcept
+        pct_encoded_str&) noexcept
     {
         ec = error::end;
         return start;
@@ -369,7 +368,7 @@ struct path_empty
         char const* const start,
         char const* const,
         error_code& ec,
-        pct_encoded_value&) noexcept
+        pct_encoded_str&) noexcept
     {
         // should never get here
         ec = error::end;

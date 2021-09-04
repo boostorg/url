@@ -7,33 +7,30 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_PCT_ENCODED_HPP
-#define BOOST_URL_RFC_IMPL_PCT_ENCODED_HPP
+#ifndef BOOST_URL_BNF_IMPL_FRAGMENT_IPP
+#define BOOST_URL_BNF_IMPL_FRAGMENT_IPP
 
-#include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/detail/pct_encoding.hpp>
+#include <boost/url/rfc/uri.hpp>
+#include <boost/url/bnf/parse.hpp>
+#include <boost/url/rfc/pct_encoded.hpp>
 
 namespace boost {
 namespace urls {
 namespace rfc {
 
-template<std::uint8_t CharMask>
 char const*
 parse(
     char const* const start,
     char const* const end,
     error_code& ec,
-    pct_encoded<CharMask> const& t) noexcept
+    fragment const& t)
 {
-    masked_char_set<CharMask> cs;
-    auto it = detail::parse_pct_encoded_impl(
-        t.v.decoded_size,
-        cs, start, end, ec);
-    if(ec)
-        return start;
-    t.v.str = string_view(
-        start, it - start);
-    return it;
+    using bnf::parse;
+    return parse(start, end, ec,
+        pct_encoded<
+            unsub_char_mask |
+            colon_char_mask |
+            at_char_mask>{t.v});
 }
 
 } // rfc

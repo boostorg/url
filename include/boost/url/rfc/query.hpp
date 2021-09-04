@@ -22,9 +22,9 @@ namespace rfc {
 
 struct query_param
 {
-    pct_encoded_value key;
+    pct_encoded_str key;
     optional<
-        pct_encoded_value> value;
+        pct_encoded_str> value;
 };
 
 /** BNF for query

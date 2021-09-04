@@ -28,6 +28,7 @@
 
 #include <boost/url/rfc/authority.hpp>
 #include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/fragment.hpp>
 #include <boost/url/rfc/hier_part.hpp>
 #include <boost/url/rfc/host.hpp>
 #include <boost/url/rfc/ip_literal.hpp>
@@ -40,6 +41,7 @@
 #include <boost/url/rfc/port.hpp>
 #include <boost/url/rfc/query.hpp>
 #include <boost/url/rfc/scheme.hpp>
+#include <boost/url/rfc/uri.hpp>
 #include <boost/url/rfc/userinfo.hpp>
 
 #endif

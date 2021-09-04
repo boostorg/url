@@ -13,8 +13,6 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/rfc/pct_encoding.hpp>
-#include <memory>
 
 namespace boost {
 namespace urls {
@@ -22,69 +20,26 @@ namespace rfc {
 
 /** Base type for a percent-encoded BNF element
 */
-class pct_encoded_value
+struct pct_encoded_str
 {
-    template<std::uint8_t>
-    friend class pct_encoded;
-
-    string_view s_;
-    std::size_t n_ = 0;
-
-public:
-    /** Return the percent-encoded string
+    /** A string holding the encoded characters
     */
-    string_view
-    str() const noexcept
-    {
-        return s_;
-    }
+    string_view str;
 
-    /** Return the number of bytes in the decoded representation of the string
+    /** The number of bytes needed to hold the decoded string
     */
-    std::size_t
-    decoded_size() const noexcept
-    {
-        return n_;
-    }
+    std::size_t decoded_size;
 };
 
-/** BNF for a string of percent-encoded, reserved characters
+/** BNF for a string of percent-encoded characters from a character set
 
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-2.1
 */
 template<std::uint8_t CharMask>
-class pct_encoded
+struct pct_encoded
 {
-    pct_encoded_value v_;
-
-public:
-    using value_type =
-        pct_encoded_value;
-
-    value_type const&
-    value() const noexcept
-    {
-        return v_;
-    }
-
-    pct_encoded_value const&
-    operator*() const noexcept
-    {
-        return v_;
-    }
-
-    pct_encoded_value const*
-    operator->() const noexcept
-    {
-        return &v_;
-    }
-
-    char const*
-    parse(
-        char const* const start,
-        char const* const end,
-        error_code& ec) noexcept;
+    pct_encoded_str& v;
 
     template<std::uint8_t CharMask>
     friend
@@ -93,7 +48,7 @@ public:
         char const* const start,
         char const* const end,
         error_code& ec,
-        pct_encoded<CharMask>& t) noexcept;
+        pct_encoded<CharMask> const& t) noexcept;
 };
     
 } // rfc

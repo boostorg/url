@@ -26,7 +26,7 @@ parse(
     char const* const start,
     char const* const end,
     error_code& ec,
-    scheme& t)
+    scheme const& t)
 {
     using namespace bnf;
     if(start == end)
@@ -45,7 +45,7 @@ parse(
     it = find_if_not(
         it + 1, end,
             alnum_chars{});
-    t.s_ = string_view(
+    t.s = string_view(
         start, it - start);
     return it;
 }

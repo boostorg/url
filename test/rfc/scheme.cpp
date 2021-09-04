@@ -20,16 +20,33 @@ namespace rfc {
 class scheme_test
 {
 public:
+    struct T
+    {
+        friend
+        char const*
+        parse(
+            char const* start,
+            char const* end,
+            error_code& ec,
+            T const&)
+        {
+            string_view s;
+            return parse(
+                start, end, ec,
+                    scheme{s});
+        }
+    };
+
     void
     run()
     {
-        bad <scheme>("");
-        bad <scheme>("1");
-        bad <scheme>(" ");
-        bad <scheme>(" http");
-        bad <scheme>("http ");
-        good<scheme>("http");
-        good<scheme>("a1steak");
+        bad <T>("");
+        bad <T>("1");
+        bad <T>(" ");
+        bad <T>(" http");
+        bad <T>("http ");
+        good<T>("http");
+        good<T>("a1steak");
     }
 };
 
