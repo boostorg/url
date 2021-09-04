@@ -53,22 +53,6 @@ parse_literal(
 
 } // detail
 
-template<char... Cn>
-char const*
-literal<Cn...>::
-parse(
-    char const* const start,
-    char const* const end,
-    error_code& ec) noexcept
-{
-    auto it = detail::parse_literal<
-        Cn...>(start, end, ec);
-    if(ec)
-        return start;
-    s_ = string_view(
-        start, it - start);
-    return it;
-}
 
 template<char...Cn>
 char const*
@@ -76,12 +60,15 @@ parse(
     char const* const start,
     char const* const end,
     error_code& ec,
-    literal<Cn...> const&) noexcept
+    literal<Cn...> const& t) noexcept
 {
     auto it = detail::parse_literal<
         Cn...>(start, end, ec);
     if(ec)
         return start;
+    if(t.v)
+        *t.v = string_view(
+            start, it - start);
     return it;
 }
 

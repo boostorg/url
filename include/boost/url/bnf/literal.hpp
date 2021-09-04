@@ -20,34 +20,18 @@ namespace bnf {
 /** BNF for literal string
 */
 template<char...Cn>
-class literal
+struct literal
 {
-public:
-    using value_type = string_view;
+    string_view* v = nullptr;
 
-    string_view const&
-    match() const noexcept
+    literal() = default;
+
+    explicit
+    literal(
+        string_view& s) noexcept
+        : v(&s)
     {
-        return s_;
     }
-
-    string_view const&
-    operator*() const noexcept
-    {
-        return s_;
-    }
-
-    string_view const*
-    operator->() const noexcept
-    {
-        return s_;
-    }
-
-    char const*
-    parse(
-        char const* const start,
-        char const* const end,
-        error_code& ec) noexcept;
 
     template<char...Cn>
     friend
@@ -57,9 +41,6 @@ public:
         char const* const end,
         error_code& ec,
         literal<Cn...> const&) noexcept;
-
-private:
-    string_view s_;
 };
 
 } // bnf

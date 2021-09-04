@@ -11,7 +11,6 @@
 #define BOOST_URL_RFC_IMPL_AUTHORITY_IPP
 
 #include <boost/url/rfc/authority.hpp>
-#include <boost/url/bnf/literal.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/host.hpp>
 #include <boost/url/rfc/port.hpp>

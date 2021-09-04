@@ -12,7 +12,6 @@
 
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/bnf/literal.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 
