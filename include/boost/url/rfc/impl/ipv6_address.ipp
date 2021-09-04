@@ -66,7 +66,8 @@ struct h16
         {
             if(start == end)
             {
-                ec = error::need_more;
+                // expected HEXDIG
+                ec = error::syntax;
                 return start;
             }
             auto d = hex_digit(*it);
@@ -140,7 +141,8 @@ parse(
                 break;
             }
             BOOST_ASSERT(n > 0);
-            ec = error::need_more;
+            // not enough words
+            ec = error::syntax;
             return start;
         }
         if(*it == ':')
@@ -148,7 +150,8 @@ parse(
             ++it;
             if(it == end)
             {
-                ec = error::need_more;
+                // missing ':'
+                ec = error::syntax;
                 return start;
             }
             if(*it == ':')

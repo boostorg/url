@@ -24,9 +24,12 @@ public:
     run()
     {
         using T = host;
+        bad_ <T>("%");
+        good_<T>("");
         good_<T>("[::]");
         good_<T>("1.2.3.4");
         good_<T>("boost.org");
+        good_<T>("999.0.0.1"); // name
     }
 };
 

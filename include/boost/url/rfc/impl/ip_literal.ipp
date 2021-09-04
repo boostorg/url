@@ -26,23 +26,18 @@ parse(
     ip_literal& t)
 {
     using bnf::parse;
-    if(start == end)
-    {
-        ec = error::need_more;
-        return start;
-    }
-    auto it = start;
-    if(*it != '[')
+    // '['
+    auto it = parse(
+        start, end, ec, '[');
+    if(ec)
     {
         // expected '['
-        ec = error::syntax;
         return start;
     }
-    ++it;
     if(it == end)
     {
         // expected address
-        ec = error::need_more;
+        ec = error::syntax;
         return start;
     }
     if(*it != 'v')

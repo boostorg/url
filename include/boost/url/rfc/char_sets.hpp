@@ -140,7 +140,10 @@ constexpr std::uint8_t
     slash_char_mask = 0x20;
 
 constexpr std::uint8_t
-    at_char_mask = 0x40;
+    alnum_char_mask = 0x40;
+
+constexpr std::uint8_t
+    at_char_mask = 0x80;
 
 } // rfc
 } // urls

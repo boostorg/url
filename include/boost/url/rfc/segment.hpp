@@ -12,9 +12,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/string.hpp>
-#include <boost/url/rfc/pct_encoding.hpp>
-#include <boost/url/bnf/repeat.hpp>
+#include <boost/url/bnf/parse.hpp>
+#include <boost/url/rfc/pct_encoded.hpp>
 
 namespace boost {
 namespace urls {
@@ -27,10 +26,6 @@ namespace rfc {
     segment       = *pchar
 
     pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
-    unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
-    pct-encoded   = "%" HEXDIG HEXDIG
-    sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
-                  / "*" / "+" / "," / ";" / "="
     @endcode
 
     @see
@@ -38,53 +33,30 @@ namespace rfc {
 */
 class segment
 {
+    pct_encoded_value v_;
+
 public:
-    class value_type
-    {
-        friend class segment;
-
-        string_view s_;
-
-    public:
-        string_view
-        encoded_str() const noexcept
-        {
-            return s_;
-        }
-
-        template<
-            class Allocator =
-                std::allocator<char>>
-        string_type<Allocator>
-        str(
-            Allocator const& a = {}) const
-        {
-            return pct_decode_unchecked(
-                s_, a);
-        }
-    };
-
-    value_type const&
-    operator*() const noexcept
+    pct_encoded_value
+    value()
     {
         return v_;
     }
 
-    value_type const*
-    operator->() const noexcept
-    {
-        return &v_;
-    }
+    BOOST_URL_DECL
+    friend
+    char const*
+    parse(
+        char const* start,
+        char const* end,
+        error_code& ec,
+        segment& t);
 
     BOOST_URL_DECL
     char const*
     parse(
-        char const* const start,
-        char const* const end,
+        char const* start,
+        char const* end,
         error_code& ec);
-
-private:
-    value_type v_;
 };
 
 /** BNF for segment which is not empty

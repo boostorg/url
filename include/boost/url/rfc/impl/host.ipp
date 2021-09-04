@@ -56,12 +56,6 @@ parse(
 {
     t.destroy();
     t.kind_ = host_kind::none;
-
-    if(start == end)
-    {
-        ec = error::need_more;
-        return start;
-    }
     auto it = start;
     if(*it == '[')
     {
@@ -87,7 +81,6 @@ parse(
         ec = error::syntax;
         return start;
     }
-
     // IPv4address
     {
         ipv4_address v;
@@ -100,7 +93,6 @@ parse(
         }
         ec = {};
     }
-
     // reg-name
     pct_encoded<
         unreserved_char_mask |
@@ -108,7 +100,6 @@ parse(
     it = parse(it, end, ec, v);
     if(ec)
     {
-        // need more or
         // bad reg-name
         return start;
     }

@@ -25,7 +25,6 @@
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/bnf/range.hpp>
 #include <boost/url/bnf/repeat.hpp>
-#include <boost/url/bnf/sequence.hpp>
 #include <boost/url/bnf/token.hpp>
 #include <boost/url/bnf/tuple.hpp>
 #include <boost/url/bnf/type_traits.hpp>

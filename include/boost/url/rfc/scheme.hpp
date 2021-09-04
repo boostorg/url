@@ -13,19 +13,10 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/bnf/char_set.hpp>
 
 namespace boost {
 namespace urls {
 namespace rfc {
-
-BOOST_URL_DECL
-bool
-is_scheme_char(char c) noexcept;
-
-using scheme_char_set =
-    bnf::char_set_function<
-        &is_scheme_char>;
 
 /** BNF for scheme
 
@@ -39,13 +30,23 @@ using scheme_char_set =
 */
 class scheme
 {
+    string_view s_;
+
 public:
+    string_view
+    str() const noexcept
+    {
+        return s_;
+    };
+
     BOOST_URL_DECL
+    friend
     char const*
     parse(
         char const* const start,
         char const* const end,
-        error_code& ec);
+        error_code& ec,
+        scheme& t);
 };
 
 } // rfc

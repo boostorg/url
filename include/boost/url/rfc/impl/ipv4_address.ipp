@@ -14,7 +14,6 @@
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/literal.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/bnf/sequence.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 
 namespace boost {
@@ -37,7 +36,8 @@ struct dec_octet
     {
         if(start == end)
         {
-            ec = error::need_more;
+            // expected DIGIT
+            ec = error::syntax;
             return start;
         }
         auto it = start;

@@ -36,7 +36,6 @@ set(BOOST_URL_TESTS_FILES
     bnf/char_set.cpp
     bnf/range.cpp
     bnf/repeat.cpp
-    bnf/sequence.cpp
     bnf/token.cpp
     bnf/tuple.cpp
     bnf/type_traits.cpp

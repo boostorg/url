@@ -40,6 +40,10 @@ public:
         string_view question = "?";
         string_view colon = ":";
         string_view slash = "/";
+        string_view alnum =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "0123456789";
         string_view at = "@";
 
         v = {};
@@ -49,7 +53,8 @@ public:
         for(std::uint8_t c : question)   v[c] |= 0x08;
         for(std::uint8_t c : colon)      v[c] |= 0x10;
         for(std::uint8_t c : slash)      v[c] |= 0x20;
-        for(std::uint8_t c : at)         v[c] |= 0x40;
+        for(std::uint8_t c : alnum)      v[c] |= 0x40;
+        for(std::uint8_t c : at)         v[c] |= 0x80;
     }
 
     void
@@ -132,6 +137,12 @@ public:
         check(masked_char_set<
             slash_char_mask>(),
             "/");
+
+        check(masked_char_set<
+            alnum_char_mask>(),
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "0123456789");
 
         check(masked_char_set<
             question_char_mask>(),

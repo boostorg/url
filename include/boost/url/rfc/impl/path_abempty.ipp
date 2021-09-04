@@ -14,7 +14,6 @@
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/bnf/literal.hpp>
-#include <boost/url/bnf/sequence.hpp>
 #include <boost/url/rfc/segment.hpp>
 
 namespace boost {
@@ -28,12 +27,10 @@ increment(
     char const* const end,
     error_code& ec)
 {
-    using namespace bnf;
-    sequence<
-        literal<'/'>,
-        segment> p;
-    auto it = p.parse(
-        start, end, ec);
+    segment t;
+    using bnf::parse;
+    auto it = parse(
+        start, end, ec, '/', t);
     if(ec)
     {
         v_ = {};

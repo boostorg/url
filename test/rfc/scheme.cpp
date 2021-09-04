@@ -23,13 +23,13 @@ public:
     void
     run()
     {
-        bad <scheme>("");
-        bad <scheme>("1");
-        bad <scheme>(" ");
-        bad <scheme>(" http");
-        bad <scheme>("http ");
-        good<scheme>("http");
-        good<scheme>("a1steak");
+        bad_ <scheme>("");
+        bad_ <scheme>("1");
+        bad_ <scheme>(" ");
+        bad_ <scheme>(" http");
+        bad_ <scheme>("http ");
+        good_<scheme>("http");
+        good_<scheme>("a1steak");
     }
 };
 

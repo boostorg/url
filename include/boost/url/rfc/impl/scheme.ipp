@@ -11,36 +11,27 @@
 #define BOOST_URL_RFC_IMPL_SCHEME_IPP
 
 #include <boost/url/rfc/scheme.hpp>
-#include <boost/url/error.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/bnf/parse.hpp>
+#include <boost/url/bnf/token.hpp>
 #include <boost/url/rfc/char_sets.hpp>
+#include <boost/assert.hpp>
 
 namespace boost {
 namespace urls {
 namespace rfc {
 
-bool
-is_scheme_char(char c) noexcept
-{
-    return
-        is_alpha(c) ||
-        is_digit(c) ||
-        c == '+' ||
-        c == '-' ||
-        c == '.';
-}
-
 char const*
-scheme::
 parse(
     char const* const start,
     char const* const end,
-    error_code& ec)
+    error_code& ec,
+    scheme& t)
 {
     auto it = start;
     if(it == end)
     {
-        ec = error::need_more;
+        // expected alpha
+        ec = error::syntax;
         return start;
     }
     if(! is_alpha(*it))
@@ -48,8 +39,13 @@ parse(
         ec = error::syntax;
         return start;
     }
-    scheme_char_set cs;
-    it = cs.skip(it + 1, end);
+    bnf::token<
+        masked_char_set<
+            alnum_char_mask>> ct;
+    using bnf::parse;
+    it = parse(start, end, ec, ct);
+    BOOST_ASSERT(it != start);
+    t.s_ = ct.str();
     return it;
 }
 

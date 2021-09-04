@@ -44,7 +44,8 @@ skip:
         ++it;
         if(it == end)
         {
-            ec = error::need_more;
+            // missing HEXDIG
+            ec = error::syntax;
             return start;
         }
         if(hex_digit(*it) == -1)
@@ -56,7 +57,8 @@ skip:
         ++it;
         if(it == end)
         {
-            ec = error::need_more;
+            // missing HEXDIG
+            ec = error::syntax;
             return start;
         }
         if(hex_digit(*it) == -1)

@@ -21,23 +21,35 @@ namespace urls {
 namespace rfc {
 
 char const*
-segment::
 parse(
     char const* const start,
     char const* const end,
-    error_code& ec)
+    error_code& ec,
+    segment& t)
 {
     pct_encoded<
         unreserved_char_mask +
         sub_delims_char_mask +
         colon_char_mask +
-        at_char_mask> p;
-    auto it = p.parse(
-        start, end, ec);
+        at_char_mask> ts;
+    auto it = parse(
+        start, end, ec, ts);
     if(ec)
         return start;
-    v_.s_ = p->str();
+    t.v_ = ts.value();
     return it;
+}
+
+char const*
+segment::
+parse(
+    char const* start,
+    char const* end,
+    error_code& ec)
+{
+    using bnf::parse;
+    return rfc::parse(
+        start, end, ec, *this);
 }
 
 char const*
