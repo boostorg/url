@@ -59,6 +59,18 @@ parse(
     T1&& t1,
     Tn&&... tn);
 
+/** Parse a complete string
+*/
+template<
+    class T0,
+    class... Tn>
+void
+parse(
+    string_view s,
+    error_code& ec,
+    T0&& t0,
+    Tn&&... tn);
+
 /** Return true if a string matches the grammar
 */
 template<class T>

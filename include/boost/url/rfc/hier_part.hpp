@@ -14,7 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/range.hpp>
 #include <boost/url/rfc/authority.hpp>
-#include <boost/url/rfc/path.hpp>
+#include <boost/url/rfc/pct_encoded.hpp>
 #include <boost/optional.hpp>
 
 namespace boost {
@@ -50,7 +50,7 @@ namespace rfc {
 class hier_part
 {
     using path_type =
-        bnf::range<rfc::path>;
+        bnf::range<pct_encoded_value>;
     path_type v_;
     optional<rfc::authority> a_;
 
@@ -62,7 +62,8 @@ public:
         return a_;
     }
 
-    bnf::range<rfc::path> const&
+    bnf::range<
+        pct_encoded_value> const&
     path() const noexcept
     {
         return v_;

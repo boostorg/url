@@ -13,6 +13,8 @@
 #include "test_suite.hpp"
 #include "test_bnf.hpp"
 
+#include <iostream>
+
 namespace boost {
 namespace urls {
 namespace rfc {
@@ -45,6 +47,13 @@ public:
         good_<T>("x/y/z");
         good_<T>("x//y///z///");
         good_<T>("");
+
+        hier_part p;
+        error_code ec;
+        using bnf::parse;
+        parse("/1/2/3/4/5", ec, p);
+        for(auto const& t : p.path())
+            std::cout << t.str() << std::endl;
     }
 };
 

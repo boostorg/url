@@ -92,6 +92,32 @@ parse(
     return it;
 }
 
+template<
+    class T0,
+    class... Tn>
+void
+parse(
+    string_view s,
+    error_code& ec,
+    T0&& t0,
+    Tn&&... tn)
+{
+    auto const end =
+        s.data() + s.size();
+    auto it = parse(
+        s.data(), end, ec,
+        std::forward<T0>(t0),
+        std::forward<Tn>(tn)...);
+    if(ec)
+        return;
+    if(it != end)
+    {
+        // partial match
+        ec = error::syntax;
+        return;
+    }
+}
+
 template<class T>
 bool
 is_valid_(

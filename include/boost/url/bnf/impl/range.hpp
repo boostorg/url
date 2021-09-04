@@ -17,57 +17,113 @@ namespace urls {
 namespace bnf {
 
 template<class T>
-range<T>::
-iterator::
-iterator(string_view s)
-    : end_(s.data() + s.size())
+class range<T>::iterator
 {
-    error_code ec;
-    next_ = T::begin(
-        s.data(), end_, ec, v_);
-    if(ec == error::end)
-        next_ = nullptr;
-    else if(ec.failed())
-        urls::detail::throw_system_error(ec,
-            BOOST_CURRENT_LOCATION);
-}
+    T v_;
+    char const* next_ = nullptr;
+    char const* end_ = nullptr;
+    begin_t begin_ = nullptr;
+    increment_t increment_ = nullptr;
 
-template<class T>
-auto
-range<T>::
-iterator::
-operator++() ->
-    iterator&
-{
-    using namespace urls::detail;
-    error_code ec;
-    next_ = T::increment(
-        next_, end_, ec, v_);
-    if(ec == error::end)
+    friend class range;
+
+    iterator(
+        string_view s,
+        begin_t begin,
+        increment_t increment)
+        : end_(s.data() + s.size())
+        , begin_(begin)
+        , increment_(increment)
     {
-        next_ = nullptr;
-        ec = {};
+        using namespace urls::detail;
+        error_code ec;
+        next_ = begin_(
+            s.data(), end_, ec, v_);
+        if(ec == error::end)
+            next_ = nullptr;
+        else if(ec.failed())
+            throw_system_error(ec,
+                BOOST_CURRENT_LOCATION);
     }
-    if(ec.failed())
-        throw_system_error(ec,
-            BOOST_CURRENT_LOCATION);
-    return *this;
-}
 
-template<class T>
-auto
-range<T>::
-begin(error_code& ec) const ->
+    explicit
+    iterator(
+        char const* end,
+        begin_t begin,
+        increment_t increment)
+        : end_(end)
+        , begin_(begin)
+        , increment_(increment)
+    {
+    }
+
+public:
+    using value_type = T;
+    using pointer = value_type const*;
+    using reference = value_type const&;
+    using iterator_category =
+        std::forward_iterator_tag;
+
+    iterator() noexcept = default;
+
+    bool
+    operator==(
+        iterator const& other) const
+    {
+        return
+            next_ == other.next_ &&
+            end_ == other.end_ &&
+            begin_ == other.begin_ &&
+            increment_ == other.increment_;
+    }
+
+    bool
+    operator!=(
+        iterator const& other) const
+    {
+        return !(*this == other);
+    }
+
+    value_type const&
+    operator*() const noexcept
+    {
+        return v_;
+    }
+
+    value_type const*
+    operator->() const noexcept
+    {
+        return &v_;
+    }
+
+    iterator&
+    operator++()
+    {
+        using namespace urls::detail;
+        error_code ec;
+        next_ = increment_(
+            next_, end_, ec, v_);
+        if(ec == error::end)
+        {
+            next_ = nullptr;
+            ec = {};
+        }
+        if(ec.failed())
+            throw_system_error(ec,
+                BOOST_CURRENT_LOCATION);
+        return *this;
+    }
+
     iterator
-{
-    iterator it(s_, ec);
-    if(! ec)
-        return it;
-    return iterator(
-        s_.data() + s_.size());
-    // VFALCO is this better than above?
-    //return iterator();
-}
+    operator++(int)
+    {
+        auto temp = *this;
+        ++(*this);
+        return temp;
+    }
+};
+
+//------------------------------------------------
 
 template<class T>
 auto
@@ -75,7 +131,8 @@ range<T>::
 begin() const ->
     iterator
 {
-    return iterator(s_);
+    return iterator(s_,
+        begin_, increment_);
 }
 
 template<class T>
@@ -85,7 +142,58 @@ end() const ->
     iterator
 {
     return iterator(
-        s_.data() + s_.size());
+        s_.data() + s_.size(),
+        begin_, increment_);
+}
+
+template<class T, class U>
+char const*
+parse_range(
+    char const* start,
+    char const* end,
+    error_code& ec,
+    range<T>& t,
+    U const&)
+{
+    T v;
+    std::size_t n = 0;
+    auto it = U::begin(
+        start, end, ec, v);
+    if(ec == error::end)
+    {
+        t = range<T>(
+            string_view(start,
+                it - start), n,
+            &U::begin,
+            &U::increment);
+        ec = {};
+        return it;
+    }
+    if(ec.failed())
+    {
+        t = {};
+        return start;
+    }
+    for(;;)
+    {
+        ++n;
+        it = U::increment(
+            it, end, ec, v);
+        if(ec == error::end)
+            break;
+        if(ec.failed())
+        {
+            t = {};
+            return start;
+        }
+    }
+    t = range<T>(
+        string_view(start,
+            it - start), n,
+        &U::begin,
+        &U::increment);
+    ec = {};
+    return it;
 }
 
 } // bnf

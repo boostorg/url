@@ -26,11 +26,34 @@ namespace bnf {
 template<class T>
 class range
 {
+    using begin_t = char const*(*)(
+        char const*, char const*,
+            error_code&, T&);
+
+    using increment_t = char const*(*)(
+        char const*, char const*,
+            error_code&, T&);
+
     string_view s_;
+    std::size_t n_ = 0;
+    begin_t begin_ = nullptr;
+    increment_t
+        increment_ = nullptr;
+
+    range(
+        string_view s,
+        std::size_t n,
+        begin_t begin,
+        increment_t increment)
+        : s_(s)
+        , n_(n)
+        , begin_(begin)
+        , increment_(increment)
+    {
+    }
 
 public:
-    using value_type = typename
-        T::value_type;
+    using value_type = T;
 
     class iterator;
 
@@ -47,12 +70,38 @@ public:
     constexpr range() = default;
 
     /** Constructor
+
+        @par Preconditions
+
+        `s` parses according to the grammar without error
+
+        @param s The string representing the range
+
+        @param n The number of elements in the range
     */
-    explicit
     range(
-        string_view s) noexcept
+        string_view s,
+        // VFALCO FIX ME
+        std::size_t n = 0) noexcept
         : s_(s)
+        , n_(n)
     {
+    }
+
+    /** Return true if the range is empty
+    */
+    bool
+    empty() const noexcept
+    {
+        return n_ == 0;
+    }
+
+    /** Return the number of elements in the range
+    */
+    std::size_t
+    size() const noexcept
+    {
+        return n_;
     }
 
     /** Return the entire string underlying the range
@@ -64,83 +113,20 @@ public:
     }
 
     iterator
-    begin(error_code& ec) const;
-
-    iterator
     begin() const;
 
     iterator
     end() const;
-};
 
-//------------------------------------------------
-
-template<class T>
-class range<T>::iterator
-{
-    char const* next_ = nullptr;
-    char const* end_ = nullptr;
-    typename T::value_type v_;
-
-    friend class range;
-
-    explicit
-    iterator(string_view s);
-
-    explicit
-    iterator(char const* end);
-
-public:
-    using value_type =
-        typename T::value_type;
-    using pointer = value_type const*;
-    using reference = value_type const&;
-    using iterator_category =
-        std::forward_iterator_tag;
-
-    iterator() noexcept = default;
-
-    bool
-    operator==(
-        iterator const& other) const
-    {
-        return
-            next_ == other.next_ &&
-            end_ == other.end_;
-    }
-
-    bool
-    operator!=(
-        iterator const& other) const
-    {
-        return !(*this == other);
-    }
-
-    value_type const&
-    operator*() const noexcept
-    {
-        return v_;
-    }
-
-    value_type const*
-    operator->() const noexcept
-    {
-        return &v_;
-    }
-
-    void
-    increment(error_code& ec);
-
-    iterator&
-    operator++();
-
-    iterator
-    operator++(int)
-    {
-        auto temp = *this;
-        ++(*this);
-        return temp;
-    }
+    template<class T, class U>
+    friend
+    char const*
+    parse_range(
+        char const* start,
+        char const* end,
+        error_code& ec,
+        range<T>& t,
+        U const&);
 };
 
 } // bnf

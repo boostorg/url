@@ -29,11 +29,11 @@ parse(
     authority& t)
 {
     using bnf::parse;
-    auto it = start;
+    char const* it;
     // [ userinfo "@" ]
     {
         userinfo u;
-        it = parse(it, end,
+        it = parse(start, end,
             ec, u, '@');
         if(! ec.failed())
         {
@@ -41,8 +41,9 @@ parse(
         }
         else
         {
-            t.u_.reset();
             ec = {};
+            it = start;
+            t.u_.reset();
         }
     }
     // host
