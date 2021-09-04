@@ -24,6 +24,8 @@ public:
     run()
     {
         good_<authority>("me@you.com");
+        good_<authority>("user:pass@");
+        good_<authority>("user:1234");
     }
 };
 

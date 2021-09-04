@@ -14,6 +14,7 @@
 #include <boost/url/bnf/literal.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/host.hpp>
+#include <boost/url/rfc/port.hpp>
 #include <boost/url/rfc/userinfo.hpp>
 
 namespace boost {
@@ -28,24 +29,54 @@ parse(
     authority& t)
 {
     using bnf::parse;
-    userinfo u;
-    auto it = parse(start,
-        end, ec, u, '@');
-    bool got_userinfo;
-    if(! ec.failed())
+    auto it = start;
+    // [ userinfo "@" ]
     {
-        got_userinfo = true;
+        userinfo u;
+        it = parse(it, end,
+            ec, u, '@');
+        if(! ec.failed())
+        {
+            t.u_.emplace(u);
+        }
+        else
+        {
+            t.u_.reset();
+            ec = {};
+        }
     }
-    else
-    {
-        got_userinfo = false;
-        ec = {};
-    }
-    host h;
+    // host
     it = parse(
-        it, end, ec, h);
+        it, end, ec, t.h_);
     if(ec)
         return start;
+    // [ ":" port ]
+    {
+        // ":"
+        if(it == end)
+        {
+            t.p_.reset();
+            return it;
+        }
+        if(*it != ':')
+        {
+            t.p_.reset();
+            return it;
+        }
+        ++it;
+        // port
+        port p;
+        it = parse(
+            it, end, ec, p);
+        if(ec)
+        {
+            // never happens
+            BOOST_ASSERT(
+                ! ec.failed());
+            return start;
+        }
+        t.p_.emplace(p);
+    }
     return it;
 }
 

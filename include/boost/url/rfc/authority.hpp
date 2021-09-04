@@ -12,6 +12,10 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/rfc/host.hpp>
+#include <boost/url/rfc/port.hpp>
+#include <boost/url/rfc/userinfo.hpp>
+#include <boost/optional.hpp>
 #include <array>
 #include <cstdint>
 
@@ -29,8 +33,32 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.2
 */
-struct authority
+class authority
 {
+    rfc::host h_;
+    optional<rfc::port> p_;
+    optional<rfc::userinfo> u_;
+
+public:
+    optional<
+        rfc::userinfo> const&
+    userinfo() const noexcept
+    {
+        return u_;
+    }
+
+    rfc::host const&
+    host() const noexcept
+    {
+        return h_;
+    }
+
+    optional<rfc::port> const&
+    port() const noexcept
+    {
+        return p_;
+    }
+
     BOOST_URL_DECL
     friend
     char const*
