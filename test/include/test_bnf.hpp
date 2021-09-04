@@ -10,7 +10,6 @@
 #ifndef BOOST_URL_TEST_TEST_BNF_HPP
 #define BOOST_URL_TEST_TEST_BNF_HPP
 
-#include <boost/url/bnf/algorithm.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/string.hpp>
 
@@ -18,25 +17,6 @@
 
 namespace boost {
 namespace urls {
-
-template<class T>
-void
-bad(string_view s)
-{
-    BOOST_TEST_THROWS(
-        bnf::validate<T>(s),
-        std::exception);
-    BOOST_TEST(! bnf::is_valid<T>(s));
-}
-
-template<class T>
-void
-good(string_view s)
-{
-    BOOST_TEST_NO_THROW(
-        bnf::validate<T>(s));
-    BOOST_TEST(bnf::is_valid<T>(s));
-}
 
 template<class T>
 void

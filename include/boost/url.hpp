@@ -19,7 +19,6 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/urls.hpp>
 
-#include <boost/url/bnf/algorithm.hpp>
 #include <boost/url/bnf/char_set.hpp>
 #include <boost/url/bnf/literal.hpp>
 #include <boost/url/bnf/parse.hpp>
@@ -39,12 +38,10 @@
 #include <boost/url/rfc/ipv4_address.hpp>
 #include <boost/url/rfc/ipv6_address.hpp>
 #include <boost/url/rfc/origin_form.hpp>
-#include <boost/url/rfc/path.hpp>
 #include <boost/url/rfc/pct_encoded.hpp>
 #include <boost/url/rfc/pct_encoding.hpp>
 #include <boost/url/rfc/port.hpp>
 #include <boost/url/rfc/scheme.hpp>
-#include <boost/url/rfc/segment.hpp>
 #include <boost/url/rfc/userinfo.hpp>
 
 #endif

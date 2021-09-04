@@ -43,11 +43,9 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/ipv4_address.ipp>
 #include <boost/url/rfc/impl/ipv6_address.ipp>
 #include <boost/url/rfc/impl/origin_form.ipp>
-#include <boost/url/rfc/impl/path.ipp>
 #include <boost/url/rfc/impl/pct_encoding.ipp>
 #include <boost/url/rfc/impl/port.ipp>
 #include <boost/url/rfc/impl/scheme.ipp>
-#include <boost/url/rfc/impl/segment.ipp>
 #include <boost/url/rfc/impl/userinfo.ipp>
 
 #endif

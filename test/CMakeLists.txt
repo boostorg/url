@@ -32,7 +32,6 @@ set(BOOST_URL_TESTS_FILES
     url.cpp
     url_view.cpp
     urls.cpp
-    bnf/algorithm.cpp
     bnf/char_set.cpp
     bnf/range.cpp
     bnf/repeat.cpp
@@ -49,12 +48,10 @@ set(BOOST_URL_TESTS_FILES
     rfc/ipv4_address.cpp
     rfc/ipv6_address.cpp
     rfc/origin_form.cpp
-    rfc/path.cpp
     rfc/pct_encoded.cpp
     rfc/pct_encoding.cpp
     rfc/port.cpp
     rfc/scheme.cpp
-    rfc/segment.cpp
     rfc/userinfo.cpp
     )
 
