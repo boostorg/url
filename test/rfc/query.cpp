@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/rfc/hier_part.hpp>
+#include <boost/url/rfc/query.hpp>
 
 #include "test_suite.hpp"
 #include "test_bnf.hpp"
@@ -19,47 +19,38 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-class hier_part_test
+class query_test
 {
 public:
     void
     run()
     {
-        using T = hier_part;
-        
-        bad <T>("/");
+        using T = query;
 
-        good<T>("//");
-        good<T>("//user:pass@");
-        good<T>("//boost.org");
-        good<T>("//1.2.3.4:8080");
-        good<T>("//1.2.3.4:8080/");
-        good<T>("//1.2.3.4:8080/x");
-        good<T>("//1.2.3.4:8080/x/");
-        good<T>("//1.2.3.4:8080////");
-        good<T>("/x");
-        good<T>("/x/");
-        good<T>("/x/y");
-        good<T>("/x/y//");
-        good<T>("x");
-        good<T>("x/");
-        good<T>("x//");
-        good<T>("x/y/z");
-        good<T>("x//y///z///");
+        bad <T>("%");
+
         good<T>("");
+        good<T>("x");
+        good<T>("x=");
+        good<T>("x=y");
+        good<T>("x=y&");
+        good<T>("x=y&a");
+        good<T>("x=y&a=b&");
 
-        hier_part p;
+#if 0
+        query p;
         error_code ec;
         using bnf::parse;
         parse("/1/2/3/4/5", ec, p);
         for(auto const& t : p.path())
             std::cout << t.str() << std::endl;
+#endif
     }
 };
 
 TEST_SUITE(
-    hier_part_test,
-    "boost.url.hier_part");
+    query_test,
+    "boost.url.query");
 
 } // rfc
 } // urls

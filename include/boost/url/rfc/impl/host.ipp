@@ -94,9 +94,7 @@ parse(
         ec = {};
     }
     // reg-name
-    pct_encoded<
-        unreserved_char_mask |
-        sub_delims_char_mask> v;
+    pct_encoded<unsub_char_mask> v;
     it = parse(it, end, ec, v);
     if(ec)
     {

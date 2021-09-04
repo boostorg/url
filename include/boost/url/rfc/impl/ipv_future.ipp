@@ -34,8 +34,7 @@ parse(
         token<hexdig_chars>{v0},
         '.',
         token<masked_char_set<
-            unreserved_char_mask |
-            sub_delims_char_mask |
+            unsub_char_mask |
             colon_char_mask>>{v1});
     if(ec)
         return start;

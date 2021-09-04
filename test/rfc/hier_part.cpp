@@ -13,8 +13,6 @@
 #include "test_suite.hpp"
 #include "test_bnf.hpp"
 
-#include <iostream>
-
 namespace boost {
 namespace urls {
 namespace rfc {
@@ -52,8 +50,15 @@ public:
         error_code ec;
         using bnf::parse;
         parse("/1/2/3/4/5", ec, p);
+        std::string s;
         for(auto const& t : p.path())
-            std::cout << t.str() << std::endl;
+        {
+            s.push_back('/');
+            s.append(
+                t.str().data(),
+                t.str().size());
+        }
+        BOOST_TEST(s == "/1/2/3/4/5");
     }
 };
 

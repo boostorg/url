@@ -75,14 +75,14 @@ parse(
 */
 template<class T>
 bool
-is_valid_(
+is_valid(
     string_view s);
 
 /** Throw an exception the string does not match the grammar
 */
 template<class T>
 void
-validate_(
+validate(
     string_view s);
 
 } // bnf

@@ -29,19 +29,11 @@ parse(
     error_code& ec,
     userinfo& t)
 {
-    // *( unreserved / pct-encoded / sub-delims )
-    constexpr auto cs_nc_mask =
-        unreserved_char_mask +
-        sub_delims_char_mask;
-
-    // *( unreserved / pct-encoded / sub-delims / ":" )
-    constexpr auto cs_mask =
-        unreserved_char_mask +
-        sub_delims_char_mask +
-        colon_char_mask;
-
-    pct_encoded<cs_nc_mask> user;
-    pct_encoded<cs_mask> pass;
+    pct_encoded<
+        unsub_char_mask> user;
+    pct_encoded<
+        unsub_char_mask |
+        colon_char_mask> pass;
     optional<
         bnf::literal<':'>> colon;
     auto it = parse(start, end, ec,

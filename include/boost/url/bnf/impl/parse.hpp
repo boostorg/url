@@ -120,7 +120,7 @@ parse(
 
 template<class T>
 bool
-is_valid_(
+is_valid(
     string_view s)
 {
     T t;
@@ -140,14 +140,14 @@ is_valid_(
 }
 
 bool
-is_valid_(char) = delete;
+is_valid(char) = delete;
 
 template<class T>
 void
-validate_(string_view s)
+validate(string_view s)
 {
     using namespace urls::detail;
-    if(! is_valid_<T>(s))
+    if(! is_valid<T>(s))
         throw_invalid_argument(
             "syntax error",
             BOOST_CURRENT_LOCATION);

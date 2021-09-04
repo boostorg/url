@@ -20,27 +20,11 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-class query_param
+struct query_param
 {
-    friend struct query;
-
-    pct_encoded_value key_;
+    pct_encoded_value key;
     optional<
-        pct_encoded_value> value_;
-
-public:
-    pct_encoded_value const&
-    key() const noexcept
-    {
-        return key_;
-    }
-
-    optional<
-        pct_encoded_value> const&
-    value() const noexcept
-    {
-        return value_;
-    }
+        pct_encoded_value> value;
 };
 
 /** BNF for query
@@ -58,8 +42,7 @@ public:
 */
 struct query
 {
-    bnf::range<
-        query_param>& v;
+    bnf::range<query_param> v;
 
     BOOST_URL_DECL
     static
@@ -85,7 +68,7 @@ struct query
         char const* const start,
         char const* const end,
         error_code& ec,
-        query const& t)
+        query& t)
     {
         return bnf::parse_range(
             start, end, ec, t.v, t);

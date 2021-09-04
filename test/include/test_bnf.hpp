@@ -79,9 +79,9 @@ void
 bad(string_view s)
 {
     BOOST_TEST_THROWS(
-        bnf::validate_<T>(s),
+        bnf::validate<T>(s),
         std::exception);
-    BOOST_TEST(! bnf::is_valid_<T>(s));
+    BOOST_TEST(! bnf::is_valid<T>(s));
 }
 
 template<class T>
@@ -89,8 +89,8 @@ void
 good(string_view s)
 {
     BOOST_TEST_NO_THROW(
-        bnf::validate_<T>(s));
-    BOOST_TEST(bnf::is_valid_<T>(s));
+        bnf::validate<T>(s));
+    BOOST_TEST(bnf::is_valid<T>(s));
 }
 
 } // urls

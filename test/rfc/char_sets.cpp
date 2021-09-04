@@ -32,25 +32,26 @@ public:
     void
     build_table(table_type& v)
     {
-        string_view unreserved =
+        string_view query =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz"
             "0123456789"
-            "-._~";
-        string_view sub_delims = "!$&'()*+,;=";
+            "-._~"
+            "!$'()*+,;";
+        string_view amper = "&";
+        string_view equals = "=";
         string_view gen_delims = ":/?#[]@";
         string_view question = "?";
-        string_view equals = "=";
         string_view colon = ":";
         string_view slash = "/";
         string_view at = "@";
 
         v = {};
-        for(std::uint8_t c : unreserved) v[c] |= 0x01;
-        for(std::uint8_t c : sub_delims) v[c] |= 0x02;
-        for(std::uint8_t c : gen_delims) v[c] |= 0x04;
-        for(std::uint8_t c : question)   v[c] |= 0x08;
-        for(std::uint8_t c : equals)     v[c] |= 0x10;
+        for(std::uint8_t c : query)      v[c] |= 0x01;
+        for(std::uint8_t c : amper)      v[c] |= 0x02;
+        for(std::uint8_t c : equals)     v[c] |= 0x04;
+        for(std::uint8_t c : gen_delims) v[c] |= 0x08;
+        for(std::uint8_t c : question)   v[c] |= 0x10;
         for(std::uint8_t c : colon)      v[c] |= 0x20;
         for(std::uint8_t c : slash)      v[c] |= 0x40;
         for(std::uint8_t c : at)         v[c] |= 0x80;
@@ -90,14 +91,28 @@ public:
         //print_table();
 
         test_char_set(masked_char_set<
-            unreserved_char_mask>(),
+            query_char_mask>(),
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz"
             "0123456789"
-            "-._~");
+            "-._~"
+            "!$'()*+,;"
+            );
 
         test_char_set(masked_char_set<
-            sub_delims_char_mask>(),
+            amper_char_mask>(),
+            "&");
+
+        test_char_set(masked_char_set<
+            equals_char_mask>(),
+            "=");
+
+        test_char_set(masked_char_set<
+            unsub_char_mask>(),
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "0123456789"
+            "-._~"
             "!$&'()*+,;=");
 
         test_char_set(masked_char_set<
@@ -105,24 +120,29 @@ public:
             ":/?#[]@");
 
         test_char_set(masked_char_set<
-            equals_char_mask>(),
-            "=");
+            question_char_mask>(),
+            "?");
 
         test_char_set(masked_char_set<
             colon_char_mask>(),
             ":");
 
         test_char_set(masked_char_set<
-            at_char_mask>(),
-            "@");
-
-        test_char_set(masked_char_set<
             slash_char_mask>(),
             "/");
 
         test_char_set(masked_char_set<
-            question_char_mask>(),
-            "?");
+            at_char_mask>(),
+            "@");
+
+        test_char_set(masked_char_set<
+            pchar_mask>(),
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "0123456789"
+            "-._~"
+            "!$&'()*+,;="
+            ":@");
     }
 };
 

@@ -46,33 +46,71 @@ public:
 
 //------------------------------------------------
 
-/** Mask for the unreserved character set
+/** Mask for query characters, excluding equals and ampersand
+
+    This is the unreserved set combined with the
+    sub-delims set, with the ampersand and equals
+    characters removed. It is used for parsing
+    query parameter text.
 
     @par BNF
     @code
-    unreserved  = ALPHA / DIGIT / "-" / "." / "_" / "~"
+    query-char      = ALPHA / DIGIT / "-" / "." / "_" / "~"
+                    / "!" / "$" / "'" / "(" / ")"
+                    / "*" / "+" / "," / ";"
     @endcode
 
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-2.3
 */
 constexpr std::uint8_t
-    unreserved_char_mask = 0x01;
+    query_char_mask = 0x01;
 
-/** Mask for character set of sub-delims
+/** Mask for a character set containing just '&'
 
     @par BNF
     @code
-    sub-delims  = "!" / "$" / "&" / "'" / "(" / ")"
-                / "*" / "+" / "," / ";" / "="
+    AMPER      = "&"
     @endcode
 
     @see
         @ref masked_char_set
-        https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
 */
 constexpr std::uint8_t
-    sub_delims_char_mask = 0x02;
+    amper_char_mask = 0x02;
+
+/** Mask for a character set containing just '='
+
+    @par BNF
+    @code
+    EQUALS    = "="
+    @endcode
+
+    @see
+        @ref masked_char_set
+*/
+constexpr std::uint8_t
+    equals_char_mask = 0x04;
+
+/** Mask for the combined unreserved and sub-delims character set
+
+    @par BNF
+    @code
+    unsub-char   = unreserved / sub-delims
+
+    unreserved   = ALPHA / DIGIT / "-" / "." / "_" / "~"
+    sub-delims   = "!" / "$" / "&" / "'" / "(" / ")"
+                 / "*" / "+" / "," / ";" / "="
+    @endcode
+
+    @see
+        https://datatracker.ietf.org/doc/html/rfc3986#section-2.3
+*/
+constexpr std::uint8_t
+    unsub_char_mask =
+        query_char_mask |
+        amper_char_mask |
+        equals_char_mask;
 
 /** Mask for character set of gen-delims
 
@@ -86,7 +124,7 @@ constexpr std::uint8_t
         https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
 */
 constexpr std::uint8_t
-    gen_delims_char_mask = 0x04;
+    gen_delims_char_mask = 0x08;
 
 /** Mask for a character set containing '?'
 
@@ -99,20 +137,7 @@ constexpr std::uint8_t
         @ref masked_char_set
 */
 constexpr std::uint8_t
-    question_char_mask = 0x08;
-
-/** Mask for a character set containing '='
-
-    @par BNF
-    @code
-    EQUALS    = "="
-    @endcode
-
-    @see
-        @ref masked_char_set
-*/
-constexpr std::uint8_t
-    equals_char_mask = 0x10;
+    question_char_mask = 0x10;
 
 /** Mask for a character set containing ':'
 
@@ -166,8 +191,7 @@ constexpr std::uint8_t
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.3
 */
 constexpr std::uint8_t pchar_mask =
-    unreserved_char_mask |
-    sub_delims_char_mask |
+    unsub_char_mask |
     colon_char_mask |
     at_char_mask;
 

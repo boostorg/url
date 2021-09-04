@@ -14,6 +14,7 @@
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/detail/paths.hpp>
 #include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/pct_encoded.hpp>
 
 namespace boost {
 namespace urls {
@@ -27,8 +28,40 @@ begin(
     error_code& ec,
     query_param& t) noexcept
 {
-    return increment(
-        start, end, ec, t);
+    using bnf::parse;
+    pct_encoded<
+        query_char_mask> k;
+    auto it = parse(
+        start, end, ec, k);
+    if(ec)
+        return start;
+    it = parse(
+        it, end, ec, '=');
+    if(ec.failed())
+    {
+        if(it != start)
+        {
+            // key with no value
+            ec = {};
+            t.key = k.value();
+            t.value.reset();
+            return it;
+        }
+        // empty list
+        ec = error::end;
+        return start;
+    }
+    pct_encoded<
+        query_char_mask> v;
+    it = parse(it, end, ec, v);
+    if(ec)
+    {
+        // VFALCO what about the key?
+        return start;
+    }
+    t.key = k.value();
+    t.value.emplace(v.value());
+    return it;
 }
 
 char const*
@@ -39,8 +72,28 @@ increment(
     error_code& ec,
     query_param& t) noexcept
 {
-    //pct_encoded<pchar
-    return nullptr;
+    using bnf::parse;
+    auto it = parse(
+        start, end, ec, '&');
+    if(ec)
+    {
+        // end of list
+        ec = error::end;
+        return start;
+    }
+    auto it0 = it;
+    it = begin(it, end, ec, t);
+    if(ec == error::end)
+    {
+        // empty param
+        ec = {};
+        t.key = {};
+        t.value.reset();
+        return it0;
+    }
+    if(ec)
+        return start;
+    return it;
 }
 
 } // rfc
