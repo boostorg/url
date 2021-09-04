@@ -69,25 +69,6 @@ public:
     */
     constexpr range() = default;
 
-    /** Constructor
-
-        @par Preconditions
-
-        `s` parses according to the grammar without error
-
-        @param s The string representing the range
-
-        @param n The number of elements in the range
-    */
-    range(
-        string_view s,
-        // VFALCO FIX ME
-        std::size_t n = 0) noexcept
-        : s_(s)
-        , n_(n)
-    {
-    }
-
     /** Return true if the range is empty
     */
     bool
