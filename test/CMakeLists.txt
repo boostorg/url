@@ -42,6 +42,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/authority.cpp
     rfc/char_sets.cpp
     rfc/hexdig.cpp
+    rfc/hier_part.cpp
     rfc/host.cpp
     rfc/ip_literal.cpp
     rfc/ipv_future.cpp
@@ -49,10 +50,6 @@ set(BOOST_URL_TESTS_FILES
     rfc/ipv6_address.cpp
     rfc/origin_form.cpp
     rfc/path.cpp
-    rfc/path_abempty.cpp
-    rfc/path_absolute.cpp
-    rfc/path_noscheme.cpp
-    rfc/path_rootless.cpp
     rfc/pct_encoded.cpp
     rfc/pct_encoding.cpp
     rfc/port.cpp

@@ -32,6 +32,7 @@
 #include <boost/url/rfc/authority.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/hexdig.hpp>
+#include <boost/url/rfc/hier_part.hpp>
 #include <boost/url/rfc/host.hpp>
 #include <boost/url/rfc/ip_literal.hpp>
 #include <boost/url/rfc/ipv_future.hpp>
@@ -39,11 +40,6 @@
 #include <boost/url/rfc/ipv6_address.hpp>
 #include <boost/url/rfc/origin_form.hpp>
 #include <boost/url/rfc/path.hpp>
-#include <boost/url/rfc/path_abempty.hpp>
-#include <boost/url/rfc/path_absolute.hpp>
-#include <boost/url/rfc/path_absolute.hpp>
-#include <boost/url/rfc/path_noscheme.hpp>
-#include <boost/url/rfc/path_rootless.hpp>
 #include <boost/url/rfc/pct_encoded.hpp>
 #include <boost/url/rfc/pct_encoding.hpp>
 #include <boost/url/rfc/port.hpp>

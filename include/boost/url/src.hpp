@@ -36,6 +36,7 @@ in a translation unit of the program.
 #include <boost/url/rfc/detail/impl/char_table.ipp>
 
 #include <boost/url/rfc/impl/authority.ipp>
+#include <boost/url/rfc/impl/hier_part.ipp>
 #include <boost/url/rfc/impl/host.ipp>
 #include <boost/url/rfc/impl/ip_literal.ipp>
 #include <boost/url/rfc/impl/ipv_future.ipp>
@@ -43,10 +44,6 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/ipv6_address.ipp>
 #include <boost/url/rfc/impl/origin_form.ipp>
 #include <boost/url/rfc/impl/path.ipp>
-#include <boost/url/rfc/impl/path_abempty.ipp>
-#include <boost/url/rfc/impl/path_absolute.ipp>
-#include <boost/url/rfc/impl/path_noscheme.ipp>
-#include <boost/url/rfc/impl/path_rootless.ipp>
 #include <boost/url/rfc/impl/pct_encoding.ipp>
 #include <boost/url/rfc/impl/port.ipp>
 #include <boost/url/rfc/impl/scheme.ipp>
