@@ -18,15 +18,15 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     fragment const& t)
 {
     using bnf::parse;
-    return parse(start, end, ec,
+    return parse(it, end, ec,
         pct_encoded<
             unsub_char_mask |
             colon_char_mask |

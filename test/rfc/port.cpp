@@ -28,10 +28,11 @@ public:
     {
         error_code ec;
         port t;
+        auto it = s.data();
         auto const end =
             s.data() + s.size();
-        auto it = parse(
-            s.data(), end, ec, t);
+        BOOST_TEST(
+            parse(it, end, ec, t));
         if(! BOOST_TEST(! ec))
             return;
         if(! BOOST_TEST(it == end))

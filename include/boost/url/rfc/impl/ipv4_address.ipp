@@ -26,25 +26,24 @@ struct dec_octet
     std::uint8_t value;
 
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         dec_octet& t)
     {
         bnf::digit_chars dc;
-        if(start == end)
+        if(it == end)
         {
             // expected DIGIT
             ec = error::syntax;
-            return start;
+            return false;
         }
-        auto it = start;
         if(! dc(*it))
         {
             ec = error::syntax;
-            return start;
+            return false;
         }
         unsigned v = *it - '0';
         ++it;
@@ -53,20 +52,20 @@ struct dec_octet
             t.value = static_cast<
                 std::uint8_t>(v);
             ec = {};
-            return it;
+            return true;
         }
         if(! dc(*it))
         {
             t.value = static_cast<
                 std::uint8_t>(v);
             ec = {};
-            return it;
+            return true;
         }
         if(v == 0)
         {
             // bad leading '0'
             ec = error::syntax;
-            return start;
+            return false;
         }
         v = (10 * v) + *it - '0';
         ++it;
@@ -75,41 +74,41 @@ struct dec_octet
             t.value = static_cast<
                 std::uint8_t>(v);
             ec = {};
-            return it;
+            return true;
         }
         if(! dc(*it))
         {
             t.value = static_cast<
                 std::uint8_t>(v);
             ec = {};
-            return it;
+            return true;
         }
         if(v > 25)
         {
             // out of range
             ec = error::syntax;
-            return start;
+            return false;
         }
         v = (10 * v) + *it - '0';
         if(v > 255)
         {
             // out of range
             ec = error::syntax;
-            return start;
+            return false;
         }
         ++it;
         t.value = static_cast<
             std::uint8_t>(v);
         ec = {};
-        return it;
+        return true;
     }
 };
 
 } // detail
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     ipv4_address& t)
@@ -117,19 +116,18 @@ parse(
     using namespace bnf;
     using bnf::parse;
     detail::dec_octet ip[4];
-    auto it = parse(
-        start, end, ec,
+    if(! parse(
+        it, end, ec,
         ip[0], '.',
         ip[1], '.',
         ip[2], '.',
-        ip[3]);
-    if(ec)
-        return start;
+        ip[3]))
+        return false;
     t.octets[0] = ip[0].value;
     t.octets[1] = ip[1].value;
     t.octets[2] = ip[2].value;
     t.octets[3] = ip[3].value;
-    return it;
+    return true;
 }
 
 } // rfc

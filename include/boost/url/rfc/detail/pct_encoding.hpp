@@ -21,17 +21,16 @@ namespace rfc {
 namespace detail {
 
 template<class CharSet>
-char const*
+bool
 parse_pct_encoded_impl(
-    std::size_t& needed,
-    CharSet const& cs,
-    char const* const start,
+    char const*& it,
     char const* const end,
-    error_code& ec) noexcept
+    error_code& ec,
+    CharSet const& cs,
+    std::size_t& needed) noexcept
 {
     using namespace bnf;
     std::size_t n = 0;
-    auto it = start;
     char const* it0;
 skip:
     it0 = it;
@@ -49,26 +48,26 @@ skip:
         {
             // missing HEXDIG
             ec = error::syntax;
-            return start;
+            return false;
         }
         if(hexdig_value(*it) == -1)
         {
             // expected HEXDIG
             ec = error::bad_pct_encoding_digit;
-            return start;
+            return false;
         }
         ++it;
         if(it == end)
         {
             // missing HEXDIG
             ec = error::syntax;
-            return start;
+            return false;
         }
         if(hexdig_value(*it) == -1)
         {
             // expected HEXDIG
             ec = error::bad_pct_encoding_digit;
-            return start;
+            return false;
         }
         ++n;
         ++it;
@@ -79,7 +78,8 @@ skip:
     }
 finish:
     needed = n;
-    return it;
+    ec = {};
+    return true;
 }
 
 } // detail

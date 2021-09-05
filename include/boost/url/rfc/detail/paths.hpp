@@ -26,21 +26,17 @@ struct segment
     pct_encoded_str& v;
 
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         segment const& t)
     {
         using bnf::parse;
-        auto it = parse(
-            start, end, ec,
+        return parse(it, end, ec,
             pct_encoded<
                 pchar_mask>{t.v});
-        if(ec)
-            return start;
-        return it;
     }
 };
 
@@ -51,27 +47,26 @@ struct segment_nz
     pct_encoded_str& v;
 
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         segment_nz const& t)
     {
         using bnf::parse;
-        auto it = parse(
-            start, end, ec,
+        auto const start = it;
+        if(! parse(it, end, ec,
             pct_encoded<
-                pchar_mask>{t.v});
-        if(ec)
-            return start;
+                pchar_mask>{t.v}))
+            return false;
         if(it == start)
         {
             // can't be empty
             ec = error::syntax;
-            return start;
+            return false;
         }
-        return it;
+        return true;
     }
 };
 
@@ -82,28 +77,27 @@ struct segment_nz_nc
     pct_encoded_str& v;
 
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         segment_nz_nc const& t)
     {
         using bnf::parse;
-        auto it = parse(
-            start, end, ec,
+        auto const start = it;
+        if(! parse(it, end, ec,
             pct_encoded<
                 pchar_mask &
-                ~colon_char_mask>{t.v});
-        if(ec)
-            return start;
+                ~colon_char_mask>{t.v}))
+            return false;
         if(it == start)
         {
             // can't be empty
             ec = error::syntax;
-            return start;
+            return false;
         }
-        return it;
+        return true;
     }
 };
 
@@ -116,48 +110,45 @@ struct path_abempty
         pct_encoded_str>& v;
 
     static
-    char const*
+    bool
     begin(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         pct_encoded_str& t) noexcept
     {
         return increment(
-            start, end, ec, t);
+            it, end, ec, t);
     }
 
     static
-    char const*
+    bool
     increment(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         pct_encoded_str& t) noexcept
     {
         using bnf::parse;
-        auto it = parse(
-            start, end, ec,
-            '/', segment{t});
-        if(! ec.failed())
-            return it;
-        // VFALCO Check for unrecoverable error
-        //if(ec == condition::fatal)
-        //  return start;
+        auto const start = it;
+        if(parse(it, end, ec,
+            '/', segment{t}))
+            return true;
         ec = error::end;
-        return start;
+        it = start;
+        return false;
     }
 
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         path_abempty const& t)
     {
         return bnf::parse_range(
-            start, end, ec, t.v, t);
+            it, end, ec, t.v, t);
     }
 };
 
@@ -170,57 +161,51 @@ struct path_absolute
         pct_encoded_str>& v;
 
     static
-    char const*
+    bool
     begin(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         pct_encoded_str& t) noexcept
     {
         using bnf::parse;
-        auto it = parse(
-            start, end, ec,
-            '/', segment_nz{t});
-        if(! ec.failed())
-            return it;
-        // VFALCO Check for unrecoverable error
-        //if(ec == condition::fatal)
-        //  return start;
+        auto const start = it;
+        if(parse(it, end, ec,
+            '/', segment_nz{t}))
+            return true;
         ec = error::end;
-        return start;
+        it = start;
+        return false;
     }
 
     static
-    char const*
+    bool
     increment(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         pct_encoded_str& t) noexcept
     {
         using bnf::parse;
-        auto it = parse(
-            start, end, ec,
-            '/', segment{t});
-        if(! ec.failed())
-            return it;
-        // VFALCO Check for unrecoverable error
-        //if(ec == condition::fatal)
-        //  return start;
+        auto const start = it;
+        if(parse(it, end, ec,
+            '/', segment{t}))
+            return true;
         ec = error::end;
-        return start;
+        it = start;
+        return false;
     }
 
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         path_absolute const& t)
     {
         return bnf::parse_range(
-            start, end, ec, t.v, t);
+            it, end, ec, t.v, t);
     }
 };
 
@@ -233,57 +218,51 @@ struct path_noscheme
         pct_encoded_str>& v;
 
     static
-    char const*
+    bool
     begin(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         pct_encoded_str& t) noexcept
     {
         using bnf::parse;
-        auto it = parse(
-            start, end, ec,
-            segment_nz_nc{t});
-        if(! ec.failed())
-            return it;
-        // VFALCO Check for unrecoverable error
-        //if(ec == condition::fatal)
-        //  return start;
+        auto const start = it;
+        if(parse(it, end, ec,
+            segment_nz_nc{t}))
+            return true;
         ec = error::end;
-        return start;
+        it = start;
+        return false;
     }
 
     static
-    char const*
+    bool
     increment(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         pct_encoded_str& t) noexcept
     {
         using bnf::parse;
-        auto it = parse(
-            start, end, ec,
-            '/', segment{t});
-        if(! ec.failed())
-            return it;
-        // VFALCO Check for unrecoverable error
-        //if(ec == condition::fatal)
-        //  return start;
+        auto const start = it;
+        if(parse(it, end, ec,
+            '/', segment{t}))
+            return true;
         ec = error::end;
-        return start;
+        it = start;
+        return false;
     }
 
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         path_noscheme const& t)
     {
         return bnf::parse_range(
-            start, end, ec, t.v, t);
+            it, end, ec, t.v, t);
     }
 };
 
@@ -296,49 +275,46 @@ struct path_rootless
         pct_encoded_str>& v;
 
     static
-    char const*
+    bool
     begin(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         pct_encoded_str& t) noexcept
     {
         using bnf::parse;
-        return parse(
-            start, end, ec,
+        return parse(it, end, ec,
             segment_nz{t});
     }
 
     static
-    char const*
+    bool
     increment(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         pct_encoded_str& t) noexcept
     {
         using bnf::parse;
-        auto it = parse(
-            start, end, ec,
-            '/', segment{t});
-        if(ec)
-        {
-            ec = error::end;
-            return start;
-        }
-        return it;
+        auto const start = it;
+        if(parse(it, end, ec,
+            '/', segment{t}))
+            return true;
+        ec = error::end;
+        it = start;
+        return false;
     }
 
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         path_rootless const& t)
     {
         return bnf::parse_range(
-            start, end, ec, t.v, t);
+            it, end, ec, t.v, t);
     }
 };
 
@@ -351,40 +327,40 @@ struct path_empty
         pct_encoded_str>& v;
 
     static
-    char const*
+    bool
     begin(
-        char const* const start,
-        char const* const,
+        char const*&,
+        char const*,
         error_code& ec,
         pct_encoded_str&) noexcept
     {
         ec = error::end;
-        return start;
+        return false;
     }
 
     static
-    char const*
+    bool
     increment(
-        char const* const start,
-        char const* const,
+        char const*&,
+        char const*,
         error_code& ec,
         pct_encoded_str&) noexcept
     {
         // should never get here
         ec = error::end;
-        return start;
+        return false;
     }
 
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         path_empty const& t)
     {
         return bnf::parse_range(
-            start, end, ec, t.v, t);
+            it, end, ec, t.v, t);
     }
 };
 

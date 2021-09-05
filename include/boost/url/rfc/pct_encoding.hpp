@@ -19,21 +19,21 @@ namespace urls {
 namespace rfc {
 
 template<class CharSet>
-char const*
+bool
 parse_pct_encoded(
-    CharSet const& cs,
-    char const* const start,
+    char const*& start,
     char const* const end,
-    error_code& ec) noexcept;
+    error_code& ec,
+    CharSet const& cs) noexcept;
 
 /** Returns the size of string s if it was percent-decoded, with error checking
 */
 template<class CharSet>
 std::size_t
 pct_decoded_size(
-    CharSet const& cs,
     string_view s,
-    error_code& ec) noexcept;
+    error_code& ec,
+    CharSet const& cs) noexcept;
 
 /** Returns the size of string s if it was percent-decoded, without error checking
 

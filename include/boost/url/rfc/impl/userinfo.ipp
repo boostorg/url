@@ -22,26 +22,27 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     userinfo& t)
 {
+    using bnf::parse;
+    auto const start = it;
     pct_encoded_str user;
     pct_encoded_str pass;
     optional<
         bnf::literal<':'>> colon;
-    auto it = parse(start, end, ec,
+    if(! parse(it, end, ec,
         pct_encoded<
             unsub_char_mask>{user},
         colon,
         pct_encoded<
             unsub_char_mask |
-            colon_char_mask>{pass});
-    if(ec)
-        return start;
+            colon_char_mask>{pass}))
+        return false;
     t.str = string_view(
         start, it - start);
     t.user = user;
@@ -49,7 +50,7 @@ parse(
         t.pass = pass;
     else
         t.pass.reset();
-    return it;
+    return true;
 }
 
 } // rfc

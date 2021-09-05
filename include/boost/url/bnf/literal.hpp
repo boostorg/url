@@ -35,9 +35,9 @@ struct literal
 
     template<char...Cn>
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         literal<Cn...> const&) noexcept;

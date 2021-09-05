@@ -25,16 +25,16 @@ public:
     struct T
     {
         friend
-        char const*
+        bool
         parse(
-            char const* start,
+            char const*& it,
             char const* end,
             error_code& ec,
             T const&)
         {
             query::value_type v;
             return parse(
-                start, end, ec,
+                it, end, ec,
                     query{v});
         }
     };
@@ -51,15 +51,6 @@ public:
         good<T>("x=y&");
         good<T>("x=y&a");
         good<T>("x=y&a=b&");
-
-#if 0
-        query p;
-        error_code ec;
-        using bnf::parse;
-        parse("/1/2/3/4/5", ec, p);
-        for(auto const& t : p.path())
-            std::cout << t.str() << std::endl;
-#endif
     }
 };
 

@@ -53,29 +53,28 @@ struct h16
     }
 
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         h16& t)
     {
         std::uint16_t v;
-        auto it = start;
         for(;;)
         {
-            if(start == end)
+            if(it == end)
             {
                 // expected HEXDIG
                 ec = error::syntax;
-                return start;
+                return false;
             }
             auto d =
                 bnf::hexdig_value(*it);
             if(d == -1)
             {
                 ec = error::syntax;
-                return start;
+                return false;
             }
             v = d;
             ++it;
@@ -109,7 +108,7 @@ struct h16
         t.octets[1] = static_cast<
             std::uint8_t>(
                 v % 256);
-        return it;
+        return true;
     }
 };
 
@@ -117,20 +116,20 @@ struct h16
 
 //------------------------------------------------
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     ipv6_address& t)
 {
+    using bnf::parse;
     detail::h16 w;
     int n = 8;      // words needed
     int b = -1;     // value of n
                     // when '::' seen
     bool c = false; // need colon
-    auto prev = start;
-    auto it = start;
+    auto prev = it;
     t.trailing_ipv4 = false;
     for(;;)
     {
@@ -144,7 +143,7 @@ parse(
             BOOST_ASSERT(n > 0);
             // not enough words
             ec = error::syntax;
-            return start;
+            return false;
         }
         if(*it == ':')
         {
@@ -153,7 +152,7 @@ parse(
             {
                 // missing ':'
                 ec = error::syntax;
-                return start;
+                return false;
             }
             if(*it == ':')
             {
@@ -170,15 +169,14 @@ parse(
                 }
                 // two "::"
                 ec = error::syntax;
-                return start;
+                return false;
             }
             if(c)
             {
                 prev = it;
-                it = parse(
-                    it, end, ec, w);
-                if(ec)
-                    return start;
+                if(! parse(
+                    it, end, ec, w))
+                    return false;
                 t.octets[2*(8-n)+0] =
                     w.octets[0];
                 t.octets[2*(8-n)+1] =
@@ -190,7 +188,7 @@ parse(
             }
             // expected h16
             ec = error::syntax;
-            return start;
+            return false;
         }
         if(*it == '.')
         {
@@ -198,21 +196,21 @@ parse(
             {
                 // not enough h16
                 ec = error::syntax;
-                return start;
+                return false;
             }
             if(! w.is_octet())
             {
                 // invalid octet
                 ec = error::syntax;
+                return false;
             }
             // rewind the h16 and
             // parse it as ipv4
             ipv4_address v4;
-            using bnf::parse;
-            it = parse(
-                prev, end, ec, v4);
-            if(ec)
-                return start;
+            it = prev;
+            if(! parse(
+                it, end, ec, v4))
+                return false;
             t.octets[2*(7-n)+0] =
                 v4.octets[0];
             t.octets[2*(7-n)+1] =
@@ -234,9 +232,8 @@ parse(
         if(! c)
         {
             prev = it;
-            it = parse(it, end, ec, w);
-            if(ec)
-                return start;
+            if(! parse(it, end, ec, w))
+                return false;
             t.octets[2*(8-n)+0] =
                 w.octets[0];
             t.octets[2*(8-n)+1] =
@@ -249,10 +246,11 @@ parse(
         }
         // ':' divides a word
         ec = error::syntax;
-        return start;
+        return false;
     }
+    ec = {};
     if(b == -1)
-        return it;
+        return true;
     if(b == n)
     {
         // "::" last
@@ -290,7 +288,7 @@ parse(
             &t.octets[i0],
             0, 16 - (i0 + i1));
     }
-    return it;
+    return true;
 }
 
 } // rfc

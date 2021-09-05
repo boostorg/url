@@ -21,9 +21,9 @@ namespace bnf {
 namespace detail {
 
 template<class T>
-char const*
+bool
 parse_repeat(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     std::size_t N,
@@ -31,15 +31,15 @@ parse_repeat(
     std::size_t& n)
 {
     T v;
-    auto it = start;
     n = 0;
     for(;;)
     {
-        it = parse(
-            it, end, ec, v);
-        if(ec)
+        auto it1 = it;
+        if(! parse(
+            it1, end, ec, v))
             break;
         ++n;
+        it = it1;
         if(n == M)
             break;
     }
@@ -47,9 +47,9 @@ parse_repeat(
     {
         // too few
         ec = error::syntax;
-        return start;
+        return false;
     }
-    return it;
+    return true;
 }
 
 } // detail
@@ -58,21 +58,21 @@ template<
     class T,
     std::size_t N,
     std::size_t M>
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     repeat<T, N, M> const& t)
 {
+    auto start = it;
     std::size_t n;
-    auto it = detail::parse_repeat(
-        start, end, ec, N, M, n);
-    if(ec)
-        return start;
+    if(! detail::parse_repeat(
+        it, end, ec, N, M, n))
+        return false;
     t.v = string_view(
         start, it - start);
-    return it;
+    return true;
 }
 
 } // bnf

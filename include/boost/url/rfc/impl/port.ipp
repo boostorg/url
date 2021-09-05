@@ -21,9 +21,9 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     port& t)
@@ -31,7 +31,7 @@ parse(
     using bnf::parse;
     bnf::digit_chars cs;
     port::number_type u = 0;
-    auto it = start;
+    auto const start = it;
     while(it != end)
     {
         if(! cs(*it))
@@ -47,7 +47,7 @@ parse(
                 start, it - start);
             t.number.reset();
             ec = {};
-            return it;
+            return true;
         }
         ++it;
     }
@@ -57,7 +57,7 @@ parse(
         t.number.emplace(u);
     else
         t.number.reset();
-    return it;
+    return true;
 }
 
 } // rfc

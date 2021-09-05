@@ -20,25 +20,22 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-char const*
+bool
 query::
 begin(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     query_param& t) noexcept
 {
     using bnf::parse;
     pct_encoded_str k;
-    auto it = parse(
-        start, end, ec,
+    auto const start = it;
+    if(! parse(it, end, ec,
         pct_encoded<
-            query_char_mask>{k});
-    if(ec)
-        return start;
-    it = parse(
-        it, end, ec, '=');
-    if(ec.failed())
+            query_char_mask>{k}))
+        return false;
+    if(! parse(it, end, ec, '='))
     {
         if(it != start)
         {
@@ -46,56 +43,54 @@ begin(
             ec = {};
             t.key = k;
             t.value.reset();
-            return it;
+            return true;
         }
         // empty list
         ec = error::end;
-        return start;
+        return false;
     }
     pct_encoded_str v;
-    it = parse(it, end, ec,
+    if(! parse(it, end, ec,
         pct_encoded<
-            query_char_mask>{v});
-    if(ec)
+            query_char_mask>{v}))
     {
         // VFALCO what about the key?
-        return start;
+        return false;
     }
     t.key = k;
     t.value.emplace(v);
-    return it;
+    return true;
 }
 
-char const*
+bool
 query::
 increment(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     query_param& t) noexcept
 {
     using bnf::parse;
-    auto it = parse(
-        start, end, ec, '&');
-    if(ec)
+    if(! parse(it, end, ec, '&'))
     {
         // end of list
         ec = error::end;
-        return start;
+        return false;
     }
     auto it0 = it;
-    it = begin(it, end, ec, t);
-    if(ec == error::end)
+    if(! begin(it, end, ec, t))
     {
-        // empty param
-        ec = {};
-        t.key = {};
-        t.value.reset();
-        return it0;
+        if(ec == error::end)
+        {
+            // empty param
+            ec = {};
+            t.key = {};
+            t.value.reset();
+            return it0;
+        }
+        return false;
     }
-    if(ec)
-        return start;
-    return it;
+    return true;
 }
 
 } // rfc

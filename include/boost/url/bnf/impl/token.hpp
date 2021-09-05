@@ -17,19 +17,20 @@ namespace urls {
 namespace bnf {
 
 template<class CharSet>
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     token<CharSet> const& t)
 {
-    auto it = find_if_not(
-        start, end, CharSet{});
+    auto const start = it;
+    it = find_if_not(
+        it, end, CharSet{});
     t.v = string_view(
         start, it - start);
     ec = {};
-    return it;
+    return true;
 }
 
 } // bnf

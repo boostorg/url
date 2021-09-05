@@ -34,9 +34,9 @@ struct scheme
 
     BOOST_URL_DECL
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         scheme const& t);

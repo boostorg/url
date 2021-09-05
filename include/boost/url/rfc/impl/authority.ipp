@@ -20,64 +20,61 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     authority& t)
 {
     using bnf::parse;
-    char const* it;
+    auto const start = it;
     // [ userinfo "@" ]
     {
         userinfo u;
-        it = parse(start, end,
-            ec, u, '@');
-        if(! ec.failed())
+        if(parse(it, end,
+            ec, u, '@'))
         {
             t.userinfo.emplace(u);
         }
         else
         {
-            ec = {};
-            it = start;
             t.userinfo.reset();
+            it = start;
+            ec = {};
         }
     }
     // host
-    it = parse(
-        it, end, ec, t.host);
-    if(ec)
-        return start;
+    if(! parse(it,
+        end, ec, t.host))
+        return false;
     // [ ":" port ]
     {
         // ":"
         if(it == end)
         {
             t.port.reset();
-            return it;
+            return true;
         }
         if(*it != ':')
         {
             t.port.reset();
-            return it;
+            return true;
         }
         ++it;
         // port
         port p;
-        it = parse(
-            it, end, ec, p);
-        if(ec)
+        if(! parse(
+            it, end, ec, p))
         {
             // never happens
             BOOST_ASSERT(
                 ! ec.failed());
-            return start;
+            return false;
         }
         t.port.emplace(p);
     }
-    return it;
+    return true;
 }
 
 } // rfc

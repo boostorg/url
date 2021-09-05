@@ -22,9 +22,9 @@ namespace bnf {
 /** Parse a literal character
 */
 inline
-char const*
+bool
 parse(
-    char const* start,
+    char const*& it,
     char const* end,
     error_code& ec,
     char ch) noexcept;
@@ -37,9 +37,9 @@ parse(
     @endcode
 */
 template<class T>
-char const*
+bool
 parse(
-    char const* start,
+    char const*& it,
     char const* end,
     error_code& ec,
     optional<T>& t);
@@ -50,9 +50,9 @@ template<
     class T0,
     class T1,
     class... Tn>
-char const*
+bool
 parse(
-    char const* start,
+    char const*& it,
     char const* end,
     error_code& ec,
     T0&& t0,
@@ -64,7 +64,7 @@ parse(
 template<
     class T0,
     class... Tn>
-void
+bool
 parse(
     string_view s,
     error_code& ec,

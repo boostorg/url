@@ -59,9 +59,9 @@ struct repeat
         std::size_t N,
         std::size_t M>
     friend
-    char const*
+    bool
     parse(
-        char const* start,
+        char const*& it,
         char const* end,
         error_code& ec,
         repeat<T, N, M> const& t);

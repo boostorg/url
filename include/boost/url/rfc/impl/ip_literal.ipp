@@ -18,47 +18,44 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     ip_literal& t)
 {
     using bnf::parse;
     // '['
-    auto it = parse(
-        start, end, ec, '[');
-    if(ec)
+    if(! parse(
+        it, end, ec, '['))
     {
         // expected '['
-        return start;
+        return false;
     }
     if(it == end)
     {
         // expected address
         ec = error::syntax;
-        return start;
+        return false;
     }
     if(*it != 'v')
     {
         // IPv6address
-        it = parse(it, end, ec,
-            t.ipv6, ']');
-        if(ec)
-            return start;
+        if(! parse(it, end, ec,
+            t.ipv6, ']'))
+            return false;
         t.is_ipv6 = true;
-        return it;
+        return true;
     }
     // IPvFuture
     ipv_future v;
-    it = parse(
-        it, end, ec, v, ']');
-    if(ec)
-        return start;
+    if(! parse(
+        it, end, ec, v, ']'))
+        return false;
     t.fut_str = v.str();
     t.is_ipv6 = false;
-    return it;
+    return true;
 }
 
 } // rfc

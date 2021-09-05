@@ -17,59 +17,62 @@ namespace bnf {
 namespace detail {
 
 template<char Ch>
-char const*
+bool
 parse_literal(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec) noexcept
 {
-    if(start == end)
+    if(it == end)
     {
-        ec = error::need_more;
-        return start;
-    }
-    if(*start != Ch)
-    {
+        // end of input
         ec = error::syntax;
-        return start;
+        return false;
     }
-    return start + 1;
+    if(*it != Ch)
+    {
+        // expected <Ch>
+        ec = error::syntax;
+        return false;
+    }
+    ++it;
+    ec = {};
+    return true;
 }
 
-template<char C0, char C1, char...Cn>
-char const*
+template<
+    char C0, char C1, char...Cn>
+bool
 parse_literal(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec) noexcept
 {
-    auto it = parse_literal<C0>(
-        start, end, ec);
-    if(ec)
-        return start;
+    if(! parse_literal<C0>(
+        it, end, ec))
+        return false;
     return parse_literal<
-        C1, Cn...>(start, end, ec);
+        C1, Cn...>(it, end, ec);
 }
 
 } // detail
 
-
 template<char...Cn>
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     literal<Cn...> const& t) noexcept
 {
-    auto it = detail::parse_literal<
-        Cn...>(start, end, ec);
-    if(ec)
-        return start;
+    auto start = it;
+    if(! detail::parse_literal<
+        Cn...>(it, end, ec))
+        return false;
     if(t.v)
         *t.v = string_view(
             start, it - start);
-    return it;
+    return true;
 }
 
 } // bnf

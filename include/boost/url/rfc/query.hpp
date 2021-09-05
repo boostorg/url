@@ -49,32 +49,32 @@ struct query
 
     BOOST_URL_DECL
     static
-    char const*
+    bool
     begin(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         query_param& t) noexcept;
 
     BOOST_URL_DECL
     static
-    char const*
+    bool
     increment(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         query_param& t) noexcept;
 
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         query const& t)
     {
         return bnf::parse_range(
-            start, end, ec, t.v, t);
+            it, end, ec, t.v, t);
     }
 };
 

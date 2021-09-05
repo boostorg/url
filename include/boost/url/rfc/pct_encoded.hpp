@@ -43,9 +43,9 @@ struct pct_encoded
 
     template<std::uint8_t CharMask>
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         pct_encoded<CharMask> const& t) noexcept;

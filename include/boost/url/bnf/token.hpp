@@ -33,9 +33,9 @@ struct token
 
     template<class CharSet>
     friend
-    char const*
+    bool
     parse(
-        char const* start,
+        char const*& it,
         char const* end,
         error_code& ec,
         token<CharSet> const& t);

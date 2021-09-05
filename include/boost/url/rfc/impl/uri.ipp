@@ -21,66 +21,60 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     uri& t)
 {
     using bnf::parse;
-    auto it = start;
 
     // scheme ":"
-    it = parse(it, end, ec,
-        scheme{t.scheme}, ':');
-    if(ec)
-        return start;
+    if(! parse(it, end, ec,
+        scheme{t.scheme}, ':'))
+        return false;
 
     // hier-part
     hier_part h;
-    it = parse(
-        it, end, ec, h);
-    if(ec)
-        return start;
+    if(! parse(it, end, ec, h))
+        return false;
     t.authority = h.authority;
     t.path = h.path;
 
     // [ "?" query ]
-    it = parse(
-        it, end, ec, '?');
-    if(! ec.failed())
+    char const* it0 = it;
+    if(parse(it, end, ec, '?'))
     {
         t.query.emplace();
-        it = parse(it, end, ec,
-            query{*t.query});
-        if(ec)
-            return start;
+        if(! parse(it, end, ec,
+            query{*t.query}))
+            return false;
     }
     else
     {
-        ec = {};
         t.query.reset();
+        it = it0;
+        ec = {};
     }
 
     // [ "#" fragment ]
-    it = parse(
-        it, end, ec, '#');
-    if(! ec.failed())
+    it0 = it;
+    if(parse(it, end, ec, '#'))
     {
         t.fragment.emplace();
-        it = parse(it, end, ec,
-            fragment{*t.fragment});
-        if(ec)
-            return start;
+        if(! parse(it, end, ec,
+            fragment{*t.fragment}))
+            return false;
     }
     else
     {
-        ec = {};
         t.fragment.reset();
+        it = it0;
+        ec = {};
     }
 
-    return it;
+    return true;
 }
 
 } // rfc

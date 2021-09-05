@@ -17,33 +17,32 @@ namespace urls {
 namespace rfc {
 
 template<class CharSet>
-char const*
+bool
 parse_pct_encoded(
-    CharSet const& cs,
     char const* const start,
     char const* const end,
-    error_code& ec) noexcept
+    error_code& ec,
+    CharSet const& cs) noexcept
 {
     std::size_t needed;
-    auto it = detail::parse_pct_encoded_impl(
-        needed, cs, start, end, ec);
-    if(ec)
-        return start;
-    return it;
+    if(! detail::parse_pct_encoded_impl(
+        start, end, ec, cs, needed))
+        return false;
+    return true;
 }
 
 template<class CharSet>
 std::size_t
 pct_decoded_size(
-    CharSet const& cs,
     string_view s,
-    error_code& ec) noexcept
+    error_code& ec,
+    CharSet const& cs) noexcept
 {
     std::size_t needed;
-    auto const end = s.data() + s.size();
-    auto it = detail::parse_pct_encoded_impl(
-        needed, cs, s.data(), end, ec);
-    if(ec)
+    auto it = s.data();
+    auto const end = it + s.size();
+    if(! detail::parse_pct_encoded_impl(
+        s.data(), end, ec, cs, needed))
         return 0;
     if(it != end)
     {

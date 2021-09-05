@@ -21,33 +21,33 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     scheme const& t)
 {
     using namespace bnf;
-    if(start == end)
+    auto const start = it;
+    if(it == end)
     {
         // expected alpha
         ec = error::syntax;
-        return start;
+        return false;
     }
-    auto it = start;
     if(! alpha_chars{}(*it))
     {
         // expected alpha
         ec = error::syntax;
-        return start;
+        return false;
     }
     it = find_if_not(
         it + 1, end,
             alnum_chars{});
     t.s = string_view(
         start, it - start);
-    return it;
+    return true;
 }
 
 } // rfc

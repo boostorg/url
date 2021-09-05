@@ -25,10 +25,11 @@ public:
     {
         error_code ec;
         ipv4_address t;
+        auto it = s.data();
         auto const end =
-            s.data() + s.size();
-        auto it = parse(
-            s.data(), end, ec, t);
+            it + s.size();
+        BOOST_TEST(
+            parse(it, end, ec, t));
         if(! BOOST_TEST(! ec))
             return;
         if(! BOOST_TEST(it == end))

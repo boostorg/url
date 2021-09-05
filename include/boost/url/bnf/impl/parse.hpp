@@ -17,119 +17,113 @@ namespace boost {
 namespace urls {
 namespace bnf {
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     char ch) noexcept
 {
-    if(start == end)
+    if(it == end)
     {
+        // end of input
         ec = error::need_more;
-        return start;
+        return false;
     }
-    auto it = start;
     if(*it != ch)
     {
         // expected ch
         ec = error::syntax;
-        return start;
+        return false;
     }
     ++it;
-    return it;
+    return true;
 }
  
 template<class T>
-char const*
+bool
 parse(
-    char const* start,
-    char const* end,
+    char const*& it,
+    char const* const end,
     error_code& ec,
     optional<T>& t)
 {
     t.emplace();
-    auto it = parse(
-        start, end, ec, *t);
-    if(! ec.failed())
-        return it;
+    if(parse(it, end, ec, *t))
+        return true;
     ec = {};
     t.reset();
-    return start;
+    return true;
 }
 
-char const*
+bool
 parse(
-    char const* start,
-    char const* end,
-    error_code& ec,
-    optional<char> const& t) = delete;
+    char const*&,
+    char const*,
+    error_code&,
+    optional<char> const&) = delete;
 
 template<
     class T0,
     class T1,
     class... Tn>
-char const*
+bool
 parse(
-    char const* start,
-    char const* end,
+    char const*& it,
+    char const* const end,
     error_code& ec,
     T0&& t0,
     T1&& t1,
     Tn&&... tn)
 {
-    auto it = parse(
-        start, end, ec,
-        std::forward<T0>(t0));
-    if(ec)
-        return start;
-    it = parse(
+    if(! parse(
+        it, end, ec,
+        std::forward<T0>(t0)))
+        return false;
+    if(! parse(
         it, end, ec,
         std::forward<T1>(t1),
-        std::forward<Tn>(tn)...);
-    if(ec)
-        return start;
-    return it;
+        std::forward<Tn>(tn)...))
+        return false;
+    return true;
 }
 
 template<
     class T0,
     class... Tn>
-void
+bool
 parse(
     string_view s,
     error_code& ec,
     T0&& t0,
     Tn&&... tn)
 {
+    auto it = s.data();
     auto const end =
-        s.data() + s.size();
-    auto it = parse(
-        s.data(), end, ec,
+        it + s.size();
+    if(! parse(it, end, ec,
         std::forward<T0>(t0),
-        std::forward<Tn>(tn)...);
-    if(ec)
-        return;
+        std::forward<Tn>(tn)...))
+        return false;
     if(it != end)
     {
         // partial match
         ec = error::syntax;
-        return;
+        return false;
     }
+    return true;
 }
 
 template<class T>
 bool
-is_valid(
-    string_view s)
+is_valid(string_view s)
 {
     T t;
     error_code ec;
+    auto it = s.data();
     auto const end =
-        s.data() + s.size();
-    auto it = parse(
-        s.data(), end, ec, t);
-    if(ec)
+        it + s.size();
+    if(! parse(it, end, ec, t))
         return false;
     if(it != end)
     {

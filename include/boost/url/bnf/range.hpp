@@ -26,25 +26,20 @@ namespace bnf {
 template<class T>
 class range
 {
-    using begin_t = char const*(*)(
-        char const*, char const*,
-            error_code&, T&);
-
-    using increment_t = char const*(*)(
-        char const*, char const*,
+    using func_ptr = bool(*)(
+        char const*&, char const*,
             error_code&, T&);
 
     string_view s_;
     std::size_t n_ = 0;
-    begin_t begin_ = nullptr;
-    increment_t
-        increment_ = nullptr;
+    func_ptr begin_ = nullptr;
+    func_ptr increment_ = nullptr;
 
     range(
         string_view s,
         std::size_t n,
-        begin_t begin,
-        increment_t increment)
+        func_ptr begin,
+        func_ptr increment)
         : s_(s)
         , n_(n)
         , begin_(begin)
@@ -101,9 +96,9 @@ public:
 
     template<class T, class U>
     friend
-    char const*
+    bool
     parse_range(
-        char const* start,
+        char const*& it,
         char const* end,
         error_code& ec,
         range<T>& t,

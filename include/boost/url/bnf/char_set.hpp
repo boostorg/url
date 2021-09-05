@@ -157,8 +157,8 @@ hexdig_value(char c) noexcept
 template<class CharSet>
 char const*
 find_if(
-    char const* first,
-    char const* last,
+    char const* const first,
+    char const* const last,
     CharSet const& cs) noexcept
 {
     BOOST_STATIC_ASSERT(
@@ -173,8 +173,8 @@ template<class CharSet>
 constexpr
 char const*
 find_if_not(
-    char const* first,
-    char const* last,
+    char const* const first,
+    char const* const last,
     CharSet const& cs) noexcept
 {
     BOOST_STATIC_ASSERT(

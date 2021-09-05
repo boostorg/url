@@ -32,10 +32,11 @@ public:
         using urls::detail::throw_system_error;
         userinfo p;
         error_code ec;
+        auto it = s.data();
         auto const end =
-            s.data() + s.size();
-        auto it = parse(
-            s.data(), end, ec, p);
+            it + s.size();
+        BOOST_TEST(
+            parse(it, end, ec, p));
         if(! ec && it != end)
             ec = error::syntax;
         if(ec)

@@ -45,9 +45,9 @@ struct hier_part
 
     BOOST_URL_DECL
     friend
-    char const*
+    bool
     parse(
-        char const* const start,
+        char const*& it,
         char const* const end,
         error_code& ec,
         hier_part& t);

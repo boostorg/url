@@ -48,26 +48,24 @@ host::
     destroy();
 }
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     host& t)
 {
     t.destroy();
     t.kind_ = host_kind::none;
-    auto it = start;
     if(*it == '[')
     {
         // IP-literal
         ip_literal v;
-        it = parse(it, end, ec, v);
-        if(ec)
+        if(! parse(it, end, ec, v))
         {
             // need more or
             // bad ip-literal
-            return start;
+            return false;
         }
         if(v.is_ipv6)
         {
@@ -82,34 +80,32 @@ parse(
         ::new(&t.fut_) string_view(
             v.fut_str);
         t.kind_ = host_kind::ipv_future;
-        return start;
+        return true;
     }
     // IPv4address
     {
         ipv4_address v;
-        it = parse(it, end, ec, v);
-        if(! ec)
+        if(parse(it, end, ec, v))
         {
             ::new(&t.ipv4_)
                 ipv4_address(v);
-            return it;
+            return true;
         }
         ec = {};
     }
     // reg-name
     pct_encoded_str ns;
-    it = parse(it, end, ec,
+    if(! parse(it, end, ec,
         pct_encoded<
-            unsub_char_mask>{ns});
-    if(ec)
+            unsub_char_mask>{ns}))
     {
         // bad reg-name
-        return start;
+        return false;
     }
     ::new(&t.name_)
         pct_encoded_str(ns);
     t.kind_ = host_kind::named;
-    return it;
+    return true;
 }
 
 } // rfc

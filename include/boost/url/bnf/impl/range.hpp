@@ -22,35 +22,39 @@ class range<T>::iterator
     T v_;
     char const* next_ = nullptr;
     char const* end_ = nullptr;
-    begin_t begin_ = nullptr;
-    increment_t increment_ = nullptr;
+    func_ptr begin_ = nullptr;
+    func_ptr increment_ = nullptr;
 
     friend class range;
 
     iterator(
         string_view s,
-        begin_t begin,
-        increment_t increment)
-        : end_(s.data() + s.size())
+        func_ptr begin,
+        func_ptr increment)
+        : next_(s.data())
+        , end_(s.data() + s.size())
         , begin_(begin)
         , increment_(increment)
     {
         using namespace urls::detail;
         error_code ec;
-        next_ = begin_(
-            s.data(), end_, ec, v_);
-        if(ec == error::end)
-            next_ = nullptr;
-        else if(ec.failed())
-            throw_system_error(ec,
-                BOOST_CURRENT_LOCATION);
+        next_ = s.data();
+        if(! begin_(
+            next_, end_, ec, v_))
+        {
+            if(ec == error::end)
+                next_ = nullptr;
+            else if(ec.failed())
+                throw_system_error(ec,
+                    BOOST_CURRENT_LOCATION);
+        }
     }
 
     explicit
     iterator(
         char const* end,
-        begin_t begin,
-        increment_t increment)
+        func_ptr begin,
+        func_ptr increment)
         : end_(end)
         , begin_(begin)
         , increment_(increment)
@@ -101,12 +105,13 @@ public:
     {
         using namespace urls::detail;
         error_code ec;
-        next_ = increment_(
-            next_, end_, ec, v_);
+        if(increment_(
+            next_, end_, ec, v_))
+            return *this;
         if(ec == error::end)
         {
             next_ = nullptr;
-            ec = {};
+            return *this;
         }
         if(ec.failed())
             throw_system_error(ec,
@@ -147,44 +152,48 @@ end() const ->
 }
 
 template<class T, class U>
-char const*
+bool
 parse_range(
-    char const* start,
-    char const* end,
+    char const*& it,
+    char const* const end,
     error_code& ec,
     range<T>& t,
     U const&)
 {
     T v;
+    auto start = it;
     std::size_t n = 0;
-    auto it = U::begin(
-        start, end, ec, v);
-    if(ec == error::end)
+    if(! U::begin(it, end, ec, v))
     {
-        t = range<T>(
-            string_view(start,
-                it - start), n,
-            &U::begin,
-            &U::increment);
-        ec = {};
-        return it;
-    }
-    if(ec.failed())
-    {
-        t = {};
-        return start;
+        if(ec == error::end)
+        {
+            t = range<T>(
+                string_view(start,
+                    it - start), n,
+                &U::begin,
+                &U::increment);
+            ec = {};
+            return true;
+        }
+        if(ec.failed())
+        {
+            t = {};
+            return false;
+        }
     }
     for(;;)
     {
         ++n;
-        it = U::increment(
-            it, end, ec, v);
-        if(ec == error::end)
-            break;
-        if(ec.failed())
+        if(! U::increment(
+            it, end, ec, v))
         {
-            t = {};
-            return start;
+            if(ec == error::end)
+                break;
+            if(ec.failed())
+            {
+                t = {};
+                return false;
+            }
         }
     }
     t = range<T>(
@@ -193,7 +202,7 @@ parse_range(
         &U::begin,
         &U::increment);
     ec = {};
-    return it;
+    return true;
 }
 
 } // bnf

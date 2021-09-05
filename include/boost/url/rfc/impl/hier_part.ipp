@@ -18,9 +18,9 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     hier_part& t)
@@ -28,50 +28,46 @@ parse(
     using path_type =
         hier_part::path_type;
     using bnf::parse;
-    auto it = start;
     if(it == end)
     {
         // path-empty
         t.authority.reset();
-        it = parse(start, end, ec,
+        parse(it, end, ec,
             detail::path_empty{t.path});
         ec = {};
-        return it;
+        return true;
     }
     if(it[0] != '/')
     {
         // path-rootless
-        it = parse(it, end, ec,
-            detail::path_rootless{t.path});
-        if(ec)
-            return start;
+        if(! parse(it, end, ec,
+            detail::path_rootless{t.path}))
+            return false;
         t.authority.reset();
-        return it;
+        return true;
     }
     if( end - it == 1 ||
         it[1] != '/')
     {
         // path-absolute
-        it = parse(it, end, ec,
+        parse(it, end, ec,
             detail::path_absolute{t.path});
         t.authority.reset();
         ec = {};
-        return it;
+        return true;
     }
     // "//" authority path-abempty
     it += 2;
     authority a;
     // authority
-    it = parse(it, end, ec, a);
-    if(ec)
-        return start;
+    if(! parse(it, end, ec, a))
+        return false;
     t.authority.emplace(a);
     // path-abempty
-    it = parse(it, end, ec,
-        detail::path_abempty{t.path});
-    if(ec)
-        return start;
-    return it;
+    if(! parse(it, end, ec,
+        detail::path_abempty{t.path}))
+        return false;
+    return true;
 }
 
 } // rfc

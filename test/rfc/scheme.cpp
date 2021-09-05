@@ -23,16 +23,16 @@ public:
     struct T
     {
         friend
-        char const*
+        bool
         parse(
-            char const* start,
+            char const*& it,
             char const* end,
             error_code& ec,
             T const&)
         {
             string_view s;
             return parse(
-                start, end, ec,
+                it, end, ec,
                     scheme{s});
         }
     };

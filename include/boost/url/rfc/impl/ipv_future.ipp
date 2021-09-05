@@ -19,9 +19,9 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-char const*
+bool
 parse(
-    char const* const start,
+    char const*& it,
     char const* const end,
     error_code& ec,
     ipv_future& t)
@@ -29,30 +29,30 @@ parse(
     using namespace bnf;
     string_view v0;
     string_view v1;
-    auto it = parse(start, end, ec,
+    auto const start = it;
+    if(! parse(it, end, ec,
         'v',
         token<hexdig_chars>{v0},
         '.',
         token<masked_char_set<
             unsub_char_mask |
-            colon_char_mask>>{v1});
-    if(ec)
-        return start;
+            colon_char_mask>>{v1}))
+        return false;
     if(v0.empty())
     {
         // can't be empty
         ec = error::syntax;
-        return start;
+        return false;
     }
     if(v1.empty())
     {
         // can't be empty
         ec = error::syntax;
-        return start;
+        return false;
     }
     t.s_ = string_view(
         start, it - start);
-    return it;
+    return true;
 }
 
 } // rfc
