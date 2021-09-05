@@ -36,8 +36,8 @@ public:
             return;
         if(! BOOST_TEST(it == end))
             return;
-        BOOST_TEST(t.str() == str);
-        BOOST_TEST(t.as_number() == v);
+        BOOST_TEST(t.str == str);
+        BOOST_TEST(t.number == v);
     }
 
     void
@@ -48,8 +48,14 @@ public:
 
         bad <port>("x");
 
-        // VFALCO TODO
-        check("0", "0", boost::none);//T(0));
+        check("", "", boost::none);
+        check("0", "0", T(0));
+        check("00", "00", T(0));
+        check("01", "01", T(1));
+        check("1", "1", T(1));
+        check("65535", "65535", T(65535));
+        check("65536", "65536", boost::none);
+        check("123456789", "123456789", boost::none);
     }
 };
 

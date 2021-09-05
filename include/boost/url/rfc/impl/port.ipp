@@ -14,6 +14,8 @@
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/bnf/token.hpp>
+#include <boost/static_assert.hpp>
+#include <type_traits>
 
 namespace boost {
 namespace urls {
@@ -26,15 +28,35 @@ parse(
     error_code& ec,
     port& t)
 {
-    using namespace bnf;
-    string_view s;
-    auto it = parse(
-        start, end, ec,
-        token<digit_chars>{s});
-    if(ec)
-        return start;
-    t.s_ = s;
-    t.v_.reset();
+    using bnf::parse;
+    bnf::digit_chars cs;
+    port::number_type u = 0;
+    auto it = start;
+    while(it != end)
+    {
+        if(! cs(*it))
+            break;
+        auto u0 = u;
+        u = 10 * u + *it - '0';
+        if(u < u0)
+        {
+            // overflow
+            it = bnf::find_if_not(
+                it, end, cs);
+            t.str = string_view(
+                start, it - start);
+            t.number.reset();
+            ec = {};
+            return it;
+        }
+        ++it;
+    }
+    t.str = string_view(
+        start, it - start);
+    if(! t.str.empty())
+        t.number.emplace(u);
+    else
+        t.number.reset();
     return it;
 }
 

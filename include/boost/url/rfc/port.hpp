@@ -30,27 +30,14 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
 */
-class port
+struct port
 {
-    string_view s_;
-    optional<
-        std::uint16_t> v_;
-
-public:
     using number_type =
         std::uint16_t;
 
-    string_view
-    str() const noexcept
-    {
-        return s_;
-    }
-
-    optional<number_type> const&
-    as_number() const noexcept
-    {
-        return v_;
-    }
+    string_view str;
+    optional<
+        std::uint16_t> number;
 
     BOOST_URL_DECL
     friend
