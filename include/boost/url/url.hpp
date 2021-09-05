@@ -1422,7 +1422,7 @@ public:
         Note that if the URL contains a hash mark
         followed by an empty query string, this
         function still returns an empty string.
-        To detect this case, use @ref fragment_part
+        To detect this case, use @ref fragment_bnf
         instead.
 
         @par Exception Safety
@@ -1438,7 +1438,7 @@ public:
         @return A `std::basic_string` using the
         specified allocator.
 
-        @see encoded_fragment, fragment_part
+        @see encoded_fragment, fragment_bnf
     */
     template<
         class Allocator =
@@ -1465,7 +1465,7 @@ public:
         Note that if the URL contains a hash mark
         followed by an empty query string, this
         function still returns an empty string.
-        To detect this case, use @ref fragment_part
+        To detect this case, use @ref fragment_bnf
         instead.
 
         @par Exception Safety
@@ -1480,7 +1480,7 @@ public:
         @return A `std::basic_string` using the
         specified allocator.
 
-        @see fragment, fragment_part
+        @see fragment, fragment_bnf
     */
     BOOST_URL_DECL
     string_view
@@ -1509,7 +1509,7 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    fragment_part() const noexcept;
+    fragment_bnf() const noexcept;
 
     /** Set the fragment.
 

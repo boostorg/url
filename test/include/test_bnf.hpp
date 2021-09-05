@@ -75,6 +75,27 @@ test_char_set(
     });
 }
 
+template<
+    class T, class V>
+struct test_ref
+{
+    V v;
+
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* end,
+        error_code& ec,
+        test_ref& t)
+    {
+        using bnf::parse;
+        return parse(
+            it, end, ec,
+            T{t.v});
+    }
+};
+
 template<class T>
 void
 bad(string_view s)

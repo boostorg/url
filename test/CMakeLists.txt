@@ -37,23 +37,23 @@ set(BOOST_URL_TESTS_FILES
     bnf/range.cpp
     bnf/repeat.cpp
     bnf/token.cpp
-    rfc/authority.cpp
+    rfc/authority_bnf.cpp
     rfc/char_sets.cpp
-    rfc/fragment_part.cpp
-    rfc/hier_part.cpp
-    rfc/host.cpp
-    rfc/ip_literal.cpp
-    rfc/ipv_future.cpp
-    rfc/ipv4_address.cpp
-    rfc/ipv6_address.cpp
-    rfc/pct_encoded.cpp
+    rfc/fragment_bnf.cpp
+    rfc/hier_part_bnf.cpp
+    rfc/host_bnf.cpp
+    rfc/ip_literal_bnf.cpp
+    rfc/ipv_future_bnf.cpp
+    rfc/ipv4_address_bnf.cpp
+    rfc/ipv6_address_bnf.cpp
+    rfc/pct_encoded_str.cpp
     rfc/pct_encoding.cpp
-    rfc/port.cpp
-    rfc/query_part.cpp
-    rfc/relative_part.cpp
-    rfc/scheme_part.cpp
-    rfc/uri.cpp
-    rfc/userinfo.cpp
+    rfc/port_bnf.cpp
+    rfc/query_bnf.cpp
+    rfc/relative_part_bnf.cpp
+    rfc/scheme_bnf.cpp
+    rfc/uri_bnf.cpp
+    rfc/userinfo_bnf.cpp
     )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "" FILES ${BOOST_URL_TESTS_FILES})

@@ -423,9 +423,9 @@ public:
         BOOST_TEST(url_view("#").encoded_fragment() == "");
         BOOST_TEST(url_view("#x").encoded_fragment() == "x");
 
-        BOOST_TEST(url_view("").fragment_part() == "");
-        BOOST_TEST(url_view("#").fragment_part() == "#");
-        BOOST_TEST(url_view("#x").fragment_part() == "#x");
+        BOOST_TEST(url_view("").fragment_bnf() == "");
+        BOOST_TEST(url_view("#").fragment_bnf() == "#");
+        BOOST_TEST(url_view("#x").fragment_bnf() == "#x");
     }
 
     void

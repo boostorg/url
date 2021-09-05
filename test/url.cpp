@@ -35,7 +35,7 @@ public:
             "port     : " << u.port_part() << "\n" <<
             "path     : " << u.encoded_path() << "\n"
             "query    : " << u.query_part() << "\n"
-            "fragment : " << u.fragment_part() << "\n"
+            "fragment : " << u.fragment_bnf() << "\n"
             //"resource : " << u.encoded_resource() << "\n"
             ;
         log.flush();
@@ -842,24 +842,24 @@ public:
         BOOST_TEST(url("#").encoded_fragment() == "");
         BOOST_TEST(url("#x").encoded_fragment() == "x");
 
-        BOOST_TEST(url("").fragment_part() == "");
-        BOOST_TEST(url("#").fragment_part() == "#");
-        BOOST_TEST(url("#x").fragment_part() == "#x");
+        BOOST_TEST(url("").fragment_bnf() == "");
+        BOOST_TEST(url("#").fragment_bnf() == "#");
+        BOOST_TEST(url("#x").fragment_bnf() == "#x");
 
-        BOOST_TEST(url().set_fragment("").fragment_part() == "");
-        BOOST_TEST(url().set_fragment("#").fragment_part() == "#%23");
-        BOOST_TEST(url().set_fragment("#x").fragment_part() == "#%23x");
+        BOOST_TEST(url().set_fragment("").fragment_bnf() == "");
+        BOOST_TEST(url().set_fragment("#").fragment_bnf() == "#%23");
+        BOOST_TEST(url().set_fragment("#x").fragment_bnf() == "#%23x");
 
-        BOOST_TEST(url().set_encoded_fragment("").fragment_part() == "");
-        BOOST_TEST(url().set_encoded_fragment("x").fragment_part() == "#x");
-        BOOST_TEST(url().set_encoded_fragment("%23").fragment_part() == "#%23");
+        BOOST_TEST(url().set_encoded_fragment("").fragment_bnf() == "");
+        BOOST_TEST(url().set_encoded_fragment("x").fragment_bnf() == "#x");
+        BOOST_TEST(url().set_encoded_fragment("%23").fragment_bnf() == "#%23");
         BOOST_TEST_THROWS(url().set_encoded_fragment("#"), invalid_part);
         BOOST_TEST_THROWS(url().set_encoded_fragment("#x"), invalid_part);
 
-        BOOST_TEST(url().set_fragment_part("").fragment_part() == "");
-        BOOST_TEST(url().set_fragment_part("#").fragment_part() == "#");
-        BOOST_TEST(url().set_fragment_part("#x").fragment_part() == "#x");
-        BOOST_TEST(url().set_fragment_part("#%23x").fragment_part() == "#%23x");
+        BOOST_TEST(url().set_fragment_part("").fragment_bnf() == "");
+        BOOST_TEST(url().set_fragment_part("#").fragment_bnf() == "#");
+        BOOST_TEST(url().set_fragment_part("#x").fragment_bnf() == "#x");
+        BOOST_TEST(url().set_fragment_part("#%23x").fragment_bnf() == "#%23x");
         BOOST_TEST_THROWS(url().set_fragment_part("x"), invalid_part);
         BOOST_TEST_THROWS(url().set_fragment_part("%23"), invalid_part);
 

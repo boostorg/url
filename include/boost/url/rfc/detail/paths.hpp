@@ -14,14 +14,14 @@
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/pct_encoded.hpp>
+#include <boost/url/rfc/pct_encoded_str.hpp>
 
 namespace boost {
 namespace urls {
 namespace rfc {
 namespace detail {
 
-struct segment
+struct segment_bnf
 {
     pct_encoded_str& v;
 
@@ -31,7 +31,7 @@ struct segment
         char const*& it,
         char const* const end,
         error_code& ec,
-        segment const& t)
+        segment_bnf const& t)
     {
         using bnf::parse;
         return parse(it, end, ec,
@@ -42,7 +42,7 @@ struct segment
 
 //------------------------------------------------
 
-struct segment_nz
+struct segment_nz_bnf
 {
     pct_encoded_str& v;
 
@@ -52,7 +52,7 @@ struct segment_nz
         char const*& it,
         char const* const end,
         error_code& ec,
-        segment_nz const& t)
+        segment_nz_bnf const& t)
     {
         using bnf::parse;
         auto const start = it;
@@ -72,7 +72,7 @@ struct segment_nz
 
 //------------------------------------------------
 
-struct segment_nz_nc
+struct segment_nz_nc_bnf
 {
     pct_encoded_str& v;
 
@@ -82,7 +82,7 @@ struct segment_nz_nc
         char const*& it,
         char const* const end,
         error_code& ec,
-        segment_nz_nc const& t)
+        segment_nz_nc_bnf const& t)
     {
         using bnf::parse;
         auto const start = it;
@@ -104,7 +104,7 @@ struct segment_nz_nc
 //------------------------------------------------
 
 // path-abempty  = *( "/" segment )
-struct path_abempty
+struct path_abempty_bnf
 {
     bnf::range<
         pct_encoded_str>& v;
@@ -132,7 +132,7 @@ struct path_abempty
         using bnf::parse;
         auto const start = it;
         if(parse(it, end, ec,
-            '/', segment{t}))
+            '/', segment_bnf{t}))
             return true;
         ec = error::end;
         it = start;
@@ -145,7 +145,7 @@ struct path_abempty
         char const*& it,
         char const* const end,
         error_code& ec,
-        path_abempty const& t)
+        path_abempty_bnf const& t)
     {
         return bnf::parse_range(
             it, end, ec, t.v, t);
@@ -155,7 +155,7 @@ struct path_abempty
 //------------------------------------------------
 
 // path-absolute = "/" [ segment-nz *( "/" segment ) ]
-struct path_absolute
+struct path_absolute_bnf
 {
     bnf::range<
         pct_encoded_str>& v;
@@ -171,7 +171,7 @@ struct path_absolute
         using bnf::parse;
         auto const start = it;
         if(parse(it, end, ec,
-            '/', segment_nz{t}))
+            '/', segment_nz_bnf{t}))
             return true;
         ec = error::end;
         it = start;
@@ -189,7 +189,7 @@ struct path_absolute
         using bnf::parse;
         auto const start = it;
         if(parse(it, end, ec,
-            '/', segment{t}))
+            '/', segment_bnf{t}))
             return true;
         ec = error::end;
         it = start;
@@ -202,7 +202,7 @@ struct path_absolute
         char const*& it,
         char const* const end,
         error_code& ec,
-        path_absolute const& t)
+        path_absolute_bnf const& t)
     {
         return bnf::parse_range(
             it, end, ec, t.v, t);
@@ -212,7 +212,7 @@ struct path_absolute
 //------------------------------------------------
 
 // path-noscheme = segment-nz-nc *( "/" segment )
-struct path_noscheme
+struct path_noscheme_bnf
 {
     bnf::range<
         pct_encoded_str>& v;
@@ -228,7 +228,7 @@ struct path_noscheme
         using bnf::parse;
         auto const start = it;
         if(parse(it, end, ec,
-            segment_nz_nc{t}))
+            segment_nz_nc_bnf{t}))
             return true;
         ec = error::end;
         it = start;
@@ -246,7 +246,7 @@ struct path_noscheme
         using bnf::parse;
         auto const start = it;
         if(parse(it, end, ec,
-            '/', segment{t}))
+            '/', segment_bnf{t}))
             return true;
         ec = error::end;
         it = start;
@@ -259,7 +259,7 @@ struct path_noscheme
         char const*& it,
         char const* const end,
         error_code& ec,
-        path_noscheme const& t)
+        path_noscheme_bnf const& t)
     {
         return bnf::parse_range(
             it, end, ec, t.v, t);
@@ -269,7 +269,7 @@ struct path_noscheme
 //------------------------------------------------
 
 // path-rootless = segment-nz *( "/" segment )
-struct path_rootless
+struct path_rootless_bnf
 {
     bnf::range<
         pct_encoded_str>& v;
@@ -284,7 +284,7 @@ struct path_rootless
     {
         using bnf::parse;
         return parse(it, end, ec,
-            segment_nz{t});
+            segment_nz_bnf{t});
     }
 
     static
@@ -298,7 +298,7 @@ struct path_rootless
         using bnf::parse;
         auto const start = it;
         if(parse(it, end, ec,
-            '/', segment{t}))
+            '/', segment_bnf{t}))
             return true;
         ec = error::end;
         it = start;
@@ -311,7 +311,7 @@ struct path_rootless
         char const*& it,
         char const* const end,
         error_code& ec,
-        path_rootless const& t)
+        path_rootless_bnf const& t)
     {
         return bnf::parse_range(
             it, end, ec, t.v, t);
@@ -321,7 +321,7 @@ struct path_rootless
 //------------------------------------------------
 
 // path-empty    = 0<pchar>
-struct path_empty
+struct path_empty_bnf
 {
     bnf::range<
         pct_encoded_str>& v;
@@ -357,7 +357,7 @@ struct path_empty
         char const*& it,
         char const* const end,
         error_code& ec,
-        path_empty const& t)
+        path_empty_bnf const& t)
     {
         return bnf::parse_range(
             it, end, ec, t.v, t);

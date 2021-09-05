@@ -1108,7 +1108,7 @@ encoded_fragment() const noexcept
 
 string_view
 url::
-fragment_part() const noexcept
+fragment_bnf() const noexcept
 {
     auto s = pt_.get(
         detail::id_frag, s_);

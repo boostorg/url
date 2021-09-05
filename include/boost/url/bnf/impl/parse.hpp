@@ -123,6 +123,7 @@ is_valid(string_view s)
     auto it = s.data();
     auto const end =
         it + s.size();
+    using bnf::parse;
     if(! parse(it, end, ec, t))
         return false;
     if(it != end)

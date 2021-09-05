@@ -26,22 +26,22 @@
 #include <boost/url/bnf/repeat.hpp>
 #include <boost/url/bnf/token.hpp>
 
-#include <boost/url/rfc/authority.hpp>
+#include <boost/url/rfc/authority_bnf.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/fragment_part.hpp>
-#include <boost/url/rfc/hier_part.hpp>
-#include <boost/url/rfc/host.hpp>
-#include <boost/url/rfc/ip_literal.hpp>
-#include <boost/url/rfc/ipv_future.hpp>
-#include <boost/url/rfc/ipv4_address.hpp>
-#include <boost/url/rfc/ipv6_address.hpp>
-#include <boost/url/rfc/pct_encoded.hpp>
+#include <boost/url/rfc/fragment_bnf.hpp>
+#include <boost/url/rfc/hier_part_bnf.hpp>
+#include <boost/url/rfc/host_bnf.hpp>
+#include <boost/url/rfc/ip_literal_bnf.hpp>
+#include <boost/url/rfc/ipv_future_bnf.hpp>
+#include <boost/url/rfc/ipv4_address_bnf.hpp>
+#include <boost/url/rfc/ipv6_address_bnf.hpp>
+#include <boost/url/rfc/pct_encoded_str.hpp>
 #include <boost/url/rfc/pct_encoding.hpp>
-#include <boost/url/rfc/port.hpp>
-#include <boost/url/rfc/relative_part.hpp>
-#include <boost/url/rfc/query_part.hpp>
-#include <boost/url/rfc/scheme_part.hpp>
-#include <boost/url/rfc/uri.hpp>
-#include <boost/url/rfc/userinfo.hpp>
+#include <boost/url/rfc/port_bnf.hpp>
+#include <boost/url/rfc/relative_part_bnf.hpp>
+#include <boost/url/rfc/query_bnf.hpp>
+#include <boost/url/rfc/scheme_bnf.hpp>
+#include <boost/url/rfc/uri_bnf.hpp>
+#include <boost/url/rfc/userinfo_bnf.hpp>
 
 #endif

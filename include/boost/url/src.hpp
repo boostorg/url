@@ -33,21 +33,21 @@ in a translation unit of the program.
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_view.ipp>
 
-#include <boost/url/rfc/impl/authority.ipp>
+#include <boost/url/rfc/impl/authority_bnf.ipp>
 #include <boost/url/rfc/impl/char_sets.ipp>
-#include <boost/url/rfc/impl/fragment_part.ipp>
-#include <boost/url/rfc/impl/hier_part.ipp>
-#include <boost/url/rfc/impl/host.ipp>
-#include <boost/url/rfc/impl/ip_literal.ipp>
-#include <boost/url/rfc/impl/ipv_future.ipp>
-#include <boost/url/rfc/impl/ipv4_address.ipp>
-#include <boost/url/rfc/impl/ipv6_address.ipp>
+#include <boost/url/rfc/impl/fragment_bnf.ipp>
+#include <boost/url/rfc/impl/hier_part_bnf.ipp>
+#include <boost/url/rfc/impl/host_bnf.ipp>
+#include <boost/url/rfc/impl/ip_literal_bnf.ipp>
+#include <boost/url/rfc/impl/ipv_future_bnf.ipp>
+#include <boost/url/rfc/impl/ipv4_address_bnf.ipp>
+#include <boost/url/rfc/impl/ipv6_address_bnf.ipp>
 #include <boost/url/rfc/impl/pct_encoding.ipp>
-#include <boost/url/rfc/impl/port.ipp>
-#include <boost/url/rfc/impl/query_part.ipp>
-#include <boost/url/rfc/impl/relative_part.ipp>
-#include <boost/url/rfc/impl/scheme_part.ipp>
-#include <boost/url/rfc/impl/uri.ipp>
-#include <boost/url/rfc/impl/userinfo.ipp>
+#include <boost/url/rfc/impl/port_bnf.ipp>
+#include <boost/url/rfc/impl/query_bnf.ipp>
+#include <boost/url/rfc/impl/relative_part_bnf.ipp>
+#include <boost/url/rfc/impl/scheme_bnf.ipp>
+#include <boost/url/rfc/impl/uri_bnf.ipp>
+#include <boost/url/rfc/impl/userinfo_bnf.ipp>
 
 #endif

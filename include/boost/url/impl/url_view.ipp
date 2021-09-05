@@ -14,7 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/detail/parse.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/uri.hpp>
+#include <boost/url/rfc/uri_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -335,7 +335,7 @@ encoded_fragment() const noexcept
 
 string_view
 url_view::
-fragment_part() const noexcept
+fragment_bnf() const noexcept
 {
     auto s = pt_.get(
         detail::id_frag, s_);
@@ -762,7 +762,7 @@ parse_uri(
     string_view s,
     error_code& ec) noexcept
 {
-    rfc::uri t;
+    rfc::uri_bnf t;
     if(! bnf::parse(s, ec, t))
         return boost::none;
     detail::parts p;
