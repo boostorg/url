@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/rfc/hier_part.hpp>
+#include <boost/url/rfc/relative_part.hpp>
 
 #include "test_suite.hpp"
 #include "test_bnf.hpp"
@@ -17,17 +17,18 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-class hier_part_test
+class relative_part_test
 {
 public:
     void
     run()
-    {
-        using T = hier_part;
-        
-        bad <T>("/");
+    {       
+        bad<relative_part>({
+            "/",
+            ":/" // colon not ok in relative-part
+            });
 
-        good<T>({
+        good<relative_part>({
             ""
             "//",
             "//user:pass@",
@@ -46,10 +47,9 @@ public:
             "x//",
             "x/y/z",
             "x//y///z///"
-            ":/" // colon ok in hier-part
             });
 
-        hier_part p;
+        relative_part p;
         error_code ec;
         using bnf::parse;
         parse("/1/2/3/4/5", ec, p);
@@ -66,8 +66,8 @@ public:
 };
 
 TEST_SUITE(
-    hier_part_test,
-    "boost.url.hier_part");
+    relative_part_test,
+    "boost.url.relative_part");
 
 } // rfc
 } // urls

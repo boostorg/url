@@ -609,6 +609,20 @@ public:
     parse_uri(
         string_view s,
         error_code& ec) noexcept;
+
+    /** Parse a string using the absolute-URI grammar
+
+        @par BNF
+        @code
+        absolute-URI  = scheme ":" hier-part [ "?" query ]
+        @endcode
+    */
+    BOOST_URL_DECL
+    friend
+    optional<url_view>
+    parse_absolute_uri(
+        string_view s,
+        error_code& ec) noexcept;
 };
 
 BOOST_URL_DECL

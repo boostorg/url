@@ -50,6 +50,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/pct_encoding.cpp
     rfc/port.cpp
     rfc/query.cpp
+    rfc/relative_part.cpp
     rfc/scheme_part.cpp
     rfc/uri.cpp
     rfc/userinfo.cpp

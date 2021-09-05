@@ -7,10 +7,10 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_HIER_PART_IPP
-#define BOOST_URL_RFC_IMPL_HIER_PART_IPP
+#ifndef BOOST_URL_RFC_IMPL_RELATIVE_PART_IPP
+#define BOOST_URL_RFC_IMPL_RELATIVE_PART_IPP
 
-#include <boost/url/rfc/hier_part.hpp>
+#include <boost/url/rfc/relative_part.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/detail/paths.hpp>
 
@@ -23,7 +23,7 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    hier_part& t)
+    relative_part& t)
 {
     using bnf::parse;
     if(it == end)
@@ -37,9 +37,9 @@ parse(
     }
     if(it[0] != '/')
     {
-        // path-rootless
+        // path-noscheme
         if(! parse(it, end, ec,
-            detail::path_rootless{
+            detail::path_noscheme{
                 t.path}))
             return false;
         t.authority.reset();
