@@ -54,12 +54,12 @@ parse(
         if(it == end)
         {
             t.port.reset();
-            return true;
+            goto finish;
         }
         if(*it != ':')
         {
             t.port.reset();
-            return true;
+            goto finish;
         }
         ++it;
         // port
@@ -74,6 +74,9 @@ parse(
         }
         t.port.emplace(p);
     }
+finish:
+    t.str = string_view(
+        start, it - start);
     return true;
 }
 

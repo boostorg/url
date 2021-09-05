@@ -23,7 +23,7 @@ namespace detail {
 
 struct dec_octet
 {
-    std::uint8_t value;
+    std::uint8_t& v;
 
     friend
     bool
@@ -31,7 +31,7 @@ struct dec_octet
         char const*& it,
         char const* const end,
         error_code& ec,
-        dec_octet& t)
+        dec_octet const& t)
     {
         bnf::digit_chars dc;
         if(it == end)
@@ -49,14 +49,14 @@ struct dec_octet
         ++it;
         if(it == end)
         {
-            t.value = static_cast<
+            t.v = static_cast<
                 std::uint8_t>(v);
             ec = {};
             return true;
         }
         if(! dc(*it))
         {
-            t.value = static_cast<
+            t.v = static_cast<
                 std::uint8_t>(v);
             ec = {};
             return true;
@@ -71,14 +71,14 @@ struct dec_octet
         ++it;
         if(it == end)
         {
-            t.value = static_cast<
+            t.v = static_cast<
                 std::uint8_t>(v);
             ec = {};
             return true;
         }
         if(! dc(*it))
         {
-            t.value = static_cast<
+            t.v = static_cast<
                 std::uint8_t>(v);
             ec = {};
             return true;
@@ -97,7 +97,7 @@ struct dec_octet
             return false;
         }
         ++it;
-        t.value = static_cast<
+        t.v = static_cast<
             std::uint8_t>(v);
         ec = {};
         return true;
@@ -113,20 +113,20 @@ parse(
     error_code& ec,
     ipv4_address& t)
 {
-    using namespace bnf;
     using bnf::parse;
-    detail::dec_octet ip[4];
-    if(! parse(
-        it, end, ec,
-        ip[0], '.',
-        ip[1], '.',
-        ip[2], '.',
-        ip[3]))
+    auto const start = it;
+    if(! parse(it, end, ec,
+        detail::dec_octet{
+            t.octets[0]}, '.',
+        detail::dec_octet{
+            t.octets[1]}, '.',
+        detail::dec_octet{
+            t.octets[2]}, '.',
+        detail::dec_octet{
+            t.octets[3]}))
         return false;
-    t.octets[0] = ip[0].value;
-    t.octets[1] = ip[1].value;
-    t.octets[2] = ip[2].value;
-    t.octets[3] = ip[3].value;
+    t.str = string_view(
+        start, it - start);
     return true;
 }
 

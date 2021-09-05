@@ -29,7 +29,7 @@ enum class host_kind
     ipv4,
     ipv6,
     ipv_future,
-    named
+    domain
 };
 
 /** BNF for host
@@ -52,7 +52,7 @@ class host
     {
         ipv4_address ipv4_;
         ipv6_address ipv6_;
-        pct_encoded_str name_{};
+        pct_encoded_str domain_{};
         string_view fut_;
     };
 
@@ -82,7 +82,7 @@ public:
     get_ipv4() const noexcept
     {
         BOOST_ASSERT(kind_ ==
-            host_kind::named);
+            host_kind::ipv4);
         return ipv4_;
     }
 
@@ -103,11 +103,11 @@ public:
     }
 
     pct_encoded_str
-    get_name() const noexcept
+    get_domain() const noexcept
     {
         BOOST_ASSERT(kind_ ==
-            host_kind::named);
-        return name_;
+            host_kind::domain);
+        return domain_;
     }
 
     BOOST_URL_DECL

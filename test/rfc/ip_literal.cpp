@@ -23,11 +23,19 @@ public:
     void
     run()
     {
-        using T = ip_literal;
-        bad <T>("::");
-        bad <T>("[v8]");
-        good<T>("[::]");
-        good<T>("[v1.0]");
+        bad<ip_literal>({
+            "::",
+            "[",
+            "[:",
+            "[::",
+            "[]",
+            "[v8]"
+            });
+
+        good<ip_literal>({
+            "[::]",
+            "[v1.0]"
+            });
     }
 };
 

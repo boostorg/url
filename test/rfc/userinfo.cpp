@@ -10,7 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/rfc/userinfo.hpp>
 
-#include <boost/url/detail/except.hpp>
+#include <boost/url/bnf/parse.hpp>
 #include "test_suite.hpp"
 #include "test_bnf.hpp"
 
@@ -25,29 +25,24 @@ public:
     check(
         string_view s,
         string_view s1,
-        string_view s2,
         optional<
-            string_view> s3)
+            string_view> s2)
     {
         using urls::detail::throw_system_error;
         userinfo p;
         error_code ec;
-        auto it = s.data();
-        auto const end =
-            it + s.size();
-        BOOST_TEST(
-            parse(it, end, ec, p));
-        if(! ec && it != end)
-            ec = error::syntax;
-        if(ec)
-            throw_system_error(ec,
-                BOOST_CURRENT_LOCATION);
-        BOOST_TEST(p.str == s1);
-        BOOST_TEST(p.user.str == s2);
-        if(s3.has_value())
+        using bnf::parse;
+        if(! BOOST_TEST(
+            parse(s, ec, p)))
+            return;
+        if(! BOOST_TEST(! ec))
+            return;
+        BOOST_TEST(p.str == s);
+        BOOST_TEST(p.user.str == s1);
+        if(s2.has_value())
             BOOST_TEST(
                 p.pass.has_value() &&
-                p.pass->str == *s3);
+                p.pass->str == *s2);
         else
             BOOST_TEST(! p.pass.has_value());
     }
@@ -55,29 +50,32 @@ public:
     void
     run()
     {
-        bad <userinfo>("@");
+        bad<userinfo>({
+            "@"
+            });
 
-        good<userinfo>("");
-        good<userinfo>("x");
-        good<userinfo>("xy");
-        good<userinfo>("x:");
-        good<userinfo>("x:y");
-        good<userinfo>("x:y:");
-        good<userinfo>("x:y:z");
-        good<userinfo>("%41");
+        good<userinfo>({
+            "",
+            "x",
+            "xy",
+            "x:",
+            "x:y",
+            "x:y:",
+            "x:y:z",
+            "%41"
+            });
 
-        using T = optional<string_view>;
-        check("x",      "x",      "x",  boost::none);
-        check("x:",     "x:",     "x",  T(""));
-        check(":",      ":",      "",   T(""));
-        check("::",     "::",     "",   T(":"));
-        check(":x",     ":x",     "",   T("x"));
-        check("x:y",    "x:y",    "x",  T("y"));
-        check("xy:zz:", "xy:zz:", "xy", T("zz:"));
+        using T =
+            optional<string_view>;
+        check("x",      "x",  boost::none);
+        check("x:",     "x",  T(""));
+        check(":",      "",   T(""));
+        check("::",     "",   T(":"));
+        check(":x",     "",   T("x"));
+        check("x:y",    "x",  T("y"));
+        check("xy:zz:", "xy", T("zz:"));
         check(
-            "%41%42:%43%44",
-            "%41%42:%43%44",
-            "%41%42", T("%43%44"));
+            "%41%42:%43%44", "%41%42", T("%43%44"));
     }
 };
 

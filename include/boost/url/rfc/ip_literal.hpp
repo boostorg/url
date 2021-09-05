@@ -31,6 +31,7 @@ namespace rfc {
 */
 struct ip_literal
 {
+    string_view str;
     bool is_ipv6;
     ipv6_address ipv6;
     string_view fut_str;

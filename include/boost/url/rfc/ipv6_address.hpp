@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/string.hpp>
 #include <array>
 #include <cstdint>
 
@@ -45,6 +46,7 @@ namespace rfc {
 */
 struct ipv6_address
 {
+    string_view str;
     std::array<
         std::uint8_t, 16> octets;
     bool trailing_ipv4;

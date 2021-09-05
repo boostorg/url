@@ -32,25 +32,27 @@ parse(
     auto const start = it;
     if(! parse(it, end, ec,
         'v',
-        token<hexdig_chars>{v0},
+        token<hexdig_chars>{
+            t.major},
         '.',
         token<masked_char_set<
             unsub_char_mask |
-            colon_char_mask>>{v1}))
+            colon_char_mask>>{
+                t.minor}))
         return false;
-    if(v0.empty())
+    if(t.major.empty())
     {
         // can't be empty
         ec = error::syntax;
         return false;
     }
-    if(v1.empty())
+    if(t.minor.empty())
     {
         // can't be empty
         ec = error::syntax;
         return false;
     }
-    t.s_ = string_view(
+    t.str = string_view(
         start, it - start);
     return true;
 }

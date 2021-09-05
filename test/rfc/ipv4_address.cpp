@@ -25,14 +25,9 @@ public:
     {
         error_code ec;
         ipv4_address t;
-        auto it = s.data();
-        auto const end =
-            it + s.size();
-        BOOST_TEST(
-            parse(it, end, ec, t));
+        using bnf::parse;
+        BOOST_TEST(parse(s, ec, t));
         if(! BOOST_TEST(! ec))
-            return;
-        if(! BOOST_TEST(it == end))
             return;
         std::uint32_t v1 =
             (static_cast<std::uint32_t>(
@@ -49,19 +44,23 @@ public:
     void
     run()
     {
-        bad <ipv4_address>("0");
-        bad <ipv4_address>("0.");
-        bad <ipv4_address>("0.0");
-        bad <ipv4_address>("0.0.");
-        bad <ipv4_address>("0.0.0");
-        bad <ipv4_address>("0.0.0.");
-        bad <ipv4_address>("0.0.0.256");
-        bad <ipv4_address>("1.2.3.4.");
-        bad <ipv4_address>("1.2.3.4x");
-        bad <ipv4_address>("1.2.3.300");
+        bad <ipv4_address>({
+            "0",
+            "0.",
+            "0.0",
+            "0.0.",
+            "0.0.0",
+            "0.0.0.",
+            "0.0.0.256",
+            "1.2.3.4.",
+            "1.2.3.4x",
+            "1.2.3.300"
+            });
 
-        good<ipv4_address>("0.0.0.0");
-        good<ipv4_address>("1.2.3.4");
+        good<ipv4_address>({
+            "0.0.0.0",
+            "1.2.3.4"
+            });
 
         check("0.0.0.0", 0x00000000);
         check("1.2.3.4", 0x01020304);

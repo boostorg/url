@@ -28,6 +28,11 @@ namespace rfc {
     @par BNF
     @code
     URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+    hier-part     = "//" authority path-abempty
+                  / path-absolute
+                  / path-rootless
+                  / path-empty
     @endcode
 
     @see

@@ -23,21 +23,17 @@ public:
     void
     check(
         string_view s,
-        string_view str,
         optional<std::uint16_t> v)
     {
-        error_code ec;
         port t;
-        auto it = s.data();
-        auto const end =
-            s.data() + s.size();
-        BOOST_TEST(
-            parse(it, end, ec, t));
+        error_code ec;
+        using bnf::parse;
+        if(! BOOST_TEST(
+            parse(s, ec, t)))
+            return;
         if(! BOOST_TEST(! ec))
             return;
-        if(! BOOST_TEST(it == end))
-            return;
-        BOOST_TEST(t.str == str);
+        BOOST_TEST(t.str == s);
         BOOST_TEST(t.number == v);
     }
 
@@ -47,16 +43,20 @@ public:
         using T = optional<
             port::number_type>;
 
-        bad <port>("x");
+        bad<port>({
+            "x"
+            "80x",
+            ":443"
+            });
 
-        check("", "", boost::none);
-        check("0", "0", T(0));
-        check("00", "00", T(0));
-        check("01", "01", T(1));
-        check("1", "1", T(1));
-        check("65535", "65535", T(65535));
-        check("65536", "65536", boost::none);
-        check("123456789", "123456789", boost::none);
+        check("", boost::none);
+        check("0", 0);
+        check("00", 0);
+        check("01", 1);
+        check("1", 1);
+        check("65535", 65535);
+        check("65536", boost::none);
+        check("123456789", boost::none);
     }
 };
 

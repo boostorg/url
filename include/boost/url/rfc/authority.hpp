@@ -35,6 +35,7 @@ namespace rfc {
 */
 struct authority
 {
+    string_view str;
     rfc::host host;
     optional<rfc::port> port;
     optional<rfc::userinfo> userinfo;

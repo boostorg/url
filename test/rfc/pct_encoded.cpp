@@ -9,3 +9,26 @@
 
 // Test that header file is self-contained.
 #include <boost/url/rfc/pct_encoded.hpp>
+
+#include "test_suite.hpp"
+
+namespace boost {
+namespace urls {
+namespace rfc {
+
+class pct_encoded_test
+{
+public:
+    void
+    run()
+    {
+    }
+};
+
+TEST_SUITE(
+    pct_encoded_test,
+    "boost.url.pct_encoded");
+
+} // rfc
+} // urls
+} // boost

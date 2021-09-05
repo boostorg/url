@@ -36,8 +36,8 @@ destroy()
     case host_kind::ipv_future:
         fut_.~string_view();
         break;
-    case host_kind::named:
-        name_.~pct_encoded_str();
+    case host_kind::domain:
+        domain_.~pct_encoded_str();
         break;
     }
 }
@@ -86,6 +86,7 @@ parse(
     // IPv4address
     {
         ipv4_address v;
+        auto it0 = it;
         if(parse(it, end, ec, v))
         {
             ::new(&t.ipv4_)
@@ -93,6 +94,7 @@ parse(
             t.kind_ = host_kind::ipv4;
             goto finish;
         }
+        it = it0;
         ec = {};
     }
     // reg-name
@@ -105,9 +107,9 @@ parse(
             // bad reg-name
             return false;
         }
-        ::new(&t.name_)
+        ::new(&t.domain_)
             pct_encoded_str(ns);
-        t.kind_ = host_kind::named;
+        t.kind_ = host_kind::domain;
     }
 finish:
     t.s_ = string_view(

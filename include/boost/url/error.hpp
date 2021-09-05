@@ -86,8 +86,7 @@ struct BOOST_SYMBOL_VISIBLE
 */
 enum class error
 {
-    need_more = 1,
-    end,
+    end = 1,
     syntax,
 
     /// An input did not match a structural element (soft error)

@@ -27,7 +27,7 @@ parse(
     if(it == end)
     {
         // end of input
-        ec = error::need_more;
+        ec = error::syntax;
         return false;
     }
     if(*it != ch)

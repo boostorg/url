@@ -28,16 +28,11 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
 */
-class ipv_future
+struct ipv_future
 {
-    string_view s_;
-
-public:
-    string_view const
-    str() const noexcept
-    {
-        return s_;
-    }
+    string_view str;
+    string_view major;
+    string_view minor;
 
     BOOST_URL_DECL
     friend

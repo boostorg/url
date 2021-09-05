@@ -27,22 +27,20 @@ namespace detail {
 
 struct h16
 {
-    using value_type = std::array<
-        std::uint8_t, 2>;
-
-    value_type octets;
+    std::uint8_t* p;
 
     // return `true` if the hex
     // word could be 0..255 if
     // interpreted as decimal
+    static
     bool
-    is_octet() const noexcept
+    is_octet(std::uint8_t const* p) noexcept
     {
         unsigned short word =
             static_cast<unsigned short>(
-                octets[0]) * 256 +
+                p[0]) * 256 +
             static_cast<unsigned short>(
-                octets[1]);
+                p[1]);
         if(word > 0x255)
             return false;
         if(((word >>  4) & 0xf) > 9)
@@ -58,7 +56,7 @@ struct h16
         char const*& it,
         char const* const end,
         error_code& ec,
-        h16& t)
+        h16 const& t)
     {
         std::uint16_t v;
         for(;;)
@@ -102,10 +100,10 @@ struct h16
             break;
         }
         ec = {};
-        t.octets[0] = static_cast<
+        t.p[0] = static_cast<
             std::uint8_t>(
                 v / 256);
-        t.octets[1] = static_cast<
+        t.p[1] = static_cast<
             std::uint8_t>(
                 v % 256);
         return true;
@@ -124,7 +122,6 @@ parse(
     ipv6_address& t)
 {
     using bnf::parse;
-    detail::h16 w;
     int n = 8;      // words needed
     int b = -1;     // value of n
                     // when '::' seen
@@ -174,13 +171,10 @@ parse(
             if(c)
             {
                 prev = it;
-                if(! parse(
-                    it, end, ec, w))
+                if(! parse(it, end, ec, 
+                    detail::h16{
+                        &t.octets[2*(8-n)]}))
                     return false;
-                t.octets[2*(8-n)+0] =
-                    w.octets[0];
-                t.octets[2*(8-n)+1] =
-                    w.octets[1];
                 --n;
                 if(n == 0)
                     break;
@@ -198,7 +192,8 @@ parse(
                 ec = error::syntax;
                 return false;
             }
-            if(! w.is_octet())
+            if(! detail::h16::is_octet(
+                &t.octets[2*(7-n)]))
             {
                 // invalid octet
                 ec = error::syntax;
@@ -232,12 +227,10 @@ parse(
         if(! c)
         {
             prev = it;
-            if(! parse(it, end, ec, w))
+            if(! parse(it, end, ec,
+                detail::h16{
+                    &t.octets[2*(8-n)]}))
                 return false;
-            t.octets[2*(8-n)+0] =
-                w.octets[0];
-            t.octets[2*(8-n)+1] =
-                w.octets[1];
             --n;
             if(n == 0)
                 break;

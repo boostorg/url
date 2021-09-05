@@ -91,12 +91,7 @@ bad(std::initializer_list<
     string_view> init)
 {
     for(auto s : init)
-    {
-        BOOST_TEST_THROWS(
-            bnf::validate<T>(s),
-            std::exception);
-        BOOST_TEST(! bnf::is_valid<T>(s));
-    }
+        bad<T>(s);
 }
 
 template<class T>
@@ -114,11 +109,7 @@ good(std::initializer_list<
     string_view> init)
 {
     for(auto s : init)
-    {
-        BOOST_TEST_NO_THROW(
-            bnf::validate<T>(s));
-        BOOST_TEST(bnf::is_valid<T>(s));
-    }
+        good<T>(s);
 }
 
 } // urls

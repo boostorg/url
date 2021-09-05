@@ -23,16 +23,18 @@ public:
     void
     run()
     {
-        using T = ipv_future;
+        bad<ipv_future>({
+            "v",
+            "v1",
+            "v1.",
+            "v1.@$",
+            "v.1"
+            });
 
-        bad <T>("v");
-        bad <T>("v1");
-        bad <T>("v1.");
-        bad <T>("v1.@$");
-        bad <T>("v.1");
-
-        good<T>("v1.0");
-        good<T>("v1.minor");
+        good<ipv_future>({
+            "v1.0",
+            "v1.minor"
+        });
     }
 };
 
