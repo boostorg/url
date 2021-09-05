@@ -14,7 +14,7 @@
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/fragment_part.hpp>
 #include <boost/url/rfc/hier_part.hpp>
-#include <boost/url/rfc/query.hpp>
+#include <boost/url/rfc/query_part.hpp>
 #include <boost/url/rfc/scheme_part.hpp>
 
 namespace boost {
@@ -43,20 +43,9 @@ parse(
     t.path = h.path;
 
     // [ "?" query ]
-    char const* it0 = it;
-    if(parse(it, end, ec, '?'))
-    {
-        t.query.emplace();
-        if(! parse(it, end, ec,
-            query{*t.query}))
-            return false;
-    }
-    else
-    {
-        t.query.reset();
-        it = it0;
-        ec = {};
-    }
+    if(! parse(it, end, ec,
+        query_part{t.query}))
+        return false;
 
     // [ "#" fragment ]
     if(! parse(it, end, ec,

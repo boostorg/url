@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/rfc/query.hpp>
+#include <boost/url/rfc/query_part.hpp>
 
 #include "test_suite.hpp"
 #include "test_bnf.hpp"
@@ -19,44 +19,47 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-class query_test
+class query_part_test
 {
 public:
     struct T
     {
+        optional<bnf::range<
+            query_param>> v;
+
         friend
         bool
         parse(
             char const*& it,
             char const* end,
             error_code& ec,
-            T const&)
+            T& t)
         {
-            query::value_type v;
+            using bnf::parse;
             return parse(
                 it, end, ec,
-                    query{v});
+                query_part{t.v});
         }
     };
 
     void
     run()
     {
-        bad <T>("%");
+        bad <T>("?%");
 
-        good<T>("");
-        good<T>("x");
-        good<T>("x=");
-        good<T>("x=y");
-        good<T>("x=y&");
-        good<T>("x=y&a");
-        good<T>("x=y&a=b&");
+        good<T>("?");
+        good<T>("?x");
+        good<T>("?x=");
+        good<T>("?x=y");
+        good<T>("?x=y&");
+        good<T>("?x=y&a");
+        good<T>("?x=y&a=b&");
     }
 };
 
 TEST_SUITE(
-    query_test,
-    "boost.url.query");
+    query_part_test,
+    "boost.url.query_part");
 
 } // rfc
 } // urls

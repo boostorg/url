@@ -39,7 +39,7 @@
 #include <boost/url/rfc/pct_encoding.hpp>
 #include <boost/url/rfc/port.hpp>
 #include <boost/url/rfc/relative_part.hpp>
-#include <boost/url/rfc/query.hpp>
+#include <boost/url/rfc/query_part.hpp>
 #include <boost/url/rfc/scheme_part.hpp>
 #include <boost/url/rfc/uri.hpp>
 #include <boost/url/rfc/userinfo.hpp>

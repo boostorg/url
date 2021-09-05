@@ -19,7 +19,7 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-class fragment_test
+class fragment_part_test
 {
 public:
     struct T
@@ -59,8 +59,8 @@ public:
 };
 
 TEST_SUITE(
-    fragment_test,
-    "boost.url.fragment");
+    fragment_part_test,
+    "boost.url.fragment_part");
 
 } // rfc
 } // urls

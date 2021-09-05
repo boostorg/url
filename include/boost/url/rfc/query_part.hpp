@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_QUERY_HPP
-#define BOOST_URL_RFC_QUERY_HPP
+#ifndef BOOST_URL_RFC_QUERY_PART_HPP
+#define BOOST_URL_RFC_QUERY_PART_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -27,25 +27,25 @@ struct query_param
         pct_encoded_str> value;
 };
 
-/** BNF for query
+/** BNF for query-part
 
     @par BNF
     @code
-    query         = *( pchar / "/" / "?" )
-                  / path-absolute
-                  / path-rootless
-                  / path-empty
+    query-part      [ "?" query ]
+
+    query           = *( pchar / "/" / "?" )
+                    / path-absolute
+                    / path-rootless
+                    / path-empty
     @endcode
 
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
 */
-struct query
+struct query_part
 {
-    using value_type =
-        bnf::range<query_param>;
-    
-    value_type& v;
+    optional<
+        bnf::range<query_param>>& v;
 
     BOOST_URL_DECL
     static
@@ -65,17 +65,14 @@ struct query
         error_code& ec,
         query_param& t) noexcept;
 
+    BOOST_URL_DECL
     friend
     bool
     parse(
         char const*& it,
         char const* const end,
         error_code& ec,
-        query const& t)
-    {
-        return bnf::parse_range(
-            it, end, ec, t.v, t);
-    }
+        query_part const& t);
 };
 
 } // rfc

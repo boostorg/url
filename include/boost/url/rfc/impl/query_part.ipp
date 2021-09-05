@@ -7,10 +7,10 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_QUERY_IPP
-#define BOOST_URL_RFC_IMPL_QUERY_IPP
+#ifndef BOOST_URL_RFC_IMPL_QUERY_PART_IPP
+#define BOOST_URL_RFC_IMPL_QUERY_PART_IPP
 
-#include <boost/url/rfc/query.hpp>
+#include <boost/url/rfc/query_part.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/detail/paths.hpp>
 #include <boost/url/rfc/char_sets.hpp>
@@ -21,7 +21,7 @@ namespace urls {
 namespace rfc {
 
 bool
-query::
+query_part::
 begin(
     char const*& it,
     char const* const end,
@@ -63,7 +63,7 @@ begin(
 }
 
 bool
-query::
+query_part::
 increment(
     char const*& it,
     char const* const end,
@@ -91,6 +91,27 @@ increment(
         return false;
     }
     return true;
+}
+
+bool
+parse(
+    char const*& it,
+    char const* const end,
+    error_code& ec,
+    query_part const& t)
+{
+    using bnf::parse;
+    if( it == end ||
+        *it != '?')
+    {
+        ec = {};
+        t.v.reset();
+        return true;
+    }
+    ++it;
+    t.v.emplace();
+    return bnf::parse_range(
+        it, end, ec, *t.v, t);
 }
 
 } // rfc

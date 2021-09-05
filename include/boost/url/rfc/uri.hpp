@@ -15,7 +15,7 @@
 #include <boost/url/bnf/range.hpp>
 #include <boost/url/rfc/authority.hpp>
 #include <boost/url/rfc/pct_encoded.hpp>
-#include <boost/url/rfc/query.hpp>
+#include <boost/url/rfc/query_part.hpp>
 #include <boost/url/rfc/scheme_part.hpp>
 #include <boost/optional.hpp>
 
