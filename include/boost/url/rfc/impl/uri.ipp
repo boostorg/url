@@ -12,6 +12,7 @@
 
 #include <boost/url/rfc/uri.hpp>
 #include <boost/url/bnf/parse.hpp>
+#include <boost/url/rfc/fragment.hpp>
 #include <boost/url/rfc/hier_part.hpp>
 #include <boost/url/rfc/query.hpp>
 #include <boost/url/rfc/scheme.hpp>
@@ -29,31 +30,56 @@ parse(
 {
     using bnf::parse;
     auto it = start;
+
     // scheme ":"
-    string_view s1;
     it = parse(it, end, ec,
-        scheme{s1}, ':');
+        scheme{t.scheme}, ':');
     if(ec)
         return start;
+
     // hier-part
     hier_part h;
     it = parse(
         it, end, ec, h);
+    if(ec)
+        return start;
+    t.authority = h.authority;
+    t.path = h.path;
+
     // [ "?" query ]
     it = parse(
         it, end, ec, '?');
     if(! ec.failed())
     {
-        query q;
-        it = parse(
-            it, end, ec, q);
+        t.query.emplace();
+        it = parse(it, end, ec,
+            query{*t.query});
         if(ec)
             return start;
     }
     else
     {
         ec = {};
+        t.query.reset();
     }
+
+    // [ "#" fragment ]
+    it = parse(
+        it, end, ec, '#');
+    if(! ec.failed())
+    {
+        t.fragment.emplace();
+        it = parse(it, end, ec,
+            fragment{*t.fragment});
+        if(ec)
+            return start;
+    }
+    else
+    {
+        ec = {};
+        t.fragment.reset();
+    }
+
     return it;
 }
 

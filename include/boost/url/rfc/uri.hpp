@@ -12,6 +12,11 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/bnf/range.hpp>
+#include <boost/url/rfc/authority.hpp>
+#include <boost/url/rfc/pct_encoded.hpp>
+#include <boost/url/rfc/query.hpp>
+#include <boost/optional.hpp>
 
 namespace boost {
 namespace urls {
@@ -29,6 +34,12 @@ namespace rfc {
 */
 struct uri
 {
+    string_view scheme;
+    bnf::range<pct_encoded_str> path;
+    optional<rfc::authority> authority;
+    optional<bnf::range<query_param>> query;
+    optional<pct_encoded_str> fragment;
+
     BOOST_URL_DECL
     friend
     char const*

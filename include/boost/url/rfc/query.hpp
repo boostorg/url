@@ -42,7 +42,10 @@ struct query_param
 */
 struct query
 {
-    bnf::range<query_param> v;
+    using value_type =
+        bnf::range<query_param>;
+    
+    value_type& v;
 
     BOOST_URL_DECL
     static
@@ -68,7 +71,7 @@ struct query
         char const* const start,
         char const* const end,
         error_code& ec,
-        query& t)
+        query const& t)
     {
         return bnf::parse_range(
             start, end, ec, t.v, t);

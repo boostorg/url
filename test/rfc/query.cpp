@@ -22,11 +22,26 @@ namespace rfc {
 class query_test
 {
 public:
+    struct T
+    {
+        friend
+        char const*
+        parse(
+            char const* start,
+            char const* end,
+            error_code& ec,
+            T const&)
+        {
+            query::value_type v;
+            return parse(
+                start, end, ec,
+                    query{v});
+        }
+    };
+
     void
     run()
     {
-        using T = query;
-
         bad <T>("%");
 
         good<T>("");
