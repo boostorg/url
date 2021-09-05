@@ -39,7 +39,7 @@ set(BOOST_URL_TESTS_FILES
     bnf/token.cpp
     rfc/authority.cpp
     rfc/char_sets.cpp
-    rfc/fragment.cpp
+    rfc/fragment_part.cpp
     rfc/hier_part.cpp
     rfc/host.cpp
     rfc/ip_literal.cpp

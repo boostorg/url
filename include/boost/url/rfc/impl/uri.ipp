@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/uri.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/fragment.hpp>
+#include <boost/url/rfc/fragment_part.hpp>
 #include <boost/url/rfc/hier_part.hpp>
 #include <boost/url/rfc/query.hpp>
 #include <boost/url/rfc/scheme_part.hpp>
@@ -59,20 +59,9 @@ parse(
     }
 
     // [ "#" fragment ]
-    it0 = it;
-    if(parse(it, end, ec, '#'))
-    {
-        t.fragment.emplace();
-        if(! parse(it, end, ec,
-            fragment{*t.fragment}))
-            return false;
-    }
-    else
-    {
-        t.fragment.reset();
-        it = it0;
-        ec = {};
-    }
+    if(! parse(it, end, ec,
+        fragment_part{t.fragment}))
+        return false;
 
     return true;
 }

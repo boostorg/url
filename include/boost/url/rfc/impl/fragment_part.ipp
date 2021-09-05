@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_BNF_IMPL_FRAGMENT_IPP
-#define BOOST_URL_BNF_IMPL_FRAGMENT_IPP
+#ifndef BOOST_URL_BNF_IMPL_FRAGMENT_PART_IPP
+#define BOOST_URL_BNF_IMPL_FRAGMENT_PART_IPP
 
 #include <boost/url/rfc/uri.hpp>
 #include <boost/url/bnf/parse.hpp>
@@ -23,14 +23,23 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    fragment const& t)
+    fragment_part const& t)
 {
     using bnf::parse;
+    if( it == end ||
+        *it != '#')
+    {
+        ec = {};
+        t.v.reset();
+        return true;
+    }
+    ++it;
+    t.v.emplace();
     return parse(it, end, ec,
         pct_encoded<
             unsub_char_mask |
             colon_char_mask |
-            at_char_mask>{t.v});
+            at_char_mask>{*t.v});
 }
 
 } // rfc

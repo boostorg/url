@@ -28,7 +28,7 @@
 
 #include <boost/url/rfc/authority.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/fragment.hpp>
+#include <boost/url/rfc/fragment_part.hpp>
 #include <boost/url/rfc/hier_part.hpp>
 #include <boost/url/rfc/host.hpp>
 #include <boost/url/rfc/ip_literal.hpp>
