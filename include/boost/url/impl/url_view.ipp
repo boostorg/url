@@ -769,7 +769,7 @@ parse_uri(
     using detail::part;
     p.resize(
         part::id_scheme,
-        t.scheme.size() + 1);
+        t.scheme.str.size() + 1);
     if(t.authority.has_value())
     {
         auto const& u =

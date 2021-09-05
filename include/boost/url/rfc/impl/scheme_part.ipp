@@ -7,10 +7,10 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_SCHEME_IPP
-#define BOOST_URL_RFC_IMPL_SCHEME_IPP
+#ifndef BOOST_URL_RFC_IMPL_SCHEME_PART_IPP
+#define BOOST_URL_RFC_IMPL_SCHEME_PART_IPP
 
-#include <boost/url/rfc/scheme.hpp>
+#include <boost/url/rfc/scheme_part.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/bnf/repeat.hpp>
@@ -26,7 +26,7 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    scheme const& t)
+    scheme_part& t)
 {
     using namespace bnf;
     auto const start = it;
@@ -45,8 +45,10 @@ parse(
     it = find_if_not(
         it + 1, end,
             alnum_chars{});
-    t.s = string_view(
+    t.str = string_view(
         start, it - start);
+    t.id = string_to_scheme(
+        t.str);
     return true;
 }
 

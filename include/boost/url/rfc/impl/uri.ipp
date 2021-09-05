@@ -15,7 +15,7 @@
 #include <boost/url/rfc/fragment.hpp>
 #include <boost/url/rfc/hier_part.hpp>
 #include <boost/url/rfc/query.hpp>
-#include <boost/url/rfc/scheme.hpp>
+#include <boost/url/rfc/scheme_part.hpp>
 
 namespace boost {
 namespace urls {
@@ -32,7 +32,7 @@ parse(
 
     // scheme ":"
     if(! parse(it, end, ec,
-        scheme{t.scheme}, ':'))
+        t.scheme, ':'))
         return false;
 
     // hier-part

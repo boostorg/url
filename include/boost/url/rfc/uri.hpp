@@ -16,6 +16,7 @@
 #include <boost/url/rfc/authority.hpp>
 #include <boost/url/rfc/pct_encoded.hpp>
 #include <boost/url/rfc/query.hpp>
+#include <boost/url/rfc/scheme_part.hpp>
 #include <boost/optional.hpp>
 
 namespace boost {
@@ -34,7 +35,7 @@ namespace rfc {
 */
 struct uri
 {
-    string_view scheme;
+    scheme_part scheme;;
     bnf::range<pct_encoded_str> path;
     optional<rfc::authority> authority;
     optional<bnf::range<query_param>> query;

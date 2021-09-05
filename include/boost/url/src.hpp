@@ -45,7 +45,7 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/pct_encoding.ipp>
 #include <boost/url/rfc/impl/port.ipp>
 #include <boost/url/rfc/impl/query.ipp>
-#include <boost/url/rfc/impl/scheme.ipp>
+#include <boost/url/rfc/impl/scheme_part.ipp>
 #include <boost/url/rfc/impl/uri.ipp>
 #include <boost/url/rfc/impl/userinfo.ipp>
 

@@ -13,6 +13,7 @@
 #include <boost/url/bnf/char_set.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/string.hpp>
+#include <initializer_list>
 
 #include "test_suite.hpp"
 
@@ -86,11 +87,38 @@ bad(string_view s)
 
 template<class T>
 void
+bad(std::initializer_list<
+    string_view> init)
+{
+    for(auto s : init)
+    {
+        BOOST_TEST_THROWS(
+            bnf::validate<T>(s),
+            std::exception);
+        BOOST_TEST(! bnf::is_valid<T>(s));
+    }
+}
+
+template<class T>
+void
 good(string_view s)
 {
     BOOST_TEST_NO_THROW(
         bnf::validate<T>(s));
     BOOST_TEST(bnf::is_valid<T>(s));
+}
+
+template<class T>
+void
+good(std::initializer_list<
+    string_view> init)
+{
+    for(auto s : init)
+    {
+        BOOST_TEST_NO_THROW(
+            bnf::validate<T>(s));
+        BOOST_TEST(bnf::is_valid<T>(s));
+    }
 }
 
 } // urls

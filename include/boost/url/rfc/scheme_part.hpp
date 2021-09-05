@@ -7,11 +7,12 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_SCHEME_HPP
-#define BOOST_URL_RFC_SCHEME_HPP
+#ifndef BOOST_URL_RFC_SCHEME_PART_HPP
+#define BOOST_URL_RFC_SCHEME_PART_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/scheme.hpp>
 #include <boost/url/string.hpp>
 
 namespace boost {
@@ -28,9 +29,10 @@ namespace rfc {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
 */
-struct scheme
+struct scheme_part
 {
-    string_view& s;
+    string_view str;
+    urls::scheme id;
 
     BOOST_URL_DECL
     friend
@@ -39,7 +41,7 @@ struct scheme
         char const*& it,
         char const* const end,
         error_code& ec,
-        scheme const& t);
+        scheme_part& t);
 };
 
 } // rfc
