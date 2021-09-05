@@ -46,6 +46,7 @@ class host
 {
     host_kind kind_ =
         host_kind::none;
+    string_view s_;
 
     union
     {
@@ -64,6 +65,12 @@ public:
 
     BOOST_URL_DECL
     ~host();
+
+    string_view
+    str() const noexcept
+    {
+        return s_;
+    }
 
     host_kind
     kind() const noexcept

@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <boost/url/detail/char_type.hpp>
+#include <boost/optional.hpp>
 #include <memory>
 #include <string>
 #include <utility>
@@ -28,6 +29,14 @@ class url_view
 {
     char const* s_ = "";
     detail::parts pt_;
+
+    url_view(
+        char const* s,
+        detail::parts const& pt) noexcept
+        : s_(s)
+        , pt_(pt)
+    {
+    }
 
 public:
     class segments_type;
@@ -586,7 +595,27 @@ public:
     BOOST_URL_DECL
     string_view
     fragment_part() const noexcept;
+
+    /** Parse a string using the URI grammar
+
+        @par BNF
+        @code
+        URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+        @endcode
+    */
+    BOOST_URL_DECL
+    friend
+    optional<url_view>
+    parse_uri(
+        string_view s,
+        error_code& ec) noexcept;
 };
+
+BOOST_URL_DECL
+optional<url_view>
+parse_uri(
+    string_view s,
+    error_code& ec) noexcept;
 
 //----------------------------------------------------------
 

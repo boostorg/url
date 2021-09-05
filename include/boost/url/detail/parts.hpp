@@ -18,7 +18,7 @@ namespace boost {
 namespace urls {
 namespace detail {
 
-enum
+enum part
 {
     id_scheme = 0,  // trailing ':'
     id_user,        // leading "//"

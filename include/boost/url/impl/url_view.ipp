@@ -13,6 +13,8 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/detail/parse.hpp>
+#include <boost/url/bnf/parse.hpp>
+#include <boost/url/rfc/uri.hpp>
 
 namespace boost {
 namespace urls {
@@ -751,6 +753,73 @@ operator[](string_view key) const
     if(it == end())
         return "";
     return it->value();
+}
+
+//------------------------------------------------
+
+optional<url_view>
+parse_uri(
+    string_view s,
+    error_code& ec) noexcept
+{
+    rfc::uri t;
+    if(! bnf::parse(s, ec, t))
+        return boost::none;
+    detail::parts p;
+    using detail::part;
+    p.resize(
+        part::id_scheme,
+        t.scheme.size() + 1);
+    if(t.authority.has_value())
+    {
+        auto const& u =
+            t.authority->userinfo;
+        if(u.has_value())
+        {
+            p.resize(
+                part::id_user,
+                u->user.str.size() + 2);
+            if(u->pass.has_value())
+            {
+                p.resize(
+                    part::id_password,
+                    u->pass->str.size() + 2);
+            }
+        }
+        auto const& h =
+            t.authority->host;
+        if(h.kind() !=
+            rfc::host_kind::none)
+        {
+            p.resize(
+                part::id_host,
+                h.str().size());
+        }
+        if(t.authority->port.has_value())
+        {
+            p.resize(
+                part::id_port,
+                t.authority->port->str.size() + 1);
+        }
+        p.resize(
+            part::id_path,
+            t.path.str().size());
+        auto const& q = t.query;
+        if(q.has_value())
+        {
+            p.resize(
+                part::id_query,
+                q->str().size() + 1);
+        }
+        auto const& f = t.fragment;
+        if(f.has_value())
+        {
+            p.resize(
+                part::id_frag,
+                f->str.size() + 1);
+        }
+    }
+    return url_view(s.data(), p);
 }
 
 } // urls

@@ -429,6 +429,26 @@ public:
     }
 
     void
+    testParseUri()
+    {
+        error_code ec;
+        auto const u = urls::parse_uri(
+            "http://user:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag",
+            ec);
+        if(! BOOST_TEST(! ec))
+            return;
+        BOOST_TEST(u.has_value());
+        BOOST_TEST(u->scheme() == "http");
+        BOOST_TEST(u->user() == "user");
+        BOOST_TEST(u->password() == "pass");
+        BOOST_TEST(u->host() == "www.boost.org");
+        BOOST_TEST(u->port() == "8080");
+        BOOST_TEST(u->encoded_path() == "/x/y/z");
+        BOOST_TEST(u->query() == "a=b&c=3");
+        BOOST_TEST(u->encoded_fragment() == "frag");
+    }
+
+    void
     run()
     {
         testView();
@@ -440,6 +460,8 @@ public:
         testPath();
         testQuery();
         testFragment();
+
+        testParseUri();
     }
 };
 

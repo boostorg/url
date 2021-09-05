@@ -55,6 +55,7 @@ parse(
     error_code& ec,
     host& t)
 {
+    auto const start = it;
     t.destroy();
     t.kind_ = host_kind::none;
     if(*it == '[')
@@ -73,14 +74,14 @@ parse(
             ::new(&t.ipv6_)
                 ipv6_address(v.ipv6);
             t.kind_ = host_kind::ipv6;
-            return it;
+            goto finish;
         }
         // VFALCO TODO
         // IPvFuture
         ::new(&t.fut_) string_view(
             v.fut_str);
         t.kind_ = host_kind::ipv_future;
-        return true;
+        goto finish;
     }
     // IPv4address
     {
@@ -89,22 +90,28 @@ parse(
         {
             ::new(&t.ipv4_)
                 ipv4_address(v);
-            return true;
+            t.kind_ = host_kind::ipv4;
+            goto finish;
         }
         ec = {};
     }
     // reg-name
-    pct_encoded_str ns;
-    if(! parse(it, end, ec,
-        pct_encoded<
-            unsub_char_mask>{ns}))
     {
-        // bad reg-name
-        return false;
+        pct_encoded_str ns;
+        if(! parse(it, end, ec,
+            pct_encoded<
+                unsub_char_mask>{ns}))
+        {
+            // bad reg-name
+            return false;
+        }
+        ::new(&t.name_)
+            pct_encoded_str(ns);
+        t.kind_ = host_kind::named;
     }
-    ::new(&t.name_)
-        pct_encoded_str(ns);
-    t.kind_ = host_kind::named;
+finish:
+    t.s_ = string_view(
+        start, it - start);
     return true;
 }
 
