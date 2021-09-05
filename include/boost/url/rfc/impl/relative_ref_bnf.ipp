@@ -7,15 +7,14 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_URI_BNF_IPP
-#define BOOST_URL_RFC_IMPL_URI_BNF_IPP
+#ifndef BOOST_URL_RFC_IMPL_RELATIVE_REF_BNF_IPP
+#define BOOST_URL_RFC_IMPL_RELATIVE_REF_BNF_IPP
 
-#include <boost/url/rfc/uri_bnf.hpp>
+#include <boost/url/rfc/relative_ref_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/fragment_bnf.hpp>
-#include <boost/url/rfc/hier_part_bnf.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
-#include <boost/url/rfc/scheme_bnf.hpp>
+#include <boost/url/rfc/relative_part_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -26,21 +25,16 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    uri_bnf& t)
+    relative_ref_bnf& t)
 {
     using bnf::parse;
 
-    // scheme ":"
-    if(! parse(it, end, ec,
-        t.scheme, ':'))
+    // relative-part
+    relative_part_bnf rp;
+    if(! parse(it, end, ec, rp))
         return false;
-
-    // hier-part
-    hier_part_bnf hp;
-    if(! parse(it, end, ec, hp))
-        return false;
-    t.authority = hp.authority;
-    t.path = hp.path;
+    t.authority = rp.authority;
+    t.path = rp.path;
 
     // [ "?" query ]
     if( it != end &&

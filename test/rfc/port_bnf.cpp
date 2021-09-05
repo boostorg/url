@@ -40,8 +40,7 @@ public:
     void
     run()
     {
-        using T = optional<
-            port_bnf::number_type>;
+        using T = port_bnf;
 
         bad<T>("x");
         bad<T>("80x");

@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_URI_BNF_HPP
-#define BOOST_URL_RFC_URI_BNF_HPP
+#ifndef BOOST_URL_RFC_ABSOLUTE_URI_BNF_HPP
+#define BOOST_URL_RFC_ABSOLUTE_URI_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -23,23 +23,22 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-/** BNF for URI
+/** BNF for absolute-URI
 
     @par BNF
     @code
-    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+    absolute-URI    = scheme ":" hier-part [ "?" query ]
     @endcode
 
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3
 */
-struct uri_bnf
+struct absolute_uri_bnf
 {
     scheme_bnf scheme;
     bnf::range<pct_encoded_str> path;
     optional<authority_bnf> authority;
     optional<bnf::range<query_param>> query;
-    optional<pct_encoded_str> fragment;
 
     BOOST_URL_DECL
     friend
@@ -48,7 +47,7 @@ struct uri_bnf
         char const*& it,
         char const* const end,
         error_code& ec,
-        uri_bnf& t);
+        absolute_uri_bnf& t);
 };
 
 } // rfc

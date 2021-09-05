@@ -28,7 +28,6 @@ parse(
     error_code& ec,
     port_bnf& t)
 {
-    using bnf::parse;
     bnf::digit_chars cs;
     port_bnf::number_type u = 0;
     auto const start = it;

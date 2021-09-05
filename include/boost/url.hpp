@@ -26,6 +26,7 @@
 #include <boost/url/bnf/repeat.hpp>
 #include <boost/url/bnf/token.hpp>
 
+#include <boost/url/rfc/absolute_uri_bnf.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/fragment_bnf.hpp>
@@ -39,6 +40,7 @@
 #include <boost/url/rfc/pct_encoding.hpp>
 #include <boost/url/rfc/port_bnf.hpp>
 #include <boost/url/rfc/relative_part_bnf.hpp>
+#include <boost/url/rfc/relative_ref_bnf.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/rfc/scheme_bnf.hpp>
 #include <boost/url/rfc/uri_bnf.hpp>

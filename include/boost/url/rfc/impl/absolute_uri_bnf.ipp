@@ -7,10 +7,10 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_URI_BNF_IPP
-#define BOOST_URL_RFC_IMPL_URI_BNF_IPP
+#ifndef BOOST_URL_RFC_IMPL_ABSOLUTE_URI_BNF_IPP
+#define BOOST_URL_RFC_IMPL_ABSOLUTE_URI_BNF_IPP
 
-#include <boost/url/rfc/uri_bnf.hpp>
+#include <boost/url/rfc/absolute_uri_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/fragment_bnf.hpp>
 #include <boost/url/rfc/hier_part_bnf.hpp>
@@ -26,7 +26,7 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    uri_bnf& t)
+    absolute_uri_bnf& t)
 {
     using bnf::parse;
 
@@ -55,22 +55,6 @@ parse(
     else
     {
         t.query.reset();
-    }
-
-    // [ "#" fragment ]
-    if( it != end &&
-        *it == '#')
-    {
-        ++it;
-        t.fragment.emplace();
-        if(! parse(it, end, ec,
-            fragment_bnf{
-                *t.fragment}))
-            return false;
-    }
-    else
-    {
-        t.fragment.reset();
     }
 
     return true;

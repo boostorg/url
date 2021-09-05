@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/rfc/uri_bnf.hpp>
+#include <boost/url/rfc/absolute_uri_bnf.hpp>
 
 #include "test_suite.hpp"
 #include "test_bnf.hpp"
@@ -19,17 +19,20 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-class uri_bnf_test
+class absolute_uri_bnf_test
 {
 public:
     void
     run()
     {
-        using T = uri_bnf;
+        using T = absolute_uri_bnf;
 
         bad<T>("");
         bad<T>(":");
-        bad<T>("http://##");
+        bad<T>("http://#");
+        bad<T>("http://x.y.z/?a=b&c=d&#");
+        bad<T>("http://x.y.z/?a=b&c=d&#frag");
+        bad<T>("http://x.y.z/#frag");
 
         good<T>("http:");
         good<T>("http:x");
@@ -46,17 +49,12 @@ public:
         good<T>("http://x.y.z/?a=b");
         good<T>("http://x.y.z/?a=b&c=d");
         good<T>("http://x.y.z/?a=b&c=d&");
-        good<T>("http://x.y.z/?a=b&c=d&#");
-        good<T>("http://x.y.z/?a=b&c=d&#1");
-        good<T>("http://x.y.z/?a=b&c=d&#12");
-        good<T>("http://x.y.z/?a=b&c=d&#12%23");
-        good<T>("http://x.y.z/?a=b&c=d&#12%23%20");
     }
 };
 
 TEST_SUITE(
-    uri_bnf_test,
-    "boost.url.uri_bnf");
+    absolute_uri_bnf_test,
+    "boost.url.absolute_uri_bnf");
 
 } // rfc
 } // urls

@@ -33,6 +33,7 @@ in a translation unit of the program.
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_view.ipp>
 
+#include <boost/url/rfc/impl/absolute_uri_bnf.ipp>
 #include <boost/url/rfc/impl/authority_bnf.ipp>
 #include <boost/url/rfc/impl/char_sets.ipp>
 #include <boost/url/rfc/impl/fragment_bnf.ipp>
@@ -46,6 +47,7 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/port_bnf.ipp>
 #include <boost/url/rfc/impl/query_bnf.ipp>
 #include <boost/url/rfc/impl/relative_part_bnf.ipp>
+#include <boost/url/rfc/impl/relative_ref_bnf.ipp>
 #include <boost/url/rfc/impl/scheme_bnf.ipp>
 #include <boost/url/rfc/impl/uri_bnf.ipp>
 #include <boost/url/rfc/impl/userinfo_bnf.ipp>
