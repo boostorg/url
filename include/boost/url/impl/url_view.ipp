@@ -15,9 +15,26 @@
 #include <boost/url/detail/parse.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/uri_bnf.hpp>
+#include <boost/url/rfc/relative_ref_bnf.hpp>
 
 namespace boost {
 namespace urls {
+
+string_view
+url_view::
+get(detail::part id) const noexcept
+{
+    return pt_.get(id, s_);
+}
+
+std::size_t
+url_view::
+len(detail::part id) const noexcept
+{
+    return pt_.length(id);
+}
+
+//------------------------------------------------
 
 url_view::
 url_view(string_view s)
@@ -29,6 +46,8 @@ url_view(string_view s)
     if(ec)
         invalid_part::raise();
 }
+
+//------------------------------------------------
 
 string_view
 url_view::
@@ -50,22 +69,39 @@ encoded_origin() const noexcept
         s_);
 }
 
-//----------------------------------------------------------
+//------------------------------------------------
 //
 // scheme
 //
-//----------------------------------------------------------
+//------------------------------------------------
 
-optional<string_view>
+bool
+url_view::
+has_scheme() const noexcept
+{
+    auto const n = len(
+        detail::id_scheme);
+    if(n == 0)
+        return false;
+    BOOST_ASSERT(n > 1);
+    BOOST_ASSERT(
+        get(detail::id_scheme
+            ).ends_with(':'));
+    return true;
+}
+
+string_view
 url_view::
 scheme() const noexcept
 {
-    auto s = pt_.get(
-        detail::id_scheme, s_);
-    if(s.empty())
-        return boost::none;
-    BOOST_ASSERT(s.back() == ':');
-    s.remove_suffix(1); // ':'
+    auto s = get(
+        detail::id_scheme);
+    if(! s.empty())
+    {
+        BOOST_ASSERT(s.size() > 1);
+        BOOST_ASSERT(s.ends_with(':'));
+        s.remove_suffix(1);
+    }
     return s;
 }
 
@@ -79,9 +115,18 @@ bool
 url_view::
 has_authority() const noexcept
 {
-    return pt_.length(
+    auto const n = 
+        pt_.length(
+            detail::id_user,
+            detail::id_path);
+    if(n == 0)
+        return false;
+    BOOST_ASSERT(n > 1);
+    BOOST_ASSERT(pt_.get(
         detail::id_user,
-        detail::id_path) != 0;
+        detail::id_path,
+        s_).starts_with("//"));
+    return true;
 }
 
 string_view
@@ -94,46 +139,50 @@ encoded_authority() const noexcept
         s_);
     if(! s.empty())
     {
-        BOOST_ASSERT(s.size() >= 2);
+        BOOST_ASSERT(s.size() > 1);
         BOOST_ASSERT(
-            s.substr(0, 2) == "//");
+            s.starts_with("//"));
         s.remove_prefix(2);
     }
     return s;
 }
 
-//----------------------------------------------------------
-//
 // userinfo
-//
-//----------------------------------------------------------
 
 bool
 url_view::
 has_userinfo() const noexcept
 {
-    if(pt_.length(
-        detail::id_user) == 0)
+    auto n = pt_.length(
+        detail::id_password);
+    if(n == 0)
+        return false;
+    BOOST_ASSERT(get(
+        detail::id_password
+            ).ends_with('@'));
+    return true;
+}
+
+bool
+url_view::
+has_user() const noexcept
+{
+    auto const n = len(
+        detail::id_user);
+    if(n == 0)
     {
+        // no authority
         BOOST_ASSERT(pt_.length(
             detail::id_user,
             detail::id_host) == 0);
         return false;
     }
-    BOOST_ASSERT(pt_.get(
-        detail::id_user, s_).substr(
-            0, 2) == "//");
-    if(pt_.length(
-        detail::id_user) > 2)
+    BOOST_ASSERT(n > 1);
+    BOOST_ASSERT(get(
+        detail::id_user).
+            starts_with("//"));
+    if(n > 2)
         return true;
-    if(pt_.length(
-        detail::id_password) > 0)
-    {
-        BOOST_ASSERT(pt_.get(
-            detail::id_password,
-                s_).back() == '@');
-        return true;
-    }
     return false;
 }
 
@@ -160,26 +209,6 @@ encoded_userinfo() const noexcept
 
 string_view
 url_view::
-userinfo_part() const noexcept
-{
-    auto s = pt_.get(
-        detail::id_user,
-        detail::id_host,
-        s_);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(s.size() >= 2);
-    BOOST_ASSERT(
-        s.substr(0, 2) == "//");
-    s.remove_prefix(2);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(s.back() == '@');
-    return s;
-}
-
-string_view
-url_view::
 encoded_user() const noexcept
 {
     auto s = pt_.get(
@@ -193,6 +222,28 @@ encoded_user() const noexcept
         s.remove_prefix(2);
     }
     return s;
+}
+
+bool
+url_view::
+has_password() const noexcept
+{
+    auto const n = pt_.length(
+        detail::id_password);
+    if(n > 1)
+    {
+        BOOST_ASSERT(get(
+            detail::id_password
+                ).starts_with(':'));
+        BOOST_ASSERT(get(
+            detail::id_password
+                ).ends_with('@'));
+        return true;
+    }
+    BOOST_ASSERT(n == 0 ||
+        get(detail::id_password
+            ).ends_with('@'));
+    return false;
 }
 
 string_view
@@ -217,11 +268,7 @@ encoded_password() const noexcept
     }
 }
 
-//----------------------------------------------------------
-//
 // host
-//
-//----------------------------------------------------------
 
 string_view
 url_view::
@@ -237,9 +284,21 @@ string_view
 url_view::
 encoded_host() const noexcept
 {
-    return pt_.get(
-        detail::id_host,
-        s_);
+    return get(detail::id_host);
+}
+
+bool
+url_view::
+has_port() const noexcept
+{
+    auto const n =
+        len(detail::id_port);
+    if(n == 0)
+        return false;
+    BOOST_ASSERT(
+        get(detail::id_port
+            ).starts_with(':'));
+    return true;
 }
 
 string_view
@@ -252,17 +311,6 @@ port() const noexcept
         || s.front() == ':');
     if(! s.empty())
         s.remove_prefix(1);
-    return s;
-}
-
-string_view
-url_view::
-port_part() const noexcept
-{
-    auto const s = pt_.get(
-        detail::id_port, s_);
-    BOOST_ASSERT(s.empty() ||
-        s.front() == ':');
     return s;
 }
 
@@ -756,6 +804,85 @@ operator[](string_view key) const
 
 //------------------------------------------------
 
+namespace detail {
+
+static
+void
+apply_authority(parts& p,
+    optional<rfc::authority_bnf> const& t)
+{
+    if(! t.has_value())
+        return;
+    auto const& u =
+        t->userinfo;
+    if(u.has_value())
+    {
+        p.resize(
+            part::id_user,
+            u->user.str.size() + 2);
+        if(u->pass.has_value())
+            p.resize(
+                part::id_password,
+                u->pass->str.size() + 2);
+        else
+            p.resize(
+                part::id_password, 1);
+    }
+    else
+    {
+        p.resize(
+            part::id_password, 1);
+    }
+    auto const& h =
+        t->host;
+    if(h.kind() != rfc::host_kind::none)
+        p.resize(
+            part::id_host,
+            h.str().size());
+    if(t->port.has_value())
+        p.resize(
+            part::id_port,
+            t->port->str.size() + 1);
+}
+
+static
+void
+apply_path(parts& p, bnf::range<
+    rfc::pct_encoded_str> const& t)
+{
+    p.resize(
+        part::id_path,
+        t.str().size());
+}
+
+static
+void
+apply_query(parts& p,
+    optional<bnf::range<
+        rfc::query_param>> const& t)
+{
+    if(t.has_value())
+        p.resize(
+            part::id_query,
+            t->str().size() + 1);
+}
+
+static
+void
+apply_fragment(
+    parts& p,
+    optional<rfc::pct_encoded_str> const& t)
+{
+    if(t.has_value())
+        p.resize(
+            part::id_frag,
+            t->str.size() + 1);
+}
+
+} // detail
+
+//------------------------------------------------
+
 optional<url_view>
 parse_uri(
     string_view s,
@@ -763,62 +890,87 @@ parse_uri(
 {
     rfc::uri_bnf t;
     if(! bnf::parse(s, ec, t))
-        return boost::none;
+        return none;
     detail::parts p;
     using detail::part;
     p.resize(
         part::id_scheme,
         t.scheme.str.size() + 1);
-    if(t.authority.has_value())
-    {
-        auto const& u =
-            t.authority->userinfo;
-        if(u.has_value())
-        {
-            p.resize(
-                part::id_user,
-                u->user.str.size() + 2);
-            if(u->pass.has_value())
-            {
-                p.resize(
-                    part::id_password,
-                    u->pass->str.size() + 2);
-            }
-        }
-        auto const& h =
-            t.authority->host;
-        if(h.kind() !=
-            rfc::host_kind::none)
-        {
-            p.resize(
-                part::id_host,
-                h.str().size());
-        }
-        if(t.authority->port.has_value())
-        {
-            p.resize(
-                part::id_port,
-                t.authority->port->str.size() + 1);
-        }
-        p.resize(
-            part::id_path,
-            t.path.str().size());
-        auto const& q = t.query;
-        if(q.has_value())
-        {
-            p.resize(
-                part::id_query,
-                q->str().size() + 1);
-        }
-        auto const& f = t.fragment;
-        if(f.has_value())
-        {
-            p.resize(
-                part::id_frag,
-                f->str.size() + 1);
-        }
-    }
-    return url_view(s.data(), p);
+
+    // authority
+    detail::apply_authority(
+        p, t.authority);
+
+    // path
+    detail::apply_path(
+        p, t.path);
+
+    // query
+    detail::apply_query(
+        p, t.query);
+
+    // fragment
+    detail::apply_fragment(
+        p, t.fragment);
+
+    return url_view(
+        s.data(), p);
+}
+
+url_view
+parse_uri(
+    string_view s)
+{
+    error_code ec;
+    auto u = parse_uri(s, ec);
+    if(ec.failed())
+        detail::throw_system_error(ec,
+            BOOST_CURRENT_LOCATION);
+    BOOST_ASSERT(u.has_value());
+    return *u;
+}
+
+optional<url_view>
+parse_relative_ref(
+    string_view s,
+    error_code& ec) noexcept
+{
+    rfc::relative_ref_bnf t;
+    if(! bnf::parse(s, ec, t))
+        return none;
+    detail::parts p;
+
+    // authority
+    detail::apply_authority(
+        p, t.authority);
+
+    // path
+    detail::apply_path(
+        p, t.path);
+
+    // query
+    detail::apply_query(
+        p, t.query);
+
+    // fragment
+    detail::apply_fragment(
+        p, t.fragment);
+
+    return url_view(
+        s.data(), p);
+}
+
+url_view
+parse_relative_ref(
+    string_view s)
+{
+    error_code ec;
+    auto u = parse_relative_ref(s, ec);
+    if(ec.failed())
+        detail::throw_system_error(ec,
+            BOOST_CURRENT_LOCATION);
+    BOOST_ASSERT(u.has_value());
+    return *u;
 }
 
 } // urls

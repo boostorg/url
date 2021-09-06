@@ -45,7 +45,7 @@ public:
         BOOST_TEST(v.encoded_password() == "pass");
         BOOST_TEST(v.encoded_userinfo() == "user:pass");
         BOOST_TEST(v.encoded_host() == "example.com");
-        BOOST_TEST(v.port_part() == ":80");
+        BOOST_TEST(v.has_port());
         BOOST_TEST(v.port() == "80");
         BOOST_TEST(v.encoded_host_and_port() == "example.com:80");
         BOOST_TEST(v.encoded_path() == "/path/to/file.txt");
@@ -60,28 +60,6 @@ public:
     }
 
     //------------------------------------------------------
-
-    void
-    testUserinfo()
-    {
-        BOOST_TEST(url_view().encoded_userinfo() == "");
-        BOOST_TEST(url_view("//x/").encoded_userinfo() == "");
-        BOOST_TEST(url_view("//x@/").encoded_userinfo() == "x");
-        BOOST_TEST(url_view("//x:@/").encoded_userinfo() == "x:");
-        BOOST_TEST(url_view("//x:y@/").encoded_userinfo() == "x:y");
-        BOOST_TEST(url_view("//:y@/").encoded_userinfo() == ":y");
-        BOOST_TEST(url_view("//:@/").encoded_userinfo() == ":");
-        BOOST_TEST(url_view("//@/").encoded_userinfo() == "");
-
-        BOOST_TEST(url_view().userinfo_part() == "");
-        BOOST_TEST(url_view("//x/").userinfo_part() == "");
-        BOOST_TEST(url_view("//x@/").userinfo_part() == "x@");
-        BOOST_TEST(url_view("//x:@/").userinfo_part() == "x:@");
-        BOOST_TEST(url_view("//x:y@/").userinfo_part() == "x:y@");
-        BOOST_TEST(url_view("//:y@/").userinfo_part() == ":y@");
-        BOOST_TEST(url_view("//:@/").userinfo_part() == ":@");
-        BOOST_TEST(url_view("//@/").userinfo_part() == "@");
-    }
 
     void
     testUser()
@@ -239,12 +217,12 @@ public:
     void
     testPort()
     {
+        BOOST_TEST(! url_view().has_port());
         BOOST_TEST(url_view().port() == "");
-        BOOST_TEST(url_view().port_part() == "");
         BOOST_TEST(url_view("//x:/").port() == "");
-        BOOST_TEST(url_view("//x:/").port_part() == ":");
+        BOOST_TEST(url_view("//x:/").has_port());
         BOOST_TEST(url_view("//x:80/").port() == "80");
-        BOOST_TEST(url_view("//x:80/").port_part() == ":80");
+        BOOST_TEST(url_view("//x:80/").has_port());
     }
 
     //------------------------------------------------------
@@ -428,6 +406,75 @@ public:
         BOOST_TEST(url_view("#x").fragment_bnf() == "#x");
     }
 
+    //--------------------------------------------
+
+    void
+    testScheme()
+    {
+        {
+            auto u = parse_uri(
+                "http://");
+            BOOST_TEST(u.has_scheme());
+            BOOST_TEST(u.scheme() == "http");
+        }
+        {
+            auto u = parse_relative_ref(
+                "/x");
+            BOOST_TEST(! u.has_scheme());
+            BOOST_TEST(u.scheme() == "");
+        }
+    }
+
+    void
+    testUserinfo()
+    {
+        {
+            auto u = parse_uri("x://@");
+            BOOST_TEST(u.has_userinfo());
+            BOOST_TEST(u.encoded_userinfo() == "");
+            BOOST_TEST(u.has_user() == false);
+            BOOST_TEST(u.encoded_user() == "");
+            BOOST_TEST(u.has_password() == false);
+            BOOST_TEST(u.encoded_password() == "");
+        }
+        {
+            auto u = parse_uri("x://:@");
+            BOOST_TEST(u.has_userinfo());
+            BOOST_TEST(u.encoded_userinfo() == ":");
+            BOOST_TEST(u.has_user() == false);
+            BOOST_TEST(u.encoded_user() == "");
+            BOOST_TEST(u.has_password() == true);
+            BOOST_TEST(u.encoded_password() == "");
+        }
+        {
+            auto u = parse_uri("x://a:@");
+            BOOST_TEST(u.has_userinfo());
+            BOOST_TEST(u.encoded_userinfo() == "a:");
+            BOOST_TEST(u.has_user() == true);
+            BOOST_TEST(u.encoded_user() == "a");
+            BOOST_TEST(u.has_password() == true);
+            BOOST_TEST(u.encoded_password() == "");
+        }
+        {
+            auto u = parse_uri("x://:b@");
+            BOOST_TEST(u.has_userinfo());
+            BOOST_TEST(u.encoded_userinfo() == ":b");
+            BOOST_TEST(u.has_user() == false);
+            BOOST_TEST(u.encoded_user() == "");
+            BOOST_TEST(u.has_password() == true);
+            BOOST_TEST(u.encoded_password() == "b");
+        }
+        {
+            auto u = parse_uri("x://a:b@");
+            BOOST_TEST(u.has_userinfo());
+            BOOST_TEST(u.encoded_userinfo() == "a:b");
+            BOOST_TEST(u.has_user() == true);
+            BOOST_TEST(u.encoded_user() == "a");
+            BOOST_TEST(u.has_password() == true);
+            BOOST_TEST(u.encoded_password() == "b");
+        }
+    }
+
     void
     testParseUri()
     {
@@ -453,7 +500,6 @@ public:
     {
         testView();
 
-        testUserinfo();
         testHostAndPort();
         testHost();
         testPort();
@@ -461,6 +507,8 @@ public:
         testQuery();
         testFragment();
 
+        testScheme();
+        testUserinfo();
         testParseUri();
     }
 };

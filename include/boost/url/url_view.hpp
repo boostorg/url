@@ -38,6 +38,12 @@ class url_view
     {
     }
 
+    // shortcuts
+    string_view get(
+        detail::part id) const noexcept;
+    std::size_t len(
+        detail::part id) const noexcept;
+
 public:
     class segments_type;
     class params_type;
@@ -73,10 +79,16 @@ public:
     //
     //------------------------------------------------------
 
-    /** Return the scheme.
+    /** Return true if a scheme is present
     */
     BOOST_URL_DECL
-    optional<string_view>
+    bool
+    has_scheme() const noexcept;
+
+    /** Return the scheme
+    */
+    BOOST_URL_DECL
+    string_view
     scheme() const noexcept;
 
     //------------------------------------------------------
@@ -85,28 +97,11 @@ public:
     //
     //------------------------------------------------------
 
-    /*
-    VFALCO This can't work because authority
-           cannot be sanely percent-decoded
-    */
-    /*
-    BOOST_URL_DECL
-    optional<
-        bnf::pct_encoded_str>
-    authority() const noexcept;
-    */
-
-    /*
-    BOOST_URL_DECL
-    optional<string_view>
-    authority() const noexcept;
-    */
-
     /** Return true if an authority is present.
 
         This function returns
         @code
-        !this->encoded_authority().empty();
+        ! this->encoded_authority().empty();
         @endcode
 
         @par Exception Safety
@@ -117,17 +112,13 @@ public:
     bool
     has_authority() const noexcept;
 
-    /** Return the encoded authority.
+    /** Return the authority if present, or an empty string
+
+        @see has_authority
     */
     BOOST_URL_DECL
     string_view
     encoded_authority() const noexcept;
-
-    //------------------------------------------------------
-    //
-    // userinfo
-    //
-    //------------------------------------------------------
 
     /** Return `true` if a userinfo is present.
 
@@ -139,7 +130,7 @@ public:
     bool
     has_userinfo() const noexcept;
 
-    /** Return the userinfo.
+    /** Return the userinfo if present, or an empty string
 
         Returns the userinfo of the URL as an encoded
         string. The userinfo includes the user and
@@ -154,14 +145,20 @@ public:
     string_view
     encoded_userinfo() const noexcept;
 
-    /** Return the userinfo.
+    /** Return true if the URL contains a user
+    */
+    BOOST_URL_DECL
+    bool
+    has_user() const noexcept;
 
-        Returns the userinfo part of the URL as an
-        encoded string. The userinfo part includes the
-        user and password, with a colon separating the
-        components if the password is not empty, and
-        a trailing at sign ('@') if either component
-        is not empty.
+    /** Return the user if present, or an empty string
+
+        This function returns the user portion of
+        the userinfo if present, as an encoded string.
+        The user portion is defined by all of the
+        characters in the userinfo up to but not
+        including the first colon (':"), or the
+        entire userinfo if no colon is present.
 
         @par Exception Safety
 
@@ -169,9 +166,9 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    userinfo_part() const noexcept;
+    encoded_user() const noexcept;
 
-    /** Return the user.
+    /** Return the user if present, or an empty string
 
         This function returns the user portion of
         the userinfo if present, as a decoded string.
@@ -204,28 +201,23 @@ public:
             encoded_user(), a);
     }
 
-    /** Return the user.
+    /** Return true if the URL contains a password
+    */
+    BOOST_URL_DECL
+    bool
+    has_password() const noexcept;
 
-        This function returns the user portion of
-        the userinfo if present, as an encoded string.
-        The user portion is defined by all of the
-        characters in the userinfo up to but not
-        including the first colon (':"), or the
-        entire userinfo if no colon is present.
-
-        @par Exception Safety
-
-        No-throw guarantee.
+    /** Return the password if present, or an empty string
     */
     BOOST_URL_DECL
     string_view
-    encoded_user() const noexcept;
+    encoded_password() const noexcept;
 
-    /** Return the password.
+    /** Return the password if present, or an empty string
     */
     template<
         class Allocator =
-        std::allocator<char>>
+            std::allocator<char>>
     string_type<Allocator>
     password(
         Allocator const& a = {}) const
@@ -233,18 +225,6 @@ public:
         return detail::decode(
             encoded_password(), a);
     }
-
-    /** Return the password.
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_password() const noexcept;
-
-    //------------------------------------------------------
-    //
-    // host
-    //
-    //------------------------------------------------------
 
     /** Return the type of host present, if any.
 
@@ -325,6 +305,12 @@ public:
     string_view
     encoded_host() const noexcept;
 
+    /** Return true if the URL contains a port
+    */
+    BOOST_URL_DECL
+    bool
+    has_port() const noexcept;
+
     /** Return the port.
 
         If the URL contains a port, this function
@@ -339,21 +325,6 @@ public:
     BOOST_URL_DECL
     string_view
     port() const noexcept;
-
-    /** Return the port.
-
-        If the URL contains a port, this function
-        returns the port string including a leading
-        colon (':'). Otherwise, an empty string
-        is returned.
-
-        @par Exception Safety
-
-        No-throw guarantee.
-    */
-    BOOST_URL_DECL
-    string_view
-    port_part() const noexcept;
 
     //------------------------------------------------------
     //
@@ -611,6 +582,12 @@ public:
         string_view s,
         error_code& ec) noexcept;
 
+    BOOST_URL_DECL
+    friend
+    url_view
+    parse_uri(
+        string_view s);
+
     /** Parse a string using the absolute-URI grammar
 
         @par BNF
@@ -621,16 +598,40 @@ public:
     BOOST_URL_DECL
     friend
     optional<url_view>
-    parse_absolute_uri(
+    parse_relative_ref(
         string_view s,
         error_code& ec) noexcept;
+
+    BOOST_URL_DECL
+    friend
+    url_view
+    parse_relative_ref(
+        string_view s);
 };
+
+//------------------------------------------------
 
 BOOST_URL_DECL
 optional<url_view>
 parse_uri(
     string_view s,
     error_code& ec) noexcept;
+
+BOOST_URL_DECL
+url_view
+parse_uri(
+    string_view s);
+
+BOOST_URL_DECL
+optional<url_view>
+parse_relative_ref(
+    string_view s,
+    error_code& ec) noexcept;
+
+BOOST_URL_DECL
+url_view
+parse_relative_ref(
+    string_view s);
 
 //----------------------------------------------------------
 
