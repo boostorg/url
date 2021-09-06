@@ -38,6 +38,30 @@ public:
         good<T>("x=y&");
         good<T>("x=y&a");
         good<T>("x=y&a=b&");
+
+        // some gen-delims
+        for(auto c :
+            "#[]"
+            )
+        {
+            string_view s( &c, 1 );
+            bad<T>(s);
+        }
+
+        // pchar / "/" / "?"
+        good<T>(
+            // unreserved
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "0123456789"
+            "-._~"
+            // sub-delims
+            "!$&'()*+,;="
+            // ":" / "@"
+            ":@"
+            // "/" / "?"
+            "/?"
+            );
     }
 };
 

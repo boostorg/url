@@ -50,11 +50,10 @@ class range<T>::iterator
         }
     }
 
-    explicit
     iterator(
         char const* end,
         func_ptr begin,
-        func_ptr increment)
+        func_ptr increment) noexcept
         : end_(end)
         , begin_(begin)
         , increment_(increment)

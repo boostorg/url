@@ -29,8 +29,6 @@ public:
             fragment_bnf,
             pct_encoded_str>;
 
-        bad<T>("/");
-        bad<T>("?");
         bad<T>("#");
         bad<T>("[");
         bad<T>("]");
@@ -40,6 +38,30 @@ public:
         good<T>("");
         good<T>("@");
         good<T>(".%ff");
+
+        // some gen-delims
+        for(auto c :
+            "#[]"
+            )
+        {
+            string_view s( &c, 1 );
+            bad<T>(s);
+        }
+
+        // pchar / "/" / "?"
+        good<T>(
+            // unreserved
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "0123456789"
+            "-._~"
+            // sub-delims
+            "!$&'()*+,;="
+            // ":" / "@"
+            ":@"
+            // "/" / "?"
+            "/?"
+            );
     }
 };
 

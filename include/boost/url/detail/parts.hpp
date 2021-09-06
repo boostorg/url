@@ -22,7 +22,7 @@ enum part
 {
     id_scheme = 0,  // trailing ':'
     id_user,        // leading "//"
-    id_password,    // leading ':', trailing '@'
+    id_pass,        // leading ':', trailing '@'
     id_host,
     id_port,        // leading ':'
     id_path,
@@ -36,9 +36,11 @@ enum part
 struct parts
 {
     std::size_t offset[id_end + 1];
+    std::size_t decoded[id_end];
     std::size_t nseg = 0;
     std::size_t nparam = 0;
     host_type host = host_type::none;
+    std::uint16_t port_number = 0;
 
     parts() noexcept
     {
@@ -49,7 +51,10 @@ struct parts
     clear() noexcept
     {
         for(int i = 0; i <= id_end; ++i)
+        {
             offset[i] = 0;
+            decoded[i] = 0;
+        }
     }
 
     std::size_t

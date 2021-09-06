@@ -56,15 +56,6 @@ segments() noexcept ->
 
 //----------------------------------------------------------
 
-url_view::
-params_type::
-params_type(
-    url const& v) noexcept
-    : s_(v.s_)
-    , pt_(&v.pt_)
-{
-}
-
 template<class Allocator>
 string_type<Allocator>
 url::
@@ -93,22 +84,6 @@ operator==(
     return
         v_ == other.v_ &&
         off_ == other.off_;
-}
-
-auto
-url::
-params() const noexcept ->
-    url_view::params_type
-{
-    return url_view::params_type(*this);
-}
-
-auto
-url::
-params() noexcept ->
-    params_type
-{
-    return params_type(*this);
 }
 
 } // urls

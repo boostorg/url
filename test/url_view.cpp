@@ -296,117 +296,43 @@ public:
         }
     }
 
-    //------------------------------------------------------
-
-    void
-    testQuery()
-    {
-        BOOST_TEST(url_view("").query() == "");
-        BOOST_TEST(url_view("?").query() == "");
-        BOOST_TEST(url_view("?x").query() == "x");
-
-        BOOST_TEST(url_view("").encoded_query() == "");
-        BOOST_TEST(url_view("?").encoded_query() == "");
-        BOOST_TEST(url_view("?x").encoded_query() == "x");
-
-        BOOST_TEST(url_view("").query_part() == "");
-        BOOST_TEST(url_view("?").query_part() == "?");
-        BOOST_TEST(url_view("?x").query_part() == "?x");
-
-        testParams();
-    }
-
-    void
-    testParams()
-    {
-        {
-            url_view::params_type const qp{};
-            BOOST_TEST(qp.empty());
-            BOOST_TEST(qp.size() == 0);
-            BOOST_TEST(qp.begin() == qp.end());
-            BOOST_TEST(! qp.contains("x"));
-            BOOST_TEST(qp.count("x") == 0);
-            BOOST_TEST(qp.find("x") == qp.end());
-            BOOST_TEST_THROWS(qp.at("x"), out_of_range);
-
-            BOOST_TEST(
-                url_view::params_type::iterator() ==
-                url_view::params_type::iterator());
-        }
-        {
-            url_view const v("?x=1&y=2&y=3&z");
-            auto qp = v.params();
-            BOOST_TEST(! qp.empty());
-            BOOST_TEST(qp.size() == 4);
-            BOOST_TEST(qp.begin() != qp.end());
-            BOOST_TEST(qp.end() == qp.end());
-            BOOST_TEST(qp.contains("x"));
-            BOOST_TEST(qp.contains("y"));
-            BOOST_TEST(! qp.contains("a"));
-            BOOST_TEST(qp.count("x") == 1);
-            BOOST_TEST(qp.count("y") == 2);
-            BOOST_TEST(qp.count("a") == 0);
-            BOOST_TEST(qp.find("x")->encoded_value() == "1");
-            BOOST_TEST(qp.find("y")->encoded_value() == "2");
-            BOOST_TEST(qp.find("a") == qp.end());
-            BOOST_TEST(qp["x"] == "1");
-            BOOST_TEST(qp["y"] == "2");
-            BOOST_TEST(qp["a"] == "");
-            BOOST_TEST(qp.at("x") == "1");
-            BOOST_TEST(qp.at("y") == "2");
-
-            BOOST_TEST_THROWS(
-                qp.at("a"),
-                std::out_of_range);
-
-            static_pool<4000> sp;
-            {
-                auto it = qp.begin();
-                BOOST_TEST(it->key(sp.allocator()) == "x"); ++it;
-                BOOST_TEST(it->key(sp.allocator()) == "y"); ++it;
-                BOOST_TEST(it->key(sp.allocator()) == "y"); ++it;
-                BOOST_TEST(it->key(sp.allocator()) == "z");
-                it = qp.begin();
-                BOOST_TEST(it->value(sp.allocator()) == "1"); ++it;
-                BOOST_TEST(it->value(sp.allocator()) == "2"); ++it;
-                BOOST_TEST(it->value(sp.allocator()) == "3"); ++it;
-                BOOST_TEST(it->value(sp.allocator()) == "");
-            }
-
-            auto it = qp.begin();
-            BOOST_TEST(it->encoded_key() == "x");
-            it++;
-            it++;
-            BOOST_TEST(it->encoded_key() == "y");
-            ++it;
-            BOOST_TEST(it->encoded_key() == "z");
-            --it;
-            BOOST_TEST(it->encoded_key() == "y");
-            it--;
-            it--;
-            BOOST_TEST(it->encoded_key() == "x");
-        }
-    }
-
-    //------------------------------------------------------
-
-    void
-    testFragment()
-    {
-        BOOST_TEST(url_view("").fragment() == "");
-        BOOST_TEST(url_view("#").fragment() == "");
-        BOOST_TEST(url_view("#x").fragment() == "x");
-
-        BOOST_TEST(url_view("").encoded_fragment() == "");
-        BOOST_TEST(url_view("#").encoded_fragment() == "");
-        BOOST_TEST(url_view("#x").encoded_fragment() == "x");
-
-        BOOST_TEST(url_view("").fragment_bnf() == "");
-        BOOST_TEST(url_view("#").fragment_bnf() == "#");
-        BOOST_TEST(url_view("#x").fragment_bnf() == "#x");
-    }
-
     //--------------------------------------------
+
+    void
+    testParseUri()
+    {
+        error_code ec;
+        auto const u = urls::parse_uri(
+            "http://username:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag",
+            ec);
+        if(! BOOST_TEST(! ec))
+            return;
+        BOOST_TEST(u.has_value());
+        BOOST_TEST(u->scheme() == "http");
+        BOOST_TEST(u->username() == "username");
+        BOOST_TEST(u->password() == "pass");
+        BOOST_TEST(u->host() == "www.boost.org");
+        BOOST_TEST(u->port() == "8080");
+        BOOST_TEST(u->encoded_path() == "/x/y/z");
+        BOOST_TEST(u->query() == "a=b&c=3");
+        BOOST_TEST(u->encoded_fragment() == "frag");
+    }
+
+    void
+    testShared()
+    {
+        string_view s =
+            "http://username:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag";
+        std::shared_ptr<url_view> sp;
+        {
+            auto const u = urls::parse_uri(s);
+            sp = u.make_shared();
+            BOOST_TEST(
+                u.encoded_url().data() !=
+                sp->encoded_url().data());
+        }
+        BOOST_TEST(sp->encoded_url() == s);
+    }
 
     void
     testScheme()
@@ -509,29 +435,185 @@ public:
         }
     }
 
-    //--------------------------------------------
+    void
+    testQuery()
+    {
+        {
+            auto u = parse_uri(
+                "http://");
+            BOOST_TEST(! u.has_query());
+            BOOST_TEST(u.encoded_query() == "");
+            BOOST_TEST(u.query() == "");
+        }
+        {
+            auto u = parse_uri(
+                "http://?");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() == "");
+            BOOST_TEST(u.query() == "");
+        }
+        {
+            auto u = parse_uri(
+                "http://?k");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() == "k");
+            BOOST_TEST(u.query() == "k");
+        }
+        {
+            auto u = parse_uri(
+                "http://?k=");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() == "k=");
+            BOOST_TEST(u.query() == "k=");
+        }
+        {
+            auto u = parse_uri(
+                "http://?#");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() == "");
+            BOOST_TEST(u.query() == "");
+        }
+        {
+            auto u = parse_uri(
+                "http://?%3f");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() == "%3f");
+            BOOST_TEST(u.query() == "?");
+        }
+        {
+            auto u = parse_uri(
+                "http://?%25");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() == "%25");
+            BOOST_TEST(u.query() == "%");
+        }
+        {
+            auto u = parse_uri(
+                "http://?&");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() == "&");
+            BOOST_TEST(u.query() == "&");
+        }
+        {
+            auto u = parse_uri(
+                "http://?%26");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() == "%26");
+            BOOST_TEST(u.query() == "&");
+        }
+        {
+            auto u = parse_uri(
+                "http://?a%3db%26");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() == "a%3db%26");
+            BOOST_TEST(u.query() == "a=b&");
+        }
 
-    //--------------------------------------------
+        {
+            query_params_view const qp{};
+            BOOST_TEST(qp.empty());
+            BOOST_TEST(qp.size() == 0);
+            BOOST_TEST(qp.begin() == qp.end());
+            BOOST_TEST(! qp.contains("x"));
+            BOOST_TEST(qp.count("x") == 0);
+            BOOST_TEST(qp.find("x") == qp.end());
+            BOOST_TEST_THROWS(qp.at("x"), std::out_of_range);
+
+            BOOST_TEST(
+                query_params_view::iterator() ==
+                query_params_view::iterator());
+        }
+        {
+            url_view const v("?x=1&y=2&y=3&z");
+            auto qp = v.query_params();
+            BOOST_TEST(! qp.empty());
+            BOOST_TEST(qp.size() == 4);
+            BOOST_TEST(qp.begin() != qp.end());
+            BOOST_TEST(qp.end() == qp.end());
+            BOOST_TEST(qp.contains("x"));
+            BOOST_TEST(qp.contains("y"));
+            BOOST_TEST(! qp.contains("a"));
+            BOOST_TEST(qp.count("x") == 1);
+            BOOST_TEST(qp.count("y") == 2);
+            BOOST_TEST(qp.count("a") == 0);
+            BOOST_TEST(qp.find("x")->encoded_value() == "1");
+            BOOST_TEST(qp.find("y")->encoded_value() == "2");
+            BOOST_TEST(qp.find("a") == qp.end());
+            BOOST_TEST(qp["x"] == "1");
+            BOOST_TEST(qp["y"] == "2");
+            BOOST_TEST(qp["a"] == "");
+            BOOST_TEST(qp.at("x") == "1");
+            BOOST_TEST(qp.at("y") == "2");
+
+            BOOST_TEST_THROWS(
+                qp.at("a"),
+                std::out_of_range);
+
+            static_pool<4000> sp;
+            {
+                auto it = qp.begin();
+                BOOST_TEST(it->key(sp.allocator()) == "x"); ++it;
+                BOOST_TEST(it->key(sp.allocator()) == "y"); ++it;
+                BOOST_TEST(it->key(sp.allocator()) == "y"); ++it;
+                BOOST_TEST(it->key(sp.allocator()) == "z");
+                it = qp.begin();
+                BOOST_TEST(it->value(sp.allocator()) == "1"); ++it;
+                BOOST_TEST(it->value(sp.allocator()) == "2"); ++it;
+                BOOST_TEST(it->value(sp.allocator()) == "3"); ++it;
+                BOOST_TEST(it->value(sp.allocator()) == "");
+            }
+
+            auto it = qp.begin();
+            BOOST_TEST(it->encoded_key() == "x");
+            it++;
+            it++;
+            BOOST_TEST(it->encoded_key() == "y");
+            ++it;
+            BOOST_TEST(it->encoded_key() == "z");
+        }
+    }
 
     void
-    testParseUri()
+    testFragment()
     {
-        error_code ec;
-        auto const u = urls::parse_uri(
-            "http://username:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag",
-            ec);
-        if(! BOOST_TEST(! ec))
-            return;
-        BOOST_TEST(u.has_value());
-        BOOST_TEST(u->scheme() == "http");
-        BOOST_TEST(u->username() == "username");
-        BOOST_TEST(u->password() == "pass");
-        BOOST_TEST(u->host() == "www.boost.org");
-        BOOST_TEST(u->port() == "8080");
-        BOOST_TEST(u->encoded_path() == "/x/y/z");
-        BOOST_TEST(u->query() == "a=b&c=3");
-        BOOST_TEST(u->encoded_fragment() == "frag");
+        {
+            auto u = parse_uri(
+                "http://");
+            BOOST_TEST(! u.has_fragment());
+            BOOST_TEST(u.encoded_fragment() == "");
+            BOOST_TEST(u.fragment() == "");
+        }
+        {
+            auto u = parse_uri(
+                "http://#");
+            BOOST_TEST(u.has_fragment());
+            BOOST_TEST(u.encoded_fragment() == "");
+            BOOST_TEST(u.fragment() == "");
+        }
+        {
+            auto u = parse_uri(
+                "http://#x");
+            BOOST_TEST(u.has_fragment());
+            BOOST_TEST(u.encoded_fragment() == "x");
+            BOOST_TEST(u.fragment() == "x");
+        }
+        {
+            auto u = parse_uri(
+                "http://#x%23");
+            BOOST_TEST(u.has_fragment());
+            BOOST_TEST(u.encoded_fragment() == "x%23");
+            BOOST_TEST(u.fragment() == "x#");
+        }
+        {
+            auto u = parse_uri(
+                "http://#x%25");
+            BOOST_TEST(u.has_fragment());
+            BOOST_TEST(u.encoded_fragment() == "x%25");
+            BOOST_TEST(u.fragment() == "x%");
+        }
     }
+
+    //--------------------------------------------
 
     void
     run()
@@ -542,12 +624,13 @@ public:
         testHost();
         testPort();
         testPath();
-        testQuery();
-        testFragment();
 
+        testParseUri();
+        testShared();
         testScheme();
         testUserinfo();
-        testParseUri();
+        testQuery();
+        testFragment();
     }
 };
 

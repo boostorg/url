@@ -23,8 +23,7 @@ namespace rfc {
 struct query_param
 {
     pct_encoded_str key;
-    optional<
-        pct_encoded_str> value;
+    optional<pct_encoded_str> value;
 };
 
 /** BNF for query
@@ -32,9 +31,16 @@ struct query_param
     @par BNF
     @code
     query           = *( pchar / "/" / "?" )
-                    / path-absolute
-                    / path-rootless
-                    / path-empty
+
+    query-params    = [ query-param ] *( "&" [ query-param ] )
+    query-param     = key [ "=" value ]
+    key             = *qpchar
+    value           = *( qpchar / "=" )
+    qpchar          = unreserved
+                    / pct-encoded
+                    / "!" / "$" / "'" / "(" / ")"
+                    / "*" / "+" / "," / ";"
+                    / ":" / "@" / "/" / "?"
     @endcode
 
     @see

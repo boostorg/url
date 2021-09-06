@@ -14,6 +14,7 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
+#if 0
 std::size_t
 pct_decoded_size_unchecked(
     string_view s) noexcept
@@ -36,10 +37,12 @@ pct_decoded_size_unchecked(
     }
     return n;
 }
+#endif
 
-char*
+void
 pct_decode_unchecked(
-    char* dest,
+    char* out,
+    char* const last,
     string_view s) noexcept
 {
     auto it = s.data();
@@ -47,19 +50,24 @@ pct_decode_unchecked(
         it + s.size();
     while(it != end)
     {
+        BOOST_ASSERT(out != last);
         if(*it != '%')
         {
-            *dest++ = *it++;
+            *out++ = *it++;
             continue;
         }
-        *dest++ = static_cast<char>(
+        BOOST_ASSERT(end - it >= 3);
+        BOOST_ASSERT(
+            bnf::hexdig_value(it[1]) >= 0);
+        BOOST_ASSERT(
+            bnf::hexdig_value(it[2]) >= 0);
+        *out++ = static_cast<char>(
             (static_cast<unsigned char>(
                 bnf::hexdig_value(it[1])) << 4) +
             static_cast<unsigned char>(
                 bnf::hexdig_value(it[2])));
         it += 3;
     }
-    return dest;
 }
 
 } // rfc

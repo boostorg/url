@@ -16,6 +16,8 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
+#if 0
+
 template<class CharSet>
 bool
 parse_pct_encoded(
@@ -52,6 +54,8 @@ pct_decoded_size(
     }
     return needed;
 }
+
+#endif
 
 } // rfc
 } // urls

@@ -55,7 +55,7 @@ public:
 
     @par BNF
     @code
-    query-char      = ALPHA / DIGIT / "-" / "." / "_" / "~"
+    query-char      = unreserved
                     / "!" / "$" / "'" / "(" / ")"
                     / "*" / "+" / "," / ";"
     @endcode
@@ -177,6 +177,30 @@ constexpr std::uint8_t
 */
 constexpr std::uint8_t
     at_char_mask = 0x80;
+
+/** Mask for a character set containing qpchars
+
+    A qpchar is a pchar plus "/" and "?", minus
+    the ampersand ("&") and equals ("=").
+
+    @par BNF
+    @code
+    qpchar          = unreserved
+                    / pct-encoded
+                    / "!" / "$" / "'" / "(" / ")"
+                    / "*" / "+" / "," / ";"
+                    / ":" / "@" / "/" / "?"
+    @endcode
+
+    @see
+        @ref query_bnf
+*/
+constexpr std::uint8_t qpchar_mask =
+    query_char_mask |
+    colon_char_mask |
+    at_char_mask |
+    slash_char_mask |
+    question_char_mask;
 
 /** Mask for a character set containing pchars
 

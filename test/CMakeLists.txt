@@ -25,6 +25,7 @@ set(BOOST_URL_TESTS_FILES
     error.cpp
     host_type.cpp
     optional.cpp
+    query_params_view.cpp
     sandbox.cpp
     scheme.cpp
     static_pool.cpp

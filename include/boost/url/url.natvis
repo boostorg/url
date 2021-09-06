@@ -5,4 +5,34 @@
     <DisplayString>{str.ptr_,[str.len_]s}</DisplayString>
   </Type>
 
+  <Type Name="boost::urls::url_view">
+    <DisplayString>{s_,[pt_.offset[detail::part::id_end]]s}</DisplayString>
+    <Expand>
+      <Synthetic Name="scheme">
+        <DisplayString>{s_,[pt_.offset[detail::part::id_user]]s}</DisplayString>
+      </Synthetic>
+      <Synthetic Name="user">
+        <DisplayString>{s_+pt_.offset[detail::id_user],[pt_.offset[detail::part::id_pass]-pt_.offset[detail::part::id_user]]s}</DisplayString>
+      </Synthetic>
+      <Synthetic Name="pass">
+        <DisplayString>{s_+pt_.offset[detail::id_pass],[pt_.offset[detail::part::id_host]-pt_.offset[detail::part::id_pass]]s}</DisplayString>
+      </Synthetic>
+      <Synthetic Name="host">
+        <DisplayString>{s_+pt_.offset[detail::id_host],[pt_.offset[detail::part::id_port]-pt_.offset[detail::part::id_host]]s}</DisplayString>
+      </Synthetic>
+      <Synthetic Name="port">
+        <DisplayString>{s_+pt_.offset[detail::id_port],[pt_.offset[detail::part::id_path]-pt_.offset[detail::part::id_port]]s}</DisplayString>
+      </Synthetic>
+      <Synthetic Name="path">
+        <DisplayString>{s_+pt_.offset[detail::id_path],[pt_.offset[detail::part::id_query]-pt_.offset[detail::part::id_path]]s}</DisplayString>
+      </Synthetic>
+      <Synthetic Name="query">
+        <DisplayString>{s_+pt_.offset[detail::id_query],[pt_.offset[detail::part::id_frag]-pt_.offset[detail::part::id_query]]s}</DisplayString>
+      </Synthetic>
+      <Synthetic Name="frag">
+        <DisplayString>{s_+pt_.offset[detail::id_frag],[pt_.offset[detail::part::id_end]-pt_.offset[detail::part::id_frag]]s}</DisplayString>
+      </Synthetic>
+    </Expand>
+  </Type>
+  
 </AutoVisualizer>

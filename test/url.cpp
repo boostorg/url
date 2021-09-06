@@ -768,15 +768,15 @@ public:
         // params() const
         {
             url const v("?x=1&y=2&y=3&z");
-            auto qp = v.params();
+            auto qp = v.query_params();
             static_assert(
                 std::is_same<decltype(qp),
-                    url_view::params_type>::value, "");
+                    query_params_view>::value, "");
         }
 
         {
             url v("?x=1&y=2&y=3&z");
-            auto qp = v.params();
+            auto qp = v.query_params();
             BOOST_TEST(! qp.empty());
             BOOST_TEST(qp.size() == 4);
             BOOST_TEST(qp.begin() != qp.end());

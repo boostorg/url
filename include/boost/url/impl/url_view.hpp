@@ -31,54 +31,12 @@ operator==(
 
 //----------------------------------------------------------
 
-template<class Allocator>
-string_type<Allocator>
-url_view::
-params_type::
-at( string_view key,
-    Allocator const& a) const
-{
-    auto const it = find(key);
-    if(it == end())
-        out_of_range::raise();
-    return it->value(a);
-}
-
-//----------------------------------------------------------
-
-bool
-url_view::
-params_type::
-iterator::
-operator==(
-    iterator other) const noexcept
-{
-    BOOST_ASSERT(
-        pt_ != other.pt_ ||
-        off_ != other.off_ || (
-            nk_ == other.nk_ &&
-            nv_ == other.nv_));
-    return
-        pt_ == other.pt_ &&
-        off_ == other.off_;
-}
-
-//----------------------------------------------------------
-
 auto
 url_view::
 segments() const noexcept ->
     segments_type
 {
     return segments_type(*this);
-}
-
-auto
-url_view::
-params() const noexcept ->
-    params_type
-{
-    return params_type(*this);
 }
 
 } // urls

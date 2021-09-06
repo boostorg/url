@@ -11,6 +11,7 @@
 #define BOOST_URL_URL_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/query_params_view.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/detail/char_type.hpp>
 #include <boost/url/detail/parts.hpp>
@@ -44,7 +45,6 @@ namespace urls {
 class url
 {
     friend class url_view::segments_type;
-    friend class url_view::params_type;
 
     class modify;
 
@@ -1381,9 +1381,9 @@ public:
 
         @see url_view::params_type
     */
-    inline
-    url_view::params_type
-    params() const noexcept;
+    BOOST_URL_DECL
+    query_params_view
+    query_params() const noexcept;
 
     /** Return the query.
 
@@ -1398,9 +1398,9 @@ public:
 
         @see params_type
     */
-    inline
+    BOOST_URL_DECL
     params_type
-    params() noexcept;
+    query_params() noexcept;
 
     //------------------------------------------------------
     //
@@ -2157,7 +2157,7 @@ public:
     inline
     bool
     operator==(
-    iterator other) const noexcept;
+        iterator other) const noexcept;
 
     bool
     operator!=(
@@ -2202,8 +2202,5 @@ using url = url;
 } // boost
 
 #include <boost/url/impl/url.hpp>
-#ifdef BOOST_URL_HEADER_ONLY
-#include <boost/url/impl/url.ipp>
-#endif
 
 #endif

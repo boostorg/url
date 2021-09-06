@@ -10,7 +10,6 @@
 #ifndef BOOST_URL_RFC_DETAIL_PCT_ENCODING_HPP
 #define BOOST_URL_RFC_DETAIL_PCT_ENCODING_HPP
 
-#include <boost/url/bnf/char_set.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/char_set.hpp>
 #include <cstdlib>

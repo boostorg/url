@@ -29,9 +29,9 @@ parse(
     using bnf::parse;
     return parse(it, end, ec,
         pct_encoded_bnf<
-            unsub_char_mask |
-            colon_char_mask |
-            at_char_mask>{t.v});
+            pchar_mask |
+            slash_char_mask |
+            question_char_mask>{t.v});
 }
 
 } // rfc

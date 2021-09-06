@@ -33,10 +33,12 @@ public:
     build_table(table_type& v)
     {
         string_view query =
+            // unreserved
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz"
             "0123456789"
             "-._~"
+            // subdelims minus "&" / "="
             "!$'()*+,;";
         string_view amper = "&";
         string_view equals = "=";
@@ -92,10 +94,12 @@ public:
 
         test_char_set(masked_char_set<
             query_char_mask>(),
+            // unreserved
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz"
             "0123456789"
             "-._~"
+            // subdelims minus "&" / "="
             "!$'()*+,;"
             );
 
@@ -109,10 +113,12 @@ public:
 
         test_char_set(masked_char_set<
             unsub_char_mask>(),
+            // unreserved
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz"
             "0123456789"
             "-._~"
+            // subdelims
             "!$&'()*+,;=");
 
         test_char_set(masked_char_set<
@@ -136,12 +142,30 @@ public:
             "@");
 
         test_char_set(masked_char_set<
-            pchar_mask>(),
+            qpchar_mask>(),
+            // unreserved
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz"
             "0123456789"
             "-._~"
+            // subdelims minus "&" / "="
+            "!$'()*+,;"
+            // ":" / "@"
+            ":@"
+            // "/" / "?"
+            "/?"
+        );
+
+        test_char_set(masked_char_set<
+            pchar_mask>(),
+            // unreserved
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "0123456789"
+            "-._~"
+            // sub-delims
             "!$&'()*+,;="
+            // ":" / "@"
             ":@");
     }
 };

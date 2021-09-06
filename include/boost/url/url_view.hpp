@@ -11,9 +11,11 @@
 #define BOOST_URL_URL_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/query_params_view.hpp>
 #include <boost/url/optional.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <boost/url/detail/char_type.hpp>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
@@ -29,6 +31,8 @@ class url_view
 {
     char const* s_ = "";
     detail::parts pt_;
+
+    struct shared_impl;
 
     url_view(
         char const* s,
@@ -46,11 +50,13 @@ class url_view
 
 public:
     class segments_type;
-    class params_type;
 
-    url_view() = default;
+    /** Constructor
+    */
+    // VFALCO DEPRECATED
+    url_view() noexcept = default;
 
-    /** Constructor.
+    /** Constructor
 
         @param s The string to construct from.
     */
@@ -59,15 +65,21 @@ public:
     explicit
     url_view(string_view s);
 
+    /** Return the view as a self-contained shared object
+    */
+    BOOST_URL_DECL
+    std::shared_ptr<url_view>
+    make_shared() const;
+
     //------------------------------------------------------
 
-    /** Return the complete serialized URL.
+    /** Return the complete serialized URL
     */
     BOOST_URL_DECL
     string_view
     encoded_url() const;
 
-    /** Return the origin.
+    /** Return the origin
     */
     BOOST_URL_DECL
     string_view
@@ -79,7 +91,7 @@ public:
     //
     //------------------------------------------------------
 
-    /** Return true if a scheme is present
+    /** Return true if a scheme exists
     */
     BOOST_URL_DECL
     bool
@@ -97,7 +109,7 @@ public:
     //
     //------------------------------------------------------
 
-    /** Return true if an authority is present.
+    /** Return true if an authority exists
 
         This function returns
         @code
@@ -112,7 +124,7 @@ public:
     bool
     has_authority() const noexcept;
 
-    /** Return the authority if present, or an empty string
+    /** Return the authority if it exists, or an empty string
 
         @see has_authority
     */
@@ -120,7 +132,7 @@ public:
     string_view
     encoded_authority() const noexcept;
 
-    /** Return `true` if a userinfo is present.
+    /** Return true if a userinfo exists
 
         This function returns `true` if there are
         any characters in the URL's userinfo, including
@@ -130,7 +142,7 @@ public:
     bool
     has_userinfo() const noexcept;
 
-    /** Return the userinfo if present, or an empty string
+    /** Return the userinfo if it exists, or an empty string
 
         Returns the userinfo of the URL as an encoded
         string. The userinfo includes the username and
@@ -145,7 +157,7 @@ public:
     string_view
     encoded_userinfo() const noexcept;
 
-    /** Return the userinfo if present, or an empty string
+    /** Return the userinfo if it exists, or an empty string
 
         This function returns the userinfo part
         of the URL if present, as a decoded string.
@@ -174,13 +186,13 @@ public:
             encoded_userinfo(), a);
     }
 
-    /** Return true if the URL contains a username
+    /** Return true if a username exists
     */
     BOOST_URL_DECL
     bool
     has_username() const noexcept;
 
-    /** Return the username if present, or an empty string
+    /** Return the username if it exists, or an empty string
 
         This function returns the username portion of
         the userinfo if present, as an encoded string.
@@ -197,7 +209,7 @@ public:
     string_view
     encoded_username() const noexcept;
 
-    /** Return the username if present, or an empty string
+    /** Return the username if it exists, or an empty string
 
         This function returns the username portion of
         the userinfo if present, as a decoded string.
@@ -230,19 +242,19 @@ public:
             encoded_username(), a);
     }
 
-    /** Return true if the URL contains a password
+    /** Return true if a password exists
     */
     BOOST_URL_DECL
     bool
     has_password() const noexcept;
 
-    /** Return the password if present, or an empty string
+    /** Return the password if it exists, or an empty string
     */
     BOOST_URL_DECL
     string_view
     encoded_password() const noexcept;
 
-    /** Return the password if present, or an empty string
+    /** Return the password if it exists, or an empty string
     */
     template<
         class Allocator =
@@ -342,12 +354,11 @@ public:
     bool
     has_port() const noexcept;
 
-    /** Return the port.
+    /** Return the port if it exists, or an empty string
 
         If the URL contains a port, this function
-        returns the port string without a leading
-        colon (':'). Otherwise, an empty string
-        is returned.
+        returns the entire port string, which may
+        or may not be a decimal number.
 
         @par Exception Safety
 
@@ -357,19 +368,34 @@ public:
     string_view
     port() const noexcept;
 
+    /** Return the integer port number, or 0 if no port
+
+        If the URL contains a port string and the
+        string contains a decimal value in the range
+        0 to 65535, returns the number. Otherwise,
+        returns zero.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
+    BOOST_URL_DECL
+    std::uint16_t
+    port_number() const noexcept;
+
     //------------------------------------------------------
     //
     // path
     //
     //------------------------------------------------------
 
-    /** Return the encoded path.
+    /** Return the encoded path
     */
     BOOST_URL_DECL
     string_view
     encoded_path() const noexcept;
 
-    /** Return the path segments as a read-only container.
+    /** Return the path segments as a read-only range
     */
     inline
     segments_type
@@ -381,22 +407,46 @@ public:
     //
     //------------------------------------------------------
 
-    /** Return the query.
+    /** Return true if a query exists
 
-        This function returns the query of the URL:
+        A query exists if the hash mark ('#') is
+        present after the path, even if followed
+        by an empty query string.
 
-        * If a query is present, it is returned
-        in decoded form without a leading question
-        mark ('?'), otherwise:
+        @see encoded_query, query
+    */
+    BOOST_URL_DECL
+    bool
+    has_query() const noexcept;
 
-        * If there is no query, an empty string is
-        returned.
+    /** Return the query if it exists, or an empty string
 
-        Note that if the URL contains a question mark
-        followed by an empty query string, this
-        function still returns an empty string.
-        To detect this case, use @ref query_part
-        instead.
+        This function returns the percent-encoded
+        query if it exists. Otherwise it returns
+        an empty string.
+
+        @par Exception Safety
+        No-throw guarantee.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+
+        @see has_query, query
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_query() const noexcept;
+
+    /** Return the query if it exists, or an empty string
+
+        If the query exists, it is returned as a
+        string with percent-decoding applied.
+        Otherwise, an empty string is returned.
 
         @par Exception Safety
 
@@ -411,7 +461,7 @@ public:
         @return A `std::basic_string` using the
         specified allocator.
 
-        @see encoded_query, query_part
+        @see encoded_query
     */
     template<
         class Allocator =
@@ -424,22 +474,30 @@ public:
             encoded_query(), a);
     }
 
-    /** Return the query.
+    /** Return the query parameters as a read-only container.
+    */
+    BOOST_URL_DECL
+    query_params_view
+    query_params() const noexcept;
 
-        This function returns the query of the URL:
+    //------------------------------------------------------
+    //
+    // fragment
+    //
+    //------------------------------------------------------
 
-        * If a query is present, it is returned
-        in encoded form without a leading question
-        mark ('#'), otherwise:
+    /** Return true if a fragment is present
+    */
+    BOOST_URL_DECL
+    bool
+    has_fragment() const noexcept;
 
-        * If there is no query, an empty string is
-        returned.
+    /** Return the fragment if present, otherwise return an empty string
 
-        Note that if the URL contains a question
-        mark followed by an empty query string,
-        this function still returns an empty string.
-        To detect this case, use @ref query_part
-        instead.
+        This function returns the fragment as a
+        percent-encoded string if present, otherwise
+        returns an empty string. The returned string
+        does not include the leading hash mark ('#').
 
         @par Exception Safety
 
@@ -453,48 +511,11 @@ public:
         @return A `std::basic_string` using the
         specified allocator.
 
-        @see query, query_part
+        @see fragment
     */
     BOOST_URL_DECL
     string_view
-    encoded_query() const noexcept;
-
-    /** Return the query.
-
-        This function returns the query of the URL:
-
-        * If a query is present, it is returned
-        in encoded form including the leading hash
-        mark ('?'), otherwise:
-
-        * If there is no query, an empty string is
-        returned.
-
-        Note that if the URL contains a question
-        mark followed by an empty query string,
-        this function returns "#".
-
-        @par Exception Safety
-
-        No-throw guarantee.
-
-        @see query, encoded_query
-    */
-    BOOST_URL_DECL
-    string_view
-    query_part() const noexcept;
-
-    /** Return the query parameters as a read-only container.
-    */
-    inline
-    params_type
-    params() const noexcept;
-
-    //------------------------------------------------------
-    //
-    // fragment
-    //
-    //------------------------------------------------------
+    encoded_fragment() const noexcept;
 
     /** Return the fragment.
 
@@ -539,65 +560,11 @@ public:
             encoded_fragment(), a);
     }
 
-    /** Return the fragment.
-
-        This function returns the fragment of the URL:
-
-        * If a fragment is present, it is returned in
-        encoded form without a leading hash mark ('#'),
-        otherwise:
-
-        * If there is no fragment, an empty string is
-        returned.
-
-        Note that if the URL contains a hash mark
-        followed by an empty query string, this
-        function still returns an empty string.
-        To detect this case, use @ref fragment_bnf
-        instead.
-
-        @par Exception Safety
-
-        No-throw guarantee.
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
-
-        @return A `std::basic_string` using the
-        specified allocator.
-
-        @see fragment, fragment_bnf
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_fragment() const noexcept;
-
-    /** Return the fragment.
-
-        This function returns the fragment of the URL:
-
-        * If a fragment is present, it is returned
-        in encoded form including the leading hash
-        mark ('#'), otherwise:
-
-        * If there is no fragment, an empty string is
-        returned.
-
-        Note that if the URL contains a hash mark
-        followed by an empty query string, this
-        function returns "#".
-
-        @par Exception Safety
-
-        No-throw guarantee.
-
-        @see fragment, encoded_fragment
-    */
-    BOOST_URL_DECL
-    string_view
-    fragment_bnf() const noexcept;
+    //--------------------------------------------
+    //
+    // free functions
+    //
+    //--------------------------------------------
 
     /** Parse a string using the URI grammar
 
@@ -837,236 +804,9 @@ private:
     parse() noexcept;
 };
 
-//----------------------------------------------------------
-
-/** A read-only view to the URL query parameters.
-*/
-class url_view::params_type
-{
-    char const* s_ = nullptr;
-    detail::parts const* pt_ = nullptr;
-
-public:
-    class value_type;
-    class iterator;
-    using const_iterator = iterator;
-
-    params_type() = default;
-    params_type(
-        params_type const&) = default;
-    params_type& operator=(
-        params_type const&) = default;
-
-    explicit
-    params_type(url_view const& v)
-        : s_(v.s_)
-        , pt_(&v.pt_)
-    {
-    }
-
-    inline
-    explicit
-    params_type(
-        url const& v) noexcept;
-
-    bool
-    empty() const noexcept
-    {
-        return size() == 0;
-    }
-
-    std::size_t
-    size() const noexcept
-    {
-        return (pt_ == nullptr) ? 0 :
-            pt_->nparam;
-    }
-
-    BOOST_URL_DECL
-    iterator
-    begin() const noexcept;
-
-    BOOST_URL_DECL
-    iterator
-    end() const noexcept;
-
-    BOOST_URL_DECL
-    bool
-    contains(string_view key) const noexcept;
-
-    BOOST_URL_DECL
-    std::size_t
-    count(string_view key) const noexcept;
-
-    BOOST_URL_DECL
-    iterator
-    find(string_view key) const noexcept;
-
-    BOOST_URL_DECL
-    std::string
-    operator[](string_view key) const;
-
-    template<class Allocator =
-        std::allocator<char>>
-    string_type<Allocator>
-    at( string_view key,
-        Allocator const& a = {}) const;
-};
-
-//----------------------------------------------------------
-
-class url_view::params_type::value_type
-{
-    string_view k_;
-    string_view v_;
-
-    friend class params_type;
-
-    value_type(
-        string_view k,
-        string_view v) noexcept
-        : k_(k)
-        , v_(v)
-    {
-        }
-
-public:
-    value_type() = delete;
-    value_type& operator=(
-        value_type const&) = delete;
-
-    value_type(
-        value_type const&) = default;
-
-    string_view
-    encoded_key() const noexcept
-    {
-        return k_;
-    }
-
-    string_view
-    encoded_value() const noexcept
-    {
-        return v_;
-    }
-
-    template<
-        class Allocator =
-            std::allocator<char>>
-    string_type<Allocator>
-    key(Allocator const& a = {}) const
-    {
-        return detail::decode(
-            encoded_key(), a);
-    }
-
-    template<
-        class Allocator =
-            std::allocator<char>>
-    string_type<Allocator>
-    value(Allocator const& a = {}) const
-    {
-        return detail::decode(
-            encoded_value(), a);
-    }
-
-    value_type const*
-    operator->() const noexcept
-    {
-        return this;
-    }
-
-    operator
-    std::pair<
-        std::string const,
-        std::string>() const
-    {
-        return { key(), value() };
-    }
-};
-
-//----------------------------------------------------------
-
-class url_view::params_type::iterator
-{
-    friend params_type;
-
-    char const* s_;
-    detail::parts const* pt_;
-    std::size_t off_;
-    std::size_t nk_;
-    std::size_t nv_;
-
-    BOOST_URL_DECL
-    iterator(
-        params_type const* v,
-        bool end) noexcept;
-
-public:
-    using value_type =
-        params_type::value_type;
-
-    BOOST_URL_DECL
-    iterator() noexcept;
-
-    BOOST_URL_DECL
-    value_type
-    operator*() const noexcept;
-
-    value_type
-    operator->() const noexcept
-    {
-        return operator*();
-    }
-
-    inline
-    bool
-    operator==(
-        iterator other) const noexcept;
-
-    bool
-    operator!=(
-        iterator other) const noexcept
-    {
-        return !(*this == other);
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator++() noexcept;
-
-    iterator
-    operator++(int) noexcept
-    {
-        auto tmp = *this;
-        ++*this;
-        return tmp;
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator--() noexcept;
-
-    iterator
-    operator--(int) noexcept
-    {
-        auto tmp = *this;
-        --*this;
-        return tmp;
-    }
-
-private:
-    inline
-    void
-    parse() noexcept;
-};
-
 } // urls
 } // boost
 
 #include <boost/url/impl/url_view.hpp>
-#ifdef BOOST_URL_HEADER_ONLY
-#include <boost/url/impl/url_view.ipp>
-#endif
 
 #endif

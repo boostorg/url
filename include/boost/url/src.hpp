@@ -28,6 +28,7 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/except.ipp>
 
 #include <boost/url/impl/error.ipp>
+#include <boost/url/impl/query_params_view.ipp>
 #include <boost/url/impl/scheme.ipp>
 #include <boost/url/impl/static_pool.ipp>
 #include <boost/url/impl/url.ipp>
@@ -43,6 +44,7 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/ipv_future_bnf.ipp>
 #include <boost/url/rfc/impl/ipv4_address_bnf.ipp>
 #include <boost/url/rfc/impl/ipv6_address_bnf.ipp>
+#include <boost/url/rfc/impl/pct_encoded_bnf.ipp>
 #include <boost/url/rfc/impl/pct_encoding.ipp>
 #include <boost/url/rfc/impl/port_bnf.ipp>
 #include <boost/url/rfc/impl/query_bnf.ipp>

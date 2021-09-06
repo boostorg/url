@@ -198,14 +198,14 @@ struct parser
         else if(match_literal("@"))
         {
             // add '@'
-            mark(pt, id_password);
+            mark(pt, id_pass);
         }
         else
         {
             // requires backtracking
             p_ = p0;
             mark(pt, id_user);
-            mark(pt, id_password);
+            mark(pt, id_pass);
         }
         parse_host(pt, ec);
     }
@@ -226,7 +226,7 @@ struct parser
         p_ = e.parse(p1, end_, ec);
         if(ec)
             return;
-        mark(pt, id_password);
+        mark(pt, id_pass);
     }
 
     void
