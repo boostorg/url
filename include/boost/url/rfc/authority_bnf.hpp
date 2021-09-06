@@ -12,10 +12,10 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/optional.hpp>
 #include <boost/url/rfc/host_bnf.hpp>
 #include <boost/url/rfc/port_bnf.hpp>
 #include <boost/url/rfc/userinfo_bnf.hpp>
-#include <boost/optional.hpp>
 #include <array>
 #include <cstdint>
 

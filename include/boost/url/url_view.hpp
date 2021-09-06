@@ -11,9 +11,9 @@
 #define BOOST_URL_URL_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/optional.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <boost/url/detail/char_type.hpp>
-#include <boost/optional.hpp>
 #include <memory>
 #include <string>
 #include <utility>
@@ -48,26 +48,10 @@ public:
 
         @param s The string to construct from.
     */
+    // VFALCO DEPRECATED
     BOOST_URL_DECL
     explicit
     url_view(string_view s);
-
-    /** Return the number of characters in the URL.
-    */
-    std::size_t
-    size() const noexcept
-    {
-        return pt_.offset[
-            detail::id_end];
-    }
-
-    /** Return a pointer to the characters in the URL.
-    */
-    char const*
-    data() const noexcept
-    {
-        return s_;
-    }
 
     //------------------------------------------------------
 
@@ -92,7 +76,7 @@ public:
     /** Return the scheme.
     */
     BOOST_URL_DECL
-    string_view
+    optional<string_view>
     scheme() const noexcept;
 
     //------------------------------------------------------
@@ -100,6 +84,23 @@ public:
     // authority
     //
     //------------------------------------------------------
+
+    /*
+    VFALCO This can't work because authority
+           cannot be sanely percent-decoded
+    */
+    /*
+    BOOST_URL_DECL
+    optional<
+        bnf::pct_encoded_str>
+    authority() const noexcept;
+    */
+
+    /*
+    BOOST_URL_DECL
+    optional<string_view>
+    authority() const noexcept;
+    */
 
     /** Return true if an authority is present.
 

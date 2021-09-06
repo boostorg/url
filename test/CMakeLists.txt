@@ -24,6 +24,7 @@ set(BOOST_URL_TESTS_FILES
     _detail_parse.cpp
     error.cpp
     host_type.cpp
+    optional.cpp
     sandbox.cpp
     scheme.cpp
     static_pool.cpp

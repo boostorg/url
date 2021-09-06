@@ -56,15 +56,14 @@ encoded_origin() const noexcept
 //
 //----------------------------------------------------------
 
-string_view
+optional<string_view>
 url_view::
 scheme() const noexcept
 {
     auto s = pt_.get(
-        detail::id_scheme,
-        s_);
+        detail::id_scheme, s_);
     if(s.empty())
-        return s;
+        return boost::none;
     BOOST_ASSERT(s.back() == ':');
     s.remove_suffix(1); // ':'
     return s;
