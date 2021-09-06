@@ -36,14 +36,14 @@ public:
         BOOST_TEST(url_view("//example.com").host_type() == host_type::name);
         BOOST_TEST(url_view("//127.0.0.1.9").host_type() == host_type::name);
 
-        url_view const v("http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
-        BOOST_TEST(v.encoded_url() == "http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
-        BOOST_TEST(v.encoded_origin() == "http://user:pass@example.com:80");
-        BOOST_TEST(v.encoded_authority() == "user:pass@example.com:80");
+        url_view const v("http://username:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
+        BOOST_TEST(v.encoded_url() == "http://username:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
+        BOOST_TEST(v.encoded_origin() == "http://username:pass@example.com:80");
+        BOOST_TEST(v.encoded_authority() == "username:pass@example.com:80");
         BOOST_TEST(v.scheme() == "http");
-        BOOST_TEST(v.encoded_user() == "user");
+        BOOST_TEST(v.encoded_username() == "username");
         BOOST_TEST(v.encoded_password() == "pass");
-        BOOST_TEST(v.encoded_userinfo() == "user:pass");
+        BOOST_TEST(v.encoded_userinfo() == "username:pass");
         BOOST_TEST(v.encoded_host() == "example.com");
         BOOST_TEST(v.has_port());
         BOOST_TEST(v.port() == "80");
@@ -52,7 +52,7 @@ public:
         BOOST_TEST(v.encoded_query() == "k1=v1&k2=v2");
         BOOST_TEST(v.encoded_fragment() == "");
 
-        BOOST_TEST(v.user() == "user");
+        BOOST_TEST(v.username() == "username");
         BOOST_TEST(v.password() == "pass");
         BOOST_TEST(v.host() == "example.com");
         BOOST_TEST(v.query() == "k1=v1&k2=v2");
@@ -64,25 +64,25 @@ public:
     void
     testUser()
     {
-        BOOST_TEST(url_view().user() == "");
-        BOOST_TEST(url_view("//x/").user() == "");
-        BOOST_TEST(url_view("//x@/").user() == "x");
-        BOOST_TEST(url_view("//x:@/").user() == "x");
-        BOOST_TEST(url_view("//x:y@/").user() == "x");
-        BOOST_TEST(url_view("//:y@/").user() == "");
-        BOOST_TEST(url_view("//:@/").user() == "");
-        BOOST_TEST(url_view("//@/").user() == "");
-        BOOST_TEST(url_view("//%3A@/").user() == ":");
+        BOOST_TEST(url_view().username() == "");
+        BOOST_TEST(url_view("//x/").username() == "");
+        BOOST_TEST(url_view("//x@/").username() == "x");
+        BOOST_TEST(url_view("//x:@/").username() == "x");
+        BOOST_TEST(url_view("//x:y@/").username() == "x");
+        BOOST_TEST(url_view("//:y@/").username() == "");
+        BOOST_TEST(url_view("//:@/").username() == "");
+        BOOST_TEST(url_view("//@/").username() == "");
+        BOOST_TEST(url_view("//%3A@/").username() == ":");
 
-        BOOST_TEST(url_view().encoded_user() == "");
-        BOOST_TEST(url_view("//x/").encoded_user() == "");
-        BOOST_TEST(url_view("//x@/").encoded_user() == "x");
-        BOOST_TEST(url_view("//x:@/").encoded_user() == "x");
-        BOOST_TEST(url_view("//x:y@/").encoded_user() == "x");
-        BOOST_TEST(url_view("//:y@/").encoded_user() == "");
-        BOOST_TEST(url_view("//:@/").encoded_user() == "");
-        BOOST_TEST(url_view("//@/").encoded_user() == "");
-        BOOST_TEST(url_view("//%3A@/").encoded_user() == "%3A");
+        BOOST_TEST(url_view().encoded_username() == "");
+        BOOST_TEST(url_view("//x/").encoded_username() == "");
+        BOOST_TEST(url_view("//x@/").encoded_username() == "x");
+        BOOST_TEST(url_view("//x:@/").encoded_username() == "x");
+        BOOST_TEST(url_view("//x:y@/").encoded_username() == "x");
+        BOOST_TEST(url_view("//:y@/").encoded_username() == "");
+        BOOST_TEST(url_view("//:@/").encoded_username() == "");
+        BOOST_TEST(url_view("//@/").encoded_username() == "");
+        BOOST_TEST(url_view("//%3A@/").encoded_username() == "%3A");
     }
 
     //------------------------------------------------------
@@ -432,61 +432,99 @@ public:
             auto u = parse_uri("x://@");
             BOOST_TEST(u.has_userinfo());
             BOOST_TEST(u.encoded_userinfo() == "");
-            BOOST_TEST(u.has_user() == false);
-            BOOST_TEST(u.encoded_user() == "");
+            BOOST_TEST(u.userinfo() == "");
+            BOOST_TEST(u.has_username() == false);
+            BOOST_TEST(u.encoded_username() == "");
+            BOOST_TEST(u.username() == "");
             BOOST_TEST(u.has_password() == false);
             BOOST_TEST(u.encoded_password() == "");
+            BOOST_TEST(u.password() == "");
         }
         {
             auto u = parse_uri("x://:@");
             BOOST_TEST(u.has_userinfo());
             BOOST_TEST(u.encoded_userinfo() == ":");
-            BOOST_TEST(u.has_user() == false);
-            BOOST_TEST(u.encoded_user() == "");
+            BOOST_TEST(u.userinfo() == ":");
+            BOOST_TEST(u.has_username() == false);
+            BOOST_TEST(u.encoded_username() == "");
+            BOOST_TEST(u.username() == "");
             BOOST_TEST(u.has_password() == true);
             BOOST_TEST(u.encoded_password() == "");
+            BOOST_TEST(u.password() == "");
         }
         {
-            auto u = parse_uri("x://a:@");
+            auto u = parse_uri("x://a%41:@");
             BOOST_TEST(u.has_userinfo());
-            BOOST_TEST(u.encoded_userinfo() == "a:");
-            BOOST_TEST(u.has_user() == true);
-            BOOST_TEST(u.encoded_user() == "a");
+            BOOST_TEST(u.encoded_userinfo() == "a%41:");
+            BOOST_TEST(u.has_username() == true);
+            BOOST_TEST(u.encoded_username() == "a%41");
+            BOOST_TEST(u.username() == "aA");
             BOOST_TEST(u.has_password() == true);
             BOOST_TEST(u.encoded_password() == "");
+            BOOST_TEST(u.password() == "");
         }
         {
-            auto u = parse_uri("x://:b@");
+            auto u = parse_uri("x://:b%42@");
             BOOST_TEST(u.has_userinfo());
-            BOOST_TEST(u.encoded_userinfo() == ":b");
-            BOOST_TEST(u.has_user() == false);
-            BOOST_TEST(u.encoded_user() == "");
+            BOOST_TEST(u.encoded_userinfo() == ":b%42");
+            BOOST_TEST(u.has_username() == false);
+            BOOST_TEST(u.encoded_username() == "");
+            BOOST_TEST(u.username() == "");
             BOOST_TEST(u.has_password() == true);
-            BOOST_TEST(u.encoded_password() == "b");
+            BOOST_TEST(u.encoded_password() == "b%42");
+            BOOST_TEST(u.password() == "bB");
         }
         {
             auto u = parse_uri("x://a:b@");
             BOOST_TEST(u.has_userinfo());
             BOOST_TEST(u.encoded_userinfo() == "a:b");
-            BOOST_TEST(u.has_user() == true);
-            BOOST_TEST(u.encoded_user() == "a");
+            BOOST_TEST(u.has_username() == true);
+            BOOST_TEST(u.encoded_username() == "a");
             BOOST_TEST(u.has_password() == true);
             BOOST_TEST(u.encoded_password() == "b");
         }
+        {
+            auto u = parse_uri("x://%3a:%3a@");
+            BOOST_TEST(u.has_userinfo());
+            BOOST_TEST(u.encoded_userinfo() == "%3a:%3a");
+            BOOST_TEST(u.userinfo() == ":::");
+            BOOST_TEST(u.has_username() == true);
+            BOOST_TEST(u.encoded_username() == "%3a");
+            BOOST_TEST(u.username() == ":");
+            BOOST_TEST(u.has_password() == true);
+            BOOST_TEST(u.encoded_password() == "%3a");
+            BOOST_TEST(u.password() == ":");
+        }
+        {
+            auto u = parse_uri("x://%2525@");
+            BOOST_TEST(u.has_userinfo());
+            BOOST_TEST(u.encoded_userinfo() == "%2525");
+            BOOST_TEST(u.userinfo() == "%25");
+            BOOST_TEST(u.has_username() == true);
+            BOOST_TEST(u.encoded_username() == "%2525");
+            BOOST_TEST(u.username() == "%25");
+            BOOST_TEST(u.has_password() == false);
+            BOOST_TEST(u.encoded_password() == "");
+            BOOST_TEST(u.password() == "");
+        }
     }
+
+    //--------------------------------------------
+
+    //--------------------------------------------
 
     void
     testParseUri()
     {
         error_code ec;
         auto const u = urls::parse_uri(
-            "http://user:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag",
+            "http://username:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag",
             ec);
         if(! BOOST_TEST(! ec))
             return;
         BOOST_TEST(u.has_value());
         BOOST_TEST(u->scheme() == "http");
-        BOOST_TEST(u->user() == "user");
+        BOOST_TEST(u->username() == "username");
         BOOST_TEST(u->password() == "pass");
         BOOST_TEST(u->host() == "www.boost.org");
         BOOST_TEST(u->port() == "8080");

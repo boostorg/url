@@ -24,9 +24,9 @@ namespace rfc {
 
     @par BNF
     @code
-    userinfo    = user [ ":" [ password ] ]
+    userinfo    = username [ ":" [ password ] ]
 
-    user        = *( unreserved / pct-encoded / sub-delims )
+    username    = *( unreserved / pct-encoded / sub-delims )
     password    = *( unreserved / pct-encoded / sub-delims / ":" )
     @endcode
 
@@ -36,9 +36,8 @@ namespace rfc {
 struct userinfo_bnf
 {
     string_view str;
-    pct_encoded_str user;
-    optional<
-        pct_encoded_str> pass;
+    pct_encoded_str username;
+    optional<pct_encoded_str> password;
 
     BOOST_URL_DECL
     friend

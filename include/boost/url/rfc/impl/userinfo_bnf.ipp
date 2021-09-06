@@ -45,11 +45,11 @@ parse(
         return false;
     t.str = string_view(
         start, it - start);
-    t.user = user;
+    t.username = user;
     if(colon.has_value())
-        t.pass = pass;
+        t.password = pass;
     else
-        t.pass.reset();
+        t.password.reset();
     return true;
 }
 

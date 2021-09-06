@@ -133,7 +133,7 @@ public:
     /** Return the userinfo if present, or an empty string
 
         Returns the userinfo of the URL as an encoded
-        string. The userinfo includes the user and
+        string. The userinfo includes the username and
         password, with a colon separating the components
         if the password is not empty.
 
@@ -145,17 +145,46 @@ public:
     string_view
     encoded_userinfo() const noexcept;
 
-    /** Return true if the URL contains a user
+    /** Return the userinfo if present, or an empty string
+
+        This function returns the userinfo part
+        of the URL if present, as a decoded string.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
+    template<
+        class Allocator =
+            std::allocator<char>>
+    string_type<Allocator>
+    userinfo(
+        Allocator const& a = {}) const
+    {
+        return detail::decode(
+            encoded_userinfo(), a);
+    }
+
+    /** Return true if the URL contains a username
     */
     BOOST_URL_DECL
     bool
-    has_user() const noexcept;
+    has_username() const noexcept;
 
-    /** Return the user if present, or an empty string
+    /** Return the username if present, or an empty string
 
-        This function returns the user portion of
+        This function returns the username portion of
         the userinfo if present, as an encoded string.
-        The user portion is defined by all of the
+        The username portion is defined by all of the
         characters in the userinfo up to but not
         including the first colon (':"), or the
         entire userinfo if no colon is present.
@@ -166,13 +195,13 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    encoded_user() const noexcept;
+    encoded_username() const noexcept;
 
-    /** Return the user if present, or an empty string
+    /** Return the username if present, or an empty string
 
-        This function returns the user portion of
+        This function returns the username portion of
         the userinfo if present, as a decoded string.
-        The user portion is defined by all of the
+        The username portion is defined by all of the
         characters in the userinfo up to but not
         including the first colon (':"), or the
         entire userinfo if no colon is present.
@@ -194,11 +223,11 @@ public:
         class Allocator =
             std::allocator<char>>
     string_type<Allocator>
-    user(
+    username(
         Allocator const& a = {}) const
     {
         return detail::decode(
-            encoded_user(), a);
+            encoded_username(), a);
     }
 
     /** Return true if the URL contains a password
@@ -225,6 +254,8 @@ public:
         return detail::decode(
             encoded_password(), a);
     }
+
+    //--------------------------------------------
 
     /** Return the type of host present, if any.
 

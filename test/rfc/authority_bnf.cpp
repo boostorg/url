@@ -55,9 +55,9 @@ public:
             if(BOOST_TEST(p.userinfo.has_value()))
             {
                 BOOST_TEST(p.userinfo->str == "x:y");
-                BOOST_TEST(p.userinfo->user.str == "x");
-                if(BOOST_TEST(p.userinfo->pass.has_value()))
-                    BOOST_TEST(p.userinfo->pass->str == "y");
+                BOOST_TEST(p.userinfo->username.str == "x");
+                if(BOOST_TEST(p.userinfo->password.has_value()))
+                    BOOST_TEST(p.userinfo->password->str == "y");
             }
         }
     }

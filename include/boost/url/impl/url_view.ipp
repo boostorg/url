@@ -165,7 +165,7 @@ has_userinfo() const noexcept
 
 bool
 url_view::
-has_user() const noexcept
+has_username() const noexcept
 {
     auto const n = len(
         detail::id_user);
@@ -209,7 +209,7 @@ encoded_userinfo() const noexcept
 
 string_view
 url_view::
-encoded_user() const noexcept
+encoded_username() const noexcept
 {
     auto s = pt_.get(
         detail::id_user,
@@ -819,11 +819,11 @@ apply_authority(parts& p,
     {
         p.resize(
             part::id_user,
-            u->user.str.size() + 2);
-        if(u->pass.has_value())
+            u->username.str.size() + 2);
+        if(u->password.has_value())
             p.resize(
                 part::id_password,
-                u->pass->str.size() + 2);
+                u->password->str.size() + 2);
         else
             p.resize(
                 part::id_password, 1);
