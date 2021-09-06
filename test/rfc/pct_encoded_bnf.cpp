@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/rfc/pct_encoded_str.hpp>
+#include <boost/url/rfc/pct_encoded_bnf.hpp>
 
 #include "test_suite.hpp"
 
@@ -16,7 +16,7 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-class pct_encoded_str_test
+class pct_encoded_bnf_test
 {
 public:
     void
@@ -26,8 +26,8 @@ public:
 };
 
 TEST_SUITE(
-    pct_encoded_str_test,
-    "boost.url.pct_encoded_str");
+    pct_encoded_bnf_test,
+    "boost.url.pct_encoded_bnf");
 
 } // rfc
 } // urls

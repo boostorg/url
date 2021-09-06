@@ -14,7 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/pct_encoded_str.hpp>
+#include <boost/url/rfc/pct_encoded_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -35,7 +35,7 @@ struct segment_bnf
     {
         using bnf::parse;
         return parse(it, end, ec,
-            pct_encoded<
+            pct_encoded_bnf<
                 pchar_mask>{t.v});
     }
 };
@@ -57,7 +57,7 @@ struct segment_nz_bnf
         using bnf::parse;
         auto const start = it;
         if(! parse(it, end, ec,
-            pct_encoded<
+            pct_encoded_bnf<
                 pchar_mask>{t.v}))
             return false;
         if(it == start)
@@ -87,7 +87,7 @@ struct segment_nz_nc_bnf
         using bnf::parse;
         auto const start = it;
         if(! parse(it, end, ec,
-            pct_encoded<
+            pct_encoded_bnf<
                 pchar_mask &
                 ~colon_char_mask>{t.v}))
             return false;

@@ -14,7 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/optional.hpp>
 #include <boost/url/bnf/range.hpp>
-#include <boost/url/rfc/pct_encoded_str.hpp>
+#include <boost/url/rfc/pct_encoded_bnf.hpp>
 
 namespace boost {
 namespace urls {

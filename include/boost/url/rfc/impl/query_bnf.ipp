@@ -13,7 +13,7 @@
 #include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/pct_encoded_str.hpp>
+#include <boost/url/rfc/pct_encoded_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -35,7 +35,7 @@ struct query_range
         pct_encoded_str k;
         auto const start = it;
         if(! parse(it, end, ec,
-            pct_encoded<
+            pct_encoded_bnf<
                 query_char_mask>{k}))
             return false;
         if(! parse(it, end, ec, '='))
@@ -54,7 +54,7 @@ struct query_range
         }
         pct_encoded_str v;
         if(! parse(it, end, ec,
-            pct_encoded<
+            pct_encoded_bnf<
                 query_char_mask>{v}))
         {
             // VFALCO what about the key?

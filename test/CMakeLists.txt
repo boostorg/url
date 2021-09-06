@@ -48,7 +48,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/ipv_future_bnf.cpp
     rfc/ipv4_address_bnf.cpp
     rfc/ipv6_address_bnf.cpp
-    rfc/pct_encoded_str.cpp
+    rfc/pct_encoded_bnf.cpp
     rfc/pct_encoding.cpp
     rfc/port_bnf.cpp
     rfc/query_bnf.cpp

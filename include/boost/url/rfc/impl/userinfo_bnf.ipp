@@ -15,7 +15,7 @@
 #include <boost/url/string.hpp>
 #include <boost/url/bnf/literal.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/pct_encoded_str.hpp>
+#include <boost/url/rfc/pct_encoded_bnf.hpp>
 #include <boost/url/rfc/pct_encoding.hpp>
 
 namespace boost {
@@ -36,10 +36,10 @@ parse(
     optional<
         bnf::literal<':'>> colon;
     if(! parse(it, end, ec,
-        pct_encoded<
+        pct_encoded_bnf<
             unsub_char_mask>{user},
         colon,
-        pct_encoded<
+        pct_encoded_bnf<
             unsub_char_mask |
             colon_char_mask>{pass}))
         return false;

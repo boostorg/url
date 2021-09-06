@@ -187,7 +187,7 @@ constexpr std::uint8_t
 
     @see
         @ref masked_char_set
-        @ref pct_encoded
+        @ref pct_encoded_bnf
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.3
 */
 constexpr std::uint8_t pchar_mask =

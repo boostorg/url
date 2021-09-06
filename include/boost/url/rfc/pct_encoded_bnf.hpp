@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_PCT_ENCODED_STR_HPP
-#define BOOST_URL_RFC_PCT_ENCODED_STR_HPP
+#ifndef BOOST_URL_RFC_PCT_ENCODED_BNF_HPP
+#define BOOST_URL_RFC_PCT_ENCODED_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -37,7 +37,7 @@ struct pct_encoded_str
         https://datatracker.ietf.org/doc/html/rfc3986#section-2.1
 */
 template<std::uint8_t CharMask>
-struct pct_encoded
+struct pct_encoded_bnf
 {
     pct_encoded_str& v;
 
@@ -48,13 +48,13 @@ struct pct_encoded
         char const*& it,
         char const* const end,
         error_code& ec,
-        pct_encoded<CharMask> const& t) noexcept;
+        pct_encoded_bnf<CharMask> const& t) noexcept;
 };
     
 } // rfc
 } // urls
 } // boost
 
-#include <boost/url/rfc/impl/pct_encoded_str.hpp>
+#include <boost/url/rfc/impl/pct_encoded_bnf.hpp>
 
 #endif

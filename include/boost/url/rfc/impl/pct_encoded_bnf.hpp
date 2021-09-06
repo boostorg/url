@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_PCT_ENCODED_STR_HPP
-#define BOOST_URL_RFC_IMPL_PCT_ENCODED_STR_HPP
+#ifndef BOOST_URL_RFC_IMPL_PCT_ENCODED_BNF_HPP
+#define BOOST_URL_RFC_IMPL_PCT_ENCODED_BNF_HPP
 
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/detail/pct_encoding.hpp>
@@ -23,7 +23,8 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    pct_encoded<CharMask> const& t) noexcept
+    pct_encoded_bnf<
+        CharMask> const& t) noexcept
 {
     auto const start = it;
     masked_char_set<CharMask> cs;

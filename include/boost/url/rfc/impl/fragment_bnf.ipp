@@ -13,7 +13,7 @@
 #include <boost/url/rfc/fragment_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/rfc/pct_encoded_str.hpp>
+#include <boost/url/rfc/pct_encoded_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -28,7 +28,7 @@ parse(
 {
     using bnf::parse;
     return parse(it, end, ec,
-        pct_encoded<
+        pct_encoded_bnf<
             unsub_char_mask |
             colon_char_mask |
             at_char_mask>{t.v});

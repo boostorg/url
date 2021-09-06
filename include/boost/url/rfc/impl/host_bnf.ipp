@@ -101,7 +101,7 @@ parse(
     {
         pct_encoded_str ns;
         if(! parse(it, end, ec,
-            pct_encoded<
+            pct_encoded_bnf<
                 unsub_char_mask>{ns}))
         {
             // bad reg-name

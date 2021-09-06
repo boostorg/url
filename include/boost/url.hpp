@@ -37,7 +37,7 @@
 #include <boost/url/rfc/ipv_future_bnf.hpp>
 #include <boost/url/rfc/ipv4_address_bnf.hpp>
 #include <boost/url/rfc/ipv6_address_bnf.hpp>
-#include <boost/url/rfc/pct_encoded_str.hpp>
+#include <boost/url/rfc/pct_encoded_bnf.hpp>
 #include <boost/url/rfc/pct_encoding.hpp>
 #include <boost/url/rfc/port_bnf.hpp>
 #include <boost/url/rfc/relative_part_bnf.hpp>
