@@ -114,8 +114,88 @@ public:
     }
 
     void
+    testAuthority()
+    {
+        auto const no =
+            [](string_view s)
+        {
+            BOOST_TEST_NO_THROW(
+            [s]{
+                auto u = parse_uri(s);
+                BOOST_TEST(! u.has_authority());
+            }());
+        };
+        auto const yes =
+            [](string_view s, string_view m)
+        {
+            BOOST_TEST_NO_THROW(
+            [&]{
+                auto u = parse_uri(s);
+                BOOST_TEST(u.has_authority());
+                BOOST_TEST(
+                    u.encoded_authority() == m);
+            }());
+        };
+
+        no("http:xyz/");
+        no("http:/x");
+        no("http:/x");
+        no("http:%2f%2f");
+        no("http:/%40");
+
+        yes("http://", "");
+        yes("http://a", "a");
+        yes("http://a@", "a@");
+        yes("http://:@", ":@");
+        yes("http://@", "@");
+        yes("http://@x", "@x");
+    }
+
+    void
     testUserinfo()
     {
+        auto const no =
+            [](string_view s)
+        {
+            BOOST_TEST_NO_THROW(
+            [s]{
+                auto u = parse_uri(s);
+                BOOST_TEST(! u.has_userinfo());
+            }());
+        };
+        auto const yes =
+            []( string_view s,
+                string_view m1,
+                string_view m2)
+        {
+            BOOST_TEST_NO_THROW(
+            [&]{
+                auto u = parse_uri(s);
+                BOOST_TEST(u.has_userinfo());
+                BOOST_TEST(
+                    u.encoded_userinfo() == m1);
+                BOOST_TEST(
+                    u.userinfo() == m2);
+            }());
+        };
+
+        no("http:");
+        no("http:xyz/");
+        no("http:/x");
+        no("http:/x");
+        no("http:%2f%2f");
+        no("http:/%40");
+        no("http://");
+        no("http://a");
+
+        yes("http://a@", "a", "a");
+        yes("http://:@", ":", ":");
+        yes("http://@", "", "");
+        yes("http://@x", "", "");
+        yes("http://%61@x", "%61", "a");
+        yes("http://:%61@x", ":%61", ":a");
+        yes("http://%61%3a%62@x", "%61%3a%62", "a:b");
+
         {
             auto u = parse_uri("x://@");
             BOOST_TEST(u.has_userinfo());
@@ -202,18 +282,46 @@ public:
     {
         {
             auto u = parse_uri(
-                "http://www.example.com/");
-            BOOST_TEST(u.encoded_hostname() ==
-                "www.example.com");
+                "res:foo/");
+            BOOST_TEST(u.host_type() ==
+                host_type::none);
+            BOOST_TEST(u.encoded_host() ==
+                "");
+        }
+        {
+            auto u = parse_uri(
+                "http://");
             BOOST_TEST(u.host_type() ==
                 host_type::name);
+            BOOST_TEST(u.encoded_host() ==
+                "");
+        }
+        {
+            auto u = parse_uri(
+                "http:///");
+            BOOST_TEST(u.host_type() ==
+                host_type::name);
+            BOOST_TEST(u.encoded_host() ==
+                "");
+        }
+        {
+            auto u = parse_uri(
+                "http://www.example.com/");
+            BOOST_TEST(u.host_type() ==
+                host_type::name);
+            BOOST_TEST(u.encoded_host() ==
+                "www.example.com");
+            BOOST_TEST(u.host() ==
+                "www.example.com");
         }
         {
             auto u = parse_uri(
                 "http://192.168.0.1/");
             BOOST_TEST(u.host_type() ==
                 host_type::ipv4);
-            BOOST_TEST(u.encoded_hostname() ==
+            BOOST_TEST(u.encoded_host() ==
+                "192.168.0.1");
+            BOOST_TEST(u.host() ==
                 "192.168.0.1");
             BOOST_TEST(
                 u.ipv4_address().to_uint() ==
@@ -222,10 +330,26 @@ public:
         {
             auto u = parse_uri(
                 "http://[1::6:192.168.0.1]:8080/");
-            BOOST_TEST(u.encoded_hostname() ==
-                "[1::6:192.168.0.1]");
             BOOST_TEST(u.host_type() ==
                 host_type::ipv6);
+            BOOST_TEST(u.encoded_host() ==
+                "[1::6:192.168.0.1]");
+            BOOST_TEST(u.host() ==
+                "[1::6:192.168.0.1]");
+            BOOST_TEST(u.ipv6_address() ==
+                make_ipv6_address("1::6:c0a8:1"));
+        }
+        {
+            auto u = parse_uri(
+                "http://[v1.x]:8080/");
+            BOOST_TEST(u.host_type() ==
+                host_type::ipvfuture);
+            BOOST_TEST(u.encoded_host() ==
+                "[v1.x]");
+            BOOST_TEST(u.host() ==
+                "[v1.x]");
+            BOOST_TEST(u.ipv_future() ==
+                "[v1.x]");
         }
     }
 
@@ -430,6 +554,7 @@ public:
     {
         testParse();
         testScheme();
+        testAuthority();
         testUserinfo();
         testHost();
         testQuery();

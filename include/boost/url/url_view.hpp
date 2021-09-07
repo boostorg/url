@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ipv4_address.hpp>
+#include <boost/url/ipv6_address.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/optional.hpp>
 #include <boost/url/detail/parts.hpp>
@@ -35,6 +36,21 @@ class url_view
 
     struct shared_impl;
 
+    // VFALCO This has to be kept in
+    // sync with other declarations
+    enum
+    {
+        id_scheme = 0,  // trailing ':'
+        id_user,        // leading "//"
+        id_pass,        // leading ':', trailing '@'
+        id_host,
+        id_port,        // leading ':'
+        id_path,
+        id_query,       // leading '?'
+        id_frag,        // leading '#'
+        id_end          // one past the end
+    };
+
     url_view(
         char const* s,
         detail::parts const& pt) noexcept
@@ -44,10 +60,9 @@ class url_view
     }
 
     // shortcuts
-    string_view get(
-        detail::part id) const noexcept;
-    std::size_t len(
-        detail::part id) const noexcept;
+    string_view get(int id) const noexcept;
+    string_view get(int id0, int id1) const noexcept;
+    std::size_t len(int id) const noexcept;
 
 public:
     class segments_type;
@@ -112,13 +127,12 @@ public:
 
     /** Return true if an authority exists
 
-        This function returns
-        @code
-        ! this->encoded_authority().empty();
-        @endcode
-
+        This function returns true if an authority is
+        present, even if the authority is an empty
+        string. Its presence
+        in a URL is determined by a leading double-slash
+        ("//") in the 
         @par Exception Safety
-
         No-throw guarantee.
     */
     BOOST_URL_DECL
@@ -135,9 +149,9 @@ public:
 
     /** Return true if a userinfo exists
 
-        This function returns `true` if there are
-        any characters in the URL's userinfo, including
-        the at sign ('@') separator.
+        This function returns true if the authority
+        is present and contains an at-sign ('@')
+        which is not percent encoded.
     */
     BOOST_URL_DECL
     bool
@@ -282,35 +296,20 @@ public:
         return pt_.host_type;
     }
 
-    /** Return the host name string if it exists, or an empty string
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_hostname() const noexcept;
+    /** Return the host
 
-    /** Return the ipv4 address if it exists
-    */
-    BOOST_URL_DECL
-    urls::ipv4_address
-    ipv4_address() const noexcept;
-
-    /** Return the host and port.
-
-        This function returns the encoded host and port,
-        or an empty string if there is no host or port.
-        The returned value includes both the host if present,
-        and a port, with a colon separating the host and port
-        if either component is non-empty.
+        This function returns the host portion of
+        the authority as an encoded string if present,
+        otherwise it returns an empty string.
 
         @par Exception Safety
-
         No-throw guarantee.
     */
     BOOST_URL_DECL
     string_view
-    encoded_host_and_port() const noexcept;
+    encoded_host() const noexcept;
 
-    /** Return the host.
+    /** Return the host
 
         This function returns the host portion of
         the authority as a decoded string if present,
@@ -336,7 +335,8 @@ public:
     host(
         Allocator const& a = {}) const
     {
-        auto const s0 = encoded_host();
+        auto const s0 =
+            encoded_host();
         if(pt_.host_type !=
             urls::host_type::name)
         {
@@ -344,14 +344,35 @@ public:
             return string_type<Allocator>(
                 s0.data(), s0.size(), a);
         }
-        return detail::decode(s0, a);
+        return rfc::pct_decode_unchecked(
+            s0, pt_.decoded[id_host], a);
     }
 
-    /** Return the host.
+    /** Return the ipv4 address if it exists, or return an unspecified address
+    */
+    BOOST_URL_DECL
+    urls::ipv4_address
+    ipv4_address() const noexcept;
 
-        This function returns the host portion of
-        the authority as an encoded string if present,
-        otherwise it returns an empty string.
+    /** Return the ipv6 address if it exists, or return an unspecified address
+    */
+    BOOST_URL_DECL
+    urls::ipv6_address
+    ipv6_address() const noexcept;
+
+    /** Return the ipvfuture address if it exists, or return an empty string
+    */
+    BOOST_URL_DECL
+    string_view
+    ipv_future() const noexcept;
+
+    /** Return the host and port.
+
+        This function returns the encoded host and port,
+        or an empty string if there is no host or port.
+        The returned value includes both the host if present,
+        and a port, with a colon separating the host and port
+        if either component is non-empty.
 
         @par Exception Safety
 
@@ -359,7 +380,7 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    encoded_host() const noexcept;
+    encoded_host_and_port() const noexcept;
 
     /** Return true if the URL contains a port
     */

@@ -14,6 +14,7 @@
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/throw_exception.hpp>
+#include <limits.h>
 #include <stdint.h>
 
 #if CHAR_BIT != 8

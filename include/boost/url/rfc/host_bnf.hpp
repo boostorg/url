@@ -39,7 +39,7 @@ class host_bnf
     ipv4_address ipv4_;
     ipv6_address ipv6_;
     string_view ipvfuture_;
-    host_type host_type_ =
+    urls::host_type host_type_ =
         host_type::none;
 
 public:

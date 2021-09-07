@@ -65,8 +65,11 @@ public:
         good<T>("boost.org");
         good<T>("999.0.0.1");
 
-        BOOST_TEST(check("", host_type::name)
+        BOOST_TEST(check("", host_type::none)
             .str() == "");
+
+        BOOST_TEST(check("www.example.com", host_type::name)
+            .get_name().str == "www.example.com");
 
         BOOST_TEST(check("1.2.3.999", host_type::name)
             .get_name().str == "1.2.3.999");
@@ -82,9 +85,6 @@ public:
 
         BOOST_TEST(check("[v1.2]", host_type::ipvfuture)
             .get_ipv_future() == "v1.2");
-
-        BOOST_TEST(check("www.example.com", host_type::name)
-            .get_name().str == "www.example.com");
     }
 };
 
