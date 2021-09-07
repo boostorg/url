@@ -12,8 +12,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/ipv6_address.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/rfc/ipv6_address_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -33,7 +33,7 @@ struct ip_literal_bnf
 {
     string_view str;
     bool is_ipv6;
-    ipv6_address_bnf ipv6;
+    ipv6_address ipv6;
     string_view fut_str;
 
     BOOST_URL_DECL

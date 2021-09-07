@@ -25,6 +25,16 @@ BOOST_URL_DECL void BOOST_NORETURN throw_out_of_range(source_location const& loc
 BOOST_URL_DECL void BOOST_NORETURN throw_system_error(error_code const& ec, source_location const& loc);
 BOOST_URL_DECL void BOOST_NORETURN throw_system_error(error e, source_location const& loc);
 
+inline
+void
+maybe_throw(
+    error_code const& ec,
+    source_location const& loc)
+{
+    if(ec.failed())
+        throw_system_error(ec, loc);
+}
+
 } // detail
 } // urls
 } // boost

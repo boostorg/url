@@ -50,10 +50,12 @@ public:
         if( ! BOOST_TEST(
             ! ec.failed()))
             return {};
+        auto const bytes =
+            t.addr.to_bytes();
         BOOST_TEST(get_u64(
-            &t.octets[0]) == u0);
+            &bytes[0]) == u0);
         BOOST_TEST(get_u64(
-            &t.octets[8]) == u1);
+            &bytes[8]) == u1);
         return t;
     }
 
@@ -163,9 +165,6 @@ public:
         check("FE80:0:0:0:200:F8FF:FE21:67CF", 0xfe80000000000000, 0x0200f8fffe2167cf);
         check("FFFF:0:0:0:0:0:0:1", 0xffff000000000000, 1);
         check("FFFF::1", 0xffff000000000000, 1);
-
-        BOOST_TEST(! check("::", 0, 0).trailing_ipv4);
-        BOOST_TEST(check("0:0:0:0:0:0:1.2.3.4", 0, 0x01020304).trailing_ipv4);
     }
 };
 

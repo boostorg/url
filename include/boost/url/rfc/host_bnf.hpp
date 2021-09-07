@@ -37,7 +37,7 @@ class host_bnf
     string_view str_;
     pct_encoded_str name_;
     ipv4_address ipv4_;
-    ipv6_address_bnf ipv6_;
+    ipv6_address ipv6_;
     string_view ipvfuture_;
     host_type host_type_ =
         host_type::none;
@@ -77,7 +77,7 @@ public:
         return ipv4_;
     }
 
-    ipv6_address_bnf const&
+    ipv6_address const&
     get_ipv6() const noexcept
     {
         BOOST_ASSERT(host_type_ ==

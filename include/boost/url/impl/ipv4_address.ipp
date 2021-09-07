@@ -12,6 +12,8 @@
 
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/detail/network_order.hpp>
+#include <boost/url/bnf/parse.hpp>
+#include <boost/url/rfc/ipv4_address_bnf.hpp>
 #include <cstring>
 
 namespace boost {
@@ -120,6 +122,30 @@ operator<<(
     buf[n] = '\0';
     os << string_view(buf, n);
     return os;
+}
+
+ipv4_address
+make_ipv4_address(
+    string_view s,
+    error_code& ec) noexcept
+{
+    rfc::ipv4_address_bnf t;
+    using bnf::parse;
+    if(! parse(s, ec, t))
+        return {};
+    return t.addr;
+}
+
+ipv4_address
+make_ipv4_address(
+    string_view s)
+{
+    error_code ec;
+    auto const addr =
+        make_ipv4_address(s, ec);
+    detail::maybe_throw(ec,
+        BOOST_CURRENT_LOCATION);
+    return addr;
 }
 
 } // urls

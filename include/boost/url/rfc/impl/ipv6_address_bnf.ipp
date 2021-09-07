@@ -27,14 +27,14 @@ namespace detail {
 
 struct h16
 {
-    std::uint8_t* p;
+    unsigned char* p;
 
     // return `true` if the hex
     // word could be 0..255 if
     // interpreted as decimal
     static
     bool
-    is_octet(std::uint8_t const* p) noexcept
+    is_octet(unsigned char const* p) noexcept
     {
         unsigned short word =
             static_cast<unsigned short>(
@@ -101,10 +101,10 @@ struct h16
         }
         ec = {};
         t.p[0] = static_cast<
-            std::uint8_t>(
+            unsigned char>(
                 v / 256);
         t.p[1] = static_cast<
-            std::uint8_t>(
+            unsigned char>(
                 v % 256);
         return true;
     }
@@ -127,7 +127,7 @@ parse(
                     // when '::' seen
     bool c = false; // need colon
     auto prev = it;
-    t.trailing_ipv4 = false;
+    ipv6_address::bytes_type bytes;
     for(;;)
     {
         if(it == end)
@@ -173,7 +173,7 @@ parse(
                 prev = it;
                 if(! parse(it, end, ec, 
                     detail::h16{
-                        &t.octets[2*(8-n)]}))
+                        &bytes[2*(8-n)]}))
                     return false;
                 --n;
                 if(n == 0)
@@ -193,7 +193,7 @@ parse(
                 return false;
             }
             if(! detail::h16::is_octet(
-                &t.octets[2*(7-n)]))
+                &bytes[2*(7-n)]))
             {
                 // invalid octet
                 ec = error::syntax;
@@ -208,11 +208,10 @@ parse(
                 return false;
             auto const b =
                 v4.addr.to_bytes();
-            t.octets[2*(7-n)+0] = b[0];
-            t.octets[2*(7-n)+1] = b[1];
-            t.octets[2*(7-n)+2] = b[2];
-            t.octets[2*(7-n)+3] = b[3];
-            t.trailing_ipv4 = true;
+            bytes[2*(7-n)+0] = b[0];
+            bytes[2*(7-n)+1] = b[1];
+            bytes[2*(7-n)+2] = b[2];
+            bytes[2*(7-n)+3] = b[3];
             --n;
             break;
         }
@@ -227,7 +226,7 @@ parse(
             prev = it;
             if(! parse(it, end, ec,
                 detail::h16{
-                    &t.octets[2*(8-n)]}))
+                    &bytes[2*(8-n)]}))
                 return false;
             --n;
             if(n == 0)
@@ -241,14 +240,17 @@ parse(
     }
     ec = {};
     if(b == -1)
+    {
+        t.addr = ipv6_address(bytes);
         return true;
+    }
     if(b == n)
     {
         // "::" last
         auto const i =
             2 * (7 - n);
         std::memset(
-            &t.octets[i],
+            &bytes[i],
             0, 16 - i);
     }
     else if(b == 7)
@@ -257,11 +259,11 @@ parse(
         auto const i =
             2 * (b - n);
         std::memmove(
-            &t.octets[16 - i],
-            &t.octets[2],
+            &bytes[16 - i],
+            &bytes[2],
             i);
         std::memset(
-            &t.octets[0],
+            &bytes[0],
             0, 16 - i);
     }
     else
@@ -272,13 +274,14 @@ parse(
         auto const i1 =
             2 * (b - n);
         std::memmove(
-            &t.octets[16 - i1],
-            &t.octets[i0 + 2],
+            &bytes[16 - i1],
+            &bytes[i0 + 2],
             i1);
         std::memset(
-            &t.octets[i0],
+            &bytes[i0],
             0, 16 - (i0 + i1));
     }
+    t.addr = ipv6_address(bytes);
     return true;
 }
 

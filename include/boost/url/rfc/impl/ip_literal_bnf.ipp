@@ -12,6 +12,7 @@
 
 #include <boost/url/rfc/ip_literal_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
+#include <boost/url/rfc/ipv6_address_bnf.hpp>
 #include <boost/url/rfc/ipv_future_bnf.hpp>
 
 namespace boost {
@@ -43,10 +44,12 @@ parse(
     if(*it != 'v')
     {
         // IPv6address
+        ipv6_address_bnf t2;
         if(! parse(it, end, ec,
-            t.ipv6, ']'))
+                t2, ']'))
             return false;
         t.is_ipv6 = true;
+        t.ipv6 = t2.addr;
         goto finish;
     }
     // IPvFuture

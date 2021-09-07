@@ -51,7 +51,7 @@ public:
     BOOST_URL_DECL
     explicit
     ipv4_address(
-        bytes_type const & bytes);
+        bytes_type const& bytes);
 
     /** Construct from an unsigned integer in host byte order
     */
@@ -176,6 +176,8 @@ public:
         return ipv4_address(0xFFFFFFFF);
     }
 
+    /** Format the address to an output stream
+    */
     BOOST_URL_DECL
     friend
     std::ostream&
@@ -184,6 +186,8 @@ public:
         ipv4_address const&);
 
 private:
+    friend class ipv6_address;
+
     BOOST_URL_DECL
     std::size_t
     print_impl(
@@ -194,14 +198,27 @@ private:
 };
 
 #if 0
-/** Format the ipv4_address to an output stream
-*/
 BOOST_URL_DECL
 std::ostream&
 operator<<(
     std::ostream&,
     ipv4_address const&);
 #endif
+
+/** Return an IPv4 address from an IP address string in dotted decimal form
+*/
+BOOST_URL_DECL
+ipv4_address
+make_ipv4_address(
+    string_view s,
+    error_code& ec) noexcept;
+
+/** Return an IPv4 address from an IP address string in dotted decimal form
+*/
+BOOST_URL_DECL
+ipv4_address
+make_ipv4_address(
+    string_view s);
 
 } // urls
 } // boost

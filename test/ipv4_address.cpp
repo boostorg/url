@@ -54,6 +54,13 @@ public:
             BOOST_TEST(a2.is_loopback());
             BOOST_TEST(a1 == a2);
         }
+        {
+            BOOST_TEST(make_ipv4_address(
+                "1.2.3.4") == ipv4_address(0x01020304));
+            BOOST_TEST_THROWS(
+                make_ipv4_address("256.0.0.1"),
+                std::exception);
+        }
     }
 };
 
