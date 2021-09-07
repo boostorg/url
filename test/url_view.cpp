@@ -393,6 +393,20 @@ public:
         }
         {
             auto u = parse_uri(
+                "http://:00000");
+            BOOST_TEST(u.has_port());
+            BOOST_TEST(u.port() == "00000");
+            BOOST_TEST(u.port_number() == 0);
+        }
+        {
+            auto u = parse_uri(
+                "http://:000001");
+            BOOST_TEST(u.has_port());
+            BOOST_TEST(u.port() == "000001");
+            BOOST_TEST(u.port_number() == 1);
+        }
+        {
+            auto u = parse_uri(
                 "http://:65535");
             BOOST_TEST(u.has_port());
             BOOST_TEST(u.port() == "65535");
@@ -404,6 +418,41 @@ public:
             BOOST_TEST(u.has_port());
             BOOST_TEST(u.port() == "65536");
             BOOST_TEST(u.port_number() == 0);
+        }
+    }
+
+    void
+    testHostAndPort()
+    {
+        {
+            auto u = parse_uri(
+                "http://x:1");
+            BOOST_TEST(u.encoded_host_and_port() ==
+                "x:1");
+        }
+        {
+            auto u = parse_uri(
+                "http://x%3a:1");
+            BOOST_TEST(u.encoded_host_and_port() ==
+                "x%3a:1");
+        }
+        {
+            auto u = parse_uri(
+                "http://:1");
+            BOOST_TEST(u.encoded_host_and_port() ==
+                ":1");
+        }
+        {
+            auto u = parse_uri(
+                "http://:000001");
+            BOOST_TEST(u.encoded_host_and_port() ==
+                ":000001");
+        }
+        {
+            auto u = parse_uri(
+                "http://xyz:99999");
+            BOOST_TEST(u.encoded_host_and_port() ==
+                "xyz:99999");
         }
     }
 
@@ -612,6 +661,7 @@ public:
         testUserinfo();
         testHost();
         testPort();
+        testHostAndPort();
         testQuery();
         testFragment();
         testShared();

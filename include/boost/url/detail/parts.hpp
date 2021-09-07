@@ -44,7 +44,7 @@ struct parts
     std::size_t nparam = 0;
     std::uint16_t port_number = 0;
     urls::host_type host_type =
-        host_type::none;
+        urls::host_type::none;
 
     parts() noexcept
     {
