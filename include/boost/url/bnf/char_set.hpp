@@ -141,13 +141,13 @@ constexpr
 char
 hexdig_value(char c) noexcept
 {
-    if(c >= '0' && c <= '9')
-        return c - '0';
-    if(c >= 'A' && c <= 'F')
-        return 10 + c - 'A';
-    if(c >= 'a' && c <= 'f')
-        return 10 + c - 'a';
-    return -1;
+    return
+        (c >= '0' && c <= '9') ?
+        c - '0' : (
+            (c >= 'A' && c <= 'F') ?
+            10 + c - 'A' : (
+                (c >= 'a' && c <= 'f') ?
+                10 + c - 'a' : - 1) );
 }
 
 //------------------------------------------------
@@ -170,7 +170,6 @@ find_if(
 /** Find the first characer in the string that is not in CharSet
 */
 template<class CharSet>
-constexpr
 char const*
 find_if_not(
     char const* const first,

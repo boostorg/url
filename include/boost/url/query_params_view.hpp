@@ -142,6 +142,17 @@ public:
         string_view s);
 };
 
+BOOST_URL_DECL
+query_params_view
+parse_query_params(
+    string_view s,
+    error_code& ec);
+
+BOOST_URL_DECL
+query_params_view
+parse_query_params(
+    string_view s);
+
 //----------------------------------------------------------
 
 /** The value type for query parameters

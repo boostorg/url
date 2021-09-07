@@ -27,8 +27,6 @@ parse(
     ipv_future_bnf& t)
 {
     using namespace bnf;
-    string_view v0;
-    string_view v1;
     auto const start = it;
     if(! parse(it, end, ec,
         'v',

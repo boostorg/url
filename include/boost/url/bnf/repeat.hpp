@@ -55,16 +55,16 @@ struct repeat
     string_view& v;
 
     template<
-        class T,
-        std::size_t N,
-        std::size_t M>
+        class T_,
+        std::size_t N_,
+        std::size_t M_>
     friend
     bool
     parse(
         char const*& it,
         char const* end,
         error_code& ec,
-        repeat<T, N, M> const& t);
+        repeat<T_, N_, M_> const& t);
 };
 
 } // bnf

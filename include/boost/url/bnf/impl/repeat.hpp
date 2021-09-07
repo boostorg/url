@@ -67,7 +67,7 @@ parse(
 {
     auto start = it;
     std::size_t n;
-    if(! detail::parse_repeat(
+    if(! detail::parse_repeat<T>(
         it, end, ec, N, M, n))
         return false;
     t.v = string_view(

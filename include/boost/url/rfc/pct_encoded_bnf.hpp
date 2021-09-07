@@ -41,14 +41,14 @@ struct pct_encoded_bnf
 {
     pct_encoded_str& v;
 
-    template<std::uint8_t CharMask>
+    template<std::uint8_t CharMask_>
     friend
     bool
     parse(
         char const*& it,
         char const* const end,
         error_code& ec,
-        pct_encoded_bnf<CharMask> const& t) noexcept;
+        pct_encoded_bnf<CharMask_> const& t) noexcept;
 };
     
 } // rfc

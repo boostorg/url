@@ -60,7 +60,6 @@ struct has_find_if_not<T, boost::void_t<
 };
 
 template<class Pred>
-constexpr
 char const*
 find_if(
     char const* first,
@@ -78,7 +77,6 @@ find_if(
 }
 
 template<class Pred>
-constexpr
 char const*
 find_if(
     char const* first,
@@ -91,7 +89,6 @@ find_if(
 }
 
 template<class Pred>
-constexpr
 char const*
 find_if_not(
     char const* first,
@@ -109,7 +106,6 @@ find_if_not(
 }
 
 template<class Pred>
-constexpr
 char const*
 find_if_not(
     char const* first,

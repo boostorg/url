@@ -31,14 +31,14 @@ struct token
 
     string_view& v;
 
-    template<class CharSet>
+    template<class CharSet_>
     friend
     bool
     parse(
         char const*& it,
         char const* end,
         error_code& ec,
-        token<CharSet> const& t);
+        token<CharSet_> const& t);
 };
 
 } // bnf

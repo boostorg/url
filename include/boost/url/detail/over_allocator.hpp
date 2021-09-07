@@ -11,6 +11,7 @@
 #define BOOST_URL_DETAIL_OVER_ALLOCATOR_HPP
 
 #include <boost/config.hpp>
+#include <boost/core/empty_value.hpp>
 #include <boost/type_traits/is_final.hpp>
 #include <boost/type_traits/type_with_alignment.hpp>
 #ifdef BOOST_NO_CXX11_ALLOCATOR
@@ -37,90 +38,9 @@ template<class Alloc>
 using allocator_traits = std::allocator_traits<Alloc>;
 #endif
 
-//------------------------------------------------
-
-template<class T>
-struct is_empty_base_optimization_derived
-    : std::integral_constant<bool,
-        std::is_empty<T>::value &&
-        ! boost::is_final<T>::value>
-{
-};
-
-//------------------------------------------------
-
-template<class T, int UniqueID = 0,
-    bool isDerived =
-        is_empty_base_optimization_derived<T>::value>
-class empty_base_optimization : private T
-{
-public:
-    empty_base_optimization() = default;
-    empty_base_optimization(empty_base_optimization&&) = default;
-    empty_base_optimization(empty_base_optimization const&) = default;
-    empty_base_optimization& operator=(empty_base_optimization&&) = default;
-    empty_base_optimization& operator=(empty_base_optimization const&) = default;
-
-    template<class Arg1, class... ArgN>
-    explicit
-    empty_base_optimization(Arg1&& arg1, ArgN&&... argn)
-        : T(std::forward<Arg1>(arg1),
-            std::forward<ArgN>(argn)...)
-    {
-    }
-
-    T& member() noexcept
-    {
-        return *this;
-    }
-
-    T const& member() const noexcept
-    {
-        return *this;
-    }
-};
-
-//------------------------------------------------
-
-template<
-    class T,
-    int UniqueID
->
-class empty_base_optimization <T, UniqueID, false>
-{
-    T t_;
-
-public:
-    empty_base_optimization() = default;
-    empty_base_optimization(empty_base_optimization&&) = default;
-    empty_base_optimization(empty_base_optimization const&) = default;
-    empty_base_optimization& operator=(empty_base_optimization&&) = default;
-    empty_base_optimization& operator=(empty_base_optimization const&) = default;
-
-    template<class Arg1, class... ArgN>
-    explicit
-    empty_base_optimization(Arg1&& arg1, ArgN&&... argn)
-        : t_(std::forward<Arg1>(arg1),
-            std::forward<ArgN>(argn)...)
-    {
-    }
-
-    T& member() noexcept
-    {
-        return t_;
-    }
-
-    T const& member() const noexcept
-    {
-        return t_;
-    }
-};
-
-//------------------------------------------------
-
 template<class T, class Allocator>
 class over_allocator
-    : private empty_base_optimization<Allocator>
+    : private empty_value<Allocator>
 {
     template<class U, class OtherAlloc>
     friend class over_allocator;
@@ -154,14 +74,16 @@ public:
     over_allocator(
         std::size_t extra,
         Allocator const& alloc)
-        : empty_base_optimization<Allocator>(alloc)
+        : empty_value<Allocator>(
+            boost::empty_init_t{}, alloc)
         , extra_(extra)
     {
     }
 
     template<class U>
     over_allocator(over_allocator<U, Allocator> const& other) noexcept
-        : empty_base_optimization<Allocator>(other.member())
+        : empty_value<Allocator>(
+            boost::empty_init_t{}, other.get())
         , extra_(other.extra_)
     {
     }
@@ -175,7 +97,7 @@ public:
         auto constexpr S = sizeof(U);
         using A = typename allocator_traits<
             Allocator>::template rebind_alloc<U>;
-        A a{this->member()};
+        A a{this->get()};
         return reinterpret_cast<pointer>(
             std::allocator_traits<A>::allocate(a,
                 (n * sizeof(value_type) + extra_ + S - 1) / S));
@@ -190,7 +112,7 @@ public:
         auto constexpr S = sizeof(U);
         using A = typename allocator_traits<
             Allocator>::template rebind_alloc<U>;
-        A a{this->member()};
+        A a{this->get()};
         std::allocator_traits<A>::deallocate(a,
             reinterpret_cast<U*>(p),
                 (n * sizeof(value_type) + extra_ + S - 1) / S);
@@ -220,7 +142,7 @@ public:
         over_allocator<U, Allocator> const& rhs)
     {
         return
-            lhs.member() == rhs.member() &&
+            lhs.get() == rhs.get() &&
             lhs.extra_ == rhs.extra_;
     }
 

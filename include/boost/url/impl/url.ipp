@@ -22,6 +22,7 @@ namespace urls {
 
 //----------------------------------------------------------
 
+#if 0
 // handles allocate/free
 class url::modify
 {
@@ -38,6 +39,7 @@ public:
     {
     }
 };
+#endif
 
 //----------------------------------------------------------
 
@@ -1533,9 +1535,9 @@ replace_encoded( iterator pos, string_view s ) ->
     detail::pchar_pct_set().validate(s);
     BOOST_ASSERT(v_ != nullptr);
     url& v = *v_; (void)v;
-    auto const ns = s.size();
-    auto const n0 = pos.n_;
-    auto const n = ns + 1;
+    //auto const ns = s.size();
+    //auto const n0 = pos.n_;
+    //auto const n = ns + 1;
 // VFALCO This is to make insert and erase compose
 //        and offer the strong exception safety guarantee
 //if( n0 < n ) v.s_ = v.a_->reserve(v.size() + n - n0);
@@ -1552,8 +1554,8 @@ replace( iterator pos, string_view s ) ->
     BOOST_ASSERT(v_ != nullptr);
     url& v = *v_; (void)v;
     auto const ns = detail::pchar_pct_set().encoded_size(s);
-    auto const n0 = pos.n_;
-    auto const n = ns + 1;
+    //auto const n0 = pos.n_;
+    //auto const n = ns + 1;
 // VFALCO This is to make insert and erase compose
 //        and offer the strong exception safety guarantee
 //if( n0 < n ) v.s_ = v.a_->reserve(v.size() + n - n0);

@@ -45,7 +45,7 @@ test_char_set(
 
     // number of chars in
     // set equals s.size()
-    int n = 0;
+    std::size_t n = 0;
     for_each_char(
     [&cs, &n](char c)
     {

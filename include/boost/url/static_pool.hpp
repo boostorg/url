@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <cstdlib>
+#include <type_traits>
 
 namespace boost {
 namespace urls {

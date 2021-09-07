@@ -51,10 +51,9 @@ struct parts
     clear() noexcept
     {
         for(int i = 0; i <= id_end; ++i)
-        {
             offset[i] = 0;
+        for(int i = 0; i < id_end; ++i)
             decoded[i] = 0;
-        }
     }
 
     std::size_t

@@ -52,9 +52,8 @@ public:
 
     class iterator;
 
-    constexpr range(
-        range const&) = default;
-    constexpr range& operator=(
+    range(range const&) = default;
+    range& operator=(
         range const&) = default;
 
     /** Default constructor
@@ -62,7 +61,7 @@ public:
         Iteration of default constructed ranges
         is undefined.
     */
-    constexpr range() = default;
+    range() = default;
 
     /** Return true if the range is empty
     */
@@ -94,15 +93,16 @@ public:
     iterator
     end() const;
 
-    template<class T, class U>
+    template<
+        class T_, class U_>
     friend
     bool
     parse_range(
         char const*& it,
         char const* end,
         error_code& ec,
-        range<T>& t,
-        U const&);
+        range<T_>& t,
+        U_ const&);
 };
 
 } // bnf

@@ -33,14 +33,14 @@ struct literal
     {
     }
 
-    template<char...Cn>
+    template<char...Cn_>
     friend
     bool
     parse(
         char const*& it,
         char const* const end,
         error_code& ec,
-        literal<Cn...> const&) noexcept;
+        literal<Cn_...> const&) noexcept;
 };
 
 } // bnf

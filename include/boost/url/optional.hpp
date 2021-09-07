@@ -54,7 +54,7 @@ public:
         optional<T> const& t) noexcept
         : has_value_(t.has_value())
     {
-        if(has_value)
+        if(has_value_)
             ::new(&t_) T(*t);
     }
 

@@ -1008,7 +1008,6 @@ void
 match_port(string_view s)
 {
     parser pr(s);
-    error_code ec;
     pr.match_port();
     if(! pr.done())
         invalid_part::raise();
