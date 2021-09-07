@@ -7,14 +7,13 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_PCT_ENCODING_HPP
-#define BOOST_URL_RFC_IMPL_PCT_ENCODING_HPP
+#ifndef BOOST_URL_IMPL_PCT_ENCODING_HPP
+#define BOOST_URL_IMPL_PCT_ENCODING_HPP
 
 #include <boost/url/rfc/detail/pct_encoding.hpp>
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 #if 0
 
@@ -57,7 +56,6 @@ pct_decoded_size(
 
 #endif
 
-} // rfc
 } // urls
 } // boost
 

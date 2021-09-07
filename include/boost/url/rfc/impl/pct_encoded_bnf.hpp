@@ -7,15 +7,14 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_PCT_ENCODED_BNF_HPP
-#define BOOST_URL_RFC_IMPL_PCT_ENCODED_BNF_HPP
+#ifndef BOOST_URL_IMPL_PCT_ENCODED_BNF_HPP
+#define BOOST_URL_IMPL_PCT_ENCODED_BNF_HPP
 
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/detail/pct_encoding.hpp>
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 template<std::uint8_t CharMask>
 bool
@@ -37,7 +36,6 @@ parse(
     return true;
 }
 
-} // rfc
 } // urls
 } // boost
 

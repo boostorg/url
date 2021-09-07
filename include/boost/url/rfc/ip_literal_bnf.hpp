@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IP_LITERAL_BNF_HPP
-#define BOOST_URL_RFC_IP_LITERAL_BNF_HPP
+#ifndef BOOST_URL_IP_LITERAL_BNF_HPP
+#define BOOST_URL_IP_LITERAL_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -17,7 +17,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 /** BNF for IP-literal
 
@@ -46,7 +45,6 @@ struct ip_literal_bnf
         ip_literal_bnf& t);
 };
 
-} // rfc
 } // urls
 } // boost
 

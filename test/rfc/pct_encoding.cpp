@@ -14,7 +14,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 class pct_encoding_test
 {
@@ -29,6 +28,5 @@ TEST_SUITE(
     pct_encoding_test,
     "boost.url.pct_encoding");
 
-} // rfc
 } // urls
 } // boost

@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_ABSOLUTE_URI_BNF_HPP
-#define BOOST_URL_RFC_ABSOLUTE_URI_BNF_HPP
+#ifndef BOOST_URL_ABSOLUTE_URI_BNF_HPP
+#define BOOST_URL_ABSOLUTE_URI_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -21,7 +21,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 /** BNF for absolute-URI
 
@@ -50,7 +49,6 @@ struct absolute_uri_bnf
         absolute_uri_bnf& t);
 };
 
-} // rfc
 } // urls
 } // boost
 

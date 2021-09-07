@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_PCT_ENCODED_BNF_HPP
-#define BOOST_URL_RFC_PCT_ENCODED_BNF_HPP
+#ifndef BOOST_URL_PCT_ENCODED_BNF_HPP
+#define BOOST_URL_PCT_ENCODED_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -16,7 +16,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 /** Base type for a percent-encoded BNF element
 */
@@ -51,7 +50,6 @@ struct pct_encoded_bnf
         pct_encoded_bnf<CharMask_> const& t) noexcept;
 };
     
-} // rfc
 } // urls
 } // boost
 

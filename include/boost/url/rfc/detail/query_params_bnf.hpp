@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_DETAIL_QUERY_PARAMS_BNF_IPP
-#define BOOST_URL_RFC_DETAIL_QUERY_PARAMS_BNF_IPP
+#ifndef BOOST_URL_DETAIL_QUERY_PARAMS_BNF_IPP
+#define BOOST_URL_DETAIL_QUERY_PARAMS_BNF_IPP
 
 #include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
@@ -17,7 +17,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 namespace detail {
 
 struct query_params_bnf
@@ -102,7 +101,6 @@ struct query_params_bnf
 };
 
 } // detail
-} // rfc
 } // urls
 } // boost
 

@@ -39,8 +39,8 @@ iterator(
         return;
     }
     error_code ec;
-    rfc::query_param t;
-    rfc::detail::
+    query_param t;
+    detail::
         query_params_bnf::begin(
             next_, end_, ec, t);
     if(ec)
@@ -60,8 +60,8 @@ operator++() noexcept ->
     iterator&
 {
     error_code ec;
-    rfc::query_param t;
-    rfc::detail::
+    query_param t;
+    detail::
         query_params_bnf::increment(
             next_, end_, ec, t);
     if(ec == error::end)
@@ -175,9 +175,9 @@ parse_query_params(
 {
     using bnf::parse;
     bnf::range<
-        rfc::query_param> t;
+        query_param> t;
     if(! parse(s, ec,
-        rfc::query_bnf{t}))
+        query_bnf{t}))
         return {};
     return query_params_view(
         t.str(), t.size());

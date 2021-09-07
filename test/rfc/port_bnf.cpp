@@ -15,7 +15,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 class port_bnf_test
 {
@@ -61,6 +60,5 @@ TEST_SUITE(
     port_bnf_test,
     "boost.url.port_bnf");
 
-} // rfc
 } // urls
 } // boost

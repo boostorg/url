@@ -16,7 +16,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 class scheme_bnf_test
 {
@@ -61,6 +60,5 @@ TEST_SUITE(
     scheme_bnf_test,
     "boost.url.scheme_bnf");
 
-} // rfc
 } // urls
 } // boost

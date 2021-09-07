@@ -15,7 +15,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 class ipv_future_bnf_test
 {
@@ -40,6 +39,5 @@ TEST_SUITE(
     ipv_future_bnf_test,
     "boost.url.ipv_future_bnf");
 
-} // rfc
 } // urls
 } // boost

@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_FRAGMENT_BNF_HPP
-#define BOOST_URL_RFC_FRAGMENT_BNF_HPP
+#ifndef BOOST_URL_FRAGMENT_BNF_HPP
+#define BOOST_URL_FRAGMENT_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -17,7 +17,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 /** BNF for fragment
 
@@ -43,7 +42,6 @@ struct fragment_bnf
         fragment_bnf const& t);
 };
 
-} // rfc
 } // urls
 } // boost
 

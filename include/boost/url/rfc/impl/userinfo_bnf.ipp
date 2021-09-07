@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_USERINFO_BNF_IPP
-#define BOOST_URL_RFC_IMPL_USERINFO_BNF_IPP
+#ifndef BOOST_URL_IMPL_USERINFO_BNF_IPP
+#define BOOST_URL_IMPL_USERINFO_BNF_IPP
 
 #include <boost/url/rfc/userinfo_bnf.hpp>
 #include <boost/url/error.hpp>
@@ -20,7 +20,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 bool
 parse(
@@ -53,7 +52,6 @@ parse(
     return true;
 }
 
-} // rfc
 } // urls
 } // boost
 

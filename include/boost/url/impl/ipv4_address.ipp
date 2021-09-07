@@ -129,7 +129,7 @@ make_ipv4_address(
     string_view s,
     error_code& ec) noexcept
 {
-    rfc::ipv4_address_bnf t;
+    ipv4_address_bnf t;
     using bnf::parse;
     if(! parse(s, ec, t))
         return {};

@@ -344,7 +344,7 @@ public:
             return string_type<Allocator>(
                 s0.data(), s0.size(), a);
         }
-        return rfc::pct_decode_unchecked(
+        return pct_decode_unchecked(
             s0, pt_.decoded[id_host], a);
     }
 

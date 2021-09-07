@@ -15,7 +15,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 class hier_part_bnf_test
 {
@@ -69,6 +68,5 @@ TEST_SUITE(
     hier_part_bnf_test,
     "boost.url.hier_part_bnf");
 
-} // rfc
 } // urls
 } // boost

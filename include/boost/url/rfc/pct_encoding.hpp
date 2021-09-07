@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_PCT_ENCODING_HPP
-#define BOOST_URL_RFC_PCT_ENCODING_HPP
+#ifndef BOOST_URL_PCT_ENCODING_HPP
+#define BOOST_URL_PCT_ENCODING_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -17,7 +17,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 #if 0
 template<class CharSet>
@@ -95,7 +94,6 @@ key_equal_encoded(
     string_view plain_key,
     pct_encoded_str encoded) noexcept;
 
-} // rfc
 } // urls
 } // boost
 

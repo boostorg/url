@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_DETAIL_PATHS_HPP
-#define BOOST_URL_RFC_DETAIL_PATHS_HPP
+#ifndef BOOST_URL_DETAIL_PATHS_HPP
+#define BOOST_URL_DETAIL_PATHS_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -18,7 +18,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 namespace detail {
 
 struct segment_bnf
@@ -365,7 +364,6 @@ struct path_empty_bnf
 };
 
 } // detail
-} // rfc
 } // urls
 } // boost
 

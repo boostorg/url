@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_SCHEME_BNF_HPP
-#define BOOST_URL_RFC_SCHEME_BNF_HPP
+#ifndef BOOST_URL_SCHEME_BNF_HPP
+#define BOOST_URL_SCHEME_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -17,7 +17,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 /** BNF for scheme
 
@@ -44,7 +43,6 @@ struct scheme_bnf
         scheme_bnf& t);
 };
 
-} // rfc
 } // urls
 } // boost
 

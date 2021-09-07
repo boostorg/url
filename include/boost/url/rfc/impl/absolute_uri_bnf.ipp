@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_ABSOLUTE_URI_BNF_IPP
-#define BOOST_URL_RFC_IMPL_ABSOLUTE_URI_BNF_IPP
+#ifndef BOOST_URL_IMPL_ABSOLUTE_URI_BNF_IPP
+#define BOOST_URL_IMPL_ABSOLUTE_URI_BNF_IPP
 
 #include <boost/url/rfc/absolute_uri_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
@@ -19,7 +19,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 bool
 parse(
@@ -60,7 +59,6 @@ parse(
     return true;
 }
 
-} // rfc
 } // urls
 } // boost
 

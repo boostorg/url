@@ -19,7 +19,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 class char_sets_test
 {
@@ -174,6 +173,5 @@ TEST_SUITE(
     char_sets_test,
     "boost.url.char_sets");
 
-} // rfc
 } // urls
 } // boost

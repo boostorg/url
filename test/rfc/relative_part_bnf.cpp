@@ -15,7 +15,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 class relative_part_bnf_test
 {
@@ -67,6 +66,5 @@ TEST_SUITE(
     relative_part_bnf_test,
     "boost.url.relative_part_bnf");
 
-} // rfc
 } // urls
 } // boost

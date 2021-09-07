@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_RELATIVE_REF_BNF_HPP
-#define BOOST_URL_RFC_RELATIVE_REF_BNF_HPP
+#ifndef BOOST_URL_RELATIVE_REF_BNF_HPP
+#define BOOST_URL_RELATIVE_REF_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -21,7 +21,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 /** BNF for relative-ref
 
@@ -50,7 +49,6 @@ struct relative_ref_bnf
         relative_ref_bnf& t);
 };
 
-} // rfc
 } // urls
 } // boost
 

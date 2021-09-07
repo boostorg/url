@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_CHAR_SETS_HPP
-#define BOOST_URL_RFC_CHAR_SETS_HPP
+#ifndef BOOST_URL_CHAR_SETS_HPP
+#define BOOST_URL_CHAR_SETS_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/bnf/char_set.hpp>
@@ -16,7 +16,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 #ifndef BOOST_URL_DOCS
 namespace detail {
@@ -219,7 +218,6 @@ constexpr std::uint8_t pchar_mask =
     colon_char_mask |
     at_char_mask;
 
-} // rfc
 } // urls
 } // boost
 

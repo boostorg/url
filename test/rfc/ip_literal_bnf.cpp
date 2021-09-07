@@ -15,7 +15,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 class ip_literal_bnf_test
 {
@@ -41,6 +40,5 @@ TEST_SUITE(
     ip_literal_bnf_test,
     "boost.url.ip_literal_bnf");
 
-} // rfc
 } // urls
 } // boost

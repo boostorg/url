@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_FRAGMENT_BNF_IPP
-#define BOOST_URL_RFC_IMPL_FRAGMENT_BNF_IPP
+#ifndef BOOST_URL_IMPL_FRAGMENT_BNF_IPP
+#define BOOST_URL_IMPL_FRAGMENT_BNF_IPP
 
 #include <boost/url/rfc/fragment_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
@@ -17,7 +17,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 bool
 parse(
@@ -34,7 +33,6 @@ parse(
             question_char_mask>{t.v});
 }
 
-} // rfc
 } // urls
 } // boost
 

@@ -159,8 +159,8 @@ parse_query_params(
 */
 class query_params_view::value_type
 {
-    rfc::pct_encoded_str k_;
-    rfc::pct_encoded_str v_;
+    pct_encoded_str k_;
+    pct_encoded_str v_;
     bool has_value_ = false;
 
     friend class iterator;
@@ -210,7 +210,7 @@ public:
     string_type<Allocator>
     key(Allocator const& a = {}) const
     {
-        return rfc::pct_decode_unchecked(
+        return pct_decode_unchecked(
             k_.str, k_.decoded_size, a);
     }
 
@@ -236,7 +236,7 @@ public:
     string_type<Allocator>
     value(Allocator const& a = {}) const
     {
-        return rfc::pct_decode_unchecked(
+        return pct_decode_unchecked(
             v_.str, v_.decoded_size, a);
     }
 

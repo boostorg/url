@@ -17,7 +17,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 class absolute_uri_bnf_test
 {
@@ -56,6 +55,5 @@ TEST_SUITE(
     absolute_uri_bnf_test,
     "boost.url.absolute_uri_bnf");
 
-} // rfc
 } // urls
 } // boost

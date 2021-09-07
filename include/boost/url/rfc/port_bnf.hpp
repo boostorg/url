@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_PORT_BNF_HPP
-#define BOOST_URL_RFC_PORT_BNF_HPP
+#ifndef BOOST_URL_PORT_BNF_HPP
+#define BOOST_URL_PORT_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -18,7 +18,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 /** BNF for port
 
@@ -49,7 +48,6 @@ struct port_bnf
         port_bnf& t);
 };
 
-} // rfc
 } // urls
 } // boost
 

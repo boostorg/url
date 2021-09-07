@@ -649,7 +649,7 @@ static
 void
 apply_host(
     parts& p,
-    rfc::host_bnf const& h)
+    host_bnf const& h)
 {
     p.host_type = h.host_type();
     switch(h.host_type())
@@ -702,7 +702,7 @@ static
 void
 apply_authority(
     parts& p, optional<
-        rfc::authority_bnf> const& t)
+        authority_bnf> const& t)
 {
     if(! t.has_value())
     {
@@ -753,7 +753,7 @@ apply_authority(
 static
 void
 apply_path(parts& p, bnf::range<
-    rfc::pct_encoded_str> const& t)
+    pct_encoded_str> const& t)
 {
     p.resize(
         part::id_path,
@@ -764,7 +764,7 @@ static
 void
 apply_query(parts& p,
     optional<bnf::range<
-        rfc::query_param>> const& t)
+        query_param>> const& t)
 {
     if(t.has_value())
         p.resize(
@@ -776,7 +776,7 @@ static
 void
 apply_fragment(
     parts& p,
-    optional<rfc::pct_encoded_str> const& t)
+    optional<pct_encoded_str> const& t)
 {
     if(t.has_value())
         p.resize(
@@ -793,7 +793,7 @@ parse_uri(
     string_view s,
     error_code& ec) noexcept
 {
-    rfc::uri_bnf t;
+    uri_bnf t;
     if(! bnf::parse(s, ec, t))
         return none;
     detail::parts p;
@@ -840,7 +840,7 @@ parse_relative_ref(
     string_view s,
     error_code& ec) noexcept
 {
-    rfc::relative_ref_bnf t;
+    relative_ref_bnf t;
     if(! bnf::parse(s, ec, t))
         return none;
     detail::parts p;

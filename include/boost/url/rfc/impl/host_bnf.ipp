@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_HOST_BNF_IPP
-#define BOOST_URL_RFC_IMPL_HOST_BNF_IPP
+#ifndef BOOST_URL_IMPL_HOST_BNF_IPP
+#define BOOST_URL_IMPL_HOST_BNF_IPP
 
 #include <boost/url/rfc/host_bnf.hpp>
 #include <boost/url/rfc/ip_literal_bnf.hpp>
@@ -16,7 +16,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 host_bnf::
 ~host_bnf() noexcept = default;
@@ -89,7 +88,6 @@ finish:
     return true;
 }
 
-} // rfc
 } // urls
 } // boost
 

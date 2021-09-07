@@ -14,7 +14,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 class pct_encoded_bnf_test
 {
@@ -29,6 +28,5 @@ TEST_SUITE(
     pct_encoded_bnf_test,
     "boost.url.pct_encoded_bnf");
 
-} // rfc
 } // urls
 } // boost

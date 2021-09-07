@@ -20,7 +20,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 BOOST_STATIC_ASSERT(
     std::is_copy_constructible<
@@ -92,6 +91,5 @@ TEST_SUITE(
     host_bnf_test,
     "boost.url.host_bnf");
 
-} // rfc
 } // urls
 } // boost

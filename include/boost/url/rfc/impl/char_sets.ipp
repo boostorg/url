@@ -7,14 +7,13 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_CHAR_SETS_IPP
-#define BOOST_URL_RFC_IMPL_CHAR_SETS_IPP
+#ifndef BOOST_URL_IMPL_CHAR_SETS_IPP
+#define BOOST_URL_IMPL_CHAR_SETS_IPP
 
 #include <boost/url/rfc/char_sets.hpp>
 
 namespace boost {
 namespace urls {
-namespace rfc {
 namespace detail {
 
 std::uint8_t
@@ -38,7 +37,6 @@ char_set_flags[256] = {
 };
 
 } // detail
-} // rfc
 } // urls
 } // boost
 

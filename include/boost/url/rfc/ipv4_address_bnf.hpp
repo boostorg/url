@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IPV4_ADDRESS_BNF_HPP
-#define BOOST_URL_RFC_IPV4_ADDRESS_BNF_HPP
+#ifndef BOOST_URL_IPV4_ADDRESS_BNF_HPP
+#define BOOST_URL_IPV4_ADDRESS_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -19,7 +19,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 /** BNF for IPv4address
 
@@ -55,7 +54,6 @@ struct ipv4_address_bnf
         ipv4_address_bnf& t);
 };
 
-} // rfc
 } // urls
 } // boost
 

@@ -7,15 +7,14 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_PCT_ENCODED_BNF_IPP
-#define BOOST_URL_RFC_IMPL_PCT_ENCODED_BNF_IPP
+#ifndef BOOST_URL_IMPL_PCT_ENCODED_BNF_IPP
+#define BOOST_URL_IMPL_PCT_ENCODED_BNF_IPP
 
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
 #include <boost/url/bnf/char_set.hpp>
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 // returns true if plain_key == decode(encoded)
 bool
@@ -54,7 +53,6 @@ key_equal_encoded(
     }
 }
 
-} // rfc
 } // urls
 } // boost
 

@@ -16,7 +16,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 class ipv6_address_bnf_test
 {
@@ -172,6 +171,5 @@ TEST_SUITE(
     ipv6_address_bnf_test,
     "boost.url.ipv6_address_bnf");
 
-} // rfc
 } // urls
 } // boost

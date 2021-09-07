@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_HIER_PART_HPP
-#define BOOST_URL_RFC_HIER_PART_HPP
+#ifndef BOOST_URL_HIER_PART_HPP
+#define BOOST_URL_HIER_PART_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -19,7 +19,6 @@
 
 namespace boost {
 namespace urls {
-namespace rfc {
 
 /** BNF for hier-part
 
@@ -49,7 +48,6 @@ struct hier_part_bnf
         hier_part_bnf& t);
 };
 
-} // rfc
 } // urls
 } // boost
 
