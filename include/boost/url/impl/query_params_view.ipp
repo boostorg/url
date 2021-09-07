@@ -189,9 +189,8 @@ parse_query_params(
 {
     error_code ec;
     auto qp = parse_query_params(s, ec);
-    if(ec.failed())
-        detail::throw_system_error(
-            ec, BOOST_CURRENT_LOCATION);
+    detail::maybe_throw(ec,
+        BOOST_CURRENT_LOCATION);
     return qp;
 }
 

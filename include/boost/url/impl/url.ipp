@@ -990,6 +990,23 @@ set_encoded_path(
     return *this;
 }
 
+path_view
+url::
+path() const noexcept
+{
+    return path_view(
+        pt_.get(detail::id_path, s_),
+            pt_.nseg);
+}
+
+auto
+url::
+path() noexcept ->
+    segments_type
+{
+    return segments_type(*this);
+}
+
 //----------------------------------------------------------
 //
 // query

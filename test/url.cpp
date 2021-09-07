@@ -539,18 +539,16 @@ public:
     void
     testSegments()
     {
-        // segments() const
+        // path() const
         {
             url const v("/path/to/file.txt");
-            auto ps = v.segments();
-            static_assert(
-                std::is_same<decltype(ps),
-                    url_view::segments_type>::value, "");
+            auto ps = v.path();
+            // ?
         }
 
         {
             url v("/path/to/file.txt");
-            auto ps = v.segments();
+            auto ps = v.path();
             BOOST_TEST(! ps.empty());
             BOOST_TEST(ps.size() == 3);
             BOOST_TEST(ps.begin() != ps.end());
@@ -578,7 +576,7 @@ public:
         }
         {
             url u("http://user:pass@example.com:80?k1=v1&k2=v2");
-            auto ps = u.segments();
+            auto ps = u.path();
             BOOST_TEST(ps.empty());
             ps.insert_encoded(
                 ps.insert_encoded(

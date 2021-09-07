@@ -396,9 +396,15 @@ string_view
 url_view::
 encoded_path() const noexcept
 {
-    return pt_.get(
-        id_path,
-        s_);
+    return get(id_path);
+}
+
+path_view
+url_view::
+path() const noexcept
+{
+    return path_view(
+        get(id_path), pt_.nseg);
 }
 
 //----------------------------------------------------------
@@ -478,167 +484,6 @@ encoded_fragment() const noexcept
     BOOST_ASSERT(
         s.starts_with('#'));
     return s.substr(1);
-}
-
-//----------------------------------------------------------
-//
-// segments_type
-//
-//----------------------------------------------------------
-
-url_view::
-segments_type::
-iterator::
-iterator() noexcept
-    : s_(nullptr)
-    , pt_(nullptr)
-    , off_(0)
-    , n_(0)
-{
-}
-
-url_view::
-segments_type::
-iterator::
-iterator(
-    segments_type const* v,
-    bool end) noexcept
-    : s_(v->s_)
-    , pt_(v->pt_)
-{
-    if(! pt_)
-    {
-        off_ = 0;
-        n_ = 0;
-    }
-    else if( end ||
-        pt_->nseg == 0)
-    {
-        off_ = pt_->offset[
-            id_query];
-        n_ = 0;
-    }
-    else
-    {
-        off_ = pt_->offset[
-            id_path];
-        parse();
-    }
-}
-
-auto
-url_view::
-segments_type::
-iterator::
-operator*() const noexcept ->
-    value_type
-{
-    string_view s = {
-        s_ + off_, n_ };
-    if(! s.empty() &&
-        s.front() == '/')
-        s = s.substr(1);    
-    return value_type(s);
-}
-
-auto
-url_view::
-segments_type::
-iterator::
-operator++() noexcept ->
-    iterator&
-{
-    BOOST_ASSERT(
-        off_ != pt_->offset[
-            id_frag]);
-    off_ = off_ + n_;
-    if(off_ == pt_->offset[
-        id_frag])
-    {
-        // end
-        n_ = 0;
-    }
-    else
-    {
-        parse();
-    }
-    return *this;
-}
-
-auto
-url_view::
-segments_type::
-iterator::
-operator--() noexcept ->
-    iterator&
-{
-    BOOST_ASSERT(
-        off_ != pt_->offset[
-            id_path]);
-    auto const begin =
-        s_ + pt_->offset[
-            id_path];
-    auto p = s_ + off_;
-    while(--p > begin)
-    {
-        if(*p == '/')
-        {
-            off_ = p - s_;
-            parse();
-            return *this;
-        }
-    }
-    // fails for relative-uri
-    //BOOST_ASSERT(*p == '/');
-    auto const off = p - s_;
-    n_ = off_ - off;
-    off_ = off;
-    return *this;
-}
-
-void
-url_view::
-segments_type::
-iterator::
-parse() noexcept
-{
-    BOOST_ASSERT(off_ !=
-        pt_->offset[
-            id_frag]);
-    auto const end =
-        s_ + pt_->offset[
-            id_frag];
-    auto const p0 = s_ + off_;
-    auto p = p0;
-    if(*p == '/')
-        ++p;
-    while(p < end)
-    {
-        if(*p == '/')
-            break;
-        ++p;
-    }
-    n_ = p - p0;
-}
-
-//----------------------------------------------------------
-
-auto
-url_view::
-segments_type::
-begin() const noexcept ->
-    iterator
-{
-    return iterator(this, false);
-}
-
-auto
-url_view::
-segments_type::
-end() const noexcept ->
-    iterator
-{
-    return iterator(this, true);
 }
 
 //------------------------------------------------
@@ -758,6 +603,7 @@ apply_path(parts& p, bnf::range<
     p.resize(
         part::id_path,
         t.str().size());
+    p.nseg = t.size();
 }
 
 static
@@ -767,9 +613,12 @@ apply_query(parts& p,
         query_param>> const& t)
 {
     if(t.has_value())
+    {
         p.resize(
             part::id_query,
             t->str().size() + 1);
+        p.nparam = t->size();
+    }
 }
 
 static

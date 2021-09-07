@@ -15,6 +15,7 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/optional.hpp>
+#include <boost/url/path_view.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <boost/url/detail/char_type.hpp>
 #include <cstdint>
@@ -65,8 +66,6 @@ class url_view
     std::size_t len(int id) const noexcept;
 
 public:
-    class segments_type;
-
     /** Constructor
     */
     // VFALCO DEPRECATED
@@ -429,11 +428,11 @@ public:
     string_view
     encoded_path() const noexcept;
 
-    /** Return the path segments as a read-only range
+    /** Return the path segments as a read-only forward range
     */
-    inline
-    segments_type
-    segments() const noexcept;
+    BOOST_URL_DECL
+    path_view
+    path() const noexcept;
 
     //------------------------------------------------------
     //
@@ -508,7 +507,7 @@ public:
             encoded_query(), a);
     }
 
-    /** Return the query parameters as a read-only container.
+    /** Return the query parameters as a read-only forward range
     */
     BOOST_URL_DECL
     query_params_view
@@ -664,179 +663,6 @@ BOOST_URL_DECL
 url_view
 parse_relative_ref(
     string_view s);
-
-//----------------------------------------------------------
-
-/** A read-only view to the path segments.
-*/
-class url_view::segments_type
-{
-    char const* s_ = nullptr;
-    detail::parts const* pt_ = nullptr;
-
-public:
-    class value_type;
-    class iterator;
-    using const_iterator = iterator;
-
-    segments_type() = default;
-    segments_type(segments_type const&) = default;
-    segments_type& operator=(
-        segments_type const&) = default;
-
-    explicit
-    segments_type(url_view const& v) noexcept
-        : s_(v.s_)
-        , pt_(&v.pt_)
-    {
-    }
-
-    inline
-    explicit
-    segments_type( url const& v) noexcept;
-
-    bool
-    empty() const noexcept
-    {
-        return size() == 0;
-    }
-
-    std::size_t
-    size() const noexcept
-    {
-        return (pt_ == nullptr) ? 0 :
-            pt_->nseg;
-    }
-
-    BOOST_URL_DECL
-    iterator
-    begin() const noexcept;
-
-    BOOST_URL_DECL
-    iterator
-    end() const noexcept;
-};
-
-//----------------------------------------------------------
-
-class url_view::segments_type::value_type
-{
-    string_view s_;
-
-    friend class segments_type;
-
-    explicit
-    value_type(
-        string_view s) noexcept
-        : s_(s)
-    {
-    }
-
-public:
-    value_type() = delete;
-    value_type& operator=(
-        value_type const&) = delete;
-
-    value_type(
-        value_type const&) = default;
-
-    string_view
-    encoded_string() const noexcept
-    {
-        return s_;
-    }
-
-    template<
-        class Allocator =
-            std::allocator<char>>
-    string_type<Allocator>
-    string(Allocator const& a = {}) const
-    {
-        return detail::decode(
-            encoded_string(), a);
-    }
-
-    value_type const*
-    operator->() const noexcept
-    {
-        return this;
-    }
-};
-
-//----------------------------------------------------------
-
-class url_view::segments_type::iterator
-{
-    friend segments_type;
-
-    char const* s_;
-    detail::parts const* pt_;
-    std::size_t off_;
-    std::size_t n_;
-
-    BOOST_URL_DECL
-    iterator(
-        segments_type const* v,
-        bool end) noexcept;
-
-public:
-    using value_type =
-        segments_type::value_type;
-
-    BOOST_URL_DECL
-    iterator() noexcept;
-
-    BOOST_URL_DECL
-    value_type
-    operator*() const noexcept;
-
-    value_type
-    operator->() const noexcept
-    {
-        return operator*();
-    }
-
-    inline
-    bool
-    operator==(
-        iterator other) const noexcept;
-
-    bool
-    operator!=(
-        iterator other) const noexcept
-    {
-        return !(*this == other);
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator++() noexcept;
-
-    iterator
-    operator++(int) noexcept
-    {
-        auto tmp = *this;
-        ++*this;
-        return tmp;
-    }
-
-    BOOST_URL_DECL
-    iterator&
-    operator--() noexcept;
-
-    iterator
-    operator--(int) noexcept
-    {
-        auto tmp = *this;
-        --*this;
-        return tmp;
-    }
-
-private:
-    inline
-    void
-    parse() noexcept;
-};
 
 } // urls
 } // boost

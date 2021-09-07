@@ -13,32 +13,6 @@
 namespace boost {
 namespace urls {
 
-bool
-url_view::
-segments_type::
-iterator::
-operator==(
-    iterator other) const noexcept
-{
-    BOOST_ASSERT(
-        pt_ != other.pt_ ||
-        off_ != other.off_ ||
-        n_ == other.n_);
-    return
-        pt_ == other.pt_ &&
-        off_ == other.off_;
-}
-
-//----------------------------------------------------------
-
-auto
-url_view::
-segments() const noexcept ->
-    segments_type
-{
-    return segments_type(*this);
-}
-
 } // urls
 } // boost
 

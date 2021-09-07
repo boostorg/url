@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/hier_part_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/detail/paths.hpp>
+#include <boost/url/rfc/detail/paths_bnf.hpp>
 
 namespace boost {
 namespace urls {

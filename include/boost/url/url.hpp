@@ -11,6 +11,7 @@
 #define BOOST_URL_URL_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/path_view.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/detail/char_type.hpp>
@@ -44,8 +45,6 @@ namespace urls {
 */
 class url
 {
-    friend class url_view::segments_type;
-
     class modify;
 
     storage_ptr sp_;
@@ -1142,9 +1141,9 @@ public:
 
         @see url_view::segments_type
     */
-    inline
-    url_view::segments_type
-    segments() const noexcept;
+    BOOST_URL_DECL
+    path_view
+    path() const noexcept;
 
     /** Return the path.
 
@@ -1159,9 +1158,9 @@ public:
 
         @see segments_type
     */
-    inline
+    BOOST_URL_DECL
     segments_type
-    segments() noexcept;
+    path() noexcept;
 
     //------------------------------------------------------
     //
