@@ -34,10 +34,14 @@ enum class host_type
     name,
 
     /** A host is specified by IPv4address.
+
+        @see ipv4_address
     */
     ipv4,
 
     /** A host is specified by IPv6address.
+
+        @see ipv6_address
     */
     ipv6,
 

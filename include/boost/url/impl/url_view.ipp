@@ -17,6 +17,7 @@
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/uri_bnf.hpp>
 #include <boost/url/rfc/relative_ref_bnf.hpp>
+#include <array>
 
 namespace boost {
 namespace urls {
@@ -301,6 +302,28 @@ encoded_password() const noexcept
 }
 
 // host
+
+string_view
+url_view::
+encoded_hostname() const noexcept
+{
+    return get(detail::id_host);
+}
+
+urls::ipv4_address
+url_view::
+ipv4_address() const noexcept
+{
+    BOOST_ASSERT(pt_.host_type ==
+        host_type::ipv4);
+    std::array<
+        unsigned char, 4> bytes;
+    std::memcpy(
+        &bytes[0],
+        &pt_.ip_addr[0], 4);
+    return urls::ipv4_address(
+        bytes);
+}
 
 string_view
 url_view::
@@ -614,6 +637,44 @@ namespace detail {
 
 static
 void
+apply_host(
+    parts& p,
+    rfc::host_bnf const& h)
+{
+    p.host_type = h.host_type();
+    switch(h.host_type())
+    {
+    default:
+    case urls::host_type::none:
+        break;
+    case urls::host_type::name:
+        break;
+    case urls::host_type::ipv4:
+    {
+        auto const bytes =
+            h.get_ipv4().to_bytes();
+        std::memcpy(
+            &p.ip_addr[0],
+            bytes.data(), 4);
+        break;
+    }
+    case urls::host_type::ipv6:
+        break;
+    case urls::host_type::ipvfuture:
+        break;
+    }
+
+    if(h.host_type() !=
+        host_type::none)
+    {
+        p.resize(
+            part::id_host,
+            h.str().size());
+    }
+}
+
+static
+void
 apply_authority(
     parts& p, optional<
         rfc::authority_bnf> const& t)
@@ -651,13 +712,7 @@ apply_authority(
         p.resize(part::id_user, 2);
     }
 
-    auto const& h = t->host;
-    if(h.kind() != rfc::host_kind::none)
-    {
-        p.resize(
-            part::id_host,
-            h.str().size());
-    }
+    apply_host(p, t->host);
 
     if(t->port.has_value())
     {

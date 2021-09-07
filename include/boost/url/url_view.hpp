@@ -11,6 +11,7 @@
 #define BOOST_URL_URL_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/ipv4_address.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/optional.hpp>
 #include <boost/url/detail/parts.hpp>
@@ -269,7 +270,7 @@ public:
 
     //--------------------------------------------
 
-    /** Return the type of host present, if any.
+    /** Return the type of host present, if any
 
         @par Exception Safety
 
@@ -278,8 +279,20 @@ public:
     urls::host_type
     host_type() const noexcept
     {
-        return pt_.host;
+        return pt_.host_type;
     }
+
+    /** Return the host name string if it exists, or an empty string
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_hostname() const noexcept;
+
+    /** Return the ipv4 address if it exists
+    */
+    BOOST_URL_DECL
+    urls::ipv4_address
+    ipv4_address() const noexcept;
 
     /** Return the host and port.
 
@@ -323,15 +336,15 @@ public:
     host(
         Allocator const& a = {}) const
     {
-        if(pt_.host != urls::host_type::name)
+        auto const s0 = encoded_host();
+        if(pt_.host_type !=
+            urls::host_type::name)
         {
-            auto const s =  pt_.get(
-                detail::id_host, s_);
+            // no decoding
             return string_type<Allocator>(
-                s.data(), s.size(), a);
+                s0.data(), s0.size(), a);
         }
-        return detail::decode(
-            encoded_host(), a);
+        return detail::decode(s0, a);
     }
 
     /** Return the host.

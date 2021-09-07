@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/host_type.hpp>
 #include <boost/url/rfc/ipv4_address_bnf.hpp>
 #include <boost/url/rfc/ipv6_address_bnf.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
@@ -20,17 +21,6 @@
 namespace boost {
 namespace urls {
 namespace rfc {
-
-/** The kind of host
-*/
-enum class host_kind
-{
-    none,
-    ipv4,
-    ipv6,
-    ipv_future,
-    domain
-};
 
 /** BNF for host
 
@@ -44,70 +34,63 @@ enum class host_kind
 */
 class host_bnf
 {
-    host_kind kind_ =
-        host_kind::none;
-    string_view s_;
-
-    union
-    {
-        ipv4_address_bnf ipv4_;
-        ipv6_address_bnf ipv6_;
-        pct_encoded_str domain_{};
-        string_view fut_;
-    };
-
-    void destroy();
+    string_view str_;
+    pct_encoded_str name_;
+    ipv4_address ipv4_;
+    ipv6_address_bnf ipv6_;
+    string_view ipvfuture_;
+    host_type host_type_ =
+        host_type::none;
 
 public:
-    host_bnf()
-    {
-    }
+    BOOST_URL_DECL
+    ~host_bnf() noexcept;
 
     BOOST_URL_DECL
-    ~host_bnf();
+    host_bnf() noexcept;
 
     string_view
     str() const noexcept
     {
-        return s_;
+        return str_;
     }
 
-    host_kind
-    kind() const noexcept
+    urls::host_type
+    host_type() const noexcept
     {
-        return kind_;
+        return host_type_;
     }
 
-    ipv4_address_bnf const&
+    pct_encoded_str
+    get_name() const noexcept
+    {
+        BOOST_ASSERT(host_type_ ==
+            urls::host_type::name);
+        return name_;
+    }
+
+    ipv4_address const&
     get_ipv4() const noexcept
     {
-        BOOST_ASSERT(kind_ ==
-            host_kind::ipv4);
+        BOOST_ASSERT(host_type_ ==
+            urls::host_type::ipv4);
         return ipv4_;
     }
 
     ipv6_address_bnf const&
     get_ipv6() const noexcept
     {
-        BOOST_ASSERT(kind_ ==
-            host_kind::ipv6);
+        BOOST_ASSERT(host_type_ ==
+            urls::host_type::ipv6);
         return ipv6_;
     }
 
     string_view
     get_ipv_future() const noexcept
     {
-        BOOST_ASSERT(kind_ ==
-            host_kind::ipv_future);
-        return fut_;
-    }
-
-    pct_encoded_str
-    get_domain() const noexcept
-    {
-        BOOST_ASSERT(kind_ ==
-            host_kind::domain);
-        return domain_;
+        BOOST_ASSERT(host_type_ ==
+            urls::host_type::ipvfuture);
+        return ipvfuture_;
     }
 
     BOOST_URL_DECL

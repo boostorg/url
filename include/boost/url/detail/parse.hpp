@@ -295,7 +295,8 @@ struct parser
             return;
         }
         ++p_;
-        pt.host = host_type::ipv6;
+        pt.host_type =
+            urls::host_type::ipv6;
     }
 
     void
@@ -306,7 +307,8 @@ struct parser
         auto const p0 = p_;
         if(match_ip_v4())
         {
-            pt.host = host_type::ipv4;
+            pt.host_type =
+                urls::host_type::ipv4;
             auto const p1 = p_;
             auto const e =
                 reg_name_pct_set();
@@ -314,7 +316,8 @@ struct parser
             if(ec)
                 return;
             if(p_ != p1)
-                pt.host = host_type::name;
+                pt.host_type =
+                    urls::host_type::name;
             return;
         }
         auto const e =
@@ -323,7 +326,8 @@ struct parser
         if(ec)
             return;
         if(p_ != p0)
-            pt.host = host_type::name;
+            pt.host_type =
+                urls::host_type::name;
     }
 
     short
@@ -981,7 +985,7 @@ parse_plain_hostname(
     {
         if(ec != error::no_match)
         {
-            pt.host = host_type::name;
+            pt.host_type = host_type::name;
             return;
         }
         ec = {};
@@ -989,10 +993,10 @@ parse_plain_hostname(
         {
             if(pr.done())
             {
-                pt.host = host_type::ipv4;
+                pt.host_type = host_type::ipv4;
                 return;
             }
-            pt.host = host_type::name;
+            pt.host_type = host_type::name;
             return;
         }
     }
@@ -1000,7 +1004,7 @@ parse_plain_hostname(
     {
         return;
     }
-    pt.host = host_type::name;
+    pt.host_type = host_type::name;
 }
 
 inline

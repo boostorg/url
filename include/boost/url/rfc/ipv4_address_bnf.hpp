@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/ipv4_address.hpp>
 #include <boost/url/string.hpp>
 #include <array>
 #include <cstdint>
@@ -42,7 +43,7 @@ struct ipv4_address_bnf
         std::array<std::uint8_t, 4>;
 
     string_view str;
-    value_type octets;
+    ipv4_address addr;
 
     BOOST_URL_DECL
     friend

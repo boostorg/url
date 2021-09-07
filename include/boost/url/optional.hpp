@@ -14,10 +14,19 @@
 #include <boost/url/detail/except.hpp>
 #include <boost/assert.hpp>
 #include <boost/none.hpp>
+#include <boost/optional.hpp>
+
 #include <utility>
 
 namespace boost {
 namespace urls {
+
+#if 1
+
+template<class T>
+using optional = boost::optional<T>;
+
+#else
 
 /** A simplified C++11 optional
 */
@@ -259,6 +268,8 @@ operator!=(
         return true;
     return t != *u;
 }
+
+#endif
 
 } // urls
 } // boost

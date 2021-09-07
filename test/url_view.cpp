@@ -20,230 +20,7 @@ namespace urls {
 class url_view_test
 {
 public:
-    test_suite::log_type log;
-
-    void
-    testView()
-    {
-        BOOST_TEST(url_view().host_type() == host_type::none);
-        BOOST_TEST(url_view("//").host_type() == host_type::none);
-        BOOST_TEST(url_view("//127.0.0.1").host_type() == host_type::ipv4);
-        BOOST_TEST(url_view("//0.0.0.0").host_type() == host_type::ipv4);
-        BOOST_TEST(url_view("//255.255.255.255").host_type() == host_type::ipv4);
-        BOOST_TEST(url_view("//0.0.0.").host_type() == host_type::name);
-        BOOST_TEST(url_view("//127.00.0.1").host_type() == host_type::name);
-        BOOST_TEST(url_view("//999.0.0.0").host_type() == host_type::name);
-        BOOST_TEST(url_view("//example.com").host_type() == host_type::name);
-        BOOST_TEST(url_view("//127.0.0.1.9").host_type() == host_type::name);
-
-        url_view const v("http://username:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
-        BOOST_TEST(v.encoded_url() == "http://username:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
-        BOOST_TEST(v.encoded_origin() == "http://username:pass@example.com:80");
-        BOOST_TEST(v.encoded_authority() == "username:pass@example.com:80");
-        BOOST_TEST(v.scheme() == "http");
-        BOOST_TEST(v.encoded_username() == "username");
-        BOOST_TEST(v.encoded_password() == "pass");
-        BOOST_TEST(v.encoded_userinfo() == "username:pass");
-        BOOST_TEST(v.encoded_host() == "example.com");
-        BOOST_TEST(v.has_port());
-        BOOST_TEST(v.port() == "80");
-        BOOST_TEST(v.encoded_host_and_port() == "example.com:80");
-        BOOST_TEST(v.encoded_path() == "/path/to/file.txt");
-        BOOST_TEST(v.encoded_query() == "k1=v1&k2=v2");
-        BOOST_TEST(v.encoded_fragment() == "");
-
-        BOOST_TEST(v.username() == "username");
-        BOOST_TEST(v.password() == "pass");
-        BOOST_TEST(v.host() == "example.com");
-        BOOST_TEST(v.query() == "k1=v1&k2=v2");
-        BOOST_TEST(v.fragment() == "");
-    }
-
-    //------------------------------------------------------
-
-    void
-    testUser()
-    {
-        BOOST_TEST(url_view().username() == "");
-        BOOST_TEST(url_view("//x/").username() == "");
-        BOOST_TEST(url_view("//x@/").username() == "x");
-        BOOST_TEST(url_view("//x:@/").username() == "x");
-        BOOST_TEST(url_view("//x:y@/").username() == "x");
-        BOOST_TEST(url_view("//:y@/").username() == "");
-        BOOST_TEST(url_view("//:@/").username() == "");
-        BOOST_TEST(url_view("//@/").username() == "");
-        BOOST_TEST(url_view("//%3A@/").username() == ":");
-
-        BOOST_TEST(url_view().encoded_username() == "");
-        BOOST_TEST(url_view("//x/").encoded_username() == "");
-        BOOST_TEST(url_view("//x@/").encoded_username() == "x");
-        BOOST_TEST(url_view("//x:@/").encoded_username() == "x");
-        BOOST_TEST(url_view("//x:y@/").encoded_username() == "x");
-        BOOST_TEST(url_view("//:y@/").encoded_username() == "");
-        BOOST_TEST(url_view("//:@/").encoded_username() == "");
-        BOOST_TEST(url_view("//@/").encoded_username() == "");
-        BOOST_TEST(url_view("//%3A@/").encoded_username() == "%3A");
-    }
-
-    //------------------------------------------------------
-
-    void
-    testHostAndPort()
-    {
-        BOOST_TEST(url_view().encoded_host_and_port() == "");
-        BOOST_TEST(url_view("//").encoded_host_and_port() == "");
-        BOOST_TEST(url_view("//x").encoded_host_and_port() == "x");
-        BOOST_TEST(url_view("//x:").encoded_host_and_port() == "x:");
-        BOOST_TEST(url_view("//x:0").encoded_host_and_port() == "x:0");
-        BOOST_TEST(url_view("//x:0/").encoded_host_and_port() == "x:0");
-    }
-
-    void
-    testIPv4()
-    {
-        BOOST_TEST(url_view().host_type() == host_type::none);
-        BOOST_TEST(url_view("//0.0.0.0").host_type() == host_type::ipv4);
-        BOOST_TEST(url_view("//255.255.255.255").host_type() == host_type::ipv4);
-        BOOST_TEST(url_view("//255.255.255.255").host_type() == host_type::ipv4);
-        BOOST_TEST(url_view("//256.255.255.255").host_type() == host_type::name);
-        BOOST_TEST(url_view("//256.255.255.").host_type() == host_type::name);
-        BOOST_TEST(url_view("//00.0.0.0").host_type() == host_type::name);
-    }
-
-    void
-    testIPv6()
-    {
-        BOOST_TEST(url_view("//[::]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[0000:0000:0000:0000:0000:0000:0000:0000]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[1234:5678:9ABC:DEF0:0000:0000:0000:0000]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[3FFE:1900:4545:3:200:F8FF:FE21:67CF]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[FE80:0:0:0:200:F8FF:FE21:67CF]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[2001:0DB8:0A0B:12F0:0000:0000:0000:0001]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[2001:DB8:3333:4444:5555:6666:7777:8888]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[2001:DB8:3333:4444:CCCC:DDDD:EEEE:FFFF]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[::]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[2001:DB8::]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[::1234:5678]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[2001:DB8::1234:5678]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[2001:0DB8:0001:0000:0000:0AB9:C0A8:0102]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[2001:DB8:1::AB9:C0A8:102]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[684D:1111:222:3333:4444:5555:6:77]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[0:0:0:0:0:0:0:0]").host_type() == host_type::ipv6);
-
-        BOOST_TEST(url_view("//[::1:2:3:4:5]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[0:0:0:1:2:3:4:5]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[1:2::3:4:5]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[1:2:0:0:0:3:4:5]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[1:2:3:4:5::]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[1:2:3:4:5:0:0:0]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[0:0:0:0:0:FFFF:102:405]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[::]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[::0]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[::1]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[0:0:0::1]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[FFFF::1]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[FFFF:0:0:0:0:0:0:1]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[2001:0DB8:0A0B:12F0:0:0:0:1]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[2001:DB8:A0B:12F0::1]").host_type() == host_type::ipv6);
-
-        BOOST_TEST(url_view("//[::FFFF:1.2.3.4]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[0:0:0:0:0:0:1.2.3.4]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[::1.2.3.4]").host_type() == host_type::ipv6);
-
-        BOOST_TEST_NO_THROW(url_view("//[fe80:0:0:0:200:f8ff:fe21:67cf]"));
-        BOOST_TEST_NO_THROW(url_view("//[2001:0db8:0a0b:12f0:0000:0000:0000:0001]"));
-        BOOST_TEST_NO_THROW(url_view("//[2001:db8:3333:4444:5555:6666:7777:8888]"));
-        BOOST_TEST_NO_THROW(url_view("//[2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF]"));
-        BOOST_TEST_NO_THROW(url_view("//[::]"));
-        BOOST_TEST_NO_THROW(url_view("//[2001:db8::]"));
-        BOOST_TEST_NO_THROW(url_view("//[::1234:5678]"));
-        BOOST_TEST_NO_THROW(url_view("//[2001:db8::1234:5678]"));
-        BOOST_TEST_NO_THROW(url_view("//[2001:0db8:0001:0000:0000:0ab9:C0A8:0102]"));
-        BOOST_TEST_NO_THROW(url_view("//[2001:db8:1::ab9:C0A8:102]"));
-        BOOST_TEST_NO_THROW(url_view("//[684D:1111:222:3333:4444:5555:6:77]"));
-        BOOST_TEST_NO_THROW(url_view("//[0:0:0:0:0:0:0:0]"));
-
-        BOOST_TEST_THROWS(url_view("http://[0]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[0:1.2.3.4]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[0:0:0:0:0:0:0::1.2.3.4]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("http://[0:0:0:0:0:0:0:1.2.3.4]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("http://[::FFFF:999.2.3.4]"), invalid_part);
-
-        // coverage
-        BOOST_TEST_THROWS(url_view("//["), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[0"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[:"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::0::]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[:0::]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[0::0:x]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[x::]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[0:12"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[0:123"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::1.]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::1.2]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::1.2"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::1.2x]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::1.2.]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::1.2.3"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::1.2.3]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::1.2.3x]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::1.2.3.]"), invalid_part);
-        BOOST_TEST_THROWS(url_view("//[::1.2.3.4x]"), invalid_part);
-
-        BOOST_TEST(url_view("//[1:2:3:4:5:6::7]").host_type() == host_type::ipv6);
-        BOOST_TEST(url_view("//[1:2:3:4:5:6:7::]").host_type() == host_type::ipv6);
-    }
-
-    void
-    testHost()
-    {
-        BOOST_TEST(url_view().host() == "");
-        BOOST_TEST(url_view("//?#").host() == "");
-        BOOST_TEST(url_view("//x?#").host() == "x");
-        BOOST_TEST(url_view("//%2F").host() == "/");
-        BOOST_TEST(url_view("//%2F?#").host() == "/");
-
-        BOOST_TEST(url_view().encoded_host() == "");
-        BOOST_TEST(url_view("//?#").encoded_host() == "");
-        BOOST_TEST(url_view("//x?#").encoded_host() == "x");
-        BOOST_TEST(url_view("//%2F").encoded_host() == "%2F");
-        BOOST_TEST(url_view("//%2F?#").encoded_host() == "%2F");
-
-        testIPv4();
-        testIPv6();
-    }
-
-    void
-    testPort()
-    {
-        BOOST_TEST(! url_view().has_port());
-        BOOST_TEST(url_view().port() == "");
-        BOOST_TEST(url_view("//x:/").port() == "");
-        BOOST_TEST(url_view("//x:/").has_port());
-        BOOST_TEST(url_view("//x:80/").port() == "80");
-        BOOST_TEST(url_view("//x:80/").has_port());
-    }
-
-    //------------------------------------------------------
-
-    void
-    testPath()
-    {
-        BOOST_TEST(url_view().encoded_path() == "");
-        BOOST_TEST(url_view("x:a").encoded_path() == "a");
-        BOOST_TEST(url_view("x:/a").encoded_path() == "/a");
-        BOOST_TEST(url_view("x://y/a").encoded_path() == "/a");
-
-        BOOST_TEST(url_view("x").encoded_path() == "x");
-        BOOST_TEST(url_view("x/").encoded_path() == "x/");
-        BOOST_TEST(url_view("x//").encoded_path() == "x//");
-
-        BOOST_TEST(url_view("/").encoded_path() == "/");
-
-        testSegments();
-    }
-
+#if 0
     void
     testSegments()
     {
@@ -295,11 +72,12 @@ public:
             BOOST_TEST(it->encoded_string() == "path");
         }
     }
+#endif
 
     //--------------------------------------------
 
     void
-    testParseUri()
+    testParse()
     {
         error_code ec;
         auto const u = urls::parse_uri(
@@ -316,22 +94,6 @@ public:
         BOOST_TEST(u->encoded_path() == "/x/y/z");
         BOOST_TEST(u->query() == "a=b&c=3");
         BOOST_TEST(u->encoded_fragment() == "frag");
-    }
-
-    void
-    testShared()
-    {
-        string_view s =
-            "http://username:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag";
-        std::shared_ptr<url_view> sp;
-        {
-            auto const u = urls::parse_uri(s);
-            sp = u.make_shared();
-            BOOST_TEST(
-                u.encoded_url().data() !=
-                sp->encoded_url().data());
-        }
-        BOOST_TEST(sp->encoded_url() == s);
     }
 
     void
@@ -432,6 +194,38 @@ public:
             BOOST_TEST(u.has_password() == false);
             BOOST_TEST(u.encoded_password() == "");
             BOOST_TEST(u.password() == "");
+        }
+    }
+
+    void
+    testHost()
+    {
+        {
+            auto u = parse_uri(
+                "http://www.example.com/");
+            BOOST_TEST(u.encoded_hostname() ==
+                "www.example.com");
+            BOOST_TEST(u.host_type() ==
+                host_type::name);
+        }
+        {
+            auto u = parse_uri(
+                "http://192.168.0.1/");
+            BOOST_TEST(u.host_type() ==
+                host_type::ipv4);
+            BOOST_TEST(u.encoded_hostname() ==
+                "192.168.0.1");
+            BOOST_TEST(
+                u.ipv4_address().to_uint() ==
+                    0xc0a80001);
+        }
+        {
+            auto u = parse_uri(
+                "http://[1::6:192.168.0.1]:8080/");
+            BOOST_TEST(u.encoded_hostname() ==
+                "[1::6:192.168.0.1]");
+            BOOST_TEST(u.host_type() ==
+                host_type::ipv6);
         }
     }
 
@@ -613,24 +407,34 @@ public:
         }
     }
 
+    void
+    testShared()
+    {
+        string_view s =
+            "http://username:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag";
+        std::shared_ptr<url_view> sp;
+        {
+            auto const u = urls::parse_uri(s);
+            sp = u.make_shared();
+            BOOST_TEST(
+                u.encoded_url().data() !=
+                sp->encoded_url().data());
+        }
+        BOOST_TEST(sp->encoded_url() == s);
+    }
+
     //--------------------------------------------
 
     void
     run()
     {
-        testView();
-
-        testHostAndPort();
-        testHost();
-        testPort();
-        testPath();
-
-        testParseUri();
-        testShared();
+        testParse();
         testScheme();
         testUserinfo();
+        testHost();
         testQuery();
         testFragment();
+        testShared();
     }
 };
 

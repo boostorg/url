@@ -740,9 +740,9 @@ set_host(
     }
     detail::parts pt;
     detail::parse_plain_hostname(pt, s);
-    BOOST_ASSERT(
-        pt.host != urls::host_type::none);
-    if(pt.host != urls::host_type::name)
+    BOOST_ASSERT(pt.host_type !=
+        urls::host_type::none);
+    if(pt.host_type != urls::host_type::name)
     {
         if(! has_authority())
         {
@@ -792,7 +792,7 @@ set_host(
             e.encode(dest, s);
         }
     }
-    pt_.host = pt.host;
+    pt_.host_type = pt.host_type;
     return *this;
 }
 
@@ -826,7 +826,7 @@ set_encoded_host(
             s.size());
         s.copy(dest, s.size());
     }
-    pt_.host = pt.host;
+    pt_.host_type = pt.host_type;
     return *this;
 }
 

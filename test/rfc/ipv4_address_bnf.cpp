@@ -29,16 +29,8 @@ public:
         BOOST_TEST(parse(s, ec, t));
         if(! BOOST_TEST(! ec))
             return;
-        std::uint32_t v1 =
-            (static_cast<std::uint32_t>(
-                t.octets[0]) << 24) |
-            (static_cast<std::uint32_t>(
-                t.octets[1]) << 16) |
-            (static_cast<std::uint32_t>(
-                t.octets[2]) <<  8) |
-            (static_cast<std::uint32_t>(
-                t.octets[3])      );
-        BOOST_TEST(v1 == v);
+        BOOST_TEST(
+            t.addr.to_uint() == v);
     }
 
     void

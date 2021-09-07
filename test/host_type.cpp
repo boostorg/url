@@ -9,3 +9,24 @@
 
 // Test that header file is self-contained.
 #include <boost/url/host_type.hpp>
+
+#include "test_suite.hpp"
+
+namespace boost {
+namespace urls {
+
+class host_type_test
+{
+public:
+    void
+    run()
+    {
+    }
+};
+
+TEST_SUITE(
+    host_type_test,
+    "boost.url.host_type");
+
+} // urls
+} // boost

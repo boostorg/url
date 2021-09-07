@@ -11,12 +11,24 @@
 #include <boost/url/rfc/host_bnf.hpp>
 
 #include <boost/url/bnf/parse.hpp>
+#include <boost/static_assert.hpp>
+
 #include "test_suite.hpp"
 #include "test_bnf.hpp"
+
+#include <type_traits>
 
 namespace boost {
 namespace urls {
 namespace rfc {
+
+BOOST_STATIC_ASSERT(
+    std::is_copy_constructible<
+        host_bnf>::value);
+
+BOOST_STATIC_ASSERT(
+    std::is_copy_assignable<
+        host_bnf>::value);
 
 class host_bnf_test
 {
@@ -25,7 +37,7 @@ public:
     host_bnf
     check(
         string_view s,
-        rfc::host_kind k)
+        host_type ht)
     {
         host_bnf h;
         error_code ec;
@@ -34,7 +46,7 @@ public:
             parse(s, ec, h)))
             return {};
         BOOST_TEST(
-            h.kind() == k);
+            h.host_type() == ht);
         return h;
     }
 
@@ -53,26 +65,27 @@ public:
         good<T>("boost.org");
         good<T>("999.0.0.1");
 
-        BOOST_TEST(check("", host_kind::domain)
+        BOOST_TEST(check("", host_type::name)
             .str() == "");
 
-        BOOST_TEST(check("1.2.3.999", host_kind::domain)
-            .get_domain().str == "1.2.3.999");
+        BOOST_TEST(check("1.2.3.999", host_type::name)
+            .get_name().str == "1.2.3.999");
 
-        BOOST_TEST(check("1.2.3.4", host_kind::ipv4)
-            .get_ipv4().octets == (
+        BOOST_TEST(check("1.2.3.4", host_type::ipv4)
+            .get_ipv4().to_bytes() == (
                 std::array<std::uint8_t, 4>({1,2,3,4})));
 
-        BOOST_TEST(check("[1:2:3:4:5:6:7:8]", host_kind::ipv6)
-            .get_ipv6().octets == (
+        BOOST_TEST((check(
+            "[1:2:3:4:5:6:7:8]", host_type::ipv6)
+                .get_ipv6().octets ==
                 std::array<std::uint8_t, 16>(
                 {0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8})));
 
-        BOOST_TEST(check("[v1.2]", host_kind::ipv_future)
+        BOOST_TEST(check("[v1.2]", host_type::ipvfuture)
             .get_ipv_future() == "v1.2");
 
-        BOOST_TEST(check("www.example.com", host_kind::domain)
-            .get_domain().str == "www.example.com");
+        BOOST_TEST(check("www.example.com", host_type::name)
+            .get_name().str == "www.example.com");
     }
 };
 

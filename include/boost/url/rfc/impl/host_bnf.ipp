@@ -18,35 +18,11 @@ namespace boost {
 namespace urls {
 namespace rfc {
 
-void
 host_bnf::
-destroy()
-{
-    switch(kind_)
-    {
-    default:
-    case host_kind::none:
-        break;
-    case host_kind::ipv4:
-        ipv4_.~ipv4_address_bnf();
-        break;
-    case host_kind::ipv6:
-        ipv6_.~ipv6_address_bnf();
-        break;
-    case host_kind::ipv_future:
-        fut_.~string_view();
-        break;
-    case host_kind::domain:
-        domain_.~pct_encoded_str();
-        break;
-    }
-}
+~host_bnf() noexcept = default;
 
 host_bnf::
-~host_bnf()
-{
-    destroy();
-}
+host_bnf() noexcept = default;
 
 bool
 parse(
@@ -56,8 +32,6 @@ parse(
     host_bnf& t)
 {
     auto const start = it;
-    t.destroy();
-    t.kind_ = host_kind::none;
     if(*it == '[')
     {
         // IP-literal
@@ -71,16 +45,15 @@ parse(
         if(v.is_ipv6)
         {
             // IPv6address
-            ::new(&t.ipv6_)
-                ipv6_address_bnf(v.ipv6);
-            t.kind_ = host_kind::ipv6;
+            t.ipv6_ = v.ipv6;
+            t.host_type_ = host_type::ipv6;
             goto finish;
         }
         // VFALCO TODO
         // IPvFuture
-        ::new(&t.fut_) string_view(
-            v.fut_str);
-        t.kind_ = host_kind::ipv_future;
+        t.ipvfuture_ = v.fut_str;
+        t.host_type_ =
+            host_type::ipvfuture;
         goto finish;
     }
     // IPv4address
@@ -89,9 +62,8 @@ parse(
         auto it0 = it;
         if(parse(it, end, ec, v))
         {
-            ::new(&t.ipv4_)
-                ipv4_address_bnf(v);
-            t.kind_ = host_kind::ipv4;
+            t.ipv4_ = v.addr;
+            t.host_type_ = host_type::ipv4;
             goto finish;
         }
         it = it0;
@@ -102,17 +74,17 @@ parse(
         pct_encoded_str ns;
         if(! parse(it, end, ec,
             pct_encoded_bnf<
-                unsub_char_mask>{ns}))
+                unsub_char_mask>{
+                    t.name_}))
         {
             // bad reg-name
             return false;
         }
-        ::new(&t.domain_)
-            pct_encoded_str(ns);
-        t.kind_ = host_kind::domain;
+        t.host_type_ =
+            host_type::name;
     }
 finish:
-    t.s_ = string_view(
+    t.str_ = string_view(
         start, it - start);
     return true;
 }

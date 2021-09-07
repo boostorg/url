@@ -23,7 +23,7 @@ namespace detail {
 
 struct dec_octet
 {
-    std::uint8_t& v;
+    unsigned char& v;
 
     friend
     bool
@@ -115,18 +115,16 @@ parse(
 {
     using bnf::parse;
     auto const start = it;
+    std::array<unsigned char, 4> v;
     if(! parse(it, end, ec,
-        detail::dec_octet{
-            t.octets[0]}, '.',
-        detail::dec_octet{
-            t.octets[1]}, '.',
-        detail::dec_octet{
-            t.octets[2]}, '.',
-        detail::dec_octet{
-            t.octets[3]}))
+        detail::dec_octet{v[0]}, '.',
+        detail::dec_octet{v[1]}, '.',
+        detail::dec_octet{v[2]}, '.',
+        detail::dec_octet{v[3]}))
         return false;
     t.str = string_view(
         start, it - start);
+    t.addr = ipv4_address(v);
     return true;
 }
 

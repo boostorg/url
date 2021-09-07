@@ -11,8 +11,10 @@
 #define BOOST_URL_DETAIL_PARTS_HPP
 
 #include <boost/url/host_type.hpp>
+#include <boost/url/ipv4_address.hpp>
 #include <boost/url/detail/char_type.hpp>
 #include <cstring>
+#include <new>
 
 namespace boost {
 namespace urls {
@@ -37,10 +39,12 @@ struct parts
 {
     std::size_t offset[id_end + 1];
     std::size_t decoded[id_end];
+    unsigned char ip_addr[16];
     std::size_t nseg = 0;
     std::size_t nparam = 0;
-    host_type host = host_type::none;
     std::uint16_t port_number = 0;
+    urls::host_type host_type =
+        host_type::none;
 
     parts() noexcept
     {
@@ -50,10 +54,15 @@ struct parts
     void
     clear() noexcept
     {
+        // VFALCO is this needed?
+        host_type = urls::host_type::none;
         for(int i = 0; i <= id_end; ++i)
             offset[i] = 0;
+        // VFALCO This isn't really needed
+        /*
         for(int i = 0; i < id_end; ++i)
             decoded[i] = 0;
+        */
     }
 
     std::size_t

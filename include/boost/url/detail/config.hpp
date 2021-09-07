@@ -16,6 +16,10 @@
 #include <boost/throw_exception.hpp>
 #include <stdint.h>
 
+#if CHAR_BIT != 8
+# error unsupported platform
+#endif
+
 // VFALCO Copied from <boost/config.hpp>
 //        This is a derivative work.
 #ifdef __has_cpp_attribute

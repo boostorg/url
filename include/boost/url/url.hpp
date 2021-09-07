@@ -737,7 +737,7 @@ public:
     urls::host_type
     host_type() const noexcept
     {
-        return pt_.host;
+        return pt_.host_type;
     }
 
     /** Return the host and port.
@@ -782,7 +782,8 @@ public:
     host(
         Allocator const& a = {}) const
     {
-        if(pt_.host != urls::host_type::name)
+        if(pt_.host_type !=
+            urls::host_type::name)
         {
             auto const s =  pt_.get(
                 detail::id_host, s_);

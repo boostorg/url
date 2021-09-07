@@ -206,14 +206,12 @@ parse(
             if(! parse(
                 it, end, ec, v4))
                 return false;
-            t.octets[2*(7-n)+0] =
-                v4.octets[0];
-            t.octets[2*(7-n)+1] =
-                v4.octets[1];
-            t.octets[2*(7-n)+2] =
-                v4.octets[2];
-            t.octets[2*(7-n)+3] =
-                v4.octets[3];
+            auto const b =
+                v4.addr.to_bytes();
+            t.octets[2*(7-n)+0] = b[0];
+            t.octets[2*(7-n)+1] = b[1];
+            t.octets[2*(7-n)+2] = b[2];
+            t.octets[2*(7-n)+3] = b[3];
             t.trailing_ipv4 = true;
             --n;
             break;
