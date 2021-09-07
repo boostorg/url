@@ -366,22 +366,6 @@ public:
     string_view
     ipv_future() const noexcept;
 
-    /** Return the host and port.
-
-        This function returns the encoded host and port,
-        or an empty string if there is no host or port.
-        The returned value includes both the host if present,
-        and a port, with a colon separating the host and port
-        if either component is non-empty.
-
-        @par Exception Safety
-
-        No-throw guarantee.
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_host_and_port() const noexcept;
-
     /** Return true if the URL contains a port
     */
     BOOST_URL_DECL
@@ -416,6 +400,22 @@ public:
     BOOST_URL_DECL
     std::uint16_t
     port_number() const noexcept;
+
+    /** Return the host and port.
+
+        This function returns the encoded host and port,
+        or an empty string if there is no host or port.
+        The returned value includes both the host if present,
+        and a port, with a colon separating the host and port
+        if either component is non-empty.
+
+        @par Exception Safety
+
+        No-throw guarantee.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_host_and_port() const noexcept;
 
     //------------------------------------------------------
     //

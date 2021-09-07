@@ -347,27 +347,15 @@ ipv_future() const noexcept
 
 // port
 
-string_view
-url_view::
-encoded_host_and_port() const noexcept
-{
-    return pt_.get(
-        id_host,
-        id_path,
-        s_);
-}
-
 bool
 url_view::
 has_port() const noexcept
 {
-    auto const n = len(
-        id_port);
+    auto const n = len(id_port);
     if(n == 0)
         return false;
     BOOST_ASSERT(
-        get(id_port
-            ).starts_with(':'));
+        get(id_port).starts_with(':'));
     return true;
 }
 
@@ -375,12 +363,10 @@ string_view
 url_view::
 port() const noexcept
 {
-    auto s =
-        get(id_port);
+    auto s = get(id_port);
     if(s.empty())
         return s;
-    BOOST_ASSERT(
-        s.starts_with(':'));
+    BOOST_ASSERT(has_port());
     return s.substr(1);
 }
 
@@ -388,9 +374,18 @@ std::uint16_t
 url_view::
 port_number() const noexcept
 {
+    BOOST_ASSERT(
+        has_port() ||
+        pt_.port_number == 0);
     return pt_.port_number;
 }
 
+string_view
+url_view::
+encoded_host_and_port() const noexcept
+{
+    return get(id_host, id_path);
+}
 //----------------------------------------------------------
 //
 // path
@@ -661,11 +656,15 @@ apply_host(
     {
     default:
     case urls::host_type::none:
+    {
         break;
+    }
     case urls::host_type::name:
+    {
         p.decoded[id_host] =
             h.get_name().decoded_size;
         break;
+    }
     case urls::host_type::ipv4:
     {
         auto const bytes =
@@ -676,14 +675,18 @@ apply_host(
         break;
     }
     case urls::host_type::ipv6:
+    {
         auto const bytes =
             h.get_ipv6().to_bytes();
         std::memcpy(
             &p.ip_addr[0],
             bytes.data(), 16);
         break;
+    }
     case urls::host_type::ipvfuture:
+    {
         break;
+    }
     }
 
     if(h.host_type() !=

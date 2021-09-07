@@ -65,7 +65,7 @@ public:
         good<T>("boost.org");
         good<T>("999.0.0.1");
 
-        BOOST_TEST(check("", host_type::none)
+        BOOST_TEST(check("", host_type::name)
             .str() == "");
 
         BOOST_TEST(check("www.example.com", host_type::name)

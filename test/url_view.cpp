@@ -354,6 +354,60 @@ public:
     }
 
     void
+    testPort()
+    {
+        {
+            auto u = parse_uri(
+                "http://");
+            BOOST_TEST(! u.has_port());
+            BOOST_TEST(u.port() == "");
+            BOOST_TEST(u.port_number() == 0);
+        }
+        {
+            auto u = parse_uri(
+                "http://www");
+            BOOST_TEST(! u.has_port());
+            BOOST_TEST(u.port() == "");
+            BOOST_TEST(u.port_number() == 0);
+        }
+        {
+            auto u = parse_uri(
+                "http://:");
+            BOOST_TEST(u.has_port());
+            BOOST_TEST(u.port() == "");
+            BOOST_TEST(u.port_number() == 0);
+        }
+        {
+            auto u = parse_uri(
+                "http://:0");
+            BOOST_TEST(u.has_port());
+            BOOST_TEST(u.port() == "0");
+            BOOST_TEST(u.port_number() == 0);
+        }
+        {
+            auto u = parse_uri(
+                "http://:42");
+            BOOST_TEST(u.has_port());
+            BOOST_TEST(u.port() == "42");
+            BOOST_TEST(u.port_number() == 42);
+        }
+        {
+            auto u = parse_uri(
+                "http://:65535");
+            BOOST_TEST(u.has_port());
+            BOOST_TEST(u.port() == "65535");
+            BOOST_TEST(u.port_number() == 65535);
+        }
+        {
+            auto u = parse_uri(
+                "http://:65536");
+            BOOST_TEST(u.has_port());
+            BOOST_TEST(u.port() == "65536");
+            BOOST_TEST(u.port_number() == 0);
+        }
+    }
+
+    void
     testQuery()
     {
         {
@@ -557,6 +611,7 @@ public:
         testAuthority();
         testUserinfo();
         testHost();
+        testPort();
         testQuery();
         testFragment();
         testShared();
