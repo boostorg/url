@@ -52,6 +52,11 @@ class url_view
         id_end          // one past the end
     };
 
+    // shortcuts
+    string_view get(int id) const noexcept;
+    string_view get(int id0, int id1) const noexcept;
+    std::size_t len(int id) const noexcept;
+
     url_view(
         char const* s,
         detail::parts const& pt) noexcept
@@ -60,31 +65,13 @@ class url_view
     {
     }
 
-    // shortcuts
-    string_view get(int id) const noexcept;
-    string_view get(int id0, int id1) const noexcept;
-    std::size_t len(int id) const noexcept;
-
 public:
-    /** Constructor
-    */
-    // VFALCO DEPRECATED
-    url_view() noexcept = default;
-
-    /** Constructor
-
-        @param s The string to construct from.
-    */
-    // VFALCO DEPRECATED
-    BOOST_URL_DECL
-    explicit
-    url_view(string_view s);
-
     /** Return the view as a self-contained shared object
     */
     BOOST_URL_DECL
-    std::shared_ptr<url_view>
-    make_shared() const;
+    std::shared_ptr<
+        url_view const>
+    collect() const;
 
     //------------------------------------------------------
 
@@ -199,12 +186,6 @@ public:
         return detail::decode(
             encoded_userinfo(), a);
     }
-
-    /** Return true if a username exists
-    */
-    BOOST_URL_DECL
-    bool
-    has_username() const noexcept;
 
     /** Return the username if it exists, or an empty string
 
@@ -347,13 +328,13 @@ public:
             s0, pt_.decoded[id_host], a);
     }
 
-    /** Return the ipv4 address if it exists, or return an unspecified address
+    /** Return the ipv4 address if it exists, or return the unspecified address (0.0.0.0)
     */
     BOOST_URL_DECL
     urls::ipv4_address
     ipv4_address() const noexcept;
 
-    /** Return the ipv6 address if it exists, or return an unspecified address
+    /** Return the ipv6 address if it exists, or return the unspecified address (0:0:0:0:0:0:0:0)
     */
     BOOST_URL_DECL
     urls::ipv6_address
@@ -599,13 +580,6 @@ public:
     //
     //--------------------------------------------
 
-    /** Parse a string using the URI grammar
-
-        @par BNF
-        @code
-        URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-        @endcode
-    */
     BOOST_URL_DECL
     friend
     optional<url_view>
@@ -619,13 +593,6 @@ public:
     parse_uri(
         string_view s);
 
-    /** Parse a string using the absolute-URI grammar
-
-        @par BNF
-        @code
-        absolute-URI  = scheme ":" hier-part [ "?" query ]
-        @endcode
-    */
     BOOST_URL_DECL
     friend
     optional<url_view>
@@ -642,23 +609,74 @@ public:
 
 //------------------------------------------------
 
+/** Parse a URI
+
+    @par BNF
+    @code
+    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+    @endcode
+
+    @see
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3
+*/
 BOOST_URL_DECL
 optional<url_view>
 parse_uri(
     string_view s,
     error_code& ec) noexcept;
 
+/** Parse a URI
+
+    @par BNF
+    @code
+    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+    @endcode
+
+    @see
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3
+*/
 BOOST_URL_DECL
 url_view
 parse_uri(
     string_view s);
 
+/** Parse a relative-ref
+
+    @par BNF
+    @code
+    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+
+    relative-part = "//" authority path-abempty
+                  / path-absolute
+                  / path-noscheme
+                  / path-empty
+    @endcode
+
+    @see
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3
+*/
 BOOST_URL_DECL
 optional<url_view>
 parse_relative_ref(
     string_view s,
     error_code& ec) noexcept;
 
+/** Parse a relative-ref
+
+    @par BNF
+    @code
+    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+
+    relative-part = "//" authority path-abempty
+                  / path-absolute
+                  / path-noscheme
+                  / path-empty
+
+    @endcode
+
+    @see
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3
+*/
 BOOST_URL_DECL
 url_view
 parse_relative_ref(

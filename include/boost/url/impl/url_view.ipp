@@ -57,9 +57,10 @@ struct url_view::shared_impl :
     }
 };
 
-std::shared_ptr<url_view>
+std::shared_ptr<
+    url_view const>
 url_view::
-make_shared() const
+collect() const
 {
     using T = shared_impl;
     using Alloc = std::allocator<char>;
@@ -73,17 +74,6 @@ make_shared() const
             p.get() + 1),
         s.data(), s.size());
     return p;
-}
-
-url_view::
-url_view(string_view s)
-    : s_(s.data())
-{
-    detail::parser pr(s);
-    error_code ec;
-    detail::parse_url(pt_, s, ec);
-    if(ec)
-        invalid_part::raise();
 }
 
 //------------------------------------------------
@@ -182,28 +172,6 @@ has_userinfo() const noexcept
     BOOST_ASSERT(get(
         id_pass).ends_with('@'));
     return true;
-}
-
-bool
-url_view::
-has_username() const noexcept
-{
-    auto const n = len(
-        id_user);
-    if(n == 0)
-    {
-        // no authority
-        BOOST_ASSERT(pt_.length(
-            id_user,
-            id_host) == 0);
-        return false;
-    }
-    BOOST_ASSERT(n > 1);
-    BOOST_ASSERT(
-        has_authority());
-    if(n > 2)
-        return true;
-    return false;
 }
 
 string_view

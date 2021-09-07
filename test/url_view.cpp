@@ -201,7 +201,6 @@ public:
             BOOST_TEST(u.has_userinfo());
             BOOST_TEST(u.encoded_userinfo() == "");
             BOOST_TEST(u.userinfo() == "");
-            BOOST_TEST(u.has_username() == false);
             BOOST_TEST(u.encoded_username() == "");
             BOOST_TEST(u.username() == "");
             BOOST_TEST(u.has_password() == false);
@@ -213,7 +212,6 @@ public:
             BOOST_TEST(u.has_userinfo());
             BOOST_TEST(u.encoded_userinfo() == ":");
             BOOST_TEST(u.userinfo() == ":");
-            BOOST_TEST(u.has_username() == false);
             BOOST_TEST(u.encoded_username() == "");
             BOOST_TEST(u.username() == "");
             BOOST_TEST(u.has_password() == true);
@@ -224,7 +222,6 @@ public:
             auto u = parse_uri("x://a%41:@");
             BOOST_TEST(u.has_userinfo());
             BOOST_TEST(u.encoded_userinfo() == "a%41:");
-            BOOST_TEST(u.has_username() == true);
             BOOST_TEST(u.encoded_username() == "a%41");
             BOOST_TEST(u.username() == "aA");
             BOOST_TEST(u.has_password() == true);
@@ -235,7 +232,6 @@ public:
             auto u = parse_uri("x://:b%42@");
             BOOST_TEST(u.has_userinfo());
             BOOST_TEST(u.encoded_userinfo() == ":b%42");
-            BOOST_TEST(u.has_username() == false);
             BOOST_TEST(u.encoded_username() == "");
             BOOST_TEST(u.username() == "");
             BOOST_TEST(u.has_password() == true);
@@ -246,7 +242,6 @@ public:
             auto u = parse_uri("x://a:b@");
             BOOST_TEST(u.has_userinfo());
             BOOST_TEST(u.encoded_userinfo() == "a:b");
-            BOOST_TEST(u.has_username() == true);
             BOOST_TEST(u.encoded_username() == "a");
             BOOST_TEST(u.has_password() == true);
             BOOST_TEST(u.encoded_password() == "b");
@@ -256,7 +251,6 @@ public:
             BOOST_TEST(u.has_userinfo());
             BOOST_TEST(u.encoded_userinfo() == "%3a:%3a");
             BOOST_TEST(u.userinfo() == ":::");
-            BOOST_TEST(u.has_username() == true);
             BOOST_TEST(u.encoded_username() == "%3a");
             BOOST_TEST(u.username() == ":");
             BOOST_TEST(u.has_password() == true);
@@ -268,7 +262,6 @@ public:
             BOOST_TEST(u.has_userinfo());
             BOOST_TEST(u.encoded_userinfo() == "%2525");
             BOOST_TEST(u.userinfo() == "%25");
-            BOOST_TEST(u.has_username() == true);
             BOOST_TEST(u.encoded_username() == "%2525");
             BOOST_TEST(u.username() == "%25");
             BOOST_TEST(u.has_password() == false);
@@ -545,8 +538,9 @@ public:
                 query_params_view::iterator());
         }
         {
-            url_view const v("?x=1&y=2&y=3&z");
-            auto qp = v.query_params();
+            auto u = parse_relative_ref(
+                "/x/?x=1&y=2&y=3&z");
+            auto qp = u.query_params();
             BOOST_TEST(! qp.empty());
             BOOST_TEST(qp.size() == 4);
             BOOST_TEST(qp.begin() != qp.end());
@@ -635,14 +629,14 @@ public:
     }
 
     void
-    testShared()
+    testCollect()
     {
         string_view s =
             "http://username:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag";
-        std::shared_ptr<url_view> sp;
+        std::shared_ptr<url_view const> sp;
         {
             auto const u = urls::parse_uri(s);
-            sp = u.make_shared();
+            sp = u.collect();
             BOOST_TEST(
                 u.encoded_url().data() !=
                 sp->encoded_url().data());
@@ -664,7 +658,7 @@ public:
         testHostAndPort();
         testQuery();
         testFragment();
-        testShared();
+        testCollect();
     }
 };
 

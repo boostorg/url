@@ -45,24 +45,46 @@ namespace urls {
 */
 class url
 {
-    class modify;
-
     storage_ptr sp_;
     std::size_t cap_ = 0;
-
     detail::parts pt_;
     char* s_ = nullptr;
+
+    class modify;
+
+    // VFALCO This has to be kept in
+    // sync with other declarations
+    enum
+    {
+        id_scheme = 0,  // trailing ':'
+        id_user,        // leading "//"
+        id_pass,        // leading ':', trailing '@'
+        id_host,
+        id_port,        // leading ':'
+        id_path,
+        id_query,       // leading '?'
+        id_frag,        // leading '#'
+        id_end          // one past the end
+    };
+
+    // shortcuts
+    string_view get(int id) const noexcept;
+    string_view get(int id0, int id1) const noexcept;
+    std::size_t len(int id) const noexcept;
 
 public:
     class segments_type;
     class params_type;
 
+    /** Destructor
+    */
     BOOST_URL_DECL
     ~url();
 
-    /** Constructor.
+    /** Constructor
     */
-    url() = default;
+    BOOST_URL_DECL
+    url() noexcept;
 
     /** Construct an empty URL with the specified storage.
     */
