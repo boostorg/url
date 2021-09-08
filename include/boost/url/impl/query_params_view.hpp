@@ -40,6 +40,7 @@ public:
         query_params_view::value_type;
     using pointer = value_type const*;
     using reference = value_type const&;
+    using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::forward_iterator_tag;
 
