@@ -42,6 +42,13 @@ len(int id) const noexcept
     return pt_.length(id);
 }
 
+std::size_t
+url::
+len(int id0, int id1) const noexcept
+{
+    return pt_.length(id0, id1);
+}
+
 //------------------------------------------------
 
 #if 0
@@ -63,6 +70,404 @@ public:
 };
 #endif
 
+//------------------------------------------------
+//************************************************
+//************************************************
+//************************************************
+//------------------------------------------------
+
+//------------------------------------------------
+//
+// classification
+//
+//------------------------------------------------
+
+bool
+url::
+empty() const noexcept
+{
+    return len(
+        id_scheme, id_end) == 0;
+}
+
+//------------------------------------------------
+
+string_view
+url::
+encoded_url() const
+{
+    return get(id_scheme, id_end);
+}
+
+string_view
+url::
+encoded_origin() const noexcept
+{
+    return get(id_scheme, id_path);
+}
+
+//------------------------------------------------
+//
+// scheme
+//
+//------------------------------------------------
+
+bool
+url::
+has_scheme() const noexcept
+{
+    auto const n = len(
+        id_scheme);
+    if(n == 0)
+        return false;
+    BOOST_ASSERT(n > 1);
+    BOOST_ASSERT(
+        get(id_scheme
+            ).ends_with(':'));
+    return true;
+}
+
+string_view
+url::
+scheme() const noexcept
+{
+    auto s = get(
+        id_scheme);
+    if(! s.empty())
+    {
+        BOOST_ASSERT(s.size() > 1);
+        BOOST_ASSERT(s.ends_with(':'));
+        s.remove_suffix(1);
+    }
+    return s;
+}
+
+//----------------------------------------------------------
+//
+// authority
+//
+//----------------------------------------------------------
+
+bool
+url::
+has_authority() const noexcept
+{
+    auto const n = len(id_user);
+    if(n == 0)
+        return false;
+    BOOST_ASSERT(get(
+        id_user).starts_with("//"));
+    return true;
+}
+
+string_view
+url::
+encoded_authority() const noexcept
+{
+    auto s = get(id_user, id_path);
+    if(! s.empty())
+    {
+        BOOST_ASSERT(has_authority());
+        s.remove_prefix(2);
+    }
+    return s;
+}
+
+// userinfo
+
+bool
+url::
+has_userinfo() const noexcept
+{
+    auto n = len(id_pass);
+    if(n == 0)
+        return false;
+    BOOST_ASSERT(has_authority());
+    BOOST_ASSERT(get(
+        id_pass).ends_with('@'));
+    return true;
+}
+
+string_view
+url::
+encoded_userinfo() const noexcept
+{
+    auto s = get(
+        id_user, id_host);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        has_authority());
+    s.remove_prefix(2);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        s.ends_with('@'));
+    s.remove_suffix(1);
+    return s;
+}
+
+string_view
+url::
+encoded_username() const noexcept
+{
+    auto s = get(id_user);
+    if(! s.empty())
+    {
+        BOOST_ASSERT(
+            has_authority());
+        s.remove_prefix(2);
+    }
+    return s;
+}
+
+bool
+url::
+has_password() const noexcept
+{
+    auto const n = len(id_pass);
+    if(n > 1)
+    {
+        BOOST_ASSERT(get(
+            id_pass
+                ).starts_with(':'));
+        BOOST_ASSERT(get(
+            id_pass
+                ).ends_with('@'));
+        return true;
+    }
+    BOOST_ASSERT(n == 0 ||
+        get(id_pass
+            ).ends_with('@'));
+    return false;
+}
+
+string_view
+url::
+encoded_password() const noexcept
+{
+    auto s = get(id_pass);
+    switch(s.size())
+    {
+    case 1:
+        BOOST_ASSERT(
+            s.starts_with('@'));
+        BOOST_FALLTHROUGH;
+    case 0:
+        return s.substr(0,0);
+    default:
+        break;
+    }
+    BOOST_ASSERT(
+        s.ends_with('@'));
+    BOOST_ASSERT(
+        s.starts_with(':'));
+    return s.substr(1,
+        s.size() - 2);
+}
+
+// host
+
+string_view
+url::
+encoded_host() const noexcept
+{
+    return get(id_host);
+}
+
+urls::ipv4_address
+url::
+ipv4_address() const noexcept
+{
+    BOOST_ASSERT(pt_.host_type ==
+        host_type::ipv4);
+    if(pt_.host_type !=
+        host_type::ipv4)
+        return ipv4_address();
+    std::array<
+        unsigned char, 4> bytes;
+    std::memcpy(
+        &bytes[0],
+        &pt_.ip_addr[0], 4);
+    return urls::ipv4_address(
+        bytes);
+}
+
+urls::ipv6_address
+url::
+ipv6_address() const noexcept
+{
+    BOOST_ASSERT(pt_.host_type ==
+        host_type::ipv6);
+    if(pt_.host_type !=
+        host_type::ipv6)
+        return ipv6_address();
+    std::array<
+        unsigned char, 16> bytes;
+    std::memcpy(
+        &bytes[0],
+        &pt_.ip_addr[0], 16);
+    return urls::ipv6_address(
+        bytes);
+}
+
+string_view
+url::
+ipv_future() const noexcept
+{
+    BOOST_ASSERT(pt_.host_type ==
+        host_type::ipvfuture);
+    if(pt_.host_type !=
+        host_type::ipvfuture)
+        return {};
+    return get(id_host);
+}
+
+// port
+
+bool
+url::
+has_port() const noexcept
+{
+    auto const n = len(id_port);
+    if(n == 0)
+        return false;
+    BOOST_ASSERT(
+        get(id_port).starts_with(':'));
+    return true;
+}
+
+string_view
+url::
+port() const noexcept
+{
+    auto s = get(id_port);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(has_port());
+    return s.substr(1);
+}
+
+std::uint16_t
+url::
+port_number() const noexcept
+{
+    BOOST_ASSERT(
+        has_port() ||
+        pt_.port_number == 0);
+    return pt_.port_number;
+}
+
+string_view
+url::
+encoded_host_and_port() const noexcept
+{
+    return get(id_host, id_path);
+}
+//----------------------------------------------------------
+//
+// path
+//
+//----------------------------------------------------------
+
+string_view
+url::
+encoded_path() const noexcept
+{
+    return get(id_path);
+}
+
+path_view
+url::
+path() const noexcept
+{
+    return path_view(
+        get(id_path), pt_.nseg);
+}
+
+//----------------------------------------------------------
+//
+// query
+//
+//----------------------------------------------------------
+
+bool
+url::
+has_query() const noexcept
+{
+    auto const n = len(
+        id_query);
+    if(n == 0)
+        return false;
+    BOOST_ASSERT(
+        get(id_query).
+            starts_with('?'));
+    return true;
+}
+
+string_view
+url::
+encoded_query() const noexcept
+{
+    auto s = get(
+        id_query);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        s.starts_with('?'));
+    return s.substr(1);
+}
+
+query_params_view
+url::
+query_params() const noexcept
+{
+    auto s = get(
+        id_query);
+    if(s.empty())
+        return query_params_view(s, 0);
+    BOOST_ASSERT(s.starts_with('?'));
+    return query_params_view(
+        s.substr(1), pt_.nparam);
+}
+
+//----------------------------------------------------------
+//
+// fragment
+//
+//----------------------------------------------------------
+
+bool
+url::
+has_fragment() const noexcept
+{
+    auto const n = len(
+        id_frag);
+    if(n == 0)
+        return false;
+    BOOST_ASSERT(
+        get(id_frag).
+            starts_with('#'));
+    return true;
+}
+
+string_view
+url::
+encoded_fragment() const noexcept
+{
+    auto s = get(
+        id_frag);
+    if(s.empty())
+        return s;
+    BOOST_ASSERT(
+        s.starts_with('#'));
+    return s.substr(1);
+}
+
+//------------------------------------------------
+//************************************************
+//************************************************
+//************************************************
 //------------------------------------------------
 
 url::
@@ -87,6 +492,14 @@ url(
     set_encoded_url(s);
 }
 
+std::size_t
+url::
+size() const noexcept
+{
+    return len(
+        id_scheme, id_end);
+}
+
 void
 url::
 clear() noexcept
@@ -99,20 +512,6 @@ clear() noexcept
 }
 
 //------------------------------------------------
-
-string_view
-url::
-encoded_url() const
-{
-    return get(id_scheme, id_end);
-}
-
-string_view
-url::
-encoded_origin() const noexcept
-{
-    return get(id_scheme, id_path);
-}
 
 url&
 url::
@@ -194,20 +593,6 @@ set_encoded_origin(
 //
 //------------------------------------------------
 
-string_view
-url::
-scheme() const noexcept
-{
-    auto s = pt_.get(
-        id_scheme,
-        s_);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(s.back() == ':');
-    s.remove_suffix(1); // ':'
-    return s;
-}
-
 url&
 url::
 set_scheme(
@@ -234,33 +619,6 @@ set_scheme(
 // authority
 //
 //------------------------------------------------
-
-bool
-url::
-has_authority() const noexcept
-{
-    return pt_.length(
-        id_user,
-        id_path) != 0;
-}
-
-string_view
-url::
-encoded_authority() const noexcept
-{
-    auto s = pt_.get(
-        id_user,
-        id_path,
-        s_);
-    if(! s.empty())
-    {
-        BOOST_ASSERT(s.size() >= 2);
-        BOOST_ASSERT(
-            s.substr(0, 2) == "//");
-        s.remove_prefix(2);
-    }
-    return s;
-}
 
 url&
 url::
@@ -305,73 +663,6 @@ set_encoded_authority(
 // userinfo
 //
 //------------------------------------------------
-
-bool
-url::
-has_userinfo() const noexcept
-{
-/*
-    //@     true
-    //x@    true
-    //x     false
-*/
-    if(pt_.length(
-        id_user) == 0)
-    {
-        BOOST_ASSERT(pt_.length(
-            id_user,
-            id_path) == 0);
-        return false;
-    }
-    BOOST_ASSERT(pt_.get(
-        id_user, s_).substr(
-            0, 2) == "//");
-    if(pt_.length(
-        id_user) > 2)
-        return true;
-    if(pt_.length(
-        id_pass) > 0)
-    {
-        BOOST_ASSERT(pt_.get(
-            id_pass,
-                s_).back() == '@');
-        return true;
-    }
-    return false;
-}
-
-string_view
-url::
-encoded_userinfo() const noexcept
-{
-    auto s = userinfo_part();
-    if(! s.empty())
-    {
-        BOOST_ASSERT(s.back() == '@');
-        s.remove_suffix(1);
-    }
-    return s;
-}
-
-string_view
-url::
-userinfo_part() const noexcept
-{
-    auto s = pt_.get(
-        id_user,
-        id_host,
-        s_);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(s.size() >= 2);
-    BOOST_ASSERT(
-        s.substr(0, 2) == "//");
-    s.remove_prefix(2);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(s.back() == '@');
-    return s;
-}
 
 url&
 url::
@@ -426,23 +717,6 @@ set_userinfo_part(
         s.remove_suffix(1);
     }
     return set_encoded_userinfo(s);
-}
-
-string_view
-url::
-encoded_user() const noexcept
-{
-    auto s = pt_.get(
-        id_user,
-        s_);
-    if(! s.empty())
-    {
-        BOOST_ASSERT(s.size() >= 2);
-        BOOST_ASSERT(
-            s.substr(0, 2) == "//");
-        s.remove_prefix(2);
-    }
-    return s;
 }
 
 url&
@@ -541,40 +815,6 @@ set_encoded_user(
         2 + n);
     s.copy(dest + 2, n);
     return *this;
-}
-
-string_view
-url::
-encoded_password() const noexcept
-{
-    auto s = pt_.get(
-        id_pass, s_);
-    if(! s.empty())
-    {
-        if(s.front() == ':')
-        {
-            BOOST_ASSERT(
-                s.size() >= 2);
-            s.remove_prefix(1);
-        }
-        BOOST_ASSERT(s.back() == '@');
-        s.remove_suffix(1);
-    }
-    return s;
-}
-
-string_view
-url::
-password_part() const noexcept
-{
-    auto s = pt_.get(
-        id_pass, s_);
-    if(! s.empty())
-    {
-        BOOST_ASSERT(s.front() == '@');
-        s.remove_suffix(1);
-    }
-    return s;
 }
 
 url&
@@ -711,25 +951,6 @@ set_password_part(
 //
 //------------------------------------------------
 
-string_view
-url::
-encoded_host_and_port() const noexcept
-{
-    return pt_.get(
-        id_host,
-        id_path,
-        s_);
-}
-
-string_view
-url::
-encoded_host() const noexcept
-{
-    return pt_.get(
-        id_host,
-        s_);
-}
-
 url&
 url::
 set_host(
@@ -849,32 +1070,6 @@ set_encoded_host(
     return *this;
 }
 
-string_view
-url::
-port() const noexcept
-{
-    auto s = pt_.get(
-        id_port,
-        s_);
-    BOOST_ASSERT(s.empty() ||
-        s.front() == ':');
-    if(! s.empty())
-        s.remove_prefix(1);
-    return s;
-}
-
-string_view
-url::
-port_part() const noexcept
-{
-    auto s = pt_.get(
-        id_port,
-        s_);
-    BOOST_ASSERT(s.empty() ||
-        s.front() == ':');
-    return s;
-}
-
 url&
 url::
 set_port(unsigned n)
@@ -961,15 +1156,6 @@ set_port_part(string_view s)
 //
 //------------------------------------------------
 
-string_view
-url::
-encoded_path() const noexcept
-{
-    return pt_.get(
-        id_path,
-        s_);
-}
-
 url&
 url::
 set_encoded_path(
@@ -1009,15 +1195,6 @@ set_encoded_path(
     return *this;
 }
 
-path_view
-url::
-path() const noexcept
-{
-    return path_view(
-        pt_.get(id_path, s_),
-            pt_.nseg);
-}
-
 auto
 url::
 path() noexcept ->
@@ -1031,32 +1208,6 @@ path() noexcept ->
 // query
 //
 //------------------------------------------------
-
-string_view
-url::
-encoded_query() const noexcept
-{
-    auto s = pt_.get(
-        id_query, s_);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(
-        s.front() == '?');
-    return s.substr(1);
-}
-
-string_view
-url::
-query_part() const noexcept
-{
-    auto s = pt_.get(
-        id_query, s_);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(
-        s.front() == '?');
-    return s;
-}
 
 url&
 url::
@@ -1125,15 +1276,6 @@ set_query_part(
     return *this;
 }
 
-query_params_view
-url::
-query_params() const noexcept
-{
-    return query_params_view(
-        pt_.get(id_query, s_),
-        pt_.nparam);
-}
-
 auto
 url::
 query_params() noexcept ->
@@ -1147,32 +1289,6 @@ query_params() noexcept ->
 // fragment
 //
 //------------------------------------------------
-
-string_view
-url::
-encoded_fragment() const noexcept
-{
-    auto s = pt_.get(
-        id_frag, s_);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(
-        s.front() == '#');
-    return s.substr(1);
-}
-
-string_view
-url::
-fragment_bnf() const noexcept
-{
-    auto s = pt_.get(
-        id_frag, s_);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(
-        s.front() == '#');
-    return s;
-}
 
 url&
 url::

@@ -36,6 +36,8 @@ pct_decoded_size(
     error_code& ec,
     CharSet const& cs) noexcept;
 
+#endif
+
 /** Returns the size of string s if it was percent-decoded, without error checking
 
     @par Preconditions
@@ -45,8 +47,6 @@ BOOST_URL_DECL
 std::size_t
 pct_decoded_size_unchecked(
     string_view s) noexcept;
-
-#endif
 
 /** Write string s with percent-decoding applied, to the range first, last
 
@@ -77,6 +77,8 @@ pct_decode_unchecked(
     std::size_t decoded_size,
     Allocator const& a = {})
 {
+// VFALCO FIX ME
+decoded_size = pct_decoded_size_unchecked(es);
     string_type<Allocator> s(a);
     if(decoded_size == 0)
         return s;

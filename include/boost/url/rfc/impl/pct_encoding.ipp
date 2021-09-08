@@ -13,7 +13,6 @@
 namespace boost {
 namespace urls {
 
-#if 0
 std::size_t
 pct_decoded_size_unchecked(
     string_view s) noexcept
@@ -36,7 +35,6 @@ pct_decoded_size_unchecked(
     }
     return n;
 }
-#endif
 
 void
 pct_decode_unchecked(
