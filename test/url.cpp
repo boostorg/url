@@ -20,6 +20,7 @@ namespace urls {
 class url_test
 {
 public:
+#if 0
     test_suite::log_type log;
 
     void
@@ -859,10 +860,12 @@ public:
     }
 
     //------------------------------------------------------
+#endif
 
     void
     run()
     {
+#if 0
         testObservers();
 
         testConstValue();
@@ -886,6 +889,7 @@ public:
         testFragment();
 
         testNormalize();
+#endif
     }
 };
 
