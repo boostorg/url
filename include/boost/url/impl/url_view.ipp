@@ -290,9 +290,9 @@ url_view::
 ipv4_address() const noexcept
 {
     BOOST_ASSERT(pt_.host_type ==
-        host_type::ipv4);
+        urls::host_type::ipv4);
     if(pt_.host_type !=
-        host_type::ipv4)
+        urls::host_type::ipv4)
         return ipv4_address();
     std::array<
         unsigned char, 4> bytes;
@@ -308,9 +308,9 @@ url_view::
 ipv6_address() const noexcept
 {
     BOOST_ASSERT(pt_.host_type ==
-        host_type::ipv6);
+        urls::host_type::ipv6);
     if(pt_.host_type !=
-        host_type::ipv6)
+        urls::host_type::ipv6)
         return ipv6_address();
     std::array<
         unsigned char, 16> bytes;
@@ -326,9 +326,9 @@ url_view::
 ipv_future() const noexcept
 {
     BOOST_ASSERT(pt_.host_type ==
-        host_type::ipvfuture);
+        urls::host_type::ipvfuture);
     if(pt_.host_type !=
-        host_type::ipvfuture)
+        urls::host_type::ipvfuture)
         return {};
     return get(id_host);
 }

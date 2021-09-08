@@ -39,7 +39,7 @@ class host_bnf
     ipv6_address ipv6_;
     string_view ipvfuture_;
     urls::host_type host_type_ =
-        host_type::none;
+        urls::host_type::none;
 
 public:
     BOOST_URL_DECL
