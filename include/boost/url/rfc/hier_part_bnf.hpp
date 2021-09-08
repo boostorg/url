@@ -12,10 +12,10 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/optional.hpp>
 #include <boost/url/bnf/range.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
+#include <boost/optional.hpp>
 
 namespace boost {
 namespace urls {

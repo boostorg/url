@@ -14,10 +14,10 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/query_params_view.hpp>
-#include <boost/url/optional.hpp>
 #include <boost/url/path_view.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <boost/url/detail/char_type.hpp>
+#include <boost/optional.hpp>
 #include <cstdint>
 #include <memory>
 #include <string>

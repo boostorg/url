@@ -14,10 +14,43 @@
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/char_set.hpp>
 #include <boost/url/detail/parts.hpp>
+#include <boost/url/bnf/range.hpp>
+#include <boost/url/rfc/authority_bnf.hpp>
+#include <boost/url/rfc/host_bnf.hpp>
+#include <boost/url/rfc/pct_encoded_bnf.hpp>
+#include <boost/url/rfc/detail/query_params_bnf.hpp>
 
 namespace boost {
 namespace urls {
 namespace detail {
+
+void
+apply_host(
+    parts& p,
+    host_bnf const& h) noexcept;
+
+void
+apply_authority(
+    parts& p,
+    optional<
+        authority_bnf> const& t) noexcept;
+
+void
+apply_path(
+    parts& p,
+    bnf::range<
+        pct_encoded_str> const& t) noexcept;
+
+void
+apply_query(parts& p,
+    optional<bnf::range<
+        query_param>> const& t) noexcept;
+
+void
+apply_fragment(
+    parts& p,
+    optional<
+        pct_encoded_str> const& t) noexcept;
 
 // https://tools.ietf.org/html/rfc3986#section-3.2
 

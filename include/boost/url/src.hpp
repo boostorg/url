@@ -26,6 +26,7 @@ in a translation unit of the program.
 #include <boost/url.hpp>
 
 #include <boost/url/detail/impl/except.ipp>
+#include <boost/url/detail/impl/parse.ipp>
 
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/ipv4_address.ipp>

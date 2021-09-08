@@ -165,7 +165,7 @@ bool
 url_view::
 has_userinfo() const noexcept
 {
-    auto n = pt_.length(id_pass);
+    auto n = len(id_pass);
     if(n == 0)
         return false;
     BOOST_ASSERT(has_authority());
@@ -178,10 +178,8 @@ string_view
 url_view::
 encoded_userinfo() const noexcept
 {
-    auto s = pt_.get(
-        id_user,
-        id_host,
-        s_);
+    auto s = get(
+        id_user, id_host);
     if(s.empty())
         return s;
     BOOST_ASSERT(
@@ -189,7 +187,8 @@ encoded_userinfo() const noexcept
     s.remove_prefix(2);
     if(s.empty())
         return s;
-    BOOST_ASSERT(s.back() == '@');
+    BOOST_ASSERT(
+        s.ends_with('@'));
     s.remove_suffix(1);
     return s;
 }
@@ -198,9 +197,7 @@ string_view
 url_view::
 encoded_username() const noexcept
 {
-    auto s = pt_.get(
-        id_user,
-        s_);
+    auto s = get(id_user);
     if(! s.empty())
     {
         BOOST_ASSERT(
@@ -214,8 +211,7 @@ bool
 url_view::
 has_password() const noexcept
 {
-    auto const n = pt_.length(
-        id_pass);
+    auto const n = len(id_pass);
     if(n > 1)
     {
         BOOST_ASSERT(get(
@@ -453,155 +449,6 @@ encoded_fragment() const noexcept
         s.starts_with('#'));
     return s.substr(1);
 }
-
-//------------------------------------------------
-
-namespace detail {
-
-static
-void
-apply_host(
-    parts& p,
-    host_bnf const& h)
-{
-    p.host_type = h.host_type();
-    switch(h.host_type())
-    {
-    default:
-    case urls::host_type::none:
-    {
-        break;
-    }
-    case urls::host_type::name:
-    {
-        p.decoded[id_host] =
-            h.get_name().decoded_size;
-        break;
-    }
-    case urls::host_type::ipv4:
-    {
-        auto const bytes =
-            h.get_ipv4().to_bytes();
-        std::memcpy(
-            &p.ip_addr[0],
-            bytes.data(), 4);
-        break;
-    }
-    case urls::host_type::ipv6:
-    {
-        auto const bytes =
-            h.get_ipv6().to_bytes();
-        std::memcpy(
-            &p.ip_addr[0],
-            bytes.data(), 16);
-        break;
-    }
-    case urls::host_type::ipvfuture:
-    {
-        break;
-    }
-    }
-
-    if(h.host_type() !=
-        host_type::none)
-    {
-        p.resize(
-            part::id_host,
-            h.str().size());
-    }
-}
-
-static
-void
-apply_authority(
-    parts& p, optional<
-        authority_bnf> const& t)
-{
-    if(! t.has_value())
-    {
-        // no authority
-        return;
-    }
-    auto const& u = t->userinfo;
-    if(u.has_value())
-    {
-        // leading "//" for authority
-        p.resize(
-            part::id_user,
-            u->username.str.size() + 2);
-
-        if(u->password.has_value())
-        {
-            // leading ':' for password,
-            // trailing '@' for userinfo
-            p.resize(
-                part::id_pass,
-                u->password->str.size() + 2);
-        }
-        else
-        {
-            // trailing '@' for userinfo
-            p.resize(part::id_pass, 1);
-        }
-    }
-    else
-    {
-        // leading "//" for authority
-        p.resize(part::id_user, 2);
-    }
-
-    apply_host(p, t->host);
-
-    if(t->port.has_value())
-    {
-        // leading ':' for port
-        p.resize(
-            part::id_port,
-            t->port->str.size() + 1);
-        if(t->port->number.has_value())
-            p.port_number = *t->port->number;
-    }
-}
-
-static
-void
-apply_path(parts& p, bnf::range<
-    pct_encoded_str> const& t)
-{
-    p.resize(
-        part::id_path,
-        t.str().size());
-    p.nseg = t.size();
-}
-
-static
-void
-apply_query(parts& p,
-    optional<bnf::range<
-        query_param>> const& t)
-{
-    if(t.has_value())
-    {
-        p.resize(
-            part::id_query,
-            t->str().size() + 1);
-        p.nparam = t->size();
-    }
-}
-
-static
-void
-apply_fragment(
-    parts& p,
-    optional<pct_encoded_str> const& t)
-{
-    if(t.has_value())
-        p.resize(
-            part::id_frag,
-            t->str.size() + 1);
-}
-
-} // detail
 
 //------------------------------------------------
 
