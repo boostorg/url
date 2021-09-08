@@ -24,10 +24,10 @@ public:
     {       
         using T = relative_part_bnf;
 
-        bad<T>("/");
         bad<T>(":/"); // colon not ok in relative-part
 
         good<T>("");
+        good<T>("/");
         good<T>("//");
         good<T>("//user:pass@");
         good<T>("//boost.org");

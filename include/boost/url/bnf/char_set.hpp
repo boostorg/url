@@ -18,7 +18,7 @@ namespace boost {
 namespace urls {
 namespace bnf {
 
-/** Set of alphanumeric characters
+/** A CharSet containing the alphanumeric characters
 
     @par BNF
     @code
@@ -27,16 +27,22 @@ namespace bnf {
     ALPHA       =  %x41-5A / %x61-7A
                 ; A-Z / a-z
 
-    DIGIT       =  %x30-39
+    xDIGIT       =  %x30-39
                 ; 0-9
     @endcode
 
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1">
+        B.1. Core Rules (rfc5234)</a>
+
     @see
-        find_if, find_if_not
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1">[RFC5234] B.1. Core Rules</a>
+        @ref find_if,
+        @ref find_if_not.
 */
 struct alnum_chars
 {
+    /** Return true if c is in the character set.
+    */
     constexpr
     bool
     operator()(char c) const noexcept
@@ -48,7 +54,7 @@ struct alnum_chars
     }
 };
 
-/** Set of alpha characters
+/** A CharSet containing the alpha characters
 
     @par BNF
     @code
@@ -62,6 +68,8 @@ struct alnum_chars
 */
 struct alpha_chars
 {
+    /** Return true if c is in the character set.
+    */
     constexpr
     bool
     operator()(char c) const noexcept
@@ -72,7 +80,7 @@ struct alpha_chars
     }
 };
 
-/** Set of digit characters
+/** A CharSet containing the digit characters
 
     @par BNF
     @code
@@ -86,6 +94,8 @@ struct alpha_chars
 */
 struct digit_chars
 {
+    /** Return true if c is in the character set.
+    */
     constexpr
     bool
     operator()(char c) const noexcept
@@ -94,7 +104,7 @@ struct digit_chars
     }
 };
 
-/** Set of hexadecimal digit characters
+/** A CharSet containing the hexadecimal digit characters
 
     @par BNF
     @code
@@ -108,16 +118,24 @@ struct digit_chars
     uses suggest case-insensitivity is a de-facto
     standard.
 
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1">
+        B.1. Core Rules (rfc5234)</a>
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-1.2">
+        1.2. Syntax Notation (rfc7230)</a>
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc5952#section-2.3">
+        2.3. Uppercase or Lowercase (rfc5952)</a>
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc5952#section-4.3">
+        4.3. Lowercase (rfc5952)</a>
+
     @see
-        find_if, find_if_not
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1">[RFC5234] B.1. Core Rules</a>
-        @li https://datatracker.ietf.org/doc/html/rfc7230#section-1.2
-        @li https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1
-        @li https://datatracker.ietf.org/doc/html/rfc5952#section-2.3
-        @li https://datatracker.ietf.org/doc/html/rfc5952#section-4.3
+        @ref find_if,
+        @ref find_if_not.
 */
 struct hexdig_chars
 {
+    /** Return true if c is in the character set.
+    */
     constexpr
     bool
     operator()(char c) const noexcept

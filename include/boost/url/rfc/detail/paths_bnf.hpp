@@ -172,12 +172,29 @@ struct path_absolute_bnf
     {
         using bnf::parse;
         auto const start = it;
-        if(parse(it, end, ec,
-            '/', segment_nz_bnf{t}))
+        if(it == end)
+        {
+            // expected '/'
+            ec = error::syntax;
+            return false;
+        }
+        if(*it != '/')
+        {
+            // expected '/'
+            ec = error::syntax;
+            return false;
+        }
+        ++it;
+        if(it == end)
             return true;
-        ec = error::end;
-        it = start;
-        return false;
+        if(*it == '/')
+        {
+            // bad empty segment
+            ec = error::syntax;
+            return false;
+        }
+        return parse(it, end, ec,
+            segment_nz_bnf{t});
     }
 
     static
@@ -232,8 +249,8 @@ struct path_noscheme_bnf
         if(parse(it, end, ec,
             segment_nz_nc_bnf{t}))
             return true;
-        ec = error::end;
-        it = start;
+        // expected segment-nz-nc
+        ec = error::syntax;
         return false;
     }
 
@@ -334,8 +351,9 @@ struct path_empty_bnf
         char const*&,
         char const*,
         error_code& ec,
-        pct_encoded_str&) noexcept
+        pct_encoded_str& t) noexcept
     {
+        t = {};
         ec = error::end;
         return false;
     }
@@ -346,9 +364,10 @@ struct path_empty_bnf
         char const*&,
         char const*,
         error_code& ec,
-        pct_encoded_str&) noexcept
+        pct_encoded_str& t) noexcept
     {
         // should never get here
+        t = {};
         ec = error::end;
         return false;
     }

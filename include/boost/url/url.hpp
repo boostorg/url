@@ -2134,8 +2134,6 @@ private:
     parse() noexcept;
 };
 
-using url = url;
-
 } // urls
 } // boost
 

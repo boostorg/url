@@ -24,29 +24,26 @@ public:
     {
         using T = hier_part_bnf;
         
-        bad <T>("/");
-
-        good<T>({
-            ""
-            "//",
-            "//user:pass@",
-            "//boost.org",
-            "//1.2.3.4:8080",
-            "//1.2.3.4:8080/",
-            "//1.2.3.4:8080/x",
-            "//1.2.3.4:8080/x/",
-            "//1.2.3.4:8080////",
-            "/x",
-            "/x/",
-            "/x/y",
-            "/x/y//",
-            "x",
-            "x/",
-            "x//",
-            "x/y/z",
-            "x//y///z///"
-            ":/" // colon ok in hier-part
-            });
+        good<T>("");
+        good<T>("/");
+        good<T>("//");
+        good<T>("//user:pass@");
+        good<T>("//boost.org");
+        good<T>("//1.2.3.4:8080");
+        good<T>("//1.2.3.4:8080/");
+        good<T>("//1.2.3.4:8080/x");
+        good<T>("//1.2.3.4:8080/x/");
+        good<T>("//1.2.3.4:8080////");
+        good<T>("/x");
+        good<T>("/x/");
+        good<T>("/x/y");
+        good<T>("/x/y//");
+        good<T>("x");
+        good<T>("x/");
+        good<T>("x//");
+        good<T>("x/y/z");
+        good<T>("x//y///z///");
+        good<T>(":/"); // colon ok in hier-part
 
         hier_part_bnf p;
         error_code ec;
