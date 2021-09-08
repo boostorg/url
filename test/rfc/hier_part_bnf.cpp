@@ -23,7 +23,7 @@ public:
     run()
     {
         using T = hier_part_bnf;
-        
+
         good<T>("");
         good<T>("/");
         good<T>("//");

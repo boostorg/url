@@ -43,9 +43,7 @@ iterator(
     detail::
         query_params_bnf::begin(
             next_, end_, ec, t);
-    if(ec)
-        detail::throw_system_error(
-            ec, BOOST_CURRENT_LOCATION);
+    BOOST_ASSERT(! ec.failed());
     v_.k_ = t.key;
     if(t.value.has_value())
         v_.v_ = *t.value;
@@ -69,9 +67,7 @@ operator++() noexcept ->
         next_ = nullptr;
         return *this;
     }
-    if(ec)
-        detail::throw_system_error(
-            ec, BOOST_CURRENT_LOCATION);
+    BOOST_ASSERT(! ec.failed());
     v_.k_ = t.key;
     if(t.value.has_value())
         v_.v_ = *t.value;

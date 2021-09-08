@@ -171,7 +171,6 @@ struct path_absolute_bnf
         pct_encoded_str& t) noexcept
     {
         using bnf::parse;
-        auto const start = it;
         if(it == end)
         {
             // expected '/'
@@ -245,7 +244,6 @@ struct path_noscheme_bnf
         pct_encoded_str& t) noexcept
     {
         using bnf::parse;
-        auto const start = it;
         if(parse(it, end, ec,
             segment_nz_nc_bnf{t}))
             return true;

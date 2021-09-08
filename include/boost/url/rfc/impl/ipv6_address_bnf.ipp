@@ -205,12 +205,12 @@ parse(
             if(! parse(
                 it, end, ec, v4))
                 return false;
-            auto const b =
+            auto const b4 =
                 v4.addr.to_bytes();
-            bytes[2*(7-n)+0] = b[0];
-            bytes[2*(7-n)+1] = b[1];
-            bytes[2*(7-n)+2] = b[2];
-            bytes[2*(7-n)+3] = b[3];
+            bytes[2*(7-n)+0] = b4[0];
+            bytes[2*(7-n)+1] = b4[1];
+            bytes[2*(7-n)+2] = b4[2];
+            bytes[2*(7-n)+3] = b4[3];
             --n;
             break;
         }

@@ -50,18 +50,16 @@ iterator(
     if(*next_ == '/')
     {
         // "/" segment
-        bnf_t::increment(
-            next_, end_, ec, v_.s_);
-        detail::maybe_throw(ec,
-            BOOST_CURRENT_LOCATION);
+        bnf_t::increment(next_,
+            end_, ec, v_.s_);
+        BOOST_ASSERT(! ec);
     }
     else
     {
         // segment-nz
-        bnf_t::begin(
-            next_, end_, ec, v_.s_);
-        detail::maybe_throw(ec,
-            BOOST_CURRENT_LOCATION);
+        bnf_t::begin(next_,
+            end_, ec, v_.s_);
+        BOOST_ASSERT(! ec);
     }
 }
 
@@ -98,8 +96,7 @@ operator++() noexcept ->
         next_ = nullptr;
         return *this;
     }
-    detail::maybe_throw(ec,
-        BOOST_CURRENT_LOCATION);
+    BOOST_ASSERT(! ec);
     return *this;
 }
 
@@ -113,6 +110,7 @@ operator--() noexcept ->
     using bnf_t =
         detail::path_rootless_bnf;
     BOOST_ASSERT(i_ != 0);
+    BOOST_ASSERT(pos_ != begin_);
     --i_;
     error_code ec;
     while(--pos_ != begin_)
@@ -121,28 +119,25 @@ operator--() noexcept ->
             continue;
         // "/" segment
         next_ = pos_;
-        bnf_t::increment(
-            next_, end_, ec, v_.s_);
-        detail::maybe_throw(ec,
-            BOOST_CURRENT_LOCATION);
+        bnf_t::increment(next_,
+            end_, ec, v_.s_);
+        BOOST_ASSERT(! ec);
         return *this;
     }
     next_ = pos_;
     if(*next_ == '/')
     {
         // "/" segment
-        bnf_t::increment(
-            next_, end_, ec, v_.s_);
-        detail::maybe_throw(ec,
-            BOOST_CURRENT_LOCATION);
+        bnf_t::increment(next_,
+            end_, ec, v_.s_);
+        BOOST_ASSERT(! ec);
     }
     else
     {
         // segment-nz
-        bnf_t::begin(
-            next_, end_, ec, v_.s_);
-        detail::maybe_throw(ec,
-            BOOST_CURRENT_LOCATION);
+        bnf_t::begin(next_,
+            end_, ec, v_.s_);
+        BOOST_ASSERT(! ec);
     }
     return *this;
 }

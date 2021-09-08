@@ -46,32 +46,29 @@ public:
     void
     check(
         string_view s,
-        std::vector<std::string> v0,
+        std::vector<
+        std::string> const& v0,
         path_view (*f)(string_view))
     {
         path_view p;
         BOOST_TEST_NO_THROW(p = f(s));
         // forward
         {
-            std::vector<std::string> v;
+            std::vector<std::string> v1;
             std::copy(
                 p.begin(),
                 p.end(),
-                std::back_inserter(v));
-            BOOST_TEST(v == v0);
+                std::back_inserter(v1));
+            BOOST_TEST(v0 == v1);
         }
         // reverse
         {
-            std::vector<std::string> v;
+            std::vector<std::string> v1;
             std::copy(
                 reverse(p.end()),
                 reverse(p.begin()),
-                std::back_inserter(v));
-            std::vector<std::string> v1;
-            std::copy(
-                reverse(v.end()),
-                reverse(v.begin()),
                 std::back_inserter(v1));
+            std::reverse(v1.begin(), v1.end());
             BOOST_TEST(v0 == v1);
         }
     }

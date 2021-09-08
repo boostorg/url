@@ -108,7 +108,7 @@ print_impl(
     *dest++ = '.';
     write(dest, (v >>  8) & 0xff);
     *dest++ = '.';
-    write(dest, (v      )       );
+    write(dest, (v      ) & 0xff);
     return dest - start;
 }
 
