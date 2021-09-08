@@ -13,6 +13,8 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/bnf/detail/char_set.hpp>
+#include <boost/static_assert.hpp>
 
 namespace boost {
 namespace urls {
@@ -35,21 +37,25 @@ struct pct_encoded_str
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-2.1
 */
-template<std::uint8_t CharMask>
+template<class CharSet>
 struct pct_encoded_bnf
 {
     pct_encoded_str& v;
 
-    template<std::uint8_t CharMask_>
+    BOOST_STATIC_ASSERT(
+        bnf::detail::is_char_set_pred<
+            CharSet>::value);
+
+    template<class CharSet_>
     friend
     bool
     parse(
         char const*& it,
         char const* const end,
         error_code& ec,
-        pct_encoded_bnf<CharMask_> const& t) noexcept;
+        pct_encoded_bnf<CharSet_> const& t) noexcept;
 };
-    
+
 } // urls
 } // boost
 

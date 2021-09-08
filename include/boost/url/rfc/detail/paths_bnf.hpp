@@ -35,7 +35,8 @@ struct segment_bnf
         using bnf::parse;
         return parse(it, end, ec,
             pct_encoded_bnf<
-                pchar_mask>{t.v});
+                masked_char_set<
+                    pchar_mask>>{t.v});
     }
 };
 
@@ -57,7 +58,8 @@ struct segment_nz_bnf
         auto const start = it;
         if(! parse(it, end, ec,
             pct_encoded_bnf<
-                pchar_mask>{t.v}))
+                masked_char_set<
+                pchar_mask>>{t.v}))
             return false;
         if(it == start)
         {
@@ -87,8 +89,9 @@ struct segment_nz_nc_bnf
         auto const start = it;
         if(! parse(it, end, ec,
             pct_encoded_bnf<
-                pchar_mask &
-                ~colon_char_mask>{t.v}))
+                masked_char_set<
+                    pchar_mask &
+                    ~colon_char_mask>>{t.v}))
             return false;
         if(it == start)
         {

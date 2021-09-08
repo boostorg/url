@@ -33,7 +33,8 @@ struct query_params_bnf
         // key
         if(! parse(it, end, ec,
             pct_encoded_bnf<
-                qpchar_mask>{t.key}))
+                masked_char_set<
+                    qpchar_mask>>{t.key}))
             return false;
         // "="
         if(! parse(it, end, ec, '='))
@@ -47,8 +48,9 @@ struct query_params_bnf
         t.value.emplace();
         if(! parse(it, end, ec,
             pct_encoded_bnf<
-                qpchar_mask |
-                equals_char_mask>{*t.value}))
+                masked_char_set<
+                    qpchar_mask |
+                    equals_char_mask>>{*t.value}))
         {
             ec = {};
             t.value.reset();
@@ -75,7 +77,8 @@ struct query_params_bnf
         // key
         if(! parse(it, end, ec,
             pct_encoded_bnf<
-                qpchar_mask>{t.key}))
+                masked_char_set<
+                    qpchar_mask>>{t.key}))
             return false;
         // "="
         if(! parse(it, end, ec, '='))
@@ -89,8 +92,10 @@ struct query_params_bnf
         t.value.emplace();
         if(! parse(it, end, ec,
             pct_encoded_bnf<
-                qpchar_mask |
-                equals_char_mask>{*t.value}))
+                masked_char_set<
+                    qpchar_mask |
+                    equals_char_mask>>{
+                        *t.value}))
         {
             ec = {};
             t.value.reset();

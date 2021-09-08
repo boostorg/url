@@ -16,19 +16,18 @@
 namespace boost {
 namespace urls {
 
-template<std::uint8_t CharMask>
+template<class CharSet>
 bool
 parse(
     char const*& it,
     char const* const end,
     error_code& ec,
     pct_encoded_bnf<
-        CharMask> const& t) noexcept
+        CharSet> const& t) noexcept
 {
     auto const start = it;
-    masked_char_set<CharMask> cs;
     if(! detail::parse_pct_encoded_impl(
-        it, end, ec, cs,
+        it, end, ec, CharSet{},
             t.v.decoded_size))
         return false;
     t.v.str = string_view(

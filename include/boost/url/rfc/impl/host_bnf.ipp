@@ -73,8 +73,9 @@ parse(
         pct_encoded_str ns;
         if(! parse(it, end, ec,
             pct_encoded_bnf<
-                unsub_char_mask>{
-                    t.name_}))
+                masked_char_set<
+                    unsub_char_mask>>{
+                        t.name_}))
         {
             // bad reg-name
             return false;

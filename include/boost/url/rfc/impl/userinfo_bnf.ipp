@@ -36,11 +36,13 @@ parse(
         bnf::literal<':'>> colon;
     if(! parse(it, end, ec,
         pct_encoded_bnf<
-            unsub_char_mask>{user},
+            masked_char_set<
+                unsub_char_mask>>{user},
         colon,
         pct_encoded_bnf<
-            unsub_char_mask |
-            colon_char_mask>{pass}))
+            masked_char_set<
+                unsub_char_mask |
+                colon_char_mask>>{pass}))
         return false;
     t.str = string_view(
         start, it - start);
