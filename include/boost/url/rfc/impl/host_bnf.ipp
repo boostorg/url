@@ -45,14 +45,14 @@ parse(
         {
             // IPv6address
             t.ipv6_ = v.ipv6;
-            t.host_type_ = host_type::ipv6;
+            t.host_type_ = urls::host_type::ipv6;
             goto finish;
         }
         // VFALCO TODO
         // IPvFuture
         t.ipvfuture_ = v.fut_str;
         t.host_type_ =
-            host_type::ipvfuture;
+            urls::host_type::ipvfuture;
         goto finish;
     }
     // IPv4address
@@ -62,7 +62,7 @@ parse(
         if(parse(it, end, ec, v))
         {
             t.ipv4_ = v.addr;
-            t.host_type_ = host_type::ipv4;
+            t.host_type_ = urls::host_type::ipv4;
             goto finish;
         }
         it = it0;
@@ -81,7 +81,7 @@ parse(
             return false;
         }
         t.host_type_ =
-            host_type::name;
+            urls::host_type::name;
     }
 finish:
     t.str_ = string_view(
