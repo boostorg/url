@@ -13,12 +13,12 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/query_params_view.hpp>
 #include <boost/url/path_view.hpp>
-#include <boost/url/detail/parts.hpp>
+#include <boost/url/query_params_view.hpp>
 #include <boost/url/detail/char_type.hpp>
-#include <boost/optional.hpp>
+#include <boost/url/detail/parts.hpp>
 #include <cstdint>
+#include <iosfwd>
 #include <memory>
 #include <string>
 #include <utility>
@@ -26,16 +26,12 @@
 namespace boost {
 namespace urls {
 
-class url;
-
 /** A parsed reference to a URL string.
 */
 class url_view
 {
     char const* s_ = "";
     detail::parts pt_;
-
-    struct shared_impl;
 
     // VFALCO This has to be kept in
     // sync with other declarations
@@ -52,10 +48,14 @@ class url_view
         id_end          // one past the end
     };
 
+    friend class url;
+    struct shared_impl;
+
     // shortcuts
     string_view get(int id) const noexcept;
     string_view get(int id0, int id1) const noexcept;
     std::size_t len(int id) const noexcept;
+    std::size_t len(int id0, int id1) const noexcept;
 
     url_view(
         char const* s,
@@ -66,14 +66,62 @@ class url_view
     }
 
 public:
-    /** Return the view as a self-contained shared object
+    /** Constructor
+
+        Default constructed views represent a
+        relative-ref with an empty path. That is,
+        their representation is a string of
+        zero length.
+    */
+    BOOST_URL_DECL
+    url_view() noexcept;
+
+    /** Return a copy of the view with extended lifetime.
+
+        This function makes a copy of the storage
+        pointed to by this, and attaches it to a
+        new constant view returned in a shared
+        pointer. The lifetime of the storage for
+        the characters will extend for the lifetime
+        of the shared object. This allows the new
+        view to be copied and passed around after
+        the original string buffer is destroyed.
+
+        @par Example
+        @code
+        std::shared_ptr<url_view const> sp;
+        {
+            std::string s( "http://example.com" );
+            url_view u = parse_uri( s ); // u references characters in s
+            sp = u.collect();
+
+            // s is destroyed and thus u
+            // becomes invalid, but sp remains valid.
+        }
+        std::cout << *sp; // works
+        @endcode
     */
     BOOST_URL_DECL
     std::shared_ptr<
         url_view const>
     collect() const;
 
-    //------------------------------------------------------
+    //--------------------------------------------
+    //
+    // classification
+    //
+    //--------------------------------------------
+
+    /** Return true if the URL is empty
+
+        An empty URL is a relative-ref with
+        zero path segments.
+    */
+    BOOST_URL_DECL
+    bool
+    empty() const noexcept;
+
+    //--------------------------------------------
 
     /** Return the complete serialized URL
     */
@@ -87,11 +135,11 @@ public:
     string_view
     encoded_origin() const noexcept;
 
-    //------------------------------------------------------
+    //--------------------------------------------
     //
     // scheme
     //
-    //------------------------------------------------------
+    //--------------------------------------------
 
     /** Return true if a scheme exists
     */
@@ -105,11 +153,11 @@ public:
     string_view
     scheme() const noexcept;
 
-    //------------------------------------------------------
+    //--------------------------------------------
     //
     // authority
     //
-    //------------------------------------------------------
+    //--------------------------------------------
 
     /** Return true if an authority exists
 
@@ -397,11 +445,11 @@ public:
     string_view
     encoded_host_and_port() const noexcept;
 
-    //------------------------------------------------------
+    //--------------------------------------------
     //
     // path
     //
-    //------------------------------------------------------
+    //--------------------------------------------
 
     /** Return the encoded path
     */
@@ -415,11 +463,11 @@ public:
     path_view
     path() const noexcept;
 
-    //------------------------------------------------------
+    //--------------------------------------------
     //
     // query
     //
-    //------------------------------------------------------
+    //--------------------------------------------
 
     /** Return true if a query exists
 
@@ -494,11 +542,11 @@ public:
     query_params_view
     query_params() const noexcept;
 
-    //------------------------------------------------------
+    //--------------------------------------------
     //
     // fragment
     //
-    //------------------------------------------------------
+    //--------------------------------------------
 
     /** Return true if a fragment is present
     */
@@ -570,8 +618,9 @@ public:
     fragment(
         Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_fragment(), a);
+        return pct_decode_unchecked(
+            encoded_fragment(),
+            pt_.decoded[id_frag], a);
     }
 
     //--------------------------------------------
@@ -582,7 +631,7 @@ public:
 
     BOOST_URL_DECL
     friend
-    optional<url_view>
+    url_view
     parse_uri(
         string_view s,
         error_code& ec) noexcept;
@@ -595,7 +644,7 @@ public:
 
     BOOST_URL_DECL
     friend
-    optional<url_view>
+    url_view
     parse_relative_ref(
         string_view s,
         error_code& ec) noexcept;
@@ -620,7 +669,7 @@ public:
         https://datatracker.ietf.org/doc/html/rfc3986#section-3
 */
 BOOST_URL_DECL
-optional<url_view>
+url_view
 parse_uri(
     string_view s,
     error_code& ec) noexcept;
@@ -637,8 +686,7 @@ parse_uri(
 */
 BOOST_URL_DECL
 url_view
-parse_uri(
-    string_view s);
+parse_uri(string_view s);
 
 /** Parse a relative-ref
 
@@ -656,7 +704,7 @@ parse_uri(
         https://datatracker.ietf.org/doc/html/rfc3986#section-3
 */
 BOOST_URL_DECL
-optional<url_view>
+url_view
 parse_relative_ref(
     string_view s,
     error_code& ec) noexcept;
@@ -681,6 +729,14 @@ BOOST_URL_DECL
 url_view
 parse_relative_ref(
     string_view s);
+
+/** Format the serialized url to the output stream
+*/
+BOOST_URL_DECL
+std::ostream&
+operator<<(
+    std::ostream& os,
+    url_view const& u);
 
 } // urls
 } // boost

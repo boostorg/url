@@ -161,6 +161,10 @@ apply_fragment(
         p.decoded[id_frag] =
             t->decoded_size;
     }
+    else
+    {
+        p.decoded[id_frag] = 0;
+    }
 }
 
 } // detail

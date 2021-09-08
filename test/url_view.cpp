@@ -11,8 +11,8 @@
 #include <boost/url/url_view.hpp>
 
 #include <boost/url/static_pool.hpp>
-
 #include "test_suite.hpp"
+#include <sstream>
 
 namespace boost {
 namespace urls {
@@ -85,15 +85,26 @@ public:
             ec);
         if(! BOOST_TEST(! ec))
             return;
-        BOOST_TEST(u.has_value());
-        BOOST_TEST(u->scheme() == "http");
-        BOOST_TEST(u->username() == "username");
-        BOOST_TEST(u->password() == "pass");
-        BOOST_TEST(u->host() == "www.boost.org");
-        BOOST_TEST(u->port() == "8080");
-        BOOST_TEST(u->encoded_path() == "/x/y/z");
-        BOOST_TEST(u->query() == "a=b&c=3");
-        BOOST_TEST(u->encoded_fragment() == "frag");
+        BOOST_TEST(u.scheme() == "http");
+        BOOST_TEST(u.username() == "username");
+        BOOST_TEST(u.password() == "pass");
+        BOOST_TEST(u.host() == "www.boost.org");
+        BOOST_TEST(u.port() == "8080");
+        BOOST_TEST(u.encoded_path() == "/x/y/z");
+        BOOST_TEST(u.query() == "a=b&c=3");
+        BOOST_TEST(u.encoded_fragment() == "frag");
+
+        BOOST_TEST_NO_THROW(parse_relative_ref(""));
+    }
+
+    void
+    testCtors()
+    {
+        {
+            url_view u;
+            BOOST_TEST(u.encoded_url() == "");
+            BOOST_TEST(u.empty());
+        }
     }
 
     void
@@ -647,9 +658,21 @@ public:
     //--------------------------------------------
 
     void
+    testOutput()
+    {
+        auto u = parse_uri( "http://example.com" );
+        std::stringstream ss;
+        ss << u;
+        BOOST_TEST(
+            ss.str() == "http://example.com");
+    }
+
+    void
     run()
     {
         testParse();
+        testCtors();
+        testCollect();
         testScheme();
         testAuthority();
         testUserinfo();
@@ -658,11 +681,13 @@ public:
         testHostAndPort();
         testQuery();
         testFragment();
-        testCollect();
+        testOutput();
     }
 };
 
-TEST_SUITE(url_view_test, "boost.url.url_view");
+TEST_SUITE(
+    url_view_test,
+    "boost.url.url_view");
 
 } // urls
 } // boost

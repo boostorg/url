@@ -18,6 +18,7 @@
 #include <boost/url/rfc/uri_bnf.hpp>
 #include <boost/url/rfc/relative_ref_bnf.hpp>
 #include <array>
+#include <ostream>
 
 namespace boost {
 namespace urls {
@@ -33,8 +34,7 @@ string_view
 url_view::
 get(int id0, int id1) const noexcept
 {
-    return pt_.get(
-        id0, id1, s_);
+    return pt_.get(id0, id1, s_);
 }
 
 std::size_t
@@ -42,6 +42,13 @@ url_view::
 len(int id) const noexcept
 {
     return pt_.length(id);
+}
+
+std::size_t
+url_view::
+len(int id0, int id1) const noexcept
+{
+    return pt_.length(id0, id1);
 }
 
 //------------------------------------------------
@@ -74,6 +81,23 @@ collect() const
             p.get() + 1),
         s.data(), s.size());
     return p;
+}
+
+url_view::
+url_view() noexcept = default;
+
+//------------------------------------------------
+//
+// classification
+//
+//------------------------------------------------
+
+bool
+url_view::
+empty() const noexcept
+{
+    return len(
+        id_scheme, id_end) == 0;
 }
 
 //------------------------------------------------
@@ -452,18 +476,20 @@ encoded_fragment() const noexcept
 
 //------------------------------------------------
 
-optional<url_view>
+url_view
 parse_uri(
     string_view s,
     error_code& ec) noexcept
 {
     uri_bnf t;
     if(! bnf::parse(s, ec, t))
-        return none;
+        return {};
+
     detail::parts p;
-    using detail::part;
+
+    // scheme
     p.resize(
-        part::id_scheme,
+        detail::part::id_scheme,
         t.scheme.str.size() + 1);
 
     // authority
@@ -482,8 +508,7 @@ parse_uri(
     detail::apply_fragment(
         p, t.fragment);
 
-    return url_view(
-        s.data(), p);
+    return url_view(s.data(), p);
 }
 
 url_view
@@ -492,21 +517,20 @@ parse_uri(
 {
     error_code ec;
     auto u = parse_uri(s, ec);
-    if(ec.failed())
-        detail::throw_system_error(ec,
-            BOOST_CURRENT_LOCATION);
-    BOOST_ASSERT(u.has_value());
-    return *u;
+    detail::maybe_throw(ec,
+        BOOST_CURRENT_LOCATION);
+    return u;
 }
 
-optional<url_view>
+url_view
 parse_relative_ref(
     string_view s,
     error_code& ec) noexcept
 {
     relative_ref_bnf t;
     if(! bnf::parse(s, ec, t))
-        return none;
+        return {};
+
     detail::parts p;
 
     // authority
@@ -535,11 +559,18 @@ parse_relative_ref(
 {
     error_code ec;
     auto u = parse_relative_ref(s, ec);
-    if(ec.failed())
-        detail::throw_system_error(ec,
-            BOOST_CURRENT_LOCATION);
-    BOOST_ASSERT(u.has_value());
-    return *u;
+    detail::maybe_throw(ec,
+        BOOST_CURRENT_LOCATION);
+    return u;
+}
+
+std::ostream&
+operator<<(
+    std::ostream& os,
+    url_view const& u)
+{
+    os << u.encoded_url();
+    return os;
 }
 
 } // urls

@@ -11,18 +11,24 @@
 #define BOOST_URL_URL_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/ipv4_address.hpp>
+#include <boost/url/ipv6_address.hpp>
 #include <boost/url/path_view.hpp>
 #include <boost/url/query_params_view.hpp>
-#include <boost/url/url_view.hpp>
 #include <boost/url/detail/char_type.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <boost/url/storage_ptr.hpp>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
 
 namespace boost {
 namespace urls {
+
+#ifndef BOOST_URL_DOCS
+class url_view;
+#endif
 
 /** A modifiable container for a URL.
 
@@ -45,12 +51,10 @@ namespace urls {
 */
 class url
 {
+    char* s_ = nullptr;
+    detail::parts pt_;
     storage_ptr sp_;
     std::size_t cap_ = 0;
-    detail::parts pt_;
-    char* s_ = nullptr;
-
-    class modify;
 
     // VFALCO This has to be kept in
     // sync with other declarations
@@ -67,14 +71,16 @@ class url
         id_end          // one past the end
     };
 
+    class modify;
+
     // shortcuts
     string_view get(int id) const noexcept;
     string_view get(int id0, int id1) const noexcept;
     std::size_t len(int id) const noexcept;
 
 public:
-    class segments_type;
     class params_type;
+    class segments_type;
 
     /** Destructor
     */
@@ -1400,8 +1406,6 @@ public:
         @par Exception Safety
 
         No-throw guarantee.
-
-        @see url_view::params_type
     */
     BOOST_URL_DECL
     query_params_view
@@ -1417,8 +1421,6 @@ public:
         @par Exception Safety
 
         No-throw guarantee.
-
-        @see params_type
     */
     BOOST_URL_DECL
     params_type
