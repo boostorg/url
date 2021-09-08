@@ -26,7 +26,7 @@ local SOURCES =
     _detail_parse.cpp
     error.cpp
     host_type.cpp
-    optional.cpp
+    path_view.cpp
     query_params_view.cpp
     sandbox.cpp
     scheme.cpp
