@@ -289,48 +289,46 @@ urls::ipv4_address
 url_view::
 ipv4_address() const noexcept
 {
-    BOOST_ASSERT(pt_.host_type ==
-        urls::host_type::ipv4);
-    if(pt_.host_type !=
+    if(pt_.host_type ==
         urls::host_type::ipv4)
-        return ipv4_address();
-    std::array<
-        unsigned char, 4> bytes;
-    std::memcpy(
-        &bytes[0],
-        &pt_.ip_addr[0], 4);
-    return urls::ipv4_address(
-        bytes);
+    {
+        std::array<
+            unsigned char, 4> bytes;
+        std::memcpy(
+            &bytes[0],
+            &pt_.ip_addr[0], 4);
+        return urls::ipv4_address(
+            bytes);
+    }
+    return urls::ipv4_address();
 }
 
 urls::ipv6_address
 url_view::
 ipv6_address() const noexcept
 {
-    BOOST_ASSERT(pt_.host_type ==
-        urls::host_type::ipv6);
-    if(pt_.host_type !=
+    if(pt_.host_type ==
         urls::host_type::ipv6)
-        return ipv6_address();
-    std::array<
-        unsigned char, 16> bytes;
-    std::memcpy(
-        &bytes[0],
-        &pt_.ip_addr[0], 16);
-    return urls::ipv6_address(
-        bytes);
+    {
+        std::array<
+            unsigned char, 16> bytes;
+        std::memcpy(
+            &bytes[0],
+            &pt_.ip_addr[0], 16);
+        return urls::ipv6_address(
+            bytes);
+    }
+    return urls::ipv6_address();
 }
 
 string_view
 url_view::
 ipv_future() const noexcept
 {
-    BOOST_ASSERT(pt_.host_type ==
-        urls::host_type::ipvfuture);
-    if(pt_.host_type !=
+    if(pt_.host_type ==
         urls::host_type::ipvfuture)
-        return {};
-    return get(id_host);
+        return get(id_host);
+    return {};
 }
 
 // port

@@ -20,81 +20,50 @@ namespace urls {
 class url_view_test
 {
 public:
-#if 0
-    void
-    testSegments()
-    {
-        BOOST_TEST(url_view().segments().size() == 0);
-        BOOST_TEST(url_view("x:a").segments().size() == 1);
-        BOOST_TEST(url_view("x:/a").segments().size() == 1);
-        BOOST_TEST(url_view("x://y/a").segments().size() == 1);
-
-        BOOST_TEST(url_view("x").segments().size() == 1);
-        BOOST_TEST(url_view("x/").segments().size() == 2);
-        BOOST_TEST(url_view("x//").segments().size() == 3);
-
-        BOOST_TEST(url_view("/").segments().size() == 1);
-
-        {
-            url_view::segments_type const ps{};
-            BOOST_TEST(ps.empty());
-            BOOST_TEST(ps.size() == 0);
-            BOOST_TEST(ps.begin() == ps.end());
-            BOOST_TEST(
-                url_view::segments_type::iterator() ==
-                url_view::segments_type::iterator());
-        }
-        {
-            url_view const v("/path/to/file.txt");
-            auto const ps = v.segments();
-            BOOST_TEST(! ps.empty());
-            BOOST_TEST(ps.size() == 3);
-            BOOST_TEST(ps.begin() != ps.end());
-            BOOST_TEST(ps.end() == ps.end());
-
-            static_pool<4000> sp;
-            {
-                auto it = ps.begin();
-                BOOST_TEST(it->string(sp.allocator()) == "path"); ++it;
-                BOOST_TEST(it->string(sp.allocator()) == "to"); ++it;
-                BOOST_TEST(it->string(sp.allocator()) == "file.txt");
-            }
-
-            auto it = ps.begin();
-            BOOST_TEST(it->encoded_string() == "path");
-            it++;
-            BOOST_TEST(it->encoded_string() == "to");
-            ++it;
-            BOOST_TEST(it->encoded_string() == "file.txt");
-            --it;
-            BOOST_TEST(it->encoded_string() == "to");
-            it--;
-            BOOST_TEST(it->encoded_string() == "path");
-        }
-    }
-#endif
-
-    //--------------------------------------------
-
     void
     testParse()
     {
-        error_code ec;
-        auto const u = urls::parse_uri(
-            "http://username:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag",
-            ec);
-        if(! BOOST_TEST(! ec))
-            return;
-        BOOST_TEST(u.scheme() == "http");
-        BOOST_TEST(u.username() == "username");
-        BOOST_TEST(u.password() == "pass");
-        BOOST_TEST(u.host() == "www.boost.org");
-        BOOST_TEST(u.port() == "8080");
-        BOOST_TEST(u.encoded_path() == "/x/y/z");
-        BOOST_TEST(u.query() == "a=b&c=3");
-        BOOST_TEST(u.encoded_fragment() == "frag");
+        {
+            BOOST_TEST_THROWS(
+                urls::parse_uri(":"),
+                std::exception);
+        }
+        {
+            BOOST_TEST_THROWS(
+                urls::parse_relative_ref(":"),
+                std::exception);
+        }
+        {
+            error_code ec;
+            auto const u = urls::parse_uri(
+                "http://username:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag",
+                ec);
+            if(! BOOST_TEST(! ec))
+                return;
+            BOOST_TEST(u.encoded_origin() ==
+                "http://username:pass@www.boost.org:8080");
+            BOOST_TEST(u.scheme() == "http");
+            BOOST_TEST(u.username() == "username");
+            BOOST_TEST(u.password() == "pass");
+            BOOST_TEST(u.host() == "www.boost.org");
+            BOOST_TEST(u.port() == "8080");
+            BOOST_TEST(u.encoded_path() == "/x/y/z");
+            BOOST_TEST(u.query() == "a=b&c=3");
+            BOOST_TEST(u.encoded_fragment() == "frag");
+        }
 
         BOOST_TEST_NO_THROW(parse_relative_ref(""));
+
+        {
+            auto const u = urls::parse_relative_ref(
+                "/path/to/foo.htm");
+            BOOST_TEST(u.encoded_userinfo() == "");
+        }
+        {
+            auto const u = urls::parse_relative_ref(
+                "//host/path/to/foo.htm");
+            BOOST_TEST(u.encoded_userinfo() == "");
+        }
     }
 
     void
@@ -291,6 +260,12 @@ public:
                 host_type::none);
             BOOST_TEST(u.encoded_host() ==
                 "");
+            BOOST_TEST(u.ipv4_address()
+                == ipv4_address());
+            BOOST_TEST(u.ipv6_address()
+                == ipv6_address());
+            BOOST_TEST(
+                u.ipv_future() == "");
         }
         {
             auto u = parse_uri(
@@ -461,6 +436,29 @@ public:
     }
 
     void
+    testPath()
+    {
+        url_view u;
+        BOOST_TEST_NO_THROW(
+            u = parse_relative_ref(
+                "/path/to/file.htm"));
+        auto const p = u.path();
+        BOOST_TEST(! p.empty());
+        BOOST_TEST(p.size() == 3);
+        auto it = p.begin();
+        BOOST_TEST(
+            it->encoded_segment() == "path");
+        ++it;
+        BOOST_TEST(
+            it->encoded_segment() == "to");
+        ++it;
+        BOOST_TEST(
+            it->encoded_segment() == "file.htm");
+        ++it;
+        BOOST_TEST(it == p.end());
+    }
+
+    void
     testQuery()
     {
         {
@@ -469,6 +467,7 @@ public:
             BOOST_TEST(! u.has_query());
             BOOST_TEST(u.encoded_query() == "");
             BOOST_TEST(u.query() == "");
+            BOOST_TEST(u.query_params().empty());
         }
         {
             auto u = parse_uri(
@@ -679,6 +678,7 @@ public:
         testHost();
         testPort();
         testHostAndPort();
+        testPath();
         testQuery();
         testFragment();
         testOutput();
