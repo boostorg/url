@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/network_order.hpp>
 #include "test_suite.hpp"
+#include <sstream>
 
 namespace boost {
 namespace urls {
@@ -20,8 +21,19 @@ class ipv4_address_test
 {
 public:
     void
+    testOutput()
+    {
+        std::stringstream ss;
+        ipv4_address a(0x01020304);
+        ss << a;
+        BOOST_TEST(
+            ss.str() == "1.2.3.4");
+    }
+
+    void
     run()
     {
+        testOutput();
         {
             ipv4_address a;
             BOOST_TEST(a.is_unspecified());

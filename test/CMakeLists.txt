@@ -26,7 +26,6 @@ set(BOOST_URL_TESTS_FILES
     ipv6_address.cpp
     path_view.cpp
     query_params_view.cpp
-    sandbox.cpp
     scheme.cpp
     static_pool.cpp
     storage_ptr.cpp

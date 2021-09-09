@@ -74,7 +74,7 @@ ipv4_address::
 is_multicast() const noexcept
 {
     return (to_uint() & 0xF0000000) ==
-        0xE0000000;;
+        0xE0000000;
 }
 
 std::size_t
@@ -119,8 +119,7 @@ operator<<(
 {
     char buf[ipv4_address::max_str_len + 1];
     auto n = a.print_impl(buf);
-    buf[n] = '\0';
-    os << string_view(buf, n);
+    os.write(buf, n);
     return os;
 }
 

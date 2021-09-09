@@ -75,22 +75,6 @@ is_unspecified() const noexcept
 
 bool
 ipv6_address::
-is_link_local() const noexcept
-{
-    return  (addr_[0] == 0xfe) && (
-            (addr_[1] & 0xc0) == 0x80);
-}
-
-bool
-ipv6_address::
-is_site_local() const noexcept
-{
-    return  (addr_[0] == 0xfe) && (
-            (addr_[1] & 0xc0) == 0xc0);
-}
-
-bool
-ipv6_address::
 is_v4_mapped() const noexcept
 {
     return
@@ -101,53 +85,6 @@ is_v4_mapped() const noexcept
         addr_[ 8] == 0 && addr_[ 9] == 0 &&
         addr_[10] == 0xff &&
         addr_[11] == 0xff;
-}
-
-bool
-ipv6_address::
-is_multicast() const noexcept
-{
-    return addr_[0] == 0xff;
-}
-
-bool
-ipv6_address::
-is_multicast_global() const noexcept
-{
-    return  (addr_[0] == 0xff) && (
-            (addr_[1] & 0x0f) == 0x0e);
-}
-
-bool
-ipv6_address::
-is_multicast_link_local() const noexcept
-{
-    return  (addr_[0] == 0xff) && (
-            (addr_[1] & 0x0f) == 0x02);
-}
-
-bool
-ipv6_address::
-is_multicast_node_local() const noexcept
-{
-    return  (addr_[0] == 0xff) && (
-            (addr_[1] & 0x0f) == 0x01);
-}
-
-bool
-ipv6_address::
-is_multicast_org_local() const noexcept
-{
-    return  (addr_[0] == 0xff) && (
-            (addr_[1] & 0x0f) == 0x08);
-}
-
-bool
-ipv6_address::
-is_multicast_site_local() const noexcept
-{
-    return  (addr_[0] == 0xff) && (
-            (addr_[1] & 0x0f) == 0x05);
 }
 
 bool
@@ -290,8 +227,7 @@ operator<<(
 {
     char buf[ipv6_address::max_str_len + 1];
     auto n = a.print_impl(buf);
-    buf[n] = '\0';
-    os << string_view(buf, n);
+    os.write(buf, n);
     return os;
 }
 
@@ -327,12 +263,10 @@ ipv6_address
 make_ipv6_address(
     ipv4_address const& a) noexcept
 {
-    ipv6_address::bytes_type bytes{};
     auto const v = a.to_bytes();
-    bytes[12] = v[0];
-    bytes[13] = v[1];
-    bytes[14] = v[2];
-    bytes[15] = v[3];
+    ipv6_address::bytes_type bytes = {
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0xff, 0xff, v[0], v[1], v[2], v[3] } };
     return ipv6_address(bytes);
 }
 

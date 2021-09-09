@@ -20,8 +20,19 @@
 namespace boost {
 namespace urls {
 
+#ifndef BOOST_URL_DOCS
 class ipv4_address;
+#endif
 
+/** Represents an IP version 6 style address
+
+    Objects of this type are used to construct
+    and manipulate IP version 6 addresses.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc4291">
+        IP Version 6 Addressing Architecture</a>
+*/
 class ipv6_address
 {
 public:
@@ -36,16 +47,26 @@ public:
     std::size_t max_str_len = 49;
 
     /** The type used to represent an address as an array of bytes
+
+        Octets are stored in network byte order.
     */
     using bytes_type =
         std::array<unsigned char, 16>;
 
     /** Constructor
+
+        Default constructed objects represent
+        the unspecified address.
+
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.2">
+            2.5.2. The Unspecified Address</a>
+
+        @see @ref is_unspecified
     */
     BOOST_URL_DECL
     ipv6_address() noexcept;
 
-    /** Construct from raw bytes
+    /** Constructor
     */
     BOOST_URL_DECL
     explicit
@@ -58,7 +79,7 @@ public:
     ipv6_address(
         ipv6_address const& other) noexcept;
 
-    /** Assign from another address
+    /** Assignment
     */
     BOOST_URL_DECL
     ipv6_address&
@@ -88,6 +109,10 @@ public:
 
         @return A `std::basic_string` using the
         specified allocator.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.2">
+            2.2. Text Representation of Addresses</a>
     */
     template<class Allocator =
         std::allocator<char>>
@@ -95,71 +120,46 @@ public:
     to_string(Allocator const& a = {}) const;
 
     /** Return true if the address is unspecified
+
+        The address 0:0:0:0:0:0:0:0 is called the
+        unspecified address. It indicates the
+        absence of an address.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.2">
+            2.5.2. The Unspecified Address</a>
     */
     BOOST_URL_DECL
     bool
     is_unspecified() const noexcept;
 
     /** Return true if the address is a loopback address
+
+        The unicast address 0:0:0:0:0:0:0:1 is called
+        the loopback address. It may be used by a node
+        to send an IPv6 packet to itself.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.3">
+            2.5.3. The Loopback Address</a>
     */
     BOOST_URL_DECL
     bool
     is_loopback() const noexcept;
 
-    /** Return true if the address is link local
-    */
-    BOOST_URL_DECL
-    bool
-    is_link_local() const noexcept;
-
-    /** Return true if the address is site local
-    */
-    BOOST_URL_DECL
-    bool
-    is_site_local() const noexcept;
-
     /** Return true if the address is a mapped IPv4 address
+
+        This address type is used to represent the
+        addresses of IPv4 nodes as IPv6 addresses.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.5.2">
+            2.5.5.2. IPv4-Mapped IPv6 Address</a>
     */
     BOOST_URL_DECL
     bool
     is_v4_mapped() const noexcept;
 
-    /** Return true if the address is a multicast address
-    */
-    BOOST_URL_DECL
-    bool
-    is_multicast() const noexcept;
-
-    /** Return true if the address is a global multicast address
-    */
-    BOOST_URL_DECL
-    bool
-    is_multicast_global() const noexcept;
-
-    /** Return true if the address is a link-local multicast address
-    */
-    BOOST_URL_DECL
-    bool
-    is_multicast_link_local() const noexcept;
-
-    /** Return true if the address is a node-local multicast address
-    */
-    BOOST_URL_DECL
-    bool
-    is_multicast_node_local() const noexcept;
-
-    /** Return true if the address is a org-local multicast address
-    */
-    BOOST_URL_DECL
-    bool
-    is_multicast_org_local() const noexcept;
-
-    /** Return true if the address is a site-local multicast address
-    */
-    BOOST_URL_DECL
-    bool
-    is_multicast_site_local() const noexcept;
-  
     /** Return true if two addresses are equal
     */
     BOOST_URL_DECL
@@ -181,6 +181,14 @@ public:
     }
 
     /** Return an address object that represents the loopback address
+
+        The unicast address 0:0:0:0:0:0:0:1 is called
+        the loopback address. It may be used by a node
+        to send an IPv6 packet to itself.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.3">
+            2.5.3. The Loopback Address</a>
     */
     BOOST_URL_DECL
     static
@@ -206,6 +214,16 @@ private:
 };
 
 /** Return an IPv6 address from an IP address string
+
+    @par Exception Safety
+    Does not throw.
+
+    @return The parsed address if successful,
+        otherwise a default constructed object.
+
+    @param s The string to parse
+
+    @param ec Set to the error, if any occurred
 */
 BOOST_URL_DECL
 ipv6_address
@@ -214,6 +232,10 @@ make_ipv6_address(
     error_code& ec) noexcept;
 
 /** Return an IPv6 address from an IP address string
+
+    @throw system_error Thrown on failure
+
+    @param s The string to parse
 */
 BOOST_URL_DECL
 ipv6_address
@@ -221,6 +243,8 @@ make_ipv6_address(
     string_view s);
 
 /** Return an IPv6 address from an IPv4 address
+
+    @param a The ipv4 address to use
 */
 BOOST_URL_DECL
 ipv6_address
