@@ -39,13 +39,10 @@ allocate(
 void
 basic_static_pool::
 deallocate(
-    void* p,
-    std::size_t bytes,
-    std::size_t align) noexcept
+    void*,
+    std::size_t,
+    std::size_t) noexcept
 {
-    (void)p;
-    (void)bytes;
-    (void)align;
 }
 
 } // urls

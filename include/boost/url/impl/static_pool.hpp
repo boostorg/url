@@ -63,8 +63,7 @@ public:
     {
         return reinterpret_cast<T*>(
             pool_->allocate(
-                n * sizeof(T),
-                alignof(T)));
+                n * sizeof(T), alignof(T)));
     }
 
     void
@@ -73,8 +72,7 @@ public:
         size_type n) noexcept
     {
         pool_->deallocate(p,
-            n * sizeof(T),
-            alignof(T));
+            n * sizeof(T), alignof(T));
     }
 
     template<class U>
