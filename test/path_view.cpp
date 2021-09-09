@@ -154,6 +154,7 @@ public:
         check("http%3a//a.htm", {"http:","","a.htm"}, &parse_path_noscheme);
         check("a/b/c", {"a","b","c"}, &parse_path_noscheme);
         bad("", &parse_path_noscheme);
+        bad("%2g/", &parse_path_noscheme);
         bad("/", &parse_path_noscheme);
         bad("/:", &parse_path_noscheme);
         bad(":", &parse_path_noscheme);

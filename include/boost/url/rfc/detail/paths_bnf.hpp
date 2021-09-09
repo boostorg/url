@@ -335,54 +335,6 @@ struct path_rootless_bnf
     }
 };
 
-//------------------------------------------------
-
-// path-empty    = 0<pchar>
-struct path_empty_bnf
-{
-    bnf::range<
-        pct_encoded_str>& v;
-
-    static
-    bool
-    begin(
-        char const*&,
-        char const*,
-        error_code& ec,
-        pct_encoded_str& t) noexcept
-    {
-        t = {};
-        ec = error::end;
-        return false;
-    }
-
-    static
-    bool
-    increment(
-        char const*&,
-        char const*,
-        error_code& ec,
-        pct_encoded_str& t) noexcept
-    {
-        // should never get here
-        t = {};
-        ec = error::end;
-        return false;
-    }
-
-    friend
-    bool
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        path_empty_bnf const& t)
-    {
-        return bnf::parse_range(
-            it, end, ec, t.v, t);
-    }
-};
-
 } // detail
 } // urls
 } // boost

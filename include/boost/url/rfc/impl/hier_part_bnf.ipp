@@ -29,8 +29,7 @@ parse(
     {
         // path-empty
         t.authority.reset();
-        parse(it, end, ec,
-            detail::path_empty_bnf{t.path});
+        t.path = {};
         ec = {};
         return true;
     }
