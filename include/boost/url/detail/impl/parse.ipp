@@ -78,21 +78,22 @@ apply_authority(
         // no authority
         return;
     }
-    auto const& u = t->userinfo;
-    if(u.has_value())
+    if(t->has_userinfo)
     {
+        auto const& u = t->userinfo;
+
         // leading "//" for authority
         p.resize(
             part::id_user,
-            u->username.str.size() + 2);
+            u.username.str.size() + 2);
 
-        if(u->password.has_value())
+        if(u.password.has_value())
         {
             // leading ':' for password,
             // trailing '@' for userinfo
             p.resize(
                 part::id_pass,
-                u->password->str.size() + 2);
+                u.password->str.size() + 2);
         }
         else
         {
@@ -106,16 +107,19 @@ apply_authority(
         p.resize(part::id_user, 2);
     }
 
+    // host
     apply_host(p, t->host);
 
-    if(t->port.has_value())
+    // port
+    if(t->has_port)
     {
         // leading ':' for port
         p.resize(
             part::id_port,
-            t->port->str.size() + 1);
-        if(t->port->number.has_value())
-            p.port_number = *t->port->number;
+            t->port.str.size() + 1);
+
+        if(t->port.number.has_value())
+            p.port_number = *t->port.number;
     }
 }
 

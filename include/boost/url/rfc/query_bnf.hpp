@@ -14,7 +14,6 @@
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/range.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/optional.hpp>
 
 namespace boost {
 namespace urls {
@@ -22,7 +21,8 @@ namespace urls {
 struct query_param
 {
     pct_encoded_str key;
-    optional<pct_encoded_str> value;
+    pct_encoded_str value;
+    bool has_value = false;
 };
 
 /** BNF for query

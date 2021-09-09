@@ -30,18 +30,20 @@ parse(
     auto const start = it;
 
     // [ userinfo "@" ]
-    t.userinfo.emplace();
-    if(! parse(it, end,
-        ec, *t.userinfo, '@'))
+    if(parse(it, end,
+        ec, t.userinfo, '@'))
     {
-        t.userinfo.reset();
+        t.has_userinfo = true;
+    }
+    else
+    {
         it = start;
         ec = {};
     }
 
     // host
-    if(! parse(it,
-        end, ec, t.host))
+    if(! parse(it, end,
+            ec, t.host))
         return false;
 
     // [ ":" port ]
@@ -49,19 +51,16 @@ parse(
         *it == ':')
     {
         ++it;
-        t.port.emplace();
-        if(! parse(it, end, ec,
-            *t.port))
-        {
-            // never happens
-            BOOST_ASSERT(
-                ! ec.failed());
-            return false;
-        }
+        t.has_port = true;
+        parse(it, end, ec,
+            t.port);
+        // can't fail
+        BOOST_ASSERT(
+            ! ec.failed());
     }
     else
     {
-        t.port.reset();
+        t.has_port = false;
     }
 
     t.str = string_view(

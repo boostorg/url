@@ -56,18 +56,18 @@ public:
                 host_type::name);
             BOOST_TEST(p.host.get_name().str
                 == "e.com");
-            if(BOOST_TEST(p.port.has_value()))
+            if(BOOST_TEST(p.has_port))
             {
-                BOOST_TEST(p.port->str == "8080");
-                BOOST_TEST(p.port->number.has_value());
-                BOOST_TEST(*p.port->number == 8080);
+                BOOST_TEST(p.port.str == "8080");
+                BOOST_TEST(p.port.number.has_value());
+                BOOST_TEST(*p.port.number == 8080);
             }
-            if(BOOST_TEST(p.userinfo.has_value()))
+            if(BOOST_TEST(p.has_userinfo))
             {
-                BOOST_TEST(p.userinfo->str == "x:y");
-                BOOST_TEST(p.userinfo->username.str == "x");
-                if(BOOST_TEST(p.userinfo->password.has_value()))
-                    BOOST_TEST(p.userinfo->password->str == "y");
+                BOOST_TEST(p.userinfo.str == "x:y");
+                BOOST_TEST(p.userinfo.username.str == "x");
+                if(BOOST_TEST(p.userinfo.password.has_value()))
+                    BOOST_TEST(p.userinfo.password->str == "y");
             }
         }
     }

@@ -15,7 +15,6 @@
 #include <boost/url/rfc/host_bnf.hpp>
 #include <boost/url/rfc/port_bnf.hpp>
 #include <boost/url/rfc/userinfo_bnf.hpp>
-#include <boost/optional.hpp>
 #include <array>
 #include <cstdint>
 
@@ -35,9 +34,11 @@ namespace urls {
 struct authority_bnf
 {
     string_view str;
+    userinfo_bnf userinfo;
     host_bnf host;
-    optional<port_bnf> port;
-    optional<userinfo_bnf> userinfo;
+    port_bnf port;
+    bool has_port = false;
+    bool has_userinfo = false;
 
     BOOST_URL_DECL
     friend

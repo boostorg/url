@@ -30,32 +30,33 @@ struct query_params_bnf
         query_param& t) noexcept
     {
         using bnf::parse;
+
         // key
         if(! parse(it, end, ec,
             pct_encoded_bnf<
                 masked_char_set<
                     qpchar_mask>>{t.key}))
             return false;
+
         // "="
-        if(! parse(it, end, ec, '='))
+        t.has_value = parse(
+            it, end, ec, '=');
+        if(! t.has_value)
         {
             // key with no value
             ec = {};
-            t.value.reset();
             return true;
         }
+
         // value
-        t.value.emplace();
-        if(! parse(it, end, ec,
+        // VFALCO This doesn't look right!
+        parse(it, end, ec,
             pct_encoded_bnf<
                 masked_char_set<
                     qpchar_mask |
-                    equals_char_mask>>{*t.value}))
-        {
-            ec = {};
-            t.value.reset();
-            return true;
-        }
+                    equals_char_mask>>{
+                        t.value});
+        ec = {};
         return true;
     }
 
@@ -81,26 +82,22 @@ struct query_params_bnf
                     qpchar_mask>>{t.key}))
             return false;
         // "="
-        if(! parse(it, end, ec, '='))
+        t.has_value = parse(
+            it, end, ec, '=');
+        if(! t.has_value)
         {
             // key with no value
             ec = {};
-            t.value.reset();
             return true;
         }
         // value
-        t.value.emplace();
-        if(! parse(it, end, ec,
+        parse(it, end, ec,
             pct_encoded_bnf<
                 masked_char_set<
                     qpchar_mask |
                     equals_char_mask>>{
-                        *t.value}))
-        {
-            ec = {};
-            t.value.reset();
-            return true;
-        }
+                        t.value});
+        ec = {};
         return true;
     }
 };

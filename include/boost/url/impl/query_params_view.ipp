@@ -46,9 +46,9 @@ iterator(
     BOOST_ASSERT(! ec.failed());
     v_.k_ = t.key;
     v_.has_value_ = 
-        t.value.has_value();
+        t.has_value;
     if(v_.has_value_)
-        v_.v_ = *t.value;
+        v_.v_ = t.value;
     else
         v_.v_ = {};
 }
@@ -72,9 +72,9 @@ operator++() noexcept ->
     BOOST_ASSERT(! ec.failed());
     v_.k_ = t.key;
     v_.has_value_ = 
-        t.value.has_value();
+        t.has_value;
     if(v_.has_value_)
-        v_.v_ = *t.value;
+        v_.v_ = t.value;
     else
         v_.v_ = {};
     return *this;
