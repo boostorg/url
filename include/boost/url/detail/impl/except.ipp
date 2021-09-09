@@ -26,6 +26,7 @@ throw_bad_alloc(
         std::bad_alloc(), loc);
 }
 
+#if 0
 void
 throw_length_error(
     char const* what,
@@ -34,6 +35,7 @@ throw_length_error(
     throw_exception(
         std::length_error(what), loc);
 }
+#endif
 
 void
 throw_invalid_argument(
@@ -62,6 +64,7 @@ throw_system_error(
         system_error(ec), loc);
 }
 
+#if 0
 void
 throw_system_error(
     error e,
@@ -70,6 +73,7 @@ throw_system_error(
     throw_exception(
         system_error(e), loc);
 }
+#endif
 
 } // detail
 } // url

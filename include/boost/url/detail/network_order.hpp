@@ -37,14 +37,7 @@ is_big_endian() noexcept
     unsigned char t0[4] = {};
     std::uint_least32_t t1 = 1;
     std::memcpy(t0, &t1, 4);
-    if(t0[0] == 0)
-    {
-        // big endian
-        BOOST_ASSERT(
-            t0[3] == 1);
-        return true;
-    }
-    return false;
+    return t0[0] == 0;
 }
 
 inline

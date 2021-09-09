@@ -13,7 +13,6 @@
 #include <boost/url/rfc/userinfo_bnf.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/bnf/literal.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
 #include <boost/url/rfc/pct_encoding.hpp>
@@ -30,27 +29,31 @@ parse(
 {
     using bnf::parse;
     auto const start = it;
-    pct_encoded_str user;
-    pct_encoded_str pass;
-    optional<
-        bnf::literal<':'>> colon;
     if(! parse(it, end, ec,
         pct_encoded_bnf<
             masked_char_set<
-                unsub_char_mask>>{user},
-        colon,
-        pct_encoded_bnf<
-            masked_char_set<
-                unsub_char_mask |
-                colon_char_mask>>{pass}))
+                unsub_char_mask>>{
+                    t.username}))
         return false;
+    if( it != end &&
+        *it == ':')
+    {
+        ++it;
+        t.password.emplace();
+        if(! parse(it, end, ec,
+            pct_encoded_bnf<
+                masked_char_set<
+                    unsub_char_mask |
+                    colon_char_mask>>{
+                        *t.password}))
+            return false;
+    }
+    else
+    {
+        t.password.reset();
+    }
     t.str = string_view(
         start, it - start);
-    t.username = user;
-    if(colon.has_value())
-        t.password = pass;
-    else
-        t.password.reset();
     return true;
 }
 

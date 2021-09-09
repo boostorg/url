@@ -29,6 +29,7 @@ public:
         bad<T>("v1.");
         bad<T>("v1.@$");
         bad<T>("v.1");
+        bad<T>("w1.1");
 
         good<T>("v1.0");
         good<T>("v1.minor");

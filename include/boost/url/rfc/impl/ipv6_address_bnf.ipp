@@ -57,15 +57,10 @@ struct h16
         error_code& ec,
         h16 const& t)
     {
+        BOOST_ASSERT(it != end);
         std::uint16_t v;
         for(;;)
         {
-            if(it == end)
-            {
-                // expected HEXDIG
-                ec = error::syntax;
-                return false;
-            }
             auto d =
                 bnf::hexdig_value(*it);
             if(d == -1)

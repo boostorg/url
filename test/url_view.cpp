@@ -129,6 +129,12 @@ public:
         yes("http://:@", ":@");
         yes("http://@", "@");
         yes("http://@x", "@x");
+
+        {
+            auto u = parse_uri(
+                "http:/path");
+            BOOST_TEST(u.encoded_host() == "");
+        }
     }
 
     void

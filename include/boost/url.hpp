@@ -24,7 +24,6 @@
 #include <boost/url/urls.hpp>
 
 #include <boost/url/bnf/char_set.hpp>
-#include <boost/url/bnf/literal.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/bnf/range.hpp>
 #include <boost/url/bnf/repeat.hpp>
