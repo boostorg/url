@@ -12,7 +12,6 @@
 
 #include <boost/url/error.hpp>
 #include <boost/url/url.hpp>
-#include <boost/url/detail/parse.hpp>
 #include <cstring>
 #include <stdexcept>
 #include <utility>
@@ -483,15 +482,6 @@ url::
 url::
 url() noexcept = default;
 
-url::
-url(
-    storage_ptr sp,
-    string_view s)
-    : sp_(std::move(sp))
-{
-    set_encoded_url(s);
-}
-
 std::size_t
 url::
 size() const noexcept
@@ -512,6 +502,8 @@ clear() noexcept
 }
 
 //------------------------------------------------
+
+#if 0
 
 url&
 url::
@@ -2075,6 +2067,8 @@ resize_impl(
     s_[size()] = '\0';
     return s_ + pt_.offset[first];
 }
+
+#endif
 
 } // urls
 } // boost

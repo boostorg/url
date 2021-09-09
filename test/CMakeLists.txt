@@ -20,7 +20,6 @@ set(BOOST_URL_TESTS_FILES
     include/test_suite.hpp
     include/test_bnf.hpp
     _detail_char_type.cpp
-    _detail_parse.cpp
     error.cpp
     host_type.cpp
     ipv4_address.cpp

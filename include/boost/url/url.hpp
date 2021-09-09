@@ -601,6 +601,10 @@ public:
     }
 
     //--------------------------------------------
+    //--------------------------------------------
+    //--------------------------------------------
+    //--------------------------------------------
+    //--------------------------------------------
 
     /** Destructor
     */
@@ -618,29 +622,6 @@ public:
     url(
         storage_ptr sp) noexcept
         : sp_(std::move(sp))
-    {
-    }
-
-    /** Construct a parsed URL with the specified storage.
-
-        If `s` is not a valid URL (a <em>URI-absolute</em>
-        or a <em>relative-ref</em>), an exception is thrown.
-
-        @param a The storage to use.
-
-        @param s The URL to parse.
-
-        @throw std::exception parse error.
-    */
-    BOOST_URL_DECL
-    url(
-        storage_ptr sp,
-        string_view s);
-
-    explicit
-    url(
-        string_view s)
-        : url(storage_ptr(), s)
     {
     }
 

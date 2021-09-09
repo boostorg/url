@@ -11,7 +11,6 @@
 #define BOOST_URL_DETAIL_IMPL_PARSE_IPP
 
 #include <boost/url/detail/parse.hpp>
-#include <boost/optional.hpp>
 
 namespace boost {
 namespace urls {
