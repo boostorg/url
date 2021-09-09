@@ -16,47 +16,110 @@
 namespace boost {
 namespace urls {
 
-/** Identifies a special URL scheme.
+/** Identifies a known URL scheme
 */
 enum class scheme : unsigned char
 {
+    /** Indicates the scheme is not a well-known scheme
+    */
     unknown = 0,
 
+    /** File Transfer Protocol (FTP)
+
+        FTP is a standard communication protocol
+        used for the transfer of computer files
+        from a server to a client on a computer
+        network.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/draft-yevstifeyev-ftp-uri-scheme">
+            The 'ftp' URI Scheme</a>
+    */
     ftp,
+
+    /** File URI Scheme
+
+        The File URI Scheme is typically used
+        to retrieve files from within one's
+        own computer.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc8089">
+            The "file" URI Scheme</a>
+    */
     file,
+
+    /** The Hypertext Transfer Protocol URI Scheme
+
+        URLs of this type indicate a resource which
+        is interacted with using the HTTP protocol.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc7230">
+            Hypertext Transfer Protocol (HTTP/1.1)</a>
+    */
     http,
+
+    /** The Secure Hypertext Transfer Protocol URI Scheme
+
+        URLs of this type indicate a resource which
+        is interacted with using the Secure HTTP
+        protocol.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc7230">
+            Hypertext Transfer Protocol (HTTP/1.1)</a>
+    */
     https,
+
+    /** The WebSocket URI Scheme
+
+        URLs of this type indicate a resource which
+        is interacted with using the WebSocket protocol.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc6455">
+            The WebSocket Protocol</a>
+    */
     ws,
+
+    /** The Secure WebSocket URI Scheme
+
+        URLs of this type indicate a resource which
+        is interacted with using the Secure WebSocket
+        protocol.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc6455">
+            The WebSocket Protocol</a>
+    */
     wss
 };
 
-/** Return the scheme for a non-normalized string, if known
+/** Return the known scheme for a non-normalized string, if known
+
+    If the string does not identify a known
+    scheme, the value @ref scheme::unknown is
+    returned.
+
+    @return The known scheme
+
+    @param s The string holding the scheme
+
 */
 BOOST_URL_DECL
 scheme
 string_to_scheme(string_view s) noexcept;
 
 /** Return the normalized string for a known scheme
+
+    @return A string representing the known scheme
+
+    @param s The known scheme constant
 */
 BOOST_URL_DECL
 string_view
 to_string(scheme s) noexcept;
-
-/** Return `true` if the scheme string is a special scheme.
-
-    The list of special schemes is as follows:
-    ftp, file, http, https, ws, wss.
-
-    @param s The string constant to check
-
-    @return `true` if the scheme is special
-*/
-inline
-bool
-is_special(string_view s) noexcept
-{
-    return string_to_scheme(s) != scheme::unknown;
-}
 
 } // urls
 } // boost

@@ -11,7 +11,7 @@
 #define BOOST_URL_IMPL_SCHEME_IPP
 
 #include <boost/url/scheme.hpp>
-#include <boost/url/detail/char_type.hpp>
+#include <boost/url/bnf/ascii.hpp>
 
 namespace boost {
 namespace urls {
@@ -20,13 +20,12 @@ scheme
 string_to_scheme(
     string_view s) noexcept
 {
-    using detail::to_lower;
-
+    using bnf::ascii_tolower;
     switch(s.size())
     {
     case 2: // ws
-        if( tolower(s[0]) == 'w' &&
-            tolower(s[1]) == 's')
+        if( ascii_tolower(s[0]) == 'w' &&
+            ascii_tolower(s[1]) == 's')
             return scheme::ws;
         break;
 
@@ -34,14 +33,14 @@ string_to_scheme(
         switch(tolower(s[0]))
         {
         case 'w': // wss
-            if( tolower(s[1]) == 's' &&
-                tolower(s[2]) == 's')
+            if( ascii_tolower(s[1]) == 's' &&
+                ascii_tolower(s[2]) == 's')
                 return scheme::wss;
             break;
 
         case 'f': // ftp
-            if( tolower(s[1]) == 't' &&
-                tolower(s[2]) == 'p')
+            if( ascii_tolower(s[1]) == 't' &&
+                ascii_tolower(s[2]) == 'p')
                 return scheme::ftp;
             break;
 
@@ -54,16 +53,16 @@ string_to_scheme(
         switch(tolower(s[0]))
         {
         case 'f': // file
-            if( tolower(s[1]) == 'i' &&
-                tolower(s[2]) == 'l' &&
-                tolower(s[3]) == 'e')
+            if( ascii_tolower(s[1]) == 'i' &&
+                ascii_tolower(s[2]) == 'l' &&
+                ascii_tolower(s[3]) == 'e')
                 return scheme::file;
             break;
 
         case 'h': // http
-            if( tolower(s[1]) == 't' &&
-                tolower(s[2]) == 't' &&
-                tolower(s[3]) == 'p')
+            if( ascii_tolower(s[1]) == 't' &&
+                ascii_tolower(s[2]) == 't' &&
+                ascii_tolower(s[3]) == 'p')
                 return scheme::http;
             break;
 
@@ -73,11 +72,11 @@ string_to_scheme(
         break;
 
     case 5: // https
-        if( tolower(s[0]) == 'h' &&
-            tolower(s[1]) == 't' &&
-            tolower(s[2]) == 't' &&
-            tolower(s[3]) == 'p' &&
-            tolower(s[4]) == 's')
+        if( ascii_tolower(s[0]) == 'h' &&
+            ascii_tolower(s[1]) == 't' &&
+            ascii_tolower(s[2]) == 't' &&
+            ascii_tolower(s[3]) == 'p' &&
+            ascii_tolower(s[4]) == 's')
             return scheme::https;
         break;
 
@@ -102,7 +101,7 @@ to_string(scheme s) noexcept
     default:
         break;
     }
-    return "<unknown>";
+    return "unknown";
 }
 
 } // urls

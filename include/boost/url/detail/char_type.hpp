@@ -408,44 +408,6 @@ decode(
     return s;
 }
 
-// returns true if decode(encoded)==match
-inline
-bool
-key_equal(
-    string_view encoded,
-    string_view match)
-{
-    // VFALCO should we validate the encoded string?
-    if(encoded.size() < match.size())
-        return false; // trivial reject
-    auto p0 = encoded.data();
-    auto p1 = match.data();
-    auto const e0 = p0 + encoded.size();
-    auto const e1 = p1 + match.size();
-    for(;;)
-    {
-        if(p0 >= e0)
-            return p1 >= e1;
-        if(p1 >= e1)
-            return false;
-        if(*p0 != '%')
-        {
-            if(*p0++ != *p1++)
-                return false;
-            continue;
-        }
-        BOOST_ASSERT(e0 - p0 >= 3);
-        auto const ch = static_cast<char>(
-            (static_cast<unsigned char>(
-                bnf::hexdig_value(p0[1])) << 4) +
-            static_cast<unsigned char>(
-                bnf::hexdig_value(p0[2])));
-        if(ch != *p1++)
-            return false;
-        p0 += 3;
-    }
-}
-
 //----------------------------------------------------------
 
 struct port_string

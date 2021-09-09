@@ -34,6 +34,7 @@ set(BOOST_URL_TESTS_FILES
     url.cpp
     url_view.cpp
     urls.cpp
+    bnf/ascii.cpp
     bnf/char_set.cpp
     bnf/parse.cpp
     bnf/range.cpp
