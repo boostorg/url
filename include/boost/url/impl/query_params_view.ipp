@@ -45,7 +45,9 @@ iterator(
             next_, end_, ec, t);
     BOOST_ASSERT(! ec.failed());
     v_.k_ = t.key;
-    if(t.value.has_value())
+    v_.has_value_ = 
+        t.value.has_value();
+    if(v_.has_value_)
         v_.v_ = *t.value;
     else
         v_.v_ = {};
@@ -69,7 +71,9 @@ operator++() noexcept ->
     }
     BOOST_ASSERT(! ec.failed());
     v_.k_ = t.key;
-    if(t.value.has_value())
+    v_.has_value_ = 
+        t.value.has_value();
+    if(v_.has_value_)
         v_.v_ = *t.value;
     else
         v_.v_ = {};
@@ -100,11 +104,7 @@ query_params_view::
 contains(
     string_view key) const noexcept
 {
-    for(auto e : *this)
-        if(key_equal_encoded(
-                key, e.k_))
-            return true;
-    return false;
+    return find(key) != end();
 }
 
 std::size_t
@@ -167,7 +167,7 @@ operator[](string_view key) const
 query_params_view
 parse_query_params(
     string_view s,
-    error_code& ec)
+    error_code& ec) noexcept
 {
     using bnf::parse;
     bnf::range<

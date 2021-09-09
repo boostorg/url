@@ -42,7 +42,7 @@
           <member><link linkend="url.ref.boost__urls__parse_path_noscheme">parse_path_noscheme</link></member>
           <member><link linkend="url.ref.boost__urls__parse_path_rootless">parse_path_rootless</link></member>
           <member><link linkend="url.ref.boost__urls__parse_query_params">parse_query_params</link></member>
-          <member><link linkend="url.ref.boost__urls__parse_relative_uri">parse_relative_uri</link></member>
+          <member><link linkend="url.ref.boost__urls__parse_relative_ref">parse_relative_ref</link></member>
         </simplelist>
         <bridgehead renderas="sect3">Type Traits</bridgehead>
         <simplelist type="vert" columns="1">
@@ -75,7 +75,6 @@
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__absolute_uri_bnf">absolute_uri_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__authority_bnf">authority_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__char_sets">char_sets</link></member>
           <member><link linkend="url.ref.boost__urls__fragment_bnf">fragment_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__hier_part_bnf">hier_part_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__host_bnf">host_bnf</link></member>

@@ -47,7 +47,7 @@ public:
     check(
         string_view s,
         std::vector<
-        std::string> const& v0,
+            std::string> const& v0,
         path_view (*f)(string_view))
     {
         path_view p;
