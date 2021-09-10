@@ -45,7 +45,7 @@ enum class scheme : unsigned char
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc8089">
-            The "file" URI Scheme</a>
+            The "file" URI Scheme (rfc8089)</a>
     */
     file,
 
@@ -56,7 +56,7 @@ enum class scheme : unsigned char
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc7230">
-            Hypertext Transfer Protocol (HTTP/1.1)</a>
+            Hypertext Transfer Protocol (HTTP/1.1) (rfc7230)</a>
     */
     http,
 
@@ -68,7 +68,7 @@ enum class scheme : unsigned char
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc7230">
-            Hypertext Transfer Protocol (HTTP/1.1)</a>
+            Hypertext Transfer Protocol (HTTP/1.1) (rfc7230)</a>
     */
     https,
 
@@ -79,7 +79,7 @@ enum class scheme : unsigned char
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc6455">
-            The WebSocket Protocol</a>
+            The WebSocket Protocol (rfc6455)</a>
     */
     ws,
 
@@ -91,7 +91,7 @@ enum class scheme : unsigned char
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc6455">
-            The WebSocket Protocol</a>
+            The WebSocket Protocol (rfc6455)</a>
     */
     wss
 };

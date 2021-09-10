@@ -134,6 +134,10 @@ enum class error
     */
     end,
 
+    /** Null encountered in pct-encoded
+    */
+    illegal_null,
+
     /** Illegal reserved character in encoded string.
     */
     illegal_reserved_char,
@@ -169,6 +173,10 @@ enum class error
     /** Missing words in IPv6 address
     */
     missing_words,
+
+    /** A grammar element was not in canonical form
+    */
+    non_canonical,
 
     /** Wrong character literal
     */

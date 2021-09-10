@@ -12,9 +12,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/detail/char_type.hpp>
+#include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/rfc/pct_encoding.hpp>
 #include <utility>
 
 namespace boost {
@@ -155,8 +154,8 @@ public:
     string_type<Allocator>
     segment(Allocator const& a = {}) const
     {
-        return pct_decode_unchecked(
-            s_.str, s_.decoded_size, a);
+        return detail::pct_decode_unchecked(
+            s_.str, s_.decoded_size, {}, a);
     }
 
     value_type const*

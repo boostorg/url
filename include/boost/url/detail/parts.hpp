@@ -11,10 +11,8 @@
 #define BOOST_URL_DETAIL_PARTS_HPP
 
 #include <boost/url/host_type.hpp>
-#include <boost/url/ipv4_address.hpp>
-#include <boost/url/detail/char_type.hpp>
+#include <cstdint>
 #include <cstring>
-#include <new>
 
 namespace boost {
 namespace urls {

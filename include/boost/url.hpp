@@ -15,6 +15,7 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/path_view.hpp>
+#include <boost/url/pct_encoding.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/static_pool.hpp>
@@ -40,7 +41,6 @@
 #include <boost/url/rfc/ipv4_address_bnf.hpp>
 #include <boost/url/rfc/ipv6_address_bnf.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/rfc/pct_encoding.hpp>
 #include <boost/url/rfc/port_bnf.hpp>
 #include <boost/url/rfc/relative_part_bnf.hpp>
 #include <boost/url/rfc/relative_ref_bnf.hpp>

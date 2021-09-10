@@ -15,7 +15,6 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/path_view.hpp>
 #include <boost/url/query_params_view.hpp>
-#include <boost/url/detail/char_type.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <cstdint>
 #include <iosfwd>
@@ -231,8 +230,8 @@ public:
     userinfo(
         Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_userinfo(), a);
+        return detail::pct_decode_unchecked(
+            encoded_userinfo(), {}, a);
     }
 
     /** Return the username if it exists, or an empty string
@@ -281,8 +280,8 @@ public:
     username(
         Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_username(), a);
+        return detail::pct_decode_unchecked(
+            encoded_username(), {}, a);
     }
 
     /** Return true if a password exists
@@ -306,8 +305,8 @@ public:
     password(
         Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_password(), a);
+        return detail::pct_decode_unchecked(
+            encoded_password(), {}, a);
     }
 
     //--------------------------------------------
@@ -372,8 +371,8 @@ public:
             return string_type<Allocator>(
                 s0.data(), s0.size(), a);
         }
-        return pct_decode_unchecked(
-            s0, pt_.decoded[id_host], a);
+        return detail::pct_decode_unchecked(
+            s0, pt_.decoded[id_host], {}, a);
     }
 
     /** Return the ipv4 address if it exists, or return the unspecified address (0.0.0.0)
@@ -532,8 +531,8 @@ public:
     query(
         Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_query(), a);
+        return detail::pct_decode_unchecked(
+            encoded_query(), {}, a);
     }
 
     /** Return the query parameters as a read-only forward range
@@ -618,9 +617,9 @@ public:
     fragment(
         Allocator const& a = {}) const
     {
-        return pct_decode_unchecked(
+        return detail::pct_decode_unchecked(
             encoded_fragment(),
-            pt_.decoded[id_frag], a);
+            pt_.decoded[id_frag], {}, a);
     }
 
     //--------------------------------------------

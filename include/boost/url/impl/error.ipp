@@ -113,6 +113,7 @@ case error::bad_schemeless_path_segment: return "bad segment-nz-nc";
 case error::empty: return "incomplete";
 case error::empty_path_segment: return "empty path segment";
 case error::end: return "end";
+case error::illegal_null: return "illegal null";
 case error::illegal_reserved_char: return "illegal reserved char";
 case error::incomplete: return "incomplete";
 case error::invalid: return "invalid";
@@ -121,6 +122,7 @@ case error::missing_char_literal: return "missing char literal";
 case error::missing_path_segment: return "missing path segment";
 case error::missing_path_separator: return "missing path sep";
 case error::missing_words: return "missing words";
+case error::non_canonical: return "non canonical";
 case error::wrong_char_literal: return "wrong char literal";
 
 case error::bad_pct_hexdig: return "bad hexdig in pct-encoding";

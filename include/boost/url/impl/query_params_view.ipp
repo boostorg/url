@@ -114,7 +114,7 @@ count(
 {
     std::size_t n = 0;
     for(auto e : *this)
-        if(key_equal_encoded(
+        if(detail::key_equal_encoded(
                 key, e.k_))
             ++n;
     return n;
@@ -129,7 +129,7 @@ find(
     auto it = begin();
     for(auto const last = end();
         it != last; ++it)
-        if(key_equal_encoded(
+        if(detail::key_equal_encoded(
                 key, it->k_))
             break;
     return it;
@@ -146,7 +146,7 @@ find(
     auto const last = end();
     if(it != last)
         while(++it != last)
-            if(key_equal_encoded(
+            if(detail::key_equal_encoded(
                     key, it->k_))
                 break;
     return it;

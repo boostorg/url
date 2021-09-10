@@ -15,8 +15,8 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/path_view.hpp>
 #include <boost/url/query_params_view.hpp>
-#include <boost/url/detail/char_type.hpp>
 #include <boost/url/detail/parts.hpp>
+#include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/storage_ptr.hpp>
 #include <cstdint>
 #include <memory>
@@ -208,8 +208,8 @@ public:
     userinfo(
         Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_userinfo(), a);
+        return detail::pct_decode_unchecked(
+            encoded_userinfo(), {}, a);
     }
 
     /** Return the username if it exists, or an empty string
@@ -258,8 +258,8 @@ public:
     username(
         Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_username(), a);
+        return detail::pct_decode_unchecked(
+            encoded_username(), {}, a);
     }
 
     /** Return true if a password exists
@@ -283,8 +283,8 @@ public:
     password(
         Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_password(), a);
+        return detail::pct_decode_unchecked(
+            encoded_password(), {}, a);
     }
 
     //--------------------------------------------
@@ -349,7 +349,7 @@ public:
             return string_type<Allocator>(
                 s0.data(), s0.size(), a);
         }
-        return pct_decode_unchecked(
+        return pct_decode(
             s0, pt_.decoded[id_host], a);
     }
 
@@ -509,8 +509,8 @@ public:
     query(
         Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_query(), a);
+        return detail::pct_decode_unchecked(
+            encoded_query(), {}, a);
     }
 
     /** Return the query parameters as a read-only forward range
@@ -595,7 +595,7 @@ public:
     fragment(
         Allocator const& a = {}) const
     {
-        return pct_decode_unchecked(
+        return pct_decode(
             encoded_fragment(),
             pt_.decoded[id_frag], a);
     }
@@ -1752,8 +1752,8 @@ public:
     string_type<Allocator>
     string(Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_string(), a);
+        return detail::pct_decode_unchecked(
+            encoded_string(), {}, a);
     }
 
     value_type const*
@@ -1996,8 +1996,8 @@ public:
     string_type<Allocator>
     key(Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_key(), a);
+        return detail::pct_decode_unchecked(
+            encoded_key(), {}, a);
     }
 
     /** Return the value.
@@ -2021,8 +2021,8 @@ public:
     string_type<Allocator>
     value(Allocator const& a = {}) const
     {
-        return detail::decode(
-            encoded_value(), a);
+        return detail::pct_decode_unchecked(
+            encoded_value(), {}, a);
     }
 
     value_type const*

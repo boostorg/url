@@ -61,6 +61,7 @@ public:
         check(error::empty);
         check(error::empty_path_segment);
         check(error::end);
+        check(error::illegal_null);
         check(error::illegal_reserved_char);
         check(error::incomplete);
         check(error::invalid);
@@ -69,6 +70,7 @@ public:
         check(error::missing_path_segment);
         check(error::missing_path_separator);
         check(error::missing_words);
+        check(error::non_canonical);
         check(error::wrong_char_literal);
 
         check(condition::fatal, error::bad_pct_hexdig);

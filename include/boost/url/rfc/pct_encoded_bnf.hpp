@@ -12,25 +12,13 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/pct_encoding.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/bnf/detail/char_set.hpp>
 #include <boost/static_assert.hpp>
 
 namespace boost {
 namespace urls {
-
-/** Base type for a percent-encoded BNF element
-*/
-struct pct_encoded_str
-{
-    /** A string holding the encoded characters
-    */
-    string_view str;
-
-    /** The number of bytes needed to hold the decoded string
-    */
-    std::size_t decoded_size;
-};
 
 /** BNF for a string of percent-encoded characters from a character set
 

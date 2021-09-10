@@ -19,12 +19,12 @@ set(BOOST_URL_TESTS_FILES
     include/main.cpp
     include/test_suite.hpp
     include/test_bnf.hpp
-    _detail_char_type.cpp
     error.cpp
     host_type.cpp
     ipv4_address.cpp
     ipv6_address.cpp
     path_view.cpp
+    pct_encoding.cpp
     query_params_view.cpp
     scheme.cpp
     static_pool.cpp
@@ -50,7 +50,6 @@ set(BOOST_URL_TESTS_FILES
     rfc/ipv4_address_bnf.cpp
     rfc/ipv6_address_bnf.cpp
     rfc/pct_encoded_bnf.cpp
-    rfc/pct_encoding.cpp
     rfc/port_bnf.cpp
     rfc/query_bnf.cpp
     rfc/relative_part_bnf.cpp

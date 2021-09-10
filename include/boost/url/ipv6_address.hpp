@@ -31,7 +31,7 @@ class ipv4_address;
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc4291">
-        IP Version 6 Addressing Architecture</a>
+        IP Version 6 Addressing Architecture (rfc4291)</a>
 */
 class ipv6_address
 {
@@ -112,7 +112,7 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.2">
-            2.2. Text Representation of Addresses</a>
+            2.2. Text Representation of Addresses (rfc4291)</a>
     */
     template<class Allocator =
         std::allocator<char>>
@@ -127,7 +127,7 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.2">
-            2.5.2. The Unspecified Address</a>
+            2.5.2. The Unspecified Address (rfc4291)</a>
     */
     BOOST_URL_DECL
     bool
@@ -141,7 +141,7 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.3">
-            2.5.3. The Loopback Address</a>
+            2.5.3. The Loopback Address (rfc4291)</a>
     */
     BOOST_URL_DECL
     bool
@@ -154,7 +154,7 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.5.2">
-            2.5.5.2. IPv4-Mapped IPv6 Address</a>
+            2.5.5.2. IPv4-Mapped IPv6 Address (rfc4291)</a>
     */
     BOOST_URL_DECL
     bool
@@ -188,7 +188,7 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.3">
-            2.5.3. The Loopback Address</a>
+            2.5.3. The Loopback Address (rfc4291)</a>
     */
     BOOST_URL_DECL
     static

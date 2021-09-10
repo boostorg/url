@@ -72,13 +72,13 @@ public:
     void
     bad(string_view s)
     {
-        qpv_t p;
-        BOOST_TEST_THROWS(p =
+        qpv_t qp;
+        BOOST_TEST_THROWS(qp =
             parse_query_params(s),
             std::exception);
-        BOOST_TEST(p.empty());
+        BOOST_TEST(qp.empty());
         BOOST_TEST(
-            p.begin() == p.end());
+            qp.begin() == qp.end());
     }
 
     void
@@ -86,14 +86,14 @@ public:
         string_view s,
         std::vector<T> const& v0)
     {
-        qpv_t p;
+        qpv_t qp;
         BOOST_TEST_NO_THROW(
-            p = parse_query_params(s));
+            qp = parse_query_params(s));
         {
             std::vector<T> v1;
             std::copy(
-                p.begin(),
-                p.end(),
+                qp.begin(),
+                qp.end(),
                 std::back_inserter(v1));
             BOOST_TEST(v0 == v1);
         }
@@ -165,9 +165,9 @@ public:
     testMembers()
     {
         {
-            qpv_t p;
+            qpv_t qp;
             BOOST_TEST_NO_THROW(
-                p = parse_query_params(
+                qp = parse_query_params(
                  "a=1"
                 "&b=2"
                 "&b=3"
@@ -177,24 +177,43 @@ public:
                 "&%65=7" // 'e'
                 "&f=%38" // '8'
             ));
-            BOOST_TEST(! p.empty());
-            BOOST_TEST(p.size() == 8);
-            BOOST_TEST(p.contains("a"));
-            BOOST_TEST(p.count("b") == 3);
-            BOOST_TEST(p.find("z") == p.end());
+            BOOST_TEST(! qp.empty());
+            BOOST_TEST(qp.size() == 8);
+            BOOST_TEST(qp.contains("a"));
+            BOOST_TEST(qp.count("b") == 3);
+            BOOST_TEST(qp.find("z") == qp.end());
             qpv_t::iterator it;
-            it = p.find("b");
+            it = qp.find("b");
             BOOST_TEST(it->value() == "2");
-            it = p.find(it, "b");
+            it = qp.find(it, "b");
             BOOST_TEST(it->value() == "3");
-            it = p.find(it, "b");
+            it = qp.find(it, "b");
             BOOST_TEST(it->value() == "5");
-            it = p.find(it, "b");
-            BOOST_TEST(it == p.end());
-            BOOST_TEST(p["f"] == "8");
-            BOOST_TEST_THROWS(p.at("y"),
+            it = qp.find(it, "b");
+            BOOST_TEST(it == qp.end());
+            BOOST_TEST(qp["f"] == "8");
+            BOOST_TEST_THROWS(qp.at("y"),
                 std::exception);
         }
+    }
+
+    void
+    testPlus()
+    {
+        qpv_t qp;
+        BOOST_TEST_NO_THROW(
+            qp = parse_query_params(
+                "name=John+Doe&c++=23"));
+        auto it = qp.begin();
+        BOOST_TEST(it->key() == "name");
+        BOOST_TEST(it->key(false) == "name");
+        BOOST_TEST(it->value() == "John Doe");
+        BOOST_TEST(it->value(false) == "John+Doe");
+        ++it;
+        BOOST_TEST(it->key() == "c  ");
+        BOOST_TEST(it->key(false) == "c++");
+        BOOST_TEST(it->value() == "23");
+        BOOST_TEST(it->value(false) == "23");
     }
 
     void
@@ -203,6 +222,7 @@ public:
         testIterator();
         testParse();
         testMembers();
+        testPlus();
     }
 };
 

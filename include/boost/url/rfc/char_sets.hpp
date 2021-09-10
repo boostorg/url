@@ -218,6 +218,28 @@ constexpr std::uint8_t pchar_mask =
     colon_char_mask |
     at_char_mask;
 
+/** Character set for pchar
+
+    @par BNF
+    @code
+    pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+    @endcode
+*/
+using pchar_set = masked_char_set<pchar_mask>;
+
+/** Character set for qpchar
+
+    @par BNF
+    @code
+    qpchar          = unreserved
+                    / pct-encoded
+                    / "!" / "$" / "'" / "(" / ")"
+                    / "*" / "+" / "," / ";"
+                    / ":" / "@" / "/" / "?"
+    @endcode
+*/
+using qpchar_set = masked_char_set<qpchar_mask>;
+
 } // urls
 } // boost
 

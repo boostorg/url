@@ -20,6 +20,10 @@ namespace bnf {
 
 BOOST_STATIC_ASSERT(
     detail::is_char_set_pred<
+        all_chars>::value);
+
+BOOST_STATIC_ASSERT(
+    detail::is_char_set_pred<
         alnum_chars>::value);
 
 BOOST_STATIC_ASSERT(
@@ -96,6 +100,14 @@ public:
             test_chars{n0, n1}, "x");
         BOOST_TEST(n0 > 0);
         BOOST_TEST(n1 > 0);
+
+        {
+            all_chars cs;
+            for(std::size_t i = 0;
+                i < 256; ++i)
+                BOOST_TEST(cs(static_cast<
+                    char>(i)));
+        }
 
         test_char_set(
             alnum_chars{},

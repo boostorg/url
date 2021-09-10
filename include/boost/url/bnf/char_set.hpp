@@ -18,6 +18,24 @@ namespace boost {
 namespace urls {
 namespace bnf {
 
+/** A CharSet containing all characters
+
+    @par BNF
+    @code
+    ALL         = %x00-FF
+                ; all ASCII and high-ASCII
+    @endcode
+*/
+struct all_chars
+{
+    constexpr
+    bool
+    operator()(char) const noexcept
+    {
+        return true;
+    }
+};
+
 /** A CharSet containing the alphanumeric characters
 
     @par BNF

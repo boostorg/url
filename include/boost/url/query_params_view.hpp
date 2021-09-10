@@ -11,10 +11,9 @@
 #define BOOST_URL_QUERY_PARAMS_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/pct_encoding.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/detail/char_type.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/rfc/pct_encoding.hpp>
 #include <utility>
 
 namespace boost {
@@ -260,8 +259,45 @@ public:
     string_type<Allocator>
     key(Allocator const& a = {}) const
     {
-        return pct_decode_unchecked(
-            k_.str, k_.decoded_size, a);
+        return detail::pct_decode_unchecked(
+            k_.str, k_.decoded_size, {}, a);
+    }
+
+    /** Return the key
+
+        This function returns the key as a
+        string with percent-decoding applied,
+        optionally disabling the conversion
+        of plus signs to spaces.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param plus_to_space A bool indicating
+        whether or not plus signs in the encoded
+        string are converted to spaces.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
+    template<
+        class Allocator =
+            std::allocator<char>>
+    string_type<Allocator>
+    key(bool plus_to_space,
+        Allocator const& a = {}) const
+    {
+        pct_decode_opts opt;
+        opt.plus_to_space = plus_to_space;
+        return detail::pct_decode_unchecked(
+            k_.str, k_.decoded_size, opt, a);
     }
 
     /** Return true if a value exists for this element
@@ -304,8 +340,46 @@ public:
     string_type<Allocator>
     value(Allocator const& a = {}) const
     {
-        return pct_decode_unchecked(
-            v_.str, v_.decoded_size, a);
+        return detail::pct_decode_unchecked(
+            v_.str, v_.decoded_size, {}, a);
+    }
+
+    /** Return the value if it exists, or an empty string
+
+        This function returns the value as a
+        string with percent-decoding applied,
+        optionally disabling the conversion
+        of plus signs to spaces.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param plus_to_space A bool indicating
+        whether or not plus signs in the encoded
+        string are converted to spaces.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+    */
+    template<
+        class Allocator =
+            std::allocator<char>>
+    string_type<Allocator>
+    value(
+        bool plus_to_space,
+        Allocator const& a = {}) const
+    {
+        pct_decode_opts opt;
+        opt.plus_to_space = plus_to_space;
+        return detail::pct_decode_unchecked(
+            v_.str, v_.decoded_size, opt, a);
     }
 
     value_type const*

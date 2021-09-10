@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/except.hpp>
 #include <boost/throw_exception.hpp>
+#include <new>
 #include <stdexcept>
 
 namespace boost {
