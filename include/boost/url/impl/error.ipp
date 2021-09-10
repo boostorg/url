@@ -129,24 +129,10 @@ case error::illegal_reserved_char: return "illegal reserved char";
             default:
                 return {ev, *this};
 
-case error::no_match:
-case error::syntax:
-case error::invalid:
-
-case error::missing_scheme:
-case error::bad_scheme_start_char:
-case error::bad_scheme_char:
-case error::bad_username_char:
-case error::bad_userinfo_char:
-case error::bad_port_char:
-case error::port_overflow:
-case error::missing_hostname:
-case error::missing_port:
-
 case error::bad_pct_encoding_digit:
 case error::incomplete_pct_encoding:
 case error::illegal_reserved_char:
-    return condition::parse_error;
+    return condition::fatal;
             }
         }
     };
@@ -155,6 +141,8 @@ case error::illegal_reserved_char:
     return error_code{static_cast<
         std::underlying_type<error>::type>(e), cat};
 }
+
+//------------------------------------------------
 
 error_condition
 make_error_condition(condition c)
@@ -173,8 +161,8 @@ make_error_condition(condition c)
             switch(static_cast<condition>(cv))
             {
             default:
-            case condition::parse_error:
-                return "parsing error";
+            case condition::fatal:
+                return "fatal condition";
             }
         }
     };

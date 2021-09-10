@@ -48,23 +48,23 @@ public:
     void
     run()
     {
-        check(condition::parse_error, error::no_match);
-        check(condition::parse_error, error::syntax);
-        check(condition::parse_error, error::invalid);
+        check(error::no_match);
+        check(error::syntax);
+        check(error::invalid);
 
-        check(condition::parse_error, error::missing_scheme);
-        check(condition::parse_error, error::bad_scheme_start_char);
-        check(condition::parse_error, error::bad_scheme_char);
-        check(condition::parse_error, error::bad_username_char);
-        check(condition::parse_error, error::bad_userinfo_char);
-        check(condition::parse_error, error::bad_port_char);
-        check(condition::parse_error, error::port_overflow);
-        check(condition::parse_error, error::missing_hostname);
-        check(condition::parse_error, error::missing_port);
+        check(error::missing_scheme);
+        check(error::bad_scheme_start_char);
+        check(error::bad_scheme_char);
+        check(error::bad_username_char);
+        check(error::bad_userinfo_char);
+        check(error::bad_port_char);
+        check(error::port_overflow);
+        check(error::missing_hostname);
+        check(error::missing_port);
 
-        check(condition::parse_error, error::bad_pct_encoding_digit);
-        check(condition::parse_error, error::incomplete_pct_encoding);
-        check(condition::parse_error, error::illegal_reserved_char);
+        check(condition::fatal, error::bad_pct_encoding_digit);
+        check(condition::fatal, error::incomplete_pct_encoding);
+        check(condition::fatal, error::illegal_reserved_char);
     }
 };
 

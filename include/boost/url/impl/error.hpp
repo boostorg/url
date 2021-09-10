@@ -12,8 +12,6 @@
 
 #include <type_traits>
 
-#ifndef BOOST_URL_STANDALONE
-
 namespace boost {
 namespace system {
 template<>
@@ -28,23 +26,6 @@ struct is_error_condition_enum<::boost::urls::condition>
 };
 } // system
 } // boost
-
-#else
-
-namespace std {
-template<>
-struct is_error_code_enum<::boost::urls::error>
-{
-    static bool const value = true;
-};
-template<>
-struct is_error_condition_enum<::boost::urls::condition>
-{
-    static bool const value = true;
-};
-} // std
-
-#endif
 
 namespace boost {
 namespace urls {

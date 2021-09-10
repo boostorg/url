@@ -140,7 +140,11 @@ enum class error
 
 enum class condition
 {
-    parse_error = 1
+    /** A fatal error in syntax was encountered
+
+        This indicates that parsing cannot continue.
+    */
+    fatal = 1
 };
 
 } // urls
