@@ -36,11 +36,7 @@ parse(
         // IP-literal
         ip_literal_bnf v;
         if(! parse(it, end, ec, v))
-        {
-            // need more or
-            // bad ip-literal
             return false;
-        }
         if(v.is_ipv6)
         {
             // IPv6address

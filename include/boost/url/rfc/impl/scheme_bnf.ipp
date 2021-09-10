@@ -32,13 +32,13 @@ parse(
     if(it == end)
     {
         // expected alpha
-        ec = error::syntax;
+        ec = error::incomplete;
         return false;
     }
     if(! alpha_chars{}(*it))
     {
         // expected alpha
-        ec = error::syntax;
+        ec = error::bad_alpha;
         return false;
     }
     it = find_if_not(

@@ -89,7 +89,7 @@ public:
             bnf::hexdig_value(p[0]) == -1 ||
             bnf::hexdig_value(p[1]) == -1)
         {
-            ec = error::bad_pct_encoding_digit;
+            ec = error::bad_pct_hexdig;
         }
     }
 

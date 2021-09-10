@@ -86,56 +86,114 @@ struct BOOST_SYMBOL_VISIBLE
 */
 enum class error
 {
-    end = 1,
+    success = 0,
+
     syntax,
 
-    /// An input did not match a structural element (soft error)
-    no_match,
+    /** Bad alphabetic character
+    */
+    bad_alpha,
 
-    /// The parts encountered an invalid input
+    /** Character is not a digit
+    */
+    bad_digit,
+
+    /** A required element was empty
+    */
+    bad_empty_element,
+
+    /** Bad HEXDIG
+    */
+    bad_hexdig,
+
+    /** Syntax error in IPv6 address
+    */
+    bad_ipv6,
+
+    /** Bad leading zero in number
+    */
+    bad_leading_zero,
+
+    /** The octet is out of range
+    */
+    bad_octet,
+
+    /** Bad schemeless path segment
+    */
+    bad_schemeless_path_segment,
+
+    /** Bad empty element
+    */
+    empty,
+
+    /** Illegal empty path segment
+    */
+    empty_path_segment,
+
+    /** A list parser reached the end
+    */
+    end,
+
+    /** Illegal reserved character in encoded string.
+    */
+    illegal_reserved_char,
+
+    /** Incomplete input for grammar
+
+        This happens when the end of the input
+        string is reached without fully matching
+        the grammar.
+    */
+    incomplete,
+
+    /** Validation failed
+    */
     invalid,
 
-    //---
-
-    /// The scheme is missing.
-    missing_scheme,
-
-    /// The scheme does not start with a letter.
-    bad_scheme_start_char,
-
-    /// The scheme contains an invalid character.
-    bad_scheme_char,
-
-    /** The user contains an invalid character.
-
-        This error is returned when attempting to set
-        the user with a string containing a colon (':').
+    /** Leftover input remaining after match
     */
-    bad_username_char,
+    leftover_input,
 
-    /// The userinfo contains an invalid character.
-    bad_userinfo_char,
+    /** Missing character literal
+    */
+    missing_char_literal,
 
-    /// The port contains an invalid character.
-    bad_port_char,
+    /** Missing path segment
+    */
+    missing_path_segment,
 
-    /// The port number is too large.
-    port_overflow,
+    /** A slash '/' was expected in the path segment
+    */
+    missing_path_separator,
 
-    /// The hostname is missing
-    missing_hostname,
+    /** Missing words in IPv6 address
+    */
+    missing_words,
 
-    /// The port is missing
-    missing_port,
+    /** Wrong character literal
+    */
+    wrong_char_literal,
 
-    /// The percent-encoding digit is invalid.
-    bad_pct_encoding_digit,
+    //--------------------------------------------
 
-    /// The percent-encoded sequence is incomplete.
+    /** Bad hexadecimal digit
+
+        This error condition is fatal.
+    */
+    bad_pct_hexdig,
+
+    /** The percent-encoded sequence is incomplete.
+
+        This error condition is fatal.
+    */
     incomplete_pct_encoding,
 
-    /// Illegal reserved character in encoded string.
-    illegal_reserved_char
+    /** Missing hexadecimal digit
+
+        This error condition is fatal.
+    */
+    missing_pct_hexdig,
+
 };
 
 enum class condition

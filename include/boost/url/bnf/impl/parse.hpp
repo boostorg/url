@@ -27,13 +27,13 @@ parse(
     if(it == end)
     {
         // end of input
-        ec = error::syntax;
+        ec = error::incomplete;
         return false;
     }
     if(*it != ch)
     {
         // expected ch
-        ec = error::syntax;
+        ec = error::wrong_char_literal;
         return false;
     }
     ++it;
@@ -107,8 +107,8 @@ parse(
         return false;
     if(it != end)
     {
-        // partial match
-        ec = error::syntax;
+        // input not consumed fully
+        ec = error::leftover_input;
         return false;
     }
     return true;
@@ -120,18 +120,7 @@ is_valid(string_view s)
 {
     T t;
     error_code ec;
-    auto it = s.data();
-    auto const end =
-        it + s.size();
-    using bnf::parse;
-    if(! parse(it, end, ec, t))
-        return false;
-    if(it != end)
-    {
-        // partial match
-        return false;
-    }
-    return true;
+    return parse(s, ec, t);
 }
 
 bool
@@ -143,8 +132,8 @@ validate(string_view s)
 {
     using namespace urls::detail;
     if(! is_valid<T>(s))
-        throw_invalid_argument(
-            "syntax error",
+        throw_system_error(
+            error::invalid,
             BOOST_CURRENT_LOCATION);
 }
 

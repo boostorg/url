@@ -48,7 +48,6 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/ipv_future_bnf.ipp>
 #include <boost/url/rfc/impl/ipv4_address_bnf.ipp>
 #include <boost/url/rfc/impl/ipv6_address_bnf.ipp>
-#include <boost/url/rfc/impl/pct_encoded_bnf.ipp>
 #include <boost/url/rfc/impl/pct_encoding.ipp>
 #include <boost/url/rfc/impl/port_bnf.ipp>
 #include <boost/url/rfc/impl/query_bnf.ipp>

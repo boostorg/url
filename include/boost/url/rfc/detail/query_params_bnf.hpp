@@ -49,15 +49,12 @@ struct query_params_bnf
         }
 
         // value
-        // VFALCO This doesn't look right!
-        parse(it, end, ec,
+        return parse(it, end, ec,
             pct_encoded_bnf<
                 masked_char_set<
                     qpchar_mask |
                     equals_char_mask>>{
                         t.value});
-        ec = {};
-        return true;
     }
 
     static
@@ -75,12 +72,14 @@ struct query_params_bnf
             ec = error::end;
             return false;
         }
+
         // key
         if(! parse(it, end, ec,
             pct_encoded_bnf<
                 masked_char_set<
                     qpchar_mask>>{t.key}))
             return false;
+
         // "="
         t.has_value = parse(
             it, end, ec, '=');
@@ -90,15 +89,14 @@ struct query_params_bnf
             ec = {};
             return true;
         }
+
         // value
-        parse(it, end, ec,
+        return parse(it, end, ec,
             pct_encoded_bnf<
                 masked_char_set<
                     qpchar_mask |
                     equals_char_mask>>{
                         t.value});
-        ec = {};
-        return true;
     }
 };
 

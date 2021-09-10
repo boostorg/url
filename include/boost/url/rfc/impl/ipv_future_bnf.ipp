@@ -40,13 +40,13 @@ parse(
     if(t.major.empty())
     {
         // can't be empty
-        ec = error::syntax;
+        ec = error::bad_empty_element;
         return false;
     }
     if(t.minor.empty())
     {
         // can't be empty
-        ec = error::syntax;
+        ec = error::bad_empty_element;
         return false;
     }
     t.str = string_view(

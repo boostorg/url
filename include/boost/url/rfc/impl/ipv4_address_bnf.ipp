@@ -36,12 +36,13 @@ struct dec_octet
         if(it == end)
         {
             // expected DIGIT
-            ec = error::syntax;
+            ec = error::incomplete;
             return false;
         }
         if(! dc(*it))
         {
-            ec = error::syntax;
+            // not a digit
+            ec = error::bad_digit;
             return false;
         }
         unsigned v = *it - '0';
@@ -63,7 +64,7 @@ struct dec_octet
         if(v == 0)
         {
             // bad leading '0'
-            ec = error::syntax;
+            ec = error::bad_leading_zero;
             return false;
         }
         v = (10 * v) + *it - '0';
@@ -85,14 +86,14 @@ struct dec_octet
         if(v > 25)
         {
             // out of range
-            ec = error::syntax;
+            ec = error::bad_octet;
             return false;
         }
         v = (10 * v) + *it - '0';
         if(v > 255)
         {
             // out of range
-            ec = error::syntax;
+            ec = error::bad_octet;
             return false;
         }
         ++it;

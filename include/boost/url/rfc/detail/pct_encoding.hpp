@@ -45,26 +45,26 @@ skip:
         if(it == end)
         {
             // missing HEXDIG
-            ec = error::syntax;
+            ec = error::missing_pct_hexdig;
             return false;
         }
         if(hexdig_value(*it) == -1)
         {
             // expected HEXDIG
-            ec = error::bad_pct_encoding_digit;
+            ec = error::bad_pct_hexdig;
             return false;
         }
         ++it;
         if(it == end)
         {
             // missing HEXDIG
-            ec = error::syntax;
+            ec = error::missing_pct_hexdig;
             return false;
         }
         if(hexdig_value(*it) == -1)
         {
             // expected HEXDIG
-            ec = error::bad_pct_encoding_digit;
+            ec = error::bad_pct_hexdig;
             return false;
         }
         ++n;

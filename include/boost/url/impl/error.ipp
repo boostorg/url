@@ -100,23 +100,32 @@ make_error_code(error e)
             switch(static_cast<error>(ev))
             {
             default:
-case error::no_match: return "no match for element";
 case error::syntax: return "syntax";
-case error::invalid: return "invalid";
 
-case error::missing_scheme: return "missing scheme";
-case error::bad_scheme_start_char: return "bad scheme start char";
-case error::bad_scheme_char: return "bad scheme char";
-case error::bad_username_char: return "bad user char";
-case error::bad_userinfo_char: return "bad userinfo char";
-case error::bad_port_char: return "bad port char";
-case error::port_overflow: return "port overflow";
-case error::missing_hostname: return "missing hostname";
-case error::missing_port: return "missing port";
-
-case error::bad_pct_encoding_digit: return "bad pct-encoding digit";
-case error::incomplete_pct_encoding: return "incomplete pct-encoding";
+case error::bad_alpha: return "bad alpha";
+case error::bad_digit: return "bad digit";
+case error::bad_empty_element: return "bad empty element";
+case error::bad_hexdig: return "bad hexdig";
+case error::bad_ipv6: return "bad ipv6";
+case error::bad_leading_zero: return "bad leading zero";
+case error::bad_octet: return "bad octet";
+case error::bad_schemeless_path_segment: return "bad segment-nz-nc";
+case error::empty: return "incomplete";
+case error::empty_path_segment: return "empty path segment";
+case error::end: return "end";
 case error::illegal_reserved_char: return "illegal reserved char";
+case error::incomplete: return "incomplete";
+case error::invalid: return "invalid";
+case error::leftover_input: return "leftover input";
+case error::missing_char_literal: return "missing char literal";
+case error::missing_path_segment: return "missing path segment";
+case error::missing_path_separator: return "missing path sep";
+case error::missing_words: return "missing words";
+case error::wrong_char_literal: return "wrong char literal";
+
+case error::bad_pct_hexdig: return "bad hexdig in pct-encoding";
+case error::incomplete_pct_encoding: return "incomplete pct-encoding";
+case error::missing_pct_hexdig: return "missing hexdig in pct-encoding";
             }
         }
 
@@ -129,9 +138,9 @@ case error::illegal_reserved_char: return "illegal reserved char";
             default:
                 return {ev, *this};
 
-case error::bad_pct_encoding_digit:
+case error::bad_pct_hexdig:
 case error::incomplete_pct_encoding:
-case error::illegal_reserved_char:
+case error::missing_pct_hexdig:
     return condition::fatal;
             }
         }

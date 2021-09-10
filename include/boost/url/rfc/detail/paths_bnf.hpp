@@ -64,7 +64,7 @@ struct segment_nz_bnf
         if(it == start)
         {
             // can't be empty
-            ec = error::syntax;
+            ec = error::empty_path_segment;
             return false;
         }
         return true;
@@ -96,7 +96,7 @@ struct segment_nz_nc_bnf
         if(it == start)
         {
             // can't be empty
-            ec = error::syntax;
+            ec = error::empty_path_segment;
             return false;
         }
         return true;
@@ -174,13 +174,13 @@ struct path_absolute_bnf
         if(it == end)
         {
             // expected '/'
-            ec = error::syntax;
+            ec = error::missing_path_segment;
             return false;
         }
         if(*it != '/')
         {
             // expected '/'
-            ec = error::syntax;
+            ec = error::missing_path_separator;
             return false;
         }
         ++it;
@@ -188,8 +188,8 @@ struct path_absolute_bnf
             return true;
         if(*it == '/')
         {
-            // bad empty segment
-            ec = error::syntax;
+            // can't be empty
+            ec = error::empty_path_segment;
             return false;
         }
         return parse(it, end, ec,
@@ -247,8 +247,8 @@ struct path_noscheme_bnf
         if(parse(it, end, ec,
             segment_nz_nc_bnf{t}))
             return true;
-        // expected segment-nz-nc
-        ec = error::syntax;
+        // bad segment-nz-nc
+        ec = error::bad_schemeless_path_segment;
         return false;
     }
 

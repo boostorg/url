@@ -30,14 +30,11 @@ parse(
     // '['
     if(! parse(
         it, end, ec, '['))
-    {
-        // expected '['
         return false;
-    }
     if(it == end)
     {
         // expected address
-        ec = error::syntax;
+        ec = error::incomplete;
         return false;
     }
     if(*it != 'v')

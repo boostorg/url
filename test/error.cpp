@@ -48,23 +48,32 @@ public:
     void
     run()
     {
-        check(error::no_match);
         check(error::syntax);
+
+        check(error::bad_alpha);
+        check(error::bad_digit);
+        check(error::bad_empty_element);
+        check(error::bad_hexdig);
+        check(error::bad_ipv6);
+        check(error::bad_leading_zero);
+        check(error::bad_octet);
+        check(error::bad_schemeless_path_segment);
+        check(error::empty);
+        check(error::empty_path_segment);
+        check(error::end);
+        check(error::illegal_reserved_char);
+        check(error::incomplete);
         check(error::invalid);
+        check(error::leftover_input);
+        check(error::missing_char_literal);
+        check(error::missing_path_segment);
+        check(error::missing_path_separator);
+        check(error::missing_words);
+        check(error::wrong_char_literal);
 
-        check(error::missing_scheme);
-        check(error::bad_scheme_start_char);
-        check(error::bad_scheme_char);
-        check(error::bad_username_char);
-        check(error::bad_userinfo_char);
-        check(error::bad_port_char);
-        check(error::port_overflow);
-        check(error::missing_hostname);
-        check(error::missing_port);
-
-        check(condition::fatal, error::bad_pct_encoding_digit);
+        check(condition::fatal, error::bad_pct_hexdig);
         check(condition::fatal, error::incomplete_pct_encoding);
-        check(condition::fatal, error::illegal_reserved_char);
+        check(condition::fatal, error::missing_pct_hexdig);
     }
 };
 
