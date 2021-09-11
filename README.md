@@ -1,6 +1,3 @@
-<img width="880" height = "80" alt = "Boost.URL Title"
-    src="https://raw.githubusercontent.com/vinniefalco/url/master/doc/images/repo-logo.png">
-
 [![Boost.URL](https://raw.githubusercontent.com/vinniefalco/url/master/doc/images/repo-logo.png)](http://master.url.cpp.al/)
 
 Branch          | [`master`](https://github.com/CPPAlliance/url/tree/master) | [`develop`](https://github.com/CPPAlliance/url/tree/develop) |
