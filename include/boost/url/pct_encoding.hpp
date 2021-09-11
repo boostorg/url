@@ -59,7 +59,14 @@ namespace urls {
     the default allocator is used, and the return
     type of the function becomes `std::string`.
 
-    @see @ref all_chars
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
+        2.1. Percent-Encoding (rfc3986)</a>
+
+    @see
+        @ref bnf::all_chars,
+        @ref pct_decode_opts,
+        @ref pct_encode.
 */
 template<
     class CharSet = bnf::all_chars>
@@ -114,7 +121,14 @@ pct_decode_size(
     the default allocator is used, and the return
     type of the function becomes `std::string`.
 
-    @see @ref all_chars
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
+        2.1. Percent-Encoding (rfc3986)</a>
+
+    @see
+        @ref bnf::all_chars,
+        @ref pct_decode_opts,
+        @ref pct_encode.
 */
 template<
     class CharSet = bnf::all_chars,
@@ -149,6 +163,14 @@ pct_decode(
     @param opt The options for encoding. If this
     parameter is omitted, the default options
     will be used.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
+        2.1. Percent-Encoding (rfc3986)</a>
+
+    @see
+        @ref pct_decode,
+        @ref pct_encode_opts.
 */
 template<class CharSet>
 std::size_t
@@ -190,7 +212,9 @@ pct_encode_size(
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
         2.1. Percent-Encoding (rfc3986)</a>
 
-    @see @ref pct_encode_opts, @ref pct_decode
+    @see
+        @ref pct_decode,
+        @ref pct_encode_opts.
 */
 template<
     class CharSet,

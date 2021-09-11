@@ -25,6 +25,8 @@ namespace bnf {
     ALL         = %x00-FF
                 ; all ASCII and high-ASCII
     @endcode
+
+    @see @ref find_if, @ref find_if_not.
 */
 struct all_chars
 {
@@ -53,9 +55,7 @@ struct all_chars
     @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1">
         B.1. Core Rules (rfc5234)</a>
 
-    @see
-        @ref find_if,
-        @ref find_if_not.
+    @see @ref find_if, @ref find_if_not.
 */
 struct alnum_chars
 {
@@ -80,9 +80,11 @@ struct alnum_chars
                 ; A-Z / a-z
     @endcode
 
-    @see
-        find_if, find_if_not
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1">[RFC5234] B.1. Core Rules</a>
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1">
+        B.1. Core Rules (rfc5234)</a>
+
+    @see @ref find_if, @ref find_if_not.
 */
 struct alpha_chars
 {
@@ -106,9 +108,11 @@ struct alpha_chars
                 ; 0-9
     @endcode
 
-    @see
-        find_if, find_if_not
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1">[RFC5234] B.1. Core Rules</a>
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1">
+        B.1. Core Rules (rfc5234)</a>
+
+    @see @ref find_if, @ref find_if_not.
 */
 struct digit_chars
 {
@@ -146,9 +150,7 @@ struct digit_chars
     @li <a href="https://datatracker.ietf.org/doc/html/rfc5952#section-4.3">
         4.3. Lowercase (rfc5952)</a>
 
-    @see
-        @ref find_if,
-        @ref find_if_not.
+    @see @ref find_if, @ref find_if_not.
 */
 struct hexdig_chars
 {

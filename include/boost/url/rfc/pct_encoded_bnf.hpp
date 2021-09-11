@@ -22,8 +22,13 @@ namespace urls {
 
 /** BNF for a string of percent-encoded characters from a character set
 
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-2.1
+    @tparam CharSet The character set indicating
+    which characters are unreserved. Any character
+    not in this set will be considered reserved.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
+        2.1. Percent-Encoding (rfc3986)</a>
 */
 template<class CharSet>
 struct pct_encoded_bnf

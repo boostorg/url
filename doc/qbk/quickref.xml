@@ -95,13 +95,34 @@
     </row></tbody>
   </tgroup>
   <tgroup cols="2">
-    <colspec colname="a"/><colspec colname="b"/>
+    <colspec colname="a"/><colspec colname="c"/>
     <thead><row>
-      <entry valign="center" namest="a" nameend="b">
+      <entry valign="center" namest="a" nameend="a">
+        <bridgehead renderas="sect2">Percent Encoding</bridgehead>
+      </entry>
+      <entry valign="center" namest="b" nameend="c">
         <bridgehead renderas="sect2">BNF</bridgehead>
       </entry>
     </row></thead>
     <tbody><row>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Functions</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__pct_decode">pct_decode</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_decode_size">pct_decode_size</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_encode">pct_encode</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_encode_size">pct_encode_size</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">Options</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__pct_decode_opts">pct_decode_opts</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_encode_opts">pct_encode_opts</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">Types</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__pct_encoded_str">pct_encoded_str</link></member>
+        </simplelist>
+      </entry>
       <entry valign="top">
         <bridgehead renderas="sect3">Classes</bridgehead>
         <simplelist type="vert" columns="1">

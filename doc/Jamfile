@@ -32,6 +32,7 @@ docca.reference reference.qbk
             BOOST_URL_PUBLIC \\
             BOOST_URL_FORCEINLINE \\
             \"BOOST_URL_NODISCARD=[[nodiscard]]\" \\
+            \"BOOST_STATIC_ASSERT(x)=\" \\
             \"BOOST_URL_INLINE_VARIABLE(v, t)=constexpr t v;\""
         <doxygen:param>ABBREVIATE_BRIEF=
         <doxygen:param>INLINE_INHERITED_MEMB=YES
