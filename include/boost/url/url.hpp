@@ -48,7 +48,7 @@ class url_view;
 
     @see @li <a href="https://tools.ietf.org/html/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>
 */
-class url
+class BOOST_SYMBOL_VISIBLE url
 {
 #ifndef BOOST_URL_DOCS
 protected:
