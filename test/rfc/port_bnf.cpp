@@ -26,9 +26,10 @@ public:
     {
         port_bnf t;
         error_code ec;
-        using bnf::parse;
+        using bnf::parse_string;
         if(! BOOST_TEST(
-            parse(s, ec, t)))
+            parse_string(
+                s, ec, t)))
             return;
         if(! BOOST_TEST(! ec))
             return;

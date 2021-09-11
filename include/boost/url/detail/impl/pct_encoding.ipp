@@ -106,6 +106,7 @@ pct_decode_unchecked(
     string_view s,
     pct_decode_opts const& opt) noexcept
 {
+    (void)last;
     auto it = s.data();
     auto const end = it + s.size();
     error_code ec;

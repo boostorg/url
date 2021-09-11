@@ -17,7 +17,6 @@
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
-#include <boost/url/storage_ptr.hpp>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -51,9 +50,12 @@ class url_view;
 */
 class url
 {
+#ifndef BOOST_URL_DOCS
+protected:
+#endif
+    
     char* s_ = nullptr;
     detail::parts pt_;
-    storage_ptr sp_;
     std::size_t cap_ = 0;
 
     // VFALCO This has to be kept in
@@ -71,7 +73,7 @@ class url
         id_end          // one past the end
     };
 
-    class modify;
+    friend class static_url_base;
 
     // shortcuts
     string_view get(int id) const noexcept;
@@ -79,9 +81,64 @@ class url
     std::size_t len(int id) const noexcept;
     std::size_t len(int id0, int id1) const noexcept;
 
+    BOOST_URL_DECL url(
+        char* buf, std::size_t cap) noexcept;
+    BOOST_URL_DECL void copy(
+        char const* s, detail::parts const& pt);
+
+    BOOST_URL_DECL virtual char* alloc_impl(
+        std::size_t new_cap);
+    BOOST_URL_DECL virtual void free_impl(char* s);
+    BOOST_URL_DECL virtual std::size_t growth_impl(
+        std::size_t cap, std::size_t new_size);
+
 public:
     class params_type;
     class segments_type;
+
+    /** Destructor
+    */
+    BOOST_URL_DECL
+    virtual
+    ~url();
+
+    /** Constructor
+    */
+    BOOST_URL_DECL
+    url() noexcept;
+
+    /** Constructor
+    */
+    BOOST_URL_DECL
+    url(url&& u) noexcept;
+
+    /** Constructor
+    */
+    BOOST_URL_DECL
+    url(url const& u);
+
+    /** Constructor
+    */
+    BOOST_URL_DECL
+    url(url_view const& u);
+
+    /** Assignment
+    */
+    BOOST_URL_DECL
+    url&
+    operator=(url&& u) noexcept;
+
+    /** Assignment
+    */
+    BOOST_URL_DECL
+    url&
+    operator=(url const& u);
+
+    /** Assignment
+    */
+    BOOST_URL_DECL
+    url&
+    operator=(url_view const& u);
 
     //--------------------------------------------
     //
@@ -99,12 +156,6 @@ public:
     empty() const noexcept;
 
     //--------------------------------------------
-
-    /** Return the complete serialized URL
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_url() const;
 
     /** Return the origin
     */
@@ -349,8 +400,8 @@ public:
             return string_type<Allocator>(
                 s0.data(), s0.size(), a);
         }
-        return pct_decode(
-            s0, pt_.decoded[id_host], a);
+        return detail::pct_decode_unchecked(
+            s0, pt_.decoded[id_host], {}, a);
     }
 
     /** Return the ipv4 address if it exists, or return the unspecified address (0.0.0.0)
@@ -595,9 +646,9 @@ public:
     fragment(
         Allocator const& a = {}) const
     {
-        return pct_decode(
+        return detail::pct_decode_unchecked(
             encoded_fragment(),
-            pt_.decoded[id_frag], a);
+            pt_.decoded[id_frag], {}, a);
     }
 
     //--------------------------------------------
@@ -606,31 +657,17 @@ public:
     //--------------------------------------------
     //--------------------------------------------
 
-    /** Destructor
+    /** Return the complete serialized URL
     */
     BOOST_URL_DECL
-    ~url();
+    string_view
+    str() const noexcept;
 
-    /** Constructor
+    /** Return the encoded URL as a null-terminated string
     */
     BOOST_URL_DECL
-    url() noexcept;
-
-    /** Construct an empty URL with the specified storage.
-    */
-    explicit
-    url(
-        storage_ptr sp) noexcept
-        : sp_(std::move(sp))
-    {
-    }
-
-    /** Return the number of characters in the URL
-    */
-    // VFALCO do we need this?
-    BOOST_URL_DECL
-    std::size_t
-    size() const noexcept;
+    char const*
+    c_str() const noexcept;
 
     /** Return the number of characters that may be stored without a reallocation.
 
@@ -653,6 +690,12 @@ public:
     BOOST_URL_DECL
     void
     clear() noexcept;
+
+    /** Adjust the capacity
+    */
+    BOOST_URL_DECL
+    void
+    reserve(std::size_t n);
 
     //------------------------------------------------------
 
@@ -1552,10 +1595,11 @@ public:
 private:
     inline void resize_impl(
         std::size_t new_size);
+    inline char* resize_impl(int id,
+        std::size_t new_size);
     inline char* resize_impl(
-        int id, std::size_t new_size);
-    inline char* resize_impl(
-        int first, int last, std::size_t new_size);
+        int first, int last,
+        std::size_t new_size);
 };
 
 //----------------------------------------------------------

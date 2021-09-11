@@ -40,7 +40,8 @@ at( string_view key,
 {
     auto const it = find(key);
     if(it == end())
-        out_of_range::raise();
+        detail::throw_out_of_range(
+            BOOST_CURRENT_LOCATION);
     return it->value(a);
 }
 

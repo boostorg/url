@@ -41,14 +41,14 @@ std::size_t
 url_view::
 len(int id) const noexcept
 {
-    return pt_.length(id);
+    return pt_.len(id);
 }
 
 std::size_t
 url_view::
 len(int id0, int id1) const noexcept
 {
-    return pt_.length(id0, id1);
+    return pt_.len(id0, id1);
 }
 
 //------------------------------------------------
@@ -72,7 +72,7 @@ collect() const
     using T = shared_impl;
     using Alloc = std::allocator<char>;
     Alloc a;
-    string_view s = encoded_url();
+    string_view s = str();
     auto p = std::allocate_shared<T>(
         detail::over_allocator<T, Alloc>(
             s.size(), a), *this);
@@ -104,7 +104,7 @@ empty() const noexcept
 
 string_view
 url_view::
-encoded_url() const
+str() const
 {
     return get(id_scheme, id_end);
 }
@@ -480,7 +480,8 @@ parse_uri(
     error_code& ec) noexcept
 {
     uri_bnf t;
-    if(! bnf::parse(s, ec, t))
+    if(! bnf::parse_string(
+            s, ec, t))
         return {};
 
     detail::parts p;
@@ -526,7 +527,8 @@ parse_relative_ref(
     error_code& ec) noexcept
 {
     relative_ref_bnf t;
-    if(! bnf::parse(s, ec, t))
+    if(! bnf::parse_string(
+            s, ec, t))
         return {};
 
     detail::parts p;
@@ -567,7 +569,8 @@ operator<<(
     std::ostream& os,
     url_view const& u)
 {
-    os << u.encoded_url();
+    auto s = u.str();
+    os.write(s.data(), s.size());
     return os;
 }
 

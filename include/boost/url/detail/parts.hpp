@@ -35,43 +35,24 @@ enum part
 
 struct parts
 {
-    std::size_t offset[id_end + 1];
-    std::size_t decoded[id_end];
-    unsigned char ip_addr[16];
+    std::size_t offset[id_end + 1] = {};
+    std::size_t decoded[id_end] = {};
+    unsigned char ip_addr[16] = {};
     std::size_t nseg = 0;
     std::size_t nparam = 0;
     std::uint16_t port_number = 0;
     urls::host_type host_type =
         urls::host_type::none;
 
-    parts() noexcept
-    {
-        clear();
-    }
-
-    void
-    clear() noexcept
-    {
-        // VFALCO is this needed?
-        host_type = urls::host_type::none;
-        for(int i = 0; i <= id_end; ++i)
-            offset[i] = 0;
-        // VFALCO This isn't really needed
-        /*
-        for(int i = 0; i < id_end; ++i)
-            decoded[i] = 0;
-        */
-    }
-
     std::size_t
-    length(int id) const noexcept
+    len(int id) const noexcept
     {
         return offset[id + 1] -
             offset[id];
     }
 
     std::size_t
-    length(
+    len(
         int begin,
         int end) const noexcept
     {
@@ -107,7 +88,7 @@ struct parts
         int id,
         std::size_t n) noexcept
     {
-        auto const n0 = length(id);
+        auto const n0 = len(id);
         auto const d = n - n0;
         for(auto i = id + 1;
             i <= id_end; ++i)
@@ -120,7 +101,7 @@ struct parts
         std::size_t n) noexcept
     {
         BOOST_ASSERT(id < detail::id_end - 1);
-        BOOST_ASSERT(n <= length(id));
+        BOOST_ASSERT(n <= len(id));
         offset[id + 1] = offset[id] +
             static_cast<std::size_t>(n);
     }

@@ -16,9 +16,11 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/path_view.hpp>
 #include <boost/url/pct_encoding.hpp>
+#include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/static_pool.hpp>
+#include <boost/url/static_url.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/url_view.hpp>

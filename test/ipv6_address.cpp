@@ -52,9 +52,9 @@ public:
     {
         BOOST_TEST(
             ipv6_address().to_string() == "::");
-        ipv6_address::bytes_type bytes = {
+        ipv6_address::bytes_type bytes = { {
             1, 0, 2, 0, 3, 0, 4, 0,
-            5, 0, 6, 0, 7, 0, 8, 0 };
+            5, 0, 6, 0, 7, 0, 8, 0 } };
         ipv6_address a0(bytes);
         BOOST_TEST(a0.to_string() ==
             "10:20:30:40:50:60:70:80");

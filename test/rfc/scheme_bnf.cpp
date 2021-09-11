@@ -27,9 +27,10 @@ public:
     {
         error_code ec;
         scheme_bnf p;
-        using bnf::parse;
+        using bnf::parse_string;
         if(! BOOST_TEST(
-            parse(s, ec, p)))
+            parse_string(
+                s, ec, p)))
             return;
         BOOST_TEST(
             ! ec.failed());

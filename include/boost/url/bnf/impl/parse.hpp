@@ -92,7 +92,7 @@ template<
     class T0,
     class... Tn>
 bool
-parse(
+parse_string(
     string_view s,
     error_code& ec,
     T0&& t0,
@@ -114,13 +114,35 @@ parse(
     return true;
 }
 
+template<
+    class T0,
+    class... Tn>
+void
+parse_string(
+    string_view s,
+    T0&& t0,
+    Tn&&... tn)
+{
+    error_code ec;
+    if(parse(s, ec,
+        std::forward<T0>(t0),
+        std::forward<Tn>(tn)...))
+    {
+        BOOST_ASSERT(! ec.failed());
+        return;
+    }
+    urls::detail::throw_system_error(
+        ec, BOOST_CURRENT_LOCATION);
+}
+
 template<class T>
 bool
 is_valid(string_view s)
 {
     T t;
     error_code ec;
-    return parse(s, ec, t);
+    return parse_string(
+        s, ec, t);
 }
 
 bool

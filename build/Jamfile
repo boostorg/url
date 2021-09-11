@@ -16,7 +16,6 @@ project boost/url
     : usage-requirements
       <link>shared:<define>BOOST_URL_DYN_LINK=1
       <link>static:<define>BOOST_URL_STATIC_LINK=1
-      <library>/boost/json//boost_json
     : source-location ../src
     ;
 
@@ -28,7 +27,6 @@ explicit url_sources ;
 
 lib boost_url
    : url_sources
-     /boost/json//boost_json
    ;
 
 boost-install boost_url ;

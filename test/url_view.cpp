@@ -71,7 +71,7 @@ public:
     {
         {
             url_view u;
-            BOOST_TEST(u.encoded_url() == "");
+            BOOST_TEST(u.str() == "");
             BOOST_TEST(u.empty());
         }
     }
@@ -654,10 +654,10 @@ public:
             auto const u = urls::parse_uri(s);
             sp = u.collect();
             BOOST_TEST(
-                u.encoded_url().data() !=
-                sp->encoded_url().data());
+                u.str().data() !=
+                sp->str().data());
         }
-        BOOST_TEST(sp->encoded_url() == s);
+        BOOST_TEST(sp->str() == s);
     }
 
     //--------------------------------------------

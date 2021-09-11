@@ -43,9 +43,10 @@ public:
     {
         error_code ec;
         ipv6_address_bnf t;
-        using bnf::parse;
+        using bnf::parse_string;
         BOOST_TEST(
-            parse(s, ec, t));
+            parse_string(
+                s, ec, t));
         if( ! BOOST_TEST(
             ! ec.failed()))
             return {};

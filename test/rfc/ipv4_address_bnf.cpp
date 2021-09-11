@@ -24,8 +24,9 @@ public:
     {
         error_code ec;
         ipv4_address_bnf t;
-        using bnf::parse;
-        BOOST_TEST(parse(s, ec, t));
+        using bnf::parse_string;
+        BOOST_TEST(
+            parse_string(s, ec, t));
         if(! BOOST_TEST(! ec))
             return;
         BOOST_TEST(

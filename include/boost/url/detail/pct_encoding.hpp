@@ -264,6 +264,7 @@ pct_encode(
     pct_encode_opts const& opt,
     CharSet const& cs) noexcept
 {
+    (void)last;
     // can't have % in charset
     BOOST_ASSERT(! cs('%'));
     static constexpr char hex[] =

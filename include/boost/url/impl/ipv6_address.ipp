@@ -238,8 +238,8 @@ make_ipv6_address(
     error_code& ec) noexcept
 {
     ipv6_address_bnf t;
-    using bnf::parse;
-    if(! parse(s, ec, t))
+    using bnf::parse_string;
+    if(! parse_string(s, ec, t))
         return {};
     return t.addr;
 }

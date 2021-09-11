@@ -28,7 +28,7 @@ public:
     {
         (void)u;
         log <<
-            "href     : " << u.encoded_url() << "\n"
+            "href     : " << u.str() << "\n"
             "scheme   : " << u.scheme() << "\n"
             "user     : " << u.encoded_username() << "\n"
             "password : " << u.encoded_password() << "\n"
@@ -65,7 +65,7 @@ public:
 
         {
             url const v("http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
-            BOOST_TEST(v.encoded_url() == "http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
+            BOOST_TEST(v.str() == "http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
             BOOST_TEST(v.encoded_origin() == "http://user:pass@example.com:80");
             BOOST_TEST(v.encoded_authority() == "user:pass@example.com:80");
             BOOST_TEST(v.scheme() == "http");
@@ -91,7 +91,7 @@ public:
     void
     testCtor()
     {
-        BOOST_TEST(url().encoded_url() == "");
+        BOOST_TEST(url().str() == "");
     }
 
     void
@@ -99,13 +99,13 @@ public:
     {
         BOOST_TEST(url().scheme() == "");
         BOOST_TEST(url("http:").scheme() == "http");
-        BOOST_TEST(url("http:").encoded_url() == "http:");
+        BOOST_TEST(url("http:").str() == "http:");
         BOOST_TEST(url("http:").set_scheme("").scheme() == "");
-        BOOST_TEST(url("http:").set_scheme("").encoded_url() == "");
-        BOOST_TEST(url("http:").set_scheme("ftp").encoded_url() == "ftp:");
-        BOOST_TEST(url("ws:").set_scheme("gopher").encoded_url() == "gopher:");
-        BOOST_TEST(url("http://example.com").set_scheme("ftp").encoded_url() == "ftp://example.com");
-        BOOST_TEST(url("ws://example.com").set_scheme("gopher").encoded_url() == "gopher://example.com");
+        BOOST_TEST(url("http:").set_scheme("").str() == "");
+        BOOST_TEST(url("http:").set_scheme("ftp").str() == "ftp:");
+        BOOST_TEST(url("ws:").set_scheme("gopher").str() == "gopher:");
+        BOOST_TEST(url("http://example.com").set_scheme("ftp").str() == "ftp://example.com");
+        BOOST_TEST(url("ws://example.com").set_scheme("gopher").str() == "gopher://example.com");
 
         BOOST_TEST_THROWS(url().set_scheme("c@t"), invalid_part);
         BOOST_TEST_THROWS(url().set_scheme("1cat"), invalid_part);
@@ -119,7 +119,7 @@ public:
         BOOST_TEST(url("http://user:pass@example.com/path/to/file.txt?q").encoded_origin() ==
                          "http://user:pass@example.com");
         BOOST_TEST(url("http://user:pass@example.com/path/to/file.txt?q"
-            ).set_encoded_origin("ws://x.com").encoded_url() == "ws://x.com/path/to/file.txt?q");
+            ).set_encoded_origin("ws://x.com").str() == "ws://x.com/path/to/file.txt?q");
         BOOST_TEST(
             url("http://host:80/")
             .set_encoded_origin("http://host:443/")
@@ -142,7 +142,7 @@ public:
         BOOST_TEST(url("http://localhost:443").encoded_authority() == "localhost:443");
         BOOST_TEST(url("http://:443").encoded_authority() == ":443");
         BOOST_TEST(url("http://user:pass@example.com").encoded_authority() == "user:pass@example.com");
-        BOOST_TEST(url("http://@").set_encoded_authority("user:pass@example.com").encoded_url() == "http://user:pass@example.com");
+        BOOST_TEST(url("http://@").set_encoded_authority("user:pass@example.com").str() == "http://user:pass@example.com");
     }
 
     void
@@ -151,20 +151,20 @@ public:
         BOOST_TEST(url().username() == "");
         BOOST_TEST(url().encoded_username() == "");
         BOOST_TEST(url().set_user("").username() == "");
-        BOOST_TEST(url().set_user("user").encoded_url() == "//user@");
-        BOOST_TEST(url().set_encoded_user("user%20name").encoded_url() == "//user%20name@");
-        BOOST_TEST(url().set_encoded_user("user%3Aname").encoded_url() == "//user%3Aname@");
+        BOOST_TEST(url().set_user("user").str() == "//user@");
+        BOOST_TEST(url().set_encoded_user("user%20name").str() == "//user%20name@");
+        BOOST_TEST(url().set_encoded_user("user%3Aname").str() == "//user%3Aname@");
         BOOST_TEST(url().set_encoded_user("user%3Aname").username() == "user:name");
-        BOOST_TEST(url().set_encoded_user("user%40name").encoded_url() == "//user%40name@");
+        BOOST_TEST(url().set_encoded_user("user%40name").str() == "//user%40name@");
         BOOST_TEST(url().set_encoded_user("user%40name").username() == "user@name");
 
-        BOOST_TEST(url("http:").set_encoded_user("").encoded_url() == "http:");
-        BOOST_TEST(url("http://@").set_encoded_user("").encoded_url() == "http://");
-        BOOST_TEST(url("http://x@").set_encoded_user("").encoded_url() == "http://");
-        BOOST_TEST(url("http://x:@").set_encoded_user("").encoded_url() == "http://:@");
-        BOOST_TEST(url("http://:@").set_user("").encoded_url() == "http://:@");
-        BOOST_TEST(url("http://:y@").set_encoded_user("x").encoded_url() == "http://x:y@");
-        BOOST_TEST(url("ws://user:pass@").set_user("x").encoded_url() == "ws://x:pass@");
+        BOOST_TEST(url("http:").set_encoded_user("").str() == "http:");
+        BOOST_TEST(url("http://@").set_encoded_user("").str() == "http://");
+        BOOST_TEST(url("http://x@").set_encoded_user("").str() == "http://");
+        BOOST_TEST(url("http://x:@").set_encoded_user("").str() == "http://:@");
+        BOOST_TEST(url("http://:@").set_user("").str() == "http://:@");
+        BOOST_TEST(url("http://:y@").set_encoded_user("x").str() == "http://x:y@");
+        BOOST_TEST(url("ws://user:pass@").set_user("x").str() == "ws://x:pass@");
 
         BOOST_TEST_THROWS(url().set_encoded_user("user:pass"), invalid_part);
         BOOST_TEST_THROWS(url().set_encoded_user("user name"), invalid_part);
@@ -176,20 +176,20 @@ public:
         BOOST_TEST(url().password() == "");
         BOOST_TEST(url().encoded_password() == "");
         BOOST_TEST(url().set_encoded_password("").password() == "");
-        BOOST_TEST(url().set_password("pass").encoded_url() == "//:pass@");
-        BOOST_TEST(url().set_encoded_password("%40pass").encoded_url() == "//:%40pass@");
-        BOOST_TEST(url().set_encoded_password("pass%20word").encoded_url() == "//:pass%20word@");
-        BOOST_TEST(url().set_encoded_password("pass%42word").encoded_url() == "//:pass%42word@");
+        BOOST_TEST(url().set_password("pass").str() == "//:pass@");
+        BOOST_TEST(url().set_encoded_password("%40pass").str() == "//:%40pass@");
+        BOOST_TEST(url().set_encoded_password("pass%20word").str() == "//:pass%20word@");
+        BOOST_TEST(url().set_encoded_password("pass%42word").str() == "//:pass%42word@");
 
-        BOOST_TEST(url("http:").set_encoded_password("").encoded_url() == "http:");
-        BOOST_TEST(url("http://@").set_encoded_password("").encoded_url() == "http://");
-        BOOST_TEST(url("http://x@").set_encoded_password("").encoded_url() == "http://x@");
-        BOOST_TEST(url("http://x@").set_encoded_password("y").encoded_url() == "http://x:y@");
-        BOOST_TEST(url("http://:@").set_encoded_password("").encoded_url() == "http://");
-        BOOST_TEST(url("http://:y@").set_password("pass").encoded_url() == "http://:pass@");
-        BOOST_TEST(url("http://x:y@").set_password("pass").encoded_url() == "http://x:pass@");
-        BOOST_TEST(url("http://x:pass@").set_password("y").encoded_url() == "http://x:y@");
-        BOOST_TEST(url("http://x:pass@example.com").set_password("y").encoded_url() == "http://x:y@example.com");
+        BOOST_TEST(url("http:").set_encoded_password("").str() == "http:");
+        BOOST_TEST(url("http://@").set_encoded_password("").str() == "http://");
+        BOOST_TEST(url("http://x@").set_encoded_password("").str() == "http://x@");
+        BOOST_TEST(url("http://x@").set_encoded_password("y").str() == "http://x:y@");
+        BOOST_TEST(url("http://:@").set_encoded_password("").str() == "http://");
+        BOOST_TEST(url("http://:y@").set_password("pass").str() == "http://:pass@");
+        BOOST_TEST(url("http://x:y@").set_password("pass").str() == "http://x:pass@");
+        BOOST_TEST(url("http://x:pass@").set_password("y").str() == "http://x:y@");
+        BOOST_TEST(url("http://x:pass@example.com").set_password("y").str() == "http://x:y@example.com");
 
         BOOST_TEST_THROWS(url().set_encoded_password("pass word"), invalid_part);
         BOOST_TEST_THROWS(url().set_encoded_password(":pass"), invalid_part);
@@ -209,27 +209,27 @@ public:
         BOOST_TEST(url("//:@/").encoded_userinfo() == ":");
         BOOST_TEST(url("//@/").encoded_userinfo() == "");
 
-        BOOST_TEST(url().set_encoded_userinfo("").encoded_url() == "");
-        BOOST_TEST(url().set_encoded_userinfo("user:").encoded_url() == "//user:@");
-        BOOST_TEST(url().set_encoded_userinfo(":pass").encoded_url() == "//:pass@");
-        BOOST_TEST(url().set_encoded_userinfo("user:pass").encoded_url() == "//user:pass@");
-        BOOST_TEST(url().set_encoded_userinfo("user%3Apass").encoded_url() == "//user%3Apass@");
+        BOOST_TEST(url().set_encoded_userinfo("").str() == "");
+        BOOST_TEST(url().set_encoded_userinfo("user:").str() == "//user:@");
+        BOOST_TEST(url().set_encoded_userinfo(":pass").str() == "//:pass@");
+        BOOST_TEST(url().set_encoded_userinfo("user:pass").str() == "//user:pass@");
+        BOOST_TEST(url().set_encoded_userinfo("user%3Apass").str() == "//user%3Apass@");
         BOOST_TEST_THROWS(url().set_encoded_userinfo("user%3pass"), invalid_part);
 
-        BOOST_TEST(url().set_userinfo_part("").encoded_url() == "");
-        BOOST_TEST(url().set_userinfo_part("user:@").encoded_url() == "//user:@");
-        BOOST_TEST(url().set_userinfo_part(":pass@").encoded_url() == "//:pass@");
-        BOOST_TEST(url().set_userinfo_part("user:pass@").encoded_url() == "//user:pass@");
-        BOOST_TEST(url().set_userinfo_part("user%3Apass@").encoded_url() == "//user%3Apass@");
+        BOOST_TEST(url().set_userinfo_part("").str() == "");
+        BOOST_TEST(url().set_userinfo_part("user:@").str() == "//user:@");
+        BOOST_TEST(url().set_userinfo_part(":pass@").str() == "//:pass@");
+        BOOST_TEST(url().set_userinfo_part("user:pass@").str() == "//user:pass@");
+        BOOST_TEST(url().set_userinfo_part("user%3Apass@").str() == "//user%3Apass@");
         BOOST_TEST_THROWS(url().set_userinfo_part("user%3Apass"), invalid_part);
 
-        BOOST_TEST(url("http://x:y@/").set_encoded_userinfo("").encoded_url() == "http:/");
-        BOOST_TEST(url("http://user:pass@/").set_encoded_userinfo("user").encoded_url() == "http://user@/");
-        BOOST_TEST(url("http://user:pass@/").set_encoded_userinfo(":pass").encoded_url() == "http://:pass@/");
-        BOOST_TEST(url("http://:pass@/").set_encoded_userinfo("user").encoded_url() == "http://user@/");
-        BOOST_TEST(url("http://user:@/").set_encoded_userinfo(":pass").encoded_url() == "http://:pass@/");
-        BOOST_TEST(url("http://z.com/").set_encoded_userinfo("").encoded_url() == "http://z.com/");
-        BOOST_TEST(url("http://x:y@z.com/").set_encoded_userinfo("").encoded_url() == "http://z.com/");
+        BOOST_TEST(url("http://x:y@/").set_encoded_userinfo("").str() == "http:/");
+        BOOST_TEST(url("http://user:pass@/").set_encoded_userinfo("user").str() == "http://user@/");
+        BOOST_TEST(url("http://user:pass@/").set_encoded_userinfo(":pass").str() == "http://:pass@/");
+        BOOST_TEST(url("http://:pass@/").set_encoded_userinfo("user").str() == "http://user@/");
+        BOOST_TEST(url("http://user:@/").set_encoded_userinfo(":pass").str() == "http://:pass@/");
+        BOOST_TEST(url("http://z.com/").set_encoded_userinfo("").str() == "http://z.com/");
+        BOOST_TEST(url("http://x:y@z.com/").set_encoded_userinfo("").str() == "http://z.com/");
     }
 
     void
@@ -255,16 +255,16 @@ public:
         BOOST_TEST(url("//@/").encoded_username() == "");
         BOOST_TEST(url("//%3A@/").encoded_username() == "%3A");
 
-        BOOST_TEST(url("").set_user("").encoded_url() == "");
-        BOOST_TEST(url("").set_user("x").encoded_url() == "//x@");
-        BOOST_TEST(url("").set_user("x:").encoded_url() == "//x%3A@");
-        BOOST_TEST(url("").set_user("x:y").encoded_url() == "//x%3Ay@");
-        BOOST_TEST(url("//yy@").set_user("x").encoded_url() == "//x@");
-        BOOST_TEST(url("//:@").set_user("x").encoded_url() == "//x:@");
-        BOOST_TEST(url("//:p@").set_user("x").encoded_url() == "//x:p@");
-        //BOOST_TEST(url("//yy@").set_user("").encoded_url() == "");
-        BOOST_TEST(url("//:p@").set_user("x").encoded_url() == "//x:p@");
-        BOOST_TEST(url("//yy:p@").set_user("x").encoded_url() == "//x:p@");
+        BOOST_TEST(url("").set_user("").str() == "");
+        BOOST_TEST(url("").set_user("x").str() == "//x@");
+        BOOST_TEST(url("").set_user("x:").str() == "//x%3A@");
+        BOOST_TEST(url("").set_user("x:y").str() == "//x%3Ay@");
+        BOOST_TEST(url("//yy@").set_user("x").str() == "//x@");
+        BOOST_TEST(url("//:@").set_user("x").str() == "//x:@");
+        BOOST_TEST(url("//:p@").set_user("x").str() == "//x:p@");
+        //BOOST_TEST(url("//yy@").set_user("").str() == "");
+        BOOST_TEST(url("//:p@").set_user("x").str() == "//x:p@");
+        BOOST_TEST(url("//yy:p@").set_user("x").str() == "//x:p@");
     }
 
     //------------------------------------------------------
@@ -388,20 +388,20 @@ public:
         BOOST_TEST(url("//%2F").encoded_host() == "%2F");
         BOOST_TEST(url("//%2F?#").encoded_host() == "%2F");
 
-        BOOST_TEST(url().set_host("x").encoded_url() == "//x");
-        BOOST_TEST(url().set_host("local host").encoded_url() == "//local%20host");
-        BOOST_TEST(url("z://").set_host("x").encoded_url() == "z://x");
-        BOOST_TEST(url("z://x/").set_host("yy").encoded_url() == "z://yy/");
-        BOOST_TEST(url("z://yy/").set_host("x").encoded_url() == "z://x/");
-        BOOST_TEST(url("z://yy/").set_host("").encoded_url() == "z:/");
-        BOOST_TEST(url("z://yy:80/").set_host("").encoded_url() == "z://:80/");
-        BOOST_TEST(url("z://@").set_host("x").encoded_url() == "z://@x");
-        BOOST_TEST(url("z://@yy").set_host("x").encoded_url() == "z://@x");
-        BOOST_TEST(url("z://@yy").set_host("").encoded_url() == "z://@");
-        BOOST_TEST(url("z://:@").set_host("x").encoded_url() == "z://:@x");
-        BOOST_TEST(url("z://:@yy").set_host("").encoded_url() == "z://:@");
+        BOOST_TEST(url().set_host("x").str() == "//x");
+        BOOST_TEST(url().set_host("local host").str() == "//local%20host");
+        BOOST_TEST(url("z://").set_host("x").str() == "z://x");
+        BOOST_TEST(url("z://x/").set_host("yy").str() == "z://yy/");
+        BOOST_TEST(url("z://yy/").set_host("x").str() == "z://x/");
+        BOOST_TEST(url("z://yy/").set_host("").str() == "z:/");
+        BOOST_TEST(url("z://yy:80/").set_host("").str() == "z://:80/");
+        BOOST_TEST(url("z://@").set_host("x").str() == "z://@x");
+        BOOST_TEST(url("z://@yy").set_host("x").str() == "z://@x");
+        BOOST_TEST(url("z://@yy").set_host("").str() == "z://@");
+        BOOST_TEST(url("z://:@").set_host("x").str() == "z://:@x");
+        BOOST_TEST(url("z://:@yy").set_host("").str() == "z://:@");
         BOOST_TEST(url("z:").set_host("yy").host_type() == host_type::name);
-        BOOST_TEST(url("z:").set_host("1.2.3.4").encoded_url() == "z://1.2.3.4");
+        BOOST_TEST(url("z:").set_host("1.2.3.4").str() == "z://1.2.3.4");
         BOOST_TEST(url("z://x").set_host("1.2.3.4").host_type() == host_type::ipv4);
         BOOST_TEST(url("z://x").set_host("1.2.3.4x").host_type() == host_type::name);
         BOOST_TEST(url("z://x").set_host("[::]").host_type() == host_type::ipv6);
@@ -410,20 +410,20 @@ public:
         BOOST_TEST(url("z://x").set_host("[::]x").encoded_host() == "%5B%3A%3A%5Dx");
         BOOST_TEST(url("z://x").set_host("[::").encoded_host() == "%5B%3A%3A");
 
-        BOOST_TEST(url().set_encoded_host("x").encoded_url() == "//x");
+        BOOST_TEST(url().set_encoded_host("x").str() == "//x");
         BOOST_TEST(url().set_encoded_host("local%20host").host() == "local host");
-        BOOST_TEST(url("z://").set_encoded_host("x").encoded_url() == "z://x");
-        BOOST_TEST(url("z://x/").set_encoded_host("yy").encoded_url() == "z://yy/");
-        BOOST_TEST(url("z://yy/").set_encoded_host("x").encoded_url() == "z://x/");
-        BOOST_TEST(url("z://yy/").set_encoded_host("").encoded_url() == "z:/");
-        BOOST_TEST(url("z://yy:80/").set_encoded_host("").encoded_url() == "z://:80/");
-        BOOST_TEST(url("z://@").set_encoded_host("x").encoded_url() == "z://@x");
-        BOOST_TEST(url("z://@yy").set_encoded_host("x").encoded_url() == "z://@x");
-        BOOST_TEST(url("z://@yy").set_encoded_host("").encoded_url() == "z://@");
-        BOOST_TEST(url("z://:@").set_encoded_host("x").encoded_url() == "z://:@x");
-        BOOST_TEST(url("z://:@yy").set_encoded_host("").encoded_url() == "z://:@");
+        BOOST_TEST(url("z://").set_encoded_host("x").str() == "z://x");
+        BOOST_TEST(url("z://x/").set_encoded_host("yy").str() == "z://yy/");
+        BOOST_TEST(url("z://yy/").set_encoded_host("x").str() == "z://x/");
+        BOOST_TEST(url("z://yy/").set_encoded_host("").str() == "z:/");
+        BOOST_TEST(url("z://yy:80/").set_encoded_host("").str() == "z://:80/");
+        BOOST_TEST(url("z://@").set_encoded_host("x").str() == "z://@x");
+        BOOST_TEST(url("z://@yy").set_encoded_host("x").str() == "z://@x");
+        BOOST_TEST(url("z://@yy").set_encoded_host("").str() == "z://@");
+        BOOST_TEST(url("z://:@").set_encoded_host("x").str() == "z://:@x");
+        BOOST_TEST(url("z://:@yy").set_encoded_host("").str() == "z://:@");
         BOOST_TEST(url("z:").set_encoded_host("yy").host_type() == host_type::name);
-        BOOST_TEST(url("z:").set_encoded_host("1.2.3.4").encoded_url() == "z://1.2.3.4");
+        BOOST_TEST(url("z:").set_encoded_host("1.2.3.4").str() == "z://1.2.3.4");
         BOOST_TEST(url("z://x").set_encoded_host("1.2.3.4").host_type() == host_type::ipv4);
         BOOST_TEST(url("z://x").set_encoded_host("1.2.3.4x").host_type() == host_type::name);
         BOOST_TEST(url("z://x").set_encoded_host("[::]").host_type() == host_type::ipv6);
@@ -444,21 +444,21 @@ public:
         BOOST_TEST(url("//x:/").port() == "");
         BOOST_TEST(url("//x:80/").port() == "80");
 
-        BOOST_TEST(url().set_port(80).encoded_url() == "//:80");
-        BOOST_TEST(url("//:443/").set_port(80).encoded_url() == "//:80/");
-        BOOST_TEST(url("//:80/").set_port(443).encoded_url() == "//:443/");
+        BOOST_TEST(url().set_port(80).str() == "//:80");
+        BOOST_TEST(url("//:443/").set_port(80).str() == "//:80/");
+        BOOST_TEST(url("//:80/").set_port(443).str() == "//:443/");
 
-        BOOST_TEST(url().set_port("80").encoded_url() == "//:80");
-        BOOST_TEST(url("//:443/").set_port("80").encoded_url() == "//:80/");
-        BOOST_TEST(url("//:80/").set_port("443").encoded_url() == "//:443/");
+        BOOST_TEST(url().set_port("80").str() == "//:80");
+        BOOST_TEST(url("//:443/").set_port("80").str() == "//:80/");
+        BOOST_TEST(url("//:80/").set_port("443").str() == "//:443/");
         BOOST_TEST_THROWS(url().set_port("x"), invalid_part);
-        BOOST_TEST(url("http://:443/").set_port("").encoded_url() == "http:/");
+        BOOST_TEST(url("http://:443/").set_port("").str() == "http:/");
 
-        BOOST_TEST(url().set_port_part(":80").encoded_url() == "//:80");
-        BOOST_TEST(url("//:443/").set_port_part(":80").encoded_url() == "//:80/");
-        BOOST_TEST(url("//:80/").set_port_part(":443").encoded_url() == "//:443/");
-        BOOST_TEST(url("//:80/").set_port_part(":").encoded_url() == "//:/");
-        BOOST_TEST(url("//:80/").set_port_part("").encoded_url() == "/");
+        BOOST_TEST(url().set_port_part(":80").str() == "//:80");
+        BOOST_TEST(url("//:443/").set_port_part(":80").str() == "//:80/");
+        BOOST_TEST(url("//:80/").set_port_part(":443").str() == "//:443/");
+        BOOST_TEST(url("//:80/").set_port_part(":").str() == "//:/");
+        BOOST_TEST(url("//:80/").set_port_part("").str() == "/");
         BOOST_TEST_THROWS(url().set_port_part("80"), invalid_part);
     }
 
@@ -479,45 +479,45 @@ public:
         BOOST_TEST(url("/").encoded_path() == "/");
 
         // path-empty
-        BOOST_TEST(url("").set_encoded_path("").encoded_url() == "");
-        BOOST_TEST(url("//x#").set_encoded_path("").encoded_url() == "//x#");
+        BOOST_TEST(url("").set_encoded_path("").str() == "");
+        BOOST_TEST(url("//x#").set_encoded_path("").str() == "//x#");
 
         // path-abempty
-        BOOST_TEST(url("//x#").set_encoded_path("/").encoded_url() == "//x/#");
-        BOOST_TEST(url("//x#").set_encoded_path("//").encoded_url() == "//x//#");
-        BOOST_TEST(url("//x#").set_encoded_path("/y").encoded_url() == "//x/y#");
+        BOOST_TEST(url("//x#").set_encoded_path("/").str() == "//x/#");
+        BOOST_TEST(url("//x#").set_encoded_path("//").str() == "//x//#");
+        BOOST_TEST(url("//x#").set_encoded_path("/y").str() == "//x/y#");
         BOOST_TEST_THROWS(url("//x#").set_encoded_path("x"), invalid_part);
         BOOST_TEST_THROWS(url("//x#").set_encoded_path("x/"), invalid_part);
         BOOST_TEST_THROWS(url("//x#").set_encoded_path("/%A"), invalid_part);
         BOOST_TEST_THROWS(url("//x#").set_encoded_path("/#"), invalid_part);
 
         // path-absolute
-        BOOST_TEST(url("?#").set_encoded_path("/x").encoded_url() == "/x?#");
-        BOOST_TEST(url("x:?#").set_encoded_path("/").encoded_url() == "x:/?#");
+        BOOST_TEST(url("?#").set_encoded_path("/x").str() == "/x?#");
+        BOOST_TEST(url("x:?#").set_encoded_path("/").str() == "x:/?#");
         BOOST_TEST_THROWS(url("?").set_encoded_path("//x"), invalid_part);
         BOOST_TEST_THROWS(url("?").set_encoded_path("/x%A"), invalid_part);
         BOOST_TEST_THROWS(url("x:?#").set_encoded_path("/x?"), invalid_part);
         BOOST_TEST_THROWS(url("/x/%"), invalid_part);
 
         // path-noscheme
-        BOOST_TEST(url("").set_encoded_path("x").encoded_url() == "x");
-        BOOST_TEST(url("").set_encoded_path("x/").encoded_url() == "x/");
-        BOOST_TEST(url("").set_encoded_path("x//").encoded_url() == "x//");
-        BOOST_TEST(url("?#").set_encoded_path("x").encoded_url() == "x?#");
-        BOOST_TEST(url("?#").set_encoded_path("x/").encoded_url() == "x/?#");
-        BOOST_TEST(url("?#").set_encoded_path("x//").encoded_url() == "x//?#");
-        BOOST_TEST(url("yz/?#").set_encoded_path("x").encoded_url() == "x?#");
-        BOOST_TEST(url("yz/?#").set_encoded_path("x/").encoded_url() == "x/?#");
-        BOOST_TEST(url("yz/?#").set_encoded_path("x//").encoded_url() == "x//?#");
+        BOOST_TEST(url("").set_encoded_path("x").str() == "x");
+        BOOST_TEST(url("").set_encoded_path("x/").str() == "x/");
+        BOOST_TEST(url("").set_encoded_path("x//").str() == "x//");
+        BOOST_TEST(url("?#").set_encoded_path("x").str() == "x?#");
+        BOOST_TEST(url("?#").set_encoded_path("x/").str() == "x/?#");
+        BOOST_TEST(url("?#").set_encoded_path("x//").str() == "x//?#");
+        BOOST_TEST(url("yz/?#").set_encoded_path("x").str() == "x?#");
+        BOOST_TEST(url("yz/?#").set_encoded_path("x/").str() == "x/?#");
+        BOOST_TEST(url("yz/?#").set_encoded_path("x//").str() == "x//?#");
         BOOST_TEST_THROWS(url("yz/?#").set_encoded_path(":"), invalid_part);
         BOOST_TEST_THROWS(url("yz/?#").set_encoded_path("x:"), invalid_part);
         BOOST_TEST_THROWS(url("yz/?#").set_encoded_path("x:/q"), invalid_part);
         BOOST_TEST_THROWS(url("y/%"), invalid_part);
 
         // path-rootless
-        BOOST_TEST(url("x:?#").set_encoded_path("y").encoded_url() == "x:y?#");
-        BOOST_TEST(url("x:?#").set_encoded_path("y/").encoded_url() == "x:y/?#");
-        BOOST_TEST(url("x:?#").set_encoded_path("y//").encoded_url() == "x:y//?#");
+        BOOST_TEST(url("x:?#").set_encoded_path("y").str() == "x:y?#");
+        BOOST_TEST(url("x:?#").set_encoded_path("y/").str() == "x:y/?#");
+        BOOST_TEST(url("x:?#").set_encoded_path("y//").str() == "x:y//?#");
         BOOST_TEST_THROWS(url("x:?#").set_encoded_path("%A"), invalid_part);
         BOOST_TEST_THROWS(url("x:?#").set_encoded_path("y?"), invalid_part);
         BOOST_TEST_THROWS(url("x:y/%"), invalid_part);
@@ -701,27 +701,27 @@ public:
         BOOST_TEST(url("?").encoded_query() == "");
         BOOST_TEST(url("?x").encoded_query() == "x");
 
-        BOOST_TEST(url("//?").set_query("").encoded_url() == "//");
-        BOOST_TEST(url("//?x").set_query("").encoded_url() == "//");
-        BOOST_TEST(url("//?xy").set_query("y").encoded_url() == "//?y");
-        BOOST_TEST(url("//").set_query("?").encoded_url() == "//??");
-        BOOST_TEST(url("//").set_query("??").encoded_url() == "//???");
+        BOOST_TEST(url("//?").set_query("").str() == "//");
+        BOOST_TEST(url("//?x").set_query("").str() == "//");
+        BOOST_TEST(url("//?xy").set_query("y").str() == "//?y");
+        BOOST_TEST(url("//").set_query("?").str() == "//??");
+        BOOST_TEST(url("//").set_query("??").str() == "//???");
 
-        BOOST_TEST(url("//?").set_encoded_query("").encoded_url() == "//");
-        BOOST_TEST(url("//?x").set_encoded_query("").encoded_url() == "//");
-        BOOST_TEST(url("//?xy").set_encoded_query("y").encoded_url() == "//?y");
+        BOOST_TEST(url("//?").set_encoded_query("").str() == "//");
+        BOOST_TEST(url("//?x").set_encoded_query("").str() == "//");
+        BOOST_TEST(url("//?xy").set_encoded_query("y").str() == "//?y");
         BOOST_TEST_THROWS(url("//").set_encoded_query("#"), invalid_part);
         BOOST_TEST_THROWS(url("//").set_encoded_query("#?"), invalid_part);
 
-        BOOST_TEST(url("//?").set_query_part("").encoded_url() == "//");
-        BOOST_TEST(url("//?x").set_query_part("").encoded_url() == "//");
+        BOOST_TEST(url("//?").set_query_part("").str() == "//");
+        BOOST_TEST(url("//?x").set_query_part("").str() == "//");
         BOOST_TEST_THROWS(url("//?xy").set_query_part("y"), invalid_part);
-        BOOST_TEST(url("//?xy").set_query_part("?y").encoded_url() == "//?y");
+        BOOST_TEST(url("//?xy").set_query_part("?y").str() == "//?y");
 
         BOOST_TEST_THROWS(url("?%"), invalid_part);
-        BOOST_TEST(url("?x=").encoded_url() == "?x=");
+        BOOST_TEST(url("?x=").str() == "?x=");
         BOOST_TEST_THROWS(url("?x=%"), invalid_part);
-        BOOST_TEST(url("?x=#").encoded_url() == "?x=#");
+        BOOST_TEST(url("?x=#").str() == "?x=#");
     }
 
     void
@@ -825,22 +825,22 @@ public:
         BOOST_TEST_THROWS(url().set_fragment_part("x"), invalid_part);
         BOOST_TEST_THROWS(url().set_fragment_part("%23"), invalid_part);
 
-        BOOST_TEST(url("//#").set_fragment("").encoded_url() == "//");
-        BOOST_TEST(url("//#x").set_fragment("").encoded_url() == "//");
-        BOOST_TEST(url("//#xy").set_fragment("y").encoded_url() == "//#y");
-        BOOST_TEST(url("//").set_fragment("#").encoded_url() == "//#%23");
-        BOOST_TEST(url("//").set_fragment("##").encoded_url() == "//#%23%23");
+        BOOST_TEST(url("//#").set_fragment("").str() == "//");
+        BOOST_TEST(url("//#x").set_fragment("").str() == "//");
+        BOOST_TEST(url("//#xy").set_fragment("y").str() == "//#y");
+        BOOST_TEST(url("//").set_fragment("#").str() == "//#%23");
+        BOOST_TEST(url("//").set_fragment("##").str() == "//#%23%23");
 
-        BOOST_TEST(url("//#").set_encoded_fragment("").encoded_url() == "//");
-        BOOST_TEST(url("//#x").set_encoded_fragment("").encoded_url() == "//");
-        BOOST_TEST(url("//#xy").set_encoded_fragment("y").encoded_url() == "//#y");
+        BOOST_TEST(url("//#").set_encoded_fragment("").str() == "//");
+        BOOST_TEST(url("//#x").set_encoded_fragment("").str() == "//");
+        BOOST_TEST(url("//#xy").set_encoded_fragment("y").str() == "//#y");
         BOOST_TEST_THROWS(url("//").set_encoded_fragment("#"), invalid_part);
         BOOST_TEST_THROWS(url("//").set_encoded_fragment("##"), invalid_part);
 
-        BOOST_TEST(url("//#").set_fragment_part("").encoded_url() == "//");
-        BOOST_TEST(url("//#x").set_fragment_part("").encoded_url() == "//");
+        BOOST_TEST(url("//#").set_fragment_part("").str() == "//");
+        BOOST_TEST(url("//#x").set_fragment_part("").str() == "//");
         BOOST_TEST_THROWS(url("//#xy").set_fragment_part("y"), invalid_part);
-        BOOST_TEST(url("//#xy").set_fragment_part("#y").encoded_url() == "//#y");
+        BOOST_TEST(url("//#xy").set_fragment_part("#y").str() == "//#y");
 
         BOOST_TEST_THROWS(url("#%"), invalid_part);
     }
@@ -850,13 +850,13 @@ public:
     void
     testNormalize()
     {
-        BOOST_TEST(url("").normalize_scheme().encoded_url() == "");
-        BOOST_TEST(url("/").normalize_scheme().encoded_url() == "/");
-        BOOST_TEST(url("http://").normalize_scheme().encoded_url() == "http://");
-        BOOST_TEST(url("Http://").normalize_scheme().encoded_url() == "http://");
-        BOOST_TEST(url("HTtp://").normalize_scheme().encoded_url() == "http://");
-        BOOST_TEST(url("HTTp://").normalize_scheme().encoded_url() == "http://");
-        BOOST_TEST(url("HTTP://").normalize_scheme().encoded_url() == "http://");
+        BOOST_TEST(url("").normalize_scheme().str() == "");
+        BOOST_TEST(url("/").normalize_scheme().str() == "/");
+        BOOST_TEST(url("http://").normalize_scheme().str() == "http://");
+        BOOST_TEST(url("Http://").normalize_scheme().str() == "http://");
+        BOOST_TEST(url("HTtp://").normalize_scheme().str() == "http://");
+        BOOST_TEST(url("HTTp://").normalize_scheme().str() == "http://");
+        BOOST_TEST(url("HTTP://").normalize_scheme().str() == "http://");
     }
 
     //------------------------------------------------------

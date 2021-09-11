@@ -138,6 +138,7 @@ pct_encode(
     auto it = detail::pct_encode(
         &r[0], end, s, opt, cs);
     BOOST_ASSERT(it == end);
+    (void)it;
     return r;
 }
 

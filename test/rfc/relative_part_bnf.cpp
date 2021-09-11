@@ -48,8 +48,8 @@ public:
 
         relative_part_bnf p;
         error_code ec;
-        using bnf::parse;
-        parse("/1/2/3/4/5", ec, p);
+        using bnf::parse_string;
+        parse_string("/1/2/3/4/5", ec, p);
         std::string s;
         for(auto const& t : p.path)
         {

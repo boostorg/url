@@ -47,6 +47,7 @@ class url_view
         id_end          // one past the end
     };
 
+    friend class static_url_base;
     friend class url;
     struct shared_impl;
 
@@ -122,11 +123,11 @@ public:
 
     //--------------------------------------------
 
-    /** Return the complete serialized URL
+    /** Return the complete encoded URL
     */
     BOOST_URL_DECL
     string_view
-    encoded_url() const;
+    str() const;
 
     /** Return the origin
     */

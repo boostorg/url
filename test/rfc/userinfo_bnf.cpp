@@ -30,9 +30,9 @@ public:
         using urls::detail::throw_system_error;
         userinfo_bnf p;
         error_code ec;
-        using bnf::parse;
+        using bnf::parse_string;
         if(! BOOST_TEST(
-            parse(s, ec, p)))
+            parse_string(s, ec, p)))
             return;
         if(! BOOST_TEST(! ec))
             return;

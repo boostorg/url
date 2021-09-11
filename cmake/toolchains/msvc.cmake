@@ -9,6 +9,7 @@ add_compile_options(
     /permissive-  # strict C++
     /W4           # enable all warnings
     /MP           # multi-processor compilation
+    /fsanitize=address
 )
 if("${CMAKE_GENERATOR_PLATFORM}" STREQUAL "Win32") # 32-bit
     add_compile_options(

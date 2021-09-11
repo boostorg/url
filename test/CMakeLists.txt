@@ -28,7 +28,7 @@ set(BOOST_URL_TESTS_FILES
     query_params_view.cpp
     scheme.cpp
     static_pool.cpp
-    storage_ptr.cpp
+    static_url.cpp
     string.cpp
     url.cpp
     url_view.cpp

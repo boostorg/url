@@ -65,9 +65,22 @@ template<
     class T0,
     class... Tn>
 bool
-parse(
+parse_string(
     string_view s,
     error_code& ec,
+    T0&& t0,
+    Tn&&... tn);
+
+/** Parse a complete string
+
+    @throw system_error Thrown on failure
+*/
+template<
+    class T0,
+    class... Tn>
+void
+parse_string(
+    string_view s,
     T0&& t0,
     Tn&&... tn);
 

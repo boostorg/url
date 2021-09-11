@@ -47,7 +47,6 @@ if(BOOST_URL_IS_ROOT)
         config
         container
         exception
-        json
         mp11
         optional
         system
@@ -101,9 +100,7 @@ function(boost_url_setup_properties target)
             Boost::align
             Boost::assert
             Boost::config
-            Boost::container
             Boost::exception
-            Boost::json
             Boost::mp11
             Boost::optional
             Boost::system
