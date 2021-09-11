@@ -27,6 +27,7 @@ docca.reference reference.qbk
         <doxygen:param>MACRO_EXPANSION=YES
         <doxygen:param>EXPAND_ONLY_PREDEF=YES
         <doxygen:param>"PREDEFINED=\\
+            BOOST_SYMBOL_VISIBLE \\
             BOOST_URL_DOCS \\
             BOOST_URL_DECL \\
             BOOST_URL_PUBLIC \\
