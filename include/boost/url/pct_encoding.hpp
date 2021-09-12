@@ -54,11 +54,6 @@ namespace urls {
     parameter is omitted, the default options
     will be used.
 
-    @param a An optional allocator the returned
-    string will use. If this parameter is omitted,
-    the default allocator is used, and the return
-    type of the function becomes `std::string`.
-
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
         2.1. Percent-Encoding (rfc3986)</a>

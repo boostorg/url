@@ -33,7 +33,7 @@ parse(
         pct_encoded_bnf<
             masked_char_set<
                 unsub_char_mask>>{
-                    t.username}))
+                    t.user}))
         return false;
     if( it != end &&
         *it == ':')

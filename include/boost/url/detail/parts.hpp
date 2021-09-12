@@ -11,6 +11,7 @@
 #define BOOST_URL_DETAIL_PARTS_HPP
 
 #include <boost/url/host_type.hpp>
+#include <boost/url/scheme.hpp>
 #include <cstdint>
 #include <cstring>
 
@@ -43,7 +44,17 @@ struct parts
     std::uint16_t port_number = 0;
     urls::host_type host_type =
         urls::host_type::none;
+    urls::scheme scheme =
+        urls::scheme::none;
 
+    // size excluding null
+    std::size_t
+    len() const noexcept
+    {
+        return offset[id_end];
+    }
+
+    // size of id
     std::size_t
     len(int id) const noexcept
     {
@@ -51,6 +62,7 @@ struct parts
             offset[id];
     }
 
+    // size of [begin, end)
     std::size_t
     len(
         int begin,
@@ -62,6 +74,7 @@ struct parts
             offset[begin];
     }
 
+    // return id as string
     string_view
     get(int id,
         char const* s) const noexcept
@@ -72,6 +85,7 @@ struct parts
                 offset[id] };
     }
 
+    // return [begin, end) as string
     string_view
     get(int begin,
         int end,
@@ -83,6 +97,7 @@ struct parts
                 offset[begin] };
     }
 
+    // change id to size n
     void
     resize(
         int id,
@@ -100,7 +115,8 @@ struct parts
         int id,
         std::size_t n) noexcept
     {
-        BOOST_ASSERT(id < detail::id_end - 1);
+        BOOST_ASSERT(
+            id < detail::id_end - 1);
         BOOST_ASSERT(n <= len(id));
         offset[id + 1] = offset[id] +
             static_cast<std::size_t>(n);

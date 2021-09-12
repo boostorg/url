@@ -96,18 +96,10 @@ bool
 url_view::
 empty() const noexcept
 {
-    return len(
-        id_scheme, id_end) == 0;
+    return pt_.len() == 0;
 }
 
 //------------------------------------------------
-
-string_view
-url_view::
-str() const
-{
-    return get(id_scheme, id_end);
-}
 
 string_view
 url_view::
@@ -150,6 +142,13 @@ scheme() const noexcept
         s.remove_suffix(1);
     }
     return s;
+}
+
+urls::scheme
+url_view::
+scheme_id() const noexcept
+{
+    return pt_.scheme;
 }
 
 //----------------------------------------------------------
@@ -219,7 +218,7 @@ encoded_userinfo() const noexcept
 
 string_view
 url_view::
-encoded_username() const noexcept
+encoded_user() const noexcept
 {
     auto s = get(id_user);
     if(! s.empty())
@@ -473,6 +472,17 @@ encoded_fragment() const noexcept
 }
 
 //------------------------------------------------
+//------------------------------------------------
+//------------------------------------------------
+
+string_view
+url_view::
+str() const
+{
+    return get(id_scheme, id_end);
+}
+
+//------------------------------------------------
 
 url_view
 parse_uri(
@@ -487,6 +497,7 @@ parse_uri(
     detail::parts p;
 
     // scheme
+    p.scheme = t.scheme.id;
     p.resize(
         detail::part::id_scheme,
         t.scheme.str.size() + 1);

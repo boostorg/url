@@ -124,7 +124,7 @@ parse_string(
     Tn&&... tn)
 {
     error_code ec;
-    if(parse(s, ec,
+    if(parse_string(s, ec,
         std::forward<T0>(t0),
         std::forward<Tn>(tn)...))
     {

@@ -12,6 +12,7 @@
 
 #include <boost/url/url_view.hpp>
 #include "test_suite.hpp"
+#include <iostream>
 
 namespace boost {
 namespace urls {
@@ -135,12 +136,12 @@ public:
     {
         url_view uv;
         BOOST_TEST_NO_THROW( uv = parse_uri(
-            "http://username:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag"));
+            "http://user:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag"));
         url_t u(uv);
         BOOST_TEST(u.encoded_origin() ==
-            "http://username:pass@www.boost.org:8080");
+            "http://user:pass@www.boost.org:8080");
         BOOST_TEST(u.scheme() == "http");
-        BOOST_TEST(u.username() == "username");
+        BOOST_TEST(u.user() == "user");
         BOOST_TEST(u.password() == "pass");
         BOOST_TEST(u.host() == "www.boost.org");
         BOOST_TEST(u.port() == "8080");
@@ -150,10 +151,40 @@ public:
     }
 
     void
+    testSetScheme()
+    {
+        {
+            url_t u;
+            u = parse_uri("http://www.example.com");
+            u.set_scheme("");
+            BOOST_TEST(u.str() == "//www.example.com");
+        }
+        {
+            url_t u;
+            u = parse_uri("http:live/wire");
+            u.set_scheme("");
+            BOOST_TEST(u.str() == "live/wire");
+        }
+        {
+            url_t u;
+            u = parse_uri("http:my:adidas");
+            u.set_scheme("");
+            BOOST_TEST(u.str() == "./my:adidas");
+        }
+        {
+            url_t u;
+            u = parse_uri("http:my:adidas/");
+            u.set_scheme("");
+            BOOST_TEST(u.str() == "./my:adidas/");
+        }
+    }
+
+    void
     run()
     {
         testSpecial();
         testParts();
+        testSetScheme();
     }
 };
 

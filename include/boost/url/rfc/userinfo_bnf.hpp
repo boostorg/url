@@ -23,9 +23,9 @@ namespace urls {
 
     @par BNF
     @code
-    userinfo    = username [ ":" [ password ] ]
+    userinfo    = user [ ":" [ password ] ]
 
-    username    = *( unreserved / pct-encoded / sub-delims )
+    user        = *( unreserved / pct-encoded / sub-delims )
     password    = *( unreserved / pct-encoded / sub-delims / ":" )
     @endcode
 
@@ -35,7 +35,7 @@ namespace urls {
 struct userinfo_bnf
 {
     string_view str;
-    pct_encoded_str username;
+    pct_encoded_str user;
     optional<pct_encoded_str> password;
 
     BOOST_URL_DECL

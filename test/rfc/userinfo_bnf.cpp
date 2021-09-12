@@ -37,7 +37,7 @@ public:
         if(! BOOST_TEST(! ec))
             return;
         BOOST_TEST(p.str == s);
-        BOOST_TEST(p.username.str == s1);
+        BOOST_TEST(p.user.str == s1);
         if(s2.has_value())
             BOOST_TEST(
                 p.password.has_value() &&

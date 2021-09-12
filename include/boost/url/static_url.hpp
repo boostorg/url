@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/url.hpp>
+#include <boost/static_assert.hpp>
 
 namespace boost {
 namespace urls {
@@ -72,6 +73,9 @@ class static_url
 #endif
 {
     char buf_[Capacity + 1];
+
+    BOOST_STATIC_ASSERT(
+        Capacity < max_size());
 
 public:
     ~static_url()

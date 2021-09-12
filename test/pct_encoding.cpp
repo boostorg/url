@@ -122,7 +122,8 @@ public:
             // null is reserved
             opt.allow_null = true;
             opt.non_normal_is_error = false;
-            good_decode_size(1, string_view("\0", 1), opt);
+            bad_decode_size(string_view("\0", 1), opt);
+            good_decode_size(1, string_view("\0", 1), opt, test_chars_null{});
             good_decode_size(1, "%00", opt);
             opt.allow_null = false;
             bad_decode_size(string_view("\0", 1), opt);
@@ -134,12 +135,14 @@ public:
             pct_decode_opts opt;
 
             good_decode_size(1, "A", opt);
-            good_decode_size(2, "aA", opt);
-            good_decode_size(3, "ab%41", opt);
+            good_decode_size(1, "%41", opt);
+            bad_decode_size("ab%41", opt);
+            bad_decode_size("aA", opt);
 
             opt.non_normal_is_error = true;
             good_decode_size(1, "A", opt);
             good_decode_size(2, "A%20", opt);
+            bad_decode_size("%41", opt);
             opt.plus_to_space = true;
             good_decode_size(2, "A+", opt);
             opt.plus_to_space = false;
@@ -228,7 +231,8 @@ public:
             opt.non_normal_is_error = false;
             good_decode(
                 string_view("\0", 1),
-                string_view("\0", 1), opt);
+                string_view("\0", 1), opt,
+                    test_chars_null{});
             good_decode("%00",
                 string_view("\0", 1), opt);
             opt.allow_null = false;
@@ -240,8 +244,9 @@ public:
             pct_decode_opts opt;
 
             good_decode("A", "A", opt);
-            good_decode("aA", "aA", opt);
-            good_decode("ab%41", "abA", opt);
+            good_decode("%42", "B", opt);
+            bad_decode("aA", opt);
+            bad_decode("ab%41", opt);
 
             opt.non_normal_is_error = true;
             good_decode("A", "A", opt);

@@ -15,9 +15,11 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/path_view.hpp>
 #include <boost/url/query_params_view.hpp>
+#include <boost/url/scheme.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <cstdint>
+#include <iosfwd>
 #include <memory>
 #include <string>
 #include <utility>
@@ -46,7 +48,9 @@ class url_view;
     @li Functions which throw offer the strong
     exception safety guarantee.
 
-    @see @li <a href="https://tools.ietf.org/html/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>
+    @par Specification
+    @li <a href="https://tools.ietf.org/html/rfc3986">
+        Uniform Resource Identifier (URI): Generic Syntax (rfc3986)</a>
 */
 class BOOST_SYMBOL_VISIBLE url
 {
@@ -141,10 +145,24 @@ public:
     operator=(url_view const& u);
 
     //--------------------------------------------
+    //--------------------------------------------
+    //--------------------------------------------
+
+    //--------------------------------------------
     //
     // classification
     //
     //--------------------------------------------
+
+    /** An integer for the maximum size string that can be represented
+    */
+    static
+    constexpr
+    std::size_t
+    max_size()
+    {
+        return 0x7ffffffe;
+    }
 
     /** Return true if the URL is empty
 
@@ -170,16 +188,34 @@ public:
     //--------------------------------------------
 
     /** Return true if a scheme exists
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
+            3.1. Scheme (rfc3986)</a>
     */
     BOOST_URL_DECL
     bool
     has_scheme() const noexcept;
 
     /** Return the scheme
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
+            3.1. Scheme (rfc3986)</a>
     */
     BOOST_URL_DECL
     string_view
     scheme() const noexcept;
+
+    /** Return a known-scheme constant if a scheme is present
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
+            3.1. Scheme (rfc3986)</a>
+    */
+    BOOST_URL_DECL
+    urls::scheme
+    scheme_id() const noexcept;
 
     //--------------------------------------------
     //
@@ -222,7 +258,7 @@ public:
     /** Return the userinfo if it exists, or an empty string
 
         Returns the userinfo of the URL as an encoded
-        string. The userinfo includes the username and
+        string. The userinfo includes the user and
         password, with a colon separating the components
         if the password is not empty.
 
@@ -263,11 +299,11 @@ public:
             encoded_userinfo(), {}, a);
     }
 
-    /** Return the username if it exists, or an empty string
+    /** Return the user if it exists, or an empty string
 
-        This function returns the username portion of
+        This function returns the user portion of
         the userinfo if present, as an encoded string.
-        The username portion is defined by all of the
+        The user portion is defined by all of the
         characters in the userinfo up to but not
         including the first colon (':"), or the
         entire userinfo if no colon is present.
@@ -278,13 +314,13 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    encoded_username() const noexcept;
+    encoded_user() const noexcept;
 
-    /** Return the username if it exists, or an empty string
+    /** Return the user if it exists, or an empty string
 
-        This function returns the username portion of
+        This function returns the user portion of
         the userinfo if present, as a decoded string.
-        The username portion is defined by all of the
+        The user portion is defined by all of the
         characters in the userinfo up to but not
         including the first colon (':"), or the
         entire userinfo if no colon is present.
@@ -306,11 +342,11 @@ public:
         class Allocator =
             std::allocator<char>>
     string_type<Allocator>
-    username(
+    user(
         Allocator const& a = {}) const
     {
         return detail::pct_decode_unchecked(
-            encoded_username(), {}, a);
+            encoded_user(), {}, a);
     }
 
     /** Return true if a password exists
@@ -654,8 +690,6 @@ public:
     //--------------------------------------------
     //--------------------------------------------
     //--------------------------------------------
-    //--------------------------------------------
-    //--------------------------------------------
 
     /** Return the complete serialized URL
     */
@@ -698,50 +732,14 @@ public:
     reserve(std::size_t n);
 
     //------------------------------------------------------
-
-    /** Set the URL.
-
-        @par Exception Safety
-
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The URL to set. The contents must
-        meet the syntactic requirements of a
-        <em>URI-reference</em>.
-
-        @throw std::exception parsing error.
-    */
-    BOOST_URL_DECL
-    url&
-    set_encoded_url(
-        string_view s);
-
-    /** Set the origin to the specified value.
-
-        The origin consists of the everything from the
-        beginning of the URL up to but not including
-        the path.
-
-        @par Exception Safety
-
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The origin to set. Special characters
-        must be percent-encoded, or an exception is
-        thrown.
-    */
-    BOOST_URL_DECL
-    url&
-    set_encoded_origin(
-        string_view s);
-
-    //------------------------------------------------------
     //
     // scheme
     //
     //------------------------------------------------------
+
+private:
+    void assert_scheme() const noexcept;
+public:
 
     /** Set the scheme.
 
@@ -756,25 +754,81 @@ public:
         contain a valid scheme. A trailing colon is
         automatically added.
 
-        @par ABNF
+        @par Example
+        @code
+        url u;
+        u.set_scheme( "http" );         // produces "http:"
+        u.set_scheme( "" );             // produces ""
+        u.set_scheme( "1forall");       // throws, invalid scheme
+        @endcode
+
+        @par BNF
         @code
         scheme        = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
         @endcode
 
         @par Exception Safety
-
         Strong guarantee.
         Calls to allocate may throw.
+
+        @return A reference to the object, for chaining.
 
         @param s The scheme to set. This string must
         not include a trailing colon, otherwise an
         exception is thrown.
 
-        @throw std::exception invalid scheme.
+        @throw std::invalid_argument invalid scheme.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
+            3.1. Scheme (rfc3986)</a>
     */
     BOOST_URL_DECL
     url&
     set_scheme(string_view s);
+
+    /** Set the scheme.
+
+        This function sets the scheme to the specified
+        string:
+
+        @li If `id` is @ref scheme::none, any existing
+        scheme is removed along with the trailing
+        colon (':'), otherwise:
+
+        @li The scheme is set to `id`, which must
+        not be equal to @ref scheme::unknown.
+
+        @par Example
+        @code
+        url u;
+        u.set_scheme( scheme::http );       // produces "http:"
+        u.set_scheme( scheme::none );       // produces ""
+        u.set_scheme( scheme::unknown);     // throws, invalid scheme
+        @endcode
+
+        @par BNF
+        @code
+        scheme        = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @return A reference to the object, for chaining.
+
+        @param id The scheme to set.
+
+        @throw std::invalid_argument `id == scheme::unknown`
+    */
+    BOOST_URL_DECL
+    url&
+    set_scheme(urls::scheme id);
+
+private:
+    void set_scheme_impl(string_view s, urls::scheme id);
+public:
 
     //------------------------------------------------------
     //
@@ -782,131 +836,55 @@ public:
     //
     //------------------------------------------------------
 
-    /** Set the authority.
+private:
+    void assert_userinfo() const noexcept;
+    char* set_user_impl(std::size_t n);
+public:
+
+    /** Clear the user.
+
+        If a user is present, it is removed. If the
+        user was the only component present in the
+        userinfo, then the userinfo is removed without
+        removing the authority.
 
         @par Exception Safety
+        Does not throw.
 
-        Strong guarantee.
-        Calls to allocate may throw.
+        @return A reference to the object, for chaining.
 
-        @param s The authority to set. This string
-        must meed the syntactic requirements for
-        the components of the authority, otherwise
-        an exception is thrown.
-
-        @throw std::exception invalid authority.
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
     */
     BOOST_URL_DECL
     url&
-    set_encoded_authority(
-        string_view s);
-
-    //------------------------------------------------------
-    //
-    // userinfo
-    //
-    //------------------------------------------------------
-
-    /** Set the userinfo.
-
-        Sets the userinfo of the URL to the given
-        encoded string:
-
-        @li If the string is empty, the userinfo is
-        cleared, else
-
-        @li If the string is not empty, then the userinfo
-        is set to the given string. The user is set to
-        the characters up to the first colon if any,
-        while the password is set to the remaining
-        characters if any.
-        If the URL previously did not have an authority
-        (@ref has_authority returns `false`), a double
-        slash ("//") is prepended to the userinfo.
-        The string must meet the syntactic requirements
-        of <em>userinfo</em> otherwise an exception is
-        thrown.
-
-        @par ABNF
-        @code
-        userinfo      = [ [ user ] [ ':' password ] ]
-        user          = *( unreserved / pct-encoded / sub-delims )
-        password      = *( unreserved / pct-encoded / sub-delims / ":" )
-        @endcode
-
-        @par Exception Safety
-
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set.
-    */
-    BOOST_URL_DECL
-    url&
-    set_encoded_userinfo(
-        string_view s);
-
-    /** Set the userinfo.
-
-        Sets the userinfo of the URL to the given
-        encoded string:
-
-        @li If the string is empty, the userinfo is
-        cleared, else
-
-        @li If the string is not empty, then the userinfo
-        is set to the given string. The user is set to
-        the characters up to the first colon if any,
-        while the password is set to the remaining
-        characters if any.
-        If the URL previously did not have an authority
-        (@ref has_authority returns `false`), a double
-        slash ("//") is prepended to the userinfo.
-        The string must meet the syntactic requirements
-        of <em>userinfo-part</em> otherwise an exception
-        is thrown.
-
-        @par ABNF
-        @code
-        userinfo-part = [ [ user ] [ ':' password ] '@' ]
-        user          = *( unreserved / pct-encoded / sub-delims )
-        password      = *( unreserved / pct-encoded / sub-delims / ":" )
-        @endcode
-
-        @par Exception Safety
-
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set.
-    */
-    BOOST_URL_DECL
-    url&
-    set_userinfo_part(
-        string_view s);
+    clear_user() noexcept;
 
     /** Set the user.
 
         The user is set to the specified string,
-        replacing any previous user:
+        replacing any previous user. If a userinfo
+        was not present it is added, even if the
+        user string is empty. The resulting URL
+        will have an authority if it did not have
+        one previously.
 
-        @li If the string is empty, the user is cleared.
-
-        @li If the string is not empty then the
-        user is set to the new string.
         Any special or reserved characters in the
         string are automatically percent-encoded.
-        If the URL previously did not have an authority
-        (@ref has_authority returns `false`), a double
-        slash ("//") is prepended to the userinfo.
 
         @par Exception Safety
-
         Strong guarantee.
         Calls to allocate may throw.
 
+        @return A reference to the object, for chaining.
+
         @param s The string to set. This string may
         contain any characters, including nulls.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
     */
     BOOST_URL_DECL
     url&
@@ -915,28 +893,25 @@ public:
 
     /** Set the user.
 
-        The user is set to the specified encoded
-        string, replacing any previous user:
+        The user is set to the specified string,
+        replacing any previous user. If a userinfo
+        was not present it is added, even if the
+        user string is empty. The resulting URL
+        will have an authority if it did not have
+        one previously.
 
-        @li If the string is empty, the user is cleared.
+        The string must be a valid percent-encoded
+        string for the user field, otherwise an
+        exception is thrown.
 
-        @li If the string is not empty then the
-        user is set to the given string.
-        If the URL previously did not have an authority
-        (@ref has_authority returns `false`), a double
-        slash ("//") is prepended to the userinfo.
-        The string must meet the syntactic requirements
-        of <em>user</em> otherwise an exception is
-        thrown.
-
-        @li
-        @par ABNF
+        @par BNF
         @code
         user          = *( unreserved / pct-encoded / sub-delims )
         @endcode
 
-        @par Exception Safety
+        @return A reference to the object, for chaining.
 
+        @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
 
@@ -946,6 +921,14 @@ public:
     url&
     set_encoded_user(
         string_view s);
+
+private:
+    char* set_password_impl(std::size_t n);
+public:
+
+    BOOST_URL_DECL
+    url&
+    clear_password() noexcept;
 
     /** Set the password.
 
@@ -1012,28 +995,69 @@ public:
     set_encoded_password(
         string_view s);
 
-    /** Set the password.
+    /** Set the origin to the specified value.
 
-        The password part is set to the encoded string
-        `s`, replacing any previous password:
+        The origin consists of the everything from the
+        beginning of the URL up to but not including
+        the path.
 
-        @li If the string is empty, the password is
-        cleared, and the first occurring colon (':') is
-        removed from the userinfo if present, otherwise
+        @par Exception Safety
 
-        @li If ths string is not empty then the password
-        is set to the new string, which must include a
-        leading colon.
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The origin to set. Special characters
+        must be percent-encoded, or an exception is
+        thrown.
+    */
+    BOOST_URL_DECL
+    url&
+    set_encoded_origin(
+        string_view s);
+
+    /** Set the authority.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The authority to set. This string
+        must meed the syntactic requirements for
+        the components of the authority, otherwise
+        an exception is thrown.
+
+        @throw std::invalid_argument invalid authority
+    */
+    BOOST_URL_DECL
+    url&
+    set_encoded_authority(
+        string_view s);
+
+    /** Set the userinfo.
+
+        Sets the userinfo of the URL to the given
+        encoded string:
+
+        @li If the string is empty, the userinfo is
+        cleared, else
+
+        @li If the string is not empty, then the userinfo
+        is set to the given string. The user is set to
+        the characters up to the first colon if any,
+        while the password is set to the remaining
+        characters if any.
         If the URL previously did not have an authority
         (@ref has_authority returns `false`), a double
         slash ("//") is prepended to the userinfo.
         The string must meet the syntactic requirements
-        of <em>password-part</em> otherwise an exception is
+        of <em>userinfo</em> otherwise an exception is
         thrown.
 
-        @par ANBF
+        @par BNF
         @code
-        password-part = [ ':' *( unreserved / pct-encoded / sub-delims / ":" ) ]
+        userinfo      = [ [ user ] [ ':' password ] ]
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
         @endcode
 
         @par Exception Safety
@@ -1045,7 +1069,7 @@ public:
     */
     BOOST_URL_DECL
     url&
-    set_password_part(
+    set_encoded_userinfo(
         string_view s);
 
     //------------------------------------------------------
@@ -1089,7 +1113,7 @@ public:
         and `s` is not empty, then the authority is added
         including a leading double slash ("//").
 
-        @par ABNF
+        @par BNF
         @code
         IPv4address   = dec-octet "." dec-octet "." dec-octet "." dec-octet
 
@@ -1139,7 +1163,7 @@ public:
         then the authority is added including the
         leading double slash ("//").
 
-        @par ABNF
+        @par BNF
         @code
         host          = IP-literal / IPv4address / reg-name
 
@@ -1217,7 +1241,7 @@ public:
         of <em>port</em> otherwise an exception is
         thrown.
 
-        @par ABNF
+        @par BNF
         @code
         port          = *DIGIT
         @endcode
@@ -1254,7 +1278,7 @@ public:
         of <em>port-part</em> otherwise an exception is
         thrown.
 
-        @par ABNF
+        @par BNF
         @code
         port-part     = [ ':' *DIGIT ]
         @endcode
@@ -1302,7 +1326,7 @@ public:
         If the path does not meet the syntactic
         requirements, an exception is thrown.
 
-        @par ABNF
+        @par BNF
         @code
         path          = path-abempty    ; begins with "/" or is empty
                       / path-absolute   ; begins with "/" but not "//"
@@ -1399,7 +1423,7 @@ public:
         of <em>query</em> otherwise an exception is
         thrown.
 
-        @par ABNF
+        @par BNF
         @code
         query         = *( pchar / "/" / "?" )
         @endcode
@@ -1433,7 +1457,7 @@ public:
         of <em>query-part</em> otherwise an exception
         is thrown.
 
-        @par ABNF
+        @par BNF
         @code
         query-part    = [ "#" *( pchar / "/" / "?" ) ]
         @endcode
@@ -1519,7 +1543,7 @@ public:
         of <em>fragment</em> otherwise an exception is
         thrown.
 
-        @par ABNF
+        @par BNF
         @code
         fragment      = *( pchar / "/" / "?" )
         @endcode
@@ -1555,7 +1579,7 @@ public:
         of <em>fragment-part</em> otherwise an exception
         is thrown.
 
-        @par ABNF
+        @par BNF
         @code
         fragment-part = [ "#" *( pchar / "/" / "?" ) ]
         @endcode
@@ -2158,6 +2182,10 @@ private:
     void
     parse() noexcept;
 };
+
+BOOST_URL_DECL
+std::ostream&
+operator<<(std::ostream& os, url const& u);
 
 } // urls
 } // boost

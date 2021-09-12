@@ -15,6 +15,7 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/path_view.hpp>
 #include <boost/url/query_params_view.hpp>
+#include <boost/url/scheme.hpp>
 #include <boost/url/detail/parts.hpp>
 #include <cstdint>
 #include <iosfwd>
@@ -107,10 +108,24 @@ public:
     collect() const;
 
     //--------------------------------------------
+    //--------------------------------------------
+    //--------------------------------------------
+
+    //--------------------------------------------
     //
     // classification
     //
     //--------------------------------------------
+
+    /** An integer for the maximum size string that can be represented
+    */
+    static
+    constexpr
+    std::size_t
+    max_size()
+    {
+        return 0x7ffffffe;
+    }
 
     /** Return true if the URL is empty
 
@@ -122,12 +137,6 @@ public:
     empty() const noexcept;
 
     //--------------------------------------------
-
-    /** Return the complete encoded URL
-    */
-    BOOST_URL_DECL
-    string_view
-    str() const;
 
     /** Return the origin
     */
@@ -142,16 +151,34 @@ public:
     //--------------------------------------------
 
     /** Return true if a scheme exists
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
+            3.1. Scheme (rfc3986)</a>
     */
     BOOST_URL_DECL
     bool
     has_scheme() const noexcept;
 
     /** Return the scheme
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
+            3.1. Scheme (rfc3986)</a>
     */
     BOOST_URL_DECL
     string_view
     scheme() const noexcept;
+
+    /** Return a known-scheme constant if a scheme is present
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
+            3.1. Scheme (rfc3986)</a>
+    */
+    BOOST_URL_DECL
+    urls::scheme
+    scheme_id() const noexcept;
 
     //--------------------------------------------
     //
@@ -194,7 +221,7 @@ public:
     /** Return the userinfo if it exists, or an empty string
 
         Returns the userinfo of the URL as an encoded
-        string. The userinfo includes the username and
+        string. The userinfo includes the user and
         password, with a colon separating the components
         if the password is not empty.
 
@@ -235,11 +262,11 @@ public:
             encoded_userinfo(), {}, a);
     }
 
-    /** Return the username if it exists, or an empty string
+    /** Return the user if it exists, or an empty string
 
-        This function returns the username portion of
+        This function returns the user portion of
         the userinfo if present, as an encoded string.
-        The username portion is defined by all of the
+        The user portion is defined by all of the
         characters in the userinfo up to but not
         including the first colon (':"), or the
         entire userinfo if no colon is present.
@@ -250,13 +277,13 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    encoded_username() const noexcept;
+    encoded_user() const noexcept;
 
-    /** Return the username if it exists, or an empty string
+    /** Return the user if it exists, or an empty string
 
-        This function returns the username portion of
+        This function returns the user portion of
         the userinfo if present, as a decoded string.
-        The username portion is defined by all of the
+        The user portion is defined by all of the
         characters in the userinfo up to but not
         including the first colon (':"), or the
         entire userinfo if no colon is present.
@@ -278,11 +305,11 @@ public:
         class Allocator =
             std::allocator<char>>
     string_type<Allocator>
-    username(
+    user(
         Allocator const& a = {}) const
     {
         return detail::pct_decode_unchecked(
-            encoded_username(), {}, a);
+            encoded_user(), {}, a);
     }
 
     /** Return true if a password exists
@@ -622,6 +649,16 @@ public:
             encoded_fragment(),
             pt_.decoded[id_frag], {}, a);
     }
+
+    //--------------------------------------------
+    //--------------------------------------------
+    //--------------------------------------------
+
+    /** Return the complete encoded URL
+    */
+    BOOST_URL_DECL
+    string_view
+    str() const;
 
     //--------------------------------------------
     //

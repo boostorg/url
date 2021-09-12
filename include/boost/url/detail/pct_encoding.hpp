@@ -138,14 +138,9 @@ pct_decode_size(
             ++n;
             continue;
         }
-        if(opt.non_normal_is_error)
-        {
-            // reserved character in input
-            ec = error::illegal_reserved_char;
-            break;
-        }
-        ++n;
-        ++it;
+        // reserved character in input
+        ec = error::illegal_reserved_char;
+        break;
     }
     return n;
 }

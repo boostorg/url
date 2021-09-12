@@ -85,7 +85,7 @@ apply_authority(
         // leading "//" for authority
         p.resize(
             part::id_user,
-            u.username.str.size() + 2);
+            u.user.str.size() + 2);
 
         if(u.password.has_value())
         {

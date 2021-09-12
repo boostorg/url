@@ -23,6 +23,9 @@ string_to_scheme(
     using bnf::ascii_tolower;
     switch(s.size())
     {
+    case 0: // none
+        return scheme::none;
+
     case 2: // ws
         if( ascii_tolower(s[0]) == 'w' &&
             ascii_tolower(s[1]) == 's')
@@ -97,11 +100,11 @@ to_string(scheme s) noexcept
     case scheme::https: return "https";
     case scheme::ws:    return "ws";
     case scheme::wss:   return "wss";
-
+    case scheme::none:  return {};
     default:
         break;
     }
-    return "unknown";
+    return "<unknown>";
 }
 
 } // urls

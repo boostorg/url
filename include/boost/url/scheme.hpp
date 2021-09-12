@@ -20,9 +20,13 @@ namespace urls {
 */
 enum class scheme : unsigned char
 {
+    /** Indicates that no scheme is present
+    */
+    none = 0,
+
     /** Indicates the scheme is not a well-known scheme
     */
-    unknown = 0,
+    unknown,
 
     /** File Transfer Protocol (FTP)
 
