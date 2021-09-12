@@ -114,7 +114,7 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    ipv6_address_bnf& t)
+    ipv6_address_bnf const& t)
 {
     using bnf::parse;
     int n = 8;      // words needed
@@ -196,13 +196,14 @@ parse(
             }
             // rewind the h16 and
             // parse it as ipv4
-            ipv4_address_bnf v4;
+            ipv4_address v4;
             it = prev;
-            if(! parse(
-                it, end, ec, v4))
+            if(! parse(it, end, ec,
+                    ipv4_address_bnf{
+                        v4}))
                 return false;
             auto const b4 =
-                v4.addr.to_bytes();
+                v4.to_bytes();
             bytes[2*(7-n)+0] = b4[0];
             bytes[2*(7-n)+1] = b4[1];
             bytes[2*(7-n)+2] = b4[2];
@@ -236,7 +237,7 @@ parse(
     ec = {};
     if(b == -1)
     {
-        t.addr = ipv6_address(bytes);
+        t.v = ipv6_address(bytes);
         return true;
     }
     if(b == n)
@@ -276,7 +277,7 @@ parse(
             &bytes[i0],
             0, 16 - (i0 + i1));
     }
-    t.addr = ipv6_address(bytes);
+    t.v = ipv6_address(bytes);
     return true;
 }
 

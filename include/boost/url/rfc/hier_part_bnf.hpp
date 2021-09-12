@@ -12,10 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/bnf/range.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
-#include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/optional.hpp>
 
 namespace boost {
 namespace urls {
@@ -35,8 +32,10 @@ namespace urls {
 */
 struct hier_part_bnf
 {
-    bnf::range<pct_encoded_str> path;
-    optional<authority_bnf> authority;
+    bool has_authority = false;
+    authority_bnf authority;
+    string_view path;
+    std::size_t path_count = 0;
 
     BOOST_URL_DECL
     friend

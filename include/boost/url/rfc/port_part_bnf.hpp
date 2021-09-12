@@ -7,31 +7,38 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_SCHEME_BNF_HPP
-#define BOOST_URL_SCHEME_BNF_HPP
+#ifndef BOOST_URL_PORT_PART_BNF_HPP
+#define BOOST_URL_PORT_PART_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/scheme.hpp>
 #include <boost/url/string.hpp>
+#include <cstdint>
 
 namespace boost {
 namespace urls {
 
-/** BNF for scheme
+/** BNF for port-part
 
     @par BNF
     @code
-    scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+    port-part       = [ ":" port ]
+
+    port            = *DIGIT
     @endcode
 
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
 */
-struct scheme_bnf
+struct port_part_bnf
 {
-    string_view scheme;
-    urls::scheme scheme_id;
+    using number_type =
+        std::uint16_t;
+
+    bool has_port;
+    string_view port;
+    bool has_number;
+    std::uint16_t port_number;
 
     BOOST_URL_DECL
     friend
@@ -40,7 +47,7 @@ struct scheme_bnf
         char const*& it,
         char const* const end,
         error_code& ec,
-        scheme_bnf& t);
+        port_part_bnf& t);
 };
 
 } // urls

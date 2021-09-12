@@ -25,46 +25,53 @@ parse(
     relative_part_bnf& t)
 {
     using bnf::parse;
+    using detail::path_noscheme_bnf;
+    using detail::path_absolute_bnf;
+    using detail::path_abempty_bnf;
     if(it == end)
     {
         // path-empty
-        t.authority.reset();
         ec = {};
+        t.path = {};
+        t.path_count = 0;
+        t.has_authority = false;
         return true;
     }
+    bnf::range<pct_encoded_str> r;
     if(it[0] != '/')
     {
         // path-noscheme
         if(! parse(it, end, ec,
-            detail::path_noscheme_bnf{
-                t.path}))
+            path_noscheme_bnf{r}))
             return false;
-        t.authority.reset();
+        t.path = r.str();
+        t.path_count = r.size();
+        t.has_authority = false;
         return true;
     }
     if( end - it == 1 ||
         it[1] != '/')
     {
         // path-absolute
-        parse(it, end, ec,
-            detail::path_absolute_bnf{
-                t.path});
-        t.authority.reset();
-        ec = {};
+        if(! parse(it, end, ec,
+            path_absolute_bnf{r}))
+            return false;
+        t.path = r.str();
+        t.path_count = r.size();
+        t.has_authority = false;
         return true;
     }
     // "//" authority path-abempty
     it += 2;
-    // authority
-    t.authority.emplace();
     if(! parse(it, end, ec,
-            *t.authority))
+            t.authority))
         return false;
-    // path-abempty
     if(! parse(it, end, ec,
-        detail::path_abempty_bnf{
-            t.path}))
+        path_abempty_bnf{r}))
         return false;
+    t.path = r.str();
+    t.path_count = r.size();
+    t.has_authority = true;
     return true;
 }
 

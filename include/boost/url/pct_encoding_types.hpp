@@ -27,7 +27,7 @@ struct pct_encoded_str
 
     /** The number of bytes needed to hold the decoded string
     */
-    std::size_t decoded_size;
+    std::size_t decoded_size = 0;
 };
 
 //------------------------------------------------

@@ -26,10 +26,8 @@ parse(
     ip_literal_bnf& t)
 {
     using bnf::parse;
-    auto const start = it;
     // '['
-    if(! parse(
-        it, end, ec, '['))
+    if(! parse(it, end, ec, '['))
         return false;
     if(it == end)
     {
@@ -40,26 +38,22 @@ parse(
     if(*it != 'v')
     {
         // IPv6address
-        ipv6_address_bnf t2;
         if(! parse(it, end, ec,
-                t2, ']'))
+                ipv6_address_bnf{
+                    t.ipv6}, ']'))
             return false;
         t.is_ipv6 = true;
-        t.ipv6 = t2.addr;
-        goto finish;
     }
-    // IPvFuture
+    else
     {
-        ipv_future_bnf v;
-        if(! parse(
-            it, end, ec, v, ']'))
+        // IPvFuture
+        ipv_future_bnf p;
+        if(! parse(it, end, ec,
+                p, ']'))
             return false;
-        t.fut_str = v.str;
         t.is_ipv6 = false;
+        t.ipvfuture = p.str;
     }
-finish:
-    t.str = string_view(
-        start, it - start);
     return true;
 }
 

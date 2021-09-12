@@ -12,12 +12,9 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/bnf/range.hpp>
-#include <boost/url/rfc/authority_bnf.hpp>
-#include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/rfc/query_bnf.hpp>
-#include <boost/url/rfc/scheme_bnf.hpp>
-#include <boost/optional.hpp>
+#include <boost/url/rfc/fragment_part_bnf.hpp>
+#include <boost/url/rfc/query_part_bnf.hpp>
+#include <boost/url/rfc/relative_part_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -34,10 +31,9 @@ namespace urls {
 */
 struct relative_ref_bnf
 {
-    bnf::range<pct_encoded_str> path;
-    optional<authority_bnf> authority;
-    optional<bnf::range<query_param>> query;
-    optional<pct_encoded_str> fragment;
+    relative_part_bnf   relative_part;
+    query_part_bnf      query_part;
+    fragment_part_bnf   fragment_part;
 
     BOOST_URL_DECL
     friend

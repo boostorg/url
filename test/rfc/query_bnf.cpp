@@ -10,9 +10,10 @@
 // Test that header file is self-contained.
 #include <boost/url/rfc/query_bnf.hpp>
 
+#include <boost/url/bnf/range.hpp>
+#include <boost/url/rfc/detail/query_params_bnf.hpp>
 #include "test_suite.hpp"
 #include "test_bnf.hpp"
-
 #include <iostream>
 
 namespace boost {
@@ -24,9 +25,7 @@ public:
     void
     run()
     {
-        using T = test_ref<
-            query_bnf,
-            bnf::range<query_param>>;
+        using T = query_bnf;
 
         bad <T>("%");
 

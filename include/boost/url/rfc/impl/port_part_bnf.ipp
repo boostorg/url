@@ -7,12 +7,12 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_URI_BNF_IPP
-#define BOOST_URL_IMPL_URI_BNF_IPP
+#ifndef BOOST_URL_IMPL_PORT_PART_BNF_IPP
+#define BOOST_URL_IMPL_PORT_PART_BNF_IPP
 
-#include <boost/url/rfc/uri_bnf.hpp>
+#include <boost/url/rfc/port_part_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/fragment_bnf.hpp>
+#include <boost/url/rfc/port_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -22,30 +22,24 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    uri_bnf& t)
+    port_part_bnf& t)
 {
     using bnf::parse;
-
-    // scheme ":"
-    if(! parse(it, end, ec,
-            t.scheme_part))
+    if( it == end ||
+        *it != ':')
+    {
+        ec = {};
+        t.has_port = false;
+        return true;
+    }
+    ++it;
+    port_bnf t0;
+    if(! parse(it, end, ec, t0))
         return false;
-
-    // hier-part
-    if(! parse(it, end, ec,
-            t.hier_part))
-        return false;
-
-    // [ "?" query ]
-    if(! parse(it, end, ec,
-            t.query_part))
-        return false;
-
-    // [ "#" fragment ]
-    if(! parse(it, end, ec,
-            t.fragment_part))
-        return false;
-
+    t.has_port = true;
+    t.port = t0.str;
+    t.has_number = t0.has_number;
+    t.port_number = t0.number;
     return true;
 }
 

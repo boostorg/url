@@ -27,44 +27,33 @@ parse(
     authority_bnf& t)
 {
     using bnf::parse;
-    auto const start = it;
+    auto start = it;
 
     // [ userinfo "@" ]
-    if(parse(it, end,
-        ec, t.userinfo, '@'))
+    if(parse(it, end, ec,
+        t.userinfo, '@'))
     {
         t.has_userinfo = true;
+        start = it;
     }
     else
     {
+        // rewind
+        t.has_userinfo = false;
         it = start;
         ec = {};
     }
 
     // host
-    if(! parse(it, end,
-            ec, t.host))
+    if(! parse(it, end, ec,
+            t.host))
         return false;
 
     // [ ":" port ]
-    if( it != end &&
-        *it == ':')
-    {
-        ++it;
-        t.has_port = true;
-        parse(it, end, ec,
-            t.port);
-        // can't fail
-        BOOST_ASSERT(
-            ! ec.failed());
-    }
-    else
-    {
-        t.has_port = false;
-    }
+    if(! parse(it, end, ec,
+            t.port))
+        return false;
 
-    t.str = string_view(
-        start, it - start);
     return true;
 }
 

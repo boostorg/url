@@ -23,20 +23,21 @@ public:
     check(string_view s, std::uint32_t v)
     {
         error_code ec;
-        ipv4_address_bnf t;
+        ipv4_address a;
         using bnf::parse_string;
-        BOOST_TEST(
-            parse_string(s, ec, t));
+        BOOST_TEST(parse_string(s, ec,
+            ipv4_address_bnf{a}));
         if(! BOOST_TEST(! ec))
             return;
-        BOOST_TEST(
-            t.addr.to_uint() == v);
+        BOOST_TEST(a.to_uint() == v);
     }
 
     void
     run()
     {
-        using T = ipv4_address_bnf;
+        using T = test_ref<
+            ipv4_address_bnf,
+            ipv4_address>;
 
         bad<T>("0");
         bad<T>("0.");

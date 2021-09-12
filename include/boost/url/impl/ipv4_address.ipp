@@ -128,11 +128,12 @@ make_ipv4_address(
     string_view s,
     error_code& ec) noexcept
 {
-    ipv4_address_bnf t;
+    ipv4_address a;
     using bnf::parse_string;
-    if(! parse_string(s, ec, t))
+    if(! parse_string(s, ec,
+            ipv4_address_bnf{a}))
         return {};
-    return t.addr;
+    return a;
 }
 
 ipv4_address

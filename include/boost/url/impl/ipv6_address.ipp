@@ -237,11 +237,12 @@ make_ipv6_address(
     string_view s,
     error_code& ec) noexcept
 {
-    ipv6_address_bnf t;
+    ipv6_address a;
     using bnf::parse_string;
-    if(! parse_string(s, ec, t))
+    if(! parse_string(s, ec,
+            ipv6_address_bnf{a}))
         return {};
-    return t.addr;
+    return a;
 }
 
 /** Return an IPv6 address from an IP address string

@@ -12,11 +12,10 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/rfc/host_bnf.hpp>
-#include <boost/url/rfc/port_bnf.hpp>
+#include <boost/url/rfc/port_part_bnf.hpp>
 #include <boost/url/rfc/userinfo_bnf.hpp>
-#include <array>
-#include <cstdint>
 
 namespace boost {
 namespace urls {
@@ -33,12 +32,15 @@ namespace urls {
 */
 struct authority_bnf
 {
-    string_view str;
-    userinfo_bnf userinfo;
-    host_bnf host;
-    port_bnf port;
-    bool has_port = false;
+    // userinfo
     bool has_userinfo = false;
+    userinfo_bnf userinfo;
+
+    // host
+    host_bnf host;
+
+    // port
+    port_part_bnf port;
 
     BOOST_URL_DECL
     friend

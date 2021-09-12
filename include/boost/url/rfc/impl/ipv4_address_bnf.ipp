@@ -111,10 +111,9 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    ipv4_address_bnf& t)
+    ipv4_address_bnf const& t)
 {
     using bnf::parse;
-    auto const start = it;
     std::array<unsigned char, 4> v;
     if(! parse(it, end, ec,
         detail::dec_octet{v[0]}, '.',
@@ -122,9 +121,7 @@ parse(
         detail::dec_octet{v[2]}, '.',
         detail::dec_octet{v[3]}))
         return false;
-    t.str = string_view(
-        start, it - start);
-    t.addr = ipv4_address(v);
+    t.v = ipv4_address(v);
     return true;
 }
 

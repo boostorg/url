@@ -7,12 +7,11 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_URI_BNF_IPP
-#define BOOST_URL_IMPL_URI_BNF_IPP
+#ifndef BOOST_URL_IMPL_FRAGMENT_PART_BNF_IPP
+#define BOOST_URL_IMPL_FRAGMENT_PART_BNF_IPP
 
-#include <boost/url/rfc/uri_bnf.hpp>
+#include <boost/url/rfc/fragment_part_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/fragment_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -22,30 +21,29 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    uri_bnf& t)
+    fragment_part_bnf& t)
 {
     using bnf::parse;
-
-    // scheme ":"
+    if( it == end ||
+        *it != '#')
+    {
+        t.has_fragment = false;
+        ec = {};
+        return true;
+    }
+    auto start = it;
+    ++it;
+    using T = masked_char_set<
+        pchar_mask |
+        slash_char_mask |
+        question_char_mask>;
     if(! parse(it, end, ec,
-            t.scheme_part))
+        pct_encoded_bnf<T>{
+            t.fragment }))
         return false;
-
-    // hier-part
-    if(! parse(it, end, ec,
-            t.hier_part))
-        return false;
-
-    // [ "?" query ]
-    if(! parse(it, end, ec,
-            t.query_part))
-        return false;
-
-    // [ "#" fragment ]
-    if(! parse(it, end, ec,
-            t.fragment_part))
-        return false;
-
+    t.has_fragment = true;
+    t.fragment_part = string_view(
+        start, it - start);
     return true;
 }
 

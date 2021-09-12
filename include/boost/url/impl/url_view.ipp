@@ -490,33 +490,29 @@ parse_uri(
     error_code& ec) noexcept
 {
     uri_bnf t;
-    if(! bnf::parse_string(
-            s, ec, t))
+    if(! bnf::parse_string(s, ec, t))
         return {};
 
     detail::parts p;
 
     // scheme
-    p.scheme = t.scheme.id;
-    p.resize(
-        detail::part::id_scheme,
-        t.scheme.str.size() + 1);
+    detail::apply(p, t.scheme_part);
 
     // authority
-    detail::apply_authority(
-        p, t.authority);
+    if(t.hier_part.has_authority)
+        detail::apply(p,
+            t.hier_part.authority);
 
     // path
-    detail::apply_path(
-        p, t.path);
+    detail::apply_path(p,
+        t.hier_part.path,
+        t.hier_part.path_count);
 
     // query
-    detail::apply_query(
-        p, t.query);
+    detail::apply(p, t.query_part);
 
     // fragment
-    detail::apply_fragment(
-        p, t.fragment);
+    detail::apply(p, t.fragment_part);
 
     return url_view(s.data(), p);
 }
@@ -545,23 +541,22 @@ parse_relative_ref(
     detail::parts p;
 
     // authority
-    detail::apply_authority(
-        p, t.authority);
+    if(t.relative_part.has_authority)
+        detail::apply(p,
+            t.relative_part.authority);
 
     // path
-    detail::apply_path(
-        p, t.path);
+    detail::apply_path(p,
+        t.relative_part.path,
+        t.relative_part.path_count);
 
     // query
-    detail::apply_query(
-        p, t.query);
+    detail::apply(p, t.query_part);
 
     // fragment
-    detail::apply_fragment(
-        p, t.fragment);
+    detail::apply(p, t.fragment_part);
 
-    return url_view(
-        s.data(), p);
+    return url_view(s.data(), p);
 }
 
 url_view

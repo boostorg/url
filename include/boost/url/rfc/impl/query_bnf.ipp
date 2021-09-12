@@ -24,11 +24,17 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    query_bnf const& t)
+    query_bnf& t)
 {
-    return bnf::parse_range(
-        it, end, ec, t.v,
-            detail::query_params_bnf{});
+    bnf::range<
+        detail::query_param> r;
+    if(! bnf::parse_range(
+        it, end, ec, r,
+            detail::query_params_bnf{}))
+        return false;
+    t.query = r.str();
+    t.query_count = r.size();
+    return true;
 }
 
 } // urls

@@ -13,9 +13,6 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/string.hpp>
-#include <array>
-#include <cstdint>
 
 namespace boost {
 namespace urls {
@@ -46,8 +43,7 @@ namespace urls {
 */
 struct ipv6_address_bnf
 {
-    string_view str;
-    ipv6_address addr;
+    ipv6_address& v;
 
     BOOST_URL_DECL
     friend
@@ -56,7 +52,7 @@ struct ipv6_address_bnf
         char const*& it,
         char const* const end,
         error_code& ec,
-        ipv6_address_bnf& t);
+        ipv6_address_bnf const& t);
 };
 
 } // urls

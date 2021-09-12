@@ -12,10 +12,6 @@
 
 #include <boost/url/rfc/absolute_uri_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/fragment_bnf.hpp>
-#include <boost/url/rfc/hier_part_bnf.hpp>
-#include <boost/url/rfc/query_bnf.hpp>
-#include <boost/url/rfc/scheme_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -31,30 +27,18 @@ parse(
 
     // scheme ":"
     if(! parse(it, end, ec,
-        t.scheme, ':'))
+            t.scheme_part))
         return false;
 
     // hier-part
-    hier_part_bnf hp;
-    if(! parse(it, end, ec, hp))
+    if(! parse(it, end, ec,
+            t.hier_part))
         return false;
-    t.authority = hp.authority;
-    t.path = hp.path;
 
     // [ "?" query ]
-    if( it != end &&
-        *it == '?')
-    {
-        ++it;
-        t.query.emplace();
-        if(! parse(it, end, ec,
-            query_bnf{*t.query}))
-            return false;
-    }
-    else
-    {
-        t.query.reset();
-    }
+    if(! parse(it, end, ec,
+            t.query_part))
+        return false;
 
     return true;
 }

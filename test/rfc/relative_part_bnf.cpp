@@ -46,19 +46,12 @@ public:
         good<T>("x/y/z");
         good<T>("x//y///z///");
 
-        relative_part_bnf p;
         error_code ec;
-        using bnf::parse_string;
-        parse_string("/1/2/3/4/5", ec, p);
-        std::string s;
-        for(auto const& t : p.path)
-        {
-            s.push_back('/');
-            s.append(
-                t.str.data(),
-                t.str.size());
-        }
-        BOOST_TEST(s == "/1/2/3/4/5");
+        relative_part_bnf t;
+        bnf::parse_string(
+            "/1/2/3/4/5", ec, t);
+        BOOST_TEST(t.path == "/1/2/3/4/5");
+        BOOST_TEST(t.path_count == 5);
     }
 };
 

@@ -17,37 +17,44 @@
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
 #include <boost/url/rfc/detail/query_params_bnf.hpp>
 
+#include <boost/url/rfc/fragment_part_bnf.hpp>
+#include <boost/url/rfc/query_part_bnf.hpp>
+#include <boost/url/rfc/scheme_part_bnf.hpp>
+
 namespace boost {
 namespace urls {
 namespace detail {
 
 void
-apply_host(
+apply(
+    parts& p,
+    scheme_part_bnf const& t) noexcept;
+
+void
+apply(
     parts& p,
     host_bnf const& h) noexcept;
 
 void
-apply_authority(
+apply(
     parts& p,
-    optional<
-        authority_bnf> const& t) noexcept;
+    authority_bnf const& t) noexcept;
 
 void
 apply_path(
     parts& p,
-    bnf::range<
-        pct_encoded_str> const& t) noexcept;
+    string_view path,
+    std::size_t path_count) noexcept;
 
 void
-apply_query(parts& p,
-    optional<bnf::range<
-        query_param>> const& t) noexcept;
-
-void
-apply_fragment(
+apply(
     parts& p,
-    optional<
-        pct_encoded_str> const& t) noexcept;
+    query_part_bnf const& t) noexcept;
+
+void
+apply(
+    parts& p,
+    fragment_part_bnf const& t) noexcept;
 
 } // detail
 } // urls

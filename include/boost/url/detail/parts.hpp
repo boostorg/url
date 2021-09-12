@@ -41,6 +41,7 @@ struct parts
     unsigned char ip_addr[16] = {};
     std::size_t nseg = 0;
     std::size_t nparam = 0;
+    // VFALCO don't we need a bool?
     std::uint16_t port_number = 0;
     urls::host_type host_type =
         urls::host_type::none;

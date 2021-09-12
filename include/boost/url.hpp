@@ -36,6 +36,7 @@
 #include <boost/url/rfc/authority_bnf.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/fragment_bnf.hpp>
+#include <boost/url/rfc/fragment_part_bnf.hpp>
 #include <boost/url/rfc/hier_part_bnf.hpp>
 #include <boost/url/rfc/host_bnf.hpp>
 #include <boost/url/rfc/ip_literal_bnf.hpp>
@@ -44,10 +45,13 @@
 #include <boost/url/rfc/ipv6_address_bnf.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
 #include <boost/url/rfc/port_bnf.hpp>
+#include <boost/url/rfc/port_part_bnf.hpp>
 #include <boost/url/rfc/relative_part_bnf.hpp>
 #include <boost/url/rfc/relative_ref_bnf.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
+#include <boost/url/rfc/query_part_bnf.hpp>
 #include <boost/url/rfc/scheme_bnf.hpp>
+#include <boost/url/rfc/scheme_part_bnf.hpp>
 #include <boost/url/rfc/uri_bnf.hpp>
 #include <boost/url/rfc/userinfo_bnf.hpp>
 

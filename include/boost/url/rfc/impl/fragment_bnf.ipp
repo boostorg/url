@@ -31,7 +31,8 @@ parse(
             masked_char_set<
                 pchar_mask |
                 slash_char_mask |
-                question_char_mask>>{t.v});
+                question_char_mask>>{
+        t.v});
 }
 
 } // urls

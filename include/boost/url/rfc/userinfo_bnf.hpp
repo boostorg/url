@@ -12,9 +12,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/optional.hpp>
 
 namespace boost {
 namespace urls {
@@ -34,9 +33,11 @@ namespace urls {
 */
 struct userinfo_bnf
 {
-    string_view str;
     pct_encoded_str user;
-    optional<pct_encoded_str> password;
+    string_view     user_part;
+    bool            has_password = false;
+    pct_encoded_str password;
+    string_view     password_part;
 
     BOOST_URL_DECL
     friend

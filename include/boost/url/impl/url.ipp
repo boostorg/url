@@ -786,6 +786,7 @@ set_scheme_impl(
             id_scheme, 2);
         dest[0] = '.';
         dest[1] = '/';
+        ++pt_.nseg;
         pt_.split(id_scheme, 0);
         pt_.scheme = id;
         assert_scheme();

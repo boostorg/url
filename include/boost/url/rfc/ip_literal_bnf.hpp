@@ -30,10 +30,9 @@ namespace urls {
 */
 struct ip_literal_bnf
 {
-    string_view str;
-    bool is_ipv6;
+    bool is_ipv6 = false;
     ipv6_address ipv6;
-    string_view fut_str;
+    string_view ipvfuture;
 
     BOOST_URL_DECL
     friend

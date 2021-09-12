@@ -50,24 +50,21 @@ public:
             using bnf::parse_string;
             BOOST_TEST(parse_string(
                 "x:y@e.com:8080", ec, p));
-            BOOST_TEST(p.str ==
-                "x:y@e.com:8080");
-            BOOST_TEST(p.host.host_type() ==
+            BOOST_TEST(p.host.host_type ==
                 host_type::name);
-            BOOST_TEST(p.host.get_name().str
+            BOOST_TEST(p.host.name.str
                 == "e.com");
-            if(BOOST_TEST(p.has_port))
+            if(BOOST_TEST(p.port.has_port))
             {
-                BOOST_TEST(p.port.str == "8080");
-                BOOST_TEST(p.port.number.has_value());
-                BOOST_TEST(*p.port.number == 8080);
+                BOOST_TEST(p.port.port == "8080");
+                BOOST_TEST(p.port.has_number);
+                BOOST_TEST(p.port.port_number == 8080);
             }
             if(BOOST_TEST(p.has_userinfo))
             {
-                BOOST_TEST(p.userinfo.str == "x:y");
                 BOOST_TEST(p.userinfo.user.str == "x");
-                if(BOOST_TEST(p.userinfo.password.has_value()))
-                    BOOST_TEST(p.userinfo.password->str == "y");
+                if(BOOST_TEST(p.userinfo.has_password))
+                    BOOST_TEST(p.userinfo.password.str == "y");
             }
         }
     }

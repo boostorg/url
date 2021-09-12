@@ -45,7 +45,7 @@ public:
             parse_string(s, ec, h)))
             return {};
         BOOST_TEST(
-            h.host_type() == ht);
+            h.host_type == ht);
         return h;
     }
 
@@ -65,25 +65,25 @@ public:
         good<T>("999.0.0.1");
 
         BOOST_TEST(check("", host_type::name)
-            .str() == "");
+            .host_part == "");
 
         BOOST_TEST(check("www.example.com", host_type::name)
-            .get_name().str == "www.example.com");
+            .name.str == "www.example.com");
 
         BOOST_TEST(check("1.2.3.999", host_type::name)
-            .get_name().str == "1.2.3.999");
+            .name.str == "1.2.3.999");
 
         BOOST_TEST(check("1.2.3.4", host_type::ipv4)
-            .get_ipv4().to_bytes() == (
+            .ipv4.to_bytes() == (
                 std::array<std::uint8_t, 4>({1,2,3,4})));
 
         BOOST_TEST(check(
             "[1:2:3:4:5:6:7:8]", host_type::ipv6)
-                .get_ipv6() == make_ipv6_address(
+                .ipv6 == make_ipv6_address(
                     "1:2:3:4:5:6:7:8"));
 
         BOOST_TEST(check("[v1.2]", host_type::ipvfuture)
-            .get_ipv_future() == "v1.2");
+            .ipvfuture == "v1.2");
     }
 };
 

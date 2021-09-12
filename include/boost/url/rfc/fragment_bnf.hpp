@@ -12,8 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/optional.hpp>
+#include <boost/url/pct_encoding_types.hpp>
 
 namespace boost {
 namespace urls {

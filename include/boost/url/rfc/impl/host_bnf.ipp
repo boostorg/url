@@ -17,12 +17,6 @@
 namespace boost {
 namespace urls {
 
-host_bnf::
-~host_bnf() noexcept = default;
-
-host_bnf::
-host_bnf() noexcept = default;
-
 bool
 parse(
     char const*& it,
@@ -30,6 +24,14 @@ parse(
     error_code& ec,
     host_bnf& t)
 {
+    if(it == end)
+    {
+        t.host_type =
+            host_type::name;
+        t.name = {};
+        t.host_part = {};
+        return true;
+    }
     auto const start = it;
     if(*it == '[')
     {
@@ -40,47 +42,49 @@ parse(
         if(v.is_ipv6)
         {
             // IPv6address
-            t.ipv6_ = v.ipv6;
-            t.host_type_ = urls::host_type::ipv6;
-            goto finish;
+            t.ipv6 = v.ipv6;
+            t.host_type =
+                host_type::ipv6;
+            t.host_part = string_view(
+                start, it - start);
+            return true;
         }
-        // VFALCO TODO
         // IPvFuture
-        t.ipvfuture_ = v.fut_str;
-        t.host_type_ =
-            urls::host_type::ipvfuture;
-        goto finish;
+        t.ipvfuture = v.ipvfuture;
+        t.host_type =
+            host_type::ipvfuture;
+        t.host_part = string_view(
+            start, it - start);
+        return true;
     }
     // IPv4address
     {
-        ipv4_address_bnf v;
-        auto it0 = it;
-        if(parse(it, end, ec, v))
+        if(parse(it, end, ec,
+            ipv4_address_bnf{t.ipv4}))
         {
-            t.ipv4_ = v.addr;
-            t.host_type_ = urls::host_type::ipv4;
-            goto finish;
+            t.host_type =
+                host_type::ipv4;
+            t.host_part = string_view(
+                start, it - start);
+            return true;
         }
-        it = it0;
+        // rewind
+        it = start;
         ec = {};
     }
     // reg-name
+    if(! parse(it, end, ec,
+        pct_encoded_bnf<
+            masked_char_set<
+                unsub_char_mask>>{
+                    t.name}))
     {
-        pct_encoded_str ns;
-        if(! parse(it, end, ec,
-            pct_encoded_bnf<
-                masked_char_set<
-                    unsub_char_mask>>{
-                        t.name_}))
-        {
-            // bad reg-name
-            return false;
-        }
-        t.host_type_ =
-            urls::host_type::name;
+        // bad reg-name
+        return false;
     }
-finish:
-    t.str_ = string_view(
+    t.host_type =
+        host_type::name;
+    t.host_part = string_view(
         start, it - start);
     return true;
 }

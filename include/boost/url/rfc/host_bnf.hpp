@@ -13,10 +13,10 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/host_type.hpp>
-#include <boost/url/rfc/ipv4_address_bnf.hpp>
-#include <boost/url/rfc/ipv6_address_bnf.hpp>
-#include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/assert.hpp>
+#include <boost/url/pct_encoding_types.hpp>
+#include <boost/url/string.hpp>
+#include <boost/url/ipv4_address.hpp>
+#include <boost/url/ipv6_address.hpp>
 
 namespace boost {
 namespace urls {
@@ -31,66 +31,15 @@ namespace urls {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
 */
-class host_bnf
+struct host_bnf
 {
-    string_view str_;
-    pct_encoded_str name_;
-    ipv4_address ipv4_;
-    ipv6_address ipv6_;
-    string_view ipvfuture_;
-    urls::host_type host_type_ =
+    urls::host_type host_type =
         urls::host_type::none;
-
-public:
-    BOOST_URL_DECL
-    ~host_bnf() noexcept;
-
-    BOOST_URL_DECL
-    host_bnf() noexcept;
-
-    string_view
-    str() const noexcept
-    {
-        return str_;
-    }
-
-    urls::host_type
-    host_type() const noexcept
-    {
-        return host_type_;
-    }
-
-    pct_encoded_str
-    get_name() const noexcept
-    {
-        BOOST_ASSERT(host_type_ ==
-            urls::host_type::name);
-        return name_;
-    }
-
-    ipv4_address const&
-    get_ipv4() const noexcept
-    {
-        BOOST_ASSERT(host_type_ ==
-            urls::host_type::ipv4);
-        return ipv4_;
-    }
-
-    ipv6_address const&
-    get_ipv6() const noexcept
-    {
-        BOOST_ASSERT(host_type_ ==
-            urls::host_type::ipv6);
-        return ipv6_;
-    }
-
-    string_view
-    get_ipv_future() const noexcept
-    {
-        BOOST_ASSERT(host_type_ ==
-            urls::host_type::ipvfuture);
-        return ipvfuture_;
-    }
+    pct_encoded_str name;
+    ipv4_address ipv4;
+    ipv6_address ipv6;
+    string_view ipvfuture;
+    string_view host_part;
 
     BOOST_URL_DECL
     friend

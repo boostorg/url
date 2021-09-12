@@ -35,8 +35,8 @@ struct port_bnf
         std::uint16_t;
 
     string_view str;
-    optional<
-        std::uint16_t> number;
+    std::uint16_t number;
+    bool has_number = false;
 
     BOOST_URL_DECL
     friend

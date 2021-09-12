@@ -29,42 +29,19 @@ parse(
     using bnf::parse;
 
     // relative-part
-    relative_part_bnf rp;
-    if(! parse(it, end, ec, rp))
+    if(! parse(it, end, ec,
+            t.relative_part))
         return false;
-    t.authority = rp.authority;
-    t.path = rp.path;
 
     // [ "?" query ]
-    if( it != end &&
-        *it == '?')
-    {
-        ++it;
-        t.query.emplace();
-        if(! parse(it, end, ec,
-            query_bnf{*t.query}))
-            return false;
-    }
-    else
-    {
-        t.query.reset();
-    }
+    if(! parse(it, end, ec,
+            t.query_part))
+        return false;
 
     // [ "#" fragment ]
-    if( it != end &&
-        *it == '#')
-    {
-        ++it;
-        t.fragment.emplace();
-        if(! parse(it, end, ec,
-            fragment_bnf{
-                *t.fragment}))
-            return false;
-    }
-    else
-    {
-        t.fragment.reset();
-    }
+    if(! parse(it, end, ec,
+            t.fragment_part))
+        return false;
 
     return true;
 }

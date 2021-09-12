@@ -17,12 +17,23 @@ namespace urls {
 namespace detail {
 
 void
-apply_host(
+apply(
     parts& p,
-    host_bnf const& h) noexcept
+    scheme_part_bnf const& t) noexcept
 {
-    p.host_type = h.host_type();
-    switch(h.host_type())
+    p.scheme = t.scheme_id;
+    p.resize(
+        part::id_scheme,
+        t.scheme_part.size());
+}
+
+void
+apply(
+    parts& p,
+    host_bnf const& t) noexcept
+{
+    p.host_type = t.host_type;
+    switch(t.host_type)
     {
     default:
     case urls::host_type::none:
@@ -32,13 +43,13 @@ apply_host(
     case urls::host_type::name:
     {
         p.decoded[id_host] =
-            h.get_name().decoded_size;
+            t.name.decoded_size;
         break;
     }
     case urls::host_type::ipv4:
     {
         auto const bytes =
-            h.get_ipv4().to_bytes();
+            t.ipv4.to_bytes();
         std::memcpy(
             &p.ip_addr[0],
             bytes.data(), 4);
@@ -47,7 +58,7 @@ apply_host(
     case urls::host_type::ipv6:
     {
         auto const bytes =
-            h.get_ipv6().to_bytes();
+            t.ipv6.to_bytes();
         std::memcpy(
             &p.ip_addr[0],
             bytes.data(), 16);
@@ -59,110 +70,110 @@ apply_host(
     }
     }
 
-    if(h.host_type() !=
-        host_type::none)
+    if(t.host_type != host_type::none)
     {
         p.resize(
             part::id_host,
-            h.str().size());
+            t.host_part.size());
     }
 }
 
 void
-apply_authority(
-    parts& p, optional<
-        authority_bnf> const& t) noexcept
+apply(
+    parts& p, 
+    authority_bnf const& t) noexcept
 {
-    if(! t.has_value())
+    if(t.has_userinfo)
     {
-        // no authority
-        return;
-    }
-    if(t->has_userinfo)
-    {
-        auto const& u = t->userinfo;
+        auto const& u = t.userinfo;
 
         // leading "//" for authority
         p.resize(
             part::id_user,
             u.user.str.size() + 2);
+        p.decoded[id_user] = u.user.decoded_size;
 
-        if(u.password.has_value())
+        if(u.has_password)
         {
             // leading ':' for password,
             // trailing '@' for userinfo
             p.resize(
                 part::id_pass,
-                u.password->str.size() + 2);
+                u.password.str.size() + 2);
+            p.decoded[id_pass] =
+                u.password.decoded_size;
         }
         else
         {
             // trailing '@' for userinfo
             p.resize(part::id_pass, 1);
+            p.decoded[id_pass] = 0;
         }
     }
     else
     {
         // leading "//" for authority
         p.resize(part::id_user, 2);
+        p.decoded[id_user] = 0;
     }
 
     // host
-    apply_host(p, t->host);
+    apply(p, t.host);
 
     // port
-    if(t->has_port)
+    if(t.port.has_port)
     {
-        // leading ':' for port
         p.resize(
             part::id_port,
-            t->port.str.size() + 1);
+            t.port.port.size() + 1);
 
-        if(t->port.number.has_value())
-            p.port_number = *t->port.number;
+        if(t.port.has_number)
+            p.port_number =
+                t.port.port_number;
     }
 }
 
 void
 apply_path(
     parts& p,
-    bnf::range<
-        pct_encoded_str> const& t) noexcept
+    string_view path,
+    std::size_t path_count) noexcept
 {
-    p.resize(
-        part::id_path,
-        t.str().size());
-    p.nseg = t.size();
+    p.resize(part::id_path,
+        path.size());
+    p.nseg = path_count;
 }
 
 void
-apply_query(
+apply(
     parts& p,
-    optional<bnf::range<
-        query_param>> const& t) noexcept
+    query_part_bnf const& t) noexcept
 {
-    if(t.has_value())
+    if(t.has_query)
     {
         p.resize(
             part::id_query,
-            t->str().size() + 1);
-        p.nparam = t->size();
+            t.query_part.size());
+        p.nparam = t.query_count;
+    }
+    else
+    {
+        p.nparam = 0;
     }
 }
 
 void
-apply_fragment(
+apply(
     parts& p,
-    optional<
-        pct_encoded_str> const& t) noexcept
+    fragment_part_bnf const& t) noexcept
 {
-    if(t.has_value())
+    if(t.has_fragment)
     {
         p.resize(
             part::id_frag,
-            t->str.size() + 1);
+            t.fragment_part.size());
         p.decoded[id_frag] =
-            t->decoded_size;
+            t.fragment.decoded_size;
     }
     else
     {

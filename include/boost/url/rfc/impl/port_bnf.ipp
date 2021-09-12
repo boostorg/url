@@ -43,7 +43,7 @@ parse(
                 it, end, cs);
             t.str = string_view(
                 start, it - start);
-            t.number.reset();
+            t.has_number = false;
             ec = {};
             return true;
         }
@@ -52,9 +52,14 @@ parse(
     t.str = string_view(
         start, it - start);
     if(! t.str.empty())
-        t.number.emplace(u);
+    {
+        t.has_number = true;
+        t.number = u;
+    }
     else
-        t.number.reset();
+    {
+        t.has_number = false;
+    }
     return true;
 }
 

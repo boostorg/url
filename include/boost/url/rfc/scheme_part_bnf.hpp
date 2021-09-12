@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_SCHEME_BNF_HPP
-#define BOOST_URL_SCHEME_BNF_HPP
+#ifndef BOOST_URL_SCHEME_PART_BNF_HPP
+#define BOOST_URL_SCHEME_PART_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -18,20 +18,23 @@
 namespace boost {
 namespace urls {
 
-/** BNF for scheme
+/** BNF for scheme-part
 
     @par BNF
     @code
-    scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+    scheme-part     = scheme ":"
+
+    scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
     @endcode
 
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
 */
-struct scheme_bnf
+struct scheme_part_bnf
 {
     string_view scheme;
     urls::scheme scheme_id;
+    string_view scheme_part;
 
     BOOST_URL_DECL
     friend
@@ -40,7 +43,7 @@ struct scheme_bnf
         char const*& it,
         char const* const end,
         error_code& ec,
-        scheme_bnf& t);
+        scheme_part_bnf& t);
 };
 
 } // urls

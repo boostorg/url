@@ -13,9 +13,6 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/ipv4_address.hpp>
-#include <boost/url/string.hpp>
-#include <array>
-#include <cstdint>
 
 namespace boost {
 namespace urls {
@@ -38,11 +35,7 @@ namespace urls {
 */
 struct ipv4_address_bnf
 {
-    using value_type =
-        std::array<std::uint8_t, 4>;
-
-    string_view str;
-    ipv4_address addr;
+    ipv4_address& v;
 
     BOOST_URL_DECL
     friend
@@ -51,7 +44,7 @@ struct ipv4_address_bnf
         char const*& it,
         char const* const end,
         error_code& ec,
-        ipv4_address_bnf& t);
+        ipv4_address_bnf const& t);
 };
 
 } // urls

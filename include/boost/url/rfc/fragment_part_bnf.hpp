@@ -7,31 +7,33 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_SCHEME_BNF_HPP
-#define BOOST_URL_SCHEME_BNF_HPP
+#ifndef BOOST_URL_FRAGMENT_PART_BNF_HPP
+#define BOOST_URL_FRAGMENT_PART_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/scheme.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/pct_encoding_types.hpp>
 
 namespace boost {
 namespace urls {
 
-/** BNF for scheme
+/** BNF for fragment-part
 
     @par BNF
     @code
-    scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+    fragment-part   = [ "#" fragment ]
+
+    fragment        = *( pchar / "/" / "?" )
     @endcode
 
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3.5
 */
-struct scheme_bnf
+struct fragment_part_bnf
 {
-    string_view scheme;
-    urls::scheme scheme_id;
+    bool has_fragment;
+    pct_encoded_str fragment;
+    string_view fragment_part;
 
     BOOST_URL_DECL
     friend
@@ -40,7 +42,7 @@ struct scheme_bnf
         char const*& it,
         char const* const end,
         error_code& ec,
-        scheme_bnf& t);
+        fragment_part_bnf& t);
 };
 
 } // urls

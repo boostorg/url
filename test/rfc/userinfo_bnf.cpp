@@ -28,22 +28,25 @@ public:
             string_view> s2)
     {
         using urls::detail::throw_system_error;
-        userinfo_bnf p;
+        userinfo_bnf t;
         error_code ec;
         using bnf::parse_string;
         if(! BOOST_TEST(
-            parse_string(s, ec, p)))
+            parse_string(s, ec, t)))
             return;
         if(! BOOST_TEST(! ec))
             return;
-        BOOST_TEST(p.str == s);
-        BOOST_TEST(p.user.str == s1);
+        BOOST_TEST(t.user.str == s1);
         if(s2.has_value())
+        {
             BOOST_TEST(
-                p.password.has_value() &&
-                p.password->str == *s2);
+                t.has_password &&
+                t.password.str == *s2);
+        }
         else
-            BOOST_TEST(! p.password.has_value());
+        {
+            BOOST_TEST(! t.has_password);
+        }
     }
 
     void

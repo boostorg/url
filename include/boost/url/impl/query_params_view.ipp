@@ -39,7 +39,7 @@ iterator(
         return;
     }
     error_code ec;
-    query_param t;
+    detail::query_param t;
     detail::
         query_params_bnf::begin(
             next_, end_, ec, t);
@@ -60,7 +60,7 @@ operator++() noexcept ->
     iterator&
 {
     error_code ec;
-    query_param t;
+    detail::query_param t;
     detail::
         query_params_bnf::increment(
             next_, end_, ec, t);
@@ -170,13 +170,11 @@ parse_query_params(
     error_code& ec) noexcept
 {
     using bnf::parse_string;
-    bnf::range<
-        query_param> t;
-    if(! parse_string(s, ec,
-        query_bnf{t}))
+    query_bnf t;
+    if(! parse_string(s, ec, t))
         return {};
     return query_params_view(
-        t.str(), t.size());
+        t.query, t.query_count);
 }
 
 query_params_view

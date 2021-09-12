@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_QUERY_BNF_HPP
-#define BOOST_URL_QUERY_BNF_HPP
+#ifndef BOOST_URL_QUERY_PART_BNF_HPP
+#define BOOST_URL_QUERY_PART_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -18,30 +18,24 @@
 namespace boost {
 namespace urls {
 
-/** BNF for query
+/** BNF for query-part
 
     @par BNF
     @code
-    query           = *( pchar / "/" / "?" )
+    query-part      = [ "?" query ]
 
-    query-params    = [ query-param ] *( "&" [ query-param ] )
-    query-param     = key [ "=" value ]
-    key             = *qpchar
-    value           = *( qpchar / "=" )
-    qpchar          = unreserved
-                    / pct-encoded
-                    / "!" / "$" / "'" / "(" / ")"
-                    / "*" / "+" / "," / ";"
-                    / ":" / "@" / "/" / "?"
+    query           = *( pchar / "/" / "?" )
     @endcode
 
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
 */
-struct query_bnf
+struct query_part_bnf
 {
+    bool has_query;
     string_view query;
     std::size_t query_count;
+    string_view query_part;
 
     BOOST_URL_DECL
     friend
@@ -50,7 +44,7 @@ struct query_bnf
         char const*& it,
         char const* const end,
         error_code& ec,
-        query_bnf& t);
+        query_part_bnf& t);
 };
 
 } // urls

@@ -12,12 +12,10 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/bnf/range.hpp>
-#include <boost/url/rfc/authority_bnf.hpp>
-#include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/rfc/query_bnf.hpp>
-#include <boost/url/rfc/scheme_bnf.hpp>
-#include <boost/optional.hpp>
+#include <boost/url/rfc/fragment_part_bnf.hpp>
+#include <boost/url/rfc/hier_part_bnf.hpp>
+#include <boost/url/rfc/query_part_bnf.hpp>
+#include <boost/url/rfc/scheme_part_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -34,11 +32,10 @@ namespace urls {
 */
 struct uri_bnf
 {
-    scheme_bnf scheme;
-    bnf::range<pct_encoded_str> path;
-    optional<authority_bnf> authority;
-    optional<bnf::range<query_param>> query;
-    optional<pct_encoded_str> fragment;
+    scheme_part_bnf     scheme_part;
+    hier_part_bnf       hier_part;
+    query_part_bnf      query_part;
+    fragment_part_bnf   fragment_part;
 
     BOOST_URL_DECL
     friend

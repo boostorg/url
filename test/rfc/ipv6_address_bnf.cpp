@@ -35,34 +35,33 @@ public:
              static_cast<std::uint64_t>(p[7]);
     }
 
-    ipv6_address_bnf
+    ipv6_address
     check(
         string_view s,
         std::uint64_t u0,
         std::uint64_t u1)
     {
         error_code ec;
-        ipv6_address_bnf t;
-        using bnf::parse_string;
-        BOOST_TEST(
-            parse_string(
-                s, ec, t));
+        ipv6_address a;
+        BOOST_TEST(bnf::parse_string(
+            s, ec, ipv6_address_bnf{a}));
         if( ! BOOST_TEST(
             ! ec.failed()))
             return {};
-        auto const bytes =
-            t.addr.to_bytes();
-        BOOST_TEST(get_u64(
-            &bytes[0]) == u0);
-        BOOST_TEST(get_u64(
-            &bytes[8]) == u1);
-        return t;
+        auto const bytes = a.to_bytes();
+        BOOST_TEST(
+            get_u64(&bytes[0]) == u0);
+        BOOST_TEST(
+            get_u64(&bytes[8]) == u1);
+        return a;
     }
 
     void
     run()
     {
-        using T = ipv6_address_bnf;
+        using T = test_ref<
+            ipv6_address_bnf,
+            ipv6_address>;
 
         bad<T>("");
         bad<T>("0");

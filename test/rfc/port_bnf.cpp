@@ -22,7 +22,8 @@ public:
     void
     check(
         string_view s,
-        optional<std::uint16_t> v)
+        std::uint16_t v,
+        bool has_number = true)
     {
         port_bnf t;
         error_code ec;
@@ -33,8 +34,11 @@ public:
             return;
         if(! BOOST_TEST(! ec))
             return;
+        BOOST_TEST(
+            t.has_number == has_number);
         BOOST_TEST(t.str == s);
-        BOOST_TEST(t.number == v);
+        if(t.has_number)
+            BOOST_TEST(t.number == v);
     }
 
     void
@@ -46,14 +50,14 @@ public:
         bad<T>("80x");
         bad<T>(":443");
 
-        check("", boost::none);
+        check("", 0, false);
         check("0", 0);
         check("00", 0);
         check("01", 1);
         check("1", 1);
         check("65535", 65535);
-        check("65536", boost::none);
-        check("123456789", boost::none);
+        check("65536", 0, false);
+        check("123456789", 0, false);
     }
 };
 

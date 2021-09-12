@@ -7,12 +7,12 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_SCHEME_BNF_IPP
-#define BOOST_URL_IMPL_SCHEME_BNF_IPP
+#ifndef BOOST_URL_IMPL_QUERY_PART_BNF_IPP
+#define BOOST_URL_IMPL_QUERY_PART_BNF_IPP
 
-#include <boost/url/rfc/scheme_bnf.hpp>
+#include <boost/url/rfc/query_part_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/query_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -22,28 +22,27 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    scheme_bnf& t)
+    query_part_bnf& t)
 {
-    auto const start = it;
-    if(it == end)
+    using bnf::parse;
+    using detail::query_params_bnf;
+    auto start = it;
+    if( it == end ||
+        *it != '?')
     {
-        // expected alpha
-        ec = error::incomplete;
-        return false;
+        ec = {};
+        t.has_query = false;
+        return true;
     }
-    if(! bnf::alpha_chars{}(*it))
-    {
-        // expected alpha
-        ec = error::bad_alpha;
+    ++it;
+    query_bnf t0;
+    if(! parse(it, end, ec, t0))
         return false;
-    }
-    it = bnf::find_if_not(
-        it + 1, end,
-            bnf::alnum_chars{});
-    t.scheme = string_view(
+    t.has_query = true;
+    t.query = t0.query;
+    t.query_count = t0.query_count;
+    t.query_part = string_view(
         start, it - start);
-    t.scheme_id = string_to_scheme(
-        t.scheme);
     return true;
 }
 

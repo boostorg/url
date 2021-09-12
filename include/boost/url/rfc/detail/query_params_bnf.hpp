@@ -19,6 +19,13 @@ namespace boost {
 namespace urls {
 namespace detail {
 
+struct query_param
+{
+    pct_encoded_str key;
+    pct_encoded_str value;
+    bool has_value = false;
+};
+
 struct query_params_bnf
 {
     static

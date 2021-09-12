@@ -35,7 +35,7 @@ public:
         BOOST_TEST(
             ! ec.failed());
         BOOST_TEST(
-            p.id == id);
+            p.scheme_id == id);
     }
 
     void

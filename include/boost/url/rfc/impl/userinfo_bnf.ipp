@@ -15,7 +15,6 @@
 #include <boost/url/string.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/pct_encoding.hpp>
 
 namespace boost {
 namespace urls {
@@ -28,32 +27,36 @@ parse(
     userinfo_bnf& t)
 {
     using bnf::parse;
-    auto const start = it;
+    auto start = it;
     if(! parse(it, end, ec,
         pct_encoded_bnf<
             masked_char_set<
                 unsub_char_mask>>{
                     t.user}))
         return false;
+    t.user_part = string_view(
+        start, it - start);
+    start = it;
     if( it != end &&
         *it == ':')
     {
         ++it;
-        t.password.emplace();
         if(! parse(it, end, ec,
             pct_encoded_bnf<
                 masked_char_set<
                     unsub_char_mask |
                     colon_char_mask>>{
-                        *t.password}))
+                        t.password}))
             return false;
+        t.has_password = true;
+        t.password_part = string_view(
+            start, it - start);
     }
     else
     {
-        t.password.reset();
+        t.has_password = false;
+        t.password_part = {};
     }
-    t.str = string_view(
-        start, it - start);
     return true;
 }
 
