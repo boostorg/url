@@ -11,7 +11,6 @@
 #include <boost/url/ipv6_address.hpp>
 
 #include <boost/url/ipv4_address.hpp>
-#include <boost/url/detail/network_order.hpp>
 #include "test_suite.hpp"
 #include <sstream>
 
@@ -150,6 +149,11 @@ public:
         ipv4_address a(0x7f000001);
         BOOST_TEST(make_ipv6_address(a).to_string() ==
             "::ffff:127.0.0.1");
+
+        char buf[ipv6_address::max_str_len];
+        BOOST_TEST(make_ipv6_address(a
+            ).to_buffer(buf, sizeof(buf)) ==
+                "::ffff:127.0.0.1");
     }
 
     void

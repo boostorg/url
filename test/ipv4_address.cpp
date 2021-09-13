@@ -10,7 +10,6 @@
 // Test that header file is self-contained.
 #include <boost/url/ipv4_address.hpp>
 
-#include <boost/url/detail/network_order.hpp>
 #include "test_suite.hpp"
 #include <sstream>
 
@@ -28,6 +27,10 @@ public:
         ss << a;
         BOOST_TEST(
             ss.str() == "1.2.3.4");
+
+        char buf[ipv4_address::max_str_len];
+        BOOST_TEST(a.to_buffer(buf,
+            sizeof(buf)) == "1.2.3.4");
     }
 
     void

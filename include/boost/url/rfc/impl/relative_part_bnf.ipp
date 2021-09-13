@@ -47,7 +47,6 @@ parse(
         it[1] != '/')
     {
         // path-absolute
-        parsed_path t0;
         if(! parse(it, end, ec,
             path_absolute_bnf{
                 t.path}))
@@ -60,7 +59,6 @@ parse(
     if(! parse(it, end, ec,
             t.authority))
         return false;
-    parsed_path t0;
     if(! parse(it, end, ec,
         path_abempty_bnf{
             t.path}))

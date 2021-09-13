@@ -25,27 +25,30 @@ namespace urls {
 */
 enum class host_type
 {
-    /** No host is specified.
+    // VFALCO 3 space indent or
+    // else Doxygen malfunctions
+
+    /**No host is specified.
     */
     none,
 
-    /** A host is specified by reg-name.
+    /**A host is specified by reg-name.
     */
     name,
 
-    /** A host is specified by IPv4address.
-
-        @see ipv4_address
+    /**
+     * A host is specified by IPv4address.
+       See @ref ipv4_address
     */
     ipv4,
 
-    /** A host is specified by IPv6address.
+    /**A host is specified by IPv6address.
 
-        @see ipv6_address
+       @see @ref ipv6_address
     */
     ipv6,
 
-    /** A host is specified by IPvFuture.
+    /**A host is specified by IPvFuture.
     */
     ipvfuture
 };

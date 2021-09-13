@@ -20,10 +20,25 @@
 namespace boost {
 namespace urls {
 
+/** Represents an IP version 4 style address
+
+    Objects of this type are used to construct
+    and manipulate IP version 4 addresses.
+
+    @par Specification
+    @li <a href="https://en.wikipedia.org/wiki/IPv4">
+        IPv4 (Wikipedia)</a>
+
+    @see
+        @ref make_ipv4_address,
+        @ref ipv6_address.
+*/
 class ipv4_address
 {
 public:
     /** The number of characters in the longest possible ipv4 string
+
+        The longest ipv4 address string is "255.255.255.255".
     */
     static
     constexpr
@@ -53,7 +68,7 @@ public:
     ipv4_address(
         bytes_type const& bytes);
 
-    /** Construct from an unsigned integer in host byte order
+    /** Construct from an unsigned integer
     */
     BOOST_URL_DECL
     explicit
@@ -83,7 +98,7 @@ public:
     bytes_type
     to_bytes() const noexcept;
 
-    /** Return the address as an unsigned integer in host byte order
+    /** Return the address as an unsigned integer
     */
     BOOST_URL_DECL
     uint_type
@@ -108,6 +123,25 @@ public:
         std::allocator<char>>
     string_type<Allocator>
     to_string(Allocator const& a = {}) const;
+
+    /** Write a dotted decimal string representing the address to a buffer
+
+        The resulting buffer is not null-terminated.
+
+        @throw std::length_error `dest_size < ipv4_address::max_str_len`
+
+        @return The formatted string
+
+        @param dest The buffer in which to write,
+        which must have at least `dest_size` space.
+
+        @param dest_size The size of the output buffer.
+    */
+    BOOST_URL_DECL
+    string_view
+    to_buffer(
+        char* dest,
+        std::size_t dest_size) const;
 
     /** Return true if the address is a loopback address
     */
@@ -193,7 +227,6 @@ private:
     print_impl(
         char* dest) const noexcept;
 
-    // network order
     uint_type addr_;
 };
 

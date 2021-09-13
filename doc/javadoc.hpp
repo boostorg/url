@@ -17,12 +17,12 @@
     {statements}
     @endcode
 
+    @note {text}
+
     @par BNF
     @code
     ELEMENT     = {ABNF}
     @endcode
-
-    @note {text}
 
     @par Exception Safety
     Does not throw.

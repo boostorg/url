@@ -11,7 +11,7 @@
 #define BOOST_URL_IMPL_IPV4_ADDRESS_IPP
 
 #include <boost/url/ipv4_address.hpp>
-#include <boost/url/detail/network_order.hpp>
+#include <boost/url/detail/except.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/ipv4_address_bnf.hpp>
 #include <cstring>
@@ -23,13 +23,16 @@ ipv4_address::
 ipv4_address(
     bytes_type const& bytes)
 {
-    std::memcpy(&addr_,
-        bytes.data(), 4);
+    addr_ =
+(static_cast<unsigned long>(bytes[0]) << 24) |
+(static_cast<unsigned long>(bytes[1]) << 16) |
+(static_cast<unsigned long>(bytes[2]) <<  8) |
+(static_cast<unsigned long>(bytes[3]));
 }
 
 ipv4_address::
 ipv4_address(uint_type addr)
-    : addr_(detail::host_to_network(addr))
+    : addr_(addr)
 {
 }
 
@@ -39,9 +42,10 @@ to_bytes() const noexcept ->
     bytes_type
 {
     bytes_type bytes;
-    std::memcpy(
-        bytes.data(),
-        &addr_, 4);
+    bytes[0] = (addr_ >> 24) & 0xff;
+    bytes[1] = (addr_ >> 16) & 0xff;
+    bytes[2] = (addr_ >>  8) & 0xff;
+    bytes[3] =  addr_        & 0xff;
     return bytes;
 }
 
@@ -50,8 +54,21 @@ ipv4_address::
 to_uint() const noexcept ->
     uint_type
 {
-    return detail::network_to_host(
-        addr_);
+    return addr_;
+}
+
+string_view
+ipv4_address::
+to_buffer(
+    char* dest,
+    std::size_t dest_size) const
+{
+    if(dest_size < max_str_len)
+        detail::throw_length_error(
+            "ipv4_address::to_buffer",
+            BOOST_CURRENT_LOCATION);
+    auto n = print_impl(dest);
+    return string_view(dest, n);
 }
 
 bool

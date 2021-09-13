@@ -48,13 +48,6 @@ struct parts
     urls::scheme scheme =
         urls::scheme::none;
 
-    // size excluding null
-    std::size_t
-    len() const noexcept
-    {
-        return offset[id_end];
-    }
-
     // size of id
     std::size_t
     len(int id) const noexcept

@@ -119,6 +119,25 @@ public:
     string_type<Allocator>
     to_string(Allocator const& a = {}) const;
 
+    /** Write a dotted decimal string representing the address to a buffer
+
+        The resulting buffer is not null-terminated.
+
+        @throw std::length_error `dest_size < ipv6_address::max_str_len`
+
+        @return The formatted string
+
+        @param dest The buffer in which to write,
+        which must have at least `dest_size` space.
+
+        @param dest_size The size of the output buffer.
+    */
+    BOOST_URL_DECL
+    string_view
+    to_buffer(
+        char* dest,
+        std::size_t dest_size) const;
+
     /** Return true if the address is unspecified
 
         The address 0:0:0:0:0:0:0:0 is called the

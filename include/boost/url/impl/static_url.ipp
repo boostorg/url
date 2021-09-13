@@ -31,6 +31,7 @@ static_url_base(
     std::size_t cap) noexcept
     : url(buf, cap)
 {
+    buf[0] = 0;
 }
 
 void

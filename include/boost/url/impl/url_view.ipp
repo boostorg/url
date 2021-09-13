@@ -96,7 +96,7 @@ bool
 url_view::
 empty() const noexcept
 {
-    return pt_.len() == 0;
+    return pt_.offset[id_end] == 0;
 }
 
 //------------------------------------------------
@@ -288,18 +288,16 @@ urls::ipv4_address
 url_view::
 ipv4_address() const noexcept
 {
-    if(pt_.host_type ==
+    if(pt_.host_type !=
         urls::host_type::ipv4)
-    {
-        std::array<
-            unsigned char, 4> bytes;
-        std::memcpy(
-            &bytes[0],
-            &pt_.ip_addr[0], 4);
-        return urls::ipv4_address(
-            bytes);
-    }
-    return urls::ipv4_address();
+        return {};
+    std::array<
+        unsigned char, 4> bytes;
+    std::memcpy(
+        &bytes[0],
+        &pt_.ip_addr[0], 4);
+    return urls::ipv4_address(
+        bytes);
 }
 
 urls::ipv6_address

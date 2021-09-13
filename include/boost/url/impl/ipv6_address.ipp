@@ -59,6 +59,20 @@ to_bytes() const noexcept ->
     return addr_;
 }
 
+string_view
+ipv6_address::
+to_buffer(
+    char* dest,
+    std::size_t dest_size) const
+{
+    if(dest_size < max_str_len)
+        detail::throw_length_error(
+            "ipv6_address::to_buffer",
+            BOOST_CURRENT_LOCATION);
+    auto n = print_impl(dest);
+    return string_view(dest, n);
+}
+
 bool
 ipv6_address::
 is_loopback() const noexcept

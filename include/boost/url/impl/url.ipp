@@ -18,8 +18,13 @@
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
+#include <boost/url/detail/print.hpp>
+#include <boost/url/rfc/authority_bnf.hpp>
 #include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/host_bnf.hpp>
+#include <boost/url/rfc/port_bnf.hpp>
 #include <boost/url/rfc/scheme_bnf.hpp>
+#include <boost/url/rfc/userinfo_bnf.hpp>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
@@ -57,6 +62,69 @@ len(int id0, int id1) const noexcept
     return pt_.len(id0, id1);
 }
 
+void
+url::
+check_invariants() const noexcept
+{
+    BOOST_ASSERT(
+        len(id_scheme) == 0 ||
+        get(id_scheme).ends_with(':'));
+    BOOST_ASSERT(
+        len(id_user) == 0 ||
+        get(id_user).starts_with("//"));
+    BOOST_ASSERT(
+        len(id_pass) == 0 ||
+        get(id_user).starts_with("//"));
+    BOOST_ASSERT(
+        len(id_pass) == 0 ||
+        (len(id_pass) == 1 &&
+            get(id_pass) == "@") ||
+        (len(id_pass) > 1 &&
+            get(id_pass).starts_with(':') &&
+            get(id_pass).ends_with('@')));
+    BOOST_ASSERT(
+        len(id_user, id_path) == 0 ||
+        get(id_user).starts_with("//"));
+    BOOST_ASSERT(
+        len(id_port) == 0 ||
+        get(id_port).starts_with(':'));
+    BOOST_ASSERT(
+        len(id_query) == 0 ||
+        get(id_query).starts_with('?'));
+    BOOST_ASSERT(
+        len(id_frag) == 0 ||
+        get(id_frag).starts_with('#'));
+    BOOST_ASSERT(c_str()[
+        pt_.offset[id_end]] == '\0');
+#if 0
+    BOOST_ASSERT(
+        (len(id_user) <= 2 &&
+            pt_.decoded[id_user] == 0) ||
+        (len(id_user) > 2 &&
+            pt_.decoded[id_user] != 0));
+    BOOST_ASSERT(
+        (len(id_pass) <= 2 &&
+            pt_.decoded[id_pass] == 0) ||
+        (len(id_pass) > 2 &&
+            pt_.decoded[id_pass] != 0));
+    BOOST_ASSERT(
+        (len(id_host) == 0 &&
+            pt_.decoded[id_host] == 0) ||
+        (len(id_host) != 0 &&
+            pt_.decoded[id_host] != 0));
+    BOOST_ASSERT(
+        (len(id_query) <= 1 &&
+            pt_.decoded[id_query] == 0) ||
+        (len(id_query) > 1 &&
+            pt_.decoded[id_query] != 0));
+    BOOST_ASSERT(
+        (len(id_frag) <= 1 &&
+            pt_.decoded[id_frag] == 0) ||
+        (len(id_frag) > 1 &&
+            pt_.decoded[id_frag] != 0));
+#endif
+}
+
 //------------------------------------------------
 
 url::
@@ -75,7 +143,7 @@ copy(
     char const* s,
     detail::parts const& pt)
 {
-    auto n = pt.len();
+    auto n = pt.offset[id_end];
     if(n == 0 && ! s_)
         return;
     if(cap_ < n)
@@ -221,7 +289,7 @@ bool
 url::
 empty() const noexcept
 {
-    return pt_.len() == 0;
+    return pt_.offset[id_end] == 0;
 }
 
 //------------------------------------------------
@@ -413,13 +481,11 @@ urls::ipv4_address
 url::
 ipv4_address() const noexcept
 {
-    BOOST_ASSERT(pt_.host_type ==
-        urls::host_type::ipv4);
     if(pt_.host_type !=
         urls::host_type::ipv4)
-        return ipv4_address();
-    std::array<
-        unsigned char, 4> bytes;
+        return {};
+    urls::ipv4_address::
+        bytes_type bytes;
     std::memcpy(
         &bytes[0],
         &pt_.ip_addr[0], 4);
@@ -431,13 +497,11 @@ urls::ipv6_address
 url::
 ipv6_address() const noexcept
 {
-    BOOST_ASSERT(pt_.host_type ==
-        urls::host_type::ipv6);
     if(pt_.host_type !=
         urls::host_type::ipv6)
-        return ipv6_address();
-    std::array<
-        unsigned char, 16> bytes;
+        return {};
+    urls::ipv6_address::
+        bytes_type bytes;
     std::memcpy(
         &bytes[0],
         &pt_.ip_addr[0], 16);
@@ -642,6 +706,8 @@ reserve(std::size_t cap)
     auto n = len(id_scheme, id_end);
     if(n > 0)
         std::memcpy(s, s_, n + 1);
+    else
+        s[0] = '\0';
     if(s_)
         free_impl(s_);
     s_ = s;
@@ -700,16 +766,6 @@ set_encoded_origin(
 //
 //------------------------------------------------
 
-void
-url::
-assert_scheme() const noexcept
-{
-    BOOST_ASSERT(
-        (len(id_scheme) == 0) ||
-        (len(id_scheme) > 1 &&
-            get(id_scheme).ends_with(':')));
-}
-
 url&
 url::
 set_scheme(string_view s)
@@ -743,15 +799,14 @@ set_scheme_impl(
     string_view s,
     urls::scheme id)
 {
-    assert_scheme();
-
+    check_invariants();
     if(s.empty())
     {
-        if(len(id_scheme) == 0)
+        auto const n = len(id_scheme);
+        if(n == 0)
             return;
 
-        // remove scheme
-        // The complicated case is changing
+        // Check if we are changing
         // path-rootless to path-noscheme
         bool const need_dot = [this]
         {
@@ -776,20 +831,37 @@ set_scheme_impl(
             // just remove the scheme
             resize_impl(id_scheme, 0);
             pt_.scheme = id;
-            assert_scheme();
+            check_invariants();
             return;
         }
 
         // remove the scheme but add "./"
         // to the beginning of the path
-        auto dest = resize_impl(
-            id_scheme, 2);
+        BOOST_ASSERT(n >= 2);
+        std::memmove(
+            s_, s_ + n,
+            pt_.offset[id_path] - n);
+        std::memmove(
+            s_ + pt_.offset[
+                id_path] - (n - 2),
+            s_ + pt_.offset[id_path],
+            pt_.offset[id_end] -
+                pt_.offset[id_path]);
+        pt_.offset[id_scheme] = 0;
+        for(int i = id_user;
+                i <= id_path; ++i)
+            pt_.offset[i] -= n;
+        for(int i = id_query;
+                i <= id_end; ++i)
+            pt_.offset[i] -= n - 2;
+        auto dest = s_ +
+            pt_.offset[id_path];
         dest[0] = '.';
         dest[1] = '/';
+        dest[pt_.offset[id_end]] = '\0';
         ++pt_.nseg;
-        pt_.split(id_scheme, 0);
         pt_.scheme = id;
-        assert_scheme();
+        check_invariants();
         return;
     }
 
@@ -806,7 +878,7 @@ set_scheme_impl(
     s.copy(dest, n);
     dest[n] = ':';
     pt_.scheme = id;
-    assert_scheme();
+    check_invariants();
     return;
 }
 
@@ -816,40 +888,17 @@ set_scheme_impl(
 //
 //------------------------------------------------
 
-void
-url::
-assert_userinfo() const noexcept
-{
-    BOOST_ASSERT(
-        len(id_user) == 0 ||
-        get(id_user).starts_with("//"));
-    BOOST_ASSERT(
-        len(id_pass) == 0 ||
-        get(id_user).starts_with("//"));
-    BOOST_ASSERT(
-        (len(id_pass) == 0) ||
-        (len(id_pass) == 1 &&
-            get(id_pass) == "@") ||
-        (len(id_pass) == 2 &&
-            get(id_pass) == ":@") ||
-        (len(id_pass) > 2 &&
-            get(id_pass).starts_with(':') &&
-            get(id_pass).ends_with('@')));
-}
-
-//------------------------------------------------
-
 char*
 url::
 set_user_impl(std::size_t n)
 {
-    assert_userinfo();
+    check_invariants();
     if(len(id_pass) != 0)
     {
         // keep "//"
         auto dest = resize_impl(
             id_user, 2 + n);
-        assert_userinfo();
+        check_invariants();
         return dest + 2;
     }
     // add authority
@@ -859,15 +908,15 @@ set_user_impl(std::size_t n)
     dest[0] = '/';
     dest[1] = '/';
     dest[2 + n] = '@';
-    assert_userinfo();
+    check_invariants();
     return dest + 2;
 }
 
 url&
 url::
-clear_user() noexcept
+remove_user() noexcept
 {
-    assert_userinfo();
+    check_invariants();
     if(len(id_user) == 0)
     {
         // no authority
@@ -883,7 +932,8 @@ clear_user() noexcept
         // keep password
         resize_impl(id_user, 2);
     }
-    assert_userinfo();
+    pt_.decoded[id_user] = 0;
+    check_invariants();
     return *this;
  }
 
@@ -891,6 +941,7 @@ url&
 url::
 set_user(string_view s)
 {
+    check_invariants();
     masked_char_set<
         unsub_char_mask> cs;
     auto const n =
@@ -899,9 +950,10 @@ set_user(string_view s)
     dest = detail::pct_encode(
         dest, get(id_pass).data(),
             s, {},  cs);
+    pt_.decoded[id_user] = s.size();
     BOOST_ASSERT(dest ==
         get(id_pass).data());
-    assert_userinfo();
+    check_invariants();
     return *this;
 }
 
@@ -910,23 +962,25 @@ url::
 set_encoded_user(
     string_view s)
 {
-    if(s.empty())
-    {
-        // remove user
-        set_user_impl(0);
-        return *this;
-    }
+    check_invariants();
     error_code ec;
     masked_char_set<
         unsub_char_mask> cs;
-    pct_decode_size(s, ec, cs);
-    if(ec)
+    auto const n =
+        pct_decode_size(s, ec, cs);
+    if(ec.failed())
         detail::throw_invalid_argument(
             "url::set_encoded_user",
             BOOST_CURRENT_LOCATION);
     auto dest = set_user_impl(s.size());
-    BOOST_ASSERT(dest != nullptr);
-    std::memcpy(dest, s.data(), s.size());
+    pt_.decoded[id_user] = n;
+    if(! s.empty())
+    {
+        BOOST_ASSERT(dest != nullptr);
+        std::memcpy(dest,
+            s.data(), s.size());
+    }
+    check_invariants();
     return *this;
 }
 
@@ -937,7 +991,7 @@ url::
 set_password_impl(
     std::size_t n)
 {
-    assert_userinfo();
+    check_invariants();
     if(len(id_user) != 0)
     {
         // already have authority
@@ -945,6 +999,7 @@ set_password_impl(
             id_pass, 1 + n + 1);
         dest[0] = ':';
         dest[n + 1] = '@';
+        check_invariants();
         return dest + 1;
     }
     // add authority
@@ -957,322 +1012,520 @@ set_password_impl(
     dest[1] = '/';
     dest[2] = ':';
     dest[2 + n + 1] = '@';
-    assert_userinfo();
+    check_invariants();
     return dest + 3;
 }
 
 url&
 url::
-clear_password() noexcept
+remove_password() noexcept
 {
-    assert_userinfo();
+    check_invariants();
     auto const n = len(id_pass);
-    if(n == 0)
+    if(n < 2)
         return *this;
-    if(len(id_user) == 2)
-    {
-        // remove '@'
-        resize_impl(id_pass, 0);
-        return *this;
-    }
-    // retain '@'
+    // clear password, retain '@'
     auto dest =
         resize_impl(id_pass, 1);
     dest[0] = '@';
+    pt_.decoded[id_pass] = 0;
+    check_invariants();
     return *this;
 }
-
-#if 0
 
 url&
 url::
-set_encoded_authority(
+set_password(string_view s)
+{
+    check_invariants();
+    masked_char_set<
+        unsub_char_mask |
+        colon_char_mask> cs;
+    auto const n =
+        pct_encode_size(s, cs);
+    auto dest = set_password_impl(n);
+    dest = detail::pct_encode(dest,
+        get(id_host).data() - 1,
+            s, {},  cs);
+    pt_.decoded[id_pass] = s.size();
+    BOOST_ASSERT(dest ==
+        get(id_host).data() - 1);
+    check_invariants();
+    return *this;
+}
+
+url&
+url::
+set_encoded_password(
     string_view s)
 {
-    if(s.empty())
+    check_invariants();
+    masked_char_set<
+        unsub_char_mask |
+        colon_char_mask> cs;
+    error_code ec;
+    auto const n =
+        pct_decode_size(s, ec, cs);
+    if(ec.failed())
+        detail::throw_invalid_argument(
+            "url::set_encoded_password",
+            BOOST_CURRENT_LOCATION);
+    auto dest =
+        set_password_impl(s.size());
+    pt_.decoded[id_pass] = n;
+    if(! s.empty())
     {
-        resize_impl(
-            id_user,
-            id_path, 0);
-        return *this;
+        BOOST_ASSERT(dest != nullptr);
+        std::memcpy(dest,
+            s.data(), s.size());
     }
-
-    detail::parts pt;
-    detail::parse_authority(pt, s);
-    auto const dest = resize_impl(
-        id_user,
-        id_path,
-        2 + s.size());
-    //---
-    dest[0] = '/';
-    dest[1] = '/';
-    s.copy(dest + 2, s.size());
-    pt_.split(
-        id_user,
-        2 + pt.len(id_user));
-    pt_.split(
-        id_pass,
-        pt.len(id_pass));
-    pt_.split(
-        id_host,
-        pt.len(id_host));
-    BOOST_ASSERT(
-        pt_.len(id_port) ==
-            pt.len(id_port));
+    check_invariants();
     return *this;
 }
 
 //------------------------------------------------
-//
-// userinfo
-//
-//------------------------------------------------
+
+char*
+url::
+set_userinfo_impl(
+    std::size_t n)
+{
+    // "//" {dest} "@"
+    check_invariants();
+    auto dest = resize_impl(
+        id_user, id_host, n + 3);
+    pt_.split(id_user, n + 2);
+    dest[0] = '/';
+    dest[1] = '/';
+    dest[n + 2] = '@';
+    check_invariants();
+    return dest + 2;
+}
+
+url&
+url::
+remove_userinfo() noexcept
+{
+    check_invariants();
+    if(len(id_pass) == 0)
+    {
+        // no userinfo
+        return *this;
+    }
+    // keep authority '//'
+    resize_impl(
+        id_user, id_host, 2);
+    pt_.decoded[id_user] = 0;
+    pt_.decoded[id_pass] = 0;
+    check_invariants();
+    return *this;
+}
+
+url&
+url::
+set_userinfo(
+    string_view s)
+{
+    check_invariants();
+    masked_char_set<
+        unsub_char_mask> cs;
+    auto const n =
+        pct_encode_size(s, cs);
+    auto dest = set_userinfo_impl(n);
+    dest = detail::pct_encode(dest,
+        get(id_host).data() - 1,
+            s, {},  cs);
+    pt_.decoded[id_user] = s.size();
+    BOOST_ASSERT(dest ==
+        get(id_host).data() - 1);
+    check_invariants();
+    return *this;
+}
 
 url&
 url::
 set_encoded_userinfo(
     string_view s)
 {
-    if(s.empty())
-    {
-        if(pt_.len(
-            id_host,
-            id_path) == 0)
-        {
-            // no authority
-            resize_impl(
-                id_user,
-                id_host, 0);
-            return *this;
-        }
-        // keep "//"
-        resize_impl(
-            id_user,
-            id_host, 2);
-        return *this;
-    }
-
-    detail::parts pt;
-    detail::parse_userinfo(pt, s);
-    auto dest = resize_impl(
-        id_user,
-        id_host,
-        2 + s.size() + 1);
-    dest[0] = '/';
-    dest[1] = '/';
-    dest += 2;
-    s.copy(dest, s.size());
-    pt_.split(
-        id_user,
-        pt.len(id_user));
-    dest[s.size()] = '@';
+    check_invariants();
+    error_code ec;
+    userinfo_bnf t;
+    if(! bnf::parse_string(s, ec, t))
+        detail::throw_invalid_argument(
+            "url::set_encoded_userinfo",
+            BOOST_CURRENT_LOCATION);
+    auto dest = set_userinfo_impl(s.size());
+    pt_.split(id_user, 2 + t.user.str.size());
+    if(! s.empty())
+        std::memcpy(dest, s.data(), s.size());
+    pt_.decoded[id_user] =
+        t.user.decoded_size;
+    if(t.has_password)
+        pt_.decoded[id_pass] =
+            t.password.decoded_size;
+    else
+        pt_.decoded[id_pass] = 0;
+    check_invariants();
     return *this;
 }
 
 //------------------------------------------------
-//
-// host
-//
-//------------------------------------------------
+
+char*
+url::
+set_host_impl(std::size_t n)
+{
+    check_invariants();
+    if(len(id_user) == 0)
+    {
+        // add authority
+        auto dest = resize_impl(
+            id_user, n + 2);
+        pt_.split(id_user, 2);
+        pt_.split(id_pass, 0);
+        dest[0] = '/';
+        dest[1] = '/';
+        check_invariants();
+        return dest + 2;
+    }
+    // already have authority
+    auto const dest =
+        resize_impl(id_host, n);
+    check_invariants();
+    return dest;
+}
+
+url&
+url::
+set_host(
+    urls::ipv4_address const& addr)
+{
+    check_invariants();
+    char buf[urls::
+        ipv4_address::max_str_len];
+    auto s = addr.to_buffer(
+        buf, sizeof(buf));
+    auto dest =
+        set_host_impl(s.size());
+    std::memcpy(
+        dest, s.data(), s.size());
+    pt_.decoded[id_host] = len(id_host);
+    pt_.host_type =
+        urls::host_type::ipv4;
+    auto bytes = addr.to_bytes();
+    std::memcpy(pt_.ip_addr,
+        bytes.data(), bytes.size());
+    check_invariants();
+    return *this;
+}
+
+url&
+url::
+set_host(
+    urls::ipv6_address const& addr)
+{
+    check_invariants();
+    char buf[2 + urls::
+        ipv6_address::max_str_len];
+    auto s = addr.to_buffer(
+        buf + 1, sizeof(buf) - 2);
+    buf[0] = '[';
+    buf[s.size() + 1] = ']';
+    auto dest =
+        set_host_impl(s.size() + 2);
+    std::memcpy(
+        dest, buf, s.size() + 2);
+    pt_.decoded[id_host] = len(id_host);
+    pt_.host_type =
+        urls::host_type::ipv6;
+    auto bytes = addr.to_bytes();
+    std::memcpy(pt_.ip_addr,
+        bytes.data(), bytes.size());
+    check_invariants();
+    return *this;
+}
 
 url&
 url::
 set_host(
     string_view s)
 {
-    if(s.empty())
+    // try ipv4
     {
-        // just hostname
-        if( pt_.len(
-            id_user,
-            id_host) == 2 &&
-            pt_.len(id_port) == 0)
-        {
-            BOOST_ASSERT(pt_.get(
-                id_user, s_
-                    ) == "//");
-            // remove authority
-            resize_impl(
-                id_user,
-                id_path, 0);
-        }
-        else
-        {
-            resize_impl(id_host, 0);
-        }
-        return *this;
+        error_code ec;
+        auto a = make_ipv4_address(s, ec);
+        if(! ec.failed())
+            return set_host(a);
     }
-    detail::parts pt;
-    detail::parse_plain_hostname(pt, s);
-    BOOST_ASSERT(pt.host_type !=
+    check_invariants();
+    masked_char_set<
+        unsub_char_mask> cs;
+    auto const n =
+        pct_encode_size(s, cs);
+    auto dest = set_host_impl(n);
+    dest = detail::pct_encode(
+        dest, get(id_path).data(),
+            s, {},  cs);
+    pt_.decoded[id_host] = s.size();
+    pt_.host_type =
+        urls::host_type::name;
+    check_invariants();
+    return *this;
+}
+
+url&
+url::
+set_encoded_host(string_view s)
+{
+    // first try parsing it
+    host_bnf t;
+    error_code ec;
+    if(! bnf::parse_string(s, ec, t))
+        detail::throw_invalid_argument(
+            "url::set_encoded_host",
+            BOOST_CURRENT_LOCATION);
+    BOOST_ASSERT(t.host_type !=
         urls::host_type::none);
-    if(pt.host_type != urls::host_type::name)
+    if(t.host_type ==
+            urls::host_type::ipv4)
+        return set_host(t.ipv4);
+    if(t.host_type ==
+            urls::host_type::ipv6)
+        return set_host(t.ipv6);
+
+    // set it as a name or ipvfuture
+    check_invariants();
+    pct_decode_opts opt;
+    masked_char_set<
+        unsub_char_mask> cs;
+    opt.plus_to_space = false;
+    auto const n = pct_decode_size(
+        s, ec, cs, opt);
+    if(ec.failed())
+        detail::throw_invalid_argument(
+            "url::set_encoded_host",
+            BOOST_CURRENT_LOCATION);
+    auto dest =
+        set_host_impl(s.size());
+    std::memcpy(
+        dest, s.data(), s.size());
+    pt_.decoded[id_host] = n;
+    pt_.host_type = t.host_type;
+    check_invariants();
+    return *this;
+}
+
+//------------------------------------------------
+
+char*
+url::
+set_port_impl(std::size_t n)
+{
+    check_invariants();
+    if(len(id_user) != 0)
     {
-        if(! has_authority())
-        {
-            // add authority
-            auto const dest = resize_impl(
-                id_user,
-                2 + s.size());
-            dest[0] = '/';
-            dest[1] = '/';
-            pt_.split(
-                id_user, 2);
-            pt_.split(
-                id_pass, 0);
-            s.copy(dest + 2, s.size());
-        }
-        else
-        {
-            auto const dest = resize_impl(
-                id_host,
-                s.size());
-            s.copy(dest, s.size());
-        }
+        // authority exists
+        auto dest = resize_impl(
+            id_port, n + 1);
+        dest[0] = ':';
+        check_invariants();
+        return dest + 1;
     }
-    else
-    {
-        auto const e =
-            detail::reg_name_pct_set();
-        if(! has_authority())
-        {
-            // add authority
-            auto const dest = resize_impl(
-                id_user,
-                2 + e.encoded_size(s));
-            dest[0] = '/';
-            dest[1] = '/';
-            pt_.split(
-                id_user, 2);
-            pt_.split(
-                id_pass, 0);
-            e.encode(dest + 2, s);
-        }
-        else
-        {
-            auto const dest = resize_impl(
-                id_host,
-                e.encoded_size(s));
-            e.encode(dest, s);
-        }
-    }
-    pt_.host_type = pt.host_type;
+    auto dest = resize_impl(
+        id_user, 3 + n);
+    pt_.split(id_user, 2);
+    pt_.split(id_pass, 0);
+    pt_.split(id_host, 0);
+    dest[0] = '/';
+    dest[1] = '/';
+    dest[2] = ':';
+    check_invariants();
+    return dest + 3;
+}
+
+url&
+url::
+remove_port() noexcept
+{
+    check_invariants();
+    resize_impl(id_port, 0);
+    pt_.port_number = 0;
+    check_invariants();
     return *this;
 }
 
 url&
 url::
-set_encoded_host(
-    string_view s)
+set_port(std::uint16_t n)
 {
-    if(s.empty())
-        return set_host(s);
-    detail::parts pt;
-    detail::parse_hostname(pt, s);
-    if(! has_authority())
-    {
-        // add authority
-        auto const dest = resize_impl(
-            id_user,
-            2 + s.size());
-        dest[0] = '/';
-        dest[1] = '/';
-        pt_.split(
-            id_user, 2);
-        pt_.split(
-            id_pass, 0);
-        s.copy(dest + 2, s.size());
-    }
-    else
-    {
-        auto const dest = resize_impl(
-            id_host,
-            s.size());
-        s.copy(dest, s.size());
-    }
-    pt_.host_type = pt.host_type;
+    check_invariants();
+    auto s =
+        detail::make_printed(n);
+    auto dest = set_port_impl(
+        s.str().size());
+    std::memcpy(
+        dest, s.str().data(),
+            s.str().size());
+    pt_.port_number = n;
+    check_invariants();
     return *this;
-}
-
-url&
-url::
-set_port(unsigned n)
-{
-    detail::port_string s(n);
-    return set_port(s.get());
 }
 
 url&
 url::
 set_port(string_view s)
 {
-    if(s.empty())
+    check_invariants();
+    port_bnf t;
+    error_code ec;
+    if(! bnf::parse_string(
+            s, ec, t))
+        detail::throw_invalid_argument(
+            "url::set_port",
+            BOOST_CURRENT_LOCATION);
+    auto dest =
+        set_port_impl(t.str.size());
+    std::memcpy(dest,
+        t.str.data(), t.str.size());
+    if(t.has_number)
+        pt_.port_number = t.number;
+    else
+        pt_.port_number = 0;
+    check_invariants();
+    return *this;
+}
+
+//------------------------------------------------
+
+url&
+url::
+remove_authority() noexcept
+{
+    check_invariants();
+    if(len(id_user) == 0)
     {
-        // just port
-        if(pt_.len(
-            id_user,
-            id_port) == 2)
-        {
-            // remove authority
-            BOOST_ASSERT(pt_.get(
-                id_user, s_).substr(
-                    0, 2) == "//");
-            resize_impl(
-                id_user,
-                id_path, 0);
-        }
-        else
-        {
-            resize_impl(id_port, 0);
-        }
+        // no authority
         return *this;
     }
-    detail::match_port(s);
-    if(! has_authority())
-    {
-        // add authority
-        auto const dest = resize_impl(
-            id_user,
-            3 + s.size());
-        dest[0] = '/';
-        dest[1] = '/';
-        dest[2] = ':';
-        pt_.split(
-            id_user, 2);
-        pt_.split(
-            id_pass, 0);
-        pt_.split(
-            id_host, 0);
-        s.copy(dest + 3, s.size());
-    }
-    else
-    {
-        auto const dest = resize_impl(
-            id_port,
-            1 + s.size());
-        dest[0] = ':';
-        s.copy(dest + 1, s.size());
-    }
+    // remove authority
+    resize_impl(
+        id_user, id_path, 0);
+    pt_.host_type =
+        urls::host_type::none;
+    check_invariants();
     return *this;
 }
 
 url&
 url::
-set_port_part(string_view s)
+set_encoded_authority(string_view s)
 {
-    if(s.empty())
+    error_code ec;
+    authority_bnf t;
+    if(! bnf::parse_string(
+            s, ec, t))
+        detail::throw_invalid_argument(
+            "url::set_encoded_authority",
+            BOOST_CURRENT_LOCATION);
+    auto n = s.size();
+    auto dest = resize_impl(
+        id_user, id_path, n + 2);
+    dest[0] = '/';
+    dest[1] = '/';
+    std::memcpy(dest + 2,
+        s.data(), s.size());
+    if(t.has_userinfo)
     {
-        set_port(s);
-        return *this;
+        auto const& t0 = t.userinfo;
+        pt_.split(id_user,
+            2 + t0.user.str.size());
+        n -= t0.user.str.size();
+        pt_.decoded[id_user] =
+            t0.user.decoded_size;
+        if(t0.has_password)
+        {
+            pt_.split(id_pass, 2 +
+                t0.password.str.size());
+            pt_.decoded[id_pass] =
+                t0.password.decoded_size;
+            n -= 1 + t0.password.str.size();
+        }
+        else
+        {
+            pt_.split(id_pass, 1);
+            pt_.decoded[id_pass] = 0;
+            n -= 1;
+        }
     }
-    if(s.front() != ':')
-        invalid_part::raise();
-    if(s.size() > 1)
-        return set_port(s.substr(1));
-    resize_impl(
-        id_port, 1)[0] = ':';
+    else
+    {
+        pt_.split(id_user, 2);
+        pt_.split(id_pass, 0);
+    }
+    pt_.split(id_host,
+        t.host.host_part.size());
+    n -= t.host.host_part.size();
+    pt_.host_type = t.host.host_type;
+    if(pt_.host_type ==
+        urls::host_type::ipv4)
+    {
+        auto const bytes =
+            t.host.ipv4.to_bytes();
+        std::memcpy(pt_.ip_addr,
+            bytes.data(), bytes.size());
+        pt_.decoded[id_host] =
+            len(id_host);
+    }
+    else if(pt_.host_type ==
+        urls::host_type::ipv6)
+    {
+        auto const bytes =
+            t.host.ipv6.to_bytes();
+        std::memcpy(pt_.ip_addr,
+            bytes.data(), bytes.size());
+        pt_.decoded[id_host] =
+            len(id_host);
+    }
+    else if(pt_.host_type ==
+        urls::host_type::ipvfuture)
+    {
+        pt_.decoded[id_host] =
+            len(id_host);
+    }
+    else
+    {
+        pt_.decoded[id_host] =
+            t.host.name.decoded_size;
+    }
+    if(t.port.has_port)
+    {
+        if(t.port.has_number)
+            pt_.port_number =
+                t.port.port_number;
+        else
+            pt_.port_number = 0;
+    }
+    else
+    {
+        pt_.port_number = 0;
+    }
+    check_invariants();
     return *this;
 }
+
+//------------------------------------------------
+
+url&
+url::
+set_encoded_origin(
+    string_view s)
+{
+    return *this;
+}
+
+//------------------------------------------------
+
+#if 0
 
 //------------------------------------------------
 //
@@ -2102,7 +2355,7 @@ resize_impl(
         if(s_)
         {
             BOOST_ASSERT(cap_ != 0);
-            std::memcpy(p, s_, pt_.len() + 1);
+            std::memcpy(p, s_, pt_.offset[id_end] + 1);
             sp_->deallocate(s_, cap_ + 1, 1);
         }
         s_ = p;
@@ -2132,12 +2385,7 @@ resize_impl(
     auto const n0 =
         pt_.len(first, last);
     if(new_len == 0 && n0 == 0)
-    {
-        // VFALCO This happens
-        BOOST_ASSERT(s_ != nullptr);
         return s_ + pt_.offset[first];
-    }
-
     if(new_len <= n0)
     {
         // shrinking
@@ -2159,28 +2407,28 @@ resize_impl(
         for(auto i = last;
                 i <= id_end; ++i)
             pt_.offset[i] -= n;
-        s_[pt_.len()] = '\0';
+        s_[pt_.offset[id_end]] = '\0';
         return s_ + pt_.offset[first];
     }
 
     // growing
     std::size_t n = new_len - n0;
 
-    if(n > max_size() - pt_.len())
+    if(n > max_size() - pt_.offset[id_end])
         detail::throw_length_error(
-            "url::resize",
+            "url::resize_impl",
             BOOST_CURRENT_LOCATION);
 
-    if(cap_ < pt_.len() + n)
+    if(cap_ < pt_.offset[id_end] + n)
     {
         // reallocate
         auto new_cap = growth_impl(
-            cap_, pt_.len() + n);
+            cap_, pt_.offset[id_end] + n);
         auto s1 = alloc_impl(new_cap);
         if(s_)
         {
             BOOST_ASSERT(cap_ != 0);
-            std::memcpy(s1, s_, pt_.len() + 1);
+            std::memcpy(s1, s_, pt_.offset[id_end] + 1);
             free_impl(s_);
         }
         s_ = s1;
@@ -2204,7 +2452,7 @@ resize_impl(
     for(auto i = last;
         i <= id_end; ++i)
         pt_.offset[i] += n;
-    s_[pt_.len()] = '\0';
+    s_[pt_.offset[id_end]] = '\0';
     return s_ + pt_.offset[first];
 }
 
