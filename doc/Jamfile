@@ -13,6 +13,10 @@ import boostbook ;
 import os ;
 import ../../../tools/docca/docca.jam ;
 
+local broot = [ os.environ BOOST_ROOT ] ;
+
+path-constant out : . ;
+
 docca.reference reference.qbk
     :
         xsl/custom-overrides.xsl
@@ -92,6 +96,16 @@ xml url_doc
 
 explicit url_doc ;
 
+install treeimages
+    :
+        [ glob $(broot)/doc/src/images/*.png ]
+        images/doc-logo.png
+    :
+        <location>$(out)/html/images
+    ;
+
+explicit treeimages ;
+
 #-------------------------------------------------------------------------------
 #
 # HTML documentation for $(BOOST_ROOT)/doc/html
@@ -103,6 +117,13 @@ boostbook url
         url_doc
     :
         <xsl:param>boost.root=../../../..
+        <xsl:param>nav.layout=none
+        <xsl:param>boost.image.src=images/doc-logo.png
+        <xsl:param>boost.image.alt="Boost.URL Logo"
+        <xsl:param>boost.image.w=880
+        <xsl:param>boost.image.h=80
+        <xsl:param>boost.graphics.root=images/
+        <xsl:param>html.stylesheet=boostbook.css
         <xsl:param>chapter.autolabel=1
         <xsl:param>chunk.section.depth=8                # Depth to which sections should be chunked
         <xsl:param>chunk.first.sections=1               # Chunk the first top-level section?
@@ -111,7 +132,9 @@ boostbook url
         <xsl:param>generate.section.toc.level=8         # Control depth of TOC generation in sections
         <xsl:param>generate.toc="chapter toc,title section nop reference nop"
         <include>../../../tools/boostbook/dtd
-    :   <dependency>stylesheets
+    :
+        <dependency>stylesheets
+        <dependency>treeimages
         <dependency>images
     ;
 
