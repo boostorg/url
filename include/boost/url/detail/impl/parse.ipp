@@ -22,6 +22,7 @@ apply(
     scheme_part_bnf const& t) noexcept
 {
     p.scheme = t.scheme_id;
+    if(t.scheme_id != scheme::none)
     p.resize(
         part::id_scheme,
         t.scheme_part.size());

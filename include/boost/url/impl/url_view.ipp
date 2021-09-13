@@ -483,6 +483,10 @@ str() const
 }
 
 //------------------------------------------------
+//
+// parsing
+//
+//------------------------------------------------
 
 url_view
 parse_uri(
@@ -526,6 +530,8 @@ parse_uri(
     return u;
 }
 
+//------------------------------------------------
+
 url_view
 parse_relative_ref(
     string_view s,
@@ -566,6 +572,52 @@ parse_relative_ref(
         BOOST_CURRENT_LOCATION);
     return u;
 }
+
+//------------------------------------------------
+
+url_view
+parse_uri_reference(
+    string_view s,
+    error_code& ec) noexcept
+{
+    uri_reference_bnf t;
+    if(! bnf::parse_string(s, ec, t))
+        return {};
+
+    detail::parts p;
+
+    // scheme
+    detail::apply(p, t.scheme_part);
+
+    // authority
+    if(t.has_authority)
+        detail::apply(p,
+            t.authority);
+
+    // path
+    detail::apply(p, t.path);
+
+    // query
+    detail::apply(p, t.query_part);
+
+    // fragment
+    detail::apply(p, t.fragment_part);
+
+    return url_view(s.data(), p);
+}
+
+url_view
+parse_uri_reference(
+    string_view s)
+{
+    error_code ec;
+    auto u = parse_uri_reference(s, ec);
+    detail::maybe_throw(ec,
+        BOOST_CURRENT_LOCATION);
+    return u;
+}
+
+//------------------------------------------------
 
 std::ostream&
 operator<<(

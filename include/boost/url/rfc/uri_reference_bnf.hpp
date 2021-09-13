@@ -7,31 +7,37 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_RELATIVE_REF_BNF_HPP
-#define BOOST_URL_RFC_RELATIVE_REF_BNF_HPP
+#ifndef BOOST_URL_RFC_URI_REFERENCE_BNF_HPP
+#define BOOST_URL_RFC_URI_REFERENCE_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/rfc/fragment_part_bnf.hpp>
 #include <boost/url/rfc/query_part_bnf.hpp>
-#include <boost/url/rfc/relative_part_bnf.hpp>
+#include <boost/url/rfc/scheme_part_bnf.hpp>
 
 namespace boost {
 namespace urls {
 
-/** BNF for relative-ref
+/** BNF for URI-reference
 
     @par BNF
     @code
+    URI-reference = URI / relative-ref
+
+    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
     relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
     @endcode
 
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-4.2
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3
 */
-struct relative_ref_bnf
+struct uri_reference_bnf
 {
-    relative_part_bnf   relative_part;
+    scheme_part_bnf     scheme_part;
+    bool                has_authority = false;
+    authority_bnf       authority;
+    parsed_path         path;
     query_part_bnf      query_part;
     fragment_part_bnf   fragment_part;
 
@@ -42,7 +48,7 @@ struct relative_ref_bnf
         char const*& it,
         char const* const end,
         error_code& ec,
-        relative_ref_bnf& t);
+        uri_reference_bnf& t);
 };
 
 } // urls

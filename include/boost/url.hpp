@@ -54,6 +54,7 @@
 #include <boost/url/rfc/scheme_bnf.hpp>
 #include <boost/url/rfc/scheme_part_bnf.hpp>
 #include <boost/url/rfc/uri_bnf.hpp>
+#include <boost/url/rfc/uri_reference_bnf.hpp>
 #include <boost/url/rfc/userinfo_bnf.hpp>
 
 #endif

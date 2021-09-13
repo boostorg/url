@@ -666,31 +666,12 @@ public:
     //
     //--------------------------------------------
 
-    BOOST_URL_DECL
-    friend
-    url_view
-    parse_uri(
-        string_view s,
-        error_code& ec) noexcept;
-
-    BOOST_URL_DECL
-    friend
-    url_view
-    parse_uri(
-        string_view s);
-
-    BOOST_URL_DECL
-    friend
-    url_view
-    parse_relative_ref(
-        string_view s,
-        error_code& ec) noexcept;
-
-    BOOST_URL_DECL
-    friend
-    url_view
-    parse_relative_ref(
-        string_view s);
+    BOOST_URL_DECL friend url_view parse_uri(
+        string_view s, error_code& ec) noexcept;
+    BOOST_URL_DECL friend url_view parse_relative_ref(
+        string_view s, error_code& ec) noexcept;
+    BOOST_URL_DECL friend url_view parse_uri_reference(
+        string_view s, error_code& ec) noexcept;
 };
 
 //------------------------------------------------
@@ -765,6 +746,30 @@ parse_relative_ref(
 BOOST_URL_DECL
 url_view
 parse_relative_ref(
+    string_view s);
+
+/** Parse a URI-reference
+
+    @par BNF
+    @code
+    URI-reference = URI / relative-ref
+
+    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+    @endcode
+
+    @see
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3
+*/
+BOOST_URL_DECL
+url_view
+parse_uri_reference(
+    string_view s,
+    error_code& ec) noexcept;
+
+BOOST_URL_DECL
+url_view
+parse_uri_reference(
     string_view s);
 
 /** Format the serialized url to the output stream

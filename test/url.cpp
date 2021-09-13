@@ -1005,6 +1005,8 @@ public:
                 BOOST_TEST(url(parse_uri(s1)
                     ).set_encoded_password(s2).str() == s3);
         };
+
+        clear("", "");
     }
 
     //--------------------------------------------

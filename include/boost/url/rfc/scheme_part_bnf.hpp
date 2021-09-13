@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_SCHEME_PART_BNF_HPP
-#define BOOST_URL_SCHEME_PART_BNF_HPP
+#ifndef BOOST_URL_RFC_SCHEME_PART_BNF_HPP
+#define BOOST_URL_RFC_SCHEME_PART_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
@@ -33,7 +33,8 @@ namespace urls {
 struct scheme_part_bnf
 {
     string_view scheme;
-    urls::scheme scheme_id;
+    urls::scheme scheme_id =
+        urls::scheme::none;
     string_view scheme_part;
 
     BOOST_URL_DECL

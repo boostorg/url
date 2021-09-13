@@ -61,6 +61,7 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/scheme_bnf.ipp>
 #include <boost/url/rfc/impl/scheme_part_bnf.ipp>
 #include <boost/url/rfc/impl/uri_bnf.ipp>
+#include <boost/url/rfc/impl/uri_reference_bnf.ipp>
 #include <boost/url/rfc/impl/userinfo_bnf.ipp>
 
 #endif

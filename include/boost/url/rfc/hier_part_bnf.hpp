@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_HIER_PART_HPP
-#define BOOST_URL_HIER_PART_HPP
+#ifndef BOOST_URL_RFC_HIER_PART_HPP
+#define BOOST_URL_RFC_HIER_PART_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>

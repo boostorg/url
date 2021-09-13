@@ -966,8 +966,7 @@ url::
 clear_password() noexcept
 {
     assert_userinfo();
-    auto const n =
-        len(id_pass);
+    auto const n = len(id_pass);
     if(n == 0)
         return *this;
     if(len(id_user) == 2)
