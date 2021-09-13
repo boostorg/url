@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/hier_part_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/detail/paths_bnf.hpp>
+#include <boost/url/rfc/paths_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -25,9 +25,6 @@ parse(
     hier_part_bnf& t)
 {
     using bnf::parse;
-    using detail::path_rootless_bnf;
-    using detail::path_absolute_bnf;
-    using detail::path_abempty_bnf;
     if(it == end)
     {
         // path-empty
@@ -69,7 +66,7 @@ parse(
         return false;
     // path-abempty
     if(! parse(it, end, ec,
-        path_abempty_bnf{r}))
+            path_abempty_bnf{r}))
         return false;
     t.path = r.str();
     t.path_count = r.size();

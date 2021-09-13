@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/relative_part_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/detail/paths_bnf.hpp>
+#include <boost/url/rfc/paths_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -25,9 +25,6 @@ parse(
     relative_part_bnf& t)
 {
     using bnf::parse;
-    using detail::path_noscheme_bnf;
-    using detail::path_absolute_bnf;
-    using detail::path_abempty_bnf;
     if(it == end)
     {
         // path-empty

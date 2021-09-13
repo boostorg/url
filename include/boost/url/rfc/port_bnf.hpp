@@ -13,7 +13,6 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/optional.hpp>
 #include <cstdint>
 
 namespace boost {

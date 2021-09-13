@@ -13,8 +13,8 @@
 #include <boost/url/path_view.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/parse.hpp>
+#include <boost/url/rfc/paths_bnf.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
-#include <boost/url/rfc/detail/paths_bnf.hpp>
 #include <boost/url/detail/except.hpp>
 
 namespace boost {
@@ -40,7 +40,7 @@ iterator(
 {
     using bnf::parse;
     using bnf_t =
-        detail::path_rootless_bnf;
+        path_rootless_bnf;
     if(next_ == end_)
     {
         next_ = nullptr;
@@ -83,7 +83,7 @@ operator++() noexcept ->
 {
     using bnf::parse;
     using bnf_t =
-        detail::path_rootless_bnf;
+        path_rootless_bnf;
     BOOST_ASSERT(next_ != nullptr);
     ++i_;
     pos_ = next_;
@@ -108,7 +108,7 @@ operator--() noexcept ->
 {
     using bnf::parse;
     using bnf_t =
-        detail::path_rootless_bnf;
+        path_rootless_bnf;
     BOOST_ASSERT(i_ != 0);
     BOOST_ASSERT(pos_ != begin_);
     --i_;
@@ -171,7 +171,7 @@ parse_path_abempty(
     bnf::range<
         pct_encoded_str> t;
     if(! parse_string(s, ec,
-        detail::path_abempty_bnf{t}))
+            path_abempty_bnf{t}))
         return {};
     return path_view(
         t.str(), t.size());
@@ -197,7 +197,7 @@ parse_path_absolute(
     bnf::range<
         pct_encoded_str> t;
     if(! parse_string(s, ec,
-        detail::path_absolute_bnf{t}))
+            path_absolute_bnf{t}))
         return {};
     return path_view(
         t.str(), t.size());
@@ -223,7 +223,7 @@ parse_path_noscheme(
     bnf::range<
         pct_encoded_str> t;
     if(! parse_string(s, ec,
-        detail::path_noscheme_bnf{t}))
+            path_noscheme_bnf{t}))
         return {};
     return path_view(
         t.str(), t.size());
@@ -249,7 +249,7 @@ parse_path_rootless(
     bnf::range<
         pct_encoded_str> t;
     if(! parse_string(s, ec,
-        detail::path_rootless_bnf{t}))
+            path_rootless_bnf{t}))
         return {};
     return path_view(
         t.str(), t.size());
