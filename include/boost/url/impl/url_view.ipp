@@ -504,9 +504,7 @@ parse_uri(
             t.hier_part.authority);
 
     // path
-    detail::apply_path(p,
-        t.hier_part.path,
-        t.hier_part.path_count);
+    detail::apply(p, t.hier_part.path);
 
     // query
     detail::apply(p, t.query_part);
@@ -546,9 +544,8 @@ parse_relative_ref(
             t.relative_part.authority);
 
     // path
-    detail::apply_path(p,
-        t.relative_part.path,
-        t.relative_part.path_count);
+    detail::apply(p,
+        t.relative_part.path);
 
     // query
     detail::apply(p, t.query_part);

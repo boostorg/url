@@ -29,20 +29,17 @@ parse(
     {
         // path-empty
         t.path = {};
-        t.path_count = 0;
         t.has_authority = false;
         ec = {};
         return true;
     }
-    bnf::range<pct_encoded_str> r;
     if(it[0] != '/')
     {
         // path-rootless
         if(! parse(it, end, ec,
-            path_rootless_bnf{r}))
+            path_rootless_bnf{
+                t.path}))
             return false;
-        t.path = r.str();
-        t.path_count = r.size();
         t.has_authority = false;
         return true;
     }
@@ -51,10 +48,9 @@ parse(
     {
         // path-absolute
         if(! parse(it, end, ec,
-            path_absolute_bnf{r}))
+            path_absolute_bnf{
+                t.path}))
             return false;
-        t.path = r.str();
-        t.path_count = r.size();
         t.has_authority = false;
         return true;
     }
@@ -66,10 +62,9 @@ parse(
         return false;
     // path-abempty
     if(! parse(it, end, ec,
-            path_abempty_bnf{r}))
+        path_abempty_bnf{
+            t.path}))
         return false;
-    t.path = r.str();
-    t.path_count = r.size();
     t.has_authority = true;
     return true;
 }

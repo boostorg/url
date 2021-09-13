@@ -12,11 +12,26 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/bnf/range.hpp>
 #include <boost/url/pct_encoding_types.hpp>
+#include <cstddef>
 
 namespace boost {
 namespace urls {
+
+/** Information about a parsed path
+*/
+struct parsed_path
+{
+    /** The encoded string representing the path
+    */
+    string_view path;
+
+    /** The number of segments in the path
+    */
+    std::size_t count = 0;
+};
+
+//------------------------------------------------
 
 struct segment_bnf
 {
@@ -69,8 +84,7 @@ struct segment_nz_nc_bnf
 // path-abempty  = *( "/" segment )
 struct path_abempty_bnf
 {
-    bnf::range<
-        pct_encoded_str>& v;
+    parsed_path& v;
 
     BOOST_URL_DECL
     static
@@ -105,8 +119,7 @@ struct path_abempty_bnf
 // path-absolute = "/" [ segment-nz *( "/" segment ) ]
 struct path_absolute_bnf
 {
-    bnf::range<
-        pct_encoded_str>& v;
+    parsed_path& v;
 
     BOOST_URL_DECL
     static
@@ -141,8 +154,7 @@ struct path_absolute_bnf
 // path-noscheme = segment-nz-nc *( "/" segment )
 struct path_noscheme_bnf
 {
-    bnf::range<
-        pct_encoded_str>& v;
+    parsed_path& v;
 
     BOOST_URL_DECL
     static
@@ -177,8 +189,7 @@ struct path_noscheme_bnf
 // path-rootless = segment-nz *( "/" segment )
 struct path_rootless_bnf
 {
-    bnf::range<
-        pct_encoded_str>& v;
+    parsed_path& v;
 
     BOOST_URL_DECL
     static

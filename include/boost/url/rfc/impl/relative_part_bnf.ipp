@@ -30,19 +30,16 @@ parse(
         // path-empty
         ec = {};
         t.path = {};
-        t.path_count = 0;
         t.has_authority = false;
         return true;
     }
-    bnf::range<pct_encoded_str> r;
     if(it[0] != '/')
     {
         // path-noscheme
         if(! parse(it, end, ec,
-            path_noscheme_bnf{r}))
+            path_noscheme_bnf{
+                t.path}))
             return false;
-        t.path = r.str();
-        t.path_count = r.size();
         t.has_authority = false;
         return true;
     }
@@ -50,11 +47,11 @@ parse(
         it[1] != '/')
     {
         // path-absolute
+        parsed_path t0;
         if(! parse(it, end, ec,
-            path_absolute_bnf{r}))
+            path_absolute_bnf{
+                t.path}))
             return false;
-        t.path = r.str();
-        t.path_count = r.size();
         t.has_authority = false;
         return true;
     }
@@ -63,11 +60,11 @@ parse(
     if(! parse(it, end, ec,
             t.authority))
         return false;
+    parsed_path t0;
     if(! parse(it, end, ec,
-        path_abempty_bnf{r}))
+        path_abempty_bnf{
+            t.path}))
         return false;
-    t.path = r.str();
-    t.path_count = r.size();
     t.has_authority = true;
     return true;
 }

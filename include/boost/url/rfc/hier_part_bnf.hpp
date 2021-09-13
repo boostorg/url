@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
+#include <boost/url/rfc/paths_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -34,8 +35,7 @@ struct hier_part_bnf
 {
     bool has_authority = false;
     authority_bnf authority;
-    string_view path;
-    std::size_t path_count = 0;
+    parsed_path path;
 
     BOOST_URL_DECL
     friend

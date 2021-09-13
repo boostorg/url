@@ -122,8 +122,13 @@ parse(
     error_code& ec,
     path_abempty_bnf const& t)
 {
-    return bnf::parse_range(
-        it, end, ec, t.v, t);
+    bnf::range<pct_encoded_str> r;
+    if(! bnf::parse_range(
+        it, end, ec, r, t))
+        return false;
+    t.v.path = r.str();
+    t.v.count = r.size();
+    return true;
 }
 
 //------------------------------------------------
@@ -187,8 +192,13 @@ parse(
     error_code& ec,
     path_absolute_bnf const& t)
 {
-    return bnf::parse_range(
-        it, end, ec, t.v, t);
+    bnf::range<pct_encoded_str> r;
+    if(! bnf::parse_range(
+            it, end, ec, r, t))
+        return false;
+    t.v.path = r.str();
+    t.v.count = r.size();
+    return true;
 }
 
 //------------------------------------------------
@@ -235,8 +245,13 @@ parse(
     error_code& ec,
     path_noscheme_bnf const& t)
 {
-    return bnf::parse_range(
-        it, end, ec, t.v, t);
+    bnf::range<pct_encoded_str> r;
+    if(! bnf::parse_range(
+            it, end, ec, r, t))
+        return false;
+    t.v.path = r.str();
+    t.v.count = r.size();
+    return true;
 }
 
 //------------------------------------------------
@@ -279,8 +294,13 @@ parse(
     error_code& ec,
     path_rootless_bnf const& t)
 {
-    return bnf::parse_range(
-        it, end, ec, t.v, t);
+    bnf::range<pct_encoded_str> r;
+    if(! bnf::parse_range(
+            it, end, ec, r, t))
+        return false;
+    t.v.path = r.str();
+    t.v.count = r.size();
+    return true;
 }
 
 } // urls

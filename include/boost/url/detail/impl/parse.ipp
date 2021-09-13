@@ -134,14 +134,13 @@ apply(
 }
 
 void
-apply_path(
+apply(
     parts& p,
-    string_view path,
-    std::size_t path_count) noexcept
+    parsed_path const& t) noexcept
 {
     p.resize(part::id_path,
-        path.size());
-    p.nseg = path_count;
+        t.path.size());
+    p.nseg = t.count;
 }
 
 void

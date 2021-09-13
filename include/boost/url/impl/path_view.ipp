@@ -168,13 +168,12 @@ parse_path_abempty(
     error_code& ec) noexcept
 {
     using bnf::parse_string;
-    bnf::range<
-        pct_encoded_str> t;
+    parsed_path t;
     if(! parse_string(s, ec,
             path_abempty_bnf{t}))
         return {};
     return path_view(
-        t.str(), t.size());
+        t.path, t.count);
 }
 
 path_view
@@ -194,13 +193,12 @@ parse_path_absolute(
     error_code& ec) noexcept
 {
     using bnf::parse_string;
-    bnf::range<
-        pct_encoded_str> t;
+    parsed_path t;
     if(! parse_string(s, ec,
             path_absolute_bnf{t}))
         return {};
     return path_view(
-        t.str(), t.size());
+        t.path, t.count);
 }
 
 path_view
@@ -220,13 +218,12 @@ parse_path_noscheme(
     error_code& ec) noexcept
 {
     using bnf::parse_string;
-    bnf::range<
-        pct_encoded_str> t;
+    parsed_path t;
     if(! parse_string(s, ec,
             path_noscheme_bnf{t}))
         return {};
     return path_view(
-        t.str(), t.size());
+        t.path, t.count);
 }
 
 path_view
@@ -246,13 +243,12 @@ parse_path_rootless(
     error_code& ec) noexcept
 {
     using bnf::parse_string;
-    bnf::range<
-        pct_encoded_str> t;
+    parsed_path t;
     if(! parse_string(s, ec,
             path_rootless_bnf{t}))
         return {};
     return path_view(
-        t.str(), t.size());
+        t.path, t.count);
 }
 
 path_view

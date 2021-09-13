@@ -11,13 +11,11 @@
 #define BOOST_URL_DETAIL_PARSE_HPP
 
 #include <boost/url/detail/parts.hpp>
-#include <boost/url/bnf/range.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
-#include <boost/url/rfc/host_bnf.hpp>
-#include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/rfc/detail/query_params_bnf.hpp>
-
 #include <boost/url/rfc/fragment_part_bnf.hpp>
+#include <boost/url/rfc/host_bnf.hpp>
+#include <boost/url/rfc/paths_bnf.hpp>
+#include <boost/url/rfc/pct_encoded_bnf.hpp>
 #include <boost/url/rfc/query_part_bnf.hpp>
 #include <boost/url/rfc/scheme_part_bnf.hpp>
 
@@ -41,10 +39,9 @@ apply(
     authority_bnf const& t) noexcept;
 
 void
-apply_path(
+apply(
     parts& p,
-    string_view path,
-    std::size_t path_count) noexcept;
+    parsed_path const& path) noexcept;
 
 void
 apply(
