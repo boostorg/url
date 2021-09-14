@@ -151,40 +151,10 @@ public:
     }
 
     void
-    testSetScheme()
-    {
-        {
-            url_t u;
-            u = parse_uri("http://www.example.com");
-            u.set_scheme("");
-            BOOST_TEST(u.str() == "//www.example.com");
-        }
-        {
-            url_t u;
-            u = parse_uri("http:live/wire");
-            u.set_scheme("");
-            BOOST_TEST(u.str() == "live/wire");
-        }
-        {
-            url_t u;
-            u = parse_uri("http:my:adidas");
-            u.set_scheme("");
-            BOOST_TEST(u.str() == "./my:adidas");
-        }
-        {
-            url_t u;
-            u = parse_uri("http:my:adidas/");
-            u.set_scheme("");
-            BOOST_TEST(u.str() == "./my:adidas/");
-        }
-    }
-
-    void
     run()
     {
         testSpecial();
         testParts();
-        testSetScheme();
     }
 };
 

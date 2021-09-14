@@ -747,8 +747,21 @@ public:
         This function removes the scheme if it
         is present.
 
+        @par BNF
+        @code
+        URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+        @endcode
+
         @par Exception Safety
         Does not throw.
+
+        @return A reference to the object, for chaining.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
+            3.1. Scheme (rfc3986)</a>
+
+        @see @ref set_scheme.
     */
     BOOST_URL_DECL
     url&
@@ -757,21 +770,14 @@ public:
     /** Set the scheme
 
         This function sets the scheme to the specified
-        string:
-
-        @li If the string is empty, any existing scheme
-        is removed along with the trailing colon (':'),
-        otherwise:
-
-        @li The scheme is set to the string, which must
-        contain a valid scheme. A trailing colon is
-        automatically added.
+        string, which must contain a valid scheme
+        without a trailing colon (':'). If the scheme
+        is invalid, an exception is thrown.
 
         @par Example
         @code
         url u;
         u.set_scheme( "http" );         // produces "http:"
-        u.set_scheme( "" );             // produces ""
         u.set_scheme( "1forall");       // throws, invalid scheme
         @endcode
 
@@ -786,9 +792,7 @@ public:
 
         @return A reference to the object, for chaining.
 
-        @param s The scheme to set. This string must
-        not include a trailing colon, otherwise an
-        exception is thrown.
+        @param s The scheme to set.
 
         @throw std::invalid_argument invalid scheme.
 
@@ -800,29 +804,21 @@ public:
     url&
     set_scheme(string_view s);
 
-    /** Set the scheme.
+    /** Set the scheme
 
         This function sets the scheme to the specified
-        string:
-
-        @li If `id` is @ref scheme::none, any existing
-        scheme is removed along with the trailing
-        colon (':'), otherwise:
-
-        @li The scheme is set to `id`, which must
-        not be equal to @ref scheme::unknown.
+        known @ref urls::scheme id, which may not be
+        @ref scheme::unknown or else an exception is
+        thrown. If the id is @ref scheme::none, this
+        function behaves as if @ref remove_scheme
+        were called.
 
         @par Example
         @code
         url u;
-        u.set_scheme( scheme::http );       // produces "http:"
-        u.set_scheme( scheme::none );       // produces ""
-        u.set_scheme( scheme::unknown);     // throws, invalid scheme
-        @endcode
-
-        @par BNF
-        @code
-        scheme        = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+        u.set_scheme( scheme::http );           // produces "http:"
+        u.set_scheme( scheme::none );           // produces ""
+        u.set_scheme( scheme::unknown);         // throws, invalid scheme
         @endcode
 
         @par Exception Safety
@@ -831,9 +827,13 @@ public:
 
         @return A reference to the object, for chaining.
 
-        @param id The scheme to set.
+        @param s The scheme to set.
 
-        @throw std::invalid_argument `id == scheme::unknown`
+        @throw std::invalid_argument invalid scheme.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
+            3.1. Scheme (rfc3986)</a>
     */
     BOOST_URL_DECL
     url&
@@ -1422,6 +1422,7 @@ public:
     url&
     remove_origin() noexcept;
 
+private:
     //--------------------------------------------
     //
     // path

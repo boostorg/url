@@ -48,8 +48,9 @@
           <member><link linkend="url.ref.boost__urls__parse_uri">parse_uri</link></member>
           <member><link linkend="url.ref.boost__urls__parse_uri_reference">parse_uri_reference</link></member>
         </simplelist>
-        <bridgehead renderas="sect3">Type Traits</bridgehead>
+        <bridgehead renderas="sect3">Operators</bridgehead>
         <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__operator_lt__lt_">operator&lt;&lt;</link></member>
         </simplelist>
       </entry>
       <entry valign="top">
@@ -62,20 +63,12 @@
           <member><link linkend="url.ref.boost__urls__string_view">string_view</link></member>
           <member><link linkend="url.ref.boost__urls__system_error">system_error</link></member>
         </simplelist>
-        <bridgehead renderas="sect3">Operators</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__operator_lt__lt_">operator&lt;&lt;</link></member>
-        </simplelist>
         <bridgehead renderas="sect3">Constants</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__condition">condition</link></member>
           <member><link linkend="url.ref.boost__urls__error">error</link></member>
           <member><link linkend="url.ref.boost__urls__host_type">host_type</link></member>
           <member><link linkend="url.ref.boost__urls__scheme">scheme</link></member>
-        </simplelist>
-        <bridgehead renderas="sect3">Concepts</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member>CharSet</member>
         </simplelist>
       </entry>
       <entry valign="top">
@@ -91,6 +84,10 @@
           <member><link linkend="url.ref.boost__urls__pct_decode_opts">pct_decode_opts</link></member>
           <member><link linkend="url.ref.boost__urls__pct_encode_opts">pct_encode_opts</link></member>
           <member><link linkend="url.ref.boost__urls__pct_encoded_str">pct_encoded_str</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">Concepts</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member>CharSet</member>
         </simplelist>
       </entry>
     </row></tbody>

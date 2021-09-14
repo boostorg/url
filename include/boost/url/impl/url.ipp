@@ -773,85 +773,6 @@ set_scheme_impl(
     urls::scheme id)
 {
     check_invariants();
-    if(s.empty())
-    {
-        auto const n = len(id_scheme);
-        if(n == 0)
-            return;
-
-        // Check if we are changing
-        // path-rootless to path-noscheme
-        bool const need_dot = [this]
-        {
-            if(len(id_user) >= 2)
-            {
-                // authority
-                return false;
-            }
-            auto s = get(id_path);
-            if(s.empty())
-            {
-                // path-empty
-                return false;
-            }
-            if(s.starts_with('/'))
-            {
-                // path-absolute
-                return false;
-            }
-            auto const p = static_cast<
-                url const*>(this)->path();
-            BOOST_ASSERT(! p.empty());
-            auto it = p.begin();
-            s = it->encoded_segment();
-            if(s.find_first_of(':') ==
-                string_view::npos)
-            {
-                // path-noscheme
-                return false;
-            }
-            return true;
-        }();
-
-        if(! need_dot)
-        {
-            // just remove the scheme
-            resize_impl(id_scheme, 0);
-            pt_.scheme = id;
-            check_invariants();
-            return;
-        }
-
-        // remove the scheme but add "./"
-        // to the beginning of the path
-        BOOST_ASSERT(n >= 2);
-        std::memmove(
-            s_, s_ + n,
-            pt_.offset[id_path] - n);
-        std::memmove(
-            s_ + pt_.offset[
-                id_path] - (n - 2),
-            s_ + pt_.offset[id_path],
-            pt_.offset[id_end] -
-                pt_.offset[id_path]);
-        pt_.offset[id_scheme] = 0;
-        for(int i = id_user;
-                i <= id_path; ++i)
-            pt_.offset[i] -= n;
-        for(int i = id_query;
-                i <= id_end; ++i)
-            pt_.offset[i] -= n - 2;
-        auto dest = s_ +
-            pt_.offset[id_path];
-        dest[0] = '.';
-        dest[1] = '/';
-        dest[pt_.offset[id_end]] = '\0';
-        ++pt_.nseg;
-        pt_.scheme = id;
-        check_invariants();
-        return;
-    }
-
     scheme_bnf b;
     error_code ec;
     bnf::parse_string(s, ec, b);
@@ -873,8 +794,81 @@ url&
 url::
 remove_scheme() noexcept
 {
-    set_scheme_impl(
-        "", urls::scheme::none);
+    check_invariants();
+    auto const n = len(id_scheme);
+    if(n == 0)
+        return *this;
+
+    // Check if we are changing
+    // path-rootless to path-noscheme
+    bool const need_dot = [this]
+    {
+        if(len(id_user) >= 2)
+        {
+            // authority
+            return false;
+        }
+        auto s = get(id_path);
+        if(s.empty())
+        {
+            // path-empty
+            return false;
+        }
+        if(s.starts_with('/'))
+        {
+            // path-absolute
+            return false;
+        }
+        auto const p = static_cast<
+            url const*>(this)->path();
+        BOOST_ASSERT(! p.empty());
+        auto it = p.begin();
+        s = it->encoded_segment();
+        if(s.find_first_of(':') ==
+            string_view::npos)
+        {
+            // path-noscheme
+            return false;
+        }
+        return true;
+    }();
+
+    if(! need_dot)
+    {
+        // just remove the scheme
+        resize_impl(id_scheme, 0);
+        pt_.scheme = urls::scheme::none;
+        check_invariants();
+        return *this;
+    }
+
+    // remove the scheme but add "./"
+    // to the beginning of the path
+    BOOST_ASSERT(n >= 2);
+    std::memmove(
+        s_, s_ + n,
+        pt_.offset[id_path] - n);
+    std::memmove(
+        s_ + pt_.offset[
+            id_path] - (n - 2),
+        s_ + pt_.offset[id_path],
+        pt_.offset[id_end] -
+            pt_.offset[id_path]);
+    pt_.offset[id_scheme] = 0;
+    for(int i = id_user;
+            i <= id_path; ++i)
+        pt_.offset[i] -= n;
+    for(int i = id_query;
+            i <= id_end; ++i)
+        pt_.offset[i] -= n - 2;
+    auto dest = s_ +
+        pt_.offset[id_path];
+    dest[0] = '.';
+    dest[1] = '/';
+    dest[pt_.offset[id_end]] = '\0';
+    ++pt_.nseg;
+    pt_.scheme = urls::scheme::none;
+    check_invariants();
     return *this;
 }
 
@@ -896,10 +890,7 @@ set_scheme(urls::scheme id)
             "url::set_scheme",
             BOOST_CURRENT_LOCATION);
     if(id == urls::scheme::none)
-    {
-        set_scheme_impl("", id);
-        return *this;
-    }
+        return remove_scheme();
     set_scheme_impl(
         to_string(id), id);
     return *this;

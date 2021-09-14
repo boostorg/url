@@ -568,6 +568,10 @@ public:
         set("//a.b/1/2", "ws","ws://a.b/1/2", scheme::ws);
         set("//a:b@c.d/1/?#", "ws",
             "ws://a:b@c.d/1/?#", scheme::ws);
+
+        BOOST_TEST_THROWS(
+            url().set_scheme(""),
+            std::invalid_argument);
     }
 
     //--------------------------------------------
