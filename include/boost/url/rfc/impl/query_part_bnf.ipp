@@ -25,7 +25,6 @@ parse(
     query_part_bnf& t)
 {
     using bnf::parse;
-    using detail::query_params_bnf;
     auto start = it;
     if( it == end ||
         *it != '?')

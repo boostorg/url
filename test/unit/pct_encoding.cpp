@@ -11,7 +11,7 @@
 #include <boost/url/pct_encoding.hpp>
 
 #include <boost/url/static_pool.hpp>
-#include <boost/url/detail/test/test_suite.hpp>
+#include "test_suite.hpp"
 
 namespace boost {
 namespace urls {

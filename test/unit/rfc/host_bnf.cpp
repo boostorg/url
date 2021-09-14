@@ -13,7 +13,7 @@
 #include <boost/url/bnf/parse.hpp>
 #include <boost/static_assert.hpp>
 
-#include <boost/url/detail/test/test_suite.hpp>
+#include "test_suite.hpp"
 #include "test_bnf.hpp"
 
 #include <type_traits>

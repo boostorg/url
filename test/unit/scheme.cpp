@@ -11,7 +11,7 @@
 #include <boost/url/scheme.hpp>
 
 #include <boost/url/bnf/ascii.hpp>
-#include <boost/url/detail/test/test_suite.hpp>
+#include "test_suite.hpp"
 
 namespace boost {
 namespace urls {

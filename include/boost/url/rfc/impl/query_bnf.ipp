@@ -14,7 +14,7 @@
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/rfc/detail/query_params_bnf.hpp>
+#include <boost/url/rfc/query_params_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -26,11 +26,10 @@ parse(
     error_code& ec,
     query_bnf& t)
 {
-    bnf::range<
-        detail::query_param> r;
+    bnf::range<query_param> r;
     if(! bnf::parse_range(
         it, end, ec, r,
-            detail::query_params_bnf{}))
+            query_params_bnf{}))
         return false;
     t.query = r.str();
     t.query_count = r.size();

@@ -13,7 +13,7 @@
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
-#include <boost/url/rfc/detail/query_params_bnf.hpp>
+#include <boost/url/rfc/query_params_bnf.hpp>
 #include <boost/url/detail/except.hpp>
 #include <iostream>
 
@@ -40,10 +40,9 @@ iterator(
         return;
     }
     error_code ec;
-    detail::query_param t;
-    detail::
-        query_params_bnf::begin(
-            next_, end_, ec, t);
+    query_param t;
+    query_params_bnf::begin(
+        next_, end_, ec, t);
     BOOST_ASSERT(! ec.failed());
     v_.k_ = t.key;
     v_.has_value_ = 
@@ -61,10 +60,9 @@ operator++() noexcept ->
     iterator&
 {
     error_code ec;
-    detail::query_param t;
-    detail::
-        query_params_bnf::increment(
-            next_, end_, ec, t);
+    query_param t;
+    query_params_bnf::increment(
+        next_, end_, ec, t);
     if(ec == error::end)
     {
         next_ = nullptr;

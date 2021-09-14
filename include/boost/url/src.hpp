@@ -55,6 +55,7 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/port_bnf.ipp>
 #include <boost/url/rfc/impl/port_part_bnf.ipp>
 #include <boost/url/rfc/impl/query_bnf.ipp>
+#include <boost/url/rfc/impl/query_params_bnf.ipp>
 #include <boost/url/rfc/impl/query_part_bnf.ipp>
 #include <boost/url/rfc/impl/relative_part_bnf.ipp>
 #include <boost/url/rfc/impl/relative_ref_bnf.ipp>

@@ -146,15 +146,16 @@
           <member><link linkend="url.ref.boost__urls__path_absolute_bnf">path_absolute_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__path_noscheme_bnf">path_noscheme_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__path_rootless_bnf">path_rootless_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_encoded_bnf">pct_encoded_bnf</link></member>
         </simplelist>
       </entry>
       <entry valign="top">
         <bridgehead renderas="sect3">RFC 3986 (2/2)</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__pct_encoded_bnf">pct_encoded_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__port_bnf">port_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__port_part_bnf">port_part_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__query_bnf">query_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__query_params_bnf">query_params_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__query_part_bnf">query_part_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__relative_part_bnf">relative_part_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__relative_ref_bnf">relative_ref_bnf</link></member>

@@ -28,8 +28,9 @@ namespace urls {
     password    = *( unreserved / pct-encoded / sub-delims / ":" )
     @endcode
 
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.3
+    @par Specification
+    <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+        >3.2.1. User Information (3986)</a>
 */
 struct userinfo_bnf
 {

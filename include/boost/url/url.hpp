@@ -278,7 +278,7 @@ public:
 
         @return A reference to the object, for chaining.
 
-        @param s The scheme to set.
+        @param id The scheme to set.
 
         @throw std::invalid_argument invalid scheme.
 
@@ -1570,6 +1570,9 @@ public:
 
         Strong guarantee.
         Calls to allocate may throw.
+
+        @param key The key to find. This parameter
+        is not percent-encoded.
 
         @param a An optional allocator the returned
         string will use. If this parameter is omitted,

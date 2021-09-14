@@ -8,37 +8,25 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/rfc/ipv_future_bnf.hpp>
+#include <boost/url/rfc/query_params_bnf.hpp>
 
-#include "test_suite.hpp"
 #include "test_bnf.hpp"
 
 namespace boost {
 namespace urls {
 
-class ipv_future_bnf_test
+class query_params_bnf_test
 {
 public:
     void
     run()
     {
-        using T = ipv_future_bnf;
-
-        bad<T>("v");
-        bad<T>("v1");
-        bad<T>("v1.");
-        bad<T>("v1.@$");
-        bad<T>("v.1");
-        bad<T>("w1.1");
-
-        good<T>("v1.0");
-        good<T>("v1.minor");
     }
 };
 
 TEST_SUITE(
-    ipv_future_bnf_test,
-    "boost.url.ipv_future_bnf");
+    query_params_bnf_test,
+    "boost.url.query_params_bnf");
 
 } // urls
 } // boost

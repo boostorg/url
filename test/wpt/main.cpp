@@ -9,7 +9,7 @@
 
 #include <boost/json.hpp>
 #include <boost/url.hpp>
-#include <boost/url/detail/test/test_suite.hpp>
+#include "test_suite.hpp"
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>

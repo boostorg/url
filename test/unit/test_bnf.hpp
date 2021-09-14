@@ -15,7 +15,7 @@
 #include <boost/url/string.hpp>
 #include <initializer_list>
 
-#include <boost/url/detail/test/test_suite.hpp>
+#include "test_suite.hpp"
 
 namespace boost {
 namespace urls {

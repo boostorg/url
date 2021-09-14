@@ -65,11 +65,9 @@ set(BOOST_URL_TESTS_FILES
 set(TEST_MAIN ../../src/test_main.cpp)
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${BOOST_URL_TESTS_FILES})
-source_group(TREE "" PREFIX "" FILES ${TEST_MAIN})
+source_group(TREE "../src" PREFIX "" FILES ${TEST_MAIN})
 add_executable(boost_url_tests ${BOOST_URL_TESTS_FILES} ${TEST_MAIN})
-target_include_directories(boost_url_tests PRIVATE . )
+target_include_directories(boost_url_tests PRIVATE . ../../src/include)
 target_link_libraries(boost_url_tests PRIVATE Boost::url)
 add_test(NAME boost_url_tests COMMAND boost_url_tests)
 add_dependencies(tests boost_url_tests)
-
-#source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../src PREFIX "" FILES ../../src/src.cpp)

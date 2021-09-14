@@ -20,7 +20,7 @@
 namespace boost {
 namespace urls {
 
-/** A ForwardRange view of read-only query parameters
+/** A non-modifiable ForwardRange of read-only query parameters
 
     Objects of this type provide an iterable,
     bidirectional range which references a string
@@ -37,10 +37,17 @@ namespace urls {
     @par BNF
     @code
     query-params    = [ query-param ] *( "&" [ query-param ] )
+
     query-param     = key [ "=" value ]
     @endcode
 
-    @see @ref parse_query_params
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+        >3.4. Query (rfc3986)</a>
+
+    @see
+        @ref parse_query_params,
+        @ref url_view::query.
 */
 class query_params_view
 {
@@ -484,7 +491,6 @@ parse_query_params(
     @throw system_error Thrown on error
 
     @param s The string to parse
-    @param ec Set to the error, if any occurred
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">

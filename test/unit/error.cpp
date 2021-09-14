@@ -10,7 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/error.hpp>
 
-#include <boost/url/detail/test/test_suite.hpp>
+#include "test_suite.hpp"
 
 #include <memory>
 

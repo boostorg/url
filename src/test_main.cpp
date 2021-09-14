@@ -7,7 +7,7 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#include <boost/url/detail/test/test_suite.hpp>
+#include "test_suite.hpp"
 
 #include <iostream>
 #ifdef _MSC_VER

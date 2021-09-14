@@ -380,6 +380,16 @@ encoded_host_and_port() const noexcept
 {
     return get(id_host, id_path);
 }
+
+string_view
+url_view::
+encoded_origin() const noexcept
+{
+    if(len(id_user) < 2)
+        return {};
+    return get(id_scheme, id_path);
+}
+
 //----------------------------------------------------------
 //
 // path
@@ -478,15 +488,6 @@ encoded_fragment() const noexcept
     BOOST_ASSERT(
         s.starts_with('#'));
     return s.substr(1);
-}
-
-//------------------------------------------------
-
-string_view
-url_view::
-encoded_origin() const noexcept
-{
-    return get(id_scheme, id_path);
 }
 
 //------------------------------------------------

@@ -12,7 +12,7 @@
 #include <boost/url/string.hpp>
 
 #include "test_bnf.hpp"
-#include <boost/url/detail/test/test_suite.hpp>
+#include "test_suite.hpp"
 
 #include <array>
 #include <iostream>

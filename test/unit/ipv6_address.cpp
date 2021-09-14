@@ -11,7 +11,7 @@
 #include <boost/url/ipv6_address.hpp>
 
 #include <boost/url/ipv4_address.hpp>
-#include <boost/url/detail/test/test_suite.hpp>
+#include "test_suite.hpp"
 #include <sstream>
 
 namespace boost {

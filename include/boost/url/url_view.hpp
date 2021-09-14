@@ -150,8 +150,8 @@ public:
 
     /** Return the complete encoded URL
 
-        This function returns the full encoded
-        URL as a string view.
+        This function returns the URL as a
+        percent-encoded string.
 
         @par Exception Safety
         Does not throw.
@@ -196,22 +196,36 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if a scheme is present
+    /** Return true if this contains a scheme
 
-        This function returns true if the URL
+        This function returns true if this
         contains a scheme. URLs with schemes
-        are absolute URLs.
+        are called absolute URLs.
+
+        @par Example
+        @code
+        assert( parse_uri( "http://www.example.com" ).has_scheme() );
+        @endcode
 
         @par BNF
         @code
-        URI         = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+        URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
 
-        absolute-URI  = scheme ":" hier-part [ "?" query ]
+        absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+        scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
         @endcode
+
+        @par Exception Safety
+        Does not throw.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
             >3.1. Scheme (rfc3986)</a>
+
+        @see
+            @ref scheme,
+            @ref scheme_id.
     */
     BOOST_URL_DECL
     bool
@@ -219,19 +233,65 @@ public:
 
     /** Return the scheme
 
+        This function returns the scheme if it
+        exists, without a trailing colon (':').
+        Otherwise it returns an empty string.
+
+        @par Example
+        @code
+        assert( parse_uri( "http://www.example.com" ).scheme() == "http" );
+        @endcode
+
+        @par BNF
+        @code
+        scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+
+        URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+        absolute-URI    = scheme ":" hier-part [ "?" query ]
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
-            3.1. Scheme (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
+            >3.1. Scheme (rfc3986)</a>
+
+        @see
+            @ref has_scheme,
+            @ref scheme_id.
     */
     BOOST_URL_DECL
     string_view
     scheme() const noexcept;
 
-    /** Return a known-scheme constant if a scheme is present
+    /** Return a constant representing the scheme
+
+        This function returns a @ref urls::scheme constant
+        to identify the scheme as a well-known scheme.
+        If the scheme is not recognized, the value
+        @ref urls::scheme::unknown is returned. If
+        this does not contain a scheme, then
+        @ref urls::scheme::none is returned.
+
+        @par BNF
+        @code
+        URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+        absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+        scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
-            3.1. Scheme (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
+            >3.1. Scheme (rfc3986)</a>
+
+        @see @ref urls::scheme
     */
     BOOST_URL_DECL
     urls::scheme
@@ -239,66 +299,172 @@ public:
 
     //--------------------------------------------
     //
-    // authority
+    // Authority
     //
     //--------------------------------------------
 
-    /** Return true if an authority exists
+    /** Return true if this contains an authority 
 
-        This function returns true if an authority is
-        present, even if the authority is an empty
-        string. Its presence
-        in a URL is determined by a leading double-slash
-        ("//") in the 
+        This function returns true if this contains
+        an authority.
+
+        @par Example
+        @code
+        assert( parse_uri( "http://www.example.com/index.htm" ).has_authority() == true );
+
+        assert( parse_relative_ref( "//" ).has_authority() == true );
+
+        assert( parse_relative_ref( "/file.txt" ).has_authority() == false );
+        @endcode
+
+        @par BNF
+        @code
+        authority       = [ userinfo "@" ] host [ ":" port ]
+
+        URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+        absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+        URI-reference   = URI / relative-ref
+
+        relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
+
+        hier-part       = "//" authority path-abempty
+                        ; (more...)
+
+        relative-part   = "//" authority path-abempty
+                        ; (more...)
+
+        @endcode
 
         @par Exception Safety
         Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
+            >3.2. Authority (rfc3986)</a>
+
+        @see
+            @ref encoded_authority.
     */
     BOOST_URL_DECL
     bool
     has_authority() const noexcept;
 
-    /** Return the authority if it exists, or an empty string
+    /** Return the authority
 
-        @see has_authority
+        This function returns the authority as a
+        percent-encoded string.
+
+        @par Example
+        @code
+        assert( parse_uri( "http://www.example.com/index.htm" ).encoded_authority() == "www.example.com" );
+        @endcode
+
+        @par BNF
+        @code
+        authority   = [ userinfo "@" ] host [ ":" port ]
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
+            >3.2. Authority (rfc3986)</a>
+
+        @see
+            @ref has_authority.
     */
     BOOST_URL_DECL
     string_view
     encoded_authority() const noexcept;
 
-    /** Return true if a userinfo exists
+    //--------------------------------------------
 
-        This function returns true if the authority
-        is present and contains an at-sign ('@')
-        which is not percent encoded.
+    /** Return true if this contains a userinfo
+
+        This function returns true if this contains
+        a userinfo.
+
+        @par Example
+        @code
+        assert( parse_uri( "http://user@example.com" ).has_userinfo() == true );
+        @endcode
+
+        @par BNF
+        @code
+        userinfo    = user [ ":" [ password ] ]
+
+        authority   = [ userinfo "@" ] host [ ":" port ]
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+            >3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref encoded_userinfo,
+            @ref userinfo.
     */
     BOOST_URL_DECL
     bool
     has_userinfo() const noexcept;
 
-    /** Return the userinfo if it exists, or an empty string
+    /** Return the userinfo
 
-        Returns the userinfo of the URL as an encoded
-        string. The userinfo includes the user and
-        password, with a colon separating the components
-        if the password is not empty.
+        This function returns the userinfo
+        as a percent-encoded string.
+
+        @par Example
+        @code
+        assert( parse_uri( "http://user:pass@example.com" ).encoded_userinfo() == "user:pass" );
+        @endcode
+
+        @par BNF
+        @code
+        userinfo    = user [ ":" [ password ] ]
+
+        authority   = [ userinfo "@" ] host [ ":" port ]
+        @endcode
 
         @par Exception Safety
+        Does not throw.
 
-        No-throw guarantee.
+        @par Specification
+        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+            >3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref has_userinfo,
+            @ref userinfo.
     */
     BOOST_URL_DECL
     string_view
     encoded_userinfo() const noexcept;
 
-    /** Return the userinfo if it exists, or an empty string
+    /** Return the userinfo
 
-        This function returns the userinfo part
-        of the URL if present, as a decoded string.
+        This function returns the userinfo as a
+        string with percent-decoding applied, using
+        the optionally specified allocator.
+
+        @par Example
+        @code
+        assert( parse_uri( "http://user:pass@example.com" ).userinfo() == "user:pass" );
+        @endcode
+
+        @par BNF
+        @code
+        userinfo    = user [ ":" [ password ] ]
+
+        authority   = [ userinfo "@" ] host [ ":" port ]
+        @endcode
 
         @par Exception Safety
-
-        Strong guarantee.
         Calls to allocate may throw.
 
         @param a An optional allocator the returned
@@ -308,6 +474,14 @@ public:
 
         @return A `std::basic_string` using the
         specified allocator.
+
+        @par Specification
+        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+            >3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref has_userinfo,
+            @ref encoded_userinfo.
     */
     template<
         class Allocator =
@@ -320,35 +494,64 @@ public:
             encoded_userinfo(), {}, a);
     }
 
-    /** Return the user if it exists, or an empty string
+    //--------------------------------------------
+
+    /** Return the user
 
         This function returns the user portion of
-        the userinfo if present, as an encoded string.
-        The user portion is defined by all of the
-        characters in the userinfo up to but not
-        including the first colon (':"), or the
-        entire userinfo if no colon is present.
+        the userinfo as a percent-encoded string.
+
+        @par Example
+        @code
+        assert( parse_uri( "http://user:pass@example.com" ).encoded_user() == "user" );
+        @endcode
+
+        @par BNF
+        @code
+        userinfo    = user [ ":" [ password ] ]
+
+        user        = *( unreserved / pct-encoded / sub-delims )
+        password    = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
 
         @par Exception Safety
+        Does not throw.
 
-        No-throw guarantee.
+        @par Specification
+        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+            >3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref encoded_password,
+            @ref has_password,
+            @ref password,
+            @ref user.
     */
     BOOST_URL_DECL
     string_view
     encoded_user() const noexcept;
 
-    /** Return the user if it exists, or an empty string
+    /** Return the user
 
         This function returns the user portion of
-        the userinfo if present, as a decoded string.
-        The user portion is defined by all of the
-        characters in the userinfo up to but not
-        including the first colon (':"), or the
-        entire userinfo if no colon is present.
+        the userinfo as a string with percent-decoding
+        applied, using the optionally specified
+        allocator.
+
+        @par Example
+        @code
+        assert( parse_uri( "http://user:pass@example.com" ).user() == "user" );
+        @endcode
+
+        @par BNF
+        @code
+        userinfo    = user [ ":" [ password ] ]
+
+        user        = *( unreserved / pct-encoded / sub-delims )
+        password    = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
 
         @par Exception Safety
-
-        Strong guarantee.
         Calls to allocate may throw.
 
         @param a An optional allocator the returned
@@ -358,6 +561,16 @@ public:
 
         @return A `std::basic_string` using the
         specified allocator.
+
+        @par Specification
+        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+            >3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref encoded_password,
+            @ref encoded_user,
+            @ref has_password,
+            @ref password.
     */
     template<
         class Allocator =
@@ -370,19 +583,106 @@ public:
             encoded_user(), {}, a);
     }
 
-    /** Return true if a password exists
+    /** Return true if this contains a password
+
+        This function returns true if the userinfo
+        contains a password (which may be empty).
+
+        @par Example
+        @code
+        assert( parse_uri( "http://user@example.com" ).has_password() == false );
+
+        assert( parse_uri( "http://user:pass@example.com" ).has_password() == true );
+
+        assert( parse_uri( "http://:@" ).has_password() == true );
+        @endcode
+
+        @par BNF
+        @code
+        userinfo    = user [ ":" [ password ] ]
+
+        user        = *( unreserved / pct-encoded / sub-delims )
+        password    = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+            >3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref encoded_password,
+            @ref encoded_user,
+            @ref password,
+            @ref user.
     */
     BOOST_URL_DECL
     bool
     has_password() const noexcept;
 
-    /** Return the password if it exists, or an empty string
+    /** Return the password
+
+        This function returns the password portion
+        of the userinfo as a percent-encoded string.
+
+        @par Example
+        @code
+        assert( parse_uri( "http://user:pass@example.com" ).encoded_user() == "user" );
+        @endcode
+
+        @par BNF
+        @code
+        userinfo    = user [ ":" [ password ] ]
+
+        user        = *( unreserved / pct-encoded / sub-delims )
+        password    = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+            >3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref encoded_password,
+            @ref has_password,
+            @ref password,
+            @ref user.
     */
     BOOST_URL_DECL
     string_view
     encoded_password() const noexcept;
 
-    /** Return the password if it exists, or an empty string
+    /** Return the password
+
+        This function returns the password from the
+        userinfo with percent-decoding applied,
+        using the optionally specified allocator.
+
+        @par Exception Safety
+        Calls to allocate may throw.
+
+        @param a An allocator to use for the string.
+        If this parameter is omitted, the default
+        allocator is used, and the return type of
+        the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+            >3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref encoded_password,
+            @ref encoded_user,
+            @ref has_password,
+            @ref password.
     */
     template<
         class Allocator =
@@ -399,9 +699,42 @@ public:
 
     /** Return the type of host present, if any
 
-        @par Exception Safety
+        This function returns a @ref urls::host_type
+        constant representing the type of host
+        this contains, which may be
+        @ref urls::host_type::none.
 
-        No-throw guarantee.
+        @par Example
+        @code
+        assert( parse_relative_ref( "/favicon.png" ).host_type() == host_type::none );
+
+        assert( parse_uri( "http://example.com" ).host_type() == host_type::name );
+
+        assert( parse_uri( "http://192.168.0.1" ).host_type() == host_type::ipv4 );
+        @endcode
+
+        @par BNF
+        @code
+        host        = IP-literal / IPv4address / reg-name
+
+        IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+
+        IPvFuture   = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2. Host (rfc3986)</a>
+
+        @see
+            @ref encoded_host,
+            @ref has_port,
+            @ref host,
+            @ref port,
+            @ref port_number.
     */
     urls::host_type
     host_type() const noexcept
@@ -412,11 +745,41 @@ public:
     /** Return the host
 
         This function returns the host portion of
-        the authority as an encoded string if present,
-        otherwise it returns an empty string.
+        the authority as a percent-encoded string,
+
+        @par Example
+        @code
+        assert( parse_relative_ref( "/favicon.png" ).encoded_host() == "" );
+
+        assert( parse_uri( "http://example.com" ).encoded_host() == "example.com" );
+
+        assert( parse_uri( "http://192.168.0.1" ).encoded_host() == "192.168.0.1" );
+        @endcode
+
+        @par BNF
+        @code
+        host        = IP-literal / IPv4address / reg-name
+
+        IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+
+        IPvFuture   = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+
+        reg-name    = *( unreserved / pct-encoded / sub-delims )
+        @endcode
 
         @par Exception Safety
-        No-throw guarantee.
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2. Host (rfc3986)</a>
+
+        @see
+            @ref has_port,
+            @ref host,
+            @ref host_type,
+            @ref port,
+            @ref port_number.
     */
     BOOST_URL_DECL
     string_view
@@ -425,12 +788,31 @@ public:
     /** Return the host
 
         This function returns the host portion of
-        the authority as a decoded string if present,
-        otherwise it returns an empty string.
+        the authority as a string with percent-decoding
+        applied, using the optionally specified
+        allocator.
+
+        @par Example
+        @code
+        assert( parse_relative_ref( "/favicon.png" ).encoded_host() == "" );
+
+        assert( parse_uri( "http://example.com" ).encoded_host() == "example.com" );
+
+        assert( parse_uri( "http://192.168.0.1" ).encoded_host() == "192.168.0.1" );
+        @endcode
+
+        @par BNF
+        @code
+        host        = IP-literal / IPv4address / reg-name
+
+        IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+
+        IPvFuture   = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+
+        reg-name    = *( unreserved / pct-encoded / sub-delims )
+        @endcode
 
         @par Exception Safety
-
-        Strong guarantee.
         Calls to allocate may throw.
 
         @param a An optional allocator the returned
@@ -440,6 +822,18 @@ public:
 
         @return A `std::basic_string` using the
         specified allocator.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2. Host (rfc3986)</a>
+
+        @see
+            @ref encoded_host,
+            @ref encoded_host_and_port
+            @ref has_port,
+            @ref host_type,
+            @ref port,
+            @ref port_number.
     */
     template<
         class Allocator =
@@ -461,88 +855,326 @@ public:
             s0, pt_.decoded[id_host], {}, a);
     }
 
-    /** Return the ipv4 address if it exists, or return the unspecified address (0.0.0.0)
+    /** Return the host as an IPv4 address
+
+        If @ref host_type equals @ref urls::host_type::ipv4,
+        this function returns the corresponding
+        @ref ipv4_address
+        of the host if it exists, otherwise it
+        returns the unspecified address which
+        is equal to "0.0.0.0".
+
+        @par BNF
+        @code
+        IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+        dec-octet   = DIGIT                 ; 0-9
+                    / %x31-39 DIGIT         ; 10-99
+                    / "1" 2DIGIT            ; 100-199
+                    / "2" %x30-34 DIGIT     ; 200-249
+                    / "25" %x30-35          ; 250-255
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2. Host (rfc3986)</a>
+
+        @see
+            @ref ipv4_address
     */
     BOOST_URL_DECL
     urls::ipv4_address
     ipv4_address() const noexcept;
 
-    /** Return the ipv6 address if it exists, or return the unspecified address (0:0:0:0:0:0:0:0)
+    /** Return the host as an IPv6 address
+
+        If @ref host_type equals
+        @ref urls::host_type::ipv6, this
+        function returns the corresponding
+        @ref ipv6_address of the host if it
+        exists, otherwise it returns the
+        unspecified address which is equal
+        to "0:0:0:0:0:0:0:0".
+
+        @par BNF
+        @code
+        IPv6address =                            6( h16 ":" ) ls32
+                    /                       "::" 5( h16 ":" ) ls32
+                    / [               h16 ] "::" 4( h16 ":" ) ls32
+                    / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+                    / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+                    / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+                    / [ *4( h16 ":" ) h16 ] "::"              ls32
+                    / [ *5( h16 ":" ) h16 ] "::"              h16
+                    / [ *6( h16 ":" ) h16 ] "::"
+
+        ls32        = ( h16 ":" h16 ) / IPv4address
+                    ; least-significant 32 bits of address
+
+        h16         = 1*4HEXDIG
+                    ; 16 bits of address represented in hexadecimal
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2. Host (rfc3986)</a>
+
+        @see
+            @ref ipv6_address
     */
     BOOST_URL_DECL
     urls::ipv6_address
     ipv6_address() const noexcept;
 
-    /** Return the ipvfuture address if it exists, or return an empty string
+    /** Return the host as an IPvFuture string
+
+        If @ref host_type equals
+        @ref urls::host_type::ipvfuture, this
+        function returns a string representing
+        the address. Otherwise it returns the
+        empty string.
+
+        @par BNF
+        @code
+        IPvFuture  = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2. Host (rfc3986)</a>
     */
     BOOST_URL_DECL
     string_view
     ipv_future() const noexcept;
 
     /** Return true if the URL contains a port
+
+        This function returns true if the
+        authority contains a port.
+
+        @par BNF
+        @code
+        authority   = [ userinfo "@" ] host [ ":" port ]
+
+        port        = *DIGIT
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
+            >3.2.3. Port (rfc3986)</a>
+
+        @see
+            @ref encoded_host,
+            @ref encoded_host_and_port
+            @ref host,
+            @ref host_type,
+            @ref port,
+            @ref port_number.
     */
     BOOST_URL_DECL
     bool
     has_port() const noexcept;
 
-    /** Return the port if it exists, or an empty string
+    /** Return the port
 
-        If the URL contains a port, this function
-        returns the entire port string, which may
-        or may not be a decimal number.
+        This function returns the port specified
+        in the authority, or an empty string if
+        there is no port.
+
+        @par BNF
+        @code
+        port        = *DIGIT
+        @endcode
 
         @par Exception Safety
+        Does not throw.
 
-        No-throw guarantee.
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
+            >3.2.3. Port (rfc3986)</a>
+
+        @see
+            @ref encoded_host,
+            @ref encoded_host_and_port
+            @ref has_port,
+            @ref host,
+            @ref host_type,
+            @ref port_number.
     */
     BOOST_URL_DECL
     string_view
     port() const noexcept;
 
-    /** Return the integer port number, or 0 if no port
+    /** Return the port as an intege
 
-        If the URL contains a port string and the
-        string contains a decimal value in the range
-        0 to 65535, returns the number. Otherwise,
-        returns zero.
+        This function returns the port as an
+        integer if the authority specifies
+        a port and the number can be represented.
+        Otherwise it returns zero.
+
+        @par BNF
+        @code
+        port        = *DIGIT
+        @endcode
 
         @par Exception Safety
+        Does not throw.
 
-        No-throw guarantee.
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
+            >3.2.3. Port (rfc3986)</a>
+
+        @see
+            @ref encoded_host,
+            @ref encoded_host_and_port
+            @ref has_port,
+            @ref host,
+            @ref host_type,
+            @ref port,
     */
     BOOST_URL_DECL
     std::uint16_t
     port_number() const noexcept;
 
-    /** Return the host and port.
+    /** Return the host and port
 
-        This function returns the encoded host and port,
-        or an empty string if there is no host or port.
-        The returned value includes both the host if present,
-        and a port, with a colon separating the host and port
-        if either component is non-empty.
+        This function returns the host and
+        port of the authority as a single
+        percent-encoded string.
+
+        @par BNF
+        @code
+        authority   = [ userinfo "@" ] host [ ":" port ]
+        @endcode
 
         @par Exception Safety
+        Does not throw.
 
-        No-throw guarantee.
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
+            >3.2.3. Port (rfc3986)</a>
+
+        @see
+            @ref encoded_host,
+            @ref encoded_host_and_port
+            @ref has_port,
+            @ref host,
+            @ref host_type,
+            @ref port,
     */
     BOOST_URL_DECL
     string_view
     encoded_host_and_port() const noexcept;
 
     //--------------------------------------------
+
+    /** Return the origin
+
+        This function returns the origin as
+        a percent-encoded string. The origin
+        consists of the scheme and authority.
+        This string will be empty if no
+        authority is present.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_origin() const noexcept;
+
+    //--------------------------------------------
     //
-    // path
+    // Path
     //
     //--------------------------------------------
 
-    /** Return the encoded path
+    /** Return the path
+
+        This function returns the path as a
+        percent-encoded string.
+
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+
+        @see
+            @ref path
     */
     BOOST_URL_DECL
     string_view
     encoded_path() const noexcept;
 
-    /** Return the path segments as a read-only forward range
+    /** Return the path
+
+        This function returns the path as a
+        non-modifiable _BidirectionalRange_.
+
+        @par Example
+        @code
+        url_view u = parse_relative_ref( "/path/to/file.txt" );
+
+        for( auto t : u.path() )
+            std::cout << t.encoded_segment() << std::endl;
+        @endcode
+
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+
+        segment       = *pchar
+        segment-nz    = 1*pchar
+        segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
+                      ; non-zero-length segment without any colon ":"
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+
+        @see
+            @ref encoded_path,
+            @ref path_view.
     */
     BOOST_URL_DECL
     path_view
@@ -550,54 +1182,78 @@ public:
 
     //--------------------------------------------
     //
-    // query
+    // Query
     //
     //--------------------------------------------
 
-    /** Return true if a query exists
+    /** Return true if this contains a query
 
-        A query exists if the hash mark ('#') is
-        present after the path, even if followed
-        by an empty query string.
+        This function returns true if this
+        contains a query.
 
-        @see encoded_query, query
+        @par BNF
+        @code
+        query           = *( pchar / "/" / "?" )
+
+        query-part      = [ "?" query ]
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
+
+        @see
+            @ref encoded_query,
+            @ref query.
     */
     BOOST_URL_DECL
     bool
     has_query() const noexcept;
 
-    /** Return the query if it exists, or an empty string
+    /** Return the query
 
-        This function returns the percent-encoded
-        query if it exists. Otherwise it returns
-        an empty string.
+        This function returns the query as
+        a percent-encoded string.
+
+        @par BNF
+        @code
+        query           = *( pchar / "/" / "?" )
+
+        query-part      = [ "?" query ]
+        @endcode
 
         @par Exception Safety
-        No-throw guarantee.
+        Does not throw.
 
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
 
-        @return A `std::basic_string` using the
-        specified allocator.
-
-        @see has_query, query
+        @see
+            @ref encoded_query,
+            @ref query.
     */
     BOOST_URL_DECL
     string_view
     encoded_query() const noexcept;
 
-    /** Return the query if it exists, or an empty string
+    /** Return the query
 
-        If the query exists, it is returned as a
-        string with percent-decoding applied.
-        Otherwise, an empty string is returned.
+        This function returns the query as a
+        string with percent-decoding applied,
+        using the optionally specified allocator.
+
+        @par BNF
+        @code
+        query           = *( pchar / "/" / "?" )
+
+        query-part      = [ "?" query ]
+        @endcode
 
         @par Exception Safety
-
-        Strong guarantee.
         Calls to allocate may throw.
 
         @param a An optional allocator the returned
@@ -608,7 +1264,13 @@ public:
         @return A `std::basic_string` using the
         specified allocator.
 
-        @see encoded_query
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
+
+        @see
+            @ref encoded_query,
+            @ref has_query.
     */
     template<
         class Allocator =
@@ -621,7 +1283,19 @@ public:
             encoded_query(), {}, a);
     }
 
-    /** Return the query parameters as a read-only forward range
+    /** Return the query
+
+        This function returns the query as
+        a non-modifiable _ForwardRange_ of
+        key/value pairs.
+
+        @par BNF
+        @code
+        query-params    = [ query-param ] *( "&" [ query-param ] )
+
+        query-param     = key [ "=" value ]
+
+        @endcode
     */
     BOOST_URL_DECL
     query_params_view
@@ -633,32 +1307,41 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if a fragment is present
+    /** Return true if this contains a fragment
+
+        This function returns true if this
+        contains a fragment.
+
+        @par BNF
+        @code
+        fragment        = *( pchar / "/" / "?" )
+
+        fragment-part   = [ "#" fragment ]
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
+            >3.5. Fragment</a>
+
+        @see
+            @ref encoded_fragment,
+            @ref fragment.
     */
     BOOST_URL_DECL
     bool
     has_fragment() const noexcept;
 
-    /** Return the fragment if present, otherwise return an empty string
+    /** Return the fragment
 
         This function returns the fragment as a
-        percent-encoded string if present, otherwise
-        returns an empty string. The returned string
-        does not include the leading hash mark ('#').
+        percent-encoded string.
 
         @par Exception Safety
+        Does not throw.
 
-        No-throw guarantee.
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
-
-        @return A `std::basic_string` using the
-        specified allocator.
-
-        @see fragment
+        @see
+            @ref fragment,
+            @ref has_fragment.
     */
     BOOST_URL_DECL
     string_view
@@ -666,24 +1349,18 @@ public:
 
     /** Return the fragment.
 
-        This function returns the fragment of the URL:
+        This function returns the fragment as a
+        string with percent-decoding applied, using
+        the optionally specified allocator.
 
-        * If a fragment is present, it is returned in
-        decoded form without a leading hash mark ('#'),
-        otherwise:
+        @par BNF
+        @code
+        fragment        = *( pchar / "/" / "?" )
 
-        * If there is no fragment, an empty string is
-        returned.
-
-        Note that if the URL contains a hash mark
-        followed by an empty query string, this
-        function still returns an empty string.
-        To detect this case, use @ref fragment_bnf
-        instead.
+        fragment-part   = [ "#" fragment ]
+        @endcode
 
         @par Exception Safety
-
-        Strong guarantee.
         Calls to allocate may throw.
 
         @param a An optional allocator the returned
@@ -694,7 +1371,9 @@ public:
         @return A `std::basic_string` using the
         specified allocator.
 
-        @see encoded_fragment, fragment_bnf
+        @see
+            @ref encoded_fragment,
+            @ref has_fragment.
     */
     template<
         class Allocator =
@@ -707,14 +1386,6 @@ public:
             encoded_fragment(),
             pt_.decoded[id_frag], {}, a);
     }
-
-    //--------------------------------------------
-
-    /** Return the origin
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_origin() const noexcept;
 
     //--------------------------------------------
     //
@@ -1186,7 +1857,6 @@ parse_relative_ref(
                   / path-absolute
                   / path-rootless
                   / path-empty
-    @endcode
 
     URI-reference = URI / relative-ref
 

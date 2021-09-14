@@ -13,13 +13,14 @@ import testing ;
 project
     : requirements
       $(c11-requires)
-      <source>../../include/boost/url/detail/test/test_main.cpp
+      <source>../../src/test_main.cpp
       <include>.
+      <include>../../src/include
     ;
 
 
 local SOURCES =
-    ../../include/boost/url/detail/test/test_main.cpp
+    ../../src/test_main.cpp
     error.cpp
     host_type.cpp
     ipv4_address.cpp
@@ -73,5 +74,5 @@ local LIMIT_SOURCES =
     ;
 for local f in $(LIMIT_SOURCES)
 {
-    run $(f) ../../include/boost/url/detail/test/test_main.cpp /boost/url//url_sources ;
+    run $(f) ../../src/test_main.cpp /boost/url//url_sources ;
 }

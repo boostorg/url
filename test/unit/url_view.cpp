@@ -11,7 +11,7 @@
 #include <boost/url/url_view.hpp>
 
 #include <boost/url/static_pool.hpp>
-#include <boost/url/detail/test/test_suite.hpp>
+#include "test_suite.hpp"
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/uri_reference_bnf.hpp>
 
@@ -529,6 +529,18 @@ public:
     }
 
     void
+    testOrigin()
+    {
+        BOOST_TEST(parse_uri(
+            "x://p:q@a.b.c/f.z?a=b#frag"
+                ).encoded_origin() == "x://p:q@a.b.c");
+        BOOST_TEST(parse_relative_ref(
+            "/file.txt").encoded_origin() == "");
+        BOOST_TEST(parse_uri("x:/path/file/txt"
+            ).encoded_origin() == "");
+    }
+
+    void
     testPath()
     {
         url_view u;
@@ -778,6 +790,7 @@ public:
         testHost();
         testPort();
         testHostAndPort();
+        testOrigin();
         testPath();
         testQuery();
         testFragment();

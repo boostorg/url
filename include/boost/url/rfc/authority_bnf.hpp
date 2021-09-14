@@ -27,8 +27,9 @@ namespace urls {
     authority   = [ userinfo "@" ] host [ ":" port ]
     @endcode
 
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.2
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
+        >3.2. Authority (rfc3986)</a>
 */
 struct authority_bnf
 {

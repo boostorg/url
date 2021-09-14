@@ -11,7 +11,7 @@
 #include <boost/url/bnf/char_set.hpp>
 
 #include <boost/url/string.hpp>
-#include <boost/url/detail/test/test_suite.hpp>
+#include "test_suite.hpp"
 #include "test_bnf.hpp"
 
 namespace boost {

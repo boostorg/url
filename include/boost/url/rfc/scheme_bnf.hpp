@@ -25,8 +25,9 @@ namespace urls {
     scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
     @endcode
 
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
+        >3.1. Scheme (rfc3986)</a>
 */
 struct scheme_bnf
 {
