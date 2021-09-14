@@ -12,7 +12,9 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/rfc/authority_bnf.hpp>
 #include <boost/url/rfc/fragment_part_bnf.hpp>
+#include <boost/url/rfc/paths_bnf.hpp>
 #include <boost/url/rfc/query_part_bnf.hpp>
 #include <boost/url/rfc/scheme_part_bnf.hpp>
 
