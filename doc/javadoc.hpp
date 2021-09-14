@@ -38,6 +38,7 @@
     @param {name} {description}.
 
     @throw {condition}.
+    @throw std::invalid_argument parse error
 
     @par Thread Safety
     {description}
