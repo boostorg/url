@@ -64,31 +64,12 @@ struct url_view::shared_impl :
     }
 };
 
-std::shared_ptr<
-    url_view const>
-url_view::
-collect() const
-{
-    using T = shared_impl;
-    using Alloc = std::allocator<char>;
-    Alloc a;
-    string_view s = str();
-    auto p = std::allocate_shared<T>(
-        detail::over_allocator<T, Alloc>(
-            s.size(), a), *this);
-    std::memcpy(
-        reinterpret_cast<char*>(
-            p.get() + 1),
-        s.data(), s.size());
-    return p;
-}
-
 url_view::
 url_view() noexcept = default;
 
 //------------------------------------------------
 //
-// classification
+// observers
 //
 //------------------------------------------------
 
@@ -99,13 +80,30 @@ empty() const noexcept
     return pt_.offset[id_end] == 0;
 }
 
-//------------------------------------------------
-
 string_view
 url_view::
-encoded_origin() const noexcept
+encoded_url() const noexcept
 {
-    return get(id_scheme, id_path);
+    return get(id_scheme, id_end);
+}
+
+std::shared_ptr<
+    url_view const>
+url_view::
+collect() const
+{
+    using T = shared_impl;
+    using Alloc = std::allocator<char>;
+    Alloc a;
+    string_view s = encoded_url();
+    auto p = std::allocate_shared<T>(
+        detail::over_allocator<T, Alloc>(
+            s.size(), a), *this);
+    std::memcpy(
+        reinterpret_cast<char*>(
+            p.get() + 1),
+        s.data(), s.size());
+    return p;
 }
 
 //------------------------------------------------
@@ -470,14 +468,12 @@ encoded_fragment() const noexcept
 }
 
 //------------------------------------------------
-//------------------------------------------------
-//------------------------------------------------
 
 string_view
 url_view::
-str() const
+encoded_origin() const noexcept
 {
-    return get(id_scheme, id_end);
+    return get(id_scheme, id_path);
 }
 
 //------------------------------------------------
@@ -622,7 +618,7 @@ operator<<(
     std::ostream& os,
     url_view const& u)
 {
-    auto s = u.str();
+    auto s = u.encoded_url();
     os.write(s.data(), s.size());
     return os;
 }

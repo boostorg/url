@@ -34,7 +34,7 @@ public:
         {
             url_t u;
             BOOST_TEST(*u.c_str() == '\0');
-            BOOST_TEST(u.str().empty());
+            BOOST_TEST(u.encoded_url().empty());
         }
 
         url c1      = parse_uri("http://1");
@@ -46,18 +46,18 @@ public:
         {
             {
                 url_t u(c1);
-                BOOST_TEST(u.str() == c1.str());
-                BOOST_TEST(u.c_str() != c1.str().data());
+                BOOST_TEST(u.encoded_url() == c1.encoded_url());
+                BOOST_TEST(u.c_str() != c1.encoded_url().data());
             }
             {
                 url_t u(c2);
-                BOOST_TEST(u.str() == c2.str());
-                BOOST_TEST(u.c_str() != c2.str().data());
+                BOOST_TEST(u.encoded_url() == c2.encoded_url());
+                BOOST_TEST(u.c_str() != c2.encoded_url().data());
             }
             {
                 url_t u(c3);
-                BOOST_TEST(u.str() == c3.str());
-                BOOST_TEST(u.c_str() != c3.str().data());
+                BOOST_TEST(u.encoded_url() == c3.encoded_url());
+                BOOST_TEST(u.c_str() != c3.encoded_url().data());
             }
         }
 
@@ -65,18 +65,18 @@ public:
         {
             {
                 url_t u(std::move(c1));
-                BOOST_TEST(u.str() == c1.str());
-                BOOST_TEST(u.c_str() != c1.str().data());
+                BOOST_TEST(u.encoded_url() == c1.encoded_url());
+                BOOST_TEST(u.c_str() != c1.encoded_url().data());
             }
             {
                 url_t u(std::move(c2));
-                BOOST_TEST(u.str() == c2.str());
-                BOOST_TEST(u.c_str() != c2.str().data());
+                BOOST_TEST(u.encoded_url() == c2.encoded_url());
+                BOOST_TEST(u.c_str() != c2.encoded_url().data());
             }
             {
                 url_t u(std::move(c3));
-                BOOST_TEST(u.str() == c3.str());
-                BOOST_TEST(u.c_str() != c3.str().data());
+                BOOST_TEST(u.encoded_url() == c3.encoded_url());
+                BOOST_TEST(u.c_str() != c3.encoded_url().data());
             }
         }
 
@@ -85,20 +85,20 @@ public:
             {
                 url_t u(c4);
                 u = c1;
-                BOOST_TEST(u.str() == c1.str());
-                BOOST_TEST(u.c_str() != c1.str().data());
+                BOOST_TEST(u.encoded_url() == c1.encoded_url());
+                BOOST_TEST(u.c_str() != c1.encoded_url().data());
             }
             {
                 url_t u(c4);
                 u = c2;
-                BOOST_TEST(u.str() == c2.str());
-                BOOST_TEST(u.c_str() != c2.str().data());
+                BOOST_TEST(u.encoded_url() == c2.encoded_url());
+                BOOST_TEST(u.c_str() != c2.encoded_url().data());
             }
             {
                 url_t u(c4);
                 u = c3;
-                BOOST_TEST(u.str() == c3.str());
-                BOOST_TEST(u.c_str() != c3.str().data());
+                BOOST_TEST(u.encoded_url() == c3.encoded_url());
+                BOOST_TEST(u.c_str() != c3.encoded_url().data());
             }
         }
 
@@ -107,20 +107,20 @@ public:
             {
                 url_t u(c4);
                 u = std::move(c1);
-                BOOST_TEST(u.str() == c1.str());
-                BOOST_TEST(u.c_str() != c1.str().data());
+                BOOST_TEST(u.encoded_url() == c1.encoded_url());
+                BOOST_TEST(u.c_str() != c1.encoded_url().data());
             }
             {
                 url_t u(c4);
                 u = std::move(c2);
-                BOOST_TEST(u.str() == c2.str());
-                BOOST_TEST(u.c_str() != c2.str().data());
+                BOOST_TEST(u.encoded_url() == c2.encoded_url());
+                BOOST_TEST(u.c_str() != c2.encoded_url().data());
             }
             {
                 url_t u(c4);
                 u = std::move(c3);
-                BOOST_TEST(u.str() == c3.str());
-                BOOST_TEST(u.c_str() != c3.str().data());
+                BOOST_TEST(u.encoded_url() == c3.encoded_url());
+                BOOST_TEST(u.c_str() != c3.encoded_url().data());
             }
         }
 

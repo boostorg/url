@@ -108,24 +108,70 @@ protected:
 public:
     /** Constructor
 
-        Default constructed views represent a
-        relative-ref with an empty path. That is,
-        their representation is a string of
-        zero length.
+        Default constructed views refer to
+        a string with zero length, which
+        always remains valid. This matches
+        the grammar for a relative-ref with
+        an empty path and no query or
+        fragment.
+
+        @par BNF
+        @code
+        relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+        @endcode
     */
     BOOST_URL_DECL
     url_view() noexcept;
 
-    /** Return a copy of the view with extended lifetime.
+    //--------------------------------------------
+    //
+    // observers
+    //
+    //--------------------------------------------
+
+    /** Returns the size of the longest representable URL, in characters
+
+        This does not include any null terminator.
+    */
+    static
+    constexpr
+    std::size_t
+    max_size()
+    {
+        return 0x7ffffffe;
+    }
+
+    /** Return true if the URL is empty
+
+        An empty URL is a relative-ref with
+        zero path segments.
+    */
+    BOOST_URL_DECL
+    bool
+    empty() const noexcept;
+
+    /** Return the complete encoded URL
+
+        This function returns the full encoded
+        URL as a string view.
+
+        @par Exception Safety
+        Does not throw.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_url() const noexcept;
+
+    /** Return an immutable copy of the URL, with shared lifetime
 
         This function makes a copy of the storage
         pointed to by this, and attaches it to a
-        new constant view returned in a shared
-        pointer. The lifetime of the storage for
-        the characters will extend for the lifetime
-        of the shared object. This allows the new
-        view to be copied and passed around after
-        the original string buffer is destroyed.
+        new constant @ref url_view returned in a
+        shared pointer. The lifetime of the storage
+        for the characters will extend for the
+        lifetime of the shared object. This allows
+        the new view to be copied and passed around
+        after the original string buffer is destroyed.
 
         @par Example
         @code
@@ -145,43 +191,6 @@ public:
     std::shared_ptr<
         url_view const>
     collect() const;
-
-    //--------------------------------------------
-    //--------------------------------------------
-    //--------------------------------------------
-
-    //--------------------------------------------
-    //
-    // classification
-    //
-    //--------------------------------------------
-
-    /** An integer for the maximum size string that can be represented
-    */
-    static
-    constexpr
-    std::size_t
-    max_size()
-    {
-        return 0x7ffffffe;
-    }
-
-    /** Return true if the URL is empty
-
-        An empty URL is a relative-ref with
-        zero path segments.
-    */
-    BOOST_URL_DECL
-    bool
-    empty() const noexcept;
-
-    //--------------------------------------------
-
-    /** Return the origin
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_origin() const noexcept;
 
     //--------------------------------------------
     //
@@ -691,14 +700,12 @@ public:
     }
 
     //--------------------------------------------
-    //--------------------------------------------
-    //--------------------------------------------
 
-    /** Return the complete encoded URL
+    /** Return the origin
     */
     BOOST_URL_DECL
     string_view
-    str() const;
+    encoded_origin() const noexcept;
 
     //--------------------------------------------
     //
