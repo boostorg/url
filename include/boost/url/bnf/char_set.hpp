@@ -190,7 +190,7 @@ hexdig_value(char c) noexcept
 
 //------------------------------------------------
 
-/** Find the first characer in the string that is in CharSet
+/** Find the first character in the string that is in CharSet
 */
 template<class CharSet>
 char const*
@@ -205,7 +205,7 @@ find_if(
         detail::has_find_if<CharSet>{});
 }
 
-/** Find the first characer in the string that is not in CharSet
+/** Find the first character in the string that is not in CharSet
 */
 template<class CharSet>
 char const*

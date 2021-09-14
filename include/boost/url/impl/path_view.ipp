@@ -16,6 +16,7 @@
 #include <boost/url/rfc/paths_bnf.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/detail/except.hpp>
+#include <iostream>
 
 namespace boost {
 namespace urls {
@@ -158,6 +159,19 @@ end() const noexcept ->
     iterator
 {
     return iterator(n_, s_);
+}
+
+//------------------------------------------------
+
+std::ostream&
+operator<<(
+    std::ostream& os,
+    path_view const& pv)
+{
+    os.write(
+        pv.encoded_path().data(),
+        pv.encoded_path().size());
+    return os;
 }
 
 //------------------------------------------------

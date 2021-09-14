@@ -14,6 +14,7 @@
 #include <boost/url/string.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
+#include <iosfwd>
 #include <utility>
 
 namespace boost {
@@ -63,6 +64,14 @@ public:
     size() const noexcept
     {
         return n_;
+    }
+
+    /** Return the complete encoded path
+    */
+    string_view
+    encoded_path() const noexcept
+    {
+        return s_;
     }
 
     /** Return an iterator to the beginning of the range
@@ -170,6 +179,16 @@ public:
         return segment();
     }
 };
+
+//----------------------------------------------------------
+
+/** Format the encoded path to an output stream
+*/
+BOOST_URL_DECL
+std::ostream&
+operator<<(
+    std::ostream& os,
+    path_view const& pv);
 
 //----------------------------------------------------------
 

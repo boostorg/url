@@ -772,7 +772,7 @@ url_view
 parse_uri_reference(
     string_view s);
 
-/** Format the serialized url to the output stream
+/** Format the encoded url to the output stream
 */
 BOOST_URL_DECL
 std::ostream&

@@ -14,8 +14,11 @@
   <tgroup cols="4">
     <colspec colname="a"/><colspec colname="b"/><colspec colname="c"/><colspec colname="d"/>
     <thead><row>
-      <entry valign="center" namest="a" nameend="d">
+      <entry valign="center" namest="a" nameend="c">
         <bridgehead renderas="sect2">URL</bridgehead>
+      </entry>
+      <entry valign="center" namest="d" nameend="d">
+        <bridgehead renderas="sect2">Encoding</bridgehead>
       </entry>
     </row></thead>
     <tbody><row>
@@ -26,7 +29,6 @@
           <member><link linkend="url.ref.boost__urls__ipv6_address">ipv6_address</link></member>
           <member><link linkend="url.ref.boost__urls__path_view">path_view</link></member>
           <member><link linkend="url.ref.boost__urls__query_params_view">query_params_view</link></member>
-          <member><link linkend="url.ref.boost__urls__scheme">scheme</link></member>
           <member><link linkend="url.ref.boost__urls__static_pool">static_pool</link></member>
           <member><link linkend="url.ref.boost__urls__static_url">static_url</link></member>
           <member><link linkend="url.ref.boost__urls__url">url</link></member>
@@ -36,7 +38,6 @@
       <entry valign="top">
         <bridgehead renderas="sect3">Functions</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__parse_uri">parse_uri</link></member>
           <member><link linkend="url.ref.boost__urls__parse_path">parse_path</link></member>
           <member><link linkend="url.ref.boost__urls__parse_path_abempty">parse_path_abempty</link></member>
           <member><link linkend="url.ref.boost__urls__parse_path_absolute">parse_path_absolute</link></member>
@@ -44,6 +45,8 @@
           <member><link linkend="url.ref.boost__urls__parse_path_rootless">parse_path_rootless</link></member>
           <member><link linkend="url.ref.boost__urls__parse_query_params">parse_query_params</link></member>
           <member><link linkend="url.ref.boost__urls__parse_relative_ref">parse_relative_ref</link></member>
+          <member><link linkend="url.ref.boost__urls__parse_uri">parse_uri</link></member>
+          <member><link linkend="url.ref.boost__urls__parse_uri_reference">parse_uri_reference</link></member>
         </simplelist>
         <bridgehead renderas="sect3">Type Traits</bridgehead>
         <simplelist type="vert" columns="1">
@@ -61,51 +64,20 @@
         </simplelist>
         <bridgehead renderas="sect3">Operators</bridgehead>
         <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__operator_lt__lt_">operator&lt;&lt;</link></member>
         </simplelist>
         <bridgehead renderas="sect3">Constants</bridgehead>
         <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__condition">condition</link></member>
+          <member><link linkend="url.ref.boost__urls__error">error</link></member>
           <member><link linkend="url.ref.boost__urls__host_type">host_type</link></member>
+          <member><link linkend="url.ref.boost__urls__scheme">scheme</link></member>
         </simplelist>
         <bridgehead renderas="sect3">Concepts</bridgehead>
         <simplelist type="vert" columns="1">
           <member>CharSet</member>
         </simplelist>
       </entry>
-      <entry valign="top">
-        <bridgehead renderas="sect3">rfc3986</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__absolute_uri_bnf">absolute_uri_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__authority_bnf">authority_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__fragment_bnf">fragment_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__hier_part_bnf">hier_part_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__host_bnf">host_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__ip_literal_bnf">ip_literal_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__ipv_future_bnf">ipv_future_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__ipv4_address_bnf">ipv4_address_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__ipv6_address_bnf">ipv6_address_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_encoded_bnf">pct_encoded_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__port_bnf">port_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__query_bnf">query_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__relative_part_bnf">relative_part_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__relative_ref_bnf">relative_ref_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__scheme_bnf">scheme_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__uri_bnf">uri_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__userinfo_bnf">userinfo_bnf</link></member>
-        </simplelist>
-      </entry>
-    </row></tbody>
-  </tgroup>
-  <tgroup cols="2">
-    <colspec colname="a"/><colspec colname="c"/>
-    <thead><row>
-      <entry valign="center" namest="a" nameend="a">
-        <bridgehead renderas="sect2">Percent Encoding</bridgehead>
-      </entry>
-      <entry valign="center" namest="b" nameend="c">
-        <bridgehead renderas="sect2">BNF</bridgehead>
-      </entry>
-    </row></thead>
-    <tbody><row>
       <entry valign="top">
         <bridgehead renderas="sect3">Functions</bridgehead>
         <simplelist type="vert" columns="1">
@@ -114,16 +86,23 @@
           <member><link linkend="url.ref.boost__urls__pct_encode">pct_encode</link></member>
           <member><link linkend="url.ref.boost__urls__pct_encode_size">pct_encode_size</link></member>
         </simplelist>
-        <bridgehead renderas="sect3">Options</bridgehead>
+        <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__pct_decode_opts">pct_decode_opts</link></member>
           <member><link linkend="url.ref.boost__urls__pct_encode_opts">pct_encode_opts</link></member>
-        </simplelist>
-        <bridgehead renderas="sect3">Types</bridgehead>
-        <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__pct_encoded_str">pct_encoded_str</link></member>
         </simplelist>
       </entry>
+    </row></tbody>
+  </tgroup>
+  <tgroup cols="4">
+    <colspec colname="a"/><colspec colname="b"/><colspec colname="c"/><colspec colname="d"/>
+    <thead><row>
+      <entry valign="center" namest="a" nameend="d">
+        <bridgehead renderas="sect2">BNF</bridgehead>
+      </entry>
+    </row></thead>
+    <tbody><row>
       <entry valign="top">
         <bridgehead renderas="sect3">Classes</bridgehead>
         <simplelist type="vert" columns="1">
@@ -132,7 +111,6 @@
           <member><link linkend="url.ref.boost__urls__bnf__alpha_chars">alpha_chars</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__digit_chars">digit_chars</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__hexdig_chars">hexdig_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__parse_string">parse_string</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__range">range</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__repeat">repeat</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__token">token</link></member>
@@ -141,12 +119,55 @@
       <entry valign="top">
         <bridgehead renderas="sect3">Functions</bridgehead>
         <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__bnf__ascii_tolower">ascii_tolower</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__find_if">find_if</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__find_if_not">find_if_not</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__hexdig_value">hexdig_value</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__is_valid">is_valid</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__parse">parse</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__parse_range">parse_range</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__parse_string">parse_string</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__validate">validate</link></member>
+        </simplelist>
+      </entry>
+      <entry valign="top">
+        <bridgehead renderas="sect3">RFC 3986 (1/2)</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__absolute_uri_bnf">absolute_uri_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__authority_bnf">authority_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__fragment_bnf">fragment_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__fragment_part_bnf">fragment_part_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__hier_part_bnf">hier_part_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__host_bnf">host_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__ip_literal_bnf">ip_literal_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__ipv_future_bnf">ipv_future_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__ipv4_address_bnf">ipv4_address_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__ipv6_address_bnf">ipv6_address_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__parsed_path">parsed_path</link></member>
+          <member><link linkend="url.ref.boost__urls__path_abempty_bnf">path_abempty_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__path_absolute_bnf">path_absolute_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__path_noscheme_bnf">path_noscheme_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__path_rootless_bnf">path_rootless_bnf</link></member>
+        </simplelist>
+      </entry>
+      <entry valign="top">
+        <bridgehead renderas="sect3">RFC 3986 (2/2)</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__pct_encoded_bnf">pct_encoded_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__port_bnf">port_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__port_part_bnf">port_part_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__query_bnf">query_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__query_part_bnf">query_part_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__relative_part_bnf">relative_part_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__relative_ref_bnf">relative_ref_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__scheme_bnf">scheme_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__scheme_part_bnf">scheme_part_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__segment_bnf">segment_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__segment_nz_bnf">segment_nz_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__segment_nz_nc_bnf">segment_nz_nc_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__uri_bnf">uri_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__uri_reference_bnf">uri_reference_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__userinfo_bnf">userinfo_bnf</link></member>
         </simplelist>
       </entry>
     </row></tbody>

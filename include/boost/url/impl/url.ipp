@@ -766,33 +766,6 @@ set_encoded_origin(
 //
 //------------------------------------------------
 
-url&
-url::
-set_scheme(string_view s)
-{
-    set_scheme_impl(
-        s, string_to_scheme(s));
-    return *this;
-}
-
-url&
-url::
-set_scheme(urls::scheme id)
-{
-    if(id == urls::scheme::unknown)
-        detail::throw_invalid_argument(
-            "url::set_scheme",
-            BOOST_CURRENT_LOCATION);
-    if(id == urls::scheme::none)
-    {
-        set_scheme_impl("", id);
-        return *this;
-    }
-    set_scheme_impl(
-        to_string(id), id);
-    return *this;
-}
-
 void
 url::
 set_scheme_impl(
@@ -894,6 +867,42 @@ set_scheme_impl(
     pt_.scheme = id;
     check_invariants();
     return;
+}
+
+url&
+url::
+remove_scheme() noexcept
+{
+    set_scheme_impl(
+        "", urls::scheme::none);
+    return *this;
+}
+
+url&
+url::
+set_scheme(string_view s)
+{
+    set_scheme_impl(
+        s, string_to_scheme(s));
+    return *this;
+}
+
+url&
+url::
+set_scheme(urls::scheme id)
+{
+    if(id == urls::scheme::unknown)
+        detail::throw_invalid_argument(
+            "url::set_scheme",
+            BOOST_CURRENT_LOCATION);
+    if(id == urls::scheme::none)
+    {
+        set_scheme_impl("", id);
+        return *this;
+    }
+    set_scheme_impl(
+        to_string(id), id);
+    return *this;
 }
 
 //------------------------------------------------

@@ -526,41 +526,48 @@ public:
     void
     testScheme()
     {
+        auto const remove = [](
+            string_view s1, string_view s2)
         {
-            url u;
-            u.reserve(40);
+            url u = parse_uri_reference(s1);
             BOOST_TEST(
-                u.set_scheme("http").str() == "http:");
-        }
+                u.remove_scheme().str() == s2);
+            BOOST_TEST(u.scheme().empty());
+            BOOST_TEST(u.scheme_id() ==
+                scheme::none);
+        };
 
-        url u;
-        BOOST_TEST(u.set_scheme("").str() == "");
-        BOOST_TEST(u.set_scheme(scheme::none).str() == "");
-        BOOST_TEST(u.set_scheme("http").str() == "http:");
-        BOOST_TEST(u.scheme_id() == scheme::http);
-        BOOST_TEST_THROWS(
-            u.set_scheme("http:"), std::invalid_argument);
-        BOOST_TEST(u.str() == "http:");
-        BOOST_TEST(u.scheme_id() == scheme::http);
-        BOOST_TEST_THROWS(
-            u.set_scheme("1http"), std::invalid_argument);
-        BOOST_TEST_THROWS(
-            u.set_scheme(scheme::unknown), std::invalid_argument);
-        BOOST_TEST(u.scheme_id() == scheme::http);
-        BOOST_TEST(u.str() == "http:");
-        BOOST_TEST(u.scheme_id() == scheme::http);
-        BOOST_TEST(u.set_scheme("ftp").str() == "ftp:");
-        BOOST_TEST(u.scheme_id() == scheme::ftp);
-        BOOST_TEST(u.set_scheme(scheme::none).str() == "");
-        BOOST_TEST(u.scheme_id() == scheme::none);
-        BOOST_TEST(u.set_scheme(scheme::ws).str() == "ws:");
-        BOOST_TEST(u.scheme_id() == scheme::ws);
-        BOOST_TEST(u.set_scheme("").str() == "");
-        BOOST_TEST(u.scheme_id() == scheme::none);
-        BOOST_TEST(u.set_scheme("x").str() == "x:");
-        BOOST_TEST(u.scheme_id() == scheme::unknown);
-        u = parse_uri("http:/path/to/file.txt");
-        BOOST_TEST(u.set_scheme("").str() == "/path/to/file.txt");
+        auto const set = [](
+            string_view s1, string_view s2,
+            string_view s3, scheme id)
+        {
+            url u = parse_uri_reference(s1);
+            BOOST_TEST(
+                u.set_scheme(s2).str() == s3);
+            BOOST_TEST(u.scheme() == s2);
+            BOOST_TEST(u.scheme_id() == id);
+        };
+
+        remove("", "");
+        remove("x", "x");
+        remove("x:", "");
+        remove("x:/", "/");
+        remove("x:a", "a");
+        remove("x:a/", "a/");
+        remove("x://", "//");
+        remove("x:a:/", "./a:/");
+        remove("x://a.b/1/2", "//a.b/1/2");
+        remove("x://a:b@c.d/1/?#", "//a:b@c.d/1/?#");
+
+        set("", "ftp", "ftp:", scheme::ftp);
+        set("/", "ws", "ws:/", scheme::ws);
+        set("a", "ws", "ws:a", scheme::ws);
+        set("a/", "ws", "ws:a/", scheme::ws);
+        set("//", "ws", "ws://", scheme::ws);
+        set("a:/", "ws", "ws:/", scheme::ws);
+        set("//a.b/1/2", "ws","ws://a.b/1/2", scheme::ws);
+        set("//a:b@c.d/1/?#", "ws",
+            "ws://a:b@c.d/1/?#", scheme::ws);
     }
 
     //--------------------------------------------

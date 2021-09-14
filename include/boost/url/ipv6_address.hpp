@@ -214,15 +214,6 @@ public:
     ipv6_address
     loopback() noexcept;
 
-    /** Format the address to an output stream
-    */
-    BOOST_URL_DECL
-    friend
-    std::ostream&
-    operator<<(
-        std::ostream&,
-        ipv6_address const&);
-
 private:
     BOOST_URL_DECL
     std::size_t
@@ -231,6 +222,14 @@ private:
 
     bytes_type addr_;
 };
+
+/** Format the address to an output stream
+*/
+BOOST_URL_DECL
+std::ostream&
+operator<<(
+    std::ostream& os,
+    ipv6_address const& addr);
 
 /** Return an IPv6 address from an IP address string
 

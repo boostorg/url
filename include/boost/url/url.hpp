@@ -738,6 +738,10 @@ public:
     //
     //--------------------------------------------
 
+private:
+    void set_scheme_impl(string_view s, urls::scheme id);
+public:
+
     /** Remove the scheme
 
         This function removes the scheme if it
@@ -834,10 +838,6 @@ public:
     BOOST_URL_DECL
     url&
     set_scheme(urls::scheme id);
-
-private:
-    void set_scheme_impl(string_view s, urls::scheme id);
-public:
 
     //--------------------------------------------
     //
@@ -2311,6 +2311,8 @@ private:
     parse() noexcept;
 };
 
+/** Format the encoded url to the output stream
+*/
 BOOST_URL_DECL
 std::ostream&
 operator<<(std::ostream& os, url const& u);

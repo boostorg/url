@@ -15,6 +15,7 @@
 #include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/rfc/detail/query_params_bnf.hpp>
 #include <boost/url/detail/except.hpp>
+#include <iostream>
 
 namespace boost {
 namespace urls {
@@ -160,6 +161,19 @@ operator[](string_view key) const
     if(it == end())
         return {};
     return it->value();
+}
+
+//------------------------------------------------
+
+std::ostream&
+operator<<(
+    std::ostream& os,
+    query_params_view const& qpv)
+{
+    os.write(
+        qpv.encoded_query().data(),
+        qpv.encoded_query().size());
+    return os;
 }
 
 //------------------------------------------------

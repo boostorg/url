@@ -28,16 +28,17 @@ enum class scheme : unsigned char
     */
     unknown,
 
-    /** File Transfer Protocol (FTP)
+    /**
+     * File Transfer Protocol (FTP)
 
-        FTP is a standard communication protocol
-        used for the transfer of computer files
-        from a server to a client on a computer
-        network.
+       FTP is a standard communication protocol
+       used for the transfer of computer files
+       from a server to a client on a computer
+       network.
 
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/draft-yevstifeyev-ftp-uri-scheme">
-            The 'ftp' URI Scheme</a>
+       @par Specification
+       @li <a href="https://datatracker.ietf.org/doc/html/draft-yevstifeyev-ftp-uri-scheme">
+           The 'ftp' URI Scheme</a>
     */
     ftp,
 

@@ -237,11 +237,12 @@ print_impl(
 std::ostream&
 operator<<(
     std::ostream& os,
-    ipv6_address const& a)
+    ipv6_address const& addr)
 {
-    char buf[ipv6_address::max_str_len + 1];
-    auto n = a.print_impl(buf);
-    os.write(buf, n);
+    char buf[ipv6_address::max_str_len];
+    auto const s = addr.to_buffer(
+        buf, sizeof(buf));
+    os.write(s.data(), s.size());
     return os;
 }
 

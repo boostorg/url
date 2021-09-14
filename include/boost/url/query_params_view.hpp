@@ -14,6 +14,7 @@
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
+#include <iosfwd>
 #include <utility>
 
 namespace boost {
@@ -83,6 +84,14 @@ public:
     size() const noexcept
     {
         return n_;
+    }
+
+    /** Return the full encoded query string
+    */
+    string_view
+    encoded_query() const noexcept
+    {
+        return s_;
     }
 
     /** Return an iterator to the beginning of the range
@@ -413,6 +422,16 @@ public:
         return { key(), value() };
     }
 };
+
+//------------------------------------------------
+
+/** Format the encoded query to an output stream
+*/
+BOOST_URL_DECL
+std::ostream&
+operator<<(
+    std::ostream& os,
+    query_params_view const& qpv);
 
 //------------------------------------------------
 

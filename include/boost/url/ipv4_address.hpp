@@ -210,15 +210,6 @@ public:
         return ipv4_address(0xFFFFFFFF);
     }
 
-    /** Format the address to an output stream
-    */
-    BOOST_URL_DECL
-    friend
-    std::ostream&
-    operator<<(
-        std::ostream&,
-        ipv4_address const&);
-
 private:
     friend class ipv6_address;
 
@@ -230,13 +221,13 @@ private:
     uint_type addr_;
 };
 
-#if 0
+/** Format the address to an output stream
+*/
 BOOST_URL_DECL
 std::ostream&
 operator<<(
-    std::ostream&,
-    ipv4_address const&);
-#endif
+    std::ostream& os,
+    ipv4_address const& addr);
 
 /** Return an IPv4 address from an IP address string in dotted decimal form
 */
