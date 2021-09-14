@@ -23,6 +23,17 @@
 namespace boost {
 namespace urls {
 
+struct url_view::shared_impl :
+    url_view
+{
+    shared_impl(
+        url_view const& u) noexcept
+        : url_view(reinterpret_cast<
+            char const*>(this + 1), u.pt_)
+    {
+    }
+};
+
 string_view
 url_view::
 get(int id) const noexcept
@@ -53,16 +64,18 @@ len(int id0, int id1) const noexcept
 
 //------------------------------------------------
 
-struct url_view::shared_impl :
-    url_view
+url_view::
+url_view(
+    char const* s,
+    detail::parts const& pt) noexcept
+    : cs_(s)
+    , pt_(pt)
 {
-    shared_impl(
-        url_view const& u) noexcept
-        : url_view(reinterpret_cast<
-            char const*>(this + 1), u.pt_)
-    {
-    }
-};
+    if(pt.offset[id_end] > max_size())
+        detail::throw_length_error(
+            "url_view::max_size exceeded",
+            BOOST_CURRENT_LOCATION);
+}
 
 url_view::
 url_view() noexcept = default;
@@ -483,10 +496,70 @@ encoded_origin() const noexcept
 //------------------------------------------------
 
 url_view
+parse_absolute_uri(
+    string_view s,
+    error_code& ec) noexcept
+{
+    if(s.size() > url_view::max_size())
+        detail::throw_length_error(
+            "url_view::max_size exceeded",
+            BOOST_CURRENT_LOCATION);
+    absolute_uri_bnf t;
+    if(! bnf::parse_string(s, ec, t))
+        return {};
+
+    detail::parts p;
+
+    // scheme
+    detail::apply(p, t.scheme_part);
+
+    // authority
+    if(t.hier_part.has_authority)
+        detail::apply(p,
+            t.hier_part.authority);
+
+    // path
+    detail::apply(p, t.hier_part.path);
+
+    // query
+    detail::apply(p, t.query_part);
+
+    return url_view(s.data(), p);
+}
+
+url_view
+parse_absolute_uri(
+    string_view s,
+    std::error_code& ec) noexcept
+{
+    error_code ec0;
+    auto u = parse_absolute_uri(s, ec0);
+    ec = ec0;
+    return u;
+}
+
+url_view
+parse_absolute_uri(
+    string_view s)
+{
+    error_code ec;
+    auto u = parse_absolute_uri(s, ec);
+    detail::maybe_throw(ec,
+        BOOST_CURRENT_LOCATION);
+    return u;
+}
+
+//------------------------------------------------
+
+url_view
 parse_uri(
     string_view s,
     error_code& ec) noexcept
 {
+    if(s.size() > url_view::max_size())
+        detail::throw_length_error(
+            "url_view::max_size exceeded",
+            BOOST_CURRENT_LOCATION);
     uri_bnf t;
     if(! bnf::parse_string(s, ec, t))
         return {};
@@ -515,6 +588,17 @@ parse_uri(
 
 url_view
 parse_uri(
+    string_view s,
+    std::error_code& ec) noexcept
+{
+    error_code ec0;
+    auto u = parse_uri(s, ec0);
+    ec = ec0;
+    return u;
+}
+
+url_view
+parse_uri(
     string_view s)
 {
     error_code ec;
@@ -531,6 +615,10 @@ parse_relative_ref(
     string_view s,
     error_code& ec) noexcept
 {
+    if(s.size() > url_view::max_size())
+        detail::throw_length_error(
+            "url_view::max_size exceeded",
+            BOOST_CURRENT_LOCATION);
     relative_ref_bnf t;
     if(! bnf::parse_string(
             s, ec, t))
@@ -558,6 +646,17 @@ parse_relative_ref(
 
 url_view
 parse_relative_ref(
+    string_view s,
+    std::error_code& ec) noexcept
+{
+    error_code ec0;
+    auto u = parse_relative_ref(s, ec0);
+    ec = ec0;
+    return u;
+}
+
+url_view
+parse_relative_ref(
     string_view s)
 {
     error_code ec;
@@ -574,6 +673,10 @@ parse_uri_reference(
     string_view s,
     error_code& ec) noexcept
 {
+    if(s.size() > url_view::max_size())
+        detail::throw_length_error(
+            "url_view::max_size exceeded",
+            BOOST_CURRENT_LOCATION);
     uri_reference_bnf t;
     if(! bnf::parse_string(s, ec, t))
         return {};
@@ -598,6 +701,17 @@ parse_uri_reference(
     detail::apply(p, t.fragment_part);
 
     return url_view(s.data(), p);
+}
+
+url_view
+parse_uri_reference(
+    string_view s,
+    std::error_code& ec) noexcept
+{
+    error_code ec0;
+    auto u = parse_uri_reference(s, ec0);
+    ec = ec0;
+    return u;
 }
 
 url_view

@@ -38,6 +38,7 @@
       <entry valign="top">
         <bridgehead renderas="sect3">Functions</bridgehead>
         <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__parse_absolute_uri">parse_absolute_uri</link></member>
           <member><link linkend="url.ref.boost__urls__parse_path">parse_path</link></member>
           <member><link linkend="url.ref.boost__urls__parse_path_abempty">parse_path_abempty</link></member>
           <member><link linkend="url.ref.boost__urls__parse_path_absolute">parse_path_absolute</link></member>

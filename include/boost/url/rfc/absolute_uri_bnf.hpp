@@ -24,10 +24,16 @@ namespace urls {
     @par BNF
     @code
     absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+    hier-part       = "//" authority path-abempty
+                    / path-absolute
+                    / path-rootless
+                    / path-empty
     @endcode
 
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.3"
+        >4.3. Absolute URI (rfc3986)</a>
 */
 struct absolute_uri_bnf
 {

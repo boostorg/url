@@ -26,16 +26,87 @@ public:
     void
     testParse()
     {
+        // absolute-URI
         {
-            BOOST_TEST_THROWS(
-                urls::parse_uri(":"),
-                std::exception);
+            string_view s =
+                "http://user:pass@www.example.com:80/dir/file.txt?query";
+            {
+                error_code ec;
+                parse_absolute_uri(s, ec);
+                BOOST_TEST(! ec.failed());
+            }
+            {
+                std::error_code ec;
+                parse_absolute_uri(s, ec);
+                BOOST_TEST(! ec);
+            }
+            BOOST_TEST_NO_THROW(parse_absolute_uri(s));
+            BOOST_TEST_THROWS(parse_absolute_uri("a://b/c?#"),
+                system_error);
         }
+
+        // relative-ref
         {
-            BOOST_TEST_THROWS(
-                urls::parse_relative_ref(":"),
-                std::exception);
+            string_view s =
+                "//user:pass@www.example.com:80/dir/file.txt?query#frag";
+            {
+                error_code ec;
+                parse_relative_ref(s, ec);
+                BOOST_TEST(! ec.failed());
+            }
+            {
+                std::error_code ec;
+                parse_relative_ref(s, ec);
+                BOOST_TEST(! ec);
+            }
+            BOOST_TEST_NO_THROW(parse_relative_ref(s));
+            BOOST_TEST_THROWS(parse_relative_ref(":"),
+                system_error);
         }
+
+        // URI
+        {
+            string_view s =
+                "http://user:pass@www.example.com:80/dir/file.txt?query#frag";
+            {
+                error_code ec;
+                parse_uri(s, ec);
+                BOOST_TEST(! ec.failed());
+            }
+            {
+                std::error_code ec;
+                parse_uri(s, ec);
+                BOOST_TEST(! ec);
+            }
+            BOOST_TEST_NO_THROW(parse_uri(s));
+            BOOST_TEST_THROWS(parse_uri(":"),
+                system_error);
+        }
+
+        // URI-reference
+        {
+            string_view s1 =
+                "http://user:pass@www.example.com:80/dir/file.txt?query#frag";
+            string_view s2 =
+                "//user:pass@www.example.com:80/dir/file.txt?query#frag";
+            {
+                error_code ec;
+                parse_uri_reference(s1, ec);
+                BOOST_TEST(! ec.failed());
+            }
+            {
+                error_code ec;
+                parse_uri_reference(s2, ec);
+                BOOST_TEST(! ec.failed());
+            }
+            BOOST_TEST_NO_THROW(parse_uri_reference(s1));
+            BOOST_TEST_NO_THROW(parse_uri_reference(s2));
+            BOOST_TEST_THROWS(parse_uri_reference(":"),
+                system_error);
+        }
+
+        //---
+
         {
             error_code ec;
             auto const u = urls::parse_uri(
@@ -55,6 +126,7 @@ public:
             BOOST_TEST(u.encoded_fragment() == "frag");
         }
 
+        // relative-ref
         BOOST_TEST_NO_THROW(parse_relative_ref(""));
 
         {
