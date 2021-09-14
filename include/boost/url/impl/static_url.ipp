@@ -45,7 +45,7 @@ void
 static_url_base::
 copy(url_view const& u)
 {
-    this->url::copy(u.s_, u.pt_);
+    this->url::copy(u.cs_, u.pt_);
 }
 
 url_view

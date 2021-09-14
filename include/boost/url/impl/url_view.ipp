@@ -27,14 +27,14 @@ string_view
 url_view::
 get(int id) const noexcept
 {
-    return pt_.get(id, s_);
+    return pt_.get(id, cs_);
 }
 
 string_view
 url_view::
 get(int id0, int id1) const noexcept
 {
-    return pt_.get(id0, id1, s_);
+    return pt_.get(id0, id1, cs_);
 }
 
 std::size_t

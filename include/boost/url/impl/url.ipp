@@ -33,35 +33,6 @@
 namespace boost {
 namespace urls {
 
-string_view
-url::
-get(int id) const noexcept
-{
-    return pt_.get(id, s_);
-}
-
-string_view
-url::
-get(int id0, int id1) const noexcept
-{
-    return pt_.get(
-        id0, id1, s_);
-}
-
-std::size_t
-url::
-len(int id) const noexcept
-{
-    return pt_.len(id);
-}
-
-std::size_t
-url::
-len(int id0, int id1) const noexcept
-{
-    return pt_.len(id0, id1);
-}
-
 void
 url::
 check_invariants() const noexcept
@@ -135,6 +106,7 @@ url(char* buf,
 {
     BOOST_ASSERT(cap > 0);
     s_[0] = '\0';
+    cs_ = s_;
 }
 
 void
@@ -154,6 +126,7 @@ copy(
         if(s_)
             free_impl(s_);
         s_ = s1;
+        cs_ = s_;
         cap_ = cap;
     }
     if(n != 0)
@@ -225,9 +198,11 @@ url::
 url(url&& u) noexcept
 {
     s_ = u.s_;
+    cs_ = u.cs_;
     pt_ = u.pt_;
     cap_ = u.cap_;
     u.s_ = nullptr;
+    u.cs_ = "";
     u.pt_ = {};
     u.cap_ = 0;
 }
@@ -241,7 +216,7 @@ url(url const& u)
 url::
 url(url_view const& u)
 {
-    copy(u.s_, u.pt_);
+    copy(u.cs_, u.pt_);
 }
 
 url&
@@ -251,9 +226,11 @@ operator=(url&& u) noexcept
     if(s_)
         free_impl(s_);
     s_ = u.s_;
+    cs_ = s_;
     pt_ = u.pt_;
     cap_ = u.cap_;
     u.s_ = nullptr;
+    u.cs_ = "";
     u.pt_ = {};
     u.cap_ = 0;
     return *this;
@@ -271,399 +248,10 @@ url&
 url::
 operator=(url_view const& u)
 {
-    copy(u.s_, u.pt_);
+    copy(u.cs_, u.pt_);
     return *this;
 }
 
-//------------------------------------------------
-//------------------------------------------------
-//------------------------------------------------
-
-//------------------------------------------------
-//
-// classification
-//
-//------------------------------------------------
-
-bool
-url::
-empty() const noexcept
-{
-    return pt_.offset[id_end] == 0;
-}
-
-//------------------------------------------------
-
-string_view
-url::
-encoded_origin() const noexcept
-{
-    return get(id_scheme, id_path);
-}
-
-//------------------------------------------------
-//
-// scheme
-//
-//------------------------------------------------
-
-bool
-url::
-has_scheme() const noexcept
-{
-    auto const n = len(
-        id_scheme);
-    if(n == 0)
-        return false;
-    BOOST_ASSERT(n > 1);
-    BOOST_ASSERT(
-        get(id_scheme
-            ).ends_with(':'));
-    return true;
-}
-
-string_view
-url::
-scheme() const noexcept
-{
-    auto s = get(
-        id_scheme);
-    if(! s.empty())
-    {
-        BOOST_ASSERT(s.size() > 1);
-        BOOST_ASSERT(s.ends_with(':'));
-        s.remove_suffix(1);
-    }
-    return s;
-}
-
-urls::scheme
-url::
-scheme_id() const noexcept
-{
-    return pt_.scheme;
-}
-
-//----------------------------------------------------------
-//
-// authority
-//
-//----------------------------------------------------------
-
-bool
-url::
-has_authority() const noexcept
-{
-    auto const n = len(id_user);
-    if(n == 0)
-        return false;
-    BOOST_ASSERT(get(
-        id_user).starts_with("//"));
-    return true;
-}
-
-string_view
-url::
-encoded_authority() const noexcept
-{
-    auto s = get(id_user, id_path);
-    if(! s.empty())
-    {
-        BOOST_ASSERT(has_authority());
-        s.remove_prefix(2);
-    }
-    return s;
-}
-
-// userinfo
-
-bool
-url::
-has_userinfo() const noexcept
-{
-    auto n = len(id_pass);
-    if(n == 0)
-        return false;
-    BOOST_ASSERT(has_authority());
-    BOOST_ASSERT(get(
-        id_pass).ends_with('@'));
-    return true;
-}
-
-string_view
-url::
-encoded_userinfo() const noexcept
-{
-    auto s = get(
-        id_user, id_host);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(
-        has_authority());
-    s.remove_prefix(2);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(
-        s.ends_with('@'));
-    s.remove_suffix(1);
-    return s;
-}
-
-string_view
-url::
-encoded_user() const noexcept
-{
-    auto s = get(id_user);
-    if(! s.empty())
-    {
-        BOOST_ASSERT(
-            has_authority());
-        s.remove_prefix(2);
-    }
-    return s;
-}
-
-bool
-url::
-has_password() const noexcept
-{
-    auto const n = len(id_pass);
-    if(n > 1)
-    {
-        BOOST_ASSERT(get(
-            id_pass
-                ).starts_with(':'));
-        BOOST_ASSERT(get(
-            id_pass
-                ).ends_with('@'));
-        return true;
-    }
-    BOOST_ASSERT(n == 0 ||
-        get(id_pass
-            ).ends_with('@'));
-    return false;
-}
-
-string_view
-url::
-encoded_password() const noexcept
-{
-    auto s = get(id_pass);
-    switch(s.size())
-    {
-    case 1:
-        BOOST_ASSERT(
-            s.starts_with('@'));
-        BOOST_FALLTHROUGH;
-    case 0:
-        return s.substr(0,0);
-    default:
-        break;
-    }
-    BOOST_ASSERT(
-        s.ends_with('@'));
-    BOOST_ASSERT(
-        s.starts_with(':'));
-    return s.substr(1,
-        s.size() - 2);
-}
-
-// host
-
-string_view
-url::
-encoded_host() const noexcept
-{
-    return get(id_host);
-}
-
-urls::ipv4_address
-url::
-ipv4_address() const noexcept
-{
-    if(pt_.host_type !=
-        urls::host_type::ipv4)
-        return {};
-    urls::ipv4_address::
-        bytes_type bytes;
-    std::memcpy(
-        &bytes[0],
-        &pt_.ip_addr[0], 4);
-    return urls::ipv4_address(
-        bytes);
-}
-
-urls::ipv6_address
-url::
-ipv6_address() const noexcept
-{
-    if(pt_.host_type !=
-        urls::host_type::ipv6)
-        return {};
-    urls::ipv6_address::
-        bytes_type bytes;
-    std::memcpy(
-        &bytes[0],
-        &pt_.ip_addr[0], 16);
-    return urls::ipv6_address(
-        bytes);
-}
-
-string_view
-url::
-ipv_future() const noexcept
-{
-    BOOST_ASSERT(pt_.host_type ==
-        urls::host_type::ipvfuture);
-    if(pt_.host_type !=
-        urls::host_type::ipvfuture)
-        return {};
-    return get(id_host);
-}
-
-// port
-
-bool
-url::
-has_port() const noexcept
-{
-    auto const n = len(id_port);
-    if(n == 0)
-        return false;
-    BOOST_ASSERT(
-        get(id_port).starts_with(':'));
-    return true;
-}
-
-string_view
-url::
-port() const noexcept
-{
-    auto s = get(id_port);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(has_port());
-    return s.substr(1);
-}
-
-std::uint16_t
-url::
-port_number() const noexcept
-{
-    BOOST_ASSERT(
-        has_port() ||
-        pt_.port_number == 0);
-    return pt_.port_number;
-}
-
-string_view
-url::
-encoded_host_and_port() const noexcept
-{
-    return get(id_host, id_path);
-}
-//----------------------------------------------------------
-//
-// path
-//
-//----------------------------------------------------------
-
-string_view
-url::
-encoded_path() const noexcept
-{
-    return get(id_path);
-}
-
-path_view
-url::
-path() const noexcept
-{
-    return path_view(
-        get(id_path), pt_.nseg);
-}
-
-//----------------------------------------------------------
-//
-// query
-//
-//----------------------------------------------------------
-
-bool
-url::
-has_query() const noexcept
-{
-    auto const n = len(
-        id_query);
-    if(n == 0)
-        return false;
-    BOOST_ASSERT(
-        get(id_query).
-            starts_with('?'));
-    return true;
-}
-
-string_view
-url::
-encoded_query() const noexcept
-{
-    auto s = get(
-        id_query);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(
-        s.starts_with('?'));
-    return s.substr(1);
-}
-
-query_params_view
-url::
-query_params() const noexcept
-{
-    auto s = get(
-        id_query);
-    if(s.empty())
-        return query_params_view(s, 0);
-    BOOST_ASSERT(s.starts_with('?'));
-    return query_params_view(
-        s.substr(1), pt_.nparam);
-}
-
-//----------------------------------------------------------
-//
-// fragment
-//
-//----------------------------------------------------------
-
-bool
-url::
-has_fragment() const noexcept
-{
-    auto const n = len(
-        id_frag);
-    if(n == 0)
-        return false;
-    BOOST_ASSERT(
-        get(id_frag).
-            starts_with('#'));
-    return true;
-}
-
-string_view
-url::
-encoded_fragment() const noexcept
-{
-    auto s = get(
-        id_frag);
-    if(s.empty())
-        return s;
-    BOOST_ASSERT(
-        s.starts_with('#'));
-    return s.substr(1);
-}
-
-//------------------------------------------------
-//------------------------------------------------
 //------------------------------------------------
 
 string_view
@@ -711,54 +299,9 @@ reserve(std::size_t cap)
     if(s_)
         free_impl(s_);
     s_ = s;
+    cs_ = s_;
     cap_ = cap;
 }
-
-//------------------------------------------------
-
-#if 0
-
-url&
-url::
-set_encoded_origin(
-    string_view s)
-{
-    if(s.empty())
-    {
-        resize_impl(
-            id_scheme,
-            id_path, 0);
-        return *this;
-    }
-
-    error_code ec;
-    detail::parts pt;
-    detail::parse_origin(pt, s, ec);
-    if(ec)
-        invalid_part::raise();
-    auto const dest =
-        resize_impl(
-            id_scheme,
-            id_path,
-            s.size());
-    s.copy(dest, s.size());
-    pt_.split(
-        id_scheme,
-        pt.len(id_scheme));
-    pt_.split(
-        id_user,
-        pt.len(id_user));
-    pt_.split(
-        id_pass,
-        pt.len(id_pass));
-    pt_.split(
-        id_host,
-        pt.len(id_host));
-    pt_.split(
-        id_port, pt.len(id_port));
-    return *this;
-}
-#endif
 
 //------------------------------------------------
 //
@@ -819,8 +362,7 @@ remove_scheme() noexcept
             // path-absolute
             return false;
         }
-        auto const p = static_cast<
-            url const*>(this)->path();
+        auto const p = url_view::path();
         BOOST_ASSERT(! p.empty());
         auto it = p.begin();
         s = it->encoded_segment();
@@ -1578,8 +1120,7 @@ remove_origin() noexcept
         check_invariants();
         return *this;
     }
-    auto const p = static_cast<
-        url const*>(this)->path();
+    auto const p = url_view::path();
     BOOST_ASSERT(! p.empty());
     auto it = p.begin();
     s = it->encoded_segment();
@@ -2385,6 +1926,7 @@ resize_impl(
             free_impl(s_);
         }
         s_ = s1;
+        cs_ = s_;
         cap_ = new_cap;
     }
 

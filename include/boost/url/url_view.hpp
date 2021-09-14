@@ -30,7 +30,11 @@ namespace urls {
 */
 class url_view
 {
-    char const* s_ = "";
+#ifndef BOOST_URL_DOCS
+protected:
+#endif
+
+    char const* cs_ = "";
     detail::parts pt_;
 
     // VFALCO This has to be kept in
@@ -61,7 +65,7 @@ class url_view
     url_view(
         char const* s,
         detail::parts const& pt) noexcept
-        : s_(s)
+        : cs_(s)
         , pt_(pt)
     {
     }
@@ -193,8 +197,9 @@ public:
         string. Its presence
         in a URL is determined by a leading double-slash
         ("//") in the 
+
         @par Exception Safety
-        No-throw guarantee.
+        Does not throw.
     */
     BOOST_URL_DECL
     bool
@@ -782,7 +787,5 @@ operator<<(
 
 } // urls
 } // boost
-
-#include <boost/url/impl/url_view.hpp>
 
 #endif
