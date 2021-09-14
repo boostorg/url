@@ -738,7 +738,19 @@ public:
     //
     //--------------------------------------------
 
-    /** Set the scheme.
+    /** Remove the scheme
+
+        This function removes the scheme if it
+        is present.
+
+        @par Exception Safety
+        Does not throw.
+    */
+    BOOST_URL_DECL
+    url&
+    remove_scheme() noexcept;
+
+    /** Set the scheme
 
         This function sets the scheme to the specified
         string:
@@ -905,11 +917,11 @@ public:
         user          = *( unreserved / pct-encoded / sub-delims )
         @endcode
 
-        @return A reference to the object, for chaining.
-
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
+
+        @return A reference to the object, for chaining.
 
         @param s The string to set.
     */
@@ -1026,6 +1038,7 @@ public:
         @par BNF
         @code
         userinfo      = [ [ user ] [ ':' password ] ]
+
         user          = *( unreserved / pct-encoded / sub-delims )
         password      = *( unreserved / pct-encoded / sub-delims / ":" )
         @endcode
@@ -1047,7 +1060,6 @@ public:
     set_userinfo(
         string_view s);
 
-    //--------------------------------------------
     //--------------------------------------------
 
 private:
@@ -1405,27 +1417,10 @@ public:
 
         @par Exception Safety
         Does not throw.
-
-    */
-
-    /** Set the origin to the specified value.
-
-        The origin consists of the everything from the
-        beginning of the URL up to but not including
-        the path.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The origin to set. Special characters
-        must be percent-encoded, or an exception is
-        thrown.
     */
     BOOST_URL_DECL
     url&
-    set_encoded_origin(
-        string_view s);
+    remove_origin() noexcept;
 
     //--------------------------------------------
     //

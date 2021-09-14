@@ -1328,6 +1328,34 @@ public:
     //--------------------------------------------
 
     void
+    testOrigin()
+    {
+        auto const remove = [](
+            string_view s1, string_view s2)
+        {
+            url u = parse_uri_reference(s1);
+            BOOST_TEST(u.remove_origin().str() == s2);
+            BOOST_TEST(u.encoded_origin().empty());
+            BOOST_TEST(! u.has_authority());
+        };
+
+        remove("", "");
+        remove("w", "w");
+        remove("w/", "w/");
+        remove("/", "/");
+        remove("/x", "/x");
+        remove("/x/", "/x/");
+        remove("/x/?#", "/x/?#");
+        remove("w:", "");
+        remove("w::", "./:");
+        remove("x://y//z", ".//z");
+        remove("http://user:pass@example.com:80/path/to/file.txt",
+               "/path/to/file.txt"); 
+    }
+
+    //--------------------------------------------
+
+    void
     run()
     {
         testScheme();
@@ -1338,6 +1366,7 @@ public:
         testHost();
         testPort();
         testAuthority();
+        testOrigin();
 #if 0
         testObservers();
 

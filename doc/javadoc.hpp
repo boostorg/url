@@ -31,19 +31,19 @@
     Calls to allocate may throw.
     Exceptions thrown on invalid input.
 
-    @return {description}.
-
     @tparam {name} {description}.
+
+    @return {description}.
 
     @param {name} {description}.
 
     @throw {condition}.
 
-    @par Specification
-    @li <a href="">text (rfc#)</a>
-
     @par Thread Safety
     {description}
+
+    @par Specification
+    @li <a href="">text (rfc#)</a>
 
     @see @ref {refid}, @ref {refid}.
 */

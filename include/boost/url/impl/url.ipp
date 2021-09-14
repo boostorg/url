@@ -810,20 +810,34 @@ set_scheme_impl(
         // path-rootless to path-noscheme
         bool const need_dot = [this]
         {
-            if(has_authority())
+            if(len(id_user) >= 2)
+            {
+                // authority
                 return false;
+            }
             auto s = get(id_path);
             if(s.empty())
+            {
+                // path-empty
                 return false;
+            }
             if(s.starts_with('/'))
+            {
+                // path-absolute
                 return false;
+            }
             auto const p = static_cast<
                 url const*>(this)->path();
             BOOST_ASSERT(! p.empty());
             auto it = p.begin();
             s = it->encoded_segment();
-            return s.find_first_of(':') !=
-                string_view::npos;
+            if(s.find_first_of(':') ==
+                string_view::npos)
+            {
+                // path-noscheme
+                return false;
+            }
+            return true;
         }();
 
         if(! need_dot)
@@ -1517,9 +1531,81 @@ set_encoded_authority(string_view s)
 
 url&
 url::
-set_encoded_origin(
-    string_view s)
+remove_origin() noexcept
 {
+    check_invariants();
+    if(len(id_scheme,
+        id_path) == 0)
+    {
+        // no origin
+        return *this;
+    }
+
+    pt_.decoded[id_user] = 0;
+    pt_.decoded[id_pass] = 0;
+    pt_.decoded[id_host] = 0;
+    pt_.host_type =
+        urls::host_type::none;
+    pt_.port_number = 0;
+
+    // Check if we will be left with
+    // "//" or a rootless segment
+    // with a colon
+    auto s = get(id_path);
+    if(s.starts_with("//"))
+    {
+        // need "."
+        auto dest = resize_impl(
+            id_scheme, id_path, 1);
+        dest[0] = '.';
+        pt_.offset[id_scheme] = 0;
+        pt_.offset[id_user] = 0;
+        pt_.offset[id_pass] = 0;
+        pt_.offset[id_host] = 0;
+        pt_.offset[id_port] = 0;
+        BOOST_ASSERT(
+            pt_.offset[id_path] >= 1);
+        pt_.offset[id_path] -= 1;
+        return *this;
+    }
+    if( s.empty() ||
+        s.starts_with('/'))
+    {
+        // path-empty,
+        // path-absolute
+        resize_impl(
+            id_scheme, id_path, 0);
+        check_invariants();
+        return *this;
+    }
+    auto const p = static_cast<
+        url const*>(this)->path();
+    BOOST_ASSERT(! p.empty());
+    auto it = p.begin();
+    s = it->encoded_segment();
+    if(s.find_first_of(':') ==
+        string_view::npos)
+    {
+        // path-noscheme
+        resize_impl(
+            id_scheme, id_path, 0);
+        check_invariants();
+        return *this;
+    }
+
+    // need "./"
+    auto dest = resize_impl(
+        id_scheme, id_path, 2);
+    dest[0] = '.';
+    dest[1] = '/';
+    pt_.offset[id_scheme] = 0;
+    pt_.offset[id_user] = 0;
+    pt_.offset[id_pass] = 0;
+    pt_.offset[id_host] = 0;
+    pt_.offset[id_port] = 0;
+    BOOST_ASSERT(
+        pt_.offset[id_path] >= 2);
+    pt_.offset[id_path] -= 2;
     return *this;
 }
 
@@ -1586,73 +1672,6 @@ path() noexcept ->
 //
 //------------------------------------------------
 
-url&
-url::
-set_query(
-    string_view s)
-{
-    if(s.empty())
-    {
-        resize_impl(id_query, 0);
-        return *this;
-    }
-    auto const e =
-        detail::query_pct_set();
-    auto const n =
-        e.encoded_size(s);
-    auto const dest = resize_impl(
-        id_query,
-        1 + n);
-    dest[0] = '?';
-    e.encode(dest + 1, s);
-    return *this;
-}
-
-url&
-url::
-set_encoded_query(
-    string_view s)
-{
-    if(s.empty())
-    {
-        resize_impl(id_query, 0);
-        return *this;
-    }
-    auto const e =
-        detail::query_pct_set();
-    e.validate(s);
-    auto const dest = resize_impl(
-        id_query,
-        1 + s.size());
-    dest[0] = '?';
-    s.copy(dest + 1, s.size());
-    return *this;
-}
-
-url&
-url::
-set_query_part(
-    string_view s)
-{
-    if(s.empty())
-    {
-        resize_impl(id_query, 0);
-        return *this;
-    }
-    if(s.front() != '?')
-        invalid_part::raise();
-    s = s.substr(1);
-    auto const e =
-        detail::query_pct_set();
-    e.validate(s);
-    auto const dest = resize_impl(
-        id_query,
-        1 + s.size());
-    dest[0] = '?';
-    s.copy(dest + 1, s.size());
-    return *this;
-}
-
 auto
 url::
 query_params() noexcept ->
@@ -1666,72 +1685,6 @@ query_params() noexcept ->
 // fragment
 //
 //------------------------------------------------
-
-url&
-url::
-set_fragment(
-    string_view s)
-{
-    if(s.empty())
-    {
-        resize_impl(id_frag, 0);
-        return *this;
-    }
-    auto const e =
-        detail::frag_pct_set();
-    auto const n =
-        e.encoded_size(s);
-    auto const dest = resize_impl(
-        id_frag, 1 + n);
-    dest[0] = '#';
-    e.encode(dest + 1, s);
-    return *this;
-}
-
-url&
-url::
-set_encoded_fragment(
-    string_view s)
-{
-    if(s.empty())
-    {
-        resize_impl(id_frag, 0);
-        return *this;
-    }
-    auto const e =
-        detail::frag_pct_set();
-    e.validate(s);
-    auto const dest = resize_impl(
-        id_frag,
-        1 + s.size());
-    dest[0] = '#';
-    s.copy(dest + 1, s.size());
-    return *this;
-}
-
-url&
-url::
-set_fragment_part(
-    string_view s)
-{
-    if(s.empty())
-    {
-        resize_impl(id_frag, 0);
-        return *this;
-    }
-    if(s.front() != '#')
-        invalid_part::raise();
-    s = s.substr(1);
-    auto const e =
-        detail::frag_pct_set();
-    e.validate(s);
-    auto const dest = resize_impl(
-        id_frag,
-        1 + s.size());
-    dest[0] = '#';
-    s.copy(dest + 1, s.size());
-    return *this;
-}
 
 //------------------------------------------------
 
