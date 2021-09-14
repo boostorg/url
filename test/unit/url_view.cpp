@@ -12,6 +12,9 @@
 
 #include <boost/url/static_pool.hpp>
 #include <boost/url/detail/test/test_suite.hpp>
+#include <boost/url/bnf/parse.hpp>
+#include <boost/url/rfc/uri_reference_bnf.hpp>
+
 #include <sstream>
 
 namespace boost {
@@ -685,6 +688,13 @@ public:
     }
 
     void
+    testCases()
+    {
+        BOOST_TEST(bnf::is_valid<uri_reference_bnf>(
+            "javascript:alert(1)"));
+    }
+
+    void
     run()
     {
         testParse();
@@ -700,6 +710,7 @@ public:
         testQuery();
         testFragment();
         testOutput();
+        testCases();
     }
 };
 

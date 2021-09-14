@@ -37,9 +37,24 @@ parse(
         ec = error::bad_alpha;
         return false;
     }
+    struct scheme_chars
+    {
+        constexpr
+        bool
+        operator()(char c) const noexcept
+        {
+            return
+                (c >= '0' && c <= '9') ||
+                (c >= 'A' && c <= 'Z') ||
+                (c >= 'a' && c <= 'z') ||
+                c == '+' ||
+                c == '-' ||
+                c == '.';
+        }
+    };
     it = bnf::find_if_not(
         it + 1, end,
-            bnf::alnum_chars{});
+            scheme_chars{});
     t.scheme = string_view(
         start, it - start);
     t.scheme_id = string_to_scheme(
