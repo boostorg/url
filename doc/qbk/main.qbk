@@ -34,6 +34,7 @@
 [/ Named Requirements ]
 
 [def __Allocator__              [@https://en.cppreference.com/w/cpp/named_req/Allocator ['Allocator]]]
+[def __Copyable__               [@https://en.cppreference.com/w/cpp/concepts/copyable ['Copyable]]]
 [def __CopyAssignable__         [@https://en.cppreference.com/w/cpp/named_req/CopyAssignable ['CopyAssignable]]]
 [def __CopyConstructible__      [@https://en.cppreference.com/w/cpp/named_req/CopyConstructible ['CopyConstructible]]]
 [def __DefaultConstructible__   [@https://en.cppreference.com/w/cpp/named_req/DefaultConstructible ['DefaultConstructible]]]
@@ -41,10 +42,10 @@
 [def __InputIterator__          [@https://en.cppreference.com/w/cpp/named_req/InputIterator ['InputIterator]]]
 [def __MoveAssignable__         [@https://en.cppreference.com/w/cpp/named_req/MoveAssignable ['MoveAssignable]]]
 [def __MoveConstructible__      [@https://en.cppreference.com/w/cpp/named_req/MoveConstructible ['MoveConstructible]]]
+[def __SemiRegular__            [@https://en.cppreference.com/w/cpp/concepts/semiregular ['SemiRegular]]]
 [def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
 
-[def __Copyable__               [@https://en.cppreference.com/w/cpp/concepts/copyable ['Copyable]]]
-[def __SemiRegular__            [@https://en.cppreference.com/w/cpp/concepts/semiregular ['SemiRegular]]]
+[def __CharSet__                [link url.CharSet ['CharSet]]]
 
 [/ Dingbats ]
 
@@ -55,6 +56,7 @@
 
 [include intro.qbk]
 [include usage.qbk]
+[include CharSet.qbk]
 
 [section:quickref Reference]
 [xinclude quickref.xml]

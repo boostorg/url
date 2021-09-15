@@ -1,0 +1,127 @@
+[/
+    Copyright (c) 2021 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/vinniefalco/uri
+]
+
+[section:CharSet CharSet]
+
+A ['CharSet] is a unary predicate which accepts as its single
+argument a value of type `char`. The return value of the predicate
+is a `bool` whose value is true if the character is a member of the
+notional character set, or false otherwise.
+
+[heading Associated Types]
+
+* [link url.ref.boost__urls__bnf__is_char_set `is_char_set`]
+* __BodyReader__
+* __BodyWriter__
+
+[heading Requirements]
+
+In this table:
+
+* `T` is a type meeting the requirements of ['CharSet]
+* `t` is a `const` value of type `T`
+* `c` is a value of type `char`
+* `first`, `last` are values of type `char const*`
+
+[table Valid expressions
+[[Expression] [Type] [Semantics, Pre/Post-conditions]]
+[
+    [`T t;`]
+    []
+    [
+        T is __DefaultConstructible__.
+    ]
+][
+    [`t.operator()( c );`]
+    [`bool`]
+    [
+        This function returns `true` if `c` is a member of
+        the character set, otherwise it returns `false`.
+    ]
+][
+    [
+    ```
+    t.find_if(
+        first, last )
+    ```
+    ]
+    [`char const*`]
+    [
+        This optional member function examines the valid
+        range of characters in `[first, last)` and returns
+        a pointer to the first occurrence of a character 
+        which is in the set, or returns `last` if no such
+        character.
+
+        The implementation of
+        [link url.ref.boost__urls__bnf__find_if `find_if`]
+        will call this function if provided by the character
+        set, allowing optimized or otherwise performant
+        implementations to be developed. If this member
+        function is not provided, a default implementation
+        is used which calls `operator()`.
+    ]
+][
+    [
+    ```
+    t.find_if_not(
+        first, last )
+    ```
+    ]
+    [`char const*`]
+    [
+        This optional member function examines the valid
+        range of characters in `[first, last)` and returns
+        a pointer to the first occurrence of a character 
+        which is not in the set, or returns `last` if no
+        such character.
+
+        The implementation of
+        [link url.ref.boost__urls__bnf__find_if_not `find_if_not`]
+        will call this function if provided by the character
+        set, allowing optimized or otherwise performant
+        implementations to be developed. If this member
+        function is not provided, a default implementation
+        is used which calls `operator()`.
+    ]
+]]
+
+[heading Exemplar]
+
+```
+struct CharSet
+{
+    bool operator()( char c ) const noexcept;
+
+    char const* find_if( char const* first, char const* last ) const noexcept;
+    char const* find_if_not( char const* first, char const* last ) const noexcept;
+};
+```
+
+[heading Example]
+```
+struct digit_chars
+{
+    constexpr bool operator()(char c) const noexcept
+    {
+        return c >= '0' && c <= '9';
+    }
+};
+```
+
+[heading Models]
+
+* [link url.ref.boost__urls__bnf__all_chars `bnf::all_chars`]
+* [link url.ref.boost__urls__bnf__alnum_chars `bnf::alnum_chars`]
+* [link url.ref.boost__urls__bnf__alpha_chars `bnf::alpha_chars`]
+* [link url.ref.boost__urls__bnf__digit_chars `bnf::digit_chars`]
+* [link url.ref.boost__urls__bnf__hexdig_chars `bnf::hexdig_chars`]
+* [link url.ref.boost__urls__masked_char_set `masked_char_set`]
+
+[endsect]

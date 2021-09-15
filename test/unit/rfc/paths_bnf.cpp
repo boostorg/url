@@ -10,10 +10,15 @@
 // Test that header file is self-contained.
 #include <boost/url/rfc/paths_bnf.hpp>
 
+#include <boost/url/bnf/range.hpp>
+#include <boost/static_assert.hpp>
 #include "test_suite.hpp"
 
 namespace boost {
 namespace urls {
+
+BOOST_STATIC_ASSERT(
+    bnf::is_range<path_abempty_bnf>::value);
 
 class paths_bnf_test
 {

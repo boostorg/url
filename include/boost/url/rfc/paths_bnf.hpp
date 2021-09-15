@@ -84,6 +84,8 @@ struct segment_nz_nc_bnf
 // path-abempty  = *( "/" segment )
 struct path_abempty_bnf
 {
+    using value_type = pct_encoded_str;
+
     parsed_path& v;
 
     BOOST_URL_DECL

@@ -13,15 +13,45 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/detail/except.hpp>
+#include <boost/type_traits/make_void.hpp>
 #include <cstddef>
 #include <iterator>
-#include <memory>
 #include <type_traits>
 
 namespace boost {
 namespace urls {
 namespace bnf {
+
+/** Alias for `std::true_type` if T satisfies __Range__
+*/
+#ifdef BOOST_URL_DOCS
+template<class T>
+using is_range = __see_below__;
+#else
+template<class T, class = void>
+struct is_range : std::false_type {};
+
+template<class T>
+struct is_range<T, boost::void_t<
+    decltype(
+    //typename T::value_type,
+    std::declval<char const*&>() =
+        T::begin(
+            std::declval<char const*&>(),
+            std::declval<char const*>(),
+            std::declval<error_code&>(),
+            std::declval<typename T::value_type &>()),
+    std::declval<char const*&>() =
+        T::increment(
+            std::declval<char const*&>(),
+            std::declval<char const*>(),
+            std::declval<error_code&>(),
+            std::declval<typename T::value_type &>())
+        ) > >
+    : std::true_type
+{
+};
+#endif
 
 template<class T>
 class range

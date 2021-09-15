@@ -88,7 +88,7 @@
         </simplelist>
         <bridgehead renderas="sect3">Concepts</bridgehead>
         <simplelist type="vert" columns="1">
-          <member>CharSet</member>
+          <member><link linkend="url.CharSet"><emphasis>CharSet</emphasis></link></member>
         </simplelist>
       </entry>
     </row></tbody>
@@ -112,6 +112,12 @@
           <member><link linkend="url.ref.boost__urls__bnf__range">range</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__repeat">repeat</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__token">token</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">Type Traits</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__bnf__is_char_set">is_char_set</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__is_element">is_element</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__is_range">is_range</link></member>
         </simplelist>
       </entry>
       <entry valign="top">

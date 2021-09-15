@@ -36,7 +36,7 @@ struct pct_encoded_bnf
     pct_encoded_str& v;
 
     BOOST_STATIC_ASSERT(
-        bnf::detail::is_char_set_pred<
+        bnf::is_char_set<
             CharSet>::value);
 
     template<class CharSet_>

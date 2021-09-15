@@ -18,6 +18,26 @@ namespace boost {
 namespace urls {
 namespace bnf {
 
+/** Alias for `std::true_type` if T satisfies __CharSet__
+*/
+#ifdef BOOST_URL_DOCS
+template<class T>
+using is_char_set = __see_below__;
+#else
+template<class T, class = void>
+struct is_char_set : std::false_type {};
+
+template<class T>
+struct is_char_set<T, boost::void_t<
+    decltype(
+    std::declval<bool&>() =
+        std::declval<T const&>().operator()(
+            std::declval<char>())
+            ) > > : std::true_type
+{
+};
+#endif
+
 /** A CharSet containing all characters
 
     @par BNF
@@ -200,7 +220,7 @@ find_if(
     CharSet const& cs) noexcept
 {
     BOOST_STATIC_ASSERT(
-        detail::is_char_set_pred<CharSet>::value);
+        is_char_set<CharSet>::value);
     return detail::find_if(first, last, cs,
         detail::has_find_if<CharSet>{});
 }
@@ -215,7 +235,7 @@ find_if_not(
     CharSet const& cs) noexcept
 {
     BOOST_STATIC_ASSERT(
-        detail::is_char_set_pred<CharSet>::value);
+        is_char_set<CharSet>::value);
     return detail::find_if_not(first, last, cs,
         detail::has_find_if_not<CharSet>{});
 }

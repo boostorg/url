@@ -19,23 +19,23 @@ namespace urls {
 namespace bnf {
 
 BOOST_STATIC_ASSERT(
-    detail::is_char_set_pred<
+    is_char_set<
         all_chars>::value);
 
 BOOST_STATIC_ASSERT(
-    detail::is_char_set_pred<
+    is_char_set<
         alnum_chars>::value);
 
 BOOST_STATIC_ASSERT(
-    detail::is_char_set_pred<
+    is_char_set<
         alpha_chars>::value);
 
 BOOST_STATIC_ASSERT(
-    detail::is_char_set_pred<
+    is_char_set<
         digit_chars>::value);
 
 BOOST_STATIC_ASSERT(
-    detail::is_char_set_pred<
+    is_char_set<
         hexdig_chars>::value);
 
 class char_set_test

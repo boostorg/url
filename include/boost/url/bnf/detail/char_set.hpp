@@ -19,19 +19,6 @@ namespace bnf {
 namespace detail {
 
 template<class T, class = void>
-struct is_char_set_pred : std::false_type {};
-
-template<class T>
-struct is_char_set_pred<T, boost::void_t<
-    decltype(
-    std::declval<bool&>() =
-        std::declval<T const&>().operator()(
-            std::declval<char>())
-            ) > > : std::true_type
-{
-};
-
-template<class T, class = void>
 struct has_find_if : std::false_type {};
 
 template<class T>

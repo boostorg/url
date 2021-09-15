@@ -28,7 +28,7 @@ pct_decode_size(
     pct_decode_opts const& opt) noexcept
 {
     BOOST_STATIC_ASSERT(
-        bnf::detail::is_char_set_pred<
+        bnf::is_char_set<
             CharSet>::value);
     ec = {};
     auto it = s.data();
@@ -57,7 +57,7 @@ pct_decode(
     Allocator const& a)
 {
     BOOST_STATIC_ASSERT(
-        bnf::detail::is_char_set_pred<
+        bnf::is_char_set<
             CharSet>::value);
     string_type<Allocator> r(a);
     error_code ec;
@@ -83,7 +83,7 @@ pct_encode_size(
     pct_encode_opts const& opt) noexcept
 {
     BOOST_STATIC_ASSERT(
-        bnf::detail::is_char_set_pred<
+        bnf::is_char_set<
             CharSet>::value);
     std::size_t n = 0;
     auto it = s.data();
@@ -129,7 +129,7 @@ pct_encode(
     Allocator const& a)
 {
     BOOST_STATIC_ASSERT(
-        bnf::detail::is_char_set_pred<
+        bnf::is_char_set<
             CharSet>::value);
     string_type<Allocator> r(a);
     r.resize(

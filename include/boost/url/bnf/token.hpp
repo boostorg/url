@@ -26,7 +26,7 @@ template<class CharSet>
 struct token
 {
     BOOST_STATIC_ASSERT(
-        detail::is_char_set_pred<
+        is_char_set<
             CharSet>::value);
 
     string_view& v;
