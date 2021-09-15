@@ -20,6 +20,9 @@
 
 namespace boost {
 namespace urls {
+
+struct pct_encoded_str;
+
 namespace bnf {
 
 /** Alias for `std::true_type` if T satisfies __Range__
@@ -33,20 +36,24 @@ struct is_range : std::false_type {};
 
 template<class T>
 struct is_range<T, boost::void_t<
+    decltype(typename T::value_type()), // default ctor
     decltype(
-    //typename T::value_type,
-    std::declval<char const*&>() =
+    std::declval<bool&>() =
         T::begin(
             std::declval<char const*&>(),
             std::declval<char const*>(),
             std::declval<error_code&>(),
-            std::declval<typename T::value_type &>()),
-    std::declval<char const*&>() =
+            std::declval<typename
+                std::add_lvalue_reference<
+                    typename T::value_type>::type>()),
+    std::declval<bool&>() =
         T::increment(
             std::declval<char const*&>(),
             std::declval<char const*>(),
             std::declval<error_code&>(),
-            std::declval<typename T::value_type &>())
+            std::declval<typename
+                std::add_lvalue_reference<
+                    typename T::value_type>::type>())
         ) > >
     : std::true_type
 {

@@ -84,7 +84,8 @@ struct segment_nz_nc_bnf
 // path-abempty  = *( "/" segment )
 struct path_abempty_bnf
 {
-    using value_type = pct_encoded_str;
+    using value_type =
+        pct_encoded_str;
 
     parsed_path& v;
 
@@ -93,7 +94,7 @@ struct path_abempty_bnf
     bool
     begin(
         char const*& it,
-        char const* const end,
+        char const* end,
         error_code& ec,
         pct_encoded_str& t) noexcept;
 
@@ -102,7 +103,7 @@ struct path_abempty_bnf
     bool
     increment(
         char const*& it,
-        char const* const end,
+        char const* end,
         error_code& ec,
         pct_encoded_str& t) noexcept;
 
