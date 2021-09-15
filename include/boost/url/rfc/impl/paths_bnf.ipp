@@ -27,9 +27,9 @@ parse(
 {
     using bnf::parse;
     return parse(it, end, ec,
-        pct_encoded_bnf<
+        pct_encoded_bnf(
             masked_char_set<
-                pchar_mask>>{t.v});
+                pchar_mask>{}, t.v));
 }
 
 //------------------------------------------------
@@ -44,9 +44,9 @@ parse(
     using bnf::parse;
     auto const start = it;
     if(! parse(it, end, ec,
-        pct_encoded_bnf<
+        pct_encoded_bnf(
             masked_char_set<
-            pchar_mask>>{t.v}))
+                pchar_mask>{}, t.v)))
         return false;
     if(it == start)
     {
@@ -69,10 +69,10 @@ parse(
     using bnf::parse;
     auto const start = it;
     if(! parse(it, end, ec,
-        pct_encoded_bnf<
+        pct_encoded_bnf(
             masked_char_set<
                 pchar_mask &
-                ~colon_char_mask>>{t.v}))
+                ~colon_char_mask>{}, t.v)))
         return false;
     if(it == start)
     {

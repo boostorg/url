@@ -27,12 +27,12 @@ parse(
 {
     using bnf::parse;
     return parse(it, end, ec,
-        pct_encoded_bnf<
+        pct_encoded_bnf(
             masked_char_set<
                 pchar_mask |
                 slash_char_mask |
-                question_char_mask>>{
-        t.v});
+                question_char_mask>{},
+        t.v));
 }
 
 } // urls

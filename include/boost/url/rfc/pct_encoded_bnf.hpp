@@ -20,6 +20,13 @@
 namespace boost {
 namespace urls {
 
+#ifndef BOOST_URL_DOCS
+namespace detail {
+template<class CharSet>
+struct pct_encoded_bnf;
+} // detail
+#endif
+
 /** BNF for a string of percent-encoded characters from a character set
 
     @tparam CharSet The character set indicating
@@ -31,23 +38,10 @@ namespace urls {
         2.1. Percent-Encoding (rfc3986)</a>
 */
 template<class CharSet>
-struct pct_encoded_bnf
-{
-    pct_encoded_str& v;
-
-    BOOST_STATIC_ASSERT(
-        bnf::is_char_set<
-            CharSet>::value);
-
-    template<class CharSet_>
-    friend
-    bool
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        pct_encoded_bnf<CharSet_> const& t) noexcept;
-};
+detail::pct_encoded_bnf<CharSet>
+pct_encoded_bnf(
+    CharSet const& cs,
+    pct_encoded_str& t);
 
 } // urls
 } // boost

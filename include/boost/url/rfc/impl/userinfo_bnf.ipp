@@ -29,10 +29,10 @@ parse(
     using bnf::parse;
     auto start = it;
     if(! parse(it, end, ec,
-        pct_encoded_bnf<
+        pct_encoded_bnf(
             masked_char_set<
-                unsub_char_mask>>{
-                    t.user}))
+                unsub_char_mask>{},
+            t.user)))
         return false;
     t.user_part = string_view(
         start, it - start);
@@ -42,11 +42,11 @@ parse(
     {
         ++it;
         if(! parse(it, end, ec,
-            pct_encoded_bnf<
+            pct_encoded_bnf(
                 masked_char_set<
                     unsub_char_mask |
-                    colon_char_mask>>{
-                        t.password}))
+                    colon_char_mask>{},
+                t.password)))
             return false;
         t.has_password = true;
         t.password_part = string_view(

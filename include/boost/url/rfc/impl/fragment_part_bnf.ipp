@@ -38,8 +38,8 @@ parse(
         slash_char_mask |
         question_char_mask>;
     if(! parse(it, end, ec,
-        pct_encoded_bnf<T>{
-            t.fragment }))
+        pct_encoded_bnf(T{},
+            t.fragment )))
         return false;
     t.has_fragment = true;
     t.fragment_part = string_view(

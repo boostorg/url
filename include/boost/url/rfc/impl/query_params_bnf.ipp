@@ -30,9 +30,9 @@ begin(
 
     // key
     if(! parse(it, end, ec,
-        pct_encoded_bnf<
+        pct_encoded_bnf(
             masked_char_set<
-                qpchar_mask>>{t.key}))
+                qpchar_mask>{}, t.key)))
         return false;
 
     // "="
@@ -47,11 +47,11 @@ begin(
 
     // value
     return parse(it, end, ec,
-        pct_encoded_bnf<
+        pct_encoded_bnf(
             masked_char_set<
                 qpchar_mask |
-                equals_char_mask>>{
-                    t.value});
+                    equals_char_mask>{},
+                    t.value));
 }
 
 bool
@@ -72,9 +72,9 @@ increment(
 
     // key
     if(! parse(it, end, ec,
-        pct_encoded_bnf<
+        pct_encoded_bnf(
             masked_char_set<
-                qpchar_mask>>{t.key}))
+                qpchar_mask>{}, t.key)))
         return false;
 
     // "="
@@ -89,11 +89,11 @@ increment(
 
     // value
     return parse(it, end, ec,
-        pct_encoded_bnf<
+        pct_encoded_bnf(
             masked_char_set<
                 qpchar_mask |
-                equals_char_mask>>{
-                    t.value});
+                    equals_char_mask>{},
+                    t.value));
 }
 
 } // urls

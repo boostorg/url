@@ -16,25 +16,62 @@
 namespace boost {
 namespace urls {
 
+namespace detail {
+
+template<class CharSet>
+struct pct_encoded_bnf
+{
+    CharSet const& cs_;
+    pct_encoded_str& s_;
+
+    pct_encoded_bnf(
+        CharSet const& cs,
+        pct_encoded_str& s) noexcept
+        : cs_(cs)
+        , s_(s)
+    {
+    }
+
+    template<class CharSet_>
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        pct_encoded_bnf<CharSet_> const& t) noexcept;
+};
+
 template<class CharSet>
 bool
 parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    pct_encoded_bnf<
-        CharSet> const& t) noexcept
+    pct_encoded_bnf<CharSet> const& t) noexcept
 {
     auto const start = it;
     // VFALCO TODO
     // opt.plus_to_space?
     if(! detail::parse_pct_encoded(
-        it, end, ec, CharSet{},
-            t.v.decoded_size))
+        it, end, ec, t.cs_,
+            t.s_.decoded_size))
         return false;
-    t.v.str = string_view(
+    t.s_.str = string_view(
         start, it - start);
     return true;
+}
+
+} // detail
+
+template<class CharSet>
+detail::pct_encoded_bnf<CharSet>
+pct_encoded_bnf(
+    CharSet const& cs,
+    pct_encoded_str& t)
+{
+    return detail::pct_encoded_bnf<
+        CharSet>(cs, t);
 }
 
 } // urls
