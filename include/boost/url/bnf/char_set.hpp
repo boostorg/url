@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
+// Copyright (c) 2021 Vinnie Falco (vinnie dot falco at gmail dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -13,6 +13,12 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/bnf/detail/char_set.hpp>
 #include <boost/static_assert.hpp>
+#include <cstdint>
+
+//#include <emmintrin.h>
+
+// Credit to Peter Dimov for ideas regarding
+// SIMD constexpr, and character set masks.
 
 namespace boost {
 namespace urls {
@@ -37,6 +43,211 @@ struct is_char_set<T, boost::void_t<
 {
 };
 #endif
+
+//------------------------------------------------
+
+/** A character set based on a unary predicate
+*/
+template<class Pred>
+struct pred_chars
+{
+    constexpr
+    bool
+    operator()(unsigned char ch) const noexcept
+    {
+        return Pred()(ch);
+    }
+
+    #if 0
+    constexpr
+    char const*
+    find_if(
+        char const* first,
+        char const* last ) const noexcept
+    {
+        while( last - first >= 16 )
+        {
+            unsigned char r[ 16 ] = {};
+            for( int i = 0; i < 16; ++i )
+                r[ i ] = Pr()( first[ i ] )? 0xFF: 0x00;
+            __m128i r2 = _mm_loadu_si128( (__m128i const*)r );
+            unsigned r3 = _mm_movemask_epi8( r2 );
+            if( r3 )
+                return first + __builtin_ctz( r3 );
+            first += 16;
+        }
+        while(
+            first != last &&
+            ! Pred()(*first))
+        {
+            ++first;
+        }
+        return first;
+    }
+    #endif
+};
+
+//------------------------------------------------
+
+/** A character set based on a constexpr lookup table
+*/
+class lut_chars
+{
+    std::uint64_t mask_[4] = {};
+
+    constexpr
+    static
+    std::uint64_t
+    lo(char c) noexcept
+    {
+        return static_cast<
+            unsigned char>(c) & 3;
+    }
+
+    constexpr
+    static
+    std::uint64_t
+    hi(char c) noexcept
+    {
+        return 1ULL << (static_cast<
+            unsigned char>(c) >> 2);
+    }
+
+    constexpr
+    static
+    lut_chars
+    construct(
+        char const* s) noexcept
+    {
+        return *s
+            ? lut_chars(*s) +
+                construct(s+1)
+            : lut_chars();
+    }
+
+    template<class Pred>
+    constexpr
+    static
+    lut_chars
+    construct(Pred pred) noexcept
+    {
+        return pred(255) ?
+            lut_chars(255) :
+            lut_chars();
+    }
+
+    template<class Pred>
+    constexpr
+    static
+    lut_chars
+    construct(Pred pred, unsigned char ch)
+    {
+        return ch == 255
+            ? construct(pred)
+            : construct(pred, ch) +
+                construct(pred, ch + 1);
+    }
+
+    constexpr
+    lut_chars() = default;
+
+    constexpr
+    lut_chars(
+        std::uint64_t m0,
+        std::uint64_t m1,
+        std::uint64_t m2,
+        std::uint64_t m3) noexcept
+        : mask_{ m0, m1, m2, m3 }
+    {
+    }
+
+public:
+    constexpr
+    explicit
+    lut_chars(char ch)
+        : mask_ {
+            lo(ch) == 0 ? hi(ch) : 0,
+            lo(ch) == 1 ? hi(ch) : 0,
+            lo(ch) == 2 ? hi(ch) : 0,
+            lo(ch) == 3 ? hi(ch) : 0 }
+    {
+    }
+
+    constexpr
+    explicit
+    lut_chars(char const* s) noexcept
+        : lut_chars(construct(s))
+    {
+    }
+
+    template<class Pred>
+    constexpr
+    explicit
+    lut_chars(Pred pred) noexcept
+        : lut_chars(pred, 0)
+    {
+    }
+
+    constexpr
+    bool
+    operator()(
+        unsigned char ch) const noexcept
+    {
+        return mask_[lo(ch)] & hi(ch);
+    }
+
+    constexpr
+    lut_chars
+    operator+(char ch) const noexcept
+    {
+        return *this + lut_chars(ch);
+    }
+
+    constexpr
+    lut_chars
+    operator+(
+        lut_chars const& cs) const noexcept
+    {
+        return lut_chars(
+            mask_[0] | cs.mask_[0],
+            mask_[1] | cs.mask_[1],
+            mask_[2] | cs.mask_[2],
+            mask_[3] | cs.mask_[3]);
+    }
+
+    constexpr
+    lut_chars
+    operator-(char ch) const noexcept
+    {
+        return *this - lut_chars(ch);
+    }
+
+    constexpr
+    lut_chars
+    operator-(
+        lut_chars const& cs) const noexcept
+    {
+        return lut_chars(
+            mask_[0] & ~cs.mask_[0],
+            mask_[1] & ~cs.mask_[1],
+            mask_[2] & ~cs.mask_[2],
+            mask_[3] & ~cs.mask_[3]);
+    }
+
+    constexpr
+    lut_chars
+    operator~() const noexcept
+    {
+        return lut_chars(
+            ~mask_[0],
+            ~mask_[1],
+            ~mask_[2],
+            ~mask_[3]
+        );
+    }
+};
+
+//------------------------------------------------
 
 /** A CharSet containing all characters
 

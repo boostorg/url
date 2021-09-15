@@ -41,7 +41,7 @@ template<class CharSet>
 detail::pct_encoded_bnf<CharSet>
 pct_encoded_bnf(
     CharSet const& cs,
-    pct_encoded_str& t);
+    pct_encoded_str& t) noexcept;
 
 } // urls
 } // boost

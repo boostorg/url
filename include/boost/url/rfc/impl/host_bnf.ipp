@@ -73,11 +73,12 @@ parse(
         ec = {};
     }
     // reg-name
+    static constexpr auto cs =
+        unreserved_chars +
+        subdelim_chars;
     if(! parse(it, end, ec,
         pct_encoded_bnf(
-            masked_char_set<
-                unsub_char_mask>{},
-                    t.name)))
+            cs, t.name)))
     {
         // bad reg-name
         return false;

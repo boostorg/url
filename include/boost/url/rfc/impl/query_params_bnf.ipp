@@ -29,11 +29,13 @@ begin(
     using bnf::parse;
 
     // key
-    if(! parse(it, end, ec,
-        pct_encoded_bnf(
-            masked_char_set<
-                qpchar_mask>{}, t.key)))
-        return false;
+    {
+        static constexpr auto cs =
+            pchars + '/' + '?' - '&' - '=';
+        if(! parse(it, end, ec,
+            pct_encoded_bnf(cs, t.key)))
+            return false;
+    }
 
     // "="
     t.has_value = parse(
@@ -46,12 +48,10 @@ begin(
     }
 
     // value
+    static constexpr auto cs =
+        pchars + '/' + '?' - '&';
     return parse(it, end, ec,
-        pct_encoded_bnf(
-            masked_char_set<
-                qpchar_mask |
-                    equals_char_mask>{},
-                    t.value));
+        pct_encoded_bnf(cs, t.value));
 }
 
 bool
@@ -71,11 +71,13 @@ increment(
     }
 
     // key
-    if(! parse(it, end, ec,
-        pct_encoded_bnf(
-            masked_char_set<
-                qpchar_mask>{}, t.key)))
-        return false;
+    {
+        static constexpr auto cs =
+            pchars + '/' + '?' - '&' - '=';
+        if(! parse(it, end, ec,
+            pct_encoded_bnf(cs, t.key)))
+            return false;
+    }
 
     // "="
     t.has_value = parse(
@@ -88,12 +90,10 @@ increment(
     }
 
     // value
+    static constexpr auto cs =
+        pchars + '/' + '?' - '&';
     return parse(it, end, ec,
-        pct_encoded_bnf(
-            masked_char_set<
-                qpchar_mask |
-                    equals_char_mask>{},
-                    t.value));
+        pct_encoded_bnf(cs, t.value));
 }
 
 } // urls

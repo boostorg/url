@@ -31,15 +31,6 @@ struct pct_encoded_bnf
         , s_(s)
     {
     }
-
-    template<class CharSet_>
-    friend
-    bool
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        pct_encoded_bnf<CharSet_> const& t) noexcept;
 };
 
 template<class CharSet>
@@ -48,7 +39,8 @@ parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    pct_encoded_bnf<CharSet> const& t) noexcept
+    pct_encoded_bnf<
+        CharSet> const& t) noexcept
 {
     auto const start = it;
     // VFALCO TODO
@@ -68,7 +60,7 @@ template<class CharSet>
 detail::pct_encoded_bnf<CharSet>
 pct_encoded_bnf(
     CharSet const& cs,
-    pct_encoded_str& t)
+    pct_encoded_str& t) noexcept
 {
     return detail::pct_encoded_bnf<
         CharSet>(cs, t);

@@ -10,27 +10,60 @@
 #ifndef BOOST_URL_BNF_IMPL_TOKEN_HPP
 #define BOOST_URL_BNF_IMPL_TOKEN_HPP
 
+#include <boost/url/error.hpp>
 #include <boost/url/bnf/char_set.hpp>
 
 namespace boost {
 namespace urls {
 namespace bnf {
 
+namespace detail {
+
+template<class CharSet>
+struct token
+{
+    BOOST_STATIC_ASSERT(
+        is_char_set<
+            CharSet>::value);
+
+    CharSet const& cs_;
+    string_view& s_;
+
+    template<class CharSet_>
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* end,
+        error_code& ec,
+        token<CharSet_> const& t) noexcept;
+};
+
 template<class CharSet>
 bool
 parse(
     char const*& it,
-    char const* const end,
+    char const* end,
     error_code& ec,
-    token<CharSet> const& t)
+    token<CharSet> const& t) noexcept
 {
-    auto const start = it;
-    it = find_if_not(
-        it, end, CharSet{});
-    t.v = string_view(
-        start, it - start);
     ec = {};
+    auto const start = it;
+    it = bnf::find_if_not(it, end, t.cs_);
+    t.s_ = string_view(start, it - start);
     return true;
+}
+
+} // detail
+
+template<class CharSet>
+detail::token<CharSet>
+token(
+    CharSet const& cs,
+    string_view& t) noexcept
+{
+    return detail::token<
+        CharSet>{cs, t};
 }
 
 } // bnf

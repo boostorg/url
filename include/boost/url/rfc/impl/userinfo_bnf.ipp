@@ -28,12 +28,14 @@ parse(
 {
     using bnf::parse;
     auto start = it;
-    if(! parse(it, end, ec,
-        pct_encoded_bnf(
-            masked_char_set<
-                unsub_char_mask>{},
-            t.user)))
-        return false;
+    {
+        static constexpr auto cs =
+            unreserved_chars +
+            subdelim_chars;
+        if(! parse(it, end, ec,
+            pct_encoded_bnf(cs, t.user)))
+            return false;
+    }
     t.user_part = string_view(
         start, it - start);
     start = it;
@@ -41,11 +43,11 @@ parse(
         *it == ':')
     {
         ++it;
+        static constexpr auto cs =
+            unreserved_chars +
+            subdelim_chars + ':';
         if(! parse(it, end, ec,
-            pct_encoded_bnf(
-                masked_char_set<
-                    unsub_char_mask |
-                    colon_char_mask>{},
+            pct_encoded_bnf(cs,
                 t.password)))
             return false;
         t.has_password = true;

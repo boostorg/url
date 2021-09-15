@@ -11,6 +11,7 @@
 #define BOOST_URL_IMPL_FRAGMENT_PART_BNF_IPP
 
 #include <boost/url/rfc/fragment_part_bnf.hpp>
+#include <boost/url/rfc/fragment_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
 
 namespace boost {
@@ -33,13 +34,8 @@ parse(
     }
     auto start = it;
     ++it;
-    using T = masked_char_set<
-        pchar_mask |
-        slash_char_mask |
-        question_char_mask>;
-    if(! parse(it, end, ec,
-        pct_encoded_bnf(T{},
-            t.fragment )))
+    if(! parse(it, end, ec, 
+        fragment_bnf{t.fragment}))
         return false;
     t.has_fragment = true;
     t.fragment_part = string_view(

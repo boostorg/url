@@ -13,6 +13,7 @@
 #include <boost/url/rfc/ipv_future_bnf.hpp>
 #include <boost/url/bnf/char_set.hpp>
 #include <boost/url/bnf/parse.hpp>
+#include <boost/url/bnf/token.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 
 namespace boost {
@@ -27,15 +28,15 @@ parse(
 {
     using namespace bnf;
     auto const start = it;
+    static constexpr auto cs =
+        unreserved_chars +
+        subdelim_chars + ':';
     if(! parse(it, end, ec,
         'v',
-        token<hexdig_chars>{
-            t.major},
+        bnf::token(
+            hexdig_chars{}, t.major),
         '.',
-        token<masked_char_set<
-            unsub_char_mask |
-            colon_char_mask>>{
-                t.minor}))
+        bnf::token(cs, t.minor)))
         return false;
     if(t.major.empty())
     {

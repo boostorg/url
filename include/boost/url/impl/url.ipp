@@ -498,8 +498,9 @@ url::
 set_user(string_view s)
 {
     check_invariants();
-    masked_char_set<
-        unsub_char_mask> cs;
+    static constexpr auto cs =
+        unreserved_chars +
+        subdelim_chars;
     auto const n =
         pct_encode_size(s, cs);
     auto dest = set_user_impl(n);
@@ -520,8 +521,9 @@ set_encoded_user(
 {
     check_invariants();
     error_code ec;
-    masked_char_set<
-        unsub_char_mask> cs;
+    static constexpr auto cs =
+        unreserved_chars +
+        subdelim_chars;
     auto const n =
         pct_decode_size(s, ec, cs);
     if(ec.failed())
@@ -594,9 +596,9 @@ url::
 set_password(string_view s)
 {
     check_invariants();
-    masked_char_set<
-        unsub_char_mask |
-        colon_char_mask> cs;
+    static constexpr auto cs =
+        unreserved_chars +
+        subdelim_chars + ':';
     auto const n =
         pct_encode_size(s, cs);
     auto dest = set_password_impl(n);
@@ -616,9 +618,9 @@ set_encoded_password(
     string_view s)
 {
     check_invariants();
-    masked_char_set<
-        unsub_char_mask |
-        colon_char_mask> cs;
+    static constexpr auto cs =
+        unreserved_chars +
+        subdelim_chars + ':';
     error_code ec;
     auto const n =
         pct_decode_size(s, ec, cs);
@@ -683,8 +685,9 @@ set_userinfo(
     string_view s)
 {
     check_invariants();
-    masked_char_set<
-        unsub_char_mask> cs;
+    static constexpr auto cs =
+        unreserved_chars +
+        subdelim_chars;
     auto const n =
         pct_encode_size(s, cs);
     auto dest = set_userinfo_impl(n);
@@ -814,8 +817,9 @@ set_host(
             return set_host(a);
     }
     check_invariants();
-    masked_char_set<
-        unsub_char_mask> cs;
+    static constexpr auto cs =
+        unreserved_chars +
+        subdelim_chars;
     auto const n =
         pct_encode_size(s, cs);
     auto dest = set_host_impl(n);
@@ -852,8 +856,9 @@ set_encoded_host(string_view s)
     // set it as a name or ipvfuture
     check_invariants();
     pct_decode_opts opt;
-    masked_char_set<
-        unsub_char_mask> cs;
+    static constexpr auto cs =
+        unreserved_chars +
+        subdelim_chars;
     opt.plus_to_space = false;
     auto const n = pct_decode_size(
         s, ec, cs, opt);
