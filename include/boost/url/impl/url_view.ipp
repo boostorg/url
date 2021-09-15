@@ -411,6 +411,24 @@ path() const noexcept
         get(id_path), pt_.nseg);
 }
 
+std::size_t
+url_view::
+segment_count() const noexcept
+{
+    return pt_.nseg;
+}
+
+string_view
+url_view::
+encoded_segment(int index) const noexcept
+{
+    if(index >= pt_.nseg)
+        return {};
+    if(- index > pt_.nseg)
+        return {};
+    return {};
+}
+
 //----------------------------------------------------------
 //
 // query

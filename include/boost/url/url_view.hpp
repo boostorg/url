@@ -60,6 +60,7 @@ namespace urls {
     @endcode
 
     @see
+        @ref parse_absolute_uri,
         @ref parse_relative_ref,
         @ref parse_uri,
         @ref parse_uri_reference.
@@ -1174,11 +1175,226 @@ public:
 
         @see
             @ref encoded_path,
-            @ref path_view.
+            @ref encoded_segment,
+            @ref path_view,
+            @ref segment_count.
     */
     BOOST_URL_DECL
     path_view
     path() const noexcept;
+
+    /** Return the count of the number of path segments
+
+        This function returns the number
+        of segments in the path, including
+        empty segments.
+
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+
+        segment       = *pchar
+        segment-nz    = 1*pchar
+        segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
+                      ; non-zero-length segment without any colon ":"
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+
+        @see
+            @ref encoded_path,
+            @ref encoded_segment,
+            @ref path,
+            @ref path_view
+    */
+    BOOST_URL_DECL
+    std::size_t
+    segment_count() const noexcept;
+
+    /** Return a path segment by index
+
+        This function returns an indexed
+        path segment as a percent-encoded
+        string. The behavior depends on
+        index:
+
+        @li If `index` is 0 the first path
+        segment is returned;
+
+        @li If index is positive, then
+        the `index` + 1th path segment is
+        returned. For example if `index == 2`
+        then the third segment is returned.
+        In other words, `index` is zero based.
+
+        @li If index is negative, then the
+        function negates index, and counts from
+        the end of the path rather than the
+        beginning. For example if `index == -1`
+        then the last path segment is returned.
+
+        If the index is out of range, an empty
+        string is returned. To determine the
+        number of segments, call @ref segment_count.
+
+        @par Example
+        @code
+        url_view u = parse_relative_ref( "/path/to/the/file.txt" );
+
+        assert( u.encoded_segment( -2 ) == "the" );
+        assert( u.encoded_segment( -1 ) == "file.txt" );
+        assert( u.encoded_segment(  0 ) == "path" );
+        assert( u.encoded_segment(  1 ) == "to" );
+        @endcode
+
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+
+        segment       = *pchar
+        segment-nz    = 1*pchar
+        segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
+                      ; non-zero-length segment without any colon ":"
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+
+        @param index The index of the segment to return.
+
+        @see
+            @ref encoded_path,
+            @ref path_view.
+
+        @see
+            @ref encoded_path,
+            @ref path,
+            @ref path_view,
+            @ref segment_count.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_segment(int index) const noexcept;
+
+    /** Return a path segment by index
+
+        This function returns an indexed
+        path segment with percent-decoding
+        applied, using an optionally specified
+        allocator. The behavior depends on
+        index:
+
+        @li If `index` is 0 the first path
+        segment is returned;
+
+        @li If index is positive, then
+        the `index` + 1th path segment is
+        returned. For example if `index == 2`
+        then the third segment is returned.
+        In other words, `index` is zero based.
+
+        @li If index is negative, then the
+        function negates index, and counts from
+        the end of the path rather than the
+        beginning. For example if `index == -1`
+        then the last path segment is returned.
+
+        If the index is out of range, an empty
+        string is returned. To determine the
+        number of segments, call @ref segment_count.
+
+        @par Example
+        @code
+        url_view u = parse_relative_ref( "/path/to/the/file.txt" );
+
+        assert( u.encoded_segment( -2 ) == "the" );
+        assert( u.encoded_segment( -1 ) == "file.txt" );
+        assert( u.encoded_segment(  0 ) == "path" );
+        assert( u.encoded_segment(  1 ) == "to" );
+        @endcode
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+
+        segment       = *pchar
+        segment-nz    = 1*pchar
+        segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
+                      ; non-zero-length segment without any colon ":"
+        @endcode
+
+        @par Exception Safety
+        Calls to allocate may throw.
+
+        @param index The index of the segment to return.
+
+        @param a An optional allocator the returned
+        string will use. If this parameter is omitted,
+        the default allocator is used, and the return
+        type of the function becomes `std::string`.
+
+        @return A `std::basic_string` using the
+        specified allocator.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+
+        @see
+            @ref encoded_path,
+            @ref path,
+            @ref path_view,
+            @ref segment_count.
+    */
+    template<
+        class Allocator =
+            std::allocator<char>>
+    string_type<Allocator>
+    segment(
+        int index,
+        Allocator const& a = {}) const
+    {
+        return detail::pct_decode_unchecked(
+            encoded_segment(index), {}, a);
+    }
 
     //--------------------------------------------
     //

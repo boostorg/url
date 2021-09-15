@@ -41,7 +41,7 @@ endif()
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "" FILES ${F})
 add_executable(boost_wpt_tests ${F})
-target_include_directories(boost_wpt_tests PRIVATE . )
+target_include_directories(boost_wpt_tests PRIVATE . ../../src/include)
 target_link_libraries(boost_wpt_tests PRIVATE Boost::url Boost::json)
 add_test(NAME boost_url_tests COMMAND boost_url_tests)
 add_dependencies(tests boost_url_tests)
