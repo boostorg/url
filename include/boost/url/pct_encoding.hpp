@@ -174,12 +174,14 @@ pct_encode_size(
     CharSet const& cs,
     pct_encode_opts const& opt = {}) noexcept;
 
+#ifndef BOOST_URL_DOCS
 // VFALCO This would make no sense
 std::size_t
 pct_encode_size(
     string_view,
     bnf::all_chars const&,
     ...) = delete;
+#endif
 
 /** Return a string with percent-encoding applied
 

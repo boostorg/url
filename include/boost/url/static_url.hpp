@@ -62,7 +62,8 @@ public:
     null terminator.
 
     @see
-        @ref url, @ref url_view.
+        @ref url,
+        @ref url_view.
 */
 template<std::size_t Capacity>
 class static_url
@@ -78,6 +79,8 @@ class static_url
         Capacity < max_size());
 
 public:
+    /** Destructor
+    */
     ~static_url()
     {
     }
@@ -91,6 +94,13 @@ public:
     }
 
     /** Constructor
+
+        This constructs a copy of `u`.
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @throw std::bad_alloc `u.encoded_url().size() > Capacity`
     */
     static_url(url const& u)
         : static_url()
@@ -99,6 +109,13 @@ public:
     }
 
     /** Constructor
+
+        This constructs a copy of `u`.
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @throw std::bad_alloc `u.encoded_url().size() > Capacity`
     */
     static_url(url_view const& u)
         : static_url()
@@ -107,6 +124,13 @@ public:
     }
 
     /** Constructor
+
+        This constructs a copy of `u`.
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @throw std::bad_alloc `u.encoded_url().size() > Capacity`
     */
     static_url(static_url const& u)
         : static_url()

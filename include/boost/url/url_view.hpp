@@ -137,7 +137,7 @@ public:
     std::size_t
     max_size()
     {
-        return 0x7ffffffe;
+        return BOOST_URL_MAX_SIZE;
     }
 
     /** Return true if the URL is empty
@@ -1605,7 +1605,7 @@ public:
 
     //--------------------------------------------
     //
-    // free functions
+    // Parsing
     //
     //--------------------------------------------
 

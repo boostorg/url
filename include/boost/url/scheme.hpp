@@ -16,7 +16,16 @@
 namespace boost {
 namespace urls {
 
+/* VFALCO NOTE The formatting of javadocs
+               for enums is the way it is
+   to work around an output bug in Doxygen!
+*/
+
 /** Identifies a known URL scheme
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
+        >3.1. Scheme (rfc3986)</a>
 */
 enum class scheme : unsigned char
 {
@@ -54,48 +63,52 @@ enum class scheme : unsigned char
     */
     file,
 
-    /** The Hypertext Transfer Protocol URI Scheme
+    /**
+     * The Hypertext Transfer Protocol URI Scheme
 
-        URLs of this type indicate a resource which
-        is interacted with using the HTTP protocol.
+       URLs of this type indicate a resource which
+       is interacted with using the HTTP protocol.
 
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc7230">
+       @par Specification
+       @li <a href="https://datatracker.ietf.org/doc/html/rfc7230">
             Hypertext Transfer Protocol (HTTP/1.1) (rfc7230)</a>
     */
     http,
 
-    /** The Secure Hypertext Transfer Protocol URI Scheme
+    /**
+     * The Secure Hypertext Transfer Protocol URI Scheme
 
-        URLs of this type indicate a resource which
-        is interacted with using the Secure HTTP
-        protocol.
+       URLs of this type indicate a resource which
+       is interacted with using the Secure HTTP
+       protocol.
 
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc7230">
+       @par Specification
+       @li <a href="https://datatracker.ietf.org/doc/html/rfc7230">
             Hypertext Transfer Protocol (HTTP/1.1) (rfc7230)</a>
     */
     https,
 
-    /** The WebSocket URI Scheme
+    /**
+     * The WebSocket URI Scheme
 
-        URLs of this type indicate a resource which
-        is interacted with using the WebSocket protocol.
+       URLs of this type indicate a resource which
+       is interacted with using the WebSocket protocol.
 
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc6455">
+       @par Specification
+       @li <a href="https://datatracker.ietf.org/doc/html/rfc6455">
             The WebSocket Protocol (rfc6455)</a>
     */
     ws,
 
-    /** The Secure WebSocket URI Scheme
+    /**
+     * The Secure WebSocket URI Scheme
 
-        URLs of this type indicate a resource which
-        is interacted with using the Secure WebSocket
-        protocol.
+       URLs of this type indicate a resource which
+       is interacted with using the Secure WebSocket
+       protocol.
 
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc6455">
+       @par Specification
+       @li <a href="https://datatracker.ietf.org/doc/html/rfc6455">
             The WebSocket Protocol (rfc6455)</a>
     */
     wss
@@ -107,10 +120,18 @@ enum class scheme : unsigned char
     scheme, the value @ref scheme::unknown is
     returned.
 
+    @par BNF
+    @code
+    scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+    @endcode
+
     @return The known scheme
 
     @param s The string holding the scheme
 
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
+        >3.1. Scheme (rfc3986)</a>
 */
 BOOST_URL_DECL
 scheme

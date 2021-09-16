@@ -57,4 +57,14 @@
 # endif
 #endif
 
+// This macro is used for the limits
+// test which sets the value lower,
+// to exercise code coverage.
+//
+#ifndef BOOST_URL_MAX_SIZE
+// we leave room for a null,
+// and still fit in signed-32
+#define BOOST_URL_MAX_SIZE 0x7ffffffe
+#endif
+
 #endif
