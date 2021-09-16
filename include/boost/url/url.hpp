@@ -53,8 +53,8 @@ class url_view;
     @li <a href="https://tools.ietf.org/html/rfc3986">
         Uniform Resource Identifier (URI): Generic Syntax (rfc3986)</a>
 */
-class BOOST_SYMBOL_VISIBLE
-    url : public url_view
+class BOOST_SYMBOL_VISIBLE url
+    : public url_view
 {
 #ifndef BOOST_URL_DOCS
 protected:
@@ -62,21 +62,6 @@ protected:
     
     char* s_ = nullptr;
     std::size_t cap_ = 0;
-
-    // VFALCO This has to be kept in
-    // sync with other declarations
-    enum
-    {
-        id_scheme = 0,  // trailing ':'
-        id_user,        // leading "//"
-        id_pass,        // leading ':', trailing '@'
-        id_host,
-        id_port,        // leading ':'
-        id_path,
-        id_query,       // leading '?'
-        id_frag,        // leading '#'
-        id_end          // one past the end
-    };
 
     friend class static_url_base;
 

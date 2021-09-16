@@ -19,22 +19,25 @@ namespace boost {
 namespace urls {
 namespace detail {
 
-enum part
+struct part_ids
 {
-    id_scheme = 0,  // trailing ':'
-    id_user,        // leading "//"
-    id_pass,        // leading ':', trailing '@'
-    id_host,
-    id_port,        // leading ':'
-    id_path,
-    id_query,       // leading '?'
-    id_frag,        // leading '#'
-    id_end          // one past the end
+    enum part
+    {
+        id_scheme = 0,  // trailing ':'
+        id_user,        // leading "//"
+        id_pass,        // leading ':', trailing '@'
+        id_host,
+        id_port,        // leading ':'
+        id_path,
+        id_query,       // leading '?'
+        id_frag,        // leading '#'
+        id_end          // one past the end
+    };
 };
 
 //----------------------------------------------------------
 
-struct parts
+struct parts : private part_ids
 {
     std::size_t offset[id_end + 1] = {};
     std::size_t decoded[id_end] = {};
@@ -109,8 +112,7 @@ struct parts
         int id,
         std::size_t n) noexcept
     {
-        BOOST_ASSERT(
-            id < detail::id_end - 1);
+        BOOST_ASSERT(id < id_end - 1);
         BOOST_ASSERT(n <= len(id));
         offset[id + 1] = offset[id] +
             static_cast<std::size_t>(n);

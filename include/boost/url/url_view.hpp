@@ -27,6 +27,15 @@
 namespace boost {
 namespace urls {
 
+#ifndef BOOST_URL_DOCS
+struct authority_bnf;
+struct fragment_part_bnf;
+struct host_bnf;
+struct parsed_path;
+struct query_part_bnf;
+struct scheme_part_bnf;
+#endif
+
 /** A read-only view to a URL
 
     Objects of this type represent valid URLs
@@ -66,6 +75,7 @@ namespace urls {
         @ref parse_uri_reference.
 */
 class url_view
+    : protected detail::part_ids
 {
 #ifndef BOOST_URL_DOCS
 protected:
@@ -73,21 +83,6 @@ protected:
 
     char const* cs_ = "";
     detail::parts pt_;
-
-    // VFALCO This has to be kept in
-    // sync with other declarations
-    enum
-    {
-        id_scheme = 0,  // trailing ':'
-        id_user,        // leading "//"
-        id_pass,        // leading ':', trailing '@'
-        id_host,
-        id_port,        // leading ':'
-        id_path,
-        id_query,       // leading '?'
-        id_frag,        // leading '#'
-        id_end          // one past the end
-    };
 
     struct shared_impl;
     friend class static_url_base;
@@ -1636,6 +1631,20 @@ public:
         string_view s, std::error_code& ec) noexcept;
     BOOST_URL_DECL friend url_view parse_uri_reference(
         string_view s);
+
+private:
+    static void apply(detail::parts& p,
+        scheme_part_bnf const& t) noexcept;
+    static void apply(detail::parts& p,
+        host_bnf const& h) noexcept;
+    static void apply(detail::parts& p,
+        authority_bnf const& t) noexcept;
+    static void apply(detail::parts& p,
+        parsed_path const& path) noexcept;
+    static void apply(detail::parts& p,
+        query_part_bnf const& t) noexcept;
+    static void apply(detail::parts& p,
+        fragment_part_bnf const& t) noexcept;
 };
 
 //------------------------------------------------
