@@ -62,12 +62,12 @@ set(BOOST_URL_TESTS_FILES
     rfc/userinfo_bnf.cpp
     )
 
-set(TEST_MAIN ../../src/test_main.cpp)
+set(TEST_MAIN ../../extra/test_main.cpp)
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${BOOST_URL_TESTS_FILES})
-source_group(TREE "../src" PREFIX "" FILES ${TEST_MAIN})
+source_group(TREE "../extra" PREFIX "" FILES ${TEST_MAIN})
 add_executable(boost_url_tests ${BOOST_URL_TESTS_FILES} ${TEST_MAIN})
-target_include_directories(boost_url_tests PRIVATE . ../../src/include)
+target_include_directories(boost_url_tests PRIVATE . ../../extra/include)
 target_link_libraries(boost_url_tests PRIVATE Boost::url)
 add_test(NAME boost_url_tests COMMAND boost_url_tests)
 add_dependencies(tests boost_url_tests)

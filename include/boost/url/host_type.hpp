@@ -28,11 +28,13 @@ enum class host_type
     // VFALCO 3 space indent or
     // else Doxygen malfunctions
 
-    /**No host is specified.
+    /**
+     * No host is specified.
     */
     none,
 
-    /**A host is specified by reg-name.
+    /**
+     * A host is specified by reg-name.
     */
     name,
 
@@ -42,13 +44,15 @@ enum class host_type
     */
     ipv4,
 
-    /**A host is specified by IPv6address.
+    /**
+     * A host is specified by IPv6address.
 
        @see @ref ipv6_address
     */
     ipv6,
 
-    /**A host is specified by IPvFuture.
+    /**
+     * A host is specified by IPvFuture.
     */
     ipvfuture
 };
