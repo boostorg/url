@@ -34,12 +34,9 @@ parse(
         return true;
     }
     ++it;
-    query_bnf t0;
-    if(! parse(it, end, ec, t0))
+    if(! parse(it, end, ec, t.query))
         return false;
     t.has_query = true;
-    t.query = t0.query;
-    t.query_count = t0.query_count;
     t.query_part = string_view(
         start, it - start);
     return true;

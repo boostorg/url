@@ -7,26 +7,18 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-// Test that header file is self-contained.
-#include <boost/url/rfc/query_params_bnf.hpp>
+#ifndef BOOST_URL_BNF_IMPL_RANGE_IPP
+#define BOOST_URL_BNF_IMPL_RANGE_IPP
 
-#include "test_bnf.hpp"
+#include <boost/url/bnf/range.hpp>
 
 namespace boost {
 namespace urls {
+namespace bnf {
 
-class query_params_bnf_test
-{
-public:
-    void
-    run()
-    {
-    }
-};
 
-TEST_SUITE(
-    query_params_bnf_test,
-    "boost.url.query_params_bnf");
-
+} // bnf
 } // urls
 } // boost
+
+#endif

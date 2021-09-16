@@ -110,22 +110,6 @@ increment(
     return false;
 }
 
-bool
-parse(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    path_abempty_bnf const& t)
-{
-    bnf::range<pct_encoded_str> r;
-    if(! bnf::parse_range(
-        it, end, ec, r, t))
-        return false;
-    t.v.path = r.str();
-    t.v.count = r.size();
-    return true;
-}
-
 //------------------------------------------------
 
 bool
@@ -180,22 +164,6 @@ increment(
     return false;
 }
 
-bool
-parse(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    path_absolute_bnf const& t)
-{
-    bnf::range<pct_encoded_str> r;
-    if(! bnf::parse_range(
-            it, end, ec, r, t))
-        return false;
-    t.v.path = r.str();
-    t.v.count = r.size();
-    return true;
-}
-
 //------------------------------------------------
 
 bool
@@ -233,21 +201,6 @@ increment(
     return false;
 }
 
-bool
-parse(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    path_noscheme_bnf const& t)
-{
-    bnf::range<pct_encoded_str> r;
-    if(! bnf::parse_range(
-            it, end, ec, r, t))
-        return false;
-    t.v.path = r.str();
-    t.v.count = r.size();
-    return true;
-}
 
 //------------------------------------------------
 
@@ -280,22 +233,6 @@ increment(
     ec = error::end;
     it = start;
     return false;
-}
-
-bool
-parse(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    path_rootless_bnf const& t)
-{
-    bnf::range<pct_encoded_str> r;
-    if(! bnf::parse_range(
-            it, end, ec, r, t))
-        return false;
-    t.v.path = r.str();
-    t.v.count = r.size();
-    return true;
 }
 
 } // urls

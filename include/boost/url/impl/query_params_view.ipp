@@ -13,7 +13,6 @@
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
-#include <boost/url/rfc/query_params_bnf.hpp>
 #include <boost/url/detail/except.hpp>
 #include <iostream>
 
@@ -41,7 +40,7 @@ iterator(
     }
     error_code ec;
     query_param t;
-    query_params_bnf::begin(
+    query_bnf::begin(
         next_, end_, ec, t);
     BOOST_ASSERT(! ec.failed());
     v_.k_ = t.key;
@@ -61,7 +60,7 @@ operator++() noexcept ->
 {
     error_code ec;
     query_param t;
-    query_params_bnf::increment(
+    query_bnf::increment(
         next_, end_, ec, t);
     if(ec == error::end)
     {
@@ -186,7 +185,7 @@ parse_query_params(
     if(! parse_string(s, ec, t))
         return {};
     return query_params_view(
-        t.query, t.query_count);
+        t.str, t.count);
 }
 
 query_params_view

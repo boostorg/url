@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/pct_encoding_types.hpp>
+#include <boost/url/bnf/range.hpp>
 #include <cstddef>
 
 namespace boost {
@@ -82,12 +83,15 @@ struct segment_nz_nc_bnf
 //------------------------------------------------
 
 // path-abempty  = *( "/" segment )
-struct path_abempty_bnf
+struct path_abempty_bnf : bnf::range
 {
     using value_type =
         pct_encoded_str;
 
-    parsed_path& v;
+    path_abempty_bnf()
+        : bnf::range(this)
+    {
+    }
 
     BOOST_URL_DECL
     static
@@ -106,23 +110,20 @@ struct path_abempty_bnf
         char const* end,
         error_code& ec,
         pct_encoded_str& t) noexcept;
-
-    BOOST_URL_DECL
-    friend
-    bool
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        path_abempty_bnf const& t);
 };
 
 //------------------------------------------------
 
 // path-absolute = "/" [ segment-nz *( "/" segment ) ]
-struct path_absolute_bnf
+struct path_absolute_bnf : bnf::range
 {
-    parsed_path& v;
+    using value_type =
+        pct_encoded_str;
+
+    path_absolute_bnf()
+        : bnf::range(this)
+    {
+    }
 
     BOOST_URL_DECL
     static
@@ -141,23 +142,20 @@ struct path_absolute_bnf
         char const* const end,
         error_code& ec,
         pct_encoded_str& t) noexcept;
-
-    BOOST_URL_DECL
-    friend
-    bool
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        path_absolute_bnf const& t);
 };
 
 //------------------------------------------------
 
 // path-noscheme = segment-nz-nc *( "/" segment )
-struct path_noscheme_bnf
+struct path_noscheme_bnf : bnf::range
 {
-    parsed_path& v;
+    using value_type =
+        pct_encoded_str;
+
+    path_noscheme_bnf()
+        : bnf::range(this)
+    {
+    }
 
     BOOST_URL_DECL
     static
@@ -176,23 +174,20 @@ struct path_noscheme_bnf
         char const* const end,
         error_code& ec,
         pct_encoded_str& t) noexcept;
-
-    BOOST_URL_DECL
-    friend
-    bool
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        path_noscheme_bnf const& t);
 };
 
 //------------------------------------------------
 
 // path-rootless = segment-nz *( "/" segment )
-struct path_rootless_bnf
+struct path_rootless_bnf : bnf::range
 {
-    parsed_path& v;
+    using value_type =
+        pct_encoded_str;
+
+    path_rootless_bnf()
+        : bnf::range(this)
+    {
+    }
 
     BOOST_URL_DECL
     static
@@ -211,15 +206,6 @@ struct path_rootless_bnf
         char const* const end,
         error_code& ec,
         pct_encoded_str& t) noexcept;
-
-    BOOST_URL_DECL
-    friend
-    bool
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        path_rootless_bnf const& t);
 };
 
 } // urls

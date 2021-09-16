@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/rfc/query_bnf.hpp>
 #include <cstddef>
 
 namespace boost {
@@ -33,8 +34,7 @@ namespace urls {
 struct query_part_bnf
 {
     bool has_query;
-    string_view query;
-    std::size_t query_count;
+    query_bnf query;
     string_view query_part;
 
     BOOST_URL_DECL

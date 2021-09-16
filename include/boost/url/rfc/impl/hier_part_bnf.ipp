@@ -36,10 +36,11 @@ parse(
     if(it[0] != '/')
     {
         // path-rootless
-        if(! parse(it, end, ec,
-            path_rootless_bnf{
-                t.path}))
+        path_rootless_bnf t0;
+        if(! parse(it, end, ec, t0))
             return false;
+        t.path.path = t0.str;
+        t.path.count = t0.count;
         t.has_authority = false;
         return true;
     }
@@ -47,10 +48,11 @@ parse(
         it[1] != '/')
     {
         // path-absolute
-        if(! parse(it, end, ec,
-            path_absolute_bnf{
-                t.path}))
+        path_absolute_bnf t0;
+        if(! parse(it, end, ec, t0))
             return false;
+        t.path.path = t0.str;
+        t.path.count = t0.count;
         t.has_authority = false;
         return true;
     }
@@ -61,10 +63,11 @@ parse(
             t.authority))
         return false;
     // path-abempty
-    if(! parse(it, end, ec,
-        path_abempty_bnf{
-            t.path}))
+    path_abempty_bnf t0;
+    if(! parse(it, end, ec, t0))
         return false;
+    t.path.path = t0.str;
+    t.path.count = t0.count;
     t.has_authority = true;
     return true;
 }

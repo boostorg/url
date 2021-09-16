@@ -154,7 +154,7 @@ apply(
         p.resize(
             part::id_query,
             t.query_part.size());
-        p.nparam = t.query_count;
+        p.nparam = t.query.count;
     }
     else
     {

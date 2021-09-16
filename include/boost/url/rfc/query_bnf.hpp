@@ -12,11 +12,20 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/bnf/range.hpp>
 #include <cstddef>
 
 namespace boost {
 namespace urls {
+
+struct query_param
+{
+    pct_encoded_str key;
+    pct_encoded_str value;
+    bool has_value = false;
+};
 
 /** BNF for query
 
@@ -38,19 +47,33 @@ namespace urls {
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
 */
-struct query_bnf
+struct query_bnf : bnf::range
 {
-    string_view query;
-    std::size_t query_count;
+    using value_type =
+        query_param;
+
+    query_bnf()
+        : bnf::range(this)
+    {
+    }
 
     BOOST_URL_DECL
-    friend
+    static
     bool
-    parse(
+    begin(
         char const*& it,
         char const* const end,
         error_code& ec,
-        query_bnf& t);
+        query_param& t) noexcept;
+
+    BOOST_URL_DECL
+    static
+    bool
+    increment(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        query_param& t) noexcept;
 };
 
 } // urls

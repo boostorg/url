@@ -14,26 +14,86 @@
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/rfc/query_params_bnf.hpp>
 
 namespace boost {
 namespace urls {
 
 bool
-parse(
+query_bnf::
+begin(
     char const*& it,
     char const* const end,
     error_code& ec,
-    query_bnf& t)
+    query_param& t) noexcept
 {
-    bnf::range<query_param> r;
-    if(! bnf::parse_range(
-        it, end, ec, r,
-            query_params_bnf{}))
+    using bnf::parse;
+
+    // key
+    {
+        static constexpr auto cs =
+            pchars + '/' + '?' - '&' - '=';
+        if(! parse(it, end, ec,
+            pct_encoded_bnf(cs, t.key)))
+            return false;
+    }
+
+    // "="
+    t.has_value = parse(
+        it, end, ec, '=');
+    if(! t.has_value)
+    {
+        // key with no value
+        ec = {};
+        return true;
+    }
+
+    // value
+    static constexpr auto cs =
+        pchars + '/' + '?' - '&';
+    return parse(it, end, ec,
+        pct_encoded_bnf(cs, t.value));
+}
+
+bool
+query_bnf::
+increment(
+    char const*& it,
+    char const* const end,
+    error_code& ec,
+    query_param& t) noexcept
+{
+    using bnf::parse;
+    if(! parse(it, end, ec, '&'))
+    {
+        // end of list
+        ec = error::end;
         return false;
-    t.query = r.str();
-    t.query_count = r.size();
-    return true;
+    }
+
+    // key
+    {
+        static constexpr auto cs =
+            pchars + '/' + '?' - '&' - '=';
+        if(! parse(it, end, ec,
+            pct_encoded_bnf(cs, t.key)))
+            return false;
+    }
+
+    // "="
+    t.has_value = parse(
+        it, end, ec, '=');
+    if(! t.has_value)
+    {
+        // key with no value
+        ec = {};
+        return true;
+    }
+
+    // value
+    static constexpr auto cs =
+        pchars + '/' + '?' - '&';
+    return parse(it, end, ec,
+        pct_encoded_bnf(cs, t.value));
 }
 
 } // urls
