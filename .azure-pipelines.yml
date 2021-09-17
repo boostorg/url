@@ -194,10 +194,12 @@ stages:
 
     steps:
     - bash: |
-        set -e
+        set -xe
+                echo containerImage is $containerImage
+                echo X
+                echo PACKAGES is $PACKAGES
+                echo X
 
-        if [ -n "$containerImage" ]
-            then
                 if [ -f "/etc/debian_version" ]
                 then
                     apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
@@ -220,7 +222,6 @@ stages:
                     apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y cmake
                     # pip3 install cmake
                 fi
-            fi
 
         git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
         cp -prf boost-ci-cloned/ci .
