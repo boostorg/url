@@ -49,7 +49,7 @@ stages:
       matrix:
         GCC_10:
           B2_TOOLSET: gcc
-          B2_CXXSTD: 14,17,2a
+          B2_CXXSTD: 14,17,20
           CXX: g++-10
           PACKAGES: g++-10
           VM_IMAGE: ubuntu-20.04
@@ -99,19 +99,19 @@ stages:
           VM_IMAGE: ubuntu-18.04
         Clang_12:
           B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
+          B2_CXXSTD: 14,17,20
           CXX: clang++-12
           PACKAGES: clang-12
           VM_IMAGE: ubuntu-20.04
         Clang_11:
           B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
+          B2_CXXSTD: 14,17,20
           CXX: clang++-11
           PACKAGES: clang-11
           VM_IMAGE: ubuntu-20.04
         Clang_10:
           B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
+          B2_CXXSTD: 14,17,20
           CXX: clang++-10
           PACKAGES: clang-10
           VM_IMAGE: ubuntu-20.04
@@ -204,7 +204,7 @@ stages:
         #   VM_IMAGE: ubuntu-18.04
         #   containerImage: ubuntu:16.04
     pool:
-      vmImage: $(VMIMAGE)
+      vmImage: $(VM_IMAGE)
 
     steps:
     - bash: |
