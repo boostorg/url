@@ -46,7 +46,7 @@ stages:
 
   - job: 'Linux'
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-18.04'
     strategy:
       matrix:
         GCC_8:
@@ -162,9 +162,9 @@ stages:
   - job: 'Windows'
     strategy:
       matrix:
-        VS_2019_cxx2a_strict:
+        VS_2019_cxx20:
           B2_TOOLSET: msvc-14.2
-          B2_CXXSTD: latest # 2a
+          B2_CXXSTD: 20
           B2_CXXFLAGS: -permissive-
           B2_ADDRESS_MODEL: 64
           VM_IMAGE: 'windows-2019'
