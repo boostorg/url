@@ -86,12 +86,14 @@ stages:
           B2_CXXSTD: 14,17,2a
           CXX: clang++-8
           PACKAGES: clang-8 libc6-dbg libc++-dev libstdc++-8-dev
+          LLVM_OS: bionic
           LLVM_REPO: llvm-toolchain-bionic-8
         Clang_7:
           B2_TOOLSET: clang
           B2_CXXSTD: 14,17,2a
           CXX: clang++-7
           PACKAGES: clang-7 libc6-dbg libc++-dev libstdc++-8-dev
+          LLVM_OS: bionic
           LLVM_REPO: llvm-toolchain-bionic-7
         Clang_6_libcxx:
           B2_TOOLSET: clang
@@ -99,12 +101,14 @@ stages:
           B2_STDLIB: libc++
           CXX: clang++-6.0
           PACKAGES: clang-6.0 libc6-dbg libc++-dev libc++abi-dev libstdc++-8-dev
+          LLVM_OS: bionic
           LLVM_REPO: llvm-toolchain-bionic-6.0
         Clang_6:
           B2_TOOLSET: clang
           B2_CXXSTD: 14,17,2a
           CXX: clang++-6.0
           PACKAGES: clang-6.0 libc6-dbg libc++-dev libc++abi-dev libstdc++-8-dev
+          LLVM_OS: bionic
           LLVM_REPO: llvm-toolchain-bionic-6.0
         Clang_5:
           B2_TOOLSET: clang
@@ -155,7 +159,8 @@ stages:
         
         echo TESTVARIABLE is $TESTVARIABLE
 
-        git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
+        # git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
+        git clone --branch feature/azure https://github.com/sdarwin/boost-ci.git boost-ci-cloned
         cp -prf boost-ci-cloned/ci .
         rm -rf boost-ci-cloned
         source ci/azure-pipelines/install.sh
@@ -172,9 +177,10 @@ stages:
   #
   # 2021-09 DOCKER CONTAINERS NOTE
   #
-  # Azure Containers don't currently run as root, and don't have sudo installed. This is a showstopper.
+  # Azure Pipeline containers don't run as root, and don't have sudo installed.
   # https://github.com/microsoft/azure-pipelines-agent/issues/2043
-  # Luckily, this only affects a small number of jobs, which can be run in other CI pipelines.
+  # Luckily, this only affects a small number of jobs, which can be run in other CI.
+  # After the bug is fixed, containers can be used, very similarly to github/workflows/ci.yml 
   #
 
   - job: 'Windows'
