@@ -77,6 +77,7 @@ protected:
     BOOST_URL_DECL virtual void free_impl(char* s);
     BOOST_URL_DECL virtual std::size_t growth_impl(
         std::size_t cap, std::size_t new_size);
+    void build_table() noexcept;
 
 public:
     /** Destructor
@@ -124,12 +125,6 @@ public:
     operator=(url_view const& u);
 
     //--------------------------------------------
-
-    /** Return the complete serialized URL
-    */
-    BOOST_URL_DECL
-    string_view
-    str() const noexcept;
 
     /** Return the encoded URL as a null-terminated string
     */
@@ -1111,6 +1106,8 @@ private:
     normalize_scheme() noexcept;
 
 private:
+    void ensure_space(std::size_t nchar,
+        std::size_t nseg, std::size_t nparam);
     char* resize_impl(
         int id, std::size_t new_size);
     char* resize_impl(

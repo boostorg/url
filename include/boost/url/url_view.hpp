@@ -17,6 +17,8 @@
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/detail/parts.hpp>
+#include <boost/assert.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <memory>
@@ -81,7 +83,11 @@ class url_view
 protected:
 #endif
 
-    char const* cs_ = "";
+    static
+    constexpr
+    char const* const empty_ = "";
+
+    char const* cs_ = empty_;
     detail::parts pt_;
 
     struct shared_impl;
@@ -100,6 +106,18 @@ protected:
         detail::parts const& pt) noexcept;
 
 public:
+    // Container
+
+    using value_type        = char;
+    using pointer           = char*;
+    using const_pointer     = char const*;
+    using reference         = char&;
+    using const_reference   = char const&;
+    using const_iterator    = char const*;
+    using iterator          = const_iterator;
+    using size_type         = std::size_t;
+    using difference_type   = std::ptrdiff_t;
+
     /** Constructor
 
         Default constructed views refer to
@@ -123,16 +141,29 @@ public:
     //
     //--------------------------------------------
 
-    /** Returns the size of the longest representable URL, in characters
+    /** Return the maximum number of characters allowed in a URL
 
-        This does not include any null terminator.
+        This does not include a null terminator.
     */
     static
     constexpr
     std::size_t
-    max_size()
+    max_size() noexcept
     {
         return BOOST_URL_MAX_SIZE;
+    }
+
+    /** Return the number of characters in the URL
+
+        This function returns the number of
+        characters in the URL, not including
+        a null terminator.
+    */
+    constexpr
+    std::size_t
+    size() const noexcept
+    {
+        return pt_.offset[id_end];
     }
 
     /** Return true if the URL is empty
@@ -140,9 +171,56 @@ public:
         An empty URL is a relative-ref with
         zero path segments.
     */
-    BOOST_URL_DECL
+    constexpr
     bool
-    empty() const noexcept;
+    empty() const noexcept
+    {
+        return size() == 0;
+    }
+
+    constexpr
+    char const*
+    data() const noexcept
+    {
+        return cs_;
+    }
+
+    char const&
+    operator[](
+        std::size_t pos) const noexcept
+    {
+        BOOST_ASSERT(pos < size());
+        return cs_[pos];
+    }
+
+    /** Return an iterator to the beginning
+
+        This function returns a constant iterator
+        to the first character of the URL, or
+        one past the last element if the URL is
+        empty.
+    */
+    constexpr
+    char const*
+    begin() const noexcept
+    {
+        return data();
+    }
+
+    /** Return an iterator to the end
+
+        This function returns a constant iterator to
+        the character following the last character of
+        the URL. This character acts as a placeholder,
+        attempting to access it results in undefined
+        behavior.
+    */
+    constexpr
+    char const*
+    end() const noexcept
+    {
+        return data() + size();
+    }
 
     /** Return the complete encoded URL
 
@@ -152,9 +230,13 @@ public:
         @par Exception Safety
         Does not throw.
     */
-    BOOST_URL_DECL
+    constexpr
     string_view
-    encoded_url() const noexcept;
+    encoded_url() const noexcept
+    {
+        return string_view(
+            data(), size());
+    }
 
     /** Return an immutable copy of the URL, with shared lifetime
 

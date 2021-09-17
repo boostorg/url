@@ -22,7 +22,9 @@
 #include <boost/url/rfc/authority_bnf.hpp>
 #include <boost/url/rfc/char_sets.hpp>
 #include <boost/url/rfc/host_bnf.hpp>
+#include <boost/url/rfc/paths_bnf.hpp>
 #include <boost/url/rfc/port_bnf.hpp>
+#include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/rfc/scheme_bnf.hpp>
 #include <boost/url/rfc/userinfo_bnf.hpp>
 #include <cstring>
@@ -32,6 +34,8 @@
 
 namespace boost {
 namespace urls {
+
+//------------------------------------------------
 
 void
 url::
@@ -105,6 +109,8 @@ url(char* buf,
     , cap_(cap)
 {
     BOOST_ASSERT(cap > 0);
+    BOOST_ASSERT((cap & (sizeof(
+        max_align_t) - 1)) == 0);
     s_[0] = '\0';
     cs_ = s_;
 }
@@ -115,7 +121,19 @@ copy(
     char const* s,
     detail::parts const& pt)
 {
-    auto n = pt.offset[id_end];
+#if 0
+    ensure_space(
+        pt.offset[id_end],
+        pt.nseg,
+        pt.nparam);
+    std::memcpy(s_, s,
+        pt.offset[id_end]);
+    pt_ = pt;
+    //build_table();
+#else
+    auto n =
+        pt.offset[id_end] +
+        pt.tabsize();
     if(n == 0 && ! s_)
         return;
     if(cap_ < n)
@@ -129,10 +147,14 @@ copy(
         cs_ = s_;
         cap_ = cap;
     }
-    if(n != 0)
-        std::memcpy(s_, s, n);
-    s_[n] = 0;
     pt_ = pt;
+    if(n != 0)
+    {
+        s_[n] = 0;
+        std::memcpy(s_, s, n);
+        //build_table();
+    }
+#endif
 }
 
 char*
@@ -169,6 +191,9 @@ growth_impl(
     }
     // 50% growth factor
     auto n = cap + cap / 2;
+    // align up
+    n = (n + sizeof(max_align_t) - 1) &
+        ~(sizeof(max_align_t) - 1);
     if(n < cap)
     {
         // overflow
@@ -177,6 +202,77 @@ growth_impl(
     if(n < new_size)
         return new_size;
     return n;
+}
+
+void
+url::
+build_table() noexcept
+{
+    // path
+    {
+        error_code ec;
+        pos_t* tab = reinterpret_cast<
+            pos_t*>(s_ + cap_);
+        tab -= 1; // path table
+        auto s = get(id_path);
+        auto it = s.data();
+        auto const end = it + s.size();
+        pct_encoded_str t;
+        *tab = it - s_;
+        tab -= 2;
+        if( s.starts_with('/') ||
+            s.empty())
+            path_abempty_bnf::begin(
+                it, end, ec, t);
+        else
+            path_rootless_bnf::begin(
+                it, end, ec, t);
+        for(;;)
+        {
+            if(ec == error::end)
+                break;
+            if(ec)
+                detail::throw_system_error(ec,
+                    BOOST_CURRENT_LOCATION);
+            *tab = it - s_;
+            tab -= 2;
+            path_abempty_bnf::increment(
+                it, end, ec, t);
+        }
+        *tab = it - s_;
+        BOOST_ASSERT(*tab ==
+            pt_.offset[id_query]);
+    }
+    // query
+    {
+        error_code ec;
+        pos_t* tab = reinterpret_cast<
+            pos_t*>(s_ + cap_);
+        tab -= 2; // query table
+        auto s = get(id_query);
+        auto it = s.data();
+        auto const end = it + s.size();
+        query_param t;
+        *tab = it - s_;
+        tab -= 2;
+        query_bnf::begin(
+            it, end, ec, t);
+        for(;;)
+        {
+            if(ec == error::end)
+                break;
+            if(ec)
+                detail::throw_system_error(ec,
+                    BOOST_CURRENT_LOCATION);
+            *tab = it - s_;
+            tab -= 2;
+            query_bnf::increment(
+                it, end, ec, t);
+        }
+        *tab = it - s_;
+        BOOST_ASSERT(*tab ==
+            pt_.offset[id_frag]);
+    }
 }
 
 //------------------------------------------------
@@ -202,7 +298,7 @@ url(url&& u) noexcept
     pt_ = u.pt_;
     cap_ = u.cap_;
     u.s_ = nullptr;
-    u.cs_ = "";
+    u.cs_ = empty_;
     u.pt_ = {};
     u.cap_ = 0;
 }
@@ -230,7 +326,7 @@ operator=(url&& u) noexcept
     pt_ = u.pt_;
     cap_ = u.cap_;
     u.s_ = nullptr;
-    u.cs_ = "";
+    u.cs_ = empty_;
     u.pt_ = {};
     u.cap_ = 0;
     return *this;
@@ -254,19 +350,10 @@ operator=(url_view const& u)
 
 //------------------------------------------------
 
-string_view
-url::
-str() const noexcept
-{
-    return get(id_scheme, id_end);
-}
-
 char const*
 url::
 c_str() const noexcept
 {
-    static constexpr char
-        empty_[] = { '\0' };
     if(s_ == nullptr)
         return empty_;
     return s_;
@@ -1157,6 +1244,42 @@ remove_origin() noexcept
 
 //------------------------------------------------
 
+void
+url::
+ensure_space(
+    std::size_t nchar,
+    std::size_t nseg,
+    std::size_t nparam)
+{
+    if(nchar > max_size())
+        detail::throw_length_error(
+            "nchar > max_size",
+            BOOST_CURRENT_LOCATION);
+    std::size_t n = nchar;
+    if(nseg > nparam)
+        n += 2 * sizeof(pos_t) *
+            (nseg + 1);
+    else
+        n += 2 * sizeof(pos_t) *
+            (nparam + 1);
+    // align up
+    auto const a =
+        sizeof(max_align_t) - 1;
+    n = (n + a) & ~a;
+    if(n <= cap_)
+        return;
+    auto s = alloc_impl(n);
+    if(s_)
+    {
+        std::memcpy(s, s_,
+            pt_.offset[id_end]);
+        free_impl(s_);
+    }
+    s_ = s;
+    cs_ = s;
+    cap_ = n;
+}
+
 char*
 url::
 resize_impl(
@@ -1255,7 +1378,7 @@ operator<<(
     std::ostream& os,
     url const& u)
 {
-    auto const s = u.str();
+    auto const s = u.encoded_url();
     os.write(s.data(), s.size());
     return os;
 }

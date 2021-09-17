@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/url.hpp>
 #include <boost/static_assert.hpp>
+#include <cstddef>
 
 namespace boost {
 namespace urls {
@@ -54,12 +55,17 @@ public:
     This container acts like @ref url,
     except that dynamic allocations are
     never performed. Instead, the capacity
-    for the characters comes from inline
-    storage.
+    for the data comes from inline storage.
 
     @tparam Capacity The maximum capacity
-    of the stored string, excluding the
-    null terminator.
+    in bytes. A URL requires bytes equal
+    to at least the number of characters
+    plus one, plus an additional number
+    of bytes proportional to the count of
+    path segments plus the count of query
+    params. Due to alignment requirements,
+    the usable capacity may be slightly
+    less than this number.
 
     @see
         @ref url,
@@ -73,10 +79,8 @@ class static_url
     : public static_url_base
 #endif
 {
-    char buf_[Capacity + 1];
-
-    BOOST_STATIC_ASSERT(
-        Capacity < max_size());
+    char buf_[(Capacity + 1) &
+        ~(sizeof(max_align_t)-1)];
 
 public:
     /** Destructor

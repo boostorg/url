@@ -77,7 +77,8 @@ url_view(
     : cs_(s)
     , pt_(pt)
 {
-    if(pt.offset[id_end] > max_size())
+    BOOST_ASSERT(cs_ != nullptr);
+    if(size() > max_size())
         detail::throw_length_error(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
@@ -92,20 +93,6 @@ url_view() noexcept = default;
 //
 //------------------------------------------------
 
-bool
-url_view::
-empty() const noexcept
-{
-    return pt_.offset[id_end] == 0;
-}
-
-string_view
-url_view::
-encoded_url() const noexcept
-{
-    return get(id_scheme, id_end);
-}
-
 std::shared_ptr<
     url_view const>
 url_view::
@@ -117,11 +104,10 @@ collect() const
     string_view s = encoded_url();
     auto p = std::allocate_shared<T>(
         detail::over_allocator<T, Alloc>(
-            s.size(), a), *this);
+            size(), a), *this);
     std::memcpy(
         reinterpret_cast<char*>(
-            p.get() + 1),
-        s.data(), s.size());
+            p.get() + 1), data(), size());
     return p;
 }
 
@@ -150,8 +136,7 @@ string_view
 url_view::
 scheme() const noexcept
 {
-    auto s = get(
-        id_scheme);
+    auto s = get(id_scheme);
     if(! s.empty())
     {
         BOOST_ASSERT(s.size() > 1);
@@ -254,17 +239,14 @@ has_password() const noexcept
     auto const n = len(id_pass);
     if(n > 1)
     {
-        BOOST_ASSERT(get(
-            id_pass
-                ).starts_with(':'));
-        BOOST_ASSERT(get(
-            id_pass
-                ).ends_with('@'));
+        BOOST_ASSERT(get(id_pass
+            ).starts_with(':'));
+        BOOST_ASSERT(get(id_pass
+            ).ends_with('@'));
         return true;
     }
-    BOOST_ASSERT(n == 0 ||
-        get(id_pass
-            ).ends_with('@'));
+    BOOST_ASSERT(n == 0 || get(
+        id_pass).ends_with('@'));
     return false;
 }
 
@@ -280,7 +262,7 @@ encoded_password() const noexcept
             s.starts_with('@'));
         BOOST_FALLTHROUGH;
     case 0:
-        return s.substr(0,0);
+        return s.substr(0, 0);
     default:
         break;
     }
@@ -472,8 +454,7 @@ query_params_view
 url_view::
 query_params() const noexcept
 {
-    auto s = get(
-        id_query);
+    auto s = get(id_query);
     if(s.empty())
         return query_params_view(s, 0);
     BOOST_ASSERT(s.starts_with('?'));

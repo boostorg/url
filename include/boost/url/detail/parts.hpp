@@ -12,8 +12,8 @@
 
 #include <boost/url/host_type.hpp>
 #include <boost/url/scheme.hpp>
+#include <boost/url/string.hpp>
 #include <cstdint>
-#include <cstring>
 
 namespace boost {
 namespace urls {
@@ -21,6 +21,8 @@ namespace detail {
 
 struct part_ids
 {
+    using pos_t = std::size_t;
+
     enum
     {
         id_scheme = 0,  // trailing ':'
@@ -39,11 +41,11 @@ struct part_ids
 
 struct parts : private part_ids
 {
-    std::size_t offset[id_end + 1] = {};
-    std::size_t decoded[id_end] = {};
+    pos_t offset[id_end + 1] = {};
+    pos_t decoded[id_end] = {};
+    pos_t nseg = 0;
+    pos_t nparam = 0;
     unsigned char ip_addr[16] = {};
-    std::size_t nseg = 0;
-    std::size_t nparam = 0;
     // VFALCO don't we need a bool?
     std::uint16_t port_number = 0;
     urls::host_type host_type =
@@ -51,8 +53,19 @@ struct parts : private part_ids
     urls::scheme scheme =
         urls::scheme::none;
 
-    // size of id
+    // size of table
     std::size_t
+    tabsize() const noexcept
+    {
+        auto n = nseg;
+        if( n < nparam)
+            n = nparam;
+        return sizeof(pos_t) *
+            2 * (n + 1);
+    }
+
+    // size of id
+    pos_t
     len(int id) const noexcept
     {
         return offset[id + 1] -
@@ -60,7 +73,7 @@ struct parts : private part_ids
     }
 
     // size of [begin, end)
-    std::size_t
+    pos_t
     len(
         int begin,
         int end) const noexcept
@@ -98,7 +111,7 @@ struct parts : private part_ids
     void
     resize(
         int id,
-        std::size_t n) noexcept
+        pos_t n) noexcept
     {
         auto const n0 = len(id);
         auto const d = n - n0;
@@ -107,6 +120,8 @@ struct parts : private part_ids
             offset[i] += d;
     }
 
+    // trim id to size n,
+    // moving excess into id+1
     void
     split(
         int id,
@@ -114,8 +129,7 @@ struct parts : private part_ids
     {
         BOOST_ASSERT(id < id_end - 1);
         BOOST_ASSERT(n <= len(id));
-        offset[id + 1] = offset[id] +
-            static_cast<std::size_t>(n);
+        offset[id + 1] = offset[id] + n;
     }
 };
 
