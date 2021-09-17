@@ -74,6 +74,7 @@ stages:
           B2_CXXSTD: 11
           CXX: g++-4.9
           PACKAGES: g++-4.9
+          containerImage: ubuntu:16.04
         GCC_4_8:
           B2_TOOLSET: gcc
           B2_CXXSTD: 11
@@ -83,26 +84,26 @@ stages:
           B2_TOOLSET: clang
           B2_CXXSTD: 14,17,2a
           CXX: clang++-8
-          PACKAGES: clang-8
+          PACKAGES: clang-8 libc6-dbg libc++-dev libstdc++-8-dev
           LLVM_REPO: llvm-toolchain-xenial-8
         Clang_7:
           B2_TOOLSET: clang
           B2_CXXSTD: 14,17,2a
           CXX: clang++-7
-          PACKAGES: clang-7
+          PACKAGES: clang-7 libc6-dbg libc++-dev libstdc++-8-dev
           LLVM_REPO: llvm-toolchain-xenial-7
         Clang_6_libcxx:
           B2_TOOLSET: clang
           B2_CXXSTD: 11,14,17,2a
           B2_STDLIB: libc++
           CXX: clang++-6.0
-          PACKAGES: clang-6.0
+          PACKAGES: clang-6.0 libc6-dbg libc++-dev libc++abi-dev libstdc++-8-dev
           LLVM_REPO: llvm-toolchain-xenial-6.0
         Clang_6:
           B2_TOOLSET: clang
           B2_CXXSTD: 14,17,2a
           CXX: clang++-6.0
-          PACKAGES: clang-6.0
+          PACKAGES: clang-6.0 libc6-dbg libc++-dev libc++abi-dev libstdc++-8-dev
           LLVM_REPO: llvm-toolchain-xenial-6.0
         Clang_5:
           B2_TOOLSET: clang
@@ -126,6 +127,7 @@ stages:
           CXX: clang++-3.8
           B2_CXXSTD: 11,14
           PACKAGES: clang-3.8
+          containerImage: ubuntu:16.04
         Clang_3_7:
           B2_TOOLSET: clang
           B2_CXXSTD: 11
@@ -141,9 +143,39 @@ stages:
           B2_CXXSTD: 11
           CXX: clang++-3.5
           PACKAGES: clang-3.5
+          containerImage: ubuntu:16.04
+
+    container: $[ variables['containerImage'] ]
+
     steps:
     - bash: |
         set -e
+
+        if [ -n "$containerImage" ]
+            then
+                if [ -f "/etc/debian_version" ]
+                then
+                    apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
+                    apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y sudo software-properties-common tzdata wget curl apt-transport-https make apt-file unzip libssl-dev build-essential autotools-dev autoconf automake g++ libc++-helpers python ruby cpio gcc-multilib g++-multilib pkgconf python3 ccache libpython-dev
+                    # install pip:
+                    python_version=$(python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
+                    if python3 -c "import sys; result = 0 if float($python_version) < float(3.6) else 1; sys.exit(result)"; then
+                      wget https://bootstrap.pypa.io/pip/$python_version/get-pip.py
+                      python3 get-pip.py
+                    else
+                      apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y python3-pip
+                    fi
+        
+                    # install git:
+                    # apt-get install -y git
+                    apt-add-repository ppa:git-core/ppa
+                    apt-get -o Acquire::Retries=$NET_RETRY_COUNT update && apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y git
+        
+                    # install cmake:
+                    apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y cmake
+                    # pip3 install cmake
+                fi
+            fi
 
         git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
         cp -prf boost-ci-cloned/ci .
