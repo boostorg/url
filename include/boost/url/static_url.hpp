@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/url.hpp>
+#include <boost/align/align_up.hpp>
 #include <boost/static_assert.hpp>
 #include <cstddef>
 
@@ -35,13 +36,10 @@ protected:
     BOOST_URL_DECL void copy(url const& u);
     BOOST_URL_DECL void copy(url_view const& u);
     BOOST_URL_DECL url_view convert() const noexcept;
-
     BOOST_URL_DECL char* alloc_impl(
         std::size_t n) override;
     BOOST_URL_DECL void free_impl(char*) override;
-    BOOST_URL_DECL std::size_t growth_impl(
-        std::size_t cap, std::size_t
-            new_size) override;
+
 public:
     BOOST_URL_DECL
     operator url_view() const noexcept;
@@ -58,14 +56,15 @@ public:
     for the data comes from inline storage.
 
     @tparam Capacity The maximum capacity
-    in bytes. A URL requires bytes equal
-    to at least the number of characters
-    plus one, plus an additional number
-    of bytes proportional to the count of
-    path segments plus the count of query
-    params. Due to alignment requirements,
-    the usable capacity may be slightly
-    less than this number.
+    in bytes. A URL requires bytes equal to
+    at least the number of characters plus
+    one for the terminating NULL, plus an
+    additional number of bytes proportional
+    to the larger of the count of path segments
+    and the count of query params. Due to
+    alignment requirements, the usable
+    capacity may be slightly less than
+    this number.
 
     @see
         @ref url,
@@ -79,8 +78,11 @@ class static_url
     : public static_url_base
 #endif
 {
-    char buf_[(Capacity + 1) &
-        ~(sizeof(max_align_t)-1)];
+    BOOST_STATIC_ASSERT(
+        Capacity < (std::size_t(-1) &
+            ~(alignof(pos_t)-1)));
+    char buf_[alignment::align_up(
+        Capacity, alignof(pos_t))];
 
 public:
     /** Destructor
@@ -93,7 +95,7 @@ public:
     */
     static_url() noexcept
         : static_url_base(
-            buf_, Capacity)
+            buf_, sizeof(buf_))
     {
     }
 
@@ -104,7 +106,7 @@ public:
         @par Exception Safety
         Strong guarantee.
 
-        @throw std::bad_alloc `u.encoded_url().size() > Capacity`
+        @throw std::bad_alloc insufficient space
     */
     static_url(url const& u)
         : static_url()
@@ -119,7 +121,7 @@ public:
         @par Exception Safety
         Strong guarantee.
 
-        @throw std::bad_alloc `u.encoded_url().size() > Capacity`
+        @throw std::bad_alloc insufficient space
     */
     static_url(url_view const& u)
         : static_url()
@@ -134,7 +136,7 @@ public:
         @par Exception Safety
         Strong guarantee.
 
-        @throw std::bad_alloc `u.encoded_url().size() > Capacity`
+        @throw std::bad_alloc insufficient space
     */
     static_url(static_url const& u)
         : static_url()
@@ -143,6 +145,11 @@ public:
     }
 
     /** Assignment
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @throw std::bad_alloc insufficient space
     */
     static_url&
     operator=(url const& u)
@@ -152,6 +159,11 @@ public:
     }
 
     /** Assignment
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @throw std::bad_alloc insufficient space
     */
     static_url&
     operator=(url_view const& u)
@@ -161,6 +173,11 @@ public:
     }
 
     /** Assignment
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @throw std::bad_alloc insufficient space
     */
     static_url&
     operator=(static_url const& u)

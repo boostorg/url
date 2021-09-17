@@ -31,21 +31,22 @@ static_url_base(
     std::size_t cap) noexcept
     : url(buf, cap)
 {
-    buf[0] = 0;
 }
 
 void
 static_url_base::
 copy(url const& u)
 {
-    this->url::copy(u.s_, u.pt_);
+    this->url::copy(
+        u.s_, u.pt_, u.tab_begin());
 }
 
 void
 static_url_base::
 copy(url_view const& u)
 {
-    this->url::copy(u.cs_, u.pt_);
+    this->url::copy(
+        u.cs_, u.pt_, nullptr);
 }
 
 url_view
@@ -59,8 +60,10 @@ char*
 static_url_base::
 alloc_impl(std::size_t n)
 {
+    (void)n;
     // should never get here
-    BOOST_ASSERT(n > capacity());
+    BOOST_ASSERT(
+        n > capacity_in_bytes());
     detail::throw_invalid_argument(
         "alloc_impl",
         BOOST_CURRENT_LOCATION);
@@ -73,17 +76,6 @@ free_impl(char*)
     // should never get here
     detail::throw_invalid_argument(
         "free_impl",
-        BOOST_CURRENT_LOCATION);
-}
-
-std::size_t
-static_url_base::
-growth_impl(
-    std::size_t cap,
-    std::size_t new_size)
-{
-    BOOST_ASSERT(new_size > cap);
-    detail::throw_bad_alloc(
         BOOST_CURRENT_LOCATION);
 }
 

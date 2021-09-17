@@ -27,6 +27,7 @@
 #include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/rfc/scheme_bnf.hpp>
 #include <boost/url/rfc/userinfo_bnf.hpp>
+#include <boost/align/align_up.hpp>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
@@ -41,6 +42,9 @@ void
 url::
 check_invariants() const noexcept
 {
+    using alignment::align_up;
+    BOOST_ASSERT(align_up(cap_,
+        alignof(pos_t)) == cap_);
     BOOST_ASSERT(
         len(id_scheme) == 0 ||
         get(id_scheme).ends_with(':'));
@@ -69,157 +73,41 @@ check_invariants() const noexcept
     BOOST_ASSERT(
         len(id_frag) == 0 ||
         get(id_frag).starts_with('#'));
-    BOOST_ASSERT(c_str()[
-        pt_.offset[id_end]] == '\0');
-#if 0
-    BOOST_ASSERT(
-        (len(id_user) <= 2 &&
-            pt_.decoded[id_user] == 0) ||
-        (len(id_user) > 2 &&
-            pt_.decoded[id_user] != 0));
-    BOOST_ASSERT(
-        (len(id_pass) <= 2 &&
-            pt_.decoded[id_pass] == 0) ||
-        (len(id_pass) > 2 &&
-            pt_.decoded[id_pass] != 0));
-    BOOST_ASSERT(
-        (len(id_host) == 0 &&
-            pt_.decoded[id_host] == 0) ||
-        (len(id_host) != 0 &&
-            pt_.decoded[id_host] != 0));
-    BOOST_ASSERT(
-        (len(id_query) <= 1 &&
-            pt_.decoded[id_query] == 0) ||
-        (len(id_query) > 1 &&
-            pt_.decoded[id_query] != 0));
-    BOOST_ASSERT(
-        (len(id_frag) <= 1 &&
-            pt_.decoded[id_frag] == 0) ||
-        (len(id_frag) > 1 &&
-            pt_.decoded[id_frag] != 0));
-#endif
+    BOOST_ASSERT(c_str()[size()] == '\0');
 }
 
-//------------------------------------------------
-
+auto
 url::
-url(char* buf,
-    std::size_t cap) noexcept
-    : s_(buf)
-    , cap_(cap)
+tab_end() const noexcept ->
+    pos_t*
 {
-    BOOST_ASSERT(cap > 0);
-    BOOST_ASSERT((cap & (sizeof(
-        max_align_t) - 1)) == 0);
-    s_[0] = '\0';
-    cs_ = s_;
+    return reinterpret_cast<
+        pos_t*>(s_ + cap_);
+}
+
+auto
+url::
+tab_begin() const noexcept ->
+    pos_t*
+{
+    return tab_end() -
+        pt_.tabsize();
 }
 
 void
 url::
-copy(
-    char const* s,
-    detail::parts const& pt)
-{
-#if 0
-    ensure_space(
-        pt.offset[id_end],
-        pt.nseg,
-        pt.nparam);
-    std::memcpy(s_, s,
-        pt.offset[id_end]);
-    pt_ = pt;
-    //build_table();
-#else
-    auto n =
-        pt.offset[id_end] +
-        pt.tabsize();
-    if(n == 0 && ! s_)
-        return;
-    if(cap_ < n)
-    {
-        auto cap = growth_impl(
-            cap_, n);
-        auto s1 = alloc_impl(cap);
-        if(s_)
-            free_impl(s_);
-        s_ = s1;
-        cs_ = s_;
-        cap_ = cap;
-    }
-    pt_ = pt;
-    if(n != 0)
-    {
-        s_[n] = 0;
-        std::memcpy(s_, s, n);
-        //build_table();
-    }
-#endif
-}
-
-char*
-url::
-alloc_impl(std::size_t n)
-{
-    return new char[n + 1];
-}
-
-void
-url::
-free_impl(char* s)
-{
-    delete[] s;
-}
-
-std::size_t
-url::
-growth_impl(
-    std::size_t cap,
-    std::size_t new_size)
-{
-    if(new_size > max_size())
-        detail::throw_length_error(
-            "url::reserve",
-            BOOST_CURRENT_LOCATION);
-    BOOST_ASSERT(new_size > cap);
-    if(cap == 0)
-    {
-        // minimum
-        if( new_size < 24)
-            return 24;
-        return new_size;
-    }
-    // 50% growth factor
-    auto n = cap + cap / 2;
-    // align up
-    n = (n + sizeof(max_align_t) - 1) &
-        ~(sizeof(max_align_t) - 1);
-    if(n < cap)
-    {
-        // overflow
-        return max_size();
-    }
-    if(n < new_size)
-        return new_size;
-    return n;
-}
-
-void
-url::
-build_table() noexcept
+build_tab() noexcept
 {
     // path
+    if(pt_.nseg > 0)
     {
         error_code ec;
-        pos_t* tab = reinterpret_cast<
-            pos_t*>(s_ + cap_);
-        tab -= 1; // path table
+        // path table
+        pos_t* tab = tab_end() - 1;
         auto s = get(id_path);
         auto it = s.data();
         auto const end = it + s.size();
         pct_encoded_str t;
-        *tab = it - s_;
-        tab -= 2;
         if( s.starts_with('/') ||
             s.empty())
             path_abempty_bnf::begin(
@@ -239,22 +127,17 @@ build_table() noexcept
             path_abempty_bnf::increment(
                 it, end, ec, t);
         }
-        *tab = it - s_;
-        BOOST_ASSERT(*tab ==
-            pt_.offset[id_query]);
     }
     // query
+    if(pt_.nparam > 0)
     {
         error_code ec;
-        pos_t* tab = reinterpret_cast<
-            pos_t*>(s_ + cap_);
-        tab -= 2; // query table
+        // query table
+        pos_t* tab = tab_end() - 2;
         auto s = get(id_query);
         auto it = s.data();
         auto const end = it + s.size();
         query_param t;
-        *tab = it - s_;
-        tab -= 2;
         query_bnf::begin(
             it, end, ec, t);
         for(;;)
@@ -269,10 +152,72 @@ build_table() noexcept
             query_bnf::increment(
                 it, end, ec, t);
         }
-        *tab = it - s_;
-        BOOST_ASSERT(*tab ==
-            pt_.offset[id_frag]);
     }
+}
+
+//------------------------------------------------
+
+url::
+url(char* buf,
+    std::size_t cap) noexcept
+    : s_(buf)
+    , cap_(cap)
+{
+    using alignment::align_up;
+    BOOST_ASSERT(cap > 0);
+    BOOST_ASSERT(align_up(cap,
+        alignof(pos_t)) == cap);
+    s_[0] = '\0';
+    cs_ = s_;
+}
+
+void
+url::
+copy(
+    char const* s,
+    detail::parts const& pt,
+    pos_t const* tab_begin_)
+{
+    if(pt.size() == 0)
+    {
+        clear();
+        return;
+    }
+    ensure_space(
+        pt.size() + 1,
+        pt.nseg,
+        pt.nparam);
+    pt_ = pt;
+    std::memcpy(
+        s_, s, pt.size());
+    if(tab_begin_ != nullptr)
+        std::memcpy(
+            tab_begin(),
+            tab_begin_,
+            pt_.tabsize() *
+                sizeof(pos_t));
+    else
+        build_tab();
+    s_[size()] = '\0';
+}
+
+char*
+url::
+alloc_impl(std::size_t n)
+{
+    using alignment::align_up;
+    n = align_up(
+        n, alignof(pos_t));
+    auto s = new char[n];
+    cap_ = n;
+    return s;
+}
+
+void
+url::
+free_impl(char* s)
+{
+    delete[] s;
 }
 
 //------------------------------------------------
@@ -306,13 +251,13 @@ url(url&& u) noexcept
 url::
 url(url const& u)
 {
-    copy(u.s_, u.pt_);
+    copy(u.s_, u.pt_, u.tab_begin());
 }
 
 url::
 url(url_view const& u)
 {
-    copy(u.cs_, u.pt_);
+    copy(u.cs_, u.pt_, nullptr);
 }
 
 url&
@@ -336,7 +281,7 @@ url&
 url::
 operator=(url const& u)
 {
-    copy(u.s_, u.pt_);
+    copy(u.s_, u.pt_, u.tab_begin());
     return *this;
 }
 
@@ -344,20 +289,11 @@ url&
 url::
 operator=(url_view const& u)
 {
-    copy(u.cs_, u.pt_);
+    copy(u.cs_, u.pt_, nullptr);
     return *this;
 }
 
 //------------------------------------------------
-
-char const*
-url::
-c_str() const noexcept
-{
-    if(s_ == nullptr)
-        return empty_;
-    return s_;
-}
 
 void
 url::
@@ -367,6 +303,12 @@ clear() noexcept
     {
         pt_ = {};
         s_[0] = '\0';
+        cs_ = s_;
+    }
+    else
+    {
+        BOOST_ASSERT(
+            cs_ == empty_);
     }
 }
 
@@ -374,25 +316,12 @@ void
 url::
 reserve(std::size_t cap)
 {
-    if(cap < cap_)
-        return;
-    cap = growth_impl(cap_, cap);
-    auto s = alloc_impl(cap);
-    auto n = len(id_scheme, id_end);
-    if(n > 0)
-        std::memcpy(s, s_, n + 1);
-    else
-        s[0] = '\0';
-    if(s_)
-        free_impl(s_);
-    s_ = s;
-    cs_ = s_;
-    cap_ = cap;
+    BOOST_ASSERT(false);
 }
 
 //------------------------------------------------
 //
-// scheme
+// Scheme
 //
 //------------------------------------------------
 
@@ -476,25 +405,21 @@ remove_scheme() noexcept
     BOOST_ASSERT(n >= 2);
     std::memmove(
         s_, s_ + n,
-        pt_.offset[id_path] - n);
+        pt_.offset(id_path) - n);
     std::memmove(
-        s_ + pt_.offset[
-            id_path] - (n - 2),
-        s_ + pt_.offset[id_path],
-        pt_.offset[id_end] -
-            pt_.offset[id_path]);
-    pt_.offset[id_scheme] = 0;
-    for(int i = id_user;
-            i <= id_path; ++i)
-        pt_.offset[i] -= n;
-    for(int i = id_query;
-            i <= id_end; ++i)
-        pt_.offset[i] -= n - 2;
+        s_ + pt_.offset(
+            id_path) - (n - 2),
+        s_ + pt_.offset(id_path),
+        pt_.offset(id_end) -
+            pt_.offset(id_path));
+    pt_.adjust(id_user, id_path, 0-n);
+    pt_.adjust(
+        id_query, id_end, 0-(n - 2));
     auto dest = s_ +
-        pt_.offset[id_path];
+        pt_.offset(id_path);
     dest[0] = '.';
     dest[1] = '/';
-    dest[pt_.offset[id_end]] = '\0';
+    dest[pt_.offset(id_end)] = '\0';
     ++pt_.nseg;
     pt_.scheme = urls::scheme::none;
     check_invariants();
@@ -1192,14 +1117,11 @@ remove_origin() noexcept
         auto dest = resize_impl(
             id_scheme, id_path, 1);
         dest[0] = '.';
-        pt_.offset[id_scheme] = 0;
-        pt_.offset[id_user] = 0;
-        pt_.offset[id_pass] = 0;
-        pt_.offset[id_host] = 0;
-        pt_.offset[id_port] = 0;
-        BOOST_ASSERT(
-            pt_.offset[id_path] >= 1);
-        pt_.offset[id_path] -= 1;
+        pt_.split(id_scheme, 0);
+        pt_.split(id_user, 0);
+        pt_.split(id_pass, 0);
+        pt_.split(id_host, 0);
+        pt_.split(id_port, 0);
         return *this;
     }
     if( s.empty() ||
@@ -1231,14 +1153,11 @@ remove_origin() noexcept
         id_scheme, id_path, 2);
     dest[0] = '.';
     dest[1] = '/';
-    pt_.offset[id_scheme] = 0;
-    pt_.offset[id_user] = 0;
-    pt_.offset[id_pass] = 0;
-    pt_.offset[id_host] = 0;
-    pt_.offset[id_port] = 0;
-    BOOST_ASSERT(
-        pt_.offset[id_path] >= 2);
-    pt_.offset[id_path] -= 2;
+    pt_.split(id_scheme, 0);
+    pt_.split(id_user, 0);
+    pt_.split(id_pass, 0);
+    pt_.split(id_host, 0);
+    pt_.split(id_port, 0);
     return *this;
 }
 
@@ -1247,37 +1166,49 @@ remove_origin() noexcept
 void
 url::
 ensure_space(
-    std::size_t nchar,
+    std::size_t nchar, // excluding null
     std::size_t nseg,
     std::size_t nparam)
 {
-    if(nchar > max_size())
+    // minimum size
+    if( nchar < 15)
+        nchar = 15;
+    if(nchar > max_size() - 1)
         detail::throw_length_error(
             "nchar > max_size",
             BOOST_CURRENT_LOCATION);
-    std::size_t n = nchar;
+    std::size_t new_cap = nchar + 1;
     if(nseg > nparam)
-        n += 2 * sizeof(pos_t) *
+        new_cap += 2 * sizeof(pos_t) *
             (nseg + 1);
     else
-        n += 2 * sizeof(pos_t) *
+        new_cap += 2 * sizeof(pos_t) *
             (nparam + 1);
-    // align up
-    auto const a =
-        sizeof(max_align_t) - 1;
-    n = (n + a) & ~a;
-    if(n <= cap_)
+    if(new_cap <= cap_)
         return;
-    auto s = alloc_impl(n);
-    if(s_)
+    char* s;
+    if(s_ != nullptr)
     {
-        std::memcpy(s, s_,
-            pt_.offset[id_end]);
+        // 50% growth policy
+        auto n = cap_ + (cap_ / 2);
+        if(n < cap_)
+        {
+            // overflow
+            n = std::size_t(-1) &
+                ~(alignof(pos_t)-1);
+        }
+        if( new_cap < n)
+            new_cap = n;
+        s = alloc_impl(new_cap);
+        std::memcpy(s, s_, size());
         free_impl(s_);
+    }
+    else
+    {
+        s = alloc_impl(new_cap);
     }
     s_ = s;
     cs_ = s;
-    cap_ = n;
 }
 
 char*
@@ -1296,79 +1227,50 @@ resize_impl(
     int last,
     std::size_t new_len)
 {
-    auto const n0 =
-        pt_.len(first, last);
+    auto const n0 = len(first, last);
     if(new_len == 0 && n0 == 0)
-        return s_ + pt_.offset[first];
+        return s_ + pt_.offset(first);
     if(new_len <= n0)
     {
         // shrinking
         std::size_t n = n0 - new_len;
         auto const pos =
-            pt_.offset[last];
+            pt_.offset(last);
         // adjust chars
         std::memmove(
             s_ + pos - n,
             s_ + pos,
-            pt_.offset[
-                id_end] - pos + 1);
-        // collapse [first, last)
-        for(auto i = first + 1;
-                i < last; ++i)
-            pt_.offset[i] =
-                pt_.offset[last] - n;
-        // shift [last, end) left
-        for(auto i = last;
-                i <= id_end; ++i)
-            pt_.offset[i] -= n;
-        s_[pt_.offset[id_end]] = '\0';
-        return s_ + pt_.offset[first];
+            pt_.offset(
+                id_end) - pos + 1);
+        // collapse (first, last)
+        pt_.collapse(first,  last, 
+            pt_.offset(last) - n);
+        // shift (last, end) left
+        pt_.adjust(
+            last, id_end, 0 - n);
+        s_[size()] = '\0';
+        return s_ + pt_.offset(first);
     }
 
     // growing
     std::size_t n = new_len - n0;
-
-    if(n > max_size() - pt_.offset[id_end])
-        detail::throw_length_error(
-            "url::resize_impl",
-            BOOST_CURRENT_LOCATION);
-
-    if(cap_ < pt_.offset[id_end] + n)
-    {
-        // reallocate
-        auto new_cap = growth_impl(
-            cap_, pt_.offset[id_end] + n);
-        auto s1 = alloc_impl(new_cap);
-        if(s_)
-        {
-            BOOST_ASSERT(cap_ != 0);
-            std::memcpy(s1, s_, pt_.offset[id_end] + 1);
-            free_impl(s_);
-        }
-        s_ = s1;
-        cs_ = s_;
-        cap_ = new_cap;
-    }
-
+    ensure_space(
+        size()+n, pt_.nseg, pt_.nparam);
     auto const pos =
-        pt_.offset[last];
-        // adjust chars
+        pt_.offset(last);
+    // adjust chars
     std::memmove(
         s_ + pos + n,
         s_ + pos,
-        pt_.offset[id_end] -
+        pt_.offset(id_end) -
             pos + 1);
-    // collapse [first, last)
-    for(auto i = first + 1;
-        i < last; ++i)
-        pt_.offset[i] =
-            pt_.offset[last] + n;
-    // shift [last, end) right
-    for(auto i = last;
-        i <= id_end; ++i)
-        pt_.offset[i] += n;
-    s_[pt_.offset[id_end]] = '\0';
-    return s_ + pt_.offset[first];
+    // collapse (first, last)
+    pt_.collapse(first, last,
+        pt_.offset(last) + n);
+    // shift (last, end) right
+    pt_.adjust(last, id_end, n);
+    s_[size()] = '\0';
+    return s_ + pt_.offset(first);
 }
 
 //------------------------------------------------

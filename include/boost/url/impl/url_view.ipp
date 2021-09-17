@@ -101,7 +101,6 @@ collect() const
     using T = shared_impl;
     using Alloc = std::allocator<char>;
     Alloc a;
-    string_view s = encoded_url();
     auto p = std::allocate_shared<T>(
         detail::over_allocator<T, Alloc>(
             size(), a), *this);
@@ -508,8 +507,9 @@ apply(
     scheme_part_bnf const& t) noexcept
 {
     p.scheme = t.scheme_id;
-    if(t.scheme_id != scheme::none)
-    p.resize(
+    if(t.scheme_id !=
+        urls::scheme::none)
+    p.set_size(
         id_scheme,
         t.scheme_part.size());
 }
@@ -558,9 +558,10 @@ apply(
     }
     }
 
-    if(t.host_type != host_type::none)
+    if(t.host_type !=
+        urls::host_type::none)
     {
-        p.resize(
+        p.set_size(
             id_host,
             t.host_part.size());
     }
@@ -577,7 +578,7 @@ apply(
         auto const& u = t.userinfo;
 
         // leading "//" for authority
-        p.resize(
+        p.set_size(
             id_user,
             u.user.str.size() + 2);
         p.decoded[id_user] = u.user.decoded_size;
@@ -586,7 +587,7 @@ apply(
         {
             // leading ':' for password,
             // trailing '@' for userinfo
-            p.resize(
+            p.set_size(
                 id_pass,
                 u.password.str.size() + 2);
             p.decoded[id_pass] =
@@ -595,14 +596,14 @@ apply(
         else
         {
             // trailing '@' for userinfo
-            p.resize(id_pass, 1);
+            p.set_size(id_pass, 1);
             p.decoded[id_pass] = 0;
         }
     }
     else
     {
         // leading "//" for authority
-        p.resize(id_user, 2);
+        p.set_size(id_user, 2);
         p.decoded[id_user] = 0;
     }
 
@@ -612,7 +613,7 @@ apply(
     // port
     if(t.port.has_port)
     {
-        p.resize(
+        p.set_size(
             id_port,
             t.port.port.size() + 1);
 
@@ -628,7 +629,7 @@ apply(
     detail::parts& p,
     parsed_path const& t) noexcept
 {
-    p.resize(id_path, t.path.size());
+    p.set_size(id_path, t.path.size());
     p.nseg = t.count;
 }
 
@@ -640,7 +641,7 @@ apply(
 {
     if(t.has_query)
     {
-        p.resize(
+        p.set_size(
             id_query,
             t.query_part.size());
         p.nparam = t.query.count;
@@ -659,7 +660,7 @@ apply(
 {
     if(t.has_fragment)
     {
-        p.resize(
+        p.set_size(
             id_frag,
             t.fragment_part.size());
         p.decoded[id_frag] =

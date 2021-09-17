@@ -19,13 +19,15 @@ target_compile_definitions(boost_url_limits PRIVATE
     BOOST_URL_NO_LIB=1
 )
 target_link_libraries(boost_url_limits PRIVATE
+    Boost::align
     Boost::config
     Boost::core
     Boost::exception
     Boost::optional
     Boost::type_traits
     Boost::system
-    Boost::utility)
+    Boost::utility
+    Boost::variant2)
 target_link_libraries(boost_url_limits INTERFACE Boost::url)
 add_test(NAME boost_url_limits COMMAND boost_url_limits)
 add_dependencies(tests boost_url_limits)

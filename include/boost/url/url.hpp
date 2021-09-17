@@ -66,18 +66,19 @@ protected:
     friend class static_url_base;
 
     void check_invariants() const noexcept;
+    pos_t* tab_end() const noexcept;
+    pos_t* tab_begin() const noexcept;
+    void build_tab() noexcept;
 
     BOOST_URL_DECL url(
         char* buf, std::size_t cap) noexcept;
-    BOOST_URL_DECL void copy(
-        char const* s, detail::parts const& pt);
+    BOOST_URL_DECL void copy(char const* s,
+        detail::parts const& pt,
+            pos_t const* tab_begin_);
 
     BOOST_URL_DECL virtual char* alloc_impl(
         std::size_t new_cap);
     BOOST_URL_DECL virtual void free_impl(char* s);
-    BOOST_URL_DECL virtual std::size_t growth_impl(
-        std::size_t cap, std::size_t new_size);
-    void build_table() noexcept;
 
 public:
     /** Destructor
@@ -128,19 +129,16 @@ public:
 
     /** Return the encoded URL as a null-terminated string
     */
-    BOOST_URL_DECL
     char const*
-    c_str() const noexcept;
+    c_str() const noexcept
+    {
+        return cs_;
+    }
 
-    /** Return the number of characters that may be stored without a reallocation.
-
-        This function returns the maximum number of
-        characters, excluding the null terminator,
-        which may be stored in the container before
-        a reallocation is necessary.
+    /** Returns the total number of bytes currently available to the container
     */
     std::size_t
-    capacity() const noexcept
+    capacity_in_bytes() const noexcept
     {
         return cap_;
     }

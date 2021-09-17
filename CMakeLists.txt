@@ -67,6 +67,7 @@ if(BOOST_URL_IS_ROOT)
         static_assert
         tuple
         type_traits
+        variant2
         winapi
     )
         add_subdirectory(../${lib} libs/${lib} EXCLUDE_FROM_ALL)

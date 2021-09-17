@@ -143,7 +143,7 @@ public:
 
     /** Return the maximum number of characters allowed in a URL
 
-        This does not include a null terminator.
+        This includes any null terminator, if present
     */
     static
     constexpr
@@ -157,13 +157,12 @@ public:
 
         This function returns the number of
         characters in the URL, not including
-        a null terminator.
+        any null terminator, if present.
     */
-    constexpr
     std::size_t
     size() const noexcept
     {
-        return pt_.offset[id_end];
+        return pt_.size();
     }
 
     /** Return true if the URL is empty
@@ -171,14 +170,12 @@ public:
         An empty URL is a relative-ref with
         zero path segments.
     */
-    constexpr
     bool
     empty() const noexcept
     {
         return size() == 0;
     }
 
-    constexpr
     char const*
     data() const noexcept
     {
@@ -200,7 +197,6 @@ public:
         one past the last element if the URL is
         empty.
     */
-    constexpr
     char const*
     begin() const noexcept
     {
@@ -215,7 +211,6 @@ public:
         attempting to access it results in undefined
         behavior.
     */
-    constexpr
     char const*
     end() const noexcept
     {
@@ -230,7 +225,6 @@ public:
         @par Exception Safety
         Does not throw.
     */
-    constexpr
     string_view
     encoded_url() const noexcept
     {
