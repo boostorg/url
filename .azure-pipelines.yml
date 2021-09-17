@@ -69,12 +69,13 @@ stages:
           B2_CXXSTD: 11
           CXX: g++-5
           PACKAGES: g++-5
-        GCC_4_9:
-          B2_TOOLSET: gcc
-          B2_CXXSTD: 11
-          CXX: g++-4.9
-          PACKAGES: g++-4.9
-          containerImage: ubuntu:16.04
+        # Moved to containers section:
+        #  GCC_4_9:
+        #  B2_TOOLSET: gcc
+        #  B2_CXXSTD: 11
+        #  CXX: g++-4.9
+        #  PACKAGES: g++-4.9
+        #  containerImage: ubuntu:16.04
         GCC_4_8:
           B2_TOOLSET: gcc
           B2_CXXSTD: 11
@@ -122,12 +123,13 @@ stages:
           B2_CXXSTD: 11,14
           CXX: clang++-3.9
           PACKAGES: clang-3.9
-        Clang_3_8:
-          B2_TOOLSET: clang
-          CXX: clang++-3.8
-          B2_CXXSTD: 11,14
-          PACKAGES: clang-3.8
-          containerImage: ubuntu:16.04
+        # Moved to containers section
+        # Clang_3_8:
+        #   B2_TOOLSET: clang
+        #   CXX: clang++-3.8
+        #   B2_CXXSTD: 11,14
+        #   PACKAGES: clang-3.8
+        #   containerImage: ubuntu:16.04
         Clang_3_7:
           B2_TOOLSET: clang
           B2_CXXSTD: 11
@@ -138,6 +140,49 @@ stages:
           B2_CXXSTD: 11
           CXX: clang++-3.6
           PACKAGES: clang-3.6
+        # Moved to containers section:
+        # Clang_3_5:
+        #   B2_TOOLSET: clang
+        #   B2_CXXSTD: 11
+        #   CXX: clang++-3.5
+        #   PACKAGES: clang-3.5
+        #   containerImage: ubuntu:16.04
+
+    steps:
+    - bash: |
+        set -e
+
+        git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
+        cp -prf boost-ci-cloned/ci .
+        rm -rf boost-ci-cloned
+        source ci/azure-pipelines/install.sh
+      displayName: 'Install'
+    - bash: |
+        set -e
+        echo "SELF=$SELF"
+        echo "BOOST_ROOT=$BOOST_ROOT"
+
+        cd $BOOST_ROOT/libs/$SELF
+        ci/azure-pipelines/build.sh
+      displayName: 'Build'
+
+  - job: 'Linux_Containers'
+    pool:
+      vmImage: 'ubuntu-18.04'
+    strategy:
+      matrix:
+        GCC_4_9:
+          B2_TOOLSET: gcc
+          B2_CXXSTD: 11
+          CXX: g++-4.9
+          PACKAGES: g++-4.9
+          containerImage: ubuntu:16.04
+        Clang_3_8:
+          B2_TOOLSET: clang
+          CXX: clang++-3.8
+          B2_CXXSTD: 11,14
+          PACKAGES: clang-3.8
+          containerImage: ubuntu:16.04
         Clang_3_5:
           B2_TOOLSET: clang
           B2_CXXSTD: 11
