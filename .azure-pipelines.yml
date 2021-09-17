@@ -69,7 +69,7 @@ stages:
           B2_CXXSTD: 11
           CXX: g++-5
           PACKAGES: g++-5
-        # Moved to containers section:
+        # Should move to containers. See note in containers section below.
         #  GCC_4_9:
         #  B2_TOOLSET: gcc
         #  B2_CXXSTD: 11
@@ -86,26 +86,26 @@ stages:
           B2_CXXSTD: 14,17,2a
           CXX: clang++-8
           PACKAGES: clang-8 libc6-dbg libc++-dev libstdc++-8-dev
-          LLVM_REPO: llvm-toolchain-xenial-8
+          LLVM_REPO: llvm-toolchain-bionic-8
         Clang_7:
           B2_TOOLSET: clang
           B2_CXXSTD: 14,17,2a
           CXX: clang++-7
           PACKAGES: clang-7 libc6-dbg libc++-dev libstdc++-8-dev
-          LLVM_REPO: llvm-toolchain-xenial-7
+          LLVM_REPO: llvm-toolchain-bionic-7
         Clang_6_libcxx:
           B2_TOOLSET: clang
           B2_CXXSTD: 11,14,17,2a
           B2_STDLIB: libc++
           CXX: clang++-6.0
           PACKAGES: clang-6.0 libc6-dbg libc++-dev libc++abi-dev libstdc++-8-dev
-          LLVM_REPO: llvm-toolchain-xenial-6.0
+          LLVM_REPO: llvm-toolchain-bionic-6.0
         Clang_6:
           B2_TOOLSET: clang
           B2_CXXSTD: 14,17,2a
           CXX: clang++-6.0
           PACKAGES: clang-6.0 libc6-dbg libc++-dev libc++abi-dev libstdc++-8-dev
-          LLVM_REPO: llvm-toolchain-xenial-6.0
+          LLVM_REPO: llvm-toolchain-bionic-6.0
         Clang_5:
           B2_TOOLSET: clang
           B2_CXXSTD: 11,14,17
@@ -123,7 +123,7 @@ stages:
           B2_CXXSTD: 11,14
           CXX: clang++-3.9
           PACKAGES: clang-3.9
-        # Moved to containers section
+        # Should move to containers. See note in containers section below.
         # Clang_3_8:
         #   B2_TOOLSET: clang
         #   CXX: clang++-3.8
@@ -136,11 +136,12 @@ stages:
           CXX: clang++-3.7
           PACKAGES: clang-3.7
         Clang_3_6:
+          TESTVARIABLE: hello
           B2_TOOLSET: clang
           B2_CXXSTD: 11
           CXX: clang++-3.6
           PACKAGES: clang-3.6
-        # Moved to containers section:
+        # Should move to containers. See note in containers section below.
         # Clang_3_5:
         #   B2_TOOLSET: clang
         #   B2_CXXSTD: 11
@@ -150,7 +151,9 @@ stages:
 
     steps:
     - bash: |
-        set -e
+        set -ex
+        
+        echo TESTVARIABLE is $TESTVARIABLE
 
         git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
         cp -prf boost-ci-cloned/ci .
@@ -166,85 +169,13 @@ stages:
         ci/azure-pipelines/build.sh
       displayName: 'Build'
 
-  - job: 'Linux_Containers'
-    pool:
-      vmImage: 'ubuntu-18.04'
-    strategy:
-      matrix:
-        GCC_4_9:
-          TESTVARIABLE: hello
-          B2_TOOLSET: gcc
-          B2_CXXSTD: 11
-          CXX: g++-4.9
-          PACKAGES: g++-4.9
-          containerImage: ubuntu:16.04
-        Clang_3_8:
-          TESTVARIABLE: hello
-          B2_TOOLSET: clang
-          CXX: clang++-3.8
-          B2_CXXSTD: 11,14
-          PACKAGES: clang-3.8
-          containerImage: ubuntu:16.04
-        Clang_3_5:
-          TESTVARIABLE: hello
-          B2_TOOLSET: clang
-          B2_CXXSTD: 11
-          CXX: clang++-3.5
-          PACKAGES: clang-3.5
-          containerImage: ubuntu:16.04
-
-    container: $[ variables['containerImage'] ]
-
-    steps:
-    - bash: |
-        set -xe
-                echo containerImage is $containerImage
-                echo X
-                echo PACKAGES is $PACKAGES
-                echo X
-                echo TESTVARIABLE is $TESTVARIABLE
-                echo X
-                whoami 
-                echo X
-                which sudo || true
-                echo X
-
-                if [ -f "/etc/debian_version" ]
-                then
-                    sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
-                    sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y sudo software-properties-common tzdata wget curl apt-transport-https make apt-file unzip libssl-dev build-essential autotools-dev autoconf automake g++ libc++-helpers python ruby cpio gcc-multilib g++-multilib pkgconf python3 ccache libpython-dev
-                    # install pip:
-                    python_version=$(python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
-                    if python3 -c "import sys; result = 0 if float($python_version) < float(3.6) else 1; sys.exit(result)"; then
-                      sudo wget https://bootstrap.pypa.io/pip/$python_version/get-pip.py
-                      sudo python3 get-pip.py
-                    else
-                      sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y python3-pip
-                    fi
-        
-                    # install git:
-                    # apt-get install -y git
-                    sudo apt-add-repository ppa:git-core/ppa
-                    sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT update && sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y git
-        
-                    # install cmake:
-                    sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y cmake
-                    # pip3 install cmake
-                fi
-
-        git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
-        cp -prf boost-ci-cloned/ci .
-        rm -rf boost-ci-cloned
-        source ci/azure-pipelines/install.sh
-      displayName: 'Install'
-    - bash: |
-        set -e
-        echo "SELF=$SELF"
-        echo "BOOST_ROOT=$BOOST_ROOT"
-
-        cd $BOOST_ROOT/libs/$SELF
-        ci/azure-pipelines/build.sh
-      displayName: 'Build'
+  #
+  # 2021-09 DOCKER CONTAINERS NOTE
+  #
+  # Azure Containers don't currently run as root, and don't have sudo installed. This is a showstopper.
+  # https://github.com/microsoft/azure-pipelines-agent/issues/2043
+  # Luckily, this only affects a small number of jobs, which can be run in other CI pipelines.
+  #
 
   - job: 'Windows'
     strategy:
