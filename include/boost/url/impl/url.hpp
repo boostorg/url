@@ -13,55 +13,6 @@
 namespace boost {
 namespace urls {
 
-bool
-url::
-segments_type::
-iterator::
-operator==(
-    iterator other) const noexcept
-{
-    BOOST_ASSERT(
-        v_ != other.v_ ||
-        off_ != other.off_ ||
-        n_ == other.n_);
-    return
-        v_ == other.v_ &&
-        off_ == other.off_;
-}
-
-//----------------------------------------------------------
-
-template<class Allocator>
-string_type<Allocator>
-url::
-params_type::
-at( string_view key,
-    Allocator const& a) const
-{
-    auto const it = find(key);
-    if(it == end())
-        detail::throw_out_of_range(
-            BOOST_CURRENT_LOCATION);
-    return it->value(a);
-}
-
-bool
-url::
-params_type::
-iterator::
-operator==(
-    iterator other) const noexcept
-{
-    BOOST_ASSERT(
-        v_ != other.v_ ||
-        off_ != other.off_ || (
-            nk_ == other.nk_ &&
-            nv_ == other.nv_));
-    return
-        v_ == other.v_ &&
-        off_ == other.off_;
-}
-
 } // urls
 } // boost
 

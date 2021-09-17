@@ -21,7 +21,7 @@ namespace detail {
 
 struct part_ids
 {
-    enum part
+    enum
     {
         id_scheme = 0,  // trailing ':'
         id_user,        // leading "//"
