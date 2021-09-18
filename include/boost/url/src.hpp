@@ -31,9 +31,9 @@ in a translation unit of the program.
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/ipv4_address.ipp>
 #include <boost/url/impl/ipv6_address.ipp>
-#include <boost/url/impl/path_view.ipp>
 #include <boost/url/impl/query_params_view.ipp>
 #include <boost/url/impl/scheme.ipp>
+#include <boost/url/impl/segments_view.ipp>
 #include <boost/url/impl/static_pool.ipp>
 #include <boost/url/impl/static_url.ipp>
 #include <boost/url/impl/url.ipp>

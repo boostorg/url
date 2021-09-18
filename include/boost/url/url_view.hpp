@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/path_view.hpp>
+#include <boost/url/segments_view.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/detail/parts.hpp>
@@ -1226,8 +1226,8 @@ public:
             @ref segment_count.
     */
     BOOST_URL_DECL
-    path_view
-    path() const noexcept;
+    segments_view
+    segments() const noexcept;
 
     /** Return the count of the number of path segments
 

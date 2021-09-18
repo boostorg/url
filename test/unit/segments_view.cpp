@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/path_view.hpp>
+#include <boost/url/segments_view.hpp>
 
 #include "test_suite.hpp"
 #include <algorithm>
@@ -20,7 +20,7 @@
 namespace boost {
 namespace urls {
 
-class path_view_test
+class segments_view_test
 {
 public:
     template<class It>
@@ -33,9 +33,9 @@ public:
 
     void
     bad(string_view s,
-        path_view (*f)(string_view))
+        segments_view (*f)(string_view))
     {
-        path_view p;
+        segments_view p;
         BOOST_TEST_THROWS(p = f(s),
             std::exception);
         BOOST_TEST(p.empty());
@@ -48,9 +48,9 @@ public:
         string_view s,
         std::vector<
             std::string> const& v0,
-        path_view (*f)(string_view))
+        segments_view (*f)(string_view))
     {
-        path_view p;
+        segments_view p;
         BOOST_TEST_NO_THROW(p = f(s));
         // forward
         {
@@ -77,13 +77,13 @@ public:
     testIterator()
     {
         BOOST_TEST(
-            path_view::iterator() ==
-            path_view::iterator());
-        path_view p;
+            segments_view::iterator() ==
+            segments_view::iterator());
+        segments_view p;
         BOOST_TEST(p.begin() !=
-            path_view::iterator());
+            segments_view::iterator());
         BOOST_TEST(p.end() !=
-            path_view::iterator());
+            segments_view::iterator());
         BOOST_TEST(
             p.begin() == p.end());
 
@@ -197,8 +197,8 @@ public:
 };
 
 TEST_SUITE(
-    path_view_test,
-    "boost.url.path_view");
+    segments_view_test,
+    "boost.url.segments_view");
 
 } // urls
 } // boost

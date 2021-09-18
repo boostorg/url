@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_PATH_VIEW_HPP
-#define BOOST_URL_PATH_VIEW_HPP
+#ifndef BOOST_URL_SEGMENTS_VIEW_HPP
+#define BOOST_URL_SEGMENTS_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
@@ -22,7 +22,7 @@ namespace urls {
 
 /** A BidirectionalRange view of read-only path segments
 */
-class path_view
+class segments_view
 {
     string_view s_;
     std::size_t n_;
@@ -30,7 +30,7 @@ class path_view
     friend class url;
     friend class url_view;
 
-    path_view(
+    segments_view(
         string_view s,
         std::size_t n)
         : s_(s)
@@ -42,13 +42,13 @@ public:
     class value_type;
     class iterator;
 
-    path_view(
-        path_view const&) = default;
-    path_view& operator=(
-        path_view const&) = default;
+    segments_view(
+        segments_view const&) = default;
+    segments_view& operator=(
+        segments_view const&) = default;
 
     BOOST_URL_DECL
-    path_view() noexcept;
+    segments_view() noexcept;
 
     /** Return true if the range contains no elements
     */
@@ -86,25 +86,25 @@ public:
     iterator
     end() const noexcept;
 
-    BOOST_URL_DECL friend path_view
+    BOOST_URL_DECL friend segments_view
         parse_path_abempty(string_view s,
             error_code& ec) noexcept;
-    BOOST_URL_DECL friend path_view
+    BOOST_URL_DECL friend segments_view
         parse_path_abempty(string_view s);
-    BOOST_URL_DECL friend path_view
+    BOOST_URL_DECL friend segments_view
         parse_path_absolute(string_view s,
             error_code& ec) noexcept;
-    BOOST_URL_DECL friend path_view
+    BOOST_URL_DECL friend segments_view
         parse_path_absolute(string_view s);
-    BOOST_URL_DECL friend path_view
+    BOOST_URL_DECL friend segments_view
         parse_path_noscheme(string_view s,
             error_code& ec) noexcept;
-    BOOST_URL_DECL friend path_view
+    BOOST_URL_DECL friend segments_view
         parse_path_noscheme(string_view s);
-    BOOST_URL_DECL friend path_view
+    BOOST_URL_DECL friend segments_view
         parse_path_rootless(string_view s,
             error_code& ec) noexcept;
-    BOOST_URL_DECL friend path_view
+    BOOST_URL_DECL friend segments_view
         parse_path_rootless(string_view s);
 };
 
@@ -112,12 +112,12 @@ public:
 
 /** The value type for query parameters
 */
-class path_view::value_type
+class segments_view::value_type
 {
     pct_encoded_str s_;
 
     friend class iterator;
-    friend class path_view;
+    friend class segments_view;
 
 public:
     value_type() = default;
@@ -188,7 +188,7 @@ BOOST_URL_DECL
 std::ostream&
 operator<<(
     std::ostream& os,
-    path_view const& pv);
+    segments_view const& pv);
 
 //----------------------------------------------------------
 
@@ -220,7 +220,7 @@ operator<<(
         @ref parse_path_rootless.
 */
 BOOST_URL_DECL
-path_view
+segments_view
 parse_path_abempty(
     string_view s,
     error_code& ec) noexcept;
@@ -251,7 +251,7 @@ parse_path_abempty(
         @ref parse_path_rootless.
 */
 BOOST_URL_DECL
-path_view
+segments_view
 parse_path_abempty(
     string_view s);
 
@@ -283,7 +283,7 @@ parse_path_abempty(
         @ref parse_path_rootless.
 */
 inline
-path_view
+segments_view
 parse_path(
     string_view s,
     error_code& ec) noexcept
@@ -317,7 +317,7 @@ parse_path(
         @ref parse_path_rootless.
 */
 inline
-path_view
+segments_view
 parse_path(
     string_view s)
 {
@@ -352,7 +352,7 @@ parse_path(
         @ref parse_path_rootless.
 */
 BOOST_URL_DECL
-path_view
+segments_view
 parse_path_absolute(
     string_view s,
     error_code& ec) noexcept;
@@ -383,7 +383,7 @@ parse_path_absolute(
         @ref parse_path_rootless.
 */
 BOOST_URL_DECL
-path_view
+segments_view
 parse_path_absolute(
     string_view s);
 
@@ -418,7 +418,7 @@ parse_path_absolute(
         @ref parse_path_rootless.
 */
 BOOST_URL_DECL
-path_view
+segments_view
 parse_path_noscheme(
     string_view s,
     error_code& ec) noexcept;
@@ -452,7 +452,7 @@ parse_path_noscheme(
         @ref parse_path_rootless.
 */
 BOOST_URL_DECL
-path_view
+segments_view
 parse_path_noscheme(
     string_view s);
 
@@ -486,7 +486,7 @@ parse_path_noscheme(
         @ref parse_path_noscheme.
 */
 BOOST_URL_DECL
-path_view
+segments_view
 parse_path_rootless(
     string_view s,
     error_code& ec) noexcept;
@@ -519,13 +519,13 @@ parse_path_rootless(
         @ref parse_path_noscheme.
 */
 BOOST_URL_DECL
-path_view
+segments_view
 parse_path_rootless(
     string_view s);
 
 } // urls
 } // boost
 
-#include <boost/url/impl/path_view.hpp>
+#include <boost/url/impl/segments_view.hpp>
 
 #endif

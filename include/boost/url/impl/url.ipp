@@ -402,7 +402,7 @@ remove_scheme() noexcept
             // path-absolute
             return false;
         }
-        auto const p = url_view::path();
+        auto const p = url_view::segments();
         BOOST_ASSERT(! p.empty());
         auto it = p.begin();
         s = it->encoded_segment();
@@ -1192,7 +1192,7 @@ remove_origin() noexcept
         check_invariants();
         return *this;
     }
-    auto const p = url_view::path();
+    auto const p = url_view::segments();
     BOOST_ASSERT(! p.empty());
     auto it = p.begin();
     s = it->encoded_segment();

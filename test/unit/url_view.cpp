@@ -548,7 +548,7 @@ public:
             BOOST_TEST_NO_THROW(
                 u = parse_relative_ref(
                     "/path/to/file.htm"));
-            auto const p = u.path();
+            auto const p = u.segments();
             BOOST_TEST(! p.empty());
             BOOST_TEST(p.size() == 3);
             auto it = p.begin();

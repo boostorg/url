@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_PATH_VIEW_HPP
-#define BOOST_URL_IMPL_PATH_VIEW_HPP
+#ifndef BOOST_URL_IMPL_SEGMENTS_VIEW_HPP
+#define BOOST_URL_IMPL_SEGMENTS_VIEW_HPP
 
 #include <boost/url/detail/except.hpp>
 #include <cstdint>
@@ -16,16 +16,16 @@
 namespace boost {
 namespace urls {
 
-class path_view::iterator
+class segments_view::iterator
 {
     std::size_t i_ = 0;
-    path_view::value_type v_;
+    segments_view::value_type v_;
     char const* begin_ = nullptr;
     char const* pos_ = nullptr;
     char const* next_ = nullptr;
     char const* end_ = nullptr;
 
-    friend path_view;
+    friend segments_view;
 
     explicit
     iterator(
@@ -38,7 +38,7 @@ class path_view::iterator
 
 public:
     using value_type =
-        path_view::value_type;
+        segments_view::value_type;
     using pointer = value_type const;
     using reference = value_type const;
     using difference_type =

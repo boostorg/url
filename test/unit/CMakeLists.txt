@@ -21,10 +21,10 @@ set(BOOST_URL_TESTS_FILES
     host_type.cpp
     ipv4_address.cpp
     ipv6_address.cpp
-    path_view.cpp
     pct_encoding.cpp
     query_params_view.cpp
     scheme.cpp
+    segments_view.cpp
     static_pool.cpp
     static_url.cpp
     string.cpp
