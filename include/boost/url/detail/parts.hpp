@@ -44,6 +44,8 @@ class parts : private part_ids
     pos_t offset_[id_end + 1] = {};
 
 public:
+    // zero means no table
+    std::size_t cap = 0; // in bytes
     pos_t decoded[id_end] = {};
     pos_t nseg = 0;
     pos_t nparam = 0;
@@ -59,6 +61,16 @@ public:
     constexpr
     pos_t zero_ = 0;
 
+    // return true if a lookup table
+    // exists for segments and params
+    constexpr
+    bool
+    has_table() const noexcept
+    {
+        return cap > 0;
+    }
+
+    // return offset of id from base
     constexpr
     pos_t
     offset(int id) const noexcept
@@ -68,12 +80,24 @@ public:
             zero_ : offset_[id];
     }
 
-    // size of string, without null
+    // return total size minus null
     constexpr
     std::size_t
     size() const noexcept
     {
         return offset(id_end);
+    }
+
+    // return size of table in bytes
+    std::size_t
+    table_bytes() const noexcept
+    {
+        std::size_t n = 0;
+        if(nseg > 1)
+            n += nseg - 1;
+        if(nparam > 1)
+            n += nparam - 1;
+        return n * sizeof(pos_t);
     }
 
     // size of table in pos_t
@@ -83,10 +107,12 @@ public:
         auto n = nseg;
         if( n < nparam)
             n = nparam;
-        return 2 * n;
+        if(n < 2)
+            return 0;
+        return 2 * (n - 1);
     }
 
-    // size of id
+    // return length of part
     constexpr
     pos_t
     len(int id) const noexcept
@@ -96,15 +122,15 @@ public:
             offset(id);
     }
 
-    // size of [begin, end)
+    // return length of [first, last)
     pos_t
     len(
-        int begin,
-        int end) const noexcept
+        int first,
+        int last) const noexcept
     {
-        BOOST_ASSERT(begin <= end);
-        BOOST_ASSERT(end <= id_end);
-        return offset(end) - offset(begin);
+        BOOST_ASSERT(first <= last);
+        BOOST_ASSERT(last <= id_end);
+        return offset(last) - offset(first);
     }
 
     // return id as string

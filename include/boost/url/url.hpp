@@ -58,28 +58,30 @@ class BOOST_SYMBOL_VISIBLE url
 #ifndef BOOST_URL_DOCS
 protected:
 #endif
-
     char* s_ = nullptr;
-    std::size_t cap_ = 0;
 
-    friend class static_url_base;
+    BOOST_URL_DECL
+    url(
+        char* buf,
+        std::size_t cap) noexcept;
 
-    void check_invariants() const noexcept;
-    pos_t* tab_end() const noexcept;
-    pos_t* tab_begin() const noexcept;
-    void build_tab() noexcept;
-    pos_t segment_pos(std::size_t i) const noexcept;
-    pos_t segment_len(std::size_t i) const noexcept;
-
-    BOOST_URL_DECL url(
-        char* buf, std::size_t cap) noexcept;
-    BOOST_URL_DECL void copy(char const* s,
+    BOOST_URL_DECL
+    void
+    copy(
+        char const* s,
         detail::parts const& pt,
-            pos_t const* tab_begin_);
+        pos_t const* tab_begin_);
 
-    BOOST_URL_DECL virtual char* alloc_impl(
+    BOOST_URL_DECL
+    virtual
+    char*
+    alloc_impl(
         std::size_t new_cap);
-    BOOST_URL_DECL virtual void free_impl(char* s);
+
+    BOOST_URL_DECL
+    virtual
+    void
+    free_impl(char* s);
 
 public:
     /** Destructor
@@ -141,7 +143,7 @@ public:
     std::size_t
     capacity_in_bytes() const noexcept
     {
-        return cap_;
+        return pt_.cap;
     }
 
     /** Clear the contents.
@@ -1175,7 +1177,7 @@ public:
 
     //--------------------------------------------
     //
-    // normalization
+    // Normalization
     //
     //--------------------------------------------
 
@@ -1190,12 +1192,38 @@ public:
     normalize_scheme() noexcept;
 
 private:
-    void ensure_space(std::size_t nchar,
-        std::size_t nseg, std::size_t nparam);
-    char* resize_impl(
-        int id, std::size_t new_size);
-    char* resize_impl(
-        int first, int last, std::size_t new_size);
+
+    //--------------------------------------------
+    //
+    // implementation
+    //
+    //--------------------------------------------
+
+    friend class static_url_base;
+
+    void check_invariants() const noexcept;
+    void build_tab() noexcept;
+    pos_t* tab_end() const noexcept;
+    pos_t* tab_begin() const noexcept;
+    pos_t segment_pos(std::size_t i) const noexcept;
+    pos_t segment_len(std::size_t i) const noexcept;
+
+    void
+    ensure_space(
+        std::size_t nchar,
+        std::size_t nseg,
+        std::size_t nparam);
+
+    char*
+    resize_impl(
+        int id,
+        std::size_t new_size);
+
+    char*
+    resize_impl(
+        int first,
+        int last,
+        std::size_t new_size);
 };
 
 //----------------------------------------------------------
