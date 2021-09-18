@@ -69,6 +69,8 @@ protected:
     pos_t* tab_end() const noexcept;
     pos_t* tab_begin() const noexcept;
     void build_tab() noexcept;
+    pos_t segment_pos(std::size_t i) const noexcept;
+    pos_t segment_len(std::size_t i) const noexcept;
 
     BOOST_URL_DECL url(
         char* buf, std::size_t cap) noexcept;
@@ -160,7 +162,7 @@ public:
 
     //--------------------------------------------
     //
-    // scheme
+    // Scheme
     //
     //--------------------------------------------
 
@@ -267,7 +269,7 @@ public:
 
     //--------------------------------------------
     //
-    // authority
+    // Authority
     //
     //--------------------------------------------
 
@@ -848,10 +850,9 @@ public:
     url&
     remove_origin() noexcept;
 
-private:
     //--------------------------------------------
     //
-    // path
+    // Path
     //
     //--------------------------------------------
 
@@ -911,9 +912,90 @@ private:
     set_encoded_path(
         string_view s);
 
+    /** Return a path segment by index
+
+        This function returns an indexed
+        path segment as a percent-encoded
+        string. The behavior depends on
+        index:
+
+        @li If `index` is 0 the first path
+        segment is returned;
+
+        @li If index is positive, then
+        the `index` + 1th path segment is
+        returned. For example if `index == 2`
+        then the third segment is returned.
+        In other words, `index` is zero based.
+
+        @li If index is negative, then the
+        function negates index, and counts from
+        the end of the path rather than the
+        beginning. For example if `index == -1`
+        then the last path segment is returned.
+
+        If the index is out of range, an empty
+        string is returned. To determine the
+        number of segments, call @ref segment_count.
+
+        @par Example
+        @code
+        url_view u = parse_relative_ref( "/path/to/the/file.txt" );
+
+        assert( u.encoded_segment( -2 ) == "the" );
+        assert( u.encoded_segment( -1 ) == "file.txt" );
+        assert( u.encoded_segment(  0 ) == "path" );
+        assert( u.encoded_segment(  1 ) == "to" );
+        @endcode
+
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+
+        segment       = *pchar
+        segment-nz    = 1*pchar
+        segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
+                      ; non-zero-length segment without any colon ":"
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+
+        @param index The index of the segment to return.
+
+        @see
+            @ref encoded_path,
+            @ref path_view.
+
+        @see
+            @ref encoded_path,
+            @ref path,
+            @ref path_view,
+            @ref segment_count.
+    */
+    BOOST_URL_DECL
+    virtual
+    string_view
+    encoded_segment(
+        int index) const noexcept override;
+
     //--------------------------------------------
     //
-    // query
+    // Query
     //
     //--------------------------------------------
 
@@ -1016,7 +1098,7 @@ private:
 
     //--------------------------------------------
     //
-    // fragment
+    // Fragment
     //
     //--------------------------------------------
 

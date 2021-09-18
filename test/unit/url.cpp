@@ -1367,6 +1367,26 @@ public:
     //--------------------------------------------
 
     void
+    testPath()
+    {
+        // encoded_segment
+        {
+            url u = parse_uri(
+                "http://www.example.com/path/to/file.txt");
+            BOOST_TEST(u.encoded_segment(0) == "path");
+            BOOST_TEST(u.encoded_segment(1) == "to");
+            BOOST_TEST(u.encoded_segment(2) == "file.txt");
+            BOOST_TEST(u.encoded_segment(3) == "");
+            BOOST_TEST(u.encoded_segment(-1) == "file.txt");
+            BOOST_TEST(u.encoded_segment(-2) == "to");
+            BOOST_TEST(u.encoded_segment(-3) == "path");
+            BOOST_TEST(u.encoded_segment(-4) == "");
+        }
+    }
+
+    //--------------------------------------------
+
+    void
     run()
     {
         testScheme();
@@ -1378,6 +1398,7 @@ public:
         testPort();
         testAuthority();
         testOrigin();
+        testPath();
 #if 0
         testObservers();
 

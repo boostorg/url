@@ -155,6 +155,30 @@ build_tab() noexcept
     }
 }
 
+auto
+url::
+segment_pos(
+    std::size_t i) const noexcept ->
+        pos_t
+{
+    if(i == 0)
+        return pt_.offset(id_path);
+    if(i == pt_.nseg)
+        return pt_.offset(id_query);
+    return *(tab_end() - 1 - 2 * (i - 1));
+}
+
+auto
+url::
+segment_len(
+    std::size_t i) const noexcept ->
+        pos_t
+{
+    return
+        segment_pos(i + 1) -
+        segment_pos(i);
+}
+
 //------------------------------------------------
 
 url::
@@ -1084,6 +1108,40 @@ set_encoded_authority(string_view s)
     }
     check_invariants();
     return *this;
+}
+
+//------------------------------------------------
+//
+// Path
+//
+//------------------------------------------------
+
+string_view
+url::
+encoded_segment(
+    int index) const noexcept
+{
+    std::size_t i;
+    if(index < 0)
+        i = pt_.nseg + index;
+    else
+        i = static_cast<
+            std::size_t>(index);
+    if(i >= pt_.nseg)
+        return empty_;
+    string_view s(
+        s_ + segment_pos(i),
+        segment_len(i));
+    if(i > 0)
+    {
+        BOOST_ASSERT(
+            s.starts_with('/'));
+        s.remove_prefix(1);
+        return s;
+    }
+    if(s.starts_with('/'))
+        s.remove_prefix(1);
+    return s;
 }
 
 //------------------------------------------------

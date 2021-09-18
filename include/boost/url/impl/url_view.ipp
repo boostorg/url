@@ -398,6 +398,7 @@ path() const noexcept
         get(id_path), pt_.nseg);
 }
 
+
 std::size_t
 url_view::
 segment_count() const noexcept
@@ -409,11 +410,28 @@ string_view
 url_view::
 encoded_segment(int index) const noexcept
 {
-    if(index >= pt_.nseg)
-        return {};
-    if(- index > pt_.nseg)
-        return {};
-    return {};
+    std::size_t i;
+    if(index >= 0)
+    {
+        i = static_cast<
+            std::size_t>(index);
+        if(i >= pt_.nseg)
+            return empty_;
+        auto pv = path();
+        auto it = pv.begin();
+        while(i--)
+            ++it;
+        return it->encoded_segment();
+    }
+    i = static_cast<
+        std::size_t>(-index);
+    if(i > pt_.nseg)
+        return empty_;
+    auto pv = path();
+    auto it = pv.end();
+    while(i--)
+        --it;
+    return it->encoded_segment();
 }
 
 //----------------------------------------------------------

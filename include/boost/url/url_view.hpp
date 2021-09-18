@@ -76,7 +76,7 @@ struct scheme_part_bnf;
         @ref parse_uri,
         @ref parse_uri_reference.
 */
-class url_view
+class BOOST_SYMBOL_VISIBLE url_view
     : protected detail::part_ids
 {
 #ifndef BOOST_URL_DOCS
@@ -1177,17 +1177,7 @@ public:
 
         @par BNF
         @code
-        path          = path-abempty    ; begins with "/" or is empty
-                      / path-absolute   ; begins with "/" but not "//"
-                      / path-noscheme   ; begins with a non-colon segment
-                      / path-rootless   ; begins with a segment
-                      / path-empty      ; zero characters
-
-        path-abempty  = *( "/" segment )
-        path-absolute = "/" [ segment-nz *( "/" segment ) ]
-        path-noscheme = segment-nz-nc *( "/" segment )
-        path-rootless = segment-nz *( "/" segment )
-        path-empty    = 0<pchar>
+        path          = [ "/" ] segment *( "/" segment )
         @endcode
 
         @par Exception Safety
@@ -1198,7 +1188,7 @@ public:
             >3.3. Path (rfc3986)</a>
 
         @see
-            @ref path
+            @ref path.
     */
     BOOST_URL_DECL
     string_view
@@ -1219,22 +1209,7 @@ public:
 
         @par BNF
         @code
-        path          = path-abempty    ; begins with "/" or is empty
-                      / path-absolute   ; begins with "/" but not "//"
-                      / path-noscheme   ; begins with a non-colon segment
-                      / path-rootless   ; begins with a segment
-                      / path-empty      ; zero characters
-
-        path-abempty  = *( "/" segment )
-        path-absolute = "/" [ segment-nz *( "/" segment ) ]
-        path-noscheme = segment-nz-nc *( "/" segment )
-        path-rootless = segment-nz *( "/" segment )
-        path-empty    = 0<pchar>
-
-        segment       = *pchar
-        segment-nz    = 1*pchar
-        segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
-                      ; non-zero-length segment without any colon ":"
+        path          = [ "/" ] segment *( "/" segment )
         @endcode
 
         @par Exception Safety
@@ -1262,22 +1237,7 @@ public:
 
         @par BNF
         @code
-        path          = path-abempty    ; begins with "/" or is empty
-                      / path-absolute   ; begins with "/" but not "//"
-                      / path-noscheme   ; begins with a non-colon segment
-                      / path-rootless   ; begins with a segment
-                      / path-empty      ; zero characters
-
-        path-abempty  = *( "/" segment )
-        path-absolute = "/" [ segment-nz *( "/" segment ) ]
-        path-noscheme = segment-nz-nc *( "/" segment )
-        path-rootless = segment-nz *( "/" segment )
-        path-empty    = 0<pchar>
-
-        segment       = *pchar
-        segment-nz    = 1*pchar
-        segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
-                      ; non-zero-length segment without any colon ":"
+        path          = [ "/" ] segment *( "/" segment )
         @endcode
 
         @par Exception Safety
@@ -1323,34 +1283,9 @@ public:
         string is returned. To determine the
         number of segments, call @ref segment_count.
 
-        @par Example
-        @code
-        url_view u = parse_relative_ref( "/path/to/the/file.txt" );
-
-        assert( u.encoded_segment( -2 ) == "the" );
-        assert( u.encoded_segment( -1 ) == "file.txt" );
-        assert( u.encoded_segment(  0 ) == "path" );
-        assert( u.encoded_segment(  1 ) == "to" );
-        @endcode
-
         @par BNF
         @code
-        path          = path-abempty    ; begins with "/" or is empty
-                      / path-absolute   ; begins with "/" but not "//"
-                      / path-noscheme   ; begins with a non-colon segment
-                      / path-rootless   ; begins with a segment
-                      / path-empty      ; zero characters
-
-        path-abempty  = *( "/" segment )
-        path-absolute = "/" [ segment-nz *( "/" segment ) ]
-        path-noscheme = segment-nz-nc *( "/" segment )
-        path-rootless = segment-nz *( "/" segment )
-        path-empty    = 0<pchar>
-
-        segment       = *pchar
-        segment-nz    = 1*pchar
-        segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
-                      ; non-zero-length segment without any colon ":"
+        path          = [ "/" ] segment *( "/" segment )
         @endcode
 
         @par Exception Safety
@@ -1373,8 +1308,10 @@ public:
             @ref segment_count.
     */
     BOOST_URL_DECL
+    virtual
     string_view
-    encoded_segment(int index) const noexcept;
+    encoded_segment(
+        int index) const noexcept;
 
     /** Return a path segment by index
 
@@ -1403,33 +1340,9 @@ public:
         string is returned. To determine the
         number of segments, call @ref segment_count.
 
-        @par Example
-        @code
-        url_view u = parse_relative_ref( "/path/to/the/file.txt" );
-
-        assert( u.encoded_segment( -2 ) == "the" );
-        assert( u.encoded_segment( -1 ) == "file.txt" );
-        assert( u.encoded_segment(  0 ) == "path" );
-        assert( u.encoded_segment(  1 ) == "to" );
-        @endcode
         @par BNF
         @code
-        path          = path-abempty    ; begins with "/" or is empty
-                      / path-absolute   ; begins with "/" but not "//"
-                      / path-noscheme   ; begins with a non-colon segment
-                      / path-rootless   ; begins with a segment
-                      / path-empty      ; zero characters
-
-        path-abempty  = *( "/" segment )
-        path-absolute = "/" [ segment-nz *( "/" segment ) ]
-        path-noscheme = segment-nz-nc *( "/" segment )
-        path-rootless = segment-nz *( "/" segment )
-        path-empty    = 0<pchar>
-
-        segment       = *pchar
-        segment-nz    = 1*pchar
-        segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
-                      ; non-zero-length segment without any colon ":"
+        path          = [ "/" ] segment *( "/" segment )
         @endcode
 
         @par Exception Safety
