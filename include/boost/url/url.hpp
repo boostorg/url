@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/query_params_view.hpp>
+#include <boost/url/segments.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/detail/parts.hpp>
@@ -883,21 +883,10 @@ public:
 
         @par BNF
         @code
-        path          = path-abempty    ; begins with "/" or is empty
-                      / path-absolute   ; begins with "/" but not "//"
-                      / path-noscheme   ; begins with a non-colon segment
-                      / path-rootless   ; begins with a segment
-                      / path-empty      ; zero characters
-
-        path-abempty  = *( "/" segment )
-        path-absolute = "/" [ segment-nz *( "/" segment ) ]
-        path-noscheme = segment-nz-nc *( "/" segment )
-        path-rootless = segment-nz *( "/" segment )
-        path-empty    = 0<pchar>
+        path          = [ "/" ] segment *( "/" segment )
         @endcode
 
         @par Exception Safety
-
         Strong guarantee.
         Calls to allocate may throw.
 
@@ -949,22 +938,7 @@ public:
 
         @par BNF
         @code
-        path          = path-abempty    ; begins with "/" or is empty
-                      / path-absolute   ; begins with "/" but not "//"
-                      / path-noscheme   ; begins with a non-colon segment
-                      / path-rootless   ; begins with a segment
-                      / path-empty      ; zero characters
-
-        path-abempty  = *( "/" segment )
-        path-absolute = "/" [ segment-nz *( "/" segment ) ]
-        path-noscheme = segment-nz-nc *( "/" segment )
-        path-rootless = segment-nz *( "/" segment )
-        path-empty    = 0<pchar>
-
-        segment       = *pchar
-        segment-nz    = 1*pchar
-        segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
-                      ; non-zero-length segment without any colon ":"
+        path          = [ "/" ] segment *( "/" segment )
         @endcode
 
         @par Exception Safety
@@ -978,10 +952,6 @@ public:
 
         @see
             @ref encoded_path,
-            @ref path_view.
-
-        @see
-            @ref encoded_path,
             @ref path,
             @ref path_view,
             @ref segment_count.
@@ -991,6 +961,41 @@ public:
     string_view
     encoded_segment(
         int index) const noexcept override;
+
+    /** Return the path segments
+
+        This function returns the path as a
+        modifiable random access range.
+
+        @par Example
+        @code
+        url_view u = parse_relative_ref( "/path/to/file.txt" );
+
+        for( auto t : u.segments() )
+            std::cout << t.encoded_segment() << std::endl;
+        @endcode
+
+        @par BNF
+        @code
+        path          = [ "/" ] segment *( "/" segment )
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+
+        @see
+            @ref encoded_path,
+            @ref encoded_segment,
+            @ref path_view,
+            @ref segment_count.
+    */
+    BOOST_URL_DECL
+    urls::segments
+    segments() noexcept;
 
     //--------------------------------------------
     //

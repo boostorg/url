@@ -1194,16 +1194,16 @@ public:
     string_view
     encoded_path() const noexcept;
 
-    /** Return the path
+    /** Return the path segments
 
-        This function returns the path as a
-        non-modifiable _BidirectionalRange_.
+        This function returns the path segments as
+        a read-only bidirectional range.
 
         @par Example
         @code
         url_view u = parse_relative_ref( "/path/to/file.txt" );
 
-        for( auto t : u.path() )
+        for( auto t : u.segments() )
             std::cout << t.encoded_segment() << std::endl;
         @endcode
 

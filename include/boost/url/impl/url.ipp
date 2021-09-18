@@ -1111,40 +1111,6 @@ set_encoded_authority(string_view s)
 }
 
 //------------------------------------------------
-//
-// Path
-//
-//------------------------------------------------
-
-string_view
-url::
-encoded_segment(
-    int index) const noexcept
-{
-    std::size_t i;
-    if(index < 0)
-        i = pt_.nseg + index;
-    else
-        i = static_cast<
-            std::size_t>(index);
-    if(i >= pt_.nseg)
-        return empty_;
-    string_view s(
-        s_ + segment_pos(i),
-        segment_len(i));
-    if(i > 0)
-    {
-        BOOST_ASSERT(
-            s.starts_with('/'));
-        s.remove_prefix(1);
-        return s;
-    }
-    if(s.starts_with('/'))
-        s.remove_prefix(1);
-    return s;
-}
-
-//------------------------------------------------
 
 url&
 url::
@@ -1217,6 +1183,47 @@ remove_origin() noexcept
     pt_.split(id_host, 0);
     pt_.split(id_port, 0);
     return *this;
+}
+
+//------------------------------------------------
+//
+// Path
+//
+//------------------------------------------------
+
+string_view
+url::
+encoded_segment(
+    int index) const noexcept
+{
+    std::size_t i;
+    if(index < 0)
+        i = pt_.nseg + index;
+    else
+        i = static_cast<
+            std::size_t>(index);
+    if(i >= pt_.nseg)
+        return empty_;
+    string_view s(
+        s_ + segment_pos(i),
+        segment_len(i));
+    if(i > 0)
+    {
+        BOOST_ASSERT(
+            s.starts_with('/'));
+        s.remove_prefix(1);
+        return s;
+    }
+    if(s.starts_with('/'))
+        s.remove_prefix(1);
+    return s;
+}
+
+urls::segments
+url::
+segments() noexcept
+{
+    return urls::segments(*this);
 }
 
 //------------------------------------------------

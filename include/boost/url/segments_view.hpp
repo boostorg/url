@@ -110,7 +110,7 @@ public:
 
 //----------------------------------------------------------
 
-/** The value type for query parameters
+/** The value type for segment views
 */
 class segments_view::value_type
 {
