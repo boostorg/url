@@ -374,14 +374,6 @@ encoded_path() const noexcept
     return get(id_path);
 }
 
-segments_view
-url_view::
-segments() const noexcept
-{
-    return segments_view(
-        get(id_path), nseg_);
-}
-
 std::size_t
 url_view::
 segment_count() const noexcept
@@ -401,21 +393,21 @@ encoded_segment(
             std::size_t>(index);
         if(i >= nseg_)
             return empty_;
-        auto pv = segments();
+        auto pv = encoded_segments();
         auto it = pv.begin();
         while(i--)
             ++it;
-        return it->encoded_segment();
+        return *it;
     }
     i = static_cast<
         std::size_t>(-index);
     if(i > nseg_)
         return empty_;
-    auto pv = segments();
+    auto pv = encoded_segments();
     auto it = pv.end();
     while(i--)
         --it;
-    return it->encoded_segment();
+    return *it;
 }
 
 //----------------------------------------------------------

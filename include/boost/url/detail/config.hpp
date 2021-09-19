@@ -11,6 +11,7 @@
 #define BOOST_URL_DETAIL_CONFIG_HPP
 
 #include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 #include <limits.h>
 
 #if CHAR_BIT != 8
@@ -61,6 +62,12 @@
 // we leave room for a null,
 // and still fit in signed-32
 #define BOOST_URL_MAX_SIZE 0x7ffffffe
+#endif
+
+#if BOOST_WORKAROUND( BOOST_GCC_VERSION, <= 72000 )
+# define BOOST_URL_CONSTEXPR
+#else
+# define BOOST_URL_CONSTEXPR constexpr
 #endif
 
 #endif

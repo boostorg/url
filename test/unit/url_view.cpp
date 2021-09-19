@@ -548,18 +548,15 @@ public:
             BOOST_TEST_NO_THROW(
                 u = parse_relative_ref(
                     "/path/to/file.htm"));
-            auto const p = u.segments();
+            auto const p = u.encoded_segments();
             BOOST_TEST(! p.empty());
             BOOST_TEST(p.size() == 3);
             auto it = p.begin();
-            BOOST_TEST(
-                it->encoded_segment() == "path");
+            BOOST_TEST(*it == "path");
             ++it;
-            BOOST_TEST(
-                it->encoded_segment() == "to");
+            BOOST_TEST(*it == "to");
             ++it;
-            BOOST_TEST(
-                it->encoded_segment() == "file.htm");
+            BOOST_TEST(*it == "file.htm");
             ++it;
             BOOST_TEST(it == p.end());
         }

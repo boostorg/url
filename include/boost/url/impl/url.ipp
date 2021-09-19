@@ -224,11 +224,11 @@ remove_scheme() noexcept
             // path-absolute
             return false;
         }
-        auto const p = url_view::segments();
+        auto const p =
+            url_view::encoded_segments();
         BOOST_ASSERT(! p.empty());
         auto it = p.begin();
-        s = it->encoded_segment();
-        if(s.find_first_of(':') ==
+        if(it->find_first_of(':') ==
             string_view::npos)
         {
             // path-noscheme
@@ -986,11 +986,11 @@ remove_origin() noexcept
         check_invariants();
         return *this;
     }
-    auto const p = url_view::segments();
+    auto const p =
+        url_view::encoded_segments();
     BOOST_ASSERT(! p.empty());
     auto it = p.begin();
-    s = it->encoded_segment();
-    if(s.find_first_of(':') ==
+    if(it->find_first_of(':') ==
         string_view::npos)
     {
         // path-noscheme

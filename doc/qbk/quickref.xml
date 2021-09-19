@@ -25,10 +25,11 @@
       <entry valign="top">
         <bridgehead renderas="sect3">Classes</bridgehead>
         <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__encoded_segments_view">encoded_segments_view</link></member>
           <member><link linkend="url.ref.boost__urls__ipv4_address">ipv4_address</link></member>
           <member><link linkend="url.ref.boost__urls__ipv6_address">ipv6_address</link></member>
-          <member><link linkend="url.ref.boost__urls__path_view">path_view</link></member>
           <member><link linkend="url.ref.boost__urls__query_params_view">query_params_view</link></member>
+          <member><link linkend="url.ref.boost__urls__segments_view">segments_view</link></member>
           <member><link linkend="url.ref.boost__urls__static_pool">static_pool</link></member>
           <member><link linkend="url.ref.boost__urls__static_url">static_url</link></member>
           <member><link linkend="url.ref.boost__urls__url">url</link></member>

@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_HPP
 #define BOOST_URL_HPP
 
+#include <boost/url/encoded_segments_view.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/host_type.hpp>
 #include <boost/url/ipv4_address.hpp>

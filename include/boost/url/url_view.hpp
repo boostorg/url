@@ -133,7 +133,7 @@ protected:
     }
 
     // return offset of id
-    constexpr
+    BOOST_URL_CONSTEXPR
     pos_t
     offset(int id) const noexcept
     {
@@ -155,7 +155,7 @@ protected:
     }
 
     // return length of part
-    constexpr
+    BOOST_URL_CONSTEXPR
     pos_t
     len(int id) const noexcept
     {
@@ -176,7 +176,7 @@ protected:
     }
 
     // return id as string
-    constexpr
+    BOOST_URL_CONSTEXPR
     string_view
     get(int id) const noexcept
     {
@@ -185,7 +185,7 @@ protected:
     }
 
     // return [first, last) as string
-    constexpr
+    BOOST_URL_CONSTEXPR
     string_view
     get(int first,
         int last) const noexcept
@@ -1349,13 +1349,35 @@ public:
         This function returns the path segments as
         a read-only bidirectional range.
 
-        @par Example
+        @par BNF
         @code
-        url_view u = parse_relative_ref( "/path/to/file.txt" );
-
-        for( auto t : u.segments() )
-            std::cout << t.encoded_segment() << std::endl;
+        path          = [ "/" ] segment *( "/" segment )
         @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+
+        @see
+            @ref encoded_path,
+            @ref encoded_segment,
+            @ref path_view,
+            @ref segment_count.
+    */
+    encoded_segments_view
+    encoded_segments() const noexcept
+    {
+        return encoded_segments_view(
+            encoded_path(), nseg_);
+    }
+
+    /** Return the path segments
+
+        This function returns the path segments as
+        a read-only bidirectional range.
 
         @par BNF
         @code
@@ -1375,9 +1397,14 @@ public:
             @ref path_view,
             @ref segment_count.
     */
-    BOOST_URL_DECL
-    segments_view
-    segments() const noexcept;
+    template<class Allocator =
+        std::allocator<char>>
+    segments_view<Allocator>
+    segments(Allocator const& alloc = {}) const noexcept
+    {
+        return segments_view<Allocator>(
+            encoded_path(), nseg_, alloc);
+    }
 
     /** Return the count of the number of path segments
 

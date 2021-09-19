@@ -17,6 +17,7 @@ set(BOOST_URL_TESTS_FILES
     CMakeLists.txt
     Jamfile
     test_bnf.hpp
+    encoded_segments_view.cpp
     error.cpp
     host_type.cpp
     ipv4_address.cpp
