@@ -32,56 +32,40 @@ namespace urls {
 struct url_view::shared_impl :
     url_view
 {
+    virtual
+    ~shared_impl()
+    {
+    }
+
     shared_impl(
         url_view const& u) noexcept
-        : url_view(reinterpret_cast<
-            char const*>(this + 1), u.pt_)
+        : url_view(u, reinterpret_cast<
+            char const*>(this + 1))
     {
     }
 };
 
-string_view
 url_view::
-get(int id) const noexcept
+url_view(
+    char const* cs) noexcept
+    : cs_(cs)
 {
-    return pt_.get(id, cs_);
 }
 
-string_view
 url_view::
-get(int id0, int id1) const noexcept
+url_view(
+    url_view const& u,
+    char const* cs) noexcept
+    : url_view(u)
 {
-    return pt_.get(id0, id1, cs_);
-}
-
-std::size_t
-url_view::
-len(int id) const noexcept
-{
-    return pt_.len(id);
-}
-
-std::size_t
-url_view::
-len(int id0, int id1) const noexcept
-{
-    return pt_.len(id0, id1);
+    cs_ = cs;
 }
 
 //------------------------------------------------
 
 url_view::
-url_view(
-    char const* s,
-    detail::parts const& pt) noexcept
-    : cs_(s)
-    , pt_(pt)
+~url_view()
 {
-    BOOST_ASSERT(cs_ != nullptr);
-    if(size() > max_size())
-        detail::throw_length_error(
-            "url_view::max_size exceeded",
-            BOOST_CURRENT_LOCATION);
 }
 
 url_view::
@@ -89,7 +73,7 @@ url_view() noexcept = default;
 
 //------------------------------------------------
 //
-// observers
+// Observers
 //
 //------------------------------------------------
 
@@ -112,7 +96,7 @@ collect() const
 
 //------------------------------------------------
 //
-// scheme
+// Scheme
 //
 //------------------------------------------------
 
@@ -149,12 +133,12 @@ urls::scheme
 url_view::
 scheme_id() const noexcept
 {
-    return pt_.scheme;
+    return scheme_;
 }
 
 //----------------------------------------------------------
 //
-// authority
+// Authority
 //
 //----------------------------------------------------------
 
@@ -286,14 +270,14 @@ urls::ipv4_address
 url_view::
 ipv4_address() const noexcept
 {
-    if(pt_.host_type !=
+    if(host_type_ !=
         urls::host_type::ipv4)
         return {};
     std::array<
         unsigned char, 4> bytes;
     std::memcpy(
         &bytes[0],
-        &pt_.ip_addr[0], 4);
+        &ip_addr_[0], 4);
     return urls::ipv4_address(
         bytes);
 }
@@ -302,14 +286,14 @@ urls::ipv6_address
 url_view::
 ipv6_address() const noexcept
 {
-    if(pt_.host_type ==
+    if(host_type_ ==
         urls::host_type::ipv6)
     {
         std::array<
             unsigned char, 16> bytes;
         std::memcpy(
             &bytes[0],
-            &pt_.ip_addr[0], 16);
+            &ip_addr_[0], 16);
         return urls::ipv6_address(
             bytes);
     }
@@ -320,7 +304,7 @@ string_view
 url_view::
 ipv_future() const noexcept
 {
-    if(pt_.host_type ==
+    if(host_type_ ==
         urls::host_type::ipvfuture)
         return get(id_host);
     return {};
@@ -357,8 +341,8 @@ port_number() const noexcept
 {
     BOOST_ASSERT(
         has_port() ||
-        pt_.port_number == 0);
-    return pt_.port_number;
+        port_number_ == 0);
+    return port_number_;
 }
 
 string_view
@@ -379,7 +363,7 @@ encoded_origin() const noexcept
 
 //----------------------------------------------------------
 //
-// path
+// Path
 //
 //----------------------------------------------------------
 
@@ -395,26 +379,27 @@ url_view::
 segments() const noexcept
 {
     return segments_view(
-        get(id_path), pt_.nseg);
+        get(id_path), nseg_);
 }
 
 std::size_t
 url_view::
 segment_count() const noexcept
 {
-    return pt_.nseg;
+    return nseg_;
 }
 
 string_view
 url_view::
-encoded_segment(int index) const noexcept
+encoded_segment(
+    int index) const noexcept
 {
     std::size_t i;
     if(index >= 0)
     {
         i = static_cast<
             std::size_t>(index);
-        if(i >= pt_.nseg)
+        if(i >= nseg_)
             return empty_;
         auto pv = segments();
         auto it = pv.begin();
@@ -424,7 +409,7 @@ encoded_segment(int index) const noexcept
     }
     i = static_cast<
         std::size_t>(-index);
-    if(i > pt_.nseg)
+    if(i > nseg_)
         return empty_;
     auto pv = segments();
     auto it = pv.end();
@@ -435,7 +420,7 @@ encoded_segment(int index) const noexcept
 
 //----------------------------------------------------------
 //
-// query
+// Query
 //
 //----------------------------------------------------------
 
@@ -475,12 +460,12 @@ query_params() const noexcept
         return query_params_view(s, 0);
     BOOST_ASSERT(s.starts_with('?'));
     return query_params_view(
-        s.substr(1), pt_.nparam);
+        s.substr(1), nparam_);
 }
 
 //----------------------------------------------------------
 //
-// fragment
+// Fragment
 //
 //----------------------------------------------------------
 
@@ -520,13 +505,12 @@ encoded_fragment() const noexcept
 void
 url_view::
 apply(
-    detail::parts& p,
     scheme_part_bnf const& t) noexcept
 {
-    p.scheme = t.scheme_id;
+    scheme_ = t.scheme_id;
     if(t.scheme_id !=
         urls::scheme::none)
-    p.set_size(
+    set_size(
         id_scheme,
         t.scheme_part.size());
 }
@@ -534,10 +518,9 @@ apply(
 void
 url_view::
 apply(
-    detail::parts& p,
     host_bnf const& t) noexcept
 {
-    p.host_type = t.host_type;
+    host_type_ = t.host_type;
     switch(t.host_type)
     {
     default:
@@ -547,7 +530,7 @@ apply(
     }
     case urls::host_type::name:
     {
-        p.decoded[id_host] =
+        decoded_[id_host] =
             t.name.decoded_size;
         break;
     }
@@ -556,7 +539,7 @@ apply(
         auto const bytes =
             t.ipv4.to_bytes();
         std::memcpy(
-            &p.ip_addr[0],
+            &ip_addr_[0],
             bytes.data(), 4);
         break;
     }
@@ -565,7 +548,7 @@ apply(
         auto const bytes =
             t.ipv6.to_bytes();
         std::memcpy(
-            &p.ip_addr[0],
+            &ip_addr_[0],
             bytes.data(), 16);
         break;
     }
@@ -578,7 +561,7 @@ apply(
     if(t.host_type !=
         urls::host_type::none)
     {
-        p.set_size(
+        set_size(
             id_host,
             t.host_part.size());
     }
@@ -587,7 +570,6 @@ apply(
 void
 url_view::
 apply(
-    detail::parts& p, 
     authority_bnf const& t) noexcept
 {
     if(t.has_userinfo)
@@ -595,47 +577,47 @@ apply(
         auto const& u = t.userinfo;
 
         // leading "//" for authority
-        p.set_size(
+        set_size(
             id_user,
             u.user.str.size() + 2);
-        p.decoded[id_user] = u.user.decoded_size;
+        decoded_[id_user] = u.user.decoded_size;
 
         if(u.has_password)
         {
             // leading ':' for password,
             // trailing '@' for userinfo
-            p.set_size(
+            set_size(
                 id_pass,
                 u.password.str.size() + 2);
-            p.decoded[id_pass] =
+            decoded_[id_pass] =
                 u.password.decoded_size;
         }
         else
         {
             // trailing '@' for userinfo
-            p.set_size(id_pass, 1);
-            p.decoded[id_pass] = 0;
+            set_size(id_pass, 1);
+            decoded_[id_pass] = 0;
         }
     }
     else
     {
         // leading "//" for authority
-        p.set_size(id_user, 2);
-        p.decoded[id_user] = 0;
+        set_size(id_user, 2);
+        decoded_[id_user] = 0;
     }
 
     // host
-    apply(p, t.host);
+    apply(t.host);
 
     // port
     if(t.port.has_port)
     {
-        p.set_size(
+        set_size(
             id_port,
             t.port.port.size() + 1);
 
         if(t.port.has_number)
-            p.port_number =
+            port_number_ =
                 t.port.port_number;
     }
 }
@@ -643,49 +625,46 @@ apply(
 void
 url_view::
 apply(
-    detail::parts& p,
     parsed_path const& t) noexcept
 {
-    p.set_size(id_path, t.path.size());
-    p.nseg = t.count;
+    set_size(id_path, t.path.size());
+    nseg_ = t.count;
 }
 
 void
 url_view::
 apply(
-    detail::parts& p,
     query_part_bnf const& t) noexcept
 {
     if(t.has_query)
     {
-        p.set_size(
+        set_size(
             id_query,
             t.query_part.size());
-        p.nparam = t.query.count;
+        nparam_ = t.query.count;
     }
     else
     {
-        p.nparam = 0;
+        nparam_ = 0;
     }
 }
 
 void
 url_view::
 apply(
-    detail::parts& p,
     fragment_part_bnf const& t) noexcept
 {
     if(t.has_fragment)
     {
-        p.set_size(
+        set_size(
             id_frag,
             t.fragment_part.size());
-        p.decoded[id_frag] =
+        decoded_[id_frag] =
             t.fragment.decoded_size;
     }
     else
     {
-        p.decoded[id_frag] = 0;
+        decoded_[id_frag] = 0;
     }
 }
 
@@ -700,27 +679,27 @@ parse_absolute_uri(
         detail::throw_length_error(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
+
     absolute_uri_bnf t;
     if(! bnf::parse_string(s, ec, t))
         return {};
 
-    detail::parts p;
+    url_view u(s.data());
 
     // scheme
-    url_view::apply(p, t.scheme_part);
+    u.apply(t.scheme_part);
 
     // authority
     if(t.hier_part.has_authority)
-        url_view::apply(p,
-            t.hier_part.authority);
+        u.apply(t.hier_part.authority);
 
     // path
-    url_view::apply(p, t.hier_part.path);
+    u.apply(t.hier_part.path);
 
     // query
-    url_view::apply(p, t.query_part);
+    u.apply(t.query_part);
 
-    return url_view(s.data(), p);
+    return u;
 }
 
 url_view
@@ -756,30 +735,30 @@ parse_uri(
         detail::throw_length_error(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
+
     uri_bnf t;
     if(! bnf::parse_string(s, ec, t))
         return {};
 
-    detail::parts p;
+    url_view u(s.data());
 
     // scheme
-    url_view::apply(p, t.scheme_part);
+    u.apply(t.scheme_part);
 
     // authority
     if(t.hier_part.has_authority)
-        url_view::apply(p,
-            t.hier_part.authority);
+        u.apply(t.hier_part.authority);
 
     // path
-    url_view::apply(p, t.hier_part.path);
+    u.apply(t.hier_part.path);
 
     // query
-    url_view::apply(p, t.query_part);
+    u.apply(t.query_part);
 
     // fragment
-    url_view::apply(p, t.fragment_part);
+    u.apply(t.fragment_part);
 
-    return url_view(s.data(), p);
+    return u;
 }
 
 url_view
@@ -815,29 +794,28 @@ parse_relative_ref(
         detail::throw_length_error(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
+
     relative_ref_bnf t;
     if(! bnf::parse_string(
             s, ec, t))
         return {};
 
-    detail::parts p;
+    url_view u(s.data());
 
     // authority
     if(t.relative_part.has_authority)
-        url_view::apply(p,
-            t.relative_part.authority);
+        u.apply(t.relative_part.authority);
 
     // path
-    url_view::apply(p,
-        t.relative_part.path);
+    u.apply(t.relative_part.path);
 
     // query
-    url_view::apply(p, t.query_part);
+    u.apply(t.query_part);
 
     // fragment
-    url_view::apply(p, t.fragment_part);
+    u.apply(t.fragment_part);
 
-    return url_view(s.data(), p);
+    return u;
 }
 
 url_view
@@ -873,30 +851,30 @@ parse_uri_reference(
         detail::throw_length_error(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
+
     uri_reference_bnf t;
     if(! bnf::parse_string(s, ec, t))
         return {};
 
-    detail::parts p;
+    url_view u(s.data());
 
     // scheme
-    url_view::apply(p, t.scheme_part);
+    u.apply(t.scheme_part);
 
     // authority
     if(t.has_authority)
-        url_view::apply(p,
-            t.authority);
+        u.apply(t.authority);
 
     // path
-    url_view::apply(p, t.path);
+    u.apply(t.path);
 
     // query
-    url_view::apply(p, t.query_part);
+    u.apply(t.query_part);
 
     // fragment
-    url_view::apply(p, t.fragment_part);
+    u.apply(t.fragment_part);
 
-    return url_view(s.data(), p);
+    return u;
 }
 
 url_view

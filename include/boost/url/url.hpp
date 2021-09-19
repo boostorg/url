@@ -13,10 +13,8 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/segments.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/url_view.hpp>
-#include <boost/url/detail/parts.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <cstdint>
 #include <iosfwd>
@@ -59,29 +57,26 @@ class BOOST_SYMBOL_VISIBLE url
 protected:
 #endif
     char* s_ = nullptr;
+    std::size_t cap_ = 0;
 
     BOOST_URL_DECL
-    url(
-        char* buf,
+    url(char* buf,
         std::size_t cap) noexcept;
 
     BOOST_URL_DECL
     void
-    copy(
-        char const* s,
-        detail::parts const& pt,
-        pos_t const* tab_begin_);
+    copy(url_view const& u);
 
     BOOST_URL_DECL
     virtual
     char*
-    alloc_impl(
+    allocate(
         std::size_t new_cap);
 
     BOOST_URL_DECL
     virtual
     void
-    free_impl(char* s);
+    deallocate(char* s);
 
 public:
     /** Destructor
@@ -99,11 +94,6 @@ public:
     */
     BOOST_URL_DECL
     url(url&& u) noexcept;
-
-    /** Constructor
-    */
-    BOOST_URL_DECL
-    url(url const& u);
 
     /** Constructor
     */
@@ -143,7 +133,7 @@ public:
     std::size_t
     capacity_in_bytes() const noexcept
     {
-        return pt_.cap;
+        return cap_;
     }
 
     /** Clear the contents.
@@ -907,24 +897,24 @@ public:
         This function returns an indexed
         path segment as a percent-encoded
         string. The behavior depends on
-        index:
+        `i`:
 
-        @li If `index` is 0 the first path
+        @li If `i` is 0 the first path
         segment is returned;
 
-        @li If index is positive, then
-        the `index` + 1th path segment is
-        returned. For example if `index == 2`
+        @li If `i` is positive, then
+        the `i` + 1th path segment is
+        returned. For example if `i == 2`
         then the third segment is returned.
-        In other words, `index` is zero based.
+        In other words, `i` is zero based.
 
-        @li If index is negative, then the
-        function negates index, and counts from
+        @li If `i` is negative, then the
+        function negates `i`, and counts from
         the end of the path rather than the
-        beginning. For example if `index == -1`
+        beginning. For example if `i == -1`
         then the last path segment is returned.
 
-        If the index is out of range, an empty
+        If the `i` is out of range, an empty
         string is returned. To determine the
         number of segments, call @ref segment_count.
 
@@ -950,7 +940,7 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
 
-        @param index The index of the segment to return.
+        @param i The index of the segment to return.
 
         @see
             @ref encoded_path,
@@ -962,42 +952,7 @@ public:
     virtual
     string_view
     encoded_segment(
-        int index) const noexcept override;
-
-    /** Return the path segments
-
-        This function returns the path as a
-        modifiable random access range.
-
-        @par Example
-        @code
-        url_view u = parse_relative_ref( "/path/to/file.txt" );
-
-        for( auto t : u.segments() )
-            std::cout << t.encoded_segment() << std::endl;
-        @endcode
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
-
-        @par Exception Safety
-        Does not throw.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-
-        @see
-            @ref encoded_path,
-            @ref encoded_segment,
-            @ref path_view,
-            @ref segment_count.
-    */
-    BOOST_URL_DECL
-    urls::segments
-    segments() noexcept;
+        int i) const noexcept override;
 
     //--------------------------------------------
     //
@@ -1192,7 +1147,6 @@ public:
     normalize_scheme() noexcept;
 
 private:
-
     //--------------------------------------------
     //
     // implementation
@@ -1203,10 +1157,6 @@ private:
 
     void check_invariants() const noexcept;
     void build_tab() noexcept;
-    pos_t* tab_end() const noexcept;
-    pos_t* tab_begin() const noexcept;
-    pos_t segment_pos(std::size_t i) const noexcept;
-    pos_t segment_len(std::size_t i) const noexcept;
 
     void
     ensure_space(

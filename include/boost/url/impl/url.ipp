@@ -36,67 +36,58 @@
 namespace boost {
 namespace urls {
 
+// construct from static storage
 url::
 url(char* buf,
     std::size_t cap) noexcept
     : s_(buf)
+    , cap_(cap)
 {
     using alignment::align_up;
     BOOST_ASSERT(cap > 0);
-    BOOST_ASSERT(align_up(cap,
-        alignof(pos_t)) == cap);
+    BOOST_ASSERT(align_up(cap_,
+        alignof(pos_t)) == cap_);
     s_[0] = '\0';
     cs_ = s_;
-    pt_.cap = cap;
 }
 
+// make a copy of u
 void
 url::
-copy(
-    char const* s,
-    detail::parts const& pt,
-    pos_t const* tab_begin_)
+copy(url_view const& u)
 {
-    if(pt.size() == 0)
+    if(u.size() == 0)
     {
         clear();
         return;
     }
     ensure_space(
-        pt.size(),
-        pt.nseg,
-        pt.nparam);
-    auto cap = pt_.cap;
-    pt_ = pt;
-    pt_.cap = cap;
-    std::memcpy(
-        s_, s, pt.size());
-    if(tab_begin_ != nullptr)
-        std::memcpy(
-            tab_begin(),
-            tab_begin_,
-            pt_.tabsize() *
-                sizeof(pos_t));
-    else
-        build_tab();
+        u.size(),
+        u.nseg_,
+        u.nparam_);
+    base() = u;
+    cs_ = s_;
+    std::memcpy(s_,
+        u.data(), u.size());
     s_[size()] = '\0';
 }
 
+// allocate n aligned up
 char*
 url::
-alloc_impl(std::size_t n)
+allocate(std::size_t n)
 {
     using alignment::align_up;
     n = align_up(
         n, alignof(pos_t));
     auto s = new char[n];
-    pt_.cap = n;
+    cap_ = n;
     return s;
 }
 
 void
 url::
-free_impl(char* s)
+deallocate(char* s)
 {
     delete[] s;
 }
@@ -109,8 +100,8 @@ url::
     if(s_)
     {
         BOOST_ASSERT(
-            pt_.cap != 0);
-        free_impl(s_);
+            cap_ != 0);
+        deallocate(s_);
     }
 }
 
@@ -120,24 +111,16 @@ url() noexcept = default;
 url::
 url(url&& u) noexcept
 {
+    base() = u;
+    cap_ = u.cap_;
     s_ = u.s_;
-    cs_ = u.cs_;
-    pt_ = u.pt_;
-    u.s_ = nullptr;
-    u.cs_ = empty_;
-    u.pt_ = {};
-}
-
-url::
-url(url const& u)
-{
-    copy(u.s_, u.pt_, u.tab_begin());
+    u = url();
 }
 
 url::
 url(url_view const& u)
 {
-    copy(u.cs_, u.pt_, nullptr);
+    copy(u);
 }
 
 url&
@@ -145,21 +128,13 @@ url::
 operator=(url&& u) noexcept
 {
     if(s_)
-        free_impl(s_);
+        deallocate(s_);
+    base() = u;
+    cap_ = u.cap_;
     s_ = u.s_;
-    cs_ = s_;
-    pt_ = u.pt_;
+    u.base() = {};
+    u.cap_ = 0;
     u.s_ = nullptr;
-    u.cs_ = empty_;
-    u.pt_ = {};
-    return *this;
-}
-
-url&
-url::
-operator=(url const& u)
-{
-    copy(u.s_, u.pt_, u.tab_begin());
     return *this;
 }
 
@@ -167,7 +142,7 @@ url&
 url::
 operator=(url_view const& u)
 {
-    copy(u.cs_, u.pt_, nullptr);
+    copy(u);
     return *this;
 }
 
@@ -179,7 +154,7 @@ clear() noexcept
 {
     if(s_)
     {
-        pt_ = {};
+        base() = {};
         s_[0] = '\0';
         cs_ = s_;
     }
@@ -188,13 +163,6 @@ clear() noexcept
         BOOST_ASSERT(
             cs_ == empty_);
     }
-}
-
-void
-url::
-reserve(std::size_t cap)
-{
-    BOOST_ASSERT(false);
 }
 
 //------------------------------------------------
@@ -222,7 +190,7 @@ set_scheme_impl(
         id_scheme, n + 1);
     s.copy(dest, n);
     dest[n] = ':';
-    pt_.scheme = id;
+    scheme_ = id;
     check_invariants();
     return;
 }
@@ -273,7 +241,7 @@ remove_scheme() noexcept
     {
         // just remove the scheme
         resize_impl(id_scheme, 0);
-        pt_.scheme = urls::scheme::none;
+        scheme_ = urls::scheme::none;
         check_invariants();
         return *this;
     }
@@ -283,38 +251,29 @@ remove_scheme() noexcept
     BOOST_ASSERT(n >= 2);
     ensure_space(
         size(),
-        pt_.nseg + 1,
-        pt_.nparam);
+        nseg_ + 1,
+        nparam_);
     // move chars
     std::memmove(
         s_, s_ + n,
-        pt_.offset(id_path) - n);
+        offset(id_path) - n);
     std::memmove(
-        s_ + pt_.offset(
+        s_ + offset(
             id_path) - (n - 2),
-        s_ + pt_.offset(id_path),
-        pt_.offset(id_end) -
-            pt_.offset(id_path));
+        s_ + offset(id_path),
+        offset(id_end) -
+            offset(id_path));
     // adjust table
-    ++pt_.nseg;
-#if 0
-    if(pt_.nseg > 1)
-    {
-        auto tab = tab_begin() + 1;
-        for(std::size_t i = 0; i <
-                pt_.nseg - 1; ++i)
-            tab[2 * i] = tab[2 * i + 2];
-    }
-#endif
-    pt_.adjust(id_user, id_path, 0-n);
-    pt_.adjust(
+    ++nseg_;
+    adjust(id_user, id_path, 0-n);
+    adjust(
         id_query, id_end, 0-(n - 2));
     auto dest = s_ +
-        pt_.offset(id_path);
+        offset(id_path);
     dest[0] = '.';
     dest[1] = '/';
-    dest[pt_.offset(id_end)] = '\0';
-    pt_.scheme = urls::scheme::none;
+    dest[offset(id_end)] = '\0';
+    scheme_ = urls::scheme::none;
     check_invariants();
     return *this;
 }
@@ -365,7 +324,7 @@ set_user_impl(std::size_t n)
     // add authority
     auto dest = resize_impl(
         id_user, 2 + n + 1);
-    pt_.split(id_user, 2 + n);
+    split(id_user, 2 + n);
     dest[0] = '/';
     dest[1] = '/';
     dest[2 + n] = '@';
@@ -393,7 +352,7 @@ remove_user() noexcept
         // keep password
         resize_impl(id_user, 2);
     }
-    pt_.decoded[id_user] = 0;
+    decoded_[id_user] = 0;
     check_invariants();
     return *this;
  }
@@ -412,7 +371,7 @@ set_user(string_view s)
     dest = detail::pct_encode(
         dest, get(id_pass).data(),
             s, {},  cs);
-    pt_.decoded[id_user] = s.size();
+    decoded_[id_user] = s.size();
     BOOST_ASSERT(dest ==
         get(id_pass).data());
     check_invariants();
@@ -436,7 +395,7 @@ set_encoded_user(
             "url::set_encoded_user",
             BOOST_CURRENT_LOCATION);
     auto dest = set_user_impl(s.size());
-    pt_.decoded[id_user] = n;
+    decoded_[id_user] = n;
     if(! s.empty())
     {
         BOOST_ASSERT(dest != nullptr);
@@ -470,7 +429,7 @@ set_password_impl(
         resize_impl(
         id_user, id_host,
         2 + 1 + n + 1);
-    pt_.split(id_user, 2);
+    split(id_user, 2);
     dest[0] = '/';
     dest[1] = '/';
     dest[2] = ':';
@@ -491,7 +450,7 @@ remove_password() noexcept
     auto dest =
         resize_impl(id_pass, 1);
     dest[0] = '@';
-    pt_.decoded[id_pass] = 0;
+    decoded_[id_pass] = 0;
     check_invariants();
     return *this;
 }
@@ -510,7 +469,7 @@ set_password(string_view s)
     dest = detail::pct_encode(dest,
         get(id_host).data() - 1,
             s, {},  cs);
-    pt_.decoded[id_pass] = s.size();
+    decoded_[id_pass] = s.size();
     BOOST_ASSERT(dest ==
         get(id_host).data() - 1);
     check_invariants();
@@ -535,7 +494,7 @@ set_encoded_password(
             BOOST_CURRENT_LOCATION);
     auto dest =
         set_password_impl(s.size());
-    pt_.decoded[id_pass] = n;
+    decoded_[id_pass] = n;
     if(! s.empty())
     {
         BOOST_ASSERT(dest != nullptr);
@@ -557,7 +516,7 @@ set_userinfo_impl(
     check_invariants();
     auto dest = resize_impl(
         id_user, id_host, n + 3);
-    pt_.split(id_user, n + 2);
+    split(id_user, n + 2);
     dest[0] = '/';
     dest[1] = '/';
     dest[n + 2] = '@';
@@ -578,8 +537,8 @@ remove_userinfo() noexcept
     // keep authority '//'
     resize_impl(
         id_user, id_host, 2);
-    pt_.decoded[id_user] = 0;
-    pt_.decoded[id_pass] = 0;
+    decoded_[id_user] = 0;
+    decoded_[id_pass] = 0;
     check_invariants();
     return *this;
 }
@@ -599,7 +558,7 @@ set_userinfo(
     dest = detail::pct_encode(dest,
         get(id_host).data() - 1,
             s, {},  cs);
-    pt_.decoded[id_user] = s.size();
+    decoded_[id_user] = s.size();
     BOOST_ASSERT(dest ==
         get(id_host).data() - 1);
     check_invariants();
@@ -619,16 +578,16 @@ set_encoded_userinfo(
             "url::set_encoded_userinfo",
             BOOST_CURRENT_LOCATION);
     auto dest = set_userinfo_impl(s.size());
-    pt_.split(id_user, 2 + t.user.str.size());
+    split(id_user, 2 + t.user.str.size());
     if(! s.empty())
         std::memcpy(dest, s.data(), s.size());
-    pt_.decoded[id_user] =
+    decoded_[id_user] =
         t.user.decoded_size;
     if(t.has_password)
-        pt_.decoded[id_pass] =
+        decoded_[id_pass] =
             t.password.decoded_size;
     else
-        pt_.decoded[id_pass] = 0;
+        decoded_[id_pass] = 0;
     check_invariants();
     return *this;
 }
@@ -645,8 +604,8 @@ set_host_impl(std::size_t n)
         // add authority
         auto dest = resize_impl(
             id_user, n + 2);
-        pt_.split(id_user, 2);
-        pt_.split(id_pass, 0);
+        split(id_user, 2);
+        split(id_pass, 0);
         dest[0] = '/';
         dest[1] = '/';
         check_invariants();
@@ -673,11 +632,11 @@ set_host(
         set_host_impl(s.size());
     std::memcpy(
         dest, s.data(), s.size());
-    pt_.decoded[id_host] = len(id_host);
-    pt_.host_type =
+    decoded_[id_host] = len(id_host);
+    host_type_ =
         urls::host_type::ipv4;
     auto bytes = addr.to_bytes();
-    std::memcpy(pt_.ip_addr,
+    std::memcpy(ip_addr_,
         bytes.data(), bytes.size());
     check_invariants();
     return *this;
@@ -699,11 +658,11 @@ set_host(
         set_host_impl(s.size() + 2);
     std::memcpy(
         dest, buf, s.size() + 2);
-    pt_.decoded[id_host] = len(id_host);
-    pt_.host_type =
+    decoded_[id_host] = len(id_host);
+    host_type_ =
         urls::host_type::ipv6;
     auto bytes = addr.to_bytes();
-    std::memcpy(pt_.ip_addr,
+    std::memcpy(ip_addr_,
         bytes.data(), bytes.size());
     check_invariants();
     return *this;
@@ -731,8 +690,8 @@ set_host(
     dest = detail::pct_encode(
         dest, get(id_path).data(),
             s, {},  cs);
-    pt_.decoded[id_host] = s.size();
-    pt_.host_type =
+    decoded_[id_host] = s.size();
+    host_type_ =
         urls::host_type::name;
     check_invariants();
     return *this;
@@ -775,8 +734,8 @@ set_encoded_host(string_view s)
         set_host_impl(s.size());
     std::memcpy(
         dest, s.data(), s.size());
-    pt_.decoded[id_host] = n;
-    pt_.host_type = t.host_type;
+    decoded_[id_host] = n;
+    host_type_ = t.host_type;
     check_invariants();
     return *this;
 }
@@ -799,9 +758,9 @@ set_port_impl(std::size_t n)
     }
     auto dest = resize_impl(
         id_user, 3 + n);
-    pt_.split(id_user, 2);
-    pt_.split(id_pass, 0);
-    pt_.split(id_host, 0);
+    split(id_user, 2);
+    split(id_pass, 0);
+    split(id_host, 0);
     dest[0] = '/';
     dest[1] = '/';
     dest[2] = ':';
@@ -815,7 +774,7 @@ remove_port() noexcept
 {
     check_invariants();
     resize_impl(id_port, 0);
-    pt_.port_number = 0;
+    port_number_ = 0;
     check_invariants();
     return *this;
 }
@@ -832,7 +791,7 @@ set_port(std::uint16_t n)
     std::memcpy(
         dest, s.str().data(),
             s.str().size());
-    pt_.port_number = n;
+    port_number_ = n;
     check_invariants();
     return *this;
 }
@@ -854,9 +813,9 @@ set_port(string_view s)
     std::memcpy(dest,
         t.str.data(), t.str.size());
     if(t.has_number)
-        pt_.port_number = t.number;
+        port_number_ = t.number;
     else
-        pt_.port_number = 0;
+        port_number_ = 0;
     check_invariants();
     return *this;
 }
@@ -876,7 +835,7 @@ remove_authority() noexcept
     // remove authority
     resize_impl(
         id_user, id_path, 0);
-    pt_.host_type =
+    host_type_ =
         urls::host_type::none;
     check_invariants();
     return *this;
@@ -903,77 +862,77 @@ set_encoded_authority(string_view s)
     if(t.has_userinfo)
     {
         auto const& t0 = t.userinfo;
-        pt_.split(id_user,
+        split(id_user,
             2 + t0.user.str.size());
         n -= t0.user.str.size();
-        pt_.decoded[id_user] =
+        decoded_[id_user] =
             t0.user.decoded_size;
         if(t0.has_password)
         {
-            pt_.split(id_pass, 2 +
+            split(id_pass, 2 +
                 t0.password.str.size());
-            pt_.decoded[id_pass] =
+            decoded_[id_pass] =
                 t0.password.decoded_size;
             n -= 1 + t0.password.str.size();
         }
         else
         {
-            pt_.split(id_pass, 1);
-            pt_.decoded[id_pass] = 0;
+            split(id_pass, 1);
+            decoded_[id_pass] = 0;
             n -= 1;
         }
     }
     else
     {
-        pt_.split(id_user, 2);
-        pt_.split(id_pass, 0);
+        split(id_user, 2);
+        split(id_pass, 0);
     }
-    pt_.split(id_host,
+    split(id_host,
         t.host.host_part.size());
     n -= t.host.host_part.size();
-    pt_.host_type = t.host.host_type;
-    if(pt_.host_type ==
+    host_type_ = t.host.host_type;
+    if(host_type_ ==
         urls::host_type::ipv4)
     {
         auto const bytes =
             t.host.ipv4.to_bytes();
-        std::memcpy(pt_.ip_addr,
+        std::memcpy(ip_addr_,
             bytes.data(), bytes.size());
-        pt_.decoded[id_host] =
+        decoded_[id_host] =
             len(id_host);
     }
-    else if(pt_.host_type ==
+    else if(host_type_ ==
         urls::host_type::ipv6)
     {
         auto const bytes =
             t.host.ipv6.to_bytes();
-        std::memcpy(pt_.ip_addr,
+        std::memcpy(ip_addr_,
             bytes.data(), bytes.size());
-        pt_.decoded[id_host] =
+        decoded_[id_host] =
             len(id_host);
     }
-    else if(pt_.host_type ==
+    else if(host_type_ ==
         urls::host_type::ipvfuture)
     {
-        pt_.decoded[id_host] =
+        decoded_[id_host] =
             len(id_host);
     }
     else
     {
-        pt_.decoded[id_host] =
+        decoded_[id_host] =
             t.host.name.decoded_size;
     }
     if(t.port.has_port)
     {
         if(t.port.has_number)
-            pt_.port_number =
+            port_number_ =
                 t.port.port_number;
         else
-            pt_.port_number = 0;
+            port_number_ = 0;
     }
     else
     {
-        pt_.port_number = 0;
+        port_number_ = 0;
     }
     check_invariants();
     return *this;
@@ -993,12 +952,12 @@ remove_origin() noexcept
         return *this;
     }
 
-    pt_.decoded[id_user] = 0;
-    pt_.decoded[id_pass] = 0;
-    pt_.decoded[id_host] = 0;
-    pt_.host_type =
+    decoded_[id_user] = 0;
+    decoded_[id_pass] = 0;
+    decoded_[id_host] = 0;
+    host_type_ =
         urls::host_type::none;
-    pt_.port_number = 0;
+    port_number_ = 0;
 
     // Check if we will be left with
     // "//" or a rootless segment
@@ -1010,11 +969,11 @@ remove_origin() noexcept
         auto dest = resize_impl(
             id_scheme, id_path, 1);
         dest[0] = '.';
-        pt_.split(id_scheme, 0);
-        pt_.split(id_user, 0);
-        pt_.split(id_pass, 0);
-        pt_.split(id_host, 0);
-        pt_.split(id_port, 0);
+        split(id_scheme, 0);
+        split(id_user, 0);
+        split(id_pass, 0);
+        split(id_host, 0);
+        split(id_port, 0);
         return *this;
     }
     if( s.empty() ||
@@ -1046,11 +1005,11 @@ remove_origin() noexcept
         id_scheme, id_path, 2);
     dest[0] = '.';
     dest[1] = '/';
-    pt_.split(id_scheme, 0);
-    pt_.split(id_user, 0);
-    pt_.split(id_pass, 0);
-    pt_.split(id_host, 0);
-    pt_.split(id_port, 0);
+    split(id_scheme, 0);
+    split(id_user, 0);
+    split(id_pass, 0);
+    split(id_host, 0);
+    split(id_port, 0);
     return *this;
 }
 
@@ -1068,11 +1027,11 @@ encoded_segment(
 #if 0
     std::size_t i;
     if(index < 0)
-        i = pt_.nseg + index;
+        i = nseg + index;
     else
         i = static_cast<
             std::size_t>(index);
-    if(i >= pt_.nseg)
+    if(i >= nseg)
         return empty_;
     string_view s(
         s_ + segment_pos(i),
@@ -1092,13 +1051,6 @@ encoded_segment(
 #endif
 }
 
-urls::segments
-url::
-segments() noexcept
-{
-    return urls::segments(*this);
-}
-
 //------------------------------------------------
 //
 // implementation
@@ -1110,8 +1062,8 @@ url::
 check_invariants() const noexcept
 {
     using alignment::align_up;
-    BOOST_ASSERT(align_up(pt_.cap,
-        alignof(pos_t)) == pt_.cap);
+    BOOST_ASSERT(align_up(cap_,
+        alignof(pos_t)) == cap_);
     BOOST_ASSERT(
         len(id_scheme) == 0 ||
         get(id_scheme).ends_with(':'));
@@ -1143,12 +1095,12 @@ check_invariants() const noexcept
     BOOST_ASSERT(c_str()[size()] == '\0');
     // validate segments
 #if 0
-    if(pt_.nseg > 0)
+    if(nseg > 0)
     {
         auto it = cs_ +
-            pt_.offset(id_path);
+            offset(id_path);
         auto const end = s_ +
-            pt_.offset(id_query);
+            offset(id_query);
         error_code ec;
         pct_encoded_str t;
         auto start = it;
@@ -1183,7 +1135,7 @@ build_tab() noexcept
 {
 #if 0
     // path
-    if(pt_.nseg > 0)
+    if(nseg_ > 1)
     {
         error_code ec;
         // path table
@@ -1213,7 +1165,7 @@ build_tab() noexcept
         }
     }
     // query
-    if(pt_.nparam > 0)
+    if(nparam_ > 1)
     {
         error_code ec;
         // query table
@@ -1240,48 +1192,6 @@ build_tab() noexcept
 #endif
 }
 
-auto
-url::
-tab_end() const noexcept ->
-    pos_t*
-{
-    return reinterpret_cast<
-        pos_t*>(s_ + pt_.cap);
-}
-
-auto
-url::
-tab_begin() const noexcept ->
-    pos_t*
-{
-    return tab_end() -
-        pt_.tabsize();
-}
-
-auto
-url::
-segment_pos(
-    std::size_t i) const noexcept ->
-        pos_t
-{
-    if(i == 0)
-        return pt_.offset(id_path);
-    if(i == pt_.nseg)
-        return pt_.offset(id_query);
-    return *(tab_end() - 1 - 2 * (i - 1));
-}
-
-auto
-url::
-segment_len(
-    std::size_t i) const noexcept ->
-        pos_t
-{
-    return
-        segment_pos(i + 1) -
-        segment_pos(i);
-}
-
 void
 url::
 ensure_space(
@@ -1303,14 +1213,14 @@ ensure_space(
     else
         new_cap += 2 * sizeof(pos_t) *
             (nparam + 1);
-    if(new_cap <= pt_.cap)
+    if(new_cap <= cap_)
         return;
     char* s;
     if(s_ != nullptr)
     {
         // 50% growth policy
-        auto n = pt_.cap + (pt_.cap / 2);
-        if(n < pt_.cap)
+        auto n = cap_ + (cap_ / 2);
+        if(n < cap_)
         {
             // overflow
             n = std::size_t(-1) &
@@ -1318,13 +1228,13 @@ ensure_space(
         }
         if( new_cap < n)
             new_cap = n;
-        s = alloc_impl(new_cap);
+        s = allocate(new_cap);
         std::memcpy(s, s_, size());
-        free_impl(s_);
+        deallocate(s_);
     }
     else
     {
-        s = alloc_impl(new_cap);
+        s = allocate(new_cap);
     }
     s_ = s;
     cs_ = s;
@@ -1349,72 +1259,72 @@ resize_impl(
 {
     auto const n0 = len(first, last);
     if(new_len == 0 && n0 == 0)
-        return s_ + pt_.offset(first);
+        return s_ + offset(first);
     if(new_len <= n0)
     {
         // shrinking
         std::size_t n = n0 - new_len;
         auto const pos =
-            pt_.offset(last);
+            offset(last);
         // adjust chars
         std::memmove(
             s_ + pos - n,
             s_ + pos,
-            pt_.offset(
+            offset(
                 id_end) - pos + 1);
         // collapse (first, last)
-        pt_.collapse(first,  last, 
-            pt_.offset(last) - n);
+        collapse(first,  last, 
+            offset(last) - n);
         // shift (last, end) left
-        pt_.adjust(
+        adjust(
             last, id_end, 0 - n);
 #if 0
         // update table
-        if( pt_.nseg > 1 &&
+        if( nseg > 1 &&
             first <= id_path)
         {
             // adjust segments
             auto const tab =
                 tab_end() - 1;
             for(std::size_t i = 0;
-                i < pt_.nseg - 1; ++i)
+                i < nseg - 1; ++i)
                 tab[0-2*i] += 0 - n;
         }
-        if( pt_.nparam > 1 &&
+        if( nparam > 1 &&
             first <= id_query)
         {
             // adjust params
             auto const tab =
                 tab_end() - 2;
             for(std::size_t i = 0;
-                i < pt_.nparam - 1; ++i)
+                i < nparam - 1; ++i)
                 tab[0-2*i] += 0 - n;
         }
 #endif
         s_[size()] = '\0';
-        return s_ + pt_.offset(first);
+        return s_ + offset(first);
     }
 
     // growing
     std::size_t n = new_len - n0;
-    ensure_space(
-        size()+n, pt_.nseg, pt_.nparam);
+    ensure_space(size() + n,
+        nseg_, nparam_);
     auto const pos =
-        pt_.offset(last);
+        offset(last);
     // adjust chars
     std::memmove(
         s_ + pos + n,
         s_ + pos,
-        pt_.offset(id_end) -
+        offset(id_end) -
             pos + 1);
     // collapse (first, last)
-    pt_.collapse(first, last,
-        pt_.offset(last) + n);
+    collapse(first, last,
+        offset(last) + n);
     // shift (last, end) right
-    pt_.adjust(last, id_end, n);
+    adjust(last, id_end, n);
 #if 0
     // update table
-    if( pt_.nseg > 1 &&
+    if( nseg > 1 &&
         last > id_path &&
         first < id_path)
     {
@@ -1422,10 +1332,10 @@ resize_impl(
         auto const tab =
             tab_end() - 1;
         for(std::size_t i = 0;
-            i < pt_.nseg - 1; ++i)
+            i < nseg - 1; ++i)
             tab[0-2*i] += n;
     }
-    if( pt_.nparam > 1 &&
+    if( nparam > 1 &&
         last > id_query &&
         first < id_query)
     {
@@ -1433,12 +1343,12 @@ resize_impl(
         auto const tab =
             tab_end() - 2;
         for(std::size_t i = 0;
-            i < pt_.nparam - 1; ++i)
+            i < nparam - 1; ++i)
             tab[0-2*i] += n;
     }
 #endif
     s_[size()] = '\0';
-    return s_ + pt_.offset(first);
+    return s_ + offset(first);
 }
 
 //------------------------------------------------

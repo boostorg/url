@@ -11,12 +11,13 @@
 #define BOOST_URL_URL_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/host_type.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
+#include <boost/url/scheme.hpp>
 #include <boost/url/segments_view.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
-#include <boost/url/detail/parts.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -77,33 +78,177 @@ struct scheme_part_bnf;
         @ref parse_uri_reference.
 */
 class BOOST_SYMBOL_VISIBLE url_view
-    : protected detail::part_ids
 {
 #ifndef BOOST_URL_DOCS
 protected:
 #endif
+    using pos_t = std::size_t;
+
+    enum
+    {
+        id_scheme = -1, // trailing ':'
+        id_user,        // leading "//"
+        id_pass,        // leading ':', trailing '@'
+        id_host,
+        id_port,        // leading ':'
+        id_path,
+        id_query,       // leading '?'
+        id_frag,        // leading '#'
+        id_end          // one past the end
+    };
+
+    static
+    constexpr
+    pos_t zero_ = 0;
 
     static
     constexpr
     char const* const empty_ = "";
 
     char const* cs_ = empty_;
-    detail::parts pt_;
+    pos_t offset_[id_end + 1] = {};
+    pos_t decoded_[id_end] = {};
+    pos_t nseg_ = 0;
+    pos_t nparam_ = 0;
+    unsigned char ip_addr_[16] = {};
+    // VFALCO don't we need a bool?
+    std::uint16_t port_number_ = 0;
+    urls::host_type host_type_ =
+        urls::host_type::none;
+    urls::scheme scheme_ =
+        urls::scheme::none;
 
     struct shared_impl;
     friend class static_url_base;
     friend class url;
 
-    // shortcuts
-    string_view get(int id) const noexcept;
-    string_view get(int id0, int id1) const noexcept;
-    std::size_t len(int id) const noexcept;
-    std::size_t len(int id0, int id1) const noexcept;
+    url_view& base() noexcept
+    {
+        return *this;
+    }
+    
+    url_view const& base() const noexcept
+    {
+        return *this;
+    }
 
-    BOOST_URL_DECL
+    // return offset of id
+    constexpr
+    pos_t
+    offset(int id) const noexcept
+    {
+        return
+            id == id_scheme ?
+            zero_ : offset_[id];
+    }
+
+    // return size of table in bytes
+    std::size_t
+    table_bytes() const noexcept
+    {
+        std::size_t n = 0;
+        if(nseg_ > 1)
+            n += nseg_ - 1;
+        if(nparam_ > 1)
+            n += nparam_ - 1;
+        return n * sizeof(pos_t);
+    }
+
+    // return length of part
+    constexpr
+    pos_t
+    len(int id) const noexcept
+    {
+        return
+            offset(id + 1) -
+            offset(id);
+    }
+
+    // return length of [first, last)
+    pos_t
+    len(
+        int first,
+        int last) const noexcept
+    {
+        BOOST_ASSERT(first <= last);
+        BOOST_ASSERT(last <= id_end);
+        return offset(last) - offset(first);
+    }
+
+    // return id as string
+    constexpr
+    string_view
+    get(int id) const noexcept
+    {
+        return {
+            cs_ + offset(id), len(id) };
+    }
+
+    // return [first, last) as string
+    constexpr
+    string_view
+    get(int first,
+        int last) const noexcept
+    {
+        return { cs_ + offset(first),
+            offset(last) - offset(first) };
+    }
+
+    // change id to size n
+    void
+    set_size(
+        int id,
+        pos_t n) noexcept
+    {
+        auto d = n - len(id);
+        for(auto i = id + 1;
+            i <= id_end; ++i)
+            offset_[i] += d;
+    }
+
+    // trim id to size n,
+    // moving excess into id+1
+    void
+    split(
+        int id,
+        std::size_t n) noexcept
+    {
+        BOOST_ASSERT(id < id_end - 1);
+        BOOST_ASSERT(n <= len(id));
+        offset_[id + 1] = offset(id) + n;
+    }
+
+    // add n to [first, last]
+    void
+    adjust(
+        int first,
+        int last,
+        std::size_t n) noexcept
+    {
+        for(int i = first;
+                i <= last; ++i)
+            offset_[i] += n;
+    }
+
+    // set [first, last) offset
+    void
+    collapse(
+        int first,
+        int last,
+        std::size_t n) noexcept
+    {
+        for(int i = first + 1;
+                i < last; ++i)
+            offset_[i] = n;
+    }
+
+    explicit
     url_view(
-        char const* s,
-        detail::parts const& pt) noexcept;
+        char const* cs) noexcept;
+
+    url_view(
+        url_view const& u,
+        char const* cs) noexcept;
 
 public:
     // Container
@@ -117,6 +262,11 @@ public:
     using iterator          = const_iterator;
     using size_type         = std::size_t;
     using difference_type   = std::ptrdiff_t;
+
+    /** Destructor
+    */
+    BOOST_URL_DECL
+    ~url_view();
 
     /** Constructor
 
@@ -162,7 +312,7 @@ public:
     std::size_t
     size() const noexcept
     {
-        return pt_.size();
+        return offset(id_end);
     }
 
     /** Return true if the URL is empty
@@ -811,7 +961,7 @@ public:
     urls::host_type
     host_type() const noexcept
     {
-        return pt_.host_type;
+        return host_type_;
     }
 
     /** Return the host
@@ -916,7 +1066,7 @@ public:
     {
         auto const s0 =
             encoded_host();
-        if(pt_.host_type !=
+        if(host_type_ !=
             urls::host_type::name)
         {
             // no decoding
@@ -924,7 +1074,7 @@ public:
                 s0.data(), s0.size(), a);
         }
         return detail::pct_decode_unchecked(
-            s0, pt_.decoded[id_host], {}, a);
+            s0, decoded_[id_host], {}, a);
     }
 
     /** Return the host as an IPv4 address
@@ -1262,26 +1412,36 @@ public:
         This function returns an indexed
         path segment as a percent-encoded
         string. The behavior depends on
-        index:
+        `i`:
 
-        @li If `index` is 0 the first path
+        @li If `i` is 0 the first path
         segment is returned;
 
-        @li If index is positive, then
-        the `index` + 1th path segment is
-        returned. For example if `index == 2`
+        @li If `i` is positive, then
+        the `i` + 1th path segment is
+        returned. For example if `i == 2`
         then the third segment is returned.
-        In other words, `index` is zero based.
+        In other words, `i` is zero based.
 
-        @li If index is negative, then the
-        function negates index, and counts from
+        @li If `i` is negative, then the
+        function negates `i`, and counts from
         the end of the path rather than the
-        beginning. For example if `index == -1`
+        beginning. For example if `i == -1`
         then the last path segment is returned.
 
-        If the index is out of range, an empty
+        If the `i` is out of range, an empty
         string is returned. To determine the
         number of segments, call @ref segment_count.
+
+        @par Example
+        @code
+        url_view u = parse_relative_ref( "/path/to/the/file.txt" );
+
+        assert( u.encoded_segment( -2 ) == "the" );
+        assert( u.encoded_segment( -1 ) == "file.txt" );
+        assert( u.encoded_segment(  0 ) == "path" );
+        assert( u.encoded_segment(  1 ) == "to" );
+        @endcode
 
         @par BNF
         @code
@@ -1295,11 +1455,7 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
 
-        @param index The index of the segment to return.
-
-        @see
-            @ref encoded_path,
-            @ref path_view.
+        @param i The index of the segment to return.
 
         @see
             @ref encoded_path,
@@ -1311,7 +1467,7 @@ public:
     virtual
     string_view
     encoded_segment(
-        int index) const noexcept;
+        int i) const noexcept;
 
     /** Return a path segment by index
 
@@ -1584,7 +1740,7 @@ public:
     {
         return detail::pct_decode_unchecked(
             encoded_fragment(),
-            pt_.decoded[id_frag], {}, a);
+            decoded_[id_frag], {}, a);
     }
 
     //--------------------------------------------
@@ -1622,18 +1778,12 @@ public:
         string_view s);
 
 private:
-    static void apply(detail::parts& p,
-        scheme_part_bnf const& t) noexcept;
-    static void apply(detail::parts& p,
-        host_bnf const& h) noexcept;
-    static void apply(detail::parts& p,
-        authority_bnf const& t) noexcept;
-    static void apply(detail::parts& p,
-        parsed_path const& path) noexcept;
-    static void apply(detail::parts& p,
-        query_part_bnf const& t) noexcept;
-    static void apply(detail::parts& p,
-        fragment_part_bnf const& t) noexcept;
+    void apply(scheme_part_bnf const& t) noexcept;
+    void apply(host_bnf const& h) noexcept;
+    void apply(authority_bnf const& t) noexcept;
+    void apply(parsed_path const& path) noexcept;
+    void apply(query_part_bnf const& t) noexcept;
+    void apply(fragment_part_bnf const& t) noexcept;
 };
 
 //------------------------------------------------

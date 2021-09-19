@@ -36,13 +36,9 @@ protected:
     BOOST_URL_DECL void copy(url const& u);
     BOOST_URL_DECL void copy(url_view const& u);
     BOOST_URL_DECL url_view convert() const noexcept;
-    BOOST_URL_DECL char* alloc_impl(
+    BOOST_URL_DECL char* allocate(
         std::size_t n) override;
-    BOOST_URL_DECL void free_impl(char*) override;
-
-public:
-    BOOST_URL_DECL
-    operator url_view() const noexcept;
+    BOOST_URL_DECL void deallocate(char*) override;
 };
 #endif
 

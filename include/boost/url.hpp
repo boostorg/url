@@ -18,7 +18,6 @@
 #include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
-#include <boost/url/segments.hpp>
 #include <boost/url/segments_view.hpp>
 #include <boost/url/static_pool.hpp>
 #include <boost/url/static_url.hpp>

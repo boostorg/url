@@ -37,28 +37,26 @@ void
 static_url_base::
 copy(url const& u)
 {
-    this->url::copy(
-        u.s_, u.pt_, u.tab_begin());
+    this->url::copy(u);
 }
 
 void
 static_url_base::
 copy(url_view const& u)
 {
-    this->url::copy(
-        u.cs_, u.pt_, nullptr);
+    this->url::copy(u);
 }
 
 url_view
 static_url_base::
 convert() const noexcept
 {
-    return url_view(s_, pt_);
+    return url_view(*this);
 }
 
 char*
 static_url_base::
-alloc_impl(std::size_t n)
+allocate(std::size_t n)
 {
     (void)n;
     // should never get here
@@ -71,18 +69,12 @@ alloc_impl(std::size_t n)
 
 void
 static_url_base::
-free_impl(char*)
+deallocate(char*)
 {
     // should never get here
     detail::throw_invalid_argument(
         "free_impl",
         BOOST_CURRENT_LOCATION);
-}
-
-static_url_base::
-operator url_view() const noexcept
-{
-    return url_view(s_, pt_);
 }
 
 } // urls
