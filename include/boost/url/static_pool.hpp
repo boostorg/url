@@ -24,6 +24,9 @@ class basic_static_pool
     char* const base_;
     std::size_t const capacity_;
     char* top_;
+    std::size_t n_ = 0;
+
+    struct item;
 
     BOOST_URL_DECL
     void*
