@@ -1367,10 +1367,10 @@ public:
             @ref path_view,
             @ref segment_count.
     */
-    encoded_segments_view
+    segments_encoded_view
     encoded_segments() const noexcept
     {
-        return encoded_segments_view(
+        return segments_encoded_view(
             encoded_path(), nseg_);
     }
 

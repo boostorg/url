@@ -20,7 +20,7 @@
 namespace boost {
 namespace urls {
 
-class encoded_segments_view;
+class segments_encoded_view;
 
 /** A BidirectionalRange view of read-only path segments with percent-decoding applied
 */
@@ -54,7 +54,7 @@ public:
 
     explicit
     segments_view(
-        encoded_segments_view const& sv,
+        segments_encoded_view const& sv,
         Allocator const& = {}) noexcept;
 
     /** Return true if the range contains no elements

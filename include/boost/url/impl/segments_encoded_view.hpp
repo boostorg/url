@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_ENCODED_SEGMENTS_VIEW_HPP
-#define BOOST_URL_IMPL_ENCODED_SEGMENTS_VIEW_HPP
+#ifndef BOOST_URL_IMPL_SEGMENTS_ENCODED_VIEW_HPP
+#define BOOST_URL_IMPL_SEGMENTS_ENCODED_VIEW_HPP
 
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
@@ -18,7 +18,7 @@
 namespace boost {
 namespace urls {
 
-class encoded_segments_view::iterator
+class segments_encoded_view::iterator
 {
     std::size_t i_ = 0;
     string_view s_;
@@ -27,7 +27,7 @@ class encoded_segments_view::iterator
     char const* next_ = nullptr;
     char const* end_ = nullptr;
 
-    friend encoded_segments_view;
+    friend segments_encoded_view;
 
     explicit
     iterator(

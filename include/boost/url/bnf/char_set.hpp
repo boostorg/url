@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/bnf/detail/char_set.hpp>
+#include <boost/type_traits/make_void.hpp>
 #include <boost/static_assert.hpp>
 #include <cstdint>
 
@@ -132,7 +133,8 @@ class lut_chars
     construct(Pred pred) noexcept
     {
         return pred(255) ?
-            lut_chars(255) :
+            lut_chars(static_cast<
+                char>(255)) :
             lut_chars();
     }
 

@@ -75,7 +75,7 @@ public:
 
         BOOST_TEST(check("1.2.3.4", host_type::ipv4)
             .ipv4.to_bytes() == (
-                std::array<std::uint8_t, 4>({1,2,3,4})));
+                std::array<std::uint8_t, 4>({{1,2,3,4}})));
 
         BOOST_TEST(check(
             "[1:2:3:4:5:6:7:8]", host_type::ipv6)

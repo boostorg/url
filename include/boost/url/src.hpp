@@ -28,12 +28,13 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/except.ipp>
 #include <boost/url/detail/impl/pct_encoding.ipp>
 
-#include <boost/url/impl/encoded_segments_view.ipp>
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/ipv4_address.ipp>
 #include <boost/url/impl/ipv6_address.ipp>
 #include <boost/url/impl/query_params_view.ipp>
 #include <boost/url/impl/scheme.ipp>
+#include <boost/url/impl/segments_encoded.ipp>
+#include <boost/url/impl/segments_encoded_view.ipp>
 #include <boost/url/impl/static_pool.ipp>
 #include <boost/url/impl/static_url.ipp>
 #include <boost/url/impl/url.ipp>

@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/encoded_segments_view.hpp>
+#include <boost/url/segments_encoded_view.hpp>
 
 #include "test_suite.hpp"
 #include <algorithm>
@@ -20,7 +20,7 @@
 namespace boost {
 namespace urls {
 
-class encoded_segments_view_test
+class segments_encoded_view_test
 {
 public:
     template<class It>
@@ -33,9 +33,9 @@ public:
 
     void
     bad(string_view s,
-        encoded_segments_view (*f)(string_view))
+        segments_encoded_view (*f)(string_view))
     {
-        encoded_segments_view p;
+        segments_encoded_view p;
         BOOST_TEST_THROWS(p = f(s),
             std::exception);
         BOOST_TEST(p.empty());
@@ -48,9 +48,9 @@ public:
         string_view s,
         std::vector<
             std::string> const& v0,
-        encoded_segments_view (*f)(string_view))
+        segments_encoded_view (*f)(string_view))
     {
-        encoded_segments_view p;
+        segments_encoded_view p;
         BOOST_TEST_NO_THROW(p = f(s));
         // forward
         {
@@ -79,13 +79,13 @@ public:
     testIterator()
     {
         BOOST_TEST(
-            encoded_segments_view::iterator() ==
-            encoded_segments_view::iterator());
-        encoded_segments_view p;
+            segments_encoded_view::iterator() ==
+            segments_encoded_view::iterator());
+        segments_encoded_view p;
         BOOST_TEST(p.begin() !=
-            encoded_segments_view::iterator());
+            segments_encoded_view::iterator());
         BOOST_TEST(p.end() !=
-            encoded_segments_view::iterator());
+            segments_encoded_view::iterator());
         BOOST_TEST(
             p.begin() == p.end());
 
@@ -199,8 +199,8 @@ public:
 };
 
 TEST_SUITE(
-    encoded_segments_view_test,
-    "boost.url.encoded_segments_view");
+    segments_encoded_view_test,
+    "boost.url.segments_encoded_view");
 
 } // urls
 } // boost

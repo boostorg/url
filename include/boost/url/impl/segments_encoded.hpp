@@ -7,18 +7,17 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-// Test that header file is self-contained.
-#include <boost/url/string.hpp>
+#ifndef BOOST_URL_IMPL_SEGMENTS_ENCODED_HPP
+#define BOOST_URL_IMPL_SEGMENTS_ENCODED_HPP
 
-#include <boost/static_assert.hpp>
+#include <boost/url/detail/config.hpp>
+#include <boost/url/string.hpp>
+#include <iterator>
 
 namespace boost {
 namespace urls {
 
-#ifdef BOOST_URL_HAS_STRING_VIEW
-BOOST_STATIC_ASSERT(is_stringish<
-    std::string_view>::value);
-#endif
-
 } // urls
 } // boost
+
+#endif

@@ -16,6 +16,7 @@
 #include <boost/url/scheme.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/bnf/parse.hpp>
+#include <boost/url/detail/copied_strings.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/detail/print.hpp>
@@ -1019,11 +1020,14 @@ remove_origin() noexcept
 //
 //------------------------------------------------
 
-string_view
+auto
 url::
-encoded_segment(
-    int index) const noexcept
+segment_impl(
+    std::size_t i) const noexcept ->
+        raw_segment
 {
+    BOOST_ASSERT(
+        i < segment_count());
 #if 0
     std::size_t i;
     if(index < 0)
@@ -1047,8 +1051,133 @@ encoded_segment(
         s.remove_prefix(1);
     return s;
 #else
-    return this->url_view::encoded_segment(index);
+    auto n = len(id_path);
+    if(segment_count() < 2)
+        return { offset(id_path), n };
+    auto it = s_ + offset(id_path);
+    auto start = it;
+    auto const last =
+        s_ + offset(id_query);
+    BOOST_ASSERT(n > 0);
+    for(;;)
+    {
+        for(;;)
+        {
+            ++it;
+            if(*it == '/')
+                break;
+            if(it == last)
+                break;
+        }
+        if(i == 0)
+            break;
+        start = it;
+        --i;
+    }
+    return {
+        static_cast<std::size_t>(
+            start - s_),
+        static_cast<std::size_t>(
+            it - start ) };
 #endif
+}
+
+string_view
+url::
+encoded_segment(
+    int index) const noexcept
+{
+    std::size_t i;
+    raw_segment r;
+    if(index >= 0)
+    {
+        i = static_cast<
+            std::size_t>(index);
+        if(i >= nseg_)
+            return empty_;
+        r = segment_impl(i);
+    }
+    else
+    {
+        i = static_cast<
+            std::size_t>(-index);
+        if(i > nseg_)
+            return empty_;
+        r = segment_impl(nseg_ - i);
+    }
+    string_view s = {
+        s_ + r.pos, r.len };
+    if(s.starts_with('/'))
+        s.remove_prefix(1);
+    return s;
+}
+
+segments_encoded
+url::
+encoded_segments() noexcept
+{
+    return segments_encoded(*this);
+}
+
+char*
+url::
+resize_segment_impl(
+    raw_segment const& r,
+    std::size_t n)
+{
+    if(n < r.len)
+    {
+        // shrinking
+        std::memmove(
+            s_ + r.pos + n,
+            s_ + r.pos + r.len,
+            size() - (r.pos + r.len));
+        resize_impl(
+            id_path,
+            len(id_path) - (
+                r.len - n));
+        return s_ + r.pos;
+    }
+    // growing
+    auto n0 = offset(id_query) -
+        (r.pos + r.len);
+    resize_impl(
+        id_path,
+        len(id_path) + (
+            n - r.len));
+    std::memmove(
+        s_ + r.pos + n,
+        s_ + r.pos + r.len,
+        n0);
+    return s_ + r.pos;
+}
+
+void
+url::
+set_encoded_segment(
+    std::size_t i,
+    string_view s0)
+{
+    detail::copied_strings cs(
+        encoded_url());
+    auto s = cs.maybe_copy(s0);
+    auto r = segment_impl(i);
+    auto n = s.size();
+    if( r.len == 0 ||
+        s_[r.pos] == '/')
+    {
+        auto p =
+            resize_segment_impl(r, n + 1);
+        if(! s.empty())
+            std::memcpy(p + 1,
+                s.data(), s.size());
+        p[0] = '/';
+        return;
+    }
+    auto p = resize_segment_impl(r, n);
+    if(! s.empty())
+        std::memcpy(p,
+            s.data(), s.size());
 }
 
 //------------------------------------------------

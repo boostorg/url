@@ -28,6 +28,8 @@ local SOURCES =
     pct_encoding.cpp
     query_params_view.cpp
     scheme.cpp
+    segments_encoded.cpp
+    segments_encoded_view.cpp
     segments_view.cpp
     static_pool.cpp
     static_url.cpp

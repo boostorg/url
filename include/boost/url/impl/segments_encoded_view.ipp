@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_ENCODED_SEGMENTS_VIEW_IPP
-#define BOOST_URL_IMPL_ENCODED_SEGMENTS_VIEW_IPP
+#ifndef BOOST_URL_IMPL_SEGMENTS_ENCODED_VIEW_IPP
+#define BOOST_URL_IMPL_SEGMENTS_ENCODED_VIEW_IPP
 
 #include <boost/url/segments_view.hpp>
 #include <boost/url/error.hpp>
@@ -21,8 +21,8 @@
 namespace boost {
 namespace urls {
 
-encoded_segments_view::
-encoded_segments_view() noexcept
+segments_encoded_view::
+segments_encoded_view() noexcept
     : s_("")
     , n_(0)
 {
@@ -30,7 +30,7 @@ encoded_segments_view() noexcept
 
 //------------------------------------------------
 
-encoded_segments_view::
+segments_encoded_view::
 iterator::
 iterator(
     string_view s)
@@ -68,7 +68,7 @@ iterator(
     }
 }
 
-encoded_segments_view::
+segments_encoded_view::
 iterator::
 iterator(
     std::size_t n,
@@ -81,7 +81,7 @@ iterator(
 }
 
 auto
-encoded_segments_view::
+segments_encoded_view::
 iterator::
 operator++() noexcept ->
     iterator&
@@ -108,7 +108,7 @@ operator++() noexcept ->
 }
 
 auto
-encoded_segments_view::
+segments_encoded_view::
 iterator::
 operator--() noexcept ->
     iterator&
@@ -158,7 +158,7 @@ operator--() noexcept ->
 //------------------------------------------------
 
 auto
-encoded_segments_view::
+segments_encoded_view::
 begin() const noexcept ->
     iterator
 {
@@ -166,7 +166,7 @@ begin() const noexcept ->
 }
 
 auto
-encoded_segments_view::
+segments_encoded_view::
 end() const noexcept ->
     iterator
 {
@@ -178,7 +178,7 @@ end() const noexcept ->
 std::ostream&
 operator<<(
     std::ostream& os,
-    encoded_segments_view const& pv)
+    segments_encoded_view const& pv)
 {
     // VFALCO TODO
     return os;
@@ -186,7 +186,7 @@ operator<<(
 
 //------------------------------------------------
 
-encoded_segments_view
+segments_encoded_view
 parse_path_abempty(
     string_view s,
     error_code& ec) noexcept
@@ -195,11 +195,11 @@ parse_path_abempty(
     path_abempty_bnf t;
     if(! parse_string(s, ec, t))
         return {};
-    return encoded_segments_view(
+    return segments_encoded_view(
         t.str, t.count);
 }
 
-encoded_segments_view
+segments_encoded_view
 parse_path_abempty(
     string_view s)
 {
@@ -210,7 +210,7 @@ parse_path_abempty(
     return p;
 }
 
-encoded_segments_view
+segments_encoded_view
 parse_path_absolute(
     string_view s,
     error_code& ec) noexcept
@@ -219,11 +219,11 @@ parse_path_absolute(
     path_absolute_bnf t;
     if(! parse_string(s, ec, t))
         return {};
-    return encoded_segments_view(
+    return segments_encoded_view(
         t.str, t.count);
 }
 
-encoded_segments_view
+segments_encoded_view
 parse_path_absolute(
     string_view s)
 {
@@ -234,7 +234,7 @@ parse_path_absolute(
     return p;
 }
 
-encoded_segments_view
+segments_encoded_view
 parse_path_noscheme(
     string_view s,
     error_code& ec) noexcept
@@ -243,11 +243,11 @@ parse_path_noscheme(
     path_noscheme_bnf t;
     if(! parse_string(s, ec, t))
         return {};
-    return encoded_segments_view(
+    return segments_encoded_view(
         t.str, t.count);
 }
 
-encoded_segments_view
+segments_encoded_view
 parse_path_noscheme(
     string_view s)
 {
@@ -258,7 +258,7 @@ parse_path_noscheme(
     return p;
 }
 
-encoded_segments_view
+segments_encoded_view
 parse_path_rootless(
     string_view s,
     error_code& ec) noexcept
@@ -267,11 +267,11 @@ parse_path_rootless(
     path_rootless_bnf t;
     if(! parse_string(s, ec, t))
         return {};
-    return encoded_segments_view(
+    return segments_encoded_view(
         t.str, t.count);
 }
 
-encoded_segments_view
+segments_encoded_view
 parse_path_rootless(
     string_view s)
 {

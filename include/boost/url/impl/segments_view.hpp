@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_IMPL_SEGMENTS_VIEW_HPP
 #define BOOST_URL_IMPL_SEGMENTS_VIEW_HPP
 
-#include <boost/url/encoded_segments_view.hpp>
+#include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/rfc/paths_bnf.hpp>
@@ -121,7 +121,7 @@ public:
 template<class Alloc>
 segments_view<Alloc>::
 segments_view(
-    encoded_segments_view const& sv,
+    segments_encoded_view const& sv,
     Alloc const& a) noexcept
     : s_(sv.s_)
     , n_(sv.n_)

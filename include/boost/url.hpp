@@ -10,7 +10,6 @@
 #ifndef BOOST_URL_HPP
 #define BOOST_URL_HPP
 
-#include <boost/url/encoded_segments_view.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/host_type.hpp>
 #include <boost/url/ipv4_address.hpp>
@@ -19,6 +18,8 @@
 #include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
+#include <boost/url/segments_encoded.hpp>
+#include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
 #include <boost/url/static_pool.hpp>
 #include <boost/url/static_url.hpp>

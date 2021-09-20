@@ -14,6 +14,7 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/scheme.hpp>
+#include <boost/url/segments_encoded.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <cstdint>
@@ -53,6 +54,8 @@ class url_view;
 class BOOST_SYMBOL_VISIBLE url
     : public url_view
 {
+    friend class segments_encoded::reference;
+
 #ifndef BOOST_URL_DOCS
 protected:
 #endif
@@ -847,6 +850,28 @@ public:
     //
     //--------------------------------------------
 
+private:
+    struct raw_segment
+    {
+        std::size_t pos;
+        std::size_t len;
+    };
+
+    raw_segment
+    segment_impl(
+        std::size_t i) const noexcept;
+
+    char*
+    resize_segment_impl(
+        raw_segment const& r,
+        std::size_t n);
+
+    void
+    set_encoded_segment(
+        std::size_t i,
+        string_view s);
+public:
+
     /** Set the path.
 
         Sets the path of the URL to the specified
@@ -953,6 +978,10 @@ public:
     string_view
     encoded_segment(
         int i) const noexcept override;
+
+    BOOST_URL_DECL
+    segments_encoded
+    encoded_segments() noexcept;
 
     //--------------------------------------------
     //
