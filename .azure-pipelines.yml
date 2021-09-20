@@ -1,3 +1,4 @@
+---
 # Copyright 2015-2019 Rene Rivera.
 # Copyright 2019 Mateusz Loskot <mateusz at loskot dot net>
 # Copyright 2020 Alexander Grund
@@ -22,17 +23,17 @@
 trigger:
   branches:
     include:
-    - develop
-    - master
-    - bugfix/*
-    - feature/*
-    - fix/*
-    - pr/*
+      - develop
+      - master
+      - bugfix/*
+      - feature/*
+      - fix/*
+      - pr/*
 
 pr:
   branches:
     include:
-    - develop
+      - develop
 
 variables:
   B2_CI_VERSION: 1
@@ -40,221 +41,293 @@ variables:
   B2_LINK: shared,static
 
 stages:
+  - stage: Test
+    jobs:
+      - job: 'Linux'
+        strategy:
+          matrix:
+            GCC_10:
+              B2_TOOLSET: gcc
+              B2_CXXSTD: 14,17,20
+              CXX: g++-10
+              PACKAGES: g++-10
+              VM_IMAGE: ubuntu-20.04
+            GCC_9:
+              B2_TOOLSET: gcc
+              B2_CXXSTD: 14,17,2a
+              CXX: g++-9
+              PACKAGES: g++-9
+              VM_IMAGE: ubuntu-20.04
+            GCC_8:
+              B2_TOOLSET: gcc
+              B2_CXXSTD: 14,17,2a
+              CXX: g++-8
+              PACKAGES: g++-8
+              VM_IMAGE: ubuntu-20.04
+            GCC_7:
+              B2_TOOLSET: gcc
+              B2_CXXSTD: 11,14,17
+              CXX: g++-7
+              PACKAGES: g++-7
+              VM_IMAGE: ubuntu-18.04
+            GCC_6:
+              B2_TOOLSET: gcc
+              B2_CXXSTD: 11,14
+              CXX: g++-6
+              PACKAGES: g++-6
+              VM_IMAGE: ubuntu-18.04
+            GCC_5:
+              B2_TOOLSET: gcc
+              B2_CXXSTD: 11
+              CXX: g++-5
+              PACKAGES: g++-5
+              VM_IMAGE: ubuntu-18.04
+            # Should move to containers. See note in containers section below.
+            #  GCC_4_9:
+            #  B2_TOOLSET: gcc
+            #  B2_CXXSTD: 11
+            #  CXX: g++-4.9
+            #  PACKAGES: g++-4.9
+            #  VM_IMAGE: ubuntu-18.04
+            #  containerImage: ubuntu:16.04
+            GCC_4_8:
+              B2_TOOLSET: gcc
+              B2_CXXSTD: 11
+              CXX: g++-4.8
+              PACKAGES: g++-4.8
+              VM_IMAGE: ubuntu-18.04
+            Clang_12:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 14,17,20
+              CXX: clang++-12
+              PACKAGES: clang-12
+              VM_IMAGE: ubuntu-20.04
+            Clang_11:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 14,17,20
+              CXX: clang++-11
+              PACKAGES: clang-11
+              VM_IMAGE: ubuntu-20.04
+            Clang_10:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 14,17,20
+              CXX: clang++-10
+              PACKAGES: clang-10
+              VM_IMAGE: ubuntu-20.04
+            Clang_9:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 14,17,2a
+              CXX: clang++-9
+              PACKAGES: clang-9
+              VM_IMAGE: ubuntu-20.04
+            Clang_8:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 14,17
+              CXX: clang++-8
+              PACKAGES: clang-8 libc6-dbg libc++-dev libstdc++-8-dev
+              LLVM_OS: bionic
+              LLVM_REPO: llvm-toolchain-bionic-8
+              VM_IMAGE: ubuntu-18.04
+            Clang_7:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 14,17
+              CXX: clang++-7
+              PACKAGES: clang-7 libc6-dbg libc++-dev libstdc++-8-dev
+              LLVM_OS: bionic
+              LLVM_REPO: llvm-toolchain-bionic-7
+              VM_IMAGE: ubuntu-18.04
+            Clang_6_libcxx:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 11,14,17
+              B2_STDLIB: libc++
+              CXX: clang++-6.0
+              PACKAGES: clang-6.0 libc6-dbg libc++-dev libc++abi-dev libstdc++-8-dev
+              LLVM_OS: bionic
+              LLVM_REPO: llvm-toolchain-bionic-6.0
+              VM_IMAGE: ubuntu-18.04
+            Clang_6:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 14,17
+              CXX: clang++-6.0
+              PACKAGES: clang-6.0 libc6-dbg libc++-dev libc++abi-dev libstdc++-8-dev
+              LLVM_OS: bionic
+              LLVM_REPO: llvm-toolchain-bionic-6.0
+              VM_IMAGE: ubuntu-18.04
+            Clang_5:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 11,14,17
+              PACKAGES: clang-5.0
+              CXX: clang++-5.0
+              LLVM_REPO: llvm-toolchain-xenial-5.0
+              VM_IMAGE: ubuntu-18.04
+            Clang_4:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 11,14
+              CXX: clang++-4.0
+              PACKAGES: clang-4.0
+              LLVM_REPO: llvm-toolchain-xenial-4.0
+              VM_IMAGE: ubuntu-18.04
+            Clang_3_9:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 11,14
+              CXX: clang++-3.9
+              PACKAGES: clang-3.9
+              VM_IMAGE: ubuntu-18.04
+            # Should move to containers. See note in containers section below.
+            # Clang_3_8:
+            #   B2_TOOLSET: clang
+            #   CXX: clang++-3.8
+            #   B2_CXXSTD: 11,14
+            #   PACKAGES: clang-3.8
+            #   VM_IMAGE: ubuntu-18.04
+            #   containerImage: ubuntu:16.04
+            Clang_3_7:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 11
+              CXX: clang++-3.7
+              PACKAGES: clang-3.7
+              VM_IMAGE: ubuntu-18.04
+            Clang_3_6:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 11
+              CXX: clang++-3.6
+              PACKAGES: clang-3.6
+              VM_IMAGE: ubuntu-18.04
+              # Should move to containers. See note in containers section below.
+              # Clang_3_5:
+              #   B2_TOOLSET: clang
+              #   B2_CXXSTD: 11
+              #   CXX: clang++-3.5
+              #   PACKAGES: clang-3.5
+              #   VM_IMAGE: ubuntu-18.04
+              #   containerImage: ubuntu:16.04
 
-- stage: Test
-  jobs:
+        pool:
+          vmImage: $(VM_IMAGE)
 
-  - job: 'Linux'
-    pool:
-      vmImage: 'ubuntu-16.04'
-    strategy:
-      matrix:
-        GCC_8:
-          B2_TOOLSET: gcc
-          B2_CXXSTD: 14,17,2a
-          CXX: g++-8
-          PACKAGES: g++-8
-        GCC_7:
-          B2_TOOLSET: gcc
-          B2_CXXSTD: 11,14,17
-          CXX: g++-7
-          PACKAGES: g++-7
-        GCC_6:
-          B2_TOOLSET: gcc
-          B2_CXXSTD: 11,14
-          CXX: g++-6
-          PACKAGES: g++-6
-        GCC_5:
-          B2_TOOLSET: gcc
-          B2_CXXSTD: 11
-          CXX: g++-5
-          PACKAGES: g++-5
-        GCC_4_9:
-          B2_TOOLSET: gcc
-          B2_CXXSTD: 11
-          CXX: g++-4.9
-          PACKAGES: g++-4.9
-        GCC_4_8:
-          B2_TOOLSET: gcc
-          B2_CXXSTD: 11
-          CXX: g++-4.8
-          PACKAGES: g++-4.8
-        Clang_8:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
-          CXX: clang++-8
-          PACKAGES: clang-8
-          LLVM_REPO: llvm-toolchain-xenial-8
-        Clang_7:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
-          CXX: clang++-7
-          PACKAGES: clang-7
-          LLVM_REPO: llvm-toolchain-xenial-7
-        Clang_6_libcxx:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 11,14,17,2a
-          B2_STDLIB: libc++
-          CXX: clang++-6.0
-          PACKAGES: clang-6.0
-          LLVM_REPO: llvm-toolchain-xenial-6.0
-        Clang_6:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
-          CXX: clang++-6.0
-          PACKAGES: clang-6.0
-          LLVM_REPO: llvm-toolchain-xenial-6.0
-        Clang_5:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 11,14,17
-          PACKAGES: clang-5.0
-          CXX: clang++-5.0
-          LLVM_REPO: llvm-toolchain-xenial-5.0
-        Clang_4:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 11,14
-          CXX: clang++-4.0
-          PACKAGES: clang-4.0
-          LLVM_REPO: llvm-toolchain-xenial-4.0
-        Clang_3_9:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 11,14
-          CXX: clang++-3.9
-          PACKAGES: clang-3.9
-        Clang_3_8:
-          B2_TOOLSET: clang
-          CXX: clang++-3.8
-          B2_CXXSTD: 11,14
-          PACKAGES: clang-3.8
-        Clang_3_7:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 11
-          CXX: clang++-3.7
-          PACKAGES: clang-3.7
-        Clang_3_6:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 11
-          CXX: clang++-3.6
-          PACKAGES: clang-3.6
-        Clang_3_5:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 11
-          CXX: clang++-3.5
-          PACKAGES: clang-3.5
-    steps:
-    - bash: |
-        set -e
+        steps:
+          - bash: |
+              set -e
 
-        git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
-        cp -prf boost-ci-cloned/ci .
-        rm -rf boost-ci-cloned
-        source ci/azure-pipelines/install.sh
-      displayName: 'Install'
-    - bash: |
-        set -e
-        echo "SELF=$SELF"
-        echo "BOOST_ROOT=$BOOST_ROOT"
+              git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
+              cp -prf boost-ci-cloned/ci .
+              rm -rf boost-ci-cloned
+              source ci/azure-pipelines/install.sh
+            displayName: 'Install'
+          - bash: |
+              set -e
+              echo "SELF=$SELF"
+              echo "BOOST_ROOT=$BOOST_ROOT"
 
-        cd $BOOST_ROOT/libs/$SELF
-        ci/azure-pipelines/build.sh
-      displayName: 'Build'
+              cd $BOOST_ROOT/libs/$SELF
+              ci/azure-pipelines/build.sh
+            displayName: 'Build'
 
-  - job: 'Windows'
-    strategy:
-      matrix:
-        VS_2019_cxx2a_strict:
-          B2_TOOLSET: msvc-14.2
-          B2_CXXSTD: latest # 2a
-          B2_CXXFLAGS: -permissive-
-          B2_ADDRESS_MODEL: 64
-          VM_IMAGE: 'windows-2019'
-        VS_2017_cxx2a_strict:
-          B2_TOOLSET: msvc-14.1
-          B2_CXXSTD: latest # 2a
-          B2_CXXFLAGS: -permissive-
-          B2_ADDRESS_MODEL: 64
-          VM_IMAGE: 'vs2017-win2016'
-        VS_2017_cxx17:
-          B2_TOOLSET: msvc-14.1
-          B2_CXXSTD: 17
-          B2_ADDRESS_MODEL: 64,32
-          VM_IMAGE: 'vs2017-win2016'
-        VS_2017_cxx14:
-          B2_TOOLSET: msvc-14.1
-          #B2_CXXSTD: 14 # default
-          B2_ADDRESS_MODEL: 64,32
-          VM_IMAGE: 'vs2017-win2016'
+      #
+      # 2021-09 DOCKER CONTAINERS NOTE
+      #
+      # Azure Pipeline containers don't run as root, and don't have sudo installed.
+      # https://github.com/microsoft/azure-pipelines-agent/issues/2043
+      # Luckily, this only affects a small number of jobs, which can be run in other CI.
+      # After the bug is fixed, containers may be used, similar to github/workflows/ci.yml
+      #
 
-    pool:
-      vmImage: $(VM_IMAGE)
-    steps:
-    - script: |
-        git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
-        xcopy /s /e /q /i /y boost-ci-cloned\ci .\ci
-        rmdir /s /q boost-ci-cloned
-        ci\azure-pipelines\install.bat
-      displayName: 'Install'
-    - script: ci\build.bat
-      displayName: 'Build'
+      - job: 'Windows'
+        strategy:
+          matrix:
+            VS_2019_cxx20:
+              B2_TOOLSET: msvc-14.2
+              B2_CXXSTD: 20
+              B2_CXXFLAGS: -permissive-
+              B2_ADDRESS_MODEL: 64
+              VM_IMAGE: 'windows-2019'
+            VS_2017_cxx2a_strict:
+              B2_TOOLSET: msvc-14.1
+              B2_CXXSTD: latest  # 2a
+              B2_CXXFLAGS: -permissive-
+              B2_ADDRESS_MODEL: 64
+              VM_IMAGE: 'vs2017-win2016'
+            VS_2017_cxx17:
+              B2_TOOLSET: msvc-14.1
+              B2_CXXSTD: 17
+              B2_ADDRESS_MODEL: 64,32
+              VM_IMAGE: 'vs2017-win2016'
+            VS_2017_cxx14:
+              B2_TOOLSET: msvc-14.1
+              # B2_CXXSTD: 14  # default
+              B2_ADDRESS_MODEL: 64,32
+              VM_IMAGE: 'vs2017-win2016'
 
-  - job: 'macOS'
-    pool:
-      vmImage: 'macOS-10.14'
-    strategy:
-      matrix:
-        Xcode_11_3_1:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
-          XCODE_APP: /Applications/Xcode_11.3.1.app
-        Xcode_11_2_1:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
-          XCODE_APP: /Applications/Xcode_11.2.1.app
-        Xcode_11_2:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
-          XCODE_APP: /Applications/Xcode_11.2.app
-        Xcode_11_1:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
-          XCODE_APP: /Applications/Xcode_11.1.app
-        Xcode_10_3:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 11,14,17,2a
-          XCODE_APP: /Applications/Xcode_10.3.app
-        Xcode_10_2_1:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 11,14,17,2a
-          XCODE_APP: /Applications/Xcode_10.2.1.app
-        Xcode_10_2:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 11,14,17,2a
-          XCODE_APP: /Applications/Xcode_10.2.app
+        pool:
+          vmImage: $(VM_IMAGE)
+        steps:
+          - script: |
+              git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
+              xcopy /s /e /q /i /y boost-ci-cloned\ci .\ci
+              rmdir /s /q boost-ci-cloned
+              ci\azure-pipelines\install.bat
+            displayName: 'Install'
+          - script: ci\build.bat
+            displayName: 'Build'
 
-        # These get mysterious link errors for std::basic_string members
-        #Xcode_10_1:
-        #  B2_TOOLSET: clang
-        #  B2_CXXSTD: 11,14,17,2a
-        #  XCODE_APP: /Applications/Xcode_10.1.app
-        #Xcode_10_0:
-        #  B2_TOOLSET: clang
-        #  B2_CXXSTD: 11,14,17,2a
-        #  XCODE_APP: /Applications/Xcode_10.app
+      - job: 'macOS'
+        pool:
+          vmImage: 'macOS-10.14'
+        strategy:
+          matrix:
+            Xcode_11_3_1:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 14,17,2a
+              XCODE_APP: /Applications/Xcode_11.3.1.app
+            Xcode_11_2_1:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 14,17,2a
+              XCODE_APP: /Applications/Xcode_11.2.1.app
+            Xcode_11_2:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 14,17,2a
+              XCODE_APP: /Applications/Xcode_11.2.app
+            Xcode_11_1:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 14,17,2a
+              XCODE_APP: /Applications/Xcode_11.1.app
+            Xcode_10_3:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 11,14,17,2a
+              XCODE_APP: /Applications/Xcode_10.3.app
+            Xcode_10_2_1:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 11,14,17,2a
+              XCODE_APP: /Applications/Xcode_10.2.1.app
+            Xcode_10_2:
+              B2_TOOLSET: clang
+              B2_CXXSTD: 11,14,17,2a
+              XCODE_APP: /Applications/Xcode_10.2.app
 
-    steps:
-    - bash: |
-        set -e
+              # These get mysterious link errors for std::basic_string members
+              # Xcode_10_1:
+              #   B2_TOOLSET: clang
+              #   B2_CXXSTD: 11,14,17,2a
+              #   XCODE_APP: /Applications/Xcode_10.1.app
+              # Xcode_10_0:
+              #   B2_TOOLSET: clang
+              #   B2_CXXSTD: 11,14,17,2a
+              #   XCODE_APP: /Applications/Xcode_10.app
 
-        git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
-        cp -prf boost-ci-cloned/ci .
-        rm -rf boost-ci-cloned
-        source ci/azure-pipelines/install.sh
-      displayName: Install
-    - bash: |
-        set -e
-        echo "SELF=$SELF"
-        echo "BOOST_ROOT=$BOOST_ROOT"
+        steps:
+          - bash: |
+              set -e
 
-        cd $BOOST_ROOT/libs/$SELF
-        ci/azure-pipelines/build.sh
-      displayName: 'Build'
+              git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci-cloned
+              cp -prf boost-ci-cloned/ci .
+              rm -rf boost-ci-cloned
+              source ci/azure-pipelines/install.sh
+            displayName: Install
+          - bash: |
+              set -e
+              echo "SELF=$SELF"
+              echo "BOOST_ROOT=$BOOST_ROOT"
+
+              cd $BOOST_ROOT/libs/$SELF
+              ci/azure-pipelines/build.sh
+            displayName: 'Build'
