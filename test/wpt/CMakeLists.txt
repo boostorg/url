@@ -18,27 +18,6 @@ set(F
     main.cpp
     )
 
-if(BOOST_URL_IS_ROOT)
-    #
-    # Building inside Boost tree, but as a separate project e.g. on Travis or
-    # other CI, or when producing Visual Studio Solution and Projects. This is
-    # when we have to add dependencies to the project manually.
-    set(BUILD_TESTING OFF)
-    foreach(lib
-        json
-    )
-        add_subdirectory(../../../${lib} libs/${lib} EXCLUDE_FROM_ALL)
-        set(target boost_${lib})
-        if(TARGET ${target})
-          get_target_property(lib_type ${target} TYPE)
-          if(NOT ${lib_type} STREQUAL INTERFACE_LIBRARY)
-            set_property(TARGET ${target} PROPERTY FOLDER _deps/${lib})
-          endif()
-        endif()
-    endforeach()
-    unset(BUILD_TESTING)
-endif()
-
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "" FILES ${F})
 add_executable(boost_wpt_tests ${F})
 target_include_directories(boost_wpt_tests PRIVATE . ../../extra/include)

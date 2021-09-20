@@ -10,7 +10,7 @@
 set(TEST_MAIN ../../extra/test_main.cpp)
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES limits.cpp Jamfile)
-source_group(TREE "../extra" PREFIX "" FILES ${TEST_MAIN})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${TEST_MAIN})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../src PREFIX "_extra" FILES ../../src/src.cpp)
 add_executable(boost_url_limits limits.cpp Jamfile ${TEST_MAIN} ../../src/src.cpp)
 target_include_directories(boost_url_limits PRIVATE ../../include ../../extra/include ../../..)
