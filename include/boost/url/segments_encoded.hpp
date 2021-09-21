@@ -23,6 +23,31 @@ namespace urls {
 class url;
 #endif
 
+/** A reference to modifiable URL segments
+
+    This class implements a <em>RandomAccessContainer</em>
+    representing the path segments in a @ref url as
+    percent-encoded strings. Ownership of the segments
+    is not transferred; the container references the
+    buffer in the url. Therefore, the lifetime of the
+    url must remain valid until this container no
+    longer exists.
+
+    Objects of this type are not constructed directly.
+    Instead, call the corresponding non-const member
+    function of @ref url to obtain an instance of
+    the container:
+
+    @par Example
+    @code
+    url u = parse_relative_ref( "/path/to/file.txt" );
+
+    segments_encoded se = u.encoded_segments();
+    @endcode
+
+    @see
+        @ref url.
+*/
 class segments_encoded
 {
     url* u_ = nullptr;
@@ -37,6 +62,8 @@ class segments_encoded
     }
 
 public:
+    /** A <em>RandomAccessProxyIterator</em>
+    */
     class iterator;
     class reference;
     class const_iterator;
@@ -185,115 +212,6 @@ public:
 //------------------------------------------------
 
 class segments_encoded::
-    const_reference
-{
-    url const* u_ = nullptr;
-    std::size_t i_ = 0;
-
-    friend class segments_encoded;
-    friend class const_iterator;
-
-    const_reference(
-        url const& u,
-        std::size_t i) noexcept
-        : u_(&u)
-        , i_(i)
-    {
-    }
-
-public:
-    BOOST_URL_DECL
-    operator
-    string_view() const noexcept;
-
-    operator
-    std::string() const noexcept
-    {
-        return std::string(
-            string_view(*this));
-    }
-
-#ifdef BOOST_URL_HAS_STRING_VIEW
-    operator
-    std::string_view() const noexcept
-    {
-        auto s = string_view(*this);
-        return { s.data(), s.size() };
-    }
-#endif
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator==(
-        const_reference const& x1,
-        T const& x2 ) noexcept
-    {
-        return
-            string_view(x1) ==
-            to_string_view(x2);
-    }
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator==(
-        T const& x1,
-        const_reference x2 ) noexcept
-    {
-        return
-            to_string_view(x1) ==
-            string_view(x2);
-    }
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator!=(
-        const_reference const& x1,
-        T const& x2 ) noexcept
-    {
-        return !( x1 == x2 );
-    }
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator!=(
-        T const& x1,
-        const_reference const& x2 ) noexcept
-    {
-        return !(x1 == x2);
-    }
-};
-
-//------------------------------------------------
-
-class segments_encoded::
     reference
 {
     url* u_ = nullptr;
@@ -318,12 +236,9 @@ public:
         return *this;
     }
 
+    inline
     reference&
-    operator=(const_reference const& other)
-    {
-        *this = string_view(other);
-        return *this;
-    }
+    operator=(const_reference const& other);
 
     template<class T>
 #ifdef BOOST_JSON_DOCS
@@ -443,6 +358,122 @@ public:
 
 //------------------------------------------------
 
+class segments_encoded::
+    const_reference
+{
+    url const* u_ = nullptr;
+    std::size_t i_ = 0;
+
+    friend class segments_encoded;
+    friend class const_iterator;
+
+    const_reference(
+        url const& u,
+        std::size_t i) noexcept
+        : u_(&u)
+        , i_(i)
+    {
+    }
+
+public:
+    const_reference(
+        reference const& other) noexcept
+        : u_(other.u_)
+        , i_(other.i_)
+    {
+    }
+
+    BOOST_URL_DECL
+    operator
+    string_view() const noexcept;
+
+    operator
+    std::string() const noexcept
+    {
+        return std::string(
+            string_view(*this));
+    }
+
+#ifdef BOOST_URL_HAS_STRING_VIEW
+    operator
+    std::string_view() const noexcept
+    {
+        auto s = string_view(*this);
+        return { s.data(), s.size() };
+    }
+#endif
+
+    template<class T
+#ifndef BOOST_JSON_DOCS
+        , class = typename std::enable_if<
+            is_stringish<T>::value,
+                bool>::type
+#endif
+    >
+    friend
+    bool
+    operator==(
+        const_reference const& x1,
+        T const& x2 ) noexcept
+    {
+        return
+            string_view(x1) ==
+            to_string_view(x2);
+    }
+
+    template<class T
+#ifndef BOOST_JSON_DOCS
+        , class = typename std::enable_if<
+            is_stringish<T>::value,
+                bool>::type
+#endif
+    >
+    friend
+    bool
+    operator==(
+        T const& x1,
+        const_reference x2 ) noexcept
+    {
+        return
+            to_string_view(x1) ==
+            string_view(x2);
+    }
+
+    template<class T
+#ifndef BOOST_JSON_DOCS
+        , class = typename std::enable_if<
+            is_stringish<T>::value,
+                bool>::type
+#endif
+    >
+    friend
+    bool
+    operator!=(
+        const_reference const& x1,
+        T const& x2 ) noexcept
+    {
+        return !( x1 == x2 );
+    }
+
+    template<class T
+#ifndef BOOST_JSON_DOCS
+        , class = typename std::enable_if<
+            is_stringish<T>::value,
+                bool>::type
+#endif
+    >
+    friend
+    bool
+    operator!=(
+        T const& x1,
+        const_reference const& x2 ) noexcept
+    {
+        return !(x1 == x2);
+    }
+};
+
+//------------------------------------------------
+
 class segments_encoded::iterator
 {
     url* u_ = nullptr;
@@ -469,6 +500,8 @@ public:
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::random_access_iterator_tag;
+
+    iterator() = default;
 
     iterator&
     operator++() noexcept
@@ -583,7 +616,7 @@ public:
     }
 
     reference
-    operator[](ptrdiff_t n)
+    operator[](ptrdiff_t n) const
     {
         return *(*this + n);
     }
@@ -653,6 +686,8 @@ public:
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::random_access_iterator_tag;
+
+    const_iterator() = default;
 
     const_iterator(
         iterator const& it) noexcept
@@ -771,8 +806,8 @@ public:
             b.i_) - a.i_;
     }
 
-    reference
-    operator[](ptrdiff_t n)
+    const_reference
+    operator[](ptrdiff_t n) const
     {
         return *(*this + n);
     }
@@ -982,6 +1017,19 @@ segments_encoded::
 pop_back()
 {
     erase(end() - 1);
+}
+
+//------------------------------------------------
+
+auto
+segments_encoded::
+reference::
+operator=(
+    const_reference const& other) ->
+        reference&
+{
+    *this = string_view(other);
+    return *this;
 }
 
 } // urls

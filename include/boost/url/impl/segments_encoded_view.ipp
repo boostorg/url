@@ -180,7 +180,9 @@ operator<<(
     std::ostream& os,
     segments_encoded_view const& pv)
 {
-    // VFALCO TODO
+    os.write(
+        pv.s_.data(),
+        pv.s_.size());
     return os;
 }
 

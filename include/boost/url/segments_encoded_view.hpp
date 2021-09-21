@@ -88,6 +88,9 @@ public:
     iterator
     end() const noexcept;
 
+    BOOST_URL_DECL friend std::ostream&
+        operator<<(std::ostream& os,
+            segments_encoded_view const& pv);
     BOOST_URL_DECL friend segments_encoded_view
         parse_path_abempty(string_view s,
             error_code& ec) noexcept;

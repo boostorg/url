@@ -12,6 +12,10 @@
 
 #include <boost/url/url.hpp>
 #include <boost/static_assert.hpp>
+#include <iterator>
+#if __cpp_lib_ranges >= 201911
+//#include <ranges>
+#endif
 #include <sstream>
 #include "test_suite.hpp"
 
@@ -23,22 +27,49 @@ namespace urls {
 class segments_encoded_test
 {
 public:
+    BOOST_STATIC_ASSERT(
+        std::is_default_constructible<
+            segments_encoded::iterator>::value);
+
+    BOOST_STATIC_ASSERT(
+        std::is_default_constructible<
+            segments_encoded::const_iterator>::value);
+
+#if __cpp_lib_ranges >= 201911
+    /*
+    BOOST_STATIC_ASSERT(
+        std::random_access_range<
+            segments_encoded>);
+    */
+
+    BOOST_STATIC_ASSERT(
+        std::random_access_iterator<
+            segments_encoded::iterator>);
+
+    BOOST_STATIC_ASSERT(
+        std::random_access_iterator<
+            segments_encoded::const_iterator>);
+#endif
+
     // const_reference
 
     BOOST_STATIC_ASSERT(
         std::is_convertible<
             segments_encoded::const_reference,
             string_view>::value);
+
     BOOST_STATIC_ASSERT(
         std::is_convertible<
             segments_encoded::const_reference,
             std::string>::value);
+
 #ifdef BOOST_URL_HAS_STRING_VIEW
     BOOST_STATIC_ASSERT(
         std::is_convertible<
             segments_encoded::const_reference,
             std::string_view>::value);
 #endif
+
     BOOST_STATIC_ASSERT(
         ! std::is_convertible<
             segments_encoded::const_reference,
@@ -81,12 +112,14 @@ public:
         std::is_convertible<
             segments_encoded::reference,
             std::string>::value);
+
 #ifdef BOOST_URL_HAS_STRING_VIEW
     BOOST_STATIC_ASSERT(
         std::is_convertible<
             segments_encoded::reference,
             std::string_view>::value);
 #endif
+
     BOOST_STATIC_ASSERT(
         ! std::is_convertible<
             segments_encoded::reference,
@@ -118,6 +151,23 @@ public:
         std::is_assignable<
             segments_encoded::reference,
             char const*>::value);
+
+    static
+    void
+    testIterators(
+        segments_encoded::iterator i,
+        segments_encoded::const_iterator j,
+        std::ptrdiff_t n)
+    {
+        ++i;
+        i++;
+        i += n;
+        j + n;
+        n + j;
+        i -= n;
+        j - n;
+        j[n];
+    }
 
     void
     testConvert()
@@ -325,6 +375,8 @@ public:
         testAssign();
         testModifiers();
         testAlgorithms();
+
+        &testIterators;
     }
 };
 
