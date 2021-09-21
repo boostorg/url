@@ -54,6 +54,7 @@ class url_view;
 class BOOST_SYMBOL_VISIBLE url
     : public url_view
 {
+    friend class segments_encoded;
     friend class segments_encoded::reference;
 
 #ifndef BOOST_URL_DOCS
@@ -858,11 +859,16 @@ private:
     };
 
     raw_segment
-    segment_impl(
+    get_segment(
         std::size_t i) const noexcept;
 
     char*
-    resize_segment_impl(
+    resize(
+        raw_segment const& r,
+        std::size_t n);
+
+    char*
+    insert(
         raw_segment const& r,
         std::size_t n);
 
@@ -870,6 +876,16 @@ private:
     set_encoded_segment(
         std::size_t i,
         string_view s);
+
+    void
+    insert_encoded_segment(
+        std::size_t i,
+        string_view s);
+
+    void
+    erase_segments(
+        std::size_t first,
+        std::size_t last);
 public:
 
     /** Set the path.

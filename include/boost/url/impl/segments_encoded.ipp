@@ -24,10 +24,31 @@ size() const noexcept
     return u_->segment_count();
 }
 
-void
+auto
 segments_encoded::
-clear() noexcept
+insert(
+    const_iterator before,
+    string_view s) ->
+        iterator
 {
+    BOOST_ASSERT(before.u_ == u_);
+    u_->insert_encoded_segment(
+        before.i_, s);
+    return begin();
+}
+
+auto
+segments_encoded::
+erase(
+    const_iterator first,
+    const_iterator last) ->
+        iterator
+{
+    BOOST_ASSERT(first.u_ == u_);
+    BOOST_ASSERT(last.u_ == u_);
+    u_->erase_segments(
+        first.i_, last.i_);
+    return { *u_, first.i_ };
 }
 
 //------------------------------------------------

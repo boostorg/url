@@ -1022,12 +1022,16 @@ remove_origin() noexcept
 
 auto
 url::
-segment_impl(
+get_segment(
     std::size_t i) const noexcept ->
         raw_segment
 {
+    if(segment_count() == 0)
+        return { offset(id_path), 0 };
+    if(i == segment_count())
+        return { offset(id_query), 0 };
     BOOST_ASSERT(
-        i < segment_count());
+        i <= segment_count());
 #if 0
     std::size_t i;
     if(index < 0)
@@ -1082,46 +1086,9 @@ segment_impl(
 #endif
 }
 
-string_view
-url::
-encoded_segment(
-    int index) const noexcept
-{
-    std::size_t i;
-    raw_segment r;
-    if(index >= 0)
-    {
-        i = static_cast<
-            std::size_t>(index);
-        if(i >= nseg_)
-            return empty_;
-        r = segment_impl(i);
-    }
-    else
-    {
-        i = static_cast<
-            std::size_t>(-index);
-        if(i > nseg_)
-            return empty_;
-        r = segment_impl(nseg_ - i);
-    }
-    string_view s = {
-        s_ + r.pos, r.len };
-    if(s.starts_with('/'))
-        s.remove_prefix(1);
-    return s;
-}
-
-segments_encoded
-url::
-encoded_segments() noexcept
-{
-    return segments_encoded(*this);
-}
-
 char*
 url::
-resize_segment_impl(
+resize(
     raw_segment const& r,
     std::size_t n)
 {
@@ -1152,32 +1119,159 @@ resize_segment_impl(
     return s_ + r.pos;
 }
 
+// insert before r
+char*
+url::
+insert(
+    raw_segment const& r,
+    std::size_t n)
+{
+    // growing
+    auto n0 = offset(
+        id_query) - r.pos;
+    resize_impl(
+        id_path,
+        len(id_path) + n);
+    std::memmove(
+        s_ + r.pos + n,
+        s_ + r.pos,
+        n0);
+    return s_ + r.pos;
+}
+
 void
 url::
 set_encoded_segment(
     std::size_t i,
     string_view s0)
 {
+    // validate
+    error_code ec;
+    pct_decode_size(s0, ec, pchars);
+    if(ec)
+        detail::throw_invalid_argument(
+            BOOST_CURRENT_LOCATION);
+
     detail::copied_strings cs(
         encoded_url());
     auto s = cs.maybe_copy(s0);
-    auto r = segment_impl(i);
+    auto r = get_segment(i);
     auto n = s.size();
     if( r.len == 0 ||
         s_[r.pos] == '/')
     {
         auto p =
-            resize_segment_impl(r, n + 1);
+            resize(r, n + 1);
         if(! s.empty())
             std::memcpy(p + 1,
                 s.data(), s.size());
         p[0] = '/';
         return;
     }
-    auto p = resize_segment_impl(r, n);
+    auto p = resize(r, n);
     if(! s.empty())
         std::memcpy(p,
             s.data(), s.size());
+}
+
+void
+url::
+insert_encoded_segment(
+    std::size_t i,
+    string_view s0)
+{
+    // validate
+    error_code ec;
+    pct_decode_size(s0, ec, pchars);
+    if(ec)
+        detail::throw_invalid_argument(
+            BOOST_CURRENT_LOCATION);
+
+    detail::copied_strings cs(
+        encoded_url());
+    auto s = cs.maybe_copy(s0);
+    auto r = get_segment(i);
+    auto n = s.size();
+    if( r.len == 0 ||
+        s_[r.pos] == '/')
+    {
+        auto p = insert(r, n + 1);
+        if(! s.empty())
+            std::memcpy(p + 1,
+                s.data(), s.size());
+        p[0] = '/';
+        ++nseg_;
+        return;
+    }
+    auto p = insert(r, n);
+    if(! s.empty())
+        std::memcpy(p,
+            s.data(), s.size());
+    ++nseg_;
+}
+
+void
+url::
+erase_segments(
+    std::size_t first,
+    std::size_t last)
+{
+    if(segment_count() == 0)
+        return;
+    if(first == last)
+        return;
+    BOOST_ASSERT(last > first);
+    auto r0 = get_segment(first);
+    auto r1 = get_segment(last);
+    // shrinking
+    std::memmove(
+        s_ + r0.pos,
+        s_ + r1.pos,
+        size() - r1.pos);
+    resize_impl(
+        id_path,
+        len(id_path) - (
+            r1.pos - r0.pos));
+    nseg_ -= last - first;
+}
+
+//------------------------------------------------
+
+string_view
+url::
+encoded_segment(
+    int index) const noexcept
+{
+    std::size_t i;
+    raw_segment r;
+    if(index >= 0)
+    {
+        i = static_cast<
+            std::size_t>(index);
+        if(i >= nseg_)
+            return empty_;
+        r = get_segment(i);
+    }
+    else
+    {
+        i = static_cast<
+            std::size_t>(-index);
+        if(i > nseg_)
+            return empty_;
+        r = get_segment(nseg_ - i);
+    }
+    string_view s = {
+        s_ + r.pos, r.len };
+    if(s.starts_with('/'))
+        s.remove_prefix(1);
+    return s;
+}
+
+segments_encoded
+url::
+encoded_segments() noexcept
+{
+    return segments_encoded(*this);
 }
 
 //------------------------------------------------

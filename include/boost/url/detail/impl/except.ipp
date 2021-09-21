@@ -38,6 +38,14 @@ throw_length_error(
 
 void
 throw_invalid_argument(
+    source_location const& loc)
+{
+    throw_exception(
+        std::invalid_argument(""), loc);
+}
+
+void
+throw_invalid_argument(
     char const* what,
     source_location const& loc)
 {

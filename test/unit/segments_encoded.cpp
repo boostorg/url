@@ -18,17 +18,6 @@
 namespace boost {
 namespace urls {
 
-template<class T>
-struct arrow_proxy
-{
-    T t;
-
-    T* operator->() noexcept
-    {
-        return &t;
-    }
-};
-
 //------------------------------------------------
 
 class segments_encoded_test
@@ -151,6 +140,24 @@ public:
             std::string_view() = *se.cbegin();
         #endif
         }
+    }
+
+    void
+    testAssign()
+    {
+        // assign stringish to reference
+        {
+            url u = parse_relative_ref("/");
+            segments_encoded se =
+                u.encoded_segments();
+
+            *se.begin() = string_view();
+            *se.begin() = std::string();
+        #ifdef BOOST_URL_HAS_STRING_VIEW
+            *se.begin() = std::string_view();
+        #endif
+            *se.begin() = "x";
+        }
         {
             url u = parse_relative_ref(
                 "/path/to/file.txt");
@@ -189,20 +196,92 @@ public:
     }
 
     void
-    testAssign()
+    testModifiers()
     {
-        // assign stringish to reference
+        // push_back
         {
-            url u = parse_relative_ref("/");
-            segments_encoded se =
-                u.encoded_segments();
+            url u;
+            auto es = u.encoded_segments();
+            BOOST_TEST(u.segment_count() == 0);
+            es.push_back("path");
+            BOOST_TEST(u.segment_count() == 1);
+            BOOST_TEST(u.encoded_url() == "/path");
+            es.push_back("to");
+            BOOST_TEST(u.segment_count() == 2);
+            BOOST_TEST(u.encoded_url() == "/path/to");
+            es.push_back("file.txt");
+            BOOST_TEST(u.segment_count() == 3);
+            BOOST_TEST(u.encoded_url() == "/path/to/file.txt");
 
-            *se.begin() = string_view();
-            *se.begin() = std::string();
-        #ifdef BOOST_URL_HAS_STRING_VIEW
-            *se.begin() = std::string_view();
-        #endif
-            *se.begin() = "x";
+            BOOST_TEST_THROWS(es.push_back("%"), std::invalid_argument);
+            BOOST_TEST_THROWS(es.push_back("/"), std::invalid_argument);
+            BOOST_TEST_THROWS(es.push_back("%2g"), std::invalid_argument);
+        }
+
+        // pop_back
+        {
+            url u = parse_relative_ref("/path/to/file.txt");
+            auto es = u.encoded_segments();
+            BOOST_TEST(es.size() == 3);
+            es.pop_back();
+            BOOST_TEST(es.size() == 2);
+            BOOST_TEST(u.encoded_path() == "/path/to");
+            es.pop_back();
+            BOOST_TEST(es.size() == 1);
+            BOOST_TEST(u.encoded_path() == "/path");
+            es.pop_back();
+            BOOST_TEST(es.size() == 0);
+            BOOST_TEST(u.encoded_path().empty());
+        }
+
+        // erase
+        {
+            url u = parse_relative_ref("/home/etc/path/to/the/file.txt");
+            auto es = u.encoded_segments();
+            es.erase(es.begin() + 1);
+            BOOST_TEST(u.segment_count() == 5);
+            BOOST_TEST(u.encoded_url() == "/home/path/to/the/file.txt");
+            es.erase(es.begin() + 3);
+            BOOST_TEST(u.segment_count() == 4);
+            BOOST_TEST(u.encoded_url() == "/home/path/to/file.txt");
+            es.erase(es.begin() + 1, es.begin() + 3);
+            BOOST_TEST(u.segment_count() == 2);
+            BOOST_TEST(u.encoded_url() == "/home/file.txt");
+            auto it = es.erase(es.begin() + 1);
+            BOOST_TEST(it == es.end());
+            BOOST_TEST(u.segment_count() == 1);
+            BOOST_TEST(u.encoded_url() == "/home");
+            BOOST_TEST(es.erase(es.begin()) == es.begin());
+            BOOST_TEST(u.segment_count() == 0);
+            BOOST_TEST(u.encoded_url().empty());
+        }
+
+        // clear
+        {
+            url u = parse_relative_ref("/path/to/file.txt");
+            auto es = u.encoded_segments();
+            es.clear();
+            BOOST_TEST(u.encoded_url().empty());
+            BOOST_TEST(u.segment_count() == 0);
+        }
+
+        // insert
+        {
+            url u = parse_relative_ref("");
+            auto es = u.encoded_segments();
+            es.insert(es.end(), "file.txt");
+            BOOST_TEST(es.size() == 1);
+            BOOST_TEST(u.encoded_path() == "/file.txt");
+            es.insert(es.begin(), "path");
+            BOOST_TEST(es.size() == 2);
+            BOOST_TEST(u.encoded_path() == "/path/file.txt");
+            es.insert(es.end() - 1, "to");
+            BOOST_TEST(es.size() == 3);
+            BOOST_TEST(u.encoded_path() == "/path/to/file.txt");
+
+            BOOST_TEST_THROWS(es.insert(es.end(), "%"), std::invalid_argument);
+            BOOST_TEST_THROWS(es.insert(es.end(), "/"), std::invalid_argument);
+            BOOST_TEST_THROWS(es.insert(es.end(), "%2g"), std::invalid_argument);
         }
     }
 
@@ -244,6 +323,7 @@ public:
     {
         testConvert();
         testAssign();
+        testModifiers();
         testAlgorithms();
     }
 };

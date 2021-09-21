@@ -124,9 +124,62 @@ public:
 
     // modifiers
 
-    BOOST_URL_DECL
+    inline
     void
     clear() noexcept;
+
+    BOOST_URL_DECL
+    iterator
+    insert(
+        const_iterator before,
+        string_view s);
+
+    template<class T
+#ifndef BOOST_JSON_DOCS
+        , class = typename std::enable_if<
+            is_stringish<T>::value,
+                bool>::type
+#endif
+    >
+    iterator
+    insert(
+        const_iterator before,
+        T const& t);
+
+    inline
+    iterator
+    erase(
+        const_iterator first);
+
+    BOOST_URL_DECL
+    iterator
+    erase(
+        const_iterator first,
+        const_iterator last);
+
+    inline
+    void
+    push_back(
+        string_view s);
+
+    template<class T
+#ifndef BOOST_JSON_DOCS
+        , class = typename std::enable_if<
+            is_stringish<T>::value,
+                bool>::type
+#endif
+    >
+    void
+    push_back(
+        T const& t)
+    {
+        return push_back(
+            to_string_view(t));
+    }
+
+    inline
+    void
+    pop_back();
 };
 
 //------------------------------------------------
@@ -764,6 +817,8 @@ public:
 
 //------------------------------------------------
 
+// element access
+
 auto
 segments_encoded::
 at(std::size_t i) noexcept ->
@@ -834,6 +889,8 @@ back() ->
     return { *u_, size() - 1 };
 }
 
+// iterators
+
 auto
 segments_encoded::
 begin() noexcept ->
@@ -880,6 +937,51 @@ cend() const noexcept ->
     const_iterator
 {
     return const_iterator(*u_, size());
+}
+
+// modifiers
+
+void
+segments_encoded::
+clear() noexcept
+{
+    erase(begin(), end());
+}
+
+template<class T, class>
+auto
+segments_encoded::
+insert(
+    const_iterator before,
+    T const& t) ->
+        iterator
+{
+    return insert(before,
+        to_string_view(t));
+}
+
+auto
+segments_encoded::
+erase(
+    const_iterator first) ->
+        iterator
+{
+    return erase(first, first + 1);
+}
+
+void
+segments_encoded::
+push_back(
+    string_view s)
+{
+    insert(end(), s);
+}
+
+void
+segments_encoded::
+pop_back()
+{
+    erase(end() - 1);
 }
 
 } // urls
