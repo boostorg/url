@@ -882,6 +882,12 @@ private:
         std::size_t i,
         string_view s);
 
+    char*
+    insert_encoded_segments(
+        std::size_t i,
+        std::size_t len,
+        std::size_t nseg);
+
     void
     erase_segments(
         std::size_t first,
@@ -1224,5 +1230,7 @@ operator<<(std::ostream& os, url const& u);
 
 } // urls
 } // boost
+
+#include <boost/url/impl/segments_encoded.hpp>
 
 #endif

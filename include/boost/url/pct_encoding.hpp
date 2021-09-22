@@ -64,7 +64,7 @@ namespace urls {
         @ref pct_encode.
 */
 template<
-    class CharSet = bnf::all_chars>
+    class CharSet /*= bnf::all_chars*/>
 std::size_t
 pct_decode_size(
     string_view s,

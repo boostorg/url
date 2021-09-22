@@ -14,6 +14,7 @@
 #include <boost/url/string.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/assert.hpp>
+#include <initializer_list>
 #include <iterator>
 
 namespace boost {
@@ -320,14 +321,15 @@ public:
         else an exception is thrown.
 
         @par Exception Safety
-        Exceptions thrown on invalid input.
+        Strong guarantee.
         Calls to allocate may throw.
+        Exceptions thrown on invalid input.
 
         @return An iterator pointing to the
         inserted value.
 
         @param before An iterator before which the
-        new segment will be inserted.
+        new element should be inserted.
 
         @param s A valid percent-encoded string
         to be inserted.
@@ -351,14 +353,15 @@ public:
         `is_stringlike<T>::value == true`.
 
         @par Exception Safety
-        Exceptions thrown on invalid input.
+        Strong guarantee.
         Calls to allocate may throw.
+        Exceptions thrown on invalid input.
 
         @return An iterator pointing to the
         inserted value.
 
         @param before An iterator before which the
-        new segment will be inserted.
+        new element should be inserted.
 
         @param t The stringlike value to insert.
     */
@@ -374,10 +377,101 @@ public:
         const_iterator before,
         T const& t);
 
+    /** Insert a range of segments
+
+        This function inserts a range
+        of percent-encoded strings.
+
+        @par Requires
+        @code
+        is_stringlike< std::iterator_traits< FwdIt >::value_type >::value == true
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @return An iterator to the first newly inserted
+        element or `before` if the range is empty.
+
+        @param before An iterator before which the
+        new element should be inserted.
+
+        @param first An iterator to the first
+        element to insert.
+
+        @param last An iterator to one past the
+        last element to insert.
+    */
+    template<class FwdIt>
+    iterator
+    insert(
+        const_iterator before,
+        FwdIt first,
+        FwdIt last);
+
+    /** Insert a range of segments
+
+        This function inserts a range of
+        percent-encoded strings passed as
+        an initializer-list.
+
+        @par Requires
+        @code
+        is_stringlike< T >::value == true
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @return An iterator to the first newly inserted
+        element or `before` if the range is empty.
+
+        @param before An iterator before which the
+        new elements should be inserted.
+
+        @param init The initializer list containing
+        percent-encoded segments to insert.
+    */
+    template<class T>
+#ifdef BOOST_URL_DOCS
+    iterator
+#else
+    typename std::enable_if<
+        is_stringlike<T>::value,
+        iterator>::type
+#endif
+    insert(
+        const_iterator before,
+        std::initializer_list<
+            T> const& init);
+
+private:
+    template<class FwdIt>
+    iterator
+    insert(
+        const_iterator before,
+        FwdIt first,
+        FwdIt last,
+        std::input_iterator_tag) = delete;
+
+    template<class FwdIt>
+    iterator
+    insert(
+        const_iterator before,
+        FwdIt first,
+        FwdIt last,
+        std::forward_iterator_tag);
+public:
+
     /** Erase an element
 
         This function erases the element pointed
-        to by `pos`.
+        to by `pos`, which must be a valid
+        iterator for the container.
     */
     inline
     iterator
@@ -467,6 +561,8 @@ public:
 } // urls
 } // boost
 
-#include <boost/url/impl/segments_encoded.hpp>
+// VFALCO This include is at the bottom of
+// url.hpp because of a circular dependency
+//#include <boost/url/impl/segments_encoded.hpp>
 
 #endif

@@ -12,6 +12,7 @@
 
 #include <boost/url/url.hpp>
 #include <boost/static_assert.hpp>
+#include <initializer_list>
 #include <iterator>
 #if __cpp_lib_ranges >= 201911
 //#include <ranges>
@@ -332,6 +333,25 @@ public:
             BOOST_TEST_THROWS(es.insert(es.end(), "%"), std::invalid_argument);
             BOOST_TEST_THROWS(es.insert(es.end(), "/"), std::invalid_argument);
             BOOST_TEST_THROWS(es.insert(es.end(), "%2g"), std::invalid_argument);
+        }
+        {
+            std::initializer_list<
+                string_view> init = {
+                    "path", "to", "file.txt" };
+            url u = parse_relative_ref("");
+            auto es = u.encoded_segments();
+            es.insert(es.begin(),
+                init.begin(), init.end());
+            BOOST_TEST(u.encoded_path() ==
+                "/path/to/file.txt");
+        }
+        {
+            url u = parse_relative_ref("");
+            auto es = u.encoded_segments();
+            es.insert(es.begin(),
+                { "path", "to", "file.txt" } );
+            BOOST_TEST(u.encoded_path() ==
+                "/path/to/file.txt");
         }
     }
 

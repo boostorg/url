@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/detail/except.hpp>
 #include <iterator>
 
 namespace boost {
@@ -879,6 +880,93 @@ insert(
 {
     return insert(before,
         to_string_view(t));
+}
+
+template<class FwdIt>
+auto
+segments_encoded::
+insert(
+    const_iterator before,
+    FwdIt first,
+    FwdIt last) ->
+        iterator
+{
+    return insert(before, first, last,
+        typename std::iterator_traits<
+            FwdIt>::iterator_category{});
+}
+
+template<class FwdIt>
+auto
+segments_encoded::
+insert(
+    const_iterator before,
+    FwdIt first,
+    FwdIt last,
+    std::forward_iterator_tag) ->
+        iterator
+{
+    BOOST_ASSERT(before.u_ == u_);
+    if(first == last)
+        return { *u_, before.i_ };
+    bool const abs =
+        u_->encoded_path().empty() ||
+        u_->encoded_path().starts_with('/');
+
+    // measure and validate
+    std::size_t n = 0;
+    std::size_t len = 0;
+    auto it = first;
+    while(it != last)
+    {
+        error_code ec;
+        len += pct_decode_size(
+            *it++, ec, pchars);
+        if(ec.failed())
+            detail::throw_invalid_argument(
+                BOOST_CURRENT_LOCATION);
+        ++n;
+    }
+    char* p;
+    it = first;
+    string_view s(*it++);
+    if(abs)
+    {
+        p = u_->insert_encoded_segments(
+            before.i_, len + n, n);
+        *p++ = '/';
+    }
+    else
+    {
+        BOOST_ASSERT(n > 0);
+        p = u_->insert_encoded_segments(
+            before.i_, len + n - 1, n);
+    }
+    for(;;)
+    {
+        std::memcpy(p,
+            s.data(), s.size());
+        p += s.size();
+        if(it == last)
+            break;
+        s = *it++;
+        *p++ = '/';
+    }
+    return { *u_, before.i_ };
+}
+
+template<class T>
+auto
+segments_encoded::
+insert(
+    const_iterator before,
+    std::initializer_list<T> const& init) ->
+        typename std::enable_if<
+            is_stringlike<T>::value,
+            iterator>::type
+{
+    return insert(before,
+        init.begin(), init.end());
 }
 
 auto

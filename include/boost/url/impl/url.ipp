@@ -1210,6 +1210,20 @@ insert_encoded_segment(
     ++nseg_;
 }
 
+
+char*
+url::
+insert_encoded_segments(
+    std::size_t i,
+    std::size_t len,
+    std::size_t nseg)
+{
+    auto r = get_segment(i);
+    auto p = insert(r, len);
+    nseg_ += nseg;
+    return p;
+}
+
 void
 url::
 erase_segments(
