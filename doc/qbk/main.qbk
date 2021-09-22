@@ -44,7 +44,6 @@
 [def __MoveConstructible__      [@https://en.cppreference.com/w/cpp/named_req/MoveConstructible ['MoveConstructible]]]
 [def __SemiRegular__            [@https://en.cppreference.com/w/cpp/concepts/semiregular ['SemiRegular]]]
 [def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
-
 [def __CharSet__                [link url.CharSet ['CharSet]]]
 
 [/ Dingbats ]

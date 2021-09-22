@@ -16,7 +16,7 @@ namespace boost {
 namespace urls {
 
 #ifdef BOOST_URL_HAS_STRING_VIEW
-BOOST_STATIC_ASSERT(is_stringish<
+BOOST_STATIC_ASSERT(is_stringlike<
     std::string_view>::value);
 #endif
 

@@ -1336,75 +1336,10 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
-
-        @see
-            @ref path.
     */
     BOOST_URL_DECL
     string_view
     encoded_path() const noexcept;
-
-    /** Return the path segments
-
-        This function returns the path segments as
-        a read-only bidirectional range.
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
-
-        @par Exception Safety
-        Does not throw.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-
-        @see
-            @ref encoded_path,
-            @ref encoded_segment,
-            @ref path_view,
-            @ref segment_count.
-    */
-    segments_encoded_view
-    encoded_segments() const noexcept
-    {
-        return segments_encoded_view(
-            encoded_path(), nseg_);
-    }
-
-    /** Return the path segments
-
-        This function returns the path segments as
-        a read-only bidirectional range.
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
-
-        @par Exception Safety
-        Does not throw.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-
-        @see
-            @ref encoded_path,
-            @ref encoded_segment,
-            @ref path_view,
-            @ref segment_count.
-    */
-    template<class Allocator =
-        std::allocator<char>>
-    segments_view<Allocator>
-    segments(Allocator const& alloc = {}) const noexcept
-    {
-        return segments_view<Allocator>(
-            encoded_path(), nseg_, alloc);
-    }
 
     /** Return the count of the number of path segments
 
@@ -1423,12 +1358,6 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
-
-        @see
-            @ref encoded_path,
-            @ref encoded_segment,
-            @ref path,
-            @ref path_view
     */
     BOOST_URL_DECL
     std::size_t
@@ -1483,12 +1412,6 @@ public:
             >3.3. Path (rfc3986)</a>
 
         @param i The index of the segment to return.
-
-        @see
-            @ref encoded_path,
-            @ref path,
-            @ref path_view,
-            @ref segment_count.
     */
     BOOST_URL_DECL
     virtual
@@ -1502,24 +1425,24 @@ public:
         path segment with percent-decoding
         applied, using an optionally specified
         allocator. The behavior depends on
-        index:
+        i:
 
-        @li If `index` is 0 the first path
+        @li If `i` is 0 the first path
         segment is returned;
 
-        @li If index is positive, then
-        the `index` + 1th path segment is
-        returned. For example if `index == 2`
+        @li If i is positive, then
+        the `i` + 1th path segment is
+        returned. For example if `i == 2`
         then the third segment is returned.
-        In other words, `index` is zero based.
+        In other words, `i` is zero based.
 
-        @li If index is negative, then the
-        function negates index, and counts from
+        @li If i is negative, then the
+        function negates i, and counts from
         the end of the path rather than the
-        beginning. For example if `index == -1`
+        beginning. For example if `i == -1`
         then the last path segment is returned.
 
-        If the index is out of range, an empty
+        If the i is out of range, an empty
         string is returned. To determine the
         number of segments, call @ref segment_count.
 
@@ -1531,7 +1454,7 @@ public:
         @par Exception Safety
         Calls to allocate may throw.
 
-        @param index The index of the segment to return.
+        @param i The index of the segment to return.
 
         @param a An optional allocator the returned
         string will use. If this parameter is omitted,
@@ -1544,23 +1467,67 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
-
-        @see
-            @ref encoded_path,
-            @ref path,
-            @ref path_view,
-            @ref segment_count.
     */
     template<
         class Allocator =
             std::allocator<char>>
     string_type<Allocator>
     segment(
-        int index,
+        int i,
         Allocator const& a = {}) const
     {
         return detail::pct_decode_unchecked(
-            encoded_segment(index), {}, a);
+            encoded_segment(i), {}, a);
+    }
+
+    /** Return the path segments
+
+        This function returns the path segments as
+        a read-only bidirectional range.
+
+        @par BNF
+        @code
+        path          = [ "/" ] segment *( "/" segment )
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+    */
+    segments_encoded_view
+    encoded_segments() const noexcept
+    {
+        return segments_encoded_view(
+            encoded_path(), nseg_);
+    }
+
+    /** Return the path segments
+
+        This function returns the path segments as
+        a read-only bidirectional range.
+
+        @par BNF
+        @code
+        path          = [ "/" ] segment *( "/" segment )
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+    */
+    template<class Allocator =
+        std::allocator<char>>
+    segments_view<Allocator>
+    segments(Allocator const& alloc = {}) const noexcept
+    {
+        return segments_view<Allocator>(
+            encoded_path(), nseg_, alloc);
     }
 
     //--------------------------------------------

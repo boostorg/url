@@ -26,11 +26,14 @@ namespace urls {
 */
 constexpr
 bnf::lut_chars
-unreserved_chars(
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+unreserved_chars
+#ifndef BOOST_URL_DOCS
+    ("ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz"
     "0123456789"
-    "-._~");
+    "-._~")
+#endif
+;
 
 /** Character set for gen-delims
 
@@ -41,7 +44,11 @@ unreserved_chars(
 */
 constexpr
 bnf::lut_chars
-gen_delim_chars(":/?#[]@");
+gen_delim_chars
+#ifndef BOOST_URL_DOCS
+    (":/?#[]@")
+#endif
+;
 
 /** Character set for sub-delims
 
@@ -53,7 +60,11 @@ gen_delim_chars(":/?#[]@");
 */
 constexpr
 bnf::lut_chars
-subdelim_chars( "!" "$&" "\x27" "()*+,;=");
+subdelim_chars
+#ifndef BOOST_URL_DOCS
+( "!" "$&" "\x27" "()*+,;=")
+#endif
+;
 
 /** Character set for pchar
 
@@ -64,7 +75,11 @@ subdelim_chars( "!" "$&" "\x27" "()*+,;=");
 */
 constexpr
 bnf::lut_chars
-pchars = unreserved_chars + subdelim_chars + ':' + '@';
+pchars
+#ifndef BOOST_URL_DOCS
+= unreserved_chars + subdelim_chars + ':' + '@'
+#endif
+;
 
 /** Character set for query
 
@@ -75,7 +90,11 @@ pchars = unreserved_chars + subdelim_chars + ':' + '@';
 */
 constexpr
 bnf::lut_chars
-query_chars = pchars + '/' + '?';
+query_chars
+#ifndef BOOST_URL_DOCS
+= pchars + '/' + '?'
+#endif
+;
 
 /** Character set for fragment
 
@@ -86,7 +105,11 @@ query_chars = pchars + '/' + '?';
 */
 constexpr
 bnf::lut_chars
-fragment_chars = pchars + '/' + '?';
+fragment_chars
+#ifndef BOOST_URL_DOCS
+= pchars + '/' + '?'
+#endif
+;
 
 } // urls
 } // boost

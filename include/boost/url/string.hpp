@@ -25,29 +25,91 @@ namespace boost {
 namespace urls {
 
 /** The type of string_view used by the library
+
+    String views are used to pass character
+    buffers into or out of functions. Ownership
+    of the underlying character buffer is not
+    transferred; the caller is responsible for
+    ensuring that the lifetime of the object
+    owning the character buffer extends until
+    the string view is no longer referenced.
 */
 using string_view = boost::string_view;
 
-/// The string alias template return type for allocating member functions.
+/** The string alias template return type for allocating member functions.
+
+    Functions which return `std::basic_string`
+    using a given _Allocator_ use this type alias
+    to resolve the type of string.
+*/
 template<class Allocator>
 using string_type =
     std::basic_string<char,
         std::char_traits<char>, Allocator>;
 
-/** Alias for true_type if T is like a string_view
+/** Alias for `std::true_type` if a `T` can be converted to a @ref string_view
+
+    This metafunction is an alias for `std::true_type` if
+
+    @code
+    std::is_convertible< T, string_view > == true
+    @endcode
+
+    or, if the following expressions are valid
+    where `t` has type `T const`:
+
+    @code
+    char const* p = t.data();
+
+    std::size_t n = t.size();
+    @endcode
+
+    Otherwise, it is an alias for `std::false_type`.
+
+    @par Examples
+
+    This function causes a compile time error if
+    `T` does not satisfy `is_stringlike`:
+    @code
+    template< typename T>
+    void f( T const & )
+    {
+        static_assert( is_stringlike< T >::value, "T must be stringlike" );
+    }
+    @endcode
+
+    The following function uses
+    <a href="https://en.cppreference.com/w/cpp/language/sfinae">
+    SFINAE</a> on the return type to enable itself only
+    if `T` satisfies `is_stringlike`:
+
+    @code
+    // return type is void
+    template< class T >
+    typename std::enable_if< is_stringlike< T >::value >::type
+    f( T const& t );
+    @endcode
+
+    The function @ref to_string_view is used to
+    generically convert an instance of a type
+    `T` to @ref string_view when such a conversion
+    is possible. This allows the library to
+    interoperate with various string-like types.
+
+    @see @ref to_string_view
 */
 #ifdef BOOST_URL_DOCS
 template<class T>
-using is_stringish = __see_below__;
+using is_stringlike = __see_below__;
 #else
 template<class T, class = void>
-struct is_stringish :
+struct is_stringlike :
     std::is_convertible<T, string_view>
 {
 };
 
 template<class T>
-struct is_stringish<T, boost::void_t<
+struct is_stringlike<T, boost::void_t<
     decltype(
     std::declval<char const*&>() =
         std::declval<T const>().data(),
@@ -58,7 +120,18 @@ struct is_stringish<T, boost::void_t<
 };
 #endif
 
-#ifdef BOOST_JSON_DOCS
+/** Return a string_view constructed from a T
+
+    This function constructs a string view from
+    the generic value `t`. The function
+    participates in overload resolution only
+    if `is_stringlike<T>::value == true`.
+
+    @return A string view representing `t`.
+
+    @param t The value to construct from.
+*/
+#ifdef BOOST_URL_DOCS
 template<class T>
 string_view
 to_string_view(T const& t) noexcept;
@@ -76,7 +149,7 @@ to_string_view(
 
 template<class T>
 typename std::enable_if<
-    is_stringish<T>::value &&
+    is_stringlike<T>::value &&
     ! std::is_convertible<
         T, string_view>::value,
     string_view>::type

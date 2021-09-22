@@ -926,7 +926,6 @@ public:
         @param s The string to set.
 
         @throws std::exception invalid path.
-
     */
     BOOST_URL_DECL
     url&
@@ -982,12 +981,6 @@ public:
             >3.3. Path (rfc3986)</a>
 
         @param i The index of the segment to return.
-
-        @see
-            @ref encoded_path,
-            @ref path,
-            @ref path_view,
-            @ref segment_count.
     */
     BOOST_URL_DECL
     virtual

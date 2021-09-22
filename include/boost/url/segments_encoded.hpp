@@ -19,11 +19,11 @@
 namespace boost {
 namespace urls {
 
-#ifndef BOOST_JSON_DOCS
+#ifndef BOOST_URL_DOCS
 class url;
 #endif
 
-/** A reference to modifiable URL segments
+/** A reference-like container to modifiable URL segments
 
     This class implements a <em>RandomAccessContainer</em>
     representing the path segments in a @ref url as
@@ -33,7 +33,7 @@ class url;
     url must remain valid until this container no
     longer exists.
 
-    Objects of this type are not constructed directly.
+    Objects of this type are not constructed directly;
     Instead, call the corresponding non-const member
     function of @ref url to obtain an instance of
     the container:
@@ -44,6 +44,18 @@ class url;
 
     segments_encoded se = u.encoded_segments();
     @endcode
+
+    The @ref reference and @ref const_reference
+    nested types are defined as publicly accessible
+    nested classes. They proxy the behavior of a
+    reference to a percent-encoded string in the
+    underlying URL. The primary use of these
+    references is to provide l-values that can be
+    returned from element-accessing operations.
+    Any reads or writes which happen through a
+    @ref reference or @ref const_reference
+    potentially read or write the underlying
+    @ref url.
 
     @see
         @ref url.
@@ -62,109 +74,298 @@ class segments_encoded
     }
 
 public:
-    /** A <em>RandomAccessProxyIterator</em>
-    */
-    class iterator;
-    class reference;
-    class const_iterator;
-    class const_reference;
+#ifdef BOOST_URL_DOCS
+    /** A random-access iterator referencing segments in a url path
 
+        When dereferenced, this iterator returns a
+        proxy which allows conversion to stringlike
+        types, assignments which change the underlying
+        container, and comparisons.
+    */
+    using iterator = __see_below__;
+
+    /** A random-access iterator referencing segments in a url path
+
+        When dereferenced, this iterator returns a
+        proxy which allows conversion to stringlike
+        types, and comparisons.
+    */
+    using const_iterator = __see_below__;
+
+    /** A proxy for a percent-encoded path segment
+
+        This type is a proxy for a modifiable
+        percent-encoded path segment. It supports
+        assignment, conversion to stringlike types,
+        and comparison.
+    */
+    using reference = __see_below__;
+
+    /** A proxy for a percent-encoded path segment
+
+        This type is a proxy for a read-only
+        percent-encoded path segment. It supports
+        conversion to stringlike types, and comparison.
+    */
+    using const_reference = __see_below__;
+#else
+    class iterator;
+    class const_iterator;
+    class reference;
+    class const_reference;
+#endif
+
+    /** A type which can represent a segment as a value
+    */
     using value_type = std::string;
+
+    /** An unsigned integer type
+    */
     using size_type = std::size_t;
+
+    /** A signed integer type
+    */
     using difference_type = std::ptrdiff_t;
-    using pointer = reference*;
-    using const_pointer = const_reference const*;
 
     //--------------------------------------------
 
     // element access
 
+    /** Return an element with bounds checking
+
+        This function returns a proxy reference
+        to the i-th element. If i is greater than
+        @ref size, an exception is thrown.
+
+        @par Exception Safety
+        Strong guarantee.
+        Exception thrown on invalid parameter.
+
+        @throws std::out_of_range `i >= size()`
+
+        @return A proxy reference to the element.
+
+        @param i The zero-based index of the
+        element.
+    */
     inline
     reference
-    at(std::size_t i) noexcept;
+    at(std::size_t i);
 
+    /** Return an element with bounds checking
+
+        This function returns a proxy reference
+        to the i-th element. If i is greater than
+        @ref size, an exception is thrown.
+
+        @par Exception Safety
+        Strong guarantee.
+        Exception thrown on invalid parameter.
+
+        @throws std::out_of_range `i >= size()`
+
+        @return A proxy reference to the element.
+
+        @param i The zero-based index of the
+        element.
+    */
     inline
     const_reference
-    at(std::size_t i) const noexcept;
+    at(std::size_t i) const;
 
+    /** Return an element
+
+        This function returns a proxy reference
+        to the i-th element.
+
+        @par Preconditions
+        @code
+        i < size()
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @return A proxy reference to the element.
+
+        @param i The zero-based index of the
+        element.
+    */
     inline
     reference
     operator[](std::size_t i) noexcept;
 
+    /** Return an element
+
+        This function returns a proxy reference
+        to the i-th element.
+
+        @par Preconditions
+        @code
+        i < size()
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @return A proxy reference to the element.
+
+        @param i The zero-based index of the
+        element.
+    */
     inline
     const_reference
     operator[](std::size_t i) const noexcept;
 
+    /** Return the first element
+    */
     inline
     const_reference
     front() const;
 
+    /** Return the first element
+    */
     inline
     reference
     front();
 
+    /** Return the last element
+    */
     inline
     const_reference
     back() const;
 
+    /** Return the last element
+    */
     inline
     reference
     back();
 
     // iterators
 
+    /** Return an iterator to the beginning
+    */
     inline
     iterator
     begin() noexcept;
 
+    /** Return an iterator to the beginning
+    */
     inline
     const_iterator
     begin() const noexcept;
 
+    /** Return an iterator to the beginning
+    */
     inline
     const_iterator
     cbegin() const noexcept;
 
+    /** Return an iterator to the end
+    */
     inline
     iterator
     end() noexcept;
 
+    /** Return an iterator to the end
+    */
     inline
     const_iterator
     end() const noexcept;
 
+    /** Return an iterator to the end
+    */
     inline
     const_iterator
     cend() const noexcept;
 
     // capacity
 
+    /** Return true if the container is empty
+    */
     bool
     empty() const noexcept
     {
         return size() == 0;
     }
 
+    /** Return the number of elements in the container
+    */
     BOOST_URL_DECL
     std::size_t
     size() const noexcept;
 
     // modifiers
 
+    /** Remove the contents of the container
+
+        @par Postconditions
+        @code
+        empty() == true
+        @endcode
+
+        @par Exception Safety
+        Does not throw.
+    */
     inline
     void
     clear() noexcept;
 
+    /** Insert an element
+
+        This function inserts a segment specified
+        by the percent-encoded string `s`, at the
+        position preceding `before`. The string
+        must contain a valid percent-encoding, or
+        else an exception is thrown.
+
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+        Calls to allocate may throw.
+
+        @return An iterator pointing to the
+        inserted value.
+
+        @param before An iterator before which the
+        new segment will be inserted.
+
+        @param s A valid percent-encoded string
+        to be inserted.
+    */
     BOOST_URL_DECL
     iterator
     insert(
         const_iterator before,
         string_view s);
 
+    /** Insert an element
+
+        This function inserts a segment specified
+        by the percent-encoded stringlike `t`,
+        at the position preceding `before`. The
+        stringlike must contain a valid percent-encoding,
+        or else an exception is thrown.
+
+        This function participates in overload
+        resolution only if
+        `is_stringlike<T>::value == true`.
+
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+        Calls to allocate may throw.
+
+        @return An iterator pointing to the
+        inserted value.
+
+        @param before An iterator before which the
+        new segment will be inserted.
+
+        @param t The stringlike value to insert.
+    */
     template<class T
-#ifndef BOOST_JSON_DOCS
+#ifndef BOOST_URL_DOCS
         , class = typename std::enable_if<
-            is_stringish<T>::value,
+            is_stringlike<T>::value,
                 bool>::type
 #endif
     >
@@ -173,26 +374,70 @@ public:
         const_iterator before,
         T const& t);
 
+    /** Erase an element
+
+        This function erases the element pointed
+        to by `pos`.
+    */
     inline
     iterator
     erase(
-        const_iterator first);
+        const_iterator pos);
 
+    /** Erase elements
+
+        This function erases the elements in
+        the range `[first, last)`.
+    */
     BOOST_URL_DECL
     iterator
     erase(
         const_iterator first,
         const_iterator last);
 
+    /** Add an element to the end
+
+        This function appends a segment
+        containing the percent-encoded string
+        `s` to the end of the container. The
+        string must contain a valid
+        percent-encoding or else an exception
+        is thrown.
+
+        @par Exception Safety
+        Strong guarantee.
+        Exceptions thrown on invalid input.
+
+        @param s The string to add
+    */
     inline
     void
     push_back(
         string_view s);
 
+    /** Add an element to the end
+
+        This function appends a segment
+        containing the percent-encoded stringlike
+        `t` to the end of the container. The
+        stringlike must contain a valid
+        percent-encoding or else an exception
+        is thrown.
+
+        This function participates in overload
+        resolution only if
+        `is_stringlike<T>::value == true`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Exceptions thrown on invalid input.
+
+        @param t The stringlike to add
+    */
     template<class T
-#ifndef BOOST_JSON_DOCS
+#ifndef BOOST_URL_DOCS
         , class = typename std::enable_if<
-            is_stringish<T>::value,
+            is_stringlike<T>::value,
                 bool>::type
 #endif
     >
@@ -204,833 +449,20 @@ public:
             to_string_view(t));
     }
 
+    /** Remove the last element
+
+        This function removes the last element
+        from the container.
+
+        @par Preconditions
+        @code
+        size() > 0
+        @endcode
+    */
     inline
     void
     pop_back();
 };
-
-//------------------------------------------------
-
-class segments_encoded::
-    reference
-{
-    url* u_ = nullptr;
-    std::size_t i_ = 0;
-
-    friend class segments_encoded;
-    friend class iterator;
-
-    reference(
-        url& u,
-        std::size_t i) noexcept
-        : u_(&u)
-        , i_(i)
-    {
-    }
-
-public:
-    reference&
-    operator=(reference const& other)
-    {
-        *this = string_view(other);
-        return *this;
-    }
-
-    inline
-    reference&
-    operator=(const_reference const& other);
-
-    template<class T>
-#ifdef BOOST_JSON_DOCS
-    reference&
-#else
-    typename std::enable_if<
-        is_stringish<T>::value,
-            reference&>::type
-#endif
-    operator=(T const& t)
-    {
-        *this = to_string_view(t);
-        return *this;
-    }
-
-    BOOST_URL_DECL
-    reference&
-    operator=(string_view);
-
-    //---
-
-    BOOST_URL_DECL
-    operator
-    string_view() const noexcept;
-
-    operator
-    std::string() const noexcept
-    {
-        return std::string(
-            string_view(*this));
-    }
-
-#ifdef BOOST_URL_HAS_STRING_VIEW
-    operator
-    std::string_view() const noexcept
-    {
-        auto s = string_view(*this);
-        return { s.data(), s.size() };
-    }
-#endif
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator==(
-        reference const& x1,
-        T const& x2 ) noexcept
-    {
-        return
-            string_view(x1) ==
-            to_string_view(x2);
-    }
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator==(
-        T const& x1,
-        reference x2 ) noexcept
-    {
-        return
-            to_string_view(x1) ==
-            string_view(x2);
-    }
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator!=(
-        reference const& x1,
-        T const& x2 ) noexcept
-    {
-        return !( x1 == x2 );
-    }
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator!=(
-        T const& x1,
-        reference const& x2 ) noexcept
-    {
-        return !( x1 == x2);
-    }
-
-    BOOST_URL_DECL
-    friend
-    void
-    swap(
-        reference r0,
-        reference r1);
-};
-
-//------------------------------------------------
-
-class segments_encoded::
-    const_reference
-{
-    url const* u_ = nullptr;
-    std::size_t i_ = 0;
-
-    friend class segments_encoded;
-    friend class const_iterator;
-
-    const_reference(
-        url const& u,
-        std::size_t i) noexcept
-        : u_(&u)
-        , i_(i)
-    {
-    }
-
-public:
-    const_reference(
-        reference const& other) noexcept
-        : u_(other.u_)
-        , i_(other.i_)
-    {
-    }
-
-    BOOST_URL_DECL
-    operator
-    string_view() const noexcept;
-
-    operator
-    std::string() const noexcept
-    {
-        return std::string(
-            string_view(*this));
-    }
-
-#ifdef BOOST_URL_HAS_STRING_VIEW
-    operator
-    std::string_view() const noexcept
-    {
-        auto s = string_view(*this);
-        return { s.data(), s.size() };
-    }
-#endif
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator==(
-        const_reference const& x1,
-        T const& x2 ) noexcept
-    {
-        return
-            string_view(x1) ==
-            to_string_view(x2);
-    }
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator==(
-        T const& x1,
-        const_reference x2 ) noexcept
-    {
-        return
-            to_string_view(x1) ==
-            string_view(x2);
-    }
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator!=(
-        const_reference const& x1,
-        T const& x2 ) noexcept
-    {
-        return !( x1 == x2 );
-    }
-
-    template<class T
-#ifndef BOOST_JSON_DOCS
-        , class = typename std::enable_if<
-            is_stringish<T>::value,
-                bool>::type
-#endif
-    >
-    friend
-    bool
-    operator!=(
-        T const& x1,
-        const_reference const& x2 ) noexcept
-    {
-        return !(x1 == x2);
-    }
-};
-
-//------------------------------------------------
-
-class segments_encoded::iterator
-{
-    url* u_ = nullptr;
-    std::size_t i_ = 0;
-
-    friend class segments_encoded;
-
-    iterator(
-        url& u,
-        std::size_t i) noexcept
-        : u_(&u)
-        , i_(i)
-    {
-    }
-
-public:
-    using value_type = std::string;
-    using reference =
-        segments_encoded::reference;
-    using pointer = void*;
-    using const_reference =
-        segments_encoded::const_reference;
-    using const_pointer = void const*;
-    using difference_type = std::ptrdiff_t;
-    using iterator_category =
-        std::random_access_iterator_tag;
-
-    iterator() = default;
-
-    iterator&
-    operator++() noexcept
-    {
-        ++i_;
-        return *this;
-    }
-
-    iterator
-    operator++(int) noexcept
-    {
-        auto tmp = *this;
-        ++*this;
-        return tmp;
-    }
-
-    iterator&
-    operator--() noexcept
-    {
-        --i_;
-        return *this;
-    }
-
-    iterator
-    operator--(int) noexcept
-    {
-        auto tmp = *this;
-        --*this;
-        return tmp;
-    }
-
-    reference
-    operator*() const noexcept
-    {
-        return reference(*u_, i_);
-    }
-
-    friend
-    bool
-    operator==(
-        iterator a,
-        iterator b) noexcept
-    {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return a.u_ == b.u_ &&
-            a.i_ == b.i_;
-    }
-
-    friend
-    bool
-    operator!=(
-        iterator a,
-        iterator b) noexcept
-    {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return a.u_ != b.u_ ||
-            a.i_ != b.i_;
-    }
-
-    // LegacyRandomAccessIterator
-
-    iterator&
-    operator+=(ptrdiff_t n) noexcept
-    {
-        i_ += n;
-        return *this;
-    }
-
-    friend
-    iterator
-    operator+(
-        iterator it,
-        ptrdiff_t n) noexcept
-    {
-        return { *it.u_, it.i_ + n };
-    }
-
-    friend
-    iterator
-    operator+(
-        ptrdiff_t n,
-        iterator it) noexcept
-    {
-        return { *it.u_, it.i_ + n };
-    }
-
-    iterator&
-    operator-=(ptrdiff_t n) noexcept
-    {
-        i_ -= n;
-        return *this;
-    }
-
-    friend
-    iterator
-    operator-(
-        iterator it,
-        ptrdiff_t n) noexcept
-    {
-        return { *it.u_, it.i_ - n };
-    }
-
-    friend
-    std::ptrdiff_t
-    operator-(
-        iterator a,
-        iterator b) noexcept
-    {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return static_cast<std::ptrdiff_t>(
-            b.i_) - a.i_;
-    }
-
-    reference
-    operator[](ptrdiff_t n) const
-    {
-        return *(*this + n);
-    }
-
-    friend
-    bool
-    operator<(
-        iterator a,
-        iterator b)
-    {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return a.i_ < b.i_;
-    }
-
-    friend
-    bool
-    operator>(
-        iterator a,
-        iterator b)
-    {
-        return b < a;
-    }
-
-    friend
-    bool
-    operator>=(
-        iterator a,
-        iterator b)
-    {
-        return !(a < b);
-    }
-
-    friend
-    bool
-    operator<=(
-        iterator a,
-        iterator b)
-    {
-        return !(a > b);
-    }
-};
-
-//------------------------------------------------
-
-class segments_encoded::const_iterator
-{
-    url const* u_ = nullptr;
-    std::size_t i_ = 0;
-
-    friend class segments_encoded;
-
-    const_iterator(
-        url const& u,
-        std::size_t i) noexcept
-        : u_(&u)
-        , i_(i)
-    {
-    }
-
-public:
-    using value_type = std::string;
-    using const_reference =
-        segments_encoded::const_reference;
-    using const_pointer = void const*;
-    using reference = const_reference;
-    using pointer = void const*;
-    using difference_type = std::ptrdiff_t;
-    using iterator_category =
-        std::random_access_iterator_tag;
-
-    const_iterator() = default;
-
-    const_iterator(
-        iterator const& it) noexcept
-        : u_(it.u_)
-        , i_(it.i_)
-    {
-    }
-
-    const_iterator&
-    operator++() noexcept
-    {
-        ++i_;
-        return *this;
-    }
-
-    const_iterator
-    operator++(int) noexcept
-    {
-        auto tmp = *this;
-        ++*this;
-        return tmp;
-    }
-
-    const_iterator&
-    operator--() noexcept
-    {
-        --i_;
-        return *this;
-    }
-
-    const_iterator
-    operator--(int) noexcept
-    {
-        auto tmp = *this;
-        --*this;
-        return tmp;
-    }
-
-    const_reference
-    operator*() const noexcept
-    {
-        return const_reference(*u_, i_);
-    }
-
-    friend
-    bool
-    operator==(
-        const_iterator a,
-        const_iterator b) noexcept
-    {
-        return a.u_ == b.u_ &&
-            a.i_ == b.i_;
-    }
-
-    friend
-    bool
-    operator!=(
-        const_iterator a,
-        const_iterator b) noexcept
-    {
-        return a.u_ != b.u_ ||
-            a.i_ != b.i_;
-    }
-
-    // LegacyRandomAccessIterator
-
-    const_iterator&
-    operator+=(ptrdiff_t n) noexcept
-    {
-        i_ += n;
-        return *this;
-    }
-
-    friend
-    const_iterator
-    operator+(
-        const_iterator it,
-        ptrdiff_t n) noexcept
-    {
-        return { *it.u_, it.i_ + n };
-    }
-
-    friend
-    const_iterator
-    operator+(
-        ptrdiff_t n,
-        const_iterator it) noexcept
-    {
-        return { *it.u_, it.i_ + n };
-    }
-
-    const_iterator&
-    operator-=(ptrdiff_t n) noexcept
-    {
-        i_ -= n;
-        return *this;
-    }
-
-    friend
-    const_iterator
-    operator-(
-        const_iterator it,
-        ptrdiff_t n) noexcept
-    {
-        return { *it.u_, it.i_ - n };
-    }
-
-    friend
-    std::ptrdiff_t
-    operator-(
-        const_iterator a,
-        const_iterator b) noexcept
-    {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return static_cast<std::ptrdiff_t>(
-            b.i_) - a.i_;
-    }
-
-    const_reference
-    operator[](ptrdiff_t n) const
-    {
-        return *(*this + n);
-    }
-
-    friend
-    bool
-    operator<(
-        const_iterator a,
-        const_iterator b)
-    {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return a.i_ < b.i_;
-    }
-
-    friend
-    bool
-    operator>(
-        const_iterator a,
-        const_iterator b)
-    {
-        return b < a;
-    }
-
-    friend
-    bool
-    operator>=(
-        const_iterator a,
-        const_iterator b)
-    {
-        return !(a < b);
-    }
-
-    friend
-    bool
-    operator<=(
-        const_iterator a,
-        const_iterator b)
-    {
-        return !(a > b);
-    }
-};
-
-//------------------------------------------------
-
-// element access
-
-auto
-segments_encoded::
-at(std::size_t i) noexcept ->
-    reference
-{
-    if(i >= size())
-        detail::throw_out_of_range(
-            BOOST_CURRENT_LOCATION);
-    return (*this)[i];
-}
-
-auto
-segments_encoded::
-at(std::size_t i) const noexcept ->
-    const_reference
-{
-    if(i >= size())
-        detail::throw_out_of_range(
-            BOOST_CURRENT_LOCATION);
-    return { *u_, i };
-}
-
-auto
-segments_encoded::
-operator[](std::size_t i) noexcept ->
-    reference
-{
-    return { *u_, i };
-}
-
-auto
-segments_encoded::
-operator[](std::size_t i) const noexcept ->
-    const_reference
-{
-    return { *u_, i };
-}
-
-auto
-segments_encoded::
-front() const ->
-    const_reference
-{
-    return { *u_, 0 };
-}
-
-auto
-segments_encoded::
-front() ->
-    reference
-{
-    return { *u_, 0 };
-}
-
-auto
-segments_encoded::
-back() const ->
-    const_reference
-{
-    return { *u_, size() - 1 };
-}
-
-auto
-segments_encoded::
-back() ->
-    reference
-{
-    return { *u_, size() - 1 };
-}
-
-// iterators
-
-auto
-segments_encoded::
-begin() noexcept ->
-    iterator
-{
-    return iterator(*u_, 0);
-}
-
-auto
-segments_encoded::
-begin() const noexcept ->
-    const_iterator
-{
-    return const_iterator(*u_, 0);
-}
-
-auto
-segments_encoded::
-cbegin() const noexcept ->
-    const_iterator
-{
-    return const_iterator(*u_, 0);
-}
-
-auto
-segments_encoded::
-end() noexcept ->
-    iterator
-{
-    return iterator(*u_, size());
-}
-
-auto
-segments_encoded::
-end() const noexcept ->
-    const_iterator
-{
-    return const_iterator(*u_, size());
-}
-
-auto
-segments_encoded::
-cend() const noexcept ->
-    const_iterator
-{
-    return const_iterator(*u_, size());
-}
-
-// modifiers
-
-void
-segments_encoded::
-clear() noexcept
-{
-    erase(begin(), end());
-}
-
-template<class T, class>
-auto
-segments_encoded::
-insert(
-    const_iterator before,
-    T const& t) ->
-        iterator
-{
-    return insert(before,
-        to_string_view(t));
-}
-
-auto
-segments_encoded::
-erase(
-    const_iterator first) ->
-        iterator
-{
-    return erase(first, first + 1);
-}
-
-void
-segments_encoded::
-push_back(
-    string_view s)
-{
-    insert(end(), s);
-}
-
-void
-segments_encoded::
-pop_back()
-{
-    erase(end() - 1);
-}
-
-//------------------------------------------------
-
-auto
-segments_encoded::
-reference::
-operator=(
-    const_reference const& other) ->
-        reference&
-{
-    *this = string_view(other);
-    return *this;
-}
 
 } // urls
 } // boost
