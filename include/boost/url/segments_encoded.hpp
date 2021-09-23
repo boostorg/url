@@ -44,6 +44,9 @@ class url;
     url u = parse_relative_ref( "/path/to/file.txt" );
 
     segments_encoded se = u.encoded_segments();
+
+    for( segments_encoded::value_type s : se )
+        std::cout << s << std::endl;
     @endcode
 
     The @ref reference and @ref const_reference
@@ -117,6 +120,10 @@ public:
 #endif
 
     /** A type which can represent a segment as a value
+
+        This type allows for making a copy of
+        a segment where ownership is retained
+        in the copy.
     */
     using value_type = std::string;
 
@@ -129,8 +136,10 @@ public:
     using difference_type = std::ptrdiff_t;
 
     //--------------------------------------------
-
-    // element access
+    //
+    // Element Access
+    //
+    //--------------------------------------------
 
     /** Return an element with bounds checking
 
@@ -242,7 +251,11 @@ public:
     reference
     back();
 
-    // iterators
+    //--------------------------------------------
+    //
+    // Iterators
+    //
+    //--------------------------------------------
 
     /** Return an iterator to the beginning
     */
@@ -280,7 +293,11 @@ public:
     const_iterator
     cend() const noexcept;
 
-    // capacity
+    //--------------------------------------------
+    //
+    // Capacity
+    //
+    //--------------------------------------------
 
     /** Return true if the container is empty
     */
@@ -296,7 +313,11 @@ public:
     std::size_t
     size() const noexcept;
 
-    // modifiers
+    //--------------------------------------------
+    //
+    // Modifiers
+    //
+    //--------------------------------------------
 
     /** Remove the contents of the container
 
@@ -318,7 +339,11 @@ public:
         by the percent-encoded string `s`, at the
         position preceding `before`. The string
         must contain a valid percent-encoding, or
-        else an exception is thrown.
+        else an exception is thrown. All
+        references and iterators starting
+        from the newly inserted element and
+        up to and including the last element
+        and @ref end iterators are invalidated.
 
         @par Exception Safety
         Strong guarantee.
@@ -346,7 +371,11 @@ public:
         by the percent-encoded stringlike `t`,
         at the position preceding `before`. The
         stringlike must contain a valid percent-encoding,
-        or else an exception is thrown.
+        or else an exception is thrown. All
+        references and iterators starting
+        from the newly inserted element and
+        up to and including the last element
+        and @ref end iterators are invalidated.
 
         This function participates in overload
         resolution only if
@@ -380,11 +409,28 @@ public:
     /** Insert a range of segments
 
         This function inserts a range
-        of percent-encoded strings.
+        of percent-encoded strings. All
+        references and iterators starting
+        from the newly inserted elements and
+        up to and including the last element
+        and @ref end iterators are invalidated.
 
         @par Requires
         @code
         is_stringlike< std::iterator_traits< FwdIt >::value_type >::value == true
+        @endcode
+
+        @par Example
+        @code
+        url u = parse_relative_uri( "/path/file.txt" );
+
+        segments_encoded se = u.encoded_segments();
+
+        std::vector< std::string > v = { "to", "the" };
+
+        se.insert( u.end() - 1, v.begin(), v.end() );
+
+        assert( u.encoded_path() == "/path/to/the/file.txt") );
         @endcode
 
         @par Exception Safety
@@ -392,8 +438,9 @@ public:
         Calls to allocate may throw.
         Exceptions thrown on invalid input.
 
-        @return An iterator to the first newly inserted
-        element or `before` if the range is empty.
+        @return An iterator to one past the last
+        newly inserted element or `before` if
+        the range is empty.
 
         @param before An iterator before which the
         new element should be inserted.
@@ -415,11 +462,26 @@ public:
 
         This function inserts a range of
         percent-encoded strings passed as
-        an initializer-list.
+        an initializer-list. All
+        references and iterators starting
+        from the newly inserted elements and
+        up to and including the last element
+        and @ref end iterators are invalidated.
 
         @par Requires
         @code
         is_stringlike< T >::value == true
+        @endcode
+
+        @par Example
+        @code
+        url u = parse_relative_uri( "/path/file.txt" );
+
+        segments_encoded se = u.encoded_segments();
+
+        se.insert( u.end() - 1, { "to", "the" } );
+
+        assert( u.encoded_path() == "/path/to/the/file.txt") );
         @endcode
 
         @par Exception Safety
@@ -427,8 +489,9 @@ public:
         Calls to allocate may throw.
         Exceptions thrown on invalid input.
 
-        @return An iterator to the first newly inserted
-        element or `before` if the range is empty.
+        @return An iterator to one past the last
+        newly inserted element or `before` if
+        the range is empty.
 
         @param before An iterator before which the
         new elements should be inserted.
@@ -471,35 +534,99 @@ public:
 
         This function erases the element pointed
         to by `pos`, which must be a valid
-        iterator for the container.
+        iterator for the container. All
+        references and iterators starting
+        from pos and up to and including
+        the last element and @ref end iterators
+        are invalidated.
+
+        @par Preconditions
+        `pos` points to a valid element.
+
+        @par Example
+        @code
+        url u = parse_relative_uri( "/path/to/file.txt" );
+
+        segments_encoded se = u.encoded_segments();
+
+        se.erase( se.begin() + 1 );
+
+        assert( u.encoded_path() == "/path/file.txt" );
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @return An iterator following
+        the last element erased.
+
+        @param pos An iterator to the
+        element to erase.
     */
     inline
     iterator
     erase(
-        const_iterator pos);
+        const_iterator pos) noexcept;
 
-    /** Erase elements
+    /** Erase a range of elements
 
-        This function erases the elements in
-        the range `[first, last)`.
+        This function erases the elements
+        in the range `[first, last)`. All
+        references and iterators starting
+        from `first` and up to and including
+        the last element and @ref end iterators
+        are invalidated.
+
+        @par Preconditions
+        `[first, last)` is a valid range
+
+        @par Example
+        @code
+        url u = parse_relative_uri( "/path/to/the/file.txt" );
+
+        segments_encoded se = u.encoded_segments();
+
+        se.erase( se.begin() + 1, se.begin() + 3 );
+
+        assert( u.encoded_path() == "/path/file.txt" );
+        @endcode
+
+        @return An iterator following
+        the last element erased.
+
+        @param first The beginning of the
+        range to erase.
+
+        @param last The end of the range
+        to erase.
     */
     BOOST_URL_DECL
     iterator
     erase(
         const_iterator first,
-        const_iterator last);
+        const_iterator last) noexcept;
 
     /** Add an element to the end
 
         This function appends a segment
         containing the percent-encoded string
         `s` to the end of the container. The
-        string must contain a valid
-        percent-encoding or else an exception
-        is thrown.
+        percent-encoding must be valid or else
+        an exception is thrown. All @ref end
+        iterators are invalidated.
+
+        @par Example
+        @code
+        url u = parse_relative_uri( "/path/to" );
+
+        u.segments_encoded().push_back( "file.txt" );
+
+        assert( u.encoded_path() == "/path/to/file.txt" );
+        @endcode
 
         @par Exception Safety
         Strong guarantee.
+        Calls to allocate may throw.
         Exceptions thrown on invalid input.
 
         @param s The string to add
@@ -514,16 +641,26 @@ public:
         This function appends a segment
         containing the percent-encoded stringlike
         `t` to the end of the container. The
-        stringlike must contain a valid
-        percent-encoding or else an exception
-        is thrown.
+        percent-encoding must be valid or else
+        an exception is thrown. All @ref end
+        iterators are invalidated.
 
-        This function participates in overload
+        The function participates in overload
         resolution only if
         `is_stringlike<T>::value == true`.
 
+        @par Example
+        @code
+        url u = parse_relative_uri( "/path/to" );
+
+        u.segments_encoded().push_back( "file.txt" );
+
+        assert( u.encoded_path() == "/path/to/file.txt" );
+        @endcode
+
         @par Exception Safety
         Strong guarantee.
+        Calls to allocate may throw.
         Exceptions thrown on invalid input.
 
         @param t The stringlike to add
@@ -546,16 +683,32 @@ public:
     /** Remove the last element
 
         This function removes the last element
-        from the container.
+        from the container. Calling this on an
+        empty container results in undefined
+        behavior. Iterators and references to
+        the last element, as well as the
+        @ref end iterator, are invalidated.
 
         @par Preconditions
         @code
-        size() > 0
+        not empty()
         @endcode
+
+        @par Example
+        @code
+        url u = parse_relative_uri( "/path/to/file.txt" );
+
+        u.segments_encoded().pop_back();
+
+        assert( u.encoded_path() == "/path/to" );
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
     */
     inline
     void
-    pop_back();
+    pop_back() noexcept;
 };
 
 } // urls

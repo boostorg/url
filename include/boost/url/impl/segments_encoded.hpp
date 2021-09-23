@@ -116,7 +116,8 @@ public:
     template<class T
 #ifndef BOOST_URL_DOCS
         , class = typename std::enable_if<
-            is_stringlike<T>::value,
+            is_stringlike<T>::value &&
+            ! std::is_same<reference, T>::value,
                 bool>::type
 #endif
     >
@@ -140,7 +141,8 @@ public:
     template<class T
 #ifndef BOOST_URL_DOCS
         , class = typename std::enable_if<
-            is_stringlike<T>::value,
+            is_stringlike<T>::value &&
+            ! std::is_same<reference, T>::value,
                 bool>::type
 #endif
     >
@@ -273,7 +275,8 @@ public:
     template<class T
 #ifndef BOOST_URL_DOCS
         , class = typename std::enable_if<
-            is_stringlike<T>::value,
+            is_stringlike<T>::value &&
+            ! std::is_same<reference, T>::value,
                 bool>::type
 #endif
     >
@@ -297,7 +300,8 @@ public:
     template<class T
 #ifndef BOOST_URL_DOCS
         , class = typename std::enable_if<
-            is_stringlike<T>::value,
+            is_stringlike<T>::value &&
+            ! std::is_same<reference, T>::value,
                 bool>::type
 #endif
     >
@@ -497,7 +501,7 @@ public:
     {
         BOOST_ASSERT(a.u_ == b.u_);
         return static_cast<std::ptrdiff_t>(
-            b.i_) - a.i_;
+            a.i_) - b.i_;
     }
 
     reference
@@ -690,7 +694,7 @@ public:
     {
         BOOST_ASSERT(a.u_ == b.u_);
         return static_cast<std::ptrdiff_t>(
-            b.i_) - a.i_;
+            a.i_) - b.i_;
     }
 
     const_reference
@@ -930,27 +934,33 @@ insert(
     char* p;
     it = first;
     string_view s(*it++);
-    if(abs)
+    p = u_->insert_encoded_segments(
+        before.i_, len + n, n);
+    if(abs || before.i_ != 0)
     {
-        p = u_->insert_encoded_segments(
-            before.i_, len + n, n);
-        *p++ = '/';
+        for(;;)
+        {
+            *p++ = '/';
+            std::memcpy(p,
+                s.data(), s.size());
+            if(it == last)
+                break;
+            p += s.size();
+            s = *it++;
+        }
     }
     else
     {
-        BOOST_ASSERT(n > 0);
-        p = u_->insert_encoded_segments(
-            before.i_, len + n - 1, n);
-    }
-    for(;;)
-    {
-        std::memcpy(p,
-            s.data(), s.size());
-        p += s.size();
-        if(it == last)
-            break;
-        s = *it++;
-        *p++ = '/';
+        for(;;)
+        {
+            std::memcpy(p,
+                s.data(), s.size());
+            p += s.size();
+            *p++ = '/';
+            if(it == last)
+                break;
+            s = *it++;
+        }
     }
     return { *u_, before.i_ };
 }
@@ -972,7 +982,7 @@ insert(
 auto
 segments_encoded::
 erase(
-    const_iterator pos) ->
+    const_iterator pos) noexcept ->
         iterator
 {
     return erase(pos, pos + 1);
@@ -988,7 +998,7 @@ push_back(
 
 void
 segments_encoded::
-pop_back()
+pop_back() noexcept
 {
     erase(end() - 1);
 }
@@ -1004,6 +1014,50 @@ operator=(
 {
     *this = string_view(other);
     return *this;
+}
+
+inline
+bool
+operator==(
+    segments_encoded::
+        const_reference const& c,
+    segments_encoded::
+        reference const& r) noexcept
+{
+    return string_view(c) == string_view(r);
+}
+
+inline
+bool
+operator==(
+    segments_encoded::
+        reference const& r,
+    segments_encoded::
+        const_reference const& c) noexcept
+{
+    return string_view(r) == string_view(c);
+}
+
+inline
+bool
+operator!=(
+    segments_encoded::
+        const_reference const& c,
+    segments_encoded::
+        reference const& r) noexcept
+{
+    return string_view(c) != string_view(r);
+}
+
+inline
+bool
+operator!=(
+    segments_encoded::
+        reference const& r,
+    segments_encoded::
+        const_reference const& c) noexcept
+{
+    return string_view(r) != string_view(c);
 }
 
 } // urls

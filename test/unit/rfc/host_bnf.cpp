@@ -40,9 +40,8 @@ public:
     {
         host_bnf h;
         error_code ec;
-        using bnf::parse_string;
         if(! BOOST_TEST(
-            parse_string(s, ec, h)))
+            bnf::parse_string(s, ec, h)))
             return {};
         BOOST_TEST(
             h.host_type == ht);

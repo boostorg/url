@@ -34,14 +34,14 @@ insert(
     BOOST_ASSERT(before.u_ == u_);
     u_->insert_encoded_segment(
         before.i_, s);
-    return begin();
+    return { *u_, before.i_ };
 }
 
 auto
 segments_encoded::
 erase(
     const_iterator first,
-    const_iterator last) ->
+    const_iterator last) noexcept ->
         iterator
 {
     BOOST_ASSERT(first.u_ == u_);

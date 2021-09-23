@@ -147,8 +147,7 @@ make_ipv4_address(
     error_code& ec) noexcept
 {
     ipv4_address a;
-    using bnf::parse_string;
-    if(! parse_string(s, ec,
+    if(! bnf::parse_string(s, ec,
             ipv4_address_bnf{a}))
         return {};
     return a;

@@ -180,9 +180,9 @@ parse_query_params(
     string_view s,
     error_code& ec) noexcept
 {
-    using bnf::parse_string;
     query_bnf t;
-    if(! parse_string(s, ec, t))
+    if(! bnf::parse_string(
+            s, ec, t))
         return {};
     return query_params_view(
         t.str, t.count);

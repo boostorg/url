@@ -41,6 +41,9 @@ public:
     void
     run()
     {
+        // (none)
+        check("", scheme::none);
+
         // ftp
         check("f");
         check("ft");

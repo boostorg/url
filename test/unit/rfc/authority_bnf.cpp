@@ -47,8 +47,7 @@ public:
         {
             authority_bnf p;
             error_code ec;
-            using bnf::parse_string;
-            BOOST_TEST(parse_string(
+            BOOST_TEST(bnf::parse_string(
                 "x:y@e.com:8080", ec, p));
             BOOST_TEST(p.host.host_type ==
                 host_type::name);

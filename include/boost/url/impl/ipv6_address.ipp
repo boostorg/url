@@ -253,8 +253,7 @@ make_ipv6_address(
     error_code& ec) noexcept
 {
     ipv6_address a;
-    using bnf::parse_string;
-    if(! parse_string(s, ec,
+    if(! bnf::parse_string(s, ec,
             ipv6_address_bnf{a}))
         return {};
     return a;

@@ -193,9 +193,9 @@ parse_path_abempty(
     string_view s,
     error_code& ec) noexcept
 {
-    using bnf::parse_string;
     path_abempty_bnf t;
-    if(! parse_string(s, ec, t))
+    if(! bnf::parse_string(
+            s, ec, t))
         return {};
     return segments_encoded_view(
         t.str, t.count);
@@ -217,9 +217,9 @@ parse_path_absolute(
     string_view s,
     error_code& ec) noexcept
 {
-    using bnf::parse_string;
     path_absolute_bnf t;
-    if(! parse_string(s, ec, t))
+    if(! bnf::parse_string(
+            s, ec, t))
         return {};
     return segments_encoded_view(
         t.str, t.count);
@@ -241,9 +241,9 @@ parse_path_noscheme(
     string_view s,
     error_code& ec) noexcept
 {
-    using bnf::parse_string;
     path_noscheme_bnf t;
-    if(! parse_string(s, ec, t))
+    if(! bnf::parse_string(
+            s, ec, t))
         return {};
     return segments_encoded_view(
         t.str, t.count);
@@ -265,9 +265,9 @@ parse_path_rootless(
     string_view s,
     error_code& ec) noexcept
 {
-    using bnf::parse_string;
     path_rootless_bnf t;
-    if(! parse_string(s, ec, t))
+    if(! bnf::parse_string(
+            s, ec, t))
         return {};
     return segments_encoded_view(
         t.str, t.count);

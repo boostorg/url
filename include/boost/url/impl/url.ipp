@@ -1203,10 +1203,11 @@ insert_encoded_segment(
         ++nseg_;
         return;
     }
-    auto p = insert(r, n);
+    auto p = insert(r, n + 1);
     if(! s.empty())
         std::memcpy(p,
             s.data(), s.size());
+    p[n] = '/';
     ++nseg_;
 }
 
@@ -1241,7 +1242,8 @@ erase_segments(
     std::memmove(
         s_ + r0.pos,
         s_ + r1.pos,
-        size() - r1.pos);
+        offset(id_query)
+            - r1.pos);
     resize_impl(
         id_path,
         len(id_path) - (
