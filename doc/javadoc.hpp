@@ -11,10 +11,12 @@
 
     {description}
 
+    @par Requires
+
+    @par Preconditions
+
     @par Example
-    {description}
     @code
-    {statements}
     @endcode
 
     @note {text}
@@ -25,7 +27,7 @@
     @endcode
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
     No-throw guarantee.
     Strong guarantee.
     Calls to allocate may throw.
@@ -37,8 +39,7 @@
 
     @param {name} {description}.
 
-    @throw {condition}.
-    @throw std::invalid_argument parse error
+    @throw {exception} {condition}.
 
     @par Thread Safety
     {description}

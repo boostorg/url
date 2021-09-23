@@ -33,7 +33,7 @@ namespace urls {
     the string is invalid.
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @throw system_error if the encoded string
         is invalid.
@@ -146,7 +146,7 @@ pct_decode(
     set. No encoding is actually performed.
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @return The number of bytes needed, excluding
     any null terminator.

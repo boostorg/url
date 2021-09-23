@@ -122,7 +122,7 @@ public:
     /** Return the number of matching keys
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @return The number of matching keys.
 
@@ -136,7 +136,7 @@ public:
     /** Find the first occurrence of a key
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @return An iterator to the matching
         element, or @ref end() if no element
@@ -152,7 +152,7 @@ public:
     /** Find the next occurrence of a key
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @return An iterator to the matching
         element, or @ref end() if no element

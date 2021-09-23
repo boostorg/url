@@ -30,7 +30,7 @@ namespace bnf {
     returns the same character.
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @return The converted character
 

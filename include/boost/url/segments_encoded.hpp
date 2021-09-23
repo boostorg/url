@@ -300,6 +300,10 @@ public:
     //--------------------------------------------
 
     /** Return true if the container is empty
+
+        This function returns true if there are
+        no elements in the container. That is, if
+        the underlying path is the empty string.
     */
     bool
     empty() const noexcept
@@ -308,6 +312,13 @@ public:
     }
 
     /** Return the number of elements in the container
+
+        This function returns the number of
+        elements in the underlying path. Empty
+        segments count towards this total.
+
+        @par Exception Safety
+        Throws nothing.
     */
     BOOST_URL_DECL
     std::size_t
@@ -321,13 +332,17 @@ public:
 
     /** Remove the contents of the container
 
+        This function removes all the segments
+        from the container, leaving the
+        underlying URL with an empty path.
+
         @par Postconditions
         @code
         empty() == true
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
     */
     inline
     void
@@ -337,10 +352,11 @@ public:
 
         This function inserts a segment specified
         by the percent-encoded string `s`, at the
-        position preceding `before`. The string
-        must contain a valid percent-encoding, or
-        else an exception is thrown. All
-        references and iterators starting
+        position preceding `before`.
+        The string must contain a valid
+        percent-encoding, or else an exception
+        is thrown.
+        All references and iterators starting
         from the newly inserted element and
         up to and including the last element
         and @ref end iterators are invalidated.
@@ -358,6 +374,8 @@ public:
 
         @param s A valid percent-encoded string
         to be inserted.
+
+        @throw std::invalid_argument invalid percent-encoding
     */
     BOOST_URL_DECL
     iterator
@@ -369,14 +387,14 @@ public:
 
         This function inserts a segment specified
         by the percent-encoded stringlike `t`,
-        at the position preceding `before`. The
-        stringlike must contain a valid percent-encoding,
-        or else an exception is thrown. All
-        references and iterators starting
+        at the position preceding `before`.
+        The stringlike must contain a valid
+        percent-encoding, or else an exception
+        is thrown.
+        All references and iterators starting
         from the newly inserted element and
         up to and including the last element
         and @ref end iterators are invalidated.
-
         This function participates in overload
         resolution only if
         `is_stringlike<T>::value == true`.
@@ -393,6 +411,8 @@ public:
         new element should be inserted.
 
         @param t The stringlike value to insert.
+
+        @throw std::invalid_argument invalid percent-encoding
     */
     template<class T
 #ifndef BOOST_URL_DOCS
@@ -409,8 +429,11 @@ public:
     /** Insert a range of segments
 
         This function inserts a range
-        of percent-encoded strings. All
-        references and iterators starting
+        of percent-encoded strings.
+        Each string must contain a valid
+        percent-encoding or else an
+        exception is thrown.
+        All references and iterators starting
         from the newly inserted elements and
         up to and including the last element
         and @ref end iterators are invalidated.
@@ -450,6 +473,8 @@ public:
 
         @param last An iterator to one past the
         last element to insert.
+
+        @throw std::invalid_argument invalid percent-encoding
     */
     template<class FwdIt>
     iterator
@@ -462,8 +487,11 @@ public:
 
         This function inserts a range of
         percent-encoded strings passed as
-        an initializer-list. All
-        references and iterators starting
+        an initializer-list.
+        Each string must contain a valid
+        percent-encoding or else an exception
+        is thrown.
+        All references and iterators starting
         from the newly inserted elements and
         up to and including the last element
         and @ref end iterators are invalidated.
@@ -498,6 +526,8 @@ public:
 
         @param init The initializer list containing
         percent-encoded segments to insert.
+
+        @throw std::invalid_argument invalid percent-encoding
     */
     template<class T>
 #ifdef BOOST_URL_DOCS
@@ -534,14 +564,15 @@ public:
 
         This function erases the element pointed
         to by `pos`, which must be a valid
-        iterator for the container. All
-        references and iterators starting
+        iterator for the container.
+        All references and iterators starting
         from pos and up to and including
         the last element and @ref end iterators
         are invalidated.
 
         @par Preconditions
-        `pos` points to a valid element.
+        `pos` points to a valid element in
+        this container.
 
         @par Example
         @code
@@ -571,14 +602,16 @@ public:
     /** Erase a range of elements
 
         This function erases the elements
-        in the range `[first, last)`. All
-        references and iterators starting
+        in the range `[first, last)`, which
+        must be a valid range in the container.
+        All references and iterators starting
         from `first` and up to and including
         the last element and @ref end iterators
         are invalidated.
 
         @par Preconditions
-        `[first, last)` is a valid range
+        `[first, last)` is a valid range in
+        this container.
 
         @par Example
         @code
@@ -599,6 +632,8 @@ public:
 
         @param last The end of the range
         to erase.
+
+        @throw std::invalid_argument invalid percent-encoding
     */
     BOOST_URL_DECL
     iterator
@@ -610,10 +645,10 @@ public:
 
         This function appends a segment
         containing the percent-encoded string
-        `s` to the end of the container. The
-        percent-encoding must be valid or else
-        an exception is thrown. All @ref end
-        iterators are invalidated.
+        `s` to the end of the container.
+        The percent-encoding must be valid or
+        else an exception is thrown.
+        All @ref end iterators are invalidated.
 
         @par Example
         @code
@@ -630,6 +665,8 @@ public:
         Exceptions thrown on invalid input.
 
         @param s The string to add
+
+        @throw std::invalid_argument invalid percent-encoding
     */
     inline
     void
@@ -640,11 +677,10 @@ public:
 
         This function appends a segment
         containing the percent-encoded stringlike
-        `t` to the end of the container. The
-        percent-encoding must be valid or else
-        an exception is thrown. All @ref end
-        iterators are invalidated.
-
+        `t` to the end of the container.
+        The percent-encoding must be valid 
+        or else an exception is thrown.
+        All @ref end iterators are invalidated.
         The function participates in overload
         resolution only if
         `is_stringlike<T>::value == true`.
@@ -664,6 +700,8 @@ public:
         Exceptions thrown on invalid input.
 
         @param t The stringlike to add
+
+        @throw std::invalid_argument invalid percent-encoding
     */
     template<class T
 #ifndef BOOST_URL_DOCS
@@ -683,9 +721,9 @@ public:
     /** Remove the last element
 
         This function removes the last element
-        from the container. Calling this on an
-        empty container results in undefined
-        behavior. Iterators and references to
+        from the container, which must not be
+        empty or else undefined behavior occurs.
+        Iterators and references to
         the last element, as well as the
         @ref end iterator, are invalidated.
 

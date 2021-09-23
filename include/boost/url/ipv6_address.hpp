@@ -234,7 +234,7 @@ operator<<(
 /** Return an IPv6 address from an IP address string
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @return The parsed address if successful,
         otherwise a default constructed object.

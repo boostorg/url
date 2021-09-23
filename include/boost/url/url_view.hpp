@@ -373,7 +373,7 @@ public:
         percent-encoded string.
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
     */
     string_view
     encoded_url() const noexcept
@@ -439,7 +439,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
@@ -474,7 +474,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
@@ -507,7 +507,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
@@ -560,7 +560,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
@@ -589,7 +589,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
@@ -622,7 +622,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
@@ -654,7 +654,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
@@ -737,7 +737,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
@@ -828,7 +828,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
@@ -863,7 +863,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
@@ -945,7 +945,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -990,7 +990,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -1098,7 +1098,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -1141,7 +1141,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -1168,7 +1168,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -1191,7 +1191,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
@@ -1221,7 +1221,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
@@ -1252,7 +1252,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
@@ -1282,7 +1282,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
@@ -1331,7 +1331,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
@@ -1353,7 +1353,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
@@ -1405,7 +1405,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
@@ -1491,7 +1491,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
@@ -1515,7 +1515,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
@@ -1549,7 +1549,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
@@ -1576,7 +1576,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
@@ -1687,7 +1687,7 @@ public:
         percent-encoded string.
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @see
             @ref fragment,
@@ -1803,7 +1803,7 @@ private:
     @endcode
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @return A view to the parsed URL
 
@@ -1849,7 +1849,7 @@ parse_absolute_uri(
     @endcode
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @return A view to the parsed URL
 
@@ -1941,7 +1941,7 @@ parse_absolute_uri(string_view s);
     @endcode
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @return A view to the parsed URL
 
@@ -1987,7 +1987,7 @@ parse_uri(
     @endcode
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @return A view to the parsed URL
 
@@ -2079,7 +2079,7 @@ parse_uri(string_view s);
     @endcode
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @return A view to the parsed URL
 
@@ -2125,7 +2125,7 @@ parse_relative_ref(
     @endcode
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @return A view to the parsed URL
 
@@ -2227,7 +2227,7 @@ parse_relative_ref(
     @endcode
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @return A view to the parsed URL
 
@@ -2282,7 +2282,7 @@ parse_uri_reference(
     @endcode
 
     @par Exception Safety
-    Does not throw.
+    Throws nothing.
 
     @return A view to the parsed URL
 

@@ -176,7 +176,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @return A reference to the object, for chaining.
 
@@ -280,7 +280,7 @@ public:
         removing the authority.
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @return A reference to the object, for chaining.
 
@@ -686,7 +686,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">
@@ -839,7 +839,7 @@ public:
         the path.
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
     */
     BOOST_URL_DECL
     url&
@@ -991,7 +991,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Does not throw.
+        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
