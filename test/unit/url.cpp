@@ -1382,6 +1382,60 @@ public:
             BOOST_TEST(u.encoded_segment(-3) == "path");
             BOOST_TEST(u.encoded_segment(-4) == "");
         }
+
+        // set_encoded_path
+        {
+            // empty
+            url u = parse_uri("x://y/path/to/file.txt?q#f");
+            u.set_encoded_path("");
+            BOOST_TEST(u.encoded_path() == "");
+            BOOST_TEST(u.encoded_url() == "x://y?q#f");
+        }
+        {
+            // path-abempty
+            url u = parse_uri("x://y/path/to/file.txt?q#f");
+            u.set_encoded_path("/x");
+            BOOST_TEST(u.encoded_path() == "/x");
+            BOOST_TEST(u.encoded_url() == "x://y/x?q#f");
+            BOOST_TEST_THROWS(u.set_encoded_path("x/"),
+                std::invalid_argument);
+        }
+        {
+            // path-absolute
+            url u = parse_relative_ref("/path/to/file.txt");
+            u.set_encoded_path("/home/file.txt");
+            BOOST_TEST(u.encoded_path() == "/home/file.txt");
+            BOOST_TEST(u.encoded_url() == "/home/file.txt");
+            BOOST_TEST_THROWS(u.set_encoded_path("/home/%ile.txt"),
+                std::invalid_argument);
+            BOOST_TEST_THROWS(u.set_encoded_path("//home/file.txt"),
+                std::invalid_argument);
+        }
+        {
+            // path-rootless
+            url u = parse_uri("x:mailto");
+            u.set_encoded_path("file.txt");
+            BOOST_TEST(u.encoded_path() == "file.txt");
+            BOOST_TEST(u.encoded_url() == "x:file.txt");
+            u.set_encoded_path(":file.txt");
+            BOOST_TEST(u.encoded_path() == ":file.txt");
+            BOOST_TEST(u.encoded_url() == "x::file.txt");
+            // to path-absolute
+            u.set_encoded_path("/file.txt");
+            BOOST_TEST(u.encoded_path() == "/file.txt");
+            BOOST_TEST(u.encoded_url() == "x:/file.txt");
+        }
+        {
+            // path-noscheme
+            url u = parse_relative_ref("mailto");
+            u.set_encoded_path("file.txt");
+            BOOST_TEST(u.encoded_path() == "file.txt");
+            BOOST_TEST(u.encoded_url() == "file.txt");
+            BOOST_TEST_THROWS(u.set_encoded_path(":file.txt"),
+                std::invalid_argument);
+            BOOST_TEST_THROWS(u.set_encoded_path("http:index.htm"),
+                std::invalid_argument);
+        }
     }
 
     //--------------------------------------------

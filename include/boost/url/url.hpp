@@ -897,33 +897,39 @@ public:
 
     /** Set the path.
 
-        Sets the path of the URL to the specified
-        encoded string. If this string is empty,
-        any existing path is removed.
+        This function validates the given percent-encoded
+        path according to the allowed grammar based
+        on the existing contents of the URL. If the
+        path is valid, the old path is replaced with
+        the new path. Otherwise, an exception is
+        thrown. The requirements for `s` are thus:
 
-        The string must meet the syntactic requirements,
-        which vary depending on the existing contents
-        of the URL:
+        @li If `s` matches <em>path-empty</em>, that is
+        if `s.empty() == true`, the path is valid. Else,
 
         @li If an authority is present (@ref has_authority
         returns `true`), the path syntax must match
-        <em>path-abempty</em>, else
+        <em>path-abempty</em>. Else, if there is no
+        authority then:
 
         @li If the new path starts with a forward
         slash ('/'), the path syntax must match
-        <em>path-absolute</em>, else
+        <em>path-absolute</em>. Else, if the
+        path is rootless (does not start with '/'),
+        then:
 
         @li If a scheme is present, the path syntax
         must match <em>path-rootless</em>, otherwise
 
         @li The path syntax must match <em>path-noscheme</em>.
 
-        If the path does not meet the syntactic
-        requirements, an exception is thrown.
-
         @par BNF
         @code
-        path          = [ "/" ] segment *( "/" segment )
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
         @endcode
 
         @par Exception Safety
@@ -932,7 +938,11 @@ public:
 
         @param s The string to set.
 
-        @throws std::exception invalid path.
+        @throws std::invalid_argument invalid path.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
     */
     BOOST_URL_DECL
     url&

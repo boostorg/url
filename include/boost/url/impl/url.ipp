@@ -1252,6 +1252,38 @@ erase_segments(
 
 //------------------------------------------------
 
+url&
+url::
+set_encoded_path(
+    string_view s)
+{
+    error_code ec;
+    segments_encoded_view sev;
+    if(! s.empty())
+    {
+        if(has_authority())
+            sev = parse_path_abempty(s, ec);
+        else if(s.starts_with('/'))
+            sev = parse_path_absolute(s, ec);
+        else if(has_scheme())
+            sev = parse_path_rootless(s, ec);
+        else 
+            sev = parse_path_noscheme(s, ec);
+        if(ec.failed())
+            detail::throw_invalid_argument(
+                BOOST_CURRENT_LOCATION);
+    }
+    else
+    {
+        // path-empty
+    }
+    auto p = resize_impl(
+        id_path, s.size());
+    std::memcpy(p, s.data(), s.size());
+    nseg_ = sev.size();
+    return *this;
+}
+
 string_view
 url::
 encoded_segment(
