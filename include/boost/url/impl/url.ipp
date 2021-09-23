@@ -1211,7 +1211,6 @@ insert_encoded_segment(
     ++nseg_;
 }
 
-
 char*
 url::
 insert_encoded_segments(

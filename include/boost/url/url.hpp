@@ -882,6 +882,7 @@ private:
         std::size_t i,
         string_view s);
 
+    BOOST_URL_DECL
     char*
     insert_encoded_segments(
         std::size_t i,
