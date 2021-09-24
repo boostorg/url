@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/detail/helpers.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/assert.hpp>
 #include <initializer_list>
@@ -65,10 +66,25 @@ class url;
         @ref url.
 */
 class segments_encoded
+    : private detail::any_helper
+    , private detail::parts_helper
 {
     url* u_ = nullptr;
 
     friend class url;
+
+    using fwdit =
+        any_fwdit<string_view>;
+
+    template<class FwdIt>
+    static
+    any_fwdit_impl<
+        FwdIt, string_view>
+    make_fwdit(FwdIt it) noexcept
+    {
+        return any_fwdit_impl<
+            FwdIt, string_view>(it);
+    }
 
     explicit
     segments_encoded(
@@ -134,6 +150,170 @@ public:
     /** A signed integer type
     */
     using difference_type = std::ptrdiff_t;
+
+    //--------------------------------------------
+    //
+    // Members
+    //
+    //--------------------------------------------
+
+    /** Replace the contents of the container
+
+        This function replaces the contents
+        with an initializer list  of
+        percent-encoded strings.
+        Each string must contain a valid
+        percent-encoding or else an
+        exception is thrown.
+        The behavior is undefined any string
+        refers to the contents of `*this`.
+        All iterators and references to elements
+        of the container are invalidated,
+        including the @ref end iterator.
+
+        @par Requires
+        @code
+        is_stringlike< T >::value == true
+        @endcode
+
+        @par Example
+        @code
+        url u = parse_relative_uri( "/path/to/file.txt" );
+
+        u.encoded_segments() = { "etc", "init.rc" };
+
+        assert( u.encoded_path() == "/etc/init.rc") );
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @param init An initializer list of strings.
+
+        @throw std::invalid_argument invalid percent-encoding
+    */
+    template<class T>
+#ifdef BOOST_URL_DOCS
+    segments_encoded&
+#else
+    typename std::enable_if<
+        is_stringlike<T>::value,
+        segments_encoded&>::type
+#endif
+    operator=(std::initializer_list<T> init)
+    {
+        assign(init);
+        return *this;
+    }
+
+    /** Replace the contents of the container
+
+        This function replaces the contents
+        with a range of percent-encoded
+        strings.
+        Each string must contain a valid
+        percent-encoding or else an
+        exception is thrown.
+        The behavior is undefined if either
+        argument is an iterator into `*this`.
+        All iterators and references to elements
+        of the container are invalidated,
+        including the @ref end iterator.
+
+        @par Requires
+        @code
+        is_stringlike< std::iterator_traits< FwdIt >::value_type >::value == true
+        @endcode
+
+        @par Example
+        @code
+        url u = parse_relative_uri( "/path/to/file.txt" );
+
+        segments_encoded se = u.encoded_segments();
+
+        std::vector< std::string > v = { "etc", "init.rc" };
+
+        se.insert( u.end() - 1, v.begin(), v.end() );
+
+        assert( u.encoded_path() == "/etc/init.rc") );
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @param first An iterator to the first
+        element in the range
+
+        @param last An iterator to one past the
+        last element in the range
+
+        @throw std::invalid_argument invalid percent-encoding
+    */
+    template<class FwdIt>
+#ifdef BOOST_URL_DOCS
+    void
+#else
+    typename std::enable_if<
+        is_stringlike<typename
+            std::iterator_traits<
+                FwdIt>::value_type>::value,
+        void>::type
+#endif
+    assign(FwdIt first, FwdIt last);
+
+    /** Replace the contents of the container
+
+        This function replaces the contents
+        with an initializer list  of
+        percent-encoded strings.
+        Each string must contain a valid
+        percent-encoding or else an
+        exception is thrown.
+        The behavior is undefined any string
+        refers to the contents of `*this`.
+        All iterators and references to elements
+        of the container are invalidated,
+        including the @ref end iterator.
+
+        @par Requires
+        @code
+        is_stringlike< T >::value == true
+        @endcode
+
+        @par Example
+        @code
+        url u = parse_relative_uri( "/path/to/file.txt" );
+
+        u.encoded_segments().assign( { "etc", "init.rc" } );
+
+        assert( u.encoded_path() == "/etc/init.rc") );
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @param init An initializer list of strings.
+
+        @throw std::invalid_argument invalid percent-encoding
+    */
+    template<class T>
+#ifdef BOOST_URL_DOCS
+    void
+#else
+    typename std::enable_if<
+        is_stringlike<T>::value,
+        void>::type
+#endif
+    assign(std::initializer_list<T> init)
+    {
+        assign(init.begin(), init.end());
+    }
 
     //--------------------------------------------
     //
@@ -330,6 +510,24 @@ public:
     //
     //--------------------------------------------
 
+private:
+    template<class FwdIt>
+    iterator
+    insert(
+        const_iterator before,
+        FwdIt first,
+        FwdIt last,
+        std::input_iterator_tag) = delete;
+
+    template<class FwdIt>
+    iterator
+    insert(
+        const_iterator before,
+        FwdIt first,
+        FwdIt last,
+        std::forward_iterator_tag);
+public:
+
     /** Remove the contents of the container
 
         This function removes all the segments
@@ -433,6 +631,8 @@ public:
         Each string must contain a valid
         percent-encoding or else an
         exception is thrown.
+        The behavior is undefined if either
+        argument is an iterator into `this`.
         All references and iterators starting
         from the newly inserted elements and
         up to and including the last element
@@ -477,7 +677,15 @@ public:
         @throw std::invalid_argument invalid percent-encoding
     */
     template<class FwdIt>
+#ifdef BOOST_URL_DOCS
     iterator
+#else
+    typename std::enable_if<
+        is_stringlike<typename
+            std::iterator_traits<
+                FwdIt>::value_type>::value,
+        iterator>::type
+#endif
     insert(
         const_iterator before,
         FwdIt first,
@@ -539,26 +747,7 @@ public:
 #endif
     insert(
         const_iterator before,
-        std::initializer_list<
-            T> const& init);
-
-private:
-    template<class FwdIt>
-    iterator
-    insert(
-        const_iterator before,
-        FwdIt first,
-        FwdIt last,
-        std::input_iterator_tag) = delete;
-
-    template<class FwdIt>
-    iterator
-    insert(
-        const_iterator before,
-        FwdIt first,
-        FwdIt last,
-        std::forward_iterator_tag);
-public:
+        std::initializer_list<T> init);
 
     /** Erase an element
 
@@ -747,6 +936,16 @@ public:
     inline
     void
     pop_back() noexcept;
+
+private:
+    BOOST_URL_DECL
+    void
+    edit_segments(
+        std::size_t i0,
+        std::size_t i1,
+        fwdit const& first,
+        fwdit const& last,
+        fwdit&& it);
 };
 
 } // urls

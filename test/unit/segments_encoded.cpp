@@ -156,6 +156,20 @@ public:
             char const*>::value);
 
     void
+    testMembers()
+    {
+        url_view const u0 = parse_uri(
+            "x://y/path/to/the/file.txt?q#f");
+
+        {
+            url u = u0;
+            u.encoded_segments() = { "etc", "index.htm" };
+            BOOST_TEST(u.encoded_path() == "/etc/index.htm");
+            BOOST_TEST(u.encoded_url() == "x://y/etc/index.htm?q#f");
+        }
+    }
+
+    void
     testElementAccess()
     {
         url_view const u0 = parse_relative_ref(
@@ -785,6 +799,7 @@ public:
             BOOST_TEST(u.encoded_url() ==
                 "/file.txt//path");
         }
+
         // assign const_reference to reference
         {
             url u = parse_relative_ref(
@@ -794,6 +809,22 @@ public:
 
             se[0] = cs[2];
             BOOST_TEST(u.encoded_url() == "/file.txt/to/file.txt");
+        }
+
+        // grammar compliance
+        {
+            // path-noscheme
+            url u = parse_relative_ref("y?q#f");
+            u.encoded_segments()[0] = "a:b";
+            BOOST_TEST(u.encoded_path() == "./a:b");
+            BOOST_TEST(u.encoded_url() == "./a:b?q#f");
+        }
+        {
+            // path-absolute
+            url u = parse_relative_ref("/a/b/c?q#f");
+            u.encoded_segments() = { "", "" };
+            BOOST_TEST(u.encoded_path() == "/.//");
+            BOOST_TEST(u.encoded_url() == "/.//?q#f");
         }
     }
 
@@ -833,6 +864,7 @@ public:
     void
     run()
     {
+        testMembers();
         testElementAccess();
         testIterators();
         testCapacity();

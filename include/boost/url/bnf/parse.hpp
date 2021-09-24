@@ -110,20 +110,6 @@ parse_string(
     T0&& t0,
     Tn&&... tn);
 
-/** Return true if a string matches the grammar
-*/
-template<class T>
-bool
-is_valid(
-    string_view s);
-
-/** Throw an exception the string does not match the grammar
-*/
-template<class T>
-void
-validate(
-    string_view s);
-
 } // bnf
 } // urls
 } // boost

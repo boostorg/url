@@ -137,10 +137,8 @@
           <member><link linkend="url.ref.boost__urls__bnf__find_if">find_if</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__find_if_not">find_if_not</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__hexdig_value">hexdig_value</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__is_valid">is_valid</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__parse">parse</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__parse_string">parse_string</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__validate">validate</link></member>
         </simplelist>
       </entry>
       <entry valign="top">

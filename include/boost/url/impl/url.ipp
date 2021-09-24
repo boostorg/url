@@ -16,7 +16,6 @@
 #include <boost/url/scheme.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/detail/copied_strings.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/detail/print.hpp>
@@ -1088,166 +1087,181 @@ get_segment(
 
 char*
 url::
-resize(
-    raw_segment const& r,
-    std::size_t n)
+edit_segments(
+    std::size_t first,
+    std::size_t last,
+    std::size_t n,
+    std::size_t nseg)
 {
-    if(n < r.len)
+    BOOST_ASSERT(
+        last >= first);
+    BOOST_ASSERT(
+        last - first <= nseg_);
+    auto const r0 =
+        get_segment(first);
+    auto const r1 =
+        get_segment(last);
+    auto const n0 =
+        r1.pos - r0.pos;
+    ensure_space(
+        size() + n - n0,
+        nseg_ + nseg -
+            (last - first),
+        nparam_);
+    if(n <= n0)
     {
         // shrinking
         std::memmove(
-            s_ + r.pos + n,
-            s_ + r.pos + r.len,
-            size() - (r.pos + r.len));
+            s_ + r0.pos + n,
+            s_ + r1.pos,
+            offset(id_query) -
+                r1.pos);
         resize_impl(
             id_path,
             len(id_path) - (
-                r.len - n));
-        return s_ + r.pos;
+                n0 - n));
     }
-    // growing
-    auto n0 = offset(id_query) -
-        (r.pos + r.len);
-    resize_impl(
-        id_path,
-        len(id_path) + (
-            n - r.len));
-    std::memmove(
-        s_ + r.pos + n,
-        s_ + r.pos + r.len,
-        n0);
-    return s_ + r.pos;
-}
-
-// insert before r
-char*
-url::
-insert(
-    raw_segment const& r,
-    std::size_t n)
-{
-    // growing
-    auto n0 = offset(
-        id_query) - r.pos;
-    resize_impl(
-        id_path,
-        len(id_path) + n);
-    std::memmove(
-        s_ + r.pos + n,
-        s_ + r.pos,
-        n0);
-    return s_ + r.pos;
-}
-
-void
-url::
-set_encoded_segment(
-    std::size_t i,
-    string_view s0)
-{
-    // validate
-    error_code ec;
-    pct_decode_size(s0, ec, pchars);
-    if(ec)
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
-
-    detail::copied_strings cs(
-        encoded_url());
-    auto s = cs.maybe_copy(s0);
-    auto r = get_segment(i);
-    auto n = s.size();
-    if( r.len == 0 ||
-        s_[r.pos] == '/')
+    else
     {
-        auto p =
-            resize(r, n + 1);
-        if(! s.empty())
-            std::memcpy(p + 1,
-                s.data(), s.size());
-        p[0] = '/';
-        return;
+        // growing
+        auto const pos =
+            offset(id_query);
+        resize_impl(
+            id_path,
+            len(id_path) + (
+                n - n0));
+        std::memmove(
+            s_ + r0.pos + n,
+            s_ + r1.pos,
+            pos - r1.pos);
     }
-    auto p = resize(r, n);
-    if(! s.empty())
-        std::memcpy(p,
-            s.data(), s.size());
+    nseg_ = nseg_ +
+        nseg - (last - first);
+    return s_ + r0.pos;
 }
 
+// insert or replace [i0, i1)
+// with [first, last)
 void
 url::
-insert_encoded_segment(
-    std::size_t i,
-    string_view s0)
+edit_segments(
+    std::size_t i0,
+    std::size_t i1,
+    any_fwdit<string_view> const& first,
+    any_fwdit<string_view> const& last,
+    any_fwdit<string_view>&& it)
 {
-    // validate
-    error_code ec;
-    pct_decode_size(s0, ec, pchars);
-    if(ec)
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
-
-    detail::copied_strings cs(
-        encoded_url());
-    auto s = cs.maybe_copy(s0);
-    auto r = get_segment(i);
-    auto n = s.size();
-    if( r.len == 0 ||
-        s_[r.pos] == '/')
-    {
-        auto p = insert(r, n + 1);
-        if(! s.empty())
-            std::memcpy(p + 1,
-                s.data(), s.size());
-        p[0] = '/';
-        ++nseg_;
-        return;
-    }
-    auto p = insert(r, n + 1);
-    if(! s.empty())
-        std::memcpy(p,
-            s.data(), s.size());
-    p[n] = '/';
-    ++nseg_;
-}
-
-char*
-url::
-insert_encoded_segments(
-    std::size_t i,
-    std::size_t len,
-    std::size_t nseg)
-{
-    auto r = get_segment(i);
-    auto p = insert(r, len);
-    nseg_ += nseg;
-    return p;
-}
-
-void
-url::
-erase_segments(
-    std::size_t first,
-    std::size_t last)
-{
-    if(segment_count() == 0)
-        return;
+    // handle erase
     if(first == last)
+    {
+        edit_segments(
+            i0, i1, 0, 0);
         return;
-    BOOST_ASSERT(last > first);
-    auto r0 = get_segment(first);
-    auto r1 = get_segment(last);
-    // shrinking
-    std::memmove(
-        s_ + r0.pos,
-        s_ + r1.pos,
-        offset(id_query)
-            - r1.pos);
-    resize_impl(
-        id_path,
-        len(id_path) - (
-            r1.pos - r0.pos));
-    nseg_ -= last - first;
+    }
+
+    // measure and validate
+    error_code ec;
+    std::size_t n = 0;
+    std::size_t nseg = 0;
+    for(;;)
+    {
+        n += pct_decode_size(
+            *it, ec, pchars);
+        if(ec.failed())
+            detail::throw_invalid_argument(
+                BOOST_CURRENT_LOCATION);
+        ++it;
+        ++nseg;
+        if(it == last)
+            break;
+    }
+
+    // meet grammar requirements
+    int style;
+    if( i0 > 0 ||
+        has_authority())
+    {
+        // path-abempty
+        style = 0;
+    }
+    else if(
+        len(id_path) == 0 ||
+        s_[offset(
+            id_path)] == '/')
+    {
+        // path-absolute
+        if(string_view(
+            *first).empty() &&
+                nseg > 1)
+        {
+            // prepend "/."
+            ++n;
+            ++nseg;
+            style = 1;
+        }
+        else
+        {
+            style = 0;
+        }
+    }
+    else if(! has_scheme())
+    {
+        // path-noscheme
+        string_view s = *first;
+        if(s.empty() ||
+            s.find_first_of(':') !=
+                string_view::npos)
+        {
+            // prepend "."
+            ++nseg;
+            style = 2;
+        }
+        else
+        {
+            style = 3;
+        }
+    }
+    else
+    {
+        // path-rootless
+        // or path-empty
+        style = 3;
+    }
+
+    // edit
+    auto const size0 = size();
+    auto p = edit_segments(
+        i0, i1, n + nseg, nseg);
+    if(style == 1)
+    {
+        *p++ = '/';
+        *p++ = '.';
+    }
+    else if(style == 2)
+    {
+        *p++ = '.';
+    }
+    it = first;
+    if(style == 3)
+        goto do_skip_lead;
+    for(;;)
+    {
+        *p++ = '/';
+    do_skip_lead:
+        string_view s = *it;
+        if(! s.empty())
+        {
+            std::memcpy(p,
+                s.data(), s.size());
+            p += s.size();
+        }
+        ++it;
+        if(it == last)
+            break;
+    }
+    if( style == 3 &&
+        i1 < size0)
+        *p++ = '/';
 }
 
 //------------------------------------------------

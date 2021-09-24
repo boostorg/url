@@ -97,13 +97,35 @@ struct test_ref
 };
 
 template<class T>
+bool
+is_valid(string_view s)
+{
+    T t;
+    error_code ec;
+    return bnf::parse_string(
+        s, ec, t);
+}
+
+bool
+is_valid(char) = delete;
+
+template<class T>
+void
+validate(string_view s)
+{
+    if(! is_valid<T>(s))
+        detail::throw_invalid_argument(
+            BOOST_CURRENT_LOCATION);
+}
+
+template<class T>
 void
 bad(string_view s)
 {
     BOOST_TEST_THROWS(
-        bnf::validate<T>(s),
+        validate<T>(s),
         std::exception);
-    BOOST_TEST(! bnf::is_valid<T>(s));
+    BOOST_TEST(! is_valid<T>(s));
 }
 
 template<class T>
@@ -120,8 +142,8 @@ void
 good(string_view s)
 {
     BOOST_TEST_NO_THROW(
-        bnf::validate<T>(s));
-    BOOST_TEST(bnf::is_valid<T>(s));
+        validate<T>(s));
+    BOOST_TEST(is_valid<T>(s));
 }
 
 template<class T>

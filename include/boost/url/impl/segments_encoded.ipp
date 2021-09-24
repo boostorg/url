@@ -17,6 +17,12 @@
 namespace boost {
 namespace urls {
 
+//------------------------------------------------
+//
+// Capacity
+//
+//------------------------------------------------
+
 std::size_t
 segments_encoded::
 size() const noexcept
@@ -24,16 +30,28 @@ size() const noexcept
     return u_->segment_count();
 }
 
+//------------------------------------------------
+//
+// Modifiers
+//
+//------------------------------------------------
+
 auto
 segments_encoded::
 insert(
     const_iterator before,
-    string_view s) ->
+    string_view s0) ->
         iterator
 {
     BOOST_ASSERT(before.u_ == u_);
-    u_->insert_encoded_segment(
-        before.i_, s);
+    detail::copied_strings cs(
+        u_->encoded_url());
+    auto s = cs.maybe_copy(s0);
+    u_->edit_segments(
+        before.i_, before.i_,
+        make_fwdit(&s),
+        make_fwdit(&s + 1),
+        make_fwdit(&s));
     return { *u_, before.i_ };
 }
 
@@ -46,11 +64,19 @@ erase(
 {
     BOOST_ASSERT(first.u_ == u_);
     BOOST_ASSERT(last.u_ == u_);
-    u_->erase_segments(
-        first.i_, last.i_);
+    string_view s;
+    u_->edit_segments(
+        first.i_, last.i_,
+        make_fwdit(&s),
+        make_fwdit(&s),
+        make_fwdit(&s));
     return { *u_, first.i_ };
 }
 
+//------------------------------------------------
+//
+// References
+//
 //------------------------------------------------
 
 segments_encoded::
@@ -76,10 +102,17 @@ string_view() const noexcept
 auto
 segments_encoded::
 reference::
-operator=(string_view s) ->
+operator=(string_view s0) ->
     reference&
 {
-    u_->set_encoded_segment(i_, s);
+    detail::copied_strings cs(
+        u_->encoded_url());
+    auto s = cs.maybe_copy(s0);
+    u_->edit_segments(
+        i_, i_ + 1,
+        make_fwdit(&s),
+        make_fwdit(&s + 1),
+        make_fwdit(&s));
     return *this;
 }
 

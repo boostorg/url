@@ -135,30 +135,6 @@ parse_string(
         ec, BOOST_CURRENT_LOCATION);
 }
 
-template<class T>
-bool
-is_valid(string_view s)
-{
-    T t;
-    error_code ec;
-    return parse_string(
-        s, ec, t);
-}
-
-bool
-is_valid(char) = delete;
-
-template<class T>
-void
-validate(string_view s)
-{
-    using namespace urls::detail;
-    if(! is_valid<T>(s))
-        throw_system_error(
-            error::invalid,
-            BOOST_CURRENT_LOCATION);
-}
-
 } // bnf
 } // urls
 } // boost

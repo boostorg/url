@@ -11,10 +11,10 @@
 #include <boost/url/url_view.hpp>
 
 #include <boost/url/static_pool.hpp>
-#include "test_suite.hpp"
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/uri_reference_bnf.hpp>
-
+#include "test_bnf.hpp"
+#include "test_suite.hpp"
 #include <sstream>
 
 namespace boost {
@@ -787,7 +787,7 @@ public:
     void
     testCases()
     {
-        BOOST_TEST(bnf::is_valid<uri_reference_bnf>(
+        BOOST_TEST(is_valid<uri_reference_bnf>(
             "javascript:alert(1)"));
     }
 

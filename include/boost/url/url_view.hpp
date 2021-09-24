@@ -18,6 +18,7 @@
 #include <boost/url/segments_view.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
+#include <boost/url/detail/helpers.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -78,33 +79,11 @@ struct scheme_part_bnf;
         @ref parse_uri_reference.
 */
 class BOOST_SYMBOL_VISIBLE url_view
+    : protected detail::parts_helper
 {
 #ifndef BOOST_URL_DOCS
 protected:
 #endif
-    using pos_t = std::size_t;
-
-    enum
-    {
-        id_scheme = -1, // trailing ':'
-        id_user,        // leading "//"
-        id_pass,        // leading ':', trailing '@'
-        id_host,
-        id_port,        // leading ':'
-        id_path,
-        id_query,       // leading '?'
-        id_frag,        // leading '#'
-        id_end          // one past the end
-    };
-
-    static
-    constexpr
-    pos_t zero_ = 0;
-
-    static
-    constexpr
-    char const* const empty_ = "";
-
     char const* cs_ = empty_;
     pos_t offset_[id_end + 1] = {};
     pos_t decoded_[id_end] = {};
