@@ -25,7 +25,9 @@ in a translation unit of the program.
 // using src.hpp as their main header file
 #include <boost/url.hpp>
 
+#include <boost/url/detail/impl/copied_strings.ipp>
 #include <boost/url/detail/impl/except.ipp>
+#include <boost/url/detail/impl/path_fwdit.ipp>
 #include <boost/url/detail/impl/pct_encoding.ipp>
 
 #include <boost/url/impl/error.ipp>

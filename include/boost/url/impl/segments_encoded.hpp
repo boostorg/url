@@ -756,7 +756,7 @@ typename std::enable_if<
 segments_encoded::
 assign(FwdIt first, FwdIt last)
 {
-    u_->edit_segments(
+    u_->edit_encoded_segments(
         0, size(),
         make_fwdit(first),
         make_fwdit(last),
@@ -909,7 +909,7 @@ insert(
     std::forward_iterator_tag) ->
         iterator
 {
-    u_->edit_segments(
+    u_->edit_encoded_segments(
         before.i_,
         before.i_,
         make_fwdit(first),

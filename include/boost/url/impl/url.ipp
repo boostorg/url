@@ -17,6 +17,7 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/detail/except.hpp>
+#include <boost/url/detail/path_fwdit.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/detail/print.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
@@ -114,7 +115,9 @@ url(url&& u) noexcept
     base() = u;
     cap_ = u.cap_;
     s_ = u.s_;
-    u = url();
+    u.s_ = nullptr;
+    u.cap_ = 0;
+    u.base() = url_view();
 }
 
 url::
@@ -132,9 +135,9 @@ operator=(url&& u) noexcept
     base() = u;
     cap_ = u.cap_;
     s_ = u.s_;
-    u.base() = {};
-    u.cap_ = 0;
     u.s_ = nullptr;
+    u.cap_ = 0;
+    u.base() = url_view();
     return *this;
 }
 
@@ -183,7 +186,6 @@ set_scheme_impl(
     bnf::parse_string(s, ec, b);
     if(ec.failed())
         detail::throw_invalid_argument(
-            "url::set_scheme",
             BOOST_CURRENT_LOCATION);
     auto n = s.size();
     auto dest = resize_impl(
@@ -293,7 +295,6 @@ set_scheme(urls::scheme id)
 {
     if(id == urls::scheme::unknown)
         detail::throw_invalid_argument(
-            "url::set_scheme",
             BOOST_CURRENT_LOCATION);
     if(id == urls::scheme::none)
         return remove_scheme();
@@ -392,7 +393,6 @@ set_encoded_user(
         pct_decode_size(s, ec, cs);
     if(ec.failed())
         detail::throw_invalid_argument(
-            "url::set_encoded_user",
             BOOST_CURRENT_LOCATION);
     auto dest = set_user_impl(s.size());
     decoded_[id_user] = n;
@@ -490,7 +490,6 @@ set_encoded_password(
         pct_decode_size(s, ec, cs);
     if(ec.failed())
         detail::throw_invalid_argument(
-            "url::set_encoded_password",
             BOOST_CURRENT_LOCATION);
     auto dest =
         set_password_impl(s.size());
@@ -575,7 +574,6 @@ set_encoded_userinfo(
     userinfo_bnf t;
     if(! bnf::parse_string(s, ec, t))
         detail::throw_invalid_argument(
-            "url::set_encoded_userinfo",
             BOOST_CURRENT_LOCATION);
     auto dest = set_userinfo_impl(s.size());
     split(id_user, 2 + t.user.str.size());
@@ -706,7 +704,6 @@ set_encoded_host(string_view s)
     error_code ec;
     if(! bnf::parse_string(s, ec, t))
         detail::throw_invalid_argument(
-            "url::set_encoded_host",
             BOOST_CURRENT_LOCATION);
     BOOST_ASSERT(t.host_type !=
         urls::host_type::none);
@@ -728,7 +725,6 @@ set_encoded_host(string_view s)
         s, ec, cs, opt);
     if(ec.failed())
         detail::throw_invalid_argument(
-            "url::set_encoded_host",
             BOOST_CURRENT_LOCATION);
     auto dest =
         set_host_impl(s.size());
@@ -806,7 +802,6 @@ set_port(string_view s)
     if(! bnf::parse_string(
             s, ec, t))
         detail::throw_invalid_argument(
-            "url::set_port",
             BOOST_CURRENT_LOCATION);
     auto dest =
         set_port_impl(t.str.size());
@@ -832,9 +827,24 @@ remove_authority() noexcept
         // no authority
         return *this;
     }
-    // remove authority
-    resize_impl(
-        id_user, id_path, 0);
+    if(get(id_path
+        ).starts_with("//"))
+    {
+        // prepend "/."
+        auto p = resize_impl(
+            id_user, id_path, 2);
+        p[0] = '/';
+        p[1] = '.';
+        split(id_user, 0);
+        split(id_pass, 0);
+        split(id_host, 0);
+        split(id_port, 0);
+    }
+    else
+    {
+        resize_impl(
+            id_user, id_path, 0);
+    }
     host_type_ =
         urls::host_type::none;
     check_invariants();
@@ -850,7 +860,6 @@ set_encoded_authority(string_view s)
     if(! bnf::parse_string(
             s, ec, t))
         detail::throw_invalid_argument(
-            "url::set_encoded_authority",
             BOOST_CURRENT_LOCATION);
     auto n = s.size();
     auto dest = resize_impl(
@@ -1144,12 +1153,13 @@ edit_segments(
 // with [first, last)
 void
 url::
-edit_segments(
+edit_encoded_segments(
     std::size_t i0,
     std::size_t i1,
     any_fwdit<string_view> const& first,
     any_fwdit<string_view> const& last,
-    any_fwdit<string_view>&& it)
+    any_fwdit<string_view>&& it,
+    int abs_hint)
 {
     // handle erase
     if(first == last)
@@ -1185,9 +1195,10 @@ edit_segments(
         style = 0;
     }
     else if(
-        len(id_path) == 0 ||
-        s_[offset(
-            id_path)] == '/')
+        abs_hint == 1 || (
+        abs_hint != 0 && (
+            len(id_path) == 0 ||
+            s_[offset(id_path)] == '/')))
     {
         // path-absolute
         if(string_view(
@@ -1219,6 +1230,11 @@ edit_segments(
         else
         {
             style = 3;
+            if(i1 == nseg_)
+            {
+                BOOST_ASSERT(n > 0);
+                --n;
+            }
         }
     }
     else
@@ -1226,6 +1242,11 @@ edit_segments(
         // path-rootless
         // or path-empty
         style = 3;
+        if(i1 == nseg_)
+        {
+            BOOST_ASSERT(n > 0);
+            --n;
+        }
     }
 
     // edit
@@ -1264,6 +1285,137 @@ edit_segments(
         *p++ = '/';
 }
 
+// insert or replace [i0, i1)
+// with [first, last)
+void
+url::
+edit_segments(
+    std::size_t i0,
+    std::size_t i1,
+    any_fwdit<string_view> const& first,
+    any_fwdit<string_view> const& last,
+    any_fwdit<string_view>&& it,
+    int abs_hint)
+{
+    // handle erase
+    if(first == last)
+    {
+        edit_segments(
+            i0, i1, 0, 0);
+        return;
+    }
+
+    // measure
+    std::size_t n = 0;
+    std::size_t nseg = 0;
+    for(;;)
+    {
+        n += pct_encode_size(
+            *it, pchars);
+        ++it;
+        ++nseg;
+        if(it == last)
+            break;
+    }
+
+    // meet grammar requirements
+    int style;
+    if( i0 > 0 ||
+        has_authority())
+    {
+        // path-abempty
+        style = 0;
+    }
+    else if(
+        abs_hint == 1 || (
+        abs_hint != 0 && (
+            len(id_path) == 0 ||
+            s_[offset(id_path)] == '/')))
+    {
+        // path-absolute
+        if(string_view(
+            *first).empty() &&
+                nseg > 1)
+        {
+            // prepend "/."
+            ++n;
+            ++nseg;
+            style = 1;
+        }
+        else
+        {
+            style = 0;
+        }
+    }
+    else if(! has_scheme())
+    {
+        // path-noscheme
+        string_view s = *first;
+        if(s.empty() ||
+            s.find_first_of(':') !=
+                string_view::npos)
+        {
+            // prepend "."
+            ++nseg;
+            style = 2;
+        }
+        else
+        {
+            style = 3;
+            if(i1 == nseg_)
+            {
+                BOOST_ASSERT(n > 0);
+                --n;
+            }
+        }
+    }
+    else
+    {
+        // path-rootless
+        // or path-empty
+        style = 3;
+        if(i1 == nseg_)
+        {
+            BOOST_ASSERT(n > 0);
+            --n;
+        }
+    }
+
+    // edit
+    auto const size0 = size();
+    auto const p0 = edit_segments(
+        i0, i1, n + nseg, nseg);
+    auto p = p0;
+    if(style == 1)
+    {
+        *p++ = '/';
+        *p++ = '.';
+    }
+    else if(style == 2)
+    {
+        *p++ = '.';
+    }
+    it = first;
+    if(style == 3)
+        goto do_skip_lead;
+    for(;;)
+    {
+        *p++ = '/';
+    do_skip_lead:
+        string_view s = *it;
+        if(! s.empty())
+            p = detail::pct_encode(
+                p, p0 + n + nseg,
+                s, {}, pchars);
+        ++it;
+        if(it == last)
+            break;
+    }
+    if( style == 3 &&
+        i1 < size0)
+        *p++ = '/';
+}
+
 //------------------------------------------------
 
 url&
@@ -1271,30 +1423,38 @@ url::
 set_encoded_path(
     string_view s)
 {
-    error_code ec;
-    segments_encoded_view sev;
-    if(! s.empty())
-    {
-        if(has_authority())
-            sev = parse_path_abempty(s, ec);
-        else if(s.starts_with('/'))
-            sev = parse_path_absolute(s, ec);
-        else if(has_scheme())
-            sev = parse_path_rootless(s, ec);
-        else 
-            sev = parse_path_noscheme(s, ec);
-        if(ec.failed())
-            detail::throw_invalid_argument(
-                BOOST_CURRENT_LOCATION);
-    }
+    int abs_hint;
+    if(s.starts_with('/'))
+        abs_hint = 1;
     else
-    {
-        // path-empty
-    }
-    auto p = resize_impl(
-        id_path, s.size());
-    std::memcpy(p, s.data(), s.size());
-    nseg_ = sev.size();
+        abs_hint = 0;
+    edit_encoded_segments(
+        0, nseg_,
+        detail::path_fwdit(s),
+        detail::path_fwdit(
+            s.data() + s.size()),
+        detail::path_fwdit(s),
+        abs_hint);
+    return *this;
+}
+
+url&
+url::
+set_path(
+    string_view s)
+{
+    int abs_hint;
+    if(s.starts_with('/'))
+        abs_hint = 1;
+    else
+        abs_hint = 0;
+    edit_segments(
+        0, nseg_,
+        detail::path_fwdit(s),
+        detail::path_fwdit(
+            s.data() + s.size()),
+        detail::path_fwdit(s),
+        abs_hint);
     return *this;
 }
 

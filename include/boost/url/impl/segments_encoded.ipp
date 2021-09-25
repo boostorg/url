@@ -47,7 +47,7 @@ insert(
     detail::copied_strings cs(
         u_->encoded_url());
     auto s = cs.maybe_copy(s0);
-    u_->edit_segments(
+    u_->edit_encoded_segments(
         before.i_, before.i_,
         make_fwdit(&s),
         make_fwdit(&s + 1),
@@ -65,7 +65,7 @@ erase(
     BOOST_ASSERT(first.u_ == u_);
     BOOST_ASSERT(last.u_ == u_);
     string_view s;
-    u_->edit_segments(
+    u_->edit_encoded_segments(
         first.i_, last.i_,
         make_fwdit(&s),
         make_fwdit(&s),
@@ -108,7 +108,7 @@ operator=(string_view s0) ->
     detail::copied_strings cs(
         u_->encoded_url());
     auto s = cs.maybe_copy(s0);
-    u_->edit_segments(
+    u_->edit_encoded_segments(
         i_, i_ + 1,
         make_fwdit(&s),
         make_fwdit(&s + 1),

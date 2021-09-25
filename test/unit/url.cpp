@@ -10,9 +10,9 @@
 // Test that header file is self-contained.
 #include <boost/url/url.hpp>
 
-#include <boost/url/url_view.hpp>
-
+#include <boost/url/detail/path_fwdit.hpp>
 #include "test_suite.hpp"
+#include <initializer_list>
 
 namespace boost {
 namespace urls {
@@ -20,506 +20,68 @@ namespace urls {
 class url_test
 {
 public:
-#if 0
-    test_suite::log_type log;
-
     void
-    dump(url const& u)
+    testPathFwdIt()
     {
-        (void)u;
-        log <<
-            "href     : " << u.encoded_url() << "\n"
-            "scheme   : " << u.scheme() << "\n"
-            "user     : " << u.encoded_user() << "\n"
-            "password : " << u.encoded_password() << "\n"
-            "hostname : " << u.encoded_host() << "\n"
-            "port     : " << u.port() << "\n" <<
-            "path     : " << u.encoded_path() << "\n"
-            "query    : " << u.encoded_query() << "\n"
-            "fragment : " << u.encoded_fragment() << "\n"
-            //"resource : " << u.encoded_resource() << "\n"
-            ;
-        log.flush();
-    }
-
-    void
-    testObservers()
-    {
-        BOOST_TEST(url("/").size() == 1);
-        BOOST_TEST(url("/").capacity() >= 1);
-    }
-
-    void
-    testConstValue()
-    {
-        BOOST_TEST(url().host_type() == host_type::none);
-        BOOST_TEST(url("//").host_type() == host_type::none);
-        BOOST_TEST(url("//127.0.0.1").host_type() == host_type::ipv4);
-        BOOST_TEST(url("//0.0.0.0").host_type() == host_type::ipv4);
-        BOOST_TEST(url("//255.255.255.255").host_type() == host_type::ipv4);
-        BOOST_TEST(url("//0.0.0.").host_type() == host_type::name);
-        BOOST_TEST(url("//127.00.0.1").host_type() == host_type::name);
-        BOOST_TEST(url("//999.0.0.0").host_type() == host_type::name);
-        BOOST_TEST(url("//example.com").host_type() == host_type::name);
-        BOOST_TEST(url("//127.0.0.1.9").host_type() == host_type::name);
-
+        auto const check =
+        []( string_view s,
+            std::initializer_list<
+                string_view> init)
         {
-            url const v("http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
-            BOOST_TEST(v.encoded_url() == "http://user:pass@example.com:80/path/to/file.txt?k1=v1&k2=v2");
-            BOOST_TEST(v.encoded_origin() == "http://user:pass@example.com:80");
-            BOOST_TEST(v.encoded_authority() == "user:pass@example.com:80");
-            BOOST_TEST(v.scheme() == "http");
-            BOOST_TEST(v.encoded_user() == "user");
-            BOOST_TEST(v.encoded_password() == "pass");
-            BOOST_TEST(v.encoded_userinfo() == "user:pass");
-            BOOST_TEST(v.encoded_host() == "example.com");
-            BOOST_TEST(v.port() == "80");
-            BOOST_TEST(v.encoded_path() == "/path/to/file.txt");
-            BOOST_TEST(v.encoded_query() == "k1=v1&k2=v2");
-            BOOST_TEST(v.encoded_fragment() == "");
-
-            BOOST_TEST(v.user() == "user");
-            BOOST_TEST(v.password() == "pass");
-            BOOST_TEST(v.host() == "example.com");
-            BOOST_TEST(v.query() == "k1=v1&k2=v2");
-            BOOST_TEST(v.fragment() == "");
-        }
-    }
-
-    //------------------------------------------------------
-
-    void
-    testCtor()
-    {
-        BOOST_TEST(url().encoded_url() == "");
-    }
-
-    void
-    testOrigin()
-    {
-        BOOST_TEST(url().encoded_origin() == "");
-        BOOST_TEST(url("http://user:pass@example.com/path/to/file.txt?q").encoded_origin() ==
-                         "http://user:pass@example.com");
-        BOOST_TEST(url("http://user:pass@example.com/path/to/file.txt?q"
-            ).set_encoded_origin("ws://x.com").encoded_url() == "ws://x.com/path/to/file.txt?q");
-        BOOST_TEST(
-            url("http://host:80/")
-            .set_encoded_origin("http://host:443/")
-            .port() == "443");
-    }
-
-    //------------------------------------------------------
-
-    void
-    testHostAndPort()
-    {
-        BOOST_TEST(url().encoded_host_and_port() == "");
-        BOOST_TEST(url("//").encoded_host_and_port() == "");
-        BOOST_TEST(url("//x").encoded_host_and_port() == "x");
-        BOOST_TEST(url("//x:").encoded_host_and_port() == "x:");
-        BOOST_TEST(url("//x:0").encoded_host_and_port() == "x:0");
-        BOOST_TEST(url("//x:0/").encoded_host_and_port() == "x:0");
-    }
-
-    //------------------------------------------------------
-
-    void
-    testPath()
-    {
-        BOOST_TEST(url().encoded_path() == "");
-        BOOST_TEST(url("x:a").encoded_path() == "a");
-        BOOST_TEST(url("x:/a").encoded_path() == "/a");
-        BOOST_TEST(url("x://y/a").encoded_path() == "/a");
-
-        BOOST_TEST(url("x").encoded_path() == "x");
-        BOOST_TEST(url("x/").encoded_path() == "x/");
-        BOOST_TEST(url("x//").encoded_path() == "x//");
-
-        BOOST_TEST(url("/").encoded_path() == "/");
-
-        // path-empty
-        BOOST_TEST(url("").set_encoded_path("").encoded_url() == "");
-        BOOST_TEST(url("//x#").set_encoded_path("").encoded_url() == "//x#");
-
-        // path-abempty
-        BOOST_TEST(url("//x#").set_encoded_path("/").encoded_url() == "//x/#");
-        BOOST_TEST(url("//x#").set_encoded_path("//").encoded_url() == "//x//#");
-        BOOST_TEST(url("//x#").set_encoded_path("/y").encoded_url() == "//x/y#");
-        BOOST_TEST_THROWS(url("//x#").set_encoded_path("x"), invalid_part);
-        BOOST_TEST_THROWS(url("//x#").set_encoded_path("x/"), invalid_part);
-        BOOST_TEST_THROWS(url("//x#").set_encoded_path("/%A"), invalid_part);
-        BOOST_TEST_THROWS(url("//x#").set_encoded_path("/#"), invalid_part);
-
-        // path-absolute
-        BOOST_TEST(url("?#").set_encoded_path("/x").encoded_url() == "/x?#");
-        BOOST_TEST(url("x:?#").set_encoded_path("/").encoded_url() == "x:/?#");
-        BOOST_TEST_THROWS(url("?").set_encoded_path("//x"), invalid_part);
-        BOOST_TEST_THROWS(url("?").set_encoded_path("/x%A"), invalid_part);
-        BOOST_TEST_THROWS(url("x:?#").set_encoded_path("/x?"), invalid_part);
-        BOOST_TEST_THROWS(url("/x/%"), invalid_part);
-
-        // path-noscheme
-        BOOST_TEST(url("").set_encoded_path("x").encoded_url() == "x");
-        BOOST_TEST(url("").set_encoded_path("x/").encoded_url() == "x/");
-        BOOST_TEST(url("").set_encoded_path("x//").encoded_url() == "x//");
-        BOOST_TEST(url("?#").set_encoded_path("x").encoded_url() == "x?#");
-        BOOST_TEST(url("?#").set_encoded_path("x/").encoded_url() == "x/?#");
-        BOOST_TEST(url("?#").set_encoded_path("x//").encoded_url() == "x//?#");
-        BOOST_TEST(url("yz/?#").set_encoded_path("x").encoded_url() == "x?#");
-        BOOST_TEST(url("yz/?#").set_encoded_path("x/").encoded_url() == "x/?#");
-        BOOST_TEST(url("yz/?#").set_encoded_path("x//").encoded_url() == "x//?#");
-        BOOST_TEST_THROWS(url("yz/?#").set_encoded_path(":"), invalid_part);
-        BOOST_TEST_THROWS(url("yz/?#").set_encoded_path("x:"), invalid_part);
-        BOOST_TEST_THROWS(url("yz/?#").set_encoded_path("x:/q"), invalid_part);
-        BOOST_TEST_THROWS(url("y/%"), invalid_part);
-
-        // path-rootless
-        BOOST_TEST(url("x:?#").set_encoded_path("y").encoded_url() == "x:y?#");
-        BOOST_TEST(url("x:?#").set_encoded_path("y/").encoded_url() == "x:y/?#");
-        BOOST_TEST(url("x:?#").set_encoded_path("y//").encoded_url() == "x:y//?#");
-        BOOST_TEST_THROWS(url("x:?#").set_encoded_path("%A"), invalid_part);
-        BOOST_TEST_THROWS(url("x:?#").set_encoded_path("y?"), invalid_part);
-        BOOST_TEST_THROWS(url("x:y/%"), invalid_part);
-    }
-
-    void
-    testSegments()
-    {
-        // path() const
-        {
-            url const v("/path/to/file.txt");
-            auto ps = v.path();
-            // ?
-        }
-
-        {
-            url v("/path/to/file.txt");
-            auto ps = v.path();
-            BOOST_TEST(! ps.empty());
-            BOOST_TEST(ps.size() == 3);
-            BOOST_TEST(ps.begin() != ps.end());
-            BOOST_TEST(ps.end() == ps.end());
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 3);
-
-            static_pool<4000> sp;
+            detail::path_fwdit it(s);
+            detail::path_fwdit const end(
+                s.data() + s.size());
+            auto i = init.begin();
+            while(it != end)
             {
-                auto it = ps.begin();
-                BOOST_TEST(it->string(sp.allocator()) == "path"); ++it;
-                BOOST_TEST(it->string(sp.allocator()) == "to"); ++it;
-                BOOST_TEST(it->string(sp.allocator()) == "file.txt");
+                if(! BOOST_TEST(
+                        i != init.end()))
+                    break;
+                BOOST_TEST(*i == *it);
+                ++it;
+                ++i;
             }
+            BOOST_TEST(i == init.end());
+        };
 
-            auto it = ps.begin();
-            BOOST_TEST(it->encoded_string() == "path");
-            it++;
-            BOOST_TEST(it->encoded_string() == "to");
-            ++it;
-            BOOST_TEST(it->encoded_string() == "file.txt");
-            --it;
-            BOOST_TEST(it->encoded_string() == "to");
-            it--;
-            BOOST_TEST(it->encoded_string() == "path");
+        check( "", {} );
+        check( "x", {"x"});
+        check( "/x", {"x"});
+        check( "//", {"",""});
+        check( ".//", {".","",""});
+        check( "./", {".",""});
+    }
+
+    void
+    testSpecial()
+    {
+        // copy
+        {
+            url u = parse_uri_reference("x://y/z?q#f");
+            url u2(u);
+            BOOST_TEST(u2.encoded_url() == u.encoded_url());
         }
         {
-            url u("http://user:pass@example.com:80?k1=v1&k2=v2");
-            auto ps = u.path();
-            BOOST_TEST(ps.empty());
-            ps.insert_encoded(
-                ps.insert_encoded(
-                    ps.insert_encoded(
-                        ps.insert_encoded(
-                            ps.insert_encoded(ps.end(), "a" ), "b" ), "c" ), "d" ), "file.txt" );
-            BOOST_TEST(!ps.empty());
-            BOOST_TEST(ps.size() == 5);
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 5);
-            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt");
-
-            {
-                auto e = ps.begin();
-                ++e;
-                ++e;
-                ps.erase( ps.begin(), e );
-            }
-            BOOST_TEST(!ps.empty());
-            BOOST_TEST(ps.size() == 3);
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 3);
-            BOOST_TEST(u.encoded_path() == "/c/d/file.txt");
-
-            auto const after = ps.insert_encoded(ps.begin(), "a");
-            BOOST_TEST(!ps.empty());
-            BOOST_TEST(ps.size() == 4);
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 4);
-            BOOST_TEST(u.encoded_path() == "/a/c/d/file.txt");
-            ps.insert_encoded(after, "b");
-            BOOST_TEST(!ps.empty());
-            BOOST_TEST(ps.size() == 5);
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 5);
-            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt");
-
-            ps.insert_encoded(ps.begin(), "");
-            BOOST_TEST(!ps.empty());
-            BOOST_TEST(ps.size() == 6);
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
-            BOOST_TEST(u.encoded_path() == "//a/b/c/d/file.txt");
-
-            ps.erase(ps.begin());
-            BOOST_TEST(!ps.empty());
-            BOOST_TEST(ps.size() == 5);
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 5);
-            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt");
-
-            ps.insert_encoded(ps.end(), "");
-            BOOST_TEST(!ps.empty());
-            BOOST_TEST(ps.size() == 6);
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
-            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt/");
-
-            {
-                auto e = ps.end();
-                --e;
-                ps.erase(e);
-            }
-            BOOST_TEST(!ps.empty());
-            BOOST_TEST(ps.size() == 5);
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 5);
-            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt");
-
-            BOOST_TEST_THROWS(ps.insert_encoded(ps.begin(), "/"), invalid_part);
-            BOOST_TEST(!ps.empty());
-            BOOST_TEST(ps.size() == 5);
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 5);
-            BOOST_TEST(u.encoded_path() == "/a/b/c/d/file.txt");
-
-            ps.insert(ps.begin(), "/");
-            BOOST_TEST(!ps.empty());
-            BOOST_TEST(ps.size() == 6);
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
-            BOOST_TEST(u.encoded_path() == "/%2F/a/b/c/d/file.txt");
-
-            {
-                auto n = u.capacity();
-                std::string s(n - u.size() + ps.begin()->encoded_string().size(), 'a');
-                ps.replace_encoded(ps.begin(), s);
-                BOOST_TEST(n == u.capacity());
-                BOOST_TEST(u.size() == u.capacity());
-                BOOST_TEST(!ps.empty());
-                BOOST_TEST(ps.size() == 6);
-                BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
-                BOOST_TEST(u.encoded_path() == "/" + s + "/a/b/c/d/file.txt");
-
-                s += 'a';
-                ps.replace_encoded(ps.begin(), s);
-                BOOST_TEST(n < u.capacity());
-                BOOST_TEST(!ps.empty());
-                BOOST_TEST(ps.size() == 6);
-                BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
-                BOOST_TEST(u.encoded_path() == "/" + s + "/a/b/c/d/file.txt");
-
-                ps.replace_encoded(ps.begin(), "%2F");
-            }
-
-            BOOST_TEST_THROWS(ps.replace_encoded(ps.begin(), "/"), invalid_part);
-            BOOST_TEST(!ps.empty());
-            BOOST_TEST(ps.size() == 6);
-            BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
-            BOOST_TEST(u.encoded_path() == "/%2F/a/b/c/d/file.txt");
-
-            {
-                auto n = u.capacity();
-                std::string s(n - u.size() + ps.begin()->encoded_string().size(), 'a');
-                ps.replace(ps.begin(), s);
-                BOOST_TEST(n == u.capacity());
-                BOOST_TEST(u.size() == u.capacity());
-                BOOST_TEST(!ps.empty());
-                BOOST_TEST(ps.size() == 6);
-                BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
-                BOOST_TEST(u.encoded_path() == "/" + s + "/a/b/c/d/file.txt");
-
-                ps.replace(ps.begin(), s + '/');
-                BOOST_TEST(n < u.capacity());
-                BOOST_TEST(!ps.empty());
-                BOOST_TEST(ps.size() == 6);
-                BOOST_TEST(std::distance(ps.begin(), ps.end()) == 6);
-                BOOST_TEST(u.encoded_path() == "/" + s + "%2F/a/b/c/d/file.txt");
-
-                ps.replace_encoded(ps.begin(), "%2F");
-            }
+            url u = parse_uri_reference("x://y/z?q#f");
+            url u2 = parse_relative_ref("./");
+            u2 = u;
+            BOOST_TEST(u2.encoded_url() == u.encoded_url());
         }
-    }
-
-    //------------------------------------------------------
-
-    void
-    testQuery()
-    {
-        BOOST_TEST(url("").query() == "");
-        BOOST_TEST(url("?").query() == "");
-        BOOST_TEST(url("?x").query() == "x");
-
-        BOOST_TEST(url("").encoded_query() == "");
-        BOOST_TEST(url("?").encoded_query() == "");
-        BOOST_TEST(url("?x").encoded_query() == "x");
-
-        BOOST_TEST(url("//?").set_query("").encoded_url() == "//");
-        BOOST_TEST(url("//?x").set_query("").encoded_url() == "//");
-        BOOST_TEST(url("//?xy").set_query("y").encoded_url() == "//?y");
-        BOOST_TEST(url("//").set_query("?").encoded_url() == "//??");
-        BOOST_TEST(url("//").set_query("??").encoded_url() == "//???");
-
-        BOOST_TEST(url("//?").set_encoded_query("").encoded_url() == "//");
-        BOOST_TEST(url("//?x").set_encoded_query("").encoded_url() == "//");
-        BOOST_TEST(url("//?xy").set_encoded_query("y").encoded_url() == "//?y");
-        BOOST_TEST_THROWS(url("//").set_encoded_query("#"), invalid_part);
-        BOOST_TEST_THROWS(url("//").set_encoded_query("#?"), invalid_part);
-
-        BOOST_TEST(url("//?").set_query_part("").encoded_url() == "//");
-        BOOST_TEST(url("//?x").set_query_part("").encoded_url() == "//");
-        BOOST_TEST_THROWS(url("//?xy").set_query_part("y"), invalid_part);
-        BOOST_TEST(url("//?xy").set_query_part("?y").encoded_url() == "//?y");
-
-        BOOST_TEST_THROWS(url("?%"), invalid_part);
-        BOOST_TEST(url("?x=").encoded_url() == "?x=");
-        BOOST_TEST_THROWS(url("?x=%"), invalid_part);
-        BOOST_TEST(url("?x=#").encoded_url() == "?x=#");
-    }
-
-    void
-    testParams()
-    {
-        // params() const
+        // move
         {
-            url const v("?x=1&y=2&y=3&z");
-            auto qp = v.query_params();
-            static_assert(
-                std::is_same<decltype(qp),
-                    query_params_view>::value, "");
+            url u = parse_uri_reference("x://y/z?q#f");
+            url u2(std::move(u));
+            BOOST_TEST(u.empty());
+            BOOST_TEST(u2.encoded_url() == "x://y/z?q#f");
         }
-
         {
-            url v("?x=1&y=2&y=3&z");
-            auto qp = v.query_params();
-            BOOST_TEST(! qp.empty());
-            BOOST_TEST(qp.size() == 4);
-            BOOST_TEST(qp.begin() != qp.end());
-            BOOST_TEST(qp.end() == qp.end());
-            BOOST_TEST(qp.contains("x"));
-            BOOST_TEST(qp.contains("y"));
-            BOOST_TEST(! qp.contains("a"));
-            BOOST_TEST(qp.count("x") == 1);
-            BOOST_TEST(qp.count("y") == 2);
-            BOOST_TEST(qp.count("a") == 0);
-            BOOST_TEST(qp.find("x")->encoded_value() == "1");
-            BOOST_TEST(qp.find("y")->encoded_value() == "2");
-            BOOST_TEST(qp.find("a") == qp.end());
-            BOOST_TEST(qp["x"] == "1");
-            BOOST_TEST(qp["y"] == "2");
-            BOOST_TEST(qp["a"] == "");
-            BOOST_TEST(qp.at("x") == "1");
-            BOOST_TEST(qp.at("y") == "2");
-
-            BOOST_TEST_THROWS(
-                qp.at("a"),
-                std::out_of_range);
-
-            static_pool<4000> sp;
-            {
-                auto it = qp.begin();
-                BOOST_TEST(it->key(sp.allocator()) == "x"); ++it;
-                BOOST_TEST(it->key(sp.allocator()) == "y"); ++it;
-                BOOST_TEST(it->key(sp.allocator()) == "y"); ++it;
-                BOOST_TEST(it->key(sp.allocator()) == "z");
-                it = qp.begin();
-                BOOST_TEST(it->value(sp.allocator()) == "1"); ++it;
-                BOOST_TEST(it->value(sp.allocator()) == "2"); ++it;
-                BOOST_TEST(it->value(sp.allocator()) == "3"); ++it;
-                BOOST_TEST(it->value(sp.allocator()) == "");
-            }
-
-            auto it = qp.begin();
-            BOOST_TEST(it->encoded_key() == "x");
-            it++;
-            it++;
-            BOOST_TEST(it->encoded_key() == "y");
-            ++it;
-            BOOST_TEST(it->encoded_key() == "z");
-            --it;
-            BOOST_TEST(it->encoded_key() == "y");
-            it--;
-            it--;
-            BOOST_TEST(it->encoded_key() == "x");
+            url u = parse_uri_reference("x://y/z?q#f");
+            url u2 = parse_relative_ref("./");
+            u2 = std::move(u);
+            BOOST_TEST(u.empty());
+            BOOST_TEST(u2.encoded_url() == "x://y/z?q#f");
         }
     }
-
-    //------------------------------------------------------
-
-    void
-    testFragment()
-    {
-        BOOST_TEST(url("").fragment() == "");
-        BOOST_TEST(url("#").fragment() == "");
-        BOOST_TEST(url("#x").fragment() == "x");
-
-        BOOST_TEST(url("").encoded_fragment() == "");
-        BOOST_TEST(url("#").encoded_fragment() == "");
-        BOOST_TEST(url("#x").encoded_fragment() == "x");
-
-        BOOST_TEST(url("").fragment() == "");
-        BOOST_TEST(url("#").fragment() == "#");
-        BOOST_TEST(url("#x").fragment() == "#x");
-
-        BOOST_TEST(url().set_fragment("").fragment() == "");
-        BOOST_TEST(url().set_fragment("#").fragment() == "#%23");
-        BOOST_TEST(url().set_fragment("#x").fragment() == "#%23x");
-
-        BOOST_TEST(url().set_encoded_fragment("").fragment() == "");
-        BOOST_TEST(url().set_encoded_fragment("x").fragment() == "#x");
-        BOOST_TEST(url().set_encoded_fragment("%23").fragment() == "#%23");
-        BOOST_TEST_THROWS(url().set_encoded_fragment("#"), invalid_part);
-        BOOST_TEST_THROWS(url().set_encoded_fragment("#x"), invalid_part);
-
-        BOOST_TEST(url().set_fragment_part("").fragment() == "");
-        BOOST_TEST(url().set_fragment_part("#").fragment() == "#");
-        BOOST_TEST(url().set_fragment_part("#x").fragment() == "#x");
-        BOOST_TEST(url().set_fragment_part("#%23x").fragment() == "#%23x");
-        BOOST_TEST_THROWS(url().set_fragment_part("x"), invalid_part);
-        BOOST_TEST_THROWS(url().set_fragment_part("%23"), invalid_part);
-
-        BOOST_TEST(url("//#").set_fragment("").encoded_url() == "//");
-        BOOST_TEST(url("//#x").set_fragment("").encoded_url() == "//");
-        BOOST_TEST(url("//#xy").set_fragment("y").encoded_url() == "//#y");
-        BOOST_TEST(url("//").set_fragment("#").encoded_url() == "//#%23");
-        BOOST_TEST(url("//").set_fragment("##").encoded_url() == "//#%23%23");
-
-        BOOST_TEST(url("//#").set_encoded_fragment("").encoded_url() == "//");
-        BOOST_TEST(url("//#x").set_encoded_fragment("").encoded_url() == "//");
-        BOOST_TEST(url("//#xy").set_encoded_fragment("y").encoded_url() == "//#y");
-        BOOST_TEST_THROWS(url("//").set_encoded_fragment("#"), invalid_part);
-        BOOST_TEST_THROWS(url("//").set_encoded_fragment("##"), invalid_part);
-
-        BOOST_TEST(url("//#").set_fragment_part("").encoded_url() == "//");
-        BOOST_TEST(url("//#x").set_fragment_part("").encoded_url() == "//");
-        BOOST_TEST_THROWS(url("//#xy").set_fragment_part("y"), invalid_part);
-        BOOST_TEST(url("//#xy").set_fragment_part("#y").encoded_url() == "//#y");
-
-        BOOST_TEST_THROWS(url("#%"), invalid_part);
-    }
-
-    //------------------------------------------------------
-
-    void
-    testNormalize()
-    {
-        BOOST_TEST(url("").normalize_scheme().encoded_url() == "");
-        BOOST_TEST(url("/").normalize_scheme().encoded_url() == "/");
-        BOOST_TEST(url("http://").normalize_scheme().encoded_url() == "http://");
-        BOOST_TEST(url("Http://").normalize_scheme().encoded_url() == "http://");
-        BOOST_TEST(url("HTtp://").normalize_scheme().encoded_url() == "http://");
-        BOOST_TEST(url("HTTp://").normalize_scheme().encoded_url() == "http://");
-        BOOST_TEST(url("HTTP://").normalize_scheme().encoded_url() == "http://");
-    }
-
-    //------------------------------------------------------
-#endif
 
     //--------------------------------------------
 
@@ -1290,6 +852,7 @@ public:
         remove("z://x/y/", "z:/y/");
         remove("z://x/y/?#", "z:/y/?#");
         remove("z://x:/y/?#", "z:/y/?#");
+        remove("z://x//y/?q#f", "z:/.//y/?q#f");
 
         set("", "", "//");
         set("", "x@", "//x@");
@@ -1397,8 +960,8 @@ public:
             u.set_encoded_path("/x");
             BOOST_TEST(u.encoded_path() == "/x");
             BOOST_TEST(u.encoded_url() == "x://y/x?q#f");
-            BOOST_TEST_THROWS(u.set_encoded_path("x/"),
-                std::invalid_argument);
+            u.set_encoded_path("x/");
+            BOOST_TEST(u.encoded_url() == "x://y/x/?q#f");
         }
         {
             // path-absolute
@@ -1406,9 +969,9 @@ public:
             u.set_encoded_path("/home/file.txt");
             BOOST_TEST(u.encoded_path() == "/home/file.txt");
             BOOST_TEST(u.encoded_url() == "/home/file.txt");
+            u.set_encoded_path("//home/file.txt");
+            BOOST_TEST(u.encoded_path() == "/.//home/file.txt");
             BOOST_TEST_THROWS(u.set_encoded_path("/home/%ile.txt"),
-                std::invalid_argument);
-            BOOST_TEST_THROWS(u.set_encoded_path("//home/file.txt"),
                 std::invalid_argument);
         }
         {
@@ -1431,10 +994,94 @@ public:
             u.set_encoded_path("file.txt");
             BOOST_TEST(u.encoded_path() == "file.txt");
             BOOST_TEST(u.encoded_url() == "file.txt");
-            BOOST_TEST_THROWS(u.set_encoded_path(":file.txt"),
-                std::invalid_argument);
-            BOOST_TEST_THROWS(u.set_encoded_path("http:index.htm"),
-                std::invalid_argument);
+            u.set_encoded_path(":file.txt");
+            BOOST_TEST(u.encoded_path() == "./:file.txt");
+            u.set_encoded_path("http:index.htm");
+            BOOST_TEST(u.encoded_path() == "./http:index.htm");
+        }
+
+        // set_encoded_path
+        {
+            auto const check =
+            [&](string_view s0,
+                string_view arg,
+                string_view match)
+            {
+                url u = parse_uri_reference(s0);
+                u.set_encoded_path(arg);
+                BOOST_TEST(
+                    u.encoded_url() == match);
+            };
+            check(
+                "",
+                "path/to/file.txt",
+                "path/to/file.txt");
+            check(
+                "",
+                "/path/to/file.txt",
+                "/path/to/file.txt");
+            check(
+                "",
+                "//index.htm",
+                "/.//index.htm");
+            check(
+                "http://example.com?q#f",
+                "path/to/file.txt",
+                "http://example.com/path/to/file.txt?q#f");
+            check(
+                "http://example.com?q#f",
+                "/path/to/file.txt",
+                "http://example.com/path/to/file.txt?q#f");
+            check(
+                "x",
+                "http:path/to/file.",
+                "./http:path/to/file.");
+            check(
+                "x:",
+                "y:z/",
+                "x:y:z/");
+        }
+
+        // set_path
+        {
+            auto const check =
+            [&](string_view s0,
+                string_view arg,
+                string_view match)
+            {
+                url u = parse_uri_reference(s0);
+                u.set_path(arg);
+                BOOST_TEST(
+                    u.encoded_url() == match);
+            };
+            check(
+                "",
+                "path/to/file.txt",
+                "path/to/file.txt");
+            check(
+                "",
+                "/path/to/file.txt",
+                "/path/to/file.txt");
+            check(
+                "",
+                "//index.htm",
+                "/.//index.htm");
+            check(
+                "http://example.com?q#f",
+                "path/to/file.txt",
+                "http://example.com/path/to/file.txt?q#f");
+            check(
+                "http://example.com?q#f",
+                "/path/to/file.txt",
+                "http://example.com/path/to/file.txt?q#f");
+            check(
+                "x",
+                "http:path/to/file.",
+                "./http:path/to/file.");
+            check(
+                "x:",
+                "y:z/",
+                "x:y:z/");
         }
     }
 
@@ -1443,8 +1090,10 @@ public:
     void
     run()
     {
-        testScheme();
+        testPathFwdIt();
 
+        testSpecial();
+        testScheme();
         testUser();
         testPassword();
         testUserinfo();
@@ -1453,27 +1102,6 @@ public:
         testAuthority();
         testOrigin();
         testPath();
-#if 0
-        testObservers();
-
-        testConstValue();
-
-        testCtor();
-        testOrigin();
-        testAuthority();
-        testPassword();
-
-        testHostAndPort();
-        testHost();
-        testPort();
-        testPath();
-        testSegments();
-        testQuery();
-        testParams();
-        testFragment();
-
-        testNormalize();
-#endif
     }
 };
 

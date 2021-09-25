@@ -102,6 +102,13 @@ public:
 
     /** Constructor
     */
+    url(url const& u)
+        : url(u.base())
+    {
+    }
+
+    /** Constructor
+    */
     BOOST_URL_DECL
     url(url_view const& u);
 
@@ -113,9 +120,12 @@ public:
 
     /** Assignment
     */
-    BOOST_URL_DECL
     url&
-    operator=(url const& u);
+    operator=(url const& u)
+    {
+        *this = u.base();
+        return *this;
+    }
 
     /** Assignment
     */
@@ -871,6 +881,18 @@ private:
         std::size_t nseg);
 
     void
+    edit_encoded_segments(
+        std::size_t i0,
+        std::size_t i1,
+        any_fwdit<string_view
+            > const& first,
+        any_fwdit<string_view
+            > const& last,
+        any_fwdit<
+            string_view>&& it,
+        int abs_hint = -1);
+
+    void
     edit_segments(
         std::size_t i0,
         std::size_t i1,
@@ -879,7 +901,8 @@ private:
         any_fwdit<string_view
             > const& last,
         any_fwdit<
-            string_view>&& it);
+            string_view>&& it,
+        int abs_hint = -1);
 public:
 
     /** Set the path.
@@ -934,6 +957,11 @@ public:
     BOOST_URL_DECL
     url&
     set_encoded_path(
+        string_view s);
+
+    BOOST_URL_DECL
+    url&
+    set_path(
         string_view s);
 
     /** Return a path segment by index

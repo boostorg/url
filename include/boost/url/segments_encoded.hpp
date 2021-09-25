@@ -936,16 +936,6 @@ public:
     inline
     void
     pop_back() noexcept;
-
-private:
-    BOOST_URL_DECL
-    void
-    edit_segments(
-        std::size_t i0,
-        std::size_t i1,
-        fwdit const& first,
-        fwdit const& last,
-        fwdit&& it);
 };
 
 } // urls
