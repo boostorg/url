@@ -28,6 +28,9 @@ namespace urls {
 
 #ifndef BOOST_URL_DOCS
 class url_view;
+namespace detail {
+struct any_path_iter;
+}
 #endif
 
 /** A modifiable container for a URL.
@@ -53,7 +56,6 @@ class url_view;
 */
 class BOOST_SYMBOL_VISIBLE url
     : public url_view
-    , private detail::any_helper
 {
     friend class segments_encoded;
     friend class segments_encoded::reference;
@@ -159,12 +161,6 @@ public:
     BOOST_URL_DECL
     void
     clear() noexcept;
-
-    /** Adjust the capacity
-    */
-    BOOST_URL_DECL
-    void
-    reserve(std::size_t n);
 
     //--------------------------------------------
     //
@@ -881,27 +877,11 @@ private:
         std::size_t nseg);
 
     void
-    edit_encoded_segments(
-        std::size_t i0,
-        std::size_t i1,
-        any_fwdit<string_view
-            > const& first,
-        any_fwdit<string_view
-            > const& last,
-        any_fwdit<
-            string_view>&& it,
-        int abs_hint = -1);
-
-    void
     edit_segments(
         std::size_t i0,
         std::size_t i1,
-        any_fwdit<string_view
-            > const& first,
-        any_fwdit<string_view
-            > const& last,
-        any_fwdit<
-            string_view>&& it,
+        detail::any_path_iter&& it0,
+        detail::any_path_iter&& it1,
         int abs_hint = -1);
 public:
 

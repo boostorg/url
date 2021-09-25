@@ -17,7 +17,6 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/url/detail/path_fwdit.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/detail/print.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
@@ -707,30 +706,37 @@ set_encoded_host(string_view s)
             BOOST_CURRENT_LOCATION);
     BOOST_ASSERT(t.host_type !=
         urls::host_type::none);
-    if(t.host_type ==
-            urls::host_type::ipv4)
+    check_invariants();
+    switch(t.host_type)
+    {
+    case urls::host_type::ipv4:
         return set_host(t.ipv4);
-    if(t.host_type ==
-            urls::host_type::ipv6)
+
+    case urls::host_type::ipv6:
         return set_host(t.ipv6);
 
-    // set it as a name or ipvfuture
-    check_invariants();
-    pct_decode_opts opt;
-    static constexpr auto cs =
-        unreserved_chars +
-        subdelim_chars;
-    opt.plus_to_space = false;
-    auto const n = pct_decode_size(
-        s, ec, cs, opt);
-    if(ec.failed())
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
-    auto dest =
-        set_host_impl(s.size());
-    std::memcpy(
-        dest, s.data(), s.size());
-    decoded_[id_host] = n;
+    case urls::host_type::name:
+    {
+        auto dest =
+            set_host_impl(s.size());
+        std::memcpy(
+            dest, s.data(), s.size());
+        decoded_[id_host] =
+            t.name.decoded_size;
+        break;
+    }
+        BOOST_FALLTHROUGH;
+
+    case urls::host_type::ipvfuture:
+    {
+        auto dest =
+            set_host_impl(s.size());
+        std::memcpy(
+            dest, s.data(), s.size());
+        decoded_[id_host] = s.size();
+        break;
+    }
+    }
     host_type_ = t.host_type;
     check_invariants();
     return *this;
@@ -1040,29 +1046,6 @@ get_segment(
         return { offset(id_query), 0 };
     BOOST_ASSERT(
         i <= segment_count());
-#if 0
-    std::size_t i;
-    if(index < 0)
-        i = nseg + index;
-    else
-        i = static_cast<
-            std::size_t>(index);
-    if(i >= nseg)
-        return empty_;
-    string_view s(
-        s_ + segment_pos(i),
-        segment_len(i));
-    if(i > 0)
-    {
-        BOOST_ASSERT(
-            s.starts_with('/'));
-        s.remove_prefix(1);
-        return s;
-    }
-    if(s.starts_with('/'))
-        s.remove_prefix(1);
-    return s;
-#else
     auto n = len(id_path);
     if(segment_count() < 2)
         return { offset(id_path), n };
@@ -1091,7 +1074,6 @@ get_segment(
             start - s_),
         static_cast<std::size_t>(
             it - start ) };
-#endif
 }
 
 char*
@@ -1153,171 +1135,33 @@ edit_segments(
 // with [first, last)
 void
 url::
-edit_encoded_segments(
+edit_segments(
     std::size_t i0,
     std::size_t i1,
-    any_fwdit<string_view> const& first,
-    any_fwdit<string_view> const& last,
-    any_fwdit<string_view>&& it,
+    detail::any_path_iter&& it0,
+    detail::any_path_iter&& it1,
     int abs_hint)
 {
-    // handle erase
-    if(first == last)
-    {
-        edit_segments(
-            i0, i1, 0, 0);
-        return;
-    }
-
-    // measure and validate
+    // measure
     error_code ec;
     std::size_t n = 0;
     std::size_t nseg = 0;
     for(;;)
     {
-        n += pct_decode_size(
-            *it, ec, pchars);
+        bool more = it0.measure(n, ec);
         if(ec.failed())
             detail::throw_invalid_argument(
                 BOOST_CURRENT_LOCATION);
-        ++it;
+        if(! more)
+            break;
         ++nseg;
-        if(it == last)
-            break;
     }
-
-    // meet grammar requirements
-    int style;
-    if( i0 > 0 ||
-        has_authority())
+    if(nseg == 0)
     {
-        // path-abempty
-        style = 0;
-    }
-    else if(
-        abs_hint == 1 || (
-        abs_hint != 0 && (
-            len(id_path) == 0 ||
-            s_[offset(id_path)] == '/')))
-    {
-        // path-absolute
-        if(string_view(
-            *first).empty() &&
-                nseg > 1)
-        {
-            // prepend "/."
-            ++n;
-            ++nseg;
-            style = 1;
-        }
-        else
-        {
-            style = 0;
-        }
-    }
-    else if(! has_scheme())
-    {
-        // path-noscheme
-        string_view s = *first;
-        if(s.empty() ||
-            s.find_first_of(':') !=
-                string_view::npos)
-        {
-            // prepend "."
-            ++nseg;
-            style = 2;
-        }
-        else
-        {
-            style = 3;
-            if(i1 == nseg_)
-            {
-                BOOST_ASSERT(n > 0);
-                --n;
-            }
-        }
-    }
-    else
-    {
-        // path-rootless
-        // or path-empty
-        style = 3;
-        if(i1 == nseg_)
-        {
-            BOOST_ASSERT(n > 0);
-            --n;
-        }
-    }
-
-    // edit
-    auto const size0 = size();
-    auto p = edit_segments(
-        i0, i1, n + nseg, nseg);
-    if(style == 1)
-    {
-        *p++ = '/';
-        *p++ = '.';
-    }
-    else if(style == 2)
-    {
-        *p++ = '.';
-    }
-    it = first;
-    if(style == 3)
-        goto do_skip_lead;
-    for(;;)
-    {
-        *p++ = '/';
-    do_skip_lead:
-        string_view s = *it;
-        if(! s.empty())
-        {
-            std::memcpy(p,
-                s.data(), s.size());
-            p += s.size();
-        }
-        ++it;
-        if(it == last)
-            break;
-    }
-    if( style == 3 &&
-        i1 < size0)
-        *p++ = '/';
-}
-
-// insert or replace [i0, i1)
-// with [first, last)
-void
-url::
-edit_segments(
-    std::size_t i0,
-    std::size_t i1,
-    any_fwdit<string_view> const& first,
-    any_fwdit<string_view> const& last,
-    any_fwdit<string_view>&& it,
-    int abs_hint)
-{
-    // handle erase
-    if(first == last)
-    {
-        edit_segments(
-            i0, i1, 0, 0);
+        edit_segments(i0, i1, 0, 0);
         return;
     }
 
-    // measure
-    std::size_t n = 0;
-    std::size_t nseg = 0;
-    for(;;)
-    {
-        n += pct_encode_size(
-            *it, pchars);
-        ++it;
-        ++nseg;
-        if(it == last)
-            break;
-    }
-
     // meet grammar requirements
     int style;
     if( i0 > 0 ||
@@ -1334,7 +1178,7 @@ edit_segments(
     {
         // path-absolute
         if(string_view(
-            *first).empty() &&
+            it0.first).empty() &&
                 nseg > 1)
         {
             // prepend "/."
@@ -1350,9 +1194,8 @@ edit_segments(
     else if(! has_scheme())
     {
         // path-noscheme
-        string_view s = *first;
-        if(s.empty() ||
-            s.find_first_of(':') !=
+        if( it0.first.empty() ||
+            it0.first.find_first_of(':') !=
                 string_view::npos)
         {
             // prepend "."
@@ -1381,35 +1224,30 @@ edit_segments(
         }
     }
 
-    // edit
+    // copy
     auto const size0 = size();
-    auto const p0 = edit_segments(
+    auto p = edit_segments(
         i0, i1, n + nseg, nseg);
-    auto p = p0;
+    auto const last = p + n + nseg;
     if(style == 1)
     {
         *p++ = '/';
         *p++ = '.';
+        --nseg;
     }
     else if(style == 2)
     {
         *p++ = '.';
+        --nseg;
     }
-    it = first;
-    if(style == 3)
-        goto do_skip_lead;
+    if(style != 3)
+        *p++ = '/';
     for(;;)
     {
-        *p++ = '/';
-    do_skip_lead:
-        string_view s = *it;
-        if(! s.empty())
-            p = detail::pct_encode(
-                p, p0 + n + nseg,
-                s, {}, pchars);
-        ++it;
-        if(it == last)
+        it1.copy(p, last);
+        if(--nseg == 0)
             break;
+        *p++ = '/';
     }
     if( style == 3 &&
         i1 < size0)
@@ -1428,12 +1266,11 @@ set_encoded_path(
         abs_hint = 1;
     else
         abs_hint = 0;
-    edit_encoded_segments(
-        0, nseg_,
-        detail::path_fwdit(s),
-        detail::path_fwdit(
-            s.data() + s.size()),
-        detail::path_fwdit(s),
+    edit_segments(
+        0,
+        nseg_,
+        detail::enc_path_iter(s),
+        detail::enc_path_iter(s),
         abs_hint);
     return *this;
 }
@@ -1450,10 +1287,8 @@ set_path(
         abs_hint = 0;
     edit_segments(
         0, nseg_,
-        detail::path_fwdit(s),
-        detail::path_fwdit(
-            s.data() + s.size()),
-        detail::path_fwdit(s),
+        detail::plain_path_iter(s),
+        detail::plain_path_iter(s),
         abs_hint);
     return *this;
 }

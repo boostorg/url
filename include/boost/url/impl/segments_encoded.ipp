@@ -47,11 +47,13 @@ insert(
     detail::copied_strings cs(
         u_->encoded_url());
     auto s = cs.maybe_copy(s0);
-    u_->edit_encoded_segments(
-        before.i_, before.i_,
-        make_fwdit(&s),
-        make_fwdit(&s + 1),
-        make_fwdit(&s));
+    u_->edit_segments(
+        before.i_,
+        before.i_,
+        detail::make_enc_segs_iter(
+            &s, &s + 1),
+        detail::make_enc_segs_iter(
+            &s, &s + 1));
     return { *u_, before.i_ };
 }
 
@@ -65,11 +67,10 @@ erase(
     BOOST_ASSERT(first.u_ == u_);
     BOOST_ASSERT(last.u_ == u_);
     string_view s;
-    u_->edit_encoded_segments(
+    u_->edit_segments(
         first.i_, last.i_,
-        make_fwdit(&s),
-        make_fwdit(&s),
-        make_fwdit(&s));
+        detail::make_enc_segs_iter(&s, &s),
+        detail::make_enc_segs_iter(&s, &s));
     return { *u_, first.i_ };
 }
 
@@ -108,11 +109,13 @@ operator=(string_view s0) ->
     detail::copied_strings cs(
         u_->encoded_url());
     auto s = cs.maybe_copy(s0);
-    u_->edit_encoded_segments(
-        i_, i_ + 1,
-        make_fwdit(&s),
-        make_fwdit(&s + 1),
-        make_fwdit(&s));
+    u_->edit_segments(
+        i_,
+        i_ + 1,
+        detail::make_enc_segs_iter(
+            &s, &s + 1),
+        detail::make_enc_segs_iter(
+            &s, &s + 1));
     return *this;
 }
 

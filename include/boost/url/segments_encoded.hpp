@@ -12,8 +12,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/detail/helpers.hpp>
 #include <boost/url/detail/except.hpp>
+#include <boost/url/detail/parts_base.hpp>
 #include <boost/assert.hpp>
 #include <initializer_list>
 #include <iterator>
@@ -66,25 +66,11 @@ class url;
         @ref url.
 */
 class segments_encoded
-    : private detail::any_helper
-    , private detail::parts_helper
+    : private detail::parts_base
 {
     url* u_ = nullptr;
 
     friend class url;
-
-    using fwdit =
-        any_fwdit<string_view>;
-
-    template<class FwdIt>
-    static
-    any_fwdit_impl<
-        FwdIt, string_view>
-    make_fwdit(FwdIt it) noexcept
-    {
-        return any_fwdit_impl<
-            FwdIt, string_view>(it);
-    }
 
     explicit
     segments_encoded(

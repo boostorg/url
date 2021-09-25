@@ -17,17 +17,17 @@ in a translation unit of the program.
 
 */
 
-#ifndef BOOST_URL_SOURCE
-#define BOOST_URL_SOURCE
-#endif
-
 // We include this in case someone is
 // using src.hpp as their main header file
 #include <boost/url.hpp>
 
+#ifndef BOOST_URL_SOURCE
+#define BOOST_URL_SOURCE
+#endif
+
+#include <boost/url/detail/impl/any_path_iter.ipp>
 #include <boost/url/detail/impl/copied_strings.ipp>
 #include <boost/url/detail/impl/except.ipp>
-#include <boost/url/detail/impl/path_fwdit.ipp>
 #include <boost/url/detail/impl/pct_encoding.ipp>
 
 #include <boost/url/impl/error.ipp>

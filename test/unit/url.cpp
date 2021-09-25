@@ -10,9 +10,9 @@
 // Test that header file is self-contained.
 #include <boost/url/url.hpp>
 
-#include <boost/url/detail/path_fwdit.hpp>
 #include "test_suite.hpp"
 #include <initializer_list>
+#include <sstream>
 
 namespace boost {
 namespace urls {
@@ -20,38 +20,6 @@ namespace urls {
 class url_test
 {
 public:
-    void
-    testPathFwdIt()
-    {
-        auto const check =
-        []( string_view s,
-            std::initializer_list<
-                string_view> init)
-        {
-            detail::path_fwdit it(s);
-            detail::path_fwdit const end(
-                s.data() + s.size());
-            auto i = init.begin();
-            while(it != end)
-            {
-                if(! BOOST_TEST(
-                        i != init.end()))
-                    break;
-                BOOST_TEST(*i == *it);
-                ++it;
-                ++i;
-            }
-            BOOST_TEST(i == init.end());
-        };
-
-        check( "", {} );
-        check( "x", {"x"});
-        check( "/x", {"x"});
-        check( "//", {"",""});
-        check( ".//", {".","",""});
-        check( "./", {".",""});
-    }
-
     void
     testSpecial()
     {
@@ -67,6 +35,7 @@ public:
             u2 = u;
             BOOST_TEST(u2.encoded_url() == u.encoded_url());
         }
+
         // move
         {
             url u = parse_uri_reference("x://y/z?q#f");
@@ -80,6 +49,31 @@ public:
             u2 = std::move(u);
             BOOST_TEST(u.empty());
             BOOST_TEST(u2.encoded_url() == "x://y/z?q#f");
+        }
+    }
+
+    //--------------------------------------------
+
+    void
+    testCapacity()
+    {
+        // capacity_in_bytes
+        {
+            url u;
+            BOOST_TEST(u.capacity_in_bytes() == 0);
+            BOOST_TEST(u.empty());
+        }
+
+        // clear
+        {
+            url u = parse_uri(
+                "http://example.com/index.htm?q#f");
+            BOOST_TEST(u.capacity_in_bytes() > 0);
+            BOOST_TEST(! u.empty());
+            u.clear();
+            BOOST_TEST(u.capacity_in_bytes() > 0);
+            BOOST_TEST(u.empty());
+            BOOST_TEST(u.size() == 0);
         }
     }
 
@@ -110,6 +104,16 @@ public:
             BOOST_TEST(u.scheme_id() == id);
         };
 
+        auto const setid = [](
+            string_view s1, scheme id,
+            string_view s2)
+        {
+            url u = parse_uri_reference(s1);
+            BOOST_TEST(
+                u.set_scheme(id).encoded_url() == s2);
+            BOOST_TEST(u.scheme_id() == id);
+        };
+
         remove("", "");
         remove("x", "x");
         remove("x:", "");
@@ -131,8 +135,23 @@ public:
         set("//a:b@c.d/1/?#", "ws",
             "ws://a:b@c.d/1/?#", scheme::ws);
 
+        setid("", scheme::ftp, "ftp:");
+        setid("/", scheme::ws, "ws:/");
+        setid("a", scheme::ws, "ws:a");
+        setid("a/", scheme::ws, "ws:a/");
+        setid("//", scheme::ws, "ws://");
+        setid("a:/", scheme::ws, "ws:/");
+        setid("//a.b/1/2", scheme::ws, "ws://a.b/1/2");
+        setid("//a:b@c.d/1/?#", scheme::ws,
+            "ws://a:b@c.d/1/?#");
+        setid("a:/", scheme::none, "/");
+
         BOOST_TEST_THROWS(
             url().set_scheme(""),
+            std::invalid_argument);
+
+        BOOST_TEST_THROWS(
+            url().set_scheme(scheme::unknown),
             std::invalid_argument);
     }
 
@@ -569,6 +588,34 @@ public:
     void
     testHost()
     {
+        auto const set = [](string_view s1,
+            string_view s2, string_view s3,
+            host_type ht = host_type::name)
+        {
+            url u = parse_uri_reference(s1);
+            BOOST_TEST(
+                u.set_encoded_host(s2).encoded_url() == s3);
+            BOOST_TEST(u.encoded_host() == s2);
+            BOOST_TEST(u.host_type() == ht);
+        };
+
+        auto const bad = [](string_view s1, string_view s2)
+        {
+            url u = parse_uri_reference(s1);
+            BOOST_TEST_THROWS(u.set_encoded_host(s2),
+                std::invalid_argument);
+        };
+
+        set("/", "x", "//x/");
+        set("//x", "yz", "//yz");
+        set("//x/", "yz", "//yz/");
+        set("//x/", "1.2.3.4", "//1.2.3.4/", host_type::ipv4);
+        set("//x/", "[::]", "//[::]/", host_type::ipv6);
+        set("", "1.2.3.4", "//1.2.3.4", host_type::ipv4);
+        set("", "[v1.0]", "//[v1.0]", host_type::ipvfuture);
+
+        bad("/", { "\0", 1 });
+
         // ipv4
         {
             url u;
@@ -865,6 +912,8 @@ public:
         set("", ":0", "//:0");
         set("", ":443", "//:443");
         set("", ":65536", "//:65536");
+        set("", "1.2.3.4", "//1.2.3.4");
+        set("", "[v1.0]", "//[v1.0]");
         set("", "[::]", "//[::]");
         set("", "[::ffff:127.0.0.1]",
                 "//[::ffff:127.0.0.1]");
@@ -887,6 +936,8 @@ public:
         set("///a", ":0", "//:0/a");
         set("///a", ":443", "//:443/a");
         set("///a", ":65536", "//:65536/a");
+        set("///a", "1.2.3.4", "//1.2.3.4/a");
+        set("///a", "[v1.0]", "//[v1.0]/a");
         set("///a", "[::]", "//[::]/a");
         set("///a", "[::ffff:127.0.0.1]",
                     "//[::ffff:127.0.0.1]/a");
@@ -1082,7 +1133,28 @@ public:
                 "x:",
                 "y:z/",
                 "x:y:z/");
+            check(
+                "x:y:z/",
+                "",
+                "x:");
+            check(
+                "x:y:z/",
+                "abc",
+                "x:abc");
         }
+    }
+
+    //--------------------------------------------
+
+    void
+    testOstream()
+    {
+        url u = parse_uri(
+            "http://example.com/index.htm?q#f");
+        std::stringstream ss;
+        ss << u;
+        BOOST_TEST(ss.str() ==
+            "http://example.com/index.htm?q#f");
     }
 
     //--------------------------------------------
@@ -1090,9 +1162,8 @@ public:
     void
     run()
     {
-        testPathFwdIt();
-
         testSpecial();
+        testCapacity();
         testScheme();
         testUser();
         testPassword();
@@ -1102,6 +1173,7 @@ public:
         testAuthority();
         testOrigin();
         testPath();
+        testOstream();
     }
 };
 

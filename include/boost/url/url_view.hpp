@@ -18,7 +18,7 @@
 #include <boost/url/segments_view.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
-#include <boost/url/detail/helpers.hpp>
+#include <boost/url/detail/parts_base.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -79,7 +79,7 @@ struct scheme_part_bnf;
         @ref parse_uri_reference.
 */
 class BOOST_SYMBOL_VISIBLE url_view
-    : protected detail::parts_helper
+    : protected detail::parts_base
 {
 #ifndef BOOST_URL_DOCS
 protected:

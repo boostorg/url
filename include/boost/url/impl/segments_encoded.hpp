@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/detail/except.hpp>
+#include <boost/url/detail/any_path_iter.hpp>
 #include <iterator>
 
 namespace boost {
@@ -756,11 +757,13 @@ typename std::enable_if<
 segments_encoded::
 assign(FwdIt first, FwdIt last)
 {
-    u_->edit_encoded_segments(
-        0, size(),
-        make_fwdit(first),
-        make_fwdit(last),
-        make_fwdit(first));
+    u_->edit_segments(
+        0,
+        size(),
+        detail::make_enc_segs_iter(
+            first, last),
+        detail::make_enc_segs_iter(
+            first, last));
 }
 
 //------------------------------------------------
@@ -909,12 +912,13 @@ insert(
     std::forward_iterator_tag) ->
         iterator
 {
-    u_->edit_encoded_segments(
+    u_->edit_segments(
         before.i_,
         before.i_,
-        make_fwdit(first),
-        make_fwdit(last),
-        make_fwdit(first));
+        detail::make_enc_segs_iter(
+            first, last),
+        detail::make_enc_segs_iter(
+            first, last));
     return { *u_, before.i_ };
 }
 

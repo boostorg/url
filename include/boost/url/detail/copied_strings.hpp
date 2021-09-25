@@ -10,6 +10,10 @@
 #ifndef BOOST_URL_DETAIL_COPIED_STRINGS_HPP
 #define BOOST_URL_DETAIL_COPIED_STRINGS_HPP
 
+#ifndef BOOST_URL_SOURCE
+#error
+#endif
+
 #include <boost/url/string.hpp>
 
 namespace boost {
