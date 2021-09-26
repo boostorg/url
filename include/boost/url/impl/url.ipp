@@ -715,6 +715,7 @@ set_encoded_host(string_view s)
     case urls::host_type::ipv6:
         return set_host(t.ipv6);
 
+    case urls::host_type::none:
     case urls::host_type::name:
     {
         auto dest =
@@ -1296,26 +1297,12 @@ set_path(
 string_view
 url::
 encoded_segment(
-    int index) const noexcept
+    std::size_t i) const noexcept
 {
-    std::size_t i;
     raw_segment r;
-    if(index >= 0)
-    {
-        i = static_cast<
-            std::size_t>(index);
-        if(i >= nseg_)
-            return empty_;
-        r = get_segment(i);
-    }
-    else
-    {
-        i = static_cast<
-            std::size_t>(-index);
-        if(i > nseg_)
-            return empty_;
-        r = get_segment(nseg_ - i);
-    }
+    if(i >= nseg_)
+        return empty_;
+    r = get_segment(i);
     string_view s = {
         s_ + r.pos, r.len };
     if(s.starts_with('/'))

@@ -8,8 +8,9 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/segments_encoded.hpp>
+#include <boost/url/segments.hpp>
 
+#include <boost/url/static_pool.hpp>
 #include <boost/url/url.hpp>
 #include <boost/static_assert.hpp>
 #include <initializer_list>
@@ -25,133 +26,132 @@ namespace urls {
 
 //------------------------------------------------
 
-class segments_encoded_test
+class segments_test
 {
 public:
-    BOOST_STATIC_ASSERT(
-        std::is_default_constructible<
-            segments_encoded::iterator>::value);
-
-    BOOST_STATIC_ASSERT(
-        std::is_default_constructible<
-            segments_encoded::const_iterator>::value);
+    using Alloc = std::allocator<char>;
+    using alloc_type =
+        basic_static_pool::allocator_type<char>;
 
 #if __cpp_lib_ranges >= 201911
     /*
     BOOST_STATIC_ASSERT(
         std::random_access_range<
-            segments_encoded>);
+            segments>);
     */
 
     BOOST_STATIC_ASSERT(
         std::random_access_iterator<
-            segments_encoded::iterator>);
+            segments<Alloc>::iterator>);
 
     BOOST_STATIC_ASSERT(
         std::random_access_iterator<
-            segments_encoded::const_iterator>);
+            segments<Alloc>::const_iterator>);
 #endif
 
     // const_reference
 
     BOOST_STATIC_ASSERT(
-        std::is_convertible<
-            segments_encoded::const_reference,
+        ! std::is_convertible<
+            segments<Alloc>::const_reference,
             string_view>::value);
 
     BOOST_STATIC_ASSERT(
         std::is_convertible<
-            segments_encoded::const_reference,
+            segments<Alloc>::const_reference,
             std::string>::value);
 
 #ifdef BOOST_URL_HAS_STRING_VIEW
     BOOST_STATIC_ASSERT(
-        std::is_convertible<
-            segments_encoded::const_reference,
+        ! std::is_convertible<
+            segments<Alloc>::const_reference,
             std::string_view>::value);
 #endif
 
     BOOST_STATIC_ASSERT(
         ! std::is_convertible<
-            segments_encoded::const_reference,
+            segments<Alloc>::const_reference,
             std::wstring>::value);
 
     BOOST_STATIC_ASSERT(
         ! std::is_assignable<
-            segments_encoded::const_reference,
+            segments<Alloc>::const_reference,
             string_view>::value);
 
     BOOST_STATIC_ASSERT(
         ! std::is_assignable<
-            segments_encoded::const_reference,
+            segments<Alloc>::const_reference,
             std::string>::value);
 
 #ifdef BOOST_URL_HAS_STRING_VIEW
     BOOST_STATIC_ASSERT(
         ! std::is_assignable<
-            segments_encoded::const_reference,
+            segments<Alloc>::const_reference,
             std::string_view>::value);
 #endif
 
     BOOST_STATIC_ASSERT(
         ! std::is_assignable<
-            segments_encoded::const_reference,
+            segments<Alloc>::const_reference,
             char const(&)[2]>::value);
 
     BOOST_STATIC_ASSERT(
         ! std::is_assignable<
-            segments_encoded::const_reference,
+            segments<Alloc>::const_reference,
             char const*>::value);
 
     // reference
 
     BOOST_STATIC_ASSERT(
-        std::is_convertible<
-            segments_encoded::reference,
+        ! std::is_convertible<
+            segments<Alloc>::reference,
             string_view>::value);
+
     BOOST_STATIC_ASSERT(
         std::is_convertible<
-            segments_encoded::reference,
+            segments<Alloc>::reference,
             std::string>::value);
 
 #ifdef BOOST_URL_HAS_STRING_VIEW
     BOOST_STATIC_ASSERT(
-        std::is_convertible<
-            segments_encoded::reference,
+        ! std::is_convertible<
+            segments<Alloc>::reference,
             std::string_view>::value);
 #endif
 
     BOOST_STATIC_ASSERT(
         ! std::is_convertible<
-            segments_encoded::reference,
+            segments<Alloc>::reference,
             std::wstring>::value);
 
     BOOST_STATIC_ASSERT(
         std::is_assignable<
-            segments_encoded::reference,
+            segments<Alloc>::reference,
             string_view>::value);
 
     BOOST_STATIC_ASSERT(
         std::is_assignable<
-            segments_encoded::reference,
+            segments<Alloc>::reference,
             std::string>::value);
 
 #ifdef BOOST_URL_HAS_STRING_VIEW
     BOOST_STATIC_ASSERT(
         std::is_assignable<
-            segments_encoded::reference,
+            segments<Alloc>::reference,
             std::string_view>::value);
 #endif
 
     BOOST_STATIC_ASSERT(
         std::is_assignable<
-            segments_encoded::reference,
+            segments<Alloc>::reference,
             char const(&)[2]>::value);
 
     BOOST_STATIC_ASSERT(
         std::is_assignable<
-            segments_encoded::reference,
+            segments<Alloc>::reference,
             char const*>::value);
+
+    static_pool<4096> p_;
 
     void
     testMembers()
@@ -161,7 +161,7 @@ public:
 
         {
             url u = u0;
-            u.encoded_segments() = { "etc", "index.htm" };
+            u.segments(p_.allocator()) = { "etc", "index.htm" };
             BOOST_TEST(u.encoded_path() == "/etc/index.htm");
             BOOST_TEST(u.encoded_url() == "x://y/etc/index.htm?q#f");
         }
@@ -176,8 +176,8 @@ public:
         // at
         {
             url u = u0;
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs = se;
+            auto se = u.segments(p_.allocator());
+            auto const& cs = se;
 
             BOOST_TEST(se.at(0) == "path");
             BOOST_TEST(se.at(1) == "to");
@@ -203,8 +203,8 @@ public:
         // operator[]
         {
             url u = u0;
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs = se;
+            auto se = u.segments(p_.allocator());
+            auto const& cs = se;
 
             BOOST_TEST(se[0] == "path");
             BOOST_TEST(se[1] == "to");
@@ -228,8 +228,8 @@ public:
         // front
         {
             url u = u0;
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs = se;
+            auto se = u.segments(p_.allocator());
+            auto const& cs = se;
 
             BOOST_TEST(se.front() == "path");
             BOOST_TEST(cs.front() == "path");
@@ -246,8 +246,8 @@ public:
         // back
         {
             url u = u0;
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs = se;
+            auto se = u.segments(p_.allocator());
+            auto const& cs = se;
 
             BOOST_TEST(se.back() == "file.txt");
             BOOST_TEST(cs.back() == "file.txt");
@@ -270,11 +270,11 @@ public:
 
         // (default-ctor)
         {
-            segments_encoded::iterator it;
-            segments_encoded::const_iterator cit;
+            segments<Alloc>::iterator it;
+            segments<Alloc>::const_iterator cit;
 
             url u = u0;
-            segments_encoded se = u.encoded_segments();
+            auto se = u.segments();
 
             it = se.begin();
 
@@ -291,8 +291,8 @@ public:
         // begin
         {
             url u = u0;
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs = se;
+            auto se = u.segments(p_.allocator());
+            auto const& cs = se;
 
             BOOST_TEST(se.begin() == cs.begin());
             BOOST_TEST(se.cbegin() == cs.begin());
@@ -303,8 +303,8 @@ public:
         // end
         {
             url u = u0;
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs = se;
+            auto se = u.segments(p_.allocator());
+            auto const& cs = se;
 
             BOOST_TEST(se.end() == cs.end());
             BOOST_TEST(se.cend() == cs.end());
@@ -318,10 +318,10 @@ public:
 
         {
             url u = u0;
-            segments_encoded se = u.encoded_segments();
+            auto se = u.segments();
             auto const& cs(se);
 
-            segments_encoded::iterator it = se.begin();
+            segments<Alloc>::iterator it = se.begin();
             BOOST_TEST(*it == "path");
             BOOST_TEST(*++it == "to");
             BOOST_TEST(*it++ == "to");
@@ -362,7 +362,7 @@ public:
             BOOST_TEST(it != se.cbegin());
             BOOST_TEST(it != cs.begin());
 
-            segments_encoded::const_iterator cit =
+            segments<Alloc>::const_iterator cit =
                 cs.cbegin();
             BOOST_TEST(*cit == "path");
             BOOST_TEST(*++cit == "to");
@@ -386,7 +386,8 @@ public:
             BOOST_TEST(se.cend() - cit == 3);
 
             BOOST_TEST(cit[0] == "to");
-            BOOST_TEST(cit[1] == "the");
+            BOOST_TEST(cit[1] == "the")
+;
             BOOST_TEST(cit < se.end());
             BOOST_TEST(cit < se.cend());
             BOOST_TEST(cit < cs.end());
@@ -423,8 +424,8 @@ public:
         // empty
         {
             url u = u0;
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs = se;
+            auto se = u.segments(p_.allocator());
+            auto const& cs = se;
 
             BOOST_TEST(! se.empty());
             BOOST_TEST(! cs.empty());
@@ -433,8 +434,8 @@ public:
         // size
         {
             url u = u0;
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs = se;
+            auto se = u.segments(p_.allocator());
+            auto const& cs = se;
 
             BOOST_TEST(se.size() == 4);
             BOOST_TEST(cs.size() == 4);
@@ -447,7 +448,7 @@ public:
         // clear
         {
             url u = parse_uri("x://y/path/to/the/file.txt");
-            segments_encoded se = u.encoded_segments();
+            auto se = u.segments(p_.allocator());
 
             BOOST_TEST(! se.empty());
             BOOST_TEST(se.size() == 4);
@@ -461,11 +462,11 @@ public:
         // insert( const_iterator, string_view )
         {
             url u = parse_uri("x://y/path/file.txt?q#f");
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs(se);
+            auto se = u.segments(p_.allocator());
+            auto const& cs(se);
 
             BOOST_TEST(se.size() == 2);
-            segments_encoded::iterator it =
+            auto it =
                 se.insert(se.begin() + 1, "to");
             BOOST_TEST(se.size() == 3);
             BOOST_TEST(u.encoded_path() == "/path/to/file.txt");
@@ -484,20 +485,16 @@ public:
             BOOST_TEST(u.encoded_path() == "/etc/path/to/file.txt/");
             BOOST_TEST(u.encoded_url() == "x://y/etc/path/to/file.txt/?q#f");
             BOOST_TEST(*it == "etc");
-
-            BOOST_TEST_THROWS(se.insert(se.begin(), "%"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.insert(se.begin(), "/"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.insert(se.begin(), "%2g"), std::invalid_argument);
         }
 
         {
             // rootless
             url u = parse_uri("x:path/file.txt?q#f");
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs(se);
+            auto se = u.segments(p_.allocator());
+            auto const& cs(se);
 
             BOOST_TEST(se.size() == 2);
-            segments_encoded::iterator it =
+            auto it =
                 se.insert(se.begin() + 1, "to");
             BOOST_TEST(se.size() == 3);
             BOOST_TEST(u.encoded_path() == "path/to/file.txt");
@@ -516,17 +513,13 @@ public:
             BOOST_TEST(u.encoded_path() == "etc/path/to/file.txt/");
             BOOST_TEST(u.encoded_url() == "x:etc/path/to/file.txt/?q#f");
             BOOST_TEST(*it == "etc");
-
-            BOOST_TEST_THROWS(se.insert(se.begin(), "%"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.insert(se.begin(), "/"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.insert(se.begin(), "%2g"), std::invalid_argument);
         }
 
         // insert( const_iterator, FwdIt, FwdIt )
         {
             url u = parse_uri("x://y/path/file.txt?q#f");
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs(se);
+            auto se = u.segments(p_.allocator());
+            auto const& cs(se);
 
             std::initializer_list<string_view> init = {"to", "the" };
             auto it = se.insert(
@@ -535,11 +528,6 @@ public:
             BOOST_TEST(*it == "to");
             BOOST_TEST(u.encoded_path() == "/path/to/the/file.txt");
             BOOST_TEST(u.encoded_url() == "x://y/path/to/the/file.txt?q#f");
-
-            std::initializer_list<string_view> bad = {"%"};
-            BOOST_TEST_THROWS(se.insert(
-                se.begin() + 1, bad.begin(), bad.end()),
-                std::invalid_argument);
 
             // empty range
             it = se.insert(se.begin() + 1,
@@ -550,8 +538,8 @@ public:
         {
             // rootless
             url u = parse_uri("x:the/file.txt?q#f");
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs(se);
+            auto se = u.segments(p_.allocator());
+            auto const& cs(se);
 
             std::initializer_list<string_view> init = {"path", "to" };
             auto it = se.insert(
@@ -560,11 +548,6 @@ public:
             BOOST_TEST(*it == "path");
             BOOST_TEST(u.encoded_path() == "path/to/the/file.txt");
             BOOST_TEST(u.encoded_url() == "x:path/to/the/file.txt?q#f");
-
-            std::initializer_list<string_view> bad = {"%"};
-            BOOST_TEST_THROWS(se.insert(
-                se.begin() + 1, bad.begin(), bad.end()),
-                std::invalid_argument);
 
             // empty range
             it = se.insert(se.begin() + 1,
@@ -576,8 +559,8 @@ public:
         // insert( const_iterator, initializer_list )
         {
             url u = parse_uri("x://y/path/file.txt?q#f");
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs(se);
+            auto se = u.segments(p_.allocator());
+            auto const& cs(se);
 
             std::initializer_list<
                 string_view> init = {
@@ -592,7 +575,7 @@ public:
         // erase( const_iterator )
         {
             url u = parse_uri("x://y/path/to/the/file.txt?q#f");
-            segments_encoded se = u.encoded_segments();
+            auto se = u.segments(p_.allocator());
 
             se.erase(se.begin() + 1);
             BOOST_TEST(se.size() == 3);
@@ -618,7 +601,7 @@ public:
         // erase( const_iterator, const_iterator )
         {
             url u = parse_uri("x://y/home/etc/path/to/the/file.txt?q#f");
-            segments_encoded se = u.encoded_segments();
+            auto se = u.segments(p_.allocator());
 
             se.erase(se.begin(), se.begin() + 2);
             BOOST_TEST(u.encoded_path() == "/path/to/the/file.txt");
@@ -631,18 +614,13 @@ public:
 
         // push_back
         {
-            url u = parse_uri("x://y/home/etc/path/to/the/file.txt?q#f");
-            segments_encoded se = u.encoded_segments();
-
-            BOOST_TEST_THROWS(se.push_back("%"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.push_back("/"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.push_back("%2g"), std::invalid_argument);
+            // VFALCO TODO
         }
 
         // pop_back
         {
             url u = parse_uri("x://y/path/to/file.txt?q#f");
-            segments_encoded se = u.encoded_segments();
+            auto se = u.segments(p_.allocator());
 
             BOOST_TEST(se.size() == 3);
             se.pop_back();
@@ -663,56 +641,39 @@ public:
     void
     testConversion()
     {
-        auto const implicit =
-            [](std::string s)
-            {
-                return s;
-            };
-
         // reference
         {
             url u = parse_uri("x://y/path/to/file.txt?q#f");
-            segments_encoded se = u.encoded_segments();
+            auto se = u.segments(p_.allocator());
 
-            segments_encoded::reference r = se[2];
-            BOOST_TEST(string_view(r) == "file.txt");
-            BOOST_TEST(static_cast<std::string>(r) == "file.txt");
-        #ifdef BOOST_URL_HAS_STRING_VIEW
-            BOOST_TEST(std::string_view(r) == "file.txt");
-        #endif
+            auto r = se[2];
+            BOOST_TEST(r == "file.txt");
             BOOST_TEST("file.txt" == r);
             BOOST_TEST("path" != r);
-            // force operator std::string()
-            BOOST_TEST(implicit(r) == "file.txt");
         }
 
         // const_reference
         {
             url u = parse_uri("x://y/path/to/file.txt?q#f");
-            segments_encoded se = u.encoded_segments();
-            segments_encoded const& cs(se);
+            auto se = u.segments(p_.allocator());
+            auto const& cs(se);
 
-            segments_encoded::const_reference cr = cs[1];
-            BOOST_TEST(string_view(cr) == "to");
-            BOOST_TEST(static_cast<std::string>(cr) == "to");
-        #ifdef BOOST_URL_HAS_STRING_VIEW
-            BOOST_TEST(std::string_view(cr) == "to");
-        #endif
+            auto cr = cs[1];
+            BOOST_TEST(cr == "to");
             BOOST_TEST("to" == cr);
             BOOST_TEST("path" != cr);
             // force operator std::string()
-            BOOST_TEST(implicit(cr) == "to");
 
-            segments_encoded::reference r = se[2];
+            auto r = se[2];
 
             // construct from reference
-            segments_encoded::const_reference cr2(r);
+            segments<alloc_type>::const_reference cr2(r);
             BOOST_TEST(cr2 == r);
             BOOST_TEST(r == cr2);
             BOOST_TEST(cr2 == "file.txt");
             BOOST_TEST("file.txt" == cr2);
 
-            segments_encoded::const_reference cr3(se[0]);
+            segments<alloc_type>::const_reference cr3(se[0]);
             BOOST_TEST(cr3 != r);
             BOOST_TEST(r != cr3);
         }
@@ -724,31 +685,27 @@ public:
         // assign stringish to reference
         {
             url u = parse_relative_ref("/");
-            segments_encoded se =
-                u.encoded_segments();
+            auto se =
+                u.segments(p_.allocator());
 
             *se.begin() = string_view();
             *se.begin() = std::string();
-        #ifdef BOOST_URL_HAS_STRING_VIEW
-            *se.begin() = std::string_view();
-        #endif
             *se.begin() = "x";
         }
         {
             url u = parse_relative_ref(
                 "/path/to/file.txt");
-            segments_encoded se =
-                u.encoded_segments();
+            auto se = u.segments(p_.allocator());
 
             BOOST_TEST(se.front() == "path");
             BOOST_TEST(se.back() == "file.txt");
 
             se.front() = "x";
-            se[1] = "p";
+            se[1] = "p_";
             se[2] = "i.htm";
             se[0] = "path";
             BOOST_TEST(u.encoded_url() ==
-                "/path/p/i.htm");
+                "/path/p_/i.htm");
             se[1] = "to";
             se[2] = "file.txt";
             se[1] = se[2];
@@ -756,11 +713,13 @@ public:
             BOOST_TEST(u.encoded_url() ==
                 "/file.txt/file.txt/file.txt");
         }
+#if 0
+        // VFALCO BROKEN
         {
             url u = parse_relative_ref(
                 "/path/to/file.txt");
-            segments_encoded seg =
-                u.encoded_segments();
+            segments<Alloc> seg =
+                u.segments(p_.allocator());
             std::reverse(
                 seg.begin(), seg.end());
             BOOST_TEST(u.encoded_url() ==
@@ -769,12 +728,13 @@ public:
             BOOST_TEST(u.encoded_url() ==
                 "/file.txt//path");
         }
+#endif
 
         // assign const_reference to reference
         {
             url u = parse_relative_ref(
                 "/path/to/file.txt");
-            segments_encoded se = u.encoded_segments();
+            auto se = u.segments(p_.allocator());
             auto const& cs(se);
 
             se[0] = cs[2];
@@ -785,14 +745,14 @@ public:
         {
             // path-noscheme
             url u = parse_relative_ref("y?q#f");
-            u.encoded_segments()[0] = "a:b";
+            u.segments(p_.allocator())[0] = "a:b";
             BOOST_TEST(u.encoded_path() == "./a:b");
             BOOST_TEST(u.encoded_url() == "./a:b?q#f");
         }
         {
             // path-absolute
             url u = parse_relative_ref("/a/b/c?q#f");
-            u.encoded_segments() = { "", "" };
+            u.segments(p_.allocator()) = { "", "" };
             BOOST_TEST(u.encoded_path() == "/.//");
             BOOST_TEST(u.encoded_url() == "/.//?q#f");
         }
@@ -805,25 +765,25 @@ public:
         url u;
         {
             std::stringstream ss;
-            segments_encoded seg =
-                u.encoded_segments();
+            auto seg =
+                u.segments(p_.allocator());
             std::copy(
                 seg.begin(),
                 seg.end(),
                 std::ostream_iterator<
-                    std::string>( ss ) );
+                    string_type<alloc_type>>( ss ) );
         }
         {
-            segments_encoded seg =
-                u.encoded_segments();
+            auto seg =
+                u.segments(p_.allocator());
             (void)std::remove(
                 seg.begin(),
                 seg.end(),
                 "" );
         }
         {
-            segments_encoded seg =
-                u.encoded_segments();
+            auto seg =
+                u.segments(p_.allocator());
             (void)std::remove(
                 seg.begin(),
                 seg.end(),
@@ -842,13 +802,17 @@ public:
 
         testConversion();
         testAssign();
-        testAlgorithms();;
+        testAlgorithms();
+
+        {
+
+        }
     }
 };
 
 TEST_SUITE(
-    segments_encoded_test,
-    "boost.url.segments_encoded");
+    segments_test,
+    "boost.url.segments");
 
 } // urls
 } // boost

@@ -10,7 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/string.hpp>
 
-#include <boost/static_assert.hpp>
+#include "test_suite.hpp"
 
 namespace boost {
 namespace urls {
@@ -19,6 +19,24 @@ namespace urls {
 BOOST_STATIC_ASSERT(is_stringlike<
     std::string_view>::value);
 #endif
+
+class string_test
+{
+public:
+    void
+    run()
+    {
+        string_value sv("hello");
+        auto sv2 = sv;
+        BOOST_TEST(sv2 == sv);
+        sv = {};
+        BOOST_TEST(sv2 != sv);
+    }
+};
+
+TEST_SUITE(
+    string_test,
+    "boost.url.string");
 
 } // urls
 } // boost

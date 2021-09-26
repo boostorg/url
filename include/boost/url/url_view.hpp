@@ -15,6 +15,7 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/scheme.hpp>
+#include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
 #include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
@@ -1344,44 +1345,10 @@ public:
 
     /** Return a path segment by index
 
-        This function returns an indexed
-        path segment as a percent-encoded
-        string. The behavior depends on
-        `i`:
-
-        @li If `i` is 0 the first path
-        segment is returned;
-
-        @li If `i` is positive, then
-        the `i` + 1th path segment is
-        returned. For example if `i == 2`
-        then the third segment is returned.
-        In other words, `i` is zero based.
-
-        @li If `i` is negative, then the
-        function negates `i`, and counts from
-        the end of the path rather than the
-        beginning. For example if `i == -1`
-        then the last path segment is returned.
-
-        If the `i` is out of range, an empty
-        string is returned. To determine the
-        number of segments, call @ref segment_count.
-
-        @par Example
-        @code
-        url_view u = parse_relative_ref( "/path/to/the/file.txt" );
-
-        assert( u.encoded_segment( -2 ) == "the" );
-        assert( u.encoded_segment( -1 ) == "file.txt" );
-        assert( u.encoded_segment(  0 ) == "path" );
-        assert( u.encoded_segment(  1 ) == "to" );
-        @endcode
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
+        This function returns a zero-based,
+        indexed path segment as a percent-encoded
+        string. If `i >= segment_count()`, an
+        empty string is returned.
 
         @par Exception Safety
         Throws nothing.
@@ -1396,7 +1363,7 @@ public:
     virtual
     string_view
     encoded_segment(
-        int i) const noexcept;
+        std::size_t i) const noexcept;
 
     /** Return a path segment by index
 
@@ -1502,10 +1469,10 @@ public:
     */
     template<class Allocator =
         std::allocator<char>>
-    segments_view<Allocator>
+    segments_view
     segments(Allocator const& alloc = {}) const noexcept
     {
-        return segments_view<Allocator>(
+        return segments_view(
             encoded_path(), nseg_, alloc);
     }
 

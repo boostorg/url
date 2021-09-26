@@ -21,7 +21,7 @@ namespace urls {
 namespace detail {
 
 any_path_iter::
-~any_path_iter() = default;
+~any_path_iter() noexcept = default;
 
 //------------------------------------------------
 
@@ -91,6 +91,7 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
+    (void)end;
     BOOST_ASSERT(static_cast<
         std::size_t>(
             end - dest) >= n_);
@@ -200,6 +201,7 @@ copy_impl(
     char*& dest,
     char const* end) noexcept
 {
+    (void)end;
     BOOST_ASSERT(static_cast<
         std::size_t>(end - dest) >=
             s.size());
@@ -209,6 +211,30 @@ copy_impl(
             s.data(), s.size());
         dest += s.size();
     }
+}
+
+//------------------------------------------------
+
+void
+plain_segs_iter_base::
+measure_impl(
+    string_view s,
+    std::size_t& n) noexcept
+{
+    n += pct_encode_size(
+        s, pchars);
+}
+
+void
+plain_segs_iter_base::
+copy_impl(
+    string_view s,
+    char*& dest,
+    char const* end) noexcept
+{
+    dest = pct_encode(
+        dest, end, s, {},
+            pchars);
 }
 
 //------------------------------------------------

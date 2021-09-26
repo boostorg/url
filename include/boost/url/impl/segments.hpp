@@ -7,55 +7,91 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_SEGMENTS_ENCODED_HPP
-#define BOOST_URL_IMPL_SEGMENTS_ENCODED_HPP
+#ifndef BOOST_URL_IMPL_SEGMENTS_HPP
+#define BOOST_URL_IMPL_SEGMENTS_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/detail/except.hpp>
 #include <boost/url/detail/any_path_iter.hpp>
+#include <boost/url/detail/copied_strings.hpp>
+#include <boost/url/detail/except.hpp>
+#include <boost/url/detail/optional_allocator.hpp>
+#include <boost/assert.hpp>
 #include <iterator>
+#include <new>
 
 namespace boost {
 namespace urls {
 
 /** A proxy to a path segment
 */
-class segments_encoded::
+template<class Allocator>
+class segments<Allocator>::
     reference
 {
     url* u_ = nullptr;
     std::size_t i_ = 0;
+    Allocator a_;
 
-    friend class segments_encoded;
+    friend class segments;
     friend class iterator;
 
     reference(
         url& u,
-        std::size_t i) noexcept
+        std::size_t i,
+        Allocator const& a) noexcept
         : u_(&u)
         , i_(i)
+        , a_(a)
     {
+    }
+
+    string_type<Allocator>
+    operator*() const noexcept
+    {
+        return urls::pct_decode(
+            u_->encoded_segment(i_),
+                pchars, {}, a_);
     }
 
 public:
     /** Assignment
     */
     reference&
-    operator=(reference const& other)
+    operator=(
+        reference const& other)
     {
         if( u_ == other.u_ &&
             i_ == other.i_)
             return *this;
-        *this = string_view(other);
+        auto s = *other;
+        u_->edit_segments(
+            i_, i_ + 1,
+            detail::make_plain_segs_iter(
+                &s, &s + 1),
+            detail::make_plain_segs_iter(
+                &s, &s + 1));
         return *this;
     }
 
     /** Assignment
     */
-    inline
     reference&
-    operator=(const_reference const& other);
+    operator=(
+        const_reference const& other)
+    {
+        if( u_ == other.u_ &&
+            i_ == other.i_)
+            return *this;
+        auto s = *other;
+        u_->edit_segments(
+            i_, i_ + 1,
+            detail::make_plain_segs_iter(
+                &s, &s + 1),
+            detail::make_plain_segs_iter(
+                &s, &s + 1));
+        return *this;
+    }
 
     /** Assignment
 
@@ -79,67 +115,131 @@ public:
 
     /** Assignment
     */
-    BOOST_URL_DECL
     reference&
-    operator=(string_view);
+    operator=(string_view s)
+    {
+        u_->edit_segments(
+            i_, i_ + 1,
+            detail::make_plain_segs_iter(
+                &s, &s + 1),
+            detail::make_plain_segs_iter(
+                &s, &s + 1));
+        return *this;
+    }
 
     //---
 
     /** Conversion
     */
-    BOOST_URL_DECL
     operator
-    string_view() const noexcept;
-
-    /** Conversion
-    */
-    operator
-    std::string() const noexcept
+    value_type() const noexcept
     {
-        return std::string(
-            string_view(*this));
+        return **this;
     }
-
-#ifdef BOOST_URL_HAS_STRING_VIEW
-    /** Conversion
-    */
-    operator
-    std::string_view() const noexcept
-    {
-        auto s = string_view(*this);
-        return { s.data(), s.size() };
-    }
-#endif
 
     /** Swap two elements
     */
-    BOOST_URL_DECL
+    template<class Alloc_>
     friend
     void
     swap(
-        reference r0,
-        reference r1);
+        typename segments<Alloc_>::reference& r0,
+        typename segments<Alloc_>::reference& r1);
+
+    //--------------------------------------------
+
+    template<class T
+    #ifndef BOOST_URL_DOCS
+        , class = typename std::enable_if<
+            is_stringlike<T>::value>::type
+    #endif
+    >
+    friend
+    bool
+    operator==(
+        reference const& x1,
+        T const& x2 ) noexcept
+    {
+        return *x1 == to_string_view(x2);
+    }
+
+    template<class T
+    #ifndef BOOST_URL_DOCS
+        , class = typename std::enable_if<
+            is_stringlike<T>::value>::type
+    #endif
+    >
+    friend
+    bool
+    operator==(
+        T const& x1,
+        reference const& x2) noexcept
+    {
+        return to_string_view(x1) == *x2;
+    }
+
+    template<class T
+    #ifndef BOOST_URL_DOCS
+        , class = typename std::enable_if<
+            is_stringlike<T>::value>::type
+    #endif
+    >
+    friend
+    bool
+    operator!=(
+        reference const& x1,
+        T const& x2 ) noexcept
+    {
+        return !(x1 == x2);
+    }
+
+    template<class T
+    #ifndef BOOST_URL_DOCS
+        , class = typename std::enable_if<
+            is_stringlike<T>::value>::type
+    #endif
+    >
+    friend
+    bool
+    operator!=(
+        T const& x1,
+        reference const& x2) noexcept
+    {
+        return !(x1 == x2);
+    }
 };
 
 //------------------------------------------------
 
 /** A proxy to a path segment
 */
-class segments_encoded::
+template<class Allocator>
+class segments<Allocator>::
     const_reference
 {
     url const* u_ = nullptr;
     std::size_t i_ = 0;
+    Allocator a_;
 
-    friend class segments_encoded;
+    friend class segments;
     friend class const_iterator;
 
     const_reference(
         url const& u,
-        std::size_t i) noexcept
+        std::size_t i,
+        Allocator const& a) noexcept
         : u_(&u)
         , i_(i)
+        , a_(a)
     {
+    }
+
+    string_type<Allocator>
+    operator*() const noexcept
+    {
+        return urls::pct_decode(
+            u_->encoded_segment(i_),
+                pchars, {}, a_);
     }
 
 public:
@@ -147,59 +247,132 @@ public:
         reference const& other) noexcept
         : u_(other.u_)
         , i_(other.i_)
+        , a_(other.a_)
     {
     }
 
     /** Conversion
     */
-    BOOST_URL_DECL
     operator
-    string_view() const noexcept;
-
-    /** Conversion
-    */
-    operator
-    std::string() const noexcept
+    value_type() const noexcept
     {
-        return std::string(
-            string_view(*this));
+        return **this;
     }
 
-#ifdef BOOST_URL_HAS_STRING_VIEW
-    /** Conversion
-    */
-    operator
-    std::string_view() const noexcept
+    //--------------------------------------------
+    //
+    // Comparison
+    //
+    //--------------------------------------------
+
+    friend
+    bool
+    operator==(
+        const_reference const& x1,
+        const_reference const& x2) noexcept
     {
-        auto s = string_view(*this);
-        return { s.data(), s.size() };
+        return *x1 == *x2;
     }
-#endif
+
+    friend
+    bool
+    operator!=(
+        const_reference const& x1,
+        const_reference const& x2) noexcept
+    {
+        return *x1 != *x2;
+    }
+
+    template<class T
+    #ifndef BOOST_URL_DOCS
+        , class = typename std::enable_if<
+            is_stringlike<T>::value>::type
+    #endif
+    >
+    friend
+    bool
+    operator==(
+        const_reference const& x1,
+        T const& x2 ) noexcept
+    {
+        return *x1 == to_string_view(x2);
+    }
+
+    template<class T
+    #ifndef BOOST_URL_DOCS
+        , class = typename std::enable_if<
+            is_stringlike<T>::value>::type
+    #endif
+    >
+    friend
+    bool
+    operator==(
+        T const& x1,
+        const_reference const& x2) noexcept
+    {
+        return to_string_view(x1) == *x2;
+    }
+
+    template<class T
+    #ifndef BOOST_URL_DOCS
+        , class = typename std::enable_if<
+            is_stringlike<T>::value>::type
+    #endif
+    >
+    friend
+    bool
+    operator!=(
+        const_reference const& x1,
+        T const& x2 ) noexcept
+    {
+        return !(x1 == x2);
+    }
+
+    template<class T
+    #ifndef BOOST_URL_DOCS
+        , class = typename std::enable_if<
+            is_stringlike<T>::value>::type
+    #endif
+    >
+    friend
+    bool
+    operator!=(
+        T const& x1,
+        const_reference const& x2) noexcept
+    {
+        return !(x1 == x2);
+    }
 };
 
 //------------------------------------------------
 
-class segments_encoded::iterator
+template<class Allocator>
+class segments<Allocator>::iterator
 {
     url* u_ = nullptr;
     std::size_t i_ = 0;
+    detail::optional_allocator<
+        Allocator> a_;
 
-    friend class segments_encoded;
+    friend class segments;
 
     iterator(
         url& u,
-        std::size_t i) noexcept
+        std::size_t i,
+        Allocator const& a) noexcept
         : u_(&u)
         , i_(i)
+        , a_(a)
     {
     }
 
 public:
-    using value_type = std::string;
-    using reference =
-        segments_encoded::reference;
-    using const_reference =
-        segments_encoded::const_reference;
+    using value_type =
+        string_type<Allocator>;
+    using reference = segments<
+        Allocator>::reference;
+    using const_reference = segments<
+        Allocator>::const_reference;
     using pointer = void*;
     using const_pointer = void const*;
     using difference_type = std::ptrdiff_t;
@@ -241,7 +414,7 @@ public:
     reference
     operator*() const noexcept
     {
-        return reference(*u_, i_);
+        return reference(*u_, i_, *a_);
     }
 
     friend
@@ -281,7 +454,7 @@ public:
         iterator it,
         ptrdiff_t n) noexcept
     {
-        return { *it.u_, it.i_ + n };
+        return { *it.u_, it.i_ + n, *it.a_ };
     }
 
     friend
@@ -290,7 +463,7 @@ public:
         ptrdiff_t n,
         iterator it) noexcept
     {
-        return { *it.u_, it.i_ + n };
+        return { *it.u_, it.i_ + n, *it.a_ };
     }
 
     iterator&
@@ -306,7 +479,7 @@ public:
         iterator it,
         ptrdiff_t n) noexcept
     {
-        return { *it.u_, it.i_ - n };
+        return { *it.u_, it.i_ - n, *it.a_ };
     }
 
     friend
@@ -368,25 +541,31 @@ public:
 
 /** A random-access iterator referencing segments in a url path
 */
-class segments_encoded::const_iterator
+template<class Allocator>
+class segments<Allocator>::const_iterator
 {
     url const* u_ = nullptr;
     std::size_t i_ = 0;
+    detail::optional_allocator<
+        Allocator> a_;
 
-    friend class segments_encoded;
+    friend class segments;
 
     const_iterator(
         url const& u,
-        std::size_t i) noexcept
+        std::size_t i,
+        Allocator const& a) noexcept
         : u_(&u)
         , i_(i)
+        , a_(a)
     {
     }
 
 public:
-    using value_type = std::string;
-    using const_reference =
-        segments_encoded::const_reference;
+    using value_type =
+        string_type<Allocator>;
+    using const_reference = segments<
+        Allocator>::const_reference;
     using reference = const_reference;
     using pointer = void const*;
     using const_pointer = void const*;
@@ -400,6 +579,7 @@ public:
         iterator const& it) noexcept
         : u_(it.u_)
         , i_(it.i_)
+        , a_(it.a_)
     {
     }
 
@@ -436,7 +616,7 @@ public:
     const_reference
     operator*() const noexcept
     {
-        return const_reference(*u_, i_);
+        return const_reference(*u_, i_, *a_);
     }
 
     friend
@@ -474,7 +654,7 @@ public:
         const_iterator it,
         ptrdiff_t n) noexcept
     {
-        return { *it.u_, it.i_ + n };
+        return { *it.u_, it.i_ + n, *it.a_ };
     }
 
     friend
@@ -483,7 +663,7 @@ public:
         ptrdiff_t n,
         const_iterator it) noexcept
     {
-        return { *it.u_, it.i_ + n };
+        return { *it.u_, it.i_ + n, *it.a_ };
     }
 
     const_iterator&
@@ -499,7 +679,7 @@ public:
         const_iterator it,
         ptrdiff_t n) noexcept
     {
-        return { *it.u_, it.i_ - n };
+        return { *it.u_, it.i_ - n, *it.a_ };
     }
 
     friend
@@ -563,21 +743,22 @@ public:
 //
 //------------------------------------------------
 
+template<class Allocator>
 template<class FwdIt>
 typename std::enable_if<
     is_stringlike<typename
         std::iterator_traits<
             FwdIt>::value_type>::value,
     void>::type
-segments_encoded::
+segments<Allocator>::
 assign(FwdIt first, FwdIt last)
 {
     u_->edit_segments(
         0,
         size(),
-        detail::make_enc_segs_iter(
+        detail::make_plain_segs_iter(
             first, last),
-        detail::make_enc_segs_iter(
+        detail::make_plain_segs_iter(
             first, last));
 }
 
@@ -587,8 +768,9 @@ assign(FwdIt first, FwdIt last)
 //
 //------------------------------------------------
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 at(std::size_t i) ->
     reference
 {
@@ -598,63 +780,70 @@ at(std::size_t i) ->
     return (*this)[i];
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 at(std::size_t i) const ->
     const_reference
 {
     if(i >= size())
         detail::throw_out_of_range(
             BOOST_CURRENT_LOCATION);
-    return { *u_, i };
+    return (*this)[i];
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 operator[](std::size_t i) noexcept ->
     reference
 {
-    return { *u_, i };
+    return { *u_, i, a_ };
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 operator[](std::size_t i) const noexcept ->
     const_reference
 {
-    return { *u_, i };
+    return { *u_, i, a_ };
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 front() const ->
     const_reference
 {
-    return { *u_, 0 };
+    return { *u_, 0, a_ };
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 front() ->
     reference
 {
-    return { *u_, 0 };
+    return { *u_, 0, a_ };
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 back() const ->
     const_reference
 {
-    return { *u_, size() - 1 };
+    return { *u_, size() - 1, a_ };
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 back() ->
     reference
 {
-    return { *u_, size() - 1 };
+    return { *u_, size() - 1, a_ };
 }
 
 //------------------------------------------------
@@ -663,52 +852,78 @@ back() ->
 //
 //------------------------------------------------
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 begin() noexcept ->
     iterator
 {
-    return iterator(*u_, 0);
+    return iterator(
+        *u_, 0, a_);
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 begin() const noexcept ->
     const_iterator
 {
-    return const_iterator(*u_, 0);
+    return const_iterator(
+        *u_, 0, a_);
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 cbegin() const noexcept ->
     const_iterator
 {
-    return const_iterator(*u_, 0);
+    return const_iterator(
+        *u_, 0, a_);
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 end() noexcept ->
     iterator
 {
-    return iterator(*u_, size());
+    return iterator(
+        *u_, size(), a_);
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 end() const noexcept ->
     const_iterator
 {
-    return const_iterator(*u_, size());
+    return const_iterator(
+        *u_, size(), a_);
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 cend() const noexcept ->
     const_iterator
 {
-    return const_iterator(*u_, size());
+    return const_iterator(
+        *u_, size(), a_);
+}
+
+//------------------------------------------------
+//
+// Capacity
+//
+//------------------------------------------------
+
+template<class Allocator>
+std::size_t
+segments<Allocator>::
+size() const noexcept
+{
+    return u_->segment_count();
 }
 
 //------------------------------------------------
@@ -717,9 +932,37 @@ cend() const noexcept ->
 //
 //------------------------------------------------
 
+template<class Allocator>
+void
+segments<Allocator>::
+clear() noexcept
+{
+    erase(begin(), end());
+}
+
+template<class Allocator>
+auto
+segments<Allocator>::
+insert(
+    const_iterator before,
+    string_view s) ->
+        iterator
+{
+    BOOST_ASSERT(before.u_ == u_);
+    u_->edit_segments(
+        before.i_,
+        before.i_,
+        detail::make_plain_segs_iter(
+            &s, &s + 1),
+        detail::make_plain_segs_iter(
+            &s, &s + 1));
+    return { *u_, before.i_, a_ };
+}
+
+template<class Allocator>
 template<class FwdIt>
 auto
-segments_encoded::
+segments<Allocator>::
 insert(
     const_iterator before,
     FwdIt first,
@@ -730,16 +973,17 @@ insert(
     u_->edit_segments(
         before.i_,
         before.i_,
-        detail::make_enc_segs_iter(
+        detail::make_plain_segs_iter(
             first, last),
-        detail::make_enc_segs_iter(
+        detail::make_plain_segs_iter(
             first, last));
-    return { *u_, before.i_ };
+    return { *u_, before.i_, a_ };
 }
 
+template<class Allocator>
 template<class T>
 auto
-segments_encoded::
+segments<Allocator>::
 insert(
     const_iterator before,
     std::initializer_list<T> init) ->
@@ -751,16 +995,10 @@ insert(
         init.begin(), init.end());
 }
 
-void
-segments_encoded::
-clear() noexcept
-{
-    erase(begin(), end());
-}
-
+template<class Allocator>
 template<class T, class>
 auto
-segments_encoded::
+segments<Allocator>::
 insert(
     const_iterator before,
     T const& t) ->
@@ -770,9 +1008,10 @@ insert(
         to_string_view(t));
 }
 
+template<class Allocator>
 template<class FwdIt>
 auto
-segments_encoded::
+segments<Allocator>::
 insert(
     const_iterator before,
     FwdIt first,
@@ -788,8 +1027,9 @@ insert(
             FwdIt>::iterator_category{});
 }
 
+template<class Allocator>
 auto
-segments_encoded::
+segments<Allocator>::
 erase(
     const_iterator pos) noexcept ->
         iterator
@@ -797,123 +1037,60 @@ erase(
     return erase(pos, pos + 1);
 }
 
+template<class Allocator>
+auto
+segments<Allocator>::
+segments::
+erase(
+    const_iterator first,
+    const_iterator last) noexcept ->
+        iterator
+{
+    BOOST_ASSERT(first.u_ == u_);
+    BOOST_ASSERT(last.u_ == u_);
+    string_view s;
+    u_->edit_segments(
+        first.i_, last.i_,
+        detail::make_enc_segs_iter(&s, &s),
+        detail::make_enc_segs_iter(&s, &s));
+    return { *u_, first.i_, a_ };
+}
+
+template<class Allocator>
 void
-segments_encoded::
+segments<Allocator>::
 push_back(
     string_view s)
 {
     insert(end(), s);
 }
 
+template<class Allocator>
 void
-segments_encoded::
+segments<Allocator>::
 pop_back() noexcept
 {
     erase(end() - 1);
 }
 
 //------------------------------------------------
+//
+// nested types
+//
+//------------------------------------------------
 
-auto
-segments_encoded::
-reference::
-operator=(
-    const_reference const& other) ->
-        reference&
+template<class Alloc>
+void
+swap(
+    typename segments<Alloc>::reference& r0,
+    typename segments<Alloc>::reference& r1)
 {
-    if( u_ == other.u_ &&
-        i_ == other.i_)
-        return *this;
-    *this = string_view(other);
-    return *this;
-}
-
-/** Comparison
-
-    This function participates in overload
-    resolution only if
-    `is_stringlike<T>::value == true`.
-*/
-template<class T
-#ifndef BOOST_URL_DOCS
-    , class = typename std::enable_if<
-        is_stringlike<T>::value>::type
-#endif
->
-bool
-operator==(
-    segments_encoded::
-        const_reference const& x1,
-    T const& x2 ) noexcept
-{
-    return
-        string_view(x1) ==
-        to_string_view(x2);
-}
-
-/** Comparison
-
-    This function participates in overload
-    resolution only if
-    `is_stringlike<T>::value == true`.
-*/
-template<class T
-#ifndef BOOST_URL_DOCS
-    , class = typename std::enable_if<
-        is_stringlike<T>::value>::type
-#endif
->
-bool
-operator==(
-    T const& x1,
-    segments_encoded::
-        const_reference const& x2 ) noexcept
-{
-    return
-        to_string_view(x1) ==
-        string_view(x2);
-}
-
-/** Comparison
-
-    This function participates in overload
-    resolution only if
-    `is_stringlike<T>::value == true`.
-*/
-template<class T
-#ifndef BOOST_URL_DOCS
-    , class = typename std::enable_if<
-        is_stringlike<T>::value>::type
-#endif
->
-bool
-operator!=(
-    segments_encoded::
-        const_reference const& x1,
-    T const& x2 ) noexcept
-{
-    return !( x1 == x2 );
-}
-
-/** Comparison
-
-    This function participates in overload
-    resolution only if
-    `is_stringlike<T>::value == true`.
-*/
-template<class T
-#ifndef BOOST_URL_DOCS
-    , class = typename std::enable_if<
-        is_stringlike<T>::value>::type
-#endif
->
-bool
-operator!=(
-    T const& x1,
-    segments_encoded::
-        const_reference const& x2 ) noexcept
-{
-    return !(x1 == x2);
+    detail::copied_strings cs(
+        r0.u_->encoded_url());
+    auto tmp = cs.maybe_copy(
+        string_view(r0));
+    r0 = r1;
+    r1 = tmp;
 }
 
 } // urls

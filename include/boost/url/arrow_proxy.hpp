@@ -7,20 +7,26 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_URL_HPP
-#define BOOST_URL_IMPL_URL_HPP
+#ifndef BOOST_URL_ARROW_PROXY_HPP
+#define BOOST_URL_ARROW_PROXY_HPP
+
+#include <boost/url/detail/config.hpp>
 
 namespace boost {
 namespace urls {
 
-template<class Allocator>
-segments<Allocator>
-url::
-segments(Allocator const& a) noexcept
+// https://quuxplusone.github.io/blog/2019/02/06/arrow-proxy/
+
+template<class T>
+struct arrow_proxy
 {
-    return urls::segments<Allocator>(
-        *this, a);
-}
+    T t;
+
+    T *operator->() noexcept
+    {
+        return &t;
+    }
+};
 
 } // urls
 } // boost

@@ -13,13 +13,13 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/type_traits/make_void.hpp>
 #include <boost/utility/string_view.hpp>
+#include <memory>
 #include <string>
-#include <type_traits>
-
 #ifndef BOOST_NO_CXX17_HDR_STRING_VIEW
-#include <string_view>
-#define BOOST_URL_HAS_STRING_VIEW
+# include <string_view>
+# define BOOST_URL_HAS_STRING_VIEW
 #endif
+#include <type_traits>
 
 namespace boost {
 namespace urls {
@@ -160,7 +160,54 @@ to_string_view(
 }
 #endif
 
+//------------------------------------------------
+
+class string_value : public string_view
+{
+    struct base;
+
+    base* p_ = nullptr;
+
+    template<class Allocator>
+    base*
+    construct(
+        std::size_t n,
+        Allocator const& a,
+        char*& dest);
+
+public:
+    class allocator;
+
+    inline
+    ~string_value();
+
+    string_value() = default;
+
+    template<class Allocator>
+    string_value(
+        std::size_t n,
+        Allocator const& a,
+        char*& dest);
+
+    template< class Allocator =
+        std::allocator<char> >
+    explicit
+    string_value(
+        string_view s,
+        Allocator const& a = {});
+
+    inline
+    string_value(
+        string_value const& other) noexcept;
+
+    inline
+    string_value&
+    operator=(string_value const& other) noexcept;
+};
+
 } // urls
 } // boost
+
+#include <boost/url/impl/string.hpp>
 
 #endif

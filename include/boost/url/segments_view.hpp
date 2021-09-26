@@ -12,50 +12,43 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/detail/pct_encoding.hpp>
-#include <boost/url/rfc/pct_encoded_bnf.hpp>
+#include <cstddef>
 #include <iosfwd>
-#include <utility>
 
 namespace boost {
 namespace urls {
 
-class segments_encoded_view;
-
 /** A BidirectionalRange view of read-only path segments with percent-decoding applied
 */
-template<class Allocator>
 class segments_view
 {
     string_view s_;
     std::size_t n_;
-    Allocator a_;
+    string_value::allocator a_;
 
     friend class url;
     friend class url_view;
 
+    template<class Allocator>
     segments_view(
         string_view s,
         std::size_t n,
-        Allocator const& alloc) noexcept
+        Allocator const& a)
         : s_(s)
         , n_(n)
-        , a_(alloc)
+        , a_(a)
     {
     }
 
 public:
     class iterator;
 
+    BOOST_URL_DECL
     segments_view(
-        segments_view const&) noexcept = default;
-    segments_view& operator=(
-        segments_view const&) noexcept = default;
+        segments_view const&) noexcept;
 
-    explicit
-    segments_view(
-        segments_encoded_view const& sv,
-        Allocator const& = {}) noexcept;
+    segments_view& operator=(
+        segments_view const&) noexcept = delete;
 
     /** Return true if the range contains no elements
     */
@@ -75,11 +68,13 @@ public:
 
     /** Return an iterator to the beginning of the range
     */
+    BOOST_URL_DECL
     iterator
     begin() const noexcept;
 
     /** Return an iterator to the end of the range
     */
+    BOOST_URL_DECL
     iterator
     end() const noexcept;
 };

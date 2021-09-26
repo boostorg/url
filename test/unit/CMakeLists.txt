@@ -24,6 +24,7 @@ set(BOOST_URL_TESTS_FILES
     pct_encoding.cpp
     query_params_view.cpp
     scheme.cpp
+    segments.cpp
     segments_encoded.cpp
     segments_encoded_view.cpp
     segments_view.cpp

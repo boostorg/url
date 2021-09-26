@@ -991,10 +991,6 @@ public:
             BOOST_TEST(u.encoded_segment(1) == "to");
             BOOST_TEST(u.encoded_segment(2) == "file.txt");
             BOOST_TEST(u.encoded_segment(3) == "");
-            BOOST_TEST(u.encoded_segment(-1) == "file.txt");
-            BOOST_TEST(u.encoded_segment(-2) == "to");
-            BOOST_TEST(u.encoded_segment(-3) == "path");
-            BOOST_TEST(u.encoded_segment(-4) == "");
         }
 
         // set_encoded_path

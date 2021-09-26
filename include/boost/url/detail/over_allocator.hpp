@@ -11,6 +11,7 @@
 #define BOOST_URL_DETAIL_OVER_ALLOCATOR_HPP
 
 #include <boost/config.hpp>
+#include <boost/assert.hpp>
 #include <boost/core/empty_value.hpp>
 #include <boost/type_traits/is_final.hpp>
 #include <boost/type_traits/type_with_alignment.hpp>

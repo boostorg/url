@@ -37,7 +37,6 @@ class segments_encoded_view
     string_view s_;
     std::size_t n_;
 
-    template<class Alloc>
     friend class segments_view;
     friend class url_view;
 

@@ -14,6 +14,7 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/scheme.hpp>
+#include <boost/url/segments.hpp>
 #include <boost/url/segments_encoded.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
@@ -57,8 +58,9 @@ struct any_path_iter;
 class BOOST_SYMBOL_VISIBLE url
     : public url_view
 {
+    template<class Allocator>
+    friend class urls::segments;
     friend class segments_encoded;
-    friend class segments_encoded::reference;
 
 #ifndef BOOST_URL_DOCS
 protected:
@@ -946,43 +948,13 @@ public:
 
     /** Return a path segment by index
 
-        This function returns an indexed
-        path segment as a percent-encoded
-        string. The behavior depends on
-        `i`:
+        This function returns a zero-based,
+        indexed path segment as a percent-encoded
+        string.
 
-        @li If `i` is 0 the first path
-        segment is returned;
-
-        @li If `i` is positive, then
-        the `i` + 1th path segment is
-        returned. For example if `i == 2`
-        then the third segment is returned.
-        In other words, `i` is zero based.
-
-        @li If `i` is negative, then the
-        function negates `i`, and counts from
-        the end of the path rather than the
-        beginning. For example if `i == -1`
-        then the last path segment is returned.
-
-        If the `i` is out of range, an empty
-        string is returned. To determine the
-        number of segments, call @ref segment_count.
-
-        @par Example
+        @par Preconditions
         @code
-        url_view u = parse_relative_ref( "/path/to/the/file.txt" );
-
-        assert( u.encoded_segment( -2 ) == "the" );
-        assert( u.encoded_segment( -1 ) == "file.txt" );
-        assert( u.encoded_segment(  0 ) == "path" );
-        assert( u.encoded_segment(  1 ) == "to" );
-        @endcode
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
+        i < segment_count()
         @endcode
 
         @par Exception Safety
@@ -998,11 +970,16 @@ public:
     virtual
     string_view
     encoded_segment(
-        int i) const noexcept override;
+        std::size_t i) const noexcept override;
 
     BOOST_URL_DECL
     segments_encoded
     encoded_segments() noexcept;
+
+    template<class Allocator =
+        std::allocator<char>>
+    urls::segments<Allocator>
+    segments(Allocator const& = {}) noexcept;
 
     //--------------------------------------------
     //
@@ -1237,6 +1214,8 @@ operator<<(std::ostream& os, url const& u);
 } // urls
 } // boost
 
+#include <boost/url/impl/segments.hpp>
 #include <boost/url/impl/segments_encoded.hpp>
+#include <boost/url/impl/url.hpp>
 
 #endif

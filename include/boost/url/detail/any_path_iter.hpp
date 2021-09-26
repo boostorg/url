@@ -169,12 +169,88 @@ public:
     }
 };
 
+//------------------------------------------------
+
+class plain_segs_iter_base
+{
+protected:
+    BOOST_URL_DECL
+    static
+    void
+    measure_impl(
+        string_view s,
+        std::size_t& n) noexcept;
+
+    BOOST_URL_DECL
+    static
+    void
+    copy_impl(
+        string_view s,
+        char*& dest,
+        char const* end) noexcept;
+};
+
+// iterates segments in an
+// encoded segment range
+template<class FwdIt>
+class plain_segs_iter
+    : public any_path_iter
+    , public plain_segs_iter_base
+{
+    FwdIt it_;
+    FwdIt end_;
+
+public:
+    plain_segs_iter(
+        FwdIt first,
+        FwdIt last) noexcept
+        : it_(first)
+        , end_(last)
+    {
+    }
+
+    bool
+    measure(
+        std::size_t& n,
+        error_code&
+            ) noexcept override
+    {
+        if(it_ == end_)
+            return false;
+        measure_impl(*it_, n);
+        ++it_;
+        return true;
+    }
+
+    void
+    copy(
+        char*& dest,
+        char const* end
+            ) noexcept override
+    {
+        copy_impl(*it_,
+            dest, end);
+        ++it_;
+    }
+};
+
+//------------------------------------------------
+
 template<class FwdIt>
 enc_segs_iter<FwdIt>
 make_enc_segs_iter(
     FwdIt first, FwdIt last)
 {
     return enc_segs_iter<FwdIt>(
+        first, last);
+}
+
+template<class FwdIt>
+plain_segs_iter<FwdIt>
+make_plain_segs_iter(
+    FwdIt first, FwdIt last)
+{
+    return plain_segs_iter<FwdIt>(
         first, last);
 }
 

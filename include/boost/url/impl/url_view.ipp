@@ -384,29 +384,14 @@ segment_count() const noexcept
 string_view
 url_view::
 encoded_segment(
-    int index) const noexcept
+    std::size_t i) const noexcept
 {
-    std::size_t i;
-    if(index >= 0)
-    {
-        i = static_cast<
-            std::size_t>(index);
-        if(i >= nseg_)
-            return empty_;
-        auto pv = encoded_segments();
-        auto it = pv.begin();
-        while(i--)
-            ++it;
-        return *it;
-    }
-    i = static_cast<
-        std::size_t>(-index);
-    if(i > nseg_)
+    if(i >= nseg_)
         return empty_;
     auto pv = encoded_segments();
-    auto it = pv.end();
+    auto it = pv.begin();
     while(i--)
-        --it;
+        ++it;
     return *it;
 }
 
