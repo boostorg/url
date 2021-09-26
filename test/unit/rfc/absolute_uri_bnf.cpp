@@ -24,30 +24,46 @@ public:
     void
     run()
     {
-        using T = absolute_uri_bnf;
+        auto const bad = [](string_view s)
+        {
+            error_code ec;
+            absolute_uri_bnf t;
+            bnf::parse_string(s, ec, t);
+            BOOST_TEST(ec.failed());
+        };
 
-        bad<T>("");
-        bad<T>(":");
-        bad<T>("http://#");
-        bad<T>("http://x.y.z/?a=b&c=d&#");
-        bad<T>("http://x.y.z/?a=b&c=d&#frag");
-        bad<T>("http://x.y.z/#frag");
+        auto const good = [](string_view s)
+        {
+            error_code ec;
+            absolute_uri_bnf t;
+            bnf::parse_string(s, ec, t);
+            BOOST_TEST(! ec.failed());
+        };
 
-        good<T>("http:");
-        good<T>("http:x");
-        good<T>("http:x/");
-        good<T>("http:x/x");
-        good<T>("http:x//");
-        good<T>("http://");
-        good<T>("http://x");
-        good<T>("http://x.y.z");
-        good<T>("http://x.y.z/");
-        good<T>("http://x.y.z/?");
-        good<T>("http://x.y.z/?a");
-        good<T>("http://x.y.z/?a=");
-        good<T>("http://x.y.z/?a=b");
-        good<T>("http://x.y.z/?a=b&c=d");
-        good<T>("http://x.y.z/?a=b&c=d&");
+        bad("");
+        bad(":");
+        bad("http://#");
+        bad("http://x.y.z/?a=b&c=d&#");
+        bad("http://x.y.z/?a=b&c=d&#frag");
+        bad("http://x.y.z/#frag");
+        bad("http://%");
+        bad("http://?%");
+
+        good("http:");
+        good("http:x");
+        good("http:x/");
+        good("http:x/x");
+        good("http:x//");
+        good("http://");
+        good("http://x");
+        good("http://x.y.z");
+        good("http://x.y.z/");
+        good("http://x.y.z/?");
+        good("http://x.y.z/?a");
+        good("http://x.y.z/?a=");
+        good("http://x.y.z/?a=b");
+        good("http://x.y.z/?a=b&c=d");
+        good("http://x.y.z/?a=b&c=d&");
     }
 };
 

@@ -34,15 +34,30 @@ public:
     void
     run()
     {
-        using T = authority_bnf;
+        auto const bad = [](string_view s)
+        {
+            error_code ec;
+            authority_bnf t;
+            bnf::parse_string(s, ec, t);
+            BOOST_TEST(ec.failed());
+        };
 
-        bad<T> ("%");
+        auto const good = [](string_view s)
+        {
+            error_code ec;
+            authority_bnf t;
+            bnf::parse_string(s, ec, t);
+            BOOST_TEST(! ec.failed());
+        };
 
-        good<T>("");
-        good<T>(":");
-        good<T>("me@you.com");
-        good<T>("user:pass@");
-        good<T>("user:1234");
+        bad("%");
+        bad("host:a");
+
+        good("");
+        good(":");
+        good("me@you.com");
+        good("user:pass@");
+        good("user:1234");
 
         {
             authority_bnf p;
