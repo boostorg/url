@@ -13,10 +13,13 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
+#include <boost/url/params.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments.hpp>
 #include <boost/url/segments_encoded.hpp>
 #include <boost/url/url_view.hpp>
+#include <boost/url/detail/any_path_iter.hpp>
+#include <boost/url/detail/any_query_iter.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <cstdint>
 #include <iosfwd>
@@ -61,6 +64,8 @@ class BOOST_SYMBOL_VISIBLE url
     template<class Allocator>
     friend class urls::segments;
     friend class segments_encoded;
+    friend class urls::params;
+    friend class params_encoded;
 
 #ifndef BOOST_URL_DOCS
 protected:
@@ -987,33 +992,38 @@ public:
     //
     //--------------------------------------------
 
-    /** Set the query.
+private:
+    struct raw_param
+    {
+        std::size_t pos;
+        std::size_t nk;
+        std::size_t nv;
+    };
 
-        Sets the query of the URL to the specified
-        plain string:
+    raw_param
+    get_param(
+        std::size_t i) const noexcept;
 
-        @li If the string is empty, the query is
-        cleared including the leading question
-        mark ('?'), otherwise:
+    char*
+    edit_params(
+        std::size_t first,
+        std::size_t last,
+        std::size_t n,
+        std::size_t nparam);
 
-        @li If the string is not empty, the query
-        is set to the given string, with a leading
-        question mark added.
-        Any special or reserved characters in the
-        string are automatically percent-encoded.
+    void
+    edit_params(
+        std::size_t i0,
+        std::size_t i1,
+        detail::any_query_iter&& it0,
+        detail::any_query_iter&& it1);
+public:
 
-        @par Exception Safety
-
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set. This string may
-        contain any characters, including nulls.
+    /** Remove the query
     */
     BOOST_URL_DECL
     url&
-    set_query(
-        string_view s);
+    remove_query() noexcept;
 
     /** Set the query.
 
@@ -1083,6 +1093,14 @@ public:
     url&
     set_query_part(
         string_view s);
+
+    template<class Allocator =
+        std::allocator<char>>
+    urls::params
+    params(Allocator const& a = {})
+    {
+        return urls::params(*this, a);
+    }
 
     //--------------------------------------------
     //
@@ -1214,8 +1232,10 @@ operator<<(std::ostream& os, url const& u);
 } // urls
 } // boost
 
+#include <boost/url/impl/params.hpp>
 #include <boost/url/impl/segments.hpp>
 #include <boost/url/impl/segments_encoded.hpp>
 #include <boost/url/impl/url.hpp>
+#include <boost/url/detail/impl/any_query_iter.hpp>
 
 #endif

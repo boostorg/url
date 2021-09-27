@@ -138,12 +138,12 @@ begin(
         return true;
     if(*it == '/')
     {
-        // can't be empty
+        // can't begin with "//"
         ec = error::empty_path_segment;
         return false;
     }
     return parse(it, end, ec,
-        segment_nz_bnf{t});
+        segment_bnf{t});
 }
 
 bool

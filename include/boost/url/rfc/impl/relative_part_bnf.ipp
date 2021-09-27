@@ -35,12 +35,18 @@ parse(
     }
     if(it[0] != '/')
     {
-        // path-
         path_noscheme_bnf t0;
-        if(! parse(it, end, ec, t0))
-            return false;
-        t.path.path = t0.str;
-        t.path.count = t0.count;
+        if(parse(it, end, ec, t0))
+        {
+            // path-noscheme
+            t.path.path = t0.str;
+            t.path.count = t0.count;
+            t.has_authority = false;
+            return true;
+        }
+        // path-empty
+        ec = {};
+        t.path = {};
         t.has_authority = false;
         return true;
     }

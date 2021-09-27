@@ -1041,14 +1041,14 @@ get_segment(
     std::size_t i) const noexcept ->
         raw_segment
 {
-    if(segment_count() == 0)
+    if(nseg_ == 0)
         return { offset(id_path), 0 };
-    if(i == segment_count())
+    if(i == nseg_)
         return { offset(id_query), 0 };
     BOOST_ASSERT(
-        i <= segment_count());
+        i <= nseg_);
     auto n = len(id_path);
-    if(segment_count() < 2)
+    if(nseg_ < 2)
         return { offset(id_path), n };
     auto it = s_ + offset(id_path);
     auto start = it;
@@ -1060,9 +1060,9 @@ get_segment(
         for(;;)
         {
             ++it;
-            if(*it == '/')
-                break;
             if(it == last)
+                break;
+            if(*it == '/')
                 break;
         }
         if(i == 0)
@@ -1159,6 +1159,7 @@ edit_segments(
     }
     if(nseg == 0)
     {
+        // erase
         edit_segments(i0, i1, 0, 0);
         return;
     }
@@ -1315,6 +1316,175 @@ url::
 encoded_segments() noexcept
 {
     return segments_encoded(*this);
+}
+
+//------------------------------------------------
+//
+// Query
+//
+//------------------------------------------------
+
+auto
+url::
+get_param(
+    std::size_t i) const noexcept ->
+        raw_param
+{
+    auto const make_param =
+    [this](
+        std::size_t pos,
+        std::size_t n)
+    {
+        string_view s(s_ + pos, n);
+        auto i = s.find_first_of('=');
+        if(i == string_view::npos)
+            return raw_param{ pos, n, 0 };
+        return raw_param{ pos, i, n - i };
+    };
+
+    if(nparam_ == 0)
+        return { offset(id_query), 0, 0 };
+    if(i == nparam_)
+        return { offset(id_frag), 0, 0 };
+    BOOST_ASSERT(i <= nparam_);
+    auto n = len(id_query);
+    if(nparam_ < 2)
+        return make_param(
+            offset(id_query), n);
+    auto it = s_ + offset(id_query);
+    auto start = it;
+    auto const last =
+        s_ + offset(id_frag);
+    BOOST_ASSERT(n > 0);
+    for(;;)
+    {
+        for(;;)
+        {
+            ++it;
+            if(it == last)
+                break;
+            if(*it == '&')
+                break;
+        }
+        if(i == 0)
+            break;
+        start = it;
+        --i;
+    }
+    return make_param(
+        start - s_, it - start);
+}
+
+char*
+url::
+edit_params(
+    std::size_t first,
+    std::size_t last,
+    std::size_t n,
+    std::size_t nparam)
+{
+    BOOST_ASSERT(last >= first);
+    BOOST_ASSERT(
+        last - first <= nparam_);
+    auto const r0 = get_param(first);
+    auto const r1 = get_param(last);
+    auto const n0 = r1.pos - r0.pos;
+    ensure_space(
+        size() + n - n0,
+        nseg_,
+        nparam_ + nparam -
+            (last - first));
+    if(n <= n0)
+    {
+        // shrinking
+        std::memmove(
+            s_ + r0.pos + n,
+            s_ + r1.pos,
+            offset(id_frag) -
+                r1.pos);
+        resize_impl(
+            id_query,
+            len(id_query) - (
+                n0 - n));
+    }
+    else
+    {
+        // growing
+        auto const pos =
+            offset(id_frag);
+        resize_impl(
+            id_query,
+            len(id_query) + (
+                n - n0));
+        std::memmove(
+            s_ + r0.pos + n,
+            s_ + r1.pos,
+            pos - r1.pos);
+    }
+    nparam_ = nparam_ +
+        nparam - (last - first);
+    return s_ + r0.pos;
+}
+
+void
+url::
+edit_params(
+    std::size_t i0,
+    std::size_t i1,
+    detail::any_query_iter&& it0,
+    detail::any_query_iter&& it1)
+{
+    // measure
+    error_code ec;
+    std::size_t n = 0;
+    std::size_t nparam = 0;
+    for(;;)
+    {
+        bool more = it0.measure(n, ec);
+        if(ec.failed())
+            detail::throw_invalid_argument(
+                BOOST_CURRENT_LOCATION);
+        if(! more)
+            break;
+        ++nparam;
+    }
+    if(nparam == 0)
+    {
+        // erase
+        edit_params(i0, i1, 0, 0);
+        return;
+    }
+
+    // copy
+    auto p = edit_params(
+        i0, i1, n + nparam, nparam);
+    auto const last = p + n + nparam;
+    if(i0 == 0)
+    {
+        *p++ = '?';
+        goto do_copy;
+    }
+    for(;;)
+    {
+        *p++ = '&';
+    do_copy:
+        it1.copy(p, last);
+        if(--nparam == 0)
+            break;
+    }
+}
+
+//------------------------------------------------
+
+url&
+url::
+remove_query() noexcept
+{
+    params::value_type v;
+    edit_params(0, nparam_,
+        detail::make_enc_params_iter(&v, &v + 1),
+        detail::make_enc_params_iter(&v, &v + 1));
+    return *this;
 }
 
 //------------------------------------------------

@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_DETAIL_ANY_PATH_ITER_HPP
-#define BOOST_URL_DETAIL_ANY_PATH_ITER_HPP
+#ifndef BOOST_URL_DETAIL_ANY_QUERY_ITER_HPP
+#define BOOST_URL_DETAIL_ANY_QUERY_ITER_HPP
 
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
@@ -19,12 +19,10 @@ namespace urls {
 namespace detail {
 
 struct BOOST_SYMBOL_VISIBLE
-    any_path_iter
+    any_query_iter
 {
-    string_view first;
-
     virtual
-    ~any_path_iter() noexcept = 0;
+    ~any_query_iter() noexcept = 0;
 
     virtual
     bool
@@ -41,22 +39,25 @@ struct BOOST_SYMBOL_VISIBLE
 
 //------------------------------------------------
 
-// iterates segments in an
-// encoded path string
+// iterates params in an
+// encoded query string
 class BOOST_SYMBOL_VISIBLE
-    enc_path_iter
-    : public any_path_iter
+    enc_query_iter
+    : public any_query_iter
 {
-    std::size_t n_;
-    char const* p_;
+//    char const* p_;
     char const* end_;
+#if 0
+    std::size_t nk_;
+    std::size_t nv_;
+#endif
 
     void
     increment() noexcept;
 
 public:
     explicit
-    enc_path_iter(
+    enc_query_iter(
         string_view s) noexcept;
 
     bool
@@ -72,45 +73,15 @@ public:
 
 //------------------------------------------------
 
-// iterates segments in an
-// plain path string
-class BOOST_SYMBOL_VISIBLE
-    plain_path_iter :
-    public any_path_iter
-{
-    std::size_t n_;
-    char const* p_;
-    char const* end_;
-
-    void
-    increment() noexcept;
-
-public:
-    explicit
-    plain_path_iter(
-        string_view s) noexcept;
-
-    bool
-    measure(
-        std::size_t& n,
-        error_code& ec) noexcept override;
-
-    void
-    copy(
-        char*& dest,
-        char const* end) noexcept override;
-};
-
-//------------------------------------------------
-
-class enc_segs_iter_base
+class enc_params_iter_base
 {
 protected:
     BOOST_URL_DECL
     static
     bool
     measure_impl(
-        string_view s,
+        string_view key,
+        string_view const* value,
         std::size_t& n,
         error_code& ec) noexcept;
 
@@ -118,23 +89,24 @@ protected:
     static
     void
     copy_impl(
-        string_view s,
+        string_view key,
+        string_view const* value,
         char*& dest,
         char const* end) noexcept;
 };
 
-// iterates segments in an
-// encoded segment range
+// iterates params in an
+// encoded params range
 template<class FwdIt>
-class enc_segs_iter
-    : public any_path_iter
-    , public enc_segs_iter_base
+class enc_params_iter
+    : public any_query_iter
+    , public enc_params_iter_base
 {
     FwdIt it_;
     FwdIt end_;
 
 public:
-    enc_segs_iter(
+    enc_params_iter(
         FwdIt first,
         FwdIt last) noexcept
         : it_(first)
@@ -150,11 +122,14 @@ public:
     {
         if(it_ == end_)
             return false;
-        if(! measure_impl(
-                *it_, n, ec))
-            return false;
-        ++it_;
-        return true;
+        params::value_type v(*it_++);
+        if(v.has_value)
+            measure_impl(v.key,
+                &v.value, n, ec);
+        else
+            measure_impl(v.key,
+                nullptr, n, ec);
+        return ! ec.failed();
     }
 
     void
@@ -163,45 +138,51 @@ public:
         char const* end
             ) noexcept override
     {
-        copy_impl(*it_,
-            dest, end);
-        ++it_;
+        params::value_type v(*it_++);
+        if(v.has_value)
+            copy_impl(v.key,
+                &v.value, dest, end);
+        else
+            copy_impl(v.key,
+                nullptr, dest, end);
     }
 };
 
 //------------------------------------------------
 
-class plain_segs_iter_base
+class plain_params_iter_base
 {
 protected:
     BOOST_URL_DECL
     static
     void
     measure_impl(
-        string_view s,
+        string_view key,
+        string_view const* value,
         std::size_t& n) noexcept;
 
     BOOST_URL_DECL
     static
     void
     copy_impl(
-        string_view s,
+        string_view key,
+        string_view const* value,
         char*& dest,
         char const* end) noexcept;
 };
 
-// iterates segments in a
-// plain segment range
+// iterates params in a
+// decoded params range
 template<class FwdIt>
-class plain_segs_iter
-    : public any_path_iter
-    , public plain_segs_iter_base
+class plain_params_iter
+    : public any_query_iter
+    , public plain_params_iter_base
 {
     FwdIt it_;
     FwdIt end_;
 
 public:
-    plain_segs_iter(
+    plain_params_iter(
         FwdIt first,
         FwdIt last) noexcept
         : it_(first)
@@ -213,49 +194,41 @@ public:
     measure(
         std::size_t& n,
         error_code&
-            ) noexcept override
-    {
-        if(it_ == end_)
-            return false;
-        measure_impl(*it_, n);
-        ++it_;
-        return true;
-    }
+            ) noexcept override;
 
     void
     copy(
         char*& dest,
         char const* end
-            ) noexcept override
-    {
-        copy_impl(*it_,
-            dest, end);
-        ++it_;
-    }
+            ) noexcept override;
 };
 
 //------------------------------------------------
 
 template<class FwdIt>
-enc_segs_iter<FwdIt>
-make_enc_segs_iter(
+enc_params_iter<FwdIt>
+make_enc_params_iter(
     FwdIt first, FwdIt last)
 {
-    return enc_segs_iter<FwdIt>(
+    return enc_params_iter<FwdIt>(
         first, last);
 }
 
 template<class FwdIt>
-plain_segs_iter<FwdIt>
-make_plain_segs_iter(
+plain_params_iter<FwdIt>
+make_plain_params_iter(
     FwdIt first, FwdIt last)
 {
-    return plain_segs_iter<FwdIt>(
+    return plain_params_iter<FwdIt>(
         first, last);
 }
 
 } // detail
 } // urls
 } // boost
+
+// VFALCO This include is at the bottom of
+// url.hpp because of a circular dependency
+//#include <boost/url/detail/impl/any_query_iter.hpp>
 
 #endif

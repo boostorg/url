@@ -1339,9 +1339,11 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
     */
-    BOOST_URL_DECL
     std::size_t
-    segment_count() const noexcept;
+    segment_count() const noexcept
+    {
+        return nseg_;
+    }
 
     /** Return a path segment by index
 
@@ -1508,6 +1510,14 @@ public:
     BOOST_URL_DECL
     bool
     has_query() const noexcept;
+
+    /** Return the number of key/value pairs in the query
+    */
+    std::size_t
+    param_count() const noexcept
+    {
+        return nparam_;
+    }
 
     /** Return the query
 

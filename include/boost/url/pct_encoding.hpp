@@ -63,13 +63,12 @@ namespace urls {
         @ref pct_decode_opts,
         @ref pct_encode.
 */
-template<
-    class CharSet /*= bnf::all_chars*/>
+template<class CharSet>
 std::size_t
 pct_decode_size(
     string_view s,
     error_code& ec,
-    CharSet const& cs = {},
+    CharSet const& cs,
     pct_decode_opts const& opt = {}) noexcept;
 
 /** Return a string with percent-decoding applied

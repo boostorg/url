@@ -36,10 +36,20 @@ key_equal_encoded(
             encoded.str.data(),
             plain_key.size()) == 0;
     }
+    return key_equal_encoded(
+        plain_key, encoded.str);
+}
+
+// returns true if plain_key == decode(encoded)
+bool
+key_equal_encoded(
+    string_view plain_key,
+    string_view encoded) noexcept
+{
     auto it0 = plain_key.data();
-    auto it1 = encoded.str.data();
+    auto it1 = encoded.data();
     auto const end0 = it0 + plain_key.size();
-    auto const end1 = it1 + encoded.str.size();
+    auto const end1 = it1 + encoded.size();
     for(;;)
     {
         if(it1 == end1)
@@ -99,7 +109,7 @@ pct_decode_size_unchecked(
 // Preconditions:
 // * valid encoding for options
 // * [first, last) is exactly big enough
-void
+char*
 pct_decode_unchecked(
     char* dest,
     char const* last,
@@ -127,7 +137,7 @@ pct_decode_unchecked(
             // unescaped
             *dest++ = *it++;
         }
-        return;
+        return dest;
     }
 
     // plus decodes to space
@@ -153,6 +163,7 @@ pct_decode_unchecked(
         // unescaped
         *dest++ = *it++;
     }
+    return dest;
 }
 
 } // detail

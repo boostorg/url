@@ -26,6 +26,7 @@ in a translation unit of the program.
 #endif
 
 #include <boost/url/detail/impl/any_path_iter.ipp>
+#include <boost/url/detail/impl/any_query_iter.ipp>
 #include <boost/url/detail/impl/copied_strings.ipp>
 #include <boost/url/detail/impl/except.ipp>
 #include <boost/url/detail/impl/pct_encoding.ipp>
@@ -33,6 +34,8 @@ in a translation unit of the program.
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/ipv4_address.ipp>
 #include <boost/url/impl/ipv6_address.ipp>
+#include <boost/url/impl/params.ipp>
+#include <boost/url/impl/params_view.ipp>
 #include <boost/url/impl/query_params_view.ipp>
 #include <boost/url/impl/scheme.ipp>
 #include <boost/url/impl/segments_encoded.ipp>

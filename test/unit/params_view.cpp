@@ -7,24 +7,26 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_URL_HPP
-#define BOOST_URL_IMPL_URL_HPP
+// Test that header file is self-contained.
+#include <boost/url/params_view.hpp>
+
+#include "test_suite.hpp"
 
 namespace boost {
 namespace urls {
 
-template<class Allocator>
-auto
-url::
-segments(
-    Allocator const& a) noexcept ->
-        urls::segments<Allocator>
+class params_view_test
 {
-    return urls::segments<Allocator>(
-        *this, a);
-}
+public:
+    void
+    run()
+    {
+    }
+};
+
+TEST_SUITE(
+    params_view_test,
+    "boost.url.params_view");
 
 } // urls
 } // boost
-
-#endif

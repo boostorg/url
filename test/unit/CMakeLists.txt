@@ -21,6 +21,8 @@ set(BOOST_URL_TESTS_FILES
     host_type.cpp
     ipv4_address.cpp
     ipv6_address.cpp
+    params.cpp
+    params_view.cpp
     pct_encoding.cpp
     query_params_view.cpp
     scheme.cpp

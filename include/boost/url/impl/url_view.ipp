@@ -374,13 +374,6 @@ encoded_path() const noexcept
     return get(id_path);
 }
 
-std::size_t
-url_view::
-segment_count() const noexcept
-{
-    return nseg_;
-}
-
 string_view
 url_view::
 encoded_segment(

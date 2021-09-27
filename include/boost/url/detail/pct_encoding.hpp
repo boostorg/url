@@ -38,6 +38,12 @@ key_equal_encoded(
     string_view plain_key,
     pct_encoded_str encoded) noexcept;
 
+BOOST_URL_DECL
+bool
+key_equal_encoded(
+    string_view plain_key,
+    string_view encoded) noexcept;
+
 //------------------------------------------------
 
 // decode 2 hex chars
@@ -151,7 +157,7 @@ pct_decode_size_unchecked(
     string_view s) noexcept;
 
 BOOST_URL_DECL
-void
+char*
 pct_decode_unchecked(
     char* first,
     char const* last,

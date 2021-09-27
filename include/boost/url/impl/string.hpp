@@ -41,6 +41,10 @@ construct(
         allocator_type a_;
 
     public:
+        ~impl()
+        {
+        }
+
         explicit
         impl(
             allocator_type const& a)
@@ -168,19 +172,20 @@ public:
         allocator const& other) noexcept
         : p_(other.p_)
     {
-        ++p_->refs;
+        if(p_)
+            ++p_->refs;
     }
 
     allocator&
     operator=(
         allocator const& other) noexcept
     {
+        if(other.p_)
+            ++other.p_->refs;
         if( p_ &&
-            --p_->refs)
+            --p_->refs == 0)
             p_->destroy();
         p_ = other.p_;
-        if(p_)
-            ++p_->refs;
         return *this;
     }
 
@@ -200,6 +205,10 @@ public:
             allocator_type a_;
 
         public:
+            ~impl()
+            {
+            }
+
             impl(allocator_type const& a)
                 : a_(a)
             {
