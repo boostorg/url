@@ -90,6 +90,43 @@ operator*() const ->
 
 //------------------------------------------------
 //
+// Element Access
+//
+//------------------------------------------------
+
+auto
+params::
+at(string_view key) const ->
+    string_value
+{
+    url::raw_param r;
+    auto it = find(key);
+    for(;;)
+    {
+        if(it == end())
+            detail::throw_out_of_range(
+                BOOST_CURRENT_LOCATION);
+        r = u_->get_param(it.i_);
+        if(r.nv != 0)
+            break;
+        ++it;
+        it = find(it, key);
+    }
+    string_view ev{
+        u_->s_ + r.pos +
+            r.nk + 1,
+        r.nv - 1 };
+    auto n = detail::
+        pct_decode_size_unchecked(ev);
+    char *dest;
+    auto s = a_.make_string_value(n, dest);
+    detail::pct_decode_unchecked(
+        dest, dest + n, ev, {});
+    return s;
+}
+
+//------------------------------------------------
+//
 // Modifiers
 //
 //------------------------------------------------
@@ -152,9 +189,6 @@ find(
     }
     return from;
 }
-
-
-//------------------------------------------------
 
 } // urls
 } // boost

@@ -20,11 +20,11 @@ namespace urls {
 
 class params_encoded_view::iterator
 {
-    char const* begin_ = nullptr;
     char const* end_ = nullptr;
     char const* p_ = nullptr;
     std::size_t nk_ = 0;
     std::size_t nv_ = 0;
+    bool first_ = true;
 
     friend class params_encoded_view;
 
@@ -91,9 +91,95 @@ public:
 
 //------------------------------------------------
 //
+// Members
+//
+//------------------------------------------------
+
+params_encoded_view::
+params_encoded_view(
+    string_view s,
+    std::size_t n) noexcept
+    : s_(s)
+    , n_(n)
+{
+}
+
+params_encoded_view::
+~params_encoded_view() noexcept = default;
+
+params_encoded_view::
+params_encoded_view() noexcept = default;
+
+params_encoded_view::
+params_encoded_view(
+    params_encoded_view const& other) noexcept = default;
+
+params_encoded_view&
+params_encoded_view::
+operator=(
+    params_encoded_view const& other) noexcept = default;
+
+template<class Allocator>
+params_view
+params_encoded_view::
+decoded(Allocator const& alloc) const
+{
+    return params_view(s_, n_, alloc);
+}
+
+//------------------------------------------------
+//
+// Element Access
+//
+//------------------------------------------------
+
+template<class Key>
+auto
+params_encoded_view::
+at(Key const& key) const ->
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        string_view>::type
+{
+    return at(to_string_view(key));
+}
+
+//------------------------------------------------
+//
+// Capacity
+//
+//------------------------------------------------
+
+bool
+params_encoded_view::
+empty() const noexcept
+{
+    return n_ == 0;
+}
+
+std::size_t
+params_encoded_view::
+size() const noexcept
+{
+    return n_;
+}
+
+//------------------------------------------------
+//
 // Lookup
 //
 //------------------------------------------------
+
+template<class Key>
+auto
+params_encoded_view::
+count(Key const& key) const noexcept ->
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        std::size_t>::type
+{
+    return count(to_string_view(key));
+}
 
 auto
 params_encoded_view::
@@ -126,6 +212,25 @@ find(
 {
     return find(from,
         to_string_view(key));
+}
+
+bool
+params_encoded_view::
+contains(string_view key) const noexcept
+{
+    return find(key) != end();
+}
+
+template<class Key>
+auto
+params_encoded_view::
+contains(
+    Key const& key) const noexcept ->
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        bool>::type
+{
+    return contains(to_string_view(key));
 }
 
 } // urls

@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/params_view.hpp>
 #include <boost/url/value_types.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <iterator>
@@ -30,15 +31,12 @@ class params_encoded_view
     friend class url_view;
 
     string_view s_;
-    std::size_t n_;
+    std::size_t n_ = 0;
 
+    inline
     params_encoded_view(
         string_view s,
-        std::size_t n) noexcept
-        : s_(s)
-        , n_(n)
-    {
-    }
+        std::size_t n) noexcept;
 
 public:
     class iterator;
@@ -48,6 +46,48 @@ public:
     using const_reference = value_type;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
+
+#ifndef BOOST_URL_DOCS
+    inline
+    ~params_encoded_view() noexcept;
+
+    inline
+    params_encoded_view() noexcept;
+
+    inline
+    params_encoded_view(
+        params_encoded_view const& other) noexcept;
+
+    inline
+    params_encoded_view&
+    operator=(
+        params_encoded_view const& other) noexcept;
+#endif
+
+    template<class Allocator =
+        std::allocator<char>>
+    params_view
+    decoded(Allocator const& alloc = {}) const;
+
+    //--------------------------------------------
+    //
+    // Element Access
+    //
+    //--------------------------------------------
+
+    BOOST_URL_DECL
+    string_view
+    at(string_view key) const;
+
+    template<class Key>
+#ifdef BOOST_URL_DOCS
+    string_view
+#else
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        string_view>::type
+#endif
+    at(Key const& key) const;
 
     //--------------------------------------------
     //
@@ -69,17 +109,13 @@ public:
     //
     //--------------------------------------------
 
+    inline
     bool
-    empty() const noexcept
-    {
-        return n_ == 0;
-    }
+    empty() const noexcept;
 
+    inline
     std::size_t
-    size() const noexcept
-    {
-        return n_;
-    }
+    size() const noexcept;
 
     //--------------------------------------------
     //
@@ -99,10 +135,7 @@ public:
         is_stringlike<Key>::value,
         std::size_t>::type
 #endif
-    count(Key const& key) const noexcept
-    {
-        return count(to_string_view(key));
-    }
+    count(Key const& key) const noexcept;
 
     inline
     iterator
@@ -150,27 +183,27 @@ public:
         is_stringlike<Key>::value,
         bool>::type
 #endif
-    contains(Key const& key) const noexcept
-    {
-        return contains(to_string_view(key));
-    }
+    contains(Key const& key) const noexcept;
+
+    //--------------------------------------------
+    //
+    // Parsing
+    //
+    //--------------------------------------------
 
     BOOST_URL_DECL
     friend
     params_encoded_view
-    parse_query_params_(
+    parse_query_params(
         string_view s,
         error_code& ec) noexcept;
 
     BOOST_URL_DECL
     friend
     params_encoded_view
-    parse_query_params_(
+    parse_query_params(
         string_view s);
 };
-
-} // urls
-} // boost
 
 /** Return a query params view from a parsed string, using query-params bnf
 
@@ -200,7 +233,7 @@ public:
 */
 BOOST_URL_DECL
 params_encoded_view
-parse_query_params_(
+parse_query_params(
     string_view s,
     error_code& ec) noexcept;
 
@@ -230,8 +263,11 @@ parse_query_params_(
 */
 BOOST_URL_DECL
 params_encoded_view
-parse_query_params_(
+parse_query_params(
     string_view s);
+
+} // urls
+} // boost
 
 // VFALCO This include is at the bottom of
 // url_view.hpp because of a circular dependency

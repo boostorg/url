@@ -203,19 +203,6 @@ public:
     string_type<Allocator>
     at( string_view key,
         Allocator const& a = {}) const;
-
-    BOOST_URL_DECL
-    friend
-    query_params_view
-    parse_query_params(
-        string_view s,
-        error_code& ec) noexcept;
-
-    BOOST_URL_DECL
-    friend
-    query_params_view
-    parse_query_params(
-        string_view s);
 };
 
 //----------------------------------------------------------
@@ -439,69 +426,6 @@ std::ostream&
 operator<<(
     std::ostream& os,
     query_params_view const& qpv);
-
-//------------------------------------------------
-
-/** Return a query params view from a parsed string, using query-params bnf
-
-    This function parses the string and returns the
-    corresponding query params object if the string
-    is valid, otherwise sets the error and returns
-    an empty range. The query string should not
-    include the leading question mark.
-
-    @par BNF
-    @code
-    query-params    = [ query-param ] *( "&" [ query-param ] )
-    query-param     = key [ "=" value ]
-    @endcode
-
-    @par Exception Safety
-    No-throw guarantee.
-
-    @param s The string to parse
-    @param ec Set to the error, if any occurred
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">
-        3.4. Query (rfc3986)</a>
-
-    @see @ref query_params_view
-*/
-BOOST_URL_DECL
-query_params_view
-parse_query_params(
-    string_view s,
-    error_code& ec) noexcept;
-
-/** Return a query params view from a parsed string, using query-params bnf
-
-    This function parses the string and returns the
-    corresponding query params object if the string
-    is valid, otherwise throws an exception.
-    The query string should not include the
-    leading question mark.
-
-    @par BNF
-    @code
-    query-params    = [ query-param ] *( "&" [ query-param ] )
-    query-param     = key [ "=" value ]
-    @endcode
-
-    @throw system_error Thrown on error
-
-    @param s The string to parse
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">
-        3.4. Query (rfc3986)</a>
-
-    @see @ref query_params_view
-*/
-BOOST_URL_DECL
-query_params_view
-parse_query_params(
-    string_view s);
 
 } // urls
 } // boost

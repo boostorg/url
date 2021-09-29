@@ -70,6 +70,36 @@ operator*() const ->
 
 //------------------------------------------------
 //
+// Element Access
+//
+//------------------------------------------------
+
+auto
+params_encoded::
+at(string_view key) const ->
+    string_view
+{
+    url::raw_param r;
+    auto it = find(key);
+    for(;;)
+    {
+        if(it == end())
+            detail::throw_out_of_range(
+                BOOST_CURRENT_LOCATION);
+        r = u_->get_param(it.i_);
+        if(r.nv != 0)
+            break;
+        ++it;
+        it = find(it, key);
+    }
+    return {
+        u_->s_ + r.pos +
+            r.nk + 1,
+        r.nv - 1 };
+}
+
+//------------------------------------------------
+//
 // Modifiers
 //
 //------------------------------------------------

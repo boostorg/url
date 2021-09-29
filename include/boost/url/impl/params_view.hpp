@@ -20,12 +20,12 @@ namespace urls {
 
 class params_view::iterator
 {
-    char const* begin_ = nullptr;
     char const* end_ = nullptr;
     char const* p_ = nullptr;
     std::size_t nk_ = 0;
     std::size_t nv_ = 0;
     string_value::allocator a_;
+    bool first_ = true;
 
     friend class params_view;
 
@@ -92,9 +92,76 @@ public:
 
 //------------------------------------------------
 //
+// Members
+//
+//------------------------------------------------
+
+template<class Allocator>
+params_view::
+params_view(
+    string_view s,
+    std::size_t n,
+    Allocator const& a)
+    : s_(s)
+    , n_(n)
+    , a_(a)
+{
+}
+
+//------------------------------------------------
+//
+// Element Access
+//
+//------------------------------------------------
+
+template<class Key>
+auto
+params_view::
+at(Key const& key) const ->
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        string_value>::type
+{
+    return at(to_string_view(key));
+}
+
+//------------------------------------------------
+//
+// Capacity
+//
+//------------------------------------------------
+
+bool
+params_view::
+empty() const noexcept
+{
+    return n_ == 0;
+}
+
+std::size_t
+params_view::
+size() const noexcept
+{
+    return n_;
+}
+
+//------------------------------------------------
+//
 // Lookup
 //
 //------------------------------------------------
+
+template<class Key>
+auto
+params_view::
+count(
+    Key const& key) const noexcept ->
+        typename std::enable_if<
+            is_stringlike<Key>::value,
+            std::size_t>::type
+{
+    return count(to_string_view(key));
+}
 
 auto
 params_view::
@@ -127,6 +194,26 @@ find(
 {
     return find(from,
         to_string_view(key));
+}
+
+bool
+params_view::
+contains(
+    string_view key) const noexcept
+{
+    return find(key) != end();
+}
+
+template<class Key>
+auto
+params_view::
+contains(
+    Key const& key) const noexcept ->
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        bool>::type
+{
+    return contains(to_string_view(key));
 }
 
 } // urls

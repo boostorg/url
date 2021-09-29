@@ -10,7 +10,6 @@
 // Test that header file is self-contained.
 #include <boost/url/params_encoded.hpp>
 
-#include <boost/url/static_pool.hpp>
 #include <boost/url/url.hpp>
 #include "test_suite.hpp"
 
@@ -20,8 +19,6 @@ namespace urls {
 class params_encoded_test
 {
 public:
-    using pool_t = static_pool<4096>;
-
     void
     testMembers()
     {
@@ -79,6 +76,22 @@ public:
             BOOST_TEST(p.back().key == "k4");
             BOOST_TEST(p.back().value == "4444");
             BOOST_TEST(p.back().has_value);
+        }
+
+        // at(string_view)
+        // at(Key)
+        {
+            url u = parse_uri_reference(
+                "?k0=0&k1=1&k2=&k3&k4=4444#f");
+            params_encoded p = u.params_encoded();
+            BOOST_TEST(p.at("k0") == "0");
+            BOOST_TEST(p.at("k1") == "1");
+            BOOST_TEST(p.at("k2") == "");
+            BOOST_TEST_THROWS(p.at("k3") == "0",
+                std::out_of_range);
+            BOOST_TEST(p.at("k4") == "4444");
+            BOOST_TEST_THROWS(p.at("k5"),
+                std::out_of_range);
         }
     }
 
@@ -449,34 +462,47 @@ public:
     void
     testIterators()
     {
-        url u = parse_uri_reference(
-            "/?a=1&bb=22&ccc=333&dddd=4444#f");
-        params_encoded p = u.params_encoded();
-        auto it = p.begin();
-        BOOST_TEST((*it).key == "a");
-        BOOST_TEST((*++it).key == "bb");
-        BOOST_TEST((*it++).key == "bb");
-        BOOST_TEST((*it).key == "ccc");
-        BOOST_TEST((*--it).key == "bb");
-        BOOST_TEST((*it--).key == "bb");
-        BOOST_TEST((*it).key == "a");
-        auto it2 = p.end();
-        BOOST_TEST(it == p.begin());
-        BOOST_TEST(it != it2);
-        BOOST_TEST((*(it += 1)).key == "bb");
-        BOOST_TEST((*(it + 1)).value == "333");
-        BOOST_TEST((*(1 + it)).value == "333");
-        BOOST_TEST((*it).value == "22");
-        BOOST_TEST((*(it2 -= 1)).value == "4444");
-        BOOST_TEST((*(it2 - 1)).value == "333");
-        BOOST_TEST((*it2).value == "4444");
-        BOOST_TEST(it2 - it == 2);
-        BOOST_TEST(it[1].value == "333");
+        {
+            url u = parse_uri_reference(
+                "/?a=1&bb=22&ccc=333&dddd=4444#f");
+            params_encoded p = u.params_encoded();
+            auto it = p.begin();
+            BOOST_TEST((*it).key == "a");
+            BOOST_TEST((*++it).key == "bb");
+            BOOST_TEST((*it++).key == "bb");
+            BOOST_TEST((*it).key == "ccc");
+            BOOST_TEST((*--it).key == "bb");
+            BOOST_TEST((*it--).key == "bb");
+            BOOST_TEST((*it).key == "a");
+            auto it2 = p.end();
+            BOOST_TEST(it == p.begin());
+            BOOST_TEST(it != it2);
+            BOOST_TEST((*(it += 1)).key == "bb");
+            BOOST_TEST((*(it + 1)).value == "333");
+            BOOST_TEST((*(1 + it)).value == "333");
+            BOOST_TEST((*it).value == "22");
+            BOOST_TEST((*(it2 -= 1)).value == "4444");
+            BOOST_TEST((*(it2 - 1)).value == "333");
+            BOOST_TEST((*it2).value == "4444");
+            BOOST_TEST(it2 - it == 2);
+            BOOST_TEST(it[1].value == "333");
 
-        BOOST_TEST(it < it2);
-        BOOST_TEST(it <= it2);
-        BOOST_TEST(it2 > it);
-        BOOST_TEST(it2 >= it);
+            BOOST_TEST(it < it2);
+            BOOST_TEST(it <= it2);
+            BOOST_TEST(it2 > it);
+            BOOST_TEST(it2 >= it);
+        }
+
+        // operator*
+        {
+            url u = parse_uri_reference(
+                "/?a&b=&c=3#f");
+            params_encoded p = u.params_encoded();
+            auto it = p.begin();
+            BOOST_TEST((*it).has_value == false);
+            BOOST_TEST((*++it).has_value == true);
+            BOOST_TEST((*++it).value == "3");
+        }
     }
 
     void

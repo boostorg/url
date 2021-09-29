@@ -10,6 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/query_params_view.hpp>
 
+#if 0
 #include "test_suite.hpp"
 
 namespace boost {
@@ -232,3 +233,4 @@ TEST_SUITE(
 
 } // urls
 } // boost
+#endif

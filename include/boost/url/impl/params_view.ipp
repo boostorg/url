@@ -20,6 +20,26 @@ namespace urls {
 
 params_view::
 value_type::
+~value_type() noexcept = default;
+
+params_view::
+value_type::
+value_type() noexcept = default;
+
+params_view::
+value_type::
+value_type(
+    value_type const& other) noexcept = default;
+
+auto
+params_view::
+value_type::
+operator=(
+    value_type const& other) noexcept ->
+        value_type& = default;
+
+params_view::
+value_type::
 value_type(
     char const* s,
     std::size_t nk,
@@ -51,12 +71,6 @@ value_type(
         has_value = false;
     }
     // key
-    if( nk > 0 &&
-        s[0] == '&')
-    {
-        ++s;
-        --nk;
-    }
     string_view ek{s, nk};
     auto n = detail::
         pct_decode_size_unchecked(ek);
@@ -73,21 +87,31 @@ params_view::
 iterator::
 scan() noexcept
 {
-    string_view s(
-        begin_, begin_ - end_);
-    auto i = s.find_first_of('&');
+    string_view s(p_, end_ - p_);
+    std::size_t i;
+    if(! first_)
+    {
+        BOOST_ASSERT(
+            s.starts_with('&'));
+        i = s.find_first_of('&', 1);
+    }
+    else
+    {
+        i = s.find_first_of('&');
+    }
     if( i == string_view::npos)
         i = s.size();
     nk_ = string_view(
         p_, i).find_first_of('=');
     if(nk_ != string_view::npos)
     {
-        nv_ = s.size() - nk_;
+        nv_ = i - nk_;
     }
     else
     {
-        // has_key==false
-        nk_ = 0;
+        // has_value==false
+        nk_ = i;
+        nv_ = 0;
     }
 }
 
@@ -96,16 +120,10 @@ iterator::
 iterator(
     string_view s,
     string_value::allocator a) noexcept
-    : begin_(s.data())
-    , end_(s.data() + s.size())
+    : end_(s.data() + s.size())
+    , p_(s.data())
     , a_(a)
 {
-    if(s.empty())
-    {
-        p_ = nullptr;
-        return;
-    }
-    p_ = begin_;
     scan();
 }
 
@@ -115,10 +133,10 @@ iterator(
     string_view s,
     int,
     string_value::allocator a) noexcept
-    : begin_(s.data())
-    , end_(s.data() + s.size())
+    : end_(s.data() + s.size())
     , p_(nullptr)
     , a_(a)
+    , first_(false)
 {
 }
 
@@ -128,10 +146,9 @@ iterator::
 encoded_key() const noexcept
 {
     BOOST_ASSERT(p_ != nullptr);
-    if( nk_ > 0 &&
-        p_[0] == '&')
-        return string_view{
-            p_ + 1, nk_ - 1};
+    if(! first_)
+        return string_view(
+            p_ + 1, nk_ - 1);
     return string_view{ p_, nk_ };
 }
 
@@ -142,10 +159,13 @@ operator++() noexcept ->
     iterator&
 {
     BOOST_ASSERT(p_ != nullptr);
+    first_ = false;
     p_ += nk_ + nv_;
     if(p_ == end_)
     {
         p_ = nullptr;
+        nk_ = 0;
+        nv_ = 0;
         return *this;
     }
     scan();
@@ -158,6 +178,10 @@ iterator::
 operator*() const ->
     reference
 {
+    if(! first_)
+        return value_type(
+            p_ + 1, nk_ - 1,
+                nv_, a_);
     return value_type(
         p_, nk_, nv_, a_);
 }
@@ -169,20 +193,51 @@ operator==(
     params_view::
         iterator b) noexcept
 {
-    BOOST_ASSERT(a.begin_ == b.begin_);
     BOOST_ASSERT(a.end_ == b.end_);
-    BOOST_ASSERT(
-        a.p_ != b.p_ || (
-            a.nk_ == b.nk_ &&
-            a.nv_ == b.nv_));
-    return a.p_ == b.p_;
+    return
+        a.p_ == b.p_ &&
+        a.first_ == b.first_;
 }
 
-//--------------------------------------------
+//------------------------------------------------
+//
+// Element Access
+//
+//------------------------------------------------
+
+auto
+params_view::
+at(string_view key) const ->
+    string_value
+{
+    auto it = find(key);
+    for(;;)
+    {
+        if(it == end())
+            detail::throw_out_of_range(
+                BOOST_CURRENT_LOCATION);
+        if(it.nv_ != 0)
+            break;
+        ++it;
+        it = find(it, key);
+    }
+    string_view ev{
+        it.p_ + it.nk_ + 1,
+        it.nv_ - 1 };
+    auto n = detail::
+        pct_decode_size_unchecked(ev);
+    char *dest;
+    auto s = a_.make_string_value(n, dest);
+    detail::pct_decode_unchecked(
+        dest, dest + n, ev, {});
+    return s;
+}
+
+//------------------------------------------------
 //
 // Iterators
 //
-//--------------------------------------------
+//------------------------------------------------
 
 auto
 params_view::
@@ -229,8 +284,6 @@ find(
     string_view key) const noexcept ->
         iterator
 {
-    BOOST_ASSERT(
-        from.begin_ == s_.data());
     BOOST_ASSERT(from.end_ ==
         s_.data() + s_.size());
 

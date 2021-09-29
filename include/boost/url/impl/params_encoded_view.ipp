@@ -12,34 +12,43 @@
 
 #include <boost/url/params_encoded_view.hpp>
 #include <boost/url/url.hpp>
+#include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
 namespace urls {
 
-//------------------------------------------------
-
 void
 params_encoded_view::
 iterator::
 scan() noexcept
 {
-    string_view s(
-        begin_, begin_ - end_);
-    auto i = s.find_first_of('&');
+    string_view s(p_, end_ - p_);
+    std::size_t i;
+    if(! first_)
+    {
+        BOOST_ASSERT(
+            s.starts_with('&'));
+        i = s.find_first_of('&', 1);
+    }
+    else
+    {
+        i = s.find_first_of('&');
+    }
     if( i == string_view::npos)
         i = s.size();
     nk_ = string_view(
         p_, i).find_first_of('=');
     if(nk_ != string_view::npos)
     {
-        nv_ = s.size() - nk_;
+        nv_ = i - nk_;
     }
     else
     {
-        // has_key==false
-        nk_ = 0;
+        // has_value==false
+        nk_ = i;
+        nv_ = 0;
     }
 }
 
@@ -47,15 +56,9 @@ params_encoded_view::
 iterator::
 iterator(
     string_view s) noexcept
-    : begin_(s.data())
-    , end_(s.data() + s.size())
+    : end_(s.data() + s.size())
+    , p_(s.data())
 {
-    if(s.empty())
-    {
-        p_ = nullptr;
-        return;
-    }
-    p_ = begin_;
     scan();
 }
 
@@ -64,9 +67,9 @@ iterator::
 iterator(
     string_view s,
     int) noexcept
-    : begin_(s.data())
-    , end_(s.data() + s.size())
+    : end_(s.data() + s.size())
     , p_(nullptr)
+    , first_(false)
 {
 }
 
@@ -76,10 +79,9 @@ iterator::
 encoded_key() const noexcept
 {
     BOOST_ASSERT(p_ != nullptr);
-    if( nk_ > 0 &&
-        p_[0] == '&')
-        return string_view{
-            p_ + 1, nk_ - 1};
+    if(! first_)
+        return string_view(
+            p_ + 1, nk_ - 1);
     return string_view{ p_, nk_ };
 }
 
@@ -90,10 +92,13 @@ operator++() noexcept ->
     iterator&
 {
     BOOST_ASSERT(p_ != nullptr);
+    first_ = false;
     p_ += nk_ + nv_;
     if(p_ == end_)
     {
         p_ = nullptr;
+        nk_ = 0;
+        nv_ = 0;
         return *this;
     }
     scan();
@@ -106,19 +111,32 @@ iterator::
 operator*() const ->
     reference
 {
+    if(! first_)
+    {
+        if(nv_ > 0)
+            return reference{
+                string_view(
+                    p_ + 1, nk_ - 1),
+                string_view(
+                    p_ + nk_ + 1, nv_ - 1),
+                true};
+        return reference{
+            string_view(
+                p_ + 1, nk_ - 1),
+            string_view{},
+            false};
+    }
     if(nv_ > 0)
         return reference{
             string_view(
-                p_ + 1,
-                nk_ - 1),
+                p_, nk_),
             string_view(
                 p_ + nk_ + 1,
                 nv_ - 1),
             true};
     return reference{
         string_view(
-            p_ + 1,
-            nk_ - 1),
+            p_, nk_),
         string_view{},
         false};
 }
@@ -130,13 +148,37 @@ operator==(
     params_encoded_view::
         iterator b) noexcept
 {
-    BOOST_ASSERT(a.begin_ == b.begin_);
     BOOST_ASSERT(a.end_ == b.end_);
-    BOOST_ASSERT(
-        a.p_ != b.p_ || (
-            a.nk_ == b.nk_ &&
-            a.nv_ == b.nv_));
-    return a.p_ == b.p_;
+    return
+        a.p_ == b.p_ &&
+        a.first_ == b.first_;
+}
+
+//------------------------------------------------
+//
+// Element Access
+//
+//------------------------------------------------
+
+auto
+params_encoded_view::
+at(string_view key) const ->
+    string_view
+{
+    auto it = find(key);
+    for(;;)
+    {
+        if(it == end())
+            detail::throw_out_of_range(
+                BOOST_CURRENT_LOCATION);
+        if(it.nv_ != 0)
+            break;
+        ++it;
+        it = find(it, key);
+    }
+    return {
+        it.p_ + it.nk_ + 1,
+        it.nv_ - 1 };
 }
 
 //--------------------------------------------
@@ -190,8 +232,6 @@ find(
     string_view key) const noexcept ->
         iterator
 {
-    BOOST_ASSERT(
-        from.begin_ == s_.data());
     BOOST_ASSERT(from.end_ ==
         s_.data() + s_.size());
 
@@ -204,6 +244,37 @@ find(
         ++from;
     }
     return from;
+}
+
+//------------------------------------------------
+//
+// Parsing
+//
+//------------------------------------------------
+
+params_encoded_view
+parse_query_params(
+    string_view s,
+    error_code& ec) noexcept
+{
+    query_bnf t;
+    if(! bnf::parse_string(
+            s, ec, t))
+        return {};
+    return params_encoded_view(
+        t.str, t.count);
+}
+
+params_encoded_view
+parse_query_params(
+    string_view s)
+{
+    error_code ec;
+    auto qp = parse_query_params(s, ec);
+    if(ec.failed())
+        detail::throw_invalid_argument(
+            BOOST_CURRENT_LOCATION);
+    return qp;
 }
 
 } // urls

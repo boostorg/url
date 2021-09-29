@@ -173,32 +173,6 @@ operator<<(
     return os;
 }
 
-//------------------------------------------------
-
-query_params_view
-parse_query_params(
-    string_view s,
-    error_code& ec) noexcept
-{
-    query_bnf t;
-    if(! bnf::parse_string(
-            s, ec, t))
-        return {};
-    return query_params_view(
-        t.str, t.count);
-}
-
-query_params_view
-parse_query_params(
-    string_view s)
-{
-    error_code ec;
-    auto qp = parse_query_params(s, ec);
-    detail::maybe_throw(ec,
-        BOOST_CURRENT_LOCATION);
-    return qp;
-}
-
 } // urls
 } // boost
 

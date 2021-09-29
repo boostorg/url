@@ -220,6 +220,40 @@ public:
 //
 //------------------------------------------------
 
+params_encoded::
+params_encoded(
+    url& u) noexcept
+    : u_(&u)
+{
+}
+
+params_encoded&
+params_encoded::
+operator=(std::initializer_list<
+    value_type> init)
+{
+    assign(init);
+    return *this;
+}
+
+void
+params_encoded::
+assign(std::initializer_list<
+    value_type> init)
+{
+    assign(init.begin(), init.end());
+}
+
+template<class FwdIt>
+void
+params_encoded::
+assign(FwdIt first, FwdIt last)
+{
+    assign(first, last,
+        typename std::iterator_traits<
+            FwdIt>::iterator_category{});
+}
+
 template<class FwdIt>
 void
 params_encoded::
@@ -252,6 +286,17 @@ at(std::size_t pos) const ->
         detail::throw_out_of_range(
             BOOST_CURRENT_LOCATION);
     return (*this)[pos];
+}
+
+template<class Key>
+auto
+params_encoded::
+at(Key const& key) const ->
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        string_view>::type
+{
+    return at(to_string_view(key));
 }
 
 auto
@@ -297,6 +342,13 @@ end() const noexcept ->
 // Capacity
 //
 //------------------------------------------------
+
+bool
+params_encoded::
+empty() const noexcept
+{
+    return size() == 0;
+}
 
 std::size_t
 params_encoded::
@@ -544,7 +596,6 @@ emplace_at(
     BOOST_ASSERT(pos.u_ == u_);
     using detail::
         make_enc_params_iter;
-    auto r = u_->get_param(pos.i_);
     value_type v{key,
         string_view{}, false};
     u_->edit_params(
@@ -665,6 +716,17 @@ erase(
     return first;
 }
 
+template<class Key>
+auto
+params_encoded::
+erase(Key const& key) noexcept ->
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        std::size_t>::type
+{
+    return erase(to_string_view(key));
+}
+
 //------------------------------------------------
 
 auto
@@ -734,6 +796,17 @@ pop_back() noexcept
 //
 //------------------------------------------------
 
+template<class Key>
+auto
+params_encoded::
+count(Key const& key) const noexcept ->
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        std::size_t>::type
+{
+    return count(to_string_view(key));
+}
+
 auto
 params_encoded::
 find(string_view key) const noexcept ->
@@ -772,6 +845,18 @@ params_encoded::
 contains(string_view key) const noexcept
 {
     return find(key) != end();
+}
+
+template<class Key>
+auto
+params_encoded::
+contains(
+    Key const& key) const noexcept ->
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        bool>::type
+{
+    return contains(to_string_view(key));
 }
 
 } // urls

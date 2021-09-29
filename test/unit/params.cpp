@@ -54,8 +54,8 @@ public:
     void
     testElements()
     {
-        // at
-        // operator[]
+        // at(std::size_t)
+        // operator[std::size_t]
         // front
         // back
         {
@@ -80,6 +80,22 @@ public:
             BOOST_TEST(p.back().key == "k4");
             BOOST_TEST(p.back().value == "4444");
             BOOST_TEST(p.back().has_value);
+        }
+
+        // at(string_view)
+        // at(Key)
+        {
+            url u = parse_uri_reference(
+                "?k0=0&k1=1&k2=&k3&k4=4444#f");
+            params p = u.params(pa.allocator());
+            BOOST_TEST(p.at("k0") == "0");
+            BOOST_TEST(p.at("k1") == "1");
+            BOOST_TEST(p.at("k2") == "");
+            BOOST_TEST_THROWS(p.at("k3") == "0",
+                std::out_of_range);
+            BOOST_TEST(p.at("k4") == "4444");
+            BOOST_TEST_THROWS(p.at("k5"),
+                std::out_of_range);
         }
     }
 

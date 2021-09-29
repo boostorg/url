@@ -31,6 +31,7 @@ find(void* p) noexcept
     auto t = table();
     auto const end =
         t + n_;
+    (void)end;
     BOOST_ASSERT(t != end);
     while(*t != p)
     {

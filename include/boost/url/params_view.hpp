@@ -21,12 +21,14 @@ namespace urls {
 
 #ifndef BOOST_URL_DOCS
 class url_view;
+class params_encoded_view;
 #endif
 
 class params_view
     : private detail::parts_base
 {
     friend class url_view;
+    friend class params_encoded_view;
 
     string_view s_;
     std::size_t n_;
@@ -36,18 +38,34 @@ class params_view
     params_view(
         string_view s,
         std::size_t n,
-        Allocator const& a) noexcept
-        : s_(s)
-        , n_(n)
-        , a_(a)
-    {
-    }
+        Allocator const& a);
 
 public:
     class iterator;
 
     class value_type
     {
+    public:
+        string_value key;
+        string_value value;
+        bool has_value;
+
+        BOOST_URL_DECL
+        ~value_type() noexcept;
+
+        BOOST_URL_DECL
+        value_type() noexcept;
+
+        BOOST_URL_DECL
+        value_type(
+            value_type const& other) noexcept;
+
+        BOOST_URL_DECL
+        value_type&
+        operator=(
+            value_type const& other) noexcept;
+
+    private:
         friend class params_view;
         friend class iterator;
 
@@ -57,17 +75,32 @@ public:
             std::size_t nk,
             std::size_t nv,
             string_value::allocator a);
-
-    public:
-        string_value key;
-        string_value value;
-        bool has_value;
     };
 
     using reference = value_type;
     using const_reference = value_type;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
+
+    //--------------------------------------------
+    //
+    // Element Access
+    //
+    //--------------------------------------------
+
+    BOOST_URL_DECL
+    string_value
+    at(string_view key) const;
+
+    template<class Key>
+#ifdef BOOST_URL_DOCS
+    string_value
+#else
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        string_value>::type
+#endif
+    at(Key const& key) const;
 
     //--------------------------------------------
     //
@@ -89,17 +122,13 @@ public:
     //
     //--------------------------------------------
 
+    inline
     bool
-    empty() const noexcept
-    {
-        return n_ == 0;
-    }
+    empty() const noexcept;
 
+    inline
     std::size_t
-    size() const noexcept
-    {
-        return n_;
-    }
+    size() const noexcept;
 
     //--------------------------------------------
     //
@@ -119,10 +148,7 @@ public:
         is_stringlike<Key>::value,
         std::size_t>::type
 #endif
-    count(Key const& key) const noexcept
-    {
-        return count(to_string_view(key));
-    }
+    count(Key const& key) const noexcept;
 
     inline
     iterator
@@ -170,10 +196,7 @@ public:
         is_stringlike<Key>::value,
         bool>::type
 #endif
-    contains(Key const& key) const noexcept
-    {
-        return contains(to_string_view(key));
-    }
+    contains(Key const& key) const noexcept;
 };
 
 } // urls

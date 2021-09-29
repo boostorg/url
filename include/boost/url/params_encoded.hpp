@@ -32,12 +32,10 @@ class params_encoded
 
     url* u_ = nullptr;
 
+    inline
     explicit
     params_encoded(
-        url& u) noexcept
-        : u_(&u)
-    {
-    }
+        url& u) noexcept;
 
 public:
     class iterator;
@@ -54,29 +52,19 @@ public:
     //
     //--------------------------------------------
 
+    inline
     params_encoded&
     operator=(std::initializer_list<
-        value_type> init)
-    {
-        assign(init);
-        return *this;
-    }
+        value_type> init);
 
+    inline
     void
     assign(std::initializer_list<
-        value_type> init)
-    {
-        assign(init.begin(), init.end());
-    }
+        value_type> init);
 
     template<class FwdIt>
     void
-    assign(FwdIt first, FwdIt last)
-    {
-        assign(first, last,
-            typename std::iterator_traits<
-                FwdIt>::iterator_category{});
-    }
+    assign(FwdIt first, FwdIt last);
 
 private:
     template<class FwdIt>
@@ -99,6 +87,20 @@ public:
     inline
     reference
     at(std::size_t pos) const;
+
+    BOOST_URL_DECL
+    string_view
+    at(string_view key) const;
+
+    template<class Key>
+#ifdef BOOST_URL_DOCS
+    string_view
+#else
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        string_view>::type
+#endif
+    at(Key const& key) const;
 
     BOOST_URL_DECL
     reference
@@ -133,11 +135,9 @@ public:
     //
     //--------------------------------------------
 
+    inline
     bool
-    empty() const noexcept
-    {
-        return size() == 0;
-    }
+    empty() const noexcept;
 
     inline
     std::size_t
@@ -349,10 +349,7 @@ public:
         is_stringlike<Key>::value,
         std::size_t>::type
 #endif
-    erase(Key const& key) noexcept
-    {
-        return erase(to_string_view(key));
-    }
+    erase(Key const& key) noexcept;
 
     //--------------------------------------------
 
@@ -415,10 +412,7 @@ public:
         is_stringlike<Key>::value,
         std::size_t>::type
 #endif
-    count(Key const& key) const noexcept
-    {
-        return count(to_string_view(key));
-    }
+    count(Key const& key) const noexcept;
 
     inline
     iterator
@@ -466,10 +460,7 @@ public:
         is_stringlike<Key>::value,
         bool>::type
 #endif
-    contains(Key const& key) const noexcept
-    {
-        return contains(to_string_view(key));
-    }
+    contains(Key const& key) const noexcept;
 };
 
 } // urls
