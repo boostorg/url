@@ -1244,6 +1244,5 @@ operator<<(std::ostream& os, url const& u);
 #include <boost/url/impl/segments.hpp>
 #include <boost/url/impl/segments_encoded.hpp>
 #include <boost/url/impl/url.hpp>
-#include <boost/url/detail/impl/any_query_iter.hpp>
 
 #endif

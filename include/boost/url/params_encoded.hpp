@@ -468,7 +468,7 @@ public:
 #endif
     contains(Key const& key) const noexcept
     {
-        return count(to_string_view(key));
+        return contains(to_string_view(key));
     }
 };
 

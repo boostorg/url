@@ -14,6 +14,7 @@
 #include <boost/url/host_type.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
+#include <boost/url/params_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
@@ -1607,9 +1608,16 @@ public:
     query_params_view
     query_params() const noexcept;
 
+    template<
+        class Allocator =
+            std::allocator<char>>
+    params_view
+    params(Allocator const&
+        alloc = {}) const noexcept;
+
     //--------------------------------------------
     //
-    // fragment
+    // Fragment
     //
     //--------------------------------------------
 
@@ -2345,5 +2353,11 @@ operator<<(
 
 } // urls
 } // boost
+
+// These includes are here
+// because of circular dependencies
+#include <boost/url/impl/params_view.hpp>
+
+#include <boost/url/impl/url_view.hpp>
 
 #endif

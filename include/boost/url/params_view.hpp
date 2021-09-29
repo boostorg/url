@@ -13,7 +13,8 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/detail/parts_base.hpp>
-#include <cstddef>
+#include <iterator>
+#include <type_traits>
 
 namespace boost {
 namespace urls {
@@ -23,18 +24,21 @@ class url_view;
 #endif
 
 class params_view
-    : protected detail::parts_base
+    : private detail::parts_base
 {
-    friend class url_view;
+    friend class url;
 
-    url_view const* u_ = nullptr;
+    string_view s_;
+    std::size_t n_;
     string_value::allocator a_;
 
     template<class Allocator>
     params_view(
-        url_view& u,
+        string_view s,
+        std::size_t n,
         Allocator const& a) noexcept
-        : u_(&u)
+        : s_(s)
+        , n_(n)
         , a_(a)
     {
     }
@@ -42,13 +46,34 @@ class params_view
 public:
     class iterator;
 
-    BOOST_URL_DECL
-    bool
-    empty() const noexcept;
+    class value_type
+    {
+        friend class params_view;
+        friend class iterator;
 
-    BOOST_URL_DECL
-    std::size_t
-    size() const noexcept;
+        BOOST_URL_DECL
+        value_type(
+            char const* s,
+            std::size_t nk,
+            std::size_t nv,
+            string_value::allocator a);
+
+    public:
+        string_value key;
+        string_value value;
+        bool has_value;
+    };
+
+    using reference = value_type;
+    using const_reference = value_type;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
+
+    //--------------------------------------------
+    //
+    // Iterators
+    //
+    //--------------------------------------------
 
     BOOST_URL_DECL
     iterator
@@ -57,11 +82,105 @@ public:
     BOOST_URL_DECL
     iterator
     end() const noexcept;
+
+    //--------------------------------------------
+    //
+    // Capacity
+    //
+    //--------------------------------------------
+
+    bool
+    empty() const noexcept
+    {
+        return n_ == 0;
+    }
+
+    std::size_t
+    size() const noexcept
+    {
+        return n_;
+    }
+
+    //--------------------------------------------
+    //
+    // Lookup
+    //
+    //--------------------------------------------
+
+    BOOST_URL_DECL
+    std::size_t
+    count(string_view key) const noexcept;
+
+    template<class Key>
+#ifdef BOOST_URL_DOCS
+    std::size_t
+#else
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        std::size_t>::type
+#endif
+    count(Key const& key) const noexcept
+    {
+        return count(to_string_view(key));
+    }
+
+    inline
+    iterator
+    find(string_view key) const noexcept;
+
+    template<class Key>
+#ifdef BOOST_URL_DOCS
+    iterator
+#else
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        iterator>::type
+#endif
+    find(Key const& key) const noexcept;
+
+    /** Search [from, end), from==end is valid
+    */
+    BOOST_URL_DECL
+    iterator
+    find(
+        iterator from,
+        string_view key) const noexcept;
+
+    template<class Key>
+#ifdef BOOST_URL_DOCS
+    iterator
+#else
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        iterator>::type
+#endif
+    find(
+        iterator from,
+        Key const& key) const noexcept;
+
+    inline
+    bool
+    contains(string_view key) const noexcept;
+
+    template<class Key>
+#ifdef BOOST_URL_DOCS
+    bool
+#else
+    typename std::enable_if<
+        is_stringlike<Key>::value,
+        bool>::type
+#endif
+    contains(Key const& key) const noexcept
+    {
+        return contains(to_string_view(key));
+    }
 };
 
 } // urls
 } // boost
 
-#include <boost/url/impl/params_view.hpp>
+// VFALCO This include is at the bottom of
+// url_view.hpp because of a circular dependency
+//#include <boost/url/impl/params_view.hpp>
 
 #endif

@@ -125,7 +125,8 @@ count(string_view key) const noexcept
     while(it != end_)
     {
         ++n;
-        it = find(it + 1, key);
+        ++it;
+        it = find(it, key);
     }
     return n;
 }

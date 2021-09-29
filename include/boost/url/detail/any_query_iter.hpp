@@ -230,6 +230,6 @@ make_plain_params_iter(
 
 // VFALCO This include is at the bottom of
 // url.hpp because of a circular dependency
-//#include <boost/url/detail/impl/any_query_iter.hpp>
+#include <boost/url/detail/impl/any_query_iter.hpp>
 
 #endif

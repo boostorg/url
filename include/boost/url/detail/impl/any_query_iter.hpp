@@ -10,6 +10,8 @@
 #ifndef BOOST_URL_DETAIL_IMPL_ANY_QUERY_ITER_HPP
 #define BOOST_URL_DETAIL_IMPL_ANY_QUERY_ITER_HPP
 
+#include <boost/url/value_types.hpp>
+
 namespace boost {
 namespace urls {
 namespace detail {
@@ -23,7 +25,7 @@ measure(
 {
     if(it_ == end_)
         return false;
-    params::value_type v(*it_++);
+    params_value_type v(*it_++);
     if(v.has_value)
         measure_impl(
             v.key, &v.value, n);

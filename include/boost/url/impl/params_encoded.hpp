@@ -767,6 +767,13 @@ find(
         to_string_view(key));
 }
 
+bool
+params_encoded::
+contains(string_view key) const noexcept
+{
+    return find(key) != end();
+}
+
 } // urls
 } // boost
 
