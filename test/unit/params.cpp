@@ -10,6 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/params.hpp>
 
+#include <boost/url/static_pool.hpp>
 #include <boost/url/url.hpp>
 #include "test_suite.hpp"
 
@@ -19,6 +20,9 @@ namespace urls {
 class params_test
 {
 public:
+    using pool_t = static_pool<4096>;
+    pool_t pa;
+
     void
     testMembers()
     {
@@ -28,7 +32,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?x#f");
-            u.params() = {
+            u.params(pa.allocator()) = {
                 { "k1", "1", true },
                 { "k2", "2", true },
                 { "k3", "", true },
@@ -41,7 +45,7 @@ public:
         }
         {
             url u = parse_uri_reference("/?x#f");
-            u.params() = {};
+            u.params(pa.allocator()) = {};
             BOOST_TEST(u.encoded_query() == "");
             BOOST_TEST(u.encoded_url() == "/#f");
         }
@@ -57,7 +61,7 @@ public:
         {
             url u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             BOOST_TEST(p.at(0).key == "k0");
             BOOST_TEST(p.at(0).value == "0");
             BOOST_TEST(p.at(0).has_value);
@@ -87,13 +91,13 @@ public:
         {
             url u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             BOOST_TEST(! p.empty());
             BOOST_TEST(p.size() == 5);
         }
         {
             url u;
-            params p = u.params();
+            params p = u.params(pa.allocator());
             BOOST_TEST(p.empty());
             BOOST_TEST(p.size() == 0);
         }
@@ -106,7 +110,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k2=&k3&k4=4444#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             p.clear();
             BOOST_TEST(u.encoded_query() == "");
             BOOST_TEST(u.encoded_url() == "/#f");
@@ -116,7 +120,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k2=#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             auto it = p.insert(p.begin() + 1,
                 {"k1", "1", true});
             BOOST_TEST(it == p.begin() + 1);
@@ -132,7 +136,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k3#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             auto it = p.insert(p.begin() + 1,{
                 {"k1", "1", true},
                 {"k2", "", true}});
@@ -147,7 +151,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k3#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             auto it = p.replace(
                 p.end() - 1,
                 {"k2", "", true});
@@ -163,7 +167,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k2=&k3&k4=4444#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             auto it = p.replace(
                 p.begin() + 1, p.begin() + 3, {
                     {"a","aa",true},
@@ -180,7 +184,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k%31=1&k2=#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             BOOST_TEST(p.at(1).key == "k1");
             auto it = p.remove_value(p.begin() + 1);
             BOOST_TEST(u.encoded_query() == "k0=0&k%31&k2=");
@@ -199,7 +203,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k%31=1&k2=#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             auto it = p.emplace_at(
                 p.begin() + 1,
                 "k1", "1");
@@ -215,7 +219,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k2=&k3#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             auto it = p.emplace_at(
                 p.begin() + 2,
                 "hello_world");
@@ -231,7 +235,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k2=&k3#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             auto it = p.emplace_before(
                 p.begin() + 1, "k1", "1");
             BOOST_TEST(it == p.begin() + 1);
@@ -246,7 +250,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k2=&k3#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             auto it = p.emplace_before(
                 p.begin() + 1, "k1");
             BOOST_TEST(it == p.begin() + 1);
@@ -261,7 +265,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k2=&k3&k4=4444#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             p.erase(p.begin() + 2);
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k3&k4=4444");
@@ -280,7 +284,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?a=1&%62=2&c=3&c=4&c=5&d=6&e=7&d=8&f=9#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             BOOST_TEST(p.erase("c") == 3);
             BOOST_TEST(u.encoded_query() ==
                 "a=1&%62=2&d=6&e=7&d=8&f=9");
@@ -303,7 +307,7 @@ public:
         // emplace_back(Key)
         {
             url u = parse_uri_reference("/#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             p.emplace_back("k0", "0");
             BOOST_TEST(u.encoded_query() == "k0=0");
             BOOST_TEST(u.encoded_url() == "/?k0=0#f");
@@ -338,7 +342,7 @@ public:
         // pop_back()
         {
             url u = parse_uri_reference("/#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
 
             p.push_back({"k0", "0", true});
             BOOST_TEST(u.encoded_query() == "k0=0");
@@ -420,7 +424,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?a=1&%62=2&c=3&c=4&c=5&d=6&e=7&d=8&f=9#f");
-            params p = u.params();
+            params p = u.params(pa.allocator());
             BOOST_TEST(p.count("a") == 1);
             BOOST_TEST(p.count("b") == 1);
             BOOST_TEST(p.count("c") == 3);
@@ -448,7 +452,7 @@ public:
     {
         url u = parse_uri_reference(
             "/?a=1&bb=22&ccc=333&dddd=4444#f");
-        params p = u.params();
+        params p = u.params(pa.allocator());
         auto it = p.begin();
         BOOST_TEST((*it).key == "a");
         BOOST_TEST((*++it).key == "bb");
