@@ -433,6 +433,18 @@ query_params() const noexcept
         s.substr(1), nparam_);
 }
 
+params_encoded_view
+url_view::
+params_encoded() const noexcept
+{
+    auto s = get(id_query);
+    if(s.empty())
+        return params_encoded_view(s, 0);
+    BOOST_ASSERT(s[0] == '?');
+    s.remove_prefix(1);
+    return params_encoded_view(s, nparam_);
+}
+
 //----------------------------------------------------------
 //
 // Fragment

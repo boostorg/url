@@ -15,7 +15,9 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/params.hpp>
+#include <boost/url/params_view.hpp>
 #include <boost/url/params_encoded.hpp>
+#include <boost/url/params_encoded_view.hpp>
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/query_params_view.hpp>

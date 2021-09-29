@@ -23,6 +23,7 @@ set(BOOST_URL_TESTS_FILES
     ipv6_address.cpp
     params.cpp
     params_encoded.cpp
+    params_encoded_view.cpp
     params_view.cpp
     pct_encoding.cpp
     query_params_view.cpp

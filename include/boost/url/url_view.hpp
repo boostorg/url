@@ -15,6 +15,7 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/params_view.hpp>
+#include <boost/url/params_encoded_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
@@ -1615,6 +1616,10 @@ public:
     params(Allocator const&
         alloc = {}) const noexcept;
 
+    BOOST_URL_DECL
+    params_encoded_view
+    params_encoded() const noexcept;
+
     //--------------------------------------------
     //
     // Fragment
@@ -2357,6 +2362,7 @@ operator<<(
 // These includes are here
 // because of circular dependencies
 #include <boost/url/impl/params_view.hpp>
+#include <boost/url/impl/params_encoded_view.hpp>
 
 #include <boost/url/impl/url_view.hpp>
 

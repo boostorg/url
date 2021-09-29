@@ -7,11 +7,12 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_PARAMS_VIEW_HPP
-#define BOOST_URL_PARAMS_VIEW_HPP
+#ifndef BOOST_URL_PARAMS_ENCODED_VIEW_HPP
+#define BOOST_URL_PARAMS_ENCODED_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/value_types.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <iterator>
 #include <type_traits>
@@ -23,47 +24,26 @@ namespace urls {
 class url_view;
 #endif
 
-class params_view
+class params_encoded_view
     : private detail::parts_base
 {
     friend class url_view;
 
     string_view s_;
     std::size_t n_;
-    string_value::allocator a_;
 
-    template<class Allocator>
-    params_view(
+    params_encoded_view(
         string_view s,
-        std::size_t n,
-        Allocator const& a) noexcept
+        std::size_t n) noexcept
         : s_(s)
         , n_(n)
-        , a_(a)
     {
     }
 
 public:
     class iterator;
 
-    class value_type
-    {
-        friend class params_view;
-        friend class iterator;
-
-        BOOST_URL_DECL
-        value_type(
-            char const* s,
-            std::size_t nk,
-            std::size_t nv,
-            string_value::allocator a);
-
-    public:
-        string_value key;
-        string_value value;
-        bool has_value;
-    };
-
+    using value_type = params_value_type;
     using reference = value_type;
     using const_reference = value_type;
     using size_type = std::size_t;
@@ -174,13 +154,87 @@ public:
     {
         return contains(to_string_view(key));
     }
+
+    BOOST_URL_DECL
+    friend
+    params_encoded_view
+    parse_query_params_(
+        string_view s,
+        error_code& ec) noexcept;
+
+    BOOST_URL_DECL
+    friend
+    params_encoded_view
+    parse_query_params_(
+        string_view s);
 };
 
 } // urls
 } // boost
 
+/** Return a query params view from a parsed string, using query-params bnf
+
+    This function parses the string and returns the
+    corresponding query params object if the string
+    is valid, otherwise sets the error and returns
+    an empty range. The query string should not
+    include the leading question mark.
+
+    @par BNF
+    @code
+    query-params    = [ query-param ] *( "&" [ query-param ] )
+    query-param     = key [ "=" value ]
+    @endcode
+
+    @par Exception Safety
+    No-throw guarantee.
+
+    @param s The string to parse
+    @param ec Set to the error, if any occurred
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">
+        3.4. Query (rfc3986)</a>
+
+    @see @ref query_params_view
+*/
+BOOST_URL_DECL
+params_encoded_view
+parse_query_params_(
+    string_view s,
+    error_code& ec) noexcept;
+
+/** Return a query params view from a parsed string, using query-params bnf
+
+    This function parses the string and returns the
+    corresponding query params object if the string
+    is valid, otherwise throws an exception.
+    The query string should not include the
+    leading question mark.
+
+    @par BNF
+    @code
+    query-params    = [ query-param ] *( "&" [ query-param ] )
+    query-param     = key [ "=" value ]
+    @endcode
+
+    @throw system_error Thrown on error
+
+    @param s The string to parse
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">
+        3.4. Query (rfc3986)</a>
+
+    @see @ref query_params_view
+*/
+BOOST_URL_DECL
+params_encoded_view
+parse_query_params_(
+    string_view s);
+
 // VFALCO This include is at the bottom of
 // url_view.hpp because of a circular dependency
-//#include <boost/url/impl/params_view.hpp>
+//#include <boost/url/impl/params_encoded_view.hpp>
 
 #endif
