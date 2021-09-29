@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_PARAMS_HPP
-#define BOOST_URL_IMPL_PARAMS_HPP
+#ifndef BOOST_URL_IMPL_PARAMS_ENCODED_HPP
+#define BOOST_URL_IMPL_PARAMS_ENCODED_HPP
 
 #include <boost/url/detail/except.hpp>
 #include <boost/assert.hpp>
@@ -18,28 +18,25 @@ namespace urls {
 
 //------------------------------------------------
 
-class params::iterator
+class params_encoded::iterator
 {
     url* u_ = nullptr;
     std::size_t i_ = 0;
-    string_value::allocator a_;
 
-    friend class params;
+    friend class params_encoded;
 
     iterator(
         url& u,
-        std::size_t i,
-        string_value::allocator a) noexcept
+        std::size_t i) noexcept
         : u_(&u)
         , i_(i)
-        , a_(a)
     {
     }
 
 public:
-    using value_type = params::value_type;
-    using reference = params::reference;
-    using const_reference = params::reference;
+    using value_type = params_encoded::value_type;
+    using reference = params_encoded::reference;
+    using const_reference = params_encoded::reference;
     using pointer = void*;
     using const_pointer = void const*;
     using difference_type = std::ptrdiff_t;
@@ -122,8 +119,7 @@ public:
     {
         return {
             *it.u_,
-            it.i_ + n,
-            it.a_ };
+            it.i_ + n };
     }
 
     friend
@@ -134,8 +130,7 @@ public:
     {
         return {
             *it.u_,
-            it.i_ + n,
-            it.a_ };
+            it.i_ + n };
     }
 
     iterator&
@@ -153,9 +148,7 @@ public:
         ptrdiff_t n) noexcept
     {
         return {
-            *it.u_,
-            it.i_ - n,
-            it.a_ };
+            *it.u_, it.i_ - n, };
     }
 
     friend
@@ -229,18 +222,18 @@ public:
 
 template<class FwdIt>
 void
-params::
+params_encoded::
 assign(FwdIt first, FwdIt last,
     std::forward_iterator_tag)
 {
     using detail::
-        make_plain_params_iter;
+        make_enc_params_iter;
     u_->edit_params(
         0,
         size(),
-        make_plain_params_iter(
+        make_enc_params_iter(
             first, last),
-        make_plain_params_iter(
+        make_enc_params_iter(
             first, last));
 }
 
@@ -251,7 +244,7 @@ assign(FwdIt first, FwdIt last,
 //------------------------------------------------
 
 auto
-params::
+params_encoded::
 at(std::size_t pos) const ->
     reference
 {
@@ -262,7 +255,7 @@ at(std::size_t pos) const ->
 }
 
 auto
-params::
+params_encoded::
 front() const ->
     reference
 {
@@ -270,7 +263,7 @@ front() const ->
 }
 
 auto
-params::
+params_encoded::
 back() const ->
     reference
 {
@@ -284,19 +277,19 @@ back() const ->
 //--------------------------------------------
 
 auto
-params::
+params_encoded::
 begin() const noexcept ->
     iterator
 {
-    return { *u_, 0, a_ };
+    return { *u_, 0 };
 }
 
 auto
-params::
+params_encoded::
 end() const noexcept ->
     iterator
 {
-    return { *u_, size(), a_ };
+    return { *u_, size() };
 }
 
 //------------------------------------------------
@@ -306,7 +299,7 @@ end() const noexcept ->
 //------------------------------------------------
 
 std::size_t
-params::
+params_encoded::
 size() const noexcept
 {
     return u_->param_count();
@@ -319,7 +312,7 @@ size() const noexcept
 //------------------------------------------------
 
 void
-params::
+params_encoded::
 clear() noexcept
 {
     erase(begin(), end());
@@ -328,7 +321,7 @@ clear() noexcept
 //------------------------------------------------
 
 auto
-params::
+params_encoded::
 insert(
     iterator before,
     value_type const& v) ->
@@ -339,7 +332,7 @@ insert(
 }
 
 auto
-params::
+params_encoded::
 insert(
     iterator before,
     std::initializer_list<
@@ -352,7 +345,7 @@ insert(
 
 template<class FwdIt>
 auto
-params::
+params_encoded::
 insert(
     iterator before,
     FwdIt first,
@@ -366,7 +359,7 @@ insert(
 
 template<class FwdIt>
 auto
-params::
+params_encoded::
 insert(
     iterator before,
     FwdIt first,
@@ -375,14 +368,14 @@ insert(
         iterator
 {
     using detail::
-        make_plain_params_iter;
+        make_enc_params_iter;
     BOOST_ASSERT(before.u_ == u_);
     u_->edit_params(
         before.i_,
         before.i_,
-        make_plain_params_iter(
+        make_enc_params_iter(
             first, last),
-        make_plain_params_iter(
+        make_enc_params_iter(
             first, last));
     return before;
 }
@@ -390,7 +383,7 @@ insert(
 //------------------------------------------------
 
 auto
-params::
+params_encoded::
 replace(
     iterator pos,
     value_type const& value) ->
@@ -405,7 +398,7 @@ replace(
 
 template<class FwdIt>
 auto
-params::
+params_encoded::
 replace(
     iterator from,
     iterator to,
@@ -414,21 +407,21 @@ replace(
         iterator
 {
     using detail::
-        make_plain_params_iter;
+        make_enc_params_iter;
     BOOST_ASSERT(from.u_ == u_);
     BOOST_ASSERT(to.u_ == u_);
     u_->edit_params(
         from.i_,
         to.i_,
-        make_plain_params_iter(
+        make_enc_params_iter(
             first, last),
-        make_plain_params_iter(
+        make_enc_params_iter(
             first, last));
     return from;
 }
 
 auto
-params::
+params_encoded::
 replace(
     iterator from,
     iterator to,
@@ -444,12 +437,14 @@ replace(
 }
 
 auto
-params::
+params_encoded::
 remove_value(
     iterator pos) ->
         iterator
 {
     BOOST_ASSERT(pos.u_ == u_);
+    using detail::
+        make_enc_params_iter;
     auto r = u_->get_param(pos.i_);
     value_type v{
         string_view{
@@ -460,15 +455,15 @@ remove_value(
     u_->edit_params(
         pos.i_,
         pos.i_ + 1,
-        detail::make_enc_params_iter(
+        make_enc_params_iter(
             &v, &v + 1),
-        detail::make_enc_params_iter(
+        make_enc_params_iter(
             &v, &v + 1));
     return pos;
 }
 
 auto
-params::
+params_encoded::
 replace_value(
     iterator pos,
     string_view value) ->
@@ -482,7 +477,7 @@ replace_value(
 
 template<class Value>
 auto
-params::
+params_encoded::
 replace_value(
     iterator pos,
     Value const& value) ->
@@ -497,7 +492,7 @@ replace_value(
 //------------------------------------------------
 
 auto
-params::
+params_encoded::
 emplace_at(
     iterator pos,
     string_view key,
@@ -505,16 +500,16 @@ emplace_at(
         iterator
 {
     using detail::
-        make_plain_params_iter;
+        make_enc_params_iter;
     value_type v{
         key, value, true };
     BOOST_ASSERT(pos.u_ == u_);
     u_->edit_params(
         pos.i_,
         pos.i_ + 1,
-        make_plain_params_iter(
+        make_enc_params_iter(
             &v, &v + 1),
-        make_plain_params_iter(
+        make_enc_params_iter(
             &v, &v + 1));
     return pos;
 }
@@ -523,7 +518,7 @@ template<
     class Key,
     class Value>
 auto
-params::
+params_encoded::
 emplace_at(
     iterator pos,
     Key const& key,
@@ -540,29 +535,31 @@ emplace_at(
 }
 
 auto
-params::
+params_encoded::
 emplace_at(
     iterator pos,
     string_view key) ->
         iterator
 {
     BOOST_ASSERT(pos.u_ == u_);
+    using detail::
+        make_enc_params_iter;
     auto r = u_->get_param(pos.i_);
     value_type v{key,
         string_view{}, false};
     u_->edit_params(
         pos.i_,
         pos.i_ + 1,
-        detail::make_enc_params_iter(
+        make_enc_params_iter(
             &v, &v + 1),
-        detail::make_enc_params_iter(
+        make_enc_params_iter(
             &v, &v + 1));
     return pos;
 }
 
 template<class Key>
 auto
-params::
+params_encoded::
 emplace_at(
     iterator pos,
     Key const& key) ->
@@ -575,7 +572,7 @@ emplace_at(
 }
 
 auto
-params::
+params_encoded::
 emplace_before(
     iterator before,
     string_view key,
@@ -594,7 +591,7 @@ template<
     class Key,
     class Value>
 auto
-params::
+params_encoded::
 emplace_before(
     iterator before,
     Key const& key,
@@ -611,7 +608,7 @@ emplace_before(
 }
 
 auto
-params::
+params_encoded::
 emplace_before(
     iterator before,
     string_view key) ->
@@ -627,7 +624,7 @@ emplace_before(
 
 template<class Key>
 auto
-params::
+params_encoded::
 emplace_before(
     iterator before,
     Key const& key) ->
@@ -643,7 +640,7 @@ emplace_before(
 //------------------------------------------------
 
 auto
-params::
+params_encoded::
 erase(iterator pos) ->
     iterator
 {
@@ -651,7 +648,7 @@ erase(iterator pos) ->
 }
 
 auto
-params::
+params_encoded::
 erase(
     iterator first,
     iterator last) ->
@@ -671,7 +668,7 @@ erase(
 //------------------------------------------------
 
 auto
-params::
+params_encoded::
 emplace_back(
     string_view key,
     string_view value) ->
@@ -686,7 +683,7 @@ template<
     class Key,
     class Value>
 auto
-params::
+params_encoded::
 emplace_back(
     Key const& k,
     Value const& v) ->
@@ -702,7 +699,7 @@ emplace_back(
 
 template<class Key>
 auto
-params::
+params_encoded::
 emplace_back(
     Key const& key) ->
         typename std::enable_if<
@@ -716,7 +713,7 @@ emplace_back(
 }
 
 void
-params::
+params_encoded::
 push_back(
     value_type const& v)
 {
@@ -725,7 +722,7 @@ push_back(
 
 
 void
-params::
+params_encoded::
 pop_back() noexcept
 {
     erase(end() - 1);
@@ -738,7 +735,7 @@ pop_back() noexcept
 //------------------------------------------------
 
 auto
-params::
+params_encoded::
 find(string_view key) const noexcept ->
     iterator
 {
@@ -747,7 +744,7 @@ find(string_view key) const noexcept ->
 
 template<class Key>
 auto
-params::
+params_encoded::
 find(Key const& key) const noexcept ->
     typename std::enable_if<
         is_stringlike<Key>::value,
@@ -758,7 +755,7 @@ find(Key const& key) const noexcept ->
 
 template<class Key>
 auto
-params::
+params_encoded::
 find(
     iterator from,
     Key const& key) const noexcept ->

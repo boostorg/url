@@ -12,6 +12,7 @@
 
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/value_types.hpp>
 #include <cstddef>
 
 namespace boost {
@@ -122,7 +123,7 @@ public:
     {
         if(it_ == end_)
             return false;
-        params::value_type v(*it_++);
+        params_value_type v(*it_++);
         if(v.has_value)
             measure_impl(v.key,
                 &v.value, n, ec);
@@ -138,7 +139,7 @@ public:
         char const* end
             ) noexcept override
     {
-        params::value_type v(*it_++);
+        params_value_type v(*it_++);
         if(v.has_value)
             copy_impl(v.key,
                 &v.value, dest, end);

@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_PARAMS_HPP
-#define BOOST_URL_PARAMS_HPP
+#ifndef BOOST_URL_PARAMS_ENCODED_HPP
+#define BOOST_URL_PARAMS_ENCODED_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
@@ -25,46 +25,26 @@ namespace urls {
 class url;
 #endif
 
-class params
+class params_encoded
     : private detail::parts_base
 {
     friend class url;
 
     url* u_ = nullptr;
-    string_value::allocator a_;
 
-    template<class Allocator>
-    params(
-        url& u,
-        Allocator const& a) noexcept
+    explicit
+    params_encoded(
+        url& u) noexcept
         : u_(&u)
-        , a_(a)
     {
     }
 
 public:
     class iterator;
 
-    class reference
-    {
-        friend class params;
-        friend class iterator;
-
-        BOOST_URL_DECL
-        reference(
-            char const* s,
-            std::size_t nk,
-            std::size_t nv,
-            string_value::allocator a);
-
-    public:
-        string_value key;
-        string_value value;
-        bool has_value;
-    };
-
     using value_type = params_value_type;
-    using const_reference = reference;
+    using reference = value_type;
+    using const_reference = value_type;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 
@@ -74,7 +54,7 @@ public:
     //
     //--------------------------------------------
 
-    params&
+    params_encoded&
     operator=(std::initializer_list<
         value_type> init)
     {
@@ -497,6 +477,6 @@ public:
 
 // VFALCO This include is at the bottom of
 // url.hpp because of a circular dependency
-//#include <boost/url/impl/params.hpp>
+//#include <boost/url/impl/params_encoded.hpp>
 
 #endif

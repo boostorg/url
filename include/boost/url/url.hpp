@@ -14,6 +14,7 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/params.hpp>
+#include <boost/url/params_encoded.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments.hpp>
 #include <boost/url/segments_encoded.hpp>
@@ -1094,6 +1095,12 @@ public:
     set_query_part(
         string_view s);
 
+    urls::params_encoded
+    params_encoded() noexcept
+    {
+        return urls::params_encoded(*this);
+    }
+
     template<class Allocator =
         std::allocator<char>>
     urls::params
@@ -1233,6 +1240,7 @@ operator<<(std::ostream& os, url const& u);
 } // boost
 
 #include <boost/url/impl/params.hpp>
+#include <boost/url/impl/params_encoded.hpp>
 #include <boost/url/impl/segments.hpp>
 #include <boost/url/impl/segments_encoded.hpp>
 #include <boost/url/impl/url.hpp>
