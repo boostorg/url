@@ -20,13 +20,13 @@ namespace urls {
 
 class params_encoded::iterator
 {
-    url* u_ = nullptr;
+    url const* u_ = nullptr;
     std::size_t i_ = 0;
 
     friend class params_encoded;
 
     iterator(
-        url& u,
+        url const& u,
         std::size_t i) noexcept
         : u_(&u)
         , i_(i)

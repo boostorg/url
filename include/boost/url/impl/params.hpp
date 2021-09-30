@@ -20,14 +20,14 @@ namespace urls {
 
 class params::iterator
 {
-    url* u_ = nullptr;
+    url const* u_ = nullptr;
     std::size_t i_ = 0;
     string_value::allocator a_;
 
     friend class params;
 
     iterator(
-        url& u,
+        url const& u,
         std::size_t i,
         string_value::allocator a) noexcept
         : u_(&u)

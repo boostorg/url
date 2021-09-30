@@ -14,14 +14,12 @@ namespace boost {
 namespace urls {
 
 template<class Allocator>
-auto
+urls::segments
 url::
 segments(
-    Allocator const& a) noexcept ->
-        urls::segments<Allocator>
+    Allocator const& a) noexcept
 {
-    return urls::segments<Allocator>(
-        *this, a);
+    return urls::segments(*this, a);
 }
 
 } // urls

@@ -39,6 +39,7 @@ in a translation unit of the program.
 #include <boost/url/impl/params_encoded_view.ipp>
 #include <boost/url/impl/params_view.ipp>
 #include <boost/url/impl/scheme.ipp>
+#include <boost/url/impl/segments.ipp>
 #include <boost/url/impl/segments_encoded.ipp>
 #include <boost/url/impl/segments_encoded_view.ipp>
 #include <boost/url/impl/segments_view.ipp>

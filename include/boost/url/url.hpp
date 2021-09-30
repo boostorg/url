@@ -62,7 +62,6 @@ struct any_path_iter;
 class BOOST_SYMBOL_VISIBLE url
     : public url_view
 {
-    template<class Allocator>
     friend class urls::segments;
     friend class segments_encoded;
     friend class urls::params;
@@ -984,7 +983,7 @@ public:
 
     template<class Allocator =
         std::allocator<char>>
-    urls::segments<Allocator>
+    urls::segments
     segments(Allocator const& = {}) noexcept;
 
     //--------------------------------------------
