@@ -31,7 +31,6 @@
           <member><link linkend="url.ref.boost__urls__params_encoded">params_encoded</link></member>
           <member><link linkend="url.ref.boost__urls__params_view">params_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_encoded_view">params_encoded_view</link></member>
-          <member><link linkend="url.ref.boost__urls__query_params_view">query_params_view</link></member>
           <member><link linkend="url.ref.boost__urls__segments_encoded">segments_encoded</link></member>
           <member><link linkend="url.ref.boost__urls__segments_encoded_view">segments_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__segments_view">segments_view</link></member>

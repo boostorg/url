@@ -19,7 +19,6 @@
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
-#include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <boost/assert.hpp>
@@ -1591,11 +1590,11 @@ public:
             encoded_query(), {}, a);
     }
 
-    /** Return the query
+    /** Return the query parameters
 
-        This function returns the query as
-        a non-modifiable _ForwardRange_ of
-        key/value pairs.
+        This function returns the query
+        parameters as a non-modifiable
+        forward range of key/value pairs.
 
         @par BNF
         @code
@@ -1605,10 +1604,6 @@ public:
 
         @endcode
     */
-    BOOST_URL_DECL
-    query_params_view
-    query_params() const noexcept;
-
     template<
         class Allocator =
             std::allocator<char>>
@@ -1616,6 +1611,20 @@ public:
     params(Allocator const&
         alloc = {}) const noexcept;
 
+    /** Return the query parameters
+
+        This function returns the query
+        parameters as a non-modifiable
+        forward range of key/value pairs.
+
+        @par BNF
+        @code
+        query-params    = [ query-param ] *( "&" [ query-param ] )
+
+        query-param     = key [ "=" value ]
+
+        @endcode
+    */
     BOOST_URL_DECL
     params_encoded_view
     params_encoded() const noexcept;

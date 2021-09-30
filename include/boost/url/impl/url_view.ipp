@@ -421,18 +421,6 @@ encoded_query() const noexcept
     return s.substr(1);
 }
 
-query_params_view
-url_view::
-query_params() const noexcept
-{
-    auto s = get(id_query);
-    if(s.empty())
-        return query_params_view(s, 0);
-    BOOST_ASSERT(s.starts_with('?'));
-    return query_params_view(
-        s.substr(1), nparam_);
-}
-
 params_encoded_view
 url_view::
 params_encoded() const noexcept

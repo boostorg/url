@@ -229,7 +229,7 @@ public:
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">
         3.4. Query (rfc3986)</a>
 
-    @see @ref query_params_view
+    @see @ref params_encoded_view
 */
 BOOST_URL_DECL
 params_encoded_view
@@ -259,7 +259,7 @@ parse_query_params(
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">
         3.4. Query (rfc3986)</a>
 
-    @see @ref query_params_view
+    @see @ref params_encoded_view
 */
 BOOST_URL_DECL
 params_encoded_view

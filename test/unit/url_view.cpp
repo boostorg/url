@@ -581,7 +581,6 @@ public:
             BOOST_TEST(! u.has_query());
             BOOST_TEST(u.encoded_query() == "");
             BOOST_TEST(u.query() == "");
-            BOOST_TEST(u.query_params().empty());
         }
         {
             auto u = parse_uri(
@@ -647,69 +646,7 @@ public:
             BOOST_TEST(u.query() == "a=b&");
         }
 
-        {
-            query_params_view const qp{};
-            BOOST_TEST(qp.empty());
-            BOOST_TEST(qp.size() == 0);
-            BOOST_TEST(qp.begin() == qp.end());
-            BOOST_TEST(! qp.contains("x"));
-            BOOST_TEST(qp.count("x") == 0);
-            BOOST_TEST(qp.find("x") == qp.end());
-            BOOST_TEST_THROWS(qp.at("x"), std::out_of_range);
-
-            BOOST_TEST(
-                query_params_view::iterator() ==
-                query_params_view::iterator());
-        }
-        {
-            auto u = parse_relative_ref(
-                "/x/?x=1&y=2&y=3&z");
-            auto qp = u.query_params();
-            BOOST_TEST(! qp.empty());
-            BOOST_TEST(qp.size() == 4);
-            BOOST_TEST(qp.begin() != qp.end());
-            BOOST_TEST(qp.end() == qp.end());
-            BOOST_TEST(qp.contains("x"));
-            BOOST_TEST(qp.contains("y"));
-            BOOST_TEST(! qp.contains("a"));
-            BOOST_TEST(qp.count("x") == 1);
-            BOOST_TEST(qp.count("y") == 2);
-            BOOST_TEST(qp.count("a") == 0);
-            BOOST_TEST(qp.find("x")->encoded_value() == "1");
-            BOOST_TEST(qp.find("y")->encoded_value() == "2");
-            BOOST_TEST(qp.find("a") == qp.end());
-            BOOST_TEST(qp["x"] == "1");
-            BOOST_TEST(qp["y"] == "2");
-            BOOST_TEST(qp["a"] == "");
-            BOOST_TEST(qp.at("x") == "1");
-            BOOST_TEST(qp.at("y") == "2");
-
-            BOOST_TEST_THROWS(
-                qp.at("a"),
-                std::out_of_range);
-
-            static_pool<4000> sp;
-            {
-                auto it = qp.begin();
-                BOOST_TEST(it->key(sp.allocator()) == "x"); ++it;
-                BOOST_TEST(it->key(sp.allocator()) == "y"); ++it;
-                BOOST_TEST(it->key(sp.allocator()) == "y"); ++it;
-                BOOST_TEST(it->key(sp.allocator()) == "z");
-                it = qp.begin();
-                BOOST_TEST(it->value(sp.allocator()) == "1"); ++it;
-                BOOST_TEST(it->value(sp.allocator()) == "2"); ++it;
-                BOOST_TEST(it->value(sp.allocator()) == "3"); ++it;
-                BOOST_TEST(it->value(sp.allocator()) == "");
-            }
-
-            auto it = qp.begin();
-            BOOST_TEST(it->encoded_key() == "x");
-            it++;
-            it++;
-            BOOST_TEST(it->encoded_key() == "y");
-            ++it;
-            BOOST_TEST(it->encoded_key() == "z");
-        }
+        // VFALCO TODO test params()
     }
 
     void
