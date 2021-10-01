@@ -41,8 +41,8 @@ public:
     class iterator;
 
     using value_type = params_value_type;
-    using reference = value_type;
-    using const_reference = value_type;
+    using reference = params_value_type;
+    using const_reference = params_value_type;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 
@@ -85,7 +85,7 @@ public:
     //--------------------------------------------
 
     inline
-    reference
+    value_type
     at(std::size_t pos) const;
 
     BOOST_URL_DECL
@@ -103,16 +103,16 @@ public:
     at(Key const& key) const;
 
     BOOST_URL_DECL
-    reference
+    value_type
     operator[](
         std::size_t pos) const;
 
     inline
-    reference
+    value_type
     front() const;
 
     inline
-    reference
+    value_type
     back() const;
 
     //--------------------------------------------

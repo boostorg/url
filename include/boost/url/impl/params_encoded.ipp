@@ -22,11 +22,11 @@ auto
 params_encoded::
 operator[](
     std::size_t pos) const ->
-        reference
+        value_type
 {
     auto const r = u_->get_param(pos);
     if(r.nv > 0)
-        return reference{
+        return value_type{
             string_view(
                 u_->s_ + r.pos + 1,
                 r.nk - 1),
@@ -34,7 +34,7 @@ operator[](
                 u_->s_ + r.pos + r.nk + 1,
                 r.nv - 1),
             true};
-    return reference{
+    return value_type{
         string_view(
             u_->s_ + r.pos + 1,
             r.nk - 1),
@@ -48,11 +48,11 @@ auto
 params_encoded::
 iterator::
 operator*() const ->
-    reference
+    value_type
 {
     auto const r = u_->get_param(i_);
     if(r.nv > 0)
-        return reference{
+        return value_type{
             string_view(
                 u_->s_ + r.pos + 1,
                 r.nk - 1),
@@ -60,7 +60,7 @@ operator*() const ->
                 u_->s_ + r.pos + r.nk + 1,
                 r.nv - 1),
             true};
-    return reference{
+    return value_type{
         string_view(
             u_->s_ + r.pos + 1,
             r.nk - 1),

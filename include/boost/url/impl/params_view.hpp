@@ -46,11 +46,8 @@ class params_view::iterator
 
 public:
     using value_type = params_view::value_type;
-    using reference = params_view::reference;
-    using const_reference =
-        params_view::const_reference;
-    using pointer = void*;
-    using const_pointer = void const*;
+    using reference = params_view::value_type;
+    using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::forward_iterator_tag;
@@ -70,7 +67,7 @@ public:
     }
 
     BOOST_URL_DECL
-    reference
+    value_type
     operator*() const;
 
     BOOST_URL_DECL

@@ -176,7 +176,7 @@ auto
 params_view::
 iterator::
 operator*() const ->
-    reference
+    value_type
 {
     if(! first_)
         return value_type(

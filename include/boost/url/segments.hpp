@@ -404,6 +404,8 @@ public:
     void
     clear() noexcept;
 
+    //--------------------------------------------
+
     /** Insert an element
 
         This function inserts a segment specified
@@ -625,11 +627,38 @@ private:
         std::forward_iterator_tag);
 public:
 
+    //--------------------------------------------
+
     inline
     iterator
     replace(
         iterator pos,
         string_view s);
+
+    template<class String>
+#ifdef BOOST_URL_DOCS
+    iterator
+#else
+    typename std::enable_if<
+        is_stringlike<String>::value,
+        iterator>::type
+#endif
+    replace(
+        iterator pos,
+        String const& s);
+
+    template<class String>
+#ifdef BOOST_URL_DOCS
+    iterator
+#else
+    typename std::enable_if<
+        is_stringlike<String>::value,
+        iterator>::type
+#endif
+    replace(
+        iterator from,
+        iterator to,
+        std::initializer_list<String> init);
 
     inline
     iterator
@@ -654,6 +683,8 @@ public:
         iterator to,
         FwdIt first,
         FwdIt last);
+
+    //--------------------------------------------
 
     /** Erase an element
 
@@ -735,6 +766,8 @@ public:
     erase(
         iterator first,
         iterator last) noexcept;
+
+    //--------------------------------------------
 
     /** Add an element to the end
 

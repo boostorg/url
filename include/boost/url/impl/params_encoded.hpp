@@ -34,11 +34,9 @@ class params_encoded::iterator
     }
 
 public:
-    using value_type = params_encoded::value_type;
-    using reference = params_encoded::reference;
-    using const_reference = params_encoded::reference;
-    using pointer = void*;
-    using const_pointer = void const*;
+    using value_type = params_value_type;
+    using reference = params_value_type;
+    using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::random_access_iterator_tag;
@@ -76,7 +74,7 @@ public:
     }
 
     BOOST_URL_DECL
-    reference
+    value_type
     operator*() const;
 
     friend
@@ -163,7 +161,7 @@ public:
                 a.i_) - b.i_;
     }
 
-    reference
+    value_type
     operator[](ptrdiff_t n) const
     {
         return *(*this + n);
@@ -280,7 +278,7 @@ assign(FwdIt first, FwdIt last,
 auto
 params_encoded::
 at(std::size_t pos) const ->
-    reference
+    value_type
 {
     if(pos >= size())
         detail::throw_out_of_range(
@@ -302,7 +300,7 @@ at(Key const& key) const ->
 auto
 params_encoded::
 front() const ->
-    reference
+    value_type
 {
     return (*this)[0];
 }
@@ -310,7 +308,7 @@ front() const ->
 auto
 params_encoded::
 back() const ->
-    reference
+    value_type
 {
     return (*this)[size() - 1];
 }

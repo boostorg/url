@@ -49,9 +49,7 @@ class segments::iterator
 public:
     using value_type = string_value;
     using reference = string_value;
-    using const_reference = string_value;
-    using pointer = void*;
-    using const_pointer = void const*;
+    using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::random_access_iterator_tag;
@@ -168,7 +166,7 @@ public:
             std::ptrdiff_t>(a.i_) - b.i_;
     }
 
-    reference
+    string_value
     operator[](ptrdiff_t n) const
     {
         return *(*this + n);
@@ -442,6 +440,38 @@ replace(
     return replace(
         pos, pos + 1,
             &s, &s + 1);
+}
+
+template<class String>
+auto
+segments::
+replace(
+    iterator pos,
+    String const& s) ->
+        typename std::enable_if<
+            is_stringlike<String>::value,
+            iterator>::type
+{
+    return replace(pos,
+        to_string_view(s));
+}
+
+template<class String>
+auto
+segments::
+replace(
+    iterator from,
+    iterator to,
+    std::initializer_list<String> init) ->
+        typename std::enable_if<
+            is_stringlike<String>::value,
+            iterator>::type
+{
+    return replace(
+        from,
+        to,
+        init.begin(),
+        init.end());
 }
 
 auto

@@ -19,166 +19,6 @@
 namespace boost {
 namespace urls {
 
-/** A proxy to a path segment
-*/
-class segments_encoded::
-    reference
-{
-    url* u_ = nullptr;
-    std::size_t i_ = 0;
-
-    friend class segments_encoded;
-    friend class iterator;
-
-    reference(
-        url& u,
-        std::size_t i) noexcept
-        : u_(&u)
-        , i_(i)
-    {
-    }
-
-public:
-    /** Assignment
-    */
-    reference&
-    operator=(reference const& other)
-    {
-        if( u_ == other.u_ &&
-            i_ == other.i_)
-            return *this;
-        *this = string_view(other);
-        return *this;
-    }
-
-    /** Assignment
-    */
-    inline
-    reference&
-    operator=(const_reference const& other);
-
-    /** Assignment
-
-        This function participates in overload
-        resolution only if
-        `is_stringlike<T>::value == true`.
-    */
-    template<class T>
-#ifdef BOOST_URL_DOCS
-    reference&
-#else
-    typename std::enable_if<
-        is_stringlike<T>::value,
-            reference&>::type
-#endif
-    operator=(T const& t)
-    {
-        *this = to_string_view(t);
-        return *this;
-    }
-
-    /** Assignment
-    */
-    BOOST_URL_DECL
-    reference&
-    operator=(string_view);
-
-    //---
-
-    /** Conversion
-    */
-    BOOST_URL_DECL
-    operator
-    string_view() const noexcept;
-
-    /** Conversion
-    */
-    operator
-    std::string() const noexcept
-    {
-        return std::string(
-            string_view(*this));
-    }
-
-#ifdef BOOST_URL_HAS_STRING_VIEW
-    /** Conversion
-    */
-    operator
-    std::string_view() const noexcept
-    {
-        auto s = string_view(*this);
-        return { s.data(), s.size() };
-    }
-#endif
-
-    /** Swap two elements
-    */
-    BOOST_URL_DECL
-    friend
-    void
-    swap(
-        reference r0,
-        reference r1);
-};
-
-//------------------------------------------------
-
-/** A proxy to a path segment
-*/
-class segments_encoded::
-    const_reference
-{
-    url const* u_ = nullptr;
-    std::size_t i_ = 0;
-
-    friend class segments_encoded;
-    friend class const_iterator;
-
-    const_reference(
-        url const& u,
-        std::size_t i) noexcept
-        : u_(&u)
-        , i_(i)
-    {
-    }
-
-public:
-    const_reference(
-        reference const& other) noexcept
-        : u_(other.u_)
-        , i_(other.i_)
-    {
-    }
-
-    /** Conversion
-    */
-    BOOST_URL_DECL
-    operator
-    string_view() const noexcept;
-
-    /** Conversion
-    */
-    operator
-    std::string() const noexcept
-    {
-        return std::string(
-            string_view(*this));
-    }
-
-#ifdef BOOST_URL_HAS_STRING_VIEW
-    /** Conversion
-    */
-    operator
-    std::string_view() const noexcept
-    {
-        auto s = string_view(*this);
-        return { s.data(), s.size() };
-    }
-#endif
-};
-
-//------------------------------------------------
-
 class segments_encoded::iterator
 {
     url* u_ = nullptr;
@@ -196,12 +36,8 @@ class segments_encoded::iterator
 
 public:
     using value_type = std::string;
-    using reference =
-        segments_encoded::reference;
-    using const_reference =
-        segments_encoded::const_reference;
-    using pointer = void*;
-    using const_pointer = void const*;
+    using reference = string_view;
+    using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::random_access_iterator_tag;
@@ -238,10 +74,10 @@ public:
         return tmp;
     }
 
-    reference
+    string_view
     operator*() const noexcept
     {
-        return reference(*u_, i_);
+        return u_->encoded_segment(i_);
     }
 
     friend
@@ -320,7 +156,7 @@ public:
             a.i_) - b.i_;
     }
 
-    reference
+    string_view
     operator[](ptrdiff_t n) const
     {
         return *(*this + n);
@@ -359,199 +195,6 @@ public:
     operator<=(
         iterator a,
         iterator b)
-    {
-        return !(a > b);
-    }
-};
-
-//------------------------------------------------
-
-/** A random-access iterator referencing segments in a url path
-*/
-class segments_encoded::const_iterator
-{
-    url const* u_ = nullptr;
-    std::size_t i_ = 0;
-
-    friend class segments_encoded;
-
-    const_iterator(
-        url const& u,
-        std::size_t i) noexcept
-        : u_(&u)
-        , i_(i)
-    {
-    }
-
-public:
-    using value_type = std::string;
-    using const_reference =
-        segments_encoded::const_reference;
-    using reference = const_reference;
-    using pointer = void const*;
-    using const_pointer = void const*;
-    using difference_type = std::ptrdiff_t;
-    using iterator_category =
-        std::random_access_iterator_tag;
-
-    const_iterator() = default;
-
-    const_iterator(
-        iterator const& it) noexcept
-        : u_(it.u_)
-        , i_(it.i_)
-    {
-    }
-
-    const_iterator&
-    operator++() noexcept
-    {
-        ++i_;
-        return *this;
-    }
-
-    const_iterator
-    operator++(int) noexcept
-    {
-        auto tmp = *this;
-        ++*this;
-        return tmp;
-    }
-
-    const_iterator&
-    operator--() noexcept
-    {
-        --i_;
-        return *this;
-    }
-
-    const_iterator
-    operator--(int) noexcept
-    {
-        auto tmp = *this;
-        --*this;
-        return tmp;
-    }
-
-    const_reference
-    operator*() const noexcept
-    {
-        return const_reference(*u_, i_);
-    }
-
-    friend
-    bool
-    operator==(
-        const_iterator a,
-        const_iterator b) noexcept
-    {
-        return a.u_ == b.u_ &&
-            a.i_ == b.i_;
-    }
-
-    friend
-    bool
-    operator!=(
-        const_iterator a,
-        const_iterator b) noexcept
-    {
-        return a.u_ != b.u_ ||
-            a.i_ != b.i_;
-    }
-
-    // LegacyRandomAccessIterator
-
-    const_iterator&
-    operator+=(ptrdiff_t n) noexcept
-    {
-        i_ += n;
-        return *this;
-    }
-
-    friend
-    const_iterator
-    operator+(
-        const_iterator it,
-        ptrdiff_t n) noexcept
-    {
-        return { *it.u_, it.i_ + n };
-    }
-
-    friend
-    const_iterator
-    operator+(
-        ptrdiff_t n,
-        const_iterator it) noexcept
-    {
-        return { *it.u_, it.i_ + n };
-    }
-
-    const_iterator&
-    operator-=(ptrdiff_t n) noexcept
-    {
-        i_ -= n;
-        return *this;
-    }
-
-    friend
-    const_iterator
-    operator-(
-        const_iterator it,
-        ptrdiff_t n) noexcept
-    {
-        return { *it.u_, it.i_ - n };
-    }
-
-    friend
-    std::ptrdiff_t
-    operator-(
-        const_iterator a,
-        const_iterator b) noexcept
-    {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return static_cast<std::ptrdiff_t>(
-            a.i_) - b.i_;
-    }
-
-    const_reference
-    operator[](ptrdiff_t n) const
-    {
-        return *(*this + n);
-    }
-
-    friend
-    bool
-    operator<(
-        const_iterator a,
-        const_iterator b)
-    {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return a.i_ < b.i_;
-    }
-
-    friend
-    bool
-    operator>(
-        const_iterator a,
-        const_iterator b)
-    {
-        return b < a;
-    }
-
-    friend
-    bool
-    operator>=(
-        const_iterator a,
-        const_iterator b)
-    {
-        return !(a < b);
-    }
-
-    friend
-    bool
-    operator<=(
-        const_iterator a,
-        const_iterator b)
     {
         return !(a > b);
     }
@@ -563,14 +206,48 @@ public:
 //
 //------------------------------------------------
 
-template<class FwdIt>
-typename std::enable_if<
-    is_stringlike<typename
-        std::iterator_traits<
-            FwdIt>::value_type>::value,
-    void>::type
 segments_encoded::
-assign(FwdIt first, FwdIt last)
+segments_encoded(
+    url& u) noexcept
+    : u_(&u)
+{
+}
+
+template<class String>
+auto
+segments_encoded::
+operator=(
+    std::initializer_list<String> init) ->
+        typename std::enable_if<
+            is_stringlike<String>::value,
+            segments_encoded&>::type
+{
+    assign(init);
+    return *this;
+}
+
+template<class String>
+auto
+segments_encoded::
+assign(
+    std::initializer_list<String> init) ->
+    typename std::enable_if<
+        is_stringlike<String>::value,
+        void>::type
+{
+    assign(init.begin(), init.end());
+}
+
+template<class FwdIt>
+auto
+segments_encoded::
+assign(
+    FwdIt first, FwdIt last) ->
+    typename std::enable_if<
+        is_stringlike<typename
+            std::iterator_traits<
+                FwdIt>::value_type>::value,
+        void>::type
 {
     u_->edit_segments(
         0,
@@ -587,10 +264,9 @@ assign(FwdIt first, FwdIt last)
 //
 //------------------------------------------------
 
-auto
+string_view const
 segments_encoded::
-at(std::size_t i) ->
-    reference
+at(std::size_t i) const
 {
     if(i >= size())
         detail::throw_out_of_range(
@@ -600,61 +276,25 @@ at(std::size_t i) ->
 
 auto
 segments_encoded::
-at(std::size_t i) const ->
-    const_reference
-{
-    if(i >= size())
-        detail::throw_out_of_range(
-            BOOST_CURRENT_LOCATION);
-    return { *u_, i };
-}
-
-auto
-segments_encoded::
-operator[](std::size_t i) noexcept ->
+operator[](
+    std::size_t i) const noexcept ->
     reference
 {
-    return { *u_, i };
+    return u_->encoded_segment(i);
 }
 
-auto
+string_view
 segments_encoded::
-operator[](std::size_t i) const noexcept ->
-    const_reference
+front() const noexcept
 {
-    return { *u_, i };
+    return (*this)[0];
 }
 
-auto
+string_view
 segments_encoded::
-front() const ->
-    const_reference
+back() const noexcept
 {
-    return { *u_, 0 };
-}
-
-auto
-segments_encoded::
-front() ->
-    reference
-{
-    return { *u_, 0 };
-}
-
-auto
-segments_encoded::
-back() const ->
-    const_reference
-{
-    return { *u_, size() - 1 };
-}
-
-auto
-segments_encoded::
-back() ->
-    reference
-{
-    return { *u_, size() - 1 };
+    return (*this)[size() - 1];
 }
 
 //------------------------------------------------
@@ -665,7 +305,7 @@ back() ->
 
 auto
 segments_encoded::
-begin() noexcept ->
+begin() const noexcept ->
     iterator
 {
     return iterator(*u_, 0);
@@ -673,42 +313,30 @@ begin() noexcept ->
 
 auto
 segments_encoded::
-begin() const noexcept ->
-    const_iterator
-{
-    return const_iterator(*u_, 0);
-}
-
-auto
-segments_encoded::
-cbegin() const noexcept ->
-    const_iterator
-{
-    return const_iterator(*u_, 0);
-}
-
-auto
-segments_encoded::
-end() noexcept ->
+end() const noexcept ->
     iterator
 {
     return iterator(*u_, size());
 }
 
-auto
+//------------------------------------------------
+//
+// Capacity
+//
+//------------------------------------------------
+
+bool
 segments_encoded::
-end() const noexcept ->
-    const_iterator
+empty() const noexcept
 {
-    return const_iterator(*u_, size());
+    return size() == 0;
 }
 
-auto
+std::size_t
 segments_encoded::
-cend() const noexcept ->
-    const_iterator
+size() const noexcept
 {
-    return const_iterator(*u_, size());
+    return u_->segment_count();
 }
 
 //------------------------------------------------
@@ -717,11 +345,66 @@ cend() const noexcept ->
 //
 //------------------------------------------------
 
+void
+segments_encoded::
+clear() noexcept
+{
+    erase(begin(), end());
+}
+
+//------------------------------------------------
+
+template<class String>
+auto
+segments_encoded::
+insert(
+    iterator before,
+    String const& s) ->
+        typename std::enable_if<
+            is_stringlike<String>::value,
+            iterator>::type
+{
+    return insert(before,
+        to_string_view(s));
+}
+
+template<class String>
+auto
+segments_encoded::
+insert(
+    iterator before,
+    std::initializer_list<String> init) ->
+        typename std::enable_if<
+            is_stringlike<String>::value,
+            iterator>::type
+{
+    return insert(before,
+        init.begin(), init.end());
+}
+
 template<class FwdIt>
 auto
 segments_encoded::
 insert(
-    const_iterator before,
+    iterator before,
+    FwdIt first,
+    FwdIt last) ->
+        typename std::enable_if<
+            is_stringlike<typename
+                std::iterator_traits<
+                    FwdIt>::value_type>::value,
+            iterator>::type
+{
+    return insert(before, first, last,
+        typename std::iterator_traits<
+            FwdIt>::iterator_category{});
+}
+
+template<class FwdIt>
+auto
+segments_encoded::
+insert(
+    iterator before,
     FwdIt first,
     FwdIt last,
     std::forward_iterator_tag) ->
@@ -737,44 +420,74 @@ insert(
     return { *u_, before.i_ };
 }
 
-template<class T>
+//------------------------------------------------
+
 auto
 segments_encoded::
-insert(
-    const_iterator before,
-    std::initializer_list<T> init) ->
-        typename std::enable_if<
-            is_stringlike<T>::value,
-            iterator>::type
-{
-    return insert(before,
-        init.begin(), init.end());
-}
-
-void
-segments_encoded::
-clear() noexcept
-{
-    erase(begin(), end());
-}
-
-template<class T, class>
-auto
-segments_encoded::
-insert(
-    const_iterator before,
-    T const& t) ->
+replace(
+    iterator pos,
+    string_view s) ->
         iterator
 {
-    return insert(before,
-        to_string_view(t));
+    return replace(
+        pos, pos + 1,
+            &s, &s + 1);
+}
+
+template<class String>
+auto
+segments_encoded::
+replace(
+    iterator pos,
+    String const& s) ->
+        typename std::enable_if<
+            is_stringlike<String>::value,
+            iterator>::type
+{
+    return replace(pos,
+        to_string_view(s));
+}
+
+template<class String>
+auto
+segments_encoded::
+replace(
+    iterator from,
+    iterator to,
+    std::initializer_list<String> init) ->
+        typename std::enable_if<
+            is_stringlike<String>::value,
+            iterator>::type
+{
+    return replace(
+        from,
+        to,
+        init.begin(),
+        init.end());
+}
+
+auto
+segments_encoded::
+replace(
+    iterator from,
+    iterator to,
+    std::initializer_list<
+        string_view> init) ->
+    iterator
+{
+    return replace(
+        from,
+        to,
+        init.begin(),
+        init.end());
 }
 
 template<class FwdIt>
 auto
 segments_encoded::
-insert(
-    const_iterator before,
+replace(
+    iterator from,
+    iterator to,
     FwdIt first,
     FwdIt last) ->
         typename std::enable_if<
@@ -783,19 +496,30 @@ insert(
                     FwdIt>::value_type>::value,
             iterator>::type
 {
-    return insert(before, first, last,
-        typename std::iterator_traits<
-            FwdIt>::iterator_category{});
+    BOOST_ASSERT(from.u_ == u_);
+    BOOST_ASSERT(to.u_ == u_);
+    u_->edit_segments(
+        from.i_,
+        to.i_,
+        detail::make_enc_segs_iter(
+            first, last),
+        detail::make_enc_segs_iter(
+            first, last));
+    return from;
 }
+
+//------------------------------------------------
 
 auto
 segments_encoded::
 erase(
-    const_iterator pos) noexcept ->
+    iterator pos) noexcept ->
         iterator
 {
     return erase(pos, pos + 1);
 }
+
+//------------------------------------------------
 
 void
 segments_encoded::
@@ -805,115 +529,24 @@ push_back(
     insert(end(), s);
 }
 
+template<class String>
+auto
+segments_encoded::
+push_back(
+    String const& s) ->
+        typename std::enable_if<
+            is_stringlike<String>::value,
+            void>::type
+{
+    push_back(
+        to_string_view(s));
+}
+
 void
 segments_encoded::
 pop_back() noexcept
 {
     erase(end() - 1);
-}
-
-//------------------------------------------------
-
-auto
-segments_encoded::
-reference::
-operator=(
-    const_reference const& other) ->
-        reference&
-{
-    if( u_ == other.u_ &&
-        i_ == other.i_)
-        return *this;
-    *this = string_view(other);
-    return *this;
-}
-
-/** Comparison
-
-    This function participates in overload
-    resolution only if
-    `is_stringlike<T>::value == true`.
-*/
-template<class T
-#ifndef BOOST_URL_DOCS
-    , class = typename std::enable_if<
-        is_stringlike<T>::value>::type
-#endif
->
-bool
-operator==(
-    segments_encoded::
-        const_reference const& x1,
-    T const& x2 ) noexcept
-{
-    return
-        string_view(x1) ==
-        to_string_view(x2);
-}
-
-/** Comparison
-
-    This function participates in overload
-    resolution only if
-    `is_stringlike<T>::value == true`.
-*/
-template<class T
-#ifndef BOOST_URL_DOCS
-    , class = typename std::enable_if<
-        is_stringlike<T>::value>::type
-#endif
->
-bool
-operator==(
-    T const& x1,
-    segments_encoded::
-        const_reference const& x2 ) noexcept
-{
-    return
-        to_string_view(x1) ==
-        string_view(x2);
-}
-
-/** Comparison
-
-    This function participates in overload
-    resolution only if
-    `is_stringlike<T>::value == true`.
-*/
-template<class T
-#ifndef BOOST_URL_DOCS
-    , class = typename std::enable_if<
-        is_stringlike<T>::value>::type
-#endif
->
-bool
-operator!=(
-    segments_encoded::
-        const_reference const& x1,
-    T const& x2 ) noexcept
-{
-    return !( x1 == x2 );
-}
-
-/** Comparison
-
-    This function participates in overload
-    resolution only if
-    `is_stringlike<T>::value == true`.
-*/
-template<class T
-#ifndef BOOST_URL_DOCS
-    , class = typename std::enable_if<
-        is_stringlike<T>::value>::type
-#endif
->
-bool
-operator!=(
-    T const& x1,
-    segments_encoded::
-        const_reference const& x2 ) noexcept
-{
-    return !(x1 == x2);
 }
 
 } // urls

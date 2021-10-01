@@ -37,11 +37,9 @@ class params::iterator
     }
 
 public:
-    using value_type = params::value_type;
+    using value_type = params_value_type;
     using reference = params::reference;
-    using const_reference = params::reference;
-    using pointer = void*;
-    using const_pointer = void const*;
+    using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::random_access_iterator_tag;
