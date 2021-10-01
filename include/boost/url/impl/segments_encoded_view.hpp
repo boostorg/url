@@ -117,21 +117,45 @@ segments_encoded_view(
 }
 
 segments_encoded_view::
-segments_encoded_view(
-    segments_encoded_view
-        const& other) noexcept = default;
-
-segments_encoded_view&
-segments_encoded_view::
-operator=(
-    segments_encoded_view
-        const& other) noexcept = default;
-
-segments_encoded_view::
 segments_encoded_view() noexcept
     : s_("")
     , n_(0)
 {
+}
+
+template<class Allocator>
+segments_view
+segments_encoded_view::
+decoded(Allocator const& alloc) const
+{
+    return segments_view(s_, n_, alloc);
+}
+
+bool
+segments_encoded_view::
+is_absolute() const noexcept
+{
+    return s_.starts_with('/');
+}
+
+//------------------------------------------------
+//
+// Element Access
+//
+//------------------------------------------------
+
+string_view const
+segments_encoded_view::
+front() const noexcept
+{
+    return *begin();
+}
+
+string_view const
+segments_encoded_view::
+back() const noexcept
+{
+    return *--end();
 }
 
 //------------------------------------------------

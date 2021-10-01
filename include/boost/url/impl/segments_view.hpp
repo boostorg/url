@@ -116,6 +116,39 @@ public:
     }
 };
 
+//------------------------------------------------
+//
+// Members
+//
+//------------------------------------------------
+
+bool
+segments_view::
+is_absolute() const noexcept
+{
+    return s_.starts_with('/');
+}
+
+//------------------------------------------------
+//
+// Element Access
+//
+//------------------------------------------------
+
+string_value
+segments_view::
+front() const noexcept
+{
+    return *begin();
+}
+
+string_value
+segments_view::
+back() const noexcept
+{
+    return *--end();
+}
+
 } // urls
 } // boost
 

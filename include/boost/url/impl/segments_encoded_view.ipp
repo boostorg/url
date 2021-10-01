@@ -171,6 +171,10 @@ end() const noexcept ->
 }
 
 //------------------------------------------------
+//
+// Friends
+//
+//------------------------------------------------
 
 std::ostream&
 operator<<(
@@ -185,102 +189,63 @@ operator<<(
 
 //------------------------------------------------
 
-segments_encoded_view
-parse_path_abempty(
-    string_view s,
-    error_code& ec) noexcept
+result<segments_encoded_view>
+parse_path(string_view s) noexcept
 {
+    if(s.empty())
+        return segments_encoded_view();
+    if(s[0] == '/')
+        return parse_path_abempty(s);
+    return parse_path_rootless(s);
+}
+
+result<segments_encoded_view>
+parse_path_abempty(
+    string_view s) noexcept
+{
+    error_code ec;
     path_abempty_bnf t;
-    if(! bnf::parse_string(
-            s, ec, t))
-        return {};
+    if(! bnf::parse_string(s, ec, t))
+        return ec;
     return segments_encoded_view(
         t.str, t.count);
 }
 
-segments_encoded_view
-parse_path_abempty(
-    string_view s)
+result<segments_encoded_view>
+parse_path_absolute(
+    string_view s) noexcept
 {
     error_code ec;
-    auto p = parse_path_abempty(s, ec);
-    detail::maybe_throw(ec,
-        BOOST_CURRENT_LOCATION);
-    return p;
-}
-
-segments_encoded_view
-parse_path_absolute(
-    string_view s,
-    error_code& ec) noexcept
-{
     path_absolute_bnf t;
-    if(! bnf::parse_string(
-            s, ec, t))
-        return {};
+    if(! bnf::parse_string(s, ec, t))
+        return ec;
     return segments_encoded_view(
         t.str, t.count);
 }
 
-segments_encoded_view
-parse_path_absolute(
-    string_view s)
+result<segments_encoded_view>
+parse_path_noscheme(
+    string_view s) noexcept
 {
     error_code ec;
-    auto p = parse_path_absolute(s, ec);
-    detail::maybe_throw(ec,
-        BOOST_CURRENT_LOCATION);
-    return p;
-}
-
-segments_encoded_view
-parse_path_noscheme(
-    string_view s,
-    error_code& ec) noexcept
-{
     path_noscheme_bnf t;
-    if(! bnf::parse_string(
-            s, ec, t))
-        return {};
+    if(! bnf::parse_string(s, ec, t))
+        return ec;
     return segments_encoded_view(
         t.str, t.count);
 }
 
-segments_encoded_view
-parse_path_noscheme(
-    string_view s)
+result<segments_encoded_view>
+parse_path_rootless(
+    string_view s) noexcept
 {
     error_code ec;
-    auto p = parse_path_noscheme(s, ec);
-    detail::maybe_throw(ec,
-        BOOST_CURRENT_LOCATION);
-    return p;
-}
-
-segments_encoded_view
-parse_path_rootless(
-    string_view s,
-    error_code& ec) noexcept
-{
     path_rootless_bnf t;
-    if(! bnf::parse_string(
-            s, ec, t))
-        return {};
+    if(! bnf::parse_string(s, ec, t))
+        return ec;
     return segments_encoded_view(
         t.str, t.count);
 }
-
-segments_encoded_view
-parse_path_rootless(
-    string_view s)
-{
-    error_code ec;
-    auto p = parse_path_rootless(s, ec);
-    detail::maybe_throw(ec,
-        BOOST_CURRENT_LOCATION);
-    return p;
-}
-
 
 } // urls
 } // boost

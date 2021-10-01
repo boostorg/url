@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/segments_view.hpp>
 #include <boost/url/string.hpp>
 #include <iosfwd>
 #include <utility>
@@ -19,18 +20,36 @@
 namespace boost {
 namespace urls {
 
-/** A BidirectionalRange view of read-only, encoded path segments
+/** A bidirectional range of read-only encoded path segments
 
     Objects of this type represent an iterable
     range of path segments, where each segment
     is represented by a percent-encoded string.
-    Ownership of the underlying path is not
-    transferred; the string to which the
-    container refers must remain valid until
-    the container is no longer used.
+    Ownership of the underlying characters is
+    not transferred; the source of the character
+    buffer must remain valid until the container
+    is no longer used.
+    A view of encoded segments in a URL's path
+    can be obtained by calling
+        @ref url_view::encoded_segments.
+    Alternatively, to obtain encoded segments
+    from a path stored in a string call one of
+    the parsing functions:
+        @ref parse_path_abempty,
+        @ref parse_path_absolute,
+        @ref parse_path_noscheme,
+        @ref parse_path_rootless.
 
+    @par Example
+    A path string is parsed into encoded segments:
+    @code
+    @endcode
     @see
-        @ref segments_view
+        @ref parse_path_abempty,
+        @ref parse_path_absolute,
+        @ref parse_path_noscheme,
+        @ref parse_path_rootless,
+        @ref segments_view.
 */
 class segments_encoded_view
 {
@@ -46,11 +65,32 @@ class segments_encoded_view
         std::size_t n) noexcept;
 
 public:
+#ifdef BOOST_URL_DOCS
+    /** An iterator to a read-only encoded path segment.
+    */
+    using iterator = __see_below__;
+#else
     class iterator;
+#endif
+
+    /** The type of value returned when dereferencing an iterator.
+    */
     using value_type = string_view;
+
+    /** The type of value returned when dereferencing an iterator.
+    */
     using reference = string_view;
+
+    /** The type of value returned when dereferencing an iterator.
+    */
     using const_reference = string_view;
+
+    /** The unsigned integer type used to represent size.
+    */
     using size_type = std::size_t;
+
+    /** The signed integer type used to represent differences.
+    */
     using difference_type = std::ptrdiff_t;
 
     //--------------------------------------------
@@ -59,16 +99,99 @@ public:
     //
     //--------------------------------------------
 
-    inline
-    segments_encoded_view(
-        segments_encoded_view const& other) noexcept;
+    /** Constructor
 
-    inline
-    segments_encoded_view& operator=(
-        segments_encoded_view const& other) noexcept;
-
+        A default-constructed instance will be
+        an empty range.
+    */
     inline
     segments_encoded_view() noexcept;
+
+    /** Return a view of this container as percent-decoded segments
+
+        This function returns a new view over
+        the same underlying character buffer
+        where each segment is returned as a
+        @ref string_value with percent-decoding
+        applied using the optionally specified
+        allocator. The decoded view does not take
+        ownership of the underlying character
+        buffer; the caller is still responsible
+        for ensuring that the buffer remains valid
+        until all views which reference it are
+        destroyed.
+
+        @par Example
+        @code
+        segments_encoded_view sev = parse_path( "/%70%61%74%68/%74%6f/%66%69%6c%65%2e%74%78%74" ).value();
+
+        segments_view sv = sev.decoded();
+
+        std::stringstream ss;
+
+        ss << sv.front() << "/../" << sv.back();
+
+        assert( ss.str() == "path/../file.txt" );
+        @endcode
+
+        @par Exceptions
+        Calls to allocate may throw.
+
+        @return A view to decoded path segments.
+
+        @param alloc The allocator the returned
+        view will use for all string storage. If
+        this parameter is ommitted, the default
+        allocator will be used.
+    */
+    template<class Allocator = std::allocator<char> >
+    segments_view
+    decoded(Allocator const& alloc = {}) const;
+
+    /** Returns true if this contains an absolute path.
+
+        Absolute paths always start with a
+        forward slash ('/').
+    */
+    inline
+    bool
+    is_absolute() const noexcept;
+
+    //--------------------------------------------
+    //
+    // Element Access
+    //
+    //--------------------------------------------
+
+    /** Return the first element.
+    */
+    inline
+    string_view const
+    front() const noexcept;
+
+    /** Return the last element.
+    */
+    inline
+    string_view const
+    back() const noexcept;
+
+    //--------------------------------------------
+    //
+    // Iterators
+    //
+    //--------------------------------------------
+
+    /** Return an iterator to the beginning.
+    */
+    BOOST_URL_DECL
+    iterator
+    begin() const noexcept;
+
+    /** Return an iterator to the end.
+    */
+    BOOST_URL_DECL
+    iterator
+    end() const noexcept;
 
     //--------------------------------------------
     //
@@ -89,107 +212,60 @@ public:
     size() const noexcept;
 
     //--------------------------------------------
-    //
-    // Iterators
-    //
-    //--------------------------------------------
-
-    /** Return an iterator to the beginning of the range
-    */
-    BOOST_URL_DECL
-    iterator
-    begin() const noexcept;
-
-    /** Return an iterator to the end of the range
-    */
-    BOOST_URL_DECL
-    iterator
-    end() const noexcept;
-
-    //--------------------------------------------
 
     BOOST_URL_DECL friend std::ostream&
         operator<<(std::ostream& os,
             segments_encoded_view const& pv);
-    BOOST_URL_DECL friend segments_encoded_view
-        parse_path_abempty(string_view s,
-            error_code& ec) noexcept;
-    BOOST_URL_DECL friend segments_encoded_view
-        parse_path_abempty(string_view s);
-    BOOST_URL_DECL friend segments_encoded_view
-        parse_path_absolute(string_view s,
-            error_code& ec) noexcept;
-    BOOST_URL_DECL friend segments_encoded_view
-        parse_path_absolute(string_view s);
-    BOOST_URL_DECL friend segments_encoded_view
-        parse_path_noscheme(string_view s,
-            error_code& ec) noexcept;
-    BOOST_URL_DECL friend segments_encoded_view
-        parse_path_noscheme(string_view s);
-    BOOST_URL_DECL friend segments_encoded_view
-        parse_path_rootless(string_view s,
-            error_code& ec) noexcept;
-    BOOST_URL_DECL friend segments_encoded_view
-        parse_path_rootless(string_view s);
+
+    BOOST_URL_DECL friend
+        result<segments_encoded_view>
+        parse_path(string_view s) noexcept;
+
+    BOOST_URL_DECL friend
+        result<segments_encoded_view>
+        parse_path_abempty(string_view s) noexcept;
+
+    BOOST_URL_DECL friend
+        result<segments_encoded_view>
+        parse_path_absolute(string_view s) noexcept;
+
+    BOOST_URL_DECL friend
+        result<segments_encoded_view>
+        parse_path_noscheme(string_view s) noexcept;
+
+    BOOST_URL_DECL friend
+        result<segments_encoded_view>
+        parse_path_rootless(string_view s) noexcept;
 };
 
 //----------------------------------------------------------
 
-/** Format the encoded path to an output stream
+/** Format the object to an output stream
 */
 BOOST_URL_DECL
 std::ostream&
 operator<<(
     std::ostream& os,
-    segments_encoded_view const& pv);
+    segments_encoded_view const& vw);
 
 //----------------------------------------------------------
 
-/** Return a path view from a parsed string, using path-abempty bnf
+/** Parse a string and return an encoded segment view
 
     This function parses the string and returns the
     corresponding path object if the string is valid,
-    otherwise sets the error and returns an empty range.
+    otherwise returns an error.
 
     @par BNF
     @code
-    path-abempty  = *( "/" segment )
+    path          = [ "/" ] segment *( "/" segment )
     @endcode
 
     @par Exception Safety
     No-throw guarantee.
 
-    @param s The string to parse
-    @param ec Set to the error, if any occurred
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">
-        3.3. Path (rfc3986)</a>
-
-    @see
-        @ref parse_path,
-        @ref parse_path_absolute,
-        @ref parse_path_noscheme,
-        @ref parse_path_rootless.
-*/
-BOOST_URL_DECL
-segments_encoded_view
-parse_path_abempty(
-    string_view s,
-    error_code& ec) noexcept;
-
-/** Return a path view from a parsed string, using path-abempty bnf
-
-    This function parses the string and returns the
-    corresponding path object if the string is valid,
-    otherwise throws an exception.
-
-    @par BNF
-    @code
-    path-abempty  = *( "/" segment )
-    @endcode
-
-    @throw system_error Thrown on error
+    @return A valid view on success, otherwise an
+    error code.
 
     @param s The string to parse
 
@@ -204,11 +280,10 @@ parse_path_abempty(
         @ref parse_path_rootless.
 */
 BOOST_URL_DECL
-segments_encoded_view
-parse_path_abempty(
-    string_view s);
+result<segments_encoded_view>
+parse_path(string_view s) noexcept;
 
-/** Return a path view from a parsed string, using path-abempty bnf
+/** Parse a string and return an encoded segment view
 
     This function parses the string and returns the
     corresponding path object if the string is valid,
@@ -222,8 +297,10 @@ parse_path_abempty(
     @par Exception Safety
     No-throw guarantee.
 
+    @return A valid view on success, otherwise an
+    error code.
+
     @param s The string to parse
-    @param ec Set to the error, if any occurred
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">
@@ -235,49 +312,12 @@ parse_path_abempty(
         @ref parse_path_noscheme,
         @ref parse_path_rootless.
 */
-inline
-segments_encoded_view
-parse_path(
-    string_view s,
-    error_code& ec) noexcept
-{
-    return parse_path_abempty(s, ec);
-}
+BOOST_URL_DECL
+result<segments_encoded_view>
+parse_path_abempty(
+    string_view s) noexcept;
 
-/** Return a path view from a parsed string, using path-abempty bnf
-
-    This function parses the string and returns the
-    corresponding path object if the string is valid,
-    otherwise throws an exception.
-
-    @par BNF
-    @code
-    path-abempty  = *( "/" segment )
-    @endcode
-
-    @throw system_error Thrown on error
-
-    @param s The string to parse
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">
-        3.3. Path (rfc3986)</a>
-
-    @see
-        @ref parse_path_abempty,
-        @ref parse_path_absolute,
-        @ref parse_path_noscheme,
-        @ref parse_path_rootless.
-*/
-inline
-segments_encoded_view
-parse_path(
-    string_view s)
-{
-    return parse_path_abempty(s);
-}
-
-/** Return a path view from a parsed string, using path-absolute bnf
+/** Parse a string and return an encoded segment view
 
     This function parses the string and returns the
     corresponding path object if the string is valid,
@@ -291,37 +331,8 @@ parse_path(
     @par Exception Safety
     No-throw guarantee.
 
-    @param s The string to parse
-    @param ec Set to the error, if any occurred
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">
-        3.3. Path (rfc3986)</a>
-
-    @see
-        @ref parse_path,
-        @ref parse_path_abempty,
-        @ref parse_path_noscheme,
-        @ref parse_path_rootless.
-*/
-BOOST_URL_DECL
-segments_encoded_view
-parse_path_absolute(
-    string_view s,
-    error_code& ec) noexcept;
-
-/** Return a path view from a parsed string, using path-absolute bnf
-
-    This function parses the string and returns the
-    corresponding path object if the string is valid,
-    otherwise throws an exception.
-
-    @par BNF
-    @code
-    path-absolute = "/" [ segment-nz *( "/" segment ) ]
-    @endcode
-
-    @throw system_error Thrown on error
+    @return A valid view on success, otherwise an
+    error code.
 
     @param s The string to parse
 
@@ -336,11 +347,11 @@ parse_path_absolute(
         @ref parse_path_rootless.
 */
 BOOST_URL_DECL
-segments_encoded_view
+result<segments_encoded_view>
 parse_path_absolute(
-    string_view s);
+    string_view s) noexcept;
 
-/** Return a path view from a parsed string, using path-noscheme bnf
+/** Parse a string and return an encoded segment view
 
     This function parses the string and returns the
     corresponding path object if the string is valid,
@@ -357,40 +368,8 @@ parse_path_absolute(
     @par Exception Safety
     No-throw guarantee.
 
-    @param s The string to parse
-    @param ec Set to the error, if any occurred
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">
-        3.3. Path (rfc3986)</a>
-
-    @see
-        @ref parse_path,
-        @ref parse_path_abempty,
-        @ref parse_path_absolute,
-        @ref parse_path_rootless.
-*/
-BOOST_URL_DECL
-segments_encoded_view
-parse_path_noscheme(
-    string_view s,
-    error_code& ec) noexcept;
-
-/** Return a path view from a parsed string, using path-noscheme bnf
-
-    This function parses the string and returns the
-    corresponding path object if the string is valid,
-    otherwise throws an exception.
-
-    @par BNF
-    @code
-    path-noscheme = segment-nz-nc *( "/" segment )
-
-    segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
-                    ; non-zero-length segment without any colon ":"
-    @endcode
-
-    @throw system_error Thrown on error
+    @return A valid view on success, otherwise an
+    error code.
 
     @param s The string to parse
 
@@ -405,11 +384,11 @@ parse_path_noscheme(
         @ref parse_path_rootless.
 */
 BOOST_URL_DECL
-segments_encoded_view
+result<segments_encoded_view>
 parse_path_noscheme(
-    string_view s);
+    string_view s) noexcept;
 
-/** Return a path view from a parsed string, using path_rootless bnf
+/** Parse a string and return an encoded segment view
 
     This function parses the string and returns the
     corresponding path object if the string is valid,
@@ -425,39 +404,8 @@ parse_path_noscheme(
     @par Exception Safety
     No-throw guarantee.
 
-    @param s The string to parse
-    @param ec Set to the error, if any occurred
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">
-        3.3. Path (rfc3986)</a>
-
-    @see
-        @ref parse_path,
-        @ref parse_path_abempty,
-        @ref parse_path_absolute,
-        @ref parse_path_noscheme.
-*/
-BOOST_URL_DECL
-segments_encoded_view
-parse_path_rootless(
-    string_view s,
-    error_code& ec) noexcept;
-
-/** Return a path view from a parsed string, using path_rootless bnf
-
-    This function parses the string and returns the
-    corresponding path object if the string is valid,
-    otherwise sets the error and returns an empty range.
-
-    @par BNF
-    @code
-    path-rootless = segment-nz *( "/" segment )
-
-    segment-nz    = 1*pchar
-    @endcode
-
-    @throw system_error Thrown on error
+    @return A valid view on success, otherwise an
+    error code.
 
     @param s The string to parse
 
@@ -472,9 +420,9 @@ parse_path_rootless(
         @ref parse_path_noscheme.
 */
 BOOST_URL_DECL
-segments_encoded_view
+result<segments_encoded_view>
 parse_path_rootless(
-    string_view s);
+    string_view s) noexcept;
 
 } // urls
 } // boost

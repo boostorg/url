@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/system/error_code.hpp>
+#include <boost/system/result.hpp>
 #include <boost/system/system_error.hpp>
 #include <stdexcept>
 
@@ -29,6 +30,10 @@ using error_condition = boost::system::error_condition;
 
 /// The type of system error thrown by the library
 using system_error = boost::system::system_error;
+
+/// The type of result returned by library functions
+template<class T>
+using result = boost::system::result<T, error_code>;
 
 //----------------------------------------------------------
 

@@ -20,12 +20,6 @@ namespace boost {
 namespace urls {
 
 segments_view::
-segments_view(
-    segments_view const&) noexcept = default;
-
-//------------------------------------------------
-
-segments_view::
 iterator::
 iterator(
     string_view s,

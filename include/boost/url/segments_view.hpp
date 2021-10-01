@@ -18,6 +18,10 @@
 namespace boost {
 namespace urls {
 
+#ifndef BOOST_URL_DECL
+class segments_encoded_view;
+#endif
+
 /** A BidirectionalRange view of read-only path segments with percent-decoding applied
 */
 class segments_view
@@ -28,6 +32,7 @@ class segments_view
 
     friend class url;
     friend class url_view;
+    friend class segments_encoded_view;
 
     template<class Allocator>
     segments_view(
@@ -41,7 +46,38 @@ class segments_view
     }
 
 public:
+#ifdef BOOST_URL_DOCS
+    /** An iterator to a read-only decoded path segment.
+    */
+    using iterator = __see_below__;
+#else
     class iterator;
+#endif
+    /** The type of value returned when dereferencing an iterator.
+    */
+    using value_type = string_value;
+
+    /** The type of value returned when dereferencing an iterator.
+    */
+    using reference = string_value;
+
+    /** The type of value returned when dereferencing an iterator.
+    */
+    using const_reference = string_value;
+
+    /** The unsigned integer type used to represent size.
+    */
+    using size_type = std::size_t;
+
+    /** The signed integer type used to represent differences.
+    */
+    using difference_type = std::ptrdiff_t;
+
+    //--------------------------------------------
+    //
+    // Members
+    //
+    //--------------------------------------------
 
     BOOST_URL_DECL
     segments_view(
@@ -65,6 +101,39 @@ public:
     {
         return n_;
     }
+
+    /** Returns true if this contains an absolute path.
+
+        Absolute paths always start with a
+        forward slash ('/').
+    */
+    inline
+    bool
+    is_absolute() const noexcept;
+
+    //--------------------------------------------
+    //
+    // Element Access
+    //
+    //--------------------------------------------
+
+    /** Return the first element.
+    */
+    inline
+    string_value
+    front() const noexcept;
+
+    /** Return the last element.
+    */
+    inline
+    string_value
+    back() const noexcept;
+
+    //--------------------------------------------
+    //
+    // Iterators
+    //
+    //--------------------------------------------
 
     /** Return an iterator to the beginning of the range
     */
