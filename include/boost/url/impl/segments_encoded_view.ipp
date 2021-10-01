@@ -21,19 +21,12 @@
 namespace boost {
 namespace urls {
 
-segments_encoded_view::
-segments_encoded_view() noexcept
-    : s_("")
-    , n_(0)
-{
-}
-
 //------------------------------------------------
 
 segments_encoded_view::
 iterator::
 iterator(
-    string_view s)
+    string_view s) noexcept
     : begin_(s.data())
     , pos_(s.data())
     , next_(s.data())
@@ -155,6 +148,10 @@ operator--() noexcept ->
     return *this;
 }
 
+//------------------------------------------------
+//
+// Iterators
+//
 //------------------------------------------------
 
 auto

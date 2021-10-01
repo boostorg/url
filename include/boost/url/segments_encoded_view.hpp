@@ -40,40 +40,59 @@ class segments_encoded_view
     friend class segments_view;
     friend class url_view;
 
+    inline
     segments_encoded_view(
         string_view s,
-        std::size_t n)
-        : s_(s)
-        , n_(n)
-    {
-    }
+        std::size_t n) noexcept;
 
 public:
     class iterator;
+    using value_type = string_view;
+    using reference = string_view;
+    using const_reference = string_view;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
 
+    //--------------------------------------------
+    //
+    // Members
+    //
+    //--------------------------------------------
+
+    inline
     segments_encoded_view(
-        segments_encoded_view const&) = default;
-    segments_encoded_view& operator=(
-        segments_encoded_view const&) = default;
+        segments_encoded_view const& other) noexcept;
 
-    BOOST_URL_DECL
+    inline
+    segments_encoded_view& operator=(
+        segments_encoded_view const& other) noexcept;
+
+    inline
     segments_encoded_view() noexcept;
+
+    //--------------------------------------------
+    //
+    // Capacity
+    //
+    //--------------------------------------------
 
     /** Return true if the range contains no elements
     */
+    inline
     bool
-    empty() const noexcept
-    {
-        return n_ == 0;
-    }
+    empty() const noexcept;
 
     /** Return the number of elements in the range
     */
+    inline
     std::size_t
-    size() const noexcept
-    {
-        return n_;
-    }
+    size() const noexcept;
+
+    //--------------------------------------------
+    //
+    // Iterators
+    //
+    //--------------------------------------------
 
     /** Return an iterator to the beginning of the range
     */
@@ -86,6 +105,8 @@ public:
     BOOST_URL_DECL
     iterator
     end() const noexcept;
+
+    //--------------------------------------------
 
     BOOST_URL_DECL friend std::ostream&
         operator<<(std::ostream& os,

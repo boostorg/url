@@ -31,7 +31,7 @@ class segments_encoded_view::iterator
 
     explicit
     iterator(
-        string_view s);
+        string_view s) noexcept;
 
     // end ctor
     iterator(
@@ -40,8 +40,8 @@ class segments_encoded_view::iterator
 
 public:
     using value_type = string_view;
-    using pointer = value_type const*;
-    using reference = value_type const&;
+    using reference = string_view;
+    using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::bidirectional_iterator_tag;
@@ -52,22 +52,10 @@ public:
     iterator& operator=(
         iterator const&) noexcept = default;
 
-    std::size_t
-    index() const noexcept
-    {
-        return i_;
-    }
-
     value_type const&
     operator*() const noexcept
     {
         return s_;
-    }
-
-    value_type const*
-    operator->() const noexcept
-    {
-        return &s_;
     }
 
     bool
@@ -112,6 +100,59 @@ public:
         return tmp;
     }
 };
+
+//------------------------------------------------
+//
+// Members
+//
+//------------------------------------------------
+
+segments_encoded_view::
+segments_encoded_view(
+    string_view s,
+    std::size_t n) noexcept
+    : s_(s)
+    , n_(n)
+{
+}
+
+segments_encoded_view::
+segments_encoded_view(
+    segments_encoded_view
+        const& other) noexcept = default;
+
+segments_encoded_view&
+segments_encoded_view::
+operator=(
+    segments_encoded_view
+        const& other) noexcept = default;
+
+segments_encoded_view::
+segments_encoded_view() noexcept
+    : s_("")
+    , n_(0)
+{
+}
+
+//------------------------------------------------
+//
+// Capacity
+//
+//------------------------------------------------
+
+bool
+segments_encoded_view::
+empty() const noexcept
+{
+    return size() == 0;
+}
+
+std::size_t
+segments_encoded_view::
+size() const noexcept
+{
+    return n_;
+}
 
 } // urls
 } // boost
