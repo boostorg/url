@@ -37,10 +37,10 @@ public:
             BOOST_TEST(u.encoded_url().empty());
         }
 
-        url c1      = parse_uri("http://1");
-        url_t c2    = parse_uri("http://2");
-        url_view c3 = parse_uri("http://3");
-        url_view c4 = parse_uri("ftp://");
+        url c1      = parse_uri("http://1").value();
+        url_t c2    = parse_uri("http://2").value();
+        url_view c3 = parse_uri("http://3").value();
+        url_view c4 = parse_uri("ftp://").value();
 
         // copy ctor
         {
@@ -136,7 +136,7 @@ public:
     {
         url_view uv;
         BOOST_TEST_NO_THROW( uv = parse_uri(
-            "http://user:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag"));
+            "http://user:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag").value());
         url_t u(uv);
         BOOST_TEST(u.encoded_origin() ==
             "http://user:pass@www.boost.org:8080");

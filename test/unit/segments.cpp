@@ -46,7 +46,7 @@ public:
     testMembers()
     {
         url_view const u0 = parse_uri(
-            "x://y/path/to/the/file.txt?q#f");
+            "x://y/path/to/the/file.txt?q#f").value();
 
         {
             url u = u0;
@@ -60,7 +60,7 @@ public:
     testElementAccess()
     {
         url_view const u0 = parse_relative_ref(
-            "/path/to/the/file.txt");
+            "/path/to/the/file.txt").value();
 
         // at
         {
@@ -154,7 +154,7 @@ public:
     testIterators()
     {
         url_view const u0 = parse_uri(
-            "x://y/path/to/the/file.txt");
+            "x://y/path/to/the/file.txt").value();
 
         // (default-ctor)
         {
@@ -232,7 +232,7 @@ public:
     testCapacity()
     {
         url_view const u0 = parse_uri(
-            "x://y/path/to/the/file.txt");
+            "x://y/path/to/the/file.txt").value();
 
         // empty
         {
@@ -260,7 +260,7 @@ public:
     {
         // clear
         {
-            url u = parse_uri("x://y/path/to/the/file.txt");
+            url u = parse_uri("x://y/path/to/the/file.txt").value();
             auto se = u.segments(p_.allocator());
 
             BOOST_TEST(! se.empty());
@@ -274,7 +274,7 @@ public:
 
         // insert( const_iterator, string_view )
         {
-            url u = parse_uri("x://y/path/file.txt?q#f");
+            url u = parse_uri("x://y/path/file.txt?q#f").value();
             auto se = u.segments(p_.allocator());
             auto const& cs(se);
 
@@ -302,7 +302,7 @@ public:
 
         {
             // rootless
-            url u = parse_uri("x:path/file.txt?q#f");
+            url u = parse_uri("x:path/file.txt?q#f").value();
             auto se = u.segments(p_.allocator());
             auto const& cs(se);
 
@@ -330,7 +330,7 @@ public:
 
         // insert( const_iterator, FwdIt, FwdIt )
         {
-            url u = parse_uri("x://y/path/file.txt?q#f");
+            url u = parse_uri("x://y/path/file.txt?q#f").value();
             auto se = u.segments(p_.allocator());
             auto const& cs(se);
 
@@ -350,7 +350,7 @@ public:
         }
         {
             // rootless
-            url u = parse_uri("x:the/file.txt?q#f");
+            url u = parse_uri("x:the/file.txt?q#f").value();
             auto se = u.segments(p_.allocator());
             auto const& cs(se);
 
@@ -371,7 +371,7 @@ public:
 
         // insert( const_iterator, initializer_list )
         {
-            url u = parse_uri("x://y/path/file.txt?q#f");
+            url u = parse_uri("x://y/path/file.txt?q#f").value();
             auto se = u.segments(p_.allocator());
             auto const& cs(se);
 
@@ -387,7 +387,7 @@ public:
 
         // erase( const_iterator )
         {
-            url u = parse_uri("x://y/path/to/the/file.txt?q#f");
+            url u = parse_uri("x://y/path/to/the/file.txt?q#f").value();
             auto se = u.segments(p_.allocator());
 
             se.erase(se.begin() + 1);
@@ -413,7 +413,8 @@ public:
 
         // erase( const_iterator, const_iterator )
         {
-            url u = parse_uri("x://y/home/etc/path/to/the/file.txt?q#f");
+            url u = parse_uri(
+                "x://y/home/etc/path/to/the/file.txt?q#f").value();
             auto se = u.segments(p_.allocator());
 
             se.erase(se.begin(), se.begin() + 2);
@@ -428,7 +429,8 @@ public:
         // replace(iterator, iterator, initializer-list)
         {
             // initializer_list<String>
-            url u = parse_relative_ref("/a/b/c/d/e/f/g");
+            url u = parse_relative_ref(
+                "/a/b/c/d/e/f/g").value();
             segments ss = u.segments();
             auto it = ss.replace(
                 ss.begin() + 1,
@@ -440,7 +442,8 @@ public:
         }
         {
             // initializer_list<string_view>
-            url u = parse_relative_ref("/a/b/c/d/e/f/g");
+            url u = parse_relative_ref(
+                "/a/b/c/d/e/f/g").value();
             segments ss = u.segments();
             auto it = ss.replace(
                 ss.begin() + 1,
@@ -456,7 +459,7 @@ public:
         // push_back(string_view)
         // push_back(String)
         {
-            url u = parse_relative_ref("");
+            url u = parse_relative_ref("").value();
             auto se = u.segments(p_.allocator());
             se.push_back("path");
             BOOST_TEST(u.encoded_path() == "/path");
@@ -468,7 +471,8 @@ public:
 
         // pop_back
         {
-            url u = parse_uri("x://y/path/to/file.txt?q#f");
+            url u = parse_uri(
+                "x://y/path/to/file.txt?q#f").value();
             auto se = u.segments(p_.allocator());
 
             BOOST_TEST(se.size() == 3);

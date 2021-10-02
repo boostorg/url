@@ -8,4 +8,4 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/value_types.hpp>
+#include <boost/url/params_value_type.hpp>

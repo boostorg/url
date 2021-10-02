@@ -11,8 +11,8 @@
 #define BOOST_URL_PARAMS_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/params_value_type.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/value_types.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <initializer_list>
 #include <iterator>
@@ -25,6 +25,8 @@ namespace urls {
 class url;
 #endif
 
+/** A random access container of modifiable, percent-decoded query parameters.
+*/
 class params
     : private detail::parts_base
 {

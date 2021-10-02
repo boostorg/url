@@ -24,8 +24,10 @@ set(BOOST_URL_TESTS_FILES
     params.cpp
     params_encoded.cpp
     params_encoded_view.cpp
+    params_value_type.cpp
     params_view.cpp
     pct_encoding.cpp
+    pct_encoding_types.cpp
     scheme.cpp
     segments.cpp
     segments_encoded.cpp
@@ -61,6 +63,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/query_bnf.cpp
     rfc/query_part_bnf.cpp
     rfc/relative_part_bnf.cpp
+    rfc/relative_ref_bnf.cpp
     rfc/scheme_bnf.cpp
     rfc/scheme_part_bnf.cpp
     rfc/uri_bnf.cpp

@@ -12,9 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/detail/except.hpp>
 #include <boost/url/detail/parts_base.hpp>
-#include <boost/assert.hpp>
 #include <initializer_list>
 #include <iterator>
 
@@ -120,6 +118,15 @@ public:
     //
     //--------------------------------------------
 
+    /** Returns true if this contains an absolute path.
+
+        Absolute paths always start with a
+        forward slash ('/').
+    */
+    inline
+    bool
+    is_absolute() const noexcept;
+
     /** Replace the contents of the container
 
         This function replaces the contents
@@ -128,8 +135,8 @@ public:
         Each string must contain a valid
         percent-encoding or else an
         exception is thrown.
-        The behavior is undefined any string
-        refers to the contents of `*this`.
+        The behavior is undefined if any
+        string refers to the contents of `*this`.
         All iterators and references to elements
         of the container are invalidated,
         including the @ref end iterator.
@@ -339,13 +346,13 @@ public:
     //
     //--------------------------------------------
 
-    /** Return an iterator to the beginning
+    /** Return an iterator to the beginning.
     */
     inline
     iterator
     begin() const noexcept;
 
-    /** Return an iterator to the end
+    /** Return an iterator to the end.
     */
     inline
     iterator

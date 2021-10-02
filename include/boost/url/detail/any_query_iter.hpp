@@ -12,7 +12,7 @@
 
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/value_types.hpp>
+#include <boost/url/params_value_type.hpp>
 #include <cstddef>
 
 namespace boost {

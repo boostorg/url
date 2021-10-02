@@ -67,33 +67,22 @@ do_setters_scheme(json::array const& ja)
     for(auto const& jv : ja)
     {
         ++total_;
-        error_code ec;
         auto href = jv.at("href").as_string();
-        url u = parse_uri_reference(href, ec);
-        if(! ec.failed())
+        url u = parse_uri_reference(href).value();
+        auto const& ex = jv.at("expected").as_object();
+        try
         {
-            auto const& ex = jv.at("expected").as_object();
-            try
-            {
-                u.set_scheme(jv.at("new_value").as_string());
-            }
-            catch(std::exception const& e)
-            {
-                if(ex.at("href").as_string() != href)
-                {
-                    Log << "caught exception: " << e.what() << std::endl;
-                    Log << "set_scheme failed: " << href <<
-                        ", " << jv.at("new_value") << std::endl;
-                    ++fail_;
-                }
-            }
+            u.set_scheme(jv.at("new_value").as_string());
         }
-        else
+        catch(std::exception const& e)
         {
-            Log << "parse failed: " << href
-                //<< " // " << jv.at("comment")
-                << std::endl;
-            ++fail_;
+            if(ex.at("href").as_string() != href)
+            {
+                Log << "caught exception: " << e.what() << std::endl;
+                Log << "set_scheme failed: " << href <<
+                    ", " << jv.at("new_value") << std::endl;
+                ++fail_;
+            }
         }
     }
 }
@@ -104,18 +93,9 @@ do_setters_user(json::array const& ja)
     for(auto const& jv : ja)
     {
         ++total_;
-        error_code ec;
         auto href = jv.at("href").as_string();
-        url u = parse_uri_reference(href, ec);
-        if(! ec.failed())
-        {
-        }
-        else
-        {
-            Log << "parse failed: " << href <<
-                " // " << jv.at("comment") << std::endl;
-            ++fail_;
-        }
+        url u = parse_uri_reference(href).value();
+        // VFALCO TODO
     }
 }
 

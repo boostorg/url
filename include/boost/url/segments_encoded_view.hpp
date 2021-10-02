@@ -29,26 +29,56 @@ class url_view;
     Objects of this type represent an iterable
     range of path segments, where each segment
     is represented by a percent-encoded string.
+
+    Dereferenced iterators return string views
+    into the underlying character buffer.
+
     Ownership of the underlying characters is
-    not transferred; the source of the character
-    buffer must remain valid until the container
-    is no longer used.
+    not transferred; the character buffer used
+    to construct the container must remain
+    valid for as long as the container exists.
+
     A view of encoded segments in a URL's path
     can be obtained by calling
         @ref url_view::encoded_segments.
     Alternatively, to obtain encoded segments
     from a path stored in a string call one of
-    the parsing functions:
-        @ref parse_path_abempty,
-        @ref parse_path_absolute,
-        @ref parse_path_noscheme,
-        @ref parse_path_rootless.
+    the parsing functions (see below).
 
     @par Example
-    A path string is parsed into encoded segments:
+
+    A path string is parsed into encoded
+    segments, then each segment is printed to
+    standard output:
+
     @code
+    segments_encoded_view sev = parse_path( "/path/to/file.txt" ).value();
+
+    for( auto it = sev.begin(); it != sev.end(); ++it )
+        std::cout << *it << std::endl;
     @endcode
+
+    A URL containing a path is parsed, then a
+    view to the encoded segments is obtained
+    and formatted to standard output:
+
+    @code
+    url_view u = parse_uri( "http://example.com/path/to/file.txt" ).value();
+
+    segments_encoded_view sev = u.encoded_segments();
+
+    std::cout << sev << std::endl;
+    @endcode
+
+    @par Complexity
+
+    Iterator increment or decrement runs in linear
+    time on the size of the segment.
+    All other operations run in constant time.
+    No operations allocate memory.
+
     @see
+        @ref parse_path,
         @ref parse_path_abempty,
         @ref parse_path_absolute,
         @ref parse_path_noscheme,
@@ -69,7 +99,7 @@ class segments_encoded_view
 
 public:
 #ifdef BOOST_URL_DOCS
-    /** An iterator to a read-only encoded path segment.
+    /** A bidirectional read-only iterator to an encoded path segment.
     */
     using iterator = __see_below__;
 #else
@@ -112,17 +142,17 @@ public:
 
     /** Return a view of this container as percent-decoded segments
 
-        This function returns a new view over
-        the same underlying character buffer
-        where each segment is returned as a
-        @ref string_value with percent-decoding
-        applied using the optionally specified
-        allocator. The decoded view does not take
-        ownership of the underlying character
-        buffer; the caller is still responsible
-        for ensuring that the buffer remains valid
-        until all views which reference it are
-        destroyed.
+        This function returns a new view over the
+        same underlying character buffer where each
+        segment is returned as a @ref string_value
+        with percent-decoding applied using the
+        optionally specified allocator.
+
+        The decoded view does not take ownership of
+        the underlying character buffer; the caller
+        is still responsible for ensuring that the
+        buffer remains valid until all views which
+        reference it are destroyed.
 
         @par Example
         @code

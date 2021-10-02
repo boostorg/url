@@ -51,7 +51,7 @@ public:
     testMembers()
     {
         url_view const u0 = parse_uri(
-            "x://y/path/to/the/file.txt?q#f");
+            "x://y/path/to/the/file.txt?q#f").value();
 
         {
             url u = u0;
@@ -65,7 +65,7 @@ public:
     testElementAccess()
     {
         url_view const u0 = parse_relative_ref(
-            "/path/to/the/file.txt");
+            "/path/to/the/file.txt").value();
 
         // at
         {
@@ -135,7 +135,7 @@ public:
     testIterators()
     {
         url_view const u0 = parse_uri(
-            "x://y/path/to/the/file.txt");
+            "x://y/path/to/the/file.txt").value();
 
         // (default-ctor)
         {
@@ -208,7 +208,7 @@ public:
     testCapacity()
     {
         url_view const u0 = parse_uri(
-            "x://y/path/to/the/file.txt");
+            "x://y/path/to/the/file.txt").value();
 
         // empty
         {
@@ -231,7 +231,7 @@ public:
     {
         // clear
         {
-            url u = parse_uri("x://y/path/to/the/file.txt");
+            url u = parse_uri("x://y/path/to/the/file.txt").value();
             segments_encoded se = u.encoded_segments();
 
             BOOST_TEST(! se.empty());
@@ -245,7 +245,7 @@ public:
 
         // insert( const_iterator, string_view )
         {
-            url u = parse_uri("x://y/path/file.txt?q#f");
+            url u = parse_uri("x://y/path/file.txt?q#f").value();
             segments_encoded se = u.encoded_segments();
             segments_encoded const& cs(se);
 
@@ -277,7 +277,7 @@ public:
 
         {
             // rootless
-            url u = parse_uri("x:path/file.txt?q#f");
+            url u = parse_uri("x:path/file.txt?q#f").value();
             segments_encoded se = u.encoded_segments();
             segments_encoded const& cs(se);
 
@@ -309,7 +309,7 @@ public:
 
         // insert( const_iterator, FwdIt, FwdIt )
         {
-            url u = parse_uri("x://y/path/file.txt?q#f");
+            url u = parse_uri("x://y/path/file.txt?q#f").value();
             segments_encoded se = u.encoded_segments();
             segments_encoded const& cs(se);
 
@@ -334,7 +334,7 @@ public:
         }
         {
             // rootless
-            url u = parse_uri("x:the/file.txt?q#f");
+            url u = parse_uri("x:the/file.txt?q#f").value();
             segments_encoded se = u.encoded_segments();
             segments_encoded const& cs(se);
 
@@ -360,7 +360,7 @@ public:
 
         // insert( const_iterator, initializer_list )
         {
-            url u = parse_uri("x://y/path/file.txt?q#f");
+            url u = parse_uri("x://y/path/file.txt?q#f").value();
             segments_encoded se = u.encoded_segments();
             segments_encoded const& cs(se);
 
@@ -376,7 +376,7 @@ public:
 
         // erase( const_iterator )
         {
-            url u = parse_uri("x://y/path/to/the/file.txt?q#f");
+            url u = parse_uri("x://y/path/to/the/file.txt?q#f").value();
             segments_encoded se = u.encoded_segments();
 
             se.erase(se.begin() + 1);
@@ -402,7 +402,7 @@ public:
 
         // erase( const_iterator, const_iterator )
         {
-            url u = parse_uri("x://y/home/etc/path/to/the/file.txt?q#f");
+            url u = parse_uri("x://y/home/etc/path/to/the/file.txt?q#f").value();
             segments_encoded se = u.encoded_segments();
 
             se.erase(se.begin(), se.begin() + 2);
@@ -417,7 +417,7 @@ public:
         // replace(iterator, iterator, initializer-list)
         {
             // initializer_list<String>
-            url u = parse_relative_ref("/a/b/c/d/e/f/g");
+            url u = parse_relative_ref("/a/b/c/d/e/f/g").value();
             segments_encoded se = u.encoded_segments();
             auto it = se.replace(
                 se.begin() + 1,
@@ -429,7 +429,7 @@ public:
         }
         {
             // initializer_list<string_view>
-            url u = parse_relative_ref("/a/b/c/d/e/f/g");
+            url u = parse_relative_ref("/a/b/c/d/e/f/g").value();
             segments_encoded se = u.encoded_segments();
             auto it = se.replace(
                 se.begin() + 1,
@@ -444,7 +444,7 @@ public:
 
         // push_back
         {
-            url u = parse_uri("x://y/home/etc/path/to/the/file.txt?q#f");
+            url u = parse_uri("x://y/home/etc/path/to/the/file.txt?q#f").value();
             segments_encoded se = u.encoded_segments();
 
             BOOST_TEST_THROWS(se.push_back("%"), std::invalid_argument);
@@ -454,7 +454,7 @@ public:
 
         // pop_back
         {
-            url u = parse_uri("x://y/path/to/file.txt?q#f");
+            url u = parse_uri("x://y/path/to/file.txt?q#f").value();
             segments_encoded se = u.encoded_segments();
 
             BOOST_TEST(se.size() == 3);

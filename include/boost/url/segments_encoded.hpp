@@ -116,6 +116,15 @@ public:
     //
     //--------------------------------------------
 
+    /** Returns true if this contains an absolute path.
+
+        Absolute paths always start with a
+        forward slash ('/').
+    */
+    inline
+    bool
+    is_absolute() const noexcept;
+
     /** Replace the contents of the container
 
         This function replaces the contents

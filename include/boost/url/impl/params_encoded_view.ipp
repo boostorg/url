@@ -252,29 +252,16 @@ find(
 //
 //------------------------------------------------
 
-params_encoded_view
+result<params_encoded_view>
 parse_query_params(
-    string_view s,
-    error_code& ec) noexcept
-{
-    query_bnf t;
-    if(! bnf::parse_string(
-            s, ec, t))
-        return {};
-    return params_encoded_view(
-        t.str, t.count);
-}
-
-params_encoded_view
-parse_query_params(
-    string_view s)
+    string_view s) noexcept
 {
     error_code ec;
-    auto qp = parse_query_params(s, ec);
-    if(ec.failed())
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
-    return qp;
+    query_bnf t;
+    if(! bnf::parse_string(s, ec, t))
+        return ec;
+    return params_encoded_view(
+        t.str, t.count);
 }
 
 } // urls

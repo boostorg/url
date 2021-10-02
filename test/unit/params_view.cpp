@@ -30,7 +30,7 @@ public:
         // at(Key)
         {
             url_view u = parse_uri_reference(
-                "?k0=0&k1=1&k2=&k3&k4=4444#f");
+                "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
             params_view p = u.params(pa.allocator());
             BOOST_TEST(p.at("k0") == "0");
             BOOST_TEST(p.at("k1") == "1");
@@ -50,7 +50,7 @@ public:
         // size
         {
             url_view u = parse_uri_reference(
-                "?k0=0&k1=1&k2=&k3&k4=4444#f");
+                "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
             params_view p = u.params(pa.allocator());
             BOOST_TEST(! p.empty());
             BOOST_TEST(p.size() == 5);
@@ -76,7 +76,7 @@ public:
         // contains(Key)
         {
             url_view u = parse_uri_reference(
-                "/?a=1&%62=2&c=3&c=4&c=5&d=6&e=7&d=8&f=9#f");
+                "/?a=1&%62=2&c=3&c=4&c=5&d=6&e=7&d=8&f=9#f").value();
             params_view p = u.params(pa.allocator());
             BOOST_TEST(p.count("a") == 1);
             BOOST_TEST(p.count("b") == 1);
@@ -109,7 +109,7 @@ public:
         // operator++(int)
         {
             url_view u = parse_uri_reference(
-                "/?a=1&bb=22&ccc=333&dddd=4444#f");
+                "/?a=1&bb=22&ccc=333&dddd=4444#f").value();
             params_view p = u.params(pa.allocator());
             auto it = p.begin();
             BOOST_TEST((*it).key == "a");
@@ -124,7 +124,7 @@ public:
         // operator*
         {
             url_view u = parse_uri_reference(
-                "/?&x&y=&z=3#f");
+                "/?&x&y=&z=3#f").value();
             params_view p = u.params();
             BOOST_TEST(p.size() == 4);
             auto it = p.begin();
@@ -158,7 +158,7 @@ public:
     {
         {
             params_view u = parse_query_params(
-                "a=1&b=2+2&c=%61%70%70%6c%65").decoded();
+                "a=1&b=2+2&c=%61%70%70%6c%65").value().decoded();
             BOOST_TEST(u.at("b") == "2 2");
             BOOST_TEST(u.at("c") == "apple");
         }

@@ -10,8 +10,10 @@
 // Test that header file is self-contained.
 #include <boost/url/segments_encoded_view.hpp>
 
+#include <boost/url/url_view.hpp>
 #include "test_suite.hpp"
 #include <algorithm>
+#include <iostream>
 #include <sstream>
 #include <utility>
 #include <vector>
@@ -371,6 +373,22 @@ public:
     void
     testExamples()
     {
+        {
+    segments_encoded_view sev = parse_path( "/path/to/file.txt" ).value();
+
+    for( auto it = sev.begin(); it != sev.end(); ++it )
+        std::cout << *it << std::endl;
+        }
+
+        {
+    url_view u = parse_uri( "http://example.com/path/to/file.txt" ).value();
+
+    segments_encoded_view sev = u.encoded_segments();
+
+    std::cout << sev << std::endl;
+        }
+        //---
+
         {
         segments_encoded_view sev = parse_path( "/%70%61%74%68/%74%6f/%66%69%6c%65%2e%74%78%74" ).value();
 

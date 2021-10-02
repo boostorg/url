@@ -213,6 +213,15 @@ segments_encoded(
 {
 }
 
+bool
+segments_encoded::
+is_absolute() const noexcept
+{
+    return
+        u_->len(id_path) != 0 &&
+        u_->s_[u_->offset(id_path)] == '/';
+}
+
 template<class String>
 auto
 segments_encoded::

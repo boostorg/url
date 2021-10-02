@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_DETAIL_IMPL_ANY_QUERY_ITER_HPP
 #define BOOST_URL_DETAIL_IMPL_ANY_QUERY_ITER_HPP
 
-#include <boost/url/value_types.hpp>
+#include <boost/url/params_value_type.hpp>
 
 namespace boost {
 namespace urls {

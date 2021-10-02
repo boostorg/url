@@ -25,27 +25,27 @@ public:
     {
         // copy
         {
-            url u = parse_uri_reference("x://y/z?q#f");
+            url u = parse_uri_reference("x://y/z?q#f").value();
             url u2(u);
             BOOST_TEST(u2.encoded_url() == u.encoded_url());
         }
         {
-            url u = parse_uri_reference("x://y/z?q#f");
-            url u2 = parse_relative_ref("./");
+            url u = parse_uri_reference("x://y/z?q#f").value();
+            url u2 = parse_relative_ref("./").value();
             u2 = u;
             BOOST_TEST(u2.encoded_url() == u.encoded_url());
         }
 
         // move
         {
-            url u = parse_uri_reference("x://y/z?q#f");
+            url u = parse_uri_reference("x://y/z?q#f").value();
             url u2(std::move(u));
             BOOST_TEST(u.empty());
             BOOST_TEST(u2.encoded_url() == "x://y/z?q#f");
         }
         {
-            url u = parse_uri_reference("x://y/z?q#f");
-            url u2 = parse_relative_ref("./");
+            url u = parse_uri_reference("x://y/z?q#f").value();
+            url u2 = parse_relative_ref("./").value();
             u2 = std::move(u);
             BOOST_TEST(u.empty());
             BOOST_TEST(u2.encoded_url() == "x://y/z?q#f");
@@ -67,7 +67,7 @@ public:
         // clear
         {
             url u = parse_uri(
-                "http://example.com/index.htm?q#f");
+                "http://example.com/index.htm?q#f").value();
             BOOST_TEST(u.capacity_in_bytes() > 0);
             BOOST_TEST(! u.empty());
             u.clear();
@@ -85,7 +85,7 @@ public:
         auto const remove = [](
             string_view s1, string_view s2)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.remove_scheme().encoded_url() == s2);
             BOOST_TEST(u.scheme().empty());
@@ -97,7 +97,7 @@ public:
             string_view s1, string_view s2,
             string_view s3, scheme id)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_scheme(s2).encoded_url() == s3);
             BOOST_TEST(u.scheme() == s2);
@@ -108,7 +108,7 @@ public:
             string_view s1, scheme id,
             string_view s2)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_scheme(id).encoded_url() == s2);
             BOOST_TEST(u.scheme_id() == id);
@@ -163,7 +163,7 @@ public:
         auto const remove = [](
             string_view s1, string_view s2)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.remove_user().encoded_url() == s2);
             BOOST_TEST(u.encoded_user().empty());
@@ -174,7 +174,7 @@ public:
             string_view s1, string_view s2,
                 string_view s3)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_user(s2).encoded_url() == s3);
             BOOST_TEST(u.user() == s2);
@@ -185,7 +185,7 @@ public:
             string_view s1, string_view s2,
                 string_view s3)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(u.set_encoded_user(
                 s2).encoded_url() == s3);
             BOOST_TEST(u.encoded_user() == s2);
@@ -305,7 +305,7 @@ public:
         auto const remove = [](
             string_view s1, string_view s2)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.remove_password().encoded_url() == s2);
             BOOST_TEST(u.encoded_password() == "");
@@ -316,7 +316,7 @@ public:
             string_view s1, string_view s2,
                 string_view s3)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_password(s2).encoded_url() == s3);
             BOOST_TEST(u.password() == s2);
@@ -327,7 +327,7 @@ public:
             string_view s1, string_view s2,
                 string_view s3)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(u.set_encoded_password(
                 s2).encoded_url() == s3);
             BOOST_TEST(u.encoded_password() == s2);
@@ -430,7 +430,7 @@ public:
         auto const remove = [](
             string_view s1, string_view s2)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(u.remove_userinfo().encoded_url() == s2);
             BOOST_TEST(u.encoded_userinfo().empty());
             BOOST_TEST(u.userinfo().empty());
@@ -440,7 +440,7 @@ public:
         auto const set = [](string_view s1,
             string_view s2, string_view s3)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_userinfo(s2).encoded_url() == s3);
             BOOST_TEST(u.userinfo() == s2);
@@ -450,7 +450,7 @@ public:
         auto const enc = [](string_view s1,
             string_view s2, string_view s3)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_encoded_userinfo(s2).encoded_url() == s3);
             BOOST_TEST(u.encoded_userinfo() == s2);
@@ -592,7 +592,7 @@ public:
             string_view s2, string_view s3,
             host_type ht = host_type::name)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_encoded_host(s2).encoded_url() == s3);
             BOOST_TEST(u.encoded_host() == s2);
@@ -601,7 +601,7 @@ public:
 
         auto const bad = [](string_view s1, string_view s2)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST_THROWS(u.set_encoded_host(s2),
                 std::invalid_argument);
         };
@@ -693,7 +693,7 @@ public:
         auto const remove = [](
             string_view s1, string_view s2)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.remove_port().encoded_url() == s2);
             BOOST_TEST(! u.has_port());
@@ -704,7 +704,7 @@ public:
         auto const setn = [](string_view s1,
             std::uint16_t n, string_view s2)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_port(n).encoded_url() == s2);
             BOOST_TEST(u.has_port());
@@ -715,7 +715,7 @@ public:
             std::uint16_t n, string_view s2,
                 string_view s3)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_port(s2).encoded_url() == s3);
             BOOST_TEST(u.has_port());
@@ -834,7 +834,7 @@ public:
         auto const remove = [](
             string_view s1, string_view s2)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(u.remove_authority().encoded_url() == s2);
             BOOST_TEST(u.encoded_authority().empty());
             BOOST_TEST(! u.has_authority());
@@ -843,7 +843,7 @@ public:
         auto const set = [](string_view s1,
             string_view s2, string_view s3)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_encoded_authority(s2).encoded_url() == s3);
             BOOST_TEST(u.encoded_authority() == s2);
@@ -958,7 +958,7 @@ public:
         auto const remove = [](
             string_view s1, string_view s2)
         {
-            url u = parse_uri_reference(s1);
+            url u = parse_uri_reference(s1).value();
             BOOST_TEST(u.remove_origin().encoded_url() == s2);
             BOOST_TEST(u.encoded_origin().empty());
             BOOST_TEST(! u.has_authority());
@@ -986,7 +986,7 @@ public:
         // encoded_segment
         {
             url u = parse_uri(
-                "http://www.example.com/path/to/file.txt");
+                "http://www.example.com/path/to/file.txt").value();
             BOOST_TEST(u.encoded_segment(0) == "path");
             BOOST_TEST(u.encoded_segment(1) == "to");
             BOOST_TEST(u.encoded_segment(2) == "file.txt");
@@ -996,14 +996,14 @@ public:
         // set_encoded_path
         {
             // empty
-            url u = parse_uri("x://y/path/to/file.txt?q#f");
+            url u = parse_uri("x://y/path/to/file.txt?q#f").value();
             u.set_encoded_path("");
             BOOST_TEST(u.encoded_path() == "");
             BOOST_TEST(u.encoded_url() == "x://y?q#f");
         }
         {
             // path-abempty
-            url u = parse_uri("x://y/path/to/file.txt?q#f");
+            url u = parse_uri("x://y/path/to/file.txt?q#f").value();
             u.set_encoded_path("/x");
             BOOST_TEST(u.encoded_path() == "/x");
             BOOST_TEST(u.encoded_url() == "x://y/x?q#f");
@@ -1012,7 +1012,7 @@ public:
         }
         {
             // path-absolute
-            url u = parse_relative_ref("/path/to/file.txt");
+            url u = parse_relative_ref("/path/to/file.txt").value();
             u.set_encoded_path("/home/file.txt");
             BOOST_TEST(u.encoded_path() == "/home/file.txt");
             BOOST_TEST(u.encoded_url() == "/home/file.txt");
@@ -1023,7 +1023,7 @@ public:
         }
         {
             // path-rootless
-            url u = parse_uri("x:mailto");
+            url u = parse_uri("x:mailto").value();
             u.set_encoded_path("file.txt");
             BOOST_TEST(u.encoded_path() == "file.txt");
             BOOST_TEST(u.encoded_url() == "x:file.txt");
@@ -1037,7 +1037,7 @@ public:
         }
         {
             // path-noscheme
-            url u = parse_relative_ref("mailto");
+            url u = parse_relative_ref("mailto").value();
             u.set_encoded_path("file.txt");
             BOOST_TEST(u.encoded_path() == "file.txt");
             BOOST_TEST(u.encoded_url() == "file.txt");
@@ -1054,7 +1054,7 @@ public:
                 string_view arg,
                 string_view match)
             {
-                url u = parse_uri_reference(s0);
+                url u = parse_uri_reference(s0).value();
                 u.set_encoded_path(arg);
                 BOOST_TEST(
                     u.encoded_url() == match);
@@ -1096,7 +1096,7 @@ public:
                 string_view arg,
                 string_view match)
             {
-                url u = parse_uri_reference(s0);
+                url u = parse_uri_reference(s0).value();
                 u.set_path(arg);
                 BOOST_TEST(
                     u.encoded_url() == match);
@@ -1146,7 +1146,7 @@ public:
     testOstream()
     {
         url u = parse_uri(
-            "http://example.com/index.htm?q#f");
+            "http://example.com/index.htm?q#f").value();
         std::stringstream ss;
         ss << u;
         BOOST_TEST(ss.str() ==

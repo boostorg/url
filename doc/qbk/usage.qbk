@@ -4,7 +4,7 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-    Official repository: https://github.com/vinniefalco/uri
+    Official repository: https://github.com/CPPAlliance/url
 ]
 
 [section Usage]
@@ -26,5 +26,10 @@ ALPHA (letters), CR (carriage return), DIGIT (decimal digits), DQUOTE (double
 quote), HEXDIG (hexadecimal digits), LF (line feed), and SP (space).  The
 complete URI syntax is described in
 __RFC3986__.
+
+[heading Return Type boost::system::result]
+
+In many places, functions in the library have a return type which uses the
+__result__ alias template.
 
 [endsect]

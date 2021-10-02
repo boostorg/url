@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_VALUE_TYPES_HPP
-#define BOOST_URL_VALUE_TYPES_HPP
+#ifndef BOOST_URL_PARAMS_VALUE_TYPE_HPP
+#define BOOST_URL_PARAMS_VALUE_TYPE_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string.hpp>
