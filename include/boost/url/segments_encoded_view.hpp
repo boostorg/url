@@ -20,6 +20,10 @@
 namespace boost {
 namespace urls {
 
+#ifndef BOOST_URL_DECL
+class url_view;
+#endif
+
 /** A bidirectional range of read-only encoded path segments
 
     Objects of this type represent an iterable
@@ -56,7 +60,6 @@ class segments_encoded_view
     string_view s_;
     std::size_t n_;
 
-    friend class segments_view;
     friend class url_view;
 
     inline

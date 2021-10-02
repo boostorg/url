@@ -16,7 +16,7 @@
 #include <boost/url/rfc/paths_bnf.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/detail/except.hpp>
-#include <iostream>
+#include <ostream>
 
 namespace boost {
 namespace urls {

@@ -202,7 +202,7 @@ public:
 
     inline
     string_value&
-    operator=(string_value const& other) noexcept;
+    operator=(string_value const& other) & noexcept;
 };
 
 } // urls
