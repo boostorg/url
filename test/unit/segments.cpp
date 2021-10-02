@@ -427,13 +427,28 @@ public:
 
         // replace(iterator, iterator, initializer-list)
         {
+            // initializer_list<String>
             url u = parse_relative_ref("/a/b/c/d/e/f/g");
-            auto se = u.segments(p_.allocator());
-            auto it = se.replace(
-                se.begin() + 1,
-                se.begin() + 3,
+            segments ss = u.segments();
+            auto it = ss.replace(
+                ss.begin() + 1,
+                ss.begin() + 3,
                 { "x", "y", "z" });
-            BOOST_TEST(it == se.begin() + 1);
+            BOOST_TEST(it == ss.begin() + 1);
+            BOOST_TEST(u.encoded_path() ==
+                "/a/x/y/z/d/e/f/g");
+        }
+        {
+            // initializer_list<string_view>
+            url u = parse_relative_ref("/a/b/c/d/e/f/g");
+            segments ss = u.segments();
+            auto it = ss.replace(
+                ss.begin() + 1,
+                ss.begin() + 3, {
+                    string_view("x"),
+                    string_view("y"),
+                    string_view("z") });
+            BOOST_TEST(it == ss.begin() + 1);
             BOOST_TEST(u.encoded_path() ==
                 "/a/x/y/z/d/e/f/g");
         }

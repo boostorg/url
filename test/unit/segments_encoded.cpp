@@ -414,6 +414,34 @@ public:
             BOOST_TEST(u.encoded_url() == "x://y?q#f");
         }
 
+        // replace(iterator, iterator, initializer-list)
+        {
+            // initializer_list<String>
+            url u = parse_relative_ref("/a/b/c/d/e/f/g");
+            segments_encoded se = u.encoded_segments();
+            auto it = se.replace(
+                se.begin() + 1,
+                se.begin() + 3,
+                { "x", "y", "z" });
+            BOOST_TEST(it == se.begin() + 1);
+            BOOST_TEST(u.encoded_path() ==
+                "/a/x/y/z/d/e/f/g");
+        }
+        {
+            // initializer_list<string_view>
+            url u = parse_relative_ref("/a/b/c/d/e/f/g");
+            segments_encoded se = u.encoded_segments();
+            auto it = se.replace(
+                se.begin() + 1,
+                se.begin() + 3, {
+                    string_view("x"),
+                    string_view("y"),
+                    string_view("z") });
+            BOOST_TEST(it == se.begin() + 1);
+            BOOST_TEST(u.encoded_path() ==
+                "/a/x/y/z/d/e/f/g");
+        }
+
         // push_back
         {
             url u = parse_uri("x://y/home/etc/path/to/the/file.txt?q#f");

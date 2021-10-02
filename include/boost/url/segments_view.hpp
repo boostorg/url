@@ -48,6 +48,7 @@ public:
 #else
     class iterator;
 #endif
+
     /** The type of value returned when dereferencing an iterator.
     */
     using value_type = string_value;
