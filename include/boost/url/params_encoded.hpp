@@ -11,6 +11,7 @@
 #define BOOST_URL_PARAMS_ENCODED_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/params.hpp>
 #include <boost/url/params_value_type.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/detail/parts_base.hpp>
@@ -77,6 +78,13 @@ private:
     assign(FwdIt first, FwdIt last,
         std::input_iterator_tag) = delete;
 public:
+
+    /** Return a view of this container as percent-decoded query parameters
+    */
+    template<class Allocator =
+        std::allocator<char>>
+    params
+    decoded(Allocator const& alloc = {}) const;
 
     //--------------------------------------------
     //

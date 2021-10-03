@@ -11,6 +11,7 @@
 #define BOOST_URL_SEGMENTS_ENCODED_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/segments.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <initializer_list>
@@ -124,6 +125,12 @@ public:
     inline
     bool
     is_absolute() const noexcept;
+
+    /** Return this container as percent-decoded segments
+    */
+    template<class Allocator = std::allocator<char> >
+    segments
+    decoded(Allocator const& alloc = {}) const;
 
     /** Replace the contents of the container
 

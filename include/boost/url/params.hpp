@@ -23,6 +23,7 @@ namespace urls {
 
 #ifndef BOOST_URL_DOCS
 class url;
+class params_encoded;
 #endif
 
 /** A random access container of modifiable, percent-decoded query parameters.
@@ -31,6 +32,7 @@ class params
     : private detail::parts_base
 {
     friend class url;
+    friend class params_encoded;
 
     url* u_ = nullptr;
     string_value::allocator a_;

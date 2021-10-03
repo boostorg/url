@@ -222,6 +222,15 @@ is_absolute() const noexcept
         u_->s_[u_->offset(id_path)] == '/';
 }
 
+template<class Allocator>
+segments
+segments_encoded::
+decoded(Allocator const& alloc) const
+{
+    return segments(*u_, alloc);
+}
+
+
 template<class String>
 auto
 segments_encoded::

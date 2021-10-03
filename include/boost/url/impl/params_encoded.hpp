@@ -269,6 +269,14 @@ assign(FwdIt first, FwdIt last,
             first, last));
 }
 
+template<class Allocator>
+params
+params_encoded::
+decoded(Allocator const& alloc) const
+{
+    return params(*u_, alloc);
+}
+
 //------------------------------------------------
 //
 // Element Access

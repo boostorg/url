@@ -22,7 +22,7 @@ class error_test
 public:
     void check(error e)
     {
-        auto const ec = make_error_code(e);
+        auto const ec = BOOST_URL_ERR(e);
         BOOST_TEST(ec.category().name() != nullptr);
         BOOST_TEST(! ec.message().empty());
         BOOST_TEST(ec.category().default_error_condition(

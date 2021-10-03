@@ -115,7 +115,7 @@ public:
     */
     using difference_type = std::ptrdiff_t;
 
-    /** Return a view of this container as percent-decoded segments
+    /** Return a view of this container as percent-decoded query parameters
 
         This function returns a new view over the
         same underlying character buffer where each
