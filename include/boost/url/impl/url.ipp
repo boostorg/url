@@ -1488,6 +1488,16 @@ remove_query() noexcept
 }
 
 //------------------------------------------------
+
+url&
+url::
+remove_fragment() noexcept
+{
+    resize_impl(id_frag, 0);
+    return *this;
+}
+
+//------------------------------------------------
 //
 // implementation
 //

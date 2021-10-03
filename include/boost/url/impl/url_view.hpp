@@ -13,6 +13,143 @@
 namespace boost {
 namespace urls {
 
+url_view&
+url_view::
+base() noexcept
+{
+    return *this;
+}
+    
+url_view const&
+url_view::
+base() const noexcept
+{
+    return *this;
+}
+
+// return offset of id
+BOOST_URL_CONSTEXPR
+auto
+url_view::
+offset(int id) const noexcept ->
+    pos_t
+{
+    return
+        id == id_scheme ?
+        zero_ : offset_[id];
+}
+
+// return length of part
+BOOST_URL_CONSTEXPR
+auto
+url_view::
+len(int id) const noexcept ->
+    pos_t
+{
+    return
+        offset(id + 1) -
+        offset(id);
+}
+
+// return id as string
+BOOST_URL_CONSTEXPR
+string_view
+url_view::
+get(int id) const noexcept
+{
+    return {
+        cs_ + offset(id), len(id) };
+}
+
+// return [first, last) as string
+BOOST_URL_CONSTEXPR
+string_view
+url_view::
+get(int first,
+    int last) const noexcept
+{
+    return { cs_ + offset(first),
+        offset(last) - offset(first) };
+}
+
+// return size of table in bytes
+std::size_t
+url_view::
+table_bytes() const noexcept
+{
+    std::size_t n = 0;
+    if(nseg_ > 1)
+        n += nseg_ - 1;
+    if(nparam_ > 1)
+        n += nparam_ - 1;
+    return n * sizeof(pos_t);
+}
+
+// return length of [first, last)
+auto
+url_view::
+len(
+    int first,
+    int last) const noexcept ->
+        pos_t
+{
+    BOOST_ASSERT(first <= last);
+    BOOST_ASSERT(last <= id_end);
+    return offset(last) - offset(first);
+}
+
+// change id to size n
+void
+url_view::
+set_size(
+    int id,
+    pos_t n) noexcept
+{
+    auto d = n - len(id);
+    for(auto i = id + 1;
+        i <= id_end; ++i)
+        offset_[i] += d;
+}
+
+// trim id to size n,
+// moving excess into id+1
+void
+url_view::
+split(
+    int id,
+    std::size_t n) noexcept
+{
+    BOOST_ASSERT(id < id_end - 1);
+    BOOST_ASSERT(n <= len(id));
+    offset_[id + 1] = offset(id) + n;
+}
+
+// add n to [first, last]
+void
+url_view::
+adjust(
+    int first,
+    int last,
+    std::size_t n) noexcept
+{
+    for(int i = first;
+            i <= last; ++i)
+        offset_[i] += n;
+}
+
+// set [first, last) offset
+void
+url_view::
+collapse(
+    int first,
+    int last,
+    std::size_t n) noexcept
+{
+    for(int i = first + 1;
+            i < last; ++i)
+        offset_[i] = n;
+}
+
 //------------------------------------------------
 //
 // Query

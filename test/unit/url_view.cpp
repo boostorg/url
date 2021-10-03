@@ -622,36 +622,48 @@ public:
     void
     testFragment()
     {
+        auto const good = [](
+            string_view s,
+            char const* encoded = nullptr,
+            string_view plain = {})
         {
-            auto u = parse_uri("http://").value();
-            BOOST_TEST(! u.has_fragment());
-            BOOST_TEST(u.encoded_fragment() == "");
-            BOOST_TEST(u.fragment() == "");
-        }
+            result<url_view> r =
+                parse_uri_reference(s);
+            if(! BOOST_TEST(r))
+                return;
+            url_view u = r.value();
+            if(encoded)
+            {
+                BOOST_TEST(u.has_fragment());
+                BOOST_TEST(u.encoded_fragment() ==
+                    string_view(encoded));
+                BOOST_TEST(u.fragment() == plain);
+            }
+            else
+            {
+                BOOST_TEST(! u.has_fragment());
+            }
+        };
+
+        auto const bad = [](
+            string_view s)
         {
-            auto u = parse_uri("http://#").value();
-            BOOST_TEST(u.has_fragment());
-            BOOST_TEST(u.encoded_fragment() == "");
-            BOOST_TEST(u.fragment() == "");
-        }
-        {
-            auto u = parse_uri("http://#x").value();
-            BOOST_TEST(u.has_fragment());
-            BOOST_TEST(u.encoded_fragment() == "x");
-            BOOST_TEST(u.fragment() == "x");
-        }
-        {
-            auto u = parse_uri("http://#x%23").value();
-            BOOST_TEST(u.has_fragment());
-            BOOST_TEST(u.encoded_fragment() == "x%23");
-            BOOST_TEST(u.fragment() == "x#");
-        }
-        {
-            auto u = parse_uri("http://#x%25").value();
-            BOOST_TEST(u.has_fragment());
-            BOOST_TEST(u.encoded_fragment() == "x%25");
-            BOOST_TEST(u.fragment() == "x%");
-        }
+            result<url_view> r =
+                parse_uri_reference(s);
+            BOOST_TEST(r.has_error());
+        };
+
+        good("");
+        good("#", "", "");
+        good("/#", "", "");
+        good("/#A", "A", "A");
+        good("/#%41", "%41", "A");
+        good("/?#%41", "%41", "A");
+        good("#/?:@!$&'()*+,;=",
+              "/?:@!$&'()*+,;=",
+              "/?:@!$&'()*+,;=");
+
+        bad("#%%");
     }
 
     void

@@ -1121,6 +1121,12 @@ public:
     //
     //--------------------------------------------
 
+    /** Remove the fragment.
+    */
+    BOOST_URL_DECL
+    url&
+    remove_fragment() noexcept;
+
     /** Set the fragment.
 
         Sets the fragment of the URL to the specified

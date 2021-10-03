@@ -101,152 +101,59 @@ protected:
     urls::scheme scheme_ =
         urls::scheme::none;
 
-    struct shared_impl;
-    friend class static_url_base;
     friend class url;
+    friend class static_url_base;
+    struct shared_impl;
 
-    url_view& base() noexcept
-    {
-        return *this;
-    }
-    
-    url_view const& base() const noexcept
-    {
-        return *this;
-    }
+    inline url_view& base() noexcept;
+    inline url_view const& base() const noexcept;
+    BOOST_URL_CONSTEXPR pos_t offset(
+        int id) const noexcept;
+    BOOST_URL_CONSTEXPR pos_t len(
+        int id) const noexcept;
+    BOOST_URL_CONSTEXPR string_view get(
+        int id) const noexcept;
+    BOOST_URL_CONSTEXPR string_view get(
+        int first, int last) const noexcept;
+    inline std::size_t table_bytes() const noexcept;
+    inline pos_t len(int first, int last) const noexcept;
+    inline void set_size(int id, pos_t n) noexcept;
+    inline void split(int id, std::size_t n) noexcept;
+    inline void adjust(int first, int last,
+        std::size_t n) noexcept;
+    inline void collapse(int first, int last,
+        std::size_t n) noexcept;
 
-    // return offset of id
-    BOOST_URL_CONSTEXPR
-    pos_t
-    offset(int id) const noexcept
-    {
-        return
-            id == id_scheme ?
-            zero_ : offset_[id];
-    }
-
-    // return size of table in bytes
-    std::size_t
-    table_bytes() const noexcept
-    {
-        std::size_t n = 0;
-        if(nseg_ > 1)
-            n += nseg_ - 1;
-        if(nparam_ > 1)
-            n += nparam_ - 1;
-        return n * sizeof(pos_t);
-    }
-
-    // return length of part
-    BOOST_URL_CONSTEXPR
-    pos_t
-    len(int id) const noexcept
-    {
-        return
-            offset(id + 1) -
-            offset(id);
-    }
-
-    // return length of [first, last)
-    pos_t
-    len(
-        int first,
-        int last) const noexcept
-    {
-        BOOST_ASSERT(first <= last);
-        BOOST_ASSERT(last <= id_end);
-        return offset(last) - offset(first);
-    }
-
-    // return id as string
-    BOOST_URL_CONSTEXPR
-    string_view
-    get(int id) const noexcept
-    {
-        return {
-            cs_ + offset(id), len(id) };
-    }
-
-    // return [first, last) as string
-    BOOST_URL_CONSTEXPR
-    string_view
-    get(int first,
-        int last) const noexcept
-    {
-        return { cs_ + offset(first),
-            offset(last) - offset(first) };
-    }
-
-    // change id to size n
-    void
-    set_size(
-        int id,
-        pos_t n) noexcept
-    {
-        auto d = n - len(id);
-        for(auto i = id + 1;
-            i <= id_end; ++i)
-            offset_[i] += d;
-    }
-
-    // trim id to size n,
-    // moving excess into id+1
-    void
-    split(
-        int id,
-        std::size_t n) noexcept
-    {
-        BOOST_ASSERT(id < id_end - 1);
-        BOOST_ASSERT(n <= len(id));
-        offset_[id + 1] = offset(id) + n;
-    }
-
-    // add n to [first, last]
-    void
-    adjust(
-        int first,
-        int last,
-        std::size_t n) noexcept
-    {
-        for(int i = first;
-                i <= last; ++i)
-            offset_[i] += n;
-    }
-
-    // set [first, last) offset
-    void
-    collapse(
-        int first,
-        int last,
-        std::size_t n) noexcept
-    {
-        for(int i = first + 1;
-                i < last; ++i)
-            offset_[i] = n;
-    }
-
-    explicit
-    url_view(
-        char const* cs) noexcept;
-
-    url_view(
-        url_view const& u,
+    explicit inline url_view(char const* cs) noexcept;
+    inline url_view(url_view const& u,
         char const* cs) noexcept;
 
 public:
     // Container
 
     using value_type        = char;
-    using pointer           = char*;
+    using pointer           = char const*;
     using const_pointer     = char const*;
-    using reference         = char&;
+    using reference         = char const&;
     using const_reference   = char const&;
     using const_iterator    = char const*;
-    using iterator          = const_iterator;
+    using iterator          = char const*;
     using size_type         = std::size_t;
     using difference_type   = std::ptrdiff_t;
 
+    //--------------------------------------------
+    //
+    // Special Members
+    //
+    //--------------------------------------------
+
     /** Destructor
+
+        Any params, segments, or iterators
+        which reference this object are
+        invalidated. The ownership and
+        lifetime of the underlying character
+        buffer remains unchanged.
     */
     BOOST_URL_DECL
     ~url_view();
@@ -1637,7 +1544,7 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if this contains a fragment
+    /** Return true if a fragment exists.
 
         This function returns true if this
         contains a fragment.
@@ -1649,9 +1556,12 @@ public:
         fragment-part   = [ "#" fragment ]
         @endcode
 
+        @par Exception Safety
+        Throws nothing.
+
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
-            >3.5. Fragment</a>
+            >3.5. Fragment (rfc3986)</a>
 
         @see
             @ref encoded_fragment,
@@ -1661,10 +1571,17 @@ public:
     bool
     has_fragment() const noexcept;
 
-    /** Return the fragment
+    /** Return the fragment.
 
         This function returns the fragment as a
         percent-encoded string.
+
+        @par BNF
+        @code
+        fragment        = *( pchar / "/" / "?" )
+
+        fragment-part   = [ "#" fragment ]
+        @endcode
 
         @par Exception Safety
         Throws nothing.
@@ -1680,8 +1597,8 @@ public:
     /** Return the fragment.
 
         This function returns the fragment as a
-        string with percent-decoding applied, using
-        the optionally specified allocator.
+        string with percent-decoding applied,
+        using the optionally specified allocator.
 
         @par BNF
         @code
@@ -1692,6 +1609,10 @@ public:
 
         @par Exception Safety
         Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
+            >3.5. Fragment (rfc3986)</a>
 
         @param a An optional allocator the returned
         string will use. If this parameter is omitted,
@@ -1712,9 +1633,11 @@ public:
     fragment(
         Allocator const& a = {}) const
     {
+        pct_decode_opts opt;
+        opt.plus_to_space = false;
         return detail::pct_decode_unchecked(
             encoded_fragment(),
-            decoded_[id_frag], {}, a);
+            decoded_[id_frag], opt, a);
     }
 
     //--------------------------------------------
