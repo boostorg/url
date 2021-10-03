@@ -273,7 +273,7 @@ assign(
 //
 //------------------------------------------------
 
-string_view const
+string_view
 segments_encoded::
 at(std::size_t i) const
 {

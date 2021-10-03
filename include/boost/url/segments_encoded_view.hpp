@@ -45,7 +45,7 @@ class url_view;
     from a path stored in a string call one of
     the parsing functions (see below).
 
-    @par Example
+    @par Examples
 
     A path string is parsed into encoded
     segments, then each segment is printed to
@@ -72,8 +72,8 @@ class url_view;
 
     @par Complexity
 
-    Iterator increment or decrement runs in linear
-    time on the size of the segment.
+    Iterator increment or decrement runs in
+    linear time on the size of the segment.
     All other operations run in constant time.
     No operations allocate memory.
 
@@ -99,7 +99,7 @@ class segments_encoded_view
 
 public:
 #ifdef BOOST_URL_DOCS
-    /** A bidirectional read-only iterator to an encoded path segment.
+    /** A read-only bidirectional iterator to an encoded path segment.
     */
     using iterator = __see_below__;
 #else
@@ -118,11 +118,11 @@ public:
     */
     using const_reference = string_view;
 
-    /** The unsigned integer type used to represent size.
+    /** An unsigned integer type used to represent size.
     */
     using size_type = std::size_t;
 
-    /** The signed integer type used to represent differences.
+    /** A signed integer type used to represent differences.
     */
     using difference_type = std::ptrdiff_t;
 
@@ -199,13 +199,13 @@ public:
     /** Return the first element.
     */
     inline
-    string_view const
+    string_view
     front() const noexcept;
 
     /** Return the last element.
     */
     inline
-    string_view const
+    string_view
     back() const noexcept;
 
     //--------------------------------------------

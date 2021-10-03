@@ -144,14 +144,14 @@ is_absolute() const noexcept
 //
 //------------------------------------------------
 
-string_view const
+string_view
 segments_encoded_view::
 front() const noexcept
 {
     return *begin();
 }
 
-string_view const
+string_view
 segments_encoded_view::
 back() const noexcept
 {

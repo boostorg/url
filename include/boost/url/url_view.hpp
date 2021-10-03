@@ -1629,7 +1629,7 @@ public:
     */
     BOOST_URL_DECL
     params_encoded_view
-    params_encoded() const noexcept;
+    encoded_params() const noexcept;
 
     //--------------------------------------------
     //
@@ -1770,8 +1770,6 @@ private:
 
     @param s The string to parse
 
-    @param ec Set to the error, if any occurred
-
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.3"
         >4.3. Absolute URI (rfc3986)</a>
@@ -1815,8 +1813,6 @@ parse_absolute_uri(
 
     @param s The string to parse
 
-    @param ec Set to the error, if any occurred
-
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
         >3. Syntax Components (rfc3986)</a>
@@ -1859,8 +1855,6 @@ parse_uri(
     @return A view to the parsed URL
 
     @param s The string to parse
-
-    @param ec Set to the error, if any occurred
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
@@ -1913,8 +1907,6 @@ parse_relative_ref(
     @return A view to the parsed URL
 
     @param s The string to parse
-
-    @param ec Set to the error, if any occurred
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"

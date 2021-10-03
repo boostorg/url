@@ -32,7 +32,8 @@ parse(
     if(it == end)
     {
         // expected address
-        ec = error::incomplete;
+        ec = BOOST_URL_ERR(
+            error::incomplete);
         return false;
     }
     if(*it != 'v')

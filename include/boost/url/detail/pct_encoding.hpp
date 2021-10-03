@@ -59,7 +59,8 @@ decode_hex_octet(
     if(end - it < 2)
     {
         // missing HEXDIG
-        ec = error::missing_pct_hexdig;
+        ec = BOOST_URL_ERR(
+            error::missing_pct_hexdig);
         return 0;
     }
     auto const d0 =
@@ -70,7 +71,8 @@ decode_hex_octet(
         d1 == -1)
     {
         // expected HEXDIG
-        ec = error::bad_pct_hexdig;
+        ec = BOOST_URL_ERR(
+            error::bad_pct_hexdig);
         return 0;
     }
     it += 2;
@@ -109,7 +111,8 @@ pct_decode_size(
             *it == '\0')
         {
             // null in input
-            ec = error::illegal_null;
+            ec = BOOST_URL_ERR(
+                error::illegal_null);
             break;
         }
         if(cs(*it))
@@ -131,21 +134,24 @@ pct_decode_size(
                 c == '\0')
             {
                 // escaped null
-                ec = error::illegal_null;
+                ec = BOOST_URL_ERR(
+                    error::illegal_null);
                 break;
             }
             if( opt.non_normal_is_error &&
                 cs(c))
             {
                 // escaped unreserved char
-                ec = error::non_canonical;
+                ec = BOOST_URL_ERR(
+                    error::non_canonical);
                 break;
             }
             ++n;
             continue;
         }
         // reserved character in input
-        ec = error::illegal_reserved_char;
+        ec = BOOST_URL_ERR(
+            error::illegal_reserved_char);
         break;
     }
     return n;
@@ -219,26 +225,30 @@ skip:
         if(it == end)
         {
             // missing HEXDIG
-            ec = error::missing_pct_hexdig;
+            ec = BOOST_URL_ERR(
+                error::missing_pct_hexdig);
             return false;
         }
         if(hexdig_value(*it) == -1)
         {
             // expected HEXDIG
-            ec = error::bad_pct_hexdig;
+            ec = BOOST_URL_ERR(
+                error::bad_pct_hexdig);
             return false;
         }
         ++it;
         if(it == end)
         {
             // missing HEXDIG
-            ec = error::missing_pct_hexdig;
+            ec = BOOST_URL_ERR(
+                error::missing_pct_hexdig);
             return false;
         }
         if(hexdig_value(*it) == -1)
         {
             // expected HEXDIG
-            ec = error::bad_pct_hexdig;
+            ec = BOOST_URL_ERR(
+                error::bad_pct_hexdig);
             return false;
         }
         ++n;

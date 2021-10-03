@@ -71,4 +71,13 @@
 # define BOOST_URL_CONSTEXPR constexpr
 #endif
 
+// Add source location to error codes
+#ifdef BOOST_URL_NO_SOURCE_LOCATION
+# define BOOST_URL_ERR(ev) (ev)
+#else
+# define BOOST_URL_ERR(ev) (::boost::system::error_code( (ev), [] { \
+         static constexpr auto loc(BOOST_CURRENT_LOCATION); \
+         return &loc; }()))
+#endif
+
 #endif

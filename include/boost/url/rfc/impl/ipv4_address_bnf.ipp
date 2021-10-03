@@ -36,13 +36,15 @@ struct dec_octet
         if(it == end)
         {
             // expected DIGIT
-            ec = error::incomplete;
+            ec = BOOST_URL_ERR(
+                error::incomplete);
             return false;
         }
         if(! dc(*it))
         {
             // not a digit
-            ec = error::bad_digit;
+            ec = BOOST_URL_ERR(
+                error::bad_digit);
             return false;
         }
         unsigned v = *it - '0';
@@ -64,7 +66,8 @@ struct dec_octet
         if(v == 0)
         {
             // bad leading '0'
-            ec = error::bad_leading_zero;
+            ec = BOOST_URL_ERR(
+                error::bad_leading_zero);
             return false;
         }
         v = (10 * v) + *it - '0';
@@ -86,14 +89,16 @@ struct dec_octet
         if(v > 25)
         {
             // out of range
-            ec = error::bad_octet;
+            ec = BOOST_URL_ERR(
+                error::bad_octet);
             return false;
         }
         v = (10 * v) + *it - '0';
         if(v > 255)
         {
             // out of range
-            ec = error::bad_octet;
+            ec = BOOST_URL_ERR(
+                error::bad_octet);
             return false;
         }
         ++it;

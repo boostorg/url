@@ -28,7 +28,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params_encoded_view p = u.params_encoded();
+            params_encoded_view p = u.encoded_params();
             BOOST_TEST(p.at("k0") == "0");
             BOOST_TEST(p.at("k1") == "1");
             BOOST_TEST(p.at("k2") == "");
@@ -48,13 +48,13 @@ public:
         {
             url_view u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params_encoded_view p = u.params_encoded();
+            params_encoded_view p = u.encoded_params();
             BOOST_TEST(! p.empty());
             BOOST_TEST(p.size() == 5);
         }
         {
             url_view u;
-            params_encoded_view p = u.params_encoded();
+            params_encoded_view p = u.encoded_params();
             BOOST_TEST(p.empty());
             BOOST_TEST(p.size() == 0);
         }
@@ -74,7 +74,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "/?a=1&%62=2&c=3&c=4&c=5&d=6&e=7&d=8&f=9#f").value();
-            params_encoded_view p = u.params_encoded();
+            params_encoded_view p = u.encoded_params();
             BOOST_TEST(p.count("a") == 1);
             BOOST_TEST(p.count("%62") == 1); // pct-encoded
             BOOST_TEST(p.count("c") == 3);
@@ -108,7 +108,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "/?a=1&bb=22&ccc=333&dddd=4444#f").value();
-            params_encoded_view p = u.params_encoded();
+            params_encoded_view p = u.encoded_params();
             auto it = p.begin();
             BOOST_TEST((*it).key == "a");
             BOOST_TEST((*++it).key == "bb");
@@ -124,7 +124,7 @@ public:
             url_view u = parse_uri_reference(
                 "/?&x&y=&z=3#f").value();
             params_encoded_view p =
-                u.params_encoded();
+                u.encoded_params();
             BOOST_TEST(p.size() == 4);
             auto it = p.begin();
 

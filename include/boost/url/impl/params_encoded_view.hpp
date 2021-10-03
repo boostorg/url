@@ -99,21 +99,6 @@ params_encoded_view(
 {
 }
 
-params_encoded_view::
-~params_encoded_view() noexcept = default;
-
-params_encoded_view::
-params_encoded_view() noexcept = default;
-
-params_encoded_view::
-params_encoded_view(
-    params_encoded_view const& other) noexcept = default;
-
-params_encoded_view&
-params_encoded_view::
-operator=(
-    params_encoded_view const& other) noexcept = default;
-
 template<class Allocator>
 params_view
 params_encoded_view::

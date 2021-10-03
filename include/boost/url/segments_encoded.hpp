@@ -300,7 +300,7 @@ public:
         element.
     */
     inline
-    string_view const
+    string_view
     at(std::size_t i) const;
 
     /** Return an element

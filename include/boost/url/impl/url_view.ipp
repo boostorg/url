@@ -423,7 +423,7 @@ encoded_query() const noexcept
 
 params_encoded_view
 url_view::
-params_encoded() const noexcept
+encoded_params() const noexcept
 {
     auto s = get(id_query);
     if(s.empty())

@@ -66,7 +66,8 @@ increment(
     if(! parse(it, end, ec, '&'))
     {
         // end of list
-        ec = error::end;
+        ec = BOOST_URL_ERR(
+            error::end);
         return false;
     }
 

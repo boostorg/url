@@ -47,7 +47,8 @@ parse(
     if(it == start)
     {
         // can't be empty
-        ec = error::empty_path_segment;
+        ec = BOOST_URL_ERR(
+            error::empty_path_segment);
         return false;
     }
     return true;
@@ -72,7 +73,8 @@ parse(
     if(it == start)
     {
         // can't be empty
-        ec = error::empty_path_segment;
+        ec = BOOST_URL_ERR(
+            error::empty_path_segment);
         return false;
     }
     return true;
@@ -105,7 +107,8 @@ increment(
     if(parse(it, end, ec,
         '/', segment_bnf{t}))
         return true;
-    ec = error::end;
+    ec = BOOST_URL_ERR(
+        error::end);
     it = start;
     return false;
 }
@@ -124,13 +127,15 @@ begin(
     if(it == end)
     {
         // expected '/'
-        ec = error::missing_path_segment;
+        ec = BOOST_URL_ERR(
+            error::missing_path_segment);
         return false;
     }
     if(*it != '/')
     {
         // expected '/'
-        ec = error::missing_path_separator;
+        ec = BOOST_URL_ERR(
+            error::missing_path_separator);
         return false;
     }
     ++it;
@@ -139,7 +144,8 @@ begin(
     if(*it == '/')
     {
         // can't begin with "//"
-        ec = error::empty_path_segment;
+        ec = BOOST_URL_ERR(
+            error::empty_path_segment);
         return false;
     }
     return parse(it, end, ec,
@@ -159,7 +165,8 @@ increment(
     if(parse(it, end, ec,
         '/', segment_bnf{t}))
         return true;
-    ec = error::end;
+    ec = BOOST_URL_ERR(
+        error::end);
     it = start;
     return false;
 }
@@ -179,7 +186,8 @@ begin(
         segment_nz_nc_bnf{t}))
         return true;
     // bad segment-nz-nc
-    ec = error::bad_schemeless_path_segment;
+    ec = BOOST_URL_ERR(
+        error::bad_schemeless_path_segment);
     return false;
 }
 
@@ -196,7 +204,8 @@ increment(
     if(parse(it, end, ec,
         '/', segment_bnf{t}))
         return true;
-    ec = error::end;
+    ec = BOOST_URL_ERR(
+        error::end);
     it = start;
     return false;
 }
@@ -230,7 +239,8 @@ increment(
     if(parse(it, end, ec,
         '/', segment_bnf{t}))
         return true;
-    ec = error::end;
+    ec = BOOST_URL_ERR(
+        error::end);
     it = start;
     return false;
 }

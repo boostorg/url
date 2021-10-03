@@ -40,7 +40,8 @@ pct_decode_size(
         return n;
     if(it != end)
     {
-        ec = error::leftover_input;
+        ec = BOOST_URL_ERR(
+            error::leftover_input);
         return n;
     }
     return n;

@@ -27,13 +27,15 @@ parse(
     if(it == end)
     {
         // end of input
-        ec = error::incomplete;
+        ec = BOOST_URL_ERR(
+            error::incomplete);
         return false;
     }
     if(*it != ch)
     {
         // expected ch
-        ec = error::wrong_char_literal;
+        ec = BOOST_URL_ERR(
+            error::wrong_char_literal);
         return false;
     }
     ++it;
@@ -108,7 +110,8 @@ parse_string(
     if(it != end)
     {
         // input not consumed fully
-        ec = error::leftover_input;
+        ec = BOOST_URL_ERR(
+            error::leftover_input);
         return false;
     }
     return true;

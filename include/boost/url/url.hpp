@@ -213,8 +213,12 @@ public:
 
         @par Example
         @code
-        url u;
-        u.set_scheme( "http" );         // produces "http:"
+        url u = parse_uri( "http://www.example.com" );
+
+        u.set_scheme( "https" );         // u is now "https://www.example.com"
+
+        assert( u.encoded_url() == "https://www.example.com" );
+
         u.set_scheme( "1forall");       // throws, invalid scheme
         @endcode
 
@@ -236,6 +240,9 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
             3.1. Scheme (rfc3986)</a>
+
+        @see
+            @ref remove_scheme.
     */
     BOOST_URL_DECL
     url&
@@ -1095,7 +1102,7 @@ public:
         string_view s);
 
     urls::params_encoded
-    params_encoded() noexcept
+    encoded_params() noexcept
     {
         return urls::params_encoded(*this);
     }

@@ -33,7 +33,7 @@ struct query_param
     @code
     query           = *( pchar / "/" / "?" )
 
-    query-params    = [ query-param ] *( "&" [ query-param ] )
+    query-params    = query-param *( "&" query-param )
     query-param     = key [ "=" value ]
     key             = *qpchar
     value           = *( qpchar / "=" )

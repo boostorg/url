@@ -66,7 +66,8 @@ struct h16
             if(d == -1)
             {
                 // not a HEXDIG
-                ec = error::bad_hexdig;
+                ec = BOOST_URL_ERR(
+                    error::bad_hexdig);
                 return false;
             }
             v = d;
@@ -134,7 +135,8 @@ parse(
             }
             BOOST_ASSERT(n > 0);
             // not enough words
-            ec = error::missing_words;
+            ec = BOOST_URL_ERR(
+                error::missing_words);
             return false;
         }
         if(*it == ':')
@@ -143,7 +145,8 @@ parse(
             if(it == end)
             {
                 // missing ':'
-                ec = error::missing_char_literal;
+                ec = BOOST_URL_ERR(
+                    error::missing_char_literal);
                 return false;
             }
             if(*it == ':')
@@ -160,7 +163,8 @@ parse(
                     continue;
                 }
                 // two "::"
-                ec = error::bad_ipv6;
+                ec = BOOST_URL_ERR(
+                    error::bad_ipv6);
                 return false;
             }
             if(c)
@@ -176,7 +180,8 @@ parse(
                 continue;
             }
             // expected h16
-            ec = error::missing_words;
+            ec = BOOST_URL_ERR(
+                error::missing_words);
             return false;
         }
         if(*it == '.')
@@ -184,14 +189,16 @@ parse(
             if(b == -1 && n > 1)
             {
                 // not enough h16
-                ec = error::bad_ipv6;
+                ec = BOOST_URL_ERR(
+                    error::bad_ipv6);
                 return false;
             }
             if(! detail::h16::is_octet(
                 &bytes[2*(7-n)]))
             {
                 // invalid octet
-                ec = error::bad_octet;
+                ec = BOOST_URL_ERR(
+                    error::bad_octet);
                 return false;
             }
             // rewind the h16 and
@@ -231,7 +238,8 @@ parse(
             continue;
         }
         // ':' divides a word
-        ec = error::bad_ipv6;
+        ec = BOOST_URL_ERR(
+            error::bad_ipv6);
         return false;
     }
     ec = {};

@@ -46,7 +46,8 @@ parse_repeat(
     if(n < N)
     {
         // too few
-        ec = error::syntax;
+        ec = BOOST_URL_ERR(
+            error::syntax);
         return false;
     }
     return true;
