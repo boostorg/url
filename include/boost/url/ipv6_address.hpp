@@ -104,10 +104,9 @@ public:
 
         @param a An optional allocator the returned
         string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
+        the default allocator is used.
 
-        @return A `std::basic_string` using the
+        @return A @ref string_value using the
         specified allocator.
 
         @par Specification
@@ -116,7 +115,7 @@ public:
     */
     template<class Allocator =
         std::allocator<char>>
-    string_type<Allocator>
+    string_value
     to_string(Allocator const& a = {}) const;
 
     /** Write a dotted decimal string representing the address to a buffer

@@ -202,6 +202,7 @@ public:
             BOOST_TEST(u.encoded_query() == "k0=0&k%31&k2=");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k%31&k2=#f");
+            BOOST_TEST(it == p.begin() + 1);
         }
 
         // replace_value(iterator, string_view)

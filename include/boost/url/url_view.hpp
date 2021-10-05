@@ -20,6 +20,7 @@
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
 #include <boost/url/scheme.hpp>
+#include <boost/url/detail/except.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
@@ -107,14 +108,6 @@ protected:
 
     inline url_view& base() noexcept;
     inline url_view const& base() const noexcept;
-    BOOST_URL_CONSTEXPR pos_t offset(
-        int id) const noexcept;
-    BOOST_URL_CONSTEXPR pos_t len(
-        int id) const noexcept;
-    BOOST_URL_CONSTEXPR string_view get(
-        int id) const noexcept;
-    BOOST_URL_CONSTEXPR string_view get(
-        int first, int last) const noexcept;
     inline std::size_t table_bytes() const noexcept;
     inline pos_t len(int first, int last) const noexcept;
     inline void set_size(int id, pos_t n) noexcept;
@@ -128,17 +121,82 @@ protected:
     inline url_view(url_view const& u,
         char const* cs) noexcept;
 
-public:
-    // Container
+    // return offset of id
+    BOOST_URL_CONSTEXPR
+    auto
+    offset(int id) const noexcept ->
+        pos_t
+    {
+        return
+            id == id_scheme ?
+            zero_ : offset_[id];
+    }
 
+    // return length of part
+    BOOST_URL_CONSTEXPR
+    auto
+    len(int id) const noexcept ->
+        pos_t
+    {
+        return
+            offset(id + 1) -
+            offset(id);
+    }
+
+    // return id as string
+    BOOST_URL_CONSTEXPR
+    string_view
+    get(int id) const noexcept
+    {
+        return {
+            cs_ + offset(id), len(id) };
+    }
+
+    // return [first, last) as string
+    BOOST_URL_CONSTEXPR
+    string_view
+    get(int first,
+        int last) const noexcept
+    {
+        return { cs_ + offset(first),
+            offset(last) - offset(first) };
+    }
+
+public:
+    /** The type of elements.
+    */
     using value_type        = char;
+
+    /** The type of pointers to elements.
+    */
     using pointer           = char const*;
+
+    /** The type of const pointers to elements.
+    */
     using const_pointer     = char const*;
+
+    /** The type of reference to elements.
+    */
     using reference         = char const&;
+
+    /** The type of const references to elements.
+    */
     using const_reference   = char const&;
+
+    /** The type of const iterator to elements.
+    */
     using const_iterator    = char const*;
+
+    /** The type of iterator to elements.
+    */
     using iterator          = char const*;
+
+    /** An unsigned integer type to represent sizes.
+    */
     using size_type         = std::size_t;
+
+    /** A signed integer type to represent differences.
+    */
     using difference_type   = std::ptrdiff_t;
 
     //--------------------------------------------
@@ -151,12 +209,12 @@ public:
 
         Any params, segments, or iterators
         which reference this object are
-        invalidated. The ownership and
-        lifetime of the underlying character
-        buffer remains unchanged.
+        invalidated. The ownership and lifetime
+        of the underlying character buffer
+        remains unchanged.
     */
     BOOST_URL_DECL
-    ~url_view();
+    virtual ~url_view();
 
     /** Constructor
 
@@ -171,6 +229,13 @@ public:
         @code
         relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
         @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
+            >4.2. Relative Reference (rfc3986)</a>
     */
     BOOST_URL_DECL
     url_view() noexcept;
@@ -181,9 +246,12 @@ public:
     //
     //--------------------------------------------
 
-    /** Return the maximum number of characters allowed in a URL
+    /** Return the maximum number of characters allowed in a URL.
 
         This includes any null terminator, if present
+
+        @par Exception Safety
+        Throws nothing.
     */
     static
     constexpr
@@ -193,11 +261,14 @@ public:
         return BOOST_URL_MAX_SIZE;
     }
 
-    /** Return the number of characters in the URL
+    /** Return the number of characters in the URL.
 
         This function returns the number of
         characters in the URL, not including
         any null terminator, if present.
+
+        @par Exception Safety
+        Throws nothing.
     */
     std::size_t
     size() const noexcept
@@ -205,10 +276,13 @@ public:
         return offset(id_end);
     }
 
-    /** Return true if the URL is empty
+    /** Return true if the URL is empty.
 
-        An empty URL is a relative-ref with
+        An empty URL is a <em>relative-ref</em> with
         zero path segments.
+
+        @par Exception Safety
+        Throws nothing.
     */
     bool
     empty() const noexcept
@@ -216,12 +290,54 @@ public:
         return size() == 0;
     }
 
+    /** Return a pointer to the first character of the view
+
+        This function returns a pointer to the
+        first character of the view, which is
+        not guaranteed to be null-terminated.
+
+        @par Exception Safety
+        Throws nothing.
+    */
     char const*
     data() const noexcept
     {
         return cs_;
     }
 
+    /** Access the specified character
+
+        This function returns a reference to
+        the character at the specified zero-based
+        position. If `pos` is out of range, an
+        exception if thrown.
+
+        @param pos The zero-based character
+        position to access.
+
+        @throw std::out_of_range pos >= size()
+    */
+    char const&
+    at(std::size_t pos) const
+    {
+        if(pos >= size())
+            detail::throw_out_of_range(
+                BOOST_CURRENT_LOCATION);
+        return cs_[pos];
+    }
+
+    /** Access the specified character
+
+        This function returns a reference to
+        the character at the specified zero-based
+        position. The behavior is undefined if
+        `pos` is out of range.
+
+        @par Preconditions
+        @code
+        pos < this->size()
+        @endcode
+    */
     char const&
     operator[](
         std::size_t pos) const noexcept
@@ -272,7 +388,7 @@ public:
             data(), size());
     }
 
-    /** Return an immutable copy of the URL, with shared lifetime
+    /** Return a read-only copy of the URL, with shared lifetime.
 
         This function makes a copy of the storage
         pointed to by this, and attaches it to a
@@ -288,8 +404,14 @@ public:
         std::shared_ptr<url_view const> sp;
         {
             std::string s( "http://example.com" );
-            url_view u = parse_uri( s ); // u references characters in s
+            url_view u = parse_uri( s ).value();    // u references characters in s
+
+            assert( u.data() == s.data() );         // same buffer
+
             sp = u.collect();
+
+            assert( sp->data() != s.data() );       // different buffer
+            assert( sp->encoded_url() == s);        // same contents
 
             // s is destroyed and thus u
             // becomes invalid, but sp remains valid.
@@ -316,7 +438,9 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://www.example.com" ).has_scheme() );
+        url_view u = parse_uri( "http://www.example.com" ).value();
+
+        assert( u.has_scheme() );
         @endcode
 
         @par BNF
@@ -422,11 +546,11 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://www.example.com/index.htm" ).has_authority() == true );
+        assert( parse_uri( "http://www.example.com/index.htm" ).value().has_authority() == true );
 
-        assert( parse_relative_ref( "//" ).has_authority() == true );
+        assert( parse_relative_ref( "//" ).value().has_authority() == true );
 
-        assert( parse_relative_ref( "/file.txt" ).has_authority() == false );
+        assert( parse_relative_ref( "/file.txt" ).value().has_authority() == false );
         @endcode
 
         @par BNF
@@ -496,12 +620,14 @@ public:
 
     /** Return true if this contains a userinfo
 
-        This function returns true if this contains
-        a userinfo.
+        This function returns true if this
+        contains a userinfo.
 
         @par Example
         @code
-        assert( parse_uri( "http://user@example.com" ).has_userinfo() == true );
+        url_view u = parse_uri( "http://user@example.com" ).value();
+
+        assert( u.has_userinfo() == true );
         @endcode
 
         @par BNF
@@ -566,7 +692,9 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://user:pass@example.com" ).userinfo() == "user:pass" );
+        url_view u = parse_uri( "http://user:pass@example.com" ).value();
+
+        assert( u.userinfo() == "user:pass" );
         @endcode
 
         @par BNF
@@ -581,10 +709,9 @@ public:
 
         @param a An optional allocator the returned
         string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
+        the default allocator is used.
 
-        @return A `std::basic_string` using the
+        @return A @ref string_value using the
         specified allocator.
 
         @par Specification
@@ -598,12 +725,14 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_type<Allocator>
+    string_value
     userinfo(
         Allocator const& a = {}) const
     {
-        return detail::pct_decode_unchecked(
-            encoded_userinfo(), {}, a);
+        pct_decode_opts opt;
+        opt.plus_to_space = false;
+        return detail::pct_decode_unchecked_(
+            encoded_userinfo(), opt, a);
     }
 
     //--------------------------------------------
@@ -615,7 +744,9 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://user:pass@example.com" ).encoded_user() == "user" );
+        url_view u = parse_uri( "http://user:pass@example.com" ).value();
+
+        assert( u.encoded_user() == "user" );
         @endcode
 
         @par BNF
@@ -668,10 +799,9 @@ public:
 
         @param a An optional allocator the returned
         string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
+        the default allocator is used.
 
-        @return A `std::basic_string` using the
+        @return A @ref string_value using the
         specified allocator.
 
         @par Specification
@@ -687,12 +817,14 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_type<Allocator>
+    string_value
     user(
         Allocator const& a = {}) const
     {
-        return detail::pct_decode_unchecked(
-            encoded_user(), {}, a);
+        pct_decode_opts opt;
+        opt.plus_to_space = false;
+        return detail::pct_decode_unchecked_(
+            encoded_user(), opt, a);
     }
 
     /** Return true if this contains a password
@@ -702,11 +834,11 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://user@example.com" ).has_password() == false );
+        assert( parse_uri( "http://user@example.com" ).value().has_password() == false );
 
-        assert( parse_uri( "http://user:pass@example.com" ).has_password() == true );
+        assert( parse_uri( "http://user:pass@example.com" ).value().has_password() == true );
 
-        assert( parse_uri( "http://:@" ).has_password() == true );
+        assert( parse_uri( "http://:@" ).value().has_password() == true );
         @endcode
 
         @par BNF
@@ -741,7 +873,9 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://user:pass@example.com" ).encoded_user() == "user" );
+        url_view u = parse_uri( "http://user:pass@example.com" ).value();
+
+        assert( u.encoded_user() == "user" );
         @endcode
 
         @par BNF
@@ -783,7 +917,7 @@ public:
         allocator is used, and the return type of
         the function becomes `std::string`.
 
-        @return A `std::basic_string` using the
+        @return A @ref string_value using the
         specified allocator.
 
         @par Specification
@@ -799,30 +933,33 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_type<Allocator>
+    string_value
     password(
         Allocator const& a = {}) const
     {
-        return detail::pct_decode_unchecked(
-            encoded_password(), {}, a);
+        pct_decode_opts opt;
+        opt.plus_to_space = false;
+        return detail::pct_decode_unchecked_(
+            encoded_password(), opt, a);
     }
 
     //--------------------------------------------
 
     /** Return the type of host present, if any
 
-        This function returns a @ref urls::host_type
-        constant representing the type of host
-        this contains, which may be
+        This function returns a
+            @ref urls::host_type
+        constant representing the type of
+        host this contains, which may be
         @ref urls::host_type::none.
 
         @par Example
         @code
-        assert( parse_relative_ref( "/favicon.png" ).host_type() == host_type::none );
+        assert( parse_relative_ref( "/favicon.png" ).value().host_type() == host_type::none );
 
-        assert( parse_uri( "http://example.com" ).host_type() == host_type::name );
+        assert( parse_uri( "http://example.com" ).value().host_type() == host_type::name );
 
-        assert( parse_uri( "http://192.168.0.1" ).host_type() == host_type::ipv4 );
+        assert( parse_uri( "http://192.168.0.1" ).value().host_type() == host_type::ipv4 );
         @endcode
 
         @par BNF
@@ -906,11 +1043,11 @@ public:
 
         @par Example
         @code
-        assert( parse_relative_ref( "/favicon.png" ).encoded_host() == "" );
+        assert( parse_relative_ref( "/favicon.png" ).value().encoded_host() == "" );
 
-        assert( parse_uri( "http://example.com" ).encoded_host() == "example.com" );
+        assert( parse_uri( "http://example.com" ).value().encoded_host() == "example.com" );
 
-        assert( parse_uri( "http://192.168.0.1" ).encoded_host() == "192.168.0.1" );
+        assert( parse_uri( "http://192.168.0.1" ).value().encoded_host() == "192.168.0.1" );
         @endcode
 
         @par BNF
@@ -932,7 +1069,7 @@ public:
         the default allocator is used, and the return
         type of the function becomes `std::string`.
 
-        @return A `std::basic_string` using the
+        @return A @ref string_value using the
         specified allocator.
 
         @par Specification
@@ -950,7 +1087,7 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_type<Allocator>
+    string_value
     host(
         Allocator const& a = {}) const
     {
@@ -960,11 +1097,12 @@ public:
             urls::host_type::name)
         {
             // no decoding
-            return string_type<Allocator>(
-                s0.data(), s0.size(), a);
+            return string_value(s0, a);
         }
-        return detail::pct_decode_unchecked(
-            s0, decoded_[id_host], {}, a);
+        pct_decode_opts opt;
+        opt.plus_to_space = false;
+        return detail::pct_decode_unchecked_(
+            s0, decoded_[id_host], opt, a);
     }
 
     /** Return the host as an IPv4 address
@@ -995,7 +1133,7 @@ public:
             >3.2.2. Host (rfc3986)</a>
 
         @see
-            @ref ipv4_address
+            @ref ipv4_address.
     */
     BOOST_URL_DECL
     urls::ipv4_address
@@ -1038,7 +1176,7 @@ public:
             >3.2.2. Host (rfc3986)</a>
 
         @see
-            @ref ipv6_address
+            @ref ipv6_address.
     */
     BOOST_URL_DECL
     urls::ipv6_address
@@ -1319,7 +1457,7 @@ public:
         the default allocator is used, and the return
         type of the function becomes `std::string`.
 
-        @return A `std::basic_string` using the
+        @return A @ref string_value using the
         specified allocator.
 
         @par Specification
@@ -1329,13 +1467,15 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_type<Allocator>
+    string_value
     segment(
         int i,
         Allocator const& a = {}) const
     {
-        return detail::pct_decode_unchecked(
-            encoded_segment(i), {}, a);
+        pct_decode_opts opt;
+        opt.plus_to_space = false;
+        return detail::pct_decode_unchecked_(
+            encoded_segment(i), opt, a);
     }
 
     /** Return the path segments
@@ -1477,7 +1617,7 @@ public:
         the default allocator is used, and the return
         type of the function becomes `std::string`.
 
-        @return A `std::basic_string` using the
+        @return A @ref string_value using the
         specified allocator.
 
         @par Specification
@@ -1491,25 +1631,33 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_type<Allocator>
+    string_value
     query(
         Allocator const& a = {}) const
     {
-        return detail::pct_decode_unchecked(
-            encoded_query(), {}, a);
+        pct_decode_opts opt;
+        opt.plus_to_space = true;
+        return detail::pct_decode_unchecked_(
+            encoded_query(), opt, a);
     }
 
     /** Return the query parameters
 
         This function returns the query
         parameters as a non-modifiable
-        forward range of key/value pairs.
+        forward range of key/value pairs
+        where each returned string has
+        percent-decoding applied.
 
         @par BNF
         @code
         query-params    = [ query-param ] *( "&" [ query-param ] )
 
         query-param     = key [ "=" value ]
+
+        @param alloc The allocator the container
+        will use when returning string with
+        percent-decoding applied.
 
         @endcode
     */
@@ -1525,6 +1673,8 @@ public:
         This function returns the query
         parameters as a non-modifiable
         forward range of key/value pairs.
+        Each string returned by the container
+        is percent-encoded.
 
         @par BNF
         @code
@@ -1586,6 +1736,10 @@ public:
         @par Exception Safety
         Throws nothing.
 
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
+            >3.5. Fragment (rfc3986)</a>
+
         @see
             @ref fragment,
             @ref has_fragment.
@@ -1616,10 +1770,9 @@ public:
 
         @param a An optional allocator the returned
         string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
+        the default allocator is used.
 
-        @return A `std::basic_string` using the
+        @return A @ref string_value using the
         specified allocator.
 
         @see
@@ -1629,13 +1782,13 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_type<Allocator>
+    string_value
     fragment(
         Allocator const& a = {}) const
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return detail::pct_decode_unchecked(
+        return detail::pct_decode_unchecked_(
             encoded_fragment(),
             decoded_[id_frag], opt, a);
     }

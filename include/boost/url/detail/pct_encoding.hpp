@@ -187,6 +187,23 @@ pct_decode_unchecked(
 }
 
 template<class Allocator>
+string_value
+pct_decode_unchecked_(
+    string_view s,
+    std::size_t decoded_size,
+    pct_decode_opts const& opt,
+    Allocator const& a)
+{
+    char* dest;
+    string_value r(
+        decoded_size, a, dest);
+    pct_decode_unchecked(
+        dest, dest + r.size(),
+            s, opt);
+    return r;
+}
+
+template<class Allocator>
 string_type<Allocator>
 pct_decode_unchecked(
     string_view s,
@@ -194,6 +211,18 @@ pct_decode_unchecked(
     Allocator const& a)
 {
     return pct_decode_unchecked(s,
+        pct_decode_size_unchecked(s),
+            opt, a);
+}
+
+template<class Allocator>
+string_value
+pct_decode_unchecked_(
+    string_view s,
+    pct_decode_opts const& opt,
+    Allocator const& a)
+{
+    return pct_decode_unchecked_(s,
         pct_decode_size_unchecked(s),
             opt, a);
 }

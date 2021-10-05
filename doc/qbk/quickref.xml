@@ -74,6 +74,7 @@
           <member><link linkend="url.ref.boost__urls__error_condition">error_condition</link></member>
           <member><link linkend="url.ref.boost__urls__result">result</link></member>
           <member><link linkend="url.ref.boost__urls__string_type">string_type</link></member>
+          <member><link linkend="url.ref.boost__urls__string_value">string_value</link></member>
           <member><link linkend="url.ref.boost__urls__string_view">string_view</link></member>
           <member><link linkend="url.ref.boost__urls__system_error">system_error</link></member>
         </simplelist>

@@ -162,6 +162,27 @@ to_string_view(
 
 //------------------------------------------------
 
+/** A read-only, reference counted string
+
+    Objects of this type represent read-only
+    strings with ownership of the character
+    buffer. They are reference counted which
+    makes copies cheap. The type is derived
+    from @ref string_view which provides
+    compatibility with strings in terms of
+    comparisons and converisons. However,
+    care must be exercised; undefined
+    behavior results if the string_view
+    portion of the object is modified
+    directly, for example by calling
+    `remove_suffix` or `operator=`.
+
+    Slicing however, is supported, as
+    copies of the `string_view` portion
+    of the object are valid and remain
+    valid for the lifetime of the oriignal
+    object.
+*/
 class string_value : public string_view
 {
     struct base;

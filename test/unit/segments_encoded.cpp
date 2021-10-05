@@ -140,6 +140,7 @@ public:
         // (default-ctor)
         {
             segments_encoded::iterator it;
+            (void)it;
         }
 
         // begin

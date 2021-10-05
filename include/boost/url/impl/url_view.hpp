@@ -27,51 +27,6 @@ base() const noexcept
     return *this;
 }
 
-// return offset of id
-BOOST_URL_CONSTEXPR
-auto
-url_view::
-offset(int id) const noexcept ->
-    pos_t
-{
-    return
-        id == id_scheme ?
-        zero_ : offset_[id];
-}
-
-// return length of part
-BOOST_URL_CONSTEXPR
-auto
-url_view::
-len(int id) const noexcept ->
-    pos_t
-{
-    return
-        offset(id + 1) -
-        offset(id);
-}
-
-// return id as string
-BOOST_URL_CONSTEXPR
-string_view
-url_view::
-get(int id) const noexcept
-{
-    return {
-        cs_ + offset(id), len(id) };
-}
-
-// return [first, last) as string
-BOOST_URL_CONSTEXPR
-string_view
-url_view::
-get(int first,
-    int last) const noexcept
-{
-    return { cs_ + offset(first),
-        offset(last) - offset(first) };
-}
-
 // return size of table in bytes
 std::size_t
 url_view::

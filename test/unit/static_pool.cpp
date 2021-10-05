@@ -24,14 +24,17 @@ public:
     template<class Allocator =
         std::allocator<char>>
     static
-    string_type<Allocator>
+    string_value
     make_string(
         string_view s,
         Allocator const& a = {})
     {
-        return string_type<
-            Allocator>(s.data(),
-                s.size(), a);
+        char* dest;
+        string_value sv(
+            s.size(), a, dest);
+        std::memcpy(dest,
+            s.data(), s.size());
+        return sv;
     }
 
     void

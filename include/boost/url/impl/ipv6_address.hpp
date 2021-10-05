@@ -16,14 +16,15 @@ namespace boost {
 namespace urls {
 
 template<class Allocator>
-string_type<Allocator>
+string_value
 ipv6_address::
 to_string(Allocator const& a) const
 {
-    string_type<Allocator> s(a);
     char buf[max_str_len];
-    s.resize(print_impl(buf));
-    std::memcpy(&s[0], buf, s.size());
+    auto const n = print_impl(buf);
+    char* dest;
+    string_value s(n, a, dest);
+    std::memcpy(dest, buf, n);
     return s;
 }
 

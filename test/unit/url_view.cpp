@@ -24,160 +24,152 @@ class url_view_test
 {
 public:
     void
-    testParse()
+    testSpecialMembers()
     {
-        // VFALCO TODO
-#if 0
-        // absolute-URI
+        // url_view()
+        // ~url_view()
         {
-            string_view s =
-                "http://user:pass@www.example.com:80/dir/file.txt?query";
-            {
-                error_code ec;
-                parse_absolute_uri(s, ec).value();
-                BOOST_TEST(! ec.failed());
-            }
-            {
-                std::error_code ec;
-                parse_absolute_uri(s, ec).value();
-                BOOST_TEST(! ec);
-            }
-            BOOST_TEST_NO_THROW(parse_absolute_uri(s));
-            BOOST_TEST_THROWS(parse_absolute_uri("a://b/c?#"),
-                system_error);
+            url_view u;
+            BOOST_TEST(u.empty());
+            BOOST_TEST(u.size() == 0);
         }
-
-        // relative-ref
-        {
-            string_view s =
-                "//user:pass@www.example.com:80/dir/file.txt?query#frag";
-            {
-                error_code ec;
-                parse_relative_ref(s, ec);
-                BOOST_TEST(! ec.failed());
-            }
-            {
-                std::error_code ec;
-                parse_relative_ref(s, ec);
-                BOOST_TEST(! ec);
-            }
-            BOOST_TEST_NO_THROW(parse_relative_ref(s));
-            BOOST_TEST_THROWS(parse_relative_ref(":"),
-                system_error);
-        }
-
-        // URI
-        {
-            string_view s =
-                "http://user:pass@www.example.com:80/dir/file.txt?query#frag";
-            {
-                error_code ec;
-                parse_uri(s, ec);
-                BOOST_TEST(! ec.failed());
-            }
-            {
-                std::error_code ec;
-                parse_uri(s, ec);
-                BOOST_TEST(! ec);
-            }
-            BOOST_TEST_NO_THROW(parse_uri(s));
-            BOOST_TEST_THROWS(parse_uri(":"),
-                system_error);
-        }
-
-        // URI-reference
-        {
-            string_view s1 =
-                "http://user:pass@www.example.com:80/dir/file.txt?query#frag";
-            string_view s2 =
-                "//user:pass@www.example.com:80/dir/file.txt?query#frag";
-            {
-                error_code ec;
-                parse_uri_reference(s1, ec);
-                BOOST_TEST(! ec.failed());
-            }
-            {
-                error_code ec;
-                parse_uri_reference(s2, ec);
-                BOOST_TEST(! ec.failed());
-            }
-            BOOST_TEST_NO_THROW(parse_uri_reference(s1));
-            BOOST_TEST_NO_THROW(parse_uri_reference(s2));
-            BOOST_TEST_THROWS(parse_uri_reference(":"),
-                system_error);
-        }
-
-        //---
-
-        {
-            error_code ec;
-            auto const u = urls::parse_uri(
-                "http://user:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag",
-                ec);
-            if(! BOOST_TEST(! ec))
-                return;
-            BOOST_TEST(u.encoded_origin() ==
-                "http://user:pass@www.boost.org:8080");
-            BOOST_TEST(u.scheme() == "http");
-            BOOST_TEST(u.user() == "user");
-            BOOST_TEST(u.password() == "pass");
-            BOOST_TEST(u.host() == "www.boost.org");
-            BOOST_TEST(u.port() == "8080");
-            BOOST_TEST(u.encoded_path() == "/x/y/z");
-            BOOST_TEST(u.query() == "a=b&c=3");
-            BOOST_TEST(u.encoded_fragment() == "frag");
-        }
-
-        // relative-ref
-        BOOST_TEST_NO_THROW(parse_relative_ref(""));
-
-        {
-            auto const u = urls::parse_relative_ref(
-                "/path/to/foo.htm");
-            BOOST_TEST(u.encoded_userinfo() == "");
-        }
-        {
-            auto const u = urls::parse_relative_ref(
-                "//host/path/to/foo.htm");
-            BOOST_TEST(u.encoded_userinfo() == "");
-        }
-#endif
     }
 
     void
-    testCtors()
+    testObservers()
     {
+        // max_size()
+        {
+            BOOST_TEST(
+                url_view::max_size() > 0);
+
+            url_view u;
+            BOOST_TEST(u.max_size() > 0);
+        }
+
+        // size()
         {
             url_view u;
-            BOOST_TEST(u.encoded_url() == "");
+            BOOST_TEST(u.size() == 0);
+            u = parse_relative_ref("/").value();
+            BOOST_TEST(u.size() == 1);
+        }
+
+        // empty()
+        {
+            url_view u;
             BOOST_TEST(u.empty());
+            u = parse_relative_ref("/").value();
+            BOOST_TEST(! u.empty());
+        }
+
+        // data()
+        {
+            string_view s = "/index.htm";
+            url_view u = parse_relative_ref(s).value();
+            BOOST_TEST(u.data() != nullptr);
+            BOOST_TEST(u.data() == s.data());
+        }
+
+        // at(std::size_t)
+        {
+            string_view s = "/index.htm";
+            url_view u = parse_relative_ref(s).value();
+            BOOST_TEST(u.at(0) == '/');
+            BOOST_TEST(u.at(9) == 'm');
+            BOOST_TEST_THROWS(u.at(10),
+                std::out_of_range);
+        }
+
+        // operator[](std::size_t)
+        {
+            string_view s = "/index.htm";
+            url_view u = parse_relative_ref(s).value();
+            BOOST_TEST(u[0] == '/');
+            BOOST_TEST(u[9] == 'm');
+            BOOST_TEST(&u[3] == &s[3]);
+        }
+
+        // begin()
+        // end()
+        {
+            string_view s = "/index.htm";
+            url_view u = parse_relative_ref(s).value();
+            BOOST_TEST(u.begin() == s.data());
+            BOOST_TEST(u.begin() == u.data());
+            BOOST_TEST(u.end() != u.begin());
+            BOOST_TEST(u.end()[-1] == 'm');
+        }
+
+        // encoded_url()
+        {
+            string_view s = "/index.htm";
+            url_view u = parse_relative_ref(s).value();
+            BOOST_TEST(u.encoded_url() == s);
+            BOOST_TEST(u.encoded_url().data() == s.data());
+        }
+
+        // collect()
+        {
+        std::shared_ptr<url_view const> sp;
+        {
+            std::string s( "http://example.com" );
+            url_view u = parse_uri( s ).value();    // u references characters in s
+
+            assert( u.data() == s.data() );         // same buffer
+
+            sp = u.collect();
+
+            assert( sp->data() != s.data() );       // different buffer
+            assert( sp->encoded_url() == s);        // same contents
+
+            // s is destroyed and thus u
+            // becomes invalid, but sp remains valid.
+        }
         }
     }
 
     void
     testScheme()
     {
+        auto const good = [](
+            string_view s,
+            char const* m = nullptr,
+            scheme id = scheme::unknown)
         {
-            auto u = parse_uri("http://").value();
-            BOOST_TEST(u.has_scheme());
-            BOOST_TEST(u.scheme() == "http");
-            BOOST_TEST(
-                u.scheme_id() == scheme::http);
-        }
+            result<url_view> r =
+                parse_uri_reference(s);
+            if(! BOOST_TEST(r))
+                return;
+            url_view u = r.value();
+            if(m)
+            {
+                BOOST_TEST(u.scheme() ==
+                    string_view(m));
+                BOOST_TEST(
+                    u.scheme_id() == id);
+            }
+            else
+            {
+                BOOST_TEST(! u.has_scheme());
+                BOOST_TEST(u.scheme_id() ==
+                    scheme::none);
+            }
+        };
+
+        auto const bad = [](
+            string_view s)
         {
-            auto u = parse_uri("ou812://").value();
-            BOOST_TEST(u.has_scheme());
-            BOOST_TEST(u.scheme() == "ou812");
-            BOOST_TEST(
-                u.scheme_id() == scheme::unknown);
-        }
-        {
-            auto u = parse_relative_ref("/x").value();
-            BOOST_TEST(! u.has_scheme());
-            BOOST_TEST(u.scheme() == "");
-            BOOST_TEST(
-                u.scheme_id() == scheme::none);
-        }
+            result<url_view> r =
+                parse_uri_reference(s);
+            BOOST_TEST(r.has_error());
+        };
+
+        good("http://", "http", scheme::http);
+        good("ou812://", "ou812");
+        good("/x");
+
+        bad("1x:");
     }
 
     void
@@ -221,6 +213,13 @@ public:
             auto u = parse_uri("http:/path").value();
             BOOST_TEST(u.encoded_host() == "");
         }
+
+        // Docs
+        assert( parse_uri( "http://www.example.com/index.htm" ).value().has_authority() == true );
+
+        assert( parse_relative_ref( "//" ).value().has_authority() == true );
+
+        assert( parse_relative_ref( "/file.txt" ).value().has_authority() == false );
     }
 
     void
@@ -666,22 +665,6 @@ public:
         bad("#%%");
     }
 
-    void
-    testCollect()
-    {
-        string_view s =
-            "http://user:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag";
-        std::shared_ptr<url_view const> sp;
-        {
-            auto const u = urls::parse_uri(s).value();
-            sp = u.collect();
-            BOOST_TEST(
-                u.encoded_url().data() !=
-                sp->encoded_url().data());
-        }
-        BOOST_TEST(sp->encoded_url() == s);
-    }
-
     //--------------------------------------------
 
     void
@@ -704,9 +687,8 @@ public:
     void
     run()
     {
-        testParse();
-        testCtors();
-        testCollect();
+        testSpecialMembers();
+        testObservers();
         testScheme();
         testAuthority();
         testUserinfo();
@@ -717,6 +699,7 @@ public:
         testPath();
         testQuery();
         testFragment();
+
         testOutput();
         testCases();
     }

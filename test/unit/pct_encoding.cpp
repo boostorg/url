@@ -334,7 +334,9 @@ public:
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             BOOST_TEST(s.size() >
                 std::string().capacity());
-        #ifndef BOOST_MSVC
+        #ifndef _MSC_VER
+            // VFALCO Because msvc's string allocates
+            // one byte from a function marked noexcept
             BOOST_TEST_THROWS(pct_encode(s,
                 test_chars(), {}, p.allocator()),
                     std::exception);
