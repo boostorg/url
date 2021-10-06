@@ -7,83 +7,20 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_PARAMS_VIEW_IPP
-#define BOOST_URL_IMPL_PARAMS_VIEW_IPP
+#ifndef BOOST_URL_IMPL_PARAMS_ENCODED_VIEW_IPP
+#define BOOST_URL_IMPL_PARAMS_ENCODED_VIEW_IPP
 
-#include <boost/url/params_view.hpp>
+#include <boost/url/params_encoded_view.hpp>
 #include <boost/url/url.hpp>
+#include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
 namespace urls {
 
-params_view::
-value_type::
-~value_type() noexcept = default;
-
-params_view::
-value_type::
-value_type() noexcept = default;
-
-params_view::
-value_type::
-value_type(
-    value_type const& other) noexcept = default;
-
-auto
-params_view::
-value_type::
-operator=(
-    value_type const& other) noexcept ->
-        value_type& = default;
-
-params_view::
-value_type::
-value_type(
-    char const* s,
-    std::size_t nk,
-    std::size_t const nv,
-    string_value::allocator a)
-{
-    if(nk + nv == 0)
-    {
-        has_value = false;
-        return;
-    }
-    if(nv > 0)
-    {
-        // value
-        BOOST_ASSERT(s[nk] == '=');
-        has_value = true;
-        string_view ev{
-            s + nk + 1, nv - 1 };
-        auto n = detail::
-            pct_decode_size_unchecked(ev);
-        char *dest;
-        value = a.make_string_value(
-            n, dest);
-        detail::pct_decode_unchecked(
-            dest, dest + n, ev, {});
-    }
-    else
-    {
-        has_value = false;
-    }
-    // key
-    string_view ek{s, nk};
-    auto n = detail::
-        pct_decode_size_unchecked(ek);
-    char* dest;
-    key = a.make_string_value(n, dest);
-    detail::pct_decode_unchecked(
-        dest, dest + nk, ek, {});
-}
-
-//------------------------------------------------
-
 void
-params_view::
+params_encoded_view::
 iterator::
 scan() noexcept
 {
@@ -115,33 +52,29 @@ scan() noexcept
     }
 }
 
-params_view::
+params_encoded_view::
 iterator::
 iterator(
-    string_view s,
-    string_value::allocator a) noexcept
+    string_view s) noexcept
     : end_(s.data() + s.size())
     , p_(s.data())
-    , a_(a)
 {
     scan();
 }
 
-params_view::
+params_encoded_view::
 iterator::
 iterator(
     string_view s,
-    int,
-    string_value::allocator a) noexcept
+    int) noexcept
     : end_(s.data() + s.size())
     , p_(nullptr)
-    , a_(a)
     , first_(false)
 {
 }
 
 string_view
-params_view::
+params_encoded_view::
 iterator::
 encoded_key() const noexcept
 {
@@ -153,7 +86,7 @@ encoded_key() const noexcept
 }
 
 auto
-params_view::
+params_encoded_view::
 iterator::
 operator++() noexcept ->
     iterator&
@@ -173,24 +106,46 @@ operator++() noexcept ->
 }
 
 auto
-params_view::
+params_encoded_view::
 iterator::
 operator*() const ->
     value_type
 {
     if(! first_)
-        return value_type(
-            p_ + 1, nk_ - 1,
-                nv_, a_);
-    return value_type(
-        p_, nk_, nv_, a_);
+    {
+        if(nv_ > 0)
+            return value_type{
+                string_view(
+                    p_ + 1, nk_ - 1),
+                string_view(
+                    p_ + nk_ + 1, nv_ - 1),
+                true};
+        return value_type{
+            string_view(
+                p_ + 1, nk_ - 1),
+            string_view{},
+            false};
+    }
+    if(nv_ > 0)
+        return value_type{
+            string_view(
+                p_, nk_),
+            string_view(
+                p_ + nk_ + 1,
+                nv_ - 1),
+            true};
+    return value_type{
+        string_view(
+            p_, nk_),
+        string_view{},
+        false};
 }
 
 bool
 operator==(
-    params_view::
+    params_encoded_view::
         iterator a,
-    params_view::
+    params_encoded_view::
         iterator b) noexcept
 {
     BOOST_ASSERT(a.end_ == b.end_);
@@ -206,9 +161,9 @@ operator==(
 //------------------------------------------------
 
 auto
-params_view::
+params_encoded_view::
 at(string_view key) const ->
-    string_value
+    string_view
 {
     auto it = find(key);
     for(;;)
@@ -221,38 +176,31 @@ at(string_view key) const ->
         ++it;
         it = find(it, key);
     }
-    string_view ev{
+    return {
         it.p_ + it.nk_ + 1,
         it.nv_ - 1 };
-    auto n = detail::
-        pct_decode_size_unchecked(ev);
-    char *dest;
-    auto s = a_.make_string_value(n, dest);
-    detail::pct_decode_unchecked(
-        dest, dest + n, ev, {});
-    return s;
 }
 
-//------------------------------------------------
+//--------------------------------------------
 //
 // Iterators
 //
-//------------------------------------------------
+//--------------------------------------------
 
 auto
-params_view::
+params_encoded_view::
 begin() const noexcept ->
     iterator
 {
-    return { s_, a_ };
+    return { s_ };
 }
 
 auto
-params_view::
+params_encoded_view::
 end() const noexcept ->
     iterator
 {
-    return { s_, 0, a_ };
+    return { s_, 0 };
 }
 
 //------------------------------------------------
@@ -262,7 +210,7 @@ end() const noexcept ->
 //------------------------------------------------
 
 std::size_t
-params_view::
+params_encoded_view::
 count(string_view key) const noexcept
 {
     std::size_t n = 0;
@@ -278,7 +226,7 @@ count(string_view key) const noexcept
 }
 
 auto
-params_view::
+params_encoded_view::
 find(
     iterator from,
     string_view key) const noexcept ->
@@ -290,13 +238,30 @@ find(
     auto const end_ = end();
     while(from != end_)
     {
-        if( detail::key_equal_encoded(
-            key,
-            from.encoded_key()))
+        // VFALCO need pct-encoded comparison
+        if( key == from.encoded_key())
             break;
         ++from;
     }
     return from;
+}
+
+//------------------------------------------------
+//
+// Parsing
+//
+//------------------------------------------------
+
+result<params_encoded_view>
+parse_query_params(
+    string_view s) noexcept
+{
+    error_code ec;
+    query_bnf t;
+    if(! bnf::parse_string(s, ec, t))
+        return ec;
+    return params_encoded_view(
+        t.str, t.count);
 }
 
 } // urls

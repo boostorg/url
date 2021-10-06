@@ -119,7 +119,7 @@ string_value(
 string_value&
 string_value::
 operator=(
-    string_value const& other) noexcept
+    string_value const& other) & noexcept
 {
     if( p_ &&
         --p_->refs == 0)

@@ -16,8 +16,8 @@
 
 namespace boost {
 
-using url = urls::url;
-using url_view = urls::url_view;
+using urls::url;
+using urls::url_view;
 
 } // boost
 

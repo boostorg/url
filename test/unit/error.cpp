@@ -32,7 +32,7 @@ public:
     void check(condition c, error e)
     {
         {
-            auto const ec = make_error_code(e);
+            auto const ec = BOOST_URL_ERR(e);
             BOOST_TEST(ec.category().name() != nullptr);
             BOOST_TEST(! ec.message().empty());
             BOOST_TEST(ec == c);

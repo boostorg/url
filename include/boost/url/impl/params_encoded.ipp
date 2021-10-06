@@ -7,10 +7,10 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_PARAMS_IPP
-#define BOOST_URL_IMPL_PARAMS_IPP
+#ifndef BOOST_URL_IMPL_PARAMS_ENCODED_IPP
+#define BOOST_URL_IMPL_PARAMS_ENCODED_IPP
 
-#include <boost/url/params.hpp>
+#include <boost/url/params_encoded.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/assert.hpp>
@@ -18,74 +18,54 @@
 namespace boost {
 namespace urls {
 
-params::
-reference::
-reference(
-    char const* const s,
-    std::size_t const nk,
-    std::size_t const nv,
-    string_value::allocator a)
-{
-    if(nv > 0)
-    {
-        // value
-        BOOST_ASSERT(s[nk] == '=');
-        has_value = true;
-        string_view ev{
-            s + nk + 1, nv - 1 };
-        auto n = detail::
-            pct_decode_size_unchecked(ev);
-        char *dest;
-        value = a.make_string_value(
-            n, dest);
-        detail::pct_decode_unchecked(
-            dest, dest + n, ev, {});
-    }
-    else
-    {
-        has_value = false;
-    }
-    // key
-    BOOST_ASSERT(nk > 0);
-    BOOST_ASSERT(
-        s[0] == '?' || s[0] == '&');
-    string_view ek{s + 1, nk - 1};
-    auto n = detail::
-        pct_decode_size_unchecked(ek);
-    char* dest;
-    key = a.make_string_value(n, dest);
-    detail::pct_decode_unchecked(
-        dest, dest + nk, ek, {});
-}
-
 auto
-params::
+params_encoded::
 operator[](
     std::size_t pos) const ->
-        reference
+        value_type
 {
-    auto const r =
-        u_->get_param(pos);
-    return reference(
-        u_->s_ + r.pos,
-            r.nk, r.nv, a_);
+    auto const r = u_->get_param(pos);
+    if(r.nv > 0)
+        return value_type{
+            string_view(
+                u_->s_ + r.pos + 1,
+                r.nk - 1),
+            string_view(
+                u_->s_ + r.pos + r.nk + 1,
+                r.nv - 1),
+            true};
+    return value_type{
+        string_view(
+            u_->s_ + r.pos + 1,
+            r.nk - 1),
+        string_view{},
+        false};
 }
 
 //------------------------------------------------
 
 auto
-params::
+params_encoded::
 iterator::
 operator*() const ->
-    reference
+    value_type
 {
-    auto const r =
-        u_->get_param(i_);
-    return reference(
-        u_->s_ + r.pos,
-        r.nk,
-        r.nv,
-        a_);
+    auto const r = u_->get_param(i_);
+    if(r.nv > 0)
+        return value_type{
+            string_view(
+                u_->s_ + r.pos + 1,
+                r.nk - 1),
+            string_view(
+                u_->s_ + r.pos + r.nk + 1,
+                r.nv - 1),
+            true};
+    return value_type{
+        string_view(
+            u_->s_ + r.pos + 1,
+            r.nk - 1),
+        string_view{},
+        false};
 }
 
 //------------------------------------------------
@@ -95,9 +75,9 @@ operator*() const ->
 //------------------------------------------------
 
 auto
-params::
+params_encoded::
 at(string_view key) const ->
-    string_value
+    string_view
 {
     url::raw_param r;
     auto it = find(key);
@@ -112,17 +92,10 @@ at(string_view key) const ->
         ++it;
         it = find(it, key);
     }
-    string_view ev{
+    return {
         u_->s_ + r.pos +
             r.nk + 1,
         r.nv - 1 };
-    auto n = detail::
-        pct_decode_size_unchecked(ev);
-    char *dest;
-    auto s = a_.make_string_value(n, dest);
-    detail::pct_decode_unchecked(
-        dest, dest + n, ev, {});
-    return s;
 }
 
 //------------------------------------------------
@@ -132,7 +105,7 @@ at(string_view key) const ->
 //------------------------------------------------
 
 std::size_t
-params::
+params_encoded::
 erase(string_view key) noexcept
 {
     std::size_t n = 0;
@@ -153,7 +126,7 @@ erase(string_view key) noexcept
 //------------------------------------------------
 
 std::size_t
-params::
+params_encoded::
 count(string_view key) const noexcept
 {
     std::size_t n = 0;
@@ -169,7 +142,7 @@ count(string_view key) const noexcept
 }
 
 auto
-params::
+params_encoded::
 find(
     iterator from,
     string_view key) const noexcept ->
@@ -189,6 +162,8 @@ find(
     }
     return from;
 }
+
+//------------------------------------------------
 
 } // urls
 } // boost

@@ -7,25 +7,5 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#include <boost/url.hpp>
-
-#include "test_suite.hpp"
-
-namespace boost {
-namespace urls {
-
-class limits_test
-{
-public:
-    void
-    run()
-    {
-    }
-};
-
-TEST_SUITE(
-    limits_test,
-    "boost.url.limits");
-
-} // urls
-} // boost
+// Test that header file is self-contained.
+#include <boost/url/rfc/relative_ref_bnf.hpp>

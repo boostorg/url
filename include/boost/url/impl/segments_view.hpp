@@ -10,7 +10,6 @@
 #ifndef BOOST_URL_IMPL_SEGMENTS_VIEW_HPP
 #define BOOST_URL_IMPL_SEGMENTS_VIEW_HPP
 
-#include <boost/url/arrow_proxy.hpp>
 #include <boost/url/pct_encoding_types.hpp>
 #include <cstddef>
 
@@ -45,8 +44,8 @@ class segments_view::
 
 public:
     using value_type = string_value;
-    using pointer = value_type const*;
-    using reference = value_type const&;
+    using reference = string_value;
+    using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::bidirectional_iterator_tag;
@@ -66,12 +65,6 @@ public:
     BOOST_URL_DECL
     string_value
     operator*() const noexcept;
-
-    arrow_proxy<string_value>
-    operator->() const noexcept
-    {
-        return {**this};
-    }
 
     bool
     operator==(
@@ -115,6 +108,74 @@ public:
         return tmp;
     }
 };
+
+//------------------------------------------------
+//
+// Members
+//
+//------------------------------------------------
+
+template<class Allocator>
+segments_view::
+segments_view(
+    string_view s,
+    std::size_t n,
+    Allocator const& a)
+    : s_(s)
+    , n_(n)
+    , a_(a)
+{
+}
+
+segments_view::
+segments_view() noexcept = default;
+
+bool
+segments_view::
+is_absolute() const noexcept
+{
+    return s_.starts_with('/');
+}
+
+//------------------------------------------------
+//
+// Element Access
+//
+//------------------------------------------------
+
+string_value
+segments_view::
+front() const noexcept
+{
+    return *begin();
+}
+
+string_value
+segments_view::
+back() const noexcept
+{
+    return *--end();
+}
+
+//------------------------------------------------
+//
+// Capacity
+//
+//------------------------------------------------
+
+bool
+segments_view::
+empty() const noexcept
+{
+    return size() == 0;
+}
+
+std::size_t
+segments_view::
+size() const noexcept
+{
+    return n_;
+}
 
 } // urls
 } // boost

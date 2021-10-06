@@ -19,19 +19,6 @@ namespace urls {
 
 //------------------------------------------------
 //
-// Capacity
-//
-//------------------------------------------------
-
-std::size_t
-segments_encoded::
-size() const noexcept
-{
-    return u_->segment_count();
-}
-
-//------------------------------------------------
-//
 // Modifiers
 //
 //------------------------------------------------
@@ -39,7 +26,7 @@ size() const noexcept
 auto
 segments_encoded::
 insert(
-    const_iterator before,
+    iterator before,
     string_view s0) ->
         iterator
 {
@@ -60,8 +47,8 @@ insert(
 auto
 segments_encoded::
 erase(
-    const_iterator first,
-    const_iterator last) noexcept ->
+    iterator first,
+    iterator last) noexcept ->
         iterator
 {
     BOOST_ASSERT(first.u_ == u_);
@@ -73,68 +60,6 @@ erase(
         detail::make_enc_segs_iter(&s, &s));
     return { *u_, first.i_ };
 }
-
-//------------------------------------------------
-//
-// References
-//
-//------------------------------------------------
-
-segments_encoded::
-const_reference::
-operator
-string_view() const noexcept
-{
-    return u_->encoded_segment(
-        static_cast<int>(i_));
-}
-
-//------------------------------------------------
-
-segments_encoded::
-reference::
-operator
-string_view() const noexcept
-{
-    return u_->encoded_segment(
-        static_cast<int>(i_));
-}
-
-auto
-segments_encoded::
-reference::
-operator=(string_view s0) ->
-    reference&
-{
-    detail::copied_strings cs(
-        u_->encoded_url());
-    auto s = cs.maybe_copy(s0);
-    u_->edit_segments(
-        i_,
-        i_ + 1,
-        detail::make_enc_segs_iter(
-            &s, &s + 1),
-        detail::make_enc_segs_iter(
-            &s, &s + 1));
-    return *this;
-}
-
-void
-swap(
-    segments_encoded::
-        reference r0,
-    segments_encoded::
-        reference r1)
-{
-    detail::copied_strings cs(
-        r0.u_->encoded_url());
-    auto tmp = cs.maybe_copy(
-        string_view(r0));
-    r0 = r1;
-    r1 = tmp;
-}
-
-//------------------------------------------------
 
 } // urls
 } // boost

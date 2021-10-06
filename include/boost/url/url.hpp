@@ -14,6 +14,7 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/params.hpp>
+#include <boost/url/params_encoded.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments.hpp>
 #include <boost/url/segments_encoded.hpp>
@@ -61,7 +62,6 @@ struct any_path_iter;
 class BOOST_SYMBOL_VISIBLE url
     : public url_view
 {
-    template<class Allocator>
     friend class urls::segments;
     friend class segments_encoded;
     friend class urls::params;
@@ -213,8 +213,12 @@ public:
 
         @par Example
         @code
-        url u;
-        u.set_scheme( "http" );         // produces "http:"
+        url u = parse_uri( "http://www.example.com" );
+
+        u.set_scheme( "https" );         // u is now "https://www.example.com"
+
+        assert( u.encoded_url() == "https://www.example.com" );
+
         u.set_scheme( "1forall");       // throws, invalid scheme
         @endcode
 
@@ -236,6 +240,9 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
             3.1. Scheme (rfc3986)</a>
+
+        @see
+            @ref remove_scheme.
     */
     BOOST_URL_DECL
     url&
@@ -983,7 +990,7 @@ public:
 
     template<class Allocator =
         std::allocator<char>>
-    urls::segments<Allocator>
+    urls::segments
     segments(Allocator const& = {}) noexcept;
 
     //--------------------------------------------
@@ -1093,6 +1100,12 @@ public:
     url&
     set_query_part(
         string_view s);
+
+    urls::params_encoded
+    encoded_params() noexcept
+    {
+        return urls::params_encoded(*this);
+    }
 
     template<class Allocator =
         std::allocator<char>>
@@ -1233,9 +1246,9 @@ operator<<(std::ostream& os, url const& u);
 } // boost
 
 #include <boost/url/impl/params.hpp>
+#include <boost/url/impl/params_encoded.hpp>
 #include <boost/url/impl/segments.hpp>
 #include <boost/url/impl/segments_encoded.hpp>
 #include <boost/url/impl/url.hpp>
-#include <boost/url/detail/impl/any_query_iter.hpp>
 
 #endif

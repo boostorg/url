@@ -26,6 +26,9 @@ class basic_static_pool
     char* top_;
     std::size_t n_ = 0;
 
+    void** table() noexcept;
+    void** find(void* p) noexcept;
+
     BOOST_URL_DECL
     void*
     allocate(
@@ -44,6 +47,11 @@ public:
     */
     template<class T>
     class allocator_type;
+
+    /** Destructor
+    */
+    BOOST_URL_DECL
+    ~basic_static_pool();
 
     /** Constructor
     */

@@ -14,10 +14,11 @@
 #include <boost/url/host_type.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
+#include <boost/url/params_view.hpp>
+#include <boost/url/params_encoded_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
-#include <boost/url/query_params_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <boost/assert.hpp>
@@ -59,9 +60,9 @@ struct scheme_part_bnf;
     @code
     url u;
 
-    u = parse_uri( "http://www.example.com/index.html" );
+    u = parse_uri( "http://www.example.com/index.html" ).value();
 
-    u = parse_relative_ref( "/path/to/file.txt" );
+    u = parse_relative_ref( "/path/to/file.txt" ).value();
     @endcode
 
     @par BNF
@@ -69,6 +70,8 @@ struct scheme_part_bnf;
     URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
 
     URI-reference = URI / relative-ref
+
+    absolute-URI  = scheme ":" hier-part [ "?" query ]
 
     relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
     @endcode
@@ -1589,11 +1592,32 @@ public:
             encoded_query(), {}, a);
     }
 
-    /** Return the query
+    /** Return the query parameters
 
-        This function returns the query as
-        a non-modifiable _ForwardRange_ of
-        key/value pairs.
+        This function returns the query
+        parameters as a non-modifiable
+        forward range of key/value pairs.
+
+        @par BNF
+        @code
+        query-params    = [ query-param ] *( "&" [ query-param ] )
+
+        query-param     = key [ "=" value ]
+
+        @endcode
+    */
+    template<
+        class Allocator =
+            std::allocator<char>>
+    params_view
+    params(Allocator const&
+        alloc = {}) const noexcept;
+
+    /** Return the query parameters
+
+        This function returns the query
+        parameters as a non-modifiable
+        forward range of key/value pairs.
 
         @par BNF
         @code
@@ -1604,12 +1628,12 @@ public:
         @endcode
     */
     BOOST_URL_DECL
-    query_params_view
-    query_params() const noexcept;
+    params_encoded_view
+    encoded_params() const noexcept;
 
     //--------------------------------------------
     //
-    // fragment
+    // Fragment
     //
     //--------------------------------------------
 
@@ -1699,33 +1723,14 @@ public:
     //
     //--------------------------------------------
 
-    BOOST_URL_DECL friend url_view parse_absolute_uri(
-        string_view s, error_code& ec) noexcept;
-    BOOST_URL_DECL friend url_view parse_absolute_uri(
-        string_view s, std::error_code& ec) noexcept;
-    BOOST_URL_DECL friend url_view parse_absolute_uri(
-        string_view s);
-
-    BOOST_URL_DECL friend url_view parse_uri(
-        string_view s, error_code& ec) noexcept;
-    BOOST_URL_DECL friend url_view parse_uri(
-        string_view s, std::error_code& ec) noexcept;
-    BOOST_URL_DECL friend url_view parse_uri(
-        string_view s);
-
-    BOOST_URL_DECL friend url_view parse_relative_ref(
-        string_view s, error_code& ec) noexcept;
-    BOOST_URL_DECL friend url_view parse_relative_ref(
-        string_view s, std::error_code& ec) noexcept;
-    BOOST_URL_DECL friend url_view parse_relative_ref(
-        string_view s);
-
-    BOOST_URL_DECL friend url_view parse_uri_reference(
-        string_view s, error_code& ec) noexcept;
-    BOOST_URL_DECL friend url_view parse_uri_reference(
-        string_view s, std::error_code& ec) noexcept;
-    BOOST_URL_DECL friend url_view parse_uri_reference(
-        string_view s);
+    BOOST_URL_DECL friend result<url_view>
+        parse_absolute_uri(string_view s) noexcept;
+    BOOST_URL_DECL friend result<url_view>
+        parse_uri(string_view s) noexcept;
+    BOOST_URL_DECL friend result<url_view>
+        parse_relative_ref(string_view s) noexcept;
+    BOOST_URL_DECL friend result<url_view>
+        parse_uri_reference(string_view s) noexcept;
 
 private:
     void apply(scheme_part_bnf const& t) noexcept;
@@ -1765,8 +1770,6 @@ private:
 
     @param s The string to parse
 
-    @param ec Set to the error, if any occurred
-
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.3"
         >4.3. Absolute URI (rfc3986)</a>
@@ -1779,102 +1782,9 @@ private:
         @ref url_view.
 */
 BOOST_URL_DECL
-url_view
+result<url_view>
 parse_absolute_uri(
-    string_view s,
-    error_code& ec) noexcept;
-
-/** Parse an absolute-URI
-
-    This function parses a string according
-    to the absolute-URI grammar below, and
-    returns a @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    absolute-URI    = scheme ":" hier-part [ "?" query ]
-
-    hier-part       = "//" authority path-abempty
-                    / path-absolute
-                    / path-rootless
-                    / path-empty
-    @endcode
-
-    @par Exception Safety
-    Throws nothing.
-
-    @return A view to the parsed URL
-
-    @param s The string to parse
-
-    @param ec Set to the error, if any occurred
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.3"
-        >4.3. Absolute URI (rfc3986)</a>
-
-    @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
-*/
-BOOST_URL_DECL
-url_view
-parse_absolute_uri(
-    string_view s,
-    std::error_code& ec) noexcept;
-
-/** Parse an absolute-URI
-
-    This function parses a string according
-    to the absolute-URI grammar below, and
-    returns a @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    absolute-URI    = scheme ":" hier-part [ "?" query ]
-
-    hier-part       = "//" authority path-abempty
-                    / path-absolute
-                    / path-rootless
-                    / path-empty
-    @endcode
-
-    @par Exception Safety
-    Exceptions thrown on invalid input.
-
-    @return A view to the parsed URL
-
-    @param s The string to parse
-
-    @throw std::invalid_argument parse error
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.3"
-        >4.3. Absolute URI (rfc3986)</a>
-
-    @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
-*/
-BOOST_URL_DECL
-url_view
-parse_absolute_uri(string_view s);
-
-//------------------------------------------------
+    string_view s) noexcept;
 
 /** Parse a URI
 
@@ -1903,8 +1813,6 @@ parse_absolute_uri(string_view s);
 
     @param s The string to parse
 
-    @param ec Set to the error, if any occurred
-
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
         >3. Syntax Components (rfc3986)</a>
@@ -1917,102 +1825,9 @@ parse_absolute_uri(string_view s);
         @ref url_view.
 */
 BOOST_URL_DECL
-url_view
+result<url_view>
 parse_uri(
-    string_view s,
-    error_code& ec) noexcept;
-
-/** Parse a URI
-
-    This function parses a string according
-    to the URI grammar below, and returns a
-    @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-    hier-part     = "//" authority path-abempty
-                  / path-absolute
-                  / path-rootless
-                  / path-empty
-    @endcode
-
-    @par Exception Safety
-    Throws nothing.
-
-    @return A view to the parsed URL
-
-    @param s The string to parse
-
-    @param ec Set to the error, if any occurred
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
-        >3. Syntax Components (rfc3986)</a>
-
-    @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
-*/
-BOOST_URL_DECL
-url_view
-parse_uri(
-    string_view s,
-    std::error_code& ec) noexcept;
-
-/** Parse a URI
-
-    This function parses a string according
-    to the URI grammar below, and returns a
-    @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-    hier-part     = "//" authority path-abempty
-                  / path-absolute
-                  / path-rootless
-                  / path-empty
-    @endcode
-
-    @par Exception Safety
-    Exceptions thrown on invalid input.
-
-    @return A view to the parsed URL
-
-    @param s The string to parse
-
-    @throw std::invalid_argument parse error
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
-        >3. Syntax Components (rfc3986)</a>
-
-    @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
-*/
-BOOST_URL_DECL
-url_view
-parse_uri(string_view s);
-
-//------------------------------------------------
+    string_view s) noexcept;
 
 /** Parse a relative-ref
 
@@ -2041,8 +1856,6 @@ parse_uri(string_view s);
 
     @param s The string to parse
 
-    @param ec Set to the error, if any occurred
-
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
         >4.2. Relative Reference (rfc3986)</a>
@@ -2055,103 +1868,9 @@ parse_uri(string_view s);
         @ref url_view.
 */
 BOOST_URL_DECL
-url_view
+result<url_view>
 parse_relative_ref(
-    string_view s,
-    error_code& ec) noexcept;
-
-/** Parse a relative-ref
-
-    This function parses a string according
-    to the relative-ref grammar below, and
-    returns a @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
-
-    relative-part = "//" authority path-abempty
-                  / path-absolute
-                  / path-noscheme
-                  / path-empty
-    @endcode
-
-    @par Exception Safety
-    Throws nothing.
-
-    @return A view to the parsed URL
-
-    @param s The string to parse
-
-    @param ec Set to the error, if any occurred
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
-        >4.2. Relative Reference (rfc3986)</a>
-
-    @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
-*/
-BOOST_URL_DECL
-url_view
-parse_relative_ref(
-    string_view s,
-    std::error_code& ec) noexcept;
-
-/** Parse a relative-ref
-
-    This function parses a string according
-    to the relative-ref grammar below, and
-    returns a @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
-
-    relative-part = "//" authority path-abempty
-                  / path-absolute
-                  / path-noscheme
-                  / path-empty
-    @endcode
-
-    @par Exception Safety
-    Exceptions thrown on invalid input.
-
-    @return A view to the parsed URL
-
-    @param s The string to parse
-
-    @throw std::invalid_argument parse error
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
-        >4.2. Relative Reference (rfc3986)</a>
-
-    @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
-*/
-BOOST_URL_DECL
-url_view
-parse_relative_ref(
-    string_view s);
-
-//------------------------------------------------
+    string_view s) noexcept;
 
 /** Parse a URI-reference
 
@@ -2189,8 +1908,6 @@ parse_relative_ref(
 
     @param s The string to parse
 
-    @param ec Set to the error, if any occurred
-
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
         >4.1. URI Reference (rfc3986)</a>
@@ -2203,119 +1920,9 @@ parse_relative_ref(
         @ref url_view.
 */
 BOOST_URL_DECL
-url_view
+result<url_view>
 parse_uri_reference(
-    string_view s,
-    error_code& ec) noexcept;
-
-/** Parse a URI-reference
-
-    This function parses a string according
-    to the URI-reference grammar below, and
-    returns a @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-    hier-part     = "//" authority path-abempty
-                  / path-absolute
-                  / path-rootless
-                  / path-empty
-
-    URI-reference = URI / relative-ref
-
-    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
-
-    relative-part = "//" authority path-abempty
-                  / path-absolute
-                  / path-noscheme
-                  / path-empty
-    @endcode
-
-    @par Exception Safety
-    Throws nothing.
-
-    @return A view to the parsed URL
-
-    @param s The string to parse
-
-    @param ec Set to the error, if any occurred
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
-        >4.1. URI Reference (rfc3986)</a>
-
-    @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
-*/
-BOOST_URL_DECL
-url_view
-parse_uri_reference(
-    string_view s,
-    std::error_code& ec) noexcept;
-
-/** Parse a URI-reference
-
-    This function parses a string according
-    to the URI-reference grammar below, and
-    returns a @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-    hier-part     = "//" authority path-abempty
-                  / path-absolute
-                  / path-rootless
-                  / path-empty
-
-    URI-reference = URI / relative-ref
-
-    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
-
-    relative-part = "//" authority path-abempty
-                  / path-absolute
-                  / path-noscheme
-                  / path-empty
-    @endcode
-
-    @par Exception Safety
-    Exceptions thrown on invalid input.
-
-    @return A view to the parsed URL
-
-    @param s The string to parse
-
-    @throw std::invalid_argument parse error
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
-        >4.1. URI Reference (rfc3986)</a>
-
-    @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
-*/
-BOOST_URL_DECL
-url_view
-parse_uri_reference(
-    string_view s);
+    string_view s) noexcept;
 
 //------------------------------------------------
 
@@ -2345,5 +1952,12 @@ operator<<(
 
 } // urls
 } // boost
+
+// These includes are here
+// because of circular dependencies
+#include <boost/url/impl/params_view.hpp>
+#include <boost/url/impl/params_encoded_view.hpp>
+
+#include <boost/url/impl/url_view.hpp>
 
 #endif

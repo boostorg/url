@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/params_view.hpp>
+#include <boost/url/params_encoded_view.hpp>
 
 #include <boost/url/url_view.hpp>
 #include <boost/url/static_pool.hpp>
@@ -17,12 +17,9 @@
 namespace boost {
 namespace urls {
 
-class params_view_test
+class params_encoded_view_test
 {
 public:
-    using pool_t = static_pool<4096>;
-    pool_t pa;
-
     void
     testElements()
     {
@@ -31,7 +28,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params_view p = u.params(pa.allocator());
+            params_encoded_view p = u.encoded_params();
             BOOST_TEST(p.at("k0") == "0");
             BOOST_TEST(p.at("k1") == "1");
             BOOST_TEST(p.at("k2") == "");
@@ -51,13 +48,13 @@ public:
         {
             url_view u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params_view p = u.params(pa.allocator());
+            params_encoded_view p = u.encoded_params();
             BOOST_TEST(! p.empty());
             BOOST_TEST(p.size() == 5);
         }
         {
             url_view u;
-            params_view p = u.params(pa.allocator());
+            params_encoded_view p = u.encoded_params();
             BOOST_TEST(p.empty());
             BOOST_TEST(p.size() == 0);
         }
@@ -77,23 +74,24 @@ public:
         {
             url_view u = parse_uri_reference(
                 "/?a=1&%62=2&c=3&c=4&c=5&d=6&e=7&d=8&f=9#f").value();
-            params_view p = u.params(pa.allocator());
+            params_encoded_view p = u.encoded_params();
             BOOST_TEST(p.count("a") == 1);
-            BOOST_TEST(p.count("b") == 1);
+            BOOST_TEST(p.count("%62") == 1); // pct-encoded
             BOOST_TEST(p.count("c") == 3);
             BOOST_TEST(p.count("d") == 2);
             BOOST_TEST(p.count("e") == 1);
             BOOST_TEST(p.count("f") == 1);
             BOOST_TEST(p.count("g") == 0);
 
-            BOOST_TEST(p.find("b") ==
+            BOOST_TEST(p.find("%62") ==
                 std::next(p.begin()));
             BOOST_TEST(p.find(
                 std::next(p.begin(), 6), "d") ==
                 std::next(p.begin(), 7));
 
             BOOST_TEST(p.contains("a"));
-            BOOST_TEST(p.contains("b"));
+            BOOST_TEST(! p.contains("b"));
+            BOOST_TEST(p.contains("%62"));
             BOOST_TEST(p.contains("c"));
             BOOST_TEST(p.contains("d"));
             BOOST_TEST(p.contains("e"));
@@ -110,7 +108,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "/?a=1&bb=22&ccc=333&dddd=4444#f").value();
-            params_view p = u.params(pa.allocator());
+            params_encoded_view p = u.encoded_params();
             auto it = p.begin();
             BOOST_TEST((*it).key == "a");
             BOOST_TEST((*++it).key == "bb");
@@ -125,11 +123,12 @@ public:
         {
             url_view u = parse_uri_reference(
                 "/?&x&y=&z=3#f").value();
-            params_view p = u.params();
+            params_encoded_view p =
+                u.encoded_params();
             BOOST_TEST(p.size() == 4);
             auto it = p.begin();
 
-            params_view::value_type v;
+            params_encoded_view::value_type v;
 
             v = *it++;
             BOOST_TEST(v.key == "");
@@ -156,11 +155,15 @@ public:
     void
     testEncoding()
     {
+        // parse_query_params(string_view)
         {
             params_view u = parse_query_params(
                 "a=1&b=2+2&c=%61%70%70%6c%65").value().decoded();
             BOOST_TEST(u.at("b") == "2 2");
             BOOST_TEST(u.at("c") == "apple");
+
+            BOOST_TEST_THROWS(parse_query_params("#a").value(),
+                std::exception);
         }
     }
 
@@ -176,8 +179,8 @@ public:
 };
 
 TEST_SUITE(
-    params_view_test,
-    "boost.url.params_view");
+    params_encoded_view_test,
+    "boost.url.params_encoded_view");
 
 } // urls
 } // boost

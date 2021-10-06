@@ -21,7 +21,8 @@ namespace urls {
     and containers to indicate the type of host
     present in a URL.
 
-    @see url_view::host, url_base::host
+    @see
+        @ref url_view::host.
 */
 enum class host_type
 {

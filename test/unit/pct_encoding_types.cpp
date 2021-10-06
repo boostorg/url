@@ -7,22 +7,5 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_URL_HPP
-#define BOOST_URL_IMPL_URL_HPP
-
-namespace boost {
-namespace urls {
-
-template<class Allocator>
-urls::segments
-url::
-segments(
-    Allocator const& a) noexcept
-{
-    return urls::segments(*this, a);
-}
-
-} // urls
-} // boost
-
-#endif
+// Test that header file is self-contained.
+#include <boost/url/pct_encoding_types.hpp>

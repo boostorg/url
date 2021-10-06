@@ -34,7 +34,7 @@ namespace urls {
     owning the character buffer extends until
     the string view is no longer referenced.
 */
-using string_view = boost::string_view;
+typedef boost::string_view string_view;
 
 /** The string alias template return type for allocating member functions.
 
@@ -47,7 +47,7 @@ using string_type =
     std::basic_string<char,
         std::char_traits<char>, Allocator>;
 
-/** Alias for `std::true_type` if a `T` can be converted to a @ref string_view
+/** Alias for `std::true_type` if a `T` can be converted to a string_view
 
     This metafunction is an alias for `std::true_type` if
 
@@ -92,7 +92,7 @@ using string_type =
 
     The function @ref to_string_view is used to
     generically convert an instance of a type
-    `T` to @ref string_view when such a conversion
+    `T` to `string_view` when such a conversion
     is possible. This allows the library to
     interoperate with various string-like types.
 
@@ -202,7 +202,7 @@ public:
 
     inline
     string_value&
-    operator=(string_value const& other) noexcept;
+    operator=(string_value const& other) & noexcept;
 };
 
 } // urls

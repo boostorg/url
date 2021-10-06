@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_PARAMS_HPP
-#define BOOST_URL_PARAMS_HPP
+#ifndef BOOST_URL_PARAMS_ENCODED_HPP
+#define BOOST_URL_PARAMS_ENCODED_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/params_value_type.hpp>
@@ -25,44 +25,24 @@ namespace urls {
 class url;
 #endif
 
-/** A random access container of modifiable, percent-decoded query parameters.
-*/
-class params
+class params_encoded
     : private detail::parts_base
 {
     friend class url;
 
     url* u_ = nullptr;
-    string_value::allocator a_;
 
-    template<class Allocator>
-    params(
-        url& u,
-        Allocator const& a);
+    inline
+    explicit
+    params_encoded(
+        url& u) noexcept;
 
 public:
     class iterator;
 
-    class reference
-    {
-        friend class params;
-        friend class iterator;
-
-        BOOST_URL_DECL
-        reference(
-            char const* s,
-            std::size_t nk,
-            std::size_t nv,
-            string_value::allocator a);
-
-    public:
-        string_value key;
-        string_value value;
-        bool has_value;
-    };
-
     using value_type = params_value_type;
-    using const_reference = reference;
+    using reference = params_value_type;
+    using const_reference = params_value_type;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 
@@ -73,7 +53,7 @@ public:
     //--------------------------------------------
 
     inline
-    params&
+    params_encoded&
     operator=(std::initializer_list<
         value_type> init);
 
@@ -105,34 +85,34 @@ public:
     //--------------------------------------------
 
     inline
-    reference
+    value_type
     at(std::size_t pos) const;
 
     BOOST_URL_DECL
-    string_value
+    string_view
     at(string_view key) const;
 
     template<class Key>
 #ifdef BOOST_URL_DOCS
-    string_value
+    string_view
 #else
     typename std::enable_if<
         is_stringlike<Key>::value,
-        string_value>::type
+        string_view>::type
 #endif
     at(Key const& key) const;
 
     BOOST_URL_DECL
-    reference
+    value_type
     operator[](
         std::size_t pos) const;
 
     inline
-    reference
+    value_type
     front() const;
 
     inline
-    reference
+    value_type
     back() const;
 
     //--------------------------------------------
@@ -488,6 +468,6 @@ public:
 
 // VFALCO This include is at the bottom of
 // url.hpp because of a circular dependency
-//#include <boost/url/impl/params.hpp>
+//#include <boost/url/impl/params_encoded.hpp>
 
 #endif

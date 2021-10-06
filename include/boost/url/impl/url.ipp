@@ -229,7 +229,7 @@ remove_scheme() noexcept
             url_view::encoded_segments();
         BOOST_ASSERT(! p.empty());
         auto it = p.begin();
-        if(it->find_first_of(':') ==
+        if((*it).find_first_of(':') ==
             string_view::npos)
         {
             // path-noscheme
@@ -1006,7 +1006,7 @@ remove_origin() noexcept
         url_view::encoded_segments();
     BOOST_ASSERT(! p.empty());
     auto it = p.begin();
-    if(it->find_first_of(':') ==
+    if((*it).find_first_of(':') ==
         string_view::npos)
     {
         // path-noscheme

@@ -31,7 +31,7 @@
           <member><link linkend="url.ref.boost__urls__params_encoded">params_encoded</link></member>
           <member><link linkend="url.ref.boost__urls__params_view">params_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_encoded_view">params_encoded_view</link></member>
-          <member><link linkend="url.ref.boost__urls__query_params_view">query_params_view</link></member>
+          <member><link linkend="url.ref.boost__urls__segments">segments</link></member>
           <member><link linkend="url.ref.boost__urls__segments_encoded">segments_encoded</link></member>
           <member><link linkend="url.ref.boost__urls__segments_encoded_view">segments_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__segments_view">segments_view</link></member>
@@ -72,6 +72,7 @@
           <member><link linkend="url.ref.boost__urls__error_category">error_category</link></member>
           <member><link linkend="url.ref.boost__urls__error_code">error_code</link></member>
           <member><link linkend="url.ref.boost__urls__error_condition">error_condition</link></member>
+          <member><link linkend="url.ref.boost__urls__result">result</link></member>
           <member><link linkend="url.ref.boost__urls__string_type">string_type</link></member>
           <member><link linkend="url.ref.boost__urls__string_view">string_view</link></member>
           <member><link linkend="url.ref.boost__urls__system_error">system_error</link></member>

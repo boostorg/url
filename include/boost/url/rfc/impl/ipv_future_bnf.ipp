@@ -41,13 +41,15 @@ parse(
     if(t.major.empty())
     {
         // can't be empty
-        ec = error::bad_empty_element;
+        ec = BOOST_URL_ERR(
+            error::bad_empty_element);
         return false;
     }
     if(t.minor.empty())
     {
         // can't be empty
-        ec = error::bad_empty_element;
+        ec = BOOST_URL_ERR(
+            error::bad_empty_element);
         return false;
     }
     t.str = string_view(

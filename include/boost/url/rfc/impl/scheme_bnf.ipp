@@ -28,13 +28,15 @@ parse(
     if(it == end)
     {
         // expected alpha
-        ec = error::incomplete;
+        ec = BOOST_URL_ERR(
+            error::incomplete);
         return false;
     }
     if(! bnf::alpha_chars{}(*it))
     {
         // expected alpha
-        ec = error::bad_alpha;
+        ec = BOOST_URL_ERR(
+            error::bad_alpha);
         return false;
     }
     static

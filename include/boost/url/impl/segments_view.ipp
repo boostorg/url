@@ -15,15 +15,10 @@
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/paths_bnf.hpp>
 #include <boost/assert.hpp>
+#include <ostream>
 
 namespace boost {
 namespace urls {
-
-segments_view::
-segments_view(
-    segments_view const&) noexcept = default;
-
-//------------------------------------------------
 
 segments_view::
 iterator::
@@ -171,6 +166,12 @@ operator--() noexcept ->
     return *this;
 }
 
+//------------------------------------------------
+//
+// Iterators
+//
+//------------------------------------------------
+
 auto
 segments_view::
 begin() const noexcept ->
@@ -185,6 +186,31 @@ end() const noexcept ->
     iterator
 {
     return iterator(n_, s_, a_);
+}
+
+//------------------------------------------------
+//
+// Friends
+//
+//------------------------------------------------
+
+std::ostream&
+operator<<(
+    std::ostream& os,
+    segments_view const& vw)
+{
+    auto it = vw.begin();
+    auto const end = vw.end();
+    if(! vw.is_absolute())
+        goto skip;
+    while(it != end)
+    {
+        os.put('/');
+    skip:
+        auto s(*it++);
+        os.write(s.data(), s.size());
+    }
+    return os;
 }
 
 } // urls
