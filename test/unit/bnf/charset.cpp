@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/bnf/char_set.hpp>
+#include <boost/url/bnf/charset.hpp>
 
 #include <boost/url/string.hpp>
 #include "test_suite.hpp"
@@ -19,23 +19,23 @@ namespace urls {
 namespace bnf {
 
 BOOST_STATIC_ASSERT(
-    is_char_set<
+    is_charset<
         all_chars>::value);
 
 BOOST_STATIC_ASSERT(
-    is_char_set<
+    is_charset<
         alnum_chars>::value);
 
 BOOST_STATIC_ASSERT(
-    is_char_set<
+    is_charset<
         alpha_chars>::value);
 
 BOOST_STATIC_ASSERT(
-    is_char_set<
+    is_charset<
         digit_chars>::value);
 
 BOOST_STATIC_ASSERT(
-    is_char_set<
+    is_charset<
         hexdig_chars>::value);
 
 class char_set_test
@@ -145,7 +145,7 @@ public:
 
 TEST_SUITE(
     char_set_test,
-    "boost.url.char_set");
+    "boost.url.charset");
 
 } // bnf
 } // urls

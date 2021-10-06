@@ -12,9 +12,7 @@
 
 #include <boost/url/detail/any_query_iter.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/pct_encoding.hpp>
-#include <boost/url/rfc/char_sets.hpp>
-#include <boost/url/detail/pct_encoding.hpp>
+#include <boost/url/rfc/charsets.hpp>
 
 namespace boost {
 namespace urls {
@@ -138,11 +136,11 @@ measure_impl(
 {
     static constexpr auto cs =
         pchars + '/' + '?';
-    n += pct_encode_size(key, cs);
+    n += pct_encode_bytes(key, cs);
     if(value)
     {
         ++n; // '='
-        n += pct_encode_size(
+        n += pct_encode_bytes(
             *value, cs);
     }
 }
@@ -157,13 +155,12 @@ copy_impl(
 {
     static constexpr auto cs =
         pchars + '/' + '?';
-    dest = detail::pct_encode(
-        dest, end, key, {}, cs);
+    pct_encode(key, cs, dest, end);
     if(value)
     {
         *dest++ = '=';
-        dest = detail::pct_encode(
-            dest, end, *value, {}, cs);
+        pct_encode(*value,
+            cs, dest, end);
     }
 }
 

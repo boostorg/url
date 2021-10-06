@@ -33,7 +33,6 @@ iterator(
 {
     using bnf::parse;
     using bnf_t = path_rootless_bnf;
-    using detail::pct_decode_unchecked;
     if(next_ == end_)
     {
         next_ = nullptr;
@@ -110,7 +109,6 @@ operator++() noexcept ->
 {
     using bnf::parse;
     using bnf_t = path_rootless_bnf;
-    using detail::pct_decode_unchecked;
     BOOST_ASSERT(next_ != nullptr);
     pos_ = next_;
     error_code ec;
@@ -134,7 +132,6 @@ operator--() noexcept ->
 {
     using bnf::parse;
     using bnf_t = path_rootless_bnf;
-    using detail::pct_decode_unchecked;
     BOOST_ASSERT(pos_ != begin_);
     error_code ec;
     while(--pos_ != begin_)

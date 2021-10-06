@@ -11,10 +11,10 @@
 #define BOOST_URL_IMPL_IPV_FUTURE_BNF_IPP
 
 #include <boost/url/rfc/ipv_future_bnf.hpp>
-#include <boost/url/bnf/char_set.hpp>
+#include <boost/url/bnf/charset.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/bnf/token.hpp>
-#include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/charsets.hpp>
 
 namespace boost {
 namespace urls {

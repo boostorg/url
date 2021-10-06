@@ -11,7 +11,7 @@
 #define BOOST_URL_BNF_IMPL_TOKEN_HPP
 
 #include <boost/url/error.hpp>
-#include <boost/url/bnf/char_set.hpp>
+#include <boost/url/bnf/charset.hpp>
 
 namespace boost {
 namespace urls {
@@ -23,7 +23,7 @@ template<class CharSet>
 struct token
 {
     BOOST_STATIC_ASSERT(
-        is_char_set<
+        is_charset<
             CharSet>::value);
 
     CharSet const& cs_;

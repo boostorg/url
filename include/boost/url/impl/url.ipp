@@ -12,7 +12,6 @@
 
 #include <boost/url/url.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/pct_encoding.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/bnf/parse.hpp>
@@ -20,7 +19,7 @@
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/detail/print.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
-#include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/host_bnf.hpp>
 #include <boost/url/rfc/paths_bnf.hpp>
 #include <boost/url/rfc/port_bnf.hpp>
@@ -366,11 +365,10 @@ set_user(string_view s)
         unreserved_chars +
         subdelim_chars;
     auto const n =
-        pct_encode_size(s, cs);
+        pct_encode_bytes(s, cs);
     auto dest = set_user_impl(n);
-    dest = detail::pct_encode(
-        dest, get(id_pass).data(),
-            s, {},  cs);
+    pct_encode(s, cs,
+        dest, get(id_pass).data());
     decoded_[id_user] = s.size();
     BOOST_ASSERT(dest ==
         get(id_pass).data());
@@ -463,11 +461,10 @@ set_password(string_view s)
         unreserved_chars +
         subdelim_chars + ':';
     auto const n =
-        pct_encode_size(s, cs);
+        pct_encode_bytes(s, cs);
     auto dest = set_password_impl(n);
-    dest = detail::pct_encode(dest,
-        get(id_host).data() - 1,
-            s, {},  cs);
+    pct_encode(s, cs, dest,
+        get(id_host).data() - 1);
     decoded_[id_pass] = s.size();
     BOOST_ASSERT(dest ==
         get(id_host).data() - 1);
@@ -551,11 +548,10 @@ set_userinfo(
         unreserved_chars +
         subdelim_chars;
     auto const n =
-        pct_encode_size(s, cs);
+        pct_encode_bytes(s, cs);
     auto dest = set_userinfo_impl(n);
-    dest = detail::pct_encode(dest,
-        get(id_host).data() - 1,
-            s, {},  cs);
+    pct_encode(s, cs, dest,
+        get(id_host).data() - 1);
     decoded_[id_user] = s.size();
     BOOST_ASSERT(dest ==
         get(id_host).data() - 1);
@@ -682,11 +678,10 @@ set_host(
         unreserved_chars +
         subdelim_chars;
     auto const n =
-        pct_encode_size(s, cs);
+        pct_encode_bytes(s, cs);
     auto dest = set_host_impl(n);
-    dest = detail::pct_encode(
-        dest, get(id_path).data(),
-            s, {},  cs);
+    pct_encode(s, cs, dest,
+        get(id_path).data());
     decoded_[id_host] = s.size();
     host_type_ =
         urls::host_type::name;

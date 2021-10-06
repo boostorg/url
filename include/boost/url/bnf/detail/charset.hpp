@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_BNF_DETAIL_CHAR_SET_HPP
-#define BOOST_URL_BNF_DETAIL_CHAR_SET_HPP
+#ifndef BOOST_URL_BNF_DETAIL_CHARSET_HPP
+#define BOOST_URL_BNF_DETAIL_CHARSET_HPP
 
 #include <boost/type_traits/make_void.hpp>
 #include <type_traits>

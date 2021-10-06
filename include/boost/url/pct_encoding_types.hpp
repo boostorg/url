@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/CPPAllinace/url
+// Official repository: https://github.com/CPPAlliance/url
 //
 
 #ifndef BOOST_URL_PCT_ENCODING_TYPES_HPP
@@ -51,21 +51,6 @@ struct pct_decode_opts
     /** True if decoding a non-normal string is an error
     */
     bool non_normal_is_error = false;
-};
-
-//------------------------------------------------
-
-/** Options for applying percent-encoding to strings
-*/
-struct pct_encode_opts
-{
-    /** True if SP (space, ' ') encodes into PLUS ('+')
-
-        @par Specification
-        @li <a href="https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1">
-            application/x-www-form-urlencoded (w3.org)</a>
-    */
-    bool space_to_plus = false;
 };
 
 } // urls

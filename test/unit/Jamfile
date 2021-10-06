@@ -44,14 +44,14 @@ local SOURCES =
     url_view.cpp
     urls.cpp
     bnf/ascii.cpp
-    bnf/char_set.cpp
+    bnf/charset.cpp
     bnf/parse.cpp
     bnf/range.cpp
     bnf/repeat.cpp
     bnf/token.cpp
     rfc/absolute_uri_bnf.cpp
     rfc/authority_bnf.cpp
-    rfc/char_sets.cpp
+    rfc/charsets.cpp
     rfc/fragment_bnf.cpp
     rfc/fragment_part_bnf.cpp
     rfc/hier_part_bnf.cpp

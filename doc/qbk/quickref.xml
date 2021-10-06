@@ -73,7 +73,6 @@
           <member><link linkend="url.ref.boost__urls__error_code">error_code</link></member>
           <member><link linkend="url.ref.boost__urls__error_condition">error_condition</link></member>
           <member><link linkend="url.ref.boost__urls__result">result</link></member>
-          <member><link linkend="url.ref.boost__urls__string_type">string_type</link></member>
           <member><link linkend="url.ref.boost__urls__string_value">string_value</link></member>
           <member><link linkend="url.ref.boost__urls__string_view">string_view</link></member>
           <member><link linkend="url.ref.boost__urls__system_error">system_error</link></member>
@@ -92,7 +91,7 @@
           <member><link linkend="url.ref.boost__urls__pct_decode">pct_decode</link></member>
           <member><link linkend="url.ref.boost__urls__pct_decode_size">pct_decode_size</link></member>
           <member><link linkend="url.ref.boost__urls__pct_encode">pct_encode</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_encode_size">pct_encode_size</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_encode_bytes">pct_encode_bytes</link></member>
         </simplelist>
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
@@ -131,7 +130,7 @@
         </simplelist>
         <bridgehead renderas="sect3">Type Traits</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__bnf__is_char_set">is_char_set</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__is_charset">is_charset</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__is_element">is_element</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__is_range">is_range</link></member>
         </simplelist>

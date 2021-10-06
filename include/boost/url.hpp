@@ -34,7 +34,7 @@
 #include <boost/url/urls.hpp>
 
 #include <boost/url/bnf/ascii.hpp>
-#include <boost/url/bnf/char_set.hpp>
+#include <boost/url/bnf/charset.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/bnf/range.hpp>
 #include <boost/url/bnf/repeat.hpp>
@@ -42,7 +42,7 @@
 
 #include <boost/url/rfc/absolute_uri_bnf.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
-#include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/fragment_bnf.hpp>
 #include <boost/url/rfc/fragment_part_bnf.hpp>
 #include <boost/url/rfc/hier_part_bnf.hpp>

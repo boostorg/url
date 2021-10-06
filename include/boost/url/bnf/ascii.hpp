@@ -11,7 +11,7 @@
 #define BOOST_URL_BNF_ASCII_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/bnf/detail/char_set.hpp>
+#include <boost/url/bnf/detail/charset.hpp>
 #include <boost/static_assert.hpp>
 
 namespace boost {

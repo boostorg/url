@@ -17,7 +17,7 @@
 #include <boost/url/detail/copied_strings.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/optional_allocator.hpp>
-#include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/charsets.hpp>
 #include <boost/assert.hpp>
 #include <iterator>
 #include <new>

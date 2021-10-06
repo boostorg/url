@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_TEST_BNF_HPP
 #define BOOST_URL_TEST_BNF_HPP
 
-#include <boost/url/bnf/char_set.hpp>
+#include <boost/url/bnf/charset.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/string.hpp>
 #include <initializer_list>

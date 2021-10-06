@@ -13,7 +13,7 @@
 #include <boost/url/rfc/ipv4_address_bnf.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/charsets.hpp>
 
 namespace boost {
 namespace urls {

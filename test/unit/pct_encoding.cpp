@@ -154,151 +154,136 @@ public:
 
     //--------------------------------------------
 
-    template<
-        class CharSet = test_chars,
-        class Allocator =
-            std::allocator<char>>
     void
-    bad_decode(
-        string_view s,
-        pct_decode_opts const& opt = {},
-        CharSet const& cs = {},
-        Allocator const& a = {})
+    testEncodeBytes()
     {
-        BOOST_TEST_THROWS(pct_decode(
-            s, cs, opt, a),
-            std::exception);
-    }
-
-    template<
-        class CharSet = test_chars,
-        class Allocator =
-        std::allocator<char>>
-    void
-    good_decode(
-        string_view s,
-        string_view s1,
-        pct_decode_opts const& opt = {},
-        CharSet const& cs = {},
-        Allocator const& a = {})
-    {
-        string_type<Allocator> r;
-        BOOST_TEST_NO_THROW(
-            r = pct_decode(s, cs, opt, a));
-        BOOST_TEST(r == s1);
-    }
-
-    void
-    testDecode()
-    {
-        bad_decode("%");
-        bad_decode("%%");
-        bad_decode("%a");
-        bad_decode("%g");
-        bad_decode("%ag");
-        bad_decode("%a%");
-
-        // plus to space
+        auto const check =
+            []( string_view s,
+                std::size_t n,
+                bool space_to_plus = false)
         {
-            pct_decode_opts opt;
-            good_decode("+", " ", opt);
-            opt.non_normal_is_error = true;
-            good_decode("+", " ", opt);
-            opt.plus_to_space = false;
-            opt.non_normal_is_error = true;
-            bad_decode("+", opt);
-        }
-
-        // allow null
-        {
-            pct_decode_opts opt;
-
-            // null is unreserved
-            opt.allow_null = true;
-            good_decode(
-                string_view("\0", 1),
-                string_view("\0", 1),
-                opt, test_chars_null{});
-            good_decode(
-                "%00", string_view("\0", 1),
-                opt, test_chars_null{});
-            opt.allow_null = false;
-            bad_decode(string_view("\0", 1),
-                opt, test_chars_null{});
-
-            // null is reserved
-            opt.allow_null = true;
-            opt.non_normal_is_error = false;
-            good_decode(
-                string_view("\0", 1),
-                string_view("\0", 1), opt,
-                    test_chars_null{});
-            good_decode("%00",
-                string_view("\0", 1), opt);
-            opt.allow_null = false;
-            bad_decode(string_view("\0", 1), opt);
-        }
-
-        // non-normalized is error
-        {
-            pct_decode_opts opt;
-
-            good_decode("A", "A", opt);
-            good_decode("%42", "B", opt);
-            bad_decode("aA", opt);
-            bad_decode("ab%41", opt);
-
-            opt.non_normal_is_error = true;
-            good_decode("A", "A", opt);
-            good_decode("A%20", "A ", opt);
-            opt.plus_to_space = true;
-            good_decode("A+", "A ", opt);
-            opt.plus_to_space = false;
-            bad_decode("%41", opt);
-            bad_decode("ab%41", opt);
-            bad_decode(" ", opt);
-        }
-    }
-
-    //--------------------------------------------
-
-    void
-    testEncodeSize()
-    {
-        BOOST_TEST(pct_encode_size(
-            "A", test_chars{}) == 1);
-        BOOST_TEST(pct_encode_size(
-            "AAAA", test_chars{}) == 4);
-        BOOST_TEST(pct_encode_size(
-            "%32", test_chars{}) == 9);
-        BOOST_TEST(pct_encode_size(
-            " ", test_chars{}) == 3);
-
-        // space_to_plus
-        {
-            BOOST_TEST(pct_encode_size(
-                "  ", test_chars{}) == 6);
             pct_encode_opts opt;
-            BOOST_TEST(pct_encode_size(
-                "  ", test_chars{}, opt) == 6);
-            opt.space_to_plus = true;
-            BOOST_TEST(pct_encode_size(
-                "  ", test_chars{}, opt) == 2);
-        }
+            opt.space_to_plus =
+                space_to_plus;
+            BOOST_TEST(pct_encode_bytes(
+                s, test_chars{}, opt) == n);
+        };
+
+        check("", 0);
+        check(" ", 3);
+        check("A", 1);
+        check("B", 3);
+        check("AB", 4);
+        check("A B", 7);
+
+        check("", 0, true);
+        check(" ", 1, true);
+        check("A", 1, true);
+        check("B", 3, true);
+        check("AB", 4, true);
+        check("A B", 5, true);
     }
 
-    //--------------------------------------------
+    void
+    testEncodeToBuffer()
+    {
+        auto const check =
+            []( string_view s,
+                string_view m0,
+                bool space_to_plus = false)
+        {
+            pct_encode_opts opt;
+            opt.space_to_plus =
+                space_to_plus;
+            auto const m = pct_encode(
+                s, test_chars{}, opt);
+            if(! BOOST_TEST(m == m0))
+                return;
+            char buf[64];
+            BOOST_ASSERT(
+                m.size() < sizeof(buf));
+            for(std::size_t i = 0;
+                i <= sizeof(buf); ++i)
+            {
+                char* dest = buf;
+                char const* end = buf + i;
+                bool const success =
+                    pct_encode(s, test_chars{},
+                        dest, end, opt);
+                string_view r(buf, dest - buf);
+                if(success)
+                {
+                    BOOST_TEST(i == m.size());
+                    BOOST_TEST(dest == end);
+                    BOOST_TEST(r == m);
+                    break;
+                }
+                std::size_t n = dest - buf;
+                BOOST_TEST(
+                    string_view(buf, n) ==
+                    m.substr(0, n));
+            }
+        };
+
+        check("", "");
+        check(" ", "%20");
+        check("A", "A");
+        check("B", "%42");
+        check("AB", "A%42");
+        check("A B", "A%20%42");
+
+        check("", "", true);
+        check(" ", "+", true);
+        check("A", "A", true);
+        check("B", "%42", true);
+        check("AB", "A%42", true);
+        check("A B", "A+%42", true);
+    }
 
     void
-    testEncode()
+    testEncodeToString()
     {
-        BOOST_TEST(pct_encode(
-            "A", test_chars{}) == "A");
-        BOOST_TEST(pct_encode(
-            "B", test_chars{}) == "%42");
-        BOOST_TEST(pct_encode(
-            "AB", test_chars{}) == "A%42");
+        auto const check =
+            []( string_view s,
+                string_view m,
+                bool space_to_plus = false)
+        {
+            {
+                pct_encode_opts opt;
+                opt.space_to_plus =
+                    space_to_plus;
+                BOOST_TEST(pct_encode(
+                    s, test_chars{}, opt) == m);
+            }
+            {
+                static_pool<256> pool;
+                pct_encode_opts opt;
+                opt.space_to_plus =
+                    space_to_plus;
+                BOOST_TEST(pct_encode(
+                    s, test_chars{}, opt,
+                        pool.allocator()) == m);
+            }
+        };
 
+        check("", "");
+        check(" ", "%20");
+        check("A", "A");
+        check("B", "%42");
+        check("AB", "A%42");
+        check("A B", "A%20%42");
+
+        check("", "", true);
+        check(" ", "+", true);
+        check("A", "A", true);
+        check("B", "%42", true);
+        check("AB", "A%42", true);
+        check("A B", "A+%42", true);
+    }
+
+    void
+    testEncodeExtras()
+    {
         // space_to_plus
         {
             BOOST_TEST(pct_encode(
@@ -348,9 +333,11 @@ public:
     run()
     {
         testDecodeSize();
-        testDecode();
-        testEncodeSize();
-        testEncode();
+
+        testEncodeBytes();
+        testEncodeToBuffer();
+        testEncodeToString();
+        testEncodeExtras();
     }
 };
 

@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/scheme_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/charsets.hpp>
 
 namespace boost {
 namespace urls {

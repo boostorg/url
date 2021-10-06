@@ -52,7 +52,6 @@ in a translation unit of the program.
 
 #include <boost/url/rfc/impl/absolute_uri_bnf.ipp>
 #include <boost/url/rfc/impl/authority_bnf.ipp>
-#include <boost/url/rfc/impl/char_sets.ipp>
 #include <boost/url/rfc/impl/fragment_bnf.ipp>
 #include <boost/url/rfc/impl/fragment_part_bnf.ipp>
 #include <boost/url/rfc/impl/hier_part_bnf.ipp>

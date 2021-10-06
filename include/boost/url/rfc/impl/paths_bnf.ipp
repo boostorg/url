@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/paths_bnf.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
 
 namespace boost {

@@ -12,8 +12,7 @@
 
 #include <boost/url/detail/any_path_iter.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/pct_encoding.hpp>
-#include <boost/url/rfc/char_sets.hpp>
+#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 
 namespace boost {
@@ -158,7 +157,7 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    n += urls::pct_encode_size(
+    n += urls::pct_encode_bytes(
         s, pchars);
     increment();
     return true;
@@ -171,9 +170,9 @@ copy(
     char const* end) noexcept
 {
     BOOST_ASSERT(p_ != nullptr);
-    dest = pct_encode(dest, end,
+    pct_encode(
         string_view(p_, n_),
-            {}, pchars);
+            pchars, dest, end);
     increment();
 }
 
@@ -221,7 +220,7 @@ measure_impl(
     string_view s,
     std::size_t& n) noexcept
 {
-    n += pct_encode_size(
+    n += pct_encode_bytes(
         s, pchars);
 }
 
@@ -232,12 +231,9 @@ copy_impl(
     char*& dest,
     char const* end) noexcept
 {
-    dest = pct_encode(
-        dest, end, s, {},
-            pchars);
+    pct_encode(s,
+        pchars, dest, end);
 }
-
-//------------------------------------------------
 
 } // detail
 } // urls

@@ -16,7 +16,7 @@ notional character set, or false otherwise.
 
 [heading Associated Types]
 
-* [link url.ref.boost__urls__bnf__is_char_set `is_char_set`]
+* [link url.ref.boost__urls__bnf__is_charset `is_charset`]
 
 [heading Requirements]
 

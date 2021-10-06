@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/CPPAllinace/url
+// Official repository: https://github.com/CPPAlliance/url
 //
 
 #ifndef BOOST_URL_STRING_HPP
@@ -35,17 +35,6 @@ namespace urls {
     the string view is no longer referenced.
 */
 typedef boost::string_view string_view;
-
-/** The string alias template return type for allocating member functions.
-
-    Functions which return `std::basic_string`
-    using a given _Allocator_ use this type alias
-    to resolve the type of string.
-*/
-template<class Allocator>
-using string_type =
-    std::basic_string<char,
-        std::char_traits<char>, Allocator>;
 
 /** Alias for `std::true_type` if a `T` can be converted to a string_view
 

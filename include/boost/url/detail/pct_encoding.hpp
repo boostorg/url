@@ -13,7 +13,7 @@
 #include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/bnf/char_set.hpp>
+#include <boost/url/bnf/charset.hpp>
 #include <boost/assert.hpp>
 #include <memory>
 
@@ -171,22 +171,6 @@ pct_decode_unchecked(
     pct_decode_opts const& opt) noexcept;
 
 template<class Allocator>
-string_type<Allocator>
-pct_decode_unchecked(
-    string_view s,
-    std::size_t decoded_size,
-    pct_decode_opts const& opt,
-    Allocator const& a)
-{
-    string_type<Allocator> r(a);
-    r.resize(decoded_size);
-    pct_decode_unchecked(
-        &r[0], &r[0] + r.size(),
-            s, opt);
-    return r;
-}
-
-template<class Allocator>
 string_value
 pct_decode_unchecked_(
     string_view s,
@@ -204,18 +188,6 @@ pct_decode_unchecked_(
 }
 
 template<class Allocator>
-string_type<Allocator>
-pct_decode_unchecked(
-    string_view s,
-    pct_decode_opts const& opt,
-    Allocator const& a)
-{
-    return pct_decode_unchecked(s,
-        pct_decode_size_unchecked(s),
-            opt, a);
-}
-
-template<class Allocator>
 string_value
 pct_decode_unchecked_(
     string_view s,
@@ -225,147 +197,6 @@ pct_decode_unchecked_(
     return pct_decode_unchecked_(s,
         pct_decode_size_unchecked(s),
             opt, a);
-}
-
-template<class CharSet>
-bool
-parse_pct_encoded(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    CharSet const& cs,
-    std::size_t& needed) noexcept
-{
-    using namespace bnf;
-    std::size_t n = 0;
-    char const* it0;
-skip:
-    it0 = it;
-    it = find_if_not(
-        it0, end, cs);
-    n += it - it0;
-    if(it == end)
-        goto finish;
-    if(*it != '%')
-        goto finish;
-    for(;;)
-    {
-        ++it;
-        if(it == end)
-        {
-            // missing HEXDIG
-            ec = BOOST_URL_ERR(
-                error::missing_pct_hexdig);
-            return false;
-        }
-        if(hexdig_value(*it) == -1)
-        {
-            // expected HEXDIG
-            ec = BOOST_URL_ERR(
-                error::bad_pct_hexdig);
-            return false;
-        }
-        ++it;
-        if(it == end)
-        {
-            // missing HEXDIG
-            ec = BOOST_URL_ERR(
-                error::missing_pct_hexdig);
-            return false;
-        }
-        if(hexdig_value(*it) == -1)
-        {
-            // expected HEXDIG
-            ec = BOOST_URL_ERR(
-                error::bad_pct_hexdig);
-            return false;
-        }
-        ++n;
-        ++it;
-        if(it == end)
-            break;
-        if(*it != '%')
-            goto skip;
-    }
-finish:
-    needed = n;
-    ec = {};
-    return true;
-}
-
-//------------------------------------------------
-
-template<class CharSet>
-char*
-pct_encode(
-    char* const first,
-    char const* last,
-    string_view s,
-    pct_encode_opts const& opt,
-    CharSet const& cs) noexcept
-{
-    (void)last;
-    // can't have % in charset
-    BOOST_ASSERT(! cs('%'));
-    static constexpr char hex[] =
-        "0123456789abcdef";
-    auto it = first;
-    auto p = s.data();
-    auto const end = p + s.size();
-    if(! opt.space_to_plus)
-    {
-        while(p != end)
-        {
-            if(cs(*p))
-            {
-                BOOST_ASSERT(
-                    it != last);
-                *it++ = *p++;
-                continue;
-            }
-            BOOST_ASSERT(
-                last - it >= 3);
-            *it++ = '%';
-            auto const u = static_cast<
-                unsigned char>(*p);
-            *it++ = hex[u>>4];
-            *it++ = hex[u&0xf];
-            ++p;
-        }
-        return it;
-    }
-    // If you are converting space
-    // to plus, then space should
-    // be in the list of reserved
-    // characters!
-    BOOST_ASSERT(! cs(' '));
-    while(p != end)
-    {
-        if(cs(*p))
-        {
-            BOOST_ASSERT(
-                it != last);
-            *it++ = *p++;
-            continue;
-        }
-        if(*p == ' ')
-        {
-            BOOST_ASSERT(
-                it != last);
-            *it++ = '+';
-            ++p;
-            continue;
-        }
-        BOOST_ASSERT(
-            last - it >= 3);
-        *it++ = '%';
-        auto const u = static_cast<
-            unsigned char>(*p);
-        *it++ = hex[u>>4];
-        *it++ = hex[u&0xf];
-        ++p;
-    }
-    return it;
 }
 
 } // detail

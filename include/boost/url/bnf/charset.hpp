@@ -7,11 +7,11 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_BNF_CHAR_SET_HPP
-#define BOOST_URL_BNF_CHAR_SET_HPP
+#ifndef BOOST_URL_BNF_CHARSET_HPP
+#define BOOST_URL_BNF_CHARSET_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/bnf/detail/char_set.hpp>
+#include <boost/url/bnf/detail/charset.hpp>
 #include <boost/type_traits/make_void.hpp>
 #include <boost/static_assert.hpp>
 #include <cstdint>
@@ -29,13 +29,13 @@ namespace bnf {
 */
 #ifdef BOOST_URL_DOCS
 template<class T>
-using is_char_set = __see_below__;
+using is_charset = __see_below__;
 #else
 template<class T, class = void>
-struct is_char_set : std::false_type {};
+struct is_charset : std::false_type {};
 
 template<class T>
-struct is_char_set<T, boost::void_t<
+struct is_charset<T, boost::void_t<
     decltype(
     std::declval<bool&>() =
         std::declval<T const&>().operator()(
@@ -433,7 +433,7 @@ find_if(
     CharSet const& cs) noexcept
 {
     BOOST_STATIC_ASSERT(
-        is_char_set<CharSet>::value);
+        is_charset<CharSet>::value);
     return detail::find_if(first, last, cs,
         detail::has_find_if<CharSet>{});
 }
@@ -448,7 +448,7 @@ find_if_not(
     CharSet const& cs) noexcept
 {
     BOOST_STATIC_ASSERT(
-        is_char_set<CharSet>::value);
+        is_charset<CharSet>::value);
     return detail::find_if_not(first, last, cs,
         detail::has_find_if_not<CharSet>{});
 }
