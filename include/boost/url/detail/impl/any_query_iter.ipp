@@ -71,14 +71,14 @@ measure_impl(
         pchars + '/' + '?';
     pct_decode_opts opt;
     opt.plus_to_space = true;
-    pct_decode_size(
+    validate_pct_encoding(
         key, ec, cs, opt);
     if(ec.failed())
         return false;
     n += key.size();
     if(value)
     {
-        pct_decode_size(
+        validate_pct_encoding(
             *value, ec, cs, opt);
         if(ec.failed())
             return false;
@@ -155,12 +155,12 @@ copy_impl(
 {
     static constexpr auto cs =
         pchars + '/' + '?';
-    pct_encode(key, cs, dest, end);
+    pct_encode(dest, end, key, cs);
     if(value)
     {
         *dest++ = '=';
-        pct_encode(*value,
-            cs, dest, end);
+        pct_encode(dest, end,
+            *value, cs);
     }
 }
 

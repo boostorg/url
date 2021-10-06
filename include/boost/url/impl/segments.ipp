@@ -26,13 +26,15 @@ iterator::
 operator*() const
 {
     auto s = u_->encoded_segment(i_);
-    auto n = detail::
-        pct_decode_size_unchecked(s);
+    auto n =
+        pct_decoded_bytes_unchecked(s);
     char* dest;
     auto v =
         a_.make_string_value(n, dest);
-    detail::pct_decode_unchecked(
-        dest, dest + n, s, {});
+    pct_decode_opts opt;
+    opt.plus_to_space = false;
+    pct_decode_unchecked(
+        dest, dest + n, s, opt);
     return v;
 }
 
@@ -49,13 +51,15 @@ operator[](
     string_value
 {
     auto s = u_->encoded_segment(i);
-    auto n = detail::
-        pct_decode_size_unchecked(s);
+    auto n =
+        pct_decoded_bytes_unchecked(s);
     char* dest;
     auto v =
         a_.make_string_value(n, dest);
-    detail::pct_decode_unchecked(
-        dest, dest + n, s, {});
+    pct_decode_opts opt;
+    opt.plus_to_space = false;
+    pct_decode_unchecked(
+        dest, dest + n, s, opt);
     return v;
 }
 

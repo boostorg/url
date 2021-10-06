@@ -16,6 +16,7 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/params_view.hpp>
 #include <boost/url/params_encoded_view.hpp>
+#include <boost/url/pct_encoding.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
@@ -731,7 +732,7 @@ public:
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return detail::pct_decode_unchecked_(
+        return pct_decode_unchecked(
             encoded_userinfo(), opt, a);
     }
 
@@ -823,7 +824,7 @@ public:
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return detail::pct_decode_unchecked_(
+        return pct_decode_unchecked(
             encoded_user(), opt, a);
     }
 
@@ -939,7 +940,7 @@ public:
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return detail::pct_decode_unchecked_(
+        return pct_decode_unchecked(
             encoded_password(), opt, a);
     }
 
@@ -1101,8 +1102,8 @@ public:
         }
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return detail::pct_decode_unchecked_(
-            s0, decoded_[id_host], opt, a);
+        return pct_decode_unchecked(
+            s0, opt, a, decoded_[id_host]);
     }
 
     /** Return the host as an IPv4 address
@@ -1474,7 +1475,7 @@ public:
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return detail::pct_decode_unchecked_(
+        return pct_decode_unchecked(
             encoded_segment(i), opt, a);
     }
 
@@ -1637,7 +1638,7 @@ public:
     {
         pct_decode_opts opt;
         opt.plus_to_space = true;
-        return detail::pct_decode_unchecked_(
+        return pct_decode_unchecked(
             encoded_query(), opt, a);
     }
 
@@ -1788,9 +1789,9 @@ public:
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return detail::pct_decode_unchecked_(
+        return pct_decode_unchecked(
             encoded_fragment(),
-            decoded_[id_frag], opt, a);
+            opt, a, decoded_[id_frag]);
     }
 
     //--------------------------------------------

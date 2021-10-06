@@ -41,114 +41,186 @@ public:
 
     //--------------------------------------------
 
-    template<
-        class CharSet = test_chars>
-    static
-    void
-    bad_decode_size(
-        string_view s,
-        pct_decode_opts const& opt = {},
-        CharSet const& cs = {})
+    struct string_param : string_view
     {
-        error_code ec;
-        pct_decode_size(
-            s, ec, cs, opt);
-        BOOST_TEST(ec.failed());
-    }
-
-    template<
-        class CharSet = test_chars>
-    static
-    void
-    good_decode_size(
-        std::size_t n,
-        string_view s,
-        pct_decode_opts const& opt = {},
-        CharSet const& cs = {})
-    {
-        error_code ec;
-        std::size_t n1 = pct_decode_size(
-            s, ec, cs, opt);
-        BOOST_TEST(! ec.failed());
-        BOOST_TEST(n1 == n);
-    }
-    
-    void
-    testDecodeSize()
-    {
-        // check defaults
+        template<std::size_t N>
+        string_param(
+            char const(&ca)[N]) noexcept
+            : string_view(ca, N - 1)
         {
-            pct_decode_opts opt;
-            BOOST_TEST(
-                opt.allow_null == true);
-            BOOST_TEST(
-                opt.plus_to_space == true);
-            BOOST_TEST(
-                opt.non_normal_is_error == false);
         }
+    };
 
-        good_decode_size(0, "");
-        bad_decode_size("%");
-        bad_decode_size("%%");
-        bad_decode_size("%a");
-        bad_decode_size("%g");
-        bad_decode_size("%ag");
-        bad_decode_size("%a%");
+    void
+    testDecoding()
+    {
+        constexpr bnf::lut_chars CS1('A');
+        constexpr bnf::lut_chars CS2 = CS1 + '\0';
+        bnf::lut_chars const* pcs = &CS1;
+        pct_decode_opts opt;
 
-        // plus to space
+        auto const good = [&](
+            string_param s0,
+            string_param s1)
         {
-            pct_decode_opts opt;
-            good_decode_size(1, "+", opt);
-            opt.non_normal_is_error = true;
-            good_decode_size(1, "+", opt);
-            opt.plus_to_space = false;
-            opt.non_normal_is_error = true;
-            bad_decode_size("+", opt);
-        }
+            error_code ec;
+            auto n = validate_pct_encoding(
+                s0, ec, *pcs, opt);
+            if(! BOOST_TEST(! ec.failed()))
+                return;
+            BOOST_TEST(n == s1.size());
+            BOOST_TEST(n ==
+                pct_decoded_bytes_unchecked(s0));
+            auto s = pct_decode_unchecked(s0, opt);
+            BOOST_TEST(s == s1);
+        };
 
-        // allow null
+        auto const bad = [&](
+            string_param s)
         {
-            pct_decode_opts opt;
+            error_code ec;
+            validate_pct_encoding(
+                s, ec, test_chars{}, opt);
+            BOOST_TEST(ec.failed());
+        };
 
-            // null is unreserved
-            opt.allow_null = true;
-            good_decode_size(1,
-                string_view("\0", 1), opt, test_chars_null{});
-            good_decode_size(1, "%00", opt, test_chars_null{});
-            opt.allow_null = false;
-            bad_decode_size(
-                string_view("\0", 1), opt, test_chars_null{});
-
-            // null is reserved
+        {
+            pcs = &CS1;
             opt.allow_null = true;
             opt.non_normal_is_error = false;
-            bad_decode_size(string_view("\0", 1), opt);
-            good_decode_size(1, string_view("\0", 1), opt, test_chars_null{});
-            good_decode_size(1, "%00", opt);
-            opt.allow_null = false;
-            bad_decode_size(string_view("\0", 1), opt);
-            bad_decode_size("%00", opt);
+            opt.plus_to_space = false;
+
+            good("", "");
+            good("%20", " ");
+            good("A", "A");
+            good("%41", "A");
+            good("%42", "B");
+            good("A%42", "AB");
+            good("A%20%42", "A B");
+            good("%00", "\0");
+            bad("B");
+            bad("+");
+            bad("%");
+            bad("%1");
+            bad("%1x");
+            bad("%%");
+            bad("A%00+");
         }
 
-        // non-normalized is error
         {
-            pct_decode_opts opt;
-
-            good_decode_size(1, "A", opt);
-            good_decode_size(1, "%41", opt);
-            bad_decode_size("ab%41", opt);
-            bad_decode_size("aA", opt);
-
-            opt.non_normal_is_error = true;
-            good_decode_size(1, "A", opt);
-            good_decode_size(2, "A%20", opt);
-            bad_decode_size("%41", opt);
-            opt.plus_to_space = true;
-            good_decode_size(2, "A+", opt);
+            pcs = &CS1;
+            opt.allow_null = false;
+            opt.non_normal_is_error = false;
             opt.plus_to_space = false;
-            bad_decode_size("%41", opt);
-            bad_decode_size("ab%41", opt);
-            bad_decode_size(" ", opt);
+
+            good("", "");
+            good("%20", " ");
+            good("A", "A");
+            good("%41", "A");
+            good("%42", "B");
+            good("A%42", "AB");
+            good("A%20%42", "A B");
+            bad("B");
+            bad("%00");
+            bad("+");
+            bad("%");
+            bad("%1");
+            bad("%1x");
+            bad("%%");
+            bad("A%00+");
+        }
+
+        {
+            pcs = &CS1;
+            opt.allow_null = true;
+            opt.non_normal_is_error = true;
+            opt.plus_to_space = false;
+
+            good("", "");
+            good("%20", " ");
+            good("A", "A");
+            bad("%41");
+            good("%42", "B");
+            good("A%42", "AB");
+            good("A%20%42", "A B");
+            good("%00", "\0");
+            bad("B");
+            bad("+");
+            bad("%");
+            bad("%1");
+            bad("%1x");
+            bad("%%");
+            bad("A%00+");
+        }
+
+        {
+            pcs = &CS1;
+            opt.allow_null = true;
+            opt.non_normal_is_error = false;
+            opt.plus_to_space = false;
+
+            good("", "");
+            good("%20", " ");
+            good("A", "A");
+            good("%41", "A");
+            good("%42", "B");
+            good("A%42", "AB");
+            good("A%20%42", "A B");
+            good("%00", "\0");
+            bad("B");
+            bad("+");
+            bad("%");
+            bad("%1");
+            bad("%1x");
+            bad("%%");
+            bad("A%00+");
+        }
+
+        {
+            pcs = &CS1;
+            opt.allow_null = true;
+            opt.non_normal_is_error = false;
+            opt.plus_to_space = true;
+
+            good("", "");
+            good("%20", " ");
+            good("A", "A");
+            good("%41", "A");
+            good("%42", "B");
+            good("A%42", "AB");
+            good("A%20%42", "A B");
+            good("%00", "\0");
+            good("+", " ");
+            bad("B");
+            bad("%");
+            bad("%1");
+            bad("%1x");
+            bad("%%");
+            good("A%00+", "A\0 ");
+        }
+
+        {
+            pcs = &CS2;
+            opt.allow_null = true;
+            opt.non_normal_is_error = false;
+            opt.plus_to_space = true;
+
+            good("\0", "\0");
+            good("A\0", "A\0");
+            good("%41\0", "A\0");
+            good("%41%00", "A\0");
+        }
+
+        {
+            pcs = &CS2;
+            opt.allow_null = false;
+            opt.non_normal_is_error = false;
+            opt.plus_to_space = true;
+
+            bad("\0");
+            bad("A\0");
+            bad("%41\0");
+            bad("%41%00");
         }
     }
 
@@ -208,8 +280,8 @@ public:
                 char* dest = buf;
                 char const* end = buf + i;
                 bool const success =
-                    pct_encode(s, test_chars{},
-                        dest, end, opt);
+                    pct_encode(dest, end,
+                        s, test_chars{}, opt);
                 string_view r(buf, dest - buf);
                 if(success)
                 {
@@ -332,7 +404,7 @@ public:
     void
     run()
     {
-        testDecodeSize();
+        testDecoding();
 
         testEncodeBytes();
         testEncodeToBuffer();

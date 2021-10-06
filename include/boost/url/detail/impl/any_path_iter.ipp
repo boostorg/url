@@ -75,7 +75,7 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    urls::pct_decode_size(
+    urls::validate_pct_encoding(
         s, ec, pchars);
     if(ec.failed())
         return false;
@@ -170,9 +170,9 @@ copy(
     char const* end) noexcept
 {
     BOOST_ASSERT(p_ != nullptr);
-    pct_encode(
+    pct_encode(dest, end,
         string_view(p_, n_),
-            pchars, dest, end);
+            pchars);
     increment();
 }
 
@@ -185,7 +185,7 @@ measure_impl(
     std::size_t& n,
     error_code& ec) noexcept
 {
-    urls::pct_decode_size(
+    urls::validate_pct_encoding(
         s, ec, pchars);
     if(ec.failed())
         return false;
@@ -231,8 +231,8 @@ copy_impl(
     char*& dest,
     char const* end) noexcept
 {
-    pct_encode(s,
-        pchars, dest, end);
+    pct_encode(
+        dest, end, s, pchars);
 }
 
 } // detail

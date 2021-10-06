@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/except.hpp>
 #include <boost/url/bnf/charset.hpp>
+#include <boost/url/detail/except.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
@@ -19,97 +20,141 @@
 namespace boost {
 namespace urls {
 
+namespace detail {
+
 template<class CharSet>
-bool
-parse_pct_encoded(
+std::size_t
+validate_pct_encoding(
     char const*& it,
     char const* const end,
     error_code& ec,
     CharSet const& cs,
-    std::size_t& needed) noexcept
+    pct_decode_opts const& opt) noexcept
 {
-    std::size_t n = 0;
-    char const* it0;
-skip:
-    it0 = it;
-    it = bnf::find_if_not(
-        it0, end, cs);
-    n += it - it0;
-    if(it == end)
-        goto finish;
-    if(*it != '%')
-        goto finish;
-    for(;;)
-    {
-        ++it;
-        if(it == end)
-        {
-            // missing HEXDIG
-            ec = BOOST_URL_ERR(
-                error::missing_pct_hexdig);
-            return false;
-        }
-        if(bnf::hexdig_value(*it) == -1)
-        {
-            // expected HEXDIG
-            ec = BOOST_URL_ERR(
-                error::bad_pct_hexdig);
-            return false;
-        }
-        ++it;
-        if(it == end)
-        {
-            // missing HEXDIG
-            ec = BOOST_URL_ERR(
-                error::missing_pct_hexdig);
-            return false;
-        }
-        if(bnf::hexdig_value(*it) == -1)
-        {
-            // expected HEXDIG
-            ec = BOOST_URL_ERR(
-                error::bad_pct_hexdig);
-            return false;
-        }
-        ++n;
-        ++it;
-        if(it == end)
-            break;
-        if(*it != '%')
-            goto skip;
-    }
-finish:
-    needed = n;
-    ec = {};
-    return true;
 }
+
+} // detail
 
 template<class CharSet>
 std::size_t
-pct_decode_size(
+validate_pct_encoding(
     string_view s,
     error_code& ec,
     CharSet const& cs,
     pct_decode_opts const& opt) noexcept
 {
+    // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
-        bnf::is_charset<
-            CharSet>::value);
-    ec = {};
+        bnf::is_charset<CharSet>::value);
+
+    // can't have % in charset
+    BOOST_ASSERT(! cs('%'));
+    std::size_t n = 0;
     auto it = s.data();
     auto const end = it + s.size();
-    auto const n =
-        detail::pct_decode_size(
-            it, end, ec, cs, opt);
-    if(ec.failed())
-        return n;
-    if(it != end)
+    while(it != end)
     {
+        if( opt.plus_to_space &&
+            *it == '+')
+        {
+            // plus to space
+            ++n;
+            ++it;
+            continue;
+        }
+        if( ! opt.allow_null &&
+            *it == '\0')
+        {
+            // null in input
+            ec = BOOST_URL_ERR(
+                error::illegal_null);
+            return n;
+        }
+        if(cs(*it))
+        {
+            // unreserved
+            ++n;
+            ++it;
+            continue;
+        }
+        if(*it == '%')
+        {
+            // escaped
+            ++it;
+            if(end - it < 2)
+            {
+                // missing HEXDIG
+                ec = BOOST_URL_ERR(
+                    error::missing_pct_hexdig);
+                return n;
+            }
+            auto const d0 =
+                bnf::hexdig_value(it[0]);
+            auto const d1 =
+                bnf::hexdig_value(it[1]);
+            if( d0 == -1 ||
+                d1 == -1)
+            {
+                // expected HEXDIG
+                ec = BOOST_URL_ERR(
+                    error::bad_pct_hexdig);
+                return n;
+            }
+            it += 2;
+            char const c = static_cast<char>(
+                ((static_cast<
+                    unsigned char>(d0) << 4) +
+                (static_cast<
+                    unsigned char>(d1))));
+            if( ! opt.allow_null &&
+                c == '\0')
+            {
+                // escaped null
+                ec = BOOST_URL_ERR(
+                    error::illegal_null);
+                return n;
+            }
+            if( opt.non_normal_is_error &&
+                cs(c))
+            {
+                // escaped unreserved char
+                ec = BOOST_URL_ERR(
+                    error::non_canonical);
+                return n;
+            }
+            ++n;
+            continue;
+        }
+        // reserved character in input
         ec = BOOST_URL_ERR(
-            error::leftover_input);
+            error::illegal_reserved_char);
         return n;
     }
+    BOOST_ASSERT(it == end);
+    ec = {};
     return n;
+}
+
+//------------------------------------------------
+
+template<class Allocator>
+string_value
+pct_decode_unchecked(
+    string_view s,
+    pct_decode_opts const& opt,
+    Allocator const& a,
+    std::size_t decoded_size)
+{
+    if(decoded_size == std::size_t(-1))
+        decoded_size =
+            pct_decoded_bytes_unchecked(s);
+    char* dest;
+    string_value r(
+        decoded_size, a, dest);
+    pct_decode_unchecked(
+        dest, dest + decoded_size,
+            s, opt);
+    return r;
 }
 
 //------------------------------------------------
@@ -173,10 +218,10 @@ template<
     class CharSet>
 bool
 pct_encode(
-    String const& s0,
-    CharSet const& cs,
     char*& dest0,
     char const* const end,
+    String const& s0,
+    CharSet const& cs,
     pct_encode_opts const& opt)
 {
     // String must satisfy is_stringlike
@@ -300,7 +345,7 @@ pct_encode(
     string_value r(n, a, dest);
     char const* end = dest + n;
     bool const success = pct_encode(
-        s, cs, dest, end, opt);
+        dest, end, s, cs, opt);
     BOOST_ASSERT(success);
     BOOST_ASSERT(dest == end);
     (void)end;

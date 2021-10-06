@@ -93,11 +93,11 @@ operator*() const noexcept
     char* dest;
     auto s = a_.make_string_value(
         t_.decoded_size, dest);
-    detail::pct_decode_unchecked(
-        dest,
-        dest + t_.decoded_size,
-        t_.str,
-        {});
+    pct_decode_opts opt;
+    opt.plus_to_space = false;
+    pct_decode_unchecked(
+        dest, dest + t_.decoded_size,
+            t_.str, opt);
     return s;
 }
 

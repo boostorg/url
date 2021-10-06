@@ -30,29 +30,6 @@ struct pct_encoded_str
     std::size_t decoded_size = 0;
 };
 
-//------------------------------------------------
-
-/** Options for removing percent-encoding from strings
-*/
-struct pct_decode_opts
-{
-    /** True if null characters are allowed in decoded output
-    */
-    bool allow_null = true;
-
-    /** True if PLUS ('+') decodes into SP (space, ' ')
-
-        @par Specification
-        @li <a href="https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1">
-            application/x-www-form-urlencoded (w3.org)</a>
-    */
-    bool plus_to_space = true;
-
-    /** True if decoding a non-normal string is an error
-    */
-    bool non_normal_is_error = false;
-};
-
 } // urls
 } // boost
 

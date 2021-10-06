@@ -58,13 +58,13 @@ value_type(
         has_value = true;
         string_view ev{
             s + nk + 1, nv - 1 };
-        auto n = detail::
-            pct_decode_size_unchecked(ev);
+        auto n =
+            pct_decoded_bytes_unchecked(ev);
         char *dest;
         value = a.make_string_value(
             n, dest);
-        detail::pct_decode_unchecked(
-            dest, dest + n, ev, {});
+        pct_decode_unchecked(
+            dest, dest + n, ev);
     }
     else
     {
@@ -72,12 +72,12 @@ value_type(
     }
     // key
     string_view ek{s, nk};
-    auto n = detail::
-        pct_decode_size_unchecked(ek);
+    auto n =
+        pct_decoded_bytes_unchecked(ek);
     char* dest;
     key = a.make_string_value(n, dest);
-    detail::pct_decode_unchecked(
-        dest, dest + nk, ek, {});
+    pct_decode_unchecked(
+        dest, dest + nk, ek);
 }
 
 //------------------------------------------------
@@ -224,12 +224,12 @@ at(string_view key) const ->
     string_view ev{
         it.p_ + it.nk_ + 1,
         it.nv_ - 1 };
-    auto n = detail::
-        pct_decode_size_unchecked(ev);
+    auto n =
+        pct_decoded_bytes_unchecked(ev);
     char *dest;
     auto s = a_.make_string_value(n, dest);
-    detail::pct_decode_unchecked(
-        dest, dest + n, ev, {});
+    pct_decode_unchecked(
+        dest, dest + n, ev);
     return s;
 }
 

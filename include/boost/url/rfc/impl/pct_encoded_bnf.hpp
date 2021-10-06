@@ -10,8 +10,8 @@
 #ifndef BOOST_URL_IMPL_PCT_ENCODED_BNF_HPP
 #define BOOST_URL_IMPL_PCT_ENCODED_BNF_HPP
 
-#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/pct_encoding.hpp>
+#include <boost/url/bnf/charset.hpp>
 
 namespace boost {
 namespace urls {
@@ -21,14 +21,14 @@ namespace detail {
 template<class CharSet>
 struct pct_encoded_bnf
 {
-    CharSet const& cs_;
-    pct_encoded_str& s_;
+    CharSet const& cs;
+    pct_encoded_str& s;
 
     pct_encoded_bnf(
-        CharSet const& cs,
-        pct_encoded_str& s) noexcept
-        : cs_(cs)
-        , s_(s)
+        CharSet const& cs_,
+        pct_encoded_str& s_) noexcept
+        : cs(cs_)
+        , s(s_)
     {
     }
 };
@@ -45,12 +45,61 @@ parse(
     auto const start = it;
     // VFALCO TODO
     // opt.plus_to_space?
-    if(! parse_pct_encoded(
-        it, end, ec, t.cs_,
-            t.s_.decoded_size))
-        return false;
-    t.s_.str = string_view(
+    std::size_t n = 0;
+    char const* it0;
+skip:
+    it0 = it;
+    it = bnf::find_if_not(
+        it0, end, t.cs);
+    n += it - it0;
+    if(it == end)
+        goto finish;
+    if(*it != '%')
+        goto finish;
+    for(;;)
+    {
+        ++it;
+        if(it == end)
+        {
+            // missing HEXDIG
+            ec = BOOST_URL_ERR(
+                error::missing_pct_hexdig);
+            return false;
+        }
+        if(bnf::hexdig_value(*it) == -1)
+        {
+            // expected HEXDIG
+            ec = BOOST_URL_ERR(
+                error::bad_pct_hexdig);
+            return false;
+        }
+        ++it;
+        if(it == end)
+        {
+            // missing HEXDIG
+            ec = BOOST_URL_ERR(
+                error::missing_pct_hexdig);
+            return false;
+        }
+        if(bnf::hexdig_value(*it) == -1)
+        {
+            // expected HEXDIG
+            ec = BOOST_URL_ERR(
+                error::bad_pct_hexdig);
+            return false;
+        }
+        ++n;
+        ++it;
+        if(it == end)
+            break;
+        if(*it != '%')
+            goto skip;
+    }
+finish:
+    ec = {};
+    t.s.str = string_view(
         start, it - start);
+    t.s.decoded_size = n;
     return true;
 }
 
