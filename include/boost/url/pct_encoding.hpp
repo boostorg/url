@@ -14,6 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/bnf/charset.hpp>
 #include <memory>
 
 namespace boost {
@@ -22,6 +23,9 @@ namespace urls {
 /** Options for removing percent-encoding from strings
 
     @see
+        @ref pct_decode,
+        @ref pct_decode_bytes_unchecked,
+        @ref pct_decode_unchecked,
         @ref validate_pct_encoding.
 */
 struct pct_decode_opts
@@ -84,8 +88,11 @@ struct pct_decode_opts
         2.1. Percent-Encoding (rfc3986)</a>
 
     @see
+        @ref pct_decode,
+        @ref pct_decode_bytes_unchecked,
         @ref pct_decode_opts,
-        @ref pct_encode.
+        @ref pct_decode_to_value,
+        @ref pct_decode_unchecked.
 */
 template<class CharSet>
 std::size_t
@@ -94,6 +101,180 @@ validate_pct_encoding(
     error_code& ec,
     CharSet const& cs,
     pct_decode_opts const& opt = {}) noexcept;
+
+/** Write a string with percent-decoding into a buffer.
+
+    This function applies percent-decoding to
+    the given percent-encoded string, by
+    converting escape sequences into their
+    character equivalent.
+    The function returns the number of bytes
+    written to the destination buffer, which
+    may be less than the size of the output
+    area.
+
+    @par Exception Safety
+    Throws nothing.
+
+    @return The number of bytes written to
+    the destination buffer, which does not
+    include any null termination.
+
+    @param dest A pointer to the
+    beginning of the output buffer.
+
+    @param end A pointer to one past the end
+    of the output buffer.
+
+    @param s The string to encode.
+
+    @param ec Set to the error, if any
+    occurred. If the destination buffer
+    is too small to hold the result, `ec`
+    is set to @ref error::no_space.
+
+    @param opt The options for encoding. If
+    this parameter is omitted, the default
+    options will be used.
+
+    @param cs The character set to use.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
+        >2.1. Percent-Encoding (rfc3986)</a>
+
+    @see
+        @ref pct_decode_bytes_unchecked,
+        @ref pct_decode_opts,
+        @ref pct_decode_to_value.
+        @ref pct_decode_unchecked.
+        @ref validate_pct_encoding.
+*/
+template<
+    class CharSet =
+        bnf::all_chars>
+std::size_t
+pct_decode(
+    char* dest,
+    char const* end,
+    string_view s,
+    error_code& ec,
+    pct_decode_opts const& opt = {},
+    CharSet const& cs = {}) noexcept;
+
+/** Return a string with percent-decoding applied.
+
+    This function applies percent-decoding to
+    the given percent-encoded string, by
+    converting escape sequences into their
+    character equivalent.
+    The result is returned as a string using
+    the optionally specified allocator.
+
+    @par Exception Safety
+    Throws on invalid input.
+    Calls to allocate may throw.
+
+    @return A `std::basic_string` holding
+    the decoded result. If the default
+    allocator is used, the return type is
+    `std::string`.
+
+    @param s The string to encode.
+
+    @param opt The options for encoding. If
+    this parameter is omitted, the default
+    options will be used.
+
+    @param cs An opitionally specified
+    character set to use. If this parameter
+    is omitted, all characters are considered
+    unreserved.
+
+    @param a An optional allocator the returned
+    string will use. If this parameter is omitted,
+    the default allocator is used.
+
+    @throws std::invalid_argument invalid input.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
+        >2.1. Percent-Encoding (rfc3986)</a>
+
+    @see
+        @ref pct_decode_bytes_unchecked,
+        @ref pct_decode_opts,
+        @ref pct_decode_to_value.
+        @ref pct_decode_unchecked.
+        @ref validate_pct_encoding.
+*/
+template<
+    class CharSet = bnf::all_chars,
+    class Allocator = std::allocator<char> >
+std::basic_string<char,
+    std::char_traits<char>,
+        Allocator>
+pct_decode(
+    string_view s,
+    pct_decode_opts const& opt = {},
+    CharSet const& cs = {},
+    Allocator const& a = {});
+
+/** Return a string with percent-decoding applied.
+
+    This function applies percent-decoding to
+    the given percent-encoded string, by
+    converting escape sequences into their
+    character equivalent.
+    The result is returned as a @ref string_value
+    the optionally specified allocator.
+
+    @par Exception Safety
+    Throws on invalid input.
+    Calls to allocate may throw.
+
+    @return A `std::basic_string` holding
+    the decoded result. If the default
+    allocator is used, the return type is
+    `std::string`.
+
+    @param s The string to encode.
+
+    @param opt The options for encoding. If
+    this parameter is omitted, the default
+    options will be used.
+
+    @param cs An opitionally specified
+    character set to use. If this parameter
+    is omitted, all characters are considered
+    unreserved.
+
+    @param a An optional allocator the returned
+    string will use. If this parameter is omitted,
+    the default allocator is used.
+
+    @throws std::invalid_argument invalid input.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
+        >2.1. Percent-Encoding (rfc3986)</a>
+
+    @see
+        @ref pct_decode_bytes_unchecked,
+        @ref pct_decode_opts,
+        @ref pct_decode_to_value.
+        @ref pct_decode_unchecked.
+        @ref validate_pct_encoding.
+*/
+template<
+    class CharSet = bnf::all_chars,
+    class Allocator = std::allocator<char> >
+string_value
+pct_decode_to_value(
+    string_view s,
+    pct_decode_opts const& opt = {},
+    CharSet const& cs = {},
+    Allocator const& a = {});
 
 /** Return the number of bytes needed to hold the string with percent-decoding applied.
 
@@ -122,7 +303,7 @@ validate_pct_encoding(
 */
 BOOST_URL_DECL
 std::size_t
-pct_decoded_bytes_unchecked(
+pct_decode_bytes_unchecked(
     string_view s) noexcept;
 
 /** Apply percent-decoding to a string
@@ -136,6 +317,9 @@ pct_decoded_bytes_unchecked(
 
     @par Exception Safety
     Throws nothing.
+
+    @return The number of bytes written to
+    the destination.
 
     @param dest A pointer to the beginning of
     the output buffer to hold the percent-decoded
@@ -151,7 +335,7 @@ pct_decoded_bytes_unchecked(
     default settings are used.
 */
 BOOST_URL_DECL
-void
+std::size_t
 pct_decode_unchecked(
     char* dest,
     char const* end,
@@ -188,7 +372,7 @@ pct_decode_unchecked(
     the algorithm indicating the correct
     decoded size. If this parameter is omitted,
     the value will be calculated as-if by
-    calling @ref pct_decoded_bytes_unchecked.
+    calling @ref pct_decode_bytes_unchecked.
 */
 template<class Allocator =
     std::allocator<char> >
@@ -200,48 +384,22 @@ pct_decode_unchecked(
     std::size_t decoded_size =
         std::size_t(-1) );
 
-// VFALCO Users will probably want these eventually
-#if 0
-template<class CharSet = bnf::all_chars>
-std::size_t
-pct_decode(
-    char* dest,
-    char const* end,
-    string_view s,
-    error_code& ec,
-    pct_decode_opts const& opt = {},
-    CharSet const& cs = {}) noexcept;
-
-template<
-    class CharSet = bnf::all_chars,
-    class Allocator = std::allocator<char> >
-std::basic_string<
-    char, std::char_traits<char>,
-        Allocator>
-pct_decode(
-    string_view s,
-    pct_decode_opts const& opt = {},
-    CharSet const& cs = {},
-    Allocator const& a = {});
-
-template<
-    class CharSet = bnf::all_chars,
-    class Allocator = std::allocator<char> >
-string_value
-pct_decode_to_value(
-    string_view s,
-    pct_decode_opts const& opt = {},
-    CharSet const& cs = {},
-    Allocator const& a) noexcept;
-#endif
-
 //------------------------------------------------
 
-/** Options for applying percent-encoding to strings
+/** Options for applying percent-encoding to strings.
+
+    Instances of this type may be provided
+    to percent-encoding algorithms to
+    customize their behavior.
+
+    @see
+        @ref pct_encode,
+        @ref pct_encode_bytes,
+        @ref pct_encode_to_value.
 */
 struct pct_encode_opts
 {
-    /** True if SP (space, ' ') encodes into PLUS ('+')
+    /** True if space (SP, ' ') encodes into PLUS ('+').
 
         @par Specification
         @li <a href="https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1">
@@ -258,19 +416,29 @@ struct pct_encode_opts
     encoded using the given options and character
     set. No encoding is actually performed.
 
+    @par Example
+    @code
+    pct_encode_opts opt;
+    opt.space_to_plus = false;
+
+    std::size_t n = pct_encode_bytes( "My Stuff", pchars, opt );
+
+    assert( n == 10 );
+    @endcode
+
     @par Exception Safety
     Throws nothing.
 
-    @return The number of bytes needed, excluding
-    any null terminator.
+    @return The number of bytes needed,
+    excluding any null terminator.
 
     @param s The string to encode.
 
     @param cs The character set to use.
 
-    @param opt The options for encoding. If this
-    parameter is omitted, the default options
-    will be used.
+    @param opt The options for encoding. If
+    this parameter is omitted, the default
+    options will be used.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
@@ -279,14 +447,13 @@ struct pct_encode_opts
     @see
         @ref pct_decode,
         @ref pct_encode,
-        @ref pct_encode_opts.
+        @ref pct_encode_opts,
+        @ref pct_encode_to_value.
 */
-template<
-    class String,
-    class CharSet>
+template<class CharSet>
 std::size_t
 pct_encode_bytes(
-    String const& s,
+    string_view s,
     CharSet const& cs,
     pct_encode_opts const& opt = {}) noexcept;
 
@@ -302,7 +469,7 @@ pct_encode_bytes(
     ...) = delete;
 #endif
 
-/** Apply percent-encoding to a string
+/** Write a string with percent-encoding into a buffer.
 
     This function applies percent-encoding to
     the given plain string, by escaping all
@@ -330,23 +497,25 @@ pct_encode_bytes(
 
     @param cs The character set to use.
 
+    @param opt The options for encoding. If
+    this parameter is omitted, the default
+    options will be used.
+
     @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
-        2.1. Percent-Encoding (rfc3986)</a>
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
+        >2.1. Percent-Encoding (rfc3986)</a>
 
     @see
         @ref pct_decode,
         @ref pct_encode,
         @ref pct_encode_bytes.
 */
-template<
-    class String,
-    class CharSet>
-bool
+template<class CharSet>
+std::size_t
 pct_encode(
-    char*& dest,
+    char* dest,
     char const* end,
-    String const& s,
+    string_view s,
     CharSet const& cs,
     pct_encode_opts const& opt = {});
 
@@ -356,8 +525,81 @@ pct_encode(
     the given plain string, by escaping all
     characters that are not in the specified
     <em>CharSet</em>.
+    The result is returned as a
+    `std::basic_string`. using the optionally
+    specified allocator.
+
+    @par Example
+    @code
+    pct_encode_opts opt;
+    opt.space_to_plus = true;
+
+    std::string s = pct_encode( "My Stuff", pchars, opt );
+
+    assert( s == "My+Stuff" );
+    @endcode
+
+    @par Exception Safety
+    Calls to allocate may throw.
+
+    @return A `std::basic_string` holding the
+    encoded string, using the specified
+    allocator.
+
+    @param s The string to encode.
+
+    @param cs The character set to use.
+
+    @param opt The options for encoding. If
+    this parameter is omitted, the default
+    options will be used.
+
+    @param a An optional allocator the returned
+    string will use. If this parameter is omitted,
+    the default allocator is used. In this case
+    the return type will be `std::string`.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
+        >2.1. Percent-Encoding (rfc3986)</a>
+
+    @see
+        @ref pct_encode,
+        @ref pct_encode_bytes,
+        @ref pct_encode_opts,
+        @ref pct_encode_to_value.
+*/
+template<
+    class CharSet,
+    class Allocator =
+        std::allocator<char> >
+std::basic_string<char,
+    std::char_traits<char>,
+        Allocator>
+pct_encode(
+    string_view s,
+    CharSet const& cs,
+    pct_encode_opts const& opt = {},
+    Allocator const& a = {});
+
+/** Return a string with percent-encoding applied
+
+    This function applies percent-encoding to
+    the given plain string, by escaping all
+    characters that are not in the specified
+    <em>CharSet</em>.
     The result is returned as a @ref string_value
     using the optionally specified allocator.
+
+    @par Example
+    @code
+    pct_encode_opts opt;
+    opt.space_to_plus = true;
+
+    string_value s = pct_encode_to_value( "My Stuff", pchars, opt );
+
+    assert( s == "My+Stuff" );
+    @endcode
 
     @par Exception Safety
     Calls to allocate may throw.
@@ -369,26 +611,29 @@ pct_encode(
 
     @param cs The character set to use.
 
+    @param opt The options for encoding. If
+    this parameter is omitted, the default
+    options will be used.
+
     @param a An optional allocator the returned
     string will use. If this parameter is omitted,
     the default allocator is used.
 
     @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
-        2.1. Percent-Encoding (rfc3986)</a>
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
+        >2.1. Percent-Encoding (rfc3986)</a>
 
     @see
-        @ref pct_decode,
         @ref pct_encode,
-        @ref pct_encode_bytes.
+        @ref pct_encode_bytes,
+        @ref pct_encode_opts.
 */
 template<
-    class String,
     class CharSet,
     class Allocator = std::allocator<char> >
 string_value
-pct_encode(
-    String const& s,
+pct_encode_to_value(
+    string_view s,
     CharSet const& cs,
     pct_encode_opts const& opt = {},
     Allocator const& a = {});

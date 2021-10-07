@@ -12,6 +12,7 @@
 
 #include <boost/url/static_pool.hpp>
 #include "test_suite.hpp"
+#include <memory>
 
 namespace boost {
 namespace urls {
@@ -63,25 +64,154 @@ public:
             string_param s0,
             string_param s1)
         {
-            error_code ec;
-            auto n = validate_pct_encoding(
-                s0, ec, *pcs, opt);
-            if(! BOOST_TEST(! ec.failed()))
-                return;
-            BOOST_TEST(n == s1.size());
-            BOOST_TEST(n ==
-                pct_decoded_bytes_unchecked(s0));
-            auto s = pct_decode_unchecked(s0, opt);
-            BOOST_TEST(s == s1);
+            // validate_pct_encoding
+            {
+                error_code ec;
+                auto n = validate_pct_encoding(
+                    s0, ec, *pcs, opt);
+                if(! BOOST_TEST(! ec.failed()))
+                    return;
+                BOOST_TEST(n == s1.size());
+            }
+            // pct_decode to buffer
+            {
+                char buf[16];
+                for(std::size_t i = 0;
+                    i < sizeof(buf); ++i)
+                {
+                    error_code ec;
+                    auto const n = pct_decode(
+                        buf, buf + i,
+                            s0, ec, opt, *pcs);
+                    if(i < s1.size())
+                    {
+                        BOOST_TEST(
+                            ec == error::no_space);
+                        BOOST_TEST(n < s1.size());
+                        BOOST_TEST(n <= i);
+                        continue;
+                    }
+                    BOOST_TEST(! ec.failed());
+                    BOOST_TEST(n == s1.size());
+                    BOOST_TEST(
+                        string_view(buf, n) == s1);
+                    break;
+                }
+            }
+            // pct_decode() -> std::string
+            {
+                std::string s = pct_decode(
+                    s0, opt, *pcs);
+                BOOST_TEST(s == s1);
+            }
+            // pct_decode() -> std::basic_string
+            {
+                using A = basic_static_pool::
+                    allocator_type<char>;
+                static_pool<256> p;
+                std::basic_string<char,
+                    std::char_traits<char>, A> s =
+                        pct_decode(s0, opt, *pcs,
+                            p.allocator());
+                BOOST_TEST(s == s1);
+            }
+            // pct_decode_to_value()
+            {
+                string_value s =
+                    pct_decode_to_value(
+                        s0, opt, *pcs);
+                BOOST_TEST(s == s1);
+            }
+            // pct_decode_to_value(Allocator)
+            {
+                static_pool<256> p;
+                string_value s =
+                    pct_decode_to_value(
+                        s0, opt, *pcs,
+                            p.allocator());
+                BOOST_TEST(s == s1);
+            }
+            // pct_decode_bytes_unchecked
+            {
+                auto const n =
+                    pct_decode_bytes_unchecked(s0);
+                BOOST_TEST(n == s1.size());
+            }
+            // pct_decode_unchecked
+            {
+                char buf[16];
+                auto const n =
+                    pct_decode_unchecked(
+                        buf, buf + sizeof(buf),
+                            s0, opt);
+                BOOST_TEST(n == s1.size());
+                BOOST_TEST(
+                    string_view(buf, n) == s1);
+            }
         };
 
         auto const bad = [&](
             string_param s)
         {
-            error_code ec;
-            validate_pct_encoding(
-                s, ec, test_chars{}, opt);
-            BOOST_TEST(ec.failed());
+            // validate_pct_encoding
+            {
+                error_code ec;
+                validate_pct_encoding(
+                    s, ec, test_chars{}, opt);
+                BOOST_TEST(ec.failed());
+            }
+            // pct_decode to buffer
+            {
+                char buf[16];
+                error_code ec;
+                pct_decode(buf,
+                    buf + sizeof(buf),
+                        s, ec, opt, *pcs);
+                BOOST_TEST(ec.failed());
+            }
+            // pct_decode_to_value()
+            {
+                BOOST_TEST_THROWS(
+                    pct_decode_to_value(
+                        s, opt, *pcs),
+                    std::invalid_argument);
+            }
+            // pct_decode() -> std::string
+            {
+                BOOST_TEST_THROWS(
+                    pct_decode(s, opt, *pcs),
+                    std::invalid_argument);
+            }
+            // pct_decode_bytes_unchecked
+            {
+                // don't crash
+                pct_decode_bytes_unchecked(s);
+            }
+            // pct_decode_unchecked
+            {
+                // don't crash
+                char buf[16];
+                pct_decode_unchecked(
+                    buf, buf + sizeof(buf),
+                        s, opt);
+            }
+            // well-defined behavior test
+            {
+                char buf[16];
+                BOOST_ASSERT(
+                    s.size() < sizeof(buf));
+                for(std::size_t i = 0;
+                    i < sizeof(buf); ++i)
+                {
+                    std::memset(
+                        buf, 0xff, sizeof(buf));
+                    pct_decode_unchecked(buf,
+                        buf + i, s, opt);
+                    string_view s1(buf, sizeof(buf));
+                    BOOST_TEST(s1.find(' ') ==
+                        string_view::npos);
+                }
+            }
         };
 
         {
@@ -227,47 +357,60 @@ public:
     //--------------------------------------------
 
     void
-    testEncodeBytes()
-    {
-        auto const check =
-            []( string_view s,
-                std::size_t n,
-                bool space_to_plus = false)
-        {
-            pct_encode_opts opt;
-            opt.space_to_plus =
-                space_to_plus;
-            BOOST_TEST(pct_encode_bytes(
-                s, test_chars{}, opt) == n);
-        };
-
-        check("", 0);
-        check(" ", 3);
-        check("A", 1);
-        check("B", 3);
-        check("AB", 4);
-        check("A B", 7);
-
-        check("", 0, true);
-        check(" ", 1, true);
-        check("A", 1, true);
-        check("B", 3, true);
-        check("AB", 4, true);
-        check("A B", 5, true);
-    }
-
-    void
-    testEncodeToBuffer()
+    testEncode()
     {
         auto const check =
             []( string_view s,
                 string_view m0,
                 bool space_to_plus = false)
         {
+            // pct_encode_bytes
+            {
+                pct_encode_opts opt;
+                opt.space_to_plus =
+                    space_to_plus;
+                BOOST_TEST(pct_encode_bytes(
+                    s, test_chars{}, opt) ==
+                        m0.size());
+            }
+            // pct_encode
+            {
+                pct_encode_opts opt;
+                opt.space_to_plus =
+                    space_to_plus;
+                BOOST_TEST(pct_encode(
+                    s, test_chars{}, opt) == m0);
+            }
+            {
+                static_pool<256> pool;
+                pct_encode_opts opt;
+                opt.space_to_plus =
+                    space_to_plus;
+                BOOST_TEST(pct_encode(
+                    s, test_chars{}, opt,
+                        pool.allocator()) == m0);
+            }
+            // pct_encode_to_value
+            {
+                pct_encode_opts opt;
+                opt.space_to_plus =
+                    space_to_plus;
+                BOOST_TEST(pct_encode_to_value(
+                    s, test_chars{}, opt) == m0);
+            }
+            {
+                static_pool<256> pool;
+                pct_encode_opts opt;
+                opt.space_to_plus =
+                    space_to_plus;
+                BOOST_TEST(pct_encode_to_value(
+                    s, test_chars{}, opt,
+                        pool.allocator()) == m0);
+            }
             pct_encode_opts opt;
             opt.space_to_plus =
                 space_to_plus;
-            auto const m = pct_encode(
+            auto const m = pct_encode_to_value(
                 s, test_chars{}, opt);
             if(! BOOST_TEST(m == m0))
                 return;
@@ -279,62 +422,18 @@ public:
             {
                 char* dest = buf;
                 char const* end = buf + i;
-                bool const success =
-                    pct_encode(dest, end,
-                        s, test_chars{}, opt);
-                string_view r(buf, dest - buf);
-                if(success)
+                std::size_t n = pct_encode(
+                    dest, end, s, test_chars{}, opt);
+                string_view r(buf, n);
+                if(n == m.size())
                 {
                     BOOST_TEST(i == m.size());
-                    BOOST_TEST(dest == end);
                     BOOST_TEST(r == m);
                     break;
                 }
-                std::size_t n = dest - buf;
                 BOOST_TEST(
                     string_view(buf, n) ==
                     m.substr(0, n));
-            }
-        };
-
-        check("", "");
-        check(" ", "%20");
-        check("A", "A");
-        check("B", "%42");
-        check("AB", "A%42");
-        check("A B", "A%20%42");
-
-        check("", "", true);
-        check(" ", "+", true);
-        check("A", "A", true);
-        check("B", "%42", true);
-        check("AB", "A%42", true);
-        check("A B", "A+%42", true);
-    }
-
-    void
-    testEncodeToString()
-    {
-        auto const check =
-            []( string_view s,
-                string_view m,
-                bool space_to_plus = false)
-        {
-            {
-                pct_encode_opts opt;
-                opt.space_to_plus =
-                    space_to_plus;
-                BOOST_TEST(pct_encode(
-                    s, test_chars{}, opt) == m);
-            }
-            {
-                static_pool<256> pool;
-                pct_encode_opts opt;
-                opt.space_to_plus =
-                    space_to_plus;
-                BOOST_TEST(pct_encode(
-                    s, test_chars{}, opt,
-                        pool.allocator()) == m);
             }
         };
 
@@ -358,29 +457,29 @@ public:
     {
         // space_to_plus
         {
-            BOOST_TEST(pct_encode(
+            BOOST_TEST(pct_encode_to_value(
                 " ", test_chars{}) == "%20");
             pct_encode_opts opt;
             BOOST_TEST(opt.space_to_plus == false);
-            BOOST_TEST(pct_encode(
+            BOOST_TEST(pct_encode_to_value(
                 " ", test_chars{}, opt) == "%20");
-            BOOST_TEST(pct_encode(
+            BOOST_TEST(pct_encode_to_value(
                 "A", test_chars{}, opt) == "A");
-            BOOST_TEST(pct_encode(
+            BOOST_TEST(pct_encode_to_value(
                 " A+", test_chars{}, opt) == "%20A%2b");
             opt.space_to_plus = true;
-            BOOST_TEST(pct_encode(
+            BOOST_TEST(pct_encode_to_value(
                 " ", test_chars{}, opt) == "+");
-            BOOST_TEST(pct_encode(
+            BOOST_TEST(pct_encode_to_value(
                 "A", test_chars{}, opt) == "A");
-            BOOST_TEST(pct_encode(
+            BOOST_TEST(pct_encode_to_value(
                 " A+", test_chars{}, opt) == "+A%2b");
         }
 
         // allocator
         {
             static_pool<256> p;
-            BOOST_TEST(pct_encode(
+            BOOST_TEST(pct_encode_to_value(
                 "ABC", test_chars{}, {},
                 p.allocator()) ==
                     "A%42%43");
@@ -394,7 +493,7 @@ public:
         #ifndef _MSC_VER
             // VFALCO Because msvc's string allocates
             // one byte from a function marked noexcept
-            BOOST_TEST_THROWS(pct_encode(s,
+            BOOST_TEST_THROWS(pct_encode_to_value(s,
                 test_chars(), {}, p.allocator()),
                     std::exception);
         #endif
@@ -405,10 +504,7 @@ public:
     run()
     {
         testDecoding();
-
-        testEncodeBytes();
-        testEncodeToBuffer();
-        testEncodeToString();
+        testEncode();
         testEncodeExtras();
     }
 };

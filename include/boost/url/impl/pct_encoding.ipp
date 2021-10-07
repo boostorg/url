@@ -18,7 +18,7 @@ namespace boost {
 namespace urls {
 
 std::size_t
-pct_decoded_bytes_unchecked(
+pct_decode_bytes_unchecked(
     string_view s) noexcept
 {
     auto it = s.data();
@@ -34,17 +34,17 @@ pct_decoded_bytes_unchecked(
             ++n;
             continue;
         }
-        BOOST_ASSERT(
-            end - it >= 3);
+        if(end - it < 3)
+            return n;
         it += 3;
         ++n;
     }
     return n;
 }
 
-void
+std::size_t
 pct_decode_unchecked(
-    char* dest,
+    char* const dest0,
     char const* end,
     string_view s,
     pct_decode_opts const& opt) noexcept
@@ -64,15 +64,17 @@ pct_decode_unchecked(
     };
     auto it = s.data();
     auto const last = it + s.size();
+    auto dest = dest0;
 
     if(opt.plus_to_space)
     {
         while(it != last)
         {
-            // dest too small
-            BOOST_ASSERT(dest != end);
             if(dest == end)
-                return;
+            {
+                // dest too small
+                return dest - dest0;
+            }
             if(*it == '+')
             {
                 // plus to space
@@ -84,15 +86,13 @@ pct_decode_unchecked(
             {
                 // escaped
                 ++it;
-                // missing input
-                BOOST_ASSERT(
-                    last - it >= 2);
                 if(last - it < 2)
                 {
+                    // missing input,
                     // initialize output
                     std::memset(dest,
                         0, end - dest);
-                    return;
+                    return dest - dest0;
                 }
                 *dest++ = decode_hex(it);
                 it += 2;
@@ -101,28 +101,27 @@ pct_decode_unchecked(
             // unescaped
             *dest++ = *it++;
         }
-        return;
+        return dest - dest0;
     }
 
     while(it != last)
     {
-        // dest too small
-        BOOST_ASSERT(dest != end);
         if(dest == end)
-            return;
+        {
+            // dest too small
+            return dest - dest0;
+        }
         if(*it == '%')
         {
             // escaped
             ++it;
-            // missing input
-            BOOST_ASSERT(
-                last - it >= 2);
             if(last - it < 2)
             {
+                // missing input,
                 // initialize output
                 std::memset(dest,
                     0, end - dest);
-                return;
+                return dest - dest0;
             }
             *dest++ = decode_hex(it);
             it += 2;
@@ -131,6 +130,7 @@ pct_decode_unchecked(
         // unescaped
         *dest++ = *it++;
     }
+    return dest - dest0;
 }
 
 } // urls

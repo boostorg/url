@@ -33,7 +33,7 @@ reference(
         has_value = true;
         string_view ev{
             s + nk + 1, nv - 1 };
-        auto n = pct_decoded_bytes_unchecked(ev);
+        auto n = pct_decode_bytes_unchecked(ev);
         char *dest;
         value = a.make_string_value(
             n, dest);
@@ -50,7 +50,7 @@ reference(
         s[0] == '?' || s[0] == '&');
     string_view ek{s + 1, nk - 1};
     auto n =
-        pct_decoded_bytes_unchecked(ek);
+        pct_decode_bytes_unchecked(ek);
     char* dest;
     key = a.make_string_value(n, dest);
     pct_decode_unchecked(
@@ -116,7 +116,7 @@ at(string_view key) const ->
             r.nk + 1,
         r.nv - 1 };
     auto n =
-        pct_decoded_bytes_unchecked(ev);
+        pct_decode_bytes_unchecked(ev);
     char *dest;
     auto s = a_.make_string_value(n, dest);
     pct_decode_unchecked(

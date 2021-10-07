@@ -155,12 +155,13 @@ copy_impl(
 {
     static constexpr auto cs =
         pchars + '/' + '?';
-    pct_encode(dest, end, key, cs);
+    dest += pct_encode(
+        dest, end, key, cs);
     if(value)
     {
         *dest++ = '=';
-        pct_encode(dest, end,
-            *value, cs);
+        dest += pct_encode(
+            dest, end, *value, cs);
     }
 }
 

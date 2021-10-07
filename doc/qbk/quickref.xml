@@ -88,10 +88,13 @@
       <entry valign="top">
         <bridgehead renderas="sect3">Functions</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__pct_decoded_bytes_unchecked">pct_decoded_bytes_unchecked</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_decode">pct_decode</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_decode_bytes_unchecked">pct_decode_bytes_unchecked</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_decode_to_value">decode_to_value</link></member>
           <member><link linkend="url.ref.boost__urls__pct_decode_unchecked">pct_decode_unchecked</link></member>
           <member><link linkend="url.ref.boost__urls__pct_encode">pct_encode</link></member>
           <member><link linkend="url.ref.boost__urls__pct_encode_bytes">pct_encode_bytes</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_encode_to_value">pct_encode_to_value</link></member>
           <member><link linkend="url.ref.boost__urls__validate_pct_encoding">validate_pct_encoding</link></member>
         </simplelist>
         <bridgehead renderas="sect3">Types</bridgehead>

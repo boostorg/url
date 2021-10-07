@@ -59,7 +59,7 @@ value_type(
         string_view ev{
             s + nk + 1, nv - 1 };
         auto n =
-            pct_decoded_bytes_unchecked(ev);
+            pct_decode_bytes_unchecked(ev);
         char *dest;
         value = a.make_string_value(
             n, dest);
@@ -73,7 +73,7 @@ value_type(
     // key
     string_view ek{s, nk};
     auto n =
-        pct_decoded_bytes_unchecked(ek);
+        pct_decode_bytes_unchecked(ek);
     char* dest;
     key = a.make_string_value(n, dest);
     pct_decode_unchecked(
@@ -225,7 +225,7 @@ at(string_view key) const ->
         it.p_ + it.nk_ + 1,
         it.nv_ - 1 };
     auto n =
-        pct_decoded_bytes_unchecked(ev);
+        pct_decode_bytes_unchecked(ev);
     char *dest;
     auto s = a_.make_string_value(n, dest);
     pct_decode_unchecked(

@@ -370,8 +370,6 @@ set_user(string_view s)
     pct_encode(dest,
         get(id_pass).data(), s, cs);
     decoded_[id_user] = s.size();
-    BOOST_ASSERT(dest ==
-        get(id_pass).data());
     check_invariants();
     return *this;
 }
@@ -466,8 +464,6 @@ set_password(string_view s)
     pct_encode(dest, get(
         id_host).data() - 1, s, cs);
     decoded_[id_pass] = s.size();
-    BOOST_ASSERT(dest ==
-        get(id_host).data() - 1);
     check_invariants();
     return *this;
 }
@@ -553,8 +549,6 @@ set_userinfo(
     pct_encode(dest, get(
         id_host).data() - 1, s, cs);
     decoded_[id_user] = s.size();
-    BOOST_ASSERT(dest ==
-        get(id_host).data() - 1);
     check_invariants();
     return *this;
 }

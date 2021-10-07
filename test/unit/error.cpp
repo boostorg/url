@@ -76,6 +76,8 @@ public:
         check(condition::fatal, error::bad_pct_hexdig);
         check(condition::fatal, error::incomplete_pct_encoding);
         check(condition::fatal, error::missing_pct_hexdig);
+
+        check(error::no_space);
     }
 };
 

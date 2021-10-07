@@ -60,6 +60,7 @@ case error::wrong_char_literal: return "wrong char literal";
 case error::bad_pct_hexdig: return "bad hexdig in pct-encoding";
 case error::incomplete_pct_encoding: return "incomplete pct-encoding";
 case error::missing_pct_hexdig: return "missing hexdig in pct-encoding";
+case error::no_space: return "no space";
             }
         }
 

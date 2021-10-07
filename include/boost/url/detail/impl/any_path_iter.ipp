@@ -170,9 +170,10 @@ copy(
     char const* end) noexcept
 {
     BOOST_ASSERT(p_ != nullptr);
-    pct_encode(dest, end,
+    dest += pct_encode(
+        dest, end,
         string_view(p_, n_),
-            pchars);
+        pchars);
     increment();
 }
 
@@ -231,7 +232,7 @@ copy_impl(
     char*& dest,
     char const* end) noexcept
 {
-    pct_encode(
+    dest += pct_encode(
         dest, end, s, pchars);
 }
 

@@ -385,8 +385,7 @@ string_view
 url_view::
 encoded_query() const noexcept
 {
-    auto s = get(
-        id_query);
+    auto s = get(id_query);
     if(s.empty())
         return s;
     BOOST_ASSERT(

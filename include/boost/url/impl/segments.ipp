@@ -33,7 +33,7 @@ operator*() const
     else
         s = { u_->cs_ + r.pos, r.len };
     auto n =
-        pct_decoded_bytes_unchecked(s);
+        pct_decode_bytes_unchecked(s);
     char* dest;
     auto v =
         a_.make_string_value(n, dest);
@@ -64,7 +64,7 @@ operator[](
     else
         s = { u_->cs_ + r.pos, r.len };
     auto n =
-        pct_decoded_bytes_unchecked(s);
+        pct_decode_bytes_unchecked(s);
     char* dest;
     auto v =
         a_.make_string_value(n, dest);

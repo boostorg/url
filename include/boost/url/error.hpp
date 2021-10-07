@@ -250,6 +250,14 @@ enum class error
     */
     missing_pct_hexdig,
 
+    /**
+     * No space in output buffer
+
+       This error is returned when a provided
+       output buffer was too small to hold
+       the complete result of an algorithm.
+    */
+    no_space
 };
 
 //------------------------------------------------
