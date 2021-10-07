@@ -25,7 +25,7 @@ segments::
 iterator::
 operator*() const
 {
-    auto r = u_->get_segment(i_);
+    auto r = u_->segment(i_);
     string_view s;
     if(u_->cs_[r.pos] == '/')
         s = { u_->cs_ + r.pos + 1,
@@ -56,7 +56,7 @@ operator[](
     std::size_t i) const ->
     string_value
 {
-    auto r = u_->get_segment(i);
+    auto r = u_->segment(i);
     string_view s;
     if(u_->cs_[r.pos] == '/')
         s = { u_->cs_ + r.pos + 1,

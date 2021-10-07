@@ -880,7 +880,7 @@ private:
     };
 
     raw_segment
-    get_segment(
+    segment(
         std::size_t i) const noexcept;
 
     char*
@@ -982,7 +982,7 @@ private:
     };
 
     raw_param
-    get_param(
+    param(
         std::size_t i) const noexcept;
 
     char*

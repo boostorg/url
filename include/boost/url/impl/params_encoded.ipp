@@ -24,7 +24,7 @@ operator[](
     std::size_t pos) const ->
         value_type
 {
-    auto const r = u_->get_param(pos);
+    auto const r = u_->param(pos);
     if(r.nv > 0)
         return value_type{
             string_view(
@@ -50,7 +50,7 @@ iterator::
 operator*() const ->
     value_type
 {
-    auto const r = u_->get_param(i_);
+    auto const r = u_->param(i_);
     if(r.nv > 0)
         return value_type{
             string_view(
@@ -86,7 +86,7 @@ at(string_view key) const ->
         if(it == end())
             detail::throw_out_of_range(
                 BOOST_CURRENT_LOCATION);
-        r = u_->get_param(it.i_);
+        r = u_->param(it.i_);
         if(r.nv != 0)
             break;
         ++it;
@@ -152,7 +152,7 @@ find(
     auto const end_ = end();
     while(from != end_)
     {
-        auto r = u_->get_param(
+        auto r = u_->param(
             from.i_);
         if( detail::key_equal_encoded(
             key, string_view(u_->s_ +

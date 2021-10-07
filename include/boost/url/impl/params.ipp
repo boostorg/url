@@ -64,7 +64,7 @@ operator[](
         reference
 {
     auto const r =
-        u_->get_param(pos);
+        u_->param(pos);
     return reference(
         u_->s_ + r.pos,
             r.nk, r.nv, a_);
@@ -79,7 +79,7 @@ operator*() const ->
     reference
 {
     auto const r =
-        u_->get_param(i_);
+        u_->param(i_);
     return reference(
         u_->s_ + r.pos,
         r.nk,
@@ -105,7 +105,7 @@ at(string_view key) const ->
         if(it == end())
             detail::throw_out_of_range(
                 BOOST_CURRENT_LOCATION);
-        r = u_->get_param(it.i_);
+        r = u_->param(it.i_);
         if(r.nv != 0)
             break;
         ++it;
@@ -178,7 +178,7 @@ find(
     auto const end_ = end();
     while(from != end_)
     {
-        auto r = u_->get_param(
+        auto r = u_->param(
             from.i_);
         if( detail::key_equal_encoded(
             key, string_view(u_->s_ +

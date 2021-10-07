@@ -503,7 +503,7 @@ remove_value(
     BOOST_ASSERT(pos.u_ == u_);
     using detail::
         make_enc_params_iter;
-    auto r = u_->get_param(pos.i_);
+    auto r = u_->param(pos.i_);
     value_type v{
         string_view{
             u_->s_ + r.pos + 1,

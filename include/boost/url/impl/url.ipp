@@ -1032,7 +1032,7 @@ remove_origin() noexcept
 
 auto
 url::
-get_segment(
+segment(
     std::size_t i) const noexcept ->
         raw_segment
 {
@@ -1085,9 +1085,9 @@ edit_segments(
     BOOST_ASSERT(
         last - first <= nseg_);
     auto const r0 =
-        get_segment(first);
+        segment(first);
     auto const r1 =
-        get_segment(last);
+        segment(last);
     auto const n0 =
         r1.pos - r0.pos;
     ensure_space(
@@ -1305,7 +1305,7 @@ encoded_segments() noexcept
 
 auto
 url::
-get_param(
+param(
     std::size_t i) const noexcept ->
         raw_param
 {
@@ -1365,8 +1365,8 @@ edit_params(
     BOOST_ASSERT(last >= first);
     BOOST_ASSERT(
         last - first <= nparam_);
-    auto const r0 = get_param(first);
-    auto const r1 = get_param(last);
+    auto const r0 = param(first);
+    auto const r1 = param(last);
     auto const n0 = r1.pos - r0.pos;
     ensure_space(
         size() + n - n0,

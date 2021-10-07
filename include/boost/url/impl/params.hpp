@@ -503,7 +503,7 @@ remove_value(
         iterator
 {
     BOOST_ASSERT(pos.u_ == u_);
-    auto r = u_->get_param(pos.i_);
+    auto r = u_->param(pos.i_);
     value_type v{
         string_view{
             u_->s_ + r.pos + 1,
