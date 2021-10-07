@@ -658,6 +658,84 @@ public:
     //--------------------------------------------
 
     void
+    testParse()
+    {
+        // parse_absolute_uri
+        {
+            result<url_view> r;
+
+            r = parse_absolute_uri(
+                "http://user:pass@example.com:443/path/to/file.txt?q");
+            BOOST_TEST(r.has_value());
+            BOOST_TEST_NO_THROW(r.value());
+
+            r = parse_absolute_uri(
+                "");
+            BOOST_TEST(r.has_error());
+            BOOST_TEST_THROWS(
+                r.value(), std::exception);
+        }
+
+        // parse_uri
+        {
+            result<url_view> r;
+
+            r = parse_uri(
+                "http://user:pass@example.com:443/path/to/file.txt?q#f");
+            BOOST_TEST(r.has_value());
+            BOOST_TEST_NO_THROW(r.value());
+
+            r = parse_uri(
+                "");
+            BOOST_TEST(r.has_error());
+            BOOST_TEST_THROWS(
+                r.value(), std::exception);
+        }
+
+        // parse_relative_ref
+        {
+            result<url_view> r;
+
+            r = parse_relative_ref(
+                "//example.com/path/to/file.txt?q#f");
+            BOOST_TEST(r.has_value());
+            BOOST_TEST_NO_THROW(r.value());
+
+            r = parse_relative_ref(
+                "http:file.txt");
+            BOOST_TEST(r.has_error());
+            BOOST_TEST_THROWS(
+                r.value(), std::exception);
+        }
+
+        // parse_uri_reference
+        {
+            result<url_view> r;
+
+            r = parse_uri_reference(
+                "http://user:pass@example.com:443/path/to/file.txt?q#f");
+            BOOST_TEST(r.has_value());
+            BOOST_TEST_NO_THROW(r.value());
+
+            r = parse_uri_reference(
+                "//example.cmo/path/to/file.txt?q#f");
+            BOOST_TEST(r.has_value());
+
+            r = parse_uri_reference(
+                "");
+            BOOST_TEST(r.has_value());
+            BOOST_TEST_NO_THROW(r.value());
+
+            r = parse_uri_reference(
+                "1000://");
+            BOOST_TEST(r.has_error());
+            BOOST_TEST_THROWS(
+                r.value(), std::exception);
+        }
+
+    }
+
+    void
     testOutput()
     {
         auto u = parse_uri( "http://example.com" ).value();
@@ -690,6 +768,7 @@ public:
         testQuery();
         testFragment();
 
+        testParse();
         testOutput();
         testCases();
     }
