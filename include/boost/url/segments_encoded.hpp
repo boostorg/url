@@ -328,7 +328,7 @@ public:
         @param i The zero-based index of the
         element.
     */
-    inline
+    BOOST_URL_DECL
     string_view
     operator[](
         std::size_t i) const noexcept;

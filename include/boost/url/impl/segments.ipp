@@ -25,7 +25,13 @@ segments::
 iterator::
 operator*() const
 {
-    auto s = u_->encoded_segment(i_);
+    auto r = u_->get_segment(i_);
+    string_view s;
+    if(u_->cs_[r.pos] == '/')
+        s = { u_->cs_ + r.pos + 1,
+                r.len - 1 };
+    else
+        s = { u_->cs_ + r.pos, r.len };
     auto n =
         pct_decoded_bytes_unchecked(s);
     char* dest;
@@ -50,7 +56,13 @@ operator[](
     std::size_t i) const ->
     string_value
 {
-    auto s = u_->encoded_segment(i);
+    auto r = u_->get_segment(i);
+    string_view s;
+    if(u_->cs_[r.pos] == '/')
+        s = { u_->cs_ + r.pos + 1,
+                r.len - 1 };
+    else
+        s = { u_->cs_ + r.pos, r.len };
     auto n =
         pct_decoded_bytes_unchecked(s);
     char* dest;

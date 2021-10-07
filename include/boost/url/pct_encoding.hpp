@@ -207,26 +207,32 @@ std::size_t
 pct_decode(
     char* dest,
     char const* end,
-    error_code& ec,
     string_view s,
+    error_code& ec,
     pct_decode_opts const& opt = {},
     CharSet const& cs = {}) noexcept;
 
-template<class CharSet = bnf::all_chars>
-string_value
+template<
+    class CharSet = bnf::all_chars,
+    class Allocator = std::allocator<char> >
+std::basic_string<
+    char, std::char_traits<char>,
+        Allocator>
 pct_decode(
     string_view s,
     pct_decode_opts const& opt = {},
     CharSet const& cs = {},
-    Allocator const& a) noexcept;
+    Allocator const& a = {});
 
 template<
-    class CharSet = bnf::all_chars>
-std::string
-pct_decode(
+    class CharSet = bnf::all_chars,
+    class Allocator = std::allocator<char> >
+string_value
+pct_decode_to_value(
     string_view s,
     pct_decode_opts const& opt = {},
-    CharSet const& cs = {}) noexcept;
+    CharSet const& cs = {},
+    Allocator const& a) noexcept;
 #endif
 
 //------------------------------------------------

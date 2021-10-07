@@ -74,11 +74,9 @@ public:
         return tmp;
     }
 
+    BOOST_URL_DECL
     string_view
-    operator*() const noexcept
-    {
-        return u_->encoded_segment(i_);
-    }
+    operator*() const noexcept;
 
     friend
     bool
@@ -290,15 +288,6 @@ at(std::size_t i) const
         detail::throw_out_of_range(
             BOOST_CURRENT_LOCATION);
     return (*this)[i];
-}
-
-auto
-segments_encoded::
-operator[](
-    std::size_t i) const noexcept ->
-    reference
-{
-    return u_->encoded_segment(i);
 }
 
 string_view

@@ -17,6 +17,37 @@
 namespace boost {
 namespace urls {
 
+string_view
+segments_encoded::
+iterator::
+operator*() const noexcept
+{
+    auto r = u_->get_segment(i_);
+    if(u_->cs_[r.pos] == '/')
+        return { u_->cs_ + r.pos + 1,
+            r.len - 1 };
+    return { u_->cs_ + r.pos, r.len };
+}
+
+//------------------------------------------------
+//
+// Element Access
+//
+//------------------------------------------------
+
+auto
+segments_encoded::
+operator[](
+    std::size_t i) const noexcept ->
+    reference
+{
+    auto r = u_->get_segment(i);
+    if(u_->cs_[r.pos] == '/')
+        return { u_->cs_ + r.pos + 1,
+            r.len - 1 };
+    return { u_->cs_ + r.pos, r.len };
+}
+
 //------------------------------------------------
 //
 // Modifiers

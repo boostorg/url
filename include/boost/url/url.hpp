@@ -883,11 +883,6 @@ private:
     get_segment(
         std::size_t i) const noexcept;
 
-    BOOST_URL_DECL
-    string_view
-    encoded_segment(
-        std::size_t i) const noexcept;
-
     char*
     edit_segments(
         std::size_t first,
