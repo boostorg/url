@@ -1072,6 +1072,22 @@ get_segment(
             it - start ) };
 }
 
+string_view
+url::
+encoded_segment(
+    std::size_t i) const noexcept
+{
+    raw_segment r;
+    if(i >= nseg_)
+        return empty_;
+    r = get_segment(i);
+    string_view s = {
+        s_ + r.pos, r.len };
+    if(s.starts_with('/'))
+        s.remove_prefix(1);
+    return s;
+}
+
 char*
 url::
 edit_segments(
@@ -1288,22 +1304,6 @@ set_path(
         detail::plain_path_iter(s),
         abs_hint);
     return *this;
-}
-
-string_view
-url::
-encoded_segment(
-    std::size_t i) const noexcept
-{
-    raw_segment r;
-    if(i >= nseg_)
-        return empty_;
-    r = get_segment(i);
-    string_view s = {
-        s_ + r.pos, r.len };
-    if(s.starts_with('/'))
-        s.remove_prefix(1);
-    return s;
 }
 
 segments_encoded

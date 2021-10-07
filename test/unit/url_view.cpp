@@ -539,16 +539,6 @@ public:
             ++it;
             BOOST_TEST(it == p.end());
         }
-
-        // encoded_segment
-        {
-            url_view u = parse_uri(
-                "http://www.example.com/path/to/file.txt").value();
-            BOOST_TEST(u.encoded_segment(0) == "path");
-            BOOST_TEST(u.encoded_segment(1) == "to");
-            BOOST_TEST(u.encoded_segment(2) == "file.txt");
-            BOOST_TEST(u.encoded_segment(3) == "");
-        }
     }
 
     void

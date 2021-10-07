@@ -1366,9 +1366,11 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
     */
-    BOOST_URL_DECL
     string_view
-    encoded_path() const noexcept;
+    encoded_path() const noexcept
+    {
+        return get(id_path);
+    }
 
     /** Return the count of the number of path segments
 
@@ -1392,91 +1394,6 @@ public:
     segment_count() const noexcept
     {
         return nseg_;
-    }
-
-    /** Return a path segment by index
-
-        This function returns a zero-based,
-        indexed path segment as a percent-encoded
-        string. If `i >= segment_count()`, an
-        empty string is returned.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-
-        @param i The index of the segment to return.
-    */
-    BOOST_URL_DECL
-    virtual
-    string_view
-    encoded_segment(
-        std::size_t i) const noexcept;
-
-    /** Return a path segment by index
-
-        This function returns an indexed
-        path segment with percent-decoding
-        applied, using an optionally specified
-        allocator. The behavior depends on
-        i:
-
-        @li If `i` is 0 the first path
-        segment is returned;
-
-        @li If i is positive, then
-        the `i` + 1th path segment is
-        returned. For example if `i == 2`
-        then the third segment is returned.
-        In other words, `i` is zero based.
-
-        @li If i is negative, then the
-        function negates i, and counts from
-        the end of the path rather than the
-        beginning. For example if `i == -1`
-        then the last path segment is returned.
-
-        If the i is out of range, an empty
-        string is returned. To determine the
-        number of segments, call @ref segment_count.
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
-
-        @par Exception Safety
-        Calls to allocate may throw.
-
-        @param i The index of the segment to return.
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
-
-        @return A @ref string_value using the
-        specified allocator.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-    */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    string_value
-    segment(
-        int i,
-        Allocator const& a = {}) const
-    {
-        pct_decode_opts opt;
-        opt.plus_to_space = false;
-        return pct_decode_unchecked(
-            encoded_segment(i), opt, a);
     }
 
     /** Return the path segments

@@ -363,33 +363,6 @@ encoded_origin() const noexcept
 
 //----------------------------------------------------------
 //
-// Path
-//
-//----------------------------------------------------------
-
-string_view
-url_view::
-encoded_path() const noexcept
-{
-    return get(id_path);
-}
-
-string_view
-url_view::
-encoded_segment(
-    std::size_t i) const noexcept
-{
-    if(i >= nseg_)
-        return empty_;
-    auto pv = encoded_segments();
-    auto it = pv.begin();
-    while(i--)
-        ++it;
-    return *it;
-}
-
-//----------------------------------------------------------
-//
 // Query
 //
 //----------------------------------------------------------

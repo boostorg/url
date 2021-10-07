@@ -883,6 +883,11 @@ private:
     get_segment(
         std::size_t i) const noexcept;
 
+    BOOST_URL_DECL
+    string_view
+    encoded_segment(
+        std::size_t i) const noexcept;
+
     char*
     edit_segments(
         std::size_t first,
@@ -957,32 +962,6 @@ public:
     url&
     set_path(
         string_view s);
-
-    /** Return a path segment by index
-
-        This function returns a zero-based,
-        indexed path segment as a percent-encoded
-        string.
-
-        @par Preconditions
-        @code
-        i < segment_count()
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-
-        @param i The index of the segment to return.
-    */
-    BOOST_URL_DECL
-    virtual
-    string_view
-    encoded_segment(
-        std::size_t i) const noexcept override;
 
     BOOST_URL_DECL
     segments_encoded
