@@ -35,10 +35,10 @@ struct port_part_bnf
     using number_type =
         std::uint16_t;
 
-    bool has_port;
+    bool has_port = false;
     string_view port;
-    bool has_number;
-    std::uint16_t port_number;
+    bool has_number = false;
+    std::uint16_t port_number = 0;
 
     BOOST_URL_DECL
     friend

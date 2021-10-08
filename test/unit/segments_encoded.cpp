@@ -32,19 +32,9 @@ public:
             segments_encoded::iterator>::value);
 
 #if __cpp_lib_ranges >= 201911
-    /*
-    BOOST_STATIC_ASSERT(
-        std::random_access_range<
-            segments_encoded>);
-    */
-
     BOOST_STATIC_ASSERT(
         std::random_access_iterator<
             segments_encoded::iterator>);
-
-    BOOST_STATIC_ASSERT(
-        std::random_access_iterator<
-            segments_encoded::const_iterator>);
 #endif
 
     void

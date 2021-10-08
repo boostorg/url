@@ -20,7 +20,7 @@ struct params_value_type
 {
     string_view key;
     string_view value;
-    bool has_value;
+    bool has_value = false;
 
 #ifdef BOOST_NO_CXX14_AGGREGATE_NSDMI
     constexpr
