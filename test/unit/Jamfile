@@ -21,6 +21,7 @@ project
 
 local SOURCES =
     ../../extra/test_main.cpp
+    authority_view.cpp
     error.cpp
     host_type.cpp
     ipv4_address.cpp

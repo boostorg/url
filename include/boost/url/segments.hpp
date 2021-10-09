@@ -23,7 +23,7 @@ namespace urls {
 class url;
 #endif
 
-/** A reference-like container to modifiable URL segments
+/** A container referencing a random-access range of modifiable, percent-decoded path segments.
 
     This class implements a <em>RandomAccessContainer</em>
     representing the path segments in a @ref url as
@@ -79,12 +79,11 @@ class segments
 
 public:
 #ifdef BOOST_URL_DOCS
-    /** A random-access iterator referencing segments in a url path
+    /** A random-access iterator referencing segments in a url path.
 
-        When dereferenced, this iterator returns a
-        proxy which allows conversion to stringlike
-        types, assignments which change the underlying
-        container, and comparisons.
+        Deferencing this iterator returns a string
+        holding a decoded path segment, using the
+        the container's allocator.
     */
     using iterator = __see_below__;
 

@@ -7,27 +7,18 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_URL_VIEW_HPP
-#define BOOST_URL_URL_VIEW_HPP
+#ifndef BOOST_URL_AUTHORITY_VIEW_HPP
+#define BOOST_URL_AUTHORITY_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/host_type.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/params_view.hpp>
-#include <boost/url/params_encoded_view.hpp>
 #include <boost/url/pct_encoding.hpp>
-#include <boost/url/scheme.hpp>
-#include <boost/url/segments_encoded_view.hpp>
-#include <boost/url/segments_view.hpp>
-#include <boost/url/scheme.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/url/detail/parts_base.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
-#include <cstdint>
 #include <iosfwd>
-#include <memory>
 #include <utility>
 
 namespace boost {
@@ -35,22 +26,18 @@ namespace urls {
 
 #ifndef BOOST_URL_DOCS
 struct authority_bnf;
-struct fragment_part_bnf;
 struct host_bnf;
-struct parsed_path;
-struct query_part_bnf;
-struct scheme_part_bnf;
 #endif
 
-/** A read-only view to a URL
+/** A read-only view to an authority.
 
-    Objects of this type represent valid URLs
-    whose storage is managed externally. That
-    is, it acts like a `std::string_view` in
+    Objects of this type represent a valid
+    authority whose storage is managed externally.
+    That is, it acts like a `std::string_view` in
     terms of ownership. Callers are responsible
     for ensuring that the lifetime of the
     underlying string extends until the
-    `url_view` is no longer in use.
+    `authority_view` is no longer in use.
     To construct from an existing string it is
     necessary to use one of the parsing
     functions. Each function parses against
@@ -58,22 +45,13 @@ struct scheme_part_bnf;
 
     @par Example
     @code
-    url_view u;
+    authority_view a;
 
-    u = parse_uri( "http://www.example.com/index.html" ).value();
-
-    u = parse_relative_ref( "/path/to/file.txt" ).value();
+    a = parse_authority( "www.example.com:443" );
     @endcode
 
     @par BNF
     @code
-    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-    URI-reference = URI / relative-ref
-
-    absolute-URI  = scheme ":" hier-part [ "?" query ]
-
-    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
     @endcode
 
     @see
@@ -82,43 +60,49 @@ struct scheme_part_bnf;
         @ref parse_uri,
         @ref parse_uri_reference.
 */
-class BOOST_SYMBOL_VISIBLE url_view
-    : protected detail::parts_base
+class BOOST_SYMBOL_VISIBLE authority_view
 {
 #ifndef BOOST_URL_DOCS
 protected:
 #endif
+    using pos_t = std::size_t;
+
+    enum
+    {
+        id_user = -1,
+        id_pass,        // leading ':', trailing '@'
+        id_host,
+        id_port,        // leading ':'
+        id_end          // one past the end
+    };
+
+    static
+    constexpr
+    pos_t zero_ = 0;
+
+    static
+    constexpr
+    char const* const empty_ = "";
+
     char const* cs_ = empty_;
     pos_t offset_[id_end + 1] = {};
     pos_t decoded_[id_end] = {};
-    pos_t nseg_ = 0;
-    pos_t nparam_ = 0;
     unsigned char ip_addr_[16] = {};
     // VFALCO don't we need a bool?
     std::uint16_t port_number_ = 0;
     urls::host_type host_type_ =
         urls::host_type::none;
-    urls::scheme scheme_ =
-        urls::scheme::none;
 
-    friend class url;
-    friend class static_url_base;
     struct shared_impl;
 
-    inline url_view& base() noexcept;
-    inline url_view const& base() const noexcept;
-    inline std::size_t table_bytes() const noexcept;
     inline pos_t len(int first, int last) const noexcept;
     inline void set_size(int id, pos_t n) noexcept;
-    inline void split(int id, std::size_t n) noexcept;
-    inline void adjust(int first, int last,
-        std::size_t n) noexcept;
-    inline void collapse(int first, int last,
-        std::size_t n) noexcept;
 
-    explicit inline url_view(char const* cs) noexcept;
-    inline url_view(url_view const& u,
+    explicit inline authority_view(
         char const* cs) noexcept;
+    inline authority_view(
+        authority_view const& u,
+            char const* cs) noexcept;
 
     // return offset of id
     BOOST_URL_CONSTEXPR
@@ -127,7 +111,7 @@ protected:
         pos_t
     {
         return
-            id == id_scheme ?
+            id == id_user ?
             zero_ : offset_[id];
     }
 
@@ -205,47 +189,33 @@ public:
     //--------------------------------------------
 
     /** Destructor
-
-        Any params, segments, or iterators
-        which reference this object are
-        invalidated. The ownership and lifetime
-        of the underlying character buffer
-        remains unchanged.
     */
     BOOST_URL_DECL
-    virtual ~url_view();
+    virtual ~authority_view();
 
     /** Constructor
 
-        Default constructed views refer to
-        a string with zero length, which
-        always remains valid. This matches
-        the grammar for a relative-ref with
-        an empty path and no query or
-        fragment.
-
-        @par BNF
-        @code
-        relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
-        @endcode
+        Default constructed authorities
+        refer to a string with zero length,
+        which is always valid. This matches
+        the grammar for a zero-length host.
 
         @par Exception Safety
         Throws nothing.
 
         @par Specification
-        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
-            >4.2. Relative Reference (rfc3986)</a>
     */
     BOOST_URL_DECL
-    url_view() noexcept;
+    authority_view() noexcept;
 
     //--------------------------------------------
     //
-    // Observers
+    // Capacity
+    // Element Access
     //
     //--------------------------------------------
 
-    /** Return the maximum number of characters allowed in a URL.
+    /** Return the maximum number of characters allowed in the authority.
 
         This includes any null terminator, if present
 
@@ -275,10 +245,7 @@ public:
         return offset(id_end);
     }
 
-    /** Return true if the URL is empty.
-
-        An empty URL is a <em>relative-ref</em> with
-        zero path segments.
+    /** Return true if the contents are empty.
 
         @par Exception Safety
         Throws nothing.
@@ -289,11 +256,11 @@ public:
         return size() == 0;
     }
 
-    /** Return a pointer to the first character of the view
+    /** Return a pointer to the first character
 
         This function returns a pointer to the
-        first character of the view, which is
-        not guaranteed to be null-terminated.
+        beginning of the view which is not
+        guaranteed to be null-terminated.
 
         @par Exception Safety
         Throws nothing.
@@ -348,8 +315,8 @@ public:
     /** Return an iterator to the beginning
 
         This function returns a constant iterator
-        to the first character of the URL, or
-        one past the last element if the URL is
+        to the first character of the view, or
+        one past the last element if the view is
         empty.
     */
     char const*
@@ -362,7 +329,7 @@ public:
 
         This function returns a constant iterator to
         the character following the last character of
-        the URL. This character acts as a placeholder,
+        the view. This character acts as a placeholder,
         attempting to access it results in undefined
         behavior.
     */
@@ -372,26 +339,17 @@ public:
         return data() + size();
     }
 
-    /** Return the complete encoded URL
+    //--------------------------------------------
+    //
+    // Observers
+    //
+    //--------------------------------------------
 
-        This function returns the URL as a
-        percent-encoded string.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    string_view
-    encoded_url() const noexcept
-    {
-        return string_view(
-            data(), size());
-    }
-
-    /** Return a read-only copy of the URL, with shared lifetime.
+    /** Return a read-only copy of the authority, with shared lifetime.
 
         This function makes a copy of the storage
         pointed to by this, and attaches it to a
-        new constant @ref url_view returned in a
+        new constant @ref authority_view returned in a
         shared pointer. The lifetime of the storage
         for the characters will extend for the
         lifetime of the shared object. This allows
@@ -400,19 +358,19 @@ public:
 
         @par Example
         @code
-        std::shared_ptr<url_view const> sp;
+        std::shared_ptr<authority const> sp;
         {
-            std::string s( "http://example.com" );
-            url_view u = parse_uri( s ).value();    // u references characters in s
+            std::string s( "user:pass@example.com:443" );
+            authority_view a = parse_authority( s ).value();    // a references characters in s
 
-            assert( u.data() == s.data() );         // same buffer
+            assert( u.data() == s.data() );                     // same buffer
 
             sp = u.collect();
 
-            assert( sp->data() != s.data() );       // different buffer
-            assert( sp->encoded_url() == s);        // same contents
+            assert( sp->data() != s.data() );                   // different buffer
+            assert( sp->encoded_authority() == s);              // same contents
 
-            // s is destroyed and thus u
+            // s is destroyed and thus a
             // becomes invalid, but sp remains valid.
         }
         std::cout << *sp; // works
@@ -420,173 +378,10 @@ public:
     */
     BOOST_URL_DECL
     std::shared_ptr<
-        url_view const>
+        authority_view const>
     collect() const;
 
-    //--------------------------------------------
-    //
-    // Scheme
-    //
-    //--------------------------------------------
-
-    /** Return true if this contains a scheme
-
-        This function returns true if this
-        contains a scheme. URLs with schemes
-        are called absolute URLs.
-
-        @par Example
-        @code
-        url_view u = parse_uri( "http://www.example.com" ).value();
-
-        assert( u.has_scheme() );
-        @endcode
-
-        @par BNF
-        @code
-        URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-        absolute-URI    = scheme ":" hier-part [ "?" query ]
-
-        scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
-            >3.1. Scheme (rfc3986)</a>
-
-        @see
-            @ref scheme,
-            @ref scheme_id.
-    */
-    BOOST_URL_DECL
-    bool
-    has_scheme() const noexcept;
-
-    /** Return the scheme
-
-        This function returns the scheme if it
-        exists, without a trailing colon (':').
-        Otherwise it returns an empty string.
-
-        @par Example
-        @code
-        assert( parse_uri( "http://www.example.com" ).scheme() == "http" );
-        @endcode
-
-        @par BNF
-        @code
-        scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
-
-        URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-        absolute-URI    = scheme ":" hier-part [ "?" query ]
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
-            >3.1. Scheme (rfc3986)</a>
-
-        @see
-            @ref has_scheme,
-            @ref scheme_id.
-    */
-    BOOST_URL_DECL
-    string_view
-    scheme() const noexcept;
-
-    /** Return a constant representing the scheme
-
-        This function returns a @ref urls::scheme constant
-        to identify the scheme as a well-known scheme.
-        If the scheme is not recognized, the value
-        @ref urls::scheme::unknown is returned. If
-        this does not contain a scheme, then
-        @ref urls::scheme::none is returned.
-
-        @par BNF
-        @code
-        URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-        absolute-URI    = scheme ":" hier-part [ "?" query ]
-
-        scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
-            >3.1. Scheme (rfc3986)</a>
-
-        @see @ref urls::scheme
-    */
-    BOOST_URL_DECL
-    urls::scheme
-    scheme_id() const noexcept;
-
-    //--------------------------------------------
-    //
-    // Authority
-    //
-    //--------------------------------------------
-
-    /** Return true if this contains an authority 
-
-        This function returns true if this contains
-        an authority.
-
-        @par Example
-        @code
-        assert( parse_uri( "http://www.example.com/index.htm" ).value().has_authority() == true );
-
-        assert( parse_relative_ref( "//" ).value().has_authority() == true );
-
-        assert( parse_relative_ref( "/file.txt" ).value().has_authority() == false );
-        @endcode
-
-        @par BNF
-        @code
-        authority       = [ userinfo "@" ] host [ ":" port ]
-
-        URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-        absolute-URI    = scheme ":" hier-part [ "?" query ]
-
-        URI-reference   = URI / relative-ref
-
-        relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
-
-        hier-part       = "//" authority path-abempty
-                        ; (more...)
-
-        relative-part   = "//" authority path-abempty
-                        ; (more...)
-
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
-            >3.2. Authority (rfc3986)</a>
-
-        @see
-            @ref encoded_authority.
-    */
-    BOOST_URL_DECL
-    bool
-    has_authority() const noexcept;
-
-    /** Return the authority
+    /** Return the complete authority
 
         This function returns the authority as a
         percent-encoded string.
@@ -611,9 +406,12 @@ public:
         @see
             @ref has_authority.
     */
-    BOOST_URL_DECL
     string_view
-    encoded_authority() const noexcept;
+    encoded_authority() const noexcept
+    {
+        return string_view(
+            data(), size());
+    }
 
     //--------------------------------------------
 
@@ -769,9 +567,11 @@ public:
             @ref password,
             @ref user.
     */
-    BOOST_URL_DECL
     string_view
-    encoded_user() const noexcept;
+    encoded_user() const noexcept
+    {
+        return get(id_user);
+    }
 
     /** Return the user
 
@@ -1328,418 +1128,26 @@ public:
     encoded_host_and_port() const noexcept;
 
     //--------------------------------------------
-
-    /** Return the origin
-
-        This function returns the origin as
-        a percent-encoded string. The origin
-        consists of the scheme and authority.
-        This string will be empty if no
-        authority is present.
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_origin() const noexcept;
-
-    //--------------------------------------------
-    //
-    // Path
-    //
-    //--------------------------------------------
-
-    /** Return the path
-
-        This function returns the path as a
-        percent-encoded string.
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-    */
-    string_view
-    encoded_path() const noexcept
-    {
-        return get(id_path);
-    }
-
-    /** Return the count of the number of path segments
-
-        This function returns the number
-        of segments in the path, including
-        empty segments.
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-    */
-    std::size_t
-    segment_count() const noexcept
-    {
-        return nseg_;
-    }
-
-    /** Return the path segments
-
-        This function returns the path segments as
-        a read-only bidirectional range.
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-    */
-    segments_encoded_view
-    encoded_segments() const noexcept
-    {
-        return segments_encoded_view(
-            encoded_path(), nseg_);
-    }
-
-    /** Return the path segments
-
-        This function returns the path segments as
-        a read-only bidirectional range.
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-    */
-    template<class Allocator =
-        std::allocator<char>>
-    segments_view
-    segments(Allocator const& alloc = {}) const noexcept
-    {
-        return segments_view(
-            encoded_path(), nseg_, alloc);
-    }
-
-    //--------------------------------------------
-    //
-    // Query
-    //
-    //--------------------------------------------
-
-    /** Return true if this contains a query
-
-        This function returns true if this
-        contains a query.
-
-        @par BNF
-        @code
-        query           = *( pchar / "/" / "?" )
-
-        query-part      = [ "?" query ]
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
-
-        @see
-            @ref encoded_query,
-            @ref query.
-    */
-    BOOST_URL_DECL
-    bool
-    has_query() const noexcept;
-
-    /** Return the number of key/value pairs in the query
-    */
-    std::size_t
-    param_count() const noexcept
-    {
-        return nparam_;
-    }
-
-    /** Return the query
-
-        This function returns the query as
-        a percent-encoded string.
-
-        @par BNF
-        @code
-        query           = *( pchar / "/" / "?" )
-
-        query-part      = [ "?" query ]
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
-
-        @see
-            @ref encoded_query,
-            @ref query.
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_query() const noexcept;
-
-    /** Return the query
-
-        This function returns the query as a
-        string with percent-decoding applied,
-        using the optionally specified allocator.
-
-        @par BNF
-        @code
-        query           = *( pchar / "/" / "?" )
-
-        query-part      = [ "?" query ]
-        @endcode
-
-        @par Exception Safety
-        Calls to allocate may throw.
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
-
-        @return A @ref string_value using the
-        specified allocator.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
-
-        @see
-            @ref encoded_query,
-            @ref has_query.
-    */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    string_value
-    query(
-        Allocator const& a = {}) const
-    {
-        pct_decode_opts opt;
-        opt.plus_to_space = true;
-        return pct_decode_unchecked(
-            encoded_query(), opt, a);
-    }
-
-    /** Return the query parameters
-
-        This function returns the query
-        parameters as a non-modifiable
-        forward range of key/value pairs
-        where each returned string has
-        percent-decoding applied.
-
-        @par BNF
-        @code
-        query-params    = [ query-param ] *( "&" [ query-param ] )
-
-        query-param     = key [ "=" value ]
-
-        @param alloc The allocator the container
-        will use when returning string with
-        percent-decoding applied.
-
-        @endcode
-    */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    params_view
-    params(Allocator const&
-        alloc = {}) const noexcept;
-
-    /** Return the query parameters
-
-        This function returns the query
-        parameters as a non-modifiable
-        forward range of key/value pairs.
-        Each string returned by the container
-        is percent-encoded.
-
-        @par BNF
-        @code
-        query-params    = [ query-param ] *( "&" [ query-param ] )
-
-        query-param     = key [ "=" value ]
-
-        @endcode
-    */
-    BOOST_URL_DECL
-    params_encoded_view
-    encoded_params() const noexcept;
-
-    //--------------------------------------------
-    //
-    // Fragment
-    //
-    //--------------------------------------------
-
-    /** Return true if a fragment exists.
-
-        This function returns true if this
-        contains a fragment.
-
-        @par BNF
-        @code
-        fragment        = *( pchar / "/" / "?" )
-
-        fragment-part   = [ "#" fragment ]
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
-            >3.5. Fragment (rfc3986)</a>
-
-        @see
-            @ref encoded_fragment,
-            @ref fragment.
-    */
-    BOOST_URL_DECL
-    bool
-    has_fragment() const noexcept;
-
-    /** Return the fragment.
-
-        This function returns the fragment as a
-        percent-encoded string.
-
-        @par BNF
-        @code
-        fragment        = *( pchar / "/" / "?" )
-
-        fragment-part   = [ "#" fragment ]
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
-            >3.5. Fragment (rfc3986)</a>
-
-        @see
-            @ref fragment,
-            @ref has_fragment.
-    */
-    BOOST_URL_DECL
-    string_view
-    encoded_fragment() const noexcept;
-
-    /** Return the fragment.
-
-        This function returns the fragment as a
-        string with percent-decoding applied,
-        using the optionally specified allocator.
-
-        @par BNF
-        @code
-        fragment        = *( pchar / "/" / "?" )
-
-        fragment-part   = [ "#" fragment ]
-        @endcode
-
-        @par Exception Safety
-        Calls to allocate may throw.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
-            >3.5. Fragment (rfc3986)</a>
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used.
-
-        @return A @ref string_value using the
-        specified allocator.
-
-        @see
-            @ref encoded_fragment,
-            @ref has_fragment.
-    */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    string_value
-    fragment(
-        Allocator const& a = {}) const
-    {
-        pct_decode_opts opt;
-        opt.plus_to_space = false;
-        return pct_decode_unchecked(
-            encoded_fragment(),
-            opt, a, decoded_[id_frag]);
-    }
-
-    //--------------------------------------------
     //
     // Parsing
     //
     //--------------------------------------------
 
-    BOOST_URL_DECL friend result<url_view>
-        parse_absolute_uri(string_view s) noexcept;
-    BOOST_URL_DECL friend result<url_view>
-        parse_uri(string_view s) noexcept;
-    BOOST_URL_DECL friend result<url_view>
-        parse_relative_ref(string_view s) noexcept;
-    BOOST_URL_DECL friend result<url_view>
-        parse_uri_reference(string_view s) noexcept;
+    BOOST_URL_DECL friend result<authority_view>
+        parse_authority(string_view s) noexcept;
 
 private:
-    void apply(scheme_part_bnf const& t) noexcept;
     void apply(host_bnf const& h) noexcept;
     void apply(authority_bnf const& t) noexcept;
-    void apply(parsed_path const& path) noexcept;
-    void apply(query_part_bnf const& t) noexcept;
-    void apply(fragment_part_bnf const& t) noexcept;
 };
 
 //------------------------------------------------
 
 /** Parse an absolute-URI
 
-    This function parses a string according
-    to the absolute-URI grammar below, and
-    returns a @ref url_view referencing the string.
+    This function parses a string according to
+    the authority grammar below, and returns an
+    @ref authority_view referencing the string.
     Ownership of the string is not transferred;
     the caller is responsible for ensuring that
     the lifetime of the string extends until the
@@ -1747,178 +1155,28 @@ private:
 
     @par BNF
     @code
-    absolute-URI    = scheme ":" hier-part [ "?" query ]
-
-    hier-part       = "//" authority path-abempty
-                    / path-absolute
-                    / path-rootless
-                    / path-empty
     @endcode
 
     @par Exception Safety
     Throws nothing.
 
-    @return A view to the parsed URL
+    @return A view to the parsed authority
 
     @param s The string to parse
 
     @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.3"
-        >4.3. Absolute URI (rfc3986)</a>
 
     @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
+        @ref authority.
 */
 BOOST_URL_DECL
-result<url_view>
-parse_absolute_uri(
-    string_view s) noexcept;
-
-/** Parse a URI
-
-    This function parses a string according
-    to the URI grammar below, and returns a
-    @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-    hier-part     = "//" authority path-abempty
-                  / path-absolute
-                  / path-rootless
-                  / path-empty
-    @endcode
-
-    @par Exception Safety
-    Throws nothing.
-
-    @return A view to the parsed URL
-
-    @param s The string to parse
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
-        >3. Syntax Components (rfc3986)</a>
-
-    @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
-*/
-BOOST_URL_DECL
-result<url_view>
-parse_uri(
-    string_view s) noexcept;
-
-/** Parse a relative-ref
-
-    This function parses a string according
-    to the relative-ref grammar below, and
-    returns a @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
-
-    relative-part = "//" authority path-abempty
-                  / path-absolute
-                  / path-noscheme
-                  / path-empty
-    @endcode
-
-    @par Exception Safety
-    Throws nothing.
-
-    @return A view to the parsed URL
-
-    @param s The string to parse
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
-        >4.2. Relative Reference (rfc3986)</a>
-
-    @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
-*/
-BOOST_URL_DECL
-result<url_view>
-parse_relative_ref(
-    string_view s) noexcept;
-
-/** Parse a URI-reference
-
-    This function parses a string according
-    to the URI-reference grammar below, and
-    returns a @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-    hier-part     = "//" authority path-abempty
-                  / path-absolute
-                  / path-rootless
-                  / path-empty
-
-    URI-reference = URI / relative-ref
-
-    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
-
-    relative-part = "//" authority path-abempty
-                  / path-absolute
-                  / path-noscheme
-                  / path-empty
-    @endcode
-
-    @par Exception Safety
-    Throws nothing.
-
-    @return A view to the parsed URL
-
-    @param s The string to parse
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
-        >4.1. URI Reference (rfc3986)</a>
-
-    @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference,
-        @ref url_view.
-*/
-BOOST_URL_DECL
-result<url_view>
-parse_uri_reference(
+result<authority_view>
+parse_authority(
     string_view s) noexcept;
 
 //------------------------------------------------
 
-/** Format the encoded URL to the output stream
+/** Format the encoded authority to the output stream
 
     This function serializes the encoded URL
     to the output stream.
@@ -1940,16 +1198,11 @@ BOOST_URL_DECL
 std::ostream&
 operator<<(
     std::ostream& os,
-    url_view const& u);
+    authority_view const& a);
 
 } // urls
 } // boost
 
-// These includes are here
-// because of circular dependencies
-#include <boost/url/impl/params_view.hpp>
-#include <boost/url/impl/params_encoded_view.hpp>
-
-#include <boost/url/impl/url_view.hpp>
+#include <boost/url/impl/authority_view.hpp>
 
 #endif

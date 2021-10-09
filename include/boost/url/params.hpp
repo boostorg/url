@@ -26,7 +26,7 @@ class url;
 class params_encoded;
 #endif
 
-/** A random access container of modifiable, percent-decoded query parameters.
+/** A container referencing a random-access range of modifiable, percent-decoded query parameters.
 */
 class params
     : private detail::parts_base
@@ -43,8 +43,30 @@ class params
         Allocator const& a);
 
 public:
-    class iterator;
+#ifdef BOOST_URL_DOCS
+    /** A random-access iterator referencing parameters in a url query.
 
+        Dereferencing this iterator returns the
+        query parameter as a read-only structure
+        containing strings allocated using the
+        container's allocator.
+    */
+    using iterator = __see_below__;
+
+#else
+    class iterator;
+#endif
+
+    /** A read-only structure representing a decoded query parameter.
+
+        Objects of this type are returned when
+        accessing elements of the query parameters
+        container. The strings returned are
+        read-only copies. Changes to the query
+        parameters are be made through the
+        container's non-const member functions.
+    */
+    /**@{*/
     class reference
     {
         friend class params;
@@ -58,14 +80,49 @@ public:
             string_value::allocator a);
 
     public:
+        /** The query key.
+
+            This string, which may be empty,
+            holds the query key with percent-decoding
+            applied.
+        */
         string_value key;
+
+        /** The query value.
+
+            This string, which may be empty,
+            holds the query value with percent-decoding
+            applied. The field @ref has_value indicates
+            if the query value is defined.
+        */
         string_value value;
+
+        /** True if the query parameter has a value.
+
+            This field is true if the query parameter
+            has a value, even if that value is empty.
+            An empty value is distinguished from
+            having no value.
+        */
         bool has_value;
     };
-
-    using value_type = params_value_type;
     using const_reference = reference;
+    /**@}*/
+
+    /** A type which can represent a parameter as a value
+
+        This type allows for making a copy of
+        a query parameter where ownership is
+        retained in the copy.
+    */
+    using value_type = params_value_type;
+
+    /** An unsigned integer type
+    */
     using size_type = std::size_t;
+
+    /** A signed integer type
+    */
     using difference_type = std::ptrdiff_t;
 
     //--------------------------------------------

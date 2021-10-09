@@ -31,6 +31,7 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/except.ipp>
 #include <boost/url/detail/impl/pct_encoding.ipp>
 
+#include <boost/url/impl/authority_view.ipp>
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/ipv4_address.ipp>
 #include <boost/url/impl/ipv6_address.ipp>
