@@ -328,10 +328,9 @@ apply(
     {
         auto const& u = t.userinfo;
 
-        // leading "//" for authority
         set_size(
             id_user,
-            u.user.str.size() + 2);
+            u.user.str.size());
         decoded_[id_user] = u.user.decoded_size;
 
         if(u.has_password)
@@ -353,8 +352,7 @@ apply(
     }
     else
     {
-        // leading "//" for authority
-        set_size(id_user, 2);
+        set_size(id_user, 0);
         decoded_[id_user] = 0;
     }
 
@@ -389,20 +387,15 @@ parse_authority(
             "authority_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
 
-#if 0
     error_code ec;
-    absolute_uri_bnf t;
+    authority_bnf t;
     if(! bnf::parse_string(s, ec, t))
         return ec;
-#endif
 
     authority_view a(s.data());
 
-#if 0
     // authority
-    if(t.hier_part.has_authority)
-        u.apply(t.hier_part.authority);
-#endif
+    a.apply(t);
 
     return a;
 }
