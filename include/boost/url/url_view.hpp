@@ -1370,30 +1370,6 @@ public:
         return get(id_path);
     }
 
-    /** Return the count of the number of path segments
-
-        This function returns the number
-        of segments in the path, including
-        empty segments.
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-    */
-    std::size_t
-    segment_count() const noexcept
-    {
-        return nseg_;
-    }
-
     /** Return the path segments
 
         This function returns the path segments as
@@ -1476,14 +1452,6 @@ public:
     BOOST_URL_DECL
     bool
     has_query() const noexcept;
-
-    /** Return the number of key/value pairs in the query
-    */
-    std::size_t
-    param_count() const noexcept
-    {
-        return nparam_;
-    }
 
     /** Return the query
 

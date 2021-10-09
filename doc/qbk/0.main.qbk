@@ -10,7 +10,7 @@
 [library Boost.URL
     [id url]
     [quickbook 1.6]
-    [copyright 2019 Vinnie Falco]
+    [copyright 2021 Vinnie Falco]
     [purpose URL Library]
     [license
         Distributed under the Boost Software License, Version 1.0.
@@ -46,6 +46,7 @@
 [def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
 [def __CharSet__                [link url.CharSet ['CharSet]]]
 
+[def __authority_view__         [link url.ref.boost__urls__authority_view `authority_view`]]
 [def __error_code__             [link url.ref.boost__urls__error_code `error_code`]]
 [def __result__                 [link url.ref.boost__urls__result `result`]]
 [def __string_view__            [link url.ref.boost__urls__string_view `string_view`]]
@@ -58,10 +59,22 @@
 
 [/-----------------------------------------------------------------------------]
 
-[include intro.qbk]
-[include quicklook.qbk]
-[include usage.qbk]
-[include parsing.qbk]
+[include 1.0.intro.qbk]
+[include 1.1.quicklook.qbk]
+[include 1.2.usage.qbk]
+
+[section Parsing]
+[include 2.0.parsing.qbk]
+[include 2.1.scheme.qbk]
+[include 2.2.authority.qbk]
+[include 2.3.path.qbk]
+[include 2.4.query.qbk]
+[include 2.5.fragment.qbk]
+[include 2.6.segment_views.qbk]
+[include 2.7.params_views.qbk]
+[include 2.8.authority_view.qbk]
+[endsect]
+
 [include CharSet.qbk]
 
 [section:quickref Reference]

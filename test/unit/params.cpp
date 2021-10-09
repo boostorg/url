@@ -327,31 +327,31 @@ public:
             p.emplace_back("k0", "0");
             BOOST_TEST(u.encoded_query() == "k0=0");
             BOOST_TEST(u.encoded_url() == "/?k0=0#f");
-            BOOST_TEST(u.param_count() == 1);
+            BOOST_TEST(u.encoded_params().size() == 1);
             p.emplace_back("k1", "1");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k1=1#f");
-            BOOST_TEST(u.param_count() == 2);
+            BOOST_TEST(u.encoded_params().size() == 2);
             p.emplace_back("k2", "");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k1=1&k2=#f");
-            BOOST_TEST(u.param_count() == 3);
+            BOOST_TEST(u.encoded_params().size() == 3);
             p.emplace_back("k3");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k1=1&k2=&k3#f");
-            BOOST_TEST(u.param_count() == 4);
+            BOOST_TEST(u.encoded_params().size() == 4);
             p.emplace_back("", "4444");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3&=4444");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k1=1&k2=&k3&=4444#f");
-            BOOST_TEST(u.param_count() == 5);
+            BOOST_TEST(u.encoded_params().size() == 5);
         }
 
         // push_back(value_type)
@@ -363,66 +363,66 @@ public:
             p.push_back({"k0", "0", true});
             BOOST_TEST(u.encoded_query() == "k0=0");
             BOOST_TEST(u.encoded_url() == "/?k0=0#f");
-            BOOST_TEST(u.param_count() == 1);
+            BOOST_TEST(u.encoded_params().size() == 1);
 
             p.push_back({"k1", "1", true});
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k1=1#f");
-            BOOST_TEST(u.param_count() == 2);
+            BOOST_TEST(u.encoded_params().size() == 2);
 
             p.push_back({"k2", "", true});
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k1=1&k2=#f");
-            BOOST_TEST(u.param_count() == 3);
+            BOOST_TEST(u.encoded_params().size() == 3);
 
             p.push_back({"k3", "", false});
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k1=1&k2=&k3#f");
-            BOOST_TEST(u.param_count() == 4);
+            BOOST_TEST(u.encoded_params().size() == 4);
 
             p.push_back({"", "4444", true});
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3&=4444");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k1=1&k2=&k3&=4444#f");
-            BOOST_TEST(u.param_count() == 5);
+            BOOST_TEST(u.encoded_params().size() == 5);
 
             p.pop_back();
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k1=1&k2=&k3#f");
-            BOOST_TEST(u.param_count() == 4);
+            BOOST_TEST(u.encoded_params().size() == 4);
 
             p.pop_back();
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k1=1&k2=#f");
-            BOOST_TEST(u.param_count() == 3);
+            BOOST_TEST(u.encoded_params().size() == 3);
 
             p.pop_back();
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1");
             BOOST_TEST(u.encoded_url() ==
                 "/?k0=0&k1=1#f");
-            BOOST_TEST(u.param_count() == 2);
+            BOOST_TEST(u.encoded_params().size() == 2);
 
             p.pop_back();
             BOOST_TEST(u.encoded_query() == "k0=0");
             BOOST_TEST(u.encoded_url() == "/?k0=0#f");
-            BOOST_TEST(u.param_count() == 1);
+            BOOST_TEST(u.encoded_params().size() == 1);
 
             p.pop_back();
             BOOST_TEST(u.encoded_query() == "");
             BOOST_TEST(u.encoded_url() == "/#f");
-            BOOST_TEST(u.param_count() == 0);
+            BOOST_TEST(u.encoded_params().size() == 0);
         }
     }
 

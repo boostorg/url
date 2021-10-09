@@ -1,0 +1,34 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[section Authority View]
+
+[/-----------------------------------------------------------------------------]
+
+For contexts where an authority can appear by itself, the library provides the
+__authority_view__, a read-only container to a non-owning character buffer
+containing a valid authority. As an example, the grammar for the
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1 ['request-target]]
+of an HTTP/1 CONNECT request uses
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.3 ['authority-form]].
+An authority view cannot be constructed from a string directly. Instead, it
+is returned from the function
+[link url.ref.boost__urls__parse_authority `parse_authority`].
+
+The authority view provides the subset of observer member functions found in
+__url_view__ which are relevant to the authority. However, when an authority
+is parsed on its own, the leading double slashes ("//") are not present. The
+following authority string is valid for `parse_authority`:
+```
+    user:pass@www.example.com:443
+```
+
+[/-----------------------------------------------------------------------------]
+
+[endsect]

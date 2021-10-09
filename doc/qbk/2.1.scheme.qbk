@@ -1,0 +1,87 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[/-----------------------------------------------------------------------------]
+
+[section Scheme]
+
+The scheme is the top-level hierarchical element which defines the
+syntax and semantics of the rest of the URL. The scheme identifier
+is always followed by a colon when it appears in a URL. Here are
+some examples of URLs which contain a scheme:
+    ```
+    https://www.example.com/path/to/file.txt?page=2
+
+    file:///usr/local/bin/
+    ```
+
+A scheme must start with a letter, and may contain only letters,
+digits, plus and minus signs, and periods:
+
+[table Scheme BNF [[
+```
+    scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+
+    absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+    URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+```
+]]]
+
+The library defines an enumeration of values for some well-known scheme
+identifiers. These may be used instead of their corresponding strings:
+
+[table Scheme IDs [
+    [ID]
+    [Description]
+][
+    [[link url.ref.boost__urls__scheme `scheme::none`]]
+    [Indicates no scheme present]
+][
+    [[link url.ref.boost__urls__scheme `scheme::unknown`]]
+    [A valid but unknown scheme]
+][
+    [[link url.ref.boost__urls__scheme `scheme::ftp`]]
+    [File Transfer Protocol ("FTP")]
+][
+    [[link url.ref.boost__urls__scheme `scheme::file`]]
+    [File URI Scheme]
+][
+    [[link url.ref.boost__urls__scheme `scheme::http`]]
+    [Hypertext Transfer Protocol]
+][
+    [[link url.ref.boost__urls__scheme `scheme::https`]]
+    [Secure Hypertext Transfer Protocol]
+][
+    [[link url.ref.boost__urls__scheme `scheme::ws`]]
+    [WebSocket Protocol]
+][
+    [[link url.ref.boost__urls__scheme `scheme::wss`]]
+    [Secure WebSocket Protocol]
+]]
+
+The functions for inspecting the scheme in a __url_view__ are as follows:
+
+[table Scheme Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.has_scheme `has_scheme`]]
+    [Return true if a scheme is present]
+][
+    [[link url.ref.boost__urls__url_view.scheme `scheme`]]
+    [Return the scheme as a string]
+][
+    [[link url.ref.boost__urls__url_view.scheme_id `scheme_id`]]
+    [Return the scheme as a known-scheme enumeration constant]
+]]
+
+[/-----------------------------------------------------------------------------]
+
+[endsect]

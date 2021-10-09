@@ -1,0 +1,58 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[section Segment Views]
+
+[/-----------------------------------------------------------------------------]
+
+The library provides two read-only containers for interacting with the segments
+in a URL's path:
+
+[table Segment View Types [
+    [Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]]
+    [A read-only forward range of path segments returned as percent-encoded strings.]
+][
+    [[link url.ref.boost__urls__segments_view `segments_view`]]
+    [A read-only forward range of path segments returned as strings with percent-decoding applied.]
+]]
+
+These containers are lightweight references to the underlying path string.
+Ownership of the string is not transferred; the caller is responsible for
+ensuring that the lifetime of the string extends until the container is
+destroyed. Containers may not be constructed directly from strings.
+Instead, they are created by the parsing functions below. This provides
+the guarantee that all constructed views contain valid path segments:
+
+[table Path Parsing Functions [
+    [Function]
+    [Grammar]
+][
+    [[link url.ref.boost__urls__parse_path `parse_path`]]
+    [['any path]]
+][
+    [[link url.ref.boost__urls__parse_path_abempty `parse_path_abempty`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-abempty]]]
+][
+    [[link url.ref.boost__urls__parse_path_absolute `parse_path_absolute`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-absolute]]]
+][
+    [[link url.ref.boost__urls__parse_path_noscheme `parse_path_noscheme`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-noscheme]]]
+][
+    [[link url.ref.boost__urls__parse_path_rootless `parse_path_rootless`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-rootless]]]
+]]
+
+
+[/-----------------------------------------------------------------------------]
+
+[endsect]

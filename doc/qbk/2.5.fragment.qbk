@@ -1,0 +1,58 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[/-----------------------------------------------------------------------------]
+
+[section Fragment]
+
+The fragment identifier in a URL provides further refinement of the
+specification of the resource, including additional identifying information.
+The semantics of the fragment vary depending on the scheme, authority, path,
+and media type of the resource. In HTML, fragments are used as internal
+page references. This usage is called a "named anchor," referring to a
+section within a web page. The URL below contains the fragment "section2":
+```
+    https://www.example.com/index.html#section2
+```
+
+A fragment appearing in a URL is always preceded by the number sign ('#'). A
+URL with a fragment of zero length is distinguishable from a URL with no
+fragment. The fragment grammar is defined as follows:
+
+[table Fragment BNF [[
+```
+    fragment        = *( pchar / "/" / "?" )
+
+    relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
+
+    URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+    URI-reference   = URI / relative-ref
+```
+]]]
+
+The functions for inspecting the fragment in a __url_view__ are as follows:
+
+[table Fragment Observers[
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]]
+    [Return the fragment as a percent-encoded string.]
+][
+    [[link url.ref.boost__urls__url_view.fragment `fragment`]]
+    [Return the fragment as a string with percent-decoding applied.]
+][
+    [[link url.ref.boost__urls__url_view.has_fragment `has_fragment`]]
+    [Return true if a fragment is present]
+]]
+
+[/-----------------------------------------------------------------------------]
+
+[endsect]

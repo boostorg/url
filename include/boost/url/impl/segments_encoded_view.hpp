@@ -148,6 +148,7 @@ string_view
 segments_encoded_view::
 front() const noexcept
 {
+    BOOST_ASSERT(! empty());
     return *begin();
 }
 
@@ -155,6 +156,7 @@ string_view
 segments_encoded_view::
 back() const noexcept
 {
+    BOOST_ASSERT(! empty());
     return *--end();
 }
 

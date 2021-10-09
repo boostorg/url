@@ -1,0 +1,124 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[/-----------------------------------------------------------------------------]
+
+[section Authority]
+
+The authority is a hierarchical element which names an entity governing
+the name space defined by the remainder of the URL. The host component
+of the authority can be a registered name or server addressed with
+optional port and user information. In a URL, the authority component
+is always preceded by a double slash ("//").
+
+[table Authority BNF [
+    [
+    ```
+    authority       = [ userinfo "@" ] host [ ":" port ]
+
+    userinfo        = user [ ":" [ password ] ]
+
+    host            = IP-literal / IPv4address / reg-name
+
+    port            = *DIGIT
+
+    user            = *( unreserved / pct-encoded / sub-delims )
+    password        = *( unreserved / pct-encoded / sub-delims / ":" )
+
+    IP-literal      = "[" ( IPv6address / IPvFuture  ) "]"
+
+    reg-name        = *( unreserved / pct-encoded / sub-delims )
+    ```
+    ]
+]]
+
+Note that if an authority is present, the host is always defined even if it
+is the empty string (corresponding to a zero-length ['reg-name] in the BNF).
+
+
+
+The functions for inspecting all or part of the authority in a
+__url_view__ are as follows:
+
+[table Authority Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.has_password `has_password`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.has_userinfo `has_userinfo`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.encoded_password `encoded_password`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.encoded_user `encoded_user`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.encoded_userinfo `encoded_userinfo`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.password `password`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.user `user`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.userinfo `userinfo`]]
+    [Return true if an authority is present]
+]]
+
+
+[table Host Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.encoded_host `encoded_host`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.encoded_host_and_port `encoded_host_and_port`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.has_port `has_port`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.host `host`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.ipv4_address `ipv4_address`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.ipv6_address `ipv6_address`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.ipv_future `ipv_future`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.port `port`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.port_number `port_number`]]
+    [Return true if an authority is present]
+]]
+
+[table Authority Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.has_authority `has_authority`]]
+    [Return true if an authority is present]
+][
+    [[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]]
+    [Return true if an authority is present]
+]]
+
+[/-----------------------------------------------------------------------------]
+
+[endsect]

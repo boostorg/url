@@ -310,6 +310,7 @@ params_encoded::
 front() const ->
     value_type
 {
+    BOOST_ASSERT(! empty());
     return (*this)[0];
 }
 
@@ -318,6 +319,7 @@ params_encoded::
 back() const ->
     value_type
 {
+    BOOST_ASSERT(! empty());
     return (*this)[size() - 1];
 }
 
@@ -360,7 +362,7 @@ std::size_t
 params_encoded::
 size() const noexcept
 {
-    return u_->param_count();
+    return u_->nparam_;
 }
 
 //------------------------------------------------

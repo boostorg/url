@@ -7,9 +7,6 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-[section Parsing]
-[block'''<?dbhtml stop-chunking?>''']
-
 A URL string can be parsed using one of the parsing functions.
 Each function parses according to a particular grammar specified
 in __rfc3986__:
@@ -81,7 +78,8 @@ function. The caller is required to ensure that the lifetime of the string
 extends until the view is destroyed.
 A URL view containing a non-empty string cannot be constructed directly;
 instead, it must be created using a parsing function. This guarantees that
-any constructed view contains a syntactically valid URL.
+any constructed view contains a syntactically valid URL already in its
+serialized form.
 
 The function
 [link url.ref.boost__urls__url_view.collect `url_view::collect`]
@@ -102,10 +100,11 @@ copy:
         // At this point the string literal goes out of scope
     }
 
-    // but `sp` remains valid since it has its own copy
+    // but `*sp` remains valid since it has its own copy
     std::cout << *sp;
 ```
 
-parse_uri( "https://www.example.com/path/to/file.txt" )
-
-[endsect]
+The interface of __url_view__ decomposes the URL into its individual parts and
+allows for inspection of the various parts as well as returning metadata about
+the URL itself. These non-modifying observer operations are described in the
+sections that follow.

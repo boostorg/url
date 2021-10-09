@@ -301,6 +301,7 @@ segments::
 front() const ->
     string_value
 {
+    BOOST_ASSERT(! empty());
     return (*this)[0];
 }
 
@@ -309,6 +310,7 @@ segments::
 back() const ->
     string_value
 {
+    BOOST_ASSERT(! empty());
     return (*this)[size() - 1];
 }
 
@@ -353,7 +355,7 @@ std::size_t
 segments::
 size() const noexcept
 {
-    return u_->segment_count();
+    return u_->nseg_;
 }
 
 //------------------------------------------------

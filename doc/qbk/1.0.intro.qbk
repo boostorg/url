@@ -15,7 +15,7 @@
 Boost.URL is a portable C++ library which provides containers and algorithms
 which model a "URL", more formally described using the
 [@https://https://datatracker.ietf.org/doc/html/rfc3986 Uniform Resource Identifier (URI)]
-specification (henceforth referred to as "rfc3986"). A URL is a compact sequence
+specification (henceforth referred to as __rfc3986__). A URL is a compact sequence
 of characters that identifies an abstract or physical resource. For example,
 this is a valid URL which satisfies the ['absolute-URI] grammar:
 ```
@@ -40,7 +40,7 @@ Boost.URL offers these features:
 * Require only C++11
 * Works without exceptions
 * Fast compilation, no templates
-* Strict compliance with rfc3986
+* Strict compliance with __rfc3986__
 * Allocator control, including avoiding allocation entirely
 * Optional header-only, without linking to a library
 
@@ -56,7 +56,7 @@ Boost.URL offers these features:
 [heading Header-Only]
 
 To use as header-only; that is, to eliminate the requirement to
-link a program to a static or dynamic Boost.JSON library, simply
+link a program to a static or dynamic Boost.URL library, simply
 place the following line in exactly one new or existing source
 file in your project.
 ```
