@@ -997,11 +997,11 @@ public:
 
         @par Example
         @code
-        assert( parse_relative_ref( "/favicon.png" ).encoded_host() == "" );
+        assert( parse_relative_ref( "/favicon.png" ).value().encoded_host() == "" );
 
-        assert( parse_uri( "http://example.com" ).encoded_host() == "example.com" );
+        assert( parse_uri( "http://example.com" ).value().encoded_host() == "example.com" );
 
-        assert( parse_uri( "http://192.168.0.1" ).encoded_host() == "192.168.0.1" );
+        assert( parse_uri( "http://192.168.0.1" ).value().encoded_host() == "192.168.0.1" );
         @endcode
 
         @par BNF
@@ -1042,11 +1042,11 @@ public:
 
         @par Example
         @code
-        assert( parse_relative_ref( "/favicon.png" ).value().encoded_host() == "" );
+        assert( parse_relative_ref( "/favicon.png" ).value().host() == "" );
 
-        assert( parse_uri( "http://example.com" ).value().encoded_host() == "example.com" );
+        assert( parse_uri( "http://example.com" ).value().host() == "example.com" );
 
-        assert( parse_uri( "http://192.168.0.1" ).value().encoded_host() == "192.168.0.1" );
+        assert( parse_uri( "http://192.168.0.1" ).value().host() == "192.168.0.1" );
         @endcode
 
         @par BNF

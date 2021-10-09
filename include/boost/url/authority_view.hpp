@@ -55,16 +55,11 @@ struct host_bnf;
     @endcode
 
     @see
-        @ref parse_absolute_uri,
-        @ref parse_relative_ref,
-        @ref parse_uri,
-        @ref parse_uri_reference.
+        @ref parse_authority.
 */
-class BOOST_SYMBOL_VISIBLE authority_view
+class BOOST_SYMBOL_VISIBLE
+    authority_view
 {
-#ifndef BOOST_URL_DOCS
-protected:
-#endif
     using pos_t = std::size_t;
 
     enum
@@ -95,9 +90,10 @@ protected:
 
     struct shared_impl;
 
-    inline pos_t len(int first, int last) const noexcept;
-    inline void set_size(int id, pos_t n) noexcept;
-
+    inline pos_t len(int first,
+        int last) const noexcept;
+    inline void set_size(
+        int id, pos_t n) noexcept;
     explicit inline authority_view(
         char const* cs) noexcept;
     inline authority_view(
@@ -230,11 +226,11 @@ public:
         return BOOST_URL_MAX_SIZE;
     }
 
-    /** Return the number of characters in the URL.
+    /** Return the number of characters in the authority.
 
-        This function returns the number of
-        characters in the URL, not including
-        any null terminator, if present.
+        This function returns the number
+        of characters in the authority, not
+        including any null terminator.
 
         @par Exception Safety
         Throws nothing.
@@ -259,7 +255,7 @@ public:
     /** Return a pointer to the first character
 
         This function returns a pointer to the
-        beginning of the view which is not
+        beginning of the view, which is not
         guaranteed to be null-terminated.
 
         @par Exception Safety
@@ -363,11 +359,11 @@ public:
             std::string s( "user:pass@example.com:443" );
             authority_view a = parse_authority( s ).value();    // a references characters in s
 
-            assert( u.data() == s.data() );                     // same buffer
+            assert( a.data() == s.data() );                     // same buffer
 
-            sp = u.collect();
+            sp = a.collect();
 
-            assert( sp->data() != s.data() );                   // different buffer
+            assert( sp->data() != a.data() );                   // different buffer
             assert( sp->encoded_authority() == s);              // same contents
 
             // s is destroyed and thus a
@@ -383,12 +379,12 @@ public:
 
     /** Return the complete authority
 
-        This function returns the authority as a
-        percent-encoded string.
+        This function returns the authority
+        as a percent-encoded string.
 
         @par Example
         @code
-        assert( parse_uri( "http://www.example.com/index.htm" ).encoded_authority() == "www.example.com" );
+        assert( parse_authority( "www.example.com" ).value().encoded_authority() == "www.example.com" );
         @endcode
 
         @par BNF
@@ -402,9 +398,6 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
             >3.2. Authority (rfc3986)</a>
-
-        @see
-            @ref has_authority.
     */
     string_view
     encoded_authority() const noexcept
@@ -422,9 +415,9 @@ public:
 
         @par Example
         @code
-        url_view u = parse_uri( "http://user@example.com" ).value();
+        authority_view a = parse_authority( "user@example.com" ).value();
 
-        assert( u.has_userinfo() == true );
+        assert( a.has_userinfo() == true );
         @endcode
 
         @par BNF
@@ -456,7 +449,7 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://user:pass@example.com" ).encoded_userinfo() == "user:pass" );
+        assert( parse_authority( "user:pass@example.com" ).value().encoded_userinfo() == "user:pass" );
         @endcode
 
         @par BNF
@@ -489,9 +482,9 @@ public:
 
         @par Example
         @code
-        url_view u = parse_uri( "http://user:pass@example.com" ).value();
+        authority_view a = parse_authority( "user:pass@example.com" ).value();
 
-        assert( u.userinfo() == "user:pass" );
+        assert( a.userinfo() == "user:pass" );
         @endcode
 
         @par BNF
@@ -541,9 +534,9 @@ public:
 
         @par Example
         @code
-        url_view u = parse_uri( "http://user:pass@example.com" ).value();
+        authority_view a = parse_authority( "user:pass@example.com" ).value();
 
-        assert( u.encoded_user() == "user" );
+        assert( a.encoded_user() == "user" );
         @endcode
 
         @par BNF
@@ -582,7 +575,7 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://user:pass@example.com" ).user() == "user" );
+        assert( parse_authority( "user:pass@example.com" ).value().user() == "user" );
         @endcode
 
         @par BNF
@@ -633,11 +626,11 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://user@example.com" ).value().has_password() == false );
+        assert( parse_authority( "user@example.com" ).value().has_password() == false );
 
-        assert( parse_uri( "http://user:pass@example.com" ).value().has_password() == true );
+        assert( parse_authority( "user:pass@example.com" ).value().has_password() == true );
 
-        assert( parse_uri( "http://:@" ).value().has_password() == true );
+        assert( parse_authority( ":@" ).value().has_password() == true );
         @endcode
 
         @par BNF
@@ -672,9 +665,9 @@ public:
 
         @par Example
         @code
-        url_view u = parse_uri( "http://user:pass@example.com" ).value();
+        authority_view a = parse_authority( "user:pass@example.com" ).value();
 
-        assert( u.encoded_user() == "user" );
+        assert( a.encoded_user() == "user" );
         @endcode
 
         @par BNF
@@ -754,11 +747,11 @@ public:
 
         @par Example
         @code
-        assert( parse_relative_ref( "/favicon.png" ).value().host_type() == host_type::none );
+        assert( authority_view().host_type() == host_type::none );
 
-        assert( parse_uri( "http://example.com" ).value().host_type() == host_type::name );
+        assert( parse_authority( "example.com" ).value().host_type() == host_type::name );
 
-        assert( parse_uri( "http://192.168.0.1" ).value().host_type() == host_type::ipv4 );
+        assert( parse_authority( "192.168.0.1" ).value().host_type() == host_type::ipv4 );
         @endcode
 
         @par BNF
@@ -797,11 +790,11 @@ public:
 
         @par Example
         @code
-        assert( parse_relative_ref( "/favicon.png" ).encoded_host() == "" );
+        assert( parse_authority( "" ).value().encoded_host() == "" );
 
-        assert( parse_uri( "http://example.com" ).encoded_host() == "example.com" );
+        assert( parse_authority( "http://example.com" ).value().encoded_host() == "example.com" );
 
-        assert( parse_uri( "http://192.168.0.1" ).encoded_host() == "192.168.0.1" );
+        assert( parse_authority( "http://192.168.0.1" ).value().encoded_host() == "192.168.0.1" );
         @endcode
 
         @par BNF
@@ -842,11 +835,11 @@ public:
 
         @par Example
         @code
-        assert( parse_relative_ref( "/favicon.png" ).value().encoded_host() == "" );
+        assert( parse_authority( "" ).value().host() == "" );
 
-        assert( parse_uri( "http://example.com" ).value().encoded_host() == "example.com" );
+        assert( parse_authority( "example.com" ).value().host() == "example.com" );
 
-        assert( parse_uri( "http://192.168.0.1" ).value().encoded_host() == "192.168.0.1" );
+        assert( parse_authority( "192.168.0.1" ).value().host() == "192.168.0.1" );
         @endcode
 
         @par BNF
@@ -1143,7 +1136,7 @@ private:
 
 //------------------------------------------------
 
-/** Parse an absolute-URI
+/** Parse an authority
 
     This function parses a string according to
     the authority grammar below, and returns an
@@ -1155,6 +1148,16 @@ private:
 
     @par BNF
     @code
+    authority     = [ userinfo "@" ] host [ ":" port ]
+
+    userinfo      = user [ ":" [ password ] ]
+
+    user          = *( unreserved / pct-encoded / sub-delims )
+    password      = *( unreserved / pct-encoded / sub-delims / ":" )
+
+    host          = IP-literal / IPv4address / reg-name
+
+    port          = *DIGIT
     @endcode
 
     @par Exception Safety
@@ -1165,9 +1168,11 @@ private:
     @param s The string to parse
 
     @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
+        >3.2. Authority (rfc3986)</a>
 
     @see
-        @ref authority.
+        @ref authority_view.
 */
 BOOST_URL_DECL
 result<authority_view>
