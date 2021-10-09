@@ -1718,9 +1718,9 @@ public:
     BOOST_URL_DECL friend result<url_view>
         parse_absolute_uri(string_view s) noexcept;
     BOOST_URL_DECL friend result<url_view>
-        parse_uri(string_view s) noexcept;
-    BOOST_URL_DECL friend result<url_view>
         parse_relative_ref(string_view s) noexcept;
+    BOOST_URL_DECL friend result<url_view>
+        parse_uri(string_view s) noexcept;
     BOOST_URL_DECL friend result<url_view>
         parse_uri_reference(string_view s) noexcept;
 

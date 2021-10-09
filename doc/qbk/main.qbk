@@ -29,7 +29,7 @@
 [template include_file[path][^<'''<ulink url="https://github.com/CPPAlliance/url/blob/master/include/'''[path]'''">'''[path]'''</ulink>'''>]]
 [template issue[n] '''<ulink url="https://github.com/CPPAlliance/url/issues/'''[n]'''">#'''[n]'''</ulink>''']
 
-[def __RFC3986__                [@https://tools.ietf.org/html/rfc3986 [RFC3986]]]
+[def __rfc3986__                [@https://tools.ietf.org/html/rfc3986 rfc3986]]
 
 [/ Named Requirements ]
 
@@ -46,7 +46,10 @@
 [def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
 [def __CharSet__                [link url.CharSet ['CharSet]]]
 
-[def __result__                 `boost::system::result`]
+[def __error_code__             [link url.ref.boost__urls__error_code `error_code`]]
+[def __result__                 [link url.ref.boost__urls__result `result`]]
+[def __string_view__            [link url.ref.boost__urls__string_view `string_view`]]
+[def __url_view__               [link url.ref.boost__urls__url_view `url_view`]]
 
 [/ Dingbats ]
 
@@ -58,6 +61,7 @@
 [include intro.qbk]
 [include quicklook.qbk]
 [include usage.qbk]
+[include parsing.qbk]
 [include CharSet.qbk]
 
 [section:quickref Reference]

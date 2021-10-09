@@ -1,5 +1,5 @@
 [/
-    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2021 Vinnie Falco (vinnie.falco@gmail.com)
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -7,29 +7,105 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-[section:intro Introduction]
+[section Overview]
+[block'''<?dbhtml stop-chunking?>''']
 
-[heading Design]
+[/-----------------------------------------------------------------------------]
 
-The design of the mutable container achieves these goals:
+Boost.URL is a portable C++ library which provides containers and algorithms
+which model a "URL", more formally described using the
+[@https://https://datatracker.ietf.org/doc/html/rfc3986 Uniform Resource Identifier (URI)]
+specification (henceforth referred to as "rfc3986"). A URL is a compact sequence
+of characters that identifies an abstract or physical resource. For example,
+this is a valid URL which satisfies the ['absolute-URI] grammar:
+```
+https://www.example.com/path/to/file.txt?userid=1001&page=2&results=full
+```
 
-The caller can produce all possible valid URLs using the
-  modification functions.
+This library understands the various grammars related to URLs and provides
+for validating and parsing of strings, manipulation of URL strings, and
+algorithms operating on URLs such as normalization and resolution.
+While the library is general purpose, special care has been taken to ensure
+that the implementation and data representation are friendly to network
+programs which need to handle URLs efficiently and securely, including the
+case where the inputs come from untrusted sources. Interfaces are provided
+for using error codes instead of exceptions as needed, and all algorithms
+provide a mechanism for avoiding memory allocations entirely if desired.
+Another feature of the library is that all container mutations leave the
+URL in a valid state. Code which uses Boost.URL will be easy to read,
+flexible, and performant.
 
-The URL always remains syntactically valid after modification:
+Boost.URL offers these features:
 
-The order of modification of URL parts generally does
-not affect the resulting URL.
+* Require only C++11
+* Works without exceptions
+* Fast compilation, no templates
+* Strict compliance with rfc3986
+* Allocator control, including avoiding allocation entirely
+* Optional header-only, without linking to a library
 
-The library adds separators when needed, in the cases
-  where the user's intent is unambiguous, or
+[/-----------------------------------------------------------------------------]
 
-The library throws an exception when an ambiguous
-  modification would leave the URL in a syntactically
-  invalid state.
+[section Requirements]
 
-Perform modifications using a pre-allocated buffer
+* Requires Boost and a compiler supporting at least C++11
+* Aliases for standard types use their Boost equivalents
+* Link to a built static or dynamic Boost library, or use header-only (see below)
+* Supports `-fno-exceptions`, detected automatically
 
-Avoid all dynamic allocations
+[heading Header-Only]
+
+To use as header-only; that is, to eliminate the requirement to
+link a program to a static or dynamic Boost.JSON library, simply
+place the following line in exactly one new or existing source
+file in your project.
+```
+#include <boost/url/src.hpp>
+```
+
+[heading Embedded]
+
+Boost.URL works great on embedded devices. It can be used in a
+way that avoids all dynamic memory allocations. Furthermore it
+is designed to work without exceptions if desired.
+
+[endsect]
+
+[/-----------------------------------------------------------------------------]
+
+[section Supported Compilers]
+
+Boost.URL has been tested with the following compilers:
+
+* clang: 3.8, 4, 5, 6, 7, 8, 9, 10, 11
+* gcc: 4.8, 4.9, 5, 6, 7, 8, 9, 10
+* msvc: 14.0, 14.1, 14.2
+
+[h3 Quality Assurance]
+
+The development infrastructure for the library includes
+these per-commit analyses:
+
+* Coverage reports
+* Compilation and tests on Drone.io, Azure Pipelines, Appveyor
+* Fuzzing using clang-llvm and machine learning
+
+[endsect]
+
+[/-----------------------------------------------------------------------------]
+
+[section Security Review (Bishop Fox)]
+TBA
+[endsect]
+
+[/-----------------------------------------------------------------------------]
+
+[h1 Credits]
+
+This library wouldn't be where it is today without the help of
+[@https://github.com/pdimov Peter Dimov]
+for design advice and general assistance.
+
+[/-----------------------------------------------------------------------------]
 
 [endsect]

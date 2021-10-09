@@ -12,7 +12,11 @@
 A ['CharSet] is a unary predicate which accepts as its single
 argument a value of type `char`. The return value of the predicate
 is a `bool` whose value is true if the character is a member of the
-notional character set, or false otherwise.
+notional character set, or false otherwise. A character set can be
+used to specify which characters are unreserved and thus, do not
+need to be escaped when used in percent-encoding algorithms.
+Character sets may also be used by parsers; some character sets
+have optimized implementations for finding matching elements.
 
 [heading Associated Types]
 
