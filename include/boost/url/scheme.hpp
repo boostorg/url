@@ -51,15 +51,16 @@ enum class scheme : unsigned char
     */
     ftp,
 
-    /** File URI Scheme
+    /**
+     * File URI Scheme
 
-        The File URI Scheme is typically used
-        to retrieve files from within one's
-        own computer.
+       The File URI Scheme is typically used
+       to retrieve files from within one's
+       own computer.
 
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc8089">
-            The "file" URI Scheme (rfc8089)</a>
+       @par Specification
+       @li <a href="https://datatracker.ietf.org/doc/html/rfc8089">
+           The "file" URI Scheme (rfc8089)</a>
     */
     file,
 

@@ -24,6 +24,7 @@ operator[](
     std::size_t pos) const ->
         value_type
 {
+    BOOST_ASSERT(pos < u_->nparam_);
     auto const r = u_->param(pos);
     if(r.nv > 0)
         return value_type{
@@ -50,6 +51,7 @@ iterator::
 operator*() const ->
     value_type
 {
+    BOOST_ASSERT(i_ < u_->nparam_);
     auto const r = u_->param(i_);
     if(r.nv > 0)
         return value_type{

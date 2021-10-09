@@ -22,6 +22,7 @@ segments_encoded::
 iterator::
 operator*() const noexcept
 {
+    BOOST_ASSERT(i_ < u_->nseg_);
     auto r = u_->segment(i_);
     if(u_->cs_[r.pos] == '/')
         return { u_->cs_ + r.pos + 1,
@@ -41,6 +42,7 @@ operator[](
     std::size_t i) const noexcept ->
     reference
 {
+    BOOST_ASSERT(i < u_->nseg_);
     auto r = u_->segment(i);
     if(u_->cs_[r.pos] == '/')
         return { u_->cs_ + r.pos + 1,

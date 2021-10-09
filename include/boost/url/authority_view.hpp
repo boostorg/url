@@ -52,7 +52,21 @@ struct host_bnf;
 
     @par BNF
     @code
+    authority     = [ userinfo "@" ] host [ ":" port ]
+
+    userinfo      = user [ ":" [ password ] ]
+
+    user          = *( unreserved / pct-encoded / sub-delims )
+    password      = *( unreserved / pct-encoded / sub-delims / ":" )
+
+    host          = IP-literal / IPv4address / reg-name
+
+    port          = *DIGIT
     @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
+        >3.2. Authority (rfc3986)</a>
 
     @see
         @ref parse_authority.

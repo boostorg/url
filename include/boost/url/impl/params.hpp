@@ -312,6 +312,7 @@ params::
 front() const ->
     reference
 {
+    BOOST_ASSERT(! empty());
     return (*this)[0];
 }
 
@@ -320,6 +321,7 @@ params::
 back() const ->
     reference
 {
+    BOOST_ASSERT(! empty());
     return (*this)[size() - 1];
 }
 
@@ -355,7 +357,7 @@ std::size_t
 params::
 size() const noexcept
 {
-    return u_->param_count();
+    return u_->nparam_;
 }
 
 bool

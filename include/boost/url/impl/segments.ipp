@@ -25,6 +25,7 @@ segments::
 iterator::
 operator*() const
 {
+    BOOST_ASSERT(i_ < u_->nseg_);
     auto r = u_->segment(i_);
     string_view s;
     if(u_->cs_[r.pos] == '/')
@@ -56,6 +57,7 @@ operator[](
     std::size_t i) const ->
     string_value
 {
+    BOOST_ASSERT(i < u_->nseg_);
     auto r = u_->segment(i);
     string_view s;
     if(u_->cs_[r.pos] == '/')

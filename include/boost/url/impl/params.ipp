@@ -63,6 +63,8 @@ operator[](
     std::size_t pos) const ->
         reference
 {
+    BOOST_ASSERT(
+        pos < u_->nparam_);
     auto const r =
         u_->param(pos);
     return reference(
@@ -78,6 +80,8 @@ iterator::
 operator*() const ->
     reference
 {
+    BOOST_ASSERT(i_ <
+        u_->nparam_);
     auto const r =
         u_->param(i_);
     return reference(

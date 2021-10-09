@@ -147,6 +147,7 @@ string_value
 segments_view::
 front() const noexcept
 {
+    BOOST_ASSERT(! empty());
     return *begin();
 }
 
@@ -154,6 +155,7 @@ string_value
 segments_view::
 back() const noexcept
 {
+    BOOST_ASSERT(! empty());
     return *--end();
 }
 

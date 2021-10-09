@@ -1,0 +1,27 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[/-----------------------------------------------------------------------------]
+
+[section Params Views]
+
+[table Params View Types [
+    [Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__params_encoded_view `params_encoded_view`]]
+    [A read-only forward range of query parameters returned as percent-encoded strings.]
+][
+    [[link url.ref.boost__urls__params_view `params_view`]]
+    [A read-only forward range of query parameters returned as strings with percent-decoding applied.]
+]]
+
+[/-----------------------------------------------------------------------------]
+
+[endsect]

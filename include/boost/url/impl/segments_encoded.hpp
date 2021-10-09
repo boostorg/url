@@ -294,6 +294,7 @@ string_view
 segments_encoded::
 front() const noexcept
 {
+    BOOST_ASSERT(! empty());
     return (*this)[0];
 }
 
@@ -301,6 +302,7 @@ string_view
 segments_encoded::
 back() const noexcept
 {
+    BOOST_ASSERT(! empty());
     return (*this)[size() - 1];
 }
 
@@ -343,7 +345,7 @@ std::size_t
 segments_encoded::
 size() const noexcept
 {
-    return u_->segment_count();
+    return u_->nseg_;
 }
 
 //------------------------------------------------

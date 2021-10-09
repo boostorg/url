@@ -1,0 +1,63 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[/-----------------------------------------------------------------------------]
+
+[section Path]
+
+The path contains data, usually organized hierarchically which is combined
+with the ['query] (explained in the next section) to identify a resource
+within the scope of the scheme and authority (if any). Most schemes
+interpret the path as a sequence of slash delimited ['segments]. In
+addition to interacting with the path as a single string, the library
+provides container adaptors modeling ranges of individual path segments.
+The URL below contains a path with three segments:
+```
+    http://www.example.com/path/to/file.txt
+```
+
+Depending on the type of URL, there are various syntactic rules for how the
+path may be formulated in a URL. The BNF for these formulations is defined
+thusly:
+
+[table Path BNF [[
+```
+    path          = path-abempty    ; begins with "/" or is empty
+                  / path-absolute   ; begins with "/" but not "//"
+                  / path-noscheme   ; begins with a non-colon segment
+                  / path-rootless   ; begins with a segment
+                  / path-empty      ; zero characters
+
+    path-abempty  = *( "/" segment )
+    path-absolute = "/" [ segment-nz *( "/" segment ) ]
+    path-noscheme = segment-nz-nc *( "/" segment )
+    path-rootless = segment-nz *( "/" segment )
+    path-empty    = 0<pchar>
+```
+]]]
+
+The functions for interacting with the path in a __url_view__ are as follows:
+
+[table Path Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.encoded_path `encoded_path`]]
+    [Return the path as a percent-encoded string]
+][
+    [[link url.ref.boost__urls__url_view.encoded_segments `encoded_segments`]]
+    [Return the path segments as a read-only container of percent-encoded strings.]
+][
+    [[link url.ref.boost__urls__url_view.segments `segments`]]
+    [Return the path segments as a read-only container of strings with percent-decoding applied.]
+]]
+
+[/-----------------------------------------------------------------------------]
+
+[endsect]
