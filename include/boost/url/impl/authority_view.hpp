@@ -34,7 +34,7 @@ set_size(
     pos_t n) noexcept
 {
     auto d = n - len(id);
-    for(auto i = id + 1;
+    for(auto i = id;
         i <= id_end; ++i)
         offset_[i] += d;
 }

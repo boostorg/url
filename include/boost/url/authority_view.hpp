@@ -78,7 +78,7 @@ class BOOST_SYMBOL_VISIBLE
 
     enum
     {
-        id_user = -1,
+        id_user = 0,
         id_pass,        // leading ':', trailing '@'
         id_host,
         id_port,        // leading ':'
@@ -122,7 +122,7 @@ class BOOST_SYMBOL_VISIBLE
     {
         return
             id == id_user ?
-            zero_ : offset_[id];
+            zero_ : offset_[id - 1];
     }
 
     // return length of part
