@@ -225,12 +225,12 @@ public:
         std::initializer_list<
             value_type> init);
 
-    inline
+    BOOST_URL_DECL
     iterator
     remove_value(
         iterator pos);
 
-    inline
+    BOOST_URL_DECL
     iterator
     replace_value(
         iterator pos,

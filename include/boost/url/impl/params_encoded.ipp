@@ -106,6 +106,45 @@ at(string_view key) const ->
 //
 //------------------------------------------------
 
+auto
+params_encoded::
+remove_value(
+    iterator pos) ->
+        iterator
+{
+    BOOST_ASSERT(pos.u_ == u_);
+    using detail::
+        make_enc_params_iter;
+    auto r = u_->param(pos.i_);
+    value_type v{
+        string_view{
+            u_->s_ + r.pos + 1,
+            r.nk - 1},
+        string_view{},
+        false};
+    u_->edit_params(
+        pos.i_,
+        pos.i_ + 1,
+        make_enc_params_iter(
+            &v, &v + 1),
+        make_enc_params_iter(
+            &v, &v + 1));
+    return pos;
+}
+
+auto
+params_encoded::
+replace_value(
+    iterator pos,
+    string_view value) ->
+        iterator
+{
+    (void)pos;
+    (void)value;
+    // VFALCO TODO
+    return {};
+}
+
 std::size_t
 params_encoded::
 erase(string_view key) noexcept

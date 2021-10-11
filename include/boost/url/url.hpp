@@ -890,6 +890,7 @@ private:
         std::size_t n,
         std::size_t nseg);
 
+    BOOST_URL_DECL
     void
     edit_segments(
         std::size_t i0,
@@ -992,6 +993,7 @@ private:
         std::size_t n,
         std::size_t nparam);
 
+    BOOST_URL_DECL
     void
     edit_params(
         std::size_t i0,
