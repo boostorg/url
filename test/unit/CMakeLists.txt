@@ -29,6 +29,7 @@ set(BOOST_URL_TESTS_FILES
     params_view.cpp
     pct_encoding.cpp
     pct_encoding_types.cpp
+    punycode.cpp
     scheme.cpp
     segments.cpp
     segments_encoded.cpp
