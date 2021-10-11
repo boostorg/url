@@ -15,10 +15,11 @@
 [section Nomenclature]
 
 This library standardizes on the term "URL" to refer to all strings which
-follow the syntax in rfc3986. The reason is that the terms URI and IRI
+follow the syntax in __rfc3986__. The reason is that the terms URI and IRI
 cause confusion. In practice a single algorithm is used for both so
 keeping them distinct yields little value. When discussing particular
-grammars, the name of the grammar is used exactly as it appears in rfc3986.
+grammars, the name of the grammar is used exactly as it appears in the
+literature.
 
 [endsect]
 
@@ -42,7 +43,35 @@ compose parsing algorithms using the combinators provided by the library.
 [section `result` Return Type]
 
 In many places, functions in the library have a return type which uses the
-__result__ alias template.
+__result__ alias template. Below is a synopsis of the type. For complete
+information please consult the full `result` documentation in Boost.System:
+```
+    // A variant-like object which hold the
+    // value T upon success, otherwise holds
+    // an ``__error_code__``.
+    //
+    template< class T >
+    class ``__result__``
+    {
+    public:
+        // Return true if the result contains an error
+        constexpr bool has_error() const noexcept;
+
+        // These return true if the result contains a value
+        constexpr bool has_value() const noexcept;
+        constexpr explicit operator bool() const noexcept;
+
+        // Return the value or throw an exception if has_value()==false
+        constexpr T& value();
+        constexpr T& operator*();
+        constexpr T const& value() const;
+        constexpr T const& operator*() const;
+
+        // Return the error, which is default constructed if has_error()==false
+        constexpr ``__error_code__`` error() const noexcept;
+
+        ``['more...]``
+```
 
 [endsect]
 
@@ -52,5 +81,19 @@ __result__ alias template.
 [endsect]
 
 [/-----------------------------------------------------------------------------]
+
+[section Source Listings]
+
+[note
+    All code in this documentation is written as if the
+    following declarations are in effect:
+```
+    #include <boost/url.hpp>
+
+    using namespace boost::urls;
+```
+]
+
+[endsect]
 
 [endsect]

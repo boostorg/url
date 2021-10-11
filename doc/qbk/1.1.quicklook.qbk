@@ -12,5 +12,75 @@
 This section is intended to give the reader a brief overview of the features
 and interface style of the library.
 
+Say you have the following URL that you want to parse:
+```
+    https://user:pass@www.example.com:443/path/to/my%20file.txt?id=42&name=Joe#anchor
+```
+
+You can parse it by calling this function:
+```
+    ``__url_view__`` u = ``__parse_uri__``( "https://user:pass@www.example.com:443/path/to/file.txt?id=42&name=Joe#anchor" ).value();
+```
+
+The function __parse_uri__ returns an object of type __result__ which is a
+container resembling a variant that holds either an error or an object.
+In this case we immediately call `result::value` which throws an exception
+on a parsing error, otherwise returns an instance of __url_view__ which holds
+the parsed result.
+It is worth noting that __parse_uri__ allocates no memory and throws no
+exceptions. Like a string view, the __url_view__ does not retain ownership
+of the underlying string buffer. Constructed URL views always contain a
+valid URL in its correctly serialized form. Accessing the parts of the URL
+is easy:
+[table [[Code][Output]] [[
+```
+    std::cout <<
+        "scheme    :" << u.``[link url.ref.boost__urls__url_view.scheme `scheme`]``() << "\n" <<
+        "authority :" << u.``[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]``() << "\n" <<
+        "path      :" << u.``[link url.ref.boost__urls__url_view.encoded_path `encoded_path`]``() << "\n" <<
+        "query     :" << u.``[link url.ref.boost__urls__url_view.encoded_query `encoded_query`]``() << "\n" <<
+        "fragment  :" << u.``[link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]``() << "\n";
+```
+][
+```
+    scheme    : https
+    authority : user:pass@www.example.com:443
+    path      : /path/to/my%20file.txt
+    query     : id=42&name=Joe
+    fragment  : anchor
+```
+]]]
+
+Functions like
+[link url.ref.boost__urls__url_view.encoded_path `encoded_path`]
+return string views, simply referencing the relevant portion of the
+URL string without the need to allocate memory. To get a decoded string,
+call the same function without the word encoded:
+[table [[Code][Output]] [[
+```
+    std::cout << "path      :" << u.``[link url.ref.boost__urls__url_view.path `path`]``() << "\n";
+```
+][
+```
+    path      : /path/to/my file.txt
+```
+]]]
+
+The function `path` returns a __string_value__, which is a library type
+that models a read-only string with ownership of the underlying buffer,
+which uses a type-erased allocator. All functions which return string
+values accept an optional __Allocator__ parameter when when omitted,
+defaults to the standard allocator. Here is the same code which prints
+the path with percent-decoding applied, except using a local stack-based
+allocator instead of the heap:
+```
+    ``__static_pool__``< 1024 > sp;
+
+    std::cout <<
+        "path      :" << u.path( sp.allocator() ) << "\n";
+```
+
+The __static_pool__ type is provided by the library and can be used to
+apply percent-decoding to strings.
 
 [endsect]

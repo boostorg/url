@@ -538,10 +538,11 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if this contains an authority 
+    /** Return true if an authority is present.
 
-        This function returns true if this contains
-        an authority.
+        This function returns `true` if the URL
+        contains an authority. The authority is
+        always preceded by a double slash ("//").
 
         @par Example
         @code
@@ -586,7 +587,7 @@ public:
     bool
     has_authority() const noexcept;
 
-    /** Return the authority
+    /** Return the authority.
 
         This function returns the authority as a
         percent-encoded string.
@@ -617,7 +618,7 @@ public:
 
     //--------------------------------------------
 
-    /** Return true if this contains a userinfo
+    /** Return true if a userinfo is present.
 
         This function returns true if this
         contains a userinfo.
