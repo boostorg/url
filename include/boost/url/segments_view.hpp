@@ -23,7 +23,10 @@ class url_view;
 class segments_encoded_view;
 #endif
 
-/** A BidirectionalRange view of read-only path segments with percent-decoding applied
+/** A bidirectional range of read-only path segment strings with percent-decoding applied.
+
+    @see
+        @ref segments_encoded_view.
 */
 class segments_view
 {

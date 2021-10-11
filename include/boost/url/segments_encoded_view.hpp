@@ -24,7 +24,7 @@ namespace urls {
 class url_view;
 #endif
 
-/** A bidirectional range of read-only encoded path segments
+/** A bidirectional range of read-only encoded path segment strings.
 
     Objects of this type represent an iterable
     range of path segments, where each segment

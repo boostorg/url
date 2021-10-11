@@ -41,38 +41,36 @@ is always preceded by a double slash ("//").
 Note that if an authority is present, the host is always defined even if it
 is the empty string (corresponding to a zero-length ['reg-name] in the BNF).
 
-
-
 The functions for inspecting all or part of the authority in a
 __url_view__ are as follows:
 
-[table Authority Observers [
+[table Userinfo Observers [
     [Function]
     [Description]
 ][
     [[link url.ref.boost__urls__url_view.has_password `has_password`]]
-    [Return true if an authority is present]
+    [Return true if an password is present.]
 ][
     [[link url.ref.boost__urls__url_view.has_userinfo `has_userinfo`]]
-    [Return true if an authority is present]
+    [Return true if a userinfo is present.]
 ][
     [[link url.ref.boost__urls__url_view.encoded_password `encoded_password`]]
-    [Return true if an authority is present]
+    [Return the password as a percent-encoded string.]
 ][
     [[link url.ref.boost__urls__url_view.encoded_user `encoded_user`]]
-    [Return true if an authority is present]
+    [Return the user as a percent-encoded string.]
 ][
     [[link url.ref.boost__urls__url_view.encoded_userinfo `encoded_userinfo`]]
-    [Return true if an authority is present]
+    [Return the userinfo as a percent-encoded string.]
 ][
     [[link url.ref.boost__urls__url_view.password `password`]]
-    [Return true if an authority is present]
+    [Return the password as a string with percent-decoding applied.]
 ][
     [[link url.ref.boost__urls__url_view.user `user`]]
-    [Return true if an authority is present]
+    [Return the user as a string with percent-decoding applied.]
 ][
     [[link url.ref.boost__urls__url_view.userinfo `userinfo`]]
-    [Return true if an authority is present]
+    [Return the userinfo as a string with percent-decoding applied.]
 ]]
 
 
@@ -81,31 +79,31 @@ __url_view__ are as follows:
     [Description]
 ][
     [[link url.ref.boost__urls__url_view.encoded_host `encoded_host`]]
-    [Return true if an authority is present]
+    [Return the host as a percent-encoded string.]
 ][
     [[link url.ref.boost__urls__url_view.encoded_host_and_port `encoded_host_and_port`]]
-    [Return true if an authority is present]
+    [Return the host and port as a percent-encoded string.]
 ][
     [[link url.ref.boost__urls__url_view.has_port `has_port`]]
-    [Return true if an authority is present]
+    [Return true if an port is present.]
 ][
     [[link url.ref.boost__urls__url_view.host `host`]]
-    [Return true if an authority is present]
+    [Return the type of host specified, if any.]
 ][
     [[link url.ref.boost__urls__url_view.ipv4_address `ipv4_address`]]
-    [Return true if an authority is present]
+    [Return the IPv4 address of the host, if applicable.]
 ][
     [[link url.ref.boost__urls__url_view.ipv6_address `ipv6_address`]]
-    [Return true if an authority is present]
+    [Return the IPv6 address of the host, if applicable.]
 ][
     [[link url.ref.boost__urls__url_view.ipv_future `ipv_future`]]
-    [Return true if an authority is present]
+    [Return the IPv-future address of the host, if applicable.]
 ][
     [[link url.ref.boost__urls__url_view.port `port`]]
-    [Return true if an authority is present]
+    [Return the port string of the host, if applicable.]
 ][
     [[link url.ref.boost__urls__url_view.port_number `port_number`]]
-    [Return true if an authority is present]
+    [Return the port number of the host, if applicable.]
 ]]
 
 [table Authority Observers [
@@ -113,10 +111,10 @@ __url_view__ are as follows:
     [Description]
 ][
     [[link url.ref.boost__urls__url_view.has_authority `has_authority`]]
-    [Return true if an authority is present]
+    [Return true if an authority is present.]
 ][
     [[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]]
-    [Return true if an authority is present]
+    [Return the authority as a percent-encoded string.]
 ]]
 
 [/-----------------------------------------------------------------------------]

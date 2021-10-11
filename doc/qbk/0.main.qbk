@@ -48,7 +48,10 @@
 
 [def __authority_view__         [link url.ref.boost__urls__authority_view `authority_view`]]
 [def __error_code__             [link url.ref.boost__urls__error_code `error_code`]]
+[def __parse_uri__              [link url.ref.boost__urls__parse_uri `parse_uri`]]
 [def __result__                 [link url.ref.boost__urls__result `result`]]
+[def __static_pool__            [link url.ref.boost__urls__static_pool `static_pool`]]
+[def __string_value__           [link url.ref.boost__urls__string_value `string_value`]]
 [def __string_view__            [link url.ref.boost__urls__string_view `string_view`]]
 [def __url_view__               [link url.ref.boost__urls__url_view `url_view`]]
 

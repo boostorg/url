@@ -40,26 +40,25 @@ using system_error = boost::system::system_error;
 
     @par Declaration
     @code
-    template< typename T >
-    struct result
+    template< class T >
+    class result
     {
-        // Returns true if the result contains a value
-        constexpr bool has_value() const noexcept;
-
-        // Returns true if the result contains an error code
+    public:
+        // Return true if the result contains an error
         constexpr bool has_error() const noexcept;
 
-        // Returns true if the result contains a value
+        // These return true if the result contains a value
+        constexpr bool has_value() const noexcept;
         constexpr explicit operator bool() const noexcept;
 
-        // Return the value, or throw an exception if has_error() == true
+        // Return the value or throw an exception if has_value()==false
         constexpr T& value();
         constexpr T& operator*();
         constexpr T const& value() const;
         constexpr T const& operator*() const;
 
-        // Return the error code, which is default constructed if has_error() == false
-        constexpr error_code error() const;
+        // Return the error, which is default constructed if has_error()==false
+        constexpr error_code error() const noexcept;
 
         ...more
     @endcode
