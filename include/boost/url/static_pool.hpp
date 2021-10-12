@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <cstdlib>
+#include <string>
 #include <type_traits>
 
 namespace boost {
@@ -48,6 +49,12 @@ public:
     template<class T>
     class allocator_type;
 
+    /** The type of strings using the pool's allocator.
+    */
+    using string_type = std::basic_string<
+        char, std::char_traits<char>,
+            allocator_type<char>>;
+
     /** Destructor
     */
     BOOST_URL_DECL
@@ -69,6 +76,19 @@ public:
     inline
     allocator_type<char>
     allocator() noexcept;
+
+    /** Construct a std::basic_string using the pool as its allocator.
+    */
+    template<class... Args>
+    string_type
+    make_string(Args&&... args)
+    {
+        return std::basic_string<
+            char, std::char_traits<char>,
+                allocator_type<char>>(
+            std::forward<Args>(args)...,
+                allocator());
+    }
 };
 
 /** A fixed-size storage pool for allocating memory

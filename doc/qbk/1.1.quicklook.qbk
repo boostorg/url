@@ -150,7 +150,7 @@ as percent-encoded key and value pair strings:
 ```
     ``[link url.ref.boost__urls__params_encoded_view `params_encoded_view`]`` params = u.``[link url.ref.boost__urls__url_view.encoded_params `encoded_params`]``();
 
-    for( auto const v : params )
+    for( auto v : params )
     {
         std::cout <<
             "key = " << v.key <<
@@ -173,7 +173,7 @@ using a stack-based allocator which does not use the heap:
 
     ``[link url.ref.boost__urls__params_view `params_view`]`` params = u.``[link url.ref.boost__urls__url_view.params `params`]``( pool.allocator() );
 
-    for( auto const v : params )
+    for( auto v : params )
     {
         std::cout <<
             "key = " << v.key <<
@@ -187,8 +187,59 @@ using a stack-based allocator which does not use the heap:
 ```
 ]]]
 
+[/-----------------------------------------------------------------------------]
+
 [heading Modification]
 
+The library provides the container __url__ for supporting modification of the
+contents of a URL. Unlike the __url_view__, which does not gain ownership of
+the underlying character buffer, the __url__ container uses the default
+allocator to control a resizable character buffer which it owns. A __url__
+cannot be constructed directly from a string. Instead it must be constructed
+from an existing __url_view__. For example using a parse function:
+```
+    ``__url__`` u = ``__parse_uri__``( "http://user:pass@www.example.com:443/path/to/my%2dfile.txt?id=42&name=John%Doe#anchor" ).value();
+```
+
+Objects of type __url__ are first-class. They can be copied, moved, and
+assigned as needed. They support all of the inspection functions of
+__url_view__, and also provide functions to modify all parts of the URL.
+Changing the scheme is easy:
+```
+    u.set_scheme( "https" );
+```
+
+Or we can use a predefined constant:
+```
+    u.set_scheme( scheme::https ); // equivalent to u.set_scheme( "https" );
+```
+
+The scheme must be valid, however, or else an exception is thrown:
+```
+    try
+    {
+        u.set_scheme( "100" ); // illegal, must start with a letter
+    }
+    catch( std::invalid_argument const& )
+    {
+        // this happens
+    }
+```
+
+All modification functions perform validation on their input. Attemping
+to set part of the URL to an invalid string will result in an exception.
+It is not possible for a __url__ to hold a syntactically illegal text.
+Modification functions return a reference to the object, so chaining
+is possible:
+```
+    u.set_host( make_ipv4_address( "192.168.0.1" ) )
+     .set_port( 8080 )
+     .remove_userinfo();
+```
+
+All non-const operations offer the strong exception safety guarantee. The
+path segment and query parameter containers returned by __url__ offer
+modifiable range functionality, using member functions of the container.
 
 
 [endsect]
