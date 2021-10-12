@@ -667,24 +667,6 @@ erase(iterator pos) ->
     return erase(pos, pos + 1);
 }
 
-auto
-params_encoded::
-erase(
-    iterator first,
-    iterator last) ->
-        iterator
-{
-    BOOST_ASSERT(first.u_ == u_);
-    BOOST_ASSERT(last.u_ == u_);
-    string_view s;
-    u_->edit_params(
-        first.i_,
-        last.i_,
-        detail::enc_query_iter(s),
-        detail::enc_query_iter(s));
-    return first;
-}
-
 template<class Key>
 auto
 params_encoded::

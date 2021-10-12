@@ -410,7 +410,7 @@ public:
     iterator
     erase(iterator pos);
 
-    inline
+    BOOST_URL_DECL
     iterator
     erase(
         iterator first,

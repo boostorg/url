@@ -171,6 +171,24 @@ replace_value(
     return {};
 }
 
+auto
+params::
+erase(
+    iterator first,
+    iterator last) ->
+        iterator
+{
+    BOOST_ASSERT(first.u_ == u_);
+    BOOST_ASSERT(last.u_ == u_);
+    string_view s;
+    u_->edit_params(
+        first.i_,
+        last.i_,
+        detail::enc_query_iter(s),
+        detail::enc_query_iter(s));
+    return first;
+}
+
 std::size_t
 params::
 erase(string_view key) noexcept

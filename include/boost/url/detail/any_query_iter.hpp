@@ -43,8 +43,7 @@ struct BOOST_SYMBOL_VISIBLE
 
 // iterates params in an
 // encoded query string
-class BOOST_SYMBOL_VISIBLE
-    enc_query_iter
+class enc_query_iter
     : public any_query_iter
 {
 //    char const* p_;
@@ -58,7 +57,6 @@ class BOOST_SYMBOL_VISIBLE
     increment() noexcept;
 
 public:
-    BOOST_URL_DECL
     explicit
     enc_query_iter(
         string_view s) noexcept;
