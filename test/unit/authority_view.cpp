@@ -131,15 +131,6 @@ public:
     void
     testUserinfo()
     {
-        auto const no =
-            [](string_view s)
-        {
-            BOOST_TEST_NO_THROW(
-            [s]{
-                auto a = parse_authority(s).value();
-                BOOST_TEST(! a.has_userinfo());
-            }());
-        };
         auto const yes =
             []( string_view s,
                 string_view m1,

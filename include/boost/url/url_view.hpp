@@ -116,8 +116,13 @@ protected:
     inline void collapse(int first, int last,
         std::size_t n) noexcept;
 
-    explicit inline url_view(char const* cs) noexcept;
-    inline url_view(url_view const& u,
+    BOOST_URL_DECL
+    explicit
+    url_view(char const* cs) noexcept;
+
+    BOOST_URL_DECL
+    url_view(
+        url_view const& u,
         char const* cs) noexcept;
 
     // return offset of id
@@ -238,6 +243,17 @@ public:
     */
     BOOST_URL_DECL
     url_view() noexcept;
+
+    /** Constructor
+    */
+    BOOST_URL_DECL
+    url_view(url_view const&) noexcept;
+
+    /** Assignment
+    */
+    BOOST_URL_DECL
+    url_view&
+    operator=(url_view const&) noexcept;
 
     //--------------------------------------------
     //

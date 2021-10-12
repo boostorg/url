@@ -46,6 +46,9 @@ struct url_view::shared_impl :
 };
 
 url_view::
+url_view(url_view const&) noexcept = default;
+
+url_view::
 url_view(
     char const* cs) noexcept
     : cs_(cs)
@@ -70,6 +73,10 @@ url_view::
 
 url_view::
 url_view() noexcept = default;
+
+url_view&
+url_view::
+operator=(url_view const&) noexcept = default;
 
 //------------------------------------------------
 //

@@ -108,9 +108,9 @@ class BOOST_SYMBOL_VISIBLE
         int last) const noexcept;
     inline void set_size(
         int id, pos_t n) noexcept;
-    explicit inline authority_view(
+    explicit authority_view(
         char const* cs) noexcept;
-    inline authority_view(
+    authority_view(
         authority_view const& u,
             char const* cs) noexcept;
 
@@ -217,6 +217,15 @@ public:
     */
     BOOST_URL_DECL
     authority_view() noexcept;
+
+    BOOST_URL_DECL
+    authority_view(
+        authority_view const&) noexcept;
+
+    BOOST_URL_DECL
+    authority_view&
+    operator=(
+        authority_view const&) noexcept;
 
     //--------------------------------------------
     //

@@ -65,6 +65,15 @@ authority_view::
 authority_view::
 authority_view() noexcept = default;
 
+authority_view::
+authority_view(
+    authority_view const&) noexcept = default;
+
+authority_view&
+authority_view::
+operator=(
+    authority_view const&) noexcept = default;
+
 //------------------------------------------------
 //
 // Observers
