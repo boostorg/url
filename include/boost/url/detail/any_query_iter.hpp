@@ -22,6 +22,7 @@ namespace detail {
 struct BOOST_SYMBOL_VISIBLE
     any_query_iter
 {
+    BOOST_URL_DECL
     virtual
     ~any_query_iter() noexcept = 0;
 
@@ -57,6 +58,7 @@ class BOOST_SYMBOL_VISIBLE
     increment() noexcept;
 
 public:
+    BOOST_URL_DECL
     explicit
     enc_query_iter(
         string_view s) noexcept;

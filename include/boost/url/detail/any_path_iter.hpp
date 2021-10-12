@@ -23,6 +23,7 @@ struct BOOST_SYMBOL_VISIBLE
 {
     string_view first;
 
+    BOOST_URL_DECL
     virtual
     ~any_path_iter() noexcept = 0;
 

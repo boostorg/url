@@ -17,13 +17,14 @@ in a translation unit of the program.
 
 */
 
-// We include this in case someone is
-// using src.hpp as their main header file
-#include <boost/url.hpp>
-
+// MUST COME FIRST
 #ifndef BOOST_URL_SOURCE
 #define BOOST_URL_SOURCE
 #endif
+
+// We include this in case someone is
+// using src.hpp as their main header file
+#include <boost/url.hpp>
 
 #include <boost/url/detail/impl/any_path_iter.ipp>
 #include <boost/url/detail/impl/any_query_iter.ipp>

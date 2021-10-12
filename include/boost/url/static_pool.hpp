@@ -81,14 +81,7 @@ public:
     */
     template<class... Args>
     string_type
-    make_string(Args&&... args)
-    {
-        return std::basic_string<
-            char, std::char_traits<char>,
-                allocator_type<char>>(
-            std::forward<Args>(args)...,
-                allocator());
-    }
+    make_string(Args&&... args);
 };
 
 /** A fixed-size storage pool for allocating memory

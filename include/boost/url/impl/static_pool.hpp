@@ -100,6 +100,19 @@ allocator() noexcept ->
     return allocator_type<char>(*this);
 }
 
+template<class... Args>
+auto
+basic_static_pool::
+make_string(Args&&... args) ->
+    string_type
+{
+    return std::basic_string<
+        char, std::char_traits<char>,
+            allocator_type<char>>(
+        std::forward<Args>(args)...,
+            allocator());
+}
+
 } // urls
 } // boost
 

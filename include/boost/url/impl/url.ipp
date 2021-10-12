@@ -119,6 +119,12 @@ url(url&& u) noexcept
 }
 
 url::
+url(url const& u)
+    : url(u.base())
+{
+}
+
+url::
 url(url_view const& u)
 {
     copy(u);

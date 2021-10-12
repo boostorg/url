@@ -111,10 +111,8 @@ public:
 
     /** Constructor
     */
-    url(url const& u)
-        : url(u.base())
-    {
-    }
+    BOOST_URL_DECL
+    url(url const& u);
 
     /** Constructor
     */
