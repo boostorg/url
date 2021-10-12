@@ -1133,14 +1133,87 @@ public:
     //--------------------------------------------
 
     void
+    testQuery()
+    {
+        // remove_query
+        {
+            url u = parse_relative_ref("?query").value();
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() == "query");
+            BOOST_TEST(u.params().size() == 1);
+            BOOST_TEST(u.remove_query().has_query() == false);
+            BOOST_TEST(u.encoded_query() == "");
+            BOOST_TEST(u.query() == "");
+            BOOST_TEST(u.params().size() == 0);
+            BOOST_TEST(u.encoded_params().size() == 0);
+        }
+
+        // set_encoded_query
+        {
+            url u;
+            BOOST_TEST(! u.has_query());
+            u.set_encoded_query("k1=v1&k2=v2");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.params().size() == 2);
+            BOOST_TEST(u.params()[0].key == "k1");
+            BOOST_TEST(u.params()[0].value == "v1");
+            BOOST_TEST(u.params()[1].key == "k2");
+            BOOST_TEST(u.params()[1].value == "v2");
+
+            u.set_encoded_query("");
+            BOOST_TEST(! u.has_query());
+            BOOST_TEST(u.encoded_query().empty());
+            BOOST_TEST(u.params().size() == 0);
+
+            BOOST_TEST_THROWS(
+                u.set_encoded_query("\x01"),
+                std::invalid_argument);
+        }
+
+        // set_query
+        {
+            url u;
+            BOOST_TEST(! u.has_query());
+            u.set_query("!@#$%^&*()_+=-;:'{}[]|\\?/>.<,");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() ==
+                "!@%23$%25%5e&*()_+=-;:'%7b%7d%5b%5d%7c%5c?/%3e.%3c,");
+            BOOST_TEST(u.params().size() == 2);
+            BOOST_TEST(u.params()[0].key == "!@#$%^");
+            BOOST_TEST(u.params()[0].value == "");
+            BOOST_TEST(u.params()[1].key == "*()_ ");
+            BOOST_TEST(u.params()[1].value ==
+                "-;:'{}[]|\\?/>.<,");
+        }
+    }
+
+    void
+    testFragment()
+    {
+    }
+
+    //--------------------------------------------
+
+    void
     testOstream()
     {
-        url u = parse_uri(
-            "http://example.com/index.htm?q#f").value();
-        std::stringstream ss;
-        ss << u;
-        BOOST_TEST(ss.str() ==
-            "http://example.com/index.htm?q#f");
+        {
+            url u = parse_uri(
+                "http://example.com/index.htm?q#f").value();
+            std::stringstream ss;
+            ss << u;
+            BOOST_TEST(ss.str() ==
+                "http://example.com/index.htm?q#f");
+        }
+        {
+            std::stringstream ss;
+            ss <<
+                std::setfill('*') <<
+                std::left <<
+                std::setw(11) <<
+                parse_uri("http://x").value();
+            BOOST_TEST(ss.str() == "http://x***");
+        }
     }
 
     //--------------------------------------------
@@ -1159,6 +1232,8 @@ public:
         testAuthority();
         testOrigin();
         testPath();
+        testQuery();
+        testFragment();
         testOstream();
     }
 };

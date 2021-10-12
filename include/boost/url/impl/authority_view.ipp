@@ -416,8 +416,7 @@ operator<<(
     std::ostream& os,
     authority_view const& a)
 {
-    auto s = a.encoded_authority();
-    os.write(s.data(), s.size());
+    os << a.encoded_authority();
     return os;
 }
 

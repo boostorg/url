@@ -27,6 +27,19 @@ void
 enc_query_iter::
 increment() noexcept
 {
+    p_ += n_;
+    if(p_ == end_)
+    {
+        p_ = nullptr;
+        return;
+    }
+    ++p_;
+    string_view s(p_, end_ - p_);
+    auto pos = s.find_first_of('&');
+    if(pos != string_view::npos)
+        n_ = pos;
+    else
+        n_ = s.size();
 }
 
 enc_query_iter::
@@ -34,6 +47,19 @@ enc_query_iter(
     string_view s) noexcept
     : end_(s.data() + s.size())
 {
+    if(s.empty())
+    {
+        n_ = 0;
+        p_ = nullptr;
+        return;
+    }
+    std::size_t pos;
+    pos = s.find_first_of('&');
+    p_ = s.data();
+    if(pos != string_view::npos)
+        n_ = pos;
+    else
+        n_ = s.size();
 }
 
 bool
@@ -42,9 +68,18 @@ measure(
     std::size_t& n,
     error_code& ec) noexcept
 {
-    (void)n;
-    (void)ec;
-    return false;
+    if(! p_)
+        return false;
+    string_view s(p_, n_);
+    static auto constexpr cs =
+        pchars + '/' + '?';
+    urls::validate_pct_encoding(
+        s, ec, cs);
+    if(ec.failed())
+        return false;
+    n += s.size();
+    increment();
+    return true;
 }
 
 void
@@ -53,8 +88,92 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    (void)dest;
     (void)end;
+    BOOST_ASSERT(static_cast<
+        std::size_t>(
+            end - dest) >= n_);
+    BOOST_ASSERT(p_ != nullptr);
+    if(n_ > 0)
+    {
+        std::memcpy(
+            dest, p_, n_);
+        dest += n_;
+    }
+    increment();
+}
+
+//------------------------------------------------
+
+void
+plain_query_iter::
+increment() noexcept
+{
+    p_ += n_;
+    if(p_ == end_)
+    {
+        p_ = nullptr;
+        return;
+    }
+    ++p_;
+    string_view s(p_, end_ - p_);
+    auto pos = s.find_first_of('&');
+    if(pos != string_view::npos)
+        n_ = pos;
+    else
+        n_ = s.size();
+}
+
+plain_query_iter::
+plain_query_iter(
+    string_view s) noexcept
+    : end_(s.data() + s.size())
+{
+    if(s.empty())
+    {
+        n_ = 0;
+        p_ = nullptr;
+        return;
+    }
+    std::size_t pos;
+    pos = s.find_first_of('&');
+    p_ = s.data();
+    if(pos != string_view::npos)
+        n_ = pos;
+    else
+        n_ = s.size();
+}
+
+bool
+plain_query_iter::
+measure(
+    std::size_t& n,
+    error_code&) noexcept
+{
+    if(! p_)
+        return false;
+    string_view s(p_, n_);
+    static auto constexpr cs =
+        pchars + '/' + '?';
+    n += urls::pct_encode_bytes(
+        s, cs);
+    increment();
+    return true;
+}
+
+void
+plain_query_iter::
+copy(
+    char*& dest,
+    char const* end) noexcept
+{
+    BOOST_ASSERT(p_ != nullptr);
+    static auto constexpr cs =
+        pchars + '/' + '?';
+    dest += pct_encode(
+        dest, end,
+        string_view(p_, n_),
+        cs);
+    increment();
 }
 
 //------------------------------------------------

@@ -202,10 +202,10 @@ operator<<(
         goto skip;
     while(it != end)
     {
-        os.put('/');
+        os << '/';
     skip:
         auto s(*it++);
-        os.write(s.data(), s.size());
+        os << s;
     }
     return os;
 }

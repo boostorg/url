@@ -765,8 +765,7 @@ operator<<(
     std::ostream& os,
     url_view const& u)
 {
-    auto s = u.encoded_url();
-    os.write(s.data(), s.size());
+    os << u.encoded_url();
     return os;
 }
 

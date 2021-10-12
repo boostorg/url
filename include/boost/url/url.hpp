@@ -973,6 +973,8 @@ public:
     //--------------------------------------------
 
 private:
+    char* set_query_impl(std::size_t n);
+
     struct raw_param
     {
         std::size_t pos;
@@ -1072,15 +1074,19 @@ public:
     */
     BOOST_URL_DECL
     url&
-    set_query_part(
+    set_query(
         string_view s);
 
+    /** Return the query parameters as a random-access range of percent-encoded strings.
+    */
     urls::params_encoded
     encoded_params() noexcept
     {
         return urls::params_encoded(*this);
     }
 
+    /** Return the query parameters as a random-access range of strings with percent-decoding applied.
+    */
     template<class Allocator =
         std::allocator<char>>
     urls::params
@@ -1095,41 +1101,15 @@ public:
     //
     //--------------------------------------------
 
+private:
+    char* set_fragment_impl(std::size_t n);
+public:
+
     /** Remove the fragment.
     */
     BOOST_URL_DECL
     url&
     remove_fragment() noexcept;
-
-    /** Set the fragment.
-
-        Sets the fragment of the URL to the specified
-        plain string:
-
-        @li If the string is empty, the fragment is
-        cleared including the leading hash mark ('#'),
-        otherwise:
-
-        @li If the string is not empty, the fragment
-        is set to given string, with a leading hash
-        mark added.
-        Any special or reserved characters in the
-        string are automatically percent-encoded.
-
-        @par Exception Safety
-
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set. This string may
-        contain any characters, including nulls.
-
-        @see set_encoded_fragment, set_fragment_part
-    */
-    BOOST_URL_DECL
-    url&
-    set_fragment(
-        string_view s);
 
     /** Set the fragment.
 
@@ -1168,6 +1148,36 @@ public:
     set_encoded_fragment(
         string_view s);
 
+    /** Set the fragment.
+
+        Sets the fragment of the URL to the specified
+        plain string:
+
+        @li If the string is empty, the fragment is
+        cleared including the leading hash mark ('#'),
+        otherwise:
+
+        @li If the string is not empty, the fragment
+        is set to given string, with a leading hash
+        mark added.
+        Any special or reserved characters in the
+        string are automatically percent-encoded.
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set. This string may
+        contain any characters, including nulls.
+
+        @see set_encoded_fragment, set_fragment_part
+    */
+    BOOST_URL_DECL
+    url&
+    set_fragment(
+        string_view s);
+
     //--------------------------------------------
     //
     // Normalization
@@ -1179,10 +1189,6 @@ public:
     BOOST_URL_DECL
     url&
     normalize();
-
-    BOOST_URL_DECL
-    url&
-    normalize_scheme() noexcept;
 
 private:
     //--------------------------------------------

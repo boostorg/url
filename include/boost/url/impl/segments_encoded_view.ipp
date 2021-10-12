@@ -181,9 +181,7 @@ operator<<(
     std::ostream& os,
     segments_encoded_view const& pv)
 {
-    os.write(
-        pv.s_.data(),
-        pv.s_.size());
+    os << pv.s_;
     return os;
 }
 

@@ -46,12 +46,9 @@ struct BOOST_SYMBOL_VISIBLE
 class enc_query_iter
     : public any_query_iter
 {
-//    char const* p_;
+    char const* p_;
     char const* end_;
-#if 0
-    std::size_t nk_;
-    std::size_t nv_;
-#endif
+    std::size_t n_;
 
     void
     increment() noexcept;
@@ -59,6 +56,36 @@ class enc_query_iter
 public:
     explicit
     enc_query_iter(
+        string_view s) noexcept;
+
+    bool
+    measure(
+        std::size_t& n,
+        error_code& ec) noexcept override;
+
+    void
+    copy(
+        char*& dest,
+        char const* end) noexcept override;
+};
+
+//------------------------------------------------
+
+// iterates params in a
+// plain query string
+class plain_query_iter
+    : public any_query_iter
+{
+    char const* p_;
+    char const* end_;
+    std::size_t n_;
+
+    void
+    increment() noexcept;
+
+public:
+    explicit
+    plain_query_iter(
         string_view s) noexcept;
 
     bool

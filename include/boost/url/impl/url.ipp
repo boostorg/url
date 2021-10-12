@@ -20,6 +20,7 @@
 #include <boost/url/detail/print.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
 #include <boost/url/rfc/charsets.hpp>
+#include <boost/url/rfc/fragment_bnf.hpp>
 #include <boost/url/rfc/host_bnf.hpp>
 #include <boost/url/rfc/paths_bnf.hpp>
 #include <boost/url/rfc/port_bnf.hpp>
@@ -1454,31 +1455,129 @@ edit_params(
 }
 
 //------------------------------------------------
+//
+// Query
+//
+//------------------------------------------------
+
+char*
+url::
+set_query_impl(
+    std::size_t n)
+{
+    auto dest = resize_impl(
+        id_query, n + 1);
+    dest[0] = '?';
+    return dest + 1;
+}
 
 url&
 url::
 remove_query() noexcept
 {
-    params::value_type v;
-    edit_params(0, nparam_,
-        detail::make_enc_params_iter(&v, &v + 1),
-        detail::make_enc_params_iter(&v, &v + 1));
+    string_view s;
+    edit_params(
+        0,
+        nparam_,
+        detail::enc_query_iter(s),
+        detail::enc_query_iter(s));
+    return *this;
+}
+
+url&
+url::
+set_encoded_query(
+    string_view s)
+{
+    edit_params(
+        0,
+        nparam_,
+        detail::enc_query_iter(s),
+        detail::enc_query_iter(s));
+    return *this;
+}
+
+url&
+url::
+set_query(
+    string_view s)
+{
+    edit_params(
+        0,
+        nparam_,
+        detail::plain_query_iter(s),
+        detail::plain_query_iter(s));
     return *this;
 }
 
 //------------------------------------------------
+//
+// Fragment
+//
+//------------------------------------------------
+
+char*
+url::
+set_fragment_impl(
+    std::size_t n)
+{
+    auto dest = resize_impl(
+        id_frag, n + 1);
+    dest[0] = '#';
+    return dest + 1;
+}
 
 url&
 url::
 remove_fragment() noexcept
 {
     resize_impl(id_frag, 0);
+    decoded_[id_frag] = 0;
+    return *this;
+}
+
+url&
+url::
+set_encoded_fragment(
+    string_view s)
+{
+    check_invariants();
+    error_code ec;
+    pct_encoded_str t;
+    if(! bnf::parse_string(s, ec,
+            fragment_bnf{t}))
+        detail::throw_invalid_argument(
+            BOOST_CURRENT_LOCATION);
+    auto dest = set_fragment_impl(s.size());
+    decoded_[id_frag] = t.decoded_size;
+    if(! s.empty())
+        std::memcpy(
+            dest, s.data(), s.size());
+    check_invariants();
+    return *this;
+}
+
+url&
+url::
+set_fragment(
+    string_view s)
+{
+    check_invariants();
+    static constexpr auto cs =
+        pchars + '/' + '?';
+    auto const n =
+        pct_encode_bytes(s, cs);
+    auto dest = set_fragment_impl(n);
+    pct_encode(dest, get(
+        id_end).data(), s, cs);
+    decoded_[id_frag] = s.size();
+    check_invariants();
     return *this;
 }
 
 //------------------------------------------------
 //
-// implementation
+// Implementation
 //
 //------------------------------------------------
 
@@ -1783,8 +1882,7 @@ operator<<(
     std::ostream& os,
     url const& u)
 {
-    auto const s = u.encoded_url();
-    os.write(s.data(), s.size());
+    os << u.encoded_url();
     return os;
 }
 

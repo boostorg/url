@@ -242,7 +242,7 @@ operator<<(
     char buf[ipv6_address::max_str_len];
     auto const s = addr.to_buffer(
         buf, sizeof(buf));
-    os.write(s.data(), s.size());
+    os << s;
     return os;
 }
 
