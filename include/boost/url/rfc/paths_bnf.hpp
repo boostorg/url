@@ -82,7 +82,13 @@ struct segment_nz_nc_bnf
 
 //------------------------------------------------
 
-// path-abempty  = *( "/" segment )
+/** BNF for path-abempty grammar
+
+    @par BNF
+    @code
+    path-abempty  = *( "/" segment )
+    @endcode
+*/
 struct path_abempty_bnf : bnf::range
 {
     using value_type =
@@ -114,7 +120,13 @@ struct path_abempty_bnf : bnf::range
 
 //------------------------------------------------
 
-// path-absolute = "/" [ segment-nz *( "/" segment ) ]
+/** BNF for path-absolute grammar.
+
+    @par BNF
+    @code
+    path-absolute = "/" [ segment-nz *( "/" segment ) ]
+    @endcode
+*/
 struct path_absolute_bnf : bnf::range
 {
     using value_type =
@@ -146,7 +158,13 @@ struct path_absolute_bnf : bnf::range
 
 //------------------------------------------------
 
-// path-noscheme = segment-nz-nc *( "/" segment )
+/** BNF for path-noscheme grammar.
+
+    @par BNF
+    @code
+    path-noscheme = segment-nz-nc *( "/" segment )
+    @endcode
+*/
 struct path_noscheme_bnf : bnf::range
 {
     using value_type =
@@ -178,7 +196,14 @@ struct path_noscheme_bnf : bnf::range
 
 //------------------------------------------------
 
-// path-rootless = segment-nz *( "/" segment )
+/** BNF for path-rootless grammar.
+
+    @par BNF
+    @code
+    path-rootless = segment-nz *( "/" segment )
+    @endcode
+*/
+
 struct path_rootless_bnf : bnf::range
 {
     using value_type =
