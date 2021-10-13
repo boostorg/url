@@ -9,3 +9,24 @@
 
 // Test that header file is self-contained.
 #include <boost/url/rfc/relative_ref_bnf.hpp>
+
+#include "test_suite.hpp"
+
+namespace boost {
+namespace urls {
+
+class relative_ref_bnf_test
+{
+public:
+    void
+    run()
+    {       
+    }
+};
+
+TEST_SUITE(
+    relative_ref_bnf_test,
+    "boost.url.relative_ref_bnf");
+
+} // urls
+} // boost

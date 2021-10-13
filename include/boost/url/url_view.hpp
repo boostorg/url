@@ -1835,6 +1835,7 @@ parse_uri(
     relative-part = "//" authority path-abempty
                   / path-absolute
                   / path-noscheme
+                  / path-abempty
                   / path-empty
     @endcode
 
@@ -1846,8 +1847,10 @@ parse_uri(
     @param s The string to parse
 
     @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2
         >4.2. Relative Reference (rfc3986)</a>
+    @li <a href="https://www.rfc-editor.org/errata/eid5428"
+        >Errata ID: 5428 (rfc3986)</a>
 
     @see
         @ref parse_absolute_uri,
@@ -1887,6 +1890,7 @@ parse_relative_ref(
     relative-part = "//" authority path-abempty
                   / path-absolute
                   / path-noscheme
+                  / path-abempty
                   / path-empty
     @endcode
 
@@ -1900,6 +1904,8 @@ parse_relative_ref(
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
         >4.1. URI Reference (rfc3986)</a>
+    @li <a href="https://www.rfc-editor.org/errata/eid5428"
+        >Errata ID: 5428 (rfc3986)</a>
 
     @see
         @ref parse_absolute_uri,
