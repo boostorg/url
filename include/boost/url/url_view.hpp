@@ -142,9 +142,9 @@ protected:
     len(int id) const noexcept ->
         pos_t
     {
-        return
+        return id == id_end ? 0 : (
             offset(id + 1) -
-            offset(id);
+            offset(id) );
     }
 
     // return id as string
