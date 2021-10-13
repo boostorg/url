@@ -828,7 +828,7 @@ public:
 
         IPvFuture   = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
 
-        reg-name    = *( unreserved / pct-encoded / sub-delims )
+        reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
 
         @par Exception Safety
@@ -873,7 +873,7 @@ public:
 
         IPvFuture   = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
 
-        reg-name    = *( unreserved / pct-encoded / sub-delims )
+        reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
 
         @par Exception Safety

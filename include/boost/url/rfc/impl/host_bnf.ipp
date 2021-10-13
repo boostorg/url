@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/host_bnf.hpp>
 #include <boost/url/rfc/ip_literal_bnf.hpp>
-#include <new>
+#include <boost/url/rfc/reg_name_bnf.hpp>
 
 namespace boost {
 namespace urls {
@@ -24,6 +24,7 @@ parse(
     error_code& ec,
     host_bnf& t)
 {
+    using bnf::parse;
     if(it == end)
     {
         t.host_type =
@@ -73,12 +74,8 @@ parse(
         ec = {};
     }
     // reg-name
-    static constexpr auto cs =
-        unreserved_chars +
-        subdelim_chars;
     if(! parse(it, end, ec,
-        pct_encoded_bnf(
-            cs, t.name)))
+        reg_name_bnf{t.name}))
     {
         // bad reg-name
         return false;

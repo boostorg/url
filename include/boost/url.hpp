@@ -57,6 +57,7 @@
 #include <boost/url/rfc/port_part_bnf.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/rfc/query_part_bnf.hpp>
+#include <boost/url/rfc/reg_name_bnf.hpp>
 #include <boost/url/rfc/relative_part_bnf.hpp>
 #include <boost/url/rfc/relative_ref_bnf.hpp>
 #include <boost/url/rfc/scheme_bnf.hpp>

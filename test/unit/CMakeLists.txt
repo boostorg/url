@@ -63,6 +63,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/port_part_bnf.cpp
     rfc/query_bnf.cpp
     rfc/query_part_bnf.cpp
+    rfc/reg_name_bnf.cpp
     rfc/relative_part_bnf.cpp
     rfc/relative_ref_bnf.cpp
     rfc/scheme_bnf.cpp
