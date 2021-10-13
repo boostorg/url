@@ -1577,6 +1577,54 @@ set_fragment(
 
 //------------------------------------------------
 //
+// Resolution
+//
+//------------------------------------------------
+
+bool
+url::
+resolve(
+    url_view const& base,
+    url_view const& ref,
+    error_code& ec)
+{
+    (void)base;
+    (void)ref;
+    ec = {};
+    return false;
+}
+
+//------------------------------------------------
+//
+// Normalization
+//
+//------------------------------------------------
+
+url&
+url::
+normalize()
+{
+#if 0
+    // scheme
+    {
+        char* it = s_
+            + offset(id_scheme);
+        auto last = it + offset(id_user);
+        if(it < last)
+        {
+            --last;
+            while(it != last)
+            {
+                // to upper
+            }
+        }
+    }
+#endif
+    return *this;
+}
+
+//------------------------------------------------
+//
 // Implementation
 //
 //------------------------------------------------

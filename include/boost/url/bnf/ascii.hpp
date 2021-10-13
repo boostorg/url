@@ -36,13 +36,12 @@ namespace bnf {
 
     @param c The ascii character to convert
 */
-inline
+constexpr
 char
 ascii_tolower(char c) noexcept
 {
-    if(c >= 'A' && c <= 'Z')
-        return c + 'a' - 'A';
-    return c;
+    return (c >= 'A' && c <= 'Z')
+        ? c + 'a' - 'A' : c;
 }
 
 } // bnf

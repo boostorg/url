@@ -1696,6 +1696,18 @@ public:
 
     //--------------------------------------------
     //
+    // Resolution
+    //
+    //--------------------------------------------
+
+    /** Return true if the URL satisfies the absolute-uri grammar.
+    */
+    BOOST_URL_DECL
+    bool
+    is_absolute_uri() const noexcept;
+
+    //--------------------------------------------
+    //
     // Parsing
     //
     //--------------------------------------------
