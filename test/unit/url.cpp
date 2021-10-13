@@ -1135,6 +1135,16 @@ public:
     void
     testQuery()
     {
+        // has_query
+        {
+            url u = parse_relative_ref("?query").value();
+            BOOST_TEST(u.has_query());
+            u.clear();
+            BOOST_TEST(! u.has_query());
+            u = parse_relative_ref("?").value();
+            BOOST_TEST(u.has_query());
+        }
+
         // remove_query
         {
             url u = parse_relative_ref("?query").value();
@@ -1190,6 +1200,44 @@ public:
     void
     testFragment()
     {
+        // has_fragment
+        {
+            url u = parse_relative_ref("#frag").value();
+            BOOST_TEST(u.has_fragment());
+            u.clear();
+            BOOST_TEST(! u.has_fragment());
+            u = parse_relative_ref("#").value();
+            BOOST_TEST(u.has_fragment());
+        }
+
+        // remove_fragment
+        {
+            url u = parse_relative_ref( "/#frag" ).value();
+            BOOST_TEST(u.has_fragment());
+            BOOST_TEST(! u.remove_fragment().has_fragment());
+            BOOST_TEST(u.fragment() == "");
+        }
+
+        // set_encoded_fragment
+        {
+            url u = parse_relative_ref( "/" ).value();
+            BOOST_TEST(! u.has_fragment());
+            u.set_encoded_fragment("fr%20ag");
+            BOOST_TEST(u.fragment() == "fr ag");
+            u.remove_fragment();
+            u.set_encoded_fragment("");
+            BOOST_TEST(u.has_fragment());
+            BOOST_TEST(u.encoded_url() == "/#");
+        }
+
+        // set_fragment
+        {
+            url u = parse_relative_ref( "/" ).value();
+            BOOST_TEST(! u.has_fragment());
+            u.set_fragment("fr ag");
+            BOOST_TEST(u.fragment() == "fr ag");
+            BOOST_TEST(u.encoded_fragment() == "fr%20ag");
+        }
     }
 
     //--------------------------------------------
