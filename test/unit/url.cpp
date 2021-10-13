@@ -1243,6 +1243,75 @@ public:
     //--------------------------------------------
 
     void
+    testResolution()
+    {
+        auto ub = parse_uri(
+            "http://a/b/c/d;p?q").value();
+
+        auto const check = [&ub](
+            string_view r,
+            string_view m)
+        {
+            auto ur =
+                parse_uri_reference(r).value();
+            url u;
+            error_code ec;
+            u.resolve(ub, ur, ec);
+            if(! BOOST_TEST(! ec.failed()))
+                return;
+            BOOST_TEST(u.encoded_url() == m);
+        };
+
+        check("g:h"          , "g:h");
+        check("g"            , "http://a/b/c/g");
+        check("./g"          , "http://a/b/c/g");
+        check("g/"           , "http://a/b/c/g/");
+        check("/g"           , "http://a/g");
+        check("//g"          , "http://g");
+        check("?y"           , "http://a/b/c/d;p?y");
+        check("g?y"          , "http://a/b/c/g?y");
+        check("#s"           , "http://a/b/c/d;p?q#s");
+        check("g#s"          , "http://a/b/c/g#s");
+        check("g?y#s"        , "http://a/b/c/g?y#s");
+        check(";x"           , "http://a/b/c/;x");
+        check("g;x"          , "http://a/b/c/g;x");
+        check("g;x?y#s"      , "http://a/b/c/g;x?y#s");
+        check(""             , "http://a/b/c/d;p?q");
+        check("."            , "http://a/b/c/");
+        check("./"           , "http://a/b/c/");
+        check(".."           , "http://a/b/");
+        check("../"          , "http://a/b/");
+        check("../g"         , "http://a/b/g");
+        check("../.."        , "http://a/");
+        check("../../"       , "http://a/");
+        check("../../g"      , "http://a/g");
+
+        check("../../../g",    "http://a/../g");
+        check("../../../../g", "http://a/../../g");
+
+        check("/./g"         , "http://a/g");
+        check("/../g"        , "http://a/g");
+        check("g."           , "http://a/b/c/g.");
+        check(".g"           , "http://a/b/c/.g");
+        check("g.."          , "http://a/b/c/g..");
+        check("..g"          , "http://a/b/c/..g");
+                             
+        check("./../g"       , "http://a/b/g");
+        check("./g/."        , "http://a/b/c/g/");
+        check("g/./h"        , "http://a/b/c/g/h");
+        check("g/../h"       , "http://a/b/c/h");
+        check("g;x=1/./y"    , "http://a/b/c/g;x=1/y");
+        check("g;x=1/../y"   , "http://a/b/c/y");
+                             
+        check("g?y/./x"      , "http://a/b/c/g?y/./x");
+        check("g?y/../x"     , "http://a/b/c/g?y/../x");
+        check("g#s/./x"      , "http://a/b/c/g#s/./x");
+        check("g#s/../x"     , "http://a/b/c/g#s/../x");
+    }
+
+    //--------------------------------------------
+
+    void
     testOstream()
     {
         {
@@ -1282,6 +1351,7 @@ public:
         testPath();
         testQuery();
         testFragment();
+        //testResolution();
         testOstream();
     }
 };

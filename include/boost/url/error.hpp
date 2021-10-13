@@ -256,7 +256,12 @@ enum class error
        output buffer was too small to hold
        the complete result of an algorithm.
     */
-    no_space
+    no_space,
+
+    /**
+     * The URL is not a base URL
+    */
+    not_a_base
 };
 
 //------------------------------------------------

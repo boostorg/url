@@ -1588,10 +1588,124 @@ resolve(
     url_view const& ref,
     error_code& ec)
 {
-    (void)base;
-    (void)ref;
+    if(! base.is_absolute_uri())
+    {
+        ec = error::not_a_base;
+        return false;
+    }
+
     ec = {};
-    return false;
+
+    //
+    // 5.2.2. Transform References
+    // https://datatracker.ietf.org/doc/html/rfc3986#section-5.2.2
+    //
+
+    if(ref.has_scheme())
+    {
+        ensure_space(
+            ref.size(),
+            ref.nseg_,
+            ref.nparam_);
+        copy(ref);
+        return true;
+    }
+    if(ref.has_authority())
+    {
+        ensure_space(
+            base.offset(id_user) +
+                ref.size(),
+            ref.nseg_,
+            ref.nparam_);
+        clear();
+        set_scheme(base.scheme());
+        set_encoded_authority(
+            ref.encoded_authority());
+        set_encoded_path(
+            ref.encoded_path());
+        set_encoded_query(
+            ref.encoded_query());
+        set_encoded_fragment(
+            ref.encoded_fragment());
+        return true;
+    }
+    if(ref.encoded_path().empty())
+    {
+        if(ref.has_query())
+        {
+            ensure_space(
+                base.offset(id_query) +
+                    ref.size(),
+                base.nseg_,
+                ref.nparam_);
+            clear();
+            set_scheme(base.scheme());
+            set_encoded_authority(
+                base.encoded_authority());
+            set_encoded_path(
+                base.encoded_path());
+            set_encoded_query(
+                ref.encoded_query());
+        }
+        else
+        {
+            ensure_space(
+                base.offset(id_query) +
+                    ref.size(),
+                base.nseg_,
+                ref.nparam_);
+            clear();
+            set_scheme(base.scheme());
+            set_encoded_authority(
+                base.encoded_authority());
+            set_encoded_path(
+                base.encoded_path());
+            set_encoded_query(
+                base.encoded_query());
+        }
+        set_encoded_fragment(
+            ref.encoded_fragment());
+        return true;
+    }
+    if(ref.encoded_path().starts_with('/'))
+    {
+        ensure_space(
+            base.offset(id_path) +
+                ref.size(),
+            ref.nseg_,
+            ref.nparam_);
+        clear();
+        set_scheme(base.scheme());
+        set_encoded_authority(
+            base.encoded_authority());
+        set_encoded_path(
+            ref.encoded_path());
+        set_encoded_query(
+            ref.encoded_query());
+        set_encoded_fragment(
+            ref.encoded_fragment());
+        return true;
+    }
+    ensure_space(
+        base.offset(id_query) +
+            ref.size(),
+        base.nseg_ + ref.nseg_,
+        ref.nparam_);
+    clear();
+    set_scheme(base.scheme());
+    set_encoded_authority(
+        base.encoded_authority());
+    set_encoded_path(
+        ref.encoded_path());
+    encoded_segments().insert(
+        encoded_segments().end(),
+        ref.encoded_segments().begin(),
+        ref.encoded_segments().end());
+    set_encoded_query(
+        ref.encoded_query());
+    set_encoded_fragment(
+        ref.encoded_fragment());
+    return true;
 }
 
 //------------------------------------------------

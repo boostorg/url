@@ -78,6 +78,7 @@ public:
         check(condition::fatal, error::missing_pct_hexdig);
 
         check(error::no_space);
+        check(error::not_a_base);
     }
 };
 
