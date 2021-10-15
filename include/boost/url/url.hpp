@@ -898,6 +898,17 @@ private:
         int abs_hint = -1);
 public:
 
+    /** Set whether the path is absolute.
+
+        This modifies the path as needed to
+        make it absolute or relative.
+
+        @return true on success.
+    */
+    BOOST_URL_DECL
+    bool
+    set_path_absolute(bool absolute);
+
     /** Set the path.
 
         This function validates the given percent-encoded

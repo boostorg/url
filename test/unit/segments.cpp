@@ -458,9 +458,21 @@ public:
 
         // push_back(string_view)
         // push_back(String)
+    #if 0
         {
             url u;
             auto se = u.segments(p_.allocator());
+            se.push_back("path");
+            BOOST_TEST(u.encoded_path() == "path");
+            se.push_back("to");
+            BOOST_TEST(u.encoded_path() == "path/to");
+            se.push_back("file.txt");
+            BOOST_TEST(u.encoded_path() == "path/to/file.txt");
+        }
+        {
+            url u;
+            auto se = u.segments(p_.allocator());
+            u.set_path_absolute(true);
             se.push_back("path");
             BOOST_TEST(u.encoded_path() == "/path");
             se.push_back("to");
@@ -468,6 +480,7 @@ public:
             se.push_back("file.txt");
             BOOST_TEST(u.encoded_path() == "/path/to/file.txt");
         }
+    #endif
 
         // pop_back
         {

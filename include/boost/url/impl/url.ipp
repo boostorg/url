@@ -1139,6 +1139,14 @@ edit_segments(
     detail::any_path_iter&& it1,
     int abs_hint)
 {
+    if(abs_hint == -1)
+    {
+        if(get(id_path).starts_with('/'))
+            abs_hint = 1;
+        else
+            abs_hint = 0;
+    }
+
     // measure
     error_code ec;
     std::size_t n = 0;
@@ -1253,6 +1261,46 @@ edit_segments(
 }
 
 //------------------------------------------------
+
+bool
+url::
+set_path_absolute(bool absolute)
+{
+    if(len(id_path) == 0)
+    {
+        if(! absolute)
+            return true;
+        auto dest = resize_impl(
+            id_path, 1);
+        *dest = '/';
+        // VFALCO Update table
+        return true;
+    }
+
+    if(s_[offset(id_path)] == '/')
+    {
+        if(absolute)
+            return true;
+        if( has_authority() &&
+            len(id_path) > 1)
+            return false;
+        auto n = len(id_port);
+        split(id_port, n + 1);
+        resize_impl(id_port, n);
+        // VFALCO Update table
+        return true;
+    }
+
+    if(! absolute)
+        return true;
+    auto n = len(id_port);
+    auto dest = resize_impl(
+        id_port, n + 1) + n;
+    split(id_port, n);
+    *dest = '/';
+    // VFALCO Update table
+    return true;
+}
 
 url&
 url::

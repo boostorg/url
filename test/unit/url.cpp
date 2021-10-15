@@ -11,7 +11,7 @@
 #include <boost/url/url.hpp>
 
 #include "test_suite.hpp"
-#include <initializer_list>
+#include <algorithm>
 #include <sstream>
 
 namespace boost {
@@ -983,6 +983,57 @@ public:
     void
     testPath()
     {
+        // set_path_absolute
+        {
+            url u;
+            BOOST_TEST(! u.is_path_absolute());
+            BOOST_TEST(u.set_path_absolute(false));
+            BOOST_TEST(! u.is_path_absolute());
+            BOOST_TEST(u.encoded_url() == "");
+            BOOST_TEST(u.set_path_absolute(true));
+            BOOST_TEST(u.is_path_absolute());
+            BOOST_TEST(u.encoded_url() == "/");
+        }
+        {
+            url u = parse_relative_ref("/").value();
+            BOOST_TEST(u.is_path_absolute());
+            BOOST_TEST(u.set_path_absolute(true));
+            BOOST_TEST(u.is_path_absolute());
+            BOOST_TEST(u.encoded_url() == "/");
+            BOOST_TEST(u.set_path_absolute(false));
+            BOOST_TEST(! u.is_path_absolute());
+            BOOST_TEST(u.encoded_url() == "");
+        }
+        {
+            url u = parse_relative_ref("//").value();
+            BOOST_TEST(! u.is_path_absolute());
+            BOOST_TEST(u.set_path_absolute(true));
+            BOOST_TEST(u.is_path_absolute());
+            BOOST_TEST(u.encoded_url() == "///");
+            BOOST_TEST(u.set_path_absolute(false));
+            BOOST_TEST(! u.is_path_absolute());
+            BOOST_TEST(u.encoded_url() == "//");
+        }
+        {
+            url u = parse_relative_ref("//x/y").value();
+            BOOST_TEST(u.is_path_absolute());
+            BOOST_TEST(! u.set_path_absolute(false));
+            BOOST_TEST(u.is_path_absolute());
+            BOOST_TEST(u.encoded_url() == "//x/y");
+        }
+        {
+            url u = parse_uri("x:y").value();
+            BOOST_TEST(! u.is_path_absolute());
+            BOOST_TEST(u.set_path_absolute(false));
+            BOOST_TEST(! u.is_path_absolute());
+            BOOST_TEST(u.set_path_absolute(true));
+            BOOST_TEST(u.is_path_absolute());
+            BOOST_TEST(u.encoded_url() == "x:/y");
+            BOOST_TEST(u.set_path_absolute(false));
+            BOOST_TEST(! u.is_path_absolute());
+            BOOST_TEST(u.encoded_url() == "x:y");
+        }
+
         // set_encoded_path
         {
             // empty
@@ -1336,6 +1387,20 @@ public:
 
     //--------------------------------------------
 
+    static
+    void
+    equal(
+        segments const& seg,
+        std::initializer_list<string_view> init)
+    {
+        if(! BOOST_TEST(seg.size() == init.size()))
+            return;
+        BOOST_TEST(std::equal(
+            seg.begin(), seg.end(), init.begin()));
+    }
+
+    //--------------------------------------------
+
     void
     run()
     {
@@ -1361,3 +1426,4 @@ TEST_SUITE(url_test, "boost.url.url");
 
 } // urls
 } // boost
+

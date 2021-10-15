@@ -75,7 +75,7 @@ split(
     std::size_t n) noexcept
 {
     BOOST_ASSERT(id < id_end - 1);
-    BOOST_ASSERT(n <= len(id));
+    //BOOST_ASSERT(n <= len(id));
     offset_[id + 1] = offset(id) + n;
 }
 
