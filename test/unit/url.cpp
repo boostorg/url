@@ -1254,7 +1254,8 @@ public:
         {
             auto ur =
                 parse_uri_reference(r).value();
-            url u;
+            url u = parse_uri(
+                "z://y:x@p.q:69/x/f?q#f" ).value();
             error_code ec;
             u.resolve(ub, ur, ec);
             if(! BOOST_TEST(! ec.failed()))
@@ -1286,8 +1287,8 @@ public:
         check("../../"       , "http://a/");
         check("../../g"      , "http://a/g");
 
-        check("../../../g",    "http://a/../g");
-        check("../../../../g", "http://a/../../g");
+        check("../../../g",    "http://a/g");
+        check("../../../../g", "http://a/g");
 
         check("/./g"         , "http://a/g");
         check("/../g"        , "http://a/g");
