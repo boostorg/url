@@ -149,18 +149,6 @@ scheme_id() const noexcept
 //
 //----------------------------------------------------------
 
-bool
-url_view::
-has_authority() const noexcept
-{
-    auto const n = len(id_user);
-    if(n == 0)
-        return false;
-    BOOST_ASSERT(get(
-        id_user).starts_with("//"));
-    return true;
-}
-
 string_view
 url_view::
 encoded_authority() const noexcept

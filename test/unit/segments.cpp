@@ -459,7 +459,7 @@ public:
         // push_back(string_view)
         // push_back(String)
         {
-            url u = parse_relative_ref("").value();
+            url u;
             auto se = u.segments(p_.allocator());
             se.push_back("path");
             BOOST_TEST(u.encoded_path() == "/path");

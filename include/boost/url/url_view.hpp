@@ -599,9 +599,11 @@ public:
         @see
             @ref encoded_authority.
     */
-    BOOST_URL_DECL
     bool
-    has_authority() const noexcept;
+    has_authority() const noexcept
+    {
+        return len(id_user) > 0;
+    }
 
     /** Return the authority.
 
@@ -1363,6 +1365,16 @@ public:
     // Path
     //
     //--------------------------------------------
+
+    /** Return true if the path is absolute
+    */
+    bool
+    is_path_absolute() const noexcept
+    {
+        return
+            len(id_path) > 0 &&
+            cs_[offset(id_path)] == '/';
+    }
 
     /** Return the path
 
