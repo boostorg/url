@@ -63,7 +63,7 @@ enc_path_iter(
         n_ = pos;
     else
         n_ = s.size();
-    first = { p_, n_ };
+    first_segment = { p_, n_ };
 }
 
 bool
@@ -145,7 +145,7 @@ plain_path_iter(
         n_ = pos;
     else
         n_ = s.size();
-    first = { p_, n_ };
+    first_segment = { p_, n_ };
 }
 
 bool

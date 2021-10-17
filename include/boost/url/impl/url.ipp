@@ -1184,7 +1184,7 @@ edit_segments(
     {
         // path-absolute
         if(string_view(
-            it0.first).empty() &&
+            it0.first_segment).empty() &&
                 nseg > 1)
         {
             // prepend "/."
@@ -1200,8 +1200,8 @@ edit_segments(
     else if(! has_scheme())
     {
         // path-noscheme
-        if( it0.first.empty() ||
-            it0.first.find_first_of(':') !=
+        if( it0.first_segment.empty() ||
+            it0.first_segment.find_first_of(':') !=
                 string_view::npos)
         {
             // prepend "."
@@ -1248,6 +1248,9 @@ edit_segments(
     }
     if(style != 3)
         *p++ = '/';
+
+    // output segments with slashes
+    // only in between elements.
     for(;;)
     {
         it1.copy(p, last);

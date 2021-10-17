@@ -21,7 +21,7 @@ namespace detail {
 struct BOOST_SYMBOL_VISIBLE
     any_path_iter
 {
-    string_view first;
+    string_view first_segment;
 
     BOOST_URL_DECL
     virtual
@@ -141,6 +141,7 @@ public:
         : it_(first)
         , end_(last)
     {
+        first_segment = *first;
     }
 
     bool
@@ -208,6 +209,7 @@ public:
         : it_(first)
         , end_(last)
     {
+        first_segment = *first;
     }
 
     bool
