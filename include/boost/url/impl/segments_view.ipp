@@ -24,6 +24,7 @@ segments_view::
 iterator::
 iterator(
     string_view s,
+    std::size_t nseg,
     string_value::allocator const& a) noexcept
     : begin_(s.data())
     , pos_(s.data())
@@ -32,41 +33,40 @@ iterator(
     , a_(a)
 {
     using bnf::parse;
-    using bnf_t = path_rootless_bnf;
-    if(next_ == end_)
+    using bnf_t = segment_bnf;
+    if(nseg == 0)
     {
         next_ = nullptr;
         return;
     }
+    auto const n =
+        detail::path_prefix(s);
+    begin_ += n;
+    next_ += n;
+    pos_ += n;
     error_code ec;
-    if(*next_ == '/')
-    {
-        // "/" segment
-        bnf_t::increment(next_,
-            end_, ec, t_);
-        BOOST_ASSERT(! ec);
-    }
-    else
-    {
-        // segment-nz
-        bnf_t::begin(next_,
-            end_, ec, t_);
-        BOOST_ASSERT(! ec);
-    }
+    parse(next_, end_, ec,
+        segment_bnf{t_});
+    BOOST_ASSERT(! ec);
 }
 
 segments_view::
 iterator::
 iterator(
-    std::size_t,
     string_view s,
+    std::size_t nseg,
     string_value::
-        allocator const& a) noexcept
-    : begin_(s.data())
+        allocator const& a,
+    int) noexcept
+    : i_(nseg)
+    , begin_(s.data())
     , pos_(s.data() + s.size())
     , end_(s.data() + s.size())
     , a_(a)
 {
+    auto const n =
+        detail::path_prefix(s);
+    begin_ += n;
 }
 
 segments_view::
@@ -110,6 +110,7 @@ operator++() noexcept ->
     using bnf::parse;
     using bnf_t = path_rootless_bnf;
     BOOST_ASSERT(next_ != nullptr);
+    ++i_;
     pos_ = next_;
     error_code ec;
     // "/" segment
@@ -132,8 +133,18 @@ operator--() noexcept ->
 {
     using bnf::parse;
     using bnf_t = path_rootless_bnf;
-    BOOST_ASSERT(pos_ != begin_);
+    BOOST_ASSERT(i_ != 0);
+    --i_;
     error_code ec;
+    if(i_ == 0)
+    {
+        next_ = begin_;
+        pos_ = begin_;
+        parse(next_, end_, ec,
+            segment_bnf{t_});
+        BOOST_ASSERT(! ec.failed());
+        return *this;
+    }
     while(--pos_ != begin_)
     {
         if(*pos_ != '/')
@@ -174,7 +185,7 @@ segments_view::
 begin() const noexcept ->
     iterator
 {
-    return iterator(s_, a_);
+    return iterator(s_, n_, a_);
 }
 
 auto
@@ -182,7 +193,7 @@ segments_view::
 end() const noexcept ->
     iterator
 {
-    return iterator(n_, s_, a_);
+    return iterator(s_, n_, a_, 0);
 }
 
 //------------------------------------------------

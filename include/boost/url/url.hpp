@@ -877,14 +877,20 @@ private:
         std::size_t len;
     };
 
+    // deprecated
     raw_segment
     segment(
+        std::size_t i,
+        bool prefixed = false) const noexcept;
+
+    pos_t
+    segment_(
         std::size_t i) const noexcept;
 
     char*
     edit_segments(
-        std::size_t first,
-        std::size_t last,
+        std::size_t i0,
+        std::size_t i1,
         std::size_t n,
         std::size_t nseg);
 

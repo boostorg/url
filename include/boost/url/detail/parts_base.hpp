@@ -20,8 +20,6 @@ namespace detail {
 // constants and variables
 struct parts_base
 {
-    using pos_t = std::size_t;
-
     enum
     {
         id_scheme = -1, // trailing ':'

@@ -24,10 +24,13 @@ operator*() const noexcept
 {
     BOOST_ASSERT(i_ < u_->nseg_);
     auto r = u_->segment(i_);
-    if(u_->cs_[r.pos] == '/')
-        return { u_->cs_ + r.pos + 1,
-            r.len - 1 };
-    return { u_->cs_ + r.pos, r.len };
+    string_view s;
+    if(i_ > 0)
+        s = { u_->cs_ + r.pos + 1,
+                r.len - 1 };
+    else
+        s = { u_->cs_ + r.pos, r.len };
+    return s;
 }
 
 //------------------------------------------------

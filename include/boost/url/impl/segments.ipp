@@ -28,7 +28,7 @@ operator*() const
     BOOST_ASSERT(i_ < u_->nseg_);
     auto r = u_->segment(i_);
     string_view s;
-    if(u_->cs_[r.pos] == '/')
+    if(i_ > 0)
         s = { u_->cs_ + r.pos + 1,
                 r.len - 1 };
     else

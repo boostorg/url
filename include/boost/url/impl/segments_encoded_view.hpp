@@ -31,12 +31,14 @@ class segments_encoded_view::iterator
 
     explicit
     iterator(
-        string_view s) noexcept;
+        string_view s,
+        std::size_t nseg) noexcept;
 
     // end ctor
     iterator(
-        std::size_t n,
-        string_view s) noexcept;
+        string_view s,
+        std::size_t nseg,
+        int) noexcept;
 
 public:
     using value_type = string_view;
@@ -106,15 +108,6 @@ public:
 // Members
 //
 //------------------------------------------------
-
-segments_encoded_view::
-segments_encoded_view(
-    string_view s,
-    std::size_t n) noexcept
-    : s_(s)
-    , n_(n)
-{
-}
 
 segments_encoded_view::
 segments_encoded_view() noexcept

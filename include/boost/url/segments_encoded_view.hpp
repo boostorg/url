@@ -92,7 +92,7 @@ class segments_encoded_view
 
     friend class url_view;
 
-    inline
+    BOOST_URL_DECL
     segments_encoded_view(
         string_view s,
         std::size_t n) noexcept;

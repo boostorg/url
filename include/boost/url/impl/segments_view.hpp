@@ -19,6 +19,7 @@ namespace urls {
 class segments_view::
     iterator
 {
+    std::size_t i_ = 0;
     char const* begin_ = nullptr;
     char const* pos_ = nullptr;
     char const* next_ = nullptr;
@@ -31,16 +32,18 @@ class segments_view::
     BOOST_URL_DECL
     iterator(
         string_view s,
+        std::size_t nseg,
         string_value::
             allocator const& a) noexcept;
 
     // end ctor
     BOOST_URL_DECL
     iterator(
-        std::size_t n,
         string_view s,
+        std::size_t nseg,
         string_value::
-            allocator const& a) noexcept;
+            allocator const& a,
+        int) noexcept;
 
 public:
     using value_type = string_value;

@@ -579,8 +579,10 @@ url_view::
 apply(
     parsed_path const& t) noexcept
 {
-    set_size(id_path, t.path.size());
-    nseg_ = t.count;
+    auto s = t.path;
+    set_size(id_path, s.size());
+    nseg_ = detail::path_segments(
+        t.path, t.count);
 }
 
 void

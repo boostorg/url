@@ -192,14 +192,53 @@ set_scheme_impl(
     if(ec.failed())
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
-    auto n = s.size();
+
+    auto const n = s.size();
+    auto const p = offset(id_path);
+
+    // check for "./" prefix
+    bool const has_dot =
+        [this, p]
+    {
+        if(nseg_ == 0)
+            return false;
+        if(segment_(1) <
+            offset(id_path) + 2)
+            return false;
+        auto const src = s_ + p;
+        if(src[0] != '.')
+            return false;
+        if(src[1] != '/')
+            return false;
+        return true;
+    }();
+
+    // Remove "./"
+    if(has_dot)
+    {
+        // do this first, for
+        // strong exception safety
+        ensure_space(
+            size() + n + 1 - 2,
+            nseg_,
+            nparam_);
+        std::memmove(
+            s_ + p,
+            s_ + p + 2,
+            size() + 1 -
+                (p + 2));
+        set_size(
+            id_path,
+            len(id_path) - 2);
+        s_[size()] = '\0';
+    }
+
     auto dest = resize_impl(
         id_scheme, n + 1);
     s.copy(dest, n);
     dest[n] = ':';
     scheme_ = id;
     check_invariants();
-    return;
 }
 
 url&
@@ -211,36 +250,25 @@ remove_scheme() noexcept
     if(n == 0)
         return *this;
 
+    auto const p = offset(id_path);
+
     // Check if we are changing
     // path-rootless to path-noscheme
-    bool const need_dot = [this]
+    bool const need_dot =
+        [this, p]
     {
-        if(len(id_user) >= 2)
-        {
-            // authority
+        if(has_authority())
             return false;
-        }
-        auto s = get(id_path);
-        if(s.empty())
-        {
-            // path-empty
+        if(nseg_ == 0)
             return false;
-        }
-        if(s.starts_with('/'))
-        {
-            // path-absolute
+        BOOST_ASSERT(len(id_path) > 0);
+        if(s_[p] == '/')
             return false;
-        }
-        auto const p =
-            url_view::encoded_segments();
-        BOOST_ASSERT(! p.empty());
-        auto it = p.begin();
-        if((*it).find_first_of(':') ==
+        string_view const s(
+            s_ + p, segment_(1) - p);
+        if(s.find_first_of(':') ==
             string_view::npos)
-        {
-            // path-noscheme
             return false;
-        }
         return true;
     }();
 
@@ -256,30 +284,25 @@ remove_scheme() noexcept
     // remove the scheme but add "./"
     // to the beginning of the path
     BOOST_ASSERT(n >= 2);
-    ensure_space(
-        size(),
-        nseg_ + 1,
-        nparam_);
-    // move chars
+    // move [id_scheme, id_path) left
     std::memmove(
-        s_, s_ + n,
-        offset(id_path) - n);
+        s_,
+        s_ + n,
+        p - n);
+    // move [id_path, id_end) left
     std::memmove(
-        s_ + offset(
-            id_path) - (n - 2),
-        s_ + offset(id_path),
-        offset(id_end) -
-            offset(id_path));
-    // adjust table
-    ++nseg_;
+        s_ + p - (n - 2),
+        s_ + p,
+        offset(id_end) - p);
+    // VFALCO adjust table
+    // adjust part offsets.
+    // (p is invalidated)
     adjust(id_user, id_path, 0-n);
-    adjust(
-        id_query, id_end, 0-(n - 2));
-    auto dest = s_ +
-        offset(id_path);
+    adjust(id_query, id_end, 0-(n - 2));
+    auto dest = s_ + offset(id_path);
     dest[0] = '.';
     dest[1] = '/';
-    dest[offset(id_end)] = '\0';
+    s_[size()] = '\0';
     scheme_ = urls::scheme::none;
     check_invariants();
     return *this;
@@ -860,23 +883,32 @@ set_encoded_authority(string_view s)
 {
     error_code ec;
     authority_bnf t;
-    if(! bnf::parse_string(
-            s, ec, t))
+    if(! bnf::parse_string(s, ec, t))
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
-    auto n = s.size();
+    auto n = s.size() + 2;
+    auto const need_slash =
+        ! is_path_absolute() &&
+        len(id_path) > 0;
+    if(need_slash)
+        ++n;
     auto dest = resize_impl(
-        id_user, id_path, n + 2);
+        id_user, id_path, n);
     dest[0] = '/';
     dest[1] = '/';
     std::memcpy(dest + 2,
         s.data(), s.size());
+    if(need_slash)
+    {
+        dest[n - 1] = '/';
+        // VFALCO adjust table
+    }
     if(t.has_userinfo)
     {
         auto const& t0 = t.userinfo;
         split(id_user,
             2 + t0.user.str.size());
-        n -= t0.user.str.size();
+        n -= 2 + t0.user.str.size();
         decoded_[id_user] =
             t0.user.decoded_size;
         if(t0.has_password)
@@ -885,7 +917,7 @@ set_encoded_authority(string_view s)
                 t0.password.str.size());
             decoded_[id_pass] =
                 t0.password.decoded_size;
-            n -= 1 + t0.password.str.size();
+            n -= 2 + t0.password.str.size();
         }
         else
         {
@@ -896,6 +928,7 @@ set_encoded_authority(string_view s)
     }
     else
     {
+        n -= 2;
         split(id_user, 2);
         split(id_pass, 0);
     }
@@ -934,6 +967,10 @@ set_encoded_authority(string_view s)
         decoded_[id_host] =
             t.host.name.decoded_size;
     }
+    if(need_slash)
+        split(id_port, n - 1);
+    else
+        BOOST_ASSERT(len(id_port) == n);
     if(t.port.has_port)
     {
         if(t.port.has_number)
@@ -1031,26 +1068,57 @@ remove_origin() noexcept
 //
 //------------------------------------------------
 
+/*
+    Return the i-th 0 based raw segment,
+    which includes the separators. The
+    first segment (i==0) includes all
+    characters of any malleable prefix.
+*/
 auto
 url::
 segment(
-    std::size_t i) const noexcept ->
+    std::size_t i,
+    bool prefixed) const noexcept ->
         raw_segment
 {
     if(nseg_ == 0)
         return { offset(id_path), 0 };
     if(i == nseg_)
         return { offset(id_query), 0 };
-    BOOST_ASSERT(
-        i <= nseg_);
-    auto n = len(id_path);
-    if(nseg_ < 2)
-        return { offset(id_path), n };
+    BOOST_ASSERT(i <= nseg_);
     auto it = s_ + offset(id_path);
+    if(! prefixed)
+        it += detail::path_prefix(
+            get(id_path));
     auto start = it;
     auto const last =
         s_ + offset(id_query);
-    BOOST_ASSERT(n > 0);
+    if(nseg_ < 2)
+        return {
+            static_cast<std::size_t>(
+                it - s_),
+            static_cast<std::size_t>(
+                last - it) };
+    BOOST_ASSERT(last > it);
+    if( i == 0 &&
+        ! prefixed &&
+        *it == '/')
+    {
+        // special case: first unprefixed 
+        // raw segment can be empty
+        return {
+            static_cast<std::size_t>(
+                it - s_),
+            0 };
+    }
+    else if(
+        i > 0 &&
+        ! prefixed &&
+        *it == '/')
+    {
+        --i;
+    }
+
     for(;;)
     {
         for(;;)
@@ -1073,63 +1141,89 @@ segment(
             it - start ) };
 }
 
+/*  Return offset of i-th segment
+*/
+pos_t
+url::
+segment_(
+    std::size_t i) const noexcept
+{
+    return segment(i).pos;
+}
+
+/*  Remove segments [first, last) and make
+    room for nseg new segments inserted
+    before first, with space for n chars
+    including prefix and/or separators.
+
+    Segments look like this, where ## is the
+    malleable prefix and '/' is a literal slash:
+
+    ##_0_ /_1_ /_2_ /_3_
+*/
 char*
 url::
 edit_segments(
-    std::size_t first,
-    std::size_t last,
+    std::size_t i0,
+    std::size_t i1,
     std::size_t n,
     std::size_t nseg)
 {
-    BOOST_ASSERT(
-        last >= first);
-    BOOST_ASSERT(
-        last - first <= nseg_);
-    auto const r0 =
-        segment(first);
-    auto const r1 =
-        segment(last);
-    auto const n0 =
-        r1.pos - r0.pos;
+    BOOST_ASSERT(i1 >= i0);
+    BOOST_ASSERT(i1 - i0 <= nseg_);
+
+    // end of path
+    auto const pend = offset(id_query);
+
+    // new number of segments
+    std::size_t const nseg1 =
+        nseg_ + nseg - (i1 - i0);
+
+    // [p0, p1) range to replace
+    auto p0 = segment(i0, true).pos;
+    auto p1 = segment(i1, true).pos;
+    if(i1 == 0)
+        p1 += detail::path_prefix(
+            get(id_path));
+    else if(
+        i1 + 1 < nseg_ &&
+        p1 > p0 &&
+        (i0 == 0 || nseg != 0))
+        ++p1;
+
+    // old size of [p0, p1)
+    auto const n0 = p1 - p0;
+
+    // adjust capacity
     ensure_space(
         size() + n - n0,
-        nseg_ + nseg -
-            (last - first),
+        nseg1,
         nparam_);
-    if(n <= n0)
-    {
-        // shrinking
-        std::memmove(
-            s_ + r0.pos + n,
-            s_ + r1.pos,
-            offset(id_query) -
-                r1.pos);
-        resize_impl(
-            id_path,
-            len(id_path) - (
-                n0 - n));
-    }
-    else
-    {
-        // growing
-        auto const pos =
-            offset(id_query);
-        resize_impl(
-            id_path,
-            len(id_path) + (
-                n - n0));
-        std::memmove(
-            s_ + r0.pos + n,
-            s_ + r1.pos,
-            pos - r1.pos);
-    }
-    nseg_ = nseg_ +
-        nseg - (last - first);
-    return s_ + r0.pos;
+
+    // start of output
+    auto dest = s_ + p0;
+
+    // move and size
+    std::memmove(
+        dest + n,
+        s_ + p1,
+        size() - p1);
+    set_size(
+        id_path,
+        len(id_path) -
+            (n0 - n));
+    nseg_ = nseg1;
+
+#ifndef NDEBUG
+    std::fill(
+        dest, dest + n, '_');
+#endif
+
+    return dest;
 }
 
 // insert or replace [i0, i1)
-// with [first, last)
+// with [it0, it1)
 void
 url::
 edit_segments(
@@ -1139,128 +1233,173 @@ edit_segments(
     detail::any_path_iter&& it1,
     int abs_hint)
 {
-    if(abs_hint == -1)
-    {
-        if(get(id_path).starts_with('/'))
-            abs_hint = 1;
-        else
-            abs_hint = 0;
-    }
+    bool abs;
+    if(has_authority())
+        abs = true;
+    else if(abs_hint == -1)
+        abs = is_path_absolute();
+    else if(abs_hint == 1)
+        abs = true;
+    else
+        abs = false;
 
-    // measure
+/*
+    Measure the number of characters and
+    the number of segments we are inserting.
+    This does not include leading or trailing
+    separators.
+*/
     error_code ec;
     std::size_t n = 0;
     std::size_t nseg = 0;
-    for(;;)
+    bool more = it0.measure(n, ec);
+    if(ec.failed())
+        detail::throw_invalid_argument(
+            BOOST_CURRENT_LOCATION);
+    if(more)
     {
-        bool more = it0.measure(n, ec);
-        if(ec.failed())
-            detail::throw_invalid_argument(
-                BOOST_CURRENT_LOCATION);
-        if(! more)
-            break;
-        ++nseg;
-    }
-    if(nseg == 0)
-    {
-        // erase
-        edit_segments(i0, i1, 0, 0);
-        return;
+        for(;;)
+        {
+            ++nseg;
+            more = it0.measure(n, ec);
+            if(ec.failed())
+                detail::throw_invalid_argument(
+                    BOOST_CURRENT_LOCATION);
+            if(! more)
+                break;
+            ++n;
+        }
     }
 
-    // meet grammar requirements
-    int style;
-    if( i0 > 0 ||
-        has_authority())
+/*  Calculate prefix:
+        0 = ""
+        1 = "/"
+        2 = "./"
+        3 = "/./"
+*/
+    int prefix;
+    if(i0 > 0)
     {
-        // path-abempty
-        style = 0;
+        if(nseg > 0)
+            prefix = 1;
+        else
+            prefix = 0;
     }
     else if(
-        abs_hint == 1 || (
-        abs_hint != 0 && (
-            len(id_path) == 0 ||
-            s_[offset(id_path)] == '/')))
+        it0.front == "." &&
+        nseg > 1)
     {
-        // path-absolute
-        if(string_view(
-            it0.first_segment).empty() &&
-                nseg > 1)
-        {
-            // prepend "/."
-            ++n;
-            ++nseg;
-            style = 1;
-        }
+        if( abs ||
+            has_authority())
+            prefix = 3;
         else
-        {
-            style = 0;
-        }
+            prefix = 2;
     }
-    else if(! has_scheme())
+    else if(has_authority())
     {
-        // path-noscheme
-        if( it0.first_segment.empty() ||
-            it0.first_segment.find_first_of(':') !=
-                string_view::npos)
-        {
-            // prepend "."
-            ++nseg;
-            style = 2;
-        }
+        if(nseg == 0)
+            prefix = abs ? 1 : 0;
+        else if(! it0.front.empty())
+            prefix = 1;
         else
-        {
-            style = 3;
-            if(i1 == nseg_)
-            {
-                BOOST_ASSERT(n > 0);
-                --n;
-            }
-        }
+            prefix = 3;
+    }
+    else if(
+        nseg > 1 &&
+        it0.front.empty())
+    {
+        prefix = 3;
+    }
+    else if(
+        ! abs &&
+        ! has_scheme() &&
+        (
+            it0.front.find_first_of(
+                ':') != string_view::npos ||
+            it0.front.empty()))
+    {
+        BOOST_ASSERT(nseg > 0);
+        prefix = 2;
+    }
+    else if(
+        abs &&
+        nseg > 0 &&
+        it0.front.empty())
+    {
+        BOOST_ASSERT(
+            ! has_authority());
+        prefix = 3;
     }
     else
     {
-        // path-rootless
-        // or path-empty
-        style = 3;
-        if(i1 == nseg_)
-        {
-            BOOST_ASSERT(n > 0);
-            --n;
-        }
+        if(abs)
+            prefix = 1;
+        else
+            prefix = 0;
+    }
+
+/*  Calculate suffix
+        0 = ""
+        1 = "/"
+*/
+    int suffix;
+    if( nseg > 0 &&
+        i1 + 1 < nseg_)
+    {
+        suffix = 1;
+    }
+    else
+    {
+        suffix = 0;
     }
 
     // copy
+    n += prefix + suffix;
     auto const size0 = size();
-    auto p = edit_segments(
-        i0, i1, n + nseg, nseg);
-    auto const last = p + n + nseg;
-    if(style == 1)
-    {
-        *p++ = '/';
-        *p++ = '.';
-        --nseg;
-    }
-    else if(style == 2)
-    {
-        *p++ = '.';
-        --nseg;
-    }
-    if(style != 3)
-        *p++ = '/';
+    auto dest = edit_segments(
+        i0, i1, n, nseg);
+    auto const last = dest + n;
 
-    // output segments with slashes
-    // only in between elements.
-    for(;;)
+/*  Write all characters in the destination:
+
+    The output proceeds as:
+
+        prefix [ segment [ '/' segment ] ] suffix
+*/
+    switch(prefix)
     {
-        it1.copy(p, last);
-        if(--nseg == 0)
-            break;
-        *p++ = '/';
+    case 3:
+        *dest++ = '/';
+        *dest++ = '.';
+        *dest++ = '/';
+        break;
+    case 2:
+        *dest++ = '.';
+        BOOST_FALLTHROUGH;
+    case 1:
+        *dest++ = '/';
+        break;
+    default:
+        break;
     }
-    if( style == 3 &&
-        i1 < size0)
-        *p++ = '/';
+/*
+    Output each segment, placing a slash
+    only in between new segments. Leading
+    or trailing separators are handled
+    outside the loop.
+*/
+    if(nseg > 0)
+    {
+        for(;;)
+        {
+            it1.copy(dest, last);
+            if(--nseg == 0)
+                break;
+            *dest++ = '/';
+        }
+    }
+    if(suffix == 1)
+        *dest++ = '/';
 }
 
 //------------------------------------------------

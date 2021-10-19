@@ -16,6 +16,7 @@
 #include <boost/url/rfc/paths_bnf.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/detail/except.hpp>
+#include <boost/url/detail/path.hpp>
 #include <ostream>
 
 namespace boost {
@@ -26,51 +27,48 @@ namespace urls {
 segments_encoded_view::
 iterator::
 iterator(
-    string_view s) noexcept
+    string_view s,
+    std::size_t nseg) noexcept
     : begin_(s.data())
     , pos_(s.data())
     , next_(s.data())
     , end_(s.data() + s.size())
 {
-    using bnf::parse;
-    using bnf_t =
-        path_rootless_bnf;
-    if(next_ == end_)
+    if(nseg == 0)
     {
         next_ = nullptr;
         return;
     }
-    error_code ec;
-    if(*next_ == '/')
-    {
-        // "/" segment
-        pct_encoded_str t;
-        bnf_t::increment(next_,
-            end_, ec, t);
-        s_ = t.str;
-        BOOST_ASSERT(! ec);
-    }
+    auto const n =
+        detail::path_prefix(s);
+    begin_ += n;
+    next_ += n;
+    pos_ += n;
+    auto const i = string_view(
+        begin_, s.size() - n
+            ).find_first_of('/');
+    if(i != string_view::npos)
+        next_ += i;
     else
-    {
-        // segment-nz
-        pct_encoded_str t;
-        bnf_t::begin(next_,
-            end_, ec, t);
-        s_ = t.str;
-        BOOST_ASSERT(! ec);
-    }
+        next_ = end_;
+    s_ = string_view(
+        pos_, next_ - pos_);
 }
 
 segments_encoded_view::
 iterator::
 iterator(
-    std::size_t n,
-    string_view s) noexcept
-    : i_(n)
+    string_view s,
+    std::size_t nseg,
+    int) noexcept
+    : i_(nseg)
     , begin_(s.data())
     , pos_(s.data() + s.size())
     , end_(s.data() + s.size())
 {
+    auto const n =
+        detail::path_prefix(s);
+    begin_ += n;
 }
 
 auto
@@ -110,8 +108,15 @@ operator--() noexcept ->
     using bnf_t =
         path_rootless_bnf;
     BOOST_ASSERT(i_ != 0);
-    BOOST_ASSERT(pos_ != begin_);
     --i_;
+    if(i_ == 0)
+    {
+        next_ = pos_;
+        pos_ = begin_;
+        s_ = string_view(
+            pos_, next_ - pos_);
+        return *this;
+    }
     error_code ec;
     while(--pos_ != begin_)
     {
@@ -149,6 +154,17 @@ operator--() noexcept ->
 }
 
 //------------------------------------------------
+
+segments_encoded_view::
+segments_encoded_view(
+    string_view s,
+    std::size_t nseg) noexcept
+    : s_(s)
+    , n_(nseg)
+{
+}
+
+//------------------------------------------------
 //
 // Iterators
 //
@@ -159,7 +175,7 @@ segments_encoded_view::
 begin() const noexcept ->
     iterator
 {
-    return iterator(s_);
+    return iterator(s_, n_);
 }
 
 auto
@@ -167,7 +183,7 @@ segments_encoded_view::
 end() const noexcept ->
     iterator
 {
-    return iterator(n_, s_);
+    return iterator(s_, n_, 0);
 }
 
 //------------------------------------------------
@@ -206,7 +222,8 @@ parse_path_abempty(
     if(! bnf::parse_string(s, ec, t))
         return ec;
     return segments_encoded_view(
-        t.str, t.count);
+        t.str, detail::path_segments(
+            t.str, t.count));
 }
 
 result<segments_encoded_view>
@@ -218,7 +235,8 @@ parse_path_absolute(
     if(! bnf::parse_string(s, ec, t))
         return ec;
     return segments_encoded_view(
-        t.str, t.count);
+        t.str, detail::path_segments(
+            t.str, t.count));
 }
 
 result<segments_encoded_view>
@@ -230,7 +248,8 @@ parse_path_noscheme(
     if(! bnf::parse_string(s, ec, t))
         return ec;
     return segments_encoded_view(
-        t.str, t.count);
+        t.str, detail::path_segments(
+            t.str, t.count));
 }
 
 result<segments_encoded_view>
@@ -242,7 +261,8 @@ parse_path_rootless(
     if(! bnf::parse_string(s, ec, t))
         return ec;
     return segments_encoded_view(
-        t.str, t.count);
+        t.str, detail::path_segments(
+            t.str, t.count));
 }
 
 } // urls

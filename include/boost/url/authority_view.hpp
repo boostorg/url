@@ -74,8 +74,6 @@ struct host_bnf;
 class BOOST_SYMBOL_VISIBLE
     authority_view
 {
-    using pos_t = std::size_t;
-
     enum
     {
         id_user = 0,

@@ -268,8 +268,8 @@ public:
             se.clear();
             BOOST_TEST(se.empty());
             BOOST_TEST(se.size() == 0);
-            BOOST_TEST(u.encoded_path() == "");
-            BOOST_TEST(u.encoded_url() == "x://y");
+            BOOST_TEST(u.encoded_path() == "/");
+            BOOST_TEST(u.encoded_url() == "x://y/");
         }
 
         // insert( const_iterator, string_view )
@@ -407,8 +407,8 @@ public:
 
             se.erase(se.begin());
             BOOST_TEST(se.empty());
-            BOOST_TEST(u.encoded_path().empty());
-            BOOST_TEST(u.encoded_url() == "x://y?q#f");
+            BOOST_TEST(u.encoded_path() == "/");
+            BOOST_TEST(u.encoded_url() == "x://y/?q#f");
         }
 
         // erase( const_iterator, const_iterator )
@@ -422,8 +422,8 @@ public:
             BOOST_TEST(u.encoded_url() == "x://y/path/to/the/file.txt?q#f");
 
             se.erase(se.begin(), se.end());
-            BOOST_TEST(u.encoded_path() == "");
-            BOOST_TEST(u.encoded_url() == "x://y?q#f");
+            BOOST_TEST(u.encoded_path() == "/");
+            BOOST_TEST(u.encoded_url() == "x://y/?q#f");
         }
 
         // replace(iterator, iterator, initializer-list)
@@ -499,8 +499,8 @@ public:
             BOOST_TEST(u.encoded_url() == "x://y/path?q#f");
             se.pop_back();
             BOOST_TEST(se.size() == 0);
-            BOOST_TEST(u.encoded_path().empty());
-            BOOST_TEST(u.encoded_url() == "x://y?q#f");
+            BOOST_TEST(u.encoded_path() == "/");
+            BOOST_TEST(u.encoded_url() == "x://y/?q#f");
         }
     }
 

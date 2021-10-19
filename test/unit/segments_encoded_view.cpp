@@ -228,7 +228,7 @@ public:
         path          = [ "/" ] segment *( "/" segment )
     */
         check("", {}, &parse_path);
-        check("/", {""}, &parse_path);
+        check("/", {}, &parse_path);
         check("/a", {"a"}, &parse_path);
         check("/:", {":"}, &parse_path);
         check("/:/", {":",""}, &parse_path);
@@ -253,7 +253,7 @@ public:
         path-abempty  = *( "/" segment )
     */
         check("", {}, &parse_path_abempty);
-        check("/", {""}, &parse_path_abempty);
+        check("/", {}, &parse_path_abempty);
         check("/a", {"a"}, &parse_path_abempty);
         check("/:", {":"}, &parse_path_abempty);
         check("/:/", {":",""}, &parse_path_abempty);
@@ -277,7 +277,7 @@ public:
     /*
         path-absolute = "/" [ segment-nz *( "/" segment ) ]
     */
-        check("/", {""}, &parse_path_absolute);
+        check("/", {}, &parse_path_absolute);
         check("/a", {"a"}, &parse_path_absolute);
         check("/a/", {"a",""}, &parse_path_absolute);
         check("/:", {":"}, &parse_path_absolute);

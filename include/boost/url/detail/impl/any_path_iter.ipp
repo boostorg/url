@@ -1,4 +1,4 @@
-//
+ //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -63,7 +63,7 @@ enc_path_iter(
         n_ = pos;
     else
         n_ = s.size();
-    first_segment = { p_, n_ };
+    front = { p_, n_ };
 }
 
 bool
@@ -145,7 +145,7 @@ plain_path_iter(
         n_ = pos;
     else
         n_ = s.size();
-    first_segment = { p_, n_ };
+    front = { p_, n_ };
 }
 
 bool
