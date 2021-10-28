@@ -1542,11 +1542,16 @@ public:
         check("../../"       , "http://a/");
         check("../../g"      , "http://a/g");
 
-        check("../../../g",    "http://a/g");
-        check("../../../../g", "http://a/g");
+        /*  Errata 4547
+            https://www.rfc-editor.org/errata/eid4547
+        */
+        //check("../../../g",    "http://a/g");
+        //check("../../../../g", "http://a/g");
+        check("../../../g",    "http://a/../g");
+        check("../../../../g", "http://a/../../g");
 
         check("/./g"         , "http://a/g");
-        check("/../g"        , "http://a/g");
+        check("/../g"        , "http://a/../g");
         check("g."           , "http://a/b/c/g.");
         check(".g"           , "http://a/b/c/.g");
         check("g.."          , "http://a/b/c/g..");
@@ -1608,7 +1613,7 @@ public:
         testQuery();
         testFragment();
         testSegments();
-        //testResolution();
+        testResolution();
         testOstream();
     }
 };

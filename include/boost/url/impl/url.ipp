@@ -1169,6 +1169,7 @@ edit_segments(
         len(id_path) -
             (n0 - n));
     nseg_ = nseg1;
+    s_[size()] = '\0';
 
 #ifndef NDEBUG
     std::fill(
@@ -1190,9 +1191,8 @@ edit_segments(
     int abs_hint)
 {
     bool abs;
-    if(has_authority())
-        abs = true;
-    else if(abs_hint == -1)
+    if( has_authority() ||
+        abs_hint == -1)
         abs = is_path_absolute();
     else if(abs_hint == 1)
         abs = true;
@@ -1563,6 +1563,7 @@ edit_params(
     detail::any_query_iter&& it0,
     detail::any_query_iter&& it1)
 {
+    check_invariants();
     // measure
     error_code ec;
     std::size_t n = 0;
@@ -1601,6 +1602,7 @@ edit_params(
         if(--nparam == 0)
             break;
     }
+    check_invariants();
 }
 
 //------------------------------------------------
@@ -1638,11 +1640,13 @@ url::
 set_encoded_query(
     string_view s)
 {
+    check_invariants();
     edit_params(
         0,
         nparam_,
         detail::enc_query_iter(s),
         detail::enc_query_iter(s));
+    check_invariants();
     return *this;
 }
 
@@ -1737,6 +1741,66 @@ resolve(
     url_view const& ref,
     error_code& ec)
 {
+    auto const remove_dot_segments =
+        [this]
+    {
+        auto segs = encoded_segments();
+        if(segs.empty())
+            return;
+        auto it = segs.begin();
+        int n = 0;
+        for(;;)
+        {
+            if(*it == ".")
+            {
+                if(it != segs.end() - 1)
+                    it = segs.erase(it);
+                else
+                    segs.replace(it, "");
+            }
+            else if(it == segs.begin())
+            {
+            #if 0
+                if(*it == "..")
+                    it = segs.erase(it);
+                else
+                    ++it;
+            #else
+            /*  Errata 4547
+                https://www.rfc-editor.org/errata/eid4547
+            */
+                if(*it != "..")
+                    ++n;
+                ++it;
+            #endif
+            }
+            else if(*it == "..")
+            {
+                if(n > 0)
+                {
+                    it = segs.erase(it - 1);
+                    if( it == segs.begin() ||
+                        it != segs.end() - 1)
+                        it = segs.erase(it);
+                    else
+                        segs.replace(it, "");
+                    --n;
+                }
+                else
+                {
+                    ++it;
+                }
+            }
+            else
+            {
+                ++n;
+                ++it;
+            }
+            if(it == segs.end())
+                break;
+        }
+    };
+
     if(! base.is_absolute_uri())
     {
         ec = error::not_a_base;
@@ -1757,6 +1821,7 @@ resolve(
             ref.nseg_,
             ref.nparam_);
         copy(ref);
+        remove_dot_segments();
         return true;
     }
     if(ref.has_authority())
@@ -1772,10 +1837,13 @@ resolve(
             ref.encoded_authority());
         set_encoded_path(
             ref.encoded_path());
-        set_encoded_query(
-            ref.encoded_query());
-        set_encoded_fragment(
-            ref.encoded_fragment());
+        remove_dot_segments();
+        if(ref.has_query())
+            set_encoded_query(
+                ref.encoded_query());
+        if(ref.has_fragment())
+            set_encoded_fragment(
+                ref.encoded_fragment());
         return true;
     }
     if(ref.encoded_path().empty())
@@ -1789,10 +1857,12 @@ resolve(
                 ref.nparam_);
             clear();
             set_scheme(base.scheme());
-            set_encoded_authority(
-                base.encoded_authority());
+            if(base.has_authority())
+                set_encoded_authority(
+                    base.encoded_authority());
             set_encoded_path(
                 base.encoded_path());
+            remove_dot_segments();
             set_encoded_query(
                 ref.encoded_query());
         }
@@ -1802,18 +1872,22 @@ resolve(
                 base.offset(id_query) +
                     ref.size(),
                 base.nseg_,
-                ref.nparam_);
+                base.nparam_);
             clear();
             set_scheme(base.scheme());
-            set_encoded_authority(
-                base.encoded_authority());
+            if(base.has_authority())
+                set_encoded_authority(
+                    base.encoded_authority());
             set_encoded_path(
                 base.encoded_path());
-            set_encoded_query(
-                base.encoded_query());
+            remove_dot_segments();
+            if(base.has_query())
+                set_encoded_query(
+                    base.encoded_query());
         }
-        set_encoded_fragment(
-            ref.encoded_fragment());
+        if(ref.has_fragment())
+            set_encoded_fragment(
+                ref.encoded_fragment());
         return true;
     }
     if(ref.encoded_path().starts_with('/'))
@@ -1825,14 +1899,18 @@ resolve(
             ref.nparam_);
         clear();
         set_scheme(base.scheme());
-        set_encoded_authority(
-            base.encoded_authority());
+        if(base.has_authority())
+            set_encoded_authority(
+                base.encoded_authority());
         set_encoded_path(
             ref.encoded_path());
-        set_encoded_query(
-            ref.encoded_query());
-        set_encoded_fragment(
-            ref.encoded_fragment());
+        remove_dot_segments();
+        if(ref.has_query())
+            set_encoded_query(
+                ref.encoded_query());
+        if(ref.has_fragment())
+            set_encoded_fragment(
+                ref.encoded_fragment());
         return true;
     }
     ensure_space(
@@ -1842,18 +1920,30 @@ resolve(
         ref.nparam_);
     clear();
     set_scheme(base.scheme());
-    set_encoded_authority(
-        base.encoded_authority());
-    set_encoded_path(
-        ref.encoded_path());
-    encoded_segments().insert(
-        encoded_segments().end(),
-        ref.encoded_segments().begin(),
-        ref.encoded_segments().end());
-    set_encoded_query(
-        ref.encoded_query());
-    set_encoded_fragment(
-        ref.encoded_fragment());
+    if(base.has_authority())
+        set_encoded_authority(
+            base.encoded_authority());
+    {
+        // 5.2.3. Merge Paths
+        auto es = encoded_segments();
+        if(base.nseg_ > 0)
+        {
+            set_encoded_path(
+                base.encoded_path());
+            if(nseg_ > 0)
+                es.pop_back();
+        }
+        es.insert(es.end(),
+            ref.encoded_segments().begin(),
+            ref.encoded_segments().end());
+    }
+    remove_dot_segments();
+    if(ref.has_query())
+        set_encoded_query(
+            ref.encoded_query());
+    if(ref.has_fragment())
+        set_encoded_fragment(
+            ref.encoded_fragment());
     return true;
 }
 
