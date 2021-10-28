@@ -154,6 +154,7 @@ public:
         remove("x:a", "a");
         remove("x:a/", "a/");
         remove("x://", "//");
+        remove("x:a:", "./a:");
         remove("x:a:/", "./a:/");
         remove("x://a.b/1/2", "//a.b/1/2");
         remove("x://a:b@c.d/1/?#", "//a:b@c.d/1/?#");
@@ -164,6 +165,7 @@ public:
         set("a/", "ws", "ws:a/", scheme::ws);
         set("//", "ws", "ws://", scheme::ws);
         set("a:/", "ws", "ws:/", scheme::ws);
+        set("./a:", "http", "http:a:", scheme::http);
         set("//a.b/1/2", "ws","ws://a.b/1/2", scheme::ws);
         set("//a:b@c.d/1/?#", "ws",
             "ws://a:b@c.d/1/?#", scheme::ws);
@@ -1327,6 +1329,23 @@ public:
 
     //--------------------------------------------
 
+    template<class F>
+    static
+    void
+    perform(
+        string_view s0,
+        string_view s1,
+        std::initializer_list<
+            string_view> init,
+        F const& f)
+    {
+        url u = parse_uri_reference(s0).value();
+        f(u);
+        equal(u.segments(), init);
+        equal(u.encoded_segments(), init);
+        BOOST_TEST(u.encoded_url() == s1);
+    }
+
     void
     testSegments()
     {
@@ -1366,6 +1385,29 @@ public:
             check(s, init, false);
         };
 
+        auto const assign = [](
+            string_view s0,
+            string_view s1,
+            std::initializer_list<
+                string_view> init)
+        {
+            url u0 = parse_uri_reference(s0).value();
+            {
+                url u(u0);
+                u.segments() = init;
+                equal(u.segments(), init);
+                equal(u.encoded_segments(), init);
+                BOOST_TEST(u.encoded_url() == s1);
+            }
+            {
+                url u(u0);
+                u.encoded_segments() = init;
+                equal(u.segments(), init);
+                equal(u.encoded_segments(), init);
+                BOOST_TEST(u.encoded_url() == s1);
+            }
+        };
+
         rel("", {});
         rel("./", { "" });
         rel("././", { ".", "" });
@@ -1390,326 +1432,63 @@ public:
         abs("/././/", { ".", "", "" });
         abs("/.//", { "", "" });
         abs("x:/.//", { "", "" });
-    }
 
-    void
-    testSegments2()
-    {
-        // "" -> "./"
-        {
-            url u;
-            BOOST_TEST(! u.is_path_absolute());
-            BOOST_TEST(u.segments().empty());
-            u.segments() = { "" };
-            equal(u.segments(), { "" });
-            BOOST_TEST(u.encoded_url() =="./");
-        }
+        assign( "", "./", { "" });
+        assign( "/", "/./", { "" });
+        assign( "//x", "//x/./", { "" });
+        assign( "//x/", "//x/./", { "" });
+        assign( "", "x", { "x" });
+        assign( "/", "/x", { "x" });
+        assign( "", "x/y/z", { "x", "y", "z" });
+        assign( "/", "/x/y/z", { "x", "y", "z" });
+        assign( "/", "/.", { "." });
+        assign( "/", "/././", { ".", "" });
+        assign( "/", "/././/", { ".", "", "" });
+        assign( "//x/", "//x/.", { "." });
+        assign( "//x/", "//x/././", { ".", "" });
+        assign( "//x/", "//x/././/", { ".", "", "" });
 
-        // "/" -> "/./"
-        {
-            url u = parse_relative_ref("/").value();
-            BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.segments().empty());
-            u.segments() = { "" };
-            equal(u.segments(), { "" });
-            BOOST_TEST(u.encoded_url() =="/./");
-        }
+        perform( "/", "/", {}, [](url& u) { u.segments().clear(); });
+        perform( "/", "/", {}, [](url& u) { u.encoded_segments().clear(); });
+        perform( "//x/", "//x/", {}, [](url& u) { u.segments().clear(); });
+        perform( "//x/", "//x/", {}, [](url& u) { u.encoded_segments().clear(); });
+        perform( "/x", "/x/y", { "x", "y" }, [](url& u) { u.segments().push_back("y"); });
+        perform( "/x", "/x/y", { "x", "y" }, [](url& u) { u.encoded_segments().push_back("y"); });
+        perform( "/x/", "/x//y", { "x", "", "y" }, [](url& u) { u.segments().push_back("y"); });
+        perform( "/x/", "/x//y", { "x", "", "y" }, [](url& u) { u.encoded_segments().push_back("y"); });
+        perform( "//x//", "/.//", { "", "" }, [](url& u) { u.remove_authority(); });
+        perform( "x:y:z", "./y:z", { "y:z" }, [](url& u) { u.remove_scheme(); });
+        perform( "x:y:z/", "./y:z/", { "y:z", "" }, [](url& u) { u.remove_scheme(); });
+        perform( "./y:z", "x:y:z", { "y:z" }, [](url& u) { u.set_scheme("x"); });
+        perform( "./y:z/", "x:y:z/", { "y:z", "" }, [](url& u) { u.set_scheme("x"); });
+        perform( "y", "//x/y", { "y" }, [](url& u) { u.set_encoded_authority("x"); });
+        perform( "//x/y", "/y", { "y" }, [](url& u) { u.remove_authority(); });
+        perform( "y", "//x:1/y", { "y" }, [](url& u) { u.set_encoded_authority("x:1"); });
+        perform( "/y", "//x:1/y", { "y" }, [](url& u) { u.set_encoded_authority("x:1"); });
+        perform( "x:", "x:y", { "y" }, [](url& u) { u.segments().push_back("y"); });
+        perform( "x:", "x:y", { "y" }, [](url& u) { u.encoded_segments().push_back("y"); });
+        perform( "/.//", "x:/.//", { "", "" }, [](url& u) { u.set_scheme("x"); });
 
-        // "//example.com" -> "//example.com/./"
-        {
-            url u = parse_relative_ref(
-                "//example.com").value();
-            BOOST_TEST(u.segments().empty());
-            u.segments() = { "" };
-            BOOST_TEST(u.encoded_url() ==
-                "//example.com/./");
-            equal(u.segments(), { "" });
-        }
-
-        // "//example.com/" -> "//example.com/./"
-        {
-            url u = parse_relative_ref(
-                "//example.com/").value();
-            BOOST_TEST(u.segments().empty());
-            u.segments() = { "" };
-            BOOST_TEST(u.encoded_url() ==
-                "//example.com/./");
-            equal(u.segments(), { "" });
-        }
-
-        // "/" -> "/"
-        {
-            url u = parse_relative_ref("/").value();
-            BOOST_TEST(u.segments().empty());
-            u.segments().clear();
-            BOOST_TEST(u.encoded_url() == "/");
-            equal(u.segments(), {});
-        }
-
-        // "//example.com/" -> "//example.com"
-        {
-            url u = parse_relative_ref(
-                "//example.com/").value();
-            BOOST_TEST(u.segments().empty());
-            u.segments().clear();
-            BOOST_TEST(u.encoded_url() ==
-                "//example.com/");
-            equal(u.segments(), {});
-        }
-
-        // "" -> "index.htm"
-        {
-            url u;
-            u.segments() = { "index.htm" };
-            BOOST_TEST(u.encoded_url() == "index.htm");
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), { "index.htm" });
-        }
-
-        // "/" -> "/index.htm"
-        {
-            url u;
+        perform( "//x", "//x/", {}, [](url& u) {
             BOOST_TEST(u.set_path_absolute(true));
-            u.segments().push_back("index.htm");
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "index.htm" });
-            BOOST_TEST(u.encoded_url() == "/index.htm");
-        }
-
-        // "/home/" -> "/home/index.htm"
-        {
-            url u = parse_relative_ref("/home/").value();
-            equal(u.segments(), { "home", "" });
-            u.segments().push_back("index.htm");
-            equal(u.segments(), { "home", "", "index.htm" });
-            BOOST_TEST(u.encoded_url() == "/home//index.htm");
-        }
-
-        // "" -> "path/to/file.txt"
-        {
-            url u;
-            u.segments() = { "path", "to", "file.txt" };
-            BOOST_TEST(u.encoded_url() == "path/to/file.txt");
-            equal(u.segments(), { "path", "to", "file.txt" });
-        }
-
-        // "//x" -> "//x/"
-        {
-            url u = parse_relative_ref("//x").value();
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), {});
-            BOOST_TEST(u.set_path_absolute(true));
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), {});
-            BOOST_TEST(u.encoded_url() == "//x/");
-        }
-
-        // "//x/" -> "//x"
-        {
-            url u = parse_relative_ref("//x/").value();
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), {});
+            });
+        
+        perform( "//x/", "//x", {}, [](url& u) {
             BOOST_TEST(u.set_path_absolute(false));
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), {});
-            BOOST_TEST(u.encoded_url() == "//x");
-        }
-
-        // "//x//" -> "/.//"
-        {
-            url u = parse_relative_ref("//x//").value();
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "", "" });
-            u.remove_authority();
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "", "" });
-            BOOST_TEST(u.encoded_url() == "/.//");
-        }
-
-        // "x:y:z" -> "./y:z"
-        {
-            url u = parse_uri("x:y:z").value();
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), { "y:z" });
-            u.remove_scheme();
-            BOOST_TEST(u.segments().size() == 1);
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), { "y:z" });
-            BOOST_TEST(u.encoded_url() == "./y:z");
-        }
-
-        // "x:y:z/" -> "./y:z/"
-        {
-            url u = parse_uri("x:y:z/").value();
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), { "y:z", "" });
-            u.remove_scheme();
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), { "y:z", "" });
-            BOOST_TEST(u.encoded_url() == "./y:z/");
-        }
-
-        // "./y:z" -> "x:y:z"
-        {
-            url u = parse_relative_ref("./y:z").value();
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), { "y:z" });
-            u.set_scheme("x");
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), { "y:z" });
-            BOOST_TEST(u.encoded_url() == "x:y:z");
-        }
-
-        // "./y:z/" -> "x:y:z/"
-        {
-            url u = parse_relative_ref("./y:z/").value();
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), { "y:z", "" });
-            u.set_scheme("x");
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), { "y:z", "" });
-            BOOST_TEST(u.encoded_url() == "x:y:z/");
-        }
-
-        // "y" -> "//x/y"
-        {
-            url u = parse_relative_ref("y").value();
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), { "y" });
-            u.set_encoded_authority("x");
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "y" });
-            BOOST_TEST(u.encoded_url() == "//x/y");
-        }
-
-        // "//x/y" -> "/y"
-        {
-            url u = parse_relative_ref("//x/y").value();
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "y" });
-            u.remove_authority();
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "y" });
-            BOOST_TEST(u.encoded_url() == "/y");
-        }
-
-        // "y" -> "//x:8080/y"
-        {
-            url u = parse_relative_ref("y").value();
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), { "y" });
-            u.set_encoded_authority("x:8080");
-            BOOST_TEST(u.encoded_url() == "//x:8080/y");
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "y" });
-        }
-
-        // "x:" -> "x:y"
-        {
-            url u = parse_uri("x:").value();
-            equal(u.segments(), {});
-            u.segments().push_back("y");
-            BOOST_TEST(u.encoded_url() == "x:y");
-            equal(u.segments(), { "y" });
-        }
-
-        // "x:" -> "x:/y"
-        {
-            url u = parse_uri("x:").value();
-            BOOST_TEST(! u.is_path_absolute());
-            equal(u.segments(), {});
-            BOOST_TEST(u.set_path_absolute(true));
-            u.segments().push_back("y");
-            BOOST_TEST(u.encoded_url() == "x:/y");
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "y" });
-        }
-
-        // "/" -> "/."
-        {
-            url u;
-            BOOST_TEST(u.set_path_absolute(true));
-            BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.encoded_url() == "/");
-            equal(u.segments(), {});
-            u.segments() = { "." };
-            equal(u.segments(), { "." });
-            BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.encoded_url() == "/.");
-        }
-
-        // "/" -> "/././"
-        {
-            url u;
-            BOOST_TEST(u.set_path_absolute(true));
-            BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.encoded_url() == "/");
-            equal(u.segments(), {});
-            u.segments() = { ".", "" };
-            equal(u.segments(), { ".", "" });
-            BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.encoded_url() == "/././");
-        }
-
-        // "/" -> "/././/"
-        {
-            url u;
-            BOOST_TEST(u.set_path_absolute(true));
-            BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.encoded_url() == "/");
-            equal(u.segments(), {});
-            u.segments() = { ".", "", "" };
-            equal(u.segments(), { ".", "", "" });
-            BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.encoded_url() == "/././/");
-        }
-
-        // "//x" -> "//x/."
-        {
-            url u = parse_relative_ref("//x").value();
-            equal(u.segments(), {});
-            u.segments() = { "." };
-            BOOST_TEST(u.encoded_url() == "//x/.");
-            equal(u.segments(), { "." });
-        }
-
-        // "//x" -> "//x/././"
-        {
-            url u = parse_relative_ref("//x").value();
-            u.segments() = { ".", "" };
-            equal(u.segments(), { ".", "" });
-            BOOST_TEST(u.encoded_url() == "//x/././");
-        }
-
-        // "//x" -> "//x/././/"
-        {
-            url u = parse_relative_ref("//x").value();
-            u.segments() = { ".", "", "" };
-            equal(u.segments(), { ".", "", "" });
-            BOOST_TEST(u.encoded_url() == "//x/././/");
-        }
-
-        // "/.//" -> "x:/.//"
-        {
-            url u = parse_relative_ref("/.//").value();
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "", "" });
-            u.set_scheme("x");
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "", "" });
-            BOOST_TEST(u.encoded_url() == "x:/.//");
-        }
-
-        // "//x/y" -> "//x/y"
-        {
-            url u = parse_relative_ref("//x/y").value();
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "y" } );
+            });
+        
+        perform( "//x/y", "//x/y", { "y" }, [](url& u) {
             BOOST_TEST(! u.set_path_absolute(false));
-            BOOST_TEST(u.is_path_absolute());
-            equal(u.segments(), { "y" } );
-            BOOST_TEST(u.encoded_url() == "//x/y");
-        }
+            });
+
+        perform( "//x/y", "//x/y", { "y" }, [](url& u) {
+            BOOST_TEST(u.set_path_absolute(true));
+            });
+
+        perform( "x:", "x:/y", { "y" }, [](url& u) {
+            BOOST_TEST(u.set_path_absolute(true));
+            u.encoded_segments().push_back("y");
+            });
     }
 
     //--------------------------------------------
@@ -1825,7 +1604,6 @@ public:
         testQuery();
         testFragment();
         testSegments();
-        testSegments2();
         //testResolution();
         testOstream();
     }
