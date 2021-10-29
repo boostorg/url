@@ -1469,6 +1469,10 @@ public:
         perform( "x:", "x:y", { "y" }, [](url& u) { u.encoded_segments().push_back("y"); });
         perform( "/.//", "x:/.//", { "", "" }, [](url& u) { u.set_scheme("x"); });
 
+        perform( "//x/y/z", "//x/z", { "z" }, [](url& u) {
+            u.segments().erase(u.segments().begin());
+            });
+
         perform( "//x", "//x/", {}, [](url& u) {
             BOOST_TEST(u.set_path_absolute(true));
             });

@@ -202,7 +202,7 @@ set_scheme_impl(
     {
         if(nseg_ == 0)
             return false;
-        if(segment_(1) <
+        if(segment(1) <
             offset(id_path) + 2)
             return false;
         auto const src = s_ + p;
@@ -265,7 +265,7 @@ remove_scheme() noexcept
         if(s_[p] == '/')
             return false;
         string_view const s(
-            s_ + p, segment_(1) - p);
+            s_ + p, segment(1) - p);
         if(s.find_first_of(':') ==
             string_view::npos)
             return false;
@@ -1068,87 +1068,35 @@ remove_origin() noexcept
 //
 //------------------------------------------------
 
-/*
-    Return the i-th 0 based raw segment,
-    which includes the separators. The
-    first segment (i==0) includes all
-    characters of any malleable prefix.
-*/
-auto
-url::
-segment(
-    std::size_t i,
-    bool prefixed) const noexcept ->
-        raw_segment
-{
-    if(nseg_ == 0)
-        return { offset(id_path), 0 };
-    if(i == nseg_)
-        return { offset(id_query), 0 };
-    BOOST_ASSERT(i <= nseg_);
-    auto it = s_ + offset(id_path);
-    if(! prefixed)
-        it += detail::path_prefix(
-            get(id_path));
-    auto start = it;
-    auto const last =
-        s_ + offset(id_query);
-    if(nseg_ < 2)
-        return {
-            static_cast<std::size_t>(
-                it - s_),
-            static_cast<std::size_t>(
-                last - it) };
-    BOOST_ASSERT(last > it);
-    if( i == 0 &&
-        ! prefixed &&
-        *it == '/')
-    {
-        // special case: first unprefixed 
-        // raw segment can be empty
-        return {
-            static_cast<std::size_t>(
-                it - s_),
-            0 };
-    }
-    else if(
-        i > 0 &&
-        ! prefixed &&
-        *it == '/')
-    {
-        --i;
-    }
-
-    for(;;)
-    {
-        for(;;)
-        {
-            ++it;
-            if(it == last)
-                break;
-            if(*it == '/')
-                break;
-        }
-        if(i == 0)
-            break;
-        start = it;
-        --i;
-    }
-    return {
-        static_cast<std::size_t>(
-            start - s_),
-        static_cast<std::size_t>(
-            it - start ) };
-}
-
 /*  Return offset of i-th segment
 */
 pos_t
 url::
-segment_(
+segment(
     std::size_t i) const noexcept
 {
-    return segment(i).pos;
+    if(i == 0)
+        return offset(id_path);
+    if(i == nseg_)
+        return offset(id_query);
+    BOOST_ASSERT(i < nseg_);
+    auto it = s_ + offset(id_path) +
+        detail::path_prefix(
+            get(id_path));
+    BOOST_ASSERT(it < s_ +
+        offset(id_query));
+    for(;;)
+    {
+        while(*it != '/')
+            ++it;
+        BOOST_ASSERT(it < s_ +
+            offset(id_query));
+        --i;
+        if(i == 0)
+            break;
+        ++it;
+    }
+    return it - s_;
 }
 
 /*  Remove segments [first, last) and make
@@ -1180,16 +1128,24 @@ edit_segments(
         nseg_ + nseg - (i1 - i0);
 
     // [p0, p1) range to replace
-    auto p0 = segment(i0, true).pos;
-    auto p1 = segment(i1, true).pos;
+    auto p0 = segment(i0);
+    auto p1 = segment(i1);
     if(i1 == 0)
+    {
         p1 += detail::path_prefix(
             get(id_path));
+    }
     else if(
-        i1 + 1 < nseg_ &&
-        p1 > p0 &&
-        (i0 == 0 || nseg != 0))
+        i0 == 0 &&
+        nseg == 0 &&
+        i1 < nseg_)
+    {
+        // Remove the slash from segment i1
+        // if it is becoming the new first
+        // segment.
+        BOOST_ASSERT(s_[p1] == '/');
         ++p1;
+    }
 
     // old size of [p0, p1)
     auto const n0 = p1 - p0;
@@ -1343,7 +1299,10 @@ edit_segments(
         1 = "/"
 */
     int suffix;
+    //if( nseg > 0 &&
+        //i1 + 1 < nseg_)
     if( nseg > 0 &&
+        i0 == 0 &&
         i1 + 1 < nseg_)
     {
         suffix = 1;

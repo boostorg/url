@@ -13,6 +13,7 @@
 #include <boost/url/segments_encoded.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/detail/copied_strings.hpp>
+#include <boost/url/detail/path.hpp>
 
 namespace boost {
 namespace urls {
@@ -23,13 +24,16 @@ iterator::
 operator*() const noexcept
 {
     BOOST_ASSERT(i_ < u_->nseg_);
-    auto r = u_->segment(i_);
-    string_view s;
+    auto p0 = u_->segment(i_);
+    auto const p1 =
+        u_->segment(i_ + 1);
     if(i_ > 0)
-        s = { u_->cs_ + r.pos + 1,
-                r.len - 1 };
+        ++p0;
     else
-        s = { u_->cs_ + r.pos, r.len };
+        p0 += detail::path_prefix(
+            u_->get(id_path));
+    string_view s(
+        u_->cs_ + p0, p1 - p0);
     return s;
 }
 
@@ -46,11 +50,17 @@ operator[](
     reference
 {
     BOOST_ASSERT(i < u_->nseg_);
-    auto r = u_->segment(i);
-    if(u_->cs_[r.pos] == '/')
-        return { u_->cs_ + r.pos + 1,
-            r.len - 1 };
-    return { u_->cs_ + r.pos, r.len };
+    auto p0 = u_->segment(i);
+    auto const p1 =
+        u_->segment(i + 1);
+    if(i > 0)
+        ++p0;
+    else
+        p0 += detail::path_prefix(
+            u_->get(id_path));
+    string_view s(
+        u_->cs_ + p0, p1 - p0);
+    return s;
 }
 
 //------------------------------------------------

@@ -871,20 +871,8 @@ public:
     //--------------------------------------------
 
 private:
-    struct raw_segment
-    {
-        std::size_t pos;
-        std::size_t len;
-    };
-
-    // deprecated
-    raw_segment
-    segment(
-        std::size_t i,
-        bool prefixed = false) const noexcept;
-
     pos_t
-    segment_(
+    segment(
         std::size_t i) const noexcept;
 
     char*
