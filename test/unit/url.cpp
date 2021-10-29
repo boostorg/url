@@ -1512,7 +1512,7 @@ public:
             url u = parse_uri(
                 "z://y:x@p.q:69/x/f?q#f" ).value();
             error_code ec;
-            u.resolve(ub, ur, ec);
+            resolve(ub, ur, u, ec);
             if(! BOOST_TEST(! ec.failed()))
                 return;
             BOOST_TEST(u.encoded_url() == m);
@@ -1551,7 +1551,12 @@ public:
         check("../../../../g", "http://a/../../g");
 
         check("/./g"         , "http://a/g");
+
+        // VFALCO RFC says this:
+        //check("/../g"        , "http://a/g");
+        // but this seems more logical
         check("/../g"        , "http://a/../g");
+
         check("g."           , "http://a/b/c/g.");
         check(".g"           , "http://a/b/c/.g");
         check("g.."          , "http://a/b/c/g..");

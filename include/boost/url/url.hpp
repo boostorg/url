@@ -158,6 +158,25 @@ public:
         return cap_;
     }
 
+    /** Adjust the capacity without changing the size
+
+        This function adjusts the capacity
+        of the container in bytes, without
+        affecting the current contents.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @throw bad_alloc Allocation failure
+
+        @par bytes The number of bytes to reserve.
+    */
+    BOOST_URL_DECL
+    void
+    reserve_bytes(
+        std::size_t bytes);
+
     /** Clear the contents.
     
         @par Exception Safety
@@ -1185,19 +1204,6 @@ public:
 
     //--------------------------------------------
     //
-    // Resolution
-    //
-    //--------------------------------------------
-
-    BOOST_URL_DECL
-    bool
-    resolve(
-        url_view const& base,
-        url_view const& ref,
-        error_code& ec);
-
-    //--------------------------------------------
-    //
     // Normalization
     //
     //--------------------------------------------
@@ -1207,6 +1213,21 @@ public:
     BOOST_URL_DECL
     url&
     normalize();
+
+    //--------------------------------------------
+    //
+    // Resolution
+    //
+    //--------------------------------------------
+
+    friend
+    inline
+    void
+    resolve(
+        url_view const& base,
+        url_view const& ref,
+        url& dest,
+        error_code& ec);
 
 private:
     //--------------------------------------------
@@ -1236,9 +1257,67 @@ private:
         int first,
         int last,
         std::size_t new_size);
+
+    BOOST_URL_DECL
+    bool
+    resolve(
+        url_view const& base,
+        url_view const& ref,
+        error_code& ec);
 };
 
 //----------------------------------------------------------
+
+/** Resolve a URL reference against a base URL
+
+    This function attempts to resolve a URL
+    reference `ref` against the base URL `base`
+    which must satisfy the <em>absolute-URI</em>
+    grammar.
+    This process is defined in detail in
+    rfc3986 (see below).
+    The result of the resolution is placed
+    into `dest`.
+    If an error occurs, the contents of
+    `dest` is unspecified.
+
+    @par BNF
+    @code
+    absolute-URI  = scheme ":" hier-part [ "?" query ]
+    @endcode
+
+    @par Exception Safety
+    Basic guarantee.
+    Calls to allocate may throw.
+
+    @param base The base URL to resolve against.
+
+    @param ref The URL reference to resolve.
+
+    @param dest The container where the result
+    is written, upon success.
+
+    @param Set to the error if 
+    @par Specification
+    <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-5"
+        >5. Reference Resolution (rfc3986)</a>
+
+    @see
+        @ref url,
+        @ref url_view.
+*/
+inline
+void
+resolve(
+    url_view const& base,
+    url_view const& ref,
+    url& dest,
+    error_code& ec)
+{
+    BOOST_ASSERT(&dest != &base);
+    BOOST_ASSERT(&dest != &ref);
+    dest.resolve(base, ref, ec);
+}
 
 /** Format the encoded url to the output stream
 */

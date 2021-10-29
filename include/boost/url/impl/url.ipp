@@ -158,6 +158,27 @@ operator=(url_view const& u)
 
 void
 url::
+reserve_bytes(
+    std::size_t bytes)
+{
+    if(bytes <= capacity_in_bytes())
+        return;
+    std::size_t n = 0;
+    if(nseg_ > 1)
+        n += sizeof(pos_t) *
+            (nseg_ - 1);
+    if(nparam_ > 0)
+        n += 2 * sizeof(pos_t) *
+            nparam_;
+    BOOST_ASSERT(n <= bytes);
+    bytes -= n;
+    if(bytes > 0)
+        ensure_space(bytes,
+            nseg_, nparam_);
+}
+
+void
+url::
 clear() noexcept
 {
     if(s_)
@@ -2132,12 +2153,12 @@ ensure_space(
             "nchar > max_size",
             BOOST_CURRENT_LOCATION);
     std::size_t new_cap = nchar + 1;
-    if(nseg > nparam)
+    if(nseg_ > 1)
+        new_cap += sizeof(pos_t) *
+            (nseg - 1);
+    if(nparam > 0)
         new_cap += 2 * sizeof(pos_t) *
-            (nseg + 1);
-    else
-        new_cap += 2 * sizeof(pos_t) *
-            (nparam + 1);
+            nparam;
     if(new_cap <= cap_)
         return;
     char* s;
