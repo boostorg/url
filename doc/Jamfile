@@ -128,10 +128,10 @@ boostbook url
         <xsl:param>chapter.autolabel=1
         <xsl:param>chunk.section.depth=8                # Depth to which sections should be chunked
         <xsl:param>chunk.first.sections=1               # Chunk the first top-level section?
-        <xsl:param>toc.section.depth=8                  # How deep should recursive sections appear in the TOC?
         <xsl:param>toc.max.depth=8                      # How many levels should be created for each TOC?
-        <xsl:param>generate.section.toc.level=8         # Control depth of TOC generation in sections
-        <xsl:param>generate.toc="chapter toc,title section nop reference nop"
+        <xsl:param>toc.section.depth=8                  # How deep should recursive sections appear in the TOC?
+        #<xsl:param>generate.toc=""
+        <xsl:param>generate.toc="chapter toc,title section nop reference nop part toc"
         <include>../../../tools/boostbook/dtd
     :
         <dependency>stylesheets

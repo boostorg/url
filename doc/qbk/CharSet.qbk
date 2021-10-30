@@ -7,7 +7,7 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-[section:CharSet CharSet]
+[section:charset CharSet]
 
 A ['CharSet] is a unary predicate which accepts as its single
 argument a value of type `char`. The return value of the predicate

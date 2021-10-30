@@ -25,7 +25,7 @@ literature.
 
 [/-----------------------------------------------------------------------------]
 
-[section BNF Notation]
+[section:bnf_notation BNF Notation]
 
 This documentation uses the Augmented Backus-Naur Form (ABNF)
 notation of
@@ -40,7 +40,7 @@ compose parsing algorithms using the combinators provided by the library.
 
 [/-----------------------------------------------------------------------------]
 
-[section `result` Return Type]
+[section:result_return_type `result` Return Type]
 
 In many places, functions in the library have a return type which uses the
 __result__ alias template. Below is a synopsis of the type. For complete
@@ -77,12 +77,12 @@ information please consult the full `result` documentation in Boost.System:
 
 [/-----------------------------------------------------------------------------]
 
-[section Percent-Encoding]
+[section:percent_encoding Percent-Encoding]
 [endsect]
 
 [/-----------------------------------------------------------------------------]
 
-[section Source Listings]
+[section:source_listings Source Listings]
 
 [note
     All code in this documentation is written as if the

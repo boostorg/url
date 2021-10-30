@@ -33,7 +33,7 @@ is always preceded by a double slash ("//").
 
     IP-literal      = "[" ( IPv6address / IPvFuture  ) "]"
 
-    reg-name        = *( unreserved / pct-encoded / sub-delims )
+    reg-name        = *( unreserved / pct-encoded / "-" / ".")
     ```
     ]
 ]]

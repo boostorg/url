@@ -7,7 +7,7 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-[section Quick Look]
+[section:quick_look Quick Look]
 
 This section is intended to give the reader a brief overview of the features
 and interface style of the library.

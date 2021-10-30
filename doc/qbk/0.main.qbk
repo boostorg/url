@@ -82,13 +82,11 @@
 
 [include CharSet.qbk]
 
-[section:quickref Reference]
+[section:ref Reference]
 [xinclude quickref.xml]
-[endsect]
-[block'''<reference id="urls_hidden"><title>This Page Intentionally Left Blank 1/2</title>''']
-[section:ref This Page Intentionally Left Blank 2/2]
+[block'''<part label="Two: Reference">''']
 [include reference.qbk]
+[block'''</part>''']
 [endsect]
-[block'''</reference>''']
 
 [xinclude index.xml]
