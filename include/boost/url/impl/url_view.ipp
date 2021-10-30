@@ -50,6 +50,7 @@ url_view(url_view const&) noexcept = default;
 
 url_view::
 url_view(
+    int,
     char const* cs) noexcept
     : cs_(cs)
 {
@@ -77,6 +78,16 @@ url_view() noexcept = default;
 url_view&
 url_view::
 operator=(url_view const&) noexcept = default;
+
+url_view::
+url_view(string_view s)
+{
+    auto r = parse_uri_reference(s);
+    if(r.has_error())
+        detail::throw_invalid_argument(
+            BOOST_CURRENT_LOCATION);
+    *this = r.value();
+}
 
 //------------------------------------------------
 //
@@ -642,7 +653,7 @@ parse_absolute_uri(
     if(! bnf::parse_string(s, ec, t))
         return ec;
 
-    url_view u(s.data());
+    url_view u(0, s.data());
 
     // scheme
     u.apply(t.scheme_part);
@@ -674,7 +685,7 @@ parse_uri(
     if(! bnf::parse_string(s, ec, t))
         return ec;
 
-    url_view u(s.data());
+    url_view u(0, s.data());
 
     // scheme
     u.apply(t.scheme_part);
@@ -710,7 +721,7 @@ parse_relative_ref(
             s, ec, t))
         return ec;
 
-    url_view u(s.data());
+    url_view u(0, s.data());
 
     // authority
     if(t.relative_part.has_authority)
@@ -742,7 +753,7 @@ parse_uri_reference(
     if(! bnf::parse_string(s, ec, t))
         return ec;
 
-    url_view u(s.data());
+    url_view u(0, s.data());
 
     // scheme
     u.apply(t.scheme_part);

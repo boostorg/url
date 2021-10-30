@@ -33,6 +33,11 @@ public:
             BOOST_TEST(u.empty());
             BOOST_TEST(u.size() == 0);
         }
+
+        // url_view(string_view)
+        {
+            url_view u("http://example.com/path/to/file.txt?#");
+        }
     }
 
     void

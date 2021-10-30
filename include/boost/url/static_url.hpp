@@ -33,6 +33,7 @@ protected:
 
     BOOST_URL_DECL static_url_base(
         char* buf, std::size_t cap) noexcept;
+    BOOST_URL_DECL void construct(string_view s);
     BOOST_URL_DECL void copy(url const& u);
     BOOST_URL_DECL void copy(url_view const& u);
     BOOST_URL_DECL url_view convert() const noexcept;
@@ -180,6 +181,14 @@ public:
     {
         copy(u);
         return *this;
+    }
+
+    /** Construct from a string
+    */
+    static_url(string_view s)
+        : static_url()
+    {
+        construct(s);
     }
 };
 

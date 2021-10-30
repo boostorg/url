@@ -117,8 +117,7 @@ protected:
         std::size_t n) noexcept;
 
     BOOST_URL_DECL
-    explicit
-    url_view(char const* cs) noexcept;
+    url_view(int, char const* cs) noexcept;
 
     BOOST_URL_DECL
     url_view(
@@ -254,6 +253,11 @@ public:
     BOOST_URL_DECL
     url_view&
     operator=(url_view const&) noexcept;
+
+    /** Construct from a string
+    */
+    BOOST_URL_DECL
+    url_view(string_view s);
 
     //--------------------------------------------
     //

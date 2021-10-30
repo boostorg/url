@@ -42,6 +42,17 @@ copy(url const& u)
 
 void
 static_url_base::
+construct(string_view s)
+{
+    auto r = parse_uri_reference(s);
+    if(r.has_error())
+        detail::throw_invalid_argument(
+            BOOST_CURRENT_LOCATION);
+    this->url::operator=(r.value());
+}
+
+void
+static_url_base::
 copy(url_view const& u)
 {
     this->url::copy(u);

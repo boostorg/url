@@ -140,6 +140,11 @@ public:
     url&
     operator=(url_view const& u);
 
+    /** Construct from a string
+    */
+    BOOST_URL_DECL
+    url(string_view s);
+
     //--------------------------------------------
 
     /** Return the encoded URL as a null-terminated string

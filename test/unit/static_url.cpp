@@ -129,6 +129,11 @@ public:
             url_t u;
             f1(u);
         }
+
+        // static_url(string_view)
+        {
+            url_t u("http://example.com/path/to/file.txt?#");
+        }
     }
 
     void

@@ -83,6 +83,11 @@ public:
             BOOST_TEST(u.empty());
             BOOST_TEST(u2.encoded_url() == "x://y/z?q#f");
         }
+
+        // url(string_view)
+        {
+            url u("http://example.com/path/to/file.txt?#");
+        }
     }
 
     //--------------------------------------------

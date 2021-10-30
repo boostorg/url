@@ -154,6 +154,16 @@ operator=(url_view const& u)
     return *this;
 }
 
+url::
+url(string_view s)
+{
+    auto r = parse_uri_reference(s);
+    if(r.has_error())
+        detail::throw_invalid_argument(
+            BOOST_CURRENT_LOCATION);
+    *this = r.value();
+}
+
 //------------------------------------------------
 
 void
