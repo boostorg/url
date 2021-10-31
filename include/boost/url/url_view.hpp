@@ -1571,12 +1571,11 @@ public:
         query-params    = [ query-param ] *( "&" [ query-param ] )
 
         query-param     = key [ "=" value ]
+        @endcode
 
         @param alloc The allocator the container
         will use when returning string with
         percent-decoding applied.
-
-        @endcode
     */
     template<
         class Allocator =

@@ -58,20 +58,40 @@ test_char_set(
     for_each_char(
     [&cs](char c)
     {
-        if(cs(c))
+        if(cs(0) || ! cs(c))
         {
-            BOOST_TEST(bnf::find_if(
-                &c, &c+1, cs) == &c);
-            BOOST_TEST(bnf::find_if_not(
-                &c, &c+1, cs) == &c+1);
+            if(cs(c))
+            {
+                BOOST_TEST(bnf::find_if(
+                    &c, &c+1, cs) == &c);
+                BOOST_TEST(bnf::find_if_not(
+                    &c, &c+1, cs) == &c+1);
+            }
+            else
+            {
+                BOOST_TEST(bnf::find_if(
+                    &c, &c+1, cs) == &c+1);
+                BOOST_TEST(bnf::find_if_not(
+                    &c, &c+1, cs) == &c);
+            }
+            return;
         }
-        else
-        {
-            BOOST_TEST(bnf::find_if(
-                &c, &c+1, cs) == &c+1);
-            BOOST_TEST(bnf::find_if_not(
-                &c, &c+1, cs) == &c);
-        }
+
+        char buf[40];
+        std::memset(
+            buf, 0, sizeof(buf));
+        buf[19] = c;
+        buf[22] = c;
+        BOOST_TEST(bnf::find_if(
+            buf, buf + sizeof(buf), cs) ==
+                buf + 19);
+        std::memset(
+            buf, c, sizeof(buf));
+        buf[19] = 0;
+        buf[22] = 0;
+        BOOST_TEST(bnf::find_if_not(
+            buf, buf + sizeof(buf), cs) ==
+                buf + 19);
     });
 }
 

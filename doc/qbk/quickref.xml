@@ -123,22 +123,18 @@
       <entry valign="top">
         <bridgehead renderas="sect3">Classes</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__bnf__all_chars">any_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__alnum_chars">alnum_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__alpha_chars">alpha_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__digit_chars">digit_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__hexdig_chars">hexdig_chars</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__lut_chars">lut_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__pred_chars">pred_chars</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__range">range</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__repeat">repeat</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__token">token</link></member>
         </simplelist>
-        <bridgehead renderas="sect3">Type Traits</bridgehead>
+        <bridgehead renderas="sect3">Constants</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__bnf__is_charset">is_charset</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__is_element">is_element</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__is_range">is_range</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__all_chars">all_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__alnum_chars">alnum_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__alpha_chars">alpha_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__digit_chars">digit_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__hexdig_chars">hexdig_chars</link></member>
         </simplelist>
       </entry>
       <entry valign="top">
@@ -150,6 +146,12 @@
           <member><link linkend="url.ref.boost__urls__bnf__hexdig_value">hexdig_value</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__parse">parse</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__parse_string">parse_string</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">Type Traits</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__bnf__is_charset">is_charset</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__is_element">is_element</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__is_range">is_range</link></member>
         </simplelist>
       </entry>
       <entry valign="top">

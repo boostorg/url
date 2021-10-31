@@ -77,7 +77,7 @@ constexpr
 bnf::lut_chars
 pchars
 #ifndef BOOST_URL_DOCS
-= unreserved_chars + subdelim_chars + ':' + '@'
+= unreserved_chars + subdelim_chars + ':' + '@';
 #endif
 ;
 

@@ -32,7 +32,6 @@ struct dec_octet
         error_code& ec,
         dec_octet const& t)
     {
-        bnf::digit_chars dc;
         if(it == end)
         {
             // expected DIGIT
@@ -40,7 +39,7 @@ struct dec_octet
                 error::incomplete);
             return false;
         }
-        if(! dc(*it))
+        if(! bnf::digit_chars(*it))
         {
             // not a digit
             ec = BOOST_URL_ERR(
@@ -56,7 +55,7 @@ struct dec_octet
             ec = {};
             return true;
         }
-        if(! dc(*it))
+        if(! bnf::digit_chars(*it))
         {
             t.v = static_cast<
                 std::uint8_t>(v);
@@ -79,7 +78,7 @@ struct dec_octet
             ec = {};
             return true;
         }
-        if(! dc(*it))
+        if(! bnf::digit_chars(*it))
         {
             t.v = static_cast<
                 std::uint8_t>(v);

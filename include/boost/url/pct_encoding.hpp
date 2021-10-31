@@ -150,9 +150,7 @@ validate_pct_encoding(
         @ref pct_decode_unchecked.
         @ref validate_pct_encoding.
 */
-template<
-    class CharSet =
-        bnf::all_chars>
+template<class CharSet>
 std::size_t
 pct_decode(
     char* dest,
@@ -160,7 +158,7 @@ pct_decode(
     string_view s,
     error_code& ec,
     pct_decode_opts const& opt = {},
-    CharSet const& cs = {}) noexcept;
+    CharSet const& cs = bnf::all_chars) noexcept;
 
 /** Return a string with percent-decoding applied.
 
@@ -209,7 +207,7 @@ pct_decode(
         @ref validate_pct_encoding.
 */
 template<
-    class CharSet = bnf::all_chars,
+    class CharSet,
     class Allocator = std::allocator<char> >
 std::basic_string<char,
     std::char_traits<char>,
@@ -217,7 +215,7 @@ std::basic_string<char,
 pct_decode(
     string_view s,
     pct_decode_opts const& opt = {},
-    CharSet const& cs = {},
+    CharSet const& cs = bnf::all_chars,
     Allocator const& a = {});
 
 /** Return a string with percent-decoding applied.
@@ -267,13 +265,13 @@ pct_decode(
         @ref validate_pct_encoding.
 */
 template<
-    class CharSet = bnf::all_chars,
+    class CharSet,
     class Allocator = std::allocator<char> >
 string_value
 pct_decode_to_value(
     string_view s,
     pct_decode_opts const& opt = {},
-    CharSet const& cs = {},
+    CharSet const& cs = bnf::all_chars,
     Allocator const& a = {});
 
 /** Return the number of bytes needed to hold the string with percent-decoding applied.
@@ -465,7 +463,7 @@ struct all_chars;
 std::size_t
 pct_encode_bytes(
     string_view,
-    bnf::all_chars const&,
+    decltype(bnf::all_chars) const&,
     ...) = delete;
 #endif
 

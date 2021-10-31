@@ -34,7 +34,7 @@ parse(
     if(! parse(it, end, ec,
         'v',
         bnf::token(
-            hexdig_chars{}, t.major),
+            hexdig_chars, t.major),
         '.',
         bnf::token(cs, t.minor)))
         return false;

@@ -10,8 +10,22 @@
 #ifndef BOOST_URL_BNF_DETAIL_CHARSET_HPP
 #define BOOST_URL_BNF_DETAIL_CHARSET_HPP
 
+#include <boost/core/bit.hpp>
 #include <boost/type_traits/make_void.hpp>
 #include <type_traits>
+
+#ifdef BOOST_URL_USE_SSE2
+# include <emmintrin.h>
+# include <xmmintrin.h>
+# ifdef _MSC_VER
+#  include <intrin.h>
+# endif
+#endif
+
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4127) // conditional expression is constant
+#endif
 
 namespace boost {
 namespace urls {
@@ -104,9 +118,73 @@ find_if_not(
         first, last);
 }
 
+#ifdef BOOST_URL_USE_SSE2
+
+// by Peter Dimov
+template<class Pred>
+char const*
+find_if_pred(
+    Pred const& pred,
+    char const* first,
+    char const* last ) noexcept
+{
+    while( last - first >= 16 )
+    {
+        unsigned char r[ 16 ] = {};
+        for( int i = 0; i < 16; ++i )
+            r[ i ] = pred( first[ i ] )? 0xFF: 0x00;
+        __m128i r2 = _mm_loadu_si128( (__m128i const*)r );
+        unsigned r3 = _mm_movemask_epi8( r2 );
+        if( r3 )
+            return first + boost::core::countr_zero( r3 );
+        first += 16;
+    }
+    while(
+        first != last &&
+        ! pred(*first))
+    {
+        ++first;
+    }
+    return first;
+}
+
+// by Peter Dimov
+template<class Pred>
+char const*
+find_if_not_pred(
+    Pred const& pred,
+    char const* first,
+    char const* last ) noexcept
+{
+    while( last - first >= 16 )
+    {
+        unsigned char r[ 16 ] = {};
+        for( int i = 0; i < 16; ++i )
+            r[ i ] = pred( first[ i ] )? 0x00: 0xFF;
+        __m128i r2 = _mm_loadu_si128( (__m128i const*)r );
+        unsigned r3 = _mm_movemask_epi8( r2 );
+        if( r3 )
+            return first + boost::core::countr_zero( r3 );
+        first += 16;
+    }
+    while(
+        first != last &&
+        pred(*first))
+    {
+        ++first;
+    }
+    return first;
+}
+
+#endif
+
 } // detail
 } // bnf
 } // urls
 } // boost
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif

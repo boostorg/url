@@ -32,7 +32,7 @@ parse(
             error::incomplete);
         return false;
     }
-    if(! bnf::alpha_chars{}(*it))
+    if(! bnf::alpha_chars(*it))
     {
         // expected alpha
         ec = BOOST_URL_ERR(

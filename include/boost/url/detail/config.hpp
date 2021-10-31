@@ -18,19 +18,6 @@
 # error unsupported platform
 #endif
 
-// VFALCO Copied from <boost/config.hpp>
-//        This is a derivative work.
-#ifdef __has_cpp_attribute
-// clang-6 accepts [[nodiscard]] with -std=c++14, but warns about it -pedantic
-# if __has_cpp_attribute(nodiscard) && !(defined(__clang__) && (__cplusplus < 201703L))
-#  define BOOST_URL_NODISCARD [[nodiscard]]
-# else
-#  define BOOST_URL_NODISCARD
-# endif
-#else
-# define BOOST_URL_NODISCARD
-#endif
-
 #if defined(BOOST_URL_DOCS)
 # define BOOST_URL_DECL
 #else
@@ -51,6 +38,14 @@
 #   define BOOST_DYN_LINK
 #  endif
 #  include <boost/config/auto_link.hpp>
+# endif
+#endif
+
+#if ! defined(BOOST_URL_NO_SSE2) && \
+    ! defined(BOOST_URL_USE_SSE2)
+# if (defined(_M_IX86) && _M_IX86_FP == 2) || \
+      defined(_M_X64) || defined(__SSE2__)
+#  define BOOST_URL_USE_SSE2
 # endif
 #endif
 

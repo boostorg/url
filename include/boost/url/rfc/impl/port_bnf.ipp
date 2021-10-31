@@ -27,12 +27,11 @@ parse(
     error_code& ec,
     port_bnf& t)
 {
-    bnf::digit_chars cs;
     port_bnf::number_type u = 0;
     auto const start = it;
     while(it != end)
     {
-        if(! cs(*it))
+        if(! bnf::digit_chars(*it))
             break;
         auto u0 = u;
         u = 10 * u + *it - '0';
@@ -40,7 +39,7 @@ parse(
         {
             // overflow
             it = bnf::find_if_not(
-                it, end, cs);
+                it, end, bnf::digit_chars);
             t.str = string_view(
                 start, it - start);
             t.has_number = false;

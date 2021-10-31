@@ -44,7 +44,7 @@
 [def __MoveConstructible__      [@https://en.cppreference.com/w/cpp/named_req/MoveConstructible ['MoveConstructible]]]
 [def __SemiRegular__            [@https://en.cppreference.com/w/cpp/concepts/semiregular ['SemiRegular]]]
 [def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
-[def __CharSet__                [link url.CharSet ['CharSet]]]
+[def __CharSet__                [link url.charset ['CharSet]]]
 
 [def __authority_view__         [link url.ref.boost__urls__authority_view `authority_view`]]
 [def __error_code__             [link url.ref.boost__urls__error_code `error_code`]]

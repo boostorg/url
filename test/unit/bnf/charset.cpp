@@ -18,25 +18,20 @@ namespace boost {
 namespace urls {
 namespace bnf {
 
-BOOST_STATIC_ASSERT(
-    is_charset<
-        all_chars>::value);
+BOOST_STATIC_ASSERT(is_charset<decltype(
+    all_chars)>::value);
 
-BOOST_STATIC_ASSERT(
-    is_charset<
-        alnum_chars>::value);
+BOOST_STATIC_ASSERT(is_charset<decltype(
+    alnum_chars)>::value);
 
-BOOST_STATIC_ASSERT(
-    is_charset<
-        alpha_chars>::value);
+BOOST_STATIC_ASSERT(is_charset<decltype(
+    alpha_chars)>::value);
 
-BOOST_STATIC_ASSERT(
-    is_charset<
-        digit_chars>::value);
+BOOST_STATIC_ASSERT(is_charset<decltype(
+    digit_chars)>::value);
 
-BOOST_STATIC_ASSERT(
-    is_charset<
-        hexdig_chars>::value);
+BOOST_STATIC_ASSERT(is_charset<decltype(
+    hexdig_chars)>::value);
 
 class char_set_test
 {
@@ -92,8 +87,52 @@ public:
             test_chars>::value);
 
     void
+    test_lut_chars()
+    {
+        // lut_chars(char const*)
+        {
+            constexpr lut_chars digits_ = "0123456789";
+        }
+
+        // lut_chars(Pred)
+        {
+            struct is_digit_
+            {
+                constexpr bool
+                operator()(char c ) const noexcept
+                {
+                    return c >= '0' && c <= '9';
+                }
+            };
+
+            constexpr lut_chars digits_( is_digit_{} );
+        }
+
+        // operator+
+        {
+            constexpr lut_chars alpha_chars_(
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz");
+
+            constexpr lut_chars alnum_chars_ = alpha_chars_ + "0123456789";
+        }
+
+        // operator-
+        {
+            constexpr lut_chars consonants = lut_chars("abcdefghijklmnopqrstuvwxyz") - "aeiou";
+        }
+
+        // operator~
+        {
+            constexpr lut_chars not_vowels = ~lut_chars( "aAeEiIoOuU" );
+        }
+    }
+
+    void
     run()
     {
+        test_lut_chars();
+
         std::size_t n0 = 0;
         std::size_t n1 = 0;
         test_char_set(
@@ -102,30 +141,29 @@ public:
         BOOST_TEST(n1 > 0);
 
         {
-            all_chars cs;
             for(std::size_t i = 0;
                 i < 256; ++i)
-                BOOST_TEST(cs(static_cast<
+                BOOST_TEST(all_chars(static_cast<
                     char>(i)));
         }
 
         test_char_set(
-            alnum_chars{},
+            alnum_chars,
             "0123456789"
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz");
 
         test_char_set(
-            alpha_chars{},
+            alpha_chars,
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz");
 
         test_char_set(
-            digit_chars{},
+            digit_chars,
             "0123456789");
 
         test_char_set(
-            hexdig_chars{},
+            hexdig_chars,
             "0123456789"
             "ABCDEF"
             "abcdef");
@@ -133,7 +171,7 @@ public:
         for_each_char(
         [](char c)
         {
-            if(hexdig_chars{}(c))
+            if(hexdig_chars(c))
                 BOOST_TEST(
                     hexdig_value(c) != -1);
             else
