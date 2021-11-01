@@ -150,7 +150,6 @@
         <bridgehead renderas="sect3">Type Traits</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__bnf__is_charset">is_charset</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__is_element">is_element</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__is_range">is_range</link></member>
         </simplelist>
       </entry>

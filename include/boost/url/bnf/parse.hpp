@@ -22,29 +22,6 @@ namespace boost {
 namespace urls {
 namespace bnf {
 
-/** Alias for `std::true_type` if T satisfies __Element__
-*/
-#ifdef BOOST_URL_DOCS
-template<class T>
-using is_element = __see_below__;
-#else
-template<class T, class = void>
-struct is_element : std::false_type {};
-
-template<class T>
-struct is_element<T, boost::void_t<
-    decltype(
-    std::declval<char const*&>() =
-        T::parse(
-            std::declval<char const*&>(),
-            std::declval<char const*>(),
-            std::declval<T&>())
-        ) > >
-    : std::is_default_constructible<T>
-{
-};
-#endif
-
 /** @brief Parse a literal character
 
    This function parses the string defined by the first chars in the
