@@ -52,13 +52,13 @@ namespace bnf {
    @return `true` if the first char in the range matches @ref ch successfully,
    `false` otherwise
 
-   @param[in,out] it An iterator to the first element in the range
+   @param[in,out] it An iterator to the first element in the range.
    At the end of this function, @ref it points to one past the last
    element parsed in the range.
 
    @param[in] end An iterator to one past the last element in the range
 
-   @param[out] ec The error code this function should set if it fails
+   @param[out] ec The error code this function should set @ref if it fails
 
    @param[out] ch A literal character
 */
@@ -111,14 +111,15 @@ parse(
 
    This function parses the string defined by the first chars in the
    range of chars [@ref it, @ref end) into the Backus–Naur form (BNF)
-   elements [@ref t0, @ref t1, ...].
+   elements [arg_0, arg_1, ..., arg_n] in @ref args.
 
-   For each type Ti in [T0, T1, ...], a corresponding function overload
-   `bool parse(char const*& it, char const* const end, error_code&, Ti const& t)`
-   should be defined to consume the input from [@ref it, @ref end) into `t`.
+   For each type Arg_i in [Arg_0, Arg_1, ..., Arg_n] in @ref Args, a
+   corresponding function overload
+   `bool parse(char const*& it, char const* const end, error_code&, Arg_i const& t)`
+   should be defined to consume the input from [@ref it, @ref end) into `arg_i`.
 
-   This `parse` function is defined for `char`s so that it matches BNF string
-   literals in [@ref it, @ref end).
+   This `parse` function is defined for `char`s so that it matches the BNF
+   string literals in [@ref it, @ref end).
 
    The function returns `true` and resets @ref ec when the input is
    parsed successfully. If the input cannot be parsed into the BNF elements,
@@ -203,12 +204,13 @@ parse(
      prefer setting @ref ec instead.
 
    @see https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
+
         @ref boost::urls::error
 
    @return `true` if the range initial chars match the elements successfully,
    `false` otherwise
 
-   @param[in,out] it An iterator to the first element in the range
+   @param[in,out] it An iterator to the first element in the range.
    At the end of this function, @ref it points to one past the last
    element parsed in the range.
 
@@ -216,13 +218,13 @@ parse(
 
    @param[out] ec The error code this function should set if it fails
 
-   @param[out] t0 T0 1st BNF element
-
-   @param[out] t1 T1 2nd BNF element
-
-   @param[out] tn ...Tn [3rd, 4th, ...] BNF elements
+   @param[out] args BNF elements to be parsed
 
 */
+#ifdef BOOST_URL_DOCS
+template<class... Args>
+bool parse( char const*& it, char const* end, Args&&... args);
+#else
 template<
     class T0,
     class T1,
@@ -235,6 +237,7 @@ parse(
     T0&& t0,
     T1&& t1,
     Tn&&... tn);
+#endif
 
 /** @brief Parse a complete string
 
