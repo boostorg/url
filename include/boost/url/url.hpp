@@ -214,8 +214,6 @@ public:
         @par Exception Safety
         Throws nothing.
 
-        @return A reference to the object, for chaining.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
             3.1. Scheme (rfc3986)</a>
@@ -253,8 +251,6 @@ public:
         Strong guarantee.
         Calls to allocate may throw.
 
-        @return A reference to the object, for chaining.
-
         @param s The scheme to set.
 
         @throw std::invalid_argument invalid scheme.
@@ -291,8 +287,6 @@ public:
         Strong guarantee.
         Calls to allocate may throw.
 
-        @return A reference to the object, for chaining.
-
         @param id The scheme to set.
 
         @throw std::invalid_argument invalid scheme.
@@ -325,8 +319,6 @@ public:
         @par Exception Safety
         Throws nothing.
 
-        @return A reference to the object, for chaining.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
             3.2.1. User Information (rfc3986)</a>
@@ -350,8 +342,6 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-
-        @return A reference to the object, for chaining.
 
         @param s The string to set. This string may
         contain any characters, including nulls.
@@ -386,8 +376,6 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-
-        @return A reference to the object, for chaining.
 
         @param s The string to set.
     */
@@ -551,8 +539,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
-        @return A reference to the object, for chaining.
-
         @param addr The address to set.
     */
 #ifdef BOOST_URL_DOCS
@@ -586,8 +572,6 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
-
-        @return A reference to the object, for chaining.
 
         @param addr The address to set.
     */
@@ -635,8 +619,6 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
-
-        @return A reference to the object, for chaining.
 
         @param s The string to set.
     */
@@ -702,8 +684,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
-        @return A reference to the object, for chaining.
-
         @param s The string to set.
 
         @throw std::invalid_argument the percent-encoding is invalid
@@ -734,8 +714,6 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">
             3.2.3. Port (rfc3986)</a>
-
-        @return A reference to the object, for chaining.
     */
     BOOST_URL_DECL
     url&
@@ -765,8 +743,6 @@ public:
             3.2.3. Port (rfc3986)</a>
 
         @param n The port number to set.
-
-        @return A reference to the object, for chaining.
     */
     BOOST_URL_DECL
     url&
@@ -807,8 +783,6 @@ public:
 
         @param s The port string to set.
 
-        @return A reference to the object, for chaining.
-
         @throw std::invalid_argument `s` is not a valid port string.
     */
     BOOST_URL_DECL
@@ -827,8 +801,6 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
             3.2. Authority (rfc3986)</a>
-
-        @return A reference to the object, for chaining.
     */
     BOOST_URL_DECL
     url&
@@ -863,8 +835,6 @@ public:
             3.2. Authority (rfc3986)</a>
 
         @param s The authority string to set.
-
-        @return A reference to the object, for chaining.
 
         @throw std::invalid_argument `s` is not a valid authority.
     */
@@ -1135,6 +1105,18 @@ private:
 public:
 
     /** Remove the fragment.
+
+        If a fragment is present (@ref has_fragment
+        returns `true`), then the fragment is
+        removed including the leading `#`.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @see
+            @ref has_fragment,
+            @ref set_encoded_fragment,
+            @ref set_fragment.
     */
     BOOST_URL_DECL
     url&
@@ -1143,18 +1125,10 @@ public:
     /** Set the fragment.
 
         Sets the fragment of the URL to the specified
-        encoded string:
-
-        @li If the string is empty, the fragment is
-        cleared including the leading hash mark ('#'),
-        otherwise:
-
-        @li If the string is not empty, the fragment
-        is set to given string, with a leading hash
-        mark added.
-        The string must meet the syntactic requirements
-        of <em>fragment</em> otherwise an exception is
-        thrown.
+        encoded string. The string must contain a
+        valid percent-encoding or else an exception
+        is thrown. When this function returns,
+        @ref has_fragment will return `true`.
 
         @par BNF
         @code
@@ -1162,15 +1136,17 @@ public:
         @endcode
 
         @par Exception Safety
-
         Strong guarantee.
         Calls to allocate may throw.
 
         @param s The string to set.
 
-        @throws std::exception invalid string.
+        @throws std::invalid_argument bad encoding.
 
-        @see set_fragment, set_fragment_part
+        @see
+            @ref has_fragment,
+            @ref remove_fragment,
+            @ref set_fragment.
     */
     BOOST_URL_DECL
     url&
@@ -1180,27 +1156,22 @@ public:
     /** Set the fragment.
 
         Sets the fragment of the URL to the specified
-        plain string:
-
-        @li If the string is empty, the fragment is
-        cleared including the leading hash mark ('#'),
-        otherwise:
-
-        @li If the string is not empty, the fragment
-        is set to given string, with a leading hash
-        mark added.
-        Any special or reserved characters in the
-        string are automatically percent-encoded.
+        plain string. Any reserved characters in the
+        string will be automatically percent-encoded.
+        When this function returns, @ref has_fragment
+        will return `true`.
 
         @par Exception Safety
-
         Strong guarantee.
         Calls to allocate may throw.
 
         @param s The string to set. This string may
         contain any characters, including nulls.
 
-        @see set_encoded_fragment, set_fragment_part
+        @see
+            @ref has_fragment,
+            @ref remove_fragment,
+            @ref set_encoded_fragment.
     */
     BOOST_URL_DECL
     url&
@@ -1302,7 +1273,8 @@ private:
     @param dest The container where the result
     is written, upon success.
 
-    @param Set to the error if 
+    @param ec Set to the error if any occurred.
+
     @par Specification
     <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-5"
         >5. Reference Resolution (rfc3986)</a>
