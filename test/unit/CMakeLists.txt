@@ -18,6 +18,7 @@ set(BOOST_URL_TESTS_FILES
     Jamfile
     test_bnf.hpp
     authority_view.cpp
+    bnf.cpp
     error.cpp
     host_type.cpp
     ipv4_address.cpp
