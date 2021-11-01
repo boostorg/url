@@ -1151,9 +1151,6 @@ edit_segments(
     BOOST_ASSERT(i1 >= i0);
     BOOST_ASSERT(i1 - i0 <= nseg_);
 
-    // end of path
-    auto const pend = offset(id_query);
-
     // new number of segments
     std::size_t const nseg1 =
         nseg_ + nseg - (i1 - i0);
@@ -1538,52 +1535,55 @@ param(
 char*
 url::
 edit_params(
-    std::size_t first,
-    std::size_t last,
+    std::size_t i0,
+    std::size_t i1,
     std::size_t n,
     std::size_t nparam)
 {
-    BOOST_ASSERT(last >= first);
-    BOOST_ASSERT(
-        last - first <= nparam_);
-    auto const r0 = param(first);
-    auto const r1 = param(last);
+    BOOST_ASSERT(i1 >= i0);
+    BOOST_ASSERT(i1 - i0 <= nparam_);
+
+    // new number of params
+    auto const nparam1 =
+        nparam_+ nparam - (i1 - i0);
+
+    // [r0, r1) range to replace
+    auto const r0 = param(i0);
+    auto const r1 = param(i1);
+
+    // old size of [r0, r1)
     auto const n0 = r1.pos - r0.pos;
+
+    // adjust capacity
     ensure_space(
         size() + n - n0,
         nseg_,
-        nparam_ + nparam -
-            (last - first));
-    if(n <= n0)
-    {
-        // shrinking
-        std::memmove(
-            s_ + r0.pos + n,
-            s_ + r1.pos,
-            offset(id_frag) -
-                r1.pos);
-        resize_impl(
-            id_query,
-            len(id_query) - (
-                n0 - n));
-    }
-    else
-    {
-        // growing
-        auto const pos =
-            offset(id_frag);
-        resize_impl(
-            id_query,
-            len(id_query) + (
-                n - n0));
-        std::memmove(
-            s_ + r0.pos + n,
-            s_ + r1.pos,
-            pos - r1.pos);
-    }
-    nparam_ = nparam_ +
-        nparam - (last - first);
-    return s_ + r0.pos;
+        nparam1);
+
+    // start of output
+    auto dest = s_ + r0.pos;
+
+    // move and size
+    std::memmove(
+        dest + n,
+        s_ + r1.pos,
+        size() - r1.pos);
+    set_size(
+        id_query,
+        len(id_query) + (
+            n - n0));
+    nparam_ = nparam1;
+    s_[size()] = '\0';
+
+#ifndef NDEBUG
+#if 0
+    // VFALCO this breaks remove_value
+    std::fill(
+        dest, dest + n, '_');
+#endif
+#endif
+
+    return dest;
 }
 
 void
@@ -1592,47 +1592,69 @@ edit_params(
     std::size_t i0,
     std::size_t i1,
     detail::any_query_iter&& it0,
-    detail::any_query_iter&& it1)
+    detail::any_query_iter&& it1,
+    bool set_hint)
 {
     check_invariants();
+    if(! set_hint)
+        set_hint = has_query();
+
     // measure
     error_code ec;
     std::size_t n = 0;
     std::size_t nparam = 0;
-    for(;;)
+    bool more = it0.measure(n, ec);
+    if(ec.failed())
+        detail::throw_invalid_argument(
+            BOOST_CURRENT_LOCATION);
+    bool prefix;
+    if(more)
     {
-        bool more = it0.measure(n, ec);
-        if(ec.failed())
-            detail::throw_invalid_argument(
-                BOOST_CURRENT_LOCATION);
-        if(! more)
-            break;
-        ++nparam;
+        ++n;
+        prefix = i0 == 0;
+        for(;;)
+        {
+            ++nparam;
+            more = it0.measure(n, ec);
+            if(ec.failed())
+                detail::throw_invalid_argument(
+                    BOOST_CURRENT_LOCATION);
+            if(! more)
+                break;
+            ++n;
+        }
     }
-    if(nparam == 0)
+    else if(
+        i0 == 0 &&
+        set_hint)
     {
-        // erase
-        edit_params(i0, i1, 0, 0);
-        return;
+        prefix = true;
+        ++n;
+    }
+    else
+    {
+        prefix = false;
     }
 
     // copy
-    auto p = edit_params(
-        i0, i1, n + nparam, nparam);
-    auto const last = p + n + nparam;
-    if(i0 == 0)
+    auto dest = edit_params(
+        i0, i1, n, nparam);
+    if(prefix)
+        *dest++ = '?';
+    if(nparam > 0)
     {
-        *p++ = '?';
-        goto do_copy;
+        auto const last = dest + n;
+        if(i0 != 0)
+            *dest++ = '&';
+        for(;;)
+        {
+            it1.copy(dest, last);
+            if(--nparam == 0)
+                break;
+            *dest++ = '&';
+        }
     }
-    for(;;)
-    {
-        *p++ = '&';
-    do_copy:
-        it1.copy(p, last);
-        if(--nparam == 0)
-            break;
-    }
+
     check_invariants();
 }
 
@@ -1642,27 +1664,12 @@ edit_params(
 //
 //------------------------------------------------
 
-char*
-url::
-set_query_impl(
-    std::size_t n)
-{
-    auto dest = resize_impl(
-        id_query, n + 1);
-    dest[0] = '?';
-    return dest + 1;
-}
-
 url&
 url::
 remove_query() noexcept
 {
-    string_view s;
-    edit_params(
-        0,
-        nparam_,
-        detail::enc_query_iter(s),
-        detail::enc_query_iter(s));
+    resize_impl(id_query, 0);
+    nparam_ = 0;
     return *this;
 }
 
@@ -1676,7 +1683,8 @@ set_encoded_query(
         0,
         nparam_,
         detail::enc_query_iter(s),
-        detail::enc_query_iter(s));
+        detail::enc_query_iter(s),
+        true);
     check_invariants();
     return *this;
 }
@@ -1690,7 +1698,8 @@ set_query(
         0,
         nparam_,
         detail::plain_query_iter(s),
-        detail::plain_query_iter(s));
+        detail::plain_query_iter(s),
+        true);
     return *this;
 }
 

@@ -1229,6 +1229,120 @@ public:
     {
         // has_query
         {
+            {
+                url u;
+                BOOST_TEST(! u.has_query());
+            }
+            {
+                url u("?");
+                BOOST_TEST(u.has_query());
+            }
+            {
+                url u("?x");
+                BOOST_TEST(u.has_query());
+            }
+        }
+
+        // remove_query
+        {
+            {
+                url u;
+                u.remove_query();
+                BOOST_TEST(! u.has_query());
+            }
+            {
+                url u("?");
+                u.remove_query();
+                BOOST_TEST(! u.has_query());
+            }
+            {
+                url u("?x");
+                u.remove_query();
+                BOOST_TEST(! u.has_query());
+            }
+        }
+
+        // set_encoded_query
+        {
+            {
+                url u;
+                u.set_encoded_query("");
+                BOOST_TEST(u.has_query());
+                BOOST_TEST(u.encoded_url() == "?");
+                BOOST_TEST(u.encoded_query() == "");
+            }
+            {
+                url u;
+                u.set_encoded_query("x");
+                BOOST_TEST(u.has_query());
+                BOOST_TEST(u.encoded_url() == "?x");
+                BOOST_TEST(u.encoded_query() == "x");
+            }
+            {
+                url u;
+                u.set_encoded_query("%41");
+                BOOST_TEST(u.has_query());
+                BOOST_TEST(u.encoded_url() == "?%41");
+                BOOST_TEST(u.encoded_query() == "%41");
+                BOOST_TEST(u.query() == "A");
+            }
+            {
+                url u;
+                BOOST_TEST_THROWS(
+                    u.set_encoded_query("%%"),
+                    std::invalid_argument);
+                BOOST_TEST_THROWS(
+                    u.set_encoded_query("%fg"),
+                    std::invalid_argument);
+            }
+        }
+
+        // set_query
+        {
+            {
+                url u;
+                u.set_query("");
+                BOOST_TEST(u.has_query());
+                BOOST_TEST(u.encoded_url() == "?");
+                BOOST_TEST(u.query() == "");
+            }
+            {
+                url u;
+                u.set_query("x");
+                BOOST_TEST(u.has_query());
+                BOOST_TEST(u.encoded_url() == "?x");
+                BOOST_TEST(u.query() == "x");
+            }
+            {
+                url u;
+                u.set_query("%41");
+                BOOST_TEST(u.has_query());
+                BOOST_TEST(u.encoded_url() == "?%2541");
+                BOOST_TEST(u.encoded_query() == "%2541");
+                BOOST_TEST(u.query() == "%41");
+            }
+            {
+                url u;
+                u.set_query("%%fg");
+                BOOST_TEST(u.has_query());
+                BOOST_TEST(u.encoded_url() == "?%25%25fg");
+                BOOST_TEST(u.encoded_query() == "%25%25fg");
+                BOOST_TEST(u.query() == "%%fg");
+            }
+            {
+                url u;
+                u.set_query("{}");
+                BOOST_TEST(u.has_query());
+                BOOST_TEST(u.encoded_url() == "?%7b%7d");
+                BOOST_TEST(u.encoded_query() == "%7b%7d");
+                BOOST_TEST(u.query() == "{}");
+            }
+        }
+
+
+
+        // has_query
+        {
             url u = parse_relative_ref("?query").value();
             BOOST_TEST(u.has_query());
             u.clear();
@@ -1263,7 +1377,7 @@ public:
             BOOST_TEST(u.params()[1].value == "v2");
 
             u.set_encoded_query("");
-            BOOST_TEST(! u.has_query());
+            BOOST_TEST(u.has_query());
             BOOST_TEST(u.encoded_query().empty());
             BOOST_TEST(u.params().size() == 0);
 

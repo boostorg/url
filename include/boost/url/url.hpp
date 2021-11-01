@@ -972,8 +972,6 @@ public:
     //--------------------------------------------
 
 private:
-    char* set_query_impl(std::size_t n);
-
     struct raw_param
     {
         std::size_t pos;
@@ -987,8 +985,8 @@ private:
 
     char*
     edit_params(
-        std::size_t first,
-        std::size_t last,
+        std::size_t i0,
+        std::size_t i1,
         std::size_t n,
         std::size_t nparam);
 
@@ -998,10 +996,23 @@ private:
         std::size_t i0,
         std::size_t i1,
         detail::any_query_iter&& it0,
-        detail::any_query_iter&& it1);
+        detail::any_query_iter&& it1,
+        bool set_hint = false);
 public:
 
-    /** Remove the query
+    /** Remove the query.
+
+        If a query is present (@ref has_query
+        returns `true`), then the query is
+        removed including the leading `?`.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @see
+            @ref has_query,
+            @ref set_encoded_query,
+            @ref set_query.
     */
     BOOST_URL_DECL
     url&
@@ -1010,32 +1021,28 @@ public:
     /** Set the query.
 
         Sets the query of the URL to the specified
-        encoded string:
-
-        @li If the string is empty, the query is
-        cleared including the leading question mark ('?'),
-        otherwise:
-
-        @li If the string is not empty, the fragment
-        is set to given string, with a leading question
-        mark added.
-        The string must meet the syntactic requirements
-        of <em>query</em> otherwise an exception is
-        thrown.
+        encoded string. The string must contain a
+        valid percent-encoding or else an exception
+        is thrown. When this function returns,
+        @ref has_query will return `true`.
 
         @par BNF
         @code
-        query         = *( pchar / "/" / "?" )
+        query           = *( pchar / "/" / "?" )
         @endcode
 
         @par Exception Safety
-
         Strong guarantee.
         Calls to allocate may throw.
 
         @param s The string to set.
 
-        @throws std::exception invalid string.
+        @throws std::invalid_argument bad encoding.
+
+        @see
+            @ref has_query,
+            @ref remove_query,
+            @ref set_query.
     */
     BOOST_URL_DECL
     url&
@@ -1045,31 +1052,22 @@ public:
     /** Set the query.
 
         Sets the query of the URL to the specified
-        encoded string.
-
-        @li If the string is empty, the query is
-        cleared including the leading question
-        mark ('?'), otherwise:
-
-        @li If the string is not empty, the query
-        is set to given string.
-        The string must meet the syntactic requirements
-        of <em>query-part</em> otherwise an exception
-        is thrown.
-
-        @par BNF
-        @code
-        query-part    = [ "#" *( pchar / "/" / "?" ) ]
-        @endcode
+        plain string. Any reserved characters in the
+        string will be automatically percent-encoded.
+        When this function returns, @ref has_query
+        will return `true`.
 
         @par Exception Safety
-
         Strong guarantee.
         Calls to allocate may throw.
 
-        @param s The string to set.
+        @param s The string to set. This string may
+        contain any characters, including nulls.
 
-        @throws std::exception invalid string.
+        @see
+            @ref has_query,
+            @ref remove_query,
+            @ref set_encoded_query.
     */
     BOOST_URL_DECL
     url&

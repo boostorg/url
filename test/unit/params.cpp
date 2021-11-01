@@ -47,7 +47,7 @@ public:
             url u = parse_uri_reference("/?x#f").value();
             u.params(pa.allocator()) = {};
             BOOST_TEST(u.encoded_query() == "");
-            BOOST_TEST(u.encoded_url() == "/#f");
+            BOOST_TEST(u.encoded_url() == "/?#f");
         }
     }
 
@@ -129,7 +129,7 @@ public:
             params p = u.params(pa.allocator());
             p.clear();
             BOOST_TEST(u.encoded_query() == "");
-            BOOST_TEST(u.encoded_url() == "/#f");
+            BOOST_TEST(u.encoded_url() == "/?#f");
         }
 
         // insert(iterator, value_type)
@@ -421,7 +421,7 @@ public:
 
             p.pop_back();
             BOOST_TEST(u.encoded_query() == "");
-            BOOST_TEST(u.encoded_url() == "/#f");
+            BOOST_TEST(u.encoded_url() == "/?#f");
             BOOST_TEST(u.encoded_params().size() == 0);
         }
     }
