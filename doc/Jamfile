@@ -13,7 +13,7 @@ import boostbook ;
 import os ;
 import ../../../tools/docca/docca.jam ;
 
-local broot = [ os.environ BOOST_ROOT ] ;
+path-constant broot : ../../../ ;
 
 path-constant out : . ;
 
