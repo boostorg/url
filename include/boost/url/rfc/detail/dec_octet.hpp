@@ -7,17 +7,14 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_IPV4_ADDRESS_BNF_IPP
-#define BOOST_URL_IMPL_IPV4_ADDRESS_BNF_IPP
+#ifndef BOOST_URL_RFC_DETAIL_DEC_OCTET_HPP
+#define BOOST_URL_RFC_DETAIL_DEC_OCTET_HPP
 
-#include <boost/url/rfc/ipv4_address_bnf.hpp>
-#include <boost/url/error.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/charsets.hpp>
 
 namespace boost {
 namespace urls {
-
 namespace detail {
 
 struct dec_octet
@@ -109,26 +106,6 @@ struct dec_octet
 };
 
 } // detail
-
-bool
-parse(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    ipv4_address_bnf const& t)
-{
-    using bnf::parse;
-    std::array<unsigned char, 4> v;
-    if(! parse(it, end, ec,
-        detail::dec_octet{v[0]}, '.',
-        detail::dec_octet{v[1]}, '.',
-        detail::dec_octet{v[2]}, '.',
-        detail::dec_octet{v[3]}))
-        return false;
-    t.v = ipv4_address(v);
-    return true;
-}
-
 } // urls
 } // boost
 

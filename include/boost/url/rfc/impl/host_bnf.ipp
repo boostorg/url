@@ -60,8 +60,7 @@ parse(
     }
     // IPv4address
     {
-        if(parse(it, end, ec,
-            ipv4_address_bnf{t.ipv4}))
+        if(parse(it, end, ec, t.ipv4))
         {
             t.host_type =
                 host_type::ipv4;

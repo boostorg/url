@@ -12,10 +12,10 @@
 
 #include <boost/url/rfc/ipv6_address_bnf.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/ipv4_address.hpp>
 #include <boost/url/bnf/charset.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/charsets.hpp>
-#include <boost/url/rfc/ipv4_address_bnf.hpp>
 #include <array>
 #include <memory>
 
@@ -205,9 +205,7 @@ parse(
             // parse it as ipv4
             ipv4_address v4;
             it = prev;
-            if(! parse(it, end, ec,
-                    ipv4_address_bnf{
-                        v4}))
+            if(! parse(it, end, ec, v4))
                 return false;
             auto const b4 =
                 v4.to_bytes();

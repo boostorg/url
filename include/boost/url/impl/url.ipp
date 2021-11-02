@@ -723,10 +723,9 @@ set_host(
 {
     // try ipv4
     {
-        error_code ec;
-        auto a = make_ipv4_address(s, ec);
-        if(! ec.failed())
-            return set_host(a);
+        auto r = parse_ipv4_address(s);
+        if(! r.has_error())
+            return set_host(r.value());
     }
     check_invariants();
     static constexpr auto cs =

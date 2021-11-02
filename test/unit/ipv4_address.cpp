@@ -20,62 +20,222 @@ class ipv4_address_test
 {
 public:
     void
-    testOutput()
+    testMembers()
     {
-        std::stringstream ss;
-        ipv4_address a(0x01020304);
-        ss << a;
-        BOOST_TEST(
-            ss.str() == "1.2.3.4");
+        // ipv4_address()
+        {
+            ipv4_address a;
+            BOOST_TEST(a.is_unspecified());
+            BOOST_TEST(a == ipv4_address());
+        }
 
-        char buf[ipv4_address::max_str_len];
-        BOOST_TEST(a.to_buffer(buf,
-            sizeof(buf)) == "1.2.3.4");
+        // ipv4_address(ipv4_address const&)
+        {
+            ipv4_address a1(1);
+            ipv4_address a2(a1);
+            BOOST_TEST(a2 == a1);
+        }
+
+        // operator=(ipv4_address const&)
+        {
+            ipv4_address a1(1);
+            ipv4_address a2;
+            BOOST_TEST(a2 != a1);
+            a2 = a1;
+            BOOST_TEST(a2 == a1);
+        }
+
+        // ipv4_address(array)
+        {
+            {
+                ipv4_address a({1,2,3,4});
+                BOOST_TEST(
+                    a.to_uint()==0x01020304);
+            }
+            {
+                ipv4_address a(
+                    ipv4_address::bytes_type(
+                        {1,2,3,4}));
+                BOOST_TEST(
+                    a.to_uint()==0x01020304);
+            }
+        }
+
+        // ipv4_address(uint_type)
+        {
+            ipv4_address a(0x01020304);
+            BOOST_TEST(
+                a.to_uint() == 0x01020304);
+        }
+
+        // ipv4_address(string_view)
+        {
+            ipv4_address a("1.2.3.4");
+            BOOST_TEST(
+                a.to_uint() == 0x01020304);
+            BOOST_TEST_THROWS(
+                ipv4_address("x"),
+                std::invalid_argument);
+        }
+
+        // to_bytes
+        {
+            ipv4_address a(0x01020304);
+            ipv4_address::bytes_type b =
+                {1, 2, 3, 4};
+            BOOST_TEST(a.to_bytes() == b);
+        }
+
+        // to_uint
+        {
+            ipv4_address a(0x01020304);
+            BOOST_TEST(
+                a.to_uint() == 0x01020304);
+        }
+
+        // to_string
+        {
+            ipv4_address a(0x01020304);
+            BOOST_TEST(
+                a.to_string() == "1.2.3.4");
+        }
+
+        // to_buffer
+        {
+            ipv4_address a(0x01020304);
+            char buf[ipv4_address::max_str_len];
+            BOOST_TEST(a.to_buffer(buf,
+                sizeof(buf)) == "1.2.3.4");
+        }
+
+        // is_loopback
+        {
+            BOOST_TEST(ipv4_address(
+                "127.0.0.1").is_loopback());
+        }
+
+        // is_unspecified
+        {
+            BOOST_TEST(
+                ipv4_address().is_unspecified());
+            BOOST_TEST(
+                ipv4_address(0).is_unspecified());
+            BOOST_TEST(ipv4_address("0.0.0.0"
+                ).is_unspecified());
+        }
+
+        // is_multicast
+        {
+            BOOST_TEST(ipv4_address(
+                "224.0.0.1").is_multicast());
+        }
+
+        // operator==
+        // operator!=
+        {
+            ipv4_address a1(1);
+            ipv4_address a2(2);
+            ipv4_address a3(1);
+            BOOST_TEST(a1 == a1);
+            BOOST_TEST(a1 != a2);
+            BOOST_TEST(a1 == a3);
+            BOOST_TEST(a2 != a3);
+        }
+
+        // static any()
+        {
+            BOOST_TEST(ipv4_address::any(
+                ).is_unspecified());
+            BOOST_TEST(! ipv4_address::any(
+                ).is_loopback());
+            BOOST_TEST(! ipv4_address::any(
+                ).is_multicast());
+        }
+
+        // static loopback()
+        {
+            BOOST_TEST(ipv4_address::loopback(
+                ).is_loopback());
+            BOOST_TEST(! ipv4_address::loopback(
+                ).is_unspecified());
+            BOOST_TEST(! ipv4_address::loopback(
+                ).is_multicast());
+        }
+
+        // static broadcast()
+        {
+            BOOST_TEST(! ipv4_address::broadcast(
+                ).is_loopback());
+            BOOST_TEST(! ipv4_address::broadcast(
+                ).is_unspecified());
+            BOOST_TEST(! ipv4_address::broadcast(
+                ).is_multicast());
+        }
+
+        // operator<<
+        {
+            std::stringstream ss;
+            ipv4_address a(0x01020304);
+            ss << a;
+            BOOST_TEST(
+                ss.str() == "1.2.3.4");
+        }
+    }
+
+    void
+    testParse()
+    {
+        auto const bad = [](
+            string_view s)
+        {
+            auto r = parse_ipv4_address(s);
+            BOOST_TEST(r.has_error());
+        };
+
+        auto const good = [](
+            string_view s)
+        {
+            auto r = parse_ipv4_address(s);
+            BOOST_TEST(r.has_value());
+        };
+
+        auto const check = [](
+            string_view s,
+            ipv4_address::uint_type v)
+        {
+            auto r = parse_ipv4_address(s);
+            if(! BOOST_TEST(r.has_value()))
+                return;
+            BOOST_TEST(r->to_uint() == v);
+        };
+
+        bad("0");
+        bad("0.");
+        bad("0.0");
+        bad("0.0.");
+        bad("0.0.0");
+        bad("0.0.0.");
+        bad("0.0.0.256");
+        bad("00.0.0.0");
+        bad("1.2.3.4.");
+        bad("1.2.3.4x");
+        bad("1.2.3.300");
+
+        good("0.0.0.0");
+        good("1.2.3.4");
+        good("1.2.3.42");
+
+        check("0.0.0.0", 0x00000000);
+        check("1.2.3.4", 0x01020304);
+        check("32.64.128.1", 0x20408001);
+        check("255.255.255.255", 0xffffffff);
     }
 
     void
     run()
     {
-        testOutput();
-        {
-            ipv4_address a;
-            BOOST_TEST(a.is_unspecified());
-            BOOST_TEST(a ==
-                ipv4_address::any());
-        }
-        {
-            ipv4_address a(0xc0a80001);
-            BOOST_TEST(! a.is_loopback());
-            BOOST_TEST(! a.is_unspecified());
-            BOOST_TEST(! a.is_multicast());
-            auto v = a.to_bytes();
-            BOOST_TEST(v[0] == 0xc0);
-            BOOST_TEST(v[1] == 0xa8);
-            BOOST_TEST(v[2] == 0x00);
-            BOOST_TEST(v[3] == 0x01);
-            BOOST_TEST(a.to_uint() ==
-                0xc0a80001);
-            BOOST_TEST(a.to_string() ==
-                "192.168.0.1");
-        }
-        {
-            ipv4_address a1 =
-                ipv4_address::loopback();
-            BOOST_TEST(a1.is_loopback());
-            ipv4_address a2;
-            BOOST_TEST(a1 != a2);
-            BOOST_TEST(a2.is_unspecified());
-            a2 = a1;
-            BOOST_TEST(a2.is_loopback());
-            BOOST_TEST(a1 == a2);
-        }
-        {
-            BOOST_TEST(make_ipv4_address(
-                "1.2.3.4") == ipv4_address(0x01020304));
-            BOOST_TEST_THROWS(
-                make_ipv4_address("256.0.0.1"),
-                std::exception);
-        }
+        testMembers();
+        testParse();
     }
 };
 

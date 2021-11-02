@@ -13,7 +13,7 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/ipv4_address_bnf.hpp>
+#include <boost/url/rfc/detail/dec_octet.hpp>
 #include <cstring>
 
 namespace boost {
@@ -21,7 +21,14 @@ namespace urls {
 
 ipv4_address::
 ipv4_address(
-    bytes_type const& bytes)
+    uint_type addr) noexcept
+    : addr_(addr)
+{
+}
+
+ipv4_address::
+ipv4_address(
+    bytes_type const& bytes) noexcept
 {
     addr_ =
 (static_cast<unsigned long>(bytes[0]) << 24) |
@@ -31,9 +38,14 @@ ipv4_address(
 }
 
 ipv4_address::
-ipv4_address(uint_type addr)
-    : addr_(addr)
+ipv4_address(
+    string_view s)
 {
+    auto r = parse_ipv4_address(s);
+    if(r.has_error())
+        detail::throw_invalid_argument(
+            BOOST_CURRENT_LOCATION);
+    *this = r.value();
 }
 
 auto
@@ -94,6 +106,24 @@ is_multicast() const noexcept
         0xE0000000;
 }
 
+bool
+parse(
+    char const*& it,
+    char const* const end,
+    error_code& ec,
+    ipv4_address& t)
+{
+    using bnf::parse;
+    std::array<unsigned char, 4> v;
+    if(! parse(it, end, ec,
+        detail::dec_octet{v[0]}, '.',
+        detail::dec_octet{v[1]}, '.',
+        detail::dec_octet{v[2]}, '.',
+        detail::dec_octet{v[3]}))
+        return false;
+    t = ipv4_address(v);
+    return true;
+}
 std::size_t
 ipv4_address::
 print_impl(
@@ -135,33 +165,19 @@ operator<<(
     ipv4_address const& addr)
 {
     char buf[ipv4_address::max_str_len];
-    auto const s = addr.to_buffer(
-        buf, sizeof(buf));
-    os << s;
+    os << addr.to_buffer(buf, sizeof(buf));
     return os;
 }
 
-ipv4_address
-make_ipv4_address(
-    string_view s,
-    error_code& ec) noexcept
-{
-    ipv4_address a;
-    if(! bnf::parse_string(s, ec,
-            ipv4_address_bnf{a}))
-        return {};
-    return a;
-}
-
-ipv4_address
-make_ipv4_address(
-    string_view s)
+result<ipv4_address>
+parse_ipv4_address(
+    string_view s) noexcept
 {
     error_code ec;
-    auto const addr =
-        make_ipv4_address(s, ec);
-    detail::maybe_throw(ec,
-        BOOST_CURRENT_LOCATION);
+    ipv4_address addr;
+    if(! bnf::parse_string(
+            s, ec, addr))
+        return ec;
     return addr;
 }
 

@@ -20,17 +20,30 @@
 namespace boost {
 namespace urls {
 
-/** Represents an IP version 4 style address
+/** An IP version 4 style address.
 
-    Objects of this type are used to construct
-    and manipulate IP version 4 addresses.
+    Objects of this type are used to construct,
+    parse, and manipulate IP version 4 addresses.
+
+    @par BNF
+    @code
+    IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+    dec-octet   = DIGIT                 ; 0-9
+                / %x31-39 DIGIT         ; 10-99
+                / "1" 2DIGIT            ; 100-199
+                / "2" %x30-34 DIGIT     ; 200-249
+                / "25" %x30-35          ; 250-255
+    @endcode
 
     @par Specification
-    @li <a href="https://en.wikipedia.org/wiki/IPv4">
-        IPv4 (Wikipedia)</a>
+    @li <a href="https://en.wikipedia.org/wiki/IPv4"
+        >IPv4 (Wikipedia)</a>
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+        >3.2.2. Host (rfc3986)</a>
 
     @see
-        @ref make_ipv4_address,
+        @ref parse_ipv4_address,
         @ref ipv6_address.
 */
 class ipv4_address
@@ -54,51 +67,51 @@ public:
     using bytes_type =
         std::array<unsigned char, 4>;
 
-    /** Constructor
+    /** Constructor.
     */
-    ipv4_address() noexcept
-        : addr_(0)
-    {
-    }
+    ipv4_address() = default;
 
-    /** Construct from raw bytes
-    */
-    BOOST_URL_DECL
-    explicit
-    ipv4_address(
-        bytes_type const& bytes);
-
-    /** Construct from an unsigned integer
-    */
-    BOOST_URL_DECL
-    explicit
-    ipv4_address(uint_type addr);
-
-    /** Constructor
+    /** Constructor.
     */
     ipv4_address(
-        ipv4_address const& other) noexcept
-        : addr_(other.addr_)
-    {
-    }
+        ipv4_address const&) = default;
 
-    /** Assign from another address
+    /** Copy assignment.
     */
     ipv4_address&
     operator=(
-        ipv4_address const& other) noexcept
-    {
-        addr_ = other.addr_;
-        return *this;
-    }
+        ipv4_address const&) = default;
 
-    /** Return the address as bytes, in network byte order
+    //
+    //---
+    //
+
+    /** Constructor.
+    */
+    BOOST_URL_DECL
+    explicit
+    ipv4_address(
+        uint_type addr) noexcept;
+
+    /** Constructor.
+    */
+    BOOST_URL_DECL
+    ipv4_address(
+        bytes_type const& bytes) noexcept;
+
+    /** Constructor.
+    */
+    BOOST_URL_DECL
+    ipv4_address(
+        string_view s);
+
+    /** Return the address as bytes, in network byte order.
     */
     BOOST_URL_DECL
     bytes_type
     to_bytes() const noexcept;
 
-    /** Return the address as an unsigned integer
+    /** Return the address as an unsigned integer.
     */
     BOOST_URL_DECL
     uint_type
@@ -107,7 +120,6 @@ public:
     /** Return the address as a string in dotted decimal format
 
         @par Exception Safety
-
         Strong guarantee.
         Calls to allocate may throw.
 
@@ -209,6 +221,17 @@ public:
         return ipv4_address(0xFFFFFFFF);
     }
 
+    /** Parse an IPv4 address.
+    */
+    BOOST_URL_DECL
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        ipv4_address& t);
+
 private:
     friend class ipv6_address;
 
@@ -217,10 +240,19 @@ private:
     print_impl(
         char* dest) const noexcept;
 
-    uint_type addr_;
+    uint_type addr_ = 0;
 };
 
-/** Format the address to an output stream
+//------------------------------------------------
+
+/** Format the address to an output stream.
+
+    IPv4 addresses written to output streams
+    are written in their dotted decimal format.
+
+    @param os The output stream.
+
+    @param addr The address to format.
 */
 BOOST_URL_DECL
 std::ostream&
@@ -231,17 +263,9 @@ operator<<(
 /** Return an IPv4 address from an IP address string in dotted decimal form
 */
 BOOST_URL_DECL
-ipv4_address
-make_ipv4_address(
-    string_view s,
-    error_code& ec) noexcept;
-
-/** Return an IPv4 address from an IP address string in dotted decimal form
-*/
-BOOST_URL_DECL
-ipv4_address
-make_ipv4_address(
-    string_view s);
+result<ipv4_address>
+parse_ipv4_address(
+    string_view s) noexcept;
 
 } // urls
 } // boost

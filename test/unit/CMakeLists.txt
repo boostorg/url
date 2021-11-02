@@ -55,7 +55,6 @@ set(BOOST_URL_TESTS_FILES
     rfc/host_bnf.cpp
     rfc/ip_literal_bnf.cpp
     rfc/ipv_future_bnf.cpp
-    rfc/ipv4_address_bnf.cpp
     rfc/ipv6_address_bnf.cpp
     rfc/paths_bnf.cpp
     rfc/pct_encoded_bnf.cpp
