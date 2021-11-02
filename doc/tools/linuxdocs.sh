@@ -21,7 +21,7 @@ if git rev-parse --abbrev-ref HEAD | grep master ; then BOOST_BRANCH=master ; el
 echo '==================================> INSTALL'
 
 sudo apt-get update
-sudo apt-get install -y docbook docbook-xml docbook-xsl xsltproc libsaxonhe-java default-jre-headless flex libfl-dev bison unzip
+sudo apt-get install -y docbook docbook-xml docbook-xsl xsltproc libsaxonhe-java default-jre-headless flex libfl-dev bison unzip rsync wget python3 cmake build-essential
 
 cd $BOOST_SRC_FOLDER
 cd ..
@@ -80,5 +80,5 @@ python3 tools/boostdep/depinst/depinst.py ../tools/quickbook
 echo '==================================> COMPILE'
 
 echo "using doxygen ; using boostbook ; using saxonhe ;" > tools/build/src/user-config.jam
-./b2 -j3 libs/$REPONAME/doc//boostrelease
 
+./b2 libs/$REPONAME/doc/
