@@ -62,6 +62,32 @@ parse(
     return true;
 }
 
+bool
+parse(
+    char const*& it,
+    char const* const end,
+    error_code& ec,
+    port_part_bnf& t)
+{
+    using bnf::parse;
+    if( it == end ||
+        *it != ':')
+    {
+        ec = {};
+        t.has_port = false;
+        return true;
+    }
+    ++it;
+    port_bnf t0;
+    if(! parse(it, end, ec, t0))
+        return false;
+    t.has_port = true;
+    t.port = t0.str;
+    t.has_number = t0.has_number;
+    t.port_number = t0.number;
+    return true;
+}
+
 } // urls
 } // boost
 

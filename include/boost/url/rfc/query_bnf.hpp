@@ -76,6 +76,34 @@ struct query_bnf : bnf::range
         query_param& t) noexcept;
 };
 
+/** BNF for query-part
+
+    @par BNF
+    @code
+    query-part      = [ "?" query ]
+
+    query           = *( pchar / "/" / "?" )
+    @endcode
+
+    @see
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+*/
+struct query_part_bnf
+{
+    bool has_query;
+    query_bnf query;
+    string_view query_part;
+
+    BOOST_URL_DECL
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        query_part_bnf& t);
+};
+
 } // urls
 } // boost
 

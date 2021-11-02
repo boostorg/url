@@ -14,7 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/rfc/host_bnf.hpp>
-#include <boost/url/rfc/port_part_bnf.hpp>
+#include <boost/url/rfc/port_bnf.hpp>
 #include <boost/url/rfc/userinfo_bnf.hpp>
 
 namespace boost {

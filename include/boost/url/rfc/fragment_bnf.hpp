@@ -41,6 +41,34 @@ struct fragment_bnf
         fragment_bnf const& t);
 };
 
+/** BNF for fragment-part
+
+    @par BNF
+    @code
+    fragment-part   = [ "#" fragment ]
+
+    fragment        = *( pchar / "/" / "?" )
+    @endcode
+
+    @see
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3.5
+*/
+struct fragment_part_bnf
+{
+    bool has_fragment;
+    pct_encoded_str fragment;
+    string_view fragment_part;
+
+    BOOST_URL_DECL
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        fragment_part_bnf& t);
+};
+
 } // urls
 } // boost
 

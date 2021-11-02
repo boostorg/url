@@ -12,8 +12,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/rfc/fragment_part_bnf.hpp>
-#include <boost/url/rfc/query_part_bnf.hpp>
+#include <boost/url/rfc/fragment_bnf.hpp>
+#include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/rfc/relative_part_bnf.hpp>
 
 namespace boost {

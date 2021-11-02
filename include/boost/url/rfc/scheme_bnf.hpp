@@ -44,6 +44,35 @@ struct scheme_bnf
         scheme_bnf& t);
 };
 
+/** BNF for scheme-part
+
+    @par BNF
+    @code
+    scheme-part     = scheme ":"
+
+    scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+    @endcode
+
+    @see
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
+*/
+struct scheme_part_bnf
+{
+    string_view scheme;
+    urls::scheme scheme_id =
+        urls::scheme::none;
+    string_view scheme_part;
+
+    BOOST_URL_DECL
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        scheme_part_bnf& t);
+};
+
 } // urls
 } // boost
 

@@ -15,13 +15,13 @@
 #include <boost/url/detail/over_allocator.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
-#include <boost/url/rfc/fragment_part_bnf.hpp>
+#include <boost/url/rfc/fragment_bnf.hpp>
 #include <boost/url/rfc/host_bnf.hpp>
 #include <boost/url/rfc/paths_bnf.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/rfc/query_part_bnf.hpp>
+#include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/rfc/relative_ref_bnf.hpp>
-#include <boost/url/rfc/scheme_part_bnf.hpp>
+#include <boost/url/rfc/scheme_bnf.hpp>
 #include <boost/url/rfc/uri_bnf.hpp>
 #include <array>
 #include <ostream>

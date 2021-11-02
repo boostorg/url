@@ -47,6 +47,38 @@ struct port_bnf
         port_bnf& t);
 };
 
+/** BNF for port-part
+
+    @par BNF
+    @code
+    port-part       = [ ":" port ]
+
+    port            = *DIGIT
+    @endcode
+
+    @see
+        https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
+*/
+struct port_part_bnf
+{
+    using number_type =
+        std::uint16_t;
+
+    bool has_port = false;
+    string_view port;
+    bool has_number = false;
+    std::uint16_t port_number = 0;
+
+    BOOST_URL_DECL
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        port_part_bnf& t);
+};
+
 } // urls
 } // boost
 

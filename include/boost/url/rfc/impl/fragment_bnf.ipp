@@ -31,6 +31,32 @@ parse(
         fragment_chars, t.v));
 }
 
+bool
+parse(
+    char const*& it,
+    char const* const end,
+    error_code& ec,
+    fragment_part_bnf& t)
+{
+    using bnf::parse;
+    if( it == end ||
+        *it != '#')
+    {
+        t.has_fragment = false;
+        ec = {};
+        return true;
+    }
+    auto start = it;
+    ++it;
+    if(! parse(it, end, ec, 
+        fragment_bnf{t.fragment}))
+        return false;
+    t.has_fragment = true;
+    t.fragment_part = string_view(
+        start, it - start);
+    return true;
+}
+
 } // urls
 } // boost
 

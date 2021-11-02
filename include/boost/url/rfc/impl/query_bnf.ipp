@@ -97,6 +97,31 @@ increment(
         pct_encoded_bnf(cs, t.value));
 }
 
+bool
+parse(
+    char const*& it,
+    char const* const end,
+    error_code& ec,
+    query_part_bnf& t)
+{
+    using bnf::parse;
+    auto start = it;
+    if( it == end ||
+        *it != '?')
+    {
+        ec = {};
+        t.has_query = false;
+        return true;
+    }
+    ++it;
+    if(! parse(it, end, ec, t.query))
+        return false;
+    t.has_query = true;
+    t.query_part = string_view(
+        start, it - start);
+    return true;
+}
+
 } // urls
 } // boost
 

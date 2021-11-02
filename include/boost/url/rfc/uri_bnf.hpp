@@ -12,10 +12,10 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/rfc/fragment_part_bnf.hpp>
+#include <boost/url/rfc/fragment_bnf.hpp>
 #include <boost/url/rfc/hier_part_bnf.hpp>
-#include <boost/url/rfc/query_part_bnf.hpp>
-#include <boost/url/rfc/scheme_part_bnf.hpp>
+#include <boost/url/rfc/query_bnf.hpp>
+#include <boost/url/rfc/scheme_bnf.hpp>
 
 namespace boost {
 namespace urls {

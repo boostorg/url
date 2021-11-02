@@ -51,7 +51,6 @@ set(BOOST_URL_TESTS_FILES
     rfc/authority_bnf.cpp
     rfc/charsets.cpp
     rfc/fragment_bnf.cpp
-    rfc/fragment_part_bnf.cpp
     rfc/hier_part_bnf.cpp
     rfc/host_bnf.cpp
     rfc/ip_literal_bnf.cpp
@@ -61,14 +60,11 @@ set(BOOST_URL_TESTS_FILES
     rfc/paths_bnf.cpp
     rfc/pct_encoded_bnf.cpp
     rfc/port_bnf.cpp
-    rfc/port_part_bnf.cpp
     rfc/query_bnf.cpp
-    rfc/query_part_bnf.cpp
     rfc/reg_name_bnf.cpp
     rfc/relative_part_bnf.cpp
     rfc/relative_ref_bnf.cpp
     rfc/scheme_bnf.cpp
-    rfc/scheme_part_bnf.cpp
     rfc/uri_bnf.cpp
     rfc/uri_reference_bnf.cpp
     rfc/userinfo_bnf.cpp
