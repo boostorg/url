@@ -39,7 +39,7 @@ choco install -y rsync sed doxygen.install xsltproc docbook-bundle
 
 if ( -Not (Get-Command java -errorAction SilentlyContinue) )
 {
-    choco install -y javaruntime
+    choco install -y openjdk --version=17.0.1
 }
 
 if ( -Not (Get-Command python -errorAction SilentlyContinue) )
@@ -170,5 +170,5 @@ $content='using doxygen : "/Program Files/doxygen/bin/doxygen.exe" ; using boost
 $filename="$Env:BOOST_ROOT\tools\build\src\user-config.jam"
 [IO.File]::WriteAllLines($filename, $content)
 
-./b2 -d 2 -j3 --user-config=tools/build/src/user-config.jam libs/$REPONAME/doc//boostrelease
+./b2 libs/$REPONAME/doc/
 

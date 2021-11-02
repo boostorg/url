@@ -81,4 +81,5 @@ python3 tools/boostdep/depinst/depinst.py ../tools/quickbook
 echo '==================================> COMPILE'
 
 echo "using doxygen ; using boostbook ; using saxonhe ;" > tools/build/src/user-config.jam
-./b2 -j3 libs/$REPONAME/doc//boostrelease
+
+./b2 libs/$REPONAME/doc/
