@@ -164,7 +164,6 @@
           <member><link linkend="url.ref.boost__urls__host_bnf">host_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__ip_literal_bnf">ip_literal_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__ipv_future_bnf">ipv_future_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__ipv4_address_bnf">ipv4_address_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__ipv6_address_bnf">ipv6_address_bnf</link></member>
           <member><link linkend="url.ref.boost__urls__parsed_path">parsed_path</link></member>
           <member><link linkend="url.ref.boost__urls__path_abempty_bnf">path_abempty_bnf</link></member>

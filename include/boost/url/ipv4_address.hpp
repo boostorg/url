@@ -133,7 +133,15 @@ public:
     template<class Allocator =
         std::allocator<char>>
     string_value
-    to_string(Allocator const& a = {}) const;
+    to_string(Allocator const& a = {}) const
+    {
+        char buf[max_str_len];
+        auto const n = print_impl(buf);
+        char* dest;
+        string_value s(n, a, dest);
+        std::memcpy(dest, buf, n);
+        return s;
+    }
 
     /** Write a dotted decimal string representing the address to a buffer
 
@@ -269,7 +277,5 @@ parse_ipv4_address(
 
 } // urls
 } // boost
-
-#include <boost/url/impl/ipv4_address.hpp>
 
 #endif

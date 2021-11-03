@@ -59,7 +59,6 @@ local SOURCES =
     rfc/host_bnf.cpp
     rfc/ip_literal_bnf.cpp
     rfc/ipv_future_bnf.cpp
-    rfc/ipv6_address_bnf.cpp
     rfc/paths_bnf.cpp
     rfc/pct_encoded_bnf.cpp
     rfc/port_bnf.cpp

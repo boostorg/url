@@ -407,7 +407,7 @@ public:
             BOOST_TEST(u.host() ==
                 "[1::6:192.168.0.1]");
             BOOST_TEST(u.ipv6_address() ==
-                make_ipv6_address("1::6:c0a8:1"));
+                ipv6_address("1::6:c0a8:1"));
         }
         {
             auto u = parse_uri(

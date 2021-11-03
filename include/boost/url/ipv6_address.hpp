@@ -29,9 +29,33 @@ class ipv4_address;
     Objects of this type are used to construct
     and manipulate IP version 6 addresses.
 
+    @par BNF
+    @code
+    IPv6address =                            6( h16 ":" ) ls32
+                /                       "::" 5( h16 ":" ) ls32
+                / [               h16 ] "::" 4( h16 ":" ) ls32
+                / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+                / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+                / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+                / [ *4( h16 ":" ) h16 ] "::"              ls32
+                / [ *5( h16 ":" ) h16 ] "::"              h16
+                / [ *6( h16 ":" ) h16 ] "::"
+
+    ls32        = ( h16 ":" h16 ) / IPv4address
+                ; least-significant 32 bits of address
+
+    h16         = 1*4HEXDIG
+                ; 16 bits of address represented in hexadecimal
+    @endcode
+
     @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc4291">
-        IP Version 6 Addressing Architecture (rfc4291)</a>
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc4291"
+        >IP Version 6 Addressing Architecture (rfc4291)</a>
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
+        >3.2.2. Host (rfc3986)</a>
+
+    @see
+        @ref ipv4_address.
 */
 class ipv6_address
 {
@@ -50,26 +74,36 @@ public:
 
         Octets are stored in network byte order.
     */
-    using bytes_type =
-        std::array<unsigned char, 16>;
+    using bytes_type = std::array<
+        unsigned char, 16>;
 
-    /** Constructor
+    /** Constructor.
 
         Default constructed objects represent
         the unspecified address.
 
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.2">
-            2.5.2. The Unspecified Address</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.2"
+            >2.5.2. The Unspecified Address</a>
 
-        @see @ref is_unspecified
+        @see
+            @ref is_unspecified
     */
-    BOOST_URL_DECL
-    ipv6_address() noexcept;
+    ipv6_address() = default;
+
+    /** Constructor.
+    */
+    ipv6_address(
+        ipv6_address const&) = default;
+
+    /** Copy Assignment
+    */
+    ipv6_address&
+    operator=(
+        ipv6_address const&) = default;
 
     /** Constructor
     */
     BOOST_URL_DECL
-    explicit
     ipv6_address(
         bytes_type const& bytes) noexcept;
 
@@ -77,20 +111,21 @@ public:
     */
     BOOST_URL_DECL
     ipv6_address(
-        ipv6_address const& other) noexcept;
+        ipv4_address const& addr) noexcept;
 
-    /** Assignment
+    /** Constructor
     */
     BOOST_URL_DECL
-    ipv6_address&
-    operator=(
-        ipv6_address const& other) noexcept;
+    ipv6_address(
+        string_view s);
 
     /** Return the address as bytes, in network byte order
     */
-    BOOST_URL_DECL
     bytes_type
-    to_bytes() const noexcept;
+    to_bytes() const noexcept
+    {
+        return addr_;
+    }
 
     /** Return the address as a string
 
@@ -116,7 +151,15 @@ public:
     template<class Allocator =
         std::allocator<char>>
     string_value
-    to_string(Allocator const& a = {}) const;
+    to_string(Allocator const& a = {}) const
+    {
+        char buf[max_str_len];
+        auto const n = print_impl(buf);
+        char* dest;
+        string_value s(n, a, dest);
+        std::memcpy(dest, buf, n);
+        return s;
+    }
 
     /** Write a dotted decimal string representing the address to a buffer
 
@@ -213,13 +256,24 @@ public:
     ipv6_address
     loopback() noexcept;
 
+    /** Parse a string containing an IPv6 address.
+    */
+    BOOST_URL_DECL
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        ipv6_address& t) noexcept;
+
 private:
     BOOST_URL_DECL
     std::size_t
     print_impl(
         char* dest) const noexcept;
 
-    bytes_type addr_;
+    bytes_type addr_{};
 };
 
 /** Format the address to an output stream
@@ -232,45 +286,16 @@ operator<<(
 
 /** Return an IPv6 address from an IP address string
 
-    @par Exception Safety
-    Throws nothing.
-
-    @return The parsed address if successful,
-        otherwise a default constructed object.
-
-    @param s The string to parse
-
-    @param ec Set to the error, if any occurred
-*/
-BOOST_URL_DECL
-ipv6_address
-make_ipv6_address(
-    string_view s,
-    error_code& ec) noexcept;
-
-/** Return an IPv6 address from an IP address string
-
     @throw system_error Thrown on failure
 
     @param s The string to parse
 */
 BOOST_URL_DECL
-ipv6_address
-make_ipv6_address(
-    string_view s);
-
-/** Return an IPv6 address from an IPv4 address
-
-    @param a The ipv4 address to use
-*/
-BOOST_URL_DECL
-ipv6_address
-make_ipv6_address(
-    ipv4_address const& a) noexcept;
+result<ipv6_address>
+parse_ipv6_address(
+    string_view s) noexcept;
 
 } // urls
 } // boost
-
-#include <boost/url/impl/ipv6_address.hpp>
 
 #endif

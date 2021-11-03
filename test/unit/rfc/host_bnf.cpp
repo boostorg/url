@@ -78,7 +78,7 @@ public:
 
         BOOST_TEST(check(
             "[1:2:3:4:5:6:7:8]", host_type::ipv6)
-                .ipv6 == make_ipv6_address(
+                .ipv6 == ipv6_address(
                     "1:2:3:4:5:6:7:8"));
 
         BOOST_TEST(check("[v1.2]", host_type::ipvfuture)

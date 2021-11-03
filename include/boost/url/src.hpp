@@ -61,7 +61,6 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/host_bnf.ipp>
 #include <boost/url/rfc/impl/ip_literal_bnf.ipp>
 #include <boost/url/rfc/impl/ipv_future_bnf.ipp>
-#include <boost/url/rfc/impl/ipv6_address_bnf.ipp>
 #include <boost/url/rfc/impl/paths_bnf.ipp>
 #include <boost/url/rfc/impl/port_bnf.ipp>
 #include <boost/url/rfc/impl/query_bnf.ipp>

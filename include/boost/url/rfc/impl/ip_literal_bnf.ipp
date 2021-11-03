@@ -11,8 +11,8 @@
 #define BOOST_URL_IMPL_IP_LITERAL_BNF_IPP
 
 #include <boost/url/rfc/ip_literal_bnf.hpp>
+#include <boost/url/ipv6_address.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/ipv6_address_bnf.hpp>
 #include <boost/url/rfc/ipv_future_bnf.hpp>
 
 namespace boost {
@@ -40,8 +40,7 @@ parse(
     {
         // IPv6address
         if(! parse(it, end, ec,
-                ipv6_address_bnf{
-                    t.ipv6}, ']'))
+                t.ipv6, ']'))
             return false;
         t.is_ipv6 = true;
     }
