@@ -24,10 +24,10 @@ namespace urls {
 class ipv4_address;
 #endif
 
-/** Represents an IP version 6 style address
+/** An IP version 6 style address.
 
-    Objects of this type are used to construct
-    and manipulate IP version 6 addresses.
+    Objects of this type are used to construct,
+    parse, and manipulate IP version 6 addresses.
 
     @par BNF
     @code
@@ -51,16 +51,25 @@ class ipv4_address;
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc4291"
         >IP Version 6 Addressing Architecture (rfc4291)</a>
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
         >3.2.2. Host (rfc3986)</a>
 
     @see
-        @ref ipv4_address.
+        @ref ipv4_address,
+        @ref parse_ipv6_address.
 */
 class ipv6_address
 {
 public:
-    /** The number of characters in the longest possible ipv4 string
+    /** The number of characters in the longest possible IPv6 string.
+
+        The longest IPv6 address is:
+        @code
+        ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
+        @endcode
+
+        @see
+            @ref to_buffer.
     */
     // ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
     // ::ffff:255.255.255.255
@@ -70,7 +79,7 @@ public:
     constexpr
     std::size_t max_str_len = 49;
 
-    /** The type used to represent an address as an array of bytes
+    /** The type used to represent an address as an array of bytes.
 
         Octets are stored in network byte order.
     */
@@ -101,19 +110,54 @@ public:
     operator=(
         ipv6_address const&) = default;
 
-    /** Constructor
+    /** Construct from an array of bytes.
+
+        This function constructs an address
+        from the array in `bytes`, which will
+        be interpreted in big-endian.
+
+        @param bytes The value to construct from.
     */
     BOOST_URL_DECL
     ipv6_address(
         bytes_type const& bytes) noexcept;
 
-    /** Constructor
+    /** Construct from an IPv4 address.
+
+        This function constructs an IPv6 address
+        from the IPv4 address `addr`. The resulting
+        address is an IPv4-Mapped IPv6 Address.
+
+        @param addr The address to construct from.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.5.2"
+            >2.5.5.2. IPv4-Mapped IPv6 Address (rfc4291)</a>
     */
     BOOST_URL_DECL
     ipv6_address(
         ipv4_address const& addr) noexcept;
 
-    /** Constructor
+    /** Construct from a string.
+
+        This function constructs an address from
+        the string `s`, which must contain a valid
+        IPv6 address string or else an exception
+        is thrown.
+
+        @note For a non-throwing parse function,
+        use @ref parse_ipv6_address.
+
+        @throw std::invalid_argument parse error.
+
+        @param s The string to parse.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2. Host (rfc3986)</a>
+
+        @see
+            @ref parse_ipv6_address.
     */
     BOOST_URL_DECL
     ipv6_address(
@@ -127,13 +171,12 @@ public:
         return addr_;
     }
 
-    /** Return the address as a string
+    /** Return the address as a string.
 
         The returned string will not
         contain surrounding square brackets.
 
         @par Exception Safety
-
         Strong guarantee.
         Calls to allocate may throw.
 
@@ -257,6 +300,23 @@ public:
     loopback() noexcept;
 
     /** Parse a string containing an IPv6 address.
+
+        This function overload is used with
+        @ref bnf::parse.
+
+        @return true if the parse was successful.
+
+        @param it A pointer to the beginning of
+        the string to be parsed. Upon return, this
+        will point to one past the last character
+        visited.
+
+        @param end A pointer to one past the last
+        character in the string to be parsed.
+
+        @param ec Set to the error, if any occurred.
+
+        @param t Set to the result upon success.
     */
     BOOST_URL_DECL
     friend
@@ -276,7 +336,18 @@ private:
     bytes_type addr_{};
 };
 
+//------------------------------------------------
+
 /** Format the address to an output stream
+
+    This function writes the address to an
+    output stream using standard notation.
+
+    @return The output stream, for chaining.
+
+    @param os The output stream to write to.
+
+    @param addrr The address to write.
 */
 BOOST_URL_DECL
 std::ostream&
@@ -284,11 +355,20 @@ operator<<(
     std::ostream& os,
     ipv6_address const& addr);
 
-/** Return an IPv6 address from an IP address string
+/** Parse a string containing an IPv6 address.
 
-    @throw system_error Thrown on failure
+    This function attempts to parse the string
+    as an IPv6 address and returns a result
+    containing the address upon success, or
+    an error code if the string does not contain
+    a valid IPv6 address.
 
-    @param s The string to parse
+    @par Exception Safety
+    Throws nothing.
+
+    @return A result containing the address.
+
+    @param s The string to parse.
 */
 BOOST_URL_DECL
 result<ipv6_address>

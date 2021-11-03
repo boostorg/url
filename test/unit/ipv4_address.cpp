@@ -106,6 +106,10 @@ public:
             char buf[ipv4_address::max_str_len];
             BOOST_TEST(a.to_buffer(buf,
                 sizeof(buf)) == "1.2.3.4");
+            char buf2[10];
+            BOOST_TEST_THROWS(
+                a.to_buffer(buf2, sizeof(buf2)),
+                std::length_error);
         }
 
         // is_loopback
@@ -175,10 +179,8 @@ public:
         // operator<<
         {
             std::stringstream ss;
-            ipv4_address a(0x01020304);
-            ss << a;
-            BOOST_TEST(
-                ss.str() == "1.2.3.4");
+            ss << ipv4_address(0x01020304);
+            BOOST_TEST(ss.str() == "1.2.3.4");
         }
     }
 

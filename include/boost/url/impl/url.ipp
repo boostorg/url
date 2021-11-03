@@ -839,10 +839,10 @@ set_port(std::uint16_t n)
     auto s =
         detail::make_printed(n);
     auto dest = set_port_impl(
-        s.str().size());
+        s.string().size());
     std::memcpy(
-        dest, s.str().data(),
-            s.str().size());
+        dest, s.string().data(),
+            s.string().size());
     port_number_ = n;
     check_invariants();
     return *this;
@@ -1341,7 +1341,6 @@ edit_segments(
 
     // copy
     n += prefix + suffix;
-    auto const size0 = size();
     auto dest = edit_segments(
         i0, i1, n, nseg);
     auto const last = dest + n;
@@ -1840,7 +1839,7 @@ resolve(
         }
     };
 
-    if(! base.is_absolute_uri())
+    if(! base.has_scheme())
     {
         ec = error::not_a_base;
         return false;
@@ -2322,7 +2321,7 @@ operator<<(
     std::ostream& os,
     url const& u)
 {
-    os << u.encoded_url();
+    os << u.string();
     return os;
 }
 

@@ -44,36 +44,44 @@ struct scheme_part_bnf;
 
 /** A read-only view to a URL
 
-    Objects of this type represent valid URLs
-    whose storage is managed externally. That
-    is, it acts like a `std::string_view` in
+    Objects of this type represent valid URL
+    strings whose storage is managed externally.
+    That is, it acts like a `std::string_view` in
     terms of ownership. Callers are responsible
     for ensuring that the lifetime of the
-    underlying string extends until the
-    `url_view` is no longer in use.
-    To construct from an existing string it is
-    necessary to use one of the parsing
-    functions. Each function parses against
-    a particular URL grammar:
+    underlying string extends until the view
+    is no longer in use.
+    The constructor parses using the
+    <em>URI-reference</em> grammar and throws
+    an exception on error.
+    The parsing free functions offer different
+    choices of grammar and can indicate failure
+    using an error code.
 
     @par Example
     @code
-    url_view u;
+    url_view u( "http://www.example.com/index.html" );
 
-    u = parse_uri( "http://www.example.com/index.html" ).value();
-
+    // Reassign, throw on error:
     u = parse_relative_ref( "/path/to/file.txt" ).value();
+
+    result< url_view > r = parse_absolute_uri(
+        "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a" );
+    if( r.has_value() )
+        std::cout << r.value();
+    else
+        std::cout << r.error().message();
     @endcode
 
     @par BNF
     @code
-    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
     URI-reference = URI / relative-ref
 
-    absolute-URI  = scheme ":" hier-part [ "?" query ]
+    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
 
     relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+
+    absolute-URI  = scheme ":" hier-part [ "?" query ]
     @endcode
 
     @see
@@ -168,39 +176,27 @@ protected:
 public:
     /** The type of elements.
     */
-    using value_type        = char;
+    using value_type = char;
 
     /** The type of pointers to elements.
     */
-    using pointer           = char const*;
+    using pointer = char const*;
 
     /** The type of const pointers to elements.
     */
-    using const_pointer     = char const*;
-
-    /** The type of reference to elements.
-    */
-    using reference         = char const&;
-
-    /** The type of const references to elements.
-    */
-    using const_reference   = char const&;
+    using const_pointer = char const*;
 
     /** The type of const iterator to elements.
     */
-    using const_iterator    = char const*;
+    using const_iterator = char const*;
 
     /** The type of iterator to elements.
     */
-    using iterator          = char const*;
+    using iterator = char const*;
 
     /** An unsigned integer type to represent sizes.
     */
-    using size_type         = std::size_t;
-
-    /** A signed integer type to represent differences.
-    */
-    using difference_type   = std::ptrdiff_t;
+    using size_type = std::size_t;
 
     //--------------------------------------------
     //
@@ -254,7 +250,27 @@ public:
     url_view&
     operator=(url_view const&) noexcept;
 
-    /** Construct from a string
+    /** Construct from a string.
+
+        This function constructs a URL from
+        the string `s`, which must contain a
+        valid URI or <em>relative-ref</em> or
+        else an exception is thrown.
+
+        @par BNF
+        @code
+        URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+        relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+        @endcode
+
+        @throw std::invalid_argument parse error.
+
+        @param s The string to parse.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
+            >4.1. URI Reference</a>
     */
     BOOST_URL_DECL
     url_view(string_view s);
@@ -267,7 +283,7 @@ public:
 
     /** Return the maximum number of characters allowed in a URL.
 
-        This includes any null terminator, if present
+        This does not include a null terminator.
 
         @par Exception Safety
         Throws nothing.
@@ -309,7 +325,7 @@ public:
         return size() == 0;
     }
 
-    /** Return a pointer to the first character of the view
+    /** Return a pointer to the first character of the view.
 
         This function returns a pointer to the
         first character of the view, which is
@@ -322,47 +338,6 @@ public:
     data() const noexcept
     {
         return cs_;
-    }
-
-    /** Access the specified character
-
-        This function returns a reference to
-        the character at the specified zero-based
-        position. If `pos` is out of range, an
-        exception if thrown.
-
-        @param pos The zero-based character
-        position to access.
-
-        @throw std::out_of_range pos >= size()
-    */
-    char const&
-    at(std::size_t pos) const
-    {
-        if(pos >= size())
-            detail::throw_out_of_range(
-                BOOST_CURRENT_LOCATION);
-        return cs_[pos];
-    }
-
-    /** Access the specified character
-
-        This function returns a reference to
-        the character at the specified zero-based
-        position. The behavior is undefined if
-        `pos` is out of range.
-
-        @par Preconditions
-        @code
-        pos < this->size()
-        @endcode
-    */
-    char const&
-    operator[](
-        std::size_t pos) const noexcept
-    {
-        BOOST_ASSERT(pos < size());
-        return cs_[pos];
     }
 
     /** Return an iterator to the beginning
@@ -401,7 +376,7 @@ public:
         Throws nothing.
     */
     string_view
-    encoded_url() const noexcept
+    string() const noexcept
     {
         return string_view(
             data(), size());
@@ -423,14 +398,14 @@ public:
         std::shared_ptr<url_view const> sp;
         {
             std::string s( "http://example.com" );
-            url_view u = parse_uri( s ).value();    // u references characters in s
+            url_view u( s );                        // u references characters in s
 
             assert( u.data() == s.data() );         // same buffer
 
             sp = u.collect();
 
             assert( sp->data() != s.data() );       // different buffer
-            assert( sp->encoded_url() == s);        // same contents
+            assert( sp->string() == s);        // same contents
 
             // s is destroyed and thus u
             // becomes invalid, but sp remains valid.
@@ -457,7 +432,7 @@ public:
 
         @par Example
         @code
-        url_view u = parse_uri( "http://www.example.com" ).value();
+        url_view u( "http://www.example.com" );
 
         assert( u.has_scheme() );
         @endcode
@@ -494,7 +469,7 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://www.example.com" ).scheme() == "http" );
+        assert( url_view( "http://www.example.com" ).scheme() == "http" );
         @endcode
 
         @par BNF
@@ -566,11 +541,11 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://www.example.com/index.htm" ).value().has_authority() == true );
+        assert( url_view( "http://www.example.com/index.htm" ).has_authority() == true );
 
-        assert( parse_relative_ref( "//" ).value().has_authority() == true );
+        assert( url_view( "//" ).has_authority() == true );
 
-        assert( parse_relative_ref( "/file.txt" ).value().has_authority() == false );
+        assert( url_view( "/file.txt" ).has_authority() == false );
         @endcode
 
         @par BNF
@@ -616,7 +591,7 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://www.example.com/index.htm" ).encoded_authority() == "www.example.com" );
+        assert( url_view( "http://www.example.com/index.htm" ).encoded_authority() == "www.example.com" );
         @endcode
 
         @par BNF
@@ -647,7 +622,7 @@ public:
 
         @par Example
         @code
-        url_view u = parse_uri( "http://user@example.com" ).value();
+        url_view u( "http://user@example.com" );
 
         assert( u.has_userinfo() == true );
         @endcode
@@ -663,7 +638,7 @@ public:
         Throws nothing.
 
         @par Specification
-        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
@@ -681,7 +656,7 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://user:pass@example.com" ).encoded_userinfo() == "user:pass" );
+        assert( url_view( "http://user:pass@example.com" ).encoded_userinfo() == "user:pass" );
         @endcode
 
         @par BNF
@@ -695,7 +670,7 @@ public:
         Throws nothing.
 
         @par Specification
-        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
@@ -714,7 +689,7 @@ public:
 
         @par Example
         @code
-        url_view u = parse_uri( "http://user:pass@example.com" ).value();
+        url_view u( "http://user:pass@example.com" );
 
         assert( u.userinfo() == "user:pass" );
         @endcode
@@ -737,7 +712,7 @@ public:
         specified allocator.
 
         @par Specification
-        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
@@ -766,7 +741,7 @@ public:
 
         @par Example
         @code
-        url_view u = parse_uri( "http://user:pass@example.com" ).value();
+        url_view u( "http://user:pass@example.com" );
 
         assert( u.encoded_user() == "user" );
         @endcode
@@ -783,7 +758,7 @@ public:
         Throws nothing.
 
         @par Specification
-        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
@@ -805,7 +780,7 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://user:pass@example.com" ).user() == "user" );
+        assert( url_view( "http://user:pass@example.com" ).user() == "user" );
         @endcode
 
         @par BNF
@@ -827,7 +802,7 @@ public:
         specified allocator.
 
         @par Specification
-        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
@@ -856,11 +831,11 @@ public:
 
         @par Example
         @code
-        assert( parse_uri( "http://user@example.com" ).value().has_password() == false );
+        assert( url_view( "http://user@example.com" ).has_password() == false );
 
-        assert( parse_uri( "http://user:pass@example.com" ).value().has_password() == true );
+        assert( url_view( "http://user:pass@example.com" ).has_password() == true );
 
-        assert( parse_uri( "http://:@" ).value().has_password() == true );
+        assert( url_view( "http://:@" ).has_password() == true );
         @endcode
 
         @par BNF
@@ -875,7 +850,7 @@ public:
         Throws nothing.
 
         @par Specification
-        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
@@ -895,7 +870,7 @@ public:
 
         @par Example
         @code
-        url_view u = parse_uri( "http://user:pass@example.com" ).value();
+        url_view u( "http://user:pass@example.com" );
 
         assert( u.encoded_user() == "user" );
         @endcode
@@ -912,7 +887,7 @@ public:
         Throws nothing.
 
         @par Specification
-        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
@@ -977,11 +952,11 @@ public:
 
         @par Example
         @code
-        assert( parse_relative_ref( "/favicon.png" ).value().host_type() == host_type::none );
+        assert( url_view( "/favicon.png" ).host_type() == host_type::none );
 
-        assert( parse_uri( "http://example.com" ).value().host_type() == host_type::name );
+        assert( url_view( "http://example.com" ).host_type() == host_type::name );
 
-        assert( parse_uri( "http://192.168.0.1" ).value().host_type() == host_type::ipv4 );
+        assert( url_view( "http://192.168.0.1" ).host_type() == host_type::ipv4 );
         @endcode
 
         @par BNF
@@ -1020,11 +995,11 @@ public:
 
         @par Example
         @code
-        assert( parse_relative_ref( "/favicon.png" ).value().encoded_host() == "" );
+        assert( url_view( "/favicon.png" ).encoded_host() == "" );
 
-        assert( parse_uri( "http://example.com" ).value().encoded_host() == "example.com" );
+        assert( url_view( "http://example.com" ).encoded_host() == "example.com" );
 
-        assert( parse_uri( "http://192.168.0.1" ).value().encoded_host() == "192.168.0.1" );
+        assert( url_view( "http://192.168.0.1" ).encoded_host() == "192.168.0.1" );
         @endcode
 
         @par BNF
@@ -1065,11 +1040,11 @@ public:
 
         @par Example
         @code
-        assert( parse_relative_ref( "/favicon.png" ).value().host() == "" );
+        assert( url_view( "/favicon.png" ).host() == "" );
 
-        assert( parse_uri( "http://example.com" ).value().host() == "example.com" );
+        assert( url_view( "http://example.com" ).host() == "example.com" );
 
-        assert( parse_uri( "http://192.168.0.1" ).value().host() == "192.168.0.1" );
+        assert( url_view( "http://192.168.0.1" ).host() == "192.168.0.1" );
         @endcode
 
         @par BNF
@@ -1289,7 +1264,7 @@ public:
     string_view
     port() const noexcept;
 
-    /** Return the port as an intege
+    /** Return the port as an integer.
 
         This function returns the port as an
         integer if the authority specifies
@@ -1370,7 +1345,10 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if the path is absolute
+    /** Return true if the path is absolute.
+
+        This function returns true if the path
+        begins with a forward slash ('/').
     */
     bool
     is_path_absolute() const noexcept
@@ -1380,7 +1358,7 @@ public:
             cs_[offset(id_path)] == '/';
     }
 
-    /** Return the path
+    /** Return the path.
 
         This function returns the path as a
         percent-encoded string.
@@ -1439,6 +1417,11 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @param alloc An optional allocator the
+        container will use when returning
+        percent-decoded strings. If omitted,
+        the default allocator is used.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
@@ -1531,8 +1514,7 @@ public:
 
         @param a An optional allocator the returned
         string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
+        the default allocator is used
 
         @return A @ref string_value using the
         specified allocator.
@@ -1562,32 +1544,6 @@ public:
 
         This function returns the query
         parameters as a non-modifiable
-        forward range of key/value pairs
-        where each returned string has
-        percent-decoding applied.
-
-        @par BNF
-        @code
-        query-params    = [ query-param ] *( "&" [ query-param ] )
-
-        query-param     = key [ "=" value ]
-        @endcode
-
-        @param alloc The allocator the container
-        will use when returning string with
-        percent-decoding applied.
-    */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    params_view
-    params(Allocator const&
-        alloc = {}) const noexcept;
-
-    /** Return the query parameters
-
-        This function returns the query
-        parameters as a non-modifiable
         forward range of key/value pairs.
         Each string returned by the container
         is percent-encoded.
@@ -1604,6 +1560,33 @@ public:
     params_encoded_view
     encoded_params() const noexcept;
 
+    /** Return the query parameters
+
+        This function returns the query
+        parameters as a non-modifiable
+        forward range of key/value pairs
+        where each returned string has
+        percent-decoding applied.
+
+        @par BNF
+        @code
+        query-params    = [ query-param ] *( "&" [ query-param ] )
+
+        query-param     = key [ "=" value ]
+        @endcode
+
+        @param alloc An optional allocator the
+        container will use when returning
+        percent-decoded strings. If omitted,
+        the default allocator is used.
+    */
+    template<
+        class Allocator =
+            std::allocator<char>>
+    params_view
+    params(Allocator const&
+        alloc = {}) const noexcept;
+
     //--------------------------------------------
     //
     // Fragment
@@ -1617,9 +1600,9 @@ public:
 
         @par BNF
         @code
-        fragment        = *( pchar / "/" / "?" )
+        URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
 
-        fragment-part   = [ "#" fragment ]
+        relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
         @endcode
 
         @par Exception Safety
@@ -1646,7 +1629,7 @@ public:
         @code
         fragment        = *( pchar / "/" / "?" )
 
-        fragment-part   = [ "#" fragment ]
+        pchar           = unreserved / pct-encoded / sub-delims / ":" / "@"
         @endcode
 
         @par Exception Safety
@@ -1658,7 +1641,8 @@ public:
 
         @see
             @ref fragment,
-            @ref has_fragment.
+            @ref has_fragment,
+            @ref pchars.
     */
     BOOST_URL_DECL
     string_view
@@ -1708,18 +1692,6 @@ public:
             encoded_fragment(),
             opt, a, decoded_[id_frag]);
     }
-
-    //--------------------------------------------
-    //
-    // Resolution
-    //
-    //--------------------------------------------
-
-    /** Return true if the URL satisfies the absolute-uri grammar.
-    */
-    BOOST_URL_DECL
-    bool
-    is_absolute_uri() const noexcept;
 
     //--------------------------------------------
     //
@@ -1914,7 +1886,7 @@ parse_relative_ref(
 
     @return A view to the parsed URL
 
-    @param s The string to parse
+    @param s The string to parse.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
@@ -1936,23 +1908,23 @@ parse_uri_reference(
 
 //------------------------------------------------
 
-/** Format the encoded URL to the output stream
+/** Format the encoded URL to the output stream.
 
     This function serializes the encoded URL
     to the output stream.
 
     @par Example
     @code
-    url_view u = parse_uri( "http://www.example.com/index.htm" );
+    url_view u( "http://www.example.com/index.htm" );
 
     std::cout << u << std::endl;
     @endcode
 
     @return A reference to the output stream, for chaining
 
-    @param os The output stream to write to
+    @param os The output stream to write to.
 
-    @param u The URL to write
+    @param u The URL to write.
 */
 BOOST_URL_DECL
 std::ostream&
@@ -1964,7 +1936,7 @@ operator<<(
 } // boost
 
 // These includes are here
-// because of circular dependencies
+// due to circular dependencies
 #include <boost/url/impl/params_view.hpp>
 #include <boost/url/impl/params_encoded_view.hpp>
 

@@ -79,6 +79,8 @@ public:
         {
             ipv6_address a("::");
             BOOST_TEST(a == ipv6_address());
+            BOOST_TEST_THROWS(ipv6_address("x"),
+                std::invalid_argument);
         }
 
         // to_bytes
@@ -110,6 +112,10 @@ public:
             char buf[ipv6_address::max_str_len];
             BOOST_TEST(a.to_buffer(buf, sizeof(buf)) ==
                 "1:2:3:4:5:6:7:8");
+            char buf2[10];
+            BOOST_TEST_THROWS(
+                a.to_buffer(buf2, sizeof(buf2)),
+                std::length_error);
         }
 
         // is_unspecified

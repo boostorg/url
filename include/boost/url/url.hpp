@@ -237,7 +237,7 @@ public:
 
         u.set_scheme( "https" );         // u is now "https://www.example.com"
 
-        assert( u.encoded_url() == "https://www.example.com" );
+        assert( u.string() == "https://www.example.com" );
 
         u.set_scheme( "1forall");       // throws, invalid scheme
         @endcode

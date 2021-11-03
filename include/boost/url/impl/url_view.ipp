@@ -421,8 +421,7 @@ bool
 url_view::
 has_fragment() const noexcept
 {
-    auto const n = len(
-        id_frag);
+    auto const n = len(id_frag);
     if(n == 0)
         return false;
     BOOST_ASSERT(
@@ -435,28 +434,12 @@ string_view
 url_view::
 encoded_fragment() const noexcept
 {
-    auto s = get(
-        id_frag);
+    auto s = get(id_frag);
     if(s.empty())
         return s;
     BOOST_ASSERT(
         s.starts_with('#'));
     return s.substr(1);
-}
-
-//------------------------------------------------
-//
-// Resolution
-//
-//------------------------------------------------
-
-bool
-url_view::
-is_absolute_uri() const noexcept
-{
-    return
-        has_scheme() &&
-        ! has_fragment();
 }
 
 //------------------------------------------------
@@ -781,7 +764,7 @@ operator<<(
     std::ostream& os,
     url_view const& u)
 {
-    os << u.encoded_url();
+    os << u.string();
     return os;
 }
 

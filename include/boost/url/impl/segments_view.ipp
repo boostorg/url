@@ -33,7 +33,6 @@ iterator(
     , a_(a)
 {
     using bnf::parse;
-    using bnf_t = segment_bnf;
     if(nseg == 0)
     {
         next_ = nullptr;

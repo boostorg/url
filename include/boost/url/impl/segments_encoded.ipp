@@ -78,7 +78,7 @@ insert(
 {
     BOOST_ASSERT(before.u_ == u_);
     detail::copied_strings cs(
-        u_->encoded_url());
+        u_->string());
     auto s = cs.maybe_copy(s0);
     u_->edit_segments(
         before.i_,

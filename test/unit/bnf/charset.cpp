@@ -92,6 +92,8 @@ public:
         // lut_chars(char const*)
         {
             constexpr lut_chars digits_ = "0123456789";
+
+            (void)digits_;
         }
 
         // lut_chars(Pred)
@@ -106,6 +108,8 @@ public:
             };
 
             constexpr lut_chars digits_( is_digit_{} );
+
+            (void)digits_;
         }
 
         // operator+
@@ -120,11 +124,15 @@ public:
         // operator-
         {
             constexpr lut_chars consonants = lut_chars("abcdefghijklmnopqrstuvwxyz") - "aeiou";
+
+            (void)consonants;
         }
 
         // operator~
         {
             constexpr lut_chars not_vowels = ~lut_chars( "aAeEiIoOuU" );
+
+            (void)not_vowels;
         }
     }
 

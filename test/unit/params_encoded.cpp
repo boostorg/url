@@ -36,14 +36,14 @@ public:
                 { "k5", "55555", true } };
             BOOST_TEST(u.encoded_query() ==
                 "k1=1&k2=2&k3=&k4&k5=55555");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k1=1&k2=2&k3=&k4&k5=55555#f");
         }
         {
             url u = parse_uri_reference("/?x#f").value();
             u.encoded_params() = {};
             BOOST_TEST(u.encoded_query() == "");
-            BOOST_TEST(u.encoded_url() == "/?#f");
+            BOOST_TEST(u.string() == "/?#f");
         }
     }
 
@@ -125,7 +125,7 @@ public:
             params_encoded p = u.encoded_params();
             p.clear();
             BOOST_TEST(u.encoded_query() == "");
-            BOOST_TEST(u.encoded_url() == "/?#f");
+            BOOST_TEST(u.string() == "/?#f");
         }
 
         // insert(iterator, value_type)
@@ -139,7 +139,7 @@ public:
             BOOST_TEST((*it).key == "k1");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=#f");
         }
 
@@ -155,7 +155,7 @@ public:
             BOOST_TEST(it == p.begin() + 1);
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=&k3#f");
         }
 
@@ -170,7 +170,7 @@ public:
             BOOST_TEST(it == p.end() - 1);
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=#f");
         }
 
@@ -188,7 +188,7 @@ public:
             BOOST_TEST(it == p.begin() + 1);
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&a=aa&b=bbb&c=ccccc&k3&k4=4444");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&a=aa&b=bbb&c=ccccc&k3&k4=4444#f");
         }
 
@@ -200,7 +200,7 @@ public:
             BOOST_TEST(p.at(1).key == "k%31");
             auto it = p.remove_value(p.begin() + 1);
             BOOST_TEST(u.encoded_query() == "k0=0&k%31&k2=");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k%31&k2=#f");
             BOOST_TEST(it == p.begin() + 1);
         }
@@ -223,7 +223,7 @@ public:
             BOOST_TEST(it == p.begin() + 1);
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=#f");
         }
 
@@ -239,7 +239,7 @@ public:
             BOOST_TEST(it == p.begin() + 2);
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&hello_world&k3");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&hello_world&k3#f");
         }
 
@@ -254,7 +254,7 @@ public:
             BOOST_TEST(it == p.begin() + 1);
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=&k3#f");
         }
 
@@ -269,7 +269,7 @@ public:
             BOOST_TEST(it == p.begin() + 1);
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1&k2=&k3");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1&k2=&k3#f");
         }
 
@@ -282,13 +282,13 @@ public:
             p.erase(p.begin() + 2);
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k3&k4=4444");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k3&k4=4444#f");
             p.erase(
                 p.begin() + 1, p.begin() + 3);
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k4=4444");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k4=4444#f");
         }
 
@@ -301,17 +301,17 @@ public:
             BOOST_TEST(p.erase("c") == 3);
             BOOST_TEST(u.encoded_query() ==
                 "a=1&%62=2&d=6&e=7&d=8&f=9");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?a=1&%62=2&d=6&e=7&d=8&f=9#f");
             BOOST_TEST(p.erase("b") == 1);
             BOOST_TEST(u.encoded_query() ==
                 "a=1&d=6&e=7&d=8&f=9");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?a=1&d=6&e=7&d=8&f=9#f");
             BOOST_TEST(p.erase("d") == 2);
             BOOST_TEST(u.encoded_query() ==
                 "a=1&e=7&f=9");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?a=1&e=7&f=9#f");
             BOOST_TEST(p.erase("g") == 0);
         }
@@ -323,30 +323,30 @@ public:
             params_encoded p = u.encoded_params();
             p.emplace_back("k0", "0");
             BOOST_TEST(u.encoded_query() == "k0=0");
-            BOOST_TEST(u.encoded_url() == "/?k0=0#f");
+            BOOST_TEST(u.string() == "/?k0=0#f");
             BOOST_TEST(u.encoded_params().size() == 1);
             p.emplace_back("k1", "1");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1#f");
             BOOST_TEST(u.encoded_params().size() == 2);
             p.emplace_back("k2", "");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=#f");
             BOOST_TEST(u.encoded_params().size() == 3);
             p.emplace_back("k3");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=&k3#f");
             BOOST_TEST(u.encoded_params().size() == 4);
             p.emplace_back("", "4444");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3&=4444");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=&k3&=4444#f");
             BOOST_TEST(u.encoded_params().size() == 5);
         }
@@ -359,66 +359,66 @@ public:
 
             p.push_back({"k0", "0", true});
             BOOST_TEST(u.encoded_query() == "k0=0");
-            BOOST_TEST(u.encoded_url() == "/?k0=0#f");
+            BOOST_TEST(u.string() == "/?k0=0#f");
             BOOST_TEST(u.encoded_params().size() == 1);
 
             p.push_back({"k1", "1", true});
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1#f");
             BOOST_TEST(u.encoded_params().size() == 2);
 
             p.push_back({"k2", "", true});
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=#f");
             BOOST_TEST(u.encoded_params().size() == 3);
 
             p.push_back({"k3", "", false});
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=&k3#f");
             BOOST_TEST(u.encoded_params().size() == 4);
 
             p.push_back({"", "4444", true});
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3&=4444");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=&k3&=4444#f");
             BOOST_TEST(u.encoded_params().size() == 5);
 
             p.pop_back();
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=&k3#f");
             BOOST_TEST(u.encoded_params().size() == 4);
 
             p.pop_back();
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=#f");
             BOOST_TEST(u.encoded_params().size() == 3);
 
             p.pop_back();
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1");
-            BOOST_TEST(u.encoded_url() ==
+            BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1#f");
             BOOST_TEST(u.encoded_params().size() == 2);
 
             p.pop_back();
             BOOST_TEST(u.encoded_query() == "k0=0");
-            BOOST_TEST(u.encoded_url() == "/?k0=0#f");
+            BOOST_TEST(u.string() == "/?k0=0#f");
             BOOST_TEST(u.encoded_params().size() == 1);
 
             p.pop_back();
             BOOST_TEST(u.encoded_query() == "");
-            BOOST_TEST(u.encoded_url() == "/?#f");
+            BOOST_TEST(u.string() == "/?#f");
             BOOST_TEST(u.encoded_params().size() == 0);
         }
     }

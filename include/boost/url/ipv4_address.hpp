@@ -23,7 +23,7 @@ namespace urls {
 /** An IP version 4 style address.
 
     Objects of this type are used to construct,
-    parse, and manipulate IP version 4 addresses.
+    parse, and manipulate IP version 6 addresses.
 
     @par BNF
     @code
@@ -49,7 +49,7 @@ namespace urls {
 class ipv4_address
 {
 public:
-    /** The number of characters in the longest possible ipv4 string
+    /** The number of characters in the longest possible IPv4 string.
 
         The longest ipv4 address string is "255.255.255.255".
     */
@@ -76,7 +76,7 @@ public:
     ipv4_address(
         ipv4_address const&) = default;
 
-    /** Copy assignment.
+    /** Copy Assignment.
     */
     ipv4_address&
     operator=(
@@ -86,20 +86,52 @@ public:
     //---
     //
 
-    /** Constructor.
+    /** Construct from an unsigned integer.
+
+        This function constructs an address from
+        the unsigned integer `u`, where the most
+        significant byte forms the first octet
+        of the resulting address.
+
+        @param u The integer to construct from.
     */
     BOOST_URL_DECL
     explicit
     ipv4_address(
-        uint_type addr) noexcept;
+        uint_type u) noexcept;
 
-    /** Constructor.
+    /** Construct from an array of bytes.
+
+        This function constructs an address
+        from the array in `bytes`, which will
+        be interpreted in big-endian.
+
+        @param bytes The value to construct from.
     */
     BOOST_URL_DECL
     ipv4_address(
         bytes_type const& bytes) noexcept;
 
-    /** Constructor.
+    /** Construct from a string.
+
+        This function constructs an address from
+        the string `s`, which must contain a valid
+        IPv4 address string or else an exception
+        is thrown.
+
+        @note For a non-throwing parse function,
+        use @ref parse_ipv4_address.
+
+        @throw std::invalid_argument parse error.
+
+        @param s The string to parse.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2. Host (rfc3986)</a>
+
+        @see
+            @ref parse_ipv4_address.
     */
     BOOST_URL_DECL
     ipv4_address(

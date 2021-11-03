@@ -62,7 +62,7 @@ public:
     }
 
     string_view
-    str() const noexcept
+    string() const noexcept
     {
         return string_view(buf_ +
             sizeof(buf_) - n_, n_);

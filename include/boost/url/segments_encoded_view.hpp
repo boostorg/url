@@ -164,7 +164,7 @@ public:
 
         ss << sv.front() << "/../" << sv.back();
 
-        assert( ss.str() == "path/../file.txt" );
+        assert( ss.string() == "path/../file.txt" );
         @endcode
 
         @par Exceptions
