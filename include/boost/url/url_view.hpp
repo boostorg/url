@@ -1700,13 +1700,13 @@ public:
     //--------------------------------------------
 
     BOOST_URL_DECL friend result<url_view>
-        parse_absolute_uri(string_view s) noexcept;
+        parse_absolute_uri(string_view s);
     BOOST_URL_DECL friend result<url_view>
-        parse_relative_ref(string_view s) noexcept;
+        parse_relative_ref(string_view s);
     BOOST_URL_DECL friend result<url_view>
-        parse_uri(string_view s) noexcept;
+        parse_uri(string_view s);
     BOOST_URL_DECL friend result<url_view>
-        parse_uri_reference(string_view s) noexcept;
+        parse_uri_reference(string_view s);
 
 private:
     void apply(scheme_part_bnf const& t) noexcept;
@@ -1739,10 +1739,10 @@ private:
                     / path-empty
     @endcode
 
-    @par Exception Safety
-    Throws nothing.
+    @throw std::length_error `s.size() > url_view::max_size`
 
-    @return A view to the parsed URL
+    @return A result containing the view to the URL,
+        or an error code if the parsing was unsuccessful.
 
     @param s The string to parse
 
@@ -1760,7 +1760,7 @@ private:
 BOOST_URL_DECL
 result<url_view>
 parse_absolute_uri(
-    string_view s) noexcept;
+    string_view s);
 
 /** Parse a URI
 
@@ -1785,7 +1785,10 @@ parse_absolute_uri(
     @par Exception Safety
     Throws nothing.
 
-    @return A view to the parsed URL
+    @throw std::length_error `s.size() > url_view::max_size`
+
+    @return A result containing the view to the URL,
+        or an error code if the parsing was unsuccessful.
 
     @param s The string to parse
 
@@ -1803,7 +1806,7 @@ parse_absolute_uri(
 BOOST_URL_DECL
 result<url_view>
 parse_uri(
-    string_view s) noexcept;
+    string_view s);
 
 /** Parse a relative-ref
 
@@ -1826,10 +1829,10 @@ parse_uri(
                   / path-empty
     @endcode
 
-    @par Exception Safety
-    Throws nothing.
+    @throw std::length_error `s.size() > url_view::max_size`
 
-    @return A view to the parsed URL
+    @return A result containing the view to the URL,
+        or an error code if the parsing was unsuccessful.
 
     @param s The string to parse
 
@@ -1849,7 +1852,7 @@ parse_uri(
 BOOST_URL_DECL
 result<url_view>
 parse_relative_ref(
-    string_view s) noexcept;
+    string_view s);
 
 /** Parse a URI-reference
 
@@ -1881,10 +1884,10 @@ parse_relative_ref(
                   / path-empty
     @endcode
 
-    @par Exception Safety
-    Throws nothing.
+    @throw std::length_error `s.size() > url_view::max_size`
 
-    @return A view to the parsed URL
+    @return A result containing the view to the URL,
+        or an error code if the parsing was unsuccessful.
 
     @param s The string to parse.
 
@@ -1904,7 +1907,7 @@ parse_relative_ref(
 BOOST_URL_DECL
 result<url_view>
 parse_uri_reference(
-    string_view s) noexcept;
+    string_view s);
 
 //------------------------------------------------
 

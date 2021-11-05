@@ -17,12 +17,9 @@ project
       <include>../../extra/include
     ;
 
-local SOURCES =
-    ../../extra/test_main.cpp
-    limits.cpp
+run limits.cpp ../../extra/test_main.cpp /boost/url//url_sources
+    : requirements
+        <define>BOOST_URL_MAX_SIZE=16
+        <define>BOOST_URL_NO_LIB
+        <define>BOOST_URL_STATIC_LINK
     ;
-
-for local f in $(SOURCES)
-{
-    run $(f) ../../extra/test_main.cpp /boost/url//url_sources ;
-}

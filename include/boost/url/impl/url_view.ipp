@@ -467,50 +467,36 @@ apply(
     host_bnf const& t) noexcept
 {
     host_type_ = t.host_type;
-    switch(t.host_type)
-    {
-    default:
-    case urls::host_type::none:
-    {
-        break;
-    }
-    case urls::host_type::name:
+    if(t.host_type ==
+        urls::host_type::name)
     {
         decoded_[id_host] =
             t.name.decoded_size;
-        break;
     }
-    case urls::host_type::ipv4:
+    else if(t.host_type ==
+        urls::host_type::ipv4)
     {
         auto const bytes =
             t.ipv4.to_bytes();
         std::memcpy(
             &ip_addr_[0],
             bytes.data(), 4);
-        break;
     }
-    case urls::host_type::ipv6:
+    else if(t.host_type ==
+        urls::host_type::ipv6)
     {
         auto const bytes =
             t.ipv6.to_bytes();
         std::memcpy(
             &ip_addr_[0],
             bytes.data(), 16);
-        break;
-    }
-    case urls::host_type::ipvfuture:
-    {
-        break;
-    }
     }
 
     if(t.host_type !=
         urls::host_type::none)
-    {
         set_size(
             id_host,
             t.host_part.size());
-    }
 }
 
 void
@@ -624,7 +610,7 @@ apply(
 
 result<url_view>
 parse_absolute_uri(
-    string_view s) noexcept
+    string_view s)
 {
     if(s.size() > url_view::max_size())
         detail::throw_length_error(
@@ -656,7 +642,7 @@ parse_absolute_uri(
 
 result<url_view>
 parse_uri(
-    string_view s) noexcept
+    string_view s)
 {
     if(s.size() > url_view::max_size())
         detail::throw_length_error(
@@ -691,7 +677,7 @@ parse_uri(
 
 result<url_view>
 parse_relative_ref(
-    string_view s) noexcept
+    string_view s)
 {
     if(s.size() > url_view::max_size())
         detail::throw_length_error(
@@ -724,7 +710,7 @@ parse_relative_ref(
 
 result<url_view>
 parse_uri_reference(
-    string_view s) noexcept
+    string_view s)
 {
     if(s.size() > url_view::max_size())
         detail::throw_length_error(

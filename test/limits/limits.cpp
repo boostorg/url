@@ -18,8 +18,31 @@ class limits_test
 {
 public:
     void
+    test_url_view()
+    {
+        string_view s = "http://www.example.com/path/to/file.txt";
+
+        BOOST_TEST_THROWS(
+            parse_absolute_uri(s),
+            std::length_error);
+
+        BOOST_TEST_THROWS(
+            parse_uri(s),
+            std::length_error);
+
+        BOOST_TEST_THROWS(
+            parse_relative_ref(s),
+            std::length_error);
+
+        BOOST_TEST_THROWS(
+            parse_uri_reference(s),
+            std::length_error);
+    }
+
+    void
     run()
     {
+        test_url_view();
     }
 };
 

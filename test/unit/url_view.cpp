@@ -658,6 +658,14 @@ public:
               "/?:@!$&'()*+,;=");
 
         bad("#%%");
+
+        // coverage
+        {
+            url_view u;
+            BOOST_TEST(
+                u.encoded_fragment() == "");
+            BOOST_TEST(u.fragment() == "");
+        }
     }
 
     //--------------------------------------------
