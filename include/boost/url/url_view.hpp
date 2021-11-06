@@ -84,6 +84,10 @@ struct scheme_part_bnf;
     absolute-URI  = scheme ":" hier-part [ "?" query ]
     @endcode
 
+    @par Specification
+    @li <a href="https://tools.ietf.org/html/rfc3986"
+        >Uniform Resource Identifier (URI): Generic Syntax (rfc3986)</a>
+
     @see
         @ref parse_absolute_uri,
         @ref parse_relative_ref,
@@ -255,7 +259,14 @@ public:
         This function constructs a URL from
         the string `s`, which must contain a
         valid URI or <em>relative-ref</em> or
-        else an exception is thrown.
+        else an exception is thrown. Upon
+        successful construction, the view
+        refers to the characters in the
+        buffer pointed to by `s`.
+        Ownership is not transferred; The
+        caller is responsible for ensuring
+        that the lifetime of the buffer
+        extends until the view is destroyed.
 
         @par BNF
         @code

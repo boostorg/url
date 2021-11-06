@@ -55,16 +55,34 @@ struct any_path_iter;
     @li Functions which throw offer the strong
     exception safety guarantee.
 
+    @par BNF
+    @code
+    URI-reference = URI / relative-ref
+
+    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+
+    absolute-URI  = scheme ":" hier-part [ "?" query ]
+    @endcode
+
     @par Specification
-    @li <a href="https://tools.ietf.org/html/rfc3986">
-        Uniform Resource Identifier (URI): Generic Syntax (rfc3986)</a>
+    @li <a href="https://tools.ietf.org/html/rfc3986"
+        >Uniform Resource Identifier (URI): Generic Syntax (rfc3986)</a>
+
+    @see
+        @ref parse_absolute_uri,
+        @ref parse_relative_ref,
+        @ref parse_uri,
+        @ref parse_uri_reference,
+        @ref resolve.
 */
 class BOOST_SYMBOL_VISIBLE url
     : public url_view
 {
     friend class urls::segments;
-    friend class segments_encoded;
     friend class urls::params;
+    friend class segments_encoded;
     friend class params_encoded;
 
 #ifndef BOOST_URL_DOCS
@@ -93,39 +111,102 @@ protected:
     deallocate(char* s);
 
 public:
+    //--------------------------------------------
+    //
+    // Special Members
+    //
+    //--------------------------------------------
+
     /** Destructor
+
+        Any params, segments, or iterators
+        which reference this object are
+        invalidated.
     */
     BOOST_URL_DECL
     virtual
     ~url();
 
     /** Constructor
+
+        Default constructed urls contain
+        a zero-length string. This matches
+        the grammar for a relative-ref with
+        an empty path and no query or
+        fragment.
+
+        @par BNF
+        @code
+        relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
+            >4.2. Relative Reference (rfc3986)</a>
     */
     BOOST_URL_DECL
     url() noexcept;
 
     /** Constructor
+
+        This function performs a move-construction
+        from `u`. After the move. the state of `u`
+        will be as-if default constructed.
+
+        @param Exception Safety
+        Throws nothing.
+
+        @param u The url to construct from.
     */
     BOOST_URL_DECL
     url(url&& u) noexcept;
 
     /** Constructor
+
+        This function constructs a copy of `u`.
+
+        @param u The url to construct from.
     */
     BOOST_URL_DECL
     url(url const& u);
 
     /** Constructor
+
+        This function constructs a copy of `u`.
+
+        @param u The url to construct from.
     */
     BOOST_URL_DECL
     url(url_view const& u);
 
     /** Assignment
+
+        This function performs a move-assignment
+        from `u`. After the move. the state of `u`
+        will be as-if default constructed.
+
+        @param Exception Safety
+        Throws nothing.
+
+        @param u The url to assign from.
     */
     BOOST_URL_DECL
     url&
     operator=(url&& u) noexcept;
 
     /** Assignment
+
+        This function assigns a copy of `u`
+        to `*this`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param u The url to copy.
     */
     url&
     operator=(url const& u)
@@ -135,12 +216,41 @@ public:
     }
 
     /** Assignment
+
+        This function assigns a copy of `u`
+        to `*this`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param u The url to copy.
     */
     BOOST_URL_DECL
     url&
     operator=(url_view const& u);
 
     /** Construct from a string
+
+        This function constructs a URL from
+        the string `s`, which must contain a
+        valid URI or <em>relative-ref</em> or
+        else an exception is thrown.
+
+        @par BNF
+        @code
+        URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+        relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+        @endcode
+
+        @throw std::invalid_argument parse error.
+
+        @param s The string to parse.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
+            >4.1. URI Reference</a>
     */
     BOOST_URL_DECL
     url(string_view s);

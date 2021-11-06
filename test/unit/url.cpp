@@ -102,6 +102,20 @@ public:
             BOOST_TEST(u.empty());
         }
 
+        // reserve_bytes
+        {
+            url u;
+            u.reserve_bytes(32);
+            BOOST_TEST(u.capacity_in_bytes() >= 32);
+            u.reserve_bytes(16);
+            BOOST_TEST(u.capacity_in_bytes() >= 16);
+            u.reserve_bytes(64);
+            BOOST_TEST(u.capacity_in_bytes() >= 64);
+            u = url_view("http://example.com/path/to/file.txt?k=v");
+            u.reserve_bytes(128);
+            BOOST_TEST(u.capacity_in_bytes() >= 128);
+        }
+
         // clear
         {
             url u = parse_uri(
