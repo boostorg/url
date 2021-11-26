@@ -54,7 +54,7 @@ public:
     iterator& operator=(
         iterator const&) noexcept = default;
 
-    value_type const&
+    reference
     operator*() const noexcept
     {
         return s_;
