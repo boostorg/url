@@ -12,13 +12,10 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/type_traits/make_void.hpp>
-#include <boost/utility/string_view.hpp>
+//#include <boost/utility/string_view.hpp>
+#include <boost/core/detail/string_view.hpp>
 #include <memory>
 #include <string>
-#ifndef BOOST_NO_CXX17_HDR_STRING_VIEW
-# include <string_view>
-# define BOOST_URL_HAS_STRING_VIEW
-#endif
 #include <type_traits>
 
 namespace boost {
@@ -39,7 +36,8 @@ using pos_t = std::size_t;
     owning the character buffer extends until
     the string view is no longer referenced.
 */
-typedef boost::string_view string_view;
+//typedef boost::string_view string_view;
+typedef boost::core::string_view string_view;
 
 /** Alias for `std::true_type` if a `T` can be converted to a string_view
 
