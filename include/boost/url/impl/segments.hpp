@@ -235,29 +235,13 @@ is_absolute() const noexcept
         u_->s_[u_->offset(id_path)] == '/';
 }
 
-template<class String>
-auto
+segments&
 segments::
-operator=(
-    std::initializer_list<String> init) ->
-    typename std::enable_if<
-        is_stringlike<String>::value,
-        segments&>::type
-{
-    assign(init);
-    return *this;
-}
-
-template<class String>
-auto
-segments::
-assign(
-    std::initializer_list<String> init) ->
-    typename std::enable_if<
-        is_stringlike<String>::value,
-        void>::type
+operator=(std::initializer_list<
+    string_view> init)
 {
     assign(init.begin(), init.end());
+    return *this;
 }
 
 template<class FwdIt>
@@ -265,10 +249,10 @@ auto
 segments::
 assign(FwdIt first, FwdIt last) ->
     typename std::enable_if<
-        is_stringlike<typename
+        std::is_convertible<typename
             std::iterator_traits<
-                FwdIt>::value_type>::value,
-        void>::type
+                FwdIt>::value_type,
+            string_view>::value>::type
 {
     u_->edit_segments(
         0,
@@ -373,32 +357,18 @@ clear() noexcept
 
 //------------------------------------------------
 
-template<class String>
 auto
 segments::
 insert(
     iterator before,
-    String const& s) ->
-        typename std::enable_if<
-            is_stringlike<String>::value,
-            iterator>::type
+    std::initializer_list<
+            string_view> init) ->
+        iterator
 {
-    return insert(before,
-        to_string_view(s));
-}
-
-template<class String>
-auto
-segments::
-insert(
-    iterator before,
-    std::initializer_list<String> init) ->
-        typename std::enable_if<
-            is_stringlike<String>::value,
-            iterator>::type
-{
-    return insert(before,
-        init.begin(), init.end());
+    return insert(
+        before,
+        init.begin(),
+        init.end());
 }
 
 template<class FwdIt>
@@ -409,9 +379,10 @@ insert(
     FwdIt first,
     FwdIt last) ->
         typename std::enable_if<
-            is_stringlike<typename
+            std::is_convertible<typename
                 std::iterator_traits<
-                    FwdIt>::value_type>::value,
+                    FwdIt>::value_type,
+                string_view>::value,
             iterator>::type
 {
     return insert(before, first, last,
@@ -453,38 +424,6 @@ replace(
             &s, &s + 1);
 }
 
-template<class String>
-auto
-segments::
-replace(
-    iterator pos,
-    String const& s) ->
-        typename std::enable_if<
-            is_stringlike<String>::value,
-            iterator>::type
-{
-    return replace(pos,
-        to_string_view(s));
-}
-
-template<class String>
-auto
-segments::
-replace(
-    iterator from,
-    iterator to,
-    std::initializer_list<String> init) ->
-        typename std::enable_if<
-            is_stringlike<String>::value,
-            iterator>::type
-{
-    return replace(
-        from,
-        to,
-        init.begin(),
-        init.end());
-}
-
 auto
 segments::
 replace(
@@ -510,9 +449,10 @@ replace(
     FwdIt first,
     FwdIt last) ->
         typename std::enable_if<
-            is_stringlike<typename
+            std::is_convertible<typename
                 std::iterator_traits<
-                    FwdIt>::value_type>::value,
+                    FwdIt>::value_type,
+                string_view>::value,
             iterator>::type
 {
     BOOST_ASSERT(from.u_ == u_);
@@ -546,18 +486,6 @@ push_back(
     string_view s)
 {
     insert(end(), s);
-}
-
-template<class String>
-auto
-segments::
-push_back(String const& s) ->
-    typename std::enable_if<
-        is_stringlike<String>::value,
-        void>::type
-{
-    return push_back(
-        to_string_view(s));
 }
 
 void

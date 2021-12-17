@@ -146,17 +146,10 @@ public:
         of the container are invalidated,
         including the @ref end iterator.
 
-        @par Requires
-        @code
-        is_stringlike< String >::value == true
-        @endcode
-
         @par Example
         @code
         url u = parse_relative_uri( "/path/to/file.txt" );
-
         u.encoded_segments() = { "etc", "init.rc" };
-
         assert( u.encoded_path() == "/etc/init.rc") );
         @endcode
 
@@ -169,62 +162,9 @@ public:
 
         @throw std::invalid_argument invalid percent-encoding
     */
-    template<class String>
-#ifdef BOOST_URL_DOCS
+    inline
     segments_encoded&
-#else
-    typename std::enable_if<
-        is_stringlike<String>::value,
-        segments_encoded&>::type
-#endif
-    operator=(std::initializer_list<String> init);
-
-    /** Replace the contents of the container
-
-        This function replaces the contents
-        with an initializer list  of
-        percent-encoded strings.
-        Each string must contain a valid
-        percent-encoding or else an
-        exception is thrown.
-        The behavior is undefined any string
-        refers to the contents of `*this`.
-        All iterators and references to elements
-        of the container are invalidated,
-        including the @ref end iterator.
-
-        @par Requires
-        @code
-        is_stringlike< String >::value == true
-        @endcode
-
-        @par Example
-        @code
-        url u = parse_relative_uri( "/path/to/file.txt" );
-
-        u.encoded_segments().assign( { "etc", "init.rc" } );
-
-        assert( u.encoded_path() == "/etc/init.rc") );
-        @endcode
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-        Exceptions thrown on invalid input.
-
-        @param init An initializer list of strings.
-
-        @throw std::invalid_argument invalid percent-encoding
-    */
-    template<class String>
-#ifdef BOOST_URL_DOCS
-    void
-#else
-    typename std::enable_if<
-        is_stringlike<String>::value,
-        void>::type
-#endif
-    assign(std::initializer_list<String> init);
+    operator=(std::initializer_list<string_view> init);
 
     /** Replace the contents of the container
 
@@ -242,7 +182,7 @@ public:
 
         @par Requires
         @code
-        is_stringlike< std::iterator_traits< FwdIt >::value_type >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::value_type, string_view >::value == true
         @endcode
 
         @par Example
@@ -276,10 +216,10 @@ public:
     void
 #else
     typename std::enable_if<
-        is_stringlike<typename
+        std::is_convertible<typename
             std::iterator_traits<
-                FwdIt>::value_type>::value,
-        void>::type
+                FwdIt>::value_type,
+            string_view>::value>::type
 #endif
     assign(FwdIt first, FwdIt last);
 
@@ -453,49 +393,6 @@ public:
         iterator before,
         string_view s);
 
-    /** Insert an element
-
-        This function inserts a segment specified
-        by the percent-encoded stringlike `s`,
-        at the position preceding `before`.
-        The stringlike must contain a valid
-        percent-encoding, or else an exception
-        is thrown.
-        All references and iterators starting
-        from the newly inserted element and
-        up to and including the last element
-        and @ref end iterators are invalidated.
-        This function participates in overload
-        resolution only if
-        `is_stringlike<String>::value == true`.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-        Exceptions thrown on invalid input.
-
-        @return An iterator pointing to the
-        inserted value.
-
-        @param before An iterator before which the
-        new element should be inserted.
-
-        @param s The stringlike value to insert.
-
-        @throw std::invalid_argument invalid percent-encoding
-    */
-    template<class String>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<String>::value,
-        iterator>::type
-#endif
-    insert(
-        iterator before,
-        String const& s);
-
     /** Insert a range of segments
 
         This function inserts a range of
@@ -542,17 +439,11 @@ public:
 
         @throw std::invalid_argument invalid percent-encoding
     */
-    template<class String>
-#ifdef BOOST_URL_DOCS
+    inline
     iterator
-#else
-    typename std::enable_if<
-        is_stringlike<String>::value,
-        iterator>::type
-#endif
     insert(
         iterator before,
-        std::initializer_list<String> init);
+        std::initializer_list<string_view> init);
 
     /** Insert a range of segments
 
@@ -570,7 +461,7 @@ public:
 
         @par Requires
         @code
-        is_stringlike< std::iterator_traits< FwdIt >::value_type >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::value_type, string_view >::value == true
         @endcode
 
         @par Example
@@ -611,9 +502,10 @@ public:
     iterator
 #else
     typename std::enable_if<
-        is_stringlike<typename
+        std::is_convertible<typename
             std::iterator_traits<
-                FwdIt>::value_type>::value,
+                FwdIt>::value_type,
+            string_view>::value,
         iterator>::type
 #endif
     insert(
@@ -730,31 +622,6 @@ public:
         iterator pos,
         string_view s);
 
-    template<class String>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<String>::value,
-        iterator>::type
-#endif
-    replace(
-        iterator pos,
-        String const& s);
-
-    template<class String>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<String>::value,
-        iterator>::type
-#endif
-    replace(
-        iterator from,
-        iterator to,
-        std::initializer_list<String> init);
-
     inline
     iterator
     replace(
@@ -768,9 +635,10 @@ public:
     iterator
 #else
     typename std::enable_if<
-        is_stringlike<typename
+        std::is_convertible<typename
             std::iterator_traits<
-                FwdIt>::value_type>::value,
+                FwdIt>::value_type,
+            string_view>::value,
         iterator>::type
 #endif
     replace(
@@ -812,47 +680,6 @@ public:
     void
     push_back(
         string_view s);
-
-    /** Add an element to the end
-
-        This function appends a segment
-        containing the percent-encoded stringlike
-        `s` to the end of the container.
-        The percent-encoding must be valid 
-        or else an exception is thrown.
-        All @ref end iterators are invalidated.
-        The function participates in overload
-        resolution only if
-        `is_stringlike<String>::value == true`.
-
-        @par Example
-        @code
-        url u = parse_relative_uri( "/path/to" );
-
-        u.segments_encoded().push_back( "file.txt" );
-
-        assert( u.encoded_path() == "/path/to/file.txt" );
-        @endcode
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-        Exceptions thrown on invalid input.
-
-        @param s The stringlike to add
-
-        @throw std::invalid_argument invalid percent-encoding
-    */
-    template<class String>
-#ifdef BOOST_URL_DOCS
-    void
-#else
-    typename std::enable_if<
-        is_stringlike<String>::value,
-        void>::type
-#endif
-    push_back(
-        String const& s);
 
     /** Remove the last element
 

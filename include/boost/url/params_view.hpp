@@ -92,16 +92,6 @@ public:
     string_value
     at(string_view key) const;
 
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    string_value
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        string_value>::type
-#endif
-    at(Key const& key) const;
-
     //--------------------------------------------
     //
     // Iterators
@@ -140,29 +130,9 @@ public:
     std::size_t
     count(string_view key) const noexcept;
 
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    std::size_t
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        std::size_t>::type
-#endif
-    count(Key const& key) const noexcept;
-
     inline
     iterator
     find(string_view key) const noexcept;
-
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-#endif
-    find(Key const& key) const noexcept;
 
     /** Search [from, end), from==end is valid
     */
@@ -172,31 +142,9 @@ public:
         iterator from,
         string_view key) const noexcept;
 
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-#endif
-    find(
-        iterator from,
-        Key const& key) const noexcept;
-
     inline
     bool
     contains(string_view key) const noexcept;
-
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    bool
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        bool>::type
-#endif
-    contains(Key const& key) const noexcept;
 };
 
 } // urls

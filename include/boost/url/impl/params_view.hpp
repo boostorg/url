@@ -107,23 +107,6 @@ params_view(
 
 //------------------------------------------------
 //
-// Element Access
-//
-//------------------------------------------------
-
-template<class Key>
-auto
-params_view::
-at(Key const& key) const ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        string_value>::type
-{
-    return at(to_string_view(key));
-}
-
-//------------------------------------------------
-//
 // Capacity
 //
 //------------------------------------------------
@@ -148,18 +131,6 @@ size() const noexcept
 //
 //------------------------------------------------
 
-template<class Key>
-auto
-params_view::
-count(
-    Key const& key) const noexcept ->
-        typename std::enable_if<
-            is_stringlike<Key>::value,
-            std::size_t>::type
-{
-    return count(to_string_view(key));
-}
-
 auto
 params_view::
 find(string_view key) const noexcept ->
@@ -168,49 +139,12 @@ find(string_view key) const noexcept ->
     return find(begin(), key);
 }
 
-template<class Key>
-auto
-params_view::
-find(Key const& key) const noexcept ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-{
-    return find(to_string_view(key));
-}
-
-template<class Key>
-auto
-params_view::
-find(
-    iterator from,
-    Key const& key) const noexcept ->
-        typename std::enable_if<
-            is_stringlike<Key>::value,
-            iterator>::type
-{
-    return find(from,
-        to_string_view(key));
-}
-
 bool
 params_view::
 contains(
     string_view key) const noexcept
 {
     return find(key) != end();
-}
-
-template<class Key>
-auto
-params_view::
-contains(
-    Key const& key) const noexcept ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        bool>::type
-{
-    return contains(to_string_view(key));
 }
 
 } // urls

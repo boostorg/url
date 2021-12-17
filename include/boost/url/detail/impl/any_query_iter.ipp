@@ -214,6 +214,7 @@ copy_impl(
     char*& dest,
     char const* end) noexcept
 {
+    (void)end;
     // avoid self-copy
     if( key.data() != dest &&
         key.data() != nullptr)

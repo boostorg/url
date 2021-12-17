@@ -294,17 +294,6 @@ at(std::size_t pos) const ->
     return (*this)[pos];
 }
 
-template<class Key>
-auto
-params_encoded::
-at(Key const& key) const ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        string_view>::type
-{
-    return at(to_string_view(key));
-}
-
 auto
 params_encoded::
 front() const ->
@@ -496,20 +485,6 @@ replace(
         init.end());
 }
 
-template<class Value>
-auto
-params_encoded::
-replace_value(
-    iterator pos,
-    Value const& value) ->
-        typename std::enable_if<
-            is_stringlike<Value>::value,
-            iterator>::type
-{
-    return replace_value(
-        pos, to_string_view(value));
-}
-
 //------------------------------------------------
 
 auto
@@ -535,24 +510,27 @@ emplace_at(
     return pos;
 }
 
-template<
-    class Key,
-    class Value>
 auto
 params_encoded::
-emplace_at(
-    iterator pos,
-    Key const& key,
-    Value const& value) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value &&
-            is_stringlike<Value>::value,
-            iterator>::type
+emplace_back(
+    string_view key) ->
+        iterator
 {
-    return emplace_at(
-        pos,
-        to_string_view(key),
-        to_string_view(value));
+    return insert(
+        end(), value_type{
+            key, {}, false});
+}
+
+auto
+params_encoded::
+emplace_back(
+    string_view key,
+    string_view value) ->
+        iterator
+{
+    return insert(
+        end(), value_type{
+            key, value, true});
 }
 
 auto
@@ -577,20 +555,6 @@ emplace_at(
     return pos;
 }
 
-template<class Key>
-auto
-params_encoded::
-emplace_at(
-    iterator pos,
-    Key const& key) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value,
-            iterator>::type
-{
-    return emplace_at(
-        pos, to_string_view(key));
-}
-
 auto
 params_encoded::
 emplace_before(
@@ -607,26 +571,6 @@ emplace_before(
             true});
 }
 
-template<
-    class Key,
-    class Value>
-auto
-params_encoded::
-emplace_before(
-    iterator before,
-    Key const& key,
-    Value const& value) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value &&
-            is_stringlike<Value>::value,
-            iterator>::type
-{
-    return emplace_before(
-        before,
-        to_string_view(key),
-        to_string_view(value));
-}
-
 auto
 params_encoded::
 emplace_before(
@@ -637,24 +581,9 @@ emplace_before(
     return insert(
         before,
         value_type{
-            to_string_view(key),
+            key,
             string_view{},
             false});
-}
-
-template<class Key>
-auto
-params_encoded::
-emplace_before(
-    iterator before,
-    Key const& key) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value,
-            iterator>::type
-{
-    return emplace_before(
-        before,
-        to_string_view(key));
 }
 
 //------------------------------------------------
@@ -667,63 +596,7 @@ erase(iterator pos) ->
     return erase(pos, pos + 1);
 }
 
-template<class Key>
-auto
-params_encoded::
-erase(Key const& key) noexcept ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        std::size_t>::type
-{
-    return erase(to_string_view(key));
-}
-
 //------------------------------------------------
-
-auto
-params_encoded::
-emplace_back(
-    string_view key,
-    string_view value) ->
-        iterator
-{
-    return insert(
-        end(), value_type{
-            key, value, true});
-}
-
-template<
-    class Key,
-    class Value>
-auto
-params_encoded::
-emplace_back(
-    Key const& k,
-    Value const& v) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value &&
-            is_stringlike<Value>::value,
-            iterator>::type
-{
-    return emplace_back(
-        to_string_view(k),
-        to_string_view(v));
-}
-
-template<class Key>
-auto
-params_encoded::
-emplace_back(
-    Key const& key) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value,
-            iterator>::type
-{
-    return insert(
-        end(), value_type{
-            key, string_view{},
-                false});
-}
 
 void
 params_encoded::
@@ -732,7 +605,6 @@ push_back(
 {
     insert(end(), v);
 }
-
 
 void
 params_encoded::
@@ -747,17 +619,6 @@ pop_back() noexcept
 //
 //------------------------------------------------
 
-template<class Key>
-auto
-params_encoded::
-count(Key const& key) const noexcept ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        std::size_t>::type
-{
-    return count(to_string_view(key));
-}
-
 auto
 params_encoded::
 find(string_view key) const noexcept ->
@@ -766,48 +627,11 @@ find(string_view key) const noexcept ->
     return find(begin(), key);
 }
 
-template<class Key>
-auto
-params_encoded::
-find(Key const& key) const noexcept ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-{
-    return find(to_string_view(key));
-}
-
-template<class Key>
-auto
-params_encoded::
-find(
-    iterator from,
-    Key const& key) const noexcept ->
-        typename std::enable_if<
-            is_stringlike<Key>::value,
-            iterator>::type
-{
-    return find(from,
-        to_string_view(key));
-}
-
 bool
 params_encoded::
 contains(string_view key) const noexcept
 {
     return find(key) != end();
-}
-
-template<class Key>
-auto
-params_encoded::
-contains(
-    Key const& key) const noexcept ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        bool>::type
-{
-    return contains(to_string_view(key));
 }
 
 } // urls

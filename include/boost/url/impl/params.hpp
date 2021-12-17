@@ -296,17 +296,6 @@ at(std::size_t pos) const ->
     return (*this)[pos];
 }
 
-template<class Key>
-auto
-params::
-at(Key const& key) const ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        string_value>::type
-{
-    return at(to_string_view(key));
-}
-
 auto
 params::
 front() const ->
@@ -498,20 +487,6 @@ replace(
         init.end());
 }
 
-template<class Value>
-auto
-params::
-replace_value(
-    iterator pos,
-    Value const& value) ->
-        typename std::enable_if<
-            is_stringlike<Value>::value,
-            iterator>::type
-{
-    return replace_value(
-        pos, to_string_view(value));
-}
-
 //------------------------------------------------
 
 auto
@@ -537,26 +512,6 @@ emplace_at(
     return pos;
 }
 
-template<
-    class Key,
-    class Value>
-auto
-params::
-emplace_at(
-    iterator pos,
-    Key const& key,
-    Value const& value) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value &&
-            is_stringlike<Value>::value,
-            iterator>::type
-{
-    return emplace_at(
-        pos,
-        to_string_view(key),
-        to_string_view(value));
-}
-
 auto
 params::
 emplace_at(
@@ -577,20 +532,6 @@ emplace_at(
     return pos;
 }
 
-template<class Key>
-auto
-params::
-emplace_at(
-    iterator pos,
-    Key const& key) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value,
-            iterator>::type
-{
-    return emplace_at(
-        pos, to_string_view(key));
-}
-
 auto
 params::
 emplace_before(
@@ -607,26 +548,6 @@ emplace_before(
             true});
 }
 
-template<
-    class Key,
-    class Value>
-auto
-params::
-emplace_before(
-    iterator before,
-    Key const& key,
-    Value const& value) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value &&
-            is_stringlike<Value>::value,
-            iterator>::type
-{
-    return emplace_before(
-        before,
-        to_string_view(key),
-        to_string_view(value));
-}
-
 auto
 params::
 emplace_before(
@@ -637,24 +558,9 @@ emplace_before(
     return insert(
         before,
         value_type{
-            to_string_view(key),
+            key,
             string_view{},
             false});
-}
-
-template<class Key>
-auto
-params::
-emplace_before(
-    iterator before,
-    Key const& key) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value,
-            iterator>::type
-{
-    return emplace_before(
-        before,
-        to_string_view(key));
 }
 
 //------------------------------------------------
@@ -667,18 +573,18 @@ erase(iterator pos) ->
     return erase(pos, pos + 1);
 }
 
-template<class Key>
+//------------------------------------------------
+
 auto
 params::
-erase(Key const& key) noexcept ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        std::size_t>::type
+emplace_back(
+    string_view key) ->
+        iterator
 {
-    return erase(to_string_view(key));
+    return insert(
+        end(), value_type{
+            key, {}, false});
 }
-
-//------------------------------------------------
 
 auto
 params::
@@ -690,39 +596,6 @@ emplace_back(
     return insert(
         end(), value_type{
             key, value, true});
-}
-
-template<
-    class Key,
-    class Value>
-auto
-params::
-emplace_back(
-    Key const& k,
-    Value const& v) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value &&
-            is_stringlike<Value>::value,
-            iterator>::type
-{
-    return emplace_back(
-        to_string_view(k),
-        to_string_view(v));
-}
-
-template<class Key>
-auto
-params::
-emplace_back(
-    Key const& key) ->
-        typename std::enable_if<
-            is_stringlike<Key>::value,
-            iterator>::type
-{
-    return insert(
-        end(), value_type{
-            key, string_view{},
-                false});
 }
 
 void
@@ -747,17 +620,6 @@ pop_back() noexcept
 //
 //------------------------------------------------
 
-template<class Key>
-auto
-params::
-count(Key const& key) const noexcept ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        std::size_t>::type
-{
-    return count(to_string_view(key));
-}
-
 auto
 params::
 find(string_view key) const noexcept ->
@@ -766,48 +628,11 @@ find(string_view key) const noexcept ->
     return find(begin(), key);
 }
 
-template<class Key>
-auto
-params::
-find(Key const& key) const noexcept ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-{
-    return find(to_string_view(key));
-}
-
-template<class Key>
-auto
-params::
-find(
-    iterator from,
-    Key const& key) const noexcept ->
-        typename std::enable_if<
-            is_stringlike<Key>::value,
-            iterator>::type
-{
-    return find(from,
-        to_string_view(key));
-}
-
 bool
 params::
 contains(string_view key) const noexcept
 {
     return find(key) != end();
-}
-
-template<class Key>
-auto
-params::
-contains(
-    Key const& key) const noexcept ->
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        bool>::type
-{
-    return contains(to_string_view(key));
 }
 
 } // urls

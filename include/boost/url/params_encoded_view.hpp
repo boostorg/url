@@ -176,21 +176,9 @@ public:
 
         @throws std::out_of_range Key not found.
     */
-    /**@{*/
     BOOST_URL_DECL
     string_view
     at(string_view key) const;
-
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    string_view
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        string_view>::type
-#endif
-    at(Key const& key) const;
-    /**@}*/
 
     //--------------------------------------------
     //
@@ -247,21 +235,9 @@ public:
 
         @param key The encoded key.
     */
-    /**@{*/
     BOOST_URL_DECL
     std::size_t
     count(string_view key) const noexcept;
-
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    std::size_t
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        std::size_t>::type
-#endif
-    count(Key const& key) const noexcept;
-    /**@}*/
 
     /** Return the first element matching the key
 
@@ -277,21 +253,9 @@ public:
 
         @param key The encoded key.
     */
-    /**@{*/
     inline
     iterator
     find(string_view key) const noexcept;
-
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-#endif
-    find(Key const& key) const noexcept;
-    /**@}*/
 
     /** Return the next element matching the key
 
@@ -313,25 +277,11 @@ public:
 
         @param key The encoded key.
     */
-    /**@{*/
     BOOST_URL_DECL
     iterator
     find(
         iterator from,
         string_view key) const noexcept;
-
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-#endif
-    find(
-        iterator from,
-        Key const& key) const noexcept;
-    /**@}*/
 
     /** Return true if at least one matching element exists.
 
@@ -346,21 +296,9 @@ public:
 
         @param key The encoded key.
     */
-    /**@{*/
     inline
     bool
     contains(string_view key) const noexcept;
-
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    bool
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        bool>::type
-#endif
-    contains(Key const& key) const noexcept;
-    /**@}*/
 
     //--------------------------------------------
     //

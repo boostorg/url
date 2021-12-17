@@ -15,4 +15,4 @@ endif()
 
 add_subdirectory(limits)
 add_subdirectory(unit)
-add_subdirectory(wpt)
+#add_subdirectory(wpt)

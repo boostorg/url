@@ -100,16 +100,6 @@ public:
     string_view
     at(string_view key) const;
 
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    string_view
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        string_view>::type
-#endif
-    at(Key const& key) const;
-
     BOOST_URL_DECL
     value_type
     operator[](
@@ -236,18 +226,6 @@ public:
         iterator pos,
         string_view value);
 
-    template<class Value>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Value>::value,
-        iterator>::type
-#endif
-    replace_value(
-        iterator pos,
-        Value const& value);
-
     //--------------------------------------------
 
     inline
@@ -257,40 +235,11 @@ public:
         string_view key,
         string_view value);
 
-    template<
-        class Key,
-        class Value>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value &&
-        is_stringlike<Value>::value,
-        iterator>::type
-#endif
-    emplace_at(
-        iterator pos,
-        Key const& key,
-        Value const& value);
-
     inline
     iterator
     emplace_at(
         iterator pos,
         string_view key);
-
-    template<
-        class Key>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-#endif
-    emplace_at(
-        iterator pos,
-        Key const& key);
 
     inline
     iterator
@@ -299,39 +248,11 @@ public:
         string_view key,
         string_view value);
 
-    template<
-        class Key,
-        class Value>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value &&
-        is_stringlike<Value>::value,
-        iterator>::type
-#endif
-    emplace_before(
-        iterator before,
-        Key const& key,
-        Value const& value);
-
     inline
     iterator
     emplace_before(
         iterator before,
         string_view key);
-
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-#endif
-    emplace_before(
-        iterator before,
-        Key const& key);
 
     //--------------------------------------------
 
@@ -349,49 +270,18 @@ public:
     std::size_t
     erase(string_view key) noexcept;
 
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    std::size_t
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        std::size_t>::type
-#endif
-    erase(Key const& key) noexcept;
-
     //--------------------------------------------
+
+    inline
+    iterator
+    emplace_back(
+        string_view key);
 
     inline
     iterator
     emplace_back(
         string_view key,
         string_view value);
-
-    template<
-        class Key,
-        class Value>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value &&
-        is_stringlike<Value>::value,
-        iterator>::type
-#endif
-    emplace_back(
-        Key const& key,
-        Value const& value);
-
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-#endif
-    emplace_back(
-        Key const& key);
 
     inline
     void
@@ -412,29 +302,9 @@ public:
     std::size_t
     count(string_view key) const noexcept;
 
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    std::size_t
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        std::size_t>::type
-#endif
-    count(Key const& key) const noexcept;
-
     inline
     iterator
     find(string_view key) const noexcept;
-
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-#endif
-    find(Key const& key) const noexcept;
 
     /** Search [from, end), from==end is valid
     */
@@ -444,31 +314,9 @@ public:
         iterator from,
         string_view key) const noexcept;
 
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    iterator
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        iterator>::type
-#endif
-    find(
-        iterator from,
-        Key const& key) const noexcept;
-
     inline
     bool
     contains(string_view key) const noexcept;
-
-    template<class Key>
-#ifdef BOOST_URL_DOCS
-    bool
-#else
-    typename std::enable_if<
-        is_stringlike<Key>::value,
-        bool>::type
-#endif
-    contains(Key const& key) const noexcept;
 };
 
 } // urls
