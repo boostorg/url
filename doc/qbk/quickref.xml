@@ -41,10 +41,6 @@
           <member><link linkend="url.ref.boost__urls__url">url</link></member>
           <member><link linkend="url.ref.boost__urls__url_view">url_view</link></member>
         </simplelist>
-        <bridgehead renderas="sect3">Type Traits</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__is_stringlike">is_stringlike</link></member>
-        </simplelist>
       </entry>
      
       <entry valign="top">
@@ -62,7 +58,6 @@
           <member><link linkend="url.ref.boost__urls__parse_uri">parse_uri</link></member>
           <member><link linkend="url.ref.boost__urls__parse_uri_reference">parse_uri_reference</link></member>
           <member><link linkend="url.ref.boost__urls__resolve">resolve</link></member>
-          <member><link linkend="url.ref.boost__urls__to_string_view">to_string_view</link></member>
         </simplelist>
         <bridgehead renderas="sect3">Operators</bridgehead>
         <simplelist type="vert" columns="1">
@@ -128,6 +123,14 @@
           <member><link linkend="url.ref.boost__urls__bnf__range">range</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__repeat">repeat</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__token">token</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">CharSets</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__bnf__all_chars_t">all_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__alnum_chars_t">alnum_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__alpha_chars_t">alpha_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__digit_chars_t">digit_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__bnf__hexdig_chars_t">hexdig_chars_t</link></member>
         </simplelist>
         <bridgehead renderas="sect3">Constants</bridgehead>
         <simplelist type="vert" columns="1">

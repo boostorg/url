@@ -68,8 +68,8 @@ struct is_charset<T, boost::void_t<
 
 /** A character set containing all characters.
 
-    This is an object invocable with
-    the equivalent signature:
+    Objects of this type are invocable with
+    this equivalent signature:
 
     @code
     bool( char ch ) const noexcept;
@@ -92,15 +92,15 @@ struct is_charset<T, boost::void_t<
         >B.1. Core Rules (rfc5234)</a>
 
     @see
+        @ref all_chars,
         @ref is_charset,
         @ref find_if,
         @ref find_if_not.
 */
-constexpr
 #ifdef BOOST_URL_DOCS
-__implementation_defined__
+using all_chars_t = __see_below__;
 #else
-struct
+struct all_chars_t
 {
     constexpr
     bool
@@ -126,16 +126,22 @@ struct
     {
         return last;
     }
-}
+};
 #endif
-all_chars{};
+
+/** A character set constant representing all characters
+
+    @see
+        @ref all_chars_t
+*/
+constexpr all_chars_t all_chars{};
 
 //------------------------------------------------
 
 /** A character set containing all letters and digits.
 
-    This is an object invocable with
-    the equivalent signature:
+    Objects of this type are invocable
+    with this equivalent signature:
 
     @code
     bool( char ch ) const noexcept;
@@ -167,11 +173,10 @@ all_chars{};
         @ref find_if,
         @ref find_if_not.
 */
-constexpr
 #ifdef BOOST_URL_DOCS
-__implementation_defined__
+using alnum_chars_t = __see_below__;
 #else
-struct
+struct alnum_chars_t
 {
     constexpr
     bool
@@ -202,16 +207,22 @@ struct
             *this, first, last);
     }
 #endif
-}
+};
 #endif
-alnum_chars{};
+
+/** A character set containing the alphanumeric characters.
+
+    @see
+        @ref alnum_chars_t
+*/
+constexpr alnum_chars_t alnum_chars{};
 
 //------------------------------------------------
 
-/** A CharSet containing the alpha characters
+/** A character set containing the alphabetical characters.
 
-    This is an object invocable with
-    the equivalent signature:
+    Objects of this type are invocable
+    with this equivalent signature:
 
     @code
     bool( char ch ) const noexcept;
@@ -234,15 +245,15 @@ alnum_chars{};
         >B.1. Core Rules (rfc5234)</a>
 
     @see
+        @ref alpha_chars,
         @ref is_charset,
         @ref find_if,
         @ref find_if_not.
 */
-constexpr
 #ifdef BOOST_URL_DOCS
-__implementation_defined__
+using alpha_chars_t = __see_below__;
 #else
-struct
+struct alpha_chars_t
 {
     constexpr
     bool
@@ -272,9 +283,15 @@ struct
             *this, first, last);
     }
 #endif
-}
+};
 #endif
-alpha_chars{};
+
+/** A character set containing the alphabetical characters.
+
+    @see
+        @ref alpha_chars_t
+*/
+constexpr alpha_chars_t alpha_chars{};
 
 //------------------------------------------------
 
@@ -304,15 +321,15 @@ alpha_chars{};
         >B.1. Core Rules (rfc5234)</a>
 
     @see
+        @ref digit_chars,
         @ref is_charset,
         @ref find_if,
         @ref find_if_not.
 */
-constexpr
 #ifdef BOOST_URL_DOCS
-__implementation_defined__
+using digit_chars_t = __see_below__;
 #else
-struct
+struct digit_chars_t
 {
     constexpr
     bool
@@ -340,9 +357,15 @@ struct
             *this, first, last);
     }
 #endif
-}
+};
 #endif
-digit_chars{};
+
+/** A character set containing the decimal digits
+
+    @see
+        @ref digit_chars_t
+*/
+constexpr digit_chars_t digit_chars{};
 
 //------------------------------------------------
 
@@ -384,15 +407,15 @@ digit_chars{};
         >4.3. Lowercase (rfc5952)</a>
 
     @see
+        @ref hexdig_chars,
         @ref is_charset,
         @ref find_if,
         @ref find_if_not.
 */
-constexpr
 #ifdef BOOST_URL_DOCS
-__implementation_defined__
+using hexdig_chars_t = __see_below__;
 #else
-struct
+struct hexdig_chars_t
 {
     /** Return true if c is in the character set.
     */
@@ -425,9 +448,15 @@ struct
             *this, first, last);
     }
 #endif
-}
+};
 #endif
-hexdig_chars{};
+
+/** A character set containing the hexadecimal digits
+
+    @see
+        @ref hexdig_chars_t
+*/
+constexpr hexdig_chars_t hexdig_chars{};
 
 // VFALCO We can declare
 // these later if needed
