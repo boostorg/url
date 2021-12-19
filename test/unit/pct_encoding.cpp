@@ -11,6 +11,7 @@
 #include <boost/url/pct_encoding.hpp>
 
 #include <boost/url/static_pool.hpp>
+#include <boost/url/bnf/lut_chars.hpp>
 #include "test_suite.hpp"
 #include <memory>
 

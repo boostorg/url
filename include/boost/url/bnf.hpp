@@ -14,6 +14,7 @@
 
 #include <boost/url/bnf/ascii.hpp>
 #include <boost/url/bnf/charset.hpp>
+#include <boost/url/bnf/lut_chars.hpp>
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/bnf/range.hpp>
 #include <boost/url/bnf/repeat.hpp>

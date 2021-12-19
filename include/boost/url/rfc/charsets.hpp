@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_CHARSETS_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/bnf/charset.hpp>
+#include <boost/url/bnf/lut_chars.hpp>
 #include <cstdint>
 
 namespace boost {
@@ -27,7 +27,10 @@ namespace urls {
 constexpr
 bnf::lut_chars
 unreserved_chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "abcdefghijklmnopqrstuvwxyz" "0123456789" "-._~";
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123456789"
+    "-._~";
 
 /** Character set for gen-delims
 

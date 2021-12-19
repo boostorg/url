@@ -22,6 +22,15 @@ namespace boost {
 namespace urls {
 namespace bnf {
 
+/*  Design
+
+    - An element is default constructible
+    - Holds the result of parsing
+    - overloads the free function `parse`
+    - has a nested value_type
+    - has `value_type& operator*() const noexcept`
+*/
+
 /** @brief Parse a literal character
 
    This function parses the string defined by the first chars in the

@@ -87,60 +87,8 @@ public:
             test_chars>::value);
 
     void
-    test_lut_chars()
-    {
-        // lut_chars(char const*)
-        {
-            constexpr lut_chars digits_ = "0123456789";
-
-            (void)digits_;
-        }
-
-        // lut_chars(Pred)
-        {
-            struct is_digit_
-            {
-                constexpr bool
-                operator()(char c ) const noexcept
-                {
-                    return c >= '0' && c <= '9';
-                }
-            };
-
-            constexpr lut_chars digits_( is_digit_{} );
-
-            (void)digits_;
-        }
-
-        // operator+
-        {
-            constexpr lut_chars alpha_chars_(
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "abcdefghijklmnopqrstuvwxyz");
-
-            constexpr lut_chars alnum_chars_ = alpha_chars_ + "0123456789";
-        }
-
-        // operator-
-        {
-            constexpr lut_chars consonants = lut_chars("abcdefghijklmnopqrstuvwxyz") - "aeiou";
-
-            (void)consonants;
-        }
-
-        // operator~
-        {
-            constexpr lut_chars not_vowels = ~lut_chars( "aAeEiIoOuU" );
-
-            (void)not_vowels;
-        }
-    }
-
-    void
     run()
     {
-        test_lut_chars();
-
         std::size_t n0 = 0;
         std::size_t n1 = 0;
         test_char_set(
