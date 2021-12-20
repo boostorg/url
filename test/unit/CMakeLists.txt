@@ -38,6 +38,7 @@ set(BOOST_URL_TESTS_FILES
     static_pool.cpp
     static_url.cpp
     string.cpp
+    string_view.cpp
     url.cpp
     url_view.cpp
     urls.cpp

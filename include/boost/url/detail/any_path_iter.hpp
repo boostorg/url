@@ -11,7 +11,7 @@
 #define BOOST_URL_DETAIL_ANY_PATH_ITER_HPP
 
 #include <boost/url/error.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include <cstddef>
 
 namespace boost {

@@ -12,7 +12,7 @@
 
 #include <boost/url/bnf/charset.hpp>
 #include <boost/url/bnf/parse.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include <initializer_list>
 
 #include "test_suite.hpp"

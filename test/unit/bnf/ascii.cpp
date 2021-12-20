@@ -10,7 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/bnf/ascii.hpp>
 
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include "test_suite.hpp"
 
 #include <memory>

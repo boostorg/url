@@ -11,7 +11,7 @@
 #define BOOST_URL_PCT_ENCODING_TYPES_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include <cstddef>
 
 namespace boost {

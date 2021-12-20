@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/segments_view.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include <iosfwd>
 #include <utility>
 

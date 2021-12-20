@@ -11,7 +11,7 @@
 #define BOOST_URL_PARAMS_ENCODED_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/url/params_value_type.hpp>
 #include <boost/url/params_view.hpp>
 #include <boost/url/detail/parts_base.hpp>

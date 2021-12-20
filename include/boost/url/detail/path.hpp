@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_DETAIL_PATH_HPP
 #define BOOST_URL_DETAIL_PATH_HPP
 
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 
 namespace boost {
 namespace urls {

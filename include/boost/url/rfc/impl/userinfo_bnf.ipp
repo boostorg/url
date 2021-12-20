@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/userinfo_bnf.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
 

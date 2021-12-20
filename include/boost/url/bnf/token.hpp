@@ -11,31 +11,54 @@
 #define BOOST_URL_BNF_TOKEN_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/bnf/charset.hpp>
+#include <boost/url/error.hpp>
+#include <boost/url/string_view.hpp>
+#include <boost/static_assert.hpp>
 
 namespace boost {
 namespace urls {
 namespace bnf {
 
-#ifndef BOOST_URL_DOCS
-namespace detail {
-template<class CharSet>
-struct token;
-} // detail
-#endif
-
 /** BNF for a series of characters in a char set
 */
 template<class CharSet>
-detail::token<CharSet>
-token(
-    CharSet const& cs,
-    string_view& t) noexcept;
+struct token
+{
+    using value_type = string_view;
+
+    value_type const&
+    operator*() const noexcept
+    {
+        return s_;
+    }
+
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* end,
+        error_code& ec,
+        token<CharSet>& t) noexcept
+    {
+        ec = {};
+        auto const start = it;
+        static constexpr CharSet cs{};
+        it = bnf::find_if_not(it, end, cs);
+        t.s_ = string_view(start, it - start);
+        return true;
+    }
+
+private:
+    BOOST_STATIC_ASSERT(
+        is_charset<
+            CharSet>::value);
+
+    value_type s_;
+};
 
 } // bnf
 } // urls
 } // boost
-
-#include <boost/url/bnf/impl/token.hpp>
 
 #endif

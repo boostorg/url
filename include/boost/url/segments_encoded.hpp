@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/segments.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <initializer_list>
 #include <iterator>

@@ -28,7 +28,8 @@
 #include <boost/url/segments_view.hpp>
 #include <boost/url/static_pool.hpp>
 #include <boost/url/static_url.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/urls.hpp>

@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_DETAIL_COPIED_STRINGS_HPP
 #define BOOST_URL_DETAIL_COPIED_STRINGS_HPP
 
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 
 namespace boost {
 namespace urls {

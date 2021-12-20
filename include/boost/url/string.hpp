@@ -11,35 +11,14 @@
 #define BOOST_URL_STRING_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/type_traits/make_void.hpp>
-//#include <boost/utility/string_view.hpp>
-#include <boost/core/detail/string_view.hpp>
 #include <memory>
 #include <string>
 #include <type_traits>
 
 namespace boost {
 namespace urls {
-
-#ifndef BOOST_URL_DOCS
-// this is private
-using pos_t = std::size_t;
-#endif
-
-/** The type of string_view used by the library
-
-    String views are used to pass character
-    buffers into or out of functions. Ownership
-    of the underlying character buffer is not
-    transferred; the caller is responsible for
-    ensuring that the lifetime of the object
-    owning the character buffer extends until
-    the string view is no longer referenced.
-*/
-//typedef boost::string_view string_view;
-typedef boost::core::string_view string_view;
-
-//------------------------------------------------
 
 /** A read-only, reference counted string
 

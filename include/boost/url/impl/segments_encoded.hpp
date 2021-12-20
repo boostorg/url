@@ -11,7 +11,7 @@
 #define BOOST_URL_IMPL_SEGMENTS_ENCODED_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/any_path_iter.hpp>
 #include <iterator>

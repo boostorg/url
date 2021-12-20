@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/params.hpp>
 #include <boost/url/params_value_type.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <initializer_list>
 #include <iterator>

@@ -14,7 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/host_type.hpp>
 #include <boost/url/pct_encoding_types.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 

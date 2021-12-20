@@ -11,7 +11,7 @@
 #define BOOST_URL_DETAIL_IMPL_ANY_PATH_ITER_IPP
 
 #include <boost/url/detail/any_path_iter.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 

@@ -28,16 +28,26 @@ parse(
 {
     using namespace bnf;
     auto const start = it;
-    static constexpr auto cs =
-        unreserved_chars +
-        subdelim_chars + ':';
+    struct minor_chars_t : bnf::lut_chars
+    {
+        constexpr
+        minor_chars_t() noexcept
+            : bnf::lut_chars(
+                unreserved_chars +
+                subdelim_chars + ':')
+        {
+        }
+    };
+    bnf::token<hexdig_chars_t> major;
+    bnf::token<minor_chars_t> minor;
     if(! parse(it, end, ec,
         'v',
-        bnf::token(
-            hexdig_chars, t.major),
+        major,
         '.',
-        bnf::token(cs, t.minor)))
+        minor))
         return false;
+    t.major = *major;
+    t.minor = *minor;
     if(t.major.empty())
     {
         // can't be empty
