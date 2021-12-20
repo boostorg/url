@@ -111,7 +111,7 @@ parse_string(
     {
         // input not consumed fully
         ec = BOOST_URL_ERR(
-            error::leftover_input);
+            urls::error::leftover_input);
         return false;
     }
     return true;

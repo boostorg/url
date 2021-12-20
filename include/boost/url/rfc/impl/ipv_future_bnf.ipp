@@ -26,7 +26,6 @@ parse(
     error_code& ec,
     ipv_future_bnf& t)
 {
-    using namespace bnf;
     auto const start = it;
     struct minor_chars_t : bnf::lut_chars
     {
@@ -38,7 +37,7 @@ parse(
         {
         }
     };
-    bnf::token<hexdig_chars_t> major;
+    bnf::token<bnf::hexdig_chars_t> major;
     bnf::token<minor_chars_t> minor;
     if(! parse(it, end, ec,
         'v',

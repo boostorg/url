@@ -52,6 +52,7 @@ in a translation unit of the program.
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_view.ipp>
 
+#include <boost/url/bnf/impl/error.ipp>
 #include <boost/url/bnf/impl/range.ipp>
 
 #include <boost/url/rfc/impl/absolute_uri_bnf.ipp>
