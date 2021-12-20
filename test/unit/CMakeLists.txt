@@ -20,6 +20,7 @@ set(BOOST_URL_TESTS_FILES
     authority_view.cpp
     bnf.cpp
     error.cpp
+    error_code.cpp
     host_type.cpp
     ipv4_address.cpp
     ipv6_address.cpp

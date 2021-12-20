@@ -27,7 +27,6 @@ public:
         optional<
             string_view> s2)
     {
-        using urls::detail::throw_system_error;
         userinfo_bnf t;
         error_code ec;
         if(! BOOST_TEST(

@@ -71,17 +71,6 @@ throw_system_error(
         system_error(ec), loc);
 }
 
-#if 0
-void
-throw_system_error(
-    error e,
-    source_location const& loc)
-{
-    throw_exception(
-        system_error(e), loc);
-}
-#endif
-
 } // detail
 } // url
 } // boost

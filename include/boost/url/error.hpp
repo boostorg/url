@@ -11,25 +11,12 @@
 #define BOOST_URL_ERROR_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/system/error_code.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/system/result.hpp>
-#include <boost/system/system_error.hpp>
 #include <stdexcept>
 
 namespace boost {
 namespace urls {
-
-/// The type of error category used by the library
-using error_category = boost::system::error_category;
-
-/// The type of error code used by the library
-using error_code = boost::system::error_code;
-
-/// The type of error condition used by the library
-using error_condition = boost::system::error_condition;
-
-/// The type of system error thrown by the library
-using system_error = boost::system::system_error;
 
 /** The type of result returned by library functions
 
