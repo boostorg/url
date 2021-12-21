@@ -669,27 +669,32 @@ using log_type = detail::log_ostream<char>;
     }
 
 # define BOOST_TEST_NO_THROW( expr )                                    \
+    ( [&]{ \
     try { \
         (void)(expr); \
         ::test_suite::detail::current()->pass( \
             #expr, __FILE__, __LINE__, \
             TEST_SUITE_FUNCTION); \
+        return true; \
     } \
     catch (const std::exception&) { \
         ::test_suite::detail::current()->fail ( \
             #expr, __FILE__, __LINE__, \
             TEST_SUITE_FUNCTION); \
+        return false; \
     } \
     catch (...) {                                                    \
         ::test_suite::detail::current()->fail ( \
             #expr, __FILE__, __LINE__, \
             TEST_SUITE_FUNCTION); \
-    }
+        return false; \
+    } \
+    }() )
 
 #else
 
 # define BOOST_TEST_THROWS( expr, except )
-# define BOOST_TEST_NO_THROW( expr ) { expr; }
+# define BOOST_TEST_NO_THROW( expr ) ( [&]{ expr; return true; }() )
 
 #endif
 

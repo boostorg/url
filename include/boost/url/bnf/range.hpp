@@ -60,13 +60,13 @@ struct is_range<T, boost::void_t<
 
 //------------------------------------------------
 
-class range
+class range_
 {
     bool(*fp_)(
         char const*&,
         char const*,
         error_code&,
-        range&);
+        range_&);
 
     template<class T>
     static
@@ -75,12 +75,12 @@ class range
         char const*& it,
         char const* end,
         error_code& ec,
-        range& t);
+        range_& t);
 
 protected:
     template<class T>
     explicit
-    range(T const*) noexcept;
+    range_(T const*) noexcept;
 
 public:
     string_view str;
@@ -89,7 +89,7 @@ public:
     template<class T>
     class iterator;
 
-    range() noexcept
+    range_() noexcept
         : fp_(nullptr)
     {
     }
@@ -100,7 +100,120 @@ public:
         char const*& it,
         char const* end,
         error_code& ec,
-        range& t);
+        range_& t);
+};
+
+//------------------------------------------------
+
+template<
+    class ValueType,
+    class ReferenceType = ValueType>
+class range
+{
+public:
+    /** The type of begin and increment function pointers
+    */
+    typedef bool (*fp_t)(
+        char const*&,
+        char const*,
+        error_code&,
+        ValueType&);
+
+#ifdef BOOST_URL_DOCS
+    /** A read-only forward iterator
+    */
+    using iterator = __see_below__;
+#else
+    class iterator;
+#endif
+
+    /** The type of value returned when dereferencing an iterator.
+    */
+    using value_type = ValueType;
+
+    /** The type of value returned when dereferencing an iterator.
+    */
+    using reference = ReferenceType;
+
+    /** The type of value returned when dereferencing an iterator.
+    */
+    using const_reference = ReferenceType;
+
+    /** An unsigned integer type used to represent size.
+    */
+    using size_type = std::size_t;
+
+    /** A signed integer type used to represent differences.
+    */
+    using difference_type = std::ptrdiff_t;
+
+    /** Copy constructor.
+    */
+    range(range const&) = default;
+
+    /** Copy assignment.
+    */
+    range& operator=(range const&) = default;
+
+    /** Constructor
+
+        Default constructed ranges are empty.
+    */
+    range() = default;
+
+    /** Constructor
+    */
+    range(
+        string_view s,
+        std::size_t n,
+        fp_t begin,
+        fp_t increment) noexcept
+        : s_(s)
+        , n_(n)
+        , begin_(begin)
+        , increment_(increment)
+    {
+    }
+
+    /** Return the underlying string.
+    */
+    string_view
+    str() const noexcept
+    {
+        return s_;
+    }
+
+    /** Return an iterator to the beginning.
+    */
+    iterator
+    begin() const;
+
+    /** Return an iterator to the end.
+    */
+    iterator
+    end() const;
+
+    /** Return true if the range contains no elements
+    */
+    bool
+    empty() const noexcept
+    {
+        return n_ == 0;
+    }
+
+    /** Return the number of elements in the range
+    */
+    std::size_t
+    size() const noexcept
+    {
+        return n_;
+    }
+
+private:
+    string_view s_;
+    std::size_t n_ = 0;
+    fp_t begin_ = nullptr;
+    fp_t increment_ = nullptr;
 };
 
 } // bnf

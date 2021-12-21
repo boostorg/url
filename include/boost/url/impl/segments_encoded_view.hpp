@@ -14,6 +14,7 @@
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/rfc/paths_bnf.hpp>
 #include <cstdint>
+#include <iterator>
 
 namespace boost {
 namespace urls {
@@ -29,7 +30,6 @@ class segments_encoded_view::iterator
 
     friend segments_encoded_view;
 
-    explicit
     iterator(
         string_view s,
         std::size_t nseg) noexcept;

@@ -11,9 +11,11 @@
 #include <boost/url/rfc/query_bnf.hpp>
 
 #include <boost/url/bnf/range.hpp>
+
 #include "test_suite.hpp"
 #include "test_bnf.hpp"
-#include <iostream>
+
+#include <algorithm>
 
 namespace boost {
 namespace urls {
@@ -22,8 +24,40 @@ class query_bnf_test
 {
 public:
     void
+    check(
+        string_view s,
+        std::initializer_list<
+            params_value_type> i)
+    {
+        query_bnf t;
+        if(! BOOST_TEST_NO_THROW(
+            bnf::parse_string(s, t)))
+            return;
+        if(! BOOST_TEST(t.v.size() == i.size()))
+            return;
+        BOOST_TEST(std::equal(
+            i.begin(),
+            i.end(),
+            t.v.begin()));
+    }
+
+    void
+    testParse()
+    {
+        check("", {{}});
+        check("&", {{},{}});
+        check("x", {{"x"}});
+        check("x&", {{"x"},{}});
+        check("x=", {{"x","",true}});
+        check("x=y", {{"x","y",true}});
+        check("a=b&c=d", {{"a","b",true},{"c","d",true}});
+    }
+
+    void
     run()
     {
+        testParse();
+
         using T = query_bnf;
 
         bad <T>("%");

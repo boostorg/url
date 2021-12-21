@@ -261,7 +261,7 @@ parse_query_params(
     if(! bnf::parse_string(s, ec, t))
         return ec;
     return params_encoded_view(
-        t.str, t.count);
+        t.v.str(), t.v.size());
 }
 
 } // urls

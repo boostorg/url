@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/pct_encoding_types.hpp>
+#include <boost/url/params_value_type.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/bnf/range.hpp>
 #include <cstddef>
@@ -25,6 +26,28 @@ struct query_param
     pct_encoded_str key;
     pct_encoded_str value;
     bool has_value = false;
+
+    friend
+    bool
+    operator==(
+        query_param const& t0,
+        query_param const& t1) noexcept
+    {
+        return
+            t0.key.str == t1.key.str &&
+            t0.has_value == t1.has_value &&
+            (! t0.has_value ||
+                t0.value.str == t1.value.str);
+    }
+        
+    friend
+    bool
+    operator!=(
+        query_param const& t0,
+        query_param const& t1) noexcept
+    {
+        return !(t0 == t1);
+    }
 };
 
 /** BNF for query
@@ -47,15 +70,25 @@ struct query_param
     @see
         https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
 */
-struct query_bnf : bnf::range
+struct query_bnf
 {
     using value_type =
-        query_param;
+        bnf::range<params_value_type>;
 
-    query_bnf()
-        : bnf::range(this)
-    {
-    }
+    value_type v;
+
+    BOOST_URL_DECL
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        query_bnf& t) noexcept;
+
+private:
+    struct key_chars;
+    struct value_chars;
 
     BOOST_URL_DECL
     static
@@ -64,7 +97,7 @@ struct query_bnf : bnf::range
         char const*& it,
         char const* const end,
         error_code& ec,
-        query_param& t) noexcept;
+        params_value_type& t) noexcept;
 
     BOOST_URL_DECL
     static
@@ -73,7 +106,7 @@ struct query_bnf : bnf::range
         char const*& it,
         char const* const end,
         error_code& ec,
-        query_param& t) noexcept;
+        params_value_type& t) noexcept;
 };
 
 /** BNF for query-part

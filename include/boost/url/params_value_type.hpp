@@ -34,6 +34,29 @@ struct params_value_type
     {
     }
 #endif
+
+    friend
+    bool
+    operator==(
+        params_value_type const& t0,
+        params_value_type const& t1) noexcept
+    {
+        // VFALCO This needs to be a pct-encoded equality
+        return
+            t0.key == t1.key &&
+            t0.has_value == t1.has_value &&
+            (! t0.has_value ||
+                t0.value == t1.value);
+    }
+        
+    friend
+    bool
+    operator!=(
+        params_value_type const& t0,
+        params_value_type const& t1) noexcept
+    {
+        return !(t0 == t1);
+    }
 };
 
 } // urls

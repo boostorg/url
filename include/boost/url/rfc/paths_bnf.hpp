@@ -89,13 +89,13 @@ struct segment_nz_nc_bnf
     path-abempty  = *( "/" segment )
     @endcode
 */
-struct path_abempty_bnf : bnf::range
+struct path_abempty_bnf : bnf::range_
 {
     using value_type =
         pct_encoded_str;
 
     path_abempty_bnf()
-        : bnf::range(this)
+        : bnf::range_(this)
     {
     }
 
@@ -127,13 +127,13 @@ struct path_abempty_bnf : bnf::range
     path-absolute = "/" [ segment-nz *( "/" segment ) ]
     @endcode
 */
-struct path_absolute_bnf : bnf::range
+struct path_absolute_bnf : bnf::range_
 {
     using value_type =
         pct_encoded_str;
 
     path_absolute_bnf()
-        : bnf::range(this)
+        : bnf::range_(this)
     {
     }
 
@@ -165,13 +165,13 @@ struct path_absolute_bnf : bnf::range
     path-noscheme = segment-nz-nc *( "/" segment )
     @endcode
 */
-struct path_noscheme_bnf : bnf::range
+struct path_noscheme_bnf : bnf::range_
 {
     using value_type =
         pct_encoded_str;
 
     path_noscheme_bnf()
-        : bnf::range(this)
+        : bnf::range_(this)
     {
     }
 
@@ -204,13 +204,13 @@ struct path_noscheme_bnf : bnf::range
     @endcode
 */
 
-struct path_rootless_bnf : bnf::range
+struct path_rootless_bnf : bnf::range_
 {
     using value_type =
         pct_encoded_str;
 
     path_rootless_bnf()
-        : bnf::range(this)
+        : bnf::range_(this)
     {
     }
 

@@ -575,7 +575,7 @@ apply(
         set_size(
             id_query,
             t.query_part.size());
-        nparam_ = t.query.count;
+        nparam_ = t.query.v.size();
     }
     else
     {
