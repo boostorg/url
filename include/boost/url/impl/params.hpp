@@ -37,7 +37,7 @@ class params::iterator
     }
 
 public:
-    using value_type = params_value_type;
+    using value_type = query_param;
     using reference = params::reference;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;

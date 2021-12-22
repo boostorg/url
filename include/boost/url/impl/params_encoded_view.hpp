@@ -42,8 +42,8 @@ class params_encoded_view::iterator
     encoded_key() const noexcept;
 
 public:
-    using value_type = params_value_type;
-    using reference = params_value_type;
+    using value_type = query_param;
+    using reference = query_param_view;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
@@ -64,7 +64,7 @@ public:
     }
 
     BOOST_URL_DECL
-    value_type
+    reference
     operator*() const;
 
     BOOST_URL_DECL

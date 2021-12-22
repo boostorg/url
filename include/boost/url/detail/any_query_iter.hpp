@@ -11,8 +11,8 @@
 #define BOOST_URL_DETAIL_ANY_QUERY_ITER_HPP
 
 #include <boost/url/error.hpp>
+#include <boost/url/query_param.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/params_value_type.hpp>
 #include <cstddef>
 
 namespace boost {
@@ -150,7 +150,7 @@ public:
     {
         if(it_ == end_)
             return false;
-        params_value_type v(*it_++);
+        query_param_view v(*it_++);
         if(v.has_value)
             measure_impl(v.key,
                 &v.value, n, ec);
@@ -166,7 +166,7 @@ public:
         char const* end
             ) noexcept override
     {
-        params_value_type v(*it_++);
+        query_param_view v(*it_++);
         if(v.has_value)
             copy_impl(v.key,
                 &v.value, dest, end);

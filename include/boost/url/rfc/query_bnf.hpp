@@ -11,44 +11,14 @@
 #define BOOST_URL_RFC_QUERY_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
-#include <boost/url/pct_encoding_types.hpp>
-#include <boost/url/params_value_type.hpp>
+#include <boost/url/error_code.hpp>
+#include <boost/url/query_param.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/bnf/range.hpp>
 #include <cstddef>
 
 namespace boost {
 namespace urls {
-
-struct query_param
-{
-    pct_encoded_str key;
-    pct_encoded_str value;
-    bool has_value = false;
-
-    friend
-    bool
-    operator==(
-        query_param const& t0,
-        query_param const& t1) noexcept
-    {
-        return
-            t0.key.str == t1.key.str &&
-            t0.has_value == t1.has_value &&
-            (! t0.has_value ||
-                t0.value.str == t1.value.str);
-    }
-        
-    friend
-    bool
-    operator!=(
-        query_param const& t0,
-        query_param const& t1) noexcept
-    {
-        return !(t0 == t1);
-    }
-};
 
 /** BNF for query
 
@@ -67,13 +37,14 @@ struct query_param
                     / ":" / "@" / "/" / "?"
     @endcode
 
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+        >3.4. Query (rfc3986)</a>       
 */
 struct query_bnf
 {
     using value_type =
-        bnf::range<params_value_type>;
+        bnf::range<query_param_view>;
 
     value_type v;
 
@@ -97,7 +68,7 @@ private:
         char const*& it,
         char const* const end,
         error_code& ec,
-        params_value_type& t) noexcept;
+        query_param_view& t) noexcept;
 
     BOOST_URL_DECL
     static
@@ -106,7 +77,7 @@ private:
         char const*& it,
         char const* const end,
         error_code& ec,
-        params_value_type& t) noexcept;
+        query_param_view& t) noexcept;
 };
 
 /** BNF for query-part

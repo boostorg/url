@@ -128,27 +128,33 @@ public:
             BOOST_TEST(p.size() == 4);
             auto it = p.begin();
 
-            params_encoded_view::value_type v;
+            {
+                auto v = *it++;
+                BOOST_TEST(v.key == "");
+                BOOST_TEST(v.value == "");
+                BOOST_TEST(v.has_value == false);
+            }
 
-            v = *it++;
-            BOOST_TEST(v.key == "");
-            BOOST_TEST(v.value == "");
-            BOOST_TEST(v.has_value == false);
+            {
+                auto v = *it++;
+                BOOST_TEST(v.key == "x");
+                BOOST_TEST(v.value == "");
+                BOOST_TEST(v.has_value == false);
+            }
 
-            v = *it++;
-            BOOST_TEST(v.key == "x");
-            BOOST_TEST(v.value == "");
-            BOOST_TEST(v.has_value == false);
+            {
+                auto v = *it++;
+                BOOST_TEST(v.key == "y");
+                BOOST_TEST(v.value == "");
+                BOOST_TEST(v.has_value == true);
+            }
 
-            v = *it++;
-            BOOST_TEST(v.key == "y");
-            BOOST_TEST(v.value == "");
-            BOOST_TEST(v.has_value == true);
-
-            v = *it++;
-            BOOST_TEST(v.key == "z");
-            BOOST_TEST(v.value == "3");
-            BOOST_TEST(v.has_value == true);
+            {
+                auto v = *it++;
+                BOOST_TEST(v.key == "z");
+                BOOST_TEST(v.value == "3");
+                BOOST_TEST(v.has_value == true);
+            }
         }
     }
 

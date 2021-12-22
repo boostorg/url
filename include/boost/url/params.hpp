@@ -11,7 +11,7 @@
 #define BOOST_URL_PARAMS_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/params_value_type.hpp>
+#include <boost/url/query_param.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <initializer_list>
@@ -115,7 +115,7 @@ public:
         a query parameter where ownership is
         retained in the copy.
     */
-    using value_type = params_value_type;
+    using value_type = query_param_view;
 
     /** An unsigned integer type
     */

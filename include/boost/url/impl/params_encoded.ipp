@@ -49,12 +49,12 @@ auto
 params_encoded::
 iterator::
 operator*() const ->
-    value_type
+    reference
 {
     BOOST_ASSERT(i_ < u_->nparam_);
     auto const r = u_->param(i_);
     if(r.nv > 0)
-        return value_type{
+        return reference{
             string_view(
                 u_->s_ + r.pos + 1,
                 r.nk - 1),
@@ -62,7 +62,7 @@ operator*() const ->
                 u_->s_ + r.pos + r.nk + 1,
                 r.nv - 1),
             true};
-    return value_type{
+    return reference{
         string_view(
             u_->s_ + r.pos + 1,
             r.nk - 1),

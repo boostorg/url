@@ -15,6 +15,7 @@
 #include <boost/url/bnf/parse.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_bnf.hpp>
+#include <boost/url/detail/pct_encoding.hpp>
 
 namespace boost {
 namespace urls {
@@ -89,7 +90,7 @@ begin(
     char const*& it,
     char const* const end,
     error_code& ec,
-    params_value_type& t) noexcept
+    query_param_view& t) noexcept
 {
     using bnf::parse;
     static constexpr
@@ -130,7 +131,7 @@ increment(
     char const*& it,
     char const* const end,
     error_code& ec,
-    params_value_type& t) noexcept
+    query_param_view& t) noexcept
 {
     using bnf::parse;
     static constexpr

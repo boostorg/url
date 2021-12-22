@@ -20,6 +20,19 @@
 namespace boost {
 namespace urls {
 
+bool
+operator==(
+    query_param_view const& t0,
+    query_param_view const& t1) noexcept
+{
+    // VFALCO This needs to be a pct-encoded equality
+    return
+        t0.key == t1.key &&
+        t0.has_value == t1.has_value &&
+        (! t0.has_value ||
+            t0.value == t1.value);
+}
+
 class query_bnf_test
 {
 public:
@@ -27,7 +40,7 @@ public:
     check(
         string_view s,
         std::initializer_list<
-            params_value_type> i)
+            query_param_view> i)
     {
         query_bnf t;
         if(! BOOST_TEST_NO_THROW(

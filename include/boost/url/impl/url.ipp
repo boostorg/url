@@ -2136,7 +2136,7 @@ build_tab() noexcept
         auto s = get(id_query);
         auto it = s.data();
         auto const end = it + s.size();
-        query_param t;
+        query_param_view t;
         query_bnf::begin(
             it, end, ec, t);
         for(;;)

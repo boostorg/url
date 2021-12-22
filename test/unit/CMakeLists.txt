@@ -27,10 +27,10 @@ set(BOOST_URL_TESTS_FILES
     params.cpp
     params_encoded.cpp
     params_encoded_view.cpp
-    params_value_type.cpp
     params_view.cpp
     pct_encoding.cpp
     pct_encoding_types.cpp
+    query_param.cpp
     scheme.cpp
     segments.cpp
     segments_encoded.cpp

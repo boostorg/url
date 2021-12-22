@@ -109,32 +109,32 @@ auto
 params_encoded_view::
 iterator::
 operator*() const ->
-    value_type
+    reference
 {
     if(! first_)
     {
         if(nv_ > 0)
-            return value_type{
+            return reference{
                 string_view(
                     p_ + 1, nk_ - 1),
                 string_view(
                     p_ + nk_ + 1, nv_ - 1),
                 true};
-        return value_type{
+        return reference{
             string_view(
                 p_ + 1, nk_ - 1),
             string_view{},
             false};
     }
     if(nv_ > 0)
-        return value_type{
+        return reference{
             string_view(
                 p_, nk_),
             string_view(
                 p_ + nk_ + 1,
                 nv_ - 1),
             true};
-    return value_type{
+    return reference{
         string_view(
             p_, nk_),
         string_view{},

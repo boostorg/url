@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/params.hpp>
-#include <boost/url/params_value_type.hpp>
+#include <boost/url/query_param.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <initializer_list>
@@ -41,9 +41,9 @@ class params_encoded
 public:
     class iterator;
 
-    using value_type = params_value_type;
-    using reference = params_value_type;
-    using const_reference = params_value_type;
+    using value_type = query_param_view;
+    using reference = query_param_view;
+    using const_reference = query_param_view;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 
