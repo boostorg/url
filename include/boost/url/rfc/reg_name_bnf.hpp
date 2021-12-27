@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_REG_NAME_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/rfc/charsets.hpp>
 
@@ -37,8 +37,6 @@ reg_name_chars =
         >3.2.2. Host (rfc3986)</a>
     @li <a href="https://www.rfc-editor.org/errata/eid4942"
         >Errata ID: 4942</a>
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
 */
 struct reg_name_bnf
 {

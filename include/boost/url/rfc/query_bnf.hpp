@@ -39,7 +39,10 @@ namespace urls {
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-        >3.4. Query (rfc3986)</a>       
+        >3.4. Query (rfc3986)</a>
+
+    @see
+        @ref query_part_bnf.
 */
 struct query_bnf
 {
@@ -89,12 +92,16 @@ private:
     query           = *( pchar / "/" / "?" )
     @endcode
 
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+        >3.4. Query (rfc3986)</a>
+
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+        @ref query_bnf.
 */
 struct query_part_bnf
 {
-    bool has_query;
+    bool has_query = false;
     query_bnf query;
     string_view query_part;
 

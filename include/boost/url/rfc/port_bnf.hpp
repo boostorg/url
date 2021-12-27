@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_PORT_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/string_view.hpp>
 #include <cstdint>
 
@@ -25,8 +25,12 @@ namespace urls {
     port          = *DIGIT
     @endcode
 
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+        >3.2.2. Host (rfc3986)</a>
+
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
+        @ref port_part_bnf.
 */
 struct port_bnf
 {
@@ -56,8 +60,12 @@ struct port_bnf
     port            = *DIGIT
     @endcode
 
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+        >3.2.2. Host (rfc3986)</a>
+
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
+        @ref port_bnf.
 */
 struct port_part_bnf
 {

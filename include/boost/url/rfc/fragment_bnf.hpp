@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_FRAGMENT_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/pct_encoding_types.hpp>
 
 namespace boost {
@@ -24,8 +24,12 @@ namespace urls {
     fragment        = *( pchar / "/" / "?" )
     @endcode
 
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
+        >3.5. Fragment (rfc3986)</a>
+
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.5
+        @ref fragment_part_bnf.
 */
 struct fragment_bnf
 {
@@ -50,12 +54,16 @@ struct fragment_bnf
     fragment        = *( pchar / "/" / "?" )
     @endcode
 
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
+        >3.5. Fragment (rfc3986)</a>
+
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.5
+        @ref fragment_bnf.
 */
 struct fragment_part_bnf
 {
-    bool has_fragment;
+    bool has_fragment = false;
     pct_encoded_str fragment;
     string_view fragment_part;
 

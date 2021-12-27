@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_IPV_FUTURE_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/string_view.hpp>
 
 namespace boost {
@@ -24,8 +24,9 @@ namespace urls {
     IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
     @endcode
 
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+        >3.2.2. Host (rfc3986)</a>
 */
 struct ipv_future_bnf
 {

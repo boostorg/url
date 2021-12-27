@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_RELATIVE_PART_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
 #include <boost/url/rfc/paths_bnf.hpp>
 
@@ -34,6 +34,9 @@ namespace urls {
         >4.2. Relative Reference (rfc3986)</a>
     @li <a href="https://www.rfc-editor.org/errata/eid5428"
         >Errata ID: 5428 (rfc3986)</a>
+
+    @see
+        @ref authority_bnf.
 */
 struct relative_part_bnf
 {

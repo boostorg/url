@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_ABSOLUTE_URI_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/rfc/hier_part_bnf.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/rfc/scheme_bnf.hpp>
@@ -34,6 +34,11 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.3"
         >4.3. Absolute URI (rfc3986)</a>
+
+    @see
+        @ref hier_part_bnf,
+        @ref query_part_bnf,
+        @ref scheme_part_bnf.
 */
 struct absolute_uri_bnf
 {

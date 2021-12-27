@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_PCT_ENCODED_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/bnf/detail/charset.hpp>

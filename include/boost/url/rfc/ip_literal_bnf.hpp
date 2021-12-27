@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_IP_LITERAL_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/string_view.hpp>
 
@@ -25,8 +25,12 @@ namespace urls {
     IP-literal = "[" ( IPv6address / IPvFuture  ) "]"
     @endcode
 
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+        >3.2.2. Host (rfc3986)</a>
+
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2
+        @ref ipv6_address.
 */
 struct ip_literal_bnf
 {

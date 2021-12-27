@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_RELATIVE_REF_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/rfc/fragment_bnf.hpp>
 #include <boost/url/rfc/query_bnf.hpp>
 #include <boost/url/rfc/relative_part_bnf.hpp>
@@ -26,8 +26,14 @@ namespace urls {
     relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
     @endcode
 
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2
+        >4.2. Relative Reference (rfc3986)</a>
+
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-4.2
+        @ref fragment_part_bnf,
+        @ref query_part_bnf,
+        @ref relative_part_bnf.
 */
 struct relative_ref_bnf
 {

@@ -11,8 +11,7 @@
 #define BOOST_URL_RFC_AUTHORITY_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
-#include <boost/url/pct_encoding_types.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/rfc/host_bnf.hpp>
 #include <boost/url/rfc/port_bnf.hpp>
 #include <boost/url/rfc/userinfo_bnf.hpp>
@@ -30,6 +29,11 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
         >3.2. Authority (rfc3986)</a>
+
+    @see
+        @ref host_bnf,
+        @ref port_part_bnf,
+        @ref userinfo_bnf.
 */
 struct authority_bnf
 {

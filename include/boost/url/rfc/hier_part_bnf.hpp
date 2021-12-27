@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_HIER_PART_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/rfc/authority_bnf.hpp>
 #include <boost/url/rfc/paths_bnf.hpp>
 
@@ -28,8 +28,9 @@ namespace urls {
                   / path-empty
     @endcode
 
-    @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
+        >3. Syntax Components (rfc3986)</a>
 */
 struct hier_part_bnf
 {

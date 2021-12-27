@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_SCHEME_BNF_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/error_code.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/string_view.hpp>
 
@@ -28,6 +28,9 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
         >3.1. Scheme (rfc3986)</a>
+
+    @see
+        @ref scheme.
 */
 struct scheme_bnf
 {
@@ -53,8 +56,12 @@ struct scheme_bnf
     scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
     @endcode
 
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
+        >3.1. Scheme (rfc3986)</a>
+
     @see
-        https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
+        @ref scheme.
 */
 struct scheme_part_bnf
 {
