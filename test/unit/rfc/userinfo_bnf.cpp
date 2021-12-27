@@ -24,8 +24,8 @@ public:
     check(
         string_view s,
         string_view s1,
-        optional<
-            string_view> s2)
+        string_view s2,
+        bool check_s2 = true)
     {
         userinfo_bnf t;
         error_code ec;
@@ -35,11 +35,11 @@ public:
         if(! BOOST_TEST(! ec))
             return;
         BOOST_TEST(t.user.str == s1);
-        if(s2.has_value())
+        if(check_s2)
         {
             BOOST_TEST(
                 t.has_password &&
-                t.password.str == *s2);
+                t.password.str == s2);
         }
         else
         {
@@ -63,17 +63,15 @@ public:
         good<T>("x:y:z");
         good<T>("%41");
 
-        using U =
-            optional<string_view>;
-        check("x",      "x",  boost::none);
-        check("x:",     "x",  U(""));
-        check(":",      "",   U(""));
-        check("::",     "",   U(":"));
-        check(":x",     "",   U("x"));
-        check("x:y",    "x",  U("y"));
-        check("xy:zz:", "xy", U("zz:"));
+        check("x",      "x",  "", false);
+        check("x:",     "x",  "");
+        check(":",      "",   "");
+        check("::",     "",   ":");
+        check(":x",     "",   "x");
+        check("x:y",    "x",  "y");
+        check("xy:zz:", "xy", "zz:");
         check(
-            "%41%42:%43%44", "%41%42", U("%43%44"));
+            "%41%42:%43%44", "%41%42", "%43%44");
     }
 };
 

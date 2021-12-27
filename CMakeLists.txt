@@ -66,7 +66,6 @@ function(boost_url_setup_properties target)
             Boost::config
             Boost::exception
             Boost::mp11
-            Boost::optional
             Boost::system
             Boost::throw_exception
             Boost::utility

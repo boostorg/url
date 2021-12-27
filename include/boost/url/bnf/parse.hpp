@@ -16,8 +16,6 @@
 #include <boost/type_traits/make_void.hpp>
 #include <type_traits>
 
-#include <boost/optional.hpp>
-
 namespace boost {
 namespace urls {
 namespace bnf {
@@ -78,43 +76,6 @@ parse(
     char const* end,
     error_code& ec,
     char ch) noexcept;
-
-/** @brief Parse an optional element
-
-   This function parses the string defined by the first chars in the
-   range of chars [@ref it, @ref end) as an optional element @ref t.
-   It uses the underlying @ref parse function for elements of type @ref T
-   to create an element of type @ref optional<T>.
-
-   When the input is parsed successfully, the function returns `true`,
-   resets @ref ec, an sets @ref t to valid element. If the input cannot
-   be parsed into an element, the function returns `false`, sets the error
-   number in @ref ec to the appropriate error number defined in
-   @ref boost::urls::error, and resets the optional @ref t.
-
-   @par Exception Safety
-   Throws nothing.
-
-   @return `true` if the range initial chars match an element of type @ref T
-   successfully, `false` otherwise
-
-   @param[in,out] it An iterator to the first element in the range
-   At the end of this function, @ref it points to one past the last
-   element parsed in the range.
-
-   @param[in] end An iterator to one past the last element in the range
-
-   @param[out] ec The error code this function should set if it fails
-
-   @param[out] ch A optional element of type @ref T
-*/
-template<class T>
-bool
-parse(
-    char const*& it,
-    char const* end,
-    error_code& ec,
-    optional<T>& t);
 
 /** @brief Parse a sequence of elements
 

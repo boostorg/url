@@ -23,7 +23,6 @@ target_link_libraries(boost_url_limits PRIVATE
     Boost::config
     Boost::core
     Boost::exception
-    Boost::optional
     Boost::type_traits
     Boost::system
     Boost::utility

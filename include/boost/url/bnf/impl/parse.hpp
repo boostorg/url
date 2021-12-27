@@ -41,29 +41,6 @@ parse(
     ++it;
     return true;
 }
- 
-template<class T>
-bool
-parse(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    optional<T>& t)
-{
-    t.emplace();
-    if(parse(it, end, ec, *t))
-        return true;
-    ec = {};
-    t.reset();
-    return true;
-}
-
-bool
-parse(
-    char const*&,
-    char const*,
-    error_code&,
-    optional<char> const&) = delete;
 
 template<
     class T0,
