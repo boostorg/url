@@ -91,6 +91,70 @@ constexpr unreserved_chars_t unreserved_chars{};
 
 //------------------------------------------------
 
+/** The reserved character set type.
+
+    Objects of this type are invocable
+    with this equivalent signature:
+
+    @code
+    bool( char ch ) const noexcept;
+    @endcode
+
+    The function object returns `true` when
+    `ch` is a member of the character set,
+    and `false` otherwise. This type satisfies
+    the <em>CharSet</em> requirements.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.3"
+        >2.3. Unreserved Characters (rfc3986)</a>
+
+    @see
+        @ref reserved_chars,
+        @ref unreserved_chars,
+        @ref unreserved_chars_t.
+*/
+#ifdef BOOST_URL_DOCS
+using reserved_chars_t = see_below;
+#else
+struct reserved_chars_t : bnf::lut_chars
+{
+    constexpr
+    reserved_chars_t() noexcept
+        : bnf::lut_chars(~unreserved_chars)
+    {
+    }
+};
+#endif
+
+/** The reserved character set.
+
+    The object is invocable with
+    this equivalent signature:
+
+    @code
+    bool( char ch ) const noexcept;
+    @endcode
+
+    The function object returns `true` when
+    `ch` is a member of the character set,
+    and `false` otherwise. The type of this
+    object satisfies the <em>CharSet</em>
+    requirements.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.3"
+        >2.3. Unreserved Characters (rfc3986)</a>
+
+    @see
+        @ref reserved_chars_t,
+        @ref unreserved_chars,
+        @ref unreserved_chars_t.
+*/
+constexpr reserved_chars_t reserved_chars{};
+
+//------------------------------------------------
+
 /** The gen-delims character set type.
 
     Objects of this type are invocable

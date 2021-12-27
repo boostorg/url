@@ -198,21 +198,23 @@
         </simplelist>
         <bridgehead renderas="sect3">Constants</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__unreserved_chars">unreserved_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__fragment_chars">fragment_chars</link></member>
           <member><link linkend="url.ref.boost__urls__gen_delim_chars">gen_delim_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__subdelim_chars">subdelim_chars</link></member>
           <member><link linkend="url.ref.boost__urls__pchars">pchars</link></member>
           <member><link linkend="url.ref.boost__urls__query_chars">query_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__fragment_chars">fragment_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__reserved_chars">reserved_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__subdelim_chars">subdelim_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__unreserved_chars">unreserved_chars</link></member>
         </simplelist>
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__unreserved_chars_t">unreserved_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__fragment_chars_t">fragment_chars_t</link></member>
           <member><link linkend="url.ref.boost__urls__gen_delim_chars_t">gen_delim_chars_t</link></member>
-          <member><link linkend="url.ref.boost__urls__subdelim_chars_t">subdelim_chars_t</link></member>
           <member><link linkend="url.ref.boost__urls__pchars_t">pchars_t</link></member>
           <member><link linkend="url.ref.boost__urls__query_chars_t">query_chars_t</link></member>
-          <member><link linkend="url.ref.boost__urls__fragment_chars_t">fragment_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__reserved_chars">reserved_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__subdelim_chars_t">subdelim_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__unreserved_chars_t">unreserved_chars_t</link></member>
         </simplelist>
       </entry>
     </row></tbody>

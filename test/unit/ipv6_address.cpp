@@ -170,7 +170,6 @@ public:
     void
     bad(string_view s)
     {
-        error_code ec;
         BOOST_TEST(parse_ipv6_address(
             s).has_error());
     }
@@ -217,7 +216,6 @@ public:
         std::uint64_t u0,
         std::uint64_t u1)
     {
-        error_code ec;
         ipv6_address a;
         auto r = parse_ipv6_address(s);
         if(! BOOST_TEST(! r.has_error()))

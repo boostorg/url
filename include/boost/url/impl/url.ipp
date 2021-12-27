@@ -426,10 +426,10 @@ set_user(string_view s)
         unreserved_chars +
         subdelim_chars;
     auto const n =
-        pct_encode_bytes(s, cs);
+        pct_encode_bytes(s, {}, cs);
     auto dest = set_user_impl(n);
-    pct_encode(dest,
-        get(id_pass).data(), s, cs);
+    pct_encode(dest, get(id_pass).data(),
+        s, {}, cs);
     decoded_[id_user] = s.size();
     check_invariants();
     return *this;
@@ -446,7 +446,7 @@ set_encoded_user(
         unreserved_chars +
         subdelim_chars;
     auto const n =
-        validate_pct_encoding(s, ec, cs);
+        validate_pct_encoding(s, ec, {}, cs);
     if(ec.failed())
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
@@ -520,10 +520,14 @@ set_password(string_view s)
         unreserved_chars +
         subdelim_chars + ':';
     auto const n =
-        pct_encode_bytes(s, cs);
+        pct_encode_bytes(s, {}, cs);
     auto dest = set_password_impl(n);
-    pct_encode(dest, get(
-        id_host).data() - 1, s, cs);
+    pct_encode(
+        dest,
+        get(id_host).data() - 1,
+        s,
+        {},
+        cs);
     decoded_[id_pass] = s.size();
     check_invariants();
     return *this;
@@ -540,7 +544,7 @@ set_encoded_password(
         subdelim_chars + ':';
     error_code ec;
     auto const n =
-        validate_pct_encoding(s, ec, cs);
+        validate_pct_encoding(s, ec, {}, cs);
     if(ec.failed())
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
@@ -605,10 +609,14 @@ set_userinfo(
         unreserved_chars +
         subdelim_chars;
     auto const n =
-        pct_encode_bytes(s, cs);
+        pct_encode_bytes(s, {}, cs);
     auto dest = set_userinfo_impl(n);
-    pct_encode(dest, get(
-        id_host).data() - 1, s, cs);
+    pct_encode(
+        dest,
+        get(id_host).data() - 1,
+        s,
+        {},
+        cs);
     decoded_[id_user] = s.size();
     check_invariants();
     return *this;
@@ -732,10 +740,14 @@ set_host(
         unreserved_chars +
         subdelim_chars;
     auto const n =
-        pct_encode_bytes(s, cs);
+        pct_encode_bytes(s, {}, cs);
     auto dest = set_host_impl(n);
-    pct_encode(dest, get(
-        id_path).data(), s, cs);
+    pct_encode(
+        dest,
+        get(id_path).data(),
+        s,
+        {},
+        cs);
     decoded_[id_host] = s.size();
     host_type_ =
         urls::host_type::name;
@@ -1757,10 +1769,14 @@ set_fragment(
     static constexpr auto cs =
         pchars + '/' + '?';
     auto const n =
-        pct_encode_bytes(s, cs);
+        pct_encode_bytes(s, {}, cs);
     auto dest = set_fragment_impl(n);
-    pct_encode(dest, get(
-        id_end).data(), s, cs);
+    pct_encode(
+        dest,
+        get(id_end).data(),
+        s,
+        {},
+        cs);
     decoded_[id_frag] = s.size();
     check_invariants();
     return *this;

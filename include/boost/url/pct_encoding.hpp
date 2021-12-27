@@ -15,6 +15,7 @@
 #include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/string.hpp>
 #include <boost/url/bnf/charset.hpp>
+#include <boost/url/rfc/charsets.hpp>
 #include <memory>
 
 namespace boost {
@@ -92,15 +93,17 @@ struct pct_decode_opts
         @ref pct_decode_bytes_unchecked,
         @ref pct_decode_opts,
         @ref pct_decode_to_value,
-        @ref pct_decode_unchecked.
+        @ref pct_decode_unchecked,
+        @ref reserved_chars_t.
 */
-template<class CharSet>
+template<
+    class CharSet = reserved_chars_t>
 std::size_t
 validate_pct_encoding(
     string_view s,
     error_code& ec,
-    CharSet const& cs,
-    pct_decode_opts const& opt = {}) noexcept;
+    pct_decode_opts const& opt = {},
+    CharSet const& cs = {}) noexcept;
 
 /** Write a string with percent-decoding into a buffer.
 
@@ -150,7 +153,8 @@ validate_pct_encoding(
         @ref pct_decode_unchecked.
         @ref validate_pct_encoding.
 */
-template<class CharSet>
+template<
+    class CharSet = reserved_chars_t>
 std::size_t
 pct_decode(
     char* dest,
@@ -158,7 +162,7 @@ pct_decode(
     string_view s,
     error_code& ec,
     pct_decode_opts const& opt = {},
-    CharSet const& cs = bnf::all_chars) noexcept;
+    CharSet const& cs = {}) noexcept;
 
 /** Return a string with percent-decoding applied.
 
@@ -207,7 +211,7 @@ pct_decode(
         @ref validate_pct_encoding.
 */
 template<
-    class CharSet,
+    class CharSet = reserved_chars_t,
     class Allocator = std::allocator<char> >
 std::basic_string<char,
     std::char_traits<char>,
@@ -215,7 +219,7 @@ std::basic_string<char,
 pct_decode(
     string_view s,
     pct_decode_opts const& opt = {},
-    CharSet const& cs = bnf::all_chars,
+    CharSet const& cs = {},
     Allocator const& a = {});
 
 /** Return a string with percent-decoding applied.
@@ -265,13 +269,13 @@ pct_decode(
         @ref validate_pct_encoding.
 */
 template<
-    class CharSet,
+    class CharSet = reserved_chars_t,
     class Allocator = std::allocator<char> >
 string_value
 pct_decode_to_value(
     string_view s,
     pct_decode_opts const& opt = {},
-    CharSet const& cs = bnf::all_chars,
+    CharSet const& cs = {},
     Allocator const& a = {});
 
 /** Return the number of bytes needed to hold the string with percent-decoding applied.
@@ -448,24 +452,13 @@ struct pct_encode_opts
         @ref pct_encode_opts,
         @ref pct_encode_to_value.
 */
-template<class CharSet>
+template<
+    class CharSet = reserved_chars_t>
 std::size_t
 pct_encode_bytes(
     string_view s,
-    CharSet const& cs,
-    pct_encode_opts const& opt = {}) noexcept;
-
-#ifndef BOOST_URL_DOCS
-namespace bnf {
-struct all_chars;
-} // bnf
-// VFALCO This would make no sense
-std::size_t
-pct_encode_bytes(
-    string_view,
-    decltype(bnf::all_chars) const&,
-    ...) = delete;
-#endif
+    pct_encode_opts const& opt = {},
+    CharSet const& cs = {}) noexcept;
 
 /** Write a string with percent-encoding into a buffer.
 
@@ -508,14 +501,15 @@ pct_encode_bytes(
         @ref pct_encode,
         @ref pct_encode_bytes.
 */
-template<class CharSet>
+template<
+    class CharSet = reserved_chars_t>
 std::size_t
 pct_encode(
     char* dest,
     char const* end,
     string_view s,
-    CharSet const& cs,
-    pct_encode_opts const& opt = {});
+    pct_encode_opts const& opt = {},
+    CharSet const& cs = {});
 
 /** Return a string with percent-encoding applied
 
@@ -565,10 +559,11 @@ pct_encode(
         @ref pct_encode,
         @ref pct_encode_bytes,
         @ref pct_encode_opts,
-        @ref pct_encode_to_value.
+        @ref pct_encode_to_value,
+        @ref reserved_chars_t.
 */
 template<
-    class CharSet,
+    class CharSet = reserved_chars_t,
     class Allocator =
         std::allocator<char> >
 std::basic_string<char,
@@ -576,8 +571,8 @@ std::basic_string<char,
         Allocator>
 pct_encode(
     string_view s,
-    CharSet const& cs,
     pct_encode_opts const& opt = {},
+    CharSet const& cs = {},
     Allocator const& a = {});
 
 /** Return a string with percent-encoding applied
@@ -627,13 +622,13 @@ pct_encode(
         @ref pct_encode_opts.
 */
 template<
-    class CharSet,
+    class CharSet = reserved_chars_t,
     class Allocator = std::allocator<char> >
 string_value
 pct_encode_to_value(
     string_view s,
-    CharSet const& cs,
     pct_encode_opts const& opt = {},
+    CharSet const& cs = {},
     Allocator const& a = {});
 
 } // urls

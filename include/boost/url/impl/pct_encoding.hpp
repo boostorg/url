@@ -24,8 +24,8 @@ std::size_t
 validate_pct_encoding(
     string_view s,
     error_code& ec,
-    CharSet const& cs,
-    pct_decode_opts const& opt) noexcept
+    pct_decode_opts const& opt,
+    CharSet const& cs) noexcept
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
@@ -137,7 +137,7 @@ pct_decode(
 
     auto const n =
         validate_pct_encoding(
-            s, ec, cs, opt);
+            s, ec, opt, cs);
     if(ec.failed())
         return 0;
     auto const n1 =
@@ -177,7 +177,7 @@ pct_decode(
     error_code ec;
     auto const n =
         validate_pct_encoding(
-            s, ec, cs, opt);
+            s, ec, opt, cs);
     if(ec.failed())
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
@@ -209,7 +209,7 @@ pct_decode_to_value(
     error_code ec;
     auto const n =
         validate_pct_encoding(
-            s, ec, cs, opt);
+            s, ec, opt, cs);
     if(ec.failed())
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
@@ -248,8 +248,8 @@ template<class CharSet>
 std::size_t
 pct_encode_bytes(
     string_view s,
-    CharSet const& cs,
-    pct_encode_opts const& opt) noexcept
+    pct_encode_opts const& opt,
+    CharSet const& cs) noexcept
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
@@ -296,8 +296,8 @@ pct_encode(
     char* dest,
     char const* const end,
     string_view s,
-    CharSet const& cs,
-    pct_encode_opts const& opt)
+    pct_encode_opts const& opt,
+    CharSet const& cs)
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
@@ -378,8 +378,8 @@ std::basic_string<char,
         Allocator>
 pct_encode(
     string_view s,
-    CharSet const& cs,
     pct_encode_opts const& opt,
+    CharSet const& cs,
     Allocator const& a)
 {
     // CharSet must satisfy is_charset
@@ -393,12 +393,12 @@ pct_encode(
     if(s.empty())
         return r;
     auto const n =
-        pct_encode_bytes(s, cs, opt);
+        pct_encode_bytes(s, opt, cs);
     r.resize(n);
     char* dest = &r[0];
     char const* end = dest + n;
     auto const n1 = pct_encode(
-        dest, end, s, cs, opt);
+        dest, end, s, opt, cs);
     BOOST_ASSERT(n1 == n);
     (void)n1;
     return r;
@@ -411,8 +411,8 @@ template<
 string_value
 pct_encode_to_value(
     string_view s,
-    CharSet const& cs,
     pct_encode_opts const& opt,
+    CharSet const& cs,
     Allocator const& a)
 {
     // CharSet must satisfy is_charset
@@ -422,12 +422,12 @@ pct_encode_to_value(
     if(s.empty())
         return string_value();
     auto const n =
-        pct_encode_bytes(s, cs, opt);
+        pct_encode_bytes(s, opt, cs);
     char* dest;
     string_value r(n, a, dest);
     char const* end = dest + n;
     auto const n1 = pct_encode(
-        dest, end, s, cs, opt);
+        dest, end, s, opt, cs);
     BOOST_ASSERT(n1 == n);
     (void)n1;
     return r;

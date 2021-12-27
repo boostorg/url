@@ -74,7 +74,7 @@ measure(
     static auto constexpr cs =
         pchars + '/' + '?';
     urls::validate_pct_encoding(
-        s, ec, cs);
+        s, ec, {}, cs);
     if(ec.failed())
         return false;
     n += s.size();
@@ -155,7 +155,7 @@ measure(
     static auto constexpr cs =
         pchars + '/' + '?';
     n += urls::pct_encode_bytes(
-        s, cs);
+        s, {}, cs);
     increment();
     return true;
 }
@@ -172,6 +172,7 @@ copy(
     dest += pct_encode(
         dest, end,
         string_view(p_, n_),
+        {},
         cs);
     increment();
 }
@@ -191,14 +192,14 @@ measure_impl(
     pct_decode_opts opt;
     opt.plus_to_space = true;
     validate_pct_encoding(
-        key, ec, cs, opt);
+        key, ec, opt, cs);
     if(ec.failed())
         return false;
     n += key.size();
     if(value)
     {
         validate_pct_encoding(
-            *value, ec, cs, opt);
+            *value, ec, opt, cs);
         if(ec.failed())
             return false;
         n += 1 + value->size();
@@ -256,12 +257,13 @@ measure_impl(
 {
     static constexpr auto cs =
         pchars + '/' + '?';
-    n += pct_encode_bytes(key, cs);
+    n += pct_encode_bytes(
+        key, {}, cs);
     if(value)
     {
         ++n; // '='
         n += pct_encode_bytes(
-            *value, cs);
+            *value, {}, cs);
     }
 }
 
@@ -276,12 +278,12 @@ copy_impl(
     static constexpr auto cs =
         pchars + '/' + '?';
     dest += pct_encode(
-        dest, end, key, cs);
+        dest, end, key, {}, cs);
     if(value)
     {
         *dest++ = '=';
         dest += pct_encode(
-            dest, end, *value, cs);
+            dest, end, *value, {}, cs);
     }
 }
 
