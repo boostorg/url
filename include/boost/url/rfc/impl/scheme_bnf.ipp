@@ -29,7 +29,7 @@ parse(
     {
         // expected alpha
         ec = BOOST_URL_ERR(
-            error::incomplete);
+            bnf::error::incomplete);
         return false;
     }
     if(! bnf::alpha_chars(*it))

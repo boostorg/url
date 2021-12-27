@@ -108,7 +108,7 @@ increment(
         '/', segment_bnf{t}))
         return true;
     ec = BOOST_URL_ERR(
-        error::end);
+        bnf::error::end);
     it = start;
     return false;
 }
@@ -166,7 +166,7 @@ increment(
         '/', segment_bnf{t}))
         return true;
     ec = BOOST_URL_ERR(
-        error::end);
+        bnf::error::end);
     it = start;
     return false;
 }
@@ -205,7 +205,7 @@ increment(
         '/', segment_bnf{t}))
         return true;
     ec = BOOST_URL_ERR(
-        error::end);
+        bnf::error::end);
     it = start;
     return false;
 }
@@ -240,7 +240,7 @@ increment(
         '/', segment_bnf{t}))
         return true;
     ec = BOOST_URL_ERR(
-        error::end);
+        bnf::error::end);
     it = start;
     return false;
 }

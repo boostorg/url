@@ -88,7 +88,7 @@ operator++() noexcept ->
     pct_encoded_str t;
     bnf_t::increment(
         next_, end_, ec, t);
-    if(ec == error::end)
+    if(ec == bnf::error::end)
     {
         next_ = nullptr;
         return *this;

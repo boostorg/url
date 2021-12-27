@@ -49,6 +49,9 @@ public:
     void
     run()
     {
+        check(error::end);
+        check(error::incomplete);
+        check(error::leftover);
         check(error::syntax);
     }
 };

@@ -33,7 +33,7 @@ parse(
     {
         // expected address
         ec = BOOST_URL_ERR(
-            error::incomplete);
+            bnf::error::incomplete);
         return false;
     }
     if(*it != 'v')

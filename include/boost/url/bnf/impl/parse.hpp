@@ -11,6 +11,7 @@
 #define BOOST_URL_BNF_IMPL_PARSE_HPP
 
 #include <boost/url/detail/except.hpp>
+#include <boost/url/bnf/error.hpp>
 #include <utility>
 
 namespace boost {
@@ -35,7 +36,7 @@ parse(
     {
         // expected ch
         ec = BOOST_URL_ERR(
-            error::wrong_char_literal);
+            error::syntax);
         return false;
     }
     ++it;
@@ -88,7 +89,7 @@ parse_string(
     {
         // input not consumed fully
         ec = BOOST_URL_ERR(
-            urls::error::leftover_input);
+            error::leftover);
         return false;
     }
     return true;
@@ -104,15 +105,14 @@ parse_string(
     Tn&&... tn)
 {
     error_code ec;
-    if(parse_string(s, ec,
+    if(! parse_string(s, ec,
         std::forward<T0>(t0),
         std::forward<Tn>(tn)...))
     {
-        BOOST_ASSERT(! ec.failed());
-        return;
+        urls::detail::throw_system_error(
+            ec, BOOST_CURRENT_LOCATION);
     }
-    urls::detail::throw_system_error(
-        ec, BOOST_CURRENT_LOCATION);
+    BOOST_ASSERT(! ec.failed());
 }
 
 } // bnf

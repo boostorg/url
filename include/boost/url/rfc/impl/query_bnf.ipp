@@ -65,7 +65,7 @@ parse(
         if(! query_bnf::increment(
             it, end, ec, v))
         {
-            if(ec != error::end)
+            if(ec != bnf::error::end)
                 return false;
             ec = {};
             break;
@@ -143,7 +143,7 @@ increment(
     if(! parse(it, end, ec, '&'))
     {
         // end of list
-        ec = error::end;
+        ec = bnf::error::end;
         return false;
     }
 

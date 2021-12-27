@@ -115,7 +115,7 @@ operator++() noexcept ->
     // "/" segment
     bnf_t::increment(
         next_, end_, ec, t_);
-    if(ec == error::end)
+    if(ec == bnf::error::end)
     {
         next_ = nullptr;
         return *this;

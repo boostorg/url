@@ -17,7 +17,8 @@ namespace urls {
 namespace bnf {
 
 error_code
-make_error_code(error e)
+make_error_code(
+    error e) noexcept
 {
     struct codes : error_category
     {
@@ -34,6 +35,9 @@ make_error_code(error e)
             {
             default:
 case error::success: return "success";
+case error::end: return "end";
+case error::incomplete: return "incomplete";
+case error::leftover: return "leftover";
 case error::syntax: return "syntax";
             }
         }
@@ -60,7 +64,8 @@ case error::syntax: return "syntax";
 //------------------------------------------------
 
 error_condition
-make_error_condition(condition c)
+make_error_condition(
+    condition c) noexcept
 {
     struct codes : error_category
     {

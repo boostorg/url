@@ -11,6 +11,7 @@
 #define BOOST_URL_BNF_IMPL_RANGE_HPP
 
 #include <boost/url/detail/except.hpp>
+#include <boost/url/bnf/error.hpp>
 #include <boost/assert.hpp>
 #include <iterator>
 
@@ -32,7 +33,7 @@ parse_impl(
     std::size_t n = 0;
     if(! T::begin(it, end, ec, t0))
     {
-        if(ec == urls::error::end)
+        if(ec == error::end)
             goto finish;
         if(ec.failed())
             return false;
@@ -43,7 +44,7 @@ parse_impl(
         if(! T::increment(
             it, end, ec, t0))
         {
-            if(ec == urls::error::end)
+            if(ec == error::end)
                 break;
             if(ec.failed())
                 return false;

@@ -150,11 +150,6 @@ enum class error
     empty_path_segment,
 
     /**
-     * A list parser reached the end.
-    */
-    end,
-
-    /**
      * Null encountered in pct-encoded.
     */
     illegal_null,
@@ -165,23 +160,9 @@ enum class error
     illegal_reserved_char,
 
     /**
-     * Incomplete input for grammar.
-
-       This happens when the end of the input
-       string is reached without fully matching
-       the grammar.
-    */
-    incomplete,
-
-    /**
      * Validation failed
     */
     invalid,
-
-    /**
-     * Leftover input remaining after match.
-    */
-    leftover_input,
 
     /**
      * Missing character literal.

@@ -15,12 +15,14 @@
 namespace boost {
 namespace system {
 template<>
-struct is_error_code_enum<::boost::urls::bnf::error>
+struct is_error_code_enum<
+    ::boost::urls::bnf::error>
 {
     static bool const value = true;
 };
 template<>
-struct is_error_condition_enum<::boost::urls::bnf::condition>
+struct is_error_condition_enum<
+    ::boost::urls::bnf::condition>
 {
     static bool const value = true;
 };
@@ -33,11 +35,13 @@ namespace bnf {
 
 BOOST_URL_DECL
 error_code
-make_error_code(error e);
+make_error_code(
+    error e) noexcept;
 
 BOOST_URL_DECL
 error_condition
-make_error_condition(condition c);
+make_error_condition(
+    condition c) noexcept;
 
 } // bnf
 } // urls

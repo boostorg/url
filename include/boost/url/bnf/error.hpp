@@ -30,6 +30,25 @@ enum class error
     success = 0,
 
     /**
+     * A list parser reached the end.
+    */
+    end,
+
+    /**
+     * Incomplete input for grammar.
+
+       This happens when the end of the input
+       string is reached without fully matching
+       the grammar.
+    */
+    incomplete,
+
+    /**
+     * Leftover input remaining after match.
+    */
+    leftover,
+
+    /**
      * An unspecified syntax error was found.
     */
     syntax

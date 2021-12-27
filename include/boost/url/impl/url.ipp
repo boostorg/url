@@ -2091,7 +2091,7 @@ check_invariants() const noexcept
                 it, end, ec, t);
         for(std::size_t i = 0;;++i)
         {
-            if(ec == error::end)
+            if(ec == bnf::error::end)
                 break;
             BOOST_ASSERT(! ec.failed());
             if(ec.failed())
@@ -2132,7 +2132,7 @@ build_tab() noexcept
                 it, end, ec, t);
         for(;;)
         {
-            if(ec == error::end)
+            if(ec == bnf::error::end)
                 break;
             if(ec)
                 detail::throw_system_error(ec,
@@ -2157,7 +2157,7 @@ build_tab() noexcept
             it, end, ec, t);
         for(;;)
         {
-            if(ec == error::end)
+            if(ec == bnf::error::end)
                 break;
             if(ec)
                 detail::throw_system_error(ec,

@@ -60,12 +60,9 @@ public:
         check(error::bad_schemeless_path_segment);
         check(error::empty);
         check(error::empty_path_segment);
-        check(error::end);
         check(error::illegal_null);
         check(error::illegal_reserved_char);
-        check(error::incomplete);
         check(error::invalid);
-        check(error::leftover_input);
         check(error::missing_char_literal);
         check(error::missing_path_segment);
         check(error::missing_path_separator);

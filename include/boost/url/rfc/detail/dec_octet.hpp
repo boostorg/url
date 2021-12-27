@@ -33,7 +33,7 @@ struct dec_octet
         {
             // expected DIGIT
             ec = BOOST_URL_ERR(
-                error::incomplete);
+                bnf::error::incomplete);
             return false;
         }
         if(! bnf::digit_chars(*it))
