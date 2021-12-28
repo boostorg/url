@@ -49,7 +49,6 @@ set(BOOST_URL_TESTS_FILES
     bnf/lut_chars.cpp
     bnf/parse.cpp
     bnf/range.cpp
-    bnf/repeat.cpp
     bnf/token.cpp
     rfc/absolute_uri_bnf.cpp
     rfc/authority_bnf.cpp

@@ -53,7 +53,6 @@ local SOURCES =
     bnf/lut_chars.cpp
     bnf/parse.cpp
     bnf/range.cpp
-    bnf/repeat.cpp
     bnf/token.cpp
     rfc/absolute_uri_bnf.cpp
     rfc/authority_bnf.cpp

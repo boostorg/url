@@ -27,10 +27,16 @@ struct token
 {
     using value_type = string_view;
 
-    value_type const&
-    operator*() const noexcept
+    value_type&
+    operator*() noexcept
     {
         return s_;
+    }
+
+    value_type*
+    operator->() noexcept
+    {
+        return &**this;
     }
 
     friend
@@ -39,7 +45,7 @@ struct token
         char const*& it,
         char const* end,
         error_code& ec,
-        token<CharSet>& t) noexcept
+        token& t) noexcept
     {
         ec = {};
         auto const start = it;
