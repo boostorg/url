@@ -232,20 +232,6 @@ enum class error
     not_a_base
 };
 
-//------------------------------------------------
-
-/** Error conditions returned by the library.
-*/
-enum class condition
-{
-    /**
-     * A fatal error in syntax was encountered.
-
-       This indicates that parsing cannot continue.
-    */
-    fatal = 1
-};
-
 } // urls
 } // boost
 

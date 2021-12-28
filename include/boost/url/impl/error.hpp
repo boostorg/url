@@ -19,11 +19,6 @@ struct is_error_code_enum<::boost::urls::error>
 {
     static bool const value = true;
 };
-template<>
-struct is_error_condition_enum<::boost::urls::condition>
-{
-    static bool const value = true;
-};
 } // system
 } // boost
 
@@ -33,10 +28,6 @@ namespace urls {
 BOOST_URL_DECL
 error_code
 make_error_code(error e);
-
-BOOST_URL_DECL
-error_condition
-make_error_condition(condition c);
 
 } // urls
 } // boost

@@ -41,19 +41,6 @@ case error::leftover: return "leftover";
 case error::syntax: return "syntax";
             }
         }
-
-#if 0
-        error_condition
-        default_error_condition(
-            int ev) const noexcept override
-        {
-            switch(static_cast<error>(ev))
-            {
-            default:
-                return {ev, *this};
-            }
-        }
-#endif
     };
 
     static codes const cat{};

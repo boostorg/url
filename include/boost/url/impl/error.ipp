@@ -74,7 +74,7 @@ case error::not_a_base: return "not a base";
 case error::bad_pct_hexdig:
 case error::incomplete_pct_encoding:
 case error::missing_pct_hexdig:
-    return condition::fatal;
+    return bnf::condition::fatal;
             }
         }
     };
@@ -82,35 +82,6 @@ case error::missing_pct_hexdig:
     static codes const cat{};
     return error_code{static_cast<
         std::underlying_type<error>::type>(e), cat};
-}
-
-//------------------------------------------------
-
-error_condition
-make_error_condition(condition c)
-{
-    struct codes : error_category
-    {
-        const char*
-        name() const noexcept override
-        {
-            return "boost.url";
-        }
-
-        std::string
-        message(int cv) const override
-        {
-            switch(static_cast<condition>(cv))
-            {
-            default:
-            case condition::fatal:
-                return "fatal condition";
-            }
-        }
-    };
-    static codes const cat{};
-    return error_condition{static_cast<
-        std::underlying_type<condition>::type>(c), cat};
 }
 
 } // urls
