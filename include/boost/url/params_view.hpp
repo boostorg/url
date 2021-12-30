@@ -43,6 +43,18 @@ class params_view
 public:
     class iterator;
 
+    /** The value type of query parameters
+
+        The query params object stores a list of encoded string view pairs
+        representing the query parameters identified in the original url.
+
+        When these values are dereference, they are lazily decoded into
+        constant read_only strings in params::reference.
+
+        A special boolean member `has_value` is used to differentiate
+        empty strings from non-existent strings.
+
+    */
     class value_type
     {
     public:
