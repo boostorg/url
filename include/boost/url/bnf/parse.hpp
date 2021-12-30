@@ -32,14 +32,14 @@ namespace bnf {
 /** @brief Parse a literal character
 
    This function parses the string defined by the first chars in the
-   range of chars [@ref it, @ref end) as a literal character.
+   range of chars [`it`, `end`) as a literal character.
 
-   The function returns `true` and resets @ref ec when the input is
+   The function returns `true` and resets `ec` when the input is
    parsed successfully. The initial character in the range is immediately
    consumed and ignored.
 
    If the input cannot be parsed into the literal BNF literal,
-   the function returns `false` and sets the error number in @ref ec to the
+   the function returns `false` and sets the error number in `ec` to the
    appropriate error number defined in @ref boost::urls::error.
 
    @par Example
@@ -54,18 +54,18 @@ namespace bnf {
 
    @par Exception Safety
    Calls to other `parse` overloads may throw, although they should
-   prefer setting @ref ec instead.
+   prefer setting `ec` instead.
 
-   @return `true` if the first char in the range matches @ref ch successfully,
+   @return `true` if the first char in the range matches `ch` successfully,
    `false` otherwise
 
    @param[in,out] it An iterator to the first element in the range.
-   At the end of this function, @ref it points to one past the last
+   At the end of this function, `it` points to one past the last
    element parsed in the range.
 
    @param[in] end An iterator to one past the last element in the range
 
-   @param[out] ec The error code this function should set @ref if it fails
+   @param[out] ec The error code this function should set `it` it fails
 
    @param[out] ch A literal character
 */
@@ -80,20 +80,20 @@ parse(
 /** @brief Parse a sequence of elements
 
    This function parses the string defined by the first chars in the
-   range of chars [@ref it, @ref end) into the Backus–Naur form (BNF)
-   elements [arg_0, arg_1, ..., arg_n] in @ref args.
+   range of chars [`it`, `end`) into the Backus–Naur form (BNF)
+   elements [arg_0, arg_1, ..., arg_n] in `args`.
 
-   For each type Arg_i in [Arg_0, Arg_1, ..., Arg_n] in @ref Args, a
+   For each type Arg_i in [Arg_0, Arg_1, ..., Arg_n] in `Args`, a
    corresponding function overload
    `bool parse(char const*& it, char const* const end, error_code&, Arg_i const& t)`
-   should be defined to consume the input from [@ref it, @ref end) into `arg_i`.
+   should be defined to consume the input from [`it`, `end`) into `arg_i`.
 
    This `parse` function is defined for `char`s so that it matches the BNF
-   string literals in [@ref it, @ref end).
+   string literals in [`it`, `end`).
 
-   The function returns `true` and resets @ref ec when the input is
+   The function returns `true` and resets `ec` when the input is
    parsed successfully. If the input cannot be parsed into the BNF elements,
-   the function returns `false` and sets the error number in @ref ec to the
+   the function returns `false` and sets the error number in `ec` to the
    appropriate error number defined in @ref boost::urls::error.
 
    @par Example
@@ -171,7 +171,7 @@ parse(
 
    @par Exception Safety
      Calls to `parse` overloads may throw, although they should
-     prefer setting @ref ec instead.
+     prefer setting `ec` instead.
 
    @see https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
 
@@ -181,19 +181,19 @@ parse(
    `false` otherwise
 
    @param[in,out] it An iterator to the first element in the range.
-   At the end of this function, @ref it points to one past the last
+   At the end of this function, `it` points to one past the last
    element parsed in the range.
 
    @param[in] end An iterator to one past the last element in the range
 
-   @param[out] ec The error code this function should set if it fails
+   @param[in] ec The error code this function should set `it` it fails
 
    @param[out] args BNF elements to be parsed
 
 */
 #ifdef BOOST_URL_DOCS
 template<class... Args>
-bool parse( char const*& it, char const* end, Args&&... args);
+bool parse( char const*& it, char const* end, error_code& ec, Args&&... args);
 #else
 template<
     class T0,
@@ -211,20 +211,20 @@ parse(
 
 /** @brief Parse a complete string
 
-   This function parses a complete string @ref s into the Backus–Naur form (BNF)
-   elements [@ref t0, @ref t1, ...]. If the string is not completely consumed,
-   @ref ec is set to @ref error::leftover_input.
+   This function parses a complete string `s` into the Backus–Naur form (BNF)
+   elements [`t0`, `t1`, ...]. If the string is not completely consumed,
+   `ec` is set to `error::leftover_input`.
 
-   The function returns `true` and resets @ref ec when the input is
-   parsed successfully into the elements [@ref t0, @ref t1, ...].
+   The function returns `true` and resets `ec` when the input is
+   parsed successfully into the elements [`t0`, `t1`, ...].
 
    If the input cannot be parsed into the BNF elements, the function returns
-   `false` and sets the error number in @ref ec to the appropriate error
+   `false` and sets the error number in `ec` to the appropriate error
    number defined in @ref boost::urls::error.
 
    @par Exception Safety
      Calls to `parse` overloads may throw, although they should
-     prefer setting @ref ec instead.
+     prefer setting `ec` instead.
 
    @see @ref boost::urls::error
 
@@ -235,13 +235,13 @@ parse(
 
    @param[out] ec The error code this function should set if it fails
 
-   @param[out] t0 T0 1st BNF element
-
-   @param[out] t1 T1 2nd BNF element
-
-   @param[out] tn ...Tn [3rd, 4th, ...] BNF elements
+   @param[out] args BNF elements
 
 */
+#ifdef BOOST_URL_DOCS
+template<class... Args>
+bool parse( string_view s, error_code& ec, Args&&... args);
+#else
 template<
     class T0,
     class... Tn>
@@ -251,16 +251,17 @@ parse_string(
     error_code& ec,
     T0&& t0,
     Tn&&... tn);
+#endif
 
 /** @brief Parse a complete string and throw on failure
 
-   This function parses a complete string @ref s into the Backus–Naur form (BNF)
-   elements [@ref t0, @ref t1, ...]. If the string is not completely consumed,
+   This function parses a complete string `s` into the Backus–Naur form (BNF)
+   elements [`t0`, `t1`, ...]. If the string is not completely consumed,
    an error is thrown.
 
    The function returns `true`when the input is parsed successfully into the
-   elements [@ref t0, @ref t1, ...]. If the input cannot be parsed into the
-   BNF elements, the function throw a @ref system_error.
+   elements [`t0`, `t1`, ...]. If the input cannot be parsed into the
+   BNF elements, the function throw a `s`ystem_error.
 
    @par Exception Safety
      Exceptions thrown on invalid input.
@@ -269,14 +270,14 @@ parse_string(
 
    @param[in] s The input string this function should parse
 
-   @param[out] t0 T0 1st BNF element
+   @param[out] args BNF elements
 
-   @param[out] t1 T1 2nd BNF element
-
-   @param[out] tn ...Tn [3rd, 4th, ...] BNF elements
-
-   @throw system_error @ref s cannot be parsed into [@ref t0, @ref t1, ...]
+   @throw system_error `s` cannot be parsed into [`t0`, `t1`, ...]
 */
+#ifdef BOOST_URL_DOCS
+template<class... Args>
+bool parse( string_view s, Args&&... args);
+#else
 template<
     class T0,
     class... Tn>
@@ -285,6 +286,7 @@ parse_string(
     string_view s,
     T0&& t0,
     Tn&&... tn);
+#endif
 
 } // bnf
 } // urls
