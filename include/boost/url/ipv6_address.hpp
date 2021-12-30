@@ -347,7 +347,7 @@ private:
 
     @param os The output stream to write to.
 
-    @param addrr The address to write.
+    @param addr The address to write.
 */
 BOOST_URL_DECL
 std::ostream&

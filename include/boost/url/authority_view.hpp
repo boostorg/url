@@ -1224,7 +1224,7 @@ BOOST_URL_DECL
 std::ostream&
 operator<<(
     std::ostream& os,
-    authority_view const& a);
+    authority_view const& u);
 
 } // urls
 } // boost
