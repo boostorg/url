@@ -47,6 +47,7 @@ endif()
 
 function(boost_url_setup_properties target)
     target_compile_features(${target} PUBLIC cxx_constexpr)
+    target_compile_features(${target} PUBLIC cxx_std_11)
     target_compile_definitions(${target} PUBLIC BOOST_URL_NO_LIB=1)
 
     if(BOOST_SUPERPROJECT_VERSION)
