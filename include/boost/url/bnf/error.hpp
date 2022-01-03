@@ -39,7 +39,10 @@ enum class error
 
        This happens when the end of the input
        string is reached without fully matching
-       the grammar.
+       the grammar. Parsing elements which
+       support streaming will return this error
+       to indicate additional input is necessary
+       for completely matching the grammar.
     */
     incomplete,
 
