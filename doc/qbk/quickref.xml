@@ -122,7 +122,6 @@
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__bnf__lut_chars">lut_chars</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__range">range</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__repeat">repeat</link></member>
           <member><link linkend="url.ref.boost__urls__bnf__token">token</link></member>
         </simplelist>
         <bridgehead renderas="sect3">CharSets</bridgehead>
