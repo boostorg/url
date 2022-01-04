@@ -1,0 +1,29 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2021 Alan de Freitas (alandefreitas@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[section Grammars]
+
+[heading Design of grammar rules]
+
+The function [link url.ref.boost__urls__grammar__parse `parse`] implements the logic for parsing strings
+according to grammar rules.
+
+A grammar rule type, henceforth called a "rule", provides an algorithm for parsing an input string. An
+instance of the rule is used to store the results.
+
+[heading Customization points]
+
+Users can define a free function `parse` as a customization point defining how to parse their
+grammar rules as part of the same architecture that might include arbitrary grammar rules in expressions.
+
+These new function overloads may be defined in other namespaces. As with __std_swap__, the design relies
+on [@https://en.cppreference.com/w/cpp/language/adl argument-dependent lookup] to find these overloads.
+
+[endsect]

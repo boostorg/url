@@ -20,54 +20,40 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/*  Design
+/** Parse a literal character
 
-    - An element is default constructible
-    - Holds the result of parsing
-    - overloads the free function `parse`
-    - has a nested value_type
-    - has `value_type& operator*() const noexcept`
-*/
-
-/** @brief Parse a literal character
-
-   This function parses the string defined by the first chars in the
-   range of chars [@ref it, @ref end) as a literal character.
-
-   The function returns `true` and resets @ref ec when the input is
-   parsed successfully. The initial character in the range is immediately
-   consumed and ignored.
-
-   If the input cannot be parsed into the literal BNF literal,
-   the function returns `false` and sets the error number in @ref ec to the
-   appropriate error number defined in @ref boost::urls::error.
+   This function parses the first char in a
+   substring as a literal character.
 
    @par Example
+
    @code
    std::string str = "Hello.cpp";
-   auto it = str.data();
-   auto const end = it + str.size();
-   if (grammar::parse(it, end, ec, 'H')) {
-       std::cout << "str begins with 'H'" << std::endl;
+   char const* it = str.data();
+   char const* end = it + str.size();
+   using grammar::parse;
+   if (parse(it, end, ec, 'H')) {
+       std::cout << "str begins with 'H'\n";
    }
    @endcode
 
    @par Exception Safety
-   Calls to other `parse` overloads may throw, although they should
-   prefer setting @ref ec instead.
 
-   @return `true` if the first char in the range matches @ref ch successfully,
-   `false` otherwise
+   Throws nothing
 
-   @param[in,out] it An iterator to the first element in the range.
-   At the end of this function, @ref it points to one past the last
+   @return `true` if the first char in the range
+   matches `ch` successfully
+
+   @param it An iterator to the first element in the range.
+   At the end of this function, `it` points to one past the last
    element parsed in the range.
 
-   @param[in] end An iterator to one past the last element in the range
+   @param end An iterator to the end of the range
 
-   @param[out] ec The error code this function should set @ref if it fails
+   @param ec Set to the error, if any occurred
 
-   @param[out] ch A literal character
+   @param ch A literal character to match
+
 */
 inline
 bool
@@ -77,216 +63,166 @@ parse(
     error_code& ec,
     char ch) noexcept;
 
-/** @brief Parse a sequence of elements
+/** Parse a range of characters into two or more sequential grammar rules
 
-   This function parses the string defined by the first chars in the
-   range of chars [@ref it, @ref end) into the Backus–Naur form (BNF)
-   elements [arg_0, arg_1, ..., arg_n] in @ref args.
+    This function parses a range of characters into
+    one or more grammar rules, where each rule
+    defines its own syntax and storage for parsed
+    results.
 
-   For each type Arg_i in [Arg_0, Arg_1, ..., Arg_n] in @ref Args, a
-   corresponding function overload
-   `bool parse(char const*& it, char const* const end, error_code&, Arg_i const& t)`
-   should be defined to consume the input from [@ref it, @ref end) into `arg_i`.
+    The algorithm works by invoking a function called
+    `parse` for each element using an unqualified call
+    so that argument-dependent lookup applies, using
+    the equivalent signature:
 
-   This `parse` function is defined for `char`s so that it matches the BNF
-   string literals in [@ref it, @ref end).
+    @code
+    template< class Rule >
+    bool parse( char const*&, char const*, error_code&, Rule&& r );
+    @endcode
 
-   The function returns `true` and resets @ref ec when the input is
-   parsed successfully. If the input cannot be parsed into the BNF elements,
-   the function returns `false` and sets the error number in @ref ec to the
-   appropriate error number defined in @ref boost::urls::error.
+    If this call succeeds, the algorithm proceeds by
+    performing the same operation on the remaining
+    arguments including the parameter pack.
 
-   @par Example
-   @code
-   #include <iostream>
-   #include <string>
+    If an error occurs for any of the rules in the
+    parameter pack, the entire parse operation fails
+    but the chars from the substring are still consumed.
 
-   #include <boost/url/grammar/char_set.hpp>
-   #include <boost/url/grammar/parse.hpp>
-   #include <boost/url/error.hpp>
+    The statement `using grammar::parse` should be in scope
+    before any calls to parse are made without namespace
+    qualification, so that argument-dependent lookup can
+    take effect, as seen in the example.
 
-   namespace boost {
-   namespace urls {
-   namespace detail {
-   // BNF element to parse a non-empty sequence of alpha chars ([a-zA-Z]+)
-   struct alpha_string_rule {
-     // reference to a std::string where we should store the results
-     std::string &v;
+    @par Example
+    @code
+    using grammar::parse;
+    if (parse(it, end, ec, r1, r2, r3)) {
+      std::cout << "Range [it, end) parsed successfully\n";
+    }
+    @endcode
 
-     // parsing an alpha_string_rule element
-     friend bool parse(char const *&it, char const *end, error_code &ec,
-                       alpha_string_rule &&t) {
-       // is_alpha functor
-       grammar::alpha_chars is_alpha;
+    @par Exception Safety
 
-       // check if empty
-       if (it == end) {
-         ec = error::incomplete;
-         return false;
-       }
+      Defined by the types of the rule objects.
 
-       // check if not alpha at all
-       if (!is_alpha(*it)) {
-         ec = error::bad_alpha;
-         return false;
-       }
-       t.v.push_back(*it);
-       ++it;
+    @return `true` if the range initial chars match the elements successfully
 
-       // consume more alphas
-       while (it != end && is_alpha(*it)) {
-         t.v.push_back(*it);
-         ++it;
-       }
-       ec = error::success;
-       return true;
-     }
-   };
-   } // namespace detail
-   } // namespace urls
-   } // namespace boost
+    @param it An iterator to the first element in the range.
+    At the end of this function, `it` points to one past the last
+    element parsed in the range.
 
-   int main() {
-     using namespace boost::urls;
+    @param end An iterator to the end of the range
 
-     // Input
-     std::string str = "Hello.cpp";
-     auto it = str.data();
-     auto const end = it + str.size();
+    @param ec Set to the error, if any occurred
 
-     // Output
-     std::string alpha_l;
-     std::string alpha_r;
-     error_code ec;
+    @param r1 First grammar rule object
 
-     // Parse two alpha strings separated by a '.'
-     if (grammar::parse(it, end, ec, detail::alpha_string_rule{alpha_l}, '.',
-                    detail::alpha_string_rule{alpha_r})) {
-       std::cout << alpha_l << std::endl;
-       std::cout << alpha_r << std::endl;
-     }
-     return 0;
-   }
-   @endcode
+    @param r2 Second grammar rule object
 
-   @par Exception Safety
-     Calls to `parse` overloads may throw, although they should
-     prefer setting @ref ec instead.
-
-   @see https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
-
-        @ref boost::urls::error
-
-   @return `true` if the range initial chars match the elements successfully,
-   `false` otherwise
-
-   @param[in,out] it An iterator to the first element in the range.
-   At the end of this function, @ref it points to one past the last
-   element parsed in the range.
-
-   @param[in] end An iterator to one past the last element in the range
-
-   @param[out] ec The error code this function should set if it fails
-
-   @param[out] args BNF elements to be parsed
+    @param rs Extra grammar rule objects
 
 */
-#ifdef BOOST_URL_DOCS
-template<class... Args>
-bool parse( char const*& it, char const* end, Args&&... args);
-#else
 template<
-    class T0,
-    class T1,
-    class... Tn>
+    class R0,
+    class R1,
+    class... Rs
+>
 bool
 parse(
     char const*& it,
     char const* end,
     error_code& ec,
-    T0&& t0,
-    T1&& t1,
-    Tn&&... tn);
-#endif
+    R0&& r1,
+    R1&& r2,
+    Rs&&... rs
+);
 
-/** @brief Parse a complete string
+/** Parse a sequence of grammar rules
 
-   This function parses a complete string @ref s into the Backus–Naur form (BNF)
-   elements [@ref t0, @ref t1, ...]. If the string is not completely consumed,
-   @ref ec is set to @ref error::leftover_input.
+   This function parses a complete string into the sequence of
+   specified grammar rules. The function returns an error if
+   some characters are left unparsed.
 
-   The function returns `true` and resets @ref ec when the input is
-   parsed successfully into the elements [@ref t0, @ref t1, ...].
+   @par Example
 
-   If the input cannot be parsed into the BNF elements, the function returns
-   `false` and sets the error number in @ref ec to the appropriate error
-   number defined in @ref boost::urls::error.
+   @code
+   using grammar::parse;
+   if (parse(str, ec, r1, r2, r3)) {
+     std::cout << "String " << str << " parsed successfully\n";
+   }
+   @endcode
 
    @par Exception Safety
-     Calls to `parse` overloads may throw, although they should
-     prefer setting @ref ec instead.
 
-   @see @ref boost::urls::error
+     Defined by the types of the rule objects.
 
-   @return `true` if the string matches the BNF elements successfully and all
-   chars are consumed, `false` otherwise
+   @return `true` if the string matches the rules successfully and all
+   chars are consumed
 
-   @param[in] s The input string this function should parse
+   @param s The input string
 
-   @param[out] ec The error code this function should set if it fails
+   @param ec Set to the error, if any occurred. If the string is not completely consumed,
+   but the beginning of the string matches the elements, `ec` is set to @ref error::leftover.
 
-   @param[out] t0 T0 1st BNF element
+   @param r1 First grammar rule object
 
-   @param[out] t1 T1 2nd BNF element
-
-   @param[out] tn ...Tn [3rd, 4th, ...] BNF elements
+   @param rs Extra grammar rule objects
 
 */
 template<
-    class T0,
-    class... Tn>
+    class R1,
+    class... Rs
+>
 bool
 parse_string(
     string_view s,
     error_code& ec,
-    T0&& t0,
-    Tn&&... tn);
+    R1&& r1,
+    Rs&&... rs
+);
 
-/** @brief Parse a complete string and throw on failure
+/** Parse a sequence of grammar rules and throw on failure
 
-   This function parses a complete string @ref s into the Backus–Naur form (BNF)
-   elements [@ref t0, @ref t1, ...]. If the string is not completely consumed,
-   an error is thrown.
+   This function parses a complete string into the specified sequence
+   of grammar rules. If the string is not completely consumed, an
+   error is thrown.
 
-   The function returns `true`when the input is parsed successfully into the
-   elements [@ref t0, @ref t1, ...]. If the input cannot be parsed into the
-   BNF elements, the function throw a @ref system_error.
+   @par Example
+
+   @code
+   try {
+      using grammar::parse;
+      parse(str, ec, r1, r2, r3);
+   } catch (boost::urls::system_error& e) {
+      std::cout << e.what() << '\n';
+   }
+   @endcode
 
    @par Exception Safety
+
      Exceptions thrown on invalid input.
 
-   @see @ref boost::urls::error
+   @param s The input string
 
-   @param[in] s The input string this function should parse
+   @param r1 First grammar rule object
 
-   @param[out] t0 T0 1st BNF element
+   @param rs Extra grammar rule objects
 
-   @param[out] t1 T1 2nd BNF element
+   @throws boost::system::system_error Thrown on failure.
 
-   @param[out] tn ...Tn [3rd, 4th, ...] BNF elements
-
-   @throw system_error @ref s cannot be parsed into [@ref t0, @ref t1, ...]
-*/
+ */
 template<
-    class T0,
-    class... Tn>
+    class R1,
+    class... Rs
+>
 void
 parse_string(
     string_view s,
-    T0&& t0,
-    Tn&&... tn);
+    R1&& r1,
+    Rs&&... rs
+);
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 
