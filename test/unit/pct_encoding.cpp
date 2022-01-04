@@ -11,7 +11,7 @@
 #include <boost/url/pct_encoding.hpp>
 
 #include <boost/url/static_pool.hpp>
-#include <boost/url/bnf/lut_chars.hpp>
+#include <boost/url/grammar/lut_chars.hpp>
 #include "test_suite.hpp"
 #include <memory>
 
@@ -56,9 +56,9 @@ public:
     void
     testDecoding()
     {
-        constexpr bnf::lut_chars CS1('A');
-        constexpr bnf::lut_chars CS2 = CS1 + '\0';
-        bnf::lut_chars const* pcs = &CS1;
+        constexpr grammar::lut_chars CS1('A');
+        constexpr grammar::lut_chars CS2 = CS1 + '\0';
+        grammar::lut_chars const* pcs = &CS1;
         pct_decode_opts opt;
 
         auto const good = [&](

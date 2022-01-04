@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_HPP
 #define BOOST_URL_HPP
 
-#include <boost/url/bnf.hpp>
+#include <boost/url/grammar.hpp>
 
 #include <boost/url/authority_view.hpp>
 #include <boost/url/error.hpp>
@@ -38,24 +38,24 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/urls.hpp>
 
-#include <boost/url/rfc/absolute_uri_bnf.hpp>
-#include <boost/url/rfc/authority_bnf.hpp>
+#include <boost/url/rfc/absolute_uri_rule.hpp>
+#include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>
-#include <boost/url/rfc/fragment_bnf.hpp>
-#include <boost/url/rfc/hier_part_bnf.hpp>
-#include <boost/url/rfc/host_bnf.hpp>
-#include <boost/url/rfc/ip_literal_bnf.hpp>
-#include <boost/url/rfc/ipv_future_bnf.hpp>
-#include <boost/url/rfc/paths_bnf.hpp>
-#include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/rfc/port_bnf.hpp>
-#include <boost/url/rfc/query_bnf.hpp>
-#include <boost/url/rfc/reg_name_bnf.hpp>
-#include <boost/url/rfc/relative_part_bnf.hpp>
-#include <boost/url/rfc/relative_ref_bnf.hpp>
-#include <boost/url/rfc/scheme_bnf.hpp>
-#include <boost/url/rfc/uri_bnf.hpp>
-#include <boost/url/rfc/uri_reference_bnf.hpp>
-#include <boost/url/rfc/userinfo_bnf.hpp>
+#include <boost/url/rfc/fragment_rule.hpp>
+#include <boost/url/rfc/hier_part_rule.hpp>
+#include <boost/url/rfc/host_rule.hpp>
+#include <boost/url/rfc/ip_literal_rule.hpp>
+#include <boost/url/rfc/ipv_future_rule.hpp>
+#include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/port_rule.hpp>
+#include <boost/url/rfc/query_rule.hpp>
+#include <boost/url/rfc/reg_name_rule.hpp>
+#include <boost/url/rfc/relative_part_rule.hpp>
+#include <boost/url/rfc/relative_ref_rule.hpp>
+#include <boost/url/rfc/scheme_rule.hpp>
+#include <boost/url/rfc/uri_rule.hpp>
+#include <boost/url/rfc/uri_reference_rule.hpp>
+#include <boost/url/rfc/userinfo_rule.hpp>
 
 #endif

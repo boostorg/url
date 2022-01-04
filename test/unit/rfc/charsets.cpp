@@ -11,19 +11,19 @@
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/static_assert.hpp>
 
-#include "test_bnf.hpp"
+#include "test_rule.hpp"
 #include "test_suite.hpp"
 
 namespace boost {
 namespace urls {
 
-BOOST_STATIC_ASSERT(bnf::is_charset<unreserved_chars_t>::value);
-BOOST_STATIC_ASSERT(bnf::is_charset<reserved_chars_t>::value);
-BOOST_STATIC_ASSERT(bnf::is_charset<gen_delim_chars_t>::value);
-BOOST_STATIC_ASSERT(bnf::is_charset<subdelim_chars_t>::value);
-BOOST_STATIC_ASSERT(bnf::is_charset<pchars_t>::value);
-BOOST_STATIC_ASSERT(bnf::is_charset<query_chars_t>::value);
-BOOST_STATIC_ASSERT(bnf::is_charset<fragment_chars_t>::value);
+BOOST_STATIC_ASSERT(grammar::is_charset<unreserved_chars_t>::value);
+BOOST_STATIC_ASSERT(grammar::is_charset<reserved_chars_t>::value);
+BOOST_STATIC_ASSERT(grammar::is_charset<gen_delim_chars_t>::value);
+BOOST_STATIC_ASSERT(grammar::is_charset<subdelim_chars_t>::value);
+BOOST_STATIC_ASSERT(grammar::is_charset<pchars_t>::value);
+BOOST_STATIC_ASSERT(grammar::is_charset<query_chars_t>::value);
+BOOST_STATIC_ASSERT(grammar::is_charset<fragment_chars_t>::value);
 
 class charsets_test
 {

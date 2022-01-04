@@ -20,9 +20,9 @@ have optimized implementations for finding matching elements.
 
 [heading Related Identifiers]
 
-* [link url.ref.boost__urls__bnf__is_charset `is_charset`]
-* [link url.ref.boost__urls__bnf__find_if `find_if`]
-* [link url.ref.boost__urls__bnf__find_if_not `find_if_not`]
+* [link url.ref.boost__urls__grammar__is_charset `is_charset`]
+* [link url.ref.boost__urls__grammar__find_if `find_if`]
+* [link url.ref.boost__urls__grammar__find_if_not `find_if_not`]
 
 [heading Requirements]
 
@@ -57,7 +57,7 @@ In this table:
         character.
 
         The implementation of
-        [link url.ref.boost__urls__bnf__find_if `find_if`]
+        [link url.ref.boost__urls__grammar__find_if `find_if`]
         will call this function if provided by the character
         set, allowing optimized or otherwise performant
         implementations to be developed. If this member
@@ -79,7 +79,7 @@ In this table:
         such character.
 
         The implementation of
-        [link url.ref.boost__urls__bnf__find_if_not `find_if_not`]
+        [link url.ref.boost__urls__grammar__find_if_not `find_if_not`]
         will call this function if provided by the character
         set, allowing optimized or otherwise performant
         implementations to be developed. If this member
@@ -113,11 +113,11 @@ struct digit_chars_t
 
 [heading Models]
 
-* [link url.ref.boost__urls__bnf__all_chars `bnf::all_chars`]
-* [link url.ref.boost__urls__bnf__alnum_chars `bnf::alnum_chars`]
-* [link url.ref.boost__urls__bnf__alpha_chars `bnf::alpha_chars`]
-* [link url.ref.boost__urls__bnf__digit_chars `bnf::digit_chars`]
-* [link url.ref.boost__urls__bnf__hexdig_chars `bnf::hexdig_chars`]
-* [link url.ref.boost__urls__bnf__lut_chars `bnf::lut_chars`]
+* [link url.ref.boost__urls__grammar__all_chars `grammar::all_chars`]
+* [link url.ref.boost__urls__grammar__alnum_chars `grammar::alnum_chars`]
+* [link url.ref.boost__urls__grammar__alpha_chars `grammar::alpha_chars`]
+* [link url.ref.boost__urls__grammar__digit_chars `grammar::digit_chars`]
+* [link url.ref.boost__urls__grammar__hexdig_chars `grammar::hexdig_chars`]
+* [link url.ref.boost__urls__grammar__lut_chars `grammar::lut_chars`]
 
 [endsect]

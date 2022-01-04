@@ -12,8 +12,8 @@
 
 #include <boost/url/segments_view.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
-#include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/paths_bnf.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/rfc/paths_rule.hpp>
 #include <boost/assert.hpp>
 #include <ostream>
 
@@ -32,7 +32,7 @@ iterator(
     , end_(s.data() + s.size())
     , a_(a)
 {
-    using bnf::parse;
+    using grammar::parse;
     if(nseg == 0)
     {
         next_ = nullptr;
@@ -45,7 +45,7 @@ iterator(
     pos_ += n;
     error_code ec;
     parse(next_, end_, ec,
-        segment_bnf{t_});
+        segment_rule{t_});
     BOOST_ASSERT(! ec);
 }
 
@@ -106,8 +106,8 @@ iterator::
 operator++() noexcept ->
     iterator&
 {
-    using bnf::parse;
-    using bnf_t = path_rootless_bnf;
+    using grammar::parse;
+    using bnf_t = path_rootless_rule;
     BOOST_ASSERT(next_ != nullptr);
     ++i_;
     pos_ = next_;
@@ -115,7 +115,7 @@ operator++() noexcept ->
     // "/" segment
     bnf_t::increment(
         next_, end_, ec, t_);
-    if(ec == bnf::error::end)
+    if(ec == grammar::error::end)
     {
         next_ = nullptr;
         return *this;
@@ -130,8 +130,8 @@ iterator::
 operator--() noexcept ->
     iterator&
 {
-    using bnf::parse;
-    using bnf_t = path_rootless_bnf;
+    using grammar::parse;
+    using bnf_t = path_rootless_rule;
     BOOST_ASSERT(i_ != 0);
     --i_;
     error_code ec;
@@ -140,7 +140,7 @@ operator--() noexcept ->
         next_ = begin_;
         pos_ = begin_;
         parse(next_, end_, ec,
-            segment_bnf{t_});
+            segment_rule{t_});
         BOOST_ASSERT(! ec.failed());
         return *this;
     }

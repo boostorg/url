@@ -12,7 +12,7 @@
 
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/url/bnf/parse.hpp>
+#include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/detail/dec_octet.hpp>
 #include <cstring>
 
@@ -113,7 +113,7 @@ parse(
     error_code& ec,
     ipv4_address& t)
 {
-    using bnf::parse;
+    using grammar::parse;
     std::array<unsigned char, 4> v;
     if(! parse(it, end, ec,
         detail::dec_octet{v[0]}, '.',
@@ -175,7 +175,7 @@ parse_ipv4_address(
 {
     error_code ec;
     ipv4_address addr;
-    if(! bnf::parse_string(
+    if(! grammar::parse_string(
             s, ec, addr))
         return ec;
     return addr;

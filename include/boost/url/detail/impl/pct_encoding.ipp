@@ -68,9 +68,9 @@ key_equal_encoded(
             return false;
         auto const ch = static_cast<char>(
             (static_cast<unsigned char>(
-                bnf::hexdig_value(it1[1])) << 4) +
+                grammar::hexdig_value(it1[1])) << 4) +
             static_cast<unsigned char>(
-                bnf::hexdig_value(it1[2])));
+                grammar::hexdig_value(it1[2])));
         if(ch != *it0++)
             return false;
         it1 += 3;

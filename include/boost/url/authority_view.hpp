@@ -25,8 +25,8 @@ namespace boost {
 namespace urls {
 
 #ifndef BOOST_URL_DOCS
-struct authority_bnf;
-struct host_bnf;
+struct authority_rule;
+struct host_rule;
 #endif
 
 /** A read-only view to an authority.
@@ -1151,8 +1151,8 @@ public:
         parse_authority(string_view s) noexcept;
 
 private:
-    void apply(host_bnf const& h) noexcept;
-    void apply(authority_bnf const& t) noexcept;
+    void apply(host_rule const& h) noexcept;
+    void apply(authority_rule const& t) noexcept;
 };
 
 //------------------------------------------------

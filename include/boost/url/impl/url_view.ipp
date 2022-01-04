@@ -13,16 +13,16 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/detail/over_allocator.hpp>
-#include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/authority_bnf.hpp>
-#include <boost/url/rfc/fragment_bnf.hpp>
-#include <boost/url/rfc/host_bnf.hpp>
-#include <boost/url/rfc/paths_bnf.hpp>
-#include <boost/url/rfc/pct_encoded_bnf.hpp>
-#include <boost/url/rfc/query_bnf.hpp>
-#include <boost/url/rfc/relative_ref_bnf.hpp>
-#include <boost/url/rfc/scheme_bnf.hpp>
-#include <boost/url/rfc/uri_bnf.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/rfc/authority_rule.hpp>
+#include <boost/url/rfc/fragment_rule.hpp>
+#include <boost/url/rfc/host_rule.hpp>
+#include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/query_rule.hpp>
+#include <boost/url/rfc/relative_ref_rule.hpp>
+#include <boost/url/rfc/scheme_rule.hpp>
+#include <boost/url/rfc/uri_rule.hpp>
 #include <array>
 #include <ostream>
 
@@ -451,7 +451,7 @@ encoded_fragment() const noexcept
 void
 url_view::
 apply(
-    scheme_part_bnf const& t) noexcept
+    scheme_part_rule const& t) noexcept
 {
     scheme_ = t.scheme_id;
     if(t.scheme_id !=
@@ -464,7 +464,7 @@ apply(
 void
 url_view::
 apply(
-    host_bnf const& t) noexcept
+    host_rule const& t) noexcept
 {
     host_type_ = t.host_type;
     if(t.host_type ==
@@ -502,7 +502,7 @@ apply(
 void
 url_view::
 apply(
-    authority_bnf const& t) noexcept
+    authority_rule const& t) noexcept
 {
     if(t.has_userinfo)
     {
@@ -568,7 +568,7 @@ apply(
 void
 url_view::
 apply(
-    query_part_bnf const& t) noexcept
+    query_part_rule const& t) noexcept
 {
     if(t.has_query)
     {
@@ -586,7 +586,7 @@ apply(
 void
 url_view::
 apply(
-    fragment_part_bnf const& t) noexcept
+    fragment_part_rule const& t) noexcept
 {
     if(t.has_fragment)
     {
@@ -618,8 +618,8 @@ parse_absolute_uri(
             BOOST_CURRENT_LOCATION);
 
     error_code ec;
-    absolute_uri_bnf t;
-    if(! bnf::parse_string(s, ec, t))
+    absolute_uri_rule t;
+    if(! grammar::parse_string(s, ec, t))
         return ec;
 
     url_view u(0, s.data());
@@ -650,8 +650,8 @@ parse_uri(
             BOOST_CURRENT_LOCATION);
 
     error_code ec;
-    uri_bnf t;
-    if(! bnf::parse_string(s, ec, t))
+    uri_rule t;
+    if(! grammar::parse_string(s, ec, t))
         return ec;
 
     url_view u(0, s.data());
@@ -685,8 +685,8 @@ parse_relative_ref(
             BOOST_CURRENT_LOCATION);
 
     error_code ec;
-    relative_ref_bnf t;
-    if(! bnf::parse_string(
+    relative_ref_rule t;
+    if(! grammar::parse_string(
             s, ec, t))
         return ec;
 
@@ -718,8 +718,8 @@ parse_uri_reference(
             BOOST_CURRENT_LOCATION);
 
     error_code ec;
-    uri_reference_bnf t;
-    if(! bnf::parse_string(s, ec, t))
+    uri_reference_rule t;
+    if(! grammar::parse_string(s, ec, t))
         return ec;
 
     url_view u(0, s.data());

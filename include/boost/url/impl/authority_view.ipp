@@ -13,10 +13,10 @@
 #include <boost/url/authority_view.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/detail/over_allocator.hpp>
-#include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/authority_bnf.hpp>
-#include <boost/url/rfc/host_bnf.hpp>
-#include <boost/url/rfc/pct_encoded_bnf.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/rfc/authority_rule.hpp>
+#include <boost/url/rfc/host_rule.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <array>
 #include <ostream>
 
@@ -279,7 +279,7 @@ encoded_host_and_port() const noexcept
 void
 authority_view::
 apply(
-    host_bnf const& t) noexcept
+    host_rule const& t) noexcept
 {
     host_type_ = t.host_type;
     switch(t.host_type)
@@ -331,7 +331,7 @@ apply(
 void
 authority_view::
 apply(
-    authority_bnf const& t) noexcept
+    authority_rule const& t) noexcept
 {
     if(t.has_userinfo)
     {
@@ -397,8 +397,8 @@ parse_authority(
             BOOST_CURRENT_LOCATION);
 
     error_code ec;
-    authority_bnf t;
-    if(! bnf::parse_string(s, ec, t))
+    authority_rule t;
+    if(! grammar::parse_string(s, ec, t))
         return ec;
 
     authority_view a(s.data());

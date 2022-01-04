@@ -11,8 +11,8 @@
 #include <boost/url/authority_view.hpp>
 
 #include <boost/url/static_pool.hpp>
-#include <boost/url/bnf/parse.hpp>
-#include "test_bnf.hpp"
+#include <boost/url/grammar/parse.hpp>
+#include "test_rule.hpp"
 #include "test_suite.hpp"
 #include <sstream>
 

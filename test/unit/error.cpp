@@ -9,7 +9,7 @@
 
 // Test that header file is self-contained.
 #include <boost/url/error.hpp>
-#include <boost/url/bnf/error.hpp>
+#include <boost/url/grammar/error.hpp>
 
 #include "test_suite.hpp"
 
@@ -30,7 +30,7 @@ public:
             static_cast<int>(e)).category() == ec.category());
     }
 
-    void check(bnf::condition c, error e)
+    void check(grammar::condition c, error e)
     {
         {
             auto const ec = BOOST_URL_ERR(e);
@@ -71,9 +71,9 @@ public:
         check(error::non_canonical);
         check(error::wrong_char_literal);
 
-        check(bnf::condition::fatal, error::bad_pct_hexdig);
-        check(bnf::condition::fatal, error::incomplete_pct_encoding);
-        check(bnf::condition::fatal, error::missing_pct_hexdig);
+        check(grammar::condition::fatal, error::bad_pct_hexdig);
+        check(grammar::condition::fatal, error::incomplete_pct_encoding);
+        check(grammar::condition::fatal, error::missing_pct_hexdig);
 
         check(error::no_space);
         check(error::not_a_base);

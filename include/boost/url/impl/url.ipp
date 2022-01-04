@@ -14,19 +14,19 @@
 #include <boost/url/error.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/url_view.hpp>
-#include <boost/url/bnf/parse.hpp>
+#include <boost/url/grammar/parse.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/detail/print.hpp>
-#include <boost/url/rfc/authority_bnf.hpp>
+#include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>
-#include <boost/url/rfc/fragment_bnf.hpp>
-#include <boost/url/rfc/host_bnf.hpp>
-#include <boost/url/rfc/paths_bnf.hpp>
-#include <boost/url/rfc/port_bnf.hpp>
-#include <boost/url/rfc/query_bnf.hpp>
-#include <boost/url/rfc/scheme_bnf.hpp>
-#include <boost/url/rfc/userinfo_bnf.hpp>
+#include <boost/url/rfc/fragment_rule.hpp>
+#include <boost/url/rfc/host_rule.hpp>
+#include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/rfc/port_rule.hpp>
+#include <boost/url/rfc/query_rule.hpp>
+#include <boost/url/rfc/scheme_rule.hpp>
+#include <boost/url/rfc/userinfo_rule.hpp>
 #include <boost/align/align_up.hpp>
 #include <cstring>
 #include <iostream>
@@ -217,9 +217,9 @@ set_scheme_impl(
     urls::scheme id)
 {
     check_invariants();
-    scheme_bnf b;
+    scheme_rule b;
     error_code ec;
-    bnf::parse_string(s, ec, b);
+    grammar::parse_string(s, ec, b);
     if(ec.failed())
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
@@ -629,8 +629,8 @@ set_encoded_userinfo(
 {
     check_invariants();
     error_code ec;
-    userinfo_bnf t;
-    if(! bnf::parse_string(s, ec, t))
+    userinfo_rule t;
+    if(! grammar::parse_string(s, ec, t))
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
     auto dest = set_userinfo_impl(s.size());
@@ -760,9 +760,9 @@ url::
 set_encoded_host(string_view s)
 {
     // first try parsing it
-    host_bnf t;
+    host_rule t;
     error_code ec;
-    if(! bnf::parse_string(s, ec, t))
+    if(! grammar::parse_string(s, ec, t))
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
     BOOST_ASSERT(t.host_type !=
@@ -865,9 +865,9 @@ url::
 set_port(string_view s)
 {
     check_invariants();
-    port_bnf t;
+    port_rule t;
     error_code ec;
-    if(! bnf::parse_string(
+    if(! grammar::parse_string(
             s, ec, t))
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
@@ -924,8 +924,8 @@ url::
 set_encoded_authority(string_view s)
 {
     error_code ec;
-    authority_bnf t;
-    if(! bnf::parse_string(s, ec, t))
+    authority_rule t;
+    if(! grammar::parse_string(s, ec, t))
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
     auto n = s.size() + 2;
@@ -1747,8 +1747,8 @@ set_encoded_fragment(
     check_invariants();
     error_code ec;
     pct_encoded_str t;
-    if(! bnf::parse_string(s, ec,
-            fragment_bnf{t}))
+    if(! grammar::parse_string(s, ec,
+            fragment_rule{t}))
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
     auto dest = set_fragment_impl(s.size());
@@ -2084,14 +2084,14 @@ check_invariants() const noexcept
         pct_encoded_str t;
         auto start = it;
         if(get(id_path).starts_with('/'))
-            path_abempty_bnf::begin(
+            path_abempty_rule::begin(
                 it, end, ec, t);
         else
-            path_rootless_bnf::begin(
+            path_rootless_rule::begin(
                 it, end, ec, t);
         for(std::size_t i = 0;;++i)
         {
-            if(ec == bnf::error::end)
+            if(ec == grammar::error::end)
                 break;
             BOOST_ASSERT(! ec.failed());
             if(ec.failed())
@@ -2101,7 +2101,7 @@ check_invariants() const noexcept
             BOOST_ASSERT(
                 start + segment_len(i) == it);
             start = it;
-            path_abempty_bnf::increment(
+            path_abempty_rule::increment(
                 it, end, ec, t);
         }
     }
@@ -2125,21 +2125,21 @@ build_tab() noexcept
         pct_encoded_str t;
         if( s.starts_with('/') ||
             s.empty())
-            path_abempty_bnf::begin(
+            path_abempty_rule::begin(
                 it, end, ec, t);
         else
-            path_rootless_bnf::begin(
+            path_rootless_rule::begin(
                 it, end, ec, t);
         for(;;)
         {
-            if(ec == bnf::error::end)
+            if(ec == grammar::error::end)
                 break;
             if(ec)
                 detail::throw_system_error(ec,
                     BOOST_CURRENT_LOCATION);
             *tab = it - s_;
             tab -= 2;
-            path_abempty_bnf::increment(
+            path_abempty_rule::increment(
                 it, end, ec, t);
         }
     }
@@ -2153,18 +2153,18 @@ build_tab() noexcept
         auto it = s.data();
         auto const end = it + s.size();
         query_param_view t;
-        query_bnf::begin(
+        query_rule::begin(
             it, end, ec, t);
         for(;;)
         {
-            if(ec == bnf::error::end)
+            if(ec == grammar::error::end)
                 break;
             if(ec)
                 detail::throw_system_error(ec,
                     BOOST_CURRENT_LOCATION);
             *tab = it - s_;
             tab -= 2;
-            query_bnf::increment(
+            query_rule::increment(
                 it, end, ec, t);
         }
     }

@@ -12,7 +12,7 @@
 
 #include <boost/url/params_encoded_view.hpp>
 #include <boost/url/url.hpp>
-#include <boost/url/rfc/query_bnf.hpp>
+#include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/assert.hpp>
 
@@ -257,8 +257,8 @@ parse_query_params(
     string_view s) noexcept
 {
     error_code ec;
-    query_bnf t;
-    if(! bnf::parse_string(s, ec, t))
+    query_rule t;
+    if(! grammar::parse_string(s, ec, t))
         return ec;
     return params_encoded_view(
         t.v.str(), t.v.size());

@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
-#include <boost/url/bnf/charset.hpp>
+#include <boost/url/grammar/charset.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <memory>
 

@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_CHARSETS_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/bnf/lut_chars.hpp>
+#include <boost/url/grammar/lut_chars.hpp>
 #include <cstdint>
 
 namespace boost {
@@ -46,11 +46,11 @@ namespace urls {
 #ifdef BOOST_URL_DOCS
 using unreserved_chars_t = see_below;
 #else
-struct unreserved_chars_t : bnf::lut_chars
+struct unreserved_chars_t : grammar::lut_chars
 {
     constexpr
     unreserved_chars_t() noexcept
-        : bnf::lut_chars(
+        : grammar::lut_chars(
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz"
             "0123456789"
@@ -117,11 +117,11 @@ constexpr unreserved_chars_t unreserved_chars{};
 #ifdef BOOST_URL_DOCS
 using reserved_chars_t = see_below;
 #else
-struct reserved_chars_t : bnf::lut_chars
+struct reserved_chars_t : grammar::lut_chars
 {
     constexpr
     reserved_chars_t() noexcept
-        : bnf::lut_chars(~unreserved_chars)
+        : grammar::lut_chars(~unreserved_chars)
     {
     }
 };
@@ -184,11 +184,11 @@ constexpr reserved_chars_t reserved_chars{};
 #ifdef BOOST_URL_DOCS
 using gen_delim_chars_t = see_below;
 #else
-struct gen_delim_chars_t : bnf::lut_chars
+struct gen_delim_chars_t : grammar::lut_chars
 {
     constexpr
     gen_delim_chars_t() noexcept
-        : bnf::lut_chars(
+        : grammar::lut_chars(
             ":/?#[]@")
     {
     }
@@ -256,11 +256,11 @@ constexpr gen_delim_chars_t gen_delim_chars{};
 #ifdef BOOST_URL_DOCS
 using subdelim_chars_t = see_below;
 #else
-struct subdelim_chars_t : bnf::lut_chars
+struct subdelim_chars_t : grammar::lut_chars
 {
     constexpr
     subdelim_chars_t() noexcept
-        : bnf::lut_chars(
+        : grammar::lut_chars(
             "!$&()*+,;=\x27")
     {
     }
@@ -328,11 +328,11 @@ constexpr subdelim_chars_t subdelim_chars{};
 #ifdef BOOST_URL_DOCS
 using pchars_t = see_below;
 #else
-struct pchars_t : bnf::lut_chars
+struct pchars_t : grammar::lut_chars
 {
     constexpr
     pchars_t() noexcept
-        : bnf::lut_chars(
+        : grammar::lut_chars(
             unreserved_chars +
             subdelim_chars +
             ':' + '@')
@@ -401,11 +401,11 @@ constexpr pchars_t pchars{};
 #ifdef BOOST_URL_DOCS
 using query_chars_t = see_below;
 #else
-struct query_chars_t : bnf::lut_chars
+struct query_chars_t : grammar::lut_chars
 {
     constexpr
     query_chars_t() noexcept
-        : bnf::lut_chars(
+        : grammar::lut_chars(
             pchars + '/' + '?')
     {
     }
@@ -472,11 +472,11 @@ constexpr query_chars_t query_chars{};
 #ifdef BOOST_URL_DOCS
 using fragment_chars_t = see_below;
 #else
-struct fragment_chars_t : bnf::lut_chars
+struct fragment_chars_t : grammar::lut_chars
 {
     constexpr
     fragment_chars_t() noexcept
-        : bnf::lut_chars(
+        : grammar::lut_chars(
             pchars + '/' + '?')
     {
     }

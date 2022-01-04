@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_RFC_DETAIL_DEC_OCTET_HPP
 #define BOOST_URL_RFC_DETAIL_DEC_OCTET_HPP
 
-#include <boost/url/bnf/parse.hpp>
+#include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/charsets.hpp>
 
 namespace boost {
@@ -33,10 +33,10 @@ struct dec_octet
         {
             // expected DIGIT
             ec = BOOST_URL_ERR(
-                bnf::error::incomplete);
+                grammar::error::incomplete);
             return false;
         }
-        if(! bnf::digit_chars(*it))
+        if(! grammar::digit_chars(*it))
         {
             // not a digit
             ec = BOOST_URL_ERR(
@@ -52,7 +52,7 @@ struct dec_octet
             ec = {};
             return true;
         }
-        if(! bnf::digit_chars(*it))
+        if(! grammar::digit_chars(*it))
         {
             t.v = static_cast<
                 std::uint8_t>(v);
@@ -75,7 +75,7 @@ struct dec_octet
             ec = {};
             return true;
         }
-        if(! bnf::digit_chars(*it))
+        if(! grammar::digit_chars(*it))
         {
             t.v = static_cast<
                 std::uint8_t>(v);

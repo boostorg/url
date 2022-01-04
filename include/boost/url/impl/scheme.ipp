@@ -11,7 +11,7 @@
 #define BOOST_URL_IMPL_SCHEME_IPP
 
 #include <boost/url/scheme.hpp>
-#include <boost/url/bnf/ascii.hpp>
+#include <boost/url/grammar/ascii.hpp>
 
 namespace boost {
 namespace urls {
@@ -20,7 +20,7 @@ scheme
 string_to_scheme(
     string_view s) noexcept
 {
-    using bnf::ascii_tolower;
+    using grammar::ascii_tolower;
     switch(s.size())
     {
     case 0: // none

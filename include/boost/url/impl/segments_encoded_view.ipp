@@ -12,9 +12,9 @@
 
 #include <boost/url/segments_view.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/bnf/parse.hpp>
-#include <boost/url/rfc/paths_bnf.hpp>
-#include <boost/url/rfc/query_bnf.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/path.hpp>
 #include <ostream>
@@ -77,9 +77,9 @@ iterator::
 operator++() noexcept ->
     iterator&
 {
-    using bnf::parse;
+    using grammar::parse;
     using bnf_t =
-        path_rootless_bnf;
+        path_rootless_rule;
     BOOST_ASSERT(next_ != nullptr);
     ++i_;
     pos_ = next_;
@@ -88,7 +88,7 @@ operator++() noexcept ->
     pct_encoded_str t;
     bnf_t::increment(
         next_, end_, ec, t);
-    if(ec == bnf::error::end)
+    if(ec == grammar::error::end)
     {
         next_ = nullptr;
         return *this;
@@ -104,9 +104,9 @@ iterator::
 operator--() noexcept ->
     iterator&
 {
-    using bnf::parse;
+    using grammar::parse;
     using bnf_t =
-        path_rootless_bnf;
+        path_rootless_rule;
     BOOST_ASSERT(i_ != 0);
     --i_;
     if(i_ == 0)
@@ -218,8 +218,8 @@ parse_path_abempty(
     string_view s) noexcept
 {
     error_code ec;
-    path_abempty_bnf t;
-    if(! bnf::parse_string(s, ec, t))
+    path_abempty_rule t;
+    if(! grammar::parse_string(s, ec, t))
         return ec;
     return segments_encoded_view(
         t.str, detail::path_segments(
@@ -231,8 +231,8 @@ parse_path_absolute(
     string_view s) noexcept
 {
     error_code ec;
-    path_absolute_bnf t;
-    if(! bnf::parse_string(s, ec, t))
+    path_absolute_rule t;
+    if(! grammar::parse_string(s, ec, t))
         return ec;
     return segments_encoded_view(
         t.str, detail::path_segments(
@@ -244,8 +244,8 @@ parse_path_noscheme(
     string_view s) noexcept
 {
     error_code ec;
-    path_noscheme_bnf t;
-    if(! bnf::parse_string(s, ec, t))
+    path_noscheme_rule t;
+    if(! grammar::parse_string(s, ec, t))
         return ec;
     return segments_encoded_view(
         t.str, detail::path_segments(
@@ -257,8 +257,8 @@ parse_path_rootless(
     string_view s) noexcept
 {
     error_code ec;
-    path_rootless_bnf t;
-    if(! bnf::parse_string(s, ec, t))
+    path_rootless_rule t;
+    if(! grammar::parse_string(s, ec, t))
         return ec;
     return segments_encoded_view(
         t.str, detail::path_segments(

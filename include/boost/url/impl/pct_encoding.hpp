@@ -11,7 +11,7 @@
 #define BOOST_URL_IMPL_PCT_ENCODING_HPP
 
 #include <boost/url/detail/except.hpp>
-#include <boost/url/bnf/charset.hpp>
+#include <boost/url/grammar/charset.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
@@ -29,7 +29,7 @@ validate_pct_encoding(
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
-        bnf::is_charset<CharSet>::value);
+        grammar::is_charset<CharSet>::value);
 
     // can't have % in charset
     BOOST_ASSERT(! cs('%'));
@@ -73,9 +73,9 @@ validate_pct_encoding(
                 return n;
             }
             auto const d0 =
-                bnf::hexdig_value(it[0]);
+                grammar::hexdig_value(it[0]);
             auto const d1 =
-                bnf::hexdig_value(it[1]);
+                grammar::hexdig_value(it[1]);
             if( d0 == -1 ||
                 d1 == -1)
             {
@@ -133,7 +133,7 @@ pct_decode(
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
-        bnf::is_charset<CharSet>::value);
+        grammar::is_charset<CharSet>::value);
 
     auto const n =
         validate_pct_encoding(
@@ -167,7 +167,7 @@ pct_decode(
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
-        bnf::is_charset<CharSet>::value);
+        grammar::is_charset<CharSet>::value);
 
     std::basic_string<char,
         std::char_traits<char>,
@@ -202,7 +202,7 @@ pct_decode_to_value(
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
-        bnf::is_charset<CharSet>::value);
+        grammar::is_charset<CharSet>::value);
 
     if(s.empty())
         return string_value();
@@ -253,7 +253,7 @@ pct_encode_bytes(
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
-        bnf::is_charset<CharSet>::value);
+        grammar::is_charset<CharSet>::value);
 
     std::size_t n = 0;
     auto it = s.data();
@@ -301,7 +301,7 @@ pct_encode(
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
-        bnf::is_charset<CharSet>::value);
+        grammar::is_charset<CharSet>::value);
 
     // Can't have % in charset
     BOOST_ASSERT(! cs('%'));
@@ -384,7 +384,7 @@ pct_encode(
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
-        bnf::is_charset<CharSet>::value);
+        grammar::is_charset<CharSet>::value);
 
     std::basic_string<
         char,
@@ -417,7 +417,7 @@ pct_encode_to_value(
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
-        bnf::is_charset<CharSet>::value);
+        grammar::is_charset<CharSet>::value);
 
     if(s.empty())
         return string_value();

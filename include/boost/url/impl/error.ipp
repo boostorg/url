@@ -74,7 +74,7 @@ case error::not_a_base: return "not a base";
 case error::bad_pct_hexdig:
 case error::incomplete_pct_encoding:
 case error::missing_pct_hexdig:
-    return bnf::condition::fatal;
+    return grammar::condition::fatal;
             }
         }
     };

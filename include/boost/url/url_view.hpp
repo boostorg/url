@@ -34,12 +34,12 @@ namespace boost {
 namespace urls {
 
 #ifndef BOOST_URL_DOCS
-struct authority_bnf;
-struct fragment_part_bnf;
-struct host_bnf;
+struct authority_rule;
+struct fragment_part_rule;
+struct host_rule;
 struct parsed_path;
-struct query_part_bnf;
-struct scheme_part_bnf;
+struct query_part_rule;
+struct scheme_part_rule;
 #endif
 
 /** A read-only view to a URL
@@ -1720,12 +1720,12 @@ public:
         parse_uri_reference(string_view s);
 
 private:
-    void apply(scheme_part_bnf const& t) noexcept;
-    void apply(host_bnf const& h) noexcept;
-    void apply(authority_bnf const& t) noexcept;
+    void apply(scheme_part_rule const& t) noexcept;
+    void apply(host_rule const& h) noexcept;
+    void apply(authority_rule const& t) noexcept;
     void apply(parsed_path const& path) noexcept;
-    void apply(query_part_bnf const& t) noexcept;
-    void apply(fragment_part_bnf const& t) noexcept;
+    void apply(query_part_rule const& t) noexcept;
+    void apply(fragment_part_rule const& t) noexcept;
 };
 
 //------------------------------------------------

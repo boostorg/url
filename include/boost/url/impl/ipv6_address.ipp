@@ -13,7 +13,7 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/url/bnf/parse.hpp>
+#include <boost/url/grammar/parse.hpp>
 #include <cstring>
 
 namespace boost {
@@ -59,7 +59,7 @@ struct h16
         for(;;)
         {
             auto d =
-                bnf::hexdig_value(*it);
+                grammar::hexdig_value(*it);
             if(d == -1)
             {
                 // not a HEXDIG
@@ -71,21 +71,21 @@ struct h16
             ++it;
             if(it == end)
                 break;
-            d = bnf::hexdig_value(*it);
+            d = grammar::hexdig_value(*it);
             if(d == -1)
                 break;
             v = (16 * v) + d;
             ++it;
             if(it == end)
                 break;
-            d = bnf::hexdig_value(*it);
+            d = grammar::hexdig_value(*it);
             if(d == -1)
                 break;
             v = (16 * v) + d;
             ++it;
             if(it == end)
                 break;
-            d = bnf::hexdig_value(*it);
+            d = grammar::hexdig_value(*it);
             if(d == -1)
                 break;
             v = (16 * v) + d;
@@ -329,7 +329,7 @@ parse(
     error_code& ec,
     ipv6_address& t) noexcept
 {
-    using bnf::parse;
+    using grammar::parse;
     int n = 8;      // words needed
     int b = -1;     // value of n
                     // when '::' seen
@@ -429,7 +429,7 @@ parse(
             break;
         }
         if( b != -1 &&
-            bnf::hexdig_value(*it) == -1)
+            grammar::hexdig_value(*it) == -1)
         {
             // ends in "::"
             break;
@@ -517,7 +517,7 @@ parse_ipv6_address(
 {
     error_code ec;
     ipv6_address addr;
-    if(! bnf::parse_string(
+    if(! grammar::parse_string(
             s, ec, addr))
         return ec;
     return addr;

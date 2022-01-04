@@ -302,7 +302,7 @@ public:
     /** Parse a string containing an IPv6 address.
 
         This function overload is used with
-        @ref bnf::parse.
+        @ref grammar::parse.
 
         @return true if the parse was successful.
 

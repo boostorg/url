@@ -19,7 +19,7 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template mode="convenience-header" match="@file[contains(., 'boost/url/bnf')]" priority="1">url/bnf.hpp</xsl:template>
+  <xsl:template mode="convenience-header" match="@file[contains(., 'boost/url/grammar')]" priority="1">url/grammar.hpp</xsl:template>
   <xsl:template mode="convenience-header" match="@file[contains(., 'boost/url')]">url.hpp</xsl:template>
   <xsl:template mode="convenience-header" match="@file"/>
 

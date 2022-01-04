@@ -11,7 +11,7 @@
 #define BOOST_URL_IMPL_PCT_ENCODING_IPP
 
 #include <boost/url/pct_encoding.hpp>
-#include <boost/url/bnf/charset.hpp>
+#include <boost/url/grammar/charset.hpp>
 #include <memory>
 
 namespace boost {
@@ -53,9 +53,9 @@ pct_decode_unchecked(
         char const* it)
     {
         auto const d0 =
-            bnf::hexdig_value(it[0]);
+            grammar::hexdig_value(it[0]);
         auto const d1 =
-            bnf::hexdig_value(it[1]);
+            grammar::hexdig_value(it[1]);
         return static_cast<char>(
             ((static_cast<
                 unsigned char>(d0) << 4) +

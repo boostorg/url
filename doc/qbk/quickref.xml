@@ -112,89 +112,50 @@
   <tgroup cols="4">
     <colspec colname="a"/><colspec colname="b"/><colspec colname="c"/><colspec colname="d"/>
     <thead><row>
-      <entry valign="center" namest="a" nameend="d">
-        <bridgehead renderas="sect2">BNF</bridgehead>
+      <entry valign="center" namest="a" nameend="b">
+        <bridgehead renderas="sect2">RFC3986</bridgehead>
+      </entry>
+      <entry valign="center" namest="c" nameend="d">
+        <bridgehead renderas="sect2">Grammar</bridgehead>
       </entry>
     </row></thead>
     <tbody><row>
       <entry valign="top">
-        <bridgehead renderas="sect3">Classes</bridgehead>
+        <bridgehead renderas="sect3">Types (1/2)</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__bnf__lut_chars">lut_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__range">range</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__token">token</link></member>
-        </simplelist>
-        <bridgehead renderas="sect3">CharSets</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__bnf__all_chars_t">all_chars_t</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__alnum_chars_t">alnum_chars_t</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__alpha_chars_t">alpha_chars_t</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__digit_chars_t">digit_chars_t</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__hexdig_chars_t">hexdig_chars_t</link></member>
-        </simplelist>
-        <bridgehead renderas="sect3">Constants</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__bnf__all_chars">all_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__alnum_chars">alnum_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__alpha_chars">alpha_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__condition">condition</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__digit_chars">digit_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__error">error</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__hexdig_chars">hexdig_chars</link></member>
-        </simplelist>
-      </entry>
-      <entry valign="top">
-        <bridgehead renderas="sect3">Functions</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__bnf__ascii_tolower">ascii_tolower</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__find_if">find_if</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__find_if_not">find_if_not</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__hexdig_value">hexdig_value</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__parse">parse</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__parse_string">parse_string</link></member>
-        </simplelist>
-        <bridgehead renderas="sect3">Type Traits</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__bnf__is_charset">is_charset</link></member>
-          <member><link linkend="url.ref.boost__urls__bnf__is_range">is_range</link></member>
-        </simplelist>
-      </entry>
-      <entry valign="top">
-        <bridgehead renderas="sect3">RFC 3986 (1/2)</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__absolute_uri_bnf">absolute_uri_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__authority_bnf">authority_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__fragment_bnf">fragment_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__fragment_part_bnf">fragment_part_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__hier_part_bnf">hier_part_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__host_bnf">host_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__ip_literal_bnf">ip_literal_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__ipv_future_bnf">ipv_future_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__absolute_uri_rule">absolute_uri_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__authority_rule">authority_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__fragment_rule">fragment_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__fragment_part_rule">fragment_part_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__hier_part_rule">hier_part_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__host_rule">host_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__ip_literal_rule">ip_literal_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__ipv_future_rule">ipv_future_rule</link></member>
           <member><link linkend="url.ref.boost__urls__parsed_path">parsed_path</link></member>
-          <member><link linkend="url.ref.boost__urls__path_abempty_bnf">path_abempty_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__path_absolute_bnf">path_absolute_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__path_noscheme_bnf">path_noscheme_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__path_rootless_bnf">path_rootless_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_encoded_bnf">pct_encoded_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__port_bnf">port_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__port_part_bnf">port_part_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__query_bnf">query_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__query_part_bnf">query_part_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__path_abempty_rule">path_abempty_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__path_absolute_rule">path_absolute_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__path_noscheme_rule">path_noscheme_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__path_rootless_rule">path_rootless_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_encoded_rule">pct_encoded_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__port_rule">port_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__port_part_rule">port_part_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__query_rule">query_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__query_part_rule">query_part_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__relative_part_rule">relative_part_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__relative_ref_rule">relative_ref_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__scheme_rule">scheme_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__scheme_part_rule">scheme_part_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__segment_rule">segment_rule</link></member>
         </simplelist>
       </entry>
       <entry valign="top">
-        <bridgehead renderas="sect3">RFC 3986 (2/2)</bridgehead>
+        <bridgehead renderas="sect3">Types (2/2)</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__relative_part_bnf">relative_part_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__relative_ref_bnf">relative_ref_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__scheme_bnf">scheme_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__scheme_part_bnf">scheme_part_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__segment_bnf">segment_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__segment_nz_bnf">segment_nz_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__segment_nz_nc_bnf">segment_nz_nc_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__uri_bnf">uri_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__uri_reference_bnf">uri_reference_bnf</link></member>
-          <member><link linkend="url.ref.boost__urls__userinfo_bnf">userinfo_bnf</link></member>
+          <member><link linkend="url.ref.boost__urls__segment_nz_rule">segment_nz_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__segment_nz_nc_rule">segment_nz_nc_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__uri_rule">uri_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__uri_reference_rule">uri_reference_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__userinfo_rule">userinfo_rule</link></member>
         </simplelist>
         <bridgehead renderas="sect3">Constants</bridgehead>
         <simplelist type="vert" columns="1">
@@ -206,7 +167,7 @@
           <member><link linkend="url.ref.boost__urls__subdelim_chars">subdelim_chars</link></member>
           <member><link linkend="url.ref.boost__urls__unreserved_chars">unreserved_chars</link></member>
         </simplelist>
-        <bridgehead renderas="sect3">Types</bridgehead>
+        <bridgehead renderas="sect3">CharSets</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__fragment_chars_t">fragment_chars_t</link></member>
           <member><link linkend="url.ref.boost__urls__gen_delim_chars_t">gen_delim_chars_t</link></member>
@@ -215,6 +176,48 @@
           <member><link linkend="url.ref.boost__urls__reserved_chars">reserved_chars_t</link></member>
           <member><link linkend="url.ref.boost__urls__subdelim_chars_t">subdelim_chars_t</link></member>
           <member><link linkend="url.ref.boost__urls__unreserved_chars_t">unreserved_chars_t</link></member>
+        </simplelist>
+      </entry>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Classes</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__lut_chars">lut_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__range">range</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__token">token</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">CharSets</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__all_chars_t">all_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__alnum_chars_t">alnum_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__alpha_chars_t">alpha_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__digit_chars_t">digit_chars_t</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__hexdig_chars_t">hexdig_chars_t</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">Constants</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__all_chars">all_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__alnum_chars">alnum_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__alpha_chars">alpha_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__condition">condition</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__digit_chars">digit_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__error">error</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__hexdig_chars">hexdig_chars</link></member>
+        </simplelist>
+      </entry>
+      <entry valign="top">
+        <bridgehead renderas="sect3">Functions</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__ascii_tolower">ascii_tolower</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__find_if">find_if</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__find_if_not">find_if_not</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__hexdig_value">hexdig_value</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__parse">parse</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__parse_string">parse_string</link></member>
+        </simplelist>
+        <bridgehead renderas="sect3">Type Traits</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__is_charset">is_charset</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__is_range">is_range</link></member>
         </simplelist>
       </entry>
     </row></tbody>

@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
-#include <boost/url/rfc/paths_bnf.hpp>
+#include <boost/url/rfc/paths_rule.hpp>
 #include <cstdint>
 #include <iterator>
 
