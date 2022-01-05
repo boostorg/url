@@ -96,11 +96,6 @@ enum class error
     success = 0,
 
     /**
-     * An unspecified syntax error was found.
-    */
-    syntax,
-
-    /**
      * Bad alphabetic character.
     */
     bad_alpha,

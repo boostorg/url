@@ -32,8 +32,6 @@ make_error_code(error e)
             switch(static_cast<error>(ev))
             {
             default:
-case error::syntax: return "syntax";
-
 case error::bad_alpha: return "bad alpha";
 case error::bad_digit: return "bad digit";
 case error::bad_empty_element: return "bad empty element";

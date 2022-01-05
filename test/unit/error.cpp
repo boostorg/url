@@ -49,8 +49,6 @@ public:
     void
     run()
     {
-        check(error::syntax);
-
         check(error::bad_alpha);
         check(error::bad_digit);
         check(error::bad_empty_element);
