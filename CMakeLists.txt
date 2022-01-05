@@ -8,6 +8,9 @@
 # Official repository: https://github.com/CPPAlliance/url
 #
 
+#####################################################################
+# Project information
+#####################################################################
 cmake_minimum_required(VERSION 3.8...3.16)
 
 set(BOOST_URL_VERSION 2)
@@ -17,7 +20,9 @@ endif()
 
 project(boost_url VERSION "${BOOST_URL_VERSION}" LANGUAGES CXX)
 
-
+#####################################################################
+# Options
+#####################################################################
 set(BOOST_URL_IS_ROOT OFF)
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(BOOST_URL_IS_ROOT ON)
@@ -35,7 +40,9 @@ else()
     set(BOOST_URL_BUILD_TESTS ${BUILD_TESTING})
 endif()
 
-
+#####################################################################
+# Dependencies
+#####################################################################
 include(GNUInstallDirs)
 if(BOOST_URL_IS_ROOT)
     # container comes from json
@@ -75,7 +82,9 @@ function(boost_url_setup_properties target)
     )
 endfunction()
 
-
+#####################################################################
+# Library target
+#####################################################################
 file(GLOB_RECURSE BOOST_URL_HEADERS CONFIGURE_DEPENDS
     include/boost/*.hpp
     include/boost/*.ipp
@@ -100,7 +109,9 @@ else()
     target_compile_definitions(boost_url PUBLIC BOOST_URL_STATIC_LINK=1)
 endif()
 
-
+#####################################################################
+# Installer
+#####################################################################
 if(BOOST_URL_INSTALL AND NOT BOOST_SUPERPROJECT_VERSION)
     install(TARGETS boost_url
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
@@ -109,7 +120,9 @@ if(BOOST_URL_INSTALL AND NOT BOOST_SUPERPROJECT_VERSION)
     )
 endif()
 
-
+#####################################################################
+# Tests
+#####################################################################
 if(BOOST_URL_BUILD_TESTS)
     add_subdirectory(test)
 endif()
