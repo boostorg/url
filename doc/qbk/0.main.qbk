@@ -57,7 +57,7 @@
 [def __string_view__            [link url.ref.boost__urls__string_view `string_view`]]
 [def __url__                    [link url.ref.boost__urls__url `url`]]
 [def __url_view__               [link url.ref.boost__urls__url_view `url_view`]]
-[def __grammar__parse__         [link url.ref.boost__urls__grammar__parse `parse_uri`]]
+[def __grammar__parse__         [link url.ref.boost__urls__grammar__parse `parse`]]
 
 [/ Dingbats ]
 
