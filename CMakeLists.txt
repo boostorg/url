@@ -24,6 +24,8 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
 endif()
 
 if(BOOST_URL_IS_ROOT)
+    # Prevent CTest added targets
+    set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
     include(CTest)
 endif()
 if(NOT BOOST_SUPERPROJECT_VERSION)
