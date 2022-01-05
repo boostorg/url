@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_REG_NAME_BNF_HPP
-#define BOOST_URL_RFC_REG_NAME_BNF_HPP
+#ifndef BOOST_URL_RFC_REG_NAME_RULE_HPP
+#define BOOST_URL_RFC_REG_NAME_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>

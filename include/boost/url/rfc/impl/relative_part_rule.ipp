@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_RELATIVE_PART_BNF_IPP
-#define BOOST_URL_IMPL_RELATIVE_PART_BNF_IPP
+#ifndef BOOST_URL_IMPL_RELATIVE_PART_RULE_IPP
+#define BOOST_URL_IMPL_RELATIVE_PART_RULE_IPP
 
 #include <boost/url/rfc/relative_part_rule.hpp>
 #include <boost/url/grammar/parse.hpp>

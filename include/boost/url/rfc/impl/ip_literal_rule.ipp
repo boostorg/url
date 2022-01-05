@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_IP_LITERAL_BNF_IPP
-#define BOOST_URL_IMPL_IP_LITERAL_BNF_IPP
+#ifndef BOOST_URL_IMPL_IP_LITERAL_RULE_IPP
+#define BOOST_URL_IMPL_IP_LITERAL_RULE_IPP
 
 #include <boost/url/rfc/ip_literal_rule.hpp>
 #include <boost/url/ipv6_address.hpp>

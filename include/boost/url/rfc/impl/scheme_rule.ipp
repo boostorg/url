@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_SCHEME_BNF_IPP
-#define BOOST_URL_IMPL_SCHEME_BNF_IPP
+#ifndef BOOST_URL_IMPL_SCHEME_RULE_IPP
+#define BOOST_URL_IMPL_SCHEME_RULE_IPP
 
 #include <boost/url/rfc/scheme_rule.hpp>
 #include <boost/url/grammar/parse.hpp>

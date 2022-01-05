@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_PORT_BNF_IPP
-#define BOOST_URL_IMPL_PORT_BNF_IPP
+#ifndef BOOST_URL_IMPL_PORT_RULE_IPP
+#define BOOST_URL_IMPL_PORT_RULE_IPP
 
 #include <boost/url/rfc/port_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>

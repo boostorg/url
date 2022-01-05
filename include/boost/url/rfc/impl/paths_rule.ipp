@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_PATHS_BNF_IPP
-#define BOOST_URL_RFC_IMPL_PATHS_BNF_IPP
+#ifndef BOOST_URL_RFC_IMPL_PATHS_RULE_IPP
+#define BOOST_URL_RFC_IMPL_PATHS_RULE_IPP
 
 #include <boost/url/rfc/paths_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
