@@ -13,7 +13,7 @@
 #include <boost/url/rfc/ipv_future_rule.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/token.hpp>
+#include <boost/url/grammar/token_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>
 
 namespace boost {
@@ -37,8 +37,10 @@ parse(
         {
         }
     };
-    grammar::token<grammar::hexdig_chars_t> major;
-    grammar::token<minor_chars_t> minor;
+    grammar::token_rule<
+        grammar::hexdig_chars_t> major;
+    grammar::token_rule<
+        minor_chars_t> minor;
     if(! parse(it, end, ec,
         'v',
         major,

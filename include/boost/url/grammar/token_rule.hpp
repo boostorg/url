@@ -7,8 +7,8 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_URL_GRAMMAR_TOKEN_HPP
-#define BOOST_URL_GRAMMAR_TOKEN_HPP
+#ifndef BOOST_URL_GRAMMAR_TOKEN_RULE_HPP
+#define BOOST_URL_GRAMMAR_TOKEN_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/grammar/charset.hpp>
@@ -20,10 +20,15 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** BNF for a series of characters in a char set
+/** Rule for 1 or more characters from a character set
+
+    @par BNF
+    @code
+    token     = 1*( ch )
+    @endcode
 */
 template<class CharSet>
-struct token
+struct token_rule
 {
     using value_type = string_view;
 
@@ -45,12 +50,22 @@ struct token
         char const*& it,
         char const* end,
         error_code& ec,
-        token& t) noexcept
+        token_rule& t) noexcept
     {
         ec = {};
         auto const start = it;
         static constexpr CharSet cs{};
-        it = grammar::find_if_not(it, end, cs);
+        if(it == end)
+        {
+            ec = error::incomplete;
+            return false;
+        }
+        it = find_if_not(it, end, cs);
+        if(it == start)
+        {
+            ec = error::syntax;
+            return false;
+        }
         t.s_ = string_view(start, it - start);
         return true;
     }

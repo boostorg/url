@@ -17,6 +17,6 @@
 #include <boost/url/grammar/lut_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/range.hpp>
-#include <boost/url/grammar/token.hpp>
+#include <boost/url/grammar/token_rule.hpp>
 
 #endif

@@ -49,7 +49,7 @@ set(BOOST_URL_TESTS_FILES
     grammar/lut_chars.cpp
     grammar/parse.cpp
     grammar/range.cpp
-    grammar/token.cpp
+    grammar/token_rule.cpp
     rfc/absolute_uri_rule.cpp
     rfc/authority_rule.cpp
     rfc/charsets.cpp
