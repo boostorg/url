@@ -71,7 +71,7 @@ enum class condition
     fatal = 1
 };
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 

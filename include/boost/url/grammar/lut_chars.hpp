@@ -393,7 +393,7 @@ public:
 #endif
 };
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 

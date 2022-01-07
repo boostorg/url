@@ -209,7 +209,7 @@ end() const ->
         s_, increment_);
 }
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 

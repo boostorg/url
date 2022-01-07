@@ -179,7 +179,7 @@ find_if_not_pred(
 #endif
 
 } // detail
-} // bnf
+} // grammar
 } // urls
 } // boost
 

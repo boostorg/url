@@ -141,6 +141,6 @@ TEST_SUITE(
     char_set_test,
     "boost.url.charset");
 
-} // bnf
+} // grammar
 } // urls
 } // boost

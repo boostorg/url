@@ -549,7 +549,7 @@ find_if_not(
         detail::has_find_if_not<CharSet>{});
 }
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 

@@ -17,7 +17,7 @@ namespace urls {
 namespace grammar {
 
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 

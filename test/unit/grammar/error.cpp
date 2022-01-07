@@ -60,6 +60,6 @@ TEST_SUITE(
     error_test,
     "boost.url.bnf.error");
 
-} // bnf
+} // grammar
 } // urls
 } // boost

@@ -115,7 +115,7 @@ parse_string(
     BOOST_ASSERT(! ec.failed());
 }
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 

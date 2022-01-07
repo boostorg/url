@@ -29,6 +29,6 @@ TEST_SUITE(
     parse_test,
     "boost.url.parse");
 
-} // bnf
+} // grammar
 } // urls
 } // boost

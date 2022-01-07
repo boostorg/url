@@ -43,7 +43,7 @@ error_condition
 make_error_condition(
     condition c) noexcept;
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 

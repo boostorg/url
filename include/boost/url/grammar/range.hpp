@@ -216,7 +216,7 @@ private:
     fp_t increment_ = nullptr;
 };
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 

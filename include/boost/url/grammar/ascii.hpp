@@ -44,7 +44,7 @@ ascii_tolower(char c) noexcept
         ? c + 'a' - 'A' : c;
 }
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 

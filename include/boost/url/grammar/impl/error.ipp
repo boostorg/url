@@ -78,7 +78,7 @@ make_error_condition(
         std::underlying_type<condition>::type>(c), cat};
 }
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 

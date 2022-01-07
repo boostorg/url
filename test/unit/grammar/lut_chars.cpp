@@ -79,6 +79,6 @@ TEST_SUITE(
     lut_chars_test,
     "boost.url.bnf.lut_chars");
 
-} // bnf
+} // grammar
 } // urls
 } // boost

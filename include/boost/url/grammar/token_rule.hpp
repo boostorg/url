@@ -71,7 +71,7 @@ struct token_rule
     }
 };
 
-} // bnf
+} // grammar
 } // urls
 } // boost
 
