@@ -81,43 +81,36 @@ parse(
 
 //------------------------------------------------
 
-template<
-    class V,
-    class R>
-class range<V, R>::iterator
+template<class R>
+class range_base<R>::iterator
 {
-    friend class range<V,R>;
+    friend class range_base<R>;
 
     char const* next_ = nullptr;
     char const* end_ = nullptr;
-    fp_t increment_ = nullptr;
-    R v_;
+    typename R::reference v_;
 
-    iterator(
-        string_view s,
-        fp_t begin,
-        fp_t increment)
+    explicit
+    iterator(string_view s)
         : next_(s.data())
         , end_(s.data() + s.size())
-        , increment_(increment)
     {
         error_code ec;
-        begin(next_, end_, ec, v_);
+        R::begin(next_, end_, ec, v_);
         BOOST_ASSERT(! ec.failed());
     }
 
     iterator(
         string_view s,
-        fp_t increment) noexcept
+        int) noexcept
         : next_(nullptr)
         , end_(s.data() + s.size())
-        , increment_(increment)
     {
     }
 
 public:
-    using value_type = V;
-    using reference = R;
+    using value_type = typename R::value_type;
+    using reference = typename R::reference;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
@@ -130,7 +123,7 @@ public:
         iterator const&) noexcept = default;
 
     reference
-    operator*()
+    operator*() const noexcept
     {
         return v_;
     }
@@ -139,10 +132,6 @@ public:
     operator==(
         iterator other) const noexcept
     {
-        BOOST_ASSERT(
-            increment_ ==
-            other.increment_);
-
         return
             next_ == other.next_ &&
             end_ == other.end_;
@@ -152,10 +141,6 @@ public:
     operator!=(
         iterator other) const noexcept
     {
-        BOOST_ASSERT(
-            increment_ ==
-            other.increment_);
-
         return
             next_ != other.next_ ||
             end_ != other.end_;
@@ -166,7 +151,7 @@ public:
     {
         BOOST_ASSERT(next_ != nullptr);
         error_code ec;
-        increment_(next_, end_, ec, v_);
+        R::increment(next_, end_, ec, v_);
         if(ec == error::end)
             next_ = nullptr;
         else
@@ -185,29 +170,80 @@ public:
 
 //------------------------------------------------
 
-template<
-    class V,
-    class R>
+template<class R>
 auto
-range<V, R>::
+range_base<R>::
 begin() const ->
     iterator
 {
-    return iterator(
-        s_, begin_, increment_);
+    return iterator(s_);
 }
 
-template<
-    class V,
-    class R>
+template<class R>
 auto
-range<V, R>::
+range_base<R>::
 end() const ->
     iterator
 {
-    return iterator(
-        s_, increment_);
+    return iterator(s_, 1);
 }
+
+template<class R>
+bool
+range_base<R>::
+parse(
+    char const*& it,
+    char const* const end,
+    error_code& ec,
+    std::size_t N,
+    std::size_t M)
+{
+    std::size_t n = 0;
+    auto const start = it;
+    typename range<R>::reference v;
+
+    if(! R::begin(it, end, ec, v))
+    {
+        if(ec != error::end)
+            return false;
+        if(n < N)
+        {
+            // too few
+            ec = error::syntax;
+            return false;
+        }
+
+        ec = {};
+        n_ = n;
+        s_ = string_view(
+            start, it - start);
+        return true;
+    }
+
+    for(;;)
+    {
+        ++n;
+        if(! R::increment(it, end, ec, v))
+        {
+            if(ec != error::end)
+                return false;
+            ec = {};
+            break;
+        }
+        if(n > M)
+        {
+            // too many
+            ec = error::syntax;
+            return false;
+        }
+    }
+
+    n_ = n;
+    s_ = string_view(start, it - start);
+    return true;
+}
+
+//------------------------------------------------
 
 } // grammar
 } // urls

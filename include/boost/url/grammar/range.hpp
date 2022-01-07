@@ -105,20 +105,26 @@ public:
 
 //------------------------------------------------
 
-template<
-    class ValueType,
-    class ReferenceType = ValueType>
-class range
+/** Rule for a repeating number of rules.
+*/
+template<class R>
+class range_base
 {
-public:
-    /** The type of begin and increment function pointers
-    */
-    typedef bool (*fp_t)(
-        char const*&,
-        char const*,
-        error_code&,
-        ValueType&);
+    string_view s_;
+    std::size_t n_ = 0;
 
+protected:
+    /** Parse a range
+    */
+    bool
+    parse(
+        char const*& it,
+        char const* end,
+        error_code& ec,
+        std::size_t N,
+        std::size_t M);
+
+public:
 #ifdef BOOST_URL_DOCS
     /** A read-only forward iterator
     */
@@ -129,15 +135,15 @@ public:
 
     /** The type of value returned when dereferencing an iterator.
     */
-    using value_type = ValueType;
+    using value_type = typename R::value_type;
 
     /** The type of value returned when dereferencing an iterator.
     */
-    using reference = ReferenceType;
+    using reference = typename R::reference;
 
     /** The type of value returned when dereferencing an iterator.
     */
-    using const_reference = ReferenceType;
+    using const_reference = reference;
 
     /** An unsigned integer type used to represent size.
     */
@@ -149,31 +155,17 @@ public:
 
     /** Copy constructor.
     */
-    range(range const&) = default;
+    range_base(range_base const&) = default;
 
     /** Copy assignment.
     */
-    range& operator=(range const&) = default;
+    range_base& operator=(range_base const&) = default;
 
     /** Constructor
 
         Default constructed ranges are empty.
     */
-    range() = default;
-
-    /** Constructor
-    */
-    range(
-        string_view s,
-        std::size_t n,
-        fp_t begin,
-        fp_t increment) noexcept
-        : s_(s)
-        , n_(n)
-        , begin_(begin)
-        , increment_(increment)
-    {
-    }
+    range_base() = default;
 
     /** Return the underlying string.
     */
@@ -208,12 +200,58 @@ public:
     {
         return n_;
     }
+};
 
-private:
-    string_view s_;
-    std::size_t n_ = 0;
-    fp_t begin_ = nullptr;
-    fp_t increment_ = nullptr;
+//------------------------------------------------
+
+/** Rule for a repeating number of rules.
+
+    This rule defines a sequence containing
+    at least N and at most M of R.
+
+    @par BNF
+    @code
+    range           =  <n>*<m>element
+
+    *<m>element     => <0>*<m>element
+    <n>*element     => <n>*<inf.>element
+    *element        => <0>*<inf.>element
+    <n>element      => <n>*<n>element
+    [ element ]     => *1( element )
+    @endcode
+
+    @tparam Element The element type to repeat
+    @tparam N The minimum number of repetitions, which may be zero
+    @tparam M The maximum number of repetitions.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#section-3.6"
+        >3.6. Variable Repetition: *Rule</a>
+*/
+template<
+    class R,
+    std::size_t N = 0,
+    std::size_t M = std::size_t(-1)>
+class range : public range_base<R>
+{
+    BOOST_STATIC_ASSERT(
+        M >= N ||
+        (N == M && N > 0));
+
+public:
+    /** Parse a range
+    */
+    friend
+    bool
+    parse(
+        char const*& it,
+        char const* end,
+        error_code& ec,
+        range& t)
+    {
+        return t.parse(
+            it, end, ec, N, M);
+    }
 };
 
 } // grammar

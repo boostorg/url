@@ -46,23 +46,21 @@ namespace urls {
 */
 struct query_rule
 {
-    using value_type =
-        grammar::range<query_param_view>;
+    using value_type = query_param;
+    using reference = query_param_view;
 
-    value_type v;
+    grammar::range<query_rule> v;
 
-    BOOST_URL_DECL
     friend
     bool
     parse(
         char const*& it,
         char const* const end,
         error_code& ec,
-        query_rule& t) noexcept;
-
-private:
-    struct key_chars;
-    struct value_chars;
+        query_rule& t)
+    {
+        return parse(it, end, ec, t.v);
+    }
 
     BOOST_URL_DECL
     static
@@ -71,7 +69,7 @@ private:
         char const*& it,
         char const* const end,
         error_code& ec,
-        query_param_view& t) noexcept;
+        reference& t) noexcept;
 
     BOOST_URL_DECL
     static
@@ -80,8 +78,14 @@ private:
         char const*& it,
         char const* const end,
         error_code& ec,
-        query_param_view& t) noexcept;
+        reference& t) noexcept;
+
+private:
+    struct key_chars;
+    struct value_chars;
 };
+
+//------------------------------------------------
 
 /** BNF for query-part
 

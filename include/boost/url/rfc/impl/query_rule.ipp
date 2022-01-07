@@ -46,42 +46,6 @@ struct query_rule::value_chars
     }
 };
 
-bool
-parse(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    query_rule& t) noexcept
-{
-    std::size_t n = 1;
-    auto const start = it;
-    query_rule::value_type::value_type v;
-
-    if(! query_rule::begin(
-        it, end, ec, v))
-        return false;
-    for(;;)
-    {
-        if(! query_rule::increment(
-            it, end, ec, v))
-        {
-            if(ec != grammar::error::end)
-                return false;
-            ec = {};
-            break;
-        }
-        ++n;
-    }
-
-    t.v = query_rule::value_type(
-        string_view(
-            start, it - start),
-        n,
-        &query_rule::begin,
-        &query_rule::increment);
-    return true;
-}
-
 //------------------------------------------------
 
 bool
