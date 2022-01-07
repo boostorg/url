@@ -183,7 +183,7 @@
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__grammar__lut_chars">lut_chars</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__range">range</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__token">token</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__token_rule">token_rule</link></member>
         </simplelist>
         <bridgehead renderas="sect3">CharSets</bridgehead>
         <simplelist type="vert" columns="1">
@@ -212,6 +212,7 @@
           <member><link linkend="url.ref.boost__urls__grammar__find_if_not">find_if_not</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__hexdig_value">hexdig_value</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__parse">parse</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__parse_all">parse_all</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__parse_string">parse_string</link></member>
         </simplelist>
         <bridgehead renderas="sect3">Type Traits</bridgehead>

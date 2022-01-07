@@ -43,30 +43,58 @@ parse(
     return true;
 }
 
+//------------------------------------------------
+
 template<
-    class T0,
-    class T1,
-    class... Tn>
+    class R1,
+    class R2,
+    class... Rn>
 bool
 parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    T0&& t0,
-    T1&& t1,
-    Tn&&... tn)
+    R1&& r1,
+    R2&& r2,
+    Rn&&... rn)
 {
     if(! parse(
         it, end, ec,
-        std::forward<T0>(t0)))
+        std::forward<R1>(r1)))
         return false;
     if(! parse(
         it, end, ec,
-        std::forward<T1>(t1),
-        std::forward<Tn>(tn)...))
+        std::forward<R2>(r2),
+        std::forward<Rn>(rn)...))
         return false;
     return true;
 }
+
+//------------------------------------------------
+
+template<
+    class R1,
+    class... Rn>
+bool
+parse_all(
+    char const*& it,
+    char const* const end,
+    error_code& ec,
+    R1&& r1,
+    Rn&&... rn)
+{
+    auto const it0 = it;
+    if(! parse(it, end, ec,
+        std::forward<R1>(r1),
+        std::forward<Rn>(rn)...))
+    {
+        it = it0;
+        return false;
+    }
+    return true;
+}
+
+//------------------------------------------------
 
 template<
     class T0,
@@ -94,6 +122,8 @@ parse_string(
     }
     return true;
 }
+
+//------------------------------------------------
 
 template<
     class T0,

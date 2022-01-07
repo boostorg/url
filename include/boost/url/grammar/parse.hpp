@@ -95,10 +95,11 @@ parse(
 
     @par Example
     @code
-    using grammar::parse;
-    if (parse(it, end, ec, r1, r2, r3)) {
-      std::cout << "Range [it, end) parsed successfully\n";
-    }
+        using grammar::parse;
+        if (parse(it, end, ec, r1, r2, r3))
+        {
+            std::cout << "Range [it, end) parsed successfully\n";
+        }
     @endcode
 
     @par Exception Safety
@@ -119,22 +120,39 @@ parse(
 
     @param r2 Second grammar rule object
 
-    @param rs Extra grammar rule objects
+    @param rn Extra grammar rule objects
 
 */
 template<
-    class R0,
     class R1,
-    class... Rs
+    class R2,
+    class... Rn
 >
 bool
 parse(
     char const*& it,
     char const* end,
     error_code& ec,
-    R0&& r1,
-    R1&& r2,
-    Rs&&... rs
+    R1&& r1,
+    R2&& r2,
+    Rn&&... rn
+);
+
+/** Parse all rules in sequence
+
+    If the parse fails, `it` is unchanged.
+*/
+template<
+    class R1,
+    class... Rn
+>
+bool
+parse_all(
+    char const*& it,
+    char const* end,
+    error_code& ec,
+    R1&& r1,
+    Rn&&... rn
 );
 
 /** Parse a sequence of grammar rules

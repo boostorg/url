@@ -220,7 +220,7 @@ public:
     [ element ]     => *1( element )
     @endcode
 
-    @tparam Element The element type to repeat
+    @tparam R The rule to repeat
     @tparam N The minimum number of repetitions, which may be zero
     @tparam M The maximum number of repetitions.
 
