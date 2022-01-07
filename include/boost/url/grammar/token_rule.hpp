@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/grammar/charset.hpp>
-#include <boost/url/error.hpp>
+#include <boost/url/grammar/error.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/static_assert.hpp>
 
@@ -30,18 +30,18 @@ namespace grammar {
 template<class CharSet>
 struct token_rule
 {
-    using value_type = string_view;
+    using value_type = std::string;
+    using reference = string_view;
 
-    value_type&
+    BOOST_STATIC_ASSERT(
+        is_charset<CharSet>::value);
+
+    string_view s;
+
+    reference
     operator*() noexcept
     {
-        return s_;
-    }
-
-    value_type*
-    operator->() noexcept
-    {
-        return &**this;
+        return s;
     }
 
     friend
@@ -57,25 +57,18 @@ struct token_rule
         static constexpr CharSet cs{};
         if(it == end)
         {
-            ec = error::incomplete;
+            ec = grammar::error::incomplete;
             return false;
         }
-        it = find_if_not(it, end, cs);
+        it = (find_if_not)(it, end, cs);
         if(it == start)
         {
-            ec = error::syntax;
+            ec = grammar::error::syntax;
             return false;
         }
-        t.s_ = string_view(start, it - start);
+        t.s = string_view(start, it - start);
         return true;
     }
-
-private:
-    BOOST_STATIC_ASSERT(
-        is_charset<
-            CharSet>::value);
-
-    value_type s_;
 };
 
 } // bnf
