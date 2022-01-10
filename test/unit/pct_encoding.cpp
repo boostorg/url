@@ -118,7 +118,7 @@ public:
             }
             // pct_decode_to_value()
             {
-                string_value s =
+                const_string s =
                     pct_decode_to_value(
                         s0, opt, *pcs);
                 BOOST_TEST(s == s1);
@@ -126,7 +126,7 @@ public:
             // pct_decode_to_value(Allocator)
             {
                 static_pool<256> p;
-                string_value s =
+                const_string s =
                     pct_decode_to_value(
                         s0, opt, *pcs,
                             p.allocator());

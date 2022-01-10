@@ -88,7 +88,7 @@ public:
             sv = f(s).value().decoded(sp.allocator()));
         // forward
         {
-            std::vector<string_value> v1;
+            std::vector<const_string> v1;
             std::copy(
                 sv.begin(),
                 sv.end(),
@@ -97,7 +97,7 @@ public:
         }
         // reverse
         {
-            std::vector<string_value> v1;
+            std::vector<const_string> v1;
             std::copy(
                 reverse(sv.end()),
                 reverse(sv.begin()),

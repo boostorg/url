@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/const_string.hpp>
 #include <boost/url/grammar/parse_tag.hpp>
 #include <array>
 #include <cstdint>
@@ -185,7 +185,7 @@ public:
         string will use. If this parameter is omitted,
         the default allocator is used.
 
-        @return A @ref string_value using the
+        @return A @ref const_string using the
         specified allocator.
 
         @par Specification
@@ -194,13 +194,13 @@ public:
     */
     template<class Allocator =
         std::allocator<char>>
-    string_value
+    const_string
     to_string(Allocator const& a = {}) const
     {
         char buf[max_str_len];
         auto const n = print_impl(buf);
         char* dest;
-        string_value s(n, a, dest);
+        const_string s(n, a, dest);
         std::memcpy(dest, buf, n);
         return s;
     }

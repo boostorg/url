@@ -11,19 +11,20 @@
 #define BOOST_URL_IMPL_STRING_HPP
 
 #include <boost/url/detail/over_allocator.hpp>
+#include <atomic>
 
 namespace boost {
 namespace urls {
 
-struct string_value::base
+struct const_string::base
 {
-    std::size_t refs = 1;
+    std::atomic<std::size_t> refs{1};
     virtual void destroy() noexcept = 0;
 };
 
 template<class Allocator>
 auto
-string_value::
+const_string::
 construct(
     std::size_t n,
     Allocator const& a,
@@ -75,8 +76,8 @@ construct(
     return p;
 }
 
-string_value::
-~string_value()
+const_string::
+~const_string()
 {
     if( p_ &&
         --p_->refs == 0)
@@ -84,8 +85,8 @@ string_value::
 }
 
 template<class Allocator>
-string_value::
-string_value(
+const_string::
+const_string(
     std::size_t n,
     Allocator const& a,
     char*& dest)
@@ -94,8 +95,8 @@ string_value(
 }
 
 template<class Allocator>
-string_value::
-string_value(
+const_string::
+const_string(
     string_view s,
     Allocator const& a)
 {
@@ -106,9 +107,9 @@ string_value(
         s.data(), s.size());
 }
 
-string_value::
-string_value(
-    string_value const& other) noexcept
+const_string::
+const_string(
+    const_string const& other) noexcept
     : string_view(other)
     , p_(other.p_)
 {
@@ -116,10 +117,10 @@ string_value(
         ++p_->refs;
 }
 
-string_value&
-string_value::
+const_string&
+const_string::
 operator=(
-    string_value const& other) & noexcept
+    const_string const& other) & noexcept
 {
     if( p_ &&
         --p_->refs == 0)
@@ -134,7 +135,7 @@ operator=(
 
 //------------------------------------------------
 
-class string_value::allocator
+class const_string::allocator
 {
     struct base
     {
@@ -146,7 +147,7 @@ class string_value::allocator
         }
 
         virtual
-        string_value
+        const_string
         alloc(
             std::size_t n,
             char*& dest) = 0;
@@ -214,12 +215,12 @@ public:
             {
             }
 
-            string_value
+            const_string
             alloc(
                 std::size_t n,
                 char*& dest) override
             {
-                return string_value(
+                return const_string(
                     n, a_, dest);
             }
 
@@ -235,8 +236,8 @@ public:
         p_ = ::new(al.allocate(1)) impl(al);
     }
 
-    string_value
-    make_string_value(
+    const_string
+    make_const_string(
         std::size_t n,
         char*& dest) const
     {

@@ -53,7 +53,7 @@
 [def __result__                 [link url.ref.boost__urls__result `result`]]
 [def __static_pool__            [link url.ref.boost__urls__static_pool `static_pool`]]
 [def __static_url__             [link url.ref.boost__urls__static_url `static_url`]]
-[def __string_value__           [link url.ref.boost__urls__string_value `string_value`]]
+[def __const_string__           [link url.ref.boost__urls__const_string `const_string`]]
 [def __string_view__            [link url.ref.boost__urls__string_view `string_view`]]
 [def __url__                    [link url.ref.boost__urls__url `url`]]
 [def __url_view__               [link url.ref.boost__urls__url_view `url_view`]]

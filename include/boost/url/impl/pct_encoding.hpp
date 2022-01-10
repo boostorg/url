@@ -193,7 +193,7 @@ pct_decode(
 template<
     class CharSet,
     class Allocator>
-string_value
+const_string
 pct_decode_to_value(
     string_view s,
     pct_decode_opts const& opt,
@@ -205,7 +205,7 @@ pct_decode_to_value(
         grammar::is_charset<CharSet>::value);
 
     if(s.empty())
-        return string_value();
+        return const_string();
     error_code ec;
     auto const n =
         validate_pct_encoding(
@@ -214,7 +214,7 @@ pct_decode_to_value(
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
     char* dest;
-    string_value r(n, a, dest);
+    const_string r(n, a, dest);
     pct_decode_unchecked(
         dest, dest + n, s, opt);
     return r;
@@ -223,7 +223,7 @@ pct_decode_to_value(
 //------------------------------------------------
 
 template<class Allocator>
-string_value
+const_string
 pct_decode_unchecked(
     string_view s,
     pct_decode_opts const& opt,
@@ -234,7 +234,7 @@ pct_decode_unchecked(
         decoded_size =
             pct_decode_bytes_unchecked(s);
     char* dest;
-    string_value r(
+    const_string r(
         decoded_size, a, dest);
     pct_decode_unchecked(
         dest, dest + decoded_size,
@@ -408,7 +408,7 @@ pct_encode(
 template<
     class CharSet,
     class Allocator>
-string_value
+const_string
 pct_encode_to_value(
     string_view s,
     pct_encode_opts const& opt,
@@ -420,11 +420,11 @@ pct_encode_to_value(
         grammar::is_charset<CharSet>::value);
 
     if(s.empty())
-        return string_value();
+        return const_string();
     auto const n =
         pct_encode_bytes(s, opt, cs);
     char* dest;
-    string_value r(n, a, dest);
+    const_string r(n, a, dest);
     char const* end = dest + n;
     auto const n1 = pct_encode(
         dest, end, s, opt, cs);

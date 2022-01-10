@@ -24,7 +24,7 @@ class params_view::iterator
     char const* p_ = nullptr;
     std::size_t nk_ = 0;
     std::size_t nv_ = 0;
-    string_value::allocator a_;
+    const_string::allocator a_;
     bool first_ = true;
 
     friend class params_view;
@@ -33,13 +33,13 @@ class params_view::iterator
 
     iterator(
         string_view s,
-        string_value::allocator a) noexcept;
+        const_string::allocator a) noexcept;
 
     // end
     iterator(
         string_view s,
         int,
-        string_value::allocator a) noexcept;
+        const_string::allocator a) noexcept;
 
     string_view
     encoded_key() const noexcept;

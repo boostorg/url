@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/const_string.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <memory>
@@ -227,7 +227,7 @@ pct_decode(
     the given percent-encoded string, by
     converting escape sequences into their
     character equivalent.
-    The result is returned as a @ref string_value
+    The result is returned as a @ref const_string
     the optionally specified allocator.
 
     @par Exception Safety
@@ -270,7 +270,7 @@ pct_decode(
 template<
     class CharSet = reserved_chars_t,
     class Allocator = std::allocator<char> >
-string_value
+const_string
 pct_decode_to_value(
     string_view s,
     pct_decode_opts const& opt = {},
@@ -377,7 +377,7 @@ pct_decode_unchecked(
 */
 template<class Allocator =
     std::allocator<char> >
-string_value
+const_string
 pct_decode_unchecked(
     string_view s,
     pct_decode_opts const& opt = {},
@@ -580,7 +580,7 @@ pct_encode(
     the given plain string, by escaping all
     characters that are not in the specified
     <em>CharSet</em>.
-    The result is returned as a @ref string_value
+    The result is returned as a @ref const_string
     using the optionally specified allocator.
 
     @par Example
@@ -588,7 +588,7 @@ pct_encode(
     pct_encode_opts opt;
     opt.space_to_plus = true;
 
-    string_value s = pct_encode_to_value( "My Stuff", pchars, opt );
+    const_string s = pct_encode_to_value( "My Stuff", pchars, opt );
 
     assert( s == "My+Stuff" );
     @endcode
@@ -596,7 +596,7 @@ pct_encode(
     @par Exception Safety
     Calls to allocate may throw.
 
-    @return A @ref string_value holding the
+    @return A @ref const_string holding the
     encoded string.
 
     @param s The string to encode.
@@ -623,7 +623,7 @@ pct_encode(
 template<
     class CharSet = reserved_chars_t,
     class Allocator = std::allocator<char> >
-string_value
+const_string
 pct_encode_to_value(
     string_view s,
     pct_encode_opts const& opt = {},

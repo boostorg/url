@@ -11,7 +11,7 @@
 #define BOOST_URL_PARAMS_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/const_string.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <iterator>
 #include <type_traits>
@@ -32,7 +32,7 @@ class params_view
 
     string_view s_;
     std::size_t n_;
-    string_value::allocator a_;
+    const_string::allocator a_;
 
     template<class Allocator>
     params_view(
@@ -46,8 +46,8 @@ public:
     class value_type
     {
     public:
-        string_value key;
-        string_value value;
+        const_string key;
+        const_string value;
         bool has_value;
 
         BOOST_URL_DECL
@@ -74,7 +74,7 @@ public:
             char const* s,
             std::size_t nk,
             std::size_t nv,
-            string_value::allocator a);
+            const_string::allocator a);
     };
 
     using reference = value_type;
@@ -89,7 +89,7 @@ public:
     //--------------------------------------------
 
     BOOST_URL_DECL
-    string_value
+    const_string
     at(string_view key) const;
 
     //--------------------------------------------

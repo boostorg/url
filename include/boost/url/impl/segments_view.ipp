@@ -25,7 +25,7 @@ iterator::
 iterator(
     string_view s,
     std::size_t nseg,
-    string_value::allocator const& a) noexcept
+    const_string::allocator const& a) noexcept
     : begin_(s.data())
     , pos_(s.data())
     , next_(s.data())
@@ -54,7 +54,7 @@ iterator::
 iterator(
     string_view s,
     std::size_t nseg,
-    string_value::
+    const_string::
         allocator const& a,
     int) noexcept
     : i_(nseg)
@@ -84,13 +84,13 @@ operator=(
     iterator const&) noexcept ->
         iterator& = default;
 
-string_value
+const_string
 segments_view::
 iterator::
 operator*() const noexcept
 {
     char* dest;
-    auto s = a_.make_string_value(
+    auto s = a_.make_const_string(
         t_.decoded_size, dest);
     pct_decode_opts opt;
     opt.plus_to_space = false;

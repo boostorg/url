@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/string.hpp>
+#include <boost/url/const_string.hpp>
 
 #include "test_suite.hpp"
 
@@ -26,7 +26,7 @@ public:
     void
     run()
     {
-        string_value sv("hello");
+        const_string sv("hello");
         auto sv2 = sv;
         BOOST_TEST(sv2 == sv);
         sv = {};

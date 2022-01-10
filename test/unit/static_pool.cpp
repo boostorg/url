@@ -10,7 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/static_pool.hpp>
 
-#include <boost/url/string.hpp>
+#include <boost/url/const_string.hpp>
 #include "test_suite.hpp"
 
 #include <iostream>
@@ -24,13 +24,13 @@ public:
     template<class Allocator =
         std::allocator<char>>
     static
-    string_value
+    const_string
     make_string(
         string_view s,
         Allocator const& a = {})
     {
         char* dest;
-        string_value sv(
+        const_string sv(
             s.size(), a, dest);
         std::memcpy(dest,
             s.data(), s.size());

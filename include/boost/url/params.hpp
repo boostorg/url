@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/query_param.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/const_string.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <initializer_list>
 #include <iterator>
@@ -35,7 +35,7 @@ class params
     friend class params_encoded;
 
     url* u_ = nullptr;
-    string_value::allocator a_;
+    const_string::allocator a_;
 
     template<class Allocator>
     params(
@@ -77,7 +77,7 @@ public:
             char const* s,
             std::size_t nk,
             std::size_t nv,
-            string_value::allocator a);
+            const_string::allocator a);
 
     public:
         /** The query key.
@@ -86,7 +86,7 @@ public:
             holds the query key with percent-decoding
             applied.
         */
-        string_value key;
+        const_string key;
 
         /** The query value.
 
@@ -95,7 +95,7 @@ public:
             applied. The field @ref has_value indicates
             if the query value is defined.
         */
-        string_value value;
+        const_string value;
 
         /** True if the query parameter has a value.
 
@@ -168,7 +168,7 @@ public:
     at(std::size_t pos) const;
 
     BOOST_URL_DECL
-    string_value
+    const_string
     at(string_view key) const;
 
     BOOST_URL_DECL

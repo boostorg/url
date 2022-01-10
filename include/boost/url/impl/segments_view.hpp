@@ -24,7 +24,7 @@ class segments_view::
     char const* pos_ = nullptr;
     char const* next_ = nullptr;
     char const* end_ = nullptr;
-    string_value::allocator a_;
+    const_string::allocator a_;
     pct_encoded_str t_;
 
     friend segments_view;
@@ -33,7 +33,7 @@ class segments_view::
     iterator(
         string_view s,
         std::size_t nseg,
-        string_value::
+        const_string::
             allocator const& a) noexcept;
 
     // end ctor
@@ -41,13 +41,13 @@ class segments_view::
     iterator(
         string_view s,
         std::size_t nseg,
-        string_value::
+        const_string::
             allocator const& a,
         int) noexcept;
 
 public:
-    using value_type = string_value;
-    using reference = string_value;
+    using value_type = const_string;
+    using reference = const_string;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
@@ -66,7 +66,7 @@ public:
         iterator const&) noexcept;
 
     BOOST_URL_DECL
-    string_value
+    const_string
     operator*() const noexcept;
 
     bool
@@ -146,7 +146,7 @@ is_absolute() const noexcept
 //
 //------------------------------------------------
 
-string_value
+const_string
 segments_view::
 front() const noexcept
 {
@@ -154,7 +154,7 @@ front() const noexcept
     return *begin();
 }
 
-string_value
+const_string
 segments_view::
 back() const noexcept
 {
