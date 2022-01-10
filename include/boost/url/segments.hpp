@@ -11,7 +11,7 @@
 #define BOOST_URL_SEGMENTS_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/const_string.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <initializer_list>
 #include <iterator>
@@ -67,7 +67,7 @@ class segments
     : private detail::parts_base
 {
     url* u_ = nullptr;
-    string_value::allocator a_;
+    const_string::allocator a_;
 
     friend class url;
 
@@ -97,11 +97,11 @@ public:
         a segment where ownership is retained
         in the copy.
     */
-    using value_type = string_value;
+    using value_type = const_string;
 
-    using reference = string_value;
+    using reference = const_string;
 
-    using const_reference = string_value;
+    using const_reference = const_string;
 
     /** An unsigned integer type
     */
@@ -234,7 +234,7 @@ public:
         element.
     */
     inline
-    string_value
+    const_string
     at(std::size_t i) const;
 
     /** Return an element
@@ -256,20 +256,20 @@ public:
         element.
     */
     BOOST_URL_DECL
-    string_value
+    const_string
     operator[](
         std::size_t i) const;
 
     /** Return the first element
     */
     inline
-    string_value
+    const_string
     front() const;
 
     /** Return the last element
     */
     inline
-    string_value
+    const_string
     back() const;
 
     //--------------------------------------------

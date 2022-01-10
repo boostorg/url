@@ -11,7 +11,7 @@
 #define BOOST_URL_SEGMENTS_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/string.hpp>
+#include <boost/url/const_string.hpp>
 #include <cstddef>
 #include <iosfwd>
 
@@ -32,7 +32,7 @@ class segments_view
 {
     string_view s_;
     std::size_t n_ = 0;
-    string_value::allocator a_;
+    const_string::allocator a_;
 
     friend class url_view;
     friend class segments_encoded_view;
@@ -54,15 +54,15 @@ public:
 
     /** The type of value returned when dereferencing an iterator.
     */
-    using value_type = string_value;
+    using value_type = const_string;
 
     /** The type of value returned when dereferencing an iterator.
     */
-    using reference = string_value;
+    using reference = const_string;
 
     /** The type of value returned when dereferencing an iterator.
     */
-    using const_reference = string_value;
+    using const_reference = const_string;
 
     /** The unsigned integer type used to represent size.
     */
@@ -104,13 +104,13 @@ public:
     /** Return the first element.
     */
     inline
-    string_value
+    const_string
     front() const noexcept;
 
     /** Return the last element.
     */
     inline
-    string_value
+    const_string
     back() const noexcept;
 
     //--------------------------------------------

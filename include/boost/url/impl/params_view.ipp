@@ -44,7 +44,7 @@ value_type(
     char const* s,
     std::size_t nk,
     std::size_t const nv,
-    string_value::allocator a)
+    const_string::allocator a)
 {
     if(nk + nv == 0)
     {
@@ -61,7 +61,7 @@ value_type(
         auto n =
             pct_decode_bytes_unchecked(ev);
         char *dest;
-        value = a.make_string_value(
+        value = a.make_const_string(
             n, dest);
         pct_decode_unchecked(
             dest, dest + n, ev);
@@ -75,7 +75,7 @@ value_type(
     auto n =
         pct_decode_bytes_unchecked(ek);
     char* dest;
-    key = a.make_string_value(n, dest);
+    key = a.make_const_string(n, dest);
     pct_decode_unchecked(
         dest, dest + nk, ek);
 }
@@ -119,7 +119,7 @@ params_view::
 iterator::
 iterator(
     string_view s,
-    string_value::allocator a) noexcept
+    const_string::allocator a) noexcept
     : end_(s.data() + s.size())
     , p_(s.data())
     , a_(a)
@@ -132,7 +132,7 @@ iterator::
 iterator(
     string_view s,
     int,
-    string_value::allocator a) noexcept
+    const_string::allocator a) noexcept
     : end_(s.data() + s.size())
     , p_(nullptr)
     , a_(a)
@@ -208,8 +208,7 @@ operator==(
 auto
 params_view::
 at(string_view key) const ->
-    string_value
-{
+    const_string {
     auto it = find(key);
     for(;;)
     {
@@ -227,7 +226,7 @@ at(string_view key) const ->
     auto n =
         pct_decode_bytes_unchecked(ev);
     char *dest;
-    auto s = a_.make_string_value(n, dest);
+    auto s = a_.make_const_string(n, dest);
     pct_decode_unchecked(
         dest, dest + n, ev);
     return s;

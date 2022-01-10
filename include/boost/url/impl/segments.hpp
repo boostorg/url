@@ -31,14 +31,14 @@ class segments::iterator
 {
     url const* u_ = nullptr;
     std::size_t i_ = 0;
-    string_value::allocator a_;
+    const_string::allocator a_;
 
     friend class segments;
 
     iterator(
         url const& u,
         std::size_t i,
-        string_value::allocator
+        const_string::allocator
             const& a) noexcept
         : u_(&u)
         , i_(i)
@@ -47,8 +47,8 @@ class segments::iterator
     }
 
 public:
-    using value_type = string_value;
-    using reference = string_value;
+    using value_type = const_string;
+    using reference = const_string;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
@@ -87,7 +87,7 @@ public:
     }
 
     BOOST_URL_DECL
-    string_value
+    const_string
     operator*() const;
 
     friend
@@ -166,7 +166,7 @@ public:
             std::ptrdiff_t>(a.i_) - b.i_;
     }
 
-    string_value
+    const_string
     operator[](ptrdiff_t n) const
     {
         return *(*this + n);
@@ -272,7 +272,7 @@ assign(FwdIt first, FwdIt last) ->
 auto
 segments::
 at(std::size_t i) const ->
-    string_value
+    const_string
 {
     if(i >= size())
         detail::throw_out_of_range(
@@ -283,7 +283,7 @@ at(std::size_t i) const ->
 auto
 segments::
 front() const ->
-    string_value
+    const_string
 {
     BOOST_ASSERT(! empty());
     return (*this)[0];
@@ -292,7 +292,7 @@ front() const ->
 auto
 segments::
 back() const ->
-    string_value
+    const_string
 {
     BOOST_ASSERT(! empty());
     return (*this)[size() - 1];

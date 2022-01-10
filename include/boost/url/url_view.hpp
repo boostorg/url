@@ -719,7 +719,7 @@ public:
         string will use. If this parameter is omitted,
         the default allocator is used.
 
-        @return A @ref string_value using the
+        @return A @ref const_string using the
         specified allocator.
 
         @par Specification
@@ -733,7 +733,7 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_value
+    const_string
     userinfo(
         Allocator const& a = {}) const
     {
@@ -809,7 +809,7 @@ public:
         string will use. If this parameter is omitted,
         the default allocator is used.
 
-        @return A @ref string_value using the
+        @return A @ref const_string using the
         specified allocator.
 
         @par Specification
@@ -825,7 +825,7 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_value
+    const_string
     user(
         Allocator const& a = {}) const
     {
@@ -925,7 +925,7 @@ public:
         allocator is used, and the return type of
         the function becomes `std::string`.
 
-        @return A @ref string_value using the
+        @return A @ref const_string using the
         specified allocator.
 
         @par Specification
@@ -941,7 +941,7 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_value
+    const_string
     password(
         Allocator const& a = {}) const
     {
@@ -1077,7 +1077,7 @@ public:
         the default allocator is used, and the return
         type of the function becomes `std::string`.
 
-        @return A @ref string_value using the
+        @return A @ref const_string using the
         specified allocator.
 
         @par Specification
@@ -1095,7 +1095,7 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_value
+    const_string
     host(
         Allocator const& a = {}) const
     {
@@ -1105,7 +1105,7 @@ public:
             urls::host_type::name)
         {
             // no decoding
-            return string_value(s0, a);
+            return const_string(s0, a);
         }
         pct_decode_opts opt;
         opt.plus_to_space = false;
@@ -1527,7 +1527,7 @@ public:
         string will use. If this parameter is omitted,
         the default allocator is used
 
-        @return A @ref string_value using the
+        @return A @ref const_string using the
         specified allocator.
 
         @par Specification
@@ -1541,7 +1541,7 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_value
+    const_string
     query(
         Allocator const& a = {}) const
     {
@@ -1683,7 +1683,7 @@ public:
         string will use. If this parameter is omitted,
         the default allocator is used.
 
-        @return A @ref string_value using the
+        @return A @ref const_string using the
         specified allocator.
 
         @see
@@ -1693,7 +1693,7 @@ public:
     template<
         class Allocator =
             std::allocator<char>>
-    string_value
+    const_string
     fragment(
         Allocator const& a = {}) const
     {

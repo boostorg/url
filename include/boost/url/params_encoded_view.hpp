@@ -119,7 +119,7 @@ public:
 
         This function returns a new view over the
         same underlying character buffer where each
-        segment is returned as a @ref string_value
+        segment is returned as a @ref const_string
         with percent-decoding applied using the
         optionally specified allocator.
 

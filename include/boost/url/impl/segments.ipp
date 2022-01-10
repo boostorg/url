@@ -21,7 +21,7 @@ namespace urls {
 
 //------------------------------------------------
 
-string_value
+const_string
 segments::
 iterator::
 operator*() const
@@ -41,7 +41,7 @@ operator*() const
         pct_decode_bytes_unchecked(s);
     char* dest;
     auto v =
-        a_.make_string_value(n, dest);
+        a_.make_const_string(n, dest);
     pct_decode_opts opt;
     opt.plus_to_space = false;
     pct_decode_unchecked(
@@ -59,7 +59,7 @@ auto
 segments::
 operator[](
     std::size_t i) const ->
-    string_value
+    const_string
 {
     BOOST_ASSERT(i < u_->nseg_);
     auto p0 = u_->segment(i);
@@ -76,7 +76,7 @@ operator[](
         pct_decode_bytes_unchecked(s);
     char* dest;
     auto v =
-        a_.make_string_value(n, dest);
+        a_.make_const_string(n, dest);
     pct_decode_opts opt;
     opt.plus_to_space = false;
     pct_decode_unchecked(

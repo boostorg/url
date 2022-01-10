@@ -38,7 +38,7 @@ set(BOOST_URL_TESTS_FILES
     segments_view.cpp
     static_pool.cpp
     static_url.cpp
-    string.cpp
+    const_string.cpp
     string_view.cpp
     url.cpp
     url_view.cpp

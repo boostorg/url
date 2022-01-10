@@ -69,7 +69,7 @@ call the same function without the word encoded:
 ```
 ]]]
 
-The function `query` returns a __string_value__, which is a library type
+The function `query` returns a __const_string__, which is a library type
 that models a read-only string with ownership of the underlying buffer,
 which uses a type-erased allocator. All functions which return string
 values accept an optional __Allocator__ parameter when when omitted,
