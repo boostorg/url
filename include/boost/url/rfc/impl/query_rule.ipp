@@ -139,29 +139,29 @@ increment(
 
 //------------------------------------------------
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    query_part_rule& t)
+    query_part_rule& t) noexcept
 {
-    using grammar::parse;
     auto start = it;
     if( it == end ||
         *it != '?')
     {
         ec = {};
         t.has_query = false;
-        return true;
+        return;
     }
     ++it;
-    if(! parse(it, end, ec, t.query))
-        return false;
+    if(! grammar::parse(
+        it, end, ec, t.query))
+        return;
     t.has_query = true;
     t.query_part = string_view(
         start, it - start);
-    return true;
 }
 
 } // urls

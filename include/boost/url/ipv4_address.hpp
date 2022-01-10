@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 #include <array>
 #include <cstdint>
 #include <iosfwd>
@@ -261,16 +262,16 @@ public:
         return ipv4_address(0xFFFFFFFF);
     }
 
-    /** Parse an IPv4 address.
+    /** Customization point for parsing an IPv4 address.
     */
     BOOST_URL_DECL
-    friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        ipv4_address& t);
+        ipv4_address& t) noexcept;
 
 private:
     friend class ipv6_address;

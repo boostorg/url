@@ -13,33 +13,35 @@
 #include <boost/url/rfc/host_rule.hpp>
 #include <boost/url/rfc/ip_literal_rule.hpp>
 #include <boost/url/rfc/reg_name_rule.hpp>
+#include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    host_rule& t)
+    host_rule& t) noexcept
 {
-    using grammar::parse;
     if(it == end)
     {
         t.host_type =
             host_type::name;
         t.name = {};
         t.host_part = {};
-        return true;
+        return;
     }
     auto const start = it;
     if(*it == '[')
     {
         // IP-literal
         ip_literal_rule v;
-        if(! parse(it, end, ec, v))
-            return false;
+        if(! grammar::parse(
+                it, end, ec, v))
+            return;
         if(v.is_ipv6)
         {
             // IPv6address
@@ -48,42 +50,43 @@ parse(
                 host_type::ipv6;
             t.host_part = string_view(
                 start, it - start);
-            return true;
+            return;
         }
+
         // IPvFuture
         t.ipvfuture = v.ipvfuture;
         t.host_type =
             host_type::ipvfuture;
         t.host_part = string_view(
             start, it - start);
-        return true;
+        return;
     }
     // IPv4address
     {
-        if(parse(it, end, ec, t.ipv4))
+        if(grammar::parse(
+            it, end, ec, t.ipv4))
         {
             t.host_type =
                 host_type::ipv4;
             t.host_part = string_view(
                 start, it - start);
-            return true;
+            return;
         }
         // rewind
         it = start;
-        ec = {};
     }
     // reg-name
-    if(! parse(it, end, ec,
+    if(! grammar::parse(it, end, ec,
         reg_name_rule{t.name}))
     {
         // bad reg-name
-        return false;
+        return;
     }
+
     t.host_type =
         host_type::name;
     t.host_part = string_view(
         start, it - start);
-    return true;
 }
 
 } // urls

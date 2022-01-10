@@ -13,63 +13,68 @@
 #include <boost/url/rfc/hier_part_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    hier_part_rule& t)
+    hier_part_rule& t) noexcept
 {
-    using grammar::parse;
     if(it == end)
     {
         // path-empty
         t.path = {};
         t.has_authority = false;
         ec = {};
-        return true;
+        return;
     }
     if(it[0] != '/')
     {
         // path-rootless
         path_rootless_rule t0;
-        if(! parse(it, end, ec, t0))
-            return false;
+        if(! grammar::parse(
+                it, end, ec, t0))
+            return;
         t.path.path = t0.str;
         t.path.count = t0.count;
         t.has_authority = false;
-        return true;
+        return;
     }
     if( end - it == 1 ||
         it[1] != '/')
     {
         // path-absolute
         path_absolute_rule t0;
-        if(! parse(it, end, ec, t0))
-            return false;
+        if(! grammar::parse(
+                it, end, ec, t0))
+            return;
         t.path.path = t0.str;
         t.path.count = t0.count;
         t.has_authority = false;
-        return true;
+        return;
     }
     // "//" authority path-abempty
     it += 2;
     // authority
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
             t.authority))
-        return false;
+        return;
     // path-abempty
     path_abempty_rule t0;
-    if(! parse(it, end, ec, t0))
-        return false;
+    if(! grammar::parse(
+            it, end, ec, t0))
+        return;
+
     t.path.path = t0.str;
     t.path.count = t0.count;
     t.has_authority = true;
-    return true;
 }
 
 } // urls

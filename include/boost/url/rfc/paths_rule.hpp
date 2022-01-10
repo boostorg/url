@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
 #include <boost/url/pct_encoding_types.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 #include <boost/url/grammar/range.hpp>
 #include <cstddef>
 
@@ -63,12 +64,13 @@ struct segment_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        segment_rule const& t);
+        segment_rule const& t) noexcept;
 };
 #endif
 
@@ -103,12 +105,13 @@ struct segment_nz_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        segment_nz_rule const& t);
+        segment_nz_rule const& t) noexcept;
 };
 #endif
 
@@ -146,12 +149,13 @@ struct segment_nz_nc_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        segment_nz_nc_rule const& t);
+        segment_nz_nc_rule const& t) noexcept;
 };
 #endif
 

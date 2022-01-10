@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -36,12 +37,13 @@ struct ipv_future_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        ipv_future_rule& t);
+        ipv_future_rule& t) noexcept;
 };
 
 } // urls

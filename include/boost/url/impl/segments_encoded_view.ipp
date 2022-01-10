@@ -77,7 +77,6 @@ iterator::
 operator++() noexcept ->
     iterator&
 {
-    using grammar::parse;
     using bnf_t =
         path_rootless_rule;
     BOOST_ASSERT(next_ != nullptr);
@@ -104,7 +103,6 @@ iterator::
 operator--() noexcept ->
     iterator&
 {
-    using grammar::parse;
     using bnf_t =
         path_rootless_rule;
     BOOST_ASSERT(i_ != 0);

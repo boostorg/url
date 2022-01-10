@@ -11,39 +11,39 @@
 #define BOOST_URL_IMPL_RELATIVE_REF_RULE_IPP
 
 #include <boost/url/rfc/relative_ref_rule.hpp>
-#include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/fragment_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/relative_part_rule.hpp>
+#include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    relative_ref_rule& t)
+    relative_ref_rule& t) noexcept
 {
-    using grammar::parse;
-
     // relative-part
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
             t.relative_part))
-        return false;
+        return;
 
     // [ "?" query ]
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
             t.query_part))
-        return false;
+        return;
 
     // [ "#" fragment ]
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
             t.fragment_part))
-        return false;
-
-    return true;
+        return;
 }
 
 } // urls

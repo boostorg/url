@@ -16,6 +16,7 @@
 #include <boost/url/rfc/hier_part_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/scheme_rule.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -46,12 +47,13 @@ struct uri_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        uri_rule& t);
+        uri_rule& t) noexcept;
 };
 
 } // urls

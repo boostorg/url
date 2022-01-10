@@ -47,12 +47,13 @@ struct h16
     }
 
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        h16 const& t)
+        h16 const& t) noexcept
     {
         BOOST_ASSERT(it != end);
         std::uint16_t v;
@@ -63,9 +64,8 @@ struct h16
             if(d == -1)
             {
                 // not a HEXDIG
-                ec = BOOST_URL_ERR(
-                    error::bad_hexdig);
-                return false;
+                ec = error::bad_hexdig;
+                return;
             }
             v = d;
             ++it;
@@ -99,7 +99,6 @@ struct h16
         t.p[1] = static_cast<
             unsigned char>(
                 v % 256);
-        return true;
     }
 };
 
@@ -322,14 +321,14 @@ print_impl(
     return dest - dest0;
 }
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
     ipv6_address& t) noexcept
 {
-    using grammar::parse;
     int n = 8;      // words needed
     int b = -1;     // value of n
                     // when '::' seen
@@ -347,9 +346,8 @@ parse(
             }
             BOOST_ASSERT(n > 0);
             // not enough words
-            ec = BOOST_URL_ERR(
-                error::missing_words);
-            return false;
+            ec = error::missing_words;
+            return;
         }
         if(*it == ':')
         {
@@ -357,9 +355,8 @@ parse(
             if(it == end)
             {
                 // missing ':'
-                ec = BOOST_URL_ERR(
-                    error::missing_char_literal);
-                return false;
+                ec = error::missing_char_literal;
+                return;
             }
             if(*it == ':')
             {
@@ -375,50 +372,48 @@ parse(
                     continue;
                 }
                 // two "::"
-                ec = BOOST_URL_ERR(
-                    error::bad_ipv6);
-                return false;
+                ec = error::bad_ipv6;
+                return;
             }
             if(c)
             {
                 prev = it;
-                if(! parse(it, end, ec, 
+                if(! grammar::parse(
+                    it, end, ec, 
                     detail::h16{
                         &bytes[2*(8-n)]}))
-                    return false;
+                    return;
                 --n;
                 if(n == 0)
                     break;
                 continue;
             }
             // expected h16
-            ec = BOOST_URL_ERR(
-                error::missing_words);
-            return false;
+            ec = error::missing_words;
+            return;
         }
         if(*it == '.')
         {
             if(b == -1 && n > 1)
             {
                 // not enough h16
-                ec = BOOST_URL_ERR(
-                    error::bad_ipv6);
-                return false;
+                ec = error::bad_ipv6;
+                return;
             }
             if(! detail::h16::is_octet(
                 &bytes[2*(7-n)]))
             {
                 // invalid octet
-                ec = BOOST_URL_ERR(
-                    error::bad_octet);
-                return false;
+                ec = error::bad_octet;
+                return;
             }
             // rewind the h16 and
             // parse it as ipv4
             ipv4_address v4;
             it = prev;
-            if(! parse(it, end, ec, v4))
-                return false;
+            if(! grammar::parse(
+                    it, end, ec, v4))
+                return;
             auto const b4 =
                 v4.to_bytes();
             bytes[2*(7-n)+0] = b4[0];
@@ -437,10 +432,11 @@ parse(
         if(! c)
         {
             prev = it;
-            if(! parse(it, end, ec,
+            if(! grammar::parse(
+                it, end, ec,
                 detail::h16{
                     &bytes[2*(8-n)]}))
-                return false;
+                return;
             --n;
             if(n == 0)
                 break;
@@ -448,15 +444,14 @@ parse(
             continue;
         }
         // ':' divides a word
-        ec = BOOST_URL_ERR(
-            error::bad_ipv6);
-        return false;
+        ec = error::bad_ipv6;
+        return;
     }
     ec = {};
     if(b == -1)
     {
         t = bytes;
-        return true;
+        return;
     }
     if(b == n)
     {
@@ -496,7 +491,6 @@ parse(
             0, 16 - (i0 + i1));
     }
     t = bytes;
-    return true;
 }
 
 std::ostream&

@@ -11,33 +11,32 @@
 #define BOOST_URL_IMPL_SCHEME_RULE_IPP
 
 #include <boost/url/rfc/scheme_rule.hpp>
-#include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/charsets.hpp>
+#include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    scheme_rule& t)
+    scheme_rule& t) noexcept
 {
     auto const start = it;
     if(it == end)
     {
         // expected alpha
-        ec = BOOST_URL_ERR(
-            grammar::error::incomplete);
-        return false;
+        ec = grammar::error::incomplete;
+        return;
     }
     if(! grammar::alpha_chars(*it))
     {
         // expected alpha
-        ec = BOOST_URL_ERR(
-            error::bad_alpha);
-        return false;
+        ec = error::bad_alpha;
+        return;
     }
     static
     constexpr
@@ -51,27 +50,25 @@ parse(
         start, it - start);
     t.scheme_id = string_to_scheme(
         t.scheme);
-    return true;
 }
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    scheme_part_rule& t)
+    scheme_part_rule& t) noexcept
 {
-    using grammar::parse;
     auto const start = it;
     scheme_rule t0;
-    if(! parse(it, end, ec,
-            t0, ':'))
-        return false;
+    if(! grammar::parse(
+        it, end, ec, t0, ':'))
+        return;
     t.scheme = t0.scheme;
     t.scheme_id = t0.scheme_id;
     t.scheme_part = string_view(
         start, it - start);
-    return true;
 }
 
 } // urls

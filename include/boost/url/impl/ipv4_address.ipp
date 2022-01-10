@@ -11,9 +11,9 @@
 #define BOOST_URL_IMPL_IPV4_ADDRESS_IPP
 
 #include <boost/url/ipv4_address.hpp>
-#include <boost/url/detail/except.hpp>
-#include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/detail/dec_octet.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/detail/except.hpp>
 #include <cstring>
 
 namespace boost {
@@ -106,24 +106,25 @@ is_multicast() const noexcept
         0xE0000000;
 }
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    ipv4_address& t)
+    ipv4_address& t) noexcept
 {
-    using grammar::parse;
     std::array<unsigned char, 4> v;
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
         detail::dec_octet{v[0]}, '.',
         detail::dec_octet{v[1]}, '.',
         detail::dec_octet{v[2]}, '.',
         detail::dec_octet{v[3]}))
-        return false;
+        return;
     t = ipv4_address(v);
-    return true;
 }
+
 std::size_t
 ipv4_address::
 print_impl(

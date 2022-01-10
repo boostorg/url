@@ -17,36 +17,37 @@
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    uri_rule& t)
+    uri_rule& t) noexcept
 {
-    using grammar::parse;
-
     // scheme ":"
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
             t.scheme_part))
-        return false;
+        return;
 
     // hier-part
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
             t.hier_part))
-        return false;
+        return;
 
     // [ "?" query ]
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
             t.query_part))
-        return false;
+        return;
 
     // [ "#" fragment ]
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
             t.fragment_part))
-        return false;
-
-    return true;
+        return;
 }
 
 } // urls

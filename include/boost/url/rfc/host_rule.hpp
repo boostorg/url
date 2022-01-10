@@ -17,6 +17,7 @@
 #include <boost/url/string_view.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -49,12 +50,13 @@ struct host_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        host_rule& t);
+        host_rule& t) noexcept;
 };
 
 } // urls

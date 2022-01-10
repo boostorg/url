@@ -14,47 +14,49 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/ipv_future_rule.hpp>
+#include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    ip_literal_rule& t)
+    ip_literal_rule& t) noexcept
 {
-    using grammar::parse;
     // '['
-    if(! parse(it, end, ec, '['))
-        return false;
+    if(! grammar::parse(
+            it, end, ec, '['))
+        return;
     if(it == end)
     {
         // expected address
-        ec = BOOST_URL_ERR(
-            grammar::error::incomplete);
-        return false;
+        ec = grammar::error::incomplete;
+        return;
     }
     if(*it != 'v')
     {
         // IPv6address
-        if(! parse(it, end, ec,
+        if(! grammar::parse(
+                it, end, ec,
                 t.ipv6, ']'))
-            return false;
+            return;
         t.is_ipv6 = true;
     }
     else
     {
         // IPvFuture
         ipv_future_rule p;
-        if(! parse(it, end, ec,
+        if(! grammar::parse(
+                it, end, ec,
                 p, ']'))
-            return false;
+            return;
         t.is_ipv6 = false;
         t.ipvfuture = p.str;
     }
-    return true;
 }
 
 } // urls

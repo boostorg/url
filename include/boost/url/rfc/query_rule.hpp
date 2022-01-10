@@ -14,6 +14,7 @@
 #include <boost/url/error_code.hpp>
 #include <boost/url/query_param.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/range.hpp>
 #include <cstddef>
 
@@ -52,14 +53,16 @@ struct query_rule
     grammar::range<query_rule> v;
 
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        query_rule& t)
+        query_rule& t) noexcept
     {
-        return parse(it, end, ec, t.v);
+        grammar::parse(
+            it, end, ec, t.v);
     }
 
     BOOST_URL_DECL
@@ -111,12 +114,13 @@ struct query_part_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        query_part_rule& t);
+        query_part_rule& t) noexcept;
 };
 
 } // urls

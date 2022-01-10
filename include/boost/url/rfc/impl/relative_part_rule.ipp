@@ -11,18 +11,19 @@
 #define BOOST_URL_IMPL_RELATIVE_PART_RULE_IPP
 
 #include <boost/url/rfc/relative_part_rule.hpp>
-#include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    relative_part_rule& t)
+    relative_part_rule& t) noexcept
 {
     using grammar::parse;
     if(it == end)
@@ -31,49 +32,51 @@ parse(
         ec = {};
         t.path = {};
         t.has_authority = false;
-        return true;
+        return;
     }
     if(it[0] != '/')
     {
         path_noscheme_rule t0;
-        if(parse(it, end, ec, t0))
+        if(grammar::parse(
+            it, end, ec, t0))
         {
             // path-noscheme
             t.path.path = t0.str;
             t.path.count = t0.count;
             t.has_authority = false;
-            return true;
+            return;
         }
         // path-empty
         ec = {};
         t.path = {};
         t.has_authority = false;
-        return true;
+        return;
     }
     if( end - it == 1 ||
         it[1] != '/')
     {
         // path-absolute
         path_absolute_rule t0;
-        if(! parse(it, end, ec, t0))
-            return false;
+        if(! grammar::parse(
+                it, end, ec, t0))
+            return;
         t.path.path = t0.str;
         t.path.count = t0.count;
         t.has_authority = false;
-        return true;
+        return;
     }
     // "//" authority path-abempty
     it += 2;
-    if(! parse(it, end, ec,
-            t.authority))
-        return false;
+    if(! grammar::parse(
+        it, end, ec, t.authority))
+        return;
     path_abempty_rule t0;
-    if(! parse(it, end, ec, t0))
-        return false;
+    if(! grammar::parse(
+            it, end, ec, t0))
+        return;
     t.path.path = t0.str;
     t.path.count = t0.count;
     t.has_authority = true;
-    return true;
 }
 
 } // urls

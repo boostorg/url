@@ -14,6 +14,7 @@
 #include <boost/url/error_code.hpp>
 #include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/rfc/charsets.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -44,12 +45,13 @@ struct reg_name_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        reg_name_rule const& t);
+        reg_name_rule const& t) noexcept;
 };
 
 } // urls

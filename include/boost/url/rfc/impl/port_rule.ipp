@@ -20,12 +20,13 @@
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    port_rule& t)
+    port_rule& t) noexcept
 {
     port_rule::number_type u = 0;
     auto const start = it;
@@ -44,7 +45,7 @@ parse(
                 start, it - start);
             t.has_number = false;
             ec = {};
-            return true;
+            return;
         }
         ++it;
     }
@@ -59,33 +60,32 @@ parse(
     {
         t.has_number = false;
     }
-    return true;
 }
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
     port_part_rule& t)
 {
-    using grammar::parse;
     if( it == end ||
         *it != ':')
     {
         ec = {};
         t.has_port = false;
-        return true;
+        return;
     }
     ++it;
     port_rule t0;
-    if(! parse(it, end, ec, t0))
-        return false;
+    if(! grammar::parse(
+            it, end, ec, t0))
+        return;
     t.has_port = true;
     t.port = t0.str;
     t.has_number = t0.has_number;
     t.port_number = t0.number;
-    return true;
 }
 
 } // urls

@@ -18,8 +18,10 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-bool
-parse(
+inline
+void
+tag_invoke(
+    parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
@@ -28,64 +30,86 @@ parse(
     if(it == end)
     {
         // end of input
-        ec = BOOST_URL_ERR(
-            error::incomplete);
-        return false;
+        ec = error::incomplete;
+        return;
     }
     if(*it != ch)
     {
         // expected ch
-        ec = BOOST_URL_ERR(
-            error::syntax);
-        return false;
+        ec = error::syntax;
+        return;
     }
     ++it;
-    return true;
 }
 
 //------------------------------------------------
 
+namespace detail {
+
+inline
+void
+parse_impl(
+    char const*&,
+    char const*,
+    error_code&) noexcept
+{
+}
+
+// this is here to avoid
+// having to clear `ec`
+// for every call
 template<
-    class R1,
-    class R2,
+    class R0,
     class... Rn>
+void
+parse_impl(
+    char const*& it,
+    char const* const end,
+    error_code& ec,
+    R0&& r0,
+    Rn&&... rn)
+{
+    using grammar::tag_invoke;
+    tag_invoke(
+        parse_tag{},
+        it, end, ec,
+        std::forward<R0>(r0));
+    if(ec.failed())
+        return;
+    parse_impl(
+        it, end, ec,
+        std::forward<Rn>(rn)...);
+}
+
+} // detail
+
+template<class... Rn>
 bool
 parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    R1&& r1,
-    R2&& r2,
     Rn&&... rn)
 {
-    if(! parse(
+    ec = {};
+    detail::parse_impl(
         it, end, ec,
-        std::forward<R1>(r1)))
-        return false;
-    if(! parse(
-        it, end, ec,
-        std::forward<R2>(r2),
-        std::forward<Rn>(rn)...))
-        return false;
-    return true;
+        std::forward<Rn>(rn)...);
+    return ! ec.failed();
 }
 
 //------------------------------------------------
 
-template<
-    class R1,
-    class... Rn>
+template<class... Rn>
 bool
 parse_all(
     char const*& it,
     char const* const end,
     error_code& ec,
-    R1&& r1,
     Rn&&... rn)
 {
     auto const it0 = it;
     if(! parse(it, end, ec,
-        std::forward<R1>(r1),
         std::forward<Rn>(rn)...))
     {
         it = it0;
@@ -96,28 +120,22 @@ parse_all(
 
 //------------------------------------------------
 
-template<
-    class T0,
-    class... Tn>
+template<class... Rn>
 bool
 parse_string(
     string_view s,
     error_code& ec,
-    T0&& t0,
-    Tn&&... tn)
+    Rn&&... rn)
 {
     auto it = s.data();
-    auto const end =
-        it + s.size();
+    auto const end = it + s.size();
     if(! parse(it, end, ec,
-        std::forward<T0>(t0),
-        std::forward<Tn>(tn)...))
+        std::forward<Rn>(rn)...))
         return false;
     if(it != end)
     {
         // input not consumed fully
-        ec = BOOST_URL_ERR(
-            error::leftover);
+        ec = error::leftover;
         return false;
     }
     return true;
@@ -125,19 +143,15 @@ parse_string(
 
 //------------------------------------------------
 
-template<
-    class T0,
-    class... Tn>
+template<class... Rn>
 void
 parse_string(
     string_view s,
-    T0&& t0,
-    Tn&&... tn)
+    Rn&&... rn)
 {
     error_code ec;
     if(! parse_string(s, ec,
-        std::forward<T0>(t0),
-        std::forward<Tn>(tn)...))
+        std::forward<Rn>(rn)...))
     {
         urls::detail::throw_system_error(
             ec, BOOST_CURRENT_LOCATION);

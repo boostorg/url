@@ -32,7 +32,6 @@ iterator(
     , end_(s.data() + s.size())
     , a_(a)
 {
-    using grammar::parse;
     if(nseg == 0)
     {
         next_ = nullptr;
@@ -44,7 +43,8 @@ iterator(
     next_ += n;
     pos_ += n;
     error_code ec;
-    parse(next_, end_, ec,
+    grammar::parse(
+        next_, end_, ec,
         segment_rule{t_});
     BOOST_ASSERT(! ec);
 }
@@ -106,7 +106,6 @@ iterator::
 operator++() noexcept ->
     iterator&
 {
-    using grammar::parse;
     using bnf_t = path_rootless_rule;
     BOOST_ASSERT(next_ != nullptr);
     ++i_;
@@ -130,7 +129,6 @@ iterator::
 operator--() noexcept ->
     iterator&
 {
-    using grammar::parse;
     using bnf_t = path_rootless_rule;
     BOOST_ASSERT(i_ != 0);
     --i_;
@@ -139,7 +137,8 @@ operator--() noexcept ->
     {
         next_ = begin_;
         pos_ = begin_;
-        parse(next_, end_, ec,
+        grammar::parse(
+            next_, end_, ec,
             segment_rule{t_});
         BOOST_ASSERT(! ec.failed());
         return *this;

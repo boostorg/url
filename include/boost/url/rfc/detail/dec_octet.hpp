@@ -10,7 +10,8 @@
 #ifndef BOOST_URL_RFC_DETAIL_DEC_OCTET_HPP
 #define BOOST_URL_RFC_DETAIL_DEC_OCTET_HPP
 
-#include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/charset.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 #include <boost/url/rfc/charsets.hpp>
 
 namespace boost {
@@ -22,26 +23,25 @@ struct dec_octet
     unsigned char& v;
 
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        dec_octet const& t)
+        dec_octet const& t) noexcept
     {
         if(it == end)
         {
             // expected DIGIT
-            ec = BOOST_URL_ERR(
-                grammar::error::incomplete);
-            return false;
+            ec = grammar::error::incomplete;
+            return;
         }
         if(! grammar::digit_chars(*it))
         {
             // not a digit
-            ec = BOOST_URL_ERR(
-                error::bad_digit);
-            return false;
+            ec = error::bad_digit;
+            return;
         }
         unsigned v = *it - '0';
         ++it;
@@ -49,22 +49,19 @@ struct dec_octet
         {
             t.v = static_cast<
                 std::uint8_t>(v);
-            ec = {};
-            return true;
+            return;
         }
         if(! grammar::digit_chars(*it))
         {
             t.v = static_cast<
                 std::uint8_t>(v);
-            ec = {};
-            return true;
+            return;
         }
         if(v == 0)
         {
             // bad leading '0'
-            ec = BOOST_URL_ERR(
-                error::bad_leading_zero);
-            return false;
+            ec = error::bad_leading_zero;
+            return;
         }
         v = (10 * v) + *it - '0';
         ++it;
@@ -72,36 +69,30 @@ struct dec_octet
         {
             t.v = static_cast<
                 std::uint8_t>(v);
-            ec = {};
-            return true;
+            return;
         }
         if(! grammar::digit_chars(*it))
         {
             t.v = static_cast<
                 std::uint8_t>(v);
-            ec = {};
-            return true;
+            return;
         }
         if(v > 25)
         {
             // out of range
-            ec = BOOST_URL_ERR(
-                error::bad_octet);
-            return false;
+            ec = error::bad_octet;
+            return;
         }
         v = (10 * v) + *it - '0';
         if(v > 255)
         {
             // out of range
-            ec = BOOST_URL_ERR(
-                error::bad_octet);
-            return false;
+            ec = error::bad_octet;
+            return;
         }
         ++it;
         t.v = static_cast<
             std::uint8_t>(v);
-        ec = {};
-        return true;
     }
 };
 

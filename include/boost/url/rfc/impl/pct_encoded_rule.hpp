@@ -12,6 +12,7 @@
 
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/grammar/charset.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -34,8 +35,9 @@ struct pct_encoded_rule
 };
 
 template<class CharSet>
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
@@ -62,31 +64,27 @@ skip:
         if(it == end)
         {
             // missing HEXDIG
-            ec = BOOST_URL_ERR(
-                error::missing_pct_hexdig);
-            return false;
+            ec = error::missing_pct_hexdig;
+            return;
         }
         if(grammar::hexdig_value(*it) == -1)
         {
             // expected HEXDIG
-            ec = BOOST_URL_ERR(
-                error::bad_pct_hexdig);
-            return false;
+            ec = error::bad_pct_hexdig;
+            return;
         }
         ++it;
         if(it == end)
         {
             // missing HEXDIG
-            ec = BOOST_URL_ERR(
-                error::missing_pct_hexdig);
-            return false;
+            ec = error::missing_pct_hexdig;
+            return;
         }
         if(grammar::hexdig_value(*it) == -1)
         {
             // expected HEXDIG
-            ec = BOOST_URL_ERR(
-                error::bad_pct_hexdig);
-            return false;
+            ec = error::bad_pct_hexdig;
+            return;
         }
         ++n;
         ++it;
@@ -100,7 +98,6 @@ finish:
     t.s.str = string_view(
         start, it - start);
     t.s.decoded_size = n;
-    return true;
 }
 
 } // detail

@@ -19,18 +19,18 @@
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    authority_rule& t)
+    authority_rule& t) noexcept
 {
-    using grammar::parse;
     auto start = it;
 
     // [ userinfo "@" ]
-    if(parse(it, end, ec,
+    if(grammar::parse(it, end, ec,
         t.userinfo, '@'))
     {
         t.has_userinfo = true;
@@ -41,20 +41,17 @@ parse(
         // rewind
         t.has_userinfo = false;
         it = start;
-        ec = {};
     }
 
     // host
-    if(! parse(it, end, ec,
-            t.host))
-        return false;
+    if(! grammar::parse(
+            it, end, ec, t.host))
+        return;
 
     // [ ":" port ]
-    if(! parse(it, end, ec,
+    if(! grammar::parse(it, end, ec,
             t.port))
-        return false;
-
-    return true;
+        return;
 }
 
 } // urls

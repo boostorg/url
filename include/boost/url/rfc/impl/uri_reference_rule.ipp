@@ -11,35 +11,36 @@
 #define BOOST_URL_IMPL_URI_REFERENCE_RULE_IPP
 
 #include <boost/url/rfc/uri_reference_rule.hpp>
-#include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/hier_part_rule.hpp>
 #include <boost/url/rfc/relative_part_rule.hpp>
+#include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    uri_reference_rule& t)
+    uri_reference_rule& t) noexcept
 {
-    using grammar::parse;
     auto const start = it;
 
     // scheme ":"
-    if(! parse(it, end, ec,
-        t.scheme_part))
+    if(! grammar::parse(
+        it, end, ec,
+            t.scheme_part))
     {
         // rewind
         it = start;
-        ec = {};
 
         // relative-ref
         relative_part_rule t0;
-        if(! parse(it, end, ec,t0))
-            return false;
+        if(! grammar::parse(
+            it, end, ec,t0))
+            return;
 
         t.has_authority =
             t0.has_authority;
@@ -50,8 +51,9 @@ parse(
     {
         // hier-part
         hier_part_rule t0;
-        if(! parse(it, end, ec, t0))
-            return false;
+        if(! grammar::parse(
+            it, end, ec, t0))
+            return;
 
         t.has_authority =
             t0.has_authority;
@@ -60,16 +62,16 @@ parse(
     }
 
     // [ "?" query ]
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
             t.query_part))
-        return false;
+        return;
 
     // [ "#" fragment ]
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
             t.fragment_part))
-        return false;
-
-    return true;
+        return;
 }
 
 } // urls

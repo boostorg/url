@@ -11,6 +11,7 @@
 #define BOOST_URL_IMPL_REG_NAME_RULE_IPP
 
 #include <boost/url/rfc/reg_name_rule.hpp>
+#include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
@@ -27,14 +28,15 @@ namespace urls {
     should be if it is necessary to distinguish between
     the complete domain name and some local domain.
 */
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    reg_name_rule const& t)
+    reg_name_rule const& t) noexcept
 {
-    return parse(
+    grammar::parse(
         it, end, ec,
         pct_encoded_rule(
             reg_name_chars, t.v));

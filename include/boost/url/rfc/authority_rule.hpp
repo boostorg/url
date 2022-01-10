@@ -15,6 +15,7 @@
 #include <boost/url/rfc/host_rule.hpp>
 #include <boost/url/rfc/port_rule.hpp>
 #include <boost/url/rfc/userinfo_rule.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -49,12 +50,13 @@ struct authority_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        authority_rule& t);
+        authority_rule& t) noexcept;
 };
 
 } // urls

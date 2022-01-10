@@ -20,7 +20,7 @@ namespace urls {
 namespace grammar {
 
 template<class T>
-bool
+void
 range_::
 parse_impl(
     char const*& it,
@@ -31,31 +31,35 @@ parse_impl(
     typename T::value_type t0;
     auto start = it;
     std::size_t n = 0;
-    if(! T::begin(it, end, ec, t0))
+    T::begin(it, end, ec, t0);
+    if(ec.failed())
     {
         if(ec == error::end)
+        {
+            ec = {};
             goto finish;
-        if(ec.failed())
-            return false;
+        }
+        return;
     }
     for(;;)
     {
         ++n;
-        if(! T::increment(
-            it, end, ec, t0))
+        T::increment(
+            it, end, ec, t0);
+        if(ec.failed())
         {
             if(ec == error::end)
+            {
+                ec = {};
                 break;
-            if(ec.failed())
-                return false;
+            }
+            return;
         }
     }
 finish:
     t.str = string_view(
         start, it - start);
     t.count = n;
-    ec = {};
-    return true;
 }
 
 template<class T>
@@ -69,14 +73,15 @@ range_(T const*) noexcept
 }
 
 inline
-bool
-parse(
+void
+tag_invoke(
+    parse_tag const&,
     char const*& it,
     char const* end,
     error_code& ec,
     range_& t)
 {
-    return t.fp_(it, end, ec, t);
+    t.fp_(it, end, ec, t);
 }
 
 //------------------------------------------------
@@ -189,7 +194,7 @@ end() const ->
 }
 
 template<class R>
-bool
+void
 range_base<R>::
 parse(
     char const*& it,
@@ -202,31 +207,34 @@ parse(
     auto const start = it;
     typename range<R>::reference v;
 
-    if(! R::begin(it, end, ec, v))
+    R::begin(it, end, ec, v);
+    if(ec.failed())
     {
         if(ec != error::end)
-            return false;
+            return;
         if(n < N)
         {
             // too few
             ec = error::syntax;
-            return false;
+            return;
         }
 
+        // good
         ec = {};
         n_ = n;
         s_ = string_view(
             start, it - start);
-        return true;
+        return;
     }
 
     for(;;)
     {
         ++n;
-        if(! R::increment(it, end, ec, v))
+        R::increment(it, end, ec, v);
+        if(ec.failed())
         {
             if(ec != error::end)
-                return false;
+                return;
             ec = {};
             break;
         }
@@ -234,16 +242,14 @@ parse(
         {
             // too many
             ec = error::syntax;
-            return false;
+            return;
         }
     }
 
+    // good
     n_ = n;
     s_ = string_view(start, it - start);
-    return true;
 }
-
-//------------------------------------------------
 
 } // grammar
 } // urls

@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 #include <boost/type_traits/make_void.hpp>
 #include <type_traits>
 
@@ -22,42 +23,41 @@ namespace grammar {
 
 /** Parse a literal character
 
-   This function parses the first char in a
-   substring as a literal character.
+    This function parses the first char in a
+    substring as a literal character.
 
-   @par Example
+    @par Example
 
-   @code
-   std::string str = "Hello.cpp";
-   char const* it = str.data();
-   char const* end = it + str.size();
-   using grammar::parse;
-   if (parse(it, end, ec, 'H')) {
-       std::cout << "str begins with 'H'\n";
-   }
-   @endcode
+    @code
+    std::string str = "Hello.cpp";
+    char const* it = str.data();
+    char const* end = it + str.size();
+    using grammar::parse;
+    if (parse(it, end, ec, 'H'))
+    {
+        std::cout << "str begins with 'H'\n";
+    }
+    @endcode
 
-   @par Exception Safety
+    @par Exception Safety
+    Throws nothing.
 
-   Throws nothing
+    @return `true` if the first char in the range
+    matches `ch` successfully
 
-   @return `true` if the first char in the range
-   matches `ch` successfully
+    @param it An iterator to the first element in the range.
+    At the end of this function, `it` points to one past the last
+    element parsed in the range.
 
-   @param it An iterator to the first element in the range.
-   At the end of this function, `it` points to one past the last
-   element parsed in the range.
+    @param end An iterator to the end of the range
 
-   @param end An iterator to the end of the range
+    @param ec Set to the error, if any occurred
 
-   @param ec Set to the error, if any occurred
-
-   @param ch A literal character to match
-
+    @param ch A literal character to match
 */
-inline
-bool
-parse(
+void
+tag_invoke(
+    parse_tag const&,
     char const*& it,
     char const* end,
     error_code& ec,
@@ -95,16 +95,15 @@ parse(
 
     @par Example
     @code
-        using grammar::parse;
-        if (parse(it, end, ec, r1, r2, r3))
-        {
-            std::cout << "Range [it, end) parsed successfully\n";
-        }
+    using grammar::parse;
+    if (parse(it, end, ec, r1, r2, r3))
+    {
+        std::cout << "Range [it, end) parsed successfully\n";
+    }
     @endcode
 
     @par Exception Safety
-
-      Defined by the types of the rule objects.
+    Defined by the types of the rule objects.
 
     @return `true` if the range initial chars match the elements successfully
 
@@ -123,37 +122,25 @@ parse(
     @param rn Extra grammar rule objects
 
 */
-template<
-    class R1,
-    class R2,
-    class... Rn
->
+template<class... Rn>
 bool
 parse(
     char const*& it,
     char const* end,
     error_code& ec,
-    R1&& r1,
-    R2&& r2,
-    Rn&&... rn
-);
+    Rn&&... rn);
 
 /** Parse all rules in sequence
 
     If the parse fails, `it` is unchanged.
 */
-template<
-    class R1,
-    class... Rn
->
+template<class... Rn>
 bool
 parse_all(
     char const*& it,
     char const* end,
     error_code& ec,
-    R1&& r1,
-    Rn&&... rn
-);
+    Rn&&... rn);
 
 /** Parse a sequence of grammar rules
 
@@ -187,17 +174,12 @@ parse_all(
    @param rs Extra grammar rule objects
 
 */
-template<
-    class R1,
-    class... Rs
->
+template<class... Rn>
 bool
 parse_string(
     string_view s,
     error_code& ec,
-    R1&& r1,
-    Rs&&... rs
-);
+    Rn&&... rn);
 
 /** Parse a sequence of grammar rules and throw on failure
 
@@ -229,16 +211,11 @@ parse_string(
    @throws boost::system::system_error Thrown on failure.
 
  */
-template<
-    class R1,
-    class... Rs
->
+template<class... Rn>
 void
 parse_string(
     string_view s,
-    R1&& r1,
-    Rs&&... rs
-);
+    Rn&&... rn);
 
 } // grammar
 } // urls

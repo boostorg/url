@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 #include <cstdint>
 
 namespace boost {
@@ -43,12 +44,13 @@ struct port_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        port_rule& t);
+        port_rule& t) noexcept;
 };
 
 /** BNF for port-part

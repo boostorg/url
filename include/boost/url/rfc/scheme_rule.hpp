@@ -14,6 +14,7 @@
 #include <boost/url/error_code.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -39,12 +40,13 @@ struct scheme_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        scheme_rule& t);
+        scheme_rule& t) noexcept;
 };
 
 /** BNF for scheme-part
@@ -72,12 +74,13 @@ struct scheme_part_rule
 
     BOOST_URL_DECL
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        scheme_part_rule& t);
+        scheme_part_rule& t) noexcept;
 };
 
 } // urls

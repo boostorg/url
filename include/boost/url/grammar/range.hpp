@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/parse.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/make_void.hpp>
 #include <cstddef>
@@ -62,7 +63,7 @@ struct is_range<T, boost::void_t<
 
 class range_
 {
-    bool(*fp_)(
+    void(*fp_)(
         char const*&,
         char const*,
         error_code&,
@@ -70,7 +71,7 @@ class range_
 
     template<class T>
     static
-    bool
+    void
     parse_impl(
         char const*& it,
         char const* end,
@@ -95,8 +96,9 @@ public:
     }
 
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        parse_tag const&,
         char const*& it,
         char const* end,
         error_code& ec,
@@ -116,7 +118,7 @@ class range_base
 protected:
     /** Parse a range
     */
-    bool
+    void
     parse(
         char const*& it,
         char const* end,
@@ -242,15 +244,15 @@ public:
     /** Parse a range
     */
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        parse_tag const&,
         char const*& it,
         char const* end,
         error_code& ec,
         range& t)
     {
-        return t.parse(
-            it, end, ec, N, M);
+        t.parse(it, end, ec, N, M);
     }
 };
 

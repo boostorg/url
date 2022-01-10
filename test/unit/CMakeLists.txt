@@ -48,6 +48,7 @@ set(BOOST_URL_TESTS_FILES
     grammar/error.cpp
     grammar/lut_chars.cpp
     grammar/parse.cpp
+    grammar/parse_tag.cpp
     grammar/range.cpp
     grammar/token_rule.cpp
     rfc/absolute_uri_rule.cpp

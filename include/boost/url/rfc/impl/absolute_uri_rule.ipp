@@ -16,31 +16,19 @@
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    absolute_uri_rule& t)
+    absolute_uri_rule& t) noexcept
 {
-    using grammar::parse;
-
-    // scheme ":"
-    if(! parse(it, end, ec,
-            t.scheme_part))
-        return false;
-
-    // hier-part
-    if(! parse(it, end, ec,
-            t.hier_part))
-        return false;
-
-    // [ "?" query ]
-    if(! parse(it, end, ec,
-            t.query_part))
-        return false;
-
-    return true;
+    grammar::parse(
+        it, end, ec,
+        t.scheme_part,
+        t.hier_part,
+        t.query_part);
 }
 
 } // urls

@@ -11,73 +11,72 @@
 #define BOOST_URL_RFC_IMPL_PATHS_RULE_IPP
 
 #include <boost/url/rfc/paths_rule.hpp>
-#include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    segment_rule const& t)
+    segment_rule const& t) noexcept
 {
-    using grammar::parse;
-    return parse(it, end, ec,
+    grammar::parse(
+        it, end, ec,
         pct_encoded_rule(pchars, t.v));
 }
 
 //------------------------------------------------
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    segment_nz_rule const& t)
+    segment_nz_rule const& t) noexcept
 {
-    using grammar::parse;
     auto const start = it;
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
         pct_encoded_rule(pchars, t.v)))
-        return false;
+        return;
     if(it == start)
     {
         // can't be empty
-        ec = BOOST_URL_ERR(
-            error::empty_path_segment);
-        return false;
+        ec = error::empty_path_segment;
+        return;
     }
-    return true;
 }
 
 //------------------------------------------------
 
-bool
-parse(
+void
+tag_invoke(
+    grammar::parse_tag const&,
     char const*& it,
     char const* const end,
     error_code& ec,
-    segment_nz_nc_rule const& t)
+    segment_nz_nc_rule const& t) noexcept
 {
-    using grammar::parse;
     auto const start = it;
     static constexpr auto cs =
         pchars - ':';
-    if(! parse(it, end, ec,
+    if(! grammar::parse(
+        it, end, ec,
         pct_encoded_rule(cs, t.v)))
-        return false;
+        return;
     if(it == start)
     {
         // can't be empty
-        ec = BOOST_URL_ERR(
-            error::empty_path_segment);
-        return false;
+        ec = error::empty_path_segment;
+        return;
     }
-    return true;
 }
 
 //------------------------------------------------
@@ -102,9 +101,9 @@ increment(
     error_code& ec,
     pct_encoded_str& t) noexcept
 {
-    using grammar::parse;
     auto const start = it;
-    if(parse(it, end, ec,
+    if(grammar::parse(
+        it, end, ec,
         '/', segment_rule{t}))
         return true;
     ec = BOOST_URL_ERR(
@@ -123,7 +122,6 @@ begin(
     error_code& ec,
     pct_encoded_str& t) noexcept
 {
-    using grammar::parse;
     if(it == end)
     {
         // expected '/'
@@ -148,7 +146,8 @@ begin(
             error::empty_path_segment);
         return false;
     }
-    return parse(it, end, ec,
+    return grammar::parse(
+        it, end, ec,
         segment_rule{t});
 }
 
@@ -160,9 +159,9 @@ increment(
     error_code& ec,
     pct_encoded_str& t) noexcept
 {
-    using grammar::parse;
     auto const start = it;
-    if(parse(it, end, ec,
+    if(grammar::parse(
+        it, end, ec,
         '/', segment_rule{t}))
         return true;
     ec = BOOST_URL_ERR(
@@ -181,13 +180,12 @@ begin(
     error_code& ec,
     pct_encoded_str& t) noexcept
 {
-    using grammar::parse;
-    if(parse(it, end, ec,
+    if(grammar::parse(
+        it, end, ec,
         segment_nz_nc_rule{t}))
         return true;
     // bad segment-nz-nc
-    ec = BOOST_URL_ERR(
-        error::bad_schemeless_path_segment);
+    ec = error::bad_schemeless_path_segment;
     return false;
 }
 
@@ -199,13 +197,12 @@ increment(
     error_code& ec,
     pct_encoded_str& t) noexcept
 {
-    using grammar::parse;
     auto const start = it;
-    if(parse(it, end, ec,
+    if(grammar::parse(
+        it, end, ec,
         '/', segment_rule{t}))
         return true;
-    ec = BOOST_URL_ERR(
-        grammar::error::end);
+    ec = grammar::error::end;
     it = start;
     return false;
 }
@@ -221,8 +218,8 @@ begin(
     error_code& ec,
     pct_encoded_str& t) noexcept
 {
-    using grammar::parse;
-    return parse(it, end, ec,
+    return grammar::parse(
+        it, end, ec,
         segment_nz_rule{t});
 }
 
@@ -236,11 +233,11 @@ increment(
 {
     using grammar::parse;
     auto const start = it;
-    if(parse(it, end, ec,
+    if(grammar::parse(
+        it, end, ec,
         '/', segment_rule{t}))
         return true;
-    ec = BOOST_URL_ERR(
-        grammar::error::end);
+    ec = grammar::error::end;
     it = start;
     return false;
 }

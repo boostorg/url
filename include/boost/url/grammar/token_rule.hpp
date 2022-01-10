@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/error.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/static_assert.hpp>
 
@@ -45,29 +46,28 @@ struct token_rule
     }
 
     friend
-    bool
-    parse(
+    void
+    tag_invoke(
+        parse_tag const&,
         char const*& it,
         char const* end,
         error_code& ec,
         token_rule& t) noexcept
     {
-        ec = {};
         auto const start = it;
         static constexpr CharSet cs{};
         if(it == end)
         {
             ec = grammar::error::incomplete;
-            return false;
+            return;
         }
         it = (find_if_not)(it, end, cs);
         if(it == start)
         {
             ec = grammar::error::syntax;
-            return false;
+            return;
         }
         t.s = string_view(start, it - start);
-        return true;
     }
 };
 
