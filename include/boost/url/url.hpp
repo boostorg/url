@@ -156,7 +156,7 @@ public:
         from `u`. After the move. the state of `u`
         will be as-if default constructed.
 
-        @param Exception Safety
+        @par Exception Safety
         Throws nothing.
 
         @param u The url to construct from.
@@ -188,7 +188,7 @@ public:
         from `u`. After the move. the state of `u`
         will be as-if default constructed.
 
-        @param Exception Safety
+        @par Exception Safety
         Throws nothing.
 
         @param u The url to assign from.

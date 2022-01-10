@@ -1218,7 +1218,7 @@ parse_authority(
 
     @param os The output stream to write to
 
-    @param u The URL to write
+    @param a The URL to write
 */
 BOOST_URL_DECL
 std::ostream&

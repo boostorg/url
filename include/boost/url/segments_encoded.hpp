@@ -406,11 +406,6 @@ public:
         up to and including the last element
         and @ref end iterators are invalidated.
 
-        @par Requires
-        @code
-        is_stringlike< String >::value == true
-        @endcode
-
         @par Example
         @code
         url u = parse_relative_uri( "/path/file.txt" );
