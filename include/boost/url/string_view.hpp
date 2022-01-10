@@ -11,7 +11,6 @@
 #define BOOST_URL_STRING_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
-//#include <boost/utility/string_view.hpp>
 #include <boost/core/detail/string_view.hpp>
 
 namespace boost {
@@ -32,7 +31,6 @@ using pos_t = std::size_t;
     owning the character buffer extends until
     the string view is no longer referenced.
 */
-//typedef boost::string_view string_view;
 typedef boost::core::string_view string_view;
 
 } // urls
