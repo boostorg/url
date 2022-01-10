@@ -592,7 +592,7 @@ apply(
     {
         set_size(
             id_frag,
-            t.fragment_part.size());
+            t.fragment.str.size() + 1);
         decoded_[id_frag] =
             t.fragment.decoded_size;
     }

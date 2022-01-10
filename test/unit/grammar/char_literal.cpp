@@ -7,18 +7,28 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_GRAMMAR_IMPL_RANGE_IPP
-#define BOOST_URL_GRAMMAR_IMPL_RANGE_IPP
+// Test that header file is self-contained.
+#include <boost/url/grammar/char_literal.hpp>
 
-#include <boost/url/grammar/range.hpp>
+#include "test_suite.hpp"
 
 namespace boost {
 namespace urls {
 namespace grammar {
 
+class char_literal_test
+{
+public:
+    void
+    run()
+    {
+    }
+};
+
+TEST_SUITE(
+    char_literal_test,
+    "boost.url.grammar.char_literal");
 
 } // grammar
 } // urls
 } // boost
-
-#endif

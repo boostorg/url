@@ -20,7 +20,7 @@
 namespace boost {
 namespace urls {
 
-/** BNF for authority
+/** Rule for authority
 
     @par BNF
     @code
@@ -48,11 +48,23 @@ struct authority_rule
     // port
     port_part_rule port;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
         grammar::parse_tag const&,
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        authority_rule& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
         char const*& it,
         char const* const end,
         error_code& ec,

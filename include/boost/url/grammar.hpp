@@ -14,11 +14,13 @@
 
 #include <boost/url/grammar/ascii.hpp>
 #include <boost/url/grammar/charset.hpp>
+#include <boost/url/grammar/elements.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/lut_chars.hpp>
+#include <boost/url/grammar/optional.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/parse_tag.hpp>
 #include <boost/url/grammar/range.hpp>
-#include <boost/url/grammar/token_rule.hpp>
+#include <boost/url/grammar/token.hpp>
 
 #endif

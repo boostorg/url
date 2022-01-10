@@ -11,6 +11,8 @@
 #define BOOST_URL_IMPL_REG_NAME_RULE_IPP
 
 #include <boost/url/rfc/reg_name_rule.hpp>
+#include <boost/url/rfc/charsets.hpp>
+#include <boost/url/grammar/lut_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 namespace boost {
@@ -34,12 +36,25 @@ tag_invoke(
     char const*& it,
     char const* const end,
     error_code& ec,
-    reg_name_rule const& t) noexcept
+    reg_name_rule& t) noexcept
 {
+    struct reg_name_chars
+        : grammar::lut_chars
+    {
+        constexpr
+        reg_name_chars() noexcept
+            : lut_chars(
+                unreserved_chars
+                + '-' + '.')
+        {
+        }
+    };
+
+    pct_encoded_rule<
+        reg_name_chars> t0;
     grammar::parse(
-        it, end, ec,
-        pct_encoded_rule(
-            reg_name_chars, t.v));
+        it, end, ec, t0);
+    t.v = t0.s;
 }
 
 } // urls

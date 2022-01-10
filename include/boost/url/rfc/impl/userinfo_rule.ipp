@@ -11,57 +11,67 @@
 #define BOOST_URL_IMPL_USERINFO_RULE_IPP
 
 #include <boost/url/rfc/userinfo_rule.hpp>
-#include <boost/url/error.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/grammar/lut_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+userinfo_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,
     userinfo_rule& t) noexcept
 {
-    auto start = it;
+    struct uchars
+        : grammar::lut_chars
     {
-        static constexpr auto cs =
-            unreserved_chars +
-            subdelim_chars;
-        if(! grammar::parse(
-            it, end, ec,
-            pct_encoded_rule(cs, t.user)))
-            return;
-    }
-    t.user_part = string_view(
-        start, it - start);
-    start = it;
-    if( it != end &&
-        *it == ':')
+        constexpr
+        uchars() noexcept
+            : lut_chars(
+                unreserved_chars +
+                subdelim_chars)
+        {
+        }
+    };
+
+    struct pwchars
+        : grammar::lut_chars
     {
-        ++it;
-        static constexpr auto cs =
-            unreserved_chars +
-            subdelim_chars + ':';
-        if(! grammar::parse(
-            it, end, ec,
-            pct_encoded_rule(cs,
-                t.password)))
-            return;
-        t.has_password = true;
-        t.password_part = string_view(
-            start, it - start);
-    }
-    else
+        constexpr
+        pwchars() noexcept
+            : lut_chars(
+                unreserved_chars +
+                subdelim_chars + ':')
+        {
+        }
+    };
+
+    pct_encoded_rule<uchars> t0;
+    pct_encoded_rule<pwchars> t1;
+
+    if(! grammar::parse(
+        it, end, ec, t0))
+        return;
+    t.user = t0.s;
+    if( it == end ||
+        *it != ':')
     {
         t.has_password = false;
-        t.password_part = {};
+        t.password = {};
+        return;
     }
+    ++it;
+    if(! grammar::parse(
+        it, end, ec, t1))
+        return;
+    t.has_password = true;
+    t.password = t1.s;
 }
 
 } // urls

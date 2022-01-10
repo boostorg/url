@@ -14,14 +14,14 @@
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/token_rule.hpp>
+#include <boost/url/grammar/token.hpp>
 
 namespace boost {
 namespace urls {
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+ipv_future_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,
@@ -39,9 +39,9 @@ tag_invoke(
         {
         }
     };
-    grammar::token_rule<
+    grammar::token<
         grammar::hexdig_chars_t> major;
-    grammar::token_rule<
+    grammar::token<
         minor_chars_t> minor;
     if(! grammar::parse(
         it, end, ec,

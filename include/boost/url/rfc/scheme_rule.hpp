@@ -19,7 +19,7 @@
 namespace boost {
 namespace urls {
 
-/** BNF for scheme
+/** Rule for scheme
 
     @par BNF
     @code
@@ -38,7 +38,6 @@ struct scheme_rule
     string_view scheme;
     urls::scheme scheme_id;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
@@ -46,10 +45,23 @@ struct scheme_rule
         char const*& it,
         char const* const end,
         error_code& ec,
+        scheme_rule& t) noexcept
+    {
+        return parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
         scheme_rule& t) noexcept;
 };
 
-/** BNF for scheme-part
+/** Rule for scheme-part
 
     @par BNF
     @code

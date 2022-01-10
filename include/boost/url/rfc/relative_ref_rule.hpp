@@ -20,7 +20,7 @@
 namespace boost {
 namespace urls {
 
-/** BNF for relative-ref
+/** Rule for relative-ref
 
     @par BNF
     @code
@@ -42,11 +42,23 @@ struct relative_ref_rule
     query_part_rule      query_part;
     fragment_part_rule   fragment_part;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
         grammar::parse_tag const&,
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        relative_ref_rule& t) noexcept
+    {
+        return parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
         char const*& it,
         char const* const end,
         error_code& ec,

@@ -17,6 +17,7 @@
 
 namespace boost {
 namespace urls {
+namespace grammar {
 
 class ascii_test
 {
@@ -38,14 +39,15 @@ public:
         auto const end = it0 + s0.size();
         BOOST_TEST(s0.size() == s1.size());
         while(it0 != end)
-            BOOST_TEST(grammar::ascii_tolower(
+            BOOST_TEST(ascii_tolower(
                 *it0++) == *it1++);
     }
 };
 
 TEST_SUITE(
     ascii_test,
-    "boost.url.ascii");
+    "boost.url.grammar.ascii");
 
+} // grammar
 } // urls
 } // boost

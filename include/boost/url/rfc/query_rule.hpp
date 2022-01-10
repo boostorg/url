@@ -21,7 +21,7 @@
 namespace boost {
 namespace urls {
 
-/** BNF for query
+/** Rule for query
 
     @par BNF
     @code
@@ -90,7 +90,7 @@ private:
 
 //------------------------------------------------
 
-/** BNF for query-part
+/** Rule for query-part
 
     @par BNF
     @code

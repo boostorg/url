@@ -19,8 +19,8 @@ namespace boost {
 namespace urls {
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+host_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,
@@ -29,7 +29,7 @@ tag_invoke(
     if(it == end)
     {
         t.host_type =
-            host_type::name;
+            urls::host_type::name;
         t.name = {};
         t.host_part = {};
         return;
@@ -47,7 +47,7 @@ tag_invoke(
             // IPv6address
             t.ipv6 = v.ipv6;
             t.host_type =
-                host_type::ipv6;
+                urls::host_type::ipv6;
             t.host_part = string_view(
                 start, it - start);
             return;
@@ -56,7 +56,7 @@ tag_invoke(
         // IPvFuture
         t.ipvfuture = v.ipvfuture;
         t.host_type =
-            host_type::ipvfuture;
+            urls::host_type::ipvfuture;
         t.host_part = string_view(
             start, it - start);
         return;
@@ -67,7 +67,7 @@ tag_invoke(
             it, end, ec, t.ipv4))
         {
             t.host_type =
-                host_type::ipv4;
+                urls::host_type::ipv4;
             t.host_part = string_view(
                 start, it - start);
             return;
@@ -76,15 +76,17 @@ tag_invoke(
         it = start;
     }
     // reg-name
-    if(! grammar::parse(it, end, ec,
-        reg_name_rule{t.name}))
+    reg_name_rule t0;
+    if(! grammar::parse(
+        it, end, ec, t0))
     {
         // bad reg-name
         return;
     }
+    t.name = t0.v;
 
     t.host_type =
-        host_type::name;
+        urls::host_type::name;
     t.host_part = string_view(
         start, it - start);
 }

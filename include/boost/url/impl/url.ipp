@@ -1746,13 +1746,12 @@ set_encoded_fragment(
 {
     check_invariants();
     error_code ec;
-    pct_encoded_str t;
-    if(! grammar::parse_string(s, ec,
-            fragment_rule{t}))
+    fragment_rule t;
+    if(! grammar::parse_string(s, ec, t))
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
     auto dest = set_fragment_impl(s.size());
-    decoded_[id_frag] = t.decoded_size;
+    decoded_[id_frag] = t.s.decoded_size;
     if(! s.empty())
         std::memcpy(
             dest, s.data(), s.size());

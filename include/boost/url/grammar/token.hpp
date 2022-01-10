@@ -7,8 +7,8 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_URL_GRAMMAR_TOKEN_RULE_HPP
-#define BOOST_URL_GRAMMAR_TOKEN_RULE_HPP
+#ifndef BOOST_URL_GRAMMAR_TOKEN_HPP
+#define BOOST_URL_GRAMMAR_TOKEN_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/grammar/charset.hpp>
@@ -29,7 +29,7 @@ namespace grammar {
     @endcode
 */
 template<class CharSet>
-struct token_rule
+struct token
 {
     using value_type = std::string;
     using reference = string_view;
@@ -52,7 +52,7 @@ struct token_rule
         char const*& it,
         char const* end,
         error_code& ec,
-        token_rule& t) noexcept
+        token& t) noexcept
     {
         auto const start = it;
         static constexpr CharSet cs{};

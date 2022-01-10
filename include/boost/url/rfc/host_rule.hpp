@@ -22,7 +22,7 @@
 namespace boost {
 namespace urls {
 
-/** BNF for host
+/** Rule for host
 
     @par BNF
     @code
@@ -48,11 +48,23 @@ struct host_rule
     string_view ipvfuture;
     string_view host_part;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
         grammar::parse_tag const&,
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        host_rule& t) noexcept
+    {
+        return parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
         char const*& it,
         char const* const end,
         error_code& ec,

@@ -13,7 +13,7 @@
 #include <boost/url/rfc/port_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/token_rule.hpp>
+#include <boost/url/grammar/token.hpp>
 #include <boost/static_assert.hpp>
 #include <type_traits>
 

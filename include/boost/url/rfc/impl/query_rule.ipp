@@ -56,36 +56,32 @@ begin(
     error_code& ec,
     query_param_view& t) noexcept
 {
-    using grammar::parse;
-    static constexpr
-        query_rule::key_chars ks{};
-    static constexpr
-        query_rule::value_chars vs{};
-    pct_encoded_str s;
+    pct_encoded_rule<
+        query_rule::key_chars> t0;
+    pct_encoded_rule<
+        query_rule::value_chars> t1;
 
     // key
-    if(! parse(it, end, ec,
-        pct_encoded_rule(ks, s)))
+    if(! grammar::parse(it, end, ec, t0))
         return false;
-    t.key = s.str;
+    t.key = t0.s.str;
 
     // "="
-    t.has_value = parse(
+    t.has_value = grammar::parse(
         it, end, ec, '=');
     if(t.has_value)
     {
         // value
-        if(! parse(it, end, ec,
-            pct_encoded_rule(vs, s)))
+        if(! grammar::parse(
+            it, end, ec, t1))
             return false;
-        t.value = s.str;
+        t.value = t1.s.str;
     }
     else
     {
         // key with no value
         ec = {};
     }
-
     return true;
 }
 
@@ -97,14 +93,13 @@ increment(
     error_code& ec,
     query_param_view& t) noexcept
 {
-    using grammar::parse;
-    static constexpr
-        query_rule::key_chars ks{};
-    static constexpr
-        query_rule::value_chars vs{};
-    pct_encoded_str s;
+    pct_encoded_rule<
+        query_rule::key_chars> t0;
+    pct_encoded_rule<
+        query_rule::value_chars> t1;
 
-    if(! parse(it, end, ec, '&'))
+    if(! grammar::parse(
+        it, end, ec, '&'))
     {
         // end of list
         ec = grammar::error::end;
@@ -112,21 +107,21 @@ increment(
     }
 
     // key
-    if(! parse(it, end, ec,
-        pct_encoded_rule(ks, s)))
+    if(! grammar::parse(
+        it, end, ec, t0))
         return false;
-    t.key = s.str;
+    t.key = t0.s.str;
 
     // "="
-    t.has_value = parse(
+    t.has_value = grammar::parse(
         it, end, ec, '=');
     if(t.has_value)
     {
         // value
-        if(! parse(it, end, ec,
-            pct_encoded_rule(vs, s)))
+        if(! grammar::parse(
+                it, end, ec, t1))
             return false;
-        t.value = s.str;
+        t.value = t1.s.str;
     }
     else
     {

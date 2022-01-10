@@ -181,9 +181,13 @@
       <entry valign="top">
         <bridgehead renderas="sect3">Classes</bridgehead>
         <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__char_literal">char_literal</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__elements">elements</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__optional">optional</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__parse_tag">parse_tag</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__lut_chars">lut_chars</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__range">range</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__token_rule">token_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__token">token</link></member>
         </simplelist>
         <bridgehead renderas="sect3">CharSets</bridgehead>
         <simplelist type="vert" columns="1">

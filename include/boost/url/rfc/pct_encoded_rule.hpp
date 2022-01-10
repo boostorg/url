@@ -11,24 +11,20 @@
 #define BOOST_URL_RFC_PCT_ENCODED_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
+#include <boost/url/string_view.hpp>
+#include <boost/url/grammar/charset.hpp>
+#include <boost/url/grammar/error.hpp>
+#include <boost/url/grammar/parse_tag.hpp>
+#include <boost/static_assert.hpp>
+
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/pct_encoding_types.hpp>
-#include <boost/url/string_view.hpp>
 #include <boost/url/grammar/detail/charset.hpp>
-#include <boost/static_assert.hpp>
 
 namespace boost {
 namespace urls {
 
-#ifndef BOOST_URL_DOCS
-namespace detail {
-template<class CharSet>
-struct pct_encoded_rule;
-} // detail
-#endif
-
-/** BNF for a string of percent-encoded characters from a character set
+/** Rule for a string of percent-encoded characters from a character set
 
     @tparam CharSet The character set indicating
     which characters are unreserved. Any character
@@ -39,10 +35,31 @@ struct pct_encoded_rule;
         2.1. Percent-Encoding (rfc3986)</a>
 */
 template<class CharSet>
-detail::pct_encoded_rule<CharSet>
-pct_encoded_rule(
-    CharSet const& cs,
-    pct_encoded_str& t) noexcept;
+struct pct_encoded_rule
+{
+    pct_encoded_str s;
+
+    friend
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
+        char const*& it,
+        char const* end,
+        error_code& ec,
+        pct_encoded_rule& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    static
+    void
+    parse(
+        char const*& it,
+        char const* end,
+        error_code& ec,
+        pct_encoded_rule& t) noexcept;
+};
 
 } // urls
 } // boost

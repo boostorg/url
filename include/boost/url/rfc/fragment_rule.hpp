@@ -34,9 +34,8 @@ namespace urls {
 */
 struct fragment_rule
 {
-    pct_encoded_str& v;
+    pct_encoded_str s;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
@@ -44,10 +43,23 @@ struct fragment_rule
         char const*& it,
         char const* const end,
         error_code& ec,
-        fragment_rule const& t) noexcept;
+        fragment_rule& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        fragment_rule& t) noexcept;
 };
 
-/** BNF for fragment-part
+/** Rule for fragment-part
 
     @par BNF
     @code
@@ -67,13 +79,24 @@ struct fragment_part_rule
 {
     bool has_fragment = false;
     pct_encoded_str fragment;
-    string_view fragment_part;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
         grammar::parse_tag const&,
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        fragment_part_rule& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
         char const*& it,
         char const* const end,
         error_code& ec,

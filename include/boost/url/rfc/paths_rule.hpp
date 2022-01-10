@@ -35,7 +35,7 @@ struct parsed_path
 
 //------------------------------------------------
 
-/** BNF for segment
+/** Rule for segment
 
     @par BNF
     @code
@@ -76,7 +76,7 @@ struct segment_rule
 
 //------------------------------------------------
 
-/** BNF for segment-nz
+/** Rule for segment-nz
 
     @par BNF
     @code
@@ -117,7 +117,7 @@ struct segment_nz_rule
 
 //------------------------------------------------
 
-/** BNF for segment_nz_nc
+/** Rule for segment_nz_nc
 
     @par BNF
     @code
@@ -161,7 +161,7 @@ struct segment_nz_nc_rule
 
 //------------------------------------------------
 
-/** BNF for path-abempty grammar
+/** Rule for path-abempty grammar
 
     @par BNF
     @code
@@ -213,7 +213,7 @@ struct path_abempty_rule : grammar::range_
 
 //------------------------------------------------
 
-/** BNF for path-absolute grammar.
+/** Rule for path-absolute grammar.
 
     @par BNF
     @code
@@ -266,7 +266,7 @@ struct path_absolute_rule : grammar::range_
 
 //------------------------------------------------
 
-/** BNF for path-noscheme grammar.
+/** Rule for path-noscheme grammar.
 
     @par BNF
     @code
@@ -319,11 +319,10 @@ struct path_noscheme_rule : grammar::range_
 
 //------------------------------------------------
 
-/** BNF for path-rootless grammar.
+/** Rule for path-rootless grammar.
 
     @par Example
     @code
-    using grammar::parse;
     path_rootless_rule t;
     bool success = parse( it, end, ec, t);
     @endcode

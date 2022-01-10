@@ -19,41 +19,43 @@ namespace boost {
 namespace urls {
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+fragment_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    fragment_rule const& t) noexcept
+    fragment_rule& t) noexcept
 {
-    grammar::parse(it, end, ec,
-        pct_encoded_rule(
-            fragment_chars, t.v));
+    pct_encoded_rule<
+        fragment_chars_t> t0;
+    grammar::parse(it, end, ec, t0);
+    t.s = t0.s;
 }
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+fragment_part_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,
     fragment_part_rule& t) noexcept
 {
-    if( it == end ||
-        *it != '#')
+    if(it == end)
     {
         t.has_fragment = false;
-        ec = {};
         return;
     }
-    auto start = it;
+    if(*it != '#')
+    {
+        t.has_fragment = false;
+        return;
+    }
     ++it;
-    if(! grammar::parse(it, end, ec, 
-        fragment_rule{t.fragment}))
+    fragment_rule t0;
+    if(! grammar::parse(it, end, ec, t0))
         return;
     t.has_fragment = true;
-    t.fragment_part = string_view(
-        start, it - start);
+    t.fragment = t0.s;
 }
 
 } // urls

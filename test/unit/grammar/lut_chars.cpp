@@ -77,7 +77,7 @@ struct lut_chars_test
 
 TEST_SUITE(
     lut_chars_test,
-    "boost.url.bnf.lut_chars");
+    "boost.url.grammar.lut_chars");
 
 } // grammar
 } // urls

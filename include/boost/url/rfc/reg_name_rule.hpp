@@ -19,14 +19,7 @@
 namespace boost {
 namespace urls {
 
-/** Charset for reg-name
-*/
-constexpr
-grammar::lut_chars
-reg_name_chars =
-    unreserved_chars + '-' + '.';
-
-/** BNF for reg-name
+/** Rule for reg-name
 
     @par BNF
     @code
@@ -41,7 +34,7 @@ reg_name_chars =
 */
 struct reg_name_rule
 {
-    pct_encoded_str& v;
+    pct_encoded_str v;
 
     BOOST_URL_DECL
     friend
@@ -51,7 +44,7 @@ struct reg_name_rule
         char const*& it,
         char const* const end,
         error_code& ec,
-        reg_name_rule const& t) noexcept;
+        reg_name_rule& t) noexcept;
 };
 
 } // urls

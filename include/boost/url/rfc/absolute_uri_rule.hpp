@@ -20,7 +20,7 @@
 namespace boost {
 namespace urls {
 
-/** BNF for absolute-URI
+/** Rule for absolute-URI
 
     @par BNF
     @code
@@ -47,11 +47,23 @@ struct absolute_uri_rule
     hier_part_rule   hier_part;
     query_part_rule  query_part;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
         grammar::parse_tag const&,
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        absolute_uri_rule& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
         char const*& it,
         char const* const end,
         error_code& ec,

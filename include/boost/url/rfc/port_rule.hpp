@@ -19,7 +19,7 @@
 namespace boost {
 namespace urls {
 
-/** BNF for port
+/** Rule for port
 
     @par BNF
     @code
@@ -53,7 +53,7 @@ struct port_rule
         port_rule& t) noexcept;
 };
 
-/** BNF for port-part
+/** Rule for port-part
 
     @par BNF
     @code

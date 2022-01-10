@@ -139,7 +139,7 @@ public:
 
 TEST_SUITE(
     char_set_test,
-    "boost.url.charset");
+    "boost.url.grammar.charset");
 
 } // grammar
 } // urls

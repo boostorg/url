@@ -109,8 +109,7 @@ struct test_ref
         error_code& ec,
         test_ref& t)
     {
-        using grammar::parse;
-        return parse(
+        return grammar::parse(
             it, end, ec,
             T{t.v});
     }

@@ -11,8 +11,8 @@
 #define BOOST_URL_GRAMMAR_PARSE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/parse_tag.hpp>
 #include <boost/type_traits/make_void.hpp>
 #include <type_traits>
@@ -32,7 +32,6 @@ namespace grammar {
     std::string str = "Hello.cpp";
     char const* it = str.data();
     char const* end = it + str.size();
-    using grammar::parse;
     if (parse(it, end, ec, 'H'))
     {
         std::cout << "str begins with 'H'\n";
@@ -88,14 +87,8 @@ tag_invoke(
     parameter pack, the entire parse operation fails
     but the chars from the substring are still consumed.
 
-    The statement `using grammar::parse` should be in scope
-    before any calls to parse are made without namespace
-    qualification, so that argument-dependent lookup can
-    take effect, as seen in the example.
-
     @par Example
     @code
-    using grammar::parse;
     if (parse(it, end, ec, r1, r2, r3))
     {
         std::cout << "Range [it, end) parsed successfully\n";
@@ -151,7 +144,6 @@ parse_all(
    @par Example
 
    @code
-   using grammar::parse;
    if (parse(str, ec, r1, r2, r3)) {
      std::cout << "String " << str << " parsed successfully\n";
    }
@@ -191,7 +183,6 @@ parse_string(
 
    @code
    try {
-      using grammar::parse;
       parse(str, ec, r1, r2, r3);
    } catch (boost::urls::system_error& e) {
       std::cout << e.what() << '\n';

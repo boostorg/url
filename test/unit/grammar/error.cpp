@@ -58,7 +58,7 @@ public:
 
 TEST_SUITE(
     error_test,
-    "boost.url.bnf.error");
+    "boost.url.grammar.error");
 
 } // grammar
 } // urls

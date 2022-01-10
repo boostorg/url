@@ -19,8 +19,8 @@ namespace boost {
 namespace urls {
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+hier_part_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,

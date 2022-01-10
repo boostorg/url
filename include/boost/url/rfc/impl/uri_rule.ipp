@@ -18,8 +18,8 @@ namespace boost {
 namespace urls {
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+uri_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,

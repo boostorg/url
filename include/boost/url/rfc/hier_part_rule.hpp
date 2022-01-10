@@ -19,7 +19,7 @@
 namespace boost {
 namespace urls {
 
-/** BNF for hier-part
+/** Rule for hier-part
 
     @par BNF
     @code
@@ -39,11 +39,23 @@ struct hier_part_rule
     authority_rule authority;
     parsed_path path;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
         grammar::parse_tag const&,
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        hier_part_rule& t) noexcept
+    {
+        return parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
         char const*& it,
         char const* const end,
         error_code& ec,

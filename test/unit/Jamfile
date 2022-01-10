@@ -48,13 +48,16 @@ local SOURCES =
     url_view.cpp
     urls.cpp
     grammar/ascii.cpp
+    grammar/char_literal.cpp
     grammar/charset.cpp
+    grammar/elements.cpp
     grammar/error.cpp
     grammar/lut_chars.cpp
+    grammar/optional.cpp
     grammar/parse.cpp
     grammar/parse_tag.cpp
     grammar/range.cpp
-    grammar/token_rule.cpp
+    grammar/token.cpp
     rfc/absolute_uri_rule.cpp
     rfc/authority_rule.cpp
     rfc/charsets.cpp

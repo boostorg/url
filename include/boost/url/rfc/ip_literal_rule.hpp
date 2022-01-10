@@ -19,7 +19,7 @@
 namespace boost {
 namespace urls {
 
-/** BNF for IP-literal
+/** Rule for IP-literal
 
     @par BNF
     @code
@@ -39,11 +39,23 @@ struct ip_literal_rule
     ipv6_address ipv6;
     string_view ipvfuture;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
         grammar::parse_tag const&,
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        ip_literal_rule& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
         char const*& it,
         char const* const end,
         error_code& ec,

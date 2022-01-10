@@ -17,34 +17,17 @@
 namespace boost {
 namespace urls {
 
-namespace detail {
-
-template<class CharSet>
-struct pct_encoded_rule
-{
-    CharSet const& cs;
-    pct_encoded_str& s;
-
-    pct_encoded_rule(
-        CharSet const& cs_,
-        pct_encoded_str& s_) noexcept
-        : cs(cs_)
-        , s(s_)
-    {
-    }
-};
-
 template<class CharSet>
 void
-tag_invoke(
-    grammar::parse_tag const&,
+pct_encoded_rule<CharSet>::
+parse(
     char const*& it,
-    char const* const end,
+    char const* end,
     error_code& ec,
-    pct_encoded_rule<
-        CharSet> const& t) noexcept
+    pct_encoded_rule& t) noexcept
 {
     auto const start = it;
+    static constexpr CharSet cs{};
     // VFALCO TODO
     // opt.plus_to_space?
     std::size_t n = 0;
@@ -52,7 +35,7 @@ tag_invoke(
 skip:
     it0 = it;
     it = grammar::find_if_not(
-        it0, end, t.cs);
+        it0, end, cs);
     n += it - it0;
     if(it == end)
         goto finish;
@@ -64,26 +47,26 @@ skip:
         if(it == end)
         {
             // missing HEXDIG
-            ec = error::missing_pct_hexdig;
+            ec = grammar::error::syntax;
             return;
         }
         if(grammar::hexdig_value(*it) == -1)
         {
             // expected HEXDIG
-            ec = error::bad_pct_hexdig;
+            ec = grammar::error::syntax;
             return;
         }
         ++it;
         if(it == end)
         {
             // missing HEXDIG
-            ec = error::missing_pct_hexdig;
+            ec = grammar::error::syntax;
             return;
         }
         if(grammar::hexdig_value(*it) == -1)
         {
             // expected HEXDIG
-            ec = error::bad_pct_hexdig;
+            ec = grammar::error::syntax;
             return;
         }
         ++n;
@@ -94,22 +77,9 @@ skip:
             goto skip;
     }
 finish:
-    ec = {};
     t.s.str = string_view(
         start, it - start);
     t.s.decoded_size = n;
-}
-
-} // detail
-
-template<class CharSet>
-detail::pct_encoded_rule<CharSet>
-pct_encoded_rule(
-    CharSet const& cs,
-    pct_encoded_str& t) noexcept
-{
-    return detail::pct_encoded_rule<
-        CharSet>(cs, t);
 }
 
 } // urls

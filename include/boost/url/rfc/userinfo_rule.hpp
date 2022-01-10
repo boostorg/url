@@ -19,7 +19,7 @@
 namespace boost {
 namespace urls {
 
-/** BNF for userinfo
+/** Rule for userinfo
 
     @par BNF
     @code
@@ -36,16 +36,26 @@ namespace urls {
 struct userinfo_rule
 {
     pct_encoded_str user;
-    string_view     user_part;
     bool            has_password = false;
     pct_encoded_str password;
-    string_view     password_part;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
         grammar::parse_tag const&,
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        userinfo_rule& t) noexcept
+    {
+        return parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
         char const*& it,
         char const* const end,
         error_code& ec,

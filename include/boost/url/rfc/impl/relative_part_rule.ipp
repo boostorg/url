@@ -18,14 +18,13 @@ namespace boost {
 namespace urls {
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+relative_part_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,
     relative_part_rule& t) noexcept
 {
-    using grammar::parse;
     if(it == end)
     {
         // path-empty

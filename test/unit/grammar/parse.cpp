@@ -27,7 +27,7 @@ public:
 
 TEST_SUITE(
     parse_test,
-    "boost.url.parse");
+    "boost.url.grammar.parse");
 
 } // grammar
 } // urls
