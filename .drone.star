@@ -14,6 +14,8 @@ windowsglobalimage="cppalliance/dronevs2019"
 
 def main(ctx):
   return [
+  linux_cxx("clang-12 arm64", "clang++-12", packages="clang-12 libstdc++-9-dev", llvm_os="focal", llvm_ver="12", buildscript="drone", buildtype="boost", image="cppalliance/droneubuntu2004:multiarch", environment={'B2_TOOLSET': 'clang-12', 'B2_CXXSTD': '11,14,17,20', 'DRONE_JOB_UUID': '472b07ba03'}, arch="arm64", globalenv=globalenv),
+  linux_cxx("gcc-11 arm64", "g++-11", packages="g++-11", buildscript="drone", buildtype="boost", image="cppalliance/droneubuntu2004:multiarch", environment={'B2_TOOLSET': 'gcc-11', 'B2_CXXSTD': '17,20', 'DRONE_JOB_UUID': 'fa35e19219'}, arch="arm64", globalenv=globalenv),
   linux_cxx("docs", "g++", packages="docbook docbook-xml docbook-xsl xsltproc libsaxonhe-java default-jre-headless flex libfl-dev bison unzip rsync", buildtype="docs", buildscript="drone", image="cppalliance/droneubuntu1804:1", environment={'COMMENT': 'docs', 'DRONE_JOB_UUID': 'b6589fc6ab'}, globalenv=globalenv),
   linux_cxx("CMAKE_INSTALL_TEST=1 Job 0", "g++", packages="", buildscript="drone", buildtype="cmake1", image="cppalliance/droneubuntu1804:1", environment={'CMAKE_INSTALL_TEST': '1', 'DRONE_JOB_UUID': 'b6589fc6ab'}, globalenv=globalenv),
   linux_cxx("COMMENT=codecov.io LCOV_BRANCH_COVERAGE=0 B2_ Job 2", "g++-8", packages="g++-8", buildscript="drone", buildtype="codecov", image=linuxglobalimage, environment={'COMMENT': 'codecov.io', 'LCOV_BRANCH_COVERAGE': '0', 'B2_CXXSTD': '11', 'B2_TOOLSET': 'gcc-8', 'B2_DEFINES': 'BOOST_NO_STRESS_TEST=1', 'DRONE_JOB_UUID': 'da4b9237ba', "CODECOV_TOKEN": {"from_secret": "codecov_token"}}, globalenv=globalenv),
