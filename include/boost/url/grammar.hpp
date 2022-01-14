@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 
 #include <boost/url/grammar/ascii.hpp>
+#include <boost/url/grammar/char_literal.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/elements.hpp>
 #include <boost/url/grammar/error.hpp>
@@ -22,5 +23,6 @@
 #include <boost/url/grammar/parse_tag.hpp>
 #include <boost/url/grammar/range.hpp>
 #include <boost/url/grammar/token.hpp>
+#include <boost/url/grammar/unsigned_decimal.hpp>
 
 #endif

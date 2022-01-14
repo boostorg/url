@@ -38,7 +38,22 @@ case error::success: return "success";
 case error::end: return "end";
 case error::incomplete: return "incomplete";
 case error::leftover: return "leftover";
+case error::overflow: return "overflow";
 case error::syntax: return "syntax";
+            }
+        }
+
+        error_condition
+        default_error_condition(
+            int ev) const noexcept override
+        {
+            switch(static_cast<error>(ev))
+            {
+case error::overflow:
+case error::syntax:
+                return condition::fatal;
+            default:
+                return {ev, *this};
             }
         }
     };
@@ -59,7 +74,7 @@ make_error_condition(
         const char*
         name() const noexcept override
         {
-            return "boost.url.bnf";
+            return "boost.url.grammar";
         }
 
         std::string

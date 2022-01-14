@@ -109,7 +109,7 @@ parse_all(
     Rn&&... rn)
 {
     auto const it0 = it;
-    if(! parse(it, end, ec,
+    if(! (parse)(it, end, ec,
         std::forward<Rn>(rn)...))
     {
         it = it0;
@@ -129,7 +129,7 @@ parse_string(
 {
     auto it = s.data();
     auto const end = it + s.size();
-    if(! parse(it, end, ec,
+    if(! (parse)(it, end, ec,
         std::forward<Rn>(rn)...))
         return false;
     if(it != end)

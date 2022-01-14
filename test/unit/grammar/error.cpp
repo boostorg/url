@@ -52,7 +52,9 @@ public:
         check(error::end);
         check(error::incomplete);
         check(error::leftover);
-        check(error::syntax);
+
+        check(condition::fatal, error::overflow);
+        check(condition::fatal, error::syntax);
     }
 };
 

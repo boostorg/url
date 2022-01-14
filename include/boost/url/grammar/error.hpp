@@ -51,6 +51,10 @@ enum class error
     */
     leftover,
 
+    /** An integer overflowed during parsing.
+    */
+    overflow,
+
     /**
      * An unspecified syntax error was found.
     */

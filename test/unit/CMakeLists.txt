@@ -54,6 +54,7 @@ set(BOOST_URL_TESTS_FILES
     grammar/parse_tag.cpp
     grammar/range.cpp
     grammar/token.cpp
+    grammar/unsigned_decimal.cpp
     rfc/absolute_uri_rule.cpp
     rfc/authority_rule.cpp
     rfc/charsets.cpp

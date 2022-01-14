@@ -50,11 +50,9 @@ struct optional
         optional& t)
     {
         auto const start = it;
-        if(! parse(
+        if(! (parse)(
             it, end, ec, t.v))
         {
-            if(ec == condition::fatal)
-                return;
             ec = {};
             it = start;
             t.has_value = false;

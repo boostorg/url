@@ -188,6 +188,7 @@
           <member><link linkend="url.ref.boost__urls__grammar__lut_chars">lut_chars</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__range">range</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__token">token</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__unsigned_decimal">unsigned_decimal</link></member>
         </simplelist>
         <bridgehead renderas="sect3">CharSets</bridgehead>
         <simplelist type="vert" columns="1">
