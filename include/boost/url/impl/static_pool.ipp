@@ -55,10 +55,10 @@ allocate(
     std::size_t bytes,
     std::size_t align)
 {
+    if( align < 2)
+        align = 2;
     static constexpr auto S =
         sizeof(void*);
-    bytes = alignment::align_up(
-        bytes, align);
     auto p = reinterpret_cast<char*>(
         reinterpret_cast<std::uintptr_t>(
             top_ - bytes) & ~(align - 1));
@@ -76,11 +76,9 @@ void
 basic_static_pool::
 deallocate(
     void* p,
-    std::size_t bytes,
-    std::size_t align) noexcept
+    std::size_t,
+    std::size_t) noexcept
 {
-    bytes = alignment::align_up(
-        bytes, align);
     BOOST_ASSERT(n_ > 0);
     if(p != top_)
     {
@@ -91,7 +89,6 @@ deallocate(
         return;
     }
     --n_;
-    top_ += bytes;
     while(n_ > 0)
     {
         auto i = reinterpret_cast<

@@ -18,6 +18,16 @@
 namespace boost {
 namespace urls {
 
+/** The type of allocator returned by static_pool
+*/
+#ifdef BOOST_URL_DOCS
+template<class T>
+using static_pool_allocator = __see_below__
+#else
+template<class T>
+class static_pool_allocator;
+#endif
+
 /** Base class for fixed-storage pool
 */
 class basic_static_pool
@@ -26,6 +36,9 @@ class basic_static_pool
     char* end_;
     char* top_;
     std::size_t n_ = 0;
+
+    template<class T>
+    friend class static_pool_allocator;
 
     void** table() noexcept;
     void** find(void* p) noexcept;
@@ -44,16 +57,21 @@ class basic_static_pool
         std::size_t align) noexcept;
 
 public:
-    /** An allocator using the static pool
+    /** Constructor (deleted)
     */
-    template<class T>
-    class allocator_type;
+    basic_static_pool(
+        basic_static_pool const&) = delete;
+
+    /** Assignment (deleted)
+    */
+    basic_static_pool&
+        operator=(basic_static_pool const&) = delete;
 
     /** The type of strings using the pool's allocator.
     */
     using string_type = std::basic_string<
         char, std::char_traits<char>,
-            allocator_type<char>>;
+            static_pool_allocator<char>>;
 
     /** Destructor
     */
@@ -73,8 +91,7 @@ public:
 
     /** Return an allocator which uses the pool.
     */
-    inline
-    allocator_type<char>
+    static_pool_allocator<char>
     allocator() noexcept;
 
     /** Construct a std::basic_string using the pool as its allocator.
@@ -83,6 +100,8 @@ public:
     string_type
     make_string(Args&&... args);
 };
+
+//------------------------------------------------
 
 /** A fixed-size storage pool for allocating memory
 */

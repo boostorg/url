@@ -62,13 +62,25 @@ public:
         }
         {
             static_pool<1024> sp;
-            basic_static_pool::
-                allocator_type<int> a =
-                    sp.allocator();
+            static_pool_allocator<int> a =
+                sp.allocator();
             BOOST_TEST(sp.allocator() == a);
             static_pool<1024> sp2;
             BOOST_TEST(sp.allocator() !=
                 sp2.allocator());
+        }
+        {
+            static_pool<1024> sp;
+            static_pool_allocator<char> a =
+                sp.allocator();
+            auto p1 = a.allocate(1);
+            auto p2 = a.allocate(2);
+            auto p3 = a.allocate(3);
+            auto p4 = a.allocate(4);
+            a.deallocate(p3, 3);
+            a.deallocate(p1, 1);
+            a.deallocate(p4, 4);
+            a.deallocate(p2, 2);
         }
     }
 };

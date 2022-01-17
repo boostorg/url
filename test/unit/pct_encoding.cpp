@@ -107,8 +107,7 @@ public:
             }
             // pct_decode() -> std::basic_string
             {
-                using A = basic_static_pool::
-                    allocator_type<char>;
+                using A = static_pool_allocator<char>;
                 static_pool<256> p;
                 std::basic_string<char,
                     std::char_traits<char>, A> s =
