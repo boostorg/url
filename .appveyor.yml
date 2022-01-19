@@ -94,12 +94,11 @@ environment:
       B2_TOOLSET: gcc
 
     - FLAVOR: mingw32
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      ARCH: i686
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       B2_ADDRESS_MODEL: 32
-      B2_CXXSTD: 11
-      SCRIPT: ci\appveyor\mingw.bat
-      B2_VARIANT: debug
+      ADDPATH: C:\mingw\bin;
+      B2_CXXSTD: 11,14,17,2a
+      B2_TOOLSET: gcc
 
     - FLAVOR: Visual Studio 2019
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
@@ -160,20 +159,11 @@ environment:
       B2_TOOLSET: gcc
 
     - FLAVOR: mingw64
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      ARCH: x86_64
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      ADDPATH: C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin;
       B2_ADDRESS_MODEL: 64
-      B2_CXXSTD: 11
-      B2_DEFINES: __USE_ISOC99
-      SCRIPT: ci\appveyor\mingw.bat
-
-    - FLAVOR: mingw64
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      ARCH: x86_64
-      B2_ADDRESS_MODEL: 64
-      B2_CXXSTD: 17
-      B2_DEFINES: __USE_ISOC99
-      SCRIPT: ci\appveyor\mingw.bat
+      B2_CXXSTD: 11,14,17,2a
+      B2_TOOLSET: gcc
 
 install:
   #- git submodule update --init --recursive
