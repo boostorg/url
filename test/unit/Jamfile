@@ -21,6 +21,7 @@ project
 
 local SOURCES =
     ../../extra/test_main.cpp
+    any_allocator.cpp
     authority_view.cpp
     error.cpp
     error_code.cpp

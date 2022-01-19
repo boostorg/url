@@ -14,9 +14,8 @@ if(NOT TARGET tests)
 endif()
 
 set(BOOST_URL_TESTS_FILES
-    CMakeLists.txt
-    Jamfile
     test_rule.hpp
+    any_allocator.cpp
     authority_view.cpp
     error.cpp
     error_code.cpp
