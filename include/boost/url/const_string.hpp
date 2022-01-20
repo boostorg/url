@@ -11,7 +11,11 @@
 #define BOOST_URL_CONST_STRING_HPP
 
 #include <boost/url/detail/config.hpp>
+
+#include <boost/url/any_allocator.hpp>
 #include <boost/url/string_view.hpp>
+
+#include <atomic>
 #include <memory>
 #include <type_traits>
 
@@ -42,26 +46,20 @@ namespace urls {
     valid for the lifetime of the original
     object.
 */
-class const_string : public string_view
+class const_string
+    : public string_view
 {
-    struct base;
+    using ref_counter_t = std::atomic<std::uint32_t>;
 
-    base* p_ = nullptr;
+    ref_counter_t* refs_ = nullptr;
 
-    template<class Allocator>
-    base*
-    construct(
-        std::size_t n,
-        Allocator const& a,
-        char*& dest);
+    any_allocator<ref_counter_t> alloc_{
+        std::allocator<ref_counter_t>{}};
+
+    void
+    decrement_refs();
 
 public:
-#ifdef BOOST_URL_DOCS
-    using allocator = __see_below__;
-#else
-    class allocator;
-#endif
-
     /** Destructor
 
         Upon destruction, ownership of the shared string is released. If
@@ -138,7 +136,7 @@ public:
      */
     inline
     const_string(
-        const_string const& other) noexcept;
+        const_string const& other);
 
     /** Copy assignment
 

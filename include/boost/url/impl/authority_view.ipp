@@ -125,8 +125,6 @@ encoded_userinfo() const noexcept
         id_user, id_host);
     if(s.empty())
         return s;
-    if(s.empty())
-        return s;
     BOOST_ASSERT(
         s.ends_with('@'));
     s.remove_suffix(1);

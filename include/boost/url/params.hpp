@@ -11,9 +11,12 @@
 #define BOOST_URL_PARAMS_HPP
 
 #include <boost/url/detail/config.hpp>
+
 #include <boost/url/query_param.hpp>
 #include <boost/url/const_string.hpp>
+#include <boost/url/any_allocator.hpp>
 #include <boost/url/detail/parts_base.hpp>
+
 #include <initializer_list>
 #include <iterator>
 #include <type_traits>
@@ -48,7 +51,7 @@ class params
         This is the allocator used to create read-only strings
         when iterators are dereferenced.
      */
-    const_string::allocator a_;
+    any_allocator<char> a_;
 
     /** Construct query params from a url
 
@@ -110,7 +113,7 @@ public:
             char const* s,
             std::size_t nk,
             std::size_t nv,
-            const_string::allocator a);
+            const any_allocator<char>& a);
 
     public:
         /** The query key.

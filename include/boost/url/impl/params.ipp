@@ -24,7 +24,7 @@ reference(
     char const* const s,
     std::size_t const nk,
     std::size_t const nv,
-    const_string::allocator a)
+    const any_allocator<char>& a)
 {
     if(nv > 0)
     {
@@ -35,8 +35,7 @@ reference(
             s + nk + 1, nv - 1 };
         auto n = pct_decode_bytes_unchecked(ev);
         char *dest;
-        value = a.make_const_string(
-            n, dest);
+        value = const_string(n, a, dest);
         pct_decode_unchecked(
             dest, dest + n, ev);
     }
@@ -52,7 +51,7 @@ reference(
     auto n =
         pct_decode_bytes_unchecked(ek);
     char* dest;
-    key = a.make_const_string(n, dest);
+    key = const_string(n, a, dest);
     pct_decode_unchecked(
         dest, dest + nk, ek);
 }
@@ -122,7 +121,7 @@ at(string_view key) const ->
     auto n =
         pct_decode_bytes_unchecked(ev);
     char *dest;
-    auto s = a_.make_const_string(n, dest);
+    const_string s(n, a_, dest);
     pct_decode_unchecked(
         dest, dest + n, ev);
     return s;

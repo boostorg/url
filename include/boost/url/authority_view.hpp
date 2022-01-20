@@ -124,7 +124,7 @@ class BOOST_SYMBOL_VISIBLE
     }
 
     // return length of part
-    BOOST_URL_CONSTEXPR
+    inline
     auto
     len(int id) const noexcept ->
         pos_t
@@ -135,7 +135,7 @@ class BOOST_SYMBOL_VISIBLE
     }
 
     // return id as string
-    BOOST_URL_CONSTEXPR
+    inline
     string_view
     get(int id) const noexcept
     {
@@ -144,7 +144,7 @@ class BOOST_SYMBOL_VISIBLE
     }
 
     // return [first, last) as string
-    BOOST_URL_CONSTEXPR
+    inline
     string_view
     get(int first,
         int last) const noexcept

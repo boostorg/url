@@ -11,7 +11,10 @@
 #define BOOST_URL_SEGMENTS_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
+
+#include <boost/url/any_allocator.hpp>
 #include <boost/url/const_string.hpp>
+
 #include <cstddef>
 #include <iosfwd>
 
@@ -32,7 +35,7 @@ class segments_view
 {
     string_view s_;
     std::size_t n_ = 0;
-    const_string::allocator a_;
+    any_allocator<char> a_;
 
     friend class url_view;
     friend class segments_encoded_view;

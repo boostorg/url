@@ -11,8 +11,11 @@
 #define BOOST_URL_SEGMENTS_HPP
 
 #include <boost/url/detail/config.hpp>
+
 #include <boost/url/const_string.hpp>
+#include <boost/url/any_allocator.hpp>
 #include <boost/url/detail/parts_base.hpp>
+
 #include <initializer_list>
 #include <iterator>
 
@@ -67,7 +70,7 @@ class segments
     : private detail::parts_base
 {
     url* u_ = nullptr;
-    const_string::allocator a_;
+    any_allocator<char> a_;
 
     friend class url;
 

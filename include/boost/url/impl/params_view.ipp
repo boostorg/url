@@ -20,23 +20,24 @@ namespace urls {
 
 params_view::
 value_type::
-~value_type() noexcept = default;
+~value_type() = default;
 
 params_view::
 value_type::
-value_type() noexcept = default;
+value_type() = default;
 
 params_view::
 value_type::
 value_type(
-    value_type const& other) noexcept = default;
+    value_type const& other) = default;
 
 auto
 params_view::
 value_type::
 operator=(
-    value_type const& other) noexcept ->
-        value_type& = default;
+value_type const& other) ->
+value_type& = default;
+
 
 params_view::
 value_type::
@@ -44,7 +45,7 @@ value_type(
     char const* s,
     std::size_t nk,
     std::size_t const nv,
-    const_string::allocator a)
+    any_allocator<char> const& a)
 {
     if(nk + nv == 0)
     {
@@ -61,8 +62,7 @@ value_type(
         auto n =
             pct_decode_bytes_unchecked(ev);
         char *dest;
-        value = a.make_const_string(
-            n, dest);
+        value = const_string(n, a, dest);
         pct_decode_unchecked(
             dest, dest + n, ev);
     }
@@ -75,7 +75,7 @@ value_type(
     auto n =
         pct_decode_bytes_unchecked(ek);
     char* dest;
-    key = a.make_const_string(n, dest);
+    key = const_string(n, a, dest);
     pct_decode_unchecked(
         dest, dest + nk, ek);
 }
@@ -119,7 +119,7 @@ params_view::
 iterator::
 iterator(
     string_view s,
-    const_string::allocator a) noexcept
+    any_allocator<char> const& a) noexcept
     : end_(s.data() + s.size())
     , p_(s.data())
     , a_(a)
@@ -131,8 +131,8 @@ params_view::
 iterator::
 iterator(
     string_view s,
-    int,
-    const_string::allocator a) noexcept
+    any_allocator<char> const& a,
+    int) noexcept
     : end_(s.data() + s.size())
     , p_(nullptr)
     , a_(a)
@@ -226,7 +226,7 @@ at(string_view key) const ->
     auto n =
         pct_decode_bytes_unchecked(ev);
     char *dest;
-    auto s = a_.make_const_string(n, dest);
+    const_string s(n, a_, dest);
     pct_decode_unchecked(
         dest, dest + n, ev);
     return s;
@@ -251,7 +251,7 @@ params_view::
 end() const noexcept ->
     iterator
 {
-    return { s_, 0, a_ };
+    return { s_, a_, 0 };
 }
 
 //------------------------------------------------

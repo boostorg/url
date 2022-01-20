@@ -40,8 +40,7 @@ operator*() const
     auto n =
         pct_decode_bytes_unchecked(s);
     char* dest;
-    auto v =
-        a_.make_const_string(n, dest);
+    const_string v(n, a_, dest);
     pct_decode_opts opt;
     opt.plus_to_space = false;
     pct_decode_unchecked(
@@ -75,8 +74,7 @@ operator[](
     auto n =
         pct_decode_bytes_unchecked(s);
     char* dest;
-    auto v =
-        a_.make_const_string(n, dest);
+    const_string v(n, a_, dest);
     pct_decode_opts opt;
     opt.plus_to_space = false;
     pct_decode_unchecked(

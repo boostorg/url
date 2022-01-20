@@ -1513,16 +1513,16 @@ param(
         return { offset(id_query), 0, 0 };
     if(i == nparam_)
         return { offset(id_frag), 0, 0 };
-    BOOST_ASSERT(i <= nparam_);
+    BOOST_ASSERT(i < nparam_);
     auto n = len(id_query);
-    if(nparam_ < 2)
+    BOOST_ASSERT(n > 0);
+    if(nparam_ == 1)
         return make_param(
             offset(id_query), n);
     auto it = s_ + offset(id_query);
     auto start = it;
     auto const last =
         s_ + offset(id_frag);
-    BOOST_ASSERT(n > 0);
     for(;;)
     {
         for(;;)

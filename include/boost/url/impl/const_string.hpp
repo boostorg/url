@@ -10,78 +10,13 @@
 #ifndef BOOST_URL_IMPL_STRING_HPP
 #define BOOST_URL_IMPL_STRING_HPP
 
-#include <boost/url/detail/over_allocator.hpp>
-#include <atomic>
-
 namespace boost {
 namespace urls {
-
-struct const_string::base
-{
-    std::atomic<std::size_t> refs{1};
-    virtual void destroy() noexcept = 0;
-};
-
-template<class Allocator>
-auto
-const_string::
-construct(
-    std::size_t n,
-    Allocator const& a,
-    char*& dest) ->
-        base*
-{
-    class impl;
-
-    using allocator_type =
-        detail::over_allocator<
-            impl, Allocator>;
-
-    class impl : public base
-    {
-        allocator_type a_;
-
-    public:
-        ~impl()
-        {
-        }
-
-        explicit
-        impl(
-            allocator_type const& a)
-            : a_(a)
-        {
-        }
-
-        void
-        destroy() noexcept override
-        {
-            auto a(a_);
-            a.deallocate(this, 1);
-        }
-    };
-
-    if(n == 0)
-    {
-        dest = nullptr;
-        return nullptr;
-    }
-    allocator_type al(n, a);
-    auto p = ::new(
-        al.allocate(1)) impl(al);
-    dest = reinterpret_cast<
-        char*>(p + 1);
-    static_cast<string_view&>(
-        *this) = { dest, n };
-    return p;
-}
 
 const_string::
 ~const_string()
 {
-    if( p_ &&
-        --p_->refs == 0)
-        p_->destroy();
+    decrement_refs();
 }
 
 template<class Allocator>
@@ -90,8 +25,27 @@ const_string(
     std::size_t n,
     Allocator const& a,
     char*& dest)
-    : p_(construct(n, a, dest))
+    : refs_(nullptr),
+      alloc_(a)
 {
+    if (n == 0)
+    {
+        static_cast<string_view&>(*this) =
+            {nullptr, n};
+        return;
+    }
+    using U = typename boost::type_with_alignment<
+        alignof(ref_counter_t)>::type;
+    auto constexpr S = sizeof(U);
+    using A = allocator_rebind_t<
+        any_allocator<ref_counter_t>, U>;
+    A aa{alloc_};
+    refs_ = reinterpret_cast<ref_counter_t*>(
+        allocator_allocate(
+          aa, (sizeof(ref_counter_t) + n + S - 1) / S));
+    allocator_construct(alloc_, refs_, 1);
+    dest = reinterpret_cast<char*>(refs_ + 1);
+    static_cast<string_view&>(*this) = {dest, n};
 }
 
 template<class Allocator>
@@ -101,20 +55,21 @@ const_string(
     Allocator const& a)
 {
     char* dest;
-    p_ = construct(
-        s.size(), a, dest);
-    std::memcpy(dest,
-        s.data(), s.size());
+    *this = const_string(s.size(), a, dest);
+    std::memcpy(dest, s.data(), s.size());
 }
 
 const_string::
 const_string(
-    const_string const& other) noexcept
+    const_string const& other)
     : string_view(other)
-    , p_(other.p_)
+    , refs_(other.refs_)
+    , alloc_(other.alloc_)
 {
-    if(p_)
-        ++p_->refs;
+    if (refs_) {
+        refs_->fetch_add(
+            1, std::memory_order_relaxed);
+    }
 }
 
 const_string&
@@ -122,128 +77,42 @@ const_string::
 operator=(
     const_string const& other) & noexcept
 {
-    if( p_ &&
-        --p_->refs == 0)
-        p_->destroy();
-    p_ = other.p_;
-    if(p_)
-        ++p_->refs;
-    static_cast<string_view&>(
-        *this) = other;
+    if (other.refs_) {
+        other.refs_->fetch_add(
+            1, std::memory_order_relaxed);
+    }
+    decrement_refs();
+    refs_  = other.refs_;
+    alloc_ = other.alloc_;
+    static_cast<string_view&>(*this)
+        = static_cast<const string_view&>(other);
     return *this;
 }
 
-//------------------------------------------------
-
-class const_string::allocator
+inline
+void
+const_string::
+decrement_refs()
 {
-    struct base
+    if (refs_
+        && refs_->fetch_sub(1,
+               std::memory_order_release) == 1)
     {
-        std::size_t refs = 1;
-
-        virtual
-        ~base()
-        {
-        }
-
-        virtual
-        const_string
-        alloc(
-            std::size_t n,
-            char*& dest) = 0;
-
-        virtual
-        void
-        destroy() noexcept = 0;
-    };
-
-    base* p_ = nullptr;
-
-public:
-    ~allocator()
-    {
-        if( p_ &&
-            --p_->refs == 0)
-            p_->destroy();
+        std::atomic_thread_fence(
+            std::memory_order_acquire);
+        allocator_destroy(alloc_, refs_);
+        using U = typename boost::type_with_alignment<
+            alignof(ref_counter_t)>::type;
+        auto constexpr S = sizeof(U);
+        using A = allocator_rebind_t<
+            any_allocator<ref_counter_t>, U>;
+        A aa{ alloc_ };
+        allocator_deallocate(
+            aa, reinterpret_cast<U*>(refs_),
+            (sizeof(ref_counter_t) + size() + S - 1) / S);
     }
+}
 
-    allocator() = default;
-
-    allocator(
-        allocator const& other) noexcept
-        : p_(other.p_)
-    {
-        if(p_)
-            ++p_->refs;
-    }
-
-    allocator&
-    operator=(
-        allocator const& other) noexcept
-    {
-        if(other.p_)
-            ++other.p_->refs;
-        if( p_ &&
-            --p_->refs == 0)
-            p_->destroy();
-        p_ = other.p_;
-        return *this;
-    }
-
-    template<class Allocator>
-    explicit
-    allocator(Allocator const& a)
-    {
-        class impl;
-
-        using allocator_type = typename
-            detail::allocator_traits<
-                Allocator>::template
-                    rebind_alloc<impl>;
-
-        class impl : public base
-        {
-            allocator_type a_;
-
-        public:
-            ~impl()
-            {
-            }
-
-            impl(allocator_type const& a)
-                : a_(a)
-            {
-            }
-
-            const_string
-            alloc(
-                std::size_t n,
-                char*& dest) override
-            {
-                return const_string(
-                    n, a_, dest);
-            }
-
-            void
-            destroy() noexcept override
-            {
-                auto a(a_);
-                a.deallocate(this, 1);
-            }
-        };
-
-        allocator_type al(a);
-        p_ = ::new(al.allocate(1)) impl(al);
-    }
-
-    const_string
-    make_const_string(
-        std::size_t n,
-        char*& dest) const
-    {
-        return p_->alloc(n, dest);
-    }
-};
 
 } // urls
 } // boost
