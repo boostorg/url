@@ -12,87 +12,154 @@
 
 #include <boost/url/detail/over_allocator.hpp>
 #include <atomic>
+#include <memory>
+#include <new>
 
 namespace boost {
 namespace urls {
 
-struct const_string::base
+struct const_string::result
 {
-    std::atomic<std::size_t> refs{1};
-    virtual void destroy() noexcept = 0;
+    base* p;
+    char* data;
+    std::size_t size;
 };
 
-template<class Allocator>
-auto
-const_string::
-construct(
-    std::size_t n,
-    Allocator const& a,
-    char*& dest) ->
-        base*
+//------------------------------------------------
+
+struct const_string::base
 {
-    class impl;
+    std::atomic<
+        std::uint32_t> refs{1};
 
-    using allocator_type =
-        detail::over_allocator<
-            impl, Allocator>;
-
-    class impl : public base
+    void
+    release(std::size_t size) noexcept
     {
-        allocator_type a_;
+        if(--refs > 0)
+            return;
+        destroy(size);
+    }
 
-    public:
-        ~impl()
-        {
-        }
+    virtual
+    void
+    destroy(std::size_t size) noexcept = 0;
+};
 
-        explicit
-        impl(
-            allocator_type const& a)
+//------------------------------------------------
+
+class const_string::factory::base
+{
+public:
+    std::atomic<
+        std::uint32_t> refs{1};
+
+    void
+    release() noexcept
+    {
+        if(--refs > 0)
+            return;
+        destroy();
+    }
+
+    virtual
+    void
+    destroy() noexcept = 0;
+
+    virtual
+    result
+    construct(std::size_t size) const = 0;
+};
+
+//------------------------------------------------
+
+template<class Allocator>
+class const_string::factory::impl
+    : public base
+{
+    friend class const_string;
+
+    Allocator a_;
+
+    struct string final : const_string::base
+    {
+        Allocator a_;
+
+        string(Allocator const& a) noexcept
             : a_(a)
         {
         }
 
         void
-        destroy() noexcept override
+        destroy(std::size_t size) noexcept override
         {
-            auto a(a_);
+            detail::over_allocator<
+                string, Allocator> a(size, a_);
+            this->~string();
             a.deallocate(this, 1);
         }
     };
 
-    if(n == 0)
+public:
+    explicit
+    impl(Allocator const& a) noexcept
+        : a_(a)
     {
-        dest = nullptr;
-        return nullptr;
     }
-    allocator_type al(n, a);
-    auto p = ::new(
-        al.allocate(1)) impl(al);
-    dest = reinterpret_cast<
-        char*>(p + 1);
-    static_cast<string_view&>(
-        *this) = { dest, n };
-    return p;
-}
 
-const_string::
-~const_string()
-{
-    if( p_ &&
-        --p_->refs == 0)
-        p_->destroy();
-}
+    void
+    destroy() noexcept override
+    {
+        typename detail::allocator_traits<
+            Allocator>::template rebind_alloc<
+                impl> a(a_);
+        this->~impl();
+        a.deallocate(this, 1);
+    }
+
+    result
+    construct(std::size_t size) const override
+    {
+        detail::over_allocator<
+            string, Allocator> a(size, a_);
+        auto p = ::new(a.allocate(1)) string(a_);
+        return result{ p, reinterpret_cast<
+            char*>(p + 1), size };
+    }
+};
+
+//------------------------------------------------
 
 template<class Allocator>
 const_string::
-const_string(
-    std::size_t n,
-    Allocator const& a,
-    char*& dest)
-    : p_(construct(n, a, dest))
+factory::
+factory(Allocator const& a)
+    : p_([&a]
+    {
+        using A = typename
+            detail::allocator_traits<
+                Allocator>::template rebind_alloc<
+                    factory::impl<Allocator>>;
+        return ::new(A(a).allocate(1)
+            ) factory::impl<Allocator>(a);
+    }())
 {
 }
+
+template<class InitFn>
+const_string
+const_string::
+factory::
+operator()(
+    std::size_t n,
+    InitFn const& init) const
+{
+    auto r = p_->construct(n);
+    const_string s(r);
+    init(n, r.data);
+    return s;
+}
+
+//------------------------------------------------
 
 template<class Allocator>
 const_string::
@@ -100,150 +167,33 @@ const_string(
     string_view s,
     Allocator const& a)
 {
-    char* dest;
-    p_ = construct(
-        s.size(), a, dest);
-    std::memcpy(dest,
-        s.data(), s.size());
+    auto r = factory::impl<
+        Allocator>(a).construct(
+            s.size());
+    static_cast<string_view&>(
+        *this) = { r.data, r.size };
+    std::memcpy(
+        r.data, s.data(), s.size());
+    p_ = r.p;
 }
 
+template<
+    class Allocator,
+    class InitFn>
 const_string::
 const_string(
-    const_string const& other) noexcept
-    : string_view(other)
-    , p_(other.p_)
+    std::size_t size,
+    Allocator const& a,
+    InitFn const& init)
 {
-    if(p_)
-        ++p_->refs;
-}
-
-const_string&
-const_string::
-operator=(
-    const_string const& other) & noexcept
-{
-    if( p_ &&
-        --p_->refs == 0)
-        p_->destroy();
-    p_ = other.p_;
-    if(p_)
-        ++p_->refs;
+    auto r = factory::impl<
+        Allocator>(a).construct(
+            size);
     static_cast<string_view&>(
-        *this) = other;
-    return *this;
+        *this) = { r.data, r.size };
+    init(size, r.data);
+    p_ = r.p;
 }
-
-//------------------------------------------------
-
-class const_string::allocator
-{
-    struct base
-    {
-        std::size_t refs = 1;
-
-        virtual
-        ~base()
-        {
-        }
-
-        virtual
-        const_string
-        alloc(
-            std::size_t n,
-            char*& dest) = 0;
-
-        virtual
-        void
-        destroy() noexcept = 0;
-    };
-
-    base* p_ = nullptr;
-
-public:
-    ~allocator()
-    {
-        if( p_ &&
-            --p_->refs == 0)
-            p_->destroy();
-    }
-
-    allocator() = default;
-
-    allocator(
-        allocator const& other) noexcept
-        : p_(other.p_)
-    {
-        if(p_)
-            ++p_->refs;
-    }
-
-    allocator&
-    operator=(
-        allocator const& other) noexcept
-    {
-        if(other.p_)
-            ++other.p_->refs;
-        if( p_ &&
-            --p_->refs == 0)
-            p_->destroy();
-        p_ = other.p_;
-        return *this;
-    }
-
-    template<class Allocator>
-    explicit
-    allocator(Allocator const& a)
-    {
-        class impl;
-
-        using allocator_type = typename
-            detail::allocator_traits<
-                Allocator>::template
-                    rebind_alloc<impl>;
-
-        class impl : public base
-        {
-            allocator_type a_;
-
-        public:
-            ~impl()
-            {
-            }
-
-            impl(allocator_type const& a)
-                : a_(a)
-            {
-            }
-
-            const_string
-            alloc(
-                std::size_t n,
-                char*& dest) override
-            {
-                return const_string(
-                    n, a_, dest);
-            }
-
-            void
-            destroy() noexcept override
-            {
-                auto a(a_);
-                a.deallocate(this, 1);
-            }
-        };
-
-        allocator_type al(a);
-        p_ = ::new(al.allocate(1)) impl(al);
-    }
-
-    const_string
-    make_const_string(
-        std::size_t n,
-        char*& dest) const
-    {
-        return p_->alloc(n, dest);
-    }
-};
 
 } // urls
 } // boost

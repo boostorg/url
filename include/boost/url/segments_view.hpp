@@ -32,7 +32,7 @@ class segments_view
 {
     string_view s_;
     std::size_t n_ = 0;
-    const_string::allocator a_;
+    const_string::factory a_;
 
     friend class url_view;
     friend class segments_encoded_view;

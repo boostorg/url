@@ -36,8 +36,7 @@ find(void* p) noexcept
     while(*t != p)
     {
         ++t;
-        BOOST_ASSERT(
-            t != end);
+        BOOST_ASSERT(t != end);
     }
     return t;
 }

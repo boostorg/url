@@ -98,7 +98,7 @@ public:
         auto constexpr S = sizeof(U);
         using A = typename allocator_traits<
             Allocator>::template rebind_alloc<U>;
-        A a{this->get()};
+        A a(this->get());
         return reinterpret_cast<pointer>(
             std::allocator_traits<A>::allocate(a,
                 (n * sizeof(value_type) + extra_ + S - 1) / S));

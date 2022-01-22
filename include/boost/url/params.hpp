@@ -48,7 +48,7 @@ class params
         This is the allocator used to create read-only strings
         when iterators are dereferenced.
      */
-    const_string::allocator a_;
+    const_string::factory a_;
 
     /** Construct query params from a url
 
@@ -110,7 +110,7 @@ public:
             char const* s,
             std::size_t nk,
             std::size_t nv,
-            const_string::allocator a);
+            const_string::factory const& a);
 
     public:
         /** The query key.

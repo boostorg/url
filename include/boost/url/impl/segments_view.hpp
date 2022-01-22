@@ -24,7 +24,7 @@ class segments_view::
     char const* pos_ = nullptr;
     char const* next_ = nullptr;
     char const* end_ = nullptr;
-    const_string::allocator a_;
+    const_string::factory a_;
     pct_encoded_str t_;
 
     friend segments_view;
@@ -33,14 +33,14 @@ class segments_view::
     iterator(
         string_view s,
         std::size_t nseg,
-        const_string::allocator const& a) noexcept;
+        const_string::factory const& a) noexcept;
 
     // end ctor
     BOOST_URL_DECL
     iterator(
         string_view s,
         std::size_t nseg,
-        const_string::allocator const& a,
+        const_string::factory const& a,
         int) noexcept;
 
 public:

@@ -170,10 +170,8 @@ public:
     {
         char buf[max_str_len];
         auto const n = print_impl(buf);
-        char* dest;
-        const_string s(n, a, dest);
-        std::memcpy(dest, buf, n);
-        return s;
+        return const_string(
+            string_view(buf, n), a);
     }
 
     /** Write a dotted decimal string representing the address to a buffer

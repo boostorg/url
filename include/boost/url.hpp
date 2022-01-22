@@ -13,6 +13,7 @@
 #include <boost/url/grammar.hpp>
 
 #include <boost/url/authority_view.hpp>
+#include <boost/url/const_string.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/error_code.hpp>
 #include <boost/url/host_type.hpp>
@@ -32,7 +33,6 @@
 #include <boost/url/segments_view.hpp>
 #include <boost/url/static_pool.hpp>
 #include <boost/url/static_url.hpp>
-#include <boost/url/string_view.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/url_view.hpp>

@@ -213,11 +213,13 @@ pct_decode_to_value(
     if(ec.failed())
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
-    char* dest;
-    const_string r(n, a, dest);
-    pct_decode_unchecked(
-        dest, dest + n, s, opt);
-    return r;
+    return const_string(n, a,
+        [&opt, &s]
+        (std::size_t n, char* dest)
+        {
+            pct_decode_unchecked(
+                dest, dest + n, s, opt);
+        });
 }
 
 //------------------------------------------------
@@ -233,13 +235,14 @@ pct_decode_unchecked(
     if(decoded_size == std::size_t(-1))
         decoded_size =
             pct_decode_bytes_unchecked(s);
-    char* dest;
-    const_string r(
-        decoded_size, a, dest);
-    pct_decode_unchecked(
-        dest, dest + decoded_size,
-            s, opt);
-    return r;
+    return const_string(
+        decoded_size, a,
+        [&s, &opt](
+            std::size_t n, char* dest)
+        {
+            pct_decode_unchecked(
+                dest, dest + n, s, opt);
+        });
 }
 
 //------------------------------------------------
@@ -423,14 +426,15 @@ pct_encode_to_value(
         return const_string();
     auto const n =
         pct_encode_bytes(s, opt, cs);
-    char* dest;
-    const_string r(n, a, dest);
-    char const* end = dest + n;
-    auto const n1 = pct_encode(
-        dest, end, s, opt, cs);
-    BOOST_ASSERT(n1 == n);
-    (void)n1;
-    return r;
+    return const_string(n, a,
+        [&s, &opt, &cs](
+            std::size_t n, char* dest)
+        {
+            auto const n1 = pct_encode(
+                dest, dest+n, s, opt, cs);
+            BOOST_ASSERT(n1 == n);
+            (void)n1;
+        });
 }
 
 } // urls

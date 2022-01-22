@@ -67,7 +67,7 @@ class segments
     : private detail::parts_base
 {
     url* u_ = nullptr;
-    const_string::allocator a_;
+    const_string::factory a_;
 
     friend class url;
 

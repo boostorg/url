@@ -39,14 +39,14 @@ operator*() const
         u_->cs_ + p0, p1 - p0);
     auto n =
         pct_decode_bytes_unchecked(s);
-    char* dest;
-    auto v =
-        a_.make_const_string(n, dest);
-    pct_decode_opts opt;
-    opt.plus_to_space = false;
-    pct_decode_unchecked(
-        dest, dest + n, s, opt);
-    return v;
+    return a_(n, [&s]
+        (std::size_t n, char* dest)
+        {
+            pct_decode_opts opt;
+            opt.plus_to_space = false;
+            pct_decode_unchecked(
+                dest, dest + n, s, opt);
+        });
 }
 
 //------------------------------------------------
@@ -74,14 +74,14 @@ operator[](
         u_->cs_ + p0, p1 - p0);
     auto n =
         pct_decode_bytes_unchecked(s);
-    char* dest;
-    auto v =
-        a_.make_const_string(n, dest);
-    pct_decode_opts opt;
-    opt.plus_to_space = false;
-    pct_decode_unchecked(
-        dest, dest + n, s, opt);
-    return v;
+    return a_(n, [&s]
+        (std::size_t n, char* dest)
+        {
+            pct_decode_opts opt;
+            opt.plus_to_space = false;
+            pct_decode_unchecked(
+                dest, dest + n, s, opt);
+        });
 }
 
 //------------------------------------------------

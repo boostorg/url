@@ -22,14 +22,14 @@ class params::iterator
 {
     url const* u_ = nullptr;
     std::size_t i_ = 0;
-    const_string::allocator a_;
+    const_string::factory a_;
 
     friend class params;
 
     iterator(
         url const& u,
         std::size_t i,
-        const_string::allocator a) noexcept
+        const_string::factory a) noexcept
         : u_(&u)
         , i_(i)
         , a_(a)

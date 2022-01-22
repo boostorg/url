@@ -32,7 +32,7 @@ class params_view
 
     string_view s_;
     std::size_t n_;
-    const_string::allocator a_;
+    const_string::factory a_;
 
     template<class Allocator>
     params_view(
@@ -86,7 +86,7 @@ public:
             char const* s,
             std::size_t nk,
             std::size_t nv,
-            const_string::allocator a);
+            const_string::factory const& a);
     };
 
     using reference = value_type;

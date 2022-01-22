@@ -36,7 +36,7 @@ public:
             segments_view::iterator>);
 #endif
 
-    static_pool<4096> sp;
+    static_pool<4096> sp_;
 
     template<class It>
     static
@@ -53,7 +53,7 @@ public:
     {
         segments_view sv;
         BOOST_TEST_THROWS(
-            sv = f(s).value().decoded(sp.allocator()),
+            sv = f(s).value().decoded(sp_.allocator()),
             std::exception);
         BOOST_TEST(sv.empty());
         BOOST_TEST(sv.begin() == sv.end());
@@ -85,7 +85,7 @@ public:
     {
         segments_view sv;
         BOOST_TEST_NO_THROW(
-            sv = f(s).value().decoded(sp.allocator()));
+            sv = f(s).value().decoded(sp_.allocator()));
         // forward
         {
             std::vector<const_string> v1;
@@ -125,7 +125,7 @@ public:
         {
             segments_view sv = parse_path(
                 "/%70%61%74%68/%74%6f/%66%69%6c%65%2e%74%78%74"
-                    ).value().decoded(sp.allocator());
+                    ).value().decoded(sp_.allocator());
             BOOST_TEST(sv.size() == 3);
             BOOST_TEST(sv.is_absolute());
         }
@@ -134,10 +134,10 @@ public:
         {
             segments_view sv;
             sv = parse_path("/path/to/file.txt"
-                ).value().decoded(sp.allocator());
+                ).value().decoded(sp_.allocator());
             BOOST_TEST(sv.is_absolute());
             sv = parse_path("./my/downloads"
-                ).value().decoded(sp.allocator());
+                ).value().decoded(sp_.allocator());
             BOOST_TEST(! sv.is_absolute());
         }
     }
@@ -149,7 +149,7 @@ public:
         // back
         {
             segments_view sv = parse_path(
-                "/path/to/file.txt").value().decoded(sp.allocator());
+                "/path/to/file.txt").value().decoded(sp_.allocator());
             BOOST_TEST(sv.front() == "path");
             BOOST_TEST(sv.back() == "file.txt");
         }
@@ -164,7 +164,7 @@ public:
         // iterator()
         {
             segments_view sv = parse_path(
-                "/path/to/file.txt").value().decoded(sp.allocator());
+                "/path/to/file.txt").value().decoded(sp_.allocator());
             iter_t it1;
             iter_t it2;
             BOOST_TEST(it1 == it2);
@@ -175,7 +175,7 @@ public:
         // iterator(iterator const&)
         {
             segments_view sv = parse_path(
-                "/path/to/file.txt").value().decoded(sp.allocator());
+                "/path/to/file.txt").value().decoded(sp_.allocator());
             iter_t it1 = sv.begin();
             iter_t it2(it1);
             BOOST_TEST(it2 == it1);
@@ -188,7 +188,7 @@ public:
         {
             segments_view sv = parse_path(
                 "/path/to/file.txt").value().decoded(
-                    sp.allocator());
+                    sp_.allocator());
             iter_t it1;
             it1 = sv.begin();
             iter_t it2;
@@ -207,7 +207,7 @@ public:
         {
             segments_view sv = parse_path(
                 "/path/to/file.txt").value().decoded(
-                    sp.allocator());
+                    sp_.allocator());
             iter_t it = sv.begin();
             BOOST_TEST(*it == "path");
             BOOST_TEST(*++it == "to");
@@ -222,7 +222,7 @@ public:
         {
             segments_view sv = parse_path(
                 "/path/to/file.txt").value().decoded(
-                    sp.allocator());
+                    sp_.allocator());
             iter_t it = sv.end();
             BOOST_TEST(*--it == "file.txt");
             BOOST_TEST(*it-- == "file.txt");
@@ -236,7 +236,7 @@ public:
         {
             segments_view sv = parse_path(
                 "/path/to/file.txt").value().decoded(
-                    sp.allocator());
+                    sp_.allocator());
             iter_t it = sv.begin();
             BOOST_TEST(it == sv.begin());
             BOOST_TEST(it != sv.end());

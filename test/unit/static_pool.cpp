@@ -29,12 +29,7 @@ public:
         string_view s,
         Allocator const& a = {})
     {
-        char* dest;
-        const_string sv(
-            s.size(), a, dest);
-        std::memcpy(dest,
-            s.data(), s.size());
-        return sv;
+        return const_string(s, a);
     }
 
     void
