@@ -54,8 +54,7 @@ iterator::
 iterator(
     string_view s,
     std::size_t nseg,
-    const_string::
-        allocator const& a,
+    const_string::allocator const& a,
     int) noexcept
     : i_(nseg)
     , begin_(s.data())

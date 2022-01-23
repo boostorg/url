@@ -38,8 +38,7 @@ class segments::iterator
     iterator(
         url const& u,
         std::size_t i,
-        const_string::allocator
-            const& a) noexcept
+        const_string::allocator const& a) noexcept
         : u_(&u)
         , i_(i)
         , a_(a)

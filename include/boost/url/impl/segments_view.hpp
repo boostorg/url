@@ -33,16 +33,14 @@ class segments_view::
     iterator(
         string_view s,
         std::size_t nseg,
-        const_string::
-            allocator const& a) noexcept;
+        const_string::allocator const& a) noexcept;
 
     // end ctor
     BOOST_URL_DECL
     iterator(
         string_view s,
         std::size_t nseg,
-        const_string::
-            allocator const& a,
+        const_string::allocator const& a,
         int) noexcept;
 
 public:
