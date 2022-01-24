@@ -65,7 +65,8 @@ factory() noexcept
             result
             construct(std::size_t size) const override
             {
-                struct string : const_string::base
+                struct string final
+                    : const_string::base
                 {
                     void
                     destroy(std::size_t size) noexcept override
@@ -83,8 +84,22 @@ factory() noexcept
                     char*>(p + 1), size };
             }
         };
+
+        struct deleter
+        {
+            default_impl* p;
+
+            ~deleter()
+            {
+                p->release();
+            }
+        };
+
         static default_impl d{};
+        static deleter dp{&d};
+
         ++d.refs;
+
         return &d;
     }())
 {
@@ -136,8 +151,22 @@ const_string() noexcept
             {
             }
         };
+
+        struct deleter
+        {
+            empty_string* p;
+
+            ~deleter()
+            {
+                p->release(0);
+            }
+        };
+
         static empty_string cs{};
+        static deleter d{&cs};
+
         ++cs.refs;
+
         return &cs;
     }())
 {
