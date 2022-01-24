@@ -72,12 +72,11 @@ validate_pct_encoding(
                     error::missing_pct_hexdig);
                 return n;
             }
-            auto const d0 =
-                grammar::hexdig_value(it[0]);
-            auto const d1 =
-                grammar::hexdig_value(it[1]);
-            if( d0 == -1 ||
-                d1 == -1)
+            char d0{' '};
+            bool r0 = grammar::hexdig_value(it[0], d0);
+            char d1{' '};
+            bool r1 = grammar::hexdig_value(it[1], d1);
+            if( !r0 || !r1 )
             {
                 // expected HEXDIG
                 ec = BOOST_URL_ERR(

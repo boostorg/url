@@ -50,7 +50,8 @@ skip:
             ec = grammar::error::syntax;
             return;
         }
-        if(grammar::hexdig_value(*it) == -1)
+        char r{' '};
+        if(!grammar::hexdig_value(*it, r))
         {
             // expected HEXDIG
             ec = grammar::error::syntax;
@@ -63,7 +64,7 @@ skip:
             ec = grammar::error::syntax;
             return;
         }
-        if(grammar::hexdig_value(*it) == -1)
+        if(!grammar::hexdig_value(*it, r))
         {
             // expected HEXDIG
             ec = grammar::error::syntax;

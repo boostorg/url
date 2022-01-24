@@ -127,12 +127,13 @@ public:
         for_each_char(
         [](char c)
         {
+            char d{' '};
             if(hexdig_chars(c))
                 BOOST_TEST(
-                    hexdig_value(c) != -1);
+                    hexdig_value(c, d));
             else
                 BOOST_TEST(
-                    hexdig_value(c) == -1);
+                    !hexdig_value(c, d));
         });
     }
 };

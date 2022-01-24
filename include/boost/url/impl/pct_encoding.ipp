@@ -52,10 +52,10 @@ pct_decode_unchecked(
     auto const decode_hex = [](
         char const* it)
     {
-        auto const d0 =
-            grammar::hexdig_value(it[0]);
-        auto const d1 =
-            grammar::hexdig_value(it[1]);
+        char d0{' '};
+        grammar::hexdig_value(it[0], d0);
+        char d1{' '};
+        grammar::hexdig_value(it[1], d1);
         return static_cast<char>(
             ((static_cast<
                 unsigned char>(d0) << 4) +
