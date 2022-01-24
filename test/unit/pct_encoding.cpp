@@ -357,86 +357,86 @@ public:
     //--------------------------------------------
 
     void
-    testEncode()
+    check( string_view s,
+           string_view m0,
+           bool space_to_plus = false)
     {
-        auto const check =
-            []( string_view s,
-                string_view m0,
-                bool space_to_plus = false)
+        // pct_encode_bytes
         {
-            // pct_encode_bytes
-            {
-                pct_encode_opts opt;
-                opt.space_to_plus =
-                    space_to_plus;
-                BOOST_TEST(pct_encode_bytes(
-                    s, opt, test_chars{}) ==
-                        m0.size());
-            }
-            // pct_encode
-            {
-                pct_encode_opts opt;
-                opt.space_to_plus =
-                    space_to_plus;
-                BOOST_TEST(pct_encode(
-                    s, opt, test_chars{}) == m0);
-            }
-            {
-                static_pool<256> pool;
-                pct_encode_opts opt;
-                opt.space_to_plus =
-                    space_to_plus;
-                BOOST_TEST(pct_encode(
-                    s, opt, test_chars{},
-                        pool.allocator()) == m0);
-            }
-            // pct_encode_to_value
-            {
-                pct_encode_opts opt;
-                opt.space_to_plus =
-                    space_to_plus;
-                BOOST_TEST(pct_encode_to_value(
-                    s, opt, test_chars{}) == m0);
-            }
-            {
-                static_pool<256> pool;
-                pct_encode_opts opt;
-                opt.space_to_plus =
-                    space_to_plus;
-                BOOST_TEST(pct_encode_to_value(
-                    s, opt, test_chars{},
-                        pool.allocator()) == m0);
-            }
             pct_encode_opts opt;
             opt.space_to_plus =
                 space_to_plus;
-            auto const m = pct_encode_to_value(
-                s, opt, test_chars{});
-            if(! BOOST_TEST(m == m0))
-                return;
-            char buf[64];
-            BOOST_ASSERT(
-                m.size() < sizeof(buf));
-            for(std::size_t i = 0;
-                i <= sizeof(buf); ++i)
+            BOOST_TEST(pct_encode_bytes(
+                s, opt, test_chars{}) ==
+                    m0.size());
+        }
+        // pct_encode
+        {
+            pct_encode_opts opt;
+            opt.space_to_plus =
+                space_to_plus;
+            BOOST_TEST(pct_encode(
+                s, opt, test_chars{}) == m0);
+        }
+        {
+            static_pool<256> pool;
+            pct_encode_opts opt;
+            opt.space_to_plus =
+                space_to_plus;
+            BOOST_TEST(pct_encode(
+                s, opt, test_chars{},
+                    pool.allocator()) == m0);
+        }
+        // pct_encode_to_value
+        {
+            pct_encode_opts opt;
+            opt.space_to_plus =
+                space_to_plus;
+            BOOST_TEST(pct_encode_to_value(
+                s, opt, test_chars{}) == m0);
+        }
+        {
+            static_pool<256> pool;
+            pct_encode_opts opt;
+            opt.space_to_plus =
+                space_to_plus;
+            BOOST_TEST(pct_encode_to_value(
+                s, opt, test_chars{},
+                    pool.allocator()) == m0);
+        }
+        pct_encode_opts opt;
+        opt.space_to_plus =
+            space_to_plus;
+        auto const m = pct_encode_to_value(
+            s, opt, test_chars{});
+        if(! BOOST_TEST(m == m0))
+            return;
+        char buf[64];
+        BOOST_ASSERT(
+            m.size() < sizeof(buf));
+        for(std::size_t i = 0;
+            i <= sizeof(buf); ++i)
+        {
+            char* dest = buf;
+            char const* end = buf + i;
+            std::size_t n = pct_encode(
+                dest, end, s, opt, test_chars{});
+            string_view r(buf, n);
+            if(n == m.size())
             {
-                char* dest = buf;
-                char const* end = buf + i;
-                std::size_t n = pct_encode(
-                    dest, end, s, opt, test_chars{});
-                string_view r(buf, n);
-                if(n == m.size())
-                {
-                    BOOST_TEST(i == m.size());
-                    BOOST_TEST(r == m);
-                    break;
-                }
-                BOOST_TEST(
-                    string_view(buf, n) ==
-                    m.substr(0, n));
+                BOOST_TEST(i == m.size());
+                BOOST_TEST(r == m);
+                break;
             }
-        };
+            BOOST_TEST(
+                string_view(buf, n) ==
+                m.substr(0, n));
+        }
+    };
 
+    void
+    testEncode()
+    {
         check("", "");
         check(" ", "%20");
         check("A", "A");
