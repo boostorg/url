@@ -113,7 +113,6 @@ class BOOST_SYMBOL_VISIBLE
             char const* cs) noexcept;
 
     // return offset of id
-    BOOST_URL_CONSTEXPR
     auto
     offset(int id) const noexcept ->
         pos_t
@@ -124,7 +123,6 @@ class BOOST_SYMBOL_VISIBLE
     }
 
     // return length of part
-    BOOST_URL_CONSTEXPR
     auto
     len(int id) const noexcept ->
         pos_t
@@ -135,7 +133,6 @@ class BOOST_SYMBOL_VISIBLE
     }
 
     // return id as string
-    BOOST_URL_CONSTEXPR
     string_view
     get(int id) const noexcept
     {
@@ -144,7 +141,6 @@ class BOOST_SYMBOL_VISIBLE
     }
 
     // return [first, last) as string
-    BOOST_URL_CONSTEXPR
     string_view
     get(int first,
         int last) const noexcept

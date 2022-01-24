@@ -137,7 +137,6 @@ protected:
         char const* cs) noexcept;
 
     // return offset of id
-    BOOST_URL_CONSTEXPR
     auto
     offset(int id) const noexcept ->
         pos_t
@@ -148,7 +147,6 @@ protected:
     }
 
     // return length of part
-    BOOST_URL_CONSTEXPR
     auto
     len(int id) const noexcept ->
         pos_t
@@ -159,7 +157,6 @@ protected:
     }
 
     // return id as string
-    BOOST_URL_CONSTEXPR
     string_view
     get(int id) const noexcept
     {
@@ -168,7 +165,6 @@ protected:
     }
 
     // return [first, last) as string
-    BOOST_URL_CONSTEXPR
     string_view
     get(int first,
         int last) const noexcept
