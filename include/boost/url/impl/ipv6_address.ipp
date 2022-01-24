@@ -59,9 +59,8 @@ struct h16
         std::uint16_t v;
         for(;;)
         {
-            auto d =
-                grammar::hexdig_value(*it);
-            if(d == -1)
+            char d;
+            if(!grammar::hexdig_value(*it, d))
             {
                 // not a HEXDIG
                 ec = error::bad_hexdig;
@@ -71,22 +70,19 @@ struct h16
             ++it;
             if(it == end)
                 break;
-            d = grammar::hexdig_value(*it);
-            if(d == -1)
+            if(!grammar::hexdig_value(*it, d))
                 break;
             v = (16 * v) + d;
             ++it;
             if(it == end)
                 break;
-            d = grammar::hexdig_value(*it);
-            if(d == -1)
+            if(!grammar::hexdig_value(*it, d))
                 break;
             v = (16 * v) + d;
             ++it;
             if(it == end)
                 break;
-            d = grammar::hexdig_value(*it);
-            if(d == -1)
+            if(!grammar::hexdig_value(*it, d))
                 break;
             v = (16 * v) + d;
             ++it;
@@ -423,8 +419,9 @@ tag_invoke(
             --n;
             break;
         }
+        char d;
         if( b != -1 &&
-            grammar::hexdig_value(*it) == -1)
+            !grammar::hexdig_value(*it, d))
         {
             // ends in "::"
             break;

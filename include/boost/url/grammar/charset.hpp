@@ -470,17 +470,27 @@ constexpr hexdig_chars_t hexdig_chars{};
     of a single hexadecimal digit, or -1 if
     `ch` is not a hexadecimal digit.
 */
-constexpr
-char
-hexdig_value(char c) noexcept
+inline
+bool
+hexdig_value(char c, char& res) noexcept
 {
-    return
-        (c >= '0' && c <= '9') ?
-        c - '0' : (
-            (c >= 'A' && c <= 'F') ?
-            10 + c - 'A' : (
-                (c >= 'a' && c <= 'f') ?
-                10 + c - 'a' : - 1) );
+    if (c >= '0' && c <= '9')
+    {
+        res = c - '0';
+        return true;
+    }
+    if (c >= 'A' && c <= 'F')
+    {
+        res = 10 + c - 'A';
+        return true;
+    }
+    if (c >= 'a' && c <= 'f')
+    {
+        res = 10 + c - 'a';
+        return true;
+    }
+    res = 0;
+    return false;
 }
 
 //------------------------------------------------
