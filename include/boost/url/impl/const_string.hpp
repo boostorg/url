@@ -73,7 +73,7 @@ public:
 //------------------------------------------------
 
 template<class Allocator>
-class const_string::factory::impl
+class const_string::factory::impl final
     : public base
 {
     friend class const_string;
