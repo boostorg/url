@@ -36,7 +36,7 @@ public:
     run()
     {
         string_view s;
-        s = "abcdefghijklmnopqrstuvwxyz";
+        s = "abcdefghijklmnopqrstuvwxyzabcdefghijk";
         {
             std::string s0;
             BOOST_TEST(s0.capacity() <

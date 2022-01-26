@@ -119,6 +119,7 @@ public:
     result
     construct(std::size_t size) const override
     {
+        // VFALCO Should we do something special when size==0?
         detail::over_allocator<
             string, Allocator> a(size, a_);
         auto p = ::new(a.allocate(1)) string(a_);
@@ -153,6 +154,10 @@ operator()(
     std::size_t n,
     InitFn const& init) const
 {
+    // VFALCO Should we do something special when n==0?
+    if (is_small(n))
+        return const_string(n,
+            std::allocator<char>{}, init);
     auto r = p_->construct(n);
     const_string s(r);
     init(n, r.data);
@@ -167,14 +172,21 @@ const_string(
     string_view s,
     Allocator const& a)
 {
-    auto r = factory::impl<
-        Allocator>(a).construct(
-            s.size());
+    // VFALCO Should we do something special when n==0?
+    if (is_small(s.size()))
+    {
+        std::memcpy(data_.buf_,
+            s.data(), s.size());
+        static_cast<string_view&>(*this
+            ) = { data_.buf_, s.size()};
+        return;
+    }
+    auto r = factory::impl<Allocator>(
+        a).construct(s.size());
     static_cast<string_view&>(
         *this) = { r.data, r.size };
-    std::memcpy(
-        r.data, s.data(), s.size());
-    p_ = r.p;
+    std::memcpy(r.data, s.data(), s.size());
+    data_.p_ = r.p;
 }
 
 template<
@@ -186,13 +198,19 @@ const_string(
     Allocator const& a,
     InitFn const& init)
 {
+    if (is_small(size))
+    {
+        init(size, data_.buf_);
+        static_cast<string_view&>(
+            *this) = { data_.buf_, size };
+        return;
+    }
     auto r = factory::impl<
-        Allocator>(a).construct(
-            size);
+        Allocator>(a).construct(size);
     static_cast<string_view&>(
         *this) = { r.data, r.size };
     init(size, r.data);
-    p_ = r.p;
+    data_.p_ = r.p;
 }
 
 } // urls
