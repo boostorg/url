@@ -42,10 +42,43 @@ namespace urls {
 */
 class const_string : public string_view
 {
+public:
+    /** Built-in capacity
+
+        Strings whose length is up to
+        this size will not require
+        dynamic allocation.
+    */
+    static constexpr
+    std::size_t
+    builtin_capacity = 32;
+
+private:
     struct base;
     struct result;
 
-    base* p_;
+    union data_t
+    {
+        base* p_;
+        char buf_[builtin_capacity];
+
+        data_t() = default;
+
+        explicit
+        data_t(base* p)
+            : p_(p)
+        {
+        }
+    };
+
+    data_t data_;
+
+    static constexpr
+    bool
+    is_small(std::size_t n) noexcept
+    {
+        return n <= builtin_capacity;
+    }
 
     BOOST_URL_DECL
     explicit

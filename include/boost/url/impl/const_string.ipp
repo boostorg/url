@@ -127,58 +127,43 @@ operator()(string_view s) const
 const_string::
 const_string(
     result const& r) noexcept
-    : string_view(
-        r.data, r.size)
-    , p_(r.p)
+    : string_view(r.data, r.size)
+    , data_(r.p)
 {
 }
 
 const_string::
 ~const_string()
 {
-    p_->release(size());
+    if (!is_small(size()))
+        data_.p_->release(size());
 }
 
 const_string::
 const_string() noexcept
     : string_view()
-    , p_([]
-    {
-        struct empty_string final : base
-        {
-            void
-            destroy(std::size_t) noexcept override
-            {
-            }
-        };
-
-        struct deleter
-        {
-            empty_string* p;
-
-            ~deleter()
-            {
-                p->release(0);
-            }
-        };
-
-        static empty_string cs{};
-        static deleter d{&cs};
-
-        ++cs.refs;
-
-        return &cs;
-    }())
 {
 }
 
 const_string::
 const_string(
     const_string const& other) noexcept
-    : string_view(other)
-    , p_(other.p_)
+    : string_view()
 {
-    ++p_->refs;
+    if (is_small(other.size()))
+    {
+        // other is small,
+        // nothing to release
+        std::memcpy( data_.buf_,
+            other.data_.buf_, other.size());
+        static_cast<string_view&>(*this) =
+            string_view(data_.buf_, other.size());
+        return;
+    }
+    data_.p_ = other.data_.p_;
+    ++data_.p_->refs;
+    static_cast<string_view&>(
+        *this) = string_view(other);
 }
 
 const_string&
@@ -186,11 +171,24 @@ const_string::
 operator=(
     const_string const& other) noexcept
 {
-    ++other.p_->refs;
-    p_->release(size());
-    p_ = other.p_;
+    if (is_small(other.size()))
+    {
+        if (!is_small(size()))
+            data_.p_->release(size());
+        else if(this == &other)
+            return *this;
+        std::memcpy(data_.buf_,
+            other.data_.buf_, other.size());
+        static_cast<string_view&>(*this) =
+            string_view(data_.buf_, other.size());
+        return *this;
+    }
+    ++other.data_.p_->refs;
+    if (!is_small(size()))
+        data_.p_->release(size());
+    data_.p_ = other.data_.p_;
     static_cast<string_view&>(
-        *this) = other;
+        *this) = string_view(other);
     return *this;
 }
 
