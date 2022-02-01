@@ -489,7 +489,7 @@ hexdig_value(char c, char& res) noexcept
         res = 10 + c - 'a';
         return true;
     }
-    res = static_cast<char>(0);
+    res = 0;
     return false;
 }
 
