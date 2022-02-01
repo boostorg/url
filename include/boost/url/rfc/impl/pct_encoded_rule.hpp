@@ -50,7 +50,7 @@ skip:
             ec = grammar::error::syntax;
             return;
         }
-        char r{' '};
+        char r;
         if(!grammar::hexdig_value(*it, r))
         {
             // expected HEXDIG

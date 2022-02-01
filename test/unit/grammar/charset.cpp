@@ -127,7 +127,7 @@ public:
         for_each_char(
         [](char c)
         {
-            char d{' '};
+            char d;
             if(hexdig_chars(c))
                 BOOST_TEST(
                     hexdig_value(c, d));

@@ -72,9 +72,9 @@ validate_pct_encoding(
                     error::missing_pct_hexdig);
                 return n;
             }
-            char d0{' '};
+            char d0;
             bool r0 = grammar::hexdig_value(it[0], d0);
-            char d1{' '};
+            char d1;
             bool r1 = grammar::hexdig_value(it[1], d1);
             if( !r0 || !r1 )
             {

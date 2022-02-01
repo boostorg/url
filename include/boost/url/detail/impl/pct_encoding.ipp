@@ -66,9 +66,9 @@ key_equal_encoded(
         // BOOST_ASSERT(end1 - it1 >= 3);
         if(end1 - it1 < 3)
             return false;
-        char h1{' '};
+        char h1;
         grammar::hexdig_value(it1[1], h1);
-        char h2{' '};
+        char h2;
         grammar::hexdig_value(it1[2], h2);
         auto const ch = static_cast<char>(
             (static_cast<unsigned char>(

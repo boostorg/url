@@ -59,7 +59,7 @@ struct h16
         std::uint16_t v;
         for(;;)
         {
-            char d{' '};
+            char d;
             if(!grammar::hexdig_value(*it, d))
             {
                 // not a HEXDIG
@@ -419,7 +419,7 @@ tag_invoke(
             --n;
             break;
         }
-        char d{' '};
+        char d;
         if( b != -1 &&
             !grammar::hexdig_value(*it, d))
         {
