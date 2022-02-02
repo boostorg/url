@@ -11,21 +11,35 @@
 
 [section Fragment]
 
+[heading Notation]
+
 The fragment identifier in a URL provides further refinement of the
 specification of the resource, including additional identifying information.
-The semantics of the fragment vary depending on the scheme, authority, path,
+It provides directions to a secondary resource related to such main resource,
+such as the section in an article or a time-point in a video.
+
+As usual, its semantics vary depending on the scheme, authority, path,
 and media type of the resource. In HTML, fragments are used as internal
 page references. This usage is called a "named anchor," referring to a
-section within a web page. The URL below contains the fragment "section2":
+section within a web page.
+
+The URL below contains the fragment "section2":
+
+[teletype]
 ```
     https://www.example.com/index.html#section2
+    \____/\_______________/\_________/\_______/
+    scheme    authority       path     fragment
 ```
 
 A fragment appearing in a URL is always preceded by the number sign ('#'). A
-URL with a fragment of zero length is distinguishable from a URL with no
-fragment. The fragment grammar is defined as follows:
+This makes a URL with a fragment of zero length distinguishable from a URL
+with no fragment.
+
+The fragment grammar is defined as follows:
 
 [table Fragment BNF [[
+[teletype]
 ```
     fragment        = *( pchar / "/" / "?" )
 
@@ -37,21 +51,117 @@ fragment. The fragment grammar is defined as follows:
 ```
 ]]]
 
+[heading Member Functions]
+
 The functions for inspecting the fragment in a __url_view__ are as follows:
 
 [table Fragment Observers[
     [Function]
     [Description]
 ][
+     [[link url.ref.boost__urls__url_view.has_fragment `has_fragment`]]
+     [Return true if a fragment is present]
+][
     [[link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]]
     [Return the fragment as a percent-encoded string.]
 ][
     [[link url.ref.boost__urls__url_view.fragment `fragment`]]
     [Return the fragment as a string with percent-decoding applied.]
-][
-    [[link url.ref.boost__urls__url_view.has_fragment `has_fragment`]]
-    [Return true if a fragment is present]
 ]]
+
+[heading Observers]
+
+Analogous to other components, the functions
+[link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]
+and [link url.ref.boost__urls__url_view.encoded_fragment `fragment`]
+can be used to obtain the fragment from a __url_view__:
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_fragment_1]
+][
+[teletype]
+```
+    https://www.example.com/index.html#section%202
+    has fragment:     1
+    encoded fragment: section%202
+    fragment:         section 2
+```
+]]]
+
+These functions do not throw. If the URL has no fragment,
+[link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]
+returns an empty string. The function
+[link url.ref.boost__urls__url_view.has_fragment `has_fragment`]
+can be used to determine whether this empty string means there is
+no fragment or an empty fragment string in the URL.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_fragment_2_a]
+][
+[teletype]
+```
+    https://www.example.com/index.html#
+    has fragment:     1
+    encoded fragment:
+    fragment:
+```
+]]
+[[
+[c++]
+[snippet_parsing_fragment_2_b]
+][
+[teletype]
+```
+    https://www.example.com/index.html
+    has fragment:     0
+    encoded fragment:
+    fragment:
+```
+]]]
+
+[heading Use Cases]
+
+URL fragments are usually interpreted as a single string.
+
+[table
+    [[Component]        [Value]                                             ]
+    [[URL]              [`https://www.example.com/index.html#section%202`]  ]
+    [[Has Fragment]     [Yes]                                               ]
+    [[Encoded Fragment] [`section%202`]                                     ]
+    [[Fragment]         [`section 2`]                                       ]
+]
+
+The URL fragment might also be empty or absent.
+
+[table
+    [[Component]        [Value]                                             ]
+    [[URL]              [`https://www.example.com/index.html#`]             ]
+    [[Has Fragment]     [Yes]                                               ]
+    [[Encoded Fragment] [(empty)]                                           ]
+    [[Fragment]         [(empty)]                                           ]
+]
+
+[table
+    [[Component]        [Value]                                             ]
+    [[URL]              [`https://www.example.com/index.html`]              ]
+    [[Has Fragment]     [No]                                                ]
+    [[Encoded Fragment] [(No fragment)]                                     ]
+    [[Fragment]         [(No fragment)]                                     ]
+]
+
+The URL reserved characters `:`, `@`, `?`, and `/` may appear
+unencoded with URL fragments, as they are not ambiguous with
+other URL components.
+
+[table
+    [[Component]        [Value]                                                ]
+    [[URL]              [`https://www.example.com/index.html#code%20:a@b?c/d`] ]
+    [[Has Fragment]     [Yes]                                                  ]
+    [[Encoded Fragment] [`code%20:a@b?c/d`]                                    ]
+    [[Fragment]         [`code :a@b?c/d`]                                      ]
+]
 
 [/-----------------------------------------------------------------------------]
 

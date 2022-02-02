@@ -11,22 +11,32 @@
 
 [section Path]
 
-The path contains data, usually organized hierarchically which is combined
-with the ['query] (explained in the next section) to identify a resource
-within the scope of the scheme and authority (if any). Most schemes
-interpret the path as a sequence of slash delimited ['segments]. In
-addition to interacting with the path as a single string, the library
+[heading Notation]
+
+The path contains data, usually organized hierarchically, which is combined
+with the [link section.query query] to identify a resource within the scope of
+the scheme and authority.
+
+Most schemes interpret the path as a sequence of slash delimited ['segments].
+These segments can map to file system paths, which is useful for file servers,
+but do not always need to imply this relationship.
+
+In addition to interacting with the path as a single string, the library
 provides container adaptors modeling ranges of individual path segments.
-The URL below contains a path with three segments:
+
+The URL below contains a path `/path/to/file.txt` with the three segments
+`path`, `to`, and `file.txt`:
+
+[teletype]
 ```
     http://www.example.com/path/to/file.txt
 ```
 
 Depending on the type of URL, there are various syntactic rules for how the
-path may be formulated in a URL. The BNF for these formulations is defined
-thusly:
+path may be formulated in a URL. The BNF for these formulations is defined:
 
 [table Path BNF [[
+[teletype]
 ```
     path          = path-abempty    ; begins with "/" or is empty
                   / path-absolute   ; begins with "/" but not "//"
@@ -41,6 +51,8 @@ thusly:
     path-empty    = 0<pchar>
 ```
 ]]]
+
+[heading Member Functions]
 
 The functions for interacting with the path in a __url_view__ are as follows:
 
@@ -57,6 +69,240 @@ The functions for interacting with the path in a __url_view__ are as follows:
     [[link url.ref.boost__urls__url_view.segments `segments`]]
     [Return the path segments as a read-only container of strings with percent-decoding applied.]
 ]]
+
+A URL path is usually interpreted as segments. The library
+provides two read-only containers for interacting with the segments
+in a URL's path:
+
+[table Segment View Types [
+    [Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]]
+    [A read-only forward range of path segments returned as percent-encoded strings.]
+][
+    [[link url.ref.boost__urls__segments_view `segments_view`]]
+    [A read-only forward range of path segments returned as strings with percent-decoding applied.]
+]]
+
+These views can be directly created by the parsing functions below. This provides
+the guarantee that all constructed views contain valid path segments:
+
+[table Path Parsing Functions [
+    [Function]
+    [Grammar]
+][
+    [[link url.ref.boost__urls__parse_path `parse_path`]]
+    [['any path]]
+][
+    [[link url.ref.boost__urls__parse_path_abempty `parse_path_abempty`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-abempty]]]
+][
+    [[link url.ref.boost__urls__parse_path_absolute `parse_path_absolute`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-absolute]]]
+][
+    [[link url.ref.boost__urls__parse_path_noscheme `parse_path_noscheme`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-noscheme]]]
+][
+    [[link url.ref.boost__urls__parse_path_rootless `parse_path_rootless`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-rootless]]]
+]]
+
+[heading Observers]
+
+The function [link url.ref.boost__urls__url_view.encoded_path `encoded_path`] can
+be used to obtain the path from a __url_view__:
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_path_1]
+][
+[teletype]
+```
+    https://www.boost.org/doc/libs/
+    path:             /doc/libs/
+    encoded segments: /doc/libs/
+    segments:         /doc/libs/
+```
+]]]
+
+These functions do not throw. There is no function analogous to `has_path` because
+all URLs have valid paths, even when the path is empty.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_path_3]
+][
+[teletype]
+```
+    https://www.boost.org
+    path:
+    encoded segments:
+    segments:
+```
+]]]
+
+Notice that there is also no decoded counterpart for
+[link url.ref.boost__urls__url_view.encoded_path `encoded_path`].
+The reason is any decoded character `/` could form an ambiguous
+path segment.
+
+[heading Segments View]
+
+These containers are lightweight references to the underlying path string.
+Ownership of the string is not transferred; the caller is responsible for
+ensuring that the lifetime of the string extends until the container is
+destroyed.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_path_2]
+][
+[teletype]
+```
+    2 segments
+    segment: doc
+    segment: libs
+```
+]]]
+
+In contexts where a path can appear by itself, such as HTTP requests,
+segment views may not be constructed directly from strings. Instead,
+we can use the analogous function
+[link url.ref.boost__urls__parse_path `parse_path`] to obtain a
+__segments_encoded_view__ or __segments_view__.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_path_9]
+][
+[teletype]
+```
+    path: /doc/libs
+    2 segments
+    segment: doc
+    segment: libs
+```
+]]]
+
+[heading Use Cases]
+
+The path comes after the URL authority, including the initial slash `/`:
+
+[table
+    [[Component]     [Value]                              ]
+    [[URL]           [`https://www.boost.org/doc/libs/`]  ]
+    [[Path]          [`/doc/libs/`]                       ]
+]
+
+In this example, the path has three segments:
+
+[table
+    [[Component]     [Value]                              ]
+    [[URL]           [`https://www.boost.org/doc/libs/`]  ]
+    [[Segment 1]     [`doc`]                              ]
+    [[Segment 2]     [`libs`]                             ]
+    [[Segment 3]     [(empty segment)]                    ]
+]
+
+Note that the final slash in `/doc/libs/` implies an extra
+empty segment that would not exist in the path `/doc/libs`:
+
+[table
+    [[Component]     [Value]                              ]
+    [[URL]           [`https://www.boost.org/doc/libs`]   ]
+    [[Segment 1]     [`doc`]                              ]
+    [[Segment 2]     [`libs`]                             ]
+]
+
+A URL always contains a path, even if it is empty:
+
+[table
+    [[Component]     [Value]                              ]
+    [[URL]           [`https://www.boost.org`]            ]
+    [[Path]          []                                   ]
+]
+
+Empty segments are also possible, resulting in consecutive slashes.
+
+[table
+    [[Component]     [Value]                               ]
+    [[URL]           [`https://www.boost.org//doc///libs`] ]
+    [[Path]          [`//doc///libs`]                      ]
+    [[Segment 1]     [(empty)]                             ]
+    [[Segment 2]     [`doc`]                               ]
+    [[Segment 3]     [(empty)]                             ]
+    [[Segment 4]     [(empty)]                             ]
+    [[Segment 5]     [`libs`]                              ]
+]
+
+If the authority is present, the path needs to be empty or start with a
+slash `/`.
+
+[table
+    [[Component]     [Value]                               ]
+    [[URL]           [`https://www.boost.org`]             ]
+    [[Host]          [`www.boost.org`]                     ]
+    [[Path]          []                                    ]
+    [[Segments]      [0]                                   ]
+]
+
+[table
+    [[Component]     [Value]                               ]
+    [[URL]           [`https://www.boost.org/`]            ]
+    [[Host]          [`www.boost.org`]                     ]
+    [[Path]          [\/]                                  ]
+    [[Segments]      [0]                                   ]
+]
+
+[table
+    [[Component]     [Value]                               ]
+    [[URL]           [`https://www.boost.org//`]           ]
+    [[Host]          [`www.boost.org`]                     ]
+    [[Path]          [\//]                                 ]
+    [[Segments]      [2]                                   ]
+]
+
+A path might begin with two slashes to indicate its first segment is empty.
+
+[table
+    [[Component]     [Value]                               ]
+    [[URL]           [`https://www.boost.org//doc/libs/`]  ]
+    [[Authority]     [`www.boost.org`]                     ]
+    [[Path]          [`//doc/libs/`]                       ]
+    [[Segment 1]     [(empty)]                             ]
+    [[Segment 2]     [`doc`]                               ]
+    [[Segment 3]     [`libs`]                              ]
+    [[Segment 4]     [(empty)]                             ]
+]
+
+However, beginning the path with double slashes is not possible when the
+authority is absent, as the first segment path would be interpreted as the
+authority.
+
+[table
+    [[Component]     [Value]                ]
+    [[URL]           [`https://doc/libs/`]  ]
+    [[Authority]     [`doc`]                ]
+    [[Path]          [`/libs/`]             ]
+    [[Segment 1]     [`libs`]               ]
+    [[Segment 2]     [(empty)]              ]
+]
+
+For this reason, paths beginning with two slashes are typically avoided
+altogether.
+
+Of the reserved character set for URLs, `:` and `@` may appear unencoded within
+paths.
+
+[table
+    [[Component]     [Value]                                          ]
+    [[URL]           [`https://www.boost.org/doc@folder/libs:boost`]  ]
+    [[Authority]     [`www.boost.org`]                                ]
+    [[Path]          [`/doc@folder/libs:boost`]                       ]
+    [[Segment 1]     [`doc@folder`]                                   ]
+    [[Segment 2]     [`libs:boost`]                                   ]
+]
 
 [/-----------------------------------------------------------------------------]
 

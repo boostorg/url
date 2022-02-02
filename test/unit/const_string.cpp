@@ -24,12 +24,11 @@ struct const_string_test
     string_view big_;
     string_view big2_;
     string_view small_;
-    static constexpr std::size_t C =
-        const_string::builtin_capacity;
+    static constexpr std::size_t C = 32;
 
     const_string_test() noexcept
     {
-        string_view cs = 
+        string_view cs =
             "*"
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz";

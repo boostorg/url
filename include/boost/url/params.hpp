@@ -70,12 +70,8 @@ class params
 public:
     /** A random-access iterator referencing parameters in a url query.
 
-        This iterator lazily constructs instances of @ref params::reference, which
-        contain @ref const_string decoded representations of the current <key, value> pair
-        in the underlying @ref url.
-
-        The @ref params underlying allocator is used to construct the instances
-        of @ref params::reference.
+        Memory for allocated strings uses the allocator specified at construction
+        of the container.
 
     */
 #ifdef BOOST_URL_DOCS

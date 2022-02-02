@@ -1,0 +1,124 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[section Modifying URLs]
+
+The class __url__ is a container used to store and produce URLs.
+The [link section.url URL parsing] functions can be used to create
+a new container:
+
+[snippet_modifying_1]
+
+All __url_view__ observers are also available for a __url__:
+
+[snippet_modifying_2]
+
+The interface of __url_view__ decomposes the URL into its individual parts and
+allows for inspection of the various parts as well as returning metadata about
+the URL itself. These non-modifying observer operations are described in the
+sections that follow.
+
+[heading Modifiers]
+
+For each observer function in __url_view__, an instance of __url__ provides a
+corresponding `set` function to define the value of the specified component.
+
+[table [[Component][Decoded][Encoded]]
+[
+    [authority]
+    [[link url.ref.boost__urls__url.set_authority `set_authority`]]
+    [[link url.ref.boost__urls__url.set_encoded_authority `set_encoded_authority`]]
+]
+[
+    [fragment]
+    [[link url.ref.boost__urls__url.set_fragment `set_fragment`]]
+    [[link url.ref.boost__urls__url.set_encoded_fragment `set_encoded_fragment`]]
+]
+[
+    [host]
+    [[link url.ref.boost__urls__url.set_host `set_host`]]
+    [[link url.ref.boost__urls__url.set_encoded_host `set_encoded_host`]]
+]
+[
+    [password]
+    [[link url.ref.boost__urls__url.set_password `set_password`]]
+    [[link url.ref.boost__urls__url.set_encoded_password `set_encoded_password`]]
+]
+[
+    [path]
+    [[link url.ref.boost__urls__url.set_path `set_path`]]
+    [[link url.ref.boost__urls__url.set_encoded_path `set_encoded_path`]]
+]
+[
+    [path_absolute]
+    [[link url.ref.boost__urls__url.set_path_absolute `set_path_absolute`]]
+    [[link url.ref.boost__urls__url.set_path_absolute `set_path_absolute`]]
+]
+[
+    [port]
+    [[link url.ref.boost__urls__url.set_port `set_port`]]
+    [[link url.ref.boost__urls__url.set_port `set_port`]]
+]
+[
+    [query]
+    [[link url.ref.boost__urls__url.set_query `set_query`]]
+    [[link url.ref.boost__urls__url.set_encoded_query `set_encoded_query`]]
+]
+[
+    [scheme]
+    [[link url.ref.boost__urls__url.set_scheme `set_scheme`]]
+    [[link url.ref.boost__urls__url.set_scheme `set_scheme`]]
+]
+[
+    [user]
+    [[link url.ref.boost__urls__url.set_user `set_user`]]
+    [[link url.ref.boost__urls__url.set_encoded_user `set_encoded_user`]]
+]
+[
+    [userinfo]
+    [[link url.ref.boost__urls__url.set_userinfo `set_userinfo`]]
+    [[link url.ref.boost__urls__url.set_encoded_userinfo `set_encoded_userinfo`]]
+]
+]
+
+[heading Encoded Modifiers]
+
+The encoded modifier functions require that the encoded strings are valid
+for the specified component.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_modifying_3]
+][
+[teletype]
+```
+    http://www.example.com
+```
+]]]
+
+If the input string contains an invalid value, an exception is thrown.
+
+[snippet_modifying_4]
+
+[heading Decoded Modifiers]
+
+The decoded modifier functions will encode any input string that is
+invalid as
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_modifying_5]
+][
+[teletype]
+```
+    http://www.my%20example.com
+```
+]]]
+
+[endsect]
