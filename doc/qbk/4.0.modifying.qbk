@@ -7,7 +7,7 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-
+[section Modifying]
 
 A URL string can be parsed using one of the parsing functions.
 Each function parses according to a particular grammar specified
@@ -110,3 +110,5 @@ The interface of __url_view__ decomposes the URL into its individual parts and
 allows for inspection of the various parts as well as returning metadata about
 the URL itself. These non-modifying observer operations are described in the
 sections that follow.
+
+[endsect]

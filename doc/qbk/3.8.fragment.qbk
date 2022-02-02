@@ -11,12 +11,17 @@
 
 [section Fragment]
 
+[h5 Notation]
+
 The fragment identifier in a URL provides further refinement of the
 specification of the resource, including additional identifying information.
+
 The semantics of the fragment vary depending on the scheme, authority, path,
 and media type of the resource. In HTML, fragments are used as internal
 page references. This usage is called a "named anchor," referring to a
 section within a web page. The URL below contains the fragment "section2":
+
+[teletype]
 ```
     https://www.example.com/index.html#section2
 ```
@@ -26,6 +31,7 @@ URL with a fragment of zero length is distinguishable from a URL with no
 fragment. The fragment grammar is defined as follows:
 
 [table Fragment BNF [[
+[teletype]
 ```
     fragment        = *( pchar / "/" / "?" )
 
@@ -36,6 +42,8 @@ fragment. The fragment grammar is defined as follows:
     URI-reference   = URI / relative-ref
 ```
 ]]]
+
+[h5 Observers]
 
 The functions for inspecting the fragment in a __url_view__ are as follows:
 

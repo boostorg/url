@@ -22,6 +22,4 @@
     [A read-only forward range of query parameters returned as strings with percent-decoding applied.]
 ]]
 
-[/-----------------------------------------------------------------------------]
-
 [endsect]

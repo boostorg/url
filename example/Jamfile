@@ -9,4 +9,4 @@
 
 project : requirements <library>/boost/url//boost_url ;
 
-exe quicklook : quicklook.cpp ;
+exe snippets : snippets.cpp ;

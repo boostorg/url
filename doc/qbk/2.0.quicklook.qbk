@@ -8,7 +8,7 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-[section:quick_look Quick Look]
+[section Quick Look]
 
 [h5 Headers]
 
@@ -17,9 +17,7 @@ and interface style of the library. We begin by including the library header fil
 scope.
 
 [c++]
-```
-    #include <boost/url.hpp>
-```
+[snippet_headers_1]
 
 Alternatively, individual headers may be included to obtain the declarations
  for specific types.
@@ -29,52 +27,52 @@ Alternatively you can use the header-only configuration simply
 by including this header file in ['exactly one] of your new or
 existing source files:
 
-```
-    #include <boost/url/src.hpp>
-```
+[snippet_headers_2]
 
 [note
     Sample code and identifiers used throughout are written as if
     the following declarations are in effect:
-    ```
-    #include <boost/url.hpp>
-    using namespace boost::urls;
-    ```
+
+    [snippet_headers_3]
 ]
 
 [h5 Parsing]
 
 Say you have the following URL that you want to parse:
 
-[teletype]
-```
-    https://user:pass@www.example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe#anchor
-```
+[c++]
+[snippet_parsing_1]
 
 You can parse it by calling this function:
 
-[c++]
-```
-    __url_view__ r = __parse_uri__( "https://user:pass@www.example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor" ).value();
-```
+[snippet_parsing_2]
 
 The function __parse_uri__ returns an object of type `__result__<__url_view__>`
 which is a container resembling a variant that holds either an error or an object.
 
-[note
-    In this example we immediately call `result::value` which throws an exception
-    on a parsing error. The functions `result::has_value` and `result::has_error`
-    could also be used to check if the string has been parsed without throwing
-    errors.
-]
+We can immediately call `result::value` to obtain a __url_view__.
+
+[snippet_parsing_3]
+
+`result::value` throws an exception on a parsing error.
+
+[snippet_parsing_4]
+
+Alternatively, the functions `result::has_value` and
+`result::has_error` could also be used to check if
+the string has been parsed without errors.
+
+[snippet_parsing_5]
 
 When there are no errors, it `result::value` returns an instance of __url_view__,
 which holds the parsed result.
 
-It is worth noting that __parse_uri__ allocates no memory and throws no exceptions.
-Like a __string_view__, a __url_view__ does not retain ownership of the underlying
-string buffer. Constructed URL views always contain a valid URL in its correctly
-serialized form.
+[note
+    It is worth noting that __parse_uri__ allocates no memory and throws no exceptions.
+    Like a __string_view__, a __url_view__ does not retain ownership of the underlying
+    string buffer. Constructed URL views always contain a valid URL in its correctly
+    serialized form.
+]
 
 [h5 Accessing]
 
@@ -82,14 +80,7 @@ Accessing the parts of the URL is easy:
 
 [table [[Code][Output]] [[
 [c++]
-```
-    std::cout <<
-        "scheme    : " << u.``[link url.ref.boost__urls__url_view.scheme `scheme`]``()            << '\n' <<
-        "authority : " << u.``[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]``() << '\n' <<
-        "path      : " << u.``[link url.ref.boost__urls__url_view.encoded_path `encoded_path`]``()      << '\n' <<
-        "query     : " << u.``[link url.ref.boost__urls__url_view.encoded_query `encoded_query`]``()     << '\n' <<
-        "fragment  : " << u.``[link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]``()  << '\n';
-```
+[snippet_accessing_1]
 ][
 [teletype]
 ```
@@ -112,11 +103,7 @@ To get a decoded string, call the same function without the word `encoded`:
 
 [table [[Code][Output]] [[
 [c++]
-```
-    std::cout <<
-        "query    : " << u.``[link url.ref.boost__urls__url_view.query `query`]``()            << '\n' <<
-        "fragment : " << u.``[link url.ref.boost__urls__url_view.fragment `fragment`]``()         << '\n';
-```
+[snippet_decoding_1]
 ][
 [teletype]
 ```
@@ -126,18 +113,27 @@ To get a decoded string, call the same function without the word `encoded`:
 ]]]
 
 The decoded functions return a __const_string__, which is a library type
-that models a read-only string. __const_string__ retains ownership of the
-underlying buffer and uses a type-erased allocator. An extra built-in
-buffer is also provided to avoid allocations for any string smaller than
-this [link url.ref.boost__urls__const_string.builtin_capacity `builtin_capacity`].
+that models a read-only string. This class retains ownership of the
+underlying buffer and uses a type-erased allocator.
+
+An extra built-in buffer is also provided to avoid allocations for any
+sequence of characters smaller than its
+[link url.ref.boost__urls__const_string.builtin_capacity `builtin_capacity`].
 
 [note
-    __url_view__ does not provide decoded functions for compound elements, such as
+    __url_view__ does not provide decoded functions for
+    [link compound-elements compound elements], such as
     [link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`] and
     [link url.ref.boost__urls__url_view.encoded_path `encoded_path`]. Compound elements
     are made up of multiple sub-elements whose encoded delimiters might be ambiguous.
-]
 
+    Although URL query strings are often used to represent key/value pairs, they
+    are not a compound element because this interpretation is not defined by
+    __rfc3986__. Users are able to treat the query as a single encoded or
+    decoded entity. __url_view__ provides the function
+    [link url.ref.boost__urls__url_view.params `params`] to extract this view
+     of key/value pairs.
+]
 
 [h5 Allocators]
 
@@ -147,12 +143,16 @@ When omitted, this parameter defaults to the standard allocator.
 Here is the same code which prints the query with percent-decoding applied,
 except using a local stack-based allocator instead of the heap:
 
+[table [[Code][Output]] [[
 [c++]
+[snippet_allocators_1]
+][
+[teletype]
 ```
-    ``__static_pool__``< 1024 > sp;
-
-    std::cout << "query : " << u.query( sp.allocator() ) << '\n';
+    query    : id=42&name=John Doe
+    fragment : page anchor
 ```
+]]]
 
 The __static_pool__ type is provided by the library as an easy alternative
 to apply percent-decoding to long strings with no memory allocations.
@@ -160,6 +160,7 @@ Note that short strings can already fit in the
 [link url.ref.boost__urls__const_string.builtin_capacity `builtin_capacity`]
 of a __const_string__ with no memory allocations.
 
+[#compound-elements]
 [h5 Compound elements]
 
 The path and query parts of the URL are treated specially by the library.
@@ -170,14 +171,8 @@ This code calls
 [link url.ref.boost__urls__url_view.encoded_segments `encoded_segments`]
 to obtain the path segments as a container that returns encoded strings:
 [table [[Code][Output]] [[
-```
-    ``[link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]`` segs = u.``[link url.ref.boost__urls__url_view.encoded_segments `encoded_segments`]``();
-
-    for( auto v : segs )
-    {
-        std::cout << v << '\n';
-    }
-```
+[c++]
+[snippet_compound_elements_1]
 ][
 ```
     path
@@ -200,14 +195,7 @@ With no arguments the container returns strings using the default allocator:
 
 [table [[Code][Output]] [[
 [c++]
-```
-    ``[link url.ref.boost__urls__segments_view `segments_view`]`` segs = u.``[link url.ref.boost__urls__url_view.segments `segments`]``();
-
-    for( auto v : segs )
-    {
-        std::cout << v << '\n';
-    }
-```
+[snippet_encoded_compound_elements_1]
 ][
 [teletype]
 ```
@@ -222,16 +210,7 @@ when acquiring the container:
 
 [table [[Code][Output]] [[
 [c++]
-```
-    __static_pool__< 1024 > pool;
-
-    ``[link url.ref.boost__urls__segments_view `segments_view`]`` segs = u.``[link url.ref.boost__urls__url_view.segments `segments`]``( pool.allocator() );
-
-    for( auto v : segs )
-    {
-        std::cout << v << '\n';
-    }
-```
+[snippet_encoded_compound_elements_2]
 ][
 [teletype]
 ```
@@ -247,16 +226,7 @@ as percent-encoded key and value pair strings:
 
 [table [[Code][Output]] [[
 [c++]
-```
-    ``[link url.ref.boost__urls__params_encoded_view `params_encoded_view`]`` params = u.``[link url.ref.boost__urls__url_view.encoded_params `encoded_params`]``();
-
-    for( auto v : params )
-    {
-        std::cout <<
-            "key = " << v.key <<
-            ", value = " << v.value << "\n";
-    }
-```
+[snippet_encoded_compound_elements_3]
 ][
 [teletype]
 ```
@@ -270,18 +240,7 @@ obtain the query parameters as allocated strings with percent-decoding applied,
 using a stack-based allocator which does not use the heap:
 [table [[Code][Output]] [[
 [c++]
-```
-    __static_pool__< 1024 > pool;
-
-    ``[link url.ref.boost__urls__params_view `params_view`]`` params = u.``[link url.ref.boost__urls__url_view.params `params`]``( pool.allocator() );
-
-    for( auto v : params )
-    {
-        std::cout <<
-            "key = " << v.key <<
-            ", value = " << v.value << "\n";
-    }
-```
+[snippet_encoded_compound_elements_4]
 ][
 [teletype]
 ```
@@ -302,9 +261,7 @@ allocator to control a resizable character buffer which it owns.
 A __url__ must be constructed from an existing __url_view__. For example using a parse function:
 
 [c++]
-```
-    ``__url__`` u = ``__parse_uri__``( "http://user:pass@www.example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor" ).value();
-```
+[snippet_modification_1]
 
 Objects of type __url__ are first-class. They can be copied, moved, and
 assigned as needed. They support all of the inspection functions of
@@ -313,28 +270,15 @@ __url_view__, and also provide functions to modify all parts of the URL.
 
 Changing the scheme is easy:
 
-```
-    u.set_scheme( "https" );
-```
+[snippet_modification_2]
 
 Or we can use a predefined constant:
 
-```
-    u.set_scheme( scheme::https ); // equivalent to u.set_scheme( "https" );
-```
+[snippet_modification_3]
 
 The scheme must be valid, however, or an exception is thrown:
 
-```
-    try
-    {
-        u.set_scheme( "100" ); // illegal, must start with a letter
-    }
-    catch( std::invalid_argument const& )
-    {
-        // this happens
-    }
-```
+[snippet_modification_4]
 
 All modification functions perform validation on their input. Attemping
 to set part of the URL to an invalid string will result in an exception.
@@ -343,11 +287,7 @@ It is not possible for a __url__ to hold a syntactically illegal text.
 Modification functions return a reference to the object, so chaining
 is possible:
 
-```
-    v.set_host( parse_ipv4_address( "192.168.0.1" ).value() )
-        .set_port( 8080 )
-        .remove_userinfo();
-```
+[snippet_modification_5]
 
 All non-const operations offer the strong exception safety guarantee.
 
@@ -356,11 +296,7 @@ modifiable range functionality, using member functions of the container:
 
 [table [[Code][Output]] [[
 [c++]
-```
-    params p = u.params();
-    p.emplace_at(p.find("name"), "name", "Vinnie Falco");
-    std::cout << u << '\n';
-```
+[snippet_modification_6]
 ][
 [teletype]
 ```

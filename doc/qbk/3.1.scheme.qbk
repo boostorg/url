@@ -11,20 +11,26 @@
 
 [section Scheme]
 
+[h5 Notation]
+
 The scheme is the top-level hierarchical element which defines the
 syntax and semantics of the rest of the URL. The scheme identifier
-is always followed by a colon when it appears in a URL. Here are
-some examples of URLs which contain a scheme:
-    ```
+is always followed by a colon when it appears in a URL.
+
+Here are some examples of URLs with the schemes `https` and `file`:
+
+[teletype]
+```
     https://www.example.com/path/to/file.txt?page=2
 
     file:///usr/local/bin/
-    ```
+```
 
 A scheme must start with a letter, and may contain only letters,
 digits, plus and minus signs, and periods:
 
 [table Scheme BNF [[
+[teletype]
 ```
     scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
 
@@ -33,6 +39,8 @@ digits, plus and minus signs, and periods:
     URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
 ```
 ]]]
+
+[h5 Common schemes]
 
 The library defines an enumeration of values for some well-known scheme
 identifiers. These may be used instead of their corresponding strings:
@@ -66,6 +74,8 @@ identifiers. These may be used instead of their corresponding strings:
     [Secure WebSocket Protocol]
 ]]
 
+[h5 Observers]
+
 The functions for inspecting the scheme in a __url_view__ are as follows:
 
 [table Scheme Observers [
@@ -81,6 +91,13 @@ The functions for inspecting the scheme in a __url_view__ are as follows:
     [[link url.ref.boost__urls__url_view.scheme_id `scheme_id`]]
     [Return the scheme as a known-scheme enumeration constant]
 ]]
+
+None of these functions throw exceptions. If the URL has no scheme,
+[link url.ref.boost__urls__url_view.scheme `scheme`] returns an empty
+string. If the function
+[link url.ref.boost__urls__url_view.scheme_id `scheme_id`] identifies a valid
+but unknown scheme, the value [link url.ref.boost__urls__scheme `scheme::unknown`]
+is returned.
 
 [/-----------------------------------------------------------------------------]
 

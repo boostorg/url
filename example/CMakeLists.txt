@@ -8,15 +8,15 @@
 #
 
 source_group("" FILES
-    quicklook.cpp
+        snippets.cpp
 )
 
 #
 
-add_executable(quicklook
-        quicklook.cpp
+add_executable(snippets
+        snippets.cpp
 )
-set_property(TARGET quicklook PROPERTY FOLDER "example")
-target_link_libraries(quicklook PRIVATE Boost::url)
+set_property(TARGET snippets PROPERTY FOLDER "example")
+target_link_libraries(snippets PRIVATE Boost::url)
 
 #

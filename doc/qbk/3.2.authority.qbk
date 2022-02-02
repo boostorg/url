@@ -11,6 +11,8 @@
 
 [section Authority]
 
+[h5 Notation]
+
 The authority is a hierarchical element which names an entity governing
 the name space defined by the remainder of the URL. The host component
 of the authority can be a registered name or server addressed with
@@ -40,6 +42,8 @@ is always preceded by a double slash ("//").
 
 Note that if an authority is present, the host is always defined even if it
 is the empty string (corresponding to a zero-length ['reg-name] in the BNF).
+
+[h5 Observers]
 
 The functions for inspecting all or part of the authority in a
 __url_view__ are as follows:
@@ -116,7 +120,5 @@ __url_view__ are as follows:
     [[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]]
     [Return the authority as a percent-encoded string.]
 ]]
-
-[/-----------------------------------------------------------------------------]
 
 [endsect]

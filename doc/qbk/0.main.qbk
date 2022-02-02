@@ -67,24 +67,34 @@
 
 [/-----------------------------------------------------------------------------]
 
+[import ../../example/snippets.cpp]
+
+[/-----------------------------------------------------------------------------]
+
 [include 1.0.overview.qbk]
 [include 2.0.quicklook.qbk]
-[include 2.0.basic_usage.qbk]
 
 [section Parsing]
 [include 3.0.parsing.qbk]
 [include 3.1.scheme.qbk]
 [include 3.2.authority.qbk]
-[include 3.3.path.qbk]
-[include 3.4.query.qbk]
-[include 3.5.fragment.qbk]
-[include 3.6.segment_views.qbk]
+[include 3.3.authority_view.qbk]
+[include 3.4.path.qbk]
+[include 3.5.segment_views.qbk]
+[include 3.6.query.qbk]
 [include 3.7.params_views.qbk]
-[include 3.8.authority_view.qbk]
+[include 3.8.fragment.qbk]
 [endsect]
 
-[include CharSet.qbk]
+[include 4.0.modifying.qbk]
+
+[section Allocators]
+[endsect]
+
 [include 5.0.grammars.qbk]
+
+[section Examples]
+[endsect]
 
 [section:ref Reference]
 [xinclude quickref.xml]

@@ -9,7 +9,7 @@
 
 [/-----------------------------------------------------------------------------]
 
-[section Query]
+[section:queries Query]
 
 The query component of a URL contains non-hierarchical data which augments the
 information in the path to identify a resource within the scope of the URL's

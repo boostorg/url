@@ -31,6 +31,4 @@ following authority string is valid for `parse_authority`:
     user:pass@www.example.com:443
 ```
 
-[/-----------------------------------------------------------------------------]
-
 [endsect]

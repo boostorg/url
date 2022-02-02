@@ -9,8 +9,6 @@
 
 [section Segment Views]
 
-[/-----------------------------------------------------------------------------]
-
 The library provides two read-only containers for interacting with the segments
 in a URL's path:
 
@@ -52,7 +50,5 @@ the guarantee that all constructed views contain valid path segments:
     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-rootless]]]
 ]]
 
-
-[/-----------------------------------------------------------------------------]
 
 [endsect]
