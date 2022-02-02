@@ -29,7 +29,7 @@ class url;
 /** A random-access handle to percent-encoded query parameters in a url.
 
     Unlike @ref params, this class dereferences to percent-encoded values,
-    which avoids the necessity allocating instances of @ref string_value for the
+    which avoids the necessity allocating instances of @ref const_string for the
     conversion.
 
  */

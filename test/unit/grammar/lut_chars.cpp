@@ -52,6 +52,7 @@ struct lut_chars_test
             "abcdefghijklmnopqrstuvwxyz");
 
             constexpr lut_chars alnum_chars_ = alpha_chars_ + "0123456789";
+            (void)alnum_chars_;
         }
 
         // operator-

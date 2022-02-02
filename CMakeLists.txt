@@ -29,6 +29,7 @@ endif()
 if(NOT BOOST_SUPERPROJECT_VERSION)
     option(BOOST_URL_INSTALL "Install boost::url files" ON)
     option(BOOST_URL_BUILD_TESTS "Build boost::url tests" ${BUILD_TESTING})
+    option(BOOST_URL_BUILD_EXAMPLES "Build boost::url examples" ${BOOST_URL_IS_ROOT})
 else()
     set(BOOST_URL_BUILD_TESTS ${BUILD_TESTING})
 endif()
@@ -36,11 +37,19 @@ endif()
 
 include(GNUInstallDirs)
 if(BOOST_URL_IS_ROOT)
+    if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../CMakeLists.txt")
+        set(BOOST_URL_FIND_PACKAGE_BOOST ON)
+    endif()
+
     # container comes from json
     set(BOOST_INCLUDE_LIBRARIES url json)
     set(BOOST_EXCLUDE_LIBRARIES url)
     set(CMAKE_FOLDER _deps)
-    add_subdirectory(../.. _deps/boost EXCLUDE_FROM_ALL)
+    if (BOOST_URL_FIND_PACKAGE_BOOST)
+        find_package(Boost 1.78.0 REQUIRED)
+    else ()
+        add_subdirectory(../.. _deps/boost EXCLUDE_FROM_ALL)
+    endif()
     unset(CMAKE_FOLDER)
 endif()
 
@@ -59,17 +68,26 @@ function(boost_url_setup_properties target)
         )
     endif()
 
-    target_link_libraries(${target}
-        PUBLIC
-            Boost::align
-            Boost::assert
-            Boost::config
-            Boost::exception
-            Boost::mp11
-            Boost::system
-            Boost::throw_exception
-            Boost::utility
-    )
+    if (BOOST_URL_FIND_PACKAGE_BOOST)
+        target_link_libraries(${target}
+                PUBLIC
+                Boost::headers
+                )
+    else()
+        target_link_libraries(${target}
+            PUBLIC
+                Boost::align
+                Boost::assert
+                Boost::config
+                Boost::exception
+                Boost::mp11
+                Boost::system
+                Boost::throw_exception
+                Boost::utility
+        )
+    endif()
+
+
 endfunction()
 
 
@@ -110,3 +128,8 @@ endif()
 if(BOOST_URL_BUILD_TESTS)
     add_subdirectory(test)
 endif()
+
+if(BOOST_URL_BUILD_EXAMPLES)
+    add_subdirectory(example)
+endif()
+

@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2019 Alan Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -263,7 +264,7 @@ public:
         void (std::size_t size, char* dest );
         @endcode
 
-        @param size The size of the resulting string
+        @param n The size of the resulting string
 
         @param init The function object to invoke.
     */

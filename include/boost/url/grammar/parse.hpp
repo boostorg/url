@@ -108,11 +108,7 @@ tag_invoke(
 
     @param ec Set to the error, if any occurred
 
-    @param r1 First grammar rule object
-
-    @param r2 Second grammar rule object
-
-    @param rn Extra grammar rule objects
+    @param rn Grammar rule objects
 
 */
 template<class... Rn>
@@ -161,9 +157,7 @@ parse_all(
    @param ec Set to the error, if any occurred. If the string is not completely consumed,
    but the beginning of the string matches the elements, `ec` is set to @ref error::leftover.
 
-   @param r1 First grammar rule object
-
-   @param rs Extra grammar rule objects
+   @param rn Grammar rule objects
 
 */
 template<class... Rn>
@@ -195,9 +189,7 @@ parse_string(
 
    @param s The input string
 
-   @param r1 First grammar rule object
-
-   @param rs Extra grammar rule objects
+   @param rn Grammar rule objects
 
    @throws boost::system::system_error Thrown on failure.
 

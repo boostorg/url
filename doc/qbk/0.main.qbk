@@ -1,5 +1,6 @@
 [/
     Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2019 Alan Freitas (alandefreitas@gmail.com)
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -66,24 +67,24 @@
 
 [/-----------------------------------------------------------------------------]
 
-[include 1.0.intro.qbk]
-[include 1.1.quicklook.qbk]
-[include 1.2.usage.qbk]
+[include 1.0.overview.qbk]
+[include 2.0.quicklook.qbk]
+[include 2.0.basic_usage.qbk]
 
 [section Parsing]
-[include 2.0.parsing.qbk]
-[include 2.1.scheme.qbk]
-[include 2.2.authority.qbk]
-[include 2.3.path.qbk]
-[include 2.4.query.qbk]
-[include 2.5.fragment.qbk]
-[include 2.6.segment_views.qbk]
-[include 2.7.params_views.qbk]
-[include 2.8.authority_view.qbk]
+[include 3.0.parsing.qbk]
+[include 3.1.scheme.qbk]
+[include 3.2.authority.qbk]
+[include 3.3.path.qbk]
+[include 3.4.query.qbk]
+[include 3.5.fragment.qbk]
+[include 3.6.segment_views.qbk]
+[include 3.7.params_views.qbk]
+[include 3.8.authority_view.qbk]
 [endsect]
 
 [include CharSet.qbk]
-[include 4.0.grammars.qbk]
+[include 5.0.grammars.qbk]
 
 [section:ref Reference]
 [xinclude quickref.xml]

@@ -1,5 +1,6 @@
 [/
     Copyright (c) 2021 Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2019 Alan Freitas (alandefreitas@gmail.com)
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -14,24 +15,35 @@
 
 Boost.URL is a portable C++ library which provides containers and algorithms
 which model a "URL", more formally described using the
-[@https://https://datatracker.ietf.org/doc/html/rfc3986 Uniform Resource Identifier (URI)]
+[@https://datatracker.ietf.org/doc/html/rfc3986 Uniform Resource Identifier (URI)]
 specification (henceforth referred to as __rfc3986__). A URL is a compact sequence
 of characters that identifies an abstract or physical resource. For example,
 this is a valid URL which satisfies the ['absolute-URI] grammar:
+
+[teletype]
 ```
-https://www.example.com/path/to/file.txt?userid=1001&page=2&results=full
+    https://www.example.com/path/to/file.txt?userid=1001&page=2&results=full
 ```
 
+[/ Introduction to URL ]
+
 This library understands the various grammars related to URLs and provides
-for validating and parsing of strings, manipulation of URL strings, and
-algorithms operating on URLs such as normalization and resolution.
+functionalities for:
+
+* validating and parsing of strings,
+* manipulation of URL strings, and
+* algorithms operating on URLs such as normalization and resolution.
+
+[heading Features]
+
 While the library is general purpose, special care has been taken to ensure
 that the implementation and data representation are friendly to network
 programs which need to handle URLs efficiently and securely, including the
-case where the inputs come from untrusted sources. Interfaces are provided
-for using error codes instead of exceptions as needed, and all algorithms
-provide a mechanism for avoiding memory allocations entirely if desired.
-Another feature of the library is that all container mutations leave the
+case where the inputs come from untrusted sources.
+
+Interfaces are provided for using error codes instead of exceptions as needed,
+and all algorithms provide a mechanism for avoiding memory allocations entirely
+if desired. Another feature of the library is that all container mutations leave the
 URL in a valid state. Code which uses Boost.URL will be easy to read,
 flexible, and performant.
 
@@ -43,26 +55,30 @@ Boost.URL offers these features:
 * Strict compliance with __rfc3986__
 * Allocator control, including avoiding allocation entirely
 * Optional header-only, without linking to a library
+* Supports `-fno-exceptions`, detected automatically
+* Link to a built static or dynamic Boost library, or use [link header-only header-only]
+* Work well on [link embedded-devices embedded devices].
 
 [/-----------------------------------------------------------------------------]
 
 [section Requirements]
 
-* Requires Boost and a compiler supporting at least C++11
-* Aliases for standard types use their Boost equivalents
-* Link to a built static or dynamic Boost library, or use header-only (see below)
-* Supports `-fno-exceptions`, detected automatically
+The library requires Boost and a compiler supporting at least C++11. Aliases for standard types, such as __string_view__, use their Boost equivalents.
 
+[#header-only]
 [heading Header-Only]
 
-To use as header-only; that is, to eliminate the requirement to
+To use the library as header-only; that is, to eliminate the requirement to
 link a program to a static or dynamic Boost.URL library, simply
 place the following line in exactly one new or existing source
 file in your project.
+
+[c++]
 ```
-#include <boost/url/src.hpp>
+    #include <boost/url/src.hpp>
 ```
 
+[#embedded-devices]
 [heading Embedded]
 
 Boost.URL works great on embedded devices. It can be used in a
@@ -95,12 +111,12 @@ these per-commit analyses:
 [/-----------------------------------------------------------------------------]
 
 [section:security_review Security Review (Bishop Fox)]
-TBA
+To be announced
 [endsect]
 
 [/-----------------------------------------------------------------------------]
 
-[h1 Credits]
+[h1 Acknowledgments]
 
 This library wouldn't be where it is today without the help of
 [@https://github.com/pdimov Peter Dimov]

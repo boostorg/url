@@ -71,7 +71,7 @@ public:
     /** A random-access iterator referencing parameters in a url query.
 
         This iterator lazily constructs instances of @ref params::reference, which
-        contain @ref string_value decoded representations of the current <key, value> pair
+        contain @ref const_string decoded representations of the current <key, value> pair
         in the underlying @ref url.
 
         The @ref params underlying allocator is used to construct the instances
@@ -97,7 +97,7 @@ public:
         Objects of this type are returned when accessing key-value pairs of the
         @ref params container.
 
-        The instances of @ref string_value stored in a reference are read-only.
+        The instances of @ref const_string stored in a reference are read-only.
 
     */
     class reference

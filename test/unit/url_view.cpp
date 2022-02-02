@@ -135,46 +135,46 @@ public:
     }
 
     void
+    good_scheme(string_view s,
+              char const* m = nullptr,
+              scheme id = scheme::unknown)
+    {
+        result<url_view> r =
+            parse_uri_reference(s);
+        if(! BOOST_TEST(r))
+            return;
+        url_view u = r.value();
+        if(m)
+        {
+            BOOST_TEST(u.scheme() ==
+                       string_view(m));
+            BOOST_TEST(
+                u.scheme_id() == id);
+        }
+        else
+        {
+            BOOST_TEST(! u.has_scheme());
+            BOOST_TEST(u.scheme_id() ==
+                       scheme::none);
+        }
+    };
+
+    void
+    bad_scheme(string_view s)
+    {
+        result<url_view> r =
+            parse_uri_reference(s);
+        BOOST_TEST(r.has_error());
+    };
+
+    void
     testScheme()
     {
-        auto const good = [](
-            string_view s,
-            char const* m = nullptr,
-            scheme id = scheme::unknown)
-        {
-            result<url_view> r =
-                parse_uri_reference(s);
-            if(! BOOST_TEST(r))
-                return;
-            url_view u = r.value();
-            if(m)
-            {
-                BOOST_TEST(u.scheme() ==
-                    string_view(m));
-                BOOST_TEST(
-                    u.scheme_id() == id);
-            }
-            else
-            {
-                BOOST_TEST(! u.has_scheme());
-                BOOST_TEST(u.scheme_id() ==
-                    scheme::none);
-            }
-        };
+        good_scheme("http://", "http", scheme::http);
+        good_scheme("ou812://", "ou812");
+        good_scheme("/x");
 
-        auto const bad = [](
-            string_view s)
-        {
-            result<url_view> r =
-                parse_uri_reference(s);
-            BOOST_TEST(r.has_error());
-        };
-
-        good("http://", "http", scheme::http);
-        good("ou812://", "ou812");
-        good("/x");
-
-        bad("1x:");
+        bad_scheme("1x:");
     }
 
     void
@@ -614,31 +614,31 @@ public:
     }
 
     void
+    good(string_view s,
+         char const* encoded = nullptr,
+         string_view plain = {})
+    {
+        result<url_view> r =
+            parse_uri_reference(s);
+        if(! BOOST_TEST(r))
+            return;
+        url_view u = r.value();
+        if(encoded)
+        {
+            BOOST_TEST(u.has_fragment());
+            BOOST_TEST(u.encoded_fragment() ==
+                       string_view(encoded));
+            BOOST_TEST(u.fragment() == plain);
+        }
+        else
+        {
+            BOOST_TEST(! u.has_fragment());
+        }
+    };
+
+    void
     testFragment()
     {
-        auto const good = [](
-            string_view s,
-            char const* encoded = nullptr,
-            string_view plain = {})
-        {
-            result<url_view> r =
-                parse_uri_reference(s);
-            if(! BOOST_TEST(r))
-                return;
-            url_view u = r.value();
-            if(encoded)
-            {
-                BOOST_TEST(u.has_fragment());
-                BOOST_TEST(u.encoded_fragment() ==
-                    string_view(encoded));
-                BOOST_TEST(u.fragment() == plain);
-            }
-            else
-            {
-                BOOST_TEST(! u.has_fragment());
-            }
-        };
-
         auto const bad = [](
             string_view s)
         {

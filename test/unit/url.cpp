@@ -640,19 +640,21 @@ public:
     //--------------------------------------------
 
     void
+    set(string_view s1,
+        string_view s2,
+        string_view s3,
+        host_type ht = host_type::name)
+    {
+        url u = parse_uri_reference(s1).value();
+        BOOST_TEST(
+            u.set_encoded_host(s2).string() == s3);
+        BOOST_TEST(u.encoded_host() == s2);
+        BOOST_TEST(u.host_type() == ht);
+    };
+
+    void
     testHost()
     {
-        auto const set = [](string_view s1,
-            string_view s2, string_view s3,
-            host_type ht = host_type::name)
-        {
-            url u = parse_uri_reference(s1).value();
-            BOOST_TEST(
-                u.set_encoded_host(s2).string() == s3);
-            BOOST_TEST(u.encoded_host() == s2);
-            BOOST_TEST(u.host_type() == ht);
-        };
-
         auto const bad = [](string_view s1, string_view s2)
         {
             url u = parse_uri_reference(s1).value();
