@@ -207,14 +207,13 @@ operator<<(
 {
     auto it = vw.begin();
     auto const end = vw.end();
-    if(! vw.is_absolute())
-        goto skip;
-    while(it != end)
+    if( it != end )
     {
-        os << '/';
-    skip:
-        auto s(*it++);
-        os << s;
+        if( vw.is_absolute() )
+            os << "/";
+        os << *it;
+        while( ++it != end )
+            os << '/' << *it;
     }
     return os;
 }

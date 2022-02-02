@@ -36,6 +36,7 @@ set(BOOST_URL_TESTS_FILES
     segments_encoded.cpp
     segments_encoded_view.cpp
     segments_view.cpp
+    snippets.cpp
     static_pool.cpp
     static_url.cpp
     const_string.cpp

@@ -7,6 +7,15 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
+[#section.url_view]
+[section URL]
+
+[heading Notation]
+
+Following the syntax in __rfc3986__, a single algorithm is used for URLs, URIs
+and IRIs. When discussing particular grammars, its rules are presented
+exactly as it appears in the literature.
+
 A URL string can be parsed using one of the parsing functions.
 Each function parses according to a particular grammar specified
 in __rfc3986__:
@@ -29,9 +38,8 @@ in __rfc3986__:
 ]]
 
 The collective grammars parsed by these algorithms are specified below.
-To understand the syntax of the BNF specification, or to understand the
-rest of the elements such as "scheme" below please refer to __rfc3986__:
 
+[teletype]
 ```
     absolute-URI    = scheme ":" hier-part [ "?" query ]
 
@@ -52,23 +60,40 @@ rest of the elements such as "scheme" below please refer to __rfc3986__:
                     / path-empty
 ```
 
-Each of these functions accepts a __string_view__ and returns a __url_view__
-wrapped in a __result__ type. The following example parses a string literal
+[heading Example]
+
+The following is an example URI and its main parts:
+
+[teletype]
+```
+     foo://example.com:8042/over/there?name=ferret#nose
+     \_/   \______________/\_________/ \_________/ \__/
+      |           |            |            |        |
+scheme     authority       path        query   fragment
+```
+
+
+For the complete specification please refer to __rfc3986__:
+
+[note
+    This documentation refers to the Augmented Backus-Naur Form (ABNF)
+    notation of
+    [@https://tools.ietf.org/html/rfc2234 rfc2234]
+    to specify particular grammars used by algorithms and containers. While
+    a complete understanding of the notation is not a requirement for using the
+    library, it may help for understanding how valid components of URLs are
+    defined. In particular, this will be of interest to users who wish to
+    compose parsing algorithms using the combinators provided by the library.
+]
+
+[heading Functions]
+
+All parsing functions accept a __string_view__ and return a
+`__result__<__url_view__>`. The following example parses a string literal
 containing a URI:
-```
-result< url_view > r = parse_uri( "https://www.example.com/path/to/file.txt" );
 
-if( r.has_value() )                         // parsing was successful
-{
-    url_view u = r.value();                 // extract the url_view
-
-    std::cout << u;                         // format the URL to cout
-}
-else
-{
-    std::cout << r.error().message();       // parsing failure; print error
-}
-```
+[c++]
+[snippet_parsing_url_1]
 
 The function throws nothing and returns the result in a variant-like container
 which holds a __url_view__ or an __error_code__ in the case where the parsing
@@ -76,10 +101,8 @@ failed. Note that like a string view, the URL view does not own the underlying
 character buffer. Instead, it references the string passed to the parsing
 function. The caller is required to ensure that the lifetime of the string
 extends until the view is destroyed.
-A URL view containing a non-empty string cannot be constructed directly;
-instead, it must be created using a parsing function. This guarantees that
-any constructed view contains a syntactically valid URL already in its
-serialized form.
+
+[heading Copying]
 
 The function
 [link url.ref.boost__urls__url_view.collect `url_view::collect`]
@@ -87,24 +110,39 @@ may be used to create a copy of the underlying character buffer and attach
 ownership of the buffer to a newly returned view, which is wrapped in a
 shared pointer. The following code calls `collect` to create a read-only
 copy:
-```
-    // This will hold our copy
-    std::shared_ptr<url_view const> sp;
-    {
-        // result::value() will throw an exception if an error occurs
-        url_view u = parse_relative_ref( "/path/to/file.txt" ).value();
 
-        // create a copy with ownership and string lifetime extension
-        sp = u.collect();
-
-        // At this point the string literal goes out of scope
-    }
-
-    // but `*sp` remains valid since it has its own copy
-    std::cout << *sp;
-```
+[c++]
+[snippet_parsing_url_2]
 
 The interface of __url_view__ decomposes the URL into its individual parts and
 allows for inspection of the various parts as well as returning metadata about
 the URL itself. These non-modifying observer operations are described in the
 sections that follow.
+
+To create a mutable copy of the __url_view__, one can just create a __url__:
+
+[c++]
+[snippet_parsing_url_3]
+
+[heading Return Type]
+
+In many places, functions in the library have a return type which uses the
+__result__ alias template. This class allows the parsing algorithms to
+report errors without referring to exceptions.
+
+The functions `result::has_value` and `result::has_error` can be used to
+check if the result contains an error.
+
+[snippet_parsing_url_1]
+
+This ensures `result::value` will not throw an error. In contexts where
+it is acceptable to throw errors, `result::value` can be used directly:
+
+[snippet_parsing_4]
+
+Check the reference for __result__ for a synopsis of the type. For complete
+information please consult the full
+[@boost:/libs/system/doc/html/system.html#ref_resultt_e `result`]
+documentation in [@boost:/libs/system/doc/html/system.html Boost.System].
+
+[endsect]

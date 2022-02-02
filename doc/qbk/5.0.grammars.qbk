@@ -8,7 +8,7 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-[section Grammars]
+[section Grammar]
 
 [heading Design of grammar rules]
 
@@ -25,5 +25,7 @@ grammar rules as part of the same architecture that might include arbitrary gram
 
 These new function overloads may be defined in other namespaces. As with __std_swap__, the design relies
 on [@https://en.cppreference.com/w/cpp/language/adl argument-dependent lookup] to find these overloads.
+
+[include CharSet.qbk]
 
 [endsect]

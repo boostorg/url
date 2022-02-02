@@ -391,13 +391,23 @@ public:
     testOutput()
     {
         {
+            // empty
+            std::stringstream ss;
+            segments_view sv = parse_path(
+                "").value().decoded();
+            BOOST_TEST(!sv.is_absolute());
+            ss << sv;
+            BOOST_TEST(ss.str() == "");
+        }
+        {
             // absolute
             std::stringstream ss;
             segments_view sv = parse_path(
                 "/%70%61%74%68/%74%6f/%66%69%6c%65%2e%74%78%74"
                     ).value().decoded();
             ss << sv;
-            BOOST_TEST(ss.str() == "/path/to/file.txt");
+            auto str = ss.str();
+            BOOST_TEST(str == "/path/to/file.txt");
         }
         {
             // relative

@@ -11,14 +11,26 @@
 
 [section Authority]
 
+[heading Notation]
+
 The authority is a hierarchical element which names an entity governing
-the name space defined by the remainder of the URL. The host component
-of the authority can be a registered name or server addressed with
-optional port and user information. In a URL, the authority component
-is always preceded by a double slash ("//").
+the name space defined by the remainder of the URL. It divides into
+three subcomponents:
+
+[teletype]
+```
+    authority = [userinfo "@"] host [":" port]
+```
+
+* The `host` subcomponent of the authority can be a registered name or an IP address.
+* The optional `port` number subcomponent is preceded by a colon ":"
+* The optional `userinfo` subcomponent consists of a username and an optional password
+
+In a URL, the authority component is always preceded by a double slash ("//").
 
 [table Authority BNF [
     [
+    [teletype]
     ```
     authority       = [ userinfo "@" ] host [ ":" port ]
 
@@ -38,8 +50,7 @@ is always preceded by a double slash ("//").
     ]
 ]]
 
-Note that if an authority is present, the host is always defined even if it
-is the empty string (corresponding to a zero-length ['reg-name] in the BNF).
+[heading Member Functions]
 
 The functions for inspecting all or part of the authority in a
 __url_view__ are as follows:
@@ -117,6 +128,399 @@ __url_view__ are as follows:
     [Return the authority as a percent-encoded string.]
 ]]
 
-[/-----------------------------------------------------------------------------]
+[heading Observers]
+
+The function [link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`] can
+be used to obtain the authority from a __url_view__:
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_authority_3]
+][
+[teletype]
+```
+    https://www.boost.org/users/download/
+    scheme:        https
+    has authority: 1
+    authority:     www.boost.org
+    path:          /users/download/
+```
+]]]
+
+These functions do not throw. If the URL has no authority,
+[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`] returns an empty string.
+
+The function [link url.ref.boost__urls__url_view.has_authority `has_authority`] can be used to check
+whether this empty string means there is no authority or an empty authority in the URL.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_authority_1]
+][
+[teletype]
+```
+    https:///path/to_resource
+    scheme:        https
+    has authority: 1
+    authority:
+    path:          /path/to_resource
+```
+]]
+[[
+[c++]
+[snippet_parsing_authority_6]
+][
+[teletype]
+```
+    mailto://John.Doe@example.com
+    scheme:        mailto
+    has authority: 1
+    authority:     John.Doe@example.com
+    path:
+```
+]]]
+
+Notice that there is no decoded counterpart of
+[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`].
+The reason is any decoded character `/` could
+make it ambiguous with the path component.
+
+[heading Host]
+
+The host subcomponent represents where resources
+are located. The functions
+[link url.ref.boost__urls__url_view.encoded_host `encoded_host`]
+and [link url.ref.boost__urls__url_view.host `host`]
+can be used to obtain the host from a __url_view__, while
+[link url.ref.boost__urls__url_view.encoded_host_and_port `encoded_host_and_port`]
+allows us to directly obtain the host with the corresponding port number.
+
+The host might be a registered name
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_authority_8]
+][
+[teletype]
+```
+    https://john.doe@www.example.com:123/forum/questions/
+    encoded host:  www.example.com
+    host:          www.example.com
+    host and port: www.example.com:123
+    port:          123
+    port number:   123
+```
+]]]
+
+or an IP address
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_authority_9]
+][
+[teletype]
+```
+    https://john.doe@192.168.2.1:123/forum/questions/
+    encoded host:  192.168.2.1
+    host:          192.168.2.1
+    host and port: 192.168.2.1:123
+    port:          123
+    port number:   123
+```
+]]]
+
+Although this is not mandatory, note that the encoded host is rarely
+different from its encoded counterpart.
+The function [link url.ref.boost__urls__url_view.port_number `port_number`]
+returns the decoded port as an integer.
+
+Registered names usually need to be handled differently from IP addresses.
+The function
+[link url.ref.boost__urls__url_view.host_type `host_type`]
+can be used to identify which type of host is described in the URL.
+
+[c++]
+[snippet_parsing_authority_10]
+
+When the [link url.ref.boost__urls__url_view.host_type `host_type`]
+matches an IP address, the functions
+[link url.ref.boost__urls__url_view.ipv4_address `ipv4_address`],
+[link url.ref.boost__urls__url_view.ipv6_address `ipv6_address`]
+can be used to obtain the decoded addresses as integers.
+
+[heading Userinfo]
+
+The optional `userinfo` subcomponent consists of a user name and
+an optional password. The function
+[link url.ref.boost__urls__url_view.encoded_userinfo `encoded_userinfo`]
+can be used to retrieve the userinfo from a __url_view__. Analogous
+functions are provided for the userinfo subcomponents.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_authority_11]
+][
+[teletype]
+```
+    https://john.doe:123456@www.somehost.com/forum/questions/
+
+    has_userinfo:     1
+    encoded_userinfo: john.doe:123456
+    userinfo:         john.doe:123456
+
+    encoded_user:     john.doe
+    user:             john.doe
+
+    has_password:     1
+    encoded_password: 123456
+    password:         123456
+```
+]]]
+
+Analogous to other observers, the functions
+[link url.ref.boost__urls__url_view.has_userinfo `has_userinfo`] and
+[link url.ref.boost__urls__url_view.has_password `has_password`] are provided
+to differentiate empty components from absent components.
+
+Note that there is no function `has_user`. The user component is available
+whenever `userinfo` exists.
+
+[note Although the specification allows the format `username:password`,
+the password component should be used with care.
+
+It is not recommended to transfer password data through URLs
+unless this is an empty string indicating no password.]
+
+[heading Authority View]
+
+In contexts where an authority can appear by itself, the library provides the
+__authority_view__, a read-only container to a non-owning character buffer
+containing a valid authority.
+
+As an example, the grammar for the
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1 ['request-target]]
+of an HTTP/1 CONNECT request uses
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.3 ['authority-form]].
+This is what such a request looks like:
+
+[teletype]
+```
+     CONNECT www.example.com:80 HTTP/1.1
+```
+
+In that case, we have an authority that cannot be parsed directly
+with __parse_uri__ as a URL. Instead, we can use the analogous function
+[link url.ref.boost__urls__parse_authority `parse_authority`] to
+obtain an __authority_view__.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_authority_12]
+][
+[teletype]
+```
+    www.example.com:80
+
+    encoded_host_and_port: www.example.com:80
+    encoded_host:          www.example.com
+    host:                  www.example.com
+    port:                  80
+    port number:           80
+
+    has_userinfo:          0
+    encoded_userinfo:
+    userinfo:
+
+    encoded_user:
+    user:
+
+    has_password:          0
+    encoded_password:
+    password:
+```
+]]]
+
+The authority view provides the subset of observer member functions found in
+__url_view__ which are relevant to the authority. However, when an authority
+is parsed on its own, the leading double slashes ("//") are not present.
+
+The following authority string is also valid for
+[link url.ref.boost__urls__parse_authority `parse_authority`]:
+
+[teletype]
+```
+    user:pass@www.example.com:443
+```
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parsing_authority_13]
+][
+[teletype]
+```
+    user:pass@www.example.com:443
+
+    encoded_host_and_port: www.example.com:443
+    encoded_host:          www.example.com
+    host:                  www.example.com
+    port:                  443
+    port number:           443
+
+    has_userinfo:          1
+    encoded_userinfo:      user:pass
+    userinfo:              user:pass
+
+    encoded_user:          user
+    user:                  user
+
+    has_password:          1
+    encoded_password:      pass
+    password:              pass
+```
+]]]
+
+
+[heading Use Cases]
+
+Note that if an authority is present, the host is always defined even if it
+is the empty string (corresponding to a zero-length ['reg-name] in the BNF).
+
+[teletype]
+```
+  https:///path/to_resource
+  \____/\/\_______________/
+    |   |          |
+scheme authority  path
+```
+
+[table
+    [[Component]     [Value]                       ]
+    [[URL]           [`https:///path/to_resource`] ]
+    [[Scheme]        [`https`]                     ]
+    [[Has authority] [Yes]                         ]
+    [[Authority]     []                            ]
+    [[Path]          [`/path/to_resource`]         ]
+]
+
+The authority component also influences how we should interpret the URL path.
+If the authority is present, the path component must either be empty or begin
+with a slash.
+
+This is a common pattern where the path is empty:
+
+[teletype]
+```
+    https://www.boost.org
+    \___/   \___________/
+    scheme    authority    (path is empty)
+```
+
+[table
+    [[Component]     [Value]                       ]
+    [[URL]           [`https://www.boost.org`]     ]
+    [[Scheme]        [`https`]                     ]
+    [[Has authority] [Yes]                         ]
+    [[Authority]     [`www.boost.org`]             ]
+    [[Path]          []                            ]
+]
+
+When both the authority and path exist, the path needs to begin with a slash:
+
+[teletype]
+```
+    https://www.boost.org/users/download/
+    \___/   \___________/\______________/
+    scheme    authority        path (begins with a slash)
+```
+
+[table
+    [[Component]     [Value]                                   ]
+    [[URL]           [`https://www.boost.org/users/download/`] ]
+    [[Scheme]        [`https`]                                 ]
+    [[Has authority] [Yes]                                     ]
+    [[Authority]     [`www.boost.org`]                         ]
+    [[Path]          [`/users/download/`]                      ]
+]
+
+This rule also affects the path "`/`":
+
+[teletype]
+```
+    https://www.boost.org/
+    \___/   \___________/\/
+    scheme    authority  path (begins with a slash)
+```
+
+[table
+    [[Component]     [Value]                                   ]
+    [[URL]           [`https://www.boost.org/`]                ]
+    [[Scheme]        [`https`]                                 ]
+    [[Has authority] [Yes]                                     ]
+    [[Authority]     [`www.boost.org`]                         ]
+    [[Path]          [`/`]                                     ]
+]
+
+When there is no authority component, the path cannot begin with an empty
+segment. This means the path cannot begin with two slashes `//` to avoid these
+characters being interpreted as the beginning of the authority component.
+
+For instance, consider the following valid URL:
+
+[teletype]
+```
+  mailto:John.Doe@example.com
+  \____/ \__________________/
+  scheme          path
+```
+
+[table
+    [[Component]     [Value]                                   ]
+    [[URL]           [`mailto:John.Doe@example.com`]           ]
+    [[Scheme]        [`mailto`]                                ]
+    [[Has authority] [No]                                      ]
+    [[Authority]     []                                        ]
+    [[Path]          [`John.Doe@example.com`]                  ]
+]
+
+Note how including a double slash would make the path be interpreted as the authority:
+
+[teletype]
+```
+  mailto://John.Doe@example.com
+  \____/ \____________________/
+  scheme       authority
+```
+
+[table
+    [[Component]     [Value]                                   ]
+    [[URL]           [`mailto://John.Doe@example.com`]         ]
+    [[Scheme]        [`mailto`]                                ]
+    [[Has authority] [Yes]                                     ]
+    [[Authority]     [`John.Doe@example.com`]                  ]
+    [[Path]          []                                        ]
+]
+
+In complete authority components, we can also extract the `userinfo` and `port` subcomponents.
+
+[teletype]
+```
+          userinfo       host      port
+          /------\ /-------------\ /-\
+  https://john.doe@www.example.com:123/forum/questions/
+  \___/   \__________________________/\_______________/
+  scheme          authority                  path
+```
+
+[table
+    [[Component]     [Value]                                                   ]
+    [[URL]           [`https://john.doe@www.example.com:123/forum/questions/`] ]
+    [[Scheme]        [`https`]                                                 ]
+    [[Has authority] [Yes]                                                     ]
+    [[Authority]     [`john.doe@www.example.com:123`]                          ]
+    [[Host]          [`www.example.com`]                                       ]
+    [[Userinfo]      [`john.doe`]                                              ]
+    [[Port]          [`123`]                                                   ]
+    [[Path]          [`/forum/questions/`]                                     ]
+]
 
 [endsect]

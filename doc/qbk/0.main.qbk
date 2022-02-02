@@ -45,10 +45,13 @@
 [def __MoveConstructible__      [@https://en.cppreference.com/w/cpp/named_req/MoveConstructible ['MoveConstructible]]]
 [def __SemiRegular__            [@https://en.cppreference.com/w/cpp/concepts/semiregular ['SemiRegular]]]
 [def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
-[def __CharSet__                [link url.charset ['CharSet]]]
+[def __CharSet__                [link url.grammar.charset ['CharSet]]]
 
 [def __std_swap__               [@https://en.cppreference.com/w/cpp/algorithm/swap `std::swap`]]
 [def __authority_view__         [link url.ref.boost__urls__authority_view `authority_view`]]
+[def __segments_view__          [link url.ref.boost__urls__segments_view `segments_view`]]
+[def __segments_encoded_view__  [link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]]
+[def __query_param_view__       [link url.ref.boost__urls__query_param_view `query_param_view`]]
 [def __error_code__             [link url.ref.boost__urls__error_code `error_code`]]
 [def __parse_uri__              [link url.ref.boost__urls__parse_uri `parse_uri`]]
 [def __result__                 [link url.ref.boost__urls__result `result`]]
@@ -67,9 +70,12 @@
 
 [/-----------------------------------------------------------------------------]
 
+[import ../../test/unit/snippets.cpp]
+
+[/-----------------------------------------------------------------------------]
+
 [include 1.0.overview.qbk]
 [include 2.0.quicklook.qbk]
-[include 2.0.basic_usage.qbk]
 
 [section Parsing]
 [include 3.0.parsing.qbk]
@@ -78,13 +84,17 @@
 [include 3.3.path.qbk]
 [include 3.4.query.qbk]
 [include 3.5.fragment.qbk]
-[include 3.6.segment_views.qbk]
-[include 3.7.params_views.qbk]
-[include 3.8.authority_view.qbk]
 [endsect]
 
-[include CharSet.qbk]
+[include 4.0.modifying.qbk]
+
+[section Allocators]
+[endsect]
+
 [include 5.0.grammars.qbk]
+
+[section Examples]
+[endsect]
 
 [section:ref Reference]
 [xinclude quickref.xml]

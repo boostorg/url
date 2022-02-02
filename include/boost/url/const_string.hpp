@@ -43,18 +43,10 @@ namespace urls {
 */
 class const_string : public string_view
 {
-public:
-    /** Built-in capacity
-
-        Strings whose length is up to
-        this size will not require
-        dynamic allocation.
-    */
     static constexpr
     std::size_t
     builtin_capacity = 32;
 
-private:
     struct base;
     struct result;
 
