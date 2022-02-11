@@ -59,11 +59,25 @@ struct pct_decode_opts
     for the character set, setting the error if
     the string is invalid.
 
+    @par Example
+    @code
+    error_code ec;
+    auto needed = validate_pct_encoding("Some%20text", ec, pchars);
+
+    assert(!ec);
+    assert(needed == 9);
+    @endcode
+
+    @par Example
+    @code
+    error_code ec;
+    auto needed = validate_pct_encoding("Some%2text", ec, pchars);
+
+    assert(ec);
+    @endcode
+
     @par Exception Safety
     Throws nothing.
-
-    @throw invalid_argument if the encoded string
-        is invalid.
 
     @return The number of bytes needed, excluding
     any null terminator.
@@ -72,16 +86,16 @@ struct pct_decode_opts
 
     @param ec Set to the error, if any occurred.
 
+    @param opt The options for decoding. If this
+    parameter is omitted, the default options
+    will be used.
+
     @param cs An optional character set to use.
     This type must satisfy the requirements
     of <em>CharSet</em>. If this parameter is
     omitted, then no characters are considered
     special. The character set is ignored if
     `opt.non_normal_is_error == false`.
-
-    @param opt The options for decoding. If this
-    parameter is omitted, the default options
-    will be used.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
@@ -115,6 +129,18 @@ validate_pct_encoding(
     may be less than the size of the output
     area.
 
+    @par Example
+    @code
+    auto dest = new char[MAX_LENGTH];
+    error_code ec;
+    auto decoded = pct_decode(dest, dest + MAX_LENGTH,
+            "Some%20text", ec, {}, pchars);
+
+    assert(!ec);
+    assert(decoded == 9);
+    assert(strcmp("Some text", dest) == 0);
+    @endcode
+
     @par Exception Safety
     Throws nothing.
 
@@ -128,14 +154,14 @@ validate_pct_encoding(
     @param end A pointer to one past the end
     of the output buffer.
 
-    @param s The string to encode.
+    @param s The string to decode.
 
     @param ec Set to the error, if any
     occurred. If the destination buffer
     is too small to hold the result, `ec`
     is set to @ref error::no_space.
 
-    @param opt The options for encoding. If
+    @param opt The options for decoding. If
     this parameter is omitted, the default
     options will be used.
 
@@ -172,6 +198,12 @@ pct_decode(
     The result is returned as a string using
     the optionally specified allocator.
 
+    @par Example
+    @code
+    auto result = pct_decode("Some%20text", {}, pchars);
+    assert(result == "Some text");
+    @endcode
+
     @par Exception Safety
     Throws on invalid input.
     Calls to allocate may throw.
@@ -181,13 +213,13 @@ pct_decode(
     allocator is used, the return type is
     `std::string`.
 
-    @param s The string to encode.
+    @param s The string to decode.
 
-    @param opt The options for encoding. If
+    @param opt The options for decoding. If
     this parameter is omitted, the default
     options will be used.
 
-    @param cs An opitionally specified
+    @param cs An optionally specified
     character set to use. If this parameter
     is omitted, all characters are considered
     unreserved.
@@ -228,7 +260,13 @@ pct_decode(
     converting escape sequences into their
     character equivalent.
     The result is returned as a @ref const_string
-    the optionally specified allocator.
+    using the optionally specified allocator.
+
+    @par Example
+    @code
+    auto result = pct_decode_to_value("Some%20text", {}, pchars);
+    assert(result.to_string() == "Some text");
+    @endcode
 
     @par Exception Safety
     Throws on invalid input.
@@ -239,13 +277,13 @@ pct_decode(
     allocator is used, the return type is
     `std::string`.
 
-    @param s The string to encode.
+    @param s The string to decode.
 
-    @param opt The options for encoding. If
+    @param opt The options for decoding. If
     this parameter is omitted, the default
     options will be used.
 
-    @param cs An opitionally specified
+    @param cs An optionally specified
     character set to use. If this parameter
     is omitted, all characters are considered
     unreserved.
@@ -286,6 +324,12 @@ pct_decode_to_value(
     for validating the input string before
     calling this function.
 
+    @par Example
+    @code
+    auto size = pct_decode_bytes_unchecked("Some%20text");
+    assert(size == 9);
+    @endcode
+
     @par Preconditions
     The string `s` must contain a valid
     percent-encoding.
@@ -315,6 +359,16 @@ pct_decode_bytes_unchecked(
     is valid. The contents of the output
     buffer will never be left undefined,
     regardless of input.
+
+    @par Example
+    @code
+    auto dest = new char[MAX_LENGTH];
+    auto decoded = pct_decode_unchecked(dest, dest + MAX_LENGTH,
+        "Some%20text");
+
+    assert(decoded == 9);
+    assert(strcmp("Some text", dest) == 0);
+    @endcode
 
     @par Exception Safety
     Throws nothing.
@@ -352,6 +406,12 @@ pct_decode_unchecked(
     allocator. No checking is performed to
     ensure that the input is valid; however,
     the returned string is never undefined.
+
+    @par Example
+    @code
+    auto result = pct_decode_unchecked("Some%20text");
+    assert(result.to_string() == "Some text");
+    @endcode
 
     @par Exception Safety
     Calls to allocate may throw.
@@ -466,8 +526,18 @@ pct_encode_bytes(
     characters that are not in the specified
     <em>CharSet</em>.
     The output is written to the destination,
-    which will be truncated if there is
+    and will be truncated if there is
     insufficient space.
+
+    @par Example
+    @code
+    auto dest = new char[MAX_LENGTH];
+    auto encoded = pct_encode(dest, dest + MAX_LENGTH,
+        "My stuff");
+
+    assert(encoded == 10);
+    assert(strncmp("My%20stuff", dest, encoded) == 0);
+    @endcode
 
     @par Exception Safety
     Throws nothing.
@@ -485,11 +555,11 @@ pct_encode_bytes(
 
     @param s The string to encode.
 
-    @param cs The character set to use.
-
     @param opt The options for encoding. If
     this parameter is omitted, the default
     options will be used.
+
+    @param cs The character set to use.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
@@ -517,7 +587,7 @@ pct_encode(
     characters that are not in the specified
     <em>CharSet</em>.
     The result is returned as a
-    `std::basic_string`. using the optionally
+    `std::basic_string`, using the optionally
     specified allocator.
 
     @par Example
