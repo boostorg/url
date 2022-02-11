@@ -60,11 +60,27 @@ struct pct_decode_opts
     for the character set, setting the error if
     the string is invalid.
 
+    @par Example 1
+    This validates and calculates the decoded length of a valid percent-encoded string.
+    @code
+    error_code ec;
+    std::size_t decoded_size = validate_pct_encoding( "Program%20Files",
+            ec, pct_decode_opts{}, pchars );
+    assert( ! ec.failed() );
+    assert( decoded_size == 13 );
+    @endcode
+
+    @par Example 2
+    This shows how validation can fail using an error code.
+    @code
+    error_code ec;
+    std::size_t decoded_size = validate_pct_encoding( "bad%escape",
+            ec, pct_decode_opts{}, pchars );
+    assert( ec.failed() );
+    @endcode
+
     @par Exception Safety
     Throws nothing.
-
-    @throw invalid_argument if the encoded string
-        is invalid.
 
     @return The number of bytes needed, excluding
     any null terminator.
@@ -73,16 +89,16 @@ struct pct_decode_opts
 
     @param ec Set to the error, if any occurred.
 
+    @param opt The options for decoding. If this
+    parameter is omitted, the default options
+    will be used.
+
     @param cs An optional character set to use.
     This type must satisfy the requirements
     of <em>CharSet</em>. If this parameter is
     omitted, then no characters are considered
     special. The character set is ignored if
     `opt.non_normal_is_error == false`.
-
-    @param opt The options for decoding. If this
-    parameter is omitted, the default options
-    will be used.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
@@ -116,6 +132,18 @@ validate_pct_encoding(
     may be less than the size of the output
     area.
 
+    @par Example
+    @code
+    char *dest = new char[MAX_LENGTH];
+    error_code ec;
+    std::size_t decoded_size = pct_decode( dest, dest + MAX_LENGTH,
+            "Program%20Files", ec, pct_decode_opts{}, pchars);
+
+    assert( ! ec.failed() );
+    assert( decoded_size == 13 );
+    assert( strncmp( "Program Files", dest, decoded_size ) == 0 );
+    @endcode
+
     @par Exception Safety
     Throws nothing.
 
@@ -129,14 +157,14 @@ validate_pct_encoding(
     @param end A pointer to one past the end
     of the output buffer.
 
-    @param s The string to encode.
+    @param s The string to decode.
 
     @param ec Set to the error, if any
     occurred. If the destination buffer
     is too small to hold the result, `ec`
     is set to @ref error::no_space.
 
-    @param opt The options for encoding. If
+    @param opt The options for decoding. If
     this parameter is omitted, the default
     options will be used.
 
@@ -173,6 +201,12 @@ pct_decode(
     The result is returned as a string using
     the optionally specified allocator.
 
+    @par Example
+    @code
+    std::string result = pct_decode( "Program%20Files", pct_decode_opts{}, pchars );
+    assert( result == "Program Files" );
+    @endcode
+
     @par Exception Safety
     Throws on invalid input.
     Calls to allocate may throw.
@@ -182,13 +216,13 @@ pct_decode(
     allocator is used, the return type is
     `std::string`.
 
-    @param s The string to encode.
+    @param s The string to decode.
 
-    @param opt The options for encoding. If
+    @param opt The options for decoding. If
     this parameter is omitted, the default
     options will be used.
 
-    @param cs An opitionally specified
+    @param cs An optionally specified
     character set to use. If this parameter
     is omitted, all characters are considered
     unreserved.
@@ -229,7 +263,13 @@ pct_decode(
     converting escape sequences into their
     character equivalent.
     The result is returned as a @ref const_string
-    the optionally specified allocator.
+    using the optionally specified allocator.
+
+    @par Example
+    @code
+    const_string result = pct_decode_to_value( "Program%20Files", pct_decode_opts{}, pchars );
+    assert( result.compare( "Program Files" ) == 0 );
+    @endcode
 
     @par Exception Safety
     Throws on invalid input.
@@ -240,9 +280,9 @@ pct_decode(
     allocator is used, the return type is
     `std::string`.
 
-    @param s The string to encode.
+    @param s The string to decode.
 
-    @param opt The options for encoding. If
+    @param opt The options for decoding. If
     this parameter is omitted, the default
     options will be used.
 
@@ -287,6 +327,12 @@ pct_decode_to_value(
     for validating the input string before
     calling this function.
 
+    @par Example
+    @code
+    std::size_t size = pct_decode_bytes_unchecked( "Program%20Files" );
+    assert( size == 13 );
+    @endcode
+
     @par Preconditions
     The string `s` must contain a valid
     percent-encoding.
@@ -316,6 +362,16 @@ pct_decode_bytes_unchecked(
     is valid. The contents of the output
     buffer will never be left undefined,
     regardless of input.
+
+    @par Example
+    @code
+    char *dest = new char[MAX_LENGTH];
+    std::size_t decoded_size = pct_decode_unchecked( dest, dest + MAX_LENGTH,
+            "Program%20Files" );
+
+    assert( decoded_size == 13 );
+    assert( strncmp("Program Files", dest, decoded_size) == 0 );
+    @endcode
 
     @par Exception Safety
     Throws nothing.
@@ -353,6 +409,12 @@ pct_decode_unchecked(
     allocator. No checking is performed to
     ensure that the input is valid; however,
     the returned string is never undefined.
+
+    @par Example
+    @code
+    const_string result = pct_decode_unchecked( "Program%20Files" );
+    assert( result.compare( "Program Files" ) == 0 );
+    @endcode
 
     @par Exception Safety
     Calls to allocate may throw.
@@ -418,14 +480,26 @@ struct pct_encode_opts
     encoded using the given options and character
     set. No encoding is actually performed.
 
-    @par Example
+    @par Example 1
+    Find the number of bytes needed to encode a string without transforming
+    ' ' to '+'.
     @code
     pct_encode_opts opt;
     opt.space_to_plus = false;
-
     std::size_t n = pct_encode_bytes( "My Stuff", pchars, opt );
 
     assert( n == 10 );
+    @endcode
+
+    @par Example 2
+    Find the number of bytes needed to encode a string when transforming
+    ' ' to '+'.
+    @code
+    pct_encode_opts opt;
+    opt.space_to_plus = true;
+    std::size_t n = pct_encode_bytes( "My Stuff", opt, pchars );
+
+    assert( n == 8 );
     @endcode
 
     @par Exception Safety
@@ -436,11 +510,11 @@ struct pct_encode_opts
 
     @param s The string to encode.
 
-    @param cs The character set to use.
-
     @param opt The options for encoding. If
     this parameter is omitted, the default
     options will be used.
+
+    @param cs The character set to use.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
@@ -467,8 +541,18 @@ pct_encode_bytes(
     characters that are not in the specified
     <em>CharSet</em>.
     The output is written to the destination,
-    which will be truncated if there is
+    and will be truncated if there is
     insufficient space.
+
+    @par Example
+    @code
+    char *dest = new char[MAX_LENGTH];
+    std::size_t encoded_size = pct_encode( dest, dest + MAX_LENGTH,
+            "Program Files", pct_encode_opts{}, pchars );
+
+    assert( encoded_size == 15 );
+    assert( strncmp( "Program%20Files", dest, encoded_size ) == 0 );
+    @endcode
 
     @par Exception Safety
     Throws nothing.
@@ -486,11 +570,11 @@ pct_encode_bytes(
 
     @param s The string to encode.
 
-    @param cs The character set to use.
-
     @param opt The options for encoding. If
     this parameter is omitted, the default
     options will be used.
+
+    @param cs The character set to use.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
@@ -518,15 +602,14 @@ pct_encode(
     characters that are not in the specified
     <em>CharSet</em>.
     The result is returned as a
-    `std::basic_string`. using the optionally
+    `std::basic_string`, using the optionally
     specified allocator.
 
     @par Example
     @code
     pct_encode_opts opt;
     opt.space_to_plus = true;
-
-    std::string s = pct_encode( "My Stuff", pchars, opt );
+    std::string s = pct_encode( "My Stuff", opt, pchars );
 
     assert( s == "My+Stuff" );
     @endcode
@@ -540,11 +623,11 @@ pct_encode(
 
     @param s The string to encode.
 
-    @param cs The character set to use.
-
     @param opt The options for encoding. If
     this parameter is omitted, the default
     options will be used.
+
+    @param cs The character set to use.
 
     @param a An optional allocator the returned
     string will use. If this parameter is omitted,
@@ -588,10 +671,9 @@ pct_encode(
     @code
     pct_encode_opts opt;
     opt.space_to_plus = true;
+    const_string encoded = pct_encode_to_value( "My Stuff", opt, pchars );
 
-    const_string s = pct_encode_to_value( "My Stuff", pchars, opt );
-
-    assert( s == "My+Stuff" );
+    assert( encoded.compare("My+Stuff") == 0 );
     @endcode
 
     @par Exception Safety
@@ -602,11 +684,11 @@ pct_encode(
 
     @param s The string to encode.
 
-    @param cs The character set to use.
-
     @param opt The options for encoding. If
     this parameter is omitted, the default
     options will be used.
+
+    @param cs The character set to use.
 
     @param a An optional allocator the returned
     string will use. If this parameter is omitted,
