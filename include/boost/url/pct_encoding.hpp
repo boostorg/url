@@ -59,21 +59,23 @@ struct pct_decode_opts
     for the character set, setting the error if
     the string is invalid.
 
-    @par Example
+    @par Example 1
+    This validates and calculates the decoded length of a valid percent-encoded string.
     @code
     error_code ec;
-    auto needed = validate_pct_encoding("Some%20text", ec, pchars);
-
-    assert(!ec);
-    assert(needed == 9);
+    std::size_t decoded_size = validate_pct_encoding( "Program%20Files",
+            ec, pct_decode_opts{}, pchars );
+    assert( ! ec.failed() );
+    assert( decoded_size == 13 );
     @endcode
 
-    @par Example
+    @par Example 2
+    This shows how validation can fail using an error code.
     @code
     error_code ec;
-    auto needed = validate_pct_encoding("Some%2text", ec, pchars);
-
-    assert(ec);
+    std::size_t decoded_size = validate_pct_encoding( "bad%escape",
+            ec, pct_decode_opts{}, pchars );
+    assert( ec.failed() );
     @endcode
 
     @par Exception Safety
@@ -131,14 +133,14 @@ validate_pct_encoding(
 
     @par Example
     @code
-    auto dest = new char[MAX_LENGTH];
+    char *dest = new char[MAX_LENGTH];
     error_code ec;
-    auto decoded = pct_decode(dest, dest + MAX_LENGTH,
-            "Some%20text", ec, {}, pchars);
+    std::size_t decoded_size = pct_decode( dest, dest + MAX_LENGTH,
+            "Program%20Files", ec, pct_decode_opts{}, pchars);
 
-    assert(!ec);
-    assert(decoded == 9);
-    assert(strcmp("Some text", dest) == 0);
+    assert( ! ec.failed() );
+    assert( decoded_size == 13 );
+    assert( strncmp( "Program Files", dest, decoded_size ) == 0 );
     @endcode
 
     @par Exception Safety
@@ -200,8 +202,8 @@ pct_decode(
 
     @par Example
     @code
-    auto result = pct_decode("Some%20text", {}, pchars);
-    assert(result == "Some text");
+    std::string result = pct_decode( "Program%20Files", pct_decode_opts{}, pchars );
+    assert( result == "Program Files" );
     @endcode
 
     @par Exception Safety
@@ -264,8 +266,8 @@ pct_decode(
 
     @par Example
     @code
-    auto result = pct_decode_to_value("Some%20text", {}, pchars);
-    assert(result.to_string() == "Some text");
+    const_string result = pct_decode_to_value( "Program%20Files", pct_decode_opts{}, pchars );
+    assert( result.compare( "Program Files" ) == 0 );
     @endcode
 
     @par Exception Safety
@@ -326,8 +328,8 @@ pct_decode_to_value(
 
     @par Example
     @code
-    auto size = pct_decode_bytes_unchecked("Some%20text");
-    assert(size == 9);
+    std::size_t size = pct_decode_bytes_unchecked( "Program%20Files" );
+    assert( size == 13 );
     @endcode
 
     @par Preconditions
@@ -362,12 +364,12 @@ pct_decode_bytes_unchecked(
 
     @par Example
     @code
-    auto dest = new char[MAX_LENGTH];
-    auto decoded = pct_decode_unchecked(dest, dest + MAX_LENGTH,
-        "Some%20text");
+    char *dest = new char[MAX_LENGTH];
+    std::size_t decoded_size = pct_decode_unchecked( dest, dest + MAX_LENGTH,
+            "Program%20Files" );
 
-    assert(decoded == 9);
-    assert(strcmp("Some text", dest) == 0);
+    assert( decoded_size == 13 );
+    assert( strncmp("Program Files", dest, decoded_size) == 0 );
     @endcode
 
     @par Exception Safety
@@ -409,8 +411,8 @@ pct_decode_unchecked(
 
     @par Example
     @code
-    auto result = pct_decode_unchecked("Some%20text");
-    assert(result.to_string() == "Some text");
+    const_string result = pct_decode_unchecked( "Program%20Files" );
+    assert( result.compare( "Program Files" ) == 0 );
     @endcode
 
     @par Exception Safety
@@ -477,14 +479,26 @@ struct pct_encode_opts
     encoded using the given options and character
     set. No encoding is actually performed.
 
-    @par Example
+    @par Example 1
+    Find the number of bytes needed to encode a string without transforming
+    ' ' to '+'.
     @code
     pct_encode_opts opt;
     opt.space_to_plus = false;
-
     std::size_t n = pct_encode_bytes( "My Stuff", pchars, opt );
 
     assert( n == 10 );
+    @endcode
+
+    @par Example 2
+    Find the number of bytes needed to encode a string when transforming
+    ' ' to '+'.
+    @code
+    pct_encode_opts opt;
+    opt.space_to_plus = true;
+    std::size_t n = pct_encode_bytes( "My Stuff", opt, pchars );
+
+    assert( n == 8 );
     @endcode
 
     @par Exception Safety
@@ -531,12 +545,12 @@ pct_encode_bytes(
 
     @par Example
     @code
-    auto dest = new char[MAX_LENGTH];
-    auto encoded = pct_encode(dest, dest + MAX_LENGTH,
-        "My stuff");
+    char *dest = new char[MAX_LENGTH];
+    std::size_t encoded_size = pct_encode( dest, dest + MAX_LENGTH,
+            "Program Files", pct_encode_opts{}, pchars );
 
-    assert(encoded == 10);
-    assert(strncmp("My%20stuff", dest, encoded) == 0);
+    assert( encoded_size == 15 );
+    assert( strncmp( "Program%20Files", dest, encoded_size ) == 0 );
     @endcode
 
     @par Exception Safety
@@ -594,8 +608,7 @@ pct_encode(
     @code
     pct_encode_opts opt;
     opt.space_to_plus = true;
-
-    std::string s = pct_encode( "My Stuff", pchars, opt );
+    std::string s = pct_encode( "My Stuff", opt, pchars );
 
     assert( s == "My+Stuff" );
     @endcode
@@ -657,10 +670,9 @@ pct_encode(
     @code
     pct_encode_opts opt;
     opt.space_to_plus = true;
+    const_string encoded = pct_encode_to_value( "My Stuff", opt, pchars );
 
-    const_string s = pct_encode_to_value( "My Stuff", pchars, opt );
-
-    assert( s == "My+Stuff" );
+    assert( encoded.compare("My+Stuff") == 0 );
     @endcode
 
     @par Exception Safety
