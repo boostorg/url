@@ -509,11 +509,11 @@ struct pct_encode_opts
 
     @param s The string to encode.
 
-    @param cs The character set to use.
-
     @param opt The options for encoding. If
     this parameter is omitted, the default
     options will be used.
+
+    @param cs The character set to use.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
@@ -622,11 +622,11 @@ pct_encode(
 
     @param s The string to encode.
 
-    @param cs The character set to use.
-
     @param opt The options for encoding. If
     this parameter is omitted, the default
     options will be used.
+
+    @param cs The character set to use.
 
     @param a An optional allocator the returned
     string will use. If this parameter is omitted,
@@ -683,11 +683,11 @@ pct_encode(
 
     @param s The string to encode.
 
-    @param cs The character set to use.
-
     @param opt The options for encoding. If
     this parameter is omitted, the default
     options will be used.
+
+    @param cs The character set to use.
 
     @param a An optional allocator the returned
     string will use. If this parameter is omitted,
