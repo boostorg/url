@@ -27,7 +27,7 @@ struct query_rule::key_chars
     key_chars() noexcept
         : grammar::lut_chars(
             pchars
-            + '/' + '?'
+            + '/' + '?' + '[' + ']'
             - '&' - '=')
     {
     }

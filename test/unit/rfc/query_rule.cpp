@@ -82,15 +82,10 @@ public:
         good<T>("x=y&");
         good<T>("x=y&a");
         good<T>("x=y&a=b&");
+        good<T>("keys[]=value1&keys[]=value2");
 
         // some gen-delims
-        for(auto c :
-            "#[]"
-            )
-        {
-            string_view s( &c, 1 );
-            bad<T>(s);
-        }
+        bad<T>("#");
 
         // pchar / "/" / "?"
         good<T>(
