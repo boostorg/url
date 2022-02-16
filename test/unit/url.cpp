@@ -1031,7 +1031,7 @@ public:
         remove("w::", "./:");
         remove("x://y//z", ".//z");
         remove("http://user:pass@example.com:80/path/to/file.txt",
-               "/path/to/file.txt"); 
+               "/path/to/file.txt");
     }
 
     //--------------------------------------------
@@ -1684,11 +1684,11 @@ public:
         perform( "//x", "//x/", {}, [](url& u) {
             BOOST_TEST(u.set_path_absolute(true));
             });
-        
+
         perform( "//x/", "//x", {}, [](url& u) {
             BOOST_TEST(u.set_path_absolute(false));
             });
-        
+
         perform( "//x/y", "//x/y", { "y" }, [](url& u) {
             BOOST_TEST(! u.set_path_absolute(false));
             });
@@ -1769,14 +1769,14 @@ public:
         check(".g"           , "http://a/b/c/.g");
         check("g.."          , "http://a/b/c/g..");
         check("..g"          , "http://a/b/c/..g");
-                             
+
         check("./../g"       , "http://a/b/g");
         check("./g/."        , "http://a/b/c/g/");
         check("g/./h"        , "http://a/b/c/g/h");
         check("g/../h"       , "http://a/b/c/h");
         check("g;x=1/./y"    , "http://a/b/c/g;x=1/y");
         check("g;x=1/../y"   , "http://a/b/c/y");
-                             
+
         check("g?y/./x"      , "http://a/b/c/g?y/./x");
         check("g?y/../x"     , "http://a/b/c/g?y/../x");
         check("g#s/./x"      , "http://a/b/c/g#s/./x");
@@ -1810,6 +1810,22 @@ public:
     //--------------------------------------------
 
     void
+    testFormat()
+    {
+#ifdef BOOST_URL_HAS_STD_FORMAT
+        {
+            url u = parse_uri(
+                "http://example.com/index.htm?q#f").value();
+            std::string s = std::format("{}", u);
+            BOOST_TEST(s ==
+                "http://example.com/index.htm?q#f");
+        }
+#endif
+    }
+
+    //--------------------------------------------
+
+    void
     run()
     {
         testSpecial();
@@ -1828,6 +1844,7 @@ public:
         testSegments();
         testResolution();
         testOstream();
+        testFormat();
     }
 };
 

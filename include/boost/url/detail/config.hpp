@@ -75,4 +75,14 @@
          return &loc; }()))
 #endif
 
+#ifdef __has_include
+# if __has_include(<version>)
+#  include <version>
+# endif
+#endif
+
+#ifdef __cpp_lib_format
+#define BOOST_URL_HAS_STD_FORMAT
+#endif
+
 #endif

@@ -32,6 +32,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <utility>
+#ifdef BOOST_URL_HAS_STD_FORMAT
+#include <string_view>
+#endif
 
 namespace boost {
 namespace urls {
@@ -2342,5 +2345,21 @@ operator<<(
 
 } // urls
 } // boost
+
+#if defined(BOOST_URL_HAS_STD_FORMAT) && !defined(BOOST_URL_DOCS)
+template <>
+struct std::formatter<::boost::urls::url>
+    : std::formatter<std::string_view>
+{
+    template <typename FormatContext>
+    auto format(
+        const ::boost::urls::url& u,
+        FormatContext& ctx) const
+    {
+        return formatter<string_view>::format(
+            std::string_view(u.data(), u.size()), ctx);
+    }
+};
+#endif
 
 #endif

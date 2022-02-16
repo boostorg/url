@@ -27,6 +27,9 @@
 #include <memory>
 #include <string>
 #include <utility>
+#ifdef BOOST_URL_HAS_STD_FORMAT
+#include <format>
+#endif
 
 namespace boost {
 namespace urls {
@@ -1412,6 +1415,11 @@ operator<<(std::ostream& os, url const& u);
 
 } // urls
 } // boost
+
+#if defined(BOOST_URL_HAS_STD_FORMAT) && !defined(BOOST_URL_DOCS)
+template <>
+struct std::formatter<::boost::urls::url>;
+#endif
 
 #include <boost/url/impl/params.hpp>
 #include <boost/url/impl/params_encoded.hpp>

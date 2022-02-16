@@ -46,7 +46,7 @@ def main(ctx):
   linux_cxx("COMMENT=Coverity Scan B2_TOOLSET=clang Job 24", "g++", packages="", buildscript="drone", buildtype="coverity", image=linuxglobalimage, environment={'COMMENT': 'Coverity Scan', 'B2_TOOLSET': 'clang', 'DRONE_JOB_UUID': '4d134bc072'}, globalenv=globalenv),
   windows_cxx("msvc-14.1", "", image="cppalliance/dronevs2017", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.1", "B2_CXXSTD": "11,14,17"},globalenv=globalenv),
   windows_cxx("msvc-14.2", "", image="cppalliance/dronevs2019", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.2", "B2_CXXSTD": "14,17,latest"},globalenv=globalenv),
-  windows_cxx("msvc-14.3", "", image="cppalliance/dronevs2022", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.3", "B2_CXXSTD": "17,20"},globalenv=globalenv),
+  windows_cxx("msvc-14.3", "", image="cppalliance/dronevs2022", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.3", "B2_CXXSTD": "17,20,latest"},globalenv=globalenv),
   ]
 
 # from https://github.com/boostorg/boost-ci
