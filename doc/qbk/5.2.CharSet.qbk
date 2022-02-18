@@ -12,10 +12,31 @@
 A ['CharSet] is a unary predicate which accepts as its single
 argument a value of type `char`. The return value of the predicate
 is a `bool` whose value is true if the character is a member of the
-notional character set, or false otherwise. A character set can be
-used to specify which characters are unreserved and thus, do not
-need to be escaped when used in percent-encoding algorithms.
-Character sets may also be used by parsers; some character sets
+notional character set, or false otherwise.
+
+[snippet_charset_1]
+
+The library provides a number of ['CharSet] predicates related to
+URL components.
+
+[snippet_charset_2]
+
+A character set are used to specify which characters are unreserved
+in a grammar rules. In URLs, they determine which characters do not
+need to be escaped in percent-encoding algorithms.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_charset_3]
+][
+[teletype]
+```
+    query:        key=the%20value
+    decoded size: 13
+```
+]]]
+
+Character sets may also be used directly by parsers; some character sets
 have optimized implementations for finding matching elements.
 
 [heading Related Identifiers]
@@ -90,26 +111,7 @@ In this table:
 
 [heading Exemplar]
 
-```
-struct CharSet
-{
-    bool operator()( char c ) const noexcept;
-
-    char const* find_if     ( char const* first, char const* last ) const noexcept;
-    char const* find_if_not ( char const* first, char const* last ) const noexcept;
-};
-```
-
-[heading Example]
-```
-struct digit_chars_t
-{
-    constexpr bool operator()( char c ) const noexcept
-    {
-        return c >= '0' && c <= '9';
-    }
-};
-```
+[snippet_charset_4]
 
 [heading Models]
 

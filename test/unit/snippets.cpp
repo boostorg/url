@@ -13,13 +13,8 @@
 #include <boost/url.hpp>
 //]
 
-#if 0
-//[snippet_headers_2
-#include <boost/url/src.hpp>
-//]
-#endif
-
 #include <iostream>
+#include <cctype>
 
 //[snippet_headers_3
 #include <boost/url.hpp>
@@ -856,6 +851,161 @@ using_modifying()
     }
 }
 
+void
+grammar_parse()
+{
+    {
+        //[snippet_parse_1
+        string_view s = "http:after_scheme";
+        scheme_rule r;
+        const char* it = s.begin();
+        error_code ec;
+        if (grammar::parse(it, s.end(), ec, r))
+        {
+            std::cout << "scheme: " << r.scheme << '\n';
+            std::cout << "suffix: " << it << '\n';
+        }
+        //]
+    }
+
+    {
+        //[snippet_parse_2
+        string_view s = "?key=value#anchor";
+        query_part_rule r1;
+        fragment_part_rule r2;
+        const char* it = s.begin();
+        error_code ec;
+        if (grammar::parse(it, s.end(), ec, r1))
+        {
+            if (grammar::parse(it, s.end(), ec, r2))
+            {
+                std::cout << "query: " << r1.query_part << '\n';
+                std::cout << "fragment: " << r2.fragment.str << '\n';
+            }
+        }
+        //]
+    }
+
+    {
+        //[snippet_parse_3
+        string_view s = "?key=value#anchor";
+        query_part_rule r1;
+        fragment_part_rule r2;
+        const char* it = s.begin();
+        error_code ec;
+        if (grammar::parse(it, s.end(), ec, r1, r2))
+        {
+            std::cout << "query: " << r1.query_part << '\n';
+            std::cout << "fragment: " << r2.fragment.str << '\n';
+        }
+        //]
+    }
+
+    {
+        //[snippet_parse_4
+        string_view s = "http://www.boost.org";
+        uri_rule r;
+        error_code ec;
+        if (grammar::parse_string(s, ec, r))
+        {
+            std::cout << "scheme: " << r.scheme_part.scheme << '\n';
+            std::cout << "host: " << r.hier_part.authority.host.host_part << '\n';
+        }
+        //]
+    }
+}
+
+//[snippet_customization_1
+struct lowercase_rule
+{
+    string_view str;
+
+    friend
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        lowercase_rule& t) noexcept
+    {
+        ec = {};
+        char const* begin = it;
+        while (it != end && std::islower(*it))
+        {
+            ++it;
+        }
+        t.str = string_view(begin, it);
+    }
+};
+//]
+
+void
+grammar_customization()
+{
+    {
+        //[snippet_customization_2
+        string_view s = "http:somelowercase";
+        scheme_rule r1;
+        lowercase_rule r2;
+        error_code ec;
+        if (grammar::parse_string(s, ec, r1, ':', r2))
+        {
+            std::cout << "scheme: " << r1.scheme << '\n';
+            std::cout << "lower:  " << r2.str << '\n';
+        }
+        //]
+    }
+}
+
+//[snippet_charset_1
+struct digit_chars_t
+{
+    constexpr
+    bool
+    operator()( char c ) const noexcept
+    {
+        return c >= '0' && c <= '9';
+    }
+};
+//]
+
+//[snippet_charset_4
+struct CharSet
+{
+    bool operator()( char c ) const noexcept;
+
+    char const* find_if     ( char const* first, char const* last ) const noexcept;
+    char const* find_if_not ( char const* first, char const* last ) const noexcept;
+};
+//]
+
+
+void
+grammar_charset()
+{
+    {
+        //[snippet_charset_2
+        query_chars_t cs;
+        assert(cs('a'));
+        assert(cs('='));
+        assert(!cs('#'));
+        //]
+    }
+    {
+        //[snippet_charset_3
+        string_view s = "key=the%20value";
+        pct_encoded_rule<query_chars_t> r;
+        error_code ec;
+        if (grammar::parse_string(s, ec, r))
+        {
+            std::cout << "query:        " << r.s.str << '\n';
+            std::cout << "decoded size: " << r.s.decoded_size << '\n';
+        }
+        //]
+    }
+}
+
 namespace boost {
 namespace urls {
 
@@ -873,7 +1023,9 @@ public:
         parsing_path();
         parsing_query();
         parsing_fragment();
-        using_modifying();
+        grammar_parse();
+        grammar_customization();
+        grammar_charset();
 
         BOOST_TEST_PASS();
     }

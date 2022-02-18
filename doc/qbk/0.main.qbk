@@ -88,12 +88,10 @@
 
 [include 4.0.modifying.qbk]
 
-[section Allocators]
-[endsect]
-
+[section Grammars Rules]
 [include 5.0.grammars.qbk]
-
-[section Examples]
+[include 5.1.customization.qbk]
+[include 5.2.CharSet.qbk]
 [endsect]
 
 [section:ref Reference]
