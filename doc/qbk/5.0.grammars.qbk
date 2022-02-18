@@ -8,9 +8,7 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-[section Grammar]
-
-[heading Design of grammar rules]
+[section Design]
 
 The function [link url.ref.boost__urls__grammar__parse `parse`] implements the logic for parsing strings
 according to grammar rules.
@@ -18,14 +16,65 @@ according to grammar rules.
 A grammar rule type, henceforth called a "rule", provides an algorithm for parsing an input string. An
 instance of the rule is used to store the results.
 
-[heading Customization points]
+[table [[Code][Output]] [[
+[c++]
+[snippet_parse_1]
+][
+[teletype]
+```
+    scheme: http
+    suffix: :after_scheme
+```
+]]]
 
-Users can define a free function `parse` as a customization point defining how to parse their
-grammar rules as part of the same architecture that might include arbitrary grammar rules in expressions.
+In this example, the function [link url.ref.boost__urls__grammar__parse `parse`]
+returns `true` if the specified range of characters begins with a scheme. When
+the operation completes successfully, the rule instance holds the results.
 
-These new function overloads may be defined in other namespaces. As with __std_swap__, the design relies
-on [@https://en.cppreference.com/w/cpp/language/adl argument-dependent lookup] to find these overloads.
+The iterator is updated to the position where the rule ended, leaving the suffix
+at the range between the new iterator and the old end iterator. This behavior is
+useful when parsing a sequence of rules.
 
-[include CharSet.qbk]
+[table [[Code][Output]] [[
+[c++]
+[snippet_parse_2]
+][
+[teletype]
+```
+    query: ?key=value
+    fragment: anchor
+```
+]]]
+
+Parsing a sequence of rules is such a common pattern that a special overload is
+provided:
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parse_3]
+][
+[teletype]
+```
+    query: ?key=value
+    fragment: anchor
+```
+]]]
+
+If all the logic has been represented in a single rule, we often want to parse
+a complete string as a rule.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_parse_4]
+][
+[teletype]
+```
+    scheme: http
+    host: www.boost.org
+```
+]]]
+
+The function [link url.ref.boost__urls__grammar__parse_string `parse_string`] only returns
+true when the whole string matches the rule.
 
 [endsect]
