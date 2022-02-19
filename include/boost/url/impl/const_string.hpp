@@ -177,14 +177,14 @@ const_string(
     {
         std::memcpy(data_.buf_,
             s.data(), s.size());
-        static_cast<string_view&>(*this
-            ) = { data_.buf_, s.size()};
+        str_ = data_.buf_;
+        len_ = s.size();
         return;
     }
     auto r = factory::impl<Allocator>(
         a).construct(s.size());
-    static_cast<string_view&>(
-        *this) = { r.data, r.size };
+    str_ = r.data;
+    len_ = r.size;
     std::memcpy(r.data, s.data(), s.size());
     data_.p_ = r.p;
 }
@@ -201,14 +201,14 @@ const_string(
     if (is_small(size))
     {
         init(size, data_.buf_);
-        static_cast<string_view&>(
-            *this) = { data_.buf_, size };
+        str_ = data_.buf_;
+        len_ = size;
         return;
     }
     auto r = factory::impl<
         Allocator>(a).construct(size);
-    static_cast<string_view&>(
-        *this) = { r.data, r.size };
+    str_ = r.data;
+    len_ = r.size;
     init(size, r.data);
     data_.p_ = r.p;
 }

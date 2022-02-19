@@ -75,4 +75,26 @@
          return &loc; }()))
 #endif
 
+// This is a workaround for C++1z GCC
+// implementations which falsely claim
+// `const_string` comparisons cannot be
+// constexpr.
+#if BOOST_WORKAROUND( BOOST_GCC_VERSION, >= 50000 ) && \
+    BOOST_WORKAROUND( BOOST_GCC_VERSION, < 70000 )
+# define BOOST_URL_CONST_STRING_CONSTEXPR
+#else
+# define BOOST_URL_CONST_STRING_CONSTEXPR BOOST_CXX14_CONSTEXPR
+#endif
+
+// This is a workaround to also avoid implicit conversions to
+// std::string_view in Clang/GCC5 + C++1z as it falsely considers
+// the copy/move constructors of core::string_view ambiguous
+#if defined(BOOST_NO_CXX17_HDR_STRING_VIEW) || \
+    BOOST_WORKAROUND( BOOST_GCC_VERSION, < 60000 ) || \
+    BOOST_WORKAROUND( BOOST_CLANG_VERSION, < 60000 ) || \
+    (defined(__MINGW32__) && BOOST_WORKAROUND( BOOST_GCC_VERSION, < 90000 ))
+#define BOOST_URL_NO_CXX17_HDR_STRING_VIEW
+#endif
+
+
 #endif

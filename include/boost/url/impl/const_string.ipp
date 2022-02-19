@@ -127,7 +127,8 @@ operator()(string_view s) const
 const_string::
 const_string(
     result const& r) noexcept
-    : string_view(r.data, r.size)
+    : str_(r.data)
+    , len_(r.size)
     , data_(r.p)
 {
 }
@@ -141,14 +142,14 @@ const_string::
 
 const_string::
 const_string() noexcept
-    : string_view()
+    : str_(nullptr), len_(0)
 {
 }
 
 const_string::
 const_string(
     const_string const& other) noexcept
-    : string_view()
+    : str_(nullptr), len_(0)
 {
     if (is_small(other.size()))
     {
@@ -156,14 +157,14 @@ const_string(
         // nothing to release
         std::memcpy( data_.buf_,
             other.data_.buf_, other.size());
-        static_cast<string_view&>(*this) =
-            string_view(data_.buf_, other.size());
+        str_ = data_.buf_;
+        len_ = other.size();
         return;
     }
     data_.p_ = other.data_.p_;
     ++data_.p_->refs;
-    static_cast<string_view&>(
-        *this) = string_view(other);
+    str_ = other.str_;
+    len_ = other.len_;
 }
 
 const_string&
@@ -179,16 +180,16 @@ operator=(
             return *this;
         std::memcpy(data_.buf_,
             other.data_.buf_, other.size());
-        static_cast<string_view&>(*this) =
-            string_view(data_.buf_, other.size());
+        str_ = data_.buf_;
+        len_ = other.size();
         return *this;
     }
     ++other.data_.p_->refs;
     if (!is_small(size()))
         data_.p_->release(size());
     data_.p_ = other.data_.p_;
-    static_cast<string_view&>(
-        *this) = string_view(other);
+    str_ = other.str_;
+    len_ = other.len_;
     return *this;
 }
 
