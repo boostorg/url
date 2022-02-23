@@ -507,6 +507,20 @@ public:
     }
 
     void
+    testRange()
+    {
+        // issue 129
+        // empty range iterates once
+        {
+            url u = parse_uri(
+                "http://example.com/index.htm").value();
+            auto const r = u.encoded_params();
+            BOOST_TEST(
+                r.begin() == r.end());
+        }
+    }
+
+    void
     run()
     {
         testMembers();
@@ -515,6 +529,7 @@ public:
         testModifiers();
         testLookup();
         testIterators();
+        testRange();
     }
 };
 

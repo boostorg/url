@@ -165,6 +165,20 @@ public:
     }
 
     void
+    testRange()
+    {
+        // issue 129
+        // empty range iterates once
+        {
+            url_view u = parse_uri(
+                "http://example.com/index.htm").value();
+            auto const r = u.params();
+            BOOST_TEST(
+                r.begin() == r.end());
+        }
+    }
+
+    void
     run()
     {
         testElements();
@@ -172,6 +186,7 @@ public:
         testLookup();
         testIterators();
         testEncoding();
+        testRange();
     }
 };
 

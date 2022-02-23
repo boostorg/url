@@ -247,7 +247,9 @@ params_view::
 begin() const noexcept ->
     iterator
 {
-    return { s_, a_ };
+    if(n_ > 0)
+        return { s_, a_ };
+    return { s_, 0, a_ };
 }
 
 auto

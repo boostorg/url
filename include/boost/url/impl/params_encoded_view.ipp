@@ -192,7 +192,9 @@ params_encoded_view::
 begin() const noexcept ->
     iterator
 {
-    return { s_ };
+    if(n_ > 0)
+        return { s_ };
+    return { s_, 0 };
 }
 
 auto
