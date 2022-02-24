@@ -371,6 +371,9 @@ public:
         up to and including the last element
         and @ref end iterators are invalidated.
 
+        @note Behavior is undefined if the element
+        belongs to the container
+
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
@@ -416,6 +419,9 @@ public:
 
         assert( u.encoded_path() == "/path/to/the/file.txt") );
         @endcode
+
+        @note Behavior is undefined if any elements of the
+        initializer_list belong to the container
 
         @par Exception Safety
         Strong guarantee.
@@ -471,6 +477,9 @@ public:
 
         assert( u.encoded_path() == "/path/to/the/file.txt") );
         @endcode
+
+        @note Behavior is undefined if any elements of the range
+        belong to the container
 
         @par Exception Safety
         Strong guarantee.

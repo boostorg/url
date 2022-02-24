@@ -401,6 +401,9 @@ public:
         Strong guarantee.
         Calls to allocate may throw.
 
+        @note Behavior is undefined if any elements of
+        initializer_list belong to the container
+
         @return An iterator to one past the last
         newly inserted element or `before` if
         the range is empty.
@@ -448,6 +451,9 @@ public:
 
         assert( u.encoded_path() == "/path/to/the/file.txt") );
         @endcode
+
+        @note Behavior is undefined if any elements of the range
+        belong to the container
 
         @par Exception Safety
         Strong guarantee.

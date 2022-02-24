@@ -98,6 +98,9 @@ insert(
         iterator
 {
     BOOST_ASSERT(before.u_ == u_);
+    detail::copied_strings cs(
+        u_->string());
+    s = cs.maybe_copy(s);
     u_->edit_segments(
         before.i_,
         before.i_,

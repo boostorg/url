@@ -290,6 +290,9 @@ public:
 
     /** Insert element at specified container position
 
+        @note Behavior is undefined if the element
+        belongs to the container
+
         @return Iterator pointing to the inserted element
 
         @param before Position at which the element should be inserted
@@ -320,6 +323,9 @@ public:
             value_type> init);
 
     /** Insert range of elements at specified container position
+
+        @note Behavior is undefined if any elements of the range
+        belong to the container
 
         @tparam FwdIt Iterator type
 
@@ -367,6 +373,9 @@ public:
 
     /** Replace an element at specified container position
 
+        @note Behavior is undefined if the element
+        belongs to the container
+
         @return Iterator to position where element was inserted
 
         @param pos Position whose element should be replaced
@@ -381,6 +390,9 @@ public:
         value_type const& value);
 
     /** Replace a range of elements at a range of container positions
+
+        @note Behavior is undefined if any elements of the range
+        belong to the container
 
         @tparam FwdIt Iterator type
 
@@ -404,6 +416,9 @@ public:
         FwdIt last);
 
     /** Replace a a list of elements at a range of container positions
+
+        @note Behavior is undefined if any elements of the initializer_list
+        belong to the container
 
         @return Iterator to position where the first inserted element
 
