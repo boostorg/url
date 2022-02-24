@@ -132,6 +132,14 @@ public:
     segments
     decoded(Allocator const& alloc = {}) const;
 
+    /** Assignment
+
+        After the assignment, both views will point to
+        the same underlying object.
+    */
+    segments_encoded&
+    operator=(segments_encoded const&) & = default;
+
     /** Replace the contents of the container
 
         This function replaces the contents

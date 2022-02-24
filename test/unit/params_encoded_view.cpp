@@ -21,6 +21,20 @@ class params_encoded_view_test
 {
 public:
     void
+    testMembers()
+    {
+        // operator=(params_encoded_view const&)
+        {
+            url_view u1;
+            url_view u2;
+            params_encoded_view p1 = u1.encoded_params();
+            params_encoded_view p2 = u2.encoded_params();
+            p2 = p1;
+            BOOST_TEST(p1.begin() == p2.begin());
+        }
+    }
+
+    void
     testElements()
     {
         // at(string_view)
@@ -190,6 +204,7 @@ public:
     void
     run()
     {
+        testMembers();
         testElements();
         testCapacity();
         testLookup();

@@ -94,6 +94,14 @@ public:
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 
+    /** Assignment
+
+        After the assignment, both views will point to
+        the same underlying object.
+    */
+    params_view&
+    operator=(params_view const&) & = default;
+
     //--------------------------------------------
     //
     // Element Access

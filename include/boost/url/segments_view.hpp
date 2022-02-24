@@ -86,6 +86,15 @@ public:
     inline
     segments_view() noexcept;
 
+    /** Assignment
+
+        After the assignment, both views will point to
+        the same underlying object.
+    */
+    segments_view&
+    operator=(segments_view const& other) & = default;
+
+
     /** Returns true if this contains an absolute path.
 
         Absolute paths always start with a

@@ -24,6 +24,20 @@ public:
     pool_t pa;
 
     void
+    testMembers()
+    {
+        // operator=(params_view const&)
+        {
+            url_view u1;
+            url_view u2;
+            params_view p1 = u1.params();
+            params_view p2 = u2.params();
+            p2 = p1;
+            BOOST_TEST(p1.begin() == p2.begin());
+        }
+    }
+
+    void
     testElements()
     {
         // at(string_view)
@@ -181,6 +195,7 @@ public:
     void
     run()
     {
+        testMembers();
         testElements();
         testCapacity();
         testLookup();

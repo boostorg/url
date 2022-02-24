@@ -126,6 +126,14 @@ public:
     bool
     is_absolute() const noexcept;
 
+    /** Assignment
+
+        After the assignment, both views will point to
+        the same underlying object.
+    */
+    segments&
+    operator=(segments const&) & = default;
+
     /** Replace the contents of the container
 
         This function replaces the contents with

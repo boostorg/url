@@ -121,6 +121,14 @@ public:
                 sv.begin() == sv.end());
         }
 
+        // operator=(segments_view const&)
+        {
+            segments_view s1;
+            segments_view s2;
+            s1 = s2;
+            BOOST_TEST(s1.begin() == s2.begin());
+        }
+
         // decoded
         {
             segments_view sv = parse_path(

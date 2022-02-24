@@ -140,6 +140,14 @@ public:
     inline
     segments_encoded_view() noexcept;
 
+    /** Assignment
+
+        After the assignment, both views will point to
+        the same underlying object.
+    */
+    segments_encoded_view&
+    operator=(segments_encoded_view const&) & = default;
+
     /** Return a view of this container as percent-decoded segments
 
         This function returns a new view over the
