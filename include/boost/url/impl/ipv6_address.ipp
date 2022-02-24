@@ -318,8 +318,8 @@ print_impl(
 }
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+ipv6_address::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,

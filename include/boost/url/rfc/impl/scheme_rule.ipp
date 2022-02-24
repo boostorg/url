@@ -53,8 +53,8 @@ parse(
 }
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+scheme_part_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,

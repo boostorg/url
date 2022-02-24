@@ -31,8 +31,8 @@ namespace urls {
     the complete domain name and some local domain.
 */
 void
-tag_invoke(
-    grammar::parse_tag const&,
+reg_name_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,

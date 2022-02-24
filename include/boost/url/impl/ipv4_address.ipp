@@ -107,8 +107,8 @@ is_multicast() const noexcept
 }
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+ipv4_address::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,

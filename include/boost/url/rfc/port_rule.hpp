@@ -42,7 +42,6 @@ struct port_rule
     std::uint16_t number;
     bool has_number = false;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
@@ -50,7 +49,21 @@ struct port_rule
         char const*& it,
         char const* const end,
         error_code& ec,
+        port_rule& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
         port_rule& t) noexcept;
+
 };
 
 /** Rule for port-part
@@ -79,14 +92,27 @@ struct port_part_rule
     bool has_number = false;
     std::uint16_t port_number = 0;
 
-    BOOST_URL_DECL
     friend
-    bool
+    void
+    tag_invoke(
+        grammar::parse_tag const&,
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        port_part_rule& t)
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
     parse(
         char const*& it,
         char const* const end,
         error_code& ec,
-        port_part_rule& t);
+        port_part_rule& t) noexcept;
 };
 
 } // urls

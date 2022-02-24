@@ -135,8 +135,8 @@ increment(
 //------------------------------------------------
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+query_part_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,
