@@ -343,6 +343,9 @@ url&
 url::
 set_scheme(string_view s)
 {
+    detail::copied_strings cs(
+        this->string());
+    s = cs.maybe_copy(s);
     set_scheme_impl(
         s, string_to_scheme(s));
     return *this;
@@ -421,6 +424,9 @@ url&
 url::
 set_user(string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     check_invariants();
     static constexpr auto cs =
         unreserved_chars +
@@ -440,6 +446,9 @@ url::
 set_encoded_user(
     string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     check_invariants();
     error_code ec;
     static constexpr auto cs =
@@ -515,6 +524,9 @@ url&
 url::
 set_password(string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     check_invariants();
     static constexpr auto cs =
         unreserved_chars +
@@ -538,6 +550,9 @@ url::
 set_encoded_password(
     string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     check_invariants();
     static constexpr auto cs =
         unreserved_chars +
@@ -604,6 +619,9 @@ url::
 set_userinfo(
     string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     check_invariants();
     static constexpr auto cs =
         unreserved_chars +
@@ -627,6 +645,9 @@ url::
 set_encoded_userinfo(
     string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     check_invariants();
     error_code ec;
     userinfo_rule t;
@@ -729,6 +750,9 @@ url::
 set_host(
     string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     // try ipv4
     {
         auto r = parse_ipv4_address(s);
@@ -759,6 +783,9 @@ url&
 url::
 set_encoded_host(string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     // first try parsing it
     host_rule t;
     error_code ec;
@@ -864,6 +891,9 @@ url&
 url::
 set_port(string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     check_invariants();
     port_rule t;
     error_code ec;
@@ -923,6 +953,9 @@ url&
 url::
 set_encoded_authority(string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     error_code ec;
     authority_rule t;
     if(! grammar::parse_string(s, ec, t))
@@ -1209,12 +1242,6 @@ edit_segments(
             (n0 - n));
     nseg_ = nseg1;
     s_[size()] = '\0';
-
-#ifndef NDEBUG
-    std::fill(
-        dest, dest + n, '_');
-#endif
-
     return dest;
 }
 
@@ -1446,6 +1473,9 @@ url::
 set_encoded_path(
     string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     int abs_hint;
     if(s.starts_with('/'))
         abs_hint = 1;
@@ -1465,6 +1495,9 @@ url::
 set_path(
     string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     int abs_hint;
     if(s.starts_with('/'))
         abs_hint = 1;
@@ -1584,15 +1617,6 @@ edit_params(
             n - n0));
     nparam_ = nparam1;
     s_[size()] = '\0';
-
-#ifndef NDEBUG
-#if 0
-    // VFALCO this breaks remove_value
-    std::fill(
-        dest, dest + n, '_');
-#endif
-#endif
-
     return dest;
 }
 
@@ -1688,6 +1712,9 @@ url::
 set_encoded_query(
     string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     check_invariants();
     edit_params(
         0,
@@ -1704,6 +1731,9 @@ url::
 set_query(
     string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     edit_params(
         0,
         nparam_,
@@ -1744,6 +1774,9 @@ url::
 set_encoded_fragment(
     string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     check_invariants();
     error_code ec;
     fragment_rule t;
@@ -1764,6 +1797,9 @@ url::
 set_fragment(
     string_view s)
 {
+    detail::copied_strings buf(
+        this->string());
+    s = buf.maybe_copy(s);
     check_invariants();
     static constexpr auto cs =
         pchars + '/' + '?';
