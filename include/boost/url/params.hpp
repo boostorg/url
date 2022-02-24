@@ -164,13 +164,21 @@ public:
         <!-- @{ -->
      */
 
+    /** Assignment
+
+        After the assignment, both views will point to
+        the same underlying object.
+    */
+    params&
+    operator=(params const&) & = default;
+
     /** Assignment from initializer list
 
         Assigns @ref params from a list of @ref params::value_type.
 
         Each instance of @ref params::value_type is a view of a query <key, value> pair.
 
-        @return Pointer to this instance of @ref params
+        @return Reference to this instance of @ref params
 
         @param init Initializer list with query parameters
 
@@ -338,6 +346,11 @@ public:
     bool
     empty() const noexcept;
 
+    /** Return the number of elements
+
+        @return Number of elements in the container
+
+     */
     inline
     std::size_t
     size() const noexcept;

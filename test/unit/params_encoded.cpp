@@ -22,6 +22,16 @@ public:
     void
     testMembers()
     {
+        // operator=(params_encoded const&)
+        {
+            url u1;
+            url u2;
+            params_encoded p1 = u1.encoded_params();
+            params_encoded p2 = u2.encoded_params();
+            p2 = p1;
+            BOOST_TEST(p1.begin() == p2.begin());
+        }
+
         // operator=
         // assign(initializer_list)
         // assign(FwdIt, FwdIt)

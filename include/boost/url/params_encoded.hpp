@@ -84,6 +84,14 @@ public:
      *  <!-- @{ -->
      */
 
+    /** Assignment
+
+        After the assignment, both views will point to
+        the same underlying object.
+    */
+    params_encoded&
+    operator=(params_encoded const&) & = default;
+
     /** Assignment from initializer list
 
         Assign params from a list of param value_type.

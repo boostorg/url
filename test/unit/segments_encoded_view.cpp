@@ -101,6 +101,14 @@ public:
                 sv.begin() == sv.end());
         }
 
+        // operator=(segments_view const&)
+        {
+            segments_encoded_view s1;
+            segments_encoded_view s2;
+            s1 = s2;
+            BOOST_TEST(s1.begin() == s2.begin());
+        }
+
         // decoded
         {
             segments_encoded_view sev = parse_path(

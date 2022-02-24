@@ -85,7 +85,7 @@ struct query_param_view
     `has_value == true`.
     A value that is present with an empty string
     is distinct from a value that is absent.
-    Whether the strings are precent-encoded
+    Whether the strings are percent-encoded
     is determined by the container from which
     the value is obtained.
 */

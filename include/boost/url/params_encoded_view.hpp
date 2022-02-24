@@ -144,6 +144,14 @@ public:
     params_view
     decoded(Allocator const& alloc = {}) const;
 
+    /** Assignment
+
+        After the assignment, both views will point to
+        the same underlying object.
+    */
+    params_encoded_view&
+    operator=(params_encoded_view const&) & = default;
+
     //--------------------------------------------
     //
     // Element Access

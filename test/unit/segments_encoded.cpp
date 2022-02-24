@@ -40,6 +40,16 @@ public:
     void
     testMembers()
     {
+        // operator=(segments const&)
+        {
+            url u1;
+            url u2;
+            segments_encoded p1 = u1.encoded_segments();
+            segments_encoded p2 = u2.encoded_segments();
+            p2 = p1;
+            BOOST_TEST(p1.begin() == p2.begin());
+        }
+
         url_view const u0 = parse_uri(
             "x://y/path/to/the/file.txt?q#f").value();
 
