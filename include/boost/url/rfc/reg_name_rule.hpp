@@ -44,6 +44,19 @@ struct reg_name_rule
         char const*& it,
         char const* const end,
         error_code& ec,
+        reg_name_rule& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
         reg_name_rule& t) noexcept;
 };
 

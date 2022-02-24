@@ -45,7 +45,7 @@
 [def __MoveConstructible__      [@https://en.cppreference.com/w/cpp/named_req/MoveConstructible ['MoveConstructible]]]
 [def __SemiRegular__            [@https://en.cppreference.com/w/cpp/concepts/semiregular ['SemiRegular]]]
 [def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
-[def __CharSet__                [link url.grammars_rules.charset ['CharSet]]]
+[def __CharSet__                [link url.grammar_rules.charset ['CharSet]]]
 
 [def __std_swap__               [@https://en.cppreference.com/w/cpp/algorithm/swap `std::swap`]]
 [def __authority_view__         [link url.ref.boost__urls__authority_view `authority_view`]]
@@ -88,7 +88,7 @@
 
 [include 4.0.modifying.qbk]
 
-[section Grammars Rules]
+[section Grammar Rules]
 [include 5.0.grammars.qbk]
 [include 5.1.customization.qbk]
 [include 5.2.CharSet.qbk]

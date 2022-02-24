@@ -263,15 +263,28 @@ public:
     /** Customization point for parsing an IPv4 address.
     */
     BOOST_URL_DECL
+    friend
     void
     tag_invoke(
         grammar::parse_tag const&,
         char const*& it,
         char const* const end,
         error_code& ec,
-        ipv4_address& t) noexcept;
+        ipv4_address& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
 
 private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        ipv4_address& t) noexcept;
+
     friend class ipv6_address;
 
     BOOST_URL_DECL

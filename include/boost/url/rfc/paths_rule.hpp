@@ -62,7 +62,6 @@ struct segment_rule
 {
     pct_encoded_str& v;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
@@ -70,7 +69,21 @@ struct segment_rule
         char const*& it,
         char const* const end,
         error_code& ec,
+        segment_rule const& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
         segment_rule const& t) noexcept;
+
 };
 #endif
 
@@ -103,11 +116,23 @@ struct segment_nz_rule
 {
     pct_encoded_str& v;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
         grammar::parse_tag const&,
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        segment_nz_rule const& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
         char const*& it,
         char const* const end,
         error_code& ec,
@@ -147,7 +172,6 @@ struct segment_nz_nc_rule
 {
     pct_encoded_str& v;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
@@ -155,7 +179,22 @@ struct segment_nz_nc_rule
         char const*& it,
         char const* const end,
         error_code& ec,
+        segment_nz_nc_rule const& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
         segment_nz_nc_rule const& t) noexcept;
+
+
 };
 #endif
 

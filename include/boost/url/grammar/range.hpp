@@ -102,7 +102,10 @@ public:
         char const*& it,
         char const* end,
         error_code& ec,
-        range_& t);
+        range_& t)
+    {
+        t.fp_(it, end, ec, t);
+    }
 };
 
 //------------------------------------------------

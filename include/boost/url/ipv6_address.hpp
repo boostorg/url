@@ -325,9 +325,21 @@ public:
         char const*& it,
         char const* const end,
         error_code& ec,
-        ipv6_address& t) noexcept;
+        ipv6_address& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
 
 private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
+        ipv6_address& t) noexcept;
+
     BOOST_URL_DECL
     std::size_t
     print_impl(

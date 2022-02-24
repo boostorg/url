@@ -112,7 +112,6 @@ struct query_part_rule
     query_rule query;
     string_view query_part;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(
@@ -120,7 +119,21 @@ struct query_part_rule
         char const*& it,
         char const* const end,
         error_code& ec,
+        query_part_rule& t) noexcept
+    {
+        parse(it, end, ec, t);
+    }
+
+private:
+    BOOST_URL_DECL
+    static
+    void
+    parse(
+        char const*& it,
+        char const* const end,
+        error_code& ec,
         query_part_rule& t) noexcept;
+
 };
 
 } // urls

@@ -72,18 +72,6 @@ range_(T const*) noexcept
         is_range<T>::value);
 }
 
-inline
-void
-tag_invoke(
-    parse_tag const&,
-    char const*& it,
-    char const* end,
-    error_code& ec,
-    range_& t)
-{
-    t.fp_(it, end, ec, t);
-}
-
 //------------------------------------------------
 
 template<class R>

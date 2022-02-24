@@ -21,8 +21,8 @@ namespace boost {
 namespace urls {
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+port_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,
@@ -63,12 +63,12 @@ tag_invoke(
 }
 
 void
-tag_invoke(
-    grammar::parse_tag const&,
+port_part_rule::
+parse(
     char const*& it,
     char const* const end,
     error_code& ec,
-    port_part_rule& t)
+    port_part_rule& t) noexcept
 {
     if( it == end ||
         *it != ':')
