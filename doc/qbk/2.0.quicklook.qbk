@@ -22,10 +22,18 @@ scope.
 Alternatively, individual headers may be included to obtain the declarations
  for specific types.
 
-To link your program you will need to link with a built library.
-Alternatively you can use the header-only configuration simply
-by including this header file in ['exactly one] of your new or
-existing source files:
+[heading Linking]
+
+You will need to link your program with the Boost.URL built library. You must install binaries
+in a location that can be found by your linker.
+
+If you followed the [@http://www.boost.org/doc/libs/release/more/getting_started/index.html Boost Getting Started]
+instructions, that's already been done for you.
+
+[heading Header-only]
+
+Boost.URL can also be used as a header-only library. Simply provide the Boost directory to your
+compiler and include this in ['exactly one] of your source files:
 
 [c++]
 ```
@@ -33,11 +41,16 @@ existing source files:
 ```
 
 [note
-    Sample code and identifiers used throughout are written as if
-    the following declarations are in effect:
+    The "header-only" configuration needs `BOOST_URL_NO_LIB` defined when building with MSVC. This macro will instruct
+    Boost to deactivate auto-linking on MSVC.
 
-    [snippet_headers_3]
+    [c++]
+    ```
+        #define BOOST_URL_NO_LIB
+        #include <boost/url.hpp>
+    ```
 ]
+
 
 [heading Parsing]
 
@@ -49,6 +62,13 @@ Say you have the following URL that you want to parse:
 You can parse it by calling this function:
 
 [snippet_parsing_2]
+
+[note
+    Sample code and identifiers used throughout are written as if
+    the following declarations are in effect:
+
+    [snippet_headers_3]
+]
 
 The function __parse_uri__ returns an object of type `__result__<__url_view__>`
 which is a container resembling a variant that holds either an error or an object.
