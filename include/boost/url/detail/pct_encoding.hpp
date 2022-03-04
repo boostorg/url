@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
+// Copyright (c) 2022 Alan Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -21,17 +22,6 @@ namespace boost {
 namespace urls {
 namespace detail {
 
-/** Return true if plain equals a decoded percent-encoded string
-
-    This function compares a plain key to a
-    percent-encoded string. The comparison is
-    made as if the key were percent-encoded.
-
-    @param plain_key The key to use for comparison.
-
-    @param encoded The percent-encoded string to
-        compare to.
-*/
 BOOST_URL_DECL
 bool
 key_equal_encoded(
@@ -43,6 +33,46 @@ bool
 key_equal_encoded(
     string_view plain_key,
     string_view encoded) noexcept;
+
+// compare two string_views as if they are both
+// percent-decoded
+int
+pct_decode_compare_unchecked(
+    string_view lhs,
+    string_view rhs) noexcept;
+
+// compare two string_views as if they are both
+// percent-decoded and lowercase
+int
+pct_decode_icompare_unchecked(
+    string_view lhs,
+    string_view rhs) noexcept;
+
+// check if string_view lhs starts with string_view
+// rhs as if they are both percent-decoded. If
+// lhs starts with rhs, return number of chars
+// matched in the encoded string_view
+std::size_t
+pct_decode_starts_with_unchecked(
+    string_view lhs,
+    string_view rhs) noexcept;
+
+// check if string_view lhs ends with string_view
+// rhs as if they are both percent-decoded. If
+// lhs ends with rhs, return number of chars
+// matched in the encoded string_view
+std::size_t
+pct_decode_ends_with_unchecked(
+    string_view lhs,
+    string_view rhs) noexcept;
+
+// compare two string_views as if they are both
+// lowercase
+int
+icompare(
+    string_view lhs,
+    string_view rhs) noexcept;
+
 
 } // detail
 } // urls

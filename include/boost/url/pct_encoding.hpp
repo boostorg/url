@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -245,7 +246,7 @@ pct_decode(
     this parameter is omitted, the default
     options will be used.
 
-    @param cs An opitionally specified
+    @param cs An optionally specified
     character set to use. If this parameter
     is omitted, all characters are considered
     unreserved.

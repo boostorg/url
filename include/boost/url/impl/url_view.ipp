@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -14,6 +15,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/detail/over_allocator.hpp>
 #include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/ascii.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/fragment_rule.hpp>
 #include <boost/url/rfc/host_rule.hpp>
@@ -441,6 +443,64 @@ encoded_fragment() const noexcept
         s.starts_with('#'));
     return s.substr(1);
 }
+
+//------------------------------------------------
+//
+// Comparisons
+//
+//------------------------------------------------
+
+int
+url_view::
+compare(const url_view& other) const noexcept
+{
+    int comp = detail::icompare(
+        scheme(),
+        other.scheme());
+    if ( comp != 0 )
+        return comp;
+
+    comp = detail::pct_decode_compare_unchecked(
+        encoded_user(),
+        other.encoded_user());
+    if ( comp != 0 )
+        return comp;
+
+    comp = detail::pct_decode_compare_unchecked(
+        encoded_password(),
+        other.encoded_password());
+    if ( comp != 0 )
+        return comp;
+
+    comp = detail::pct_decode_icompare_unchecked(
+        encoded_host(),
+        other.encoded_host());
+    if ( comp != 0 )
+        return comp;
+
+    comp = detail::normalized_path_compare(
+        encoded_path(),
+        other.encoded_path(),
+        is_path_absolute(),
+        other.is_path_absolute());
+    if ( comp != 0 )
+        return comp;
+
+    comp = detail::pct_decode_compare_unchecked(
+        encoded_query(),
+        other.encoded_query());
+    if ( comp != 0 )
+        return comp;
+
+    comp = detail::pct_decode_compare_unchecked(
+        encoded_fragment(),
+        other.encoded_fragment());
+    if ( comp != 0 )
+        return comp;
+
+    return 0;
+}
+
 
 //------------------------------------------------
 //

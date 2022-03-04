@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1810,6 +1811,121 @@ public:
     //--------------------------------------------
 
     void
+    testNormalize()
+    {
+        // normalize
+        {
+            auto check = [](string_view before,
+                            string_view after)
+            {
+                url u1 = parse_uri(before).value();
+                url_view u2 = parse_uri(after).value();
+                BOOST_TEST(u1.compare(u2) == 0);
+                u1.normalize();
+                BOOST_TEST(u1.string() == after);
+            };
+
+            check("HtTp://cPpAlLiAnCe.oRG/",
+                  "http://cppalliance.org/");
+            check("http://%2a%2b%2C%2f%3A.org/",
+                  "http://%2A%2B%2C%2F%3A.org/");
+            check("http://%63%70%70%61%6c%6Ci%61n%63e.org/",
+                  "http://cppalliance.org/");
+            check("http://%43%70%50%61%6c%6Ci%61n%43e.org/",
+                  "http://cppalliance.org/");
+            check("http://cppalliance.org/a/b/c/./../../g",
+                  "http://cppalliance.org/a/g");
+            check("http://cppalliance.org/aa/bb/cc/./../../gg",
+                  "http://cppalliance.org/aa/gg");
+            check("http://cppalliance.org/a/b/../../g",
+                  "http://cppalliance.org/g");
+            check("http://cppalliance.org/a/b/../../../g",
+                  "http://cppalliance.org/g");
+            check("http://cppalliance.org/..",
+                  "http://cppalliance.org/");
+        }
+
+        // remove_dot_segments
+        {
+            auto check = [](string_view p,
+                            string_view e) {
+                url u1 = parse_relative_ref(p).value();
+                u1.normalize_path();
+                BOOST_TEST(u1.encoded_path() == e);
+                url u2 = parse_relative_ref(e).value();
+                BOOST_TEST(u1.compare(u2) == 0);
+            };
+
+
+            check("/a/b/c/./../../g", "/a/g");
+            check("/aa/bb/cc/./../../gg", "/aa/gg");
+            check("../a/b/c/./../../g", "../a/g");
+            check("./a/b/c/./../../g", "a/g");
+            check(".././a/b/c/./../../g", "../a/g");
+            check("%2E%2E/./a/b/c/./../../g", "../a/g");
+            check("/a/b/../../g", "/g");
+            check("/a/b/../../../g", "/g");
+            check("mid/content=5/../6", "mid/6");
+            check("mid/content=5/../6/.", "mid/6/");
+            check("mid/content=5/../6/..", "mid/");
+            check("/..", "/");
+            check(".", "");
+            check("..", "..");
+            check("", "");
+        }
+
+        // inequality
+        {
+            auto check = [](string_view e1,
+                            string_view e2,
+                            int cmp) {
+                url_view u1 = parse_uri(e1).value();
+                url_view u2 = parse_uri(e2).value();
+                BOOST_TEST(u1.compare(u2) == cmp);
+                BOOST_TEST(u2.compare(u1) == -cmp);
+            };
+
+            check("http://cppalliance.org", "https://cppalliance.org", -1);
+            check("https://cppalliance.org", "httpz://cppalliance.org", -1);
+            check("http://boost.org", "http://cppalliance.org", -1);
+            check("http://boost.orgg", "http://boost.org", +1);
+            check("http://cppalliance.org/%2E%2E/./b/b/c/./../../g", "http://cppalliance.org/../a/g", +1);
+            check("http://cppalliance.org?l=v", "http://cppalliance.org?k=v", 1);
+            check("http://cppalliance.org?%6C=v", "http://cppalliance.org?k=v", 1);
+            check("http://cppalliance.org#frag", "http://cppalliance.org#glob", -1);
+            check("http://cppalliance.org#fra", "http://cppalliance.org#frag", -1);
+            check("http://cppalliance.org#frag", "http://cppalliance.org#fra", 1);
+        }
+
+        // path inequality
+        {
+            auto check = [](string_view e1,
+                            string_view e2,
+                            int cmp) {
+                url_view u1 = parse_relative_ref(e1).value();
+                url_view u2 = parse_relative_ref(e2).value();
+                BOOST_TEST(u1.compare(u2) == cmp);
+                BOOST_TEST(u2.compare(u1) == -cmp);
+            };
+
+            check("a/g", "/../g", 1);
+            check("./a/b/c/./../../g", "/a/b/../../../g", 1);
+            check("%2E/a/b/c/./../../g", "/a/b/../../../g", 1);
+
+            check("/../g", "a/g", -1);
+            check("/a/b/../../../g", "./a/b/c/./../../g", -1);
+
+            check("../g", "a/g", -1);
+            check("a/b/../../../g", "./a/b/c/./../../g", -1);
+            check("a/b/../../../%67", "./a/b/c/./../../g", -1);
+
+            check("/aa/g", "/aa/gg", -1);
+        }
+    }
+
+    //--------------------------------------------
+
+    void
     run()
     {
         testSpecial();
@@ -1828,6 +1944,7 @@ public:
         testSegments();
         testResolution();
         testOstream();
+        testNormalize();
     }
 };
 

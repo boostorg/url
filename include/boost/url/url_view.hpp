@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1702,6 +1703,30 @@ public:
 
     //--------------------------------------------
     //
+    // Comparison
+    //
+    //--------------------------------------------
+
+    /** Compare two URLs.
+
+        This function compares two URLs
+        according to Syntax-Based comparison
+        algorithm.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+    */
+    BOOST_URL_DECL
+    int
+    compare(const url_view& other) const noexcept;
+
+
+    //--------------------------------------------
+    //
     // Parsing
     //
     //--------------------------------------------
@@ -1714,6 +1739,7 @@ public:
         parse_uri(string_view s);
     BOOST_URL_DECL friend result<url_view>
         parse_uri_reference(string_view s);
+
 
 private:
     void apply(scheme_part_rule const& t) noexcept;

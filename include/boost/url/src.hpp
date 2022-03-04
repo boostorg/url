@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -32,6 +33,7 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/except.ipp>
 #include <boost/url/detail/impl/path.ipp>
 #include <boost/url/detail/impl/pct_encoding.ipp>
+#include <boost/url/detail/impl/remove_dot_segments.ipp>
 
 #include <boost/url/impl/authority_view.ipp>
 #include <boost/url/impl/const_string.ipp>
