@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -14,6 +15,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/url_view.hpp>
+#include <boost/url/host_type.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
@@ -27,6 +29,7 @@
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/scheme_rule.hpp>
 #include <boost/url/rfc/userinfo_rule.hpp>
+#include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/align/align_up.hpp>
 #include <cstring>
 #include <iostream>
@@ -428,14 +431,11 @@ set_user(string_view s)
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    static constexpr auto cs =
-        unreserved_chars +
-        subdelim_chars;
-    auto const n =
-        pct_encode_bytes(s, {}, cs);
+    auto const n = pct_encode_bytes(
+        s, {}, detail::user_chars);
     auto dest = set_user_impl(n);
     pct_encode(dest, get(id_pass).data(),
-        s, {}, cs);
+        s, {}, detail::user_chars);
     decoded_[id_user] = s.size();
     check_invariants();
     return *this;
@@ -451,11 +451,8 @@ set_encoded_user(
     s = buf.maybe_copy(s);
     check_invariants();
     error_code ec;
-    static constexpr auto cs =
-        unreserved_chars +
-        subdelim_chars;
     auto const n =
-        validate_pct_encoding(s, ec, {}, cs);
+        validate_pct_encoding(s, ec, {}, detail::user_chars);
     if(ec.failed())
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
@@ -528,18 +525,15 @@ set_password(string_view s)
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    static constexpr auto cs =
-        unreserved_chars +
-        subdelim_chars + ':';
-    auto const n =
-        pct_encode_bytes(s, {}, cs);
+    auto const n = pct_encode_bytes(
+        s, {}, detail::password_chars);
     auto dest = set_password_impl(n);
     pct_encode(
         dest,
         get(id_host).data() - 1,
         s,
         {},
-        cs);
+        detail::password_chars);
     decoded_[id_pass] = s.size();
     check_invariants();
     return *this;
@@ -554,12 +548,9 @@ set_encoded_password(
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    static constexpr auto cs =
-        unreserved_chars +
-        subdelim_chars + ':';
     error_code ec;
     auto const n =
-        validate_pct_encoding(s, ec, {}, cs);
+        validate_pct_encoding(s, ec, {}, detail::password_chars);
     if(ec.failed())
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
@@ -623,18 +614,15 @@ set_userinfo(
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    static constexpr auto cs =
-        unreserved_chars +
-        subdelim_chars;
-    auto const n =
-        pct_encode_bytes(s, {}, cs);
+    auto const n = pct_encode_bytes(
+        s, {}, detail::userinfo_chars);
     auto dest = set_userinfo_impl(n);
     pct_encode(
         dest,
         get(id_host).data() - 1,
         s,
         {},
-        cs);
+        detail::userinfo_chars);
     decoded_[id_user] = s.size();
     check_invariants();
     return *this;
@@ -760,18 +748,15 @@ set_host(
             return set_host(r.value());
     }
     check_invariants();
-    static constexpr auto cs =
-        unreserved_chars +
-        subdelim_chars;
-    auto const n =
-        pct_encode_bytes(s, {}, cs);
+    auto const n = pct_encode_bytes(
+        s, {}, detail::host_chars);
     auto dest = set_host_impl(n);
     pct_encode(
         dest,
         get(id_path).data(),
         s,
         {},
-        cs);
+        detail::host_chars);
     decoded_[id_host] = s.size();
     host_type_ =
         urls::host_type::name;
@@ -1801,17 +1786,15 @@ set_fragment(
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    static constexpr auto cs =
-        pchars + '/' + '?';
-    auto const n =
-        pct_encode_bytes(s, {}, cs);
+    auto const n = pct_encode_bytes(
+        s, {}, fragment_chars);
     auto dest = set_fragment_impl(n);
     pct_encode(
         dest,
         get(id_end).data(),
         s,
         {},
-        cs);
+        fragment_chars);
     decoded_[id_frag] = s.size();
     check_invariants();
     return *this;
@@ -2042,26 +2025,167 @@ resolve(
 //
 //------------------------------------------------
 
+void
+url::
+normalize_octets_impl(
+    int id,
+    grammar::lut_chars const& cs) noexcept
+{
+    char* it = s_ + offset(id);
+    char* end = s_ + offset(id + 1);
+    char buf = 0;
+    char* dest = it;
+    while (it < end)
+    {
+        if (*it != '%')
+        {
+            *dest = *it;
+            ++it;
+            ++dest;
+            continue;
+        }
+        if (end - it < 3)
+            break;
+
+        // decode unreserved octets
+        pct_decode_unchecked(
+            &buf,
+            &buf + 1,
+            string_view(it, 3));
+        if (cs(buf))
+        {
+            *dest = buf;
+            it += 3;
+            ++dest;
+            continue;
+        }
+
+        // uppercase percent-encoding triplets
+        ++it;
+        *it = grammar::ascii_toupper(*it);
+        ++it;
+        *it = grammar::ascii_toupper(*it);
+        ++it;
+        dest += 3;
+    }
+    if (it != dest)
+    {
+        std::size_t diff = it - dest;
+        std::size_t n = len(id) - diff;
+        shrink_impl(id, n);
+        s_[size()] = '\0';
+    }
+}
+
+void
+url::
+decoded_to_lower_impl(int id) noexcept
+{
+    char* it = s_ + offset(id);
+    char const* const end = s_ + offset(id + 1);
+    while(it < end)
+    {
+        if (*it != '%')
+        {
+            *it = grammar::ascii_tolower(
+                *it);
+            ++it;
+            continue;
+        }
+        it += 3;
+    }
+}
+
+void
+url::
+to_lower_impl(int id) noexcept
+{
+    char* it = s_ + offset(id);
+    char const* const end = s_ + offset(id + 1);
+    while(it < end)
+    {
+        *it = grammar::ascii_tolower(
+            *it);
+        ++it;
+    }
+}
+
+url&
+url::
+normalize_scheme()
+{
+    to_lower_impl(id_scheme);
+    return *this;
+}
+
+url&
+url::
+normalize_authority()
+{
+    // normalize host
+    if (host_type() == urls::host_type::name)
+    {
+        normalize_octets_impl(
+            id_host,
+            detail::reg_name_chars);
+    }
+    decoded_to_lower_impl(id_host);
+
+    // normalize password
+    normalize_octets_impl(id_pass, detail::password_chars);
+
+    // normalize user
+    normalize_octets_impl(id_user, detail::user_chars);
+    return *this;
+}
+
+url&
+url::
+normalize_path()
+{
+    normalize_octets_impl(id_path, detail::path_chars);
+    string_view p = encoded_path();
+    char* p_dest = s_ + offset(id_path);
+    char* p_end = s_ + offset(id_path + 1);
+    std::size_t pn = p.size();
+    bool abs = is_path_absolute();
+    std::size_t n = detail::remove_dot_segments(
+        p_dest, p_end, p, abs);
+    if (n != pn)
+    {
+        BOOST_ASSERT(n < pn);
+        shrink_impl(id_path, n);
+        nseg_ = std::count(
+            p.begin() + 1, p.end(), '/') + 1;
+    }
+    return *this;
+}
+
+url&
+url::
+normalize_query()
+{
+    normalize_octets_impl(id_query, query_chars);
+    return *this;
+}
+
+url&
+url::
+normalize_fragment()
+{
+    normalize_octets_impl(id_frag, fragment_chars);
+    return *this;
+}
+
 url&
 url::
 normalize()
 {
-#if 0
-    // scheme
-    {
-        char* it = s_
-            + offset(id_scheme);
-        auto last = it + offset(id_user);
-        if(it < last)
-        {
-            --last;
-            while(it != last)
-            {
-                // to upper
-            }
-        }
-    }
-#endif
+    normalize_fragment();
+    normalize_query();
+    normalize_path();
+    normalize_authority();
+    normalize_scheme();
     return *this;
 }
 
@@ -2276,47 +2400,7 @@ resize_impl(
         return s_ + offset(first);
     if(new_len <= n0)
     {
-        // shrinking
-        std::size_t n = n0 - new_len;
-        auto const pos =
-            offset(last);
-        // adjust chars
-        std::memmove(
-            s_ + pos - n,
-            s_ + pos,
-            offset(
-                id_end) - pos + 1);
-        // collapse (first, last)
-        collapse(first,  last, 
-            offset(last) - n);
-        // shift (last, end) left
-        adjust(
-            last, id_end, 0 - n);
-#if 0
-        // update table
-        if( nseg > 1 &&
-            first <= id_path)
-        {
-            // adjust segments
-            auto const tab =
-                tab_end() - 1;
-            for(std::size_t i = 0;
-                i < nseg - 1; ++i)
-                tab[0-2*i] += 0 - n;
-        }
-        if( nparam > 1 &&
-            first <= id_query)
-        {
-            // adjust params
-            auto const tab =
-                tab_end() - 2;
-            for(std::size_t i = 0;
-                i < nparam - 1; ++i)
-                tab[0-2*i] += 0 - n;
-        }
-#endif
-        s_[size()] = '\0';
-        return s_ + offset(first);
+        return shrink_impl(first, last, new_len);
     }
 
     // growing
@@ -2359,6 +2443,68 @@ resize_impl(
         for(std::size_t i = 0;
             i < nparam - 1; ++i)
             tab[0-2*i] += n;
+    }
+#endif
+    s_[size()] = '\0';
+    return s_ + offset(first);
+}
+
+char*
+url::
+shrink_impl(
+    int id,
+    std::size_t new_size)
+{
+    return shrink_impl(
+        id, id + 1, new_size);
+}
+
+char*
+url::
+shrink_impl(
+    int first,
+    int last,
+    std::size_t new_len)
+{
+    // shrinking
+    auto const n0 = len(first, last);
+    BOOST_ASSERT(new_len <= n0);
+    std::size_t n = n0 - new_len;
+    auto const pos =
+        offset(last);
+    // adjust chars
+    std::memmove(
+        s_ + pos - n,
+        s_ + pos,
+        offset(
+            id_end) - pos + 1);
+    // collapse (first, last)
+    collapse(first,  last,
+        offset(last) - n);
+    // shift (last, end) left
+    adjust(
+        last, id_end, 0 - n);
+#if 0
+    // update table
+    if( nseg > 1 &&
+        first <= id_path)
+    {
+        // adjust segments
+        auto const tab =
+            tab_end() - 1;
+        for(std::size_t i = 0;
+            i < nseg - 1; ++i)
+            tab[0-2*i] += 0 - n;
+    }
+    if( nparam > 1 &&
+        first <= id_query)
+    {
+        // adjust params
+        auto const tab =
+            tab_end() - 2;
+        for(std::size_t i = 0;
+            i < nparam - 1; ++i)
+            tab[0-2*i] += 0 - n;
     }
 #endif
     s_[size()] = '\0';

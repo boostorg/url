@@ -36,7 +36,6 @@ struct reg_name_rule
 {
     pct_encoded_str v;
 
-    BOOST_URL_DECL
     friend
     void
     tag_invoke(

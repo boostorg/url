@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1073,7 +1074,10 @@ public:
     template<class Allocator =
         std::allocator<char>>
     urls::segments
-    segments(Allocator const& = {}) noexcept;
+    segments(Allocator const& a = {}) noexcept
+    {
+        return urls::segments(*this, a);
+    }
 
     //--------------------------------------------
     //
@@ -1291,12 +1295,149 @@ public:
     // Normalization
     //
     //--------------------------------------------
+private:
+    void
+    normalize_octets_impl(
+        int id,
+        grammar::lut_chars const& cs) noexcept;
 
-    /** Normalize everything.
+    void
+    decoded_to_lower_impl(int id) noexcept;
+
+    void
+    to_lower_impl(int id) noexcept;
+public:
+
+    /** Normalize the URL components
+
+        Applies Syntax-based normalization to
+        all components of the URL.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+
     */
     BOOST_URL_DECL
     url&
     normalize();
+
+    /** Normalize the URL scheme
+
+        Applies Syntax-based normalization to the
+        URL scheme.
+
+        The scheme is normalized to lowercase.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+
+    */
+    BOOST_URL_DECL
+    url&
+    normalize_scheme();
+
+    /** Normalize the URL authority
+
+        Applies Syntax-based normalization to the
+        URL authority.
+
+        Percent-encoding triplets are normalized
+        to uppercase letters. Percent-encoded
+        octets that correspond to unreserved
+        characters are decoded.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+
+    */
+    BOOST_URL_DECL
+    url&
+    normalize_authority();
+
+    /** Normalize the URL path
+
+        Applies Syntax-based normalization to the
+        URL path.
+
+        Percent-encoding triplets are normalized
+        to uppercase letters. Percent-encoded
+        octets that correspond to unreserved
+        characters are decoded. Redundant
+        path-segments are removed.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+
+    */
+    BOOST_URL_DECL
+    url&
+    normalize_path();
+
+    /** Normalize the URL query
+
+        Applies Syntax-based normalization to the
+        URL query.
+
+        Percent-encoding triplets are normalized
+        to uppercase letters. Percent-encoded
+        octets that correspond to unreserved
+        characters are decoded.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+
+    */
+    BOOST_URL_DECL
+    url&
+    normalize_query();
+
+    /** Normalize the URL fragment
+
+        Applies Syntax-based normalization to the
+        URL fragment.
+
+        Percent-encoding triplets are normalized
+        to uppercase letters. Percent-encoded
+        octets that correspond to unreserved
+        characters are decoded.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+
+    */
+    BOOST_URL_DECL
+    url&
+    normalize_fragment();
 
     //--------------------------------------------
     //
@@ -1338,6 +1479,17 @@ private:
 
     char*
     resize_impl(
+        int first,
+        int last,
+        std::size_t new_size);
+
+    char*
+    shrink_impl(
+        int id,
+        std::size_t new_size);
+
+    char*
+    shrink_impl(
         int first,
         int last,
         std::size_t new_size);
@@ -1417,6 +1569,5 @@ operator<<(std::ostream& os, url const& u);
 #include <boost/url/impl/params_encoded.hpp>
 #include <boost/url/impl/segments.hpp>
 #include <boost/url/impl/segments_encoded.hpp>
-#include <boost/url/impl/url.hpp>
 
 #endif
