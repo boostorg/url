@@ -11,6 +11,8 @@
 #define BOOST_URL_DETAIL_IMPL_REMOVE_DOT_SEGMENTS_IPP
 
 #include <boost/url/detail/remove_dot_segments.hpp>
+#include <boost/assert.hpp>
+#include <cstring>
 
 namespace boost {
 namespace urls {
@@ -44,8 +46,8 @@ remove_dot_segments(
         char* last = dest;
         while (last != first)
         {
-          --last;
-          if (*last == '/')
+            --last;
+            if (*last == '/')
                 return last - first;
         }
         return string_view::npos;
@@ -83,9 +85,11 @@ remove_dot_segments(
     // - B and C write "/" to the output
     // - D can only happen at the end
     // - E leaves "/" or happens at the end
-    if (s == "." || s == "..")
+    if( s == "." ||
+        s == "..")
     {
-        if (!remove_unmatched && s == "..")
+        if( ! remove_unmatched &&
+                s == "..")
             append(s);
         s = {};
     }
@@ -220,14 +224,14 @@ normalized_path_compare(
         std::size_t n = 0;
         while (!s.empty())
         {
-            n = detail::pct_decode_starts_with_unchecked(s, "../");
+            n = detail::starts_with_encoded(s, "../");
             if (n)
             {
                 out += 3;
                 s.remove_prefix(n);
                 continue;
             }
-            n = detail::pct_decode_starts_with_unchecked(s, "./");
+            n = detail::starts_with_encoded(s, "./");
             if (n)
             {
                 s.remove_prefix(n);
@@ -243,9 +247,9 @@ normalized_path_compare(
         // - B and C write "/" to the output
         // - D can only happen at the end
         // - E leaves "/" or happens at the end
-        if (detail::pct_decode_compare_unchecked(s, ".") == 0)
+        if (detail::compare_encoded(s, ".") == 0)
             s = {};
-        else if (detail::pct_decode_compare_unchecked(s, "..") == 0)
+        else if (detail::compare_encoded(s, "..") == 0)
         {
             out += 2;
             s = {};
@@ -257,11 +261,11 @@ normalized_path_compare(
     std::size_t s0_prefix_n = remove_prefix(s0);
     std::size_t s1_prefix_n = remove_prefix(s1);
 
-    auto pop_last =
-        []( string_view& s,
-            string_view& c,
-            std::size_t& l,
-            bool r)
+    auto pop_last = [](
+        string_view& s,
+        string_view& c,
+        std::size_t& L,
+        bool r)
     {
         c = {};
         std::size_t n = 0;
@@ -272,14 +276,14 @@ normalized_path_compare(
             // a complete path segment, then replace
             // that prefix with "/" in the input
             // buffer; otherwise,
-            n = detail::pct_decode_ends_with_unchecked(s, "/./");
+            n = detail::ends_with_encoded(s, "/./");
             if (n)
             {
                 c = s.substr(s.size() - n);
                 s.remove_suffix(n);
                 continue;
             }
-            n = detail::pct_decode_ends_with_unchecked(s, "/.");
+            n = detail::ends_with_encoded(s, "/.");
             if (n)
             {
                 c = s.substr(s.size() - n, 1);
@@ -295,20 +299,20 @@ normalized_path_compare(
             // segment and its preceding "/"
             // (if any) from the output buffer
             // otherwise,
-            n = detail::pct_decode_ends_with_unchecked(s, "/../");
+            n = detail::ends_with_encoded(s, "/../");
             if (n)
             {
                 c = s.substr(s.size() - n);
                 s.remove_suffix(n);
-                ++l;
+                ++L;
                 continue;
             }
-            n = detail::pct_decode_ends_with_unchecked(s, "/..");
+            n = detail::ends_with_encoded(s, "/..");
             if (n)
             {
                 c = s.substr(s.size() - n);
                 s.remove_suffix(n);
-                ++l;
+                ++L;
                 continue;
             }
 
@@ -319,8 +323,8 @@ normalized_path_compare(
             // characters up to, but not including,
             // the next "/" character or the end of
             // the input buffer.
-            std::size_t p = s.size() > 1 ?
-                s.find_last_of('/', s.size() - 2)
+            std::size_t p = s.size() > 1
+                ? s.find_last_of('/', s.size() - 2)
                 : string_view::npos;
             if (p != string_view::npos)
             {
@@ -333,26 +337,26 @@ normalized_path_compare(
                 s = {};
             }
 
-            if (l == 0)
+            if (L == 0)
                 return;
             if (!s.empty())
-                --l;
+                --L;
         }
         // we still need to skip n_skip + 1
         // but the string is empty
-        if (r && l)
+        if (r && L)
         {
             c = "/";
-            l = 0;
+            L = 0;
             return;
         }
-        else if (l)
+        else if (L)
         {
             if (c.empty())
                 c = "/..";
             else
                 c = "/../";
-            --l;
+            --L;
             return;
         }
         c = {};
@@ -487,9 +491,8 @@ normalized_path_compare(
     return 1;
 }
 
-
-}
-}
-}
+} // detail
+} // urls
+} // boost
 
 #endif

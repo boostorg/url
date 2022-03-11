@@ -31,6 +31,7 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/any_query_iter.ipp>
 #include <boost/url/detail/impl/copied_strings.ipp>
 #include <boost/url/detail/impl/except.ipp>
+#include <boost/url/detail/impl/normalize.ipp>
 #include <boost/url/detail/impl/path.ipp>
 #include <boost/url/detail/impl/pct_encoding.ipp>
 #include <boost/url/detail/impl/remove_dot_segments.ipp>

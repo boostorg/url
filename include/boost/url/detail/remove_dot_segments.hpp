@@ -10,14 +10,13 @@
 #ifndef BOOST_URL_DETAIL_REMOVE_DOT_SEGMENTS_HPP
 #define BOOST_URL_DETAIL_REMOVE_DOT_SEGMENTS_HPP
 
-#include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
+#include <cstdint>
 
 namespace boost {
 namespace urls {
 namespace detail {
 
-BOOST_URL_DECL
 std::size_t
 remove_dot_segments(
     char* dest,
@@ -25,7 +24,6 @@ remove_dot_segments(
     string_view s,
     bool remove_unmatched) noexcept;
 
-BOOST_URL_DECL
 int
 normalized_path_compare(
     string_view lhs,
@@ -33,8 +31,8 @@ normalized_path_compare(
     bool remove_unmatched_dotdot_lhs,
     bool remove_unmatched_dotdot_rhs) noexcept;
 
-}
-}
-}
+} // detail
+} // urls
+} // boost
 
 #endif
