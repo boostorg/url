@@ -187,8 +187,8 @@ int
 normalized_path_compare(
     string_view s0_init,
     string_view s1_init,
-    bool s0_remove_unmatched,
-    bool s1_remove_unmatched) noexcept
+    bool r0,
+    bool r1) noexcept
 {
     // Pseudocode:
     // Execute remove_dot_segments iterations in reverse:
@@ -224,14 +224,14 @@ normalized_path_compare(
         std::size_t n = 0;
         while (!s.empty())
         {
-            n = detail::starts_with_encoded(s, "../");
+            n = detail::path_starts_with(s, "../");
             if (n)
             {
                 out += 3;
                 s.remove_prefix(n);
                 continue;
             }
-            n = detail::starts_with_encoded(s, "./");
+            n = detail::path_starts_with(s, "./");
             if (n)
             {
                 s.remove_prefix(n);
@@ -264,7 +264,7 @@ normalized_path_compare(
     auto pop_last = [](
         string_view& s,
         string_view& c,
-        std::size_t& L,
+        std::size_t& level,
         bool r)
     {
         c = {};
@@ -276,14 +276,14 @@ normalized_path_compare(
             // a complete path segment, then replace
             // that prefix with "/" in the input
             // buffer; otherwise,
-            n = detail::ends_with_encoded(s, "/./");
+            n = detail::path_ends_with(s, "/./");
             if (n)
             {
                 c = s.substr(s.size() - n);
                 s.remove_suffix(n);
                 continue;
             }
-            n = detail::ends_with_encoded(s, "/.");
+            n = detail::path_ends_with(s, "/.");
             if (n)
             {
                 c = s.substr(s.size() - n, 1);
@@ -299,20 +299,20 @@ normalized_path_compare(
             // segment and its preceding "/"
             // (if any) from the output buffer
             // otherwise,
-            n = detail::ends_with_encoded(s, "/../");
+            n = detail::path_ends_with(s, "/../");
             if (n)
             {
                 c = s.substr(s.size() - n);
                 s.remove_suffix(n);
-                ++L;
+                ++level;
                 continue;
             }
-            n = detail::ends_with_encoded(s, "/..");
+            n = detail::path_ends_with(s, "/..");
             if (n)
             {
                 c = s.substr(s.size() - n);
                 s.remove_suffix(n);
-                ++L;
+                ++level;
                 continue;
             }
 
@@ -337,34 +337,67 @@ normalized_path_compare(
                 s = {};
             }
 
-            if (L == 0)
+            if (level == 0)
                 return;
             if (!s.empty())
-                --L;
+                --level;
         }
         // we still need to skip n_skip + 1
         // but the string is empty
-        if (r && L)
+        if (r && level)
         {
             c = "/";
-            L = 0;
+            level = 0;
             return;
         }
-        else if (L)
+        else if (level)
         {
             if (c.empty())
                 c = "/..";
             else
                 c = "/../";
-            --L;
+            --level;
             return;
         }
         c = {};
     };
 
+    // number of decoded bytes in a path segment
+    auto path_decoded_bytes =
+        []( string_view s )
+    {
+        auto it = s.data();
+        auto const end =
+            it + s.size();
+        std::size_t n = 0;
+        while(it < end)
+        {
+            if(*it != '%')
+            {
+                // unescaped
+                ++it;
+                ++n;
+                continue;
+            }
+            if(end - it < 3)
+                return n;
+            char c = 0;
+            pct_decode_unchecked(
+                &c,
+                &c + 1,
+                string_view(it, 3));
+            if (c != '/')
+                it += 3;
+            else
+                ++it;
+            ++n;
+        }
+        return n;
+    };
+
     // Calculate the normalized size
     auto norm_bytes =
-        [&pop_last]
+        [&pop_last, &path_decoded_bytes]
         ( string_view p,
           bool r)
     {
@@ -374,21 +407,22 @@ normalized_path_compare(
         do
         {
             pop_last(p, c, s, r);
-            n += pct_decode_bytes_unchecked(c);
-        } while (!c.empty());
+            n += path_decoded_bytes(c);
+        }
+        while (!c.empty());
         return n;
     };
     std::size_t s0n = norm_bytes(
         s0,
-        s0_remove_unmatched);
-    if (!s0_remove_unmatched)
+        r0);
+    if (!r0)
         s0n += s0_prefix_n;
 
-    std::size_t rhs_n = norm_bytes(
+    std::size_t s1n = norm_bytes(
         s1,
-        s1_remove_unmatched);
-    if (!s1_remove_unmatched)
-        rhs_n += s1_prefix_n;
+        r1);
+    if (!r1)
+        s1n += s1_prefix_n;
 
     // Remove child segments until last intersection
     s0 = s0_init;
@@ -398,13 +432,13 @@ normalized_path_compare(
     std::size_t s0l = 0;
     std::size_t s1l = 0;
     std::size_t s0i = s0n;
-    std::size_t s1i = rhs_n;
+    std::size_t s1i = s1n;
     pop_last(
         s0, s0c, s0l,
-        s0_remove_unmatched);
+        r0);
     pop_last(
         s1, s1c, s1l,
-        s1_remove_unmatched);
+        r1);
 
     // Consume incomparable segments
     auto pop_decoded_back =
@@ -420,7 +454,13 @@ normalized_path_compare(
         char c = 0;
         pct_decode_unchecked(
             &c, &c + 1, s.substr(s.size() - 3));
-        s.remove_suffix(3);
+        if (c != '/')
+        {
+            s.remove_suffix(3);
+            return c;
+        }
+        c = s.back();
+        s.remove_suffix(1);
         return c;
     };
 
@@ -429,14 +469,15 @@ normalized_path_compare(
         // Consume more child segments
         if (s0c.empty())
             pop_last(
-                s0, s0c, s0l, s0_remove_unmatched);
+                s0, s0c, s0l, r0);
         if (s1c.empty())
             pop_last(
-                s1, s1c, s1l, s1_remove_unmatched);
+                s1, s1c, s1l, r1);
 
         // Remove incomparable suffix
-        while (!s0c.empty() &&
-               !s1c.empty())
+        while (
+            !s0c.empty() &&
+            !s1c.empty())
         {
             if (s1i > s0i)
             {
@@ -461,21 +502,22 @@ normalized_path_compare(
         // Consume more child segments
         if (s0c.empty())
             pop_last(
-                s0, s0c, s0l, s0_remove_unmatched);
+                s0, s0c, s0l, r0);
         if (s1c.empty())
             pop_last(
-                s1, s1c, s1l, s1_remove_unmatched);
+                s1, s1c, s1l, r1);
 
         // Compare intersection
-        while (!s0c.empty() &&
-               !s1c.empty())
+        while (
+            !s0c.empty() &&
+            !s1c.empty())
         {
             BOOST_ASSERT(s0i == s1i);
-            char lhs_c = pop_decoded_back(s0c);
-            char rhs_c = pop_decoded_back(s1c);
-            if (lhs_c < rhs_c)
+            char c0 = pop_decoded_back(s0c);
+            char c1 = pop_decoded_back(s1c);
+            if (c0 < c1)
                 cmp = -1;
-            else if (rhs_c < lhs_c)
+            else if (c1 < c0)
                 cmp = 1;
             --s0i;
             --s1i;
@@ -484,9 +526,9 @@ normalized_path_compare(
 
     if (cmp != 0)
         return cmp;
-    if (s0n == rhs_n )
+    if (s0n == s1n )
         return 0;
-    if (s0n < rhs_n )
+    if (s0n < s1n )
         return -1;
     return 1;
 }

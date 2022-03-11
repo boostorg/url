@@ -28,8 +28,8 @@ int
 normalized_path_compare(
     string_view lhs,
     string_view rhs,
-    bool remove_unmatched_dotdot_lhs,
-    bool remove_unmatched_dotdot_rhs) noexcept;
+    bool remove_unmatched_lhs,
+    bool remove_unmatched_rhs) noexcept;
 
 } // detail
 } // urls

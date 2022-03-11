@@ -30,7 +30,7 @@ compare_encoded(
 // lhs starts with rhs, return number of chars
 // matched in the encoded string_view
 std::size_t
-starts_with_encoded(
+path_starts_with(
     string_view lhs,
     string_view rhs) noexcept;
 
@@ -39,7 +39,7 @@ starts_with_encoded(
 // lhs ends with rhs, return number of chars
 // matched in the encoded string_view
 std::size_t
-ends_with_encoded(
+path_ends_with(
     string_view lhs,
     string_view rhs) noexcept;
 

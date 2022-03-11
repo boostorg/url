@@ -76,92 +76,6 @@ compare_encoded(
     return 1;
 }
 
-std::size_t
-starts_with_encoded(
-    string_view lhs,
-    string_view rhs) noexcept
-{
-    auto consume_one = [](
-        string_view::iterator& it,
-        char &c)
-    {
-        if(*it != '%')
-        {
-            c = *it;
-            ++it;
-            return;
-        }
-        pct_decode_unchecked(
-            &c,
-            &c + 1,
-            string_view(it, 3));
-        it += 3;
-    };
-
-    auto it0 = lhs.begin();
-    auto it1 = rhs.begin();
-    auto end0 = lhs.end();
-    auto end1 = rhs.end();
-    char c0 = 0;
-    char c1 = 0;
-    while (it0 < end0 &&
-           it1 < end1)
-    {
-        consume_one(it0, c0);
-        consume_one(it1, c1);
-        if (c0 != c1)
-            return 0;
-    }
-    if (it1 == end1)
-        return it0 - lhs.begin();
-    return 0;
-}
-
-std::size_t
-ends_with_encoded(
-    string_view lhs,
-    string_view rhs) noexcept
-{
-    auto consume_last = [](
-        string_view::iterator& it,
-        string_view::iterator& end,
-        char& c)
-    {
-        if((end - it) < 3 ||
-           *(std::prev(end, 3)) != '%')
-        {
-            c = *std::prev(end);
-            --end;
-            return;
-        }
-        pct_decode_unchecked(
-            &c,
-            &c + 1,
-            string_view(std::prev(
-                end, 3), 3));
-        end -= 3;
-    };
-
-    auto it0 = lhs.begin();
-    auto it1 = rhs.begin();
-    auto end0 = lhs.end();
-    auto end1 = rhs.end();
-    char c0 = 0;
-    char c1 = 0;
-    while(
-        it0 < end0 &&
-        it1 < end1)
-    {
-        consume_last(it0, end0, c0);
-        consume_last(it1, end1, c1);
-        if (c0 != c1)
-            return 0;
-    }
-    if (it1 == end1)
-        return lhs.end() - end0;
-    return 0;
-}
-
 int
 ci_compare_encoded(
     string_view lhs,
@@ -239,6 +153,103 @@ ci_compare(
     if ( lhs.size() < rhs.size() )
         return -1;
     return 1;
+}
+
+std::size_t
+path_starts_with(
+    string_view lhs,
+    string_view rhs) noexcept
+{
+    auto consume_one = [](
+        string_view::iterator& it,
+        char &c)
+    {
+        if(*it != '%')
+        {
+            c = *it;
+            ++it;
+            return;
+        }
+        pct_decode_unchecked(
+            &c,
+            &c + 1,
+            string_view(it, 3));
+        if (c != '/')
+        {
+            it += 3;
+            return;
+        }
+        c = *it;
+        ++it;
+    };
+
+    auto it0 = lhs.begin();
+    auto it1 = rhs.begin();
+    auto end0 = lhs.end();
+    auto end1 = rhs.end();
+    char c0 = 0;
+    char c1 = 0;
+    while (
+        it0 < end0 &&
+        it1 < end1)
+    {
+        consume_one(it0, c0);
+        consume_one(it1, c1);
+        if (c0 != c1)
+            return 0;
+    }
+    if (it1 == end1)
+        return it0 - lhs.begin();
+    return 0;
+}
+
+std::size_t
+path_ends_with(
+    string_view lhs,
+    string_view rhs) noexcept
+{
+    auto consume_last = [](
+        string_view::iterator& it,
+        string_view::iterator& end,
+        char& c)
+    {
+        if ((end - it) < 3 ||
+            *(std::prev(end, 3)) != '%')
+        {
+            c = *--end;
+            return;
+        }
+        pct_decode_unchecked(
+            &c,
+            &c + 1,
+            string_view(std::prev(
+                end, 3), 3));
+        if (c != '/')
+        {
+            end -= 3;
+            return;
+        }
+        c = *--end;
+    };
+
+    auto it0 = lhs.begin();
+    auto it1 = rhs.begin();
+    auto end0 = lhs.end();
+    auto end1 = rhs.end();
+    char c0 = 0;
+    char c1 = 0;
+    while(
+        it0 < end0 &&
+        it1 < end1)
+    {
+        consume_last(it0, end0, c0);
+        consume_last(it1, end1, c1);
+        if (c0 != c1)
+            return 0;
+    }
+    if (it1 == end1)
+        return lhs.end() - end0;
+    return 0;
 }
 
 } // detail
