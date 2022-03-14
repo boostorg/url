@@ -1821,8 +1821,13 @@ public:
                 url u1 = parse_uri(before).value();
                 url_view u2 = parse_uri(after).value();
                 BOOST_TEST(u1.compare(u2) == 0);
+                BOOST_TEST(u1 == u2);
                 u1.normalize();
                 BOOST_TEST(u1.string() == after);
+                std::hash<url_view> h;
+                BOOST_TEST(h(u1) == h(u2));
+                h = std::hash<url_view>(10);
+                BOOST_TEST(h(u1) == h(u2));
             };
 
             check("HtTp://cPpAlLiAnCe.oRG/",
@@ -1854,6 +1859,11 @@ public:
                 BOOST_TEST(u1.encoded_path() == e);
                 url u2 = parse_relative_ref(e).value();
                 BOOST_TEST(u1.compare(u2) == 0);
+                BOOST_TEST(u1 == u2);
+                std::hash<url_view> h;
+                BOOST_TEST(h(u1) == h(u2));
+                h = std::hash<url_view>(10);
+                BOOST_TEST(h(u1) == h(u2));
             };
 
 
@@ -1883,6 +1893,15 @@ public:
                 url_view u2 = parse_uri(e2).value();
                 BOOST_TEST(u1.compare(u2) == cmp);
                 BOOST_TEST(u2.compare(u1) == -cmp);
+                BOOST_TEST(u1 != u2);
+                BOOST_TEST((u1 < u2) == (cmp < 0));
+                BOOST_TEST((u1 <= u2) == (cmp <= 0));
+                BOOST_TEST((u1 > u2) == (cmp > 0));
+                BOOST_TEST((u1 >= u2) == (cmp >= 0));
+                std::hash<url_view> h;
+                BOOST_TEST(h(u1) != h(u2));
+                h = std::hash<url_view>(10);
+                BOOST_TEST(h(u1) != h(u2));
             };
 
             check("http://cppalliance.org", "https://cppalliance.org", -1);
@@ -1890,6 +1909,11 @@ public:
             check("http://boost.org", "http://cppalliance.org", -1);
             check("http://boost.orgg", "http://boost.org", +1);
             check("http://cppalliance.org/%2E%2E/./b/b/c/./../../g", "http://cppalliance.org/../a/g", +1);
+            check("http://alice@cppalliance.org", "http://bob@cppalliance.org", -1);
+            check("http://alice:passwd@cppalliance.org", "http://alice:pass@cppalliance.org", 1);
+            check("http://alice:pass1@cppalliance.org", "http://alice:pass2@cppalliance.org", -1);
+            check("http://cppalliance.org", "http://cppalliance.org:81", -1);
+            check("http://cppalliance.org:80", "http://cppalliance.org:81", -1);
             check("http://cppalliance.org?l=v", "http://cppalliance.org?k=v", 1);
             check("http://cppalliance.org?%6C=v", "http://cppalliance.org?k=v", 1);
             check("http://cppalliance.org#frag", "http://cppalliance.org#glob", -1);
@@ -1906,6 +1930,10 @@ public:
                 url_view u2 = parse_relative_ref(e2).value();
                 BOOST_TEST(u1.compare(u2) == cmp);
                 BOOST_TEST(u2.compare(u1) == -cmp);
+                std::hash<url_view> h;
+                BOOST_TEST((h(u1) == h(u2)) != cmp);
+                h = std::hash<url_view>(10);
+                BOOST_TEST((h(u1) == h(u2)) != cmp);
             };
 
             check("a/g", "/../g", 1);

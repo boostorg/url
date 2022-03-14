@@ -75,4 +75,13 @@
          return &loc; }()))
 #endif
 
+// detect 32/64 bit
+#if UINTPTR_MAX == UINT64_MAX
+# define BOOST_URL_ARCH 64
+#elif UINTPTR_MAX == UINT32_MAX
+# define BOOST_URL_ARCH 32
+#else
+# error Unknown or unsupported architecture, please open an issue
+#endif
+
 #endif

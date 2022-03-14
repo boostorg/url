@@ -20,55 +20,50 @@ namespace boost {
 namespace urls {
 namespace detail {
 
+void
+pop_encoded_front(
+    string_view& s,
+    char& c,
+    std::size_t& n) noexcept
+{
+    if(s.front() != '%')
+    {
+        c = s.front();
+        s.remove_prefix(1);
+    }
+    else
+    {
+        pct_decode_unchecked(
+            &c,
+            &c + 1,
+            s.substr(0, 3));
+        s.remove_prefix(3);
+    }
+    ++n;
+}
+
 int
 compare_encoded(
     string_view lhs,
     string_view rhs) noexcept
 {
-    auto consume_one = [](
-        string_view::iterator& it,
-        char& c,
-        std::size_t& n)
-    {
-        if(*it != '%')
-        {
-            c = *it;
-            ++it;
-        }
-        else
-        {
-            pct_decode_unchecked(
-                &c,
-                &c + 1,
-                string_view(it, 3));
-            it += 3;
-        }
-        ++n;
-    };
-
     std::size_t n0 = 0;
     std::size_t n1 = 0;
-    auto it0 = lhs.begin();
-    auto it1 = rhs.begin();
-    auto end0 = lhs.end();
-    auto end1 = rhs.end();
     char c0 = 0;
     char c1 = 0;
     while(
-        it0 < end0 &&
-        it1 < end1)
+        !lhs.empty() &&
+        !rhs.empty())
     {
-        consume_one(it0, c0, n0);
-        consume_one(it1, c1, n1);
+        pop_encoded_front(lhs, c0, n0);
+        pop_encoded_front(rhs, c1, n1);
         if (c0 < c1)
             return -1;
         if (c1 < c0)
             return 1;
     }
-    n0 += pct_decode_bytes_unchecked(
-        string_view(it0, end0 - it0));
-    n1 += pct_decode_bytes_unchecked(
-        string_view(it1, end1 - it1));
+    n0 += pct_decode_bytes_unchecked(lhs);
+    n1 += pct_decode_bytes_unchecked(rhs);
     if (n0 == n1)
         return 0;
     if (n0 < n1)
@@ -76,59 +71,84 @@ compare_encoded(
     return 1;
 }
 
+void
+digest_encoded(
+    string_view s,
+    fnv_1a& hasher) noexcept
+{
+    char c = 0;
+    std::size_t n = 0;
+    while(!s.empty())
+    {
+        pop_encoded_front(s, c, n);
+        hasher.put(c);
+    }
+}
+
 int
 ci_compare_encoded(
     string_view lhs,
     string_view rhs) noexcept
 {
-    auto consume_one =
-        []( string_view::iterator& it,
-            char &c,
-            std::size_t& n)
-    {
-        if(*it != '%')
-        {
-            c = grammar::ascii_tolower(*it);
-            ++it;
-        }
-        else
-        {
-            pct_decode_unchecked(
-                &c,
-                &c + 1,
-                string_view(it, 3));
-            c = grammar::ascii_tolower(c);
-            it += 3;
-        }
-        ++n;
-    };
-
     std::size_t n0 = 0;
     std::size_t n1 = 0;
-    auto it0 = lhs.begin();
-    auto it1 = rhs.begin();
-    auto end0 = lhs.end();
-    auto end1 = rhs.end();
     char c0 = 0;
     char c1 = 0;
     while (
-        it0 < end0 &&
-        it1 < end1)
+        !lhs.empty() &&
+        !rhs.empty())
     {
-        consume_one(it0, c0, n0);
-        consume_one(it1, c1, n1);
+        pop_encoded_front(lhs, c0, n0);
+        pop_encoded_front(rhs, c1, n1);
+        c0 = grammar::ascii_tolower(c0);
+        c1 = grammar::ascii_tolower(c1);
         if (c0 < c1)
             return -1;
         if (c1 < c0)
             return 1;
     }
-    n0 += pct_decode_bytes_unchecked(
-        string_view(it0, end0 - it0));
-    n1 += pct_decode_bytes_unchecked(
-        string_view(it1, end1 - it1));
+    n0 += pct_decode_bytes_unchecked(lhs);
+    n1 += pct_decode_bytes_unchecked(rhs);
     if (n0 == n1)
         return 0;
     if (n0 < n1)
+        return -1;
+    return 1;
+}
+
+void
+ci_digest_encoded(
+    string_view s,
+    fnv_1a& hasher) noexcept
+{
+    char c = 0;
+    std::size_t n = 0;
+    while(!s.empty())
+    {
+        pop_encoded_front(s, c, n);
+        c = grammar::ascii_tolower(c);
+        hasher.put(c);
+    }
+}
+
+int
+compare(
+    string_view lhs,
+    string_view rhs) noexcept
+{
+    auto rlen = (std::min)(lhs.size(), rhs.size());
+    for (std::size_t i = 0; i < rlen; ++i)
+    {
+        char c0 = lhs[i];
+        char c1 = rhs[i];
+        if (c0 < c1)
+            return -1;
+        if (c1 < c0)
+            return 1;
+    }
+    if ( lhs.size() == rhs.size() )
+        return 0;
+    if ( lhs.size() < rhs.size() )
         return -1;
     return 1;
 }
@@ -153,6 +173,18 @@ ci_compare(
     if ( lhs.size() < rhs.size() )
         return -1;
     return 1;
+}
+
+void
+ci_digest(
+    string_view s,
+    fnv_1a& hasher) noexcept
+{
+    for (char c: s)
+    {
+        c = grammar::ascii_tolower(c);
+        hasher.put(c);
+    }
 }
 
 std::size_t

@@ -479,6 +479,12 @@ compare(const url_view& other) const noexcept
     if ( comp != 0 )
         return comp;
 
+    comp = detail::compare(
+        port(),
+        other.port());
+    if ( comp != 0 )
+        return comp;
+
     comp = detail::normalized_path_compare(
         encoded_path(),
         other.encoded_path(),
@@ -817,5 +823,38 @@ operator<<(
 
 } // urls
 } // boost
+
+//----------------------------------------------------------
+//
+// std::hash specialization
+//
+//----------------------------------------------------------
+
+std::size_t
+std::hash<::boost::urls::url_view>::operator()(
+    ::boost::urls::url_view const& u) const noexcept
+{
+    ::boost::urls::detail::fnv_1a hasher(salt_);
+    using parts = ::boost::urls::detail::parts_base;
+    ::boost::urls::detail::ci_digest(
+        u.get(parts::id_scheme), hasher);
+    ::boost::urls::detail::digest_encoded(
+        u.get(parts::id_user), hasher);
+    ::boost::urls::detail::digest_encoded(
+        u.get(parts::id_pass), hasher);
+    ::boost::urls::detail::ci_digest_encoded(
+        u.get(parts::id_host), hasher);
+    hasher.put(u.get(parts::id_port));
+    ::boost::urls::detail::normalized_path_digest(
+        u.get(parts::id_path),
+        u.is_path_absolute(),
+        hasher);
+    ::boost::urls::detail::digest_encoded(
+        u.get(parts::id_query), hasher);
+    ::boost::urls::detail::digest_encoded(
+        u.get(parts::id_frag), hasher);
+    return hasher.digest();
+}
+
 
 #endif

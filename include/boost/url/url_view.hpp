@@ -116,6 +116,7 @@ protected:
 
     friend class url;
     friend class static_url_base;
+    friend struct std::hash<url_view>;
     struct shared_impl;
 
     url_view& base() noexcept;
@@ -1724,6 +1725,169 @@ public:
     int
     compare(const url_view& other) const noexcept;
 
+    /** Return `true` if two url_views are equal.
+
+        Two url_views are equal when their
+        normalized representations are the same.
+
+        Two URLs can compare equal even if their
+        serialized representations are not
+        identical strings.
+
+        @par Example
+        @code
+        url_view u1( "HtTp://cXaMpLe.oRG/" );
+        url_view u2( "http://example.org/" );
+        assert( u1.compare(u2) == 0 );
+        @endcode
+
+        @par Effects
+        `return url( lhs ).normalize() == url( rhs ).normalize();`
+
+        @par Complexity
+        Linear in string size.
+
+        @par Exception Safety
+        Throws nothing
+    */
+    friend
+    bool
+    operator==(
+        url_view const& lhs,
+        url_view const& rhs) noexcept
+    {
+        return lhs.compare(rhs) == 0;
+    }
+
+    /** Return `true` if two url_views are not equal.
+
+        Two url_views are equal when their
+        normalized representations are the same.
+
+        Two URLs can compare not equal even if
+        their serialized representations represent
+        the same resource.
+
+        @par Effects
+        `return ! url( lhs ).normalize() == url( rhs ).normalize();`
+
+        @par Complexity
+        Linear in string size.
+
+        @par Exception Safety
+        Throws nothing
+    */
+    friend
+    bool
+    operator!=(
+        url_view const& lhs,
+        url_view const& rhs) noexcept
+    {
+        return ! (lhs == rhs);
+    }
+
+    /** Lexicographically compares two url_views
+
+        Each URL component is compared
+        alphabetically on a character by character
+        basis as if each was normalized first.
+
+        Two URLs can compare equal even if their
+        serialized representations are not
+        identical strings.
+
+        @par Complexity
+        Linear in string sizes.
+
+        @par Exception Safety
+        Throws nothing
+    */
+    friend
+    bool
+    operator<(
+        url_view const& lhs,
+        url_view const& rhs) noexcept
+    {
+        return lhs.compare(rhs) < 0;
+    }
+
+
+    /** Lexicographically compares two url_views
+
+        Each URL component is compared
+        alphabetically on a character by character
+        basis as if each was normalized first.
+
+        Two URLs can compare equal even if their
+        serialized representations are not
+        identical strings.
+
+        @par Complexity
+        Linear in string sizes.
+
+        @par Exception Safety
+        Throws nothing
+    */
+    friend
+    bool
+    operator<=(
+        url_view const& lhs,
+        url_view const& rhs) noexcept
+    {
+        return lhs.compare(rhs) <= 0;
+    }
+
+
+    /** Lexicographically compares two url_views
+
+        Each URL component is compared
+        alphabetically on a character by character
+        basis as if each was normalized first.
+
+        Two URLs can compare equal even if their
+        serialized representations are not
+        identical strings.
+
+        @par Complexity
+        Linear in string sizes.
+
+        @par Exception Safety
+        Throws nothing
+    */
+    friend
+    bool
+    operator>(
+        url_view const& lhs,
+        url_view const& rhs) noexcept
+    {
+        return lhs.compare(rhs) > 0;
+    }
+
+
+    /** Lexicographically compares two url_views
+
+        Each URL component is compared
+        alphabetically on a character by character
+        basis as if each was normalized first.
+
+        Two URLs can compare equal even if their
+        serialized representations are not
+        identical strings.
+
+        @par Complexity
+        Linear in string sizes.
+
+        @par Exception Safety
+        Throws nothing
+    */
+    friend
+    bool
+    operator>=(
+        url_view const& lhs,
+        url_view const& rhs) noexcept
+    {
+        return lhs.compare(rhs) >= 0;
+    }
 
     //--------------------------------------------
     //
@@ -1970,6 +2134,33 @@ operator<<(
 
 } // urls
 } // boost
+
+// std::hash specialization
+#ifndef BOOST_URL_DOCS
+namespace std {
+template<>
+struct hash< ::boost::urls::url_view >
+{
+    hash() = default;
+    hash(hash const&) = default;
+    hash& operator=(hash const&) = default;
+
+    explicit
+    hash(std::size_t salt) noexcept
+        : salt_(salt)
+    {
+    }
+
+    BOOST_URL_DECL
+    std::size_t
+    operator()(::boost::urls::url_view const&) const noexcept;
+
+private:
+    std::size_t salt_ = 0;
+};
+} // std
+#endif
+
 
 // These includes are here
 // due to circular dependencies

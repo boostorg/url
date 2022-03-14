@@ -183,6 +183,132 @@ remove_dot_segments(
     return dest - dest0;
 }
 
+char
+path_pop_back( string_view& s )
+{
+    if (s.size() < 3 ||
+        *std::prev(s.end(), 3) != '%')
+    {
+        char c = s.back();
+        s.remove_suffix(1);
+        return c;
+    }
+    char c = 0;
+    pct_decode_unchecked(
+        &c, &c + 1, s.substr(s.size() - 3));
+    if (c != '/')
+    {
+        s.remove_suffix(3);
+        return c;
+    }
+    c = s.back();
+    s.remove_suffix(1);
+    return c;
+};
+
+void
+pop_last_segment(
+    string_view& s,
+    string_view& c,
+    std::size_t& level,
+    bool r) noexcept
+{
+    c = {};
+    std::size_t n = 0;
+    while (!s.empty())
+    {
+        // B.  if the input buffer begins with a
+        // prefix of "/./" or "/.", where "." is
+        // a complete path segment, then replace
+        // that prefix with "/" in the input
+        // buffer; otherwise,
+        n = detail::path_ends_with(s, "/./");
+        if (n)
+        {
+            c = s.substr(s.size() - n);
+            s.remove_suffix(n);
+            continue;
+        }
+        n = detail::path_ends_with(s, "/.");
+        if (n)
+        {
+            c = s.substr(s.size() - n, 1);
+            s.remove_suffix(n);
+            continue;
+        }
+
+        // C. if the input buffer begins with a
+        // prefix of "/../" or "/..", where ".."
+        // is a complete path segment, then
+        // replace that prefix with "/" in the
+        // input buffer and remove the last
+        // segment and its preceding "/"
+        // (if any) from the output buffer
+        // otherwise,
+        n = detail::path_ends_with(s, "/../");
+        if (n)
+        {
+            c = s.substr(s.size() - n);
+            s.remove_suffix(n);
+            ++level;
+            continue;
+        }
+        n = detail::path_ends_with(s, "/..");
+        if (n)
+        {
+            c = s.substr(s.size() - n);
+            s.remove_suffix(n);
+            ++level;
+            continue;
+        }
+
+        // E.  move the first path segment in the
+        // input buffer to the end of the output
+        // buffer, including the initial "/"
+        // character (if any) and any subsequent
+        // characters up to, but not including,
+        // the next "/" character or the end of
+        // the input buffer.
+        std::size_t p = s.size() > 1
+            ? s.find_last_of('/', s.size() - 2)
+            : string_view::npos;
+        if (p != string_view::npos)
+        {
+            c = s.substr(p + 1);
+            s.remove_suffix(c.size());
+        }
+        else
+        {
+            c = s;
+            s = {};
+        }
+
+        if (level == 0)
+            return;
+        if (!s.empty())
+            --level;
+    }
+    // we still need to skip n_skip + 1
+    // but the string is empty
+    if (r && level)
+    {
+        c = "/";
+        level = 0;
+        return;
+    }
+    else if (level)
+    {
+        if (c.empty())
+            c = "/..";
+        else
+            c = "/../";
+        --level;
+        return;
+    }
+    c = {};
+}
+
+
 int
 normalized_path_compare(
     string_view s0_init,
@@ -261,107 +387,6 @@ normalized_path_compare(
     std::size_t s0_prefix_n = remove_prefix(s0);
     std::size_t s1_prefix_n = remove_prefix(s1);
 
-    auto pop_last = [](
-        string_view& s,
-        string_view& c,
-        std::size_t& level,
-        bool r)
-    {
-        c = {};
-        std::size_t n = 0;
-        while (!s.empty())
-        {
-            // B.  if the input buffer begins with a
-            // prefix of "/./" or "/.", where "." is
-            // a complete path segment, then replace
-            // that prefix with "/" in the input
-            // buffer; otherwise,
-            n = detail::path_ends_with(s, "/./");
-            if (n)
-            {
-                c = s.substr(s.size() - n);
-                s.remove_suffix(n);
-                continue;
-            }
-            n = detail::path_ends_with(s, "/.");
-            if (n)
-            {
-                c = s.substr(s.size() - n, 1);
-                s.remove_suffix(n);
-                continue;
-            }
-
-            // C. if the input buffer begins with a
-            // prefix of "/../" or "/..", where ".."
-            // is a complete path segment, then
-            // replace that prefix with "/" in the
-            // input buffer and remove the last
-            // segment and its preceding "/"
-            // (if any) from the output buffer
-            // otherwise,
-            n = detail::path_ends_with(s, "/../");
-            if (n)
-            {
-                c = s.substr(s.size() - n);
-                s.remove_suffix(n);
-                ++level;
-                continue;
-            }
-            n = detail::path_ends_with(s, "/..");
-            if (n)
-            {
-                c = s.substr(s.size() - n);
-                s.remove_suffix(n);
-                ++level;
-                continue;
-            }
-
-            // E.  move the first path segment in the
-            // input buffer to the end of the output
-            // buffer, including the initial "/"
-            // character (if any) and any subsequent
-            // characters up to, but not including,
-            // the next "/" character or the end of
-            // the input buffer.
-            std::size_t p = s.size() > 1
-                ? s.find_last_of('/', s.size() - 2)
-                : string_view::npos;
-            if (p != string_view::npos)
-            {
-                c = s.substr(p + 1);
-                s.remove_suffix(c.size());
-            }
-            else
-            {
-                c = s;
-                s = {};
-            }
-
-            if (level == 0)
-                return;
-            if (!s.empty())
-                --level;
-        }
-        // we still need to skip n_skip + 1
-        // but the string is empty
-        if (r && level)
-        {
-            c = "/";
-            level = 0;
-            return;
-        }
-        else if (level)
-        {
-            if (c.empty())
-                c = "/..";
-            else
-                c = "/../";
-            --level;
-            return;
-        }
-        c = {};
-    };
-
     // number of decoded bytes in a path segment
     auto path_decoded_bytes =
         []( string_view s )
@@ -397,7 +422,7 @@ normalized_path_compare(
 
     // Calculate the normalized size
     auto norm_bytes =
-        [&pop_last, &path_decoded_bytes]
+        [&path_decoded_bytes]
         ( string_view p,
           bool r)
     {
@@ -406,7 +431,7 @@ normalized_path_compare(
         std::size_t n{0};
         do
         {
-            pop_last(p, c, s, r);
+            pop_last_segment(p, c, s, r);
             n += path_decoded_bytes(c);
         }
         while (!c.empty());
@@ -433,10 +458,10 @@ normalized_path_compare(
     std::size_t s1l = 0;
     std::size_t s0i = s0n;
     std::size_t s1i = s1n;
-    pop_last(
+    pop_last_segment(
         s0, s0c, s0l,
         r0);
-    pop_last(
+    pop_last_segment(
         s1, s1c, s1l,
         r1);
 
@@ -468,10 +493,10 @@ normalized_path_compare(
     {
         // Consume more child segments
         if (s0c.empty())
-            pop_last(
+            pop_last_segment(
                 s0, s0c, s0l, r0);
         if (s1c.empty())
-            pop_last(
+            pop_last_segment(
                 s1, s1c, s1l, r1);
 
         // Remove incomparable suffix
@@ -501,10 +526,10 @@ normalized_path_compare(
     {
         // Consume more child segments
         if (s0c.empty())
-            pop_last(
+            pop_last_segment(
                 s0, s0c, s0l, r0);
         if (s1c.empty())
-            pop_last(
+            pop_last_segment(
                 s1, s1c, s1l, r1);
 
         // Compare intersection
@@ -531,6 +556,27 @@ normalized_path_compare(
     if (s0n < s1n )
         return -1;
     return 1;
+}
+
+void
+normalized_path_digest(
+    string_view s,
+    bool remove_unmatched,
+    fnv_1a& hasher) noexcept
+{
+    string_view child;
+    std::size_t level = 0;
+    do
+    {
+        pop_last_segment(
+            s, child, level, remove_unmatched);
+        while (!child.empty())
+        {
+            char c = path_pop_back(child);
+            hasher.put(c);
+        }
+    }
+    while (!s.empty());
 }
 
 } // detail

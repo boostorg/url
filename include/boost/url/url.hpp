@@ -1564,6 +1564,37 @@ operator<<(std::ostream& os, url const& u);
 } // urls
 } // boost
 
+// std::hash specialization
+#ifndef BOOST_URL_DOCS
+namespace std {
+template<>
+struct hash< ::boost::urls::url >
+{
+    hash() = default;
+    hash(hash const&) = default;
+    hash& operator=(hash const&) = default;
+
+    explicit
+    hash(std::size_t salt) noexcept
+        : salt_(salt)
+    {
+    }
+
+    std::size_t
+    operator()(::boost::urls::url const& u) const noexcept
+    {
+        std::hash<::boost::urls::url_view> h(salt_);
+        return h(static_cast<::boost::urls::url_view>(u));
+    }
+
+private:
+    std::size_t salt_ = 0;
+};
+} // std
+#endif
+
+
+
 #include <boost/url/impl/params.hpp>
 #include <boost/url/impl/params_encoded.hpp>
 #include <boost/url/impl/segments.hpp>

@@ -24,12 +24,28 @@ remove_dot_segments(
     string_view s,
     bool remove_unmatched) noexcept;
 
+void
+pop_last_segment(
+    string_view& s,
+    string_view& c,
+    std::size_t& level,
+    bool r) noexcept;
+
+char
+path_pop_back( string_view& s );
+
 int
 normalized_path_compare(
     string_view lhs,
     string_view rhs,
     bool remove_unmatched_lhs,
     bool remove_unmatched_rhs) noexcept;
+
+void
+normalized_path_digest(
+    string_view s,
+    bool remove_unmatched,
+    fnv_1a& hasher) noexcept;
 
 } // detail
 } // urls
