@@ -122,7 +122,6 @@ public:
         Absolute paths always start with a
         forward slash ('/').
     */
-    inline
     bool
     is_absolute() const noexcept;
 
@@ -157,7 +156,6 @@ public:
 
         @param init An initializer list of strings.
     */
-    inline
     segments&
     operator=(std::initializer_list<string_view> init);
 
@@ -241,7 +239,6 @@ public:
         @param i The zero-based index of the
         element.
     */
-    inline
     const_string
     at(std::size_t i) const;
 
@@ -270,13 +267,11 @@ public:
 
     /** Return the first element
     */
-    inline
     const_string
     front() const;
 
     /** Return the last element
     */
-    inline
     const_string
     back() const;
 
@@ -288,13 +283,11 @@ public:
 
     /** Return an iterator to the beginning.
     */
-    inline
     iterator
     begin() const noexcept;
 
     /** Return an iterator to the end.
     */
-    inline
     iterator
     end() const noexcept;
 
@@ -310,7 +303,6 @@ public:
         no elements in the container. That is, if
         the underlying path is the empty string.
     */
-    inline
     bool
     empty() const noexcept;
 
@@ -323,7 +315,6 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    inline
     std::size_t
     size() const noexcept;
 
@@ -347,7 +338,6 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    inline
     void
     clear() noexcept;
 
@@ -422,7 +412,6 @@ public:
         @param init The initializer list containing
         unencoded segments to insert.
     */
-    inline
     iterator
     insert(
         iterator before,
@@ -519,13 +508,11 @@ public:
 
     //--------------------------------------------
 
-    inline
     iterator
     replace(
         iterator pos,
         string_view s);
 
-    inline
     iterator
     replace(
         iterator from,
@@ -586,7 +573,6 @@ public:
         @param pos An iterator to the
         element to erase.
     */
-    inline
     iterator
     erase(
         iterator pos) noexcept;
@@ -662,7 +648,6 @@ public:
 
         @throw std::invalid_argument invalid percent-encoding
     */
-    inline
     void
     push_back(
         string_view s);
@@ -693,7 +678,6 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    inline
     void
     pop_back() noexcept;
 };

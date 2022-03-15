@@ -90,6 +90,7 @@ public:
 //
 //------------------------------------------------
 
+inline
 params_encoded_view::
 params_encoded_view(
     string_view s,
@@ -113,6 +114,7 @@ decoded(Allocator const& alloc) const
 //
 //------------------------------------------------
 
+inline
 bool
 params_encoded_view::
 empty() const noexcept
@@ -120,6 +122,7 @@ empty() const noexcept
     return n_ == 0;
 }
 
+inline
 std::size_t
 params_encoded_view::
 size() const noexcept
@@ -133,6 +136,7 @@ size() const noexcept
 //
 //------------------------------------------------
 
+inline
 auto
 params_encoded_view::
 find(string_view key) const noexcept ->
@@ -141,6 +145,7 @@ find(string_view key) const noexcept ->
     return find(begin(), key);
 }
 
+inline
 bool
 params_encoded_view::
 contains(string_view key) const noexcept

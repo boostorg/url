@@ -14,6 +14,7 @@ namespace boost {
 namespace urls {
 
 // return length of [first, last)
+inline
 auto
 authority_view::
 len(
@@ -27,6 +28,7 @@ len(
 }
 
 // change id to size n
+inline
 void
 authority_view::
 set_size(

@@ -13,6 +13,7 @@
 namespace boost {
 namespace urls {
 
+inline
 url_view&
 url_view::
 base() noexcept
@@ -20,6 +21,7 @@ base() noexcept
     return *this;
 }
     
+inline
 url_view const&
 url_view::
 base() const noexcept
@@ -28,6 +30,7 @@ base() const noexcept
 }
 
 // return size of table in bytes
+inline
 std::size_t
 url_view::
 table_bytes() const noexcept
@@ -41,6 +44,7 @@ table_bytes() const noexcept
 }
 
 // return length of [first, last)
+inline
 auto
 url_view::
 len(
@@ -54,6 +58,7 @@ len(
 }
 
 // change id to size n
+inline
 void
 url_view::
 set_size(
@@ -68,6 +73,7 @@ set_size(
 
 // trim id to size n,
 // moving excess into id+1
+inline
 void
 url_view::
 split(
@@ -80,6 +86,7 @@ split(
 }
 
 // add n to [first, last]
+inline
 void
 url_view::
 adjust(
@@ -93,6 +100,7 @@ adjust(
 }
 
 // set [first, last) offset
+inline
 void
 url_view::
 collapse(

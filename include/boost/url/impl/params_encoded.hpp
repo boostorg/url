@@ -218,6 +218,7 @@ public:
 //
 //------------------------------------------------
 
+inline
 params_encoded::
 params_encoded(
     url& u) noexcept
@@ -225,6 +226,7 @@ params_encoded(
 {
 }
 
+inline
 params_encoded&
 params_encoded::
 operator=(std::initializer_list<
@@ -234,6 +236,7 @@ operator=(std::initializer_list<
     return *this;
 }
 
+inline
 void
 params_encoded::
 assign(std::initializer_list<
@@ -283,6 +286,7 @@ decoded(Allocator const& alloc) const
 //
 //------------------------------------------------
 
+inline
 auto
 params_encoded::
 at(std::size_t pos) const ->
@@ -294,6 +298,7 @@ at(std::size_t pos) const ->
     return (*this)[pos];
 }
 
+inline
 auto
 params_encoded::
 front() const ->
@@ -303,6 +308,7 @@ front() const ->
     return (*this)[0];
 }
 
+inline
 auto
 params_encoded::
 back() const ->
@@ -318,6 +324,7 @@ back() const ->
 //
 //--------------------------------------------
 
+inline
 auto
 params_encoded::
 begin() const noexcept ->
@@ -326,6 +333,7 @@ begin() const noexcept ->
     return { *u_, 0 };
 }
 
+inline
 auto
 params_encoded::
 end() const noexcept ->
@@ -340,6 +348,7 @@ end() const noexcept ->
 //
 //------------------------------------------------
 
+inline
 bool
 params_encoded::
 empty() const noexcept
@@ -347,6 +356,7 @@ empty() const noexcept
     return size() == 0;
 }
 
+inline
 std::size_t
 params_encoded::
 size() const noexcept
@@ -360,6 +370,7 @@ size() const noexcept
 //
 //------------------------------------------------
 
+inline
 void
 params_encoded::
 clear() noexcept
@@ -369,6 +380,7 @@ clear() noexcept
 
 //------------------------------------------------
 
+inline
 auto
 params_encoded::
 insert(
@@ -380,6 +392,7 @@ insert(
         before, &v, &v + 1);
 }
 
+inline
 auto
 params_encoded::
 insert(
@@ -431,6 +444,7 @@ insert(
 
 //------------------------------------------------
 
+inline
 auto
 params_encoded::
 replace(
@@ -469,6 +483,7 @@ replace(
     return from;
 }
 
+inline
 auto
 params_encoded::
 replace(
@@ -487,6 +502,7 @@ replace(
 
 //------------------------------------------------
 
+inline
 auto
 params_encoded::
 emplace_at(
@@ -510,6 +526,7 @@ emplace_at(
     return pos;
 }
 
+inline
 auto
 params_encoded::
 emplace_back(
@@ -521,6 +538,7 @@ emplace_back(
             key, {}, false});
 }
 
+inline
 auto
 params_encoded::
 emplace_back(
@@ -533,6 +551,7 @@ emplace_back(
             key, value, true});
 }
 
+inline
 auto
 params_encoded::
 emplace_at(
@@ -555,6 +574,7 @@ emplace_at(
     return pos;
 }
 
+inline
 auto
 params_encoded::
 emplace_before(
@@ -571,6 +591,7 @@ emplace_before(
             true});
 }
 
+inline
 auto
 params_encoded::
 emplace_before(
@@ -588,6 +609,7 @@ emplace_before(
 
 //------------------------------------------------
 
+inline
 auto
 params_encoded::
 erase(iterator pos) ->
@@ -598,6 +620,7 @@ erase(iterator pos) ->
 
 //------------------------------------------------
 
+inline
 void
 params_encoded::
 push_back(
@@ -606,6 +629,7 @@ push_back(
     insert(end(), v);
 }
 
+inline
 void
 params_encoded::
 pop_back() noexcept
@@ -619,6 +643,7 @@ pop_back() noexcept
 //
 //------------------------------------------------
 
+inline
 auto
 params_encoded::
 find(string_view key) const noexcept ->
@@ -627,6 +652,7 @@ find(string_view key) const noexcept ->
     return find(begin(), key);
 }
 
+inline
 bool
 params_encoded::
 contains(string_view key) const noexcept

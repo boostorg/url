@@ -109,6 +109,7 @@ public:
 //
 //------------------------------------------------
 
+inline
 segments_encoded_view::
 segments_encoded_view() noexcept
     : s_("")
@@ -124,6 +125,7 @@ decoded(Allocator const& alloc) const
     return segments_view(s_, n_, alloc);
 }
 
+inline
 bool
 segments_encoded_view::
 is_absolute() const noexcept
@@ -137,6 +139,7 @@ is_absolute() const noexcept
 //
 //------------------------------------------------
 
+inline
 string_view
 segments_encoded_view::
 front() const noexcept
@@ -145,6 +148,7 @@ front() const noexcept
     return *begin();
 }
 
+inline
 string_view
 segments_encoded_view::
 back() const noexcept
@@ -159,6 +163,7 @@ back() const noexcept
 //
 //------------------------------------------------
 
+inline
 bool
 segments_encoded_view::
 empty() const noexcept
@@ -166,6 +171,7 @@ empty() const noexcept
     return size() == 0;
 }
 
+inline
 std::size_t
 segments_encoded_view::
 size() const noexcept
