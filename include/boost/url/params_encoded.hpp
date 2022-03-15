@@ -46,7 +46,6 @@ class params_encoded
 
         @param u The url with the query params
      */
-    inline
     explicit
     params_encoded(
         url& u) noexcept;
@@ -103,7 +102,6 @@ public:
         @param init Initializer list with query parameters
 
       */
-    inline
     params_encoded&
     operator=(std::initializer_list<
         value_type> init);
@@ -119,7 +117,6 @@ public:
         @param init Initializer list with query parameters
 
     */
-    inline
     void
     assign(std::initializer_list<
         value_type> init);
@@ -188,7 +185,6 @@ public:
         @param pos Position
 
       */
-    inline
     value_type
     at(std::size_t pos) const;
 
@@ -220,7 +216,6 @@ public:
         @return Query params reference
 
       */
-    inline
     value_type
     front() const;
 
@@ -228,7 +223,6 @@ public:
 
         @return Query params reference
       */
-    inline
     value_type
     back() const;
 
@@ -242,7 +236,6 @@ public:
 
         @return Iterator to first element
       */
-    inline
     iterator
     begin() const noexcept;
 
@@ -251,7 +244,6 @@ public:
         @return Iterator to one past the last element
 
       */
-    inline
     iterator
     end() const noexcept;
 
@@ -265,7 +257,6 @@ public:
 
         @return True if container is empty
       */
-    inline
     bool
     empty() const noexcept;
 
@@ -274,7 +265,6 @@ public:
         @return The number of query parameters in the url
 
      */
-    inline
     std::size_t
     size() const noexcept;
 
@@ -290,7 +280,6 @@ public:
         `erase(begin(), end())`.
 
       */
-    inline
     void
     clear() noexcept;
 
@@ -308,7 +297,6 @@ public:
         @param v Element to be inserted
 
       */
-    inline
     iterator
     insert(
         iterator before,
@@ -323,7 +311,6 @@ public:
         @param init Elements to be inserted
 
       */
-    inline
     iterator
     insert(
         iterator before,
@@ -391,7 +378,6 @@ public:
         @param value New value for the position
 
      */
-    inline
     iterator
     replace(
         iterator pos,
@@ -437,7 +423,6 @@ public:
         @param init List of elements to replace the range
 
       */
-    inline
     iterator
     replace(
         iterator from,
@@ -485,7 +470,6 @@ public:
         @param value Value of the new element
 
       */
-    inline
     iterator
     emplace_at(
         iterator pos,
@@ -504,7 +488,6 @@ public:
         @param key The key of the new element
 
       */
-    inline
     iterator
     emplace_at(
         iterator pos,
@@ -521,7 +504,6 @@ public:
         @param value Value of the query param
 
       */
-    inline
     iterator
     emplace_before(
         iterator before,
@@ -537,7 +519,6 @@ public:
         @param key Key of the new query param
 
       */
-    inline
     iterator
     emplace_before(
         iterator before,
@@ -552,7 +533,6 @@ public:
         @param pos Position whose element should be erased
 
       */
-    inline
     iterator
     erase(iterator pos);
 
@@ -591,7 +571,6 @@ public:
         @param key Element key
 
       */
-    inline
     iterator
     emplace_back(
         string_view key);
@@ -605,7 +584,6 @@ public:
         @param value Element value
 
       */
-    inline
     iterator
     emplace_back(
         string_view key,
@@ -615,14 +593,12 @@ public:
 
         @param value Value to be inserted
       */
-    inline
     void
     push_back(
         value_type const& value);
 
     /** Remove element at the last position of the container
       */
-    inline
     void
     pop_back() noexcept;
 
@@ -650,7 +626,6 @@ public:
         @param key Element key
 
       */
-    inline
     iterator
     find(string_view key) const noexcept;
 
@@ -680,7 +655,6 @@ public:
         @param key Element key
 
       */
-    inline
     bool
     contains(string_view key) const noexcept;
 

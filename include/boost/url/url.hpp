@@ -1446,7 +1446,6 @@ public:
     //--------------------------------------------
 
     friend
-    inline
     void
     resolve(
         url_view const& base,

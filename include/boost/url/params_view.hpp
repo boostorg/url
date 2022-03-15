@@ -132,11 +132,9 @@ public:
     //
     //--------------------------------------------
 
-    inline
     bool
     empty() const noexcept;
 
-    inline
     std::size_t
     size() const noexcept;
 
@@ -150,7 +148,6 @@ public:
     std::size_t
     count(string_view key) const noexcept;
 
-    inline
     iterator
     find(string_view key) const noexcept;
 
@@ -162,7 +159,6 @@ public:
         iterator from,
         string_view key) const noexcept;
 
-    inline
     bool
     contains(string_view key) const noexcept;
 };

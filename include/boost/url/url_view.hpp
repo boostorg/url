@@ -118,15 +118,15 @@ protected:
     friend class static_url_base;
     struct shared_impl;
 
-    inline url_view& base() noexcept;
-    inline url_view const& base() const noexcept;
-    inline std::size_t table_bytes() const noexcept;
-    inline pos_t len(int first, int last) const noexcept;
-    inline void set_size(int id, pos_t n) noexcept;
-    inline void split(int id, std::size_t n) noexcept;
-    inline void adjust(int first, int last,
+    url_view& base() noexcept;
+    url_view const& base() const noexcept;
+    std::size_t table_bytes() const noexcept;
+    pos_t len(int first, int last) const noexcept;
+    void set_size(int id, pos_t n) noexcept;
+    void split(int id, std::size_t n) noexcept;
+    void adjust(int first, int last,
         std::size_t n) noexcept;
-    inline void collapse(int first, int last,
+    void collapse(int first, int last,
         std::size_t n) noexcept;
 
     BOOST_URL_DECL

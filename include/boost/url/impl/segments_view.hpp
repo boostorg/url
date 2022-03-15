@@ -128,9 +128,11 @@ segments_view(
 {
 }
 
+inline
 segments_view::
 segments_view() noexcept = default;
 
+inline
 bool
 segments_view::
 is_absolute() const noexcept
@@ -144,6 +146,7 @@ is_absolute() const noexcept
 //
 //------------------------------------------------
 
+inline
 const_string
 segments_view::
 front() const noexcept
@@ -152,6 +155,7 @@ front() const noexcept
     return *begin();
 }
 
+inline
 const_string
 segments_view::
 back() const noexcept
@@ -166,6 +170,7 @@ back() const noexcept
 //
 //------------------------------------------------
 
+inline
 bool
 segments_view::
 empty() const noexcept
@@ -173,6 +178,7 @@ empty() const noexcept
     return size() == 0;
 }
 
+inline
 std::size_t
 segments_view::
 size() const noexcept

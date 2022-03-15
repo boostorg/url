@@ -235,6 +235,7 @@ params(
 {
 }
 
+inline
 params&
 params::
 operator=(std::initializer_list<
@@ -244,6 +245,7 @@ operator=(std::initializer_list<
     return *this;
 }
 
+inline
 void
 params::
 assign(std::initializer_list<
@@ -285,10 +287,11 @@ assign(FwdIt first, FwdIt last,
 //
 //------------------------------------------------
 
+inline
 auto
 params::
 at(std::size_t pos) const ->
-    reference
+    const_reference
 {
     if(pos >= size())
         detail::throw_out_of_range(
@@ -296,6 +299,7 @@ at(std::size_t pos) const ->
     return (*this)[pos];
 }
 
+inline
 auto
 params::
 front() const ->
@@ -305,6 +309,7 @@ front() const ->
     return (*this)[0];
 }
 
+inline
 auto
 params::
 back() const ->
@@ -320,6 +325,7 @@ back() const ->
 //
 //--------------------------------------------
 
+inline
 auto
 params::
 begin() const noexcept ->
@@ -328,6 +334,7 @@ begin() const noexcept ->
     return { *u_, 0, a_ };
 }
 
+inline
 auto
 params::
 end() const noexcept ->
@@ -342,6 +349,7 @@ end() const noexcept ->
 //
 //------------------------------------------------
 
+inline
 std::size_t
 params::
 size() const noexcept
@@ -349,6 +357,7 @@ size() const noexcept
     return u_->nparam_;
 }
 
+inline
 bool
 params::
 empty() const noexcept
@@ -362,6 +371,7 @@ empty() const noexcept
 //
 //------------------------------------------------
 
+inline
 void
 params::
 clear() noexcept
@@ -371,6 +381,7 @@ clear() noexcept
 
 //------------------------------------------------
 
+inline
 auto
 params::
 insert(
@@ -382,6 +393,7 @@ insert(
         before, &v, &v + 1);
 }
 
+inline
 auto
 params::
 insert(
@@ -433,6 +445,7 @@ insert(
 
 //------------------------------------------------
 
+inline
 auto
 params::
 replace(
@@ -471,6 +484,7 @@ replace(
     return from;
 }
 
+inline
 auto
 params::
 replace(
@@ -489,6 +503,7 @@ replace(
 
 //------------------------------------------------
 
+inline
 auto
 params::
 emplace_at(
@@ -512,6 +527,7 @@ emplace_at(
     return pos;
 }
 
+inline
 auto
 params::
 emplace_at(
@@ -532,6 +548,7 @@ emplace_at(
     return pos;
 }
 
+inline
 auto
 params::
 emplace_before(
@@ -548,6 +565,7 @@ emplace_before(
             true});
 }
 
+inline
 auto
 params::
 emplace_before(
@@ -565,6 +583,7 @@ emplace_before(
 
 //------------------------------------------------
 
+inline
 auto
 params::
 erase(iterator pos) ->
@@ -575,6 +594,7 @@ erase(iterator pos) ->
 
 //------------------------------------------------
 
+inline
 auto
 params::
 emplace_back(
@@ -586,6 +606,7 @@ emplace_back(
             key, {}, false});
 }
 
+inline
 auto
 params::
 emplace_back(
@@ -598,6 +619,7 @@ emplace_back(
             key, value, true});
 }
 
+inline
 void
 params::
 push_back(
@@ -606,7 +628,7 @@ push_back(
     insert(end(), v);
 }
 
-
+inline
 void
 params::
 pop_back() noexcept
@@ -620,6 +642,7 @@ pop_back() noexcept
 //
 //------------------------------------------------
 
+inline
 auto
 params::
 find(string_view key) const noexcept ->
@@ -628,6 +651,7 @@ find(string_view key) const noexcept ->
     return find(begin(), key);
 }
 
+inline
 bool
 params::
 contains(string_view key) const noexcept

@@ -102,9 +102,9 @@ class BOOST_SYMBOL_VISIBLE
 
     struct shared_impl;
 
-    inline pos_t len(int first,
+    pos_t len(int first,
         int last) const noexcept;
-    inline void set_size(
+    void set_size(
         int id, pos_t n) noexcept;
     explicit authority_view(
         char const* cs) noexcept;

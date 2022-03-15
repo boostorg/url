@@ -204,6 +204,7 @@ public:
 //
 //------------------------------------------------
 
+inline
 segments_encoded::
 segments_encoded(
     url& u) noexcept
@@ -211,6 +212,7 @@ segments_encoded(
 {
 }
 
+inline
 bool
 segments_encoded::
 is_absolute() const noexcept
@@ -228,6 +230,7 @@ decoded(Allocator const& alloc) const
     return segments(*u_, alloc);
 }
 
+inline
 segments_encoded&
 segments_encoded::
 operator=(std::initializer_list<string_view> init)
@@ -260,6 +263,7 @@ assign(
 //
 //------------------------------------------------
 
+inline
 string_view
 segments_encoded::
 at(std::size_t i) const
@@ -270,6 +274,7 @@ at(std::size_t i) const
     return (*this)[i];
 }
 
+inline
 string_view
 segments_encoded::
 front() const noexcept
@@ -278,6 +283,7 @@ front() const noexcept
     return (*this)[0];
 }
 
+inline
 string_view
 segments_encoded::
 back() const noexcept
@@ -292,6 +298,7 @@ back() const noexcept
 //
 //------------------------------------------------
 
+inline
 auto
 segments_encoded::
 begin() const noexcept ->
@@ -300,6 +307,7 @@ begin() const noexcept ->
     return iterator(*u_, 0);
 }
 
+inline
 auto
 segments_encoded::
 end() const noexcept ->
@@ -314,6 +322,7 @@ end() const noexcept ->
 //
 //------------------------------------------------
 
+inline
 bool
 segments_encoded::
 empty() const noexcept
@@ -321,6 +330,7 @@ empty() const noexcept
     return size() == 0;
 }
 
+inline
 std::size_t
 segments_encoded::
 size() const noexcept
@@ -334,6 +344,7 @@ size() const noexcept
 //
 //------------------------------------------------
 
+inline
 void
 segments_encoded::
 clear() noexcept
@@ -343,6 +354,7 @@ clear() noexcept
 
 //------------------------------------------------
 
+inline
 auto
 segments_encoded::
 insert(
@@ -398,6 +410,7 @@ insert(
 
 //------------------------------------------------
 
+inline
 auto
 segments_encoded::
 replace(
@@ -410,6 +423,7 @@ replace(
             &s, &s + 1);
 }
 
+inline
 auto
 segments_encoded::
 replace(
@@ -453,6 +467,7 @@ replace(
 
 //------------------------------------------------
 
+inline
 auto
 segments_encoded::
 erase(
@@ -464,6 +479,7 @@ erase(
 
 //------------------------------------------------
 
+inline
 void
 segments_encoded::
 push_back(
@@ -472,6 +488,7 @@ push_back(
     insert(end(), s);
 }
 
+inline
 void
 segments_encoded::
 pop_back() noexcept

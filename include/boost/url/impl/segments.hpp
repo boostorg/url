@@ -225,6 +225,7 @@ segments(
 {
 }
 
+inline
 bool
 segments::
 is_absolute() const noexcept
@@ -234,6 +235,7 @@ is_absolute() const noexcept
         u_->s_[u_->offset(id_path)] == '/';
 }
 
+inline
 segments&
 segments::
 operator=(std::initializer_list<
@@ -268,6 +270,7 @@ assign(FwdIt first, FwdIt last) ->
 //
 //------------------------------------------------
 
+inline
 auto
 segments::
 at(std::size_t i) const ->
@@ -279,6 +282,7 @@ at(std::size_t i) const ->
     return (*this)[i];
 }
 
+inline
 auto
 segments::
 front() const ->
@@ -288,6 +292,7 @@ front() const ->
     return (*this)[0];
 }
 
+inline
 auto
 segments::
 back() const ->
@@ -303,6 +308,7 @@ back() const ->
 //
 //------------------------------------------------
 
+inline
 auto
 segments::
 begin() const noexcept ->
@@ -312,6 +318,7 @@ begin() const noexcept ->
         *u_, 0, a_);
 }
 
+inline
 auto
 segments::
 end() const noexcept ->
@@ -327,6 +334,7 @@ end() const noexcept ->
 //
 //------------------------------------------------
 
+inline
 bool
 segments::
 empty() const noexcept
@@ -334,6 +342,7 @@ empty() const noexcept
     return size() == 0;
 }
 
+inline
 std::size_t
 segments::
 size() const noexcept
@@ -347,6 +356,7 @@ size() const noexcept
 //
 //------------------------------------------------
 
+inline
 void
 segments::
 clear() noexcept
@@ -356,6 +366,7 @@ clear() noexcept
 
 //------------------------------------------------
 
+inline
 auto
 segments::
 insert(
@@ -411,6 +422,7 @@ insert(
 
 //------------------------------------------------
 
+inline
 auto
 segments::
 replace(
@@ -423,6 +435,7 @@ replace(
             &s, &s + 1);
 }
 
+inline
 auto
 segments::
 replace(
@@ -468,6 +481,7 @@ replace(
 
 //------------------------------------------------
 
+inline
 auto
 segments::
 erase(
@@ -479,6 +493,7 @@ erase(
 
 //------------------------------------------------
 
+inline
 void
 segments::
 push_back(
@@ -487,6 +502,7 @@ push_back(
     insert(end(), s);
 }
 
+inline
 void
 segments::
 pop_back() noexcept

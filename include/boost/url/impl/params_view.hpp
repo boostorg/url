@@ -111,6 +111,7 @@ params_view(
 //
 //------------------------------------------------
 
+inline
 bool
 params_view::
 empty() const noexcept
@@ -118,6 +119,7 @@ empty() const noexcept
     return n_ == 0;
 }
 
+inline
 std::size_t
 params_view::
 size() const noexcept
@@ -131,6 +133,7 @@ size() const noexcept
 //
 //------------------------------------------------
 
+inline
 auto
 params_view::
 find(string_view key) const noexcept ->
@@ -139,6 +142,7 @@ find(string_view key) const noexcept ->
     return find(begin(), key);
 }
 
+inline
 bool
 params_view::
 contains(

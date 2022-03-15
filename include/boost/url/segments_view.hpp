@@ -83,7 +83,6 @@ public:
         Default constructed views represent an
         empty path.
     */
-    inline
     segments_view() noexcept;
 
     /** Assignment
@@ -100,7 +99,6 @@ public:
         Absolute paths always start with a
         forward slash ('/').
     */
-    inline
     bool
     is_absolute() const noexcept;
 
@@ -112,13 +110,11 @@ public:
 
     /** Return the first element.
     */
-    inline
     const_string
     front() const noexcept;
 
     /** Return the last element.
     */
-    inline
     const_string
     back() const noexcept;
 
@@ -148,13 +144,11 @@ public:
 
     /** Return true if the range contains no elements
     */
-    inline
     bool
     empty() const noexcept;
 
     /** Return the number of elements in the range
     */
-    inline
     std::size_t
     size() const noexcept;
 
