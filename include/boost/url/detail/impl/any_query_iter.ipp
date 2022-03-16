@@ -13,6 +13,7 @@
 #include <boost/url/detail/any_query_iter.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/rfc/charsets.hpp>
+#include <boost/url/rfc/detail/charsets.hpp>
 
 namespace boost {
 namespace urls {
@@ -71,10 +72,8 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    static auto constexpr cs =
-        pchars + '/' + '?';
     urls::validate_pct_encoding(
-        s, ec, {}, cs);
+        s, ec, {}, query_chars);
     if(ec.failed())
         return false;
     n += s.size();
@@ -152,10 +151,8 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    static auto constexpr cs =
-        pchars + '/' + '?';
     n += urls::pct_encode_bytes(
-        s, {}, cs);
+        s, {}, query_chars);
     increment();
     return true;
 }
@@ -167,13 +164,11 @@ copy(
     char const* end) noexcept
 {
     BOOST_ASSERT(p_ != nullptr);
-    static auto constexpr cs =
-        pchars + '/' + '?';
     dest += pct_encode(
         dest, end,
         string_view(p_, n_),
         {},
-        cs);
+        query_chars);
     increment();
 }
 
@@ -187,19 +182,17 @@ measure_impl(
     std::size_t& n,
     error_code& ec) noexcept
 {
-    static constexpr auto cs =
-        pchars + '/' + '?';
     pct_decode_opts opt;
     opt.plus_to_space = true;
     validate_pct_encoding(
-        key, ec, opt, cs);
+        key, ec, opt, query_chars);
     if(ec.failed())
         return false;
     n += key.size();
     if(value)
     {
         validate_pct_encoding(
-            *value, ec, opt, cs);
+            *value, ec, opt, query_chars);
         if(ec.failed())
             return false;
         n += 1 + value->size();
@@ -217,17 +210,15 @@ copy_impl(
 {
     (void)end;
     // avoid self-copy
+    std::size_t n = key.size();
+    BOOST_ASSERT(end - n >= dest);
     if( key.data() != dest &&
         key.data() != nullptr)
     {
-        std::size_t n =
-            key.size();
-        BOOST_ASSERT(
-            end - n >= dest);
         std::memcpy(dest,
             key.data(), n);
-        dest += n;
     }
+    dest += n;
     if(value)
     {
         BOOST_ASSERT(
@@ -255,15 +246,13 @@ measure_impl(
     string_view const* value,
     std::size_t& n) noexcept
 {
-    static constexpr auto cs =
-        pchars + '/' + '?';
     n += pct_encode_bytes(
-        key, {}, cs);
+        key, {}, query_chars);
     if(value)
     {
         ++n; // '='
         n += pct_encode_bytes(
-            *value, {}, cs);
+            *value, {}, query_chars);
     }
 }
 
@@ -275,15 +264,53 @@ copy_impl(
     char*& dest,
     char const* end) noexcept
 {
-    static constexpr auto cs =
-        pchars + '/' + '?';
     dest += pct_encode(
-        dest, end, key, {}, cs);
+        dest, end, key, {}, query_chars);
     if(value)
     {
         *dest++ = '=';
         dest += pct_encode(
-            dest, end, *value, {}, cs);
+            dest, end, *value, {}, query_chars);
+    }
+}
+
+//------------------------------------------------
+
+void
+plain_value_iter_base::
+measure_impl(
+    string_view key,
+    string_view const* value,
+    std::size_t& n) noexcept
+{
+    n += key.size();
+    if(value)
+    {
+        ++n; // '='
+        n += pct_encode_bytes(
+            *value, {}, query_chars);
+    }
+}
+
+void
+plain_value_iter_base::
+copy_impl(
+    string_view key,
+    string_view const* value,
+    char*& dest,
+    char const* end) noexcept
+{
+    // avoid self-copy
+    std::size_t n = key.size();
+    BOOST_ASSERT(end - n >= dest);
+    // iterator for value only
+    BOOST_ASSERT(key.data() == dest);
+    dest += n;
+    if(value)
+    {
+        *dest++ = '=';
+        dest += pct_encode(
+            dest, end, *value, {}, query_chars);
     }
 }
 

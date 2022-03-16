@@ -231,6 +231,60 @@ public:
             ) noexcept override;
 };
 
+class plain_value_iter_base
+{
+protected:
+    BOOST_URL_DECL
+    static
+    void
+    measure_impl(
+        string_view key,
+        string_view const* value,
+        std::size_t& n) noexcept;
+
+    BOOST_URL_DECL
+    static
+    void
+    copy_impl(
+        string_view key,
+        string_view const* value,
+        char*& dest,
+        char const* end) noexcept;
+};
+
+// iterates params in a
+// decoded params range
+// decoding values only
+template<class FwdIt>
+class plain_value_iter
+    : public any_query_iter
+    , public plain_value_iter_base
+{
+    FwdIt it_;
+    FwdIt end_;
+
+public:
+    plain_value_iter(
+        FwdIt first,
+        FwdIt last) noexcept
+        : it_(first)
+        , end_(last)
+    {
+    }
+
+    bool
+    measure(
+        std::size_t& n,
+        error_code&
+            ) noexcept override;
+
+    void
+    copy(
+        char*& dest,
+        char const* end
+            ) noexcept override;
+};
+
 //------------------------------------------------
 
 template<class FwdIt>
@@ -248,6 +302,15 @@ make_plain_params_iter(
     FwdIt first, FwdIt last)
 {
     return plain_params_iter<FwdIt>(
+        first, last);
+}
+
+template<class FwdIt>
+plain_value_iter<FwdIt>
+make_plain_value_iter(
+    FwdIt first, FwdIt last)
+{
+    return plain_value_iter<FwdIt>(
         first, last);
 }
 
