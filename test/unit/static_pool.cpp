@@ -59,7 +59,7 @@ public:
             static_pool<1024> sp;
             static_pool_allocator<int> a =
                 sp.allocator();
-            BOOST_TEST(sp.allocator() == a);
+            BOOST_TEST_EQ(sp.allocator(), a);
             static_pool<1024> sp2;
             BOOST_TEST(sp.allocator() !=
                 sp2.allocator());

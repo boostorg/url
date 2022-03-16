@@ -52,7 +52,7 @@ test_char_set(
         if(cs(c))
             ++n;
     });
-    BOOST_TEST(n == s.size());
+    BOOST_TEST_EQ(n, s.size());
 
     // test find_if and find_if_not
     for_each_char(

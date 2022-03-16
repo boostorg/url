@@ -61,13 +61,13 @@ public:
         {
             url u = parse_uri_reference("x://y/z?q#f").value();
             url u2(u);
-            BOOST_TEST(u2.string() == u.string());
+            BOOST_TEST_EQ(u2.string(), u.string());
         }
         {
             url u = parse_uri_reference("x://y/z?q#f").value();
             url u2 = parse_relative_ref("./").value();
             u2 = u;
-            BOOST_TEST(u2.string() == u.string());
+            BOOST_TEST_EQ(u2.string(), u.string());
         }
 
         // move
@@ -75,14 +75,14 @@ public:
             url u = parse_uri_reference("x://y/z?q#f").value();
             url u2(std::move(u));
             BOOST_TEST(u.empty());
-            BOOST_TEST(u2.string() == "x://y/z?q#f");
+            BOOST_TEST_EQ(u2.string(), "x://y/z?q#f");
         }
         {
             url u = parse_uri_reference("x://y/z?q#f").value();
             url u2 = parse_relative_ref("./").value();
             u2 = std::move(u);
             BOOST_TEST(u.empty());
-            BOOST_TEST(u2.string() == "x://y/z?q#f");
+            BOOST_TEST_EQ(u2.string(), "x://y/z?q#f");
         }
 
         // url(string_view)
@@ -99,7 +99,7 @@ public:
         // capacity_in_bytes
         {
             url u;
-            BOOST_TEST(u.capacity_in_bytes() == 0);
+            BOOST_TEST_EQ(u.capacity_in_bytes(), 0u);
             BOOST_TEST(u.empty());
         }
 
@@ -107,26 +107,26 @@ public:
         {
             url u;
             u.reserve_bytes(32);
-            BOOST_TEST(u.capacity_in_bytes() >= 32);
+            BOOST_TEST_GE(u.capacity_in_bytes(), 32u);
             u.reserve_bytes(16);
-            BOOST_TEST(u.capacity_in_bytes() >= 16);
+            BOOST_TEST_GE(u.capacity_in_bytes(), 16u);
             u.reserve_bytes(64);
-            BOOST_TEST(u.capacity_in_bytes() >= 64);
+            BOOST_TEST_GE(u.capacity_in_bytes(), 64u);
             u = url_view("http://example.com/path/to/file.txt?k=v");
             u.reserve_bytes(128);
-            BOOST_TEST(u.capacity_in_bytes() >= 128);
+            BOOST_TEST_GE(u.capacity_in_bytes(), 128u);
         }
 
         // clear
         {
             url u = parse_uri(
                 "http://example.com/index.htm?q#f").value();
-            BOOST_TEST(u.capacity_in_bytes() > 0);
+            BOOST_TEST_GT(u.capacity_in_bytes(), 0u);
             BOOST_TEST(! u.empty());
             u.clear();
-            BOOST_TEST(u.capacity_in_bytes() > 0);
+            BOOST_TEST_GT(u.capacity_in_bytes(), 0u);
             BOOST_TEST(u.empty());
-            BOOST_TEST(u.size() == 0);
+            BOOST_TEST_EQ(u.size(), 0u);
         }
     }
 
@@ -153,8 +153,8 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_scheme(s2).string() == s3);
-            BOOST_TEST(u.scheme() == s2);
-            BOOST_TEST(u.scheme_id() == id);
+            BOOST_TEST_EQ(u.scheme(), s2);
+            BOOST_TEST_EQ(u.scheme_id(), id);
         };
 
         auto const setid = [](
@@ -164,7 +164,7 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_scheme(id).string() == s2);
-            BOOST_TEST(u.scheme_id() == id);
+            BOOST_TEST_EQ(u.scheme_id(), id);
         };
 
         remove("", "");
@@ -232,7 +232,7 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_user(s2).string() == s3);
-            BOOST_TEST(u.user() == s2);
+            BOOST_TEST_EQ(u.user(), s2);
             BOOST_TEST(u.has_userinfo());
         };
 
@@ -243,7 +243,7 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(u.set_encoded_user(
                 s2).string() == s3);
-            BOOST_TEST(u.encoded_user() == s2);
+            BOOST_TEST_EQ(u.encoded_user(), s2);
             BOOST_TEST(u.has_userinfo());
         };
 
@@ -363,8 +363,8 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.remove_password().string() == s2);
-            BOOST_TEST(u.encoded_password() == "");
-            BOOST_TEST(u.password() == "");
+            BOOST_TEST_EQ(u.encoded_password(), "");
+            BOOST_TEST_EQ(u.password(), "");
         };
 
         auto const set = [](
@@ -374,7 +374,7 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_password(s2).string() == s3);
-            BOOST_TEST(u.password() == s2);
+            BOOST_TEST_EQ(u.password(), s2);
             BOOST_TEST(u.has_userinfo());
         };
 
@@ -385,7 +385,7 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(u.set_encoded_password(
                 s2).string() == s3);
-            BOOST_TEST(u.encoded_password() == s2);
+            BOOST_TEST_EQ(u.encoded_password(), s2);
             BOOST_TEST(u.has_userinfo());
         };
 
@@ -486,7 +486,7 @@ public:
             string_view s1, string_view s2)
         {
             url u = parse_uri_reference(s1).value();
-            BOOST_TEST(u.remove_userinfo().string() == s2);
+            BOOST_TEST_EQ(u.remove_userinfo().string(), s2);
             BOOST_TEST(u.encoded_userinfo().empty());
             BOOST_TEST(u.userinfo().empty());
             BOOST_TEST(! u.has_userinfo());
@@ -498,7 +498,7 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_userinfo(s2).string() == s3);
-            BOOST_TEST(u.userinfo() == s2);
+            BOOST_TEST_EQ(u.userinfo(), s2);
             BOOST_TEST(u.has_userinfo());
         };
 
@@ -508,7 +508,7 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_encoded_userinfo(s2).string() == s3);
-            BOOST_TEST(u.encoded_userinfo() == s2);
+            BOOST_TEST_EQ(u.encoded_userinfo(), s2);
             BOOST_TEST(u.has_userinfo());
         };
 
@@ -649,8 +649,8 @@ public:
         url u = parse_uri_reference(s1).value();
         BOOST_TEST(
             u.set_encoded_host(s2).string() == s3);
-        BOOST_TEST(u.encoded_host() == s2);
-        BOOST_TEST(u.host_type() == ht);
+        BOOST_TEST_EQ(u.encoded_host(), s2);
+        BOOST_TEST_EQ(u.host_type(), ht);
     };
 
     void
@@ -677,44 +677,44 @@ public:
         {
             url u;
             u.set_host(ipv4_address(0x01020304));
-            BOOST_TEST(u.string() == "//1.2.3.4");
+            BOOST_TEST_EQ(u.string(), "//1.2.3.4");
             BOOST_TEST(u.host_type() ==
                 host_type::ipv4);
             BOOST_TEST(u.ipv4_address() ==
                 ipv4_address(0x01020304));
             BOOST_TEST(
                 u.encoded_host() == "1.2.3.4");
-            BOOST_TEST(u.host() == "1.2.3.4");
+            BOOST_TEST_EQ(u.host(), "1.2.3.4");
         }
         {
             url u;
             u.set_host("1.2.3.4");
-            BOOST_TEST(u.string() == "//1.2.3.4");
+            BOOST_TEST_EQ(u.string(), "//1.2.3.4");
             BOOST_TEST(u.host_type() ==
                 host_type::ipv4);
             BOOST_TEST(u.ipv4_address() ==
                 ipv4_address(0x01020304));
             BOOST_TEST(
                 u.encoded_host() == "1.2.3.4");
-            BOOST_TEST(u.host() == "1.2.3.4");
+            BOOST_TEST_EQ(u.host(), "1.2.3.4");
         }
         {
             url u;
             u.set_encoded_host("1.2.3.4");
-            BOOST_TEST(u.string() == "//1.2.3.4");
+            BOOST_TEST_EQ(u.string(), "//1.2.3.4");
             BOOST_TEST(u.host_type() ==
                 host_type::ipv4);
             BOOST_TEST(u.ipv4_address() ==
                 ipv4_address(0x01020304));
             BOOST_TEST(
                 u.encoded_host() == "1.2.3.4");
-            BOOST_TEST(u.host() == "1.2.3.4");
+            BOOST_TEST_EQ(u.host(), "1.2.3.4");
         }
         // ipv6
         {
             url u;
             u.set_host(ipv6_address());
-            BOOST_TEST(u.string() == "//[::]");
+            BOOST_TEST_EQ(u.string(), "//[::]");
             BOOST_TEST(u.host_type() ==
                 host_type::ipv6);
             BOOST_TEST(u.ipv6_address() ==
@@ -723,22 +723,22 @@ public:
         {
             url u;
             u.set_encoded_host("[1:2:3:4::]");
-            BOOST_TEST(u.string() == "//[1:2:3:4::]");
+            BOOST_TEST_EQ(u.string(), "//[1:2:3:4::]");
             BOOST_TEST(u.host_type() ==
                 host_type::ipv6);
             BOOST_TEST(
                 u.encoded_host() == "[1:2:3:4::]");
-            BOOST_TEST(u.host() == "[1:2:3:4::]");
+            BOOST_TEST_EQ(u.host(), "[1:2:3:4::]");
         }
         // reg-name
         {
             url u;
             u.set_host("example.com");
-            BOOST_TEST(u.string() == "//example.com");
+            BOOST_TEST_EQ(u.string(), "//example.com");
             BOOST_TEST(u.host_type() ==
                 host_type::name);
-            BOOST_TEST(u.host() == "example.com");
-            BOOST_TEST(u.encoded_host() == "example.com");
+            BOOST_TEST_EQ(u.host(), "example.com");
+            BOOST_TEST_EQ(u.encoded_host(), "example.com");
         }
     }
 
@@ -755,7 +755,7 @@ public:
                 u.remove_port().string() == s2);
             BOOST_TEST(! u.has_port());
             BOOST_TEST(u.port().empty());
-            BOOST_TEST(u.port_number() == 0);
+            BOOST_TEST_EQ(u.port_number(), 0);
         };
 
         auto const setn = [](string_view s1,
@@ -765,7 +765,7 @@ public:
             BOOST_TEST(
                 u.set_port(n).string() == s2);
             BOOST_TEST(u.has_port());
-            BOOST_TEST(u.port_number() == n);
+            BOOST_TEST_EQ(u.port_number(), n);
         };
 
         auto const set = [](string_view s1,
@@ -776,8 +776,8 @@ public:
             BOOST_TEST(
                 u.set_port(s2).string() == s3);
             BOOST_TEST(u.has_port());
-            BOOST_TEST(u.port_number() == n);
-            BOOST_TEST(u.port() == s2);
+            BOOST_TEST_EQ(u.port_number(), n);
+            BOOST_TEST_EQ(u.port(), s2);
         };
 
         BOOST_TEST_THROWS(
@@ -892,7 +892,7 @@ public:
             string_view s1, string_view s2)
         {
             url u = parse_uri_reference(s1).value();
-            BOOST_TEST(u.remove_authority().string() == s2);
+            BOOST_TEST_EQ(u.remove_authority().string(), s2);
             BOOST_TEST(u.encoded_authority().empty());
             BOOST_TEST(! u.has_authority());
         };
@@ -903,7 +903,7 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_encoded_authority(s2).string() == s3);
-            BOOST_TEST(u.encoded_authority() == s2);
+            BOOST_TEST_EQ(u.encoded_authority(), s2);
             BOOST_TEST(u.has_authority());
         };
 
@@ -1016,7 +1016,7 @@ public:
             string_view s1, string_view s2)
         {
             url u = parse_uri_reference(s1).value();
-            BOOST_TEST(u.remove_origin().string() == s2);
+            BOOST_TEST_EQ(u.remove_origin().string(), s2);
             BOOST_TEST(u.encoded_origin().empty());
             BOOST_TEST(! u.has_authority());
         };
@@ -1046,37 +1046,37 @@ public:
             BOOST_TEST(! u.is_path_absolute());
             BOOST_TEST(u.set_path_absolute(false));
             BOOST_TEST(! u.is_path_absolute());
-            BOOST_TEST(u.string() == "");
+            BOOST_TEST_EQ(u.string(), "");
             BOOST_TEST(u.set_path_absolute(true));
             BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.string() == "/");
+            BOOST_TEST_EQ(u.string(), "/");
         }
         {
             url u = parse_relative_ref("/").value();
             BOOST_TEST(u.is_path_absolute());
             BOOST_TEST(u.set_path_absolute(true));
             BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.string() == "/");
+            BOOST_TEST_EQ(u.string(), "/");
             BOOST_TEST(u.set_path_absolute(false));
             BOOST_TEST(! u.is_path_absolute());
-            BOOST_TEST(u.string() == "");
+            BOOST_TEST_EQ(u.string(), "");
         }
         {
             url u = parse_relative_ref("//").value();
             BOOST_TEST(! u.is_path_absolute());
             BOOST_TEST(u.set_path_absolute(true));
             BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.string() == "///");
+            BOOST_TEST_EQ(u.string(), "///");
             BOOST_TEST(u.set_path_absolute(false));
             BOOST_TEST(! u.is_path_absolute());
-            BOOST_TEST(u.string() == "//");
+            BOOST_TEST_EQ(u.string(), "//");
         }
         {
             url u = parse_relative_ref("//x/y").value();
             BOOST_TEST(u.is_path_absolute());
             BOOST_TEST(! u.set_path_absolute(false));
             BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.string() == "//x/y");
+            BOOST_TEST_EQ(u.string(), "//x/y");
         }
         {
             url u = parse_uri("x:y").value();
@@ -1085,10 +1085,10 @@ public:
             BOOST_TEST(! u.is_path_absolute());
             BOOST_TEST(u.set_path_absolute(true));
             BOOST_TEST(u.is_path_absolute());
-            BOOST_TEST(u.string() == "x:/y");
+            BOOST_TEST_EQ(u.string(), "x:/y");
             BOOST_TEST(u.set_path_absolute(false));
             BOOST_TEST(! u.is_path_absolute());
-            BOOST_TEST(u.string() == "x:y");
+            BOOST_TEST_EQ(u.string(), "x:y");
         }
 
         // set_encoded_path
@@ -1096,27 +1096,27 @@ public:
             // empty
             url u = parse_uri("x://y/path/to/file.txt?q#f").value();
             u.set_encoded_path("");
-            BOOST_TEST(u.encoded_path() == "/");
-            BOOST_TEST(u.string() == "x://y/?q#f");
+            BOOST_TEST_EQ(u.encoded_path(), "/");
+            BOOST_TEST_EQ(u.string(), "x://y/?q#f");
         }
         {
             // path-abempty
             url u = parse_uri("x://y/path/to/file.txt?q#f").value();
             u.set_encoded_path("/x");
-            BOOST_TEST(u.encoded_path() == "/x");
-            BOOST_TEST(u.string() == "x://y/x?q#f");
+            BOOST_TEST_EQ(u.encoded_path(), "/x");
+            BOOST_TEST_EQ(u.string(), "x://y/x?q#f");
             u.set_encoded_path("x/");
-            BOOST_TEST(u.string() == "x://y/x/?q#f");
+            BOOST_TEST_EQ(u.string(), "x://y/x/?q#f");
         }
         {
             // path-absolute
             url u = parse_relative_ref("/path/to/file.txt").value();
             u.set_encoded_path("/home/file.txt");
-            BOOST_TEST(u.encoded_path() == "/home/file.txt");
-            BOOST_TEST(u.string() == "/home/file.txt");
+            BOOST_TEST_EQ(u.encoded_path(), "/home/file.txt");
+            BOOST_TEST_EQ(u.string(), "/home/file.txt");
             u.set_encoded_path("//home/file.txt");
             equal(u, { "", "home", "file.txt" });
-            BOOST_TEST(u.encoded_path() == "/.//home/file.txt");
+            BOOST_TEST_EQ(u.encoded_path(), "/.//home/file.txt");
             BOOST_TEST_THROWS(u.set_encoded_path("/home/%ile.txt"),
                 std::invalid_argument);
         }
@@ -1124,26 +1124,26 @@ public:
             // path-rootless
             url u = parse_uri("x:mailto").value();
             u.set_encoded_path("file.txt");
-            BOOST_TEST(u.encoded_path() == "file.txt");
-            BOOST_TEST(u.string() == "x:file.txt");
+            BOOST_TEST_EQ(u.encoded_path(), "file.txt");
+            BOOST_TEST_EQ(u.string(), "x:file.txt");
             u.set_encoded_path(":file.txt");
-            BOOST_TEST(u.encoded_path() == ":file.txt");
-            BOOST_TEST(u.string() == "x::file.txt");
+            BOOST_TEST_EQ(u.encoded_path(), ":file.txt");
+            BOOST_TEST_EQ(u.string(), "x::file.txt");
             // to path-absolute
             u.set_encoded_path("/file.txt");
-            BOOST_TEST(u.encoded_path() == "/file.txt");
-            BOOST_TEST(u.string() == "x:/file.txt");
+            BOOST_TEST_EQ(u.encoded_path(), "/file.txt");
+            BOOST_TEST_EQ(u.string(), "x:/file.txt");
         }
         {
             // path-noscheme
             url u = parse_relative_ref("mailto").value();
             u.set_encoded_path("file.txt");
-            BOOST_TEST(u.encoded_path() == "file.txt");
-            BOOST_TEST(u.string() == "file.txt");
+            BOOST_TEST_EQ(u.encoded_path(), "file.txt");
+            BOOST_TEST_EQ(u.string(), "file.txt");
             u.set_encoded_path(":file.txt");
-            BOOST_TEST(u.encoded_path() == "./:file.txt");
+            BOOST_TEST_EQ(u.encoded_path(), "./:file.txt");
             u.set_encoded_path("http:index.htm");
-            BOOST_TEST(u.encoded_path() == "./http:index.htm");
+            BOOST_TEST_EQ(u.encoded_path(), "./http:index.htm");
         }
 
         // set_encoded_path
@@ -1285,23 +1285,23 @@ public:
                 url u;
                 u.set_encoded_query("");
                 BOOST_TEST(u.has_query());
-                BOOST_TEST(u.string() == "?");
-                BOOST_TEST(u.encoded_query() == "");
+                BOOST_TEST_EQ(u.string(), "?");
+                BOOST_TEST_EQ(u.encoded_query(), "");
             }
             {
                 url u;
                 u.set_encoded_query("x");
                 BOOST_TEST(u.has_query());
-                BOOST_TEST(u.string() == "?x");
-                BOOST_TEST(u.encoded_query() == "x");
+                BOOST_TEST_EQ(u.string(), "?x");
+                BOOST_TEST_EQ(u.encoded_query(), "x");
             }
             {
                 url u;
                 u.set_encoded_query("%41");
                 BOOST_TEST(u.has_query());
-                BOOST_TEST(u.string() == "?%41");
-                BOOST_TEST(u.encoded_query() == "%41");
-                BOOST_TEST(u.query() == "A");
+                BOOST_TEST_EQ(u.string(), "?%41");
+                BOOST_TEST_EQ(u.encoded_query(), "%41");
+                BOOST_TEST_EQ(u.query(), "A");
             }
             {
                 url u;
@@ -1320,39 +1320,39 @@ public:
                 url u;
                 u.set_query("");
                 BOOST_TEST(u.has_query());
-                BOOST_TEST(u.string() == "?");
-                BOOST_TEST(u.query() == "");
+                BOOST_TEST_EQ(u.string(), "?");
+                BOOST_TEST_EQ(u.query(), "");
             }
             {
                 url u;
                 u.set_query("x");
                 BOOST_TEST(u.has_query());
-                BOOST_TEST(u.string() == "?x");
-                BOOST_TEST(u.query() == "x");
+                BOOST_TEST_EQ(u.string(), "?x");
+                BOOST_TEST_EQ(u.query(), "x");
             }
             {
                 url u;
                 u.set_query("%41");
                 BOOST_TEST(u.has_query());
-                BOOST_TEST(u.string() == "?%2541");
-                BOOST_TEST(u.encoded_query() == "%2541");
-                BOOST_TEST(u.query() == "%41");
+                BOOST_TEST_EQ(u.string(), "?%2541");
+                BOOST_TEST_EQ(u.encoded_query(), "%2541");
+                BOOST_TEST_EQ(u.query(), "%41");
             }
             {
                 url u;
                 u.set_query("%%fg");
                 BOOST_TEST(u.has_query());
-                BOOST_TEST(u.string() == "?%25%25fg");
-                BOOST_TEST(u.encoded_query() == "%25%25fg");
-                BOOST_TEST(u.query() == "%%fg");
+                BOOST_TEST_EQ(u.string(), "?%25%25fg");
+                BOOST_TEST_EQ(u.encoded_query(), "%25%25fg");
+                BOOST_TEST_EQ(u.query(), "%%fg");
             }
             {
                 url u;
                 u.set_query("{}");
                 BOOST_TEST(u.has_query());
-                BOOST_TEST(u.string() == "?%7b%7d");
-                BOOST_TEST(u.encoded_query() == "%7b%7d");
-                BOOST_TEST(u.query() == "{}");
+                BOOST_TEST_EQ(u.string(), "?%7b%7d");
+                BOOST_TEST_EQ(u.encoded_query(), "%7b%7d");
+                BOOST_TEST_EQ(u.query(), "{}");
             }
         }
 
@@ -1372,13 +1372,13 @@ public:
         {
             url u = parse_relative_ref("?query").value();
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.encoded_query() == "query");
-            BOOST_TEST(u.params().size() == 1);
-            BOOST_TEST(u.remove_query().has_query() == false);
-            BOOST_TEST(u.encoded_query() == "");
-            BOOST_TEST(u.query() == "");
-            BOOST_TEST(u.params().size() == 0);
-            BOOST_TEST(u.encoded_params().size() == 0);
+            BOOST_TEST_EQ(u.encoded_query(), "query");
+            BOOST_TEST_EQ(u.params().size(), 1u);
+            BOOST_TEST_EQ(u.remove_query().has_query(), false);
+            BOOST_TEST_EQ(u.encoded_query(), "");
+            BOOST_TEST_EQ(u.query(), "");
+            BOOST_TEST_EQ(u.params().size(), 0u);
+            BOOST_TEST_EQ(u.encoded_params().size(), 0u);
         }
 
         // set_encoded_query
@@ -1387,16 +1387,16 @@ public:
             BOOST_TEST(! u.has_query());
             u.set_encoded_query("k1=v1&k2=v2");
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.params().size() == 2);
-            BOOST_TEST(u.params()[0].key == "k1");
-            BOOST_TEST(u.params()[0].value == "v1");
-            BOOST_TEST(u.params()[1].key == "k2");
-            BOOST_TEST(u.params()[1].value == "v2");
+            BOOST_TEST_EQ(u.params().size(), 2u);
+            BOOST_TEST_EQ(u.params()[0].key, "k1");
+            BOOST_TEST_EQ(u.params()[0].value, "v1");
+            BOOST_TEST_EQ(u.params()[1].key, "k2");
+            BOOST_TEST_EQ(u.params()[1].value, "v2");
 
             u.set_encoded_query("");
             BOOST_TEST(u.has_query());
             BOOST_TEST(u.encoded_query().empty());
-            BOOST_TEST(u.params().size() == 0);
+            BOOST_TEST_EQ(u.params().size(), 0u);
 
             BOOST_TEST_THROWS(
                 u.set_encoded_query("\x01"),
@@ -1411,11 +1411,11 @@ public:
             BOOST_TEST(u.has_query());
             BOOST_TEST(u.encoded_query() ==
                 "!@%23$%25%5e&*()_+=-;:'%7b%7d%5b%5d%7c%5c?/%3e.%3c,");
-            BOOST_TEST(u.params().size() == 2);
-            BOOST_TEST(u.params()[0].key == "!@#$%^");
-            BOOST_TEST(u.params()[0].value == "");
-            BOOST_TEST(u.params()[1].key == "*()_ ");
-            BOOST_TEST(u.params()[1].value ==
+            BOOST_TEST_EQ(u.params().size(), 2u);
+            BOOST_TEST_EQ(u.params()[0].key, "!@#$%^");
+            BOOST_TEST_EQ(u.params()[0].value, "");
+            BOOST_TEST_EQ(u.params()[1].key, "*()_ ");
+            BOOST_TEST_EQ(u.params()[1].value,
                 "-;:'{}[]|\\?/>.<,");
         }
     }
@@ -1464,23 +1464,23 @@ public:
                 url u;
                 u.set_encoded_fragment("");
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST(u.string() == "#");
-                BOOST_TEST(u.encoded_fragment() == "");
+                BOOST_TEST_EQ(u.string(), "#");
+                BOOST_TEST_EQ(u.encoded_fragment(), "");
             }
             {
                 url u;
                 u.set_encoded_fragment("x");
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST(u.string() == "#x");
-                BOOST_TEST(u.encoded_fragment() == "x");
+                BOOST_TEST_EQ(u.string(), "#x");
+                BOOST_TEST_EQ(u.encoded_fragment(), "x");
             }
             {
                 url u;
                 u.set_encoded_fragment("%41");
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST(u.string() == "#%41");
-                BOOST_TEST(u.encoded_fragment() == "%41");
-                BOOST_TEST(u.fragment() == "A");
+                BOOST_TEST_EQ(u.string(), "#%41");
+                BOOST_TEST_EQ(u.encoded_fragment(), "%41");
+                BOOST_TEST_EQ(u.fragment(), "A");
             }
             {
                 url u;
@@ -1499,39 +1499,39 @@ public:
                 url u;
                 u.set_fragment("");
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST(u.string() == "#");
-                BOOST_TEST(u.fragment() == "");
+                BOOST_TEST_EQ(u.string(), "#");
+                BOOST_TEST_EQ(u.fragment(), "");
             }
             {
                 url u;
                 u.set_fragment("x");
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST(u.string() == "#x");
-                BOOST_TEST(u.fragment() == "x");
+                BOOST_TEST_EQ(u.string(), "#x");
+                BOOST_TEST_EQ(u.fragment(), "x");
             }
             {
                 url u;
                 u.set_fragment("%41");
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST(u.string() == "#%2541");
-                BOOST_TEST(u.encoded_fragment() == "%2541");
-                BOOST_TEST(u.fragment() == "%41");
+                BOOST_TEST_EQ(u.string(), "#%2541");
+                BOOST_TEST_EQ(u.encoded_fragment(), "%2541");
+                BOOST_TEST_EQ(u.fragment(), "%41");
             }
             {
                 url u;
                 u.set_fragment("%%fg");
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST(u.string() == "#%25%25fg");
-                BOOST_TEST(u.encoded_fragment() == "%25%25fg");
-                BOOST_TEST(u.fragment() == "%%fg");
+                BOOST_TEST_EQ(u.string(), "#%25%25fg");
+                BOOST_TEST_EQ(u.encoded_fragment(), "%25%25fg");
+                BOOST_TEST_EQ(u.fragment(), "%%fg");
             }
             {
                 url u;
                 u.set_fragment("{}");
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST(u.string() == "#%7b%7d");
-                BOOST_TEST(u.encoded_fragment() == "%7b%7d");
-                BOOST_TEST(u.fragment() == "{}");
+                BOOST_TEST_EQ(u.string(), "#%7b%7d");
+                BOOST_TEST_EQ(u.encoded_fragment(), "%7b%7d");
+                BOOST_TEST_EQ(u.fragment(), "{}");
             }
         }
     }
@@ -1552,7 +1552,7 @@ public:
         f(u);
         equal(u.segments(), init);
         equal(u.encoded_segments(), init);
-        BOOST_TEST(u.string() == s1);
+        BOOST_TEST_EQ(u.string(), s1);
     }
 
     void
@@ -1606,14 +1606,14 @@ public:
                 u.segments() = init;
                 equal(u.segments(), init);
                 equal(u.encoded_segments(), init);
-                BOOST_TEST(u.string() == s1);
+                BOOST_TEST_EQ(u.string(), s1);
             }
             {
                 url u(u0);
                 u.encoded_segments() = init;
                 equal(u.segments(), init);
                 equal(u.encoded_segments(), init);
-                BOOST_TEST(u.string() == s1);
+                BOOST_TEST_EQ(u.string(), s1);
             }
         };
 
@@ -1724,7 +1724,7 @@ public:
             resolve(ub, ur, u, ec);
             if(! BOOST_TEST(! ec.failed()))
                 return;
-            BOOST_TEST(u.string() == m);
+            BOOST_TEST_EQ(u.string(), m);
         };
 
         check("g:h"          , "g:h");
@@ -1804,7 +1804,7 @@ public:
                 std::left <<
                 std::setw(11) <<
                 parse_uri("http://x").value();
-            BOOST_TEST(ss.str() == "http://x***");
+            BOOST_TEST_EQ(ss.str(), "http://x***");
         }
     }
 
@@ -1820,14 +1820,14 @@ public:
             {
                 url u1 = parse_uri(before).value();
                 url_view u2 = parse_uri(after).value();
-                BOOST_TEST(u1.compare(u2) == 0);
-                BOOST_TEST(u1 == u2);
+                BOOST_TEST_EQ(u1.compare(u2), 0);
+                BOOST_TEST_EQ(u1, u2);
                 u1.normalize();
-                BOOST_TEST(u1.string() == after);
+                BOOST_TEST_EQ(u1.string(), after);
                 std::hash<url_view> h;
-                BOOST_TEST(h(u1) == h(u2));
+                BOOST_TEST_EQ(h(u1), h(u2));
                 h = std::hash<url_view>(10);
-                BOOST_TEST(h(u1) == h(u2));
+                BOOST_TEST_EQ(h(u1), h(u2));
             };
 
             check("HtTp://cPpAlLiAnCe.oRG/",
@@ -1856,16 +1856,15 @@ public:
                             string_view e) {
                 url u1 = parse_relative_ref(p).value();
                 u1.normalize_path();
-                BOOST_TEST(u1.encoded_path() == e);
+                BOOST_TEST_EQ(u1.encoded_path(), e);
                 url u2 = parse_relative_ref(e).value();
-                BOOST_TEST(u1.compare(u2) == 0);
-                BOOST_TEST(u1 == u2);
+                BOOST_TEST_EQ(u1.compare(u2), 0);
+                BOOST_TEST_EQ(u1, u2);
                 std::hash<url_view> h;
-                BOOST_TEST(h(u1) == h(u2));
+                BOOST_TEST_EQ(h(u1), h(u2));
                 h = std::hash<url_view>(10);
-                BOOST_TEST(h(u1) == h(u2));
+                BOOST_TEST_EQ(h(u1), h(u2));
             };
-
 
             check("/a/b/c/./../../g", "/a/g");
             check("/aa/bb/cc/./../../gg", "/aa/gg");
@@ -1891,17 +1890,17 @@ public:
                             int cmp) {
                 url_view u1 = parse_uri(e1).value();
                 url_view u2 = parse_uri(e2).value();
-                BOOST_TEST(u1.compare(u2) == cmp);
-                BOOST_TEST(u2.compare(u1) == -cmp);
-                BOOST_TEST(u1 != u2);
-                BOOST_TEST((u1 < u2) == (cmp < 0));
-                BOOST_TEST((u1 <= u2) == (cmp <= 0));
-                BOOST_TEST((u1 > u2) == (cmp > 0));
-                BOOST_TEST((u1 >= u2) == (cmp >= 0));
+                BOOST_TEST_EQ(u1.compare(u2), cmp);
+                BOOST_TEST_EQ(u2.compare(u1), -cmp);
+                BOOST_TEST_NE(u1, u2);
+                BOOST_TEST_EQ((u1 < u2), (cmp < 0));
+                BOOST_TEST_EQ((u1 <= u2), (cmp <= 0));
+                BOOST_TEST_EQ((u1 > u2), (cmp > 0));
+                BOOST_TEST_EQ((u1 >= u2), (cmp >= 0));
                 std::hash<url_view> h;
-                BOOST_TEST(h(u1) != h(u2));
+                BOOST_TEST_NE(h(u1), h(u2));
                 h = std::hash<url_view>(10);
-                BOOST_TEST(h(u1) != h(u2));
+                BOOST_TEST_NE(h(u1), h(u2));
             };
 
             check("http://cppalliance.org", "https://cppalliance.org", -1);
@@ -1928,12 +1927,12 @@ public:
                             int cmp) {
                 url_view u1 = parse_relative_ref(e1).value();
                 url_view u2 = parse_relative_ref(e2).value();
-                BOOST_TEST(u1.compare(u2) == cmp);
-                BOOST_TEST(u2.compare(u1) == -cmp);
+                BOOST_TEST_EQ(u1.compare(u2), cmp);
+                BOOST_TEST_EQ(u2.compare(u1), -cmp);
                 std::hash<url_view> h;
-                BOOST_TEST((h(u1) == h(u2)) != cmp);
+                BOOST_TEST_NE((h(u1) == h(u2)), cmp);
                 h = std::hash<url_view>(10);
-                BOOST_TEST((h(u1) == h(u2)) != cmp);
+                BOOST_TEST_NE((h(u1) == h(u2)), cmp);
             };
 
             check("a/g", "/../g", 1);

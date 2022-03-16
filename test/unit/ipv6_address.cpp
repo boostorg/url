@@ -30,7 +30,7 @@ public:
             BOOST_TEST(
                 a == ipv6_address());
             ipv6_address::bytes_type b{};
-            BOOST_TEST(a.to_bytes() == b);
+            BOOST_TEST_EQ(a.to_bytes(), b);
         }
 
         // ipv6_address(ipv6_address const&)
@@ -41,9 +41,9 @@ public:
             ipv6_address a1(b);
             ipv6_address a2(a1);
             ipv6_address a3;
-            BOOST_TEST(a1 == a2);
-            BOOST_TEST(a1 != a3);
-            BOOST_TEST(a2 != a3);
+            BOOST_TEST_EQ(a1, a2);
+            BOOST_TEST_NE(a1, a3);
+            BOOST_TEST_NE(a2, a3);
         }
 
         // operator=(ipv6_address const&)
@@ -54,7 +54,7 @@ public:
             ipv6_address a1(b);
             ipv6_address a2;
             a2 = a1;
-            BOOST_TEST(a2 == a1);
+            BOOST_TEST_EQ(a2, a1);
         }
 
         // ipv6_address(bytes_type)
@@ -63,7 +63,7 @@ public:
                 1, 0, 2, 0, 3, 0, 4, 0,
                 5, 0, 6, 0, 7, 0, 8, 0 } };
             ipv6_address a(b);
-            BOOST_TEST(a.to_bytes() == b);
+            BOOST_TEST_EQ(a.to_bytes(), b);
         }
 
         // ipv6_address(ipv4_address)
@@ -78,7 +78,7 @@ public:
         // ipv6_address(string_view)
         {
             ipv6_address a("::");
-            BOOST_TEST(a == ipv6_address());
+            BOOST_TEST_EQ(a, ipv6_address());
             BOOST_TEST_THROWS(ipv6_address("x"),
                 std::invalid_argument);
         }
@@ -90,7 +90,7 @@ public:
                 5, 0, 6, 0, 7, 0, 8, 0 } };
             ipv6_address a;
             a = b;
-            BOOST_TEST(a.to_bytes() == b);
+            BOOST_TEST_EQ(a.to_bytes(), b);
         }
 
         // to_string
@@ -145,9 +145,9 @@ public:
             ipv6_address a1("1::");
             ipv6_address a2("2::");
             ipv6_address a3("1::");
-            BOOST_TEST(a1 != a2);
-            BOOST_TEST(a1 == a3);
-            BOOST_TEST(a2 != a3);
+            BOOST_TEST_NE(a1, a2);
+            BOOST_TEST_EQ(a1, a3);
+            BOOST_TEST_NE(a2, a3);
         }
 
         // static loopback()
@@ -162,7 +162,7 @@ public:
         {
             std::stringstream ss;
             ss << ipv6_address("1:0:0:0:0:0:0:1");
-            BOOST_TEST(ss.str() == "1::1");
+            BOOST_TEST_EQ(ss.str(), "1::1");
         }
     }
 
@@ -187,11 +187,11 @@ public:
     trip(string_view s0, string_view s1)
     {
         auto ip0 = ipv6_address(s0);
-        BOOST_TEST(ip0.to_string() == s1);
+        BOOST_TEST_EQ(ip0.to_string(), s1);
         // round-trip
         auto ip1 = ipv6_address(
             ip0.to_string());
-        BOOST_TEST(ip1 == ip0);
+        BOOST_TEST_EQ(ip1, ip0);
     }
 
     static

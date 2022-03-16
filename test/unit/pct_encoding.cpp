@@ -72,7 +72,7 @@ public:
                     s0, ec, opt, *pcs);
                 if(! BOOST_TEST(! ec.failed()))
                     return;
-                BOOST_TEST(n == s1.size());
+                BOOST_TEST_EQ(n, s1.size());
             }
             // pct_decode to buffer
             {
@@ -88,12 +88,12 @@ public:
                     {
                         BOOST_TEST(
                             ec == error::no_space);
-                        BOOST_TEST(n < s1.size());
-                        BOOST_TEST(n <= i);
+                        BOOST_TEST_LT(n, s1.size());
+                        BOOST_TEST_LE(n, i);
                         continue;
                     }
                     BOOST_TEST(! ec.failed());
-                    BOOST_TEST(n == s1.size());
+                    BOOST_TEST_EQ(n, s1.size());
                     BOOST_TEST(
                         string_view(buf, n) == s1);
                     break;
@@ -103,7 +103,7 @@ public:
             {
                 std::string s = pct_decode(
                     s0, opt, *pcs);
-                BOOST_TEST(s == s1);
+                BOOST_TEST_EQ(s, s1);
             }
             // pct_decode() -> std::basic_string
             {
@@ -113,14 +113,14 @@ public:
                     std::char_traits<char>, A> s =
                         pct_decode(s0, opt, *pcs,
                             p.allocator());
-                BOOST_TEST(s == s1);
+                BOOST_TEST_EQ(s, s1);
             }
             // pct_decode_to_value()
             {
                 const_string s =
                     pct_decode_to_value(
                         s0, opt, *pcs);
-                BOOST_TEST(s == s1);
+                BOOST_TEST_EQ(s, s1);
             }
             // pct_decode_to_value(Allocator)
             {
@@ -129,13 +129,13 @@ public:
                     pct_decode_to_value(
                         s0, opt, *pcs,
                             p.allocator());
-                BOOST_TEST(s == s1);
+                BOOST_TEST_EQ(s, s1);
             }
             // pct_decode_bytes_unchecked
             {
                 auto const n =
                     pct_decode_bytes_unchecked(s0);
-                BOOST_TEST(n == s1.size());
+                BOOST_TEST_EQ(n, s1.size());
             }
             // pct_decode_unchecked
             {
@@ -144,7 +144,7 @@ public:
                     pct_decode_unchecked(
                         buf, buf + sizeof(buf),
                             s0, opt);
-                BOOST_TEST(n == s1.size());
+                BOOST_TEST_EQ(n, s1.size());
                 BOOST_TEST(
                     string_view(buf, n) == s1);
             }
@@ -425,8 +425,8 @@ public:
             string_view r(buf, n);
             if(n == m.size())
             {
-                BOOST_TEST(i == m.size());
-                BOOST_TEST(r == m);
+                BOOST_TEST_EQ(i, m.size());
+                BOOST_TEST_EQ(r, m);
                 break;
             }
             BOOST_TEST(
@@ -461,7 +461,7 @@ public:
             BOOST_TEST(pct_encode_to_value(
                 " ", {}, test_chars{}) == "%20");
             pct_encode_opts opt;
-            BOOST_TEST(opt.space_to_plus == false);
+            BOOST_TEST_EQ(opt.space_to_plus, false);
             BOOST_TEST(pct_encode_to_value(
                 " ", opt, test_chars{}) == "%20");
             BOOST_TEST(pct_encode_to_value(

@@ -31,15 +31,15 @@ public:
         {
             url_view u;
             BOOST_TEST(u.empty());
-            BOOST_TEST(u.size() == 0);
+            BOOST_TEST_EQ(u.size(), 0u);
         }
 
         // url_view(url_view const&)
         {
             url_view u1("x://y/z?#");
             url_view u2(u1);
-            BOOST_TEST(u2.data() == u1.data());
-            BOOST_TEST(u2.size() == u1.size());
+            BOOST_TEST_EQ(u2.data(), u1.data());
+            BOOST_TEST_EQ(u2.size(), u1.size());
         }
 
         // operator=(url_view const&)
@@ -47,7 +47,7 @@ public:
             url_view u1("x://y/z?#");
             url_view u2;
             u2 = u1;
-            BOOST_TEST(u2.data() == u1.data());
+            BOOST_TEST_EQ(u2.data(), u1.data());
         }
 
         // url_view(string_view)
@@ -64,19 +64,18 @@ public:
     {
         // max_size()
         {
-            BOOST_TEST(
-                url_view::max_size() > 0);
+            BOOST_TEST_GT(url_view::max_size(), 0u);
 
             url_view u;
-            BOOST_TEST(u.max_size() > 0);
+            BOOST_TEST_GT(u.max_size(), 0u);
         }
 
         // size()
         {
             url_view u;
-            BOOST_TEST(u.size() == 0);
+            BOOST_TEST_EQ(u.size(), 0u);
             u = url_view("/");
-            BOOST_TEST(u.size() == 1);
+            BOOST_TEST_EQ(u.size(), 1u);
         }
 
         // empty()
@@ -91,8 +90,8 @@ public:
         {
             string_view s = "/index.htm";
             url_view u(s);
-            BOOST_TEST(u.data() != nullptr);
-            BOOST_TEST(u.data() == s.data());
+            BOOST_TEST_NE(u.data(), nullptr);
+            BOOST_TEST_EQ(u.data(), s.data());
         }
 
         // begin()
@@ -100,18 +99,18 @@ public:
         {
             string_view s = "/index.htm";
             url_view u(s);
-            BOOST_TEST(u.begin() == s.data());
-            BOOST_TEST(u.begin() == u.data());
-            BOOST_TEST(u.end() != u.begin());
-            BOOST_TEST(u.end()[-1] == 'm');
+            BOOST_TEST_EQ(u.begin(), s.data());
+            BOOST_TEST_EQ(u.begin(), u.data());
+            BOOST_TEST_NE(u.end(), u.begin());
+            BOOST_TEST_EQ(u.end()[-1], 'm');
         }
 
         // string()
         {
             string_view s = "/index.htm";
             url_view u = parse_relative_ref(s).value();
-            BOOST_TEST(u.string() == s);
-            BOOST_TEST(u.string().data() == s.data());
+            BOOST_TEST_EQ(u.string(), s);
+            BOOST_TEST_EQ(u.string().data(), s.data());
         }
 
         // collect()
@@ -216,7 +215,7 @@ public:
 
         {
             url_view u("http:/path");
-            BOOST_TEST(u.encoded_host() == "");
+            BOOST_TEST_EQ(u.encoded_host(), "");
         }
 
         // Docs
@@ -275,74 +274,74 @@ public:
         {
             url_view u("x://@");
             BOOST_TEST(u.has_userinfo());
-            BOOST_TEST(u.encoded_userinfo() == "");
-            BOOST_TEST(u.userinfo() == "");
-            BOOST_TEST(u.encoded_user() == "");
-            BOOST_TEST(u.user() == "");
-            BOOST_TEST(u.has_password() == false);
-            BOOST_TEST(u.encoded_password() == "");
-            BOOST_TEST(u.password() == "");
+            BOOST_TEST_EQ(u.encoded_userinfo(), "");
+            BOOST_TEST_EQ(u.userinfo(), "");
+            BOOST_TEST_EQ(u.encoded_user(), "");
+            BOOST_TEST_EQ(u.user(), "");
+            BOOST_TEST_EQ(u.has_password(), false);
+            BOOST_TEST_EQ(u.encoded_password(), "");
+            BOOST_TEST_EQ(u.password(), "");
         }
         {
             url_view u("x://:@");
             BOOST_TEST(u.has_userinfo());
-            BOOST_TEST(u.encoded_userinfo() == ":");
-            BOOST_TEST(u.userinfo() == ":");
-            BOOST_TEST(u.encoded_user() == "");
-            BOOST_TEST(u.user() == "");
-            BOOST_TEST(u.has_password() == true);
-            BOOST_TEST(u.encoded_password() == "");
-            BOOST_TEST(u.password() == "");
+            BOOST_TEST_EQ(u.encoded_userinfo(), ":");
+            BOOST_TEST_EQ(u.userinfo(), ":");
+            BOOST_TEST_EQ(u.encoded_user(), "");
+            BOOST_TEST_EQ(u.user(), "");
+            BOOST_TEST_EQ(u.has_password(), true);
+            BOOST_TEST_EQ(u.encoded_password(), "");
+            BOOST_TEST_EQ(u.password(), "");
         }
         {
             url_view u("x://a%41:@");
             BOOST_TEST(u.has_userinfo());
-            BOOST_TEST(u.encoded_userinfo() == "a%41:");
-            BOOST_TEST(u.encoded_user() == "a%41");
-            BOOST_TEST(u.user() == "aA");
-            BOOST_TEST(u.has_password() == true);
-            BOOST_TEST(u.encoded_password() == "");
-            BOOST_TEST(u.password() == "");
+            BOOST_TEST_EQ(u.encoded_userinfo(), "a%41:");
+            BOOST_TEST_EQ(u.encoded_user(), "a%41");
+            BOOST_TEST_EQ(u.user(), "aA");
+            BOOST_TEST_EQ(u.has_password(), true);
+            BOOST_TEST_EQ(u.encoded_password(), "");
+            BOOST_TEST_EQ(u.password(), "");
         }
         {
             url_view u("x://:b%42@");
             BOOST_TEST(u.has_userinfo());
-            BOOST_TEST(u.encoded_userinfo() == ":b%42");
-            BOOST_TEST(u.encoded_user() == "");
-            BOOST_TEST(u.user() == "");
-            BOOST_TEST(u.has_password() == true);
-            BOOST_TEST(u.encoded_password() == "b%42");
-            BOOST_TEST(u.password() == "bB");
+            BOOST_TEST_EQ(u.encoded_userinfo(), ":b%42");
+            BOOST_TEST_EQ(u.encoded_user(), "");
+            BOOST_TEST_EQ(u.user(), "");
+            BOOST_TEST_EQ(u.has_password(), true);
+            BOOST_TEST_EQ(u.encoded_password(), "b%42");
+            BOOST_TEST_EQ(u.password(), "bB");
         }
         {
             url_view u("x://a:b@");
             BOOST_TEST(u.has_userinfo());
-            BOOST_TEST(u.encoded_userinfo() == "a:b");
-            BOOST_TEST(u.encoded_user() == "a");
-            BOOST_TEST(u.has_password() == true);
-            BOOST_TEST(u.encoded_password() == "b");
+            BOOST_TEST_EQ(u.encoded_userinfo(), "a:b");
+            BOOST_TEST_EQ(u.encoded_user(), "a");
+            BOOST_TEST_EQ(u.has_password(), true);
+            BOOST_TEST_EQ(u.encoded_password(), "b");
         }
         {
             url_view u("x://%3a:%3a@");
             BOOST_TEST(u.has_userinfo());
-            BOOST_TEST(u.encoded_userinfo() == "%3a:%3a");
-            BOOST_TEST(u.userinfo() == ":::");
-            BOOST_TEST(u.encoded_user() == "%3a");
-            BOOST_TEST(u.user() == ":");
-            BOOST_TEST(u.has_password() == true);
-            BOOST_TEST(u.encoded_password() == "%3a");
-            BOOST_TEST(u.password() == ":");
+            BOOST_TEST_EQ(u.encoded_userinfo(), "%3a:%3a");
+            BOOST_TEST_EQ(u.userinfo(), ":::");
+            BOOST_TEST_EQ(u.encoded_user(), "%3a");
+            BOOST_TEST_EQ(u.user(), ":");
+            BOOST_TEST_EQ(u.has_password(), true);
+            BOOST_TEST_EQ(u.encoded_password(), "%3a");
+            BOOST_TEST_EQ(u.password(), ":");
         }
         {
             url_view u("x://%2525@");
             BOOST_TEST(u.has_userinfo());
-            BOOST_TEST(u.encoded_userinfo() == "%2525");
-            BOOST_TEST(u.userinfo() == "%25");
-            BOOST_TEST(u.encoded_user() == "%2525");
-            BOOST_TEST(u.user() == "%25");
-            BOOST_TEST(u.has_password() == false);
-            BOOST_TEST(u.encoded_password() == "");
-            BOOST_TEST(u.password() == "");
+            BOOST_TEST_EQ(u.encoded_userinfo(), "%2525");
+            BOOST_TEST_EQ(u.userinfo(), "%25");
+            BOOST_TEST_EQ(u.encoded_user(), "%2525");
+            BOOST_TEST_EQ(u.user(), "%25");
+            BOOST_TEST_EQ(u.has_password(), false);
+            BOOST_TEST_EQ(u.encoded_password(), "");
+            BOOST_TEST_EQ(u.password(), "");
         }
     }
 
@@ -428,56 +427,56 @@ public:
         {
             url_view u("http://");
             BOOST_TEST(! u.has_port());
-            BOOST_TEST(u.port() == "");
-            BOOST_TEST(u.port_number() == 0);
+            BOOST_TEST_EQ(u.port(), "");
+            BOOST_TEST_EQ(u.port_number(), 0);
         }
         {
             url_view u("http://www");
             BOOST_TEST(! u.has_port());
-            BOOST_TEST(u.port() == "");
-            BOOST_TEST(u.port_number() == 0);
+            BOOST_TEST_EQ(u.port(), "");
+            BOOST_TEST_EQ(u.port_number(), 0);
         }
         {
             url_view u("http://:");
             BOOST_TEST(u.has_port());
-            BOOST_TEST(u.port() == "");
-            BOOST_TEST(u.port_number() == 0);
+            BOOST_TEST_EQ(u.port(), "");
+            BOOST_TEST_EQ(u.port_number(), 0);
         }
         {
             url_view u("http://:0");
             BOOST_TEST(u.has_port());
-            BOOST_TEST(u.port() == "0");
-            BOOST_TEST(u.port_number() == 0);
+            BOOST_TEST_EQ(u.port(), "0");
+            BOOST_TEST_EQ(u.port_number(), 0);
         }
         {
             url_view u("http://:42");
             BOOST_TEST(u.has_port());
-            BOOST_TEST(u.port() == "42");
-            BOOST_TEST(u.port_number() == 42);
+            BOOST_TEST_EQ(u.port(), "42");
+            BOOST_TEST_EQ(u.port_number(), 42);
         }
         {
             url_view u("http://:00000");
             BOOST_TEST(u.has_port());
-            BOOST_TEST(u.port() == "00000");
-            BOOST_TEST(u.port_number() == 0);
+            BOOST_TEST_EQ(u.port(), "00000");
+            BOOST_TEST_EQ(u.port_number(), 0);
         }
         {
             url_view u("http://:000001");
             BOOST_TEST(u.has_port());
-            BOOST_TEST(u.port() == "000001");
-            BOOST_TEST(u.port_number() == 1);
+            BOOST_TEST_EQ(u.port(), "000001");
+            BOOST_TEST_EQ(u.port_number(), 1);
         }
         {
             url_view u("http://:65535");
             BOOST_TEST(u.has_port());
-            BOOST_TEST(u.port() == "65535");
-            BOOST_TEST(u.port_number() == 65535);
+            BOOST_TEST_EQ(u.port(), "65535");
+            BOOST_TEST_EQ(u.port_number(), 65535);
         }
         {
             url_view u("http://:65536");
             BOOST_TEST(u.has_port());
-            BOOST_TEST(u.port() == "65536");
-            BOOST_TEST(u.port_number() == 0);
+            BOOST_TEST_EQ(u.port(), "65536");
+            BOOST_TEST_EQ(u.port_number(), 0);
         }
     }
 
@@ -534,15 +533,15 @@ public:
                 "/path/to/file.htm");
             auto const p = u.encoded_segments();
             BOOST_TEST(! p.empty());
-            BOOST_TEST(p.size() == 3);
+            BOOST_TEST_EQ(p.size(), 3u);
             auto it = p.begin();
-            BOOST_TEST(*it == "path");
+            BOOST_TEST_EQ(*it, "path");
             ++it;
-            BOOST_TEST(*it == "to");
+            BOOST_TEST_EQ(*it, "to");
             ++it;
-            BOOST_TEST(*it == "file.htm");
+            BOOST_TEST_EQ(*it, "file.htm");
             ++it;
-            BOOST_TEST(it == p.end());
+            BOOST_TEST_EQ(it, p.end());
         }
     }
 
@@ -552,62 +551,62 @@ public:
         {
             url_view u("http://");
             BOOST_TEST(! u.has_query());
-            BOOST_TEST(u.encoded_query() == "");
-            BOOST_TEST(u.query() == "");
+            BOOST_TEST_EQ(u.encoded_query(), "");
+            BOOST_TEST_EQ(u.query(), "");
         }
         {
             url_view u("http://?");
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.encoded_query() == "");
-            BOOST_TEST(u.query() == "");
+            BOOST_TEST_EQ(u.encoded_query(), "");
+            BOOST_TEST_EQ(u.query(), "");
         }
         {
             url_view u("http://?k");
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.encoded_query() == "k");
-            BOOST_TEST(u.query() == "k");
+            BOOST_TEST_EQ(u.encoded_query(), "k");
+            BOOST_TEST_EQ(u.query(), "k");
         }
         {
             url_view u("http://?k=");
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.encoded_query() == "k=");
-            BOOST_TEST(u.query() == "k=");
+            BOOST_TEST_EQ(u.encoded_query(), "k=");
+            BOOST_TEST_EQ(u.query(), "k=");
         }
         {
             url_view u("http://?#");
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.encoded_query() == "");
-            BOOST_TEST(u.query() == "");
+            BOOST_TEST_EQ(u.encoded_query(), "");
+            BOOST_TEST_EQ(u.query(), "");
         }
         {
             url_view u("http://?%3f");
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.encoded_query() == "%3f");
-            BOOST_TEST(u.query() == "?");
+            BOOST_TEST_EQ(u.encoded_query(), "%3f");
+            BOOST_TEST_EQ(u.query(), "?");
         }
         {
             url_view u("http://?%25");
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.encoded_query() == "%25");
-            BOOST_TEST(u.query() == "%");
+            BOOST_TEST_EQ(u.encoded_query(), "%25");
+            BOOST_TEST_EQ(u.query(), "%");
         }
         {
             url_view u("http://?&");
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.encoded_query() == "&");
-            BOOST_TEST(u.query() == "&");
+            BOOST_TEST_EQ(u.encoded_query(), "&");
+            BOOST_TEST_EQ(u.query(), "&");
         }
         {
             url_view u("http://?%26");
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.encoded_query() == "%26");
-            BOOST_TEST(u.query() == "&");
+            BOOST_TEST_EQ(u.encoded_query(), "%26");
+            BOOST_TEST_EQ(u.query(), "&");
         }
         {
             url_view u("http://?a%3db%26");
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.encoded_query() == "a%3db%26");
-            BOOST_TEST(u.query() == "a=b&");
+            BOOST_TEST_EQ(u.encoded_query(), "a%3db%26");
+            BOOST_TEST_EQ(u.query(), "a=b&");
         }
 
         // VFALCO TODO test params()
@@ -628,7 +627,7 @@ public:
             BOOST_TEST(u.has_fragment());
             BOOST_TEST(u.encoded_fragment() ==
                        string_view(encoded));
-            BOOST_TEST(u.fragment() == plain);
+            BOOST_TEST_EQ(u.fragment(), plain);
         }
         else
         {
@@ -664,7 +663,7 @@ public:
             url_view u;
             BOOST_TEST(
                 u.encoded_fragment() == "");
-            BOOST_TEST(u.fragment() == "");
+            BOOST_TEST_EQ(u.fragment(), "");
         }
     }
 

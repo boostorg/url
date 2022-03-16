@@ -37,7 +37,7 @@ struct optional_test
             BOOST_TEST_NO_THROW(
                 parse_string("xy ", t));
             BOOST_TEST(get<0>(t).has_value);
-            BOOST_TEST(*get<1>(t).p == ' ');
+            BOOST_TEST_EQ(*get<1>(t).p, ' ');
         }
         {
             elements<
@@ -46,7 +46,7 @@ struct optional_test
             BOOST_TEST_NO_THROW(
                 parse_string(" ", t));
             BOOST_TEST(! get<0>(t).has_value);
-            BOOST_TEST(*get<1>(t).p == ' ');
+            BOOST_TEST_EQ(*get<1>(t).p, ' ');
         }
     }
 

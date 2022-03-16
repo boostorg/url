@@ -34,7 +34,7 @@ public:
             return;
         if(! BOOST_TEST(! ec))
             return;
-        BOOST_TEST(t.user.str == s1);
+        BOOST_TEST_EQ(t.user.str, s1);
         if(check_s2)
         {
             BOOST_TEST(

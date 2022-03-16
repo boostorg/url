@@ -93,8 +93,8 @@ public:
         std::size_t n1 = 0;
         test_char_set(
             test_chars{n0, n1}, "x");
-        BOOST_TEST(n0 > 0);
-        BOOST_TEST(n1 > 0);
+        BOOST_TEST_GT(n0, 0u);
+        BOOST_TEST_GT(n1, 0u);
 
         {
             for(std::size_t i = 0;

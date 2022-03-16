@@ -37,8 +37,8 @@ struct unsigned_decimal_test
         unsigned_decimal<U> t;
         BOOST_TEST_NO_THROW(
             parse_string(s, t));
-        BOOST_TEST(t.u == u);
-        BOOST_TEST(t.s == s);
+        BOOST_TEST_EQ(t.u, u);
+        BOOST_TEST_EQ(t.s, s);
     }
 
     void

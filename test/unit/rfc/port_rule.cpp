@@ -35,9 +35,9 @@ public:
             return;
         BOOST_TEST(
             t.has_number == has_number);
-        BOOST_TEST(t.str == s);
+        BOOST_TEST_EQ(t.str, s);
         if(t.has_number)
-            BOOST_TEST(t.number == v);
+            BOOST_TEST_EQ(t.number, v);
     }
 
     void

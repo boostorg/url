@@ -30,7 +30,7 @@ public:
         {
             authority_view a;
             BOOST_TEST(a.empty());
-            BOOST_TEST(a.size() == 0);
+            BOOST_TEST_EQ(a.size(), 0u);
         }
     }
 
@@ -39,19 +39,18 @@ public:
     {
         // max_size()
         {
-            BOOST_TEST(
-                authority_view::max_size() > 0);
+            BOOST_TEST_GT(authority_view::max_size(), 0u);
 
             authority_view a;
-            BOOST_TEST(a.max_size() > 0);
+            BOOST_TEST_GT(a.max_size(), 0u);
         }
 
         // size()
         {
             authority_view a;
-            BOOST_TEST(a.size() == 0);
+            BOOST_TEST_EQ(a.size(), 0u);
             a = parse_authority("x").value();
-            BOOST_TEST(a.size() == 1);
+            BOOST_TEST_EQ(a.size(), 1u);
         }
 
         // empty()
@@ -66,16 +65,16 @@ public:
         {
             string_view s = "x";
             authority_view a = parse_authority(s).value();
-            BOOST_TEST(a.data() != nullptr);
-            BOOST_TEST(a.data() == s.data());
+            BOOST_TEST_NE(a.data(), nullptr);
+            BOOST_TEST_EQ(a.data(), s.data());
         }
 
         // at(std::size_t)
         {
             string_view s = "xy";
             authority_view a = parse_authority(s).value();
-            BOOST_TEST(a.at(0) == 'x');
-            BOOST_TEST(a.at(1) == 'y');
+            BOOST_TEST_EQ(a.at(0), 'x');
+            BOOST_TEST_EQ(a.at(1), 'y');
             BOOST_TEST_THROWS(a.at(2),
                 std::out_of_range);
         }
@@ -84,9 +83,9 @@ public:
         {
             string_view s = "xyz";
             authority_view a = parse_authority(s).value();
-            BOOST_TEST(a[0] == 'x');
-            BOOST_TEST(a[1] == 'y');
-            BOOST_TEST(&a[2] == &s[2]);
+            BOOST_TEST_EQ(a[0], 'x');
+            BOOST_TEST_EQ(a[1], 'y');
+            BOOST_TEST_EQ(&a[2], &s[2]);
         }
 
         // begin()
@@ -94,18 +93,18 @@ public:
         {
             string_view s = "xyz";
             authority_view a = parse_authority(s).value();
-            BOOST_TEST(a.begin() == s.data());
-            BOOST_TEST(a.begin() == a.data());
-            BOOST_TEST(a.end() != a.begin());
-            BOOST_TEST(a.end()[-1] == 'z');
+            BOOST_TEST_EQ(a.begin(), s.data());
+            BOOST_TEST_EQ(a.begin(), a.data());
+            BOOST_TEST_NE(a.end(), a.begin());
+            BOOST_TEST_EQ(a.end()[-1], 'z');
         }
 
         // encoded_authority()
         {
             string_view s = "xyz";
             authority_view a = parse_authority(s).value();
-            BOOST_TEST(a.encoded_authority() == s);
-            BOOST_TEST(a.encoded_authority().data() == s.data());
+            BOOST_TEST_EQ(a.encoded_authority(), s);
+            BOOST_TEST_EQ(a.encoded_authority().data(), s.data());
         }
 
         // collect()
@@ -158,74 +157,74 @@ public:
         {
             auto a = parse_authority("@").value();
             BOOST_TEST(a.has_userinfo());
-            BOOST_TEST(a.encoded_userinfo() == "");
-            BOOST_TEST(a.userinfo() == "");
-            BOOST_TEST(a.encoded_user() == "");
-            BOOST_TEST(a.user() == "");
-            BOOST_TEST(a.has_password() == false);
-            BOOST_TEST(a.encoded_password() == "");
-            BOOST_TEST(a.password() == "");
+            BOOST_TEST_EQ(a.encoded_userinfo(), "");
+            BOOST_TEST_EQ(a.userinfo(), "");
+            BOOST_TEST_EQ(a.encoded_user(), "");
+            BOOST_TEST_EQ(a.user(), "");
+            BOOST_TEST_EQ(a.has_password(), false);
+            BOOST_TEST_EQ(a.encoded_password(), "");
+            BOOST_TEST_EQ(a.password(), "");
         }
         {
             auto a = parse_authority(":@").value();
             BOOST_TEST(a.has_userinfo());
-            BOOST_TEST(a.encoded_userinfo() == ":");
-            BOOST_TEST(a.userinfo() == ":");
-            BOOST_TEST(a.encoded_user() == "");
-            BOOST_TEST(a.user() == "");
-            BOOST_TEST(a.has_password() == true);
-            BOOST_TEST(a.encoded_password() == "");
-            BOOST_TEST(a.password() == "");
+            BOOST_TEST_EQ(a.encoded_userinfo(), ":");
+            BOOST_TEST_EQ(a.userinfo(), ":");
+            BOOST_TEST_EQ(a.encoded_user(), "");
+            BOOST_TEST_EQ(a.user(), "");
+            BOOST_TEST_EQ(a.has_password(), true);
+            BOOST_TEST_EQ(a.encoded_password(), "");
+            BOOST_TEST_EQ(a.password(), "");
         }
         {
             auto a = parse_authority("a%41:@").value();
             BOOST_TEST(a.has_userinfo());
-            BOOST_TEST(a.encoded_userinfo() == "a%41:");
-            BOOST_TEST(a.encoded_user() == "a%41");
-            BOOST_TEST(a.user() == "aA");
-            BOOST_TEST(a.has_password() == true);
-            BOOST_TEST(a.encoded_password() == "");
-            BOOST_TEST(a.password() == "");
+            BOOST_TEST_EQ(a.encoded_userinfo(), "a%41:");
+            BOOST_TEST_EQ(a.encoded_user(), "a%41");
+            BOOST_TEST_EQ(a.user(), "aA");
+            BOOST_TEST_EQ(a.has_password(), true);
+            BOOST_TEST_EQ(a.encoded_password(), "");
+            BOOST_TEST_EQ(a.password(), "");
         }
         {
             auto a = parse_authority(":b%42@").value();
             BOOST_TEST(a.has_userinfo());
-            BOOST_TEST(a.encoded_userinfo() == ":b%42");
-            BOOST_TEST(a.encoded_user() == "");
-            BOOST_TEST(a.user() == "");
-            BOOST_TEST(a.has_password() == true);
-            BOOST_TEST(a.encoded_password() == "b%42");
-            BOOST_TEST(a.password() == "bB");
+            BOOST_TEST_EQ(a.encoded_userinfo(), ":b%42");
+            BOOST_TEST_EQ(a.encoded_user(), "");
+            BOOST_TEST_EQ(a.user(), "");
+            BOOST_TEST_EQ(a.has_password(), true);
+            BOOST_TEST_EQ(a.encoded_password(), "b%42");
+            BOOST_TEST_EQ(a.password(), "bB");
         }
         {
             auto a = parse_authority("a:b@").value();
             BOOST_TEST(a.has_userinfo());
-            BOOST_TEST(a.encoded_userinfo() == "a:b");
-            BOOST_TEST(a.encoded_user() == "a");
-            BOOST_TEST(a.has_password() == true);
-            BOOST_TEST(a.encoded_password() == "b");
+            BOOST_TEST_EQ(a.encoded_userinfo(), "a:b");
+            BOOST_TEST_EQ(a.encoded_user(), "a");
+            BOOST_TEST_EQ(a.has_password(), true);
+            BOOST_TEST_EQ(a.encoded_password(), "b");
         }
         {
             auto a = parse_authority("%3a:%3a@").value();
             BOOST_TEST(a.has_userinfo());
-            BOOST_TEST(a.encoded_userinfo() == "%3a:%3a");
-            BOOST_TEST(a.userinfo() == ":::");
-            BOOST_TEST(a.encoded_user() == "%3a");
-            BOOST_TEST(a.user() == ":");
-            BOOST_TEST(a.has_password() == true);
-            BOOST_TEST(a.encoded_password() == "%3a");
-            BOOST_TEST(a.password() == ":");
+            BOOST_TEST_EQ(a.encoded_userinfo(), "%3a:%3a");
+            BOOST_TEST_EQ(a.userinfo(), ":::");
+            BOOST_TEST_EQ(a.encoded_user(), "%3a");
+            BOOST_TEST_EQ(a.user(), ":");
+            BOOST_TEST_EQ(a.has_password(), true);
+            BOOST_TEST_EQ(a.encoded_password(), "%3a");
+            BOOST_TEST_EQ(a.password(), ":");
         }
         {
             auto a = parse_authority("%2525@").value();
             BOOST_TEST(a.has_userinfo());
-            BOOST_TEST(a.encoded_userinfo() == "%2525");
-            BOOST_TEST(a.userinfo() == "%25");
-            BOOST_TEST(a.encoded_user() == "%2525");
-            BOOST_TEST(a.user() == "%25");
-            BOOST_TEST(a.has_password() == false);
-            BOOST_TEST(a.encoded_password() == "");
-            BOOST_TEST(a.password() == "");
+            BOOST_TEST_EQ(a.encoded_userinfo(), "%2525");
+            BOOST_TEST_EQ(a.userinfo(), "%25");
+            BOOST_TEST_EQ(a.encoded_user(), "%2525");
+            BOOST_TEST_EQ(a.user(), "%25");
+            BOOST_TEST_EQ(a.has_password(), false);
+            BOOST_TEST_EQ(a.encoded_password(), "");
+            BOOST_TEST_EQ(a.password(), "");
         }
     }
 
@@ -312,56 +311,56 @@ public:
         {
             auto a = parse_authority("").value();
             BOOST_TEST(! a.has_port());
-            BOOST_TEST(a.port() == "");
-            BOOST_TEST(a.port_number() == 0);
+            BOOST_TEST_EQ(a.port(), "");
+            BOOST_TEST_EQ(a.port_number(), 0);
         }
         {
             auto a = parse_authority("www").value();
             BOOST_TEST(! a.has_port());
-            BOOST_TEST(a.port() == "");
-            BOOST_TEST(a.port_number() == 0);
+            BOOST_TEST_EQ(a.port(), "");
+            BOOST_TEST_EQ(a.port_number(), 0);
         }
         {
             auto a = parse_authority(":").value();
             BOOST_TEST(a.has_port());
-            BOOST_TEST(a.port() == "");
-            BOOST_TEST(a.port_number() == 0);
+            BOOST_TEST_EQ(a.port(), "");
+            BOOST_TEST_EQ(a.port_number(), 0);
         }
         {
             auto a = parse_authority(":0").value();
             BOOST_TEST(a.has_port());
-            BOOST_TEST(a.port() == "0");
-            BOOST_TEST(a.port_number() == 0);
+            BOOST_TEST_EQ(a.port(), "0");
+            BOOST_TEST_EQ(a.port_number(), 0);
         }
         {
             auto a = parse_authority(":42").value();
             BOOST_TEST(a.has_port());
-            BOOST_TEST(a.port() == "42");
-            BOOST_TEST(a.port_number() == 42);
+            BOOST_TEST_EQ(a.port(), "42");
+            BOOST_TEST_EQ(a.port_number(), 42);
         }
         {
             auto a = parse_authority(":00000").value();
             BOOST_TEST(a.has_port());
-            BOOST_TEST(a.port() == "00000");
-            BOOST_TEST(a.port_number() == 0);
+            BOOST_TEST_EQ(a.port(), "00000");
+            BOOST_TEST_EQ(a.port_number(), 0);
         }
         {
             auto a = parse_authority(":000001").value();
             BOOST_TEST(a.has_port());
-            BOOST_TEST(a.port() == "000001");
-            BOOST_TEST(a.port_number() == 1);
+            BOOST_TEST_EQ(a.port(), "000001");
+            BOOST_TEST_EQ(a.port_number(), 1);
         }
         {
             auto a = parse_authority(":65535").value();
             BOOST_TEST(a.has_port());
-            BOOST_TEST(a.port() == "65535");
-            BOOST_TEST(a.port_number() == 65535);
+            BOOST_TEST_EQ(a.port(), "65535");
+            BOOST_TEST_EQ(a.port_number(), 65535);
         }
         {
             auto a = parse_authority(":65536").value();
             BOOST_TEST(a.has_port());
-            BOOST_TEST(a.port() == "65536");
-            BOOST_TEST(a.port_number() == 0);
+            BOOST_TEST_EQ(a.port(), "65536");
+            BOOST_TEST_EQ(a.port_number(), 0);
         }
     }
 

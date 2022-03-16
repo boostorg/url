@@ -33,7 +33,7 @@ public:
         // default ctor
         {
             url_t u;
-            BOOST_TEST(*u.c_str() == '\0');
+            BOOST_TEST_EQ(*u.c_str(), '\0');
             BOOST_TEST(u.string().empty());
         }
 
@@ -46,18 +46,18 @@ public:
         {
             {
                 url_t u(c1);
-                BOOST_TEST(u.string() == c1.string());
-                BOOST_TEST(u.c_str() != c1.string().data());
+                BOOST_TEST_EQ(u.string(), c1.string());
+                BOOST_TEST_NE(u.c_str(), c1.string().data());
             }
             {
                 url_t u(c2);
-                BOOST_TEST(u.string() == c2.string());
-                BOOST_TEST(u.c_str() != c2.string().data());
+                BOOST_TEST_EQ(u.string(), c2.string());
+                BOOST_TEST_NE(u.c_str(), c2.string().data());
             }
             {
                 url_t u(c3);
-                BOOST_TEST(u.string() == c3.string());
-                BOOST_TEST(u.c_str() != c3.string().data());
+                BOOST_TEST_EQ(u.string(), c3.string());
+                BOOST_TEST_NE(u.c_str(), c3.string().data());
             }
         }
 
@@ -65,18 +65,18 @@ public:
         {
             {
                 url_t u(std::move(c1));
-                BOOST_TEST(u.string() == c1.string());
-                BOOST_TEST(u.c_str() != c1.string().data());
+                BOOST_TEST_EQ(u.string(), c1.string());
+                BOOST_TEST_NE(u.c_str(), c1.string().data());
             }
             {
                 url_t u(std::move(c2));
-                BOOST_TEST(u.string() == c2.string());
-                BOOST_TEST(u.c_str() != c2.string().data());
+                BOOST_TEST_EQ(u.string(), c2.string());
+                BOOST_TEST_NE(u.c_str(), c2.string().data());
             }
             {
                 url_t u(std::move(c3));
-                BOOST_TEST(u.string() == c3.string());
-                BOOST_TEST(u.c_str() != c3.string().data());
+                BOOST_TEST_EQ(u.string(), c3.string());
+                BOOST_TEST_NE(u.c_str(), c3.string().data());
             }
         }
 
@@ -85,20 +85,20 @@ public:
             {
                 url_t u(c4);
                 u = c1;
-                BOOST_TEST(u.string() == c1.string());
-                BOOST_TEST(u.c_str() != c1.string().data());
+                BOOST_TEST_EQ(u.string(), c1.string());
+                BOOST_TEST_NE(u.c_str(), c1.string().data());
             }
             {
                 url_t u(c4);
                 u = c2;
-                BOOST_TEST(u.string() == c2.string());
-                BOOST_TEST(u.c_str() != c2.string().data());
+                BOOST_TEST_EQ(u.string(), c2.string());
+                BOOST_TEST_NE(u.c_str(), c2.string().data());
             }
             {
                 url_t u(c4);
                 u = c3;
-                BOOST_TEST(u.string() == c3.string());
-                BOOST_TEST(u.c_str() != c3.string().data());
+                BOOST_TEST_EQ(u.string(), c3.string());
+                BOOST_TEST_NE(u.c_str(), c3.string().data());
             }
         }
 
@@ -107,20 +107,20 @@ public:
             {
                 url_t u(c4);
                 u = std::move(c1);
-                BOOST_TEST(u.string() == c1.string());
-                BOOST_TEST(u.c_str() != c1.string().data());
+                BOOST_TEST_EQ(u.string(), c1.string());
+                BOOST_TEST_NE(u.c_str(), c1.string().data());
             }
             {
                 url_t u(c4);
                 u = std::move(c2);
-                BOOST_TEST(u.string() == c2.string());
-                BOOST_TEST(u.c_str() != c2.string().data());
+                BOOST_TEST_EQ(u.string(), c2.string());
+                BOOST_TEST_NE(u.c_str(), c2.string().data());
             }
             {
                 url_t u(c4);
                 u = std::move(c3);
-                BOOST_TEST(u.string() == c3.string());
-                BOOST_TEST(u.c_str() != c3.string().data());
+                BOOST_TEST_EQ(u.string(), c3.string());
+                BOOST_TEST_NE(u.c_str(), c3.string().data());
             }
         }
 
@@ -145,14 +145,14 @@ public:
         url_t u(uv);
         BOOST_TEST(u.encoded_origin() ==
             "http://user:pass@www.boost.org:8080");
-        BOOST_TEST(u.scheme() == "http");
-        BOOST_TEST(u.user() == "user");
-        BOOST_TEST(u.password() == "pass");
-        BOOST_TEST(u.host() == "www.boost.org");
-        BOOST_TEST(u.port() == "8080");
-        BOOST_TEST(u.encoded_path() == "/x/y/z");
-        BOOST_TEST(u.query() == "a=b&c=3");
-        BOOST_TEST(u.encoded_fragment() == "frag");
+        BOOST_TEST_EQ(u.scheme(), "http");
+        BOOST_TEST_EQ(u.user(), "user");
+        BOOST_TEST_EQ(u.password(), "pass");
+        BOOST_TEST_EQ(u.host(), "www.boost.org");
+        BOOST_TEST_EQ(u.port(), "8080");
+        BOOST_TEST_EQ(u.encoded_path(), "/x/y/z");
+        BOOST_TEST_EQ(u.query(), "a=b&c=3");
+        BOOST_TEST_EQ(u.encoded_fragment(), "frag");
     }
 
     void

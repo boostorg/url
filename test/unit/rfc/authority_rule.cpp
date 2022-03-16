@@ -70,15 +70,15 @@ public:
                 == "e.com");
             if(BOOST_TEST(p.port.has_port))
             {
-                BOOST_TEST(p.port.port == "8080");
+                BOOST_TEST_EQ(p.port.port, "8080");
                 BOOST_TEST(p.port.has_number);
-                BOOST_TEST(p.port.port_number == 8080);
+                BOOST_TEST_EQ(p.port.port_number, 8080);
             }
             if(BOOST_TEST(p.has_userinfo))
             {
-                BOOST_TEST(p.userinfo.user.str == "x");
+                BOOST_TEST_EQ(p.userinfo.user.str, "x");
                 if(BOOST_TEST(p.userinfo.has_password))
-                    BOOST_TEST(p.userinfo.password.str == "y");
+                    BOOST_TEST_EQ(p.userinfo.password.str, "y");
             }
         }
     }

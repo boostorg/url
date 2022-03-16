@@ -10,11 +10,14 @@
 #ifndef TEST_SUITE_HPP
 #define TEST_SUITE_HPP
 
+#include <boost/type_traits/make_void.hpp>
+
 #include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <cstdlib>
 #include <cstring>
+#include <cctype>
 #include <iomanip>
 #include <ios>
 #include <memory>
@@ -217,6 +220,221 @@ private:
 
 //----------------------------------------------------------
 
+template <class T>
+char const *
+predicate_name( T const& ) = delete;
+
+struct predicate_eq
+{
+    template <typename T, typename U>
+    bool
+    operator()(const T& t, const U& u) const
+    {
+        return t == u;
+    }
+};
+
+inline
+char const *
+predicate_name( predicate_eq const& )
+{
+    return "==";
+}
+
+struct predicate_ne
+{
+    template <typename T, typename U>
+    bool
+    operator()(const T& t, const U& u) const
+    {
+        return t != u;
+    }
+};
+
+inline
+char const *
+predicate_name( predicate_ne const& )
+{
+    return "!=";
+}
+
+struct predicate_lt
+{
+    template <typename T, typename U>
+    bool operator()(const T& t, const U& u) const
+    {
+        return t < u;
+    }
+};
+
+inline
+char const * predicate_name( predicate_lt const& )
+{
+    return "<";
+}
+
+struct predicate_le
+{
+    template <typename T, typename U>
+    bool operator()(const T& t, const U& u) const
+    {
+        return t <= u;
+    }
+};
+
+inline
+char const * predicate_name( predicate_le const& )
+{
+    return "<=";
+}
+
+struct predicate_gt
+{
+    template <typename T, typename U>
+    bool
+    operator()(const T& t, const U& u) const
+    {
+        return t > u;
+    }
+};
+
+inline
+char const * predicate_name( predicate_gt const& )
+{
+    return ">";
+}
+
+struct predicate_ge
+{
+    template <typename T, typename U>
+    bool
+    operator()(const T& t, const U& u) const
+    {
+        return t >= u;
+    }
+};
+
+inline
+char const * predicate_name( predicate_ge const& )
+{
+    return ">=";
+}
+
+//----------------------------------------------------------
+
+template <class T, class = void>
+struct has_stream_operator : std::false_type
+{};
+
+template <class T>
+struct has_stream_operator<
+    T,
+    boost::void_t<
+        decltype(std::declval<std::stringstream&>() << std::declval<T&>())
+    >> : std::true_type
+{};
+
+template <class T>
+inline
+typename std::enable_if<has_stream_operator<T>::value, std::string>::type
+test_output_impl(const T& v)
+{
+    std::stringstream ss;
+    ss << v;
+    return ss.str();
+}
+
+template <class T>
+inline
+typename std::enable_if<!has_stream_operator<T>::value, std::string>::type
+test_output_impl(const T&)
+{
+    return "{}";
+}
+
+#if !defined( BOOST_NO_CXX11_NULLPTR )
+inline
+std::string
+test_output_impl(std::nullptr_t)
+{
+    return "nullptr";
+}
+#endif
+
+inline
+std::string
+test_output_impl( signed char const& v )
+{
+    std::stringstream ss;
+    ss << v << " (" << int(v) << ")";
+    return ss.str();
+}
+
+inline
+std::string
+test_output_impl( unsigned char const& v )
+{
+    std::stringstream ss;
+    ss << v << " (" << int(v) << ")";
+    return ss.str();
+}
+
+inline
+std::string
+test_output_impl( wchar_t& v )
+{
+    std::stringstream ss;
+    ss << "wchar_t (" << int(v) << ")";
+    return ss.str();
+}
+
+#if !defined( BOOST_NO_CXX11_CHAR16_T )
+inline
+std::string
+test_output_impl( char16_t const& v )
+{
+    std::stringstream ss;
+    ss << "char16_t (" << int(v) << ")";
+    return ss.str();
+}
+#endif
+
+#if !defined( BOOST_NO_CXX11_CHAR32_T )
+inline
+std::string
+test_output_impl( char32_t const& v )
+{
+    std::stringstream ss;
+    ss << "char32_t (" << int(v) << ")";
+    return ss.str();
+}
+#endif
+
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4996)
+#endif
+
+inline std::string test_output_impl( char const& v )
+{
+    if( std::isprint( static_cast<unsigned char>( v ) ) )
+    {
+        return std::string( 1, v );
+    }
+    else
+    {
+        char buffer[ 8 ];
+        std::sprintf( buffer, "\\x%02X", static_cast<unsigned char>( v ) );
+        return buffer;
+    }
+}
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+
+//----------------------------------------------------------
+
 class runner
 {
     runner* saved_;
@@ -239,7 +457,9 @@ public:
 
     virtual void note(char const* msg) = 0;
     virtual void pass(char const* expr, char const* file, int line, char const* func) = 0;
+    virtual void pass(char const* cond, char const* expr1, char const* expr2, std::string const& out1, std::string const& out2, char const* file, int line, char const* func) = 0;
     virtual void fail(char const* expr, char const* file, int line, char const* func) = 0;
+    virtual void fail(char const* cond, char const* expr1, char const* expr2, std::string const& out1, std::string const& out2, char const* file, int line, char const* func) = 0;
 
     template<class Bool
 #if 0
@@ -261,6 +481,43 @@ public:
             return true;
         }
         fail(expr, file, line, func);
+        return false;
+    }
+
+    template<class BinaryPredicate, class T, class U>
+    bool
+    maybe_fail(
+        BinaryPredicate cond,
+        T const & t,
+        U const & u,
+        char const* expr1,
+        char const* expr2,
+        char const* file,
+        int line,
+        char const* func)
+    {
+        if(!!cond(t,u))
+        {
+            pass(
+                predicate_name(cond),
+                expr1,
+                expr2,
+                test_output_impl(t),
+                test_output_impl(u),
+                file,
+                line,
+                func);
+            return true;
+        }
+        fail(
+            predicate_name(cond),
+            expr1,
+            expr2,
+            test_output_impl(t),
+            test_output_impl(u),
+            file,
+            line,
+            func);
         return false;
     }
 
@@ -431,6 +688,21 @@ public:
     }
 
     void
+    pass(
+        char const*,
+        char const*,
+        char const*,
+        std::string const&,
+        std::string const&,
+        char const*,
+        int,
+        char const*) override
+    {
+        ++all_.total;
+        ++v_.back().total;
+    }
+
+    void
     fail(
         char const* expr,
         char const* file,
@@ -456,6 +728,44 @@ public:
                 " " << filename(file) <<
                 "(" << line << ") "
                 "failed: " << expr << "\n";
+    }
+
+    void
+    fail(
+        char const* cond,
+        char const* expr1,
+        char const* expr2,
+        std::string const& out1,
+        std::string const& out2,
+        char const* file,
+        int line,
+        char const*) override
+    {
+        ++all_.failed;
+        ++v_.back().total;
+        ++v_.back().failed;
+        auto const id = ++all_.total;
+        auto const cp =
+            checkpoint::current();
+        if(cp)
+            log_ <<
+                "case " << cp->id <<
+                "(#" << id << ") " <<
+                filename(cp->file) <<
+                "(" << cp->line << ") "
+                "failed: '" << expr1 << " " <<
+                cond << " " << expr2 << "' ('" <<
+                out1 << "' " << cond << " '" <<
+                out2 << "')\n";
+        else
+            log_ <<
+                "#" << id <<
+                " " << filename(file) <<
+                "(" << line << ") "
+                "failed: '" << expr1 << " " <<
+                cond << " " << expr2 << "' ('" <<
+                out1 << "' " << cond << " '" <<
+                out2 << "')\n";
     }
 };
 
@@ -637,6 +947,30 @@ using log_type = detail::log_ostream<char>;
 #define BOOST_ERROR(msg) \
     ::test_suite::detail::current()->fail( \
         msg, __FILE__, __LINE__, TEST_SUITE_FUNCTION)
+
+#define BOOST_TEST_EQ(expr1,expr2) \
+    ::test_suite::detail::current()->maybe_fail( \
+        ::test_suite::detail::predicate_eq(), (expr1), (expr2), #expr1, #expr2, __FILE__, __LINE__, TEST_SUITE_FUNCTION)
+
+#define BOOST_TEST_NE(expr1,expr2) \
+    ::test_suite::detail::current()->maybe_fail( \
+        ::test_suite::detail::predicate_ne(), (expr1), (expr2), #expr1, #expr2, __FILE__, __LINE__, TEST_SUITE_FUNCTION)
+
+#define BOOST_TEST_LT(expr1,expr2) \
+    ::test_suite::detail::current()->maybe_fail( \
+        ::test_suite::detail::predicate_lt(), (expr1), (expr2), #expr1, #expr2, __FILE__, __LINE__, TEST_SUITE_FUNCTION)
+
+#define BOOST_TEST_LE(expr1,expr2) \
+    ::test_suite::detail::current()->maybe_fail( \
+        ::test_suite::detail::predicate_le(), (expr1), (expr2), #expr1, #expr2, __FILE__, __LINE__, TEST_SUITE_FUNCTION)
+
+#define BOOST_TEST_GT(expr1,expr2) \
+    ::test_suite::detail::current()->maybe_fail( \
+        ::test_suite::detail::predicate_gt(), (expr1), (expr2), #expr1, #expr2, __FILE__, __LINE__, TEST_SUITE_FUNCTION)
+
+#define BOOST_TEST_GE(expr1,expr2) \
+    ::test_suite::detail::current()->maybe_fail( \
+        ::test_suite::detail::predicate_ge(), (expr1), (expr2), #expr1, #expr2, __FILE__, __LINE__, TEST_SUITE_FUNCTION)
 
 #define BOOST_TEST_PASS() \
     ::test_suite::detail::current()->pass( \

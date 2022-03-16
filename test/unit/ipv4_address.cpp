@@ -26,36 +26,36 @@ public:
         {
             ipv4_address a;
             BOOST_TEST(a.is_unspecified());
-            BOOST_TEST(a == ipv4_address());
+            BOOST_TEST_EQ(a, ipv4_address());
         }
 
         // ipv4_address(ipv4_address const&)
         {
             ipv4_address a1(1);
             ipv4_address a2(a1);
-            BOOST_TEST(a2 == a1);
+            BOOST_TEST_EQ(a2, a1);
         }
 
         // operator=(ipv4_address const&)
         {
             ipv4_address a1(1);
             ipv4_address a2;
-            BOOST_TEST(a2 != a1);
+            BOOST_TEST_NE(a2, a1);
             a2 = a1;
-            BOOST_TEST(a2 == a1);
+            BOOST_TEST_EQ(a2, a1);
         }
 
         // ipv4_address(array)
         {
             {
-                ipv4_address a({1,2,3,4});
+                ipv4_address a{{1,2,3,4}};
                 BOOST_TEST(
                     a.to_uint()==0x01020304);
             }
             {
                 ipv4_address a(
-                    ipv4_address::bytes_type(
-                        {1,2,3,4}));
+                    ipv4_address::bytes_type{
+                        {1,2,3,4}});
                 BOOST_TEST(
                     a.to_uint()==0x01020304);
             }
@@ -82,7 +82,7 @@ public:
         {
             ipv4_address a(0x01020304);
             ipv4_address::bytes_type b =
-                {1, 2, 3, 4};
+                {{1, 2, 3, 4}};
             BOOST_TEST(a.to_bytes() == b);
         }
 
@@ -140,10 +140,10 @@ public:
             ipv4_address a1(1);
             ipv4_address a2(2);
             ipv4_address a3(1);
-            BOOST_TEST(a1 == a1);
-            BOOST_TEST(a1 != a2);
-            BOOST_TEST(a1 == a3);
-            BOOST_TEST(a2 != a3);
+            BOOST_TEST_EQ(a1, a1);
+            BOOST_TEST_NE(a1, a2);
+            BOOST_TEST_EQ(a1, a3);
+            BOOST_TEST_NE(a2, a3);
         }
 
         // static any()
@@ -180,7 +180,7 @@ public:
         {
             std::stringstream ss;
             ss << ipv4_address(0x01020304);
-            BOOST_TEST(ss.str() == "1.2.3.4");
+            BOOST_TEST_EQ(ss.str(), "1.2.3.4");
         }
     }
 
@@ -208,7 +208,7 @@ public:
             auto r = parse_ipv4_address(s);
             if(! BOOST_TEST(r.has_value()))
                 return;
-            BOOST_TEST(r->to_uint() == v);
+            BOOST_TEST_EQ(r->to_uint(), v);
         };
 
         bad("0");

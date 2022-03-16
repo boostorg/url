@@ -31,14 +31,14 @@ struct elements_test
                 char_literal<'y'>> t;
             BOOST_TEST_NO_THROW(
                 parse_string("xy", t));
-            BOOST_TEST(*get<0>(t).p == 'x');
-            BOOST_TEST(*get<1>(t).p == 'y');
+            BOOST_TEST_EQ(*get<0>(t).p, 'x');
+            BOOST_TEST_EQ(*get<1>(t).p, 'y');
         }
         {
             elements<token<alnum_chars_t>> t;
             BOOST_TEST_NO_THROW(
                 parse_string("token", t));
-            BOOST_TEST(get<0>(t).s == "token");
+            BOOST_TEST_EQ(get<0>(t).s, "token");
         }
     }
 

@@ -49,8 +49,8 @@ public:
         hier_part_rule t;
         grammar::parse_string(
             "/1/2/3/4/5", ec, t);
-        BOOST_TEST(t.path.path == "/1/2/3/4/5");
-        BOOST_TEST(t.path.count == 5);
+        BOOST_TEST_EQ(t.path.path, "/1/2/3/4/5");
+        BOOST_TEST_EQ(t.path.count, 5u);
     }
 };
 

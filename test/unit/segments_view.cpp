@@ -56,7 +56,7 @@ public:
             sv = f(s).value().decoded(sp_.allocator()),
             std::exception);
         BOOST_TEST(sv.empty());
-        BOOST_TEST(sv.begin() == sv.end());
+        BOOST_TEST_EQ(sv.begin(), sv.end());
     }
 
     template<class T1, class T2>
@@ -116,7 +116,7 @@ public:
         {
             segments_view sv;
             BOOST_TEST(sv.empty());
-            BOOST_TEST(sv.size() == 0);
+            BOOST_TEST_EQ(sv.size(), 0u);
             BOOST_TEST(
                 sv.begin() == sv.end());
         }
@@ -126,7 +126,7 @@ public:
             segments_view s1;
             segments_view s2;
             s1 = s2;
-            BOOST_TEST(s1.begin() == s2.begin());
+            BOOST_TEST_EQ(s1.begin(), s2.begin());
         }
 
         // decoded
@@ -134,7 +134,7 @@ public:
             segments_view sv = parse_path(
                 "/%70%61%74%68/%74%6f/%66%69%6c%65%2e%74%78%74"
                     ).value().decoded(sp_.allocator());
-            BOOST_TEST(sv.size() == 3);
+            BOOST_TEST_EQ(sv.size(), 3u);
             BOOST_TEST(sv.is_absolute());
         }
 
@@ -158,8 +158,8 @@ public:
         {
             segments_view sv = parse_path(
                 "/path/to/file.txt").value().decoded(sp_.allocator());
-            BOOST_TEST(sv.front() == "path");
-            BOOST_TEST(sv.back() == "file.txt");
+            BOOST_TEST_EQ(sv.front(), "path");
+            BOOST_TEST_EQ(sv.back(), "file.txt");
         }
     }
 
@@ -175,9 +175,9 @@ public:
                 "/path/to/file.txt").value().decoded(sp_.allocator());
             iter_t it1;
             iter_t it2;
-            BOOST_TEST(it1 == it2);
-            BOOST_TEST(it1 != sv.begin());
-            BOOST_TEST(it2 != sv.begin());
+            BOOST_TEST_EQ(it1, it2);
+            BOOST_TEST_NE(it1, sv.begin());
+            BOOST_TEST_NE(it2, sv.begin());
         }
 
         // iterator(iterator const&)
@@ -186,10 +186,10 @@ public:
                 "/path/to/file.txt").value().decoded(sp_.allocator());
             iter_t it1 = sv.begin();
             iter_t it2(it1);
-            BOOST_TEST(it2 == it1);
-            BOOST_TEST(*it1 == *it2);
-            BOOST_TEST(*it1 == "path");
-            BOOST_TEST(*it2 == "path");
+            BOOST_TEST_EQ(it2, it1);
+            BOOST_TEST_EQ(*it1, *it2);
+            BOOST_TEST_EQ(*it1, "path");
+            BOOST_TEST_EQ(*it2, "path");
         }
 
         // operator=(iterator const&)
@@ -201,12 +201,12 @@ public:
             it1 = sv.begin();
             iter_t it2;
             it2 = sv.end();
-            BOOST_TEST(it2 != it1);
+            BOOST_TEST_NE(it2, it1);
             it2 = it1;
-            BOOST_TEST(it2 == it1);
-            BOOST_TEST(*it1 == *it2);
-            BOOST_TEST(*it1 == "path");
-            BOOST_TEST(*it2 == "path");
+            BOOST_TEST_EQ(it2, it1);
+            BOOST_TEST_EQ(*it1, *it2);
+            BOOST_TEST_EQ(*it1, "path");
+            BOOST_TEST_EQ(*it2, "path");
         }
 
         // operator*
@@ -217,11 +217,11 @@ public:
                 "/path/to/file.txt").value().decoded(
                     sp_.allocator());
             iter_t it = sv.begin();
-            BOOST_TEST(*it == "path");
-            BOOST_TEST(*++it == "to");
-            BOOST_TEST(*it++ == "to");
-            BOOST_TEST(*it++ == "file.txt");
-            BOOST_TEST(it == sv.end());
+            BOOST_TEST_EQ(*it, "path");
+            BOOST_TEST_EQ(*++it, "to");
+            BOOST_TEST_EQ(*it++, "to");
+            BOOST_TEST_EQ(*it++, "file.txt");
+            BOOST_TEST_EQ(it, sv.end());
         }
 
         // operator*
@@ -232,11 +232,11 @@ public:
                 "/path/to/file.txt").value().decoded(
                     sp_.allocator());
             iter_t it = sv.end();
-            BOOST_TEST(*--it == "file.txt");
-            BOOST_TEST(*it-- == "file.txt");
-            BOOST_TEST(*it == "to");
-            BOOST_TEST(*--it == "path");
-            BOOST_TEST(it == sv.begin());
+            BOOST_TEST_EQ(*--it, "file.txt");
+            BOOST_TEST_EQ(*it--, "file.txt");
+            BOOST_TEST_EQ(*it, "to");
+            BOOST_TEST_EQ(*--it, "path");
+            BOOST_TEST_EQ(it, sv.begin());
         }
 
         // operator ==
@@ -246,10 +246,10 @@ public:
                 "/path/to/file.txt").value().decoded(
                     sp_.allocator());
             iter_t it = sv.begin();
-            BOOST_TEST(it == sv.begin());
-            BOOST_TEST(it != sv.end());
-            BOOST_TEST(++it != sv.begin());
-            BOOST_TEST(it++ != sv.end());
+            BOOST_TEST_EQ(it, sv.begin());
+            BOOST_TEST_NE(it, sv.end());
+            BOOST_TEST_NE(++it, sv.begin());
+            BOOST_TEST_NE(it++, sv.end());
         }
     }
 
@@ -385,14 +385,14 @@ public:
     {
         segments_view sv;
         BOOST_TEST(sv.empty());
-        BOOST_TEST(sv.size() == 0);
+        BOOST_TEST_EQ(sv.size(), 0u);
         sv = parse_path(
             "/path/to/file.txt").value().decoded();
         BOOST_TEST(! sv.empty());
-        BOOST_TEST(sv.size() == 3);
+        BOOST_TEST_EQ(sv.size(), 3u);
         sv = {};
         BOOST_TEST(sv.empty());
-        BOOST_TEST(sv.size() == 0);
+        BOOST_TEST_EQ(sv.size(), 0u);
     }
 
     void
@@ -405,7 +405,7 @@ public:
                 "").value().decoded();
             BOOST_TEST(!sv.is_absolute());
             ss << sv;
-            BOOST_TEST(ss.str() == "");
+            BOOST_TEST_EQ(ss.str(), "");
         }
         {
             // absolute
@@ -415,7 +415,7 @@ public:
                     ).value().decoded();
             ss << sv;
             auto str = ss.str();
-            BOOST_TEST(str == "/path/to/file.txt");
+            BOOST_TEST_EQ(str, "/path/to/file.txt");
         }
         {
             // relative
@@ -424,7 +424,7 @@ public:
                 "%70%61%74%68/%74%6f/%66%69%6c%65%2e%74%78%74"
                     ).value().decoded();
             ss << sv;
-            BOOST_TEST(ss.str() == "path/to/file.txt");
+            BOOST_TEST_EQ(ss.str(), "path/to/file.txt");
         }
     }
 

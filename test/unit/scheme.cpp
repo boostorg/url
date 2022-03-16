@@ -33,7 +33,7 @@ public:
         auto s1 = to_string(sc1);
         for(auto& c : s0)
             c = grammar::ascii_tolower(c);
-        BOOST_TEST(s1 == s0);
+        BOOST_TEST_EQ(s1, s0);
         BOOST_TEST(s1 != to_string(
             scheme::unknown));
     }

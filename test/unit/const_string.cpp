@@ -38,7 +38,7 @@ struct const_string_test
         small_ = big_.substr(0, C);
         BOOST_TEST(big_.size() > C);
         BOOST_TEST(small_.size() <= C);
-        BOOST_TEST(C > 3);
+        BOOST_TEST(C > 3u);
     }
 
     void
@@ -48,7 +48,7 @@ struct const_string_test
         // ~const_string()
         {
             const_string s;
-            BOOST_TEST(s == "");
+            BOOST_TEST_EQ(s, "");
             BOOST_TEST(s.empty());
 
             // same buffer
@@ -66,7 +66,7 @@ struct const_string_test
                 {
                     small_.copy(dest, n, 0);
                 });
-            BOOST_TEST(s == small_);
+            BOOST_TEST_EQ(s, small_);
         }
 
         // const_string(string_view, Allocator)
@@ -74,7 +74,7 @@ struct const_string_test
         {
             char const* const x = "x";
             const_string s(x, A{});
-            BOOST_TEST(s == "x");
+            BOOST_TEST_EQ(s, "x");
             BOOST_TEST(! s.empty());
 
             // different buffer
@@ -89,9 +89,9 @@ struct const_string_test
                 auto c = small_;
                 const_string s1(c, A{});
                 const_string s2(s1);
-                BOOST_TEST(s1 == c);
-                BOOST_TEST(s2 == c);
-                BOOST_TEST(s2 == s1);
+                BOOST_TEST_EQ(s1, c);
+                BOOST_TEST_EQ(s2, c);
+                BOOST_TEST_EQ(s2, s1);
 
                 // different buffer
                 BOOST_TEST(s1.size() <= C);
@@ -102,9 +102,9 @@ struct const_string_test
             {
                 const_string s1(big_, A{});
                 const_string s2(s1);
-                BOOST_TEST(s1 == big_);
-                BOOST_TEST(s2 == big_);
-                BOOST_TEST(s2 == s1);
+                BOOST_TEST_EQ(s1, big_);
+                BOOST_TEST_EQ(s2, big_);
+                BOOST_TEST_EQ(s2, s1);
 
                 // same buffer
                 BOOST_TEST(s1.size() > C);
@@ -118,12 +118,12 @@ struct const_string_test
             {
                 const_string s1("abc", A{});
                 const_string s2;
-                BOOST_TEST(s1 == "abc");
+                BOOST_TEST_EQ(s1, "abc");
                 BOOST_TEST(s2.empty());
                 s2 = s1;
-                BOOST_TEST(s1 == "abc");
-                BOOST_TEST(s2 == "abc");
-                BOOST_TEST(s2 == s1);
+                BOOST_TEST_EQ(s1, "abc");
+                BOOST_TEST_EQ(s2, "abc");
+                BOOST_TEST_EQ(s2, s1);
 
                 // different buffer
                 BOOST_TEST(s1.size() <= C);
@@ -134,12 +134,12 @@ struct const_string_test
             {
                 const_string s1(big_, A{});
                 const_string s2;
-                BOOST_TEST(s1 == big_);
+                BOOST_TEST_EQ(s1, big_);
                 BOOST_TEST(s2.empty());
                 s2 = s1;
-                BOOST_TEST(s1 == big_);
-                BOOST_TEST(s2 == big_);
-                BOOST_TEST(s2 == s1);
+                BOOST_TEST_EQ(s1, big_);
+                BOOST_TEST_EQ(s2, big_);
+                BOOST_TEST_EQ(s2, s1);
 
                 // same buffer
                 BOOST_TEST(s1.size() > C);
@@ -150,12 +150,12 @@ struct const_string_test
             {
                 const_string s1(small_, A{});
                 const_string s2(big_, A{});
-                BOOST_TEST(s1 == small_);
-                BOOST_TEST(s2 == big_);
+                BOOST_TEST_EQ(s1, small_);
+                BOOST_TEST_EQ(s2, big_);
                 s1 = s2;
-                BOOST_TEST(s1 == big_);
-                BOOST_TEST(s2 == big_);
-                BOOST_TEST(s2 == s1);
+                BOOST_TEST_EQ(s1, big_);
+                BOOST_TEST_EQ(s2, big_);
+                BOOST_TEST_EQ(s2, s1);
 
                 // same buffer
                 BOOST_TEST(s1.size() > C);
@@ -166,12 +166,12 @@ struct const_string_test
             {
                 const_string s1(big_, A{});
                 const_string s2(big2_, A{});
-                BOOST_TEST(s1 == big_);
-                BOOST_TEST(s2 == big2_);
+                BOOST_TEST_EQ(s1, big_);
+                BOOST_TEST_EQ(s2, big2_);
                 s1 = s2;
-                BOOST_TEST(s1 == big2_);
-                BOOST_TEST(s2 == big2_);
-                BOOST_TEST(s2 == s1);
+                BOOST_TEST_EQ(s1, big2_);
+                BOOST_TEST_EQ(s2, big2_);
+                BOOST_TEST_EQ(s2, s1);
 
                 // same buffer
                 BOOST_TEST(s1.size() > C);
@@ -183,7 +183,7 @@ struct const_string_test
                 const_string s1(big_, A{});
                 const_string s2(small_, A{});
                 s1 = s2;
-                BOOST_TEST(s1 == s2);
+                BOOST_TEST_EQ(s1, s2);
             }
 
             // operator= (self-assignment)
@@ -191,7 +191,7 @@ struct const_string_test
                 const_string s(small_, A{});
                 const_string const& cs(s);
                 s = cs;
-                BOOST_TEST(s == small_);
+                BOOST_TEST_EQ(s, small_);
             }
         }
     }
@@ -234,7 +234,7 @@ struct const_string_test
                             small_.copy(dest, n, 0);
                         });
                 }
-                BOOST_TEST(s == small_);
+                BOOST_TEST_EQ(s, small_);
                 BOOST_TEST(! s.empty());
             }
             {
@@ -247,7 +247,7 @@ struct const_string_test
                             big_.copy(dest, n, 0);
                         });
                 }
-                BOOST_TEST(s == big_);
+                BOOST_TEST_EQ(s, big_);
                 BOOST_TEST(! s.empty());
             }
             {
@@ -263,7 +263,7 @@ struct const_string_test
                             small_.copy(dest, n, 0);
                         });
                 }
-                BOOST_TEST(s == small_);
+                BOOST_TEST_EQ(s, small_);
                 BOOST_TEST(! s.empty());
             }
             {
@@ -279,7 +279,7 @@ struct const_string_test
                             big_.copy(dest, n, 0);
                         });
                 }
-                BOOST_TEST(s == big_);
+                BOOST_TEST_EQ(s, big_);
                 BOOST_TEST(! s.empty());
             }
         }
@@ -294,7 +294,7 @@ struct const_string_test
                     factory a;
                     s = a(abc);
                 }
-                BOOST_TEST(s == "abc");
+                BOOST_TEST_EQ(s, "abc");
                 BOOST_TEST(! s.empty());
 
                 // different buffer
@@ -307,7 +307,7 @@ struct const_string_test
                     factory a(sp.allocator());
                     s = a(abc);
                 }
-                BOOST_TEST(s == "abc");
+                BOOST_TEST_EQ(s, "abc");
                 BOOST_TEST(! s.empty());
 
                 // different buffer

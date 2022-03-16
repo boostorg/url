@@ -37,7 +37,7 @@ public:
         auto it0 = s0.data();
         auto it1 = s1.data();
         auto const end = it0 + s0.size();
-        BOOST_TEST(s0.size() == s1.size());
+        BOOST_TEST_EQ(s0.size(), s1.size());
         while(it0 != end)
             BOOST_TEST(ascii_tolower(
                 *it0++) == *it1++);

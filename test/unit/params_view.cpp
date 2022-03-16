@@ -33,7 +33,7 @@ public:
             params_view p1 = u1.params();
             params_view p2 = u2.params();
             p2 = p1;
-            BOOST_TEST(p1.begin() == p2.begin());
+            BOOST_TEST_EQ(p1.begin(), p2.begin());
         }
     }
 
@@ -46,12 +46,12 @@ public:
             url_view u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
             params_view p = u.params(pa.allocator());
-            BOOST_TEST(p.at("k0") == "0");
-            BOOST_TEST(p.at("k1") == "1");
-            BOOST_TEST(p.at("k2") == "");
+            BOOST_TEST_EQ(p.at("k0"), "0");
+            BOOST_TEST_EQ(p.at("k1"), "1");
+            BOOST_TEST_EQ(p.at("k2"), "");
             BOOST_TEST_THROWS(p.at("k3") == "0",
                 std::out_of_range);
-            BOOST_TEST(p.at("k4") == "4444");
+            BOOST_TEST_EQ(p.at("k4"), "4444");
             BOOST_TEST_THROWS(p.at("k5"),
                 std::out_of_range);
         }
@@ -67,13 +67,13 @@ public:
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
             params_view p = u.params(pa.allocator());
             BOOST_TEST(! p.empty());
-            BOOST_TEST(p.size() == 5);
+            BOOST_TEST_EQ(p.size(), 5u);
         }
         {
             url_view u;
             params_view p = u.params(pa.allocator());
             BOOST_TEST(p.empty());
-            BOOST_TEST(p.size() == 0);
+            BOOST_TEST_EQ(p.size(), 0u);
         }
     }
 
@@ -92,13 +92,13 @@ public:
             url_view u = parse_uri_reference(
                 "/?a=1&%62=2&c=3&c=4&c=5&d=6&e=7&d=8&f=9#f").value();
             params_view p = u.params(pa.allocator());
-            BOOST_TEST(p.count("a") == 1);
-            BOOST_TEST(p.count("b") == 1);
-            BOOST_TEST(p.count("c") == 3);
-            BOOST_TEST(p.count("d") == 2);
-            BOOST_TEST(p.count("e") == 1);
-            BOOST_TEST(p.count("f") == 1);
-            BOOST_TEST(p.count("g") == 0);
+            BOOST_TEST_EQ(p.count("a"), 1u);
+            BOOST_TEST_EQ(p.count("b"), 1u);
+            BOOST_TEST_EQ(p.count("c"), 3u);
+            BOOST_TEST_EQ(p.count("d"), 2u);
+            BOOST_TEST_EQ(p.count("e"), 1u);
+            BOOST_TEST_EQ(p.count("f"), 1u);
+            BOOST_TEST_EQ(p.count("g"), 0u);
 
             BOOST_TEST(p.find("b") ==
                 std::next(p.begin()));
@@ -126,13 +126,13 @@ public:
                 "/?a=1&bb=22&ccc=333&dddd=4444#f").value();
             params_view p = u.params(pa.allocator());
             auto it = p.begin();
-            BOOST_TEST((*it).key == "a");
-            BOOST_TEST((*++it).key == "bb");
-            BOOST_TEST((*it++).key == "bb");
-            BOOST_TEST((*it).key == "ccc");
+            BOOST_TEST_EQ((*it).key, "a");
+            BOOST_TEST_EQ((*++it).key, "bb");
+            BOOST_TEST_EQ((*it++).key, "bb");
+            BOOST_TEST_EQ((*it).key, "ccc");
             auto it2 = p.end();
-            BOOST_TEST(it2 == p.end());
-            BOOST_TEST(it != it2);
+            BOOST_TEST_EQ(it2, p.end());
+            BOOST_TEST_NE(it, it2);
         }
 
         // operator*
@@ -140,30 +140,30 @@ public:
             url_view u = parse_uri_reference(
                 "/?&x&y=&z=3#f").value();
             params_view p = u.params();
-            BOOST_TEST(p.size() == 4);
+            BOOST_TEST_EQ(p.size(), 4u);
             auto it = p.begin();
 
             params_view::value_type v;
 
             v = *it++;
-            BOOST_TEST(v.key == "");
-            BOOST_TEST(v.value == "");
-            BOOST_TEST(v.has_value == false);
+            BOOST_TEST_EQ(v.key, "");
+            BOOST_TEST_EQ(v.value, "");
+            BOOST_TEST_EQ(v.has_value, false);
 
             v = *it++;
-            BOOST_TEST(v.key == "x");
-            BOOST_TEST(v.value == "");
-            BOOST_TEST(v.has_value == false);
+            BOOST_TEST_EQ(v.key, "x");
+            BOOST_TEST_EQ(v.value, "");
+            BOOST_TEST_EQ(v.has_value, false);
 
             v = *it++;
-            BOOST_TEST(v.key == "y");
-            BOOST_TEST(v.value == "");
-            BOOST_TEST(v.has_value == true);
+            BOOST_TEST_EQ(v.key, "y");
+            BOOST_TEST_EQ(v.value, "");
+            BOOST_TEST_EQ(v.has_value, true);
 
             v = *it++;
-            BOOST_TEST(v.key == "z");
-            BOOST_TEST(v.value == "3");
-            BOOST_TEST(v.has_value == true);
+            BOOST_TEST_EQ(v.key, "z");
+            BOOST_TEST_EQ(v.value, "3");
+            BOOST_TEST_EQ(v.has_value, true);
         }
     }
 
@@ -173,8 +173,8 @@ public:
         {
             params_view u = parse_query_params(
                 "a=1&b=2+2&c=%61%70%70%6c%65").value().decoded();
-            BOOST_TEST(u.at("b") == "2 2");
-            BOOST_TEST(u.at("c") == "apple");
+            BOOST_TEST_EQ(u.at("b"), "2 2");
+            BOOST_TEST_EQ(u.at("c"), "apple");
         }
     }
 

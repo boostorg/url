@@ -24,7 +24,7 @@ public:
     void check(error e)
     {
         auto const ec = BOOST_URL_ERR(e);
-        BOOST_TEST(ec.category().name() != nullptr);
+        BOOST_TEST_NE(ec.category().name(), nullptr);
         BOOST_TEST(! ec.message().empty());
         BOOST_TEST(ec.category().default_error_condition(
             static_cast<int>(e)).category() == ec.category());
@@ -34,15 +34,15 @@ public:
     {
         {
             auto const ec = BOOST_URL_ERR(e);
-            BOOST_TEST(ec.category().name() != nullptr);
+            BOOST_TEST_NE(ec.category().name(), nullptr);
             BOOST_TEST(! ec.message().empty());
-            BOOST_TEST(ec == c);
+            BOOST_TEST_EQ(ec, c);
         }
         {
             auto ec = make_error_condition(c);
-            BOOST_TEST(ec.category().name() != nullptr);
+            BOOST_TEST_NE(ec.category().name(), nullptr);
             BOOST_TEST(! ec.message().empty());
-            BOOST_TEST(ec == c);
+            BOOST_TEST_EQ(ec, c);
         }
     }
 
