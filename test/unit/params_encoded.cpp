@@ -216,9 +216,18 @@ public:
         }
 
         // replace_value(iterator, string_view)
-        // replace_value(iterator, Value)
         {
-            // VFALCO TODO
+            url u = parse_uri_reference(
+                        "/?k0=0&k%31=0&k2=#f").value();
+            params_encoded p = u.encoded_params();
+            auto it = p.replace_value(
+                p.begin() + 1,
+                "1");
+            BOOST_TEST(it == p.begin() + 1);
+            BOOST_TEST(u.encoded_query() ==
+                       "k0=0&k%31=1&k2=");
+            BOOST_TEST(u.string() ==
+                       "/?k0=0&k%31=1&k2=#f");
         }
 
         // emplace_at(iterator, string_view, string_view)

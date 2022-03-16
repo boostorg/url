@@ -139,10 +139,10 @@ replace_value(
     string_view value) ->
         iterator
 {
-    (void)pos;
-    (void)value;
-    // VFALCO TODO
-    return {};
+    return emplace_at(
+        pos,
+        (*pos).key,
+        value);
 }
 
 auto

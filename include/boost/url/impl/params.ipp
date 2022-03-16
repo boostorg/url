@@ -169,10 +169,24 @@ replace_value(
     string_view value) ->
         iterator
 {
-    (void)pos;
-    (void)value;
-    // VFALCO TODO
-    return {};
+    auto const r =
+        u_->param(pos.i_);
+    string_view key{
+        u_->s_ + r.pos + 1,
+        r.nk - 1};
+    value_type v{
+        key, value, true };
+    BOOST_ASSERT(pos.u_ == u_);
+    using detail::
+        make_plain_value_iter;
+    u_->edit_params(
+        pos.i_,
+        pos.i_ + 1,
+        make_plain_value_iter(
+            &v, &v + 1),
+        make_plain_value_iter(
+            &v, &v + 1));
+    return pos;
 }
 
 auto
