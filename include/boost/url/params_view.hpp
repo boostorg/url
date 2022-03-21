@@ -41,7 +41,17 @@ class params_view
         Allocator const& a);
 
 public:
+    /** A read-only forward iterator to a decoded query parameter.
+    */
+#ifdef BOOST_URL_DOCS
+    using iterator = __see_below__;
+#else
     class iterator;
+#endif
+
+    /** A read-only forward iterator to a decoded query parameter.
+     */
+    using const_iterator = iterator;
 
     /** The value type of query parameters
 
@@ -89,9 +99,20 @@ public:
             const_string::factory const& a);
     };
 
+    /** The type of value returned when dereferencing an iterator.
+    */
     using reference = value_type;
+
+    /** The type of value returned when dereferencing an iterator.
+    */
     using const_reference = value_type;
+
+    /** An unsigned integer type used to represent size.
+    */
     using size_type = std::size_t;
+
+    /** A signed integer type used to represent differences.
+    */
     using difference_type = std::ptrdiff_t;
 
     /** Assignment

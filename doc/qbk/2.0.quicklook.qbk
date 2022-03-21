@@ -32,8 +32,8 @@ instructions, that's already been done for you.
 
 [heading Header-only]
 
-Boost.URL can also be used as a header-only library. Simply provide the Boost directory to your
-compiler and include this in ['exactly one] of your source files:
+To use Boost.URL as header-only; that is, to eliminate the requirement to link a program to a static or dynamic
+Boost.URL library, place the following line in [*exactly one] new or existing source file in your project.
 
 [c++]
 ```
@@ -41,8 +41,8 @@ compiler and include this in ['exactly one] of your source files:
 ```
 
 [note
-    The "header-only" configuration needs `BOOST_URL_NO_LIB` defined when building with MSVC. This macro will instruct
-    Boost to deactivate auto-linking on MSVC.
+    This "header-only" configuration needs `BOOST_URL_NO_LIB` defined when building with compilers supporting
+    auto-linking, such as Microsoft Visual C++. This macro will instruct Boost to deactivate auto-linking:
 
     [c++]
     ```

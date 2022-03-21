@@ -86,13 +86,17 @@ class params_encoded_view
         std::size_t n) noexcept;
 
 public:
-#ifdef BOOST_URL_DOCS
     /** A read-only forward iterator to an encoded query parameter.
     */
+#ifdef BOOST_URL_DOCS
     using iterator = __see_below__;
 #else
     class iterator;
 #endif
+
+    /** A read-only forward iterator to an encoded query parameter.
+     */
+    using const_iterator = iterator;
 
     /** The type of value returned when dereferencing an iterator.
     */
@@ -118,7 +122,7 @@ public:
 
         This function returns a new view over the
         same underlying character buffer where each
-        segment is returned as a @ref const_string
+        segment is returned as a read-only string
         with percent-decoding applied using the
         optionally specified allocator.
 
@@ -249,7 +253,8 @@ public:
         This function returns the first
         element which matches the specified
         percent-encoded key. If no element
-        matches, then @ref end is returned.
+        matches, then an iterator to the end
+        is returned.
 
         @par Exception Safety
         Throws nothing.
@@ -266,9 +271,10 @@ public:
         This function returns the first
         element which matches the specified
         percent-encoded key, starting the
-        search at `*from` inclusive. If no
-        element matches, then @ref end is
-        returned.
+        search at `*from` inclusive.
+
+        If no element matches the key, then an
+        iterator to the end is returned.
 
         @par Exception Safety
         Throws nothing.

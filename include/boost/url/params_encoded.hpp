@@ -26,11 +26,14 @@ namespace urls {
 class url;
 #endif
 
-/** A random-access handle to percent-encoded query parameters in a url.
+/** A random-access view of percent-encoded query parameters.
 
-    Unlike @ref params, this class dereferences to percent-encoded values,
-    which avoids the necessity allocating instances of @ref const_string for the
-    conversion.
+    The elements of this class dereference
+    directly to the percent-encoded values as
+    string views.
+
+    This avoids the necessity allocating decoded
+    strings.
 
  */
 class params_encoded
@@ -38,26 +41,20 @@ class params_encoded
 {
     friend class url;
 
-    /** A pointer to the underlying url that contains these query parameters
-     */
     url* u_ = nullptr;
 
-    /** Construct query params from a parsed url
-
-        @param u The url with the query params
-     */
     explicit
     params_encoded(
         url& u) noexcept;
 
 public:
-    /** A random-access iterator referencing parameters in a url query.
-
-        Dereferencing this iterator returns the underlying encoded
-        query params.
-
-     */
+    /** A read-only random-access iterator to an encoded query parameter.
+    */
     class iterator;
+
+    /** A read-only random-access iterator to an encoded query parameter.
+     */
+    using const_iterator = iterator;
 
     /** A type which can represent a parameter as a value
       */
@@ -79,23 +76,22 @@ public:
      */
     using difference_type = std::ptrdiff_t;
 
-    /** <!-- @name Members -->
-     *  <!-- @{ -->
-     */
-
     /** Assignment
 
         After the assignment, both views will point to
         the same underlying object.
+
     */
     params_encoded&
     operator=(params_encoded const&) & = default;
 
     /** Assignment from initializer list
 
-        Assign params from a list of param value_type.
+        The query parameters are replaced by the
+        contents of the initializer list.
 
-        Each value_type is a query <key, value> pair.
+        The behavior is undefined if the elements
+        belong to the container.
 
         @return Pointer to this params object
 
@@ -108,9 +104,11 @@ public:
 
     /** Assignment from initializer list
 
-        Assign params from a list of param value_type.
+        The query parameters are replaced by the
+        contents of the initializer list.
 
-        Each instance of @ref value_type is a query <key, value> pair.
+        The behavior is undefined if the elements
+        belong to the container.
 
         @return Pointer to this params object
 
@@ -123,11 +121,11 @@ public:
 
     /** Assignment from iterators
 
-        Assign params from a range of params value_type.
+        The query parameters are replaced by the
+        contents of the range.
 
-        Each value_type is a query <key, value> pair.
-
-        @tparam FwdIt Forward Iterator Type
+        The behavior is undefined if the elements
+        belong to the container.
 
         @return Pointer to this params object
 
@@ -172,13 +170,13 @@ public:
     params
     decoded(Allocator const& alloc = {}) const;
 
-    /** <!-- @} --> */
+    //--------------------------------------------
+    //
+    // Element Access
+    //
+    //--------------------------------------------
 
-    /** <!-- @name Element Access -->
-     *  <!-- @{ -->
-     */
-
-    /** Access element at given position with bounds checking
+    /** Return indexed element with bounds checking
 
         @return Query param reference
 
@@ -188,7 +186,7 @@ public:
     value_type
     at(std::size_t pos) const;
 
-    /** Access element with given key with bounds checking
+    /** Return first element matching key with bounds checking
 
         @return Query param mapped value
 
@@ -199,7 +197,7 @@ public:
     string_view
     at(string_view key) const;
 
-    /** Access element at given position without bounds checking
+    /** Return indexed element
 
         @return Query params reference
 
@@ -211,7 +209,7 @@ public:
     operator[](
         std::size_t pos) const;
 
-    /** Access first query param in the container
+    /** Return first element
 
         @return Query params reference
 
@@ -219,18 +217,18 @@ public:
     value_type
     front() const;
 
-    /** Access last query param in the container
+    /** Return last element
 
         @return Query params reference
       */
     value_type
     back() const;
 
-    /** <!-- @} --> */
-
-    /** <!-- @name Iterators -->
-        <!-- @{ -->
-     */
+    //--------------------------------------------
+    //
+    // Iterators
+    //
+    //--------------------------------------------
 
     /** Returns an iterator to the beginning of container
 
@@ -247,11 +245,11 @@ public:
     iterator
     end() const noexcept;
 
-    /** <!-- @} --> */
-
-    /** <!-- @name Capacity -->
-        <!-- @{ -->
-     */
+    //--------------------------------------------
+    //
+    // Capacity
+    //
+    //--------------------------------------------
 
     /** Checks whether the container is empty
 
@@ -268,15 +266,10 @@ public:
     std::size_t
     size() const noexcept;
 
-    /** <!-- @} --> */
-
-    /** <!-- @name Modifiers -->
-        <!-- @{ -->
-     */
-
     /** Clears the contents of the container
 
-        Clears the contents of the container as if calling
+        This function clears the contents of the
+        container as if calling
         `erase(begin(), end())`.
 
       */
@@ -285,10 +278,13 @@ public:
 
     //--------------------------------------------
 
-    /** Insert element at specified container position
+    /** Insert element in container
 
-        @note Behavior is undefined if the element
-        belongs to the container
+        This function inserts an element at the
+        specified container position.
+
+        The behavior is undefined if the element
+        belongs to the container.
 
         @return Iterator pointing to the inserted element
 
@@ -302,7 +298,13 @@ public:
         iterator before,
         value_type const& v);
 
-    /** Insert list of elements at specified container position
+    /** Insert elements in container
+
+        This function inserts a list of elements
+        at the specified container position.
+
+        The behavior is undefined if the elements
+        belong to the container.
 
         @return Iterator pointing to the first inserted element
 
@@ -317,12 +319,13 @@ public:
         std::initializer_list<
             value_type> init);
 
-    /** Insert range of elements at specified container position
+    /** Insert elements in container
 
-        @note Behavior is undefined if any elements of the range
-        belong to the container
+        This function inserts a range of elements
+        at the specified container position.
 
-        @tparam FwdIt Iterator type
+        The behavior is undefined if any elements of
+        the range belong to the container.
 
         @return Iterator pointing to the first inserted element
 
@@ -353,8 +356,7 @@ private:
 
 public:
 #ifndef BOOST_URL_DOCS
-    /** Insert input range of elements at container position
-     */
+    // Doxygen cannot render ` = delete`
     template<class FwdIt>
     iterator
     insert(
@@ -366,10 +368,13 @@ public:
 
     //--------------------------------------------
 
-    /** Replace an element at specified container position
+    /** Replace container element
 
-        @note Behavior is undefined if the element
-        belongs to the container
+        This function replaces an element at the
+        specified container position.
+
+        The behavior is undefined if the new element
+        belongs to the existing container.
 
         @return Iterator to position where element was inserted
 
@@ -383,12 +388,13 @@ public:
         iterator pos,
         value_type const& value);
 
-    /** Replace a range of elements at a range of container positions
+    /** Replace container elements
 
-        @note Behavior is undefined if any elements of the range
-        belong to the container
+        This function replaces a range of elements
+        at a range of container positions.
 
-        @tparam FwdIt Iterator type
+        The behavior is undefined if any elements of
+        the range belong to the container.
 
         @return Iterator to position where the first inserted element
 
@@ -409,10 +415,14 @@ public:
         FwdIt first,
         FwdIt last);
 
-    /** Replace a a list of elements at a range of container positions
+    /** Replace container elements
 
-        @note Behavior is undefined if any elements of the initializer_list
-        belong to the container
+        This function replaces a list of elements
+        at a range of container positions.
+
+        The behavior is undefined if any elements of
+        the initializer_list belong to the
+        container.
 
         @return Iterator to position where the first inserted element
 
@@ -442,7 +452,11 @@ public:
     remove_value(
         iterator pos);
 
-    /** Replace a value at container position
+    /** Replace element value
+
+        This function replaces a value at the
+        specified container position while
+        maintaining the original key.
 
         @return Iterator to position where the element was replaced
 
@@ -478,8 +492,11 @@ public:
 
     /** Constructs a key-only value at container position
 
-        This function constructs a value at the container position.
-        The new value has a given query key and no query mapped value.
+        This function constructs a value at the
+        specified container position.
+
+        The new value has a specified query key
+        and no query mapped value.
 
         @return Iterator to position where the element was constructed
 
@@ -551,7 +568,7 @@ public:
         iterator first,
         iterator last);
 
-    /** Erases elements associated with a given key from container
+    /** Erases elements associated with a specified key from container
 
         @return Number of elements erased from the container
 
@@ -602,15 +619,15 @@ public:
     void
     pop_back() noexcept;
 
-    /** <!-- @} --> */
+    //--------------------------------------------
+    //
+    // Lookup
+    //
+    //--------------------------------------------
 
-    /** <!-- @name Lookup -->
-     *  <!-- @{ -->
-     */
+    /** Count number of elements with a specified key
 
-    /** Count number of elements with a given key
-
-        @return Number of elements with a given key
+        @return Number of elements with a specified key
 
         @param key Element key
 
@@ -619,9 +636,9 @@ public:
     std::size_t
     count(string_view key) const noexcept;
 
-    /** Find element with a given key
+    /** Find element with a specified key
 
-        @return Iterator pointing to element with a given key
+        @return Iterator pointing to element with a specified key
 
         @param key Element key
 
@@ -629,13 +646,13 @@ public:
     iterator
     find(string_view key) const noexcept;
 
-    /** Find element with a given key after specified position
+    /** Find element with a specified key after specified position
 
-        This function searches the range [from, end).
+        This function searches the range `[from, end)`.
 
-        from==end is valid.
+        The range where `from==end` is also valid.
 
-        @return Iterator pointing to element with the given key
+        @return Iterator pointing to element with the specified key
 
         @param from First position to consider in search
 
@@ -657,8 +674,6 @@ public:
       */
     bool
     contains(string_view key) const noexcept;
-
-    /** <!-- @} --> */
 };
 
 } // urls
