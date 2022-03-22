@@ -139,8 +139,8 @@ public:
             string_view s1, string_view s2)
         {
             url u = parse_uri_reference(s1).value();
-            BOOST_TEST(
-                u.remove_scheme().string() == s2);
+            u.remove_scheme();
+            BOOST_TEST(u.string() == s2);
             BOOST_TEST(u.scheme().empty());
             BOOST_TEST(u.scheme_id() ==
                 scheme::none);
@@ -1155,8 +1155,7 @@ public:
             {
                 url u = parse_uri_reference(s0).value();
                 u.set_encoded_path(arg);
-                BOOST_TEST(
-                    u.string() == match);
+                BOOST_TEST_EQ(u.string(), match);
             };
             check(
                 "",
@@ -1848,6 +1847,8 @@ public:
                   "http://cppalliance.org/g");
             check("http://cppalliance.org/..",
                   "http://cppalliance.org/");
+            check("http://cppalliance.org?%61=b",
+                  "http://cppalliance.org?a=b");
         }
 
         // remove_dot_segments

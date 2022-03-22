@@ -1463,7 +1463,22 @@ private:
     friend class static_url_base;
 
     void check_invariants() const noexcept;
-    void build_tab() noexcept;
+
+    void
+    build_seg_tab() noexcept;
+
+    void
+    build_param_tab() noexcept;
+
+    void*
+    seg_tab_ptr() const noexcept;
+
+    void*
+    param_tab_ptr() const noexcept;
+
+    static
+    std::size_t
+    seg_tab_size(std::size_t nseg) noexcept;
 
     void
     ensure_space(

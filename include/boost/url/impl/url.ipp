@@ -20,6 +20,8 @@
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/detail/print.hpp>
+#include <boost/url/detail/segments_table.hpp>
+#include <boost/url/detail/params_table.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/fragment_rule.hpp>
@@ -73,6 +75,8 @@ copy(url_view const& u)
     std::memcpy(s_,
         u.data(), u.size());
     s_[size()] = '\0';
+    build_seg_tab();
+    build_param_tab();
 }
 
 // allocate n aligned up
@@ -272,6 +276,7 @@ set_scheme_impl(
     s.copy(dest, n);
     dest[n] = ':';
     scheme_ = id;
+    build_seg_tab();
     check_invariants();
 }
 
@@ -338,6 +343,7 @@ remove_scheme() noexcept
     dest[1] = '/';
     s_[size()] = '\0';
     scheme_ = urls::scheme::none;
+    build_seg_tab();
     check_invariants();
     return *this;
 }
@@ -930,6 +936,7 @@ remove_authority() noexcept
     }
     host_type_ =
         urls::host_type::none;
+    build_seg_tab();
     check_invariants();
     return *this;
 }
@@ -1043,6 +1050,7 @@ set_encoded_authority(string_view s)
     {
         port_number_ = 0;
     }
+    build_seg_tab();
     check_invariants();
     return *this;
 }
@@ -1140,23 +1148,31 @@ segment(
     if(i == nseg_)
         return offset(id_query);
     BOOST_ASSERT(i < nseg_);
+
     auto it = s_ + offset(id_path) +
         detail::path_prefix(
             get(id_path));
     BOOST_ASSERT(it < s_ +
         offset(id_query));
+    std::size_t i1 = i;
     for(;;)
     {
         while(*it != '/')
             ++it;
         BOOST_ASSERT(it < s_ +
             offset(id_query));
-        --i;
-        if(i == 0)
+        --i1;
+        if(i1 == 0)
             break;
         ++it;
     }
-    return it - s_;
+    auto r1 = it - s_;
+
+    detail::const_segments_table t(seg_tab_ptr());
+    string_view p = encoded_path();
+    auto r2 = p.data() + t[i].sp - s_ - 1;
+    BOOST_ASSERT(r1 == r2);
+    return r2;
 }
 
 /*  Remove segments [first, last) and make
@@ -1187,9 +1203,13 @@ edit_segments(
     // [p0, p1) range to replace
     auto p0 = segment(i0);
     auto p1 = segment(i1);
+    std::size_t e = 0;
     if(i1 == 0)
     {
-        p1 += detail::path_prefix(
+        // Remove the prefix from existing
+        // first seg if this is becoming the
+        // new initial segments.
+        e = detail::path_prefix(
             get(id_path));
     }
     else if(
@@ -1198,11 +1218,12 @@ edit_segments(
         i1 < nseg_)
     {
         // Remove the slash from segment i1
-        // if it is becoming the new first
-        // segment.
+        // if this is erasing the first
+        // segments.
         BOOST_ASSERT(s_[p1] == '/');
-        ++p1;
+        e = 1;
     }
+    p1 += e;
 
     // old size of [p0, p1)
     auto const n0 = p1 - p0;
@@ -1225,8 +1246,29 @@ edit_segments(
         id_path,
         len(id_path) -
             (n0 - n));
-    nseg_ = nseg1;
     s_[size()] = '\0';
+
+    // adjust table
+    detail::segments_table t(
+        seg_tab_ptr());
+    std::size_t ifrom = i1;
+    std::size_t ito = i0 + nseg;
+    std::uint32_t sp0 = t[i0].sp;
+    std::uint32_t pad = n - e;
+    while (ifrom < nseg_)
+    {
+        auto& efrom = t[ifrom];
+        auto& eto = t[ito];
+        eto.sn = efrom.sn;
+        std::uint32_t nfrom =
+            t[ifrom + 1].sp - efrom.sp;
+        eto.sp = sp0 + pad;
+        pad += nfrom;
+        ifrom++;
+        ito++;
+    }
+    nseg_ = nseg1;
+
     return dest;
 }
 
@@ -1278,43 +1320,77 @@ edit_segments(
         }
     }
 
-/*  Calculate prefix:
+/*  Calculate prefix size for new segment range:
         0 = ""
         1 = "/"
         2 = "./"
         3 = "/./"
+
+    This is malleable prefix that might need to
+    change according other URL components.
+
 */
     int prefix;
+    // the trivial case when replacing after the
+    // first segment
     if(i0 > 0)
     {
         if(nseg > 0)
+            // a new segment always has a "/"
+            // prefix if not inserting the
+            // first segment
             prefix = 1;
         else
+            // unless inserting an empty list
             prefix = 0;
     }
     else if(
         it0.front == "." &&
         nseg > 1)
     {
+        // if the first element is becoming "."
+        // followed by other segments
         if( abs ||
             has_authority())
+            // add a null "/./" prefix so that
+            // "." does not become part of the
+            // authority
             prefix = 3;
         else
+            // make "./" from "." in relative
+            // paths, because we don't need the
+            // initial "/" to make it different
+            // from the authority
             prefix = 2;
     }
     else if(has_authority())
     {
+        // in the general case, we adjust the
+        // first element prefix to be compatible
+        // with the authority
         if(nseg == 0)
+            // if we include no elements, just
+            // prefix with "" or "/"
             prefix = abs ? 1 : 0;
         else if(! it0.front.empty())
+            // if the front is not empty,
+            // add prefix "/" to whatever comes
+            // after the authority
             prefix = 1;
         else
+            // if the front is empty, we make it
+            // "/./" to represent it without
+            // conflict with the authority
             prefix = 3;
     }
     else if(
         nseg > 1 &&
         it0.front.empty())
     {
+        // if the URL has no authority and
+        // the front is empty, we also insert
+        // the "/./" prefix to represent this
+        // empty path
         prefix = 3;
     }
     else if(
@@ -1325,6 +1401,11 @@ edit_segments(
                 ':') != string_view::npos ||
             it0.front.empty()))
     {
+        // if no authority and no scheme,
+        // a relative first element can be
+        // represented with "./" unless it's
+        // in conflict with the scheme by
+        // including a ":"
         BOOST_ASSERT(nseg > 0);
         prefix = 2;
     }
@@ -1333,33 +1414,76 @@ edit_segments(
         nseg > 0 &&
         it0.front.empty())
     {
+        // an absolute single empty element
+        // can be represented with "/./"
         BOOST_ASSERT(
             ! has_authority());
-        prefix = 3;
+        prefix = 3; // make
+    }
+    else if (abs)
+    {
+        // if path is absolute, we add "/" to
+        // any other general prefix
+        prefix = 1;
     }
     else
     {
-        if(abs)
-            prefix = 1;
-        else
-            prefix = 0;
+        // if not absolute, and the conflicts
+        // with authority and scheme have already
+        // been handled, we add nothing to
+        // this relative prefix
+        prefix = 0;
     }
 
-/*  Calculate suffix
+/*  Calculate suffix size for new segments:
         0 = ""
         1 = "/"
+
+    This extra suffix should the case where
+    insertion at the first indexes leaves a
+    missing slash in a relative path:
+
+    "file.txt"
+    -> insert "etc" as first segment
+    -> becomes "etc" "/" "file.txt"
+
+    "file.txt"
+    -> insert "path/to" as first segments
+    -> becomes "path/to" "/" "file.txt"
+
+    "the/file.txt"
+    -> insert "path/to" as first segments
+    -> becomes "path/to" "/" "the/file.txt"
+
+    The extra slash is not necessary when
+    insertion is not at the first position:
+
+    "path/file.txt"
+    -> insert "to/the" as second segment
+    -> becomes "path" "/to/the" "/file.txt"
+
+    The extra slash is not necessary when
+    the following position already has a slash
+    (i.e. other existing valid segments):
+
+    "/path/to/the/file.txt"
+    -> replace "etc" as first segment
+    -> becomes "/etc" "/to/the/file.txt"
+
 */
     int suffix;
-    //if( nseg > 0 &&
-        //i1 + 1 < nseg_)
     if( nseg > 0 &&
         i0 == 0 &&
-        i1 + 1 < nseg_)
+        i1 == 0 &&
+        nseg_ != 0)
     {
+        // If inserting in the first index
+        // add "/" to last seg
         suffix = 1;
     }
     else
     {
+        // no extra suffix
         suffix = 0;
     }
 
@@ -1399,9 +1523,20 @@ edit_segments(
 */
     if(nseg > 0)
     {
+        detail::segments_table t(seg_tab_ptr());
+        auto p = encoded_path();
         for(;;)
         {
+            auto& e = t[i0++];
+            e.sp = static_cast<off_t>(
+                dest - p.data());
+            string_view new_seg(dest, n);
             it1.copy(dest, last);
+            new_seg = new_seg.substr(
+                0, dest - new_seg.data());
+            auto kn = new_seg.find_first_of("/");
+            e.sn = static_cast<off_t>(
+                (std::min)(kn, new_seg.size()));
             if(--nseg == 0)
                 break;
             *dest++ = '/';
@@ -1515,49 +1650,25 @@ param(
     std::size_t i) const noexcept ->
         raw_param
 {
-    auto const make_param =
-    [this](
-        std::size_t pos,
-        std::size_t n)
-    {
-        string_view s(s_ + pos, n);
-        auto i = s.find_first_of('=');
-        if(i == string_view::npos)
-            return raw_param{ pos, n, 0 };
-        return raw_param{ pos, i, n - i };
-    };
-
     if(nparam_ == 0)
         return { offset(id_query), 0, 0 };
     if(i == nparam_)
         return { offset(id_frag), 0, 0 };
     BOOST_ASSERT(i <= nparam_);
-    auto n = len(id_query);
-    if(nparam_ < 2)
-        return make_param(
-            offset(id_query), n);
-    auto it = s_ + offset(id_query);
-    auto start = it;
-    auto const last =
-        s_ + offset(id_frag);
-    BOOST_ASSERT(n > 0);
-    for(;;)
-    {
-        for(;;)
-        {
-            ++it;
-            if(it == last)
-                break;
-            if(*it == '&')
-                break;
-        }
-        if(i == 0)
-            break;
-        start = it;
-        --i;
-    }
-    return make_param(
-        start - s_, it - start);
+
+    detail::const_params_table t(param_tab_ptr());
+    string_view q = encoded_query();
+    auto const& e = t[i];
+    const char* start = q.data() + e.kp - 1;
+    const char* end = s_ + offset(id_frag);
+    if (i != nparam_ - 1)
+        end = q.data() + t[i + 1].kp - 1;
+
+    std::size_t param_pos = start - s_;
+    std::size_t param_n = end - start;
+    std::uint32_t delim_pos = e.kn + 1;
+    std::size_t nv = param_n - delim_pos;
+    return raw_param{ param_pos, e.kn + 1, nv };
 }
 
 char*
@@ -1600,8 +1711,29 @@ edit_params(
         id_query,
         len(id_query) + (
             n - n0));
-    nparam_ = nparam1;
     s_[size()] = '\0';
+
+    // adjust table
+    detail::params_table t(
+        param_tab_ptr());
+    std::size_t ifrom = i1;
+    std::size_t ito = i0 + nparam;
+    std::uint32_t kp0 = t[i0].kp;
+    std::uint32_t pad = n;
+    while (ifrom < nparam_)
+    {
+        auto& efrom = t[ifrom];
+        auto& eto = t[ito];
+        eto.kn = efrom.kn;
+        std::uint32_t nfrom =
+            t[ifrom + 1].kp - efrom.kp;
+        eto.kp = kp0 + pad;
+        pad += nfrom;
+        ifrom++;
+        ito++;
+    }
+    nparam_ = nparam1;
+
     return dest;
 }
 
@@ -1660,14 +1792,26 @@ edit_params(
         i0, i1, n, nparam);
     if(prefix)
         *dest++ = '?';
+
     if(nparam > 0)
     {
+        detail::params_table t(param_tab_ptr());
+        auto q = encoded_query();
         auto const last = dest + n;
         if(i0 != 0)
             *dest++ = '&';
         for(;;)
         {
+            auto& e = t[i0++];
+            e.kp = static_cast<off_t>(
+                dest - q.data());
+            string_view dest_sv(dest, n);
             it1.copy(dest, last);
+            dest_sv = dest_sv.substr(
+                0, dest - dest_sv.data());
+            auto kn = dest_sv.find_first_of("=&");
+            e.kn = static_cast<off_t>(
+                (std::min)(kn, dest_sv.size()));
             if(--nparam == 0)
                 break;
             *dest++ = '&';
@@ -2143,21 +2287,33 @@ url&
 url::
 normalize_path()
 {
-    normalize_octets_impl(id_path, detail::path_chars);
+    // octets
     string_view p = encoded_path();
+    std::size_t n0 = p.size();
+    normalize_octets_impl(id_path, detail::path_chars);
+
+    // remove dot segments
     char* p_dest = s_ + offset(id_path);
-    char* p_end = s_ + offset(id_path + 1);
-    std::size_t pn = p.size();
+    const char* p_end = s_ + offset(id_path + 1);
+    p = encoded_path();
+    std::size_t n1 = p.size();
     bool abs = is_path_absolute();
-    std::size_t n = detail::remove_dot_segments(
+    std::size_t n = n1;
+    n = detail::remove_dot_segments(
         p_dest, p_end, p, abs);
-    if (n != pn)
+
+    // shrink
+    if (n != n1)
     {
-        BOOST_ASSERT(n < pn);
+        BOOST_ASSERT(n < n1);
         shrink_impl(id_path, n);
         nseg_ = std::count(
             p.begin() + 1, p.end(), '/') + 1;
     }
+
+    if (n != n0)
+        build_seg_tab();
+
     return *this;
 }
 
@@ -2165,7 +2321,10 @@ url&
 url::
 normalize_query()
 {
+    pos_t n = len(id_query);
     normalize_octets_impl(id_query, query_chars);
+    if (n != len(id_query))
+        build_param_tab();
     return *this;
 }
 
@@ -2186,6 +2345,7 @@ normalize()
     normalize_path();
     normalize_authority();
     normalize_scheme();
+    check_invariants();
     return *this;
 }
 
@@ -2231,6 +2391,54 @@ check_invariants() const noexcept
         len(id_frag) == 0 ||
         get(id_frag).starts_with('#'));
     BOOST_ASSERT(c_str()[size()] == '\0');
+
+    // check segments table
+    if (nseg_ != 0)
+    {
+        detail::segments_table t(seg_tab_ptr());
+        auto p = encoded_path();
+        segments_encoded_view segs =
+            base().encoded_segments();
+        auto it = segs.begin();
+        auto end = segs.end();
+        std::size_t i = 0;
+        while (it != end)
+        {
+            auto seg = *it;
+            auto& e = t[i];
+            BOOST_ASSERT(e.sp == static_cast<off_t>(
+                seg.data() - p.data()));
+            BOOST_ASSERT(e.sn == static_cast<off_t>(
+                seg.size()));
+            ++it;
+            ++i;
+        }
+    }
+
+    // check params table
+    if(nparam_ != 0)
+    {
+        detail::const_params_table t(param_tab_ptr());
+        BOOST_ASSERT(t[0].kp == 0);
+        auto q = encoded_query();
+        params_encoded_view params =
+            base().encoded_params();
+        auto it = params.begin();
+        auto end = params.end();
+        std::size_t i = 0;
+        while (it != end)
+        {
+            auto param = *it;
+            auto& e = t[i];
+            BOOST_ASSERT(e.kp == static_cast<off_t>(
+                param.key.data() - q.data()));
+            BOOST_ASSERT(e.kn == static_cast<off_t>(
+                param.key.size()));
+            ++it;
+            ++i;
+        }
+    }
+
     // validate segments
 #if 0
     if(nseg > 0)
@@ -2267,67 +2475,81 @@ check_invariants() const noexcept
 #endif
 }
 
+void*
+url::
+seg_tab_ptr() const noexcept
+{
+    return s_ + cap_;
+}
+
+void*
+url::
+param_tab_ptr() const noexcept
+{
+    return s_ + cap_ - seg_tab_size(nseg_);
+}
+
+std::size_t
+url::
+seg_tab_size(std::size_t nseg) noexcept
+{
+    return sizeof(detail::segments_table_entry) * nseg;
+}
+
 void
 url::
-build_tab() noexcept
+build_seg_tab() noexcept
 {
-#if 0
-    // path
-    if(nseg_ > 1)
+    BOOST_ASSERT(s_);
+    if (nseg_ != 0)
     {
-        error_code ec;
-        // path table
-        pos_t* tab = tab_end() - 1;
-        auto s = get(id_path);
-        auto it = s.data();
-        auto const end = it + s.size();
-        pct_encoded_str t;
-        if( s.starts_with('/') ||
-            s.empty())
-            path_abempty_rule::begin(
-                it, end, ec, t);
-        else
-            path_rootless_rule::begin(
-                it, end, ec, t);
-        for(;;)
+        detail::segments_table t(seg_tab_ptr());
+        auto p = encoded_path();
+        segments_encoded_view segs =
+            base().encoded_segments();
+        auto it = segs.begin();
+        auto end = segs.end();
+        std::size_t i = 0;
+        while (it != end)
         {
-            if(ec == grammar::error::end)
-                break;
-            if(ec)
-                detail::throw_system_error(ec,
-                    BOOST_CURRENT_LOCATION);
-            *tab = it - s_;
-            tab -= 2;
-            path_abempty_rule::increment(
-                it, end, ec, t);
+            auto seg = *it;
+            auto& e = t[i];
+            e.sp = static_cast<off_t>(
+                seg.data() - p.data());
+            e.sn = static_cast<off_t>(
+                seg.size());
+            ++it;
+            ++i;
         }
     }
-    // query
-    if(nparam_ > 1)
+}
+
+void
+url::
+build_param_tab() noexcept
+{
+    BOOST_ASSERT(s_);
+    if(nparam_ != 0)
     {
-        error_code ec;
-        // query table
-        pos_t* tab = tab_end() - 2;
-        auto s = get(id_query);
-        auto it = s.data();
-        auto const end = it + s.size();
-        query_param_view t;
-        query_rule::begin(
-            it, end, ec, t);
-        for(;;)
+        detail::params_table t(param_tab_ptr());
+        auto q = encoded_query();
+        params_encoded_view params =
+            base().encoded_params();
+        auto it = params.begin();
+        auto end = params.end();
+        std::size_t i = 0;
+        while (it != end)
         {
-            if(ec == grammar::error::end)
-                break;
-            if(ec)
-                detail::throw_system_error(ec,
-                    BOOST_CURRENT_LOCATION);
-            *tab = it - s_;
-            tab -= 2;
-            query_rule::increment(
-                it, end, ec, t);
+            auto param = *it;
+            auto& e = t[i];
+            e.kp = static_cast<off_t>(
+                param.key.data() - q.data());
+            e.kn = static_cast<off_t>(
+                param.key.size());
+            ++it;
+            ++i;
         }
     }
-#endif
 }
 
 void
@@ -2351,6 +2573,21 @@ ensure_space(
     if(nparam > 0)
         new_cap += 2 * sizeof(pos_t) *
             nparam;
+
+    static constexpr auto AS =
+        alignof(detail::segments_table_entry);
+    static constexpr auto SS =
+        sizeof(detail::segments_table_entry);
+    new_cap = AS * ((new_cap + AS - 1) / AS) +
+           (nseg * SS);
+
+    static constexpr auto AP =
+        alignof(detail::params_table_entry);
+    static constexpr auto SP =
+        sizeof(detail::params_table_entry);
+    new_cap = AP * ((new_cap + AP - 1) / AP) +
+           (nparam * SP);
+
     if(new_cap <= cap_)
         return;
     char* s;
@@ -2366,8 +2603,19 @@ ensure_space(
         }
         if( new_cap < n)
             new_cap = n;
+
+        // find tables
+        detail::const_segments_table st(seg_tab_ptr());
+        detail::const_params_table pt(param_tab_ptr());
+
+        // copy string
         s = allocate(new_cap);
         std::memcpy(s, s_, size());
+
+        // copy tables
+        st.copy(s + cap_, nseg_);
+        pt.copy(s + cap_ - seg_tab_size(nseg_), nparam_);
+
         deallocate(s_);
     }
     else
@@ -2420,31 +2668,6 @@ resize_impl(
         offset(last) + n);
     // shift (last, end) right
     adjust(last, id_end, n);
-#if 0
-    // update table
-    if( nseg > 1 &&
-        last > id_path &&
-        first < id_path)
-    {
-        // adjust segments
-        auto const tab =
-            tab_end() - 1;
-        for(std::size_t i = 0;
-            i < nseg - 1; ++i)
-            tab[0-2*i] += n;
-    }
-    if( nparam > 1 &&
-        last > id_query &&
-        first < id_query)
-    {
-        // adjust params
-        auto const tab =
-            tab_end() - 2;
-        for(std::size_t i = 0;
-            i < nparam - 1; ++i)
-            tab[0-2*i] += n;
-    }
-#endif
     s_[size()] = '\0';
     return s_ + offset(first);
 }
@@ -2484,29 +2707,6 @@ shrink_impl(
     // shift (last, end) left
     adjust(
         last, id_end, 0 - n);
-#if 0
-    // update table
-    if( nseg > 1 &&
-        first <= id_path)
-    {
-        // adjust segments
-        auto const tab =
-            tab_end() - 1;
-        for(std::size_t i = 0;
-            i < nseg - 1; ++i)
-            tab[0-2*i] += 0 - n;
-    }
-    if( nparam > 1 &&
-        first <= id_query)
-    {
-        // adjust params
-        auto const tab =
-            tab_end() - 2;
-        for(std::size_t i = 0;
-            i < nparam - 1; ++i)
-            tab[0-2*i] += 0 - n;
-    }
-#endif
     s_[size()] = '\0';
     return s_ + offset(first);
 }

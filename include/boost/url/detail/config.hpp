@@ -13,6 +13,7 @@
 #include <boost/config.hpp>
 #include <boost/config/workaround.hpp>
 #include <limits.h>
+#include <stdint.h>
 
 #if CHAR_BIT != 8
 # error unsupported platform
@@ -83,5 +84,13 @@
 #else
 # error Unknown or unsupported architecture, please open an issue
 #endif
+
+namespace boost {
+namespace urls {
+
+using off_t = ::uint32_t; // private
+
+} // urls
+} // boost
 
 #endif

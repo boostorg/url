@@ -302,15 +302,15 @@ public:
                 "/?k0=0&k1=1&k2=&k3&k4=4444#f").value();
             params p = u.params(pa_.allocator());
             p.erase(p.begin() + 2);
-            BOOST_TEST(u.encoded_query() ==
+            BOOST_TEST_EQ(u.encoded_query(),
                 "k0=0&k1=1&k3&k4=4444");
-            BOOST_TEST(u.string() ==
+            BOOST_TEST_EQ(u.string(),
                 "/?k0=0&k1=1&k3&k4=4444#f");
             p.erase(
                 p.begin() + 1, p.begin() + 3);
-            BOOST_TEST(u.encoded_query() ==
+            BOOST_TEST_EQ(u.encoded_query(),
                 "k0=0&k4=4444");
-            BOOST_TEST(u.string() ==
+            BOOST_TEST_EQ(u.string(),
                 "/?k0=0&k4=4444#f");
         }
 
