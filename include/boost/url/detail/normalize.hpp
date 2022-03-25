@@ -24,11 +24,15 @@ public:
     using digest_type = std::size_t;
 
 #if BOOST_URL_ARCH == 64
-    static constexpr std::uint64_t const prime = 0x100000001B3ULL;
-    static constexpr std::uint64_t init_hash  = 0xcbf29ce484222325ULL;
+    static constexpr std::size_t const prime =
+        static_cast<std::size_t>(0x100000001B3ULL);
+    static constexpr std::size_t init_hash  =
+        static_cast<std::size_t>(0xcbf29ce484222325ULL);
 #else
-    static constexpr std::uint64_t const prime = 0x01000193UL;
-    static constexpr std::uint64_t init_hash  = 0x811C9DC5UL;
+    static constexpr std::size_t const prime =
+        static_cast<std::size_t>(0x01000193UL);
+    static constexpr std::size_t init_hash  =
+        static_cast<std::size_t>(0x811C9DC5UL);
 #endif
 
     explicit

@@ -210,29 +210,29 @@ copy_impl(
 {
     (void)end;
     // avoid self-copy
-    std::size_t n = key.size();
-    BOOST_ASSERT(end - n >= dest);
+    std::size_t kn = key.size();
+    BOOST_ASSERT(end - kn >= dest);
     if( key.data() != dest &&
         key.data() != nullptr)
     {
         std::memcpy(dest,
-            key.data(), n);
+            key.data(), kn);
     }
-    dest += n;
+    dest += kn;
     if(value)
     {
         BOOST_ASSERT(
             end - 1 >= dest);
         *dest++ = '=';
-        std::size_t n =
+        std::size_t vn =
             value->size();
         BOOST_ASSERT(
-            end - n >= dest);
-        if(n > 0)
+            end - vn >= dest);
+        if(vn > 0)
         {
             std::memcpy(dest,
-                value->data(), n);
-            dest += n;
+                value->data(), vn);
+            dest += vn;
         }
     }
 }
