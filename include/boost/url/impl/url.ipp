@@ -2192,8 +2192,12 @@ normalize_path()
     {
         BOOST_ASSERT(n < pn);
         shrink_impl(id_path, n);
-        nseg_ = std::count(
-            p.begin() + 1, p.end(), '/') + 1;
+        p = encoded_path();
+        if (!p.empty())
+            nseg_ = std::count(
+                p.begin() + 1, p.end(), '/') + 1;
+        else
+            nseg_ = 0;
     }
     return *this;
 }
