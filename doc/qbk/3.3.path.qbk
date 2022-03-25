@@ -185,10 +185,73 @@ __segments_encoded_view__ or __segments_view__.
 ```
 ]]]
 
+[heading Path Semantics]
+
+A path can be absolute or relative. An absolute path begins with `/`:
+
+[table
+    [[URL]                             [Path Type]                          ]
+    [[[c++][snippet_modifying_path_1]] [Relative path `""` with 0 segments] ]
+    [[[c++][snippet_modifying_path_2]] [Absolute path `"/"` with 0 segments]]
+]
+
+The complete path segments "." and ".." are intended only for use
+within relative references (__rfc3986__ sec. 4.1) and are removed as part of
+the reference resolution process (__rfc3986__ sec. 5.2). Normalizing a URI
+resolves these dot-segments (__rfc3986__ sec. 5.2.4).
+
+[table
+    [[URL]                             [Normalized URL]              [Path]                                      ]
+    [[[c++][snippet_modifying_path_3]] [`"https://www.boost.org/b"`] [Absolute path `"/b"` with segments `{"b"}`]]
+]
+
+These rules imply a path with the prefix `":"` or `"/"` could be in conflict with
+the scheme and authority components of the URL, since they end with these
+characters. For instance, attempting to create a path with the prefix `//`,
+i.e. a path whose first segment is empty, could be interpreted as an empty
+authority:
+
+[table
+    [[URL]                             [Authority]      [Path]                                                                          ]
+    [[[c++][snippet_modifying_path_4]] [(no authority)] [Relative path `"path/to/file.txt"` with segments `{"path", "to", "file.txt"}`] ]
+    [[[c++][snippet_modifying_path_5]] [(no authority)] [Absolute path `"/path/to/file.txt"` with segments `{"path", "to", "file.txt"}`]]
+    [[[c++][snippet_modifying_path_6]] [`"path"`]       [Absolute path `"/to/file.txt"` with segments `{"to", "file.txt"}`]             ]
+]
+
+Likewise, attempting to create a relative path whose first segment contains a `":"`
+could be interpreted as another scheme and a path:
+
+[table
+    [[URL]                             [Scheme]      [Path]                                                                      ]
+    [[[c++][snippet_modifying_path_7]] [(no scheme)] [Relative path `"path-to/file.txt"` with segments `{"path-to", "file.txt"}`]]
+    [[[c++][snippet_modifying_path_8]] [`"path"`]    [Relative path `"to/file.txt"` with segments `{"to", "file.txt"}`]          ]
+]
+
+Modifying functions will properly adjust paths with malleable null prefixes
+so that paths maintain their semantics without conflicting with the scheme
+or authority components:
+
+[table
+    [[Code]                             [URL]                            [Path]                                                                                 ]
+    [[[c++][snippet_modifying_path_9]]  [`"https:/.//path/to/file.txt"`] [Absolute path `"/.//path/to/file.txt"` with segments `{"", "path", "to", "file.txt"}`]]
+    [[[c++][snippet_modifying_path_10]] [`"./path:to/file.txt"`]         [Relative path `"./path:to/file.txt"` with segments `{"path:to", "file.txt"}`]         ]
+]
+
+Given relative or absolute path, note that all algorithms preserve the path
+semantics in lossless round-trip conversions between the URL path and their
+segment container representations. Modifying functions will also adjust path
+suffixes if a delimiter to the existing path segments would be missing:
+
+[table
+    [[Code]                             [URL]                  [Path]                                                                         ]
+    [[[c++][snippet_modifying_path_11]] [`"path/to/file.txt"`] [Relative path `"path/to/file.txt"` with segments `{"path", "to", "file.txt"}`]]
+]
+
 [heading Use Cases]
 
 The path comes after the URL authority, including the initial slash `/`:
 
+[teletype]
 [table
     [[Component]     [Value]                              ]
     [[URL]           [`https://www.boost.org/doc/libs/`]  ]
@@ -292,7 +355,7 @@ authority.
 For this reason, paths beginning with two slashes are typically avoided
 altogether.
 
-Of the reserved character set for URLs, `:` and `@` may appear unencoded within
+Of the reserved character set for URLs, `":"` and `"@"` may appear unencoded within
 paths.
 
 [table

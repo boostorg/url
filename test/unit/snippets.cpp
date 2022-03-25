@@ -975,7 +975,7 @@ struct CharSet
 {
     bool operator()( char c ) const noexcept;
 
-    char const* find_if     ( char const* first, char const* last ) const noexcept;
+    char const* find_if ( char const* first, char const* last ) const noexcept;
     char const* find_if_not ( char const* first, char const* last ) const noexcept;
 };
 //]
@@ -1006,6 +1006,129 @@ grammar_charset()
     }
 }
 
+void
+modifying_path()
+{
+    {
+        //[snippet_modifying_path_1
+        url_view u = parse_uri("https://www.boost.org").value();
+        //]
+        BOOST_TEST_NOT(u.is_path_absolute());
+        BOOST_TEST_EQ(u.encoded_segments().size(), 0u);
+    }
+
+    {
+        //[snippet_modifying_path_2
+        url_view u = parse_uri("https://www.boost.org/").value();
+        //]
+        BOOST_TEST(u.is_path_absolute());
+        BOOST_TEST_EQ(u.encoded_segments().size(), 0u);
+    }
+
+    {
+        //[snippet_modifying_path_3
+        url u = parse_uri("https://www.boost.org/./a/../b").value();
+        u.normalize();
+        //]
+        BOOST_TEST(u.is_path_absolute());
+        BOOST_TEST_EQ(u.string(), "https://www.boost.org/b");
+        BOOST_TEST_EQ(u.encoded_segments().size(), 1u);
+    }
+
+    {
+        //[snippet_modifying_path_4
+        // scheme and a relative path
+        url_view u = parse_uri("https:path/to/file.txt").value();
+        //]
+        BOOST_TEST_EQ(u.scheme(), "https");
+        BOOST_TEST_NOT(u.has_authority());
+        BOOST_TEST_NOT(u.is_path_absolute());
+        BOOST_TEST_EQ(u.encoded_segments().size(), 3u);
+    }
+
+    {
+        //[snippet_modifying_path_5
+        // scheme and an absolute path
+        url_view u = parse_uri("https:/path/to/file.txt").value();
+        //]
+        BOOST_TEST_EQ(u.scheme(), "https");
+        BOOST_TEST_NOT(u.has_authority());
+        BOOST_TEST(u.is_path_absolute());
+        BOOST_TEST_EQ(u.encoded_segments().size(), 3u);
+    }
+
+    {
+        //[snippet_modifying_path_6
+        // "//path" will be considered the authority component
+        url_view u = parse_uri("https://path/to/file.txt").value();
+        //]
+        BOOST_TEST_EQ(u.scheme(), "https");
+        BOOST_TEST(u.has_authority());
+        BOOST_TEST(u.is_path_absolute());
+        BOOST_TEST_EQ(u.encoded_segments().size(), 2u);
+    }
+
+    {
+        //[snippet_modifying_path_7
+        // only a relative path
+        url_view u = parse_uri_reference("path-to/file.txt").value();
+        //]
+        BOOST_TEST_NOT(u.has_scheme());
+        BOOST_TEST_NOT(u.has_authority());
+        BOOST_TEST_NOT(u.is_path_absolute());
+        BOOST_TEST_EQ(u.encoded_segments().size(), 2u);
+    }
+
+    {
+        //[snippet_modifying_path_8
+        // "path:" will be considered the scheme component
+        // instead of a substring of the first segment
+        url_view u = parse_uri_reference("path:to/file.txt").value();
+        //]
+        BOOST_TEST(u.has_scheme());
+        BOOST_TEST_NOT(u.has_authority());
+        BOOST_TEST_NOT(u.is_path_absolute());
+        BOOST_TEST_EQ(u.encoded_segments().size(), 2u);
+    }
+
+    {
+        //[snippet_modifying_path_9
+        // "path" should not become the authority component
+        url u = parse_uri("https:path/to/file.txt").value();
+        u.set_encoded_path("//path/to/file.txt");
+        //]
+        BOOST_TEST_EQ(u.scheme(), "https");
+        BOOST_TEST_NOT(u.has_authority());
+        BOOST_TEST(u.is_path_absolute());
+        BOOST_TEST_EQ(u.encoded_segments().size(), 4u);
+    }
+
+    {
+        //[snippet_modifying_path_10
+        // "path:to" should not make the scheme become "path:"
+        url u = parse_uri_reference("path-to/file.txt").value();
+        u.set_encoded_path("path:to/file.txt");
+        //]
+        BOOST_TEST_NOT(u.has_scheme());
+        BOOST_TEST_NOT(u.has_authority());
+        BOOST_TEST_NOT(u.is_path_absolute());
+        BOOST_TEST_EQ(u.encoded_segments().size(), 2u);
+    }
+
+    {
+        //[snippet_modifying_path_11
+        // should not insert as "pathto/file.txt"
+        url u = parse_uri_reference("to/file.txt").value();
+        segments segs = u.segments();
+        segs.insert(segs.begin(), "path");
+        //]
+        BOOST_TEST_NOT(u.has_scheme());
+        BOOST_TEST_NOT(u.has_authority());
+        BOOST_TEST_NOT(u.is_path_absolute());
+        BOOST_TEST_EQ(u.encoded_segments().size(), 3u);
+    }
+}
+
 namespace boost {
 namespace urls {
 
@@ -1026,6 +1149,7 @@ public:
         grammar_parse();
         grammar_customization();
         grammar_charset();
+        modifying_path();
 
         BOOST_TEST_PASS();
     }
