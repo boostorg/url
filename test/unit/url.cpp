@@ -1848,6 +1848,8 @@ public:
                   "http://cppalliance.org/g");
             check("http://cppalliance.org/..",
                   "http://cppalliance.org/");
+            check("http://cppalliance.org?%61=b",
+                  "http://cppalliance.org?a=b");
         }
 
         // remove_dot_segments

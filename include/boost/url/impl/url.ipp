@@ -1278,11 +1278,15 @@ edit_segments(
         }
     }
 
-/*  Calculate prefix:
+/*  Calculate prefix size for new segment range:
         0 = ""
         1 = "/"
         2 = "./"
         3 = "/./"
+
+    This is malleable prefix that might need to
+    change according the URL scheme and authority.
+
 */
     int prefix;
     if(i0 > 0)
@@ -1345,16 +1349,49 @@ edit_segments(
             prefix = 0;
     }
 
-/*  Calculate suffix
+/*  Calculate suffix size for the new segments:
         0 = ""
         1 = "/"
+
+    This extra suffix should cover the case where
+    insertion at the first indexes leaves a
+    missing slash in a relative path:
+
+    "file.txt"
+    -> insert "etc" as first segment
+    -> becomes "etc" "/" "file.txt"
+
+    "file.txt"
+    -> insert "path/to" as first segments
+    -> becomes "path/to" "/" "file.txt"
+
+    "the/file.txt"
+    -> insert "path/to" as first segments
+    -> becomes "path/to" "/" "the/file.txt"
+
+    The extra slash is not necessary when
+    insertion is not at the first position:
+
+    "path/file.txt"
+    -> insert "to/the" as second segment
+    -> becomes "path" "/to/the" "/file.txt"
+
+    The extra slash is not necessary when
+    the following position already has a slash
+    (i.e. other existing valid segments):
+
+    "/path/to/the/file.txt"
+    -> replace "etc" as first segment
+    -> becomes "/etc" "/to/the/file.txt"
+
 */
     int suffix;
-    //if( nseg > 0 &&
-        //i1 + 1 < nseg_)
+    // inserting non-empty segments at the
+    // beginning of non-empty segments
     if( nseg > 0 &&
         i0 == 0 &&
-        i1 + 1 < nseg_)
+        i1 == 0 &&
+        nseg_ != 0)
     {
         suffix = 1;
     }

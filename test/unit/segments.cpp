@@ -134,9 +134,15 @@ public:
 
             // assign
             se.replace(se.begin(), "etc");
+
+            BOOST_TEST_EQ(u.string(),
+                "/etc/to/the/file.txt");
+
             // comparison
             BOOST_TEST_EQ(se.front(), "etc");
             BOOST_TEST_EQ(cs.front(), "etc");
+            BOOST_TEST_EQ(se[1], "to");
+            BOOST_TEST_EQ(cs[1], "to");
             BOOST_TEST_NE(se.front(), "path");
             BOOST_TEST_NE(cs.front(), "path");
         }
@@ -152,6 +158,9 @@ public:
 
             // assign
             se.replace(se.end() - 1, "index.htm");
+            BOOST_TEST_EQ(u.string(),
+                "/path/to/the/index.htm");
+
             // comparison
             BOOST_TEST_EQ(se.back(), "index.htm");
             BOOST_TEST_EQ(cs.back(), "index.htm");
