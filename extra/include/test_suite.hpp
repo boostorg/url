@@ -232,6 +232,13 @@ struct predicate_eq
     {
         return t == u;
     }
+
+    // MSVC Compiler Warning (level 1) C4805
+    bool
+    operator()(bool t, int u) const = delete;
+
+    bool
+    operator()(int t, bool u) const = delete;
 };
 
 inline
@@ -249,6 +256,13 @@ struct predicate_ne
     {
         return t != u;
     }
+
+    // MSVC Compiler Warning (level 1) C4805
+    bool
+    operator()(bool t, int u) const = delete;
+
+    bool
+    operator()(int t, bool u) const = delete;
 };
 
 inline
@@ -265,6 +279,13 @@ struct predicate_lt
     {
         return t < u;
     }
+
+    // MSVC Compiler Warning (level 1) C4805
+    bool
+    operator()(bool t, int u) const = delete;
+
+    bool
+    operator()(int t, bool u) const = delete;
 };
 
 inline
@@ -280,6 +301,13 @@ struct predicate_le
     {
         return t <= u;
     }
+
+    // MSVC Compiler Warning (level 1) C4805
+    bool
+    operator()(bool t, int u) const = delete;
+
+    bool
+    operator()(int t, bool u) const = delete;
 };
 
 inline
@@ -296,6 +324,13 @@ struct predicate_gt
     {
         return t > u;
     }
+
+    // MSVC Compiler Warning (level 1) C4805
+    bool
+    operator()(bool t, int u) const = delete;
+
+    bool
+    operator()(int t, bool u) const = delete;
 };
 
 inline
@@ -312,6 +347,13 @@ struct predicate_ge
     {
         return t >= u;
     }
+
+    // MSVC Compiler Warning (level 1) C4805
+    bool
+    operator()(bool t, int u) const = delete;
+
+    bool
+    operator()(int t, bool u) const = delete;
 };
 
 inline

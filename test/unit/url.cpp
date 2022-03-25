@@ -1932,9 +1932,9 @@ public:
                 BOOST_TEST_EQ(u1.compare(u2), cmp);
                 BOOST_TEST_EQ(u2.compare(u1), -cmp);
                 std::hash<url_view> h;
-                BOOST_TEST_NE((h(u1) == h(u2)), cmp);
+                BOOST_TEST_NE(int(h(u1) == h(u2)), cmp);
                 h = std::hash<url_view>(10);
-                BOOST_TEST_NE((h(u1) == h(u2)), cmp);
+                BOOST_TEST_NE(int(h(u1) == h(u2)), cmp);
             };
 
             check("a/g", "/../g", 1);
