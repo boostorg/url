@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -11,6 +12,7 @@
 #define BOOST_URL_IMPL_SEGMENTS_ENCODED_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/detail/segments_encoded_iterator_impl.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/any_path_iter.hpp>
@@ -21,16 +23,23 @@ namespace urls {
 
 class segments_encoded::iterator
 {
-    url* u_ = nullptr;
-    std::size_t i_ = 0;
-
     friend class segments_encoded;
 
+    detail::segments_encoded_iterator_impl impl_;
+
     iterator(
-        url& u,
-        std::size_t i) noexcept
-        : u_(&u)
-        , i_(i)
+        string_view s,
+        std::size_t nseg) noexcept
+        : impl_(s, nseg)
+    {
+    }
+
+    // end ctor
+    iterator(
+        string_view s,
+        std::size_t nseg,
+        int) noexcept
+        : impl_(s, nseg, 0)
     {
     }
 
@@ -40,14 +49,31 @@ public:
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
-        std::random_access_iterator_tag;
+        std::bidirectional_iterator_tag;
 
     iterator() = default;
+
+    iterator(iterator const&) noexcept = default;
+
+    iterator& operator=(iterator const&) noexcept = default;
+
+    reference
+    operator*() const noexcept
+    {
+        return impl_.s_;
+    }
 
     iterator&
     operator++() noexcept
     {
-        ++i_;
+        impl_.increment();
+        return *this;
+    }
+
+    iterator&
+    operator--() noexcept
+    {
+        impl_.decrement();
         return *this;
     }
 
@@ -59,13 +85,6 @@ public:
         return tmp;
     }
 
-    iterator&
-    operator--() noexcept
-    {
-        --i_;
-        return *this;
-    }
-
     iterator
     operator--(int) noexcept
     {
@@ -74,127 +93,18 @@ public:
         return tmp;
     }
 
-    BOOST_URL_DECL
-    string_view
-    operator*() const noexcept;
-
-    friend
     bool
     operator==(
-        iterator a,
-        iterator b) noexcept
+        iterator const& other) const noexcept
     {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return a.u_ == b.u_ &&
-            a.i_ == b.i_;
+        return impl_.equal(other.impl_);
     }
 
-    friend
     bool
     operator!=(
-        iterator a,
-        iterator b) noexcept
+        iterator const& other) const noexcept
     {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return a.u_ != b.u_ ||
-            a.i_ != b.i_;
-    }
-
-    // LegacyRandomAccessIterator
-
-    iterator&
-    operator+=(ptrdiff_t n) noexcept
-    {
-        i_ += n;
-        return *this;
-    }
-
-    friend
-    iterator
-    operator+(
-        iterator it,
-        ptrdiff_t n) noexcept
-    {
-        return { *it.u_, it.i_ + n };
-    }
-
-    friend
-    iterator
-    operator+(
-        ptrdiff_t n,
-        iterator it) noexcept
-    {
-        return { *it.u_, it.i_ + n };
-    }
-
-    iterator&
-    operator-=(ptrdiff_t n) noexcept
-    {
-        i_ -= n;
-        return *this;
-    }
-
-    friend
-    iterator
-    operator-(
-        iterator it,
-        ptrdiff_t n) noexcept
-    {
-        return { *it.u_, it.i_ - n };
-    }
-
-    friend
-    std::ptrdiff_t
-    operator-(
-        iterator a,
-        iterator b) noexcept
-    {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return static_cast<std::ptrdiff_t>(
-            a.i_) - b.i_;
-    }
-
-    string_view
-    operator[](ptrdiff_t n) const
-    {
-        return *(*this + n);
-    }
-
-    friend
-    bool
-    operator<(
-        iterator a,
-        iterator b)
-    {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return a.i_ < b.i_;
-    }
-
-    friend
-    bool
-    operator>(
-        iterator a,
-        iterator b)
-    {
-        return b < a;
-    }
-
-    friend
-    bool
-    operator>=(
-        iterator a,
-        iterator b)
-    {
-        return !(a < b);
-    }
-
-    friend
-    bool
-    operator<=(
-        iterator a,
-        iterator b)
-    {
-        return !(a > b);
+        return !impl_.equal(other.impl_);
     }
 };
 
@@ -266,21 +176,10 @@ assign(
 inline
 string_view
 segments_encoded::
-at(std::size_t i) const
-{
-    if(i >= size())
-        detail::throw_out_of_range(
-            BOOST_CURRENT_LOCATION);
-    return (*this)[i];
-}
-
-inline
-string_view
-segments_encoded::
 front() const noexcept
 {
-    BOOST_ASSERT(! empty());
-    return (*this)[0];
+    BOOST_ASSERT(!empty());
+    return *begin();
 }
 
 inline
@@ -289,31 +188,7 @@ segments_encoded::
 back() const noexcept
 {
     BOOST_ASSERT(! empty());
-    return (*this)[size() - 1];
-}
-
-//------------------------------------------------
-//
-// Iterators
-//
-//------------------------------------------------
-
-inline
-auto
-segments_encoded::
-begin() const noexcept ->
-    iterator
-{
-    return iterator(*u_, 0);
-}
-
-inline
-auto
-segments_encoded::
-end() const noexcept ->
-    iterator
-{
-    return iterator(*u_, size());
+    return *std::prev(end());
 }
 
 //------------------------------------------------
@@ -399,13 +274,13 @@ insert(
         iterator
 {
     u_->edit_segments(
-        before.i_,
-        before.i_,
+        before.impl_.i_,
+        before.impl_.i_,
         detail::make_enc_segs_iter(
             first, last),
         detail::make_enc_segs_iter(
             first, last));
-    return { *u_, before.i_ };
+    return std::next(begin(), before.impl_.i_);
 }
 
 //------------------------------------------------
@@ -419,7 +294,7 @@ replace(
         iterator
 {
     return replace(
-        pos, pos + 1,
+        pos, std::next(pos),
             &s, &s + 1);
 }
 
@@ -455,14 +330,18 @@ replace(
                 string_view>::value,
             iterator>::type
 {
-    BOOST_ASSERT(from.u_ == u_);
-    BOOST_ASSERT(to.u_ == u_);
+    BOOST_ASSERT(from.impl_.begin_ >= u_->string().data());
+    BOOST_ASSERT(from.impl_.end_ <= u_->string().data() +
+        u_->string().size());
+    BOOST_ASSERT(to.impl_.begin_ >= u_->string().data());
+    BOOST_ASSERT(to.impl_.end_ >= u_->string().data() +
+        u_->string().size());
     u_->edit_segments(
-        from.i_,
-        to.i_,
+        from.impl_.i_,
+        to.impl_.i_,
         detail::make_enc_segs_iter(first, last),
         detail::make_enc_segs_iter(first, last));
-    return from;
+    return std::next(begin(), from.impl_.i_);
 }
 
 //------------------------------------------------
@@ -474,7 +353,7 @@ erase(
     iterator pos) noexcept ->
         iterator
 {
-    return erase(pos, pos + 1);
+    return erase(pos, std::next(pos));
 }
 
 //------------------------------------------------
@@ -493,7 +372,7 @@ void
 segments_encoded::
 pop_back() noexcept
 {
-    erase(end() - 1);
+    erase(std::prev(end()));
 }
 
 } // urls

@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -85,6 +86,11 @@ public:
     */
     segments_view() noexcept;
 
+    /** Constructor
+
+        Copy constructor
+    */
+    segments_view(segments_view const& other) = default;
     /** Assignment
 
         After the assignment, both views will point to

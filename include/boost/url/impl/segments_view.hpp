@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -11,6 +12,7 @@
 #define BOOST_URL_IMPL_SEGMENTS_VIEW_HPP
 
 #include <boost/url/pct_encoding_types.hpp>
+#include <boost/url/detail/segments_iterator_impl.hpp>
 #include <cstddef>
 
 namespace boost {
@@ -19,29 +21,27 @@ namespace urls {
 class segments_view::
     iterator
 {
-    std::size_t i_ = 0;
-    char const* begin_ = nullptr;
-    char const* pos_ = nullptr;
-    char const* next_ = nullptr;
-    char const* end_ = nullptr;
-    const_string::factory a_;
-    pct_encoded_str t_;
+    detail::segments_iterator_impl impl_;
 
     friend segments_view;
 
-    BOOST_URL_DECL
     iterator(
         string_view s,
         std::size_t nseg,
-        const_string::factory const& a) noexcept;
+        const_string::factory const& a) noexcept
+        : impl_(s, nseg, a)
+    {
+    }
 
     // end ctor
-    BOOST_URL_DECL
     iterator(
         string_view s,
         std::size_t nseg,
         const_string::factory const& a,
-        int) noexcept;
+        int) noexcept
+        : impl_(s, nseg, a, 0)
+    {
+    }
 
 public:
     using value_type = const_string;
@@ -51,47 +51,32 @@ public:
     using iterator_category =
         std::bidirectional_iterator_tag;
 
-    BOOST_URL_DECL
-    iterator() noexcept;
+    iterator() noexcept = default;
 
-    BOOST_URL_DECL
-    iterator(
-        iterator const&) noexcept;
+    iterator(iterator const&) noexcept = default;
 
-    BOOST_URL_DECL
     iterator&
-    operator=(
-        iterator const&) noexcept;
+    operator=(iterator const&) noexcept = default;
 
-    BOOST_URL_DECL
     const_string
-    operator*() const noexcept;
-
-    bool
-    operator==(
-        iterator other) const noexcept
+    operator*() const noexcept
     {
-        return
-            next_ == other.next_ &&
-            end_ == other.end_;
+        return impl_.dereference();
     }
 
-    bool
-    operator!=(
-        iterator other) const noexcept
+    iterator&
+    operator++() noexcept
     {
-        return
-            next_ != other.next_ ||
-            end_ != other.end_;
+        impl_.increment();
+        return *this;
     }
 
-    BOOST_URL_DECL
     iterator&
-    operator++() noexcept;
-
-    BOOST_URL_DECL
-    iterator&
-    operator--() noexcept;
+    operator--() noexcept
+    {
+        impl_.decrement();
+        return *this;
+    }
 
     iterator
     operator++(int) noexcept
@@ -107,6 +92,20 @@ public:
         auto tmp = *this;
         --*this;
         return tmp;
+    }
+
+    bool
+    operator==(
+        iterator const& other) const noexcept
+    {
+        return impl_.equal(other.impl_);
+    }
+
+    bool
+    operator!=(
+        iterator const& other) const noexcept
+    {
+        return !impl_.equal(other.impl_);
     }
 };
 

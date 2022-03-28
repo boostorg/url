@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -78,24 +79,22 @@ public:
             auto se = u.segments(p_.allocator());
             auto const& cs = se;
 
-            BOOST_TEST_EQ(se.at(0), "path");
-            BOOST_TEST_EQ(se.at(1), "to");
-            BOOST_TEST_EQ(se.at(2), "the");
-            BOOST_TEST_EQ(se.at(3), "file.txt");
-            BOOST_TEST_THROWS(se.at(4), std::out_of_range);
+            BOOST_TEST_EQ(*se.begin(), "path");
+            BOOST_TEST_EQ(*std::next(se.begin()), "to");
+            BOOST_TEST_EQ(*std::next(se.begin(), 2), "the");
+            BOOST_TEST_EQ(*std::next(se.begin(), 3), "file.txt");
 
-            BOOST_TEST_EQ(cs.at(0), "path");
-            BOOST_TEST_EQ(cs.at(1), "to");
-            BOOST_TEST_EQ(cs.at(2), "the");
-            BOOST_TEST_EQ(cs.at(3), "file.txt");
-            BOOST_TEST_THROWS(cs.at(4), std::out_of_range);
+            BOOST_TEST_EQ(*std::next(cs.begin(), 0), "path");
+            BOOST_TEST_EQ(*std::next(cs.begin()), "to");
+            BOOST_TEST_EQ(*std::next(cs.begin(), 2), "the");
+            BOOST_TEST_EQ(*std::next(cs.begin(), 3), "file.txt");
 
-            se.replace(se.begin() + 1, "from");
+            se.replace(std::next(se.begin()), "from");
             // comparison
-            BOOST_TEST_EQ(se.at(1), "from");
-            BOOST_TEST_EQ(cs.at(1), "from");
-            BOOST_TEST_NE(se.at(1), "path");
-            BOOST_TEST_NE(cs.at(1), "path");
+            BOOST_TEST_EQ(*std::next(se.begin()), "from");
+            BOOST_TEST_EQ(*std::next(cs.begin()), "from");
+            BOOST_TEST_NE(*std::next(se.begin()), "path");
+            BOOST_TEST_NE(*std::next(cs.begin()), "path");
         }
 
         // operator[]
@@ -104,23 +103,23 @@ public:
             auto se = u.segments(p_.allocator());
             auto const& cs = se;
 
-            BOOST_TEST_EQ(se[0], "path");
-            BOOST_TEST_EQ(se[1], "to");
-            BOOST_TEST_EQ(se[2], "the");
-            BOOST_TEST_EQ(se[3], "file.txt");
+            BOOST_TEST_EQ(*se.begin(), "path");
+            BOOST_TEST_EQ(*std::next(se.begin()), "to");
+            BOOST_TEST_EQ(*std::next(se.begin(), 2), "the");
+            BOOST_TEST_EQ(*std::next(se.begin(), 3), "file.txt");
 
-            BOOST_TEST_EQ(cs[0], "path");
-            BOOST_TEST_EQ(cs[1], "to");
-            BOOST_TEST_EQ(cs[2], "the");
-            BOOST_TEST_EQ(cs[3], "file.txt");
+            BOOST_TEST_EQ(*std::next(cs.begin(), 0), "path");
+            BOOST_TEST_EQ(*std::next(cs.begin()), "to");
+            BOOST_TEST_EQ(*std::next(cs.begin(), 2), "the");
+            BOOST_TEST_EQ(*std::next(cs.begin(), 3), "file.txt");
 
             // assign
-            se.replace(se.begin() + 1, "from");
+            se.replace(std::next(se.begin()), "from");
             // comparison
-            BOOST_TEST_EQ(se[1], "from");
-            BOOST_TEST_EQ(cs[1], "from");
-            BOOST_TEST_NE(se[1], "path");
-            BOOST_TEST_NE(cs[1], "path");
+            BOOST_TEST_EQ(*std::next(se.begin()), "from");
+            BOOST_TEST_EQ(*std::next(cs.begin()), "from");
+            BOOST_TEST_NE(*std::next(se.begin()), "path");
+            BOOST_TEST_NE(*std::next(cs.begin()), "path");
         }
 
         // front
@@ -141,8 +140,8 @@ public:
             // comparison
             BOOST_TEST_EQ(se.front(), "etc");
             BOOST_TEST_EQ(cs.front(), "etc");
-            BOOST_TEST_EQ(se[1], "to");
-            BOOST_TEST_EQ(cs[1], "to");
+            BOOST_TEST_EQ(*std::next(se.begin()), "to");
+            BOOST_TEST_EQ(*std::next(cs.begin()), "to");
             BOOST_TEST_NE(se.front(), "path");
             BOOST_TEST_NE(cs.front(), "path");
         }
@@ -157,7 +156,7 @@ public:
             BOOST_TEST_EQ(cs.back(), "file.txt");
 
             // assign
-            se.replace(se.end() - 1, "index.htm");
+            se.replace(std::prev(se.end()), "index.htm");
             BOOST_TEST_EQ(u.string(),
                 "/path/to/the/index.htm");
 
@@ -219,32 +218,23 @@ public:
             BOOST_TEST_EQ(it, se.begin());
             BOOST_TEST_NE(it, se.end());
 
-            BOOST_TEST_EQ(*(it += 1), "to");
-            BOOST_TEST_EQ(*(it + 1), "the");
-            BOOST_TEST_EQ(*(1 + it), "the");
-            BOOST_TEST_EQ(*(it -= 1), "path");
-            it += 2;
-            BOOST_TEST_EQ(*(it - 1), "to");
+            std::advance(it, 1);
+            BOOST_TEST_EQ(*it, "to");
+            BOOST_TEST_EQ(*std::next(it), "the");
+            BOOST_TEST_EQ(*std::next(it), "the");
             --it;
-            BOOST_TEST_EQ(it - se.begin(), 1);
-            BOOST_TEST_EQ(se.end() - it, 3);
+            BOOST_TEST_EQ(*it, "path");
+            std::advance(it, 2);
+            BOOST_TEST_EQ(*std::prev(it), "to");
+            --it;
+            BOOST_TEST_EQ(std::distance(se.begin(), it), 1);
+            BOOST_TEST_EQ(std::distance(it, se.end()), 3);
 
-            BOOST_TEST_EQ(it[0], "to");
-            BOOST_TEST(it[1] == "the")
-;
-            BOOST_TEST_LT(it, se.end());
-            BOOST_TEST_LT(it, cs.end());
-            BOOST_TEST_LE(it, se.end());
-            BOOST_TEST_LE(it, cs.end());
-            BOOST_TEST_GT(it, se.begin());
-            BOOST_TEST_GT(it, cs.begin());
-            BOOST_TEST_GE(it, se.begin());
-            BOOST_TEST_GE(it, cs.begin());
+            BOOST_TEST_EQ(*it, "to");
+            BOOST_TEST_EQ(*std::next(it), "the");
             BOOST_TEST_NE(it, se.begin());
             BOOST_TEST_NE(it, cs.begin());
-
         }
-
     }
 
     void
@@ -299,7 +289,7 @@ public:
 
             BOOST_TEST_EQ(se.size(), 2u);
             auto it =
-                se.insert(se.begin() + 1, "to");
+                se.insert(std::next(se.begin()), "to");
             BOOST_TEST_EQ(se.size(), 3u);
             BOOST_TEST_EQ(u.encoded_path(), "/path/to/file.txt");
             BOOST_TEST_EQ(u.string(), "x://y/path/to/file.txt?q#f");
@@ -310,7 +300,6 @@ public:
             BOOST_TEST_EQ(u.encoded_path(), "/path/to/file.txt/");
             BOOST_TEST_EQ(u.string(), "x://y/path/to/file.txt/?q#f");
             BOOST_TEST_EQ(*it, "");
-            BOOST_TEST_EQ(it[-1], "file.txt");
 
             it = se.insert(se.begin(), "etc");
             BOOST_TEST_EQ(se.size(), 5u);
@@ -327,7 +316,7 @@ public:
 
             BOOST_TEST_EQ(se.size(), 2u);
             auto it =
-                se.insert(se.begin() + 1, "to");
+                se.insert(std::next(se.begin()), "to");
             BOOST_TEST_EQ(se.size(), 3u);
             BOOST_TEST_EQ(u.encoded_path(), "path/to/file.txt");
             BOOST_TEST_EQ(u.string(), "x:path/to/file.txt?q#f");
@@ -338,7 +327,6 @@ public:
             BOOST_TEST_EQ(u.encoded_path(), "path/to/file.txt/");
             BOOST_TEST_EQ(u.string(), "x:path/to/file.txt/?q#f");
             BOOST_TEST_EQ(*it, "");
-            BOOST_TEST_EQ(it[-1], "file.txt");
 
             it = se.insert(se.begin(), "etc");
             BOOST_TEST_EQ(se.size(), 5u);
@@ -355,17 +343,17 @@ public:
 
             std::initializer_list<string_view> init = {"to", "the" };
             auto it = se.insert(
-                se.begin() + 1, init.begin(), init.end());
+                std::next(se.begin()), init.begin(), init.end());
             BOOST_TEST_EQ(cs.size(), 4u);
             BOOST_TEST_EQ(*it, "to");
             BOOST_TEST_EQ(u.encoded_path(), "/path/to/the/file.txt");
             BOOST_TEST_EQ(u.string(), "x://y/path/to/the/file.txt?q#f");
 
             // empty range
-            it = se.insert(se.begin() + 1,
+            it = se.insert(std::next(se.begin()),
                 init.begin(), init.begin());
             BOOST_TEST_EQ(u.encoded_path(), "/path/to/the/file.txt");
-            BOOST_TEST_EQ(it, se.begin() + 1);
+            BOOST_TEST_EQ(it, std::next(se.begin()));
         }
         {
             // rootless
@@ -382,10 +370,10 @@ public:
             BOOST_TEST_EQ(u.string(), "x:path/to/the/file.txt?q#f");
 
             // empty range
-            it = se.insert(se.begin() + 1,
+            it = se.insert(std::next(se.begin()),
                 init.begin(), init.begin());
             BOOST_TEST_EQ(u.encoded_path(), "path/to/the/file.txt");
-            BOOST_TEST_EQ(it, se.begin() + 1);
+            BOOST_TEST_EQ(it, std::next(se.begin()));
         }
 
         // insert( const_iterator, initializer_list )
@@ -397,7 +385,7 @@ public:
             std::initializer_list<
                 string_view> init = {
                     "to", "the" };
-            auto it = se.insert(se.begin() + 1, init);
+            auto it = se.insert(std::next(se.begin()), init);
             BOOST_TEST_EQ(cs.size(), 4u);
             BOOST_TEST_EQ(*it, "to");
             BOOST_TEST_EQ(u.encoded_path(), "/path/to/the/file.txt");
@@ -409,7 +397,7 @@ public:
             url u = parse_uri("x://y/path/to/the/file.txt?q#f").value();
             auto se = u.segments(p_.allocator());
 
-            se.erase(se.begin() + 1);
+            se.erase(std::next(se.begin()));
             BOOST_TEST_EQ(se.size(), 3u);
             BOOST_TEST_EQ(u.encoded_path(), "/path/the/file.txt");
             BOOST_TEST_EQ(u.string(), "x://y/path/the/file.txt?q#f");
@@ -419,7 +407,7 @@ public:
             BOOST_TEST_EQ(u.encoded_path(), "/the/file.txt");
             BOOST_TEST_EQ(u.string(), "x://y/the/file.txt?q#f");
 
-            se.erase(se.end() - 1);
+            se.erase(std::prev(se.end()));
             BOOST_TEST_EQ(se.size(), 1u);
             BOOST_TEST_EQ(u.encoded_path(), "/the");
             BOOST_TEST_EQ(u.string(), "x://y/the?q#f");
@@ -436,7 +424,7 @@ public:
                 "x://y/home/etc/path/to/the/file.txt?q#f").value();
             auto se = u.segments(p_.allocator());
 
-            se.erase(se.begin(), se.begin() + 2);
+            se.erase(se.begin(), std::next(se.begin(), 2));
             BOOST_TEST_EQ(u.encoded_path(), "/path/to/the/file.txt");
             BOOST_TEST_EQ(u.string(), "x://y/path/to/the/file.txt?q#f");
 
@@ -452,10 +440,10 @@ public:
                 "/a/b/c/d/e/f/g").value();
             segments ss = u.segments();
             auto it = ss.replace(
-                ss.begin() + 1,
-                ss.begin() + 3,
+                std::next(ss.begin()),
+                std::next(ss.begin(), 3),
                 { "x", "y", "z" });
-            BOOST_TEST_EQ(it, ss.begin() + 1);
+            BOOST_TEST_EQ(it, std::next(ss.begin()));
             BOOST_TEST(u.encoded_path() ==
                 "/a/x/y/z/d/e/f/g");
         }
@@ -465,12 +453,12 @@ public:
                 "/a/b/c/d/e/f/g").value();
             segments ss = u.segments();
             auto it = ss.replace(
-                ss.begin() + 1,
-                ss.begin() + 3, {
+                std::next(ss.begin()),
+                std::next(ss.begin(), 3), {
                     string_view("x"),
                     string_view("y"),
                     string_view("z") });
-            BOOST_TEST_EQ(it, ss.begin() + 1);
+            BOOST_TEST_EQ(it, std::next(ss.begin()));
             BOOST_TEST(u.encoded_path() ==
                 "/a/x/y/z/d/e/f/g");
         }

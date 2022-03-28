@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -125,6 +126,12 @@ public:
     bool
     is_absolute() const noexcept;
 
+    /** Constructor
+
+        Copy constructor
+    */
+    segments(segments const&) = default;
+
     /** Assignment
 
         After the assignment, both views will point to
@@ -221,49 +228,6 @@ public:
     // Element Access
     //
     //--------------------------------------------
-
-    /** Return an element with bounds checking
-
-        This function returns a proxy reference
-        to the i-th element. If i is greater than
-        @ref size, an exception is thrown.
-
-        @par Exception Safety
-        Strong guarantee.
-        Exception thrown on invalid parameter.
-
-        @throws std::out_of_range `i >= size()`
-
-        @return A proxy reference to the element.
-
-        @param i The zero-based index of the
-        element.
-    */
-    const_string
-    at(std::size_t i) const;
-
-    /** Return an element
-
-        This function returns a proxy reference
-        to the i-th element.
-
-        @par Preconditions
-        @code
-        i < size()
-        @endcode
-
-        @par Exception Safety
-        Strong guarantee.
-
-        @return A proxy reference to the element.
-
-        @param i The zero-based index of the
-        element.
-    */
-    BOOST_URL_DECL
-    const_string
-    operator[](
-        std::size_t i) const;
 
     /** Return the first element
     */

@@ -1862,10 +1862,10 @@ resolve(
         {
             if(*it == ".")
             {
-                if(it != segs.end() - 1)
+                if(it != std::prev(segs.end()))
                     it = segs.erase(it);
                 else
-                    segs.replace(it, "");
+                    it = segs.replace(it, "");
             }
             else if(it == segs.begin())
             {
@@ -1887,12 +1887,12 @@ resolve(
             {
                 if(n > 0)
                 {
-                    it = segs.erase(it - 1);
+                    it = segs.erase(std::prev(it));
                     if( it == segs.begin() ||
-                        it != segs.end() - 1)
+                        it != std::prev(segs.end()))
                         it = segs.erase(it);
                     else
-                        segs.replace(it, "");
+                        it = segs.replace(it, "");
                     --n;
                 }
                 else

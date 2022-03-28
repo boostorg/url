@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -146,6 +147,12 @@ public:
         std::allocator<char>>
     params_view
     decoded(Allocator const& alloc = {}) const;
+
+    /** Constructor
+
+        Copy constructor
+    */
+    params_encoded_view(params_encoded_view const&) = default;
 
     /** Assignment
 

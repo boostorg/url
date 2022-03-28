@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -77,15 +78,9 @@ class segments_encoded
 
 public:
 #ifdef BOOST_URL_DOCS
-    /** A random-access iterator referencing segments in a url path
-
-        When dereferenced, this iterator returns a
-        proxy which allows conversion to stringlike
-        types, assignments which change the underlying
-        container, and comparisons.
+    /** A read-only bidirectional iterator to an encoded path segment.
     */
     using iterator = __see_below__;
-
 #else
     class iterator;
 #endif
@@ -129,6 +124,12 @@ public:
     template<class Allocator = std::allocator<char> >
     segments
     decoded(Allocator const& alloc = {}) const;
+
+    /** Constructor
+
+        Copy constructor
+    */
+    segments_encoded(segments_encoded const&) = default;
 
     /** Assignment
 
@@ -234,49 +235,6 @@ public:
     //
     //--------------------------------------------
 
-    /** Return an element with bounds checking
-
-        This function returns a proxy reference
-        to the i-th element. If i is greater than
-        @ref size, an exception is thrown.
-
-        @par Exception Safety
-        Strong guarantee.
-        Exception thrown on invalid parameter.
-
-        @throws std::out_of_range `i >= size()`
-
-        @return A proxy reference to the element.
-
-        @param i The zero-based index of the
-        element.
-    */
-    string_view
-    at(std::size_t i) const;
-
-    /** Return an element
-
-        This function returns a proxy reference
-        to the i-th element.
-
-        @par Preconditions
-        @code
-        i < size()
-        @endcode
-
-        @par Exception Safety
-        Strong guarantee.
-
-        @return A proxy reference to the element.
-
-        @param i The zero-based index of the
-        element.
-    */
-    BOOST_URL_DECL
-    string_view
-    operator[](
-        std::size_t i) const noexcept;
-
     /** Return the first element
     */
     string_view
@@ -295,11 +253,13 @@ public:
 
     /** Return an iterator to the beginning
     */
+    BOOST_URL_DECL
     iterator
     begin() const noexcept;
 
     /** Return an iterator to the end
     */
+    BOOST_URL_DECL
     iterator
     end() const noexcept;
 

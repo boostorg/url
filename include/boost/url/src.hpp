@@ -35,6 +35,8 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/path.ipp>
 #include <boost/url/detail/impl/pct_encoding.ipp>
 #include <boost/url/detail/impl/remove_dot_segments.ipp>
+#include <boost/url/detail/impl/segments_encoded_iterator_impl.ipp>
+#include <boost/url/detail/impl/segments_iterator_impl.ipp>
 
 #include <boost/url/impl/authority_view.ipp>
 #include <boost/url/impl/const_string.ipp>
