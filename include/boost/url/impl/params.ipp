@@ -19,78 +19,6 @@
 namespace boost {
 namespace urls {
 
-auto
-params::
-operator[](
-    std::size_t pos) const ->
-        reference
-{
-    BOOST_ASSERT(
-        pos < u_->nparam_);
-    auto const r =
-        u_->param(pos);
-    return reference(
-        u_->s_ + r.pos + 1,
-            r.nk - 1, r.nv, a_);
-}
-
-//------------------------------------------------
-
-auto
-params::
-iterator::
-operator*() const ->
-    reference
-{
-    BOOST_ASSERT(i_ <
-        u_->nparam_);
-    auto const r =
-        u_->param(i_);
-    return reference(
-        u_->s_ + r.pos + 1,
-        r.nk - 1,
-        r.nv,
-        a_);
-}
-
-//------------------------------------------------
-//
-// Element Access
-//
-//------------------------------------------------
-
-auto
-params::
-at(string_view key) const ->
-    const_string
-{
-    url::raw_param r;
-    auto it = find(key);
-    for(;;)
-    {
-        if(it == end())
-            detail::throw_out_of_range(
-                BOOST_CURRENT_LOCATION);
-        r = u_->param(it.i_);
-        if(r.nv != 0)
-            break;
-        ++it;
-        it = find(it, key);
-    }
-    string_view ev{
-        u_->s_ + r.pos +
-            r.nk + 1,
-        r.nv - 1 };
-    auto n =
-        pct_decode_bytes_unchecked(ev);
-    return a_(n, [ev]
-        (std::size_t n, char* dest)
-        {
-            pct_decode_unchecked(
-                dest, dest + n, ev);
-        });
-}
-
 //------------------------------------------------
 //
 // Modifiers
@@ -103,8 +31,12 @@ remove_value(
     iterator pos) ->
         iterator
 {
-    BOOST_ASSERT(pos.u_ == u_);
-    auto r = u_->param(pos.i_);
+    BOOST_ASSERT(pos.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(pos.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
+    auto r = u_->param(pos.impl_.i_);
     query_param_view v{
         string_view{
             u_->s_ + r.pos + 1,
@@ -112,13 +44,13 @@ remove_value(
         string_view{},
         false};
     u_->edit_params(
-        pos.i_,
-        pos.i_ + 1,
+        pos.impl_.i_,
+        pos.impl_.i_ + 1,
         detail::make_enc_params_iter(
             &v, &v + 1),
         detail::make_enc_params_iter(
             &v, &v + 1));
-    return pos;
+    return std::next(begin(), pos.impl_.i_);
 }
 
 auto
@@ -129,23 +61,27 @@ replace_value(
         iterator
 {
     auto const r =
-        u_->param(pos.i_);
+        u_->param(pos.impl_.i_);
     string_view key{
         u_->s_ + r.pos + 1,
         r.nk - 1};
     query_param_view v{
         key, value, true };
-    BOOST_ASSERT(pos.u_ == u_);
+    BOOST_ASSERT(pos.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(pos.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
     using detail::
         make_plain_value_iter;
     u_->edit_params(
-        pos.i_,
-        pos.i_ + 1,
+        pos.impl_.i_,
+        pos.impl_.i_ + 1,
         make_plain_value_iter(
             &v, &v + 1),
         make_plain_value_iter(
             &v, &v + 1));
-    return pos;
+    return std::next(begin(), pos.impl_.i_);
 }
 
 auto
@@ -155,15 +91,23 @@ erase(
     iterator last) ->
         iterator
 {
-    BOOST_ASSERT(first.u_ == u_);
-    BOOST_ASSERT(last.u_ == u_);
+    BOOST_ASSERT(first.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(first.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
+    BOOST_ASSERT(last.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(last.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
     string_view s;
     u_->edit_params(
-        first.i_,
-        last.i_,
+        first.impl_.i_,
+        last.impl_.i_,
         detail::enc_query_iter(s),
         detail::enc_query_iter(s));
-    return first;
+    return std::next(begin(), first.impl_.i_);
 }
 
 std::size_t
@@ -210,12 +154,16 @@ find(
     string_view key) const noexcept ->
         iterator
 {
-    BOOST_ASSERT(from.u_ == u_);
+    BOOST_ASSERT(from.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(from.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
     auto const end_ = end();
     while(from != end_)
     {
         auto r = u_->param(
-            from.i_);
+            from.impl_.i_);
         if( detail::key_equal_encoded(
             key, string_view(u_->s_ +
             r.pos + 1, r.nk - 1)))

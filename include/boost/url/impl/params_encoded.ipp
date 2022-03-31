@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -44,33 +45,6 @@ operator[](
 }
 
 //------------------------------------------------
-
-auto
-params_encoded::
-iterator::
-operator*() const ->
-    reference
-{
-    BOOST_ASSERT(i_ < u_->nparam_);
-    auto const r = u_->param(i_);
-    if(r.nv > 0)
-        return {
-            string_view(
-                u_->s_ + r.pos + 1,
-                r.nk - 1),
-            string_view(
-                u_->s_ + r.pos + r.nk + 1,
-                r.nv - 1),
-            true};
-    return {
-        string_view(
-            u_->s_ + r.pos + 1,
-            r.nk - 1),
-        string_view{},
-        false};
-}
-
-//------------------------------------------------
 //
 // Element Access
 //
@@ -88,7 +62,7 @@ at(string_view key) const ->
         if(it == end())
             detail::throw_out_of_range(
                 BOOST_CURRENT_LOCATION);
-        r = u_->param(it.i_);
+        r = u_->param(it.impl_.i_);
         if(r.nv != 0)
             break;
         ++it;
@@ -112,10 +86,14 @@ remove_value(
     iterator pos) ->
         iterator
 {
-    BOOST_ASSERT(pos.u_ == u_);
+    BOOST_ASSERT(pos.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(pos.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
     using detail::
         make_enc_params_iter;
-    auto r = u_->param(pos.i_);
+    auto r = u_->param(pos.impl_.i_);
     reference v{
         string_view{
             u_->s_ + r.pos + 1,
@@ -123,13 +101,13 @@ remove_value(
         string_view{},
         false};
     u_->edit_params(
-        pos.i_,
-        pos.i_ + 1,
+        pos.impl_.i_,
+        pos.impl_.i_ + 1,
         make_enc_params_iter(
             &v, &v + 1),
         make_enc_params_iter(
             &v, &v + 1));
-    return pos;
+    return std::next(begin(), pos.impl_.i_);
 }
 
 auto
@@ -152,15 +130,23 @@ erase(
     iterator last) ->
         iterator
 {
-    BOOST_ASSERT(first.u_ == u_);
-    BOOST_ASSERT(last.u_ == u_);
+    BOOST_ASSERT(first.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(first.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
+    BOOST_ASSERT(last.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(last.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
     string_view s;
     u_->edit_params(
-        first.i_,
-        last.i_,
+        first.impl_.i_,
+        last.impl_.i_,
         detail::enc_query_iter(s),
         detail::enc_query_iter(s));
-    return first;
+    return std::next(begin(), first.impl_.i_);
 }
 
 std::size_t
@@ -207,19 +193,24 @@ find(
     string_view key) const noexcept ->
         iterator
 {
-    BOOST_ASSERT(from.u_ == u_);
+    BOOST_ASSERT(from.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(from.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
+
     auto const end_ = end();
     while(from != end_)
     {
         auto r = u_->param(
-            from.i_);
+            from.impl_.i_);
         if( detail::key_equal_encoded(
             key, string_view(u_->s_ +
             r.pos + 1, r.nk - 1)))
             break;
         ++from;
     }
-    return from;
+    return std::next(begin(), from.impl_.i_);
 }
 
 //------------------------------------------------

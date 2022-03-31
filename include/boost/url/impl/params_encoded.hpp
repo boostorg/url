@@ -12,6 +12,7 @@
 #define BOOST_URL_IMPL_PARAMS_ENCODED_HPP
 
 #include <boost/url/detail/except.hpp>
+#include <boost/url/detail/params_encoded_iterator_impl.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
@@ -21,17 +22,30 @@ namespace urls {
 
 class params_encoded::iterator
 {
-    url const* u_ = nullptr;
-    std::size_t i_ = 0;
+
+    detail::params_encoded_iterator_impl impl_;
 
     friend class params_encoded;
 
     iterator(
-        url const& u,
-        std::size_t i) noexcept
-        : u_(&u)
-        , i_(i)
+        string_view s) noexcept
+        : impl_(s)
     {
+    }
+
+    // end
+    iterator(
+        string_view s,
+        std::size_t nparam,
+        int) noexcept
+        : impl_(s, nparam, 0)
+    {
+    }
+
+    string_view
+    encoded_key() const noexcept
+    {
+        return impl_.encoded_key();
     }
 
 public:
@@ -40,14 +54,14 @@ public:
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
-        std::random_access_iterator_tag;
+        std::forward_iterator_tag;
 
     iterator() = default;
 
     iterator&
     operator++() noexcept
     {
-        ++i_;
+        impl_.increment();
         return *this;
     }
 
@@ -59,157 +73,28 @@ public:
         return tmp;
     }
 
-    iterator&
-    operator--() noexcept
-    {
-        --i_;
-        return *this;
-    }
-
-    iterator
-    operator--(int) noexcept
-    {
-        auto tmp = *this;
-        --*this;
-        return tmp;
-    }
-
-    BOOST_URL_DECL
     reference
-    operator*() const;
+    operator*() const
+    {
+        return impl_.dereference();
+    }
 
     friend
     bool
     operator==(
-        iterator a,
-        iterator b) noexcept
+        iterator const& a,
+        iterator const& b) noexcept
     {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return a.u_ == b.u_ &&
-            a.i_ == b.i_;
+        return a.impl_.equal(b.impl_);
     }
 
     friend
     bool
     operator!=(
-        iterator a,
-        iterator b) noexcept
+        iterator const& a,
+        iterator const& b) noexcept
     {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return a.u_ != b.u_ ||
-            a.i_ != b.i_;
-    }
-
-    // LegacyRandomAccessIterator
-
-    iterator&
-    operator+=(
-        ptrdiff_t n) noexcept
-    {
-        i_ += n;
-        return *this;
-    }
-
-    friend
-    iterator
-    operator+(
-        iterator it,
-        ptrdiff_t n) noexcept
-    {
-        return {
-            *it.u_,
-            it.i_ + n };
-    }
-
-    friend
-    iterator
-    operator+(
-        ptrdiff_t n,
-        iterator it) noexcept
-    {
-        return {
-            *it.u_,
-            it.i_ + n };
-    }
-
-    iterator&
-    operator-=(
-        ptrdiff_t n) noexcept
-    {
-        i_ -= n;
-        return *this;
-    }
-
-    friend
-    iterator
-    operator-(
-        iterator it,
-        ptrdiff_t n) noexcept
-    {
-        return {
-            *it.u_, it.i_ - n, };
-    }
-
-    friend
-    std::ptrdiff_t
-    operator-(
-        iterator a,
-        iterator b) noexcept
-    {
-        BOOST_ASSERT(a.u_ == b.u_);
-        return static_cast<
-            std::ptrdiff_t>(
-                a.i_) - b.i_;
-    }
-
-    reference
-    operator[](ptrdiff_t n) const
-    {
-        return *(*this + n);
-    }
-
-    friend
-    bool
-    operator<(
-        iterator a,
-        iterator b)
-    {
-        BOOST_ASSERT(
-            a.u_ == b.u_);
-        return a.i_ < b.i_;
-    }
-
-    friend
-    bool
-    operator>(
-        iterator a,
-        iterator b)
-    {
-        BOOST_ASSERT(
-            a.u_ == b.u_);
-        return b < a;
-    }
-
-    friend
-    bool
-    operator>=(
-        iterator a,
-        iterator b)
-    {
-        BOOST_ASSERT(
-            a.u_ == b.u_);
-        return !(a < b);
-    }
-
-    friend
-    bool
-    operator<=(
-        iterator a,
-        iterator b)
-    {
-        BOOST_ASSERT(
-            a.u_ == b.u_);
-        return !(a > b);
+        return !a.impl_.equal(b.impl_);
     }
 };
 
@@ -299,26 +184,6 @@ at(std::size_t pos) const ->
     return (*this)[pos];
 }
 
-inline
-auto
-params_encoded::
-front() const ->
-    reference
-{
-    BOOST_ASSERT(! empty());
-    return (*this)[0];
-}
-
-inline
-auto
-params_encoded::
-back() const ->
-    reference
-{
-    BOOST_ASSERT(! empty());
-    return (*this)[size() - 1];
-}
-
 //--------------------------------------------
 //
 // Iterators
@@ -331,7 +196,9 @@ params_encoded::
 begin() const noexcept ->
     iterator
 {
-    return { *u_, 0 };
+    if(u_->nparam_ > 0)
+        return { u_->encoded_query() };
+    return end();
 }
 
 inline
@@ -340,7 +207,7 @@ params_encoded::
 end() const noexcept ->
     iterator
 {
-    return { *u_, size() };
+    return { u_->encoded_query(), u_->nparam_, 0 };
 }
 
 //------------------------------------------------
@@ -432,15 +299,19 @@ insert(
 {
     using detail::
         make_enc_params_iter;
-    BOOST_ASSERT(before.u_ == u_);
+    BOOST_ASSERT(before.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(before.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
     u_->edit_params(
-        before.i_,
-        before.i_,
+        before.impl_.i_,
+        before.impl_.i_,
         make_enc_params_iter(
             first, last),
         make_enc_params_iter(
             first, last));
-    return before;
+    return std::next(begin(), before.impl_.i_);
 }
 
 //------------------------------------------------
@@ -455,7 +326,7 @@ replace(
 {
     return replace(
         pos,
-        pos + 1,
+        std::next(pos),
         &value,
         &value + 1);
 }
@@ -472,16 +343,24 @@ replace(
 {
     using detail::
         make_enc_params_iter;
-    BOOST_ASSERT(from.u_ == u_);
-    BOOST_ASSERT(to.u_ == u_);
+    BOOST_ASSERT(from.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(from.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
+    BOOST_ASSERT(to.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(to.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
     u_->edit_params(
-        from.i_,
-        to.i_,
+        from.impl_.i_,
+        to.impl_.i_,
         make_enc_params_iter(
             first, last),
         make_enc_params_iter(
             first, last));
-    return from;
+    return std::next(begin(), from.impl_.i_);
 }
 
 inline
@@ -516,15 +395,19 @@ emplace_at(
         make_enc_params_iter;
     reference v{
         key, value, true };
-    BOOST_ASSERT(pos.u_ == u_);
+    BOOST_ASSERT(pos.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(pos.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
     u_->edit_params(
-        pos.i_,
-        pos.i_ + 1,
+        pos.impl_.i_,
+        pos.impl_.i_ + 1,
         make_enc_params_iter(
             &v, &v + 1),
         make_enc_params_iter(
             &v, &v + 1));
-    return pos;
+    return std::next(begin(), pos.impl_.i_);
 }
 
 inline
@@ -560,19 +443,23 @@ emplace_at(
     string_view key) ->
         iterator
 {
-    BOOST_ASSERT(pos.u_ == u_);
+    BOOST_ASSERT(pos.impl_.begin_ ==
+        u_->encoded_query().data());
+    BOOST_ASSERT(pos.impl_.end_ ==
+        u_->encoded_query().data() +
+        u_->encoded_query().size());
     using detail::
         make_enc_params_iter;
     query_param_view v{key,
         string_view{}, false};
     u_->edit_params(
-        pos.i_,
-        pos.i_ + 1,
+        pos.impl_.i_,
+        pos.impl_.i_ + 1,
         make_enc_params_iter(
             &v, &v + 1),
         make_enc_params_iter(
             &v, &v + 1));
-    return pos;
+    return std::next(begin(), pos.impl_.i_);
 }
 
 inline
@@ -616,7 +503,7 @@ params_encoded::
 erase(iterator pos) ->
     iterator
 {
-    return erase(pos, pos + 1);
+    return erase(pos, std::next(pos));
 }
 
 //------------------------------------------------
@@ -635,7 +522,7 @@ void
 params_encoded::
 pop_back() noexcept
 {
-    erase(end() - 1);
+    erase(std::next(begin(), u_->nparam_ - 1));
 }
 
 //------------------------------------------------

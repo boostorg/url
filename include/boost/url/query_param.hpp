@@ -20,6 +20,10 @@ namespace urls {
 
 #ifndef BOOST_URL_DOCS
 struct query_param;
+namespace detail
+{
+    struct params_iterator_impl;
+}
 #endif
 
 /** A query parameter view.
@@ -157,6 +161,7 @@ struct query_param
 private:
     friend class params_view;
     friend class params;
+    friend struct detail::params_iterator_impl;
 
     BOOST_URL_DECL
     query_param(

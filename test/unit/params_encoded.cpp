@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -78,14 +79,6 @@ public:
             BOOST_TEST_EQ(p.at(3).has_value, false);
             BOOST_TEST_THROWS(
                 p.at(5), std::out_of_range);
-
-            BOOST_TEST_EQ(p.front().key, "k0");
-            BOOST_TEST_EQ(p.front().value, "0");
-            BOOST_TEST(p.front().has_value);
-
-            BOOST_TEST_EQ(p.back().key, "k4");
-            BOOST_TEST_EQ(p.back().value, "4444");
-            BOOST_TEST(p.back().has_value);
         }
 
         // at(string_view)
@@ -143,9 +136,9 @@ public:
             url u = parse_uri_reference(
                 "/?k0=0&k2=#f").value();
             params_encoded p = u.encoded_params();
-            auto it = p.insert(p.begin() + 1,
+            auto it = p.insert(std::next(p.begin()),
                 {"k1", "1", true});
-            BOOST_TEST_EQ(it, p.begin() + 1);
+            BOOST_TEST_EQ(it, std::next(p.begin()));
             BOOST_TEST_EQ((*it).key, "k1");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
@@ -159,10 +152,10 @@ public:
             url u = parse_uri_reference(
                 "/?k0=0&k3#f").value();
             params_encoded p = u.encoded_params();
-            auto it = p.insert(p.begin() + 1, {
+            auto it = p.insert(std::next(p.begin()),{
                 {"k1", "1", true},
                 {"k2", "", true}});
-            BOOST_TEST_EQ(it, p.begin() + 1);
+            BOOST_TEST_EQ(it, std::next(p.begin()));
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3");
             BOOST_TEST(u.string() ==
@@ -175,9 +168,9 @@ public:
                 "/?k0=0&k1=1&k3#f").value();
             params_encoded p = u.encoded_params();
             auto it = p.replace(
-                p.end() - 1,
+                std::next(p.begin(), p.size() - 1),
                 {"k2", "", true});
-            BOOST_TEST_EQ(it, p.end() - 1);
+            BOOST_TEST_EQ(it, std::next(p.begin(), p.size() - 1));
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
             BOOST_TEST(u.string() ==
@@ -191,11 +184,11 @@ public:
                 "/?k0=0&k1=1&k2=&k3&k4=4444#f").value();
             params_encoded p = u.encoded_params();
             auto it = p.replace(
-                p.begin() + 1, p.begin() + 3, {
+                std::next(p.begin()), std::next(p.begin(), 3), {
                     {"a","aa",true},
                     {"b","bbb",true},
                     {"c","ccccc",true}});
-            BOOST_TEST_EQ(it, p.begin() + 1);
+            BOOST_TEST_EQ(it, std::next(p.begin()));
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&a=aa&b=bbb&c=ccccc&k3&k4=4444");
             BOOST_TEST(u.string() ==
@@ -208,11 +201,11 @@ public:
                 "/?k0=0&k%31=1&k2=#f").value();
             params_encoded p = u.encoded_params();
             BOOST_TEST_EQ(p.at(1).key, "k%31");
-            auto it = p.remove_value(p.begin() + 1);
+            auto it = p.remove_value(std::next(p.begin()));
             BOOST_TEST_EQ(u.encoded_query(), "k0=0&k%31&k2=");
             BOOST_TEST(u.string() ==
                 "/?k0=0&k%31&k2=#f");
-            BOOST_TEST_EQ(it, p.begin() + 1);
+            BOOST_TEST_EQ(it, std::next(p.begin()));
         }
 
         // replace_value(iterator, string_view)
@@ -221,9 +214,9 @@ public:
                         "/?k0=0&k%31=0&k2=#f").value();
             params_encoded p = u.encoded_params();
             auto it = p.replace_value(
-                p.begin() + 1,
+                std::next(p.begin()),
                 "1");
-            BOOST_TEST(it == p.begin() + 1);
+            BOOST_TEST(it == std::next(p.begin()));
             BOOST_TEST(u.encoded_query() ==
                        "k0=0&k%31=1&k2=");
             BOOST_TEST(u.string() ==
@@ -237,9 +230,9 @@ public:
                 "/?k0=0&k%31=1&k2=#f").value();
             params_encoded p = u.encoded_params();
             auto it = p.emplace_at(
-                p.begin() + 1,
+                std::next(p.begin()),
                 "k1", "1");
-            BOOST_TEST_EQ(it, p.begin() + 1);
+            BOOST_TEST_EQ(it, std::next(p.begin()));
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
             BOOST_TEST(u.string() ==
@@ -253,9 +246,9 @@ public:
                 "/?k0=0&k1=1&k2=&k3#f").value();
             params_encoded p = u.encoded_params();
             auto it = p.emplace_at(
-                p.begin() + 2,
+                std::next(p.begin(), 2),
                 "hello_world");
-            BOOST_TEST_EQ(it, p.begin() + 2);
+            BOOST_TEST_EQ(it, std::next(p.begin(), 2));
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&hello_world&k3");
             BOOST_TEST(u.string() ==
@@ -269,8 +262,8 @@ public:
                 "/?k0=0&k2=&k3#f").value();
             params_encoded p = u.encoded_params();
             auto it = p.emplace_before(
-                p.begin() + 1, "k1", "1");
-            BOOST_TEST_EQ(it, p.begin() + 1);
+                std::next(p.begin()), "k1", "1");
+            BOOST_TEST_EQ(it, std::next(p.begin()));
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3");
             BOOST_TEST(u.string() ==
@@ -284,8 +277,8 @@ public:
                 "/?k0=0&k2=&k3#f").value();
             params_encoded p = u.encoded_params();
             auto it = p.emplace_before(
-                p.begin() + 1, "k1");
-            BOOST_TEST_EQ(it, p.begin() + 1);
+                std::next(p.begin()), "k1");
+            BOOST_TEST_EQ(it, std::next(p.begin()));
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1&k2=&k3");
             BOOST_TEST(u.string() ==
@@ -298,13 +291,13 @@ public:
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k2=&k3&k4=4444#f").value();
             params_encoded p = u.encoded_params();
-            p.erase(p.begin() + 2);
+            p.erase(std::next(p.begin(), 2));
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k3&k4=4444");
             BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k3&k4=4444#f");
             p.erase(
-                p.begin() + 1, p.begin() + 3);
+                std::next(p.begin()), std::next(p.begin(), 3));
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k4=4444");
             BOOST_TEST(u.string() ==
@@ -465,9 +458,9 @@ public:
             BOOST_TEST_EQ(p.count("f"), 1u);
             BOOST_TEST_EQ(p.count("g"), 0u);
 
-            BOOST_TEST_EQ(p.find("b"), p.begin() + 1);
-            BOOST_TEST(p.find(p.begin() + 6, "d") ==
-                p.begin() + 7);
+            BOOST_TEST_EQ(p.find("b"), std::next(p.begin()));
+            BOOST_TEST(p.find(std::next(p.begin(), 6), "d") ==
+                std::next(p.begin(), 7));
 
             BOOST_TEST(p.contains("a"));
             BOOST_TEST(p.contains("b"));
@@ -491,26 +484,16 @@ public:
             BOOST_TEST_EQ((*++it).key, "bb");
             BOOST_TEST_EQ((*it++).key, "bb");
             BOOST_TEST_EQ((*it).key, "ccc");
-            BOOST_TEST_EQ((*--it).key, "bb");
-            BOOST_TEST_EQ((*it--).key, "bb");
+            it = p.begin();
             BOOST_TEST_EQ((*it).key, "a");
             auto it2 = p.end();
             BOOST_TEST_EQ(it, p.begin());
             BOOST_TEST_NE(it, it2);
-            BOOST_TEST_EQ((*(it += 1)).key, "bb");
-            BOOST_TEST_EQ((*(it + 1)).value, "333");
-            BOOST_TEST_EQ((*(1 + it)).value, "333");
+            BOOST_TEST_EQ((*(++it)).key, "bb");
+            BOOST_TEST_EQ((*(std::next(it))).value, "333");
+            BOOST_TEST_EQ((*(std::next(it))).value, "333");
             BOOST_TEST_EQ((*it).value, "22");
-            BOOST_TEST_EQ((*(it2 -= 1)).value, "4444");
-            BOOST_TEST_EQ((*(it2 - 1)).value, "333");
-            BOOST_TEST_EQ((*it2).value, "4444");
-            BOOST_TEST_EQ(it2 - it, 2);
-            BOOST_TEST_EQ(it[1].value, "333");
-
-            BOOST_TEST_LT(it, it2);
-            BOOST_TEST_LE(it, it2);
-            BOOST_TEST_GT(it2, it);
-            BOOST_TEST_GE(it2, it);
+            BOOST_TEST_EQ((*std::next(it)).value, "333");
         }
 
         // operator*

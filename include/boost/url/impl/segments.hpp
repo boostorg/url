@@ -68,7 +68,7 @@ public:
     iterator&
     operator=(iterator const&) noexcept = default;
 
-    const_string
+    reference
     operator*() const noexcept
     {
         return impl_.dereference();

@@ -1388,10 +1388,10 @@ public:
             u.set_encoded_query("k1=v1&k2=v2");
             BOOST_TEST(u.has_query());
             BOOST_TEST_EQ(u.params().size(), 2u);
-            BOOST_TEST_EQ(u.params()[0].key, "k1");
-            BOOST_TEST_EQ(u.params()[0].value, "v1");
-            BOOST_TEST_EQ(u.params()[1].key, "k2");
-            BOOST_TEST_EQ(u.params()[1].value, "v2");
+            BOOST_TEST_EQ((*u.params().begin()).key, "k1");
+            BOOST_TEST_EQ((*u.params().begin()).value, "v1");
+            BOOST_TEST_EQ((*std::next(u.params().begin())).key, "k2");
+            BOOST_TEST_EQ((*std::next(u.params().begin())).value, "v2");
 
             u.set_encoded_query("");
             BOOST_TEST(u.has_query());
@@ -1412,10 +1412,10 @@ public:
             BOOST_TEST(u.encoded_query() ==
                 "!@%23$%25%5e&*()_+=-;:'%7b%7d%5b%5d%7c%5c?/%3e.%3c,");
             BOOST_TEST_EQ(u.params().size(), 2u);
-            BOOST_TEST_EQ(u.params()[0].key, "!@#$%^");
-            BOOST_TEST_EQ(u.params()[0].value, "");
-            BOOST_TEST_EQ(u.params()[1].key, "*()_ ");
-            BOOST_TEST_EQ(u.params()[1].value,
+            BOOST_TEST_EQ((*u.params().begin()).key, "!@#$%^");
+            BOOST_TEST_EQ((*u.params().begin()).value, "");
+            BOOST_TEST_EQ((*std::next(u.params().begin())).key, "*()_ ");
+            BOOST_TEST_EQ((*std::next(u.params().begin())).value,
                 "-;:'{}[]|\\?/>.<,");
         }
     }

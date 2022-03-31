@@ -177,65 +177,6 @@ public:
 
     //--------------------------------------------
     //
-    // Element Access
-    //
-    //--------------------------------------------
-
-    /** Return indexed element with bounds checking
-
-        @return Reference to query parameter at specified position
-
-        @param pos Position
-
-     */
-    const_reference
-    at(std::size_t pos) const;
-
-    /** Return first element matching key with bounds checking
-
-        @return Reference to mapped value of a query parameter
-
-        @param key Element key
-
-     */
-    BOOST_URL_DECL
-    const_string
-    at(string_view key) const;
-
-    /** Return indexed element
-
-        @return Reference to query parameter at specified position
-
-        @param pos Element position
-
-     */
-    BOOST_URL_DECL
-    const_reference
-    operator[](
-        std::size_t pos) const;
-
-    /** Return the first element
-
-        Access first query parameter in the container
-
-        @return Reference to first query parameter in the container
-
-     */
-    const_reference
-    front() const;
-
-    /** Return the last element
-
-        Access last query parameter in the container
-
-        @return Reference to last query parameter in the container
-
-     */
-    const_reference
-    back() const;
-
-    //--------------------------------------------
-    //
     // Iterators
     //
     //--------------------------------------------
@@ -612,11 +553,6 @@ public:
     void
     push_back(
         query_param_view const& value);
-
-    /** Remove element at the end of the container
-      */
-    void
-    pop_back() noexcept;
 
     //--------------------------------------------
     //

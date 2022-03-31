@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -14,145 +15,11 @@
 #include <boost/url/url.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/detail/pct_encoding.hpp>
+#include <boost/url/detail/normalize.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
 namespace urls {
-
-void
-params_encoded_view::
-iterator::
-scan() noexcept
-{
-    string_view s(p_, end_ - p_);
-    std::size_t i;
-    if(! first_)
-    {
-        BOOST_ASSERT(
-            s.starts_with('&'));
-        i = s.find_first_of('&', 1);
-    }
-    else
-    {
-        i = s.find_first_of('&');
-    }
-    if( i == string_view::npos)
-        i = s.size();
-    nk_ = string_view(
-        p_, i).find_first_of('=');
-    if(nk_ != string_view::npos)
-    {
-        nv_ = i - nk_;
-    }
-    else
-    {
-        // has_value==false
-        nk_ = i;
-        nv_ = 0;
-    }
-}
-
-params_encoded_view::
-iterator::
-iterator(
-    string_view s) noexcept
-    : end_(s.data() + s.size())
-    , p_(s.data())
-{
-    scan();
-}
-
-params_encoded_view::
-iterator::
-iterator(
-    string_view s,
-    int) noexcept
-    : end_(s.data() + s.size())
-    , p_(nullptr)
-    , first_(false)
-{
-}
-
-string_view
-params_encoded_view::
-iterator::
-encoded_key() const noexcept
-{
-    BOOST_ASSERT(p_ != nullptr);
-    if(! first_)
-        return string_view(
-            p_ + 1, nk_ - 1);
-    return string_view{ p_, nk_ };
-}
-
-auto
-params_encoded_view::
-iterator::
-operator++() noexcept ->
-    iterator&
-{
-    BOOST_ASSERT(p_ != nullptr);
-    first_ = false;
-    p_ += nk_ + nv_;
-    if(p_ == end_)
-    {
-        p_ = nullptr;
-        nk_ = 0;
-        nv_ = 0;
-        return *this;
-    }
-    scan();
-    return *this;
-}
-
-auto
-params_encoded_view::
-iterator::
-operator*() const ->
-    reference
-{
-    if(! first_)
-    {
-        if(nv_ > 0)
-            return reference{
-                string_view(
-                    p_ + 1, nk_ - 1),
-                string_view(
-                    p_ + nk_ + 1, nv_ - 1),
-                true};
-        return reference{
-            string_view(
-                p_ + 1, nk_ - 1),
-            string_view{},
-            false};
-    }
-    if(nv_ > 0)
-        return reference{
-            string_view(
-                p_, nk_),
-            string_view(
-                p_ + nk_ + 1,
-                nv_ - 1),
-            true};
-    return reference{
-        string_view(
-            p_, nk_),
-        string_view{},
-        false};
-}
-
-bool
-operator==(
-    params_encoded_view::
-        iterator a,
-    params_encoded_view::
-        iterator b) noexcept
-{
-    BOOST_ASSERT(a.end_ == b.end_);
-    return
-        a.p_ == b.p_ &&
-        a.first_ == b.first_;
-}
 
 //------------------------------------------------
 //
@@ -171,14 +38,14 @@ at(string_view key) const ->
         if(it == end())
             detail::throw_out_of_range(
                 BOOST_CURRENT_LOCATION);
-        if(it.nv_ != 0)
+        if(it.impl_.nv_ != 0)
             break;
         ++it;
         it = find(it, key);
     }
     return {
-        it.p_ + it.nk_ + 1,
-        it.nv_ - 1 };
+        it.impl_.pos_ + it.impl_.nk_ + 1,
+        it.impl_.nv_ - 1 };
 }
 
 //--------------------------------------------
@@ -194,7 +61,7 @@ begin() const noexcept ->
 {
     if(n_ > 0)
         return { s_ };
-    return { s_, 0 };
+    return end();
 }
 
 auto
@@ -202,7 +69,7 @@ params_encoded_view::
 end() const noexcept ->
     iterator
 {
-    return { s_, 0 };
+    return { s_, n_, 0 };
 }
 
 //------------------------------------------------
@@ -234,14 +101,14 @@ find(
     string_view key) const noexcept ->
         iterator
 {
-    BOOST_ASSERT(from.end_ ==
+    BOOST_ASSERT(from.impl_.end_ ==
         s_.data() + s_.size());
 
     auto const end_ = end();
     while(from != end_)
     {
-        // VFALCO need pct-encoded comparison
-        if( key == from.encoded_key())
+        if( detail::compare_encoded(
+                key, from.encoded_key()) == 0)
             break;
         ++from;
     }

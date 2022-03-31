@@ -12,6 +12,7 @@
 #define BOOST_URL_DETAIL_IMPL_SEGMENTS_ENCODED_ITERATOR_IMPL_IPP
 
 #include <boost/url/detail/segments_encoded_iterator_impl.hpp>
+#include <boost/assert.hpp>
 
 namespace boost {
 namespace urls {

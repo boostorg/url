@@ -32,12 +32,12 @@ public:
 #if __cpp_lib_ranges >= 201911
     /*
     BOOST_STATIC_ASSERT(
-        std::bidirectional_range<
+        std::forward_range<
             segments>);
     */
 
     BOOST_STATIC_ASSERT(
-        std::bidirectional_iterator<
+        std::forward_iterator<
             segments::iterator>);
 #endif
 
