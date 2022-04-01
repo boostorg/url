@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -18,48 +19,6 @@
 namespace boost {
 namespace urls {
 
-params::
-reference::
-reference(
-    char const* const s,
-    std::size_t const nk,
-    std::size_t const nv,
-    const_string::factory const& a)
-{
-    // key
-    BOOST_ASSERT(nk > 0);
-    BOOST_ASSERT(
-        s[0] == '?' || s[0] == '&');
-    string_view ek{s + 1, nk - 1};
-    auto n =
-        pct_decode_bytes_unchecked(ek);
-    key = a(n, [nk, ek]
-        (std::size_t, char* dest)
-        {
-            pct_decode_unchecked(
-                dest, dest + nk, ek);
-        });
-    if(nv > 0)
-    {
-        // value
-        BOOST_ASSERT(s[nk] == '=');
-        has_value = true;
-        string_view ev{
-            s + nk + 1, nv - 1 };
-        n = pct_decode_bytes_unchecked(ev);
-        value = a(n, [ev]
-            (std::size_t n, char* dest)
-            {
-                pct_decode_unchecked(
-                    dest, dest + n, ev);
-            });
-    }
-    else
-    {
-        has_value = false;
-    }
-}
-
 auto
 params::
 operator[](
@@ -71,8 +30,8 @@ operator[](
     auto const r =
         u_->param(pos);
     return reference(
-        u_->s_ + r.pos,
-            r.nk, r.nv, a_);
+        u_->s_ + r.pos + 1,
+            r.nk - 1, r.nv, a_);
 }
 
 //------------------------------------------------
@@ -88,8 +47,8 @@ operator*() const ->
     auto const r =
         u_->param(i_);
     return reference(
-        u_->s_ + r.pos,
-        r.nk,
+        u_->s_ + r.pos + 1,
+        r.nk - 1,
         r.nv,
         a_);
 }
@@ -146,7 +105,7 @@ remove_value(
 {
     BOOST_ASSERT(pos.u_ == u_);
     auto r = u_->param(pos.i_);
-    value_type v{
+    query_param_view v{
         string_view{
             u_->s_ + r.pos + 1,
             r.nk - 1},
@@ -174,7 +133,7 @@ replace_value(
     string_view key{
         u_->s_ + r.pos + 1,
         r.nk - 1};
-    value_type v{
+    query_param_view v{
         key, value, true };
     BOOST_ASSERT(pos.u_ == u_);
     using detail::

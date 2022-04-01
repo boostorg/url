@@ -159,7 +159,7 @@ public:
             url u = parse_uri_reference(
                 "/?k0=0&k3#f").value();
             params_encoded p = u.encoded_params();
-            auto it = p.insert(p.begin() + 1,{
+            auto it = p.insert(p.begin() + 1, {
                 {"k1", "1", true},
                 {"k2", "", true}});
             BOOST_TEST_EQ(it, p.begin() + 1);

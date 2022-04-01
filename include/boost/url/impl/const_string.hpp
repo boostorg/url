@@ -172,11 +172,11 @@ const_string(
     string_view s,
     Allocator const& a)
 {
-    // VFALCO Should we do something special when n==0?
     if (is_small(s.size()))
     {
-        std::memcpy(data_.buf_,
-            s.data(), s.size());
+        if (!s.empty())
+            std::memcpy(data_.buf_,
+                s.data(), s.size());
         static_cast<string_view&>(*this
             ) = { data_.buf_, s.size()};
         return;

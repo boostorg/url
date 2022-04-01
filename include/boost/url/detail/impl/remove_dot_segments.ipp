@@ -37,6 +37,7 @@ remove_dot_segments(
         BOOST_ASSERT(in.size() <= std::size_t(end - dest));
         std::memcpy(dest, in.data(), in.size());
         dest += in.size();
+        (void)end;
     };
 
     auto find_last_slash =

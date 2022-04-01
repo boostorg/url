@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -13,6 +14,7 @@
 #include <boost/config.hpp>
 #include <boost/config/workaround.hpp>
 #include <limits.h>
+#include <stdint.h>
 
 #if CHAR_BIT != 8
 # error unsupported platform
@@ -82,6 +84,10 @@
 # define BOOST_URL_ARCH 32
 #else
 # error Unknown or unsupported architecture, please open an issue
+#endif
+
+#ifndef BOOST_URL_DOCS
+using pos_t = size_t;
 #endif
 
 #endif

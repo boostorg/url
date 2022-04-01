@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -12,6 +13,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/const_string.hpp>
 
 namespace boost {
 namespace urls {
@@ -93,7 +95,7 @@ struct query_param
 {
     /** The key.
     */
-    std::string key;
+    const_string key;
 
     /** The value.
 
@@ -102,7 +104,7 @@ struct query_param
         A value that is present with an empty string
         is distinct from a value that is absent.
     */
-    std::string value;
+    const_string value;
 
     /** True if the value is present
 
@@ -115,13 +117,31 @@ struct query_param
 
     /** Constructor
     */
+    query_param() = default;
+
+    /** Constructor
+    */
+    template<class Allocator>
     query_param(
-        query_param_view const& v)
-        : key(v.key)
+        query_param_view const& v,
+        Allocator const& a)
+        : key(v.key, a)
         , value(v.has_value ?
             v.value :
-            string_view())
+            string_view(), a)
         , has_value(v.has_value)
+    {
+    }
+
+    /** Constructor
+    */
+    query_param(
+        const_string const& key_,
+        const_string const& value_,
+        bool has_value_)
+        : key(key_)
+        , value(value_)
+        , has_value(has_value_)
     {
     }
 
@@ -134,19 +154,16 @@ struct query_param
         return { key, string_view(), false };
     }
 
-#ifndef BOOST_URL_DOCS
-#ifdef BOOST_NO_CXX14_AGGREGATE_NSDMI
+private:
+    friend class params_view;
+    friend class params;
+
+    BOOST_URL_DECL
     query_param(
-        string_view key_ = {},
-        string_view value_ = {},
-        bool has_value_ = false )
-        : key(key_)
-        , value(value_)
-        , has_value(has_value_)
-    {
-    }
-#endif
-#endif
+        char const* s,
+        std::size_t nk,
+        std::size_t nv,
+        const_string::factory const& a);
 };
 
 } // urls

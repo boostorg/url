@@ -12,8 +12,8 @@
 #define BOOST_URL_PARAMS_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/const_string.hpp>
 #include <boost/url/detail/parts_base.hpp>
+#include <boost/url/query_param.hpp>
 #include <iterator>
 #include <type_traits>
 
@@ -66,43 +66,11 @@ public:
         empty strings from non-existent strings.
 
     */
-    class value_type
-    {
-    public:
-        const_string key;
-        const_string value;
-        bool has_value;
-
-        BOOST_URL_DECL
-        ~value_type() noexcept;
-
-        BOOST_URL_DECL
-        value_type() noexcept;
-
-        BOOST_URL_DECL
-        value_type(
-            value_type const& other) noexcept;
-
-        BOOST_URL_DECL
-        value_type&
-        operator=(
-            value_type const& other) noexcept;
-
-    private:
-        friend class params_view;
-        friend class iterator;
-
-        BOOST_URL_DECL
-        value_type(
-            char const* s,
-            std::size_t nk,
-            std::size_t nv,
-            const_string::factory const& a);
-    };
+    using value_type = query_param;
 
     /** The type of value returned when dereferencing an iterator.
     */
-    using reference = value_type;
+    using reference = query_param;
 
     /** The type of value returned when dereferencing an iterator.
     */

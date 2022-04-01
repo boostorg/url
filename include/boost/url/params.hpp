@@ -70,7 +70,7 @@ public:
         a copy of a query parameter where ownership
         is retained in the copy.
     */
-    using value_type = query_param_view;
+    using value_type = query_param;
 
     /** A read-only structure representing a decoded query parameter.
 
@@ -81,47 +81,7 @@ public:
         read-only.
 
     */
-    class reference
-    {
-        friend class params;
-        friend class iterator;
-
-        BOOST_URL_DECL
-        reference(
-            char const* s,
-            std::size_t nk,
-            std::size_t nv,
-            const_string::factory const& a);
-
-    public:
-        /** The query key.
-
-            This string, which may be empty,
-            holds the query key with percent-decoding
-            applied.
-        */
-        const_string key;
-
-        /** The query value.
-
-            This string holds the query value
-            with percent-decoding applied.
-
-            If the parameter has no value, the
-            string is empty.
-        */
-        const_string value;
-
-        /** True if the query parameter has a value.
-
-            This field is true if the query parameter
-            has a value, even if that value is empty.
-
-            An empty value is distinguished from
-            having no value.
-        */
-        bool has_value;
-    };
+    using reference = query_param;
 
     /** A read-only structure representing a decoded query parameter.
     */
@@ -164,7 +124,7 @@ public:
 
      */
     params&
-    operator=(std::initializer_list<value_type> init);
+    operator=(std::initializer_list<query_param_view> init);
 
     /** Assignment
 
@@ -180,7 +140,7 @@ public:
      */
     void
     assign(std::initializer_list<
-        value_type> init);
+        query_param_view> init);
 
     /** Assignment
 
@@ -346,7 +306,7 @@ public:
     iterator
     insert(
         iterator before,
-        value_type const& v);
+        query_param_view const& v);
 
     /** Insert elements
 
@@ -368,7 +328,7 @@ public:
     insert(
         iterator before,
         std::initializer_list<
-            value_type> init);
+            query_param_view> init);
 
     /** Insert elements
 
@@ -431,7 +391,7 @@ public:
     iterator
     replace(
         iterator pos,
-        value_type const& value);
+        query_param_view const& value);
 
      /** Replace elements
 
@@ -484,7 +444,7 @@ public:
         iterator from,
         iterator to,
         std::initializer_list<
-            value_type> init);
+            query_param_view> init);
 
      /** Remove a query parameter from the container
 
@@ -651,7 +611,7 @@ public:
       */
     void
     push_back(
-        value_type const& value);
+        query_param_view const& value);
 
     /** Remove element at the end of the container
       */

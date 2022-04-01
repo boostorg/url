@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -42,7 +43,7 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    params::value_type v(*it_++);
+    query_param_view v(*it_++);
     if(v.has_value)
         copy_impl(
             v.key, &v.value,
@@ -79,7 +80,7 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    params::value_type v(*it_++);
+    query_param_view v(*it_++);
     if(v.has_value)
         copy_impl(
             v.key, &v.value,

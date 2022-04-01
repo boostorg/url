@@ -36,7 +36,7 @@ namespace urls {
 struct scheme_rule
 {
     string_view scheme;
-    urls::scheme scheme_id;
+    urls::scheme scheme_id{urls::scheme::unknown};
 
     friend
     void

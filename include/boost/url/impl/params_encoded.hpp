@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -161,7 +162,7 @@ public:
                 a.i_) - b.i_;
     }
 
-    value_type
+    reference
     operator[](ptrdiff_t n) const
     {
         return *(*this + n);
@@ -230,7 +231,7 @@ inline
 params_encoded&
 params_encoded::
 operator=(std::initializer_list<
-    value_type> init)
+    reference> init)
 {
     assign(init);
     return *this;
@@ -240,7 +241,7 @@ inline
 void
 params_encoded::
 assign(std::initializer_list<
-    value_type> init)
+    reference> init)
 {
     assign(init.begin(), init.end());
 }
@@ -290,7 +291,7 @@ inline
 auto
 params_encoded::
 at(std::size_t pos) const ->
-    value_type
+    reference
 {
     if(pos >= size())
         detail::throw_out_of_range(
@@ -302,7 +303,7 @@ inline
 auto
 params_encoded::
 front() const ->
-    value_type
+    reference
 {
     BOOST_ASSERT(! empty());
     return (*this)[0];
@@ -312,7 +313,7 @@ inline
 auto
 params_encoded::
 back() const ->
-    value_type
+    reference
 {
     BOOST_ASSERT(! empty());
     return (*this)[size() - 1];
@@ -385,7 +386,7 @@ auto
 params_encoded::
 insert(
     iterator before,
-    value_type const& v) ->
+    query_param_view const& v) ->
         iterator
 {
     return insert(
@@ -398,7 +399,7 @@ params_encoded::
 insert(
     iterator before,
     std::initializer_list<
-        value_type> init) ->
+        reference> init) ->
             iterator
 {
     return insert(before,
@@ -449,7 +450,7 @@ auto
 params_encoded::
 replace(
     iterator pos,
-    value_type const& value) ->
+    reference const& value) ->
         iterator
 {
     return replace(
@@ -490,7 +491,7 @@ replace(
     iterator from,
     iterator to,
     std::initializer_list<
-        value_type> init) ->
+        reference> init) ->
     iterator
 {
     return replace(
@@ -513,7 +514,7 @@ emplace_at(
 {
     using detail::
         make_enc_params_iter;
-    value_type v{
+    reference v{
         key, value, true };
     BOOST_ASSERT(pos.u_ == u_);
     u_->edit_params(
@@ -534,7 +535,7 @@ emplace_back(
         iterator
 {
     return insert(
-        end(), value_type{
+        end(), query_param_view{
             key, {}, false});
 }
 
@@ -547,7 +548,7 @@ emplace_back(
         iterator
 {
     return insert(
-        end(), value_type{
+        end(), query_param_view{
             key, value, true});
 }
 
@@ -562,7 +563,7 @@ emplace_at(
     BOOST_ASSERT(pos.u_ == u_);
     using detail::
         make_enc_params_iter;
-    value_type v{key,
+    query_param_view v{key,
         string_view{}, false};
     u_->edit_params(
         pos.i_,
@@ -585,7 +586,7 @@ emplace_before(
 {
     return insert(
         before,
-        value_type{
+        query_param_view{
             key,
             value,
             true});
@@ -601,7 +602,7 @@ emplace_before(
 {
     return insert(
         before,
-        value_type{
+        query_param_view{
             key,
             string_view{},
             false});
@@ -624,7 +625,7 @@ inline
 void
 params_encoded::
 push_back(
-    value_type const& v)
+    reference const& v)
 {
     insert(end(), v);
 }

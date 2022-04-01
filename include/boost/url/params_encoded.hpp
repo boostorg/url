@@ -59,7 +59,7 @@ public:
 
     /** A type which can represent a parameter as a value
       */
-    using value_type = query_param_view;
+    using value_type = query_param;
 
     /** A type which can represent a parameter as a value also used as reference
      */
@@ -108,7 +108,7 @@ public:
       */
     params_encoded&
     operator=(std::initializer_list<
-        value_type> init);
+        reference> init);
 
     /** Assignment from initializer list
 
@@ -125,7 +125,7 @@ public:
     */
     void
     assign(std::initializer_list<
-        value_type> init);
+        reference> init);
 
     /** Assignment from iterators
 
@@ -191,7 +191,7 @@ public:
         @param pos Position
 
       */
-    value_type
+    reference
     at(std::size_t pos) const;
 
     /** Return first element matching key with bounds checking
@@ -213,7 +213,7 @@ public:
 
       */
     BOOST_URL_DECL
-    value_type
+    reference
     operator[](
         std::size_t pos) const;
 
@@ -222,14 +222,14 @@ public:
         @return Query params reference
 
       */
-    value_type
+    reference
     front() const;
 
     /** Return last element
 
         @return Query params reference
       */
-    value_type
+    reference
     back() const;
 
     //--------------------------------------------
@@ -304,7 +304,7 @@ public:
     iterator
     insert(
         iterator before,
-        value_type const& v);
+        reference const& v);
 
     /** Insert elements in container
 
@@ -325,7 +325,7 @@ public:
     insert(
         iterator before,
         std::initializer_list<
-            value_type> init);
+            reference> init);
 
     /** Insert elements in container
 
@@ -394,7 +394,7 @@ public:
     iterator
     replace(
         iterator pos,
-        value_type const& value);
+        reference const& value);
 
     /** Replace container elements
 
@@ -446,7 +446,7 @@ public:
         iterator from,
         iterator to,
         std::initializer_list<
-            value_type> init);
+            reference> init);
 
     /** Remove a value from the container
 
@@ -620,7 +620,7 @@ public:
       */
     void
     push_back(
-        value_type const& value);
+        reference const& value);
 
     /** Remove element at the last position of the container
       */

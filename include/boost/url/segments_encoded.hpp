@@ -91,7 +91,7 @@ public:
         a segment where ownership is retained
         in the copy.
     */
-    using value_type = std::string;
+    using value_type = const_string;
 
     using reference = string_view;
 

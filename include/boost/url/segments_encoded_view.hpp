@@ -109,7 +109,7 @@ public:
 
     /** The type of value returned when dereferencing an iterator.
     */
-    using value_type = string_view;
+    using value_type = const_string;
 
     /** The type of value returned when dereferencing an iterator.
     */

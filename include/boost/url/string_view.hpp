@@ -16,11 +16,6 @@
 namespace boost {
 namespace urls {
 
-#ifndef BOOST_URL_DOCS
-// this is private
-using pos_t = std::size_t;
-#endif
-
 /** The type of string_view used by the library
 
     String views are used to pass character

@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -239,7 +240,7 @@ inline
 params&
 params::
 operator=(std::initializer_list<
-    value_type> init)
+    query_param_view> init)
 {
     assign(init);
     return *this;
@@ -249,7 +250,7 @@ inline
 void
 params::
 assign(std::initializer_list<
-    value_type> init)
+    query_param_view> init)
 {
     assign(init.begin(), init.end());
 }
@@ -386,7 +387,7 @@ auto
 params::
 insert(
     iterator before,
-    value_type const& v) ->
+    query_param_view const& v) ->
         iterator
 {
     return insert(
@@ -399,7 +400,7 @@ params::
 insert(
     iterator before,
     std::initializer_list<
-        value_type> init) ->
+        query_param_view> init) ->
             iterator
 {
     return insert(before,
@@ -450,7 +451,7 @@ auto
 params::
 replace(
     iterator pos,
-    value_type const& value) ->
+    query_param_view const& value) ->
         iterator
 {
     return replace(
@@ -491,7 +492,7 @@ replace(
     iterator from,
     iterator to,
     std::initializer_list<
-        value_type> init) ->
+        query_param_view> init) ->
     iterator
 {
     return replace(
@@ -514,7 +515,7 @@ emplace_at(
 {
     using detail::
         make_plain_params_iter;
-    value_type v{
+    query_param_view v{
         key, value, true };
     BOOST_ASSERT(pos.u_ == u_);
     u_->edit_params(
@@ -536,8 +537,7 @@ emplace_at(
         iterator
 {
     BOOST_ASSERT(pos.u_ == u_);
-    value_type v{key,
-        string_view{}, false};
+    query_param_view v{key, {}, false};
     u_->edit_params(
         pos.i_,
         pos.i_ + 1,
@@ -559,10 +559,8 @@ emplace_before(
 {
     return insert(
         before,
-        value_type{
-            key,
-            value,
-            true});
+        query_param_view{
+            key, value, true });
 }
 
 inline
@@ -575,10 +573,7 @@ emplace_before(
 {
     return insert(
         before,
-        value_type{
-            key,
-            string_view{},
-            false});
+        query_param_view{key, {}, false});
 }
 
 //------------------------------------------------
@@ -602,7 +597,7 @@ emplace_back(
         iterator
 {
     return insert(
-        end(), value_type{
+        end(), query_param_view{
             key, {}, false});
 }
 
@@ -615,7 +610,7 @@ emplace_back(
         iterator
 {
     return insert(
-        end(), value_type{
+        end(), query_param_view{
             key, value, true});
 }
 
@@ -623,7 +618,7 @@ inline
 void
 params::
 push_back(
-    value_type const& v)
+    query_param_view const& v)
 {
     insert(end(), v);
 }

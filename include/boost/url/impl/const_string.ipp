@@ -115,10 +115,11 @@ operator()(string_view s) const
             std::size_t,
             char* dest)
         {
-            std::memcpy(
-                dest,
-                s.data(),
-                s.size());
+            if (!s.empty())
+                std::memcpy(
+                    dest,
+                    s.data(),
+                    s.size());
         });
 }
 

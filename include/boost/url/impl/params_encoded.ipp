@@ -22,12 +22,12 @@ auto
 params_encoded::
 operator[](
     std::size_t pos) const ->
-        value_type
+        reference
 {
     BOOST_ASSERT(pos < u_->nparam_);
     auto const r = u_->param(pos);
     if(r.nv > 0)
-        return value_type{
+        return {
             string_view(
                 u_->s_ + r.pos + 1,
                 r.nk - 1),
@@ -35,7 +35,7 @@ operator[](
                 u_->s_ + r.pos + r.nk + 1,
                 r.nv - 1),
             true};
-    return value_type{
+    return {
         string_view(
             u_->s_ + r.pos + 1,
             r.nk - 1),
@@ -54,7 +54,7 @@ operator*() const ->
     BOOST_ASSERT(i_ < u_->nparam_);
     auto const r = u_->param(i_);
     if(r.nv > 0)
-        return reference{
+        return {
             string_view(
                 u_->s_ + r.pos + 1,
                 r.nk - 1),
@@ -62,7 +62,7 @@ operator*() const ->
                 u_->s_ + r.pos + r.nk + 1,
                 r.nv - 1),
             true};
-    return reference{
+    return {
         string_view(
             u_->s_ + r.pos + 1,
             r.nk - 1),
@@ -116,7 +116,7 @@ remove_value(
     using detail::
         make_enc_params_iter;
     auto r = u_->param(pos.i_);
-    value_type v{
+    reference v{
         string_view{
             u_->s_ + r.pos + 1,
             r.nk - 1},

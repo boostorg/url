@@ -225,6 +225,20 @@ public:
             BOOST_TEST_NE(++it, sv.begin());
             BOOST_TEST_NE(it++, sv.end());
         }
+
+        // value_type outlives reference
+        {
+            segments_encoded_view::value_type v;
+            {
+                segments_encoded_view sv = parse_path(
+                    "/path/to/file.txt").value();
+                segments_encoded_view::reference r =
+                    *sv.begin();
+                v = segments_encoded_view::value_type(
+                    r, std::allocator<char>{});
+            }
+            BOOST_TEST_EQ(v, "path");
+        }
     }
 
     //--------------------------------------------
