@@ -304,8 +304,6 @@ public:
         This function overload is used with
         @ref grammar::parse.
 
-        @return true if the parse was successful.
-
         @param it A pointer to the beginning of
         the string to be parsed. Upon return, this
         will point to one past the last character

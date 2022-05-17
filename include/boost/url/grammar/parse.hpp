@@ -41,9 +41,6 @@ namespace grammar {
     @par Exception Safety
     Throws nothing.
 
-    @return `true` if the first char in the range
-    matches `ch` successfully
-
     @param it An iterator to the first element in the range.
     At the end of this function, `it` points to one past the last
     element parsed in the range.
