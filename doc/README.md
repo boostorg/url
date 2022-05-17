@@ -33,3 +33,10 @@ Run the powershell script windowsdocs.ps1 which can be found in the doc/tools di
 .\tools\windowsdocs.ps1
 ```
 
+## Help Card
+
+To edit the Help Card in `HelpCard.org`, use LibreOffice Draw and install the
+following fonts:
+
+- [Cairo](https://fonts.google.com/specimen/Cairo)
+- [M+ 1M](https://www.fontsquirrel.com/fonts/m-1m)

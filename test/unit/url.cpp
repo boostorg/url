@@ -215,16 +215,6 @@ public:
     void
     testUser()
     {
-        auto const remove = [](
-            string_view s1, string_view s2)
-        {
-            url u = parse_uri_reference(s1).value();
-            BOOST_TEST(
-                u.remove_user().string() == s2);
-            BOOST_TEST(u.encoded_user().empty());
-            BOOST_TEST(u.user().empty());
-        };
-
         auto const set = [](
             string_view s1, string_view s2,
                 string_view s3)
@@ -249,30 +239,6 @@ public:
 
         BOOST_TEST_THROWS(url().set_encoded_user(
             "%2"), std::invalid_argument);
-
-        remove("", "");
-        remove("/x", "/x");
-        remove("//", "//");
-        remove("//x", "//x");
-        remove("//@", "//");
-        remove("//:@", "//:@");
-        remove("//x@", "//");
-        remove("//x@z", "//z");
-        remove("//x:@", "//:@");
-        remove("//x:y@", "//:y@");
-        remove("//x:y@z", "//:y@z");
-
-        remove("ws:", "ws:");
-        remove("ws:/x", "ws:/x");
-        remove("ws://", "ws://");
-        remove("ws://x", "ws://x");
-        remove("ws://@", "ws://");
-        remove("ws://:@", "ws://:@");
-        remove("ws://x@", "ws://");
-        remove("ws://x@z", "ws://z");
-        remove("ws://x:@", "ws://:@");
-        remove("ws://x:y@", "ws://:y@");
-        remove("ws://x:y@z", "ws://:y@z");
 
         set("", "", "//@");
         set("/y", "", "//@/y");
