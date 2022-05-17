@@ -400,31 +400,6 @@ set_user_impl(std::size_t n)
 
 url&
 url::
-remove_user() noexcept
-{
-    check_invariants();
-    if(len(id_user) == 0)
-    {
-        // no authority
-    }
-    else if(len(id_pass) == 1)
-    {
-        // no password, remove '@'
-        resize_impl(
-            id_user, id_host, 2);
-    }
-    else
-    {
-        // keep password
-        resize_impl(id_user, 2);
-    }
-    decoded_[id_user] = 0;
-    check_invariants();
-    return *this;
- }
-
-url&
-url::
 set_user(string_view s)
 {
     detail::copied_strings buf(

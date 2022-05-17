@@ -420,24 +420,6 @@ private:
     char* set_user_impl(std::size_t n);
 public:
 
-    /** Remove the user
-
-        If a user is present, it is removed. If the
-        user was the only component present in the
-        userinfo, then the userinfo is removed without
-        removing the authority.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
-            3.2.1. User Information (rfc3986)</a>
-    */
-    BOOST_URL_DECL
-    url&
-    remove_user() noexcept;
-
     /** Set the user.
 
         The user is set to the specified string,
