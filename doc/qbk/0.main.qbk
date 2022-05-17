@@ -76,6 +76,7 @@
 
 [include 1.0.overview.qbk]
 [include 2.0.quicklook.qbk]
+[include 2.1.HelpCard.qbk]
 
 [section Parsing]
 [include 3.0.parsing.qbk]
@@ -93,6 +94,7 @@
 [include 5.1.customization.qbk]
 [include 5.2.CharSet.qbk]
 [endsect]
+
 
 [section:ref Reference]
 [xinclude quickref.xml]
