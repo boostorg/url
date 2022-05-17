@@ -1146,6 +1146,8 @@ public:
     BOOST_URL_DECL friend result<authority_view>
         parse_authority(string_view s) noexcept;
 
+    friend class url_view;
+
 private:
     void apply(host_rule const& h) noexcept;
     void apply(authority_rule const& t) noexcept;
