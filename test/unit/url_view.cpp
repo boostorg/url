@@ -195,8 +195,10 @@ public:
             [&]{
                 url_view u(s);
                 BOOST_TEST(u.has_authority());
-                BOOST_TEST(
-                    u.encoded_authority() == m);
+                BOOST_TEST_EQ(
+                    u.encoded_authority(), m);
+                BOOST_TEST_EQ(
+                    u.authority().encoded_authority(), m);
             }());
         };
 
@@ -251,6 +253,10 @@ public:
                     u.encoded_userinfo() == m1);
                 BOOST_TEST(
                     u.userinfo() == m2);
+                BOOST_TEST(
+                    u.authority().encoded_userinfo() == m1);
+                BOOST_TEST(
+                    u.authority().userinfo() == m2);
             }());
         };
 
@@ -281,6 +287,14 @@ public:
             BOOST_TEST_EQ(u.has_password(), false);
             BOOST_TEST_EQ(u.encoded_password(), "");
             BOOST_TEST_EQ(u.password(), "");
+            BOOST_TEST(u.authority().has_userinfo());
+            BOOST_TEST_EQ(u.authority().encoded_userinfo(), "");
+            BOOST_TEST_EQ(u.authority().userinfo(), "");
+            BOOST_TEST_EQ(u.authority().encoded_user(), "");
+            BOOST_TEST_EQ(u.authority().user(), "");
+            BOOST_TEST_EQ(u.authority().has_password(), false);
+            BOOST_TEST_EQ(u.authority().encoded_password(), "");
+            BOOST_TEST_EQ(u.authority().password(), "");
         }
         {
             url_view u("x://:@");
@@ -292,6 +306,14 @@ public:
             BOOST_TEST_EQ(u.has_password(), true);
             BOOST_TEST_EQ(u.encoded_password(), "");
             BOOST_TEST_EQ(u.password(), "");
+            BOOST_TEST(u.authority().has_userinfo());
+            BOOST_TEST_EQ(u.authority().encoded_userinfo(), ":");
+            BOOST_TEST_EQ(u.authority().userinfo(), ":");
+            BOOST_TEST_EQ(u.authority().encoded_user(), "");
+            BOOST_TEST_EQ(u.authority().user(), "");
+            BOOST_TEST_EQ(u.authority().has_password(), true);
+            BOOST_TEST_EQ(u.authority().encoded_password(), "");
+            BOOST_TEST_EQ(u.authority().password(), "");
         }
         {
             url_view u("x://a%41:@");
@@ -302,6 +324,13 @@ public:
             BOOST_TEST_EQ(u.has_password(), true);
             BOOST_TEST_EQ(u.encoded_password(), "");
             BOOST_TEST_EQ(u.password(), "");
+            BOOST_TEST(u.authority().has_userinfo());
+            BOOST_TEST_EQ(u.authority().encoded_userinfo(), "a%41:");
+            BOOST_TEST_EQ(u.authority().encoded_user(), "a%41");
+            BOOST_TEST_EQ(u.authority().user(), "aA");
+            BOOST_TEST_EQ(u.authority().has_password(), true);
+            BOOST_TEST_EQ(u.authority().encoded_password(), "");
+            BOOST_TEST_EQ(u.authority().password(), "");
         }
         {
             url_view u("x://:b%42@");
@@ -312,6 +341,13 @@ public:
             BOOST_TEST_EQ(u.has_password(), true);
             BOOST_TEST_EQ(u.encoded_password(), "b%42");
             BOOST_TEST_EQ(u.password(), "bB");
+            BOOST_TEST(u.authority().has_userinfo());
+            BOOST_TEST_EQ(u.authority().encoded_userinfo(), ":b%42");
+            BOOST_TEST_EQ(u.authority().encoded_user(), "");
+            BOOST_TEST_EQ(u.authority().user(), "");
+            BOOST_TEST_EQ(u.authority().has_password(), true);
+            BOOST_TEST_EQ(u.authority().encoded_password(), "b%42");
+            BOOST_TEST_EQ(u.authority().password(), "bB");
         }
         {
             url_view u("x://a:b@");
@@ -320,6 +356,11 @@ public:
             BOOST_TEST_EQ(u.encoded_user(), "a");
             BOOST_TEST_EQ(u.has_password(), true);
             BOOST_TEST_EQ(u.encoded_password(), "b");
+            BOOST_TEST(u.authority().has_userinfo());
+            BOOST_TEST_EQ(u.authority().encoded_userinfo(), "a:b");
+            BOOST_TEST_EQ(u.authority().encoded_user(), "a");
+            BOOST_TEST_EQ(u.authority().has_password(), true);
+            BOOST_TEST_EQ(u.authority().encoded_password(), "b");
         }
         {
             url_view u("x://%3a:%3a@");
@@ -331,6 +372,14 @@ public:
             BOOST_TEST_EQ(u.has_password(), true);
             BOOST_TEST_EQ(u.encoded_password(), "%3a");
             BOOST_TEST_EQ(u.password(), ":");
+            BOOST_TEST(u.authority().has_userinfo());
+            BOOST_TEST_EQ(u.authority().encoded_userinfo(), "%3a:%3a");
+            BOOST_TEST_EQ(u.authority().userinfo(), ":::");
+            BOOST_TEST_EQ(u.authority().encoded_user(), "%3a");
+            BOOST_TEST_EQ(u.authority().user(), ":");
+            BOOST_TEST_EQ(u.authority().has_password(), true);
+            BOOST_TEST_EQ(u.authority().encoded_password(), "%3a");
+            BOOST_TEST_EQ(u.authority().password(), ":");
         }
         {
             url_view u("x://%2525@");
@@ -342,6 +391,14 @@ public:
             BOOST_TEST_EQ(u.has_password(), false);
             BOOST_TEST_EQ(u.encoded_password(), "");
             BOOST_TEST_EQ(u.password(), "");
+            BOOST_TEST(u.authority().has_userinfo());
+            BOOST_TEST_EQ(u.authority().encoded_userinfo(), "%2525");
+            BOOST_TEST_EQ(u.authority().userinfo(), "%25");
+            BOOST_TEST_EQ(u.authority().encoded_user(), "%2525");
+            BOOST_TEST_EQ(u.authority().user(), "%25");
+            BOOST_TEST_EQ(u.authority().has_password(), false);
+            BOOST_TEST_EQ(u.authority().encoded_password(), "");
+            BOOST_TEST_EQ(u.authority().password(), "");
         }
     }
 
@@ -360,6 +417,16 @@ public:
                 == ipv6_address());
             BOOST_TEST(
                 u.ipv_future() == "");
+            BOOST_TEST(u.authority().host_type() ==
+                host_type::none);
+            BOOST_TEST(u.authority().encoded_host() ==
+                "");
+            BOOST_TEST(u.authority().ipv4_address()
+                == ipv4_address());
+            BOOST_TEST(u.authority().ipv6_address()
+                == ipv6_address());
+            BOOST_TEST(
+                u.authority().ipv_future() == "");
         }
         {
             url_view u("http://");
@@ -367,12 +434,20 @@ public:
                 host_type::name);
             BOOST_TEST(u.encoded_host() ==
                 "");
+            BOOST_TEST(u.authority().host_type() ==
+                host_type::name);
+            BOOST_TEST(u.authority().encoded_host() ==
+                "");
         }
         {
             url_view u("http:///");
             BOOST_TEST(u.host_type() ==
                 host_type::name);
             BOOST_TEST(u.encoded_host() ==
+                "");
+            BOOST_TEST(u.authority().host_type() ==
+                host_type::name);
+            BOOST_TEST(u.authority().encoded_host() ==
                 "");
         }
         {
@@ -382,6 +457,12 @@ public:
             BOOST_TEST(u.encoded_host() ==
                 "www.example.com");
             BOOST_TEST(u.host() ==
+                "www.example.com");
+            BOOST_TEST(u.authority().host_type() ==
+                host_type::name);
+            BOOST_TEST(u.authority().encoded_host() ==
+                "www.example.com");
+            BOOST_TEST(u.authority().host() ==
                 "www.example.com");
         }
         {
@@ -395,6 +476,15 @@ public:
             BOOST_TEST(
                 u.ipv4_address().to_uint() ==
                     0xc0a80001);
+            BOOST_TEST(u.authority().host_type() ==
+                host_type::ipv4);
+            BOOST_TEST(u.authority().encoded_host() ==
+                "192.168.0.1");
+            BOOST_TEST(u.authority().host() ==
+                "192.168.0.1");
+            BOOST_TEST(
+                u.authority().ipv4_address().to_uint() ==
+                    0xc0a80001);
         }
         {
             url_view u(
@@ -407,6 +497,14 @@ public:
                 "[1::6:192.168.0.1]");
             BOOST_TEST(u.ipv6_address() ==
                 ipv6_address("1::6:c0a8:1"));
+            BOOST_TEST(u.authority().host_type() ==
+                host_type::ipv6);
+            BOOST_TEST(u.authority().encoded_host() ==
+                "[1::6:192.168.0.1]");
+            BOOST_TEST(u.authority().host() ==
+                "[1::6:192.168.0.1]");
+            BOOST_TEST(u.authority().ipv6_address() ==
+                ipv6_address("1::6:c0a8:1"));
         }
         {
             url_view u("http://[v1.x]:8080/");
@@ -417,6 +515,14 @@ public:
             BOOST_TEST(u.host() ==
                 "[v1.x]");
             BOOST_TEST(u.ipv_future() ==
+                "[v1.x]");
+            BOOST_TEST(u.authority().host_type() ==
+                host_type::ipvfuture);
+            BOOST_TEST(u.authority().encoded_host() ==
+                "[v1.x]");
+            BOOST_TEST(u.authority().host() ==
+                "[v1.x]");
+            BOOST_TEST(u.authority().ipv_future() ==
                 "[v1.x]");
         }
     }
@@ -429,54 +535,81 @@ public:
             BOOST_TEST(! u.has_port());
             BOOST_TEST_EQ(u.port(), "");
             BOOST_TEST_EQ(u.port_number(), 0);
+            BOOST_TEST(! u.authority().has_port());
+            BOOST_TEST_EQ(u.authority().port(), "");
+            BOOST_TEST_EQ(u.authority().port_number(), 0);
         }
         {
             url_view u("http://www");
             BOOST_TEST(! u.has_port());
             BOOST_TEST_EQ(u.port(), "");
             BOOST_TEST_EQ(u.port_number(), 0);
+            BOOST_TEST(! u.authority().has_port());
+            BOOST_TEST_EQ(u.authority().port(), "");
+            BOOST_TEST_EQ(u.authority().port_number(), 0);
         }
         {
             url_view u("http://:");
             BOOST_TEST(u.has_port());
             BOOST_TEST_EQ(u.port(), "");
             BOOST_TEST_EQ(u.port_number(), 0);
+            BOOST_TEST(u.authority().has_port());
+            BOOST_TEST_EQ(u.authority().port(), "");
+            BOOST_TEST_EQ(u.authority().port_number(), 0);
         }
         {
             url_view u("http://:0");
             BOOST_TEST(u.has_port());
             BOOST_TEST_EQ(u.port(), "0");
             BOOST_TEST_EQ(u.port_number(), 0);
+            BOOST_TEST(u.authority().has_port());
+            BOOST_TEST_EQ(u.authority().port(), "0");
+            BOOST_TEST_EQ(u.authority().port_number(), 0);
         }
         {
             url_view u("http://:42");
             BOOST_TEST(u.has_port());
             BOOST_TEST_EQ(u.port(), "42");
             BOOST_TEST_EQ(u.port_number(), 42);
+            BOOST_TEST(u.authority().has_port());
+            BOOST_TEST_EQ(u.authority().port(), "42");
+            BOOST_TEST_EQ(u.authority().port_number(), 42);
         }
         {
             url_view u("http://:00000");
             BOOST_TEST(u.has_port());
             BOOST_TEST_EQ(u.port(), "00000");
             BOOST_TEST_EQ(u.port_number(), 0);
+            BOOST_TEST(u.authority().has_port());
+            BOOST_TEST_EQ(u.authority().port(), "00000");
+            BOOST_TEST_EQ(u.authority().port_number(), 0);
         }
         {
             url_view u("http://:000001");
             BOOST_TEST(u.has_port());
             BOOST_TEST_EQ(u.port(), "000001");
             BOOST_TEST_EQ(u.port_number(), 1);
+            BOOST_TEST(u.authority().has_port());
+            BOOST_TEST_EQ(u.authority().port(), "000001");
+            BOOST_TEST_EQ(u.authority().port_number(), 1);
         }
         {
             url_view u("http://:65535");
             BOOST_TEST(u.has_port());
             BOOST_TEST_EQ(u.port(), "65535");
             BOOST_TEST_EQ(u.port_number(), 65535);
+            BOOST_TEST(u.authority().has_port());
+            BOOST_TEST_EQ(u.authority().port(), "65535");
+            BOOST_TEST_EQ(u.authority().port_number(), 65535);
         }
         {
             url_view u("http://:65536");
             BOOST_TEST(u.has_port());
             BOOST_TEST_EQ(u.port(), "65536");
             BOOST_TEST_EQ(u.port_number(), 0);
+            BOOST_TEST(u.authority().has_port());
+            BOOST_TEST_EQ(u.authority().port(), "65536");
+            BOOST_TEST_EQ(u.authority().port_number(), 0);
         }
     }
 
@@ -487,25 +620,35 @@ public:
             url_view u("http://x:1");
             BOOST_TEST(u.encoded_host_and_port() ==
                 "x:1");
+            BOOST_TEST(u.authority().encoded_host_and_port() ==
+                "x:1");
         }
         {
             url_view u("http://x%3a:1");
             BOOST_TEST(u.encoded_host_and_port() ==
+                "x%3a:1");
+            BOOST_TEST(u.authority().encoded_host_and_port() ==
                 "x%3a:1");
         }
         {
             url_view u("http://:1");
             BOOST_TEST(u.encoded_host_and_port() ==
                 ":1");
+            BOOST_TEST(u.authority().encoded_host_and_port() ==
+                ":1");
         }
         {
             url_view u("http://:000001");
             BOOST_TEST(u.encoded_host_and_port() ==
                 ":000001");
+            BOOST_TEST(u.authority().encoded_host_and_port() ==
+                ":000001");
         }
         {
             url_view u("http://xyz:99999");
             BOOST_TEST(u.encoded_host_and_port() ==
+                "xyz:99999");
+            BOOST_TEST(u.authority().encoded_host_and_port() ==
                 "xyz:99999");
         }
     }

@@ -176,6 +176,29 @@ encoded_authority() const noexcept
     return s;
 }
 
+authority_view
+url_view::
+authority() const noexcept
+{
+    string_view s = encoded_authority();
+    authority_view a;
+    a.cs_ = s.data();
+    pos_t off_user = s.data() - data();
+    a.offset_[0] = offset(id_pass) - off_user;
+    a.offset_[1] = offset(id_host) - off_user;
+    a.offset_[2] = offset(id_port) - off_user;
+    a.offset_[3] = offset(id_path) - off_user;
+    a.decoded_[0] = decoded_[id_user];
+    a.decoded_[1] = decoded_[id_pass];
+    a.decoded_[2] = decoded_[id_host];
+    a.decoded_[3] = decoded_[id_port];
+    for (int i = 0; i < 16; ++i)
+        a.ip_addr_[i] = ip_addr_[i];
+    a.port_number_ = port_number_;
+    a.host_type_ = host_type_;
+    return a;
+}
+
 // userinfo
 
 bool

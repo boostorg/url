@@ -12,6 +12,7 @@
 #define BOOST_URL_URL_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/authority_view.hpp>
 #include <boost/url/host_type.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
@@ -621,6 +622,35 @@ public:
     BOOST_URL_DECL
     string_view
     encoded_authority() const noexcept;
+
+    /** Return the authority.
+
+        This function returns the authority as a
+        an @ref authority_view.
+
+        @par Example
+        @code
+        assert( url_view( "http://www.example.com/index.htm" ).authority().encoded_host() == "www.example.com" );
+        @endcode
+
+        @par BNF
+        @code
+        authority   = [ userinfo "@" ] host [ ":" port ]
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
+            >3.2. Authority (rfc3986)</a>
+
+        @see
+            @ref has_authority.
+    */
+    BOOST_URL_DECL
+    authority_view
+    authority() const noexcept;
 
     //--------------------------------------------
 
