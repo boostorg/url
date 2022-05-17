@@ -1114,7 +1114,7 @@ public:
 
         @see
             @ref encoded_host,
-            @ref encoded_host_and_port
+            @ref encoded_host_and_port,
             @ref has_port,
             @ref host_type,
             @ref port,

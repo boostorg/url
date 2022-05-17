@@ -118,8 +118,6 @@ public:
         The behavior is undefined if the elements
         belong to the container.
 
-        @return Pointer to this params object
-
         @param init Initializer list with query parameters
 
     */
@@ -134,8 +132,6 @@ public:
 
         The behavior is undefined if the elements
         belong to the container.
-
-        @return Pointer to this params object
 
         @param first Iterator to first query parameter
 

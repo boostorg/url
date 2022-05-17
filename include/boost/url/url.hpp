@@ -620,6 +620,29 @@ public:
     set_encoded_userinfo(
         string_view s);
 
+    /** Set the userinfo.
+
+        The userinfo is set to the specified string,
+        replacing any previous userinfo. If a userinfo
+        was not present it is added, even if the
+        userinfo string is empty. The resulting URL
+        will have an authority if it did not have
+        one previously.
+
+        Any special or reserved characters in the
+        string are automatically percent-encoded.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set. This string may
+        contain any characters, including nulls.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
+    */
     BOOST_URL_DECL
     url&
     set_userinfo(
@@ -1062,21 +1085,85 @@ public:
     set_encoded_path(
         string_view s);
 
+    /** Set the path.
+
+        Sets the path of the URL to the specified
+        plain string. Any reserved characters in the
+        string will be automatically percent-encoded.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set. This string may
+        contain any characters, including nulls.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+
+        @see
+            @ref encoded_path,
+            @ref encoded_segments,
+            @ref is_path_absolute,
+            @ref normalize_path,
+            @ref set_encoded_path,
+            @ref set_path_absolute.
+    */
     BOOST_URL_DECL
     url&
     set_path(
         string_view s);
 
+    /** Return the path segments
+
+        This function returns the path segments as
+        a bidirectional range.
+
+        @par BNF
+        @code
+        path          = [ "/" ] segment *( "/" segment )
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+    */
     BOOST_URL_DECL
     segments_encoded
     encoded_segments() noexcept;
 
+    /** Return the path segments
+
+        This function returns the path segments as
+        a bidirectional range.
+
+        @par BNF
+        @code
+        path          = [ "/" ] segment *( "/" segment )
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @param alloc An optional allocator the
+        container will use when returning
+        percent-decoded strings. If omitted,
+        the default allocator is used.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+    */
     template<class Allocator =
         std::allocator<char>>
     urls::segments
-    segments(Allocator const& a = {}) noexcept
+    segments(Allocator const& alloc = {}) noexcept
     {
-        return urls::segments(*this, a);
+        return urls::segments(*this, alloc);
     }
 
     //--------------------------------------------
@@ -1188,7 +1275,22 @@ public:
     set_query(
         string_view s);
 
-    /** Return the query parameters as a random-access range of percent-encoded strings.
+    /** Return the query parameters
+
+        This function returns the query
+        parameters as a forward range of
+        key/value pairs.
+
+        Each string returned by the container
+        is percent-encoded.
+
+        @par BNF
+        @code
+        query-params    = [ query-param ] *( "&" [ query-param ] )
+
+        query-param     = key [ "=" value ]
+
+        @endcode
     */
     urls::params_encoded
     encoded_params() noexcept
@@ -1196,14 +1298,31 @@ public:
         return urls::params_encoded(*this);
     }
 
-    /** Return the query parameters as a random-access range of strings with percent-decoding applied.
+    /** Return the query parameters
+
+        This function returns the query
+        parameters as a forward range of
+        key/value pairs where each returned
+        string has percent-decoding applied.
+
+        @par BNF
+        @code
+        query-params    = [ query-param ] *( "&" [ query-param ] )
+
+        query-param     = key [ "=" value ]
+        @endcode
+
+        @param alloc An optional allocator the
+        container will use when returning
+        percent-decoded strings. If omitted,
+        the default allocator is used.
     */
     template<class Allocator =
         std::allocator<char>>
     urls::params
-    params(Allocator const& a = {})
+    params(Allocator const& alloc = {})
     {
-        return urls::params(*this, a);
+        return urls::params(*this, alloc);
     }
 
     //--------------------------------------------
