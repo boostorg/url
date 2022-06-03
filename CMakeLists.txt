@@ -79,11 +79,10 @@ function(boost_url_setup_properties target)
                 Boost::align
                 Boost::assert
                 Boost::config
-                Boost::exception
                 Boost::mp11
                 Boost::system
                 Boost::throw_exception
-                Boost::utility
+                Boost::type_traits
         )
     endif()
 
