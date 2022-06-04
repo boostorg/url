@@ -77,13 +77,20 @@ class segments_encoded
         url& u) noexcept;
 
 public:
+    /** A read-only bidirectional iterator to an encoded segment.
+
+        This is a read-only bidirectional iterator to
+        the encoded segments.
+
+     */
 #ifdef BOOST_URL_DOCS
-    /** A read-only bidirectional iterator to an encoded path segment.
-    */
     using iterator = __see_below__;
 #else
     class iterator;
 #endif
+
+    /// @copydoc iterator
+    using const_iterator = iterator;
 
     /** A type which can represent a segment as a value
 
@@ -93,8 +100,14 @@ public:
     */
     using value_type = const_string;
 
+    /** A type which can represent a segment as a const reference
+
+        This type does not make a copy of a segment
+        and ownership is retained by the container.
+    */
     using reference = string_view;
 
+    /// @copydoc reference
     using const_reference = string_view;
 
     /** An unsigned integer type

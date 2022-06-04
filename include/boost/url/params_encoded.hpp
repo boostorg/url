@@ -49,24 +49,39 @@ class params_encoded
         url& u) noexcept;
 
 public:
-    /** A read-only random-access iterator to an encoded query parameter.
-    */
-    class iterator;
+    /** A read-only forward iterator to an encoded query parameter.
 
-    /** A read-only random-access iterator to an encoded query parameter.
+        This is a read-only forward iterator to
+        the encoded query parameters.
+
      */
+#ifdef BOOST_URL_DOCS
+    using iterator = __see_below__;
+#else
+    class iterator;
+#endif
+
+    /// @copydoc iterator
     using const_iterator = iterator;
 
     /** A type which can represent a parameter as a value
-      */
+
+        This type allows for making a copy of
+        a parameter where ownership is retained
+        in the copy.
+
+    */
     using value_type = query_param;
 
-    /** A type which can represent a parameter as a value also used as reference
-     */
+    /** A type which can represent a parameter as a const reference
+
+        This type does not make a copy of a parameter
+        and ownership is retained by the container.
+
+    */
     using reference = query_param_view;
 
-    /** A type which can represent a parameter as a value also used as const reference
-     */
+    /// @copydoc reference
     using const_reference = query_param_view;
 
     /** An unsigned integer type to represent sizes
@@ -255,18 +270,11 @@ public:
     //
     //--------------------------------------------
 
-    /** Checks whether the container is empty
-
-        @return True if container is empty
-      */
+    /// Return true if the container is empty
     bool
     empty() const noexcept;
 
-    /** Returns the number of query parameters in the url
-
-        @return The number of query parameters in the url
-
-     */
+    /// Returns the number of query parameters in the url
     std::size_t
     size() const noexcept;
 

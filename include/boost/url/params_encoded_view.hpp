@@ -88,27 +88,38 @@ class params_encoded_view
 
 public:
     /** A read-only forward iterator to an encoded query parameter.
-    */
+
+        This is a read-only forward iterator to
+        the encoded query parameters.
+
+     */
 #ifdef BOOST_URL_DOCS
     using iterator = __see_below__;
 #else
     class iterator;
 #endif
 
-    /** A read-only forward iterator to an encoded query parameter.
-     */
+    /// @copydoc iterator
     using const_iterator = iterator;
 
-    /** The type of value returned when dereferencing an iterator.
+    /** A type which can represent a parameter as a value
+
+        This type allows for making a copy of
+        a parameter where ownership is retained
+        in the copy.
+
     */
     using value_type = query_param;
 
-    /** The type of value returned when dereferencing an iterator.
+    /** A type which can represent a parameter as a const reference
+
+        This type does not make a copy of a parameter
+        and ownership is retained by the container.
+
     */
     using reference = query_param_view;
 
-    /** The type of value returned when dereferencing an iterator.
-    */
+    /// @copydoc reference
     using const_reference = query_param_view;
 
     /** An unsigned integer type used to represent size.

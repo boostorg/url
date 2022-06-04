@@ -43,37 +43,33 @@ class params_view
 
 public:
     /** A read-only forward iterator to a decoded query parameter.
-    */
+
+        This is a read-only forward iterator to
+        the decoded query parameters.
+
+     */
 #ifdef BOOST_URL_DOCS
     using iterator = __see_below__;
 #else
     class iterator;
 #endif
 
-    /** A read-only forward iterator to a decoded query parameter.
-     */
+    /// @copydoc iterator
     using const_iterator = iterator;
 
-    /** The value type of query parameters
+    /** A type which can represent a parameter as a value
 
-        The query params object stores a list of encoded string view pairs
-        representing the query parameters identified in the original url.
-
-        When these values are dereference, they are lazily decoded into
-        constant read_only strings in params::reference.
-
-        A special boolean member `has_value` is used to differentiate
-        empty strings from non-existent strings.
+        This type allows for making a copy of
+        a parameter where ownership is retained
+        in the copy.
 
     */
     using value_type = query_param;
 
-    /** The type of value returned when dereferencing an iterator.
-    */
+    /// @copydoc value_type
     using reference = query_param;
 
-    /** The type of value returned when dereferencing an iterator.
-    */
+    /// @copydoc value_type
     using const_reference = value_type;
 
     /** An unsigned integer type used to represent size.

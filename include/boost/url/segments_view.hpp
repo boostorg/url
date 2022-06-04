@@ -45,24 +45,33 @@ class segments_view
         Allocator const& a);
 
 public:
+    /** A read-only bidirectional iterator to a decoded segment.
+
+        This is a read-only bidirectional iterator to
+        the decoded segments.
+
+     */
 #ifdef BOOST_URL_DOCS
-    /** An iterator to a read-only decoded path segment.
-    */
     using iterator = __see_below__;
 #else
     class iterator;
 #endif
 
-    /** The type of value returned when dereferencing an iterator.
+    /// @copydoc iterator
+    using const_iterator = iterator;
+
+    /** A type which can represent a segment as a value
+
+        This type allows for making a copy of
+        a segment where ownership is retained
+        in the copy.
     */
     using value_type = const_string;
 
-    /** The type of value returned when dereferencing an iterator.
-    */
+    /// @copydoc value_type
     using reference = const_string;
 
-    /** The type of value returned when dereferencing an iterator.
-    */
+    /// @copydoc value_type
     using const_reference = const_string;
 
     /** The unsigned integer type used to represent size.
