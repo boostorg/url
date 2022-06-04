@@ -99,24 +99,39 @@ class segments_encoded_view
         std::size_t n) noexcept;
 
 public:
+    /** A read-only bidirectional iterator to an encoded segment.
+
+        This is a read-only bidirectional iterator to
+        the encoded segments.
+
+     */
 #ifdef BOOST_URL_DOCS
-    /** A read-only bidirectional iterator to an encoded path segment.
-    */
     using iterator = __see_below__;
 #else
     class iterator;
 #endif
 
-    /** The type of value returned when dereferencing an iterator.
+    /// @copydoc iterator
+    using const_iterator = iterator;
+
+    /** A type which can represent a segment as a value
+
+        This type allows for making a copy of
+        a segment where ownership is retained
+        in the copy.
+
     */
     using value_type = const_string;
 
-    /** The type of value returned when dereferencing an iterator.
+    /** A type which can represent a segment as a const reference
+
+        This type does not make a copy of a segment
+        and ownership is retained by the container.
+
     */
     using reference = string_view;
 
-    /** The type of value returned when dereferencing an iterator.
-    */
+    /// @copydoc reference
     using const_reference = string_view;
 
     /** An unsigned integer type used to represent size.

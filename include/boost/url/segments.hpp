@@ -79,18 +79,20 @@ class segments
         Allocator const& a);
 
 public:
+    /** A read-only bidirectional iterator to a decoded segment.
+
+        This is a read-only bidirectional iterator to
+        the decoded segments.
+
+     */
 #ifdef BOOST_URL_DOCS
-    /** A random-access iterator referencing segments in a url path.
-
-        Deferencing this iterator returns a string
-        holding a decoded path segment, using the
-        the container's allocator.
-    */
     using iterator = __see_below__;
-
 #else
     class iterator;
 #endif
+
+    /// @copydoc iterator
+    using const_iterator = iterator;
 
     /** A type which can represent a segment as a value
 
@@ -100,8 +102,10 @@ public:
     */
     using value_type = const_string;
 
+    /// @copydoc value_type
     using reference = const_string;
 
+    /// @copydoc value_type
     using const_reference = const_string;
 
     /** An unsigned integer type

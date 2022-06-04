@@ -52,7 +52,11 @@ class params
         Allocator const& a);
 
 public:
-    /** A read-only random-access iterator to a decoded query parameter.
+    /** A read-only forward iterator to a decoded query parameter.
+
+        This is a read-only forward iterator to
+        the decoded query parameters.
+
      */
 #ifdef BOOST_URL_DOCS
     using iterator = __see_below__;
@@ -60,31 +64,22 @@ public:
     class iterator;
 #endif
 
-    /** A read-only random-access iterator to a decoded query parameter.
-     */
+    /// @copydoc iterator
     using const_iterator = iterator;
 
-    /** A view of a query parameter key-value pair
+    /** A type which can represent a parameter as a value
 
-        An instance of this type allows for making
-        a copy of a query parameter where ownership
-        is retained in the copy.
+        This type allows for making a copy of
+        a parameter where ownership is retained
+        in the copy.
+
     */
     using value_type = query_param;
 
-    /** A read-only structure representing a decoded query parameter.
-
-        Objects of this type are returned when
-        accessing key-value pairs of the container.
-
-        The strings stored in a reference are
-        read-only.
-
-    */
+    /// @copydoc value_type
     using reference = query_param;
 
-    /** A read-only structure representing a decoded query parameter.
-    */
+    /// @copydoc value_type
     using const_reference = reference;
 
     /** An unsigned integer type to represent sizes
