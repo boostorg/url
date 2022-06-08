@@ -36,9 +36,10 @@
     Basic guarantee. <!-- If the function throws an exception, the program is in a valid state -->
     No guarantee. <!-- If the function throws an exception, the program may not be in a valid state -->
 
-    <!-- Use explanation stock phrases if applicable -->
+    <!-- Use explanation stock phrases if applicable: -->
     <!-- Calls to allocate may throw. -->
     <!-- Exceptions thrown on invalid input. -->
+    <!-- Exceptions thrown on excessive input length. -->
 
     @tparam {name} {description}.
 

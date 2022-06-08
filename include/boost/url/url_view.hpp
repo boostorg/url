@@ -2010,7 +2010,9 @@ parse_absolute_uri(
     @endcode
 
     @par Exception Safety
-    Throws nothing.
+    Strong guarantee.
+
+    Exceptions thrown on excessive input length.
 
     @throw std::length_error `s.size() > url_view::max_size`
 

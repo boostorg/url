@@ -136,9 +136,7 @@ check if the result contains an error.
 [snippet_parsing_url_1]
 
 This ensures `result::value` will not throw an error. In contexts where
-it is acceptable to throw errors, `result::value` can be used directly:
-
-[snippet_parsing_4]
+it is acceptable to throw errors, `result::value` can be used directly.
 
 Check the reference for __result__ for a synopsis of the type. For complete
 information please consult the full
