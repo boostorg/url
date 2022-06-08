@@ -18,56 +18,29 @@
 
 //[snippet_headers_3
 #include <boost/url.hpp>
-using namespace boost::urls;
+namespace urls = boost::urls;
 //]
 
 void
 using_url_views()
 {
     //[snippet_parsing_1
-    string_view s = "https://user:pass@www.example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor";
+    urls::string_view s = "https://user:pass@www.example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor";
     //]
 
     {
         //[snippet_parsing_2
-        result<url_view> r = parse_uri( s );
+        urls::result<urls::url_view> r = urls::parse_uri( s );
         //]
     }
 
     {
         //[snippet_parsing_3
-        url_view u = parse_uri( s ).value();
+        urls::url_view u = urls::parse_uri( s ).value();
         //]
     }
 
-    {
-        //[snippet_parsing_4
-        try
-        {
-            url_view u = parse_uri(s).value();
-        }
-        catch (std::invalid_argument const&)
-        {
-            // handle error
-        }
-        //]
-    }
-
-    {
-        //[snippet_parsing_5
-        result<url_view> r = parse_uri( s );
-        if (r.has_value())
-        {
-            url_view u = r.value();
-        }
-        else
-        {
-            // handle error
-        }
-        //]
-    }
-
-    url_view u = parse_uri( s ).value();
+    urls::url_view u = urls::parse_uri( s ).value();
 
     //[snippet_accessing_1
     std::cout <<
@@ -80,21 +53,21 @@ using_url_views()
 
     {
         //[snippet_accessing_2
-        url_view u1 = parse_uri( "http://www.example.com" ).value();
+        urls::url_view u1 = urls::parse_uri( "http://www.example.com" ).value();
         std::cout << "fragment 1 : " << u1.encoded_fragment() << "\n\n";
 
-        url_view u2 = parse_uri( "http://www.example.com/#" ).value();
+        urls::url_view u2 = urls::parse_uri( "http://www.example.com/#" ).value();
         std::cout << "fragment 2 : " << u2.encoded_fragment() << "\n\n";
         //]
     }
 
     {
         //[snippet_accessing_3
-        url_view u1 = parse_uri( "http://www.example.com" ).value();
+        urls::url_view u1 = urls::parse_uri( "http://www.example.com" ).value();
         std::cout << "has fragment 1 : " << u1.has_fragment() << "\n";
         std::cout << "fragment 1 : " << u1.encoded_fragment() << "\n\n";
 
-        url_view u2 = parse_uri( "http://www.example.com/#" ).value();
+        urls::url_view u2 = urls::parse_uri( "http://www.example.com/#" ).value();
         std::cout << "has fragment 2 : " << u2.has_fragment() << "\n";
         std::cout << "fragment 2 : " << u2.encoded_fragment() << "\n\n";
         //]
@@ -108,7 +81,7 @@ using_url_views()
 
     {
         //[snippet_allocators_1
-        static_pool< 1024 > sp;
+        urls::static_pool< 1024 > sp;
         std::cout <<
             "query    : " << u.query(sp.allocator())    << "\n"
             "fragment : " << u.fragment(sp.allocator()) << "\n";
@@ -117,7 +90,7 @@ using_url_views()
 
     {
         //[snippet_compound_elements_1
-        segments_encoded_view segs = u.encoded_segments();
+        urls::segments_encoded_view segs = u.encoded_segments();
         for( auto v : segs )
         {
             std::cout << v << "\n";
@@ -127,7 +100,7 @@ using_url_views()
 
     {
         //[snippet_encoded_compound_elements_1
-        segments_view segs = u.segments();
+        urls::segments_view segs = u.segments();
 
         for( auto v : segs )
         {
@@ -138,9 +111,9 @@ using_url_views()
 
     {
         //[snippet_encoded_compound_elements_2
-        static_pool< 1024 > pool;
+        urls::static_pool< 1024 > pool;
 
-        segments_view segs = u.segments( pool.allocator() );
+        urls::segments_view segs = u.segments( pool.allocator() );
 
         for( auto v : segs )
         {
@@ -151,7 +124,7 @@ using_url_views()
 
     {
         //[snippet_encoded_compound_elements_3
-        params_encoded_view params = u.encoded_params();
+        urls::params_encoded_view params = u.encoded_params();
 
         for( auto v : params )
         {
@@ -164,9 +137,9 @@ using_url_views()
 
     {
         //[snippet_encoded_compound_elements_4
-        static_pool< 1024 > pool;
+        urls::static_pool< 1024 > pool;
 
-        params_view params = u.params( pool.allocator() );
+        urls::params_view params = u.params( pool.allocator() );
 
         for( auto v : params )
         {
@@ -181,10 +154,10 @@ using_url_views()
 void
 using_urls()
 {
-    string_view s = "https://user:pass@www.example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor";
+    urls::string_view s = "https://user:pass@www.example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor";
 
     //[snippet_modification_1
-    url u = parse_uri( s ).value();
+    urls::url u = urls::parse_uri( s ).value();
     //]
 
     //[snippet_modification_2
@@ -192,28 +165,17 @@ using_urls()
     //]
 
     //[snippet_modification_3
-    u.set_scheme( scheme::https ); // equivalent to u.set_scheme( "https" );
+    u.set_scheme( urls::scheme::https ); // equivalent to u.set_scheme( "https" );
     //]
 
     //[snippet_modification_4
-    try
-    {
-        u.set_scheme( "100" ); // illegal, must start with a letter
-    }
-    catch( std::invalid_argument const& )
-    {
-        // handle error
-    }
-    //]
-
-    //[snippet_modification_5
-    u.set_host( parse_ipv4_address( "192.168.0.1" ).value() )
+    u.set_host( urls::parse_ipv4_address( "192.168.0.1" ).value() )
         .set_port( 8080 )
         .remove_userinfo();
     //]
 
-    //[snippet_modification_6
-    params p = u.params();
+    //[snippet_modification_5
+    urls::params p = u.params();
     p.emplace_at(p.find("name"), "name", "Vinnie Falco");
     std::cout << u << "\n";
     //]
@@ -223,11 +185,11 @@ void
 parsing_urls()
 {
     //[snippet_parsing_url_1
-    result< url_view > r = parse_uri( "https://www.example.com/path/to/file.txt" );
+    urls::result< urls::url_view > r = urls::parse_uri( "https://www.example.com/path/to/file.txt" );
 
     if( r.has_value() )                         // parsing was successful
     {
-        url_view u = r.value();                 // extract the url_view
+        urls::url_view u = r.value();                 // extract the urls::url_view
 
         std::cout << u;                         // format the URL to cout
     }
@@ -239,12 +201,12 @@ parsing_urls()
 
     //[snippet_parsing_url_2
     // This will hold our copy
-    std::shared_ptr<url_view const> sp;
+    std::shared_ptr<urls::url_view const> sp;
     {
         std::string s = "/path/to/file.txt";
 
         // result::value() will throw an exception if an error occurs
-        url_view u = parse_relative_ref( s ).value();
+        urls::url_view u = urls::parse_relative_ref( s ).value();
 
         // create a copy with ownership and string lifetime extension
         sp = u.collect();
@@ -259,12 +221,12 @@ parsing_urls()
     {
         //[snippet_parsing_url_3
         // This will hold our mutable copy
-        url v;
+        urls::url v;
         {
             std::string s = "/path/to/file.txt";
 
             // result::value() will throw an exception if an error occurs
-            v = parse_relative_ref(s).value();
+            v = urls::parse_relative_ref(s).value();
 
             // At this point the string goes out of scope
         }
@@ -285,15 +247,15 @@ parsing_scheme()
 {
     {
         //[snippet_parsing_scheme_1
-        string_view s = "mailto:name@email.com";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "mailto:name@email.com";
+        urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u.scheme() << "\n";
         //]
     }
     {
-        string_view s = "mailto:name@email.com";
+        urls::string_view s = "mailto:name@email.com";
         //[snippet_parsing_scheme_2
-        url_view u = parse_uri( s ).value();
+        urls::url_view u = urls::parse_uri( s ).value();
         if (u.has_scheme())
         {
             std::cout << u.scheme() << "\n";
@@ -302,9 +264,9 @@ parsing_scheme()
     }
     {
         //[snippet_parsing_scheme_3
-        string_view s = "file://host/path/to/file";
-        url_view u = parse_uri( s ).value();
-        if (u.scheme_id() == scheme::file)
+        urls::string_view s = "file://host/path/to/file";
+        urls::url_view u = urls::parse_uri( s ).value();
+        if (u.scheme_id() == urls::scheme::file)
         {
             // handle file
         }
@@ -317,8 +279,8 @@ parsing_authority()
 {
     {
         //[snippet_parsing_authority_1
-        string_view s = "https:///path/to_resource";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "https:///path/to_resource";
+        urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u << "\n"
             "scheme:        " << u.scheme()            << "\n"
             "has authority: " << u.has_authority()     << "\n"
@@ -328,8 +290,8 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_2
-        string_view s = "https://www.boost.org";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "https://www.boost.org";
+        urls::url_view u = urls::parse_uri( s ).value();
         std::cout << "scheme:        " << u.scheme()            << "\n"
                      "has authority: " << u.has_authority()     << "\n"
                      "authority:     " << u.encoded_authority() << "\n"
@@ -338,8 +300,8 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_3
-        string_view s = "https://www.boost.org/users/download/";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "https://www.boost.org/users/download/";
+        urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u << "\n"
             "scheme:        " << u.scheme()   << "\n"
             "has authority: " << u.has_authority()     << "\n"
@@ -349,8 +311,8 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_4
-        string_view s = "https://www.boost.org/";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "https://www.boost.org/";
+        urls::url_view u = urls::parse_uri( s ).value();
         std::cout << "scheme:        " << u.scheme()            << "\n"
                      "has authority: " << u.has_authority()     << "\n"
                      "authority:     " << u.encoded_authority() << "\n"
@@ -359,8 +321,8 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_5
-        string_view s = "mailto:John.Doe@example.com";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "mailto:John.Doe@example.com";
+        urls::url_view u = urls::parse_uri( s ).value();
         std::cout << "scheme:        " << u.scheme()            << "\n"
                      "has authority: " << u.has_authority()     << "\n"
                      "authority:     " << u.encoded_authority() << "\n"
@@ -369,8 +331,8 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_6
-        string_view s = "mailto://John.Doe@example.com";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "mailto://John.Doe@example.com";
+        urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u << "\n"
             "scheme:        " << u.scheme()   << "\n"
             "has authority: " << u.has_authority()     << "\n"
@@ -380,8 +342,8 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_7
-        string_view s = "https://john.doe@www.example.com:123/forum/questions/";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "https://john.doe@www.example.com:123/forum/questions/";
+        urls::url_view u = urls::parse_uri( s ).value();
         std::cout << "scheme:        " << u.scheme()   << "\n"
             "has authority: " << u.has_authority()     << "\n"
             "authority:     " << u.encoded_authority() << "\n"
@@ -393,8 +355,8 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_8
-        string_view s = "https://john.doe@www.example.com:123/forum/questions/";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "https://john.doe@www.example.com:123/forum/questions/";
+        urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u << "\n"
             "encoded host:  " << u.encoded_host()          << "\n"
             "host:          " << u.host()                  << "\n"
@@ -405,8 +367,8 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_9
-        string_view s = "https://john.doe@192.168.2.1:123/forum/questions/";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "https://john.doe@192.168.2.1:123/forum/questions/";
+        urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u << "\n"
             "encoded host:  " << u.encoded_host()          << "\n"
             "host:          " << u.host()                  << "\n"
@@ -417,18 +379,18 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_10
-        string_view s = "https://www.boost.org/users/download/";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "https://www.boost.org/users/download/";
+        urls::url_view u = urls::parse_uri( s ).value();
         switch (u.host_type())
         {
-        case host_type::name:
+        case urls::host_type::name:
             // resolve name
-        case host_type::ipv4:
-        case host_type::ipv6:
-        case host_type::ipvfuture:
+        case urls::host_type::ipv4:
+        case urls::host_type::ipv6:
+        case urls::host_type::ipvfuture:
             // connect to ip
             break;
-        case host_type::none:
+        case urls::host_type::none:
             // handle empty host URL
             break;
         }
@@ -436,8 +398,8 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_11
-        string_view s = "https://john.doe:123456@www.somehost.com/forum/questions/";
-        url_view u = parse_uri( s ).value();
+        urls::string_view s = "https://john.doe:123456@www.somehost.com/forum/questions/";
+        urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u << "\n\n"
             // userinfo
             "has_userinfo:     " << u.has_userinfo()     << "\n"
@@ -454,8 +416,8 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_12
-        string_view s = "www.example.com:80";
-        authority_view a = parse_authority( s ).value();
+        urls::string_view s = "www.example.com:80";
+        urls::authority_view a = urls::parse_authority( s ).value();
         std::cout << a << "\n\n"
             // host and port
             "encoded_host_and_port: " << a.encoded_host_and_port()  << "\n"
@@ -478,8 +440,8 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_13
-        string_view s = "user:pass@www.example.com:443";
-        authority_view a = parse_authority( s ).value();
+        urls::string_view s = "user:pass@www.example.com:443";
+        urls::authority_view a = urls::parse_authority( s ).value();
         std::cout << a << "\n\n"
             // host and port
             "encoded_host_and_port: " << a.encoded_host_and_port()  << "\n"
@@ -507,8 +469,8 @@ parsing_path()
 {
     {
         //[snippet_parsing_path_1
-        string_view s = "https://www.boost.org/doc/libs/";
-        url_view    u = parse_uri(s).value();
+        urls::string_view s = "https://www.boost.org/doc/libs/";
+        urls::url_view    u = urls::parse_uri(s).value();
         std::cout << u << "\n"
             << "path:             " << u.encoded_path()     << "\n"
             << "encoded segments: " << u.encoded_segments() << "\n"
@@ -526,8 +488,8 @@ parsing_path()
 
     {
         //[snippet_parsing_path_2
-        string_view s = "https://www.boost.org/doc/libs";
-        url_view    u = parse_uri(s).value();
+        urls::string_view s = "https://www.boost.org/doc/libs";
+        urls::url_view    u = urls::parse_uri(s).value();
         std::cout << u.encoded_segments().size() << " segments\n";
         for (auto seg: u.encoded_segments())
         {
@@ -538,8 +500,8 @@ parsing_path()
 
     {
         //[snippet_parsing_path_3
-        string_view s = "https://www.boost.org";
-        url_view    u = parse_uri(s).value();
+        urls::string_view s = "https://www.boost.org";
+        urls::url_view    u = urls::parse_uri(s).value();
         std::cout << u << "\n"
             << "path:             " << u.encoded_path()     << "\n"
             << "encoded segments: " << u.encoded_segments() << "\n"
@@ -549,8 +511,8 @@ parsing_path()
 
     {
         //[snippet_parsing_path_4
-        string_view s = "https://www.boost.org//doc///libs";
-        url_view    u = parse_uri(s).value();
+        urls::string_view s = "https://www.boost.org//doc///libs";
+        urls::url_view    u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "path:             " << u.encoded_path()     << "\n"
                   "encoded segments: " << u.encoded_segments() << "\n"
@@ -566,8 +528,8 @@ parsing_path()
     {
         {
             //[snippet_parsing_path_5_a
-            string_view s = "https://www.boost.org";
-            url_view    u = parse_uri(s).value();
+            urls::string_view s = "https://www.boost.org";
+            urls::url_view    u = urls::parse_uri(s).value();
             std::cout << u << "\n"
                       << "path:     " << u.encoded_host()            << "\n"
                       << "path:     " << u.encoded_path()            << "\n"
@@ -576,8 +538,8 @@ parsing_path()
         }
         {
             //[snippet_parsing_path_5_b
-            string_view s = "https://www.boost.org/";
-            url_view    u = parse_uri(s).value();
+            urls::string_view s = "https://www.boost.org/";
+            urls::url_view    u = urls::parse_uri(s).value();
             std::cout << u << "\n"
                       << "host:     " << u.encoded_host()            << "\n"
                       << "path:     " << u.encoded_path()            << "\n"
@@ -586,8 +548,8 @@ parsing_path()
         }
         {
             //[snippet_parsing_path_5_c
-            string_view s = "https://www.boost.org//";
-            url_view    u = parse_uri(s).value();
+            urls::string_view s = "https://www.boost.org//";
+            urls::url_view    u = urls::parse_uri(s).value();
             std::cout << u << "\n"
                       << "host:     " << u.encoded_host()            << "\n"
                       << "path:     " << u.encoded_path()            << "\n"
@@ -598,8 +560,8 @@ parsing_path()
 
     {
         //[snippet_parsing_path_6
-        string_view s = "https://www.boost.org//doc/libs/";
-        url_view    u = parse_uri(s).value();
+        urls::string_view s = "https://www.boost.org//doc/libs/";
+        urls::url_view    u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "authority: " << u.encoded_authority() << "\n"
                   "path:      " << u.encoded_path()      << "\n";
@@ -613,8 +575,8 @@ parsing_path()
 
     {
         //[snippet_parsing_path_7
-        string_view s = "https://doc/libs/";
-        url_view    u = parse_uri(s).value();
+        urls::string_view s = "https://doc/libs/";
+        urls::url_view    u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "authority: " << u.encoded_authority() << "\n"
                   "path:      " << u.encoded_path()      << "\n";
@@ -628,8 +590,8 @@ parsing_path()
 
     {
         //[snippet_parsing_path_8
-        string_view s = "https://www.boost.org/doc@folder/libs:boost";
-        url_view    u = parse_uri(s).value();
+        urls::string_view s = "https://www.boost.org/doc@folder/libs:boost";
+        urls::url_view    u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "authority: " << u.encoded_authority() << "\n"
                   "path:      " << u.encoded_path()      << "\n";
@@ -643,8 +605,8 @@ parsing_path()
 
     {
         //[snippet_parsing_path_9
-        string_view s = "/doc/libs";
-        segments_encoded_view p = parse_path(s).value();
+        urls::string_view s = "/doc/libs";
+        urls::segments_encoded_view p = urls::parse_path(s).value();
         std::cout << "path: " << p << "\n";
         std::cout << p.size() << " segments\n";
         for (auto seg: p)
@@ -660,8 +622,8 @@ parsing_query()
 {
     {
         //[snippet_parsing_query_1
-        string_view s = "https://www.example.com/get-customer.php?id=409&name=Joe&individual";
-        url_view u = parse_uri(s).value();
+        urls::string_view s = "https://www.example.com/get-customer.php?id=409&name=Joe&individual";
+        urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has query:     " << u.has_query()     << "\n"
                   "encoded query: " << u.encoded_query() << "\n"
@@ -682,8 +644,8 @@ parsing_query()
     }
     {
         //[snippet_parsing_query_2
-        string_view s = "https://www.example.com/get-customer.php?key-1=value-1&key-2=&key-3&&=value-2";
-        url_view u = parse_uri(s).value();
+        urls::string_view s = "https://www.example.com/get-customer.php?key-1=value-1&key-2=&key-3&&=value-2";
+        urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has query:     " << u.has_query()     << "\n"
                   "encoded query: " << u.encoded_query() << "\n"
@@ -704,8 +666,8 @@ parsing_query()
     }
     {
         //[snippet_parsing_query_3
-        string_view s = "https://www.example.com/get-customer.php?email=joe@email.com&code=a:2@/!";
-        url_view u = parse_uri(s).value();
+        urls::string_view s = "https://www.example.com/get-customer.php?email=joe@email.com&code=a:2@/!";
+        urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has query:     " << u.has_query()     << "\n"
                   "encoded query: " << u.encoded_query() << "\n"
@@ -726,16 +688,16 @@ parsing_query()
     }
     {
         //[snippet_parsing_query_4
-        string_view s = "https://www.example.com/get-customer.php?name=joe";
-        url_view u = parse_uri(s).value();
+        urls::string_view s = "https://www.example.com/get-customer.php?name=joe";
+        urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "encoded query: " << u.encoded_query() << "\n";
         //]
     }
     {
         //[snippet_parsing_query_5
-        string_view s = "https://www.example.com/get-customer.php";
-        url_view u = parse_uri(s).value();
+        urls::string_view s = "https://www.example.com/get-customer.php";
+        urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has query:     " << u.has_query()     << "\n"
                   "encoded query: " << u.encoded_query() << "\n";
@@ -743,8 +705,8 @@ parsing_query()
     }
     {
         //[snippet_parsing_query_6
-        string_view s = "https://www.example.com/get-customer.php?name=John%20Doe";
-        url_view u = parse_uri(s).value();
+        urls::string_view s = "https://www.example.com/get-customer.php?name=John%20Doe";
+        urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has query:     " << u.has_query()     << "\n"
                   "encoded query: " << u.encoded_query() << "\n"
@@ -753,8 +715,8 @@ parsing_query()
     }
     {
         //[snippet_parsing_query_7
-        string_view s = "https://www.example.com/get-customer.php?name=John%26Doe";
-        url_view u = parse_uri(s).value();
+        urls::string_view s = "https://www.example.com/get-customer.php?name=John%26Doe";
+        urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has query:     " << u.has_query()     << "\n"
                   "encoded query: " << u.encoded_query() << "\n"
@@ -768,8 +730,8 @@ parsing_fragment()
 {
     {
         //[snippet_parsing_fragment_1
-        string_view s = "https://www.example.com/index.html#section%202";
-        url_view u = parse_uri(s).value();
+        urls::string_view s = "https://www.example.com/index.html#section%202";
+        urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has fragment:     " << u.has_fragment()     << "\n"
                   "encoded fragment: " << u.encoded_fragment() << "\n"
@@ -778,8 +740,8 @@ parsing_fragment()
     }
     {
         //[snippet_parsing_fragment_2_a
-        string_view s = "https://www.example.com/index.html#";
-        url_view u = parse_uri(s).value();
+        urls::string_view s = "https://www.example.com/index.html#";
+        urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has fragment:     " << u.has_fragment()     << "\n"
                   "encoded fragment: " << u.encoded_fragment() << "\n"
@@ -788,8 +750,8 @@ parsing_fragment()
     }
     {
         //[snippet_parsing_fragment_2_b
-        string_view s = "https://www.example.com/index.html";
-        url_view u = parse_uri(s).value();
+        urls::string_view s = "https://www.example.com/index.html";
+        urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has fragment:     " << u.has_fragment()     << "\n"
                   "encoded fragment: " << u.encoded_fragment() << "\n"
@@ -798,8 +760,8 @@ parsing_fragment()
     }
     {
         //[snippet_parsing_fragment_3
-        string_view s = "https://www.example.com/index.html#code%20:a@b?c/d";
-        url_view u = parse_uri(s).value();
+        urls::string_view s = "https://www.example.com/index.html#code%20:a@b?c/d";
+        urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has fragment:     " << u.has_fragment()     << "\n"
                   "encoded fragment: " << u.encoded_fragment() << "\n"
@@ -813,9 +775,9 @@ using_modifying()
 {
     {
         //[snippet_modifying_1
-        string_view s = "https://www.example.com";
-        url_view u = parse_uri(s).value();
-        url v(u);
+        urls::string_view s = "https://www.example.com";
+        urls::url_view u = urls::parse_uri(s).value();
+        urls::url v(u);
         //]
 
         //[snippet_modifying_2
@@ -832,17 +794,6 @@ using_modifying()
         //]
 
         //[snippet_modifying_4
-        try
-        {
-            v.set_scheme("http");
-        }
-        catch( std::exception const& )
-        {
-            // handle error
-        }
-        //]
-
-        //[snippet_modifying_5
         v.set_host("www.my example.com");
         std::cout << v << "\n";
         //]
@@ -856,11 +807,11 @@ grammar_parse()
 {
     {
         //[snippet_parse_1
-        string_view s = "http:after_scheme";
-        scheme_rule r;
+        urls::string_view s = "http:after_scheme";
+        urls::scheme_rule r;
         const char* it = s.begin();
-        error_code ec;
-        if (grammar::parse(it, s.end(), ec, r))
+        urls::error_code ec;
+        if (urls::grammar::parse(it, s.end(), ec, r))
         {
             std::cout << "scheme: " << r.scheme << '\n';
             std::cout << "suffix: " << it << '\n';
@@ -870,14 +821,14 @@ grammar_parse()
 
     {
         //[snippet_parse_2
-        string_view s = "?key=value#anchor";
-        query_part_rule r1;
-        fragment_part_rule r2;
+        urls::string_view s = "?key=value#anchor";
+        urls::query_part_rule r1;
+        urls::fragment_part_rule r2;
         const char* it = s.begin();
-        error_code ec;
-        if (grammar::parse(it, s.end(), ec, r1))
+        urls::error_code ec;
+        if (urls::grammar::parse(it, s.end(), ec, r1))
         {
-            if (grammar::parse(it, s.end(), ec, r2))
+            if (urls::grammar::parse(it, s.end(), ec, r2))
             {
                 std::cout << "query: " << r1.query_part << '\n';
                 std::cout << "fragment: " << r2.fragment.str << '\n';
@@ -888,12 +839,12 @@ grammar_parse()
 
     {
         //[snippet_parse_3
-        string_view s = "?key=value#anchor";
-        query_part_rule r1;
-        fragment_part_rule r2;
+        urls::string_view s = "?key=value#anchor";
+        urls::query_part_rule r1;
+        urls::fragment_part_rule r2;
         const char* it = s.begin();
-        error_code ec;
-        if (grammar::parse(it, s.end(), ec, r1, r2))
+        urls::error_code ec;
+        if (urls::grammar::parse(it, s.end(), ec, r1, r2))
         {
             std::cout << "query: " << r1.query_part << '\n';
             std::cout << "fragment: " << r2.fragment.str << '\n';
@@ -903,10 +854,10 @@ grammar_parse()
 
     {
         //[snippet_parse_4
-        string_view s = "http://www.boost.org";
-        uri_rule r;
-        error_code ec;
-        if (grammar::parse_string(s, ec, r))
+        urls::string_view s = "http://www.boost.org";
+        urls::uri_rule r;
+        urls::error_code ec;
+        if (urls::grammar::parse_string(s, ec, r))
         {
             std::cout << "scheme: " << r.scheme_part.scheme << '\n';
             std::cout << "host: " << r.hier_part.authority.host.host_part << '\n';
@@ -918,15 +869,15 @@ grammar_parse()
 //[snippet_customization_1
 struct lowercase_rule
 {
-    string_view str;
+    urls::string_view str;
 
     friend
     void
     tag_invoke(
-        grammar::parse_tag const&,
+        urls::grammar::parse_tag const&,
         char const*& it,
         char const* const end,
-        error_code& ec,
+        urls::error_code& ec,
         lowercase_rule& t) noexcept
     {
         ec = {};
@@ -935,7 +886,7 @@ struct lowercase_rule
         {
             ++it;
         }
-        t.str = string_view(begin, it);
+        t.str = urls::string_view(begin, it);
     }
 };
 //]
@@ -945,11 +896,11 @@ grammar_customization()
 {
     {
         //[snippet_customization_2
-        string_view s = "http:somelowercase";
-        scheme_rule r1;
+        urls::string_view s = "http:somelowercase";
+        urls::scheme_rule r1;
         lowercase_rule r2;
-        error_code ec;
-        if (grammar::parse_string(s, ec, r1, ':', r2))
+        urls::error_code ec;
+        if (urls::grammar::parse_string(s, ec, r1, ':', r2))
         {
             std::cout << "scheme: " << r1.scheme << '\n';
             std::cout << "lower:  " << r2.str << '\n';
@@ -986,7 +937,7 @@ grammar_charset()
 {
     {
         //[snippet_charset_2
-        query_chars_t cs;
+        urls::query_chars_t cs;
         assert(cs('a'));
         assert(cs('='));
         assert(!cs('#'));
@@ -995,10 +946,10 @@ grammar_charset()
     }
     {
         //[snippet_charset_3
-        string_view s = "key=the%20value";
-        pct_encoded_rule<query_chars_t> r;
-        error_code ec;
-        if (grammar::parse_string(s, ec, r))
+        urls::string_view s = "key=the%20value";
+        urls::pct_encoded_rule<urls::query_chars_t> r;
+        urls::error_code ec;
+        if (urls::grammar::parse_string(s, ec, r))
         {
             std::cout << "query:        " << r.s.str << '\n';
             std::cout << "decoded size: " << r.s.decoded_size << '\n';
@@ -1012,7 +963,7 @@ modifying_path()
 {
     {
         //[snippet_modifying_path_1
-        url_view u = parse_uri("https://www.boost.org").value();
+        urls::url_view u = urls::parse_uri("https://www.boost.org").value();
         //]
         BOOST_TEST_NOT(u.is_path_absolute());
         BOOST_TEST_EQ(u.encoded_segments().size(), 0u);
@@ -1020,7 +971,7 @@ modifying_path()
 
     {
         //[snippet_modifying_path_2
-        url_view u = parse_uri("https://www.boost.org/").value();
+        urls::url_view u = urls::parse_uri("https://www.boost.org/").value();
         //]
         BOOST_TEST(u.is_path_absolute());
         BOOST_TEST_EQ(u.encoded_segments().size(), 0u);
@@ -1028,7 +979,7 @@ modifying_path()
 
     {
         //[snippet_modifying_path_3
-        url u = parse_uri("https://www.boost.org/./a/../b").value();
+        urls::url u = urls::parse_uri("https://www.boost.org/./a/../b").value();
         u.normalize();
         //]
         BOOST_TEST(u.is_path_absolute());
@@ -1039,7 +990,7 @@ modifying_path()
     {
         //[snippet_modifying_path_4
         // scheme and a relative path
-        url_view u = parse_uri("https:path/to/file.txt").value();
+        urls::url_view u = urls::parse_uri("https:path/to/file.txt").value();
         //]
         BOOST_TEST_EQ(u.scheme(), "https");
         BOOST_TEST_NOT(u.has_authority());
@@ -1050,7 +1001,7 @@ modifying_path()
     {
         //[snippet_modifying_path_5
         // scheme and an absolute path
-        url_view u = parse_uri("https:/path/to/file.txt").value();
+        urls::url_view u = urls::parse_uri("https:/path/to/file.txt").value();
         //]
         BOOST_TEST_EQ(u.scheme(), "https");
         BOOST_TEST_NOT(u.has_authority());
@@ -1061,7 +1012,7 @@ modifying_path()
     {
         //[snippet_modifying_path_6
         // "//path" will be considered the authority component
-        url_view u = parse_uri("https://path/to/file.txt").value();
+        urls::url_view u = urls::parse_uri("https://path/to/file.txt").value();
         //]
         BOOST_TEST_EQ(u.scheme(), "https");
         BOOST_TEST(u.has_authority());
@@ -1072,7 +1023,7 @@ modifying_path()
     {
         //[snippet_modifying_path_7
         // only a relative path
-        url_view u = parse_uri_reference("path-to/file.txt").value();
+        urls::url_view u = urls::parse_uri_reference("path-to/file.txt").value();
         //]
         BOOST_TEST_NOT(u.has_scheme());
         BOOST_TEST_NOT(u.has_authority());
@@ -1084,7 +1035,7 @@ modifying_path()
         //[snippet_modifying_path_8
         // "path:" will be considered the scheme component
         // instead of a substring of the first segment
-        url_view u = parse_uri_reference("path:to/file.txt").value();
+        urls::url_view u = urls::parse_uri_reference("path:to/file.txt").value();
         //]
         BOOST_TEST(u.has_scheme());
         BOOST_TEST_NOT(u.has_authority());
@@ -1095,7 +1046,7 @@ modifying_path()
     {
         //[snippet_modifying_path_9
         // "path" should not become the authority component
-        url u = parse_uri("https:path/to/file.txt").value();
+        urls::url u = urls::parse_uri("https:path/to/file.txt").value();
         u.set_encoded_path("//path/to/file.txt");
         //]
         BOOST_TEST_EQ(u.scheme(), "https");
@@ -1107,7 +1058,7 @@ modifying_path()
     {
         //[snippet_modifying_path_10
         // "path:to" should not make the scheme become "path:"
-        url u = parse_uri_reference("path-to/file.txt").value();
+        urls::url u = urls::parse_uri_reference("path-to/file.txt").value();
         u.set_encoded_path("path:to/file.txt");
         //]
         BOOST_TEST_NOT(u.has_scheme());
@@ -1119,8 +1070,8 @@ modifying_path()
     {
         //[snippet_modifying_path_11
         // should not insert as "pathto/file.txt"
-        url u = parse_uri_reference("to/file.txt").value();
-        segments segs = u.segments();
+        urls::url u = urls::parse_uri_reference("to/file.txt").value();
+        urls::segments segs = u.segments();
         segs.insert(segs.begin(), "path");
         //]
         BOOST_TEST_NOT(u.has_scheme());

@@ -104,8 +104,6 @@ for the specified component.
 
 If the input string contains an invalid value, an exception is thrown.
 
-[snippet_modifying_4]
-
 [heading Decoded Modifiers]
 
 The decoded modifier functions will encode any input string that is
@@ -113,7 +111,7 @@ invalid as
 
 [table [[Code][Output]] [[
 [c++]
-[snippet_modifying_5]
+[snippet_modifying_4]
 ][
 [teletype]
 ```

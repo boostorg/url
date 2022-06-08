@@ -10,58 +10,10 @@
 
 [section Quick Look]
 
-[heading Headers]
-
 This section is intended to give the reader a brief overview of the features
-and interface style of the library. We begin by including the library header file which brings all the symbols into
-scope.
+and interface style of the library.
 
-[c++]
-[snippet_headers_1]
-
-Alternatively, individual headers may be included to obtain the declarations
- for specific types.
-
-[heading Linking]
-
-You will need to link your program with the Boost.URL built library. You must install binaries
-in a location that can be found by your linker.
-
-If you followed the [@http://www.boost.org/doc/libs/release/more/getting_started/index.html Boost Getting Started]
-instructions, that's already been done for you.
-
-[heading Header-only]
-
-To use Boost.URL as header-only; that is, to eliminate the requirement to link a program to a static or dynamic
-Boost.URL library, place the following line in [*exactly one] new or existing source file in your project.
-
-[c++]
-```
-    #include <boost/url/src.hpp>
-```
-
-[note
-    This "header-only" configuration needs `BOOST_URL_NO_LIB` defined when building with compilers supporting
-    auto-linking, such as Microsoft Visual C++. This macro will instruct Boost to deactivate auto-linking:
-
-    [c++]
-    ```
-        #define BOOST_URL_NO_LIB
-        #include <boost/url.hpp>
-    ```
-]
-
-
-[heading Parsing]
-
-Say you have the following URL that you want to parse:
-
-[c++]
-[snippet_parsing_1]
-
-You can parse it by calling this function:
-
-[snippet_parsing_2]
+[h3 Integration]
 
 [note
     Sample code and identifiers used throughout are written as if
@@ -70,34 +22,98 @@ You can parse it by calling this function:
     [snippet_headers_3]
 ]
 
+[h4 Compiled library]
+
+We begin by including the library header file which brings all the symbols into
+scope.
+
+[c++]
+[snippet_headers_1]
+
+Alternatively, individual headers may be included to obtain the declarations
+ for specific types.
+
+You will need to link your program with the Boost.URL built library. You must install binaries
+in a location that can be found by your linker.
+
+If you followed the [@http://www.boost.org/doc/libs/release/more/getting_started/index.html Boost Getting Started]
+instructions, that's already been done for you.
+
+[h4 Header-only]
+
+To use Boost.URL as header-only; that is, to eliminate the requirement to link
+a program to a static or dynamic Boost.URL library, place the following line
+in [*exactly one] new or existing source file in your project.
+
+[c++]
+```
+    // In exactly *one* source file
+    #include <boost/url/src.hpp>
+```
+
+Then define `BOOST_URL_NO_LIB` and include the library headers in any file that
+might uses Boost.URL.
+
+[c++]
+```
+    // In any other source file
+    #define BOOST_URL_NO_LIB
+    #include <boost/url.hpp>
+```
+
+This "header-only" configuration needs `BOOST_URL_NO_LIB` defined when building
+with compilers supporting auto-linking, such as Microsoft Visual C++. The macro
+will instruct Boost to deactivate auto-linking.
+
+[h3 Parsing]
+
+Say you have the following URL that you want to parse:
+
+[c++]
+[snippet_parsing_1]
+
+In this example, __string_view__ is an alias to `boost::core::string_view`, a
+`string_view` implementation that is implicitly convertible to `std::string_view`.
+The library namespace includes the aliases __string_view__, __error_code__, and
+__result__.
+
+You can parse the string by calling this function:
+
+[snippet_parsing_2]
+
 The function __parse_uri__ returns an object of type `__result__<__url_view__>`
 which is a container resembling a variant that holds either an error or an object.
+A number of [link section.url_view functions] are available to parse different
+types of URL.
 
 We can immediately call `result::value` to obtain a __url_view__.
 
 [snippet_parsing_3]
 
-`result::value` throws an exception on a parsing error.
+When there are no errors, [@boost:/libs/system/doc/html/system.html#ref_checked_value_access_2 `result::value`]
+returns an instance of __url_view__, which holds the parsed result.
+[@boost:/libs/system/doc/html/system.html#ref_checked_value_access_2 `result::value`]
+throws an exception on a parsing error.
 
-[snippet_parsing_4]
-
-Alternatively, the functions `result::has_value` and
-`result::has_error` could also be used to check if
-the string has been parsed without errors.
-
-[snippet_parsing_5]
-
-When there are no errors, it `result::value` returns an instance of __url_view__,
-which holds the parsed result.
+Alternatively, the functions
+[@boost:/libs/system/doc/html/system.html#ref_queries `result::has_value`] and
+[@boost:/libs/system/doc/html/system.html#ref_queries `result::has_error`] could
+also be used to check if the string has been parsed without errors.
 
 [note
-    It is worth noting that __parse_uri__ allocates no memory and throws no exceptions.
+    It is worth noting that __parse_uri__ does not allocate any memory dynamically.
     Like a __string_view__, a __url_view__ does not retain ownership of the underlying
-    string buffer. Constructed URL views always contain a valid URL in its correctly
-    serialized form.
+    string buffer.
+
+    As long as the contents of the original string are unmodified, constructed
+    URL views always contain a valid URL in its correctly serialized form.
+
+    If the input does not match the URL grammar, an error code
+    is reported through __result__ rather than exceptions.
+    Exceptions only thrown on excessive input length.
 ]
 
-[heading Accessing]
+[h3 Accessing]
 
 Accessing the parts of the URL is easy:
 
@@ -140,7 +156,7 @@ functions such as [link url.ref.boost__urls__url_view.has_fragment `has_fragment
 
 [table [[Code][Output]] [[
 [c++]
-[snippet_accessing_2]
+[snippet_accessing_3]
 ][
 [teletype]
 ```
@@ -153,7 +169,7 @@ functions such as [link url.ref.boost__urls__url_view.has_fragment `has_fragment
 ```
 ]]]
 
-[heading Decoding]
+[h3 Decoding]
 
 To get a decoded string, most observers provide the corresponding
 function without the word `encoded`:
@@ -268,7 +284,7 @@ __url_view__ provides the function
 [link url.ref.boost__urls__url_view.params `params`] to extract this view
 of key/value pairs.
 
-[heading Allocators]
+[h3 Allocators]
 
 All functions that return __const_string__ accept an optional __Allocator__.
 When omitted, this parameter defaults to the standard allocator.
@@ -291,7 +307,7 @@ The __static_pool__ type is provided by the library as an easy alternative
 to apply percent-decoding to long strings with no memory allocations.
 
 [#compound-elements]
-[heading Compound elements]
+[h3 Compound elements]
 
 The path and query parts of the URL are treated specially by the library.
 While they can be accessed as individual encoded strings, they can also be
@@ -315,7 +331,7 @@ As with other __url_view__ functions which return encoded strings, the encoded
 segments container does not allocate memory. Instead it returns views to the
 corresponding portions of the underlying encoded buffer referenced by the URL.
 
-[heading Encoded compound elements]
+[h3 Encoded compound elements]
 
 Alternatively, the function [link url.ref.boost__urls__url_view.segments `segments`]
 may be called to obtain the path segments as strings with percent-decoding
@@ -381,7 +397,7 @@ using a stack-based allocator which does not use the heap:
 
 [/-----------------------------------------------------------------------------]
 
-[heading Modification]
+[h3 Modification]
 
 The library provides the container __url__ for supporting modification of the
 contents of a URL. Unlike the __url_view__, which does not gain ownership of
@@ -393,10 +409,10 @@ A __url__ must be constructed from an existing __url_view__. For example using a
 [c++]
 [snippet_modification_1]
 
-Objects of type __url__ are first-class. They can be copied, moved, and
-assigned as needed. They support all of the inspection functions of
+Objects of type __url__ are [@https://en.cppreference.com/w/cpp/concepts/regular std::regular]:
+similarly to built-in types, such as `int`, a __url__ is copiable, movable, assignable, default
+constructible, and equality comparable. They support all of the inspection functions of
 __url_view__, and also provide functions to modify all parts of the URL.
-
 
 Changing the scheme is easy:
 
@@ -406,10 +422,7 @@ Or we can use a predefined constant:
 
 [snippet_modification_3]
 
-The scheme must be valid, however, or an exception is thrown:
-
-[snippet_modification_4]
-
+The scheme must be valid, however, or an exception is thrown.
 All modification functions perform validation on their input. Attemping
 to set part of the URL to an invalid string will result in an exception.
 It is not possible for a __url__ to hold a syntactically illegal text.
@@ -417,7 +430,7 @@ It is not possible for a __url__ to hold a syntactically illegal text.
 Modification functions return a reference to the object, so chaining
 is possible:
 
-[snippet_modification_5]
+[snippet_modification_4]
 
 All non-const operations offer the strong exception safety guarantee.
 
@@ -426,7 +439,7 @@ modifiable range functionality, using member functions of the container:
 
 [table [[Code][Output]] [[
 [c++]
-[snippet_modification_6]
+[snippet_modification_5]
 ][
 [teletype]
 ```
