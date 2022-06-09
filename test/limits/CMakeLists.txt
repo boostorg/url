@@ -22,10 +22,8 @@ target_link_libraries(boost_url_limits PRIVATE
     Boost::align
     Boost::config
     Boost::core
-    Boost::exception
     Boost::type_traits
     Boost::system
-    Boost::utility
     Boost::variant2)
 target_link_libraries(boost_url_limits INTERFACE Boost::url)
 add_test(NAME boost_url_limits COMMAND boost_url_limits)
