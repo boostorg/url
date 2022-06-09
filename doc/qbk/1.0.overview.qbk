@@ -63,7 +63,13 @@ Boost.URL offers these features:
 
 [section Requirements]
 
-The library requires Boost and a compiler supporting at least C++11. Aliases for standard types, such as __string_view__, use their Boost equivalents.
+The library requires Boost 1.78 and a compiler supporting at least C++11.
+
+[note
+    Boost [*1.78] or higher is a requirement for installation of this library proposal.
+]
+
+Aliases for standard types, such as __string_view__, use their Boost equivalents.
 
 [#header-only]
 [heading Header-Only]
