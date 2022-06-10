@@ -433,11 +433,6 @@ jobs:
             cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
             cmake --build . --target install
 
-            # cd ../test/cmake_install_test && mkdir __build__ && cd __build__
-            # cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
-            # cmake --build .
-            # cmake --build . --target check
-
   windows:
     strategy:
       fail-fast: false
@@ -492,3 +487,71 @@ jobs:
         run: |
             cd ../boost-root
             b2 -j %NUMBER_OF_PROCESSORS% libs/%LIBRARY%/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} address-model=${{matrix.addrmd}} variant=debug,release
+
+  CMake:
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-20.04, build_shared: ON,  build_type: Debug, generator: 'Unix Makefiles' }
+          - { os: ubuntu-20.04, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles' }
+          - { os: windows-2019, build_shared: ON,  build_type: Debug, generator: 'Visual Studio 16 2019' }
+          - { os: windows-2019, build_shared: OFF, build_type: Debug, generator: 'Visual Studio 16 2019' }
+
+    timeout-minutes: 120
+    runs-on: ${{matrix.os}}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Fetch Boost.CI
+        uses: actions/checkout@v2
+        with:
+          repository: boostorg/boost-ci
+          ref: master
+          path: boost-ci-cloned
+
+      - name: Get CI scripts folder
+        run: |
+            # Copy ci folder if not testing Boost.CI
+            [[ "$GITHUB_REPOSITORY" =~ "boost-ci" ]] || cp -r boost-ci-cloned/ci .
+            rm -rf boost-ci-cloned
+      - name: Setup Boost
+        env: {B2_DONT_BOOTSTRAP: 1}
+        run: source ci/github/install.sh
+
+      - name: Run CMake tests
+        run: |
+            cd "$BOOST_ROOT"
+            mkdir __build_cmake_test__ && cd __build_cmake_test__
+            cmake -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBOOST_INCLUDE_LIBRARIES=$SELF -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DBUILD_TESTING=ON -DBoost_VERBOSE=ON ..
+            cmake --build . --target tests boost_url_tests boost_url_limits --config ${{matrix.build_type}}
+            ctest --output-on-failure --build-config ${{matrix.build_type}}
+      - name: Run CMake subdir tests
+        run: |
+            cmake_test_folder="$BOOST_ROOT/libs/$SELF/test/cmake_test" # New unified folder
+            [ -d "$cmake_test_folder" ] || cmake_test_folder="$BOOST_ROOT/libs/$SELF/test/cmake_subdir_test"
+            cd "$cmake_test_folder"
+            mkdir __build_cmake_subdir_test__ && cd __build_cmake_subdir_test__
+            cmake -G "${{matrix.generator}}" -DBOOST_CI_INSTALL_TEST=OFF -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBUILD_SHARED_LIBS=${{matrix.build_shared}} ..
+            cmake --build . --config ${{matrix.build_type}}
+            ctest --output-on-failure --build-config ${{matrix.build_type}}
+      - name: Install Library
+        run: |
+            cd "$BOOST_ROOT"
+            mkdir __build_cmake_install_test__ && cd __build_cmake_install_test__
+            cmake -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBOOST_INCLUDE_LIBRARIES=$SELF -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DCMAKE_INSTALL_PREFIX=~/.local -DBoost_VERBOSE=ON -DBoost_DEBUG=ON ..
+            cmake --build . --target install --config ${{matrix.build_type}}
+      - name: Run CMake install tests
+        run: |
+            cmake_test_folder="$BOOST_ROOT/libs/$SELF/test/cmake_test" # New unified folder
+            [ -d "$cmake_test_folder" ] || cmake_test_folder="$BOOST_ROOT/libs/$SELF/test/cmake_install_test"
+            cd "$cmake_test_folder"
+            mkdir __build_cmake_install_test__ && cd __build_cmake_install_test__
+            cmake -G "${{matrix.generator}}" -DBOOST_CI_INSTALL_TEST=ON -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DCMAKE_PREFIX_PATH=~/.local ..
+            cmake --build . --config ${{matrix.build_type}}
+            ctest --output-on-failure --build-config ${{matrix.build_type}}
+
