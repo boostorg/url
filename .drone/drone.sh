@@ -190,11 +190,12 @@ cd libs/$SELF
 mkdir __build__ && cd __build__
 cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
 cmake --build . --target install
-#
-# cmake_install_test directory was removed. So the following test would fail.
-# cd ../test/cmake_install_test && mkdir __build__ && cd __build__
-# cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
-# cmake --build .
-# cmake --build . --target check
+ctest --output-on-failure
+
+cd ../test/cmake_test && mkdir __build__ && cd __build__
+cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
+cmake --build .
+cmake --build . --target check
+ctest --output-on-failure
 
 fi
