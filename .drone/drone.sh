@@ -147,7 +147,9 @@ common_install
 
 echo '==================================> COMPILE'
 
-export CXXFLAGS="-Wall -Wextra -Werror"
+# May want to re-enable -Werror
+# export CXXFLAGS="-Wall -Wextra -Werror"
+export CXXFLAGS="-Wall -Wextra"
 
 mkdir __build_static
 cd __build_static
