@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas at gmail dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,6 +16,8 @@
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/parse_tag.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/static_assert.hpp>
+#include <limits>
 #include <type_traits>
 
 namespace boost {
@@ -28,13 +31,10 @@ namespace grammar {
     unsigned      = "0" / ( ["1"..."9"] *DIGIT )
     @endcode
 */
-template<class T>
+template<class Unsigned>
 struct unsigned_decimal
 {
-    BOOST_STATIC_ASSERT(
-        std::is_unsigned<T>::value);
-
-    T u;
+    Unsigned u;
     string_view s;
 
     friend
@@ -50,54 +50,25 @@ struct unsigned_decimal
     }
 
 private:
+    BOOST_STATIC_ASSERT(
+        std::numeric_limits<
+            Unsigned>::is_integer &&
+        ! std::numeric_limits<
+            Unsigned>::is_signed);
+
     static
     void
     parse(
         char const*& it,
         char const* end,
         error_code& ec,
-        unsigned_decimal& t) noexcept
-    {
-        if(it == end)
-        {
-            ec = grammar::error::syntax;
-            return;
-        }
-        if(*it == '0')
-        {
-            t.s = string_view(
-                it, 1);
-            ++it;
-            t.u = 0;
-            return;
-        }
-        T u = 0;
-        auto const start = it;
-        constexpr auto div = (T(-1) / 10);
-        constexpr auto rem = (T(-1) % 10);
-        while(it != end)
-        {
-            if(! digit_chars(*it))
-                break;
-            T const dig = *it - '0';
-            if( u > div ||
-                (u == div && dig > rem))
-            {
-                ec = grammar::error::overflow;
-                return;
-            }
-            u = static_cast<T>(10 * u + dig);
-            ++it;
-        }
-        t.u = u;
-        t.s = string_view(start, it);
-    }
+        unsigned_decimal& t) noexcept;
 };
-
-//------------------------------------------------
 
 } // grammar
 } // urls
 } // boost
+
+#include <boost/url/grammar/impl/unsigned_decimal.hpp>
 
 #endif
