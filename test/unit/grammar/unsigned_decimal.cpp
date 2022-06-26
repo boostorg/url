@@ -56,6 +56,8 @@ struct unsigned_decimal_test
             bad<T>("01");
             bad<T>("256");
             bad<T>("300");
+            bad<T>("2555");
+            bad<T>("25555");
         }
         {
             using T = std::uint16_t;
@@ -65,6 +67,8 @@ struct unsigned_decimal_test
             good("99", T(99));
             good("65535", T(65535));
 
+            bad<T>("");
+            bad<T>("a");
             bad<T>("00");
             bad<T>("01");
             bad<T>("65536");

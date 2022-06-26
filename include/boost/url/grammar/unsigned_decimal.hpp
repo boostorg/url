@@ -15,6 +15,8 @@
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/parse_tag.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/static_assert.hpp>
+#include <limits>
 #include <type_traits>
 
 namespace boost {
@@ -28,13 +30,10 @@ namespace grammar {
     unsigned      = "0" / ( ["1"..."9"] *DIGIT )
     @endcode
 */
-template<class T>
+template<class Unsigned>
 struct unsigned_decimal
 {
-    BOOST_STATIC_ASSERT(
-        std::is_unsigned<T>::value);
-
-    T u;
+    Unsigned u;
     string_view s;
 
     friend
@@ -50,6 +49,12 @@ struct unsigned_decimal
     }
 
 private:
+    BOOST_STATIC_ASSERT(
+        std::numeric_limits<
+            Unsigned>::is_integer &&
+        ! std::numeric_limits<
+            Unsigned>::is_signed);
+
     static
     void
     parse(
@@ -65,36 +70,67 @@ private:
         }
         if(*it == '0')
         {
-            t.s = string_view(
-                it, 1);
-            ++it;
             t.u = 0;
+            t.s = string_view(it, 1);
+            ++it;
             return;
         }
-        T u = 0;
-        auto const start = it;
-        constexpr auto div = (T(-1) / 10);
-        constexpr auto rem = (T(-1) % 10);
-        while(it != end)
+        if(! digit_chars(*it))
         {
-            if(! digit_chars(*it))
-                break;
-            T const dig = *it - '0';
-            if( u > div ||
-                (u == div && dig > rem))
+            ec = grammar::error::syntax;
+            return;
+        }
+
+        auto const start = it;
+        static constexpr Unsigned Digits10 =
+            std::numeric_limits<
+                Unsigned>::digits10;
+        static constexpr Unsigned ten = 10;
+        auto const safe_end = (std::min)(it + Digits10, end);
+        Unsigned u = *it - '0';
+        ++it;
+
+        while(
+            it != safe_end &&
+            digit_chars(*it))
+        {
+            char const dig = *it - '0';
+            u = u * ten + dig;
+            ++it;
+        }
+
+        if(
+            it != end &&
+            digit_chars(*it))
+        {
+            static constexpr Unsigned Max = (
+                std::numeric_limits<
+                    Unsigned>::max)();
+            static constexpr auto div = (Max / ten);
+            static constexpr char rem = (Max % ten);
+            char const dig = *it - '0';
+            if( u > div || (
+                u == div && dig > rem))
             {
                 ec = grammar::error::overflow;
                 return;
             }
-            u = static_cast<T>(10 * u + dig);
+            u = u * ten + dig;
             ++it;
+
+            if(
+                it < end &&
+                digit_chars(*it))
+            {
+                ec = grammar::error::overflow;
+                return;
+            }
         }
+
         t.u = u;
         t.s = string_view(start, it);
     }
 };
-
-//------------------------------------------------
 
 } // grammar
 } // urls
