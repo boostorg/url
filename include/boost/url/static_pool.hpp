@@ -19,16 +19,32 @@ namespace boost {
 namespace urls {
 
 /** The type of allocator returned by static_pool
+
+   @see
+       @ref static_pool,
+       @ref basic_static_pool.
+
 */
 #ifdef BOOST_URL_DOCS
 template<class T>
-using static_pool_allocator = __see_below__
+using static_pool_allocator = __see_below__;
 #else
 template<class T>
 class static_pool_allocator;
 #endif
 
 /** Base class for fixed-storage pool
+
+    This class provides a static pool that can
+    use any contiguous memory block for storage.
+
+    Its most common application is as a base
+    class for a @ref static_pool.
+
+    @see
+        @ref static_pool,
+        @ref static_pool_allocator.
+
 */
 class basic_static_pool
 {
@@ -104,6 +120,31 @@ public:
 //------------------------------------------------
 
 /** A fixed-size storage pool for allocating memory
+
+    This class is provided by the library as an
+    easy alternative to apply percent-decoding
+    to long strings and store URLs with no
+    dynamic memory allocations.
+
+    @par Example
+
+    A query parameter string is parsed into
+    decoded params stored in the static pool.
+
+    @code
+    urls::static_pool<4096> pool;
+    urls::url_view u = urls::parse_uri_reference(
+            "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
+    urls::params_view params = u.params(pool.allocator());
+    for (auto p: params) {
+        std::cout << p.key << ": " << p.value << "\n";
+    }
+    @endcode
+
+    @see
+        @ref basic_static_pool,
+        @ref static_pool_allocator.
+
 */
 template<std::size_t N>
 class static_pool : public basic_static_pool

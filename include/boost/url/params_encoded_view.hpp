@@ -55,7 +55,7 @@ class url_view;
     @par Example
 
     A query parameter string is parsed into
-    encoded params, then each parameer is
+    encoded params, then each parameter is
     printed to standard output:
 
     @code

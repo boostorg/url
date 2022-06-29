@@ -303,8 +303,12 @@ except using a local stack-based allocator instead of the heap:
 ```
 ]]]
 
+[h4 Static pools]
+
 The __static_pool__ type is provided by the library as an easy alternative
 to apply percent-decoding to long strings with no memory allocations.
+
+[snippet_using_static_pool_1]
 
 [#compound-elements]
 [h3 Compound elements]

@@ -1092,6 +1092,24 @@ modifying_path()
     }
 }
 
+void
+using_static_pool()
+{
+    {
+        //[snippet_using_static_pool_1
+        urls::static_pool<4096> pool;
+        urls::url_view u = urls::parse_uri_reference(
+                "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
+        urls::params_view params = u.params(pool.allocator());
+        for (auto p: params) {
+            std::cout << p.key << ": " << p.value << "\n";
+        }
+        //]
+        BOOST_TEST_NOT(u.is_path_absolute());
+        BOOST_TEST_EQ(u.encoded_segments().size(), 0u);
+    }
+}
+
 namespace boost {
 namespace urls {
 
@@ -1113,6 +1131,7 @@ public:
         grammar_customization();
         grammar_charset();
         modifying_path();
+        using_static_pool();
 
         BOOST_TEST_PASS();
     }
