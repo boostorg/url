@@ -186,9 +186,9 @@ Some noteworthy IANA-registered schemes are
     [HTTP secured using SSL/TLS]
 ][
     [[@https://tools.ietf.org/html/rfc6068 `mailto`]]
-    [Secure WebSocket Protocol]
+    [SMTP email addresses]
 ][
-    [[@http://magnet-uri.sourceforge.net/ `magnet`]]
+    [[@https://www.bittorrent.org/beps/bep_0009.html `magnet`]]
     [Identify files by content]
 ][
     [[@https://tools.ietf.org/html/rfc2224 `nfs`]]
