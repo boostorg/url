@@ -274,10 +274,10 @@ extends until the view is destroyed.
 [heading Copying]
 
 The function
-[link url.ref.boost__urls__url_view.collect `url_view::collect`]
+[link url.ref.boost__urls__url_view.persist `url_view::persist`]
 may be used to create a copy of the underlying character buffer and attach
 ownership of the buffer to a newly returned view, which is wrapped in a
-shared pointer. The following code calls `collect` to create a read-only
+shared pointer. The following code calls `persist` to create a read-only
 copy:
 
 [c++]

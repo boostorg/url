@@ -378,7 +378,7 @@ public:
 
             assert( a.data() == s.data() );                     // same buffer
 
-            sp = a.collect();
+            sp = a.persist();
 
             assert( sp->data() != a.data() );                   // different buffer
             assert( sp->encoded_authority() == s);              // same contents
@@ -392,7 +392,7 @@ public:
     BOOST_URL_DECL
     std::shared_ptr<
         authority_view const>
-    collect() const;
+    persist() const;
 
     /** Return the complete authority
 

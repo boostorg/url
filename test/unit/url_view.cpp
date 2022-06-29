@@ -113,7 +113,7 @@ public:
             BOOST_TEST_EQ(u.string().data(), s.data());
         }
 
-        // collect()
+        // persist()
         {
         std::shared_ptr<url_view const> sp;
         {
@@ -122,7 +122,7 @@ public:
 
             assert( u.data() == s.data() );         // same buffer
 
-            sp = u.collect();
+            sp = u.persist();
 
             assert( sp->data() != s.data() );       // different buffer
             assert( sp->string() == s);        // same contents

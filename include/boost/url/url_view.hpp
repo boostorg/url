@@ -392,7 +392,19 @@ public:
             data(), size());
     }
 
-    /** Return a read-only copy of the URL, with shared lifetime.
+    /** Return a shared persistent copy of the URL view
+
+        This function returns a read-only copy of
+        the URL view, with shared lifetime. The
+        new URL view owns (persists) the underlying
+        string.
+
+        The main benefit of this function over
+        `std::make_shared` or `std::allocate_shared`
+        is using a single allocation for both the
+        new view and the character buffer. Thus,
+        it requires access to the underlying object
+        representation to achieve that.
 
         This function makes a copy of the storage
         pointed to by this, and attaches it to a
@@ -412,7 +424,7 @@ public:
 
             assert( u.data() == s.data() );         // same buffer
 
-            sp = u.collect();
+            sp = u.persist();
 
             assert( sp->data() != s.data() );       // different buffer
             assert( sp->string() == s);        // same contents
@@ -425,8 +437,7 @@ public:
     */
     BOOST_URL_DECL
     std::shared_ptr<
-        url_view const>
-    collect() const;
+        url_view const> persist() const;
 
     //--------------------------------------------
     //

@@ -100,8 +100,7 @@ url_view(string_view s)
 
 std::shared_ptr<
     url_view const>
-url_view::
-collect() const
+url_view::persist() const
 {
     using T = shared_impl;
     using Alloc = std::allocator<char>;

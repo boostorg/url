@@ -209,7 +209,7 @@ parsing_urls()
         urls::url_view u = urls::parse_relative_ref( s ).value();
 
         // create a copy with ownership and string lifetime extension
-        sp = u.collect();
+        sp = u.persist();
 
         // At this point the string goes out of scope
     }

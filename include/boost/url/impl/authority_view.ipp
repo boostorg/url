@@ -83,7 +83,7 @@ operator=(
 std::shared_ptr<
     authority_view const>
 authority_view::
-collect() const
+persist() const
 {
     using T = shared_impl;
     using Alloc = std::allocator<char>;

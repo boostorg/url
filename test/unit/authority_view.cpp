@@ -107,7 +107,7 @@ public:
             BOOST_TEST_EQ(a.encoded_authority().data(), s.data());
         }
 
-        // collect()
+        // persist()
         {
         std::shared_ptr<authority_view const> sp;
         {
@@ -116,7 +116,7 @@ public:
 
             assert( a.data() == s.data() );                     // same buffer
 
-            sp = a.collect();
+            sp = a.persist();
 
             assert( sp->data() != s.data() );                   // different buffer
             assert( sp->encoded_authority() == s);              // same contents
