@@ -29,6 +29,17 @@ else()
     add_subdirectory(../../../align boostorg/align)
     add_subdirectory(../../../system boostorg/system)
     add_subdirectory(../../../container boostorg/container)
+
+    # Conditional deps
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../detail/CMakeLists.txt")
+        add_subdirectory(../../../detail boostorg/detail)
+    endif()
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../preprocessor/CMakeLists.txt")
+        add_subdirectory(../../../preprocessor boostorg/preprocessor)
+    endif()
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../integer/CMakeLists.txt")
+        add_subdirectory(../../../integer boostorg/integer)
+    endif()
 endif()
 
 add_executable(main main.cpp)
