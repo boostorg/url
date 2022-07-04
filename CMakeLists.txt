@@ -76,13 +76,8 @@ function(boost_url_setup_properties target)
     else()
         target_link_libraries(${target}
             PUBLIC
-                Boost::align
-                Boost::assert
-                Boost::config
-                Boost::mp11
+                Boost::boost
                 Boost::system
-                Boost::throw_exception
-                Boost::type_traits
         )
     endif()
 
