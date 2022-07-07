@@ -100,6 +100,7 @@ public:
         Copy constructor
     */
     segments_view(segments_view const& other) = default;
+
     /** Assignment
 
         After the assignment, both views will point to

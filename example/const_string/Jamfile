@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Official repository: https://github.com/CPPAlliance/url
+#
+
+project : requirements  ;
+
+project
+    : requirements
+      <library>/boost/url//boost_url
+      <library>/boost/filesystem//boost_filesystem
+      <library>/boost/container//boost_container
+    ;
+
+exe query : query.cpp ;
+
+exe path : path.cpp ;
+
+exe route : route.cpp ;
+
+exe dir_router : dir_router.cpp ;
+
+exe router : router.cpp ;
+

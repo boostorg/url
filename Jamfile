@@ -20,3 +20,4 @@ constant c11-requires :
     ;
 
 build-project test ;
+build-project example ;

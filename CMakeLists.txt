@@ -34,7 +34,6 @@ else()
     set(BOOST_URL_BUILD_TESTS ${BUILD_TESTING})
 endif()
 
-
 include(GNUInstallDirs)
 if(BOOST_URL_IS_ROOT)
     if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../CMakeLists.txt")
@@ -42,7 +41,7 @@ if(BOOST_URL_IS_ROOT)
     endif()
 
     # container comes from json
-    set(BOOST_INCLUDE_LIBRARIES url json)
+    set(BOOST_INCLUDE_LIBRARIES url json filesystem container)
     set(BOOST_EXCLUDE_LIBRARIES url)
     set(CMAKE_FOLDER _deps)
     if (BOOST_URL_FIND_PACKAGE_BOOST)
@@ -85,8 +84,6 @@ function(boost_url_setup_properties target)
                 Boost::type_traits
         )
     endif()
-
-
 endfunction()
 
 
@@ -133,4 +130,8 @@ endif()
 
 if(BOOST_URL_BUILD_TESTS)
     add_subdirectory(test)
+endif()
+
+if(BOOST_URL_BUILD_EXAMPLES)
+    add_subdirectory(example)
 endif()
