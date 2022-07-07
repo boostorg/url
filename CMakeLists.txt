@@ -91,8 +91,6 @@ function(boost_url_setup_properties target)
                 Boost::type_traits
         )
     endif()
-
-
 endfunction()
 
 
