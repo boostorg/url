@@ -7,5 +7,13 @@
 # Official repository: https://github.com/CPPAlliance/url
 #
 
-add_subdirectory(magnet)
-add_subdirectory(query)
+source_group("" FILES
+        query.cpp
+        )
+
+add_executable(query
+        query.cpp
+        )
+
+set_property(TARGET query PROPERTY FOLDER "example")
+target_link_libraries(query PRIVATE Boost::url)
