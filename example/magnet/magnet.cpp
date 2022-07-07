@@ -9,6 +9,7 @@
 #include <boost/url/optional.hpp>
 #include <boost/url/rfc/absolute_uri_rule.hpp>
 #include <boost/url/grammar/digit_chars.hpp>
+#include <boost/url/grammar/parse.hpp>
 #include "filtered_view.hpp"
 #include <iostream>
 

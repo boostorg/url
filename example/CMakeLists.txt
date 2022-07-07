@@ -8,3 +8,4 @@
 #
 
 add_subdirectory(magnet)
+add_subdirectory(route)

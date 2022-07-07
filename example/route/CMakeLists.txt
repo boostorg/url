@@ -7,5 +7,13 @@
 # Official repository: https://github.com/CPPAlliance/url
 #
 
-build-project magnet ;
-build-project const_string ;
+source_group("" FILES
+        route.cpp
+        )
+
+add_executable(route
+        route.cpp
+        )
+
+set_property(TARGET route PROPERTY FOLDER "boost_url_examples")
+target_link_libraries(route PRIVATE Boost::url Boost::filesystem)
