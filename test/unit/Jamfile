@@ -22,6 +22,7 @@ project
 local SOURCES =
     ../../extra/test_main.cpp
     authority_view.cpp
+    const_string.cpp
     error.cpp
     error_code.cpp
     grammar.cpp
@@ -35,6 +36,7 @@ local SOURCES =
     pct_encoding.cpp
     pct_encoding_types.cpp
     query_param.cpp
+    recycled.cpp
     scheme.cpp
     segments.cpp
     segments_encoded.cpp
@@ -43,11 +45,11 @@ local SOURCES =
     snippets.cpp
     static_pool.cpp
     static_url.cpp
-    const_string.cpp
     string_view.cpp
     url.cpp
     url_view.cpp
     urls.cpp
+    used_ptr.cpp
     grammar/ascii.cpp
     grammar/char_literal.cpp
     grammar/charset.cpp

@@ -44,6 +44,7 @@ set(BOOST_URL_TESTS_FILES
     url.cpp
     url_view.cpp
     urls.cpp
+    used_ptr.cpp
     grammar/ascii.cpp
     grammar/char_literal.cpp
     grammar/charset.cpp
