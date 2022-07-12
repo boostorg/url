@@ -17,10 +17,23 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <iostream>
+#include <algorithm>
 
 namespace urls = boost::urls;
 namespace fs = boost::filesystem;
 using string_view = urls::string_view;
+
+namespace boost {
+namespace filesystem {
+namespace path_traits {
+template<>
+struct is_pathable< urls::pct_decoded_range >
+{
+    static const bool value = true;
+};
+}
+}
+}
 
 class route
 {
@@ -39,24 +52,21 @@ public:
         urls::url_view target,
         fs::path& result )
     {
-        // Target segments
-        urls::static_pool<1024> pool;
-        urls::segments_view segs =
-            target.segments(pool.allocator());
-
-        // Prefix segments
-        urls::segments prefix_segs =
-            prefix_.segments(pool.allocator());
+        // Segments
+        urls::segments_view target_segs = target.segments();
+        urls::segments prefix_segs = prefix_.segments();
 
         // Match the prefix segments
-        auto it0 = segs.begin();
-        auto end0 = segs.end();
+        if (target_segs.size() < prefix_segs.size())
+            return false;
+        auto it0 = target_segs.begin();
+        auto end0 = target_segs.end();
         auto it1 = prefix_segs.begin();
         auto end1 = prefix_segs.end();
         while (
             it0 != end0 &&
             it1 != end1 &&
-            *it0 == *it1)
+            it0.decoded_range() == it1.decoded_range())
         {
             ++it0;
             ++it1;
@@ -71,7 +81,7 @@ public:
         result = root_;
         while (it0 != end0)
         {
-            result /= *it0;
+            result.append(it0.decoded_range());
             ++it0;
         }
         return true;
@@ -86,7 +96,7 @@ int
 main(int argc, char **argv)
 {
     namespace urls = boost::urls;
-    namespace fs   = boost::filesystem;
+    namespace fs = boost::filesystem;
 
     // Check command line arguments.
     if (argc != 4)

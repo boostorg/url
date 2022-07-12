@@ -64,6 +64,12 @@ public:
         return impl_.dereference();
     }
 
+    pct_decoded_range
+    decoded_range() const noexcept
+    {
+        return impl_.decoded_range();
+    }
+
     iterator&
     operator++() noexcept
     {

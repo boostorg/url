@@ -12,6 +12,7 @@
 #define BOOST_URL_DETAIL_SEGMENTS_ITERATOR_IMPL_HPP
 
 #include <boost/url/string_view.hpp>
+#include <boost/url/pct_decoded_range.hpp>
 #include <string>
 
 namespace boost {
@@ -53,6 +54,10 @@ struct segments_iterator_impl
     BOOST_URL_DECL
     const_string
     dereference() const noexcept;
+
+    BOOST_URL_DECL
+    pct_decoded_range
+    decoded_range() const noexcept;
 
     BOOST_URL_DECL
     void

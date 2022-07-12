@@ -61,6 +61,13 @@ segments_iterator_impl(
     begin_ += n;
 }
 
+pct_decoded_range
+segments_iterator_impl::
+decoded_range() const noexcept
+{
+    return {t_.str.data(), t_.decoded_size, true};
+}
+
 const_string
 segments_iterator_impl::
 dereference() const noexcept

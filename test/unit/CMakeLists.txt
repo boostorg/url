@@ -40,6 +40,7 @@ set(BOOST_URL_TESTS_FILES
     static_pool.cpp
     static_url.cpp
     const_string.cpp
+    pct_decoded_range.cpp
     string_view.cpp
     url.cpp
     url_view.cpp
