@@ -50,9 +50,12 @@
 [def __MoveConstructible__      [@https://en.cppreference.com/w/cpp/named_req/MoveConstructible ['MoveConstructible]]]
 [def __SemiRegular__            [@https://en.cppreference.com/w/cpp/concepts/semiregular ['SemiRegular]]]
 [def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
-[def __CharSet__                [link url.grammar_rules.charset ['CharSet]]]
+[def __CharSet__                [link url.concepts.charset ['CharSet]]]
+[def __MutableString__          [link url.concepts.mutablestring ['MutableString]]]
 
 [def __std_swap__               [@https://en.cppreference.com/w/cpp/algorithm/swap `std::swap`]]
+[def __std_string__             [@https://en.cppreference.com/w/cpp/string/basic_string `std::string`]]
+
 [def __authority_view__         [link url.ref.boost__urls__authority_view `authority_view`]]
 [def __segments_view__          [link url.ref.boost__urls__segments_view `segments_view`]]
 [def __segments_encoded_view__  [link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]]
@@ -63,6 +66,7 @@
 [def __static_pool__            [link url.ref.boost__urls__static_pool `static_pool`]]
 [def __static_url__             [link url.ref.boost__urls__static_url `static_url`]]
 [def __const_string__           [link url.ref.boost__urls__const_string `const_string`]]
+[def __pct_encoded_view__       [link url.ref.boost__urls__pct_encoded_view `pct_encoded_view`]]
 [def __string_view__            [link url.ref.boost__urls__string_view `string_view`]]
 [def __url__                    [link url.ref.boost__urls__url `url`]]
 [def __url_view__               [link url.ref.boost__urls__url_view `url_view`]]
@@ -97,7 +101,6 @@
 [section Grammar Rules]
 [include 5.0.grammars.qbk]
 [include 5.1.customization.qbk]
-[include 5.2.CharSet.qbk]
 [endsect]
 
 
@@ -107,5 +110,12 @@
 [include reference.qbk]
 [block'''</part>''']
 [endsect]
+
+[section:concepts Concepts]
+[include 6.1.CharSet.qbk]
+[include 6.2.MutableString.qbk]
+[endsect]
+
+
 
 [xinclude index.xml]

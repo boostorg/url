@@ -98,6 +98,10 @@
           <member><link linkend="url.ref.boost__urls__pct_encode_to_value">pct_encode_to_value</link></member>
           <member><link linkend="url.ref.boost__urls__validate_pct_encoding">validate_pct_encoding</link></member>
         </simplelist>
+        <bridgehead renderas="sect3">Classes</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__pct_encoded_view">pct_encoded_view</link></member>
+        </simplelist>
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__pct_decode_opts">pct_decode_opts</link></member>
@@ -106,7 +110,8 @@
         </simplelist>
         <bridgehead renderas="sect3">Concepts</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.grammar_rules.charset"><emphasis>CharSet</emphasis></link></member>
+          <member><link linkend="url.concepts.charset"><emphasis>CharSet</emphasis></link></member>
+          <member><link linkend="url.concepts.mutablestring"><emphasis>MutableString</emphasis></link></member>
         </simplelist>
       </entry>
     </row></tbody>
@@ -224,6 +229,7 @@
         </simplelist>
         <bridgehead renderas="sect3">Type Traits</bridgehead>
         <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__is_mutable_string">is_mutable_string</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__is_charset">is_charset</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__is_range">is_range</link></member>
         </simplelist>

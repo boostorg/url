@@ -18,6 +18,7 @@ set(BOOST_URL_TESTS_FILES
     Jamfile
     test_rule.hpp
     authority_view.cpp
+    const_string.cpp
     error.cpp
     error_code.cpp
     grammar.cpp
@@ -28,6 +29,7 @@ set(BOOST_URL_TESTS_FILES
     params_encoded.cpp
     params_encoded_view.cpp
     params_view.cpp
+    pct_encoded_view.cpp
     pct_encoding.cpp
     pct_encoding_types.cpp
     query_param.cpp
@@ -39,7 +41,6 @@ set(BOOST_URL_TESTS_FILES
     snippets.cpp
     static_pool.cpp
     static_url.cpp
-    const_string.cpp
     string_view.cpp
     url.cpp
     url_view.cpp
