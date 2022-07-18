@@ -172,14 +172,6 @@ is_v4_mapped() const noexcept
         addr_[11] == 0xff;
 }
 
-bool
-operator==(
-    ipv6_address const& a1,
-    ipv6_address const& a2) noexcept
-{
-    return a1.addr_ == a2.addr_;
-}
-
 ipv6_address
 ipv6_address::
 loopback() noexcept
@@ -488,18 +480,6 @@ parse(
             0, 16 - (i0 + i1));
     }
     t = bytes;
-}
-
-std::ostream&
-operator<<(
-    std::ostream& os,
-    ipv6_address const& addr)
-{
-    char buf[ipv6_address::max_str_len];
-    auto const s = addr.to_buffer(
-        buf, sizeof(buf));
-    os << s;
-    return os;
 }
 
 result<ipv6_address>

@@ -834,15 +834,6 @@ parse_uri_reference(
 
 //------------------------------------------------
 
-std::ostream&
-operator<<(
-    std::ostream& os,
-    url_view const& u)
-{
-    os << u.string();
-    return os;
-}
-
 } // urls
 } // boost
 

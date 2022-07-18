@@ -266,12 +266,14 @@ public:
 
     /** Return true if two addresses are equal
     */
-    BOOST_URL_DECL
     friend
     bool
     operator==(
         ipv6_address const& a1,
-        ipv6_address const& a2) noexcept;
+        ipv6_address const& a2) noexcept
+    {
+        return a1.addr_ == a2.addr_;
+    }
 
     /** Return true if two addresses are not equal
     */
@@ -328,6 +330,31 @@ public:
         parse(it, end, ec, t);
     }
 
+    /** Format the address to an output stream
+
+        This function writes the address to an
+        output stream using standard notation.
+
+        @return The output stream, for chaining.
+
+        @param os The output stream to write to.
+
+        @param addr The address to write.
+    */
+    friend
+    std::ostream&
+    operator<<(
+        std::ostream& os,
+        ipv6_address const& addr)
+    {
+        char buf[ipv6_address::max_str_len];
+        auto const s = addr.to_buffer(
+            buf, sizeof(buf));
+        os << s;
+        return os;
+    }
+
+
 private:
     BOOST_URL_DECL
     static
@@ -347,23 +374,6 @@ private:
 };
 
 //------------------------------------------------
-
-/** Format the address to an output stream
-
-    This function writes the address to an
-    output stream using standard notation.
-
-    @return The output stream, for chaining.
-
-    @param os The output stream to write to.
-
-    @param addr The address to write.
-*/
-BOOST_URL_DECL
-std::ostream&
-operator<<(
-    std::ostream& os,
-    ipv6_address const& addr);
 
 /** Parse a string containing an IPv6 address.
 

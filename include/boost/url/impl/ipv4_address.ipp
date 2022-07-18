@@ -160,16 +160,6 @@ print_impl(
     return dest - start;
 }
 
-std::ostream&
-operator<<(
-    std::ostream& os,
-    ipv4_address const& addr)
-{
-    char buf[ipv4_address::max_str_len];
-    os << addr.to_buffer(buf, sizeof(buf));
-    return os;
-}
-
 result<ipv4_address>
 parse_ipv4_address(
     string_view s) noexcept

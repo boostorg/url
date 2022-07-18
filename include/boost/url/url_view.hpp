@@ -1930,6 +1930,34 @@ public:
         return lhs.compare(rhs) >= 0;
     }
 
+
+    /** Format the encoded URL to the output stream.
+
+        This function serializes the encoded URL
+        to the output stream.
+
+        @par Example
+        @code
+        url_view u( "http://www.example.com/index.htm" );
+
+        std::cout << u << std::endl;
+        @endcode
+
+        @return A reference to the output stream, for chaining
+
+        @param os The output stream to write to.
+
+        @param u The URL to write.
+    */
+    friend
+    std::ostream&
+    operator<<(
+        std::ostream& os,
+        url_view const& u)
+    {
+        return os << u.string();
+    }
+
     //--------------------------------------------
     //
     // Parsing
@@ -2150,30 +2178,6 @@ parse_uri_reference(
     string_view s);
 
 //------------------------------------------------
-
-/** Format the encoded URL to the output stream.
-
-    This function serializes the encoded URL
-    to the output stream.
-
-    @par Example
-    @code
-    url_view u( "http://www.example.com/index.htm" );
-
-    std::cout << u << std::endl;
-    @endcode
-
-    @return A reference to the output stream, for chaining
-
-    @param os The output stream to write to.
-
-    @param u The URL to write.
-*/
-BOOST_URL_DECL
-std::ostream&
-operator<<(
-    std::ostream& os,
-    url_view const& u);
 
 } // urls
 } // boost

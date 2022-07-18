@@ -261,6 +261,26 @@ public:
         return ipv4_address(0xFFFFFFFF);
     }
 
+    /** Format the address to an output stream.
+
+        IPv4 addresses written to output streams
+        are written in their dotted decimal format.
+
+        @param os The output stream.
+
+        @param addr The address to format.
+    */
+    friend
+    std::ostream&
+    operator<<(
+        std::ostream& os,
+        ipv4_address const& addr)
+    {
+        char buf[ipv4_address::max_str_len];
+        os << addr.to_buffer(buf, sizeof(buf));
+        return os;
+    }
+
     /** Customization point for parsing an IPv4 address.
     */
     friend
@@ -296,21 +316,6 @@ private:
 };
 
 //------------------------------------------------
-
-/** Format the address to an output stream.
-
-    IPv4 addresses written to output streams
-    are written in their dotted decimal format.
-
-    @param os The output stream.
-
-    @param addr The address to format.
-*/
-BOOST_URL_DECL
-std::ostream&
-operator<<(
-    std::ostream& os,
-    ipv4_address const& addr);
 
 /** Return an IPv4 address from an IP address string in dotted decimal form
 */

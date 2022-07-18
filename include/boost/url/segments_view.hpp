@@ -173,20 +173,27 @@ public:
     //
     //--------------------------------------------
 
-    BOOST_URL_DECL friend std::ostream&
-        operator<<(std::ostream& os,
-            segments_view const& pv);
+    /** Format the object to an output stream
+    */
+    friend
+    std::ostream&
+    operator<<(
+        std::ostream& os,
+        segments_view const& vw)
+    {
+        vw.write(os);
+        return os;
+    }
+
+private:
+    BOOST_URL_DECL
+    void
+    write(std::ostream& os) const;
+
 };
 
 //----------------------------------------------------------
 
-/** Format the object to an output stream
-*/
-BOOST_URL_DECL
-std::ostream&
-operator<<(
-    std::ostream& os,
-    segments_view const& vw);
 
 } // urls
 } // boost

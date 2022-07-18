@@ -62,17 +62,6 @@ end() const noexcept ->
 //
 //------------------------------------------------
 
-std::ostream&
-operator<<(
-    std::ostream& os,
-    segments_encoded_view const& pv)
-{
-    os << pv.s_;
-    return os;
-}
-
-//------------------------------------------------
-
 result<segments_encoded_view>
 parse_path(string_view s) noexcept
 {

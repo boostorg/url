@@ -43,28 +43,20 @@ end() const noexcept ->
     return iterator(s_, n_, a_, 0);
 }
 
-//------------------------------------------------
-//
-// Friends
-//
-//------------------------------------------------
-
-std::ostream&
-operator<<(
-    std::ostream& os,
-    segments_view const& vw)
+void
+segments_view::
+write(std::ostream& os) const
 {
-    auto it = vw.begin();
-    auto const end = vw.end();
-    if( it != end )
+    auto first = begin();
+    auto const last = end();
+    if( first != last )
     {
-        if( vw.is_absolute() )
+        if( is_absolute() )
             os << "/";
-        os << *it;
-        while( ++it != end )
-            os << '/' << *it;
+        os << *first;
+        while( ++first != last )
+            os << '/' << *first;
     }
-    return os;
 }
 
 } // urls
