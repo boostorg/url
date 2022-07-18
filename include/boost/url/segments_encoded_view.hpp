@@ -270,9 +270,16 @@ public:
 
     //--------------------------------------------
 
-    BOOST_URL_DECL friend std::ostream&
-        operator<<(std::ostream& os,
-            segments_encoded_view const& pv);
+    /** Format the object to an output stream
+    */
+    friend
+    std::ostream&
+    operator<<(
+        std::ostream& os,
+        segments_encoded_view const& pv)
+    {
+        return os << pv.s_;
+    }
 
     BOOST_URL_DECL friend
         result<segments_encoded_view>
@@ -294,16 +301,6 @@ public:
         result<segments_encoded_view>
         parse_path_rootless(string_view s) noexcept;
 };
-
-//----------------------------------------------------------
-
-/** Format the object to an output stream
-*/
-BOOST_URL_DECL
-std::ostream&
-operator<<(
-    std::ostream& os,
-    segments_encoded_view const& vw);
 
 //----------------------------------------------------------
 

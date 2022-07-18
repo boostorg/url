@@ -2527,17 +2527,6 @@ shrink_impl(
     return s_ + offset(first);
 }
 
-//------------------------------------------------
-
-std::ostream&
-operator<<(
-    std::ostream& os,
-    url const& u)
-{
-    os << u.string();
-    return os;
-}
-
 } // urls
 } // boost
 

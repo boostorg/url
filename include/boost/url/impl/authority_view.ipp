@@ -409,17 +409,6 @@ parse_authority(
     return a;
 }
 
-//------------------------------------------------
-
-std::ostream&
-operator<<(
-    std::ostream& os,
-    authority_view const& a)
-{
-    os << a.encoded_authority();
-    return os;
-}
-
 } // urls
 } // boost
 

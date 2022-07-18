@@ -1554,6 +1554,15 @@ public:
         url& dest,
         error_code& ec);
 
+    /** Format the encoded url to the output stream
+    */
+    friend
+    std::ostream&
+    operator<<(std::ostream& os, url const& u)
+    {
+        return os << u.string();
+    }
+
 private:
     //--------------------------------------------
     //
@@ -1655,12 +1664,6 @@ resolve(
     BOOST_ASSERT(&dest != &ref);
     dest.resolve(base, ref, ec);
 }
-
-/** Format the encoded url to the output stream
-*/
-BOOST_URL_DECL
-std::ostream&
-operator<<(std::ostream& os, url const& u);
 
 } // urls
 } // boost
