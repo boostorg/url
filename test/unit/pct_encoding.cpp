@@ -27,7 +27,7 @@ public:
         bool
         operator()(char c) const noexcept
         {
-            return c == 'A';
+            return c == 'A' || c == '+';
         }
     };
 
@@ -56,7 +56,7 @@ public:
     void
     testDecoding()
     {
-        constexpr grammar::lut_chars CS1('A');
+        constexpr grammar::lut_chars CS1("A+");
         constexpr grammar::lut_chars CS2 = CS1 + '\0';
         grammar::lut_chars const* pcs = &CS1;
         pct_decode_opts opt;
@@ -69,7 +69,7 @@ public:
             {
                 error_code ec;
                 auto n = validate_pct_encoding(
-                    s0, ec, opt, *pcs);
+                    s0, ec, *pcs, opt);
                 if(! BOOST_TEST(! ec.failed()))
                     return;
                 BOOST_TEST_EQ(n, s1.size());
@@ -83,7 +83,7 @@ public:
                     error_code ec;
                     auto const n = pct_decode(
                         buf, buf + i,
-                            s0, ec, opt, *pcs);
+                            s0, ec, *pcs, opt);
                     if(i < s1.size())
                     {
                         BOOST_TEST(
@@ -94,15 +94,19 @@ public:
                     }
                     BOOST_TEST(! ec.failed());
                     BOOST_TEST_EQ(n, s1.size());
-                    BOOST_TEST(
-                        string_view(buf, n) == s1);
+                    BOOST_TEST_EQ(
+                        string_view(buf, n), s1);
                     break;
                 }
             }
             // pct_decode() -> std::string
             {
-                std::string s = pct_decode(
-                    s0, opt, *pcs);
+                std::string s;
+                s.resize(pct_decode_bytes_unchecked(s0));
+                error_code ec;
+                std::size_t n =
+                    pct_decode(&s[0], &s[0] + s.size(), s0, ec, opt);
+                s.resize(n);
                 BOOST_TEST_EQ(s, s1);
             }
             // pct_decode() -> std::basic_string
@@ -110,25 +114,11 @@ public:
                 using A = static_pool_allocator<char>;
                 static_pool<256> p;
                 std::basic_string<char,
-                    std::char_traits<char>, A> s =
-                        pct_decode(s0, opt, *pcs,
-                            p.allocator());
-                BOOST_TEST_EQ(s, s1);
-            }
-            // pct_decode_to_value()
-            {
-                const_string s =
-                    pct_decode_to_value(
-                        s0, opt, *pcs);
-                BOOST_TEST_EQ(s, s1);
-            }
-            // pct_decode_to_value(Allocator)
-            {
-                static_pool<256> p;
-                const_string s =
-                    pct_decode_to_value(
-                        s0, opt, *pcs,
-                            p.allocator());
+                    std::char_traits<char>, A> s(
+                        p.allocator());
+                s.resize(pct_decode_bytes_unchecked(s0));
+                error_code ec;
+                pct_decode(&s[0], &s[0] + s.size(), s0, ec, opt);
                 BOOST_TEST_EQ(s, s1);
             }
             // pct_decode_bytes_unchecked
@@ -145,8 +135,8 @@ public:
                         buf, buf + sizeof(buf),
                             s0, opt);
                 BOOST_TEST_EQ(n, s1.size());
-                BOOST_TEST(
-                    string_view(buf, n) == s1);
+                BOOST_TEST_EQ(
+                    string_view(buf, n), s1);
             }
         };
 
@@ -157,8 +147,10 @@ public:
             {
                 error_code ec;
                 validate_pct_encoding(
-                    s, ec, opt, test_chars{});
+                    s, ec, test_chars{}, opt);
                 BOOST_TEST(ec.failed());
+                if (!ec.failed())
+                    BOOST_TEST_EQ(s, "");
             }
             // pct_decode to buffer
             {
@@ -166,21 +158,8 @@ public:
                 error_code ec;
                 pct_decode(buf,
                     buf + sizeof(buf),
-                        s, ec, opt, *pcs);
+                        s, ec, *pcs, opt);
                 BOOST_TEST(ec.failed());
-            }
-            // pct_decode_to_value()
-            {
-                BOOST_TEST_THROWS(
-                    pct_decode_to_value(
-                        s, opt, *pcs),
-                    std::invalid_argument);
-            }
-            // pct_decode() -> std::string
-            {
-                BOOST_TEST_THROWS(
-                    pct_decode(s, opt, *pcs),
-                    std::invalid_argument);
             }
             // pct_decode_bytes_unchecked
             {
@@ -220,21 +199,66 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = false;
 
-            good("", "");
-            good("%20", " ");
-            good("A", "A");
-            good("%41", "A");
-            good("%42", "B");
-            good("A%42", "AB");
-            good("A%20%42", "A B");
-            good("%00", "\0");
-            bad("B");
-            bad("+");
-            bad("%");
-            bad("%1");
-            bad("%1x");
-            bad("%%");
-            bad("A%00+");
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("", "");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%20", " ");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A", "A");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%41", "A");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%42", "B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%42", "AB");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%20%42", "A B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%00", "\0");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("+", "+");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%00+", "A\0+");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%1");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%1x");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%%");
+            }
         }
 
         {
@@ -243,21 +267,66 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = false;
 
-            good("", "");
-            good("%20", " ");
-            good("A", "A");
-            good("%41", "A");
-            good("%42", "B");
-            good("A%42", "AB");
-            good("A%20%42", "A B");
-            bad("B");
-            bad("%00");
-            bad("+");
-            bad("%");
-            bad("%1");
-            bad("%1x");
-            bad("%%");
-            bad("A%00+");
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("", "");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%20", " ");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A", "A");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%41", "A");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%42", "B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%42", "AB");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%20%42", "A B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("+", "+");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%00");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%1");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%1x");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%%");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("A%00+");
+            }
         }
 
         {
@@ -266,21 +335,66 @@ public:
             opt.non_normal_is_error = true;
             opt.plus_to_space = false;
 
-            good("", "");
-            good("%20", " ");
-            good("A", "A");
-            bad("%41");
-            good("%42", "B");
-            good("A%42", "AB");
-            good("A%20%42", "A B");
-            good("%00", "\0");
-            bad("B");
-            bad("+");
-            bad("%");
-            bad("%1");
-            bad("%1x");
-            bad("%%");
-            bad("A%00+");
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("", "");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%20", " ");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A", "A");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%41");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%42", "B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%42", "AB");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%20%42", "A B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%00", "\0");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("+", "+");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%00+", "A\0+");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%1");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%1x");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%%");
+            }
         }
 
         {
@@ -289,21 +403,66 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = false;
 
-            good("", "");
-            good("%20", " ");
-            good("A", "A");
-            good("%41", "A");
-            good("%42", "B");
-            good("A%42", "AB");
-            good("A%20%42", "A B");
-            good("%00", "\0");
-            bad("B");
-            bad("+");
-            bad("%");
-            bad("%1");
-            bad("%1x");
-            bad("%%");
-            bad("A%00+");
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("", "");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%20", " ");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A", "A");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%41", "A");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%42", "B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%42", "AB");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%20%42", "A B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%00", "\0");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("+", "+");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%00+", "A\0+");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%1");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%1x");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%%");
+            }
         }
 
         {
@@ -312,21 +471,66 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = true;
 
-            good("", "");
-            good("%20", " ");
-            good("A", "A");
-            good("%41", "A");
-            good("%42", "B");
-            good("A%42", "AB");
-            good("A%20%42", "A B");
-            good("%00", "\0");
-            good("+", " ");
-            bad("B");
-            bad("%");
-            bad("%1");
-            bad("%1x");
-            bad("%%");
-            good("A%00+", "A\0 ");
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("", "");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%20", " ");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A", "A");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%41", "A");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%42", "B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%42", "AB");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%20%42", "A B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%00", "\0");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("+", " ");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("B");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%1");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%1x");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%%");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A%00+", "A\0 ");
+            }
         }
 
         {
@@ -335,10 +539,22 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = true;
 
-            good("\0", "\0");
-            good("A\0", "A\0");
-            good("%41\0", "A\0");
-            good("%41%00", "A\0");
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("\0", "\0");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("A\0", "A\0");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%41\0", "A\0");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                good("%41%00", "A\0");
+            }
         }
 
         {
@@ -347,10 +563,22 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = true;
 
-            bad("\0");
-            bad("A\0");
-            bad("%41\0");
-            bad("%41%00");
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("\0");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("A\0");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%41\0");
+            }
+            {
+                BOOST_TEST_CHECKPOINT();
+                bad("%41%00");
+            }
         }
     }
 
@@ -368,7 +596,7 @@ public:
             opt.space_to_plus =
                 space_to_plus;
             BOOST_TEST(pct_encode_bytes(
-                s, opt, test_chars{}) ==
+                s, test_chars{}, opt) ==
                     m0.size());
         }
         // pct_encode
@@ -376,40 +604,33 @@ public:
             pct_encode_opts opt;
             opt.space_to_plus =
                 space_to_plus;
-            BOOST_TEST(pct_encode(
-                s, opt, test_chars{}) == m0);
+            std::string t;
+            t.resize(
+                pct_encode_bytes(s, test_chars{}, opt));
+            pct_encode(
+                &t[0], &t[0] + t.size(), s, test_chars{}, opt);
+            BOOST_TEST(t == m0);
         }
         {
             static_pool<256> pool;
             pct_encode_opts opt;
             opt.space_to_plus =
                 space_to_plus;
-            BOOST_TEST(pct_encode(
-                s, opt, test_chars{},
-                    pool.allocator()) == m0);
-        }
-        // pct_encode_to_value
-        {
-            pct_encode_opts opt;
-            opt.space_to_plus =
-                space_to_plus;
-            BOOST_TEST(pct_encode_to_value(
-                s, opt, test_chars{}) == m0);
-        }
-        {
-            static_pool<256> pool;
-            pct_encode_opts opt;
-            opt.space_to_plus =
-                space_to_plus;
-            BOOST_TEST(pct_encode_to_value(
-                s, opt, test_chars{},
-                    pool.allocator()) == m0);
+            std::basic_string<
+                char,
+                std::char_traits<char>,
+                static_pool_allocator<char>> t(pool.allocator());
+            t.resize(
+                pct_encode_bytes(s, test_chars{}, opt));
+            pct_encode(
+                &t[0], &t[0] + t.size(), s, test_chars{}, opt);
+            BOOST_TEST(t == m0);
         }
         pct_encode_opts opt;
         opt.space_to_plus =
             space_to_plus;
-        auto const m = pct_encode_to_value(
-            s, opt, test_chars{});
+        auto const m = pct_encode_to_string(
+            s, test_chars{}, opt);
         if(! BOOST_TEST(m == m0))
             return;
         char buf[64];
@@ -421,7 +642,7 @@ public:
             char* dest = buf;
             char const* end = buf + i;
             std::size_t n = pct_encode(
-                dest, end, s, opt, test_chars{});
+                dest, end, s, test_chars{}, opt);
             string_view r(buf, n);
             if(n == m.size())
             {
@@ -458,30 +679,30 @@ public:
     {
         // space_to_plus
         {
-            BOOST_TEST(pct_encode_to_value(
-                " ", {}, test_chars{}) == "%20");
+            BOOST_TEST(pct_encode_to_string(
+                " ", test_chars{}, {}) == "%20");
             pct_encode_opts opt;
             BOOST_TEST_EQ(opt.space_to_plus, false);
-            BOOST_TEST(pct_encode_to_value(
-                " ", opt, test_chars{}) == "%20");
-            BOOST_TEST(pct_encode_to_value(
-                "A", opt, test_chars{}) == "A");
-            BOOST_TEST(pct_encode_to_value(
-                " A+", opt, test_chars{}) == "%20A%2b");
+            BOOST_TEST(pct_encode_to_string(
+                " ", test_chars{}, opt) == "%20");
+            BOOST_TEST(pct_encode_to_string(
+                "A", test_chars{}, opt) == "A");
+            BOOST_TEST(pct_encode_to_string(
+                " A+", test_chars{}, opt) == "%20A+");
             opt.space_to_plus = true;
-            BOOST_TEST(pct_encode_to_value(
-                " ", opt, test_chars{}) == "+");
-            BOOST_TEST(pct_encode_to_value(
-                "A", opt, test_chars{}) == "A");
-            BOOST_TEST(pct_encode_to_value(
-                " A+", opt, test_chars{}) == "+A%2b");
+            BOOST_TEST(pct_encode_to_string(
+                " ", test_chars{}, opt) == "+");
+            BOOST_TEST(pct_encode_to_string(
+                "A", test_chars{}, opt) == "A");
+            BOOST_TEST(pct_encode_to_string(
+                " A+", test_chars{}, opt) == "+A+");
         }
 
         // allocator
         {
             static_pool<256> p;
-            BOOST_TEST(pct_encode_to_value(
-                "ABC", {}, test_chars{},
+            BOOST_TEST(pct_encode_to_string(
+                "ABC", test_chars{}, {},
                 p.allocator()) ==
                     "A%42%43");
         }
@@ -494,8 +715,8 @@ public:
         #ifndef _MSC_VER
             // VFALCO Because msvc's string allocates
             // one byte from a function marked noexcept
-            BOOST_TEST_THROWS(pct_encode_to_value(s,
-                {}, test_chars(), p.allocator()),
+            BOOST_TEST_THROWS(pct_encode_to_string(
+                s, test_chars(), {}, p.allocator()),
                     std::exception);
         #endif
         }

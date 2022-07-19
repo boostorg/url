@@ -13,6 +13,8 @@
 #include <boost/url/detail/except.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/detail/except.hpp>
+#include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/grammar/is_mutable_string.hpp>
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
 
@@ -24,28 +26,24 @@ std::size_t
 validate_pct_encoding(
     string_view s,
     error_code& ec,
-    pct_decode_opts const& opt,
-    CharSet const& cs) noexcept
+    CharSet const& allowed,
+    pct_decode_opts const& opt) noexcept
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
         grammar::is_charset<CharSet>::value);
 
     // can't have % in charset
-    BOOST_ASSERT(! cs('%'));
+    BOOST_ASSERT(! allowed('%'));
+
+    // we can't accept plus to space if '+' is not allowed
+    BOOST_ASSERT(! opt.plus_to_space || allowed('+'));
+
     std::size_t n = 0;
-    auto it = s.data();
-    auto const end = it + s.size();
+    char const* it = s.data();
+    char const* end = it + s.size();
     while(it != end)
     {
-        if( opt.plus_to_space &&
-            *it == '+')
-        {
-            // plus to space
-            ++n;
-            ++it;
-            continue;
-        }
         if( ! opt.allow_null &&
             *it == '\0')
         {
@@ -54,7 +52,7 @@ validate_pct_encoding(
                 error::illegal_null);
             return n;
         }
-        if(cs(*it))
+        if(allowed(*it))
         {
             // unreserved
             ++n;
@@ -98,7 +96,7 @@ validate_pct_encoding(
                 return n;
             }
             if( opt.non_normal_is_error &&
-                cs(c))
+                allowed(c))
             {
                 // escaped unreserved char
                 ec = BOOST_URL_ERR(
@@ -127,8 +125,8 @@ pct_decode(
     char const* end,
     string_view s,
     error_code& ec,
-    pct_decode_opts const& opt,
-    CharSet const& cs) noexcept
+    CharSet const& allowed,
+    pct_decode_opts const& opt) noexcept
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
@@ -136,7 +134,7 @@ pct_decode(
 
     auto const n =
         validate_pct_encoding(
-            s, ec, opt, cs);
+            s, ec, allowed, opt);
     if(ec.failed())
         return 0;
     auto const n1 =
@@ -148,77 +146,6 @@ pct_decode(
         return n1;
     }
     return n1;
-}
-
-//------------------------------------------------
-
-template<
-    class CharSet,
-    class Allocator>
-std::basic_string<char,
-    std::char_traits<char>,
-        Allocator>
-pct_decode(
-    string_view s,
-    pct_decode_opts const& opt,
-    CharSet const& cs,
-    Allocator const& a)
-{
-    // CharSet must satisfy is_charset
-    BOOST_STATIC_ASSERT(
-        grammar::is_charset<CharSet>::value);
-
-    std::basic_string<char,
-        std::char_traits<char>,
-            Allocator> r(a);
-    if(s.empty())
-        return r;
-    error_code ec;
-    auto const n =
-        validate_pct_encoding(
-            s, ec, opt, cs);
-    if(ec.failed())
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
-    r.resize(n);
-    pct_decode_unchecked(
-        &r[0], &r[0] + r.size(),
-            s, opt);
-    return r;
-}
-
-//------------------------------------------------
-
-template<
-    class CharSet,
-    class Allocator>
-const_string
-pct_decode_to_value(
-    string_view s,
-    pct_decode_opts const& opt,
-    CharSet const& cs,
-    Allocator const& a)
-{
-    // CharSet must satisfy is_charset
-    BOOST_STATIC_ASSERT(
-        grammar::is_charset<CharSet>::value);
-
-    if(s.empty())
-        return const_string();
-    error_code ec;
-    auto const n =
-        validate_pct_encoding(
-            s, ec, opt, cs);
-    if(ec.failed())
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
-    return const_string(n, a,
-        [&opt, &s]
-        (std::size_t n, char* dest)
-        {
-            pct_decode_unchecked(
-                dest, dest + n, s, opt);
-        });
 }
 
 //------------------------------------------------
@@ -250,8 +177,8 @@ template<class CharSet>
 std::size_t
 pct_encode_bytes(
     string_view s,
-    pct_encode_opts const& opt,
-    CharSet const& cs) noexcept
+    CharSet const& allowed,
+    pct_encode_opts const& opt) noexcept
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
@@ -264,7 +191,7 @@ pct_encode_bytes(
     {
         while(it != end)
         {
-            if(cs(*it))
+            if(allowed(*it))
                 ++n;
             else
                 n += 3;
@@ -276,12 +203,12 @@ pct_encode_bytes(
     // to plus, then space should
     // be in the list of reserved
     // characters!
-    BOOST_ASSERT(! cs(' '));
+    BOOST_ASSERT(! allowed(' '));
     while(it != end)
     {
         if(*it == ' ')
             ++n;
-        else if(cs(*it))
+        else if(allowed(*it))
             ++n;
         else
             n += 3;
@@ -298,15 +225,15 @@ pct_encode(
     char* dest,
     char const* const end,
     string_view s,
-    pct_encode_opts const& opt,
-    CharSet const& cs)
+    CharSet const& allowed,
+    pct_encode_opts const& opt)
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
         grammar::is_charset<CharSet>::value);
 
     // Can't have % in charset
-    BOOST_ASSERT(! cs('%'));
+    BOOST_ASSERT(! allowed('%'));
 
     static constexpr char hex[] =
         "0123456789abcdef";
@@ -318,7 +245,7 @@ pct_encode(
     {
         while(p != last)
         {
-            if(cs(*p))
+            if(allowed(*p))
             {
                 if(dest == end)
                     return dest - dest0;
@@ -340,10 +267,10 @@ pct_encode(
     // to plus, then space should
     // be in the list of reserved
     // characters!
-    BOOST_ASSERT(! cs(' '));
+    BOOST_ASSERT(! allowed(' '));
     while(p != last)
     {
-        if(cs(*p))
+        if(allowed(*p))
         {
             if(dest == end)
                 return dest - dest0;
@@ -378,10 +305,10 @@ template<
 std::basic_string<char,
     std::char_traits<char>,
         Allocator>
-pct_encode(
+pct_encode_to_string(
     string_view s,
+    CharSet const& allowed,
     pct_encode_opts const& opt,
-    CharSet const& cs,
     Allocator const& a)
 {
     // CharSet must satisfy is_charset
@@ -395,46 +322,17 @@ pct_encode(
     if(s.empty())
         return r;
     auto const n =
-        pct_encode_bytes(s, opt, cs);
+        pct_encode_bytes(s, allowed, opt);
     r.resize(n);
     char* dest = &r[0];
     char const* end = dest + n;
     auto const n1 = pct_encode(
-        dest, end, s, opt, cs);
+        dest, end, s, allowed, opt);
     BOOST_ASSERT(n1 == n);
     (void)n1;
     return r;
 }
-//------------------------------------------------
 
-template<
-    class CharSet,
-    class Allocator>
-const_string
-pct_encode_to_value(
-    string_view s,
-    pct_encode_opts const& opt,
-    CharSet const& cs,
-    Allocator const& a)
-{
-    // CharSet must satisfy is_charset
-    BOOST_STATIC_ASSERT(
-        grammar::is_charset<CharSet>::value);
-
-    if(s.empty())
-        return const_string();
-    auto const n =
-        pct_encode_bytes(s, opt, cs);
-    return const_string(n, a,
-        [&s, &opt, &cs](
-            std::size_t n, char* dest)
-        {
-            auto const n1 = pct_encode(
-                dest, dest+n, s, opt, cs);
-            BOOST_ASSERT(n1 == n);
-            (void)n1;
-        });
-}
 
 } // urls
 } // boost

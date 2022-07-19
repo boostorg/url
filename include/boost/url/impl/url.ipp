@@ -407,10 +407,10 @@ set_user(string_view s)
     s = buf.maybe_copy(s);
     check_invariants();
     auto const n = pct_encode_bytes(
-        s, {}, detail::user_chars);
+        s, detail::user_chars);
     auto dest = set_user_impl(n);
     pct_encode(dest, get(id_pass).data(),
-        s, {}, detail::user_chars);
+        s, detail::user_chars);
     decoded_[id_user] = s.size();
     check_invariants();
     return *this;
@@ -427,7 +427,7 @@ set_encoded_user(
     check_invariants();
     error_code ec;
     auto const n =
-        validate_pct_encoding(s, ec, {}, detail::user_chars);
+        validate_pct_encoding(s, ec, detail::user_chars, {});
     if(ec.failed())
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
@@ -501,13 +501,12 @@ set_password(string_view s)
     s = buf.maybe_copy(s);
     check_invariants();
     auto const n = pct_encode_bytes(
-        s, {}, detail::password_chars);
+        s, detail::password_chars);
     auto dest = set_password_impl(n);
     pct_encode(
         dest,
         get(id_host).data() - 1,
         s,
-        {},
         detail::password_chars);
     decoded_[id_pass] = s.size();
     check_invariants();
@@ -525,7 +524,7 @@ set_encoded_password(
     check_invariants();
     error_code ec;
     auto const n =
-        validate_pct_encoding(s, ec, {}, detail::password_chars);
+        validate_pct_encoding(s, ec, detail::password_chars, {});
     if(ec.failed())
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
@@ -590,13 +589,12 @@ set_userinfo(
     s = buf.maybe_copy(s);
     check_invariants();
     auto const n = pct_encode_bytes(
-        s, {}, detail::userinfo_chars);
+        s, detail::userinfo_chars);
     auto dest = set_userinfo_impl(n);
     pct_encode(
         dest,
         get(id_host).data() - 1,
         s,
-        {},
         detail::userinfo_chars);
     decoded_[id_user] = s.size();
     check_invariants();
@@ -724,13 +722,12 @@ set_host(
     }
     check_invariants();
     auto const n = pct_encode_bytes(
-        s, {}, detail::host_chars);
+        s, detail::host_chars);
     auto dest = set_host_impl(n);
     pct_encode(
         dest,
         get(id_path).data(),
         s,
-        {},
         detail::host_chars);
     decoded_[id_host] = s.size();
     host_type_ =
@@ -1799,13 +1796,12 @@ set_fragment(
     s = buf.maybe_copy(s);
     check_invariants();
     auto const n = pct_encode_bytes(
-        s, {}, fragment_chars);
+        s, fragment_chars);
     auto dest = set_fragment_impl(n);
     pct_encode(
         dest,
         get(id_end).data(),
         s,
-        {},
         fragment_chars);
     decoded_[id_frag] = s.size();
     check_invariants();
