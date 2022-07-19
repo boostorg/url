@@ -778,8 +778,17 @@ public:
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return pct_decode_unchecked(
-            encoded_userinfo(), opt, a);
+        string_view s = encoded_userinfo();
+        std::size_t n =
+            pct_decode_bytes_unchecked(s);
+        return const_string(
+            n, a,
+            [&s, &opt](
+                std::size_t n, char* dest)
+            {
+            pct_decode_unchecked(
+                dest, dest + n, s, opt);
+            });
     }
 
     //--------------------------------------------
@@ -870,8 +879,17 @@ public:
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return pct_decode_unchecked(
-            encoded_user(), opt, a);
+        string_view s = encoded_user();
+        std::size_t n =
+            pct_decode_bytes_unchecked(s);
+        return const_string(
+            n, a,
+            [&s, &opt](
+                std::size_t n, char* dest)
+            {
+            pct_decode_unchecked(
+                dest, dest + n, s, opt);
+            });
     }
 
     /** Return true if this contains a password
@@ -986,8 +1004,17 @@ public:
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return pct_decode_unchecked(
-            encoded_password(), opt, a);
+        string_view s = encoded_password();
+        std::size_t n =
+            pct_decode_bytes_unchecked(s);
+        return const_string(
+            n, a,
+            [&s, &opt](
+                std::size_t n, char* dest)
+            {
+            pct_decode_unchecked(
+                dest, dest + n, s, opt);
+            });
     }
 
     //--------------------------------------------
@@ -1586,8 +1613,17 @@ public:
     {
         pct_decode_opts opt;
         opt.plus_to_space = true;
-        return pct_decode_unchecked(
-            encoded_query(), opt, a);
+        string_view s = encoded_query();
+        std::size_t n =
+            pct_decode_bytes_unchecked(s);
+        return const_string(
+            n, a,
+            [&s, &opt](
+                std::size_t n, char* dest)
+            {
+            pct_decode_unchecked(
+                dest, dest + n, s, opt);
+            });
     }
 
     /** Return the query parameters

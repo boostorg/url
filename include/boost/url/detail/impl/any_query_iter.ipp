@@ -73,7 +73,7 @@ measure(
         return false;
     string_view s(p_, n_);
     urls::validate_pct_encoding(
-        s, ec, {}, query_chars);
+        s, ec, query_chars, {});
     if(ec.failed())
         return false;
     n += s.size();
@@ -152,7 +152,7 @@ measure(
         return false;
     string_view s(p_, n_);
     n += urls::pct_encode_bytes(
-        s, {}, query_chars);
+        s, query_chars);
     increment();
     return true;
 }
@@ -167,7 +167,6 @@ copy(
     dest += pct_encode(
         dest, end,
         string_view(p_, n_),
-        {},
         query_chars);
     increment();
 }
@@ -185,14 +184,14 @@ measure_impl(
     pct_decode_opts opt;
     opt.plus_to_space = true;
     validate_pct_encoding(
-        key, ec, opt, query_chars);
+        key, ec, query_chars, opt);
     if(ec.failed())
         return false;
     n += key.size();
     if(value)
     {
         validate_pct_encoding(
-            *value, ec, opt, query_chars);
+            *value, ec, query_chars, opt);
         if(ec.failed())
             return false;
         n += 1 + value->size();
@@ -246,13 +245,11 @@ measure_impl(
     string_view const* value,
     std::size_t& n) noexcept
 {
-    n += pct_encode_bytes(
-        key, {}, query_chars);
+    n += pct_encode_bytes(key, query_chars);
     if(value)
     {
         ++n; // '='
-        n += pct_encode_bytes(
-            *value, {}, query_chars);
+        n += pct_encode_bytes(*value, query_chars);
     }
 }
 
@@ -265,12 +262,12 @@ copy_impl(
     char const* end) noexcept
 {
     dest += pct_encode(
-        dest, end, key, {}, query_chars);
+        dest, end, key, query_chars);
     if(value)
     {
         *dest++ = '=';
         dest += pct_encode(
-            dest, end, *value, {}, query_chars);
+            dest, end, *value, query_chars);
     }
 }
 
@@ -287,8 +284,7 @@ measure_impl(
     if(value)
     {
         ++n; // '='
-        n += pct_encode_bytes(
-            *value, {}, query_chars);
+        n += pct_encode_bytes(*value, query_chars);
     }
 }
 
@@ -310,7 +306,7 @@ copy_impl(
     {
         *dest++ = '=';
         dest += pct_encode(
-            dest, end, *value, {}, query_chars);
+            dest, end, *value, query_chars);
     }
 }
 
