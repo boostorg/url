@@ -26,34 +26,39 @@ endif()
 if(BOOST_URL_IS_ROOT)
     include(CTest)
 endif()
+
 if(NOT BOOST_SUPERPROJECT_VERSION)
-    option(BOOST_URL_INSTALL "Install boost::url files" ON)
+    option(BOOST_URL_INSTALL "Install boost::url files" ${BOOST_URL_IS_ROOT})
     option(BOOST_URL_BUILD_TESTS "Build boost::url tests" ${BUILD_TESTING})
     option(BOOST_URL_BUILD_EXAMPLES "Build boost::url examples" ${BOOST_URL_IS_ROOT})
 else()
     set(BOOST_URL_BUILD_TESTS ${BUILD_TESTING})
 endif()
 
-include(GNUInstallDirs)
-if(BOOST_URL_IS_ROOT)
-    if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../CMakeLists.txt")
-        set(BOOST_URL_FIND_PACKAGE_BOOST ON)
-    endif()
+if (BOOST_SUPERPROJECT_VERSION)
+    set(BOOST_URL_FIND_PACKAGE_BOOST OFF)
+elseif (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../CMakeLists.txt" AND
+        EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../Jamroot" AND
+        EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../boost-build.jam" AND
+        EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../bootstrap.sh" AND
+        EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../libs")
+    set(BOOST_URL_FIND_PACKAGE_BOOST OFF)
+else()
+    set(BOOST_URL_FIND_PACKAGE_BOOST ON)
+endif()
 
-    # container comes from json
+if (BOOST_URL_FIND_PACKAGE_BOOST)
+    find_package(Boost 1.78.0 REQUIRED COMPONENTS container)
+elseif (BOOST_URL_IS_ROOT)
     set(BOOST_URL_UNIT_TEST_LIBRARIES container filesystem)
     set(BOOST_INCLUDE_LIBRARIES url json ${BOOST_URL_UNIT_TEST_LIBRARIES})
     set(BOOST_EXCLUDE_LIBRARIES url)
     set(CMAKE_FOLDER _deps)
-    if (BOOST_URL_FIND_PACKAGE_BOOST)
-        find_package(Boost 1.78.0 REQUIRED)
-    else ()
-        add_subdirectory(../.. _deps/boost EXCLUDE_FROM_ALL)
-    endif()
+    add_subdirectory(../.. _deps/boost EXCLUDE_FROM_ALL)
     unset(CMAKE_FOLDER)
 endif()
 
-
+include(GNUInstallDirs)
 function(boost_url_setup_properties target)
     target_compile_features(${target} PUBLIC cxx_constexpr)
     target_compile_definitions(${target} PUBLIC BOOST_URL_NO_LIB=1)

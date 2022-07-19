@@ -84,6 +84,22 @@ file in your project.
     #include <boost/url/src.hpp>
 ```
 
+[#cmake]
+[heading CMake Integration]
+
+The library can work both as a module of the Boost super-project or as an
+independent library that depends on Boost 1.78.0. In both cases,
+the target is available as `boost_url`.
+
+When the library is not a subdirectory of the Boost super-project, the
+Boost libraries will be located with `find_package`, regardless of
+whether it is the root library or not. This behavior can be explicitly
+controlled by setting the variable `BOOST_URL_FIND_PACKAGE_BOOST`.
+
+This allows the library to be compiled independently as the root project,
+as part of the Boost super-project, or as a dependency with
+`add_subdirectory` or `FetchContent`.
+
 [#embedded-devices]
 [heading Embedded]
 

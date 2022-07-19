@@ -8,9 +8,9 @@
 # Official repository: https://github.com/CPPAlliance/url
 #
 
-if(NOT TARGET tests)
-    add_custom_target(tests)
-    set_property(TARGET tests PROPERTY FOLDER _deps)
+if(NOT TARGET boost_url_all_tests)
+    add_custom_target(boost_url_all_tests)
+    set_property(TARGET boost_url_all_tests PROPERTY FOLDER _deps)
 endif()
 
 add_subdirectory(limits)
