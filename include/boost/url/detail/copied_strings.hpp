@@ -11,6 +11,7 @@
 #define BOOST_URL_DETAIL_COPIED_STRINGS_HPP
 
 #include <boost/url/string_view.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 
 namespace boost {
 namespace urls {
@@ -49,6 +50,11 @@ public:
     string_view
     maybe_copy(
         string_view s);
+
+    BOOST_URL_DECL
+    pct_encoded_view
+    maybe_copy(
+        pct_encoded_view s);
 };
 
 class copied_strings

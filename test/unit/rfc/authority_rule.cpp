@@ -66,7 +66,7 @@ public:
                 "x:y@e.com:8080", ec, p));
             BOOST_TEST(p.host.host_type ==
                 host_type::name);
-            BOOST_TEST(p.host.name.str
+            BOOST_TEST(p.host.name.encoded()
                 == "e.com");
             if(BOOST_TEST(p.port.has_port))
             {
@@ -76,9 +76,9 @@ public:
             }
             if(BOOST_TEST(p.has_userinfo))
             {
-                BOOST_TEST_EQ(p.userinfo.user.str, "x");
+                BOOST_TEST_EQ(p.userinfo.user.encoded(), "x");
                 if(BOOST_TEST(p.userinfo.has_password))
-                    BOOST_TEST_EQ(p.userinfo.password.str, "y");
+                    BOOST_TEST_EQ(p.userinfo.password.encoded(), "y");
             }
         }
     }

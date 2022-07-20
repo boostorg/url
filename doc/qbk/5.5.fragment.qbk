@@ -32,7 +32,7 @@ The URL below contains the fragment "section2":
     scheme    authority       path     fragment
 ```
 
-A fragment appearing in a URL is always preceded by the number sign ('#'). A
+A fragment appearing in a URL is always preceded by the number sign ('#').
 This makes a URL with a fragment of zero length distinguishable from a URL
 with no fragment.
 
@@ -51,29 +51,11 @@ The fragment grammar is defined as follows:
 ```
 ]]]
 
-[heading Member Functions]
-
-The functions for inspecting the fragment in a __url_view__ are as follows:
-
-[table Fragment Observers[
-    [Function]
-    [Description]
-][
-     [[link url.ref.boost__urls__url_view.has_fragment `has_fragment`]]
-     [Return true if a fragment is present]
-][
-    [[link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]]
-    [Return the fragment as a percent-encoded string.]
-][
-    [[link url.ref.boost__urls__url_view.fragment `fragment`]]
-    [Return the fragment as a string with percent-decoding applied.]
-]]
-
 [heading Observers]
 
 Analogous to other components, the functions
+[link url.ref.boost__urls__url_view.encoded_fragment `fragment`] and
 [link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]
-and [link url.ref.boost__urls__url_view.encoded_fragment `fragment`]
 can be used to obtain the fragment from a __url_view__:
 
 [table [[Code][Output]] [[
@@ -84,14 +66,13 @@ can be used to obtain the fragment from a __url_view__:
 ```
     https://www.example.com/index.html#section%202
     has fragment:     1
-    encoded fragment: section%202
     fragment:         section 2
+    encoded fragment: section%202
 ```
 ]]]
 
-These functions do not throw. If the URL has no fragment,
-[link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]
-returns an empty string. The function
+These functions do not throw. If the URL has no fragment, they
+return an empty string. The function
 [link url.ref.boost__urls__url_view.has_fragment `has_fragment`]
 can be used to determine whether this empty string means there is
 no fragment or an empty fragment string in the URL.
@@ -104,7 +85,6 @@ no fragment or an empty fragment string in the URL.
 ```
     https://www.example.com/index.html#
     has fragment:     1
-    encoded fragment:
     fragment:
 ```
 ]]
@@ -116,8 +96,17 @@ no fragment or an empty fragment string in the URL.
 ```
     https://www.example.com/index.html
     has fragment:     0
-    encoded fragment:
     fragment:
+```
+]][[
+[c++]
+[snippet_parsing_fragment_3]
+][
+[teletype]
+```
+    https://www.example.com/index.html
+    has fragment:     1
+    fragment:         code :a@b?c/d
 ```
 ]]]
 
@@ -162,6 +151,43 @@ other URL components.
     [[Encoded Fragment] [`code%20:a@b?c/d`]                                    ]
     [[Fragment]         [`code :a@b?c/d`]                                      ]
 ]
+
+[heading Member Functions]
+
+The functions for inspecting the fragment in a __url_view__ are as follows:
+
+[table Fragment Observers[
+    [Function]
+    [Description]
+][
+     [[link url.ref.boost__urls__url_view.has_fragment `has_fragment`]]
+     [Return true if a fragment is present]
+][
+    [[link url.ref.boost__urls__url_view.fragment `fragment`]]
+    [Return the fragment as a string with percent-decoding applied.]
+][
+    [[link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]]
+    [Return the fragment as a percent-encoded string.]
+]]
+
+The functions for modifying the fragment in a __url__ are as follows:
+
+[table Fragment Observers[
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url.set_fragment `set_fragment`]]
+    [Set fragment]
+][
+    [[link url.ref.boost__urls__url.set_encoded_fragment `set_encoded_fragment`]]
+    [Set encoded fragment]
+][
+    [[link url.ref.boost__urls__url.remove_fragment `remove_fragment`]]
+    [Remove fragment]
+][
+    [[link url.ref.boost__urls__url.normalize_fragment `normalize_fragment`]]
+    [Normalize fragment]
+]]
 
 [/-----------------------------------------------------------------------------]
 

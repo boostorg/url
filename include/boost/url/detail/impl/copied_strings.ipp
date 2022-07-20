@@ -90,6 +90,18 @@ maybe_copy(
     return s;
 }
 
+pct_encoded_view
+basic_copied_strings::
+maybe_copy(
+    pct_encoded_view s)
+{
+    return detail::access::construct(
+        maybe_copy(
+            s.encoded()),
+            s.size(),
+            s.options());
+}
+
 } // detail
 } // urls
 } // boost

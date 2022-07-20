@@ -113,28 +113,6 @@ collapse(
         offset_[i] = n;
 }
 
-//------------------------------------------------
-//
-// Query
-//
-//------------------------------------------------
-
-template<class Allocator>
-params_view
-url_view::
-params(
-    Allocator const& a) const noexcept
-{
-    auto s = get(id_query);
-    if(s.empty())
-        return params_view(
-            s, 0, a);
-    BOOST_ASSERT(s[0] == '?');
-    s.remove_prefix(1);
-    return params_view(
-        s, nparam_, a);
-}
-
 } // urls
 } // boost
 

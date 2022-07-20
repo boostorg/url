@@ -508,22 +508,22 @@ public:
         }
         {
             url_view u("http://[v1.x]:8080/");
-            BOOST_TEST(u.host_type() ==
-                host_type::ipvfuture);
-            BOOST_TEST(u.encoded_host() ==
-                "[v1.x]");
-            BOOST_TEST(u.host() ==
-                "[v1.x]");
-            BOOST_TEST(u.ipv_future() ==
-                "[v1.x]");
-            BOOST_TEST(u.authority().host_type() ==
-                host_type::ipvfuture);
-            BOOST_TEST(u.authority().encoded_host() ==
-                "[v1.x]");
-            BOOST_TEST(u.authority().host() ==
-                "[v1.x]");
-            BOOST_TEST(u.authority().ipv_future() ==
-                "[v1.x]");
+            BOOST_TEST_EQ(
+                u.host_type(), host_type::ipvfuture);
+            BOOST_TEST_EQ(
+                u.encoded_host(), "[v1.x]");
+            BOOST_TEST_EQ(
+                u.host(), "[v1.x]");
+            BOOST_TEST_EQ(
+                u.ipv_future(), "[v1.x]");
+            BOOST_TEST_EQ(
+                u.authority().host_type(), host_type::ipvfuture);
+            BOOST_TEST_EQ(
+                u.authority().encoded_host(), "[v1.x]");
+            BOOST_TEST_EQ(
+                u.authority().host(), "[v1.x]");
+            BOOST_TEST_EQ(
+                u.authority().ipv_future(), "[v1.x]");
         }
     }
 

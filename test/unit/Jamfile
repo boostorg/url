@@ -13,6 +13,7 @@ import testing ;
 project
     : requirements
       $(c11-requires)
+      <library>/boost/filesystem//boost_filesystem
       <source>../../extra/test_main.cpp
       <include>.
       <include>../../extra/include
@@ -22,7 +23,6 @@ project
 local SOURCES =
     ../../extra/test_main.cpp
     authority_view.cpp
-    const_string.cpp
     error.cpp
     error_code.cpp
     grammar.cpp
@@ -35,7 +35,6 @@ local SOURCES =
     params_view.cpp
     pct_encoded_view.cpp
     pct_encoding.cpp
-    pct_encoding_types.cpp
     query_param.cpp
     scheme.cpp
     segments.cpp

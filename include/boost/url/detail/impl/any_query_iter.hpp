@@ -26,7 +26,7 @@ measure(
 {
     if(it_ == end_)
         return false;
-    query_param_view v(*it_++);
+    query_param_encoded_view v(*it_++);
     if(v.has_value)
         measure_impl(
             v.key, &v.value, n);
@@ -43,7 +43,7 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    query_param_view v(*it_++);
+    query_param_encoded_view v(*it_++);
     if(v.has_value)
         copy_impl(
             v.key, &v.value,
@@ -63,7 +63,7 @@ measure(
 {
     if(it_ == end_)
         return false;
-    query_param_view v(*it_++);
+    query_param_encoded_view v(*it_++);
     if(v.has_value)
         measure_impl(
             v.key, &v.value, n);
@@ -80,7 +80,7 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    query_param_view v(*it_++);
+    query_param_encoded_view v(*it_++);
     if(v.has_value)
         copy_impl(
             v.key, &v.value,

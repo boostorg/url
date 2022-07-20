@@ -292,7 +292,7 @@ apply(
     case urls::host_type::name:
     {
         decoded_[id_host] =
-            t.name.decoded_size;
+            t.name.size();
         break;
     }
     case urls::host_type::ipv4:
@@ -302,6 +302,8 @@ apply(
         std::memcpy(
             &ip_addr_[0],
             bytes.data(), 4);
+        decoded_[id_host] =
+            t.host_part.size();
         break;
     }
     case urls::host_type::ipv6:
@@ -311,10 +313,14 @@ apply(
         std::memcpy(
             &ip_addr_[0],
             bytes.data(), 16);
+        decoded_[id_host] =
+            t.host_part.size();
         break;
     }
     case urls::host_type::ipvfuture:
     {
+        decoded_[id_host] =
+            t.host_part.size();
         break;
     }
     }
@@ -339,8 +345,8 @@ apply(
 
         set_size(
             id_user,
-            u.user.str.size());
-        decoded_[id_user] = u.user.decoded_size;
+            u.user.encoded().size());
+        decoded_[id_user] = u.user.size();
 
         if(u.has_password)
         {
@@ -348,9 +354,9 @@ apply(
             // trailing '@' for userinfo
             set_size(
                 id_pass,
-                u.password.str.size() + 2);
+                u.password.encoded().size() + 2);
             decoded_[id_pass] =
-                u.password.decoded_size;
+                u.password.size();
         }
         else
         {

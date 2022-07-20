@@ -49,7 +49,7 @@ class params_encoded_view::iterator
 
 public:
     using value_type = query_param;
-    using reference = query_param_view;
+    using reference = query_param_encoded_view;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
@@ -111,14 +111,6 @@ params_encoded_view(
     : s_(s)
     , n_(n)
 {
-}
-
-template<class Allocator>
-params_view
-params_encoded_view::
-decoded(Allocator const& alloc) const
-{
-    return params_view(s_, n_, alloc);
 }
 
 //------------------------------------------------

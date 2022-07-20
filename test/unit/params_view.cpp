@@ -45,7 +45,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params_view p = u.params(pa.allocator());
+            params_view p = u.params();
             BOOST_TEST_EQ(p.at("k0"), "0");
             BOOST_TEST_EQ(p.at("k1"), "1");
             BOOST_TEST_EQ(p.at("k2"), "");
@@ -65,13 +65,13 @@ public:
         {
             url_view u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params_view p = u.params(pa.allocator());
+            params_view p = u.params();
             BOOST_TEST(! p.empty());
             BOOST_TEST_EQ(p.size(), 5u);
         }
         {
             url_view u;
-            params_view p = u.params(pa.allocator());
+            params_view p = u.params();
             BOOST_TEST(p.empty());
             BOOST_TEST_EQ(p.size(), 0u);
         }
@@ -91,7 +91,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "/?a=1&%62=2&c=3&c=4&c=5&d=6&e=7&d=8&f=9#f").value();
-            params_view p = u.params(pa.allocator());
+            params_view p = u.params();
             BOOST_TEST_EQ(p.count("a"), 1u);
             BOOST_TEST_EQ(p.count("b"), 1u);
             BOOST_TEST_EQ(p.count("c"), 3u);
@@ -124,7 +124,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "/?a=1&bb=22&ccc=333&dddd=4444#f").value();
-            params_view p = u.params(pa.allocator());
+            params_view p = u.params();
             auto it = p.begin();
             BOOST_TEST_EQ((*it).key, "a");
             BOOST_TEST_EQ((*++it).key, "bb");
@@ -163,6 +163,21 @@ public:
             v = *it++;
             BOOST_TEST_EQ(v.key, "z");
             BOOST_TEST_EQ(v.value, "3");
+            BOOST_TEST_EQ(v.has_value, true);
+        }
+
+        // value_type outlives reference
+        {
+            url_view u = parse_uri_reference(
+                             "/?a=1&bb=22&ccc=333&dddd=4444#f").value();
+            params_view::value_type v;
+            {
+                params_view ps = u.params();
+                params_view::reference r = *ps.begin();
+                v = params_view::value_type(r);
+            }
+            BOOST_TEST_EQ(v.key, "a");
+            BOOST_TEST_EQ(v.value, "1");
             BOOST_TEST_EQ(v.has_value, true);
         }
     }

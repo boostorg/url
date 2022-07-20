@@ -9,10 +9,14 @@
 
 #include "test_suite.hpp"
 
+#include <boost/container/string.hpp>
+#include <boost/filesystem/path.hpp>
+
 //[snippet_headers_1
 #include <boost/url.hpp>
 //]
 
+#include <algorithm>
 #include <iostream>
 #include <cctype>
 
@@ -21,11 +25,13 @@
 namespace urls = boost::urls;
 //]
 
+#include <iostream>
+
 void
 using_url_views()
 {
     //[snippet_parsing_1
-    urls::string_view s = "https://user:pass@www.example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor";
+    urls::string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
     //]
 
     {
@@ -35,8 +41,16 @@ using_url_views()
     }
 
     {
+        urls::result<urls::url_view> r = urls::parse_uri( s );
         //[snippet_parsing_3
-        urls::url_view u = urls::parse_uri( s ).value();
+        urls::url_view u = r.value();
+        //]
+    }
+
+    {
+        urls::result<urls::url_view> r = urls::parse_uri( s );
+        //[snippet_parsing_4
+        urls::url_view u = *r;
         //]
     }
 
@@ -44,53 +58,158 @@ using_url_views()
 
     //[snippet_accessing_1
     std::cout <<
-        "scheme    : " << u.scheme()            << "\n"
-        "authority : " << u.encoded_authority() << "\n"
-        "path      : " << u.encoded_path()      << "\n"
-        "query     : " << u.encoded_query()     << "\n"
-        "fragment  : " << u.encoded_fragment()  << "\n";
+        "url       : " << u             << "\n"
+        "scheme    : " << u.scheme()    << "\n"
+        "authority : " << u.authority() << "\n"
+        "userinfo  : " << u.userinfo()  << "\n"
+        "user      : " << u.user()      << "\n"
+        "password  : " << u.password()  << "\n"
+        "host      : " << u.host()      << "\n"
+        "port      : " << u.port()      << "\n"
+        "path      : " << u.path()      << "\n"
+        "query     : " << u.query()     << "\n"
+        "fragment  : " << u.fragment()  << "\n";
+    //]
+
+    //[snippet_accessing_1b
+    for (auto seg: u.segments())
+        std::cout << seg << "\n";
+    std::cout << "\n";
+    for (auto param: u.params())
+        std::cout << param.key << ": " << param.value << "\n";
     //]
 
     {
-        //[snippet_accessing_2
+        //[snippet_accessing_2a
         urls::url_view u1 = urls::parse_uri( "http://www.example.com" ).value();
-        std::cout << "fragment 1 : " << u1.encoded_fragment() << "\n\n";
-
-        urls::url_view u2 = urls::parse_uri( "http://www.example.com/#" ).value();
-        std::cout << "fragment 2 : " << u2.encoded_fragment() << "\n\n";
+        std::cout << "fragment 1 : " << u1.fragment() << "\n\n";
         //]
     }
 
     {
-        //[snippet_accessing_3
+        //[snippet_accessing_2b
+        urls::url_view u2 = urls::parse_uri( "http://www.example.com/#" ).value();
+        std::cout << "fragment 2 : " << u2.fragment() << "\n\n";
+        //]
+    }
+
+    {
+        //[snippet_accessing_3a
         urls::url_view u1 = urls::parse_uri( "http://www.example.com" ).value();
         std::cout << "has fragment 1 : " << u1.has_fragment() << "\n";
-        std::cout << "fragment 1 : " << u1.encoded_fragment() << "\n\n";
+        std::cout << "fragment 1 : " << u1.fragment() << "\n\n";
+        //]
 
+        //[snippet_accessing_3b
         urls::url_view u2 = urls::parse_uri( "http://www.example.com/#" ).value();
         std::cout << "has fragment 2 : " << u2.has_fragment() << "\n";
-        std::cout << "fragment 2 : " << u2.encoded_fragment() << "\n\n";
+        std::cout << "fragment 2 : " << u2.fragment() << "\n\n";
         //]
     }
 
-    //[snippet_decoding_1
-    std::cout <<
-        "query    : " << u.query()    << "\n"
-        "fragment : " << u.fragment() << "\n";
-    //]
+    {
+        //[snippet_accessing_4
+        std::cout <<
+            "url       : " << u                     << "\n"
+            "scheme    : " << u.scheme()            << "\n"
+            "authority : " << u.encoded_authority() << "\n"
+            "userinfo  : " << u.encoded_userinfo()  << "\n"
+            "user      : " << u.encoded_user()      << "\n"
+            "password  : " << u.encoded_password()  << "\n"
+            "host      : " << u.encoded_host()      << "\n"
+            "port      : " << u.port()              << "\n"
+            "path      : " << u.encoded_path()      << "\n"
+            "query     : " << u.encoded_query()     << "\n"
+            "fragment  : " << u.encoded_fragment()  << "\n";
+        //]
+    }
+
+    {
+        //[snippet_decoding_1
+        std::string str;
+        u.query().assign_to(str);
+        str += "\n";
+        u.fragment().append_to(str);
+        std::cout << str << "\n";
+        //]
+    }
+    {
+        urls::url u1 = u;
+        urls::url u2 = u;
+        //[snippet_decoding_2
+        u1.set_host(u2.host());
+        //]
+        std::cout << u1 << "\n";
+    }
+    {
+        //[snippet_decoding_3
+        boost::filesystem::path p;
+        for (auto seg: u.segments())
+            p /= seg;
+        std::cout << "path: " << p << "\n";
+        //]
+    }
+// transparent std::equal_to<> required
+#if BOOST_CXX_VERSION >= 201402L && !defined(BOOST_CLANG)
+    {
+        auto handle_route = [](
+            std::vector<std::string> const&,
+            urls::url_view)
+        {};
+
+        //[snippet_decoding_4a
+        auto match = [](
+            std::vector<std::string> const& route,
+            urls::url_view u)
+        {
+            auto segs = u.segments();
+            if (route.size() != segs.size())
+                return false;
+            return std::equal(
+                route.begin(),
+                route.end(),
+                segs.begin());
+        };
+        //]
+        //[snippet_decoding_4b
+        std::vector<std::string> route =
+            {"community", "reviews.html"};
+        if (match(route, u))
+        {
+            handle_route(route, u);
+        }
+        //]
+    }
+#endif
+    {
+        //[snippet_decoding_5a
+        auto function = [](urls::string_view str)
+        {
+            std::cout << str << "\n";
+        };
+        //]
+        //[snippet_decoding_5b
+        function(u.query().to_string());
+        //]
+    }
 
     {
         //[snippet_allocators_1
         urls::static_pool< 1024 > sp;
-        std::cout <<
-            "query    : " << u.query(sp.allocator())    << "\n"
-            "fragment : " << u.fragment(sp.allocator()) << "\n";
+        boost::container::basic_string<
+            char, std::char_traits<char>,
+            urls::static_pool_allocator<char>>
+                str(sp.allocator());
+        u.query().assign_to(str);
+        str += "\n";
+        u.fragment().append_to(str);
+        std::cout << str << "\n";
         //]
     }
 
     {
         //[snippet_compound_elements_1
-        urls::segments_encoded_view segs = u.encoded_segments();
+        urls::segments_view segs = u.segments();
         for( auto v : segs )
         {
             std::cout << v << "\n";
@@ -111,35 +230,7 @@ using_url_views()
 
     {
         //[snippet_encoded_compound_elements_2
-        urls::static_pool< 1024 > pool;
-
-        urls::segments_view segs = u.segments( pool.allocator() );
-
-        for( auto v : segs )
-        {
-            std::cout << v << "\n";
-        }
-        //]
-    }
-
-    {
-        //[snippet_encoded_compound_elements_3
-        urls::params_encoded_view params = u.encoded_params();
-
-        for( auto v : params )
-        {
-            std::cout <<
-                "key = " << v.key <<
-                ", value = " << v.value << "\n";
-        }
-        //]
-    }
-
-    {
-        //[snippet_encoded_compound_elements_4
-        urls::static_pool< 1024 > pool;
-
-        urls::params_view params = u.params( pool.allocator() );
+        urls::params_view params = u.params();
 
         for( auto v : params )
         {
@@ -156,25 +247,30 @@ using_urls()
 {
     urls::string_view s = "https://user:pass@www.example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor";
 
-    //[snippet_modification_1
+    //[snippet_quicklook_modifying_1
     urls::url u = urls::parse_uri( s ).value();
     //]
 
-    //[snippet_modification_2
+    //[snippet_quicklook_modifying_1b
+    urls::static_url<1024> su = urls::parse_uri( s ).value();
+    //]
+
+    //[snippet_quicklook_modifying_2
     u.set_scheme( "https" );
     //]
 
-    //[snippet_modification_3
+    //[snippet_quicklook_modifying_3
     u.set_scheme( urls::scheme::https ); // equivalent to u.set_scheme( "https" );
     //]
 
-    //[snippet_modification_4
+    //[snippet_quicklook_modifying_4
     u.set_host( urls::parse_ipv4_address( "192.168.0.1" ).value() )
         .set_port( 8080 )
         .remove_userinfo();
+    std::cout << u << "\n";
     //]
 
-    //[snippet_modification_5
+    //[snippet_quicklook_modifying_5
     urls::params p = u.params();
     p.emplace_at(p.find("name"), "name", "Vinnie Falco");
     std::cout << u << "\n";
@@ -186,16 +282,14 @@ parsing_urls()
 {
     //[snippet_parsing_url_1
     urls::result< urls::url_view > r = urls::parse_uri( "https://www.example.com/path/to/file.txt" );
-
-    if( r.has_value() )                         // parsing was successful
+    if( r.has_value() )                    // parsing was successful
     {
-        urls::url_view u = r.value();                 // extract the urls::url_view
-
-        std::cout << u;                         // format the URL to cout
+        urls::url_view u = r.value();      // extract the urls::url_view
+        std::cout << u << "\n";            // format the URL to cout
     }
     else
     {
-        std::cout << r.error().message();       // parsing failure; print error
+        std::cout << r.error().message();  // parsing failure; print error
     }
     //]
 
@@ -282,10 +376,10 @@ parsing_authority()
         urls::string_view s = "https:///path/to_resource";
         urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u << "\n"
-            "scheme:        " << u.scheme()            << "\n"
-            "has authority: " << u.has_authority()     << "\n"
-            "authority:     " << u.encoded_authority() << "\n"
-            "path:          " << u.encoded_path()      << "\n";
+            "scheme:        " << u.scheme()        << "\n"
+            "has authority: " << u.has_authority() << "\n"
+            "authority:     " << u.authority()     << "\n"
+            "path:          " << u.encoded_path()  << "\n";
         //]
     }
     {
@@ -294,8 +388,8 @@ parsing_authority()
         urls::url_view u = urls::parse_uri( s ).value();
         std::cout << "scheme:        " << u.scheme()            << "\n"
                      "has authority: " << u.has_authority()     << "\n"
-                     "authority:     " << u.encoded_authority() << "\n"
-                     "path:          " << u.encoded_path()      << "\n";
+                     "authority:     " << u.authority()         << "\n"
+                     "path:          " << u.path()              << "\n";
         //]
     }
     {
@@ -303,10 +397,10 @@ parsing_authority()
         urls::string_view s = "https://www.boost.org/users/download/";
         urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u << "\n"
-            "scheme:        " << u.scheme()   << "\n"
-            "has authority: " << u.has_authority()     << "\n"
-            "authority:     " << u.encoded_authority() << "\n"
-            "path:          " << u.encoded_path()      << "\n";
+            "scheme:        " << u.scheme()        << "\n"
+            "has authority: " << u.has_authority() << "\n"
+            "authority:     " << u.authority()     << "\n"
+            "path:          " << u.path()          << "\n";
         //]
     }
     {
@@ -315,8 +409,8 @@ parsing_authority()
         urls::url_view u = urls::parse_uri( s ).value();
         std::cout << "scheme:        " << u.scheme()            << "\n"
                      "has authority: " << u.has_authority()     << "\n"
-                     "authority:     " << u.encoded_authority() << "\n"
-                     "path:          " << u.encoded_path()      << "\n";
+                     "authority:     " << u.authority()         << "\n"
+                     "path:          " << u.path()              << "\n";
         //]
     }
     {
@@ -325,8 +419,8 @@ parsing_authority()
         urls::url_view u = urls::parse_uri( s ).value();
         std::cout << "scheme:        " << u.scheme()            << "\n"
                      "has authority: " << u.has_authority()     << "\n"
-                     "authority:     " << u.encoded_authority() << "\n"
-                     "path:          " << u.encoded_path()      << "\n";
+                     "authority:     " << u.authority()         << "\n"
+                     "path:          " << u.path()              << "\n";
         //]
     }
     {
@@ -336,8 +430,8 @@ parsing_authority()
         std::cout << u << "\n"
             "scheme:        " << u.scheme()   << "\n"
             "has authority: " << u.has_authority()     << "\n"
-            "authority:     " << u.encoded_authority() << "\n"
-            "path:          " << u.encoded_path()      << "\n";
+            "authority:     " << u.authority()         << "\n"
+            "path:          " << u.path()              << "\n";
         //]
     }
     {
@@ -346,11 +440,11 @@ parsing_authority()
         urls::url_view u = urls::parse_uri( s ).value();
         std::cout << "scheme:        " << u.scheme()   << "\n"
             "has authority: " << u.has_authority()     << "\n"
-            "authority:     " << u.encoded_authority() << "\n"
-            "host:          " << u.encoded_host()      << "\n"
-            "userinfo:      " << u.encoded_userinfo()  << "\n"
+            "authority:     " << u.authority()         << "\n"
+            "host:          " << u.host()              << "\n"
+            "userinfo:      " << u.userinfo()          << "\n"
             "port:          " << u.port()              << "\n"
-            "path:          " << u.encoded_path()      << "\n";
+            "path:          " << u.path()              << "\n";
         //]
     }
     {
@@ -358,7 +452,6 @@ parsing_authority()
         urls::string_view s = "https://john.doe@www.example.com:123/forum/questions/";
         urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u << "\n"
-            "encoded host:  " << u.encoded_host()          << "\n"
             "host:          " << u.host()                  << "\n"
             "host and port: " << u.encoded_host_and_port() << "\n"
             "port:          " << u.port()                  << "\n"
@@ -370,7 +463,6 @@ parsing_authority()
         urls::string_view s = "https://john.doe@192.168.2.1:123/forum/questions/";
         urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u << "\n"
-            "encoded host:  " << u.encoded_host()          << "\n"
             "host:          " << u.host()                  << "\n"
             "host and port: " << u.encoded_host_and_port() << "\n"
             "port:          " << u.port()                  << "\n"
@@ -401,41 +493,32 @@ parsing_authority()
         urls::string_view s = "https://john.doe:123456@www.somehost.com/forum/questions/";
         urls::url_view u = urls::parse_uri( s ).value();
         std::cout << u << "\n\n"
-            // userinfo
             "has_userinfo:     " << u.has_userinfo()     << "\n"
-            "encoded_userinfo: " << u.encoded_userinfo() << "\n"
-            "userinfo:         " << u.userinfo()         << "\n\n"
-            // user
-            "encoded_user:     " << u.encoded_user()     << "\n"
+            "userinfo:         " << u.userinfo()         << "\n"
             "user:             " << u.user()             << "\n\n"
-            // password
             "has_password:     " << u.has_password()     << "\n"
-            "encoded_password: " << u.encoded_password() << "\n"
             "password:         " << u.password()         << "\n";
         //]
     }
     {
+        std::cout << "snippet_parsing_authority_12\n";
         //[snippet_parsing_authority_12
         urls::string_view s = "www.example.com:80";
         urls::authority_view a = urls::parse_authority( s ).value();
         std::cout << a << "\n\n"
             // host and port
-            "encoded_host_and_port: " << a.encoded_host_and_port()  << "\n"
-            "encoded_host:          " << a.encoded_host() << "\n"
+            "host_and_port:         " << a.encoded_host_and_port() << "\n"
             "host:                  " << a.host()         << "\n"
             "port:                  " << a.port()         << "\n"
             "port number:           " << a.port_number()  << "\n\n"
             // userinfo
-            "has_userinfo:          " << a.has_userinfo()     << "\n"
-            "encoded_userinfo:      " << a.encoded_userinfo() << "\n"
-            "userinfo:              " << a.userinfo()         << "\n\n"
+            "has_userinfo:          " << a.has_userinfo() << "\n"
+            "userinfo:              " << a.userinfo()     << "\n"
             // user
-            "encoded_user:          " << a.encoded_user()     << "\n"
-            "user:                  " << a.user()             << "\n\n"
+            "user:                  " << a.user()         << "\n\n"
             // password
-            "has_password:          " << a.has_password()     << "\n"
-            "encoded_password:      " << a.encoded_password() << "\n"
-            "password:              " << a.password()         << "\n";
+            "has_password:          " << a.has_password() << "\n"
+            "password:              " << a.password()     << "\n";
         //]
     }
     {
@@ -444,21 +527,17 @@ parsing_authority()
         urls::authority_view a = urls::parse_authority( s ).value();
         std::cout << a << "\n\n"
             // host and port
-            "encoded_host_and_port: " << a.encoded_host_and_port()  << "\n"
-            "encoded_host:          " << a.encoded_host() << "\n"
+            "host_and_port:         " << a.encoded_host_and_port() << "\n"
             "host:                  " << a.host()         << "\n"
             "port:                  " << a.port()         << "\n"
             "port number:           " << a.port_number()  << "\n\n"
             // userinfo
             "has_userinfo:          " << a.has_userinfo()     << "\n"
-            "encoded_userinfo:      " << a.encoded_userinfo() << "\n"
             "userinfo:              " << a.userinfo()         << "\n\n"
             // user
-            "encoded_user:          " << a.encoded_user()     << "\n"
             "user:                  " << a.user()             << "\n\n"
             // password
             "has_password:          " << a.has_password()     << "\n"
-            "encoded_password:      " << a.encoded_password() << "\n"
             "password:              " << a.password()         << "\n";
         //]
     }
@@ -472,9 +551,10 @@ parsing_path()
         urls::string_view s = "https://www.boost.org/doc/libs/";
         urls::url_view    u = urls::parse_uri(s).value();
         std::cout << u << "\n"
+            << "path:             " << u.path()             << "\n"
             << "path:             " << u.encoded_path()     << "\n"
-            << "encoded segments: " << u.encoded_segments() << "\n"
-            << "segments:         " << u.segments()         << "\n";
+            << "segments:         " << u.segments()         << "\n"
+            << "encoded_segments: " << u.encoded_segments() << "\n";
         //]
 
         //[snippet_parsing_path_1_b
@@ -489,9 +569,9 @@ parsing_path()
     {
         //[snippet_parsing_path_2
         urls::string_view s = "https://www.boost.org/doc/libs";
-        urls::url_view    u = urls::parse_uri(s).value();
-        std::cout << u.encoded_segments().size() << " segments\n";
-        for (auto seg: u.encoded_segments())
+        urls::url_view u = urls::parse_uri(s).value();
+        std::cout << u.segments().size() << " segments\n";
+        for (auto seg: u.segments())
         {
             std::cout << "segment: " << seg << "\n";
         }
@@ -503,9 +583,7 @@ parsing_path()
         urls::string_view s = "https://www.boost.org";
         urls::url_view    u = urls::parse_uri(s).value();
         std::cout << u << "\n"
-            << "path:             " << u.encoded_path()     << "\n"
-            << "encoded segments: " << u.encoded_segments() << "\n"
-            << "segments:         " << u.segments()         << "\n";
+            << "path:             " << u.encoded_path()     << "\n";
         //]
     }
 
@@ -606,7 +684,7 @@ parsing_path()
     {
         //[snippet_parsing_path_9
         urls::string_view s = "/doc/libs";
-        urls::segments_encoded_view p = urls::parse_path(s).value();
+        urls::segments_view p = urls::parse_path(s).value();
         std::cout << "path: " << p << "\n";
         std::cout << p.size() << " segments\n";
         for (auto seg: p)
@@ -626,10 +704,10 @@ parsing_query()
         urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has query:     " << u.has_query()     << "\n"
-                  "encoded query: " << u.encoded_query() << "\n"
                   "query:         " << u.query()         << "\n";
-        std::cout << u.encoded_params().size() << " parameters\n";
-        for (auto p: u.encoded_params())
+        std::cout << u.params().size() << " parameters\n";
+
+        for (auto p: u.params())
         {
             if (p.has_value)
             {
@@ -691,7 +769,7 @@ parsing_query()
         urls::string_view s = "https://www.example.com/get-customer.php?name=joe";
         urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
-                  "encoded query: " << u.encoded_query() << "\n";
+                  "query: " << u.query() << "\n";
         //]
     }
     {
@@ -699,8 +777,8 @@ parsing_query()
         urls::string_view s = "https://www.example.com/get-customer.php";
         urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
-                  "has query:     " << u.has_query()     << "\n"
-                  "encoded query: " << u.encoded_query() << "\n";
+                  "has query: " << u.has_query() << "\n"
+                  "query:     " << u.query()     << "\n";
         //]
     }
     {
@@ -734,8 +812,8 @@ parsing_fragment()
         urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has fragment:     " << u.has_fragment()     << "\n"
-                  "encoded fragment: " << u.encoded_fragment() << "\n"
-                  "fragment:         " << u.fragment()         << "\n";
+                  "fragment:         " << u.fragment()         << "\n"
+                  "encoded fragment: " << u.encoded_fragment() << "\n";
         //]
     }
     {
@@ -744,7 +822,6 @@ parsing_fragment()
         urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has fragment:     " << u.has_fragment()     << "\n"
-                  "encoded fragment: " << u.encoded_fragment() << "\n"
                   "fragment:         " << u.fragment()         << "\n";
         //]
     }
@@ -754,7 +831,6 @@ parsing_fragment()
         urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has fragment:     " << u.has_fragment()     << "\n"
-                  "encoded fragment: " << u.encoded_fragment() << "\n"
                   "fragment:         " << u.fragment()         << "\n";
         //]
     }
@@ -764,7 +840,6 @@ parsing_fragment()
         urls::url_view u = urls::parse_uri(s).value();
         std::cout << u << "\n"
                   "has fragment:     " << u.has_fragment()     << "\n"
-                  "encoded fragment: " << u.encoded_fragment() << "\n"
                   "fragment:         " << u.fragment()         << "\n";
         //]
     }
@@ -789,11 +864,18 @@ using_modifying()
         //]
 
         //[snippet_modifying_3
-        v.set_scheme("http");
+        v.set_host("my website.com");
+        v.set_path("my file.txt");
+        v.set_query("id=42&name=John Doe");
         std::cout << v << "\n";
         //]
 
         //[snippet_modifying_4
+        v.set_scheme("http");
+        std::cout << v << "\n";
+        //]
+
+        //[snippet_modifying_5
         v.set_host("www.my example.com");
         std::cout << v << "\n";
         //]
@@ -831,7 +913,7 @@ grammar_parse()
             if (urls::grammar::parse(it, s.end(), ec, r2))
             {
                 std::cout << "query: " << r1.query_part << '\n';
-                std::cout << "fragment: " << r2.fragment.str << '\n';
+                std::cout << "fragment: " << r2.fragment.encoded() << '\n';
             }
         }
         //]
@@ -847,7 +929,7 @@ grammar_parse()
         if (urls::grammar::parse(it, s.end(), ec, r1, r2))
         {
             std::cout << "query: " << r1.query_part << '\n';
-            std::cout << "fragment: " << r2.fragment.str << '\n';
+            std::cout << "fragment: " << r2.fragment.encoded() << '\n';
         }
         //]
     }
@@ -962,8 +1044,8 @@ grammar_charset()
         urls::error_code ec;
         if (urls::grammar::parse_string(s, ec, r))
         {
-            std::cout << "query:        " << r.s.str << '\n';
-            std::cout << "decoded size: " << r.s.decoded_size << '\n';
+            std::cout << "query:        " << r.s.encoded() << '\n';
+            std::cout << "decoded size: " << r.s.size() << '\n';
         }
         //]
     }
@@ -1097,12 +1179,19 @@ using_static_pool()
 {
     {
         //[snippet_using_static_pool_1
+        using pool_string = boost::container::basic_string<
+            char, std::char_traits<char>,
+                urls::static_pool_allocator<char>>;
         urls::static_pool<4096> pool;
+        pool_string k(pool.allocator());
+        pool_string v(pool.allocator());
         urls::url_view u = urls::parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-        urls::params_view params = u.params(pool.allocator());
+        urls::params_view params = u.params();
         for (auto p: params) {
-            std::cout << p.key << ": " << p.value << "\n";
+            p.key.assign_to(k);
+            p.key.assign_to(v);
+            std::cout << k << ": " << v << "\n";
         }
         //]
         BOOST_TEST_NOT(u.is_path_absolute());
@@ -1127,6 +1216,7 @@ public:
         parsing_path();
         parsing_query();
         parsing_fragment();
+        using_modifying();
         grammar_parse();
         grammar_customization();
         grammar_charset();

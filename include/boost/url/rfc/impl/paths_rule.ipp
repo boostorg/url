@@ -48,7 +48,7 @@ parse(
         it, end, ec, t0))
         return;
     t.v = t0.s;
-    if(t.v.str.empty())
+    if(t.v.empty())
     {
         // can't be empty
         ec = grammar::error::syntax;
@@ -80,7 +80,7 @@ parse(
     if(! grammar::parse(
         it, end, ec, t0))
         return;
-    if(t0.s.str.empty())
+    if(t0.s.empty())
     {
         // can't be empty
         ec = error::empty_path_segment;
@@ -97,7 +97,7 @@ begin(
     char const*& it,
     char const* const end,
     error_code& ec,
-    pct_encoded_str& t) noexcept
+    pct_encoded_view& t) noexcept
 {
     return increment(
         it, end, ec, t);
@@ -109,7 +109,7 @@ increment(
     char const*& it,
     char const* const end,
     error_code& ec,
-    pct_encoded_str& t) noexcept
+    pct_encoded_view& t) noexcept
 {
     auto const start = it;
     if(grammar::parse(
@@ -130,7 +130,7 @@ begin(
     char const*& it,
     char const* const end,
     error_code& ec,
-    pct_encoded_str& t) noexcept
+    pct_encoded_view& t) noexcept
 {
     if(it == end)
     {
@@ -167,7 +167,7 @@ increment(
     char const*& it,
     char const* const end,
     error_code& ec,
-    pct_encoded_str& t) noexcept
+    pct_encoded_view& t) noexcept
 {
     auto const start = it;
     if(grammar::parse(
@@ -188,7 +188,7 @@ begin(
     char const*& it,
     char const* const end,
     error_code& ec,
-    pct_encoded_str& t) noexcept
+    pct_encoded_view& t) noexcept
 {
     if(grammar::parse(
         it, end, ec,
@@ -205,7 +205,7 @@ increment(
     char const*& it,
     char const* const end,
     error_code& ec,
-    pct_encoded_str& t) noexcept
+    pct_encoded_view& t) noexcept
 {
     auto const start = it;
     if(grammar::parse(
@@ -226,7 +226,7 @@ begin(
     char const*& it,
     char const* const end,
     error_code& ec,
-    pct_encoded_str& t) noexcept
+    pct_encoded_view& t) noexcept
 {
     return grammar::parse(
         it, end, ec,
@@ -239,7 +239,7 @@ increment(
     char const*& it,
     char const* const end,
     error_code& ec,
-    pct_encoded_str& t) noexcept
+    pct_encoded_view& t) noexcept
 {
     auto const start = it;
     if(grammar::parse(

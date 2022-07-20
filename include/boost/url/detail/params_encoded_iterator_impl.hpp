@@ -58,7 +58,7 @@ struct params_encoded_iterator_impl
     encoded_key() const noexcept;
 
     BOOST_URL_DECL
-    query_param_view
+    query_param_encoded_view
     dereference() const;
 
     bool

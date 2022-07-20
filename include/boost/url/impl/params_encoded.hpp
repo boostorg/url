@@ -50,7 +50,7 @@ class params_encoded::iterator
 
 public:
     using value_type = query_param;
-    using reference = query_param_view;
+    using reference = query_param_encoded_view;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
@@ -253,7 +253,7 @@ auto
 params_encoded::
 insert(
     iterator before,
-    query_param_view const& v) ->
+    reference const& v) ->
         iterator
 {
     return insert(
@@ -418,7 +418,7 @@ emplace_back(
         iterator
 {
     return insert(
-        end(), query_param_view{
+        end(), query_param_encoded_view{
             key, {}, false});
 }
 
@@ -431,7 +431,7 @@ emplace_back(
         iterator
 {
     return insert(
-        end(), query_param_view{
+        end(), query_param_encoded_view{
             key, value, true});
 }
 
@@ -450,8 +450,10 @@ emplace_at(
         u_->encoded_query().size());
     using detail::
         make_enc_params_iter;
-    query_param_view v{key,
-        string_view{}, false};
+    query_param_view v{
+        pct_encoded_view(key),
+        pct_encoded_view{},
+        false};
     u_->edit_params(
         pos.impl_.i_,
         pos.impl_.i_ + 1,
@@ -473,7 +475,7 @@ emplace_before(
 {
     return insert(
         before,
-        query_param_view{
+        query_param_encoded_view{
             key,
             value,
             true});
@@ -489,7 +491,7 @@ emplace_before(
 {
     return insert(
         before,
-        query_param_view{
+        query_param_encoded_view{
             key,
             string_view{},
             false});

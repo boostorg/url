@@ -150,48 +150,25 @@ pct_decode(
 
 //------------------------------------------------
 
-template<class Allocator>
-const_string
-pct_decode_unchecked(
-    string_view s,
-    pct_decode_opts const& opt,
-    Allocator const& a,
-    std::size_t decoded_size)
-{
-    if(decoded_size == std::size_t(-1))
-        decoded_size =
-            pct_decode_bytes_unchecked(s);
-    return const_string(
-        decoded_size, a,
-        [&s, &opt](
-            std::size_t n, char* dest)
-        {
-            pct_decode_unchecked(
-                dest, dest + n, s, opt);
-        });
-}
-
-//------------------------------------------------
-
-template<class CharSet>
+namespace detail {
+template <class Iter, class CharSet>
 std::size_t
 pct_encode_bytes(
-    string_view s,
+    Iter it,
+    Iter const end,
     CharSet const& allowed,
-    pct_encode_opts const& opt) noexcept
+    pct_encode_opts const& opt = {}) noexcept
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
         grammar::is_charset<CharSet>::value);
 
     std::size_t n = 0;
-    auto it = s.data();
-    auto const end = it + s.size();
-    if(! opt.space_to_plus)
+    if (!opt.space_to_plus)
     {
-        while(it != end)
+        while (it != end)
         {
-            if(allowed(*it))
+            if (allowed(*it))
                 ++n;
             else
                 n += 3;
@@ -203,12 +180,12 @@ pct_encode_bytes(
     // to plus, then space should
     // be in the list of reserved
     // characters!
-    BOOST_ASSERT(! allowed(' '));
-    while(it != end)
+    BOOST_ASSERT(!allowed(' '));
+    while (it != end)
     {
-        if(*it == ' ')
+        if (*it == ' ')
             ++n;
-        else if(allowed(*it))
+        else if (allowed(*it))
             ++n;
         else
             n += 3;
@@ -216,17 +193,31 @@ pct_encode_bytes(
     }
     return n;
 }
+}
+
+template<class CharSet>
+std::size_t
+pct_encode_bytes(
+    string_view s,
+    CharSet const& allowed,
+    pct_encode_opts const& opt) noexcept
+{
+    return detail::pct_encode_bytes(
+        s.data(), s.data() + s.size(), allowed, opt);
+}
 
 //------------------------------------------------
 
-template<class CharSet>
+namespace detail {
+template<class Iter, class CharSet>
 std::size_t
 pct_encode(
     char* dest,
     char const* const end,
-    string_view s,
+    Iter p,
+    Iter last,
     CharSet const& allowed,
-    pct_encode_opts const& opt)
+    pct_encode_opts const& opt = {})
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
@@ -238,8 +229,6 @@ pct_encode(
     static constexpr char hex[] =
         "0123456789abcdef";
     auto const dest0 = dest;
-    auto p = s.data();
-    auto const last = p + s.size();
     auto const end3 = end - 3;
     if(! opt.space_to_plus)
     {
@@ -295,6 +284,20 @@ pct_encode(
         ++p;
     }
     return dest - dest0;
+}
+}
+
+template<class CharSet>
+std::size_t
+pct_encode(
+    char* dest,
+    char const* const end,
+    string_view s,
+    CharSet const& allowed,
+    pct_encode_opts const& opt)
+{
+    return detail::pct_encode(
+        dest, end, s.data(), s.data() + s.size(), allowed, opt);
 }
 
 //------------------------------------------------

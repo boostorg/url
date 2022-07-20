@@ -12,7 +12,7 @@
 #define BOOST_URL_SEGMENTS_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/const_string.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 #include <cstddef>
 #include <iosfwd>
 
@@ -33,16 +33,16 @@ class segments_view
 {
     string_view s_;
     std::size_t n_ = 0;
-    const_string::factory a_;
 
     friend class url_view;
     friend class segments_encoded_view;
 
-    template<class Allocator>
     segments_view(
         string_view s,
-        std::size_t n,
-        Allocator const& a);
+        std::size_t n)
+        : s_(s)
+        , n_(n)
+    {}
 
 public:
     /** A read-only bidirectional iterator to a decoded segment.
@@ -66,13 +66,18 @@ public:
         a segment where ownership is retained
         in the copy.
     */
-    using value_type = const_string;
+    using value_type = std::string;
 
-    /// @copydoc value_type
-    using reference = const_string;
+    /** A type which can represent a segment as a const reference
 
-    /// @copydoc value_type
-    using const_reference = const_string;
+        This type does not make a copy of a segment
+        and ownership is retained by the container.
+
+    */
+    using reference = pct_encoded_view;
+
+    /// @copydoc reference
+    using const_reference = pct_encoded_view;
 
     /** The unsigned integer type used to represent size.
     */
@@ -93,13 +98,14 @@ public:
         Default constructed views represent an
         empty path.
     */
-    segments_view() noexcept;
+    segments_view() noexcept = default;
 
     /** Constructor
 
         Copy constructor
     */
     segments_view(segments_view const& other) = default;
+
     /** Assignment
 
         After the assignment, both views will point to
@@ -125,12 +131,12 @@ public:
 
     /** Return the first element.
     */
-    const_string
+    pct_encoded_view
     front() const noexcept;
 
     /** Return the last element.
     */
-    const_string
+    pct_encoded_view
     back() const noexcept;
 
     //--------------------------------------------

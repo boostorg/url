@@ -15,6 +15,7 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/pct_encoding.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
@@ -494,8 +495,7 @@ public:
     /** Return the userinfo
 
         This function returns the userinfo as a
-        string with percent-decoding applied, using
-        the optionally specified allocator.
+        string with percent-decoding applied.
 
         @par Example
         @code
@@ -511,16 +511,6 @@ public:
         authority   = [ userinfo "@" ] host [ ":" port ]
         @endcode
 
-        @par Exception Safety
-        Calls to allocate may throw.
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used.
-
-        @return A @ref const_string using the
-        specified allocator.
-
         @par Specification
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
@@ -529,26 +519,16 @@ public:
             @ref has_userinfo,
             @ref encoded_userinfo.
     */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    const_string
-    userinfo(
-        Allocator const& a = {}) const
+    pct_encoded_view
+    userinfo() const noexcept
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        string_view s = encoded_userinfo();
-        std::size_t n =
-            pct_decode_bytes_unchecked(s);
-        return const_string(
-            n, a,
-            [&s, &opt](
-                std::size_t n, char* dest)
-            {
-                pct_decode_unchecked(
-                    dest, dest + n, s, opt);
-            });
+        return detail::access::construct(
+            encoded_userinfo(),
+            decoded_[id_user] +
+                has_password() + decoded_[id_pass],
+            opt);
     }
 
     //--------------------------------------------
@@ -596,8 +576,7 @@ public:
 
         This function returns the user portion of
         the userinfo as a string with percent-decoding
-        applied, using the optionally specified
-        allocator.
+        applied.
 
         @par Example
         @code
@@ -612,16 +591,6 @@ public:
         password    = *( unreserved / pct-encoded / sub-delims / ":" )
         @endcode
 
-        @par Exception Safety
-        Calls to allocate may throw.
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used.
-
-        @return A @ref const_string using the
-        specified allocator.
-
         @par Specification
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
@@ -632,26 +601,13 @@ public:
             @ref has_password,
             @ref password.
     */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    const_string
-    user(
-        Allocator const& a = {}) const
+    pct_encoded_view
+    user() const noexcept
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        string_view s = encoded_user();
-        std::size_t n =
-            pct_decode_bytes_unchecked(s);
-        return const_string(
-            n, a,
-            [&s, &opt](
-                std::size_t n, char* dest)
-            {
-            pct_decode_unchecked(
-                dest, dest + n, s, opt);
-            });
+        return detail::access::construct(
+            encoded_user(), decoded_[id_user], opt);
     }
 
     /** Return true if this contains a password
@@ -733,19 +689,7 @@ public:
     /** Return the password
 
         This function returns the password from the
-        userinfo with percent-decoding applied,
-        using the optionally specified allocator.
-
-        @par Exception Safety
-        Calls to allocate may throw.
-
-        @param a An allocator to use for the string.
-        If this parameter is omitted, the default
-        allocator is used, and the return type of
-        the function becomes `std::string`.
-
-        @return A @ref const_string using the
-        specified allocator.
+        userinfo with percent-decoding applied.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
@@ -757,26 +701,13 @@ public:
             @ref has_password,
             @ref password.
     */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    const_string
-    password(
-        Allocator const& a = {}) const
+    pct_encoded_view
+    password() const noexcept
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        string_view s = encoded_password();
-        std::size_t n =
-            pct_decode_bytes_unchecked(s);
-        return const_string(
-            n, a,
-            [&s, &opt](
-                std::size_t n, char* dest)
-            {
-            pct_decode_unchecked(
-                dest, dest + n, s, opt);
-            });
+        return detail::access::construct(
+            encoded_password(), decoded_[id_pass], opt);
     }
 
     //--------------------------------------------
@@ -874,8 +805,7 @@ public:
 
         This function returns the host portion of
         the authority as a string with percent-decoding
-        applied, using the optionally specified
-        allocator.
+        applied.
 
         @par Example
         @code
@@ -897,17 +827,6 @@ public:
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
 
-        @par Exception Safety
-        Calls to allocate may throw.
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
-
-        @return A @ref const_string using the
-        specified allocator.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
             >3.2.2. Host (rfc3986)</a>
@@ -920,25 +839,13 @@ public:
             @ref port,
             @ref port_number.
     */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    const_string
-    host(
-        Allocator const& a = {}) const
+    pct_encoded_view
+    host() const noexcept
     {
-        auto const s0 =
-            encoded_host();
-        if(host_type_ !=
-            urls::host_type::name)
-        {
-            // no decoding
-            return const_string(s0, a);
-        }
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return pct_decode_unchecked(
-            s0, opt, a, decoded_[id_host]);
+        return detail::access::construct(
+            encoded_host(), decoded_[id_host], opt);
     }
 
     /** Return the host as an IPv4 address

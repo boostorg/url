@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
 #include <boost/url/host_type.hpp>
-#include <boost/url/pct_encoding_types.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
@@ -42,7 +42,7 @@ struct host_rule
 {
     urls::host_type host_type =
         urls::host_type::none;
-    pct_encoded_str name;
+    pct_encoded_view name;
     ipv4_address ipv4;
     ipv6_address ipv6;
     string_view ipvfuture;

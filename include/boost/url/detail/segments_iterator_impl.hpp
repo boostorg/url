@@ -12,6 +12,7 @@
 #define BOOST_URL_DETAIL_SEGMENTS_ITERATOR_IMPL_HPP
 
 #include <boost/url/string_view.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 #include <string>
 
 namespace boost {
@@ -25,21 +26,18 @@ struct segments_iterator_impl
     char const* pos_ = nullptr;
     char const* next_ = nullptr;
     char const* end_ = nullptr;
-    const_string::factory a_;
-    pct_encoded_str t_;
+    pct_encoded_view t_;
 
     BOOST_URL_DECL
     segments_iterator_impl(
         string_view s,
-        std::size_t nseg,
-        const_string::factory const& a) noexcept;
+        std::size_t nseg) noexcept;
 
     // end ctor
     BOOST_URL_DECL
     segments_iterator_impl(
         string_view s,
         std::size_t nseg,
-        const_string::factory const& a,
         int) noexcept;
 
     segments_iterator_impl() = default;
@@ -51,7 +49,7 @@ struct segments_iterator_impl
         segments_iterator_impl const&) noexcept = default;
 
     BOOST_URL_DECL
-    const_string
+    pct_encoded_view
     dereference() const noexcept;
 
     BOOST_URL_DECL

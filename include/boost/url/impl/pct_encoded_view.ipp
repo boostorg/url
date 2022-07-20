@@ -37,6 +37,18 @@ operator*() const noexcept ->
              unsigned char>(d1))));
 }
 
+// unchecked constructor
+pct_encoded_view::
+pct_encoded_view(
+    string_view str,
+    std::size_t n,
+    pct_decode_opts opt) noexcept
+    : p_(str.data())
+    , n_(str.size())
+    , dn_(n)
+    , plus_to_space_(opt.plus_to_space)
+{}
+
 pct_encoded_view::
 pct_encoded_view(
     string_view str,

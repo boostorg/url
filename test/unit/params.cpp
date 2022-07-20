@@ -13,6 +13,7 @@
 
 #include <boost/url/static_pool.hpp>
 #include <boost/url/url.hpp>
+#include <boost/core/ignore_unused.hpp>
 #include "test_suite.hpp"
 
 namespace boost {
@@ -43,7 +44,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?x#f").value();
-            u.params(pa_.allocator()) = {
+            u.params() = {
                 { "k1", "1", true },
                 { "k2", "2", true },
                 { "k3", "", true },
@@ -56,7 +57,7 @@ public:
         }
         {
             url u = parse_uri_reference("/?x#f").value();
-            u.params(pa_.allocator()) = {};
+            u.params() = {};
             BOOST_TEST_EQ(u.encoded_query(), "");
             BOOST_TEST_EQ(u.string(), "/?#f");
         }
@@ -72,7 +73,7 @@ public:
         {
             url u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             BOOST_TEST_EQ((*p.begin()).key, "k0");
             BOOST_TEST_EQ((*p.begin()).value, "0");
             BOOST_TEST((*p.begin()).has_value);
@@ -96,7 +97,7 @@ public:
         {
             url u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             BOOST_TEST_EQ((*p.find("k0")).value, "0");
             BOOST_TEST_EQ((*p.find("k1")).value, "1");
             BOOST_TEST_EQ((*p.find("k2")).value, "");
@@ -114,13 +115,13 @@ public:
         {
             url u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             BOOST_TEST(! p.empty());
             BOOST_TEST_EQ(p.size(), 5u);
         }
         {
             url u;
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             BOOST_TEST(p.empty());
             BOOST_TEST_EQ(p.size(), 0u);
         }
@@ -133,7 +134,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             p.clear();
             BOOST_TEST_EQ(u.encoded_query(), "");
             BOOST_TEST_EQ(u.string(), "/?#f");
@@ -143,7 +144,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k2=#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             auto it = p.insert(std::next(p.begin()),
                 {"k1", "1", true});
             BOOST_TEST_EQ(it, std::next(p.begin()));
@@ -159,7 +160,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k3#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             auto it = p.insert(std::next(p.begin()),{
                 {"k1", "1", true},
                 {"k2", "", true}});
@@ -174,7 +175,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k3#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             auto it = p.replace(
                 std::next(p.begin(), p.size() - 1),
                 {"k2", "", true});
@@ -190,7 +191,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             auto it = p.replace(
                 std::next(p.begin()), std::next(p.begin(), 3), {
                     {"a","aa",true},
@@ -207,9 +208,10 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k%31=1&k2=#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             BOOST_TEST_EQ((*std::next(p.begin())).key, "k1");
             auto it = p.remove_value(std::next(p.begin()));
+            boost::ignore_unused(it);
             BOOST_TEST_EQ(u.encoded_query(), "k0=0&k%31&k2=");
             BOOST_TEST(u.string() ==
                 "/?k0=0&k%31&k2=#f");
@@ -219,7 +221,7 @@ public:
         {
             url u = parse_uri_reference(
                         "/?k0=0&k%31=0&k2=#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             auto it = p.replace_value(
                 std::next(p.begin()),
                 "1");
@@ -235,7 +237,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k%31=1&k2=#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             auto it = p.emplace_at(
                 std::next(p.begin()),
                 "k1", "1");
@@ -251,7 +253,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k2=&k3#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             auto it = p.emplace_at(
                 std::next(p.begin(), 2),
                 "hello_world");
@@ -267,7 +269,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k2=&k3#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             auto it = p.emplace_before(
                 std::next(p.begin()), "k1", "1");
             BOOST_TEST_EQ(it, std::next(p.begin()));
@@ -282,7 +284,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k2=&k3#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             auto it = p.emplace_before(
                 std::next(p.begin()), "k1");
             BOOST_TEST_EQ(it, std::next(p.begin()));
@@ -297,7 +299,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             p.erase(std::next(p.begin(), 2));
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k3&k4=4444");
@@ -316,7 +318,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?a=1&%62=2&c=3&c=4&c=5&d=6&e=7&d=8&f=9#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             BOOST_TEST_EQ(p.erase("c"), 3u);
             BOOST_TEST(u.encoded_query() ==
                 "a=1&%62=2&d=6&e=7&d=8&f=9");
@@ -339,7 +341,7 @@ public:
         // emplace_back(Key)
         {
             url u = parse_uri_reference("/#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             p.emplace_back("k0", "0");
             BOOST_TEST_EQ(u.encoded_query(), "k0=0");
             BOOST_TEST_EQ(u.string(), "/?k0=0#f");
@@ -374,7 +376,7 @@ public:
         // pop_back()
         {
             url u = parse_uri_reference("/#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
 
             p.push_back({"k0", "0", true});
             BOOST_TEST_EQ(u.encoded_query(), "k0=0");
@@ -425,7 +427,7 @@ public:
         {
             url u = parse_uri_reference(
                 "/?a=1&%62=2&c=3&c=4&c=5&d=6&e=7&d=8&f=9#f").value();
-            params p = u.params(pa_.allocator());
+            params p = u.params();
             BOOST_TEST_EQ(p.count("a"), 1u);
             BOOST_TEST_EQ(p.count("b"), 1u);
             BOOST_TEST_EQ(p.count("c"), 3u);
@@ -453,7 +455,7 @@ public:
     {
         url u = parse_uri_reference(
             "/?a=1&bb=22&ccc=333&dddd=4444#f").value();
-        params p = u.params(pa_.allocator());
+        params p = u.params();
         auto it = p.begin();
         BOOST_TEST_EQ((*it).key, "a");
         BOOST_TEST_EQ((*++it).key, "bb");
@@ -469,6 +471,19 @@ public:
         BOOST_TEST_EQ((*(std::next(it))).value, "333");
         BOOST_TEST_EQ((*it).value, "22");
         BOOST_TEST_EQ((*std::next(it)).value, "333");
+
+        // value_type outlives reference
+        {
+            params::value_type v;
+            {
+                params ps = u.params();
+                params::reference r = *ps.begin();
+                v = params::value_type(r);
+            }
+            BOOST_TEST_EQ(v.key, "a");
+            BOOST_TEST_EQ(v.value, "1");
+            BOOST_TEST_EQ(v.has_value, true);
+        }
     }
 
     void

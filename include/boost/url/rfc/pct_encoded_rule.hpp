@@ -12,13 +12,13 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/parse_tag.hpp>
 #include <boost/static_assert.hpp>
 
 #include <boost/url/pct_encoding.hpp>
-#include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/grammar/detail/charset.hpp>
 
 namespace boost {
@@ -37,7 +37,7 @@ namespace urls {
 template<class CharSet>
 struct pct_encoded_rule
 {
-    pct_encoded_str s;
+    pct_encoded_view s;
 
     friend
     void

@@ -27,23 +27,19 @@ struct params_iterator_impl
     std::size_t nk_ = 0;
     std::size_t nv_ = 0;
     char const* end_ = nullptr;
-    const_string::factory a_;
 
     BOOST_URL_DECL
     void scan() noexcept;
 
     BOOST_URL_DECL
     params_iterator_impl(
-        string_view s,
-        const_string::factory a) noexcept;
+        string_view s) noexcept;
 
     // end ctor
     BOOST_URL_DECL
     params_iterator_impl(
         string_view s,
-        std::size_t nparam,
-        int,
-        const_string::factory a) noexcept;
+        std::size_t nparam) noexcept;
 
     params_iterator_impl() = default;
 

@@ -38,10 +38,10 @@ remove_value(
         u_->encoded_query().size());
     auto r = u_->param(pos.impl_.i_);
     query_param_view v{
-        string_view{
+        pct_encoded_view(string_view{
             u_->s_ + r.pos + 1,
-            r.nk - 1},
-        string_view{},
+            r.nk - 1}),
+        pct_encoded_view{},
         false};
     u_->edit_params(
         pos.impl_.i_,
@@ -66,7 +66,9 @@ replace_value(
         u_->s_ + r.pos + 1,
         r.nk - 1};
     query_param_view v{
-        key, value, true };
+        pct_encoded_view(key),
+        pct_encoded_view(value),
+        true };
     BOOST_ASSERT(pos.impl_.begin_ ==
         u_->encoded_query().data());
     BOOST_ASSERT(pos.impl_.end_ ==

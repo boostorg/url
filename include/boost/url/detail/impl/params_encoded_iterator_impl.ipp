@@ -110,7 +110,7 @@ encoded_key() const noexcept
 auto
 params_encoded_iterator_impl::
 dereference() const ->
-    query_param_view
+    query_param_encoded_view
 {
     BOOST_ASSERT(begin_ != nullptr);
     BOOST_ASSERT(end_ != nullptr);
@@ -119,7 +119,7 @@ dereference() const ->
 
     BOOST_ASSERT(pos_ != nullptr);
 
-    using reference = query_param_view;
+    using reference = query_param_encoded_view;
     int prefix = pos_ != begin_ || i_ != 0;
     if(nv_ > 0)
         return reference{

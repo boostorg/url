@@ -32,7 +32,7 @@ segments_view::
 begin() const noexcept ->
     iterator
 {
-    return iterator(s_, n_, a_);
+    return iterator(s_, n_);
 }
 
 auto
@@ -40,7 +40,7 @@ segments_view::
 end() const noexcept ->
     iterator
 {
-    return iterator(s_, n_, a_, 0);
+    return iterator(s_, n_, 0);
 }
 
 void

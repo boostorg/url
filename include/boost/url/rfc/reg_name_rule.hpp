@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
-#include <boost/url/pct_encoding_types.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/grammar/parse_tag.hpp>
 
@@ -34,7 +34,7 @@ namespace urls {
 */
 struct reg_name_rule
 {
-    pct_encoded_str v;
+    pct_encoded_view v;
 
     friend
     void

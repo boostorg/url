@@ -23,22 +23,22 @@ namespace detail {
 bool
 key_equal_encoded(
     string_view plain_key,
-    pct_encoded_str encoded) noexcept
+    pct_encoded_view s) noexcept
 {
     if(plain_key.size() !=
-        encoded.decoded_size)
+        s.size())
         return false; // trivial reject
-    if(encoded.str.size() ==
-        encoded.decoded_size)
+    if(s.encoded().size() ==
+        s.size())
     {
         // plain comparison
         return std::memcmp(
             plain_key.data(),
-            encoded.str.data(),
+            s.encoded().data(),
             plain_key.size()) == 0;
     }
     return key_equal_encoded(
-        plain_key, encoded.str);
+        plain_key, s.encoded());
 }
 
 // returns true if plain_key == decode(encoded)

@@ -72,7 +72,7 @@ increment() noexcept
     pos_ = next_;
     error_code ec;
     // "/" segment
-    pct_encoded_str t;
+    pct_encoded_view t;
     bnf_t::increment(
         next_, end_, ec, t);
     if(ec == grammar::error::end)
@@ -81,7 +81,7 @@ increment() noexcept
         return;
     }
     BOOST_ASSERT(! ec);
-    s_ = t.str;
+    s_ = t.encoded();
 }
 
 void
@@ -107,31 +107,31 @@ decrement() noexcept
             continue;
         // "/" segment
         next_ = pos_;
-        pct_encoded_str t;
+        pct_encoded_view t;
         bnf_t::increment(next_,
             end_, ec, t);
         BOOST_ASSERT(! ec);
-        s_ = t.str;
+        s_ = t.encoded();
         return;
     }
     next_ = pos_;
     if(*next_ == '/')
     {
         // "/" segment
-        pct_encoded_str t;
+        pct_encoded_view t;
         bnf_t::increment(next_,
             end_, ec, t);
         BOOST_ASSERT(! ec);
-        s_ = t.str;
+        s_ = t.encoded();
     }
     else
     {
         // segment-nz
-        pct_encoded_str t;
+        pct_encoded_view t;
         bnf_t::begin(next_,
             end_, ec, t);
         BOOST_ASSERT(! ec);
-        s_ = t.str;
+        s_ = t.encoded();
     }
 }
 

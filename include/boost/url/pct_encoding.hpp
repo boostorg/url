@@ -13,7 +13,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/const_string.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <memory>
@@ -109,7 +109,6 @@ struct pct_decode_opts
         @ref pct_decode,
         @ref pct_decode_bytes_unchecked,
         @ref pct_decode_opts,
-        @ref pct_decode_to_value,
         @ref pct_decode_unchecked,
         @ref reserved_chars_t.
 */
@@ -174,7 +173,6 @@ validate_pct_encoding(
         @ref pct_decode,
         @ref pct_decode_bytes_unchecked,
         @ref pct_decode_opts,
-        @ref pct_decode_to_value,
         @ref pct_decode_unchecked,
         @ref reserved_chars_t.
 */
@@ -247,7 +245,6 @@ validate_pct_encoding(
     @see
         @ref pct_decode_bytes_unchecked,
         @ref pct_decode_opts,
-        @ref pct_decode_to_value.
         @ref pct_decode_unchecked.
         @ref validate_pct_encoding.
 */
@@ -313,7 +310,6 @@ pct_decode(
     @see
         @ref pct_decode_bytes_unchecked,
         @ref pct_decode_opts,
-        @ref pct_decode_to_value.
         @ref pct_decode_unchecked.
         @ref validate_pct_encoding.
 */
@@ -418,8 +414,7 @@ pct_decode_unchecked(
 
     @see
         @ref pct_encode,
-        @ref pct_encode_bytes,
-        @ref pct_encode_to_value.
+        @ref pct_encode_bytes.
 */
 struct pct_encode_opts
 {
@@ -489,8 +484,7 @@ struct pct_encode_opts
     @see
         @ref pct_decode,
         @ref pct_encode,
-        @ref pct_encode_opts,
-        @ref pct_encode_to_value.
+        @ref pct_encode_opts.
 */
 template <class CharSet>
 std::size_t
@@ -618,7 +612,6 @@ pct_encode(
         @ref pct_encode,
         @ref pct_encode_bytes,
         @ref pct_encode_opts,
-        @ref pct_encode_to_value,
         @ref reserved_chars_t.
 */
 template<

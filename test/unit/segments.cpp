@@ -14,11 +14,9 @@
 #include <boost/url/static_pool.hpp>
 #include <boost/url/url.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/core/ignore_unused.hpp>
 #include <initializer_list>
 #include <iterator>
-#if __cpp_lib_ranges >= 201911
-//#include <ranges>
-#endif
 #include "test_suite.hpp"
 
 namespace boost {
@@ -29,18 +27,6 @@ namespace urls {
 class segments_test
 {
 public:
-#if __cpp_lib_ranges >= 201911
-    /*
-    BOOST_STATIC_ASSERT(
-        std::forward_range<
-            segments>);
-    */
-
-    BOOST_STATIC_ASSERT(
-        std::forward_iterator<
-            segments::iterator>);
-#endif
-
     static_pool<4096> p_;
 
     void
@@ -61,7 +47,7 @@ public:
 
         {
             url u = u0;
-            u.segments(p_.allocator()) = { "etc", "index.htm" };
+            u.segments() = { "etc", "index.htm" };
             BOOST_TEST_EQ(u.encoded_path(), "/etc/index.htm");
             BOOST_TEST_EQ(u.string(), "x://y/etc/index.htm?q#f");
         }
@@ -76,7 +62,7 @@ public:
         // at
         {
             url u = u0;
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs = se;
 
             BOOST_TEST_EQ(*se.begin(), "path");
@@ -100,7 +86,7 @@ public:
         // operator[]
         {
             url u = u0;
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs = se;
 
             BOOST_TEST_EQ(*se.begin(), "path");
@@ -125,7 +111,7 @@ public:
         // front
         {
             url u = u0;
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs = se;
 
             BOOST_TEST_EQ(se.front(), "path");
@@ -149,7 +135,7 @@ public:
         // back
         {
             url u = u0;
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs = se;
 
             BOOST_TEST_EQ(se.back(), "file.txt");
@@ -177,12 +163,13 @@ public:
         // (default-ctor)
         {
             segments::iterator it;
+            boost::ignore_unused(it);
         }
 
         // begin
         {
             url u = u0;
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs = se;
 
             BOOST_TEST_EQ(se.begin(), cs.begin());
@@ -192,7 +179,7 @@ public:
         // end
         {
             url u = u0;
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs = se;
 
             BOOST_TEST_EQ(se.end(), cs.end());
@@ -235,6 +222,19 @@ public:
             BOOST_TEST_NE(it, se.begin());
             BOOST_TEST_NE(it, cs.begin());
         }
+
+        // value_type outlives reference
+        {
+            segments::value_type v;
+            {
+                url u = u0;
+                segments se = u.segments();
+                segments::reference r =
+                    *se.begin();
+                v = segments::value_type(r);
+            }
+            BOOST_TEST_EQ(v, "path");
+        }
     }
 
     void
@@ -246,7 +246,7 @@ public:
         // empty
         {
             url u = u0;
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs = se;
 
             BOOST_TEST(! se.empty());
@@ -256,7 +256,7 @@ public:
         // size
         {
             url u = u0;
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs = se;
 
             BOOST_TEST_EQ(se.size(), 4u);
@@ -270,7 +270,7 @@ public:
         // clear
         {
             url u = parse_uri("x://y/path/to/the/file.txt").value();
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
 
             BOOST_TEST(! se.empty());
             BOOST_TEST_EQ(se.size(), 4u);
@@ -284,7 +284,7 @@ public:
         // insert( const_iterator, string_view )
         {
             url u = parse_uri("x://y/path/file.txt?q#f").value();
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs(se);
 
             BOOST_TEST_EQ(se.size(), 2u);
@@ -311,7 +311,7 @@ public:
         {
             // rootless
             url u = parse_uri("x:path/file.txt?q#f").value();
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs(se);
 
             BOOST_TEST_EQ(se.size(), 2u);
@@ -338,7 +338,7 @@ public:
         // insert( const_iterator, FwdIt, FwdIt )
         {
             url u = parse_uri("x://y/path/file.txt?q#f").value();
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs(se);
 
             std::initializer_list<string_view> init = {"to", "the" };
@@ -358,7 +358,7 @@ public:
         {
             // rootless
             url u = parse_uri("x:the/file.txt?q#f").value();
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs(se);
 
             std::initializer_list<string_view> init = {"path", "to" };
@@ -379,7 +379,7 @@ public:
         // insert( const_iterator, initializer_list )
         {
             url u = parse_uri("x://y/path/file.txt?q#f").value();
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             auto const& cs(se);
 
             std::initializer_list<
@@ -395,7 +395,7 @@ public:
         // erase( const_iterator )
         {
             url u = parse_uri("x://y/path/to/the/file.txt?q#f").value();
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
 
             se.erase(std::next(se.begin()));
             BOOST_TEST_EQ(se.size(), 3u);
@@ -422,7 +422,7 @@ public:
         {
             url u = parse_uri(
                 "x://y/home/etc/path/to/the/file.txt?q#f").value();
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
 
             se.erase(se.begin(), std::next(se.begin(), 2));
             BOOST_TEST_EQ(u.encoded_path(), "/path/to/the/file.txt");
@@ -468,7 +468,7 @@ public:
     #if 0
         {
             url u;
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             se.push_back("path");
             BOOST_TEST_EQ(u.encoded_path(), "path");
             se.push_back("to");
@@ -478,7 +478,7 @@ public:
         }
         {
             url u;
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
             u.set_path_absolute(true);
             se.push_back("path");
             BOOST_TEST_EQ(u.encoded_path(), "/path");
@@ -493,7 +493,7 @@ public:
         {
             url u = parse_uri(
                 "x://y/path/to/file.txt?q#f").value();
-            auto se = u.segments(p_.allocator());
+            auto se = u.segments();
 
             BOOST_TEST_EQ(se.size(), 3u);
             se.pop_back();

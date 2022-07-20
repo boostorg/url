@@ -11,7 +11,6 @@
 #ifndef BOOST_URL_IMPL_SEGMENTS_VIEW_HPP
 #define BOOST_URL_IMPL_SEGMENTS_VIEW_HPP
 
-#include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/detail/segments_iterator_impl.hpp>
 #include <cstddef>
 
@@ -27,9 +26,8 @@ class segments_view::
 
     iterator(
         string_view s,
-        std::size_t nseg,
-        const_string::factory const& a) noexcept
-        : impl_(s, nseg, a)
+        std::size_t nseg) noexcept
+        : impl_(s, nseg)
     {
     }
 
@@ -37,15 +35,14 @@ class segments_view::
     iterator(
         string_view s,
         std::size_t nseg,
-        const_string::factory const& a,
         int) noexcept
-        : impl_(s, nseg, a, 0)
+        : impl_(s, nseg, 0)
     {
     }
 
 public:
-    using value_type = const_string;
-    using reference = const_string;
+    using value_type = std::string;
+    using reference = pct_encoded_view;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
@@ -58,7 +55,7 @@ public:
     iterator&
     operator=(iterator const&) noexcept = default;
 
-    const_string
+    pct_encoded_view
     operator*() const noexcept
     {
         return impl_.dereference();
@@ -115,22 +112,6 @@ public:
 //
 //------------------------------------------------
 
-template<class Allocator>
-segments_view::
-segments_view(
-    string_view s,
-    std::size_t n,
-    Allocator const& a)
-    : s_(s)
-    , n_(n)
-    , a_(a)
-{
-}
-
-inline
-segments_view::
-segments_view() noexcept = default;
-
 inline
 bool
 segments_view::
@@ -146,7 +127,7 @@ is_absolute() const noexcept
 //------------------------------------------------
 
 inline
-const_string
+pct_encoded_view
 segments_view::
 front() const noexcept
 {
@@ -155,7 +136,7 @@ front() const noexcept
 }
 
 inline
-const_string
+pct_encoded_view
 segments_view::
 back() const noexcept
 {

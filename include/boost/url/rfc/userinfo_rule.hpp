@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
-#include <boost/url/pct_encoding_types.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/parse_tag.hpp>
 
@@ -35,9 +35,9 @@ namespace urls {
 */
 struct userinfo_rule
 {
-    pct_encoded_str user;
-    bool            has_password = false;
-    pct_encoded_str password;
+    pct_encoded_view user;
+    bool has_password = false;
+    pct_encoded_view password;
 
     friend
     void
