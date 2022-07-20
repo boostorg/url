@@ -1,6 +1,6 @@
 [/
     Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
-    Copyright (c) 2019 Alan Freitas (alandefreitas@gmail.com)
+    Copyright (c) 2022 Alan Freitas (alandefreitas@gmail.com)
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -65,7 +65,6 @@
 [def __result__                 [link url.ref.boost__urls__result `result`]]
 [def __static_pool__            [link url.ref.boost__urls__static_pool `static_pool`]]
 [def __static_url__             [link url.ref.boost__urls__static_url `static_url`]]
-[def __const_string__           [link url.ref.boost__urls__const_string `const_string`]]
 [def __pct_encoded_view__       [link url.ref.boost__urls__pct_encoded_view `pct_encoded_view`]]
 [def __string_view__            [link url.ref.boost__urls__string_view `string_view`]]
 [def __url__                    [link url.ref.boost__urls__url `url`]]
@@ -86,23 +85,26 @@
 [include 1.0.overview.qbk]
 [include 2.0.quicklook.qbk]
 [include 2.1.HelpCard.qbk]
+[include 3.0.urls.qbk]
 
-[section Parsing]
-[include 3.0.parsing.qbk]
-[include 3.1.scheme.qbk]
-[include 3.2.authority.qbk]
-[include 3.3.path.qbk]
-[include 3.4.query.qbk]
-[include 3.5.fragment.qbk]
+[section Containers]
+[include 4.1.parsing.qbk]
+[include 4.2.modifying.qbk]
 [endsect]
 
-[include 4.0.modifying.qbk]
+[section URL Components]
+[include 5.1.scheme.qbk]
+[include 5.2.authority.qbk]
+[include 5.3.path.qbk]
+[include 5.4.query.qbk]
+[include 5.5.fragment.qbk]
+[endsect]
+
 
 [section Grammar Rules]
-[include 5.0.grammars.qbk]
-[include 5.1.customization.qbk]
+[include 6.1.design.qbk]
+[include 6.2.customization.qbk]
 [endsect]
-
 
 [section:ref Reference]
 [xinclude quickref.xml]
@@ -112,8 +114,8 @@
 [endsect]
 
 [section:concepts Concepts]
-[include 6.1.CharSet.qbk]
-[include 6.2.MutableString.qbk]
+[include 7.1.CharSet.qbk]
+[include 7.2.MutableString.qbk]
 [endsect]
 
 

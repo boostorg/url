@@ -78,9 +78,8 @@ skip:
             goto skip;
     }
 finish:
-    t.s.str = string_view(
-        start, it - start);
-    t.s.decoded_size = n;
+    t.s = detail::access::construct(
+        string_view(start, it - start), n);
 }
 
 } // urls

@@ -121,7 +121,7 @@ public:
         in the copy.
 
     */
-    using value_type = const_string;
+    using value_type = std::string;
 
     /** A type which can represent a segment as a const reference
 
@@ -173,7 +173,7 @@ public:
 
         This function returns a new view over the
         same underlying character buffer where each
-        segment is returned as a @ref const_string
+        segment is returned as a @ref string_view
         with percent-decoding applied using the
         optionally specified allocator.
 
@@ -206,9 +206,17 @@ public:
         this parameter is ommitted, the default
         allocator will be used.
     */
-    template<class Allocator = std::allocator<char> >
     segments_view
-    decoded(Allocator const& alloc = {}) const;
+    decoded() const
+    {
+        return {s_, n_};
+    }
+
+    /// @copydoc decoded()
+    operator segments_view() const
+    {
+        return decoded();
+    }
 
     /** Returns true if this contains an absolute path.
 

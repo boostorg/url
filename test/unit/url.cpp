@@ -18,6 +18,24 @@
 namespace boost {
 namespace urls {
 
+// Transparent equal_to
+template <class T = void>
+struct equal_to {
+    bool operator()( const T& lhs, const T& rhs ) const
+    {
+        return lhs == rhs;
+    }
+};
+
+template <>
+struct equal_to<void> {
+    template <class T1, class T2>
+    bool operator()( const T1& lhs, const T2& rhs ) const
+    {
+        return lhs == rhs;
+    }
+};
+
 class url_test
 {
 public:
@@ -35,7 +53,8 @@ public:
         BOOST_TEST(std::equal(
             segs.begin(),
             segs.end(),
-            init.begin()));
+            init.begin(),
+            equal_to<>{}));
     }
 
     static
@@ -222,6 +241,10 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_user(s2).string() == s3);
+            auto s = pct_encode_to_string(
+                s2, unreserved_chars + subdelim_chars);
+            u.set_user(pct_encoded_view(s));
+            BOOST_TEST(u.string() == s3);
             BOOST_TEST_EQ(u.user(), s2);
             BOOST_TEST(u.has_userinfo());
         };
@@ -340,6 +363,12 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_password(s2).string() == s3);
+            auto s = pct_encode_to_string(
+                s2, unreserved_chars +
+                    subdelim_chars + ':');
+            BOOST_TEST(
+                u.set_password(
+                     pct_encoded_view(s)).string() == s3);
             BOOST_TEST_EQ(u.password(), s2);
             BOOST_TEST(u.has_userinfo());
         };
@@ -462,8 +491,14 @@ public:
             string_view s2, string_view s3)
         {
             url u = parse_uri_reference(s1).value();
+            BOOST_TEST_EQ(
+                u.set_userinfo(s2).string(), s3);
+            auto s = pct_encode_to_string(
+                s2, unreserved_chars +
+                    subdelim_chars + ':');
             BOOST_TEST(
-                u.set_userinfo(s2).string() == s3);
+                u.set_userinfo(
+                     pct_encoded_view(s)).string() == s3);
             BOOST_TEST_EQ(u.userinfo(), s2);
             BOOST_TEST(u.has_userinfo());
         };
@@ -508,51 +543,177 @@ public:
 
         set("", "", "//@");
         set("/", "", "//@/");
-        set("//", "", "//@");
-        set("//@", "", "//@");
-        set("//a@", "", "//@");
-        set("//a:@", "", "//@");
-        set("//a:b@", "", "//@");
-        set("//@x", "", "//@x");
-        set("//a@x", "", "//@x");
-        set("//a:b@x", "", "//@x");
-        set("//a:b@x/", "", "//@x/");
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//", "", "//@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//@", "", "//@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a@", "", "//@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a:@", "", "//@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a:b@", "", "//@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//@x", "", "//@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a@x", "", "//@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a:b@x", "", "//@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a:b@x/", "", "//@x/");
+        }
 
-        set("w:", "", "w://@");
-        set("w:/", "", "w://@/");
-        set("w://", "", "w://@");
-        set("w://@", "", "w://@");
-        set("w://a@", "", "w://@");
-        set("w://a:@", "", "w://@");
-        set("w://a:b@", "", "w://@");
-        set("w://@x", "", "w://@x");
-        set("w://a@x", "", "w://@x");
-        set("w://a:b@x", "", "w://@x");
-        set("w://a:b@x/", "", "w://@x/");
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w:", "", "w://@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w:/", "", "w://@/");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://", "", "w://@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://@", "", "w://@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a@", "", "w://@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a:@", "", "w://@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a:b@", "", "w://@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://@x", "", "w://@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a@x", "", "w://@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a:b@x", "", "w://@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a:b@x/", "", "w://@x/");
+        }
 
-        set("", ":", "//%3a@");
-        set("/", "a", "//a@/");
-        set("//", "@", "//%40@");
-        set("//@", "xyz", "//xyz@");
-        set("//a@", ":@", "//%3a%40@");
-        set("//a:@", "x", "//x@");
-        set("//a:b@", "p:q", "//p%3aq@");
-        set("//@x", "z", "//z@x");
-        set("//a@x", "42", "//42@x");
-        set("//a:b@x", "UV", "//UV@x");
-        set("//a:b@x/", "NR", "//NR@x/");
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("", ":", "//:@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("/", "a", "//a@/");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//", "@", "//%40@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//@", "xyz", "//xyz@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a@", ":@", "//:%40@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a:@", "x", "//x@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a:b@", "p:q", "//p:q@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//@x", "z", "//z@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a@x", "42", "//42@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a:b@x", "UV", "//UV@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("//a:b@x/", "NR", "//NR@x/");
+        }
 
-        set("w:", ":", "w://%3a@");
-        set("w:/", "a", "w://a@/");
-        set("w://", "@", "w://%40@");
-        set("w://@", "xyz", "w://xyz@");
-        set("w://a@", ":@", "w://%3a%40@");
-        set("w://a:@", "x", "w://x@");
-        set("w://a:b@", "p:q", "w://p%3aq@");
-        set("w://@x", "z", "w://z@x");
-        set("w://a@x", "42", "w://42@x");
-        set("w://a:b@x", "UV", "w://UV@x");
-        set("w://a:b@x/", "NR", "w://NR@x/");
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w:", ":", "w://:@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w:/", "a", "w://a@/");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://", "@", "w://%40@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://@", "xyz", "w://xyz@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a@", ":@", "w://:%40@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a:@", "x", "w://x@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a:b@", "p:q", "w://p:q@");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://@x", "z", "w://z@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a@x", "42", "w://42@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a:b@x", "UV", "w://UV@x");
+        }
+        {
+            BOOST_TEST_CHECKPOINT();
+            set("w://a:b@x/", "NR", "w://NR@x/");
+        }
 
         enc("", "", "//@");
         enc("/", "", "//@/");
@@ -666,6 +827,18 @@ public:
         }
         {
             url u;
+            u.set_host(pct_encoded_view("1.2.3.4"));
+            BOOST_TEST_EQ(u.string(), "//1.2.3.4");
+            BOOST_TEST(u.host_type() ==
+                host_type::ipv4);
+            BOOST_TEST(u.ipv4_address() ==
+                ipv4_address(0x01020304));
+            BOOST_TEST(
+                u.encoded_host() == "1.2.3.4");
+            BOOST_TEST_EQ(u.host(), "1.2.3.4");
+        }
+        {
+            url u;
             u.set_encoded_host("1.2.3.4");
             BOOST_TEST_EQ(u.string(), "//1.2.3.4");
             BOOST_TEST(u.host_type() ==
@@ -700,6 +873,16 @@ public:
         {
             url u;
             u.set_host("example.com");
+            BOOST_TEST_EQ(u.string(), "//example.com");
+            BOOST_TEST(u.host_type() ==
+                host_type::name);
+            BOOST_TEST_EQ(u.host(), "example.com");
+            BOOST_TEST_EQ(u.encoded_host(), "example.com");
+        }
+        // reg-name
+        {
+            url u;
+            u.set_host(pct_encoded_view("example.com"));
             BOOST_TEST_EQ(u.string(), "//example.com");
             BOOST_TEST(u.host_type() ==
                 host_type::name);
@@ -1163,8 +1346,10 @@ public:
             {
                 url u = parse_uri_reference(s0).value();
                 u.set_path(arg);
-                BOOST_TEST(
-                    u.string() == match);
+                BOOST_TEST_EQ(u.string(), match);
+                auto s = pct_encode_to_string(arg, pchars);
+                u.set_path(pct_encoded_view(s));
+                BOOST_TEST_EQ(u.string(), match);
             };
             check(
                 "",
@@ -1282,44 +1467,31 @@ public:
 
         // set_query
         {
+            auto good = [](
+                string_view q, string_view us)
             {
                 url u;
-                u.set_query("");
+                u.set_query(q);
                 BOOST_TEST(u.has_query());
-                BOOST_TEST_EQ(u.string(), "?");
-                BOOST_TEST_EQ(u.query(), "");
-            }
-            {
-                url u;
-                u.set_query("x");
+                BOOST_TEST_EQ(u.string(), us);
+                BOOST_TEST_EQ(u.query(), q);
+
+                u.remove_query();
+                auto s = pct_encode_to_string(q, query_chars);
+                pct_decode_opts opt;
+                opt.plus_to_space = true;
+                auto es = pct_encoded_view(s, opt);
+                u.set_query(es);
                 BOOST_TEST(u.has_query());
-                BOOST_TEST_EQ(u.string(), "?x");
-                BOOST_TEST_EQ(u.query(), "x");
-            }
-            {
-                url u;
-                u.set_query("%41");
-                BOOST_TEST(u.has_query());
-                BOOST_TEST_EQ(u.string(), "?%2541");
-                BOOST_TEST_EQ(u.encoded_query(), "%2541");
-                BOOST_TEST_EQ(u.query(), "%41");
-            }
-            {
-                url u;
-                u.set_query("%%fg");
-                BOOST_TEST(u.has_query());
-                BOOST_TEST_EQ(u.string(), "?%25%25fg");
-                BOOST_TEST_EQ(u.encoded_query(), "%25%25fg");
-                BOOST_TEST_EQ(u.query(), "%%fg");
-            }
-            {
-                url u;
-                u.set_query("{}");
-                BOOST_TEST(u.has_query());
-                BOOST_TEST_EQ(u.string(), "?%7b%7d");
-                BOOST_TEST_EQ(u.encoded_query(), "%7b%7d");
-                BOOST_TEST_EQ(u.query(), "{}");
-            }
+                BOOST_TEST_EQ(u.string(), us);
+                BOOST_TEST_EQ(u.query(), q);
+            };
+            good("", "?");
+            good("x", "?x");
+            good("%41", "?%2541");
+            good("%%fg", "?%25%25fg");
+            good("{}", "?%7b%7d");
+
         }
 
 
@@ -1461,44 +1633,30 @@ public:
 
         // set_fragment
         {
+            auto good = [](
+                string_view f, string_view h, string_view ef)
             {
                 url u;
-                u.set_fragment("");
+                u.set_fragment(f);
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST_EQ(u.string(), "#");
-                BOOST_TEST_EQ(u.fragment(), "");
-            }
-            {
-                url u;
-                u.set_fragment("x");
+                BOOST_TEST_EQ(u.string(), h);
+                BOOST_TEST_EQ(u.encoded_fragment(), ef);
+                BOOST_TEST_EQ(u.fragment(), f);
+
+                auto s = pct_encode_to_string(f, fragment_chars);
+                u.set_fragment(pct_encoded_view(s));
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST_EQ(u.string(), "#x");
-                BOOST_TEST_EQ(u.fragment(), "x");
-            }
-            {
-                url u;
-                u.set_fragment("%41");
-                BOOST_TEST(u.has_fragment());
-                BOOST_TEST_EQ(u.string(), "#%2541");
-                BOOST_TEST_EQ(u.encoded_fragment(), "%2541");
-                BOOST_TEST_EQ(u.fragment(), "%41");
-            }
-            {
-                url u;
-                u.set_fragment("%%fg");
-                BOOST_TEST(u.has_fragment());
-                BOOST_TEST_EQ(u.string(), "#%25%25fg");
-                BOOST_TEST_EQ(u.encoded_fragment(), "%25%25fg");
-                BOOST_TEST_EQ(u.fragment(), "%%fg");
-            }
-            {
-                url u;
-                u.set_fragment("{}");
-                BOOST_TEST(u.has_fragment());
-                BOOST_TEST_EQ(u.string(), "#%7b%7d");
-                BOOST_TEST_EQ(u.encoded_fragment(), "%7b%7d");
-                BOOST_TEST_EQ(u.fragment(), "{}");
-            }
+                BOOST_TEST_EQ(u.string(), h);
+                BOOST_TEST_EQ(u.encoded_fragment(), ef);
+                BOOST_TEST_EQ(u.fragment(), f);
+            };
+
+            good("", "#", "");
+            good("x", "#x", "x");
+            good("%41", "#%2541", "%2541");
+            good("%%fg", "#%25%25fg", "%25%25fg");
+            good("{}", "#%7b%7d", "%7b%7d");
+
         }
     }
 

@@ -14,7 +14,7 @@
 [heading Notation]
 
 The authority is a hierarchical element which names an entity governing
-the name space defined by the remainder of the URL. It divides into
+the namespace defined by the remainder of the URL. It divides into
 three subcomponents:
 
 [teletype]
@@ -50,87 +50,9 @@ In a URL, the authority component is always preceded by a double slash ("//").
     ]
 ]]
 
-[heading Member Functions]
-
-The functions for inspecting all or part of the authority in a
-__url_view__ are as follows:
-
-[table Userinfo Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.has_password `has_password`]]
-    [Return true if an password is present.]
-][
-    [[link url.ref.boost__urls__url_view.has_userinfo `has_userinfo`]]
-    [Return true if a userinfo is present.]
-][
-    [[link url.ref.boost__urls__url_view.encoded_password `encoded_password`]]
-    [Return the password as a percent-encoded string.]
-][
-    [[link url.ref.boost__urls__url_view.encoded_user `encoded_user`]]
-    [Return the user as a percent-encoded string.]
-][
-    [[link url.ref.boost__urls__url_view.encoded_userinfo `encoded_userinfo`]]
-    [Return the userinfo as a percent-encoded string.]
-][
-    [[link url.ref.boost__urls__url_view.password `password`]]
-    [Return the password as a string with percent-decoding applied.]
-][
-    [[link url.ref.boost__urls__url_view.user `user`]]
-    [Return the user as a string with percent-decoding applied.]
-][
-    [[link url.ref.boost__urls__url_view.userinfo `userinfo`]]
-    [Return the userinfo as a string with percent-decoding applied.]
-]]
-
-
-[table Host Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.encoded_host `encoded_host`]]
-    [Return the host as a percent-encoded string.]
-][
-    [[link url.ref.boost__urls__url_view.encoded_host_and_port `encoded_host_and_port`]]
-    [Return the host and port as a percent-encoded string.]
-][
-    [[link url.ref.boost__urls__url_view.has_port `has_port`]]
-    [Return true if an port is present.]
-][
-    [[link url.ref.boost__urls__url_view.host `host`]]
-    [Return the type of host specified, if any.]
-][
-    [[link url.ref.boost__urls__url_view.ipv4_address `ipv4_address`]]
-    [Return the IPv4 address of the host, if applicable.]
-][
-    [[link url.ref.boost__urls__url_view.ipv6_address `ipv6_address`]]
-    [Return the IPv6 address of the host, if applicable.]
-][
-    [[link url.ref.boost__urls__url_view.ipv_future `ipv_future`]]
-    [Return the IPv-future address of the host, if applicable.]
-][
-    [[link url.ref.boost__urls__url_view.port `port`]]
-    [Return the port string of the host, if applicable.]
-][
-    [[link url.ref.boost__urls__url_view.port_number `port_number`]]
-    [Return the port number of the host, if applicable.]
-]]
-
-[table Authority Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.has_authority `has_authority`]]
-    [Return true if an authority is present.]
-][
-    [[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]]
-    [Return the authority as a percent-encoded string.]
-]]
-
 [heading Observers]
 
-The function [link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`] can
+The function [link url.ref.boost__urls__url_view.authority `authority`] can
 be used to obtain the authority from a __url_view__:
 
 [table [[Code][Output]] [[
@@ -148,10 +70,12 @@ be used to obtain the authority from a __url_view__:
 ]]]
 
 These functions do not throw. If the URL has no authority,
-[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`] returns an empty string.
+[link url.ref.boost__urls__url_view.authority `authority`]
+returns an empty __authority_view__.
 
-The function [link url.ref.boost__urls__url_view.has_authority `has_authority`] can be used to check
-whether this empty string means there is no authority or an empty authority in the URL.
+The function [link url.ref.boost__urls__url_view.has_authority `has_authority`]
+can be used to check whether this empty authority means there is no authority
+or an empty authority in the URL.
 
 [table [[Code][Output]] [[
 [c++]
@@ -180,17 +104,18 @@ whether this empty string means there is no authority or an empty authority in t
 ```
 ]]]
 
-Notice that there is no decoded counterpart of
-[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`].
-The reason is any decoded character `/` could
-make it ambiguous with the path component.
+Notice that the decoded counterpart of
+[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]
+does not return a __pct_encoded_view__. The reason is any decoded character
+`/` could make it ambiguous with the path component so the authority
+is represented through an __authority_view__.
 
 [heading Host]
 
 The host subcomponent represents where resources
 are located. The functions
-[link url.ref.boost__urls__url_view.encoded_host `encoded_host`]
-and [link url.ref.boost__urls__url_view.host `host`]
+[link url.ref.boost__urls__url_view.host `host`]
+and [link url.ref.boost__urls__url_view.encoded_host `encoded_host`]
 can be used to obtain the host from a __url_view__, while
 [link url.ref.boost__urls__url_view.encoded_host_and_port `encoded_host_and_port`]
 allows us to directly obtain the host with the corresponding port number.
@@ -265,14 +190,10 @@ functions are provided for the userinfo subcomponents.
     https://john.doe:123456@www.somehost.com/forum/questions/
 
     has_userinfo:     1
-    encoded_userinfo: john.doe:123456
     userinfo:         john.doe:123456
-
-    encoded_user:     john.doe
     user:             john.doe
 
     has_password:     1
-    encoded_password: 123456
     password:         123456
 ```
 ]]]
@@ -321,21 +242,16 @@ obtain an __authority_view__.
 ```
     www.example.com:80
 
-    encoded_host_and_port: www.example.com:80
-    encoded_host:          www.example.com
+    host_and_port:         www.example.com:80
     host:                  www.example.com
     port:                  80
     port number:           80
 
     has_userinfo:          0
-    encoded_userinfo:
     userinfo:
-
-    encoded_user:
     user:
 
     has_password:          0
-    encoded_password:
     password:
 ```
 ]]]
@@ -361,20 +277,16 @@ The following authority string is also valid for
     user:pass@www.example.com:443
 
     encoded_host_and_port: www.example.com:443
-    encoded_host:          www.example.com
     host:                  www.example.com
     port:                  443
     port number:           443
 
     has_userinfo:          1
-    encoded_userinfo:      user:pass
     userinfo:              user:pass
 
-    encoded_user:          user
     user:                  user
 
     has_password:          1
-    encoded_password:      pass
     password:              pass
 ```
 ]]]
@@ -522,5 +434,147 @@ In complete authority components, we can also extract the `userinfo` and `port` 
     [[Port]          [`123`]                                                   ]
     [[Path]          [`/forum/questions/`]                                     ]
 ]
+
+[heading Member Functions]
+
+The functions for inspecting all or part of the authority in a
+__url_view__ are as follows:
+
+[table Userinfo Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.has_password `has_password`]]
+    [Return true if an password is present.]
+][
+    [[link url.ref.boost__urls__url_view.has_userinfo `has_userinfo`]]
+    [Return true if a userinfo is present.]
+][
+    [[link url.ref.boost__urls__url_view.encoded_password `encoded_password`]]
+    [Return the password as a percent-encoded string.]
+][
+    [[link url.ref.boost__urls__url_view.encoded_user `encoded_user`]]
+    [Return the user as a percent-encoded string.]
+][
+    [[link url.ref.boost__urls__url_view.encoded_userinfo `encoded_userinfo`]]
+    [Return the userinfo as a percent-encoded string.]
+][
+    [[link url.ref.boost__urls__url_view.password `password`]]
+    [Return the password as a string with percent-decoding applied.]
+][
+    [[link url.ref.boost__urls__url_view.user `user`]]
+    [Return the user as a string with percent-decoding applied.]
+][
+    [[link url.ref.boost__urls__url_view.userinfo `userinfo`]]
+    [Return the userinfo as a string with percent-decoding applied.]
+]]
+
+
+[table Host Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.encoded_host `encoded_host`]]
+    [Return the host as a percent-encoded string.]
+][
+    [[link url.ref.boost__urls__url_view.encoded_host_and_port `encoded_host_and_port`]]
+    [Return the host and port as a percent-encoded string.]
+][
+    [[link url.ref.boost__urls__url_view.has_port `has_port`]]
+    [Return true if an port is present.]
+][
+    [[link url.ref.boost__urls__url_view.host `host`]]
+    [Return the type of host specified, if any.]
+][
+    [[link url.ref.boost__urls__url_view.ipv4_address `ipv4_address`]]
+    [Return the IPv4 address of the host, if applicable.]
+][
+    [[link url.ref.boost__urls__url_view.ipv6_address `ipv6_address`]]
+    [Return the IPv6 address of the host, if applicable.]
+][
+    [[link url.ref.boost__urls__url_view.ipv_future `ipv_future`]]
+    [Return the IPv-future address of the host, if applicable.]
+][
+    [[link url.ref.boost__urls__url_view.port `port`]]
+    [Return the port string of the host, if applicable.]
+][
+    [[link url.ref.boost__urls__url_view.port_number `port_number`]]
+    [Return the port number of the host, if applicable.]
+]]
+
+[table Authority Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.has_authority `has_authority`]]
+    [Return true if an authority is present.]
+][
+    [[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]]
+    [Return the authority as a percent-encoded string.]
+]]
+
+The functions for modifying all or part of the authority in a
+__url__ are as follows:
+
+[table Userinfo Modifiers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.set_userinfo `set_userinfo`]]
+    [Set the userinfo.]
+][
+    [[link url.ref.boost__urls__url_view.set_encoded_userinfo `set_encoded_userinfo`]]
+    [Set the encoded userinfo.]
+][
+    [[link url.ref.boost__urls__url_view.remove_userinfo `remove_userinfo`]]
+    [Remove the userinfo.]
+][
+    [[link url.ref.boost__urls__url_view.set_user `set_user`]]
+    [Set the user.]
+][
+    [[link url.ref.boost__urls__url_view.set_encoded_user `set_encoded_user`]]
+    [Set the encoded user.]
+][
+    [[link url.ref.boost__urls__url_view.set_password `set_password`]]
+    [Set the password.]
+][
+    [[link url.ref.boost__urls__url_view.set_encoded_password `set_encoded_password`]]
+    [Set the encoded password.]
+][
+    [[link url.ref.boost__urls__url_view.remove_password `remove_password`]]
+    [Remove the password.]
+]]
+
+
+[table Host Modifiers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.set_host `set_host`]]
+    [Set the host.]
+][
+    [[link url.ref.boost__urls__url_view.set_encoded_host `set_encoded_host`]]
+    [Set the encoded host.]
+][
+    [[link url.ref.boost__urls__url_view.set_port `set_port`]]
+    [Set the port.]
+][
+    [[link url.ref.boost__urls__url_view.remove_port `remove_port`]]
+    [Remove the port.]
+]]
+
+[table Authority Modifiers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.set_encoded_authority `set_encoded_authority`]]
+    [Set the encoded authority.]
+][
+    [[link url.ref.boost__urls__url_view.remove_authority `remove_authority`]]
+    [Remove the authority.]
+][
+    [[link url.ref.boost__urls__url_view.normalize_authority `normalize_authority`]]
+    [Normalize the authority.]
+]]
 
 [endsect]

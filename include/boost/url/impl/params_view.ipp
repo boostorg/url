@@ -28,7 +28,7 @@ namespace urls {
 auto
 params_view::
 at(string_view key) const ->
-    const_string
+    pct_encoded_view
 {
     auto it = find(key);
     for(;;)
@@ -44,14 +44,7 @@ at(string_view key) const ->
     string_view ev{
         it.impl_.pos_ + it.impl_.nk_ + 1,
         it.impl_.nv_ - 1 };
-    auto n =
-        pct_decode_bytes_unchecked(ev);
-    return a_(n, [ev]
-        (std::size_t n, char* dest)
-        {
-            pct_decode_unchecked(
-                dest, dest + n, ev);
-        });
+    return pct_encoded_view(ev);
 }
 
 //------------------------------------------------
@@ -66,7 +59,7 @@ begin() const noexcept ->
     iterator
 {
     if(n_ > 0)
-        return { s_, a_ };
+        return { s_ };
     return end();
 }
 
@@ -75,7 +68,7 @@ params_view::
 end() const noexcept ->
     iterator
 {
-    return { s_, n_, 0, a_ };
+    return { s_, n_, 0 };
 }
 
 //------------------------------------------------

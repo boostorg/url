@@ -173,6 +173,85 @@ copy(
 
 //------------------------------------------------
 
+void
+view_query_iter::
+increment() noexcept
+{
+    std::advance(p_, n_);
+    if(p_ == end_)
+    {
+        done_ = true;
+        return;
+    }
+    ++p_;
+    auto pos = p_;
+    n_ = 0;
+    while (pos != end_)
+    {
+        if (*pos == '&')
+            break;
+        ++pos;
+        ++n_;
+    }
+}
+
+view_query_iter::
+view_query_iter(
+    pct_encoded_view s) noexcept
+    : end_(s.end())
+    , n_(0)
+{
+    if(s.empty())
+    {
+        p_ = end_;
+        done_ = true;
+        return;
+    }
+    p_ = s.begin();
+    auto pos = p_;
+    while (pos != end_)
+    {
+        if (*pos == '&')
+            break;
+        ++pos;
+        ++n_;
+    }
+}
+
+bool
+view_query_iter::
+measure(
+    std::size_t& n,
+    error_code&) noexcept
+{
+    if(done_)
+        return false;
+    auto it = p_;
+    auto end = std::next(p_, n_);
+    n += detail::pct_encode_bytes(
+        it, end, query_chars);
+    increment();
+    return true;
+}
+
+void
+view_query_iter::
+copy(
+    char*& dest,
+    char const* end) noexcept
+{
+    BOOST_ASSERT(!done_);
+    auto it = p_;
+    auto last = std::next(p_, n_);
+    dest += pct_encode(
+        dest, end,
+        it, last,
+        query_chars);
+    increment();
+}
+
+//------------------------------------------------
+
 bool
 enc_params_iter_base::
 measure_impl(

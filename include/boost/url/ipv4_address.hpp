@@ -13,8 +13,9 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/const_string.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/url/grammar/parse_tag.hpp>
+#include <string>
 #include <array>
 #include <cstdint>
 #include <iosfwd>
@@ -161,18 +162,16 @@ public:
         string will use. If this parameter is omitted,
         the default allocator is used.
 
-        @return A @ref const_string using the
-        specified allocator.
+        @return A string using the specified allocator.
     */
     template<class Allocator =
         std::allocator<char>>
-    const_string
+    std::basic_string<char, std::char_traits<char>, Allocator>
     to_string(Allocator const& a = {}) const
     {
         char buf[max_str_len];
         auto const n = print_impl(buf);
-        return const_string(
-            string_view(buf, n), a);
+        return {buf, n, a};
     }
 
     /** Write a dotted decimal string representing the address to a buffer

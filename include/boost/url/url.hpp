@@ -448,6 +448,12 @@ public:
     set_user(
         string_view s);
 
+    /// @copydoc set_user()
+    BOOST_URL_DECL
+    url&
+    set_user(
+        pct_encoded_view s);
+
     /** Set the user.
 
         The user is set to the specified string,
@@ -516,6 +522,12 @@ public:
     url&
     set_password(
         string_view s);
+
+    /// @copydoc set_password()
+    BOOST_URL_DECL
+    url&
+    set_password(
+        pct_encoded_view s);
 
     /** Set the password.
 
@@ -614,6 +626,26 @@ public:
         Any special or reserved characters in the
         string are automatically percent-encoded.
 
+        The interpretation of userinfo as
+        individual user and password components
+        is scheme-dependent. Transmitting
+        passwords in URLs is deprecated.
+
+        This function treats userinfo as a unit
+        independent of the user and password
+        components.
+
+        If the input string has a ":" character,
+        its first occurrence will be considered
+        the separator between the user and the
+        password fields.
+
+        If the username might contain a ":", the
+        functions @ref set_user and
+        @ref set_password should be used
+        separately so that the character can be
+        unambiguously encoded.
+
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
@@ -629,6 +661,12 @@ public:
     url&
     set_userinfo(
         string_view s);
+
+    /// @copydoc set_userinfo()
+    BOOST_URL_DECL
+    url&
+    set_userinfo(
+        pct_encoded_view s);
 
     //--------------------------------------------
 
@@ -692,7 +730,7 @@ public:
         @param addr The address to set.
     */
 #ifdef BOOST_URL_DOCS
-    url& set_host( urls::ipv6_address const& addr );
+    url& set_host( ipv6_address const& addr );
 #else
     BOOST_URL_DECL
     url&
@@ -742,6 +780,12 @@ public:
     url&
     set_host(
         string_view s);
+
+    /// @copydoc set_host(string_view)
+    BOOST_URL_DECL
+    url&
+    set_host(
+        pct_encoded_view s);
 
     /** Set the host
 
@@ -1097,6 +1141,12 @@ public:
     set_path(
         string_view s);
 
+    /// @copydoc set_path()
+    BOOST_URL_DECL
+    url&
+    set_path(
+        pct_encoded_view s);
+
     /** Return the path segments
 
         This function returns the path segments as
@@ -1140,12 +1190,10 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
     */
-    template<class Allocator =
-        std::allocator<char>>
     urls::segments
-    segments(Allocator const& alloc = {}) noexcept
+    segments() noexcept
     {
-        return urls::segments(*this, alloc);
+        return {*this};
     }
 
     //--------------------------------------------
@@ -1257,6 +1305,12 @@ public:
     set_query(
         string_view s);
 
+    /// @copydoc set_query()
+    BOOST_URL_DECL
+    url&
+    set_query(
+        pct_encoded_view s);
+
     /** Return the query parameters
 
         This function returns the query
@@ -1294,17 +1348,11 @@ public:
         query-param     = key [ "=" value ]
         @endcode
 
-        @param alloc An optional allocator the
-        container will use when returning
-        percent-decoded strings. If omitted,
-        the default allocator is used.
     */
-    template<class Allocator =
-        std::allocator<char>>
     urls::params
-    params(Allocator const& alloc = {})
+    params()
     {
-        return urls::params(*this, alloc);
+        return {*this};
     }
 
     //--------------------------------------------
@@ -1390,6 +1438,12 @@ public:
     url&
     set_fragment(
         string_view s);
+
+    /// @copydoc set_fragment()
+    BOOST_URL_DECL
+    url&
+    set_fragment(
+        pct_encoded_view s);
 
     //--------------------------------------------
     //

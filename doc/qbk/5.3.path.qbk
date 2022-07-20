@@ -52,65 +52,10 @@ path may be formulated in a URL. The BNF for these formulations is defined:
 ```
 ]]]
 
-[heading Member Functions]
-
-The functions for interacting with the path in a __url_view__ are as follows:
-
-[table Path Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.encoded_path `encoded_path`]]
-    [Return the path as a percent-encoded string]
-][
-    [[link url.ref.boost__urls__url_view.encoded_segments `encoded_segments`]]
-    [Return the path segments as a read-only container of percent-encoded strings.]
-][
-    [[link url.ref.boost__urls__url_view.segments `segments`]]
-    [Return the path segments as a read-only container of strings with percent-decoding applied.]
-]]
-
-A URL path is usually interpreted as segments. The library
-provides two read-only containers for interacting with the segments
-in a URL's path:
-
-[table Segment View Types [
-    [Type]
-    [Description]
-][
-    [[link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]]
-    [A read-only forward range of path segments returned as percent-encoded strings.]
-][
-    [[link url.ref.boost__urls__segments_view `segments_view`]]
-    [A read-only forward range of path segments returned as strings with percent-decoding applied.]
-]]
-
-These views can be directly created by the parsing functions below. This provides
-the guarantee that all constructed views contain valid path segments:
-
-[table Path Parsing Functions [
-    [Function]
-    [Grammar]
-][
-    [[link url.ref.boost__urls__parse_path `parse_path`]]
-    [['any path]]
-][
-    [[link url.ref.boost__urls__parse_path_abempty `parse_path_abempty`]]
-    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-abempty]]]
-][
-    [[link url.ref.boost__urls__parse_path_absolute `parse_path_absolute`]]
-    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-absolute]]]
-][
-    [[link url.ref.boost__urls__parse_path_noscheme `parse_path_noscheme`]]
-    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-noscheme]]]
-][
-    [[link url.ref.boost__urls__parse_path_rootless `parse_path_rootless`]]
-    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-rootless]]]
-]]
-
 [heading Observers]
 
-The function [link url.ref.boost__urls__url_view.encoded_path `encoded_path`] can
+The functions [link url.ref.boost__urls__url_view.path `path`] and
+[link url.ref.boost__urls__url_view.encoded_path `encoded_path`] can
 be used to obtain the path from a __url_view__:
 
 [table [[Code][Output]] [[
@@ -121,8 +66,9 @@ be used to obtain the path from a __url_view__:
 ```
     https://www.boost.org/doc/libs/
     path:             /doc/libs/
-    encoded segments: /doc/libs/
+    encoded_path:     /doc/libs/
     segments:         /doc/libs/
+    encoded segments: /doc/libs/
 ```
 ]]]
 
@@ -137,20 +83,20 @@ all URLs have valid paths, even when the path is empty.
 ```
     https://www.boost.org
     path:
-    encoded segments:
-    segments:
 ```
 ]]]
 
-Notice that there is also no decoded counterpart for
-[link url.ref.boost__urls__url_view.encoded_path `encoded_path`].
-The reason is any decoded character `/` could form an ambiguous
-path segment.
+Notice that there the decoded counterpart for
+[link url.ref.boost__urls__url_view.encoded_path `encoded_path`]
+should be used with care when the path segments represents a
+hierarchy as any decoded character `/` could form an ambiguous
+path segment. In these use cases, segment views are the most
+appropriate to access individual decoded path segments.
 
 [heading Segments View]
 
-These containers are lightweight references to the underlying path string.
-Ownership of the string is not transferred; the caller is responsible for
+These segment view containers are lightweight references to the underlying path
+ string. Ownership of the string is not transferred; the caller is responsible for
 ensuring that the lifetime of the string extends until the container is
 destroyed.
 
@@ -170,7 +116,7 @@ In contexts where a path can appear by itself, such as HTTP requests,
 segment views may not be constructed directly from strings. Instead,
 we can use the analogous function
 [link url.ref.boost__urls__parse_path `parse_path`] to obtain a
-__segments_encoded_view__ or __segments_view__.
+__segments_view__ or a __segments_encoded_view__.
 
 [table [[Code][Output]] [[
 [c++]
@@ -366,6 +312,96 @@ paths.
     [[Segment 1]     [`doc@folder`]                                   ]
     [[Segment 2]     [`libs:boost`]                                   ]
 ]
+
+[heading Member Functions]
+
+The functions for interacting with the path in a __url_view__ are as follows:
+
+[table Path Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.path `path`]]
+    [Return the path as a percent-decoded string]
+][
+    [[link url.ref.boost__urls__url_view.encoded_path `encoded_path`]]
+    [Return the path as a percent-encoded string]
+][
+    [[link url.ref.boost__urls__url_view.encoded_segments `encoded_segments`]]
+    [Return the path segments as a read-only container of percent-encoded strings.]
+]]
+
+A URL path is usually interpreted as segments. The library
+provides two read-only containers for interacting with the segments
+in a URL's path:
+
+[table Segment Observers [
+    [Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__segments_view `segments_view`]]
+    [A read-only forward range of path segments returned as strings with percent-decoding applied.]
+][
+    [[link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]]
+    [A read-only forward range of path segments returned as percent-encoded strings.]
+]]
+
+Segment views can be directly created by the parsing functions below. This provides
+the guarantee that all constructed views contain valid path segments:
+
+[table Path Parsing Functions [
+    [Function]
+    [Grammar]
+][
+    [[link url.ref.boost__urls__parse_path `parse_path`]]
+    [['any path]]
+][
+    [[link url.ref.boost__urls__parse_path_abempty `parse_path_abempty`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-abempty]]]
+][
+    [[link url.ref.boost__urls__parse_path_absolute `parse_path_absolute`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-absolute]]]
+][
+    [[link url.ref.boost__urls__parse_path_noscheme `parse_path_noscheme`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-noscheme]]]
+][
+    [[link url.ref.boost__urls__parse_path_rootless `parse_path_rootless`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-rootless]]]
+]]
+
+The functions for modifying paths in a __url__ are as follows:
+
+[table Path Modifiers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.set_path `set_path`]]
+    [Set the path]
+][
+    [[link url.ref.boost__urls__url_view.set_encoded_path `set_encoded_path`]]
+    [Set the encoded path]
+][
+    [[link url.ref.boost__urls__url_view.set_path_absolute `set_path_absolute`]]
+    [Set whether the path is absolute]
+][
+    [[link url.ref.boost__urls__url_view.normalize_path `normalize_path`]]
+    [Normalize path]
+]]
+
+A URL path is usually interpreted as segments. A __url__
+provides two modifiable containers for interacting with the segments
+in a URL's path:
+
+[table Segment View Types [
+    [Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__segments `segments`]]
+    [A forward range of path segments returned as strings with percent-decoding applied.]
+][
+    [[link url.ref.boost__urls__segments_encoded `segments_encoded`]]
+    [A forward range of path segments returned as percent-encoded strings.]
+]]
 
 [/-----------------------------------------------------------------------------]
 

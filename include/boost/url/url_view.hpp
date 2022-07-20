@@ -752,14 +752,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Calls to allocate may throw.
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used.
-
-        @return A @ref const_string using the
-        specified allocator.
+        Throws nothing
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
@@ -769,26 +762,15 @@ public:
             @ref has_userinfo,
             @ref encoded_userinfo.
     */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    const_string
-    userinfo(
-        Allocator const& a = {}) const
+    pct_encoded_view
+    userinfo() const noexcept
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
         string_view s = encoded_userinfo();
-        std::size_t n =
-            pct_decode_bytes_unchecked(s);
-        return const_string(
-            n, a,
-            [&s, &opt](
-                std::size_t n, char* dest)
-            {
-            pct_decode_unchecked(
-                dest, dest + n, s, opt);
-            });
+        return
+            detail::access::construct(
+                s, decoded_[id_user] + has_password() + decoded_[id_pass], opt);
     }
 
     //--------------------------------------------
@@ -851,14 +833,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Calls to allocate may throw.
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used.
-
-        @return A @ref const_string using the
-        specified allocator.
+        Throws nothing
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
@@ -870,26 +845,15 @@ public:
             @ref has_password,
             @ref password.
     */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    const_string
-    user(
-        Allocator const& a = {}) const
+    pct_encoded_view
+    user() const noexcept
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
         string_view s = encoded_user();
-        std::size_t n =
-            pct_decode_bytes_unchecked(s);
-        return const_string(
-            n, a,
-            [&s, &opt](
-                std::size_t n, char* dest)
-            {
-            pct_decode_unchecked(
-                dest, dest + n, s, opt);
-            });
+        return
+            detail::access::construct(
+                s, decoded_[id_user], opt);
     }
 
     /** Return true if this contains a password
@@ -971,19 +935,10 @@ public:
     /** Return the password
 
         This function returns the password from the
-        userinfo with percent-decoding applied,
-        using the optionally specified allocator.
+        userinfo with percent-decoding applied.
 
         @par Exception Safety
-        Calls to allocate may throw.
-
-        @param a An allocator to use for the string.
-        If this parameter is omitted, the default
-        allocator is used, and the return type of
-        the function becomes `std::string`.
-
-        @return A @ref const_string using the
-        specified allocator.
+        Throws nothing
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
@@ -995,26 +950,15 @@ public:
             @ref has_password,
             @ref password.
     */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    const_string
-    password(
-        Allocator const& a = {}) const
+    pct_encoded_view
+    password() const noexcept
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
         string_view s = encoded_password();
-        std::size_t n =
-            pct_decode_bytes_unchecked(s);
-        return const_string(
-            n, a,
-            [&s, &opt](
-                std::size_t n, char* dest)
-            {
-            pct_decode_unchecked(
-                dest, dest + n, s, opt);
-            });
+        return
+            detail::access::construct(
+                s, decoded_[id_pass], opt);
     }
 
     //--------------------------------------------
@@ -1136,15 +1080,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Calls to allocate may throw.
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used, and the return
-        type of the function becomes `std::string`.
-
-        @return A @ref const_string using the
-        specified allocator.
+        Throws nothing
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -1158,25 +1094,15 @@ public:
             @ref port,
             @ref port_number.
     */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    const_string
-    host(
-        Allocator const& a = {}) const
+    pct_encoded_view
+    host() const noexcept
     {
-        auto const s0 =
-            encoded_host();
-        if(host_type_ !=
-            urls::host_type::name)
-        {
-            // no decoding
-            return const_string(s0, a);
-        }
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return pct_decode_unchecked(
-            s0, opt, a, decoded_[id_host]);
+        string_view s = encoded_host();
+        return
+            detail::access::construct(
+                s, decoded_[id_host], opt);
     }
 
     /** Return the host as an IPv4 address
@@ -1458,6 +1384,40 @@ public:
         return get(id_path);
     }
 
+    /** Return the path
+
+        This function returns the path as a
+        string with percent-decoding applied.
+
+        @par BNF
+        @code
+        query           = *( pchar / "/" / "?" )
+
+        query-part      = [ "?" query ]
+        @endcode
+
+        @par Exception Safety
+        Throws nothing
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
+
+        @see
+            @ref encoded_query,
+            @ref has_query.
+    */
+    pct_encoded_view
+    path() const noexcept
+    {
+        pct_decode_opts opt;
+        opt.plus_to_space = false;
+        string_view s = encoded_path();
+        return
+            detail::access::construct(
+                s, decoded_[id_path], opt);
+    }
+
     /** Return the path segments
 
         This function returns the path segments as
@@ -1495,22 +1455,14 @@ public:
         @par Exception Safety
         Throws nothing.
 
-        @param alloc An optional allocator the
-        container will use when returning
-        percent-decoded strings. If omitted,
-        the default allocator is used.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
     */
-    template<class Allocator =
-        std::allocator<char>>
     segments_view
-    segments(Allocator const& alloc = {}) const noexcept
+    segments() const noexcept
     {
-        return segments_view(
-            encoded_path(), nseg_, alloc);
+        return {encoded_path(), nseg_};
     }
 
     //--------------------------------------------
@@ -1576,8 +1528,13 @@ public:
     /** Return the query
 
         This function returns the query as a
-        string with percent-decoding applied,
-        using the optionally specified allocator.
+        string with percent-decoding applied.
+
+        When plus signs appear in the query
+        portion of the URL, they are converted
+        to spaces automatically upon decoding.
+        This behavior can be changed by setting
+        decode options.
 
         @par BNF
         @code
@@ -1587,14 +1544,7 @@ public:
         @endcode
 
         @par Exception Safety
-        Calls to allocate may throw.
-
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used
-
-        @return A @ref const_string using the
-        specified allocator.
+        Throws nothing
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
@@ -1604,26 +1554,15 @@ public:
             @ref encoded_query,
             @ref has_query.
     */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    const_string
-    query(
-        Allocator const& a = {}) const
+    pct_encoded_view
+    query() const noexcept
     {
         pct_decode_opts opt;
         opt.plus_to_space = true;
         string_view s = encoded_query();
-        std::size_t n =
-            pct_decode_bytes_unchecked(s);
-        return const_string(
-            n, a,
-            [&s, &opt](
-                std::size_t n, char* dest)
-            {
-            pct_decode_unchecked(
-                dest, dest + n, s, opt);
-            });
+        return
+            detail::access::construct(
+                s, decoded_[id_query], opt);
     }
 
     /** Return the query parameters
@@ -1661,17 +1600,10 @@ public:
         query-param     = key [ "=" value ]
         @endcode
 
-        @param alloc An optional allocator the
-        container will use when returning
-        percent-decoded strings. If omitted,
-        the default allocator is used.
     */
-    template<
-        class Allocator =
-            std::allocator<char>>
+    BOOST_URL_DECL
     params_view
-    params(Allocator const&
-        alloc = {}) const noexcept;
+    params() const noexcept;
 
     //--------------------------------------------
     //
@@ -1737,8 +1669,7 @@ public:
     /** Return the fragment.
 
         This function returns the fragment as a
-        string with percent-decoding applied,
-        using the optionally specified allocator.
+        string with percent-decoding applied.
 
         @par BNF
         @code
@@ -1748,35 +1679,25 @@ public:
         @endcode
 
         @par Exception Safety
-        Calls to allocate may throw.
+        Throws nothing
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
             >3.5. Fragment (rfc3986)</a>
 
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used.
-
-        @return A @ref const_string using the
-        specified allocator.
-
         @see
             @ref encoded_fragment,
             @ref has_fragment.
     */
-    template<
-        class Allocator =
-            std::allocator<char>>
-    const_string
-    fragment(
-        Allocator const& a = {}) const
+    pct_encoded_view
+    fragment() const noexcept
     {
         pct_decode_opts opt;
         opt.plus_to_space = false;
-        return pct_decode_unchecked(
-            encoded_fragment(),
-            opt, a, decoded_[id_frag]);
+        string_view s = encoded_fragment();
+        return
+            detail::access::construct(
+                s, decoded_[id_frag], opt);
     }
 
     //--------------------------------------------

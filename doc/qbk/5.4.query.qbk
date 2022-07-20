@@ -69,53 +69,10 @@ This table shows the BNF for a query string interpreted as parameters:
 ```
 ]]]
 
-[heading Member Functions]
-
-The functions for interacting with the query in a __url_view__ are as follows:
-
-[table Query Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.has_query `has_query`]]
-    [Return true if a query is present]
-][
-    [[link url.ref.boost__urls__url_view.encoded_query `encoded_query`]]
-    [Return the percent-encoded query.]
-][
-    [[link url.ref.boost__urls__url_view.query `query`]]
-    [Return the query as a string with percent-decoding applied.]
-]]
-
-A URL query is usually interpreted as parameters. The library
-provides two observers and read-only containers for interacting with the parameters
-in a URL's query:
-
-[table Query Params Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.encoded_params `encoded_params`]]
-    [Return the query parameters as a read-only container of percent-encoded strings.]
-][
-    [[link url.ref.boost__urls__url_view.params `params`]]
-    [Return the query parameters as a read-only container of strings with percent-decoding applied.]
-]]
-
-[table Params View Types [
-    [Type]
-    [Description]
-][
-    [[link url.ref.boost__urls__params_encoded_view `params_encoded_view`]]
-    [A read-only forward range of query parameters returned as percent-encoded strings.]
-][
-    [[link url.ref.boost__urls__params_view `params_view`]]
-    [A read-only forward range of query parameters returned as strings with percent-decoding applied.]
-]]
-
 [heading Observers]
 
-The function [link url.ref.boost__urls__url_view.encoded_query `encoded_query`] can
+The function [link url.ref.boost__urls__url_view.query `query`] and
+[link url.ref.boost__urls__url_view.encoded_query `encoded_query`] can
 be used to obtain the query string from a __url_view__:
 
 [table [[Code][Output]] [[
@@ -130,8 +87,9 @@ be used to obtain the query string from a __url_view__:
 ]]]
 
 These functions do not throw. If the URL has no query,
+[link url.ref.boost__urls__url_view.query `query`] and
 [link url.ref.boost__urls__url_view.encoded_query `encoded_query`]
-returns an empty string. The function
+return an empty string. The function
 [link url.ref.boost__urls__url_view.has_query `has_query`]
 can be used to determine whether this empty string means there is
 no query or an empty query string in the URL.
@@ -145,23 +103,6 @@ no query or an empty query string in the URL.
     https://www.example.com/get-customer.php
     has query:     0
     encoded query:
-```
-]]]
-
-We can also use the function
-[link url.ref.boost__urls__url_view.query `query`]
-to obtain the decoded counterpart of the query string.
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_parsing_query_6]
-][
-[teletype]
-```
-    https://www.example.com/get-customer.php?name=John%20Doe
-    has query:     1
-    encoded query: name=John%20Doe
-    query:         name=John Doe
 ```
 ]]]
 
@@ -183,12 +124,12 @@ query strings might include ambiguous `&` and `=` characters.
 
 In this example, the decoded query seems to imply there are
 two query parameters while there is only one parameter whose
-value includes a `&` character.
+value includes a `&` character. In this case, the decoded
+parameters can be accessed safely through a parameter view.
 
 The reason the decoded variant of query string is still allowed
 is because query strings are not required to be interpreted as
-query parameters, in which case the `&` character is not
-ambiguous.
+query parameters, in which case the `&` character is not ambiguous.
 
 [heading Parameter View]
 
@@ -205,7 +146,6 @@ destroyed.
 ```
     https://www.example.com/get-customer.php?id=409&name=Joe&individual
     has query:     1
-    encoded query: id=409&name=Joe&individual
     query:         id=409&name=Joe&individual
     3 parameters
     parameter: <id, 409>
@@ -214,9 +154,9 @@ destroyed.
 ```
 ]]]
 
-Each parameter is represented as a __query_param_view__ structure, with
-fields to refer to the key and value. An extra field `has_value` is used
-to indicate whether the value is absent.
+Each parameter is represented as a structure with fields to refer to the
+key and value. An extra field `has_value` is used to indicate whether
+the value is absent.
 
 [heading Use Cases]
 
@@ -278,6 +218,94 @@ other URL components.
     [[Parameter 2]   [Key `code`, Value `a:2@/!`]                                                       ]
 ]
 
+[heading Member Functions]
+
+The functions for interacting with the query in a __url_view__ are as follows:
+
+[table Query Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.has_query `has_query`]]
+    [Return true if a query is present]
+][
+    [[link url.ref.boost__urls__url_view.query `query`]]
+    [Return the query as a string with percent-decoding applied.]
+][
+    [[link url.ref.boost__urls__url_view.encoded_query `encoded_query`]]
+    [Return the percent-encoded query.]
+]]
+
+A URL query is usually interpreted as parameters. A __url_view__
+provides two observers and read-only containers for interacting
+with the parameters in a URL's query:
+
+[table Query Params Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.encoded_params `encoded_params`]]
+    [Return the query parameters as a read-only container of percent-encoded strings.]
+][
+    [[link url.ref.boost__urls__url_view.params `params`]]
+    [Return the query parameters as a read-only container of strings with percent-decoding applied.]
+]]
+
+[table Params View Types [
+    [Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__params_view `params_view`]]
+    [A read-only forward range of query parameters returned as strings with percent-decoding applied.]
+][
+    [[link url.ref.boost__urls__params_encoded_view `params_encoded_view`]]
+    [A read-only forward range of query parameters returned as percent-encoded strings.]
+]]
+
+The functions for modifying the query in a __url__ are as follows:
+
+[table Query Modifiers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url.set_query `set_query`]]
+    [Set query]
+][
+    [[link url.ref.boost__urls__url.set_encoded_query `set_encoded_query`]]
+    [Set encoded query]
+][
+    [[link url.ref.boost__urls__url.remove_query `remove_query`]]
+    [Remove query]
+][
+    [[link url.ref.boost__urls__url.normalize_query `normalize_query`]]
+    [Normalize query]
+]]
+
+A URL query is usually interpreted as parameters. A __url__
+provides two modifiable containers for interacting with the parameters
+in a URL's query:
+
+[table Query Params Modifiers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url.params `params`]]
+    [Return the query parameters as a modifiable container of strings with percent-decoding applied.]
+][
+    [[link url.ref.boost__urls__url.encoded_params `encoded_params`]]
+    [Return the query parameters as a modifiable container of percent-encoded strings.]
+]]
+
+[table Params View Types [
+    [Type]
+    [Description]
+][
+    [[link url.ref.boost__urls__params `params`]]
+    [A modifiable forward range of query parameters returned as strings with percent-decoding applied.]
+][
+    [[link url.ref.boost__urls__params_encoded `params_encoded`]]
+    [A modifiable forward range of query parameters returned as percent-encoded strings.]
+]]
 
 [/-----------------------------------------------------------------------------]
 

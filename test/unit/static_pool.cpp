@@ -10,7 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/static_pool.hpp>
 
-#include <boost/url/const_string.hpp>
+#include <boost/url/string_view.hpp>
 #include "test_suite.hpp"
 
 #include <iostream>
@@ -24,12 +24,12 @@ public:
     template<class Allocator =
         std::allocator<char>>
     static
-    const_string
+    std::basic_string<char, std::char_traits<char>, Allocator>
     make_string(
         string_view s,
         Allocator const& a = {})
     {
-        return const_string(s, a);
+        return {s.begin(), s.end(), a};
     }
 
     void

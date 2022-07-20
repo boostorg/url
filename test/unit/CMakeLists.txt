@@ -18,7 +18,6 @@ set(BOOST_URL_TESTS_FILES
     Jamfile
     test_rule.hpp
     authority_view.cpp
-    const_string.cpp
     error.cpp
     error_code.cpp
     grammar.cpp
@@ -31,7 +30,6 @@ set(BOOST_URL_TESTS_FILES
     params_view.cpp
     pct_encoded_view.cpp
     pct_encoding.cpp
-    pct_encoding_types.cpp
     query_param.cpp
     scheme.cpp
     segments.cpp
@@ -84,6 +82,6 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${BOOST_URL_TESTS_FILES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${TEST_MAIN})
 add_executable(boost_url_tests ${BOOST_URL_TESTS_FILES} ${TEST_MAIN})
 target_include_directories(boost_url_tests PRIVATE . ../../extra/include)
-target_link_libraries(boost_url_tests PRIVATE Boost::url)
+target_link_libraries(boost_url_tests PRIVATE Boost::url Boost::container Boost::filesystem)
 add_test(NAME boost_url_tests COMMAND boost_url_tests)
 add_dependencies(tests boost_url_tests)

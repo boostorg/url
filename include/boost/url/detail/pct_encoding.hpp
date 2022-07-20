@@ -11,7 +11,7 @@
 #ifndef BOOST_URL_DETAIL_PCT_ENCODING_HPP
 #define BOOST_URL_DETAIL_PCT_ENCODING_HPP
 
-#include <boost/url/pct_encoding_types.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/charset.hpp>
@@ -26,7 +26,7 @@ BOOST_URL_DECL
 bool
 key_equal_encoded(
     string_view plain_key,
-    pct_encoded_str encoded) noexcept;
+    pct_encoded_view encoded) noexcept;
 
 BOOST_URL_DECL
 bool

@@ -1,6 +1,6 @@
 [/
     Copyright (c) 2021  Vinnie Falco (vinnie.falco@gmail.com)
-    Copyright (c) 2019 Alan Freitas (alandefreitas@gmail.com)
+    Copyright (c) 2022 Alan Freitas (alandefreitas@gmail.com)
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -90,6 +90,10 @@ We can immediately call `result::value` to obtain a __url_view__.
 
 [snippet_parsing_3]
 
+Or simply
+
+[snippet_parsing_4]
+
 When there are no errors, [@boost:/libs/system/doc/html/system.html#ref_checked_value_access_2 `result::value`]
 returns an instance of __url_view__, which holds the parsed result.
 [@boost:/libs/system/doc/html/system.html#ref_checked_value_access_2 `result::value`]
@@ -123,30 +127,69 @@ Accessing the parts of the URL is easy:
 ][
 [teletype]
 ```
+
+
+    url       : https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor
     scheme    : https
-    authority : user:pass@www.example.com:443
-    path      : /path/to/my%2dfile.txt
-    query     : id=42&name=John%20Doe
-    fragment  : page%20anchor
+    authority : user:pass@example.com:443
+    userinfo  : user:pass
+    user      : user
+    password  : pass
+    host      : example.com
+    port      : 443
+    path      : /path/to/my-file.txt
+    query     : id=42&name=John Doe Jingleheimer-Schmidt
+    fragment  : page anchor
 ```
 ]]]
 
-Functions like
-[link url.ref.boost__urls__url_view.encoded_query `encoded_query`]
-return string views, simply referencing the relevant portion of the
-URL string without the need to allocate memory.
+URL paths can be further divided into path segments with
+the function [link url.ref.boost__urls__url_view.segments `url_view::segments`].
+Although URL query strings are often used to represent key/value pairs, they
+are not a compound element because this interpretation is not defined by
+__rfc3986__. Users can treat the query as a single entity.
+__url_view__ provides the function
+[link url.ref.boost__urls__url_view.params `url_view::params`] to extract this view
+of key/value pairs.
 
-These functions might return empty strings both for empty and absent
+[table [[Code][Output]] [[
+[c++]
+[snippet_accessing_1b]
+][
+[teletype]
+```
+    path
+    to
+    my-file.txt
+
+    id: 42
+    name: John Doe Jingleheimer-Schmidt
+```
+]]]
+
+These functions return __pct_encoded_view__, which are constant
+views referring to sub-ranges of the underlying URL string.
+By simply referencing the relevant portion of the URL string,
+its components can represent percent-decoded strings without any
+need to allocate memory.
+
+These functions might also return empty strings both for empty and absent
 components.
 
 [table [[Code][Output]] [[
 [c++]
-[snippet_accessing_2]
+[snippet_accessing_2a]
 ][
 [teletype]
 ```
     fragment 1 :
-
+```
+]][[
+[c++]
+[snippet_accessing_2b]
+][
+[teletype]
+```
     fragment 2 :
 ```
 ]]]
@@ -156,23 +199,56 @@ functions such as [link url.ref.boost__urls__url_view.has_fragment `has_fragment
 
 [table [[Code][Output]] [[
 [c++]
-[snippet_accessing_3]
+[snippet_accessing_3a]
 ][
 [teletype]
 ```
     has fragment 1 : 0
     fragment 1 :
-
+```
+]][[
+[c++]
+[snippet_accessing_3b]
+][
+[teletype]
+```
     has fragment 2 : 1
     fragment 2 :
+```
+]]]
 
+Many components do not have corresponding functions such as
+[link url.ref.boost__urls__url_view.has_authority `has_authority`]
+to check for their existence. This happens because some URL
+components are mandatory.
+
+When applicable, the encoded components can also be directly
+accessed through a __string_view__:
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_accessing_4]
+][
+[teletype]
+```
+    url       : https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor
+    scheme    : https
+    authority : user:pass@example.com:443
+    userinfo  : user:pass
+    user      : user
+    password  : pass
+    host      : example.com
+    port      : 443
+    path      : /path/to/my%2dfile.txt
+    query     : id=42&name=John%20Doe+Jingleheimer%2DSchmidt
+    fragment  : page%20anchor
 ```
 ]]]
 
 [h3 Decoding]
 
-To get a decoded string, most observers provide the corresponding
-function without the word `encoded`:
+An instance of __pct_encoded_view__ provides a number of functions
+to persist a decoded string:
 
 [table [[Code][Output]] [[
 [c++]
@@ -180,117 +256,60 @@ function without the word `encoded`:
 ][
 [teletype]
 ```
-    query    : id=42&name=John Doe
-    fragment : page anchor
+    id=42&name=John Doe Jingleheimer-Schmidt
+    page anchor
 ```
 ]]]
 
-The decoded functions return a __const_string__, which is a library type
-that models a read-only string. This class retains ownership of the
-underlying buffer and uses a type-erased allocator.
+__pct_encoded_view__ and its decoding functions are designed to
+perform no memory allocations unless the algorithm where its being
+used needs the result to be in another container. The design also
+permits recycling objects to reuse their memory, and at least
+minimize the number of allocations by deferring them until the
+result is in fact needed by the application.
 
-These are the encoded versions of the observers:
+In the example above, the memory owned by `str` can be reused to
+store other results. This is also useful when manipulating URLs:
 
-[table [[Component][Decoded][Encoded][Check]]
-[
-    [authority]
-    []
-    [[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]]
-    [[link url.ref.boost__urls__url_view.has_authority `has_authority`]]]
+[c++]
+```
+u1.set_host(u2.host());
+```
 
-[
-    [fragment]
-    [[link url.ref.boost__urls__url_view.fragment `fragment`]]
-    [[link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]]
-    [[link url.ref.boost__urls__url_view.has_fragment `has_fragment`]]
-]
-[
-    [host]
-    [[link url.ref.boost__urls__url_view.host `host`]]
-    [[link url.ref.boost__urls__url_view.encoded_host `encoded_host`]]
-    []
-]
-[
-    [host_and_port]
-    []
-    [[link url.ref.boost__urls__url_view.encoded_host_and_port `encoded_host_and_port`]]
-    []
-]
-[
-    [origin]
-    []
-    [[link url.ref.boost__urls__url_view.encoded_origin `encoded_origin`]]
-    []
-]
-[
-    [params]
-    [[link url.ref.boost__urls__url_view.params `params`]]
-    [[link url.ref.boost__urls__url_view.encoded_params `encoded_params`]]
-    []
-]
-[
-    [password]
-    [[link url.ref.boost__urls__url_view.password `password`]]
-    [[link url.ref.boost__urls__url_view.encoded_password `encoded_password`]]
-    [[link url.ref.boost__urls__url_view.has_password `has_password`]]
-]
-[
-    [path]
-    []
-    [[link url.ref.boost__urls__url_view.encoded_path `encoded_path`]]
-    []
-]
-[
-    [query]
-    [[link url.ref.boost__urls__url_view.query `query`]]
-    [[link url.ref.boost__urls__url_view.encoded_query `encoded_query`]]
-    [[link url.ref.boost__urls__url_view.has_query `has_query`]]
-]
-[
-    [segments]
-    [[link url.ref.boost__urls__url_view.segments `segments`]]
-    [[link url.ref.boost__urls__url_view.encoded_segments `encoded_segments`]]
-    []
-]
-[
-    [user]
-    [[link url.ref.boost__urls__url_view.user `user`]]
-    [[link url.ref.boost__urls__url_view.encoded_user `encoded_user`]]
-    []
-]
-[
-    [userinfo]
-    [[link url.ref.boost__urls__url_view.userinfo `userinfo`]]
-    [[link url.ref.boost__urls__url_view.encoded_userinfo `encoded_userinfo`]]
-    [[link url.ref.boost__urls__url_view.has_userinfo `has_userinfo`]]
-]
-]
+If `u2.host()` returned a value type, then two memory allocations
+would be necessary for this operation. Another common use case
+is converting URL path segments into filesystem paths:
 
-Note that __url_view__ does not provide decoded functions for
-[link compound-elements compound elements], such as
-[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]
-and [link url.ref.boost__urls__url_view.encoded_path `encoded_path`].
-Compound elements are made up of multiple sub-elements whose encoded delimiters might be ambiguous.
+[table [[Code][Output]] [[
+[c++]
+[snippet_decoding_3]
+][
+[teletype]
+```
+    path: "path/to/my-file.txt"
+```
+]]]
 
-Many components also do not have corresponding functions such as
-[link url.ref.boost__urls__url_view.has_authority `has_authority`]
-to check for their existence. This happens because some URL
-components are mandatory.
+In this example, only the internal allocations of
+`filesystem::path` need to happen. In many common
+use cases, no allocations are necessary at all,
+such as finding the appropriate route for a URL
+in a web server:
 
-Although URL query strings are often used to represent key/value pairs, they
-are not a compound element because this interpretation is not defined by
-__rfc3986__. Users can treat the query as a single entity.
-__url_view__ provides the function
-[link url.ref.boost__urls__url_view.params `params`] to extract this view
-of key/value pairs.
+[c++]
+[snippet_decoding_4a]
 
-[h3 Allocators]
+[c++]
+[snippet_decoding_4b]
 
-All functions that return __const_string__ accept an optional __Allocator__.
-When omitted, this parameter defaults to the standard allocator.
+For many simpler use cases, converting the view to a
+string might be sufficient:
 
-Here is the same code which prints the query with percent-decoding applied,
-except using a local stack-based allocator instead of the heap:
+[c++]
+[snippet_decoding_5a]
+
+The library also provides __static_pool__, a local stack-based
+allocator to further avoid dynamic allocations:
 
 [table [[Code][Output]] [[
 [c++]
@@ -298,24 +317,17 @@ except using a local stack-based allocator instead of the heap:
 ][
 [teletype]
 ```
-    query    : id=42&name=John Doe
-    fragment : page anchor
+    id=42&name=John Doe Jingleheimer-Schmidt
+    page anchor
 ```
 ]]]
-
-[h4 Static pools]
-
-The __static_pool__ type is provided by the library as an easy alternative
-to apply percent-decoding to long strings with no memory allocations.
-
-[snippet_using_static_pool_1]
 
 [#compound-elements]
 [h3 Compound elements]
 
 The path and query parts of the URL are treated specially by the library.
 While they can be accessed as individual encoded strings, they can also be
-accessed through special view types which act as bidirectional ranges.
+accessed through special view types.
 
 This code calls
 [link url.ref.boost__urls__url_view.encoded_segments `encoded_segments`]
@@ -327,7 +339,7 @@ to obtain the path segments as a container that returns encoded strings:
 ```
     path
     to
-    my%2dfile.txt
+    my-file.txt
 ```
 ]]]
 
@@ -335,13 +347,8 @@ As with other __url_view__ functions which return encoded strings, the encoded
 segments container does not allocate memory. Instead it returns views to the
 corresponding portions of the underlying encoded buffer referenced by the URL.
 
-[h3 Encoded compound elements]
-
-Alternatively, the function [link url.ref.boost__urls__url_view.segments `segments`]
-may be called to obtain the path segments as strings with percent-decoding
-applied, which requires allocating memory.
-
-With no arguments the container returns strings using the default allocator:
+As with other library functions, __pct_encoded_view__ permits accessing
+elements of composed elements while avoiding memory allocations entirely:
 
 [table [[Code][Output]] [[
 [c++]
@@ -353,46 +360,11 @@ With no arguments the container returns strings using the default allocator:
     to
     my-file.txt
 ```
-]]]
-
-Memory allocations can be avoided entirely by passing a suitable allocator
-when acquiring the container:
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_encoded_compound_elements_2]
-][
-[teletype]
-```
-    path
-    to
-    my-file.txt
-```
-]]]
-
-
-The query parameters can be accessed similarly, Here we access the parameters
-as percent-encoded key and value pair strings:
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_encoded_compound_elements_3]
-][
-[teletype]
-```
-    key = id, value = 42
-    key = name, value = John%20Doe
-```
-]]]
-
-Obtaining encoded strings from URLs never needs to allocate memory. Here we
-obtain the query parameters as allocated strings with percent-decoding applied,
-using a stack-based allocator which does not use the heap:
-[table [[Code][Output]] [[
-[c++]
-[snippet_encoded_compound_elements_4]
-][
-[teletype]
+]][[
+  [c++]
+  [snippet_encoded_compound_elements_2]
+  ][
+  [teletype]
 ```
     key = id, value = 42
     key = name, value = John Doe
@@ -401,49 +373,64 @@ using a stack-based allocator which does not use the heap:
 
 [/-----------------------------------------------------------------------------]
 
-[h3 Modification]
+[h3 Modifying]
 
-The library provides the container __url__ for supporting modification of the
-contents of a URL. Unlike the __url_view__, which does not gain ownership of
-the underlying character buffer, the __url__ container uses the default
-allocator to control a resizable character buffer which it owns.
+The library provides the containers __url__ and __static_url__ which supporting
+modification of the URL contents. A __url__ or __static_url__ must be constructed
+from an existing __url_view__.
 
-A __url__ must be constructed from an existing __url_view__. For example using a parse function:
+Unlike the __url_view__, which does not gain ownership of the underlying
+character buffer, the __url__ container uses the default allocator to
+ control a resizable character buffer which it owns.
 
 [c++]
-[snippet_modification_1]
+[snippet_quicklook_modifying_1]
 
-Objects of type __url__ are [@https://en.cppreference.com/w/cpp/concepts/regular std::regular]:
-similarly to built-in types, such as `int`, a __url__ is copiable, movable, assignable, default
+On the other hand, a __static_url__ has fixed-capacity storage and does
+not require dynamic memory allocations.
+
+[c++]
+[snippet_quicklook_modifying_1b]
+
+Objects of type __url__ are [@https://en.cppreference.com/w/cpp/concepts/regular std::regular].
+Similarly to built-in types, such as `int`, a __url__ is copiable, movable, assignable, default
 constructible, and equality comparable. They support all of the inspection functions of
-__url_view__, and also provide functions to modify all parts of the URL.
+__url_view__, and also provide functions to modify all components of the URL.
 
 Changing the scheme is easy:
 
-[snippet_modification_2]
+[snippet_quicklook_modifying_2]
 
 Or we can use a predefined constant:
 
-[snippet_modification_3]
+[snippet_quicklook_modifying_3]
 
 The scheme must be valid, however, or an exception is thrown.
-All modification functions perform validation on their input. Attemping
+All modifying functions perform validation on their input. Attemping
 to set part of the URL to an invalid string will result in an exception.
-It is not possible for a __url__ to hold a syntactically illegal text.
+It is not possible for a __url__ to hold syntactically illegal text.
 
 Modification functions return a reference to the object, so chaining
 is possible:
 
-[snippet_modification_4]
+[table [[Code][Output]] [[
+[c++]
+[snippet_quicklook_modifying_4]
+][
+[teletype]
+```
+    https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor
+```
+]]]
 
 All non-const operations offer the strong exception safety guarantee.
 
-The path segment and query parameter containers returned by __url__ offer
+The path segment and query parameter containers returned by a __url__ offer
 modifiable range functionality, using member functions of the container:
 
 [table [[Code][Output]] [[
 [c++]
-[snippet_modification_5]
+[snippet_quicklook_modifying_5]
 ][
 [teletype]
 ```

@@ -101,6 +101,12 @@ public:
         return tmp;
     }
 
+    char const*
+    base()
+    {
+        return pos_;
+    }
+
     bool
     operator==(
         iterator const& other) const noexcept

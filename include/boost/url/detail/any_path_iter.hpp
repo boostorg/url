@@ -104,6 +104,38 @@ public:
 
 //------------------------------------------------
 
+// iterates segments in an
+// plain path string
+class BOOST_SYMBOL_VISIBLE
+    view_path_iter :
+    public any_path_iter
+{
+    std::size_t n_;
+    pct_encoded_view::const_iterator p_;
+    pct_encoded_view::const_iterator end_;
+    bool done_{false};
+
+    void
+    increment() noexcept;
+
+public:
+    explicit
+    view_path_iter(
+        pct_encoded_view s) noexcept;
+
+    bool
+    measure(
+        std::size_t& n,
+        error_code& ec) noexcept override;
+
+    void
+    copy(
+        char*& dest,
+        char const* end) noexcept override;
+};
+
+//------------------------------------------------
+
 class enc_segs_iter_base
 {
 protected:

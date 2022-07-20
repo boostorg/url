@@ -42,33 +42,6 @@ digits, plus and minus signs, and periods:
 ```
 ]]]
 
-[heading Member Functions]
-
-The functions for inspecting the scheme in a __url_view__ are as follows:
-
-[table Scheme Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.has_scheme `has_scheme`]]
-    [Return true if a scheme is present]
-][
-    [[link url.ref.boost__urls__url_view.scheme `scheme`]]
-    [Return the scheme as a string]
-][
-    [[link url.ref.boost__urls__url_view.scheme_id `scheme_id`]]
-    [Return the scheme as a known-scheme enumeration constant]
-]]
-
-[note
-    None of these functions throw exceptions. If the URL has no scheme,
-    [link url.ref.boost__urls__url_view.scheme `scheme`] returns an empty
-    string. If the function
-    [link url.ref.boost__urls__url_view.scheme_id `scheme_id`] identifies a valid
-    but unknown scheme, the value [link url.ref.boost__urls__scheme `scheme::unknown`]
-    is returned.
-]
-
 [heading Observers]
 
 The function [link url.ref.boost__urls__url_view.scheme `scheme`] can
@@ -241,7 +214,54 @@ Many other valid but unofficial schemes are common:
     [Slack Client]
 ]]
 
-
 [/-----------------------------------------------------------------------------]
+
+[heading Member Functions]
+
+The functions for inspecting the scheme in a __url_view__ are as follows:
+
+[table Scheme Observers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url_view.has_scheme `has_scheme`]]
+    [Return true if a scheme is present]
+][
+    [[link url.ref.boost__urls__url_view.scheme `scheme`]]
+    [Return the scheme as a string]
+][
+    [[link url.ref.boost__urls__url_view.scheme_id `scheme_id`]]
+    [Return the scheme as a known-scheme enumeration constant]
+]]
+
+[note
+    None of these functions throw exceptions. If the URL has no scheme,
+    [link url.ref.boost__urls__url_view.scheme `scheme`] returns an empty
+    string. If the function
+    [link url.ref.boost__urls__url_view.scheme_id `scheme_id`] identifies a valid
+    but unknown scheme, the value [link url.ref.boost__urls__scheme `scheme::unknown`]
+    is returned.
+]
+
+The functions for modifying the scheme in a __url__ are as follows:
+
+[table Scheme Modifiers [
+    [Function]
+    [Description]
+][
+    [[link url.ref.boost__urls__url.set_scheme `set_scheme`]]
+    [Set the scheme]
+][
+    [[link url.ref.boost__urls__url.remove_scheme `remove_scheme`]]
+    [Set the scheme]
+][
+    [[link url.ref.boost__urls__url.normalize_scheme `normalize_scheme`]]
+    [Set the scheme]
+]]
+
+[note
+    Since schemes may contain only letters, digits, plus signs, minus signs, and periods,
+    there is no distinction in the functions for encoded and decoded schemes.
+]
 
 [endsect]

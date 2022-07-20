@@ -45,6 +45,7 @@ parse(
         reg_name_chars() noexcept
             : lut_chars(
                 unreserved_chars
+                + subdelim_chars
                 + '-' + '.')
         {
         }

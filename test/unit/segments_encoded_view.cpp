@@ -24,17 +24,6 @@ namespace urls {
 class segments_encoded_view_test
 {
 public:
-#if __cpp_lib_ranges >= 201911
-    /*
-    BOOST_STATIC_ASSERT(
-        std::bidirectional_range<
-            segments_encoded_view>);
-    */
-
-    BOOST_STATIC_ASSERT(
-        std::bidirectional_iterator<
-            segments_encoded_view::iterator>);
-#endif
 
     template<class It>
     static
@@ -113,8 +102,7 @@ public:
         {
             segments_encoded_view sev = parse_path(
                 "/%70%61%74%68/%74%6f/%66%69%6c%65%2e%74%78%74").value();
-            segments_view sv = sev.decoded(
-                std::allocator<char>{});
+            segments_view sv = sev.decoded();
             BOOST_TEST_EQ(sv.size(), 3u);
             BOOST_TEST(sv.is_absolute());
         }
@@ -234,8 +222,7 @@ public:
                     "/path/to/file.txt").value();
                 segments_encoded_view::reference r =
                     *sv.begin();
-                v = segments_encoded_view::value_type(
-                    r, std::allocator<char>{});
+                v = segments_encoded_view::value_type(r);
             }
             BOOST_TEST_EQ(v, "path");
         }

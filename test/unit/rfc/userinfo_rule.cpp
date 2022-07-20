@@ -34,12 +34,12 @@ public:
             return;
         if(! BOOST_TEST(! ec))
             return;
-        BOOST_TEST_EQ(t.user.str, s1);
+        BOOST_TEST_EQ(t.user.encoded(), s1);
         if(check_s2)
         {
             BOOST_TEST(
                 t.has_password &&
-                t.password.str == s2);
+                t.password.encoded() == s2);
         }
         else
         {

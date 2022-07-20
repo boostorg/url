@@ -146,6 +146,7 @@ public:
         BOOST_TEST(u.encoded_origin() ==
             "http://user:pass@www.boost.org:8080");
         BOOST_TEST_EQ(u.scheme(), "http");
+        BOOST_TEST_EQ(u.userinfo(), "user:pass");
         BOOST_TEST_EQ(u.user(), "user");
         BOOST_TEST_EQ(u.password(), "pass");
         BOOST_TEST_EQ(u.host(), "www.boost.org");

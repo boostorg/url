@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
-#include <boost/url/pct_encoding_types.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
@@ -34,7 +34,7 @@ namespace urls {
 */
 struct fragment_rule
 {
-    pct_encoded_str s;
+    pct_encoded_view s;
 
     friend
     void
@@ -78,7 +78,7 @@ private:
 struct fragment_part_rule
 {
     bool has_fragment = false;
-    pct_encoded_str fragment;
+    pct_encoded_view fragment;
 
     friend
     void

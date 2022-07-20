@@ -46,9 +46,7 @@ struct userinfo_chars_t : grammar::lut_chars
 {
     constexpr
         userinfo_chars_t() noexcept
-        : grammar::lut_chars(
-            unreserved_chars +
-            subdelim_chars)
+        : grammar::lut_chars(password_chars)
     {
     }
 };

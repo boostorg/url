@@ -52,12 +52,10 @@ scan() noexcept
 
 params_iterator_impl::
 params_iterator_impl(
-    string_view s,
-    const_string::factory a) noexcept
+    string_view s) noexcept
     : begin_(s.data())
     , pos_(s.data())
     , end_(s.data() + s.size())
-    , a_(a)
 {
     scan();
 }
@@ -65,18 +63,13 @@ params_iterator_impl(
 params_iterator_impl::
 params_iterator_impl(
     string_view s,
-    std::size_t nparam,
-    int,
-    const_string::factory a) noexcept
+    std::size_t nparam) noexcept
     : i_(nparam)
     , begin_(s.data())
     , pos_(s.data() + s.size())
     , end_(s.data() + s.size())
-    , a_(a)
 {
 }
-
-
 
 params_view::reference
 params_iterator_impl::
@@ -89,16 +82,14 @@ dereference() const noexcept
 
     int prefix = pos_ != begin_ || i_ != 0;
     if(nv_ > 0)
-        return params_view::reference{
+        return query_param_encoded_view(
             pos_ + prefix,
             nk_ - prefix,
-            nv_,
-            a_};
-    return params_view::reference{
+            nv_);
+    return query_param_encoded_view(
         pos_ + prefix,
         nk_ - prefix,
-        nv_,
-        a_};
+        nv_);
 }
 
 

@@ -67,10 +67,10 @@ public:
             .host_part == "");
 
         BOOST_TEST(check("www.example.com", host_type::name)
-            .name.str == "www.example.com");
+            .name.encoded() == "www.example.com");
 
         BOOST_TEST(check("1.2.3.999", host_type::name)
-            .name.str == "1.2.3.999");
+            .name.encoded() == "1.2.3.999");
 
         BOOST_TEST(check("1.2.3.4", host_type::ipv4)
             .ipv4.to_bytes() == (

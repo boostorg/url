@@ -101,6 +101,35 @@ public:
 
 //------------------------------------------------
 
+class view_query_iter
+    : public any_query_iter
+{
+    pct_encoded_view::const_iterator p_;
+    pct_encoded_view::const_iterator end_;
+    std::size_t n_;
+    bool done_{false};
+
+    void
+    increment() noexcept;
+
+public:
+    explicit
+    view_query_iter(
+        pct_encoded_view s) noexcept;
+
+    bool
+    measure(
+        std::size_t& n,
+        error_code& ec) noexcept override;
+
+    void
+    copy(
+        char*& dest,
+        char const* end) noexcept override;
+};
+
+//------------------------------------------------
+
 class enc_params_iter_base
 {
 protected:
@@ -150,7 +179,7 @@ public:
     {
         if(it_ == end_)
             return false;
-        query_param_view v(*it_++);
+        query_param_encoded_view v(*it_++);
         if(v.has_value)
             measure_impl(v.key,
                 &v.value, n, ec);
@@ -166,7 +195,7 @@ public:
         char const* end
             ) noexcept override
     {
-        query_param_view v(*it_++);
+        query_param_encoded_view v(*it_++);
         if(v.has_value)
             copy_impl(v.key,
                 &v.value, dest, end);

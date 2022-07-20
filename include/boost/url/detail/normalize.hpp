@@ -11,7 +11,6 @@
 #ifndef BOOST_URL_DETAIL_NORMALIZED_HPP
 #define BOOST_URL_DETAIL_NORMALIZED_HPP
 
-#include <boost/url/pct_encoding_types.hpp>
 #include <boost/url/string_view.hpp>
 
 namespace boost {

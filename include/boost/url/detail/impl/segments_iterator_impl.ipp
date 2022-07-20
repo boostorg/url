@@ -21,13 +21,11 @@ namespace detail {
 segments_iterator_impl::
 segments_iterator_impl(
     string_view s,
-    std::size_t nseg,
-    const_string::factory const& a) noexcept
+    std::size_t nseg) noexcept
     : begin_(s.data())
     , pos_(s.data())
     , next_(s.data())
     , end_(s.data() + s.size())
-    , a_(a)
 {
     if(nseg == 0)
     {
@@ -49,32 +47,23 @@ segments_iterator_impl::
 segments_iterator_impl(
     string_view s,
     std::size_t nseg,
-    const_string::factory const& a,
     int) noexcept
     : i_(nseg)
     , begin_(s.data())
     , pos_(s.data() + s.size())
     , end_(s.data() + s.size())
-    , a_(a)
 {
     auto const n = path_prefix(s);
     begin_ += n;
 }
 
-const_string
+pct_encoded_view
 segments_iterator_impl::
 dereference() const noexcept
 {
-    return a_(t_.decoded_size,
-        [this](
-            std::size_t, char* dest)
-        {
-            pct_decode_opts opt;
-            opt.plus_to_space = false;
-            pct_decode_unchecked(
-                dest, dest + t_.decoded_size,
-                    t_.str, opt);
-        });
+    pct_decode_opts opt;
+    opt.plus_to_space = false;
+    return pct_encoded_view(t_.encoded(), opt);
 }
 
 

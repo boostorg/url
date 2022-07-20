@@ -15,9 +15,6 @@
 #include <boost/static_assert.hpp>
 #include <initializer_list>
 #include <iterator>
-#if __cpp_lib_ranges >= 201911
-//#include <ranges>
-#endif
 #include "test_suite.hpp"
 
 namespace boost {
@@ -31,12 +28,6 @@ public:
     BOOST_STATIC_ASSERT(
         std::is_default_constructible<
             segments_encoded::iterator>::value);
-
-#if __cpp_lib_ranges >= 201911
-    BOOST_STATIC_ASSERT(
-        std::forward_iterator<
-            segments_encoded::iterator>);
-#endif
 
     void
     testMembers()
@@ -198,8 +189,7 @@ public:
                 segments_encoded se = u.encoded_segments();
                 segments_encoded::reference r =
                     *se.begin();
-                v = segments_encoded::value_type(
-                    r, std::allocator<char>{});
+                v = segments_encoded::value_type(r);
             }
             BOOST_TEST_EQ(v, "path");
         }

@@ -1,5 +1,6 @@
 [/
     Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -7,11 +8,13 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-[section Modifying URLs]
+[section Modifying]
+
+[heading Constructing Containers]
 
 The class __url__ is a container used to store and produce URLs.
 The [link section.url_view URL parsing] functions can be used to create
-a new container:
+a new container from a __url_view__:
 
 [snippet_modifying_1]
 
@@ -21,10 +24,49 @@ All __url_view__ observers are also available for a __url__:
 
 The interface of __url_view__ decomposes the URL into its individual parts and
 allows for inspection of the various parts as well as returning metadata about
-the URL itself. These non-modifying observer operations are described in the
-sections that follow.
+the URL itself.
 
 [heading Modifiers]
+
+The decoded variant of the modifier functions will encode any
+characters that would be invalid for the specified component.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_modifying_5]
+][
+[teletype]
+```
+    http://www.my%20example.com
+```
+]][[
+[c++]
+[snippet_modifying_3]
+][
+[teletype]
+```
+    https://my%20website.com/my%20file.txt?id=42&name=John%20Doe
+```
+]]]
+
+[heading Encoded Modifiers]
+
+The encoded variant of the modifier functions require that the
+encoded strings are valid for the specified component. The
+functions will throw if the input string contains any character
+invalid for the specified component.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_modifying_4]
+][
+[teletype]
+```
+    http://www.example.com
+```
+]]]
+
+[heading Summary]
 
 For each observer function in __url_view__, an instance of __url__ provides a
 corresponding `set` function to define the value of the specified component.
@@ -86,37 +128,5 @@ corresponding `set` function to define the value of the specified component.
     [[link url.ref.boost__urls__url.set_encoded_userinfo `set_encoded_userinfo`]]
 ]
 ]
-
-[heading Encoded Modifiers]
-
-The encoded modifier functions require that the encoded strings are valid
-for the specified component.
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_modifying_3]
-][
-[teletype]
-```
-    http://www.example.com
-```
-]]]
-
-If the input string contains an invalid value, an exception is thrown.
-
-[heading Decoded Modifiers]
-
-The decoded modifier functions will encode any input string that is
-invalid as
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_modifying_4]
-][
-[teletype]
-```
-    http://www.my%20example.com
-```
-]]]
 
 [endsect]

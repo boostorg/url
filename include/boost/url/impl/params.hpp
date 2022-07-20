@@ -27,19 +27,16 @@ class params::iterator
     friend class params;
 
     iterator(
-        string_view s,
-        const_string::factory a) noexcept
-        : impl_(s, a)
+        string_view s) noexcept
+        : impl_(s)
     {
     }
 
     // end
     iterator(
         string_view s,
-        std::size_t nparam,
-        int,
-        const_string::factory a) noexcept
-        : impl_(s, nparam, 0, a)
+        std::size_t nparam) noexcept
+        : impl_(s, nparam)
     {
     }
 
@@ -51,7 +48,7 @@ class params::iterator
 
 public:
     using value_type = query_param;
-    using reference = params::reference;
+    using reference = query_param_view;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
@@ -110,15 +107,6 @@ public:
 //
 //------------------------------------------------
 
-template<class Allocator>
-params::
-params(
-    url& u,
-    Allocator const& a)
-    : u_(&u)
-    , a_(a)
-{
-}
 
 inline
 params&
@@ -179,7 +167,7 @@ begin() const noexcept ->
     iterator
 {
     if (u_->nparam_ > 0)
-        return { u_->encoded_query(), a_ };
+        return { u_->encoded_query() };
     return end();
 }
 
@@ -189,10 +177,7 @@ params::
 end() const noexcept ->
     iterator
 {
-    return {
-        u_->encoded_query(),
-        u_->nparam_,
-        0, a_ };
+    return {u_->encoded_query(), u_->nparam_};
 }
 
 //------------------------------------------------
@@ -379,7 +364,9 @@ emplace_at(
     using detail::
         make_plain_params_iter;
     query_param_view v{
-        key, value, true };
+        pct_encoded_view(key),
+        pct_encoded_view(value),
+        true };
     BOOST_ASSERT(pos.impl_.begin_ ==
         u_->encoded_query().data());
     BOOST_ASSERT(pos.impl_.end_ ==
@@ -408,7 +395,8 @@ emplace_at(
     BOOST_ASSERT(pos.impl_.end_ ==
         u_->encoded_query().data() +
         u_->encoded_query().size());
-    query_param_view v{key, {}, false};
+    query_param_view v{
+        pct_encoded_view(key), {}, false};
     u_->edit_params(
         pos.impl_.i_,
         pos.impl_.i_ + 1,
@@ -431,7 +419,9 @@ emplace_before(
     return insert(
         before,
         query_param_view{
-            key, value, true });
+            pct_encoded_view(key),
+            pct_encoded_view(value),
+            true });
 }
 
 inline
@@ -444,7 +434,8 @@ emplace_before(
 {
     return insert(
         before,
-        query_param_view{key, {}, false});
+        query_param_view{
+            pct_encoded_view(key), {}, false});
 }
 
 //------------------------------------------------
@@ -469,7 +460,7 @@ emplace_back(
 {
     return insert(
         end(), query_param_view{
-            key, {}, false});
+            pct_encoded_view(key), {}, false});
 }
 
 inline
@@ -482,7 +473,9 @@ emplace_back(
 {
     return insert(
         end(), query_param_view{
-            key, value, true});
+            pct_encoded_view(key),
+            pct_encoded_view(value),
+            true});
 }
 
 inline

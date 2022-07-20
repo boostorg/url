@@ -44,7 +44,7 @@ class segments_encoded_view::iterator
     }
 
 public:
-    using value_type = const_string;
+    using value_type = std::string;
     using reference = string_view;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
@@ -120,14 +120,6 @@ segments_encoded_view() noexcept
     : s_("")
     , n_(0)
 {
-}
-
-template<class Allocator>
-segments_view
-segments_encoded_view::
-decoded(Allocator const& alloc) const
-{
-    return segments_view(s_, n_, alloc);
 }
 
 inline

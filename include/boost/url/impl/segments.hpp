@@ -37,9 +37,8 @@ class segments::iterator
 
     iterator(
         string_view s,
-        std::size_t nseg,
-        const_string::factory const& a) noexcept
-        : impl_(s, nseg, a)
+        std::size_t nseg) noexcept
+        : impl_(s, nseg)
     {
     }
 
@@ -47,15 +46,14 @@ class segments::iterator
     iterator(
         string_view s,
         std::size_t nseg,
-        const_string::factory const& a,
         int) noexcept
-        : impl_(s, nseg, a, 0)
+        : impl_(s, nseg, 0)
     {
     }
 
 public:
-    using value_type = const_string;
-    using reference = const_string;
+    using value_type = std::string;
+    using reference = pct_encoded_view;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
@@ -125,16 +123,6 @@ public:
 //
 //------------------------------------------------
 
-template<class Allocator>
-segments::
-segments(
-    url& u,
-    Allocator const& a)
-    : u_(&u)
-    , a_(a)
-{
-}
-
 inline
 bool
 segments::
@@ -184,7 +172,7 @@ inline
 auto
 segments::
 front() const ->
-    const_string
+    pct_encoded_view
 {
     BOOST_ASSERT(! empty());
     return *begin();
@@ -194,7 +182,7 @@ inline
 auto
 segments::
 back() const ->
-    const_string
+    pct_encoded_view
 {
     BOOST_ASSERT(! empty());
     return *std::prev(end());
@@ -213,7 +201,7 @@ begin() const noexcept ->
     iterator
 {
     return iterator(
-        u_->encoded_path(), u_->nseg_, a_);
+        u_->encoded_path(), u_->nseg_);
 }
 
 inline
@@ -223,7 +211,7 @@ end() const noexcept ->
     iterator
 {
     return iterator(
-        u_->encoded_path(), u_->nseg_, a_, 0);
+        u_->encoded_path(), u_->nseg_, 0);
 }
 
 //------------------------------------------------

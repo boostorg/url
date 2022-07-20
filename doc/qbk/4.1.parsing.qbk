@@ -1,0 +1,273 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2022 Alan de Freitas (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[#section.parsing]
+[#section.url_view]
+[section Parsing]
+
+[#url_notation]
+[heading Notation]
+
+Following the syntax in __rfc3986__, a single algorithm is used for URLs, URIs
+and IRIs. When discussing particular grammars, its rules are presented
+exactly as it appears in the literature.
+
+A URL string can be parsed using one of the parsing functions.
+
+[table Parsing Functions [
+    [Function]
+    [Grammar]
+    [Example]
+    [Notes]
+][
+    [[link url.ref.boost__urls__parse_uri `parse_uri`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3 ['URI]]]
+    [[teletype]`http://www.boost.org/index.html?field=value#downloads`]
+    [Supports fragment `#downloads`]
+][
+    [[link url.ref.boost__urls__parse_absolute_uri `parse_absolute_uri`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.3 ['absolute-URI]]]
+    [[teletype]`http://www.boost.org/index.html?field=value`]
+    [Does not support fragment]
+][
+    [[link url.ref.boost__urls__parse_relative_ref `parse_relative_ref`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.2 ['relative-ref]]]
+    [[teletype]`//www.boost.org/index.html?field=value#downloads`]
+    [Does not require scheme]
+][
+    [[link url.ref.boost__urls__parse_uri_reference `parse_uri_reference`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.1 ['URI-reference]]]
+    [[teletype]`http://www.boost.org/index.html`]
+    [Any `URI` or `relative-ref`]
+]]
+
+The library uses the convention that each function `parse_<component>` operates according
+to the particular grammar rule `<component>` specified in __rfc3986__. The document
+inherits from [@https://datatracker.ietf.org/doc/html/rfc2396 rfc2396], where there are
+no `URL`, `absolute-URL`, `URL-reference` rules. Thus, for consistency, the main parsing
+functions also make reference to `uri`s rather than `url`s.
+
+The collective grammars parsed by these algorithms are specified below.
+
+[teletype]
+```
+    absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+    relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
+
+    URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+    URI-reference   = URI / relative-ref
+
+    hier-part       = "//" authority path-abempty
+                    / path-absolute
+                    / path-rootless
+                    / path-empty
+
+    relative-part   = "//" authority path-abempty
+                    / path-absolute
+                    / path-noscheme
+                    / path-empty
+```
+
+[heading Example]
+
+The following is an example URI and its main components:
+
+[teletype]
+```
+     foo://example.com:8042/over/there?name=ferret#nose
+     \_/   \______________/\_________/ \_________/ \__/
+      |           |            |            |        |
+    scheme    authority       path        query   fragment
+```
+
+For the complete specification please refer to __rfc3986__:
+
+[note
+    This documentation refers to the Augmented Backus-Naur Form (ABNF)
+    notation of
+    [@https://tools.ietf.org/html/rfc2234 rfc2234]
+    to specify particular grammars used by algorithms and containers. While
+    a complete understanding of the notation is not a requirement for using the
+    library, it may help for understanding how valid components of URLs are
+    defined. In particular, this will be of interest to users who wish to
+    compose parsing algorithms using the combinators provided by the library.
+]
+
+[heading Functions]
+
+All parsing functions accept a __string_view__ and return a
+`__result__<__url_view__>`. The following example parses a string literal
+containing a [@https://datatracker.ietf.org/doc/html/rfc3986#section-3 ['URI]]:
+
+[c++]
+[snippet_parsing_url_1]
+
+The parsing function refers to the [@https://datatracker.ietf.org/doc/html/rfc3986#section-3 ['URI]]
+grammar rule and the result refers to a __url_view__. The convention `parse_<component>`
+produces `parse_uri` for the [@https://datatracker.ietf.org/doc/html/rfc3986#section-3 ['URI]]
+grammar rule defined in __rfc3986__. However, as the library adheres to
+the [link contemporary_view Contemporary View] of URI/URL partitioning
+and standardizes on the term "URL", it makes reference to the term "URL" elsewhere.
+
+When the input does not match the URL grammar, the error is reported through
+the `__result__<__url_view__>`. The result is a variant-like object
+which holds a __url_view__ or an __error_code__ in the case where the parsing
+failed.
+
+[heading Copying]
+
+Like a __string_view__, the __url_view__ does not own the underlying
+ character buffer. Instead, it references the string passed to the
+  parsing function. The caller is required to ensure that the lifetime
+of the string extends until the view is destroyed, or use other containers
+such as __url__ and __static_url__.
+
+The function
+[link url.ref.boost__urls__url_view.persist `url_view::persist`]
+may also be used to create a copy of the underlying character buffer and attach
+ownership of the buffer to a newly returned view, which is wrapped in a
+shared pointer. The following code calls `persist` to create a read-only
+copy:
+
+[c++]
+[snippet_parsing_url_2]
+
+The interface of __url_view__ decomposes the URL into its individual parts and
+allows for inspection of the various parts as well as returning metadata about
+the URL itself. All the non-modifying observer operations are described in the
+sections that follow.
+
+[table [[Code][Output]] [[
+[c++]
+[snippet_accessing_1]
+][
+[teletype]
+```
+
+
+    url       : https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor
+    scheme    : https
+    authority : user:pass@example.com:443
+    userinfo  : user:pass
+    user      : user
+    password  : pass
+    host      : example.com
+    port      : 443
+    path      : /path/to/my-file.txt
+    query     : id=42&name=John Doe Jingleheimer-Schmidt
+    fragment  : page anchor
+```
+]]]
+
+To create a mutable copy of the __url_view__, one can create a __url__
+or __static_url__:
+
+[c++]
+[snippet_parsing_url_3]
+
+[heading Return Type]
+
+In many places, functions in the library have a return type which uses the
+__result__ alias template. This class allows the parsing algorithms to
+report errors without referring to exceptions.
+
+The functions `result::has_value` and `result::has_error` can be used to
+check if the result contains an error.
+
+[snippet_parsing_url_1]
+
+This ensures `result::value` will not throw an error. In contexts where
+it is acceptable to throw errors, `result::value` can be used directly.
+
+Check the reference for __result__ for a synopsis of the type. For complete
+information please consult the full
+[@boost:/libs/system/doc/html/system.html#ref_resultt_e `result`]
+documentation in [@boost:/libs/system/doc/html/system.html Boost.System].
+
+[heading Summary]
+
+[table [[Component][Decoded][Encoded][Check]]
+[
+    [authority]
+    []
+    [[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]]
+    [[link url.ref.boost__urls__url_view.has_authority `has_authority`]]]
+
+[
+    [fragment]
+    [[link url.ref.boost__urls__url_view.fragment `fragment`]]
+    [[link url.ref.boost__urls__url_view.encoded_fragment `encoded_fragment`]]
+    [[link url.ref.boost__urls__url_view.has_fragment `has_fragment`]]
+]
+[
+    [host]
+    [[link url.ref.boost__urls__url_view.host `host`]]
+    [[link url.ref.boost__urls__url_view.encoded_host `encoded_host`]]
+    []
+]
+[
+    [host_and_port]
+    []
+    [[link url.ref.boost__urls__url_view.encoded_host_and_port `encoded_host_and_port`]]
+    []
+]
+[
+    [origin]
+    []
+    [[link url.ref.boost__urls__url_view.encoded_origin `encoded_origin`]]
+    []
+]
+[
+    [params]
+    [[link url.ref.boost__urls__url_view.params `params`]]
+    [[link url.ref.boost__urls__url_view.encoded_params `encoded_params`]]
+    []
+]
+[
+    [password]
+    [[link url.ref.boost__urls__url_view.password `password`]]
+    [[link url.ref.boost__urls__url_view.encoded_password `encoded_password`]]
+    [[link url.ref.boost__urls__url_view.has_password `has_password`]]
+]
+[
+    [path]
+    []
+    [[link url.ref.boost__urls__url_view.encoded_path `encoded_path`]]
+    []
+]
+[
+    [query]
+    [[link url.ref.boost__urls__url_view.query `query`]]
+    [[link url.ref.boost__urls__url_view.encoded_query `encoded_query`]]
+    [[link url.ref.boost__urls__url_view.has_query `has_query`]]
+]
+[
+    [segments]
+    [[link url.ref.boost__urls__url_view.segments `segments`]]
+    [[link url.ref.boost__urls__url_view.encoded_segments `encoded_segments`]]
+    []
+]
+[
+    [user]
+    [[link url.ref.boost__urls__url_view.user `user`]]
+    [[link url.ref.boost__urls__url_view.encoded_user `encoded_user`]]
+    []
+]
+[
+    [userinfo]
+    [[link url.ref.boost__urls__url_view.userinfo `userinfo`]]
+    [[link url.ref.boost__urls__url_view.encoded_userinfo `encoded_userinfo`]]
+    [[link url.ref.boost__urls__url_view.has_userinfo `has_userinfo`]]
+]
+]
+
+[endsect]

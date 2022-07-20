@@ -64,7 +64,7 @@ begin(
     // key
     if(! grammar::parse(it, end, ec, t0))
         return false;
-    t.key = t0.s.str;
+    t.key = t0.s;
 
     // "="
     t.has_value = grammar::parse(
@@ -75,7 +75,7 @@ begin(
         if(! grammar::parse(
             it, end, ec, t1))
             return false;
-        t.value = t1.s.str;
+        t.value = t1.s;
     }
     else
     {
@@ -110,7 +110,7 @@ increment(
     if(! grammar::parse(
         it, end, ec, t0))
         return false;
-    t.key = t0.s.str;
+    t.key = t0.s;
 
     // "="
     t.has_value = grammar::parse(
@@ -121,7 +121,7 @@ increment(
         if(! grammar::parse(
                 it, end, ec, t1))
             return false;
-        t.value = t1.s.str;
+        t.value = t1.s;
     }
     else
     {

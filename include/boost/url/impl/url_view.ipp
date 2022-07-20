@@ -436,6 +436,18 @@ encoded_params() const noexcept
     return params_encoded_view(s, nparam_);
 }
 
+params_view
+url_view::
+params() const noexcept
+{
+    auto s = get(id_query);
+    if(s.empty())
+        return {s, 0};
+    BOOST_ASSERT(s[0] == '?');
+    s.remove_prefix(1);
+    return {s, nparam_};
+}
+
 //----------------------------------------------------------
 //
 // Fragment
@@ -560,13 +572,14 @@ apply(
         urls::host_type::name)
     {
         decoded_[id_host] =
-            t.name.decoded_size;
+            t.name.size();
     }
     else if(t.host_type ==
         urls::host_type::ipv4)
     {
         auto const bytes =
             t.ipv4.to_bytes();
+        decoded_[id_host] = t.host_part.size();
         std::memcpy(
             &ip_addr_[0],
             bytes.data(), 4);
@@ -576,9 +589,14 @@ apply(
     {
         auto const bytes =
             t.ipv6.to_bytes();
+        decoded_[id_host] = t.host_part.size();
         std::memcpy(
             &ip_addr_[0],
             bytes.data(), 16);
+    }
+    else
+    {
+        decoded_[id_host] = t.host_part.size();
     }
 
     if(t.host_type !=
@@ -600,8 +618,8 @@ apply(
         // leading "//" for authority
         set_size(
             id_user,
-            u.user.str.size() + 2);
-        decoded_[id_user] = u.user.decoded_size;
+            u.user.encoded().size() + 2);
+        decoded_[id_user] = u.user.size();
 
         if(u.has_password)
         {
@@ -609,9 +627,9 @@ apply(
             // trailing '@' for userinfo
             set_size(
                 id_pass,
-                u.password.str.size() + 2);
+                u.password.encoded().size() + 2);
             decoded_[id_pass] =
-                u.password.decoded_size;
+                u.password.size();
         }
         else
         {
@@ -636,7 +654,6 @@ apply(
         set_size(
             id_port,
             t.port.port.size() + 1);
-
         if(t.port.has_number)
             port_number_ =
                 t.port.port_number;
@@ -650,6 +667,8 @@ apply(
 {
     auto s = t.path;
     set_size(id_path, s.size());
+    decoded_[id_path] =
+        pct_decode_bytes_unchecked(t.path);
     nseg_ = detail::path_segments(
         t.path, t.count);
 }
@@ -664,10 +683,14 @@ apply(
         set_size(
             id_query,
             t.query_part.size());
+        decoded_[id_query] =
+            pct_decode_bytes_unchecked(
+                t.query_part.substr(1));
         nparam_ = t.query.v.size();
     }
     else
     {
+        decoded_[id_query] = 0;
         nparam_ = 0;
     }
 }
@@ -681,9 +704,9 @@ apply(
     {
         set_size(
             id_frag,
-            t.fragment.str.size() + 1);
+            t.fragment.encoded().size() + 1);
         decoded_[id_frag] =
-            t.fragment.decoded_size;
+            t.fragment.size();
     }
     else
     {
