@@ -13,8 +13,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 #include <string>
 #include <array>
 #include <cstdint>
@@ -280,30 +280,7 @@ public:
         return os;
     }
 
-    /** Customization point for parsing an IPv4 address.
-    */
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        ipv4_address& t) noexcept
-    {
-        parse(it, end, ec, t);
-    }
-
 private:
-    BOOST_URL_DECL
-    static
-    void
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        ipv4_address& t) noexcept;
-
     friend class ipv6_address;
 
     BOOST_URL_DECL
@@ -315,6 +292,24 @@ private:
 };
 
 //------------------------------------------------
+
+/** A Rule for parsing
+*/
+struct ipv4_address_rule_t
+{
+    using value_type =
+        ipv4_address;
+
+    BOOST_URL_DECL
+    auto
+    parse(
+        char const*& it,
+        char const* end
+            ) const noexcept ->
+    result<ipv4_address>;
+};
+
+constexpr ipv4_address_rule_t ipv4_address_rule{};
 
 /** Return an IPv4 address from an IP address string in dotted decimal form
 */

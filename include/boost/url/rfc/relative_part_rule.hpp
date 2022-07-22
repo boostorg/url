@@ -11,10 +11,9 @@
 #define BOOST_URL_RFC_RELATIVE_PART_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/paths_rule.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -39,34 +38,25 @@ namespace urls {
     @see
         @ref authority_rule.
 */
-struct relative_part_rule
+struct relative_part_rule_t
 {
-    bool has_authority = false;
-    authority_rule authority;
-    parsed_path path;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        relative_part_rule& t) noexcept
+    struct value_type
     {
-        return parse(it, end, ec, t);
-    }
+        bool has_authority = false;
+        decltype(authority_rule)::value_type authority;
+        parsed_path path;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    auto
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        relative_part_rule& t) noexcept;
+        char const* end
+            ) const noexcept ->
+        result<value_type>;
 };
+
+constexpr relative_part_rule_t relative_part_rule{};
 
 } // urls
 } // boost

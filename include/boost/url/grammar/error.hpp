@@ -12,17 +12,22 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
+#include <boost/url/result.hpp>
 
 namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Error codes returned by BNF algorithms
+/** Error codes returned by rules
 */
 enum class error
 {
     // VFALCO 3 space indent or
     // else Doxygen malfunctions
+
+    //
+    // (informational)
+    //
 
     /**
      * The operation completed successfully.
@@ -33,6 +38,10 @@ enum class error
      * A list parser reached the end.
     */
     end,
+
+    //
+    // (recoverable)
+    //
 
     /**
      * Incomplete input for grammar.
@@ -50,6 +59,15 @@ enum class error
      * Leftover input remaining after match.
     */
     leftover,
+
+    /**
+     * An empty string matched the rule.
+    */
+    empty,
+
+    //
+    // condition::fatal
+    //
 
     /** An integer overflowed during parsing.
     */

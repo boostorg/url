@@ -18,30 +18,33 @@
 namespace boost {
 namespace urls {
 
-void
-host_rule::
+auto
+host_rule_t::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    host_rule& t) noexcept
+    char const* const end
+        ) const noexcept ->
+    result<value_type>
 {
+    value_type t;
+
     if(it == end)
     {
         t.host_type =
             urls::host_type::name;
         t.name = {};
         t.host_part = {};
-        return;
+        return t;
     }
     auto const start = it;
     if(*it == '[')
     {
         // IP-literal
-        ip_literal_rule v;
-        if(! grammar::parse(
-                it, end, ec, v))
-            return;
+        auto rv = grammar::parse(
+            it, end, ip_literal_rule);
+        if(! rv)
+            return rv.error();
+        auto v = *rv;
         if(v.is_ipv6)
         {
             // IPv6address
@@ -50,7 +53,7 @@ parse(
                 urls::host_type::ipv6;
             t.host_part = string_view(
                 start, it - start);
-            return;
+            return t;
         }
 
         // IPvFuture
@@ -59,36 +62,37 @@ parse(
             urls::host_type::ipvfuture;
         t.host_part = string_view(
             start, it - start);
-        return;
+        return t;
     }
     // IPv4address
     {
-        if(grammar::parse(
-            it, end, ec, t.ipv4))
+        auto rv = grammar::parse(
+            it, end, ipv4_address_rule);
+        if(rv.has_value())
         {
+            t.ipv4 = *rv;
             t.host_type =
                 urls::host_type::ipv4;
             t.host_part = string_view(
                 start, it - start);
-            return;
+            return t;
         }
         // rewind
         it = start;
     }
     // reg-name
-    reg_name_rule t0;
-    if(! grammar::parse(
-        it, end, ec, t0))
     {
-        // bad reg-name
-        return;
+        auto rv = grammar::parse(
+            it, end, reg_name_rule);
+        if(! rv)
+            return rv.error();
+        t.name = *rv;
+        t.host_type =
+            urls::host_type::name;
+        t.host_part = string_view(
+            start, it - start);
+        return t;
     }
-    t.name = t0.v;
-
-    t.host_type =
-        urls::host_type::name;
-    t.host_part = string_view(
-        start, it - start);
 }
 
 } // urls

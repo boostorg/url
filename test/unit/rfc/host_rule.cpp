@@ -21,47 +21,39 @@
 namespace boost {
 namespace urls {
 
-BOOST_STATIC_ASSERT(
-    std::is_copy_constructible<
-        host_rule>::value);
-
-BOOST_STATIC_ASSERT(
-    std::is_copy_assignable<
-        host_rule>::value);
-
 class host_rule_test
 {
 public:
     static
-    host_rule
+    auto
     check(
         string_view s,
-        host_type ht)
+        host_type ht) ->
+            host_rule_t::value_type
     {
-        host_rule h;
-        error_code ec;
-        if(! BOOST_TEST(
-            grammar::parse_string(s, ec, h)))
+        auto rv = grammar::parse(
+            s, host_rule);
+        if(! BOOST_TEST(! rv.has_error()))
             return {};
-        BOOST_TEST(
-            h.host_type == ht);
-        return h;
+        BOOST_TEST(rv->host_type == ht);
+        return *rv;
     }
 
     void
     run()
     {
-        using T = host_rule;
+        auto const& t =
+            host_rule;
 
-        bad<T>("%");
+        bad(t, "%");
 
-        good<T>("");
-        good<T>("[::]");
-        good<T>("[::1.2.3.4]");
-        good<T>("[v1.0]");
-        good<T>("1.2.3.4");
-        good<T>("boost.org");
-        good<T>("999.0.0.1");
+        ok(t, "");
+        ok(t, "[::]");
+        ok(t, "[::1.2.3.4]");
+        ok(t, "[v1.0]");
+        ok(t, "1.2.3.4");
+        ok(t, "boost.org");
+        ok(t, "999.0.0.1");
 
         BOOST_TEST(check("", host_type::name)
             .host_part == "");

@@ -11,11 +11,10 @@
 #define BOOST_URL_RFC_RELATIVE_REF_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/rfc/fragment_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/relative_part_rule.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -36,34 +35,25 @@ namespace urls {
         @ref query_part_rule,
         @ref relative_part_rule.
 */
-struct relative_ref_rule
+struct relative_ref_rule_t
 {
-    relative_part_rule   relative_part;
-    query_part_rule      query_part;
-    fragment_part_rule   fragment_part;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        relative_ref_rule& t) noexcept
+    struct value_type
     {
-        return parse(it, end, ec, t);
-    }
+        decltype(relative_part_rule)::value_type relative_part;
+        decltype(query_part_rule)::value_type query_part;
+        decltype(fragment_part_rule)::value_type fragment_part;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    auto
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        relative_ref_rule& t) noexcept;
+        char const* end
+            ) const noexcept ->
+        result<value_type>;
 };
+
+constexpr relative_ref_rule_t relative_ref_rule{};
 
 } // urls
 } // boost

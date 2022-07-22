@@ -17,37 +17,53 @@
 namespace boost {
 namespace urls {
 
-void
-uri_rule::
+auto
+uri_rule_t::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    uri_rule& t) noexcept
+    char const* const end
+        ) const noexcept ->
+    result<value_type>
 {
-    // scheme ":"
-    if(! grammar::parse(
-        it, end, ec,
-            t.scheme_part))
-        return;
+    value_type t;
 
-    // hier-part
-    if(! grammar::parse(
-        it, end, ec,
-            t.hier_part))
-        return;
+    // scheme ":"
+    {
+        auto rv = grammar::parse(
+            it, end, scheme_part_rule());
+        if(! rv)
+            return rv.error();
+        t.scheme_part = *rv;
+    }
+
+    // hier_part
+    {
+        auto rv = grammar::parse(
+            it, end, hier_part_rule);
+        if(! rv)
+            return rv.error();
+        t.hier_part = *rv;
+    }
 
     // [ "?" query ]
-    if(! grammar::parse(
-        it, end, ec,
-            t.query_part))
-        return;
+    {
+        auto rv = grammar::parse(
+            it, end, query_part_rule);
+        if(! rv)
+            return rv.error();
+        t.query_part = *rv;
+    }
 
     // [ "#" fragment ]
-    if(! grammar::parse(
-        it, end, ec,
-            t.fragment_part))
-        return;
+    {
+        auto rv = grammar::parse(
+            it, end, fragment_part_rule);
+        if(! rv)
+            return rv.error();
+        t.fragment_part = *rv;
+    }
+
+    return t;
 }
 
 } // urls

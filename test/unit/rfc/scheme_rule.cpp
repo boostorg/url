@@ -26,15 +26,24 @@ public:
         scheme id)
     {
         error_code ec;
-        scheme_rule p;
+        auto rv = grammar::parse(
+            s, scheme_rule());
         if(! BOOST_TEST(
-            grammar::parse_string(
-                s, ec, p)))
+                ! rv.has_error()))
             return;
         BOOST_TEST(
-            ! ec.failed());
+            rv->scheme_id == id);
+    }
+
+    template<class R>
+    static
+    void
+    bad(string_view s,
+        R const& r)
+    {
         BOOST_TEST(
-            p.scheme_id == id);
+            grammar::parse(
+                s, r).has_error());
     }
 
     void
@@ -42,12 +51,12 @@ public:
     {
         using T = scheme_rule;
 
-        bad<T>("");
-        bad<T>("1");
-        bad<T>(" ");
-        bad<T>(" http");
-        bad<T>("http ");
-        bad<T>("nope:");
+        bad("", T{});
+        bad("1", T{});
+        bad(" ", T{});
+        bad(" http", T{});
+        bad("http ", T{});
+        bad("nope:", T{});
 
         check ("http", scheme::http);
         check ("HTTP", scheme::http);

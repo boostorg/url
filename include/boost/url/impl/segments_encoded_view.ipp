@@ -76,52 +76,63 @@ result<segments_encoded_view>
 parse_path_abempty(
     string_view s) noexcept
 {
-    error_code ec;
-    path_abempty_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        return ec;
+    auto rv = grammar::parse(
+        s, path_abempty_rule{});
+    if(! rv)
+        return rv.error();
+    auto const& t = *rv;
     return segments_encoded_view(
-        t.str, detail::path_segments(
-            t.str, t.count));
+        t.string(),
+        detail::path_segments(
+            t.string(),
+            t.size()));
 }
 
 result<segments_encoded_view>
 parse_path_absolute(
     string_view s) noexcept
 {
-    error_code ec;
-    path_absolute_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        return ec;
+    auto rv = grammar::parse(
+        s, path_absolute_rule{});
+    if(! rv)
+        return rv.error();
+    auto const& v = *rv;
     return segments_encoded_view(
-        t.str, detail::path_segments(
-            t.str, t.count));
+        v.string(),
+        detail::path_segments(
+            v.string(),
+            v.size()));
 }
 
 result<segments_encoded_view>
 parse_path_noscheme(
     string_view s) noexcept
 {
-    error_code ec;
-    path_noscheme_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        return ec;
+    auto rv = grammar::parse(s,
+        path_noscheme_rule{});
+    if(! rv)
+        return rv.error();
+    auto const& t = *rv;
     return segments_encoded_view(
-        t.str, detail::path_segments(
-            t.str, t.count));
+        t.string(),
+        detail::path_segments(
+            t.string(),
+            t.size()));
 }
 
 result<segments_encoded_view>
 parse_path_rootless(
     string_view s) noexcept
 {
-    error_code ec;
-    path_rootless_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        return ec;
+    auto rv = grammar::parse(
+        s, path_rootless_rule{});
+    if(! rv)
+        return rv.error();
+    auto const& v = *rv;
     return segments_encoded_view(
-        t.str, detail::path_segments(
-            t.str, t.count));
+        v.string(), detail::path_segments(
+            v.string(),
+            v.size()));
 }
 
 } // urls

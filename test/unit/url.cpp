@@ -222,7 +222,7 @@ public:
 
         BOOST_TEST_THROWS(
             url().set_scheme(""),
-            std::invalid_argument);
+            std::exception);
 
         BOOST_TEST_THROWS(
             url().set_scheme(scheme::unknown),
@@ -514,9 +514,9 @@ public:
         };
 
         BOOST_TEST_THROWS(url().set_encoded_userinfo(
-            "%2"), std::invalid_argument);
+            "%2"), std::exception);
         BOOST_TEST_THROWS(url().set_encoded_userinfo(
-            "@"), std::invalid_argument);
+            "@"), std::exception);
 
         remove("", "");
         remove("/", "/");
@@ -787,7 +787,7 @@ public:
         {
             url u = parse_uri_reference(s1).value();
             BOOST_TEST_THROWS(u.set_encoded_host(s2),
-                std::invalid_argument);
+                std::exception);
         };
 
         set("/", "x", "//x/");
@@ -931,7 +931,7 @@ public:
 
         BOOST_TEST_THROWS(
             url().set_port("x"),
-            std::invalid_argument);
+            std::exception);
 
         remove("", "");
         remove("/", "/");
@@ -1058,11 +1058,11 @@ public:
 
         BOOST_TEST_THROWS(
             url().set_encoded_authority("x:y"),
-            std::invalid_argument);
+            std::exception);
 
         BOOST_TEST_THROWS(
             url().set_encoded_authority("%2"),
-            std::invalid_argument);
+            std::exception);
 
         remove("", "");
         remove("/", "/");
@@ -1624,10 +1624,10 @@ public:
                 url u;
                 BOOST_TEST_THROWS(
                     u.set_encoded_fragment("%%"),
-                    std::invalid_argument);
+                    std::exception);
                 BOOST_TEST_THROWS(
                     u.set_encoded_fragment("%fg"),
-                    std::invalid_argument);
+                    std::exception);
             }
         }
 

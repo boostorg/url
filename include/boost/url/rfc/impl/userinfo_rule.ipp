@@ -20,58 +20,50 @@
 namespace boost {
 namespace urls {
 
-void
-userinfo_rule::
+auto
+userinfo_rule_t::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    userinfo_rule& t) noexcept
+    char const* const end
+        ) const noexcept ->
+    result<value_type>
 {
-    struct uchars
-        : grammar::lut_chars
-    {
-        constexpr
-        uchars() noexcept
-            : lut_chars(
-                unreserved_chars +
-                subdelim_chars)
-        {
-        }
-    };
+    static constexpr auto uchars =
+        unreserved_chars +
+        subdelim_chars;
+    static constexpr auto pwchars =
+        uchars + ':';
 
-    struct pwchars
-        : grammar::lut_chars
-    {
-        constexpr
-        pwchars() noexcept
-            : lut_chars(
-                unreserved_chars +
-                subdelim_chars + ':')
-        {
-        }
-    };
+    value_type t;
 
-    pct_encoded_rule<uchars> t0;
-    pct_encoded_rule<pwchars> t1;
+    // user
+    auto rv = grammar::parse(
+        it, end,
+        pct_encoded_rule(uchars));
+    if(! rv)
+        return rv.error();
+    t.user = *rv;
 
-    if(! grammar::parse(
-        it, end, ec, t0))
-        return;
-    t.user = t0.s;
+    // ':'
     if( it == end ||
         *it != ':')
     {
         t.has_password = false;
         t.password = {};
-        return;
+        return t;
     }
     ++it;
-    if(! grammar::parse(
-        it, end, ec, t1))
-        return;
+
+    // pass
+    rv = grammar::parse(
+        it, end,
+        pct_encoded_rule(pwchars));
+    if(! rv)
+        return rv.error();
+
     t.has_password = true;
-    t.password = t1.s;
+    t.password = *rv;
+    return t;
 }
 
 } // urls

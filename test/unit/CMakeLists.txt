@@ -24,6 +24,7 @@ set(BOOST_URL_TESTS_FILES
     host_type.cpp
     ipv4_address.cpp
     ipv6_address.cpp
+    optional.cpp
     params.cpp
     params_encoded.cpp
     params_encoded_view.cpp
@@ -31,6 +32,7 @@ set(BOOST_URL_TESTS_FILES
     pct_encoded_view.cpp
     pct_encoding.cpp
     query_param.cpp
+    result.cpp
     scheme.cpp
     segments.cpp
     segments_encoded.cpp
@@ -43,19 +45,27 @@ set(BOOST_URL_TESTS_FILES
     url.cpp
     url_view.cpp
     urls.cpp
+    variant.cpp
     grammar/ascii.cpp
+    grammar/char_rule.cpp
     grammar/charset.cpp
+    grammar/dec_octet_rule.cpp
     grammar/error.cpp
     grammar/lut_chars.cpp
+    grammar/not_empty_rule.cpp
+    grammar/optional_rule.cpp
     grammar/parse.cpp
-    grammar/parse_tag.cpp
     grammar/range.cpp
-    grammar/token.cpp
-    grammar/unsigned_decimal.cpp
+    grammar/sequence_rule.cpp
+    grammar/token_rule.cpp
+    grammar/type_traits.cpp
+    grammar/unsigned_dec_rule.cpp
+    grammar/variant_rule.cpp
     rfc/absolute_uri_rule.cpp
     rfc/authority_rule.cpp
     rfc/charsets.cpp
     rfc/fragment_rule.cpp
+    rfc/h16_rule.cpp
     rfc/hier_part_rule.cpp
     rfc/host_rule.cpp
     rfc/ip_literal_rule.cpp

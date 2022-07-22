@@ -11,11 +11,10 @@
 #define BOOST_URL_RFC_ABSOLUTE_URI_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/rfc/hier_part_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/scheme_rule.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -41,34 +40,25 @@ namespace urls {
         @ref query_part_rule,
         @ref scheme_part_rule.
 */
-struct absolute_uri_rule
+struct absolute_uri_rule_t
 {
-    scheme_part_rule scheme_part;
-    hier_part_rule   hier_part;
-    query_part_rule  query_part;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        absolute_uri_rule& t) noexcept
+    struct value_type
     {
-        parse(it, end, ec, t);
-    }
+        scheme_part_rule::value_type scheme_part;
+        decltype(hier_part_rule)::value_type hier_part;
+        decltype(query_part_rule)::value_type  query_part;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    auto
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        absolute_uri_rule& t) noexcept;
+        char const* end
+            ) const noexcept ->
+        result<value_type>;
 };
+
+constexpr absolute_uri_rule_t absolute_uri_rule{};
 
 } // urls
 } // boost

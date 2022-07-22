@@ -16,23 +16,23 @@
 namespace boost {
 namespace urls {
 
-class ip_literal_rule_test
+struct ip_literal_rule_test
 {
-public:
     void
     run()
     {
-        using T = ip_literal_rule;
+        auto const& t =
+            ip_literal_rule;
 
-        bad<T>("::");
-        bad<T>("[");
-        bad<T>("[:");
-        bad<T>("[::");
-        bad<T>("[]");
-        bad<T>("[v8]");
+        bad(t, "::");
+        bad(t, "[");
+        bad(t, "[:");
+        bad(t, "[::");
+        bad(t, "[]");
+        bad(t, "[v8]");
 
-        good<T>("[::]");
-        good<T>("[v1.0]");
+        ok(t, "[::]");
+        ok(t, "[v1.0]");
     }
 };
 

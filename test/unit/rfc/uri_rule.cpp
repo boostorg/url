@@ -24,32 +24,32 @@ public:
     void
     run()
     {
-        using T = uri_rule;
+        auto const& t = uri_rule;
 
-        bad<T>("");
-        bad<T>(":");
-        bad<T>("http://##");
+        bad(t, "");
+        bad(t, ":");
+        bad(t, "http://##");
 
-        good<T>("http:");
-        good<T>("http:x");
-        good<T>("http:x/");
-        good<T>("http:x/x");
-        good<T>("http:x//");
-        good<T>("http://");
-        good<T>("http://x");
-        good<T>("http://x.y.z");
-        good<T>("http://x.y.z/");
-        good<T>("http://x.y.z/?");
-        good<T>("http://x.y.z/?a");
-        good<T>("http://x.y.z/?a=");
-        good<T>("http://x.y.z/?a=b");
-        good<T>("http://x.y.z/?a=b&c=d");
-        good<T>("http://x.y.z/?a=b&c=d&");
-        good<T>("http://x.y.z/?a=b&c=d&#");
-        good<T>("http://x.y.z/?a=b&c=d&#1");
-        good<T>("http://x.y.z/?a=b&c=d&#12");
-        good<T>("http://x.y.z/?a=b&c=d&#12%23");
-        good<T>("http://x.y.z/?a=b&c=d&#12%23%20");
+        ok(t, "http:");
+        ok(t, "http:x");
+        ok(t, "http:x/");
+        ok(t, "http:x/x");
+        ok(t, "http:x//");
+        ok(t, "http://");
+        ok(t, "http://x");
+        ok(t, "http://x.y.z");
+        ok(t, "http://x.y.z/");
+        ok(t, "http://x.y.z/?");
+        ok(t, "http://x.y.z/?a");
+        ok(t, "http://x.y.z/?a=");
+        ok(t, "http://x.y.z/?a=b");
+        ok(t, "http://x.y.z/?a=b&c=d");
+        ok(t, "http://x.y.z/?a=b&c=d&");
+        ok(t, "http://x.y.z/?a=b&c=d&#");
+        ok(t, "http://x.y.z/?a=b&c=d&#1");
+        ok(t, "http://x.y.z/?a=b&c=d&#12");
+        ok(t, "http://x.y.z/?a=b&c=d&#12%23");
+        ok(t, "http://x.y.z/?a=b&c=d&#12%23%20");
     }
 };
 

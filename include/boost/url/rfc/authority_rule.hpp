@@ -11,11 +11,10 @@
 #define BOOST_URL_RFC_AUTHORITY_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/rfc/host_rule.hpp>
 #include <boost/url/rfc/port_rule.hpp>
 #include <boost/url/rfc/userinfo_rule.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -36,40 +35,26 @@ namespace urls {
         @ref port_part_rule,
         @ref userinfo_rule.
 */
-struct authority_rule
+struct authority_rule_t
 {
-    // userinfo
-    bool has_userinfo = false;
-    userinfo_rule userinfo;
-
-    // host
-    host_rule host;
-
-    // port
-    port_part_rule port;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        authority_rule& t) noexcept
+    struct value_type
     {
-        parse(it, end, ec, t);
-    }
+        bool has_userinfo = false;
+        decltype(userinfo_rule)::value_type userinfo;
+        decltype(host_rule)::value_type host;
+        decltype(port_part_rule)::value_type port;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    auto
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        authority_rule& t) noexcept;
+        char const* end
+            ) const noexcept ->
+        result<value_type>;
 };
+
+constexpr authority_rule_t authority_rule{};
 
 } // urls
 } // boost

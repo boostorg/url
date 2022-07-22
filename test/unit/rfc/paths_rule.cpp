@@ -14,50 +14,14 @@
 #include <boost/url/grammar/range.hpp>
 #include <boost/static_assert.hpp>
 #include "test_suite.hpp"
+#include "test_rule.hpp"
 
 namespace boost {
 namespace urls {
 
-BOOST_STATIC_ASSERT(
-    grammar::is_range<path_abempty_rule>::value);
-BOOST_STATIC_ASSERT(
-    grammar::is_range<path_absolute_rule>::value);
-BOOST_STATIC_ASSERT(
-    grammar::is_range<path_noscheme_rule>::value);
-BOOST_STATIC_ASSERT(
-    grammar::is_range<path_rootless_rule>::value);
-
 class paths_rule_test
 {
 public:
-    template<class T>
-    void
-    good(string_view s)
-    {
-        T t;
-        error_code ec;
-        if(! BOOST_TEST(
-            grammar::parse_string(s,
-                ec, t)))
-            BOOST_TEST(ec.failed());
-        else
-            BOOST_TEST(! ec.failed());
-    }
-
-    template<class T>
-    void
-    bad(string_view s)
-    {
-        T t;
-        error_code ec;
-        if(! BOOST_TEST(
-            ! grammar::parse_string(s,
-                ec, t)))
-            BOOST_TEST(! ec.failed());
-        else
-            BOOST_TEST(ec.failed());
-    }
-
     /* ASCII HEX
 
         %   25
@@ -69,125 +33,129 @@ public:
     test_path_abempty_rule()
     {
         // path-abempty  = *( "/" segment )
-        using T = path_abempty_rule;
+        auto const& t =
+            path_abempty_rule{};
 
-        good<T>("");
-        good<T>("/");
-        good<T>("//");
-        good<T>("/x");
-        good<T>("/:");
-        good<T>("/x/");
-        good<T>("/%3a/");
-        good<T>("/%20");
-        good<T>("/%20");
-        good<T>("/%25");
-        good<T>("/%25%2e");
+        ok(t, "");
+        ok(t, "/");
+        ok(t, "//");
+        ok(t, "/x");
+        ok(t, "/:");
+        ok(t, "/x/");
+        ok(t, "/%3a/");
+        ok(t, "/%20");
+        ok(t, "/%20");
+        ok(t, "/%25");
+        ok(t, "/%25%2e");
 
-        bad<T>(".");
-        bad<T>(":");
-        bad<T>("x");
-        bad<T>("%20");
-        bad<T>("%2f");
-        bad<T>("a/");
-        bad<T>(" ");
+        bad(t, ".");
+        bad(t, ":");
+        bad(t, "x");
+        bad(t, "%20");
+        bad(t, "%2f");
+        bad(t, "a/");
+        bad(t, " ");
     }
 
     void
     test_path_absolute_rule()
     {
         // path-absolute = "/" [ segment-nz *( "/" segment ) ]
-        using T = path_absolute_rule;
+        auto const& t =
+            path_absolute_rule{};
 
-        good<T>("/");
-        good<T>("/x");
-        good<T>("/x/");
-        good<T>("/:/");
-        good<T>("/x//");
-        good<T>("/%20");
-        good<T>("/:%20");
-        good<T>("/%20");
-        good<T>("/%25");
-        good<T>("/%25%2e");
+        ok(t, "/");
+        ok(t, "/x");
+        ok(t, "/x/");
+        ok(t, "/:/");
+        ok(t, "/x//");
+        ok(t, "/%20");
+        ok(t, "/:%20");
+        ok(t, "/%20");
+        ok(t, "/%25");
+        ok(t, "/%25%2e");
 
-        bad<T>("");
-        bad<T>("//");
-        bad<T>(".");
-        bad<T>(":");
-        bad<T>("x");
-        bad<T>("%20");
-        bad<T>("%2f");
-        bad<T>("a/");
-        bad<T>(" ");
+        bad(t, "");
+        bad(t, "//");
+        bad(t, ".");
+        bad(t, ":");
+        bad(t, "x");
+        bad(t, "%20");
+        bad(t, "%2f");
+        bad(t, "a/");
+        bad(t, " ");
     }
 
     void
     test_path_noscheme_rule()
     {
         // path-noscheme = segment-nz-nc *( "/" segment )
-        using T = path_noscheme_rule;
+        auto const& t =
+            path_noscheme_rule{};
 
-        good<T>(".");
-        good<T>("x");
-        good<T>("%20");
-        good<T>("%2f");
-        good<T>("a/");
-        good<T>("a//");
-        good<T>("a/x");
-        good<T>("a/x/");
-        good<T>("a/x//");
-        good<T>("a///");
+        ok(t, ".");
+        ok(t, "x");
+        ok(t, "%20");
+        ok(t, "%2f");
+        ok(t, "a/");
+        ok(t, "a//");
+        ok(t, "a/x");
+        ok(t, "a/x/");
+        ok(t, "a/x//");
+        ok(t, "a///");
 
-        bad<T>("");
-        bad<T>(" ");
-        bad<T>(":");
-        bad<T>("/");
-        bad<T>("/x");
-        bad<T>("//");
-        bad<T>("/x/");
-        bad<T>("/:/");
-        bad<T>("/x//");
-        bad<T>("/%20");
-        bad<T>("/:%20");
-        bad<T>("/%20");
-        bad<T>("/%25");
-        bad<T>("/%25%2e");
+        bad(t, "");
+        bad(t, " ");
+        bad(t, ":");
+        bad(t, "/");
+        bad(t, "/x");
+        bad(t, "//");
+        bad(t, "/x/");
+        bad(t, "/:/");
+        bad(t, "/x//");
+        bad(t, "/%20");
+        bad(t, "/:%20");
+        bad(t, "/%20");
+        bad(t, "/%25");
+        bad(t, "/%25%2e");
     }
 
     void
     test_path_rootless_rule()
     {
         // path-rootless = segment-nz *( "/" segment )
-        using T = path_rootless_rule;
+        auto const& t =
+            path_rootless_rule{};
 
-        good<T>(".");
-        good<T>(":");
-        good<T>(":/");
-        good<T>("::/");
-        good<T>("://");
-        good<T>(":/:/");
-        good<T>("x");
-        good<T>("%20");
-        good<T>("%2f");
-        good<T>("a/");
-        good<T>("a//");
-        good<T>("a/x");
-        good<T>("a/x/");
-        good<T>("a/x//");
-        good<T>("a///");
+        ok(t, ".");
+        ok(t, ":");
+        ok(t, ":/");
+        ok(t, "::/");
+        ok(t, "://");
+        ok(t, ":/:/");
+        ok(t, "x");
+        ok(t, "%20");
+        ok(t, "%2f");
+        ok(t, "a/");
+        ok(t, "a//");
+        ok(t, "a/x");
+        ok(t, "a/x/");
+        ok(t, "a/x//");
+        ok(t, "a///");
 
-        bad<T>("");
-        bad<T>(" ");
-        bad<T>("/");
-        bad<T>("/x");
-        bad<T>("//");
-        bad<T>("/x/");
-        bad<T>("/:/");
-        bad<T>("/x//");
-        bad<T>("/%20");
-        bad<T>("/:%20");
-        bad<T>("/%20");
-        bad<T>("/%25");
-        bad<T>("/%25%2e");
+        bad(t, "");
+        bad(t, " ");
+        bad(t, "/");
+        bad(t, "/x");
+        bad(t, "//");
+        bad(t, "/x/");
+        bad(t, "/:/");
+        bad(t, "/x//");
+        bad(t, "/%20");
+        bad(t, "/:%20");
+        bad(t, "/%20");
+        bad(t, "/%25");
+        bad(t, "/%25%2e");
     }
 
     void

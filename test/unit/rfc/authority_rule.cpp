@@ -20,50 +20,29 @@
 namespace boost {
 namespace urls {
 
-BOOST_STATIC_ASSERT(
-    std::is_copy_constructible<
-        authority_rule>::value);
-
-BOOST_STATIC_ASSERT(
-    std::is_copy_assignable<
-        authority_rule>::value);
-
 class authority_rule_test
 {
 public:
     void
     run()
     {
-        auto const bad = [](string_view s)
-        {
-            error_code ec;
-            authority_rule t;
-            grammar::parse_string(s, ec, t);
-            BOOST_TEST(ec.failed());
-        };
+        auto const& r = authority_rule;
 
-        auto const good = [](string_view s)
-        {
-            error_code ec;
-            authority_rule t;
-            grammar::parse_string(s, ec, t);
-            BOOST_TEST(! ec.failed());
-        };
+        bad(r, "%");
+        bad(r, "host:a");
 
-        bad("%");
-        bad("host:a");
-
-        good("");
-        good(":");
-        good("me@you.com");
-        good("user:pass@");
-        good("user:1234");
+        ok(r, "");
+        ok(r, ":");
+        ok(r, "me@you.com");
+        ok(r, "user:pass@");
+        ok(r, "user:1234");
 
         {
-            authority_rule p;
-            error_code ec;
-            BOOST_TEST(grammar::parse_string(
-                "x:y@e.com:8080", ec, p));
+            auto rv = grammar::parse(
+                "x:y@e.com:8080",
+                authority_rule);
+            BOOST_TEST(rv.has_value());
+            auto p = *rv;
             BOOST_TEST(p.host.host_type ==
                 host_type::name);
             BOOST_TEST(p.host.name.encoded()

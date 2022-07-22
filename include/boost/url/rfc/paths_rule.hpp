@@ -12,9 +12,10 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
-#include <boost/url/pct_encoded_view.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
+#include <boost/url/grammar/not_empty_rule.hpp>
 #include <boost/url/grammar/range.hpp>
+#include <boost/url/rfc/charsets.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <cstddef>
 
 namespace boost {
@@ -55,37 +56,8 @@ struct parsed_path
         @ref segment_nz_rule,
         @ref segment_nz_nc_rule
 */
-#ifdef BOOST_URL_DOCS
-using segment_rule = __see_below__;
-#else
-struct segment_rule
-{
-    pct_encoded_view& v;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        segment_rule const& t) noexcept
-    {
-        parse(it, end, ec, t);
-    }
-
-private:
-    BOOST_URL_DECL
-    static
-    void
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        segment_rule const& t) noexcept;
-
-};
-#endif
+constexpr auto segment_rule =
+    pct_encoded_rule(pchars);
 
 //------------------------------------------------
 
@@ -109,36 +81,9 @@ private:
         @ref segment_rule,
         @ref segment_nz_nc_rule
 */
-#ifdef BOOST_URL_DOCS
-using segment_nz_rule = __see_below__;
-#else
-struct segment_nz_rule
-{
-    pct_encoded_view& v;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        segment_nz_rule const& t) noexcept
-    {
-        parse(it, end, ec, t);
-    }
-
-private:
-    BOOST_URL_DECL
-    static
-    void
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        segment_nz_rule const& t) noexcept;
-};
-#endif
+constexpr auto segment_nz_rule =
+    grammar::not_empty_rule(
+        pct_encoded_rule(pchars));
 
 //------------------------------------------------
 
@@ -165,38 +110,9 @@ private:
         @ref subdelim_chars,
         @ref unreserved_chars
 */
-#ifdef BOOST_URL_DOCS
-using segment_nz_nc_rule = __see_below__;
-#else
-struct segment_nz_nc_rule
-{
-    pct_encoded_view& v;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        segment_nz_nc_rule const& t) noexcept
-    {
-        parse(it, end, ec, t);
-    }
-
-private:
-    BOOST_URL_DECL
-    static
-    void
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        segment_nz_nc_rule const& t) noexcept;
-
-
-};
-#endif
+constexpr auto segment_nz_nc_rule =
+    grammar::not_empty_rule(
+        pct_encoded_rule(pchars - ':'));
 
 //------------------------------------------------
 
@@ -220,33 +136,33 @@ private:
 #ifdef BOOST_URL_DOCS
 using path_abempty_rule = __see_below__;
 #else
-struct path_abempty_rule : grammar::range_
+struct path_abempty_rule
 {
     using value_type =
-        pct_encoded_view;
-
-    path_abempty_rule()
-        : grammar::range_(this)
-    {
-    }
+        grammar::range<
+            pct_encoded_view>;
 
     BOOST_URL_DECL
-    static
-    bool
+    result<value_type>
+    parse(
+        char const*& it,
+        char const* end
+            ) const noexcept;
+
+private:
+    BOOST_URL_DECL
+    result<pct_encoded_view>
     begin(
         char const*& it,
-        char const* end,
-        error_code& ec,
-        pct_encoded_view& t) noexcept;
+        char const* end
+            ) const noexcept;
 
     BOOST_URL_DECL
-    static
-    bool
+    result<pct_encoded_view>
     increment(
         char const*& it,
-        char const* end,
-        error_code& ec,
-        pct_encoded_view& t) noexcept;
+        char const* end
+            ) const noexcept;
 };
 #endif
 
@@ -273,33 +189,33 @@ struct path_abempty_rule : grammar::range_
 #ifdef BOOST_URL_DOCS
 using path_absolute_rule = __see_below__;
 #else
-struct path_absolute_rule : grammar::range_
+struct path_absolute_rule
 {
     using value_type =
-        pct_encoded_view;
-
-    path_absolute_rule()
-        : grammar::range_(this)
-    {
-    }
+        grammar::range<
+            pct_encoded_view>;
 
     BOOST_URL_DECL
-    static
-    bool
+    result<value_type>
+    parse(
+        char const*& it,
+        char const* end
+            ) const noexcept;
+
+private:
+    BOOST_URL_DECL
+    result<pct_encoded_view>
     begin(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        pct_encoded_view& t) noexcept;
+        char const* end
+            ) const noexcept;
 
     BOOST_URL_DECL
-    static
-    bool
+    result<pct_encoded_view>
     increment(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        pct_encoded_view& t) noexcept;
+        char const* end
+            ) const noexcept;
 };
 #endif
 
@@ -326,33 +242,33 @@ struct path_absolute_rule : grammar::range_
 #ifdef BOOST_URL_DOCS
 using path_noscheme_rule = __see_below__;
 #else
-struct path_noscheme_rule : grammar::range_
+struct path_noscheme_rule
 {
     using value_type =
-        pct_encoded_view;
-
-    path_noscheme_rule()
-        : grammar::range_(this)
-    {
-    }
+        grammar::range<
+            pct_encoded_view>;
 
     BOOST_URL_DECL
-    static
-    bool
+    result<value_type>
+    parse(
+        char const*& it,
+        char const* end
+            ) const noexcept;
+
+private:
+    BOOST_URL_DECL
+    result<pct_encoded_view>
     begin(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        pct_encoded_view& t) noexcept;
+        char const* end
+            ) const noexcept;
 
     BOOST_URL_DECL
-    static
-    bool
+    result<pct_encoded_view>
     increment(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        pct_encoded_view& t) noexcept;
+        char const* end
+            ) const noexcept;
 };
 #endif
 
@@ -385,33 +301,38 @@ struct path_noscheme_rule : grammar::range_
 #ifdef BOOST_URL_DOCS
 using path_rootless_rule = __see_below__;
 #else
-struct path_rootless_rule : grammar::range_
+struct path_rootless_rule
 {
     using value_type =
-        pct_encoded_view;
-
-    path_rootless_rule()
-        : grammar::range_(this)
-    {
-    }
+        grammar::range<
+            pct_encoded_view>;
 
     BOOST_URL_DECL
-    static
-    bool
+    result<value_type>
+    parse(
+        char const*& it,
+        char const* end
+            ) const noexcept;
+
+#ifndef BOOST_URL_DOCS
+//private:
+    //friend struct detail::segments_iterator_impl;
+    //friend struct detail::segments_encoded_iterator_impl;
+
+    BOOST_URL_DECL
+    result<pct_encoded_view>
     begin(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        pct_encoded_view& t) noexcept;
+        char const* end
+            ) const noexcept;
 
     BOOST_URL_DECL
-    static
-    bool
+    result<pct_encoded_view>
     increment(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        pct_encoded_view& t) noexcept;
+        char const* end
+            ) const noexcept;
+#endif
 };
 #endif
 

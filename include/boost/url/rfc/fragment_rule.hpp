@@ -11,9 +11,11 @@
 #define BOOST_URL_RFC_FRAGMENT_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
-#include <boost/url/pct_encoded_view.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
+#include <boost/url/rfc/charsets.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/optional_rule.hpp>
 
 namespace boost {
 namespace urls {
@@ -28,36 +30,10 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
         >3.5. Fragment (rfc3986)</a>
-
-    @see
-        @ref fragment_part_rule.
 */
-struct fragment_rule
-{
-    pct_encoded_view s;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        fragment_rule& t) noexcept
-    {
-        parse(it, end, ec, t);
-    }
-
-private:
-    BOOST_URL_DECL
-    static
-    void
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        fragment_rule& t) noexcept;
-};
+constexpr auto fragment_rule =
+    pct_encoded_rule(
+        pchars + '/' + '?');
 
 /** Rule for fragment-part
 
@@ -71,37 +47,12 @@ private:
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
         >3.5. Fragment (rfc3986)</a>
-
-    @see
-        @ref fragment_rule.
 */
-struct fragment_part_rule
-{
-    bool has_fragment = false;
-    pct_encoded_view fragment;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        fragment_part_rule& t) noexcept
-    {
-        parse(it, end, ec, t);
-    }
-
-private:
-    BOOST_URL_DECL
-    static
-    void
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        fragment_part_rule& t) noexcept;
-};
+constexpr auto fragment_part_rule =
+    grammar::optional_rule(
+        grammar::sequence_rule(
+            grammar::char_rule('#'),
+            fragment_rule));
 
 } // urls
 } // boost

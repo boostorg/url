@@ -18,63 +18,80 @@
 namespace boost {
 namespace urls {
 
-void
-hier_part_rule::
+auto
+hier_part_rule_t::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    hier_part_rule& t) noexcept
+    char const* const end
+        ) const noexcept ->
+    result<value_type>
 {
+    value_type t;
+
     if(it == end)
     {
         // path-empty
-        t.path = {};
-        t.has_authority = false;
-        ec = {};
-        return;
+        return t;
     }
     if(it[0] != '/')
     {
         // path-rootless
-        path_rootless_rule t0;
-        if(! grammar::parse(
-                it, end, ec, t0))
-            return;
-        t.path.path = t0.str;
-        t.path.count = t0.count;
-        t.has_authority = false;
-        return;
+        auto const it0 = it;
+        auto rv = grammar::parse(
+            it, end,
+            path_rootless_rule{});
+        if(rv.has_value())
+        {
+            auto const& v = *rv;
+            t.path.path = v.string();
+            t.path.count = v.size();
+            return t;
+        }
+        it = it0;
+
+        // path-empty
+        return t;
     }
     if( end - it == 1 ||
         it[1] != '/')
     {
         // path-absolute
-        path_absolute_rule t0;
-        if(! grammar::parse(
-                it, end, ec, t0))
-            return;
-        t.path.path = t0.str;
-        t.path.count = t0.count;
+        auto rv = grammar::parse(
+            it, end,
+            path_absolute_rule{});
+        if(! rv)
+            return rv.error();
+        auto const& p = *rv;
+        t.path.path = p.string();
+        t.path.count = p.size();
         t.has_authority = false;
-        return;
+        return t;
     }
+
     // "//" authority path-abempty
     it += 2;
     // authority
-    if(! grammar::parse(
-        it, end, ec,
-            t.authority))
-        return;
-    // path-abempty
-    path_abempty_rule t0;
-    if(! grammar::parse(
-            it, end, ec, t0))
-        return;
+    {
+        auto rv = grammar::parse(
+            it, end, authority_rule);
+        if(! rv)
+            return rv.error();
+        t.authority = *rv;
+    }
 
-    t.path.path = t0.str;
-    t.path.count = t0.count;
-    t.has_authority = true;
+    // path-abempty
+    {
+        auto rv = grammar::parse(
+            it, end, path_abempty_rule{});
+        if(! rv)
+            return rv.error();
+
+        auto const& v = *rv;
+        t.path.path = v.string();
+        t.path.count = v.size();
+        t.has_authority = true;
+        return t;
+    }
 }
 
 } // urls

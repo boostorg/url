@@ -13,8 +13,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 #include <array>
 #include <cstdint>
 #include <iosfwd>
@@ -299,35 +299,6 @@ public:
     ipv6_address
     loopback() noexcept;
 
-    /** Parse a string containing an IPv6 address.
-
-        This function overload is used with
-        @ref grammar::parse.
-
-        @param it A pointer to the beginning of
-        the string to be parsed. Upon return, this
-        will point to one past the last character
-        visited.
-
-        @param end A pointer to one past the last
-        character in the string to be parsed.
-
-        @param ec Set to the error, if any occurred.
-
-        @param t Set to the result upon success.
-    */
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        ipv6_address& t) noexcept
-    {
-        parse(it, end, ec, t);
-    }
-
     /** Format the address to an output stream
 
         This function writes the address to an
@@ -355,15 +326,6 @@ public:
 
 private:
     BOOST_URL_DECL
-    static
-    void
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        ipv6_address& t) noexcept;
-
-    BOOST_URL_DECL
     std::size_t
     print_impl(
         char* dest) const noexcept;
@@ -372,6 +334,24 @@ private:
 };
 
 //------------------------------------------------
+
+/** A Rule for parsing
+*/
+struct ipv6_address_rule_t
+{
+    using value_type =
+        ipv6_address;
+
+    BOOST_URL_DECL
+    auto
+    parse(
+        char const*& it,
+        char const* end
+            ) const noexcept ->
+    result<ipv6_address>;
+};
+
+constexpr ipv6_address_rule_t ipv6_address_rule{};
 
 /** Parse a string containing an IPv6 address.
 

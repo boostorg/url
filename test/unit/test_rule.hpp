@@ -12,8 +12,10 @@
 
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/type_traits.hpp>
 #include <boost/url/string_view.hpp>
 #include <initializer_list>
+#include <type_traits>
 
 #include "test_suite.hpp"
 
@@ -95,83 +97,31 @@ test_char_set(
     });
 }
 
-template<
-    class T, class V>
-struct test_ref
-{
-    V v;
+//------------------------------------------------
 
-    friend
-    bool
-    parse(
-        char const*& it,
-        char const* end,
-        error_code& ec,
-        test_ref& t)
-    {
-        return grammar::parse(
-            it, end, ec,
-            T{t.v});
-    }
-};
-
-template<class T>
-bool
-is_valid(string_view s)
+// rule must match the string
+template<class R>
+typename std::enable_if<
+    grammar::is_rule<R>::value>::type
+ok( R const& r,
+    string_view s)
 {
-    T t;
-    error_code ec;
-    return grammar::parse_string(
-        s, ec, t);
+    BOOST_TEST(
+        grammar::parse(
+            s, r).has_value());
 }
 
-bool
-is_valid(char) = delete;
-
-template<class T>
-void
-validate(string_view s)
+// rule must fail the string
+template<class R>
+typename std::enable_if<
+    grammar::is_rule<R>::value>::type
+bad(
+    R const& r,
+    string_view s)
 {
-    if(! is_valid<T>(s))
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
-}
-
-template<class T>
-void
-bad(string_view s)
-{
-    BOOST_TEST_THROWS(
-        validate<T>(s),
-        std::exception);
-    BOOST_TEST(! is_valid<T>(s));
-}
-
-template<class T>
-void
-bad(std::initializer_list<
-    string_view> init)
-{
-    for(auto s : init)
-        bad<T>(s);
-}
-
-template<class T>
-void
-good(string_view s)
-{
-    BOOST_TEST_NO_THROW(
-        validate<T>(s));
-    BOOST_TEST(is_valid<T>(s));
-}
-
-template<class T>
-void
-good(std::initializer_list<
-    string_view> init)
-{
-    for(auto s : init)
-        good<T>(s);
+    BOOST_TEST(
+        grammar::parse(
+            s, r).has_error());
 }
 
 } // urls

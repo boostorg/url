@@ -552,7 +552,7 @@ compare(const url_view& other) const noexcept
 void
 url_view::
 apply(
-    scheme_part_rule const& t) noexcept
+    scheme_part_rule::value_type const& t) noexcept
 {
     scheme_ = t.scheme_id;
     if(t.scheme_id !=
@@ -565,7 +565,7 @@ apply(
 void
 url_view::
 apply(
-    host_rule const& t) noexcept
+    decltype(host_rule)::value_type const& t) noexcept
 {
     host_type_ = t.host_type;
     if(t.host_type ==
@@ -609,7 +609,7 @@ apply(
 void
 url_view::
 apply(
-    authority_rule const& t) noexcept
+    decltype(authority_rule)::value_type const& t) noexcept
 {
     if(t.has_userinfo)
     {
@@ -676,17 +676,20 @@ apply(
 void
 url_view::
 apply(
-    query_part_rule const& t) noexcept
+    decltype(query_part_rule)::value_type const& t) noexcept
 {
-    if(t.has_query)
+    if(t.has_value())
     {
-        set_size(
-            id_query,
-            t.query_part.size());
+        auto const& v = std::get<1>(*t);
+        set_size(id_query,
+            1 + v.string().size());
+        // VFALCO we are doing two passes over
+        // the string. once for the range and
+        // again for the decoded size.
         decoded_[id_query] =
             pct_decode_bytes_unchecked(
-                t.query_part.substr(1));
-        nparam_ = t.query.v.size();
+                v.string());
+        nparam_ = v.size();
     }
     else
     {
@@ -698,15 +701,15 @@ apply(
 void
 url_view::
 apply(
-    fragment_part_rule const& t) noexcept
+    decltype(fragment_part_rule)::value_type const& t) noexcept
 {
-    if(t.has_fragment)
+    if(t.has_value())
     {
         set_size(
             id_frag,
-            t.fragment.encoded().size() + 1);
+            std::get<1>(*t).encoded().size() + 1);
         decoded_[id_frag] =
-            t.fragment.size();
+            std::get<1>(*t).size();
     }
     else
     {
@@ -729,10 +732,11 @@ parse_absolute_uri(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
 
-    error_code ec;
-    absolute_uri_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        return ec;
+    auto rv = grammar::parse(
+        s, absolute_uri_rule);
+    if(! rv)
+        return rv.error();
+    auto const& t = *rv;
 
     url_view u(0, s.data());
 
@@ -761,10 +765,11 @@ parse_uri(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
 
-    error_code ec;
-    uri_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        return ec;
+    auto rv = grammar::parse(
+        s, uri_rule);
+    if(! rv)
+        return rv.error();
+    auto const& t = *rv;
 
     url_view u(0, s.data());
 
@@ -796,11 +801,11 @@ parse_relative_ref(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
 
-    error_code ec;
-    relative_ref_rule t;
-    if(! grammar::parse_string(
-            s, ec, t))
-        return ec;
+    auto rv = grammar::parse(
+        s, relative_ref_rule);
+    if(! rv)
+        return rv.error();
+    auto const& t = *rv;
 
     url_view u(0, s.data());
 
@@ -829,10 +834,11 @@ parse_uri_reference(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
 
-    error_code ec;
-    uri_reference_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        return ec;
+    auto rv = grammar::parse(
+        s, uri_reference_rule);
+    if(! rv)
+        return rv.error();
+    auto const& t = *rv;
 
     url_view u(0, s.data());
 

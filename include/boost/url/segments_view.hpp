@@ -19,7 +19,8 @@
 namespace boost {
 namespace urls {
 
-#ifndef BOOST_URL_DECL
+#ifndef BOOST_URL_DOCS
+// VFALCO is this needed?
 class url_view;
 class segments_encoded_view;
 #endif

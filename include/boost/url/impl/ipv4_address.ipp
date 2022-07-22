@@ -11,8 +11,10 @@
 #define BOOST_URL_IMPL_IPV4_ADDRESS_IPP
 
 #include <boost/url/ipv4_address.hpp>
-#include <boost/url/rfc/detail/dec_octet.hpp>
+#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/dec_octet_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/detail/except.hpp>
 #include <cstring>
 
@@ -106,25 +108,6 @@ is_multicast() const noexcept
         0xE0000000;
 }
 
-void
-ipv4_address::
-parse(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    ipv4_address& t) noexcept
-{
-    std::array<unsigned char, 4> v;
-    if(! grammar::parse(
-        it, end, ec,
-        detail::dec_octet{v[0]}, '.',
-        detail::dec_octet{v[1]}, '.',
-        detail::dec_octet{v[2]}, '.',
-        detail::dec_octet{v[3]}))
-        return;
-    t = ipv4_address(v);
-}
-
 std::size_t
 ipv4_address::
 print_impl(
@@ -160,16 +143,43 @@ print_impl(
     return dest - start;
 }
 
-result<ipv4_address>
-parse_ipv4_address(
-    string_view s) noexcept
+//------------------------------------------------
+
+auto
+ipv4_address_rule_t::
+parse(
+    char const*& it,
+    char const* end
+        ) const noexcept ->
+    result<value_type>
 {
-    error_code ec;
-    ipv4_address addr;
-    if(! grammar::parse_string(
-            s, ec, addr))
-        return ec;
-    return addr;
+    auto rv = grammar::parse(
+        it, end,
+        grammar::sequence_rule(
+            grammar::dec_octet_rule,
+            grammar::char_rule('.'),
+            grammar::dec_octet_rule,
+            grammar::char_rule('.'),
+            grammar::dec_octet_rule,
+            grammar::char_rule('.'),
+            grammar::dec_octet_rule));
+    if(! rv)
+        return rv.error();
+    std::array<unsigned char, 4> v;
+    v[0] = std::get<0>(*rv);
+    v[1] = std::get<2>(*rv);
+    v[2] = std::get<4>(*rv);
+    v[3] = std::get<6>(*rv);
+    return ipv4_address(v);
+}
+
+auto
+parse_ipv4_address(
+    string_view s) noexcept ->
+        result<ipv4_address>
+{
+    return grammar::parse(
+        s, ipv4_address_rule);
 }
 
 } // urls

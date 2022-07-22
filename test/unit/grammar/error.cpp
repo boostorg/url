@@ -50,8 +50,10 @@ public:
     run()
     {
         check(error::end);
+
         check(error::incomplete);
         check(error::leftover);
+        check(error::empty);
 
         check(condition::fatal, error::overflow);
         check(condition::fatal, error::syntax);

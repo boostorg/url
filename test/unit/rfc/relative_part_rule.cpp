@@ -19,34 +19,6 @@ namespace urls {
 class relative_part_rule_test
 {
 public:
-    template<class T>
-    void
-    good(string_view s)
-    {
-        T t;
-        error_code ec;
-        if(! BOOST_TEST(
-            grammar::parse_string(s,
-                ec, t)))
-            BOOST_TEST(ec.failed());
-        else
-            BOOST_TEST(! ec.failed());
-    }
-
-    template<class T>
-    void
-    bad(string_view s)
-    {
-        T t;
-        error_code ec;
-        if(! BOOST_TEST(
-            ! grammar::parse_string(s,
-                ec, t)))
-            BOOST_TEST(! ec.failed());
-        else
-            BOOST_TEST(ec.failed());
-    }
-
     /* ASCII HEX
 
         %   25
@@ -65,108 +37,109 @@ public:
 		              / path-abempty
                       / path-empty
     */
-        using T = relative_part_rule;
+        auto const& r =
+            relative_part_rule;
 
         // "//" authority path-abempty
         {
-            good<T>("//");
-            good<T>("///");
-            good<T>("////");
-            good<T>("///x");
-            good<T>("///:");
-            good<T>("///x/");
-            good<T>("///%3a/");
-            good<T>("///%20");
-            good<T>("///%20");
-            good<T>("///%25");
-            good<T>("///%25%2e");
+            ok(r, "//");
+            ok(r, "///");
+            ok(r, "////");
+            ok(r, "///x");
+            ok(r, "///:");
+            ok(r, "///x/");
+            ok(r, "///%3a/");
+            ok(r, "///%20");
+            ok(r, "///%20");
+            ok(r, "///%25");
+            ok(r, "///%25%2e");
 
-            good<T>("//x");
-            good<T>("//x/");
-            good<T>("//x//");
-            good<T>("//x/x");
-            good<T>("//x/:");
-            good<T>("//x/x/");
-            good<T>("//x/%3a/");
-            good<T>("//x/%20");
-            good<T>("//x/%20");
-            good<T>("//x/%25");
-            good<T>("//x/%25%2e");
+            ok(r, "//x");
+            ok(r, "//x/");
+            ok(r, "//x//");
+            ok(r, "//x/x");
+            ok(r, "//x/:");
+            ok(r, "//x/x/");
+            ok(r, "//x/%3a/");
+            ok(r, "//x/%20");
+            ok(r, "//x/%20");
+            ok(r, "//x/%25");
+            ok(r, "//x/%25%2e");
 
-            good<T>("");
-            good<T>("/");
-            good<T>("//");
-            good<T>("//user:pass@");
-            good<T>("//boost.org");
-            good<T>("//1.2.3.4:8080");
-            good<T>("//1.2.3.4:8080/");
-            good<T>("//1.2.3.4:8080/x");
-            good<T>("//1.2.3.4:8080/x/");
-            good<T>("//1.2.3.4:8080////");
-            good<T>("/x");
-            good<T>("/x/");
-            good<T>("/x/y");
-            good<T>("/x/y//");
-            good<T>("x");
-            good<T>("x/");
-            good<T>("x//");
-            good<T>("x/y/z");
-            good<T>("x//y///z///");
+            ok(r, "");
+            ok(r, "/");
+            ok(r, "//");
+            ok(r, "//user:pass@");
+            ok(r, "//boost.org");
+            ok(r, "//1.2.3.4:8080");
+            ok(r, "//1.2.3.4:8080/");
+            ok(r, "//1.2.3.4:8080/x");
+            ok(r, "//1.2.3.4:8080/x/");
+            ok(r, "//1.2.3.4:8080////");
+            ok(r, "/x");
+            ok(r, "/x/");
+            ok(r, "/x/y");
+            ok(r, "/x/y//");
+            ok(r, "x");
+            ok(r, "x/");
+            ok(r, "x//");
+            ok(r, "x/y/z");
+            ok(r, "x//y///z///");
 
-            bad<T>(":/"); // colon not ok in relative-part
+            bad(r, ":/"); // colon not ok in relative-part
         }
 
         // path-absolute
         {
-            good<T>("/");
-            good<T>("/x");
-            good<T>("/x/");
-            good<T>("/:/");
-            good<T>("/x//");
-            good<T>("/%20");
-            good<T>("/:%20");
-            good<T>("/%20");
-            good<T>("/%25");
-            good<T>("/%25%2e");
+            ok(r, "/");
+            ok(r, "/x");
+            ok(r, "/x/");
+            ok(r, "/:/");
+            ok(r, "/x//");
+            ok(r, "/%20");
+            ok(r, "/:%20");
+            ok(r, "/%20");
+            ok(r, "/%25");
+            ok(r, "/%25%2e");
         }
 
         // path-noscheme
         {
-            good<T>(".");
-            good<T>("x");
-            good<T>("%20");
-            good<T>("%2f");
-            good<T>("a/");
-            good<T>("a//");
-            good<T>("a/x");
-            good<T>("a/x/");
-            good<T>("a/x//");
-            good<T>("a///");
+            ok(r, ".");
+            ok(r, "x");
+            ok(r, "%20");
+            ok(r, "%2f");
+            ok(r, "a/");
+            ok(r, "a//");
+            ok(r, "a/x");
+            ok(r, "a/x/");
+            ok(r, "a/x//");
+            ok(r, "a///");
         }
 
         // path-abempty
         {
-            good<T>("");
-            good<T>("/");
-            good<T>("//");
-            good<T>("/x");
-            good<T>("/:");
-            good<T>("/x/");
-            good<T>("/%3a/");
-            good<T>("/%20");
-            good<T>("/%20");
-            good<T>("/%25");
-            good<T>("/%25%2e");
+            ok(r, "");
+            ok(r, "/");
+            ok(r, "//");
+            ok(r, "/x");
+            ok(r, "/:");
+            ok(r, "/x/");
+            ok(r, "/%3a/");
+            ok(r, "/%20");
+            ok(r, "/%20");
+            ok(r, "/%25");
+            ok(r, "/%25%2e");
         }
 
         // path/coverage
         {
-            error_code ec;
-            relative_part_rule t;
-            grammar::parse_string(
-                "/1/2/3/4/5", ec, t);
-            BOOST_TEST_EQ(t.path.path, "/1/2/3/4/5");
-            BOOST_TEST_EQ(t.path.count, 5u);
+            auto rv = grammar::parse(
+                "/1/2/3/4/5",
+                relative_part_rule);
+            auto const& v = *rv;
+            BOOST_TEST_EQ(v.path.path, "/1/2/3/4/5");
+            BOOST_TEST_EQ(v.path.count, 5u);
         }
     }
 

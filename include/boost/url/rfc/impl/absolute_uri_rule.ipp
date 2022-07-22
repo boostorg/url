@@ -16,19 +16,44 @@
 namespace boost {
 namespace urls {
 
-void
-absolute_uri_rule::
+auto
+absolute_uri_rule_t::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    absolute_uri_rule& t) noexcept
+    char const* const end
+        ) const noexcept ->
+    result<value_type>
 {
-    grammar::parse(
-        it, end, ec,
-        t.scheme_part,
-        t.hier_part,
-        t.query_part);
+    value_type t;
+
+    // scheme
+    {
+        auto rv = grammar::parse(
+            it, end, scheme_part_rule());
+        if(! rv)
+            return rv.error();
+        t.scheme_part = *rv;
+    }
+
+    // hier_part
+    {
+        auto rv = grammar::parse(
+            it, end, hier_part_rule);
+        if(! rv)
+            return rv.error();
+        t.hier_part = *rv;
+    }
+
+    // [ "?" query ]
+    {
+        auto rv = grammar::parse(
+            it, end, query_part_rule);
+        if(! rv)
+            return rv.error();
+        t.query_part = *rv;
+    }
+
+    return t;
 }
 
 } // urls

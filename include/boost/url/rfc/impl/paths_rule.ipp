@@ -13,242 +13,219 @@
 #include <boost/url/rfc/paths_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/grammar/char_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
 
 namespace boost {
 namespace urls {
 
-void
-segment_rule::
+auto
+path_abempty_rule::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    segment_rule const& t) noexcept
+    char const* end
+        ) const noexcept ->
+    result<value_type>
 {
-    pct_encoded_rule<pchars_t> t0;
-    if(! grammar::parse(
-        it, end, ec, t0))
-        return;
-    t.v = t0.s;
+    return grammar::parse_range(
+        it, end, *this,
+        &path_abempty_rule::begin,
+        &path_abempty_rule::increment);
 }
 
-//------------------------------------------------
-
-void
-segment_nz_rule::
-parse(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    segment_nz_rule const& t) noexcept
-{
-    pct_encoded_rule<pchars_t> t0;
-    if(! grammar::parse(
-        it, end, ec, t0))
-        return;
-    t.v = t0.s;
-    if(t.v.empty())
-    {
-        // can't be empty
-        ec = grammar::error::syntax;
-        return;
-    }
-}
-
-//------------------------------------------------
-
-void
-segment_nz_nc_rule::
-parse(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    segment_nz_nc_rule const& t) noexcept
-{
-    struct seg_chars
-        : grammar::lut_chars
-    {
-        constexpr
-        seg_chars() noexcept
-            : lut_chars(
-                pchars - ':')
-        {
-        }
-    };
-    pct_encoded_rule<seg_chars> t0;
-    if(! grammar::parse(
-        it, end, ec, t0))
-        return;
-    if(t0.s.empty())
-    {
-        // can't be empty
-        ec = error::empty_path_segment;
-        return;
-    }
-    t.v = t0.s;
-}
-
-//------------------------------------------------
-
-bool
+auto
 path_abempty_rule::
 begin(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    pct_encoded_view& t) noexcept
+    char const* end
+        ) const noexcept ->
+    result<pct_encoded_view>
 {
-    return increment(
-        it, end, ec, t);
+    return increment(it, end);
 }
 
-bool
+auto
 path_abempty_rule::
 increment(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    pct_encoded_view& t) noexcept
+    char const* end
+        ) const noexcept ->
+    result<pct_encoded_view>
 {
-    auto const start = it;
-    if(grammar::parse(
-        it, end, ec,
-        '/', segment_rule{t}))
-        return true;
-    ec = BOOST_URL_ERR(
+    auto it0 = it;
+    auto rv = grammar::parse(
+        it, end,
+        grammar::sequence_rule(
+            grammar::char_rule('/'),
+            segment_rule));
+    if(rv.has_value())
+        return std::get<1>(*rv);
+    it = it0;
+    return BOOST_URL_ERR(
         grammar::error::end);
-    it = start;
-    return false;
 }
 
 //------------------------------------------------
 
-bool
+auto
+path_absolute_rule::
+parse(
+    char const*& it,
+    char const* end
+        ) const noexcept ->
+    result<value_type>
+{
+    return grammar::parse_range(
+        it, end, *this,
+        &path_absolute_rule::begin,
+        &path_absolute_rule::increment);
+}
+
+auto
 path_absolute_rule::
 begin(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    pct_encoded_view& t) noexcept
+    char const* const end
+        ) const noexcept ->
+    result<pct_encoded_view>
 {
     if(it == end)
     {
         // expected '/'
-        ec = BOOST_URL_ERR(
-            error::missing_path_segment);
-        return false;
+        return error::missing_path_segment;
     }
     if(*it != '/')
     {
         // expected '/'
-        ec = BOOST_URL_ERR(
-            error::missing_path_separator);
-        return false;
+        return error::missing_path_separator;
     }
     ++it;
     if(it == end)
-        return true;
+        return pct_encoded_view{};
     if(*it == '/')
     {
         // can't begin with "//"
-        ec = BOOST_URL_ERR(
-            error::empty_path_segment);
-        return false;
+        return error::empty_path_segment;
     }
     return grammar::parse(
-        it, end, ec,
-        segment_rule{t});
+        it, end, segment_rule);
 }
 
-bool
+auto
 path_absolute_rule::
 increment(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    pct_encoded_view& t) noexcept
+    char const* const end
+        ) const noexcept ->
+    result<pct_encoded_view>
 {
-    auto const start = it;
-    if(grammar::parse(
-        it, end, ec,
-        '/', segment_rule{t}))
-        return true;
-    ec = BOOST_URL_ERR(
-        grammar::error::end);
-    it = start;
-    return false;
+    auto const it0 = it;
+    auto rv = grammar::parse(
+        it, end,
+        grammar::sequence_rule(
+            grammar::char_rule('/'),
+            segment_rule));
+    if(rv.has_value())
+        return std::get<1>(*rv);
+    it = it0;
+    return grammar::error::end;
 }
 
 //------------------------------------------------
 
-bool
+auto
+path_noscheme_rule::
+parse(
+    char const*& it,
+    char const* end
+        ) const noexcept ->
+    result<value_type>
+{
+    return grammar::parse_range(
+        it, end, *this,
+        &path_noscheme_rule::begin,
+        &path_noscheme_rule::increment);
+}
+
+auto
 path_noscheme_rule::
 begin(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    pct_encoded_view& t) noexcept
-{
-    if(grammar::parse(
-        it, end, ec,
-        segment_nz_nc_rule{t}))
-        return true;
-    // bad segment-nz-nc
-    ec = error::bad_schemeless_path_segment;
-    return false;
-}
-
-bool
-path_noscheme_rule::
-increment(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    pct_encoded_view& t) noexcept
-{
-    auto const start = it;
-    if(grammar::parse(
-        it, end, ec,
-        '/', segment_rule{t}))
-        return true;
-    ec = grammar::error::end;
-    it = start;
-    return false;
-}
-
-
-//------------------------------------------------
-
-bool
-path_rootless_rule::
-begin(
-    char const*& it,
-    char const* const end,
-    error_code& ec,
-    pct_encoded_view& t) noexcept
+    char const* end
+        ) const noexcept ->
+    result<pct_encoded_view>
 {
     return grammar::parse(
-        it, end, ec,
-        segment_nz_rule{t});
+        it, end, segment_nz_nc_rule);
 }
 
-bool
+auto
+path_noscheme_rule::
+increment(
+    char const*& it,
+    char const* end
+        ) const noexcept ->
+    result<pct_encoded_view>
+{
+    auto const it0 = it;
+    auto rv = grammar::parse(
+        it, end,
+        grammar::sequence_rule(
+            grammar::char_rule('/'),
+            segment_rule));
+    if(rv.has_value())
+        return std::get<1>(*rv);
+    it = it0;
+    return grammar::error::end;
+}
+
+//------------------------------------------------
+
+auto
+path_rootless_rule::
+parse(
+    char const*& it,
+    char const* end
+        ) const noexcept ->
+    result<value_type>
+{
+    return grammar::parse_range(
+        it, end, *this,
+        &path_rootless_rule::begin,
+        &path_rootless_rule::increment);
+}
+
+auto
+path_rootless_rule::
+begin(
+    char const*& it,
+    char const* end
+        ) const noexcept ->
+     result<pct_encoded_view>
+{
+    return grammar::parse(
+        it, end, segment_nz_rule);
+}
+
+auto
 path_rootless_rule::
 increment(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    pct_encoded_view& t) noexcept
+    char const* end
+        ) const noexcept ->
+    result<pct_encoded_view>
 {
-    auto const start = it;
-    if(grammar::parse(
-        it, end, ec,
-        '/', segment_rule{t}))
-        return true;
-    ec = grammar::error::end;
-    it = start;
-    return false;
+    auto const it0 = it;
+    auto rv = grammar::parse(
+        it, end,
+        grammar::sequence_rule(
+            grammar::char_rule('/'),
+            segment_rule));
+    if(rv.has_value())
+        return std::get<1>(*rv);
+    it = it0;
+    return grammar::error::end;
 }
 
 } // urls

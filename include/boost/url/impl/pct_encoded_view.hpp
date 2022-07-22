@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_IMPL_PCT_ENCODED_VIEW_HPP
 #define BOOST_URL_IMPL_PCT_ENCODED_VIEW_HPP
 
-#include <boost/url/grammar/is_mutable_string.hpp>
+#include <boost/url/grammar/type_traits.hpp>
 
 namespace boost {
 namespace urls {

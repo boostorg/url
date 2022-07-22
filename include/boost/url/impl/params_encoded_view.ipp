@@ -125,12 +125,13 @@ result<params_encoded_view>
 parse_query_params(
     string_view s) noexcept
 {
-    error_code ec;
-    query_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        return ec;
+    auto rv = grammar::parse(
+        s, query_rule{});
+    if(! rv)
+        return rv.error();
+    auto const& v = *rv;
     return params_encoded_view(
-        t.v.str(), t.v.size());
+        v.string(), v.size());
 }
 
 } // urls

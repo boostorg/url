@@ -11,15 +11,14 @@
 #define BOOST_URL_RFC_PCT_ENCODED_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/string_view.hpp>
 #include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/pct_encoding.hpp>
+#include <boost/url/result.hpp>
+#include <boost/url/string_view.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/error.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
-#include <boost/static_assert.hpp>
-
-#include <boost/url/pct_encoding.hpp>
 #include <boost/url/grammar/detail/charset.hpp>
+#include <boost/static_assert.hpp>
 
 namespace boost {
 namespace urls {
@@ -35,31 +34,51 @@ namespace urls {
         2.1. Percent-Encoding (rfc3986)</a>
 */
 template<class CharSet>
-struct pct_encoded_rule
+struct pct_encoded_rule_t
 {
-    pct_encoded_view s;
+    using value_type = pct_encoded_view;
 
+    template<class CharSet_>
     friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* end,
-        error_code& ec,
-        pct_encoded_rule& t) noexcept
-    {
-        parse(it, end, ec, t);
-    }
+    constexpr
+    auto
+    pct_encoded_rule(
+        CharSet_ const& cs) noexcept ->
+            pct_encoded_rule_t<CharSet_>;
 
-private:
-    static
-    void
+    result<value_type>
     parse(
         char const*& it,
-        char const* end,
-        error_code& ec,
-        pct_encoded_rule& t) noexcept;
+        char const* end) const noexcept;
+
+private:
+    CharSet cs_;
+
+    constexpr
+    pct_encoded_rule_t(
+        CharSet const& cs) noexcept
+        : cs_(cs)
+    {
+    }
 };
+
+template<class CharSet>
+constexpr
+auto
+pct_encoded_rule(
+    CharSet const& cs) noexcept ->
+        pct_encoded_rule_t<CharSet>
+{
+    // If an error occurs here it means that
+    // the value of your type does not meet
+    // the requirements. Please check the
+    // documentation!
+    static_assert(
+        is_charset<CharSet>::value,
+        "CharSet requirements not met");
+
+    return pct_encoded_rule_t<CharSet>(cs);
+}
 
 } // urls
 } // boost

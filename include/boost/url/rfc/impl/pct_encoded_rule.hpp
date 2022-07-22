@@ -12,22 +12,19 @@
 
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/grammar/charset.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
 
 template<class CharSet>
-void
-pct_encoded_rule<CharSet>::
+auto
+pct_encoded_rule_t<CharSet>::
 parse(
     char const*& it,
-    char const* end,
-    error_code& ec,
-    pct_encoded_rule& t) noexcept
+    char const* end) const noexcept ->
+        result<value_type>
 {
     auto const start = it;
-    static constexpr CharSet cs{};
     // VFALCO TODO
     // opt.plus_to_space?
     std::size_t n = 0;
@@ -35,7 +32,7 @@ parse(
 skip:
     it0 = it;
     it = grammar::find_if_not(
-        it0, end, cs);
+        it0, end, cs_);
     n += it - it0;
     if(it == end)
         goto finish;
@@ -47,28 +44,24 @@ skip:
         if(it == end)
         {
             // missing HEXDIG
-            ec = grammar::error::syntax;
-            return;
+            return grammar::error::syntax;
         }
         char r;
         if(!grammar::hexdig_value(*it, r))
         {
             // expected HEXDIG
-            ec = grammar::error::syntax;
-            return;
+            return grammar::error::syntax;
         }
         ++it;
         if(it == end)
         {
             // missing HEXDIG
-            ec = grammar::error::syntax;
-            return;
+            return grammar::error::syntax;
         }
         if(!grammar::hexdig_value(*it, r))
         {
             // expected HEXDIG
-            ec = grammar::error::syntax;
-            return;
+            return grammar::error::syntax;
         }
         ++n;
         ++it;
@@ -78,7 +71,7 @@ skip:
             goto skip;
     }
 finish:
-    t.s = detail::access::construct(
+    return detail::access::construct(
         string_view(start, it - start), n);
 }
 

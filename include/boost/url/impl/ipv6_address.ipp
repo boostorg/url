@@ -12,6 +12,7 @@
 
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/ipv4_address.hpp>
+#include <boost/url/rfc/h16_rule.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <cstring>
@@ -21,82 +22,27 @@ namespace urls {
 
 namespace detail {
 
-struct h16
+// return `true` if the hex
+// word could be 0..255 if
+// interpreted as decimal
+static
+bool
+maybe_octet(
+    unsigned char const* p) noexcept
 {
-    unsigned char* p;
-
-    // return `true` if the hex
-    // word could be 0..255 if
-    // interpreted as decimal
-    static
-    bool
-    is_octet(unsigned char const* p) noexcept
-    {
-        unsigned short word =
-            static_cast<unsigned short>(
-                p[0]) * 256 +
-            static_cast<unsigned short>(
-                p[1]);
-        if(word > 0x255)
-            return false;
-        if(((word >>  4) & 0xf) > 9)
-            return false;
-        if((word & 0xf) > 9)
-            return false;
-        return true;
-    }
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        h16 const& t) noexcept
-    {
-        BOOST_ASSERT(it != end);
-        std::uint16_t v;
-        for(;;)
-        {
-            char d;
-            if(!grammar::hexdig_value(*it, d))
-            {
-                // not a HEXDIG
-                ec = error::bad_hexdig;
-                return;
-            }
-            v = d;
-            ++it;
-            if(it == end)
-                break;
-            if(!grammar::hexdig_value(*it, d))
-                break;
-            v = (16 * v) + d;
-            ++it;
-            if(it == end)
-                break;
-            if(!grammar::hexdig_value(*it, d))
-                break;
-            v = (16 * v) + d;
-            ++it;
-            if(it == end)
-                break;
-            if(!grammar::hexdig_value(*it, d))
-                break;
-            v = (16 * v) + d;
-            ++it;
-            break;
-        }
-        ec = {};
-        t.p[0] = static_cast<
-            unsigned char>(
-                v / 256);
-        t.p[1] = static_cast<
-            unsigned char>(
-                v % 256);
-    }
-};
+    unsigned short word =
+        static_cast<unsigned short>(
+            p[0]) * 256 +
+        static_cast<unsigned short>(
+            p[1]);
+    if(word > 0x255)
+        return false;
+    if(((word >>  4) & 0xf) > 9)
+        return false;
+    if((word & 0xf) > 9)
+        return false;
+    return true;
+}
 
 } // detail
 
@@ -309,13 +255,15 @@ print_impl(
     return dest - dest0;
 }
 
-void
-ipv6_address::
+//------------------------------------------------
+
+auto
+ipv6_address_rule_t::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    ipv6_address& t) noexcept
+    char const* const end
+        ) const noexcept ->
+    result<ipv6_address>
 {
     int n = 8;      // words needed
     int b = -1;     // value of n
@@ -323,6 +271,7 @@ parse(
     bool c = false; // need colon
     auto prev = it;
     ipv6_address::bytes_type bytes;
+    result<h16_rule_t::value_type> rv;
     for(;;)
     {
         if(it == end)
@@ -334,8 +283,7 @@ parse(
             }
             BOOST_ASSERT(n > 0);
             // not enough words
-            ec = error::missing_words;
-            return;
+            return error::missing_words;
         }
         if(*it == ':')
         {
@@ -343,8 +291,7 @@ parse(
             if(it == end)
             {
                 // missing ':'
-                ec = error::missing_char_literal;
-                return;
+                return error::missing_char_literal;
             }
             if(*it == ':')
             {
@@ -360,48 +307,46 @@ parse(
                     continue;
                 }
                 // two "::"
-                ec = error::bad_ipv6;
-                return;
+                return error::bad_ipv6;
             }
             if(c)
             {
                 prev = it;
-                if(! grammar::parse(
-                    it, end, ec, 
-                    detail::h16{
-                        &bytes[2*(8-n)]}))
-                    return;
+                rv = grammar::parse(
+                    it, end, h16_rule);
+                if(! rv)
+                    return rv.error();
+                bytes[2*(8-n)+0] = rv->hi;
+                bytes[2*(8-n)+1] = rv->lo;
                 --n;
                 if(n == 0)
                     break;
                 continue;
             }
             // expected h16
-            ec = error::missing_words;
-            return;
+            return error::missing_words;
         }
         if(*it == '.')
         {
             if(b == -1 && n > 1)
             {
                 // not enough h16
-                ec = error::bad_ipv6;
-                return;
+                return error::bad_ipv6;
             }
-            if(! detail::h16::is_octet(
+            if(! detail::maybe_octet(
                 &bytes[2*(7-n)]))
             {
                 // invalid octet
-                ec = error::bad_octet;
-                return;
+                return error::bad_octet;
             }
             // rewind the h16 and
             // parse it as ipv4
-            ipv4_address v4;
             it = prev;
-            if(! grammar::parse(
-                    it, end, ec, v4))
-                return;
+            auto rv1 = grammar::parse(
+                it, end, ipv4_address_rule);
+            if(! rv1)
+                return rv1.error();
+            auto v4 = rv1.value();
             auto const b4 =
                 v4.to_bytes();
             bytes[2*(7-n)+0] = b4[0];
@@ -421,11 +366,12 @@ parse(
         if(! c)
         {
             prev = it;
-            if(! grammar::parse(
-                it, end, ec,
-                detail::h16{
-                    &bytes[2*(8-n)]}))
-                return;
+            rv = grammar::parse(
+                it, end, h16_rule);
+            if(! rv)
+                return rv.error();
+            bytes[2*(8-n)+0] = rv->hi;
+            bytes[2*(8-n)+1] = rv->lo;
             --n;
             if(n == 0)
                 break;
@@ -433,15 +379,10 @@ parse(
             continue;
         }
         // ':' divides a word
-        ec = error::bad_ipv6;
-        return;
+        return error::bad_ipv6;
     }
-    ec = {};
     if(b == -1)
-    {
-        t = bytes;
-        return;
-    }
+        return ipv6_address{bytes};
     if(b == n)
     {
         // "::" last
@@ -479,19 +420,16 @@ parse(
             &bytes[i0],
             0, 16 - (i0 + i1));
     }
-    t = bytes;
+    return ipv6_address{bytes};
 }
 
-result<ipv6_address>
+auto
 parse_ipv6_address(
-    string_view s) noexcept
+    string_view s) noexcept ->
+        result<ipv6_address>
 {
-    error_code ec;
-    ipv6_address addr;
-    if(! grammar::parse_string(
-            s, ec, addr))
-        return ec;
-    return addr;
+    return grammar::parse(
+        s, ipv6_address_rule);
 }
 
 } // urls

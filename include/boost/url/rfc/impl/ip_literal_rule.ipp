@@ -12,50 +12,63 @@
 
 #include <boost/url/rfc/ip_literal_rule.hpp>
 #include <boost/url/ipv6_address.hpp>
+#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/ipv_future_rule.hpp>
-#include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
 
-void
-ip_literal_rule::
+auto
+ip_literal_rule_t::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    ip_literal_rule& t) noexcept
+    char const* const end
+        ) const noexcept ->
+    result<value_type>
 {
+    value_type t;
+
     // '['
-    if(! grammar::parse(
-            it, end, ec, '['))
-        return;
+    {
+        auto rv = grammar::parse(
+            it, end, grammar::char_rule('['));
+        if(! rv)
+            return rv.error();
+    }
     if(it == end)
     {
         // expected address
-        ec = grammar::error::incomplete;
-        return;
+        return grammar::error::incomplete;
     }
     if(*it != 'v')
     {
         // IPv6address
-        if(! grammar::parse(
-                it, end, ec,
-                t.ipv6, ']'))
-            return;
+        auto rv = grammar::parse(
+            it, end,
+            grammar::sequence_rule(
+                ipv6_address_rule,
+                grammar::char_rule(']')));
+        if(! rv)
+            return rv.error();
+        t.ipv6 = std::get<0>(*rv);
         t.is_ipv6 = true;
+        return t;
     }
-    else
     {
         // IPvFuture
-        ipv_future_rule p;
-        if(! grammar::parse(
-                it, end, ec,
-                p, ']'))
-            return;
+        auto rv = grammar::parse(
+            it, end, 
+            grammar::sequence_rule(
+                ipv_future_rule,
+                grammar::char_rule(']')));
+        if(! rv)
+            return rv.error();
         t.is_ipv6 = false;
-        t.ipvfuture = p.str;
+        t.ipvfuture = std::get<0>(*rv).str;
+        return t;
     }
 }
 

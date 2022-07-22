@@ -16,7 +16,6 @@
 #include <boost/url/rfc/hier_part_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/scheme_rule.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -38,35 +37,26 @@ namespace urls {
         @ref query_part_rule,
         @ref scheme_part_rule.
 */
-struct uri_rule
+struct uri_rule_t
 {
-    scheme_part_rule     scheme_part;
-    hier_part_rule       hier_part;
-    query_part_rule      query_part;
-    fragment_part_rule   fragment_part;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        uri_rule& t) noexcept
+    struct value_type
     {
-        return parse(it, end, ec, t);
-    }
+        scheme_part_rule::value_type     scheme_part;
+        decltype(hier_part_rule)::value_type hier_part;
+        decltype(query_part_rule)::value_type query_part;
+        decltype(fragment_part_rule)::value_type fragment_part;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    auto
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        uri_rule& t) noexcept;
+        char const* const end
+            ) const noexcept ->
+        result<value_type>;
 };
+
+constexpr uri_rule_t uri_rule{};
 
 } // urls
 } // boost

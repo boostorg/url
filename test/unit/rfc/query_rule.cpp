@@ -42,16 +42,18 @@ public:
         std::initializer_list<
             query_param_view> i)
     {
-        query_rule t;
-        if(! BOOST_TEST_NO_THROW(
-            grammar::parse_string(s, t)))
+        auto rv = grammar::parse(
+            s, query_rule{});
+        if(! BOOST_TEST(! rv.has_error()))
             return;
-        if(! BOOST_TEST(t.v.size() == i.size()))
+        auto const& t = *rv;
+        if(! BOOST_TEST_EQ(
+            t.size(), i.size()))
             return;
         BOOST_TEST(std::equal(
             i.begin(),
             i.end(),
-            t.v.begin()));
+            t.begin()));
     }
 
     void
@@ -59,8 +61,8 @@ public:
     {
         check("", {{}});
         check("&", {{},{}});
-        check("x", {{"x"}});
-        check("x&", {{"x"},{}});
+        check("x", {{"x","",false}});
+        check("x&", {{"x","",false},{}});
         check("x=", {{"x","",true}});
         check("x=y", {{"x","y",true}});
         check("a=b&c=d", {{"a","b",true},{"c","d",true}});
@@ -71,24 +73,24 @@ public:
     {
         testParse();
 
-        using T = query_rule;
+        auto const& t = query_rule{};
+        
+        bad(t, "%");
 
-        bad <T>("%");
-
-        good<T>("");
-        good<T>("x");
-        good<T>("x=");
-        good<T>("x=y");
-        good<T>("x=y&");
-        good<T>("x=y&a");
-        good<T>("x=y&a=b&");
-        good<T>("keys[]=value1&keys[]=value2");
+        ok(t, "");
+        ok(t, "x");
+        ok(t, "x=");
+        ok(t, "x=y");
+        ok(t, "x=y&");
+        ok(t, "x=y&a");
+        ok(t, "x=y&a=b&");
+        ok(t, "keys[]=value1&keys[]=value2");
 
         // some gen-delims
-        bad<T>("#");
+        bad(t, "#");
 
         // pchar / "/" / "?"
-        good<T>(
+        ok(t,
             // unreserved
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz"

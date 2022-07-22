@@ -11,13 +11,12 @@
 #define BOOST_URL_RFC_URI_REFERENCE_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/fragment_rule.hpp>
 #include <boost/url/rfc/paths_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/scheme_rule.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -36,44 +35,34 @@ namespace urls {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
         >3. Syntax Components (rfc3986)</a>
 
-
     @see
         @ref authority_rule,
         @ref fragment_part_rule,
         @ref query_part_rule,
         @ref scheme_part_rule.
 */
-struct uri_reference_rule
+struct uri_reference_rule_t
 {
-    scheme_part_rule     scheme_part;
-    bool                has_authority = false;
-    authority_rule       authority;
-    parsed_path         path;
-    query_part_rule      query_part;
-    fragment_part_rule   fragment_part;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        uri_reference_rule& t) noexcept
+    struct value_type
     {
-        return parse(it, end, ec, t);
-    }
+        scheme_part_rule::value_type scheme_part;
+        bool has_authority = false;
+        decltype(authority_rule)::value_type authority;
+        parsed_path path;
+        decltype(query_part_rule)::value_type query_part;
+        decltype(fragment_part_rule)::value_type fragment_part;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    auto
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        uri_reference_rule& t) noexcept;
+        char const* end
+            ) const noexcept ->
+    result<value_type>;
 };
+
+constexpr uri_reference_rule_t uri_reference_rule{};
 
 } // urls
 } // boost

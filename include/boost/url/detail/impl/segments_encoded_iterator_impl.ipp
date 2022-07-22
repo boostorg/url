@@ -65,31 +65,28 @@ void
 segments_encoded_iterator_impl::
 increment() noexcept
 {
-    using bnf_t =
-        path_rootless_rule;
     BOOST_ASSERT(next_ != nullptr);
     ++i_;
     pos_ = next_;
     error_code ec;
     // "/" segment
     pct_encoded_view t;
-    bnf_t::increment(
-        next_, end_, ec, t);
-    if(ec == grammar::error::end)
+    auto rv =
+        path_rootless_rule{}.increment(
+            next_, end_);
+    if(rv == grammar::error::end)
     {
         next_ = nullptr;
         return;
     }
     BOOST_ASSERT(! ec);
-    s_ = t.encoded();
+    s_ = rv->encoded();
 }
 
 void
 segments_encoded_iterator_impl::
 decrement() noexcept
 {
-    using bnf_t =
-        path_rootless_rule;
     BOOST_ASSERT(i_ != 0);
     --i_;
     if(i_ == 0)
@@ -107,31 +104,25 @@ decrement() noexcept
             continue;
         // "/" segment
         next_ = pos_;
-        pct_encoded_view t;
-        bnf_t::increment(next_,
-            end_, ec, t);
-        BOOST_ASSERT(! ec);
-        s_ = t.encoded();
+        auto rv = path_rootless_rule{}.increment(
+            next_, end_);
+        s_ = rv->encoded();
         return;
     }
     next_ = pos_;
     if(*next_ == '/')
     {
         // "/" segment
-        pct_encoded_view t;
-        bnf_t::increment(next_,
-            end_, ec, t);
-        BOOST_ASSERT(! ec);
-        s_ = t.encoded();
+        auto rv = path_rootless_rule{}.increment(
+            next_, end_);
+        s_ = rv->encoded();
     }
     else
     {
         // segment-nz
-        pct_encoded_view t;
-        bnf_t::begin(next_,
-            end_, ec, t);
-        BOOST_ASSERT(! ec);
-        s_ = t.encoded();
+        auto rv = path_rootless_rule{}.begin(
+            next_, end_);
+        s_ = rv->encoded();
     }
 }
 

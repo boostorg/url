@@ -220,13 +220,8 @@ set_scheme_impl(
     urls::scheme id)
 {
     check_invariants();
-    scheme_rule b;
-    error_code ec;
-    grammar::parse_string(s, ec, b);
-    if(ec.failed())
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
-
+    grammar::parse(
+        s, scheme_rule()).value();
     auto const n = s.size();
     auto const p = offset(id_path);
 
@@ -711,11 +706,8 @@ set_encoded_userinfo(
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    error_code ec;
-    userinfo_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+    auto t = grammar::parse(
+        s, userinfo_rule).value();
     auto dest = set_userinfo_impl(s.size());
     split(id_user, 2 + t.user.encoded().size());
     if(! s.empty())
@@ -876,11 +868,8 @@ set_encoded_host(string_view s)
         this->string());
     s = buf.maybe_copy(s);
     // first try parsing it
-    host_rule t;
-    error_code ec;
-    if(! grammar::parse_string(s, ec, t))
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+    auto t = grammar::parse(
+        s, host_rule).value();
     BOOST_ASSERT(t.host_type !=
         urls::host_type::none);
     check_invariants();
@@ -984,12 +973,8 @@ set_port(string_view s)
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    port_rule t;
-    error_code ec;
-    if(! grammar::parse_string(
-            s, ec, t))
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+    auto t = grammar::parse(
+        s, port_rule{}).value();
     auto dest =
         set_port_impl(t.str.size());
     std::memcpy(dest,
@@ -1045,11 +1030,8 @@ set_encoded_authority(string_view s)
     detail::copied_strings buf(
         this->string());
     s = buf.maybe_copy(s);
-    error_code ec;
-    authority_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+    auto t = grammar::parse(
+        s, authority_rule).value();
     auto n = s.size() + 2;
     auto const need_slash =
         ! is_path_absolute() &&
@@ -1958,13 +1940,11 @@ set_encoded_fragment(
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    error_code ec;
-    fragment_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        detail::throw_invalid_argument(
+    auto t = grammar::parse(
+        s, fragment_rule).value(
             BOOST_CURRENT_LOCATION);
     auto dest = set_fragment_impl(s.size());
-    decoded_[id_frag] = t.s.size();
+    decoded_[id_frag] = t.size();
     if(! s.empty())
         std::memcpy(
             dest, s.data(), s.size());

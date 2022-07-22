@@ -11,10 +11,9 @@
 #define BOOST_URL_RFC_SCHEME_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -35,30 +34,18 @@ namespace urls {
 */
 struct scheme_rule
 {
-    string_view scheme;
-    urls::scheme scheme_id{urls::scheme::unknown};
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        scheme_rule& t) noexcept
+    struct value_type
     {
-        return parse(it, end, ec, t);
-    }
+        string_view scheme;
+        urls::scheme scheme_id =
+            urls::scheme::unknown;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    result<value_type>
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        scheme_rule& t) noexcept;
+        char const* end) const noexcept;
 };
 
 /** Rule for scheme-part
@@ -79,33 +66,19 @@ private:
 */
 struct scheme_part_rule
 {
-    string_view scheme;
-    urls::scheme scheme_id =
-        urls::scheme::none;
-    string_view scheme_part;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        scheme_part_rule& t) noexcept
+    struct value_type
     {
-        parse(it, end, ec, t);
-    }
+        string_view scheme;
+        urls::scheme scheme_id =
+            urls::scheme::none;
+        string_view scheme_part;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    result<value_type>
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        scheme_part_rule& t) noexcept;
-
+        char const* end) const noexcept;
 };
 
 } // urls

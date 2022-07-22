@@ -14,7 +14,9 @@
 #include <boost/url/error_code.hpp>
 #include <boost/url/query_param.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/optional_rule.hpp>
 #include <boost/url/grammar/range.hpp>
 #include <cstddef>
 
@@ -47,45 +49,38 @@ namespace urls {
 */
 struct query_rule
 {
-    using value_type = query_param;
-    using reference = query_param_view;
-
-    grammar::range<query_rule> v;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        query_rule& t) noexcept
-    {
-        grammar::parse(
-            it, end, ec, t.v);
-    }
+    using value_type =
+        grammar::range<
+            query_param_view>;
 
     BOOST_URL_DECL
-    static
-    bool
-    begin(
+    result<value_type>
+    parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        reference& t) noexcept;
-
-    BOOST_URL_DECL
-    static
-    bool
-    increment(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        reference& t) noexcept;
+        char const* end
+            ) const noexcept;
 
 private:
-    struct key_chars;
-    struct value_chars;
+    BOOST_URL_DECL
+    result<query_param_view>
+    begin(
+        char const*& it,
+        char const* end
+            ) const noexcept;
+
+    BOOST_URL_DECL
+    result<query_param_view>
+    increment(
+        char const*& it,
+        char const* end
+            ) const noexcept;
+
+private:
+    result<query_param_view>
+    parse_query_param(
+        char const*& it,
+        char const* end
+            ) const noexcept;
 };
 
 //------------------------------------------------
@@ -106,35 +101,11 @@ private:
     @see
         @ref query_rule.
 */
-struct query_part_rule
-{
-    bool has_query = false;
-    query_rule query;
-    string_view query_part;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        query_part_rule& t) noexcept
-    {
-        parse(it, end, ec, t);
-    }
-
-private:
-    BOOST_URL_DECL
-    static
-    void
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        query_part_rule& t) noexcept;
-
-};
+auto constexpr query_part_rule =
+    grammar::optional_rule(
+        grammar::sequence_rule(
+            grammar::char_rule('?'),
+            query_rule{}));
 
 } // urls
 } // boost

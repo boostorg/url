@@ -21,6 +21,7 @@ else()
     add_subdirectory(../../../type_traits boostorg/type_traits)
     add_subdirectory(../../../predef boostorg/predef)
     add_subdirectory(../../../mp11 boostorg/mp11)
+    add_subdirectory(../../../optional boostorg/optional)
     add_subdirectory(../../../winapi boostorg/winapi)
     add_subdirectory(../../../container_hash boostorg/container_hash)
     add_subdirectory(../../../move boostorg/move)
@@ -29,6 +30,9 @@ else()
     add_subdirectory(../../../align boostorg/align)
     add_subdirectory(../../../system boostorg/system)
     add_subdirectory(../../../container boostorg/container)
+
+    add_subdirectory(../../../io boostorg/io)
+    add_subdirectory(../../../utility boostorg/utility)
 
     # Conditional deps
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../detail/CMakeLists.txt")

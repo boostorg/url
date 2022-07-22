@@ -25,6 +25,17 @@
 #include <boost/url/scheme.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/parts_base.hpp>
+
+// VFALCO These structs used to be forward
+// declared, but the parsers now use a
+// nested type.
+#include <boost/url/rfc/authority_rule.hpp>
+#include <boost/url/rfc/fragment_rule.hpp>
+#include <boost/url/rfc/host_rule.hpp>
+#include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/rfc/query_rule.hpp>
+#include <boost/url/rfc/scheme_rule.hpp>
+
 #include <boost/assert.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -34,15 +45,6 @@
 
 namespace boost {
 namespace urls {
-
-#ifndef BOOST_URL_DOCS
-struct authority_rule;
-struct fragment_part_rule;
-struct host_rule;
-struct parsed_path;
-struct query_part_rule;
-struct scheme_part_rule;
-#endif
 
 /** A read-only view to a URL
 
@@ -1930,14 +1932,13 @@ public:
     BOOST_URL_DECL friend result<url_view>
         parse_uri_reference(string_view s);
 
-
 private:
-    void apply(scheme_part_rule const& t) noexcept;
-    void apply(host_rule const& h) noexcept;
-    void apply(authority_rule const& t) noexcept;
+    void apply(scheme_part_rule::value_type const& t) noexcept;
+    void apply(decltype(host_rule)::value_type const& h) noexcept;
+    void apply(decltype(authority_rule)::value_type const& t) noexcept;
     void apply(parsed_path const& path) noexcept;
-    void apply(query_part_rule const& t) noexcept;
-    void apply(fragment_part_rule const& t) noexcept;
+    void apply(decltype(query_part_rule)::value_type const& t) noexcept;
+    void apply(decltype(fragment_part_rule)::value_type const& t) noexcept;
 };
 
 //------------------------------------------------

@@ -80,6 +80,7 @@ function(boost_url_setup_properties target)
                 Boost::assert
                 Boost::config
                 Boost::mp11
+                Boost::optional
                 Boost::system
                 Boost::throw_exception
                 Boost::type_traits

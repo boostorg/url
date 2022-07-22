@@ -11,13 +11,12 @@
 #define BOOST_URL_RFC_HOST_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
 #include <boost/url/host_type.hpp>
 #include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
+#include <boost/url/result.hpp>
 
 namespace boost {
 namespace urls {
@@ -38,38 +37,29 @@ namespace urls {
         @ref ipv4_address,
         @ref ipv6_address.
 */
-struct host_rule
+struct host_rule_t
 {
-    urls::host_type host_type =
-        urls::host_type::none;
-    pct_encoded_view name;
-    ipv4_address ipv4;
-    ipv6_address ipv6;
-    string_view ipvfuture;
-    string_view host_part;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        host_rule& t) noexcept
+    struct value_type
     {
-        return parse(it, end, ec, t);
-    }
+        urls::host_type host_type =
+            urls::host_type::none;
+        pct_encoded_view name;
+        ipv4_address ipv4;
+        ipv6_address ipv6;
+        string_view ipvfuture;
+        string_view host_part;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    auto
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        host_rule& t) noexcept;
+        char const* end
+            ) const noexcept ->
+        result<value_type>;
 };
+
+constexpr host_rule_t host_rule{};
 
 } // urls
 } // boost

@@ -20,16 +20,6 @@ customization point.
 
 [snippet_customization_1]
 
-The `tag_invoke` customization points are defined as a
-[@http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1601r0.pdf hidden friend] of the rule object.
-Thus, the befriended `tag_invoke` overload should be fully defined within the class synopsis.
-
-This means the function [link url.ref.boost__urls__grammar__parse `parse`] can only rely on
-[@https://en.cppreference.com/w/cpp/language/adl argument-dependent lookup] to find these function
-overloads with the appropriate tag [link url.ref.boost__urls__grammar__parse_tag `grammar::parse_tag`].
-
-At this point, the new rule can interact with existing rules in any of the parsing functions:
-
 [table [[Code][Output]] [[
 [c++]
 [snippet_customization_2]

@@ -17,9 +17,8 @@
 namespace boost {
 namespace urls {
 
-class userinfo_rule_test
+struct userinfo_rule_test
 {
-public:
     void
     check(
         string_view s,
@@ -27,14 +26,13 @@ public:
         string_view s2,
         bool check_s2 = true)
     {
-        userinfo_rule t;
-        error_code ec;
-        if(! BOOST_TEST(
-            grammar::parse_string(s, ec, t)))
+        auto rv = grammar::parse(
+            s, userinfo_rule);
+        if(! BOOST_TEST(rv.has_value()))
             return;
-        if(! BOOST_TEST(! ec))
-            return;
-        BOOST_TEST_EQ(t.user.encoded(), s1);
+        auto t = *rv;
+        BOOST_TEST_EQ(
+            t.user.encoded(), s1);
         if(check_s2)
         {
             BOOST_TEST(
@@ -50,18 +48,19 @@ public:
     void
     run()
     {
-        using T = userinfo_rule;
+        auto const& t =
+            userinfo_rule;
 
-        bad<T> ("@");
+        bad(t, "@");
 
-        good<T>("");
-        good<T>("x");
-        good<T>("xy");
-        good<T>("x:");
-        good<T>("x:y");
-        good<T>("x:y:");
-        good<T>("x:y:z");
-        good<T>("%41");
+        ok(t, "");
+        ok(t, "x");
+        ok(t, "xy");
+        ok(t, "x:");
+        ok(t, "x:y");
+        ok(t, "x:y:");
+        ok(t, "x:y:z");
+        ok(t, "%41");
 
         check("x",      "x",  "", false);
         check("x:",     "x",  "");

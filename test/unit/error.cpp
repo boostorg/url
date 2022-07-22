@@ -56,7 +56,6 @@ public:
         check(error::bad_ipv6);
         check(error::bad_leading_zero);
         check(error::bad_octet);
-        check(error::bad_schemeless_path_segment);
         check(error::empty);
         check(error::empty_path_segment);
         check(error::illegal_null);

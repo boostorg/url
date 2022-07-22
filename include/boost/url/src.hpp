@@ -62,11 +62,12 @@ in a translation unit of the program.
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_view.ipp>
 
+#include <boost/url/grammar/impl/dec_octet_rule.ipp>
 #include <boost/url/grammar/impl/error.ipp>
 
 #include <boost/url/rfc/impl/absolute_uri_rule.ipp>
 #include <boost/url/rfc/impl/authority_rule.ipp>
-#include <boost/url/rfc/impl/fragment_rule.ipp>
+#include <boost/url/rfc/impl/h16_rule.ipp>
 #include <boost/url/rfc/impl/hier_part_rule.ipp>
 #include <boost/url/rfc/impl/host_rule.ipp>
 #include <boost/url/rfc/impl/ip_literal_rule.ipp>
@@ -74,7 +75,6 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/paths_rule.ipp>
 #include <boost/url/rfc/impl/port_rule.ipp>
 #include <boost/url/rfc/impl/query_rule.ipp>
-#include <boost/url/rfc/impl/reg_name_rule.ipp>
 #include <boost/url/rfc/impl/relative_part_rule.ipp>
 #include <boost/url/rfc/impl/relative_ref_rule.ipp>
 #include <boost/url/rfc/impl/scheme_rule.ipp>

@@ -11,10 +11,9 @@
 #define BOOST_URL_RFC_IP_LITERAL_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
 #include <boost/url/ipv6_address.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -33,34 +32,25 @@ namespace urls {
     @see
         @ref ipv6_address.
 */
-struct ip_literal_rule
+struct ip_literal_rule_t
 {
-    bool is_ipv6 = false;
-    ipv6_address ipv6;
-    string_view ipvfuture;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        ip_literal_rule& t) noexcept
+    struct value_type
     {
-        parse(it, end, ec, t);
-    }
+        bool is_ipv6 = false;
+        ipv6_address ipv6;
+        string_view ipvfuture;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    auto
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        ip_literal_rule& t) noexcept;
+        char const* end
+            ) const noexcept ->
+        result<value_type>;
 };
+
+constexpr ip_literal_rule_t ip_literal_rule{};
 
 } // urls
 } // boost

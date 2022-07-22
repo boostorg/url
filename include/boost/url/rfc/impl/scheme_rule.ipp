@@ -12,32 +12,32 @@
 
 #include <boost/url/rfc/scheme_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>
+#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
 
-void
+auto
 scheme_rule::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    scheme_rule& t) noexcept
+    char const* end) const noexcept ->
+        result<value_type>
 {
     auto const start = it;
     if(it == end)
     {
         // expected alpha
-        ec = grammar::error::incomplete;
-        return;
+        return grammar::error::incomplete;
     }
     if(! grammar::alpha_chars(*it))
     {
         // expected alpha
-        ec = error::bad_alpha;
-        return;
+        return error::bad_alpha;
     }
+
     static
     constexpr
     grammar::lut_chars scheme_chars(
@@ -46,29 +46,35 @@ parse(
         "abcdefghijklmnopqrstuvwxyz");
     it = grammar::find_if_not(
         it + 1, end, scheme_chars);
+    value_type t;
     t.scheme = string_view(
         start, it - start);
     t.scheme_id = string_to_scheme(
         t.scheme);
+    return t;
 }
 
-void
+auto
 scheme_part_rule::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    scheme_part_rule& t) noexcept
+    char const* end) const noexcept ->
+        result<value_type>
 {
-    auto const start = it;
-    scheme_rule t0;
-    if(! grammar::parse(
-        it, end, ec, t0, ':'))
-        return;
-    t.scheme = t0.scheme;
-    t.scheme_id = t0.scheme_id;
+    auto const it0 = it;
+    auto rv = grammar::parse(
+        it, end,
+        grammar::sequence_rule(
+            scheme_rule(),
+            grammar::char_rule(':')));
+    if(! rv)
+        return rv.error();
+    value_type t;
+    t.scheme = get<0>(*rv).scheme;
+    t.scheme_id = get<0>(*rv).scheme_id;
     t.scheme_part = string_view(
-        start, it - start);
+        it0, it - it0);
+    return t;
 }
 
 } // urls

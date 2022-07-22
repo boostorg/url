@@ -890,12 +890,11 @@ grammar_parse()
     {
         //[snippet_parse_1
         urls::string_view s = "http:after_scheme";
-        urls::scheme_rule r;
         const char* it = s.begin();
-        urls::error_code ec;
-        if (urls::grammar::parse(it, s.end(), ec, r))
+        auto rv = urls::grammar::parse(it, s.end(), urls::scheme_rule() );
+        if( ! rv )
         {
-            std::cout << "scheme: " << r.scheme << '\n';
+            std::cout << "scheme: " << rv->scheme << '\n';
             std::cout << "suffix: " << it << '\n';
         }
         //]
@@ -903,39 +902,45 @@ grammar_parse()
 
     {
         //[snippet_parse_2
+        // VFALCO This needs refactoring
+        /*
         urls::string_view s = "?key=value#anchor";
-        urls::query_part_rule r1;
-        urls::fragment_part_rule r2;
         const char* it = s.begin();
         urls::error_code ec;
         if (urls::grammar::parse(it, s.end(), ec, r1))
         {
-            if (urls::grammar::parse(it, s.end(), ec, r2))
+            auto r2 = urls::grammar::parse( it, s.end(), urls::fragment_part_rule );
+            if( r2 )
             {
                 std::cout << "query: " << r1.query_part << '\n';
-                std::cout << "fragment: " << r2.fragment.encoded() << '\n';
+                std::cout << "fragment: " << std::get<1>(*r2.value()).encoded() << '\n';
             }
         }
+        */
         //]
     }
 
     {
         //[snippet_parse_3
+        // VFALCO This needs refactoring
+        /*
         urls::string_view s = "?key=value#anchor";
         urls::query_part_rule r1;
-        urls::fragment_part_rule r2;
         const char* it = s.begin();
         urls::error_code ec;
-        if (urls::grammar::parse(it, s.end(), ec, r1, r2))
+        auto r2 = urls::grammar::parse( it, s.end(), ec, urls::fragment_part_rule );
+        if( ! ec.failed() )
         {
             std::cout << "query: " << r1.query_part << '\n';
             std::cout << "fragment: " << r2.fragment.encoded() << '\n';
         }
+        */
         //]
     }
 
     {
         //[snippet_parse_4
+        /* VFALCO This will be removed
         urls::string_view s = "http://www.boost.org";
         urls::uri_rule r;
         urls::error_code ec;
@@ -944,11 +949,13 @@ grammar_parse()
             std::cout << "scheme: " << r.scheme_part.scheme << '\n';
             std::cout << "host: " << r.hier_part.authority.host.host_part << '\n';
         }
+        */
         //]
     }
 }
 
 //[snippet_customization_1
+/* VFALCO This needs rewriting
 struct lowercase_rule
 {
     urls::string_view str;
@@ -971,6 +978,7 @@ struct lowercase_rule
         t.str = urls::string_view(begin, it);
     }
 };
+*/
 //]
 
 void
@@ -978,6 +986,8 @@ grammar_customization()
 {
     {
         //[snippet_customization_2
+        // VFALCO THIS NEEDS TO BE PORTED
+        /*
         urls::string_view s = "http:somelowercase";
         urls::scheme_rule r1;
         lowercase_rule r2;
@@ -987,6 +997,7 @@ grammar_customization()
             std::cout << "scheme: " << r1.scheme << '\n';
             std::cout << "lower:  " << r2.str << '\n';
         }
+        */
         //]
     }
 }
@@ -1040,12 +1051,12 @@ grammar_charset()
     {
         //[snippet_charset_3
         urls::string_view s = "key=the%20value";
-        urls::pct_encoded_rule<urls::query_chars_t> r;
-        urls::error_code ec;
-        if (urls::grammar::parse_string(s, ec, r))
+        
+        urls::result<urls::pct_encoded_view> rv = urls::grammar::parse(s, urls::pct_encoded_rule(urls::query_chars));
+        if( ! rv.has_error() )
         {
-            std::cout << "query:        " << r.s.encoded() << '\n';
-            std::cout << "decoded size: " << r.s.size() << '\n';
+            std::cout << "query:        " << rv->encoded() << '\n';
+            std::cout << "decoded size: " << rv->size() << '\n';
         }
         //]
     }

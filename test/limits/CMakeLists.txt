@@ -22,6 +22,7 @@ target_link_libraries(boost_url_limits PRIVATE
     Boost::align
     Boost::config
     Boost::core
+    Boost::optional
     Boost::type_traits
     Boost::system
     Boost::variant2)

@@ -24,46 +24,35 @@ public:
     void
     run()
     {
-        auto const bad = [](string_view s)
-        {
-            error_code ec;
-            absolute_uri_rule t;
-            grammar::parse_string(s, ec, t);
-            BOOST_TEST(ec.failed());
-        };
+        auto const& t = absolute_uri_rule;
 
-        auto const good = [](string_view s)
-        {
-            error_code ec;
-            absolute_uri_rule t;
-            grammar::parse_string(s, ec, t);
-            BOOST_TEST(! ec.failed());
-        };
+        bad(t, "");
+        bad(t, ":");
+        bad(t, "http://#");
+        bad(t, "http://x.y.z/?a=b&c=d&#");
+        bad(t, "http://x.y.z/?a=b&c=d&#frag");
+        bad(t, "http://x.y.z/#frag");
+        bad(t, "http://%");
+        bad(t, "http://?%");
 
-        bad("");
-        bad(":");
-        bad("http://#");
-        bad("http://x.y.z/?a=b&c=d&#");
-        bad("http://x.y.z/?a=b&c=d&#frag");
-        bad("http://x.y.z/#frag");
-        bad("http://%");
-        bad("http://?%");
+        ok(t, "http:");
+        ok(t, "http:x");
+        ok(t, "http:x/");
+        ok(t, "http:x/x");
+        ok(t, "http:x//");
+        ok(t, "http://");
+        ok(t, "http://x");
+        ok(t, "http://x.y.z");
+        ok(t, "http://x.y.z/");
+        ok(t, "http://x.y.z/?");
+        ok(t, "http://x.y.z/?a");
+        ok(t, "http://x.y.z/?a=");
+        ok(t, "http://x.y.z/?a=b");
+        ok(t, "http://x.y.z/?a=b&c=d");
+        ok(t, "http://x.y.z/?a=b&c=d&");
 
-        good("http:");
-        good("http:x");
-        good("http:x/");
-        good("http:x/x");
-        good("http:x//");
-        good("http://");
-        good("http://x");
-        good("http://x.y.z");
-        good("http://x.y.z/");
-        good("http://x.y.z/?");
-        good("http://x.y.z/?a");
-        good("http://x.y.z/?a=");
-        good("http://x.y.z/?a=b");
-        good("http://x.y.z/?a=b&c=d");
-        good("http://x.y.z/?a=b&c=d&");
+        // magnet link
+        ok(t, "magnet:?xt=urn:btih:d2474e86c");
     }
 };
 

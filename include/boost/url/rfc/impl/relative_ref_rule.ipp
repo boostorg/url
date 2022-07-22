@@ -19,31 +19,44 @@
 namespace boost {
 namespace urls {
 
-void
-relative_ref_rule::
+auto
+relative_ref_rule_t::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    relative_ref_rule& t) noexcept
+    char const* const end
+        ) const noexcept ->
+    result<value_type>
 {
+    value_type t;
+
     // relative-part
-    if(! grammar::parse(
-        it, end, ec,
-            t.relative_part))
-        return;
+    {
+        auto rv = grammar::parse(
+            it, end, relative_part_rule);
+        if(! rv)
+            return rv.error();
+        t.relative_part = *rv;
+    }
 
     // [ "?" query ]
-    if(! grammar::parse(
-        it, end, ec,
-            t.query_part))
-        return;
+    {
+        auto rv = grammar::parse(
+            it, end, query_part_rule);
+        if(! rv)
+            return rv.error();
+        t.query_part = *rv;
+    }
 
     // [ "#" fragment ]
-    if(! grammar::parse(
-        it, end, ec,
-            t.fragment_part))
-        return;
+    {
+        auto rv = grammar::parse(
+            it, end, fragment_part_rule);
+        if(! rv)
+            return rv.error();
+        t.fragment_part = *rv;
+    }
+
+    return t;
 }
 
 } // urls

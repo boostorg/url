@@ -14,7 +14,7 @@
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/pct_encoded_view.hpp>
-#include <boost/url/grammar/is_mutable_string.hpp>
+#include <boost/url/grammar/type_traits.hpp>
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
 

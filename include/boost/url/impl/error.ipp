@@ -39,7 +39,6 @@ case error::bad_hexdig: return "bad hexdig";
 case error::bad_ipv6: return "bad ipv6";
 case error::bad_leading_zero: return "bad leading zero";
 case error::bad_octet: return "bad octet";
-case error::bad_schemeless_path_segment: return "bad segment-nz-nc";
 case error::empty: return "incomplete";
 case error::empty_path_segment: return "empty path segment";
 case error::illegal_null: return "illegal null";

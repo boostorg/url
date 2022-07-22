@@ -520,28 +520,28 @@ __url__ are as follows:
     [Function]
     [Description]
 ][
-    [[link url.ref.boost__urls__url_view.set_userinfo `set_userinfo`]]
+    [[link url.ref.boost__urls__url.set_userinfo `set_userinfo`]]
     [Set the userinfo.]
 ][
-    [[link url.ref.boost__urls__url_view.set_encoded_userinfo `set_encoded_userinfo`]]
+    [[link url.ref.boost__urls__url.set_encoded_userinfo `set_encoded_userinfo`]]
     [Set the encoded userinfo.]
 ][
-    [[link url.ref.boost__urls__url_view.remove_userinfo `remove_userinfo`]]
+    [[link url.ref.boost__urls__url.remove_userinfo `remove_userinfo`]]
     [Remove the userinfo.]
 ][
-    [[link url.ref.boost__urls__url_view.set_user `set_user`]]
+    [[link url.ref.boost__urls__url.set_user `set_user`]]
     [Set the user.]
 ][
-    [[link url.ref.boost__urls__url_view.set_encoded_user `set_encoded_user`]]
+    [[link url.ref.boost__urls__url.set_encoded_user `set_encoded_user`]]
     [Set the encoded user.]
 ][
-    [[link url.ref.boost__urls__url_view.set_password `set_password`]]
+    [[link url.ref.boost__urls__url.set_password `set_password`]]
     [Set the password.]
 ][
-    [[link url.ref.boost__urls__url_view.set_encoded_password `set_encoded_password`]]
+    [[link url.ref.boost__urls__url.set_encoded_password `set_encoded_password`]]
     [Set the encoded password.]
 ][
-    [[link url.ref.boost__urls__url_view.remove_password `remove_password`]]
+    [[link url.ref.boost__urls__url.remove_password `remove_password`]]
     [Remove the password.]
 ]]
 
@@ -550,16 +550,16 @@ __url__ are as follows:
     [Function]
     [Description]
 ][
-    [[link url.ref.boost__urls__url_view.set_host `set_host`]]
+    [[link url.ref.boost__urls__url.set_host `set_host`]]
     [Set the host.]
 ][
-    [[link url.ref.boost__urls__url_view.set_encoded_host `set_encoded_host`]]
+    [[link url.ref.boost__urls__url.set_encoded_host `set_encoded_host`]]
     [Set the encoded host.]
 ][
-    [[link url.ref.boost__urls__url_view.set_port `set_port`]]
+    [[link url.ref.boost__urls__url.set_port `set_port`]]
     [Set the port.]
 ][
-    [[link url.ref.boost__urls__url_view.remove_port `remove_port`]]
+    [[link url.ref.boost__urls__url.remove_port `remove_port`]]
     [Remove the port.]
 ]]
 
@@ -567,13 +567,13 @@ __url__ are as follows:
     [Function]
     [Description]
 ][
-    [[link url.ref.boost__urls__url_view.set_encoded_authority `set_encoded_authority`]]
+    [[link url.ref.boost__urls__url.set_encoded_authority `set_encoded_authority`]]
     [Set the encoded authority.]
 ][
-    [[link url.ref.boost__urls__url_view.remove_authority `remove_authority`]]
+    [[link url.ref.boost__urls__url.remove_authority `remove_authority`]]
     [Remove the authority.]
 ][
-    [[link url.ref.boost__urls__url_view.normalize_authority `normalize_authority`]]
+    [[link url.ref.boost__urls__url.normalize_authority `normalize_authority`]]
     [Normalize the authority.]
 ]]
 

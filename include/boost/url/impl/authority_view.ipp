@@ -279,7 +279,7 @@ encoded_host_and_port() const noexcept
 void
 authority_view::
 apply(
-    host_rule const& t) noexcept
+    decltype(host_rule)::value_type const& t) noexcept
 {
     host_type_ = t.host_type;
     switch(t.host_type)
@@ -337,7 +337,7 @@ apply(
 void
 authority_view::
 apply(
-    authority_rule const& t) noexcept
+    decltype(authority_rule)::value_type const& t) noexcept
 {
     if(t.has_userinfo)
     {
@@ -402,15 +402,15 @@ parse_authority(
             "authority_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
 
-    error_code ec;
-    authority_rule t;
-    if(! grammar::parse_string(s, ec, t))
-        return ec;
+    auto rv = grammar::parse(
+        s, authority_rule);
+    if(! rv)
+        return rv.error();
 
     authority_view a(s.data());
 
     // authority
-    a.apply(t);
+    a.apply(*rv);
 
     return a;
 }

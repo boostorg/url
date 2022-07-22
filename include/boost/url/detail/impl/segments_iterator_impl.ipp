@@ -36,11 +36,9 @@ segments_iterator_impl(
     begin_ += n;
     next_ += n;
     pos_ += n;
-    error_code ec;
-    grammar::parse(
-        next_, end_, ec,
-        segment_rule{t_});
-    BOOST_ASSERT(! ec);
+    t_ = grammar::parse(
+        next_, end_,
+        segment_rule).value();
 }
 
 segments_iterator_impl::
@@ -71,27 +69,24 @@ void
 segments_iterator_impl::
 increment() noexcept
 {
-    using bnf_t = path_rootless_rule;
     BOOST_ASSERT(next_ != nullptr);
     ++i_;
     pos_ = next_;
-    error_code ec;
     // "/" segment
-    bnf_t::increment(
-        next_, end_, ec, t_);
-    if(ec == grammar::error::end)
+    auto rv = path_rootless_rule{}.increment(
+        next_, end_);
+    if(rv == grammar::error::end)
     {
         next_ = nullptr;
         return;
     }
-    BOOST_ASSERT(! ec);
+    t_ = rv.value();
 }
 
 void
 segments_iterator_impl::
 decrement() noexcept
 {
-    using bnf_t = path_rootless_rule;
     BOOST_ASSERT(i_ != 0);
     --i_;
     error_code ec;
@@ -99,10 +94,9 @@ decrement() noexcept
     {
         next_ = begin_;
         pos_ = begin_;
-        grammar::parse(
-            next_, end_, ec,
-            segment_rule{t_});
-        BOOST_ASSERT(! ec.failed());
+        t_ = grammar::parse(
+            next_, end_,
+            segment_rule).value();
         return;
     }
     while(--pos_ != begin_)
@@ -111,25 +105,22 @@ decrement() noexcept
             continue;
         // "/" segment
         next_ = pos_;
-        bnf_t::increment(next_,
-                         end_, ec, t_);
-        BOOST_ASSERT(! ec);
+        t_ = path_rootless_rule{}.increment(
+            next_, end_).value();
         return;
     }
     next_ = pos_;
     if(*next_ == '/')
     {
         // "/" segment
-        bnf_t::increment(next_,
-                         end_, ec, t_);
-        BOOST_ASSERT(! ec);
+        t_ = path_rootless_rule{}.increment(
+            next_, end_).value();
     }
     else
     {
         // segment-nz
-        bnf_t::begin(next_,
-                     end_, ec, t_);
-        BOOST_ASSERT(! ec);
+        t_ = path_rootless_rule{}.begin(
+            next_, end_).value();
     }
 }
 

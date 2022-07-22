@@ -11,9 +11,8 @@
 #define BOOST_URL_RFC_IPV_FUTURE_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -29,34 +28,25 @@ namespace urls {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
         >3.2.2. Host (rfc3986)</a>
 */
-struct ipv_future_rule
+struct ipv_future_rule_t
 {
-    string_view str;
-    string_view major;
-    string_view minor;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        ipv_future_rule& t) noexcept
+    struct value_type
     {
-        parse(it, end, ec, t);
-    }
+        string_view str;
+        string_view major;
+        string_view minor;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    auto
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        ipv_future_rule& t) noexcept;
+        char const* const end
+            ) const noexcept ->
+        result<value_type>;
 };
+
+constexpr ipv_future_rule_t ipv_future_rule{};
 
 } // urls
 } // boost

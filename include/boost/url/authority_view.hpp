@@ -17,6 +17,8 @@
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/detail/except.hpp>
+#include <boost/url/rfc/authority_rule.hpp>
+#include <boost/url/rfc/host_rule.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
 #include <iosfwd>
@@ -24,11 +26,6 @@
 
 namespace boost {
 namespace urls {
-
-#ifndef BOOST_URL_DOCS
-struct authority_rule;
-struct host_rule;
-#endif
 
 /** A read-only view to an authority.
 
@@ -1110,8 +1107,8 @@ public:
     friend class url_view;
 
 private:
-    void apply(host_rule const& h) noexcept;
-    void apply(authority_rule const& t) noexcept;
+    void apply(decltype(host_rule)::value_type const& t) noexcept;
+    void apply(decltype(authority_rule)::value_type const& t) noexcept;
 };
 
 //------------------------------------------------

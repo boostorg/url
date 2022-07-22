@@ -8,18 +8,18 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/grammar/token.hpp>
+#include <boost/url/grammar/variant_rule.hpp>
+
+#include <boost/url/grammar/parse.hpp>
 
 #include "test_suite.hpp"
-#include "test_rule.hpp"
 
 namespace boost {
 namespace urls {
-namespace rfc {
+namespace grammar {
 
-class token_rule_test
+struct variant_rule_test
 {
-public:
     void
     run()
     {
@@ -27,9 +27,9 @@ public:
 };
 
 TEST_SUITE(
-    token_rule_test,
-    "boost.url.grammar.token");
+    variant_rule_test,
+    "boost.url.grammar.variant_rule");
 
-} // rfc
+} // grammar
 } // urls
 } // boost

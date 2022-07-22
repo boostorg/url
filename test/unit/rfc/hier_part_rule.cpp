@@ -22,35 +22,37 @@ public:
     void
     run()
     {
-        using T = hier_part_rule;
-
-        good<T>("");
-        good<T>("/");
-        good<T>("//");
-        good<T>("//user:pass@");
-        good<T>("//boost.org");
-        good<T>("//1.2.3.4:8080");
-        good<T>("//1.2.3.4:8080/");
-        good<T>("//1.2.3.4:8080/x");
-        good<T>("//1.2.3.4:8080/x/");
-        good<T>("//1.2.3.4:8080////");
-        good<T>("/x");
-        good<T>("/x/");
-        good<T>("/x/y");
-        good<T>("/x/y//");
-        good<T>("x");
-        good<T>("x/");
-        good<T>("x//");
-        good<T>("x/y/z");
-        good<T>("x//y///z///");
-        good<T>(":/"); // colon ok in hier-part
-
-        error_code ec;
-        hier_part_rule t;
-        grammar::parse_string(
-            "/1/2/3/4/5", ec, t);
-        BOOST_TEST_EQ(t.path.path, "/1/2/3/4/5");
-        BOOST_TEST_EQ(t.path.count, 5u);
+        auto const& t = hier_part_rule;
+        {
+            ok(t, "");
+            ok(t, "/");
+            ok(t, "//");
+            ok(t, "//user:pass@");
+            ok(t, "//boost.org");
+            ok(t, "//1.2.3.4:8080");
+            ok(t, "//1.2.3.4:8080/");
+            ok(t, "//1.2.3.4:8080/x");
+            ok(t, "//1.2.3.4:8080/x/");
+            ok(t, "//1.2.3.4:8080////");
+            ok(t, "/x");
+            ok(t, "/x/");
+            ok(t, "/x/y");
+            ok(t, "/x/y//");
+            ok(t, "x");
+            ok(t, "x/");
+            ok(t, "x//");
+            ok(t, "x/y/z");
+            ok(t, "x//y///z///");
+            ok(t, ":/"); // colon ok in hier-part
+        }
+        {
+            auto rv = grammar::parse(
+                "/1/2/3/4/5",
+                hier_part_rule);
+            auto const& v = *rv;
+            BOOST_TEST_EQ(v.path.path, "/1/2/3/4/5");
+            BOOST_TEST_EQ(v.path.count, 5u);
+        }
     }
 };
 

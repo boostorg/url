@@ -36,8 +36,11 @@ make_error_code(
             default:
 case error::success: return "success";
 case error::end: return "end";
+
 case error::incomplete: return "incomplete";
 case error::leftover: return "leftover";
+case error::empty: return "empty";
+
 case error::overflow: return "overflow";
 case error::syntax: return "syntax";
             }

@@ -375,16 +375,16 @@ The functions for modifying paths in a __url__ are as follows:
     [Function]
     [Description]
 ][
-    [[link url.ref.boost__urls__url_view.set_path `set_path`]]
+    [[link url.ref.boost__urls__url.set_path `set_path`]]
     [Set the path]
 ][
-    [[link url.ref.boost__urls__url_view.set_encoded_path `set_encoded_path`]]
+    [[link url.ref.boost__urls__url.set_encoded_path `set_encoded_path`]]
     [Set the encoded path]
 ][
-    [[link url.ref.boost__urls__url_view.set_path_absolute `set_path_absolute`]]
+    [[link url.ref.boost__urls__url.set_path_absolute `set_path_absolute`]]
     [Set whether the path is absolute]
 ][
-    [[link url.ref.boost__urls__url_view.normalize_path `normalize_path`]]
+    [[link url.ref.boost__urls__url.normalize_path `normalize_path`]]
     [Normalize path]
 ]]
 

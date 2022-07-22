@@ -74,7 +74,4 @@ a complete string as a rule.
 ```
 ]]]
 
-The function [link url.ref.boost__urls__grammar__parse_string `parse_string`] only returns
-true when the whole string matches the rule.
-
 [endsect]

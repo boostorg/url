@@ -11,10 +11,9 @@
 #define BOOST_URL_RFC_HIER_PART_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/paths_rule.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
 
 namespace boost {
 namespace urls {
@@ -33,34 +32,25 @@ namespace urls {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
         >3. Syntax Components (rfc3986)</a>
 */
-struct hier_part_rule
+struct hier_part_rule_t
 {
-    bool has_authority = false;
-    authority_rule authority;
-    parsed_path path;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        hier_part_rule& t) noexcept
+    struct value_type
     {
-        return parse(it, end, ec, t);
-    }
+        bool has_authority = false;
+        decltype(authority_rule)::value_type authority;
+        parsed_path path;
+    };
 
-private:
     BOOST_URL_DECL
-    static
-    void
+    auto
     parse(
         char const*& it,
-        char const* const end,
-        error_code& ec,
-        hier_part_rule& t) noexcept;
+        char const* const end
+            ) const noexcept ->
+        result<value_type>;
 };
+
+constexpr hier_part_rule_t hier_part_rule{};
 
 } // urls
 } // boost

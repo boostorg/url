@@ -18,60 +18,78 @@
 namespace boost {
 namespace urls {
 
-void
-uri_reference_rule::
+auto
+uri_reference_rule_t::
 parse(
     char const*& it,
-    char const* const end,
-    error_code& ec,
-    uri_reference_rule& t) noexcept
+    char const* const end
+        ) const noexcept ->
+    result<value_type>
 {
+    value_type t;
+
     auto const start = it;
 
     // scheme ":"
-    if(! grammar::parse(
-        it, end, ec,
-            t.scheme_part))
     {
-        // rewind
-        it = start;
+        auto rv = grammar::parse(
+            it, end, scheme_part_rule());
+        if(! rv)
+        {
+            // rewind
+            it = start;
 
-        // relative-ref
-        relative_part_rule t0;
-        if(! grammar::parse(
-            it, end, ec,t0))
-            return;
+            // relative-ref
+            {
+                auto rv2 = grammar::parse(
+                    it, end, relative_part_rule);
+                if(! rv2)
+                    return rv2.error();
 
-        t.has_authority =
-            t0.has_authority;
-        t.authority = t0.authority;
-        t.path = t0.path;
-    }
-    else
-    {
-        // hier-part
-        hier_part_rule t0;
-        if(! grammar::parse(
-            it, end, ec, t0))
-            return;
+                auto const& v = rv2.value();
+                t.has_authority =
+                    v.has_authority;
+                t.authority = v.authority;
+                t.path = v.path;
+            }
+        }
+        else
+        {
+            t.scheme_part = *rv;
 
-        t.has_authority =
-            t0.has_authority;
-        t.authority = t0.authority;
-        t.path = t0.path;
+            // hier-part
+            auto rv2 = grammar::parse(
+                it, end, hier_part_rule);
+            if(! rv2)
+                return rv2.error();
+            auto t0 = rv2.value();
+
+            t.has_authority =
+                t0.has_authority;
+            t.authority = t0.authority;
+            t.path = t0.path;
+        }
     }
 
     // [ "?" query ]
-    if(! grammar::parse(
-        it, end, ec,
-            t.query_part))
-        return;
+    {
+        auto rv = grammar::parse(
+            it, end, query_part_rule);
+        if(! rv)
+            return rv.error();
+        t.query_part = *rv;
+    }
 
     // [ "#" fragment ]
-    if(! grammar::parse(
-        it, end, ec,
-            t.fragment_part))
-        return;
+    {
+        auto rv = grammar::parse(
+            it, end, fragment_part_rule);
+        if(! rv)
+            return rv.error();
+        t.fragment_part = *rv;
+    }
+
+    return t;
 }
 
 } // urls

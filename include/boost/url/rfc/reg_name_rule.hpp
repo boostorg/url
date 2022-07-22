@@ -11,13 +11,24 @@
 #define BOOST_URL_RFC_REG_NAME_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
-#include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/rfc/charsets.hpp>
-#include <boost/url/grammar/parse_tag.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
 
 namespace boost {
 namespace urls {
+
+/*  VFALCO In theory we could enforce these
+    additional requirements from errata 4942:
+
+    Such a name consists of a sequence of domain
+    labels separated by ".", each domain label
+    starting and ending with an alphanumeric character
+    and possibly also containing "-" characters.  The
+    rightmost domain label of a fully qualified domain
+    name in DNS may be followed by a single "." and
+    should be if it is necessary to distinguish between
+    the complete domain name and some local domain.
+*/
 
 /** Rule for reg-name
 
@@ -32,32 +43,8 @@ namespace urls {
     @li <a href="https://www.rfc-editor.org/errata/eid4942"
         >Errata ID: 4942</a>
 */
-struct reg_name_rule
-{
-    pct_encoded_view v;
-
-    friend
-    void
-    tag_invoke(
-        grammar::parse_tag const&,
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        reg_name_rule& t) noexcept
-    {
-        parse(it, end, ec, t);
-    }
-
-private:
-    BOOST_URL_DECL
-    static
-    void
-    parse(
-        char const*& it,
-        char const* const end,
-        error_code& ec,
-        reg_name_rule& t) noexcept;
-};
+constexpr auto reg_name_rule =
+    pct_encoded_rule(unreserved_chars + '-' + '.');
 
 } // urls
 } // boost

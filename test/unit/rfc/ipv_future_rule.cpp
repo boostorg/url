@@ -22,17 +22,18 @@ public:
     void
     run()
     {
-        using T = ipv_future_rule;
+        auto const& t =
+            ipv_future_rule;
 
-        bad<T>("v");
-        bad<T>("v1");
-        bad<T>("v1.");
-        bad<T>("v1.@$");
-        bad<T>("v.1");
-        bad<T>("w1.1");
+        bad(t, "v");
+        bad(t, "v1");
+        bad(t, "v1.");
+        bad(t, "v1.@$");
+        bad(t, "v.1");
+        bad(t, "w1.1");
 
-        good<T>("v1.0");
-        good<T>("v1.minor");
+        ok(t, "v1.0");
+        ok(t, "v1.minor");
     }
 };
 
