@@ -189,8 +189,6 @@
         <bridgehead renderas="sect3">Classes</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__grammar__char_literal">char_literal</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__elements">elements</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__optional">optional</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__parse_tag">parse_tag</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__lut_chars">lut_chars</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__range">range</link></member>

@@ -46,12 +46,9 @@ set(BOOST_URL_TESTS_FILES
     url_view.cpp
     urls.cpp
     grammar/ascii.cpp
-    grammar/char_literal.cpp
     grammar/charset.cpp
-    grammar/elements.cpp
     grammar/error.cpp
     grammar/lut_chars.cpp
-    grammar/optional.cpp
     grammar/parse.cpp
     grammar/parse_tag.cpp
     grammar/range.cpp
