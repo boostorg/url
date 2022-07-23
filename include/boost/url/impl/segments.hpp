@@ -17,7 +17,6 @@
 #include <boost/url/detail/any_path_iter.hpp>
 #include <boost/url/detail/copied_strings.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/url/detail/optional_allocator.hpp>
 #include <boost/url/detail/segments_iterator_impl.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/assert.hpp>
