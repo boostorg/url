@@ -13,6 +13,7 @@
 
 #include <boost/url/url_view.hpp>
 #include <boost/url/static_pool.hpp>
+#include <initializer_list>
 #include "test_suite.hpp"
 
 namespace boost {
@@ -21,15 +22,79 @@ namespace urls {
 class params_encoded_view_test
 {
 public:
+    using T = params_encoded_view;
+    struct V
+    {
+        string_view k;
+        string_view v;
+        bool bv = false;
+
+        V() = default;
+
+        V(string_view k_)
+            : k(k_)
+        {
+        }
+
+        V(  string_view k_,
+            string_view v_)
+            : k(k_)
+            , v(v_)
+            , bv(true)
+        {
+        }
+
+        friend
+        bool
+        operator==(
+            V const& t0,
+            query_param_view const& t1) noexcept
+        {
+            return
+                t0.k == t1.key &&
+                t0.bv == t1.has_value &&
+                ( ! t0.bv || t0.v == t1.value );
+        }
+
+        friend
+        bool
+        operator==(
+            query_param_view const& t1,
+            V const& t0) noexcept
+        {
+            return operator==(t0, t1);
+        }
+    };
+
+    // ensure string s parses to
+    // the range indicated in init.
+    static
+    void
+    check(
+        string_view s,
+        std::initializer_list<V> init)
+    {
+        auto rv = parse_query_params(s);
+        if(! BOOST_TEST(rv.has_value()))
+            return;
+        if(! BOOST_TEST_EQ(
+            rv->size(), init.size()))
+            return;
+        BOOST_TEST(std::equal(
+            rv->begin(),
+            rv->end(),
+            init.begin()));
+    }
+
     void
     testMembers()
     {
-        // operator=(params_encoded_view const&)
+        // operator=(T const&)
         {
             url_view u1;
             url_view u2;
-            params_encoded_view p1 = u1.encoded_params();
-            params_encoded_view p2 = u2.encoded_params();
+            T p1 = u1.encoded_params();
+            T p2 = u2.encoded_params();
             p2 = p1;
             BOOST_TEST_EQ(p1.begin(), p2.begin());
         }
@@ -43,7 +108,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params_encoded_view p = u.encoded_params();
+            T p = u.encoded_params();
             BOOST_TEST_EQ(p.at("k0"), "0");
             BOOST_TEST_EQ(p.at("k1"), "1");
             BOOST_TEST_EQ(p.at("k2"), "");
@@ -63,13 +128,13 @@ public:
         {
             url_view u = parse_uri_reference(
                 "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-            params_encoded_view p = u.encoded_params();
+            T p = u.encoded_params();
             BOOST_TEST(! p.empty());
             BOOST_TEST_EQ(p.size(), 5u);
         }
         {
             url_view u;
-            params_encoded_view p = u.encoded_params();
+            T p = u.encoded_params();
             BOOST_TEST(p.empty());
             BOOST_TEST_EQ(p.size(), 0u);
         }
@@ -89,7 +154,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "/?a=1&%62=2&c=3&c=4&c=5&d=6&e=7&d=8&f=9#f").value();
-            params_encoded_view p = u.encoded_params();
+            T p = u.encoded_params();
             BOOST_TEST_EQ(p.count("a"), 1u);
             BOOST_TEST_EQ(p.count("%62"), 1u); // pct-encoded
             BOOST_TEST_EQ(p.count("c"), 3u);
@@ -123,7 +188,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "/?a=1&bb=22&ccc=333&dddd=4444#f").value();
-            params_encoded_view p = u.encoded_params();
+            T p = u.encoded_params();
             auto it = p.begin();
             BOOST_TEST_EQ((*it).key, "a");
             BOOST_TEST_EQ((*++it).key, "bb");
@@ -138,7 +203,7 @@ public:
         {
             url_view u = parse_uri_reference(
                 "/?&x&y=&z=3#f").value();
-            params_encoded_view p =
+            T p =
                 u.encoded_params();
             BOOST_TEST_EQ(p.size(), 4u);
             auto it = p.begin();
@@ -176,11 +241,11 @@ public:
         {
             url_view u = parse_uri_reference(
                         "/?a=1&bb=22&ccc=333&dddd=4444#f").value();
-            params_encoded_view::value_type v;
+            T::value_type v;
             {
-                params_encoded_view ps = u.encoded_params();
-                params_encoded_view::reference r = *ps.begin();
-                v = params_encoded_view::value_type(r);
+                T ps = u.encoded_params();
+                T::reference r = *ps.begin();
+                v = T::value_type(r);
             }
             BOOST_TEST_EQ(v.key, "a");
             BOOST_TEST_EQ(v.value, "1");
@@ -218,6 +283,19 @@ public:
     }
 
     void
+    testParse()
+    {
+        //check( "k", { {} });
+        check( "k", { {"k"} });
+        check( "k=", { {"k",""} });
+        check( "k=v", { {"k","v"} });
+        check( "u&", { {"u"}, {} });
+        check( "u&k", { {"u"}, {"k"} });
+        check( "u&k=", { {"u"}, {"k",""} });
+        check( "u&k=v", { {"u"}, {"k","v"} });
+    }
+
+    void
     run()
     {
         testMembers();
@@ -227,6 +305,7 @@ public:
         testIterators();
         testEncoding();
         testRange();
+        testParse();
     }
 };
 
