@@ -17,7 +17,6 @@
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/error.hpp>
-#include <boost/url/grammar/detail/charset.hpp>
 #include <boost/static_assert.hpp>
 
 namespace boost {
@@ -74,7 +73,7 @@ pct_encoded_rule(
     // the requirements. Please check the
     // documentation!
     static_assert(
-        is_charset<CharSet>::value,
+        grammar::is_charset<CharSet>::value,
         "CharSet requirements not met");
 
     return pct_encoded_rule_t<CharSet>(cs);
