@@ -22,6 +22,13 @@ void
 params_iterator_impl::
 scan() noexcept
 {
+    if (!pos_)
+    {
+        nk_ = {};
+        nv_ = {};
+        return;
+    }
+
     string_view s(pos_, end_ - pos_);
     std::size_t i;
     if(pos_ != begin_ || i_ != 0)
@@ -52,10 +59,13 @@ scan() noexcept
 
 params_iterator_impl::
 params_iterator_impl(
-    string_view s) noexcept
+    string_view s,
+    std::size_t nparam) noexcept
     : begin_(s.data())
-    , pos_(s.data())
     , end_(s.data() + s.size())
+    , pos_(nparam ?
+        s.data() :
+        nullptr)
 {
     scan();
 }
@@ -63,11 +73,12 @@ params_iterator_impl(
 params_iterator_impl::
 params_iterator_impl(
     string_view s,
-    std::size_t nparam) noexcept
-    : i_(nparam)
-    , begin_(s.data())
-    , pos_(s.data() + s.size())
+    std::size_t nparam,
+    int) noexcept
+    : begin_(s.data())
     , end_(s.data() + s.size())
+    , pos_(nullptr)
+    , i_(nparam)
 {
 }
 
@@ -77,7 +88,6 @@ dereference() const noexcept
 {
     BOOST_ASSERT(begin_ != nullptr);
     BOOST_ASSERT(end_ != nullptr);
-    BOOST_ASSERT(pos_ != end_);
     BOOST_ASSERT(pos_ != nullptr);
 
     int prefix = pos_ != begin_ || i_ != 0;
@@ -100,7 +110,6 @@ increment() noexcept
     BOOST_ASSERT(begin_ != nullptr);
     BOOST_ASSERT(end_ != nullptr);
     BOOST_ASSERT(pos_ != nullptr);
-    BOOST_ASSERT(pos_ != end_);
 
     ++i_;
     pos_ += nk_ + nv_;
@@ -108,6 +117,7 @@ increment() noexcept
     {
         nk_ = 0;
         nv_ = 0;
+        pos_ = nullptr;
         return;
     }
     scan();

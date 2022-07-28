@@ -13,7 +13,6 @@
 
 #include <boost/url/params_encoded.hpp>
 #include <boost/url/url.hpp>
-#include <boost/url/detail/pct_encoding.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
@@ -55,23 +54,20 @@ params_encoded::
 at(string_view key) const ->
     string_view
 {
-    url::raw_param r;
+    query_param_encoded_view r;
     auto it = find(key);
     for(;;)
     {
         if(it == end())
             detail::throw_out_of_range(
                 BOOST_CURRENT_LOCATION);
-        r = u_->param(it.impl_.i_);
-        if(r.nv != 0)
+        r = *it;
+        if(r.has_value)
             break;
         ++it;
         it = find(it, key);
     }
-    return {
-        u_->s_ + r.pos +
-            r.nk + 1,
-        r.nv - 1 };
+    return r.value;
 }
 
 //------------------------------------------------
@@ -202,15 +198,11 @@ find(
     auto const end_ = end();
     while(from != end_)
     {
-        auto r = u_->param(
-            from.impl_.i_);
-        if( detail::key_equal_encoded(
-            key, string_view(u_->s_ +
-            r.pos + 1, r.nk - 1)))
+        if (pct_encoded_view(from.encoded_key()) == key)
             break;
         ++from;
     }
-    return std::next(begin(), from.impl_.i_);
+    return from;
 }
 
 //------------------------------------------------

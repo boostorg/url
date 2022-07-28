@@ -14,7 +14,6 @@
 #include <boost/url/segments.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/detail/path.hpp>
-#include <boost/url/detail/pct_encoding.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {

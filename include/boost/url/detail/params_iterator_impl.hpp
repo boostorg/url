@@ -21,25 +21,30 @@ namespace detail {
 
 struct params_iterator_impl
 {
-    std::size_t i_ = 0;
+    // range
     char const* begin_ = nullptr;
+    char const* end_ = nullptr;
+    // current element
     char const* pos_ = nullptr;
+    std::size_t i_ = 0;
+    // key/val offsets
     std::size_t nk_ = 0;
     std::size_t nv_ = 0;
-    char const* end_ = nullptr;
 
     BOOST_URL_DECL
     void scan() noexcept;
 
     BOOST_URL_DECL
     params_iterator_impl(
-        string_view s) noexcept;
+        string_view s,
+        std::size_t nparam) noexcept;
 
     // end ctor
     BOOST_URL_DECL
     params_iterator_impl(
         string_view s,
-        std::size_t nparam) noexcept;
+        std::size_t nparam,
+        int) noexcept;
 
     params_iterator_impl() = default;
 
