@@ -153,8 +153,10 @@ range<T>::
 get() const noexcept ->
     any_rule const&
 {
+    auto p = reinterpret_cast<
+        void const*>(&buf_[0]);
     return *reinterpret_cast<
-        any_rule const*>(buf_);
+        any_rule const*>(p);
 }
 
 template<class T>
@@ -254,7 +256,9 @@ range(
         }
     };
 
-    ::new(buf_) impl(
+    auto p = reinterpret_cast<
+        void *>(&buf_[0]);
+    ::new(p) impl(
         r, begin, increment);
 }
 
