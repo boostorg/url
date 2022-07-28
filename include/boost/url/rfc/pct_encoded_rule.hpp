@@ -74,7 +74,7 @@ pct_encoded_rule(
     // the requirements. Please check the
     // documentation!
     static_assert(
-        is_charset<CharSet>::value,
+        grammar::is_charset<CharSet>::value,
         "CharSet requirements not met");
 
     return pct_encoded_rule_t<CharSet>(cs);
