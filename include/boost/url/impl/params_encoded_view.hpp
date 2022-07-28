@@ -27,8 +27,9 @@ class params_encoded_view::iterator
     friend class params_encoded_view;
 
     iterator(
-        string_view s) noexcept
-        : impl_(s)
+        string_view s,
+        std::size_t nparam) noexcept
+        : impl_(s, nparam)
     {
     }
 

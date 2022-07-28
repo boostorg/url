@@ -28,8 +28,9 @@ class params_encoded::iterator
     friend class params_encoded;
 
     iterator(
-        string_view s) noexcept
-        : impl_(s)
+        string_view s,
+        std::size_t nparam) noexcept
+        : impl_(s, nparam)
     {
     }
 
@@ -196,9 +197,7 @@ params_encoded::
 begin() const noexcept ->
     iterator
 {
-    if(u_->nparam_ > 0)
-        return { u_->encoded_query() };
-    return end();
+    return { u_->encoded_query() , u_->nparam_ };
 }
 
 inline

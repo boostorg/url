@@ -27,8 +27,9 @@ class params_view::iterator
     friend class params_view;
 
     iterator(
-        string_view s) noexcept
-        : impl_(s)
+        string_view s,
+        std::size_t nparam) noexcept
+        : impl_(s, nparam)
     {
     }
 
@@ -37,7 +38,7 @@ class params_view::iterator
         string_view s,
         std::size_t nparam,
         int) noexcept
-        : impl_(s, nparam)
+        : impl_(s, nparam, 0)
     {
     }
 

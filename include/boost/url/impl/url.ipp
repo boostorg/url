@@ -18,7 +18,6 @@
 #include <boost/url/host_type.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/detail/print.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>

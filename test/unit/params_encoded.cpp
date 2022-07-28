@@ -72,11 +72,17 @@ public:
             BOOST_TEST_EQ(p.at(0).key, "k0");
             BOOST_TEST_EQ(p.at(0).value, "0");
             BOOST_TEST(p.at(0).has_value);
+
             BOOST_TEST_EQ(p.at(2).key, "k2");
             BOOST_TEST_EQ(p.at(2).value, "");
             BOOST_TEST(p.at(2).has_value);
+
             BOOST_TEST_EQ(p.at(3).key, "k3");
             BOOST_TEST_EQ(p.at(3).has_value, false);
+
+            BOOST_TEST_EQ(p.at(4).key, "k4");
+            BOOST_TEST_EQ(p.at(4).has_value, true);
+
             BOOST_TEST_THROWS(
                 p.at(5), std::out_of_range);
         }
@@ -538,6 +544,23 @@ public:
     }
 
     void
+    testEmpty()
+    {
+        // issue 129
+        // empty range iterates once
+        {
+            url u( "x:?" );
+            auto const v = u.encoded_params();
+            auto it = v.begin();
+            auto t = *it++;
+            BOOST_TEST(it == v.end());
+            BOOST_TEST(t.has_value == false);
+            BOOST_TEST(t.key.empty());
+            BOOST_TEST(t.value.empty());
+        }
+    }
+
+    void
     run()
     {
         testMembers();
@@ -547,6 +570,7 @@ public:
         testLookup();
         testIterators();
         testRange();
+        testEmpty();
     }
 };
 

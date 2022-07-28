@@ -14,7 +14,6 @@
 #include <boost/url/params_encoded_view.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/rfc/query_rule.hpp>
-#include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/detail/normalize.hpp>
 #include <boost/assert.hpp>
 
@@ -60,7 +59,7 @@ begin() const noexcept ->
     iterator
 {
     if(n_ > 0)
-        return { s_ };
+        return { s_, n_ };
     return end();
 }
 
@@ -69,7 +68,7 @@ params_encoded_view::
 end() const noexcept ->
     iterator
 {
-    return { s_, n_, 0 };
+    return { s_, n_ , 0 };
 }
 
 //------------------------------------------------

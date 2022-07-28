@@ -12,7 +12,6 @@
 #define BOOST_URL_IMPL_SEGMENTS_ENCODED_VIEW_HPP
 
 #include <boost/url/detail/except.hpp>
-#include <boost/url/detail/pct_encoding.hpp>
 #include <boost/url/detail/segments_encoded_iterator_impl.hpp>
 #include <boost/url/rfc/paths_rule.hpp>
 #include <cstdint>

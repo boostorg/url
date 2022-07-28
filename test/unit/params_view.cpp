@@ -208,6 +208,23 @@ public:
     }
 
     void
+    testEmpty()
+    {
+        // issue 129
+        // empty range iterates once
+        {
+            url_view u( "x:?" );
+            auto const v = u.params();
+            auto it = v.begin();
+            auto t = *it++;
+            BOOST_TEST(it == v.end());
+            BOOST_TEST(t.has_value == false);
+            BOOST_TEST(t.key.empty());
+            BOOST_TEST(t.value.empty());
+        }
+    }
+
+    void
     run()
     {
         testMembers();
@@ -217,6 +234,7 @@ public:
         testIterators();
         testEncoding();
         testRange();
+        testEmpty();
     }
 };
 

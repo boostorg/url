@@ -12,7 +12,6 @@
 #define BOOST_URL_DETAIL_IMPL_NORMALIZE_IPP
 
 #include <boost/url/detail/normalize.hpp>
-#include <boost/url/detail/pct_encoding.hpp>
 #include <boost/assert.hpp>
 #include <cstring>
 

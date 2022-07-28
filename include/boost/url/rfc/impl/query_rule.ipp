@@ -15,7 +15,6 @@
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
-#include <boost/url/detail/pct_encoding.hpp>
 
 namespace boost {
 namespace urls {

@@ -22,7 +22,6 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/detail/any_path_iter.hpp>
 #include <boost/url/detail/any_query_iter.hpp>
-#include <boost/url/detail/pct_encoding.hpp>
 #include <cstdint>
 #include <iosfwd>
 #include <memory>
