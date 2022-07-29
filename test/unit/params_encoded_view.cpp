@@ -13,6 +13,7 @@
 
 #include <boost/url/url_view.hpp>
 #include <boost/url/static_pool.hpp>
+#include <algorithm>
 #include <initializer_list>
 #include "test_suite.hpp"
 
@@ -89,6 +90,15 @@ public:
     void
     testMembers()
     {
+        // params_encoded_view()
+        {
+            params_encoded_view v;
+            BOOST_TEST_EQ(v.size(), 0);
+            BOOST_TEST_EQ(
+                std::distance(
+                    v.begin(), v.end()), 0);
+        }
+
         // operator=(T const&)
         {
             url_view u1;

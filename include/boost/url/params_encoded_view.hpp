@@ -129,6 +129,30 @@ public:
     */
     using difference_type = std::ptrdiff_t;
 
+    //--------------------------------------------
+
+    /** Constructor
+
+        Default constructed views
+        have zero elements.
+    */
+    params_encoded_view() = default;
+
+    /** Constructor
+
+        Copy constructor
+    */
+    params_encoded_view(
+        params_encoded_view const&) = default;
+
+    /** Assignment
+
+        After the assignment, both views will point to
+        the same underlying object.
+    */
+    params_encoded_view&
+    operator=(params_encoded_view const&) & = default;
+
     /** Return a view of this container as percent-decoded query parameters
 
         This function returns a new view over the
@@ -158,20 +182,6 @@ public:
     {
         return {s_, n_};
     }
-
-    /** Constructor
-
-        Copy constructor
-    */
-    params_encoded_view(params_encoded_view const&) = default;
-
-    /** Assignment
-
-        After the assignment, both views will point to
-        the same underlying object.
-    */
-    params_encoded_view&
-    operator=(params_encoded_view const&) & = default;
 
     //--------------------------------------------
     //
