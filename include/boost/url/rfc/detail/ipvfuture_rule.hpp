@@ -7,50 +7,47 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_H16_RULE_HPP
-#define BOOST_URL_RFC_H16_RULE_HPP
+#ifndef BOOST_URL_RFC_DETAIL_IPVFUTURE_RULE_HPP
+#define BOOST_URL_RFC_DETAIL_IPVFUTURE_RULE_HPP
 
-#include <boost/url/detail/config.hpp>
 #include <boost/url/result.hpp>
-#include <cstdint>
+#include <boost/url/string_view.hpp>
 
 namespace boost {
 namespace urls {
+namespace detail {
 
-/** Rule for h16
-
-    This parses a sixteen bit unsigned
-    hexadecimal number.
+/** Rule for IPvFuture
 
     @par BNF
     @code
-    h16         = 1*4HEXDIG
-                ; 16 bits of address represented in hexadecimal
+    IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
     @endcode
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-        >3.2.2.  Host (rfc3986)</a>
+        >3.2.2. Host (rfc3986)</a>
 */
-struct h16_rule_t
+struct ipvfuture_rule_t
 {
     struct value_type
     {
-        std::uint8_t hi;
-        std::uint8_t lo;
+        string_view str;
+        string_view major;
+        string_view minor;
     };
 
-    BOOST_URL_DECL
     auto
     parse(
         char const*& it,
-        char const* end
+        char const* const end
             ) const noexcept ->
         result<value_type>;
 };
 
-constexpr h16_rule_t h16_rule{};
+constexpr ipvfuture_rule_t ipvfuture_rule{};
 
+} // detail
 } // urls
 } // boost
 

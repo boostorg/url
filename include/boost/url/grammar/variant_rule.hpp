@@ -27,7 +27,6 @@ class variant_rule_t
 {
 public:
     using value_type = variant<
-        boost::variant2::monostate,
         typename R0::value_type,
         typename Rn::value_type...>;
 
@@ -44,8 +43,8 @@ public:
     constexpr
     auto
     variant_rule(
-        R0_ const r0,
-        Rn_ const&... rn) ->
+        R0_ const& r0,
+        Rn_ const&... rn) noexcept ->
             variant_rule_t<R0_, Rn_...>;
 
 private:
@@ -68,8 +67,8 @@ template<
 constexpr
 auto
 variant_rule(
-    R0 const r0,
-    Rn const&... rn) ->
+    R0 const& r0,
+    Rn const&... rn) noexcept ->
         variant_rule_t<R0, Rn...>;
 
 } // grammar

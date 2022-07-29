@@ -134,46 +134,54 @@ public:
     }
 
     void
-    good_scheme(string_view s,
-              char const* m = nullptr,
-              scheme id = scheme::unknown)
-    {
-        result<url_view> r =
-            parse_uri_reference(s);
-        if(! BOOST_TEST(r))
-            return;
-        url_view u = r.value();
-        if(m)
-        {
-            BOOST_TEST(u.scheme() ==
-                       string_view(m));
-            BOOST_TEST(
-                u.scheme_id() == id);
-        }
-        else
-        {
-            BOOST_TEST(! u.has_scheme());
-            BOOST_TEST(u.scheme_id() ==
-                       scheme::none);
-        }
-    };
-
-    void
-    bad_scheme(string_view s)
-    {
-        result<url_view> r =
-            parse_uri_reference(s);
-        BOOST_TEST(r.has_error());
-    };
-
-    void
     testScheme()
     {
-        good_scheme("http://", "http", scheme::http);
-        good_scheme("ou812://", "ou812");
-        good_scheme("/x");
+        auto const check = [](
+            string_view s,
+            char const* m = nullptr,
+            scheme id = scheme::unknown)
+        {
+            result<url_view> r =
+                parse_uri_reference(s);
+            if(! BOOST_TEST(r))
+                return;
+            url_view u = r.value();
+            if(m)
+            {
+                BOOST_TEST(u.scheme() ==
+                           string_view(m));
+                BOOST_TEST(
+                    u.scheme_id() == id);
+            }
+            else
+            {
+                BOOST_TEST(! u.has_scheme());
+                BOOST_TEST(u.scheme_id() ==
+                           scheme::none);
+            }
+        };
 
-        bad_scheme("1x:");
+        auto const bad = [](
+            string_view s)
+        {
+            result<url_view> r =
+                parse_uri_reference(s);
+            BOOST_TEST(r.has_error());
+        };
+
+        check("http://", "http", scheme::http);
+        check("ou812://", "ou812");
+        check("/x");
+
+        check("http://", "http", scheme::http);
+        check("HTTP://", "HTTP", scheme::http);
+        check("HtTp://", "HtTp", scheme::http);
+        check("a1steak://", "a1steak", scheme::unknown);
+
+        bad("1x:");
+        bad(" ");
+        bad(" http");
+        bad("http ");
     }
 
     void
@@ -191,15 +199,17 @@ public:
         auto const yes =
             [](string_view s, string_view m)
         {
-            BOOST_TEST_NO_THROW(
-            [&]{
+            //BOOST_TEST_NO_THROW(
+            //[&]
+            {
                 url_view u(s);
                 BOOST_TEST(u.has_authority());
                 BOOST_TEST_EQ(
                     u.encoded_authority(), m);
                 BOOST_TEST_EQ(
                     u.authority().encoded_authority(), m);
-            }());
+            }
+            //());
         };
 
         no("http:xyz/");
@@ -249,14 +259,14 @@ public:
             [&]{
                 url_view u(s);
                 BOOST_TEST(u.has_userinfo());
-                BOOST_TEST(
-                    u.encoded_userinfo() == m1);
-                BOOST_TEST(
-                    u.userinfo() == m2);
-                BOOST_TEST(
-                    u.authority().encoded_userinfo() == m1);
-                BOOST_TEST(
-                    u.authority().userinfo() == m2);
+                BOOST_TEST_EQ(
+                    u.encoded_userinfo(), m1);
+                BOOST_TEST_EQ(
+                    u.userinfo(), m2);
+                BOOST_TEST_EQ(
+                    u.authority().encoded_userinfo(), m1);
+                BOOST_TEST_EQ(
+                    u.authority().userinfo(), m2);
             }());
         };
 
@@ -416,7 +426,7 @@ public:
             BOOST_TEST(u.ipv6_address()
                 == ipv6_address());
             BOOST_TEST(
-                u.ipv_future() == "");
+                u.ipvfuture() == "");
             BOOST_TEST(u.authority().host_type() ==
                 host_type::none);
             BOOST_TEST(u.authority().encoded_host() ==
@@ -426,7 +436,7 @@ public:
             BOOST_TEST(u.authority().ipv6_address()
                 == ipv6_address());
             BOOST_TEST(
-                u.authority().ipv_future() == "");
+                u.authority().ipvfuture() == "");
         }
         {
             url_view u("http://");
@@ -515,7 +525,7 @@ public:
             BOOST_TEST_EQ(
                 u.host(), "[v1.x]");
             BOOST_TEST_EQ(
-                u.ipv_future(), "[v1.x]");
+                u.ipvfuture(), "[v1.x]");
             BOOST_TEST_EQ(
                 u.authority().host_type(), host_type::ipvfuture);
             BOOST_TEST_EQ(
@@ -523,10 +533,68 @@ public:
             BOOST_TEST_EQ(
                 u.authority().host(), "[v1.x]");
             BOOST_TEST_EQ(
-                u.authority().ipv_future(), "[v1.x]");
+                u.authority().ipvfuture(), "[v1.x]");
         }
     }
 
+    void
+    testIPLiteral()
+    {
+        auto const ok = [](
+            string_view s)
+        {
+            BOOST_TEST_NO_THROW(
+                url_view(s));
+        };
+
+        auto const bad = [](
+            string_view s)
+        {
+            BOOST_TEST_THROWS(
+                url_view(s),
+                std::exception);
+        };
+
+        bad("x://::");
+        bad("x://[");
+        bad("x://[:");
+        bad("x://[::");
+        bad("x://[]");
+        bad("x://[v8]");
+
+        ok("x://[::]");
+        ok("x://[v1.0]");
+    }
+
+
+    void
+    testIPvFuture()
+    {
+        auto const ok = [](
+            string_view s)
+        {
+            BOOST_TEST_NO_THROW(
+                url_view(s));
+        };
+
+        auto const bad = [](
+            string_view s)
+        {
+            BOOST_TEST_THROWS(
+                url_view(s),
+                std::exception);
+        };
+
+        bad("x://[v]");
+        bad("x://[v1]");
+        bad("x://[v1.]");
+        bad("x://[v1.@$]");
+        bad("x://[v.1]");
+        bad("x://[w1.1]");
+
+        ok("x://[v1.0]");
+        ok("x://[v1.minor]");
+    }
     void
     testPort()
     {
@@ -756,48 +824,52 @@ public:
     }
 
     void
-    good(string_view s,
-         char const* encoded = nullptr,
-         string_view plain = {})
-    {
-        result<url_view> r =
-            parse_uri_reference(s);
-        if(! BOOST_TEST(r))
-            return;
-        url_view u = r.value();
-        if(encoded)
-        {
-            BOOST_TEST(u.has_fragment());
-            BOOST_TEST(u.encoded_fragment() ==
-                       string_view(encoded));
-            BOOST_TEST_EQ(u.fragment(), plain);
-        }
-        else
-        {
-            BOOST_TEST(! u.has_fragment());
-        }
-    };
-
-    void
     testFragment()
     {
-        auto const bad = [](
-            string_view s)
+        auto const check = [](
+            string_view s,
+            char const* encoded = nullptr,
+            string_view plain = {})
+        {
+            result<url_view> r =
+                parse_uri_reference(s);
+            if(! BOOST_TEST(r))
+                return;
+            url_view u = r.value();
+            if(encoded)
+            {
+                BOOST_TEST(
+                    u.has_fragment());
+                BOOST_TEST(
+                    u.encoded_fragment() ==
+                        string_view(encoded));
+                BOOST_TEST_EQ(
+                    u.fragment(), plain);
+            }
+            else
+            {
+                BOOST_TEST(
+                    ! u.has_fragment());
+            }
+        };
+
+        auto const bad = [](string_view s)
         {
             result<url_view> r =
                 parse_uri_reference(s);
             BOOST_TEST(r.has_error());
         };
 
-        good("");
-        good("#", "", "");
-        good("/#", "", "");
-        good("/#A", "A", "A");
-        good("/#%41", "%41", "A");
-        good("/?#%41", "%41", "A");
-        good("#/?:@!$&'()*+,;=",
-              "/?:@!$&'()*+,;=",
-              "/?:@!$&'()*+,;=");
+        check("");
+        check("#", "", "");
+        check("/#", "", "");
+        check("/#A", "A", "A");
+        check("/#%41", "%41", "A");
+        check("/?#%41", "%41", "A");
+        check(
+            "#/?:@!$&'()*+,;=",
+            "/?:@!$&'()*+,;=",
+            "/?:@!$&'()*+,;=");
 
         bad("#%%");
 
@@ -903,6 +975,121 @@ public:
     }
 
     void
+    testRelativePart()
+    {
+        auto const ok = [](
+            string_view s)
+        {
+            BOOST_TEST_NO_THROW(
+                parse_relative_ref(s).value());
+        };
+
+        // "//" authority path-abempty
+        {
+            ok("//");
+            ok("///");
+            ok("////");
+            ok("///x");
+            ok("///:");
+            ok("///x/");
+            ok("///%3a/");
+            ok("///%20");
+            ok("///%20");
+            ok("///%25");
+            ok("///%25%2e");
+
+            ok("//x");
+            ok("//x/");
+            ok("//x//");
+            ok("//x/x");
+            ok("//x/:");
+            ok("//x/x/");
+            ok("//x/%3a/");
+            ok("//x/%20");
+            ok("//x/%20");
+            ok("//x/%25");
+            ok("//x/%25%2e");
+
+            ok("");
+            ok("/");
+            ok("//");
+            ok("//user:pass@");
+            ok("//boost.org");
+            ok("//1.2.3.4:8080");
+            ok("//1.2.3.4:8080/");
+            ok("//1.2.3.4:8080/x");
+            ok("//1.2.3.4:8080/x/");
+            ok("//1.2.3.4:8080////");
+            ok("/x");
+            ok("/x/");
+            ok("/x/y");
+            ok("/x/y//");
+            ok("x");
+            ok("x/");
+            ok("x//");
+            ok("x/y/z");
+            ok("x//y///z///");
+
+            //bad(":/"); // colon not ok in relative-part
+        }
+
+        // path-absolute
+        {
+            ok("/");
+            ok("/x");
+            ok("/x/");
+            ok("/:/");
+            ok("/x//");
+            ok("/%20");
+            ok("/:%20");
+            ok("/%20");
+            ok("/%25");
+            ok("/%25%2e");
+        }
+
+        // path-noscheme
+        {
+            ok(".");
+            ok("x");
+            ok("%20");
+            ok("%2f");
+            ok("a/");
+            ok("a//");
+            ok("a/x");
+            ok("a/x/");
+            ok("a/x//");
+            ok("a///");
+        }
+
+        // path-abempty
+        {
+            ok("");
+            ok("/");
+            ok("//");
+            ok("/x");
+            ok("/:");
+            ok("/x/");
+            ok("/%3a/");
+            ok("/%20");
+            ok("/%20");
+            ok("/%25");
+            ok("/%25%2e");
+        }
+
+        // path/coverage
+    #if 0
+        {
+            auto rv = grammar::parse(
+                "/1/2/3/4/5",
+                relative_part_rule);
+            auto const& v = *rv;
+            BOOST_TEST_EQ(v.path.path, "/1/2/3/4/5");
+            BOOST_TEST_EQ(v.path.count, 5u);
+        }
+    #endif
+    }
+
+    void
     run()
     {
         testSpecialMembers();
@@ -911,16 +1098,18 @@ public:
         testAuthority();
         testUserinfo();
         testHost();
+        testIPLiteral();
+        testIPvFuture();
         testPort();
         testHostAndPort();
         testOrigin();
         testPath();
         testQuery();
         testFragment();
-
         testParse();
         testOutput();
         testCases();
+        testRelativePart();
     }
 };
 

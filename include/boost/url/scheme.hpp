@@ -27,7 +27,9 @@ namespace urls {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
         >3.1. Scheme (rfc3986)</a>
 */
-enum class scheme : unsigned char
+// Made this short so it doesn't
+// show up as an ascii character
+enum class scheme : unsigned short
 {
     /** Indicates that no scheme is present
     */

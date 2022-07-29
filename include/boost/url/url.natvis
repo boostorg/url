@@ -1,34 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
-  <Type Name="boost::urls::url_view">
+  <Type Name="boost::urls::ipv4_address">
+    <DisplayString>{(addr_>>24)}.{(addr_>>16)%256}.{(addr_>>8)%256}.{addr_%256}</DisplayString>
+  </Type>
+
+    <Type Name="boost::urls::pct_encoded_view">
+    <DisplayString Condition="dn_==n_">{p_,[n_]s}</DisplayString>
+    <DisplayString Condition="dn_!=n_">{p_,[n_]s} ({dn_})</DisplayString>
+  </Type>
+
+  <Type Name="boost::urls::detail::url_impl">
     <DisplayString>{cs_,[offset_[id_end]]s}</DisplayString>
     <Expand>
-      <Synthetic Name="scheme">
-        <DisplayString>{cs_,[offset_[id_user]]s}</DisplayString>
+      <Synthetic Name="scheme" Condition="scheme_!=scheme::none">
+        <DisplayString>{cs_,[offset_[id_user]-1]s} {scheme_}</DisplayString>
       </Synthetic>
-      <Synthetic Name="user">
-        <DisplayString>{cs_+offset_[id_user],[offset_[id_pass]-offset_[id_user]]s}</DisplayString>
+      <Synthetic Name="user" Condition="! is_authority &amp;&amp; offset_[id_pass]-offset_[id_user]>2">
+        <DisplayString>{cs_+offset_[id_user]+2,[offset_[id_pass]-offset_[id_user]-2]s} ({decoded_[id_user]})</DisplayString>
       </Synthetic>
-      <Synthetic Name="pass">
-        <DisplayString>{cs_+offset_[id_pass],[offset_[id_host]-offset_[id_pass]]s}</DisplayString>
+      <Synthetic Name="user" Condition="is_authority &amp;&amp; offset_[id_pass]-offset_[id_user]>0">
+        <DisplayString>{cs_+offset_[id_user],[offset_[id_pass]-offset_[id_user]]s} ({decoded_[id_user]})</DisplayString>
       </Synthetic>
-      <Synthetic Name="host">
-        <DisplayString>{cs_+offset_[id_host],[offset_[id_port]-offset_[id_host]]s}</DisplayString>
+      <Synthetic Name="pass" Condition="offset_[id_host]-offset_[id_pass]>=2">
+        <DisplayString>{cs_+offset_[id_pass]+1,[offset_[id_host]-offset_[id_pass]-2]s} ({decoded_[id_pass]})</DisplayString>
       </Synthetic>
-      <Synthetic Name="port">
-        <DisplayString>{cs_+offset_[id_port],[offset_[id_path]-offset_[id_port]]s}</DisplayString>
+      <Synthetic Name="host" Condition="is_authority || offset_[id_pass]-offset_[id_user]>=2">
+        <DisplayString Condition="host_type_==host_type::none">{host_type_}</DisplayString>
+        <DisplayString Condition="host_type_!=host_type::none">{cs_+offset_[id_host],[offset_[id_port]-offset_[id_host]]s} ({decoded_[id_host]}) type={host_type_}</DisplayString>
       </Synthetic>
-      <Synthetic Name="path">
-        <DisplayString>{cs_+offset_[id_path],[offset_[id_query]-offset_[id_path]]s}</DisplayString>
+      <Synthetic Name="port" Condition="offset_[id_path]-offset_[id_port]>=1">
+        <DisplayString>{cs_+offset_[id_port]+1,[offset_[id_path]-offset_[id_port]-1]s} = {port_number_}</DisplayString>
       </Synthetic>
-      <Synthetic Name="query">
-        <DisplayString>{cs_+offset_[id_query],[offset_[id_frag]-offset_[id_query]]s}</DisplayString>
+      <Synthetic Name="path" Condition="! is_authority">
+        <DisplayString>{cs_+offset_[id_path],[offset_[id_query]-offset_[id_path]]s} [{nseg_}]</DisplayString>
       </Synthetic>
-      <Synthetic Name="frag">
-        <DisplayString>{cs_+offset_[id_frag],[offset_[id_end]-offset_[id_frag]]s}</DisplayString>
+      <Synthetic Name="query" Condition="offset_[id_frag]-offset_[id_query]>=1">
+        <DisplayString>{cs_+offset_[id_query]+1,[offset_[id_frag]-offset_[id_query]-1]s} [{nparam_}]</DisplayString>
+      </Synthetic>
+      <Synthetic Name="frag" Condition="offset_[id_end]-offset_[id_frag]>=1">
+        <DisplayString>{cs_+offset_[id_frag]+1,[offset_[id_end]-offset_[id_frag]-1]s} ({decoded_[id_frag]})</DisplayString>
       </Synthetic>
     </Expand>
   </Type>
-  
+
+  <Type Name="boost::urls::url_view" Inheritable="true">
+    <DisplayString>{ u_ }</DisplayString>
+      <Expand>
+          <ExpandedItem>u_</ExpandedItem>
+      </Expand>
+  </Type>
+
+  <Type Name="boost::urls::authority_view" Inheritable="true">
+    <DisplayString>{ u_ }</DisplayString>
+      <Expand>
+          <ExpandedItem>u_</ExpandedItem>
+      </Expand>
+  </Type>
+ 
 </AutoVisualizer>

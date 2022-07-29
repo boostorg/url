@@ -19,7 +19,15 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Parse part of a string into values using rules
+/** Parse a string using a rule
+
+    @param it A pointer to the start. The
+    caller's variable will be changed to
+    reflect the amount of input consumed.
+
+    @param end A pointer to the end.
+
+    @param r The rule to use
 */
 template<class R>
 auto
@@ -34,29 +42,11 @@ parse(
     This function parses a complete string into
     the specified sequence of grammar rules. If
     the string is not completely consumed, 
-    error is thrown.
-
-    @par Example
-
-    @code
-    try
-    {
-        parse( str, ec, r1, r2, r3 );
-    }
-    catch( std::exception const& e )
-    {
-        std::cout << e.what() << '\n';
-    }
-    @endcode
-
-    @par Exception Safety
-    Exceptions thrown on invalid input.
+    an error is returned instead.
 
     @param s The input string
 
-    @param rn Grammar rule objects
-
-    @throws boost::system::system_error Thrown on failure.
+    @param r The rule to use
 */
 template<class R>
 auto

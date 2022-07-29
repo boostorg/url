@@ -11,11 +11,8 @@
 #define BOOST_URL_RFC_URI_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
-#include <boost/url/rfc/fragment_rule.hpp>
-#include <boost/url/rfc/hier_part_rule.hpp>
-#include <boost/url/rfc/query_rule.hpp>
-#include <boost/url/rfc/scheme_rule.hpp>
+#include <boost/url/result.hpp>
+#include <boost/url/url_view.hpp>
 
 namespace boost {
 namespace urls {
@@ -30,22 +27,10 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
         >3. Syntax Components (rfc3986)</a>
-
-    @see
-        @ref fragment_part_rule,
-        @ref hier_part_rule,
-        @ref query_part_rule,
-        @ref scheme_part_rule.
 */
 struct uri_rule_t
 {
-    struct value_type
-    {
-        scheme_part_rule::value_type     scheme_part;
-        decltype(hier_part_rule)::value_type hier_part;
-        decltype(query_part_rule)::value_type query_part;
-        decltype(fragment_part_rule)::value_type fragment_part;
-    };
+    using value_type = url_view;
 
     BOOST_URL_DECL
     auto

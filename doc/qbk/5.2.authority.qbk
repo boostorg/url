@@ -492,8 +492,8 @@ __url_view__ are as follows:
     [[link url.ref.boost__urls__url_view.ipv6_address `ipv6_address`]]
     [Return the IPv6 address of the host, if applicable.]
 ][
-    [[link url.ref.boost__urls__url_view.ipv_future `ipv_future`]]
-    [Return the IPv-future address of the host, if applicable.]
+    [[link url.ref.boost__urls__url_view.ipvfuture `ipvfuture`]]
+    [Return the IPvFuture address of the host, if applicable.]
 ][
     [[link url.ref.boost__urls__url_view.port `port`]]
     [Return the port string of the host, if applicable.]

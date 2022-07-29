@@ -106,25 +106,6 @@ public:
             BOOST_TEST_EQ(a.encoded_authority(), s);
             BOOST_TEST_EQ(a.encoded_authority().data(), s.data());
         }
-
-        // persist()
-        {
-        std::shared_ptr<authority_view const> sp;
-        {
-            std::string s( "example.com" );
-            authority_view a = parse_authority( s ).value();    // a references characters in s
-
-            assert( a.data() == s.data() );                     // same buffer
-
-            sp = a.persist();
-
-            assert( sp->data() != s.data() );                   // different buffer
-            assert( sp->encoded_authority() == s);              // same contents
-
-            // s is destroyed and thus a
-            // becomes invalid, but sp remains valid.
-        }
-        }
     }
 
     void
@@ -242,7 +223,7 @@ public:
             BOOST_TEST(a.ipv6_address()
                 == ipv6_address());
             BOOST_TEST(
-                a.ipv_future() == "");
+                a.ipvfuture() == "");
         }
         {
             auto a = parse_authority("").value();
@@ -300,7 +281,7 @@ public:
                 "[v1.x]");
             BOOST_TEST(a.host() ==
                 "[v1.x]");
-            BOOST_TEST(a.ipv_future() ==
+            BOOST_TEST(a.ipvfuture() ==
                 "[v1.x]");
         }
     }

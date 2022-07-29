@@ -34,88 +34,6 @@ struct parsed_path
     std::size_t count = 0;
 };
 
-//------------------------------------------------
-
-/** Rule for segment
-
-    @par BNF
-    @code
-    segment       = *pchar
-    @endcode
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-        >3.3. Path (rfc3986)</a>
-
-    @see
-        @ref path_abempty_rule,
-        @ref path_absolute_rule,
-        @ref path_noscheme_rule,
-        @ref path_rootless_rule,
-        @ref pchars,
-        @ref segment_nz_rule,
-        @ref segment_nz_nc_rule
-*/
-constexpr auto segment_rule =
-    pct_encoded_rule(pchars);
-
-//------------------------------------------------
-
-/** Rule for segment-nz
-
-    @par BNF
-    @code
-    segment-nz    = 1*pchar
-    @endcode
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-        >3.3. Path (rfc3986)</a>
-
-    @see
-        @ref path_abempty_rule,
-        @ref path_absolute_rule,
-        @ref path_noscheme_rule,
-        @ref path_rootless_rule,
-        @ref pchars,
-        @ref segment_rule,
-        @ref segment_nz_nc_rule
-*/
-constexpr auto segment_nz_rule =
-    grammar::not_empty_rule(
-        pct_encoded_rule(pchars));
-
-//------------------------------------------------
-
-/** Rule for segment_nz_nc
-
-    @par BNF
-    @code
-    segment-nz-nc   = 1*( unreserved / pct-encoded / sub-delims / "@" )
-                    ; non-zero-length segment without any colon ":"
-    @endcode
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-        >3.3. Path (rfc3986)</a>
-
-    @see
-        @ref path_abempty_rule,
-        @ref path_absolute_rule,
-        @ref path_noscheme_rule,
-        @ref path_rootless_rule,
-        @ref pchars,
-        @ref segment_rule,
-        @ref segment_nz_rule,
-        @ref subdelim_chars,
-        @ref unreserved_chars
-*/
-constexpr auto segment_nz_nc_rule =
-    grammar::not_empty_rule(
-        pct_encoded_rule(pchars - ':'));
-
-//------------------------------------------------
-
 /** Rule for path-abempty grammar
 
     @par BNF
@@ -126,12 +44,6 @@ constexpr auto segment_nz_nc_rule =
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
         >3.3. Path (rfc3986)</a>
-
-    @see
-        @ref path_absolute_rule,
-        @ref path_noscheme_rule,
-        @ref path_rootless_rule,
-        @ref segment_rule
 */
 #ifdef BOOST_URL_DOCS
 using path_abempty_rule = __see_below__;
@@ -178,13 +90,6 @@ private:
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
         >3.3. Path (rfc3986)</a>
-
-    @see
-        @ref path_abempty_rule,
-        @ref path_noscheme_rule,
-        @ref path_rootless_rule,
-        @ref segment_rule,
-        @ref segment_nz_rule
 */
 #ifdef BOOST_URL_DOCS
 using path_absolute_rule = __see_below__;
@@ -231,13 +136,6 @@ private:
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
         >3.3. Path (rfc3986)</a>
-
-    @see
-        @ref path_abempty_rule,
-        @ref path_absolute_rule,
-        @ref path_rootless_rule,
-        @ref segment_rule,
-        @ref segment_nz_nc_rule
 */
 #ifdef BOOST_URL_DOCS
 using path_noscheme_rule = __see_below__;
@@ -290,13 +188,6 @@ private:
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
         >3.3. Path (rfc3986)</a>
-
-    @see
-        @ref path_abempty_rule,
-        @ref path_absolute_rule,
-        @ref path_noscheme_rule,
-        @ref segment_rule,
-        @ref segment_nz_nc_rule
 */
 #ifdef BOOST_URL_DOCS
 using path_rootless_rule = __see_below__;

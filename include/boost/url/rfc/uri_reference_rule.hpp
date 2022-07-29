@@ -12,11 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/result.hpp>
-#include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/fragment_rule.hpp>
-#include <boost/url/rfc/paths_rule.hpp>
-#include <boost/url/rfc/query_rule.hpp>
-#include <boost/url/rfc/scheme_rule.hpp>
+#include <boost/url/url_view.hpp>
 
 namespace boost {
 namespace urls {
@@ -34,24 +30,10 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
         >3. Syntax Components (rfc3986)</a>
-
-    @see
-        @ref authority_rule,
-        @ref fragment_part_rule,
-        @ref query_part_rule,
-        @ref scheme_part_rule.
 */
 struct uri_reference_rule_t
 {
-    struct value_type
-    {
-        scheme_part_rule::value_type scheme_part;
-        bool has_authority = false;
-        decltype(authority_rule)::value_type authority;
-        parsed_path path;
-        decltype(query_part_rule)::value_type query_part;
-        decltype(fragment_part_rule)::value_type fragment_part;
-    };
+    using value_type = url_view;
 
     BOOST_URL_DECL
     auto

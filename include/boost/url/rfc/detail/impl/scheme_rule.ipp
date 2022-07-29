@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_IMPL_SCHEME_RULE_IPP
 #define BOOST_URL_IMPL_SCHEME_RULE_IPP
 
-#include <boost/url/rfc/scheme_rule.hpp>
+#include <boost/url/rfc/detail/scheme_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/grammar/char_rule.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
@@ -18,6 +18,7 @@
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 auto
 scheme_rule::
@@ -54,29 +55,7 @@ parse(
     return t;
 }
 
-auto
-scheme_part_rule::
-parse(
-    char const*& it,
-    char const* end) const noexcept ->
-        result<value_type>
-{
-    auto const it0 = it;
-    auto rv = grammar::parse(
-        it, end,
-        grammar::sequence_rule(
-            scheme_rule(),
-            grammar::char_rule(':')));
-    if(! rv)
-        return rv.error();
-    value_type t;
-    t.scheme = get<0>(*rv).scheme;
-    t.scheme_id = get<0>(*rv).scheme_id;
-    t.scheme_part = string_view(
-        it0, it - it0);
-    return t;
-}
-
+} // detail
 } // urls
 } // boost
 

@@ -68,9 +68,7 @@ increment() noexcept
     BOOST_ASSERT(next_ != nullptr);
     ++i_;
     pos_ = next_;
-    error_code ec;
     // "/" segment
-    pct_encoded_view t;
     auto rv =
         path_rootless_rule{}.increment(
             next_, end_);
@@ -79,7 +77,6 @@ increment() noexcept
         next_ = nullptr;
         return;
     }
-    BOOST_ASSERT(! ec);
     s_ = rv->encoded();
 }
 
@@ -97,7 +94,6 @@ decrement() noexcept
             pos_, next_ - pos_);
         return;
     }
-    error_code ec;
     while(--pos_ != begin_)
     {
         if(*pos_ != '/')

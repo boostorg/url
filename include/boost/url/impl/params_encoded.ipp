@@ -24,7 +24,7 @@ operator[](
     std::size_t pos) const ->
         reference
 {
-    BOOST_ASSERT(pos < u_->nparam_);
+    BOOST_ASSERT(pos < u_->u_.nparam_);
     auto const r = u_->param(pos);
     if(r.nv > 0)
         return {

@@ -15,13 +15,14 @@
 #include <boost/url/grammar/ascii.hpp>
 #include <boost/url/grammar/char_rule.hpp>
 #include <boost/url/grammar/charset.hpp>
-#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/dec_octet_rule.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/lut_chars.hpp>
 #include <boost/url/grammar/not_empty_rule.hpp>
 #include <boost/url/grammar/optional_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/range.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/grammar/token_rule.hpp>
 #include <boost/url/grammar/type_traits.hpp>
 #include <boost/url/grammar/unsigned_dec_rule.hpp>

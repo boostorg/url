@@ -26,6 +26,7 @@ public:
     void
     run()
     {
+#if 0
         auto const& r = authority_rule;
 
         bad(r, "%");
@@ -60,6 +61,7 @@ public:
                     BOOST_TEST_EQ(p.userinfo.password.encoded(), "y");
             }
         }
+#endif
     }
 };
 

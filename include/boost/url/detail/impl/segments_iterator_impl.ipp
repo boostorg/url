@@ -12,6 +12,7 @@
 #define BOOST_URL_DETAIL_IMPL_SEGMENTS_ITERATOR_IMPL_IPP
 
 #include <boost/url/detail/segments_iterator_impl.hpp>
+#include <boost/url/rfc/detail/segment_rule.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
@@ -38,7 +39,7 @@ segments_iterator_impl(
     pos_ += n;
     t_ = grammar::parse(
         next_, end_,
-        segment_rule).value();
+        detail::segment_rule).value();
 }
 
 segments_iterator_impl::
@@ -89,7 +90,6 @@ decrement() noexcept
 {
     BOOST_ASSERT(i_ != 0);
     --i_;
-    error_code ec;
     if(i_ == 0)
     {
         next_ = begin_;

@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_IMPL_PORT_RULE_IPP
 #define BOOST_URL_IMPL_PORT_RULE_IPP
 
-#include <boost/url/rfc/port_rule.hpp>
+#include <boost/url/rfc/detail/port_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/token_rule.hpp>
@@ -19,6 +19,7 @@
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 auto
 port_rule::
@@ -88,6 +89,7 @@ parse(
     return t;
 }
 
+} // detail
 } // urls
 } // boost
 

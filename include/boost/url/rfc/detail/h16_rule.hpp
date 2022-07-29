@@ -7,41 +7,40 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IP_LITERAL_RULE_HPP
-#define BOOST_URL_RFC_IP_LITERAL_RULE_HPP
+#ifndef BOOST_URL_RFC_DETAIL_H16_RULE_HPP
+#define BOOST_URL_RFC_DETAIL_H16_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/ipv6_address.hpp>
 #include <boost/url/result.hpp>
-#include <boost/url/string_view.hpp>
+#include <cstdint>
 
 namespace boost {
 namespace urls {
+namespace detail {
 
-/** Rule for IP-literal
+/** Rule for h16
+
+    This parses a sixteen bit unsigned
+    hexadecimal number.
 
     @par BNF
     @code
-    IP-literal = "[" ( IPv6address / IPvFuture  ) "]"
+    h16         = 1*4HEXDIG
+                ; 16 bits of address represented in hexadecimal
     @endcode
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-        >3.2.2. Host (rfc3986)</a>
-
-    @see
-        @ref ipv6_address.
+        >3.2.2.  Host (rfc3986)</a>
 */
-struct ip_literal_rule_t
+struct h16_rule_t
 {
     struct value_type
     {
-        bool is_ipv6 = false;
-        ipv6_address ipv6;
-        string_view ipvfuture;
+        std::uint8_t hi;
+        std::uint8_t lo;
     };
 
-    BOOST_URL_DECL
     auto
     parse(
         char const*& it,
@@ -50,8 +49,9 @@ struct ip_literal_rule_t
         result<value_type>;
 };
 
-constexpr ip_literal_rule_t ip_literal_rule{};
+constexpr h16_rule_t h16_rule{};
 
+} // detail
 } // urls
 } // boost
 

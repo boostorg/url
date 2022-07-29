@@ -7,16 +7,17 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_HOST_RULE_IPP
-#define BOOST_URL_IMPL_HOST_RULE_IPP
+#ifndef BOOST_URL_RFC_DETAIL_IMPL_HOST_RULE_IPP
+#define BOOST_URL_RFC_DETAIL_IMPL_HOST_RULE_IPP
 
-#include <boost/url/rfc/host_rule.hpp>
-#include <boost/url/rfc/ip_literal_rule.hpp>
-#include <boost/url/rfc/reg_name_rule.hpp>
+#include <boost/url/rfc/detail/host_rule.hpp>
+#include <boost/url/rfc/detail/ip_literal_rule.hpp>
+#include <boost/url/rfc/detail/reg_name_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 auto
 host_rule_t::
@@ -30,38 +31,43 @@ parse(
 
     if(it == end)
     {
+        // empty host
         t.host_type =
             urls::host_type::name;
-        t.name = {};
-        t.host_part = {};
         return t;
     }
-    auto const start = it;
+
+    auto const it0 = it;
     if(*it == '[')
     {
         // IP-literal
         auto rv = grammar::parse(
-            it, end, ip_literal_rule);
+            it, end,
+            detail::ip_literal_rule);
         if(! rv)
             return rv.error();
         auto v = *rv;
         if(v.is_ipv6)
         {
             // IPv6address
-            t.ipv6 = v.ipv6;
+            auto const b =
+                v.ipv6.to_bytes();
+            std::memcpy(
+                t.addr,
+                b.data(),
+                b.size());
             t.host_type =
                 urls::host_type::ipv6;
-            t.host_part = string_view(
-                start, it - start);
+            t.match = string_view(
+                it0, it - it0);
             return t;
         }
 
         // IPvFuture
-        t.ipvfuture = v.ipvfuture;
         t.host_type =
             urls::host_type::ipvfuture;
-        t.host_part = string_view(
-            start, it - start);
+        t.match = string_view(
+            it0, it - it0);
         return t;
     }
     // IPv4address
@@ -70,31 +76,38 @@ parse(
             it, end, ipv4_address_rule);
         if(rv.has_value())
         {
-            t.ipv4 = *rv;
+            auto const b =
+                rv->to_bytes();
+            std::memcpy(
+                t.addr,
+                b.data(),
+                b.size());
             t.host_type =
                 urls::host_type::ipv4;
-            t.host_part = string_view(
-                start, it - start);
+            t.match = string_view(
+                it0, it - it0);
             return t;
         }
-        // rewind
-        it = start;
+
+        it = it0; // rewind
     }
     // reg-name
     {
         auto rv = grammar::parse(
-            it, end, reg_name_rule);
+            it, end,
+            detail::reg_name_rule);
         if(! rv)
             return rv.error();
         t.name = *rv;
         t.host_type =
             urls::host_type::name;
-        t.host_part = string_view(
-            start, it - start);
+        t.match = string_view(
+            it0, it - it0);
         return t;
     }
 }
 
+} // detail
 } // urls
 } // boost
 

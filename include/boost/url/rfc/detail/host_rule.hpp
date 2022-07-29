@@ -7,10 +7,9 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_HOST_RULE_HPP
-#define BOOST_URL_RFC_HOST_RULE_HPP
+#ifndef BOOST_URL_RFC_DETAIL_HOST_RULE_HPP
+#define BOOST_URL_RFC_DETAIL_HOST_RULE_HPP
 
-#include <boost/url/detail/config.hpp>
 #include <boost/url/host_type.hpp>
 #include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/string_view.hpp>
@@ -20,6 +19,7 @@
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 /** Rule for host
 
@@ -43,14 +43,11 @@ struct host_rule_t
     {
         urls::host_type host_type =
             urls::host_type::none;
+        string_view match;
+        unsigned char addr[16] = {};
         pct_encoded_view name;
-        ipv4_address ipv4;
-        ipv6_address ipv6;
-        string_view ipvfuture;
-        string_view host_part;
     };
 
-    BOOST_URL_DECL
     auto
     parse(
         char const*& it,
@@ -61,6 +58,7 @@ struct host_rule_t
 
 constexpr host_rule_t host_rule{};
 
+} // detail
 } // urls
 } // boost
 

@@ -32,14 +32,6 @@ struct parts_base
         id_frag,        // leading '#'
         id_end          // one past the end
     };
-
-    static
-    constexpr
-    pos_t zero_ = 0;
-
-    static
-    constexpr
-    char const* const empty_ = "";
 };
 
 } // detail

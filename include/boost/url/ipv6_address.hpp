@@ -335,24 +335,6 @@ private:
 
 //------------------------------------------------
 
-/** A Rule for parsing
-*/
-struct ipv6_address_rule_t
-{
-    using value_type =
-        ipv6_address;
-
-    BOOST_URL_DECL
-    auto
-    parse(
-        char const*& it,
-        char const* end
-            ) const noexcept ->
-    result<ipv6_address>;
-};
-
-constexpr ipv6_address_rule_t ipv6_address_rule{};
-
 /** Parse a string containing an IPv6 address.
 
     This function attempts to parse the string

@@ -7,13 +7,14 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_URI_REFERENCE_RULE_IPP
-#define BOOST_URL_IMPL_URI_REFERENCE_RULE_IPP
+#ifndef BOOST_URL_RFC_IMPL_URI_REFERENCE_RULE_IPP
+#define BOOST_URL_RFC_IMPL_URI_REFERENCE_RULE_IPP
 
 #include <boost/url/rfc/uri_reference_rule.hpp>
-#include <boost/url/rfc/hier_part_rule.hpp>
-#include <boost/url/rfc/relative_part_rule.hpp>
+#include <boost/url/rfc/uri_rule.hpp>
+#include <boost/url/rfc/relative_ref_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/variant_rule.hpp>
 
 namespace boost {
 namespace urls {
@@ -26,70 +27,21 @@ parse(
         ) const noexcept ->
     result<value_type>
 {
-    value_type t;
-
-    auto const start = it;
-
-    // scheme ":"
+    auto rv = grammar::parse(
+        it, end,
+        grammar::variant_rule(
+            uri_rule,
+            relative_ref_rule));
+    if(! rv)
+        return rv.error();
+    switch(rv->index())
     {
-        auto rv = grammar::parse(
-            it, end, scheme_part_rule());
-        if(! rv)
-        {
-            // rewind
-            it = start;
-
-            // relative-ref
-            {
-                auto rv2 = grammar::parse(
-                    it, end, relative_part_rule);
-                if(! rv2)
-                    return rv2.error();
-
-                auto const& v = rv2.value();
-                t.has_authority =
-                    v.has_authority;
-                t.authority = v.authority;
-                t.path = v.path;
-            }
-        }
-        else
-        {
-            t.scheme_part = *rv;
-
-            // hier-part
-            auto rv2 = grammar::parse(
-                it, end, hier_part_rule);
-            if(! rv2)
-                return rv2.error();
-            auto t0 = rv2.value();
-
-            t.has_authority =
-                t0.has_authority;
-            t.authority = t0.authority;
-            t.path = t0.path;
-        }
+    default:
+    case 0:
+        return get<0>(*rv);
+    case 1:
+        return get<1>(*rv);
     }
-
-    // [ "?" query ]
-    {
-        auto rv = grammar::parse(
-            it, end, query_part_rule);
-        if(! rv)
-            return rv.error();
-        t.query_part = *rv;
-    }
-
-    // [ "#" fragment ]
-    {
-        auto rv = grammar::parse(
-            it, end, fragment_part_rule);
-        if(! rv)
-            return rv.error();
-        t.fragment_part = *rv;
-    }
-
-    return t;
 }
 
 } // urls

@@ -17,8 +17,7 @@
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/host_rule.hpp>
+#include <boost/url/detail/url_impl.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
 #include <iosfwd>
@@ -71,81 +70,15 @@ namespace urls {
 */
 class BOOST_SYMBOL_VISIBLE
     authority_view
+    : protected detail::parts_base
 {
-    enum
-    {
-        id_user = 0,
-        id_pass,        // leading ':', trailing '@'
-        id_host,
-        id_port,        // leading ':'
-        id_end          // one past the end
-    };
+    detail::url_impl u_;
 
-    static
-    constexpr
-    pos_t zero_ = 0;
+    friend struct detail::url_impl;
 
-    static
-    constexpr
-    char const* const empty_ = "";
-
-    char const* cs_ = empty_;
-    pos_t offset_[id_end + 1] = {};
-    pos_t decoded_[id_end] = {};
-    unsigned char ip_addr_[16] = {};
-    // VFALCO don't we need a bool?
-    std::uint16_t port_number_ = 0;
-    urls::host_type host_type_ =
-        urls::host_type::none;
-
-    struct shared_impl;
-
-    pos_t len(int first,
-        int last) const noexcept;
-    void set_size(
-        int id, pos_t n) noexcept;
-    explicit authority_view(
-        char const* cs) noexcept;
+    explicit
     authority_view(
-        authority_view const& u,
-            char const* cs) noexcept;
-
-    // return offset of id
-    auto
-    offset(int id) const noexcept ->
-        pos_t
-    {
-        return
-            id == id_user ?
-            zero_ : offset_[id - 1];
-    }
-
-    // return length of part
-    auto
-    len(int id) const noexcept ->
-        pos_t
-    {
-        return
-            offset(id + 1) -
-            offset(id);
-    }
-
-    // return id as string
-    string_view
-    get(int id) const noexcept
-    {
-        return {
-            cs_ + offset(id), len(id) };
-    }
-
-    // return [first, last) as string
-    string_view
-    get(int first,
-        int last) const noexcept
-    {
-        return { cs_ + offset(first),
-            offset(last) - offset(first) };
-    }
+        detail::url_impl const& u) noexcept;
 
 public:
     /** The type of elements.
@@ -253,7 +186,7 @@ public:
     std::size_t
     size() const noexcept
     {
-        return offset(id_end);
+        return u_.offset(id_end);
     }
 
     /** Return true if the contents are empty.
@@ -279,7 +212,7 @@ public:
     char const*
     data() const noexcept
     {
-        return cs_;
+        return u_.cs_;
     }
 
     /** Access the specified character
@@ -300,7 +233,7 @@ public:
         if(pos >= size())
             detail::throw_out_of_range(
                 BOOST_CURRENT_LOCATION);
-        return cs_[pos];
+        return u_.cs_[pos];
     }
 
     /** Access the specified character
@@ -320,7 +253,7 @@ public:
         std::size_t pos) const noexcept
     {
         BOOST_ASSERT(pos < size());
-        return cs_[pos];
+        return u_.cs_[pos];
     }
 
     /** Return an iterator to the beginning
@@ -355,42 +288,6 @@ public:
     // Observers
     //
     //--------------------------------------------
-
-    /** Return a read-only copy of the authority, with shared lifetime.
-
-        This function makes a copy of the storage
-        pointed to by this, and attaches it to a
-        new constant @ref authority_view returned in a
-        shared pointer. The lifetime of the storage
-        for the characters will extend for the
-        lifetime of the shared object. This allows
-        the new view to be copied and passed around
-        after the original string buffer is destroyed.
-
-        @par Example
-        @code
-        std::shared_ptr<authority const> sp;
-        {
-            std::string s( "user:pass@example.com:443" );
-            authority_view a = parse_authority( s ).value();    // a references characters in s
-
-            assert( a.data() == s.data() );                     // same buffer
-
-            sp = a.persist();
-
-            assert( sp->data() != a.data() );                   // different buffer
-            assert( sp->encoded_authority() == s);              // same contents
-
-            // s is destroyed and thus a
-            // becomes invalid, but sp remains valid.
-        }
-        std::cout << *sp; // works
-        @endcode
-    */
-    BOOST_URL_DECL
-    std::shared_ptr<
-        authority_view const>
-    persist() const;
 
     /** Return the complete authority
 
@@ -523,8 +420,8 @@ public:
         opt.plus_to_space = false;
         return detail::access::construct(
             encoded_userinfo(),
-            decoded_[id_user] +
-                has_password() + decoded_[id_pass],
+            u_.decoded_[id_user] +
+                has_password() + u_.decoded_[id_pass],
             opt);
     }
 
@@ -566,7 +463,7 @@ public:
     string_view
     encoded_user() const noexcept
     {
-        return get(id_user);
+        return u_.get(id_user);
     }
 
     /** Return the user
@@ -604,7 +501,7 @@ public:
         pct_decode_opts opt;
         opt.plus_to_space = false;
         return detail::access::construct(
-            encoded_user(), decoded_[id_user], opt);
+            encoded_user(), u_.decoded_[id_user], opt);
     }
 
     /** Return true if this contains a password
@@ -704,7 +601,7 @@ public:
         pct_decode_opts opt;
         opt.plus_to_space = false;
         return detail::access::construct(
-            encoded_password(), decoded_[id_pass], opt);
+            encoded_password(), u_.decoded_[id_pass], opt);
     }
 
     //--------------------------------------------
@@ -752,7 +649,7 @@ public:
     urls::host_type
     host_type() const noexcept
     {
-        return host_type_;
+        return u_.host_type_;
     }
 
     /** Return the host
@@ -842,7 +739,7 @@ public:
         pct_decode_opts opt;
         opt.plus_to_space = false;
         return detail::access::construct(
-            encoded_host(), decoded_[id_host], opt);
+            encoded_host(), u_.decoded_[id_host], opt);
     }
 
     /** Return the host as an IPv4 address
@@ -944,7 +841,7 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    ipv_future() const noexcept;
+    ipvfuture() const noexcept;
 
     /** Return true if the URL contains a port
 
@@ -1094,21 +991,6 @@ public:
     {
         return os << a.encoded_authority();
     }
-
-    //--------------------------------------------
-    //
-    // Parsing
-    //
-    //--------------------------------------------
-
-    BOOST_URL_DECL friend result<authority_view>
-        parse_authority(string_view s) noexcept;
-
-    friend class url_view;
-
-private:
-    void apply(decltype(host_rule)::value_type const& t) noexcept;
-    void apply(decltype(authority_rule)::value_type const& t) noexcept;
 };
 
 //------------------------------------------------
@@ -1160,7 +1042,5 @@ parse_authority(
 
 } // urls
 } // boost
-
-#include <boost/url/impl/authority_view.hpp>
 
 #endif

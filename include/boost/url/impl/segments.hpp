@@ -128,8 +128,8 @@ segments::
 is_absolute() const noexcept
 {
     return
-        u_->len(id_path) != 0 &&
-        u_->s_[u_->offset(id_path)] == '/';
+        u_->u_.len(id_path) != 0 &&
+        u_->s_[u_->u_.offset(id_path)] == '/';
 }
 
 inline
@@ -200,7 +200,7 @@ begin() const noexcept ->
     iterator
 {
     return iterator(
-        u_->encoded_path(), u_->nseg_);
+        u_->encoded_path(), u_->u_.nseg_);
 }
 
 inline
@@ -210,7 +210,7 @@ end() const noexcept ->
     iterator
 {
     return iterator(
-        u_->encoded_path(), u_->nseg_, 0);
+        u_->encoded_path(), u_->u_.nseg_, 0);
 }
 
 //------------------------------------------------
@@ -232,7 +232,7 @@ std::size_t
 segments::
 size() const noexcept
 {
-    return u_->nseg_;
+    return u_->u_.nseg_;
 }
 
 //------------------------------------------------

@@ -7,16 +7,17 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_IMPL_H16_RULE_HPP
-#define BOOST_URL_RFC_IMPL_H16_RULE_HPP
+#ifndef BOOST_URL_RFC_DETAIL_IMPL_H16_RULE_HPP
+#define BOOST_URL_RFC_DETAIL_IMPL_H16_RULE_HPP
 
-#include <boost/url/rfc/h16_rule.hpp>
+#include <boost/url/rfc/detail/h16_rule.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 auto
 h16_rule_t::
@@ -69,6 +70,7 @@ parse(
             unsigned char>(v % 256)};
 }
 
+} // detail
 } // urls
 } // boost
 

@@ -7,10 +7,11 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_IPV_FUTURE_RULE_IPP
-#define BOOST_URL_IMPL_IPV_FUTURE_RULE_IPP
+#ifndef BOOST_URL_DETAIL_IMPL_IPVFUTURE_RULE_IPP
+#define BOOST_URL_DETAIL_IMPL_IPVFUTURE_RULE_IPP
 
-#include <boost/url/rfc/ipv_future_rule.hpp>
+#include <boost/url/rfc/detail/ipvfuture_rule.hpp>
+#include <boost/url/error.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/char_rule.hpp>
@@ -20,9 +21,10 @@
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 auto
-ipv_future_rule_t::
+ipvfuture_rule_t::
 parse(
     char const*& it,
     char const* const end
@@ -50,18 +52,19 @@ parse(
     if(t.major.empty())
     {
         // can't be empty
-        return error::bad_empty_element;
+        return urls::error::bad_empty_element;
     }
     if(t.minor.empty())
     {
         // can't be empty
-        return error::bad_empty_element;
+        return urls::error::bad_empty_element;
     }
     t.str = string_view(
         it0, it - it0);
     return t;
 }
 
+} // detail
 } // urls
 } // boost
 

@@ -40,21 +40,13 @@
 #include <boost/url/rfc/absolute_uri_rule.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>
-#include <boost/url/rfc/fragment_rule.hpp>
-#include <boost/url/rfc/hier_part_rule.hpp>
-#include <boost/url/rfc/host_rule.hpp>
-#include <boost/url/rfc/ip_literal_rule.hpp>
-#include <boost/url/rfc/ipv_future_rule.hpp>
+#include <boost/url/rfc/ipv4_address_rule.hpp>
+#include <boost/url/rfc/ipv6_address_rule.hpp>
 #include <boost/url/rfc/paths_rule.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
-#include <boost/url/rfc/port_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
-#include <boost/url/rfc/reg_name_rule.hpp>
-#include <boost/url/rfc/relative_part_rule.hpp>
 #include <boost/url/rfc/relative_ref_rule.hpp>
-#include <boost/url/rfc/scheme_rule.hpp>
 #include <boost/url/rfc/uri_rule.hpp>
 #include <boost/url/rfc/uri_reference_rule.hpp>
-#include <boost/url/rfc/userinfo_rule.hpp>
 
 #endif

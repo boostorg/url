@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_PORT_RULE_HPP
-#define BOOST_URL_RFC_PORT_RULE_HPP
+#ifndef BOOST_URL_RFC_DETAIL_PORT_RULE_HPP
+#define BOOST_URL_RFC_DETAIL_PORT_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/result.hpp>
@@ -17,6 +17,7 @@
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 /** Rule for port
 
@@ -41,7 +42,6 @@ struct port_rule
         bool has_number = false;
     };
 
-    BOOST_URL_DECL
     result<value_type>
     parse(
         char const*& it,
@@ -66,9 +66,6 @@ struct port_rule
 */
 struct port_part_rule_t
 {
-    using number_type =
-        std::uint16_t;
-
     struct value_type
     {
         bool has_port = false;
@@ -77,7 +74,6 @@ struct port_part_rule_t
         std::uint16_t port_number = 0;
     };
 
-    BOOST_URL_DECL
     auto
     parse(
         char const*& it,
@@ -88,6 +84,7 @@ struct port_part_rule_t
 
 constexpr port_part_rule_t port_part_rule{};
 
+} // detail
 } // urls
 } // boost
 

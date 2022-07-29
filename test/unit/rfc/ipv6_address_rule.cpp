@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
+// Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -8,17 +8,15 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/rfc/reg_name_rule.hpp>
+#include <boost/url/rfc/ipv6_address_rule.hpp>
 
-#include <boost/url/grammar/parse.hpp>
-#include "test_suite.hpp"
+#include "test_rule.hpp"
 
 namespace boost {
 namespace urls {
 
-class reg_name_rule_test
+struct ipv6_address_rule_test
 {
-public:
     void
     run()
     {
@@ -26,8 +24,8 @@ public:
 };
 
 TEST_SUITE(
-    reg_name_rule_test,
-    "boost.url.reg_name_rule");
+    ipv6_address_rule_test,
+    "boost.url.ipv6_address_rule");
 
 } // urls
 } // boost

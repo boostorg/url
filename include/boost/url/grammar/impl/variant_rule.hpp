@@ -35,7 +35,9 @@ parse_variant(
     std::integral_constant<
         std::size_t, I> const&,
     std::false_type const&) ->
-        result<void>
+        result<variant<
+            typename R0::value_type,
+            typename Rn::value_type...>>
 {
     // end
     return error::syntax;
@@ -54,14 +56,18 @@ parse_variant(
     std::integral_constant<
         std::size_t, I> const&,
     std::true_type const&) ->
-        result<detail::tuple_element<I,
-            detail::tuple<R0, Rn...> > >
+        result<variant<
+            typename R0::value_type,
+            typename Rn::value_type...>>
 {
     auto const it0 = it;
     auto rv = parse(
         it, end, get<I>(rn));
     if(rv.has_value())
-        return *rv;
+        return variant<
+            typename R0::value_type,
+            typename Rn::value_type...>{
+                variant2::in_place_index_t<I>{}, *rv};
     it = it0;
     return parse_variant(
         it, end, rn,

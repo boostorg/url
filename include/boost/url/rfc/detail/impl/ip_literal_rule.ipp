@@ -10,16 +10,17 @@
 #ifndef BOOST_URL_IMPL_IP_LITERAL_RULE_IPP
 #define BOOST_URL_IMPL_IP_LITERAL_RULE_IPP
 
-#include <boost/url/rfc/ip_literal_rule.hpp>
+#include <boost/url/rfc/detail/ip_literal_rule.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/grammar/char_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/rfc/ipv_future_rule.hpp>
+#include <boost/url/rfc/detail/ipvfuture_rule.hpp>
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 auto
 ip_literal_rule_t::
@@ -62,7 +63,7 @@ parse(
         auto rv = grammar::parse(
             it, end, 
             grammar::sequence_rule(
-                ipv_future_rule,
+                ipvfuture_rule,
                 grammar::char_rule(']')));
         if(! rv)
             return rv.error();
@@ -72,6 +73,7 @@ parse(
     }
 }
 
+} // detail
 } // urls
 } // boost
 

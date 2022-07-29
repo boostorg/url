@@ -7,13 +7,16 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_RELATIVE_REF_RULE_IPP
-#define BOOST_URL_IMPL_RELATIVE_REF_RULE_IPP
+#ifndef BOOST_URL_RFC_IMPL_RELATIVE_REF_RULE_IPP
+#define BOOST_URL_RFC_IMPL_RELATIVE_REF_RULE_IPP
 
 #include <boost/url/rfc/relative_ref_rule.hpp>
-#include <boost/url/rfc/fragment_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
-#include <boost/url/rfc/relative_part_rule.hpp>
+#include <boost/url/rfc/detail/fragment_rule.hpp>
+#include <boost/url/rfc/detail/relative_part_rule.hpp>
+#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/optional_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 namespace boost {
@@ -27,36 +30,53 @@ parse(
         ) const noexcept ->
     result<value_type>
 {
-    value_type t;
+    detail::url_impl u(false);
+    u.cs_ = it;
 
     // relative-part
     {
         auto rv = grammar::parse(
-            it, end, relative_part_rule);
+            it, end,
+            detail::relative_part_rule);
         if(! rv)
             return rv.error();
-        t.relative_part = *rv;
+        if(rv->has_authority)
+            u.apply_authority(rv->authority);
+        u.apply_path(rv->path);
     }
 
     // [ "?" query ]
     {
         auto rv = grammar::parse(
-            it, end, query_part_rule);
+            it, end,
+            grammar::optional_rule(
+                grammar::sequence_rule(
+                    grammar::char_rule('?'),
+                    query_rule)));
         if(! rv)
             return rv.error();
-        t.query_part = *rv;
+        if(rv->has_value())
+        {
+            auto const& v =
+                std::get<1>(**rv);
+            u.apply_query(
+                v.encoded_string(),
+                v.size());
+        }
     }
 
     // [ "#" fragment ]
     {
         auto rv = grammar::parse(
-            it, end, fragment_part_rule);
+            it, end, detail::fragment_part_rule);
         if(! rv)
             return rv.error();
-        t.fragment_part = *rv;
+        if(rv->has_value())
+            u.apply_frag(
+                std::get<1>(**rv));
     }
 
-    return t;
+    return u.construct();
 }
 
 } // urls

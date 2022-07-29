@@ -64,23 +64,14 @@ set(BOOST_URL_TESTS_FILES
     rfc/absolute_uri_rule.cpp
     rfc/authority_rule.cpp
     rfc/charsets.cpp
-    rfc/fragment_rule.cpp
-    rfc/h16_rule.cpp
-    rfc/hier_part_rule.cpp
-    rfc/host_rule.cpp
-    rfc/ip_literal_rule.cpp
-    rfc/ipv_future_rule.cpp
+    rfc/ipv4_address_rule.cpp
+    rfc/ipv6_address_rule.cpp
     rfc/paths_rule.cpp
     rfc/pct_encoded_rule.cpp
-    rfc/port_rule.cpp
     rfc/query_rule.cpp
-    rfc/reg_name_rule.cpp
-    rfc/relative_part_rule.cpp
     rfc/relative_ref_rule.cpp
-    rfc/scheme_rule.cpp
     rfc/uri_rule.cpp
     rfc/uri_reference_rule.cpp
-    rfc/userinfo_rule.cpp
     )
 
 set(TEST_MAIN ../../extra/test_main.cpp)

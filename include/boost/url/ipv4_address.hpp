@@ -293,24 +293,6 @@ private:
 
 //------------------------------------------------
 
-/** A Rule for parsing
-*/
-struct ipv4_address_rule_t
-{
-    using value_type =
-        ipv4_address;
-
-    BOOST_URL_DECL
-    auto
-    parse(
-        char const*& it,
-        char const* end
-            ) const noexcept ->
-    result<ipv4_address>;
-};
-
-constexpr ipv4_address_rule_t ipv4_address_rule{};
-
 /** Return an IPv4 address from an IP address string in dotted decimal form
 */
 BOOST_URL_DECL

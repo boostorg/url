@@ -39,6 +39,7 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/pct_encoded_view.ipp>
 #include <boost/url/detail/impl/segments_encoded_iterator_impl.ipp>
 #include <boost/url/detail/impl/segments_iterator_impl.ipp>
+#include <boost/url/detail/impl/url_impl.ipp>
 
 #include <boost/url/impl/authority_view.ipp>
 #include <boost/url/impl/error.ipp>
@@ -66,19 +67,22 @@ in a translation unit of the program.
 
 #include <boost/url/rfc/impl/absolute_uri_rule.ipp>
 #include <boost/url/rfc/impl/authority_rule.ipp>
-#include <boost/url/rfc/impl/h16_rule.ipp>
-#include <boost/url/rfc/impl/hier_part_rule.ipp>
-#include <boost/url/rfc/impl/host_rule.ipp>
-#include <boost/url/rfc/impl/ip_literal_rule.ipp>
-#include <boost/url/rfc/impl/ipv_future_rule.ipp>
+#include <boost/url/rfc/impl/ipv4_address_rule.ipp>
+#include <boost/url/rfc/impl/ipv6_address_rule.ipp>
 #include <boost/url/rfc/impl/paths_rule.ipp>
-#include <boost/url/rfc/impl/port_rule.ipp>
 #include <boost/url/rfc/impl/query_rule.ipp>
-#include <boost/url/rfc/impl/relative_part_rule.ipp>
 #include <boost/url/rfc/impl/relative_ref_rule.ipp>
-#include <boost/url/rfc/impl/scheme_rule.ipp>
 #include <boost/url/rfc/impl/uri_rule.ipp>
 #include <boost/url/rfc/impl/uri_reference_rule.ipp>
-#include <boost/url/rfc/impl/userinfo_rule.ipp>
+
+#include <boost/url/rfc/detail/impl/h16_rule.ipp>
+#include <boost/url/rfc/detail/impl/hier_part_rule.ipp>
+#include <boost/url/rfc/detail/impl/host_rule.ipp>
+#include <boost/url/rfc/detail/impl/ip_literal_rule.ipp>
+#include <boost/url/rfc/detail/impl/ipvfuture_rule.ipp>
+#include <boost/url/rfc/detail/impl/port_rule.ipp>
+#include <boost/url/rfc/detail/impl/relative_part_rule.ipp>
+#include <boost/url/rfc/detail/impl/scheme_rule.ipp>
+#include <boost/url/rfc/detail/impl/userinfo_rule.ipp>
 
 #endif

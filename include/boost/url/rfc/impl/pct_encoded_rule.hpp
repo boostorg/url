@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_PCT_ENCODED_RULE_HPP
-#define BOOST_URL_IMPL_PCT_ENCODED_RULE_HPP
+#ifndef BOOST_URL_RFC_IMPL_PCT_ENCODED_RULE_HPP
+#define BOOST_URL_RFC_IMPL_PCT_ENCODED_RULE_HPP
 
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/grammar/charset.hpp>

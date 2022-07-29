@@ -128,8 +128,8 @@ segments_encoded::
 is_absolute() const noexcept
 {
     return
-        u_->len(id_path) != 0 &&
-        u_->s_[u_->offset(id_path)] == '/';
+        u_->u_.len(id_path) != 0 &&
+        u_->s_[u_->u_.offset(id_path)] == '/';
 }
 
 template<class Allocator>
@@ -210,7 +210,7 @@ std::size_t
 segments_encoded::
 size() const noexcept
 {
-    return u_->nseg_;
+    return u_->u_.nseg_;
 }
 
 //------------------------------------------------

@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_USERINFO_RULE_HPP
-#define BOOST_URL_RFC_USERINFO_RULE_HPP
+#ifndef BOOST_URL_RFC_DETAIL_USERINFO_RULE_HPP
+#define BOOST_URL_RFC_DETAIL_USERINFO_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
@@ -17,6 +17,7 @@
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 /** Rule for userinfo
 
@@ -41,7 +42,6 @@ struct userinfo_rule_t
         pct_encoded_view password;
     };
 
-    BOOST_URL_DECL
     auto
     parse(
         char const*& it,
@@ -52,6 +52,7 @@ struct userinfo_rule_t
 
 constexpr userinfo_rule_t userinfo_rule{};
 
+} // detail
 } // urls
 } // boost
 

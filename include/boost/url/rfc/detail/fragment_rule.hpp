@@ -7,10 +7,9 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_FRAGMENT_RULE_HPP
-#define BOOST_URL_RFC_FRAGMENT_RULE_HPP
+#ifndef BOOST_URL_RFC_DETAIL_FRAGMENT_RULE_HPP
+#define BOOST_URL_RFC_DETAIL_FRAGMENT_RULE_HPP
 
-#include <boost/url/detail/config.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/grammar/char_rule.hpp>
@@ -19,6 +18,7 @@
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 /** Rule for fragment
 
@@ -54,6 +54,7 @@ constexpr auto fragment_part_rule =
             grammar::char_rule('#'),
             fragment_rule));
 
+} // detail
 } // urls
 } // boost
 

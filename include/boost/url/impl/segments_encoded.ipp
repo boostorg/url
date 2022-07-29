@@ -30,7 +30,7 @@ segments_encoded::
 begin() const noexcept ->
     iterator
 {
-    return {u_->encoded_path(), u_->nseg_};
+    return {u_->encoded_path(), u_->u_.nseg_};
 }
 
 auto
@@ -38,7 +38,7 @@ segments_encoded::
 end() const noexcept ->
     iterator
 {
-    return {u_->encoded_path(), u_->nseg_, 0};
+    return {u_->encoded_path(), u_->u_.nseg_, 0};
 }
 
 //------------------------------------------------

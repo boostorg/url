@@ -40,10 +40,10 @@ public:
     check(
         string_view s,
         std::initializer_list<
-            query_param_view> i)
+            query_param_encoded_view> i)
     {
         auto rv = grammar::parse(
-            s, query_rule{});
+            s, query_rule);
         if(! BOOST_TEST(! rv.has_error()))
             return;
         auto const& t = *rv;
@@ -73,7 +73,7 @@ public:
     {
         testParse();
 
-        auto const& t = query_rule{};
+        auto const& t = query_rule;
         
         bad(t, "%");
 

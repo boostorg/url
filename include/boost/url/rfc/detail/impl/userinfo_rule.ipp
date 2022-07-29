@@ -7,10 +7,10 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_USERINFO_RULE_IPP
-#define BOOST_URL_IMPL_USERINFO_RULE_IPP
+#ifndef BOOST_URL_RFC_DETAIL_IMPL_USERINFO_RULE_IPP
+#define BOOST_URL_RFC_DETAIL_IMPL_USERINFO_RULE_IPP
 
-#include <boost/url/rfc/userinfo_rule.hpp>
+#include <boost/url/rfc/detail/userinfo_rule.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
@@ -19,6 +19,7 @@
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 auto
 userinfo_rule_t::
@@ -66,6 +67,7 @@ parse(
     return t;
 }
 
+} // detail
 } // urls
 } // boost
 

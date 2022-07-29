@@ -13,6 +13,7 @@
 #include <boost/url/rfc/paths_rule.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/detail/segment_rule.hpp>
 #include <boost/url/grammar/char_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
@@ -58,7 +59,7 @@ increment(
         it, end,
         grammar::sequence_rule(
             grammar::char_rule('/'),
-            segment_rule));
+            detail::segment_rule));
     if(rv.has_value())
         return std::get<1>(*rv);
     it = it0;
@@ -109,7 +110,7 @@ begin(
         return error::empty_path_segment;
     }
     return grammar::parse(
-        it, end, segment_rule);
+        it, end, detail::segment_rule);
 }
 
 auto
@@ -125,7 +126,7 @@ increment(
         it, end,
         grammar::sequence_rule(
             grammar::char_rule('/'),
-            segment_rule));
+            detail::segment_rule));
     if(rv.has_value())
         return std::get<1>(*rv);
     it = it0;
@@ -157,7 +158,8 @@ begin(
     result<pct_encoded_view>
 {
     return grammar::parse(
-        it, end, segment_nz_nc_rule);
+        it, end,
+        detail::segment_nz_nc_rule);
 }
 
 auto
@@ -173,7 +175,7 @@ increment(
         it, end,
         grammar::sequence_rule(
             grammar::char_rule('/'),
-            segment_rule));
+            detail::segment_rule));
     if(rv.has_value())
         return std::get<1>(*rv);
     it = it0;
@@ -205,7 +207,8 @@ begin(
      result<pct_encoded_view>
 {
     return grammar::parse(
-        it, end, segment_nz_rule);
+        it, end,
+        detail::segment_nz_rule);
 }
 
 auto
@@ -221,7 +224,7 @@ increment(
         it, end,
         grammar::sequence_rule(
             grammar::char_rule('/'),
-            segment_rule));
+            detail::segment_rule));
     if(rv.has_value())
         return std::get<1>(*rv);
     it = it0;

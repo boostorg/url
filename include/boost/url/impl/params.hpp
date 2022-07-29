@@ -168,8 +168,9 @@ params::
 begin() const noexcept ->
     iterator
 {
-    if (u_->nparam_ > 0)
-        return { u_->encoded_query() , u_->nparam_ };
+    if (u_->u_.nparam_ > 0)
+        return { u_->encoded_query(),
+            u_->u_.nparam_ };
     return end();
 }
 
@@ -179,7 +180,8 @@ params::
 end() const noexcept ->
     iterator
 {
-    return {u_->encoded_query(), u_->nparam_, 0};
+    return { u_->encoded_query(),
+        u_->u_.nparam_, 0 };
 }
 
 //------------------------------------------------
@@ -193,7 +195,7 @@ std::size_t
 params::
 size() const noexcept
 {
-    return u_->nparam_;
+    return u_->u_.nparam_;
 }
 
 inline

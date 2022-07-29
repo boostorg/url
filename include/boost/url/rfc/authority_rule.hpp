@@ -11,10 +11,8 @@
 #define BOOST_URL_RFC_AUTHORITY_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/authority_view.hpp>
 #include <boost/url/result.hpp>
-#include <boost/url/rfc/host_rule.hpp>
-#include <boost/url/rfc/port_rule.hpp>
-#include <boost/url/rfc/userinfo_rule.hpp>
 
 namespace boost {
 namespace urls {
@@ -29,21 +27,13 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
         >3.2. Authority (rfc3986)</a>
-
-    @see
-        @ref host_rule,
-        @ref port_part_rule,
-        @ref userinfo_rule.
 */
+#ifdef BOOST_URL_DOCS
+constexpr __implementation_defined__ authority_rule;
+#else
 struct authority_rule_t
 {
-    struct value_type
-    {
-        bool has_userinfo = false;
-        decltype(userinfo_rule)::value_type userinfo;
-        decltype(host_rule)::value_type host;
-        decltype(port_part_rule)::value_type port;
-    };
+    using value_type = authority_view;
 
     BOOST_URL_DECL
     auto
@@ -55,6 +45,7 @@ struct authority_rule_t
 };
 
 constexpr authority_rule_t authority_rule{};
+#endif
 
 } // urls
 } // boost

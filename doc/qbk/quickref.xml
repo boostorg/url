@@ -130,28 +130,18 @@
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__absolute_uri_rule_t">absolute_uri_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__authority_rule_t">authority_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__h16_rule_t">h16_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__hier_part_rule_t">hier_part_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__host_rule_t">host_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__ip_literal_rule_t">ip_literal_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__ipv_future_rule_t">ipv_future_rule_t</link></member>
+          <member><link linkend="url.ref.boost__urls__ipv4_address_rule_t">ipv4_address_rule_t</link></member>
+          <member><link linkend="url.ref.boost__urls__ipv6_address_rule_t">ipv6_address_rule_t</link></member>
           <member><link linkend="url.ref.boost__urls__path_abempty_rule">path_abempty_rule</link></member>
           <member><link linkend="url.ref.boost__urls__path_absolute_rule">path_absolute_rule</link></member>
           <member><link linkend="url.ref.boost__urls__path_noscheme_rule">path_noscheme_rule</link></member>
           <member><link linkend="url.ref.boost__urls__path_rootless_rule">path_rootless_rule</link></member>
           <member><link linkend="url.ref.boost__urls__parsed_path">parsed_path</link></member>
           <member><link linkend="url.ref.boost__urls__pct_encoded_rule_t">pct_encoded_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__port_part_rule_t">port_part_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__port_rule">port_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__query_rule">query_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__relative_part_rule_t">relative_part_rule_t</link></member>
+          <member><link linkend="url.ref.boost__urls__query_rule_t">query_rule_t</link></member>
           <member><link linkend="url.ref.boost__urls__relative_ref_rule_t">relative_ref_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__scheme_part_rule">scheme_part_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__scheme_rule">scheme_rule</link></member>
           <member><link linkend="url.ref.boost__urls__uri_reference_rule_t">uri_reference_rule_t</link></member>
           <member><link linkend="url.ref.boost__urls__uri_rule_t">uri_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__userinfo_rule_t">userinfo_rule_t</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">CharSets</bridgehead>
@@ -172,24 +162,12 @@
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__absolute_uri_rule">absolute_uri_rule</link></member>
           <member><link linkend="url.ref.boost__urls__authority_rule">authority_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__fragment_part_rule">fragment_part_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__fragment_rule">fragment_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__h16_rule">h16_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__hier_part_rule">hier_part_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__host_rule">host_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__ip_literal_rule">ip_literal_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__ipv_future_rule">ipv_future_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__port_part_rule">port_part_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__query_part_rule">query_part_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__reg_name_rule">reg_name_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__relative_part_rule">relative_part_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__ipv4_address_rule">ipv4_address_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__ipv6_address_rule">ipv6_address_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__query_rule">query_rule</link></member>
           <member><link linkend="url.ref.boost__urls__relative_ref_rule">relative_ref_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__segment_rule">segment_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__segment_nz_rule">segment_nz_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__segment_nz_nc_rule">segment_nz_nc_rule</link></member>
           <member><link linkend="url.ref.boost__urls__uri_reference_rule">uri_reference_rule</link></member>
           <member><link linkend="url.ref.boost__urls__uri_rule">uri_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__userinfo_rule">userinfo_rule</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">Functions</bridgehead>

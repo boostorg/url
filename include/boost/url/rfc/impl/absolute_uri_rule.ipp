@@ -7,11 +7,17 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_ABSOLUTE_URI_RULE_IPP
-#define BOOST_URL_IMPL_ABSOLUTE_URI_RULE_IPP
+#ifndef BOOST_URL_RFC_IMPL_ABSOLUTE_URI_RULE_IPP
+#define BOOST_URL_RFC_IMPL_ABSOLUTE_URI_RULE_IPP
 
 #include <boost/url/rfc/absolute_uri_rule.hpp>
+#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/optional_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
+#include <boost/url/rfc/detail/hier_part_rule.hpp>
+#include <boost/url/rfc/detail/scheme_rule.hpp>
+#include <utility>
 
 namespace boost {
 namespace urls {
@@ -24,36 +30,53 @@ parse(
         ) const noexcept ->
     result<value_type>
 {
-    value_type t;
+    detail::url_impl u(false);
+    u.cs_ = it;
 
     // scheme
     {
         auto rv = grammar::parse(
-            it, end, scheme_part_rule());
+            it, end,
+            grammar::sequence_rule(
+                detail::scheme_rule(),
+                grammar::char_rule(':')));
         if(! rv)
             return rv.error();
-        t.scheme_part = *rv;
+        u.apply_scheme(std::get<0>(*rv).scheme);
     }
 
     // hier_part
     {
         auto rv = grammar::parse(
-            it, end, hier_part_rule);
+            it, end, detail::hier_part_rule);
         if(! rv)
             return rv.error();
-        t.hier_part = *rv;
+        if(rv->has_authority)
+            u.apply_authority(rv->authority);
+        u.apply_path(rv->path);
     }
 
     // [ "?" query ]
     {
         auto rv = grammar::parse(
-            it, end, query_part_rule);
+            it, end,
+            grammar::optional_rule(
+                grammar::sequence_rule(
+                    grammar::char_rule('?'),
+                    query_rule)));
         if(! rv)
             return rv.error();
-        t.query_part = *rv;
+        if(rv->has_value())
+        {
+            auto const& v =
+                std::get<1>(**rv);
+            u.apply_query(
+                v.encoded_string(),
+                v.size());
+        }
     }
 
-    return t;
+    return u.construct();
 }
 
 } // urls

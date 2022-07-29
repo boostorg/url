@@ -24,18 +24,7 @@
 #include <boost/url/segments_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/url/detail/parts_base.hpp>
-
-// VFALCO These structs used to be forward
-// declared, but the parsers now use a
-// nested type.
-#include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/fragment_rule.hpp>
-#include <boost/url/rfc/host_rule.hpp>
-#include <boost/url/rfc/paths_rule.hpp>
-#include <boost/url/rfc/query_rule.hpp>
-#include <boost/url/rfc/scheme_rule.hpp>
-
+#include <boost/url/detail/url_impl.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -104,79 +93,25 @@ class BOOST_SYMBOL_VISIBLE url_view
 #ifndef BOOST_URL_DOCS
 protected:
 #endif
-    char const* cs_ = empty_;
-    pos_t offset_[id_end + 1] = {};
-    pos_t decoded_[id_end] = {};
-    pos_t nseg_ = 0;
-    pos_t nparam_ = 0;
-    unsigned char ip_addr_[16] = {};
-    // VFALCO don't we need a bool?
-    std::uint16_t port_number_ = 0;
-    urls::host_type host_type_ =
-        urls::host_type::none;
-    urls::scheme scheme_ =
-        urls::scheme::none;
+    detail::url_impl u_;
 
     friend class url;
-    friend class static_url_base;
     friend struct std::hash<url_view>;
+    friend struct detail::url_impl;
     struct shared_impl;
 
-    url_view& base() noexcept;
-    url_view const& base() const noexcept;
-    std::size_t table_bytes() const noexcept;
-    pos_t len(int first, int last) const noexcept;
-    void set_size(int id, pos_t n) noexcept;
-    void split(int id, std::size_t n) noexcept;
-    void adjust(int first, int last,
-        std::size_t n) noexcept;
-    void collapse(int first, int last,
-        std::size_t n) noexcept;
+    url_view& base() noexcept
+    {
+        return *this;
+    }
+    url_view const& base() const noexcept
+    {
+        return *this;
+    }
 
-    BOOST_URL_DECL
-    url_view(int, char const* cs) noexcept;
-
-    BOOST_URL_DECL
+    explicit
     url_view(
-        url_view const& u,
-        char const* cs) noexcept;
-
-    // return offset of id
-    auto
-    offset(int id) const noexcept ->
-        pos_t
-    {
-        return
-            id == id_scheme ?
-            zero_ : offset_[id];
-    }
-
-    // return length of part
-    auto
-    len(int id) const noexcept ->
-        pos_t
-    {
-        return id == id_end ? 0 : (
-            offset(id + 1) -
-            offset(id) );
-    }
-
-    // return id as string
-    string_view
-    get(int id) const noexcept
-    {
-        return {
-            cs_ + offset(id), len(id) };
-    }
-
-    // return [first, last) as string
-    string_view
-    get(int first,
-        int last) const noexcept
-    {
-        return { cs_ + offset(first),
-            offset(last) - offset(first) };
-    }
+        detail::url_impl const& impl) noexcept;
 
 public:
     /** The type of elements.
@@ -320,7 +255,7 @@ public:
     std::size_t
     size() const noexcept
     {
-        return offset(id_end);
+        return u_.offset(id_end);
     }
 
     /** Return true if the URL is empty.
@@ -349,7 +284,7 @@ public:
     char const*
     data() const noexcept
     {
-        return cs_;
+        return u_.cs_;
     }
 
     /** Return an iterator to the beginning
@@ -604,7 +539,7 @@ public:
     bool
     has_authority() const noexcept
     {
-        return len(id_user) > 0;
+        return u_.len(id_user) > 0;
     }
 
     /** Return the authority.
@@ -772,7 +707,9 @@ public:
         string_view s = encoded_userinfo();
         return
             detail::access::construct(
-                s, decoded_[id_user] + has_password() + decoded_[id_pass], opt);
+                s, u_.decoded_[id_user] +
+                has_password() +
+                u_.decoded_[id_pass], opt);
     }
 
     //--------------------------------------------
@@ -855,7 +792,7 @@ public:
         string_view s = encoded_user();
         return
             detail::access::construct(
-                s, decoded_[id_user], opt);
+                s, u_.decoded_[id_user], opt);
     }
 
     /** Return true if this contains a password
@@ -960,7 +897,7 @@ public:
         string_view s = encoded_password();
         return
             detail::access::construct(
-                s, decoded_[id_pass], opt);
+                s, u_.decoded_[id_pass], opt);
     }
 
     //--------------------------------------------
@@ -1008,7 +945,7 @@ public:
     urls::host_type
     host_type() const noexcept
     {
-        return host_type_;
+        return u_.host_type_;
     }
 
     /** Return the host
@@ -1104,7 +1041,7 @@ public:
         string_view s = encoded_host();
         return
             detail::access::construct(
-                s, decoded_[id_host], opt);
+                s, u_.decoded_[id_host], opt);
     }
 
     /** Return the host as an IPv4 address
@@ -1206,7 +1143,7 @@ public:
     */
     BOOST_URL_DECL
     string_view
-    ipv_future() const noexcept;
+    ipvfuture() const noexcept;
 
     /** Return true if the URL contains a port
 
@@ -1359,8 +1296,8 @@ public:
     is_path_absolute() const noexcept
     {
         return
-            len(id_path) > 0 &&
-            cs_[offset(id_path)] == '/';
+            u_.len(id_path) > 0 &&
+            u_.cs_[u_.offset(id_path)] == '/';
     }
 
     /** Return the path.
@@ -1383,7 +1320,7 @@ public:
     string_view
     encoded_path() const noexcept
     {
-        return get(id_path);
+        return u_.get(id_path);
     }
 
     /** Return the path
@@ -1417,7 +1354,7 @@ public:
         string_view s = encoded_path();
         return
             detail::access::construct(
-                s, decoded_[id_path], opt);
+                s, u_.decoded_[id_path], opt);
     }
 
     /** Return the path segments
@@ -1441,7 +1378,7 @@ public:
     encoded_segments() const noexcept
     {
         return segments_encoded_view(
-            encoded_path(), nseg_);
+            encoded_path(), u_.nseg_);
     }
 
     /** Return the path segments
@@ -1464,7 +1401,7 @@ public:
     segments_view
     segments() const noexcept
     {
-        return {encoded_path(), nseg_};
+        return {encoded_path(), u_.nseg_};
     }
 
     //--------------------------------------------
@@ -1564,7 +1501,7 @@ public:
         string_view s = encoded_query();
         return
             detail::access::construct(
-                s, decoded_[id_query], opt);
+                s, u_.decoded_[id_query], opt);
     }
 
     /** Return the query parameters
@@ -1699,7 +1636,7 @@ public:
         string_view s = encoded_fragment();
         return
             detail::access::construct(
-                s, decoded_[id_frag], opt);
+                s, u_.decoded_[id_frag], opt);
     }
 
     //--------------------------------------------
@@ -1916,29 +1853,6 @@ public:
     {
         return os << u.string();
     }
-
-    //--------------------------------------------
-    //
-    // Parsing
-    //
-    //--------------------------------------------
-
-    BOOST_URL_DECL friend result<url_view>
-        parse_absolute_uri(string_view s);
-    BOOST_URL_DECL friend result<url_view>
-        parse_relative_ref(string_view s);
-    BOOST_URL_DECL friend result<url_view>
-        parse_uri(string_view s);
-    BOOST_URL_DECL friend result<url_view>
-        parse_uri_reference(string_view s);
-
-private:
-    void apply(scheme_part_rule::value_type const& t) noexcept;
-    void apply(decltype(host_rule)::value_type const& h) noexcept;
-    void apply(decltype(authority_rule)::value_type const& t) noexcept;
-    void apply(parsed_path const& path) noexcept;
-    void apply(decltype(query_part_rule)::value_type const& t) noexcept;
-    void apply(decltype(fragment_part_rule)::value_type const& t) noexcept;
 };
 
 //------------------------------------------------
@@ -2165,13 +2079,5 @@ private:
 };
 } // std
 #endif
-
-
-// These includes are here
-// due to circular dependencies
-#include <boost/url/impl/params_view.hpp>
-#include <boost/url/impl/params_encoded_view.hpp>
-
-#include <boost/url/impl/url_view.hpp>
 
 #endif

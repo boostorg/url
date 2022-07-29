@@ -12,9 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/result.hpp>
-#include <boost/url/rfc/fragment_rule.hpp>
-#include <boost/url/rfc/query_rule.hpp>
-#include <boost/url/rfc/relative_part_rule.hpp>
+#include <boost/url/url_view.hpp>
 
 namespace boost {
 namespace urls {
@@ -29,20 +27,10 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2
         >4.2. Relative Reference (rfc3986)</a>
-
-    @see
-        @ref fragment_part_rule,
-        @ref query_part_rule,
-        @ref relative_part_rule.
 */
 struct relative_ref_rule_t
 {
-    struct value_type
-    {
-        decltype(relative_part_rule)::value_type relative_part;
-        decltype(query_part_rule)::value_type query_part;
-        decltype(fragment_part_rule)::value_type fragment_part;
-    };
+    using value_type = url_view;
 
     BOOST_URL_DECL
     auto

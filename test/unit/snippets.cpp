@@ -889,6 +889,8 @@ grammar_parse()
 {
     {
         //[snippet_parse_1
+        // VFALCO we should not show this example
+        /*
         urls::string_view s = "http:after_scheme";
         const char* it = s.begin();
         auto rv = urls::grammar::parse(it, s.end(), urls::scheme_rule() );
@@ -897,6 +899,7 @@ grammar_parse()
             std::cout << "scheme: " << rv->scheme << '\n';
             std::cout << "suffix: " << it << '\n';
         }
+        */
         //]
     }
 

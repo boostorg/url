@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_RELATIVE_PART_RULE_HPP
-#define BOOST_URL_RFC_RELATIVE_PART_RULE_HPP
+#ifndef BOOST_URL_RFC_DETAIL_HIER_PART_RULE_HPP
+#define BOOST_URL_RFC_DETAIL_HIER_PART_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/result.hpp>
@@ -17,33 +17,28 @@
 
 namespace boost {
 namespace urls {
+namespace detail {
 
-/** Rule for relative-part
+/** Rule for hier-part
 
     @par BNF
     @code
-    relative-part = "//" authority path-abempty
+    hier-part     = "//" authority path-abempty
                   / path-absolute
-                  / path-noscheme
-                  / path-abempty
+                  / path-rootless
                   / path-empty
     @endcode
 
     @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2
-        >4.2. Relative Reference (rfc3986)</a>
-    @li <a href="https://www.rfc-editor.org/errata/eid5428"
-        >Errata ID: 5428 (rfc3986)</a>
-
-    @see
-        @ref authority_rule.
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
+        >3. Syntax Components (rfc3986)</a>
 */
-struct relative_part_rule_t
+struct hier_part_rule_t
 {
     struct value_type
     {
         bool has_authority = false;
-        decltype(authority_rule)::value_type authority;
+        authority_view authority;
         parsed_path path;
     };
 
@@ -51,13 +46,14 @@ struct relative_part_rule_t
     auto
     parse(
         char const*& it,
-        char const* end
+        char const* const end
             ) const noexcept ->
         result<value_type>;
 };
 
-constexpr relative_part_rule_t relative_part_rule{};
+constexpr hier_part_rule_t hier_part_rule{};
 
+} // detail
 } // urls
 } // boost
 

@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_REG_NAME_RULE_HPP
-#define BOOST_URL_RFC_REG_NAME_RULE_HPP
+#ifndef BOOST_URL_RFC_DETAIL_REG_NAME_RULE_HPP
+#define BOOST_URL_RFC_DETAIL_REG_NAME_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/rfc/charsets.hpp>
@@ -16,6 +16,7 @@
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 /*  VFALCO In theory we could enforce these
     additional requirements from errata 4942:
@@ -46,6 +47,7 @@ namespace urls {
 constexpr auto reg_name_rule =
     pct_encoded_rule(unreserved_chars + '-' + '.');
 
+} // detail
 } // urls
 } // boost
 

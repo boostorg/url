@@ -7,12 +7,14 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_QUERY_RULE_IPP
-#define BOOST_URL_IMPL_QUERY_RULE_IPP
+#ifndef BOOST_URL_RFC_IMPL_QUERY_RULE_IPP
+#define BOOST_URL_RFC_IMPL_QUERY_RULE_IPP
 
 #include <boost/url/rfc/query_rule.hpp>
+#include <boost/url/detail/pct_encoded_view.hpp>
 #include <boost/url/grammar/lut_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/range.hpp>
 #include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 
@@ -34,21 +36,26 @@ value_chars = pchars
     - '&';
 
 auto
-query_rule::
+query_rule_t::
 parse(
     char const*& it,
     char const* end
         ) const noexcept ->
     result<value_type>
 {
-    return grammar::parse_range(
+    auto rv = grammar::parse_range(
         it, end, *this,
-        &query_rule::begin,
-        &query_rule::increment);
+        &query_rule_t::begin,
+        &query_rule_t::increment);
+    if(! rv)
+        return rv.error();
+    return value_type(
+        rv->string(),
+        rv->size());
 }
 
 auto
-query_rule::
+query_rule_t::
 begin(
     char const*& it,
     char const* const end
@@ -64,7 +71,7 @@ begin(
 }
 
 auto
-query_rule::
+query_rule_t::
 increment(
     char const*& it,
     char const* const end
@@ -87,7 +94,7 @@ increment(
 }
 
 auto
-query_rule::
+query_rule_t::
 parse_query_param(
     char const*& it,
     char const* end

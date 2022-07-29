@@ -18,19 +18,32 @@
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/ascii.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/fragment_rule.hpp>
-#include <boost/url/rfc/host_rule.hpp>
 #include <boost/url/rfc/paths_rule.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/relative_ref_rule.hpp>
-#include <boost/url/rfc/scheme_rule.hpp>
 #include <boost/url/rfc/uri_rule.hpp>
+#include <boost/url/rfc/detail/host_rule.hpp>
 #include <array>
 #include <ostream>
 
 namespace boost {
 namespace urls {
+
+//------------------------------------------------
+
+namespace detail {
+
+url_view
+url_impl::
+construct() const noexcept
+{
+    return url_view(*this);
+}
+
+} // detail
+
+//------------------------------------------------
 
 struct url_view::shared_impl :
     url_view
@@ -42,33 +55,25 @@ struct url_view::shared_impl :
 
     shared_impl(
         url_view const& u) noexcept
-        : url_view(u, reinterpret_cast<
-            char const*>(this + 1))
+        : url_view(u)
     {
+        u_.cs_ =
+            reinterpret_cast<
+                char const*>(this + 1);
     }
 };
+
+//------------------------------------------------
 
 url_view::
 url_view(url_view const&) noexcept = default;
 
 url_view::
 url_view(
-    int,
-    char const* cs) noexcept
-    : cs_(cs)
+    detail::url_impl const& impl) noexcept
+    : u_(impl)
 {
 }
-
-url_view::
-url_view(
-    url_view const& u,
-    char const* cs) noexcept
-    : url_view(u)
-{
-    cs_ = cs;
-}
-
-//------------------------------------------------
 
 url_view::
 ~url_view()
@@ -76,7 +81,10 @@ url_view::
 }
 
 url_view::
-url_view() noexcept = default;
+url_view() noexcept
+    : u_(false)
+{
+}
 
 url_view&
 url_view::
@@ -84,6 +92,7 @@ operator=(url_view const&) noexcept = default;
 
 url_view::
 url_view(string_view s)
+    : u_(false)
 {
     auto r = parse_uri_reference(s);
     if(r.has_error())
@@ -124,13 +133,13 @@ bool
 url_view::
 has_scheme() const noexcept
 {
-    auto const n = len(
+    auto const n = u_.len(
         id_scheme);
     if(n == 0)
         return false;
     BOOST_ASSERT(n > 1);
     BOOST_ASSERT(
-        get(id_scheme
+        u_.get(id_scheme
             ).ends_with(':'));
     return true;
 }
@@ -139,7 +148,7 @@ string_view
 url_view::
 scheme() const noexcept
 {
-    auto s = get(id_scheme);
+    auto s = u_.get(id_scheme);
     if(! s.empty())
     {
         BOOST_ASSERT(s.size() > 1);
@@ -153,7 +162,7 @@ urls::scheme
 url_view::
 scheme_id() const noexcept
 {
-    return scheme_;
+    return u_.scheme_;
 }
 
 //----------------------------------------------------------
@@ -166,7 +175,7 @@ string_view
 url_view::
 encoded_authority() const noexcept
 {
-    auto s = get(id_user, id_path);
+    auto s = u_.get(id_user, id_path);
     if(! s.empty())
     {
         BOOST_ASSERT(has_authority());
@@ -179,23 +188,30 @@ authority_view
 url_view::
 authority() const noexcept
 {
-    string_view s = encoded_authority();
-    authority_view a;
-    a.cs_ = s.data();
-    pos_t off_user = s.data() - data();
-    a.offset_[0] = offset(id_pass) - off_user;
-    a.offset_[1] = offset(id_host) - off_user;
-    a.offset_[2] = offset(id_port) - off_user;
-    a.offset_[3] = offset(id_path) - off_user;
-    a.decoded_[0] = decoded_[id_user];
-    a.decoded_[1] = decoded_[id_pass];
-    a.decoded_[2] = decoded_[id_host];
-    a.decoded_[3] = decoded_[id_port];
+    detail::url_impl u(true);
+    u.cs_ = encoded_authority().data();
+    if(has_authority())
+    {
+        u.set_size(id_user, u_.len(id_user) - 2);
+        u.set_size(id_pass, u_.len(id_pass));
+        u.set_size(id_host, u_.len(id_host));
+        u.set_size(id_port, u_.len(id_port));
+    }
+    else
+    {
+        u.set_size(id_user, u_.len(id_user));
+        BOOST_ASSERT(u_.len(id_pass) == 0);
+        BOOST_ASSERT(u_.len(id_host) == 0);
+        BOOST_ASSERT(u_.len(id_port) == 0);
+    }
+    u.decoded_[id_user] = u_.decoded_[id_user];
+    u.decoded_[id_pass] = u_.decoded_[id_pass];
+    u.decoded_[id_host] = u_.decoded_[id_host];
     for (int i = 0; i < 16; ++i)
-        a.ip_addr_[i] = ip_addr_[i];
-    a.port_number_ = port_number_;
-    a.host_type_ = host_type_;
-    return a;
+        u.ip_addr_[i] = u_.ip_addr_[i];
+    u.port_number_ = u_.port_number_;
+    u.host_type_ = u_.host_type_;
+    return u.construct_authority();
 }
 
 // userinfo
@@ -204,11 +220,11 @@ bool
 url_view::
 has_userinfo() const noexcept
 {
-    auto n = len(id_pass);
+    auto n = u_.len(id_pass);
     if(n == 0)
         return false;
     BOOST_ASSERT(has_authority());
-    BOOST_ASSERT(get(
+    BOOST_ASSERT(u_.get(
         id_pass).ends_with('@'));
     return true;
 }
@@ -217,7 +233,7 @@ string_view
 url_view::
 encoded_userinfo() const noexcept
 {
-    auto s = get(
+    auto s = u_.get(
         id_user, id_host);
     if(s.empty())
         return s;
@@ -236,7 +252,7 @@ string_view
 url_view::
 encoded_user() const noexcept
 {
-    auto s = get(id_user);
+    auto s = u_.get(id_user);
     if(! s.empty())
     {
         BOOST_ASSERT(
@@ -250,16 +266,16 @@ bool
 url_view::
 has_password() const noexcept
 {
-    auto const n = len(id_pass);
+    auto const n = u_.len(id_pass);
     if(n > 1)
     {
-        BOOST_ASSERT(get(id_pass
+        BOOST_ASSERT(u_.get(id_pass
             ).starts_with(':'));
-        BOOST_ASSERT(get(id_pass
+        BOOST_ASSERT(u_.get(id_pass
             ).ends_with('@'));
         return true;
     }
-    BOOST_ASSERT(n == 0 || get(
+    BOOST_ASSERT(n == 0 || u_.get(
         id_pass).ends_with('@'));
     return false;
 }
@@ -268,7 +284,7 @@ string_view
 url_view::
 encoded_password() const noexcept
 {
-    auto s = get(id_pass);
+    auto s = u_.get(id_pass);
     switch(s.size())
     {
     case 1:
@@ -294,21 +310,21 @@ string_view
 url_view::
 encoded_host() const noexcept
 {
-    return get(id_host);
+    return u_.get(id_host);
 }
 
 urls::ipv4_address
 url_view::
 ipv4_address() const noexcept
 {
-    if(host_type_ !=
+    if(u_.host_type_ !=
         urls::host_type::ipv4)
         return {};
     std::array<
         unsigned char, 4> bytes;
     std::memcpy(
         &bytes[0],
-        &ip_addr_[0], 4);
+        &u_.ip_addr_[0], 4);
     return urls::ipv4_address(
         bytes);
 }
@@ -317,14 +333,14 @@ urls::ipv6_address
 url_view::
 ipv6_address() const noexcept
 {
-    if(host_type_ ==
+    if(u_.host_type_ ==
         urls::host_type::ipv6)
     {
         std::array<
             unsigned char, 16> bytes;
         std::memcpy(
             &bytes[0],
-            &ip_addr_[0], 16);
+            &u_.ip_addr_[0], 16);
         return urls::ipv6_address(
             bytes);
     }
@@ -333,11 +349,11 @@ ipv6_address() const noexcept
 
 string_view
 url_view::
-ipv_future() const noexcept
+ipvfuture() const noexcept
 {
-    if(host_type_ ==
+    if(u_.host_type_ ==
         urls::host_type::ipvfuture)
-        return get(id_host);
+        return u_.get(id_host);
     return {};
 }
 
@@ -347,11 +363,11 @@ bool
 url_view::
 has_port() const noexcept
 {
-    auto const n = len(id_port);
+    auto const n = u_.len(id_port);
     if(n == 0)
         return false;
     BOOST_ASSERT(
-        get(id_port).starts_with(':'));
+        u_.get(id_port).starts_with(':'));
     return true;
 }
 
@@ -359,7 +375,7 @@ string_view
 url_view::
 port() const noexcept
 {
-    auto s = get(id_port);
+    auto s = u_.get(id_port);
     if(s.empty())
         return s;
     BOOST_ASSERT(has_port());
@@ -372,24 +388,24 @@ port_number() const noexcept
 {
     BOOST_ASSERT(
         has_port() ||
-        port_number_ == 0);
-    return port_number_;
+        u_.port_number_ == 0);
+    return u_.port_number_;
 }
 
 string_view
 url_view::
 encoded_host_and_port() const noexcept
 {
-    return get(id_host, id_path);
+    return u_.get(id_host, id_path);
 }
 
 string_view
 url_view::
 encoded_origin() const noexcept
 {
-    if(len(id_user) < 2)
+    if(u_.len(id_user) < 2)
         return {};
-    return get(id_scheme, id_path);
+    return u_.get(id_scheme, id_path);
 }
 
 //----------------------------------------------------------
@@ -402,12 +418,12 @@ bool
 url_view::
 has_query() const noexcept
 {
-    auto const n = len(
+    auto const n = u_.len(
         id_query);
     if(n == 0)
         return false;
     BOOST_ASSERT(
-        get(id_query).
+        u_.get(id_query).
             starts_with('?'));
     return true;
 }
@@ -416,7 +432,7 @@ string_view
 url_view::
 encoded_query() const noexcept
 {
-    auto s = get(id_query);
+    auto s = u_.get(id_query);
     if(s.empty())
         return s;
     BOOST_ASSERT(
@@ -428,24 +444,24 @@ params_encoded_view
 url_view::
 encoded_params() const noexcept
 {
-    auto s = get(id_query);
+    auto s = u_.get(id_query);
     if(s.empty())
         return params_encoded_view(s, 0);
     BOOST_ASSERT(s[0] == '?');
     s.remove_prefix(1);
-    return params_encoded_view(s, nparam_);
+    return params_encoded_view(s, u_.nparam_);
 }
 
 params_view
 url_view::
 params() const noexcept
 {
-    auto s = get(id_query);
+    auto s = u_.get(id_query);
     if(s.empty())
         return {s, 0};
     BOOST_ASSERT(s[0] == '?');
     s.remove_prefix(1);
-    return {s, nparam_};
+    return {s, u_.nparam_};
 }
 
 //----------------------------------------------------------
@@ -458,11 +474,11 @@ bool
 url_view::
 has_fragment() const noexcept
 {
-    auto const n = len(id_frag);
+    auto const n = u_.len(id_frag);
     if(n == 0)
         return false;
     BOOST_ASSERT(
-        get(id_frag).
+        u_.get(id_frag).
             starts_with('#'));
     return true;
 }
@@ -471,7 +487,7 @@ string_view
 url_view::
 encoded_fragment() const noexcept
 {
-    auto s = get(id_frag);
+    auto s = u_.get(id_frag);
     if(s.empty())
         return s;
     BOOST_ASSERT(
@@ -542,181 +558,6 @@ compare(const url_view& other) const noexcept
     return 0;
 }
 
-
-//------------------------------------------------
-//
-// Parsing
-//
-//------------------------------------------------
-
-void
-url_view::
-apply(
-    scheme_part_rule::value_type const& t) noexcept
-{
-    scheme_ = t.scheme_id;
-    if(t.scheme_id !=
-        urls::scheme::none)
-    set_size(
-        id_scheme,
-        t.scheme_part.size());
-}
-
-void
-url_view::
-apply(
-    decltype(host_rule)::value_type const& t) noexcept
-{
-    host_type_ = t.host_type;
-    if(t.host_type ==
-        urls::host_type::name)
-    {
-        decoded_[id_host] =
-            t.name.size();
-    }
-    else if(t.host_type ==
-        urls::host_type::ipv4)
-    {
-        auto const bytes =
-            t.ipv4.to_bytes();
-        decoded_[id_host] = t.host_part.size();
-        std::memcpy(
-            &ip_addr_[0],
-            bytes.data(), 4);
-    }
-    else if(t.host_type ==
-        urls::host_type::ipv6)
-    {
-        auto const bytes =
-            t.ipv6.to_bytes();
-        decoded_[id_host] = t.host_part.size();
-        std::memcpy(
-            &ip_addr_[0],
-            bytes.data(), 16);
-    }
-    else
-    {
-        decoded_[id_host] = t.host_part.size();
-    }
-
-    if(t.host_type !=
-        urls::host_type::none)
-        set_size(
-            id_host,
-            t.host_part.size());
-}
-
-void
-url_view::
-apply(
-    decltype(authority_rule)::value_type const& t) noexcept
-{
-    if(t.has_userinfo)
-    {
-        auto const& u = t.userinfo;
-
-        // leading "//" for authority
-        set_size(
-            id_user,
-            u.user.encoded().size() + 2);
-        decoded_[id_user] = u.user.size();
-
-        if(u.has_password)
-        {
-            // leading ':' for password,
-            // trailing '@' for userinfo
-            set_size(
-                id_pass,
-                u.password.encoded().size() + 2);
-            decoded_[id_pass] =
-                u.password.size();
-        }
-        else
-        {
-            // trailing '@' for userinfo
-            set_size(id_pass, 1);
-            decoded_[id_pass] = 0;
-        }
-    }
-    else
-    {
-        // leading "//" for authority
-        set_size(id_user, 2);
-        decoded_[id_user] = 0;
-    }
-
-    // host
-    apply(t.host);
-
-    // port
-    if(t.port.has_port)
-    {
-        set_size(
-            id_port,
-            t.port.port.size() + 1);
-        if(t.port.has_number)
-            port_number_ =
-                t.port.port_number;
-    }
-}
-
-void
-url_view::
-apply(
-    parsed_path const& t) noexcept
-{
-    auto s = t.path;
-    set_size(id_path, s.size());
-    decoded_[id_path] =
-        pct_decode_bytes_unchecked(t.path);
-    nseg_ = detail::path_segments(
-        t.path, t.count);
-}
-
-void
-url_view::
-apply(
-    decltype(query_part_rule)::value_type const& t) noexcept
-{
-    if(t.has_value())
-    {
-        auto const& v = std::get<1>(*t);
-        set_size(id_query,
-            1 + v.string().size());
-        // VFALCO we are doing two passes over
-        // the string. once for the range and
-        // again for the decoded size.
-        decoded_[id_query] =
-            pct_decode_bytes_unchecked(
-                v.string());
-        nparam_ = v.size();
-    }
-    else
-    {
-        decoded_[id_query] = 0;
-        nparam_ = 0;
-    }
-}
-
-void
-url_view::
-apply(
-    decltype(fragment_part_rule)::value_type const& t) noexcept
-{
-    if(t.has_value())
-    {
-        set_size(
-            id_frag,
-            std::get<1>(*t).encoded().size() + 1);
-        decoded_[id_frag] =
-            std::get<1>(*t).size();
-    }
-    else
-    {
-        decoded_[id_frag] = 0;
-    }
-}
-
 //------------------------------------------------
 //
 // Parsing
@@ -731,29 +572,8 @@ parse_absolute_uri(
         detail::throw_length_error(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
-
-    auto rv = grammar::parse(
+    return grammar::parse(
         s, absolute_uri_rule);
-    if(! rv)
-        return rv.error();
-    auto const& t = *rv;
-
-    url_view u(0, s.data());
-
-    // scheme
-    u.apply(t.scheme_part);
-
-    // authority
-    if(t.hier_part.has_authority)
-        u.apply(t.hier_part.authority);
-
-    // path
-    u.apply(t.hier_part.path);
-
-    // query
-    u.apply(t.query_part);
-
-    return u;
 }
 
 result<url_view>
@@ -764,32 +584,7 @@ parse_uri(
         detail::throw_length_error(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
-
-    auto rv = grammar::parse(
-        s, uri_rule);
-    if(! rv)
-        return rv.error();
-    auto const& t = *rv;
-
-    url_view u(0, s.data());
-
-    // scheme
-    u.apply(t.scheme_part);
-
-    // authority
-    if(t.hier_part.has_authority)
-        u.apply(t.hier_part.authority);
-
-    // path
-    u.apply(t.hier_part.path);
-
-    // query
-    u.apply(t.query_part);
-
-    // fragment
-    u.apply(t.fragment_part);
-
-    return u;
+    return grammar::parse(s, uri_rule);
 }
 
 result<url_view>
@@ -801,28 +596,8 @@ parse_relative_ref(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
 
-    auto rv = grammar::parse(
+    return grammar::parse(
         s, relative_ref_rule);
-    if(! rv)
-        return rv.error();
-    auto const& t = *rv;
-
-    url_view u(0, s.data());
-
-    // authority
-    if(t.relative_part.has_authority)
-        u.apply(t.relative_part.authority);
-
-    // path
-    u.apply(t.relative_part.path);
-
-    // query
-    u.apply(t.query_part);
-
-    // fragment
-    u.apply(t.fragment_part);
-
-    return u;
 }
 
 result<url_view>
@@ -834,31 +609,8 @@ parse_uri_reference(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
 
-    auto rv = grammar::parse(
+    return grammar::parse(
         s, uri_reference_rule);
-    if(! rv)
-        return rv.error();
-    auto const& t = *rv;
-
-    url_view u(0, s.data());
-
-    // scheme
-    u.apply(t.scheme_part);
-
-    // authority
-    if(t.has_authority)
-        u.apply(t.authority);
-
-    // path
-    u.apply(t.path);
-
-    // query
-    u.apply(t.query_part);
-
-    // fragment
-    u.apply(t.fragment_part);
-
-    return u;
 }
 
 //------------------------------------------------
@@ -879,24 +631,23 @@ std::hash<::boost::urls::url_view>::operator()(
     ::boost::urls::detail::fnv_1a hasher(salt_);
     using parts = ::boost::urls::detail::parts_base;
     ::boost::urls::detail::ci_digest(
-        u.get(parts::id_scheme), hasher);
+        u.u_.get(parts::id_scheme), hasher);
     ::boost::urls::detail::digest_encoded(
-        u.get(parts::id_user), hasher);
+        u.u_.get(parts::id_user), hasher);
     ::boost::urls::detail::digest_encoded(
-        u.get(parts::id_pass), hasher);
+        u.u_.get(parts::id_pass), hasher);
     ::boost::urls::detail::ci_digest_encoded(
-        u.get(parts::id_host), hasher);
-    hasher.put(u.get(parts::id_port));
+        u.u_.get(parts::id_host), hasher);
+    hasher.put(u.u_.get(parts::id_port));
     ::boost::urls::detail::normalized_path_digest(
-        u.get(parts::id_path),
+        u.u_.get(parts::id_path),
         u.is_path_absolute(),
         hasher);
     ::boost::urls::detail::digest_encoded(
-        u.get(parts::id_query), hasher);
+        u.u_.get(parts::id_query), hasher);
     ::boost::urls::detail::digest_encoded(
-        u.get(parts::id_frag), hasher);
+        u.u_.get(parts::id_frag), hasher);
     return hasher.digest();
 }
-
 
 #endif
