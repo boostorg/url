@@ -22,13 +22,15 @@ namespace grammar {
 
 //------------------------------------------------
 
-// base class for the type-erased rule
+// base class for the type-erased rule pair
 template<class T>
 struct range<T>::
     any_rule
 {
     virtual ~any_rule() = default;
-    virtual void copy(
+    virtual void destroy(
+        ) const noexcept = 0;
+    virtual any_rule const* copy(
         void*) const noexcept = 0;
     virtual result<T> begin(
         char const*&, char const*)
@@ -91,7 +93,7 @@ public:
         auto const end =
             r_->s_.data() +
             r_->s_.size();
-        rv_ = r_->get().increment(p_, end);
+        rv_ = r_->pr_->increment(p_, end);
         if(rv_.has_error())
         {
             BOOST_ASSERT(
@@ -125,7 +127,7 @@ private:
         auto const end =
             r_->s_.data() +
             r_->s_.size();
-        rv_ = r_->get().begin(p_, end);
+        rv_ = r_->pr_->begin(p_, end);
         if(rv_.has_error())
         {
             BOOST_ASSERT(
@@ -148,20 +150,17 @@ private:
 //------------------------------------------------
 
 template<class T>
-auto
-range<T>::
-get() const noexcept ->
-    any_rule const&
-{
-    return *reinterpret_cast<
-        any_rule const*>(buf_);
-}
-
-template<class T>
 range<T>::
 ~range()
 {
-    get().~any_rule();
+    if(pr_)
+    {
+        if(pr_ == reinterpret_cast<
+                any_rule*>(buf_))
+            pr_->~any_rule();
+        else
+            pr_->destroy();
+    }
 }
 
 template<class T>
@@ -171,7 +170,8 @@ range(
     : s_(other.s_)
     , n_(other.n_)
 {
-    other.get().copy(buf_);
+    if(other.pr_)
+        pr_ = other.pr_->copy(buf_);
 }
 
 template<class T>
@@ -198,41 +198,36 @@ range<T>::
 range(
     string_view s,
     std::size_t n,
-    R const& r,
-    range_fn<R, T> begin,
-    range_fn<R, T> increment) noexcept
+    R const& increment)
     : s_(s)
     , n_(n)
 {
-    static_assert(
-        is_rule<R>::value,
-        "Rule requirements not met");
-
-    static_assert(
-        sizeof(R) <= BufferSize,
-        "sizeof(R) is unsupported");
-
     struct impl : any_rule
     {
-        R const r_;
-        range_fn<R, T> begin_;
-        range_fn<R, T> increment_;
+        R const increment_;
 
+        explicit
         impl(
-            R const& r,
-            range_fn<R, T> begin,
-            range_fn<R, T> increment) noexcept
-            : r_(r)
-            , begin_(begin)
-            , increment_(increment)
+            R const& increment) noexcept
+            : increment_(increment)
         {
         }
 
         void
+        destroy() const noexcept override
+        {
+            delete this;
+        }
+
+        any_rule const*
         copy(void* dest)
             const noexcept override
         {
-            ::new(dest) impl(*this);
+            static constexpr auto small =
+                sizeof(*this) <= BufferSize;
+            if(small)
+                return ::new(dest) impl(*this);
+            return new impl(*this);
         }
 
         result<T>
@@ -241,7 +236,8 @@ range(
             char const* end)
                 const noexcept override
         {
-            return (r_.*begin_)(it, end);
+            return (parse)(
+                it, end, increment_);
         }
 
         result<T>
@@ -250,33 +246,108 @@ range(
             char const* end)
                 const noexcept override
         {
-            return (r_.*increment_)(it, end);
+            return (parse)(
+                it, end, increment_);
         }
     };
 
-    ::new(buf_) impl(
-        r, begin, increment);
+    pr_ = ::new(reinterpret_cast<
+        void*>(buf_)) impl(increment);
+}
+
+template<class T>
+template<
+    class R0, class R1>
+range<T>::
+range(
+    string_view s,
+    std::size_t n,
+    R0 const& begin,
+    R1 const& increment)
+    : s_(s)
+    , n_(n)
+{
+    struct impl : any_rule
+    {
+        R0 const begin_;
+        R1 const increment_;
+
+        impl(
+            R0 const& begin,
+            R1 const& increment) noexcept
+            : begin_(begin)
+            , increment_(increment)
+        {
+        }
+
+        void
+        destroy() const noexcept override
+        {
+            delete this;
+        }
+
+        any_rule const*
+        copy(void* dest)
+            const noexcept override
+        {
+            static constexpr auto small =
+                sizeof(*this) <= BufferSize;
+            if(small)
+                return ::new(dest) impl(*this);
+            return new impl(*this);
+        }
+
+        result<T>
+        begin(
+            char const*& it,
+            char const* end)
+                const noexcept override
+        {
+            return (parse)(
+                it, end, begin_);
+        }
+
+        result<T>
+        increment(
+            char const*& it,
+            char const* end)
+                const noexcept override
+        {
+            return (parse)(
+                it, end, increment_);
+        }
+    };
+
+    pr_ = ::new(reinterpret_cast<
+        void*>(buf_)) impl(begin, increment);
 }
 
 //------------------------------------------------
 
-template<
-    class R,
-    class T>
+template<class R>
 auto
 parse_range(
     char const*& it,
     char const* end,
-    R const& r,
-    range_fn<typename std::remove_cv<R>::type, T> begin,
-    range_fn<typename std::remove_cv<R>::type, T> increment,
+    R const& increment,
     std::size_t N,
     std::size_t M) ->
-        result<range<T>>
+        result<range<typename
+            R::value_type>>
 {
+    // If you get a compile error here it
+    // means that your rule does not meet
+    // the type requirements. Please check
+    // the documentation.
+    static_assert(
+        is_rule<R>::value,
+        "Rule requirements not met");
+
+    using T = typename R::value_type;
+
     std::size_t n = 0;
     auto const it0 = it;
-    auto rv = (r.*begin)(it, end);
+    auto rv = (parse)(it, end, increment);
     if(rv.has_error())
     {
         if(rv.error() != error::end)
@@ -290,13 +361,13 @@ parse_range(
         // good
         return range<T>(
             string_view(it0, it - it0),
-                n, r, begin, increment);
+                n, increment);
     }
 
     for(;;)
     {
         ++n;
-        rv = (r.*increment)(it, end);
+        rv = (parse)(it, end, increment);
         if(rv.has_error())
         {
             if(rv.error() != error::end)
@@ -313,7 +384,84 @@ parse_range(
     // good
     return range<T>(
         string_view(it0, it - it0),
-            n, r, begin, increment);
+            n, increment);
+}
+
+template<class R0, class R1>
+auto
+parse_range(
+    char const*& it,
+    char const* end,
+    R0 const& begin,
+    R1 const& increment,
+    std::size_t N,
+    std::size_t M) ->
+        result<range<typename
+            R0::value_type>>
+{
+    // If you get a compile error here it
+    // means that your rule does not meet
+    // the type requirements. Please check
+    // the documentation.
+    static_assert(
+        is_rule<R0>::value,
+        "Rule requirements not met");
+    static_assert(
+        is_rule<R1>::value,
+        "Rule requirements not met");
+
+    // If you get a compile error here it
+    // means that your rules do not have
+    // the exact same value_type. Please
+    // check the documentation.
+    static_assert(
+        std::is_same<
+            typename R0::value_type,
+            typename R1::value_type>::value,
+        "Rule requirements not met");
+
+    using T = typename R0::value_type;
+
+    std::size_t n = 0;
+    auto const it0 = it;
+    auto rv = (parse)(it, end, begin);
+    if(rv.has_error())
+    {
+        if(rv.error() != error::end)
+            return rv.error();
+        if(n < N)
+        {
+            // too few
+            return error::syntax;
+        }
+
+        // good
+        return range<T>(
+            string_view(it0, it - it0),
+                n, begin, increment);
+    }
+
+    for(;;)
+    {
+        ++n;
+        rv = (parse)(it, end, increment);
+        if(rv.has_error())
+        {
+            if(rv.error() != error::end)
+                return rv.error();
+            break;
+        }
+        if(n > M)
+        {
+            // too many
+            return error::syntax;
+        }
+    }
+
+    // good
+    return range<T>(
+        string_view(it0, it - it0),
+            n, begin, increment);
 }
 
 } // grammar

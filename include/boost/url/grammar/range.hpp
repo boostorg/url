@@ -25,13 +25,6 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** The type of function used to construct parsed ranges
-*/
-template<
-    class R, class T>
-using range_fn = result<T>(R::*)(
-    char const*&, char const*) const;
-
 /** A forward range of parsed elements
 
     @tparam T The value type of the range
@@ -39,10 +32,18 @@ using range_fn = result<T>(R::*)(
 template<class T>
 class range
 {
+    // buffer size for type-erased rule
+    static
+    constexpr
+    std::size_t
+    BufferSize = 64;
+
     struct any_rule;
 
-    any_rule const&
-    get() const noexcept;
+    string_view s_;
+    std::size_t n_ = 0;
+    char buf_[BufferSize];
+    any_rule const* pr_ = nullptr;
 
 public:
     using value_type = T;
@@ -101,53 +102,71 @@ public:
     }
 
 private:
-    // buffer size for type-erased rule
-    static
-    constexpr
-    std::size_t
-    BufferSize = 64;
-
-    string_view s_;
-    std::size_t n_ = 0;
-    char buf_[BufferSize];
-
     template<class R>
     range(
         string_view s,
         std::size_t n,
-        R const& r,
-        range_fn<R, T> begin,
-        range_fn<R, T> increment) noexcept;
+        R const& increment);
 
     template<
-        class R_,
-        class T_>
+        class R0, class R1>
+    range(
+        string_view s,
+        std::size_t n,
+        R0 const& begin,
+        R1 const& increment);
+
+    template<class R_>
     friend
-    auto
+    result<range<typename
+        R_::value_type>>
     parse_range(
         char const*& it,
         char const* end,
-        R_ const& r,
-        range_fn<typename std::remove_cv<R_>::type, T_> begin,
-        range_fn<typename std::remove_cv<R_>::type, T_> increment,
+        R_ const& increment,
         std::size_t N,
-        std::size_t M) ->
-            result<range<T_>>;
+        std::size_t M);
+
+    template<
+        class R0_, class R1_>
+    friend
+    result<range<typename
+        R0_::value_type>>
+    parse_range(
+        char const*& it,
+        char const* end,
+        R0_ const& begin,
+        R1_ const& increment,
+        std::size_t N,
+        std::size_t M);
 };
 
 /** Parse a range
 */
-template<class R, class T>
-auto
+template<
+    class Rule>
+result<range<typename
+    Rule::value_type>>
 parse_range(
     char const*& it,
     char const* end,
-    R const& r,
-    range_fn<typename std::remove_cv<R>::type, T> begin,
-    range_fn<typename std::remove_cv<R>::type, T> increment,
+    Rule const& increment,
     std::size_t N = 0,
-    std::size_t M = std::size_t(-1)) ->
-        result<range<T>>;
+    std::size_t M = std::size_t(-1));
+
+/** Parse a range
+*/
+template<
+    class Rule0, class Rule1>
+result<range<typename
+    Rule0::value_type>>
+parse_range(
+    char const*& it,
+    char const* end,
+    Rule0 const& begin,
+    Rule1 const& increment,
+    std::size_t N = 0,
+    std::size_t M = std::size_t(-1));
 
 } // grammar
 } // urls

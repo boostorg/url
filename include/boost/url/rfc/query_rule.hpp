@@ -51,27 +51,6 @@ struct query_rule_t
         char const*& it,
         char const* end
             ) const noexcept;
-
-private:
-    BOOST_URL_DECL
-    result<query_param_view>
-    begin(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-
-    BOOST_URL_DECL
-    result<query_param_view>
-    increment(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-
-    result<query_param_view>
-    parse_query_param(
-        char const*& it,
-        char const* end
-            ) const noexcept;
 };
 
 constexpr query_rule_t query_rule{};

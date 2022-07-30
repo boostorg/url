@@ -192,7 +192,6 @@
           <member><link linkend="url.ref.boost__urls__grammar__not_empty_rule_t">not_empty_rule_t</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__optional_rule_t">optional_rule_t</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__range">range</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__range_fn">range_fn</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__sequence_rule_t">sequence_rule_t</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__token_rule_t">token_rule_t</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__unsigned_dec_rule">unsigned_dec_rule</link></member>

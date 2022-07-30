@@ -74,8 +74,9 @@ increment() noexcept
     ++i_;
     pos_ = next_;
     // "/" segment
-    auto rv = path_rootless_rule{}.increment(
-        next_, end_);
+    auto rv = grammar::parse(
+        next_, end_,
+            detail::path_increment);
     if(rv == grammar::error::end)
     {
         next_ = nullptr;
@@ -105,22 +106,25 @@ decrement() noexcept
             continue;
         // "/" segment
         next_ = pos_;
-        t_ = path_rootless_rule{}.increment(
-            next_, end_).value();
+        t_ = grammar::parse(
+            next_, end_,
+            detail::path_increment).value();
         return;
     }
     next_ = pos_;
     if(*next_ == '/')
     {
         // "/" segment
-        t_ = path_rootless_rule{}.increment(
-            next_, end_).value();
+        t_ = grammar::parse(
+            next_, end_,
+            detail::path_increment).value();
     }
     else
     {
         // segment-nz
-        t_ = path_rootless_rule{}.begin(
-            next_, end_).value();
+        t_ = grammar::parse(
+            next_, end_,
+            detail::path_increment).value();
     }
 }
 

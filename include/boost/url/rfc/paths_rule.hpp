@@ -60,21 +60,6 @@ struct path_abempty_rule
         char const*& it,
         char const* end
             ) const noexcept;
-
-private:
-    BOOST_URL_DECL
-    result<pct_encoded_view>
-    begin(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-
-    BOOST_URL_DECL
-    result<pct_encoded_view>
-    increment(
-        char const*& it,
-        char const* end
-            ) const noexcept;
 };
 #endif
 
@@ -106,21 +91,6 @@ struct path_absolute_rule
         char const*& it,
         char const* end
             ) const noexcept;
-
-private:
-    BOOST_URL_DECL
-    result<pct_encoded_view>
-    begin(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-
-    BOOST_URL_DECL
-    result<pct_encoded_view>
-    increment(
-        char const*& it,
-        char const* end
-            ) const noexcept;
 };
 #endif
 
@@ -149,21 +119,6 @@ struct path_noscheme_rule
     BOOST_URL_DECL
     result<value_type>
     parse(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-
-private:
-    BOOST_URL_DECL
-    result<pct_encoded_view>
-    begin(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-
-    BOOST_URL_DECL
-    result<pct_encoded_view>
-    increment(
         char const*& it,
         char const* end
             ) const noexcept;
@@ -204,26 +159,6 @@ struct path_rootless_rule
         char const*& it,
         char const* end
             ) const noexcept;
-
-#ifndef BOOST_URL_DOCS
-//private:
-    //friend struct detail::segments_iterator_impl;
-    //friend struct detail::segments_encoded_iterator_impl;
-
-    BOOST_URL_DECL
-    result<pct_encoded_view>
-    begin(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-
-    BOOST_URL_DECL
-    result<pct_encoded_view>
-    increment(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-#endif
 };
 #endif
 
