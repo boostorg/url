@@ -29,6 +29,8 @@ struct tuple_element_impl
 {
     T t;
 
+    tuple_element_impl() = default;
+
     constexpr
     tuple_element_impl(T const& t_)
         : t(t_)
@@ -62,6 +64,8 @@ struct tuple_impl<
     boost::mp11::index_sequence<Is...>, Ts...>
   : tuple_element_impl<Is, Ts>...
 {
+    tuple_impl() = default;
+
     template<class... Us>
     constexpr
     explicit
@@ -77,43 +81,18 @@ struct tuple : tuple_impl<
     boost::mp11::index_sequence_for<
         Ts...>, Ts...>
 {
-    constexpr tuple() = default;
+    tuple() = default;
 
     constexpr
     tuple(tuple const&) noexcept = default;
 
-    template<class U
-    #if 0
-        ,typename std::enable_if<
-            ! std::is_same<
-        U, error_code>::value>::type = 0
-    #endif
-    >
+    template<class... Us>
     constexpr
     explicit
-    tuple(U&& u) noexcept
-        : tuple_impl<
-            boost::mp11::index_sequence_for<
-            Ts...>, Ts...>{u}
-    {
-    }
-
-    template<
-        class U0,
-        class U1,
-        class... Us>
-    constexpr
-    explicit
-    tuple(
-        U0&& u0,
-        U1&& u1,
-        Us&&... us) noexcept
-        : tuple_impl<
-            boost::mp11::index_sequence_for<
-                Ts...>, Ts...>{
-            std::forward<U0>(u0),
-            std::forward<U1>(u1),
-            std::forward<Us>(us)...}
+    tuple(Us&&... us) noexcept
+      : tuple_impl<
+            boost::mp11::index_sequence_for<Ts...>, Ts...>{
+          std::forward<Us>(us)...}
     {
     }
 };
