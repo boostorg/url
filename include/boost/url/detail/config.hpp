@@ -86,6 +86,13 @@
 # error Unknown or unsupported architecture, please open an issue
 #endif
 
+#if BOOST_WORKAROUND( BOOST_GCC_VERSION, < 80000 ) || \
+    BOOST_WORKAROUND( BOOST_CLANG_VERSION, < 30900 )
+#define BOOST_URL_RETURN(x) return std::move((x))
+#else
+#define BOOST_URL_RETURN(x) return (x)
+#endif
+
 #ifndef BOOST_URL_DOCS
 using pos_t = size_t;
 #endif

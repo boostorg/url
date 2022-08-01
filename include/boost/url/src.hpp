@@ -37,6 +37,7 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/params_encoded_iterator_impl.ipp>
 #include <boost/url/detail/impl/params_iterator_impl.ipp>
 #include <boost/url/detail/impl/pct_encoded_view.ipp>
+#include <boost/url/detail/impl/recycler.ipp>
 #include <boost/url/detail/impl/segments_encoded_iterator_impl.ipp>
 #include <boost/url/detail/impl/segments_iterator_impl.ipp>
 #include <boost/url/detail/impl/url_impl.ipp>

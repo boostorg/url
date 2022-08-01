@@ -32,7 +32,7 @@ parse(
     if(it == end)
     {
         // path-empty
-        return t;
+        BOOST_URL_RETURN(t);
     }
     if(it[0] != '/')
     {
@@ -44,12 +44,12 @@ parse(
         if(rv.has_value())
         {
             t.path = std::move(*rv);
-            return t;
+            BOOST_URL_RETURN(t);
         }
         it = it0;
 
         // path-empty
-        return t;
+        BOOST_URL_RETURN(t);
     }
     if( end - it == 1 ||
         it[1] != '/')
@@ -62,7 +62,7 @@ parse(
             return rv.error();
         t.path = std::move(*rv);
         t.has_authority = false;
-        return t;
+        BOOST_URL_RETURN(t);
     }
 
     // "//" authority path-abempty
@@ -86,7 +86,7 @@ parse(
         t.has_authority = true;
     }
 
-    return t;
+    BOOST_URL_RETURN(t);
 }
 
 } // detail

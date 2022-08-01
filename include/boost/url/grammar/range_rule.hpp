@@ -15,8 +15,6 @@
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/config/workaround.hpp>
-#include <boost/type_traits/make_void.hpp>
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
@@ -50,24 +48,39 @@ class range
     static
     constexpr
     std::size_t
-    BufferSize = 64;
+    BufferSize = 128;
 
     struct any_rule;
 
-    template<class R>
+    template<class R, bool>
     struct impl1;
 
-    template<class R0, class R1>
+    template<
+        class R0, class R1,
+        bool>
     struct impl2;
 
     string_view s_;
     std::size_t n_ = 0;
     char buf_[BufferSize];
-    any_rule const* pr_ = nullptr;
 
     template<
         class R0, class R1>
     friend struct range_rule_t;
+
+    any_rule&
+    get() noexcept
+    {
+        return *reinterpret_cast<
+            any_rule*>(&buf_[0]);
+    }
+
+    any_rule const&
+    get() const noexcept
+    {
+        return *reinterpret_cast<
+            any_rule const*>(&buf_[0]);
+    }
 
     template<class R>
     range(
@@ -125,7 +138,7 @@ public:
         Default-constructed ranges have
         zero elements.
     */
-    range() noexcept = default;
+    range() noexcept;
 
     /** Constructor
 
@@ -134,25 +147,19 @@ public:
     */
     range(range&&) noexcept;
 
-    /** Constructor
-
-        The copy will reference the original
-        underlying buffer; ownership is not
-        not transferred. The caller is responsible
-        for ensuring that the lifetime of the
-        buffer extends until no longer in use.
+    /** Constructor (deleted)
     */
-    range(range const&);
-
-    /** Assignment
-    */
-    range&
-    operator=(range const&);
+    range(range const&) = delete;
 
     /** Assignment
     */
     range&
     operator=(range&&) noexcept;
+
+    /** Assignment (deleted)
+    */
+    range&
+    operator=(range const&) = delete;
 
     /** Return an iterator to the beginning
     */
