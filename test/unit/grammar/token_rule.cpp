@@ -26,6 +26,7 @@ struct token_rule_test
         // test constexpr
         constexpr auto r =
             token_rule(alpha_chars);
+        (void)r;
     }
 };
 

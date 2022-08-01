@@ -126,14 +126,14 @@ apply_authority(
 void
 url_impl::
 apply_path(
-    parsed_path const& t) noexcept
+    string_view s,
+    std::size_t nseg) noexcept
 {
-    auto s = t.path;
     set_size(id_path, s.size());
+    // VFALCO we are decoding twice
     decoded_[id_path] =
-        pct_decode_bytes_unchecked(t.path);
-    nseg_ = detail::path_segments(
-        t.path, t.count);
+        pct_decode_bytes_unchecked(s);
+    nseg_ = detail::path_segments(s, nseg);
 }
 
 void

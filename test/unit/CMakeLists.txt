@@ -71,7 +71,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/gen_delim_chars.cpp
     rfc/ipv4_address_rule.cpp
     rfc/ipv6_address_rule.cpp
-    rfc/paths_rule.cpp
+    rfc/path_rules.cpp
     rfc/pchars.cpp
     rfc/pct_encoded_rule.cpp
     rfc/query_rule.cpp

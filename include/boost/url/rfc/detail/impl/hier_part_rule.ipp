@@ -11,8 +11,8 @@
 #define BOOST_URL_RFC_DETAIL_IMPL_HIER_PART_RULE_IPP
 
 #include <boost/url/rfc/detail/hier_part_rule.hpp>
+#include <boost/url/rfc/path_rules.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/rfc/paths_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 namespace boost {
@@ -43,9 +43,7 @@ parse(
             path_rootless_rule);
         if(rv.has_value())
         {
-            auto const& v = *rv;
-            t.path.path = v.string();
-            t.path.count = v.size();
+            t.path = std::move(*rv);
             return t;
         }
         it = it0;
@@ -62,9 +60,7 @@ parse(
             path_absolute_rule);
         if(! rv)
             return rv.error();
-        auto const& p = *rv;
-        t.path.path = p.string();
-        t.path.count = p.size();
+        t.path = std::move(*rv);
         t.has_authority = false;
         return t;
     }
@@ -86,10 +82,7 @@ parse(
             it, end, path_abempty_rule);
         if(! rv)
             return rv.error();
-
-        auto const& v = *rv;
-        t.path.path = v.string();
-        t.path.count = v.size();
+        t.path = std::move(*rv);
         t.has_authority = true;
     }
 

@@ -32,7 +32,7 @@ parse(
         result<value_type>
 {
     auto const it0 = it;
-    auto rv = r_.parse(it, end);
+    auto rv = this->get().parse(it, end);
     if( rv.has_error() ||
         it != it0)
         return rv;

@@ -55,7 +55,9 @@ parse(
             return rv.error();
         if(rv->has_authority)
             u.apply_authority(rv->authority);
-        u.apply_path(rv->path);
+        u.apply_path(
+            rv->path.string(),
+            rv->path.size());
     }
 
     // [ "?" query ]

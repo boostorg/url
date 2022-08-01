@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/result.hpp>
 #include <boost/url/variant.hpp>
+#include <boost/url/detail/empty_value.hpp>
 #include <boost/url/grammar/detail/tuple.hpp>
 
 namespace boost {
@@ -69,6 +70,8 @@ variant_rule( Rules... rn ) noexcept;
 template<
     class R0, class... Rn>
 class variant_rule_t
+    : private urls::detail::empty_value<
+        detail::tuple<R0, Rn...>>
 {
 public:
     using value_type = variant<
@@ -97,11 +100,12 @@ private:
     variant_rule_t(
         R0 const& r0,
         Rn const&... rn) noexcept
-        : rn_(r0, rn...)
+        : urls::detail::empty_value<
+            detail::tuple<R0, Rn...>>(
+                urls::detail::empty_init,
+                r0, rn...)
     {
     }
-
-    detail::tuple<R0, Rn...> rn_;
 };
 
 template<

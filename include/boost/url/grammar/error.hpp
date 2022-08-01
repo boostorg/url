@@ -35,7 +35,15 @@ enum class error
     success = 0,
 
     /**
-     * A list parser reached the end.
+     * A rule reached the end of a range
+     *
+     * This indicates that the input was consumed
+     * when parsing a @ref range. The @ref range_rule
+     * will avoid rewinding the input buffer when
+     * this error is returned. Thus the consumed
+     * characters will be considered part of the
+     * range without contributing additional
+     * elements.
     */
     end,
 

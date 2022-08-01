@@ -33,7 +33,7 @@ namespace detail {
 */
 constexpr auto fragment_rule =
     pct_encoded_rule(
-        pchars + '/' + '?');
+        &detail::fragment_chars);
 
 /** Rule for fragment-part
 

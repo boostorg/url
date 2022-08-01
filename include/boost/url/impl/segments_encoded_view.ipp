@@ -13,11 +13,11 @@
 
 #include <boost/url/segments_view.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/grammar/parse.hpp>
-#include <boost/url/rfc/paths_rule.hpp>
-#include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/path.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/rfc/path_rules.hpp>
+#include <boost/url/rfc/query_rule.hpp>
 #include <ostream>
 
 namespace boost {

@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/optional.hpp>
 #include <boost/url/result.hpp>
+#include <boost/url/detail/empty_value.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
@@ -57,6 +58,7 @@ optional_rule( Rule r ) noexcept;
 #else
 template<class Rule>
 class optional_rule_t
+    : private urls::detail::empty_value<Rule>
 {
 public:
     using value_type = optional<
@@ -69,7 +71,7 @@ public:
             result<value_type>
     {
         auto const it0 = it;
-        auto rv = r_.parse(it, end);
+        auto rv = this->get().parse(it, end);
         if(! rv.has_error())
             return value_type(*rv);
         it = it0;
@@ -88,11 +90,10 @@ private:
     constexpr
     optional_rule_t(
         Rule const& r) noexcept
-        : r_(r)
+        : urls::detail::empty_value<Rule>(
+            urls::detail::empty_init, r)
     {
     }
-
-    Rule const r_;
 };
 
 template<class Rule>

@@ -106,9 +106,7 @@ typename std::enable_if<
 ok( R const& r,
     string_view s)
 {
-    BOOST_TEST(
-        grammar::parse(
-            s, r).has_value());
+    BOOST_TEST(grammar::parse(s, r).has_value());
 }
 
 // rule must fail the string
@@ -119,9 +117,7 @@ bad(
     R const& r,
     string_view s)
 {
-    BOOST_TEST(
-        grammar::parse(
-            s, r).has_error());
+    BOOST_TEST(grammar::parse(s, r).has_error());
 }
 
 } // urls

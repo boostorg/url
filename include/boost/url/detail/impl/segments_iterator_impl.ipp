@@ -12,7 +12,7 @@
 #define BOOST_URL_DETAIL_IMPL_SEGMENTS_ITERATOR_IMPL_IPP
 
 #include <boost/url/detail/segments_iterator_impl.hpp>
-#include <boost/url/rfc/detail/segment_rule.hpp>
+#include <boost/url/rfc/path_rules.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
@@ -39,7 +39,7 @@ segments_iterator_impl(
     pos_ += n;
     t_ = grammar::parse(
         next_, end_,
-        detail::segment_rule).value();
+        segment_rule).value();
 }
 
 segments_iterator_impl::
@@ -76,8 +76,8 @@ increment() noexcept
     // "/" segment
     auto rv = grammar::parse(
         next_, end_,
-            detail::path_increment);
-    if(rv == grammar::error::end)
+            detail::slash_segment_rule);
+    if(rv.has_error())
     {
         next_ = nullptr;
         return;
@@ -108,7 +108,7 @@ decrement() noexcept
         next_ = pos_;
         t_ = grammar::parse(
             next_, end_,
-            detail::path_increment).value();
+            detail::slash_segment_rule).value();
         return;
     }
     next_ = pos_;
@@ -117,14 +117,14 @@ decrement() noexcept
         // "/" segment
         t_ = grammar::parse(
             next_, end_,
-            detail::path_increment).value();
+            detail::slash_segment_rule).value();
     }
     else
     {
         // segment-nz
         t_ = grammar::parse(
             next_, end_,
-            detail::path_increment).value();
+            detail::slash_segment_rule).value();
     }
 }
 

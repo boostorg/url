@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_DETAIL_IMPL_RELATIVE_PART_RULE_IPP
 
 #include <boost/url/rfc/detail/relative_part_rule.hpp>
-#include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/rfc/path_rules.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 namespace boost {
@@ -42,9 +42,7 @@ parse(
         if(rv.has_value())
         {
             // path-noscheme
-            auto const& v = *rv;
-            t.path.path = v.string();
-            t.path.count = v.size();
+            t.path = std::move(*rv);
             t.has_authority = false;
             return t;
         }
@@ -60,9 +58,7 @@ parse(
         auto rv = grammar::parse(
             it, end,
             path_absolute_rule);
-        auto const& v = *rv;
-        t.path.path = v.string();
-        t.path.count = v.size();
+        t.path = std::move(*rv);
         t.has_authority = false;
         return t;
     }
@@ -81,9 +77,7 @@ parse(
             it, end, path_abempty_rule);
         if(! rv)
             return rv.error();
-        auto const& v = *rv;
-        t.path.path = v.string();
-        t.path.count = v.size();
+        t.path = std::move(*rv);
         t.has_authority = true;
     }
     return t;

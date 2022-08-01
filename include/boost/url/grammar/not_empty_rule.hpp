@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/result.hpp>
+#include <boost/url/detail/empty_value.hpp>
 #include <boost/url/grammar/type_traits.hpp>
 
 namespace boost {
@@ -47,6 +48,7 @@ not_empty_rule( Rule r );
 #else
 template<class R>
 struct not_empty_rule_t
+    : urls::detail::empty_value<R>
 {
     using value_type =
         typename R::value_type;
@@ -69,11 +71,10 @@ private:
     constexpr
     not_empty_rule_t(
         R const& r) noexcept
-        : r_(r)
+        : urls::detail::empty_value<R>(
+            urls::detail::empty_init, r)
     {
     }
-
-    R const r_;
 };
 
 template<class R>

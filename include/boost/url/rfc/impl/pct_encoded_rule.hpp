@@ -16,13 +16,15 @@
 namespace boost {
 namespace urls {
 
+namespace detail {
+
 template<class CharSet>
 auto
-pct_encoded_rule_t<CharSet>::
-parse(
+parse_pct_encoded(
     char const*& it,
-    char const* end) const noexcept ->
-        result<value_type>
+    char const* end,
+    CharSet const& cs) noexcept ->
+        result<pct_encoded_view>
 {
     auto const start = it;
     // VFALCO TODO
@@ -32,7 +34,7 @@ parse(
 skip:
     it0 = it;
     it = grammar::find_if_not(
-        it0, end, cs_);
+        it0, end, cs);
     n += it - it0;
     if(it == end)
         goto finish;
@@ -71,8 +73,36 @@ skip:
             goto skip;
     }
 finish:
-    return detail::access::construct(
+    return access::construct(
         string_view(start, it - start), n);
+}
+
+} // detail
+
+//------------------------------------------------
+
+template<class CharSet>
+auto
+pct_encoded_rule_t<CharSet>::
+parse(
+    char const*& it,
+    char const* end) const noexcept ->
+        result<value_type>
+{
+    return detail::parse_pct_encoded(
+        it, end, this->get());
+}
+
+template<class CharSet>
+auto
+pct_encoded_ref_rule_t<CharSet>::
+parse(
+    char const*& it,
+    char const* end) const noexcept ->
+        result<value_type>
+{
+    return detail::parse_pct_encoded(
+        it, end, *cs_);
 }
 
 } // urls

@@ -89,7 +89,7 @@ parse(
         result<value_type>
 {
     return detail::parse_variant(
-        it, end, rn_,
+        it, end, this->get(),
         std::integral_constant<
             std::size_t, 0>{},
         std::true_type{});

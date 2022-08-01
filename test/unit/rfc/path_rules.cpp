@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/rfc/path_rules.hpp>
 
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/range_rule.hpp>
@@ -18,7 +18,7 @@
 namespace boost {
 namespace urls {
 
-class paths_rule_test
+class path_rules_test
 {
 public:
     /* ASCII HEX
@@ -168,8 +168,8 @@ public:
 };
 
 TEST_SUITE(
-    paths_rule_test,
-    "boost.url.paths_rule");
+    path_rules_test,
+    "boost.url.path_rules");
 
 } // urls
 } // boost

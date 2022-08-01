@@ -69,7 +69,6 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/authority_rule.ipp>
 #include <boost/url/rfc/impl/ipv4_address_rule.ipp>
 #include <boost/url/rfc/impl/ipv6_address_rule.ipp>
-#include <boost/url/rfc/impl/paths_rule.ipp>
 #include <boost/url/rfc/impl/query_rule.ipp>
 #include <boost/url/rfc/impl/relative_ref_rule.ipp>
 #include <boost/url/rfc/impl/uri_rule.ipp>
@@ -80,6 +79,7 @@ in a translation unit of the program.
 #include <boost/url/rfc/detail/impl/host_rule.ipp>
 #include <boost/url/rfc/detail/impl/ip_literal_rule.ipp>
 #include <boost/url/rfc/detail/impl/ipvfuture_rule.ipp>
+#include <boost/url/rfc/detail/impl/path_rules.ipp>
 #include <boost/url/rfc/detail/impl/port_rule.ipp>
 #include <boost/url/rfc/detail/impl/relative_part_rule.ipp>
 #include <boost/url/rfc/detail/impl/scheme_rule.ipp>

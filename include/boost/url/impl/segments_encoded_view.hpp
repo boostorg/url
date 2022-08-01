@@ -13,7 +13,6 @@
 
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/segments_encoded_iterator_impl.hpp>
-#include <boost/url/rfc/paths_rule.hpp>
 #include <cstdint>
 #include <iterator>
 

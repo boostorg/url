@@ -12,8 +12,9 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/result.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/grammar/range_rule.hpp>
 
 namespace boost {
 namespace urls {
@@ -45,7 +46,7 @@ struct relative_part_rule_t
     {
         bool has_authority = false;
         decltype(authority_rule)::value_type authority;
-        parsed_path path;
+        grammar::range<pct_encoded_view> path;
     };
 
     auto

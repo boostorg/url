@@ -54,10 +54,34 @@ class range
 
     struct any_rule;
 
+    template<class R>
+    struct impl1;
+
+    template<class R0, class R1>
+    struct impl2;
+
     string_view s_;
     std::size_t n_ = 0;
     char buf_[BufferSize];
     any_rule const* pr_ = nullptr;
+
+    template<
+        class R0, class R1>
+    friend struct range_rule_t;
+
+    template<class R>
+    range(
+        string_view s,
+        std::size_t n,
+        R const& r);
+
+    template<
+        class R0, class R1>
+    range(
+        string_view s,
+        std::size_t n,
+        R0 const& first,
+        R1 const& next);
 
 public:
     /** The type of each element of the range
@@ -96,12 +120,19 @@ public:
     */
     ~range();
 
-#ifndef BOOST_URL_DOCS
-#if BOOST_WORKAROUND( BOOST_GCC_VERSION, < 50000 ) || \
-    BOOST_WORKAROUND( BOOST_CLANG_VERSION, < 40000 )
+    /** Constructor
+
+        Default-constructed ranges have
+        zero elements.
+    */
     range() noexcept = default;
-#endif
-#endif
+
+    /** Constructor
+
+        After construction, the moved-from
+        object will be the empty range.
+    */
+    range(range&&) noexcept;
 
     /** Constructor
 
@@ -111,7 +142,17 @@ public:
         for ensuring that the lifetime of the
         buffer extends until no longer in use.
     */
-    range(range const&) noexcept;
+    range(range const&);
+
+    /** Assignment
+    */
+    range&
+    operator=(range const&);
+
+    /** Assignment
+    */
+    range&
+    operator=(range&&) noexcept;
 
     /** Return an iterator to the beginning
     */
@@ -144,25 +185,6 @@ public:
     {
         return n_ == 0;
     }
-
-private:
-    template<class R>
-    range(
-        string_view s,
-        std::size_t n,
-        R const& r);
-
-    template<
-        class R0, class R1>
-    range(
-        string_view s,
-        std::size_t n,
-        R0 const& first,
-        R1 const& next);
-
-    template<
-        class R0, class R1>
-    friend struct range_rule_t;
 };
 
 //------------------------------------------------
@@ -185,7 +207,7 @@ struct range_rule_t;
 
     @par BNF
     @code
-    range        = <N>*<M>rule
+    range        = <N>*<M>next
     @endcode
 
     @par Specification
@@ -276,8 +298,8 @@ range_rule(
 
     @par BNF
     @code
-    range       = <1>*<1>rule1
-                / rule1 <N-1>*<M-1>rule2
+    range       = <1>*<1>first
+                / first <N-1>*<M-1>next
     @endcode
 
     @par Specification

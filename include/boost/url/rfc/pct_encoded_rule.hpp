@@ -15,6 +15,7 @@
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/result.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/detail/empty_value.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/static_assert.hpp>
@@ -78,13 +79,21 @@ namespace urls {
         @ref pct_encoded_view
 */
 #ifdef BOOST_URL_DOCS
+/**@{*/
 template<class CharSet>
 constexpr
 __implementation_defined__
-pct_encoded_rule( CharSet cs ) noexcept;
+pct_encoded_rule( CharSet const& cs ) noexcept;
+
+template<class CharSet>
+constexpr
+__implementation_defined__
+pct_encoded_rule( CharSet const* cs ) noexcept;
+/**@}*/
 #else
 template<class CharSet>
 struct pct_encoded_rule_t
+    : private detail::empty_value<CharSet>
 {
     using value_type = pct_encoded_view;
 
@@ -102,14 +111,42 @@ struct pct_encoded_rule_t
         char const* end) const noexcept;
 
 private:
-    CharSet cs_;
-
     constexpr
     pct_encoded_rule_t(
         CharSet const& cs) noexcept
-        : cs_(cs)
+        : detail::empty_value<CharSet>(
+            detail::empty_init, cs)
     {
     }
+};
+
+template<class CharSet>
+struct pct_encoded_ref_rule_t
+{
+    using value_type = pct_encoded_view;
+
+    template<class CharSet_>
+    friend
+    constexpr
+    auto
+    pct_encoded_rule(
+        CharSet_ const* cs) noexcept ->
+            pct_encoded_ref_rule_t<CharSet_>;
+
+    result<value_type>
+    parse(
+        char const*& it,
+        char const* end) const noexcept;
+
+private:
+    constexpr
+    pct_encoded_ref_rule_t(
+        CharSet const& cs) noexcept
+        : cs_(&cs)
+    {
+    }
+
+    CharSet const* cs_;
 };
 
 template<class CharSet>
@@ -129,6 +166,25 @@ pct_encoded_rule(
 
     return pct_encoded_rule_t<CharSet>(cs);
 }
+
+template<class CharSet>
+constexpr
+auto
+pct_encoded_rule(
+    CharSet const* cs) noexcept ->
+        pct_encoded_ref_rule_t<CharSet>
+{
+    // If an error occurs here it means that
+    // the value of your type does not meet
+    // the requirements. Please check the
+    // documentation!
+    static_assert(
+        grammar::is_charset<CharSet>::value,
+        "CharSet requirements not met");
+
+    return pct_encoded_ref_rule_t<CharSet>(*cs);
+}
+
 #endif
 
 } // urls

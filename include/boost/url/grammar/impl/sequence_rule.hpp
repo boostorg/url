@@ -272,7 +272,7 @@ parse(
         result<value_type>
 {
     detail::parse_sequence<
-        IsList, R0, Rn...> t(rn_);
+        IsList, R0, Rn...> t(this->get());
     t.apply(it, end);
     return t.make_result();
 }

@@ -140,11 +140,6 @@
           <member><link linkend="url.ref.boost__urls__pct_encoded_rule">pct_encoded_rule</link></member>
         </simplelist>
 
-        <bridgehead renderas="sect3">Types</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__parsed_path">parsed_path</link></member>
-        </simplelist>
-
         <bridgehead renderas="sect3">CharSets</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__gen_delim_chars">gen_delim_chars</link></member>

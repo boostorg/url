@@ -14,6 +14,7 @@
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/detail/tuple.hpp>
 #include <boost/mp11/algorithm.hpp>
+#include <boost/url/detail/empty_value.hpp>
 #include <tuple>
 
 namespace boost {
@@ -69,6 +70,8 @@ template<
     class R0,
     class... Rn>
 class sequence_rule_t
+    : urls::detail::empty_value<
+        detail::tuple<R0, Rn...>>
 {
     using T = mp11::mp_remove<
         std::tuple<
@@ -104,11 +107,12 @@ private:
     sequence_rule_t(
         R0 const& r0,
         Rn const&... rn) noexcept
-        : rn_(r0, rn...)
+        : urls::detail::empty_value<
+            detail::tuple<R0, Rn...>>(
+                urls::detail::empty_init,
+                r0, rn...)
     {
     }
-
-    detail::tuple<R0, Rn...> const rn_;
 };
 
 template<

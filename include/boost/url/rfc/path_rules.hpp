@@ -7,31 +7,22 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_PATHS_RULE_HPP
-#define BOOST_URL_RFC_PATHS_RULE_HPP
+#ifndef BOOST_URL_RFC_PATH_RULES_HPP
+#define BOOST_URL_RFC_PATH_RULES_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
+#include <boost/url/grammar/char_rule.hpp>
 #include <boost/url/grammar/not_empty_rule.hpp>
 #include <boost/url/grammar/range_rule.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/rfc/pchars.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/detail/path_rules.hpp>
 #include <cstddef>
 
 namespace boost {
 namespace urls {
-
-/** Information about a parsed path
-*/
-struct parsed_path
-{
-    /** The encoded string representing the path
-    */
-    string_view path;
-
-    /** The number of segments in the path
-    */
-    std::size_t count = 0;
-};
 
 /** Rule for path-abempty grammar
 
@@ -47,21 +38,11 @@ struct parsed_path
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ path_abempty_rule;
 #else
-struct path_abempty_rule_t
-{
-    using value_type =
-        grammar::range<
-            pct_encoded_view>;
-
-    BOOST_URL_DECL
-    result<value_type>
-    parse(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-};
-
-constexpr path_abempty_rule_t path_abempty_rule{};
+constexpr auto path_abempty_rule =
+    grammar::range_rule(
+        grammar::sequence_rule(
+            grammar::char_rule('/'),
+            detail::segment_rule));
 #endif
 
 //------------------------------------------------
@@ -80,21 +61,13 @@ constexpr path_abempty_rule_t path_abempty_rule{};
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ path_absolute_rule;
 #else
-struct path_absolute_rule_t
-{
-    using value_type =
-        grammar::range<
-            pct_encoded_view>;
-
-    BOOST_URL_DECL
-    result<value_type>
-    parse(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-};
-
-constexpr path_absolute_rule_t path_absolute_rule{};
+constexpr auto path_absolute_rule =
+    grammar::range_rule(
+        grammar::sequence_rule(
+            grammar::char_rule('/'),
+            detail::segment_ns_rule),
+        detail::slash_segment_rule,
+        1);
 #endif
 
 //------------------------------------------------
@@ -113,21 +86,11 @@ constexpr path_absolute_rule_t path_absolute_rule{};
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ path_noscheme_rule;
 #else
-struct path_noscheme_rule_t
-{
-    using value_type =
-        grammar::range<
-            pct_encoded_view>;
-
-    BOOST_URL_DECL
-    result<value_type>
-    parse(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-};
-
-constexpr path_noscheme_rule_t path_noscheme_rule{};
+constexpr auto path_noscheme_rule =
+    grammar::range_rule(
+        detail::segment_nz_nc_rule,
+        detail::slash_segment_rule,
+        1);
 #endif
 
 //------------------------------------------------
@@ -152,21 +115,11 @@ constexpr path_noscheme_rule_t path_noscheme_rule{};
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ path_rootless_rule;
 #else
-struct path_rootless_rule_t
-{
-    using value_type =
-        grammar::range<
-            pct_encoded_view>;
-
-    BOOST_URL_DECL
-    result<value_type>
-    parse(
-        char const*& it,
-        char const* end
-            ) const noexcept;
-};
-
-constexpr path_rootless_rule_t path_rootless_rule{};
+constexpr auto path_rootless_rule =
+    grammar::range_rule(
+        detail::segment_nz_rule,
+        detail::slash_segment_rule,
+        1);
 #endif
 
 } // urls

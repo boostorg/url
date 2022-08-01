@@ -11,9 +11,9 @@
 #define BOOST_URL_RFC_DETAIL_HIER_PART_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/result.hpp>
+#include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/grammar/range_rule.hpp>
 
 namespace boost {
 namespace urls {
@@ -39,7 +39,9 @@ struct hier_part_rule_t
     {
         bool has_authority = false;
         authority_view authority;
-        parsed_path path;
+
+        // VFALCO This doesn't belong here
+        grammar::range<pct_encoded_view> path;
     };
 
     BOOST_URL_DECL

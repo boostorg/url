@@ -28,6 +28,7 @@ struct not_empty_rule_test
         // test constexpr
         constexpr auto r =
             not_empty_rule(char_rule('.'));
+        (void)r;
 
         ok( pct_encoded_rule(
                 grammar::digit_chars),

@@ -59,6 +59,7 @@ struct sequence_rule_test
             sequence_rule(
                 char_rule('.'),
                 char_rule('.'));
+        (void)r;
         
         testSequence();
     }

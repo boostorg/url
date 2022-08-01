@@ -18,7 +18,7 @@
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/ascii.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/rfc/path_rules.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/relative_ref_rule.hpp>

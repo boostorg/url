@@ -37,6 +37,7 @@ struct unsigned_dec_rule_test
         // test constexpr
         constexpr auto r =
             unsigned_dec_rule<unsigned short>{};
+        (void)r;
 
         {
             using T = std::uint8_t;

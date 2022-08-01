@@ -59,6 +59,7 @@ struct char_rule_test
     {
         // test constexpr
         constexpr auto r = char_rule('.');
+        (void)r;
 
         testRule();
     }

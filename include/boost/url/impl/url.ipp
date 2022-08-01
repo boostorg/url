@@ -20,7 +20,7 @@
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/print.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/rfc/path_rules.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/url/rfc/detail/fragment_rule.hpp>

@@ -56,7 +56,7 @@ struct query_param_rule_t
         // key
         {
             auto rv = grammar::parse(it, end,
-                pct_encoded_rule(detail::key_chars));
+                pct_encoded_rule(&detail::key_chars));
             if(! rv)
                 return rv.error();    
             t.key = *rv;
@@ -78,7 +78,7 @@ struct query_param_rule_t
         // value
         {
             auto rv = grammar::parse(it, end,
-                pct_encoded_rule(detail::value_chars));
+                pct_encoded_rule(&detail::value_chars));
             if(! rv)
                 return rv.error();
             t.value = *rv;
@@ -115,10 +115,7 @@ parse(
                     it, end,
                     grammar::char_rule('&'));
                 if(! rv)
-                {
-                    // end of list
-                    return grammar::error::end;
-                }
+                    return rv.error();
             }
 
             return grammar::parse(it, end,

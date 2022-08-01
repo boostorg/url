@@ -29,6 +29,7 @@ struct variant_rule_test
             variant_rule(
                 char_rule('('),
                 char_rule(')'));
+        (void)r;
     }
 };
 

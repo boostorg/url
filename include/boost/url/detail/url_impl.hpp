@@ -18,11 +18,6 @@
 #include <boost/assert.hpp>
 #include <cstdint>
 
-// VFALCO These structs used to be forward
-// declared, but the parsers now use a
-// nested type.
-#include <boost/url/rfc/paths_rule.hpp>
-
 namespace boost {
 namespace urls {
 
@@ -93,7 +88,7 @@ struct url_impl : parts_base
         unsigned char const*, pct_encoded_view const&) noexcept;
     void apply_port(string_view, unsigned short) noexcept;
     void apply_authority(authority_view const&) noexcept;
-    void apply_path(parsed_path const&) noexcept;
+    void apply_path(string_view, std::size_t) noexcept;
     void apply_query(string_view, std::size_t) noexcept;
     void apply_frag(pct_encoded_view) noexcept;
 };

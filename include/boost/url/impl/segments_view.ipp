@@ -12,9 +12,6 @@
 #define BOOST_URL_IMPL_SEGMENTS_VIEW_IPP
 
 #include <boost/url/segments_view.hpp>
-#include <boost/url/grammar/parse.hpp>
-#include <boost/url/rfc/paths_rule.hpp>
-#include <boost/assert.hpp>
 #include <ostream>
 
 namespace boost {

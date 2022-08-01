@@ -31,6 +31,7 @@ struct dec_octet_rule_test
     {
         // test constexpr
         constexpr auto r = dec_octet_rule;
+        (void)r;
 
         testRule();
     }

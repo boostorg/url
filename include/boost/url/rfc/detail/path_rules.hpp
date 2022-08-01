@@ -7,10 +7,11 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_RFC_DETAIL_SEGMENT_RULE_HPP
-#define BOOST_URL_RFC_DETAIL_SEGMENT_RULE_HPP
+#ifndef BOOST_URL_RFC_DETAIL_PATH_RULES_HPP
+#define BOOST_URL_RFC_DETAIL_PATH_RULES_HPP
 
-#include <boost/url/grammar/not_empty_rule.hpp>
+#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/rfc/pchars.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 
@@ -30,16 +31,10 @@ namespace detail {
         >3.3. Path (rfc3986)</a>
 
     @see
-        @ref path_abempty_rule,
-        @ref path_absolute_rule,
-        @ref path_noscheme_rule,
-        @ref path_rootless_rule,
-        @ref pchars,
-        @ref segment_nz_rule,
-        @ref segment_nz_nc_rule
+        @ref parse.
 */
 constexpr auto segment_rule =
-    pct_encoded_rule(pchars);
+    pct_encoded_rule(&pchars);
 
 //------------------------------------------------
 
@@ -65,7 +60,7 @@ constexpr auto segment_rule =
 */
 constexpr auto segment_nz_rule =
     grammar::not_empty_rule(
-        pct_encoded_rule(pchars));
+        pct_encoded_rule(&pchars));
 
 //------------------------------------------------
 
@@ -82,19 +77,51 @@ constexpr auto segment_nz_rule =
         >3.3. Path (rfc3986)</a>
 
     @see
-        @ref path_abempty_rule,
-        @ref path_absolute_rule,
-        @ref path_noscheme_rule,
-        @ref path_rootless_rule,
-        @ref pchars,
-        @ref segment_rule,
-        @ref segment_nz_rule,
-        @ref sub_delim_chars,
-        @ref unreserved_chars
+        @ref parse.
 */
 constexpr auto segment_nz_nc_rule =
     grammar::not_empty_rule(
         pct_encoded_rule(pchars - ':'));
+
+//------------------------------------------------
+
+/** Rule for slash-segment
+
+    @par BNF
+    @code
+    slash-segment   = "/" segment
+
+    @endcode
+*/
+constexpr auto slash_segment_rule =
+    grammar::sequence_rule(
+        grammar::char_rule('/'),
+        pct_encoded_rule(&pchars));
+
+//------------------------------------------------
+
+// VFALCO This is an alternate rule not found
+// in the rfc3986, to reformulate the rfc path
+// BNFs into something the range_rule can use.
+
+/** Rule for segment-ns
+*/
+#ifdef BOOST_URL_DOCS
+constexpr __implementation_defined__ segment_ns_rule;
+#else
+struct segment_ns_rule_t
+{
+    using value_type = pct_encoded_view;
+
+    BOOST_URL_DECL
+    result<value_type>
+    parse(
+        char const*& it,
+        char const* end) const noexcept;
+};
+
+constexpr segment_ns_rule_t segment_ns_rule{};
+#endif
 
 } // detail
 } // urls
