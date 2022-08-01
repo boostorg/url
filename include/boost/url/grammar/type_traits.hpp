@@ -61,11 +61,15 @@ struct is_mutable_string<T, I, boost::void_t<
 
 /** Determine if T meets the requirements of Rule
 
-    @par Exemplar
+    This is an alias for `std::true_type` if
+    `T` meets the requirements, otherwise it
+    is an alias for `std::false_type`.
+
+    @par Example
     @code
-    struct Rule
+    struct U
     {
-        using value_type = ...;
+        struct value_type;
 
         auto
         parse(
@@ -73,11 +77,16 @@ struct is_mutable_string<T, I, boost::void_t<
             char const* end) const ->
                 result<value_type>
     };
+
+    static_assert( is_rule<U>::value, "Requirements not met" );
     @endcode
+
+    @see
+        @ref parse.
 */
 #ifdef BOOST_URL_DOCS
 template<class T>
-using is_rule = __see_below__
+using is_rule = __see_below__;
 #else
 template<class T, class = void>
 struct is_rule : std::false_type {};

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016-2019 Damian Jarek (damian dot jarek93 at gmail dot com)
+// Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,11 +26,17 @@ namespace grammar {
     token     = 1*( ch )
     @endcode
 */
+#ifdef BOOST_URL_DOCS
+template<class CharSet>
+constexpr
+__implementation_defined__
+token_rule(
+    CharSet cs) noexcept;
+#else
 template<class CharSet>
 struct token_rule_t
 {
     using value_type = string_view;
-    //using value_type = std::string;
 
     static_assert(
         is_charset<CharSet>::value,
@@ -46,11 +52,13 @@ struct token_rule_t
 private:
     template<class CharSet_>
     friend
+    constexpr
     auto
     token_rule(
         CharSet_ const&) noexcept ->
             token_rule_t<CharSet_>;
 
+    constexpr
     token_rule_t(
         CharSet const& cs) noexcept
         : cs_(cs)
@@ -60,8 +68,8 @@ private:
     CharSet const cs_;
 };
 
-template<
-    class CharSet>
+template<class CharSet>
+constexpr
 auto
 token_rule(
     CharSet const& cs) noexcept ->
@@ -69,6 +77,7 @@ token_rule(
 {
     return {cs};
 }
+#endif
 
 } // grammar
 } // urls

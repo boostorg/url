@@ -19,8 +19,53 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Rule for a set of alternative grammar elements
+/** Match one of a set of rules
+
+    Each specified rule is tried in sequence.
+    When the first match occurs, the result
+    is stored and returned in the variant. If
+    no match occurs, an error is returned. Since
+    the value type is a `std::tuple`, it is
+    necessary to use `std::get` or `std::visit`
+    to extract the result.
+
+    @par Example
+    @code
+    //  Match an absolute URI or a single asterisk
+    //
+    //  target  = absolute-URI / "*"
+    //
+    constexpr auto target_rule = variant_rule( absolute_uri_rule, char_rule('*') );
+    @endcode
+
+    @par Value Type
+    @code
+    using value_type = variant< typename Rules::value_type... >;
+    @endcode
+
+    @par BNF
+    @code
+    variant     = rule1 / rule2 / rule3...
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#section-3.2"
+        >3.2.  Alternatives (rfc5234)</a>
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-5.3"
+        >5.3.  Request Target (rfc7230)</a>
+
+    @see
+        @ref absolute_uri_rule,
+        @ref char_rule,
+        @ref parse,
+        @ref variant.
 */
+#ifdef BOOST_URL_DOCS
+template<class... Rules>
+constexpr
+__implementation_defined__
+variant_rule( Rules... rn ) noexcept;
+#else
 template<
     class R0, class... Rn>
 class variant_rule_t
@@ -59,8 +104,6 @@ private:
     detail::tuple<R0, Rn...> rn_;
 };
 
-/** Return a rule for parsing a set of alternatives
-*/
 template<
     class R0,
     class... Rn>
@@ -70,6 +113,7 @@ variant_rule(
     R0 const& r0,
     Rn const&... rn) noexcept ->
         variant_rule_t<R0, Rn...>;
+#endif
 
 } // grammar
 } // urls

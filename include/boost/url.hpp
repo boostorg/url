@@ -39,13 +39,17 @@
 
 #include <boost/url/rfc/absolute_uri_rule.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/charsets.hpp>
+#include <boost/url/rfc/gen_delim_chars.hpp>
 #include <boost/url/rfc/ipv4_address_rule.hpp>
 #include <boost/url/rfc/ipv6_address_rule.hpp>
 #include <boost/url/rfc/paths_rule.hpp>
+#include <boost/url/rfc/pchars.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/relative_ref_rule.hpp>
+#include <boost/url/rfc/reserved_chars.hpp>
+#include <boost/url/rfc/sub_delim_chars.hpp>
+#include <boost/url/rfc/unreserved_chars.hpp>
 #include <boost/url/rfc/uri_rule.hpp>
 #include <boost/url/rfc/uri_reference_rule.hpp>
 

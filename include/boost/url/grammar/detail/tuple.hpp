@@ -82,12 +82,13 @@ struct tuple : tuple_impl<
         Ts...>, Ts...>
 {
     template<class... Us,
-        class = typename std::enable_if<
+        typename std::enable_if<
             mp11::mp_bool<
                 mp11::mp_all<std::is_constructible<
                     Ts, Us>...>::value &&
                 ! mp11::mp_all<std::is_convertible<
-                    Us, Ts>...>::value>::value>::type
+                    Us, Ts>...>::value>::value,
+            int>::type = 0
     >
     constexpr
     explicit
@@ -97,10 +98,11 @@ struct tuple : tuple_impl<
     {
     }
 
-    template<class... Us, int = 0,
-        class = typename std::enable_if<
+    template<class... Us,
+        typename std::enable_if<
             mp11::mp_all<std::is_convertible<
-                Us, Ts>...>::value>::type
+                Us, Ts>...>::value,
+            int>::type = 0
     >
     constexpr
     tuple(Us&&... us) noexcept

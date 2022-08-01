@@ -25,13 +25,41 @@ namespace grammar {
 
 /** Rule for an unsigned decimal
 
-    Extra leading zeroes are not allowed.
+    Extra leading zeroes are not allowed. The
+    rule is default-constructible and requires
+    the template argument to determine the
+    type of unsigned integer used to store the
+    result.
+
+    @par Example
+    @code
+    auto rv = parse( s, unsigned_dec_rule< unsigned short >{} );
+    @endcode
+
+    @par Value Type
+    @code
+    struct value_type
+    {
+        Unsigned u;
+        string_view s;
+    };
+    @endcode
 
     @par BNF
     @code
     unsigned      = "0" / ( ["1"..."9"] *DIGIT )
     @endcode
+
+    @tparam Unsigned The unsigned integer type used
+    to store the result.
+
+    @see
+        @ref parse.
 */
+#ifdef BOOST_URL_DOCS
+template<class Unsigned>
+struct unsigned_dec_rule;
+#else
 template<class Unsigned>
 struct unsigned_dec_rule
 {
@@ -54,6 +82,7 @@ struct unsigned_dec_rule
             ) const noexcept ->
         result<value_type>;
 };
+#endif
 
 } // grammar
 } // urls

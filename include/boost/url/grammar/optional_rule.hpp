@@ -19,14 +19,48 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Rule for an optional grammar element
+/** Match a rule, or the empty string
+
+    Optional BNF elements are denoted with
+    square brackets.
+
+    @par Example
+    @code
+    result< optional< string_view > > rv = parse( s, optional_rule( char_rule( ':' ) );
+    @endcode
+
+    @par Value Type
+    @code
+    using value_type = optional< typename Rule::value_type >;
+    @endcode
+
+    @par BNF
+    @code
+    optional     = [ rule ]
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#section-3.8"
+        >3.8.  Optional Sequence (rfc5234)</a>
+
+    @par r The rule to match
+
+    @see
+        @ref optional,
+        @ref parse.
 */
-template<class R>
+#ifdef BOOST_URL_DOCS
+template<class Rule>
+constexpr
+__implementation_defined__
+optional_rule( Rule r ) noexcept;
+#else
+template<class Rule>
 class optional_rule_t
 {
 public:
     using value_type = optional<
-        typename R::value_type>;
+        typename Rule::value_type>;
 
     auto
     parse(
@@ -53,25 +87,24 @@ public:
 private:
     constexpr
     optional_rule_t(
-        R const& r) noexcept
+        Rule const& r) noexcept
         : r_(r)
     {
     }
 
-    R const r_;
+    Rule const r_;
 };
 
-//------------------------------------------------
-
-template<class R>
+template<class Rule>
 auto
 constexpr
 optional_rule(
-    R const& r) ->
-        optional_rule_t<R>
+    Rule const& r) ->
+        optional_rule_t<Rule>
 {
     return { r };
 }
+#endif
 
 } // grammar
 } // urls

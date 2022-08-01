@@ -20,7 +20,6 @@
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/print.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/paths_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
@@ -392,11 +391,6 @@ set_user_impl(std::size_t n)
     return dest + 2;
 }
 
-namespace detail
-{
-
-}
-
 url&
 url::
 set_user(string_view s)
@@ -423,10 +417,10 @@ set_user(pct_encoded_view s)
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = detail::pct_encode_bytes(
+    auto const n = detail::pct_encode_bytes_impl(
         s.begin(), s.end(), detail::user_chars);
     auto dest = set_user_impl(n);
-    detail::pct_encode(dest, u_.get(id_pass).data(),
+    detail::pct_encode_impl(dest, u_.get(id_pass).data(),
                s.begin(), s.end(), detail::user_chars);
     u_.decoded_[id_user] = s.size();
     check_invariants();
@@ -538,10 +532,10 @@ set_password(pct_encoded_view s)
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = detail::pct_encode_bytes(
+    auto const n = detail::pct_encode_bytes_impl(
         s.begin(), s.end(), detail::password_chars);
     auto dest = set_password_impl(n);
-    pct_encode(
+    detail::pct_encode_impl(
         dest,
         u_.get(id_host).data() - 1,
         s.begin(),
@@ -662,10 +656,10 @@ set_userinfo(
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = detail::pct_encode_bytes(
+    auto const n = detail::pct_encode_bytes_impl(
         s.begin(), s.end(), detail::userinfo_chars);
     auto dest = set_userinfo_impl(n);
-    detail::pct_encode(
+    detail::pct_encode_impl(
         dest,
         u_.get(id_host).data() - 1,
         s.begin(),
@@ -842,10 +836,10 @@ set_host(
             return set_host(r.value());
     }
     check_invariants();
-    auto const n = detail::pct_encode_bytes(
+    auto const n = detail::pct_encode_bytes_impl(
         s.begin(), s.end(), detail::host_chars);
     auto dest = set_host_impl(n);
-    detail::pct_encode(
+    detail::pct_encode_impl(
         dest,
         u_.get(id_path).data(),
         s.begin(),
@@ -1865,13 +1859,13 @@ set_fragment(string_view s)
     s = buf.maybe_copy(s);
     check_invariants();
     auto const n = pct_encode_bytes(
-        s, fragment_chars);
+        s, detail::fragment_chars);
     auto dest = set_fragment_impl(n);
     pct_encode(
         dest,
         u_.get(id_end).data(),
         s,
-        fragment_chars);
+        detail::fragment_chars);
     u_.decoded_[id_frag] = s.size();
     check_invariants();
     return *this;
@@ -1886,15 +1880,15 @@ set_fragment(
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = detail::pct_encode_bytes(
-        s.begin(), s.end(), fragment_chars);
+    auto const n = detail::pct_encode_bytes_impl(
+        s.begin(), s.end(), detail::fragment_chars);
     auto dest = set_fragment_impl(n);
-    detail::pct_encode(
+    detail::pct_encode_impl(
         dest,
         u_.get(id_end).data(),
         s.begin(),
         s.end(),
-        fragment_chars);
+        detail::fragment_chars);
     u_.decoded_[id_frag] = s.size();
     check_invariants();
     return *this;
@@ -2269,7 +2263,8 @@ url&
 url::
 normalize_query()
 {
-    normalize_octets_impl(id_query, query_chars);
+    normalize_octets_impl(
+        id_query, detail::query_chars);
     return *this;
 }
 
@@ -2277,7 +2272,8 @@ url&
 url::
 normalize_fragment()
 {
-    normalize_octets_impl(id_frag, fragment_chars);
+    normalize_octets_impl(
+        id_frag, detail::fragment_chars);
     return *this;
 }
 

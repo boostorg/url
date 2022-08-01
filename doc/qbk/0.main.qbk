@@ -52,9 +52,15 @@
 [def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
 [def __CharSet__                [link url.concepts.charset ['CharSet]]]
 [def __MutableString__          [link url.concepts.mutablestring ['MutableString]]]
+[def __Rule__                   [link url.concepts.rule ['Rule]]]
+[def __Rule1__                  [link url.concepts.rule ['Rule1]]]
+[def __Rule2__                  [link url.concepts.rule ['Rule2]]]
+[def __Rules__                  [link url.concepts.rule ['Rules]]]
 
 [def __std_swap__               [@https://en.cppreference.com/w/cpp/algorithm/swap `std::swap`]]
 [def __std_string__             [@https://en.cppreference.com/w/cpp/string/basic_string `std::string`]]
+[def __std_tuple__              [@https://en.cppreference.com/w/cpp/utility/tuple `std::tuple`]]
+[def __std_get__                [@https://en.cppreference.com/w/cpp/utility/tuple/get `std::get`]]
 
 [def __authority_view__         [link url.ref.boost__urls__authority_view `authority_view`]]
 [def __segments_view__          [link url.ref.boost__urls__segments_view `segments_view`]]
@@ -69,7 +75,20 @@
 [def __string_view__            [link url.ref.boost__urls__string_view `string_view`]]
 [def __url__                    [link url.ref.boost__urls__url `url`]]
 [def __url_view__               [link url.ref.boost__urls__url_view `url_view`]]
-[def __grammar__parse__         [link url.ref.boost__urls__grammar__parse `parse`]]
+
+[def __parse__                  [link url.ref.boost__urls__grammar__parse `parse`]]
+[def __is_charset__             [link url.ref.boost__urls__grammar__is_charset `is_charset`]]
+[def __is_rule__                [link url.ref.boost__urls__grammar__is_rule `is_rule`]]
+[def __char_rule__              [link url.ref.boost__urls__grammar__char_rule `char_rule`]]
+[def __dec_octet_rule__         [link url.ref.boost__urls__grammar__dec_octet_rule `dec_octet_rule`]]
+[def __not_empty_rule__         [link url.ref.boost__urls__grammar__not_empty_rule `not_empty_rule`]]
+[def __optional_rule__          [link url.ref.boost__urls__grammar__optional_rule `optional_rule`]]
+[def __range_rule__             [link url.ref.boost__urls__grammar__range_rule `range_rule`]]
+[def __sequence_rule__          [link url.ref.boost__urls__grammar__sequence_rule `sequence_rule`]]
+[def __token_rule__             [link url.ref.boost__urls__grammar__token_rule `token_rule`]]
+[def __unsigned_dec_rule__      [link url.ref.boost__urls__grammar__unsigned_dec_rule `unsigned_dec_rule`]]
+[def __variant_rule__           [link url.ref.boost__urls__grammar__variant_rule `variant_rule`]]
+[def __lut_chars__              [link url.ref.boost__urls__grammar__lut_chars `lut_chars`]]
 
 [/ Dingbats ]
 
@@ -100,22 +119,15 @@
 [include 5.5.fragment.qbk]
 [endsect]
 
+[include 6.0.grammar.qbk]
 
-[section Grammar Rules]
-[include 6.1.design.qbk]
-[include 6.2.customization.qbk]
-[endsect]
+[include 7.0.concepts.qbk]
 
 [section:ref Reference]
 [xinclude quickref.xml]
 [block'''<part label="Two: Reference">''']
 [include reference.qbk]
 [block'''</part>''']
-[endsect]
-
-[section:concepts Concepts]
-[include 7.1.CharSet.qbk]
-[include 7.2.MutableString.qbk]
 [endsect]
 
 

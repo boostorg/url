@@ -15,7 +15,6 @@
 #include <boost/url/error.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/charset.hpp>
-#include <boost/url/rfc/charsets.hpp>
 #include <memory>
 
 namespace boost {
@@ -110,7 +109,6 @@ struct pct_decode_opts
         @ref pct_decode_bytes_unchecked,
         @ref pct_decode_opts,
         @ref pct_decode_unchecked,
-        @ref reserved_chars_t.
 */
 template<
     class CharSet>
@@ -174,7 +172,6 @@ validate_pct_encoding(
         @ref pct_decode_bytes_unchecked,
         @ref pct_decode_opts,
         @ref pct_decode_unchecked,
-        @ref reserved_chars_t.
 */
 BOOST_URL_DECL
 std::size_t
@@ -612,7 +609,6 @@ pct_encode(
         @ref pct_encode,
         @ref pct_encode_bytes,
         @ref pct_encode_opts,
-        @ref reserved_chars_t.
 */
 template<
     class CharSet,

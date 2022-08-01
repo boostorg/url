@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_DETAIL_SEGMENT_RULE_HPP
 
 #include <boost/url/grammar/not_empty_rule.hpp>
-#include <boost/url/rfc/charsets.hpp>
+#include <boost/url/rfc/pchars.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 
 namespace boost {
@@ -89,7 +89,7 @@ constexpr auto segment_nz_rule =
         @ref pchars,
         @ref segment_rule,
         @ref segment_nz_rule,
-        @ref subdelim_chars,
+        @ref sub_delim_chars,
         @ref unreserved_chars
 */
 constexpr auto segment_nz_nc_rule =

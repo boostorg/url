@@ -10,7 +10,6 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/unsigned_dec_rule.hpp>
 
-#include "test_suite.hpp"
 #include "test_rule.hpp"
 
 namespace boost {
@@ -35,6 +34,10 @@ struct unsigned_dec_rule_test
     void
     run()
     {
+        // test constexpr
+        constexpr auto r =
+            unsigned_dec_rule<unsigned short>{};
+
         {
             using T = std::uint8_t;
             constexpr auto t =

@@ -26,7 +26,8 @@
   <xsl:variable name="emphasized-template-parameter-types" select="
     'Allocator',
     'CharSet',
-    'MutableString'
+    'MutableString',
+    'Rule', 'Rule0', 'Rule1', 'Rules'
   "/>
 
 </xsl:stylesheet>

@@ -10,19 +10,22 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/token_rule.hpp>
 
-#include "test_suite.hpp"
+#include <boost/url/grammar/alpha_chars.hpp>
+
 #include "test_rule.hpp"
 
 namespace boost {
 namespace urls {
-namespace rfc {
+namespace grammar {
 
-class token_rule_test
+struct token_rule_test
 {
-public:
     void
     run()
     {
+        // test constexpr
+        constexpr auto r =
+            token_rule(alpha_chars);
     }
 };
 
@@ -30,6 +33,6 @@ TEST_SUITE(
     token_rule_test,
     "boost.url.grammar.token_rule");
 
-} // rfc
+} // grammar
 } // urls
 } // boost

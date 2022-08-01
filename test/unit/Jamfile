@@ -51,16 +51,21 @@ local SOURCES =
     url_view.cpp
     urls.cpp
     variant.cpp
+    grammar/all_chars.cpp
+    grammar/alnum_chars.cpp
+    grammar/alpha_chars.cpp
     grammar/ascii.cpp
     grammar/char_rule.cpp
     grammar/charset.cpp
     grammar/dec_octet_rule.cpp
+    grammar/digit_chars.cpp
     grammar/error.cpp
+    grammar/hexdig_chars.cpp
     grammar/lut_chars.cpp
     grammar/not_empty_rule.cpp
     grammar/optional_rule.cpp
     grammar/parse.cpp
-    grammar/range.cpp
+    grammar/range_rule.cpp
     grammar/sequence_rule.cpp
     grammar/token_rule.cpp
     grammar/type_traits.cpp
@@ -68,13 +73,17 @@ local SOURCES =
     grammar/variant_rule.cpp
     rfc/absolute_uri_rule.cpp
     rfc/authority_rule.cpp
-    rfc/charsets.cpp
+    rfc/gen_delim_chars.cpp
     rfc/ipv4_address_rule.cpp
     rfc/ipv6_address_rule.cpp
     rfc/paths_rule.cpp
+    rfc/pchars.cpp
     rfc/pct_encoded_rule.cpp
     rfc/query_rule.cpp
     rfc/relative_ref_rule.cpp
+    rfc/reserved_chars.cpp
+    rfc/sub_delim_chars.cpp
+    rfc/unreserved_chars.cpp
     rfc/uri_rule.cpp
     rfc/uri_reference_rule.cpp
     ;

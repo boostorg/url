@@ -10,7 +10,6 @@
 // Test that header file is self-contained.
 #include <boost/url/rfc/absolute_uri_rule.hpp>
 
-#include "test_suite.hpp"
 #include "test_rule.hpp"
 
 #include <iostream>

@@ -41,9 +41,9 @@ parse(
         return rv.error();
     std::array<unsigned char, 4> v;
     v[0] = std::get<0>(*rv);
-    v[1] = std::get<2>(*rv);
-    v[2] = std::get<4>(*rv);
-    v[3] = std::get<6>(*rv);
+    v[1] = std::get<1>(*rv);
+    v[2] = std::get<2>(*rv);
+    v[3] = std::get<3>(*rv);
     return ipv4_address(v);
 }
 

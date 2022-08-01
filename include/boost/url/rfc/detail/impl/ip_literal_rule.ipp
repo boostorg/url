@@ -54,7 +54,7 @@ parse(
                 grammar::char_rule(']')));
         if(! rv)
             return rv.error();
-        t.ipv6 = std::get<0>(*rv);
+        t.ipv6 = *rv;
         t.is_ipv6 = true;
         return t;
     }
@@ -68,7 +68,7 @@ parse(
         if(! rv)
             return rv.error();
         t.is_ipv6 = false;
-        t.ipvfuture = std::get<0>(*rv).str;
+        t.ipvfuture = rv->str;
         return t;
     }
 }

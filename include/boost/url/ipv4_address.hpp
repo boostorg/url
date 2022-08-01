@@ -112,6 +112,7 @@ public:
         @param bytes The value to construct from.
     */
     BOOST_URL_DECL
+    explicit
     ipv4_address(
         bytes_type const& bytes) noexcept;
 
@@ -137,6 +138,7 @@ public:
             @ref parse_ipv4_address.
     */
     BOOST_URL_DECL
+    explicit
     ipv4_address(
         string_view s);
 

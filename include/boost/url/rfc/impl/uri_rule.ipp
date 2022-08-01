@@ -43,7 +43,7 @@ parse(
                 grammar::char_rule(':')));
         if(! rv)
             return rv.error();
-        u.apply_scheme(std::get<0>(*rv).scheme);
+        u.apply_scheme(rv->scheme);
     }
 
     // hier_part
@@ -70,8 +70,7 @@ parse(
             return rv.error();
         if(rv->has_value())
         {
-            auto const& v =
-                std::get<1>(**rv);
+            auto const& v = **rv;
             u.apply_query(
                 v.encoded_string(),
                 v.size());
@@ -86,8 +85,7 @@ parse(
         if(! rv)
             return rv.error();
         if(rv->has_value())
-            u.apply_frag(
-                std::get<1>(**rv));
+            u.apply_frag(**rv);
     }
 
     return u.construct();

@@ -11,6 +11,7 @@
 #define BOOST_URL_GRAMMAR_IMPL_UNSIGNED_DEC_RULE_HPP
 
 #include <boost/url/grammar/error.hpp>
+#include <boost/url/grammar/digit_chars.hpp>
 #include <algorithm> // VFALCO grr..
 
 namespace boost {

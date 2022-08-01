@@ -40,6 +40,9 @@ namespace urls {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
         >3.4. Query (rfc3986)</a>
 */
+#ifdef BOOST_URL_DOCS
+constexpr __implementation_defined__ query_rule;
+#else
 struct query_rule_t
 {
     using value_type =
@@ -54,6 +57,7 @@ struct query_rule_t
 };
 
 constexpr query_rule_t query_rule{};
+#endif
 
 } // urls
 } // boost

@@ -10,98 +10,58 @@
 #ifndef BOOST_URL_RFC_DETAIL_CHARSETS_HPP
 #define BOOST_URL_RFC_DETAIL_CHARSETS_HPP
 
-#include <boost/url/rfc/charsets.hpp>
+#include <boost/url/rfc/pchars.hpp>
+#include <boost/url/rfc/sub_delim_chars.hpp>
+#include <boost/url/rfc/unreserved_chars.hpp>
 
 namespace boost {
 namespace urls {
 namespace detail {
 
-struct user_chars_t : grammar::lut_chars
-{
-    constexpr
-    user_chars_t() noexcept
-        : grammar::lut_chars(
-            unreserved_chars +
-            subdelim_chars)
-    {
-    }
-};
+constexpr
+auto
+user_chars =
+    unreserved_chars + sub_delim_chars;
 
-constexpr user_chars_t user_chars{};
+constexpr
+auto
+password_chars =
+    unreserved_chars + sub_delim_chars + ':';
 
-struct password_chars_t : grammar::lut_chars
-{
-    constexpr
-    password_chars_t() noexcept
-        : grammar::lut_chars(
-            unreserved_chars +
-            subdelim_chars + ':')
-    {
-    }
-};
+constexpr
+auto
+userinfo_chars =
+    password_chars;
 
-constexpr password_chars_t password_chars{};
+constexpr
+auto
+host_chars =
+    unreserved_chars + sub_delim_chars;
 
-struct userinfo_chars_t : grammar::lut_chars
-{
-    constexpr
-        userinfo_chars_t() noexcept
-        : grammar::lut_chars(password_chars)
-    {
-    }
-};
+constexpr
+auto
+reg_name_chars =
+    unreserved_chars + '-' + '.';
 
-constexpr userinfo_chars_t userinfo_chars{};
+constexpr
+auto
+segment_chars =
+    pchars;
 
-struct host_chars_t : grammar::lut_chars
-{
-    constexpr
-        host_chars_t() noexcept
-        : grammar::lut_chars(
-            unreserved_chars +
-            subdelim_chars)
-    {
-    }
-};
+constexpr
+auto
+path_chars =
+    segment_chars + '/';
 
-constexpr host_chars_t host_chars{};
+constexpr
+auto
+query_chars =
+    pchars + '/' + '?';
 
-struct reg_name_chars_t : grammar::lut_chars
-{
-    constexpr
-        reg_name_chars_t() noexcept
-        : grammar::lut_chars(
-            unreserved_chars
-            + '-' + '.')
-    {
-    }
-};
-
-constexpr reg_name_chars_t reg_name_chars{};
-
-struct segment_chars_t : grammar::lut_chars
-{
-    constexpr
-        segment_chars_t() noexcept
-        : grammar::lut_chars(
-            pchars)
-    {
-    }
-};
-
-constexpr segment_chars_t segment_chars{};
-
-struct path_chars_t : grammar::lut_chars
-{
-    constexpr
-        path_chars_t() noexcept
-        : grammar::lut_chars(
-            segment_chars + '/')
-    {
-    }
-};
-
-constexpr path_chars_t path_chars{};
+constexpr
+auto
+fragment_chars =
+    pchars + '/' + '?';
 
 } // detail
 } // urls

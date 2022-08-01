@@ -19,7 +19,7 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Parse a string using a rule
+/** Parse a character buffer using a rule
 
     @param it A pointer to the start. The
     caller's variable will be changed to
@@ -29,15 +29,14 @@ namespace grammar {
 
     @param r The rule to use
 */
-template<class R>
-auto
+template<class Rule>
+result<typename Rule::value_type>
 parse(
     char const*& it,
     char const* end,
-    R const& r) ->
-        result<typename R::value_type>;
+    Rule const& r);       
 
-/** Parse a string using a rule
+/** Parse a character buffer using a rule
 
     This function parses a complete string into
     the specified sequence of grammar rules. If
@@ -48,12 +47,11 @@ parse(
 
     @param r The rule to use
 */
-template<class R>
-auto
+template<class Rule>
+result<typename Rule::value_type>
 parse(
     string_view s,
-    R const& r) ->
-        result<typename R::value_type>;
+    Rule const& r);
 
 } // grammar
 } // urls

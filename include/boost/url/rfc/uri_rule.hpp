@@ -28,6 +28,9 @@ namespace urls {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
         >3. Syntax Components (rfc3986)</a>
 */
+#ifdef BOOST_URL_DOCS
+constexpr __implementation_defined__ uri_rule{};
+#else
 struct uri_rule_t
 {
     using value_type = url_view;
@@ -42,6 +45,7 @@ struct uri_rule_t
 };
 
 constexpr uri_rule_t uri_rule{};
+#endif
 
 } // urls
 } // boost

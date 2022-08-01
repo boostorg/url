@@ -77,7 +77,7 @@ parse_path_abempty(
     string_view s) noexcept
 {
     auto rv = grammar::parse(
-        s, path_abempty_rule{});
+        s, path_abempty_rule);
     if(! rv)
         return rv.error();
     auto const& t = *rv;
@@ -93,7 +93,7 @@ parse_path_absolute(
     string_view s) noexcept
 {
     auto rv = grammar::parse(
-        s, path_absolute_rule{});
+        s, path_absolute_rule);
     if(! rv)
         return rv.error();
     auto const& v = *rv;
@@ -109,7 +109,7 @@ parse_path_noscheme(
     string_view s) noexcept
 {
     auto rv = grammar::parse(s,
-        path_noscheme_rule{});
+        path_noscheme_rule);
     if(! rv)
         return rv.error();
     auto const& t = *rv;
@@ -125,7 +125,7 @@ parse_path_rootless(
     string_view s) noexcept
 {
     auto rv = grammar::parse(
-        s, path_rootless_rule{});
+        s, path_rootless_rule);
     if(! rv)
         return rv.error();
     auto const& v = *rv;

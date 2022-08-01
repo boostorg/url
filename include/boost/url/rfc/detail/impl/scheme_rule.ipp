@@ -11,7 +11,6 @@
 #define BOOST_URL_IMPL_SCHEME_RULE_IPP
 
 #include <boost/url/rfc/detail/scheme_rule.hpp>
-#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/grammar/char_rule.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/grammar/parse.hpp>

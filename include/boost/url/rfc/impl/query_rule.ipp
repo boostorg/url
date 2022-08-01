@@ -14,9 +14,9 @@
 #include <boost/url/detail/pct_encoded_view.hpp>
 #include <boost/url/grammar/lut_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/range.hpp>
-#include <boost/url/rfc/charsets.hpp>
+#include <boost/url/grammar/range_rule.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/detail/charsets.hpp>
 
 namespace boost {
 namespace urls {
@@ -37,6 +37,59 @@ value_chars = pchars
     + '/' + '?'
     - '&';
 
+struct query_param_rule_t
+{
+    using value_type = query_param_view;
+
+    result<value_type>
+    parse(
+        char const*& it,
+        char const* end) const noexcept
+    {
+        query_param_view t;
+
+        // VFALCO we don't return error::end
+        // here, because the empty string still
+        // counts as a 1-element range with
+        // key="" and value=(none)
+
+        // key
+        {
+            auto rv = grammar::parse(it, end,
+                pct_encoded_rule(detail::key_chars));
+            if(! rv)
+                return rv.error();    
+            t.key = *rv;
+        }
+
+        // "="
+        {
+            auto rv = grammar::parse(
+                it, end,
+                grammar::char_rule('='));
+            t.has_value = rv.has_value();
+            if(! t.has_value)
+            {
+                // key with no value
+                return t;
+            }
+        }
+
+        // value
+        {
+            auto rv = grammar::parse(it, end,
+                pct_encoded_rule(detail::value_chars));
+            if(! rv)
+                return rv.error();
+            t.value = *rv;
+        }
+
+        return t;
+    }
+};
+
+static constexpr query_param_rule_t query_param_rule{};
+
 } // detail
 
 auto
@@ -47,57 +100,6 @@ parse(
         ) const noexcept ->
     result<value_type>
 {
-    struct query_param_rule_t
-    {
-        using value_type = query_param_view;
-
-        result<value_type>
-        parse(
-            char const*& it,
-            char const* end) const noexcept
-        {
-            query_param_view t;
-
-            // VFALCO we don't return error::end
-            // here, because the empty string still
-            // counts as a 1-element range with
-            // key="" and value=(none)
-
-            // key
-            {
-                auto rv = grammar::parse(it, end,
-                    pct_encoded_rule(detail::key_chars));
-                if(! rv)
-                    return rv.error();    
-                t.key = *rv;
-            }
-
-            // "="
-            {
-                auto rv = grammar::parse(
-                    it, end,
-                    grammar::char_rule('='));
-                t.has_value = rv.has_value();
-                if(! t.has_value)
-                {
-                    // key with no value
-                    return t;
-                }
-            }
-
-            // value
-            {
-                auto rv = grammar::parse(it, end,
-                    pct_encoded_rule(detail::value_chars));
-                if(! rv)
-                    return rv.error();
-                t.value = *rv;
-            }
-
-            return t;
-        }
-    };
-
     struct increment
     {
         using value_type = query_param_view;
@@ -120,14 +122,15 @@ parse(
             }
 
             return grammar::parse(it, end,
-                query_param_rule_t{});
+                detail::query_param_rule);
         }
     };
 
-    auto rv = grammar::parse_range(
+    auto rv = grammar::parse(
         it, end,
-        query_param_rule_t{},
-        increment{});
+        grammar::range_rule(
+            detail::query_param_rule,
+            increment{}));
     if(! rv)
         return rv.error();
     return value_type(

@@ -10,6 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/variant_rule.hpp>
 
+#include <boost/url/grammar/char_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 #include "test_suite.hpp"
@@ -23,6 +24,11 @@ struct variant_rule_test
     void
     run()
     {
+        // test constexpr
+        constexpr auto r =
+            variant_rule(
+                char_rule('('),
+                char_rule(')'));
     }
 };
 

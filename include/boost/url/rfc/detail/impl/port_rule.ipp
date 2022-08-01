@@ -11,7 +11,6 @@
 #define BOOST_URL_IMPL_PORT_RULE_IPP
 
 #include <boost/url/rfc/detail/port_rule.hpp>
-#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/token_rule.hpp>
 #include <boost/static_assert.hpp>

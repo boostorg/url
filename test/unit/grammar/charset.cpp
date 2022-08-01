@@ -11,29 +11,13 @@
 #include <boost/url/grammar/charset.hpp>
 
 #include <boost/url/string_view.hpp>
-#include "test_suite.hpp"
 #include "test_rule.hpp"
 
 namespace boost {
 namespace urls {
 namespace grammar {
 
-BOOST_STATIC_ASSERT(is_charset<decltype(
-    all_chars)>::value);
-
-BOOST_STATIC_ASSERT(is_charset<decltype(
-    alnum_chars)>::value);
-
-BOOST_STATIC_ASSERT(is_charset<decltype(
-    alpha_chars)>::value);
-
-BOOST_STATIC_ASSERT(is_charset<decltype(
-    digit_chars)>::value);
-
-BOOST_STATIC_ASSERT(is_charset<decltype(
-    hexdig_chars)>::value);
-
-class char_set_test
+class charset_test
 {
 public:
     struct test_chars
@@ -95,51 +79,11 @@ public:
             test_chars{n0, n1}, "x");
         BOOST_TEST_GT(n0, 0u);
         BOOST_TEST_GT(n1, 0u);
-
-        {
-            for(std::size_t i = 0;
-                i < 256; ++i)
-                BOOST_TEST(all_chars(static_cast<
-                    char>(i)));
-        }
-
-        test_char_set(
-            alnum_chars,
-            "0123456789"
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "abcdefghijklmnopqrstuvwxyz");
-
-        test_char_set(
-            alpha_chars,
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "abcdefghijklmnopqrstuvwxyz");
-
-        test_char_set(
-            digit_chars,
-            "0123456789");
-
-        test_char_set(
-            hexdig_chars,
-            "0123456789"
-            "ABCDEF"
-            "abcdef");
-
-        for_each_char(
-        [](char c)
-        {
-            char d;
-            if(hexdig_chars(c))
-                BOOST_TEST(
-                    hexdig_value(c, d));
-            else
-                BOOST_TEST(
-                    !hexdig_value(c, d));
-        });
     }
 };
 
 TEST_SUITE(
-    char_set_test,
+    charset_test,
     "boost.url.grammar.charset");
 
 } // grammar

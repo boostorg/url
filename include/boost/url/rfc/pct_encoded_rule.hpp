@@ -22,16 +22,67 @@
 namespace boost {
 namespace urls {
 
-/** Rule for a string of percent-encoded characters from a character set
+/** Rule for a string with percent-encoded escapes
 
-    @tparam CharSet The character set indicating
-    which characters are unreserved. Any character
-    not in this set will be considered reserved.
+    This function returns a rule which, when used
+    with the @ref grammar::parse function, parses
+    its input as a percent-encoded string.
+    The percent-encoding mechanism is used to
+    represent data characters which would otherwise
+    be considered context-dependent delimiters in
+    a syntax. For example the string
+
+    @code
+    "Program Files"
+    @endcode
+    
+    contains a space, which is often undestood to
+    be a delimiter. It can be expressed as a
+    percent-encoded escape sequence in hexadecimal
+    as follows:
+    
+    @code
+    "Program%20Files"
+    @endcode
+
+    Given a production rule which includes
+    <em>pct-encoded</em> escape sequences, such as:
+    @code
+    pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+    @endcode
+    
+    This example shows how to parse a string
+    of pchars:
+
+    @par Example
+    @code
+    result< pct_encoded_view > rv = grammar::parse( s, pct_encoded_rule( pchars ) );
+    @endcode
+
+    @par BNF
+    @code
+    pct-encoded   = "%" HEXDIG HEXDIG
+    @endcode
+
+    @param cs The character set indicating
+    which characters are allowed without escapes.
+    Any character which is not in this set must be
+    escaped, or else parsing returns an error.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
         2.1. Percent-Encoding (rfc3986)</a>
+
+    @see
+        @ref grammar::parse,
+        @ref pct_encoded_view
 */
+#ifdef BOOST_URL_DOCS
+template<class CharSet>
+constexpr
+__implementation_defined__
+pct_encoded_rule( CharSet cs ) noexcept;
+#else
 template<class CharSet>
 struct pct_encoded_rule_t
 {
@@ -78,6 +129,7 @@ pct_encoded_rule(
 
     return pct_encoded_rule_t<CharSet>(cs);
 }
+#endif
 
 } // urls
 } // boost

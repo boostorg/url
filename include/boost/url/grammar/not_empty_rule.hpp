@@ -18,12 +18,33 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Rule for an element which may not be empty
+/** Match a non-empty element
 
-    This rule adapts another rule such that
+    This adapts another rule such that
     when an empty string is successfully
     parsed, the result will be an error.
+
+    @par Example
+    @code
+    result< pct_encoded_view > = parse( s, not_empty_rule( pct_encoded_rule( unreserved_chars ) ) );
+    @endcode
+
+    @par Value Type
+    @code
+    using value_type = typename Rule::value_type;
+    @endcode
+
+    @param r The rule to match
+
+    @see
+        @ref parse.
 */
+#ifdef BOOST_URL_DOCS
+template<class Rule>
+constexpr
+__implementation_defined__
+not_empty_rule( Rule r );
+#else
 template<class R>
 struct not_empty_rule_t
 {
@@ -55,14 +76,6 @@ private:
     R const r_;
 };
 
-//------------------------------------------------
-
-/** Rule for an element which may not be empty
-
-    This rule adapts another rule such that
-    when an empty string is successfully
-    parsed, the result will be an error.
-*/
 template<class R>
 auto
 constexpr
@@ -72,6 +85,7 @@ not_empty_rule(
 {
     return { r };
 }
+#endif
 
 } // grammar
 } // urls

@@ -11,33 +11,34 @@
 #define BOOST_URL_RFC_IMPL_PATHS_RULE_IPP
 
 #include <boost/url/rfc/paths_rule.hpp>
-#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/url/rfc/detail/path_increment.hpp>
 #include <boost/url/grammar/char_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/range.hpp>
+#include <boost/url/grammar/range_rule.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
 
 namespace boost {
 namespace urls {
 
 auto
-path_abempty_rule::
+path_abempty_rule_t::
 parse(
     char const*& it,
     char const* end
         ) const noexcept ->
     result<value_type>
 {
-    return grammar::parse_range(
-        it, end, detail::path_increment);
+    return grammar::parse(
+        it, end, grammar::range_rule(
+            detail::path_increment));
 }
 
 //------------------------------------------------
 
 auto
-path_absolute_rule::
+path_absolute_rule_t::
 parse(
     char const*& it,
     char const* end
@@ -76,41 +77,43 @@ parse(
         }
     };
 
-    return grammar::parse_range(
-        it, end, begin{},
-            detail::path_increment);
+    return grammar::parse(
+        it, end, grammar::range_rule(
+            begin{}, detail::path_increment));
 }
 
 //------------------------------------------------
 
 auto
-path_noscheme_rule::
+path_noscheme_rule_t::
 parse(
     char const*& it,
     char const* end
         ) const noexcept ->
     result<value_type>
 {
-    return grammar::parse_range(
+    return grammar::parse(
         it, end,
-        detail::segment_nz_nc_rule,
-        detail::path_increment);
+        grammar::range_rule(
+            detail::segment_nz_nc_rule,
+            detail::path_increment));
 }
 
 //------------------------------------------------
 
 auto
-path_rootless_rule::
+path_rootless_rule_t::
 parse(
     char const*& it,
     char const* end
         ) const noexcept ->
     result<value_type>
 {
-    return grammar::parse_range(
+    return grammar::parse(
         it, end,
-        detail::segment_nz_rule,
-        detail::path_increment);
+        grammar::range_rule(
+            detail::segment_nz_rule,
+            detail::path_increment));
 }
 
 } // urls

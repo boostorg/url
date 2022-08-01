@@ -10,8 +10,8 @@
 #ifndef BOOST_URL_RFC_DETAIL_FRAGMENT_RULE_HPP
 #define BOOST_URL_RFC_DETAIL_FRAGMENT_RULE_HPP
 
-#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/url/grammar/char_rule.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/grammar/optional_rule.hpp>

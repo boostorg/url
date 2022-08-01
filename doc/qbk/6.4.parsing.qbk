@@ -1,0 +1,175 @@
+[/
+    Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[section Parsing]
+
+[heading Examples]
+
+The __dec_octet__rule__ is a compile-time constant rule used
+to parse an integer between 0 and 255 into a value type of
+`unsigned char`:
+
+```
+auto result< unsigned char > rv = parse( "100", dec_octet_rule );
+```
+
+When it is desired to match a single character, __char_rule__
+is used. This rule
+
+
+
+Rules can come from compile-time constants, run-time
+construction, or from factory functions which operate like
+class template argument deduction
+([@https://en.cppreference.com/w/cpp/language/class_template_argument_deduction CTAD]),
+but only requires C++11.
+
+The
+[link url.ref.boost__urls__grammar__dec_octet_rule `dec_octet_rule`]
+is a constant used to parss an integer between 0 and 255
+into a value type of `unsigned char`:
+
+```
+auto result< unsigned char > rv = parse( "100", dec_octet_rule );
+```
+
+The `constexpr` function
+[link url.ref.boost__urls__grammar__char_rule `char_rule`]
+is used to match a single character literal. The following
+statement results in an error because when this overload is
+used, matching only part of the string is a failure:
+
+```
+auto result< string_view > rv = parse( "xyz", char_rule( 'x' ));
+```
+
+[heading Sequences]
+
+The `constexpr` function
+[link url.ref.boost__urls__grammar__sequence_rule `sequence_rule`]
+returns a rule which requires that the input match a passed
+series of rules. The value type is a __std_tuple__ where each
+index of the tuple holds a value from the corresponding rule
+in the same argument position. Given this BNF:
+
+```
+IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
+```
+
+We can combine the decimal octet rule and the character rule
+to easily declare a variable which will parse an IPv4 address:
+
+```
+constexpr auto
+ipv4_address_rule = sequence_rule(
+    dec_octet_rule, char_rule('.'),
+    dec_octet_rule, char_rule('.'),
+    dec_octet_rule, char_rule('.'),
+    dec_octet_rule );
+```
+
+The `auto` keyword is used to avoid the need to write
+out the return type of __sequence_rule__, which will be long
+and complex. The individual integer octets can be extracted
+from the result using __std_get__. This example parses and
+prints the value of an IPv4 address:
+
+```
+auto v = parse( "192.168.0.1", ipv4_address_rule ).value();
+
+std::cout << std::get<0>(v) << "." <<
+             std::get<1>(v) << "." <<
+             std::get<2>(v) << "." <<
+             std::get<3>(v) << "\n";
+```
+
+[heading Optional]
+
+The __optional_rule__ function is used to match an element
+which is optionally present. Such elements are denoted with
+square brackets in BNF notation. The function accepts an
+argument of the optional rule. For example, if we define
+a peer as a host name followed by an optional port using
+this BNF:
+
+```
+peer = host [ ":" port ]
+
+host = 1*( unreserved / pct-encoded / sub-delims )
+
+port = 1*DIGIT
+```
+
+We can define a rule to parse it:
+
+```
+constexpr auto
+peer_rule = sequence_rule(
+    not_empty_rule( pct_encoded_rule( unreserved_chars + sub_delims_chars ) ),
+    optional_rule( sequence_rule( char_rule( ':' ), token_rule( digit_chars ) ) );
+```
+
+[heading And More...]
+
+The previous expression makes use of some other new rules
+that come with the library. Here are additional available rules.
+For a complete set please consult the reference section.
+
+[table Grammar Symbols [
+    [Name]
+    [Description]
+][
+    [__char_rule__]
+    [
+    Match a single character.
+    ]
+][
+    [__dec_octet_rule__]
+    [
+    Match an integer from 0 to 255.
+    ]
+][
+    [__not_empty_rule__]
+    [
+    Make a matching empty string into an error instead.
+    ]
+][
+    [__optional_rule__]
+    [
+    Ignore a rule if parsing fails, leaving
+    the input pointer unchanged.
+    ]
+][
+    [__range_rule__]
+    [
+    Match a repeating number of elements.
+    ]
+][
+    [__sequence_rule__]
+    [
+    Match a sequence of specified rules, in order.
+    ]
+][
+    [__token_rule__]
+    [
+    Match a string of characters from a character set.
+    ]
+][
+    [__unsigned_dec_rule__]
+    [
+    Match an unsigned integer in decimal form.
+    ]
+][
+    [__variant_rule__]
+    [
+    Match one of a set of alternatives specified by rules.
+    ]
+]]
+
+[endsect]

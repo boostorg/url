@@ -28,6 +28,9 @@ namespace urls {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2
         >4.2. Relative Reference (rfc3986)</a>
 */
+#ifdef BOOST_URL_DOCS
+constexpr __implementation_defined__ relative_ref_rule;
+#else
 struct relative_ref_rule_t
 {
     using value_type = url_view;
@@ -42,6 +45,7 @@ struct relative_ref_rule_t
 };
 
 constexpr relative_ref_rule_t relative_ref_rule{};
+#endif
 
 } // urls
 } // boost

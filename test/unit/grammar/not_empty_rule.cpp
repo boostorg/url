@@ -10,9 +10,10 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/not_empty_rule.hpp>
 
+#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/digit_chars.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 
-#include "test_suite.hpp"
 #include "test_rule.hpp"
 
 namespace boost {
@@ -24,6 +25,10 @@ struct not_empty_rule_test
     void
     run()
     {
+        // test constexpr
+        constexpr auto r =
+            not_empty_rule(char_rule('.'));
+
         ok( pct_encoded_rule(
                 grammar::digit_chars),
             "0");

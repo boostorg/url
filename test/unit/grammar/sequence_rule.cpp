@@ -54,6 +54,12 @@ struct sequence_rule_test
     void
     run()
     {
+        // test constexpr
+        constexpr auto r =
+            sequence_rule(
+                char_rule('.'),
+                char_rule('.'));
+        
         testSequence();
     }
 };

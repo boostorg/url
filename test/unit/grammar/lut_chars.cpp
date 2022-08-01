@@ -10,7 +10,6 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/lut_chars.hpp>
 
-#include "test_suite.hpp"
 #include "test_rule.hpp"
 
 namespace boost {
@@ -52,6 +51,7 @@ struct lut_chars_test
             "abcdefghijklmnopqrstuvwxyz");
 
             constexpr lut_chars alnum_chars_ = alpha_chars_ + "0123456789";
+            
             (void)alnum_chars_;
         }
 
@@ -73,6 +73,23 @@ struct lut_chars_test
     void
     run()
     {
+        test_lut_chars();
+
+        // C++11
+#if 1
+        struct is_visible
+        {
+            constexpr bool operator()( char ch ) const noexcept
+            {            
+                return ch >= 33 && ch <= 126;
+            }
+        };
+        constexpr lut_chars visible_chars( is_visible{} );
+#else
+        constexpr lut_chars visible_chars(
+            [](char ch) { return ch >= 33 && ch <= 126; });
+#endif
+        (void)visible_chars;
     }
 };
 

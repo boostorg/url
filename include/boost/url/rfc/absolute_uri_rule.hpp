@@ -33,6 +33,9 @@ namespace urls {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.3"
         >4.3. Absolute URI (rfc3986)</a>
 */
+#ifdef BOOST_URL_DOCS
+constexpr __implementation_defined__ absolute_uri_rule;
+#else
 struct absolute_uri_rule_t
 {
     using value_type = url_view;
@@ -47,6 +50,7 @@ struct absolute_uri_rule_t
 };
 
 constexpr absolute_uri_rule_t absolute_uri_rule{};
+#endif
 
 } // urls
 } // boost

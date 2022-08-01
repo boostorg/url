@@ -21,25 +21,44 @@ namespace urls {
 namespace grammar {
 
 //------------------------------------------------
+//
+// any_rule
+//
+//------------------------------------------------
 
 // base class for the type-erased rule pair
 template<class T>
 struct range<T>::
     any_rule
 {
-    virtual ~any_rule() = default;
-    virtual void destroy(
-        ) const noexcept = 0;
-    virtual any_rule const* copy(
-        void*) const noexcept = 0;
-    virtual result<T> begin(
-        char const*&, char const*)
-            const noexcept = 0;
-    virtual result<T> increment(
-        char const*&, char const*)
-            const noexcept = 0;
+    virtual
+    ~any_rule() = default;
+
+    virtual
+    void
+    destroy() const noexcept = 0;
+
+    virtual
+    any_rule const*
+    copy(void*) const noexcept = 0;
+
+    virtual
+    result<T>
+    first(
+        char const*&,
+        char const*) const noexcept = 0;
+
+    virtual
+    result<T> 
+    next(
+        char const*&,
+        char const*) const noexcept = 0;
 };
 
+//------------------------------------------------
+//
+// iterator
+//
 //------------------------------------------------
 
 template<class T>
@@ -93,7 +112,7 @@ public:
         auto const end =
             r_->s_.data() +
             r_->s_.size();
-        rv_ = r_->pr_->increment(p_, end);
+        rv_ = r_->pr_->next(p_, end);
         if(rv_.has_error())
         {
             BOOST_ASSERT(
@@ -127,7 +146,7 @@ private:
         auto const end =
             r_->s_.data() +
             r_->s_.size();
-        rv_ = r_->pr_->begin(p_, end);
+        rv_ = r_->pr_->first(p_, end);
         if(rv_.has_error())
         {
             BOOST_ASSERT(
@@ -192,26 +211,29 @@ end() const noexcept ->
     return { *this, 0 };
 }
 
+//------------------------------------------------
+
 template<class T>
 template<class R>
 range<T>::
 range(
     string_view s,
     std::size_t n,
-    R const& increment)
+    R const& next)
     : s_(s)
     , n_(n)
 {
     struct impl : any_rule
     {
-        R const increment_;
-
         explicit
         impl(
-            R const& increment) noexcept
-            : increment_(increment)
+            R const& next) noexcept
+            : next_(next)
         {
         }
+
+    private:
+        R const next_;
 
         void
         destroy() const noexcept override
@@ -231,29 +253,31 @@ range(
         }
 
         result<T>
-        begin(
+        first(
             char const*& it,
             char const* end)
                 const noexcept override
         {
-            return (parse)(
-                it, end, increment_);
+            return grammar::parse(
+                it, end, next_);
         }
 
         result<T>
-        increment(
+        next(
             char const*& it,
             char const* end)
                 const noexcept override
         {
-            return (parse)(
-                it, end, increment_);
+            return grammar::parse(
+                it, end, next_);
         }
     };
 
     pr_ = ::new(reinterpret_cast<
-        void*>(buf_)) impl(increment);
+        void*>(buf_)) impl(next);
 }
+
+//------------------------------------------------
 
 template<class T>
 template<
@@ -262,23 +286,24 @@ range<T>::
 range(
     string_view s,
     std::size_t n,
-    R0 const& begin,
-    R1 const& increment)
+    R0 const& first,
+    R1 const& next)
     : s_(s)
     , n_(n)
 {
     struct impl : any_rule
     {
-        R0 const begin_;
-        R1 const increment_;
-
         impl(
-            R0 const& begin,
-            R1 const& increment) noexcept
-            : begin_(begin)
-            , increment_(increment)
+            R0 const& first,
+            R1 const& next) noexcept
+            : first_(first)
+            , next_(next)
         {
         }
+
+    private:
+        R0 const first_;
+        R1 const next_;
 
         void
         destroy() const noexcept override
@@ -298,61 +323,51 @@ range(
         }
 
         result<T>
-        begin(
+        first(
             char const*& it,
             char const* end)
                 const noexcept override
         {
-            return (parse)(
-                it, end, begin_);
+            return grammar::parse(
+                it, end, first_);
         }
 
         result<T>
-        increment(
+        next(
             char const*& it,
             char const* end)
                 const noexcept override
         {
-            return (parse)(
-                it, end, increment_);
+            return grammar::parse(
+                it, end, next_);
         }
     };
 
     pr_ = ::new(reinterpret_cast<
-        void*>(buf_)) impl(begin, increment);
+        void*>(buf_)) impl(first, next);
 }
 
 //------------------------------------------------
 
 template<class R>
 auto
-parse_range(
+range_rule_t<R>::
+parse(
     char const*& it,
-    char const* end,
-    R const& increment,
-    std::size_t N,
-    std::size_t M) ->
-        result<range<typename
-            R::value_type>>
+    char const* end) const ->
+        result<value_type>
 {
-    // If you get a compile error here it
-    // means that your rule does not meet
-    // the type requirements. Please check
-    // the documentation.
-    static_assert(
-        is_rule<R>::value,
-        "Rule requirements not met");
-
     using T = typename R::value_type;
 
     std::size_t n = 0;
     auto const it0 = it;
-    auto rv = (parse)(it, end, increment);
+    auto rv = (grammar::parse)(
+        it, end, next_);
     if(rv.has_error())
     {
         if(rv.error() != error::end)
             return rv.error();
-        if(n < N)
+        if(n < N_)
         {
             // too few
             return error::syntax;
@@ -361,20 +376,21 @@ parse_range(
         // good
         return range<T>(
             string_view(it0, it - it0),
-                n, increment);
+                n, next_);
     }
 
     for(;;)
     {
         ++n;
-        rv = (parse)(it, end, increment);
+        rv = (grammar::parse)(
+            it, end, next_);
         if(rv.has_error())
         {
             if(rv.error() != error::end)
                 return rv.error();
             break;
         }
-        if(n > M)
+        if(n > M_)
         {
             // too many
             return error::syntax;
@@ -384,52 +400,31 @@ parse_range(
     // good
     return range<T>(
         string_view(it0, it - it0),
-            n, increment);
+            n, next_);
 }
+
+//------------------------------------------------
 
 template<class R0, class R1>
 auto
-parse_range(
+range_rule_t<R0, R1>::
+parse(
     char const*& it,
-    char const* end,
-    R0 const& begin,
-    R1 const& increment,
-    std::size_t N,
-    std::size_t M) ->
+    char const* end) const ->
         result<range<typename
             R0::value_type>>
 {
-    // If you get a compile error here it
-    // means that your rule does not meet
-    // the type requirements. Please check
-    // the documentation.
-    static_assert(
-        is_rule<R0>::value,
-        "Rule requirements not met");
-    static_assert(
-        is_rule<R1>::value,
-        "Rule requirements not met");
-
-    // If you get a compile error here it
-    // means that your rules do not have
-    // the exact same value_type. Please
-    // check the documentation.
-    static_assert(
-        std::is_same<
-            typename R0::value_type,
-            typename R1::value_type>::value,
-        "Rule requirements not met");
-
     using T = typename R0::value_type;
 
     std::size_t n = 0;
     auto const it0 = it;
-    auto rv = (parse)(it, end, begin);
+    auto rv = (grammar::parse)(
+        it, end, first_);
     if(rv.has_error())
     {
         if(rv.error() != error::end)
             return rv.error();
-        if(n < N)
+        if(n < N_)
         {
             // too few
             return error::syntax;
@@ -438,20 +433,21 @@ parse_range(
         // good
         return range<T>(
             string_view(it0, it - it0),
-                n, begin, increment);
+                n, first_, next_);
     }
 
     for(;;)
     {
         ++n;
-        rv = (parse)(it, end, increment);
+        rv = (grammar::parse)(
+            it, end, next_);
         if(rv.has_error())
         {
             if(rv.error() != error::end)
                 return rv.error();
             break;
         }
-        if(n > M)
+        if(n > M_)
         {
             // too many
             return error::syntax;
@@ -461,7 +457,7 @@ parse_range(
     // good
     return range<T>(
         string_view(it0, it - it0),
-            n, begin, increment);
+            n, first_, next_);
 }
 
 } // grammar

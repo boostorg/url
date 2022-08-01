@@ -13,23 +13,75 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/detail/tuple.hpp>
+#include <boost/mp11/algorithm.hpp>
 #include <tuple>
 
 namespace boost {
 namespace urls {
 namespace grammar {
 
-/** A rule for parsing elements in a sequence
+/** Match a series of rules in order
+
+    This matches a series of rules in the
+    order specified. Upon success the input
+    will be adjusted to point to the first
+    unconsumed character. There is no
+    implicit specification of linear white
+    space between each rule.
+
+    @par Example
+    @code
+    constexpr auto ipv4_address_rule = sequence_rule(
+        dec_octet_rule, char_rule('.'),
+        dec_octet_rule, char_rule('.'),
+        dec_octet_rule, char_rule('.'),
+        dec_octet_rule );
+    @endcode
+
+    @par Value Type
+    @code
+    using value_type = std::tuple( typename Rules::value_type );
+    @endcode
+
+    @par BNF
+    @code
+    sequence     = rule1 rule2 rule3...
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#section-3.1"
+        >3.1.  Concatenation (rfc5234)</a>
+
+    @param rn A list of one or more rules to match
+
+    @see
+        @ref char_rule,
+        @ref dec_octet_rule,
+        @ref parse.
 */
+#ifdef BOOST_URL_DOCS
+template<class... Rules>
+constexpr
+__implementation_defined__
+sequence_rule( Rules... rn ) noexcept;
+#else
 template<
     class R0,
     class... Rn>
 class sequence_rule_t
 {
+    using T = mp11::mp_remove<
+        std::tuple<
+            typename R0::value_type,
+            typename Rn::value_type...>,
+        void>;
+    static constexpr bool IsList =
+        mp11::mp_size<T>::value != 1;
+
 public:
-    using value_type = std::tuple<
-        typename R0::value_type,
-        typename Rn::value_type...>;
+    using value_type =
+        mp11::mp_eval_if_c<IsList,
+            T, mp11::mp_first, T>;
 
     template<
         class R0_,
@@ -59,10 +111,6 @@ private:
     detail::tuple<R0, Rn...> const rn_;
 };
 
-//------------------------------------------------
-
-/** Return a rule to parse a sequence
-*/
 template<
     class R0,
     class... Rn>
@@ -76,6 +124,7 @@ sequence_rule(
 {
     return { r0, rn... };
 }
+#endif
 
 } // grammar
 } // urls

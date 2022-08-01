@@ -38,7 +38,7 @@ parse(
     {
         auto rv = grammar::parse(
             it, end,
-            path_noscheme_rule{});
+            path_noscheme_rule);
         if(rv.has_value())
         {
             // path-noscheme
@@ -59,7 +59,7 @@ parse(
         // path-absolute
         auto rv = grammar::parse(
             it, end,
-            path_absolute_rule{});
+            path_absolute_rule);
         auto const& v = *rv;
         t.path.path = v.string();
         t.path.count = v.size();
@@ -78,7 +78,7 @@ parse(
     }
     {
         auto rv = grammar::parse(
-            it, end, path_abempty_rule{});
+            it, end, path_abempty_rule);
         if(! rv)
             return rv.error();
         auto const& v = *rv;

@@ -40,7 +40,7 @@ parse(
         auto const it0 = it;
         auto rv = grammar::parse(
             it, end,
-            path_rootless_rule{});
+            path_rootless_rule);
         if(rv.has_value())
         {
             auto const& v = *rv;
@@ -59,7 +59,7 @@ parse(
         // path-absolute
         auto rv = grammar::parse(
             it, end,
-            path_absolute_rule{});
+            path_absolute_rule);
         if(! rv)
             return rv.error();
         auto const& p = *rv;
@@ -83,7 +83,7 @@ parse(
     // path-abempty
     {
         auto rv = grammar::parse(
-            it, end, path_abempty_rule{});
+            it, end, path_abempty_rule);
         if(! rv)
             return rv.error();
 

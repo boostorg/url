@@ -44,6 +44,9 @@ namespace urls {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
         >3.2.2. Host (rfc3986)</a>
 */
+#ifdef BOOST_URL_DOCS
+constexpr __implementation_defined__ ipv6_address_rule;
+#else
 struct ipv6_address_rule_t
 {
     using value_type =
@@ -59,6 +62,7 @@ struct ipv6_address_rule_t
 };
 
 constexpr ipv6_address_rule_t ipv6_address_rule{};
+#endif
 
 } // urls
 } // boost

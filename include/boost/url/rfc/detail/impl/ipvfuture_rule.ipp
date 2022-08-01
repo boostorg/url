@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/detail/ipvfuture_rule.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/rfc/charsets.hpp>
+#include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/char_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
@@ -34,7 +34,7 @@ parse(
     static constexpr auto
         minor_chars = 
             unreserved_chars +
-            subdelim_chars + ':';
+            sub_delim_chars + ':';
     auto const it0 = it;
     auto rv = grammar::parse(
         it, end,
@@ -47,8 +47,8 @@ parse(
     if(! rv)
         return rv.error();
     value_type t;
-    t.major = std::get<1>(*rv);
-    t.minor = std::get<3>(*rv);
+    t.major = std::get<0>(*rv);
+    t.minor = std::get<1>(*rv);
     if(t.major.empty())
     {
         // can't be empty

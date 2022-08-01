@@ -12,7 +12,6 @@
 
 #include <boost/url/grammar/parse.hpp>
 
-#include "test_suite.hpp"
 #include "test_rule.hpp"
 
 #include <type_traits>

@@ -37,7 +37,7 @@ struct path_increment_t
                 grammar::char_rule('/'),
                 segment_rule));
         if(rv.has_value())
-            return std::get<1>(*rv);
+            return *rv;
         it = it0;
         return BOOST_URL_ERR(
             grammar::error::end);

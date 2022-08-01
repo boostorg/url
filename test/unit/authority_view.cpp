@@ -13,7 +13,6 @@
 #include <boost/url/static_pool.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include "test_rule.hpp"
-#include "test_suite.hpp"
 #include <sstream>
 
 namespace boost {

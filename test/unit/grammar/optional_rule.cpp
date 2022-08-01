@@ -10,7 +10,8 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/optional_rule.hpp>
 
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/alpha_chars.hpp>
+#include <boost/url/grammar/token_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 #include "test_suite.hpp"
@@ -24,8 +25,11 @@ struct optional_rule_test
     void
     run()
     {
-        auto rv = grammar::parse(
-            "", optional_rule(char_rule('+')));
+        // test constexpr
+        constexpr auto r =
+            optional_rule(token_rule(alpha_chars));
+
+        auto rv = parse("", r);
     }
 };
 

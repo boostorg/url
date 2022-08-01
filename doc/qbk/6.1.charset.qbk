@@ -1,0 +1,112 @@
+[/
+    Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[section Character Sets]
+
+A ['character set] defines a group of low-ASCII characters.
+Frequently used as a building block for defining parsing
+rules, we represent them as function objects invocable with
+this equivalent signature:
+
+```
+/// Return true if ch is in the set
+bool( char ch ) const noexcept;
+```
+
+The __CharSet__ concept describes the syntactical requirements
+for these types. Here we declare a character set type that
+includes the parentheses:
+
+```
+/** The open and close parenthesis characters
+
+    BNF
+        paren = "("" / ")"
+
+*/
+struct is_paren_t
+{
+    constexpr bool operator()( char c ) const noexcept
+    {
+        return c == '(' || c == ')';
+    }
+};
+```
+
+The type trait __is_charset__ determines if a type meets
+the requirements:
+
+```
+static_assert( is_charset< is_paren_t >::value, "Not a CharSet" );
+```
+
+Character sets are always passed as arguments. For convenience,
+we declare a variable in the header file marked `constexpr`
+to make it a zero-cost abstraction:
+
+```
+/** The open and close parenthesis characters
+
+    BNF
+        paren = "("" / ")"
+
+*/
+constexpr is_paren_t is_paren{};
+```
+
+For best results, ensure that user-defined character set types
+are `constexpr` constructible.
+
+The library provides these often-used character sets:
+
+[table Character Sets [
+    [Value]
+    [Description]
+][
+    [[link url.ref.boost__urls__grammar__all_chars `all_chars`]]
+    [
+        Returns `true` for every `char`.
+    ]
+][
+    [[link url.ref.boost__urls__grammar__alnum_chars `alnum_chars`]]
+    [
+        Contains the upper and lower cased letters, and digits.
+    ]
+][
+    [[link url.ref.boost__urls__grammar__alpha_chars `alpha_chars`]]
+    [
+        Contains the upper and lower cased letters.
+    ]
+][
+    [[link url.ref.boost__urls__grammar__digit_chars `digit_chars`]]
+    [
+        Contains the decimal digit characters.
+    ]
+][
+    [[link url.ref.boost__urls__grammar__hexdig_chars `hexdig_chars`]]
+    [
+        Contains the upper and lower cased hexadecimal
+        digit characters.
+    ]
+]]
+
+Finding runs of consecutive characters in a `char` buffer is
+accomplished with the functions
+[link url.ref.boost__urls__grammar__find_if `find_if`] and
+[link url.ref.boost__urls__grammar__find_if_not `find_if_not`]
+which locate the first character that is either inside the
+passed character set or not in the passed character set
+respectively. It is advised to use these functions instead
+of invoking the character set function object directly, as
+they can use of any optimizations specific to the character
+set or the target architecture. For example on all x86 and
+x64 architectures, which have Streaming SIMD Extensions 2
+([@https://en.wikipedia.org/wiki/SSE2 SSE2]).
+
+[endsect]

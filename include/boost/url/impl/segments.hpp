@@ -18,7 +18,6 @@
 #include <boost/url/detail/copied_strings.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/segments_iterator_impl.hpp>
-#include <boost/url/rfc/charsets.hpp>
 #include <boost/assert.hpp>
 #include <iterator>
 #include <new>

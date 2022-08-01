@@ -1005,25 +1005,16 @@ grammar_customization()
     }
 }
 
-//[snippet_charset_1
-struct digit_chars_t
-{
-    constexpr
-    bool
-    operator()( char c ) const noexcept
-    {
-        return c >= '0' && c <= '9';
-    }
-};
-//]
-
-//[snippet_charset_4
+//[code_charset_1
 struct CharSet
 {
     bool operator()( char c ) const noexcept;
 
-    char const* find_if ( char const* first, char const* last ) const noexcept;
-    char const* find_if_not ( char const* first, char const* last ) const noexcept;
+    // These are both optional. If either or both are left
+    // unspecified, a default implementation will be used.
+    //
+    char const* find_if( char const* first, char const* last ) const noexcept;
+    char const* find_if_not( char const* first, char const* last ) const noexcept;
 };
 //]
 
@@ -1037,33 +1028,6 @@ struct MutableString
     void append( InputIt first, InputIt last );
 };
 //]
-
-
-void
-grammar_charset()
-{
-    {
-        //[snippet_charset_2
-        urls::query_chars_t cs;
-        assert(cs('a'));
-        assert(cs('='));
-        assert(!cs('#'));
-        //]
-        (void)cs;
-    }
-    {
-        //[snippet_charset_3
-        urls::string_view s = "key=the%20value";
-        
-        urls::result<urls::pct_encoded_view> rv = urls::grammar::parse(s, urls::pct_encoded_rule(urls::query_chars));
-        if( ! rv.has_error() )
-        {
-            std::cout << "query:        " << rv->encoded() << '\n';
-            std::cout << "decoded size: " << rv->size() << '\n';
-        }
-        //]
-    }
-}
 
 void
 modifying_path()
@@ -1233,7 +1197,6 @@ public:
         using_modifying();
         grammar_parse();
         grammar_customization();
-        grammar_charset();
         modifying_path();
         using_static_pool();
 

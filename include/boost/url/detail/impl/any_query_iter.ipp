@@ -12,7 +12,6 @@
 
 #include <boost/url/detail/any_query_iter.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 
 namespace boost {
@@ -228,7 +227,7 @@ measure(
         return false;
     auto it = p_;
     auto end = std::next(p_, n_);
-    n += detail::pct_encode_bytes(
+    n += detail::pct_encode_bytes_impl(
         it, end, query_chars);
     increment();
     return true;
@@ -243,7 +242,7 @@ copy(
     BOOST_ASSERT(!done_);
     auto it = p_;
     auto last = std::next(p_, n_);
-    dest += pct_encode(
+    dest += pct_encode_impl(
         dest, end,
         it, last,
         query_chars);

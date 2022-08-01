@@ -13,8 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
 #include <boost/url/grammar/not_empty_rule.hpp>
-#include <boost/url/grammar/range.hpp>
-#include <boost/url/rfc/charsets.hpp>
+#include <boost/url/grammar/range_rule.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <cstddef>
 
@@ -46,9 +45,9 @@ struct parsed_path
         >3.3. Path (rfc3986)</a>
 */
 #ifdef BOOST_URL_DOCS
-using path_abempty_rule = __see_below__;
+constexpr __implementation_defined__ path_abempty_rule;
 #else
-struct path_abempty_rule
+struct path_abempty_rule_t
 {
     using value_type =
         grammar::range<
@@ -61,6 +60,8 @@ struct path_abempty_rule
         char const* end
             ) const noexcept;
 };
+
+constexpr path_abempty_rule_t path_abempty_rule{};
 #endif
 
 //------------------------------------------------
@@ -77,9 +78,9 @@ struct path_abempty_rule
         >3.3. Path (rfc3986)</a>
 */
 #ifdef BOOST_URL_DOCS
-using path_absolute_rule = __see_below__;
+constexpr __implementation_defined__ path_absolute_rule;
 #else
-struct path_absolute_rule
+struct path_absolute_rule_t
 {
     using value_type =
         grammar::range<
@@ -92,6 +93,8 @@ struct path_absolute_rule
         char const* end
             ) const noexcept;
 };
+
+constexpr path_absolute_rule_t path_absolute_rule{};
 #endif
 
 //------------------------------------------------
@@ -108,9 +111,9 @@ struct path_absolute_rule
         >3.3. Path (rfc3986)</a>
 */
 #ifdef BOOST_URL_DOCS
-using path_noscheme_rule = __see_below__;
+constexpr __implementation_defined__ path_noscheme_rule;
 #else
-struct path_noscheme_rule
+struct path_noscheme_rule_t
 {
     using value_type =
         grammar::range<
@@ -123,6 +126,8 @@ struct path_noscheme_rule
         char const* end
             ) const noexcept;
 };
+
+constexpr path_noscheme_rule_t path_noscheme_rule{};
 #endif
 
 //------------------------------------------------
@@ -145,9 +150,9 @@ struct path_noscheme_rule
         >3.3. Path (rfc3986)</a>
 */
 #ifdef BOOST_URL_DOCS
-using path_rootless_rule = __see_below__;
+constexpr __implementation_defined__ path_rootless_rule;
 #else
-struct path_rootless_rule
+struct path_rootless_rule_t
 {
     using value_type =
         grammar::range<
@@ -160,6 +165,8 @@ struct path_rootless_rule
         char const* end
             ) const noexcept;
 };
+
+constexpr path_rootless_rule_t path_rootless_rule{};
 #endif
 
 } // urls

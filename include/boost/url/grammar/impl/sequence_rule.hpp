@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
+// Copyright (c) 2022 Vinnie Falco (vinnie dot falco at gmail dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -11,7 +11,10 @@
 #define BOOST_URL_GRAMMAR_IMPL_SEQUENCE_RULE_HPP
 
 #include <boost/url/grammar/parse.hpp>
+#include <boost/mp11/integral.hpp>
+#include <boost/mp11/list.hpp>
 #include <boost/mp11/tuple.hpp>
+#include <type_traits>
 
 namespace boost {
 namespace urls {
@@ -19,75 +22,240 @@ namespace grammar {
 
 namespace detail {
 
-// must come first
+// returns a tuple
 template<
-    class R0,
-    class... Rn,
-    std::size_t I>
-void
-parse_element(
-    char const*&,
-    char const*,
-    error_code&,
-    detail::tuple<
-        R0, Rn...> const&,
-    std::tuple<
-        result<typename
-            R0::value_type>,
-        result<typename
-            Rn::value_type>...>&,
-    std::integral_constant<
-        std::size_t, I> const&,
-    std::false_type const&)
+    bool IsList,
+    class R0, class... Rn>
+struct parse_sequence
 {
-    // end
-}
+    using R = detail::tuple<R0, Rn...>;
 
-template<
-    class R0,
-    class... Rn,
-    std::size_t I>
-void
-parse_element(
-    char const*& it,
-    char const* end,
-    error_code& ec,
-    detail::tuple<
-        R0, Rn...> const& rn,
-    std::tuple<
-        result<typename
-            R0::value_type>,
-        result<typename
-            Rn::value_type>...>& tn,
-    std::integral_constant<
-        std::size_t, I> const&,
-    std::true_type const&)
-{
-    auto& rv = get<I>(tn);
-    rv = grammar::parse(
-        it, end, get<I>(rn));
-    if(rv.has_error())
+    using L = mp11::mp_list<
+        typename R0::value_type,
+        typename Rn::value_type...>;
+
+    using V = mp11::mp_remove<
+        std::tuple<
+            result<typename R0::value_type>,
+            result<typename Rn::value_type>...>,
+        result<void>>;
+
+    template<std::size_t I>
+    using is_void = std::is_same<
+        mp11::mp_at_c<L, I>, void>;
+
+    error_code ec;
+    R const& rn;
+    V vn;
+
+    explicit
+    parse_sequence(
+        R const& rn_) noexcept
+        : rn(rn_)
+        , vn(mp11::mp_fill<
+            V, error_code>{})
     {
-        ec = rv.error();
-        return;
     }
-    parse_element(
-        it, end, ec, rn, tn,
-        std::integral_constant<
-            std::size_t, I + 1>{},
-        std::integral_constant<bool,
-            ((I + 1) < (
-                1 + sizeof...(Rn)))>{});
-}
 
-struct deref
-{
-    template<class R>
-    auto
-    operator()(R const& r) const ->
-        decltype(*r)
+    void
+    apply(
+        char const*&,
+        char const*,
+        ...) const noexcept
     {
-        return *r;
+    }
+
+    // for result<void>
+    template<
+        std::size_t Ir,
+        std::size_t Iv>
+    void
+    apply(
+        char const*& it,
+        char const* end,
+        mp11::mp_size_t<Ir> const&,
+        mp11::mp_size_t<Iv> const&,
+        mp11::mp_true const&)
+    {
+        result<void> rv =
+            grammar::parse(
+                it, end, get<Ir>(rn));
+        if(rv.has_error())
+        {
+            ec = rv.error();
+            return;
+        }
+        apply(it, end,
+            mp11::mp_size_t<Ir+1>{},
+            mp11::mp_size_t<Iv>{});
+    }
+
+    template<
+        std::size_t Ir,
+        std::size_t Iv>
+    void
+    apply(
+        char const*& it,
+        char const* end,
+        mp11::mp_size_t<Ir> const&,
+        mp11::mp_size_t<Iv> const&,
+        mp11::mp_false const&)
+    {
+        auto& rv = get<Iv>(vn);
+        rv = grammar::parse(
+            it, end, get<Ir>(rn));
+        if(rv.has_error())
+        {
+            ec = rv.error();
+            return;
+        }
+        apply(it, end,
+            mp11::mp_size_t<Ir+1>{},
+            mp11::mp_size_t<Iv+1>{});
+    }
+
+    template<
+        std::size_t Ir = 0,
+        std::size_t Iv = 0>
+    typename std::enable_if<
+        Ir < 1 + sizeof...(Rn)>::type
+    apply(
+        char const*& it,
+        char const* end,
+        mp11::mp_size_t<Ir> const& ir = {},
+        mp11::mp_size_t<Iv> const& iv = {}
+            ) noexcept
+    {
+        apply(it, end, ir, iv, is_void<Ir>{});
+    }
+
+    struct deref
+    {
+        template<class R>
+        auto
+        operator()(R const& r) const ->
+            decltype(*r)
+        {
+            return *r;
+        }
+    };
+
+    auto
+    make_result() noexcept ->
+        result<typename sequence_rule_t<
+            R0, Rn...>::value_type>
+    {
+        if(ec.failed())
+            return ec;
+        return mp11::tuple_transform(
+            deref{}, vn);
+    }
+};
+
+// returns a value_type
+template<class R0, class... Rn>
+struct parse_sequence<false, R0, Rn...>
+{
+    using R = detail::tuple<R0, Rn...>;
+
+    using L = mp11::mp_list<
+        typename R0::value_type,
+        typename Rn::value_type...>;
+
+    using V = mp11::mp_first<
+        mp11::mp_remove<
+            mp11::mp_list<
+                result<typename R0::value_type>,
+                result<typename Rn::value_type>...>,
+            result<void>>>;
+
+    template<std::size_t I>
+    using is_void = std::is_same<
+        mp11::mp_at_c<L, I>, void>;
+
+    R const& rn;
+    V v;
+
+    explicit
+    parse_sequence(
+        R const& rn_) noexcept
+        : rn(rn_)
+        , v(error_code{})
+    {
+    }
+
+    void
+    apply(
+        char const*&,
+        char const*,
+        ...) const noexcept
+    {
+    }
+
+    // for result<void>
+    template<
+        std::size_t Ir,
+        std::size_t Iv>
+    void
+    apply(
+        char const*& it,
+        char const* end,
+        mp11::mp_size_t<Ir> const&,
+        mp11::mp_size_t<Iv> const&,
+        mp11::mp_true const&)
+    {
+        result<void> rv =
+            grammar::parse(
+                it, end, get<Ir>(rn));
+        if(rv.has_error())
+        {
+            v = rv.error();
+            return;
+        }
+        apply(it, end,
+            mp11::mp_size_t<Ir+1>{},
+            mp11::mp_size_t<Iv>{});
+    }
+
+    template<
+        std::size_t Ir,
+        std::size_t Iv>
+    void
+    apply(
+        char const*& it,
+        char const* end,
+        mp11::mp_size_t<Ir> const&,
+        mp11::mp_size_t<Iv> const&,
+        mp11::mp_false const&)
+    {
+        v = grammar::parse(
+            it, end, get<Ir>(rn));
+        if(v.has_error())
+            return;
+        apply(it, end,
+            mp11::mp_size_t<Ir+1>{},
+            mp11::mp_size_t<Iv+1>{});
+    }
+
+    template<
+        std::size_t Ir = 0,
+        std::size_t Iv = 0>
+    typename std::enable_if<
+        Ir < 1 + sizeof...(Rn)>::type
+    apply(
+        char const*& it,
+        char const* end,
+        mp11::mp_size_t<Ir> const& ir = {},
+        mp11::mp_size_t<Iv> const& iv = {}
+            ) noexcept
+    {
+        apply(it, end, ir, iv, is_void<Ir>{});
+    }
+
+    V
+    make_result() noexcept
+    {
+        return v;
     }
 };
 
@@ -103,26 +271,10 @@ parse(
     char const* end) const ->
         result<value_type>
 {
-    error_code ec;
-    std::tuple<
-        result<typename
-            R0::value_type>,
-        result<typename
-            Rn::value_type>...> tn(
-        result<typename
-               R0::value_type>(error_code{}),
-        result<typename
-               Rn::value_type>(error_code{})...
-    );
-    detail::parse_element(
-        it, end, ec, rn_, tn,
-        std::integral_constant<
-            std::size_t, 0>{},
-        std::true_type{});
-    if(ec.failed())
-        return ec;
-    return mp11::tuple_transform(
-        detail::deref{}, tn);
+    detail::parse_sequence<
+        IsList, R0, Rn...> t(rn_);
+    t.apply(it, end);
+    return t.make_result();
 }
 
 } // grammar

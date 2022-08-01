@@ -1,0 +1,65 @@
+[/
+    Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[section URLs]
+
+Functions like __parse_uri__ are sufficient for converting URLs but
+they require that the entire string is consumed. When URLs appear as
+components of a larger grammar, it is desired to use composition
+of rules based parsing to process these along with other elements
+potentially unrelated to URLs. To achieve this, the library provides
+rules for the top-level BNF productions found in __rfc3986__:
+
+[table RFC3986 Rules [
+    [Name]
+    [BNF]
+][
+    [[link url.ref.boost__urls__absolute_uri_rule `absolute_uri_rule`]]
+    [
+    ```
+    absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+    hier-part       = "//" authority path-abempty
+                    / path-absolute
+                    / path-rootless
+                    / path-empty
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__authority_rule `authority_rule`]]
+    [
+    ```
+    authority       = [ userinfo "@" ] host [ ":" port ]
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__relative_ref_rule `relative_ref_rule`]]
+    [
+    ```
+    relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__uri_reference_rule `uri_reference_rule`]]
+    [
+    ```
+    URI-reference   = URI / relative-ref
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__uri_rule `uri_rule`]]
+    [
+    ```
+    URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+    ```
+    ]
+]]
+
+[endsect]
+

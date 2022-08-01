@@ -18,38 +18,72 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Rule to match a single character literal.
+/** Match a single character literal
+
+    This example matches a period, and returns
+    a view to the matching part of character
+    buffer upon success.
+
+    @par Example
+    @code
+    result< string_view > = parse( s, char_rule('.') );
+    @endcode
+
+    @par Value Type
+    @code
+    using value_type = string_view;
+    @endcode
+
+    @par BNF
+    @code
+    char        = %00-FF
+    @endcode
+
+    @param ch The character to match
+
+    @see
+        @ref parse.
 */
+#ifdef BOOST_URL_DOCS
+constexpr
+__implementation_defined__
+char_rule( char ch ) noexcept;
+#else
 struct char_rule
 {
-    using value_type = string_view;
+    using value_type = void;
 
     /** Constructor
 
-        @param c The character to match
+        @param ch The character to match
     */
     constexpr
-    char_rule(
-        char c) noexcept
-        : c_(c)
+    char_rule(char ch) noexcept
+        : ch_(ch)
     {
     }
 
-    result<string_view>
+    result<value_type>
     parse(
         char const*& it,
         char const* end) const noexcept
     {
-        if( it != end &&
-            *it == c_)
-            return string_view(
-                it++, 1);
-        return error::syntax;
+        if(it != end)
+        {
+            if(*it == ch_)
+            {
+                ++it;
+                return {};
+            }
+            return error::syntax;
+        }
+        return error::incomplete;
     }
 
 private:
-    char c_;
+    char ch_;
 };
+#endif
 
 } // grammar
 } // urls

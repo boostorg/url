@@ -23,6 +23,7 @@
     </row></thead>
     <tbody><row>
       <entry valign="top">
+
         <bridgehead renderas="sect3">Classes</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__authority_view">authority_view</link></member>
@@ -44,9 +45,10 @@
           <member><link linkend="url.ref.boost__urls__url">url</link></member>
           <member><link linkend="url.ref.boost__urls__url_view">url_view</link></member>
         </simplelist>
+
       </entry>
-     
       <entry valign="top">
+
         <bridgehead renderas="sect3">Functions</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__parse_absolute_uri">parse_absolute_uri</link></member>
@@ -62,12 +64,15 @@
           <member><link linkend="url.ref.boost__urls__parse_uri_reference">parse_uri_reference</link></member>
           <member><link linkend="url.ref.boost__urls__resolve">resolve</link></member>
         </simplelist>
+
         <bridgehead renderas="sect3">Operators</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__operator_lt__lt_">operator&lt;&lt;</link></member>
         </simplelist>
+
       </entry>
       <entry valign="top">
+
         <bridgehead renderas="sect3">Aliases</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__error_category">error_category</link></member>
@@ -77,15 +82,19 @@
           <member><link linkend="url.ref.boost__urls__result">result</link></member>
           <member><link linkend="url.ref.boost__urls__string_view">string_view</link></member>
           <member><link linkend="url.ref.boost__urls__system_error">system_error</link></member>
+          <member><link linkend="url.ref.boost__urls__variant">variant</link></member>
         </simplelist>
+
         <bridgehead renderas="sect3">Constants</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__error">error</link></member>
           <member><link linkend="url.ref.boost__urls__host_type">host_type</link></member>
           <member><link linkend="url.ref.boost__urls__scheme">scheme</link></member>
         </simplelist>
+
       </entry>
       <entry valign="top">
+
         <bridgehead renderas="sect3">Functions</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__pct_decode">pct_decode</link></member>
@@ -95,20 +104,18 @@
           <member><link linkend="url.ref.boost__urls__pct_encode_bytes">pct_encode_bytes</link></member>
           <member><link linkend="url.ref.boost__urls__validate_pct_encoding">validate_pct_encoding</link></member>
         </simplelist>
+
         <bridgehead renderas="sect3">Classes</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__pct_encoded_view">pct_encoded_view</link></member>
         </simplelist>
+
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__pct_decode_opts">pct_decode_opts</link></member>
           <member><link linkend="url.ref.boost__urls__pct_encode_opts">pct_encode_opts</link></member>
         </simplelist>
-        <bridgehead renderas="sect3">Concepts</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.concepts.charset"><emphasis>CharSet</emphasis></link></member>
-          <member><link linkend="url.concepts.mutablestring"><emphasis>MutableString</emphasis></link></member>
-        </simplelist>
+
       </entry>
     </row></tbody>
   </tgroup>
@@ -127,31 +134,23 @@
     </row></thead>
     <tbody><row>
       <entry valign="top">
+
+        <bridgehead renderas="sect3">Functions</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__pct_encoded_rule">pct_encoded_rule</link></member>
+        </simplelist>
+
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__absolute_uri_rule_t">absolute_uri_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__ipv4_address_rule_t">ipv4_address_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__ipv6_address_rule_t">ipv6_address_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__path_abempty_rule">path_abempty_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__path_absolute_rule">path_absolute_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__path_noscheme_rule">path_noscheme_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__path_rootless_rule">path_rootless_rule</link></member>
           <member><link linkend="url.ref.boost__urls__parsed_path">parsed_path</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_encoded_rule_t">pct_encoded_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__query_rule_t">query_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__relative_ref_rule_t">relative_ref_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__uri_reference_rule_t">uri_reference_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__uri_rule_t">uri_rule_t</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">CharSets</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__fragment_chars">fragment_chars</link></member>
           <member><link linkend="url.ref.boost__urls__gen_delim_chars">gen_delim_chars</link></member>
           <member><link linkend="url.ref.boost__urls__pchars">pchars</link></member>
-          <member><link linkend="url.ref.boost__urls__query_chars">query_chars</link></member>
           <member><link linkend="url.ref.boost__urls__reserved_chars">reserved_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__subdelim_chars">subdelim_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__sub_delim_chars">subdelim_chars</link></member>
           <member><link linkend="url.ref.boost__urls__unreserved_chars">unreserved_chars</link></member>
         </simplelist>
 
@@ -164,49 +163,56 @@
           <member><link linkend="url.ref.boost__urls__authority_rule">authority_rule</link></member>
           <member><link linkend="url.ref.boost__urls__ipv4_address_rule">ipv4_address_rule</link></member>
           <member><link linkend="url.ref.boost__urls__ipv6_address_rule">ipv6_address_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__path_abempty_rule">path_abempty_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__path_absolute_rule">path_absolute_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__path_noscheme_rule">path_noscheme_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__path_rootless_rule">path_rootless_rule</link></member>
           <member><link linkend="url.ref.boost__urls__query_rule">query_rule</link></member>
           <member><link linkend="url.ref.boost__urls__relative_ref_rule">relative_ref_rule</link></member>
           <member><link linkend="url.ref.boost__urls__uri_reference_rule">uri_reference_rule</link></member>
           <member><link linkend="url.ref.boost__urls__uri_rule">uri_rule</link></member>
         </simplelist>
 
-        <bridgehead renderas="sect3">Functions</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__pct_encoded_rule">pct_encoded_rule</link></member>
-        </simplelist>
       </entry>
 
 <!-- _______________________________________________________________________ -->
 
       <entry valign="top">
+
+        <bridgehead renderas="sect3">Functions</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__ascii_to_lower">ascii_to_lower</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__ascii_toupper">ascii_toupper</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__char_rule">char_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__find_if">find_if</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__find_if_not">find_if_not</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__hexdig_value">hexdig_value</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__not_empty_rule">not_empty_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__optional_rule">optional_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__parse">parse</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__range_rule">range_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__sequence_rule">sequence_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__token_rule">token_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__variant_rule">variant_rule</link></member>
+        </simplelist>
+
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__grammar__all_chars_t">all_chars_t</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__alnum_chars_t">alnum_chars_t</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__alpha_chars_t">alpha_chars_t</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__char_rule">char_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__dec_octet_rule_t">dec_octet_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__digit_chars_t">digit_chars_t</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__hexdig_chars_t">hexdig_chars_t</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__lut_chars">lut_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__not_empty_rule_t">not_empty_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__optional_rule_t">optional_rule_t</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__range">range</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__sequence_rule_t">sequence_rule_t</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__token_rule_t">token_rule_t</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__unsigned_dec_rule">unsigned_dec_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__variant_rule_t">variant_rule_t</link></member>
         </simplelist>
+
+      </entry>
+      <entry valign="top">
 
         <bridgehead renderas="sect3">Constants</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__grammar__condition">condition</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__dec_octet_rule">dec_octet_rule</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__error">error</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__not_empty_rule">not_empty_rule</link></member>
         </simplelist>
-
-      </entry>
-      <entry valign="top">
 
         <bridgehead renderas="sect3">CharSets</bridgehead>
         <simplelist type="vert" columns="1">
@@ -217,29 +223,20 @@
           <member><link linkend="url.ref.boost__urls__grammar__hexdig_chars">hexdig_chars</link></member>
         </simplelist>
 
-        <bridgehead renderas="sect3">Functions</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__grammar__ascii_to_lower">ascii_to_lower</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__ascii_toupper">ascii_toupper</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__find_if">find_if</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__find_if_not">find_if_not</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__hexdig_value">hexdig_value</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__not_empty_rule">not_empty_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__optional_rule">optional_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__parse">parse</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__parse_range">parse_range</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__sequence_rule">sequence_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__token_rule">token_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__variant_rule">variant_rule</link></member>
-        </simplelist>
-
         <bridgehead renderas="sect3">Type Traits</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__grammar__is_charset">is_charset</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__is_mutable_string">is_mutable_string</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__is_rule">is_rule</link></member>
-
         </simplelist>
+
+        <bridgehead renderas="sect3">Concepts</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.concepts.charset"><emphasis>CharSet</emphasis></link></member>
+          <member><link linkend="url.concepts.mutablestring"><emphasis>MutableString</emphasis></link></member>
+          <member><link linkend="url.concepts.rule"><emphasis>Rule</emphasis></link></member>
+        </simplelist>
+
       </entry>
     </row></tbody>
   </tgroup>

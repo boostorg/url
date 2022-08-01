@@ -35,6 +35,9 @@ namespace urls {
 namespace detail {
 struct any_path_iter;
 }
+namespace grammar {
+class lut_chars;
+}
 #endif
 
 /** A modifiable container for a URL.

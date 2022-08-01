@@ -11,6 +11,8 @@
 #include <boost/url/grammar/char_rule.hpp>
 
 #include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/type_traits.hpp>
+#include <boost/static_assert.hpp>
 #include "test_suite.hpp"
 
 namespace boost {
@@ -19,6 +21,9 @@ namespace grammar {
 
 struct char_rule_test
 {
+    BOOST_STATIC_ASSERT(
+        is_rule<char_rule>::value);
+
     template<class R>
     static
     void
@@ -52,6 +57,9 @@ struct char_rule_test
     void
     run()
     {
+        // test constexpr
+        constexpr auto r = char_rule('.');
+
         testRule();
     }
 };

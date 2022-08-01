@@ -11,9 +11,8 @@
 #include <boost/url/rfc/paths_rule.hpp>
 
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/range.hpp>
+#include <boost/url/grammar/range_rule.hpp>
 #include <boost/static_assert.hpp>
-#include "test_suite.hpp"
 #include "test_rule.hpp"
 
 namespace boost {
@@ -34,7 +33,7 @@ public:
     {
         // path-abempty  = *( "/" segment )
         auto const& t =
-            path_abempty_rule{};
+            path_abempty_rule;
 
         ok(t, "");
         ok(t, "/");
@@ -62,7 +61,7 @@ public:
     {
         // path-absolute = "/" [ segment-nz *( "/" segment ) ]
         auto const& t =
-            path_absolute_rule{};
+            path_absolute_rule;
 
         ok(t, "/");
         ok(t, "/x");
@@ -91,7 +90,7 @@ public:
     {
         // path-noscheme = segment-nz-nc *( "/" segment )
         auto const& t =
-            path_noscheme_rule{};
+            path_noscheme_rule;
 
         ok(t, ".");
         ok(t, "x");
@@ -125,7 +124,7 @@ public:
     {
         // path-rootless = segment-nz *( "/" segment )
         auto const& t =
-            path_rootless_rule{};
+            path_rootless_rule;
 
         ok(t, ".");
         ok(t, ":");

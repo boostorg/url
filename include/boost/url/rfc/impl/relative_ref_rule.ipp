@@ -57,8 +57,7 @@ parse(
             return rv.error();
         if(rv->has_value())
         {
-            auto const& v =
-                std::get<1>(**rv);
+            auto const& v = **rv;
             u.apply_query(
                 v.encoded_string(),
                 v.size());
@@ -72,8 +71,7 @@ parse(
         if(! rv)
             return rv.error();
         if(rv->has_value())
-            u.apply_frag(
-                std::get<1>(**rv));
+            u.apply_frag(**rv);
     }
 
     return u.construct();

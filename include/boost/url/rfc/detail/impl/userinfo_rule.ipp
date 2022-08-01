@@ -12,9 +12,7 @@
 
 #include <boost/url/rfc/detail/userinfo_rule.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/rfc/charsets.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
-#include <boost/url/grammar/lut_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 namespace boost {
@@ -31,7 +29,7 @@ parse(
 {
     static constexpr auto uchars =
         unreserved_chars +
-        subdelim_chars;
+        sub_delim_chars;
     static constexpr auto pwchars =
         uchars + ':';
 

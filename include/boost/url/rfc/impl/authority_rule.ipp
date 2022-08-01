@@ -45,9 +45,9 @@ parse(
         if(rv->has_value())
         {
             u.apply_userinfo(
-                std::get<0>(**rv).user,
-                std::get<0>(**rv).has_password
-                ? &std::get<0>(**rv).password
+                (*rv)->user,
+                (*rv)->has_password
+                ? &(*rv)->password
                 : nullptr);
         }
     }

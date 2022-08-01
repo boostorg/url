@@ -17,12 +17,44 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Rule for parsing a decimal octe
+/** Match a decimal octet
+
+    A decimal octet is a fancy way of
+    saying a number from 0 to 255. These
+    are commonly used in IPv4 addresses.
+
+    @par Example
+    @code
+    result< unsigned char > = parse( s, dec_octet_rule );
+    @endcode
+
+    @par Value Type
+    @code
+    using value_type = unsigned char;
+    @endcode
+
+    @par BNF
+    @code
+    dec-octet   = DIGIT                 ; 0-9
+                / %x31-39 DIGIT         ; 10-99
+                / "1" 2DIGIT            ; 100-199
+                / "2" %x30-34 DIGIT     ; 200-249
+                / "25" %x30-35          ; 250-255
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+        >3.2.2.  Host (rfc3986)</a>
+
+    @see
+        @ref parse.
 */
+#ifdef BOOST_URL_DOCS
+constexpr __implementation_defined__ dec_octet_rule;
+#else
 struct dec_octet_rule_t
 {
-    using value_type =
-        unsigned char;
+    using value_type = unsigned char;
 
     BOOST_URL_DECL
     auto
@@ -34,6 +66,7 @@ struct dec_octet_rule_t
 };
 
 constexpr dec_octet_rule_t dec_octet_rule{};
+#endif
 
 } // grammar
 } // urls

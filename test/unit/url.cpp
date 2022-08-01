@@ -11,6 +11,7 @@
 // Test that header file is self-contained.
 #include <boost/url/url.hpp>
 
+#include <boost/url/rfc/detail/charsets.hpp>
 #include "test_suite.hpp"
 #include <algorithm>
 #include <sstream>
@@ -242,7 +243,7 @@ public:
             BOOST_TEST(
                 u.set_user(s2).string() == s3);
             auto s = pct_encode_to_string(
-                s2, unreserved_chars + subdelim_chars);
+                s2, unreserved_chars + sub_delim_chars);
             u.set_user(pct_encoded_view(s));
             BOOST_TEST(u.string() == s3);
             BOOST_TEST_EQ(u.user(), s2);
@@ -365,7 +366,7 @@ public:
                 u.set_password(s2).string() == s3);
             auto s = pct_encode_to_string(
                 s2, unreserved_chars +
-                    subdelim_chars + ':');
+                    sub_delim_chars + ':');
             BOOST_TEST(
                 u.set_password(
                      pct_encoded_view(s)).string() == s3);
@@ -495,7 +496,7 @@ public:
                 u.set_userinfo(s2).string(), s3);
             auto s = pct_encode_to_string(
                 s2, unreserved_chars +
-                    subdelim_chars + ':');
+                    sub_delim_chars + ':');
             BOOST_TEST(
                 u.set_userinfo(
                      pct_encoded_view(s)).string() == s3);
@@ -1477,7 +1478,8 @@ public:
                 BOOST_TEST_EQ(u.query(), q);
 
                 u.remove_query();
-                auto s = pct_encode_to_string(q, query_chars);
+                auto s = pct_encode_to_string(
+                    q, detail::query_chars);
                 pct_decode_opts opt;
                 opt.plus_to_space = true;
                 auto es = pct_encoded_view(s, opt);
@@ -1643,7 +1645,8 @@ public:
                 BOOST_TEST_EQ(u.encoded_fragment(), ef);
                 BOOST_TEST_EQ(u.fragment(), f);
 
-                auto s = pct_encode_to_string(f, fragment_chars);
+                auto s = pct_encode_to_string(
+                    f, detail::fragment_chars);
                 u.set_fragment(pct_encoded_view(s));
                 BOOST_TEST(u.has_fragment());
                 BOOST_TEST_EQ(u.string(), h);

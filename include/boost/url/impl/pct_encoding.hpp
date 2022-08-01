@@ -11,9 +11,9 @@
 #define BOOST_URL_IMPL_PCT_ENCODING_HPP
 
 #include <boost/url/detail/except.hpp>
-#include <boost/url/grammar/charset.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/grammar/hexdig_chars.hpp>
 #include <boost/url/grammar/type_traits.hpp>
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
@@ -151,9 +151,10 @@ pct_decode(
 //------------------------------------------------
 
 namespace detail {
+
 template <class Iter, class CharSet>
 std::size_t
-pct_encode_bytes(
+pct_encode_bytes_impl(
     Iter it,
     Iter const end,
     CharSet const& allowed,
@@ -202,16 +203,20 @@ pct_encode_bytes(
     CharSet const& allowed,
     pct_encode_opts const& opt) noexcept
 {
-    return detail::pct_encode_bytes(
-        s.data(), s.data() + s.size(), allowed, opt);
+    return detail::pct_encode_bytes_impl(
+        s.data(),
+        s.data() + s.size(),
+        allowed,
+        opt);
 }
 
 //------------------------------------------------
 
 namespace detail {
+
 template<class Iter, class CharSet>
 std::size_t
-pct_encode(
+pct_encode_impl(
     char* dest,
     char const* const end,
     Iter p,
@@ -285,7 +290,8 @@ pct_encode(
     }
     return dest - dest0;
 }
-}
+
+} // detail
 
 template<class CharSet>
 std::size_t
@@ -296,8 +302,13 @@ pct_encode(
     CharSet const& allowed,
     pct_encode_opts const& opt)
 {
-    return detail::pct_encode(
-        dest, end, s.data(), s.data() + s.size(), allowed, opt);
+    return detail::pct_encode_impl(
+        dest,
+        end,
+        s.data(),
+        s.data() + s.size(),
+        allowed,
+        opt);
 }
 
 //------------------------------------------------
@@ -335,7 +346,6 @@ pct_encode_to_string(
     (void)n1;
     return r;
 }
-
 
 } // urls
 } // boost

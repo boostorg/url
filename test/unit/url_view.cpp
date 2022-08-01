@@ -14,7 +14,6 @@
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/uri_reference_rule.hpp>
 #include "test_rule.hpp"
-#include "test_suite.hpp"
 #include <sstream>
 
 namespace boost {
