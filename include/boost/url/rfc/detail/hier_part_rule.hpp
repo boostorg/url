@@ -39,9 +39,8 @@ struct hier_part_rule_t
     {
         bool has_authority = false;
         authority_view authority;
-
-        // VFALCO This doesn't belong here
-        grammar::range<pct_encoded_view> path;
+        grammar::range<
+            pct_encoded_view> path;
     };
 
     BOOST_URL_DECL

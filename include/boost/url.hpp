@@ -25,6 +25,7 @@
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/query_param.hpp>
+#include <boost/url/recycled_ptr.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments.hpp>
 #include <boost/url/segments_encoded.hpp>

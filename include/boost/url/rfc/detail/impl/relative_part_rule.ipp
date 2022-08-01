@@ -32,7 +32,7 @@ parse(
         // path-empty
         t.path = {};
         t.has_authority = false;
-        return t;
+        BOOST_URL_RETURN(t);
     }
     if(it[0] != '/')
     {
@@ -44,12 +44,12 @@ parse(
             // path-noscheme
             t.path = std::move(*rv);
             t.has_authority = false;
-            return t;
+            BOOST_URL_RETURN(t);
         }
         // path-empty
         t.path = {};
         t.has_authority = false;
-        return t;
+        BOOST_URL_RETURN(t);
     }
     if( end - it == 1 ||
         it[1] != '/')
@@ -60,7 +60,7 @@ parse(
             path_absolute_rule);
         t.path = std::move(*rv);
         t.has_authority = false;
-        return t;
+        BOOST_URL_RETURN(t);
     }
 
     // "//" authority path-abempty
@@ -80,7 +80,7 @@ parse(
         t.path = std::move(*rv);
         t.has_authority = true;
     }
-    return t;
+    BOOST_URL_RETURN(t);
 }
 
 } // detail

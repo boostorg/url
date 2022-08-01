@@ -11,15 +11,36 @@
 #define BOOST_URL_GRAMMAR_IMPL_RANGE_HPP
 
 #include <boost/url/detail/except.hpp>
+#include <boost/url/recycled_ptr.hpp>
 #include <boost/url/detail/empty_value.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/assert.hpp>
+#include <boost/static_assert.hpp>
+#include <exception>
 #include <iterator>
 #include <new>
 
 namespace boost {
 namespace urls {
 namespace grammar {
+
+// VFALCO This could be reused for
+// other things that need to type-erase
+
+namespace detail {
+
+template<std::size_t Size>
+struct storage
+{
+    char buf[Size];
+
+    void* get() noexcept
+    {
+        return &buf[0];
+    }
+};
+
+} // detail
 
 //------------------------------------------------
 //
@@ -37,33 +58,38 @@ struct range<T>::
 
     virtual
     void
-    destroy() const noexcept = 0;
-
-    virtual
-    any_rule const*
-    move(void*) const noexcept = 0;
-
-    virtual
-    any_rule const*
-    copy(void*) const noexcept = 0;
+    move(void* dest) noexcept
+    {
+        ::new(dest) any_rule(
+            std::move(*this));
+    }
 
     virtual
     result<T>
     first(
         char const*&,
-        char const*) const noexcept = 0;
+        char const*) const noexcept
+    {
+        // pure virtual called
+        return error_code{};
+    }
 
     virtual
     result<T> 
     next(
         char const*&,
-        char const*) const noexcept = 0;
+        char const*) const noexcept
+    {
+        // pure virtual called
+        return error_code{};
+    }
 };
 
 //------------------------------------------------
 
+// small
 template<class T>
-template<class R>
+template<class R, bool Small>
 struct range<T>::impl1
     : any_rule
     , private urls::detail::empty_value<R>
@@ -78,36 +104,10 @@ struct range<T>::impl1
 
 private:
     void
-    destroy() const noexcept override
+    move(void* dest) noexcept override
     {
-        static constexpr auto small =
-            sizeof(*this) <= BufferSize;
-        if(small)
-            this->~impl1();
-        else
-            delete this;
-    }
-
-    any_rule const*
-    move(void* dest)
-        const noexcept override
-    {
-        static constexpr auto small =
-            sizeof(*this) <= BufferSize;
-        if(small)
-            return ::new(dest) impl1(*this);
-        return this;
-    }
-
-    any_rule const*
-    copy(void* dest)
-        const noexcept override
-    {
-        static constexpr auto small =
-            sizeof(*this) <= BufferSize;
-        if(small)
-            return ::new(dest) impl1(*this);
-        return new impl1(*this);
+        ::new(dest) impl1(
+            std::move(*this));
     }
 
     result<T>
@@ -133,8 +133,76 @@ private:
 
 //------------------------------------------------
 
+// big
 template<class T>
-template<class R0, class R1>
+template<class R>
+struct range<T>::impl1<R, false>
+    : any_rule
+{
+    struct impl
+    {
+        R r;
+    };
+
+    recycled_ptr<
+        detail::storage<sizeof(impl)>
+            > p_;
+
+    impl const&
+    get() const noexcept
+    {
+        return *reinterpret_cast<
+            impl const*>(p_->get());
+    }
+
+    explicit
+    impl1(R const& next) noexcept
+    {
+        ::new(p_->get()) impl{next};
+    }
+
+private:
+    ~impl1()
+    {
+        get().~impl();
+    }
+
+    impl1(impl1&&) = default;
+
+    void
+    move(void* dest) noexcept override
+    {
+        ::new(dest) impl1(
+            std::move(*this));
+    }
+
+    result<T>
+    first(
+        char const*& it,
+        char const* end)
+            const noexcept override
+    {
+        return grammar::parse(
+            it, end, this->get().r);
+    }
+
+    result<T>
+    next(
+        char const*& it,
+        char const* end)
+            const noexcept override
+    {
+        return grammar::parse(
+            it, end, this->get().r);
+    }
+};
+
+//------------------------------------------------
+
+// small
+template<class T>
+template<
+    class R0, class R1, bool Small>
 struct range<T>::impl2
     : any_rule
     , private urls::detail::empty_value<R0, 0>
@@ -152,36 +220,10 @@ struct range<T>::impl2
 
 private:
     void
-    destroy() const noexcept override
+    move(void* dest) noexcept override
     {
-        static constexpr auto small =
-            sizeof(*this) <= BufferSize;
-        if(small)
-            this->~impl2();
-        else
-            delete this;
-    }
-
-    any_rule const*
-    move(void* dest)
-        const noexcept override
-    {
-        static constexpr auto small =
-            sizeof(*this) <= BufferSize;
-        if(small)
-            return ::new(dest) impl2(*this);
-        return this;
-    }
-
-    any_rule const*
-    copy(void* dest)
-        const noexcept override
-    {
-        static constexpr auto small =
-            sizeof(*this) <= BufferSize;
-        if(small)
-            return ::new(dest) impl2(*this);
-        return new impl2(*this);
+        ::new(dest) impl2(
+            std::move(*this));
     }
 
     result<T>
@@ -204,6 +246,75 @@ private:
         return grammar::parse(it, end,
             urls::detail::empty_value<
                 R1,1>::get());
+    }
+};
+
+//------------------------------------------------
+
+// big
+template<class T>
+template<
+    class R0, class R1>
+struct range<T>::impl2<R0, R1, false>
+    : any_rule
+{
+    struct impl
+    {
+        R0 first;
+        R1 next;
+    };
+
+    recycled_ptr<
+        detail::storage<sizeof(impl)>
+            > p_;
+
+    impl const&
+    get() const noexcept
+    {
+        return *reinterpret_cast<
+            impl const*>(p_->get());
+    }
+
+    impl2(
+        R0 const& first,
+        R1 const& next) noexcept
+    {
+        ::new(p_->get()) impl{first, next};
+    }
+
+private:
+    ~impl2()
+    {
+        get().~impl();
+    }
+
+    impl2(impl2&&) = default;
+
+    void
+    move(void* dest) noexcept override
+    {
+        ::new(dest) impl2(
+            std::move(*this));
+    }
+
+    result<T>
+    first(
+        char const*& it,
+        char const* end)
+            const noexcept override
+    {
+        return grammar::parse(
+            it, end, get().first);
+    }
+
+    result<T>
+    next(
+        char const*& it,
+        char const* end)
+            const noexcept override
+    {
+        return grammar::parse(
+            it, end, get().next);
     }
 };
 
@@ -264,7 +375,7 @@ public:
         auto const end =
             r_->s_.data() +
             r_->s_.size();
-        rv_ = r_->pr_->next(p_, end);
+        rv_ = r_->get().next(p_, end);
         if(rv_.has_error())
             p_ = nullptr;
         return *this;
@@ -293,7 +404,7 @@ private:
         auto const end =
             r_->s_.data() +
             r_->s_.size();
-        rv_ = r_->pr_->first(p_, end);
+        rv_ = r_->get().first(p_, end);
         if(rv_.has_error())
             p_ = nullptr;
     }
@@ -320,19 +431,13 @@ range(
     : s_(s)
     , n_(n)
 {
-    using U = impl1<R>;
+    BOOST_STATIC_ASSERT(
+        sizeof(impl1<R, false>) <=
+            BufferSize);
 
-    static constexpr auto small =
-        sizeof(U) <= BufferSize;
-    if(small)
-    {
-        pr_ = ::new(reinterpret_cast<
-            void*>(buf_)) U(next);
-    }
-    else
-    {
-        pr_ = new U(next);
-    }
+    ::new(&get()) impl1<R,
+        sizeof(impl1<R, true>) <=
+            BufferSize>(next);
 }
 
 //------------------------------------------------
@@ -349,19 +454,14 @@ range(
     : s_(s)
     , n_(n)
 {
-    using U = impl2<R0, R1>;
+    BOOST_STATIC_ASSERT(
+        sizeof(impl2<R0, R1, false>) <=
+            BufferSize);
 
-    static constexpr auto small =
-        sizeof(U) <= BufferSize;
-    if(small)
-    {
-        pr_ = ::new(reinterpret_cast<
-            void*>(buf_)) U(first, next);
-    }
-    else
-    {
-        pr_ = new U(first, next);
-    }
+    ::new(&get()) impl2<R0, R1,
+        sizeof(impl2<R0, R1, true>
+            ) <= BufferSize>(
+                first, next);
 }
 
 //------------------------------------------------
@@ -370,8 +470,14 @@ template<class T>
 range<T>::
 ~range()
 {
-    if(pr_)
-        pr_->destroy();
+    get().~any_rule();
+}
+
+template<class T>
+range<T>::
+range() noexcept
+{
+    ::new(&get()) any_rule{};
 }
 
 template<class T>
@@ -381,22 +487,7 @@ range(
     : s_(other.s_)
     , n_(other.n_)
 {
-    if(other.pr_)
-    {
-        pr_ = other.pr_->move(buf_);
-        other.pr_ = nullptr;
-    }
-}
-
-template<class T>
-range<T>::
-range(
-    range const& other)
-    : s_(other.s_)
-    , n_(other.n_)
-{
-    if(other.pr_)
-        pr_ = other.pr_->copy(buf_);
+    other.get().move(buf_);
 }
 
 template<class T>
@@ -406,41 +497,12 @@ operator=(
     range&& other) noexcept ->
         range&
 {
-    if(pr_)
-        pr_->destroy();
-    if(other.pr_)
-    {
-        s_ = other.s_;
-        n_ = other.n_;
-        pr_ = other.pr_->move(buf_);
-        other.s_ = {};
-        other.n_ = 0;
-        other.pr_ = nullptr;
-    }
-    else
-    {
-        s_ = {};
-        n_ = 0;
-        pr_ = nullptr;
-    }
-    
-    return *this;
-}
-
-template<class T>
-auto
-range<T>::
-operator=(
-    range const& other) ->
-        range&
-{
-    range tmp(other);
-    if(pr_)
-        pr_->destroy();
-    s_ = tmp.s_;
-    n_ = tmp.n_;
-    pr_ = tmp.pr_;
-    tmp.pr_ = nullptr;
+    s_ = other.s_;
+    n_ = other.n_;
+    other.s_ = {};
+    other.n_ = 0;    
+    get().~any_rule();
+    other.get().move(buf_);
     return *this;
 }
 
