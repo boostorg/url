@@ -93,6 +93,7 @@ public:
         // params_encoded_view()
         {
             params_encoded_view v;
+            BOOST_TEST(v.empty());
             BOOST_TEST_EQ(v.size(), 0U);
             BOOST_TEST_EQ(
                 std::distance(

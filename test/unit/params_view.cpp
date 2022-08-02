@@ -26,6 +26,15 @@ public:
     void
     testMembers()
     {
+        // default constructor
+        {
+            params_view ps;
+            BOOST_TEST(ps.empty());
+            BOOST_TEST_EQ(ps.size(), 0u);
+            BOOST_TEST(
+                ps.begin() == ps.end());
+        }
+
         // operator=(params_view const&)
         {
             url_view u1;

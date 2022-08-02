@@ -33,7 +33,7 @@ class params_view
     friend class params_encoded_view;
 
     string_view s_;
-    std::size_t n_;
+    std::size_t n_ = 0;
 
     params_view(
         string_view s,
@@ -84,6 +84,12 @@ public:
     /** A signed integer type used to represent differences.
     */
     using difference_type = std::ptrdiff_t;
+
+    /** Constructor
+
+        Default constructor
+    */
+    params_view() = default;
 
     /** Constructor
 
