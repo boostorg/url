@@ -10,13 +10,14 @@
 #include <boost/url/error.hpp>
 #include <boost/url/segments_encoded.hpp>
 #include <boost/url/segments_encoded_view.hpp>
-#include <boost/url/static_pool.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/static_url.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <iostream>
+#include <fstream>
 
 namespace urls = boost::urls;
 namespace fs = boost::filesystem;
@@ -37,10 +38,9 @@ public:
 
     bool match(
         urls::url_view target,
-        fs::path& result )
+        fs::path& result)
     {
         // Target segments
-        urls::static_pool<1024> pool;
         urls::segments_view segs = target.segments();
 
         // Prefix segments
@@ -129,9 +129,11 @@ main(int argc, char **argv)
     fs::path result;
     if (r.match(target, result))
     {
-        std::cout
-            << target << " would match the file "
-            << result << std::endl;
+        fs::ifstream f(result);
+        std::string l;
+        while (std::getline(f, l))
+            std::cout << l << '\n';
+        f.close();
     }
     else
     {
