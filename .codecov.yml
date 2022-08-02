@@ -23,3 +23,9 @@ ignore:
   - extra/**/*
   - test/*
   - test/**/*
+
+coverage:
+  status:
+    project:
+      default:
+        threshold: 1%
