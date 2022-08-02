@@ -22,8 +22,8 @@ namespace urls = boost::urls;
 namespace fs = boost::filesystem;
 using string_view = urls::string_view;
 
-/// Check if a target matches a prefix
-/**
+/** Check if a target matches a prefix
+
     This function checks if the first segments
     of the target match the corresponding prefix
     segments.
@@ -52,8 +52,8 @@ bool match_prefix(
     return it1 == end1;
 }
 
-/// A static route representing files in a directory
-/**
+/** A static route representing files in a directory
+
     A route is a URL logical prefix representing
     static files in the specified root directory.
 
@@ -75,8 +75,8 @@ public:
         , root_(std::move(root))
     {}
 
-    /// Match target URL path with a file
-    /**
+    /** Match target URL path with a file
+
         This function attempts to match the target
         URL path with the route prefix.
 
