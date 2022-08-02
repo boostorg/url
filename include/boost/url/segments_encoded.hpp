@@ -140,7 +140,20 @@ public:
 
     /** Constructor
 
-        Copy constructor
+        After the copy, both views will point to
+        the same underlying object.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+        Throws nothing
+
     */
     segments_encoded(segments_encoded const&) = default;
 
@@ -148,6 +161,17 @@ public:
 
         After the assignment, both views will point to
         the same underlying object.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+        Throws nothing
     */
     segments_encoded&
     operator=(segments_encoded const&) & = default;
@@ -157,9 +181,11 @@ public:
         This function replaces the contents
         with an initializer list  of
         percent-encoded strings.
+
         Each string must contain a valid
         percent-encoding or else an
         exception is thrown.
+
         The behavior is undefined any string
         refers to the contents of `*this`.
         All iterators and references to elements
@@ -190,11 +216,14 @@ public:
         This function replaces the contents
         with a range of percent-encoded
         strings.
+
         Each string must contain a valid
         percent-encoding or else an
         exception is thrown.
+
         The behavior is undefined if either
         argument is an iterator into `*this`.
+
         All iterators and references to elements
         of the container are invalidated,
         including the @ref end iterator.
@@ -248,12 +277,28 @@ public:
     //
     //--------------------------------------------
 
-    /** Return the first element
+    /** Access the first element.
+
+        Returns a reference to the first element.
+
+        @par Precondition
+        `not empty()`
+
+        @par Complexity
+        Constant.
     */
-    string_view
+    const_reference
     front() const noexcept;
 
-    /** Return the last element
+    /** Access the last element.
+
+        Returns a reference to the last element.
+
+        @par Precondition
+        `not empty()`
+
+        @par Complexity
+        Constant.
     */
     const_reference
     back() const noexcept;
@@ -264,13 +309,30 @@ public:
     //
     //--------------------------------------------
 
-    /** Return an iterator to the beginning
+    /** Return a const iterator to the first element.
+
+        If the path is empty, @ref end() is returned.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     iterator
     begin() const noexcept;
 
-    /** Return an iterator to the end
+    /** Return an iterator to the element following the last element.
+
+        The element acts as a placeholder; attempting
+        to access it results in undefined behavior.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     iterator
@@ -287,6 +349,12 @@ public:
         This function returns true if there are
         no elements in the container. That is, if
         the underlying path is the empty string.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        No-throw guarantee.
     */
     bool
     empty() const noexcept;
@@ -294,7 +362,7 @@ public:
     /** Return the number of elements in the container
 
         This function returns the number of
-        elements in the underlying path. Empty
+        segments in the underlying path. Empty
         segments count towards this total.
 
         @par Exception Safety

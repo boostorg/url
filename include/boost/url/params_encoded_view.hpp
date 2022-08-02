@@ -134,14 +134,28 @@ public:
 
     /** Constructor
 
-        Default constructed views
-        have zero elements.
+        A default-constructed instance will be
+        an empty range.
+
     */
     params_encoded_view() = default;
 
     /** Constructor
 
-        Copy constructor
+        After the copy both views will point to
+        the same character buffer.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+            Constant
+
+        @par Exception Safety
+            Throws nothing
+
     */
     params_encoded_view(
         params_encoded_view const&) = default;
@@ -150,6 +164,18 @@ public:
 
         After the assignment, both views will point to
         the same underlying object.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+            Constant
+
+        @par Exception Safety
+            Throws nothing
+
     */
     params_encoded_view&
     operator=(params_encoded_view const&) & = default;

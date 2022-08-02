@@ -103,7 +103,19 @@ public:
 
     /** Constructor
 
-        Copy constructor
+        After the copy, both views will point to
+        the same underlying object.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+        Throws nothing
     */
     segments_view(segments_view const& other) = default;
 
@@ -111,6 +123,17 @@ public:
 
         After the assignment, both views will point to
         the same underlying object.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+        Throws nothing
     */
     segments_view&
     operator=(segments_view const& other) & = default;
@@ -130,12 +153,28 @@ public:
     //
     //--------------------------------------------
 
-    /** Return the first element.
+    /** Access the first element.
+
+        Returns a reference to the first element.
+
+        @par Precondition
+        `not empty()`
+
+        @par Complexity
+        Constant.
     */
     pct_encoded_view
     front() const noexcept;
 
-    /** Return the last element.
+    /** Access the last element.
+
+        Returns a reference to the last element.
+
+        @par Precondition
+        `not empty()`
+
+        @par Complexity
+        Constant.
     */
     pct_encoded_view
     back() const noexcept;
@@ -146,13 +185,30 @@ public:
     //
     //--------------------------------------------
 
-    /** Return an iterator to the beginning.
+    /** Return an iterator to the first element.
+
+        If the path is empty, @ref end() is returned.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     iterator
     begin() const noexcept;
 
-    /** Return an iterator to the end.
+    /** Return an iterator to the element following the last element.
+
+        The element acts as a placeholder; attempting
+        to access it results in undefined behavior.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        No-throw guarantee.
     */
     BOOST_URL_DECL
     iterator
@@ -164,12 +220,29 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if the range contains no elements
+    /** Check if the path has no segments.
+
+        Returns `true` if there are no segments in the
+        path, i.e. @ref size() returns 0.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        No-throw guarantee.
     */
     bool
     empty() const noexcept;
 
-    /** Return the number of elements in the range
+    /** Return the number of segments in the path.
+
+        This returns the number of segments in the path.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        No-throw guarantee.
     */
     std::size_t
     size() const noexcept;
