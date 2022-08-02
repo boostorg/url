@@ -2,13 +2,11 @@
 
 Branch          | [`master`](https://github.com/CPPAlliance/url/tree/master) | [`develop`](https://github.com/CPPAlliance/url/tree/develop) |
 --------------- | ----------------------------------------------------------- | ------------------------------------------------------------- |
-[Azure](https://azure.microsoft.com/en-us/services/devops/pipelines/) | [![Build Status](https://img.shields.io/azure-devops/build/vinniefalco/67375b5f-3402-44a3-a4ee-d5e856f94690/7/master)](https://dev.azure.com/vinniefalco/url/_build/latest?definitionId=7&branchName=master) | [![Build Status](https://img.shields.io/azure-devops/build/vinniefalco/67375b5f-3402-44a3-a4ee-d5e856f94690/7/develop)](https://dev.azure.com/vinniefalco/url/_build/latest?definitionId=7&branchName=develop)
 Docs            | [![Documentation](https://img.shields.io/badge/docs-master-brightgreen.svg)](http://master.url.cpp.al/) | [![Documentation](https://img.shields.io/badge/docs-develop-brightgreen.svg)](http://develop.url.cpp.al/)
 [Drone](https://drone.io/) | [![Build Status](https://drone.cpp.al/api/badges/CPPAlliance/url/status.svg?ref=refs/heads/master)](https://drone.cpp.al/CPPAlliance/url) | [![Build Status](https://drone.cpp.al/api/badges/CPPAlliance/url/status.svg?ref=refs/heads/develop)](https://drone.cpp.al/CPPAlliance/url)
 [GitHub Actions](https://github.com/) | [![CI](https://github.com/CPPAlliance/url/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/CPPAlliance/url/actions/workflows/ci.yml) | [![CI](https://github.com/CPPAlliance/url/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/CPPAlliance/url/actions/workflows/ci.yml)
 Matrix          | --- | --- 
 Fuzzing         | --- | --- 
-[Appveyor](https://ci.appveyor.com/) | [![Build status](https://ci.appveyor.com/api/projects/status/aewl3yuwn7skl5sr?svg=true&branch=master)](https://ci.appveyor.com/project/vinniefalco/cppalliance-url/branch/master) | [![Build status](https://ci.appveyor.com/api/projects/status/aewl3yuwn7skl5sr?svg=true&branch=develop)](https://ci.appveyor.com/project/vinniefalco/cppalliance-url/branch/develop)
 [codecov.io](https://codecov.io) | [![codecov](https://codecov.io/gh/CPPAlliance/url/branch/master/graph/badge.svg)](https://codecov.io/gh/CPPAlliance/url/branch/master) | [![codecov](https://codecov.io/gh/CPPAlliance/url/branch/develop/graph/badge.svg)](https://codecov.io/gh/CPPAlliance/url/branch/develop)
 
 # Boost.URL
