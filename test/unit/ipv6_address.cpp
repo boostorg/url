@@ -80,7 +80,7 @@ public:
             ipv6_address a("::");
             BOOST_TEST_EQ(a, ipv6_address());
             BOOST_TEST_THROWS(ipv6_address("x"),
-                std::invalid_argument);
+                system_error);
         }
 
         // to_bytes

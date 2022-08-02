@@ -379,7 +379,7 @@ public:
     reference
     operator*() const noexcept
     {
-        return rv_.value();
+        return *rv_;
     }
 
     bool

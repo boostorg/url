@@ -143,7 +143,7 @@ parse(
                 it, end, ipv4_address_rule);
             if(! rv1)
                 return rv1.error();
-            auto v4 = rv1.value();
+            auto v4 = *rv1;
             auto const b4 =
                 v4.to_bytes();
             bytes[2*(7-n)+0] = b4[0];

@@ -36,7 +36,8 @@ static_url_base(
     string_view s)
     : static_url_base(buf, cap)
 {
-    copy(parse_uri_reference(s).value());
+    copy(parse_uri_reference(s
+        ).value(BOOST_URL_POS));
 }
 
 void

@@ -77,7 +77,7 @@ public:
                 a.to_uint() == 0x01020304);
             BOOST_TEST_THROWS(
                 ipv4_address("x"),
-                std::invalid_argument);
+                system_error);
         }
 
         // to_bytes

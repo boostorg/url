@@ -262,7 +262,8 @@ set_encoded_authority(
     auto pos2 = s.find_last_of(':');
 #endif
     auto t = grammar::parse(
-        s, authority_rule).value();
+        s, authority_rule
+            ).value(BOOST_URL_POS);
     auto n = s.size() + 2;
     auto const need_slash =
         ! is_path_absolute() &&
@@ -790,7 +791,8 @@ set_host_ipvfuture(
     op_t op(*this, s);
     // validate
     grammar::parse(s,
-        detail::ipvfuture_rule).value();
+        detail::ipvfuture_rule
+            ).value(BOOST_URL_POS);
     auto dest = set_host_impl(
         s.size() + 2, op);
     *dest++ = '[';
@@ -903,8 +905,9 @@ set_port(
     string_view s)
 {
     op_t op(*this, s);
-    auto t = grammar::parse(
-        s, detail::port_rule{}).value();
+    auto t = grammar::parse(s,
+        detail::port_rule{}
+            ).value(BOOST_URL_POS);
     auto dest =
         set_port_impl(t.str.size(), op);
     std::memcpy(dest,
@@ -1776,8 +1779,9 @@ set_scheme_impl(
 {
     op_t op(*this, s);
     check_invariants();
-    grammar::parse(s,
-        detail::scheme_rule()).value();
+    grammar::parse(
+        s, detail::scheme_rule()
+            ).value(BOOST_URL_POS);
     auto const n = s.size();
     auto const p = u_.offset(id_path);
 

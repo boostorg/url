@@ -47,7 +47,8 @@ url_view() noexcept = default;
 
 url_view::
 url_view(string_view s)
-    : url_view(parse_uri_reference(s).value())
+    : url_view(parse_uri_reference(s
+        ).value(BOOST_URL_POS))
 {
 }
 

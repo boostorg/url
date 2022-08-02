@@ -41,11 +41,10 @@ ipv6_address(
 ipv6_address::
 ipv6_address(
     string_view s)
+    : ipv6_address(
+        parse_ipv6_address(s
+            ).value(BOOST_URL_POS))
 {
-    auto r = parse_ipv6_address(s);
-    if( !r )
-        detail::throw_invalid_argument();
-    *this = r.value();
 }
 
 string_view

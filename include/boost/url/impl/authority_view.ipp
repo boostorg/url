@@ -59,7 +59,8 @@ authority_view::
 authority_view(
     string_view s)
     : authority_view(
-        parse_authority(s).value())
+        parse_authority(s
+            ).value(BOOST_URL_POS))
 {
 }
 

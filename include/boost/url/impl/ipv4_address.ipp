@@ -39,11 +39,10 @@ ipv4_address(
 ipv4_address::
 ipv4_address(
     string_view s)
+    : ipv4_address(
+        parse_ipv4_address(s
+            ).value(BOOST_URL_POS))
 {
-    auto r = parse_ipv4_address(s);
-    if( !r)
-        detail::throw_invalid_argument();
-    *this = r.value();
 }
 
 auto

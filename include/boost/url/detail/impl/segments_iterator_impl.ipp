@@ -37,9 +37,8 @@ segments_iterator_impl(
     begin_ += n;
     next_ += n;
     pos_ += n;
-    t_ = grammar::parse(
-        next_, end_,
-        segment_rule).value();
+    t_ = *grammar::parse(
+        next_, end_, segment_rule);
 }
 
 segments_iterator_impl::
@@ -77,12 +76,12 @@ increment() noexcept
     auto rv = grammar::parse(
         next_, end_,
             detail::slash_segment_rule);
-    if( !rv )
+    if(! rv )
     {
         next_ = nullptr;
         return;
     }
-    t_ = rv.value();
+    t_ = *rv;
 }
 
 void
@@ -95,9 +94,8 @@ decrement() noexcept
     {
         next_ = begin_;
         pos_ = begin_;
-        t_ = grammar::parse(
-            next_, end_,
-            segment_rule).value();
+        t_ = *grammar::parse(
+            next_, end_, segment_rule);
         return;
     }
     while(--pos_ != begin_)
@@ -106,25 +104,25 @@ decrement() noexcept
             continue;
         // "/" segment
         next_ = pos_;
-        t_ = grammar::parse(
+        t_ = *grammar::parse(
             next_, end_,
-            detail::slash_segment_rule).value();
+                detail::slash_segment_rule);
         return;
     }
     next_ = pos_;
     if(*next_ == '/')
     {
         // "/" segment
-        t_ = grammar::parse(
+        t_ = *grammar::parse(
             next_, end_,
-            detail::slash_segment_rule).value();
+            detail::slash_segment_rule);
     }
     else
     {
         // segment-nz
-        t_ = grammar::parse(
+        t_ = *grammar::parse(
             next_, end_,
-            detail::slash_segment_rule).value();
+            detail::slash_segment_rule);
     }
 }
 
