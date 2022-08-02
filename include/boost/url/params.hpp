@@ -93,7 +93,19 @@ public:
 
     /** Constructor
 
-        Copy constructor
+        After the copy, both views will point to
+        the same underlying object.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+        Throws nothing
 
     */
     params(params const&) = default;
@@ -102,6 +114,17 @@ public:
 
         After the assignment, both views will point to
         the same underlying object.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+        Throws nothing
 
     */
     params&
@@ -115,6 +138,13 @@ public:
         The key and value strings must not
         reference the underlying URL buffer, or
         else the behavior is undefined.
+
+        @par Complexity
+        Linear in the size of `init`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
 
         @param init Initializer list with query parameters
 
@@ -131,6 +161,13 @@ public:
         reference the underlying URL buffer, or
         else the behavior is undefined.
 
+        @par Complexity
+        Linear in the size of `init`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
         @param init Initializer list with query parameters
 
      */
@@ -146,6 +183,13 @@ public:
         The key and value strings must not
         reference the underlying URL buffer, or
         else the behavior is undefined.
+
+        @par Complexity
+        Linear in the size of the range.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
 
         @param first An iterator to the beginning of the query parameter range
 

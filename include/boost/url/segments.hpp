@@ -133,7 +133,20 @@ public:
 
     /** Constructor
 
-        Copy constructor
+        After the copy, both views will point to
+        the same underlying object.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+        Throws nothing
+
     */
     segments(segments const&) = default;
 
@@ -141,6 +154,18 @@ public:
 
         After the assignment, both views will point to
         the same underlying object.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+            Constant
+
+        @par Exception Safety
+            Throws nothing
+
     */
     segments&
     operator=(segments const&) & = default;
@@ -149,11 +174,14 @@ public:
 
         This function replaces the contents with
         an initializer list of unencoded strings.
+
         The behavior is undefined if any
         string refers to the contents of `*this`.
+
         All iterators and references to elements
         of the container are invalidated,
         including the @ref end iterator.
+
         @par Example
         @code
         url u = parse_relative_uri( "/path/to/file.txt" );
@@ -234,12 +262,28 @@ public:
     //
     //--------------------------------------------
 
-    /** Return the first element
+    /** Access the first element.
+
+        Returns a reference to the first element.
+
+        @par Precondition
+        `not empty()`
+
+        @par Complexity
+        Constant.
     */
     pct_encoded_view
     front() const;
 
-    /** Return the last element
+    /** Access the last element.
+
+        Returns a reference to the last element.
+
+        @par Precondition
+        `not empty()`
+
+        @par Complexity
+        Constant.
     */
     pct_encoded_view
     back() const;
@@ -250,12 +294,29 @@ public:
     //
     //--------------------------------------------
 
-    /** Return an iterator to the beginning.
+    /** Return an iterator to the first element.
+
+        If the path is empty, @ref end() is returned.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        No-throw guarantee.
     */
     iterator
     begin() const noexcept;
 
-    /** Return an iterator to the end.
+    /** Return an iterator to the element following the last element.
+
+        The element acts as a placeholder; attempting
+        to access it results in undefined behavior.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        No-throw guarantee.
     */
     iterator
     end() const noexcept;
@@ -266,23 +327,29 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if the container is empty
+    /** Check if the path has no segments.
 
-        This function returns true if there are
-        no elements in the container. That is, if
-        the underlying path is the empty string.
+        Returns `true` if there are no segments in the
+        path, i.e. @ref size() returns 0.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        No-throw guarantee.
     */
     bool
     empty() const noexcept;
 
-    /** Return the number of elements in the container
+    /** Return the number of elements in the array.
 
-        This function returns the number of
-        elements in the underlying path. Empty
-        segments count towards this total.
+        This returns the number of segments in the path.
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
-        Throws nothing.
+        No-throw guarantee.
     */
     std::size_t
     size() const noexcept;
@@ -296,7 +363,7 @@ public:
     /** Remove the contents of the container
 
         This function removes all the segments
-        from the container, leaving the
+        from the path, leaving the
         underlying URL with an empty path.
 
         @par Postconditions

@@ -93,7 +93,19 @@ public:
 
     /** Constructor
 
-        Copy constructor
+        After the copy, both views will point to
+        the same underlying object.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+        Throws nothing
 
     */
     params_encoded(params_encoded const&) = default;
@@ -102,6 +114,17 @@ public:
 
         After the assignment, both views will point to
         the same underlying object.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the character buffer extends until
+        it is no longer referenced.
+
+        @par Complexity
+            Constant
+
+        @par Exception Safety
+            Throws nothing
 
     */
     params_encoded&
@@ -114,6 +137,13 @@ public:
 
         The behavior is undefined if the elements
         belong to the container.
+
+        @par Complexity
+        Linear in the size of `init`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
 
         @return Pointer to this params object
 
@@ -132,6 +162,13 @@ public:
         The behavior is undefined if the elements
         belong to the container.
 
+        @par Complexity
+        Linear in the size of `init`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
         @param init Initializer list with query parameters
 
     */
@@ -147,6 +184,13 @@ public:
         The behavior is undefined if the elements
         belong to the container.
 
+        @par Complexity
+        Linear in the size of the input range.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
         @param first Iterator to first query parameter
 
         @param last Iterator to one past the last query parameter
@@ -157,8 +201,7 @@ public:
     assign(FwdIt first, FwdIt last);
 
 private:
-    /** Assignment from forward iterators
-      */
+    // Assignment from forward iterators
     template<class FwdIt>
     void
     assign(FwdIt first, FwdIt last,
