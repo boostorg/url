@@ -36,6 +36,11 @@ bool match_prefix(
     urls::segments_view target,
     urls::segments_view prefix)
 {
+    // Trivially reject target that cannot
+    // contain the prefix
+    if (target.size() < prefix.size())
+        return false;
+
     // Match the prefix segments
     auto it0 = target.begin();
     auto end0 = target.end();
@@ -91,8 +96,8 @@ public:
         `result`.
 
         @param target Target URL path
-        @param result Store the corresponding file
-        @return True if target matches the directory
+        @param result An out-parameter holding the resulting path
+        @return `true` if target matches the directory
      */
     bool match(
         urls::url_view target,
