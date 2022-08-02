@@ -8,7 +8,11 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/grammar/unsigned_dec_rule.hpp>
+#include <boost/url/grammar/unsigned_rule.hpp>
+
+#include <boost/url/grammar/alpha_chars.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/token_rule.hpp>
 
 #include "test_rule.hpp"
 
@@ -16,14 +20,14 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-struct unsigned_dec_rule_test
+struct unsigned_rule_test
 {
     template<class U>
     void
     check(string_view s, U u)
     {
-        auto rv = grammar::parse(
-            s, unsigned_dec_rule<U>{});
+        auto rv = parse(
+            s, unsigned_rule<U>{});
         if(! BOOST_TEST(! rv.has_error()))
             return;
         auto const& t = *rv;
@@ -36,13 +40,18 @@ struct unsigned_dec_rule_test
     {
         // test constexpr
         constexpr auto r =
-            unsigned_dec_rule<unsigned short>{};
+            unsigned_rule<unsigned short>{};
         (void)r;
+
+        // javadoc
+        {
+            auto rv = parse( "32767", unsigned_rule< unsigned short >{} );
+        }
 
         {
             using T = std::uint8_t;
             constexpr auto t =
-                unsigned_dec_rule<T>{};
+                unsigned_rule<T>{};
 
             check("0", T(0));
             check("1", T(1));
@@ -59,7 +68,7 @@ struct unsigned_dec_rule_test
         {
             using T = std::uint16_t;
             constexpr auto t =
-                unsigned_dec_rule<T>{};
+                unsigned_rule<T>{};
 
             check("0", T(0));
             check("1", T(1));
@@ -76,7 +85,7 @@ struct unsigned_dec_rule_test
         {
             using T = std::uint32_t;
             constexpr auto t =
-                unsigned_dec_rule<T>{};
+                unsigned_rule<T>{};
 
             check("0", T(0));
             check("1", T(1));
@@ -92,8 +101,8 @@ struct unsigned_dec_rule_test
 };
 
 TEST_SUITE(
-    unsigned_dec_rule_test,
-    "boost.url.grammar.unsigned_dec_rule");
+    unsigned_rule_test,
+    "boost.url.grammar.unsigned_rule");
 
 } // grammar
 } // urls

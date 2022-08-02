@@ -27,7 +27,7 @@
     'Allocator',
     'CharSet',
     'MutableString',
-    'Rule', 'Rule0', 'Rule1', 'Rules'
+    'Rule', 'Rule1', 'Rule2', 'Rules'
   "/>
 
 </xsl:stylesheet>

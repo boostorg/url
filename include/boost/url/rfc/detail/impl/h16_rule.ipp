@@ -35,8 +35,8 @@ parse(
     std::uint16_t v;
     for(;;)
     {
-        char d;
-        if(!grammar::hexdig_value(*it, d))
+        auto d = grammar::hexdig_value(*it);
+        if(d < 0)
         {
             // not a HEXDIG
             return grammar::error::syntax;
@@ -45,19 +45,22 @@ parse(
         ++it;
         if(it == end)
             break;
-        if(!grammar::hexdig_value(*it, d))
+        d = grammar::hexdig_value(*it);
+        if(d < 0)
             break;
         v = (16 * v) + d;
         ++it;
         if(it == end)
             break;
-        if(!grammar::hexdig_value(*it, d))
+        d = grammar::hexdig_value(*it);
+        if(d < 0)
             break;
         v = (16 * v) + d;
         ++it;
         if(it == end)
             break;
-        if(!grammar::hexdig_value(*it, d))
+        d = grammar::hexdig_value(*it);
+        if(d < 0)
             break;
         v = (16 * v) + d;
         ++it;

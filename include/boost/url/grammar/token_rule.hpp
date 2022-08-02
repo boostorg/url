@@ -19,12 +19,29 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Rule for 1 or more characters from a character set
+/** Match a string of characters from a set
+
+    @par Value Type
+    @code
+    using value_type = string_view;
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref parse.
+    @code
+    result< string_view > rv = parse( "abcdef", token_rule( alpha_chars ) );
+    @endcode
 
     @par BNF
     @code
     token     = 1*( ch )
     @endcode
+
+    @param cs The character set to use
+
+    @see
+        @ref alpha_chars,
+        @ref parse.
 */
 #ifdef BOOST_URL_DOCS
 template<class CharSet>

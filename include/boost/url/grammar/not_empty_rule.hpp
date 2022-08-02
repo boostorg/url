@@ -19,26 +19,30 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Match a non-empty element
+/** Match another rule, if the result is not empty
 
     This adapts another rule such that
     when an empty string is successfully
     parsed, the result will be an error.
-
-    @par Example
-    @code
-    result< pct_encoded_view > = parse( s, not_empty_rule( pct_encoded_rule( unreserved_chars ) ) );
-    @endcode
 
     @par Value Type
     @code
     using value_type = typename Rule::value_type;
     @endcode
 
+    @par Example
+    Rules are used with the function @ref parse.
+    @code
+    result< pct_encoded_view > rv = parse( "Program%20Files",
+        not_empty_rule( pct_encoded_rule( unreserved_chars ) ) );
+    @endcode
+
     @param r The rule to match
 
     @see
-        @ref parse.
+        @ref parse,
+        @ref pct_encoded_rule,
+        @ref unreserved_chars.
 */
 #ifdef BOOST_URL_DOCS
 template<class Rule>

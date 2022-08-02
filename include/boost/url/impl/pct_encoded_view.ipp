@@ -26,10 +26,8 @@ operator*() const noexcept ->
         return ' ';
     if (*pos_ != '%')
         return *pos_;
-    char d0;
-    grammar::hexdig_value(pos_[1], d0);
-    char d1;
-    grammar::hexdig_value(pos_[2], d1);
+    auto d0 = grammar::hexdig_value(pos_[1]);
+    auto d1 = grammar::hexdig_value(pos_[2]);
     return static_cast<char>(
         ((static_cast<
               unsigned char>(d0) << 4) +

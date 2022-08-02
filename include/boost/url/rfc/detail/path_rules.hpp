@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/pchars.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/range_rule.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
 
@@ -88,7 +88,7 @@ constexpr auto segment_nz_nc_rule =
 constexpr auto slash_segment_rule =
     grammar::sequence_rule(
         grammar::squelch(
-            grammar::char_rule('/')),
+            grammar::delim_rule('/')),
         pct_encoded_rule(grammar::ref(pchars)));
 
 //------------------------------------------------
@@ -133,7 +133,7 @@ constexpr auto path_abempty_rule =
     grammar::range_rule(
         grammar::sequence_rule(
             grammar::squelch(
-                grammar::char_rule('/')),
+                grammar::delim_rule('/')),
             segment_rule));
 
 //------------------------------------------------
@@ -156,7 +156,7 @@ constexpr auto path_absolute_rule =
     grammar::range_rule(
         grammar::sequence_rule(
             grammar::squelch(
-                grammar::char_rule('/')),
+                grammar::delim_rule('/')),
             detail::segment_ns_rule),
         detail::slash_segment_rule,
         1);

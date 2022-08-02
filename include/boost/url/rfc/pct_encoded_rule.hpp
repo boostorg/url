@@ -25,39 +25,21 @@ namespace urls {
 
 /** Rule for a string with percent-encoded escapes
 
-    This function returns a rule which, when used
-    with the @ref grammar::parse function, parses
-    its input as a percent-encoded string.
-    The percent-encoding mechanism is used to
-    represent data characters which would otherwise
-    be considered context-dependent delimiters in
-    a syntax. For example the string
-
+    This function returns a rule which matches
+    a percent-encoded string, permitting characters
+    in the string which are also in the specified
+    character set to be used unescaped.
+   
+    @par Value Type
     @code
-    "Program Files"
+    using value_type = pct_encoded_view;
     @endcode
-    
-    contains a space, which is often undestood to
-    be a delimiter. It can be expressed as a
-    percent-encoded escape sequence in hexadecimal
-    as follows:
-    
-    @code
-    "Program%20Files"
-    @endcode
-
-    Given a production rule which includes
-    <em>pct-encoded</em> escape sequences, such as:
-    @code
-    pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
-    @endcode
-    
-    This example shows how to parse a string
-    of pchars:
 
     @par Example
     @code
-    result< pct_encoded_view > rv = grammar::parse( s, pct_encoded_rule( pchars ) );
+    //  pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+
+    result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( pchars ) );
     @endcode
 
     @par BNF
@@ -76,7 +58,8 @@ namespace urls {
 
     @see
         @ref grammar::parse,
-        @ref pct_encoded_view
+        @ref pchars,
+        @ref pct_encoded_view.
 */
 #ifdef BOOST_URL_DOCS
 /**@{*/

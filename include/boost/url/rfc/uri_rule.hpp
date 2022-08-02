@@ -19,6 +19,16 @@ namespace urls {
 
 /** Rule for URI
 
+    @par Value Type
+    @code
+    using value_type = url_view;
+    @endcode
+
+    @par Example
+    @code
+    result< url_view > = grammar::parse( "https://www.example.com/index.htm?id=guest#s1", uri_rule );
+    @endcode
+
     @par BNF
     @code
     URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
@@ -27,6 +37,11 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
         >3. Syntax Components (rfc3986)</a>
+
+    @see
+        @ref grammar::parse,
+        @ref parse_uri,
+        @ref url_view.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ uri_rule{};

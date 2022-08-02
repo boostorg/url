@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/grammar/optional_rule.hpp>
 
@@ -51,7 +51,7 @@ constexpr auto fragment_part_rule =
     grammar::optional_rule(
         grammar::sequence_rule(
             grammar::squelch(
-                grammar::char_rule('#')),
+                grammar::delim_rule('#')),
             fragment_rule));
 
 } // detail

@@ -19,15 +19,14 @@ namespace grammar {
 
 /** The set of hexadecimal digits
 
-    This function object is invocable with
-    the following equivalent signature:
+    Character sets are used with
+    parsing rules and the functions
+    @ref find_if and @ref find_if_not.
 
+    @par Example
     @code
-    bool( char ch ) const noexcept;
+    result< string_view > rv = parse( "8086FC19", token_rule( hexdig_chars ) );
     @endcode
-
-    It returns `true` when `ch` is a member
-    of the character set, and `false` otherwise.
 
     @par BNF
     @code
@@ -53,7 +52,10 @@ namespace grammar {
 
     @see
         @ref find_if,
-        @ref find_if_not.
+        @ref find_if_not,
+        @ref hexdig_value,
+        @ref parse,
+        @ref token_rule.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ hexdig_chars;
@@ -102,34 +104,53 @@ constexpr hexdig_chars_t hexdig_chars{};
 //struct hexdig_upper_chars;
 //struct hexdig_lower_chars;
 
-/** Return the numeric value of a HEXDIG, or -1 if invalid
+/** Return the decimal value of a hex character
 
-    This function returns the numeric value
-    of a single hexadecimal digit, or -1 if
-    `ch` is not a hexadecimal digit.
+    This function returns the decimal
+    value of a hexadecimal character,
+    or -1 if the argument is not a
+    valid hexadecimal digit.
+
+    @par BNF
+    @code
+    HEXDIG      = DIGIT
+                / "A" / "B" / "C" / "D" / "E" / "F"
+                / "a" / "b" / "c" / "d" / "e" / "f"
+    @endcode
+
+    @param ch The character to check
+
+    @return The decimal value or -1
 */
 inline
-bool
-hexdig_value(
-    char c, char& res) noexcept
+signed char
+hexdig_value(char ch) noexcept
 {
-    if (c >= '0' && c <= '9')
+    // Idea for switch statement to
+    // minimize emitted assembly from
+    // Glen Fernandes
+    signed char res;
+    switch(ch)
     {
-        res = c - '0';
-        return true;
+    default:            res = -1; break;
+    case '0':           res =  0; break;
+    case '1':           res =  1; break;
+    case '2':           res =  2; break;
+    case '3':           res =  3; break;
+    case '4':           res =  4; break;
+    case '5':           res =  5; break;
+    case '6':           res =  6; break;
+    case '7':           res =  7; break;
+    case '8':           res =  8; break;
+    case '9':           res =  9; break;
+    case 'a': case 'A': res = 10; break;
+    case 'b': case 'B': res = 11; break;
+    case 'c': case 'C': res = 12; break;
+    case 'd': case 'D': res = 13; break;
+    case 'e': case 'E': res = 14; break;
+    case 'f': case 'F': res = 15; break;
     }
-    if (c >= 'A' && c <= 'F')
-    {
-        res = 10 + c - 'A';
-        return true;
-    }
-    if (c >= 'a' && c <= 'f')
-    {
-        res = 10 + c - 'a';
-        return true;
-    }
-    res = 0;
-    return false;
+    return res;
 }
 
 } // grammar

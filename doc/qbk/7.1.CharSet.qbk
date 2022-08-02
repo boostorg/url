@@ -98,7 +98,6 @@ member functions for character sets be marked `constexpr`.
 
 [heading Models]
 
-* [link url.ref.boost__urls__grammar__all_chars `all_chars`]
 * [link url.ref.boost__urls__grammar__alnum_chars `alnum_chars`]
 * [link url.ref.boost__urls__grammar__alpha_chars `alpha_chars`]
 * [link url.ref.boost__urls__grammar__digit_chars `digit_chars`]

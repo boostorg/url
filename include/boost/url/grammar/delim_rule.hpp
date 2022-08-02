@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_GRAMMAR_CHAR_RULE_HPP
-#define BOOST_URL_GRAMMAR_CHAR_RULE_HPP
+#ifndef BOOST_URL_GRAMMAR_DELIM_RULE_HPP
+#define BOOST_URL_GRAMMAR_DELIM_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
@@ -18,11 +18,13 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Match a single character literal
+/** Match a character literal
 
-    This example matches a period, and returns
-    a view to the matching part of character
-    buffer upon success.
+    This matches the specified character.
+    The value is a reference to the character
+    in the underlying buffer, expressed as a
+    @ref string_view. The function @ref squelch
+    may be used to turn this into `void` instead.
 
     @par Value Type
     @code
@@ -30,8 +32,9 @@ namespace grammar {
     @endcode
 
     @par Example
+    Rules are used with the function @ref parse.
     @code
-    result< string_view > rv = parse( s, char_rule('.') );
+    result< string_view > rv = parse( ".", delim_rule('.') );
     @endcode
 
     @par BNF
@@ -42,14 +45,15 @@ namespace grammar {
     @param ch The character to match
 
     @see
-        @ref parse.
+        @ref parse,
+        @ref squelch.
 */
 #ifdef BOOST_URL_DOCS
 constexpr
 __implementation_defined__
-char_rule( char ch ) noexcept;
+delim_rule( char ch ) noexcept;
 #else
-struct char_rule
+struct delim_rule
 {
     using value_type = string_view;
 
@@ -58,7 +62,7 @@ struct char_rule
         @param ch The character to match
     */
     constexpr
-    char_rule(char ch) noexcept
+    delim_rule(char ch) noexcept
         : ch_(ch)
     {
     }

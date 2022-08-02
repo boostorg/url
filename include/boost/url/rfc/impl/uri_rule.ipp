@@ -15,7 +15,7 @@
 #include <boost/url/rfc/detail/fragment_rule.hpp>
 #include <boost/url/rfc/detail/hier_part_rule.hpp>
 #include <boost/url/rfc/detail/scheme_rule.hpp>
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/grammar/optional_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
@@ -41,7 +41,7 @@ parse(
             grammar::sequence_rule(
                 detail::scheme_rule(),
                 grammar::squelch(
-                    grammar::char_rule(':'))));
+                    grammar::delim_rule(':'))));
         if(! rv)
             return rv.error();
         u.apply_scheme(rv->scheme);
@@ -68,7 +68,7 @@ parse(
             grammar::optional_rule(
                 grammar::sequence_rule(
                     grammar::squelch(
-                        grammar::char_rule('?')),
+                        grammar::delim_rule('?')),
                     query_rule)));
         if(! rv)
             return rv.error();

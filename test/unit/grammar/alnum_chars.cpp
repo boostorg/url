@@ -10,21 +10,25 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/alnum_chars.hpp>
 
-#include <boost/url/grammar/charset.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/token_rule.hpp>
+
 #include "test_rule.hpp"
 
 namespace boost {
 namespace urls {
 namespace grammar {
 
-BOOST_STATIC_ASSERT(is_charset<decltype(
-    alnum_chars)>::value);
-
 struct alnum_chars_test
 {
     void
     run()
     {
+        // javadoc
+        {
+            result< string_view > rv = parse( "Johnny42", token_rule( alnum_chars ) );
+        }
+
         test_char_set(
             alnum_chars,
             "0123456789"

@@ -19,6 +19,16 @@ namespace urls {
 
 /** Rule for URI-reference
 
+    @par Value Type
+    @code
+    using value_type = url_view;
+    @endcode;
+
+    @par Example
+    @code
+    result< url_view > = grammar::parse( "ws://echo.example.com/?name=boost#demo", uri_reference_rule );
+    @endcode
+
     @par BNF
     @code
     URI-reference = URI / relative-ref
@@ -30,6 +40,11 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
         >3. Syntax Components (rfc3986)</a>
+
+    @see
+        @ref grammar::parse,
+        @ref parse_uri_reference,
+        @ref url_view.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ uri_reference_rule{};

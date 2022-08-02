@@ -54,7 +54,8 @@ struct is_mutable_string<T, I, boost::void_t<
                     typename T::value_type, char >::value>{}
                 )>>
     : std::true_type
-{};
+{
+};
 #endif
 
 } // grammar

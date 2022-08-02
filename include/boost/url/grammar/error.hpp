@@ -18,7 +18,11 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Error codes returned by rules
+/** Error codes returned when using rules
+
+    @see
+        @ref condition,
+        @ref parse.
 */
 enum class error
 {
@@ -89,7 +93,11 @@ enum class error
 
 //------------------------------------------------
 
-/** Error conditions returned by the library.
+/** Error conditions for errors received from rules
+
+    @see
+        @ref error,
+        @ref parse.
 */
 enum class condition
 {

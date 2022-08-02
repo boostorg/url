@@ -69,11 +69,6 @@ The library provides these often-used character sets:
     [Value]
     [Description]
 ][
-    [[link url.ref.boost__urls__grammar__all_chars `all_chars`]]
-    [
-        Returns `true` for every `char`.
-    ]
-][
     [[link url.ref.boost__urls__grammar__alnum_chars `alnum_chars`]]
     [
         Contains the upper and lower cased letters, and digits.

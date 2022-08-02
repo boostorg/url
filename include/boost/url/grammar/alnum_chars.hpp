@@ -19,15 +19,14 @@ namespace grammar {
 
 /** The set of letters and digits
 
-    This function object is invocable with
-    the following equivalent signature:
+    Character sets are used with
+    parsing rules and the functions
+    @ref find_if and @ref find_if_not.
 
+    @par Example
     @code
-    bool( char ch ) const noexcept;
+    result< string_view > = parse( "Johnny42", token_rule( alnumchars ) );
     @endcode
-
-    It returns `true` when `ch` is a member
-    of the character set, and `false` otherwise.
 
     @par BNF
     @code
@@ -46,7 +45,9 @@ namespace grammar {
 
     @see
         @ref find_if,
-        @ref find_if_not.
+        @ref find_if_not,
+        @ref parse,
+        @ref token_rule.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ alnum_chars;

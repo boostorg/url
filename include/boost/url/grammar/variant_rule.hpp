@@ -25,23 +25,28 @@ namespace grammar {
     Each specified rule is tried in sequence.
     When the first match occurs, the result
     is stored and returned in the variant. If
-    no match occurs, an error is returned. Since
-    the value type is a `std::tuple`, it is
-    necessary to use `std::get` or `std::visit`
-    to extract the result.
-
-    @par Example
-    @code
-    //  Match an absolute URI or a single asterisk
-    //
-    //  target  = absolute-URI / "*"
-    //
-    constexpr auto target_rule = variant_rule( absolute_uri_rule, char_rule('*') );
-    @endcode
+    no match occurs, an error is returned.
 
     @par Value Type
     @code
     using value_type = variant< typename Rules::value_type... >;
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref parse.
+    @code
+    // request-target = origin-form
+    //                / absolute-form
+    //                / authority-form
+    //                / asterisk-form
+
+    result< variant< url_view, url_view, authority_view, string_view > > rv = grammar::parse(
+        "/index.html?width=full",
+        variant_rule(
+            origin_form_rule,
+            absolute_uri_rule,
+            authority_rule,
+            delim_rule('*') ) );
     @endcode
 
     @par BNF
@@ -57,8 +62,11 @@ namespace grammar {
 
     @see
         @ref absolute_uri_rule,
-        @ref char_rule,
+        @ref authority_rule,
+        @ref delim_rule,
         @ref parse,
+        @ref origin_form_rule,
+        @ref url_view,
         @ref variant.
 */
 #ifdef BOOST_URL_DOCS

@@ -56,7 +56,7 @@ the buffer. Rule expressions can come in several styles:
 ][
     [
     ```
-    ``__char_rule__``('.')
+    ``__delim_rule__``('.')
     ```
     ]
     [

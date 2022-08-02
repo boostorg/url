@@ -8,8 +8,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_GRAMMAR_UNSIGNED_DEC_RULE_HPP
-#define BOOST_URL_GRAMMAR_UNSIGNED_DEC_RULE_HPP
+#ifndef BOOST_URL_GRAMMAR_UNSIGNED_RULE_HPP
+#define BOOST_URL_GRAMMAR_UNSIGNED_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/result.hpp>
@@ -23,18 +23,9 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Rule for an unsigned decimal
+/** Match an unsigned decimal
 
-    Extra leading zeroes are not allowed. The
-    rule is default-constructible and requires
-    the template argument to determine the
-    type of unsigned integer used to store the
-    result.
-
-    @par Example
-    @code
-    auto rv = parse( s, unsigned_dec_rule< unsigned short >{} );
-    @endcode
+    Extra leading zeroes are disallowed.
 
     @par Value Type
     @code
@@ -43,6 +34,12 @@ namespace grammar {
         Unsigned u;
         string_view s;
     };
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref parse.
+    @code
+    auto rv = parse( "32767", unsigned_rule< unsigned short >{} );
     @endcode
 
     @par BNF
@@ -54,14 +51,14 @@ namespace grammar {
     to store the result.
 
     @see
-        @ref parse.
+        @ref grammar::parse.
 */
 #ifdef BOOST_URL_DOCS
 template<class Unsigned>
-struct unsigned_dec_rule;
+struct unsigned_rule;
 #else
 template<class Unsigned>
-struct unsigned_dec_rule
+struct unsigned_rule
 {
     BOOST_STATIC_ASSERT(
         std::numeric_limits<
@@ -88,6 +85,6 @@ struct unsigned_dec_rule
 } // urls
 } // boost
 
-#include <boost/url/grammar/impl/unsigned_dec_rule.hpp>
+#include <boost/url/grammar/impl/unsigned_rule.hpp>
 
 #endif

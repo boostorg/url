@@ -10,6 +10,9 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/lut_chars.hpp>
 
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/token_rule.hpp>
+
 #include "test_rule.hpp"
 
 namespace boost {
@@ -73,6 +76,13 @@ struct lut_chars_test
     void
     run()
     {
+        // javadoc
+        {
+            constexpr lut_chars vowel_chars = "AEIOU" "aeiou";
+
+            result< string_view > rv = parse( "Aiea", token_rule( vowel_chars ) );
+        }
+
         test_lut_chars();
 
         // C++11

@@ -11,7 +11,7 @@
 #include <boost/url/grammar/range_rule.hpp>
 
 #include <boost/url/grammar/alpha_chars.hpp>
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/grammar/token_rule.hpp>
@@ -56,9 +56,34 @@ struct range_rule_test
         constexpr auto r = range_rule(
             token_rule(alpha_chars),
             sequence_rule(
-                grammar::squelch(
-                    char_rule('+')),
+                squelch(
+                    delim_rule('+')),
                 token_rule(alpha_chars)));
+
+        // javadoc
+        {
+            result< range<string_view> > rv = parse( ";alpha;xray;charlie",
+                range_rule(
+                    sequence_rule(
+                        squelch( delim_rule( ';' ) ),
+                        token_rule( alpha_chars ) ),
+                    1 ) );
+        }
+
+        // javadoc
+        {
+            result< range< string_view > > rv = parse( "whiskey,tango,foxtrot",
+                range_rule(
+                    token_rule( alpha_chars ),          // first
+                    sequence_rule(                      // next
+                        squelch( delim_rule(',') ),
+                        token_rule( alpha_chars ) ) ) );
+        }
+
+        // default construction
+        {
+            range<string_view> v;
+        }
 
         check("", {}, r);
         check("x", {"x"}, r);

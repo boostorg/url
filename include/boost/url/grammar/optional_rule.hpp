@@ -25,14 +25,15 @@ namespace grammar {
     Optional BNF elements are denoted with
     square brackets.
 
-    @par Example
-    @code
-    result< optional< string_view > > rv = parse( s, optional_rule( char_rule( ':' ) );
-    @endcode
-
     @par Value Type
     @code
     using value_type = optional< typename Rule::value_type >;
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref grammar::parse.
+    @code
+    result< optional< string_view > > rv = parse( "", optional_rule( token_rule( alpha_chars ) ) );
     @endcode
 
     @par BNF
@@ -44,11 +45,13 @@ namespace grammar {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#section-3.8"
         >3.8.  Optional Sequence (rfc5234)</a>
 
-    @par r The rule to match
+    @param r The rule to match
 
     @see
+        @ref alpha_chars,
+        @ref parse,
         @ref optional,
-        @ref parse.
+        @ref token_rule.
 */
 #ifdef BOOST_URL_DOCS
 template<class Rule>

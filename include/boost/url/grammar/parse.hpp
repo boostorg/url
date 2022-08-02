@@ -92,9 +92,9 @@ parse(
 /** Parse a character buffer using a rule
 
     This function parses a complete string into
-    the specified sequence of grammar rules. If
-    the string is not completely consumed, 
-    an error is returned instead.
+    the specified sequence of rules. If the
+    string is not completely consumed, an
+    error is returned instead.
 
     @param s The input string
 
@@ -151,6 +151,8 @@ struct rule_ref
     is no longer referenced. For best results,
     `ref` should only be used with compile-time
     constants.
+
+    @param r The rule to use
 */
 template<class Rule>
 constexpr

@@ -19,18 +19,19 @@ namespace grammar {
 
 /** Match a decimal octet
 
-    A decimal octet is a fancy way of
+    A decimal octet is precise way of
     saying a number from 0 to 255. These
     are commonly used in IPv4 addresses.
-
-    @par Example
-    @code
-    result< unsigned char > = parse( s, dec_octet_rule );
-    @endcode
 
     @par Value Type
     @code
     using value_type = unsigned char;
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref parse.
+    @code
+    result< unsigned char > rv = parse( "255", dec_octet_rule );
     @endcode
 
     @par BNF

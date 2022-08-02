@@ -25,7 +25,7 @@ namespace urls {
 
     @par Example
     @code
-    result< url_view >
+    result< url_view > = grammar::parse( "/index.htm?layout=mobile", origin_form_rule );
     @endcode
 
     @par BNF
@@ -40,8 +40,9 @@ namespace urls {
         >5.3.1.  origin-form (rfc7230)</a>
 
     @see
-        @ref url_view,
-        @ref parse
+        @ref grammar::parse,
+        @ref parse_origin_form,
+        @ref url_view.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ origin_form_rule;

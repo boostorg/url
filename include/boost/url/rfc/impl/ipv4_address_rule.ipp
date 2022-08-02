@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_IMPL_IPV4_ADDRESS_RULE_IPP
 
 #include <boost/url/rfc/ipv4_address_rule.hpp>
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/dec_octet_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
@@ -32,13 +32,13 @@ parse(
         grammar::sequence_rule(
             grammar::dec_octet_rule,
             grammar::squelch(
-                grammar::char_rule('.')),
+                grammar::delim_rule('.')),
             grammar::dec_octet_rule,
             grammar::squelch(
-                grammar::char_rule('.')),
+                grammar::delim_rule('.')),
             grammar::dec_octet_rule,
             grammar::squelch(
-                grammar::char_rule('.')),
+                grammar::delim_rule('.')),
             grammar::dec_octet_rule));
     if(! rv)
         return rv.error();

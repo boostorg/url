@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/detail/ip_literal_rule.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
@@ -35,7 +35,7 @@ parse(
     // '['
     {
         auto rv = grammar::parse(
-            it, end, grammar::char_rule('['));
+            it, end, grammar::delim_rule('['));
         if(! rv)
             return rv.error();
     }
@@ -52,7 +52,7 @@ parse(
             grammar::sequence_rule(
                 ipv6_address_rule,
                 grammar::squelch(
-                    grammar::char_rule(']'))));
+                    grammar::delim_rule(']'))));
         if(! rv)
             return rv.error();
         t.ipv6 = *rv;
@@ -66,7 +66,7 @@ parse(
             grammar::sequence_rule(
                 ipvfuture_rule,
                 grammar::squelch(
-                    grammar::char_rule(']'))));
+                    grammar::delim_rule(']'))));
         if(! rv)
             return rv.error();
         t.is_ipv6 = false;

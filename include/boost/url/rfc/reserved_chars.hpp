@@ -18,15 +18,12 @@ namespace urls {
 
 /** The reserved character set
 
-    This function object is invocable with
-    the following equivalent signature:
+    Character sets are used with parsing rules.
 
+    @par Example
     @code
-    bool( char ch ) const noexcept;
+    result< pct_encoded_view > = grammar::parse( "Program%20Files", reserved_chars );
     @endcode
-
-    It returns `true` when `ch` is a member
-    of the character set, and `false` otherwise.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.3"
@@ -34,7 +31,9 @@ namespace urls {
 
     @see
         @ref grammar::find_if,
-        @ref grammar::find_if_not.
+        @ref grammar::find_if_not,
+        @ref grammar::parse,
+        @ref pct_encoded_rule.
 */
 constexpr auto reserved_chars = ~unreserved_chars;
 

@@ -10,8 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/dec_octet_rule.hpp>
 
-#include <boost/url/result.hpp>
-#include <boost/url/grammar/detail/tuple.hpp>
+#include <boost/url/grammar/parse.hpp>
 
 #include "test_suite.hpp"
 
@@ -33,6 +32,10 @@ struct dec_octet_rule_test
         constexpr auto r = dec_octet_rule;
         (void)r;
 
+        // javadoc
+        {
+            result< unsigned char > rv = parse( "255", dec_octet_rule );
+        }
         testRule();
     }
 };

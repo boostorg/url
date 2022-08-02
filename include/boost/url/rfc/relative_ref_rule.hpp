@@ -19,6 +19,16 @@ namespace urls {
 
 /** Rule for relative-ref
 
+    @par Value Type
+    @code
+    using value_type = url_view;
+    @endcode
+
+    @par Example
+    @code
+    result< url_view > = grammar::parse( "images/dot.gif?v=hide#a", relative_ref_rule );
+    @endcode
+
     @par BNF
     @code
     relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
@@ -27,6 +37,11 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2
         >4.2. Relative Reference (rfc3986)</a>
+
+    @see
+        @ref grammar::parse,
+        @ref parse_relative_ref,
+        @ref url_view.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ relative_ref_rule;

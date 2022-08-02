@@ -18,15 +18,12 @@ namespace urls {
 
 /** The sub-delims character set
 
-    This function object is invocable with
-    the following equivalent signature:
+    Character sets are used with parsing rules.
 
+    @par Example
     @code
-    bool( char ch ) const noexcept;
+    result< pct_encoded_view > = grammar::parse( "Program%20Files", sub_delim_chars );
     @endcode
-
-    It returns `true` when `ch` is a member
-    of the character set, and `false` otherwise.
 
     @par BNF
     @code
@@ -40,7 +37,9 @@ namespace urls {
 
     @see
         @ref grammar::find_if,
-        @ref grammar::find_if_not.
+        @ref grammar::find_if_not,
+        @ref grammar::parse,
+        @ref pct_encoded_rule.
 */
 constexpr
 grammar::lut_chars

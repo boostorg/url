@@ -40,25 +40,28 @@ struct is_pred<T, boost::void_t<
 } // detail
 #endif
 
-/** A character set based on a constexpr lookup table.
+/** A set of characters
 
-    Objects of this type are invocable with
-    the equivalent signature:
+    Character sets are used with
+    parsing rules and the functions
+    @ref find_if and @ref find_if_not.
+    The characters defined by instances of
+    this set are provided upon construction.
+    The `constexpr` implementation allows
+    these to become compile-time constants.
 
+    @par Example
     @code
-    bool( char ch ) const noexcept;
+    constexpr lut_chars vowel_chars = "AEIOU" "aeiou";
+
+    result< string_view > rv = parse( "Aiea", token_rule( vowel_chars ) );
     @endcode
 
-    The function object returns `true` when
-    `ch` is a member of the character set,
-    and `false` otherwise. The type of the
-    function satisfies the <em>CharSet</em>
-    requirements.
-
     @see
-        @ref is_charset,
         @ref find_if,
-        @ref find_if_not.
+        @ref find_if_not,
+        @ref parse,
+        @ref token_rule.
 */
 class lut_chars
 {
@@ -134,7 +137,7 @@ class lut_chars
     }
 
 public:
-    /** Constructor.
+    /** Constructor
 
         This function constructs a character
         set which has as a single member,
@@ -163,7 +166,7 @@ public:
     {
     }
 
-    /** Constructor.
+    /** Constructor
 
         This function constructs a character
         set which has as members, all of the
@@ -185,7 +188,8 @@ public:
         @param s A null-terminated string.
     */
     constexpr
-    lut_chars(char const* s) noexcept
+    lut_chars(
+        char const* s) noexcept
         : lut_chars(construct(s))
     {
     }
@@ -347,7 +351,7 @@ public:
         This statement declares a character set
         containing everything but vowels:
         @code
-        constexpr lut_chars not_vowels = ~lut_chars( "aAeEiIoOuU" );
+        constexpr lut_chars not_vowels = ~lut_chars( "AEIOU" "aeiou" );
         @endcode
 
         @par Complexity

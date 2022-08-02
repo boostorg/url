@@ -21,6 +21,16 @@ namespace urls {
 
 /** Rule for query
 
+    @par Value Type
+    @code
+    using value_type = params_encoded_view;
+    @endcode
+
+    @par Example
+    @code
+    result< params_encoded_view > = grammar::parse( "format=web&id=42&compact", query_rule );
+    @endcode
+
     @par BNF
     @code
     query           = *( pchar / "/" / "?" )
@@ -39,6 +49,11 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
         >3.4. Query (rfc3986)</a>
+
+    @see
+        @ref grammar::parse,
+        @ref params_encoded_view,
+        @ref parse_query_params.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ query_rule;

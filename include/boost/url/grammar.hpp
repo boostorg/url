@@ -12,11 +12,10 @@
 
 #include <boost/url/detail/config.hpp>
 
-#include <boost/url/grammar/all_chars.hpp>
 #include <boost/url/grammar/alnum_chars.hpp>
 #include <boost/url/grammar/alpha_chars.hpp>
 #include <boost/url/grammar/ascii.hpp>
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/dec_octet_rule.hpp>
 #include <boost/url/grammar/digit_chars.hpp>
@@ -30,7 +29,7 @@
 #include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/grammar/token_rule.hpp>
 #include <boost/url/grammar/type_traits.hpp>
-#include <boost/url/grammar/unsigned_dec_rule.hpp>
+#include <boost/url/grammar/unsigned_rule.hpp>
 #include <boost/url/grammar/variant_rule.hpp>
 
 #endif

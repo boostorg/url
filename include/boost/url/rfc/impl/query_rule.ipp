@@ -67,7 +67,7 @@ struct query_param_rule_t
         {
             auto rv = grammar::parse(
                 it, end,
-                grammar::char_rule('='));
+                grammar::delim_rule('='));
             t.has_value = rv.has_value();
             if(! t.has_value)
             {
@@ -115,7 +115,7 @@ parse(
             {
                 auto rv = grammar::parse(
                     it, end,
-                    grammar::char_rule('&'));
+                    grammar::delim_rule('&'));
                 if(! rv)
                     return rv.error();
             }

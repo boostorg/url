@@ -52,10 +52,8 @@ pct_decode_unchecked(
     auto const decode_hex = [](
         char const* it)
     {
-        char d0;
-        grammar::hexdig_value(it[0], d0);
-        char d1;
-        grammar::hexdig_value(it[1], d1);
+        auto d0 = grammar::hexdig_value(it[0]);
+        auto d1 = grammar::hexdig_value(it[1]);
         return static_cast<char>(
             ((static_cast<
                 unsigned char>(d0) << 4) +

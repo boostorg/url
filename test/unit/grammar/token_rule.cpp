@@ -11,6 +11,7 @@
 #include <boost/url/grammar/token_rule.hpp>
 
 #include <boost/url/grammar/alpha_chars.hpp>
+#include <boost/url/grammar/parse.hpp>
 
 #include "test_rule.hpp"
 
@@ -27,6 +28,11 @@ struct token_rule_test
         constexpr auto r =
             token_rule(alpha_chars);
         (void)r;
+
+        // javadoc
+        {
+            result< string_view > rv = parse( "abcdef", token_rule( alpha_chars ) );
+        }
     }
 };
 

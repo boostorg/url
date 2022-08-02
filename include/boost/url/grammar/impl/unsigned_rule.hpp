@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_GRAMMAR_IMPL_UNSIGNED_DEC_RULE_HPP
-#define BOOST_URL_GRAMMAR_IMPL_UNSIGNED_DEC_RULE_HPP
+#ifndef BOOST_URL_GRAMMAR_IMPL_UNSIGNED_RULE_HPP
+#define BOOST_URL_GRAMMAR_IMPL_UNSIGNED_RULE_HPP
 
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/digit_chars.hpp>
@@ -20,7 +20,7 @@ namespace grammar {
 
 template<class U>
 auto
-unsigned_dec_rule<U>::
+unsigned_rule<U>::
 parse(
     char const*& it,
     char const* end

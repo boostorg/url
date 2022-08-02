@@ -1827,25 +1827,7 @@ public:
         return lhs.compare(rhs) >= 0;
     }
 
-
-    /** Format the encoded URL to the output stream.
-
-        This function serializes the encoded URL
-        to the output stream.
-
-        @par Example
-        @code
-        url_view u( "http://www.example.com/index.htm" );
-
-        std::cout << u << std::endl;
-        @endcode
-
-        @return A reference to the output stream, for chaining
-
-        @param os The output stream to write to.
-
-        @param u The URL to write.
-    */
+    // hidden friend
     friend
     std::ostream&
     operator<<(
@@ -1856,17 +1838,46 @@ public:
     }
 };
 
+/** Format the encoded URL to the output stream
+
+    This function serializes the encoded URL
+    to the output stream.
+
+    @par Example
+    @code
+    url_view u( "http://www.example.com/index.htm" );
+
+    std::cout << u << std::endl;
+    @endcode
+
+    @return A reference to the output stream, for chaining
+
+    @param os The output stream to write to.
+
+    @param u The URL to write.
+*/
+std::ostream&
+operator<<(
+    std::ostream& os,
+    url_view const& u);
+
 //------------------------------------------------
 
-/** Parse an absolute-URI
+/** Return a parsed absolute-URI string
 
     This function parses a string according
-    to the absolute-URI grammar below, and
-    returns a @ref url_view referencing the string.
+    to the grammar below and returns a view
+    referencing the passed string upon success,
+    else returns an error.
     Ownership of the string is not transferred;
     the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
+    the lifetime of the character buffer extends
+    until the view is no longer being accessed.
+
+    @par Example
+    @code
+    result< url_view > rv = parse_absolute_uri( "http://example.com/index.htm?id=1" );
+    @endcode
 
     @par BNF
     @code
@@ -1880,8 +1891,7 @@ public:
 
     @throw std::length_error `s.size() > url_view::max_size`
 
-    @return A result containing the view to the URL,
-        or an error code if the parsing was unsuccessful.
+    @return A @ref result containing a value or an error
 
     @param s The string to parse
 
@@ -1890,7 +1900,7 @@ public:
         >4.3. Absolute URI (rfc3986)</a>
 
     @see
-        @ref parse_absolute_uri,
+        @ref parse_origin_form,
         @ref parse_relative_ref,
         @ref parse_uri,
         @ref parse_uri_reference,
@@ -1901,10 +1911,22 @@ result<url_view>
 parse_absolute_uri(
     string_view s);
 
-/** Return a parsed origin-form string as a url view
+//------------------------------------------------
+
+/** Return a parsed origin-form string
+
+    This function parses a string according
+    to the grammar below and returns a view
+    referencing the passed string upon success,
+    else returns an error.
+    Ownership of the string is not transferred;
+    the caller is responsible for ensuring that
+    the lifetime of the character buffer extends
+    until the view is no longer being accessed.
 
     @par Example
     @code
+    result< url_view > = parse_origin_form( "/index.htm?layout=mobile" );
     @endcode
 
     @par BNF
@@ -1914,53 +1936,15 @@ parse_absolute_uri(
     absolute-path = 1*( "/" segment )
     @endcode
 
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1"
-        >5.3.1.  origin-form (rfc7230)</a>
-
-    @see
-        @ref url_view.
-*/
-BOOST_URL_DECL
-result<url_view>
-parse_origin_form(
-    string_view s);
-
-/** Parse a URI
-
-    This function parses a string according
-    to the URI grammar below, and returns a
-    @ref url_view referencing the string.
-    Ownership of the string is not transferred;
-    the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
-
-    @par BNF
-    @code
-    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-    hier-part     = "//" authority path-abempty
-                  / path-absolute
-                  / path-rootless
-                  / path-empty
-    @endcode
-
-    @par Exception Safety
-    Strong guarantee.
-
-    Exceptions thrown on excessive input length.
-
     @throw std::length_error `s.size() > url_view::max_size`
 
-    @return A result containing the view to the URL,
-        or an error code if the parsing was unsuccessful.
+    @return A @ref result containing a value or an error
 
     @param s The string to parse
 
     @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
-        >3. Syntax Components (rfc3986)</a>
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1"
+        >5.3.1.  origin-form (rfc7230)</a>
 
     @see
         @ref parse_absolute_uri,
@@ -1971,18 +1955,26 @@ parse_origin_form(
 */
 BOOST_URL_DECL
 result<url_view>
-parse_uri(
+parse_origin_form(
     string_view s);
 
-/** Parse a relative-ref
+//------------------------------------------------
+
+/** Return a parsed relative-ref string
 
     This function parses a string according
-    to the relative-ref grammar below, and
-    returns a @ref url_view referencing the string.
+    to the grammar below and returns a view
+    referencing the passed string upon success,
+    else returns an error.
     Ownership of the string is not transferred;
     the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
+    the lifetime of the character buffer extends
+    until the view is no longer being accessed.
+
+    @par Example
+    @code
+    result< url_view > = parse_relative_ref( "images/dot.gif?v=hide#a" );
+    @endcode
 
     @par BNF
     @code
@@ -1997,8 +1989,7 @@ parse_uri(
 
     @throw std::length_error `s.size() > url_view::max_size`
 
-    @return A result containing the view to the URL,
-        or an error code if the parsing was unsuccessful.
+    @return A @ref result containing a value or an error
 
     @param s The string to parse
 
@@ -2010,7 +2001,7 @@ parse_uri(
 
     @see
         @ref parse_absolute_uri,
-        @ref parse_relative_ref,
+        @ref parse_origin_form,
         @ref parse_uri,
         @ref parse_uri_reference,
         @ref url_view.
@@ -2020,15 +2011,73 @@ result<url_view>
 parse_relative_ref(
     string_view s);
 
-/** Parse a URI-reference
+//------------------------------------------------
+
+/** Return a parsed URI string
 
     This function parses a string according
-    to the URI-reference grammar below, and
-    returns a @ref url_view referencing the string.
+    to the grammar below and returns a view
+    referencing the passed string upon success,
+    else returns an error.
     Ownership of the string is not transferred;
     the caller is responsible for ensuring that
-    the lifetime of the string extends until the
-    view is no longer being accessed.
+    the lifetime of the character buffer extends
+    until the view is no longer being accessed.
+
+    @par Example
+    @code
+    result< url_view > = parse_uri( "https://www.example.com/index.htm?id=guest#s1" );
+    @endcode
+
+    @par BNF
+    @code
+    URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+    hier-part     = "//" authority path-abempty
+                  / path-absolute
+                  / path-rootless
+                  / path-empty
+    @endcode
+
+    @throw std::length_error `s.size() > url_view::max_size`
+
+    @return A @ref result containing a value or an error
+
+    @param s The string to parse
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3"
+        >3. Syntax Components (rfc3986)</a>
+
+    @see
+        @ref parse_absolute_uri,
+        @ref parse_origin_form,
+        @ref parse_relative_ref,
+        @ref parse_uri_reference,
+        @ref url_view.
+*/
+BOOST_URL_DECL
+result<url_view>
+parse_uri(
+    string_view s);
+
+//------------------------------------------------
+
+/** Return a parsed URI-reference string
+
+    This function parses a string according
+    to the grammar below and returns a view
+    referencing the passed string upon success,
+    else returns an error.
+    Ownership of the string is not transferred;
+    the caller is responsible for ensuring that
+    the lifetime of the character buffer extends
+    until the view is no longer being accessed.
+
+    @par Example
+    @code
+    result< url_view > = parse_uri_reference( "ws://echo.example.com/?name=boost#demo" );
+    @endcode
 
     @par BNF
     @code
@@ -2052,10 +2101,9 @@ parse_relative_ref(
 
     @throw std::length_error `s.size() > url_view::max_size`
 
-    @return A result containing the view to the URL,
-        or an error code if the parsing was unsuccessful.
+    @return A @ref result containing a value or an error
 
-    @param s The string to parse.
+    @param s The string to parse
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
@@ -2065,9 +2113,9 @@ parse_relative_ref(
 
     @see
         @ref parse_absolute_uri,
+        @ref parse_origin_form,
         @ref parse_relative_ref,
         @ref parse_uri,
-        @ref parse_uri_reference,
         @ref url_view.
 */
 BOOST_URL_DECL

@@ -19,7 +19,7 @@ to parse an integer between 0 and 255 into a value type of
 auto result< unsigned char > rv = parse( "100", dec_octet_rule );
 ```
 
-When it is desired to match a single character, __char_rule__
+When it is desired to match a single character, __delim_rule__
 is used. This rule
 
 
@@ -39,14 +39,13 @@ into a value type of `unsigned char`:
 auto result< unsigned char > rv = parse( "100", dec_octet_rule );
 ```
 
-The `constexpr` function
-[link url.ref.boost__urls__grammar__char_rule `char_rule`]
+The `constexpr` function __delim_rule__
 is used to match a single character literal. The following
 statement results in an error because when this overload is
 used, matching only part of the string is a failure:
 
 ```
-auto result< string_view > rv = parse( "xyz", char_rule( 'x' ));
+auto result< string_view > rv = parse( "xyz", delim_rule( 'x' ));
 ```
 
 [heading Sequences]
@@ -68,9 +67,9 @@ to easily declare a variable which will parse an IPv4 address:
 ```
 constexpr auto
 ipv4_address_rule = sequence_rule(
-    dec_octet_rule, char_rule('.'),
-    dec_octet_rule, char_rule('.'),
-    dec_octet_rule, char_rule('.'),
+    dec_octet_rule, delim_rule('.'),
+    dec_octet_rule, delim_rule('.'),
+    dec_octet_rule, delim_rule('.'),
     dec_octet_rule );
 ```
 
@@ -112,7 +111,7 @@ We can define a rule to parse it:
 constexpr auto
 peer_rule = sequence_rule(
     not_empty_rule( pct_encoded_rule( unreserved_chars + sub_delims_chars ) ),
-    optional_rule( sequence_rule( char_rule( ':' ), token_rule( digit_chars ) ) );
+    optional_rule( sequence_rule( delim_rule( ':' ), token_rule( digit_chars ) ) );
 ```
 
 [heading And More...]

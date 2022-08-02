@@ -52,13 +52,12 @@ local SOURCES =
     url_view.cpp
     urls.cpp
     variant.cpp
-    grammar/all_chars.cpp
     grammar/alnum_chars.cpp
     grammar/alpha_chars.cpp
     grammar/ascii.cpp
-    grammar/char_rule.cpp
     grammar/charset.cpp
     grammar/dec_octet_rule.cpp
+    grammar/delim_rule.cpp
     grammar/digit_chars.cpp
     grammar/error.cpp
     grammar/hexdig_chars.cpp
@@ -70,7 +69,7 @@ local SOURCES =
     grammar/sequence_rule.cpp
     grammar/token_rule.cpp
     grammar/type_traits.cpp
-    grammar/unsigned_dec_rule.cpp
+    grammar/unsigned_rule.cpp
     grammar/variant_rule.cpp
     rfc/absolute_uri_rule.cpp
     rfc/authority_rule.cpp

@@ -1611,8 +1611,7 @@ public:
         url& dest,
         error_code& ec);
 
-    /** Format the encoded url to the output stream
-    */
+    // hidden friend
     friend
     std::ostream&
     operator<<(std::ostream& os, url const& u)
@@ -1721,8 +1720,33 @@ resolve(
     dest.resolve(base, ref, ec);
 }
 
+//----------------------------------------------------------
+
+/** Format the encoded URL to the output stream
+
+    This function serializes the encoded URL
+    to the output stream.
+
+    @par Example
+    @code
+    url u( "http://www.example.com/index.htm" );
+
+    std::cout << u << std::endl;
+    @endcode
+
+    @return A reference to the output stream, for chaining
+
+    @param os The output stream to write to.
+
+    @param u The URL to write.
+*/
+std::ostream&
+operator<<(std::ostream& os, url const& u);
+
 } // urls
 } // boost
+
+//------------------------------------------------
 
 // std::hash specialization
 #ifndef BOOST_URL_DOCS

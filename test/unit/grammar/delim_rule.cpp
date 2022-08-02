@@ -8,22 +8,18 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/type_traits.hpp>
-#include <boost/static_assert.hpp>
+
 #include "test_suite.hpp"
 
 namespace boost {
 namespace urls {
 namespace grammar {
 
-struct char_rule_test
+struct delim_rule_test
 {
-    BOOST_STATIC_ASSERT(
-        is_rule<char_rule>::value);
-
     template<class R>
     static
     void
@@ -47,27 +43,25 @@ struct char_rule_test
     }
 
     void
-    testRule()
-    {
-        ok("$", char_rule('$'));
-        
-        bad("~", char_rule('$'));
-    }
-
-    void
     run()
     {
         // test constexpr
-        constexpr auto r = char_rule('.');
+        constexpr auto r = delim_rule('.');
         (void)r;
 
-        testRule();
+        // javadoc
+        {
+            result< string_view > rv = parse( ".", delim_rule('.') );
+        }
+
+        ok("$", delim_rule('$'));       
+        bad("~", delim_rule('$'));
     }
 };
 
 TEST_SUITE(
-    char_rule_test,
-    "boost.url.grammar.char_rule");
+    delim_rule_test,
+    "boost.url.grammar.delim_rule");
 
 } // grammar
 } // urls

@@ -31,18 +31,33 @@ namespace grammar {
     implicit specification of linear white
     space between each rule.
 
-    @par Example
-    @code
-    constexpr auto ipv4_address_rule = sequence_rule(
-        dec_octet_rule, char_rule('.'),
-        dec_octet_rule, char_rule('.'),
-        dec_octet_rule, char_rule('.'),
-        dec_octet_rule );
-    @endcode
-
     @par Value Type
     @code
-    using value_type = std::tuple( typename Rules::value_type );
+    using value_type = __see_below__;
+    @endcode
+
+    The sequence rule usually returns a
+    `std::tuple` containing the the `value_type`
+    of each corresponding rule in the sequence,
+    except that `void` values are removed.
+    However, if there is exactly one non-void
+    value type `T`, then the sequence rule
+    returns `result<T>` instead of
+    `result<tuple<...>>`.
+
+    @par Example
+    Rules are used with the function @ref parse.
+    @code
+    result< std::tuple< unsigned char, unsigned char, unsigned char, unsigned char > > rv =
+        parse( "192.168.0.1", 
+            sequence_rule(
+                dec_octet_rule,
+                squelch( delim_rule('.') ),
+                dec_octet_rule,
+                squelch( delim_rule('.') ),
+                dec_octet_rule,
+                squelch( delim_rule('.') ),
+                dec_octet_rule ) );
     @endcode
 
     @par BNF
@@ -57,9 +72,10 @@ namespace grammar {
     @param rn A list of one or more rules to match
 
     @see
-        @ref char_rule,
         @ref dec_octet_rule,
-        @ref parse.
+        @ref delim_rule,
+        @ref parse,
+        @ref squelch.
 */
 #ifdef BOOST_URL_DOCS
 template<class... Rules>
@@ -184,7 +200,7 @@ struct squelch_rule_t
         "www.example.com:443",
         grammar::sequence_rule(
             pct_encoded_rule(unreserved_chars + '-' + '.'),
-            grammar::squelch( grammar::char_rule( ':' ) ),
+            grammar::squelch( grammar::delim_rule( ':' ) ),
             grammar::token_rule( grammar::digit_chars ) ) );
     @endcode
 
@@ -195,17 +211,17 @@ struct squelch_rule_t
         "www.example.com:443",
         grammar::sequence_rule(
             pct_encoded_rule(unreserved_chars + '-' + '.'),
-            grammar::char_rule( ':' ),
+            grammar::delim_rule( ':' ),
             grammar::token_rule( grammar::digit_chars ) ) );
     @endcode
 
     @par r The rule to squelch
 
     @see
-        @ref grammar::char_rule,
+        @ref grammar::delim_rule,
         @ref grammar::digit_chars,
         @ref grammar::parse,
-        @ref grammar::sequence,
+        @ref grammar::sequence_rule,
         @ref grammar::token_rule,
         @ref pct_encoded_view,
         @ref pct_encoded_rule,

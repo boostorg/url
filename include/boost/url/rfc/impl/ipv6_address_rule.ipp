@@ -147,9 +147,10 @@ parse(
             --n;
             break;
         }
-        char d;
+        auto d =
+            grammar::hexdig_value(*it);
         if( b != -1 &&
-            !grammar::hexdig_value(*it, d))
+            d < 0)
         {
             // ends in "::"
             break;

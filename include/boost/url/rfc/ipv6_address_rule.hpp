@@ -26,7 +26,7 @@ namespace urls {
 
     @par Example
     @code
-    result< ipv6_address > rv = parse( "2001:0db8:85a3:0000:0000:8a2e:0370:7334", ipv6_address_rule );
+    result< ipv6_address > rv = grammar::parse( "2001:0db8:85a3:0000:0000:8a2e:0370:7334", ipv6_address_rule );
     @endcode
 
     @par BNF
@@ -56,7 +56,8 @@ namespace urls {
 
     @see
         @ref ipv6_address,
-        @ref parse.
+        @ref parse_ipv6_address,
+        @ref grammar::parse.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ ipv6_address_rule;

@@ -70,11 +70,9 @@ validate_pct_encoding(
                     error::missing_pct_hexdig);
                 return n;
             }
-            char d0;
-            bool r0 = grammar::hexdig_value(it[0], d0);
-            char d1;
-            bool r1 = grammar::hexdig_value(it[1], d1);
-            if( !r0 || !r1 )
+            auto d0 = grammar::hexdig_value(it[0]);
+            auto d1 = grammar::hexdig_value(it[1]);
+            if( d0 < 0 || d1 < 0)
             {
                 // expected HEXDIG
                 ec = BOOST_URL_ERR(

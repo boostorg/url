@@ -48,8 +48,8 @@ skip:
             // missing HEXDIG
             return grammar::error::syntax;
         }
-        char r;
-        if(!grammar::hexdig_value(*it, r))
+        auto r = grammar::hexdig_value(*it);
+        if(r < 0)
         {
             // expected HEXDIG
             return grammar::error::syntax;
@@ -60,7 +60,8 @@ skip:
             // missing HEXDIG
             return grammar::error::syntax;
         }
-        if(!grammar::hexdig_value(*it, r))
+        r = grammar::hexdig_value(*it);
+        if(r < 0)
         {
             // expected HEXDIG
             return grammar::error::syntax;

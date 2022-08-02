@@ -10,7 +10,8 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/sequence_rule.hpp>
 
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/dec_octet_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/digit_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/token_rule.hpp>
@@ -32,8 +33,7 @@ struct sequence_rule_test
         R const& r)
     {
         BOOST_TEST(
-            grammar::parse(
-                s, r).has_value());
+            parse(s, r).has_value());
     }
 
     template<class R>
@@ -43,54 +43,69 @@ struct sequence_rule_test
         R const& r)
     {
         BOOST_TEST(
-            grammar::parse(
-                s, r).has_error());
+            parse(s, r).has_error());
     }
 
     void
     testSequence()
     {
-        ok("$", sequence_rule(char_rule('$')));
-        ok("$!", sequence_rule(char_rule('$'), char_rule('!')));
-        bad("$", sequence_rule(char_rule('!')));
+        ok("$", sequence_rule(delim_rule('$')));
+        ok("$!", sequence_rule(delim_rule('$'), delim_rule('!')));
+        bad("$", sequence_rule(delim_rule('!')));
     }
 
     void
     testSquelch()
     {
         result< std::tuple< pct_encoded_view, string_view > > r1 =
-            grammar::parse(
+            parse(
                 "www.example.com:443",
-                grammar::sequence_rule(
+                sequence_rule(
                     pct_encoded_rule(unreserved_chars + '-' + '.'),
-                    grammar::squelch( grammar::char_rule( ':' ) ),
-                    grammar::token_rule( grammar::digit_chars ) ) );
+                    squelch( delim_rule( ':' ) ),
+                    token_rule( digit_chars ) ) );
 
         result< std::tuple<
                 pct_encoded_view, string_view, string_view > > r2 =
-            grammar::parse(
+            parse(
                 "www.example.com:443",
-                grammar::sequence_rule(
+                sequence_rule(
                     pct_encoded_rule(unreserved_chars + '-' + '.'),
-                    grammar::char_rule( ':' ),
-                    grammar::token_rule( grammar::digit_chars ) ) );
+                    delim_rule( ':' ),
+                    token_rule( digit_chars ) ) );
     }
 
     void
     run()
     {
         // test constexpr
-        constexpr auto r1 =
-            sequence_rule(
-                char_rule('.'),
-                char_rule('.'));
-        constexpr auto r2 =
-            sequence_rule(
-                squelch( char_rule('.') ),
-                char_rule('.'));
-        (void)r1;
-        (void)r2;
-        
+        {
+            constexpr auto r1 =
+                sequence_rule(
+                    delim_rule('.'),
+                    delim_rule('.'));
+            constexpr auto r2 =
+                sequence_rule(
+                    squelch( delim_rule('.') ),
+                    delim_rule('.'));
+            (void)r1;
+            (void)r2;
+        }
+
+        // javadoc
+        {
+            result< std::tuple< unsigned char, unsigned char, unsigned char, unsigned char > > rv =
+                parse( "192.168.0.1", 
+                    sequence_rule(
+                        dec_octet_rule,
+                        squelch( delim_rule('.') ),
+                        dec_octet_rule,
+                        squelch( delim_rule('.') ),
+                        dec_octet_rule,
+                        squelch( delim_rule('.') ),
+                        dec_octet_rule ) );
+        }
+
         testSequence();
         testSquelch();
     }

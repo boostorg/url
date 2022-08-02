@@ -14,7 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/url/grammar/charset.hpp>
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/token_rule.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
@@ -39,10 +39,10 @@ parse(
     auto rv = grammar::parse(
         it, end,
         grammar::sequence_rule(
-            grammar::char_rule('v'),
+            grammar::delim_rule('v'),
             grammar::token_rule(
                 grammar::hexdig_chars),
-            grammar::char_rule('.'),
+            grammar::delim_rule('.'),
             grammar::token_rule(minor_chars)));
     if(! rv)
         return rv.error();

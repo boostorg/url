@@ -13,7 +13,7 @@
 #include <boost/url/rfc/origin_form_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/detail/path_rules.hpp>
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/range_rule.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
 
@@ -27,13 +27,13 @@ constexpr auto origin_form_rule =
     grammar::sequence_rule(
         grammar::range_rule(
             grammar::sequence_rule(
-                grammar::char_rule('/'),
+                grammar::delim_rule('/'),
                 segment_rule),
             segment_rule,
             1),
         grammar::optional_rule(
             grammar::sequence_rule(
-                grammar::char_rule('?'),
+                grammar::delim_rule('?'),
                 query_rule))
     );
 
@@ -70,7 +70,7 @@ parse(
         auto rv = grammar::parse(it, end,
             grammar::range_rule(
                 grammar::sequence_rule(
-                    grammar::char_rule('/'),
+                    grammar::delim_rule('/'),
                     detail::segment_rule),
                 1));
         if(! rv)
@@ -85,7 +85,7 @@ parse(
             grammar::optional_rule(
                 grammar::sequence_rule(
                     grammar::squelch(
-                        grammar::char_rule('?')),
+                        grammar::delim_rule('?')),
                     query_rule)));
         if(! rv)
             return rv.error();

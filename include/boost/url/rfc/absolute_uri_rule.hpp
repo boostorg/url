@@ -26,7 +26,7 @@ namespace urls {
 
     @par Example
     @code
-    result< url_view > rv = parse( "http://example.com/index.htm?id=1", absolute_uri_rule );
+    result< url_view > rv = grammar::parse( "http://example.com/index.htm?id=1", absolute_uri_rule );
     @endcode
 
     @par BNF
@@ -44,7 +44,8 @@ namespace urls {
         >4.3. Absolute URI (rfc3986)</a>
 
     @see
-        @ref parse,
+        @ref grammar::parse,
+        @ref parse_absolute_uri,
         @ref url_view.
 */
 #ifdef BOOST_URL_DOCS

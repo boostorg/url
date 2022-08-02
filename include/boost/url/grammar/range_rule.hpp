@@ -207,9 +207,36 @@ struct range_rule_t;
 
 /** Match a repeating number of elements
 
+    Elements are matched using the passed rule.
+    <br>
+    Normally when the rule returns an error,
+    the range ends and the input is rewound to
+    one past the last character that matched
+    successfully. However, if the rule returns
+    the special value @ref error::end, the
+    input is not rewound. This allows for rules
+    which consume input without producing
+    elements in the range. For example, to
+    relax the grammar for a comma-delimited
+    list by allowing extra commas in between
+    elements.
+
     @par Value Type
     @code
-    using value_type = range< typename Rule::value_type >;
+    using value_type = grammar::range< typename Rule::value_type >;
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref parse.
+    @code
+    // range    = 1*( ";" token )
+
+    result< range<string_view> > rv = parse( ";alpha;xray;charlie",
+        range_rule(
+            sequence_rule(
+                squelch( delim_rule( ';' ) ),
+                token_rule( alpha_chars ) ),
+            1 ) );
     @endcode
 
     @par BNF
@@ -221,9 +248,26 @@ struct range_rule_t;
     @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#section-3.6"
         >3.6.  Variable Repetition (rfc5234)</a>
 
+    @param next The rule to use for matching
+    each element. The range extends until this
+    rule returns an error.
+
+    @param N The minimum number of elements for
+    the range to be valid. If omitted, this
+    defaults to zero.
+
+    @param M The maximum number of elements for
+    the range to be valid. If omitted, this
+    defaults to unlimited.
+
     @see
+        @ref alpha_chars,
+        @ref delim_rule,
+        @ref error::end,
         @ref parse,
-        @ref range.
+        @ref range,
+        @ref sequence_rule,
+        @ref squelch.
 */
 #ifdef BOOST_URL_DOCS
 template<class Rule>
@@ -298,9 +342,39 @@ range_rule(
 
 /** Match a repeating number of elements
 
+    Two rules are used for match. The rule
+    `first` is used for matching the first
+    element, while the `next` rule is used
+    to match every subsequent element.
+    <br>
+    Normally when the rule returns an error,
+    the range ends and the input is rewound to
+    one past the last character that matched
+    successfully. However, if the rule returns
+    the special value @ref error::end, the
+    input is not rewound. This allows for rules
+    which consume input without producing
+    elements in the range. For example, to
+    relax the grammar for a comma-delimited
+    list by allowing extra commas in between
+    elements.
+
     @par Value Type
     @code
     using value_type = range< typename Rule::value_type >;
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref parse.
+    @code
+    // range    = [ token ] *( "," token )
+
+    result< range< string_view > > rv = parse( "whiskey,tango,foxtrot",
+        range_rule(
+            token_rule( alpha_chars ),          // first
+            sequence_rule(                      // next
+                squelch( delim_rule(',') ),
+                token_rule( alpha_chars ) ) ) );
     @endcode
 
     @par BNF
@@ -313,9 +387,30 @@ range_rule(
     @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#section-3.6"
         >3.6.  Variable Repetition (rfc5234)</a>
 
+    @param first The rule to use for matching
+    the first element. If this rule returns
+    an error, the range will be empty.
+
+    @param next The rule to use for matching
+    each subsequent element. The range extends
+    until this rule returns an error.
+
+    @param N The minimum number of elements for
+    the range to be valid. If omitted, this
+    defaults to zero.
+
+    @param M The maximum number of elements for
+    the range to be valid. If omitted, this
+    defaults to unlimited.
+
     @see
+        @ref alpha_chars,
+        @ref delim_rule,
+        @ref error::end,
         @ref parse,
-        @ref range.
+        @ref range,
+        @ref sequence_rule,
+        @ref squelch.
 */
 #ifdef BOOST_URL_DOCS
 template<

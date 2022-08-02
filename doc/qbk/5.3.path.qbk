@@ -355,18 +355,6 @@ the guarantee that all constructed views contain valid path segments:
 ][
     [[link url.ref.boost__urls__parse_path `parse_path`]]
     [['any path]]
-][
-    [[link url.ref.boost__urls__parse_path_abempty `parse_path_abempty`]]
-    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-abempty]]]
-][
-    [[link url.ref.boost__urls__parse_path_absolute `parse_path_absolute`]]
-    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-absolute]]]
-][
-    [[link url.ref.boost__urls__parse_path_noscheme `parse_path_noscheme`]]
-    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-noscheme]]]
-][
-    [[link url.ref.boost__urls__parse_path_rootless `parse_path_rootless`]]
-    [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path-rootless]]]
 ]]
 
 The functions for modifying paths in a __url__ are as follows:

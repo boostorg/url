@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_IMPL_AUTHORITY_RULE_IPP
 
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/rfc/detail/host_rule.hpp>
@@ -40,7 +40,7 @@ parse(
                 grammar::sequence_rule(
                     detail::userinfo_rule,
                     grammar::squelch(
-                        grammar::char_rule('@')))));
+                        grammar::delim_rule('@')))));
         if(! rv)
             return rv.error();
         if(rv->has_value())

@@ -26,7 +26,7 @@ namespace urls {
 
     @par Example
     @code
-    result< ipv4_address > rv = parse( "192.168.0.1", ipv4_address_rule );
+    result< ipv4_address > rv = grammar::parse( "192.168.0.1", ipv4_address_rule );
     @endcode
 
     @par BNF
@@ -48,7 +48,8 @@ namespace urls {
 
     @see
         @ref ipv4_address,
-        @ref parse.
+        @ref parse_ipv4_address,
+        @ref grammar::parse.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ ipv4_address_rule;

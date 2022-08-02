@@ -10,37 +10,41 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/hexdig_chars.hpp>
 
-#include <boost/url/grammar/charset.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/token_rule.hpp>
+
 #include "test_rule.hpp"
 
 namespace boost {
 namespace urls {
 namespace grammar {
 
-BOOST_STATIC_ASSERT(is_charset<decltype(
-    hexdig_chars)>::value);
-
 struct hexdig_chars_test
 {
     void
     run()
     {
+        // javadoc
+        {
+            result< string_view > rv = parse( "8086FC19", token_rule( hexdig_chars ) );
+        }
+
         test_char_set(
             hexdig_chars,
             "0123456789"
             "ABCDEF"
             "abcdef");
 
+        // hexdig_value
         for_each_char(
         [](char c)
         {
-            char d;
             if(hexdig_chars(c))
                 BOOST_TEST(
-                    hexdig_value(c, d));
+                    hexdig_value(c) >= 0);
             else
                 BOOST_TEST(
-                    !hexdig_value(c, d));
+                    hexdig_value(c) < 0);
         });
     }
 };

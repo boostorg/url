@@ -26,7 +26,7 @@ namespace urls {
 
     @par Example
     @code
-    result< authority_view > rv = parse( "user:pass@example.com:8080", authority_rule );
+    result< authority_view > rv = grammar::parse( "user:pass@example.com:8080", authority_rule );
     @endcode
 
     @par BNF
@@ -40,7 +40,8 @@ namespace urls {
 
     @see
         @ref authority_view,
-        @ref parse.
+        @ref grammar::parse,
+        @ref parse_authority.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ authority_rule;
