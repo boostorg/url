@@ -17,62 +17,104 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <iostream>
-#include <fstream>
 
 namespace urls = boost::urls;
 namespace fs = boost::filesystem;
 using string_view = urls::string_view;
 
+/// Check if a target matches a prefix
+/**
+    This function checks if the first segments
+    of the target match the corresponding prefix
+    segments.
+
+    @param target Target segments
+    @param prefix Prefix segments
+    @return True if target matches prefix
+ */
+bool match_prefix(
+    urls::segments_view target,
+    urls::segments_view prefix)
+{
+    // Match the prefix segments
+    auto it0 = target.begin();
+    auto end0 = target.end();
+    auto it1 = prefix.begin();
+    auto end1 = prefix.end();
+    while (
+        it0 != end0 &&
+        it1 != end1 &&
+        *it0 == *it1)
+    {
+        ++it0;
+        ++it1;
+    }
+    return it1 == end1;
+}
+
+/// A static route representing files in a directory
+/**
+    A route is a URL logical prefix representing
+    static files in the specified root directory.
+
+    The `match` function returns the corresponding
+    file for a given URL path.
+ */
 class route
 {
 public:
+    /// Constructor
     route(string_view prefix, fs::path root)
         : prefix_(urls::parse_uri_reference(prefix).value())
         , root_(std::move(root))
     {}
 
+    /// Constructor
     route(urls::url prefix, fs::path root)
         : prefix_(std::move(prefix))
         , root_(std::move(root))
     {}
 
+    /// Match target URL path with a file
+    /**
+        This function attempts to match the target
+        URL path with the route prefix.
+
+        If the prefix matches, the target is
+        considered to represent a file in the root
+        directory. When that happens, the target
+        prefix is consumed and other segments are
+        appended to the root path.
+
+        The complete file path represented by the
+        target is returned as the output parameter
+        `result`.
+
+        @param target Target URL path
+        @param result Store the corresponding file
+        @return True if target matches the directory
+     */
     bool match(
         urls::url_view target,
         fs::path& result)
     {
-        // Target segments
-        urls::segments_view segs = target.segments();
-
-        // Prefix segments
-        urls::segments prefix_segs = prefix_.segments();
-
-        // Match the prefix segments
-        auto it0 = segs.begin();
-        auto end0 = segs.end();
-        auto it1 = prefix_segs.begin();
-        auto end1 = prefix_segs.end();
-        while (
-            it0 != end0 &&
-            it1 != end1 &&
-            *it0 == *it1)
+        if (match_prefix(
+                target.segments(),
+                static_cast<urls::url_view>(prefix_).segments()))
         {
-            ++it0;
-            ++it1;
+            result = root_;
+            auto segs = target.segments();
+            auto it = segs.begin();
+            auto end = segs.end();
+            std::advance(it, prefix_.segments().size());
+            while (it != end)
+            {
+                result /= *it;
+                ++it;
+            }
+            return true;
         }
-        if (it1 != end1)
-        {
-            result = {};
-            return false;
-        }
-
-        // Append following segments to root
-        result = root_;
-        while (it0 != end0)
-        {
-            result /= *it0;
-            ++it0;
-        }
-        return true;
+        return false;
     }
 
 private:
