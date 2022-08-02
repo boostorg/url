@@ -1725,8 +1725,7 @@ set_encoded_fragment(string_view s)
     s = buf.maybe_copy(s);
     check_invariants();
     auto t = grammar::parse(
-        s, detail::fragment_rule).value(
-            BOOST_CURRENT_LOCATION);
+        s, detail::fragment_rule).value(BOOST_URL_POS);
     auto dest = set_fragment_impl(s.size());
     u_.decoded_[id_frag] = t.size();
     if(! s.empty())
