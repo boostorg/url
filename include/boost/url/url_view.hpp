@@ -83,6 +83,7 @@ namespace urls {
 
     @see
         @ref parse_absolute_uri,
+        @ref parse_origin_form,
         @ref parse_relative_ref,
         @ref parse_uri,
         @ref parse_uri_reference.
@@ -1898,6 +1899,31 @@ public:
 BOOST_URL_DECL
 result<url_view>
 parse_absolute_uri(
+    string_view s);
+
+/** Return a parsed origin-form string as a url view
+
+    @par Example
+    @code
+    @endcode
+
+    @par BNF
+    @code
+    origin-form    = absolute-path [ "?" query ]
+
+    absolute-path = 1*( "/" segment )
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1"
+        >5.3.1.  origin-form (rfc7230)</a>
+
+    @see
+        @ref url_view.
+*/
+BOOST_URL_DECL
+result<url_view>
+parse_origin_form(
     string_view s);
 
 /** Parse a URI

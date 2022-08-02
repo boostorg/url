@@ -18,12 +18,13 @@
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/ascii.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/path_rules.hpp>
+#include <boost/url/rfc/origin_form_rule.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/relative_ref_rule.hpp>
 #include <boost/url/rfc/uri_rule.hpp>
 #include <boost/url/rfc/detail/host_rule.hpp>
+#include <boost/url/rfc/detail/path_rules.hpp>
 #include <array>
 #include <ostream>
 
@@ -577,14 +578,15 @@ parse_absolute_uri(
 }
 
 result<url_view>
-parse_uri(
+parse_origin_form(
     string_view s)
 {
     if(s.size() > url_view::max_size())
         detail::throw_length_error(
             "url_view::max_size exceeded",
             BOOST_CURRENT_LOCATION);
-    return grammar::parse(s, uri_rule);
+    return grammar::parse(
+        s, origin_form_rule);
 }
 
 result<url_view>
@@ -598,6 +600,16 @@ parse_relative_ref(
 
     return grammar::parse(
         s, relative_ref_rule);
+}
+result<url_view>
+parse_uri(
+    string_view s)
+{
+    if(s.size() > url_view::max_size())
+        detail::throw_length_error(
+            "url_view::max_size exceeded",
+            BOOST_CURRENT_LOCATION);
+    return grammar::parse(s, uri_rule);
 }
 
 result<url_view>

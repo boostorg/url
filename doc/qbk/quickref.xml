@@ -54,11 +54,8 @@
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__parse_absolute_uri">parse_absolute_uri</link></member>
           <member><link linkend="url.ref.boost__urls__parse_authority">parse_authority</link></member>
+          <member><link linkend="url.ref.boost__urls__parse_origin_form">parse_origin_form</link></member>
           <member><link linkend="url.ref.boost__urls__parse_path">parse_path</link></member>
-          <member><link linkend="url.ref.boost__urls__parse_path_abempty">parse_path_abempty</link></member>
-          <member><link linkend="url.ref.boost__urls__parse_path_absolute">parse_path_absolute</link></member>
-          <member><link linkend="url.ref.boost__urls__parse_path_noscheme">parse_path_noscheme</link></member>
-          <member><link linkend="url.ref.boost__urls__parse_path_rootless">parse_path_rootless</link></member>
           <member><link linkend="url.ref.boost__urls__parse_query_params">parse_query_params</link></member>
           <member><link linkend="url.ref.boost__urls__parse_relative_ref">parse_relative_ref</link></member>
           <member><link linkend="url.ref.boost__urls__parse_uri">parse_uri</link></member>
@@ -159,10 +156,6 @@
           <member><link linkend="url.ref.boost__urls__authority_rule">authority_rule</link></member>
           <member><link linkend="url.ref.boost__urls__ipv4_address_rule">ipv4_address_rule</link></member>
           <member><link linkend="url.ref.boost__urls__ipv6_address_rule">ipv6_address_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__path_abempty_rule">path_abempty_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__path_absolute_rule">path_absolute_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__path_noscheme_rule">path_noscheme_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__path_rootless_rule">path_rootless_rule</link></member>
           <member><link linkend="url.ref.boost__urls__query_rule">query_rule</link></member>
           <member><link linkend="url.ref.boost__urls__relative_ref_rule">relative_ref_rule</link></member>
           <member><link linkend="url.ref.boost__urls__uri_reference_rule">uri_reference_rule</link></member>

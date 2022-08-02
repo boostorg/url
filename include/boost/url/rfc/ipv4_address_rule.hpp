@@ -19,6 +19,16 @@ namespace urls {
 
 /** Rule for an IP version 4 style address
 
+    @par Value Type
+    @code
+    using value_type = ipv4_address;
+    @endcode
+
+    @par Example
+    @code
+    result< ipv4_address > rv = parse( "192.168.0.1", ipv4_address_rule );
+    @endcode
+
     @par BNF
     @code
     IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
@@ -35,6 +45,10 @@ namespace urls {
         >IPv4 (Wikipedia)</a>
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
         >3.2.2. Host (rfc3986)</a>
+
+    @see
+        @ref ipv4_address,
+        @ref parse.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ ipv4_address_rule;

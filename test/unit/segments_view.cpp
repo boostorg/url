@@ -278,106 +278,6 @@ public:
     }
 
     void
-    test_parse_path_abempty()
-    {
-    /*
-        path-abempty  = *( "/" segment )
-    */
-        check("", {}, &parse_path_abempty);
-        check("/", {}, &parse_path_abempty);
-        check("/a", {"a"}, &parse_path_abempty);
-        check("/:", {":"}, &parse_path_abempty);
-        check("/:/", {":",""}, &parse_path_abempty);
-        check("/a/", {"a",""}, &parse_path_abempty);
-        check("/a/b", {"a","b"}, &parse_path_abempty);
-        check("/%41/b", {"A","b"}, &parse_path_abempty);
-        check("///b", {"","","b"}, &parse_path_abempty);
-        check("/%2f/b", {"/","b"}, &parse_path_abempty);
-        check("/%2541//", {"%41","",""}, &parse_path_abempty);
-        check("/a/b/c", {"a","b","c"}, &parse_path_abempty);
-
-        bad("a", &parse_path_abempty);
-        bad("a/", &parse_path_abempty);
-        bad("/%2", &parse_path_abempty);
-        bad("/%%", &parse_path_abempty);
-    }
-
-    void
-    test_parse_path_absolute()
-    {
-    /*
-        path-absolute = "/" [ segment-nz *( "/" segment ) ]
-    */
-        check("/", {}, &parse_path_absolute);
-        check("/a", {"a"}, &parse_path_absolute);
-        check("/a/", {"a",""}, &parse_path_absolute);
-        check("/:", {":"}, &parse_path_absolute);
-        check("/:/", {":",""}, &parse_path_absolute);
-        check("/a/b", {"a","b"}, &parse_path_absolute);
-        check("/%41/b", {"A","b"}, &parse_path_absolute);
-        check("/%2f/b", {"/","b"}, &parse_path_absolute);
-        check("/%2541//", {"%41","",""}, &parse_path_absolute);
-        check("/a/b/c", {"a","b","c"}, &parse_path_abempty);
-
-        bad("", &parse_path_absolute);
-        bad("//", &parse_path_absolute);
-        bad("///b", &parse_path_absolute);
-        bad("a", &parse_path_absolute);
-        bad("a/", &parse_path_absolute);
-        bad("/%2", &parse_path_absolute);
-        bad("/%%", &parse_path_absolute);
-    }
-
-    void
-    test_parse_path_noscheme()
-    {
-    /*
-        path-noscheme = segment-nz-nc *( "/" segment )
-    */
-        check("a", {"a"}, &parse_path_noscheme);
-        check("a/", {"a",""}, &parse_path_noscheme);
-        check("a/b", {"a","b"}, &parse_path_noscheme);
-        check("%41/b", {"A","b"}, &parse_path_noscheme);
-        check("%2f/b", {"/","b"}, &parse_path_noscheme);
-        check("%2541//", {"%41","",""}, &parse_path_noscheme);
-        check("http%3a//a.htm", {"http:","","a.htm"}, &parse_path_noscheme);
-        check("a/b/c", {"a","b","c"}, &parse_path_noscheme);
-
-        bad("", &parse_path_noscheme);
-        bad("%2g/", &parse_path_noscheme);
-        bad("/", &parse_path_noscheme);
-        bad("/:", &parse_path_noscheme);
-        bad(":", &parse_path_noscheme);
-        bad("a:", &parse_path_noscheme);
-        bad(":/", &parse_path_noscheme);
-        bad("a:a", &parse_path_noscheme);
-    }
-
-    void
-    test_parse_path_rootless()
-    {
-    /*
-        path-rootless = segment-nz *( "/" segment )
-    */
-        check(":", {":"}, &parse_path_rootless);
-        check("a:", {"a:"}, &parse_path_rootless);
-        check(":/", {":",""}, &parse_path_rootless);
-        check("a:a", {"a:a"}, &parse_path_rootless);
-        check("a", {"a"}, &parse_path_rootless);
-        check("a/", {"a",""}, &parse_path_rootless);
-        check("a/b", {"a","b"}, &parse_path_rootless);
-        check("%41/b", {"A","b"}, &parse_path_rootless);
-        check("%2f/b", {"/","b"}, &parse_path_rootless);
-        check("%2541//", {"%41","",""}, &parse_path_rootless);
-        check("http%3a//a.htm", {"http:","","a.htm"}, &parse_path_rootless);
-        check("a/b/c", {"a","b","c"}, &parse_path_rootless);
-
-        bad("", &parse_path_rootless);
-        bad("/", &parse_path_rootless);
-        bad("/:", &parse_path_rootless);
-    }
-
-    void
     testCapacity()
     {
         segments_view sv;
@@ -440,10 +340,6 @@ public:
         testOutput();
 
         test_parse_path();
-        test_parse_path_abempty();
-        test_parse_path_absolute();
-        test_parse_path_noscheme();
-        test_parse_path_rootless();
 
         testExamples();
     }

@@ -19,6 +19,16 @@ namespace urls {
 
 /** Rule for authority
 
+    @par Value Type
+    @code
+    using value_type = authority_view;
+    @endcode
+
+    @par Example
+    @code
+    result< authority_view > rv = parse( "user:pass@example.com:8080", authority_rule );
+    @endcode
+
     @par BNF
     @code
     authority   = [ userinfo "@" ] host [ ":" port ]
@@ -27,6 +37,10 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
         >3.2. Authority (rfc3986)</a>
+
+    @see
+        @ref authority_view,
+        @ref parse.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ authority_rule;

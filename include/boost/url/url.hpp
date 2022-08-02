@@ -1630,7 +1630,6 @@ private:
     friend class static_url_base;
 
     void check_invariants() const noexcept;
-    void build_tab() noexcept;
 
     void
     ensure_space(

@@ -19,6 +19,16 @@ namespace urls {
 
 /** Rule for absolute-URI
 
+    @par Value Type
+    @code
+    using value_type = url_view;
+    @endcode
+
+    @par Example
+    @code
+    result< url_view > rv = parse( "http://example.com/index.htm?id=1", absolute_uri_rule );
+    @endcode
+
     @par BNF
     @code
     absolute-URI    = scheme ":" hier-part [ "?" query ]
@@ -32,6 +42,10 @@ namespace urls {
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.3"
         >4.3. Absolute URI (rfc3986)</a>
+
+    @see
+        @ref parse,
+        @ref url_view.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ absolute_uri_rule;

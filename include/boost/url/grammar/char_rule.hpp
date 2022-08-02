@@ -24,14 +24,14 @@ namespace grammar {
     a view to the matching part of character
     buffer upon success.
 
-    @par Example
-    @code
-    result< string_view > = parse( s, char_rule('.') );
-    @endcode
-
     @par Value Type
     @code
     using value_type = string_view;
+    @endcode
+
+    @par Example
+    @code
+    result< string_view > rv = parse( s, char_rule('.') );
     @endcode
 
     @par BNF

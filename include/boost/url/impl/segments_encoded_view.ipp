@@ -16,8 +16,8 @@
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/path.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/rfc/path_rules.hpp>
 #include <boost/url/rfc/query_rule.hpp>
+#include <boost/url/rfc/detail/path_rules.hpp>
 #include <ostream>
 
 namespace boost {
@@ -68,71 +68,28 @@ parse_path(string_view s) noexcept
     if(s.empty())
         return segments_encoded_view();
     if(s[0] == '/')
-        return parse_path_abempty(s);
-    return parse_path_rootless(s);
-}
-
-result<segments_encoded_view>
-parse_path_abempty(
-    string_view s) noexcept
-{
-    auto rv = grammar::parse(
-        s, path_abempty_rule);
-    if(! rv)
-        return rv.error();
-    auto const& t = *rv;
-    return segments_encoded_view(
-        t.string(),
-        detail::path_segments(
-            t.string(),
-            t.size()));
-}
-
-result<segments_encoded_view>
-parse_path_absolute(
-    string_view s) noexcept
-{
-    auto rv = grammar::parse(
-        s, path_absolute_rule);
-    if(! rv)
-        return rv.error();
-    auto const& v = *rv;
-    return segments_encoded_view(
-        v.string(),
-        detail::path_segments(
-            v.string(),
-            v.size()));
-}
-
-result<segments_encoded_view>
-parse_path_noscheme(
-    string_view s) noexcept
-{
-    auto rv = grammar::parse(s,
-        path_noscheme_rule);
-    if(! rv)
-        return rv.error();
-    auto const& t = *rv;
-    return segments_encoded_view(
-        t.string(),
-        detail::path_segments(
-            t.string(),
-            t.size()));
-}
-
-result<segments_encoded_view>
-parse_path_rootless(
-    string_view s) noexcept
-{
-    auto rv = grammar::parse(
-        s, path_rootless_rule);
-    if(! rv)
-        return rv.error();
-    auto const& v = *rv;
-    return segments_encoded_view(
-        v.string(), detail::path_segments(
-            v.string(),
-            v.size()));
+    {
+        auto rv = grammar::parse(
+            s, detail::path_abempty_rule);
+        if(! rv)
+            return rv.error();
+        return segments_encoded_view(
+            rv->string(),
+            detail::path_segments(
+                rv->string(),
+                rv->size()));
+    }
+    {
+        auto rv = grammar::parse(
+            s, detail::path_rootless_rule);
+        if(! rv)
+            return rv.error();
+        return segments_encoded_view(
+            rv->string(),
+            detail::path_segments(
+                rv->string(),
+                rv->size()));
+    }
 }
 
 } // urls

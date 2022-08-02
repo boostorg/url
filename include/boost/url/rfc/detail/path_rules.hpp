@@ -10,10 +10,11 @@
 #ifndef BOOST_URL_RFC_DETAIL_PATH_RULES_HPP
 #define BOOST_URL_RFC_DETAIL_PATH_RULES_HPP
 
-#include <boost/url/grammar/char_rule.hpp>
-#include <boost/url/grammar/sequence_rule.hpp>
 #include <boost/url/rfc/pchars.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/range_rule.hpp>
+#include <boost/url/grammar/sequence_rule.hpp>
 
 namespace boost {
 namespace urls {
@@ -48,15 +49,6 @@ constexpr auto segment_rule =
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
         >3.3. Path (rfc3986)</a>
-
-    @see
-        @ref path_abempty_rule,
-        @ref path_absolute_rule,
-        @ref path_noscheme_rule,
-        @ref path_rootless_rule,
-        @ref pchars,
-        @ref segment_rule,
-        @ref segment_nz_nc_rule
 */
 constexpr auto segment_nz_rule =
     grammar::not_empty_rule(
@@ -121,6 +113,102 @@ struct segment_ns_rule_t
 };
 
 constexpr segment_ns_rule_t segment_ns_rule{};
+#endif
+
+//------------------------------------------------
+
+/** Rule for path-abempty grammar
+
+    @par BNF
+    @code
+    path-abempty  = *( "/" segment )
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+        >3.3. Path (rfc3986)</a>
+*/
+constexpr auto path_abempty_rule =
+    grammar::range_rule(
+        grammar::sequence_rule(
+            grammar::char_rule('/'),
+            segment_rule));
+
+//------------------------------------------------
+
+/** Rule for path-absolute grammar.
+
+    @par BNF
+    @code
+    path-absolute = "/" [ segment-nz *( "/" segment ) ]
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+        >3.3. Path (rfc3986)</a>
+*/
+#ifdef BOOST_URL_DOCS
+constexpr __implementation_defined__ path_absolute_rule;
+#else
+constexpr auto path_absolute_rule =
+    grammar::range_rule(
+        grammar::sequence_rule(
+            grammar::char_rule('/'),
+            detail::segment_ns_rule),
+        detail::slash_segment_rule,
+        1);
+#endif
+
+//------------------------------------------------
+
+/** Rule for path-noscheme grammar.
+
+    @par BNF
+    @code
+    path-noscheme = segment-nz-nc *( "/" segment )
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+        >3.3. Path (rfc3986)</a>
+*/
+#ifdef BOOST_URL_DOCS
+constexpr __implementation_defined__ path_noscheme_rule;
+#else
+constexpr auto path_noscheme_rule =
+    grammar::range_rule(
+        segment_nz_nc_rule,
+        slash_segment_rule,
+        1);
+#endif
+
+//------------------------------------------------
+
+/** Rule for path-rootless grammar.
+
+    @par Example
+    @code
+    path_rootless_rule t;
+    bool success = parse( it, end, ec, t);
+    @endcode
+
+    @par BNF
+    @code
+    path-rootless = segment-nz *( "/" segment )
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+        >3.3. Path (rfc3986)</a>
+*/
+#ifdef BOOST_URL_DOCS
+constexpr __implementation_defined__ path_rootless_rule;
+#else
+constexpr auto path_rootless_rule =
+    grammar::range_rule(
+        segment_nz_rule,
+        slash_segment_rule,
+        1);
 #endif
 
 } // detail

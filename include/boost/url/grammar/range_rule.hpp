@@ -358,12 +358,19 @@ private:
         class R0_, class R1_>
     friend
     constexpr
-    range_rule_t<R0_, R1_>
+    auto
     range_rule(
         R0_ const& first,
         R1_ const& next,
         std::size_t N,
-        std::size_t M) noexcept;
+        std::size_t M) noexcept ->
+#if 1
+            typename std::enable_if<
+                ! std::is_integral<R1_>::value,
+                range_rule_t<R0_, R1_>>::type;
+#else
+        range_rule_t<R0_, R1_>;
+#endif
 
     R0 const first_;
     R1 const next_;
@@ -374,13 +381,20 @@ private:
 template<
     class Rule1, class Rule2>
 constexpr
-range_rule_t<Rule1, Rule2>
+auto
 range_rule(
     Rule1 const& first,
     Rule2 const& next,
     std::size_t N = 0,
     std::size_t M =
-        std::size_t(-1)) noexcept
+        std::size_t(-1)) noexcept ->
+#if 1
+    typename std::enable_if<
+        ! std::is_integral<Rule2>::value,
+        range_rule_t<Rule1, Rule2>>::type
+#else
+    range_rule_t<Rule1, Rule2>
+#endif
 {
     // If you get a compile error here it
     // means that your rule does not meet

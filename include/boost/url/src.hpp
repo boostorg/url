@@ -70,6 +70,7 @@ in a translation unit of the program.
 #include <boost/url/rfc/impl/authority_rule.ipp>
 #include <boost/url/rfc/impl/ipv4_address_rule.ipp>
 #include <boost/url/rfc/impl/ipv6_address_rule.ipp>
+#include <boost/url/rfc/impl/origin_form_rule.ipp>
 #include <boost/url/rfc/impl/query_rule.ipp>
 #include <boost/url/rfc/impl/relative_ref_rule.ipp>
 #include <boost/url/rfc/impl/uri_rule.ipp>

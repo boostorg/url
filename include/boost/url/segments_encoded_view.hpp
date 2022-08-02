@@ -81,10 +81,6 @@ class url_view;
 
     @see
         @ref parse_path,
-        @ref parse_path_abempty,
-        @ref parse_path_absolute,
-        @ref parse_path_noscheme,
-        @ref parse_path_rootless,
         @ref segments_view.
 */
 class segments_encoded_view
@@ -293,22 +289,6 @@ public:
     BOOST_URL_DECL friend
         result<segments_encoded_view>
         parse_path(string_view s) noexcept;
-
-    BOOST_URL_DECL friend
-        result<segments_encoded_view>
-        parse_path_abempty(string_view s) noexcept;
-
-    BOOST_URL_DECL friend
-        result<segments_encoded_view>
-        parse_path_absolute(string_view s) noexcept;
-
-    BOOST_URL_DECL friend
-        result<segments_encoded_view>
-        parse_path_noscheme(string_view s) noexcept;
-
-    BOOST_URL_DECL friend
-        result<segments_encoded_view>
-        parse_path_rootless(string_view s) noexcept;
 };
 
 //----------------------------------------------------------
@@ -338,154 +318,11 @@ public:
 
     @see
         @ref parse_path,
-        @ref parse_path_absolute,
-        @ref parse_path_noscheme,
-        @ref parse_path_rootless.
+        @ref segments_encoded_view.
 */
 BOOST_URL_DECL
 result<segments_encoded_view>
 parse_path(string_view s) noexcept;
-
-/** Parse a string and return an encoded segment view
-
-    This function parses the string and returns the
-    corresponding path object if the string is valid,
-    otherwise sets the error and returns an empty range.
-
-    @par BNF
-    @code
-    path-abempty  = *( "/" segment )
-    @endcode
-
-    @par Exception Safety
-    No-throw guarantee.
-
-    @return A valid view on success, otherwise an
-    error code.
-
-    @param s The string to parse
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">
-        3.3. Path (rfc3986)</a>
-
-    @see
-        @ref parse_path,
-        @ref parse_path_absolute,
-        @ref parse_path_noscheme,
-        @ref parse_path_rootless.
-*/
-BOOST_URL_DECL
-result<segments_encoded_view>
-parse_path_abempty(
-    string_view s) noexcept;
-
-/** Parse a string and return an encoded segment view
-
-    This function parses the string and returns the
-    corresponding path object if the string is valid,
-    otherwise sets the error and returns an empty range.
-
-    @par BNF
-    @code
-    path-absolute = "/" [ segment-nz *( "/" segment ) ]
-    @endcode
-
-    @par Exception Safety
-    No-throw guarantee.
-
-    @return A valid view on success, otherwise an
-    error code.
-
-    @param s The string to parse
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">
-        3.3. Path (rfc3986)</a>
-
-    @see
-        @ref parse_path,
-        @ref parse_path_abempty,
-        @ref parse_path_noscheme,
-        @ref parse_path_rootless.
-*/
-BOOST_URL_DECL
-result<segments_encoded_view>
-parse_path_absolute(
-    string_view s) noexcept;
-
-/** Parse a string and return an encoded segment view
-
-    This function parses the string and returns the
-    corresponding path object if the string is valid,
-    otherwise sets the error and returns an empty range.
-
-    @par BNF
-    @code
-    path-noscheme = segment-nz-nc *( "/" segment )
-
-    segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
-                    ; non-zero-length segment without any colon ":"
-    @endcode
-
-    @par Exception Safety
-    No-throw guarantee.
-
-    @return A valid view on success, otherwise an
-    error code.
-
-    @param s The string to parse
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">
-        3.3. Path (rfc3986)</a>
-
-    @see
-        @ref parse_path,
-        @ref parse_path_abempty,
-        @ref parse_path_absolute,
-        @ref parse_path_rootless.
-*/
-BOOST_URL_DECL
-result<segments_encoded_view>
-parse_path_noscheme(
-    string_view s) noexcept;
-
-/** Parse a string and return an encoded segment view
-
-    This function parses the string and returns the
-    corresponding path object if the string is valid,
-    otherwise sets the error and returns an empty range.
-
-    @par BNF
-    @code
-    path-rootless = segment-nz *( "/" segment )
-
-    segment-nz    = 1*pchar
-    @endcode
-
-    @par Exception Safety
-    No-throw guarantee.
-
-    @return A valid view on success, otherwise an
-    error code.
-
-    @param s The string to parse
-
-    @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">
-        3.3. Path (rfc3986)</a>
-
-    @see
-        @ref parse_path,
-        @ref parse_path_abempty,
-        @ref parse_path_absolute,
-        @ref parse_path_noscheme.
-*/
-BOOST_URL_DECL
-result<segments_encoded_view>
-parse_path_rootless(
-    string_view s) noexcept;
 
 } // urls
 } // boost

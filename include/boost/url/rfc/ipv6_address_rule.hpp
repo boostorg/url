@@ -19,6 +19,16 @@ namespace urls {
 
 /** Rule for An IP version 6 style address
 
+    @par Value Type
+    @code
+    using value_type = ipv6_address;
+    @endcode
+
+    @par Example
+    @code
+    result< ipv6_address > rv = parse( "2001:0db8:85a3:0000:0000:8a2e:0370:7334", ipv6_address_rule );
+    @endcode
+
     @par BNF
     @code
     IPv6address =                            6( h16 ":" ) ls32
@@ -43,6 +53,10 @@ namespace urls {
         >IP Version 6 Addressing Architecture (rfc4291)</a>
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
         >3.2.2. Host (rfc3986)</a>
+
+    @see
+        @ref ipv6_address,
+        @ref parse.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ ipv6_address_rule;

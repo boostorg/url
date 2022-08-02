@@ -1089,6 +1089,26 @@ public:
     }
 
     void
+    testParseOriginForm()
+    {
+        BOOST_TEST(parse_origin_form("/").has_value());
+        BOOST_TEST(parse_origin_form("/x").has_value());
+        BOOST_TEST(parse_origin_form("//").has_value());
+        BOOST_TEST(parse_origin_form("/x/").has_value());
+        BOOST_TEST(parse_origin_form("/x/y").has_value());
+        BOOST_TEST(parse_origin_form("/?").has_value());
+        BOOST_TEST(parse_origin_form("/?a").has_value());
+        BOOST_TEST(parse_origin_form("/?a=").has_value());
+        BOOST_TEST(parse_origin_form("/?a=b").has_value());
+        BOOST_TEST(parse_origin_form("/x/y?a=b&c=d").has_value());
+
+        BOOST_TEST(parse_origin_form("").has_error());
+        BOOST_TEST(parse_origin_form(" ").has_error());
+        BOOST_TEST(parse_origin_form("*").has_error());
+        BOOST_TEST(parse_origin_form("?").has_error());
+    }
+
+    void
     run()
     {
         testSpecialMembers();
@@ -1109,6 +1129,8 @@ public:
         testOutput();
         testCases();
         testRelativePart();
+
+        testParseOriginForm();
     }
 };
 

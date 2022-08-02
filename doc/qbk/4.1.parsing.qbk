@@ -37,6 +37,11 @@ A URL string can be parsed using one of the parsing functions.
     [[teletype]`http://www.boost.org/index.html?field=value`]
     [Does not support fragment]
 ][
+    [[link url.ref.boost__urls__parse_origin_form `parse_origin_form`]]
+    [[@https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1 ['origin-form]]]
+    [[teletype]`/index.html?field=value`]
+    [Used in HTTP requests]
+][
     [[link url.ref.boost__urls__parse_relative_ref `parse_relative_ref`]]
     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.2 ['relative-ref]]]
     [[teletype]`//www.boost.org/index.html?field=value#downloads`]

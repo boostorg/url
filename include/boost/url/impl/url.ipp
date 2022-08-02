@@ -20,11 +20,11 @@
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/print.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/path_rules.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/url/rfc/detail/fragment_rule.hpp>
 #include <boost/url/rfc/detail/host_rule.hpp>
+#include <boost/url/rfc/detail/path_rules.hpp>
 #include <boost/url/rfc/detail/port_rule.hpp>
 #include <boost/url/rfc/detail/scheme_rule.hpp>
 #include <boost/url/rfc/detail/userinfo_rule.hpp>
@@ -2331,103 +2331,6 @@ check_invariants() const noexcept
         u_.len(id_frag) == 0 ||
         u_.get(id_frag).starts_with('#'));
     BOOST_ASSERT(c_str()[size()] == '\0');
-    // validate segments
-#if 0
-    if(nseg > 0)
-    {
-        auto it = u_.cs_ +
-            u_.offset(id_path);
-        auto const end = s_ +
-            u_.offset(id_query);
-        error_code ec;
-        pct_encoded_str t;
-        auto start = it;
-        if(u_.get(id_path).starts_with('/'))
-            path_abempty_rule::begin(
-                it, end, ec, t);
-        else
-            path_rootless_rule::begin(
-                it, end, ec, t);
-        for(std::size_t i = 0;;++i)
-        {
-            if(ec == grammar::error::end)
-                break;
-            BOOST_ASSERT(! ec.failed());
-            if(ec.failed())
-                break;
-            BOOST_ASSERT(
-                u_.cs_ + segment_pos(i) == start);
-            BOOST_ASSERT(
-                start + segment_len(i) == it);
-            start = it;
-            path_abempty_rule::increment(
-                it, end, ec, t);
-        }
-    }
-#endif
-}
-
-void
-url::
-build_tab() noexcept
-{
-#if 0
-    // path
-    if(u_.nseg_ > 1)
-    {
-        error_code ec;
-        // path table
-        pos_t* tab = tab_end() - 1;
-        auto s = u_.get(id_path);
-        auto it = s.data();
-        auto const end = it + s.size();
-        pct_encoded_str t;
-        if( s.starts_with('/') ||
-            s.empty())
-            path_abempty_rule::begin(
-                it, end, ec, t);
-        else
-            path_rootless_rule::begin(
-                it, end, ec, t);
-        for(;;)
-        {
-            if(ec == grammar::error::end)
-                break;
-            if(ec)
-                detail::throw_system_error(ec,
-                    BOOST_CURRENT_LOCATION);
-            *tab = it - s_;
-            tab -= 2;
-            path_abempty_rule::increment(
-                it, end, ec, t);
-        }
-    }
-    // query
-    if(u_.nparam_ > 1)
-    {
-        error_code ec;
-        // query table
-        pos_t* tab = tab_end() - 2;
-        auto s = u_.get(id_query);
-        auto it = s.data();
-        auto const end = it + s.size();
-        query_param_view t;
-        query_rule::begin(
-            it, end, ec, t);
-        for(;;)
-        {
-            if(ec == grammar::error::end)
-                break;
-            if(ec)
-                detail::throw_system_error(ec,
-                    BOOST_CURRENT_LOCATION);
-            *tab = it - s_;
-            tab -= 2;
-            query_rule::increment(
-                it, end, ec, t);
-        }
-    }
-#endif
 }
 
 void

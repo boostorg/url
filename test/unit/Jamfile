@@ -77,7 +77,7 @@ local SOURCES =
     rfc/gen_delim_chars.cpp
     rfc/ipv4_address_rule.cpp
     rfc/ipv6_address_rule.cpp
-    rfc/path_rules.cpp
+    rfc/origin_form_rule.cpp
     rfc/pchars.cpp
     rfc/pct_encoded_rule.cpp
     rfc/query_rule.cpp

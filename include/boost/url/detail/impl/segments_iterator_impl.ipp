@@ -12,7 +12,7 @@
 #define BOOST_URL_DETAIL_IMPL_SEGMENTS_ITERATOR_IMPL_IPP
 
 #include <boost/url/detail/segments_iterator_impl.hpp>
-#include <boost/url/rfc/path_rules.hpp>
+#include <boost/url/rfc/detail/path_rules.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
