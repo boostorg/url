@@ -37,8 +37,8 @@ parse(
 
     // user
     auto rv = grammar::parse(
-        it, end,
-        pct_encoded_rule(&uchars));
+        it, end, pct_encoded_rule(
+            grammar::ref(uchars)));
     if(! rv)
         return rv.error();
     t.user = *rv;
@@ -55,8 +55,8 @@ parse(
 
     // pass
     rv = grammar::parse(
-        it, end,
-        pct_encoded_rule(&pwchars));
+        it, end, pct_encoded_rule(
+            grammar::ref(pwchars)));
     if(! rv)
         return rv.error();
 

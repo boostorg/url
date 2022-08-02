@@ -31,9 +31,8 @@ namespace detail {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
         >3.5. Fragment (rfc3986)</a>
 */
-constexpr auto fragment_rule =
-    pct_encoded_rule(
-        &detail::fragment_chars);
+constexpr auto fragment_rule = pct_encoded_rule(
+    grammar::ref(detail::fragment_chars));
 
 /** Rule for fragment-part
 
@@ -51,7 +50,8 @@ constexpr auto fragment_rule =
 constexpr auto fragment_part_rule =
     grammar::optional_rule(
         grammar::sequence_rule(
-            grammar::char_rule('#'),
+            grammar::squelch(
+                grammar::char_rule('#')),
             fragment_rule));
 
 } // detail

@@ -10,18 +10,30 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/parse.hpp>
 
+#include <boost/url/grammar/alpha_chars.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/dec_octet_rule.hpp>
 #include "test_suite.hpp"
 
 namespace boost {
 namespace urls {
 namespace grammar {
 
-class parse_test
+struct parse_test
 {
-public:
+    void
+    testRef()
+    {
+        BOOST_STATIC_ASSERT(is_rule<
+            decltype(ref(dec_octet_rule))>::value);
+        BOOST_TEST(parse("255",
+            ref(dec_octet_rule)).has_value());
+    }
+
     void
     run()
     {
+        testRef();
     }
 };
 

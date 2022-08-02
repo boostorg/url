@@ -51,7 +51,8 @@ parse(
             it, end,
             grammar::sequence_rule(
                 ipv6_address_rule,
-                grammar::char_rule(']')));
+                grammar::squelch(
+                    grammar::char_rule(']'))));
         if(! rv)
             return rv.error();
         t.ipv6 = *rv;
@@ -64,7 +65,8 @@ parse(
             it, end, 
             grammar::sequence_rule(
                 ipvfuture_rule,
-                grammar::char_rule(']')));
+                grammar::squelch(
+                    grammar::char_rule(']'))));
         if(! rv)
             return rv.error();
         t.is_ipv6 = false;

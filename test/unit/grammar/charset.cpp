@@ -10,7 +10,9 @@
 // Test that header file is self-contained.
 #include <boost/url/grammar/charset.hpp>
 
-#include <boost/url/string_view.hpp>
+#include <boost/url/grammar/alpha_chars.hpp>
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/token_rule.hpp>
 #include "test_rule.hpp"
 
 namespace boost {
@@ -71,8 +73,19 @@ public:
             test_chars>::value);
 
     void
+    testRef()
+    {
+        BOOST_STATIC_ASSERT(is_charset<
+            decltype(ref(alpha_chars))>::value);
+        BOOST_TEST(parse("abc", token_rule(
+            ref(alpha_chars))).has_value());
+    }
+
+    void
     run()
     {
+        testRef();
+
         std::size_t n0 = 0;
         std::size_t n1 = 0;
         test_char_set(

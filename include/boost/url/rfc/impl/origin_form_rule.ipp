@@ -84,7 +84,8 @@ parse(
         auto rv = grammar::parse(it, end,
             grammar::optional_rule(
                 grammar::sequence_rule(
-                    grammar::char_rule('?'),
+                    grammar::squelch(
+                        grammar::char_rule('?')),
                     query_rule)));
         if(! rv)
             return rv.error();

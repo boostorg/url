@@ -180,7 +180,9 @@
           <member><link linkend="url.ref.boost__urls__grammar__optional_rule">optional_rule</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__parse">parse</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__range_rule">range_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__ref">ref</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__sequence_rule">sequence_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__squelch">squelch</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__token_rule">token_rule</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__variant_rule">variant_rule</link></member>
         </simplelist>

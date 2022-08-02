@@ -140,6 +140,77 @@ find_if_not(
         detail::has_find_if_not<CharSet>{});
 }
 
+//------------------------------------------------
+
+#ifndef BOOST_URL_DOCS
+namespace detail {
+
+template<class CharSet>
+struct charset_ref
+{
+    CharSet const& cs_;
+
+    constexpr
+    bool
+    operator()(char ch) const noexcept
+    {
+        return cs_(ch);
+    }
+
+    char const*
+    find_if(
+        char const* first,
+        char const* last) const noexcept
+    {
+        return grammar::find_if(
+            first, last, cs_);
+    }
+
+    char const*
+    find_if_not(
+        char const* first,
+        char const* last) const noexcept
+    {
+        return grammar::find_if_not(
+            first, last, cs_ );
+    }
+};
+
+} // detail
+#endif
+
+/** Return a reference to a character set
+
+    This function returns a character set which
+    references the specified object. This is
+    used to reduce the number of bytes of
+    storage (`sizeof`) required by a combinator
+    when it stores a copy of the object.
+    <br>
+    Ownership of the object is not transferred;
+    the caller is responsible for ensuring the
+    lifetime of the object is extended until it
+    is no longer referenced. For best results,
+    `ref` should only be used with compile-time
+    constants.
+*/
+template<class CharSet>
+constexpr
+#ifdef BOOST_URL_DOCS
+__implementation_defined__
+#else
+typename std::enable_if<
+    is_charset<CharSet>::value &&
+    ! std::is_same<CharSet,
+        detail::charset_ref<CharSet> >::value,
+    detail::charset_ref<CharSet> >::type
+#endif
+ref(CharSet const& cs) noexcept
+{
+    return detail::charset_ref<
+        CharSet>{cs};
+}
+
 } // grammar
 } // urls
 } // boost

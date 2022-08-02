@@ -51,7 +51,7 @@ char_rule( char ch ) noexcept;
 #else
 struct char_rule
 {
-    using value_type = void;
+    using value_type = string_view;
 
     /** Constructor
 
@@ -71,10 +71,8 @@ struct char_rule
         if(it != end)
         {
             if(*it == ch_)
-            {
-                ++it;
-                return {};
-            }
+                return string_view{
+                    it++, 1 };
             return error::syntax;
         }
         return error::incomplete;

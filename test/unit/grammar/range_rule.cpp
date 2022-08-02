@@ -56,7 +56,8 @@ struct range_rule_test
         constexpr auto r = range_rule(
             token_rule(alpha_chars),
             sequence_rule(
-                char_rule('+'),
+                grammar::squelch(
+                    char_rule('+')),
                 token_rule(alpha_chars)));
 
         check("", {}, r);

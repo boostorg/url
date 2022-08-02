@@ -84,11 +84,6 @@ template<class CharSet>
 constexpr
 __implementation_defined__
 pct_encoded_rule( CharSet const& cs ) noexcept;
-
-template<class CharSet>
-constexpr
-__implementation_defined__
-pct_encoded_rule( CharSet const* cs ) noexcept;
 /**@}*/
 #else
 template<class CharSet>
@@ -121,35 +116,6 @@ private:
 };
 
 template<class CharSet>
-struct pct_encoded_ref_rule_t
-{
-    using value_type = pct_encoded_view;
-
-    template<class CharSet_>
-    friend
-    constexpr
-    auto
-    pct_encoded_rule(
-        CharSet_ const* cs) noexcept ->
-            pct_encoded_ref_rule_t<CharSet_>;
-
-    result<value_type>
-    parse(
-        char const*& it,
-        char const* end) const noexcept;
-
-private:
-    constexpr
-    pct_encoded_ref_rule_t(
-        CharSet const& cs) noexcept
-        : cs_(&cs)
-    {
-    }
-
-    CharSet const* cs_;
-};
-
-template<class CharSet>
 constexpr
 auto
 pct_encoded_rule(
@@ -165,24 +131,6 @@ pct_encoded_rule(
         "CharSet requirements not met");
 
     return pct_encoded_rule_t<CharSet>(cs);
-}
-
-template<class CharSet>
-constexpr
-auto
-pct_encoded_rule(
-    CharSet const* cs) noexcept ->
-        pct_encoded_ref_rule_t<CharSet>
-{
-    // If an error occurs here it means that
-    // the value of your type does not meet
-    // the requirements. Please check the
-    // documentation!
-    static_assert(
-        grammar::is_charset<CharSet>::value,
-        "CharSet requirements not met");
-
-    return pct_encoded_ref_rule_t<CharSet>(*cs);
 }
 
 #endif

@@ -39,7 +39,8 @@ parse(
             grammar::optional_rule(
                 grammar::sequence_rule(
                     detail::userinfo_rule,
-                    grammar::char_rule('@'))));
+                    grammar::squelch(
+                        grammar::char_rule('@')))));
         if(! rv)
             return rv.error();
         if(rv->has_value())

@@ -39,7 +39,8 @@ parse(
             it, end,
             grammar::sequence_rule(
                 detail::scheme_rule(),
-                grammar::char_rule(':')));
+                grammar::squelch(
+                    grammar::char_rule(':'))));
         if(! rv)
             return rv.error();
         u.apply_scheme(rv->scheme);
@@ -64,7 +65,8 @@ parse(
             it, end,
             grammar::optional_rule(
                 grammar::sequence_rule(
-                    grammar::char_rule('?'),
+                    grammar::squelch(
+                        grammar::char_rule('?')),
                     query_rule)));
         if(! rv)
             return rv.error();

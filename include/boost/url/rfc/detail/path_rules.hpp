@@ -35,7 +35,7 @@ namespace detail {
         @ref parse.
 */
 constexpr auto segment_rule =
-    pct_encoded_rule(&pchars);
+    pct_encoded_rule(grammar::ref(pchars));
 
 //------------------------------------------------
 
@@ -52,7 +52,7 @@ constexpr auto segment_rule =
 */
 constexpr auto segment_nz_rule =
     grammar::not_empty_rule(
-        pct_encoded_rule(&pchars));
+        pct_encoded_rule(grammar::ref(pchars)));
 
 //------------------------------------------------
 
@@ -87,8 +87,9 @@ constexpr auto segment_nz_nc_rule =
 */
 constexpr auto slash_segment_rule =
     grammar::sequence_rule(
-        grammar::char_rule('/'),
-        pct_encoded_rule(&pchars));
+        grammar::squelch(
+            grammar::char_rule('/')),
+        pct_encoded_rule(grammar::ref(pchars)));
 
 //------------------------------------------------
 
@@ -131,7 +132,8 @@ constexpr segment_ns_rule_t segment_ns_rule{};
 constexpr auto path_abempty_rule =
     grammar::range_rule(
         grammar::sequence_rule(
-            grammar::char_rule('/'),
+            grammar::squelch(
+                grammar::char_rule('/')),
             segment_rule));
 
 //------------------------------------------------
@@ -153,7 +155,8 @@ constexpr __implementation_defined__ path_absolute_rule;
 constexpr auto path_absolute_rule =
     grammar::range_rule(
         grammar::sequence_rule(
-            grammar::char_rule('/'),
+            grammar::squelch(
+                grammar::char_rule('/')),
             detail::segment_ns_rule),
         detail::slash_segment_rule,
         1);

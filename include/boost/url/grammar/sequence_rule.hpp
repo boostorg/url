@@ -11,6 +11,7 @@
 #define BOOST_URL_GRAMMAR_SEQUENCE_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/result.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/detail/tuple.hpp>
 #include <boost/mp11/algorithm.hpp>
@@ -129,6 +130,98 @@ sequence_rule(
     return { r0, rn... };
 }
 #endif
+
+#ifndef BOOST_URL_DOCS
+namespace detail {
+
+template<class Rule>
+struct squelch_rule_t
+    : urls::detail::empty_value<Rule>
+{
+    using value_type = void;
+
+    constexpr
+    squelch_rule_t(
+        Rule const& r) noexcept
+        : urls::detail::empty_value<Rule>(
+            urls::detail::empty_init, r)
+    {
+    }
+
+    result<value_type>
+    parse(
+        char const*& it,
+        char const* end) const
+    {
+        auto rv = this->get().parse(it, end);
+        if(rv.error())
+            return rv.error();
+        return {}; // void
+    }
+};
+
+} // detail
+#endif
+
+/** Squelch the value of a rule
+
+    This function returns a new rule which
+    matches the specified rule, and converts
+    its value type to `void`. This is useful
+    for matching delimiters in a grammar,
+    where the value for the delimiter is not
+    needed.
+
+    @par Value Type
+    @code
+    using value_type = void;
+    @endcode
+
+    @par Example 1
+    With `squelch`:
+    @code
+    result< std::tuple< pct_encoded_view, string_view > > rv = grammar::parse(
+        "www.example.com:443",
+        grammar::sequence_rule(
+            pct_encoded_rule(unreserved_chars + '-' + '.'),
+            grammar::squelch( grammar::char_rule( ':' ) ),
+            grammar::token_rule( grammar::digit_chars ) ) );
+    @endcode
+
+    @par Example 2
+    Without `squelch`:
+    @code
+    result< std::tuple< pct_encoded_view, string_view, string_view > > rv = grammar::parse(
+        "www.example.com:443",
+        grammar::sequence_rule(
+            pct_encoded_rule(unreserved_chars + '-' + '.'),
+            grammar::char_rule( ':' ),
+            grammar::token_rule( grammar::digit_chars ) ) );
+    @endcode
+
+    @par r The rule to squelch
+
+    @see
+        @ref grammar::char_rule,
+        @ref grammar::digit_chars,
+        @ref grammar::parse,
+        @ref grammar::sequence,
+        @ref grammar::token_rule,
+        @ref pct_encoded_view,
+        @ref pct_encoded_rule,
+        @ref unreserved_chars.
+*/
+template<class Rule>
+constexpr
+#ifdef BOOST_URL_DOCS
+__implementation_defined__
+#else
+detail::squelch_rule_t<Rule>
+#endif
+squelch( Rule const& r ) noexcept
+{
+    return { r };
+}
 
 } // grammar
 } // urls

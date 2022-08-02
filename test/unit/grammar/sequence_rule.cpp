@@ -11,7 +11,11 @@
 #include <boost/url/grammar/sequence_rule.hpp>
 
 #include <boost/url/grammar/char_rule.hpp>
+#include <boost/url/grammar/digit_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/token_rule.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/unreserved_chars.hpp>
 
 #include "test_suite.hpp"
 
@@ -52,16 +56,43 @@ struct sequence_rule_test
     }
 
     void
+    testSquelch()
+    {
+        result< std::tuple< pct_encoded_view, string_view > > r1 =
+            grammar::parse(
+                "www.example.com:443",
+                grammar::sequence_rule(
+                    pct_encoded_rule(unreserved_chars + '-' + '.'),
+                    grammar::squelch( grammar::char_rule( ':' ) ),
+                    grammar::token_rule( grammar::digit_chars ) ) );
+
+        result< std::tuple<
+                pct_encoded_view, string_view, string_view > > r2 =
+            grammar::parse(
+                "www.example.com:443",
+                grammar::sequence_rule(
+                    pct_encoded_rule(unreserved_chars + '-' + '.'),
+                    grammar::char_rule( ':' ),
+                    grammar::token_rule( grammar::digit_chars ) ) );
+    }
+
+    void
     run()
     {
         // test constexpr
-        constexpr auto r =
+        constexpr auto r1 =
             sequence_rule(
                 char_rule('.'),
                 char_rule('.'));
-        (void)r;
+        constexpr auto r2 =
+            sequence_rule(
+                squelch( char_rule('.') ),
+                char_rule('.'));
+        (void)r1;
+        (void)r2;
         
         testSequence();
+        testSquelch();
     }
 };
 

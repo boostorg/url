@@ -93,18 +93,6 @@ parse(
         it, end, this->get());
 }
 
-template<class CharSet>
-auto
-pct_encoded_ref_rule_t<CharSet>::
-parse(
-    char const*& it,
-    char const* end) const noexcept ->
-        result<value_type>
-{
-    return detail::parse_pct_encoded(
-        it, end, *cs_);
-}
-
 } // urls
 } // boost
 
