@@ -1544,6 +1544,13 @@ public:
             good("%%fg", "?%25%25fg");
             good("{}", "?%7b%7d");
 
+            // issue #245
+            {
+                url u;
+                u.set_query("");
+                u.set_query("");
+                BOOST_TEST_EQ(u.string(), "?");
+            }
         }
 
 
