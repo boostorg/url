@@ -20,6 +20,8 @@
 #include <iterator>
 #include <new>
 
+#include <stddef.h> // ::max_align_t
+
 namespace boost {
 namespace urls {
 namespace grammar {
@@ -30,7 +32,8 @@ namespace grammar {
 namespace detail {
 
 template<std::size_t Size>
-struct storage
+struct alignas(alignof(::max_align_t))
+    storage_impl
 {
     unsigned char buf[Size];
 
@@ -39,6 +42,21 @@ struct storage
         return &buf[0];
     }
 };
+
+template<std::size_t Size>
+using storage = storage_impl<
+      (Size <=    64 ?    64
+    : (Size <=   128 ?   128
+    : (Size <=   256 ?   256
+    : (Size <=   512 ?   512
+    : (Size <=  1024 ?  1024
+    : (Size <=  2048 ?  2048
+    : (Size <=  4096 ?  4096
+    : (Size <=  8192 ?  8192
+    : (Size <= 16384 ? 16384
+    : (Size <= 32768 ? 32768
+    : (Size <= 65536 ? 65536
+    : Size)))))))))))>;
 
 } // detail
 
@@ -279,7 +297,8 @@ struct range<T>::impl2<R0, R1, false>
         R0 const& first,
         R1 const& next) noexcept
     {
-        ::new(p_->get()) impl{first, next};
+        ::new(p_->get()) impl{
+            first, next};
     }
 
 private:
