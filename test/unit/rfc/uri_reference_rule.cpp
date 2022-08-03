@@ -10,9 +10,9 @@
 // Test that header file is self-contained.
 #include <boost/url/rfc/uri_reference_rule.hpp>
 
-#include "test_rule.hpp"
+#include <boost/url/grammar/parse.hpp>
 
-#include <iostream>
+#include "test_rule.hpp"
 
 namespace boost {
 namespace urls {
@@ -23,6 +23,11 @@ public:
     void
     run()
     {
+        // javadoc
+        {
+            result< url_view > rv = grammar::parse( "ws://echo.example.com/?name=boost#demo", uri_reference_rule );
+            (void)rv;
+        }
     }
 };
 

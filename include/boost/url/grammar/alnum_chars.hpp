@@ -19,11 +19,9 @@ namespace grammar {
 
 /** The set of letters and digits
 
-    Character sets are used with
-    parsing rules and the functions
-    @ref find_if and @ref find_if_not.
-
     @par Example
+    Character sets are used with rules and the
+    functions @ref find_if and @ref find_if_not.
     @code
     result< string_view > = parse( "Johnny42", token_rule( alnumchars ) );
     @endcode

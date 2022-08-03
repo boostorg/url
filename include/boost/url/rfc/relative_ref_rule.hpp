@@ -25,8 +25,9 @@ namespace urls {
     @endcode
 
     @par Example
+    Rules are used with the function @ref grammar::parse.
     @code
-    result< url_view > = grammar::parse( "images/dot.gif?v=hide#a", relative_ref_rule );
+    result< url_view > rv = grammar::parse( "images/dot.gif?v=hide#a", relative_ref_rule );
     @endcode
 
     @par BNF

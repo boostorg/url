@@ -217,10 +217,8 @@ ci_is_less(
     string_view s0,
     string_view s1) noexcept
 {
-    if(s0.size() < s1.size())
-        return true;
-    if(s0.size() > s1.size())
-        return false;
+    if(s0.size() != s1.size())
+        return s0.size() < s1.size();
     return detail::ci_is_less(s0, s1);
 }
 

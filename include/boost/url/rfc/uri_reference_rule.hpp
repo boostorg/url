@@ -25,8 +25,9 @@ namespace urls {
     @endcode;
 
     @par Example
+    Rules are used with the function @ref grammar::parse.
     @code
-    result< url_view > = grammar::parse( "ws://echo.example.com/?name=boost#demo", uri_reference_rule );
+    result< url_view > rv = grammar::parse( "ws://echo.example.com/?name=boost#demo", uri_reference_rule );
     @endcode
 
     @par BNF

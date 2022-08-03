@@ -10,6 +10,9 @@
 // Test that header file is self-contained.
 #include <boost/url/rfc/reserved_chars.hpp>
 
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
+
 #include "test_rule.hpp"
 
 namespace boost {
@@ -20,6 +23,12 @@ struct reserved_chars_test
     void
     run()
     {
+        // javadoc
+        {
+            result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( reserved_chars ) );
+            (void)rv;
+        }
+
         // Need to construct this string_view
         // manually because of the leading null
         char const res[] =

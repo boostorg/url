@@ -10,6 +10,8 @@
 // Test that header file is self-contained.
 #include <boost/url/rfc/relative_ref_rule.hpp>
 
+#include <boost/url/grammar/parse.hpp>
+
 #include "test_suite.hpp"
 
 namespace boost {
@@ -20,7 +22,12 @@ class relative_ref_rule_test
 public:
     void
     run()
-    {       
+    {    
+        // javadoc
+        {
+            result< url_view > rv = grammar::parse( "images/dot.gif?v=hide#a", relative_ref_rule );
+            (void)rv;
+        }
     }
 };
 

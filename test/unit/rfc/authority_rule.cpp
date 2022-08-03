@@ -25,7 +25,11 @@ public:
     void
     run()
     {
-#if 0
+        // javadoc
+        {
+            result< authority_view > rv = grammar::parse( "user:pass@example.com:8080", authority_rule );
+        }
+
         auto const& r = authority_rule;
 
         bad(r, "%");
@@ -42,25 +46,24 @@ public:
                 "x:y@e.com:8080",
                 authority_rule);
             BOOST_TEST(rv.has_value());
-            auto p = *rv;
-            BOOST_TEST(p.host.host_type ==
+            auto a = *rv;
+            BOOST_TEST(a.host_type() ==
                 host_type::name);
-            BOOST_TEST(p.host.name.encoded()
-                == "e.com");
-            if(BOOST_TEST(p.port.has_port))
+            BOOST_TEST(
+                a.encoded_host() == "e.com");
+            if(BOOST_TEST(a.has_port()))
             {
-                BOOST_TEST_EQ(p.port.port, "8080");
-                BOOST_TEST(p.port.has_number);
-                BOOST_TEST_EQ(p.port.port_number, 8080);
+                BOOST_TEST_EQ(a.port(), "8080");
+                BOOST_TEST_EQ(a.port_number(), 8080);
             }
-            if(BOOST_TEST(p.has_userinfo))
+            if(BOOST_TEST(a.has_userinfo()))
             {
-                BOOST_TEST_EQ(p.userinfo.user.encoded(), "x");
-                if(BOOST_TEST(p.userinfo.has_password))
-                    BOOST_TEST_EQ(p.userinfo.password.encoded(), "y");
+                BOOST_TEST_EQ(a.encoded_user(), "x");
+                if(BOOST_TEST(a.has_password()))
+                    BOOST_TEST_EQ(
+                        a.encoded_password(), "y");
             }
         }
-#endif
     }
 };
 

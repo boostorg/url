@@ -19,11 +19,11 @@ namespace urls {
 
 /** The path character set
 
-    Character sets are used with parsing rules.
-
     @par Example
+    Character sets are used with rules and the
+    functions @ref find_if and @ref find_if_not.
     @code
-    result< pct_encoded_view > = grammar::parse( "Program%20Files", pchars );
+    result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pchars );
     @endcode
 
     @par BNF

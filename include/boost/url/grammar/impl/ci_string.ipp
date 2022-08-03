@@ -67,10 +67,10 @@ ci_is_less(
     {
         auto c1 = to_lower(*p1++);
         auto c2 = to_lower(*p2++);
-        if(c1 == c2)
-            continue;
-        return c1 < c2;
+        if(c1 != c2)
+            return c1 < c2;
     }
+    // equal
     return false;
 }
 

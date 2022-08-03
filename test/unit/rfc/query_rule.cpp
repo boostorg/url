@@ -70,6 +70,12 @@ public:
     void
     run()
     {
+        // javadoc
+        {
+            result< params_encoded_view > rv = grammar::parse( "format=web&id=42&compact", query_rule );
+            (void)rv;
+        }
+
         testParse();
 
         auto const& t = query_rule;

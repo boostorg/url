@@ -27,8 +27,9 @@ namespace urls {
     @endcode
 
     @par Example
+    Rules are used with the function @ref grammar::parse.
     @code
-    result< params_encoded_view > = grammar::parse( "format=web&id=42&compact", query_rule );
+    result< params_encoded_view > rv = grammar::parse( "format=web&id=42&compact", query_rule );
     @endcode
 
     @par BNF

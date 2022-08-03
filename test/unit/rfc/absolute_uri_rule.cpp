@@ -23,6 +23,12 @@ public:
     void
     run()
     {
+        // javadoc
+        {
+            result< url_view > rv = grammar::parse( "http://example.com/index.htm?id=1", absolute_uri_rule );
+            (void)rv;
+        }
+
         auto const& t = absolute_uri_rule;
 
         bad(t, "");

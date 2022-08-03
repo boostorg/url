@@ -18,14 +18,17 @@ namespace urls {
 
 /** Rule for origin-form
 
+    This appears in the HTTP/1 request-line grammar.
+
     @par Value Type
     @code
     using value_type = url_view;
     @endcode
 
     @par Example
+    Rules are used with the function @ref grammar::parse.
     @code
-    result< url_view > = grammar::parse( "/index.htm?layout=mobile", origin_form_rule );
+    result< url_view > rv = grammar::parse( "/index.htm?layout=mobile", origin_form_rule );
     @endcode
 
     @par BNF

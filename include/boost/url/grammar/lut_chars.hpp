@@ -42,15 +42,14 @@ struct is_pred<T, boost::void_t<
 
 /** A set of characters
 
-    Character sets are used with
-    parsing rules and the functions
-    @ref find_if and @ref find_if_not.
     The characters defined by instances of
     this set are provided upon construction.
     The `constexpr` implementation allows
     these to become compile-time constants.
 
     @par Example
+    Character sets are used with rules and the
+    functions @ref find_if and @ref find_if_not.
     @code
     constexpr lut_chars vowel_chars = "AEIOU" "aeiou";
 

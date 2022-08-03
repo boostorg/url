@@ -18,15 +18,12 @@ namespace urls {
 
 /** The unreserved character set
 
-    This function object is invocable with
-    the following equivalent signature:
-
+    @par Example
+    Character sets are used with rules and the
+    functions @ref find_if and @ref find_if_not.
     @code
-    bool( char ch ) const noexcept;
+    result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( unreserved_chars ) );
     @endcode
-
-    It returns `true` when `ch` is a member
-    of the character set, and `false` otherwise.
 
     @par BNF
     @code
@@ -39,7 +36,9 @@ namespace urls {
 
     @see
         @ref grammar::find_if,
-        @ref grammar::find_if_not.
+        @ref grammar::find_if_not,
+        @ref grammar::parse,
+        @ref pct_encoded_rule.
 */
 constexpr
 grammar::lut_chars

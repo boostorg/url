@@ -20,6 +20,11 @@ struct origin_form_rule_test
     void
     run()
     {
+        // javadoc
+        {
+            result< url_view > rv = grammar::parse( "/index.htm?layout=mobile", origin_form_rule );
+            (void)rv;
+        }
     }
 };
 

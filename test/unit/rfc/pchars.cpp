@@ -10,6 +10,9 @@
 // Test that header file is self-contained.
 #include <boost/url/rfc/pchars.hpp>
 
+#include <boost/url/grammar/parse.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
+
 #include "test_rule.hpp"
 
 namespace boost {
@@ -20,6 +23,11 @@ struct pchars_test
     void
     run()
     {
+        // javadoc
+        {
+            result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( pchars ) );
+            (void)rv;
+        }
         test_char_set(
             pchars,
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

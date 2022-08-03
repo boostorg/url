@@ -36,6 +36,7 @@ namespace urls {
     @endcode
 
     @par Example
+    Rules are used with the function @ref grammar::parse.
     @code
     //  pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
 

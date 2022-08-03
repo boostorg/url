@@ -25,6 +25,7 @@ namespace urls {
     @endcode
 
     @par Example
+    Rules are used with the function @ref grammar::parse.
     @code
     result< ipv4_address > rv = grammar::parse( "192.168.0.1", ipv4_address_rule );
     @endcode

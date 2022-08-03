@@ -25,6 +25,7 @@ namespace urls {
     @endcode
 
     @par Example
+    Rules are used with the function @ref grammar::parse.
     @code
     result< url_view > rv = grammar::parse( "http://example.com/index.htm?id=1", absolute_uri_rule );
     @endcode

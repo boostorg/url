@@ -10,6 +10,9 @@
 // Test that header file is self-contained.
 #include <boost/url/rfc/gen_delim_chars.hpp>
 
+#include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/grammar/parse.hpp>
+
 #include "test_rule.hpp"
 
 namespace boost {
@@ -20,6 +23,12 @@ struct gen_delim_chars_test
     void
     run()
     {
+        // javadoc
+        {
+            result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( gen_delim_chars ) );
+            (void)rv;
+        }
+
         test_char_set(
             gen_delim_chars,
                 ":/?#[]@");
