@@ -157,10 +157,24 @@ public:
     }
 
     void
+    testOstream()
+    {
+        {
+            static_url<64> u = parse_uri(
+                "http://example.com/index.htm?q#f").value();
+            std::stringstream ss;
+            ss << u;
+            BOOST_TEST(ss.str() ==
+                "http://example.com/index.htm?q#f");
+        }
+    }
+
+    void
     run()
     {
         testSpecial();
         testParts();
+        testOstream();
     }
 };
 
