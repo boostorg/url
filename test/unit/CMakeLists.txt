@@ -89,6 +89,9 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${BOOST_URL_TESTS_FILES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${TEST_MAIN})
 add_executable(boost_url_tests ${BOOST_URL_TESTS_FILES} ${TEST_MAIN})
 target_include_directories(boost_url_tests PRIVATE . ../../extra/include)
+# The include dependencies are found in the CMakeLists.txt
+# of the root project directory.
+# See: BOOST_URL_UNIT_TEST_LIBRARIES
 target_link_libraries(boost_url_tests PRIVATE
     Boost::url
     Boost::container
