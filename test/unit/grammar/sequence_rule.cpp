@@ -78,7 +78,7 @@ struct sequence_rule_test
     void
     run()
     {
-        // test constexpr
+        // constexpr
         {
             constexpr auto r1 =
                 sequence_rule(
@@ -104,8 +104,9 @@ struct sequence_rule_test
                         dec_octet_rule,
                         squelch( delim_rule('.') ),
                         dec_octet_rule ) );
-        }
 
+            (void)rv;
+        }
         testSequence();
         testSquelch();
     }

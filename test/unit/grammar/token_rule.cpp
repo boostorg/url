@@ -24,14 +24,18 @@ struct token_rule_test
     void
     run()
     {
-        // test constexpr
-        constexpr auto r =
-            token_rule(alpha_chars);
-        (void)r;
+        // constexpr
+        {
+            constexpr auto r =
+                token_rule(alpha_chars);
+            (void)r;
+        }
 
         // javadoc
         {
             result< string_view > rv = parse( "abcdef", token_rule( alpha_chars ) );
+
+            (void)rv;
         }
     }
 };

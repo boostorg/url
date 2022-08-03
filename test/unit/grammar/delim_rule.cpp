@@ -45,13 +45,18 @@ struct delim_rule_test
     void
     run()
     {
-        // test constexpr
-        constexpr auto r = delim_rule('.');
-        (void)r;
+        // constexpr
+        {
+            constexpr auto r = delim_rule('.');
+
+            (void)r;
+        }
 
         // javadoc
         {
             result< string_view > rv = parse( ".", delim_rule('.') );
+
+            (void)rv;
         }
 
         ok("$", delim_rule('$'));       

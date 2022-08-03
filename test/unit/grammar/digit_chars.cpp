@@ -27,6 +27,8 @@ struct digit_chars_test
         // javadoc
         {
             result< string_view > rv = parse( "2022", token_rule( digit_chars ) );
+
+            (void)rv;
         }
 
         test_char_set(

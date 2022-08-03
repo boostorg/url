@@ -27,7 +27,6 @@ struct lut_chars_test
         // lut_chars(char const*)
         {
             constexpr lut_chars digits_ = "0123456789";
-
             (void)digits_;
         }
 
@@ -43,7 +42,6 @@ struct lut_chars_test
             };
 
             constexpr lut_chars digits_( is_digit_{} );
-
             (void)digits_;
         }
 
@@ -54,7 +52,7 @@ struct lut_chars_test
             "abcdefghijklmnopqrstuvwxyz");
 
             constexpr lut_chars alnum_chars_ = alpha_chars_ + "0123456789";
-            
+
             (void)alnum_chars_;
         }
 
@@ -81,6 +79,8 @@ struct lut_chars_test
             constexpr lut_chars vowel_chars = "AEIOU" "aeiou";
 
             result< string_view > rv = parse( "Aiea", token_rule( vowel_chars ) );
+
+            (void)rv;
         }
 
         test_lut_chars();

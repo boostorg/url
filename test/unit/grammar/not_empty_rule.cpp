@@ -26,15 +26,19 @@ struct not_empty_rule_test
     void
     run()
     {
-        // test constexpr
-        constexpr auto r = not_empty_rule(
-            pct_encoded_rule( unreserved_chars ));
-        (void)r;
+        // constexpr
+        {
+            constexpr auto r = not_empty_rule(
+                pct_encoded_rule( unreserved_chars ));
+            (void)r;
+        }
 
         // javadoc
         {
-        result< pct_encoded_view > rv = parse( "Program%20Files",
-            not_empty_rule( pct_encoded_rule( unreserved_chars ) ) );
+            result< pct_encoded_view > rv = parse( "Program%20Files",
+                not_empty_rule( pct_encoded_rule( unreserved_chars ) ) );
+
+            (void)rv;
         }
 
         ok( pct_encoded_rule(
