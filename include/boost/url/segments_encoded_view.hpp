@@ -345,8 +345,7 @@ public:
 
     //--------------------------------------------
 
-    /** Format the object to an output stream
-    */
+    // hidden friend
     friend
     std::ostream&
     operator<<(
@@ -360,6 +359,17 @@ public:
         result<segments_encoded_view>
         parse_path(string_view s) noexcept;
 };
+
+/** Format the encoded segments to an output stream.
+
+    @param os The output stream.
+
+    @param pv The encoded segments.
+*/
+std::ostream&
+operator<<(
+    std::ostream& os,
+    segments_encoded_view const& pv);
 
 //----------------------------------------------------------
 
