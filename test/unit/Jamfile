@@ -54,8 +54,8 @@ local SOURCES =
     variant.cpp
     grammar/alnum_chars.cpp
     grammar/alpha_chars.cpp
-    grammar/ascii.cpp
     grammar/charset.cpp
+    grammar/ci_string.cpp
     grammar/dec_octet_rule.cpp
     grammar/delim_rule.cpp
     grammar/digit_chars.cpp

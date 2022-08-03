@@ -99,8 +99,8 @@ ci_compare_encoded(
     {
         pop_encoded_front(lhs, c0, n0);
         pop_encoded_front(rhs, c1, n1);
-        c0 = grammar::ascii_tolower(c0);
-        c1 = grammar::ascii_tolower(c1);
+        c0 = grammar::to_lower(c0);
+        c1 = grammar::to_lower(c1);
         if (c0 < c1)
             return -1;
         if (c1 < c0)
@@ -125,7 +125,7 @@ ci_digest_encoded(
     while(!s.empty())
     {
         pop_encoded_front(s, c, n);
-        c = grammar::ascii_tolower(c);
+        c = grammar::to_lower(c);
         hasher.put(c);
     }
 }
@@ -160,8 +160,8 @@ ci_compare(
     auto rlen = (std::min)(lhs.size(), rhs.size());
     for (std::size_t i = 0; i < rlen; ++i)
     {
-        char c0 = grammar::ascii_tolower(lhs[i]);
-        char c1 = grammar::ascii_tolower(rhs[i]);
+        char c0 = grammar::to_lower(lhs[i]);
+        char c1 = grammar::to_lower(rhs[i]);
         if (c0 < c1)
             return -1;
         if (c1 < c0)
@@ -181,7 +181,7 @@ ci_digest(
 {
     for (char c: s)
     {
-        c = grammar::ascii_tolower(c);
+        c = grammar::to_lower(c);
         hasher.put(c);
     }
 }

@@ -11,7 +11,7 @@
 #define BOOST_URL_IMPL_SCHEME_IPP
 
 #include <boost/url/scheme.hpp>
-#include <boost/url/grammar/ascii.hpp>
+#include <boost/url/grammar/ci_string.hpp>
 
 namespace boost {
 namespace urls {
@@ -20,30 +20,30 @@ scheme
 string_to_scheme(
     string_view s) noexcept
 {
-    using grammar::ascii_tolower;
+    using grammar::to_lower;
     switch(s.size())
     {
     case 0: // none
         return scheme::none;
 
     case 2: // ws
-        if( ascii_tolower(s[0]) == 'w' &&
-            ascii_tolower(s[1]) == 's')
+        if( to_lower(s[0]) == 'w' &&
+            to_lower(s[1]) == 's')
             return scheme::ws;
         break;
 
     case 3:
-        switch(tolower(s[0]))
+        switch(to_lower(s[0]))
         {
         case 'w': // wss
-            if( ascii_tolower(s[1]) == 's' &&
-                ascii_tolower(s[2]) == 's')
+            if( to_lower(s[1]) == 's' &&
+                to_lower(s[2]) == 's')
                 return scheme::wss;
             break;
 
         case 'f': // ftp
-            if( ascii_tolower(s[1]) == 't' &&
-                ascii_tolower(s[2]) == 'p')
+            if( to_lower(s[1]) == 't' &&
+                to_lower(s[2]) == 'p')
                 return scheme::ftp;
             break;
 
@@ -53,19 +53,19 @@ string_to_scheme(
         break;
 
     case 4:
-        switch(tolower(s[0]))
+        switch(to_lower(s[0]))
         {
         case 'f': // file
-            if( ascii_tolower(s[1]) == 'i' &&
-                ascii_tolower(s[2]) == 'l' &&
-                ascii_tolower(s[3]) == 'e')
+            if( to_lower(s[1]) == 'i' &&
+                to_lower(s[2]) == 'l' &&
+                to_lower(s[3]) == 'e')
                 return scheme::file;
             break;
 
         case 'h': // http
-            if( ascii_tolower(s[1]) == 't' &&
-                ascii_tolower(s[2]) == 't' &&
-                ascii_tolower(s[3]) == 'p')
+            if( to_lower(s[1]) == 't' &&
+                to_lower(s[2]) == 't' &&
+                to_lower(s[3]) == 'p')
                 return scheme::http;
             break;
 
@@ -75,11 +75,11 @@ string_to_scheme(
         break;
 
     case 5: // https
-        if( ascii_tolower(s[0]) == 'h' &&
-            ascii_tolower(s[1]) == 't' &&
-            ascii_tolower(s[2]) == 't' &&
-            ascii_tolower(s[3]) == 'p' &&
-            ascii_tolower(s[4]) == 's')
+        if( to_lower(s[0]) == 'h' &&
+            to_lower(s[1]) == 't' &&
+            to_lower(s[2]) == 't' &&
+            to_lower(s[3]) == 'p' &&
+            to_lower(s[4]) == 's')
             return scheme::https;
         break;
 

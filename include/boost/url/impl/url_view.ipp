@@ -16,7 +16,7 @@
 #include <boost/url/detail/over_allocator.hpp>
 #include <boost/url/detail/normalize.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/ascii.hpp>
+#include <boost/url/grammar/ci_string.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/origin_form_rule.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>

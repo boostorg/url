@@ -49,8 +49,8 @@ set(BOOST_URL_TESTS_FILES
     variant.cpp
     grammar/alnum_chars.cpp
     grammar/alpha_chars.cpp
-    grammar/ascii.cpp
     grammar/charset.cpp
+    grammar/ci_string.cpp
     grammar/dec_octet_rule.cpp
     grammar/delim_rule.cpp
     grammar/digit_chars.cpp
@@ -89,6 +89,10 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${BOOST_URL_TESTS_FILES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${TEST_MAIN})
 add_executable(boost_url_tests ${BOOST_URL_TESTS_FILES} ${TEST_MAIN})
 target_include_directories(boost_url_tests PRIVATE . ../../extra/include)
-target_link_libraries(boost_url_tests PRIVATE Boost::url Boost::container Boost::filesystem)
+target_link_libraries(boost_url_tests PRIVATE
+    Boost::url
+    Boost::container
+    Boost::filesystem
+    Boost::unordered)
 add_test(NAME boost_url_tests COMMAND boost_url_tests)
 add_dependencies(boost_url_all_tests boost_url_tests)

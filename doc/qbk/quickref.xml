@@ -100,8 +100,8 @@
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__pct_decode_opts">pct_decode_opts</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_encoded_view">pct_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__pct_encode_opts">pct_encode_opts</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_encoded_view">pct_encoded_view</link></member>
         </simplelist>
 
       </entry>
@@ -126,12 +126,16 @@
 <!-- _______________________________________________________________________ -->
 
   <tgroup cols="4">
-    <colspec colname="a"/><colspec colname="b"/><colspec colname="c"/><colspec colname="d"/>
+    <colspec colname="a"/>
+    <colspec colname="b"/>
+    <colspec colname="c"/>
+    <colspec colname="d"/>
+    <colspec colname="e"/>
     <thead><row>
       <entry valign="center" namest="a" nameend="a">
         <bridgehead renderas="sect2">RFC3986</bridgehead>
       </entry>
-      <entry valign="center" namest="b" nameend="d">
+      <entry valign="center" namest="b" nameend="e">
         <bridgehead renderas="sect2">Grammar</bridgehead>
       </entry>
     </row></thead>
@@ -159,10 +163,12 @@
       </entry>
       <entry valign="top">
 
-        <bridgehead renderas="sect3">Functions</bridgehead>
+        <bridgehead renderas="sect3">Functions (1/2)</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__grammar__ascii_to_lower">ascii_to_lower</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__ascii_toupper">ascii_toupper</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__ci_compare">ci_compare</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__ci_digest">ci_digest</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__ci_is_equal">ci_is_equal</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__ci_is_less">ci_is_less</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__delim_rule">delim_rule</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__find_if">find_if</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__find_if_not">find_if_not</link></member>
@@ -172,10 +178,26 @@
           <member><link linkend="url.ref.boost__urls__grammar__parse">parse</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__range_rule">range_rule</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__ref">ref</link></member>
+        </simplelist>
+
+      </entry>
+      <entry valign="top">
+
+        <bridgehead renderas="sect3">Functions (2/2)</bridgehead>
+        <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__grammar__sequence_rule">sequence_rule</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__squelch">squelch</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__to_lower">to_lower</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__to_upper">to_upper</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__token_rule">token_rule</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__variant_rule">variant_rule</link></member>
+        </simplelist>
+
+        <bridgehead renderas="sect3">Type Traits</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__is_charset">is_charset</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__is_mutable_string">is_mutable_string</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__is_rule">is_rule</link></member>
         </simplelist>
 
       </entry>
@@ -198,16 +220,12 @@
 
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__ci_hash">ci_hash</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__ci_equal">ci_equal</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__ci_less">ci_less</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__lut_chars">lut_chars</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__range">range</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__unsigned_rule">unsigned_rule</link></member>
-        </simplelist>
-
-        <bridgehead renderas="sect3">Type Traits</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__grammar__is_charset">is_charset</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__is_mutable_string">is_mutable_string</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__is_rule">is_rule</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">Concepts</bridgehead>

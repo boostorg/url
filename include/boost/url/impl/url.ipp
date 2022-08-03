@@ -2156,9 +2156,9 @@ normalize_octets_impl(
 
         // uppercase percent-encoding triplets
         ++it;
-        *it = grammar::ascii_toupper(*it);
+        *it = grammar::to_upper(*it);
         ++it;
-        *it = grammar::ascii_toupper(*it);
+        *it = grammar::to_upper(*it);
         ++it;
         dest += 3;
     }
@@ -2181,7 +2181,7 @@ decoded_to_lower_impl(int id) noexcept
     {
         if (*it != '%')
         {
-            *it = grammar::ascii_tolower(
+            *it = grammar::to_lower(
                 *it);
             ++it;
             continue;
@@ -2198,7 +2198,7 @@ to_lower_impl(int id) noexcept
     char const* const end = s_ + u_.offset(id + 1);
     while(it < end)
     {
-        *it = grammar::ascii_tolower(
+        *it = grammar::to_lower(
             *it);
         ++it;
     }

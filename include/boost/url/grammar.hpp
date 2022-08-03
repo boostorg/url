@@ -14,10 +14,10 @@
 
 #include <boost/url/grammar/alnum_chars.hpp>
 #include <boost/url/grammar/alpha_chars.hpp>
-#include <boost/url/grammar/ascii.hpp>
-#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/charset.hpp>
+#include <boost/url/grammar/ci_string.hpp>
 #include <boost/url/grammar/dec_octet_rule.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/digit_chars.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/hexdig_chars.hpp>

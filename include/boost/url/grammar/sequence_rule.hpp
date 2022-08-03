@@ -215,7 +215,7 @@ struct squelch_rule_t
             grammar::token_rule( grammar::digit_chars ) ) );
     @endcode
 
-    @par r The rule to squelch
+    @param r The rule to squelch
 
     @see
         @ref grammar::delim_rule,

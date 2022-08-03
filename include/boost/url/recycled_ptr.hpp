@@ -29,15 +29,15 @@ class recycled_ptr
     R* r_ = nullptr;
 
 public:
-    /** Acquire a new or recycler object
+    /** Acquire a new or recycled object
 
         This function acquires exclusive
-        access to a recycler object if it
+        access to a recycled object if it
         exists, otherwise it acquires
         a new, default constructed object.
 
         Upon destruction of the pointer,
-        the object is recycler.
+        the object is recycled.
     */
     recycled_ptr();
 
