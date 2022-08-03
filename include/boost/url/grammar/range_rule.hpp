@@ -19,6 +19,8 @@
 #include <iterator>
 #include <type_traits>
 
+#include <stddef.h> // ::max_align_t
+
 namespace boost {
 namespace urls {
 namespace grammar {
@@ -60,9 +62,21 @@ class range
         bool>
     struct impl2;
 
+    struct alignas(alignof(::max_align_t))
+        small_buffer
+    {
+        unsigned char buf[BufferSize];
+
+        void* addr() const noexcept
+        {
+            return const_cast<void*>(
+                reinterpret_cast<
+                    void const*>(this));
+        }
+    };
+    small_buffer sb_;
     string_view s_;
     std::size_t n_ = 0;
-    char buf_[BufferSize];
 
     template<
         class R0, class R1>
@@ -72,14 +86,15 @@ class range
     get() noexcept
     {
         return *reinterpret_cast<
-            any_rule*>(&buf_[0]);
+            any_rule*>(sb_.addr());
     }
 
     any_rule const&
     get() const noexcept
     {
         return *reinterpret_cast<
-            any_rule const*>(&buf_[0]);
+            any_rule const*>(
+                sb_.addr());
     }
 
     template<class R>
