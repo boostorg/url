@@ -227,7 +227,7 @@ measure(
         return false;
     auto it = p_;
     auto end = std::next(p_, n_);
-    n += detail::pct_encode_bytes_impl(
+    n += pct_encode_bytes_impl(
         it, end, query_chars);
     increment();
     return true;

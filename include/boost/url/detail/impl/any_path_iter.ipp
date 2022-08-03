@@ -238,7 +238,7 @@ measure(
         return false;
     auto it = p_;
     auto end = std::next(p_, n_);
-    n += detail::pct_encode_bytes_impl(it, end, pchars);
+    n += pct_encode_bytes_impl(it, end, pchars);
     increment();
     return true;
 }
@@ -252,10 +252,8 @@ copy(
     BOOST_ASSERT(!done_);
     auto it = p_;
     auto last = std::next(p_, n_);
-    dest += detail::pct_encode_impl(
-        dest, end,
-        it, last,
-        pchars);
+    dest += pct_encode_impl(
+        dest, end, it, last, pchars);
     increment();
 }
 
