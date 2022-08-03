@@ -11,6 +11,7 @@
 
 #include <boost/container/string.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/core/ignore_unused.hpp>
 
 //[snippet_headers_1
 #include <boost/url.hpp>
@@ -1186,19 +1187,19 @@ public:
     void
     run()
     {
-        using_url_views();
-        using_urls();
-        parsing_urls();
-        parsing_scheme();
-        parsing_authority();
-        parsing_path();
-        parsing_query();
-        parsing_fragment();
-        using_modifying();
-        grammar_parse();
-        grammar_customization();
-        modifying_path();
-        using_static_pool();
+        ignore_unused(&using_url_views);
+        ignore_unused(&using_urls);
+        ignore_unused(&parsing_urls);
+        ignore_unused(&parsing_scheme);
+        ignore_unused(&parsing_authority);
+        ignore_unused(&parsing_path);
+        ignore_unused(&parsing_query);
+        ignore_unused(&parsing_fragment);
+        ignore_unused(&using_modifying);
+        ignore_unused(&grammar_parse);
+        ignore_unused(&grammar_customization);
+        ignore_unused(&modifying_path);
+        ignore_unused(&using_static_pool);
 
         BOOST_TEST_PASS();
     }

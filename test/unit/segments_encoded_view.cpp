@@ -285,8 +285,9 @@ public:
         {
     segments_encoded_view sev = parse_path( "/path/to/file.txt" ).value();
 
+    std::stringstream ss;
     for( auto it = sev.begin(); it != sev.end(); ++it )
-        std::cout << *it << std::endl;
+        ss << *it << std::endl;
         }
 
         {
@@ -294,7 +295,8 @@ public:
 
     segments_encoded_view sev = u.encoded_segments();
 
-    std::cout << sev << std::endl;
+    std::stringstream ss;
+    ss << sev << std::endl;
         }
         //---
 
