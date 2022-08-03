@@ -56,7 +56,7 @@ namespace urls {
 
     @see
         @ref ipv6_address,
-        @ref parse.
+        @ref grammar::parse.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ ipv6_address_rule;

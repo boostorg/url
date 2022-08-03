@@ -32,7 +32,7 @@ namespace detail {
         >3.3. Path (rfc3986)</a>
 
     @see
-        @ref parse.
+        @ref grammar::parse.
 */
 constexpr auto segment_rule =
     pct_encoded_rule(&pchars);
@@ -69,7 +69,7 @@ constexpr auto segment_nz_rule =
         >3.3. Path (rfc3986)</a>
 
     @see
-        @ref parse.
+        @ref grammar::parse.
 */
 constexpr auto segment_nz_nc_rule =
     grammar::not_empty_rule(

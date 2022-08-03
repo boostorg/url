@@ -41,7 +41,7 @@ namespace urls {
 
     @see
         @ref url_view,
-        @ref parse
+        @ref grammar::parse
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ origin_form_rule;

@@ -48,7 +48,7 @@ namespace urls {
 
     @see
         @ref ipv4_address,
-        @ref parse.
+        @ref grammar::parse.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ ipv4_address_rule;

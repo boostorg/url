@@ -44,7 +44,7 @@ namespace urls {
         >4.3. Absolute URI (rfc3986)</a>
 
     @see
-        @ref parse,
+        @ref grammar::parse,
         @ref url_view.
 */
 #ifdef BOOST_URL_DOCS

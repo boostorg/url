@@ -40,7 +40,7 @@ namespace urls {
 
     @see
         @ref authority_view,
-        @ref parse.
+        @ref grammar::parse.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ authority_rule;

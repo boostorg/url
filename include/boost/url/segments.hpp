@@ -22,6 +22,7 @@ namespace urls {
 
 #ifndef BOOST_URL_DOCS
 class url;
+class segments_encoded;
 #endif
 
 /** A container referencing a random-access range of modifiable, percent-decoded path segments.
@@ -70,6 +71,7 @@ class segments
     url* u_ = nullptr;
 
     friend class url;
+    friend class segments_encoded;
 
     segments(url& u)
         : u_(&u)

@@ -137,8 +137,8 @@ public:
     {
         auto const check = [](
             string_view s,
-            char const* m = nullptr,
-            scheme id = scheme::unknown)
+            char const* m,
+            scheme id)
         {
             result<url_view> r =
                 parse_uri_reference(s);
@@ -169,8 +169,8 @@ public:
         };
 
         check("http://", "http", scheme::http);
-        check("ou812://", "ou812");
-        check("/x");
+        check("ou812://", "ou812", scheme::unknown);
+        check("/x", nullptr, scheme::unknown);
 
         check("http://", "http", scheme::http);
         check("HTTP://", "HTTP", scheme::http);
@@ -827,8 +827,8 @@ public:
     {
         auto const check = [](
             string_view s,
-            char const* encoded = nullptr,
-            string_view plain = {})
+            char const* encoded,
+            string_view plain)
         {
             result<url_view> r =
                 parse_uri_reference(s);
@@ -859,7 +859,7 @@ public:
             BOOST_TEST(r.has_error());
         };
 
-        check("");
+        check("", nullptr, {});
         check("#", "", "");
         check("/#", "", "");
         check("/#A", "A", "A");
