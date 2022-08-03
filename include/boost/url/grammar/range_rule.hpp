@@ -19,6 +19,8 @@
 #include <iterator>
 #include <type_traits>
 
+#include <stddef.h> // ::max_align_t
+
 namespace boost {
 namespace urls {
 namespace grammar {
@@ -62,7 +64,10 @@ class range
 
     string_view s_;
     std::size_t n_ = 0;
-    unsigned char buf_[BufferSize];
+    union alignas(alignof(::max_align_t))
+    {
+        unsigned char buf_[BufferSize];
+    };
 
     template<
         class R0, class R1>
