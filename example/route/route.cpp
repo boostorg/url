@@ -146,48 +146,47 @@ main(int argc, char **argv)
                "doc_root: dir to look for files\n";
         return EXIT_FAILURE;
     }
-    urls::result<urls::url_view> target_r =
-        urls::parse_uri_reference(argv[1]);
-    if (!target_r)
+
+    try {
+        urls::url target =
+            urls::parse_uri_reference(argv[1]).value();
+        target.normalize_path();
+
+        std::string prefix = argv[2];
+        fs::path root = argv[2];
+
+        if (!fs::is_directory(root))
+        {
+            std::cerr
+                << "Error: " << root
+                << " is not a directory\n";
+            return EXIT_FAILURE;
+        }
+
+        // Create route
+        route r(prefix, root);
+
+        // Check if target matches a file
+        fs::path result;
+        if (r.match(target, result))
+        {
+            fs::ifstream f(result);
+            std::string l;
+            while (std::getline(f, l))
+                std::cout << l << '\n';
+            f.close();
+        }
+        else
+        {
+            std::cout
+                << "No " << target << " in prefix "
+                << prefix << std::endl;
+        }
+        return EXIT_SUCCESS;
+    }
+    catch (std::exception &e)
     {
-        std::cerr
-            << "Error: " << argv[1]
-            << " is an invalid target\n";
+        std::cerr << e.what() << "\n";
         return EXIT_FAILURE;
     }
-    urls::url target(*target_r);
-    target.normalize_path();
-
-    std::string prefix = argv[2];
-    fs::path root = argv[2];
-
-    if (!fs::is_directory(root))
-    {
-        std::cerr
-            << "Error: " << root
-            << " is not a directory\n";
-        return EXIT_FAILURE;
-    }
-
-    // Create route
-    route r(prefix, root);
-
-    // Check if target matches a file
-    fs::path result;
-    if (r.match(target, result))
-    {
-        fs::ifstream f(result);
-        std::string l;
-        while (std::getline(f, l))
-            std::cout << l << '\n';
-        f.close();
-    }
-    else
-    {
-        std::cout
-            << "No " << target << " in prefix "
-            << prefix << std::endl;
-    }
-
-    return EXIT_SUCCESS;
 }
