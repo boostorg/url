@@ -417,11 +417,18 @@ set_user(pct_encoded_view s)
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = detail::pct_encode_bytes_impl(
-        s.begin(), s.end(), detail::user_chars);
+    auto const n =
+        detail::pct_encode_bytes_impl(
+            s.begin(),
+            s.end(),
+            detail::user_chars);
     auto dest = set_user_impl(n);
-    detail::pct_encode_impl(dest, u_.get(id_pass).data(),
-               s.begin(), s.end(), detail::user_chars);
+    detail::pct_encode_impl(
+        dest,
+        u_.get(id_pass).data(),
+        s.begin(),
+        s.end(),
+        detail::user_chars);
     u_.decoded_[id_user] = s.size();
     check_invariants();
     return *this;
@@ -532,8 +539,11 @@ set_password(pct_encoded_view s)
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = detail::pct_encode_bytes_impl(
-        s.begin(), s.end(), detail::password_chars);
+    auto const n =
+        detail::pct_encode_bytes_impl(
+            s.begin(),
+            s.end(),
+            detail::password_chars);
     auto dest = set_password_impl(n);
     detail::pct_encode_impl(
         dest,
@@ -656,8 +666,11 @@ set_userinfo(
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = detail::pct_encode_bytes_impl(
-        s.begin(), s.end(), detail::userinfo_chars);
+    auto const n =
+        detail::pct_encode_bytes_impl(
+            s.begin(),
+            s.end(),
+            detail::userinfo_chars);
     auto dest = set_userinfo_impl(n);
     detail::pct_encode_impl(
         dest,
@@ -836,8 +849,11 @@ set_host(
             return set_host(r.value());
     }
     check_invariants();
-    auto const n = detail::pct_encode_bytes_impl(
-        s.begin(), s.end(), detail::host_chars);
+    auto const n =
+        detail::pct_encode_bytes_impl(
+            s.begin(),
+            s.end(),
+            detail::host_chars);
     auto dest = set_host_impl(n);
     detail::pct_encode_impl(
         dest,
@@ -1880,8 +1896,11 @@ set_fragment(
         this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = detail::pct_encode_bytes_impl(
-        s.begin(), s.end(), detail::fragment_chars);
+    auto const n =
+        detail::pct_encode_bytes_impl(
+            s.begin(),
+            s.end(),
+            detail::fragment_chars);
     auto dest = set_fragment_impl(n);
     detail::pct_encode_impl(
         dest,
