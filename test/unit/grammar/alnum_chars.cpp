@@ -27,6 +27,8 @@ struct alnum_chars_test
         // javadoc
         {
             result< string_view > rv = parse( "Johnny42", token_rule( alnum_chars ) );
+
+            (void)rv;
         }
 
         test_char_set(

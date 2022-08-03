@@ -25,14 +25,18 @@ struct optional_rule_test
     void
     run()
     {
-        // test constexpr
-        constexpr auto r =
-            optional_rule(token_rule(alpha_chars));
-        (void)r;
+        // constexpr
+        {
+            constexpr auto r =
+                optional_rule(token_rule(alpha_chars));
+            (void)r;
+        }
 
         // javadoc
         {
             result< optional< string_view > > rv = parse( "", optional_rule( token_rule( alpha_chars ) ) );
+
+            (void)rv;
         }
     }
 };

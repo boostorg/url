@@ -73,12 +73,15 @@ struct sequence_rule_test
                     pct_encoded_rule(unreserved_chars + '-' + '.'),
                     delim_rule( ':' ),
                     token_rule( digit_chars ) ) );
+
+        (void)r1;
+        (void)r2;
     }
 
     void
     run()
     {
-        // test constexpr
+        // constexpr
         {
             constexpr auto r1 =
                 sequence_rule(
@@ -104,8 +107,9 @@ struct sequence_rule_test
                         dec_octet_rule,
                         squelch( delim_rule('.') ),
                         dec_octet_rule ) );
-        }
 
+            (void)rv;
+        }
         testSequence();
         testSquelch();
     }

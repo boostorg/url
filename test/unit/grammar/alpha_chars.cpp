@@ -27,6 +27,8 @@ struct alpha_chars_test
         // javadoc
         {
             result< string_view > rv = parse( "JohnDoe", token_rule( alpha_chars ) );
+
+            (void)rv;
         }
 
         test_char_set(

@@ -38,14 +38,18 @@ struct unsigned_rule_test
     void
     run()
     {
-        // test constexpr
-        constexpr auto r =
-            unsigned_rule<unsigned short>{};
-        (void)r;
+        // constexpr
+        {
+            constexpr auto r =
+                unsigned_rule<unsigned short>{};
+            (void)r;
+        }
 
         // javadoc
         {
             auto rv = parse( "32767", unsigned_rule< unsigned short >{} );
+
+            (void)rv;
         }
 
         {

@@ -27,12 +27,14 @@ struct variant_rule_test
     void
     run()
     {
-        // test constexpr
-        constexpr auto r =
-            variant_rule(
-                delim_rule('('),
-                delim_rule(')'));
-        (void)r;
+        // constexpr
+        {
+            constexpr auto r =
+                variant_rule(
+                    delim_rule('('),
+                    delim_rule(')'));
+            (void)r;
+        }
 
         // javadoc
         {
@@ -43,6 +45,8 @@ struct variant_rule_test
                     absolute_uri_rule,
                     authority_rule,
                     delim_rule('*') ) );
+
+            (void)rv;
         }
 
     }

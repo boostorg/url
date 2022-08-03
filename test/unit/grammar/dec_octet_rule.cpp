@@ -29,12 +29,16 @@ struct dec_octet_rule_test
     run()
     {
         // test constexpr
-        constexpr auto r = dec_octet_rule;
-        (void)r;
+        {
+            constexpr auto r = dec_octet_rule;
+            (void)r;
+        }
 
         // javadoc
         {
             result< unsigned char > rv = parse( "255", dec_octet_rule );
+
+            (void)rv;
         }
         testRule();
     }

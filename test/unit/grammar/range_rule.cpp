@@ -52,13 +52,18 @@ struct range_rule_test
     void
     run()
     {
-        // test constexpr
-        constexpr auto r = range_rule(
-            token_rule(alpha_chars),
-            sequence_rule(
-                squelch(
-                    delim_rule('+')),
-                token_rule(alpha_chars)));
+        // constexpr
+        {
+            constexpr auto r = range_rule(
+                token_rule(alpha_chars),
+                sequence_rule(
+                    squelch(
+                        delim_rule('+')),
+                    token_rule(alpha_chars)));
+
+            check("", {}, r);
+            check("x", {"x"}, r);
+        }
 
         // javadoc
         {
@@ -68,6 +73,7 @@ struct range_rule_test
                         squelch( delim_rule( ';' ) ),
                         token_rule( alpha_chars ) ),
                     1 ) );
+            (void)rv;
         }
 
         // javadoc
@@ -78,15 +84,14 @@ struct range_rule_test
                     sequence_rule(                      // next
                         squelch( delim_rule(',') ),
                         token_rule( alpha_chars ) ) ) );
+
+            (void)rv;
         }
 
         // default construction
         {
             range<string_view> v;
         }
-
-        check("", {}, r);
-        check("x", {"x"}, r);
     }
 };
 

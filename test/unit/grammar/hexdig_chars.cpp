@@ -27,6 +27,8 @@ struct hexdig_chars_test
         // javadoc
         {
             result< string_view > rv = parse( "8086FC19", token_rule( hexdig_chars ) );
+
+            (void)rv;
         }
 
         test_char_set(
