@@ -32,7 +32,7 @@ namespace detail {
 template<std::size_t Size>
 struct storage
 {
-    char buf[Size];
+    unsigned char buf[Size];
 
     void* get() noexcept
     {

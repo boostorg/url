@@ -62,7 +62,7 @@ class range
 
     string_view s_;
     std::size_t n_ = 0;
-    char buf_[BufferSize];
+    unsigned char buf_[BufferSize];
 
     template<
         class R0, class R1>
@@ -72,14 +72,16 @@ class range
     get() noexcept
     {
         return *reinterpret_cast<
-            any_rule*>(&buf_[0]);
+            any_rule*>(reinterpret_cast<
+                void*>(&buf_[0]));
     }
 
     any_rule const&
     get() const noexcept
     {
         return *reinterpret_cast<
-            any_rule const*>(&buf_[0]);
+            any_rule const*>(reinterpret_cast<
+                void const*>(&buf_[0]));
     }
 
     template<class R>
