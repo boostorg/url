@@ -190,7 +190,37 @@ public:
     {
         construct(s);
     }
+
+    // hidden friend
+    friend
+    std::ostream&
+    operator<<(std::ostream& os, static_url const& u)
+    {
+        return os << u.string();
+    }
 };
+
+/** Format the static URL to the output stream
+
+    This function serializes the encoded URL
+    to the output stream.
+
+    @par Example
+    @code
+    static_url u( "http://www.example.com/index.htm" );
+
+    std::cout << u << std::endl;
+    @endcode
+
+    @return A reference to the output stream, for chaining
+
+    @param os The output stream to write to.
+
+    @param u The URL to write.
+*/
+template <std::size_t Capacity>
+std::ostream&
+operator<<(std::ostream& os, static_url<Capacity> const& u);
 
 } // urls
 } // boost
