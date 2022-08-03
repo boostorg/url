@@ -45,8 +45,11 @@ parse(
         std::numeric_limits<
             U>::digits10;
     static constexpr U ten = 10;
-    auto const safe_end = (
-        std::min)(it + Digits10, end);
+    char const* safe_end;
+    if(end - it >= Digits10)
+        safe_end = it + Digits10;
+    else
+        safe_end = end;
     U u = *it - '0';
     ++it;
 
