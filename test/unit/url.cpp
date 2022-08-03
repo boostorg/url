@@ -892,6 +892,56 @@ public:
         }
     }
 
+    void
+    testHostname()
+    {
+        BOOST_TEST(url_view(
+            "").encoded_hostname() ==
+            "");
+        BOOST_TEST(url_view(
+            "x:///").encoded_hostname() ==
+            "");
+        BOOST_TEST(url_view(
+            "x://example.com").encoded_hostname() ==
+            "example.com");
+        BOOST_TEST(url_view(
+            "x://example%2dcom").encoded_hostname() ==
+            "example%2dcom");
+        BOOST_TEST(url_view(
+            "x://1.2.3.4").encoded_hostname() ==
+            "1.2.3.4");
+        BOOST_TEST(url_view(
+            "x://[::]").encoded_hostname() ==
+            "::");
+        BOOST_TEST(url_view(
+            "x://[v2.0]").encoded_hostname() ==
+            "v2.0");
+
+        //---
+
+        BOOST_TEST(url_view(
+            "").hostname() ==
+            "");
+        BOOST_TEST(url_view(
+            "x:///").hostname() ==
+            "");
+        BOOST_TEST(url_view(
+            "x://example.com").hostname() ==
+            "example.com");
+        BOOST_TEST(url_view(
+            "x://example%2dcom").hostname() ==
+            "example-com");
+        BOOST_TEST(url_view(
+            "x://1.2.3.4").hostname() ==
+            "1.2.3.4");
+        BOOST_TEST(url_view(
+            "x://[::]").hostname() ==
+            "::");
+        BOOST_TEST(url_view(
+            "x://[v2.0]").hostname() ==
+            "v2.0");
+    }
+
     //--------------------------------------------
 
     void
@@ -2091,6 +2141,7 @@ public:
         testPassword();
         testUserinfo();
         testHost();
+        testHostname();
         testPort();
         testAuthority();
         testOrigin();

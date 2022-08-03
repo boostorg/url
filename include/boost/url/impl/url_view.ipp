@@ -314,6 +314,73 @@ encoded_host() const noexcept
     return u_.get(id_host);
 }
 
+string_view
+url_view::
+encoded_hostname() const noexcept
+{
+    string_view s = u_.get(id_host);
+    switch(u_.host_type_)
+    {
+    case urls::host_type::none:
+        BOOST_ASSERT(s.empty());
+        break;
+
+    case urls::host_type::name:
+    case urls::host_type::ipv4:
+        break;
+
+    case urls::host_type::ipv6:
+    case urls::host_type::ipvfuture:
+    {
+        BOOST_ASSERT(s.size() >= 2);
+        BOOST_ASSERT(s.front() == '[');
+        BOOST_ASSERT(s.back() == ']');
+        s.remove_prefix(1);
+        s.remove_suffix(1);
+        break;
+    }
+    }
+    return s;
+}
+
+pct_encoded_view
+url_view::
+hostname() const noexcept
+{
+    string_view s = u_.get(id_host);
+    std::size_t n;
+    switch(u_.host_type_)
+    {
+    default:
+    case urls::host_type::none:
+        BOOST_ASSERT(s.empty());
+        n = 0;
+        break;
+
+    case urls::host_type::name:
+    case urls::host_type::ipv4:
+        n = u_.decoded_[id_host];
+        break;
+
+    case urls::host_type::ipv6:
+    case urls::host_type::ipvfuture:
+    {
+        BOOST_ASSERT(s.size() >= 2);
+        BOOST_ASSERT(s.front() == '[');
+        BOOST_ASSERT(s.back() == ']');
+        s.remove_prefix(1);
+        s.remove_suffix(1);
+        n = u_.decoded_[id_host] - 2;
+        BOOST_ASSERT(n == s.size());
+        break;
+    }
+    }
+    pct_decode_opts opt;
+    opt.plus_to_space = false;
+    return detail::access::construct(
+        s, n, opt);
+}
+
 urls::ipv4_address
 url_view::
 ipv4_address() const noexcept

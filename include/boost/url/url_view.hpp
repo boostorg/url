@@ -992,6 +992,70 @@ public:
     string_view
     encoded_host() const noexcept;
 
+    /** Return the hostname
+
+        This function returns the hostname with
+        percent-encoding.
+        The hostname is formed from the host
+        string, with the additional step of
+        removing the enclosing square brackets
+        when the host type is
+        @ref host_type::ipv6 or
+        @ref host_type::ipvfuture.
+
+        @par BNF
+        @code
+        host        = IP-literal / IPv4address / reg-name
+
+        IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+        @endif
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2. Host (rfc3986)</a>
+
+        @see
+            @ref hostname.
+    */
+    BOOST_URL_DECL
+    string_view
+    encoded_hostname() const noexcept;
+
+    /** Return the hostname
+
+        This function returns the hostname with
+        percent-encoding removed.
+        The hostname is formed from the host
+        string, with the additional step of
+        removing the enclosing square brackets
+        when the host type is
+        @ref host_type::ipv6 or
+        @ref host_type::ipvfuture.
+
+        @par BNF
+        @code
+        host        = IP-literal / IPv4address / reg-name
+
+        IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+        @endif
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2. Host (rfc3986)</a>
+
+        @see
+            @ref encoded_hostname.
+    */
+    BOOST_URL_DECL
+    pct_encoded_view
+    hostname() const noexcept;
+
     /** Return the host
 
         This function returns the host portion of
