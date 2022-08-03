@@ -18,6 +18,13 @@
 namespace boost {
 namespace urls {
 
+params
+params_encoded::
+decoded() const
+{
+    return params(*u_);
+}
+
 auto
 params_encoded::
 operator[](

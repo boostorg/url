@@ -219,17 +219,12 @@ public:
 
     /** Return a view of this container as percent-decoded query parameters
 
-        @tparam Allocator An Allocator type
-
         @return A percent-decoded container of query parameters
 
-        @param alloc Allocator to create read-only strings for decoded strings
-
     */
-    template<class Allocator =
-        std::allocator<char>>
+    BOOST_URL_DECL
     params
-    decoded(Allocator const& alloc = {}) const;
+    decoded() const;
 
     //--------------------------------------------
     //

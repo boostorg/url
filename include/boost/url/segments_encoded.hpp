@@ -134,9 +134,9 @@ public:
 
     /** Return this container as percent-decoded segments
     */
-    template<class Allocator = std::allocator<char> >
+    BOOST_URL_DECL
     segments
-    decoded(Allocator const& alloc = {}) const;
+    decoded() const;
 
     /** Constructor
 

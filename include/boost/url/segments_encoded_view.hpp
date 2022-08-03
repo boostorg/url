@@ -222,10 +222,6 @@ public:
 
         @return A view to decoded path segments.
 
-        @param alloc The allocator the returned
-        view will use for all string storage. If
-        this parameter is ommitted, the default
-        allocator will be used.
     */
     segments_view
     decoded() const

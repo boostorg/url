@@ -19,6 +19,13 @@
 namespace boost {
 namespace urls {
 
+segments
+segments_encoded::
+decoded() const
+{
+    return segments(*u_);
+}
+
 //------------------------------------------------
 //
 // Iterators
