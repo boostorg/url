@@ -176,7 +176,7 @@ assign_to(
     // member function `assign(iterator, iterator)`.
     BOOST_STATIC_ASSERT(
         grammar::is_mutable_string<
-            MutableString, iterator>::value);
+            MutableString>::value);
     s.assign(begin(), end());
     return s;
 }
@@ -197,7 +197,7 @@ append_to(
     // member function `append(iterator, iterator)`.
     BOOST_STATIC_ASSERT(
         grammar::is_mutable_string<
-            MutableString, iterator>::value);
+            MutableString>::value);
     s.append(begin(), end());
     return s;
 }
