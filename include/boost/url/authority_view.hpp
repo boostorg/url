@@ -965,24 +965,7 @@ public:
     string_view
     encoded_host_and_port() const noexcept;
 
-    /** Format the encoded authority to the output stream
-
-        This function serializes the encoded URL
-        to the output stream.
-
-        @par Example
-        @code
-        url_view u = parse_uri( "http://www.example.com/index.htm" );
-
-        std::cout << u << std::endl;
-        @endcode
-
-        @return A reference to the output stream, for chaining
-
-        @param os The output stream to write to
-
-        @param a The URL to write
-    */
+    // hidden friend
     friend
     std::ostream&
     operator<<(
@@ -992,6 +975,29 @@ public:
         return os << a.encoded_authority();
     }
 };
+
+/** Format the encoded authority to the output stream
+
+    This function serializes the encoded URL
+    to the output stream.
+
+    @par Example
+    @code
+    url_view u = parse_uri( "http://www.example.com/index.htm" );
+
+    std::cout << u << std::endl;
+    @endcode
+
+    @return A reference to the output stream, for chaining
+
+    @param os The output stream to write to
+
+    @param a The URL to write
+*/
+std::ostream&
+operator<<(
+    std::ostream& os,
+    authority_view const& a);
 
 //------------------------------------------------
 

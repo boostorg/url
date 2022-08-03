@@ -299,17 +299,7 @@ public:
     ipv6_address
     loopback() noexcept;
 
-    /** Format the address to an output stream
-
-        This function writes the address to an
-        output stream using standard notation.
-
-        @return The output stream, for chaining.
-
-        @param os The output stream to write to.
-
-        @param addr The address to write.
-    */
+    // hidden friend
     friend
     std::ostream&
     operator<<(
@@ -332,6 +322,22 @@ private:
 
     bytes_type addr_{};
 };
+
+/** Format the address to an output stream
+
+    This function writes the address to an
+    output stream using standard notation.
+
+    @return The output stream, for chaining.
+
+    @param os The output stream to write to.
+
+    @param addr The address to write.
+*/
+std::ostream&
+operator<<(
+    std::ostream& os,
+    ipv6_address const& addr);
 
 //------------------------------------------------
 

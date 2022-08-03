@@ -1047,17 +1047,7 @@ public:
 
     //--------------------------------------------
 
-    /** Format the string with percent-decoding applied to the output stream
-
-        This function serializes the decoded view
-        to the output stream.
-
-        @return A reference to the output stream, for chaining
-
-        @param os The output stream to write to
-
-        @param s The decoded view to write
-    */
+    // hidden friend
     friend
     std::ostream&
     operator<<(
@@ -1074,6 +1064,22 @@ private:
     void
     write(std::ostream& os) const;
 };
+
+/** Format the string with percent-decoding applied to the output stream
+
+    This function serializes the decoded view
+    to the output stream.
+
+    @return A reference to the output stream, for chaining
+
+    @param os The output stream to write to
+
+    @param s The decoded view to write
+*/
+std::ostream&
+operator<<(
+    std::ostream& os,
+    pct_encoded_view const& s);
 
 } // urls
 

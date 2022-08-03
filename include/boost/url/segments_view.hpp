@@ -253,8 +253,7 @@ public:
     //
     //--------------------------------------------
 
-    /** Format the object to an output stream
-    */
+    // hidden friend
     friend
     std::ostream&
     operator<<(
@@ -271,6 +270,17 @@ private:
     write(std::ostream& os) const;
 
 };
+
+/** Format the segments to an output stream.
+
+    @param os The output stream.
+
+    @param vw The encoded segments.
+*/
+std::ostream&
+operator<<(
+    std::ostream& os,
+    segments_view const& vw);
 
 //----------------------------------------------------------
 
