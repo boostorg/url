@@ -37,9 +37,12 @@ struct alignas(alignof(::max_align_t))
 {
     unsigned char buf[Size];
 
-    void* get() noexcept
+    void*
+    addr() const noexcept
     {
-        return &buf[0];
+        return const_cast<void*>(
+            reinterpret_cast<
+                void const*>(this));
     }
 };
 
@@ -170,13 +173,13 @@ struct range<T>::impl1<R, false>
     get() const noexcept
     {
         return *reinterpret_cast<
-            impl const*>(p_->get());
+            impl const*>(p_->addr());
     }
 
     explicit
     impl1(R const& next) noexcept
     {
-        ::new(p_->get()) impl{next};
+        ::new(p_->addr()) impl{next};
     }
 
 private:
@@ -290,14 +293,14 @@ struct range<T>::impl2<R0, R1, false>
     get() const noexcept
     {
         return *reinterpret_cast<
-            impl const*>(p_->get());
+            impl const*>(p_->addr());
     }
 
     impl2(
         R0 const& first,
         R1 const& next) noexcept
     {
-        ::new(p_->get()) impl{
+        ::new(p_->addr()) impl{
             first, next};
     }
 
