@@ -17,7 +17,9 @@ namespace urls {
 namespace grammar {
 
 template<class R>
+#ifdef BOOST_GCC
 [[gnu::noinline]]
+#endif
 auto
 parse(
     char const*& it,
@@ -36,7 +38,9 @@ parse(
 }
 
 template<class R>
+#ifdef BOOST_GCC
 [[gnu::noinline]]
+#endif
 auto
 parse(
     string_view s,
