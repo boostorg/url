@@ -171,6 +171,10 @@ elif [ "$DRONE_JOB_BUILDTYPE" == "cmake1" ]; then
 
 echo '==================================> INSTALL'
 
+# https://bobbyhadz.com/blog/python-no-module-named-skbuild
+# https://github.com/scikit-build/cmake-python-distributions/issues/103
+pip install --user scikit-build
+
 pip install --user cmake
 
 echo '==================================> SCRIPT'
