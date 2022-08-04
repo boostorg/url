@@ -17,6 +17,7 @@ namespace urls {
 namespace grammar {
 
 template<class R>
+[[gnu::noinline]]
 auto
 parse(
     char const*& it,
@@ -35,6 +36,7 @@ parse(
 }
 
 template<class R>
+[[gnu::noinline]]
 auto
 parse(
     string_view s,
