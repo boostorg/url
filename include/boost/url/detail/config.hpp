@@ -97,4 +97,10 @@
 using pos_t = size_t;
 #endif
 
+#ifdef BOOST_GCC
+#define BOOST_URL_NO_INLINE [[gnu::noinline]]
+#else
+#define BOOST_URL_NO_INLINE
+#endif
+
 #endif

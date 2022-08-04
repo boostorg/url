@@ -196,6 +196,7 @@ struct parse_sequence<false, R0, Rn...>
     template<
         std::size_t Ir,
         std::size_t Iv>
+    BOOST_URL_NO_INLINE
     void
     apply(
         char const*& it,
