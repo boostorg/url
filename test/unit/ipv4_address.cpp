@@ -48,7 +48,9 @@ public:
         // ipv4_address(array)
         {
             {
-                ipv4_address a({1,2,3,4});
+                ipv4_address a(
+                    ipv4_address::bytes_type{{
+                        1,2,3,4}});
                 BOOST_TEST(
                     a.to_uint()==0x01020304);
             }
