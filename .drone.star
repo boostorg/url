@@ -37,7 +37,7 @@ def main(ctx):
   linux_cxx("Coverage", "g++-8", packages="g++-8", buildscript="drone", buildtype="codecov", image=linuxglobalimage, environment={'COMMENT': 'codecov.io', 'LCOV_BRANCH_COVERAGE': '0', 'B2_CXXSTD': '11', 'B2_TOOLSET': 'gcc-8', 'B2_DEFINES': 'BOOST_NO_STRESS_TEST=1', 'DRONE_JOB_UUID': 'da4b9237ba', "CODECOV_TOKEN": {"from_secret": "codecov_token"}}, globalenv=globalenv),
 
   # Latest gcc
-  linux_cxx("GCC 12: C++11, 14, 17, 20", "g++-12", packages="g++-12", buildscript="drone", buildtype="boost", image="cppalliance/droneubuntu2204:1", environment={'B2_TOOLSET': 'gcc-12', 'B2_CXXFLAGS': '-Werror -funsigned-char', 'B2_CXXSTD': '11,14,17,20'}, globalenv=globalenv),
+  linux_cxx("GCC 12: C++11, 14, 17, 20", "g++-12", packages="g++-12", buildscript="drone", buildtype="boost", image="cppalliance/droneubuntu2204:1", environment={'B2_TOOLSET': 'gcc-12', 'B2_CXXFLAGS': '-Werror -Wno-error=restrict -funsigned-char', 'B2_CXXSTD': '11,14,17,20'}, globalenv=globalenv),
 
   # Latest clang
   linux_cxx("Clang 14: C++11, 14, 17, 20", "clang++-14", packages="clang-14 libstdc++-10-dev", llvm_os="jammy", llvm_ver="14", buildscript="drone", buildtype="boost", image="cppalliance/droneubuntu2204:1", environment={'B2_TOOLSET': 'clang-14', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '11,14,17,20'}, globalenv=globalenv),
@@ -77,9 +77,9 @@ def main(ctx):
   # GCC (All other versions)
   linux_cxx("GCC 4.9: C++11", "g++-4.9", packages="g++-4.9", buildscript="drone", buildtype="boost", image="cppalliance/droneubuntu1604:1", environment={'B2_TOOLSET': 'gcc-4.9', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '11', 'DRONE_JOB_UUID': '0ade7c2cf9'}, globalenv=globalenv),
   linux_cxx("GCC 5: C++11", "g++-5", packages="g++-5", buildscript="drone", buildtype="boost", image=linuxglobalimage, environment={'B2_TOOLSET': 'gcc-5', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '11', 'DRONE_JOB_UUID': 'b1d5781111'}, globalenv=globalenv),
-  linux_cxx("GCC 6: C++11,14", "g++-6", packages="g++-6", buildscript="drone", buildtype="boost", image=linuxglobalimage, environment={'B2_TOOLSET': 'gcc-6', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '11,14', 'DRONE_JOB_UUID': '17ba079149'}, globalenv=globalenv),
-  linux_cxx("GCC 7: C++14,17", "g++-7", packages="g++-7", buildscript="drone", buildtype="boost", image=linuxglobalimage, environment={'B2_TOOLSET': 'gcc-7', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '14,17', 'DRONE_JOB_UUID': '7b52009b64'}, globalenv=globalenv),
-  linux_cxx("GCC 8: C++17", "g++-8", packages="g++-8", buildscript="drone", buildtype="boost", image=linuxglobalimage, environment={'B2_TOOLSET': 'gcc-8', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '17', 'DRONE_JOB_UUID': 'bd307a3ec3'}, globalenv=globalenv),
+  linux_cxx("GCC 6: C++11,14", "g++-6", packages="g++-6", buildscript="drone", buildtype="boost", image=linuxglobalimage, environment={'B2_TOOLSET': 'gcc-6', 'B2_CXXFLAGS': '-Werror -Wno-error=unused-function', 'B2_CXXSTD': '11,14', 'DRONE_JOB_UUID': '17ba079149'}, globalenv=globalenv),
+  linux_cxx("GCC 7: C++14,17", "g++-7", packages="g++-7", buildscript="drone", buildtype="boost", image=linuxglobalimage, environment={'B2_TOOLSET': 'gcc-7', 'B2_CXXFLAGS': '-Werror -Wno-error=unused-function', 'B2_CXXSTD': '14,17', 'DRONE_JOB_UUID': '7b52009b64'}, globalenv=globalenv),
+  linux_cxx("GCC 8: C++17", "g++-8", packages="g++-8", buildscript="drone", buildtype="boost", image=linuxglobalimage, environment={'B2_TOOLSET': 'gcc-8', 'B2_CXXFLAGS': '-Werror -Wno-error=unused-function', 'B2_CXXSTD': '17', 'DRONE_JOB_UUID': 'bd307a3ec3'}, globalenv=globalenv),
   linux_cxx("GCC 9: C++17", "g++-9", packages="g++-9", buildscript="drone", buildtype="boost", image=linuxglobalimage, environment={'B2_TOOLSET': 'gcc-9', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '17', 'DRONE_JOB_UUID': 'fa35e19212'}, globalenv=globalenv),
   linux_cxx("GCC 10: C++17", "g++-10", packages="g++-10", buildscript="drone", buildtype="boost", image=linuxglobalimage, environment={'B2_TOOLSET': 'gcc-10', 'B2_CXXFLAGS': '-Werror -funsigned-char', 'B2_CXXSTD': '17', 'DRONE_JOB_UUID': 'fa35e19213'}, globalenv=globalenv),
   linux_cxx("GCC 11: C++17,20", "g++-11", packages="g++-11", buildscript="drone", buildtype="boost", image=linuxglobalimage, environment={'B2_TOOLSET': 'gcc-11', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '17,20', 'DRONE_JOB_UUID': 'fa35e19214'}, globalenv=globalenv),
