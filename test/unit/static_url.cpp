@@ -10,6 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/static_url.hpp>
 
+#include <boost/url/url.hpp>
 #include <boost/url/url_view.hpp>
 #include "test_suite.hpp"
 #include <iostream>
@@ -20,7 +21,7 @@ namespace urls {
 class static_url_test
 {
 public:
-    using url_t = static_url<1024>;
+    using StaticUrl = static_url<1024>;
 
     void
     f1(url_view const&)
@@ -32,49 +33,54 @@ public:
     {
         // default ctor
         {
-            url_t u;
+            StaticUrl u;
             BOOST_TEST_EQ(*u.c_str(), '\0');
             BOOST_TEST(u.string().empty());
         }
 
-        url c1      = parse_uri("http://1").value();
-        url_t c2    = parse_uri("http://2").value();
-        url_view c3 = parse_uri("http://3").value();
-        url_view c4 = parse_uri("ftp://").value();
+        url c1       = parse_uri("http://1").value();
+        StaticUrl c2 = parse_uri("http://2").value();
+        url_view c3  = parse_uri("http://3").value();
+        url_view c4  = parse_uri("ftp://").value();
 
         // copy ctor
         {
             {
-                url_t u(c1);
+                StaticUrl u(c1);
                 BOOST_TEST_EQ(u.string(), c1.string());
                 BOOST_TEST_NE(u.c_str(), c1.string().data());
             }
             {
-                url_t u(c2);
+                StaticUrl u(c2);
                 BOOST_TEST_EQ(u.string(), c2.string());
                 BOOST_TEST_NE(u.c_str(), c2.string().data());
             }
             {
-                url_t u(c3);
+                StaticUrl u(c3);
                 BOOST_TEST_EQ(u.string(), c3.string());
                 BOOST_TEST_NE(u.c_str(), c3.string().data());
+            }
+            {
+                // different sizes
+                static_url<64> u1;
+                static_url<128> u2(u1);
             }
         }
 
         // move ctor
         {
             {
-                url_t u(std::move(c1));
+                StaticUrl u(std::move(c1));
                 BOOST_TEST_EQ(u.string(), c1.string());
                 BOOST_TEST_NE(u.c_str(), c1.string().data());
             }
             {
-                url_t u(std::move(c2));
+                StaticUrl u(std::move(c2));
                 BOOST_TEST_EQ(u.string(), c2.string());
                 BOOST_TEST_NE(u.c_str(), c2.string().data());
             }
             {
-                url_t u(std::move(c3));
+                StaticUrl u(std::move(c3));
                 BOOST_TEST_EQ(u.string(), c3.string());
                 BOOST_TEST_NE(u.c_str(), c3.string().data());
             }
@@ -83,41 +89,47 @@ public:
         // copy assign
         {
             {
-                url_t u(c4);
+                StaticUrl u(c4);
                 u = c1;
                 BOOST_TEST_EQ(u.string(), c1.string());
                 BOOST_TEST_NE(u.c_str(), c1.string().data());
             }
             {
-                url_t u(c4);
+                StaticUrl u(c4);
                 u = c2;
                 BOOST_TEST_EQ(u.string(), c2.string());
                 BOOST_TEST_NE(u.c_str(), c2.string().data());
             }
             {
-                url_t u(c4);
+                StaticUrl u(c4);
                 u = c3;
                 BOOST_TEST_EQ(u.string(), c3.string());
                 BOOST_TEST_NE(u.c_str(), c3.string().data());
+            }
+            {
+                // different sizes
+                static_url<64> u1;
+                static_url<128> u2;
+                u2 = u1;
             }
         }
 
         // move assign
         {
             {
-                url_t u(c4);
+                StaticUrl u(c4);
                 u = std::move(c1);
                 BOOST_TEST_EQ(u.string(), c1.string());
                 BOOST_TEST_NE(u.c_str(), c1.string().data());
             }
             {
-                url_t u(c4);
+                StaticUrl u(c4);
                 u = std::move(c2);
                 BOOST_TEST_EQ(u.string(), c2.string());
                 BOOST_TEST_NE(u.c_str(), c2.string().data());
             }
             {
-                url_t u(c4);
+                StaticUrl u(c4);
                 u = std::move(c3);
                 BOOST_TEST_EQ(u.string(), c3.string());
                 BOOST_TEST_NE(u.c_str(), c3.string().data());
@@ -126,13 +138,13 @@ public:
 
         // conversion
         {
-            url_t u;
+            StaticUrl u;
             f1(u);
         }
 
         // static_url(string_view)
         {
-            url_t u("http://example.com/path/to/file.txt?#");
+            StaticUrl u("http://example.com/path/to/file.txt?#");
         }
     }
 
@@ -142,7 +154,7 @@ public:
         url_view uv;
         BOOST_TEST_NO_THROW( uv = parse_uri(
             "http://user:pass@www.boost.org:8080/x/y/z?a=b&c=3#frag").value());
-        url_t u(uv);
+        StaticUrl u(uv);
         BOOST_TEST(u.encoded_origin() ==
             "http://user:pass@www.boost.org:8080");
         BOOST_TEST_EQ(u.scheme(), "http");

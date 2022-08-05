@@ -35,7 +35,7 @@ class segments_view
     string_view s_;
     std::size_t n_ = 0;
 
-    friend class url_view;
+    friend class url_view_base;
     friend class segments_encoded_view;
 
     segments_view(

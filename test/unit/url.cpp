@@ -11,6 +11,7 @@
 // Test that header file is self-contained.
 #include <boost/url/url.hpp>
 
+#include <boost/url/url_view.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 #include "test_suite.hpp"
 #include <algorithm>
@@ -116,35 +117,35 @@ public:
     void
     testCapacity()
     {
-        // capacity_in_bytes
+        // capacity
         {
             url u;
-            BOOST_TEST_EQ(u.capacity_in_bytes(), 0u);
+            BOOST_TEST_EQ(u.capacity(), 0u);
             BOOST_TEST(u.empty());
         }
 
-        // reserve_bytes
+        // reserve
         {
             url u;
-            u.reserve_bytes(32);
-            BOOST_TEST_GE(u.capacity_in_bytes(), 32u);
-            u.reserve_bytes(16);
-            BOOST_TEST_GE(u.capacity_in_bytes(), 16u);
-            u.reserve_bytes(64);
-            BOOST_TEST_GE(u.capacity_in_bytes(), 64u);
+            u.reserve(32);
+            BOOST_TEST_GE(u.capacity(), 32u);
+            u.reserve(16);
+            BOOST_TEST_GE(u.capacity(), 16u);
+            u.reserve(64);
+            BOOST_TEST_GE(u.capacity(), 64u);
             u = url_view("http://example.com/path/to/file.txt?k=v");
-            u.reserve_bytes(128);
-            BOOST_TEST_GE(u.capacity_in_bytes(), 128u);
+            u.reserve(128);
+            BOOST_TEST_GE(u.capacity(), 128u);
         }
 
         // clear
         {
             url u = parse_uri(
                 "http://example.com/index.htm?q#f").value();
-            BOOST_TEST_GT(u.capacity_in_bytes(), 0u);
+            BOOST_TEST_GT(u.capacity(), 0u);
             BOOST_TEST(! u.empty());
             u.clear();
-            BOOST_TEST_GT(u.capacity_in_bytes(), 0u);
+            BOOST_TEST_GT(u.capacity(), 0u);
             BOOST_TEST(u.empty());
             BOOST_TEST_EQ(u.size(), 0u);
         }

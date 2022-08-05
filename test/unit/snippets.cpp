@@ -247,6 +247,7 @@ using_urls()
     //[snippet_quicklook_modifying_1b
     static_url<1024> su = parse_uri( s ).value();
     //]
+    (void)su;
 
     //[snippet_quicklook_modifying_2
     u.set_scheme( "https" );

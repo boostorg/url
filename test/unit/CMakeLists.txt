@@ -43,7 +43,9 @@ set(BOOST_URL_TESTS_FILES
     static_url.cpp
     string_view.cpp
     url.cpp
+    url_base.cpp
     url_view.cpp
+    url_view_base.cpp
     urls.cpp
     variant.cpp
     grammar/alnum_chars.cpp

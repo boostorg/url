@@ -53,7 +53,7 @@ public:
             BOOST_TEST_NO_THROW(url_view(
                 "http://example.com/path/to/file.txt?#"));
             BOOST_TEST_THROWS(url_view("{}"),
-                std::invalid_argument);
+                std::exception);
         }
     }
 
@@ -90,17 +90,6 @@ public:
             url_view u(s);
             BOOST_TEST_NE(u.data(), nullptr);
             BOOST_TEST_EQ(u.data(), s.data());
-        }
-
-        // begin()
-        // end()
-        {
-            string_view s = "/index.htm";
-            url_view u(s);
-            BOOST_TEST_EQ(u.begin(), s.data());
-            BOOST_TEST_EQ(u.begin(), u.data());
-            BOOST_TEST_NE(u.end(), u.begin());
-            BOOST_TEST_EQ(u.end()[-1], 'm');
         }
 
         // string()

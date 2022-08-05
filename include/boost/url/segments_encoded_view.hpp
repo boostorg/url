@@ -88,7 +88,7 @@ class segments_encoded_view
     string_view s_;
     std::size_t n_ = 0;
 
-    friend class url_view;
+    friend class url_view_base;
 
     BOOST_URL_DECL
     segments_encoded_view(

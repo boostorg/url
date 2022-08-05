@@ -60,7 +60,9 @@ in a translation unit of the program.
 #include <boost/url/impl/segments_view.ipp>
 #include <boost/url/impl/static_url.ipp>
 #include <boost/url/impl/url.ipp>
+#include <boost/url/impl/url_base.ipp>
 #include <boost/url/impl/url_view.ipp>
+#include <boost/url/impl/url_view_base.ipp>
 
 #include <boost/url/grammar/impl/ci_string.ipp>
 #include <boost/url/grammar/impl/dec_octet_rule.ipp>

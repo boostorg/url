@@ -22,7 +22,7 @@ namespace boost {
 namespace urls {
 
 #ifndef BOOST_URL_DOCS
-class url;
+class url_base;
 #endif
 
 /** A reference-like container to modifiable URL segments
@@ -68,13 +68,13 @@ class url;
 class segments_encoded
     : private detail::parts_base
 {
-    url* u_ = nullptr;
+    url_base* u_ = nullptr;
 
-    friend class url;
+    friend class url_base;
 
     explicit
     segments_encoded(
-        url& u) noexcept;
+        url_base& u) noexcept;
 
 public:
     /** A read-only bidirectional iterator to an encoded segment.

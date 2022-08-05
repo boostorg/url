@@ -24,7 +24,7 @@ namespace boost {
 namespace urls {
 
 #ifndef BOOST_URL_DOCS
-class url;
+class url_base;
 #endif
 
 /** A random-access view of percent-encoded query parameters.
@@ -40,13 +40,13 @@ class url;
 class params_encoded
     : private detail::parts_base
 {
-    friend class url;
+    url_base* u_ = nullptr;
 
-    url* u_ = nullptr;
+    friend class url_base;
 
     explicit
     params_encoded(
-        url& u) noexcept;
+        url_base& u) noexcept;
 
 public:
     /** A read-only forward iterator to an encoded query parameter.

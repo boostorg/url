@@ -44,7 +44,7 @@
     </Expand>
   </Type>
 
-  <Type Name="boost::urls::url_view" Inheritable="true">
+  <Type Name="boost::urls::url_view_base" Inheritable="true">
     <DisplayString>{ u_ }</DisplayString>
       <Expand>
           <ExpandedItem>u_</ExpandedItem>

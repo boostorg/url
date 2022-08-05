@@ -34,7 +34,9 @@
 #include <boost/url/static_url.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/url.hpp>
+#include <boost/url/url_base.hpp>
 #include <boost/url/url_view.hpp>
+#include <boost/url/url_view_base.hpp>
 #include <boost/url/urls.hpp>
 
 #include <boost/url/rfc/absolute_uri_rule.hpp>

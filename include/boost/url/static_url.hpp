@@ -11,7 +11,7 @@
 #define BOOST_URL_STATIC_URL_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/url.hpp>
+#include <boost/url/url_base.hpp>
 #include <boost/align/align_up.hpp>
 #include <boost/static_assert.hpp>
 #include <cstddef>
@@ -19,27 +19,28 @@
 namespace boost {
 namespace urls {
 
-// VFALCO This is here to reduce the
-// number of template instantiations,
+// VFALCO This class is for reducing
+// the number of template instantiations,
 // and keep definitions in the library
 #ifndef BOOST_URL_DOCS
 class BOOST_SYMBOL_VISIBLE
-    static_url_base : public url
+    static_url_base
+    : public url_base
 {
 protected:
-    BOOST_URL_DECL
-    virtual
-    ~static_url_base();
-
+    ~static_url_base() = default;
     BOOST_URL_DECL static_url_base(
         char* buf, std::size_t cap) noexcept;
-    BOOST_URL_DECL void construct(string_view s);
-    BOOST_URL_DECL void copy(url const& u);
-    BOOST_URL_DECL void copy(url_view const& u);
-    BOOST_URL_DECL url_view convert() const noexcept;
-    BOOST_URL_DECL char* allocate(
-        std::size_t n) override;
-    BOOST_URL_DECL void deallocate(char*) override;
+    BOOST_URL_DECL static_url_base(
+        char* buf, std::size_t cap, string_view s);
+    BOOST_URL_DECL void clear_impl() noexcept override;
+    BOOST_URL_DECL void reserve_impl(std::size_t) override;
+
+    void
+    copy(url_view_base const& u)
+    {
+        this->url_base::copy(u);
+    }
 };
 #endif
 
@@ -75,18 +76,15 @@ class static_url
     : public static_url_base
 #endif
 {
-    BOOST_STATIC_ASSERT(
-        Capacity < (std::size_t(-1) &
-            ~(alignof(pos_t)-1)));
-    char buf_[alignment::align_up(
-        Capacity, alignof(pos_t))];
+    char buf_[Capacity + 1];
+
+    friend std::hash<static_url>;
+    using url_view_base::digest;
 
 public:
     /** Destructor
     */
-    ~static_url()
-    {
-    }
+    ~static_url() = default;
 
     /** Constructor
     */
@@ -96,133 +94,136 @@ public:
     {
     }
 
-    /** Constructor
+    /** Construct from a string.
 
-        This constructs a copy of `u`.
+        This function constructs a URL from
+        the string `s`, which must contain a
+        valid URI or <em>relative-ref</em> or
+        else an exception is thrown. Upon
+        successful construction, the view
+        refers to the characters in the
+        buffer pointed to by `s`.
+        Ownership is not transferred; The
+        caller is responsible for ensuring
+        that the lifetime of the buffer
+        extends until the view is destroyed.
 
-        @par Exception Safety
-        Strong guarantee.
+        @par BNF
+        @code
+        URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
 
-        @throw std::bad_alloc insufficient space
+        relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+        @endcode
+
+        @throw std::exception parse error.
+
+        @param s The string to parse.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
+            >4.1. URI Reference</a>
     */
-    static_url(url const& u)
-        : static_url()
-    {
-        copy(u);
-    }
-
-    /** Constructor
-
-        This constructs a copy of `u`.
-
-        @par Exception Safety
-        Strong guarantee.
-
-        @throw std::bad_alloc insufficient space
-    */
-    static_url(url_view const& u)
-        : static_url()
-    {
-        copy(u);
-    }
-
-    /** Constructor
-
-        This constructs a copy of `u`.
-
-        @par Exception Safety
-        Strong guarantee.
-
-        @throw std::bad_alloc insufficient space
-    */
-    static_url(static_url const& u)
-        : static_url()
-    {
-        copy(u);
-    }
-
-    /** Assignment
-
-        @par Exception Safety
-        Strong guarantee.
-
-        @throw std::bad_alloc insufficient space
-    */
-    static_url&
-    operator=(url const& u)
-    {
-        copy(u);
-        return *this;
-    }
-
-    /** Assignment
-
-        @par Exception Safety
-        Strong guarantee.
-
-        @throw std::bad_alloc insufficient space
-    */
-    static_url&
-    operator=(url_view const& u)
-    {
-        copy(u);
-        return *this;
-    }
-
-    /** Assignment
-
-        @par Exception Safety
-        Strong guarantee.
-
-        @throw std::bad_alloc insufficient space
-    */
-    static_url&
-    operator=(static_url const& u)
-    {
-        copy(u);
-        return *this;
-    }
-
-    /** Construct from a string
-    */
+    explicit
     static_url(string_view s)
-        : static_url()
+        : static_url_base(
+            buf_, sizeof(buf_), s)
     {
-        construct(s);
     }
 
-    // hidden friend
-    friend
-    std::ostream&
-    operator<<(std::ostream& os, static_url const& u)
+    /** Constructor
+
+        This constructs a copy of `u`.
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @throw std::length_error insufficient space
+    */
+    static_url(
+        static_url const& u)
+        : static_url()
     {
-        return os << u.string();
+        copy(u);
+    }
+
+    /** Constructor
+
+        This constructs a copy of `u`.
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @throw std::length_error insufficient space
+    */
+    static_url(
+        url_view_base const& u)
+        : static_url()
+    {
+        copy(u);
+    }
+
+    /** Assignment
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @throw std::length_error insufficient space
+    */
+    static_url&
+    operator=(
+        static_url const& u)
+    {
+        copy(u);
+        return *this;
+    }
+
+    /** Assignment
+
+        @par Exception Safety
+        Strong guarantee.
+
+        @throw std::length_error insufficient space
+    */
+    static_url&
+    operator=(
+        url_view_base const& u)
+    {
+        copy(u);
+        return *this;
     }
 };
 
-/** Format the static URL to the output stream
-
-    This function serializes the encoded URL
-    to the output stream.
-
-    @par Example
-    @code
-    static_url u( "http://www.example.com/index.htm" );
-
-    std::cout << u << std::endl;
-    @endcode
-
-    @return A reference to the output stream, for chaining
-
-    @param os The output stream to write to.
-
-    @param u The URL to write.
-*/
-template <std::size_t Capacity>
-std::ostream&
-operator<<(std::ostream& os, static_url<Capacity> const& u);
-
 } // urls
 } // boost
+
+//------------------------------------------------
+
+// std::hash specialization
+#ifndef BOOST_URL_DOCS
+namespace std {
+template<std::size_t N>
+struct hash< ::boost::urls::static_url<N> >
+{
+    hash() = default;
+    hash(hash const&) = default;
+    hash& operator=(hash const&) = default;
+
+    explicit
+    hash(std::size_t salt) noexcept
+        : salt_(salt)
+    {
+    }
+
+    std::size_t
+    operator()(::boost::urls::static_url<N> const& u) const noexcept
+    {
+        return u.digest(salt_);
+    }
+
+private:
+    std::size_t salt_ = 0;
+};
+} // std
+#endif
 
 #endif

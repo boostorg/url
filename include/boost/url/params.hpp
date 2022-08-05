@@ -23,7 +23,7 @@ namespace boost {
 namespace urls {
 
 #ifndef BOOST_URL_DOCS
-class url;
+class url_base;
 class params_encoded;
 #endif
 
@@ -39,14 +39,15 @@ class params_encoded;
 class params
     : private detail::parts_base
 {
-    friend class url;
+    url_base* u_ = nullptr;
+
+    friend class url_base;
     friend class params_encoded;
 
-    url* u_ = nullptr;
-
-    params(url& u) noexcept
+    params(url_base& u) noexcept
         : u_(&u)
-    {}
+    {
+    }
 
 public:
     /** A read-only forward iterator to a decoded query parameter.

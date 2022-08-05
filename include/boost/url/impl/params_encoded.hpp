@@ -108,7 +108,7 @@ public:
 inline
 params_encoded::
 params_encoded(
-    url& u) noexcept
+    url_base& u) noexcept
     : u_(&u)
 {
 }

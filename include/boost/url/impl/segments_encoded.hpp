@@ -117,7 +117,7 @@ public:
 inline
 segments_encoded::
 segments_encoded(
-    url& u) noexcept
+    url_base& u) noexcept
     : u_(&u)
 {
 }
