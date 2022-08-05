@@ -308,20 +308,6 @@ string might be sufficient:
 [c++]
 [snippet_decoding_5a]
 
-The library also provides __static_pool__, a local stack-based
-allocator to further avoid dynamic allocations:
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_allocators_1]
-][
-[teletype]
-```
-    id=42&name=John Doe Jingleheimer-Schmidt
-    page anchor
-```
-]]]
-
 [#compound-elements]
 [h3 Compound elements]
 

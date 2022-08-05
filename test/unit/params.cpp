@@ -11,7 +11,6 @@
 // Test that header file is self-contained.
 #include <boost/url/params.hpp>
 
-#include <boost/url/static_pool.hpp>
 #include <boost/url/url.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include "test_suite.hpp"
@@ -22,9 +21,6 @@ namespace urls {
 class params_test
 {
 public:
-    using pool_t = static_pool<4096>;
-    pool_t pa_;
-
     void
     testMembers()
     {

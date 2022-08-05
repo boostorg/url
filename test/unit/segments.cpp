@@ -11,7 +11,6 @@
 // Test that header file is self-contained.
 #include <boost/url/segments.hpp>
 
-#include <boost/url/static_pool.hpp>
 #include <boost/url/url.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/core/ignore_unused.hpp>
@@ -27,8 +26,6 @@ namespace urls {
 class segments_test
 {
 public:
-    static_pool<4096> p_;
-
     void
     testMembers()
     {

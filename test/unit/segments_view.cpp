@@ -11,7 +11,6 @@
 #include <boost/url/segments_view.hpp>
 
 #include <boost/url/segments_encoded_view.hpp>
-#include <boost/url/static_pool.hpp>
 #include "test_suite.hpp"
 #include <algorithm>
 #include <sstream>
@@ -24,8 +23,6 @@ namespace urls {
 class segments_view_test
 {
 public:
-    static_pool<4096> sp_;
-
     template<class It>
     static
     std::reverse_iterator<It>

@@ -31,7 +31,6 @@
 #include <boost/url/segments_encoded.hpp>
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
-#include <boost/url/static_pool.hpp>
 #include <boost/url/static_url.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/url.hpp>

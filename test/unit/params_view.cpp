@@ -11,7 +11,6 @@
 #include <boost/url/params_view.hpp>
 
 #include <boost/url/url_view.hpp>
-#include <boost/url/static_pool.hpp>
 #include "test_suite.hpp"
 
 namespace boost {
@@ -20,9 +19,6 @@ namespace urls {
 class params_view_test
 {
 public:
-    using pool_t = static_pool<4096>;
-    pool_t pa;
-
     void
     testMembers()
     {
