@@ -194,7 +194,7 @@ public:
                 BOOST_TEST_EQ(
                     u.encoded_authority(), m);
                 BOOST_TEST_EQ(
-                    u.authority().encoded_authority(), m);
+                    u.authority().string(), m);
             }
             //());
         };

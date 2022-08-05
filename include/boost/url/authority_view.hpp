@@ -26,25 +26,37 @@
 namespace boost {
 namespace urls {
 
-/** A read-only view to an authority.
+/** A non-owning reference to a valid authority
 
-    Objects of this type represent a valid
-    authority whose storage is managed externally.
-    That is, it acts like a `std::string_view` in
-    terms of ownership. Callers are responsible
-    for ensuring that the lifetime of the
-    underlying string extends until the
-    `authority_view` is no longer in use.
-    To construct from an existing string it is
-    necessary to use one of the parsing
-    functions. Each function parses against
-    a particular URL grammar:
+    Objects of this type represent valid authority
+    strings constructed from a parsed, external
+    character buffer whose storage is managed
+    by the caller. That is, it acts like a
+    @ref string_view in terms of ownership.
+    The caller is responsible for ensuring
+    that the lifetime of the underlying
+    character buffer extends until it is no
+    longer referenced.
 
-    @par Example
+    @par Example 1
+    Construction from a string parses the input
+    as an <em>authority</em> and throws an
+    exception on error. Upon success, the
+    constructed object points to the passed
+    character buffer; ownership is not
+    transferred.
     @code
-    authority_view a;
+    authority_view a( "user:pass@www.example.com:8080" );
+    @endcode
 
-    a = parse_authority( "www.example.com:443" );
+    @par Example 2
+    The parsing function @ref parse_authority returns
+    a @ref result containing either a valid
+    @ref authority_view upon succcess, otherwise it
+    contain an error. The error can be converted to
+    an exception by the caller if desired:
+    @code
+    result< authority_view > rv = parse_authority( "user:pass@www.example.com:8080" );
     @endcode
 
     @par BNF
@@ -70,7 +82,7 @@ namespace urls {
 */
 class BOOST_SYMBOL_VISIBLE
     authority_view
-    : protected detail::parts_base
+    : private detail::parts_base
 {
     detail::url_impl u_;
 
@@ -84,42 +96,6 @@ class BOOST_SYMBOL_VISIBLE
         detail::url_impl const& u) noexcept;
 
 public:
-    /** The type of elements.
-    */
-    using value_type        = char;
-
-    /** The type of pointers to elements.
-    */
-    using pointer           = char const*;
-
-    /** The type of const pointers to elements.
-    */
-    using const_pointer     = char const*;
-
-    /** The type of reference to elements.
-    */
-    using reference         = char const&;
-
-    /** The type of const references to elements.
-    */
-    using const_reference   = char const&;
-
-    /** The type of const iterator to elements.
-    */
-    using const_iterator    = char const*;
-
-    /** The type of iterator to elements.
-    */
-    using iterator          = char const*;
-
-    /** An unsigned integer type to represent sizes.
-    */
-    using size_type         = std::size_t;
-
-    /** A signed integer type to represent differences.
-    */
-    using difference_type   = std::ptrdiff_t;
-
     //--------------------------------------------
     //
     // Special Members
@@ -129,7 +105,8 @@ public:
     /** Destructor
     */
     BOOST_URL_DECL
-    virtual ~authority_view();
+    virtual
+    ~authority_view();
 
     /** Constructor
 
@@ -146,10 +123,53 @@ public:
     BOOST_URL_DECL
     authority_view() noexcept;
 
+    /** Construct from a string.
+
+        This function attempts to construct
+        an authority from the string `s`,
+        which must be a valid ['authority] or
+        else an exception is thrown. Upon
+        successful construction, the view
+        refers to the characters in the
+        buffer pointed to by `s`.
+        Ownership is not transferred; The
+        caller is responsible for ensuring
+        that the lifetime of the buffer
+        extends until the view is destroyed.
+
+        @par BNF
+        @code
+        authority     = [ userinfo "@" ] host [ ":" port ]
+
+        userinfo      = user [ ":" [ password ] ]
+
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+
+        host          = IP-literal / IPv4address / reg-name
+
+        port          = *DIGIT
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
+            >3.2. Authority (rfc3986)</a>
+
+        @see
+            @ref parse_authority.
+    */
+    BOOST_URL_DECL
+    explicit
+    authority_view(string_view s);
+
+    /** Constructor
+    */
     BOOST_URL_DECL
     authority_view(
         authority_view const&) noexcept;
 
+    /** Assignment
+    */
     BOOST_URL_DECL
     authority_view&
     operator=(
@@ -157,14 +177,16 @@ public:
 
     //--------------------------------------------
     //
-    // Capacity
-    // Element Access
+    // Observers
     //
     //--------------------------------------------
 
-    /** Return the maximum number of characters allowed in the authority.
+    /** Return the maximum number of characters possible
 
-        This includes any null terminator, if present
+        Currently the limit is either 2^32-2
+        characters or 2^64-2 characters,
+        depending on the system architecture.
+        This does not include a null terminator.
 
         @par Exception Safety
         Throws nothing.
@@ -180,8 +202,8 @@ public:
     /** Return the number of characters in the authority.
 
         This function returns the number
-        of characters in the authority, not
-        including any null terminator.
+        of characters in the authority, which
+        does not include a null terminator.
 
         @par Exception Safety
         Throws nothing.
@@ -218,80 +240,6 @@ public:
         return u_.cs_;
     }
 
-    /** Access the specified character
-
-        This function returns a reference to
-        the character at the specified zero-based
-        position. If `pos` is out of range, an
-        exception if thrown.
-
-        @param pos The zero-based character
-        position to access.
-
-        @throw std::out_of_range pos >= size()
-    */
-    char const&
-    at(std::size_t pos) const
-    {
-        if(pos >= size())
-            detail::throw_out_of_range(
-                BOOST_CURRENT_LOCATION);
-        return u_.cs_[pos];
-    }
-
-    /** Access the specified character
-
-        This function returns a reference to
-        the character at the specified zero-based
-        position. The behavior is undefined if
-        `pos` is out of range.
-
-        @par Preconditions
-        @code
-        pos < this->size()
-        @endcode
-    */
-    char const&
-    operator[](
-        std::size_t pos) const noexcept
-    {
-        BOOST_ASSERT(pos < size());
-        return u_.cs_[pos];
-    }
-
-    /** Return an iterator to the beginning
-
-        This function returns a constant iterator
-        to the first character of the view, or
-        one past the last element if the view is
-        empty.
-    */
-    char const*
-    begin() const noexcept
-    {
-        return data();
-    }
-
-    /** Return an iterator to the end
-
-        This function returns a constant iterator to
-        the character following the last character of
-        the view. This character acts as a placeholder,
-        attempting to access it results in undefined
-        behavior.
-    */
-    char const*
-    end() const noexcept
-    {
-        return data() + size();
-    }
-
-    //--------------------------------------------
-    //
-    // Observers
-    //
-    //--------------------------------------------
-
     /** Return the complete authority
 
         This function returns the authority
@@ -315,12 +263,15 @@ public:
             >3.2. Authority (rfc3986)</a>
     */
     string_view
-    encoded_authority() const noexcept
+    string() const noexcept
     {
-        return string_view(
-            data(), size());
+        return string_view(data(), size());
     }
 
+    //--------------------------------------------
+    //
+    // Userinfo
+    //
     //--------------------------------------------
 
     /** Return true if this contains a userinfo
@@ -608,6 +559,10 @@ public:
     }
 
     //--------------------------------------------
+    //
+    // Host
+    //
+    //--------------------------------------------
 
     /** Return the type of host present, if any
 
@@ -846,6 +801,12 @@ public:
     string_view
     ipvfuture() const noexcept;
 
+    //--------------------------------------------
+    //
+    // Port
+    //
+    //--------------------------------------------
+
     /** Return true if the URL contains a port
 
         This function returns true if the
@@ -975,7 +936,7 @@ public:
         std::ostream& os,
         authority_view const& a)
     {
-        return os << a.encoded_authority();
+        return os << a.string();
     }
 };
 

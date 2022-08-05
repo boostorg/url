@@ -196,33 +196,33 @@ struct squelch_rule_t
     @par Example 1
     With `squelch`:
     @code
-    result< std::tuple< pct_encoded_view, string_view > > rv = grammar::parse(
+    result< std::tuple< pct_encoded_view, string_view > > rv = parse(
         "www.example.com:443",
-        grammar::tuple_rule(
+        tuple_rule(
             pct_encoded_rule(unreserved_chars + '-' + '.'),
-            grammar::squelch( grammar::delim_rule( ':' ) ),
-            grammar::token_rule( grammar::digit_chars ) ) );
+            squelch( delim_rule( ':' ) ),
+            token_rule( digit_chars ) ) );
     @endcode
 
     @par Example 2
     Without `squelch`:
     @code
-    result< std::tuple< pct_encoded_view, string_view, string_view > > rv = grammar::parse(
+    result< std::tuple< pct_encoded_view, string_view, string_view > > rv = parse(
         "www.example.com:443",
-        grammar::tuple_rule(
+        tuple_rule(
             pct_encoded_rule(unreserved_chars + '-' + '.'),
-            grammar::delim_rule( ':' ),
-            grammar::token_rule( grammar::digit_chars ) ) );
+            delim_rule( ':' ),
+            token_rule( digit_chars ) ) );
     @endcode
 
     @param r The rule to squelch
 
     @see
-        @ref grammar::delim_rule,
-        @ref grammar::digit_chars,
-        @ref grammar::parse,
-        @ref grammar::tuple_rule,
-        @ref grammar::token_rule,
+        @ref delim_rule,
+        @ref digit_chars,
+        @ref parse,
+        @ref tuple_rule,
+        @ref token_rule,
         @ref pct_encoded_view,
         @ref pct_encoded_rule,
         @ref unreserved_chars.

@@ -48,7 +48,7 @@ namespace urls {
     contain an error. The error can be converted to
     an exception by the caller if desired:
     @code
-    result< url_view > u = parse_uri_reference( "https://www.example.com/index.htm?text=none#a1" );
+    result< url_view > rv = parse_uri_reference( "https://www.example.com/index.htm?text=none#a1" );
     @endcode
 
     @par BNF

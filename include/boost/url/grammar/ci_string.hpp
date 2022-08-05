@@ -230,7 +230,7 @@ ci_is_less(
     not hardened against algorithmic complexity
     attacks.
     This is a suitable hash function for
-    ordered containers.
+    unordered containers.
     The function is defined only for strings
     containing low-ASCII characters.
 

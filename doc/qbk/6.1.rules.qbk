@@ -1,0 +1,59 @@
+[/
+    Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[section Parse Rules]
+
+A __Rule__ is an object which tries to match the beginning of
+an input character buffer against a particular syntax.
+It returns a __result__ containing a value if the match
+was successful, or an __error_code__ if the match failed.
+Rules are not invoked directly. Instead they are passed as
+values to a __parse__ function, along with the input character
+buffer to process. The first overload requires that the entire
+input string match, otherwise else an error occurs. The second
+overload advances the input buffer pointer to the first unconsumed
+character upon success, allowing a stream of data to be
+parsed sequentially:
+
+[code_grammar_1_1]
+
+To satisfy the __Rule__ concept, a `class` or `struct` must declare
+the nested type `value_type` indicating the type of value returned
+upon success, and a `const` member function `parse` with a prescribed
+signature. In the following code we define a rule that matches a
+single comma:
+
+[code_grammar_1_2]
+
+Since rules are passed by value, we declare a `constexpr` variable
+of the type for syntactical convenience. Variable names for rules
+are usually suffixed with `_rule`:
+
+[code_grammar_1_3]
+
+Now we can call __parse__ with the string of input and the rule
+variable thusly:
+
+[code_grammar_1_4]
+
+Rule expressions can come in several styles. The rule defined
+above is a compile-time constant. The __unsigned_rule__ matches
+an unsigned decimal integer. Here we construct the rule at
+run time and specify the type of unsigned integer used to
+hold the result with a template parameter:
+
+[code_grammar_1_5]
+
+The function __delim_rule__ returns a rule which matches the
+passed character. This is a more general version of the
+comma rule which we defined earlier.
+
+[code_grammar_1_6]
+
+[endsect]

@@ -238,7 +238,7 @@ struct range_rule_t;
 
     @par Value Type
     @code
-    using value_type = grammar::range< typename Rule::value_type >;
+    using value_type = range< typename Rule::value_type >;
     @endcode
 
     @par Example

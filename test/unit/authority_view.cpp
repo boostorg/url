@@ -67,42 +67,12 @@ public:
             BOOST_TEST_EQ(a.data(), s.data());
         }
 
-        // at(std::size_t)
-        {
-            string_view s = "xy";
-            authority_view a = parse_authority(s).value();
-            BOOST_TEST_EQ(a.at(0), 'x');
-            BOOST_TEST_EQ(a.at(1), 'y');
-            BOOST_TEST_THROWS(a.at(2),
-                std::out_of_range);
-        }
-
-        // operator[](std::size_t)
+        // string()
         {
             string_view s = "xyz";
             authority_view a = parse_authority(s).value();
-            BOOST_TEST_EQ(a[0], 'x');
-            BOOST_TEST_EQ(a[1], 'y');
-            BOOST_TEST_EQ(&a[2], &s[2]);
-        }
-
-        // begin()
-        // end()
-        {
-            string_view s = "xyz";
-            authority_view a = parse_authority(s).value();
-            BOOST_TEST_EQ(a.begin(), s.data());
-            BOOST_TEST_EQ(a.begin(), a.data());
-            BOOST_TEST_NE(a.end(), a.begin());
-            BOOST_TEST_EQ(a.end()[-1], 'z');
-        }
-
-        // encoded_authority()
-        {
-            string_view s = "xyz";
-            authority_view a = parse_authority(s).value();
-            BOOST_TEST_EQ(a.encoded_authority(), s);
-            BOOST_TEST_EQ(a.encoded_authority().data(), s.data());
+            BOOST_TEST_EQ(a.string(), s);
+            BOOST_TEST_EQ(a.string().data(), s.data());
         }
     }
 
@@ -376,6 +346,17 @@ public:
     void
     run()
     {
+        // javadocs
+        // authority_view
+        {
+            authority_view a( "user:pass@www.example.com:8080" );
+            (void)a;
+        }
+        {
+            result< authority_view > rv = parse_authority( "user:pass@www.example.com:8080" );
+            (void)rv;
+        }
+
         testSpecialMembers();
         testObservers();
         testUserinfo();

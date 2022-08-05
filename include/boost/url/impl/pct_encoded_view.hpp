@@ -195,9 +195,11 @@ append_to(
     // This function should only be used
     // if the container `MutableString` has the
     // member function `append(iterator, iterator)`.
-    BOOST_STATIC_ASSERT(
+    static_assert(
         grammar::is_mutable_string<
-            MutableString>::value);
+            MutableString>::value,
+        "MutableString requirements not met");
+
     s.append(begin(), end());
     return s;
 }

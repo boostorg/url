@@ -27,20 +27,16 @@ parse(
         ) const noexcept ->
     result<value_type>
 {
-    value_type t;
     if(it == end)
         return error::syntax;
     if(*it == '0')
     {
-        t.u = 0;
-        t.s = string_view(it, 1);
         ++it;
-        return t;
+        return U(0);
     }
     if(! digit_chars(*it))
         return error::syntax;
 
-    auto const start = it;
     static constexpr U Digits10 =
         std::numeric_limits<
             U>::digits10;
@@ -81,9 +77,7 @@ parse(
             return grammar::error::overflow;
     }
 
-    t.u = u;
-    t.s = string_view(start, it);
-    return t;
+    return u;
 }
 
 } // grammar

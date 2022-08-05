@@ -30,9 +30,7 @@ struct unsigned_rule_test
             s, unsigned_rule<U>{});
         if(! BOOST_TEST(! rv.has_error()))
             return;
-        auto const& t = *rv;
-        BOOST_TEST_EQ(t.u, u);
-        BOOST_TEST_EQ(t.s, s);
+        BOOST_TEST_EQ(*rv, u);
     }
 
     void

@@ -26,6 +26,16 @@ struct url_view_base_test
         // javadocs
         //
 
+        // url_view()
+        {
+            url_view u( "https://www.example.com/index.htm?text=none#a1" );
+            (void)u;
+        }
+        {
+            result< url_view > rv = parse_uri_reference( "https://www.example.com/index.htm?text=none#a1" );
+            (void)rv;
+        }
+
         // size()
         {
             url_view u( "file:///Program%20Files" );

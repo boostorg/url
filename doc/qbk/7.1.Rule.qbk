@@ -19,7 +19,7 @@ overloads of __parse__ which provide a convenient, uniform front end.
 
 [heading Related Identifiers]
 
-__parse__, __is_rule__.
+__is_rule__, __parse__.
 
 [heading Requirements]
 

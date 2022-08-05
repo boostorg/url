@@ -57,6 +57,14 @@ authority_view() noexcept
 
 authority_view::
 authority_view(
+    string_view s)
+    : authority_view(
+        parse_authority(s).value())
+{
+}
+
+authority_view::
+authority_view(
     authority_view const&) noexcept = default;
 
 authority_view&

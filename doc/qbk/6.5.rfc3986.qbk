@@ -7,14 +7,15 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-[section URLs]
+[section RFC3986]
 
 Functions like __parse_uri__ are sufficient for converting URLs but
 they require that the entire string is consumed. When URLs appear as
 components of a larger grammar, it is desired to use composition
 of rules based parsing to process these along with other elements
-potentially unrelated to URLs. To achieve this, the library provides
-rules for the top-level BNF productions found in __rfc3986__:
+potentially unrelated to resource locators. To achieve this, the
+library provides rules for the top-level BNF productions found
+in __rfc3986__:
 
 [table RFC3986 Rules [
     [Name]
@@ -39,6 +40,15 @@ rules for the top-level BNF productions found in __rfc3986__:
     ```
     ]
 ][
+    [[link url.ref.boost__urls__origin_form_rule `origin_form_rule`]]
+    [
+    ```
+    origin-form    = absolute-path [ "?" query ]
+
+    absolute-path = 1*( "/" segment )
+    ```
+    ]
+][
     [[link url.ref.boost__urls__relative_ref_rule `relative_ref_rule`]]
     [
     ```
@@ -60,6 +70,51 @@ rules for the top-level BNF productions found in __rfc3986__:
     ```
     ]
 ]]
+
+
+Constants offered by the library for the character sets
+used in __rfc3986__ to specify rules for URL components are:
+
+[table RFC3986 Character Sets [
+    [Name]
+    [BNF]
+][
+    [[link url.ref.boost__urls__gen_delim_chars `gen_delim_chars`]]
+    [
+    ```
+    gen-delims    = ":" / "/" / "?" / "#" / "[" / "]" / "@"
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__pchars `pchars`]]
+    [
+    ```
+    pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__reserved_chars `reserved_chars`]]
+    [
+    (everything but
+    [link url.ref.boost__urls__unreserved_chars `unreserved_chars`])
+    ]
+][
+    [[link url.ref.boost__urls__sub_delim_chars `sub_delim_chars`]]
+    [
+    ```
+    sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
+                  / "*" / "+" / "," / ";" / "="
+    ```
+    ]
+][
+    [[link url.ref.boost__urls__unreserved_chars `unreserved_chars`]]
+    [
+    ```
+    unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+    ```
+    ]
+]]
+
 
 [endsect]
 

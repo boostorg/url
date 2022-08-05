@@ -29,17 +29,13 @@ namespace grammar {
 
     @par Value Type
     @code
-    struct value_type
-    {
-        Unsigned u;
-        string_view s;
-    };
+    using value_type = Unsigned;
     @endcode
 
     @par Example
     Rules are used with the function @ref parse.
     @code
-    auto rv = parse( "32767", unsigned_rule< unsigned short >{} );
+    result< unsigned short > rv = parse( "32767", unsigned_rule< unsigned short >{} );
     @endcode
 
     @par BNF
@@ -66,11 +62,7 @@ struct unsigned_rule
         ! std::numeric_limits<
             Unsigned>::is_signed);
 
-    struct value_type
-    {
-        Unsigned u;
-        string_view s;
-    };
+    using value_type = Unsigned;
 
     auto
     parse(

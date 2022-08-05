@@ -21,17 +21,20 @@ to go beyond what the library offers:
 * Define new ABNF rules used to parse non-URL strings
 
 To enable these use-cases, the library provides a suite of general
-facilities for processing ASCII character strings, and makes public
-the interface to useful rules found in rfc3986. The design goals
-of these facilities are:
+facilities for processing low-ASCII character strings, and makes
+public the interface to useful rules found in rfc3986. The design
+goals of these facilities are:
 
-* No memory allocation
+* No use of `std::locale` or `std::char_traits`
+* No exotic character types, just low-ASCII `char`
+* No memory allocation (or bounded allocation)
 * Flexible composition with non-terminal rules
 * Optimized for the grammars commonly found in RFCs
+* Easily extended by downstream consumers
 
 The general facilities are nested in the fully qualified namespace
 `boost::urls::grammar`, while the headers for rfc3986-specific parsing
-algorithms are located in the `boost/url/rfc/` include directory.
+algorithms are located in the `<boost/url/rfc/>` include directory.
 This section explains the design and use of the general facilities
 to define and parse new grammars.
 
@@ -46,7 +49,7 @@ best results for learning how to use the custom parsing
 features.
 
 [note
-    Code samples and identifiers in the custom parsing
+    Code samples and identifiers in this customization
     section are written as if the following declarations
     are in effect:
 
@@ -57,10 +60,12 @@ features.
     ```
 ]
 
-[include 6.1.charset.qbk]
-[include 6.2.lut_chars.qbk]
-[include 6.3.rules.qbk]
-[include 6.4.parsing.qbk]
-[include 6.5.urls.qbk]
+[import ../../test/unit/doc_grammar.cpp]
+
+[include 6.1.rules.qbk]
+[include 6.2.charset.qbk]
+[include 6.3.combinators.qbk]
+[include 6.4.range.qbk]
+[include 6.5.rfc3986.qbk]
 
 [endsect]

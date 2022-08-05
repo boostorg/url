@@ -184,6 +184,16 @@ public:
     void
     run()
     {
+        //
+        // javadocs
+        //
+
+        // static_url
+        {
+            static_url< 4000 > u( "https://www.example.com" );
+            (void)u;
+        }
+
         testSpecial();
         testParts();
         testOstream();

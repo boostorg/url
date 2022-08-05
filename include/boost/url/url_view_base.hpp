@@ -57,7 +57,7 @@ namespace urls {
 */
 class BOOST_SYMBOL_VISIBLE
     url_view_base
-    : protected detail::parts_base
+    : private detail::parts_base
 {
     detail::url_impl u_;
 
@@ -101,7 +101,7 @@ public:
     //
     //--------------------------------------------
 
-    /** Return the maximum number of characters possible in a URL
+    /** Return the maximum number of characters possible
 
         Currently the limit is either 2^32-2
         characters or 2^64-2 characters,

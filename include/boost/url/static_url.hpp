@@ -19,15 +19,43 @@
 namespace boost {
 namespace urls {
 
+#ifndef BOOST_URL_DOCS
+template<std::size_t Capacity>
+class static_url;
+#endif
+
 // VFALCO This class is for reducing
 // the number of template instantiations,
 // and keep definitions in the library
-#ifndef BOOST_URL_DOCS
+
+/** Common implementation for all static URLs
+
+    This base class is used by the library
+    to provide common functionality for
+    static URLs. Users should not use this
+    class directly. Instead, construct an
+    instance of one of the containers
+    or call a parsing function.
+
+    @par Containers
+        @li @ref url
+        @li @ref url_view
+        @li @ref static_url
+
+    @par Parsing Functions
+        @li @ref parse_absolute_uri
+        @li @ref parse_origin_form
+        @li @ref parse_relative_ref
+        @li @ref parse_uri
+        @li @ref parse_uri_reference
+*/
 class BOOST_SYMBOL_VISIBLE
     static_url_base
     : public url_base
 {
-protected:
+    template<std::size_t>
+    friend class static_url;
+
     ~static_url_base() = default;
     BOOST_URL_DECL static_url_base(
         char* buf, std::size_t cap) noexcept;
@@ -42,7 +70,6 @@ protected:
         this->url_base::copy(u);
     }
 };
-#endif
 
 //------------------------------------------------
 
@@ -53,16 +80,14 @@ protected:
     never performed. Instead, the capacity
     for the data comes from inline storage.
 
+    @par Example
+    @code
+    static_url< 4000 > u( "https://www.example.com" );
+    @endcode
+
     @tparam Capacity The maximum capacity
-    in bytes. A URL requires bytes equal to
-    at least the number of characters plus
-    one for the terminating NULL, plus an
-    additional number of bytes proportional
-    to the larger of the count of path segments
-    and the count of query params. Due to
-    alignment requirements, the usable
-    capacity may be slightly less than
-    this number.
+    in characters, not including the
+    null terminator.
 
     @see
         @ref url,
@@ -70,11 +95,7 @@ protected:
 */
 template<std::size_t Capacity>
 class static_url
-#ifdef BOOST_URL_DOCS
-    : public url_base
-#else
     : public static_url_base
-#endif
 {
     char buf_[Capacity + 1];
 
