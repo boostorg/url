@@ -10,7 +10,6 @@
 // Test that header file is self-contained.
 #include <boost/url/pct_encoding.hpp>
 
-#include <boost/url/static_pool.hpp>
 #include <boost/url/grammar/lut_chars.hpp>
 #include "test_suite.hpp"
 #include <memory>
@@ -111,11 +110,9 @@ public:
             }
             // pct_decode() -> std::basic_string
             {
-                using A = static_pool_allocator<char>;
-                static_pool<256> p;
+                using A = std::allocator<char>;
                 std::basic_string<char,
-                    std::char_traits<char>, A> s(
-                        p.allocator());
+                    std::char_traits<char>, A> s(A{});
                 s.resize(pct_decode_bytes_unchecked(s0));
                 error_code ec;
                 pct_decode(&s[0], &s[0] + s.size(), s0, ec, opt);
@@ -611,21 +608,6 @@ public:
                 &t[0], &t[0] + t.size(), s, test_chars{}, opt);
             BOOST_TEST(t == m0);
         }
-        {
-            static_pool<256> pool;
-            pct_encode_opts opt;
-            opt.space_to_plus =
-                space_to_plus;
-            std::basic_string<
-                char,
-                std::char_traits<char>,
-                static_pool_allocator<char>> t(pool.allocator());
-            t.resize(
-                pct_encode_bytes(s, test_chars{}, opt));
-            pct_encode(
-                &t[0], &t[0] + t.size(), s, test_chars{}, opt);
-            BOOST_TEST(t == m0);
-        }
         pct_encode_opts opt;
         opt.space_to_plus =
             space_to_plus;
@@ -696,29 +678,6 @@ public:
                 "A", test_chars{}, opt) == "A");
             BOOST_TEST(pct_encode_to_string(
                 " A+", test_chars{}, opt) == "+A+");
-        }
-
-        // allocator
-        {
-            static_pool<256> p;
-            BOOST_TEST(pct_encode_to_string(
-                "ABC", test_chars{}, {},
-                p.allocator()) ==
-                    "A%42%43");
-        }
-        {
-            static_pool<4> p;
-            string_view s =
-                "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            BOOST_TEST(s.size() >
-                std::string().capacity());
-        #ifndef _MSC_VER
-            // VFALCO Because msvc's string allocates
-            // one byte from a function marked noexcept
-            BOOST_TEST_THROWS(pct_encode_to_string(
-                s, test_chars(), {}, p.allocator()),
-                    std::exception);
-        #endif
         }
     }
 

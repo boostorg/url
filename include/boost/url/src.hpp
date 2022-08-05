@@ -58,7 +58,6 @@ in a translation unit of the program.
 #include <boost/url/impl/segments_encoded.ipp>
 #include <boost/url/impl/segments_encoded_view.ipp>
 #include <boost/url/impl/segments_view.ipp>
-#include <boost/url/impl/static_pool.ipp>
 #include <boost/url/impl/static_url.ipp>
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_view.ipp>

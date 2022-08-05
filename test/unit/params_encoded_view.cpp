@@ -12,7 +12,6 @@
 #include <boost/url/params_encoded_view.hpp>
 
 #include <boost/url/url_view.hpp>
-#include <boost/url/static_pool.hpp>
 #include <algorithm>
 #include <initializer_list>
 #include "test_suite.hpp"

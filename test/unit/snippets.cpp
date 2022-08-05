@@ -196,15 +196,7 @@ using_url_views()
 
     {
         //[snippet_allocators_1
-        static_pool< 1024 > sp;
-        boost::container::basic_string<
-            char, std::char_traits<char>,
-            static_pool_allocator<char>>
-                str(sp.allocator());
-        u.query().assign_to(str);
-        str += "\n";
-        u.fragment().append_to(str);
-        std::cout << str << "\n";
+        // VFALCO - Fix me!
         //]
     }
 
@@ -1153,30 +1145,9 @@ modifying_path()
     }
 }
 
-void
-using_static_pool()
-{
-    {
-        //[snippet_using_static_pool_1
-        using pool_string = boost::container::basic_string<
-            char, std::char_traits<char>,
-                static_pool_allocator<char>>;
-        static_pool<4096> pool;
-        pool_string k(pool.allocator());
-        pool_string v(pool.allocator());
-        url_view u = parse_uri_reference(
-                "?k0=0&k1=1&k2=&k3&k4=4444#f").value();
-        params_view params = u.params();
-        for (auto p: params) {
-            p.key.assign_to(k);
-            p.key.assign_to(v);
-            std::cout << k << ": " << v << "\n";
-        }
-        //]
-        BOOST_TEST_NOT(u.is_path_absolute());
-        BOOST_TEST_EQ(u.encoded_segments().size(), 0u);
-    }
-}
+//[snippet_using_static_pool_1
+// VFALCO NOPE
+//]
 
 namespace boost {
 namespace urls {
@@ -1199,7 +1170,6 @@ public:
         ignore_unused(&grammar_parse);
         ignore_unused(&grammar_customization);
         ignore_unused(&modifying_path);
-        ignore_unused(&using_static_pool);
 
         BOOST_TEST_PASS();
     }
