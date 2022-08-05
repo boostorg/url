@@ -18,35 +18,37 @@
 namespace boost {
 namespace urls {
 
-/** A read-only view to a URL
+/** A non-owning reference to a valid URL 
 
     Objects of this type represent valid URL
-    strings whose storage is managed externally.
-    That is, it acts like a `std::string_view` in
-    terms of ownership. Callers are responsible
-    for ensuring that the lifetime of the
-    underlying string extends until the view
-    is no longer in use.
-    The constructor parses using the
-    <em>URI-reference</em> grammar and throws
-    an exception on error.
-    The parsing free functions offer different
-    choices of grammar and can indicate failure
-    using an error code.
+    strings constructed from a parsed, external
+    character buffer whose storage is managed
+    by the caller. That is, it acts like a
+    @ref string_view in terms of ownership.
+    The caller is responsible for ensuring
+    that the lifetime of the underlying
+    character buffer extends until it is no
+    longer referenced.
 
-    @par Example
+    @par Example 1
+    Construction from a string parses the input
+    as a <em>URI-reference</em> and throws an
+    exception on error. Upon success, the
+    constructed object points to the passed
+    character buffer; ownership is not
+    transferred.
     @code
-    url_view u( "http://www.example.com/index.html" );
+    url_view u( "https://www.example.com/index.htm?text=none#a1" );
+    @endcode
 
-    // Reassign, throw on error:
-    u = parse_relative_ref( "/path/to/file.txt" ).value();
-
-    result< url_view > r = parse_absolute_uri(
-        "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a" );
-    if( r.has_value() )
-        std::cout << r.value();
-    else
-        std::cout << r.error().message();
+    @par Example 2
+    Parsing functions like @ref parse_uri_reference
+    return a @ref result containing either a valid
+    @ref url_view upon succcess, otherwise they
+    contain an error. The error can be converted to
+    an exception by the caller if desired:
+    @code
+    result< url_view > u = parse_uri_reference( "https://www.example.com/index.htm?text=none#a1" );
     @endcode
 
     @par BNF
@@ -56,8 +58,6 @@ namespace urls {
     URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
 
     relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
-
-    absolute-URI  = scheme ":" hier-part [ "?" query ]
     @endcode
 
     @par Specification

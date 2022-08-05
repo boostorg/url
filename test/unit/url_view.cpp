@@ -512,7 +512,7 @@ public:
             BOOST_TEST_EQ(
                 u.host(), "[v1.x]");
             BOOST_TEST_EQ(
-                u.ipvfuture(), "[v1.x]");
+                u.ipvfuture(), "v1.x");
             BOOST_TEST_EQ(
                 u.authority().host_type(), host_type::ipvfuture);
             BOOST_TEST_EQ(

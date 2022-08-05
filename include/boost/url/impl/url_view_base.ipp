@@ -388,7 +388,15 @@ ipvfuture() const noexcept
 {
     if(u_.host_type_ ==
         urls::host_type::ipvfuture)
-        return u_.get(id_host);
+    {
+        string_view s = u_.get(id_host);
+        BOOST_ASSERT(s.size() >= 6);
+        BOOST_ASSERT(s.front() == '[');
+        BOOST_ASSERT(s.back() == ']');
+        s.remove_prefix(1);
+        s.remove_suffix(1);
+        return s;
+    }
     return {};
 }
 

@@ -34,6 +34,27 @@
 namespace boost {
 namespace urls {
 
+/** Common observer functions for all URLs
+
+    This base class is used by the library to
+    provide all of the observer member functions
+    of URL containers. Users should not use this
+    class directly. Instead, construct an instance
+    of one of the containers or call a parsing
+    function:
+
+    @par Containers
+        @li @ref url
+        @li @ref url_view
+        @li @ref static_url
+
+    @par Parsing Functions
+        @li @ref parse_absolute_uri
+        @li @ref parse_origin_form
+        @li @ref parse_relative_ref
+        @li @ref parse_uri
+        @li @ref parse_uri_reference
+*/
 class BOOST_SYMBOL_VISIBLE
     url_view_base
     : protected detail::parts_base
@@ -79,8 +100,11 @@ public:
     //
     //--------------------------------------------
 
-    /** Return the maximum number of characters allowed in a URL.
+    /** Return the maximum number of characters possible in a URL
 
+        Currently the limit is either 2^32-2
+        characters or 2^64-2 characters,
+        depending on the system architecture.
         This does not include a null terminator.
 
         @par Exception Safety
@@ -94,11 +118,19 @@ public:
         return BOOST_URL_MAX_SIZE;
     }
 
-    /** Return the number of characters in the URL.
+    /** Return the number of characters in the URL
 
         This function returns the number of
-        characters in the URL, not including
-        any null terminator, if present.
+        characters in the encoded form of the
+        URL, not including any null terminator,
+        if present.
+
+        @par Example
+        @code
+        url_view u( "file:///Program%20Files" );
+
+        assert( u.size() == 23 );
+        @endcode
 
         @par Exception Safety
         Throws nothing.
@@ -109,13 +141,23 @@ public:
         return u_.offset(id_end);
     }
 
-    /** Return true if the URL is empty.
+    /** Return true if the URL is empty
 
         An empty URL is a <em>relative-ref</em> with
         zero path segments.
 
+        @par Example
+        @code
+        url_view u;
+        assert( u.empty() );
+        @endcode
+
         @par Exception Safety
         Throws nothing.
+
+        @par Specification
+        @li <a href="https://www.rfc-editor.org/rfc/rfc3986.html#section-4.2"
+            >4.2.  Relative Reference (rfc3986)</a>
     */
     bool
     empty() const noexcept
@@ -123,11 +165,11 @@ public:
         return size() == 0;
     }
 
-    /** Return a pointer to the first character of the view.
+    /** Return a pointer to the URL's character buffer
 
-        This function returns a pointer to the
-        first character of the view, which is
-        not guaranteed to be null-terminated.
+        This function returns a pointer to
+        the first character of the URL, which
+        is not guaranteed to be null-terminated.
 
         @par Exception Safety
         Throws nothing.
@@ -138,10 +180,11 @@ public:
         return u_.cs_;
     }
 
-    /** Return the complete encoded URL
+    /** Return the URL string
 
-        This function returns the URL as a
-        percent-encoded string.
+        This function returns the entire URL,
+        with any percent-escaped characters
+        preserved.
 
         @par Exception Safety
         Throws nothing.
@@ -153,32 +196,19 @@ public:
             data(), size());
     }
 
-    /** Return a shared persistent copy of the URL view
+    /** Return a shared, persistent copy of the URL
 
         This function returns a read-only copy of
-        the URL view, with shared lifetime. The
-        new URL view owns (persists) the underlying
-        string.
-        <br>
-        The main benefit of this function over
-        `std::make_shared` or `std::allocate_shared`
-        is using a single allocation for both the
-        new view and the character buffer. Thus,
-        it requires access to the underlying object
-        representation to achieve that.
-        <br>
-        This function makes a copy of the storage
-        pointed to by this, and attaches it to a
-        new constant @ref url_view returned in a
-        shared pointer. The lifetime of the storage
-        for the characters will extend for the
-        lifetime of the shared object. This allows
-        the new view to be copied and passed around
-        after the original string buffer is destroyed.
+        the URL, with shared lifetime. The returned
+        value owns (persists) the underlying string.
+        The algorithm used to create the value
+        minimizes the number of individual memory
+        allocations, making it more efficient than
+        when using direct standard library functions.
 
         @par Example
         @code
-        std::shared_ptr<url_view const> sp;
+        std::shared_ptr< url_view const > sp;
         {
             std::string s( "http://example.com" );
             url_view u( s );                        // u references characters in s
@@ -193,7 +223,6 @@ public:
             // s is destroyed and thus u
             // becomes invalid, but sp remains valid.
         }
-        std::cout << *sp; // works
         @endcode
     */
     BOOST_URL_DECL
@@ -209,8 +238,7 @@ public:
     /** Return true if this contains a scheme
 
         This function returns true if this
-        contains a scheme. URLs with schemes
-        are called absolute URLs.
+        contains a scheme.
 
         @par Example
         @code
@@ -251,7 +279,9 @@ public:
 
         @par Example
         @code
-        assert( url_view( "http://www.example.com" ).scheme() == "http" );
+        url_view u( "http://www.example.com" );
+        
+        assert( u.scheme() == "http" );
         @endcode
 
         @par BNF
@@ -287,6 +317,13 @@ public:
         this does not contain a scheme, then
         @ref urls::scheme::none is returned.
 
+        @par Example
+        @code
+        url_view u( "wss://www.example.com/crypto.cgi" );
+
+        assert( u.scheme_id() == scheme::wss );
+        @endcode
+
         @par BNF
         @code
         URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
@@ -303,7 +340,8 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
             >3.1. Scheme (rfc3986)</a>
 
-        @see @ref urls::scheme
+        @see
+            @ref urls::scheme
     */
     BOOST_URL_DECL
     urls::scheme
@@ -315,7 +353,7 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if an authority is present.
+    /** Return true if an authority is present
 
         This function returns `true` if the URL
         contains an authority. The authority is
@@ -323,11 +361,9 @@ public:
 
         @par Example
         @code
-        assert( url_view( "http://www.example.com/index.htm" ).has_authority() == true );
+        url_view u( "http://www.example.com/index.htm" );
 
-        assert( url_view( "//" ).has_authority() == true );
-
-        assert( url_view( "/file.txt" ).has_authority() == false );
+        assert( u.has_authority() );
         @endcode
 
         @par BNF
@@ -358,6 +394,7 @@ public:
             >3.2. Authority (rfc3986)</a>
 
         @see
+            @ref authority,
             @ref encoded_authority.
     */
     bool
@@ -373,7 +410,9 @@ public:
 
         @par Example
         @code
-        assert( url_view( "http://www.example.com/index.htm" ).encoded_authority() == "www.example.com" );
+        url_view u( "file://Network%20Drive/My%2DFiles" );
+
+        assert( u.encoded_authority() == "Network%20Drive" );
         @endcode
 
         @par BNF
@@ -389,20 +428,23 @@ public:
             >3.2. Authority (rfc3986)</a>
 
         @see
+            @ref authority,
             @ref has_authority.
     */
     BOOST_URL_DECL
     string_view
     encoded_authority() const noexcept;
 
-    /** Return the authority.
+    /** Return the authority
 
         This function returns the authority as a
         an @ref authority_view.
 
         @par Example
         @code
-        assert( url_view( "http://www.example.com/index.htm" ).authority().encoded_host() == "www.example.com" );
+        url_view u( "https://www.example.com:8080/index.htm" );
+
+        authority_view a = u.authority();
         @endcode
 
         @par BNF
@@ -418,6 +460,7 @@ public:
             >3.2. Authority (rfc3986)</a>
 
         @see
+            @ref encoded_authority,
             @ref has_authority.
     */
     BOOST_URL_DECL
@@ -426,16 +469,16 @@ public:
 
     //--------------------------------------------
 
-    /** Return true if a userinfo is present.
+    /** Return true if a userinfo is present
 
         This function returns true if this
         contains a userinfo.
 
         @par Example
         @code
-        url_view u( "http://user@example.com" );
+        url_view u( "http://jane%2Ddoe:pass@example.com" );
 
-        assert( u.has_userinfo() == true );
+        assert( u.has_userinfo() );
         @endcode
 
         @par BNF
@@ -467,7 +510,9 @@ public:
 
         @par Example
         @code
-        assert( url_view( "http://user:pass@example.com" ).encoded_userinfo() == "user:pass" );
+        url_view u( "http://jane%2Ddoe:pass@example.com" );
+
+        assert( u.encoded_userinfo() == "jane%2Ddoe:pass" );
         @endcode
 
         @par BNF
@@ -500,9 +545,9 @@ public:
 
         @par Example
         @code
-        url_view u( "http://user:pass@example.com" );
+        url_view u( "http://jane%2Ddoe:pass@example.com" );
 
-        assert( u.userinfo() == "user:pass" );
+        assert( u.userinfo() == "jane-doe" );
         @endcode
 
         @par BNF
@@ -520,8 +565,8 @@ public:
             >3.2.1. User Information (rfc3986)</a>
 
         @see
-            @ref has_userinfo,
-            @ref encoded_userinfo.
+            @ref encoded_userinfo,
+            @ref has_userinfo.
     */
     pct_encoded_view
     userinfo() const noexcept
@@ -545,9 +590,9 @@ public:
 
         @par Example
         @code
-        url_view u( "http://user:pass@example.com" );
+        url_view u( "http://jane%2Ddoe:pass@example.com" );
 
-        assert( u.encoded_user() == "user" );
+        assert( u.encoded_user() == "jane%2Ddoe" );
         @endcode
 
         @par BNF
@@ -584,7 +629,9 @@ public:
 
         @par Example
         @code
-        assert( url_view( "http://user:pass@example.com" ).user() == "user" );
+        url_view u( "http://jane%2Ddoe:pass@example.com" );
+
+        assert( u.user() == "jane-doe" );
         @endcode
 
         @par BNF
@@ -626,11 +673,9 @@ public:
 
         @par Example
         @code
-        assert( url_view( "http://user@example.com" ).has_password() == false );
+        url_view u( "http://jane%2Ddoe:pass@example.com" );
 
-        assert( url_view( "http://user:pass@example.com" ).has_password() == true );
-
-        assert( url_view( "http://:@" ).has_password() == true );
+        assert( u.has_password() );
         @endcode
 
         @par BNF
@@ -665,9 +710,9 @@ public:
 
         @par Example
         @code
-        url_view u( "http://user:pass@example.com" );
+        url_view u( "http://jane%2Ddoe:pass@example.com" );
 
-        assert( u.encoded_user() == "user" );
+        assert( u.encoded_password() == "pass" );
         @endcode
 
         @par BNF
@@ -686,7 +731,7 @@ public:
             >3.2.1. User Information (rfc3986)</a>
 
         @see
-            @ref encoded_password,
+            @ref encoded_user,
             @ref has_password,
             @ref password,
             @ref user.
@@ -700,6 +745,13 @@ public:
         This function returns the password from the
         userinfo with percent-decoding applied.
 
+        @par Example
+        @code
+        url_view u( "http://jane%2Ddoe:pass@example.com" );
+
+        assert( u.password() == "pass" );
+        @endcode
+
         @par Exception Safety
         Throws nothing
 
@@ -711,7 +763,7 @@ public:
             @ref encoded_password,
             @ref encoded_user,
             @ref has_password,
-            @ref password.
+            @ref user.
     */
     pct_encoded_view
     password() const noexcept
@@ -726,7 +778,7 @@ public:
 
     //--------------------------------------------
 
-    /** Return the type of host present, if any
+    /** Return the type of host present, or none
 
         This function returns a
             @ref urls::host_type
@@ -736,11 +788,9 @@ public:
 
         @par Example
         @code
-        assert( url_view( "/favicon.png" ).host_type() == host_type::none );
+        url_view u( "https://192.168.0.1/local.htm" );
 
-        assert( url_view( "http://example.com" ).host_type() == host_type::name );
-
-        assert( url_view( "http://192.168.0.1" ).host_type() == host_type::ipv4 );
+        assert( u.host_type() == host_type::ipv4 );
         @endcode
 
         @par BNF
@@ -761,8 +811,11 @@ public:
 
         @see
             @ref encoded_host,
+            @ref encoded_hostname,
+            @ref encoded_host_and_port,
             @ref has_port,
             @ref host,
+            @ref hostname,
             @ref port,
             @ref port_number.
     */
@@ -779,11 +832,9 @@ public:
 
         @par Example
         @code
-        assert( url_view( "/favicon.png" ).encoded_host() == "" );
+        url_view u( "https://www%2droot.example.com/" );
 
-        assert( url_view( "http://example.com" ).encoded_host() == "example.com" );
-
-        assert( url_view( "http://192.168.0.1" ).encoded_host() == "192.168.0.1" );
+        assert( u.encoded_host() == "www%2droot.example.com" );
         @endcode
 
         @par BNF
@@ -805,8 +856,11 @@ public:
             >3.2.2. Host (rfc3986)</a>
 
         @see
+            @ref encoded_hostname,
+            @ref encoded_host_and_port,
             @ref has_port,
             @ref host,
+            @ref hostname,
             @ref host_type,
             @ref port,
             @ref port_number.
@@ -826,6 +880,13 @@ public:
         @ref host_type::ipv6 or
         @ref host_type::ipvfuture.
 
+        @par Example
+        @code
+        url_view u( "wss://[2001:0db8::0370:7334]/index.htm" );
+
+        assert( u.encoded_hostname() == "2001:0db8::0370:7334" );
+        @endcode
+
         @par BNF
         @code
         host        = IP-literal / IPv4address / reg-name
@@ -841,7 +902,14 @@ public:
             >3.2.2. Host (rfc3986)</a>
 
         @see
-            @ref hostname.
+            @ref encoded_host,
+            @ref encoded_host_and_port,
+            @ref has_port,
+            @ref host,
+            @ref hostname,
+            @ref host_type,
+            @ref port,
+            @ref port_number.
     */
     BOOST_URL_DECL
     string_view
@@ -858,6 +926,13 @@ public:
         @ref host_type::ipv6 or
         @ref host_type::ipvfuture.
 
+        @par Example
+        @code
+        url_view u( "https://www%2droot.example.com/" );
+
+        assert( u.hostname() == "www-root.example.com" );
+        @endcode
+
         @par BNF
         @code
         host        = IP-literal / IPv4address / reg-name
@@ -873,7 +948,14 @@ public:
             >3.2.2. Host (rfc3986)</a>
 
         @see
-            @ref encoded_hostname.
+            @ref encoded_host,
+            @ref encoded_hostname,
+            @ref encoded_host_and_port,
+            @ref has_port,
+            @ref host,
+            @ref host_type,
+            @ref port,
+            @ref port_number.
     */
     BOOST_URL_DECL
     pct_encoded_view
@@ -888,11 +970,9 @@ public:
 
         @par Example
         @code
-        assert( url_view( "/favicon.png" ).host() == "" );
+        url_view u( "https://www%2droot.example.com/" );
 
-        assert( url_view( "http://example.com" ).host() == "example.com" );
-
-        assert( url_view( "http://192.168.0.1" ).host() == "192.168.0.1" );
+        assert( u.host() == "www-root.example.com" );
         @endcode
 
         @par BNF
@@ -915,8 +995,10 @@ public:
 
         @see
             @ref encoded_host,
+            @ref encoded_hostname,
             @ref encoded_host_and_port,
             @ref has_port,
+            @ref hostname,
             @ref host_type,
             @ref port,
             @ref port_number.
@@ -941,6 +1023,13 @@ public:
         returns the unspecified address which
         is equal to "0.0.0.0".
 
+        @par Example
+        @code
+        url_view u( "http://127.0.0.1/index.htm?user=win95" );
+
+        ipv4_address ip = u.ipv4_address();
+        @endcode
+
         @par BNF
         @code
         IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
@@ -960,7 +1049,12 @@ public:
             >3.2.2. Host (rfc3986)</a>
 
         @see
-            @ref ipv4_address.
+            @ref encoded_hostname,
+            @ref hostname,
+            @ref host_type,
+            @ref ipv6_address,
+            @ref ipvfuture,
+            @ref urls::ipv4_address.
     */
     BOOST_URL_DECL
     urls::ipv4_address
@@ -975,6 +1069,15 @@ public:
         exists, otherwise it returns the
         unspecified address which is equal
         to "0:0:0:0:0:0:0:0".
+
+        @par Example
+        @code
+        url_view u( "ftp://[::1]" );
+
+        ipv6_address ip = u.ipv6_address();
+
+        assert( ip.is_loopback() );
+        @endcode
 
         @par BNF
         @code
@@ -1003,7 +1106,12 @@ public:
             >3.2.2. Host (rfc3986)</a>
 
         @see
-            @ref ipv6_address.
+            @ref encoded_hostname,
+            @ref hostname,
+            @ref host_type,
+            @ref ipv4_address,
+            @ref ipvfuture,
+            @ref urls::ipv6_address.
     */
     BOOST_URL_DECL
     urls::ipv6_address
@@ -1017,6 +1125,13 @@ public:
         the address. Otherwise it returns the
         empty string.
 
+        @par Example
+        @code
+        url_view u( "http://[v1fe.d:9]" );
+
+        assert( u.ipvfuture() == "v1fe.d:9" );
+        @endcode
+
         @par BNF
         @code
         IPvFuture  = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
@@ -1028,6 +1143,13 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
             >3.2.2. Host (rfc3986)</a>
+
+        @see
+            @ref encoded_hostname,
+            @ref hostname,
+            @ref host_type,
+            @ref ipv4_address,
+            @ref ipv6_address,
     */
     BOOST_URL_DECL
     string_view
@@ -1037,6 +1159,13 @@ public:
 
         This function returns true if the
         authority contains a port.
+
+        @par Example
+        @code
+        url_view u( "wss://www.example.com:443" );
+
+        assert( u.has_port() );
+        @endcode
 
         @par BNF
         @code
@@ -1054,8 +1183,10 @@ public:
 
         @see
             @ref encoded_host,
-            @ref encoded_host_and_port
+            @ref encoded_hostname,
+            @ref encoded_host_and_port,
             @ref host,
+            @ref hostname,
             @ref host_type,
             @ref port,
             @ref port_number.
@@ -1070,6 +1201,13 @@ public:
         in the authority, or an empty string if
         there is no port.
 
+        @par Example
+        @code
+        url_view u( "http://localhost.com:8080" );
+
+        assert( u.port() == "8080" );
+        @endcode
+
         @par BNF
         @code
         port        = *DIGIT
@@ -1084,9 +1222,11 @@ public:
 
         @see
             @ref encoded_host,
-            @ref encoded_host_and_port
+            @ref encoded_hostname,
+            @ref encoded_host_and_port,
             @ref has_port,
             @ref host,
+            @ref hostname,
             @ref host_type,
             @ref port_number.
     */
@@ -1101,6 +1241,13 @@ public:
         a port and the number can be represented.
         Otherwise it returns zero.
 
+        @par Example
+        @code
+        url_view u( "http://localhost.com:8080" );
+
+        assert( u.port_number() == 8080 );
+        @endcode
+
         @par BNF
         @code
         port        = *DIGIT
@@ -1115,9 +1262,11 @@ public:
 
         @see
             @ref encoded_host,
-            @ref encoded_host_and_port
+            @ref encoded_hostname,
+            @ref encoded_host_and_port,
             @ref has_port,
             @ref host,
+            @ref hostname,
             @ref host_type,
             @ref port,
     */
@@ -1131,6 +1280,13 @@ public:
         port of the authority as a single
         percent-encoded string.
 
+        @par Example
+        @code
+        url_view u( "http://www.example.com:8080/index.htm" );
+
+        assert( u.encoded_host_and_port() == "www.example.com:8080" );
+        @endcode
+
         @par BNF
         @code
         authority   = [ userinfo "@" ] host [ ":" port ]
@@ -1140,14 +1296,18 @@ public:
         Throws nothing.
 
         @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2.  Host (rfc3986)</a>
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
             >3.2.3. Port (rfc3986)</a>
 
         @see
             @ref encoded_host,
-            @ref encoded_host_and_port
+            @ref encoded_hostname,
+            @ref encoded_host_and_port,
             @ref has_port,
             @ref host,
+            @ref hostname,
             @ref host_type,
             @ref port,
     */
@@ -1164,6 +1324,16 @@ public:
         consists of the scheme and authority.
         This string will be empty if no
         authority is present.
+
+        @par Example
+        @code
+        url_view u( "http://www.example.com:8080/index.htm?text=none#h1" );
+
+        assert( u.encoded_origin() == "http://www.example.com:8080" );
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
     */
     BOOST_URL_DECL
     string_view
@@ -1179,6 +1349,20 @@ public:
 
         This function returns true if the path
         begins with a forward slash ('/').
+
+        @par Example
+        @code
+        url_view u( "/path/to/file.txt" );
+
+        assert( u.is_path_absolute() );
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3.  Path (rfc3986)</a>
     */
     bool
     is_path_absolute() const noexcept
@@ -1192,6 +1376,13 @@ public:
 
         This function returns the path as a
         percent-encoded string.
+
+        @par Example
+        @code
+        url_view u( "file:///Program%20Files/Games/config.ini" );
+
+        assert( u.encoded_path() == "/Program%20Files/Games/config.ini" );
+        @endcode
 
         @par BNF
         @code
@@ -1216,6 +1407,13 @@ public:
         This function returns the path as a
         string with percent-decoding applied.
 
+        @par Example
+        @code
+        url_view u( "file:///Program%20Files/Games/config.ini" );
+
+        assert( u.path() == "/Program Files/Games/config.ini" );
+        @endcode
+
         @par BNF
         @code
         query           = *( pchar / "/" / "?" )
@@ -1227,8 +1425,8 @@ public:
         Throws nothing
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
 
         @see
             @ref encoded_query,
@@ -1303,6 +1501,13 @@ public:
         This function returns true if this
         contains a query.
 
+        @par Example
+        @code
+        url_view u( "/sql?id=42&col=name&page-size=20" );
+
+        assert( u.has_query() );
+        @endcode
+
         @par BNF
         @code
         query           = *( pchar / "/" / "?" )
@@ -1329,6 +1534,13 @@ public:
 
         This function returns the query as
         a percent-encoded string.
+
+        @par Example
+        @code
+        url_view u( "/sql?id=42&name=jane%2Ddoe&page+size=20" );
+
+        assert( u.encoded_query() == "id=42&name=jane%2Ddoe&page+size=20" );
+        @endcode
 
         @par BNF
         @code
@@ -1362,6 +1574,13 @@ public:
         to spaces automatically upon decoding.
         This behavior can be changed by setting
         decode options.
+
+        @par Example
+        @code
+        url_view u( "/sql?id=42&name=jane%2Ddoe&page+size=20" );
+
+        assert( u.query() == "id=42&name=jane-doe&page size=20" );
+        @endcode
 
         @par BNF
         @code
@@ -1405,8 +1624,11 @@ public:
         query-params    = [ query-param ] *( "&" [ query-param ] )
 
         query-param     = key [ "=" value ]
-
         @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
     */
     BOOST_URL_DECL
     params_encoded_view
@@ -1427,6 +1649,9 @@ public:
         query-param     = key [ "=" value ]
         @endcode
 
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
     */
     BOOST_URL_DECL
     params_view
@@ -1438,10 +1663,17 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if a fragment exists.
+    /** Return true if a fragment exists
 
         This function returns true if this
         contains a fragment.
+
+        @par Example
+        @code
+        url_view u( "http://www.example.com/index.htm#a%2D1" );
+
+        assert( u.has_fragment() );
+        @endcode
 
         @par BNF
         @code
@@ -1465,10 +1697,17 @@ public:
     bool
     has_fragment() const noexcept;
 
-    /** Return the fragment.
+    /** Return the fragment
 
         This function returns the fragment as a
         percent-encoded string.
+
+        @par Example
+        @code
+        url_view u( "http://www.example.com/index.htm#a%2D1" );
+
+        assert( u.encoded_fragment() == "a%2D1" );
+        @endcode
 
         @par BNF
         @code
@@ -1493,10 +1732,17 @@ public:
     string_view
     encoded_fragment() const noexcept;
 
-    /** Return the fragment.
+    /** Return the fragment
 
         This function returns the fragment as a
         string with percent-decoding applied.
+
+        @par Example
+        @code
+        url_view u( "http://www.example.com/index.htm#a%2D1" );
+
+        assert( u.fragment() == "a-1" );
+        @endcode
 
         @par BNF
         @code
@@ -1533,7 +1779,7 @@ public:
     //
     //--------------------------------------------
 
-    /** Compare two URLs.
+    /** Return the result of comparing this with another URL
 
         This function compares two URLs
         according to Syntax-Based comparison
@@ -1545,32 +1791,27 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+
+        @return -1 if `*this < other`, 0 if
+            `this == other`, and 1 if `this > other`.
     */
     BOOST_URL_DECL
     int
     compare(url_view_base const& other) const noexcept;
 
-    /** Return `true` if two url_views are equal.
+    /** Return the result of comparing two URLs
 
-        Two url_views are equal when their
-        normalized representations are the same.
-
-        Two URLs can compare equal even if their
-        serialized representations are not
-        identical strings.
-
-        @par Example
-        @code
-        url_view u1( "HtTp://cXaMpLe.oRG/" );
-        url_view u2( "http://example.org/" );
-        assert( u1.compare(u2) == 0 );
-        @endcode
+        The URLs are compared character
+        by character as if they were first
+        normalized.
 
         @par Effects
-        `return url( lhs ).normalize() == url( rhs ).normalize();`
+        @code
+        return url( u0 ).normalize() == url( u1 ).normalize();
+        @endcode
 
         @par Complexity
-        Linear in string size.
+        Linear in `min( u0.size(), u1.size() )`
 
         @par Exception Safety
         Throws nothing
@@ -1578,26 +1819,25 @@ public:
     friend
     bool
     operator==(
-        url_view_base const& lhs,
-        url_view_base const& rhs) noexcept
+        url_view_base const& u0,
+        url_view_base const& u1) noexcept
     {
-        return lhs.compare(rhs) == 0;
+        return u0.compare(u1) == 0;
     }
 
-    /** Return `true` if two url_views are not equal.
+    /** Return the result of comparing two URLs
 
-        Two url_views are equal when their
-        normalized representations are the same.
-
-        Two URLs can compare not equal even if
-        their serialized representations represent
-        the same resource.
+        The URLs are compared character
+        by character as if they were first
+        normalized.
 
         @par Effects
-        `return ! url( lhs ).normalize() == url( rhs ).normalize();`
+        @code
+        return url( u0 ).normalize() != url( u1 ).normalize();
+        @endcode
 
         @par Complexity
-        Linear in string size.
+        Linear in `min( u0.size(), u1.size() )`
 
         @par Exception Safety
         Throws nothing
@@ -1605,24 +1845,25 @@ public:
     friend
     bool
     operator!=(
-        url_view_base const& lhs,
-        url_view_base const& rhs) noexcept
+        url_view_base const& u0,
+        url_view_base const& u1) noexcept
     {
-        return ! (lhs == rhs);
+        return ! (u0 == u1);
     }
 
-    /** Lexicographically compares two url_views
+    /** Return the result of comparing two URLs
 
-        Each URL component is compared
-        alphabetically on a character by character
-        basis as if each was normalized first.
+        The URLs are compared character
+        by character as if they were first
+        normalized.
 
-        Two URLs can compare equal even if their
-        serialized representations are not
-        identical strings.
+        @par Effects
+        @code
+        return url( u0 ).normalize() < url( u1 ).normalize();
+        @endcode
 
         @par Complexity
-        Linear in string sizes.
+        Linear in `min( u0.size(), u1.size() )`
 
         @par Exception Safety
         Throws nothing
@@ -1630,24 +1871,25 @@ public:
     friend
     bool
     operator<(
-        url_view_base const& lhs,
-        url_view_base const& rhs) noexcept
+        url_view_base const& u0,
+        url_view_base const& u1) noexcept
     {
-        return lhs.compare(rhs) < 0;
+        return u0.compare(u1) < 0;
     }
 
-    /** Lexicographically compares two url_views
+    /** Return the result of comparing two URLs
 
-        Each URL component is compared
-        alphabetically on a character by character
-        basis as if each was normalized first.
+        The URLs are compared character
+        by character as if they were first
+        normalized.
 
-        Two URLs can compare equal even if their
-        serialized representations are not
-        identical strings.
+        @par Effects
+        @code
+        return url( u0 ).normalize() <= url( u1 ).normalize();
+        @endcode
 
         @par Complexity
-        Linear in string sizes.
+        Linear in `min( u0.size(), u1.size() )`
 
         @par Exception Safety
         Throws nothing
@@ -1655,24 +1897,25 @@ public:
     friend
     bool
     operator<=(
-        url_view_base const& lhs,
-        url_view_base const& rhs) noexcept
+        url_view_base const& u0,
+        url_view_base const& u1) noexcept
     {
-        return lhs.compare(rhs) <= 0;
+        return u0.compare(u1) <= 0;
     }
 
-    /** Lexicographically compares two url_views
+    /** Return the result of comparing two URLs
 
-        Each URL component is compared
-        alphabetically on a character by character
-        basis as if each was normalized first.
+        The URLs are compared character
+        by character as if they were first
+        normalized.
 
-        Two URLs can compare equal even if their
-        serialized representations are not
-        identical strings.
+        @par Effects
+        @code
+        return url( u0 ).normalize() > url( u1 ).normalize();
+        @endcode
 
         @par Complexity
-        Linear in string sizes.
+        Linear in `min( u0.size(), u1.size() )`
 
         @par Exception Safety
         Throws nothing
@@ -1680,24 +1923,25 @@ public:
     friend
     bool
     operator>(
-        url_view_base const& lhs,
-        url_view_base const& rhs) noexcept
+        url_view_base const& u0,
+        url_view_base const& u1) noexcept
     {
-        return lhs.compare(rhs) > 0;
+        return u0.compare(u1) > 0;
     }
 
-    /** Lexicographically compares two url_views
+    /** Return the result of comparing two URLs
 
-        Each URL component is compared
-        alphabetically on a character by character
-        basis as if each was normalized first.
+        The URLs are compared character
+        by character as if they were first
+        normalized.
 
-        Two URLs can compare equal even if their
-        serialized representations are not
-        identical strings.
+        @par Effects
+        @code
+        return url( u0 ).normalize() >= url( u1 ).normalize();
+        @endcode
 
         @par Complexity
-        Linear in string sizes.
+        Linear in `min( u0.size(), u1.size() )`
 
         @par Exception Safety
         Throws nothing
@@ -1705,10 +1949,10 @@ public:
     friend
     bool
     operator>=(
-        url_view_base const& lhs,
-        url_view_base const& rhs) noexcept
+        url_view_base const& u0,
+        url_view_base const& u1) noexcept
     {
-        return lhs.compare(rhs) >= 0;
+        return u0.compare(u1) >= 0;
     }
 
     // hidden friend
@@ -1724,10 +1968,12 @@ public:
 
 //------------------------------------------------
 
-/** Format the encoded URL to the output stream
+/** Format the URL to the output stream
 
-    This function serializes the encoded URL
-    to the output stream.
+    This function serializes the URL to
+    the specified output stream. Any
+    percent-escapes are emitted as-is;
+    no decoding is performed.
 
     @par Example
     @code

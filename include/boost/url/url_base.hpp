@@ -39,6 +39,27 @@ class lut_chars;
 }
 #endif
 
+/** Common functions for all modifiable URLs
+
+    This base class is used by the library to
+    provide all of the member functions of
+    modifiable URL containers. Users should
+    not use this class directly. Instead,
+    construct an instance of one of the
+    containers or call a parsing function:
+
+    @par Containers
+        @li @ref url
+        @li @ref url_view
+        @li @ref static_url
+
+    @par Parsing Functions
+        @li @ref parse_absolute_uri
+        @li @ref parse_origin_form
+        @li @ref parse_relative_ref
+        @li @ref parse_uri
+        @li @ref parse_uri_reference
+*/
 class BOOST_SYMBOL_VISIBLE
     url_base
     : public url_view_base
