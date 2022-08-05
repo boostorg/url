@@ -65,7 +65,7 @@ def main(ctx):
   ## Compiling as part of the boost superproject
   linux_cxx("CMake Superproject", "g++", packages="", buildscript="drone", buildtype="cmake-superproject", image="cppalliance/droneubuntu1804:1", globalenv=globalenv),
   ## Installing
-  # linux_cxx("CMake Install", "g++", packages="", buildscript="drone", buildtype="cmake1", image="cppalliance/droneubuntu1804:1", environment={'CMAKE_INSTALL_TEST': '1', 'DRONE_JOB_UUID': 'b6589fc6ab'}, globalenv=globalenv),
+  linux_cxx("CMake Install", "g++", packages="", buildscript="drone", buildtype="cmake1", image="cppalliance/droneubuntu1804:1", environment={'CMAKE_INSTALL_TEST': '1', 'DRONE_JOB_UUID': 'b6589fc6ab'}, globalenv=globalenv),
 
   # ------------------------------------------------------------------
 
