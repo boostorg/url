@@ -207,6 +207,8 @@ struct url_view_base_test
             url_view u( "http://127.0.0.1/index.htm?user=win95" );
 
             ipv4_address ip = u.ipv4_address();
+
+            (void)ip;
         }
 
         // ipv6_address
@@ -216,6 +218,8 @@ struct url_view_base_test
             ipv6_address ip = u.ipv6_address();
 
             assert( ip.is_loopback() );
+
+            (void)ip;
         }
 
         // ipvfuture()
