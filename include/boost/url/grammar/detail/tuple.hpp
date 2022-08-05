@@ -13,6 +13,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
+#include <boost/url/detail/empty_value.hpp>
 #include <boost/mp11/algorithm.hpp>
 #include <boost/mp11/function.hpp>
 #include <boost/mp11/integer_sequence.hpp>
@@ -21,30 +22,74 @@
 #include <cstdlib>
 #include <utility>
 
+#ifndef BOOST_URL_TUPLE_EBO
+// VFALCO No idea what causes it or how to fix it
+// https://devblogs.microsoft.com/cppblog/optimizing-the-layout-of-empty-base-classes-in-vs2015-update-2-3/
+#ifdef BOOST_MSVC
+#define BOOST_URL_TUPLE_EBO 0
+#else
+#define BOOST_URL_TUPLE_EBO 1
+#endif
+#endif
+
 namespace boost {
 namespace urls {
 namespace grammar {
 namespace detail {
 
+#if BOOST_URL_TUPLE_EBO
 template<std::size_t I, class T>
 struct tuple_element_impl
+    : urls::detail::empty_value<T>
 {
-    T t;
-
     constexpr
-    tuple_element_impl(
-        T const& t_)
-        : t(t_)
+    tuple_element_impl(T const& t)
+        : urls::detail::empty_value<T>(
+            urls::detail::empty_init, t)
     {
     }
 
     constexpr
-    tuple_element_impl(
-        T&& t_)
-        : t(std::move(t_))
+    tuple_element_impl(T&& t)
+        : urls::detail::empty_value<T>(
+            urls::detail::empty_init,
+                std::move(t))
     {
     }
 };
+#else
+template<std::size_t I, class T>
+struct tuple_element_impl
+{
+    T t_;
+
+    constexpr
+    tuple_element_impl(T const& t)
+        : t_(t)
+    {
+    }
+
+    constexpr
+    tuple_element_impl(T&& t)
+        : t_(std::move(t))
+    {
+    }
+
+    constexpr
+    T&
+    get() noexcept
+    {
+        return t_;
+    }
+
+    constexpr
+    T const&
+    get() const noexcept
+    {
+        return t_;
+    }
+};
+#endif
 
 template<std::size_t I, class T>
 struct tuple_element_impl<I, T&>
@@ -55,6 +100,12 @@ struct tuple_element_impl<I, T&>
     tuple_element_impl(T& t_)
         : t(t_)
     {
+    }
+
+    T&
+    get() const noexcept
+    {
+        return t;
     }
 };
 
@@ -77,9 +128,9 @@ struct tuple_impl<
 };
 
 template<class... Ts>
-struct tuple : tuple_impl<
-    mp11::index_sequence_for<
-        Ts...>, Ts...>
+struct tuple
+    : tuple_impl<
+        mp11::index_sequence_for<Ts...>, Ts...>
 {
     template<class... Us,
         typename std::enable_if<
@@ -112,12 +163,14 @@ struct tuple : tuple_impl<
     }
 };
 
+//------------------------------------------------
+
 template<std::size_t I, class T>
 constexpr
 T&
 get(tuple_element_impl<I, T>& te)
 {
-    return te.t;
+    return te.get();
 }
 
 template<std::size_t I, class T>
@@ -125,7 +178,7 @@ constexpr
 T const&
 get(tuple_element_impl<I, T> const& te)
 {
-    return te.t;
+    return te.get();
 }
 
 template<std::size_t I, class T>
@@ -133,7 +186,7 @@ constexpr
 T&&
 get(tuple_element_impl<I, T>&& te)
 {
-    return std::move(te.t);
+    return std::move(te.get());
 }
 
 template<std::size_t I, class T>
@@ -141,7 +194,7 @@ constexpr
 T&
 get(tuple_element_impl<I, T&>&& te)
 {
-    return te.t;
+    return te.get();
 }
 
 template<std::size_t I, class T>
