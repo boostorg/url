@@ -17,3 +17,10 @@ add_executable(route
 
 set_property(TARGET route PROPERTY FOLDER "boost_url_examples")
 target_link_libraries(route PRIVATE Boost::url Boost::filesystem)
+if (TARGET boost_filesystem AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    get_target_property(FS_IS_IMPORTED boost_filesystem IMPORTED)
+    if (FS_IS_IMPORTED)
+        target_compile_options(boost_filesystem PUBLIC -Wno-error=restrict)
+    endif()
+endif()
+
