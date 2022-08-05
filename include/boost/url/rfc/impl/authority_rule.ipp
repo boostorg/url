@@ -13,7 +13,7 @@
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/tuple_rule.hpp>
 #include <boost/url/rfc/detail/host_rule.hpp>
 #include <boost/url/rfc/detail/port_rule.hpp>
 #include <boost/url/rfc/detail/userinfo_rule.hpp>
@@ -37,7 +37,7 @@ parse(
         auto rv = grammar::parse(
             it, end,
             grammar::optional_rule(
-                grammar::sequence_rule(
+                grammar::tuple_rule(
                     detail::userinfo_rule,
                     grammar::squelch(
                         grammar::delim_rule('@')))));

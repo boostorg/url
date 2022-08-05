@@ -17,7 +17,7 @@
 #include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/token_rule.hpp>
-#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/tuple_rule.hpp>
 
 namespace boost {
 namespace urls {
@@ -38,7 +38,7 @@ parse(
     auto const it0 = it;
     auto rv = grammar::parse(
         it, end,
-        grammar::sequence_rule(
+        grammar::tuple_rule(
             grammar::delim_rule('v'),
             grammar::token_rule(
                 grammar::hexdig_chars),

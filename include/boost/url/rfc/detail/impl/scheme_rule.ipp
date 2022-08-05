@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/detail/scheme_rule.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
-#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/tuple_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 namespace boost {

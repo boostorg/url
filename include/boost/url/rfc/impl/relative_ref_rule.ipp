@@ -15,7 +15,7 @@
 #include <boost/url/rfc/detail/fragment_rule.hpp>
 #include <boost/url/rfc/detail/relative_part_rule.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
-#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/tuple_rule.hpp>
 #include <boost/url/grammar/optional_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 
@@ -52,7 +52,7 @@ parse(
         auto rv = grammar::parse(
             it, end,
             grammar::optional_rule(
-                grammar::sequence_rule(
+                grammar::tuple_rule(
                     grammar::squelch(
                         grammar::delim_rule('?')),
                     query_rule)));

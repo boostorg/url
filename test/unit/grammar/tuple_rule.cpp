@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/tuple_rule.hpp>
 
 #include <boost/url/grammar/dec_octet_rule.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
@@ -24,7 +24,7 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-struct sequence_rule_test
+struct tuple_rule_test
 {
     template<class R>
     static
@@ -49,9 +49,9 @@ struct sequence_rule_test
     void
     testSequence()
     {
-        ok("$", sequence_rule(delim_rule('$')));
-        ok("$!", sequence_rule(delim_rule('$'), delim_rule('!')));
-        bad("$", sequence_rule(delim_rule('!')));
+        ok("$", tuple_rule(delim_rule('$')));
+        ok("$!", tuple_rule(delim_rule('$'), delim_rule('!')));
+        bad("$", tuple_rule(delim_rule('!')));
     }
 
     void
@@ -60,7 +60,7 @@ struct sequence_rule_test
         result< std::tuple< pct_encoded_view, string_view > > r1 =
             parse(
                 "www.example.com:443",
-                sequence_rule(
+                tuple_rule(
                     pct_encoded_rule(unreserved_chars + '-' + '.'),
                     squelch( delim_rule( ':' ) ),
                     token_rule( digit_chars ) ) );
@@ -69,7 +69,7 @@ struct sequence_rule_test
                 pct_encoded_view, string_view, string_view > > r2 =
             parse(
                 "www.example.com:443",
-                sequence_rule(
+                tuple_rule(
                     pct_encoded_rule(unreserved_chars + '-' + '.'),
                     delim_rule( ':' ),
                     token_rule( digit_chars ) ) );
@@ -84,11 +84,11 @@ struct sequence_rule_test
         // constexpr
         {
             constexpr auto r1 =
-                sequence_rule(
+                tuple_rule(
                     delim_rule('.'),
                     delim_rule('.'));
             constexpr auto r2 =
-                sequence_rule(
+                tuple_rule(
                     squelch( delim_rule('.') ),
                     delim_rule('.'));
             (void)r1;
@@ -99,7 +99,7 @@ struct sequence_rule_test
         {
             result< std::tuple< unsigned char, unsigned char, unsigned char, unsigned char > > rv =
                 parse( "192.168.0.1", 
-                    sequence_rule(
+                    tuple_rule(
                         dec_octet_rule,
                         squelch( delim_rule('.') ),
                         dec_octet_rule,
@@ -116,8 +116,8 @@ struct sequence_rule_test
 };
 
 TEST_SUITE(
-    sequence_rule_test,
-    "boost.url.grammar.sequence_rule");
+    tuple_rule_test,
+    "boost.url.grammar.tuple_rule");
 
 } // grammar
 } // urls

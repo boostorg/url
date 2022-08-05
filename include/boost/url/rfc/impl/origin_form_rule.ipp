@@ -15,7 +15,7 @@
 #include <boost/url/rfc/detail/path_rules.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/range_rule.hpp>
-#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/tuple_rule.hpp>
 
 namespace boost {
 namespace urls {
@@ -24,15 +24,15 @@ namespace urls {
 namespace detail {
 
 constexpr auto origin_form_rule =
-    grammar::sequence_rule(
+    grammar::tuple_rule(
         grammar::range_rule(
-            grammar::sequence_rule(
+            grammar::tuple_rule(
                 grammar::delim_rule('/'),
                 segment_rule),
             segment_rule,
             1),
         grammar::optional_rule(
-            grammar::sequence_rule(
+            grammar::tuple_rule(
                 grammar::delim_rule('?'),
                 query_rule))
     );
@@ -69,7 +69,7 @@ parse(
     {
         auto rv = grammar::parse(it, end,
             grammar::range_rule(
-                grammar::sequence_rule(
+                grammar::tuple_rule(
                     grammar::delim_rule('/'),
                     detail::segment_rule),
                 1));
@@ -83,7 +83,7 @@ parse(
     {
         auto rv = grammar::parse(it, end,
             grammar::optional_rule(
-                grammar::sequence_rule(
+                grammar::tuple_rule(
                     grammar::squelch(
                         grammar::delim_rule('?')),
                     query_rule)));

@@ -14,7 +14,7 @@
 #include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/dec_octet_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/tuple_rule.hpp>
 
 namespace boost {
 namespace urls {
@@ -29,7 +29,7 @@ parse(
 {
     auto rv = grammar::parse(
         it, end,
-        grammar::sequence_rule(
+        grammar::tuple_rule(
             grammar::dec_octet_rule,
             grammar::squelch(
                 grammar::delim_rule('.')),

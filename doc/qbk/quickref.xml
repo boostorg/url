@@ -185,11 +185,11 @@
 
         <bridgehead renderas="sect3">Functions (2/2)</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__grammar__sequence_rule">sequence_rule</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__squelch">squelch</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__to_lower">to_lower</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__to_upper">to_upper</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__token_rule">token_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__tuple_rule">tuple_rule</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__variant_rule">variant_rule</link></member>
         </simplelist>
 

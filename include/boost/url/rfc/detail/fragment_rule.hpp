@@ -13,7 +13,7 @@
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
-#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/tuple_rule.hpp>
 #include <boost/url/grammar/optional_rule.hpp>
 
 namespace boost {
@@ -49,7 +49,7 @@ constexpr auto fragment_rule = pct_encoded_rule(
 */
 constexpr auto fragment_part_rule =
     grammar::optional_rule(
-        grammar::sequence_rule(
+        grammar::tuple_rule(
             grammar::squelch(
                 grammar::delim_rule('#')),
             fragment_rule));

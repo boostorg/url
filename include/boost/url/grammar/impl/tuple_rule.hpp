@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_GRAMMAR_IMPL_SEQUENCE_RULE_HPP
-#define BOOST_URL_GRAMMAR_IMPL_SEQUENCE_RULE_HPP
+#ifndef BOOST_URL_GRAMMAR_IMPL_TUPLE_RULE_HPP
+#define BOOST_URL_GRAMMAR_IMPL_TUPLE_RULE_HPP
 
 #include <boost/url/grammar/parse.hpp>
 #include <boost/mp11/integral.hpp>

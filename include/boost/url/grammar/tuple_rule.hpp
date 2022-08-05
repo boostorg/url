@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_GRAMMAR_SEQUENCE_RULE_HPP
-#define BOOST_URL_GRAMMAR_SEQUENCE_RULE_HPP
+#ifndef BOOST_URL_GRAMMAR_TUPLE_RULE_HPP
+#define BOOST_URL_GRAMMAR_TUPLE_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/result.hpp>
@@ -50,7 +50,7 @@ namespace grammar {
     @code
     result< std::tuple< unsigned char, unsigned char, unsigned char, unsigned char > > rv =
         parse( "192.168.0.1", 
-            sequence_rule(
+            tuple_rule(
                 dec_octet_rule,
                 squelch( delim_rule('.') ),
                 dec_octet_rule,
@@ -81,7 +81,7 @@ namespace grammar {
 template<class... Rules>
 constexpr
 __implementation_defined__
-sequence_rule( Rules... rn ) noexcept;
+tuple_rule( Rules... rn ) noexcept;
 #else
 template<
     class R0,
@@ -109,7 +109,7 @@ public:
     friend
     constexpr
     auto
-    sequence_rule(
+    tuple_rule(
         R0_ const& r0,
         Rn_ const&... rn) noexcept ->
             sequence_rule_t<R0_, Rn_...>;
@@ -137,7 +137,7 @@ template<
     class... Rn>
 constexpr
 auto
-sequence_rule(
+tuple_rule(
     R0 const& r0,
     Rn const&... rn) noexcept ->
         sequence_rule_t<
@@ -198,7 +198,7 @@ struct squelch_rule_t
     @code
     result< std::tuple< pct_encoded_view, string_view > > rv = grammar::parse(
         "www.example.com:443",
-        grammar::sequence_rule(
+        grammar::tuple_rule(
             pct_encoded_rule(unreserved_chars + '-' + '.'),
             grammar::squelch( grammar::delim_rule( ':' ) ),
             grammar::token_rule( grammar::digit_chars ) ) );
@@ -209,7 +209,7 @@ struct squelch_rule_t
     @code
     result< std::tuple< pct_encoded_view, string_view, string_view > > rv = grammar::parse(
         "www.example.com:443",
-        grammar::sequence_rule(
+        grammar::tuple_rule(
             pct_encoded_rule(unreserved_chars + '-' + '.'),
             grammar::delim_rule( ':' ),
             grammar::token_rule( grammar::digit_chars ) ) );
@@ -221,7 +221,7 @@ struct squelch_rule_t
         @ref grammar::delim_rule,
         @ref grammar::digit_chars,
         @ref grammar::parse,
-        @ref grammar::sequence_rule,
+        @ref grammar::tuple_rule,
         @ref grammar::token_rule,
         @ref pct_encoded_view,
         @ref pct_encoded_rule,
@@ -243,6 +243,6 @@ squelch( Rule const& r ) noexcept
 } // urls
 } // boost
 
-#include <boost/url/grammar/impl/sequence_rule.hpp>
+#include <boost/url/grammar/impl/tuple_rule.hpp>
 
 #endif

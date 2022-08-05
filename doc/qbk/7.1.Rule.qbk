@@ -88,8 +88,8 @@ constexpr Rule rule{};
 * __not_empty_rule__
 * __optional_rule__
 * __range_rule__
-* __sequence_rule__
 * __token_rule__
+* __tuple_rule__
 * __unsigned_rule__
 * __variant_rule__
 

@@ -13,7 +13,7 @@
 #include <boost/url/grammar/alpha_chars.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/tuple_rule.hpp>
 #include <boost/url/grammar/token_rule.hpp>
 
 #include "test_suite.hpp"
@@ -56,7 +56,7 @@ struct range_rule_test
         {
             constexpr auto r = range_rule(
                 token_rule(alpha_chars),
-                sequence_rule(
+                tuple_rule(
                     squelch(
                         delim_rule('+')),
                     token_rule(alpha_chars)));
@@ -69,7 +69,7 @@ struct range_rule_test
         {
             result< range<string_view> > rv = parse( ";alpha;xray;charlie",
                 range_rule(
-                    sequence_rule(
+                    tuple_rule(
                         squelch( delim_rule( ';' ) ),
                         token_rule( alpha_chars ) ),
                     1 ) );
@@ -81,7 +81,7 @@ struct range_rule_test
             result< range< string_view > > rv = parse( "whiskey,tango,foxtrot",
                 range_rule(
                     token_rule( alpha_chars ),          // first
-                    sequence_rule(                      // next
+                    tuple_rule(                      // next
                         squelch( delim_rule(',') ),
                         token_rule( alpha_chars ) ) ) );
 

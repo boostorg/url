@@ -50,12 +50,11 @@ auto result< string_view > rv = parse( "xyz", delim_rule( 'x' ));
 
 [heading Sequences]
 
-The `constexpr` function
-[link url.ref.boost__urls__grammar__sequence_rule `sequence_rule`]
-returns a rule which requires that the input match a passed
-series of rules. The value type is a __std_tuple__ where each
-index of the tuple holds a value from the corresponding rule
-in the same argument position. Given this BNF:
+The `constexpr` function __tuple_rule__ returns a rule which
+requires that the input match a passed series of rules. The
+value type is a __std_tuple__ where each index of the tuple
+holds a value from the corresponding rule in the same argument
+position. Given this BNF:
 
 ```
 IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
@@ -66,7 +65,7 @@ to easily declare a variable which will parse an IPv4 address:
 
 ```
 constexpr auto
-ipv4_address_rule = sequence_rule(
+ipv4_address_rule = tuple_rule(
     dec_octet_rule, delim_rule('.'),
     dec_octet_rule, delim_rule('.'),
     dec_octet_rule, delim_rule('.'),
@@ -74,7 +73,7 @@ ipv4_address_rule = sequence_rule(
 ```
 
 The `auto` keyword is used to avoid the need to write
-out the return type of __sequence_rule__, which will be long
+out the return type of __tuple_rule__, which will be long
 and complex. The individual integer octets can be extracted
 from the result using __std_get__. This example parses and
 prints the value of an IPv4 address:
@@ -109,9 +108,9 @@ We can define a rule to parse it:
 
 ```
 constexpr auto
-peer_rule = sequence_rule(
+peer_rule = tuple_rule(
     not_empty_rule( pct_encoded_rule( unreserved_chars + sub_delims_chars ) ),
-    optional_rule( sequence_rule( delim_rule( ':' ), token_rule( digit_chars ) ) );
+    optional_rule( tuple_rule( delim_rule( ':' ), token_rule( digit_chars ) ) );
 ```
 
 [heading And More...]
@@ -150,7 +149,7 @@ For a complete set please consult the reference section.
     Match a repeating number of elements.
     ]
 ][
-    [__sequence_rule__]
+    [__tuple_rule__]
     [
     Match a sequence of specified rules, in order.
     ]

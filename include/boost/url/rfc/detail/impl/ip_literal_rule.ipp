@@ -14,7 +14,7 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/sequence_rule.hpp>
+#include <boost/url/grammar/tuple_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/detail/ipvfuture_rule.hpp>
 
@@ -49,7 +49,7 @@ parse(
         // IPv6address
         auto rv = grammar::parse(
             it, end,
-            grammar::sequence_rule(
+            grammar::tuple_rule(
                 ipv6_address_rule,
                 grammar::squelch(
                     grammar::delim_rule(']'))));
@@ -63,7 +63,7 @@ parse(
         // IPvFuture
         auto rv = grammar::parse(
             it, end, 
-            grammar::sequence_rule(
+            grammar::tuple_rule(
                 ipvfuture_rule,
                 grammar::squelch(
                     grammar::delim_rule(']'))));

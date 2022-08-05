@@ -248,7 +248,7 @@ struct range_rule_t;
 
     result< range<string_view> > rv = parse( ";alpha;xray;charlie",
         range_rule(
-            sequence_rule(
+            tuple_rule(
                 squelch( delim_rule( ';' ) ),
                 token_rule( alpha_chars ) ),
             1 ) );
@@ -281,7 +281,7 @@ struct range_rule_t;
         @ref error::end,
         @ref parse,
         @ref range,
-        @ref sequence_rule,
+        @ref tuple_rule,
         @ref squelch.
 */
 #ifdef BOOST_URL_DOCS
@@ -387,7 +387,7 @@ range_rule(
     result< range< string_view > > rv = parse( "whiskey,tango,foxtrot",
         range_rule(
             token_rule( alpha_chars ),          // first
-            sequence_rule(                      // next
+            tuple_rule(                      // next
                 squelch( delim_rule(',') ),
                 token_rule( alpha_chars ) ) ) );
     @endcode
@@ -424,7 +424,7 @@ range_rule(
         @ref error::end,
         @ref parse,
         @ref range,
-        @ref sequence_rule,
+        @ref tuple_rule,
         @ref squelch.
 */
 #ifdef BOOST_URL_DOCS

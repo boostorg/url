@@ -62,8 +62,8 @@ set(BOOST_URL_TESTS_FILES
     grammar/optional_rule.cpp
     grammar/parse.cpp
     grammar/range_rule.cpp
-    grammar/sequence_rule.cpp
     grammar/token_rule.cpp
+    grammar/tuple_rule.cpp
     grammar/type_traits.cpp
     grammar/unsigned_rule.cpp
     grammar/variant_rule.cpp
