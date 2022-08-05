@@ -51,16 +51,6 @@
 # endif
 #endif
 
-// This macro is used for the limits
-// test which sets the value lower,
-// to exercise code coverage.
-//
-#ifndef BOOST_URL_MAX_SIZE
-// we leave room for a null,
-// and still fit in signed-32
-#define BOOST_URL_MAX_SIZE 0x7ffffffe
-#endif
-
 #if BOOST_WORKAROUND( BOOST_GCC_VERSION, <= 72000 ) || \
     BOOST_WORKAROUND( BOOST_CLANG_VERSION, <= 35000 )
 # define BOOST_URL_CONSTEXPR
@@ -93,8 +83,12 @@
 #define BOOST_URL_RETURN(x) return (x)
 #endif
 
-#ifndef BOOST_URL_DOCS
 using pos_t = size_t;
+
+#ifndef BOOST_URL_MAX_SIZE
+// we leave room for a null,
+// and still fit in pos_t
+#define BOOST_URL_MAX_SIZE ((pos_t(-1))-1)
 #endif
 
 #ifdef BOOST_GCC

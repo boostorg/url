@@ -26,6 +26,8 @@ class authority_view;
 
 namespace detail {
 
+constexpr char const* const empty_c_str_ = "";
+
 // This is the private 'guts' of a
 // url_view, exposed so different parts
 // of the implementation can work on it.
@@ -33,13 +35,11 @@ struct url_impl : parts_base
 {
     static
     constexpr
-    char const* const empty_ = "";
- 
-    static
-    constexpr
     pos_t const zero_ = 0;
 
-    char const* cs_ = empty_;
+    // never nullptr
+    char const* cs_ = empty_c_str_;
+
     pos_t offset_[id_end + 1] = {};
     pos_t decoded_[id_end] = {};
     pos_t nseg_ = 0;
@@ -215,6 +215,7 @@ collapse(
 }
 
 } // detail
+
 } // urls
 } // boost
 

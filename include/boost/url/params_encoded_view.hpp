@@ -77,7 +77,7 @@ class url_view;
 class params_encoded_view
     : private detail::parts_base
 {
-    friend class url_view;
+    friend class url_view_base;
     friend struct query_rule_t;
 
     string_view s_;

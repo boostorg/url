@@ -29,7 +29,7 @@ class params_encoded_view;
 class params_view
     : private detail::parts_base
 {
-    friend class url_view;
+    friend class url_view_base;
     friend class params_encoded_view;
 
     string_view s_;

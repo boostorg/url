@@ -13,6 +13,7 @@
 
 #include <boost/url/static_pool.hpp>
 #include <boost/url/url.hpp>
+#include <boost/url/url_view.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include <initializer_list>

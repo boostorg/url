@@ -21,7 +21,7 @@ namespace boost {
 namespace urls {
 
 #ifndef BOOST_URL_DOCS
-class url;
+class url_base;
 class segments_encoded;
 #endif
 
@@ -68,14 +68,15 @@ class segments_encoded;
 class segments
     : private detail::parts_base
 {
-    url* u_ = nullptr;
+    url_base* u_ = nullptr;
 
-    friend class url;
+    friend class url_base;
     friend class segments_encoded;
 
-    segments(url& u)
+    segments(url_base& u)
         : u_(&u)
-    {}
+    {
+    }
 
 public:
     /** A read-only bidirectional iterator to a decoded segment.
