@@ -37,7 +37,7 @@ def main(ctx):
   linux_cxx("Coverage", "g++-8", packages="g++-8", buildscript="drone", buildtype="codecov", image=linuxglobalimage, environment={'COMMENT': 'codecov.io', 'LCOV_BRANCH_COVERAGE': '0', 'B2_CXXSTD': '11', 'B2_TOOLSET': 'gcc-8', 'B2_DEFINES': 'BOOST_NO_STRESS_TEST=1', 'DRONE_JOB_UUID': 'da4b9237ba', "CODECOV_TOKEN": {"from_secret": "codecov_token"}}, globalenv=globalenv),
 
   # Latest gcc
-  linux_cxx("GCC 12: C++17,20", "g++-12", packages="g++-12", buildscript="drone", buildtype="boost", image="cppalliance/droneubuntu2204:1", environment={'B2_TOOLSET': 'gcc-12', 'B2_CXXFLAGS': '-Werror -Wno-error=restrict -funsigned-char', 'B2_CXXSTD': '17,20'}, globalenv=globalenv),
+  linux_cxx("GCC 12: C++17,20", "g++-12", packages="g++-12", buildscript="drone", buildtype="boost", image="cppalliance/droneubuntu2204:1", environment={'B2_TOOLSET': 'gcc-12', 'B2_CXXFLAGS': '-Werror -funsigned-char', 'B2_CXXSTD': '17,20'}, globalenv=globalenv),
 
   # Latest clang
   linux_cxx("Clang 14: C++17,20", "clang++-14", packages="clang-14 libstdc++-10-dev", llvm_os="jammy", llvm_ver="14", buildscript="drone", buildtype="boost", image="cppalliance/droneubuntu2204:1", environment={'B2_TOOLSET': 'clang-14', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '17,20'}, globalenv=globalenv),

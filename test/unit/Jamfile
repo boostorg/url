@@ -13,7 +13,7 @@ import testing ;
 project
     : requirements
       $(c11-requires)
-      <library>/boost/filesystem//boost_filesystem
+      <library>/boost/filesystem//boost_filesystem/<warnings>off
       <source>../../extra/test_main.cpp
       <include>.
       <include>../../extra/include
