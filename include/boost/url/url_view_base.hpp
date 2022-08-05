@@ -831,7 +831,7 @@ public:
         host        = IP-literal / IPv4address / reg-name
 
         IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
-        @endif
+        @endcode
 
         @par Exception Safety
         Throws nothing.
@@ -863,7 +863,7 @@ public:
         host        = IP-literal / IPv4address / reg-name
 
         IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
-        @endif
+        @endcode
 
         @par Exception Safety
         Throws nothing.

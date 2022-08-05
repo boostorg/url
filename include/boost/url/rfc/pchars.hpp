@@ -20,8 +20,9 @@ namespace urls {
 /** The path character set
 
     @par Example
-    Character sets are used with rules and the
-    functions @ref find_if and @ref find_if_not.
+    Character sets are used with rules and
+    the functions @ref grammar::find_if and
+    @ref grammar::find_if_not.
     @code
     result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pchars );
     @endcode

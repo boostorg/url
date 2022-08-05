@@ -287,6 +287,9 @@ public:
         @par Exception Safety
         No-throw guarantee.
 
+        @param from An iterator to the element
+        from where to start the search.
+
         @param key The key of the element to find.
     */
     BOOST_URL_DECL

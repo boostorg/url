@@ -74,6 +74,7 @@
           <member><link linkend="url.ref.boost__urls__url">url</link></member>
           <member><link linkend="url.ref.boost__urls__url_base">url_base</link></member>
           <member><link linkend="url.ref.boost__urls__url_view">url_view</link></member>
+          <member><link linkend="url.ref.boost__urls__url_view_base">url_view_base</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">Constants</bridgehead>

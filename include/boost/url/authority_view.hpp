@@ -74,7 +74,10 @@ class BOOST_SYMBOL_VISIBLE
 {
     detail::url_impl u_;
 
+#ifndef BOOST_URL_DOCS
+    // VFALCO docca emits this erroneously
     friend struct detail::url_impl;
+#endif
 
     explicit
     authority_view(
