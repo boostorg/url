@@ -76,10 +76,11 @@ class BOOST_SYMBOL_VISIBLE
 
     struct shared_impl;
 
+    BOOST_URL_DECL
     url_view_base() noexcept;
+    BOOST_URL_DECL
     explicit url_view_base(
         detail::url_impl const&) noexcept;
-
     ~url_view_base() = default;
     url_view_base(
         url_view_base const&) = default;

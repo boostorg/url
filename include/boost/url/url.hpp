@@ -150,7 +150,6 @@ public:
 
         @param u The url to construct from.
     */
-    BOOST_URL_DECL
     url(url_view_base const& u)
     {
         copy(u);
