@@ -44,7 +44,7 @@ provides a very much needed modular component for handling these
 use-cases.
 
 ## Example
-```
+```cpp
 using namespace boost::urls;
 
 // Parse a URL. This allocates no memory. The view
@@ -101,7 +101,7 @@ To use as header-only; that is, to eliminate the requirement to
 link a program to a static or dynamic Boost.URL library, simply
 place the following line in exactly one new or existing source
 file in your project.
-```
+```cpp
 #include <boost/url/src.hpp>
 ```
 
