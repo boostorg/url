@@ -110,6 +110,8 @@
 
 [/-----------------------------------------------------------------------------]
 
+[import ../../example/magnet/magnet.cpp]
+[import ../../example/route/route.cpp]
 [import ../../test/unit/snippets.cpp]
 
 [/-----------------------------------------------------------------------------]
@@ -133,8 +135,8 @@
 [endsect]
 
 [include 6.0.grammar.qbk]
-
 [include 7.0.concepts.qbk]
+[include 8.0.examples.qbk]
 
 [section:ref Reference]
 [xinclude quickref.xml]

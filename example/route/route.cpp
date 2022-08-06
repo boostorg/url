@@ -7,6 +7,17 @@
 // Official repository: https://github.com/CppAlliance/url
 //
 
+//[example_route
+
+/*
+    This example defines a route for a URL path.
+    If the specified route matches and the file
+    exists, the example prints its contents to
+    standard output.
+*/
+
+
+
 #include <boost/url/error.hpp>
 #include <boost/url/segments_encoded.hpp>
 #include <boost/url/segments_encoded_view.hpp>
@@ -191,3 +202,5 @@ main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 }
+
+//]

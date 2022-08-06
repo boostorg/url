@@ -5,6 +5,15 @@
 // https://www.boost.org/LICENSE_1_0.txt
 //
 
+//[example_magnet
+
+/*
+    This example parses a magnet link into a new
+    view type and prints its components to
+    standard output.
+*/
+
+
 #include <boost/url/url_view.hpp>
 #include <boost/url/optional.hpp>
 #include <boost/url/rfc/absolute_uri_rule.hpp>
@@ -719,3 +728,5 @@ int main(int argc, char** argv)
 
     return EXIT_SUCCESS;
 }
+
+//]
