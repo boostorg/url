@@ -50,7 +50,7 @@ using namespace boost::urls;
 // Parse a URL. This allocates no memory. The view
 // references the character buffer without taking ownership.
 //
-url_view uv = parse_uri( "https://www.example.com/path/to/file.txt?id=1001&name=John%20Doe&results=full" ).value();
+url_view uv( "https://www.example.com/path/to/file.txt?id=1001&name=John%20Doe&results=full" );
 
 // Print the query parameters with percent-decoding applied
 //
@@ -85,7 +85,7 @@ The library achieves these goals:
 * Works without exceptions
 * Fast compilation, no templates
 * Strict compliance with rfc3986
-* Allocator control, including avoiding allocation entirely
+* Allocate memory or use inline storage
 * Optional header-only, without linking to a library
 
 ## Requirements
@@ -118,6 +118,8 @@ Boost.URL is tested with the following compilers:
 * clang: 3.8, 4, 5, 6, 7, 8, 9, 10, 11, 12
 * gcc: 4.8, 4.9, 5, 6, 7, 8, 9, 10, 11
 * msvc: 14.0, 14.1, 14.2, 14.3
+
+and these architectures: x86, x64, ARM64, S390x
 
 ### Quality Assurance
 
