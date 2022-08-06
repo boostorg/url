@@ -71,7 +71,7 @@ protected:
 template<std::size_t Capacity>
 class static_url
 #ifdef BOOST_URL_DOCS
-    : public url
+    : public url_base
 #else
     : public static_url_base
 #endif
