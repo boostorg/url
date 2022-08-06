@@ -17,5 +17,5 @@ add_executable(magnet
         filtered_view.hpp
         )
 
-set_property(TARGET magnet PROPERTY FOLDER "boost_url_examples")
+set_property(TARGET magnet PROPERTY FOLDER "Examples")
 target_link_libraries(magnet PRIVATE Boost::url)

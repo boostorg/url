@@ -21,6 +21,7 @@
 #include <boost/url/grammar/digit_chars.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/hexdig_chars.hpp>
+#include <boost/url/grammar/literal_rule.hpp>
 #include <boost/url/grammar/lut_chars.hpp>
 #include <boost/url/grammar/not_empty_rule.hpp>
 #include <boost/url/grammar/optional_rule.hpp>

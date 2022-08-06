@@ -7,23 +7,7 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#include <boost/url/grammar/alnum_chars.hpp>
-#include <boost/url/grammar/dec_octet_rule.hpp>
-#include <boost/url/grammar/delim_rule.hpp>
-#include <boost/url/grammar/error.hpp>
-#include <boost/url/grammar/lut_chars.hpp>
-#include <boost/url/grammar/optional_rule.hpp>
-#include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/range_rule.hpp>
-#include <boost/url/grammar/token_rule.hpp>
-#include <boost/url/grammar/tuple_rule.hpp>
-#include <boost/url/grammar/unsigned_rule.hpp>
-#include <boost/url/grammar/variant_rule.hpp>
-#include <boost/url/result.hpp>
-#include <boost/url/rfc/absolute_uri_rule.hpp>
-#include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/ipv4_address_rule.hpp>
-#include <boost/url/rfc/origin_form_rule.hpp>
+#include <boost/url.hpp>
 
 #include "test_suite.hpp"
 
@@ -296,6 +280,35 @@ struct doc_grammar_code_test
 
         for( auto s : rv.value() )
             std::cout << s << "\n";
+        //]
+        }
+    }
+
+    void
+    snippets5()
+    {
+        {
+        string_view s;
+        //[code_grammar_5_1
+        result< pct_encoded_view > rv = parse( s, pct_encoded_rule( pchars ) );
+        //]
+        }
+        {
+        //[code_grammar_5_2
+        // request-line   = method SP request-target SP HTTP-version CRLF
+
+        constexpr auto request_line_rule = tuple_rule(
+            not_empty_rule( token_rule( alpha_chars ) ),    // method
+            squelch( delim_rule( ' ' ) ),                   // SP
+            variant_rule(
+                absolute_uri_rule,                          // absolute-uri or
+                relative_ref_rule),                         // relative-ref
+            squelch( delim_rule( ' ' ) ),
+            squelch( literal_rule( "HTTP/" ) ),             // "HTTP/"
+            delim_rule( digit_chars ),                      // DIGIT
+            squelch( delim_rule( '.' ) ),                   // "."
+            delim_rule( digit_chars ),                      // DIGIT
+            squelch( literal_rule( "\r\n" ) ) );            // CRLF
         //]
         }
     }

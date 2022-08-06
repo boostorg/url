@@ -12,7 +12,9 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/error.hpp>
+#include <type_traits>
 
 namespace boost {
 namespace urls {
@@ -53,16 +55,12 @@ constexpr
 __implementation_defined__
 delim_rule( char ch ) noexcept;
 #else
-struct delim_rule
+struct ch_delim_rule
 {
     using value_type = string_view;
 
-    /** Constructor
-
-        @param ch The character to match
-    */
     constexpr
-    delim_rule(char ch) noexcept
+    ch_delim_rule(char ch) noexcept
         : ch_(ch)
     {
     }
@@ -85,6 +83,100 @@ struct delim_rule
 private:
     char ch_;
 };
+
+constexpr
+ch_delim_rule
+delim_rule( char ch ) noexcept
+{
+    return ch_delim_rule(ch);
+}
+#endif
+
+//------------------------------------------------
+
+/** Match a single character from a character set
+
+    This matches exactly one character which
+    belongs to the specified character set.
+    The value is a reference to the character
+    in the underlying buffer, expressed as a
+    @ref string_view. The function @ref squelch
+    may be used to turn this into `void` instead.
+
+    @par Value Type
+    @code
+    using value_type = string_view;
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref parse.
+    @code
+    result< string_view > rv = parse( "X", delim_rule( alpha_chars ) );
+    @endcode
+
+    @param cs The character set to use.
+
+    @see
+        @ref alpha_chars,
+        @ref parse,
+        @ref squelch.
+*/
+#ifdef BOOST_URL_DOCS
+template<class CharSet>
+constexpr
+__implementation_defined__
+delim_rule( CharSet const& cs ) noexcept;
+#else
+template<class CharSet>
+struct cs_delim_rule
+{
+    using value_type = string_view;
+
+    constexpr
+    cs_delim_rule(
+        CharSet const& cs) noexcept
+        : cs_(cs)
+    {
+    }
+
+    result<value_type>
+    parse(
+        char const*& it,
+        char const* end) const noexcept
+    {
+        if(it != end)
+        {
+            if(cs_(*it))
+                return string_view{
+                    it++, 1 };
+            return error::syntax;
+        }
+        return error::incomplete;
+    }
+
+private:
+    CharSet cs_;
+};
+
+template<class CharSet>
+constexpr
+typename std::enable_if<
+    ! std::is_convertible<
+        CharSet, char>::value,
+    cs_delim_rule<CharSet>>::type
+delim_rule(
+    CharSet const& cs) noexcept
+{
+    // If you get a compile error here it
+    // means that your type does not meet
+    // the requirements for a CharSet.
+    // Please consult the documentation.
+    static_assert(
+        is_charset<CharSet>::value,
+        "CharSet requirements not met");
+
+    return cs_delim_rule<CharSet>(cs);
+}
 #endif
 
 } // grammar

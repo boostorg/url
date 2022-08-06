@@ -10,7 +10,7 @@
 
 if(NOT TARGET tests)
     add_custom_target(tests)
-    set_property(TARGET tests PROPERTY FOLDER _deps)
+    set_property(TARGET tests PROPERTY FOLDER Dependencies)
 endif()
 
 set(BOOST_URL_TESTS_FILES
@@ -58,6 +58,7 @@ set(BOOST_URL_TESTS_FILES
     grammar/digit_chars.cpp
     grammar/error.cpp
     grammar/hexdig_chars.cpp
+    grammar/literal_rule.cpp
     grammar/lut_chars.cpp
     grammar/not_empty_rule.cpp
     grammar/optional_rule.cpp

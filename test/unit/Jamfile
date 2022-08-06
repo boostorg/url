@@ -62,6 +62,7 @@ local SOURCES =
     grammar/digit_chars.cpp
     grammar/error.cpp
     grammar/hexdig_chars.cpp
+    grammar/literal_rule.cpp
     grammar/lut_chars.cpp
     grammar/not_empty_rule.cpp
     grammar/optional_rule.cpp

@@ -15,7 +15,7 @@ add_executable(route
         route.cpp
         )
 
-set_property(TARGET route PROPERTY FOLDER "boost_url_examples")
+set_property(TARGET route PROPERTY FOLDER "Examples")
 target_link_libraries(route PRIVATE Boost::url Boost::filesystem)
 if (TARGET boost_filesystem AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     get_target_property(FS_IS_IMPORTED boost_filesystem IMPORTED)

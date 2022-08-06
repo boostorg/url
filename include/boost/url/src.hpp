@@ -67,6 +67,7 @@ in a translation unit of the program.
 #include <boost/url/grammar/impl/ci_string.ipp>
 #include <boost/url/grammar/impl/dec_octet_rule.ipp>
 #include <boost/url/grammar/impl/error.ipp>
+#include <boost/url/grammar/impl/literal_rule.ipp>
 
 #include <boost/url/rfc/impl/absolute_uri_rule.ipp>
 #include <boost/url/rfc/impl/authority_rule.ipp>

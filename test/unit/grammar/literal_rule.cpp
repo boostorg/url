@@ -8,10 +8,10 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/grammar/delim_rule.hpp>
+#include <boost/url/grammar/literal_rule.hpp>
 
-#include <boost/url/grammar/alpha_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
+#include <boost/static_assert.hpp>
 
 #include "test_rule.hpp"
 
@@ -19,36 +19,35 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-struct delim_rule_test
+BOOST_STATIC_ASSERT(is_rule<literal_rule>::value);
+
+struct literal_rule_test
 {
     void
     run()
     {
-        // constexpr
+        // test constexpr
         {
-            constexpr auto r = delim_rule('.');
-
+            constexpr auto r = literal_rule("HTTP");
             (void)r;
         }
 
         // javadoc
         {
-            result< string_view > rv = parse( ".", delim_rule('.') );
-
+            result< string_view > rv = parse( "HTTP", literal_rule( "HTTP" ) );
             (void)rv;
         }
 
-        ok(delim_rule('$'), "$");
-        bad(delim_rule('x'), "$");
-
-        ok(delim_rule(alpha_chars), "a");
-        bad(delim_rule(alpha_chars), "1");
+        ok(literal_rule("HTTP"), "HTTP");
+        ok(literal_rule("--"), "--");
+        bad(literal_rule("HTTP"), "http");
+        bad(literal_rule("http"), "ftp");
     }
 };
 
 TEST_SUITE(
-    delim_rule_test,
-    "boost.url.grammar.delim_rule");
+    literal_rule_test,
+    "boost.url.grammar.literal_rule");
 
 } // grammar
 } // urls

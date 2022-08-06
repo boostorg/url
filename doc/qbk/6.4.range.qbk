@@ -76,4 +76,69 @@ janedoe
 end
 ```
 
+In the next section we discuss the available rules
+which are specific to __rfc3986__.
+
+[heading More]
+
+These are the rules and compound rules provided by the
+library. For more details please see the corresponding
+reference sections.
+
+[table Grammar Symbols [
+    [Name]
+    [Description]
+][
+    [__dec_octet_rule__]
+    [
+    Match an integer from 0 and 255.
+    ]
+][
+    [__delim_rule__]
+    [
+    Match a character literal.
+    ]
+][
+    [__literal_rule__]
+    [
+    Match a character string exactly.
+    ]
+][
+    [__not_empty_rule__]
+    [
+    Make a matching empty string into an error instead.
+    ]
+][
+    [__optional_rule__]
+    [
+    Ignore a rule if parsing fails, leaving
+    the input pointer unchanged.
+    ]
+][
+    [__range_rule__]
+    [
+    Match a repeating number of elements.
+    ]
+][
+    [__token_rule__]
+    [
+    Match a string of characters from a character set.
+    ]
+][
+    [__tuple_rule__]
+    [
+    Match a sequence of specified rules, in order.
+    ]
+][
+    [__unsigned_rule__]
+    [
+    Match an unsigned integer in decimal form.
+    ]
+][
+    [__variant_rule__]
+    [
+    Match one of a set of alternatives specified by rules.
+    ]
+]]
+
 [endsect]

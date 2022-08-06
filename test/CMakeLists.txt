@@ -10,7 +10,7 @@
 
 if(NOT TARGET boost_url_all_tests)
     add_custom_target(boost_url_all_tests)
-    set_property(TARGET boost_url_all_tests PROPERTY FOLDER _deps)
+    set_property(TARGET boost_url_all_tests PROPERTY FOLDER Dependencies)
 endif()
 
 add_subdirectory(limits)
