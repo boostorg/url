@@ -24,11 +24,6 @@ public:
     using StaticUrl = static_url<1024>;
 
     void
-    f1(url_view const&)
-    {
-    }
-
-    void
     testSpecial()
     {
         // default ctor
@@ -139,7 +134,11 @@ public:
         // conversion
         {
             StaticUrl u;
-            f1(u);
+            auto const f =
+                [](url_view const&)
+                {
+                };
+            f(u);
         }
 
         // static_url(string_view)

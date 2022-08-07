@@ -15,9 +15,9 @@
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/detail/any_path_iter.hpp>
-#include <boost/url/detail/copied_strings.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/segments_iterator_impl.hpp>
+#include <boost/url/grammar/detail/copied_strings.hpp>
 #include <boost/assert.hpp>
 #include <iterator>
 #include <new>

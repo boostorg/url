@@ -29,7 +29,6 @@ in a translation unit of the program.
 
 #include <boost/url/detail/impl/any_path_iter.ipp>
 #include <boost/url/detail/impl/any_query_iter.ipp>
-#include <boost/url/detail/impl/copied_strings.ipp>
 #include <boost/url/detail/impl/except.ipp>
 #include <boost/url/detail/impl/normalize.ipp>
 #include <boost/url/detail/impl/path.ipp>
@@ -69,6 +68,7 @@ in a translation unit of the program.
 #include <boost/url/grammar/impl/error.ipp>
 #include <boost/url/grammar/impl/literal_rule.ipp>
 
+#include <boost/url/grammar/detail/impl/copied_strings.ipp>
 #include <boost/url/grammar/detail/impl/recycled.ipp>
 
 #include <boost/url/rfc/impl/absolute_uri_rule.ipp>

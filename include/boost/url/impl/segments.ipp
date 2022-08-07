@@ -32,11 +32,16 @@ insert(
     string_view s) ->
         iterator
 {
-    BOOST_ASSERT(before.impl_.pos_ >= u_->string().data());
-    BOOST_ASSERT(before.impl_.pos_ <= u_->string().data() +
+    BOOST_ASSERT(
+        before.impl_.pos_ >=
+        u_->string().data());
+    BOOST_ASSERT(
+        before.impl_.pos_ <=
+        u_->string().data() +
         u_->string().size());
-    detail::copied_strings cs(
-        u_->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> cs(
+            u_->string());
     s = cs.maybe_copy(s);
     u_->edit_segments(
         before.impl_.i_,

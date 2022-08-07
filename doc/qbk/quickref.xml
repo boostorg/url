@@ -203,21 +203,6 @@
       </entry>
       <entry valign="top">
 
-        <bridgehead renderas="sect3">Constants</bridgehead>
-        <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__grammar__alnum_chars">alnum_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__alpha_chars">alpha_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__condition">condition</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__dec_octet_rule">dec_octet_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__digit_chars">digit_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__error">error</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__hexdig_chars">hexdig_chars</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__not_empty_rule">not_empty_rule</link></member>
-        </simplelist>
-
-      </entry>
-      <entry valign="top">
-
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__grammar__aligned_storage">aligned_storage</link></member>
@@ -229,6 +214,21 @@
           <member><link linkend="url.ref.boost__urls__grammar__recycled">recycled</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__recycled_ptr">recycled_ptr</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__unsigned_rule">unsigned_rule</link></member>
+        </simplelist>
+
+      </entry>
+      <entry valign="top">
+
+        <bridgehead renderas="sect3">Constants</bridgehead>
+        <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__alnum_chars">alnum_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__alpha_chars">alpha_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__condition">condition</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__dec_octet_rule">dec_octet_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__digit_chars">digit_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__error">error</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__hexdig_chars">hexdig_chars</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__not_empty_rule">not_empty_rule</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">Concepts</bridgehead>

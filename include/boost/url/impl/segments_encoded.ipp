@@ -13,8 +13,8 @@
 
 #include <boost/url/segments_encoded.hpp>
 #include <boost/url/url.hpp>
-#include <boost/url/detail/copied_strings.hpp>
 #include <boost/url/detail/path.hpp>
+#include <boost/url/grammar/detail/copied_strings.hpp>
 
 namespace boost {
 namespace urls {
@@ -64,8 +64,8 @@ insert(
     BOOST_ASSERT(before.impl_.pos_ >= u_->string().data());
     BOOST_ASSERT(before.impl_.pos_ <= u_->string().data() +
         u_->string().size());
-    detail::copied_strings cs(
-        u_->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> cs(u_->string());
     auto s = cs.maybe_copy(s0);
     u_->edit_segments(
         before.impl_.i_,

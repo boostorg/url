@@ -52,6 +52,7 @@ set(BOOST_URL_TESTS_FILES
     grammar/alpha_chars.cpp
     grammar/charset.cpp
     grammar/ci_string.cpp
+    grammar/copied_strings.cpp
     grammar/dec_octet_rule.cpp
     grammar/delim_rule.cpp
     grammar/digit_chars.cpp

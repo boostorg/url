@@ -18,7 +18,6 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/print.hpp>
-#include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
@@ -28,6 +27,8 @@
 #include <boost/url/rfc/detail/port_rule.hpp>
 #include <boost/url/rfc/detail/scheme_rule.hpp>
 #include <boost/url/rfc/detail/userinfo_rule.hpp>
+#include <boost/url/grammar/detail/copied_strings.hpp>
+#include <boost/url/grammar/parse.hpp>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
@@ -77,8 +78,8 @@ set_scheme_impl(
     urls::scheme id)
 {
     check_invariants();
-    grammar::parse(
-        s, detail::scheme_rule()).value();
+    grammar::parse(s,
+        detail::scheme_rule()).value();
     auto const n = s.size();
     auto const p = u_.offset(id_path);
 
@@ -196,8 +197,9 @@ url_base&
 url_base::
 set_scheme(string_view s)
 {
-    detail::copied_strings cs(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES>cs(
+            this->string());
     s = cs.maybe_copy(s);
     set_scheme_impl(
         s, string_to_scheme(s));
@@ -252,8 +254,9 @@ url_base&
 url_base::
 set_user(string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     check_invariants();
     auto const n = pct_encode_bytes(
@@ -270,9 +273,10 @@ url_base&
 url_base::
 set_user(pct_encoded_view s)
 {
-    detail::copied_strings buf(
-        this->string());
-    s = buf.maybe_copy(s);
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
+    s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
         detail::pct_encode_bytes_impl(
@@ -296,8 +300,9 @@ url_base::
 set_encoded_user(
     string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     check_invariants();
     error_code ec;
@@ -375,8 +380,9 @@ url_base&
 url_base::
 set_password(string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     check_invariants();
     auto const n = pct_encode_bytes(
@@ -396,9 +402,10 @@ url_base&
 url_base::
 set_password(pct_encoded_view s)
 {
-    detail::copied_strings buf(
-        this->string());
-    s = buf.maybe_copy(s);
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
+    s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
         detail::pct_encode_bytes_impl(
@@ -422,8 +429,9 @@ url_base::
 set_encoded_password(
     string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     check_invariants();
     error_code ec;
@@ -488,8 +496,9 @@ url_base::
 set_userinfo(
     string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     check_invariants();
     auto const n = pct_encode_bytes(
@@ -523,9 +532,10 @@ url_base::
 set_userinfo(
     pct_encoded_view s)
 {
-    detail::copied_strings buf(
-        this->string());
-    s = buf.maybe_copy(s);
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
+    s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
         detail::pct_encode_bytes_impl(
@@ -568,8 +578,9 @@ url_base::
 set_encoded_userinfo(
     string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     check_invariants();
     auto t = grammar::parse(
@@ -670,8 +681,9 @@ url_base::
 set_host(
     string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     // try ipv4
     {
@@ -700,9 +712,10 @@ url_base::
 set_host(
     pct_encoded_view s)
 {
-    detail::copied_strings buf(
-        this->string());
-    s = buf.maybe_copy(s);
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
+    s = s.maybe_copy(buf);
     // try ipv4
     {
         auto r = parse_ipv4_address(s.encoded());
@@ -730,8 +743,9 @@ url_base&
 url_base::
 set_encoded_host(string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     // first try parsing it
     auto t = grammar::parse(
@@ -819,8 +833,9 @@ url_base&
 url_base::
 set_port(string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     check_invariants();
     auto t = grammar::parse(
@@ -878,8 +893,9 @@ url_base::
 set_encoded_authority(
     string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     auto t = grammar::parse(
         s, authority_rule).value();
@@ -1351,8 +1367,9 @@ url_base::
 set_encoded_path(
     string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     int abs_hint;
     if(s.starts_with('/'))
@@ -1373,8 +1390,9 @@ url_base::
 set_path(
     string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     int abs_hint;
     if(s.starts_with('/'))
@@ -1394,9 +1412,10 @@ url_base::
 set_path(
     pct_encoded_view s)
 {
-    detail::copied_strings buf(
-        this->string());
-    s = buf.maybe_copy(s);
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
+    s = s.maybe_copy(buf);
     int abs_hint;
     if(!s.empty() && s.front() == '/')
         abs_hint = 1;
@@ -1611,8 +1630,9 @@ set_encoded_query(
 {
     if (s.empty())
         remove_query();
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     check_invariants();
     edit_params(
@@ -1635,8 +1655,9 @@ set_query(
 {
     if (s.empty())
         remove_query();
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     edit_params(
         0,
@@ -1657,9 +1678,10 @@ set_query(
 {
     if (s.empty())
         remove_query();
-    detail::copied_strings buf(
-        this->string());
-    s = buf.maybe_copy(s);
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
+    s = s.maybe_copy(buf);
     edit_params(
         0,
         u_.nparam_,
@@ -1702,8 +1724,9 @@ url_base&
 url_base::
 set_encoded_fragment(string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     check_invariants();
     auto t = grammar::parse(
@@ -1722,8 +1745,9 @@ url_base&
 url_base::
 set_fragment(string_view s)
 {
-    detail::copied_strings buf(
-        this->string());
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
     s = buf.maybe_copy(s);
     check_invariants();
     auto const n = pct_encode_bytes(
@@ -1744,9 +1768,10 @@ url_base::
 set_fragment(
     pct_encoded_view s)
 {
-    detail::copied_strings buf(
-        this->string());
-    s = buf.maybe_copy(s);
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
+    s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
         detail::pct_encode_bytes_impl(

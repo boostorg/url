@@ -21,6 +21,14 @@
 namespace boost {
 namespace urls {
 
+#ifndef BOOST_URL_DOCS
+namespace grammar {
+namespace detail {
+class copied_strings_base;
+} // detail
+} // grammar
+#endif
+
 //------------------------------------------------
 
 /** A reference to a valid, percent-encoded string
@@ -74,6 +82,7 @@ class pct_encoded_view
     using traits_type = std::char_traits<char>;
 
     friend detail::access;
+    friend class url_base;
 
     // unchecked constructor
     BOOST_URL_DECL
@@ -82,6 +91,13 @@ class pct_encoded_view
         string_view s,
         std::size_t n,
         pct_decode_opts opt = {}) noexcept;
+
+    /** Return a view whose buffer does not overlap, copying if necessary
+    */
+    BOOST_URL_DECL
+    pct_encoded_view
+    maybe_copy(
+        grammar::detail::copied_strings_base& sp) const;
 
 public:
     /** Type of a decoded character

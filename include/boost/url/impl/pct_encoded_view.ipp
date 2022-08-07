@@ -11,13 +11,15 @@
 #define BOOST_URL_IMPL_PCT_ENCODED_VIEW_IPP
 
 #include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/grammar/detail/copied_strings.hpp>
 #include <ostream>
 
 namespace boost {
 namespace urls {
 
 auto
-pct_encoded_view::iterator::
+pct_encoded_view::
+iterator::
 operator*() const noexcept ->
     reference
 {
@@ -35,6 +37,8 @@ operator*() const noexcept ->
              unsigned char>(d1))));
 }
 
+//------------------------------------------------
+
 // unchecked constructor
 pct_encoded_view::
 pct_encoded_view(
@@ -45,7 +49,8 @@ pct_encoded_view(
     , n_(str.size())
     , dn_(n)
     , plus_to_space_(opt.plus_to_space)
-{}
+{
+}
 
 pct_encoded_view::
 pct_encoded_view(
@@ -62,6 +67,22 @@ pct_encoded_view(
         detail::throw_invalid_argument(
             BOOST_CURRENT_LOCATION);
 }
+
+pct_encoded_view
+pct_encoded_view::
+maybe_copy(
+    grammar::detail::copied_strings_base& sp) const
+{
+    pct_decode_opts opt;
+    opt.plus_to_space =
+        plus_to_space_;
+    return pct_encoded_view(
+        sp.maybe_copy(encoded()),
+        dn_,
+        opt);
+}
+
+//------------------------------------------------
 
 auto
 pct_encoded_view::
@@ -82,8 +103,8 @@ copy(
     return rlen;
 }
 
-namespace detail
-{
+namespace detail {
+
 template <class T>
 int
 decoded_strcmp(pct_encoded_view s0, T s1)
@@ -104,7 +125,8 @@ decoded_strcmp(pct_encoded_view s0, T s1)
     }
     return 1 - (n0 == n1) - 2 * (n0 < n1);
 }
-}
+
+} // detail
 
 int
 pct_encoded_view::

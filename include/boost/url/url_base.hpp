@@ -142,7 +142,7 @@ public:
     //--------------------------------------------
 
 private:
-    void set_scheme_impl(string_view s, urls::scheme id);
+    void set_scheme_impl(string_view, urls::scheme);
 public:
 
     /** Remove the scheme

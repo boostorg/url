@@ -41,6 +41,19 @@ struct equal_to<void> {
 class url_test
 {
 public:
+    static
+    void
+    modify(
+        string_view before,
+        string_view after,
+        void (*pf)(url_base&))
+    {
+        url u(before);
+        (*pf)(u);
+        auto s = u.string();
+        BOOST_TEST_EQ(s, after);
+    }
+
     template<class Segments>
     static
     void
@@ -229,6 +242,16 @@ public:
         BOOST_TEST_THROWS(
             url().set_scheme(scheme::unknown),
             std::invalid_argument);
+
+        // self-intersection
+        modify(
+            "x://?mailto",
+            "mailto://?mailto",
+            [](url_base& u)
+            {
+                u.set_scheme(
+                    u.encoded_query());
+            });
     }
 
     //--------------------------------------------
@@ -341,6 +364,32 @@ public:
         enc("ws://y:@", "%41", "ws://%41:@");
         enc("ws://y:z@", "%41", "ws://%41:z@");
         enc("ws://a:b@c", "%41", "ws://%41:b@c");
+
+        // self-intersection
+        modify(
+            "x://u@/?johndoe",
+            "x://johndoe@/?johndoe",
+            [](url_base& u)
+            {
+                u.set_encoded_user(
+                    u.encoded_query());
+            });
+        modify(
+            "x://u@/?johndoe",
+            "x://johndoe@/?johndoe",
+            [](url_base& u)
+            {
+                u.set_user(
+                    u.query());
+            });
+        modify(
+            "x://u@/?johndoe",
+            "x://johndoe@/?johndoe",
+            [](url_base& u)
+            {
+                u.set_user(
+                    u.encoded_query());
+            });
     }
 
     //--------------------------------------------
@@ -472,6 +521,32 @@ public:
         enc("ws://y:@", "%41", "ws://y:%41@");
         enc("ws://y:z@", "%41", "ws://y:%41@");
         enc("ws://a:b@c", "%41", "ws://a:%41@c");
+
+        // self-intersection
+        modify(
+            "x://:p@/?johndoe",
+            "x://:johndoe@/?johndoe",
+            [](url_base& u)
+            {
+                u.set_encoded_password(
+                    u.encoded_query());
+            });
+        modify(
+            "x://:p@/?johndoe",
+            "x://:johndoe@/?johndoe",
+            [](url_base& u)
+            {
+                u.set_password(
+                    u.query());
+            });
+        modify(
+            "x://:p@/?johndoe",
+            "x://:johndoe@/?johndoe",
+            [](url_base& u)
+            {
+                u.set_password(
+                    u.encoded_query());
+            });
     }
 
     //--------------------------------------------
@@ -545,177 +620,51 @@ public:
 
         set("", "", "//@");
         set("/", "", "//@/");
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//", "", "//@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//@", "", "//@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a@", "", "//@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a:@", "", "//@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a:b@", "", "//@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//@x", "", "//@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a@x", "", "//@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a:b@x", "", "//@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a:b@x/", "", "//@x/");
-        }
+        set("//", "", "//@");
+        set("//@", "", "//@");
+        set("//a@", "", "//@");
+        set("//a:@", "", "//@");
+        set("//a:b@", "", "//@");
+        set("//@x", "", "//@x");
+        set("//a@x", "", "//@x");
+        set("//a:b@x", "", "//@x");
+        set("//a:b@x/", "", "//@x/");
 
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w:", "", "w://@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w:/", "", "w://@/");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://", "", "w://@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://@", "", "w://@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a@", "", "w://@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a:@", "", "w://@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a:b@", "", "w://@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://@x", "", "w://@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a@x", "", "w://@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a:b@x", "", "w://@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a:b@x/", "", "w://@x/");
-        }
+        set("w:", "", "w://@");
+        set("w:/", "", "w://@/");
+        set("w://", "", "w://@");
+        set("w://@", "", "w://@");
+        set("w://a@", "", "w://@");
+        set("w://a:@", "", "w://@");
+        set("w://a:b@", "", "w://@");
+        set("w://@x", "", "w://@x");
+        set("w://a@x", "", "w://@x");
+        set("w://a:b@x", "", "w://@x");
+        set("w://a:b@x/", "", "w://@x/");
 
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("", ":", "//:@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("/", "a", "//a@/");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//", "@", "//%40@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//@", "xyz", "//xyz@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a@", ":@", "//:%40@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a:@", "x", "//x@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a:b@", "p:q", "//p:q@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//@x", "z", "//z@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a@x", "42", "//42@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a:b@x", "UV", "//UV@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("//a:b@x/", "NR", "//NR@x/");
-        }
+        set("", ":", "//:@");
+        set("/", "a", "//a@/");
+        set("//", "@", "//%40@");
+        set("//@", "xyz", "//xyz@");
+        set("//a@", ":@", "//:%40@");
+        set("//a:@", "x", "//x@");
+        set("//a:b@", "p:q", "//p:q@");
+        set("//@x", "z", "//z@x");
+        set("//a@x", "42", "//42@x");
+        set("//a:b@x", "UV", "//UV@x");
+        set("//a:b@x/", "NR", "//NR@x/");
 
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w:", ":", "w://:@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w:/", "a", "w://a@/");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://", "@", "w://%40@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://@", "xyz", "w://xyz@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a@", ":@", "w://:%40@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a:@", "x", "w://x@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a:b@", "p:q", "w://p:q@");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://@x", "z", "w://z@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a@x", "42", "w://42@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a:b@x", "UV", "w://UV@x");
-        }
-        {
-            BOOST_TEST_CHECKPOINT();
-            set("w://a:b@x/", "NR", "w://NR@x/");
-        }
+        set("w:", ":", "w://:@");
+        set("w:/", "a", "w://a@/");
+        set("w://", "@", "w://%40@");
+        set("w://@", "xyz", "w://xyz@");
+        set("w://a@", ":@", "w://:%40@");
+        set("w://a:@", "x", "w://x@");
+        set("w://a:b@", "p:q", "w://p:q@");
+        set("w://@x", "z", "w://z@x");
+        set("w://a@x", "42", "w://42@x");
+        set("w://a:b@x", "UV", "w://UV@x");
+        set("w://a:b@x/", "NR", "w://NR@x/");
 
         enc("", "", "//@");
         enc("/", "", "//@/");
@@ -766,6 +715,31 @@ public:
         enc("w://a@x", "42", "w://42@x");
         enc("w://a:b@x", "UV", "w://UV@x");
         enc("w://a:b@x/", "NR", "w://NR@x/");
+
+        // self-intersection
+        modify(
+            "x://?user:pass",
+            "x://user:pass@?user:pass",
+            [](url_base& u)
+            {
+                u.set_encoded_userinfo(u.encoded_query());
+            });
+        modify(
+            "x://?user:pass",
+            "x://user:pass@?user:pass",
+            [](url_base& u)
+            {
+                u.set_userinfo(
+                    u.encoded_query());
+            });
+        modify(
+            "x://?user:pass",
+            "x://user:pass@?user:pass",
+            [](url_base& u)
+            {
+                u.set_userinfo(
+                    u.query());
+            });
     }
     //--------------------------------------------
 
@@ -891,6 +865,32 @@ public:
             BOOST_TEST_EQ(u.host(), "example.com");
             BOOST_TEST_EQ(u.encoded_host(), "example.com");
         }
+
+        // self-intersection
+        modify(
+            "x://@?www.example.com",
+            "x://@www.example.com?www.example.com",
+            [](url_base& u)
+            {
+                u.set_encoded_host(
+                    u.encoded_query());
+            });
+        modify(
+            "x://@?www.example.com",
+            "x://@www.example.com?www.example.com",
+            [](url_base& u)
+            {
+                u.set_host(
+                    u.encoded_query());
+            });
+        modify(
+            "x://@?www.example.com",
+            "x://@www.example.com?www.example.com",
+            [](url_base& u)
+            {
+                u.set_host(
+                    u.query());
+            });
     }
 
     void
@@ -1082,6 +1082,15 @@ public:
         set("g://a:b@c/y", 0, "0", "g://a:b@c:0/y");
         set("g://a:b@x.y/path/to/file.txt?#", 8080, "8080",
             "g://a:b@x.y:8080/path/to/file.txt?#");
+
+        // self-intersection
+        modify(
+            "x://@?65535",
+            "x://@:65535?65535",
+            [](url_base& u)
+            {
+                u.set_port(u.encoded_query());
+            });
     }
 
     //--------------------------------------------
@@ -1206,6 +1215,16 @@ public:
         set("ws:///a",
                     "user:pass@example.com:80",
                     "ws://user:pass@example.com:80/a");
+
+        // self-intersection
+        modify(
+            "x://@?user:pass@example.com:8080",
+            "x://user:pass@example.com:8080?user:pass@example.com:8080",
+            [](url_base& u)
+            {
+                u.set_encoded_authority(
+                    u.encoded_query());
+            });
     }
 
     //--------------------------------------------
@@ -1440,6 +1459,29 @@ public:
                 "abc",
                 "x:abc");
         }
+
+        // self-intersection
+        modify(
+            "?/a/b/c",
+            "/a/b/c?/a/b/c",
+            [](url_base& u)
+            {
+                u.set_encoded_path(u.encoded_query());
+            });
+        modify(
+            "?/a/b/c",
+            "/a/b/c?/a/b/c",
+            [](url_base& u)
+            {
+                u.set_path(u.encoded_query());
+            });
+        modify(
+            "?/a/b/c",
+            "/a/b/c?/a/b/c",
+            [](url_base& u)
+            {
+                u.set_path(u.query());
+            });
     }
 
     //--------------------------------------------
@@ -1554,8 +1596,6 @@ public:
             }
         }
 
-
-
         // has_query
         {
             url u = parse_relative_ref("?query").value();
@@ -1616,6 +1656,32 @@ public:
             BOOST_TEST_EQ((*std::next(u.params().begin())).value,
                 "-;:'{}[]|\\?/>.<,");
         }
+
+        // self-intersection
+        modify(
+            "#abracadabra",
+            "?abracadabra#abracadabra",
+            [](url_base& u)
+            {
+                u.set_encoded_query(
+                    u.encoded_fragment());
+            });
+        modify(
+            "#abracadabra",
+            "?abracadabra#abracadabra",
+            [](url_base& u)
+            {
+                u.set_query(
+                    u.encoded_fragment());
+            });
+        modify(
+            "#abracadabra",
+            "?abracadabra#abracadabra",
+            [](url_base& u)
+            {
+                u.set_query(
+                    u.fragment());
+            });
     }
 
     void
@@ -1717,8 +1783,33 @@ public:
             good("%41", "#%2541", "%2541");
             good("%%fg", "#%25%25fg", "%25%25fg");
             good("{}", "#%7b%7d", "%7b%7d");
-
         }
+
+        // self-intersection
+        modify(
+            "?abracadabra",
+            "?abracadabra#abracadabra",
+            [](url_base& u)
+            {
+                u.set_encoded_fragment(
+                    u.encoded_query());
+            });
+        modify(
+            "?abracadabra",
+            "?abracadabra#abracadabra",
+            [](url_base& u)
+            {
+                u.set_fragment(
+                    u.encoded_query());
+            });
+        modify(
+            "?abracadabra",
+            "?abracadabra#abracadabra",
+            [](url_base& u)
+            {
+                u.set_fragment(
+                    u.query());
+            });
     }
 
     //--------------------------------------------

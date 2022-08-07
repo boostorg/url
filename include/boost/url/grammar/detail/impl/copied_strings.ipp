@@ -7,18 +7,19 @@
 // Official repository: https://github.com/vinniefalco/http_proto
 //
 
-#ifndef BOOST_URL_DETAIL_COPIED_STRINGS_IPP
-#define BOOST_URL_DETAIL_COPIED_STRINGS_IPP
+#ifndef BOOST_URL_GRAMMAR_DETAIL_IMPL_COPIED_STRINGS_IPP
+#define BOOST_URL_GRAMMAR_DETAIL_IMPL_COPIED_STRINGS_IPP
 
-#include <boost/url/detail/copied_strings.hpp>
+#include <boost/url/grammar/detail/copied_strings.hpp>
 #include <functional>
 
 namespace boost {
 namespace urls {
+namespace grammar {
 namespace detail {
 
 bool
-basic_copied_strings::
+copied_strings_base::
 is_overlapping(
     string_view s) const noexcept
 {
@@ -35,8 +36,8 @@ is_overlapping(
     return true;
 }
 
-basic_copied_strings::
-~basic_copied_strings()
+copied_strings_base::
+~copied_strings_base()
 {
     while(dynamic_list_)
     {
@@ -47,8 +48,8 @@ basic_copied_strings::
     }
 }
 
-basic_copied_strings::
-basic_copied_strings(
+copied_strings_base::
+copied_strings_base(
     string_view s,
     char* local_buf,
     std::size_t local_size) noexcept
@@ -59,7 +60,7 @@ basic_copied_strings(
 }
 
 string_view
-basic_copied_strings::
+copied_strings_base::
 maybe_copy(
     string_view s)
 {
@@ -90,19 +91,8 @@ maybe_copy(
     return s;
 }
 
-pct_encoded_view
-basic_copied_strings::
-maybe_copy(
-    pct_encoded_view s)
-{
-    return detail::access::construct(
-        maybe_copy(
-            s.encoded()),
-            s.size(),
-            s.options());
-}
-
 } // detail
+} // grammar
 } // urls
 } // boost
 
