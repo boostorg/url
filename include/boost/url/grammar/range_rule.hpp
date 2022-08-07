@@ -14,6 +14,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/type_traits.hpp>
 #include <boost/static_assert.hpp>
 #include <cstddef>
 #include <iterator>
@@ -228,7 +229,7 @@ struct range_rule_t;
     the range ends and the input is rewound to
     one past the last character that matched
     successfully. However, if the rule returns
-    the special value @ref error::end, the
+    the special value @ref error::range_end, the
     input is not rewound. This allows for rules
     which consume input without producing
     elements in the range. For example, to
@@ -278,7 +279,7 @@ struct range_rule_t;
     @see
         @ref alpha_chars,
         @ref delim_rule,
-        @ref error::end,
+        @ref error::range_end,
         @ref parse,
         @ref range,
         @ref tuple_rule,
@@ -366,7 +367,7 @@ range_rule(
     the range ends and the input is rewound to
     one past the last character that matched
     successfully. However, if the rule returns
-    the special value @ref error::end, the
+    the special value @ref error::range_end, the
     input is not rewound. This allows for rules
     which consume input without producing
     elements in the range. For example, to
@@ -421,7 +422,7 @@ range_rule(
     @see
         @ref alpha_chars,
         @ref delim_rule,
-        @ref error::end,
+        @ref error::range_end,
         @ref parse,
         @ref range,
         @ref tuple_rule,

@@ -49,24 +49,9 @@ public:
     void
     run()
     {
-        check(error::bad_alpha);
-        check(error::bad_digit);
-        check(error::bad_empty_element);
-        check(error::bad_hexdig);
-        check(error::bad_ipv6);
-        check(error::bad_leading_zero);
-        check(error::bad_octet);
-        check(error::empty);
-        check(error::empty_path_segment);
         check(error::illegal_null);
         check(error::illegal_reserved_char);
-        check(error::invalid);
-        check(error::missing_char_literal);
-        check(error::missing_path_segment);
-        check(error::missing_path_separator);
-        check(error::missing_words);
         check(error::non_canonical);
-        check(error::wrong_char_literal);
 
         check(grammar::condition::fatal, error::bad_pct_hexdig);
         check(grammar::condition::fatal, error::incomplete_pct_encoding);

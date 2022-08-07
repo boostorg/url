@@ -12,7 +12,7 @@
 
 #include <boost/url/grammar/parse.hpp>
 
-#include "test_suite.hpp"
+#include "test_rule.hpp"
 
 namespace boost {
 namespace urls {
@@ -21,18 +21,10 @@ namespace grammar {
 struct dec_octet_rule_test
 {
     void
-    testRule()
-    {
-    }
-
-    void
     run()
     {
         // test constexpr
-        {
-            constexpr auto r = dec_octet_rule;
-            (void)r;
-        }
+        constexpr auto r = dec_octet_rule;
 
         // javadoc
         {
@@ -40,7 +32,19 @@ struct dec_octet_rule_test
 
             (void)rv;
         }
-        testRule();
+
+        ok(r, "0", 0);
+        ok(r, "1", 1);
+        ok(r, "9", 9);
+        ok(r, "99", 99);
+        ok(r, "255", 255);
+
+        bad(r, "", error::mismatch);
+        bad(r, "x1", error::mismatch);
+        bad(r, "01", error::invalid);
+        bad(r, "256", error::invalid);
+        bad(r, "260", error::invalid);
+        bad(r, "2550", error::invalid);
     }
 };
 

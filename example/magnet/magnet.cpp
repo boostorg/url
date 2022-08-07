@@ -612,7 +612,7 @@ magnet_link_rule_t::parse(
     urls::result<urls::url_view> r =
         urls::grammar::parse(it, end, urls::absolute_uri_rule);
     if(!r)
-        return urls::error::invalid;
+        return urls::grammar::error::invalid;
     magnet_link_view m;
     m.u_ = *r;
 
@@ -626,7 +626,7 @@ magnet_link_rule_t::parse(
     if (pit == pend)
     {
         // no exact topic in the magnet link
-        return urls::error::invalid;
+        return urls::grammar::error::invalid;
     }
 
     // all topics should parse as valid urls
@@ -639,7 +639,7 @@ magnet_link_rule_t::parse(
             urls::parse_uri(p.value.encoded());
         return u.has_value();
     }))
-        return urls::error::invalid;
+        return urls::grammar::error::invalid;
 
     // all other fields are optional
     // magnet link is OK

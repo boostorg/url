@@ -22,16 +22,20 @@ token_rule_t<CharSet>::
 parse(
     char const*& it,
     char const* end
-        ) const noexcept
-    -> result<value_type>
+        ) const noexcept ->
+    result<value_type>
 {
     auto const it0 = it;
     if(it == end)
-        return error::incomplete;
+    {
+        BOOST_URL_RETURN_EC(
+            error::mismatch);
+    }
     it = (find_if_not)(it, end, cs_);
-    if(it == it0)
-        return error::syntax;
-    return string_view(it0, it - it0);
+    if(it != it0)
+        return string_view(it0, it - it0);
+    BOOST_URL_RETURN_EC(
+        error::mismatch);
 }
 
 } // grammar

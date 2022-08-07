@@ -16,7 +16,7 @@
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/origin_form_rule.hpp>
 
-#include "test_suite.hpp"
+#include "test_rule.hpp"
 
 namespace boost {
 namespace urls {
@@ -28,13 +28,10 @@ struct variant_rule_test
     run()
     {
         // constexpr
-        {
-            constexpr auto r =
-                variant_rule(
-                    delim_rule('('),
-                    delim_rule(')'));
-            (void)r;
-        }
+        constexpr auto r =
+            variant_rule(
+                delim_rule('('),
+                delim_rule(')'));
 
         // javadoc
         {
@@ -49,6 +46,12 @@ struct variant_rule_test
             (void)rv;
         }
 
+        ok(r, "(", variant<string_view, string_view>(
+            variant2::in_place_index_t<0>{}, "("));
+        ok(r, ")", variant<string_view, string_view>(
+            variant2::in_place_index_t<1>{}, ")"));
+        bad(r, "", error::mismatch);
+        bad(r, "[]", error::mismatch);
     }
 };
 

@@ -7,11 +7,10 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_GRAMMAR_IMPL_NOT_EMPTY_RULE_HPP
-#define BOOST_URL_GRAMMAR_IMPL_NOT_EMPTY_RULE_HPP
+#ifndef BOOST_URL_GRAMMAR_IMPL_OPTIONAL_RULE_HPP
+#define BOOST_URL_GRAMMAR_IMPL_OPTIONAL_RULE_HPP
 
 #include <boost/url/grammar/error.hpp>
-#include <boost/url/grammar/parse.hpp>
 
 namespace boost {
 namespace urls {
@@ -19,33 +18,20 @@ namespace grammar {
 
 template<class R>
 auto
-not_empty_rule_t<R>::
+optional_rule_t<R>::
 parse(
     char const*& it,
     char const* end) const ->
         result<value_type>
 {
     if(it == end)
-    {
-        // empty
-        BOOST_URL_RETURN_EC(
-            error::mismatch);
-    }
+        return boost::none;
     auto const it0 = it;
     auto rv = r_.parse(it, end);
-    if( rv.has_error())
-    {
-        // error
-        return rv;
-    }
-    if(it == it0)
-    {
-        // empty
-        BOOST_URL_RETURN_EC(
-            error::mismatch);
-    }
-    // value
-    return rv;
+    if(! rv.has_error())
+        return value_type(*rv);
+    it = it0;
+    return boost::none;
 }
 
 } // grammar

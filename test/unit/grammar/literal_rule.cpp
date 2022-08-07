@@ -38,10 +38,15 @@ struct literal_rule_test
             (void)rv;
         }
 
-        ok(literal_rule("HTTP"), "HTTP");
-        ok(literal_rule("--"), "--");
-        bad(literal_rule("HTTP"), "http");
-        bad(literal_rule("http"), "ftp");
+        ok(literal_rule("HTTP"), "HTTP", "HTTP");
+        ok(literal_rule("--"), "--", "--");
+        bad(literal_rule("http"), "", error::need_more);
+        bad(literal_rule("http"), "h", error::need_more);
+        bad(literal_rule("http"), "ht", error::need_more);
+        bad(literal_rule("http"), "htt", error::need_more);
+        bad(literal_rule("http"), "x", error::mismatch);
+        bad(literal_rule("http"), "ftp", error::mismatch);
+        bad(literal_rule("HTTP"), "http", error::mismatch);
     }
 };
 

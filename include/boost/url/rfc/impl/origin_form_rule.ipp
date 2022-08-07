@@ -20,26 +20,6 @@
 namespace boost {
 namespace urls {
 
-#if 0
-namespace detail {
-
-constexpr auto origin_form_rule =
-    grammar::tuple_rule(
-        grammar::range_rule(
-            grammar::tuple_rule(
-                grammar::delim_rule('/'),
-                segment_rule),
-            segment_rule,
-            1),
-        grammar::optional_rule(
-            grammar::tuple_rule(
-                grammar::delim_rule('?'),
-                query_rule))
-    );
-
-} // detail
-#endif
-
 auto
 origin_form_rule_t::
 parse(
@@ -51,21 +31,6 @@ parse(
     detail::url_impl u(false);
     u.cs_ = it;
 
-#if 0
-    auto rv = grammar::parse(
-        it, end, detail::origin_form_rule);
-    if(! rv)
-        return rv.error();
-#if 0
-    u.apply_path(
-        std::get<0>(*rv).string(),
-        std::get<0>(*rv).size());
-    if(std::get<1>(*rv).has_value())
-        u.apply_query(
-            (std::get<1>(*rv))->encoded_string(),
-            (std::get<1>(*rv))->size());
-#endif
-#else
     {
         auto rv = grammar::parse(it, end,
             grammar::range_rule(
@@ -94,7 +59,6 @@ parse(
                 (*rv)->encoded_string(),
                 (*rv)->size());
     }
-#endif
 
     return u.construct();
 }

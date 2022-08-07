@@ -39,8 +39,9 @@ parse_variant(
             typename R0::value_type,
             typename Rn::value_type...>>
 {
-    // end
-    return error::syntax;
+    // no match
+    BOOST_URL_RETURN_EC(
+        error::mismatch);
 }
 
 template<
@@ -89,7 +90,7 @@ parse(
         result<value_type>
 {
     return detail::parse_variant(
-        it, end, this->get(),
+        it, end, rn_,
         std::integral_constant<
             std::size_t, 0>{},
         std::true_type{});

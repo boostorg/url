@@ -34,9 +34,29 @@ enum class error
     //
 
     /**
-     * The operation completed successfully.
+     * More input is needed to match the rule
+     *
+     * A rule reached the end of the input,
+     * resulting in a partial match. The error
+     * is recoverable; the caller may obtain
+     * more input if possible and attempt to
+     * parse the character buffer again.
+     * Custom rules should only return this
+     * error if it is completely unambiguous
+     * that the rule cannot be matched without
+     * more input.
     */
-    success = 0,
+    need_more = 1,
+
+    /**
+     * The rule did not match the input.
+     *
+     * This error is returned when a rule fails
+     * to match the input. The error is recoverable;
+     * the caller may rewind the input pointer and
+     * attempt to parse again using a different rule.
+    */
+    mismatch,
 
     /**
      * A rule reached the end of a range
@@ -49,37 +69,30 @@ enum class error
      * range without contributing additional
      * elements.
     */
-    end,
-
-    //
-    // (recoverable)
-    //
-
-    /**
-     * Incomplete input for grammar.
-
-       This happens when the end of the input
-       string is reached without fully matching
-       the grammar. Parsing elements which
-       support streaming will return this error
-       to indicate additional input is necessary
-       for completely matching the grammar.
-    */
-    incomplete,
+    range_end,
 
     /**
      * Leftover input remaining after match.
     */
     leftover,
 
-    /**
-     * An empty string matched the rule.
-    */
-    empty,
-
+    //--------------------------------------------
     //
     // condition::fatal
     //
+    //--------------------------------------------
+
+    /**
+     * A rule encountered unrecoverable invalid input.
+     *
+     * This error is returned when input is matching
+     * but one of the requirements is violated. For
+     * example if a percent escape is found, but
+     * one or both characters that follow are not
+     * valid hexadecimal digits. This is usually an
+     * unrecoverable error.
+    */
+    invalid,
 
     /** An integer overflowed during parsing.
     */

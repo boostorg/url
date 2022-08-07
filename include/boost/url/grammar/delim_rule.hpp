@@ -14,6 +14,7 @@
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/error.hpp>
+#include <boost/url/grammar/type_traits.hpp>
 #include <type_traits>
 
 namespace boost {
@@ -27,6 +28,8 @@ namespace grammar {
     in the underlying buffer, expressed as a
     @ref string_view. The function @ref squelch
     may be used to turn this into `void` instead.
+    If the input is empty, the error code
+    @ref error::need_more is returned.
 
     @par Value Type
     @code
@@ -65,20 +68,11 @@ struct ch_delim_rule
     {
     }
 
+    BOOST_URL_DECL
     result<value_type>
     parse(
         char const*& it,
-        char const* end) const noexcept
-    {
-        if(it != end)
-        {
-            if(*it == ch_)
-                return string_view{
-                    it++, 1 };
-            return error::syntax;
-        }
-        return error::incomplete;
-    }
+        char const* end) const noexcept;
 
 private:
     char ch_;
@@ -102,6 +96,8 @@ delim_rule( char ch ) noexcept
     in the underlying buffer, expressed as a
     @ref string_view. The function @ref squelch
     may be used to turn this into `void` instead.
+    If there is no more input, the error code
+    @ref error::need_more is returned.
 
     @par Value Type
     @code
@@ -144,14 +140,20 @@ struct cs_delim_rule
         char const*& it,
         char const* end) const noexcept
     {
-        if(it != end)
+        if(it == end)
         {
-            if(cs_(*it))
-                return string_view{
-                    it++, 1 };
-            return error::syntax;
+            // end
+            BOOST_URL_RETURN_EC(
+                error::need_more);
         }
-        return error::incomplete;
+        if(! cs_(*it))
+        {
+            // wrong character
+            BOOST_URL_RETURN_EC(
+                error::mismatch);
+        }
+        return string_view{
+            it++, 1 };
     }
 
 private:

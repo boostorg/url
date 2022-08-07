@@ -31,50 +31,6 @@ enum class error
     success = 0,
 
     /**
-     * Bad alphabetic character.
-    */
-    bad_alpha,
-
-    /**
-     * Character is not a digit.
-    */
-    bad_digit,
-
-    /**
-     * A required element was empty.
-    */
-    bad_empty_element,
-
-    /**
-     * Bad HEXDIG
-    */
-    bad_hexdig,
-
-    /**
-     * Syntax error in IPv6 address.
-    */
-    bad_ipv6,
-
-    /**
-     * Bad leading zero in number.
-    */
-    bad_leading_zero,
-
-    /**
-     * The octet is out of range.
-    */
-    bad_octet,
-
-    /** Bad empty element.
-    */
-    empty,
-
-    /**
-     * Illegal empty path segment.
-    */
-    empty_path_segment,
-
-    /**
      * Null encountered in pct-encoded.
     */
     illegal_null,
@@ -85,39 +41,9 @@ enum class error
     illegal_reserved_char,
 
     /**
-     * Validation failed
-    */
-    invalid,
-
-    /**
-     * Missing character literal.
-    */
-    missing_char_literal,
-
-    /**
-     * Missing path segment.
-    */
-    missing_path_segment,
-
-    /**
-     * A slash '/' was expected in the path segment.
-    */
-    missing_path_separator,
-
-    /**
-     * Missing words in IPv6 address.
-    */
-    missing_words,
-
-    /**
      * A grammar element was not in canonical form.
     */
     non_canonical,
-
-    /**
-     * Wrong character literal.
-    */
-    wrong_char_literal,
 
     //--------------------------------------------
 

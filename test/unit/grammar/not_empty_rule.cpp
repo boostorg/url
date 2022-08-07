@@ -41,25 +41,27 @@ struct not_empty_rule_test
             (void)rv;
         }
 
-        ok( pct_encoded_rule(
-                grammar::digit_chars),
-            "0");
-        ok( pct_encoded_rule(
-                grammar::digit_chars),
-            "");
+        constexpr auto r = not_empty_rule(
+            pct_encoded_rule(
+                grammar::digit_chars));
 
-        ok( not_empty_rule(
-                pct_encoded_rule(
-                    grammar::digit_chars)),
-            "0");
-        bad( not_empty_rule(
-                pct_encoded_rule(
-                    grammar::digit_chars)),
-            "");
-        bad( not_empty_rule(
-                pct_encoded_rule(
-                    grammar::digit_chars)),
-            "%");
+        ok(r, "0", "0");
+        ok(r, "9", "9");
+
+        bad(r, "", error::mismatch);
+        bad(r, "%", error::invalid);
+        bad(r, "%f", error::invalid);
+        bad(r, "%x", error::invalid);
+
+        {
+            string_view s("$");
+            auto it = s.data();
+            auto const end = it + s.size();
+            auto rv = parse(it, end, r);
+            BOOST_TEST(
+                rv.has_error() &&
+                rv.error() == error::mismatch);
+        }
     }
 };
 

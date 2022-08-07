@@ -27,19 +27,13 @@ parse(
         ) const noexcept ->
     result<value_type>
 {
+    using namespace grammar;
     auto rv = grammar::parse(
-        it, end,
-        grammar::tuple_rule(
-            grammar::dec_octet_rule,
-            grammar::squelch(
-                grammar::delim_rule('.')),
-            grammar::dec_octet_rule,
-            grammar::squelch(
-                grammar::delim_rule('.')),
-            grammar::dec_octet_rule,
-            grammar::squelch(
-                grammar::delim_rule('.')),
-            grammar::dec_octet_rule));
+        it, end, tuple_rule(
+            dec_octet_rule, squelch(delim_rule('.')),
+            dec_octet_rule, squelch(delim_rule('.')),
+            dec_octet_rule, squelch(delim_rule('.')),
+            dec_octet_rule));
     if(! rv)
         return rv.error();
     std::array<unsigned char, 4> v;

@@ -29,13 +29,15 @@ parse(
     auto const start = it;
     if(it == end)
     {
-        // expected alpha
-        return grammar::error::incomplete;
+        // end
+        BOOST_URL_RETURN_EC(
+            grammar::error::mismatch);
     }
     if(! grammar::alpha_chars(*it))
     {
         // expected alpha
-        return error::bad_alpha;
+        BOOST_URL_RETURN_EC(
+            grammar::error::mismatch);
     }
 
     static

@@ -22,17 +22,6 @@ namespace grammar {
 
 struct unsigned_rule_test
 {
-    template<class U>
-    void
-    check(string_view s, U u)
-    {
-        auto rv = parse(
-            s, unsigned_rule<U>{});
-        if(! BOOST_TEST(! rv.has_error()))
-            return;
-        BOOST_TEST_EQ(*rv, u);
-    }
-
     void
     run()
     {
@@ -55,49 +44,49 @@ struct unsigned_rule_test
             constexpr auto t =
                 unsigned_rule<T>{};
 
-            check("0", T(0));
-            check("1", T(1));
-            check("9", T(9));
-            check("255", T(255));
+            ok(t, "0", T(0));
+            ok(t, "1", T(1));
+            ok(t, "9", T(9));
+            ok(t, "255", T(255));
 
-            bad(t, "00");
-            bad(t, "01");
-            bad(t, "256");
-            bad(t, "300");
-            bad(t, "2555");
-            bad(t, "25555");
+            bad(t, "00", error::invalid);
+            bad(t, "01", error::invalid);
+            bad(t, "256", error::invalid);
+            bad(t, "300", error::invalid);
+            bad(t, "2555", error::invalid);
+            bad(t, "25555", error::invalid);
         }
         {
             using T = std::uint16_t;
             constexpr auto t =
                 unsigned_rule<T>{};
 
-            check("0", T(0));
-            check("1", T(1));
-            check("99", T(99));
-            check("65535", T(65535));
+            ok(t, "0", T(0));
+            ok(t, "1", T(1));
+            ok(t, "99", T(99));
+            ok(t, "65535", T(65535));
 
-            bad(t, "");
-            bad(t, "a");
-            bad(t, "00");
-            bad(t, "01");
-            bad(t, "65536");
-            bad(t, "70000");
+            bad(t, "", error::mismatch);
+            bad(t, "a", error::mismatch);
+            bad(t, "00", error::invalid);
+            bad(t, "01", error::invalid);
+            bad(t, "65536", error::invalid);
+            bad(t, "70000", error::invalid);
         }
         {
             using T = std::uint32_t;
             constexpr auto t =
                 unsigned_rule<T>{};
 
-            check("0", T(0));
-            check("1", T(1));
-            check("999", T(999));
-            check("4294967295", T(4294967295));
+            ok(t, "0", T(0));
+            ok(t, "1", T(1));
+            ok(t, "999", T(999));
+            ok(t, "4294967295", T(4294967295));
 
-            bad(t, "00");
-            bad(t, "01");
-            bad(t, "4294967296");
-            bad(t, "5000000000");
+            bad(t, "00", error::invalid);
+            bad(t, "01", error::invalid);
+            bad(t, "4294967296", error::invalid);
+            bad(t, "5000000000", error::invalid);
         }
     }
 };

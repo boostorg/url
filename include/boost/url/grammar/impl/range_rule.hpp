@@ -565,15 +565,16 @@ parse(
         it, end, next_);
     if(rv.has_error())
     {
-        if(rv.error() != error::end)
+        if(rv.error() != error::range_end)
         {
-            // rewind unless error::end
+            // rewind unless error::range_end
             it = it1;
         }
         if(n < N_)
         {
             // too few
-            return error::syntax;
+            BOOST_URL_RETURN_EC(
+                error::mismatch);
         }
 
         // good
@@ -590,9 +591,9 @@ parse(
             it, end, next_);
         if(rv.has_error())
         {
-            if(rv.error() != error::end)
+            if(rv.error() != error::range_end)
             {
-                // rewind unless error::end
+                // rewind unless error::range_end
                 it = it1;
             }
             break;
@@ -600,7 +601,8 @@ parse(
         if(n > M_)
         {
             // too many
-            return error::syntax;
+            BOOST_URL_RETURN_EC(
+                error::mismatch);
         }
     }
 
@@ -630,15 +632,16 @@ parse(
         it, end, first_);
     if(rv.has_error())
     {
-        if(rv.error() != error::end)
+        if(rv.error() != error::range_end)
         {
-            // rewind unless error::end
+            // rewind unless error::range_end
             it = it1;
         }
         if(n < N_)
         {
             // too few
-            return error::syntax;
+            BOOST_URL_RETURN_EC(
+                error::mismatch);
         }
 
         // good
@@ -655,9 +658,9 @@ parse(
             it, end, next_);
         if(rv.has_error())
         {
-            if(rv.error() != error::end)
+            if(rv.error() != error::range_end)
             {
-                // rewind unless error::end
+                // rewind unless error::range_end
                 it = it1;
             }
             break;
@@ -665,7 +668,8 @@ parse(
         if(n > M_)
         {
             // too many
-            return error::syntax;
+            BOOST_URL_RETURN_EC(
+                error::mismatch);
         }
     }
 

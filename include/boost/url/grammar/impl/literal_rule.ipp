@@ -25,16 +25,35 @@ parse(
     char const* end) const noexcept ->
         result<value_type>
 {
+    // Can't have a literal
+    // with an empty string!
     BOOST_ASSERT(n_ > 0);
+
     std::size_t n = end - it;
-    if(n < n_)
-        return error::syntax;
-    if(std::memcmp(
+    if(n >= n_)
+    {
+        if(std::memcmp(
             it, s_, n_) != 0)
-        return error::syntax;
-    it += n_;
-    return string_view(
-        it - n_, it);
+        {
+            // non-match
+            BOOST_URL_RETURN_EC(
+                error::mismatch);
+        }
+        it += n_;
+        return string_view(
+            it - n_, it);
+    }
+    // short input
+    if(std::memcmp(
+        it, s_, n) != 0)
+    {
+        // non-match
+        BOOST_URL_RETURN_EC(
+            error::mismatch);
+    }
+    // prefix matches
+    BOOST_URL_RETURN_EC(
+        error::need_more);
 }
 
 } // grammar

@@ -28,15 +28,29 @@ parse(
     result<value_type>
 {
     if(it == end)
-        return error::syntax;
+    {
+        // end
+        BOOST_URL_RETURN_EC(
+            error::mismatch);
+    }
     if(*it == '0')
     {
         ++it;
-        return U(0);
+        if( it == end ||
+            ! digit_chars(*it))
+        {
+            return U(0);
+        }
+        // bad leading zero
+        BOOST_URL_RETURN_EC(
+            error::invalid);
     }
     if(! digit_chars(*it))
-        return error::syntax;
-
+    {
+        // expected digit
+        BOOST_URL_RETURN_EC(
+            error::mismatch);
+    }
     static constexpr U Digits10 =
         std::numeric_limits<
             U>::digits10;
@@ -48,33 +62,40 @@ parse(
         safe_end = end;
     U u = *it - '0';
     ++it;
-
-    while( it != safe_end &&
-           digit_chars(*it))
+    while(it != safe_end &&
+        digit_chars(*it))
     {
         char const dig = *it - '0';
         u = u * ten + dig;
         ++it;
     }
-
     if( it != end &&
         digit_chars(*it))
     {
         static constexpr U Max = (
             std::numeric_limits<
                 U>::max)();
-        static constexpr auto div = (Max / ten);
-        static constexpr char rem = (Max % ten);
+        static constexpr
+            auto div = (Max / ten);
+        static constexpr
+            char rem = (Max % ten);
         char const dig = *it - '0';
         if( u > div || (
-                u == div && dig > rem))
-            return grammar::error::overflow;
+            u == div && dig > rem))
+        {
+            // integer overflow
+            BOOST_URL_RETURN_EC(
+                error::invalid);
+        }
         u = u * ten + dig;
         ++it;
-
         if( it < end &&
-                digit_chars(*it))
-            return grammar::error::overflow;
+            digit_chars(*it))
+        {
+            // integer overflow
+            BOOST_URL_RETURN_EC(
+                error::invalid);
+        }
     }
 
     return u;

@@ -11,6 +11,7 @@
 #define BOOST_URL_GRAMMAR_IMPL_PARSE_HPP
 
 #include <boost/url/grammar/error.hpp>
+#include <boost/url/grammar/type_traits.hpp>
 
 namespace boost {
 namespace urls {

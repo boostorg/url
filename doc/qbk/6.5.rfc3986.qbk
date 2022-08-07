@@ -7,7 +7,7 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-[section RFC3986]
+[section RFC 3986]
 
 Functions like __parse_uri__ are sufficient for converting URLs but
 they require that the entire string is consumed. When URLs appear as

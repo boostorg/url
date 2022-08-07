@@ -13,7 +13,6 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/optional.hpp>
 #include <boost/url/result.hpp>
-#include <boost/url/detail/empty_value.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
@@ -23,7 +22,9 @@ namespace grammar {
 /** Match a rule, or the empty string
 
     Optional BNF elements are denoted with
-    square brackets.
+    square brackets. If the specified rule
+    returns any error it is treated as if
+    the rule did not match.
 
     @par Value Type
     @code
@@ -60,26 +61,15 @@ __implementation_defined__
 optional_rule( Rule r ) noexcept;
 #else
 template<class Rule>
-class optional_rule_t
-    : private urls::detail::empty_value<Rule>
+struct optional_rule_t
 {
-public:
     using value_type = optional<
         typename Rule::value_type>;
 
-    auto
+    result<value_type>
     parse(
         char const*& it,
-        char const* end) const ->
-            result<value_type>
-    {
-        auto const it0 = it;
-        auto rv = this->get().parse(it, end);
-        if(! rv.has_error())
-            return value_type(*rv);
-        it = it0;
-        return value_type();
-    }
+        char const* end) const;
 
     template<class R_>
     friend
@@ -93,10 +83,11 @@ private:
     constexpr
     optional_rule_t(
         Rule const& r) noexcept
-        : urls::detail::empty_value<Rule>(
-            urls::detail::empty_init, r)
+        : r_(r)
     {
     }
+
+    Rule r_;
 };
 
 template<class Rule>
@@ -113,5 +104,7 @@ optional_rule(
 } // grammar
 } // urls
 } // boost
+
+#include <boost/url/grammar/impl/optional_rule.hpp>
 
 #endif

@@ -27,10 +27,14 @@ parse(
         ) const noexcept ->
     result<value_type>
 {
-    // VFALCO Why was this here?
-    //BOOST_ASSERT(it != end);
+    // VFALCO it might be impossible for
+    // this condition to be true (coverage)
     if(it == end)
-        return grammar::error::syntax;
+    {
+        // end
+        BOOST_URL_RETURN_EC(
+            grammar::error::invalid);
+    }
 
     std::uint16_t v;
     for(;;)
@@ -38,8 +42,9 @@ parse(
         auto d = grammar::hexdig_value(*it);
         if(d < 0)
         {
-            // not a HEXDIG
-            return grammar::error::syntax;
+            // expected HEXDIG
+            BOOST_URL_RETURN_EC(
+                grammar::error::invalid);
         }
         v = d;
         ++it;

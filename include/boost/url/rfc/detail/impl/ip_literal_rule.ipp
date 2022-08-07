@@ -41,8 +41,9 @@ parse(
     }
     if(it == end)
     {
-        // expected address
-        return grammar::error::incomplete;
+        // end
+        BOOST_URL_RETURN_EC(
+            grammar::error::invalid);
     }
     if(*it != 'v')
     {

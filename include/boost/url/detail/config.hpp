@@ -61,10 +61,14 @@
 // Add source location to error codes
 #ifdef BOOST_URL_NO_SOURCE_LOCATION
 # define BOOST_URL_ERR(ev) (ev)
+# define BOOST_URL_RETURN_EC(ev) return (ev)
 #else
 # define BOOST_URL_ERR(ev) (::boost::system::error_code( (ev), [] { \
          static constexpr auto loc(BOOST_CURRENT_LOCATION); \
          return &loc; }()))
+# define BOOST_URL_RETURN_EC(ev) \
+    static constexpr auto loc ## __LINE__(BOOST_CURRENT_LOCATION); \
+    return ::boost::system::error_code((ev), &loc ## __LINE__)
 #endif
 
 // detect 32/64 bit

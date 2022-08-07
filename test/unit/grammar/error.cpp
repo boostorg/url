@@ -49,12 +49,12 @@ public:
     void
     run()
     {
-        check(error::end);
-
-        check(error::incomplete);
+        check(error::need_more);
+        check(error::mismatch);
+        check(error::range_end);
         check(error::leftover);
-        check(error::empty);
 
+        check(condition::fatal, error::invalid);
         check(condition::fatal, error::overflow);
         check(condition::fatal, error::syntax);
     }

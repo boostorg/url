@@ -7,46 +7,37 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_GRAMMAR_IMPL_NOT_EMPTY_RULE_HPP
-#define BOOST_URL_GRAMMAR_IMPL_NOT_EMPTY_RULE_HPP
+#ifndef BOOST_URL_GRAMMAR_IMPL_DELIM_RULE_IPP
+#define BOOST_URL_GRAMMAR_IMPL_DELIM_RULE_IPP
 
-#include <boost/url/grammar/error.hpp>
-#include <boost/url/grammar/parse.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 
 namespace boost {
 namespace urls {
 namespace grammar {
 
-template<class R>
 auto
-not_empty_rule_t<R>::
+ch_delim_rule::
 parse(
     char const*& it,
-    char const* end) const ->
+    char const* end) const noexcept ->
         result<value_type>
 {
     if(it == end)
     {
-        // empty
+        // end
+        BOOST_URL_RETURN_EC(
+            error::need_more);
+    }
+    if(*it != ch_)
+    {
+        // wrong character
         BOOST_URL_RETURN_EC(
             error::mismatch);
     }
-    auto const it0 = it;
-    auto rv = r_.parse(it, end);
-    if( rv.has_error())
-    {
-        // error
-        return rv;
-    }
-    if(it == it0)
-    {
-        // empty
-        BOOST_URL_RETURN_EC(
-            error::mismatch);
-    }
-    // value
-    return rv;
-}
+    return string_view{
+        it++, 1 };
+};
 
 } // grammar
 } // urls

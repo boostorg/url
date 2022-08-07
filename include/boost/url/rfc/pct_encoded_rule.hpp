@@ -15,7 +15,6 @@
 #include <boost/url/pct_encoding.hpp>
 #include <boost/url/result.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/detail/empty_value.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/static_assert.hpp>
@@ -72,7 +71,6 @@ pct_encoded_rule( CharSet const& cs ) noexcept;
 #else
 template<class CharSet>
 struct pct_encoded_rule_t
-    : private detail::empty_value<CharSet>
 {
     using value_type = pct_encoded_view;
 
@@ -93,10 +91,11 @@ private:
     constexpr
     pct_encoded_rule_t(
         CharSet const& cs) noexcept
-        : detail::empty_value<CharSet>(
-            detail::empty_init, cs)
+        : cs_(cs)
     {
     }
+
+    CharSet cs_;
 };
 
 template<class CharSet>

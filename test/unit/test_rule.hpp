@@ -109,6 +109,19 @@ ok( R const& r,
     BOOST_TEST(grammar::parse(s, r).has_value());
 }
 
+// rule must match the string and value
+template<class R, class V>
+typename std::enable_if<
+    grammar::is_rule<R>::value>::type
+ok( R const& r,
+    string_view s,
+    V const& v)
+{
+    auto rv = grammar::parse(s, r);
+    if(BOOST_TEST(rv.has_value()))
+        BOOST_TEST_EQ(rv.value(), v);
+}
+
 // rule must fail the string
 template<class R>
 typename std::enable_if<
@@ -118,6 +131,20 @@ bad(
     string_view s)
 {
     BOOST_TEST(grammar::parse(s, r).has_error());
+}
+
+// rule must fail the string with error
+template<class R>
+typename std::enable_if<
+    grammar::is_rule<R>::value>::type
+bad(
+    R const& r,
+    string_view s,
+    error_code const& e)
+{
+    auto rv = grammar::parse(s, r);
+    if(BOOST_TEST(rv.has_error()))
+        BOOST_TEST_EQ(rv.error(), e);
 }
 
 } // urls

@@ -25,11 +25,7 @@ struct token_rule_test
     run()
     {
         // constexpr
-        {
-            constexpr auto r =
-                token_rule(alpha_chars);
-            (void)r;
-        }
+        constexpr auto r = token_rule(alpha_chars);
 
         // javadoc
         {
@@ -37,6 +33,10 @@ struct token_rule_test
 
             (void)rv;
         }
+
+        ok(r, "a", "a");
+        bad(r, "", error::mismatch);
+        bad(r, "1", error::mismatch);
     }
 };
 

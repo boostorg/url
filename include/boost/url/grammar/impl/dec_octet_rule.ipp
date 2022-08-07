@@ -27,43 +27,59 @@ parse(
 {
     if(it == end)
     {
-        // expected DIGIT
-        return error::incomplete;
+        // end
+        BOOST_URL_RETURN_EC(
+            error::mismatch);
     }
     if(! digit_chars(*it))
     {
-        // not a digit
-        return error::syntax;
+        // expected DIGIT
+        BOOST_URL_RETURN_EC(
+            error::mismatch);
     }
     unsigned v = *it - '0';
     ++it;
     if( it == end ||
         ! digit_chars(*it))
+    {
         return static_cast<
             value_type>(v);
+    }
     if(v == 0)
     {
-        // bad leading '0'
-        return error::syntax;
+        // leading '0'
+        BOOST_URL_RETURN_EC(
+            error::invalid);
     }
     v = (10 * v) + *it - '0';
     ++it;
     if( it == end ||
         ! digit_chars(*it))
+    {
         return static_cast<
             value_type>(v);
+    }
     if(v > 25)
     {
-        // out of range
-        return error::syntax;
+        // integer overflow
+        BOOST_URL_RETURN_EC(
+            error::invalid);
     }
     v = (10 * v) + *it - '0';
     if(v > 255)
     {
-        // out of range
-        return error::syntax;
+        // integer overflow
+        BOOST_URL_RETURN_EC(
+            error::invalid);
     }
     ++it;
+    if( it != end &&
+        digit_chars(*it))
+    {
+        // integer overflow
+        BOOST_URL_RETURN_EC(
+            error::invalid);
+    }
     return static_cast<
         value_type>(v);
 }

@@ -73,15 +73,17 @@ parse(
             }
             BOOST_ASSERT(n > 0);
             // not enough words
-            return error::missing_words;
+            BOOST_URL_RETURN_EC(
+                grammar::error::invalid);
         }
         if(*it == ':')
         {
             ++it;
             if(it == end)
             {
-                // missing ':'
-                return error::missing_char_literal;
+                // expected ':'
+                BOOST_URL_RETURN_EC(
+                    grammar::error::invalid);
             }
             if(*it == ':')
             {
@@ -96,8 +98,9 @@ parse(
                     c = false;
                     continue;
                 }
-                // two "::"
-                return error::bad_ipv6;
+                // extra "::" found
+                BOOST_URL_RETURN_EC(
+                    grammar::error::invalid);
             }
             if(c)
             {
@@ -115,20 +118,23 @@ parse(
                 continue;
             }
             // expected h16
-            return error::missing_words;
+            BOOST_URL_RETURN_EC(
+                grammar::error::invalid);
         }
         if(*it == '.')
         {
             if(b == -1 && n > 1)
             {
                 // not enough h16
-                return error::bad_ipv6;
+                BOOST_URL_RETURN_EC(
+                    grammar::error::invalid);
             }
             if(! detail::maybe_octet(
                 &bytes[2*(7-n)]))
             {
                 // invalid octet
-                return error::bad_octet;
+                BOOST_URL_RETURN_EC(
+                    grammar::error::invalid);
             }
             // rewind the h16 and
             // parse it as ipv4
@@ -172,7 +178,8 @@ parse(
             continue;
         }
         // ':' divides a word
-        return error::bad_ipv6;
+        BOOST_URL_RETURN_EC(
+            grammar::error::invalid);
     }
     if(b == -1)
         return ipv6_address{bytes};

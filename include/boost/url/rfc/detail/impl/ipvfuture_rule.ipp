@@ -52,12 +52,14 @@ parse(
     if(t.major.empty())
     {
         // can't be empty
-        return urls::error::bad_empty_element;
+        BOOST_URL_RETURN_EC(
+            grammar::error::invalid);
     }
     if(t.minor.empty())
     {
         // can't be empty
-        return urls::error::bad_empty_element;
+        BOOST_URL_RETURN_EC(
+            grammar::error::invalid);
     }
     t.str = string_view(
         it0, it - it0);

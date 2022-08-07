@@ -29,7 +29,10 @@ parse(
     if(it == end)
         return value_type{};
     if(*it == '/')
-        return grammar::error::syntax;
+    {
+        BOOST_URL_RETURN_EC(
+            grammar::error::mismatch);
+    }
     auto rv = grammar::parse(
         it, end, segment_rule);
     if(rv.has_error())

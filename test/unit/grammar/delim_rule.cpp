@@ -27,7 +27,6 @@ struct delim_rule_test
         // constexpr
         {
             constexpr auto r = delim_rule('.');
-
             (void)r;
         }
 
@@ -38,11 +37,13 @@ struct delim_rule_test
             (void)rv;
         }
 
-        ok(delim_rule('$'), "$");
-        bad(delim_rule('x'), "$");
+        ok(delim_rule('$'), "$", "$");
+        bad(delim_rule('$'), "", error::need_more);
+        bad(delim_rule('$'), "x", error::mismatch);
 
-        ok(delim_rule(alpha_chars), "a");
-        bad(delim_rule(alpha_chars), "1");
+        ok(delim_rule(alpha_chars), "a", "a");
+        bad(delim_rule(alpha_chars), "", error::need_more);
+        bad(delim_rule(alpha_chars), "1", error::mismatch);
     }
 };
 

@@ -21,6 +21,11 @@ namespace grammar {
 
 /** Match a string literal exactly
 
+    If there is no more input, or if the
+    end of the input is reached, and a prefix
+    of the literal matches exactly, the error
+    returned will be @ref error::need_more.
+
     @par Value Type
     @code
     using value_type = string_view;

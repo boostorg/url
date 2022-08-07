@@ -427,7 +427,7 @@ public:
             r_->s_.size();
         r_->increment_(p_, end,
             ec, *r_->r_, t_);
-        if(ec == error::end)
+        if(ec == error::range_end)
             p_ = nullptr;
         else
             BOOST_ASSERT(! ec.failed());
@@ -460,7 +460,7 @@ private:
             r_->s_.size();
         r_->begin_(p_, end,
             ec, *r_->r_, t_);
-        if(ec == error::end)
+        if(ec == error::range_end)
             p_ = nullptr;
         else
             BOOST_ASSERT(! ec.failed());
@@ -512,7 +512,7 @@ parse_range(
     begin(it, end, ec, r, t);
     if(ec.failed())
     {
-        if(ec != error::end)
+        if(ec != error::range_end)
             return {};
         if(n < N)
         {
@@ -534,7 +534,7 @@ parse_range(
         increment(it, end, ec, r, t);
         if(ec.failed())
         {
-            if(ec != error::end)
+            if(ec != error::range_end)
                 return {};
             ec = {};
             break;
@@ -657,7 +657,7 @@ private:
             ec = {};
             return;
         }
-        ec = error::end;
+        ec = error::range_end;
         return;
     }
 

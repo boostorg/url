@@ -34,13 +34,11 @@ make_error_code(
             switch(static_cast<error>(ev))
             {
             default:
-case error::success: return "success";
-case error::end: return "end";
-
-case error::incomplete: return "incomplete";
+case error::need_more: return "need more";
+case error::mismatch: return "mismatch";
+case error::invalid: return "invalid";
+case error::range_end: return "range end";
 case error::leftover: return "leftover";
-case error::empty: return "empty";
-
 case error::overflow: return "overflow";
 case error::syntax: return "syntax";
             }
@@ -52,6 +50,7 @@ case error::syntax: return "syntax";
         {
             switch(static_cast<error>(ev))
             {
+case error::invalid:
 case error::overflow:
 case error::syntax:
                 return condition::fatal;

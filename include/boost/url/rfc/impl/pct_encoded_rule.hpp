@@ -45,26 +45,30 @@ skip:
         ++it;
         if(it == end)
         {
-            // missing HEXDIG
-            return grammar::error::syntax;
+            // expected HEXDIG
+            BOOST_URL_RETURN_EC(
+                grammar::error::invalid);
         }
         auto r = grammar::hexdig_value(*it);
         if(r < 0)
         {
             // expected HEXDIG
-            return grammar::error::syntax;
+            BOOST_URL_RETURN_EC(
+                grammar::error::invalid);
         }
         ++it;
         if(it == end)
         {
-            // missing HEXDIG
-            return grammar::error::syntax;
+            // expected HEXDIG
+            BOOST_URL_RETURN_EC(
+                grammar::error::invalid);
         }
         r = grammar::hexdig_value(*it);
         if(r < 0)
         {
             // expected HEXDIG
-            return grammar::error::syntax;
+            BOOST_URL_RETURN_EC(
+                grammar::error::invalid);
         }
         ++n;
         ++it;
@@ -91,7 +95,7 @@ parse(
         result<value_type>
 {
     return detail::parse_pct_encoded(
-        it, end, this->get());
+        it, end, cs_);
 }
 
 } // urls

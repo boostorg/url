@@ -32,24 +32,9 @@ make_error_code(error e)
             switch(static_cast<error>(ev))
             {
             default:
-case error::bad_alpha: return "bad alpha";
-case error::bad_digit: return "bad digit";
-case error::bad_empty_element: return "bad empty element";
-case error::bad_hexdig: return "bad hexdig";
-case error::bad_ipv6: return "bad ipv6";
-case error::bad_leading_zero: return "bad leading zero";
-case error::bad_octet: return "bad octet";
-case error::empty: return "incomplete";
-case error::empty_path_segment: return "empty path segment";
 case error::illegal_null: return "illegal null";
 case error::illegal_reserved_char: return "illegal reserved char";
-case error::invalid: return "invalid";
-case error::missing_char_literal: return "missing char literal";
-case error::missing_path_segment: return "missing path segment";
-case error::missing_path_separator: return "missing path sep";
-case error::missing_words: return "missing words";
 case error::non_canonical: return "non canonical";
-case error::wrong_char_literal: return "wrong char literal";
 
 case error::bad_pct_hexdig: return "bad hexdig in pct-encoding";
 case error::incomplete_pct_encoding: return "incomplete pct-encoding";
