@@ -8,15 +8,16 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/recycled_ptr.hpp>
+#include <boost/url/grammar/recycled.hpp>
 
 #include "test_suite.hpp"
 #include <string>
 
 namespace boost {
 namespace urls {
+namespace grammar {
 
-struct recycled_ptr_test
+struct recycled_test
 {
     void
     testPtr()
@@ -39,8 +40,9 @@ struct recycled_ptr_test
 };
 
 TEST_SUITE(
-    recycled_ptr_test,
-    "boost.url.recycled_ptr");
+    recycled_test,
+    "boost.url.recycled");
 
+} // grammar
 } // urls
 } // boost

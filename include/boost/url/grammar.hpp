@@ -27,6 +27,7 @@
 #include <boost/url/grammar/optional_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/range_rule.hpp>
+#include <boost/url/grammar/recycled.hpp>
 #include <boost/url/grammar/token_rule.hpp>
 #include <boost/url/grammar/tuple_rule.hpp>
 #include <boost/url/grammar/type_traits.hpp>

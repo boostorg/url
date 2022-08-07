@@ -33,7 +33,6 @@ set(BOOST_URL_TESTS_FILES
     pct_encoded_view.cpp
     pct_encoding.cpp
     query_param.cpp
-    recycled_ptr.cpp
     result.cpp
     scheme.cpp
     segments.cpp
@@ -64,6 +63,7 @@ set(BOOST_URL_TESTS_FILES
     grammar/optional_rule.cpp
     grammar/parse.cpp
     grammar/range_rule.cpp
+    grammar/recycled.cpp
     grammar/token_rule.cpp
     grammar/tuple_rule.cpp
     grammar/type_traits.cpp

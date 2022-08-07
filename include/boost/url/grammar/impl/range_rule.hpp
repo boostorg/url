@@ -11,9 +11,9 @@
 #define BOOST_URL_GRAMMAR_IMPL_RANGE_HPP
 
 #include <boost/url/detail/except.hpp>
-#include <boost/url/recycled_ptr.hpp>
 #include <boost/url/detail/empty_value.hpp>
 #include <boost/url/grammar/error.hpp>
+#include <boost/url/grammar/recycled.hpp>
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
 #include <exception>
@@ -28,40 +28,6 @@ namespace grammar {
 
 // VFALCO This could be reused for
 // other things that need to type-erase
-
-namespace detail {
-
-template<std::size_t Size>
-struct alignas(alignof(::max_align_t))
-    storage_impl
-{
-    unsigned char buf[Size];
-
-    void*
-    addr() const noexcept
-    {
-        return const_cast<void*>(
-            reinterpret_cast<
-                void const*>(this));
-    }
-};
-
-template<std::size_t Size>
-using storage = storage_impl<
-      (Size <=    64 ?    64
-    : (Size <=   128 ?   128
-    : (Size <=   256 ?   256
-    : (Size <=   512 ?   512
-    : (Size <=  1024 ?  1024
-    : (Size <=  2048 ?  2048
-    : (Size <=  4096 ?  4096
-    : (Size <=  8192 ?  8192
-    : (Size <= 16384 ? 16384
-    : (Size <= 32768 ? 32768
-    : (Size <= 65536 ? 65536
-    : Size)))))))))))>;
-
-} // detail
 
 //------------------------------------------------
 //
@@ -166,8 +132,7 @@ struct range<T>::impl1<R, false>
     };
 
     recycled_ptr<
-        detail::storage<sizeof(impl)>
-            > p_;
+        aligned_storage<impl>> p_;
 
     impl const&
     get() const noexcept
@@ -286,8 +251,7 @@ struct range<T>::impl2<R0, R1, false>
     };
 
     recycled_ptr<
-        detail::storage<sizeof(impl)>
-            > p_;
+        aligned_storage<impl>> p_;
 
     impl const&
     get() const noexcept

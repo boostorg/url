@@ -7,9 +7,10 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_DETAIL_IMPL_RECYCLER_IPP
-#define BOOST_URL_DETAIL_IMPL_RECYCLER_IPP
+#ifndef BOOST_URL_GRAMMAR_DETAIL_IMPL_RECYCLED_IPP
+#define BOOST_URL_GRAMMAR_DETAIL_IMPL_RECYCLED_IPP
 
+#include <cstdlib>
 #include <mutex>
 #include <utility>
 
@@ -21,6 +22,7 @@
 
 namespace boost {
 namespace urls {
+namespace grammar {
 namespace detail {
 
 struct all_reports
@@ -57,7 +59,7 @@ struct all_reports
 static all_reports all_reports_;
 
 void
-recycler_add_impl(
+recycled_add_impl(
     std::size_t n) noexcept
 {
     std::lock_guard<
@@ -78,7 +80,7 @@ recycler_add_impl(
 }
 
 void
-recycler_remove_impl(
+recycled_remove_impl(
     std::size_t n) noexcept
 {
     std::lock_guard<
@@ -89,6 +91,7 @@ recycler_remove_impl(
 }
 
 } // detail
+} // grammar
 } // urls
 } // boost
 

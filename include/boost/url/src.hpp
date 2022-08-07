@@ -37,7 +37,6 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/params_encoded_iterator_impl.ipp>
 #include <boost/url/detail/impl/params_iterator_impl.ipp>
 #include <boost/url/detail/impl/pct_encoded_view.ipp>
-#include <boost/url/detail/impl/recycler.ipp>
 #include <boost/url/detail/impl/segments_encoded_iterator_impl.ipp>
 #include <boost/url/detail/impl/segments_iterator_impl.ipp>
 #include <boost/url/detail/impl/url_impl.ipp>
@@ -69,6 +68,8 @@ in a translation unit of the program.
 #include <boost/url/grammar/impl/delim_rule.ipp>
 #include <boost/url/grammar/impl/error.ipp>
 #include <boost/url/grammar/impl/literal_rule.ipp>
+
+#include <boost/url/grammar/detail/impl/recycled.ipp>
 
 #include <boost/url/rfc/impl/absolute_uri_rule.ipp>
 #include <boost/url/rfc/impl/authority_rule.ipp>
