@@ -28,7 +28,7 @@ namespace grammar {
 
     @par BNF
     @code
-    VCHAR       = %x21-7E
+    VCHAR       = 0x21-0x7E
                 ; visible (printing) characters
     @endcode
 

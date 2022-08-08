@@ -61,13 +61,13 @@
           <member><link linkend="url.ref.boost__urls__query_param_view">query_param_view</link></member>
           <member><link linkend="url.ref.boost__urls__segments">segments</link></member>
           <member><link linkend="url.ref.boost__urls__segments_encoded">segments_encoded</link></member>
+          <member><link linkend="url.ref.boost__urls__segments_encoded_view">segments_encoded_view</link></member>
         </simplelist>
 
       </entry>
       <entry valign="top">
         <bridgehead renderas="sect3">Types (2/2)</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__segments_encoded_view">segments_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__segments_view">segments_view</link></member>
           <member><link linkend="url.ref.boost__urls__static_url">static_url</link></member>
           <member><link linkend="url.ref.boost__urls__static_url_base">static_url_base</link></member>
@@ -109,12 +109,15 @@
 
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__errc">errc</link></member>
           <member><link linkend="url.ref.boost__urls__error_category">error_category</link></member>
           <member><link linkend="url.ref.boost__urls__error_code">error_code</link></member>
           <member><link linkend="url.ref.boost__urls__error_condition">error_condition</link></member>
+          <member><link linkend="url.ref.boost__urls__generic_category">generic_category</link></member>
           <member><link linkend="url.ref.boost__urls__optional">optional</link></member>
           <member><link linkend="url.ref.boost__urls__result">result</link></member>
           <member><link linkend="url.ref.boost__urls__string_view">string_view</link></member>
+          <member><link linkend="url.ref.boost__urls__system_category">system_category</link></member>
           <member><link linkend="url.ref.boost__urls__system_error">system_error</link></member>
           <member><link linkend="url.ref.boost__urls__variant">variant</link></member>
         </simplelist>

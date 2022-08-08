@@ -17,6 +17,10 @@
 namespace boost {
 namespace urls {
 
+#ifndef BOOST_URL_DOCS
+namespace error_types {
+#endif
+
 /// The type of error category used by the library
 using error_category = boost::system::error_category;
 
@@ -28,6 +32,36 @@ using error_condition = boost::system::error_condition;
 
 /// The type of system error thrown by the library
 using system_error = boost::system::system_error;
+
+/// A function to return the generic error category used by the library
+#ifdef BOOST_URL_DOCS
+error_category const& generic_category();
+#else
+using boost::system::generic_category;
+#endif
+
+/// A function to return the system error category used by the library
+#if BOOST_URL_DOCS
+error_category const& system_category();
+#else
+using boost::system::system_category;
+#endif
+
+/// The set of constants used for cross-platform error codes
+#if BOOST_URL_DOCS
+enum errc
+{
+    __see_below__
+};
+#else
+namespace errc = boost::system::errc;
+#endif
+
+#ifndef BOOST_URL_DOCS
+} // error_types
+
+using namespace error_types;
+#endif
 
 } // urls
 } // boost
