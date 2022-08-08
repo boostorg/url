@@ -19,7 +19,7 @@ namespace boost {
 namespace urls {
 namespace detail {
 
-struct params_iterator_impl
+struct BOOST_URL_DECL params_iterator_impl
 {
     // range
     char const* begin_ = nullptr;
@@ -31,16 +31,13 @@ struct params_iterator_impl
     std::size_t nk_ = 0;
     std::size_t nv_ = 0;
 
-    BOOST_URL_DECL
     void scan() noexcept;
 
-    BOOST_URL_DECL
     params_iterator_impl(
         string_view s,
         std::size_t nparam) noexcept;
 
     // end ctor
-    BOOST_URL_DECL
     params_iterator_impl(
         string_view s,
         std::size_t nparam,
@@ -57,11 +54,9 @@ struct params_iterator_impl
     string_view
     encoded_key() const noexcept;
 
-    BOOST_URL_DECL
     params_view::reference
     dereference() const noexcept;
 
-    BOOST_URL_DECL
     void
     increment() noexcept;
 

@@ -144,6 +144,7 @@ public:
         Absolute paths always start with a
         forward slash ('/').
     */
+    BOOST_URL_DECL
     bool
     is_absolute() const noexcept;
 
@@ -163,6 +164,7 @@ public:
         @par Complexity
         Constant.
     */
+    BOOST_URL_DECL
     pct_encoded_view
     front() const noexcept;
 
@@ -176,6 +178,7 @@ public:
         @par Complexity
         Constant.
     */
+    BOOST_URL_DECL
     pct_encoded_view
     back() const noexcept;
 
@@ -232,7 +235,10 @@ public:
         No-throw guarantee.
     */
     bool
-    empty() const noexcept;
+    empty() const noexcept
+    {
+        return size() == 0;
+    }
 
     /** Return the number of segments in the path.
 
@@ -245,7 +251,10 @@ public:
         No-throw guarantee.
     */
     std::size_t
-    size() const noexcept;
+    size() const noexcept
+    {
+        return n_;
+    }
 
     //--------------------------------------------
     //
@@ -265,7 +274,6 @@ public:
     }
 
 private:
-    BOOST_URL_DECL
     void
     write(std::ostream& os) const;
 

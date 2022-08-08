@@ -83,14 +83,13 @@ class url_view;
         @ref parse_path,
         @ref segments_view.
 */
-class segments_encoded_view
+class BOOST_URL_DECL segments_encoded_view
 {
     string_view s_;
     std::size_t n_ = 0;
 
     friend class url_view_base;
 
-    BOOST_URL_DECL
     segments_encoded_view(
         string_view s,
         std::size_t n) noexcept;
@@ -291,7 +290,6 @@ public:
         @par Exception Safety
         No-throw guarantee.
     */
-    BOOST_URL_DECL
     iterator
     begin() const noexcept;
 
@@ -306,7 +304,6 @@ public:
         @par Exception Safety
         No-throw guarantee.
     */
-    BOOST_URL_DECL
     iterator
     end() const noexcept;
 
@@ -328,7 +325,10 @@ public:
         No-throw guarantee.
     */
     bool
-    empty() const noexcept;
+    empty() const noexcept
+    {
+        return size() == 0;
+    }
 
     /** Return the number of segments in the path.
 
@@ -341,7 +341,10 @@ public:
         No-throw guarantee.
     */
     std::size_t
-    size() const noexcept;
+    size() const noexcept
+    {
+        return n_;
+    }
 
     //--------------------------------------------
 

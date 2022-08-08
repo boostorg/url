@@ -31,7 +31,7 @@ constexpr char const* const empty_c_str_ = "";
 // This is the private 'guts' of a
 // url_view, exposed so different parts
 // of the implementation can work on it.
-struct url_impl : parts_base
+struct BOOST_URL_DECL url_impl : parts_base
 {
     static
     constexpr

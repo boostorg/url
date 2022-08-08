@@ -39,6 +39,9 @@ namespace urls {
 
 //------------------------------------------------
 
+url_base::
+~url_base() = default;
+
 // construct reference
 url_base::
 url_base(

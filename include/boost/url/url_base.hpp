@@ -60,7 +60,7 @@ class lut_chars;
         @li @ref parse_uri
         @li @ref parse_uri_reference
 */
-class BOOST_SYMBOL_VISIBLE
+class BOOST_URL_DECL
     url_base
     : public url_view_base
 {
@@ -74,12 +74,13 @@ class BOOST_SYMBOL_VISIBLE
     friend class segments_encoded;
     friend class params_encoded;
 
+    virtual ~url_base() = 0;
     url_base() noexcept = default;
     url_base(detail::url_impl const&) noexcept;
     explicit url_base(string_view);
-    BOOST_URL_DECL void copy(url_view_base const&);
-    BOOST_URL_DECL virtual void clear_impl() noexcept = 0;
-    BOOST_URL_DECL virtual void reserve_impl(std::size_t) = 0;
+    void copy(url_view_base const&);
+    virtual void clear_impl() noexcept = 0;
+    virtual void reserve_impl(std::size_t) = 0;
 
 public:
     //--------------------------------------------
@@ -164,7 +165,6 @@ public:
 
         @see @ref set_scheme.
     */
-    BOOST_URL_DECL
     url_base&
     remove_scheme() noexcept;
 
@@ -206,7 +206,6 @@ public:
         @see
             @ref remove_scheme.
     */
-    BOOST_URL_DECL
     url_base&
     set_scheme(string_view s);
 
@@ -239,7 +238,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
             3.1. Scheme (rfc3986)</a>
     */
-    BOOST_URL_DECL
     url_base&
     set_scheme(urls::scheme id);
 
@@ -276,13 +274,11 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
             3.2.1. User Information (rfc3986)</a>
     */
-    BOOST_URL_DECL
     url_base&
     set_user(
         string_view s);
 
     /// @copydoc set_user()
-    BOOST_URL_DECL
     url_base&
     set_user(
         pct_encoded_view s);
@@ -311,7 +307,6 @@ public:
 
         @param s The string to set.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_user(
         string_view s);
@@ -322,7 +317,6 @@ public:
 
     /** Remove the password
     */
-    BOOST_URL_DECL
     url_base&
     remove_password() noexcept;
 
@@ -351,13 +345,11 @@ public:
         @param s The string to set. This string may
         contain any characters, including nulls.
     */
-    BOOST_URL_DECL
     url_base&
     set_password(
         string_view s);
 
     /// @copydoc set_password()
-    BOOST_URL_DECL
     url_base&
     set_password(
         pct_encoded_view s);
@@ -392,7 +384,6 @@ public:
 
         @param s The string to set.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_password(
         string_view s);
@@ -403,7 +394,6 @@ public:
 
     /** Remove the userinfo
     */
-    BOOST_URL_DECL
     url_base&
     remove_userinfo() noexcept;
 
@@ -444,7 +434,6 @@ public:
 
         @throw std::exception Thrown on error
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_userinfo(
         string_view s);
@@ -492,13 +481,11 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
             3.2.1. User Information (rfc3986)</a>
     */
-    BOOST_URL_DECL
     url_base&
     set_userinfo(
         string_view s);
 
     /// @copydoc set_userinfo()
-    BOOST_URL_DECL
     url_base&
     set_userinfo(
         pct_encoded_view s);
@@ -533,7 +520,6 @@ public:
 #ifdef BOOST_URL_DOCS
     url_base& set_host( ipv4_address const& addr );
 #else
-    BOOST_URL_DECL
     url_base&
     set_host(
         urls::ipv4_address const& addr);
@@ -567,7 +553,6 @@ public:
 #ifdef BOOST_URL_DOCS
     url_base& set_host( ipv6_address const& addr );
 #else
-    BOOST_URL_DECL
     url_base&
     set_host(
         urls::ipv6_address const& addr);
@@ -611,13 +596,11 @@ public:
 
         @param s The string to set.
     */
-    BOOST_URL_DECL
     url_base&
     set_host(
         string_view s);
 
     /// @copydoc set_host(string_view)
-    BOOST_URL_DECL
     url_base&
     set_host(
         pct_encoded_view s);
@@ -683,7 +666,6 @@ public:
 
         @throw std::exception the percent-encoding is invalid
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_host(string_view s);
 
@@ -710,7 +692,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">
             3.2.3. Port (rfc3986)</a>
     */
-    BOOST_URL_DECL
     url_base&
     remove_port() noexcept;
 
@@ -739,7 +720,6 @@ public:
 
         @param n The port number to set.
     */
-    BOOST_URL_DECL
     url_base&
     set_port(std::uint16_t n);
 
@@ -780,7 +760,6 @@ public:
 
         @throw std::exception `s` is not a valid port string.
     */
-    BOOST_URL_DECL
     url_base&
     set_port(string_view s);
 
@@ -797,7 +776,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
             3.2. Authority (rfc3986)</a>
     */
-    BOOST_URL_DECL
     url_base&
     remove_authority() noexcept;
 
@@ -833,7 +811,6 @@ public:
 
         @throw std::exception `s` is not a valid authority.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_authority(
         string_view s);
@@ -849,7 +826,6 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    BOOST_URL_DECL
     url_base&
     remove_origin() noexcept;
 
@@ -871,7 +847,6 @@ private:
         std::size_t n,
         std::size_t nseg);
 
-    BOOST_URL_DECL
     void
     edit_segments(
         std::size_t i0,
@@ -888,7 +863,6 @@ public:
 
         @return true on success.
     */
-    BOOST_URL_DECL
     bool
     set_path_absolute(bool absolute);
 
@@ -941,7 +915,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_path(
         string_view s);
@@ -971,13 +944,11 @@ public:
             @ref set_encoded_path,
             @ref set_path_absolute.
     */
-    BOOST_URL_DECL
     url_base&
     set_path(
         string_view s);
 
     /// @copydoc set_path()
-    BOOST_URL_DECL
     url_base&
     set_path(
         pct_encoded_view s);
@@ -999,7 +970,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
     */
-    BOOST_URL_DECL
     segments_encoded
     encoded_segments() noexcept;
 
@@ -1051,7 +1021,6 @@ private:
         std::size_t n,
         std::size_t nparam);
 
-    BOOST_URL_DECL
     void
     edit_params(
         std::size_t i0,
@@ -1075,7 +1044,6 @@ public:
             @ref set_encoded_query,
             @ref set_query.
     */
-    BOOST_URL_DECL
     url_base&
     remove_query() noexcept;
 
@@ -1105,7 +1073,6 @@ public:
             @ref remove_query,
             @ref set_query.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_query(
         string_view s);
@@ -1130,13 +1097,11 @@ public:
             @ref remove_query,
             @ref set_encoded_query.
     */
-    BOOST_URL_DECL
     url_base&
     set_query(
         string_view s);
 
     /// @copydoc set_query()
-    BOOST_URL_DECL
     url_base&
     set_query(
         pct_encoded_view s);
@@ -1209,7 +1174,6 @@ public:
             @ref set_encoded_fragment,
             @ref set_fragment.
     */
-    BOOST_URL_DECL
     url_base&
     remove_fragment() noexcept;
 
@@ -1239,7 +1203,6 @@ public:
             @ref remove_fragment,
             @ref set_fragment.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_fragment(
         string_view s);
@@ -1264,13 +1227,11 @@ public:
             @ref remove_fragment,
             @ref set_encoded_fragment.
     */
-    BOOST_URL_DECL
     url_base&
     set_fragment(
         string_view s);
 
     /// @copydoc set_fragment()
-    BOOST_URL_DECL
     url_base&
     set_fragment(
         pct_encoded_view s);
@@ -1307,7 +1268,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize();
 
@@ -1327,7 +1287,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize_scheme();
 
@@ -1350,7 +1309,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize_authority();
 
@@ -1374,7 +1332,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize_path();
 
@@ -1397,7 +1354,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize_query();
 
@@ -1420,7 +1376,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize_fragment();
 
@@ -1451,7 +1406,6 @@ private:
     char* shrink_impl(int, std::size_t);
     char* shrink_impl(int, int, std::size_t);
 
-    BOOST_URL_DECL
     bool
     resolve_impl(
         url_view_base const& base,

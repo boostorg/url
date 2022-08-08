@@ -60,7 +60,7 @@ class ipv4_address;
         @ref ipv4_address,
         @ref parse_ipv6_address.
 */
-class ipv6_address
+class BOOST_URL_DECL ipv6_address
 {
 public:
     /** The number of characters in the longest possible IPv6 string.
@@ -120,7 +120,6 @@ public:
 
         @param bytes The value to construct from.
     */
-    BOOST_URL_DECL
     ipv6_address(
         bytes_type const& bytes) noexcept;
 
@@ -136,7 +135,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.5.2"
             >2.5.5.2. IPv4-Mapped IPv6 Address (rfc4291)</a>
     */
-    BOOST_URL_DECL
     ipv6_address(
         ipv4_address const& addr) noexcept;
 
@@ -161,7 +159,6 @@ public:
         @see
             @ref parse_ipv6_address.
     */
-    BOOST_URL_DECL
     ipv6_address(
         string_view s);
 
@@ -215,7 +212,6 @@ public:
 
         @param dest_size The size of the output buffer.
     */
-    BOOST_URL_DECL
     string_view
     to_buffer(
         char* dest,
@@ -231,7 +227,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.2">
             2.5.2. The Unspecified Address (rfc4291)</a>
     */
-    BOOST_URL_DECL
     bool
     is_unspecified() const noexcept;
 
@@ -245,7 +240,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.3">
             2.5.3. The Loopback Address (rfc4291)</a>
     */
-    BOOST_URL_DECL
     bool
     is_loopback() const noexcept;
 
@@ -258,7 +252,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.5.2">
             2.5.5.2. IPv4-Mapped IPv6 Address (rfc4291)</a>
     */
-    BOOST_URL_DECL
     bool
     is_v4_mapped() const noexcept;
 
@@ -294,7 +287,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.3">
             2.5.3. The Loopback Address (rfc4291)</a>
     */
-    BOOST_URL_DECL
     static
     ipv6_address
     loopback() noexcept;
@@ -315,7 +307,6 @@ public:
 
 
 private:
-    BOOST_URL_DECL
     std::size_t
     print_impl(
         char* dest) const noexcept;

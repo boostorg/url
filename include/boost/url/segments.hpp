@@ -65,7 +65,7 @@ class segments_encoded;
     @see
         @ref url.
 */
-class segments
+class BOOST_URL_DECL segments
     : private detail::parts_base
 {
     url_base* u_ = nullptr;
@@ -342,7 +342,10 @@ public:
         No-throw guarantee.
     */
     bool
-    empty() const noexcept;
+    empty() const noexcept
+    {
+        return size() == 0;
+    }
 
     /** Return the number of elements in the array.
 
@@ -411,7 +414,6 @@ public:
 
         @throw std::invalid_argument invalid percent-encoding
     */
-    BOOST_URL_DECL
     iterator
     insert(
         iterator before,
@@ -652,7 +654,6 @@ public:
 
         @throw std::invalid_argument invalid percent-encoding
     */
-    BOOST_URL_DECL
     iterator
     erase(
         iterator first,

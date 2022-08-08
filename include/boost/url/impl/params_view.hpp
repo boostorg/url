@@ -20,7 +20,7 @@ namespace urls {
 
 //------------------------------------------------
 
-class params_view::iterator
+class BOOST_URL_DECL params_view::iterator
 {
     detail::params_iterator_impl impl_;
 

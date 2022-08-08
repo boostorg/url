@@ -65,7 +65,7 @@ class url_base;
     @see
         @ref url.
 */
-class segments_encoded
+class BOOST_URL_DECL segments_encoded
     : private detail::parts_base
 {
     url_base* u_ = nullptr;
@@ -134,7 +134,6 @@ public:
 
     /** Return this container as percent-decoded segments
     */
-    BOOST_URL_DECL
     segments
     decoded() const;
 
@@ -319,7 +318,6 @@ public:
         @par Exception Safety
         No-throw guarantee.
     */
-    BOOST_URL_DECL
     iterator
     begin() const noexcept;
 
@@ -334,7 +332,6 @@ public:
         @par Exception Safety
         No-throw guarantee.
     */
-    BOOST_URL_DECL
     iterator
     end() const noexcept;
 
@@ -357,7 +354,10 @@ public:
         No-throw guarantee.
     */
     bool
-    empty() const noexcept;
+    empty() const noexcept
+    {
+        return size() == 0;
+    }
 
     /** Return the number of elements in the container
 
@@ -428,7 +428,6 @@ public:
 
         @throw std::invalid_argument invalid percent-encoding
     */
-    BOOST_URL_DECL
     iterator
     insert(
         iterator before,
@@ -648,7 +647,6 @@ public:
 
         @throw std::invalid_argument invalid percent-encoding
     */
-    BOOST_URL_DECL
     iterator
     erase(
         iterator first,

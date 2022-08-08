@@ -71,7 +71,7 @@ namespace urls {
         @ref parse_uri,
         @ref parse_uri_reference.
 */
-class BOOST_SYMBOL_VISIBLE url_view
+class BOOST_URL_DECL url_view
     : public url_view_base
 {
     friend std::hash<url_view>;
@@ -106,7 +106,6 @@ public:
         of the underlying character buffer
         remains unchanged.
     */
-    BOOST_URL_DECL
     ~url_view();
 
     /** Constructor
@@ -130,7 +129,6 @@ public:
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
             >4.2. Relative Reference (rfc3986)</a>
     */
-    BOOST_URL_DECL
     url_view() noexcept;
 
     /** Construct from a string.
@@ -162,7 +160,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
             >4.1. URI Reference</a>
     */
-    BOOST_URL_DECL
     explicit
     url_view(string_view s);
 
@@ -177,7 +174,6 @@ public:
 
     /** Constructor
     */
-    BOOST_URL_DECL
     url_view(
         url_view_base const&) noexcept;
 
@@ -194,7 +190,6 @@ public:
 
     /** Assignment
     */
-    BOOST_URL_DECL
     url_view&
     operator=(url_view_base const&) noexcept;
 };

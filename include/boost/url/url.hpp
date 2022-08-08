@@ -58,7 +58,7 @@ namespace urls {
         @ref parse_uri_reference,
         @ref resolve.
 */
-class BOOST_SYMBOL_VISIBLE url
+class BOOST_URL_DECL url
     : public url_base
 {
     friend std::hash<url>;
@@ -78,7 +78,6 @@ public:
         which reference this object are
         invalidated.
     */
-    BOOST_URL_DECL
     ~url();
 
     /** Constructor
@@ -101,7 +100,6 @@ public:
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
             >4.2. Relative Reference (rfc3986)</a>
     */
-    BOOST_URL_DECL
     url() noexcept;
 
     /** Construct from a string
@@ -126,7 +124,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
             >4.1. URI Reference</a>
     */
-    BOOST_URL_DECL
     explicit
     url(string_view s);
 
@@ -141,7 +138,6 @@ public:
 
         @param u The url to construct from.
     */
-    BOOST_URL_DECL
     url(url&& u) noexcept;
 
     /** Constructor
@@ -178,7 +174,6 @@ public:
 
         @param u The url to assign from.
     */
-    BOOST_URL_DECL
     url&
     operator=(url&& u) noexcept;
 
@@ -223,8 +218,11 @@ private:
     char* allocate(std::size_t);
     void deallocate(char* s);
 
-    BOOST_URL_DECL void clear_impl() noexcept override;
-    BOOST_URL_DECL void reserve_impl(std::size_t) override;
+    void
+    clear_impl() noexcept override;
+
+    void
+    reserve_impl(std::size_t) override;
 };
 
 //----------------------------------------------------------

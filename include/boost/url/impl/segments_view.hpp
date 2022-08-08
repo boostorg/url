@@ -17,7 +17,7 @@
 namespace boost {
 namespace urls {
 
-class segments_view::
+class BOOST_URL_DECL segments_view::
     iterator
 {
     detail::segments_iterator_impl impl_;
@@ -149,22 +149,6 @@ back() const noexcept
 // Capacity
 //
 //------------------------------------------------
-
-inline
-bool
-segments_view::
-empty() const noexcept
-{
-    return size() == 0;
-}
-
-inline
-std::size_t
-segments_view::
-size() const noexcept
-{
-    return n_;
-}
 
 } // urls
 } // boost

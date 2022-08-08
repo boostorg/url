@@ -83,6 +83,7 @@ class params_encoded_view
     string_view s_;
     std::size_t n_ = 0;
 
+    BOOST_URL_DECL
     params_encoded_view(
         string_view s,
         std::size_t n) noexcept;
@@ -278,11 +279,13 @@ public:
 
     /** Return true if the range contains no elements.
     */
+    BOOST_URL_DECL
     bool
     empty() const noexcept;
 
     /** Return the number of elements in the range.
     */
+    BOOST_URL_DECL
     std::size_t
     size() const noexcept;
 
@@ -324,6 +327,7 @@ public:
 
         @param key The encoded key.
     */
+    BOOST_URL_DECL
     iterator
     find(string_view key) const noexcept;
 
@@ -367,6 +371,7 @@ public:
 
         @param key The encoded key.
     */
+    BOOST_URL_DECL
     bool
     contains(string_view key) const noexcept;
 };

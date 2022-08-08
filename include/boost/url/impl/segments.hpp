@@ -27,7 +27,7 @@ namespace urls {
 
 //------------------------------------------------
 
-class segments::iterator
+class BOOST_URL_DECL segments::iterator
 {
     detail::segments_iterator_impl impl_;
 
@@ -217,14 +217,6 @@ end() const noexcept ->
 // Capacity
 //
 //------------------------------------------------
-
-inline
-bool
-segments::
-empty() const noexcept
-{
-    return size() == 0;
-}
 
 inline
 std::size_t

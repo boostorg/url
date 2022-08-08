@@ -80,7 +80,7 @@ namespace urls {
     @see
         @ref parse_authority.
 */
-class BOOST_SYMBOL_VISIBLE
+class BOOST_URL_DECL
     authority_view
     : private detail::parts_base
 {
@@ -104,7 +104,6 @@ public:
 
     /** Destructor
     */
-    BOOST_URL_DECL
     virtual
     ~authority_view();
 
@@ -120,7 +119,6 @@ public:
 
         @par Specification
     */
-    BOOST_URL_DECL
     authority_view() noexcept;
 
     /** Construct from a string.
@@ -158,19 +156,16 @@ public:
         @see
             @ref parse_authority.
     */
-    BOOST_URL_DECL
     explicit
     authority_view(string_view s);
 
     /** Constructor
     */
-    BOOST_URL_DECL
     authority_view(
         authority_view const&) noexcept;
 
     /** Assignment
     */
-    BOOST_URL_DECL
     authority_view&
     operator=(
         authority_view const&) noexcept;
@@ -304,7 +299,6 @@ public:
             @ref encoded_userinfo,
             @ref userinfo.
     */
-    BOOST_URL_DECL
     bool
     has_userinfo() const noexcept;
 
@@ -336,7 +330,6 @@ public:
             @ref has_userinfo,
             @ref userinfo.
     */
-    BOOST_URL_DECL
     string_view
     encoded_userinfo() const noexcept;
 
@@ -493,7 +486,6 @@ public:
             @ref password,
             @ref user.
     */
-    BOOST_URL_DECL
     bool
     has_password() const noexcept;
 
@@ -530,7 +522,6 @@ public:
             @ref password,
             @ref user.
     */
-    BOOST_URL_DECL
     string_view
     encoded_password() const noexcept;
 
@@ -649,7 +640,6 @@ public:
             @ref port,
             @ref port_number.
     */
-    BOOST_URL_DECL
     string_view
     encoded_host() const noexcept;
 
@@ -730,7 +720,6 @@ public:
         @see
             @ref ipv4_address.
     */
-    BOOST_URL_DECL
     urls::ipv4_address
     ipv4_address() const noexcept;
 
@@ -773,7 +762,6 @@ public:
         @see
             @ref ipv6_address.
     */
-    BOOST_URL_DECL
     urls::ipv6_address
     ipv6_address() const noexcept;
 
@@ -797,7 +785,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
             >3.2.2. Host (rfc3986)</a>
     */
-    BOOST_URL_DECL
     string_view
     ipvfuture() const noexcept;
 
@@ -834,7 +821,6 @@ public:
             @ref port,
             @ref port_number.
     */
-    BOOST_URL_DECL
     bool
     has_port() const noexcept;
 
@@ -864,7 +850,6 @@ public:
             @ref host_type,
             @ref port_number.
     */
-    BOOST_URL_DECL
     string_view
     port() const noexcept;
 
@@ -895,7 +880,6 @@ public:
             @ref host_type,
             @ref port,
     */
-    BOOST_URL_DECL
     std::uint16_t
     port_number() const noexcept;
 
@@ -925,7 +909,6 @@ public:
             @ref host_type,
             @ref port,
     */
-    BOOST_URL_DECL
     string_view
     encoded_host_and_port() const noexcept;
 

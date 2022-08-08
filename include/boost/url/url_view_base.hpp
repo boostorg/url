@@ -55,7 +55,7 @@ namespace urls {
         @li @ref parse_uri
         @li @ref parse_uri_reference
 */
-class BOOST_SYMBOL_VISIBLE
+class BOOST_URL_DECL
     url_view_base
     : private detail::parts_base
 {
@@ -76,9 +76,7 @@ class BOOST_SYMBOL_VISIBLE
 
     struct shared_impl;
 
-    BOOST_URL_DECL
     url_view_base() noexcept;
-    BOOST_URL_DECL
     explicit url_view_base(
         detail::url_impl const&) noexcept;
     ~url_view_base() = default;
@@ -90,7 +88,6 @@ class BOOST_SYMBOL_VISIBLE
 #ifndef BOOST_URL_DOCS
 public:
 #endif
-    BOOST_URL_DECL
     std::size_t
     digest(std::size_t = 0) const noexcept;
 
@@ -226,7 +223,6 @@ public:
         }
         @endcode
     */
-    BOOST_URL_DECL
     std::shared_ptr<
         url_view const> persist() const;
 
@@ -268,7 +264,6 @@ public:
             @ref scheme,
             @ref scheme_id.
     */
-    BOOST_URL_DECL
     bool
     has_scheme() const noexcept;
 
@@ -305,7 +300,6 @@ public:
             @ref has_scheme,
             @ref scheme_id.
     */
-    BOOST_URL_DECL
     string_view
     scheme() const noexcept;
 
@@ -344,7 +338,6 @@ public:
         @see
             @ref urls::scheme
     */
-    BOOST_URL_DECL
     urls::scheme
     scheme_id() const noexcept;
 
@@ -432,7 +425,6 @@ public:
             @ref authority,
             @ref has_authority.
     */
-    BOOST_URL_DECL
     string_view
     encoded_authority() const noexcept;
 
@@ -464,7 +456,6 @@ public:
             @ref encoded_authority,
             @ref has_authority.
     */
-    BOOST_URL_DECL
     authority_view
     authority() const noexcept;
 
@@ -500,7 +491,6 @@ public:
             @ref encoded_userinfo,
             @ref userinfo.
     */
-    BOOST_URL_DECL
     bool
     has_userinfo() const noexcept;
 
@@ -534,7 +524,6 @@ public:
             @ref has_userinfo,
             @ref userinfo.
     */
-    BOOST_URL_DECL
     string_view
     encoded_userinfo() const noexcept;
 
@@ -617,7 +606,6 @@ public:
             @ref password,
             @ref user.
     */
-    BOOST_URL_DECL
     string_view
     encoded_user() const noexcept;
 
@@ -700,7 +688,6 @@ public:
             @ref password,
             @ref user.
     */
-    BOOST_URL_DECL
     bool
     has_password() const noexcept;
 
@@ -737,7 +724,6 @@ public:
             @ref password,
             @ref user.
     */
-    BOOST_URL_DECL
     string_view
     encoded_password() const noexcept;
 
@@ -866,7 +852,6 @@ public:
             @ref port,
             @ref port_number.
     */
-    BOOST_URL_DECL
     string_view
     encoded_host() const noexcept;
 
@@ -912,7 +897,6 @@ public:
             @ref port,
             @ref port_number.
     */
-    BOOST_URL_DECL
     string_view
     encoded_hostname() const noexcept;
 
@@ -958,7 +942,6 @@ public:
             @ref port,
             @ref port_number.
     */
-    BOOST_URL_DECL
     pct_encoded_view
     hostname() const noexcept;
 
@@ -1057,7 +1040,6 @@ public:
             @ref ipvfuture,
             @ref urls::ipv4_address.
     */
-    BOOST_URL_DECL
     urls::ipv4_address
     ipv4_address() const noexcept;
 
@@ -1114,7 +1096,6 @@ public:
             @ref ipvfuture,
             @ref urls::ipv6_address.
     */
-    BOOST_URL_DECL
     urls::ipv6_address
     ipv6_address() const noexcept;
 
@@ -1152,7 +1133,6 @@ public:
             @ref ipv4_address,
             @ref ipv6_address,
     */
-    BOOST_URL_DECL
     string_view
     ipvfuture() const noexcept;
 
@@ -1192,7 +1172,6 @@ public:
             @ref port,
             @ref port_number.
     */
-    BOOST_URL_DECL
     bool
     has_port() const noexcept;
 
@@ -1231,7 +1210,6 @@ public:
             @ref host_type,
             @ref port_number.
     */
-    BOOST_URL_DECL
     string_view
     port() const noexcept;
 
@@ -1271,7 +1249,6 @@ public:
             @ref host_type,
             @ref port,
     */
-    BOOST_URL_DECL
     std::uint16_t
     port_number() const noexcept;
 
@@ -1312,7 +1289,6 @@ public:
             @ref host_type,
             @ref port,
     */
-    BOOST_URL_DECL
     string_view
     encoded_host_and_port() const noexcept;
 
@@ -1336,7 +1312,6 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    BOOST_URL_DECL
     string_view
     encoded_origin() const noexcept;
 
@@ -1527,7 +1502,6 @@ public:
             @ref encoded_query,
             @ref query.
     */
-    BOOST_URL_DECL
     bool
     has_query() const noexcept;
 
@@ -1561,7 +1535,6 @@ public:
             @ref encoded_query,
             @ref query.
     */
-    BOOST_URL_DECL
     string_view
     encoded_query() const noexcept;
 
@@ -1631,7 +1604,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4. Query (rfc3986)</a>
     */
-    BOOST_URL_DECL
     params_encoded_view
     encoded_params() const noexcept;
 
@@ -1654,7 +1626,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4. Query (rfc3986)</a>
     */
-    BOOST_URL_DECL
     params_view
     params() const noexcept;
 
@@ -1694,7 +1665,6 @@ public:
             @ref encoded_fragment,
             @ref fragment.
     */
-    BOOST_URL_DECL
     bool
     has_fragment() const noexcept;
 
@@ -1729,7 +1699,6 @@ public:
             @ref has_fragment,
             @ref pchars.
     */
-    BOOST_URL_DECL
     string_view
     encoded_fragment() const noexcept;
 
@@ -1796,7 +1765,6 @@ public:
         @return -1 if `*this < other`, 0 if
             `this == other`, and 1 if `this > other`.
     */
-    BOOST_URL_DECL
     int
     compare(url_view_base const& other) const noexcept;
 

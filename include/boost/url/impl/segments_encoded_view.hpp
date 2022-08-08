@@ -19,7 +19,7 @@
 namespace boost {
 namespace urls {
 
-class segments_encoded_view::iterator
+class BOOST_URL_DECL segments_encoded_view::iterator
 {
     friend segments_encoded_view;
 
@@ -150,28 +150,6 @@ back() const noexcept
 {
     BOOST_ASSERT(! empty());
     return *--end();
-}
-
-//------------------------------------------------
-//
-// Capacity
-//
-//------------------------------------------------
-
-inline
-bool
-segments_encoded_view::
-empty() const noexcept
-{
-    return size() == 0;
-}
-
-inline
-std::size_t
-segments_encoded_view::
-size() const noexcept
-{
-    return n_;
 }
 
 } // urls

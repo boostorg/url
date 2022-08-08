@@ -21,7 +21,7 @@
 namespace boost {
 namespace urls {
 
-class segments_encoded::iterator
+class BOOST_URL_DECL segments_encoded::iterator
 {
     friend class segments_encoded;
 
@@ -188,14 +188,6 @@ back() const noexcept
 // Capacity
 //
 //------------------------------------------------
-
-inline
-bool
-segments_encoded::
-empty() const noexcept
-{
-    return size() == 0;
-}
 
 inline
 std::size_t

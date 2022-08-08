@@ -49,7 +49,7 @@ namespace urls {
         @ref parse_ipv4_address,
         @ref ipv6_address.
 */
-class ipv4_address
+class BOOST_URL_DECL ipv4_address
 {
 public:
     /** The number of characters in the longest possible IPv4 string.
@@ -98,7 +98,6 @@ public:
 
         @param u The integer to construct from.
     */
-    BOOST_URL_DECL
     explicit
     ipv4_address(
         uint_type u) noexcept;
@@ -111,7 +110,6 @@ public:
 
         @param bytes The value to construct from.
     */
-    BOOST_URL_DECL
     explicit
     ipv4_address(
         bytes_type const& bytes) noexcept;
@@ -137,20 +135,17 @@ public:
         @see
             @ref parse_ipv4_address.
     */
-    BOOST_URL_DECL
     explicit
     ipv4_address(
         string_view s);
 
     /** Return the address as bytes, in network byte order.
     */
-    BOOST_URL_DECL
     bytes_type
     to_bytes() const noexcept;
 
     /** Return the address as an unsigned integer.
     */
-    BOOST_URL_DECL
     uint_type
     to_uint() const noexcept;
 
@@ -189,7 +184,6 @@ public:
 
         @param dest_size The size of the output buffer.
     */
-    BOOST_URL_DECL
     string_view
     to_buffer(
         char* dest,
@@ -197,19 +191,16 @@ public:
 
     /** Return true if the address is a loopback address
     */
-    BOOST_URL_DECL
     bool
     is_loopback() const noexcept;
 
     /** Return true if the address is unspecified
     */
-    BOOST_URL_DECL
     bool
     is_unspecified() const noexcept;
 
     /** Return true if the address is a multicast address
     */
-    BOOST_URL_DECL
     bool
     is_multicast() const noexcept;
 
@@ -277,7 +268,6 @@ public:
 private:
     friend class ipv6_address;
 
-    BOOST_URL_DECL
     std::size_t
     print_impl(
         char* dest) const noexcept;

@@ -44,7 +44,7 @@ struct BOOST_SYMBOL_VISIBLE
 
 // iterates segments in an
 // encoded path string
-class BOOST_SYMBOL_VISIBLE
+class BOOST_URL_DECL
     enc_path_iter
     : public any_path_iter
 {
