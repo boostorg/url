@@ -35,7 +35,7 @@ struct token_rule_test
         }
 
         ok(r, "a", "a");
-        bad(r, "", error::mismatch);
+        bad(r, "", error::need_more);
         bad(r, "1", error::mismatch);
     }
 };

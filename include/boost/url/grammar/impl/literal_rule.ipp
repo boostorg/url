@@ -1,4 +1,4 @@
-//
+
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -43,15 +43,21 @@ parse(
         return string_view(
             it - n_, it);
     }
-    // short input
-    if(std::memcmp(
-        it, s_, n) != 0)
+    if(n > 0)
     {
-        // non-match
+        // short input
+        if(std::memcmp(
+            it, s_, n) != 0)
+        {
+            // non-match
+            BOOST_URL_RETURN_EC(
+                error::mismatch);
+        }
+        // prefix matches
         BOOST_URL_RETURN_EC(
-            error::mismatch);
+            error::need_more);
     }
-    // prefix matches
+    // end
     BOOST_URL_RETURN_EC(
         error::need_more);
 }

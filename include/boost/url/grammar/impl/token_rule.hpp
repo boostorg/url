@@ -29,7 +29,7 @@ parse(
     if(it == end)
     {
         BOOST_URL_RETURN_EC(
-            error::mismatch);
+            error::need_more);
     }
     it = (find_if_not)(it, end, cs_);
     if(it != it0)

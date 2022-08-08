@@ -19,7 +19,10 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-/** Match a string of characters from a set
+/** Match a non-empty string of characters from a set
+
+    If there is no more input, the error code
+    @ref error::need_more is returned.
 
     @par Value Type
     @code

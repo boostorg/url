@@ -28,7 +28,7 @@ namespace grammar {
     in the underlying buffer, expressed as a
     @ref string_view. The function @ref squelch
     may be used to turn this into `void` instead.
-    If the input is empty, the error code
+    If there is no more input, the error code
     @ref error::need_more is returned.
 
     @par Value Type
