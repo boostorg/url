@@ -15,4 +15,4 @@ project
       <library>/boost/filesystem//boost_filesystem/<warnings>off
     ;
 
-exe magnet : magnet.cpp ;
+exe route : route.cpp ;
