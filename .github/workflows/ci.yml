@@ -34,73 +34,50 @@ jobs:
       matrix:
         include:
           # Linux, gcc
-          - toolset: gcc-4.4
-            cxxstd: "98,0x"
-            os: ubuntu-20.04
-            container: ubuntu:16.04
-            install:
-              - g++-4.4
-            sources:
-              - "ppa:ubuntu-toolchain-r/test"
-          - toolset: gcc-4.6
-            cxxstd: "03,0x"
-            os: ubuntu-20.04
-            container: ubuntu:16.04
-            install:
-              - g++-4.6
-            sources:
-              - "ppa:ubuntu-toolchain-r/test"
-          # not passing:
-          # - toolset: gcc-4.7
-          #   cxxstd: "03,11"
-          #   os: ubuntu-20.04
-          #   container: ubuntu:16.04
-          #   install:
-          #     - g++-4.7
           - toolset: gcc-4.8
-            cxxstd: "03,11"
+            cxxstd: "11"
             os: ubuntu-18.04
             install:
               - g++-4.8
           - toolset: gcc-4.9
-            cxxstd: "03,11"
+            cxxstd: "11"
             os: ubuntu-20.04
             container: ubuntu:16.04
             install:
               - g++-4.9
           - toolset: gcc-5
-            cxxstd: "03,11,14,1z"
+            cxxstd: "11,14"
             os: ubuntu-20.04
             container: ubuntu:16.04
             install:
               - g++-5
           - toolset: gcc-6
-            cxxstd: "03,11,14,1z"
+            cxxstd: "11,14"
             os: ubuntu-18.04
             install:
               - g++-6
           - toolset: gcc-7
-            cxxstd: "03,11,14,17"
+            cxxstd: "14,17"
             os: ubuntu-18.04
             install:
               - g++-7
           - toolset: gcc-8
-            cxxstd: "03,11,14,17,2a"
+            cxxstd: "17"
             os: ubuntu-18.04
             install:
               - g++-8
           - toolset: gcc-9
-            cxxstd: "03,11,14,17,2a"
+            cxxstd: "17"
             os: ubuntu-18.04
             install:
               - g++-9
           - toolset: gcc-10
-            cxxstd: "03,11,14,17,20"
+            cxxstd: "17"
             os: ubuntu-20.04
             install:
               - g++-10
           - toolset: gcc-11
-            cxxstd: "03,11,14,17,20"
+            cxxstd: "17,20"
             os: ubuntu-20.04
             install:
               - g++-11
@@ -108,7 +85,7 @@ jobs:
               - "ppa:ubuntu-toolchain-r/test"
           - name: UBSAN
             toolset: gcc-11
-            cxxstd: "03,11,14,17,20"
+            cxxstd: "17,20"
             ubsan: 1
             os: ubuntu-20.04
             install:
@@ -118,67 +95,39 @@ jobs:
 
           # Linux, clang
           - toolset: clang
-            compiler: clang++-3.5
-            cxxstd: "03,11"
-            os: ubuntu-20.04
-            container: ubuntu:16.04
-            install:
-              - clang-3.5
-          - toolset: clang
-            compiler: clang++-3.6
-            cxxstd: "03,11,14"
-            os: ubuntu-20.04
-            container: ubuntu:16.04
-            install:
-              - clang-3.6
-          - toolset: clang
-            compiler: clang++-3.7
-            cxxstd: "03,11,14"
-            os: ubuntu-20.04
-            container: ubuntu:16.04
-            install:
-              - clang-3.7
-          - toolset: clang
             compiler: clang++-3.8
-            cxxstd: "03,11,14"
+            cxxstd: "11"
             os: ubuntu-20.04
             container: ubuntu:16.04
             install:
               - clang-3.8
           - toolset: clang
-            compiler: clang++-3.9
-            cxxstd: "03,11,14"
-            os: ubuntu-18.04
-            install:
-              - clang-3.9
-          - toolset: clang
             compiler: clang++-4.0
-            cxxstd: "03,11,14"
+            cxxstd: "11,14"
             os: ubuntu-18.04
             install:
               - clang-4.0
           - toolset: clang
             compiler: clang++-5.0
-            cxxstd: "03,11,14,1z"
+            cxxstd: "11,14"
             os: ubuntu-18.04
             install:
               - clang-5.0
           - toolset: clang
             compiler: clang++-6.0
-            cxxstd: "03,11,14,17"
+            cxxstd: "14,17"
             os: ubuntu-18.04
             install:
               - clang-6.0
           - toolset: clang
             compiler: clang++-7
-            cxxstd: "03,11,14,17"
+            cxxstd: "17"
             os: ubuntu-18.04
             install:
               - clang-7
-          # Note: clang-8 does not fully support C++20, so it is not compatible with libstdc++-8 in this mode
           - toolset: clang
             compiler: clang++-8
-            cxxstd: "03,11,14,17,2a"
+            cxxstd: "17"
             os: ubuntu-18.04
             install:
               - clang-8
@@ -186,31 +135,31 @@ jobs:
             gcc_toolchain: 7
           - toolset: clang
             compiler: clang++-9
-            cxxstd: "03,11,14,17,2a"
+            cxxstd: "14,17"
             os: ubuntu-20.04
             install:
               - clang-9
           - toolset: clang
             compiler: clang++-10
-            cxxstd: "03,11,14,17,20"
+            cxxstd: "14,17"
             os: ubuntu-20.04
             install:
               - clang-10
           - toolset: clang
             compiler: clang++-11
-            cxxstd: "03,11,14,17,20"
+            cxxstd: "14,17"
             os: ubuntu-20.04
             install:
               - clang-11
           - toolset: clang
             compiler: clang++-12
-            cxxstd: "03,11,14,17,20"
+            cxxstd: "17,20"
             os: ubuntu-20.04
             install:
               - clang-12
           - toolset: clang
             compiler: clang++-12
-            cxxstd: "03,11,14,17,20"
+            cxxstd: "17,20"
             cxxflags: -stdlib=libc++
             linkflags: -stdlib=libc++
             os: ubuntu-20.04
@@ -221,7 +170,7 @@ jobs:
           - name: UBSAN
             toolset: clang
             compiler: clang++-12
-            cxxstd: "03,11,14,17,20"
+            cxxstd: "17,20"
             cxxflags: -stdlib=libc++
             linkflags: -stdlib=libc++
             ubsan: 1
@@ -232,7 +181,7 @@ jobs:
               - libc++abi-12-dev
 
           - toolset: clang
-            cxxstd: "03,11,14,17,2a"
+            cxxstd: "11,14,17"
             os: macos-11
 
           - name: CMake tests
@@ -443,17 +392,17 @@ jobs:
           #  addrmd: 32,64
           #  os: windows-2016
           - toolset: msvc-14.2
-            cxxstd: "14,17,20"
+            cxxstd: "14,17"
             addrmd: 32,64
             os: windows-2019
           - toolset: msvc-14.3
-            cxxstd: "14,17,20"
+            cxxstd: "17,20"
             addrmd: 32,64
             os: windows-2022
-          - toolset: gcc
-            cxxstd: "03,11,14,17,2a"
-            addrmd: 64
-            os: windows-2019
+#          - toolset: gcc
+#            cxxstd: "11,14,17"
+#            addrmd: 64
+#            os: windows-2019
 
     runs-on: ${{matrix.os}}
 
