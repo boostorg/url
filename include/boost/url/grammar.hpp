@@ -33,5 +33,6 @@
 #include <boost/url/grammar/type_traits.hpp>
 #include <boost/url/grammar/unsigned_rule.hpp>
 #include <boost/url/grammar/variant_rule.hpp>
+#include <boost/url/grammar/vchars.hpp>
 
 #endif

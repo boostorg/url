@@ -229,6 +229,7 @@
           <member><link linkend="url.ref.boost__urls__grammar__error">error</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__hexdig_chars">hexdig_chars</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__not_empty_rule">not_empty_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__vchars">vchars</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">Concepts</bridgehead>

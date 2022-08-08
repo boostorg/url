@@ -70,6 +70,7 @@ set(BOOST_URL_TESTS_FILES
     grammar/type_traits.cpp
     grammar/unsigned_rule.cpp
     grammar/variant_rule.cpp
+    grammar/vchars.cpp
     rfc/absolute_uri_rule.cpp
     rfc/authority_rule.cpp
     rfc/gen_delim_chars.cpp
