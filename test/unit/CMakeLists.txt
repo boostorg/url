@@ -56,7 +56,7 @@ set(BOOST_URL_TESTS_FILES
     grammar/dec_octet_rule.cpp
     grammar/delim_rule.cpp
     grammar/digit_chars.cpp
-    grammar/error.cpp
+    grammar/grammar_error.cpp
     grammar/hexdig_chars.cpp
     grammar/literal_rule.cpp
     grammar/lut_chars.cpp
