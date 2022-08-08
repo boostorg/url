@@ -56,7 +56,8 @@ parse(
             U>::digits10;
     static constexpr U ten = 10;
     char const* safe_end;
-    if(end - it >= Digits10)
+    if(static_cast<std::size_t>(
+            end - it) >= Digits10)
         safe_end = it + Digits10;
     else
         safe_end = end;
