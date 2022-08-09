@@ -128,7 +128,7 @@ these per-commit analyses:
 
 * Coverage reports
 * Benchmark performance comparisons
-* Compilation and tests on Drone.io, Azure Pipelines, Appveyor
+* Compilation and tests on Drone.io
 * Fuzzing using clang-llvm and machine learning
 
 ## Visual Studio Solution Generation
