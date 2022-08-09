@@ -148,7 +148,8 @@ struct range<T>::impl1<R, false>
 private:
     ~impl1()
     {
-        get().~impl();
+        if(! p_.empty())
+            get().~impl();
     }
 
     impl1(impl1&&) = default;
@@ -269,7 +270,8 @@ struct range<T>::impl2<R0, R1, false>
 private:
     ~impl2()
     {
-        get().~impl();
+        if(! p_.empty())
+            get().~impl();
     }
 
     impl2(impl2&&) = default;

@@ -26,7 +26,8 @@ recycled_ptr<T>::
 
 template<class T>
 recycled_ptr<T>::
-recycled_ptr(recycled<T>& bin)
+recycled_ptr(
+    recycled<T>& bin)
     : bin_(&bin)
     , p_(bin.try_acquire())
 {
@@ -37,7 +38,8 @@ recycled_ptr(recycled<T>& bin)
 template<class T>
 recycled_ptr<T>::
 recycled_ptr()
-    : recycled_ptr([]() -> B&
+    : recycled_ptr(
+        []() -> B&
         {
             // VFALCO this needs the guaranteed
             // constexpr-init macro treatment

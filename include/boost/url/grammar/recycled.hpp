@@ -211,6 +211,17 @@ public:
     recycled_ptr& operator=(
         recycled_ptr&&) = delete;
 
+    /** Return true if this does not own an object
+
+        This can only happen after this
+        becomes moved-from.
+    */
+    bool
+    empty() const noexcept
+    {
+        return p_ == nullptr;
+    }
+
     /** Return the pointed-to object
     */
     T* get() const noexcept

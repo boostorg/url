@@ -63,9 +63,9 @@ class range
         bool>
     struct impl2;
 
-    struct alignas(alignof(::max_align_t))
-        small_buffer
+    struct small_buffer
     {
+        alignas(alignof(::max_align_t))
         unsigned char buf[BufferSize];
 
         void* addr() const noexcept
