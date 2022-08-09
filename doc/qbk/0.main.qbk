@@ -130,7 +130,9 @@
 [endsect]
 
 [section URL Components]
-[$url/images/PartsDiagram.svg width=8.5in]
+[heading Generic Syntax]
+The five parts of the ['generic URI syntax] are shown below:
+[$url/images/PartsDiagram.svg]
 
 [include 5.1.scheme.qbk]
 [include 5.2.authority.qbk]
