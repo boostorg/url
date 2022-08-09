@@ -57,7 +57,6 @@ struct range<T>::
         char const*&,
         char const*) const noexcept
     {
-        // pure virtual called
         return error_code{};
     }
 
@@ -67,7 +66,6 @@ struct range<T>::
         char const*&,
         char const*) const noexcept
     {
-        // pure virtual called
         return error_code{};
     }
 };
@@ -464,6 +462,9 @@ range<T>::
 range() noexcept
 {
     ::new(&get()) any_rule{};
+    char const* it = nullptr;
+    get().first(it, nullptr);
+    get().next(it, nullptr);
 }
 
 template<class T>
@@ -540,13 +541,11 @@ parse(
             BOOST_URL_RETURN_EC(
                 error::mismatch);
         }
-
         // good
         return range<T>(
             string_view(it0, it - it0),
                 n, next_);
     }
-
     for(;;)
     {
         ++n;
@@ -562,14 +561,19 @@ parse(
             }
             break;
         }
-        if(n > M_)
+        if(n >= M_)
         {
             // too many
             BOOST_URL_RETURN_EC(
                 error::mismatch);
         }
     }
-
+    if(n < N_)
+    {
+        // too few
+        BOOST_URL_RETURN_EC(
+            error::mismatch);
+    }
     // good
     return range<T>(
         string_view(it0, it - it0),
@@ -607,13 +611,11 @@ parse(
             BOOST_URL_RETURN_EC(
                 error::mismatch);
         }
-
         // good
         return range<T>(
             string_view(it0, it - it0),
                 n, first_, next_);
     }
-
     for(;;)
     {
         ++n;
@@ -629,14 +631,19 @@ parse(
             }
             break;
         }
-        if(n > M_)
+        if(n >= M_)
         {
             // too many
             BOOST_URL_RETURN_EC(
                 error::mismatch);
         }
     }
-
+    if(n < N_)
+    {
+        // too few
+        BOOST_URL_RETURN_EC(
+            error::mismatch);
+    }
     // good
     return range<T>(
         string_view(it0, it - it0),

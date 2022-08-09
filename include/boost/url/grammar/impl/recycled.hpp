@@ -51,8 +51,8 @@ template<class T>
 recycled_ptr<T>::
 recycled_ptr(
     recycled_ptr&& other) noexcept
-    : p_(other.p_)
-    , bin_(other.bin_)
+    : bin_(other.bin_)
+    , p_(other.p_)
 {
     other.p_ = nullptr;
 }

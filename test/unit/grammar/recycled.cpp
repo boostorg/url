@@ -22,6 +22,11 @@ struct recycled_test
     void
     testPtr()
     {
+    }
+
+    void
+    run()
+    {
         {
             recycled_ptr<std::string> sp;
             sp->reserve(1000);
@@ -31,17 +36,18 @@ struct recycled_test
             recycled_ptr<std::string> sp;
             BOOST_TEST(sp->capacity() >= 1000);
         }
-    }
 
-    void
-    run()
-    {
+        // coverage
+        {
+            detail::recycled_add_impl(1);
+            detail::recycled_remove_impl(1);
+        }
     }
 };
 
 TEST_SUITE(
     recycled_test,
-    "boost.url.recycled");
+    "boost.url.grammar.recycled");
 
 } // grammar
 } // urls

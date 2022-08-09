@@ -145,6 +145,13 @@ public:
         {
             StaticUrl u("http://example.com/path/to/file.txt?#");
         }
+
+        // (overflow)
+        {
+            BOOST_TEST_THROWS(
+                static_url<16>("http://example.com/path/to/file.txt?#"),
+                std::bad_alloc);
+        }
     }
 
     void

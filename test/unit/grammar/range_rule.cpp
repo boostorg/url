@@ -16,7 +16,7 @@
 #include <boost/url/grammar/tuple_rule.hpp>
 #include <boost/url/grammar/token_rule.hpp>
 
-#include "test_suite.hpp"
+#include "test_rule.hpp"
 
 #include <algorithm>
 #include <initializer_list>
@@ -27,14 +27,37 @@ namespace grammar {
 
 struct range_rule_test
 {
+    struct big_rule
+    {
+        char unused[4096];
+        using value_type = string_view;
+
+        result<value_type>
+        parse(
+            char const*& it,
+            char const* end) const noexcept
+        {
+            if(it == end)
+                return error::mismatch;
+            if(*it != ';')
+                return error::mismatch;
+            ++it;
+            if(it == end)
+                return error::mismatch;
+            if(*it == ';')
+                return error::mismatch;
+            return string_view(it++, 1);
+        }
+    };
+
     template<class R>
     static
     void
     check(
+        R const& r,
         string_view s,
         std::initializer_list<
-            string_view> init,
-        R const& r)
+            string_view> init)
     {
         auto rv = parse(s, r);
         if(! BOOST_TEST(rv.has_value()))
@@ -61,8 +84,8 @@ struct range_rule_test
                         delim_rule('+')),
                     token_rule(alpha_chars)));
 
-            check("", {}, r);
-            check("x", {"x"}, r);
+            check(r, "", {});
+            check(r, "x", {"x"});
         }
 
         // javadoc
@@ -91,6 +114,70 @@ struct range_rule_test
         // default construction
         {
             range<string_view> v;
+        }
+
+        // lower limit
+        // upper limit
+        {
+            {
+                constexpr auto r = range_rule(
+                    tuple_rule(
+                        squelch(
+                            delim_rule(';')),
+                        token_rule(alpha_chars)),
+                    2, 3);
+
+                bad(r, "", error::mismatch);
+                bad(r, ";x", error::mismatch);
+                check(r, ";x;y", {"x","y"});
+                check(r, ";x;y;z", {"x","y","z"});
+                bad(r, ";a;b;c;d", error::mismatch);
+                bad(r, ";a;b;c;d;e", error::mismatch);
+            }
+            {
+                constexpr auto r = range_rule(
+                    token_rule(alpha_chars),
+                    tuple_rule(
+                        squelch(
+                            delim_rule('+')),
+                        token_rule(alpha_chars)),
+                    2, 3);
+
+                bad(r, "", error::mismatch);
+                bad(r, "x", error::mismatch);
+                check(r, "x+y", {"x","y"});
+                check(r, "x+y+z", {"x","y","z"});
+                bad(r, "a+b+c+d", error::mismatch);
+                bad(r, "a+b+c+d+e", error::mismatch);
+            }
+        }
+
+        // big rules
+        {
+            {
+                constexpr auto r = range_rule(
+                    big_rule{},
+                    2, 3);
+
+                bad(r, "", error::mismatch);
+                bad(r, ";x", error::mismatch);
+                check(r, ";x;y", {"x","y"});
+                check(r, ";x;y;z", {"x","y","z"});
+                bad(r, ";a;b;c;d", error::mismatch);
+                bad(r, ";a;b;c;d;e", error::mismatch);
+            }
+            {
+                constexpr auto r = range_rule(
+                    big_rule{}, big_rule{},
+                    2, 3);
+
+                bad(r, "", error::mismatch);
+                bad(r, "x", error::mismatch);
+                check(r, ";x;y", {"x","y"});
+                check(r, ";x;y;z", {"x","y","z"});
+                bad(r, ";a;b;c;d", error::mismatch);
+                bad(r, ";a;b;c;d;e", error::mismatch);
+            }
         }
     }
 };
