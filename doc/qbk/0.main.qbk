@@ -130,6 +130,8 @@
 [endsect]
 
 [section URL Components]
+[$url/images/PartsDiagram.svg width=8.5in]
+
 [include 5.1.scheme.qbk]
 [include 5.2.authority.qbk]
 [include 5.3.path.qbk]

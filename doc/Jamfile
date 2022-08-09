@@ -80,7 +80,7 @@ explicit stylesheets ;
 
 install images
     :
-        [ glob images/*.png ]
+        [ glob images/*.png images/*.svg ]
     :
         <location>html/url/images
     ;

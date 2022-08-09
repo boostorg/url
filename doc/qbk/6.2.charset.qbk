@@ -80,7 +80,13 @@ The library provides these often-used character sets:
         Contains the uppercase and lowercase hexadecimal
         digit characters.
     ]
+][
+    [[link url.ref.boost__urls__grammar__vchars `vchars`]]
+    [
+        Contains the visible characters (i.e. non whitespace).
+    ]
 ]]
+
 
 Some of the character sets in the library have implementations
 optimized for the particular character set or optimized in general,
