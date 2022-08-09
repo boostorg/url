@@ -1,0 +1,65 @@
+[/
+    Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[section Containers]
+
+All URLs conform to the ['generic syntax]. Every URL is
+either ['hierarchical], or ['opaque], with the hierarchical
+URLs further distinguished by whether they are ['relative]
+or ['absolute]. Here are some examples of URLs and their
+identification in this taxonomy:
+
+[teletype]
+[table Taxonomy [
+    [URL]
+    [Description]
+][
+    [`urn:isbn:045145052`]
+    [description]
+][
+    [`isbn:045145052`]
+    []
+][
+    [`isbn`]
+    []
+][
+    [`045145052`]
+    []
+]]
+
+This library provides the following containers, which
+are capable of storing any possible URL:
+
+* __url__: A modifiable container for a URL.
+* __url_view__: A non-owning reference to a valid URL.
+* __static_url__: A URL with fixed-capacity storage.
+
+These containers maintain a useful invariant: they
+always contain a valid URL.
+
+[heading Generic Syntax]
+
+This diagram shows the generic syntax which all URLs
+conform to:
+
+[$url/images/PartsDiagram.svg]
+
+In the sections that follow we discuss the main parts
+of the URL, parsing strings into the provided containers,
+modifying parts of the container while preserving invariants,
+and how to invoke common algorithms used with URLs.
+
+[include 3.1.parsing.qbk]
+[include 3.2.scheme.qbk]
+[include 3.3.authority.qbk]
+[include 3.4.path.qbk]
+[include 3.5.query.qbk]
+[include 3.6.fragment.qbk]
+
+[endsect]

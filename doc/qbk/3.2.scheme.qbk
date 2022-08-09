@@ -11,6 +11,32 @@
 
 [section Scheme]
 
+The scheme determines how the rest of
+the URL should be interpreted, and each scheme might have
+it's own rules, such as mandatory components and values.
+
+The scheme usually represents a protocol, such as HTTP
+or FTP:
+
+[snippet_components_2a]
+
+[snippet_components_2b]
+
+In these protocols, the path describes a resource and
+the host describes how to access it.
+
+Other schemes use opaque URLs that only identify resources:
+
+[snippet_components_2c]
+
+[snippet_components_2d]
+
+[snippet_components_2e]
+
+The opaque URLs usually represent resources through the path.
+Magnet links have empty paths and use queries to describe
+the resource.
+
 [heading Notation]
 
 The scheme is the top-level hierarchical element which defines the

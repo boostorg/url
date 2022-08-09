@@ -25,14 +25,12 @@ this is a valid URL which satisfies the ['absolute-URI] grammar:
     https://www.example.com/path/to/file.txt?userid=1001&page=2&results=full
 ```
 
-[/ Introduction to URL ]
-
 This library understands the various grammars related to URLs and provides
 functionalities for:
 
-* validating and parsing of strings,
-* manipulation of URL strings, and
-* algorithms operating on URLs such as normalization and resolution.
+* Validating and parsing of strings,
+* Manipulation of URL strings, and
+* Algorithms such as normalization and resolution.
 
 [heading Features]
 
@@ -43,9 +41,9 @@ case where the inputs come from untrusted sources.
 
 Interfaces are provided for using error codes instead of exceptions as needed,
 and all algorithms provide a mechanism for avoiding memory allocations entirely
-if desired. Another feature of the library is that all container mutations leave the
-URL in a valid state. Code which uses Boost.URL will be easy to read,
-flexible, and performant.
+if desired. Another feature of the library is that all container mutations
+leave the URL in a valid state. Code which uses Boost.URL will be easy to
+read, flexible, and performant.
 
 Boost.URL offers these features:
 
@@ -57,7 +55,7 @@ Boost.URL offers these features:
 * Optional header-only, without linking to a library
 * Supports `-fno-exceptions`, detected automatically
 * Link to a built static or dynamic Boost library, or use [link header-only header-only]
-* Work well on [link embedded-devices embedded devices].
+* Work well on embedded devices
 
 [/-----------------------------------------------------------------------------]
 
@@ -69,23 +67,21 @@ The library requires Boost 1.80.0 and a compiler supporting at least C++11.
     Boost [*1.80.0] or higher is a requirement for installation of this library proposal.
 ]
 
-Aliases for standard types, such as __string_view__, use their Boost equivalents.
+Aliases for standard types, such as __error_code__ or __string_view__,
+use their Boost equivalents.
 
-[#header-only]
 [heading Header-Only]
 
-To use the library as header-only; that is, to eliminate the requirement to
-link a program to a static or dynamic Boost.URL library, simply
-place the following line in exactly one new or existing source
-file in your project.
+To use the library as header-only; that is, to eliminate the requirement
+to link a program to a static or dynamic Boost.URL library, simply place
+the following line in [*exactly one] source file in your project.
 
 [c++]
 ```
     #include <boost/url/src.hpp>
 ```
 
-[#cmake]
-[heading CMake Integration]
+[heading CMake]
 
 The library can work both as a module of the Boost super-project or as an
 independent library that depends on Boost 1.78.0. In both cases,
@@ -111,7 +107,7 @@ is designed to work without exceptions if desired.
 
 [/-----------------------------------------------------------------------------]
 
-[section Supported Compilers]
+[heading Tested Compilers]
 
 Boost.URL has been tested with the following compilers:
 
@@ -119,16 +115,44 @@ Boost.URL has been tested with the following compilers:
 * gcc: 4.8, 4.9, 5, 6, 7, 8, 9, 10, 11
 * msvc: 14.0, 14.1, 14.2, 14.3
 
-[h3 Quality Assurance]
+and these architectures: x86, x64, ARM64, S390x.
+
+[heading Quality Assurance]
 
 The development infrastructure for the library includes
 these per-commit analyses:
 
 * Coverage reports
-* Compilation and tests on Drone.io, Azure Pipelines, Appveyor
+* Compilation and tests on Drone.io and GitHub Actions
 * Fuzzing using clang-llvm and machine learning
+* Regular code audits for security
+
+[/-----------------------------------------------------------------------------]
+
+[section Nomenclature]
+
+Various names have been used historically to refer to different
+flavors of resource identifiers, including ['URI], ['URL],
+and ['URN]. Over time, the distinction between URIs and URLs
+has disappeared when discussed in technical documents and
+informal works. In this library we use the term [*URL] to
+refer to all strings which are valid according to the
+top-level grammar rules found in __rfc3986__.
 
 [endsect]
+
+[heading ABNF]
+
+This documentation uses the Augmented
+[@https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form Backus-Naur Form]
+(ABNF) notation of
+[@https://datatracker.ietf.org/doc/html/rfc5234 rfc5234]
+to specify particular grammars used by algorithms and containers. While
+a complete understanding of the notation is not a requirement for using
+the library, it may help for an understanding of how valid components of
+URLs are defined. In particular, this will be of interest to users who
+wish to compose parsing algorithms using the combinators provided by
+the library.
 
 [/-----------------------------------------------------------------------------]
 
@@ -136,18 +160,12 @@ these per-commit analyses:
 To be announced
 [endsect]
 
-[/-----------------------------------------------------------------------------]
-
-[h1 Acknowledgments]
+[heading Acknowledgments]
 
 This library wouldn't be where it is today without the help of
 [@https://github.com/pdimov Peter Dimov]
 for design advice and general assistance.
 
 [/-----------------------------------------------------------------------------]
-
-[h1 Documentation]
-
-Visit [@https://master.url.cpp.al/ https://master.url.cpp.al/] for complete documentation.
 
 [endsect]

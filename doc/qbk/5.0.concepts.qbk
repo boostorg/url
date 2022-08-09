@@ -11,8 +11,8 @@
 
 This section describes all of the concepts defined by the library.
 
-[include 7.1.CharSet.qbk]
-[include 7.1.MutableString.qbk]
-[include 7.1.Rule.qbk]
+[include 5.1.CharSet.qbk]
+[include 5.2.MutableString.qbk]
+[include 5.3.Rule.qbk]
 
 [endsect]

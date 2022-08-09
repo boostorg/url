@@ -62,10 +62,10 @@ features.
 
 [import ../../test/unit/doc_grammar.cpp]
 
-[include 6.1.rules.qbk]
-[include 6.2.charset.qbk]
-[include 6.3.combinators.qbk]
-[include 6.4.range.qbk]
-[include 6.5.rfc3986.qbk]
+[include 4.1.rules.qbk]
+[include 4.2.charset.qbk]
+[include 4.3.combinators.qbk]
+[include 4.4.range.qbk]
+[include 4.5.rfc3986.qbk]
 
 [endsect]

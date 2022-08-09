@@ -55,23 +55,23 @@ using_url_views()
         //]
     }
 
+    {
+        //[snippet_accessing_1
+        string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
+        url_view u = parse_uri( s ).value();
+        assert(u.scheme() == "https");
+        assert(u.userinfo() == "user:pass");
+        assert(u.user() == "user");
+        assert(u.password() == "pass");
+        assert(u.host() == "example.com");
+        assert(u.port() == "443");
+        assert(u.path() == "/path/to/my-file.txt");
+        assert(u.query() == "id=42&name=John Doe Jingleheimer-Schmidt");
+        assert(u.fragment() == "page anchor");
+        //]
+    }
+
     url_view u = parse_uri( s ).value();
-
-    //[snippet_accessing_1
-    std::cout <<
-        "url       : " << u             << "\n"
-        "scheme    : " << u.scheme()    << "\n"
-        "authority : " << u.authority() << "\n"
-        "userinfo  : " << u.userinfo()  << "\n"
-        "user      : " << u.user()      << "\n"
-        "password  : " << u.password()  << "\n"
-        "host      : " << u.host()      << "\n"
-        "port      : " << u.port()      << "\n"
-        "path      : " << u.path()      << "\n"
-        "query     : " << u.query()     << "\n"
-        "fragment  : " << u.fragment()  << "\n";
-    //]
-
     //[snippet_accessing_1b
     for (auto seg: u.segments())
         std::cout << seg << "\n";
@@ -274,18 +274,42 @@ using_urls()
 void
 parsing_urls()
 {
-    //[snippet_parsing_url_1
-    result< url_view > r = parse_uri( "https://www.example.com/path/to/file.txt" );
-    if( r.has_value() )                    // parsing was successful
     {
-        url_view u = r.value();      // extract the url_view
-        std::cout << u << "\n";            // format the URL to cout
+        auto handle_my_url = [](url_view const& u)
+        {
+            boost::ignore_unused(u);
+        };
+
+        //[snippet_parsing_url_1
+        result< url_view > r = parse_uri( "https://www.example.com/path/to/file.txt" );
+        //]
+        //[snippet_parsing_url_1b
+        if( r.has_value() )
+        {
+            url_view u = r.value();
+            assert(u.scheme() == "https");
+            assert(u.host() == "www.example.com");
+            assert(u.path() == "/path/to/file.txt");
+            handle_my_url(u);
+        }
+        //]
     }
-    else
+
     {
-        std::cout << r.error().message();  // parsing failure; print error
+        //[snippet_parsing_url_1c
+        result< url_view > r0 = parse_relative_ref( "/path/to/file.txt" );
+        assert( r0.has_value() );
+        //]
+        //[snippet_parsing_url_1d
+        result< url_view > r1 = parse_uri( "https://www.example.com" );
+        assert( r1.has_value() );
+        url dest;
+        error_code ec;
+        resolve(r1.value(), r0.value(), dest, ec);
+        assert(dest.string() == "https://www.example.com/path/to/file.txt");
+        //]
+        boost::ignore_unused(dest);
     }
-    //]
 
     //[snippet_parsing_url_2
     // This will hold our copy
@@ -323,11 +347,77 @@ parsing_urls()
         std::cout << v << "\n";
 
         // and it's mutable
-        v.set_encoded_fragment("anchor");
+        v.set_fragment("anchor");
 
+        // path/to/file.txt#anchor
         std::cout << v << "\n";
         //]
     }
+}
+
+void
+parsing_components()
+{
+    {
+        //[snippet_components_1
+        string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
+        url_view u = parse_uri( s ).value();
+        assert(u.scheme() == "https");
+        assert(u.authority().string() == "user:pass@example.com:443");
+        assert(u.path() == "/path/to/my-file.txt");
+        assert(u.query() == "id=42&name=John Doe Jingleheimer-Schmidt");
+        assert(u.fragment() == "page anchor");
+        //]
+    }
+
+    {
+        //[snippet_components_2a
+        string_view s = "https://www.ietf.org/rfc/rfc2396.txt";
+        url_view u = parse_uri( s ).value();
+        assert(u.scheme() == "https");
+        assert(u.host() == "www.ietf.org");
+        assert(u.path() == "/rfc/rfc2396.txt");
+        //]
+    }
+
+    {
+        //[snippet_components_2b
+        string_view s = "ftp://ftp.is.co.za/rfc/rfc1808.txt";
+        url_view u = parse_uri( s ).value();
+        assert(u.scheme() == "ftp");
+        assert(u.host() == "ftp.is.co.za");
+        assert(u.path() == "/rfc/rfc1808.txt");
+        //]
+    }
+
+    {
+        //[snippet_components_2c
+        string_view s = "mailto:John.Doe@example.com";
+        url_view u = parse_uri( s ).value();
+        assert(u.scheme() == "mailto");
+        assert(u.path() == "John.Doe@example.com");
+        //]
+    }
+
+    {
+        //[snippet_components_2d
+        string_view s = "urn:isbn:096139210x";
+        url_view u = parse_uri( s ).value();
+        assert(u.scheme() == "urn");
+        assert(u.path() == "isbn:096139210x");
+        //]
+    }
+
+    {
+        //[snippet_components_2e
+        string_view s = "magnet:?xt=urn:btih:d2474e86c95b19b8bcfdb92bc12c9d44667cfa36";
+        url_view u = parse_uri( s ).value();
+        assert(u.scheme() == "magnet");
+        assert(u.path() == "");
+        assert(u.query() == "xt=urn:btih:d2474e86c95b19b8bcfdb92bc12c9d44667cfa36");
+        //]
+    }
+
 }
 
 void
@@ -850,28 +940,24 @@ using_modifying()
         //]
 
         //[snippet_modifying_2
-        std::cout << v << "\n"
-            "scheme:        " << v.scheme()            << "\n"
-            "has authority: " << v.has_authority()     << "\n"
-            "authority:     " << v.encoded_authority() << "\n"
-            "path:          " << v.encoded_path()      << "\n";
+        assert(v.scheme() == "https");
+        assert(v.has_authority());
+        assert(v.encoded_authority() == "www.example.com");
+        assert(v.encoded_path() == "");
         //]
 
         //[snippet_modifying_3
         v.set_host("my website.com");
         v.set_path("my file.txt");
         v.set_query("id=42&name=John Doe");
-        std::cout << v << "\n";
+        assert(v.string() == "https://my%20website.com/my%20file.txt?id=42&name=John%20Doe");
         //]
 
         //[snippet_modifying_4
         v.set_scheme("http");
-        std::cout << v << "\n";
-        //]
-
-        //[snippet_modifying_5
-        v.set_host("www.my example.com");
-        std::cout << v << "\n";
+        assert(v.string() == "http://my%20website.com/my%20file.txt?id=42&name=John%20Doe");
+        v.set_encoded_host("www.my%20example.com");
+        assert(v.string() == "http://my%20example.com/my%20file.txt?id=42&name=John%20Doe");
         //]
 
 
@@ -1161,7 +1247,8 @@ public:
     {
         ignore_unused(&using_url_views);
         ignore_unused(&using_urls);
-        ignore_unused(&parsing_urls);
+        parsing_urls();
+        parsing_components();
         ignore_unused(&parsing_scheme);
         ignore_unused(&parsing_authority);
         ignore_unused(&parsing_path);

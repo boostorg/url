@@ -12,6 +12,10 @@
 [#section.query]
 [section:query Query]
 
+Opaque...
+Parameters...
+
+
 [heading Notation]
 
 The query component of a URL augments the information in the path to identify
