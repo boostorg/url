@@ -7,7 +7,7 @@
     Official repository: https://github.com/CPPAlliance/url
 ]
 
-[section URLs, URIs, and URNs]
+[section Nomenclature]
 
 Uniform Resource Locators (URL - __rfc1738__), also informally called "web addresses",
 are able to describe the name and location of a resource. A URL scheme, such as `http`,

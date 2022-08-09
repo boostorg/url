@@ -24,12 +24,12 @@
 
 namespace urls = boost::urls;
 
-/// Functor to identify a magnet "exact topic"
+/// Callable to identify a magnet "exact topic"
 /**
-    This functor evaluates if a query parameter
+    This callable evaluates if a query parameter
     represents a magnet "exact topic".
 
-    This functor is used as a filter for
+    This callable is used as a filter for
     the topics_view.
  */
 struct is_exact_topic {
@@ -37,16 +37,16 @@ struct is_exact_topic {
     operator()(urls::query_param_view p);
 };
 
-/// Functor to identify a magnet url parameter
+/// Callable to identify a magnet url parameter
 /**
-    This functor evaluates if a query parameter
+    This callable evaluates if a query parameter
     has a given key and a url as its value.
 
     These urls are percent-encoded twice,
     which means we need to decode it once
     before attempting to parse it.
 
-    This functor is used as a filter for
+    This callable is used as a filter for
     the keys_view.
  */
 template <class MutableString>
@@ -65,12 +65,12 @@ public:
     operator()(urls::query_param_view p);
 };
 
-/// Functor to convert param values to urls
+/// Callable to convert param values to urls
 /**
-    This functor converts the value of a
+    This callable converts the value of a
     query parameter into a urls::url_view.
 
-    This functor is used as a transform
+    This callable is used as a transform
     function for the topics_view.
  */
 struct to_url {
@@ -78,12 +78,12 @@ struct to_url {
     operator()(urls::query_param_view p);
 };
 
-/// Functor to convert param values to urls::pct_encoded_view
+/// Callable to convert param values to urls::pct_encoded_view
 /**
-    This functor converts the value of a
+    This callable converts the value of a
     query parameter into a urls::pct_encoded_view.
 
-    This functor is used as a transform
+    This callable is used as a transform
     function for the keys_view.
  */
 struct to_decoded_value {
@@ -94,16 +94,16 @@ struct to_decoded_value {
     }
 };
 
-/// Functor to convert param values to info_hashes
+/// Callable to convert param values to info_hashes
 /**
-    This functor converts the value of a
+    This callable converts the value of a
     query parameter into a urls::string_view with
     its infohash.
 
     The infohash hash is a parameter of an
     exact topic field in the magnet link.
 
-    This functor is used as a transform
+    This callable is used as a transform
     function for the info_hashes_view.
  */
 struct to_infohash {
@@ -111,16 +111,16 @@ struct to_infohash {
     operator()(urls::query_param_view p);
 };
 
-/// Functor to convert param values to protocols
+/// Callable to convert param values to protocols
 /**
-    This functor converts the value of a
+    This callable converts the value of a
     query parameter into a urls::string_view with
     its protocol.
 
     The protocol is a parameter of an exact
     topic field in the magnet link.
 
-    This functor is used as a transform
+    This callable is used as a transform
     function for the protocols_view.
  */
 struct to_protocol {

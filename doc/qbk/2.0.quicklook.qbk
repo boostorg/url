@@ -83,8 +83,7 @@ You can parse the string by calling this function:
 
 The function __parse_uri__ returns an object of type `__result__<__url_view__>`
 which is a container resembling a variant that holds either an error or an object.
-A number of [link section.url_view functions] are available to parse different
-types of URL.
+A number of functions are available to parse different types of URL.
 
 We can immediately call `result::value` to obtain a __url_view__.
 
@@ -121,27 +120,7 @@ also be used to check if the string has been parsed without errors.
 
 Accessing the parts of the URL is easy:
 
-[table [[Code][Output]] [[
-[c++]
 [snippet_accessing_1]
-][
-[teletype]
-```
-
-
-    url       : https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor
-    scheme    : https
-    authority : user:pass@example.com:443
-    userinfo  : user:pass
-    user      : user
-    password  : pass
-    host      : example.com
-    port      : 443
-    path      : /path/to/my-file.txt
-    query     : id=42&name=John Doe Jingleheimer-Schmidt
-    fragment  : page anchor
-```
-]]]
 
 URL paths can be further divided into path segments with
 the function [link url.ref.boost__urls__url_view.segments `url_view::segments`].
@@ -173,49 +152,13 @@ By simply referencing the relevant portion of the URL string,
 its components can represent percent-decoded strings without any
 need to allocate memory.
 
-These functions might also return empty strings both for empty and absent
-components.
+These functions might also return empty strings
 
-[table [[Code][Output]] [[
-[c++]
 [snippet_accessing_2a]
-][
-[teletype]
-```
-    fragment 1 :
-```
-]][[
-[c++]
+
+for both for empty and absent components
+
 [snippet_accessing_2b]
-][
-[teletype]
-```
-    fragment 2 :
-```
-]]]
-
-To differentiate between empty and absent components, we can use
-functions such as [link url.ref.boost__urls__url_view.has_fragment `has_fragment`]:
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_accessing_3a]
-][
-[teletype]
-```
-    has fragment 1 : 0
-    fragment 1 :
-```
-]][[
-[c++]
-[snippet_accessing_3b]
-][
-[teletype]
-```
-    has fragment 2 : 1
-    fragment 2 :
-```
-]]]
 
 Many components do not have corresponding functions such as
 [link url.ref.boost__urls__url_view.has_authority `has_authority`]
@@ -298,6 +241,9 @@ in a web server:
 
 [c++]
 [snippet_decoding_4a]
+
+This allows us to easily match files in the document
+root directory of a web server:
 
 [c++]
 [snippet_decoding_4b]

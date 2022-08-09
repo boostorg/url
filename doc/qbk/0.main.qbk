@@ -36,6 +36,7 @@
 [def __rfc1738__                [@https://tools.ietf.org/html/rfc1738 rfc1738]]
 [/ URIs, URLs, URNs: Clarifications and Recommendations ]
 [def __rfc3305__                [@https://tools.ietf.org/html/rfc3305 rfc3305]]
+[def __rfc7230__                [@https://tools.ietf.org/html/rfc7230 rfc7230]]
 
 [/ Named Requirements ]
 
@@ -61,6 +62,7 @@
 [def __std_string__             [@https://en.cppreference.com/w/cpp/string/basic_string `std::string`]]
 [def __std_tuple__              [@https://en.cppreference.com/w/cpp/utility/tuple `std::tuple`]]
 [def __std_get__                [@https://en.cppreference.com/w/cpp/utility/tuple/get `std::get`]]
+[def __std_string_view__        [@https://en.cppreference.com/w/cpp/string/basic_string_view `std::string_view`]]
 
 [def __absolute_uri_rule__      [link url.ref.boost__urls__absolute_uri_rule `absolute_uri_rule`]]
 [def __authority_rule__         [link url.ref.boost__urls__authority_rule `authority_rule`]]
@@ -71,12 +73,18 @@
 [def __optional__               [link url.ref.boost__urls__optional `optional`]]
 [def __origin_form_rule__       [link url.ref.boost__urls__origin_form_rule `origin_form_rule`]]
 [def __parse_uri__              [link url.ref.boost__urls__parse_uri `parse_uri`]]
+[def __params__                 [link url.ref.boost__urls__params `params`]]
+[def __params_view__            [link url.ref.boost__urls__params_view `params_view`]]
+[def __params_encoded__         [link url.ref.boost__urls__params_encoded `params_encoded`]]
+[def __params_encoded_view__    [link url.ref.boost__urls__params_encoded_view `encoded_params_view`]]
 [def __pchars__                 [link url.ref.boost__urls__pchars `pchars`]]
 [def __pct_encoded_view__       [link url.ref.boost__urls__pct_encoded_view `pct_encoded_view`]]
 [def __pct_encoded_rule__       [link url.ref.boost__urls__pct_encoded_rule `pct_encoded_rule`]]
 [def __query_param_view__       [link url.ref.boost__urls__query_param_view `query_param_view`]]
 [def __result__                 [link url.ref.boost__urls__result `result`]]
+[def __segments__               [link url.ref.boost__urls__segments `segments`]]
 [def __segments_view__          [link url.ref.boost__urls__segments_view `segments_view`]]
+[def __segments_encoded__       [link url.ref.boost__urls__segments_encoded `segments_encoded`]]
 [def __segments_encoded_view__  [link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]]
 [def __static_url__             [link url.ref.boost__urls__static_url `static_url`]]
 [def __string_view__            [link url.ref.boost__urls__string_view `string_view`]]
@@ -121,37 +129,19 @@
 
 [include 1.0.overview.qbk]
 [include 2.0.quicklook.qbk]
-[include 2.1.HelpCard.qbk]
-[include 3.0.urls.qbk]
-
-[section Containers]
-[include 4.1.parsing.qbk]
-[include 4.2.modifying.qbk]
-[endsect]
-
-[section URL Components]
-[heading Generic Syntax]
-The five parts of the ['generic URI syntax] are shown below:
-[$url/images/PartsDiagram.svg]
-
-[include 5.1.scheme.qbk]
-[include 5.2.authority.qbk]
-[include 5.3.path.qbk]
-[include 5.4.query.qbk]
-[include 5.5.fragment.qbk]
-[endsect]
-
-[include 6.0.grammar.qbk]
-[include 7.0.concepts.qbk]
-[include 8.0.examples.qbk]
+[include 3.0.containers.qbk]
+[include 4.0.grammar.qbk]
+[include 5.0.concepts.qbk]
+[include 6.0.examples.qbk]
 
 [section:ref Reference]
 [xinclude quickref.xml]
 [block'''<part label="Two: Reference">''']
 [include reference.qbk]
 [block'''</part>''']
+
+[include 7.1.HelpCard.qbk]
+
 [endsect]
-
-
 
 [xinclude index.xml]

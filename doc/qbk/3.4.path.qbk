@@ -1,0 +1,92 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[/-----------------------------------------------------------------------------]
+
+[section Path]
+
+The path contains data, usually organized hierarchically, which is combined
+with the [link section.query query] to identify a resource within the scope of
+the scheme and authority.
+
+If the authority is present, the path needs to be empty or start with a
+slash `/`.
+
+[snippet_parsing_path_use_case_2]
+
+A URL always contains a path, even if it is empty:
+
+[snippet_parsing_path_use_case_3]
+
+The function [link url.ref.boost__urls__url_view.path `path`]
+treats this component as an opaque substring. This is useful
+in non-hierarchical paths, such as URN identifiers:
+
+[snippet_parsing_path_3a]
+
+Most schemes interpret the path as a sequence of slash delimited ['segments].
+These segments can map to file system paths, which is useful for file servers,
+but do not always need to imply this relationship. The library
+provides container adaptors modeling ranges of individual path segments.
+The URL below contains a path with three segments:
+
+[snippet_parsing_path_0]
+
+These segment view containers are lightweight references to
+the underlying path that map every path to a unique
+sequence of segments.
+
+[warning
+    Ownership of the string is not
+    transferred; the caller is responsible for ensuring that the
+    lifetime of the string extends until the container is destroyed.
+]
+
+In contexts where a path can appear by itself, such as HTTP
+requests, segment views may also be constructed directly from
+strings.
+
+[snippet_parsing_path_9]
+
+The semantics of a path can be absolute or relative.
+An absolute path in a URL begins with `/`:
+
+[snippet_modifying_path_1_2]
+
+The complete path segments `"."` and `".."` are intended
+only for use within relative references
+(__rfc3986__ sec. 4.1) and are removed as part of the
+reference resolution process (__rfc3986__ sec. 5.2).
+Normalizing an absolute URI resolves these dot-segments
+(__rfc3986__ sec. 5.2.4).
+
+[snippet_modifying_path_3]
+
+Empty segments are also possible, resulting in consecutive slashes.
+
+[snippet_parsing_path_use_case_6]
+
+The grammar for URLs places some restrictions on where and
+how certain delimiters may appear in the first path segment,
+to prevent ambiguities between the scheme, host, and path.
+For example, a relative-ref containing a path which is not
+absolute, may not have a colon in the first segment.
+
+When the library detects that a modification to a URL would result
+in an ambiguous configuration, it adjusts the result to
+maintain the same semantics while avoiding the ambiguity:
+
+[snippet_modifying_path_9_10]
+
+This ensures the result is predictable when the user
+changes something the path or any segment.
+
+[/-----------------------------------------------------------------------------]
+
+[endsect]

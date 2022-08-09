@@ -1,0 +1,43 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/CPPAlliance/url
+]
+
+[/-----------------------------------------------------------------------------]
+
+[section Fragment]
+
+The fragment provides a refinement of the resource specification
+usually interpreted as a single string. It provides directions
+to a secondary resource related to such main resource, such as
+the section in an article or a time-point in a video.
+
+As usual, its semantics vary depending on the scheme, authority, path,
+and media type of the resource. In HTML, fragments are used as internal
+page references. This usage is called a "named anchor," referring to a
+section within a web page. The URL below points to the anchor "section2":
+
+[snippet_parsing_fragment_4]
+
+These functions do not throw. The URL fragment might also be empty
+or absent. If the URL has no fragment, these functions return an
+empty string. The function
+[link url.ref.boost__urls__url_view.has_fragment `has_fragment`]
+can be used to determine whether this empty string means there is
+no fragment or an empty fragment string in the URL.
+
+[snippet_parsing_fragment_5]
+
+The URL reserved characters `:`, `@`, `?`, and `/` may appear
+unencoded with URL fragments, as they are not ambiguous with
+other URL components.
+
+[snippet_parsing_fragment_6]
+
+[/-----------------------------------------------------------------------------]
+
+[endsect]
