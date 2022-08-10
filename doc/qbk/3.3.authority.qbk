@@ -108,11 +108,13 @@ matches an IP address, the functions
 [link url.ref.boost__urls__url_view.ipv6_address `ipv6_address`]
 can be used to obtain the decoded addresses as integers.
 
-Note that if an authority is present, the host is always
-defined even if it is the empty string (corresponding
-to a zero-length ['reg-name] in the BNF).
+[note
+    Note that if an authority is present, the host is always
+    defined even if it is the empty string (corresponding
+    to a zero-length ['reg-name] in the BNF).
 
-[snippet_parsing_authority_10a]
+    [snippet_parsing_authority_10a]
+]
 
 The authority component also influences how we should
 interpret the URL path. If the authority is present,

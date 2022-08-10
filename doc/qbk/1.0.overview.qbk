@@ -54,7 +54,7 @@ Boost.URL offers these features:
 * Allocator control, including avoiding allocation entirely
 * Optional header-only, without linking to a library
 * Supports `-fno-exceptions`, detected automatically
-* Link to a built static or dynamic Boost library, or use [link header-only header-only]
+* Link to a built static or dynamic Boost library, or use header-only
 * Work well on embedded devices
 
 [/-----------------------------------------------------------------------------]

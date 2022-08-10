@@ -13,10 +13,7 @@
 
 The path contains data, usually organized hierarchically, which is combined
 with the [link section.query query] to identify a resource within the scope of
-the scheme and authority. The path comes after the URL authority, including
-the initial slash `/`:
-
-[snippet_parsing_path_use_case_1]
+the scheme and authority.
 
 If the authority is present, the path needs to be empty or start with a
 slash `/`.
@@ -27,86 +24,31 @@ A URL always contains a path, even if it is empty:
 
 [snippet_parsing_path_use_case_3]
 
-Of the reserved character set for URLs, `":"` and `"@"` may
-appear unencoded within paths as they are not ambiguous with
-subsequent URL components:
-
-[snippet_parsing_path_use_case_4]
-
-Most schemes interpret the path as a sequence of slash delimited ['segments].
-These segments can map to file system paths, which is useful for file servers,
-but do not always need to imply this relationship.
-
-In addition to interacting with the path as a single string, the library
-provides container adaptors modeling ranges of individual path segments.
-The URL below contains a path `/path/to/file.txt` with the three segments
-`path`, `to`, and `file.txt`:
-
-[snippet_parsing_path_0]
-
-The functions [link url.ref.boost__urls__url_view.path `path`] and
-[link url.ref.boost__urls__url_view.encoded_path `encoded_path`] can
-be used to obtain the path from a __url_view__:
-
-[snippet_parsing_path_1]
-
-These functions do not throw. There is no function analogous to `has_path` because
-all URLs have valid paths, even when the path is empty:
-
-[snippet_parsing_path_3]
-
 The function [link url.ref.boost__urls__url_view.path `path`]
 treats this component as an opaque substring. This is useful
 in non-hierarchical paths, such as URN identifiers:
 
 [snippet_parsing_path_3a]
 
-Notice that the __pct_encoded_view__ returned from this
-function should be used with care when the path segments
-represent a hierarchy. Any decoded character `/` could
-form an ambiguous path segment.
+Most schemes interpret the path as a sequence of slash delimited ['segments].
+These segments can map to file system paths, which is useful for file servers,
+but do not always need to imply this relationship. The library
+provides container adaptors modeling ranges of individual path segments.
+The URL below contains a path with three segments:
 
-In these use cases, segment views are more appropriate to
-access individual decoded path segments.
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_parsing_path_2]
-][
-[teletype]
-```
-    2 segments
-    segment: doc
-    segment: libs
-```
-]]]
-
-Note that a final slash in `/doc/libs/` would impliy an extra
-empty segment that would not exist in `/doc/libs`:
-
-[snippet_parsing_path_use_case_5]
+[snippet_parsing_path_0]
 
 These segment view containers are lightweight references to
-the underlying path  string. Ownership of the string is not
+the underlying path that map every path to a unique
+sequence of segments. Ownership of the string is not
 transferred; the caller is responsible for ensuring that the
 lifetime of the string extends until the container is destroyed.
 
 In contexts where a path can appear by itself, such as HTTP
-requests, segment views may be constructed directly from
+requests, segment views may also be constructed directly from
 strings.
 
-[table [[Code][Output]] [[
-[c++]
 [snippet_parsing_path_9]
-][
-[teletype]
-```
-    path: /doc/libs
-    2 segments
-    segment: doc
-    segment: libs
-```
-]]]
 
 The semantics of a path can be absolute or relative.
 An absolute path in a URL begins with `/`:
@@ -126,47 +68,20 @@ Empty segments are also possible, resulting in consecutive slashes.
 
 [snippet_parsing_path_use_case_6]
 
-These rules imply a path with the prefix `":"` or `"/"`
-could be in conflict with the scheme and authority
-of the URL, since they end with these characters.
+The grammar for URLs places some restrictions on where and
+how certain delimiters may appear in the first path segment,
+to prevent ambiguities between the scheme, host, and path.
+For example, a relative-ref containing a path which is not
+absolute, may not have a colon in the first segment.
 
-For instance, attempting to create a path with the
-prefix `//`, i.e. a path whose first segment is
-empty, could be interpreted as an empty authority:
-
-[snippet_modifying_path_4_5_6]
-
-Likewise, attempting to create a relative path
-whose first segment contains a `":"` could be
-interpreted as another scheme and a path:
-
-[snippet_modifying_path_7_8]
-
-A path might begin with two slashes to indicate its first segment is empty.
-
-[snippet_parsing_path_use_case_7]
-
-However, beginning the path with double slashes is not possible when the
-authority is absent, as the first segment path would be interpreted as the
-authority.
-
-[snippet_parsing_path_use_case_8]
-
-For this reason, paths beginning with two slashes are typically avoided
-altogether.
-
-Modifying functions will properly adjust paths with malleable null prefixes
-so that paths maintain their semantics without conflicting with the scheme
-or authority components:
+When the library detects that a modification to a URL would result
+in an ambiguous configuration, it adjusts the result to
+maintain the same semantics while avoiding the ambiguity:
 
 [snippet_modifying_path_9_10]
 
-Given relative or absolute path, note that all algorithms preserve the path
-semantics in lossless round-trip conversions between the URL path and their
-segment container representations. Modifying functions will also adjust path
-suffixes if a delimiter to the existing path segments would be missing:
-
-[snippet_modifying_path_11]
+This ensures the result is predictable when the user
+changes something the path or any segment.
 
 [/-----------------------------------------------------------------------------]
 
