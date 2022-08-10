@@ -62,6 +62,7 @@
 [def __std_string__             [@https://en.cppreference.com/w/cpp/string/basic_string `std::string`]]
 [def __std_tuple__              [@https://en.cppreference.com/w/cpp/utility/tuple `std::tuple`]]
 [def __std_get__                [@https://en.cppreference.com/w/cpp/utility/tuple/get `std::get`]]
+[def __std_string_view__        [@https://en.cppreference.com/w/cpp/string/basic_string_view `std::string_view`]]
 
 [def __absolute_uri_rule__      [link url.ref.boost__urls__absolute_uri_rule `absolute_uri_rule`]]
 [def __authority_rule__         [link url.ref.boost__urls__authority_rule `authority_rule`]]

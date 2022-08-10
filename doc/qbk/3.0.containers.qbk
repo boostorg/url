@@ -13,24 +13,30 @@ All URLs conform to the ['generic syntax]. Every URL is
 either ['hierarchical], or ['opaque], with the hierarchical
 URLs further distinguished by whether they are ['relative]
 or ['absolute]. Here are some examples of URLs and their
-identification in this taxonomy:
+identification:
 
 [teletype]
-[table Taxonomy [
+[table URL Examples [
     [URL]
-    [Description]
+    [Notes]
+][
+    [`https://www.boost.org/index.html`]
+    [Hierarchical URL with `https` protocol. Resource in the HTTP protocol.]
+][
+    [`ftp://host.dom/etc/motd`]
+    [Hierarchical URL with `ftp` scheme. Resource in the FTP protocol.]
 ][
     [`urn:isbn:045145052`]
-    [description]
+    [Opaque URL with `urn` scheme. Identifies `isbn` resource.]
 ][
-    [`isbn:045145052`]
-    []
+    [`mailto:person@example.com`]
+    [Opaque URL with `mailto` scheme. Identifies e-mail address.]
 ][
-    [`isbn`]
-    []
+    [`index.html`]
+    [URL reference. Missing scheme and host.]
 ][
-    [`045145052`]
-    []
+    [`www.boost.org`]
+    [A Protocol-Relative Link (PRL). Not a URL.]
 ]]
 
 This library provides the following containers, which

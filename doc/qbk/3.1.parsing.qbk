@@ -19,46 +19,42 @@ string literal containing a
 [c++]
 [snippet_parsing_url_1]
 
-The function returns a __result__ which holds an error code if
-the string is not a valid URL. Otherwise it holds a __url_view__.
-It is impossible to construct a `url_view` which refers to an
+The function returns a __result__ which holds a __url_view__
+if the string is a valid URL. Otherwise it holds an __error_code__.
+It is impossible to construct a __url_view__ which refers to an
 invalid URL.
 
 [warning
     The caller is responsible for ensuring that the lifetime
     of the character buffer extends until it is no longer
     referenced by the view. These are the same semantics
-    as that of `std::string_view`.
+    as that of __std_string_view__.
 ]
 
-When a view is constructed from a string it parses it
+When a view is directly constructed from a __string_view__ it parses it
 according to the
 [@https://datatracker.ietf.org/doc/html/rfc3986#section-4.1 ['URI-reference]]
 grammar, throwing an exception upon failure:
-```
-url_view u( "https://www.example.com/path/to/file.txt" );
-```
+
+[snippet_parsing_url_1b]
 
 The URL is stored in its serialized form. Therefore, it can
 always be easily output, sent, or embedded as part of a
 protocol:
-```
-std::cout << u;
-```
+
+[snippet_parsing_url_1bb]
 
 A __url__ is an allocating container which owns its character buffer.
 Upon construction from __url_view__, it allocates dynamic storage
 to hold a copy of the string.
 
-```
-result< url > rv = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+[snippet_parsing_url_1bc]
 
-static_assert( std::is_convertible< result< url_view >, result< url > >::value, "" );
-```
+A __static_url__ is a container which owns its character buffer for
+a URL whose maximum size is known. Upon construction from
+__url_view__, it does not perform any dynamic memory allocations.
 
-``
-static_url example
-``
+[snippet_parsing_url_1bd]
 
 [heading Result Type]
 
@@ -79,9 +75,6 @@ information please consult the full
 [@boost:/libs/system/doc/html/system.html#ref_resultt_e `result`]
 documentation in [@boost:/libs/system/doc/html/system.html Boost.System].
 
-
-
-
 [heading URL types]
 
 Parsing functions are functions which start with the word "parse",
@@ -91,54 +84,35 @@ For example, the function
 parses the grammar
 found in
 [@https://datatracker.ietf.org/doc/html/rfc3986#section-4.2 4.2.Relative Reference (rfc3986)].
-
-
-The library uses the convention that each function `parse_<component>`
-operates according to the particular grammar rule `<component>`
-specified in __rfc3986__. Thus, it provides `parse_uri` for the
-[@https://datatracker.ietf.org/doc/html/rfc3986#section-3 ['URI]]
-grammar rule defined in __rfc3986__. A URL string can also be parsed
-using one of the following functions:
+A URL string can also be parsed using one of the following functions:
 
 [table Parsing Functions [
     [Function]
     [Grammar]
-    [ABNF]
     [Example]
-    [Notes]
 ][
     [[link url.ref.boost__urls__parse_uri `parse_uri`]]
     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3 ['URI]]]
-    [[teletype]`scheme ":" hier-part [ "?" query ] [ "#" fragment ]`]
     [[teletype]`http://www.boost.org/index.html?field=value#downloads`]
-    [Supports fragment `#downloads`]
 ][
     [[link url.ref.boost__urls__parse_absolute_uri `parse_absolute_uri`]]
     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.3 ['absolute-URI]]]
-    [[teletype]`scheme ":" hier-part [ "?" query ]`]
-    [[teletype]`http://www.boost.org/index.html?field=value`]
-    [Does not support fragment]
+    [[teletype]`http://www.boost.org/index.html?field=value` (Does not support fragment)]
 ][
     [[link url.ref.boost__urls__parse_relative_ref `parse_relative_ref`]]
     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.2 ['relative-ref]]]
-    [[teletype]`relative-part [ "?" query ] [ "#" fragment ]`]
     [[teletype]`//www.boost.org/index.html?field=value#downloads`]
-    [Does not require scheme or authority]
 ][
     [[link url.ref.boost__urls__parse_uri_reference `parse_uri_reference`]]
     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.1 ['URI-reference]]]
-    [[teletype]`URI / relative-ref`]
-    [[teletype]`http://www.boost.org/index.html`]
-    [Any `URI` or `relative-ref`]
+    [[teletype]`http://www.boost.org/index.html` (Any `URI` or `relative-ref`)]
 ][
     [[link url.ref.boost__urls__parse_origin_form `parse_origin_form`]]
     [[@https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1 ['origin-form]]]
-    [[teletype]`1*( "/" segment ) [ "?" query ]`]
-    [[teletype]`/index.html?field=value`]
-    [Used in HTTP requests (__rfc7230__)]
+    [[teletype]`/index.html?field=value` (Used in HTTP requests (__rfc7230__))]
 ]]
 
-[link url.ref.boost__urls__parse_uri `parse_uri`] and
+The functions [link url.ref.boost__urls__parse_uri `parse_uri`] and
 [link url.ref.boost__urls__parse_absolute_uri `parse_absolute_uri`]
 are only valid if the URL contains the scheme component.
 On the other hand, relative URI references are not required to
@@ -151,11 +125,10 @@ These relative references can be combined with base absolute URLs:
 
 [snippet_parsing_url_1d]
 
-The
-[link Help Card]
-provides a visual summary of all of the member functions and types
-used by the library with URL containers. In the sections that
-follow we discuss each of the five major parts of the URL and
-how they may be inspected and modified.
+The [link url.helpcard Help Card] provides a visual summary
+of all of the member functions and types used by the library
+with URL containers. In the sections that follow we discuss
+each of the five major parts of the URL and how they may be
+inspected and modified.
 
 [endsect]

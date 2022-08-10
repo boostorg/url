@@ -60,6 +60,7 @@ using_url_views()
         string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
         url_view u = parse_uri( s ).value();
         assert(u.scheme() == "https");
+        assert(u.authority().string() == "user:pass@example.com:443");
         assert(u.userinfo() == "user:pass");
         assert(u.user() == "user");
         assert(u.password() == "pass");
@@ -76,21 +77,25 @@ using_url_views()
     for (auto seg: u.segments())
         std::cout << seg << "\n";
     std::cout << "\n";
+
     for (auto param: u.params())
         std::cout << param.key << ": " << param.value << "\n";
+    std::cout << "\n";
     //]
 
     {
         //[snippet_accessing_2a
         url_view u1 = parse_uri( "http://www.example.com" ).value();
-        std::cout << "fragment 1 : " << u1.fragment() << "\n\n";
+        assert(u1.fragment().empty());
+        assert(!u1.has_fragment());
         //]
     }
 
     {
         //[snippet_accessing_2b
         url_view u2 = parse_uri( "http://www.example.com/#" ).value();
-        std::cout << "fragment 2 : " << u2.fragment() << "\n\n";
+        assert(u2.fragment().empty());
+        assert(u2.has_fragment());
         //]
     }
 
@@ -275,24 +280,38 @@ void
 parsing_urls()
 {
     {
-        auto handle_my_url = [](url_view const& u)
-        {
-            boost::ignore_unused(u);
-        };
-
         //[snippet_parsing_url_1
         result< url_view > r = parse_uri( "https://www.example.com/path/to/file.txt" );
         //]
+        boost::ignore_unused(r);
+    }
+
+    {
         //[snippet_parsing_url_1b
-        if( r.has_value() )
-        {
-            url_view u = r.value();
-            assert(u.scheme() == "https");
-            assert(u.host() == "www.example.com");
-            assert(u.path() == "/path/to/file.txt");
-            handle_my_url(u);
-        }
+        url_view u( "https://www.example.com/path/to/file.txt" );
         //]
+
+        //[snippet_parsing_url_1bb
+        std::cout << u;
+        //]
+    }
+
+    {
+        //[snippet_parsing_url_1bc
+        result< url > rv = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+
+        static_assert( std::is_convertible< result< url_view >, result< url > >::value, "" );
+        //]
+        boost::ignore_unused(rv);
+    }
+
+    {
+        //[snippet_parsing_url_1bd
+        result< static_url<1024> > rv = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+
+        static_assert( std::is_convertible< result< static_url<1024> >, result< url > >::value, "" );
+        //]
+        boost::ignore_unused(rv);
     }
 
     {
@@ -427,28 +446,18 @@ parsing_scheme()
         //[snippet_parsing_scheme_1
         string_view s = "mailto:name@email.com";
         url_view u = parse_uri( s ).value();
-        std::cout << u.scheme() << "\n";
+        assert ( u.has_scheme() );
+        assert ( u.scheme() == "mailto" );
         //]
-    }
-    {
-        string_view s = "mailto:name@email.com";
-        //[snippet_parsing_scheme_2
-        url_view u = parse_uri( s ).value();
-        if (u.has_scheme())
-        {
-            std::cout << u.scheme() << "\n";
-        }
-        //]
+        boost::ignore_unused(u);
     }
     {
         //[snippet_parsing_scheme_3
         string_view s = "file://host/path/to/file";
         url_view u = parse_uri( s ).value();
-        if (u.scheme_id() == scheme::file)
-        {
-            // handle file
-        }
+        assert (u.scheme_id() == scheme::file);
         //]
+        boost::ignore_unused(u);
     }
 }
 

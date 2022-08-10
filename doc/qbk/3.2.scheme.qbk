@@ -13,94 +13,76 @@
 
 The scheme determines how the rest of
 the URL should be interpreted, and each scheme might have
-it's own rules, such as mandatory components and values.
-
-The scheme usually represents a protocol, such as HTTP
-or FTP:
+its own rules, such as mandatory components and values.
+For instance, the term web address is often used informally
+to describe URLs with the `http` scheme, whose semantics
+are defined by [@https://datatracker.ietf.org/doc/html/rfc2616#section-3.2.2 rfc3986].
 
 [snippet_components_2a]
 
+One of the conventions of the HTTP scheme is that when the port 80 is
+implicitly assumed when it is not provided. Such conventions are not
+part of the URL protocol.
+
+The scheme is the top-level component defining the semantics of
+the URL. It usually represents a protocol, such as HTTP
+or FTP. In these protocols, the path describes a resource
+and the host describes how to access it.
+
 [snippet_components_2b]
 
-In these protocols, the path describes a resource and
-the host describes how to access it.
+A scheme must start with a letter, and may contain only letters,
+digits, plus and minus signs, and periods. It is always followed
+by a colon when it appears in a URL.
 
-Other schemes use opaque URLs that only identify resources:
-
-[snippet_components_2c]
-
-[snippet_components_2d]
-
-[snippet_components_2e]
-
-The opaque URLs usually represent resources through the path.
-Magnet links have empty paths and use queries to describe
-the resource.
-
-[heading Notation]
-
-The scheme is the top-level hierarchical element which defines the
-syntax and semantics of the rest of the URL. The scheme identifier
-is always followed by a colon when it appears in a URL.
-
-Here are some examples of URLs with the schemes `https` and `file`:
+Schemes do not necessarily represent protocols. The `file`
+scheme is used to identify files from within one's own
+computer.
 
 [teletype]
-```
-    https://www.example.com/path/to/file.txt?page=2
-```
-
 ```
     file:///usr/local/bin/
 ```
 
-A scheme must start with a letter, and may contain only letters,
-digits, plus and minus signs, and periods:
+Other schemes use opaque paths that only identify resources.
+They usually represent resources through the path. The `mailto`
+scheme is used to represent email addresses with the path
+component. It is intented to produce hyperlinks that
+allow users to send an email to specific addresses:
 
-[table Scheme BNF [[
-[teletype]
-```
-    scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+[snippet_components_2c]
 
-    absolute-URI    = scheme ":" hier-part [ "?" query ]
+The `urn` scheme uses an opaque path to unique identifiers
+to a resource. A typical URN namespace is `isbn`, for
+International Standard Book Numbers. A book can be identified
+as:
 
-    URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-```
-]]]
+[snippet_components_2d]
 
-[heading Observers]
+Magnet links, which use the `magnet` scheme, identify files
+by their cryptographic hash value. They have empty paths
+and use queries to describe the resource. The scheme
+allows more fields related to the file, such as a
+display name, keywords, and file sources.
+
+[snippet_components_2e]
+
+A number of
+[@https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml official URL schemes]
+registered with the Internet Assigned Numbers Authority (IANA) have their
+own grammars.
 
 The function [link url.ref.boost__urls__url_view.scheme `scheme`] can
 be used to obtain the scheme from a __url_view__:
 
-[table [[Code][Output]] [[
-[c++]
 [snippet_parsing_scheme_1]
-][
-[teletype]
-```
-    mailto
-```
-]]]
 
 If the URL has no scheme, this function returns an empty string. To check whether
 a URL contains a scheme the function
 [link url.ref.boost__urls__url_view.has_scheme `url_view::has_scheme`] might be used.
 
-[table [[Code][Output]] [[
-[c++]
-[snippet_parsing_scheme_2]
-][
-[teletype]
-```
-    mailto
-```
-]]]
-
-[heading Common schemes]
-
-The library defines an enumeration of values for some well-known scheme
-identifiers.
+The library also defines an enumeration of values for some well-known scheme
+identifiers:
 
 [c++]
 [snippet_parsing_scheme_3]
@@ -110,12 +92,6 @@ These may be used instead of their corresponding strings:
 [table Scheme IDs [
     [ID]
     [Description]
-][
-    [[link url.ref.boost__urls__scheme `scheme::none`]]
-    [Indicates no scheme present]
-][
-    [[link url.ref.boost__urls__scheme `scheme::unknown`]]
-    [A valid but unknown scheme]
 ][
     [[link url.ref.boost__urls__scheme `scheme::ftp`]]
     [File Transfer Protocol ("FTP")]
@@ -136,130 +112,6 @@ These may be used instead of their corresponding strings:
     [Secure WebSocket Protocol]
 ]]
 
-
-[heading Use Cases]
-
-A number of schemes are used to define the semantics of URLs. For instance,
-the term web address is often used informally to describe URLs with the
-`http` scheme, whose semantics are defined by
-[@https://datatracker.ietf.org/doc/html/rfc2616#section-3.2.2 rfc3986].
-One of the conventions of the HTTP scheme is that when the port 80 is
-implicitly assumed when it is not provided. Such conventions are not
-part of the URL protocol.
-
-Schemes are also different from protocols. Although the scheme `http` is
-used to interact with resources via the HTTP protocol, the scheme `file`
-has no corresponding protocol.
-
-Some noteworthy IANA-registered schemes are
-
-[table Scheme IDs [
-    [Scheme]
-    [Resource]
-][
-    [[@https://tools.ietf.org/html/rfc2392 `cid`]]
-    [SMTP/MIME messages]
-][
-    [[@https://tools.ietf.org/html/rfc2397 `data`]]
-    [Inline data]
-][
-    [[@https://tools.ietf.org/html/rfc4918 `dav`]]
-    [WebDAV]
-][
-    [[@https://tools.ietf.org/html/rfc4501 `dns`]]
-    [Domain Name System]
-][
-    [[@https://tools.ietf.org/html/rfc8089 `file`]]
-    [File systems]
-][
-    [[@https://tools.ietf.org/html/rfc1738 `ftp`]]
-    [FTP resources]
-][
-    [[@https://www.iana.org/assignments/uri-schemes/prov/git `git`]]
-    [GIT repository]
-][
-    [[@https://tools.ietf.org/html/rfc7230 `http`]]
-    [HTTP resources]
-][
-    [[@https://tools.ietf.org/html/rfc7230 `https`]]
-    [HTTP secured using SSL/TLS]
-][
-    [[@https://tools.ietf.org/html/rfc6068 `mailto`]]
-    [SMTP email addresses]
-][
-    [[@https://www.bittorrent.org/beps/bep_0009.html `magnet`]]
-    [Identify files by content]
-][
-    [[@https://tools.ietf.org/html/rfc2224 `nfs`]]
-    [Network File System]
-][
-    [[@https://tools.ietf.org/html/rfc2384 `pop`]]
-    [POP3]
-][
-    [[@https://docs.aws.amazon.com/cli/latest/reference/s3/ `s3`]]
-    [Amazon S3]
-][
-    [[@https://tools.ietf.org/html/rfc5724 `sms`]]
-    [SMS messages]
-][
-    [[@https://www.iana.org/assignments/uri-schemes/prov/svn `svn`]]
-    [Subversion (SVN) repository]
-][
-    [[@https://tools.ietf.org/html/rfc2806 `tel`]]
-    [Telephone number]
-][
-    [[@https://www.iana.org/assignments/uri-schemes/prov/udp `udp`]]
-    [Streaming protocols over UDP]
-][
-    [[@https://tools.ietf.org/html/rfc2141 `urn`]]
-    [Uniform Resource Names]
-][
-    [[@https://tools.ietf.org/html/rfc6455 `ws`]]
-    [WebSocket Protocol]
-][
-    [[@https://tools.ietf.org/html/rfc6455 `wss`]]
-    [Secure WebSocket Protocol]
-]]
-
-Many other valid but unofficial schemes are common:
-
-[table Scheme IDs [
-    [Scheme]
-    [Resource]
-][
-    [[@http://tools.ietf.org/html/draft-paskin-doi-uri `doi`]]
-    [Digital Object Identifier]
-][
-    [[@https://datatracker.ietf.org/doc/html/draft-hoehrmann-javascript-scheme `javascript`]]
-    [Javascript Code]
-][
-    [[@https://datatracker.ietf.org/doc/html/draft-patrick-lambert-odbc-uri-scheme `odbc`]]
-    [Open Database Connectivity]
-][
-    [[@https://api.slack.com/reference/deep-linking `slack`]]
-    [Slack Client]
-]]
-
-[/-----------------------------------------------------------------------------]
-
-[heading Member Functions]
-
-The functions for inspecting the scheme in a __url_view__ are as follows:
-
-[table Scheme Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.has_scheme `has_scheme`]]
-    [Return true if a scheme is present]
-][
-    [[link url.ref.boost__urls__url_view.scheme `scheme`]]
-    [Return the scheme as a string]
-][
-    [[link url.ref.boost__urls__url_view.scheme_id `scheme_id`]]
-    [Return the scheme as a known-scheme enumeration constant]
-]]
-
 [note
     None of these functions throw exceptions. If the URL has no scheme,
     [link url.ref.boost__urls__url_view.scheme `scheme`] returns an empty
@@ -268,22 +120,6 @@ The functions for inspecting the scheme in a __url_view__ are as follows:
     but unknown scheme, the value [link url.ref.boost__urls__scheme `scheme::unknown`]
     is returned.
 ]
-
-The functions for modifying the scheme in a __url__ are as follows:
-
-[table Scheme Modifiers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url.set_scheme `set_scheme`]]
-    [Set the scheme]
-][
-    [[link url.ref.boost__urls__url.remove_scheme `remove_scheme`]]
-    [Set the scheme]
-][
-    [[link url.ref.boost__urls__url.normalize_scheme `normalize_scheme`]]
-    [Set the scheme]
-]]
 
 [note
     Since schemes may contain only letters, digits, plus signs, minus signs, and periods,
