@@ -18,6 +18,8 @@ It divides into three subcomponents:
 * The `port` number preceded by a colon, which can be left out.
 * An optional `userinfo` with a username and password. The password can be omitted.
 
+[$url/images/AuthorityDiagram.svg]
+
 The function [link url.ref.boost__urls__url_view.authority `authority`] can
 be used to obtain the __authority_view__ from a __url_view__:
 
