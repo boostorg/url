@@ -662,59 +662,57 @@ void
 parsing_path()
 {
     {
+        //[snippet_parsing_path_0
+        url_view u = parse_uri("http://www.example.com/path/to/file.txt").value();
+        assert(u.path() == "/path/to/file.txt");
+        //]
+    }
+    {
         //[snippet_parsing_path_1
-        string_view s = "https://www.boost.org/doc/libs/";
-        url_view    u = parse_uri(s).value();
-        std::cout << u << "\n"
-            << "path:             " << u.path()             << "\n"
-            << "path:             " << u.encoded_path()     << "\n"
-            << "segments:         " << u.segments()         << "\n"
-            << "encoded_segments: " << u.encoded_segments() << "\n";
+        url_view u = parse_uri("https://www.boost.org/doc/the%20libs/").value();
+        assert(u.path() == "/doc/the libs/");
+        assert(u.encoded_path() == "/doc/the%20libs/");
         //]
 
         //[snippet_parsing_path_1_b
         std::cout << u.encoded_segments().size() << " segments\n";
         for (auto seg: u.encoded_segments())
-        {
             std::cout << "segment: " << seg << "\n";
-        }
         //]
     }
-
     {
         //[snippet_parsing_path_2
-        string_view s = "https://www.boost.org/doc/libs";
-        url_view u = parse_uri(s).value();
+        url_view u = parse_uri("https://www.boost.org/doc/libs").value();
         std::cout << u.segments().size() << " segments\n";
         for (auto seg: u.segments())
-        {
             std::cout << "segment: " << seg << "\n";
-        }
         //]
     }
-
     {
         //[snippet_parsing_path_3
-        string_view s = "https://www.boost.org";
-        url_view    u = parse_uri(s).value();
-        std::cout << u << "\n"
-            << "path:             " << u.encoded_path()     << "\n";
+        url_view    u = parse_uri("https://www.boost.org").value();
+        assert(u.path().empty());
+        assert(u.encoded_path().empty());
+        //]
+    }
+    {
+        //[snippet_parsing_path_3a
+        url_view u = parse_uri("urn:isbn:096139210x").value();
+        assert(u.path() == "isbn:096139210x");
         //]
     }
 
     {
         //[snippet_parsing_path_4
         string_view s = "https://www.boost.org//doc///libs";
-        url_view    u = parse_uri(s).value();
+        url_view u = parse_uri(s).value();
         std::cout << u << "\n"
                   "path:             " << u.encoded_path()     << "\n"
                   "encoded segments: " << u.encoded_segments() << "\n"
                   "segments:         " << u.segments()         << "\n";
         std::cout << u.encoded_segments().size() << " segments\n";
         for (auto seg: u.encoded_segments())
-        {
             std::cout << "segment: " << seg << "\n";
-        }
         //]
     }
 
@@ -722,7 +720,7 @@ parsing_path()
         {
             //[snippet_parsing_path_5_a
             string_view s = "https://www.boost.org";
-            url_view    u = parse_uri(s).value();
+            url_view u = parse_uri(s).value();
             std::cout << u << "\n"
                       << "path:     " << u.encoded_host()            << "\n"
                       << "path:     " << u.encoded_path()            << "\n"
@@ -732,7 +730,7 @@ parsing_path()
         {
             //[snippet_parsing_path_5_b
             string_view s = "https://www.boost.org/";
-            url_view    u = parse_uri(s).value();
+            url_view u = parse_uri(s).value();
             std::cout << u << "\n"
                       << "host:     " << u.encoded_host()            << "\n"
                       << "path:     " << u.encoded_path()            << "\n"
@@ -742,7 +740,7 @@ parsing_path()
         {
             //[snippet_parsing_path_5_c
             string_view s = "https://www.boost.org//";
-            url_view    u = parse_uri(s).value();
+            url_view u = parse_uri(s).value();
             std::cout << u << "\n"
                       << "host:     " << u.encoded_host()            << "\n"
                       << "path:     " << u.encoded_path()            << "\n"
@@ -754,58 +752,124 @@ parsing_path()
     {
         //[snippet_parsing_path_6
         string_view s = "https://www.boost.org//doc/libs/";
-        url_view    u = parse_uri(s).value();
+        url_view u = parse_uri(s).value();
         std::cout << u << "\n"
                   "authority: " << u.encoded_authority() << "\n"
                   "path:      " << u.encoded_path()      << "\n";
         std::cout << u.encoded_segments().size() << " segments\n";
         for (auto seg: u.encoded_segments())
-        {
             std::cout << "segment: " << seg << "\n";
-        }
         //]
     }
 
     {
         //[snippet_parsing_path_7
         string_view s = "https://doc/libs/";
-        url_view    u = parse_uri(s).value();
+        url_view u = parse_uri(s).value();
         std::cout << u << "\n"
                   "authority: " << u.encoded_authority() << "\n"
                   "path:      " << u.encoded_path()      << "\n";
         std::cout << u.encoded_segments().size() << " segments\n";
         for (auto seg: u.encoded_segments())
-        {
             std::cout << "segment: " << seg << "\n";
-        }
         //]
     }
 
     {
         //[snippet_parsing_path_8
         string_view s = "https://www.boost.org/doc@folder/libs:boost";
-        url_view    u = parse_uri(s).value();
+        url_view u = parse_uri(s).value();
         std::cout << u << "\n"
                   "authority: " << u.encoded_authority() << "\n"
                   "path:      " << u.encoded_path()      << "\n";
         std::cout << u.encoded_segments().size() << " segments\n";
         for (auto seg: u.encoded_segments())
-        {
             std::cout << "segment: " << seg << "\n";
-        }
         //]
     }
 
     {
         //[snippet_parsing_path_9
-        string_view s = "/doc/libs";
-        segments_view p = parse_path(s).value();
+        segments_view p = parse_path("/doc/libs").value();
         std::cout << "path: " << p << "\n";
         std::cout << p.size() << " segments\n";
         for (auto seg: p)
-        {
             std::cout << "segment: " << seg << "\n";
-        }
+        //]
+    }
+
+    {
+        //[snippet_parsing_path_use_case_1
+        url_view u = parse_uri("https://www.boost.org/doc/libs/").value();
+        assert(u.host() == "www.boost.org");
+        assert(u.path() == "/doc/libs/");
+        //]
+    }
+    {
+        //[snippet_parsing_path_use_case_2
+        result<url_view> r1 = parse_uri("https://www.boost.org");
+        assert(r1.has_value());
+
+        result<url_view> r2 = parse_uri("https://www.boost.org/");
+        assert(r2.has_value());
+
+        result<url_view> r3 = parse_uri("https://www.boost.org//");
+        assert(r3.has_value());
+        //]
+    }
+    {
+        //[snippet_parsing_path_use_case_3
+        url_view u = parse_uri("https://www.boost.org").value();
+        assert(u.path().empty());
+        //]
+    }
+    {
+        //[snippet_parsing_path_use_case_4
+        url_view u = parse_uri("https://www.boost.org/doc@folder/libs:boost").value();
+        assert(u.path() == "/doc@folder/libs:boost");
+        //]
+    }
+    {
+        //[snippet_parsing_path_use_case_5
+        url_view u = parse_uri("https://www.boost.org/doc/libs/").value();
+        segments_view segs = u.segments();
+        auto it = segs.begin();
+        assert(*it++ == "doc");
+        assert(*it++ == "libs");
+        assert(*it == "");
+        //]
+    }
+    {
+        //[snippet_parsing_path_use_case_6
+        url_view u = parse_uri("https://www.boost.org//doc///libs").value();
+        segments_view segs = u.segments();
+        auto it = segs.begin();
+        assert(*it++ == "");
+        assert(*it++ == "doc");
+        assert(*it++ == "");
+        assert(*it++ == "");
+        assert(*it == "libs");
+        //]
+    }
+    {
+        //[snippet_parsing_path_use_case_7
+        url_view u = parse_uri("https://www.boost.org//doc/libs/").value();
+        segments_view segs = u.segments();
+        auto it = segs.begin();
+        assert(*it++ == "");
+        assert(*it++ == "doc");
+        assert(*it++ == "libs");
+        assert(*it == "");
+        //]
+    }
+    {
+        //[snippet_parsing_path_use_case_8
+        url_view u = parse_uri("https://doc/libs/").value();
+        assert(u.host() == "doc");
+        segments_view segs = u.segments();
+        auto it = segs.begin();
+        assert(*it++ == "libs");
+        assert(*it == "");
         //]
     }
 }
@@ -1146,11 +1210,11 @@ modifying_path()
     {
         //[snippet_modifying_path_1
         url_view u = parse_uri("https://www.boost.org").value();
+
         //]
         BOOST_TEST_NOT(u.is_path_absolute());
         BOOST_TEST_EQ(u.encoded_segments().size(), 0u);
     }
-
     {
         //[snippet_modifying_path_2
         url_view u = parse_uri("https://www.boost.org/").value();
@@ -1158,11 +1222,28 @@ modifying_path()
         BOOST_TEST(u.is_path_absolute());
         BOOST_TEST_EQ(u.encoded_segments().size(), 0u);
     }
+    {
+        //[snippet_modifying_path_1_2
+        // Empty relative path
+        url_view u1 = parse_uri("https://www.boost.org").value();
+        assert(u1.path().empty());
+        assert(u1.segments().empty());
+        assert(!u1.is_path_absolute());
+
+        // Empty absolute path
+        url_view u2 = parse_uri("https://www.boost.org/").value();
+        assert(u2.path().empty());
+        assert(u2.segments().empty());
+        assert(u2.is_path_absolute());
+        //]
+    }
 
     {
         //[snippet_modifying_path_3
         url u = parse_uri("https://www.boost.org/./a/../b").value();
         u.normalize();
+        assert(u.string() == "https://www.boost.org/b");
+        assert(u.segments().size() == 1);
         //]
         BOOST_TEST(u.is_path_absolute());
         BOOST_TEST_EQ(u.string(), "https://www.boost.org/b");
@@ -1203,6 +1284,29 @@ modifying_path()
     }
 
     {
+        //[snippet_modifying_path_4_5_6
+        // scheme and a relative path
+        url_view u1 = parse_uri("https:path/to/file.txt").value();
+        assert(!u1.has_authority());
+        assert(!u1.is_path_absolute());
+        assert(u1.path() == "path/to/file.txt");
+
+        // scheme and an absolute path
+        url_view u2 = parse_uri("https:/path/to/file.txt").value();
+        assert(!u2.has_authority());
+        assert(u2.is_path_absolute());
+        assert(u2.path() == "/path/to/file.txt");
+
+        // "//path" will be considered the authority component
+        url_view u3 = parse_uri("https://path/to/file.txt").value();
+        assert(u3.has_authority());
+        assert(u3.authority().string() == "path");
+        assert(u3.is_path_absolute());
+        assert(u3.path() == "/to/file.txt");
+        //]
+    }
+
+    {
         //[snippet_modifying_path_7
         // only a relative path
         url_view u = parse_uri_reference("path-to/file.txt").value();
@@ -1223,6 +1327,21 @@ modifying_path()
         BOOST_TEST_NOT(u.has_authority());
         BOOST_TEST_NOT(u.is_path_absolute());
         BOOST_TEST_EQ(u.encoded_segments().size(), 2u);
+    }
+
+    {
+        //[snippet_modifying_path_7_8
+        // only a relative path
+        url_view u1 = parse_uri_reference("path-to/file.txt").value();
+        assert(!u1.has_scheme());
+        assert(u1.path() == "path-to/file.txt");
+
+        // "path:" will be considered the scheme component
+        // instead of a substring of the first segment
+        url_view u2 = parse_uri_reference("path:to/file.txt").value();
+        assert(u2.has_scheme());
+        assert(u2.path() == "to/file.txt");
+        //]
     }
 
     {
@@ -1248,13 +1367,28 @@ modifying_path()
         BOOST_TEST_NOT(u.is_path_absolute());
         BOOST_TEST_EQ(u.encoded_segments().size(), 2u);
     }
+    {
+        //[snippet_modifying_path_9_10
+        // "path" should not become the authority
+        url u1 = parse_uri("https:path/to/file.txt").value();
+        u1.set_encoded_path("//path/to/file.txt");
+        // "." segment makes it possible
+        assert(u1.string() == "https:/.//path/to/file.txt");
 
+        // "path:to" should not make the scheme become "path:"
+        url u2 = parse_uri_reference("path-to/file.txt").value();
+        u2.set_encoded_path("path:to/file.txt");
+        // "." segment makes it possible
+        assert(u2.string() == "./path:to/file.txt");
+        //]
+    }
     {
         //[snippet_modifying_path_11
         // should not insert as "pathto/file.txt"
         url u = parse_uri_reference("to/file.txt").value();
         segments segs = u.segments();
         segs.insert(segs.begin(), "path");
+        assert(u.string() == "path/to/file.txt");
         //]
         BOOST_TEST_NOT(u.has_scheme());
         BOOST_TEST_NOT(u.has_authority());
