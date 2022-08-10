@@ -391,8 +391,7 @@ parsing_components()
 
     {
         //[snippet_components_2a
-        string_view s = "https://www.ietf.org/rfc/rfc2396.txt";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://www.ietf.org/rfc/rfc2396.txt" ).value();
         assert(u.scheme() == "https");
         assert(u.host() == "www.ietf.org");
         assert(u.path() == "/rfc/rfc2396.txt");
@@ -401,8 +400,7 @@ parsing_components()
 
     {
         //[snippet_components_2b
-        string_view s = "ftp://ftp.is.co.za/rfc/rfc1808.txt";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "ftp://ftp.is.co.za/rfc/rfc1808.txt" ).value();
         assert(u.scheme() == "ftp");
         assert(u.host() == "ftp.is.co.za");
         assert(u.path() == "/rfc/rfc1808.txt");
@@ -411,8 +409,7 @@ parsing_components()
 
     {
         //[snippet_components_2c
-        string_view s = "mailto:John.Doe@example.com";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "mailto:John.Doe@example.com" ).value();
         assert(u.scheme() == "mailto");
         assert(u.path() == "John.Doe@example.com");
         //]
@@ -420,8 +417,7 @@ parsing_components()
 
     {
         //[snippet_components_2d
-        string_view s = "urn:isbn:096139210x";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "urn:isbn:096139210x" ).value();
         assert(u.scheme() == "urn");
         assert(u.path() == "isbn:096139210x");
         //]
@@ -429,8 +425,7 @@ parsing_components()
 
     {
         //[snippet_components_2e
-        string_view s = "magnet:?xt=urn:btih:d2474e86c95b19b8bcfdb92bc12c9d44667cfa36";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "magnet:?xt=urn:btih:d2474e86c95b19b8bcfdb92bc12c9d44667cfa36" ).value();
         assert(u.scheme() == "magnet");
         assert(u.path() == "");
         assert(u.query() == "xt=urn:btih:d2474e86c95b19b8bcfdb92bc12c9d44667cfa36");
@@ -466,8 +461,7 @@ parsing_authority()
 {
     {
         //[snippet_parsing_authority_1
-        string_view s = "https:///path/to_resource";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https:///path/to_resource" ).value();
         assert( u.authority().string() == "");
         assert( u.has_authority() );
         assert( u.path() == "/path/to_resource" );
@@ -485,8 +479,7 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_3a
-        string_view s = "https://www.boost.org/users/download/";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://www.boost.org/users/download/" ).value();
         assert(u.has_authority());
         authority_view a = u.authority();
         //]
@@ -496,8 +489,7 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_4
-        string_view s = "https://www.boost.org/";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://www.boost.org/" ).value();
         std::cout << "scheme:        " << u.scheme()            << "\n"
                      "has authority: " << u.has_authority()     << "\n"
                      "authority:     " << u.authority()         << "\n"
@@ -506,8 +498,7 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_5
-        string_view s = "mailto:John.Doe@example.com";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "mailto:John.Doe@example.com" ).value();
         std::cout << "scheme:        " << u.scheme()            << "\n"
                      "has authority: " << u.has_authority()     << "\n"
                      "authority:     " << u.authority()         << "\n"
@@ -516,8 +507,7 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_6
-        string_view s = "mailto://John.Doe@example.com";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "mailto://John.Doe@example.com" ).value();
         std::cout << u << "\n"
             "scheme:        " << u.scheme()   << "\n"
             "has authority: " << u.has_authority()     << "\n"
@@ -527,8 +517,7 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_7
-        string_view s = "https://john.doe@www.example.com:123/forum/questions/";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://john.doe@www.example.com:123/forum/questions/" ).value();
         std::cout << "scheme:        " << u.scheme()   << "\n"
             "has authority: " << u.has_authority()     << "\n"
             "authority:     " << u.authority()         << "\n"
@@ -540,24 +529,21 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_8
-        string_view s = "https://john.doe@www.example.com:123/forum/questions/";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://john.doe@www.example.com:123/forum/questions/" ).value();
         assert(u.host() == "www.example.com");
         assert(u.port() == "123");
         //]
     }
     {
         //[snippet_parsing_authority_9
-        string_view s = "https://john.doe@192.168.2.1:123/forum/questions/";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://john.doe@192.168.2.1:123/forum/questions/" ).value();
         assert(u.host() == "192.168.2.1");
         assert(u.port() == "123");
         //]
     }
     {
         //[snippet_parsing_authority_9b
-        string_view s = "https://www.example.com";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://www.example.com" ).value();
         assert(u.host() == "www.example.com");
         assert(u.host() == u.encoded_host());
         //]
@@ -577,8 +563,7 @@ parsing_authority()
         } write_request;
 
         //[snippet_parsing_authority_10
-        string_view s = "https://www.boost.org/users/download/";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://www.boost.org/users/download/" ).value();
         switch (u.host_type())
         {
         case host_type::name:
@@ -597,8 +582,7 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_10a
-        string_view s = "https:///path/to_resource";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https:///path/to_resource" ).value();
         assert( u.has_authority() );
         assert( u.authority().string().empty() );
         assert( u.path() == "/path/to_resource" );
@@ -606,56 +590,49 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_10b
-        string_view s = "https://www.boost.org";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://www.boost.org" ).value();
         assert( u.host() == "www.boost.org" );
         assert( u.path().empty() );
         //]
     }
     {
         //[snippet_parsing_authority_10c
-        string_view s = "https://www.boost.org/users/download/";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://www.boost.org/users/download/" ).value();
         assert( u.host() == "www.boost.org" );
         assert( u.path() == "/users/download/" );
         //]
     }
     {
         //[snippet_parsing_authority_10d
-        string_view s = "https://www.boost.org/";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://www.boost.org/" ).value();
         assert( u.host() == "www.boost.org" );
         assert( u.path() == "/" );
         //]
     }
     {
         //[snippet_parsing_authority_10e
-        string_view s = "mailto:John.Doe@example.com";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "mailto:John.Doe@example.com" ).value();
         assert( !u.has_authority() );
         assert( u.path() == "John.Doe@example.com" );
         //]
     }
     {
         //[snippet_parsing_authority_10f
-        string_view s = "mailto://John.Doe@example.com";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "mailto://John.Doe@example.com" ).value();
         assert( u.authority().string() == "John.Doe@example.com" );
         assert( u.path().empty() );
         //]
     }
     {
         //[snippet_parsing_authority_11a
-        string_view s = "https://john.doe@www.example.com:123/forum/questions/";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://john.doe@www.example.com:123/forum/questions/" ).value();
         assert(u.userinfo() == "john.doe");
         assert(u.port() == "123");
         //]
     }
     {
         //[snippet_parsing_authority_11b
-        string_view s = "https://john.doe:123456@www.somehost.com/forum/questions/";
-        url_view u = parse_uri( s ).value();
+        url_view u = parse_uri( "https://john.doe:123456@www.somehost.com/forum/questions/" ).value();
         assert(u.userinfo() == "john:doe");
         assert(u.user() == "john");
         assert(u.password() == "doe");
@@ -663,8 +640,7 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_12
-        string_view s = "www.example.com:80";
-        authority_view a = parse_authority( s ).value();
+        authority_view a = parse_authority( "www.example.com:80" ).value();
         assert(!a.has_userinfo());
         assert(a.host() == "www.example.com");
         assert(a.port() == "80");
@@ -672,8 +648,7 @@ parsing_authority()
     }
     {
         //[snippet_parsing_authority_13
-        string_view s = "user:pass@www.example.com:443";
-        authority_view a = parse_authority( s ).value();
+        authority_view a = parse_authority( "user:pass@www.example.com:443" ).value();
         assert(a.userinfo() == "user:pass");
         assert(a.user() == "user");
         assert(a.password() == "pass");

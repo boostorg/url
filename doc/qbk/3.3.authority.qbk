@@ -14,9 +14,9 @@
 The authority determines how a resource can be accessed.
 It divides into three subcomponents:
 
-* The `host` subcomponent of the authority can be a registered name or an IP address.
-* The optional `port` number subcomponent preceded by a colon ":"
-* The optional `userinfo` subcomponent with a username and an optional password
+* The mandatory `host` can be a registered name or an IP address.
+* The `port` number preceded by a colon, which can be left out.
+* An optional `userinfo` with a username and password. The password can be omitted.
 
 The function [link url.ref.boost__urls__url_view.authority `authority`] can
 be used to obtain the __authority_view__ from a __url_view__:

@@ -11,14 +11,27 @@
 
 [section Scheme]
 
-The scheme determines how the rest of
+Every URL has a scheme that determines how the rest of
 the URL should be interpreted, and each scheme might have
 its own rules, such as mandatory components and values.
 For instance, the term web address is often used informally
-to describe URLs with the `http` scheme, whose semantics
-are defined by [@https://datatracker.ietf.org/doc/html/rfc2616#section-3.2.2 rfc3986].
+to describe URLs with the `https` scheme, whose semantics
+are defined by
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.1 rfc7230].
 
 [snippet_components_2a]
+
+In relative URL references, the scheme is implied by the context.
+For instance, HTTP GET request identify resources through relative
+references:
+
+[teletype]
+```
+    GET /pub/WWW/TheProject.html HTTP/1.1
+```
+
+The scheme is implied as `http` or `https`, according to the
+protocol being used.
 
 One of the conventions of the HTTP scheme is that when the port 80 is
 implicitly assumed when it is not provided. Such conventions are not
