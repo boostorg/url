@@ -468,11 +468,9 @@ parsing_authority()
         //[snippet_parsing_authority_1
         string_view s = "https:///path/to_resource";
         url_view u = parse_uri( s ).value();
-        std::cout << u << "\n"
-            "scheme:        " << u.scheme()        << "\n"
-            "has authority: " << u.has_authority() << "\n"
-            "authority:     " << u.authority()     << "\n"
-            "path:          " << u.encoded_path()  << "\n";
+        assert( u.authority().string() == "");
+        assert( u.has_authority() );
+        assert( u.path() == "/path/to_resource" );
         //]
     }
     {
@@ -486,14 +484,14 @@ parsing_authority()
         //]
     }
     {
-        //[snippet_parsing_authority_3
+        //[snippet_parsing_authority_3a
         string_view s = "https://www.boost.org/users/download/";
         url_view u = parse_uri( s ).value();
-        std::cout << u << "\n"
-            "scheme:        " << u.scheme()        << "\n"
-            "has authority: " << u.has_authority() << "\n"
-            "authority:     " << u.authority()     << "\n"
-            "path:          " << u.path()          << "\n";
+        assert(u.has_authority());
+        authority_view a = u.authority();
+        //]
+        //[snippet_parsing_authority_3b
+        assert(a.host() == "www.boost.org");
         //]
     }
     {
@@ -544,94 +542,143 @@ parsing_authority()
         //[snippet_parsing_authority_8
         string_view s = "https://john.doe@www.example.com:123/forum/questions/";
         url_view u = parse_uri( s ).value();
-        std::cout << u << "\n"
-            "host:          " << u.host()                  << "\n"
-            "host and port: " << u.encoded_host_and_port() << "\n"
-            "port:          " << u.port()                  << "\n"
-            "port number:   " << u.port_number()           << "\n";
+        assert(u.host() == "www.example.com");
+        assert(u.port() == "123");
         //]
     }
     {
         //[snippet_parsing_authority_9
         string_view s = "https://john.doe@192.168.2.1:123/forum/questions/";
         url_view u = parse_uri( s ).value();
-        std::cout << u << "\n"
-            "host:          " << u.host()                  << "\n"
-            "host and port: " << u.encoded_host_and_port() << "\n"
-            "port:          " << u.port()                  << "\n"
-            "port number:   " << u.port_number()           << "\n";
+        assert(u.host() == "192.168.2.1");
+        assert(u.port() == "123");
         //]
     }
     {
+        //[snippet_parsing_authority_9b
+        string_view s = "https://www.example.com";
+        url_view u = parse_uri( s ).value();
+        assert(u.host() == "www.example.com");
+        assert(u.host() == u.encoded_host());
+        //]
+    }
+    {
+        struct resolve_f {
+            pct_encoded_view
+            operator()(pct_encoded_view h)
+            {
+                return h;
+            }
+        } resolve;
+        struct write_request_f {
+            void operator()(pct_encoded_view) {}
+            void operator()(ipv4_address) {}
+            void operator()(ipv6_address) {}
+        } write_request;
+
         //[snippet_parsing_authority_10
         string_view s = "https://www.boost.org/users/download/";
         url_view u = parse_uri( s ).value();
         switch (u.host_type())
         {
         case host_type::name:
-            // resolve name
-        case host_type::ipv4:
-        case host_type::ipv6:
-        case host_type::ipvfuture:
-            // connect to ip
+            write_request(resolve(u.host()));
             break;
-        case host_type::none:
-            // handle empty host URL
+        case host_type::ipv4:
+            write_request(u.ipv4_address());
+            break;
+        case host_type::ipv6:
+            write_request(u.ipv6_address());
+            break;
+        default:
             break;
         }
         //]
     }
     {
-        //[snippet_parsing_authority_11
-        string_view s = "https://john.doe:123456@www.somehost.com/forum/questions/";
+        //[snippet_parsing_authority_10a
+        string_view s = "https:///path/to_resource";
         url_view u = parse_uri( s ).value();
-        std::cout << u << "\n\n"
-            "has_userinfo:     " << u.has_userinfo()     << "\n"
-            "userinfo:         " << u.userinfo()         << "\n"
-            "user:             " << u.user()             << "\n\n"
-            "has_password:     " << u.has_password()     << "\n"
-            "password:         " << u.password()         << "\n";
+        assert( u.has_authority() );
+        assert( u.authority().string().empty() );
+        assert( u.path() == "/path/to_resource" );
         //]
     }
     {
-        std::cout << "snippet_parsing_authority_12\n";
+        //[snippet_parsing_authority_10b
+        string_view s = "https://www.boost.org";
+        url_view u = parse_uri( s ).value();
+        assert( u.host() == "www.boost.org" );
+        assert( u.path().empty() );
+        //]
+    }
+    {
+        //[snippet_parsing_authority_10c
+        string_view s = "https://www.boost.org/users/download/";
+        url_view u = parse_uri( s ).value();
+        assert( u.host() == "www.boost.org" );
+        assert( u.path() == "/users/download/" );
+        //]
+    }
+    {
+        //[snippet_parsing_authority_10d
+        string_view s = "https://www.boost.org/";
+        url_view u = parse_uri( s ).value();
+        assert( u.host() == "www.boost.org" );
+        assert( u.path() == "/" );
+        //]
+    }
+    {
+        //[snippet_parsing_authority_10e
+        string_view s = "mailto:John.Doe@example.com";
+        url_view u = parse_uri( s ).value();
+        assert( !u.has_authority() );
+        assert( u.path() == "John.Doe@example.com" );
+        //]
+    }
+    {
+        //[snippet_parsing_authority_10f
+        string_view s = "mailto://John.Doe@example.com";
+        url_view u = parse_uri( s ).value();
+        assert( u.authority().string() == "John.Doe@example.com" );
+        assert( u.path().empty() );
+        //]
+    }
+    {
+        //[snippet_parsing_authority_11a
+        string_view s = "https://john.doe@www.example.com:123/forum/questions/";
+        url_view u = parse_uri( s ).value();
+        assert(u.userinfo() == "john.doe");
+        assert(u.port() == "123");
+        //]
+    }
+    {
+        //[snippet_parsing_authority_11b
+        string_view s = "https://john.doe:123456@www.somehost.com/forum/questions/";
+        url_view u = parse_uri( s ).value();
+        assert(u.userinfo() == "john:doe");
+        assert(u.user() == "john");
+        assert(u.password() == "doe");
+        //]
+    }
+    {
         //[snippet_parsing_authority_12
         string_view s = "www.example.com:80";
         authority_view a = parse_authority( s ).value();
-        std::cout << a << "\n\n"
-            // host and port
-            "host_and_port:         " << a.encoded_host_and_port() << "\n"
-            "host:                  " << a.host()         << "\n"
-            "port:                  " << a.port()         << "\n"
-            "port number:           " << a.port_number()  << "\n\n"
-            // userinfo
-            "has_userinfo:          " << a.has_userinfo() << "\n"
-            "userinfo:              " << a.userinfo()     << "\n"
-            // user
-            "user:                  " << a.user()         << "\n\n"
-            // password
-            "has_password:          " << a.has_password() << "\n"
-            "password:              " << a.password()     << "\n";
+        assert(!a.has_userinfo());
+        assert(a.host() == "www.example.com");
+        assert(a.port() == "80");
         //]
     }
     {
         //[snippet_parsing_authority_13
         string_view s = "user:pass@www.example.com:443";
         authority_view a = parse_authority( s ).value();
-        std::cout << a << "\n\n"
-            // host and port
-            "host_and_port:         " << a.encoded_host_and_port() << "\n"
-            "host:                  " << a.host()         << "\n"
-            "port:                  " << a.port()         << "\n"
-            "port number:           " << a.port_number()  << "\n\n"
-            // userinfo
-            "has_userinfo:          " << a.has_userinfo()     << "\n"
-            "userinfo:              " << a.userinfo()         << "\n\n"
-            // user
-            "user:                  " << a.user()             << "\n\n"
-            // password
-            "has_password:          " << a.has_password()     << "\n"
-            "password:              " << a.password()         << "\n";
+        assert(a.userinfo() == "user:pass");
+        assert(a.user() == "user");
+        assert(a.password() == "pass");
+        assert(a.host() == "www.example.com");
+        assert(a.port() == "443");
         //]
     }
 }

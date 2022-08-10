@@ -79,7 +79,7 @@ public:
         invalidated.
     */
     BOOST_URL_DECL
-    ~url();
+    virtual ~url();
 
     /** Constructor
 

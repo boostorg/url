@@ -20,8 +20,8 @@ path-constant out : . ;
 docca.reference reference.qbk
     :
         xsl/custom-overrides.xsl
-# [ glob-tree-ex ../include/boost/url : *.hpp *.ipp : detail impl ]
-        ../include/boost/url/grammar/parse.hpp
+        [ glob-tree-ex ../include/boost/url : *.hpp *.ipp : detail impl ]
+        #../include/boost/url/grammar/parse.hpp
     :
         <doxygen:param>PROJECT_NAME=URL
         <doxygen:param>PROJECT_BRIEF="URL Library"

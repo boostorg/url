@@ -11,153 +11,86 @@
 
 [section Authority]
 
-[heading Notation]
-
-The authority is a hierarchical element which names an entity governing
-the namespace defined by the remainder of the URL. It divides into
-three subcomponents:
-
-[teletype]
-```
-    authority = [userinfo "@"] host [":" port]
-```
+The authority determines how a resource can be accessed.
+It divides into three subcomponents:
 
 * The `host` subcomponent of the authority can be a registered name or an IP address.
-* The optional `port` number subcomponent is preceded by a colon ":"
-* The optional `userinfo` subcomponent consists of a username and an optional password
-
-In a URL, the authority component is always preceded by a double slash ("//").
-
-[table Authority BNF [
-    [
-    [teletype]
-    ```
-    authority       = [ userinfo "@" ] host [ ":" port ]
-
-    userinfo        = user [ ":" [ password ] ]
-
-    host            = IP-literal / IPv4address / reg-name
-
-    port            = *DIGIT
-
-    user            = *( unreserved / pct-encoded / sub-delims )
-    password        = *( unreserved / pct-encoded / sub-delims / ":" )
-
-    IP-literal      = "[" ( IPv6address / IPvFuture  ) "]"
-
-    reg-name        = *( unreserved / pct-encoded / "-" / ".")
-    ```
-    ]
-]]
-
-[heading Observers]
+* The optional `port` number subcomponent preceded by a colon ":"
+* The optional `userinfo` subcomponent with a username and an optional password
 
 The function [link url.ref.boost__urls__url_view.authority `authority`] can
-be used to obtain the authority from a __url_view__:
+be used to obtain the __authority_view__ from a __url_view__:
 
-[table [[Code][Output]] [[
-[c++]
-[snippet_parsing_authority_3]
-][
-[teletype]
-```
-    https://www.boost.org/users/download/
-    scheme:        https
-    has authority: 1
-    authority:     www.boost.org
-    path:          /users/download/
-```
-]]]
+[snippet_parsing_authority_3a]
+
+Notice that [link url.ref.boost__urls__url_view.authority `authority`]
+does not return a __pct_encoded_view__. The reason is any decoded character
+`/` could make it ambiguous with the path component. The authority
+is represented through an __authority_view__, a read-only container
+to a non-owning character buffer containing a valid authority.
+
+An __authority_view__ has functions for obtaining its subcomponents:
+
+[snippet_parsing_authority_3b]
 
 These functions do not throw. If the URL has no authority,
 [link url.ref.boost__urls__url_view.authority `authority`]
 returns an empty __authority_view__.
+The function
+[link url.ref.boost__urls__url_view.has_authority `has_authority`]
+can be used to check whether this empty authority means
+there is no authority or an empty authority in the URL.
 
-The function [link url.ref.boost__urls__url_view.has_authority `has_authority`]
-can be used to check whether this empty authority means there is no authority
-or an empty authority in the URL.
+In contexts where an authority can appear by itself, an __authority_view__
+can be constructed directly from a string.
+For instance, the grammar for the
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1 ['request-target]]
+of an `HTTP/1 CONNECT` request uses
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.3 ['authority-form]].
+This is what such a request looks like:
 
-[table [[Code][Output]] [[
-[c++]
-[snippet_parsing_authority_1]
-][
 [teletype]
 ```
-    https:///path/to_resource
-    scheme:        https
-    has authority: 1
-    authority:
-    path:          /path/to_resource
+     CONNECT www.example.com:80 HTTP/1.1
 ```
-]]
-[[
-[c++]
-[snippet_parsing_authority_6]
-][
-[teletype]
-```
-    mailto://John.Doe@example.com
-    scheme:        mailto
-    has authority: 1
-    authority:     John.Doe@example.com
-    path:
-```
-]]]
 
-Notice that the decoded counterpart of
-[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]
-does not return a __pct_encoded_view__. The reason is any decoded character
-`/` could make it ambiguous with the path component so the authority
-is represented through an __authority_view__.
+In that case, we have an authority that cannot be parsed directly
+with __parse_uri__ as a URL. Instead, we can use the analogous function
+[link url.ref.boost__urls__parse_authority `parse_authority`] to
+obtain an __authority_view__.
+
+[snippet_parsing_authority_12]
+
+The authority view provides the subset of observer member functions found in
+__url_view__ which are relevant to the authority. However, when an authority
+is parsed on its own, the leading double slashes ("//") are not present.
+
+Authority string with `userinfo` are also valid for
+[link url.ref.boost__urls__parse_authority `parse_authority`]:
+
+[snippet_parsing_authority_13]
 
 [heading Host]
 
 The host subcomponent represents where resources
 are located. The functions
 [link url.ref.boost__urls__url_view.host `host`]
-and [link url.ref.boost__urls__url_view.encoded_host `encoded_host`]
-can be used to obtain the host from a __url_view__, while
-[link url.ref.boost__urls__url_view.encoded_host_and_port `encoded_host_and_port`]
-allows us to directly obtain the host with the corresponding port number.
+and [link url.ref.boost__urls__url_view.port `port`]
+can be used to obtain the host from a __url_view__
+or __authority_view__:
 
 The host might be a registered name
 
-[table [[Code][Output]] [[
-[c++]
 [snippet_parsing_authority_8]
-][
-[teletype]
-```
-    https://john.doe@www.example.com:123/forum/questions/
-    encoded host:  www.example.com
-    host:          www.example.com
-    host and port: www.example.com:123
-    port:          123
-    port number:   123
-```
-]]]
 
 or an IP address
 
-[table [[Code][Output]] [[
-[c++]
 [snippet_parsing_authority_9]
-][
-[teletype]
-```
-    https://john.doe@192.168.2.1:123/forum/questions/
-    encoded host:  192.168.2.1
-    host:          192.168.2.1
-    host and port: 192.168.2.1:123
-    port:          123
-    port number:   123
-```
-]]]
 
 Although this is not mandatory, note that the encoded host is rarely
 different from its encoded counterpart.
-The function [link url.ref.boost__urls__url_view.port_number `port_number`]
-returns the decoded port as an integer.
+
+[snippet_parsing_authority_9b]
 
 Registered names usually need to be handled differently from IP addresses.
 The function
@@ -173,36 +106,61 @@ matches an IP address, the functions
 [link url.ref.boost__urls__url_view.ipv6_address `ipv6_address`]
 can be used to obtain the decoded addresses as integers.
 
+Note that if an authority is present, the host is always
+defined even if it is the empty string (corresponding
+to a zero-length ['reg-name] in the BNF).
+
+[snippet_parsing_authority_10a]
+
+The authority component also influences how we should
+interpret the URL path. If the authority is present,
+the path component must either be empty or begin with
+a slash. This is a common pattern where the path is
+empty:
+
+[snippet_parsing_authority_10b]
+
+When both the authority and path exist, the path
+must begin with a slash:
+
+[snippet_parsing_authority_10c]
+
+This rule also affects the path "`/`":
+
+[snippet_parsing_authority_10d]
+
+When there is no authority component, the path
+cannot begin with an empty segment. This means
+the path cannot begin with two slashes `//` to
+avoid these characters being interpreted as the
+beginning of the authority component. For
+instance, consider the following valid URL:
+
+[snippet_parsing_authority_10d]
+
+Note that including a double slash would make the
+path be interpreted as the authority:
+
+[snippet_parsing_authority_10f]
+
 [heading Userinfo]
 
-The optional `userinfo` subcomponent consists of a user name and
-an optional password. The function
-[link url.ref.boost__urls__url_view.encoded_userinfo `encoded_userinfo`]
-can be used to retrieve the userinfo from a __url_view__. Analogous
-functions are provided for the userinfo subcomponents.
+In complete authority components, we can also extract
+the `userinfo` and `port` subcomponents.
 
-[table [[Code][Output]] [[
-[c++]
-[snippet_parsing_authority_11]
-][
-[teletype]
-```
-    https://john.doe:123456@www.somehost.com/forum/questions/
+[snippet_parsing_authority_11a]
 
-    has_userinfo:     1
-    userinfo:         john.doe:123456
-    user:             john.doe
+When not treated as an opaque field, the optional
+`userinfo` subcomponent consists of a user name
+and an optional password. Analogous functions are
+provided for the userinfo subcomponents.
 
-    has_password:     1
-    password:         123456
-```
-]]]
+[snippet_parsing_authority_11b]
 
 Analogous to other observers, the functions
 [link url.ref.boost__urls__url_view.has_userinfo `has_userinfo`] and
 [link url.ref.boost__urls__url_view.has_password `has_password`] are provided
 to differentiate empty components from absent components.
-
 Note that there is no function `has_user`. The user component is available
 whenever `userinfo` exists.
 
@@ -212,369 +170,5 @@ the password component should be used with care.
 It is not recommended to transfer password data through URLs
 unless this is an empty string indicating no password.]
 
-[heading Authority View]
-
-In contexts where an authority can appear by itself, the library provides the
-__authority_view__, a read-only container to a non-owning character buffer
-containing a valid authority.
-
-As an example, the grammar for the
-[@https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1 ['request-target]]
-of an HTTP/1 CONNECT request uses
-[@https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.3 ['authority-form]].
-This is what such a request looks like:
-
-[teletype]
-```
-     CONNECT www.example.com:80 HTTP/1.1
-```
-
-In that case, we have an authority that cannot be parsed directly
-with __parse_uri__ as a URL. Instead, we can use the analogous function
-[link url.ref.boost__urls__parse_authority `parse_authority`] to
-obtain an __authority_view__.
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_parsing_authority_12]
-][
-[teletype]
-```
-    www.example.com:80
-
-    host_and_port:         www.example.com:80
-    host:                  www.example.com
-    port:                  80
-    port number:           80
-
-    has_userinfo:          0
-    userinfo:
-    user:
-
-    has_password:          0
-    password:
-```
-]]]
-
-The authority view provides the subset of observer member functions found in
-__url_view__ which are relevant to the authority. However, when an authority
-is parsed on its own, the leading double slashes ("//") are not present.
-
-The following authority string is also valid for
-[link url.ref.boost__urls__parse_authority `parse_authority`]:
-
-[teletype]
-```
-    user:pass@www.example.com:443
-```
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_parsing_authority_13]
-][
-[teletype]
-```
-    user:pass@www.example.com:443
-
-    encoded_host_and_port: www.example.com:443
-    host:                  www.example.com
-    port:                  443
-    port number:           443
-
-    has_userinfo:          1
-    userinfo:              user:pass
-
-    user:                  user
-
-    has_password:          1
-    password:              pass
-```
-]]]
-
-
-[heading Use Cases]
-
-Note that if an authority is present, the host is always defined even if it
-is the empty string (corresponding to a zero-length ['reg-name] in the BNF).
-
-[teletype]
-```
-  https:///path/to_resource
-  \____/\/\_______________/
-    |   |          |
-scheme authority  path
-```
-
-[table
-    [[Component]     [Value]                       ]
-    [[URL]           [`https:///path/to_resource`] ]
-    [[Scheme]        [`https`]                     ]
-    [[Has authority] [Yes]                         ]
-    [[Authority]     []                            ]
-    [[Path]          [`/path/to_resource`]         ]
-]
-
-The authority component also influences how we should interpret the URL path.
-If the authority is present, the path component must either be empty or begin
-with a slash.
-
-This is a common pattern where the path is empty:
-
-[teletype]
-```
-    https://www.boost.org
-    \___/   \___________/
-    scheme    authority    (path is empty)
-```
-
-[table
-    [[Component]     [Value]                       ]
-    [[URL]           [`https://www.boost.org`]     ]
-    [[Scheme]        [`https`]                     ]
-    [[Has authority] [Yes]                         ]
-    [[Authority]     [`www.boost.org`]             ]
-    [[Path]          []                            ]
-]
-
-When both the authority and path exist, the path needs to begin with a slash:
-
-[teletype]
-```
-    https://www.boost.org/users/download/
-    \___/   \___________/\______________/
-    scheme    authority        path (begins with a slash)
-```
-
-[table
-    [[Component]     [Value]                                   ]
-    [[URL]           [`https://www.boost.org/users/download/`] ]
-    [[Scheme]        [`https`]                                 ]
-    [[Has authority] [Yes]                                     ]
-    [[Authority]     [`www.boost.org`]                         ]
-    [[Path]          [`/users/download/`]                      ]
-]
-
-This rule also affects the path "`/`":
-
-[teletype]
-```
-    https://www.boost.org/
-    \___/   \___________/\/
-    scheme    authority  path (begins with a slash)
-```
-
-[table
-    [[Component]     [Value]                                   ]
-    [[URL]           [`https://www.boost.org/`]                ]
-    [[Scheme]        [`https`]                                 ]
-    [[Has authority] [Yes]                                     ]
-    [[Authority]     [`www.boost.org`]                         ]
-    [[Path]          [`/`]                                     ]
-]
-
-When there is no authority component, the path cannot begin with an empty
-segment. This means the path cannot begin with two slashes `//` to avoid these
-characters being interpreted as the beginning of the authority component.
-
-For instance, consider the following valid URL:
-
-[teletype]
-```
-  mailto:John.Doe@example.com
-  \____/ \__________________/
-  scheme          path
-```
-
-[table
-    [[Component]     [Value]                                   ]
-    [[URL]           [`mailto:John.Doe@example.com`]           ]
-    [[Scheme]        [`mailto`]                                ]
-    [[Has authority] [No]                                      ]
-    [[Authority]     []                                        ]
-    [[Path]          [`John.Doe@example.com`]                  ]
-]
-
-Note how including a double slash would make the path be interpreted as the authority:
-
-[teletype]
-```
-  mailto://John.Doe@example.com
-  \____/ \____________________/
-  scheme       authority
-```
-
-[table
-    [[Component]     [Value]                                   ]
-    [[URL]           [`mailto://John.Doe@example.com`]         ]
-    [[Scheme]        [`mailto`]                                ]
-    [[Has authority] [Yes]                                     ]
-    [[Authority]     [`John.Doe@example.com`]                  ]
-    [[Path]          []                                        ]
-]
-
-In complete authority components, we can also extract the `userinfo` and `port` subcomponents.
-
-[teletype]
-```
-          userinfo       host      port
-          /------\ /-------------\ /-\
-  https://john.doe@www.example.com:123/forum/questions/
-  \___/   \__________________________/\_______________/
-  scheme          authority                  path
-```
-
-[table
-    [[Component]     [Value]                                                   ]
-    [[URL]           [`https://john.doe@www.example.com:123/forum/questions/`] ]
-    [[Scheme]        [`https`]                                                 ]
-    [[Has authority] [Yes]                                                     ]
-    [[Authority]     [`john.doe@www.example.com:123`]                          ]
-    [[Host]          [`www.example.com`]                                       ]
-    [[Userinfo]      [`john.doe`]                                              ]
-    [[Port]          [`123`]                                                   ]
-    [[Path]          [`/forum/questions/`]                                     ]
-]
-
-[heading Member Functions]
-
-The functions for inspecting all or part of the authority in a
-__url_view__ are as follows:
-
-[table Userinfo Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.has_password `has_password`]]
-    [Return true if an password is present.]
-][
-    [[link url.ref.boost__urls__url_view.has_userinfo `has_userinfo`]]
-    [Return true if a userinfo is present.]
-][
-    [[link url.ref.boost__urls__url_view.encoded_password `encoded_password`]]
-    [Return the password as a percent-encoded string.]
-][
-    [[link url.ref.boost__urls__url_view.encoded_user `encoded_user`]]
-    [Return the user as a percent-encoded string.]
-][
-    [[link url.ref.boost__urls__url_view.encoded_userinfo `encoded_userinfo`]]
-    [Return the userinfo as a percent-encoded string.]
-][
-    [[link url.ref.boost__urls__url_view.password `password`]]
-    [Return the password as a string with percent-decoding applied.]
-][
-    [[link url.ref.boost__urls__url_view.user `user`]]
-    [Return the user as a string with percent-decoding applied.]
-][
-    [[link url.ref.boost__urls__url_view.userinfo `userinfo`]]
-    [Return the userinfo as a string with percent-decoding applied.]
-]]
-
-
-[table Host Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.encoded_host `encoded_host`]]
-    [Return the host as a percent-encoded string.]
-][
-    [[link url.ref.boost__urls__url_view.encoded_host_and_port `encoded_host_and_port`]]
-    [Return the host and port as a percent-encoded string.]
-][
-    [[link url.ref.boost__urls__url_view.has_port `has_port`]]
-    [Return true if an port is present.]
-][
-    [[link url.ref.boost__urls__url_view.host `host`]]
-    [Return the type of host specified, if any.]
-][
-    [[link url.ref.boost__urls__url_view.ipv4_address `ipv4_address`]]
-    [Return the IPv4 address of the host, if applicable.]
-][
-    [[link url.ref.boost__urls__url_view.ipv6_address `ipv6_address`]]
-    [Return the IPv6 address of the host, if applicable.]
-][
-    [[link url.ref.boost__urls__url_view.ipvfuture `ipvfuture`]]
-    [Return the IPvFuture address of the host, if applicable.]
-][
-    [[link url.ref.boost__urls__url_view.port `port`]]
-    [Return the port string of the host, if applicable.]
-][
-    [[link url.ref.boost__urls__url_view.port_number `port_number`]]
-    [Return the port number of the host, if applicable.]
-]]
-
-[table Authority Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.has_authority `has_authority`]]
-    [Return true if an authority is present.]
-][
-    [[link url.ref.boost__urls__url_view.encoded_authority `encoded_authority`]]
-    [Return the authority as a percent-encoded string.]
-]]
-
-The functions for modifying all or part of the authority in a
-__url__ are as follows:
-
-[table Userinfo Modifiers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url.set_userinfo `set_userinfo`]]
-    [Set the userinfo.]
-][
-    [[link url.ref.boost__urls__url.set_encoded_userinfo `set_encoded_userinfo`]]
-    [Set the encoded userinfo.]
-][
-    [[link url.ref.boost__urls__url.remove_userinfo `remove_userinfo`]]
-    [Remove the userinfo.]
-][
-    [[link url.ref.boost__urls__url.set_user `set_user`]]
-    [Set the user.]
-][
-    [[link url.ref.boost__urls__url.set_encoded_user `set_encoded_user`]]
-    [Set the encoded user.]
-][
-    [[link url.ref.boost__urls__url.set_password `set_password`]]
-    [Set the password.]
-][
-    [[link url.ref.boost__urls__url.set_encoded_password `set_encoded_password`]]
-    [Set the encoded password.]
-][
-    [[link url.ref.boost__urls__url.remove_password `remove_password`]]
-    [Remove the password.]
-]]
-
-
-[table Host Modifiers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url.set_host `set_host`]]
-    [Set the host.]
-][
-    [[link url.ref.boost__urls__url.set_encoded_host `set_encoded_host`]]
-    [Set the encoded host.]
-][
-    [[link url.ref.boost__urls__url.set_port `set_port`]]
-    [Set the port.]
-][
-    [[link url.ref.boost__urls__url.remove_port `remove_port`]]
-    [Remove the port.]
-]]
-
-[table Authority Modifiers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url.set_encoded_authority `set_encoded_authority`]]
-    [Set the encoded authority.]
-][
-    [[link url.ref.boost__urls__url.remove_authority `remove_authority`]]
-    [Remove the authority.]
-][
-    [[link url.ref.boost__urls__url.normalize_authority `normalize_authority`]]
-    [Normalize the authority.]
-]]
 
 [endsect]
