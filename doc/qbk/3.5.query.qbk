@@ -12,177 +12,65 @@
 [#section.query]
 [section:query Query]
 
-Opaque...
-Parameters...
+The URL query augments the information in the path to identify a resource
+within the scope of the scheme and authority. Unlike the URL path, the
+query string always contains non-hierarchical data.
 
-
-[heading Notation]
-
-The query component of a URL augments the information in the path to identify
-a resource within the scope of the URL's scheme and authority. Unlike the URL
-path, the query string contains non-hierarchical data.
-
-Although there is no mandatory syntax for interpreting queries, its strings
-are often interpreted as key-value parameters delimited by the '&' or ';'
-character. In addition to interacting with the query as a single string,
-the library provides container adaptors modeling ranges of individual query
-parameters.
+Although the field is opaque and there is no mandatory syntax for
+interpreting queries, its strings are usually interpreted as key-value
+parameters delimited by the '&' or ';' character. In contexts where a
+query is interpreted as key/value pairs, it is called the
+['query parameters], ['query params], or just [*params].
+In addition to interacting with the query as a single string, the
+library provides container adaptors modeling ranges of individual
+query parameters.
 
 The URL below contains the query "[teletype]`?id=409&name=Joe&individual`"
 with the three parameters "[teletype]`id=409`", "[teletype]`name=Joe`", and
 "[teletype]`individual`":
 
-[teletype]
-```
-    https://www.example.com/get-customer.php?id=409&name=Joe&individual
-```
+[snippet_parsing_query_0]
 
-A query is indicated by a leading question mark ('?') character as seen in
-the BNF below:
-
-[table Query BNF [[
-```
-    query           = *( pchar / "/" / "?" )
-
-    absolute-URI    = scheme ":" hier-part [ "?" query ]
-
-    relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
-
-    URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-    URI-reference   = URI / relative-ref
-```
-]]]
-
-This table shows the BNF for a query string interpreted as parameters:
-
-[table Query Params BNF [[
-```
-    query-params    = query-param *( "&" query-param )
-
-    query-param     = key [ "=" value ]
-
-    key             = *qpchar
-    value           = *( qpchar / "=" )
-
-    qpchar          = unreserved
-                    / pct-encoded
-                    / "!" / "$" / "'" / "(" / ")"
-                    / "*" / "+" / "," / ";"
-                    / ":" / "@" / "/" / "?"
-```
-]]]
-
-[heading Observers]
-
-The function [link url.ref.boost__urls__url_view.query `query`] and
-[link url.ref.boost__urls__url_view.encoded_query `encoded_query`] can
-be used to obtain the query string from a __url_view__:
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_parsing_query_4]
-][
-[teletype]
-```
-    https://www.example.com/get-customer.php?name=joe
-    encoded query: name=joe
-```
-]]]
-
-These functions do not throw. If the URL has no query,
-[link url.ref.boost__urls__url_view.query `query`] and
-[link url.ref.boost__urls__url_view.encoded_query `encoded_query`]
-return an empty string. The function
+If the URL has no query, [link url.ref.boost__urls__url_view.query `query`]
+returns an empty string. The function
 [link url.ref.boost__urls__url_view.has_query `has_query`]
 can be used to determine whether this empty string means there is
 no query or an empty query string in the URL.
 
-[table [[Code][Output]] [[
-[c++]
 [snippet_parsing_query_5]
-][
-[teletype]
-```
-    https://www.example.com/get-customer.php
-    has query:     0
-    encoded query:
-```
-]]]
 
 When using the query string as parameters, note that decoded
 query strings might include ambiguous `&` and `=` characters.
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_parsing_query_7]
-][
-[teletype]
-```
-    https://www.example.com/get-customer.php?name=John%26Doe
-    has query:     1
-    encoded query: name=John%26Doe
-    query:         name=John&Doe
-```
-]]]
-
-In this example, the decoded query seems to imply there are
+In the following example, the decoded query implies there are
 two query parameters while there is only one parameter whose
-value includes a `&` character. In this case, the decoded
+value includes a `&` character.
+
+[snippet_parsing_query_7]
+
+The reason the decoded variant of a query is still allowed is
+because protocols are also allowed to interpret queries as
+opaque strings, in which case the `&` character is not ambiguous.
+
+When the query string represents parameters, the decoded
 parameters can be accessed safely through a parameter view.
 
-The reason the decoded variant of query string is still allowed
-is because query strings are not required to be interpreted as
-query parameters, in which case the `&` character is not ambiguous.
-
-[heading Parameter View]
+[snippet_parsing_query_1]
 
 Parameter views are lightweight references to the underlying path string.
-Ownership of the string is not transferred; the caller is responsible for
-ensuring that the lifetime of the string extends until the container is
-destroyed.
-
-[table [[Code][Output]] [[
-[c++]
-[snippet_parsing_query_1]
-][
-[teletype]
-```
-    https://www.example.com/get-customer.php?id=409&name=Joe&individual
-    has query:     1
-    query:         id=409&name=Joe&individual
-    3 parameters
-    parameter: <id, 409>
-    parameter: <name, Joe>
-    parameter: individual
-```
-]]]
-
 Each parameter is represented as a structure with fields to refer to the
 key and value. An extra field `has_value` is used to indicate whether
 the value is absent.
 
-[heading Use Cases]
+[snippet_parsing_query_1a]
 
-The most common formulation for the query in a URL is to define a set of
-key and value pairs of percent-encoded strings, using the ampersand ('&')
-character to delimit each pair after the first. In contexts where a query
-is interpreted as key/value pairs, it is called the ['query parameters],
-['query params], or just [*params].
+[warning
+    Ownership of the string is not transferred; the caller is responsible for
+    ensuring that the lifetime of the string extends until the container is
+    destroyed.
+]
 
 In addition to accessor functions which treat the query as a single string,
 the library provides container adaptors modeling ranges of query parameters.
-The following URL contains three query parameters:
-
-[table
-    [[Component]     [Value]                                                                  ]
-    [[URL]           [`https://www.example.com/get-customer.php?id=409&name=Joe&individual`]  ]
-    [[Has Query]     [Yes]                                                                    ]
-    [[Query]         [`id=409&name=Joe&individual`]                                           ]
-    [[Parameter 1]   [Key `id`, Value `409`]                                                  ]
-    [[Parameter 2]   [Key `name`, Value `Joe`]                                                ]
-    [[Parameter 3]   [Key `individual`, No value]                                             ]
-]
 
 Note that a parameter value might be either empty or absent. The
 presence of a value is indicated by the presence of an equals ('=')
@@ -194,122 +82,34 @@ a query parameter may be completely empty. In this case the
 parameter is said to have a zero-length or empty key, and
 no value.
 
-The URL below demonstrate all the ways that keys and values may
+The URL below demonstrates all the ways that keys and values may
 appear in query parameters:
 
-[table
-    [[Component]     [Value]                                                                            ]
-    [[URL]           [`https://www.example.com/get-customer.php?key-1=value-1&key-2=&key-3&&=value-5`]  ]
-    [[Has Query]     [Yes]                                                                              ]
-    [[Query]         [`key-1=value-1&key-2=&key-3&&=value-5`]                                           ]
-    [[Parameter 1]   [Key `key-1`, Value `value-1`]                                                     ]
-    [[Parameter 2]   [Key `key-2`, Value (empty)]                                                       ]
-    [[Parameter 3]   [Key `key-3`, No value]                                                            ]
-    [[Parameter 4]   [Key (empty), No value]                                                            ]
-    [[Parameter 5]   [Key (empty), Value `value-5`]                                                     ]
+[snippet_parsing_query_8]
+
+1) The regular key and value pair:
+
+[snippet_parsing_query_8a]
+
+2) A key with an empty value:
+
+[snippet_parsing_query_8b]
+
+3) A key with no value:
+
+[snippet_parsing_query_8c]
+
+4) A key with no value:
+
+[snippet_parsing_query_8d]
+
+[note
+    The URL reserved characters `:`, `@`, `?`, and `/` may appear
+    unencoded with URL queries, as they are not ambiguous with
+    other URL components.
+
+    [snippet_parsing_query_9]
 ]
-
-The URL reserved characters `:`, `@`, `?`, and `/` may appear
-unencoded with URL queries, as they are not ambiguous with
-other URL components.
-
-[table
-    [[Component]     [Value]                                                                            ]
-    [[URL]           [`https://www.example.com/get-customer.php?email=joe@email.com&code=a:2@/!`]       ]
-    [[Has Query]     [Yes]                                                                              ]
-    [[Query]         [`email=joe@email.com&code=a:2@/!`]                                                ]
-    [[Parameter 1]   [Key `email`, Value `joe@email.com`]                                               ]
-    [[Parameter 2]   [Key `code`, Value `a:2@/!`]                                                       ]
-]
-
-[heading Member Functions]
-
-The functions for interacting with the query in a __url_view__ are as follows:
-
-[table Query Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.has_query `has_query`]]
-    [Return true if a query is present]
-][
-    [[link url.ref.boost__urls__url_view.query `query`]]
-    [Return the query as a string with percent-decoding applied.]
-][
-    [[link url.ref.boost__urls__url_view.encoded_query `encoded_query`]]
-    [Return the percent-encoded query.]
-]]
-
-A URL query is usually interpreted as parameters. A __url_view__
-provides two observers and read-only containers for interacting
-with the parameters in a URL's query:
-
-[table Query Params Observers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url_view.encoded_params `encoded_params`]]
-    [Return the query parameters as a read-only container of percent-encoded strings.]
-][
-    [[link url.ref.boost__urls__url_view.params `params`]]
-    [Return the query parameters as a read-only container of strings with percent-decoding applied.]
-]]
-
-[table Params View Types [
-    [Type]
-    [Description]
-][
-    [[link url.ref.boost__urls__params_view `params_view`]]
-    [A read-only forward range of query parameters returned as strings with percent-decoding applied.]
-][
-    [[link url.ref.boost__urls__params_encoded_view `params_encoded_view`]]
-    [A read-only forward range of query parameters returned as percent-encoded strings.]
-]]
-
-The functions for modifying the query in a __url__ are as follows:
-
-[table Query Modifiers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url.set_query `set_query`]]
-    [Set query]
-][
-    [[link url.ref.boost__urls__url.set_encoded_query `set_encoded_query`]]
-    [Set encoded query]
-][
-    [[link url.ref.boost__urls__url.remove_query `remove_query`]]
-    [Remove query]
-][
-    [[link url.ref.boost__urls__url.normalize_query `normalize_query`]]
-    [Normalize query]
-]]
-
-A URL query is usually interpreted as parameters. A __url__
-provides two modifiable containers for interacting with the parameters
-in a URL's query:
-
-[table Query Params Modifiers [
-    [Function]
-    [Description]
-][
-    [[link url.ref.boost__urls__url.params `params`]]
-    [Return the query parameters as a modifiable container of strings with percent-decoding applied.]
-][
-    [[link url.ref.boost__urls__url.encoded_params `encoded_params`]]
-    [Return the query parameters as a modifiable container of percent-encoded strings.]
-]]
-
-[table Params View Types [
-    [Type]
-    [Description]
-][
-    [[link url.ref.boost__urls__params `params`]]
-    [A modifiable forward range of query parameters returned as strings with percent-decoding applied.]
-][
-    [[link url.ref.boost__urls__params_encoded `params_encoded`]]
-    [A modifiable forward range of query parameters returned as percent-encoded strings.]
-]]
 
 [/-----------------------------------------------------------------------------]
 

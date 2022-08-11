@@ -83,8 +83,7 @@ You can parse the string by calling this function:
 
 The function __parse_uri__ returns an object of type `__result__<__url_view__>`
 which is a container resembling a variant that holds either an error or an object.
-A number of [link section.url_view functions] are available to parse different
-types of URL.
+A number of functions are available to parse different types of URL.
 
 We can immediately call `result::value` to obtain a __url_view__.
 

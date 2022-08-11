@@ -662,6 +662,7 @@ parsing_path()
         assert( *it++ == "to" );
         assert( *it   == "file.txt" );
         //]
+        boost::ignore_unused(it);
     }
     {
         //[snippet_parsing_path_1
@@ -783,6 +784,7 @@ parsing_path()
         segments_view segs = parse_path("/doc/libs").value();
         assert( segs.size() == 2 );
         //]
+        boost::ignore_unused(segs);
     }
 
     {
@@ -791,6 +793,7 @@ parsing_path()
         assert(u.host() == "www.boost.org");
         assert(u.path() == "/doc/libs/");
         //]
+        boost::ignore_unused(u);
     }
     {
         //[snippet_parsing_path_use_case_2
@@ -809,6 +812,7 @@ parsing_path()
         url_view u("https://www.boost.org/doc@folder/libs:boost");
         assert(u.path() == "/doc@folder/libs:boost");
         //]
+        boost::ignore_unused(u);
     }
     {
         //[snippet_parsing_path_use_case_5
@@ -819,6 +823,7 @@ parsing_path()
         assert(*it++ == "libs");
         assert(*it == "");
         //]
+        boost::ignore_unused(it);
     }
     {
         //[snippet_parsing_path_use_case_6
@@ -831,6 +836,7 @@ parsing_path()
         assert(*it++ == "");
         assert(*it == "libs");
         //]
+        boost::ignore_unused(it);
     }
     {
         //[snippet_parsing_path_use_case_7
@@ -842,6 +848,7 @@ parsing_path()
         assert(*it++ == "libs");
         assert(*it == "");
         //]
+        boost::ignore_unused(it);
     }
     {
         //[snippet_parsing_path_use_case_8
@@ -852,6 +859,7 @@ parsing_path()
         assert(*it++ == "libs");
         assert(*it == "");
         //]
+        boost::ignore_unused(it);
     }
 }
 
@@ -859,25 +867,29 @@ void
 parsing_query()
 {
     {
+        //[snippet_parsing_query_0
+        url_view u("https://www.example.com/get-customer.php?id=409&name=Joe&individual");
+        assert( u.query() == "id=409&name=Joe&individual" );
+        //]
+    }
+    {
         //[snippet_parsing_query_1
         url_view u("https://www.example.com/get-customer.php?id=409&name=Joe&individual");
-        std::cout << u << "\n"
-                  "has query:     " << u.has_query()     << "\n"
-                  "query:         " << u.query()         << "\n";
-        std::cout << u.params().size() << " parameters\n";
-
-        for (auto p: u.params())
-        {
-            if (p.has_value)
-            {
-                std::cout <<
-                    "parameter: <" << p.key <<
-                    ", " << p.value << ">\n";
-            } else {
-                std::cout << "parameter: " << p.key << "\n";
-            }
-        }
+        params_view ps = u.params();
+        assert(ps.size() == 3);
         //]
+        //[snippet_parsing_query_1a
+        auto it = ps.begin();
+        assert((*it).key == "id");
+        assert((*it).value == "409");
+        ++it;
+        assert((*it).key == "name");
+        assert((*it).value == "Joe");
+        ++it;
+        assert((*it).key == "individual");
+        assert(!(*it).has_value);
+        //]
+        boost::ignore_unused(it);
     }
     {
         //[snippet_parsing_query_2
@@ -930,10 +942,8 @@ parsing_query()
     }
     {
         //[snippet_parsing_query_5
-        url_view u("https://www.example.com/get-customer.php");
-        std::cout << u << "\n"
-                  "has query: " << u.has_query() << "\n"
-                  "query:     " << u.query()     << "\n";
+        assert(url_view("https://www.example.com/get-customer.php?").has_query());
+        assert(!url_view("https://www.example.com/get-customer.php").has_query());
         //]
     }
     {
@@ -948,10 +958,41 @@ parsing_query()
     {
         //[snippet_parsing_query_7
         url_view u("https://www.example.com/get-customer.php?name=John%26Doe");
-        std::cout << u << "\n"
-                  "has query:     " << u.has_query()     << "\n"
-                  "encoded query: " << u.encoded_query() << "\n"
-                  "query:         " << u.query()         << "\n";
+        assert(u.query() == "name=John&Doe");
+        //]
+    }
+    {
+        //[snippet_parsing_query_8
+        url_view u("https://www.example.com/get-customer.php?key-1=value-1&key-2=&key-3&&=value-4");
+        params_view ps = u.params();
+        assert(ps.size() == 5);
+        //]
+        //[snippet_parsing_query_8a
+        auto it = ps.begin();
+        assert((*it).key == "key-1");
+        assert((*it).value == "value-1");
+        //]
+        //[snippet_parsing_query_8b
+        ++it;
+        assert((*it).key == "key-2");
+        assert((*it).value == "");
+        assert((*it).has_value);
+        //]
+        //[snippet_parsing_query_8c
+        ++it;
+        assert((*it).key == "key-3");
+        assert(!(*it).has_value);
+        //]
+        //[snippet_parsing_query_8d
+        ++it;
+        assert((*it).key == "");
+        assert((*it).value == "value-4");
+        //]
+    }
+    {
+        //[snippet_parsing_query_9
+        url_view u("https://www.example.com/get-customer.php?email=joe@email.com&code=a:2@/!");
+        assert(u.has_query());
         //]
     }
 }
@@ -990,6 +1031,24 @@ parsing_fragment()
         std::cout << u << "\n"
                   "has fragment:     " << u.has_fragment()     << "\n"
                   "fragment:         " << u.fragment()         << "\n";
+        //]
+    }
+    {
+        //[snippet_parsing_fragment_4
+        url_view u("https://www.example.com/index.html#section2");
+        assert(u.fragment() == "section2");
+        //]
+    }
+    {
+        //[snippet_parsing_fragment_5
+        assert(url_view("https://www.example.com/index.html#").has_fragment());
+        assert(!url_view("https://www.example.com/index.html").has_fragment());
+        //]
+    }
+    {
+        //[snippet_parsing_fragment_6
+        url_view u("https://www.example.com/index.html#code%20:a@b?c/d");
+        assert(u.fragment() == "code :a@b?c/d");
         //]
     }
 }

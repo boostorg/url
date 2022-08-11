@@ -40,9 +40,13 @@ The URL below contains a path with three segments:
 
 These segment view containers are lightweight references to
 the underlying path that map every path to a unique
-sequence of segments. Ownership of the string is not
-transferred; the caller is responsible for ensuring that the
-lifetime of the string extends until the container is destroyed.
+sequence of segments.
+
+[warning
+    Ownership of the string is not
+    transferred; the caller is responsible for ensuring that the
+    lifetime of the string extends until the container is destroyed.
+]
 
 In contexts where a path can appear by itself, such as HTTP
 requests, segment views may also be constructed directly from

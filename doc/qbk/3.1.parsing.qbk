@@ -125,7 +125,7 @@ These relative references can be combined with base absolute URLs:
 
 [snippet_parsing_url_1d]
 
-The [link url.helpcard Help Card] provides a visual summary
+The [link url.ref.helpcard Help Card] provides a visual summary
 of all of the member functions and types used by the library
 with URL containers. In the sections that follow we discuss
 each of the five major parts of the URL and how they may be
