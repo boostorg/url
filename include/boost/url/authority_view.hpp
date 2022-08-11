@@ -199,11 +199,15 @@ public:
         return BOOST_URL_MAX_SIZE;
     }
 
-    /** Return the number of characters in the authority.
+    /** Return the number of characters in the authority
 
-        This function returns the number
-        of characters in the authority, which
-        does not include a null terminator.
+        This function returns the number of
+        characters in the authority.
+
+        @par Example
+        @code
+        assert( authority_view( "user:pass@www.example.com:8080" ).size() == 30 );
+        @endcode
 
         @par Exception Safety
         Throws nothing.
@@ -214,7 +218,15 @@ public:
         return u_.offset(id_end);
     }
 
-    /** Return true if the contents are empty.
+    /** Return true if the authority is empty
+
+        An empty authority has an empty host,
+        no userinfo, and no port.
+
+        @par Example
+        @code
+        assert( authority_view( "" ).empty() );
+        @endcode
 
         @par Exception Safety
         Throws nothing.
@@ -308,7 +320,7 @@ public:
     bool
     has_userinfo() const noexcept;
 
-    /** Return the userinfo
+    /** Return the encoded userinfo
 
         This function returns the userinfo
         as a percent-encoded string.
@@ -359,6 +371,9 @@ public:
         authority   = [ userinfo "@" ] host [ ":" port ]
         @endcode
 
+        @par Exception Safety
+        Throws nothing
+
         @par Specification
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
@@ -381,7 +396,7 @@ public:
 
     //--------------------------------------------
 
-    /** Return the user
+    /** Return the encoded user
 
         This function returns the user portion of
         the userinfo as a percent-encoded string.
@@ -438,6 +453,9 @@ public:
         user        = *( unreserved / pct-encoded / sub-delims )
         password    = *( unreserved / pct-encoded / sub-delims / ":" )
         @endcode
+
+        @par Exception Safety
+        Throws nothing
 
         @par Specification
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
@@ -497,7 +515,7 @@ public:
     bool
     has_password() const noexcept;
 
-    /** Return the password
+    /** Return the encoded password
 
         This function returns the password portion
         of the userinfo as a percent-encoded string.
@@ -539,6 +557,16 @@ public:
         This function returns the password from the
         userinfo with percent-decoding applied.
 
+        @par Example
+        @code
+        authority_view a( "user:pass@example.com" );
+
+        assert( a.password() == "pass" );
+        @endcode
+
+        @par Exception Safety
+        Throws nothing
+             
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
@@ -610,7 +638,7 @@ public:
         return u_.host_type_;
     }
 
-    /** Return the host
+    /** Return the encoded host
 
         This function returns the host portion of
         the authority as a percent-encoded string,
@@ -679,6 +707,9 @@ public:
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
 
+        @par Exception Safety
+        Throws nothing
+
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
             >3.2.2. Host (rfc3986)</a>
@@ -708,6 +739,13 @@ public:
         of the host if it exists, otherwise it
         returns the unspecified address which
         is equal to "0.0.0.0".
+
+        @par Example
+        @code
+        authority_view u( "127.0.0.1" );
+
+        ipv4_address ip = u.ipv4_address();
+        @endcode
 
         @par BNF
         @code
@@ -743,6 +781,15 @@ public:
         exists, otherwise it returns the
         unspecified address which is equal
         to "0:0:0:0:0:0:0:0".
+
+        @par Example
+        @code
+        authority_view a( "[::1]" );
+
+        ipv6_address ip = a.ipv6_address();
+
+        assert( ip.is_loopback() );
+        @endcode
 
         @par BNF
         @code
@@ -785,6 +832,13 @@ public:
         the address. Otherwise it returns the
         empty string.
 
+        @par Example
+        @code
+        authority_view a( "[v1fe.d:9]" );
+
+        assert( a.ipvfuture() == "v1fe.d:9" );
+        @endcode
+
         @par BNF
         @code
         IPvFuture  = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
@@ -811,6 +865,13 @@ public:
 
         This function returns true if the
         authority contains a port.
+
+        @par Example
+        @code
+        authority_view a( "www.example.com:443" );
+
+        assert( a.has_port() );
+        @endcode
 
         @par BNF
         @code
@@ -844,6 +905,13 @@ public:
         in the authority, or an empty string if
         there is no port.
 
+        @par Example
+        @code
+        authority_view a( "localhost.com:8080" );
+
+        assert( a.port() == "8080" );
+        @endcode
+
         @par BNF
         @code
         port        = *DIGIT
@@ -875,6 +943,13 @@ public:
         a port and the number can be represented.
         Otherwise it returns zero.
 
+        @par Example
+        @code
+        authority_view a( "localhost.com:8080" );
+
+        assert( a.port_number() == 8080 );
+        @endcode
+
         @par BNF
         @code
         port        = *DIGIT
@@ -905,6 +980,13 @@ public:
         port of the authority as a single
         percent-encoded string.
 
+        @par Example
+        @code
+        authority_view a( "www.example.com:8080" );
+
+        assert( a.encoded_host_and_port() == "www.example.com:8080" );
+        @endcode
+
         @par BNF
         @code
         authority   = [ userinfo "@" ] host [ ":" port ]
@@ -914,6 +996,8 @@ public:
         Throws nothing.
 
         @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2.  Host (rfc3986)</a>
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
             >3.2.3. Port (rfc3986)</a>
 
@@ -947,9 +1031,9 @@ public:
 
     @par Example
     @code
-    url_view u = parse_uri( "http://www.example.com/index.htm" );
+    authority_view a( "www.example.com" );
 
-    std::cout << u << std::endl;
+    std::cout << a << std::endl;
     @endcode
 
     @return A reference to the output stream, for chaining

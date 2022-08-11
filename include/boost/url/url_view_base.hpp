@@ -504,7 +504,7 @@ public:
     bool
     has_userinfo() const noexcept;
 
-    /** Return the userinfo
+    /** Return the encoded userinfo
 
         This function returns the userinfo
         as a percent-encoded string.
@@ -541,8 +541,7 @@ public:
     /** Return the userinfo
 
         This function returns the userinfo as a
-        string with percent-decoding applied, using
-        the optionally specified allocator.
+        string with percent-decoding applied.
 
         @par Example
         @code
@@ -584,7 +583,7 @@ public:
 
     //--------------------------------------------
 
-    /** Return the user
+    /** Return the encoded user
 
         This function returns the user portion of
         the userinfo as a percent-encoded string.
@@ -625,8 +624,7 @@ public:
 
         This function returns the user portion of
         the userinfo as a string with percent-decoding
-        applied, using the optionally specified
-        allocator.
+        applied.
 
         @par Example
         @code
@@ -704,7 +702,7 @@ public:
     bool
     has_password() const noexcept;
 
-    /** Return the password
+    /** Return the encoded password
 
         This function returns the password portion
         of the userinfo as a percent-encoded string.
@@ -826,7 +824,7 @@ public:
         return u_.host_type_;
     }
 
-    /** Return the host
+    /** Return the encoded host
 
         This function returns the host portion of
         the authority as a percent-encoded string,
@@ -869,6 +867,59 @@ public:
     BOOST_URL_DECL
     string_view
     encoded_host() const noexcept;
+
+    /** Return the host
+
+        This function returns the host portion of
+        the authority as a string with percent-decoding
+        applied, using the optionally specified
+        allocator.
+
+        @par Example
+        @code
+        url_view u( "https://www%2droot.example.com/" );
+
+        assert( u.host() == "www-root.example.com" );
+        @endcode
+
+        @par BNF
+        @code
+        host        = IP-literal / IPv4address / reg-name
+
+        IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+
+        IPvFuture   = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+
+        reg-name    = *( unreserved / pct-encoded / "-" / ".")
+        @endcode
+
+        @par Exception Safety
+        Throws nothing
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2. Host (rfc3986)</a>
+
+        @see
+            @ref encoded_host,
+            @ref encoded_hostname,
+            @ref encoded_host_and_port,
+            @ref has_port,
+            @ref hostname,
+            @ref host_type,
+            @ref port,
+            @ref port_number.
+    */
+    pct_encoded_view
+    host() const noexcept
+    {
+        pct_decode_opts opt;
+        opt.plus_to_space = false;
+        string_view s = encoded_host();
+        return
+            detail::access::construct(
+                s, u_.decoded_[id_host], opt);
+    }
 
     /** Return the hostname
 
@@ -961,59 +1012,6 @@ public:
     BOOST_URL_DECL
     pct_encoded_view
     hostname() const noexcept;
-
-    /** Return the host
-
-        This function returns the host portion of
-        the authority as a string with percent-decoding
-        applied, using the optionally specified
-        allocator.
-
-        @par Example
-        @code
-        url_view u( "https://www%2droot.example.com/" );
-
-        assert( u.host() == "www-root.example.com" );
-        @endcode
-
-        @par BNF
-        @code
-        host        = IP-literal / IPv4address / reg-name
-
-        IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
-
-        IPvFuture   = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
-
-        reg-name    = *( unreserved / pct-encoded / "-" / ".")
-        @endcode
-
-        @par Exception Safety
-        Throws nothing
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2. Host (rfc3986)</a>
-
-        @see
-            @ref encoded_host,
-            @ref encoded_hostname,
-            @ref encoded_host_and_port,
-            @ref has_port,
-            @ref hostname,
-            @ref host_type,
-            @ref port,
-            @ref port_number.
-    */
-    pct_encoded_view
-    host() const noexcept
-    {
-        pct_decode_opts opt;
-        opt.plus_to_space = false;
-        string_view s = encoded_host();
-        return
-            detail::access::construct(
-                s, u_.decoded_[id_host], opt);
-    }
 
     /** Return the host as an IPv4 address
 
