@@ -30,12 +30,7 @@
 [template include_file[path][^<'''<ulink url="https://github.com/CPPAlliance/url/blob/master/include/'''[path]'''">'''[path]'''</ulink>'''>]]
 [template issue[n] '''<ulink url="https://github.com/CPPAlliance/url/issues/'''[n]'''">#'''[n]'''</ulink>''']
 
-[/ Uniform Resource Identifier (URI): Generic Syntax ]
 [def __rfc3986__                [@https://tools.ietf.org/html/rfc3986 rfc3986]]
-[/ Uniform Resource Locators (URL) ]
-[def __rfc1738__                [@https://tools.ietf.org/html/rfc1738 rfc1738]]
-[/ URIs, URLs, URNs: Clarifications and Recommendations ]
-[def __rfc3305__                [@https://tools.ietf.org/html/rfc3305 rfc3305]]
 [def __rfc7230__                [@https://tools.ietf.org/html/rfc7230 rfc7230]]
 
 [/ Named Requirements ]

@@ -11,27 +11,74 @@
 
 [section Scheme]
 
-Every URL has a scheme that determines how the rest of
-the URL should be interpreted, and each scheme might have
-its own rules, such as mandatory components and values.
-For instance, the term web address is often used informally
-to describe URLs with the `https` scheme, whose semantics
-are defined by
-[@https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.1 rfc7230].
+Every URL has a
+[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.1 ['scheme]]:
+a case-insensitive word that precisely specifies both the meaning and
+the syntax of the remainder of the URL. Almost everyone has seen
+examples of the
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.1 ['http URI scheme]],
+used to identify resources on the
+[@https://en.wikipedia.org/wiki/World_Wide_Web ['World Wide Web]]:
+[teletype]
+```
+http://www.example.com/images/cat-photo.gif
+```
 
-[snippet_components_2a]
+The scheme is sometimes omitted from the URL when it is implied
+by the surrounding context. The text `john.doe@example.com`
+is widely understood to be an email address, but with the
+explicit
+[@https://datatracker.ietf.org/doc/html/rfc6068 ['mailto URI scheme]]
+it becomes
+[@mailto:john.doe@example.com `mailto:john.doe@example.com`].
+When a URL lacks a scheme, it is the caller's responsibility
+to validate the semantic contents according to the surrounding
+context. This table shows the top level grammars, their treatment
+of the scheme, and the library function used to interpret strings
+using that grammar:
 
-In relative URL references, the scheme is implied by the context.
-For instance, HTTP GET request identify resources through relative
-references:
+[table Grammar [
+    [Name]
+    [Scheme]
+    [Function]
+][
+    [['URI]]
+    [required]
+    [[link url.ref.boost__urls__parse_uri `parse_uri`]]
+][
+    [['absolute-URI]]
+    [required]
+    [[link url.ref.boost__urls__parse_absolute_uri `parse_absolute_uri`]]
+][
+    [['URI-reference]]
+    [optional]
+    [[link url.ref.boost__urls__parse_uri_reference `parse_uri_reference`]]
+][
+    [['relative-ref]]
+    [none]
+    [[link url.ref.boost__urls__parse_relative_ref `parse_relative_ref`]]
+][
+    [['origin-form]]
+    [none]
+    [[link url.ref.boost__urls__parse_origin_form `parse_origin_form`]]
+]]
 
+The
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1 origin-form grammar]
+is used in the
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1 HTTP request-line],
+where the scheme is omitted and the path must be absolute
+(start with '/'): For example, here is a GET request-line:
 [teletype]
 ```
     GET /pub/WWW/TheProject.html HTTP/1.1
 ```
 
-The scheme is implied as `http` or `https`, according to the
-protocol being used.
+The scheme is implied as
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.1 http]
+or
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.2 https]
+depending on the type of connection.
 
 One of the conventions of the HTTP scheme is that when the port 80 is
 implicitly assumed when it is not provided. Such conventions are not
@@ -132,11 +179,6 @@ These may be used instead of their corresponding strings:
     [link url.ref.boost__urls__url_view.scheme_id `scheme_id`] identifies a valid
     but unknown scheme, the value [link url.ref.boost__urls__scheme `scheme::unknown`]
     is returned.
-]
-
-[note
-    Since schemes may contain only letters, digits, plus signs, minus signs, and periods,
-    there is no distinction in the functions for encoded and decoded schemes.
 ]
 
 [endsect]
