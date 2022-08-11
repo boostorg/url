@@ -48,7 +48,8 @@ read, flexible, and performant.
 Boost.URL offers these features:
 
 * Require only C++11
-* Works without exceptions
+* Parsing algorithms work without exceptions
+* Containers always maintain valid URLs
 * Fast compilation, no templates
 * Strict compliance with __rfc3986__
 * Allocator control, including avoiding allocation entirely
