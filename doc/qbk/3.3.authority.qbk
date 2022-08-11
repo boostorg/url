@@ -12,13 +12,23 @@
 [section Authority]
 
 The authority determines how a resource can be accessed.
-It divides into three subcomponents:
-
-* The mandatory `host` can be a registered name or an IP address.
-* The `port` number preceded by a colon, which can be left out.
-* An optional `userinfo` with a username and password. The password can be omitted.
+It contains two parts: the
+[@https://www.rfc-editor.org/rfc/rfc3986#section-3.2.1 ['userinfo]]
+that holds identity credentials, and the
+[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2 ['host]]
+and
+[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3 ['port]]
+which identify a communication endpoint having dominion
+over the resource described in the remainder of the URL.
 
 [$url/images/AuthorityDiagram.svg]
+
+Some observations:
+
+* The use of the password field is deprecated.
+* The authority always has a defined host field, even if empty.
+* The host can be a name, or an IPv4, an IPv6, or an IPvFuture address.
+* All but the port field use percent-encoding to escape delimiters.
 
 The function [link url.ref.boost__urls__url_view.authority `authority`] can
 be used to obtain the __authority_view__ from a __url_view__:
@@ -71,6 +81,8 @@ Authority string with `userinfo` are also valid for
 [link url.ref.boost__urls__parse_authority `parse_authority`]:
 
 [snippet_parsing_authority_13]
+
+
 
 [heading Host]
 

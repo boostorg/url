@@ -91,94 +91,13 @@ and the host describes how to access it.
 
 [snippet_components_2b]
 
-A scheme must start with a letter, and may contain only letters,
-digits, plus and minus signs, and periods. It is always followed
-by a colon when it appears in a URL.
+[heading Scheme Registry]
 
-Schemes do not necessarily represent protocols. The `file`
-scheme is used to identify files from within one's own
-computer.
-
-[teletype]
-```
-    file:///usr/local/bin/
-```
-
-Other schemes use opaque paths that only identify resources.
-They usually represent resources through the path. The `mailto`
-scheme is used to represent email addresses with the path
-component. It is intented to produce hyperlinks that
-allow users to send an email to specific addresses:
-
-[snippet_components_2c]
-
-The `urn` scheme uses an opaque path to unique identifiers
-to a resource. A typical URN namespace is `isbn`, for
-International Standard Book Numbers. A book can be identified
-as:
-
-[snippet_components_2d]
-
-Magnet links, which use the `magnet` scheme, identify files
-by their cryptographic hash value. They have empty paths
-and use queries to describe the resource. The scheme
-allows more fields related to the file, such as a
-display name, keywords, and file sources.
-
-[snippet_components_2e]
-
-A number of
-[@https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml official URL schemes]
-registered with the Internet Assigned Numbers Authority (IANA) have their
-own grammars.
-
-The function [link url.ref.boost__urls__url_view.scheme `scheme`] can
-be used to obtain the scheme from a __url_view__:
-
-[snippet_parsing_scheme_1]
-
-If the URL has no scheme, this function returns an empty string. To check whether
-a URL contains a scheme the function
-[link url.ref.boost__urls__url_view.has_scheme `url_view::has_scheme`] might be used.
-
-The library also defines an enumeration of values for some well-known scheme
-identifiers:
-
-[c++]
-[snippet_parsing_scheme_3]
-
-These may be used instead of their corresponding strings:
-
-[table Scheme IDs [
-    [ID]
-    [Description]
-][
-    [[link url.ref.boost__urls__scheme `scheme::ftp`]]
-    [File Transfer Protocol ("FTP")]
-][
-    [[link url.ref.boost__urls__scheme `scheme::file`]]
-    [File URI Scheme]
-][
-    [[link url.ref.boost__urls__scheme `scheme::http`]]
-    [Hypertext Transfer Protocol]
-][
-    [[link url.ref.boost__urls__scheme `scheme::https`]]
-    [Secure Hypertext Transfer Protocol]
-][
-    [[link url.ref.boost__urls__scheme `scheme::ws`]]
-    [WebSocket Protocol]
-][
-    [[link url.ref.boost__urls__scheme `scheme::wss`]]
-    [Secure WebSocket Protocol]
-]]
-
-[note
-    None of these functions throw exceptions. If the URL has no scheme,
-    [link url.ref.boost__urls__url_view.scheme `scheme`] returns an empty
-    string. If the function
-    [link url.ref.boost__urls__url_view.scheme_id `scheme_id`] identifies a valid
-    but unknown scheme, the value [link url.ref.boost__urls__scheme `scheme::unknown`]
-    is returned.
-]
+To facilitate interoperability standards,the Internet Assigned Numbers
+Authority (IANA) maintains a registry of published URI schemes,
+in the official
+[@https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml URI Scheme Registry].
+For more information about custom schemes including their grammar
+and semantics, please consult the registry.
 
 [endsect]
