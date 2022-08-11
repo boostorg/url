@@ -79,8 +79,7 @@ parse_absolute_uri(
 {
     if(s.size() > url_view::max_size())
         detail::throw_length_error(
-            "url_view::max_size exceeded",
-            BOOST_CURRENT_LOCATION);
+            "too large");
     return grammar::parse(
         s, absolute_uri_rule);
 }
@@ -91,8 +90,7 @@ parse_origin_form(
 {
     if(s.size() > url_view::max_size())
         detail::throw_length_error(
-            "url_view::max_size exceeded",
-            BOOST_CURRENT_LOCATION);
+            "too large");
     return grammar::parse(
         s, origin_form_rule);
 }
@@ -103,8 +101,7 @@ parse_relative_ref(
 {
     if(s.size() > url_view::max_size())
         detail::throw_length_error(
-            "url_view::max_size exceeded",
-            BOOST_CURRENT_LOCATION);
+            "too large");
 
     return grammar::parse(
         s, relative_ref_rule);
@@ -115,8 +112,7 @@ parse_uri(
 {
     if(s.size() > url_view::max_size())
         detail::throw_length_error(
-            "url_view::max_size exceeded",
-            BOOST_CURRENT_LOCATION);
+            "too large");
     return grammar::parse(s, uri_rule);
 }
 
@@ -126,8 +122,7 @@ parse_uri_reference(
 {
     if(s.size() > url_view::max_size())
         detail::throw_length_error(
-            "url_view::max_size exceeded",
-            BOOST_CURRENT_LOCATION);
+            "too large");
 
     return grammar::parse(
         s, uri_reference_rule);

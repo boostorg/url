@@ -55,8 +55,7 @@ reserve_impl(
 {
     if(n <= cap_)
         return;
-    detail::throw_bad_alloc(
-        BOOST_CURRENT_LOCATION);
+    detail::throw_bad_alloc();
 }
 
 } // urls

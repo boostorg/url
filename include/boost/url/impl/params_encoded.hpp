@@ -172,8 +172,7 @@ at(std::size_t pos) const ->
     reference
 {
     if(pos >= size())
-        detail::throw_out_of_range(
-            BOOST_CURRENT_LOCATION);
+        detail::throw_out_of_range();
     return (*this)[pos];
 }
 

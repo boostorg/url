@@ -64,8 +64,7 @@ pct_encoded_view(
     opt.non_normal_is_error = false;
     dn_ = validate_pct_encoding(str, ec, opt);
     if (ec.failed())
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+        detail::throw_invalid_argument();
 }
 
 pct_encoded_view
@@ -93,8 +92,7 @@ copy(
     size_type
 {
     if( pos > size() )
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+        detail::throw_invalid_argument();
     std::size_t rlen = (std::min)(count, size() - pos);
     auto first = std::next(begin(), pos);
     auto last = std::next(first, rlen);

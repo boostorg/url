@@ -255,8 +255,7 @@ parse_authority(
 {
     if(s.size() > authority_view::max_size())
         detail::throw_length_error(
-            "authority_view::max_size exceeded",
-            BOOST_CURRENT_LOCATION);
+            "too large");
     return grammar::parse(s, authority_rule);
 }
 

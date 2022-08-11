@@ -109,8 +109,7 @@ reserve_impl(
 {
     if(n > max_size())
         detail::throw_length_error(
-            "n > max_size",
-            BOOST_CURRENT_LOCATION);
+            "too large");
     if(n <= cap_)
         return;
     char* s;

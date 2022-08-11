@@ -35,8 +35,7 @@ at(string_view key) const ->
     for(;;)
     {
         if(it == end())
-            detail::throw_out_of_range(
-                BOOST_CURRENT_LOCATION);
+            detail::throw_out_of_range();
         if(it.impl_.nv_ != 0)
             break;
         ++it;

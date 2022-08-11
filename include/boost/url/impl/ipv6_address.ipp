@@ -44,8 +44,7 @@ ipv6_address(
 {
     auto r = parse_ipv6_address(s);
     if(r.has_error())
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+        detail::throw_invalid_argument();
     *this = r.value();
 }
 
@@ -57,8 +56,7 @@ to_buffer(
 {
     if(dest_size < max_str_len)
         detail::throw_length_error(
-            "ipv6_address::to_buffer",
-            BOOST_CURRENT_LOCATION);
+            "buffer overflow");
     auto n = print_impl(dest);
     return string_view(dest, n);
 }

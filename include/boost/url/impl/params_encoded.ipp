@@ -66,8 +66,7 @@ at(string_view key) const ->
     for(;;)
     {
         if(it == end())
-            detail::throw_out_of_range(
-                BOOST_CURRENT_LOCATION);
+            detail::throw_out_of_range();
         r = *it;
         if(r.has_value)
             break;

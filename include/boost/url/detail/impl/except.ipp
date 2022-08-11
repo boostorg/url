@@ -62,15 +62,6 @@ throw_out_of_range(
             "out of range"), loc);
 }
 
-void
-throw_system_error(
-    error_code const& ec,
-    source_location const& loc)
-{
-    throw_exception(
-        system_error(ec), loc);
-}
-
 } // detail
 } // url
 } // boost

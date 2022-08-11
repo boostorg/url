@@ -211,8 +211,7 @@ url_base::
 set_scheme(urls::scheme id)
 {
     if(id == urls::scheme::unknown)
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+        detail::throw_invalid_argument();
     if(id == urls::scheme::none)
         return remove_scheme();
     set_scheme_impl(
@@ -313,8 +312,7 @@ set_encoded_user(
             detail::user_chars,
             {});
     if(ec.failed())
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+        detail::throw_invalid_argument();
     auto dest = set_user_impl(s.size());
     u_.decoded_[id_user] = n;
     if(! s.empty())
@@ -435,11 +433,10 @@ set_encoded_password(
     s = buf.maybe_copy(s);
     check_invariants();
     error_code ec;
-    auto const n =
-        validate_pct_encoding(s, ec, detail::password_chars, {});
+    auto const n = validate_pct_encoding(
+        s, ec, detail::password_chars, {});
     if(ec.failed())
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+        detail::throw_invalid_argument();
     auto dest =
         set_password_impl(s.size());
     u_.decoded_[id_pass] = n;
@@ -1133,8 +1130,7 @@ edit_segments(
     std::size_t nseg = 0;
     bool more = it0.measure(n, ec);
     if(ec.failed())
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+        detail::throw_invalid_argument();
     if(more)
     {
         for(;;)
@@ -1142,8 +1138,7 @@ edit_segments(
             ++nseg;
             more = it0.measure(n, ec);
             if(ec.failed())
-                detail::throw_invalid_argument(
-                    BOOST_CURRENT_LOCATION);
+                detail::throw_invalid_argument();
             if(! more)
                 break;
             ++n;
@@ -1554,8 +1549,7 @@ edit_params(
     std::size_t nparam = 0;
     bool more = it0.measure(n, ec);
     if(ec.failed())
-        detail::throw_invalid_argument(
-            BOOST_CURRENT_LOCATION);
+        detail::throw_invalid_argument();
     bool prefix;
     if(more)
     {
@@ -1566,8 +1560,7 @@ edit_params(
             ++nparam;
             more = it0.measure(n, ec);
             if(ec.failed())
-                detail::throw_invalid_argument(
-                    BOOST_CURRENT_LOCATION);
+                detail::throw_invalid_argument();
             if(! more)
                 break;
             ++n;

@@ -17,23 +17,16 @@ namespace boost {
 namespace urls {
 namespace detail {
 
-BOOST_URL_DECL void BOOST_NORETURN throw_bad_alloc(source_location const& loc);
-BOOST_URL_DECL void BOOST_NORETURN throw_invalid_argument(source_location const& loc);
-BOOST_URL_DECL void BOOST_NORETURN throw_invalid_argument(char const* what, source_location const& loc);
-BOOST_URL_DECL void BOOST_NORETURN throw_length_error(char const* what, source_location const& loc);
-BOOST_URL_DECL void BOOST_NORETURN throw_out_of_range(source_location const& loc);
-BOOST_URL_DECL void BOOST_NORETURN throw_system_error(error_code const& ec, source_location const& loc);
-//BOOST_URL_DECL void BOOST_NORETURN throw_system_error(error e, source_location const& loc);
-
-inline
-void
-maybe_throw(
-    error_code const& ec,
-    source_location const& loc)
-{
-    if(ec.failed())
-        throw_system_error(ec, loc);
-}
+BOOST_URL_DECL void BOOST_NORETURN throw_bad_alloc(
+    source_location const& loc = BOOST_CURRENT_LOCATION);
+BOOST_URL_DECL void BOOST_NORETURN throw_invalid_argument(
+    source_location const& loc = BOOST_CURRENT_LOCATION);
+BOOST_URL_DECL void BOOST_NORETURN throw_invalid_argument(char const* what,
+    source_location const& loc = BOOST_CURRENT_LOCATION);
+BOOST_URL_DECL void BOOST_NORETURN throw_length_error(char const* what,
+    source_location const& loc = BOOST_CURRENT_LOCATION);
+BOOST_URL_DECL void BOOST_NORETURN throw_out_of_range(
+    source_location const& loc = BOOST_CURRENT_LOCATION);
 
 } // detail
 } // urls
