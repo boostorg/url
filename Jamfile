@@ -18,6 +18,3 @@ constant c11-requires :
     cxx11_variadic_templates
     ]
     ;
-
-build-project test ;
-build-project example ;
