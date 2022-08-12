@@ -139,8 +139,8 @@ these per-commit analyses:
 [section Nomenclature]
 
 Various names have been used historically to refer to different
-flavors of resource identifiers, including ['URI], ['URL],
-and ['URN]. Over time, the distinction between URIs and URLs
+flavors of resource identifiers, including ['URI], ['URL], ['URN],
+and even ['IRI]. Over time, the distinction between URIs and URLs
 has disappeared when discussed in technical documents and
 informal works. In this library we use the term [*URL] to
 refer to all strings which are valid according to the
