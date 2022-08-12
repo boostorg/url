@@ -331,7 +331,15 @@ public:
 
      */
     template<class FwdIt>
+#ifndef BOOST_URL_DOCS
+    typename std::enable_if<
+        !std::is_convertible<
+            FwdIt, string_view
+            >::value,
+        iterator>::type
+#else
     iterator
+#endif
     insert(
         iterator before,
         FwdIt first,
@@ -470,7 +478,7 @@ public:
 
      */
     iterator
-    emplace_at(
+    replace(
         iterator pos,
         string_view key,
         string_view value);
@@ -490,7 +498,7 @@ public:
 
       */
     iterator
-    emplace_at(
+    replace(
         iterator pos,
         string_view key);
 
@@ -506,7 +514,7 @@ public:
 
       */
     iterator
-    emplace_before(
+    insert(
         iterator before,
         string_view key,
         string_view value);
@@ -521,7 +529,7 @@ public:
 
       */
     iterator
-    emplace_before(
+    insert(
         iterator before,
         string_view key);
 
@@ -569,7 +577,7 @@ public:
 
       */
     iterator
-    emplace_back(
+    append(
         string_view key);
 
     /** Construct element at the end of the container
@@ -582,7 +590,7 @@ public:
 
       */
     iterator
-    emplace_back(
+    append(
         string_view key,
         string_view value);
 

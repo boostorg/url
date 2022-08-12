@@ -272,7 +272,11 @@ insert(
     iterator before,
     FwdIt first,
     FwdIt last) ->
-        iterator
+        typename std::enable_if<
+            !std::is_convertible<
+                FwdIt, string_view
+                >::value,
+            iterator>::type
 {
     return insert(before, first, last,
         typename std::iterator_traits<
@@ -377,7 +381,7 @@ replace(
 inline
 auto
 params_encoded::
-emplace_at(
+replace(
     iterator pos,
     string_view key,
     string_view value) ->
@@ -405,7 +409,7 @@ emplace_at(
 inline
 auto
 params_encoded::
-emplace_back(
+append(
     string_view key) ->
         iterator
 {
@@ -417,7 +421,7 @@ emplace_back(
 inline
 auto
 params_encoded::
-emplace_back(
+append(
     string_view key,
     string_view value) ->
         iterator
@@ -430,7 +434,7 @@ emplace_back(
 inline
 auto
 params_encoded::
-emplace_at(
+replace(
     iterator pos,
     string_view key) ->
         iterator
@@ -459,7 +463,7 @@ emplace_at(
 inline
 auto
 params_encoded::
-emplace_before(
+insert(
     iterator before,
     string_view key,
     string_view value) ->
@@ -476,7 +480,7 @@ emplace_before(
 inline
 auto
 params_encoded::
-emplace_before(
+insert(
     iterator before,
     string_view key) ->
         iterator

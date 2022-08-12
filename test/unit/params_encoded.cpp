@@ -230,13 +230,13 @@ public:
                        "/?k0=0&k%31=1&k2=#f");
         }
 
-        // emplace_at(iterator, string_view, string_view)
-        // emplace_at(iterator, Key, Value)
+        // replace(iterator, string_view, string_view)
+        // replace(iterator, Key, Value)
         {
             url u = parse_uri_reference(
                 "/?k0=0&k%31=1&k2=#f").value();
             params_encoded p = u.encoded_params();
-            auto it = p.emplace_at(
+            auto it = p.replace(
                 std::next(p.begin()),
                 "k1", "1");
             BOOST_TEST_EQ(it, std::next(p.begin()));
@@ -246,13 +246,13 @@ public:
                 "/?k0=0&k1=1&k2=#f");
         }
 
-        // emplace_at(iterator, string_view)
-        // emplace_at(iterator, Key)
+        // replace(iterator, string_view)
+        // replace(iterator, Key)
         {
             url u = parse_uri_reference(
                 "/?k0=0&k1=1&k2=&k3#f").value();
             params_encoded p = u.encoded_params();
-            auto it = p.emplace_at(
+            auto it = p.replace(
                 std::next(p.begin(), 2),
                 "hello_world");
             BOOST_TEST_EQ(it, std::next(p.begin(), 2));
@@ -262,13 +262,13 @@ public:
                 "/?k0=0&k1=1&hello_world&k3#f");
         }
 
-        // emplace_before(iterator, string_view, string_view)
-        // emplace_before(iterator, Key, Value)
+        // insert(iterator, string_view, string_view)
+        // insert(iterator, Key, Value)
         {
             url u = parse_uri_reference(
                 "/?k0=0&k2=&k3#f").value();
             params_encoded p = u.encoded_params();
-            auto it = p.emplace_before(
+            auto it = p.insert(
                 std::next(p.begin()), "k1", "1");
             BOOST_TEST_EQ(it, std::next(p.begin()));
             BOOST_TEST(u.encoded_query() ==
@@ -277,13 +277,13 @@ public:
                 "/?k0=0&k1=1&k2=&k3#f");
         }
 
-        // emplace_before(iterator, string_view)
-        // emplace_before(iterator, Key)
+        // insert(iterator, string_view)
+        // insert(iterator, Key)
         {
             url u = parse_uri_reference(
                 "/?k0=0&k2=&k3#f").value();
             params_encoded p = u.encoded_params();
-            auto it = p.emplace_before(
+            auto it = p.insert(
                 std::next(p.begin()), "k1");
             BOOST_TEST_EQ(it, std::next(p.begin()));
             BOOST_TEST(u.encoded_query() ==
@@ -335,34 +335,34 @@ public:
             BOOST_TEST_EQ(p.erase("g"), 0u);
         }
 
-        // emplace_back(Key, Value)
-        // emplace_back(Key)
+        // append(Key, Value)
+        // append(Key)
         {
             url u = parse_uri_reference("/#f").value();
             params_encoded p = u.encoded_params();
-            p.emplace_back("k0", "0");
+            p.append("k0", "0");
             BOOST_TEST_EQ(u.encoded_query(), "k0=0");
             BOOST_TEST_EQ(u.string(), "/?k0=0#f");
             BOOST_TEST_EQ(u.encoded_params().size(), 1u);
-            p.emplace_back("k1", "1");
+            p.append("k1", "1");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1");
             BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1#f");
             BOOST_TEST_EQ(u.encoded_params().size(), 2u);
-            p.emplace_back("k2", "");
+            p.append("k2", "");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=");
             BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=#f");
             BOOST_TEST_EQ(u.encoded_params().size(), 3u);
-            p.emplace_back("k3");
+            p.append("k3");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3");
             BOOST_TEST(u.string() ==
                 "/?k0=0&k1=1&k2=&k3#f");
             BOOST_TEST_EQ(u.encoded_params().size(), 4u);
-            p.emplace_back("", "4444");
+            p.append("", "4444");
             BOOST_TEST(u.encoded_query() ==
                 "k0=0&k1=1&k2=&k3&=4444");
             BOOST_TEST(u.string() ==
