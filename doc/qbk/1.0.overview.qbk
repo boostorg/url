@@ -32,6 +32,12 @@ functionalities for:
 * Manipulation of URL strings, and
 * Algorithms such as normalization and resolution.
 
+[note
+    Currently the library does not handle
+    [@https://www.rfc-editor.org/rfc/rfc3987.html Internationalized Resource Identifiers] (IRIs).
+    This are different from URLs, come from Unicode strings instead of
+    low-ASCII strings, and are covered by a separate specification.
+]
 [heading Features]
 
 While the library is general purpose, special care has been taken to ensure
@@ -48,11 +54,11 @@ read, flexible, and performant.
 Boost.URL offers these features:
 
 * Require only C++11
-* Parsing algorithms work without exceptions
-* Containers always maintain valid URLs
-* Fast compilation, no templates
+* Fast compilation, few templates
 * Strict compliance with __rfc3986__
-* Allocator control, including avoiding allocation entirely
+* Containers always maintain valid URLs
+* Parsing algorithms work without exceptions
+* Control over storage and allocation for URLs
 * Optional header-only, without linking to a library
 * Supports `-fno-exceptions`, detected automatically
 * Link to a built static or dynamic Boost library, or use header-only
@@ -140,7 +146,11 @@ informal works. In this library we use the term [*URL] to
 refer to all strings which are valid according to the
 top-level grammar rules found in __rfc3986__.
 
+[$url/images/MidwitMeme.svg]
+
 [endsect]
+
+[/-----------------------------------------------------------------------------]
 
 [heading ABNF]
 
