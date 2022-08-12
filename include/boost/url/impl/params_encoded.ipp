@@ -119,7 +119,7 @@ replace_value(
     string_view value) ->
         iterator
 {
-    return emplace_at(
+    return replace(
         pos,
         (*pos).key,
         value);

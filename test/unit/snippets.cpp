@@ -33,8 +33,7 @@ using_url_views()
 {
     {
         //[snippet_accessing_1
-        string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
-        url_view u( s );
+        url_view u( "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor" );
         assert(u.scheme() == "https");
         assert(u.authority().string() == "user:pass@example.com:443");
         assert(u.userinfo() == "user:pass");
@@ -271,7 +270,7 @@ using_urls()
 
     //[snippet_quicklook_modifying_5
     params p = u.params();
-    p.emplace_at(p.find("name"), "name", "Vinnie Falco");
+    p.replace(p.find("name"), "name", "John Doe");
     std::cout << u << "\n";
     //]
 }
