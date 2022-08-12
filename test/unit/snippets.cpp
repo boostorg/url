@@ -31,6 +31,23 @@ using namespace boost::urls;
 void
 using_url_views()
 {
+    {
+        //[snippet_accessing_1
+        string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
+        url_view u( s );
+        assert(u.scheme() == "https");
+        assert(u.authority().string() == "user:pass@example.com:443");
+        assert(u.userinfo() == "user:pass");
+        assert(u.user() == "user");
+        assert(u.password() == "pass");
+        assert(u.host() == "example.com");
+        assert(u.port() == "443");
+        assert(u.path() == "/path/to/my-file.txt");
+        assert(u.query() == "id=42&name=John Doe Jingleheimer-Schmidt");
+        assert(u.fragment() == "page anchor");
+        //]
+    }
+
     //[snippet_parsing_1
     string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
     //]
@@ -52,23 +69,6 @@ using_url_views()
         result<url_view> r = parse_uri( s );
         //[snippet_parsing_4
         url_view u = *r;
-        //]
-    }
-
-    {
-        //[snippet_accessing_1
-        string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
-        url_view u( s );
-        assert(u.scheme() == "https");
-        assert(u.authority().string() == "user:pass@example.com:443");
-        assert(u.userinfo() == "user:pass");
-        assert(u.user() == "user");
-        assert(u.password() == "pass");
-        assert(u.host() == "example.com");
-        assert(u.port() == "443");
-        assert(u.path() == "/path/to/my-file.txt");
-        assert(u.query() == "id=42&name=John Doe Jingleheimer-Schmidt");
-        assert(u.fragment() == "page anchor");
         //]
     }
 
