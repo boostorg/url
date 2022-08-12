@@ -233,14 +233,56 @@ private:
 
     This function attempts to resolve a URL
     reference `ref` against the base URL `base`
-    which must satisfy the <em>absolute-URI</em>
+    in a manner similar to that of a web browser
+    resolving an anchor tag. The base URL
+    must satisfy the <em>absolute-URI</em>
     grammar.
-    This process is defined in detail in
-    rfc3986 (see below).
-    The result of the resolution is placed
-    into `dest`.
+
+    Relative references are only usable when
+    in the context of a base absolute URI.
+    This process of resolving a relative
+    <em>reference</em> within the context of
+    a <em>base</em> URI is defined in detail
+    in rfc3986 (see below).
+
+    The resolution process works as if the
+    relative reference is appended to the base
+    URI and the result is normalized.
+
+    Given the input base URL, this function
+    resolves the relative reference
+    as if performing the following steps:
+
+    @li Ensure the base URI has at least a scheme
+    @li Normalizing the reference path
+    @li Merge base and reference paths
+    @li Normalize the merged path
+
+    This function places the result of the
+    resolution into `dest`, which can be
+    any of the url containers that inherit
+    from @ref url_base.
+
     If an error occurs, the contents of
-    `dest` is unspecified.
+    `dest` is unspecified and `ec` is set.
+
+    @par Example
+    @code
+    url dest;
+    error_code ec;
+
+    resolve("/one/two/three", "four", dest, ec);
+    assert( dest.str() == "/one/two/four" );
+
+    resolve("http://example.com/", "/one", dest, ec);
+    assert( dest.str() == "http://example.com/one" );
+
+    resolve("http://example.com/one", "/two", dest, ec);
+    assert( dest.str() == "http://example.com/two" );
+
+    resolve("http://a/b/c/d;p?q", "g#s", dest, ec);
+    assert( dest.str() == "http://a/b/c/g#s" );
+    @endcode
 
     @par BNF
     @code
