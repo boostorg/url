@@ -60,8 +60,6 @@ features.
     ```
 ]
 
-[import ../../test/unit/doc_grammar.cpp]
-
 [include 4.1.rules.qbk]
 [include 4.2.charset.qbk]
 [include 4.3.combinators.qbk]

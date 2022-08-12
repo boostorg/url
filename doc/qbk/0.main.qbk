@@ -119,6 +119,8 @@
 [import ../../example/magnet/magnet.cpp]
 [import ../../example/route/route.cpp]
 [import ../../test/unit/snippets.cpp]
+[import ../../test/unit/doc_container.cpp]
+[import ../../test/unit/doc_grammar.cpp]
 
 [/-----------------------------------------------------------------------------]
 

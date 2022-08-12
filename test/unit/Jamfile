@@ -96,3 +96,4 @@ for local f in $(SOURCES)
     run $(f) /boost/url//boost_url ;
 }
 run doc_grammar.cpp /boost/url//boost_url : : : <warnings>off ;
+run doc_container.cpp /boost/url//boost_url : : : <warnings>off ;

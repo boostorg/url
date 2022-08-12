@@ -11,82 +11,169 @@
 
 [section Path]
 
-The path contains data, usually organized hierarchically, which is combined
-with the [link section.query query] to identify a resource within the scope of
-the scheme and authority.
+Every URL defines a
+[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path]].
+For opaque schemes such as
+[@https://datatracker.ietf.org/doc/html/rfc6068 mailto],
+the path is considered a single unit which can be used with functions like
+[link url.ref.boost__urls__url_view_base.encoded_path `encoded_path`]
+or
+[link url.ref.boost__urls__url_base.set_path `set_path`].
+In this case it is up to the user to apply the scheme-specific
+syntax and semantics to further refine the URL contents, either
+for validation or interpretation.
+For URLs using hierarchical schemes such as
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.1 http]
+or
+[@https://datatracker.ietf.org/doc/html/rfc6455#section-11.1.2 wss],
+the path is interpreted as a slash delimited sequence of
+percent-escaped strings called ['segments]. The following URL
+contains a path with three segments: "path", "to", and "file.txt":
+```
+http://www.example.com/path/to/file.txt
+```
 
-If the authority is present, the path needs to be empty or start with a
-slash `/`.
+We use the word path to refer to the path string, and the word
+segments to mean a slash delimited sequence. In this library segments
+are represented using containers modeling bidirectional ranges. For
+example the member function
+[link url.ref.boost__urls__url_view_base.encoded_segments `encoded_segments`]
+returns a container called
+[link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]
+which may be iterated, and references the underlying character buffer
+without taking ownership. Here we define the function `segs` which
+returns a `std::list` formed by appending each segment in the path:
 
-[snippet_parsing_path_use_case_2]
+[code_container_4_1]
 
-A URL always contains a path, even if it is empty:
-
-[snippet_parsing_path_use_case_3]
-
-The function [link url.ref.boost__urls__url_view.path `path`]
-treats this component as an opaque substring. This is useful
-in non-hierarchical paths, such as URN identifiers:
-
-[snippet_parsing_path_3a]
-
-Most schemes interpret the path as a sequence of slash delimited ['segments].
-These segments can map to file system paths, which is useful for file servers,
-but do not always need to imply this relationship. The library
-provides container adaptors modeling ranges of individual path segments.
-The URL below contains a path with three segments:
-
-[snippet_parsing_path_0]
-
-These segment view containers are lightweight references to
-the underlying path that map every path to a unique
-sequence of segments.
-
-[warning
-    Ownership of the string is not
-    transferred; the caller is responsible for ensuring that the
-    lifetime of the string extends until the container is destroyed.
+[note
+    In the remainder of this section we use the
+    sequence returned from a call to the `segs`
+    function above to demonstrate the outcomes of
+    parsing and modification of path segments.
+    For example, calling
+    ```
+        segs( url_view( "/path/to/file.txt" ) )
+    ```
+    produces the sequence.
+    ```
+        { "path", "to", "file.txt" }
+    ```
+    The term sequence always refers to the elements
+    returned by `segs`.
 ]
 
-In contexts where a path can appear by itself, such as HTTP
-requests, segment views may also be constructed directly from
-strings.
+We start with the following invariants about paths:
 
-[snippet_parsing_path_9]
+* All URLs have a path, even if empty.
+* A path starting with "/" is absolute, otherwise it is relative.
+* With an authority, the path can only be absolute or empty.
+* Every absolute or relative path maps to a unique sequence.
+* Every sequence determines a unique absolute or relative path.
 
-The semantics of a path can be absolute or relative.
-An absolute path in a URL begins with `/`:
+In this table we show the result of invoking `segs` with
+different URLs containing paths. This demonstrates how
+the library achieves the invariants described above for
+various interesting cases:
 
-[snippet_modifying_path_1_2]
+[table Path Sequences [
+    [s]
+    [`segs( url( s ) )`]
+    [absolute]
+][
+    [`""`]
+    [`{ }`]
+    []
+][
+    [`"/"`]
+    [`{ "" }`]
+    [yes]
+][
+    [`"./"`]
+    [`{ "" }`]
+    []
+][
+    [`"./usr"`]
+    [`{ "usr" }`]
+    []
+][
+    [`"/index.htm"`]
+    [`{ "index.htm" }`]
+    [yes]
+][
+    [`"/images/cat-pic.gif"`]
+    [`{ "images", "cat-pic.gif" }`]
+    [yes]
+][
+    [`"images/cat-pic.gif"`]
+    [`{ "images", "cat-pic.gif" }`]
+    []
+][
+    [`"/fast//query"`]
+    [`{ "fast", "", "query" }`]
+    [yes]
+][
+    [`"fast//"`]
+    [`{ "fast", "", "" }`]
+    []
+][
+    [`"/./"`]
+    [`{ "" }`]
+    [yes]
+][
+    [`".//"`]
+    [`{ "", "" }`]
+    []
+]]
 
-The complete path segments `"."` and `".."` are intended
-only for use within relative references
-(__rfc3986__ sec. 4.1) and are removed as part of the
-reference resolution process (__rfc3986__ sec. 5.2).
-Normalizing an absolute URI resolves these dot-segments
-(__rfc3986__ sec. 5.2.4).
+Library algorithms which modify individual segments of the
+path or set the entire path attempt to behave consistently
+with the behavior expected as if the operation was performed
+on the equivalent sequence. If a path maps, say, to the three
+element sequence `{ "a", "b", "c" }` then erasing the middle
+segment should result in the sequence `{ "a", "c" }`. The
+library always strives to do exactly what the caller requests;
+however, in some cases this would result in either an invalid
+URL, or a dramatic and unwanted change in the URL's semantics.
 
-[snippet_modifying_path_3]
+For example consider the following URL:
+```
+url u = url().set_path( "kyle:xy" );
+```
 
-Empty segments are also possible, resulting in consecutive slashes.
+The library will produce the URL string `"./kyle:xy"` and not
+`"kyle:xy"`, because the latter would have a scheme which is
+clearly not intended. This table shows a URL string, a
+modification operation, and the URL string which results from
+applying the operation:
 
-[snippet_parsing_path_use_case_6]
+[table Path Operations [
+    [URL]
+    [Operation]
+    [Result]
+][
+    [`""`]
+    [`set_path( "kyle:xy" )`]
+    [`"./kyle:xy"`]
+][
+    [`"//www.example.com//kyle:xy"`]
+    [`remove_authority()`]
+    [`"/.//kyle:xy"`]
+][
+    [`"mailto:kyle:xy"`]
+    [`remove_scheme()`]
+    [`"./kyle:xy"`]
+][
+    [`"./kyle:xy"`]
+    [`set_path_absolute( true )`]
+    [`"/./kyle:xy"`]
+][
+    [`"/kyle:xy"`]
+    [`set_path_absolute( false )`]
+    [`"./kyle:xy"`]
+]]
 
-The grammar for URLs places some restrictions on where and
-how certain delimiters may appear in the first path segment,
-to prevent ambiguities between the scheme, host, and path.
-For example, a relative-ref containing a path which is not
-absolute, may not have a colon in the first segment.
-
-When the library detects that a modification to a URL would result
-in an ambiguous configuration, it adjusts the result to
-maintain the same semantics while avoiding the ambiguity:
-
-[snippet_modifying_path_9_10]
-
-This ensures the result is predictable when the user
-changes something the path or any segment.
-
-[/-----------------------------------------------------------------------------]
+For the full set of containers and functions for operating
+on paths and segments, please consult the reference.
 
 [endsect]

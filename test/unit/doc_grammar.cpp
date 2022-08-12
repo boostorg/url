@@ -95,7 +95,7 @@ constexpr lut_chars visible_chars( [](char ch) { return ch >= 33 && ch <= 126; }
 
 } // (anon)
 
-struct doc_grammar_code_test
+struct doc_grammar_test
 {
     void snippets1()
     {
@@ -324,7 +324,7 @@ struct doc_grammar_code_test
 };
 
 TEST_SUITE(
-    doc_grammar_code_test,
+    doc_grammar_test,
     "boost.url.doc.grammar");
 
 } // grammar

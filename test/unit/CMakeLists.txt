@@ -18,6 +18,7 @@ set(BOOST_URL_TESTS_FILES
     Jamfile
     test_rule.hpp
     authority_view.cpp
+    doc_container.cpp
     doc_grammar.cpp
     error.cpp
     error_code.cpp

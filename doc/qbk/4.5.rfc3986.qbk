@@ -43,7 +43,7 @@ pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
 ```
 
 The library provides the __pct_encoded_rule__ for matching
-strings which are percent encoded. This function is passed the
+strings which are percent-encoded. This function is passed the
 set of characters that may be used without escapes and returns
 a suitable rule. If the input is valid; that is, if there are
 no invalid escape sequences, the rule returns a
