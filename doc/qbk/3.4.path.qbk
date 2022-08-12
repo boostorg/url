@@ -147,30 +147,91 @@ clearly not intended. This table shows a URL string, a
 modification operation, and the URL string which results from
 applying the operation:
 
+[/
+    Functions which may need
+    to alter the path prefix:
+
+    * convert ':' to %3A
+        remove_scheme()
+
+    * add "/."
+        remove_authority()
+
+    * convert ':' to %3A or add "/."
+        remove_origin()
+
+    * convert %3A to ':'
+        set_scheme_impl()
+            set_scheme()
+            set_scheme_id()
+
+    * convert ':' to %3A
+    * convert %3A to ':'
+        set_path_absolute()
+
+    * convert ':' to %3A or add "/."
+        set_path()
+
+    * don't canonicalize %3A in segment-nc-nz
+        normalize()
+
+    ????
+        set_encoded_path()
+        edit_segments()
+]
+
 [table Path Operations [
     [URL]
     [Operation]
     [Result]
 ][
-    [`""`]
-    [`set_path( "kyle:xy" )`]
-    [`"./kyle:xy"`]
+    [`"info:kyle:xy"`]
+    [`remove_scheme()`]
+    [`"kyle%3Axy"`]
+][
+    [`"kyle%3Axy"`]
+    [`set_scheme( "gopher" )`]
+    [`"gopher:kyle:xy"`]
+][
+    [`"http://www.example.com//kyle:xy"`]
+    [`remove_authority()`]
+    [`"http:/.//kyle:xy"`]
 ][
     [`"//www.example.com//kyle:xy"`]
     [`remove_authority()`]
     [`"/.//kyle:xy"`]
 ][
-    [`"mailto:kyle:xy"`]
-    [`remove_scheme()`]
-    [`"./kyle:xy"`]
+    [`"http://www.example.com//kyle:xy"`]
+    [`remove_origin()`]
+    [`"/.//kyle:xy"`]
 ][
-    [`"./kyle:xy"`]
-    [`set_path_absolute( true )`]
-    [`"/./kyle:xy"`]
+    [`"info:kyle:xy"`]
+    [`remove_origin()`]
+    [`"kyle%3Axy"`]
 ][
     [`"/kyle:xy"`]
     [`set_path_absolute( false )`]
-    [`"./kyle:xy"`]
+    [`"kyle%3Axy"`]
+][
+    [`"kyle%3Axy"`]
+    [`set_path_absolute( true )`]
+    [`"/kyle:xy"`]
+][
+    [`""`]
+    [`set_path( "kyle:xy" )`]
+    [`"kyle%3Axy"`]
+][
+    [`""`]
+    [`set_path( "//foo/fighters.txt" )`]
+    [`"/.//foo/fighters.txt"`]
+][
+    [`"my%3Asharona/billa%3Abong"`]
+    [`normalize()`]
+    [`"my%3Asharona/billa:bong"`]
+][
+    [`"./my:sharona"`]
+    [`normalize()`]
+    [`"my%3Asharona"`]
 ]]
 
 For the full set of containers and functions for operating
