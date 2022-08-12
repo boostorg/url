@@ -998,6 +998,11 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
+
+        @see
+            @ref urls::segments_encoded,
+            @ref segments.
+
     */
     BOOST_URL_DECL
     segments_encoded
@@ -1019,6 +1024,10 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
+
+        @see
+            @ref urls::segments,
+            @ref encoded_segments.
     */
     urls::segments
     segments() noexcept
@@ -1157,6 +1166,10 @@ public:
         query-param     = key [ "=" value ]
 
         @endcode
+
+        @see
+            @ref urls::params_encoded,
+            @ref params.
     */
     urls::params_encoded
     encoded_params() noexcept
@@ -1178,9 +1191,13 @@ public:
         query-param     = key [ "=" value ]
         @endcode
 
+        @see
+            @ref urls::params,
+            @ref encoded_params.
+
     */
     urls::params
-    params()
+    params() noexcept
     {
         return {*this};
     }
