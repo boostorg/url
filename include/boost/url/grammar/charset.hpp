@@ -31,7 +31,7 @@ namespace grammar {
     @li An instance of `T` is invocable
     with this equivalent function signature:
     @code
-    bool T::operator()( char ) const;
+    bool T::operator()( char ) const noexcept;
     @endcode
 
     @par Example
