@@ -13,7 +13,7 @@ A ['CharSet] is a unary predicate which is invocable with
 this equivalent signature:
 
 ```
-bool( char ch ) const;
+bool( char ch ) const noexcept;
 ```
 
 The predicate returns `true` if `ch` is a member of the
