@@ -14,8 +14,8 @@
 #include <boost/url/result.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/detail/tuple.hpp>
-#include <boost/core/empty_value.hpp>
 #include <boost/mp11/algorithm.hpp>
+#include <boost/url/detail/empty_value.hpp>
 #include <tuple>
 
 namespace boost {
@@ -87,7 +87,7 @@ template<
     class R0,
     class... Rn>
 class sequence_rule_t
-    : empty_value<
+    : urls::detail::empty_value<
         detail::tuple<R0, Rn...>>
 {
     using T = mp11::mp_remove<
@@ -124,9 +124,9 @@ private:
     sequence_rule_t(
         R0 const& r0,
         Rn const&... rn) noexcept
-        : empty_value<
+        : urls::detail::empty_value<
             detail::tuple<R0, Rn...>>(
-                empty_init,
+                urls::detail::empty_init,
                 r0, rn...)
     {
     }
@@ -152,15 +152,15 @@ namespace detail {
 
 template<class Rule>
 struct squelch_rule_t
-    : empty_value<Rule>
+    : urls::detail::empty_value<Rule>
 {
     using value_type = void;
 
     constexpr
     squelch_rule_t(
         Rule const& r) noexcept
-        : empty_value<Rule>(
-            empty_init, r)
+        : urls::detail::empty_value<Rule>(
+            urls::detail::empty_init, r)
     {
     }
 

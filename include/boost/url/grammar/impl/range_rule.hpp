@@ -11,11 +11,11 @@
 #define BOOST_URL_GRAMMAR_IMPL_RANGE_HPP
 
 #include <boost/url/detail/except.hpp>
+#include <boost/url/detail/empty_value.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/recycled.hpp>
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/core/empty_value.hpp>
 #include <exception>
 #include <iterator>
 #include <new>
@@ -77,12 +77,13 @@ template<class T>
 template<class R, bool Small>
 struct range<T>::impl1
     : any_rule
-    , private empty_value<R>
+    , private urls::detail::empty_value<R>
 {
     explicit
     impl1(R const& next) noexcept
-        : empty_value<R>(
-            empty_init, next)
+        : urls::detail::empty_value<R>(
+            urls::detail::empty_init,
+            next)
     {
     }
 
@@ -189,16 +190,16 @@ template<
     class R0, class R1, bool Small>
 struct range<T>::impl2
     : any_rule
-    , empty_value<R0, 0>
-    , empty_value<R1, 1>
+    , private urls::detail::empty_value<R0, 0>
+    , private urls::detail::empty_value<R1, 1>
 {
     impl2(
         R0 const& first,
         R1 const& next) noexcept
-        : empty_value<R0,0>(
-            empty_init, first)
-        , empty_value<R1,1>(
-            empty_init, next)
+        : urls::detail::empty_value<R0,0>(
+            urls::detail::empty_init, first)
+        , urls::detail::empty_value<R1,1>(
+            urls::detail::empty_init, next)
     {
     }
 
@@ -217,7 +218,8 @@ private:
             const noexcept override
     {
         return grammar::parse(it, end,
-            empty_value<R0, 0>::get());
+            urls::detail::empty_value<
+                R0,0>::get());
     }
 
     result<T>
@@ -227,7 +229,8 @@ private:
             const noexcept override
     {
         return grammar::parse(it, end,
-            empty_value<R1, 1>::get());
+            urls::detail::empty_value<
+                R1,1>::get());
     }
 };
 

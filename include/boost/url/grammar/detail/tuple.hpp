@@ -13,7 +13,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_code.hpp>
-#include <boost/core/empty_value.hpp>
+#include <boost/url/detail/empty_value.hpp>
 #include <boost/mp11/algorithm.hpp>
 #include <boost/mp11/function.hpp>
 #include <boost/mp11/integer_sequence.hpp>
@@ -40,19 +40,19 @@ namespace detail {
 #if BOOST_URL_TUPLE_EBO
 template<std::size_t I, class T>
 struct tuple_element_impl
-    : empty_value<T>
+    : urls::detail::empty_value<T>
 {
     constexpr
     tuple_element_impl(T const& t)
-        : empty_value<T>(
-            empty_init, t)
+        : urls::detail::empty_value<T>(
+            urls::detail::empty_init, t)
     {
     }
 
     constexpr
     tuple_element_impl(T&& t)
-        : empty_value<T>(
-            empty_init,
+        : urls::detail::empty_value<T>(
+            urls::detail::empty_init,
                 std::move(t))
     {
     }
