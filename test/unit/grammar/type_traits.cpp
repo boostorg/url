@@ -11,6 +11,7 @@
 #include <boost/url/grammar/type_traits.hpp>
 
 #include <string>
+#include <vector>
 
 #include "test_suite.hpp"
 

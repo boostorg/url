@@ -196,66 +196,21 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = false;
 
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("", "");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%20", " ");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A", "A");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%41", "A");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%42", "B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%42", "AB");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%20%42", "A B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%00", "\0");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("+", "+");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%00+", "A\0+");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%1");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%1x");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%%");
-            }
+            good("", "");
+            good("%20", " ");
+            good("A", "A");
+            good("%41", "A");
+            good("%42", "B");
+            good("A%42", "AB");
+            good("A%20%42", "A B");
+            good("%00", "\0");
+            good("+", "+");
+            good("A%00+", "A\0+");
+            bad("B");
+            bad("%");
+            bad("%1");
+            bad("%1x");
+            bad("%%");
         }
 
         {
@@ -264,66 +219,21 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = false;
 
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("", "");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%20", " ");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A", "A");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%41", "A");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%42", "B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%42", "AB");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%20%42", "A B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("+", "+");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%00");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%1");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%1x");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%%");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("A%00+");
-            }
+            good("", "");
+            good("%20", " ");
+            good("A", "A");
+            good("%41", "A");
+            good("%42", "B");
+            good("A%42", "AB");
+            good("A%20%42", "A B");
+            good("+", "+");
+            bad("B");
+            bad("%00");
+            bad("%");
+            bad("%1");
+            bad("%1x");
+            bad("%%");
+            bad("A%00+");
         }
 
         {
@@ -332,66 +242,21 @@ public:
             opt.non_normal_is_error = true;
             opt.plus_to_space = false;
 
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("", "");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%20", " ");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A", "A");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%41");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%42", "B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%42", "AB");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%20%42", "A B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%00", "\0");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("+", "+");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%00+", "A\0+");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%1");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%1x");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%%");
-            }
+            good("", "");
+            good("%20", " ");
+            good("A", "A");
+            bad("%41");
+            good("%42", "B");
+            good("A%42", "AB");
+            good("A%20%42", "A B");
+            good("%00", "\0");
+            good("+", "+");
+            good("A%00+", "A\0+");
+            bad("B");
+            bad("%");
+            bad("%1");
+            bad("%1x");
+            bad("%%");
         }
 
         {
@@ -400,66 +265,21 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = false;
 
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("", "");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%20", " ");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A", "A");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%41", "A");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%42", "B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%42", "AB");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%20%42", "A B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%00", "\0");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("+", "+");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%00+", "A\0+");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%1");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%1x");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%%");
-            }
+            good("", "");
+            good("%20", " ");
+            good("A", "A");
+            good("%41", "A");
+            good("%42", "B");
+            good("A%42", "AB");
+            good("A%20%42", "A B");
+            good("%00", "\0");
+            good("+", "+");
+            good("A%00+", "A\0+");
+            bad("B");
+            bad("%");
+            bad("%1");
+            bad("%1x");
+            bad("%%");
         }
 
         {
@@ -468,66 +288,21 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = true;
 
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("", "");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%20", " ");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A", "A");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%41", "A");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%42", "B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%42", "AB");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%20%42", "A B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%00", "\0");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("+", " ");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("B");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%1");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%1x");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%%");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A%00+", "A\0 ");
-            }
+            good("", "");
+            good("%20", " ");
+            good("A", "A");
+            good("%41", "A");
+            good("%42", "B");
+            good("A%42", "AB");
+            good("A%20%42", "A B");
+            good("%00", "\0");
+            good("+", " ");
+            bad("B");
+            bad("%");
+            bad("%1");
+            bad("%1x");
+            bad("%%");
+            good("A%00+", "A\0 ");
         }
 
         {
@@ -536,22 +311,10 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = true;
 
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("\0", "\0");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("A\0", "A\0");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%41\0", "A\0");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                good("%41%00", "A\0");
-            }
+            good("\0", "\0");
+            good("A\0", "A\0");
+            good("%41\0", "A\0");
+            good("%41%00", "A\0");
         }
 
         {
@@ -560,22 +323,10 @@ public:
             opt.non_normal_is_error = false;
             opt.plus_to_space = true;
 
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("\0");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("A\0");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%41\0");
-            }
-            {
-                BOOST_TEST_CHECKPOINT();
-                bad("%41%00");
-            }
+            bad("\0");
+            bad("A\0");
+            bad("%41\0");
+            bad("%41%00");
         }
     }
 

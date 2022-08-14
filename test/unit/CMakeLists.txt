@@ -89,12 +89,12 @@ set(BOOST_URL_TESTS_FILES
     rfc/uri_reference_rule.cpp
     )
 
-set(TEST_MAIN ../../extra/test_main.cpp)
+set(SUITE_FILES ../../extra/test_main.cpp ../../extra/test_suite.hpp)
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${BOOST_URL_TESTS_FILES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${TEST_MAIN})
-add_executable(boost_url_tests ${BOOST_URL_TESTS_FILES} ${TEST_MAIN})
-target_include_directories(boost_url_tests PRIVATE . ../../extra/include)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${SUITE_FILES})
+add_executable(boost_url_tests ${BOOST_URL_TESTS_FILES} ${SUITE_FILES})
+target_include_directories(boost_url_tests PRIVATE . ../../extra)
 # The include dependencies are found in the CMakeLists.txt
 # of the root project directory.
 # See: BOOST_URL_UNIT_TEST_LIBRARIES

@@ -13,8 +13,11 @@
 
 #include <boost/url/url_view.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
+
 #include "test_suite.hpp"
+
 #include <algorithm>
+#include <iomanip>
 #include <sstream>
 
 namespace boost {

@@ -13,6 +13,7 @@ if(NOT TARGET boost_url_all_tests)
     set_property(TARGET boost_url_all_tests PROPERTY FOLDER Dependencies)
 endif()
 
+add_subdirectory(extra)
 add_subdirectory(limits)
 add_subdirectory(unit)
 #add_subdirectory(wpt)
