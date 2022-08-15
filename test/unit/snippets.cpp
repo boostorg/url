@@ -150,7 +150,7 @@ using_url_views()
         //[snippet_decoding_3
         boost::filesystem::path p;
         for (auto seg: u.segments())
-            p /= seg;
+            p.append(seg.begin(), seg.end());
         std::cout << "path: " << p << "\n";
         //]
     }

@@ -126,7 +126,8 @@ public:
             std::advance(it, prefix_.segments().size());
             while (it != end)
             {
-                result /= *it;
+                auto seg = *it;
+                result.append(seg.begin(), seg.end());
                 ++it;
             }
             return true;

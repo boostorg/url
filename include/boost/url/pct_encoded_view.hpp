@@ -1099,24 +1099,6 @@ operator<<(
     pct_encoded_view const& s);
 
 } // urls
-
-//------------------------------------------------
-
-#ifndef BOOST_URL_DOCS
-namespace filesystem {
-namespace path_traits {
-template <class T>
-struct is_pathable;
-
-template <>
-struct is_pathable<urls::pct_encoded_view>
-{
-    static const bool value = true;
-};
-} // path_traits
-} // filesystem
-#endif
-
 } // boost
 
 #include <boost/url/impl/pct_encoded_view.hpp>
