@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_QUERY_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
+#include <boost/url/error_type.hpp>
 #include <boost/url/params_encoded_view.hpp>
 #include <boost/url/query_param.hpp>
 #include <cstddef>

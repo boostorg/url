@@ -15,7 +15,7 @@
 #include <boost/url/string_view.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/result.hpp>
+#include <boost/url/error_type.hpp>
 
 namespace boost {
 namespace urls {

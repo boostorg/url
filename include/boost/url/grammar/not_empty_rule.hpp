@@ -11,7 +11,7 @@
 #define BOOST_URL_GRAMMAR_NOT_EMPTY_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/result.hpp>
+#include <boost/url/error_type.hpp>
 #include <boost/url/grammar/type_traits.hpp>
 
 namespace boost {

@@ -24,7 +24,7 @@ local SOURCES =
     ../../extra/test_main.cpp
     authority_view.cpp
     error.cpp
-    error_code.cpp
+    error_type.cpp
     grammar.cpp
     host_type.cpp
     ipv4_address.cpp
@@ -37,7 +37,6 @@ local SOURCES =
     pct_encoded_view.cpp
     pct_encoding.cpp
     query_param.cpp
-    result.cpp
     scheme.cpp
     segments.cpp
     segments_encoded.cpp

@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/authority_view.hpp>
-#include <boost/url/result.hpp>
+#include <boost/url/error_type.hpp>
 
 namespace boost {
 namespace urls {
