@@ -86,7 +86,7 @@ various interesting cases:
     []
 ][
     [`"/"`]
-    [`{ "" }`]
+    [`{ }`]
     [yes]
 ][
     [`"./"`]
