@@ -124,6 +124,15 @@ public:
         check("gopher");
         check("magnet");
         check("mailto");
+
+        BOOST_TEST_EQ(default_port(scheme::none), 0);
+        BOOST_TEST_EQ(default_port(scheme::unknown), 0);
+        BOOST_TEST_EQ(default_port(scheme::ftp), 21);
+        BOOST_TEST_EQ(default_port(scheme::file), 0);
+        BOOST_TEST_EQ(default_port(scheme::http), 80);
+        BOOST_TEST_EQ(default_port(scheme::https), 443);
+        BOOST_TEST_EQ(default_port(scheme::ws), 80);
+        BOOST_TEST_EQ(default_port(scheme::wss), 443);
     }
 };
 
