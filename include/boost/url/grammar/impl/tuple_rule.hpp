@@ -80,7 +80,7 @@ struct parse_sequence
         result<void> rv =
             grammar::parse(
                 it, end, get<Ir>(rn));
-        if(rv.has_error())
+        if( !rv )
         {
             ec = rv.error();
             return;
@@ -104,7 +104,7 @@ struct parse_sequence
         auto& rv = get<Iv>(vn);
         rv = grammar::parse(
             it, end, get<Ir>(rn));
-        if(rv.has_error())
+        if( !rv )
         {
             ec = rv.error();
             return;
@@ -208,7 +208,7 @@ struct parse_sequence<false, R0, Rn...>
         result<void> rv =
             grammar::parse(
                 it, end, get<Ir>(rn));
-        if(rv.has_error())
+        if( !rv )
         {
             v = rv.error();
             return;
@@ -231,7 +231,7 @@ struct parse_sequence<false, R0, Rn...>
     {
         v = grammar::parse(
             it, end, get<Ir>(rn));
-        if(v.has_error())
+        if( !v )
             return;
         apply(it, end,
             mp11::mp_size_t<Ir+1>{},

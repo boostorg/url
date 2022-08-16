@@ -77,7 +77,7 @@ measure(
     string_view s(p_, n_);
     auto rn = urls::validate_pct_encoding(
         s, pchars, {});
-    if(rn.has_error())
+    if( !rn )
     {
         ec = rn.error();
         return false;
@@ -271,7 +271,7 @@ measure_impl(
 {
     auto rn = urls::validate_pct_encoding(
         s, pchars, {});
-    if(rn.has_error())
+    if( !rn )
     {
         ec = rn.error();
         return false;

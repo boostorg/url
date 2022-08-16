@@ -362,7 +362,7 @@ public:
             r_->s_.data() +
             r_->s_.size();
         rv_ = r_->get().next(p_, end);
-        if(rv_.has_error())
+        if( !rv_ )
             p_ = nullptr;
         return *this;
     }
@@ -391,7 +391,7 @@ private:
             r_->s_.data() +
             r_->s_.size();
         rv_ = r_->get().first(p_, end);
-        if(rv_.has_error())
+        if( !rv_ )
             p_ = nullptr;
     }
 
@@ -530,7 +530,7 @@ parse(
     auto it1 = it;
     auto rv = (grammar::parse)(
         it, end, next_);
-    if(rv.has_error())
+    if( !rv )
     {
         if(rv.error() != error::range_end)
         {
@@ -554,7 +554,7 @@ parse(
         it1 = it;
         rv = (grammar::parse)(
             it, end, next_);
-        if(rv.has_error())
+        if( !rv )
         {
             if(rv.error() != error::range_end)
             {
@@ -600,7 +600,7 @@ parse(
     auto it1 = it;
     auto rv = (grammar::parse)(
         it, end, first_);
-    if(rv.has_error())
+    if( !rv )
     {
         if(rv.error() != error::range_end)
         {
@@ -624,7 +624,7 @@ parse(
         it1 = it;
         rv = (grammar::parse)(
             it, end, next_);
-        if(rv.has_error())
+        if( !rv )
         {
             if(rv.error() != error::range_end)
             {

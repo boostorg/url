@@ -64,7 +64,7 @@ parse_variant(
     auto const it0 = it;
     auto rv = parse(
         it, end, get<I>(rn));
-    if(rv.has_value())
+    if( rv )
         return variant<
             typename R0::value_type,
             typename Rn::value_type...>{

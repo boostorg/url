@@ -77,7 +77,7 @@ increment() noexcept
     auto rv = grammar::parse(
         next_, end_,
             detail::slash_segment_rule);
-    if(rv.has_error())
+    if( !rv )
     {
         next_ = nullptr;
         return;

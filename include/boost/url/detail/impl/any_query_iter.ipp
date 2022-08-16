@@ -73,7 +73,7 @@ measure(
     string_view s(p_, n_);
     auto rn = urls::validate_pct_encoding(
         s, query_chars, {});
-    if(rn.has_error())
+    if( !rn )
     {
         ec = rn.error();
         return false;
@@ -266,7 +266,7 @@ measure_impl(
     opt.plus_to_space = true;
     auto rn = validate_pct_encoding(
         key, query_chars, opt);
-    if(rn.has_error())
+    if( !rn )
     {
         ec = rn.error();
         return false;
@@ -276,14 +276,14 @@ measure_impl(
     {
         rn = validate_pct_encoding(
             *value, query_chars, opt);
-        if(rn.has_error())
+        if( !rn )
         {
             ec = rn.error();
             return false;
         }
         n += 1 + value->size();
     }
-    return ! rn.has_error();
+    return !  !rn ;
 }
 
 void

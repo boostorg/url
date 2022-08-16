@@ -311,7 +311,7 @@ private:
         @ref url_view.
 */
 inline
-error_code
+result<void>
 resolve(
     url_view_base const& base,
     url_view_base const& ref,

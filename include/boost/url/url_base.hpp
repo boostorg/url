@@ -1448,7 +1448,7 @@ public:
     //--------------------------------------------
 
     friend
-    error_code
+    result<void>
     resolve(
         url_view_base const& base,
         url_view_base const& ref,
@@ -1468,7 +1468,7 @@ private:
     char* shrink_impl(int, int, std::size_t);
 
     BOOST_URL_DECL
-    error_code
+    result<void>
     resolve_impl(
         url_view_base const& base,
         url_view_base const& ref);

@@ -62,7 +62,7 @@ pct_encoded_view(
 {
     opt.non_normal_is_error = false;
     auto rn = validate_pct_encoding(str, opt);
-    if (rn.has_error())
+    if ( !rn )
         detail::throw_invalid_argument();
     dn_ = *rn;
 }

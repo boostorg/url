@@ -309,7 +309,7 @@ set_encoded_user(
             s,
             detail::user_chars,
             {});
-    if(rn.has_error())
+    if( !rn )
         detail::throw_invalid_argument();
     auto dest = set_user_impl(s.size());
     u_.decoded_[id_user] = *rn;
@@ -432,7 +432,7 @@ set_encoded_password(
     check_invariants();
     auto const rn = validate_pct_encoding(
         s, detail::password_chars, {});
-    if(rn.has_error())
+    if( !rn )
         detail::throw_invalid_argument();
     auto dest =
         set_password_impl(s.size());
@@ -682,7 +682,7 @@ set_host(
     // try ipv4
     {
         auto r = parse_ipv4_address(s);
-        if(! r.has_error())
+        if( r )
             return set_host(r.value());
     }
     check_invariants();
@@ -713,7 +713,7 @@ set_host(
     // try ipv4
     {
         auto r = parse_ipv4_address(s.encoded());
-        if(! r.has_error())
+        if( r )
             return set_host(r.value());
     }
     check_invariants();
@@ -1786,7 +1786,7 @@ set_fragment(
 //
 //------------------------------------------------
 
-error_code
+result<void>
 url_base::
 resolve_impl(
     url_view_base const& base,

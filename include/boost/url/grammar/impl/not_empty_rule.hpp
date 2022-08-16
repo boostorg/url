@@ -33,7 +33,7 @@ parse(
     }
     auto const it0 = it;
     auto rv = r_.parse(it, end);
-    if( rv.has_error())
+    if(  !rv )
     {
         // error
         return rv;
