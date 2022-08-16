@@ -321,6 +321,20 @@ struct url_view_base_test
             assert( u.query() == "id=42&name=jane-doe&page size=20" );
         }
 
+        // encoded_query()
+        {
+            url_view u( "/sql?id=42&name=jane%2Ddoe&page+size=20" );
+
+            assert( u.encoded_query() == "id=42&name=jane%2Ddoe&page+size=20" );
+        }
+
+        // query
+        {
+            url_view u( "/sql?id=42&name=jane%2Ddoe&page+size=20" );
+
+            assert( u.query() == "id=42&name=jane-doe&page size=20" );
+        }
+
         //----------------------------------------
         //
         // Fragment
@@ -346,6 +360,22 @@ struct url_view_base_test
             url_view u( "http://www.example.com/index.htm#a%2D1" );
 
             assert( u.fragment() == "a-1" );
+        }
+
+        //----------------------------------------
+
+        // encoded_target()
+        {
+            url_view u( "http://www.example.com/index.html?query#frag" );
+
+            assert( u.encoded_target() == "/index.html?query" );
+        }
+
+        // encoded_resource()
+        {
+            url_view u( "http://www.example.com/index.html?query#frag" );
+
+            assert( u.encoded_resource() == "/index.html?query#frag" );
         }
     }
 };

@@ -1499,6 +1499,63 @@ public:
         return {encoded_path(), u_.nseg_};
     }
 
+    /** Return the encoded target.
+
+        This function returns the encoded target,
+        which is composed of the path and query.
+
+        @par Example
+        @code
+        url_view u( "http://www.example.com/index.html?query#frag" );
+
+        assert( u.encoded_target() == "/index.html?query" );
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
+
+    */
+    string_view
+    encoded_target() const noexcept
+    {
+        return u_.get(id_path, id_frag);
+    }
+
+    /** Return the encoded resource.
+
+        This function returns the encoded target,
+        which is composed of the path, query, and
+        fragment.
+
+        @par Example
+        @code
+        url_view u( "http://www.example.com/index.html?query#frag" );
+
+        assert( u.encoded_target() == "/index.html?query#frag" );
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
+
+    */
+    string_view
+    encoded_resource() const noexcept
+    {
+        return u_.get(id_path, id_end);
+    }
+
     //--------------------------------------------
     //
     // Query
@@ -1673,6 +1730,7 @@ public:
     BOOST_URL_DECL
     params_view
     params() const noexcept;
+
 
     //--------------------------------------------
     //
