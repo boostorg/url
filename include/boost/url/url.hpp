@@ -293,14 +293,14 @@ private:
     Basic guarantee.
     Calls to allocate may throw.
 
+    @return Error if any occurred
+
     @param base The base URL to resolve against.
 
     @param ref The URL reference to resolve.
 
     @param dest The container where the result
     is written, upon success.
-
-    @param ec Set to the error if any occurred.
 
     @par Specification
     <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-5"
@@ -311,16 +311,15 @@ private:
         @ref url_view.
 */
 inline
-void
+result<void>
 resolve(
     url_view_base const& base,
     url_view_base const& ref,
-    url_base& dest,
-    error_code& ec)
+    url_base& dest)
 {
     BOOST_ASSERT(&dest != &base);
     BOOST_ASSERT(&dest != &ref);
-    dest.resolve_impl(base, ref, ec);
+    return dest.resolve_impl(base, ref);
 }
 
 } // urls

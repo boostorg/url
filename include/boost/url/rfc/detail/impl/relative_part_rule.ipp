@@ -39,7 +39,7 @@ parse(
         auto rv = grammar::parse(
             it, end,
             path_noscheme_rule);
-        if(rv.has_value())
+        if( rv )
         {
             // path-noscheme
             t.path = std::move(*rv);

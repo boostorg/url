@@ -55,16 +55,16 @@ pct_encoded_view(
 pct_encoded_view::
 pct_encoded_view(
     string_view str,
-    pct_decode_opts opt) noexcept
+    pct_decode_opts opt)
     : p_(str.data())
     , n_(str.size())
     , plus_to_space_(opt.plus_to_space)
 {
-    error_code ec;
     opt.non_normal_is_error = false;
-    dn_ = validate_pct_encoding(str, ec, opt);
-    if (ec.failed())
+    auto rn = validate_pct_encoding(str, opt);
+    if ( !rn )
         detail::throw_invalid_argument();
+    dn_ = *rn;
 }
 
 pct_encoded_view

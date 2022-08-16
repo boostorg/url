@@ -41,7 +41,7 @@ parse(
         auto rv = grammar::parse(
             it, end,
             path_rootless_rule);
-        if(rv.has_value())
+        if( rv )
         {
             t.path = std::move(*rv);
             BOOST_URL_RETURN(t);

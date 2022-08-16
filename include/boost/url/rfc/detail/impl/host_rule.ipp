@@ -74,7 +74,7 @@ parse(
     {
         auto rv = grammar::parse(
             it, end, ipv4_address_rule);
-        if(rv.has_value())
+        if( rv )
         {
             auto const b =
                 rv->to_bytes();

@@ -54,8 +54,8 @@ parse(
     auto it = s.data();
     auto const end = it + s.size();
     auto rv = r.parse(it, end);
-    if( rv.has_value() &&
-            it != end)
+    if( rv &&
+        it != end)
         return error::leftover;
     return rv;
 }
