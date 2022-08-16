@@ -11,8 +11,7 @@
 #define BOOST_URL_ERROR_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
-#include <boost/url/result.hpp>
+#include <boost/url/error_type.hpp>
 #include <stdexcept>
 
 namespace boost {

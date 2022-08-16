@@ -11,8 +11,7 @@
 #define BOOST_URL_GRAMMAR_TYPE_TRAITS_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
-#include <boost/url/result.hpp>
+#include <boost/url/error_type.hpp>
 #include <boost/url/grammar/detail/type_traits.hpp>
 #include <boost/type_traits/make_void.hpp>
 #include <type_traits>

@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_DETAIL_USERINFO_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_code.hpp>
+#include <boost/url/error_type.hpp>
 #include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/string_view.hpp>
 

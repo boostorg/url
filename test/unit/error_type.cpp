@@ -8,4 +8,4 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/result.hpp>
+#include <boost/url/error_type.hpp>

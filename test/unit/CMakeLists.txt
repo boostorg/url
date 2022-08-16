@@ -21,7 +21,7 @@ set(BOOST_URL_TESTS_FILES
     doc_container.cpp
     doc_grammar.cpp
     error.cpp
-    error_code.cpp
+    error_type.cpp
     grammar.cpp
     host_type.cpp
     ipv4_address.cpp
@@ -34,7 +34,6 @@ set(BOOST_URL_TESTS_FILES
     pct_encoded_view.cpp
     pct_encoding.cpp
     query_param.cpp
-    result.cpp
     scheme.cpp
     segments.cpp
     segments_encoded.cpp

@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_RELATIVE_REF_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/result.hpp>
+#include <boost/url/error_type.hpp>
 #include <boost/url/url_view.hpp>
 
 namespace boost {
