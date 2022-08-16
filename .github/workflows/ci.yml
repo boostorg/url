@@ -477,7 +477,7 @@ jobs:
             cd "$BOOST_ROOT"
             mkdir __build_cmake_test__ && cd __build_cmake_test__
             cmake -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBOOST_INCLUDE_LIBRARIES=$SELF -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DBUILD_TESTING=ON -DBoost_VERBOSE=ON ..
-            cmake --build . --target tests boost_url_tests boost_url_limits --config ${{matrix.build_type}}
+            cmake --build . --target tests boost_url_tests boost_url_limits boost_url_extra --config ${{matrix.build_type}}
             ctest --output-on-failure --build-config ${{matrix.build_type}}
       - name: Run CMake subdir tests
         run: |
