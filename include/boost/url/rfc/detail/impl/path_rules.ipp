@@ -35,7 +35,7 @@ parse(
     }
     auto rv = grammar::parse(
         it, end, segment_rule);
-    if(rv.has_error())
+    if( !rv )
         return rv.error();
     return *rv;
 }

@@ -1448,12 +1448,11 @@ public:
     //--------------------------------------------
 
     friend
-    void
+    result<void>
     resolve(
         url_view_base const& base,
         url_view_base const& ref,
-        url_base& dest,
-        error_code& ec);
+        url_base& dest);
 
 private:
     //--------------------------------------------
@@ -1469,11 +1468,10 @@ private:
     char* shrink_impl(int, int, std::size_t);
 
     BOOST_URL_DECL
-    bool
+    result<void>
     resolve_impl(
         url_view_base const& base,
-        url_view_base const& ref,
-        error_code& ec);
+        url_view_base const& ref);
 };
 
 } // urls

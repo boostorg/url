@@ -107,7 +107,7 @@ namespace errc = boost::system::errc;
     @code
     result< url_view > r = parse_uri( "http://example.com/path/to/file.txt" );
 
-    if( r.has_error() )
+    if( !r )
         std::cout << r.error();
     else
         std::cout << r.value();

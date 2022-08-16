@@ -28,7 +28,7 @@ parse(
         return boost::none;
     auto const it0 = it;
     auto rv = r_.parse(it, end);
-    if(! rv.has_error())
+    if(rv)
         return value_type(*rv);
     it = it0;
     return boost::none;

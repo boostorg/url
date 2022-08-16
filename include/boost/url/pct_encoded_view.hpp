@@ -168,7 +168,7 @@ public:
     explicit
     pct_encoded_view(
         string_view s,
-        pct_decode_opts opt = {}) noexcept;
+        pct_decode_opts opt = {});
 
     //--------------------------------------------
     //

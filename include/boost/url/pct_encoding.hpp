@@ -86,8 +86,6 @@ struct pct_decode_opts
 
     @param s The percent-encoded string to analyze.
 
-    @param ec Set to the error, if any occurred.
-
     @param opt The options for decoding. If this
     parameter is omitted, the default options
     will be used.
@@ -112,10 +110,9 @@ struct pct_decode_opts
 */
 template<
     class CharSet>
-std::size_t
+result<std::size_t>
 validate_pct_encoding(
     string_view s,
-    error_code& ec,
     CharSet const& allowed,
     pct_decode_opts const& opt = {}) noexcept;
 
@@ -157,8 +154,6 @@ validate_pct_encoding(
 
     @param s The percent-encoded string to analyze.
 
-    @param ec Set to the error, if any occurred.
-
     @param opt The options for decoding. If this
     parameter is omitted, the default options
     will be used.
@@ -174,10 +169,9 @@ validate_pct_encoding(
         @ref pct_decode_unchecked,
 */
 BOOST_URL_DECL
-std::size_t
+result<std::size_t>
 validate_pct_encoding(
     string_view s,
-    error_code& ec,
     pct_decode_opts const& opt = {}) noexcept;
 
 /** Write a string with percent-decoding into a buffer.
@@ -208,7 +202,10 @@ validate_pct_encoding(
 
     @return The number of bytes written to
     the destination buffer, which does not
-    include any null termination.
+    include any null termination. If the
+    destination buffer is too small to hold
+    the result, the result is set to
+    @ref error::no_space.
 
     @param dest A pointer to the
     beginning of the output buffer.
@@ -217,11 +214,6 @@ validate_pct_encoding(
     of the output buffer.
 
     @param s The string to decode.
-
-    @param ec Set to the error, if any
-    occurred. If the destination buffer
-    is too small to hold the result, `ec`
-    is set to @ref error::no_space.
 
     @param opt The options for decoding. If
     this parameter is omitted, the default
@@ -247,12 +239,11 @@ validate_pct_encoding(
 */
 template<
     class CharSet>
-std::size_t
+result<std::size_t>
 pct_decode(
     char* dest,
     char const* end,
     string_view s,
-    error_code& ec,
     CharSet const& allowed,
     pct_decode_opts const& opt = {}) noexcept;
 
@@ -294,8 +285,6 @@ pct_decode(
 
     @param s The string to decode.
 
-    @param ec Set to the error, if any occurred.
-
     @param opt The options for decoding. If
     this parameter is omitted, the default
     options will be used.
@@ -311,12 +300,11 @@ pct_decode(
         @ref validate_pct_encoding.
 */
 BOOST_URL_DECL
-std::size_t
+result<std::size_t>
 pct_decode(
     char* dest,
     char const* end,
     string_view s,
-    error_code& ec,
     pct_decode_opts const& opt = {}) noexcept;
 
 /** Return the number of bytes needed to hold the string with percent-decoding applied.

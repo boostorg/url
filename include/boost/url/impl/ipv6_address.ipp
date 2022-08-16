@@ -43,7 +43,7 @@ ipv6_address(
     string_view s)
 {
     auto r = parse_ipv6_address(s);
-    if(r.has_error())
+    if( !r )
         detail::throw_invalid_argument();
     *this = r.value();
 }
