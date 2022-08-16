@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
+#include <cinttypes>
 
 namespace boost {
 namespace urls {
@@ -149,6 +150,29 @@ string_to_scheme(string_view s) noexcept;
 BOOST_URL_DECL
 string_view
 to_string(scheme s) noexcept;
+
+/** Return the default port for a known scheme
+
+    This function returns the default port
+    for the known schemes. If the value does
+    not represent a known scheme or the scheme
+    does not represent a protocol, the function
+    returns zero.
+
+    The following ports are returned by the
+    function:
+
+    @li @ref scheme::ftp = 21
+    @li @ref scheme::http, @ref scheme::ws = 80
+    @li @ref scheme::https, @ref scheme::wss = 443
+
+    @return An integer with the default port number
+
+    @param s The known scheme constant
+*/
+BOOST_URL_DECL
+std::uint16_t
+default_port(scheme s) noexcept;
 
 } // urls
 } // boost

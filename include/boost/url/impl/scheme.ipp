@@ -107,6 +107,25 @@ to_string(scheme s) noexcept
     return "<unknown>";
 }
 
+std::uint16_t
+default_port(scheme s) noexcept
+{
+    switch(s)
+    {
+    case scheme::ftp:
+        return 21;
+    case scheme::http:
+    case scheme::ws:
+        return 80;
+    case scheme::https:
+    case scheme::wss:
+        return 443;
+    default:
+        break;
+    }
+    return 0;
+}
+
 } // urls
 } // boost
 
