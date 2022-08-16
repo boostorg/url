@@ -75,10 +75,13 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    urls::validate_pct_encoding(
-        s, ec, pchars, {});
-    if(ec.failed())
+    auto rn = urls::validate_pct_encoding(
+        s, pchars, {});
+    if(rn.has_error())
+    {
+        ec = rn.error();
         return false;
+    }
     n += s.size();
     increment();
     return true;
@@ -266,10 +269,13 @@ measure_impl(
     std::size_t& n,
     error_code& ec) noexcept
 {
-    urls::validate_pct_encoding(
-        s, ec, pchars, {});
-    if(ec.failed())
+    auto rn = urls::validate_pct_encoding(
+        s, pchars, {});
+    if(rn.has_error())
+    {
+        ec = rn.error();
         return false;
+    }
     n += s.size();
     return true;
 }

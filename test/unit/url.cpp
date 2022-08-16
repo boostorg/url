@@ -1999,8 +1999,7 @@ public:
                 parse_uri_reference(r).value();
             url u = parse_uri(
                 "z://y:x@p.q:69/x/f?q#f" ).value();
-            error_code ec;
-            resolve(ub, ur, u, ec);
+            error_code ec = resolve(ub, ur, u);
             if(! BOOST_TEST(! ec.failed()))
                 return;
             BOOST_TEST_EQ(u.string(), m);

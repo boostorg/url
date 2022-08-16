@@ -22,10 +22,9 @@ namespace boost {
 namespace urls {
 
 template<class CharSet>
-std::size_t
+result<std::size_t>
 validate_pct_encoding(
     string_view s,
-    error_code& ec,
     CharSet const& allowed,
     pct_decode_opts const& opt) noexcept
 {
@@ -48,9 +47,8 @@ validate_pct_encoding(
             *it == '\0')
         {
             // null in input
-            ec = BOOST_URL_ERR(
+            BOOST_URL_RETURN_EC(
                 error::illegal_null);
-            return n;
         }
         if(allowed(*it))
         {
@@ -66,18 +64,16 @@ validate_pct_encoding(
             if(end - it < 2)
             {
                 // missing HEXDIG
-                ec = BOOST_URL_ERR(
+                BOOST_URL_RETURN_EC(
                     error::missing_pct_hexdig);
-                return n;
             }
             auto d0 = grammar::hexdig_value(it[0]);
             auto d1 = grammar::hexdig_value(it[1]);
             if( d0 < 0 || d1 < 0)
             {
                 // expected HEXDIG
-                ec = BOOST_URL_ERR(
+                BOOST_URL_RETURN_EC(
                     error::bad_pct_hexdig);
-                return n;
             }
             it += 2;
             char const c = static_cast<char>(
@@ -89,15 +85,14 @@ validate_pct_encoding(
                 c == '\0')
             {
                 // escaped null
-                ec = BOOST_URL_ERR(
+                BOOST_URL_RETURN_EC(
                     error::illegal_null);
-                return n;
             }
             if( opt.non_normal_is_error &&
                 allowed(c))
             {
                 // escaped unreserved char
-                ec = BOOST_URL_ERR(
+                BOOST_URL_RETURN_EC(
                     error::non_canonical);
                 return n;
             }
@@ -105,24 +100,21 @@ validate_pct_encoding(
             continue;
         }
         // reserved character in input
-        ec = BOOST_URL_ERR(
+        BOOST_URL_RETURN_EC(
             error::illegal_reserved_char);
-        return n;
     }
     BOOST_ASSERT(it == end);
-    ec = {};
     return n;
 }
 
 //------------------------------------------------
 
 template<class CharSet>
-std::size_t
+result<std::size_t>
 pct_decode(
     char* dest,
     char const* end,
     string_view s,
-    error_code& ec,
     CharSet const& allowed,
     pct_decode_opts const& opt) noexcept
 {
@@ -130,18 +122,17 @@ pct_decode(
     BOOST_STATIC_ASSERT(
         grammar::is_charset<CharSet>::value);
 
-    auto const n =
+    auto const rn =
         validate_pct_encoding(
-            s, ec, allowed, opt);
-    if(ec.failed())
-        return 0;
+            s, allowed, opt);
+    if(rn.has_error())
+        return rn;
     auto const n1 =
         pct_decode_unchecked(
             dest, end, s, opt);
-    if(n1 < n)
+    if(n1 < *rn)
     {
-        ec = error::no_space;
-        return n1;
+        return error::no_space;
     }
     return n1;
 }

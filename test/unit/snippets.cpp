@@ -322,8 +322,7 @@ parsing_urls()
         result< url_view > r1 = parse_uri( "https://www.example.com" );
         assert( r1.has_value() );
         url dest;
-        error_code ec;
-        resolve(r1.value(), r0.value(), dest, ec);
+        resolve(r1.value(), r0.value(), dest);
         assert(dest.string() == "https://www.example.com/path/to/file.txt");
         //]
         boost::ignore_unused(dest);

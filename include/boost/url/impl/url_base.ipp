@@ -304,17 +304,15 @@ set_encoded_user(
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    error_code ec;
-    auto const n =
+    auto const rn =
         validate_pct_encoding(
             s,
-            ec,
             detail::user_chars,
             {});
-    if(ec.failed())
+    if(rn.has_error())
         detail::throw_invalid_argument();
     auto dest = set_user_impl(s.size());
-    u_.decoded_[id_user] = n;
+    u_.decoded_[id_user] = *rn;
     if(! s.empty())
     {
         BOOST_ASSERT(dest != nullptr);
@@ -432,14 +430,13 @@ set_encoded_password(
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    error_code ec;
-    auto const n = validate_pct_encoding(
-        s, ec, detail::password_chars, {});
-    if(ec.failed())
+    auto const rn = validate_pct_encoding(
+        s, detail::password_chars, {});
+    if(rn.has_error())
         detail::throw_invalid_argument();
     auto dest =
         set_password_impl(s.size());
-    u_.decoded_[id_pass] = n;
+    u_.decoded_[id_pass] = *rn;
     if(! s.empty())
     {
         BOOST_ASSERT(dest != nullptr);
@@ -1789,12 +1786,11 @@ set_fragment(
 //
 //------------------------------------------------
 
-bool
+error_code
 url_base::
 resolve_impl(
     url_view_base const& base,
-    url_view_base const& ref,
-    error_code& ec)
+    url_view_base const& ref)
 {
     auto const remove_dot_segments =
         [this]
@@ -1858,11 +1854,8 @@ resolve_impl(
 
     if(! base.has_scheme())
     {
-        ec = error::not_a_base;
-        return false;
+        return error::not_a_base;
     }
-
-    ec = {};
 
     //
     // 5.2.2. Transform References
@@ -1874,7 +1867,7 @@ resolve_impl(
         reserve(ref.size());
         copy(ref);
         remove_dot_segments();
-        return true;
+        return {};
     }
     if(ref.has_authority())
     {
@@ -1894,7 +1887,7 @@ resolve_impl(
         if(ref.has_fragment())
             set_encoded_fragment(
                 ref.encoded_fragment());
-        return true;
+        return {};
     }
     if(ref.encoded_path().empty())
     {
@@ -1934,7 +1927,7 @@ resolve_impl(
         if(ref.has_fragment())
             set_encoded_fragment(
                 ref.encoded_fragment());
-        return true;
+        return {};
     }
     if(ref.encoded_path().starts_with('/'))
     {
@@ -1955,7 +1948,7 @@ resolve_impl(
         if(ref.has_fragment())
             set_encoded_fragment(
                 ref.encoded_fragment());
-        return true;
+        return {};
     }
     reserve(
         base.u_.offset(id_query) +
@@ -1986,7 +1979,7 @@ resolve_impl(
     if(ref.has_fragment())
         set_encoded_fragment(
             ref.encoded_fragment());
-    return true;
+    return {};
 }
 
 //------------------------------------------------

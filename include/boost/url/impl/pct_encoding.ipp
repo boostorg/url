@@ -133,10 +133,9 @@ pct_decode_unchecked(
 
 namespace detail
 {
-std::size_t
+result<std::size_t>
 validate_pct_encoding(
     string_view s,
-    error_code& ec,
     std::true_type) noexcept
 {
     const auto is_safe = [](char c)
@@ -153,30 +152,26 @@ validate_pct_encoding(
         if (end - it < 2)
         {
             // missing HEXDIG
-            ec = BOOST_URL_ERR(
+            BOOST_URL_RETURN_EC(
                 error::missing_pct_hexdig);
-            return it - s.data() - pcts * 2;
         }
         if (!grammar::hexdig_chars(it[1]) ||
             !grammar::hexdig_chars(it[2]))
         {
             // expected HEXDIG
-            ec = BOOST_URL_ERR(
+            BOOST_URL_RETURN_EC(
                 error::bad_pct_hexdig);
-            return it - s.data() - pcts * 2;
         }
         it += 3;
         ++pcts;
         it = grammar::find_if_not(it, end, is_safe);
     }
-    ec = {};
     return s.size() - pcts * 2;
 }
 
-std::size_t
+result<std::size_t>
 validate_pct_encoding(
     string_view s,
-    error_code& ec,
     std::false_type) noexcept
 {
     const auto is_safe = [](char c)
@@ -193,75 +188,67 @@ validate_pct_encoding(
         if (*it == '\0')
         {
             // null in input
-            ec = BOOST_URL_ERR(
+            BOOST_URL_RETURN_EC(
                 error::illegal_null);
-            return it - s.data() - pcts * 2;
         }
         if (end - it < 2)
         {
             // missing HEXDIG
-            ec = BOOST_URL_ERR(
+            BOOST_URL_RETURN_EC(
                 error::missing_pct_hexdig);
-            return it - s.data() - pcts * 2;
         }
         if (!grammar::hexdig_chars(it[1]) ||
             !grammar::hexdig_chars(it[2]))
         {
             // expected HEXDIG
-            ec = BOOST_URL_ERR(
+            BOOST_URL_RETURN_EC(
                 error::bad_pct_hexdig);
-            return it - s.data() - pcts * 2;
         }
         if (it[1] == '0' &&
             it[2] == '0')
         {
             // null in input
-            ec = BOOST_URL_ERR(
+            BOOST_URL_RETURN_EC(
                 error::illegal_null);
-            return it - s.data() - pcts * 2;
         }
         it += 3;
         ++pcts;
         it = grammar::find_if_not(it, end, is_safe);
     }
-    ec = {};
     return s.size() - pcts * 2;
 }
 }
 
-std::size_t
+result<std::size_t>
 validate_pct_encoding(
     string_view s,
-    error_code& ec,
     pct_decode_opts const& opt) noexcept
 {
     if (opt.allow_null)
         return detail::validate_pct_encoding(
-            s, ec, std::true_type{});
+            s, std::true_type{});
     else
        return detail::validate_pct_encoding(
-            s, ec, std::false_type{});
+            s, std::false_type{});
 }
 
-std::size_t
+result<std::size_t>
 pct_decode(
     char* dest,
     char const* end,
     string_view s,
-    error_code& ec,
     pct_decode_opts const& opt) noexcept
 {
-    auto const n =
-        validate_pct_encoding(s, ec, opt);
-    if(ec.failed())
-        return 0;
+    auto const rn =
+        validate_pct_encoding(s, opt);
+    if(rn.has_error())
+        return rn;
     auto const n1 =
         pct_decode_unchecked(
             dest, end, s, opt);
-    if(n1 < n)
+    if(n1 < *rn)
     {
-        ec = error::no_space;
-        return n1;
+        return error::no_space;
     }
     return n1;
 }

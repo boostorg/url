@@ -71,10 +71,13 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    urls::validate_pct_encoding(
-        s, ec, query_chars, {});
-    if(ec.failed())
+    auto rn = urls::validate_pct_encoding(
+        s, query_chars, {});
+    if(rn.has_error())
+    {
+        ec = rn.error();
         return false;
+    }
     n += s.size();
     increment();
     return true;
@@ -261,20 +264,26 @@ measure_impl(
 {
     pct_decode_opts opt;
     opt.plus_to_space = true;
-    validate_pct_encoding(
-        key, ec, query_chars, opt);
-    if(ec.failed())
+    auto rn = validate_pct_encoding(
+        key, query_chars, opt);
+    if(rn.has_error())
+    {
+        ec = rn.error();
         return false;
+    }
     n += key.size();
     if(value)
     {
-        validate_pct_encoding(
-            *value, ec, query_chars, opt);
-        if(ec.failed())
+        rn = validate_pct_encoding(
+            *value, query_chars, opt);
+        if(rn.has_error())
+        {
+            ec = rn.error();
             return false;
+        }
         n += 1 + value->size();
     }
-    return ! ec.failed();
+    return ! rn.has_error();
 }
 
 void

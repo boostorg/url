@@ -66,12 +66,11 @@ public:
         {
             // validate_pct_encoding
             {
-                error_code ec;
-                auto n = validate_pct_encoding(
-                    s0, ec, *pcs, opt);
-                if(! BOOST_TEST(! ec.failed()))
+                auto rn = validate_pct_encoding(
+                    s0, *pcs, opt);
+                if(! BOOST_TEST(! rn.has_error()))
                     return;
-                BOOST_TEST_EQ(n, s1.size());
+                BOOST_TEST_EQ(*rn, s1.size());
             }
             // pct_decode to buffer
             {
@@ -79,22 +78,21 @@ public:
                 for(std::size_t i = 0;
                     i < sizeof(buf); ++i)
                 {
-                    error_code ec;
-                    auto const n = pct_decode(
+                    auto const rn = pct_decode(
                         buf, buf + i,
-                            s0, ec, *pcs, opt);
+                            s0, *pcs, opt);
                     if(i < s1.size())
                     {
                         BOOST_TEST(
-                            ec == error::no_space);
-                        BOOST_TEST_LT(n, s1.size());
-                        BOOST_TEST_LE(n, i);
+                            rn.error() == error::no_space);
+                        // BOOST_TEST_LT(n, s1.size());
+                        // BOOST_TEST_LE(n, i);
                         continue;
                     }
-                    BOOST_TEST(! ec.failed());
-                    BOOST_TEST_EQ(n, s1.size());
+                    BOOST_TEST(! rn.has_error());
+                    BOOST_TEST_EQ(*rn, s1.size());
                     BOOST_TEST_EQ(
-                        string_view(buf, n), s1);
+                        string_view(buf, *rn), s1);
                     break;
                 }
             }
@@ -102,10 +100,10 @@ public:
             {
                 std::string s;
                 s.resize(pct_decode_bytes_unchecked(s0));
-                error_code ec;
-                std::size_t n =
-                    pct_decode(&s[0], &s[0] + s.size(), s0, ec, opt);
-                s.resize(n);
+                auto rn =
+                    pct_decode(&s[0], &s[0] + s.size(), s0, opt);
+                BOOST_TEST(rn.has_value());
+                s.resize(*rn);
                 BOOST_TEST_EQ(s, s1);
             }
             // pct_decode() -> std::basic_string
@@ -114,8 +112,8 @@ public:
                 std::basic_string<char,
                     std::char_traits<char>, A> s(A{});
                 s.resize(pct_decode_bytes_unchecked(s0));
-                error_code ec;
-                pct_decode(&s[0], &s[0] + s.size(), s0, ec, opt);
+                auto rn = pct_decode(&s[0], &s[0] + s.size(), s0, opt);
+                BOOST_TEST(rn.has_value());
                 BOOST_TEST_EQ(s, s1);
             }
             // pct_decode_bytes_unchecked
@@ -142,21 +140,19 @@ public:
         {
             // validate_pct_encoding
             {
-                error_code ec;
-                validate_pct_encoding(
-                    s, ec, test_chars{}, opt);
-                BOOST_TEST(ec.failed());
-                if (!ec.failed())
+                auto rn = validate_pct_encoding(
+                    s, test_chars{}, opt);
+                BOOST_TEST(rn.has_error());
+                if (!rn.has_error())
                     BOOST_TEST_EQ(s, "");
             }
             // pct_decode to buffer
             {
                 char buf[16];
-                error_code ec;
-                pct_decode(buf,
+                auto rn = pct_decode(buf,
                     buf + sizeof(buf),
-                        s, ec, *pcs, opt);
-                BOOST_TEST(ec.failed());
+                        s, *pcs, opt);
+                BOOST_TEST(rn.has_error());
             }
             // pct_decode_bytes_unchecked
             {
