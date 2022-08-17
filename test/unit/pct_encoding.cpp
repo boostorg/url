@@ -429,11 +429,52 @@ public:
     }
 
     void
+    testValidate()
+    {
+        auto check = [](
+            string_view s,
+            error_code ec,
+            pct_decode_opts opt)
+        {
+            auto r = validate_pct_encoding(s, opt);
+            BOOST_TEST(r.has_error());
+            BOOST_TEST(r.error() == ec);
+        };
+
+        pct_decode_opts opt;
+        opt.allow_null = true;
+        check("%a", error::missing_pct_hexdig, opt);
+        check("%ar", error::bad_pct_hexdig, opt);
+
+        opt.allow_null = false;
+        check(string_view("\0", 1), error::illegal_null, opt);
+        check("%00", error::illegal_null, opt);
+        check("%a", error::missing_pct_hexdig, opt);
+        check("%ar", error::bad_pct_hexdig, opt);
+
+        {
+            std::string dest;
+            dest.resize(1);
+            result<std::size_t> r = pct_decode(
+                &dest[0], &dest[1], "%a", opt);
+            BOOST_TEST_EQ(r.error(), error::missing_pct_hexdig);
+        }
+        {
+            std::string dest;
+            dest.resize(1);
+            result<std::size_t> r = pct_decode(
+                &dest[0], &dest[1], "%aa%aa", opt);
+            BOOST_TEST_EQ(r.error(), error::no_space);
+        }
+    }
+
+    void
     run()
     {
         testDecoding();
         testEncode();
         testEncodeExtras();
+        testValidate();
     }
 };
 

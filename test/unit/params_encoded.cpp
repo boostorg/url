@@ -13,6 +13,7 @@
 
 #include <boost/url/url.hpp>
 #include <boost/url/url_view.hpp>
+#include <boost/core/ignore_unused.hpp>
 #include "test_suite.hpp"
 
 namespace boost {
@@ -50,6 +51,26 @@ public:
                 "k1=1&k2=2&k3=&k4&k5=55555");
             BOOST_TEST(u.string() ==
                 "/?k1=1&k2=2&k3=&k4&k5=55555#f");
+        }
+        {
+            url u = parse_uri_reference(
+                "/?x#f").value();
+            auto ps = u.encoded_params();
+            BOOST_TEST_THROWS(
+                ps.assign({
+                    { "k1", "1#", true }}),
+                std::invalid_argument);
+            ignore_unused(ps);
+        }
+        {
+            url u = parse_uri_reference(
+                "/?x#f").value();
+            auto ps = u.encoded_params();
+            BOOST_TEST_THROWS(
+                ps.assign({
+                    { "#k1", "", false }}),
+                std::invalid_argument);
+            ignore_unused(ps);
         }
         {
             url u = parse_uri_reference("/?x#f").value();

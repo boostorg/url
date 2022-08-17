@@ -149,7 +149,7 @@ validate_pct_encoding(
     it = grammar::find_if_not(it, end, is_safe);
     while (it != end)
     {
-        if (end - it < 2)
+        if (end - it < 3)
         {
             // missing HEXDIG
             BOOST_URL_RETURN_EC(
@@ -191,7 +191,7 @@ validate_pct_encoding(
             BOOST_URL_RETURN_EC(
                 error::illegal_null);
         }
-        if (end - it < 2)
+        if (end - it < 3)
         {
             // missing HEXDIG
             BOOST_URL_RETURN_EC(
