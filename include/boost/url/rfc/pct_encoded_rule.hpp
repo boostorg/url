@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/pct_encoded_view.hpp>
 #include <boost/url/pct_encoding.hpp>
-#include <boost/url/error_type.hpp>
+#include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/error.hpp>

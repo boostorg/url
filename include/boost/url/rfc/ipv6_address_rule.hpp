@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/error_type.hpp>
+#include <boost/url/error_types.hpp>
 
 namespace boost {
 namespace urls {
