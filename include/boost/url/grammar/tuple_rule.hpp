@@ -11,7 +11,7 @@
 #define BOOST_URL_GRAMMAR_TUPLE_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/error_type.hpp>
+#include <boost/url/error_types.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/detail/tuple.hpp>
 #include <boost/mp11/algorithm.hpp>
