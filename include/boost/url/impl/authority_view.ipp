@@ -334,6 +334,65 @@ parse_authority(
     return grammar::parse(s, authority_rule);
 }
 
+//------------------------------------------------
+//
+// Comparisons
+//
+//------------------------------------------------
+
+int
+authority_view::
+compare(const authority_view& other) const noexcept
+{
+    int comp = has_userinfo() - other.has_userinfo();
+    if ( comp != 0 )
+        return comp;
+
+    if (has_userinfo())
+    {
+        comp = detail::compare_encoded(
+            encoded_user(),
+            other.encoded_user());
+        if ( comp != 0 )
+            return comp;
+
+        comp = has_password() - other.has_password();
+        if ( comp != 0 )
+            return comp;
+
+        if (has_password())
+        {
+            comp = detail::compare_encoded(
+                encoded_password(),
+                other.encoded_password());
+            if ( comp != 0 )
+                return comp;
+        }
+    }
+
+    comp = detail::ci_compare_encoded(
+        encoded_host(),
+        other.encoded_host());
+    if ( comp != 0 )
+        return comp;
+
+    comp = has_port() - other.has_port();
+    if ( comp != 0 )
+        return comp;
+
+    if (has_port())
+    {
+        comp = detail::compare(
+            port(),
+            other.port());
+        if ( comp != 0 )
+            return comp;
+    }
+
+    return 0;
+}
+
+
 } // urls
 } // boost
 

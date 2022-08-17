@@ -89,6 +89,7 @@
           <member><link linkend="url.ref.boost__urls__parse_relative_ref">parse_relative_ref</link></member>
           <member><link linkend="url.ref.boost__urls__parse_uri">parse_uri</link></member>
           <member><link linkend="url.ref.boost__urls__parse_uri_reference">parse_uri_reference</link></member>
+          <member><link linkend="url.ref.boost__urls__relative">relative</link></member>
           <member><link linkend="url.ref.boost__urls__resolve">resolve</link></member>
         </simplelist>
       </entry>

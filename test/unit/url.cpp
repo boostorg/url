@@ -860,6 +860,111 @@ struct url_test
         }
     }
 
+    void
+    testRelative()
+    {
+        auto const check = [](
+            string_view b,
+            string_view r,
+            string_view e)
+        {
+            auto ub =
+                parse_uri_reference(b).value();
+            auto ur =
+                parse_uri_reference(r).value();
+            url dest = parse_uri_reference("x/y" ).value();
+            auto rv = relative(ub, ur, dest);
+            BOOST_TEST(!rv.has_error());
+            BOOST_TEST_EQ(dest.string(), e);
+        };
+
+        // relative URL / absolute paths
+        check("/a/path/to/somewhere/else", "/a/path/to/a", "../a");
+        check("/relative/sub/foo/sub/file", "/relative/path", "../../../path");
+        check("http://google.com/baz", "http://example.org/world.html", "//example.org/world.html");
+        check("http://google.com/baz", "http:/world.html", "/world.html");
+        // AFREITAS: The paths below should be "" but set_path("") and segments() = {} crash
+        //           "." is still equivalent
+        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file", ".");
+        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file?foo=bar#abcd", ".?foo=bar#abcd");
+        // "." should be ignored
+        check("/a/path/././to/./somewhere/else", "/a/./path/./to/a", "../a");
+        // ".." should be normalized
+        check("/a/path/x/../to/y/../somewhere/else", "/b/../a/path/to/a", "../a");
+        // same parent
+        check("/relative/file?some=query#hash", "/relative/path?blubber=1#hash1", "path?blubber=1#hash1");
+        // direct parent
+        check("/relative/sub/file?some=query#hash", "/relative/path?blubber=1#hash1", "../path?blubber=1#hash1");
+        // second parent
+        check("/relative/sub/sub/file?some=query#hash", "/relative/path?blubber=1#hash1", "../../path?blubber=1#hash1");
+        // third parent
+        check("/relative/sub/foo/sub/file?some=query#hash", "/relative/path?blubber=1#hash1", "../../../path?blubber=1#hash1");
+        // parent top level
+        check("/path/to/file?some=query#hash", "/relative/path?blubber=1#hash1", "../../relative/path?blubber=1#hash1");
+        // descendant
+        check("/base/path/top.html", "/base/path/with/subdir/inner.html", "with/subdir/inner.html");
+        // same directory
+        check("/path/top.html", "/path/", "./");
+        // absolute /
+        check("http://example.org/", "http://example.org/foo/bar/bat", "foo/bar/bat");
+        // absolute /foo
+        check("http://example.org/foo", "http://example.org/foo/bar/bat", "foo/bar/bat");
+        // absolute /foo/
+        check("http://example.org/foo/", "http://example.org/foo/bar/bat", "bar/bat");
+        // same scheme
+        check("http://example.com/foo/", "http://example.org/foo/bar/bat", "//example.org/foo/bar/bat");
+        // different scheme
+        check("https://example.org/foo/", "http://example.org/foo/bar", "http://example.org/foo/bar");
+        // base with no scheme or host
+        check("/foo/", "http://example.org/foo/bar", "http://example.org/foo/bar");
+        // base with no scheme
+        check("//example.org/foo/bar", "http://example.org/foo/bar", "http://example.org/foo/bar");
+        // denormalized base
+        check("/foo/./bar/", "/foo/bar/bat", "bat");
+        // denormalized url
+        check("/foo/bar/", "/foo//bar/bat", "..//bar/bat");
+        // credentials
+        check("http://example.org/foo/", "http://user:pass@example.org/foo/bar", "//user:pass@example.org/foo/bar");
+        // base credentials
+        check("http://user:pass@example.org/foo/bar", "http://example.org/foo/bar", "//example.org/foo/bar");
+        // same credentials different host
+        check("http://user:pass@example.com/foo/bar", "http://user:pass@example.org/foo/bar", "//user:pass@example.org/foo/bar");
+        // different port 1
+        check("http://example.org:8080/foo/bar", "http://example.org/foo/bar", "//example.org/foo/bar");
+        // different port 2
+        check("http://example.org:8080/foo/bar", "http://example.org:8081/foo/bar", "//example.org:8081/foo/bar");
+        // different port 3
+        check("http://example.org/foo/bar", "http://example.org:8081/foo/bar", "//example.org:8081/foo/bar");
+        // same path - fragment
+        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file#abcd", ".#abcd");
+        // same path - query
+        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file?abcd=123", ".?abcd=123");
+        // same path - query and fragment
+        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file?abcd=123#alpha", ".?abcd=123#alpha");
+
+        auto const fail = [](
+            string_view b,
+            string_view r,
+            error_code e)
+        {
+            auto ub =
+                parse_uri_reference(b).value();
+            auto ur =
+                parse_uri_reference(r).value();
+            url dest = parse_uri_reference("x/y" ).value();
+            auto rv = relative(ub, ur, dest);
+            BOOST_TEST(rv.has_error());
+            BOOST_TEST_EQ(rv.error(), e);
+        };
+
+        // already relative
+        fail("/foo/", "foo/bar", error::not_a_base);
+
+        // relative base
+        fail("foo/", "/foo/bar", error::not_a_base);
+
+    }
+
     //--------------------------------------------
 
     void
@@ -1087,6 +1192,7 @@ struct url_test
         testFragment();
         testSegments();
         testResolution();
+        testRelative();
         testOstream();
         testNormalize();
         testSwap();
