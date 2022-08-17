@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_ERROR_TYPE_HPP
-#define BOOST_URL_ERROR_TYPE_HPP
+#ifndef BOOST_URL_ERROR_TYPES_HPP
+#define BOOST_URL_ERROR_TYPES_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/system/error_code.hpp>

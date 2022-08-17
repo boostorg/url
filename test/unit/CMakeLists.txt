@@ -21,7 +21,7 @@ set(BOOST_URL_TESTS_FILES
     doc_container.cpp
     doc_grammar.cpp
     error.cpp
-    error_type.cpp
+    error_types.cpp
     grammar.cpp
     host_type.cpp
     ipv4_address.cpp

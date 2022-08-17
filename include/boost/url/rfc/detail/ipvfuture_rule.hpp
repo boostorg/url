@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_RFC_DETAIL_IPVFUTURE_RULE_HPP
 #define BOOST_URL_RFC_DETAIL_IPVFUTURE_RULE_HPP
 
-#include <boost/url/error_type.hpp>
+#include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
 
 namespace boost {

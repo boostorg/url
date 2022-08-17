@@ -13,7 +13,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/error_type.hpp>
+#include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
 #include <array>
 #include <cstdint>

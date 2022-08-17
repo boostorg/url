@@ -14,7 +14,7 @@
 
 #include <boost/url/authority_view.hpp>
 #include <boost/url/error.hpp>
-#include <boost/url/error_type.hpp>
+#include <boost/url/error_types.hpp>
 #include <boost/url/host_type.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
