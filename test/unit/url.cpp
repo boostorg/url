@@ -883,10 +883,8 @@ struct url_test
         check("/relative/sub/foo/sub/file", "/relative/path", "../../../path");
         check("http://google.com/baz", "http://example.org/world.html", "//example.org/world.html");
         check("http://google.com/baz", "http:/world.html", "/world.html");
-        // AFREITAS: The paths below should be "" but set_path("") and segments() = {} crash
-        //           "." is still equivalent
-        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file", ".");
-        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file?foo=bar#abcd", ".?foo=bar#abcd");
+        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file", "");
+        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file?foo=bar#abcd", "?foo=bar#abcd");
         // "." should be ignored
         check("/a/path/././to/./somewhere/else", "/a/./path/./to/a", "../a");
         // ".." should be normalized
@@ -936,11 +934,11 @@ struct url_test
         // different port 3
         check("http://example.org/foo/bar", "http://example.org:8081/foo/bar", "//example.org:8081/foo/bar");
         // same path - fragment
-        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file#abcd", ".#abcd");
+        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file#abcd", "#abcd");
         // same path - query
-        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file?abcd=123", ".?abcd=123");
+        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file?abcd=123", "?abcd=123");
         // same path - query and fragment
-        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file?abcd=123#alpha", ".?abcd=123#alpha");
+        check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file?abcd=123#alpha", "?abcd=123#alpha");
 
         auto const fail = [](
             string_view b,

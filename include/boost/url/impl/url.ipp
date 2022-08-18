@@ -158,20 +158,16 @@ relative(
     //   us slightly different results.
     // - The basic exception guarantee is not
     //   satisfied in case of allocation errors.
-
     BOOST_ASSERT(&dest != &base);
     BOOST_ASSERT(&dest != &href);
 
     // Validate input
-    if (!href.is_path_absolute())
+    if (!href.is_path_absolute() ||
+        !base.is_path_absolute())
     {
-        // href is already relative
-        return error::not_a_base;
-    }
-    if (!base.is_path_absolute())
-    {
+        // href is already relative or
         // cannot calculate a URI relative to another relative URI
-        return error::not_a_base;
+        BOOST_URL_RETURN_EC(error::not_a_base);
     }
 
     // Resolve scheme
@@ -211,16 +207,45 @@ relative(
     // 0. Get segments
     auto segs0 = base.segments();
     auto segs1 = href.segments();
-    auto begin0 = segs0.begin();
+
+    // Reference iterators
+    auto const begin0 = segs0.begin();
     auto it0 = begin0;
-    auto end0 = segs0.end();
-    auto last0 = begin0 != end0 ? std::prev(end0) : end0;
-    auto begin1 = segs1.begin();
+    auto const end0 = segs0.end();
+    auto const last0 = begin0 != end0 ? std::prev(end0) : end0;
+    auto const begin1 = segs1.begin();
     auto it1 = begin1;
-    auto end1 = segs1.end();
-    auto last1 = begin0 != end1 ? std::prev(end1) : end1;
-    pct_encoded_view const dotdot("..");
-    pct_encoded_view const dot(".");
+    auto const end1 = segs1.end();
+    auto const last1 = begin0 != end1 ? std::prev(end1) : end1;
+
+    // Function to advance the dotdot segments
+    pct_encoded_view dotdot("..");
+    pct_encoded_view dot(".");
+    auto consume_dots = [dotdot, dot](
+        segments_view::iterator& first,
+        segments_view::iterator last)
+    {
+        auto it = std::next(first);
+        std::size_t l = 1;
+        while (it != last)
+        {
+            if (*it == dotdot)
+            {
+                if (--l == 0)
+                {
+                    ++it;
+                    first = it;
+                    break;
+                }
+            }
+            else if (*it != dot)
+            {
+                ++l;
+            }
+            ++it;
+        }
+        return first == it;
+    };
 
     // 1. Find the longest common path
     while (
@@ -254,57 +279,15 @@ relative(
         }
         else
         {
-            // Check if *it0 will be consumed by a dotdot
-            auto it2 = std::next(it0);
-            std::size_t l = 1;
-            while (it2 != last0)
-            {
-                if (*it2 == dotdot)
-                {
-                    if (--l == 0)
-                    {
-                        ++it2;
-                        it0 = it2;
-                        break;
-                    }
-                }
-                else if (*it2 != dot)
-                {
-                    ++l;
-                }
-                ++it2;
-            }
-            if (it0 == it2)
+            if (consume_dots(it0, last0))
                 continue;
-
-            // Check if *it1 will be consumed by a dotdot
-            auto it3 = std::next(it1);
-            l = 1;
-            while (it3 != last1)
-            {
-                if (*it3 == dotdot)
-                {
-                    if (--l == 0)
-                    {
-                        ++it3;
-                        it1 = it3;
-                        break;
-                    }
-                }
-                else if (*it3 != dot)
-                {
-                    ++l;
-                }
-                ++it3;
-            }
-            if (it1 == it3)
+            if (consume_dots(it1, last1))
                 continue;
-
             break;
         }
     }
 
-    // 1.b Check if paths are the same
+    // 1.b Check if parent paths are the same
     if (it0 == last0 &&
         it1 == last1 &&
         it0 != end0 &&
@@ -312,7 +295,7 @@ relative(
         *it0 == *it1)
     {
         // Return empty path
-        dest.segments() = {dot.encoded()};
+        dest.segments() = {};
         if (href.has_query())
             dest.set_encoded_query(href.encoded_query());
         else
@@ -324,54 +307,43 @@ relative(
         return {};
     }
 
-    // 2. replace each path component in the
-    //    base path with ../
+    // 2. Append ".." for each segment left in base
     segments_encoded segs = dest.encoded_segments();
-    segs = {dot.encoded()};
+    segs = {};
     if (it0 != end0)
     {
         dest.set_path_absolute(false);
-        auto last0 = std::prev(end0);
         while (it0 != last0)
         {
             if (*it0 == dotdot)
             {
-                if (segs.size() > 1)
+                if (!segs.empty())
                     segs.pop_back();
-                else
-                    segs = {dot.encoded()};
             }
             else if (*it0 != dot)
             {
-                if (dest.path() == dot)
-                    segs = {dotdot.encoded()};
-                else
-                    segs.push_back(dotdot.encoded());
+                segs.push_back(dotdot.encoded());
             }
             ++it0;
         }
     }
 
-    // 3. Append the reference path
+    // 3. Append segments left from the reference
     while (it1 != end1)
     {
         if (*it1 == dotdot)
         {
-            if (segs.size() > 1)
+            if (!segs.empty())
                 segs.pop_back();
-            else
-                segs = {dot.encoded()};
         }
         else if (*it1 != dot)
         {
-            string_view v = (*it1).encoded();
-            if (dest.path() == dot)
-                segs = {v};
-            else
-                segs.push_back(v);
+            segs.push_back((*it1).encoded());
         }
         ++it1;
     }
+
+    // Query and fragment comes from reference
     if (href.has_query())
         dest.set_encoded_query(href.encoded_query());
     else
