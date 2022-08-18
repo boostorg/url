@@ -48,10 +48,30 @@ template<class T>
 class range
 {
     // buffer size for type-erased rule
-    static
-    constexpr
-    std::size_t
-    BufferSize = 128;
+    static constexpr
+        std::size_t BufferSize = 128;
+
+    struct small_buffer
+    {
+        alignas(alignof(::max_align_t))
+        unsigned char buf[BufferSize];
+
+        void const* addr() const noexcept
+        {
+            return buf;
+        }
+
+        void* addr() noexcept
+        {
+            return buf;
+        }
+    };
+
+    small_buffer sb_;
+    string_view s_;
+    std::size_t n_ = 0;
+
+    //--------------------------------------------
 
     struct any_rule;
 
@@ -59,25 +79,8 @@ class range
     struct impl1;
 
     template<
-        class R0, class R1,
-        bool>
+        class R0, class R1, bool>
     struct impl2;
-
-    struct small_buffer
-    {
-        alignas(alignof(::max_align_t))
-        unsigned char buf[BufferSize];
-
-        void* addr() const noexcept
-        {
-            return const_cast<void*>(
-                reinterpret_cast<
-                    void const*>(this));
-        }
-    };
-    small_buffer sb_;
-    string_view s_;
-    std::size_t n_ = 0;
 
     template<
         class R0, class R1>
@@ -153,29 +156,42 @@ public:
 
         Default-constructed ranges have
         zero elements.
+
+        @par Exception Safety
+        Throws nothing.
     */
     range() noexcept;
 
     /** Constructor
 
-        After construction, the moved-from
-        object will be the empty range.
-    */
-    range(range&&) noexcept;
+        The copy will reference the same
+        underlying character buffer.
+        Ownership is not transferred; the
+        caller is responsible for ensuring
+        that the lifetime of the buffer
+        extends until it is no longer
+        referenced.
 
-    /** Constructor (deleted)
+        @par Exception Safety
+        Throws nothing.
     */
-    range(range const&) = delete;
+    range(range const&) noexcept;
 
     /** Assignment
-    */
-    range&
-    operator=(range&&) noexcept;
 
-    /** Assignment (deleted)
+        The copy will reference the same
+        underlying character buffer.
+        Ownership is not transferred; the
+        caller is responsible for ensuring
+        that the lifetime of the buffer
+        extends until it is no longer
+        referenced.
+
+        @par Exception Safety
+        Throws nothing.
     */
     range&
-    operator=(range const&) = delete;
+    operator=(range const&) noexcept;
 
     /** Return an iterator to the beginning
     */
@@ -185,12 +201,12 @@ public:
     */
     iterator end() const noexcept;
 
-    /** Return the matching part of the string
+    /** Return true if the range is empty
     */
-    string_view
-    string() const noexcept
+    bool
+    empty() const noexcept
     {
-        return s_;
+        return n_ == 0;
     }
 
     /** Return the number of elements in the range
@@ -201,12 +217,12 @@ public:
         return n_;
     }
 
-    /** Return true if the range is empty
+    /** Return the matching part of the string
     */
-    bool
-    empty() const noexcept
+    string_view
+    string() const noexcept
     {
-        return n_ == 0;
+        return s_;
     }
 };
 
