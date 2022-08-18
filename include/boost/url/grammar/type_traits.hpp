@@ -99,7 +99,7 @@ struct is_rule<T, boost::void_t<decltype(
         std::declval<T const&>().parse(
             std::declval<char const*&>(),
             std::declval<char const*>())
-    )>> : std::true_type
+    )>> : std::is_nothrow_copy_constructible<T>
 {
 };
 #endif

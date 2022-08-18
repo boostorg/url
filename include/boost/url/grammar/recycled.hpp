@@ -280,8 +280,6 @@ public:
         @par Exception Safety
         Throws nothing.
 
-        @param bin The bin to use for recycling.
-
         @see
             @ref acquire,
             @ref recycled,
@@ -385,7 +383,7 @@ public:
     */
     recycled_ptr&
     operator=(
-        recycled_ptr const&) noexcept;
+        recycled_ptr const& other) noexcept;
 
     /** Return true if this does not reference an object
 
