@@ -396,6 +396,22 @@ public:
         return p_ == nullptr;
     }
 
+    /** Return true if this references an object
+
+        @par Effects
+        @code
+        return ! this->empty();
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    explicit
+    operator bool() const noexcept
+    {
+        return p_ != nullptr;
+    }
+
     /** Return the referenced recycle bin
 
         @par Exception Safety

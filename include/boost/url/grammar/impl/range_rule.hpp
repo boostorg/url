@@ -45,6 +45,14 @@ struct range<T>::
 
     virtual
     void
+    move(void* dest) noexcept
+    {
+        ::new(dest) any_rule(
+            std::move(*this));
+    }
+
+    virtual
+    void
     copy(void* dest) const noexcept
     {
         ::new(dest) any_rule(*this);
@@ -87,7 +95,16 @@ struct range<T>::impl1
     }
 
 private:
+    impl1(impl1&&) noexcept = default;
     impl1(impl1 const&) noexcept = default;
+
+    void
+    move(void* dest
+        ) noexcept override
+    {
+        ::new(dest) impl1(
+            std::move(*this));
+    }
 
     void
     copy(void* dest
@@ -125,6 +142,13 @@ template<class R>
 struct range<T>::impl1<R, false>
     : any_rule
 {
+    explicit
+    impl1(R const& next) noexcept
+    {
+        ::new(p_->addr()) impl{next};
+    }
+
+private:
     struct impl
     {
         R r;
@@ -133,6 +157,9 @@ struct range<T>::impl1<R, false>
     recycled_ptr<
         aligned_storage<impl>> p_;
 
+    impl1(impl1&&) noexcept = default;
+    impl1(impl1 const&) noexcept = default;
+
     impl const&
     get() const noexcept
     {
@@ -140,19 +167,19 @@ struct range<T>::impl1<R, false>
             impl const*>(p_->addr());
     }
 
-    explicit
-    impl1(R const& next) noexcept
-    {
-        ::new(p_->addr()) impl{next};
-    }
-
-private:
     ~impl1()
     {
-        get().~impl();
+        if(p_)
+            get().~impl();
     }
 
-    impl1(impl1 const&) noexcept = default;
+    void
+    move(void* dest
+        ) noexcept override
+    {
+        ::new(dest) impl1(
+            std::move(*this));
+    }
 
     void
     copy(void* dest
@@ -204,7 +231,16 @@ struct range<T>::impl2
     }
 
 private:
+    impl2(impl2&&) noexcept = default;
     impl2(impl2 const&) noexcept = default;
+
+    void
+    move(void* dest
+        ) noexcept override
+    {
+        ::new(dest) impl2(
+            std::move(*this));
+    }
 
     void
     copy(void* dest
@@ -245,22 +281,6 @@ template<
 struct range<T>::impl2<R0, R1, false>
     : any_rule
 {
-    struct impl
-    {
-        R0 first;
-        R1 next;
-    };
-
-    recycled_ptr<
-        aligned_storage<impl>> p_;
-
-    impl const&
-    get() const noexcept
-    {
-        return *reinterpret_cast<
-            impl const*>(p_->addr());
-    }
-
     impl2(
         R0 const& first,
         R1 const& next) noexcept
@@ -270,13 +290,38 @@ struct range<T>::impl2<R0, R1, false>
     }
 
 private:
+    struct impl
+    {
+        R0 first;
+        R1 next;
+    };
+
+    recycled_ptr<
+        aligned_storage<impl>> p_;
+
+    impl2(impl2&&) noexcept = default;
+    impl2(impl2 const&) noexcept = default;
+
+    impl const&
+    get() const noexcept
+    {
+        return *reinterpret_cast<
+            impl const*>(p_->addr());
+    }
+
     ~impl2()
     {
-        if(! p_.empty())
+        if(p_)
             get().~impl();
     }
 
-    impl2(impl2 const&) noexcept = default;
+    void
+    move(void* dest
+        ) noexcept override
+    {
+        ::new(dest) impl2(
+            std::move(*this));
+    }
 
     void
     copy(void* dest
@@ -474,11 +519,46 @@ range() noexcept
 template<class T>
 range<T>::
 range(
+    range&& other) noexcept
+    : s_(other.s_)
+    , n_(other.n_)
+{
+    other.s_ = {};
+    other.n_ = {};
+    other.get().move(&get());
+    other.get().~any_rule();
+    ::new(&other.get()) any_rule{};
+}
+
+template<class T>
+range<T>::
+range(
     range const& other) noexcept
     : s_(other.s_)
     , n_(other.n_)
 {
     other.get().copy(&get());
+}
+
+template<class T>
+auto
+range<T>::
+operator=(
+    range&& other) noexcept ->
+        range&
+{
+    s_ = other.s_;
+    n_ = other.n_;
+    other.s_ = {};
+    other.n_ = 0;
+    // VFALCO we rely on nothrow move
+    // construction here, but if necessary we
+    // could move to a local buffer first.
+    get().~any_rule();
+    other.get().move(&get());
+    other.get().~any_rule();
+    ::new(&other.get()) any_rule{};
+    return *this;
 }
 
 template<class T>

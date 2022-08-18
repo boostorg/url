@@ -73,47 +73,79 @@ struct range_rule_test
     }
 
     void
-    run()
+    testRange()
     {
-        // constexpr
-        {
-            constexpr auto r = range_rule(
-                token_rule(alpha_chars),
-                tuple_rule(
-                    squelch(
-                        delim_rule('+')),
-                    token_rule(alpha_chars)));
+        constexpr auto r0 = range_rule(
+            tuple_rule(
+                squelch(
+                    delim_rule(';')),
+                token_rule(alpha_chars)));
 
-            check(r, "", {});
-            check(r, "x", {"x"});
-        }
-
-        // javadoc
-        {
-            result< range<string_view> > rv = parse( ";alpha;xray;charlie",
-                range_rule(
-                    tuple_rule(
-                        squelch( delim_rule( ';' ) ),
-                        token_rule( alpha_chars ) ),
-                    1 ) );
-            (void)rv;
-        }
-
-        // javadoc
-        {
-            result< range< string_view > > rv = parse( "whiskey,tango,foxtrot",
-                range_rule(
-                    token_rule( alpha_chars ),          // first
-                    tuple_rule(                      // next
-                        squelch( delim_rule(',') ),
-                        token_rule( alpha_chars ) ) ) );
-
-            (void)rv;
-        }
-
-        // default construction
+        // range()
         {
             range<string_view> v;
+            BOOST_TEST(v.empty());
+            BOOST_TEST_EQ(v.size(), 0);
+
+            // move
+            range<string_view> v2(std::move(v));
+            BOOST_TEST(v2.empty());
+            BOOST_TEST_EQ(v2.size(), 0);
+
+            // copy
+            range<string_view> v3(v);
+            BOOST_TEST(v3.empty());
+            BOOST_TEST_EQ(v3.size(), 0);
+        }
+
+        // range(range&&)
+        {
+            auto v0 = parse(";a;b;c", r0).value();
+            range<string_view> v(std::move(v0));
+            BOOST_TEST(v0.empty());
+            BOOST_TEST_EQ(v0.size(), 0);
+            BOOST_TEST_EQ(v0.begin(), v0.end());
+            BOOST_TEST(! v.empty());
+            BOOST_TEST_EQ(v.size(), 3);
+            BOOST_TEST_EQ(v.string(), ";a;b;c");
+        }
+
+        // range(range const&)
+        {
+            auto v0 = parse(";a;b;c", r0).value();
+            range<string_view> v(v0);
+            BOOST_TEST(! v0.empty());
+            BOOST_TEST_EQ(v0.size(), 3);
+            BOOST_TEST_EQ(v0.string(), ";a;b;c");
+            BOOST_TEST(! v.empty());
+            BOOST_TEST_EQ(v.size(), 3);
+            BOOST_TEST_EQ(v.string(), ";a;b;c");
+        }
+
+        // operator=(range&&)
+        {
+            auto v0 = parse(";a;b;c", r0).value();
+            auto v1 = parse(";x;y", r0).value();
+            v1 = std::move(v0);
+            BOOST_TEST(v0.empty());
+            BOOST_TEST_EQ(v0.size(), 0);
+            BOOST_TEST_EQ(v0.begin(), v0.end());
+            BOOST_TEST(! v1.empty());
+            BOOST_TEST_EQ(v1.size(), 3);
+            BOOST_TEST_EQ(v1.string(), ";a;b;c");
+        }
+
+        // operator=(range const&)
+        {
+            auto v0 = parse(";a;b;c", r0).value();
+            auto v1 = parse(";x;y", r0).value();
+            v1 = v0;
+            BOOST_TEST(! v0.empty());
+            BOOST_TEST_EQ(v0.size(), 3);
+            BOOST_TEST_EQ(v0.string(), ";a;b;c");
+            BOOST_TEST(! v1.empty());
+            BOOST_TEST_EQ(v1.size(), 3);
+            BOOST_TEST_EQ(v1.string(), ";a;b;c");
         }
 
         // lower limit
@@ -179,6 +211,48 @@ struct range_rule_test
                 bad(r, ";a;b;c;d;e", error::mismatch);
             }
         }
+    }
+
+    void
+    run()
+    {
+        // constexpr
+        {
+            constexpr auto r = range_rule(
+                token_rule(alpha_chars),
+                tuple_rule(
+                    squelch(
+                        delim_rule('+')),
+                    token_rule(alpha_chars)));
+
+            check(r, "", {});
+            check(r, "x", {"x"});
+        }
+
+        // javadoc
+        {
+            result< range<string_view> > rv = parse( ";alpha;xray;charlie",
+                range_rule(
+                    tuple_rule(
+                        squelch( delim_rule( ';' ) ),
+                        token_rule( alpha_chars ) ),
+                    1 ) );
+            (void)rv;
+        }
+
+        // javadoc
+        {
+            result< range< string_view > > rv = parse( "whiskey,tango,foxtrot",
+                range_rule(
+                    token_rule( alpha_chars ),          // first
+                    tuple_rule(                      // next
+                        squelch( delim_rule(',') ),
+                        token_rule( alpha_chars ) ) ) );
+
+            (void)rv;
+        }
+
+        testRange();
     }
 };
 

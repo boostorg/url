@@ -164,6 +164,22 @@ public:
 
     /** Constructor
 
+        The new range will reference the
+        same underlying character buffer.
+        Ownership is not transferred; the
+        caller is responsible for ensuring
+        that the lifetime of the buffer
+        extends until it is no longer
+        referenced. The moved-from object
+        will become as if default-constructed.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    range(range&&) noexcept;
+
+    /** Constructor
+
         The copy will reference the same
         underlying character buffer.
         Ownership is not transferred; the
@@ -176,6 +192,22 @@ public:
         Throws nothing.
     */
     range(range const&) noexcept;
+
+    /** Constructor
+
+        After the move, this will reference the
+        same underlying character buffer. Ownership
+        is not transferred; the caller is responsible
+        for ensuring that the lifetime of the buffer
+        extends until it is no longer referenced.
+        The moved-from object will become as if
+        default-constructed.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    range&
+    operator=(range&&) noexcept;
 
     /** Assignment
 
