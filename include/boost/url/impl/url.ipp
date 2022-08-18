@@ -145,19 +145,6 @@ relative(
     url_view_base const& href,
     url_base& dest)
 {
-    // AFREITAS:
-    // - filesystem functions use
-    //   (const path&, const path& base)
-    // - this function name is probably still bad
-    // - the function in URI.js behaves slightly
-    //   differently from their own examples
-    //   see https://medialize.github.io/URI.js/docs.html#relativeto
-    // - we have a bug where u.set_path("") or
-    //   u.segments() = {} crash, so this function
-    //   uses u.segments() = {"."}, which gives
-    //   us slightly different results.
-    // - The basic exception guarantee is not
-    //   satisfied in case of allocation errors.
     BOOST_ASSERT(&dest != &base);
     BOOST_ASSERT(&dest != &href);
 
@@ -173,9 +160,13 @@ relative(
     // Resolve scheme
     if (href.scheme() == base.scheme() ||
         !href.has_scheme())
+    {
         dest.remove_scheme();
+    }
     else
+    {
         dest.set_scheme(href.scheme());
+    }
 
     // Resolve authority
     if (dest.has_scheme() ||

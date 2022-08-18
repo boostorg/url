@@ -1281,11 +1281,6 @@ public:
         by component as if they were first
         normalized.
 
-        @par Effects
-        @code
-        return url( a0 ).normalize() != url( a1 ).normalize();
-        @endcode
-
         @par Complexity
         Linear in `min( a0.size(), a1.size() )`
 
@@ -1306,11 +1301,6 @@ public:
         The authorities are compared component
         by component as if they were first
         normalized.
-
-        @par Effects
-        @code
-        return url( a0 ).normalize() < url( a1 ).normalize();
-        @endcode
 
         @par Complexity
         Linear in `min( a0.size(), a1.size() )`
@@ -1333,11 +1323,6 @@ public:
         by component as if they were first
         normalized.
 
-        @par Effects
-        @code
-        return url( a0 ).normalize() <= url( a1 ).normalize();
-        @endcode
-
         @par Complexity
         Linear in `min( a0.size(), a1.size() )`
 
@@ -1359,11 +1344,6 @@ public:
         by component as if they were first
         normalized.
 
-        @par Effects
-        @code
-        return url( a0 ).normalize() > url( a1 ).normalize();
-        @endcode
-
         @par Complexity
         Linear in `min( a0.size(), a1.size() )`
 
@@ -1384,11 +1364,6 @@ public:
         The authorities are compared component
         by component as if they were first
         normalized.
-
-        @par Effects
-        @code
-        return url( a0 ).normalize() >= url( a1 ).normalize();
-        @endcode
 
         @par Complexity
         Linear in `min( a0.size(), a1.size() )`
