@@ -84,11 +84,15 @@ function(boost_url_setup_properties target)
                 Boost::align
                 Boost::assert
                 Boost::config
+                Boost::container
+                Boost::core
                 Boost::mp11
                 Boost::optional
+                Boost::static_assert
                 Boost::system
                 Boost::throw_exception
                 Boost::type_traits
+                Boost::variant2
         )
     endif()
 endfunction()
