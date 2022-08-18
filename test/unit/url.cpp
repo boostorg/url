@@ -881,7 +881,9 @@ struct url_test
         // relative URL / absolute paths
         check("/a/path/to/somewhere/else", "/a/path/to/a", "../a");
         check("/relative/sub/foo/sub/file", "/relative/path", "../../../path");
+        // resolve authority
         check("http://google.com/baz", "http://example.org/world.html", "//example.org/world.html");
+        check("http://google.com/baz", "http://example.org/world.html?q#f", "//example.org/world.html?q#f");
         check("http://google.com/baz", "http:/world.html", "/world.html");
         check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file", "");
         check("http://www.example.com:8080/dir/file", "http://www.example.com:8080/dir/file?foo=bar#abcd", "?foo=bar#abcd");
@@ -889,6 +891,8 @@ struct url_test
         check("/a/path/././to/./somewhere/else", "/a/./path/./to/a", "../a");
         // ".." should be normalized
         check("/a/path/x/../to/y/../somewhere/else", "/b/../a/path/to/a", "../a");
+        // check("/../path/x/../to/y/../somewhere/else", "/a/../../path/to/a", "../a");
+        check("/a/path/to/somewhere/else", "/a/path/to/a/../b", "../b");
         // same parent
         check("/relative/file?some=query#hash", "/relative/path?blubber=1#hash1", "path?blubber=1#hash1");
         // direct parent
@@ -1125,6 +1129,7 @@ struct url_test
             check("http://cppalliance.org/%2E%2E/./b/b/c/./../../g", "http://cppalliance.org/../a/g", +1);
             check("http://alice@cppalliance.org", "http://bob@cppalliance.org", -1);
             check("http://alice:passwd@cppalliance.org", "http://alice:pass@cppalliance.org", 1);
+            check("http://alice@cppalliance.org", "http://alice:pass@cppalliance.org", -1);
             check("http://alice:pass1@cppalliance.org", "http://alice:pass2@cppalliance.org", -1);
             check("http://cppalliance.org", "http://cppalliance.org:81", -1);
             check("http://cppalliance.org:80", "http://cppalliance.org:81", -1);

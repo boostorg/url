@@ -344,7 +344,8 @@ int
 authority_view::
 compare(const authority_view& other) const noexcept
 {
-    int comp = has_userinfo() - other.has_userinfo();
+    auto comp = static_cast<int>(has_userinfo()) -
+        static_cast<int>(other.has_userinfo());
     if ( comp != 0 )
         return comp;
 
@@ -356,7 +357,8 @@ compare(const authority_view& other) const noexcept
         if ( comp != 0 )
             return comp;
 
-        comp = has_password() - other.has_password();
+        comp = static_cast<int>(has_password()) -
+               static_cast<int>(other.has_password());
         if ( comp != 0 )
             return comp;
 
@@ -376,7 +378,8 @@ compare(const authority_view& other) const noexcept
     if ( comp != 0 )
         return comp;
 
-    comp = has_port() - other.has_port();
+    comp = static_cast<int>(has_port()) -
+           static_cast<int>(other.has_port());
     if ( comp != 0 )
         return comp;
 

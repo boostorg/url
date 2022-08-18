@@ -264,9 +264,9 @@ relative(
         }
         else if (*it1 == dotdot)
         {
+            ++it1;
             if (it0 != begin0)
                 --it0;
-            ++it1;
         }
         else
         {

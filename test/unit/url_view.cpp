@@ -934,7 +934,6 @@ public:
         testOutput();
         testCases();
         testRelativePart();
-
         testParseOriginForm();
     }
 };
