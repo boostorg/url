@@ -94,7 +94,6 @@ validate_pct_encoding(
                 // escaped unreserved char
                 BOOST_URL_RETURN_EC(
                     error::non_canonical);
-                return n;
             }
             ++n;
             continue;
