@@ -86,7 +86,7 @@ tuple_rule( Rules... rn ) noexcept;
 template<
     class R0,
     class... Rn>
-class sequence_rule_t
+class tuple_rule_t
     : urls::detail::empty_value<
         detail::tuple<R0, Rn...>>
 {
@@ -112,7 +112,7 @@ public:
     tuple_rule(
         R0_ const& r0,
         Rn_ const&... rn) noexcept ->
-            sequence_rule_t<R0_, Rn_...>;
+            tuple_rule_t<R0_, Rn_...>;
 
     result<value_type>
     parse(
@@ -121,7 +121,7 @@ public:
 
 private:
     constexpr
-    sequence_rule_t(
+    tuple_rule_t(
         R0 const& r0,
         Rn const&... rn) noexcept
         : urls::detail::empty_value<
@@ -140,7 +140,7 @@ auto
 tuple_rule(
     R0 const& r0,
     Rn const&... rn) noexcept ->
-        sequence_rule_t<
+        tuple_rule_t<
             R0, Rn...>
 {
     return { r0, rn... };

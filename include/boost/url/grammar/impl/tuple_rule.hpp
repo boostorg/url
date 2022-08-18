@@ -142,7 +142,7 @@ struct parse_sequence
 
     auto
     make_result() noexcept ->
-        result<typename sequence_rule_t<
+        result<typename tuple_rule_t<
             R0, Rn...>::value_type>
     {
         if(ec.failed())
@@ -266,7 +266,7 @@ template<
     class R0,
     class... Rn>
 auto
-sequence_rule_t<R0, Rn...>::
+tuple_rule_t<R0, Rn...>::
 parse(
     char const*& it,
     char const* end) const ->
