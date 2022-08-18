@@ -35,6 +35,18 @@ In this table:
 [
     [
     ```
+    T(t)
+    ```
+    ]
+    []
+    [
+        Copy construction of `T` throws nothing.
+
+        `std::is_nothrow_copy_constructible<T>::value == true`
+    ]
+][
+    [
+    ```
     T::value_type
     ```
     ]
@@ -72,7 +84,7 @@ struct Rule
 {
     struct value_type;
 
-    constexpr Rule() = default;
+    constexpr Rule( Rule const& ) noexcept = default;
 
     auto parse( char const*& it, char const* end ) const -> result< value_type >;
 };
