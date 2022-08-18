@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/grammar/detail/recycled.hpp>
+#include <atomic>
 #include <cstddef>
 #include <type_traits>
 #include <stddef.h> // ::max_align_t
@@ -72,8 +73,8 @@ public:
 
         All recycled instances of T are destroyed.
         Undefined behavior results if there are
-        any @ref recycled_ptr which reference this
-        bin.
+        any @ref recycled_ptr which reference
+        this recycle bin.
     */
     ~recycled();
 
@@ -89,11 +90,18 @@ private:
     {
         T t;
         U* next = nullptr;
+        std::atomic<
+            std::size_t> refs;
+
+        U()
+            : refs{1}
+        {
+        }
     };
 
     struct report;
 
-    U* try_acquire();
+    U* acquire();
     void release(U* u) noexcept;
 
     U* head_ = nullptr;
@@ -102,12 +110,14 @@ private:
 
 //------------------------------------------------
 
-/** A pointer to an instance of T
+/** A pointer to shared instance of T
 
-    This is a smart pointer container
-    which acquires an instance of `T` upon
-    construction. The instance is guaranteed
-    to be in a valid, but unknown state.
+    This is a smart pointer container which can
+    acquire shared ownership of an instance of
+    `T` upon or after construction. The instance
+    is guaranteed to be in a valid, but unknown
+    state. Every recycled pointer references
+    a valid recycle bin.
 
     @par Example
     @code
@@ -119,8 +129,9 @@ private:
     ps->clear();
     @endcode
 
-    @tparam T the type of object to acquire,
-    which must be <em>DefaultConstructible</em>.
+    @tparam T the type of object to
+        acquire, which must be
+        <em>DefaultConstructible</em>.
 */
 template<class T>
 class recycled_ptr
@@ -141,20 +152,26 @@ class recycled_ptr
 public:
     /** Destructor
 
-        If a pointee exists, it is
-        returned to the recycle bin.
+        If this is not empty, shared ownership
+        of the pointee is released. If this was
+        the last reference, the object is
+        returned to the original recycle bin.
+
+        @par Effects
+        @code
+        this->release();
+        @endcode
     */
     ~recycled_ptr();
 
     /** Constructor
 
-        Upon construction, the pointer
-        will acquire exclusive access to
-        an instance of `T` which is either
-        recycled from the specified bin,
-        or newly allocated. The instance
-        will be guaranteed to be in an
-        unknown but valid state.
+        Upon construction, this will acquire
+        exclusive access to an object of type
+        `T` which is either recycled from the
+        specified bin, or newly allocated.
+        The object will be in an unknown but
+        valid state.
 
         @par Example
         @code
@@ -166,7 +183,12 @@ public:
         ps->clear();
         @endcode
 
-        @param bin The bin to use for recycling.
+        @par Postconditions
+        @code
+        &this->bin() == &bin && ! this->empty()
+        @endcode
+
+        @param bin The recycle bin to use
 
         @see
             @ref recycled.
@@ -176,8 +198,8 @@ public:
 
     /** Constructor
 
-        The container will not hold
-        any instance of `T`.
+        After construction, this will be empty
+        and refer to the specified recycle bin.
 
         @par Example
         @code
@@ -190,7 +212,15 @@ public:
         ps->clear();
         @endcode
 
-        @param bin The bin to use for recycling.
+        @par Postconditions
+        @code
+        &this->bin() == &bin && this->empty()
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @param bin The recycle bin to use
 
         @see
             @ref acquire,
@@ -203,14 +233,12 @@ public:
 
     /** Constructor
 
-        Upon construction, the pointer
-        will acquire exclusive access to
-        an instance of `T` which is either
-        recycled from an implementation-defined
-        global instance of `recycled<T>`,
-        or newly allocated. The instance
-        will be guaranteed to be in an
-        unknown but valid state.
+        Upon construction, this will acquire
+        exclusive access to an object of type
+        `T` which is either recycled from a
+        global recycle bin, or newly allocated.
+        The object will be in an unknown but
+        valid state.
 
         @par Example
         @code
@@ -220,6 +248,11 @@ public:
         ps->clear();
         @endcode
 
+        @par Postconditions
+        @code
+        &this->bin() != nullptr && ! this->empty()
+        @endcode
+
         @see
             @ref recycled.
     */
@@ -227,8 +260,8 @@ public:
 
     /** Constructor
 
-        The container will not hold
-        any instance of `T`.
+        After construction, this will be empty
+        and refer to a global recycle bin.
 
         @par Example
         @code
@@ -238,6 +271,14 @@ public:
         ps->acquire();
         ps->clear();
         @endcode
+
+        @par Postconditions
+        @code
+        &this->bin() != nullptr && this->empty()
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
 
         @param bin The bin to use for recycling.
 
@@ -252,21 +293,104 @@ public:
 
     /** Constructor
 
-        After the move, the only valid operation
-        on the moved-from object is destruction.
+        If `other` references an object, the
+        newly constructed pointer will acquire
+        shared ownership. Otherwise this will
+        be empty. The new pointer will reference
+        the same recycle bin as `other`.
+
+        @par Postconditions
+        @code
+        &this->bin() == &other->bin() && this->get() == other.get()
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @param other The pointer to copy
     */
     recycled_ptr(
-        recycled_ptr&&) noexcept;
+        recycled_ptr const& other) noexcept;
 
-    /** Assignment (deleted)
+    /** Constructor
+
+        If `other` references an object,
+        ownership is transferred including
+        a reference to the recycle bin. After
+        the move, the moved-from object will
+        be empty.
+
+        @par Postconditions
+        @code
+        &this->bin() == &other->bin() && ! this->empty() && other.empty()
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @param other The pointer to move from
     */
-    recycled_ptr& operator=(
-        recycled_ptr&&) = delete;
+    recycled_ptr(
+        recycled_ptr&& other) noexcept;
 
-    /** Return true if this does not own an object
+    /** Assignment
 
-        This can only happen after this
-        becomes moved-from.
+        If `other` references an object,
+        ownership is transferred including
+        a reference to the recycle bin. After
+        the move, the moved-from object will
+        be empty.
+
+        @par Effects
+        @code
+        this->release()
+        @endcode
+
+        @par Postconditions
+        @code
+        &this->bin() == &other->bin()
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @param other The pointer to move from
+    */
+    recycled_ptr&
+    operator=(
+        recycled_ptr&& other) noexcept;
+
+    /** Assignment
+
+        If `other` references an object,
+        this acquires shared ownership and
+        references the same recycle bin as
+        `other`. The previous object if any
+        is released.
+
+        @par Effects
+        @code
+        this->release()
+        @endcode
+
+        @par Postconditions
+        @code
+        &this->bin() == &other->bin() && this->get() == other.get()
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @param other The pointer to copy from
+    */
+    recycled_ptr&
+    operator=(
+        recycled_ptr const&) noexcept;
+
+    /** Return true if this does not reference an object
+
+        @par Exception Safety
+        Throws nothing.
     */
     bool
     empty() const noexcept
@@ -274,34 +398,83 @@ public:
         return p_ == nullptr;
     }
 
-    /** Return the pointed-to object
+    /** Return the referenced recycle bin
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    recycled<T>&
+    bin() const noexcept
+    {
+        return *bin_;
+    }
+
+    /** Return the referenced object
+
+        If this is empty, `nullptr` is returned.
+
+        @par Exception Safety
+        Throws nothing.
     */
     T* get() const noexcept
     {
         return &p_->t;
     }
 
-    /** Return the pointed-to object
+    /** Return the referenced object
+
+        If this is empty, `nullptr` is returned.
+
+        @par Exception Safety
+        Throws nothing.
     */
     T* operator->() const noexcept
     {
         return get();
     }
 
-    /** Return the pointed-to object
+    /** Return the referenced object
+
+        @par Preconditions
+        @code
+        not this->empty()
+        @endcode
     */
     T& operator*() const noexcept
     {
         return *get();
     }
 
-    /** Return the pointed-to object
+    /** Return the referenced object
+
+        If this references an object, it is
+        returned. Otherwise, exclusive ownership
+        of a new object of type `T` is acquired
+        and returned.
+
+        @par Postconditions
+        @code
+        not this->empty()
+        @endcode
     */
     T& acquire();
 
-    /** Release the pointed-to object
+    /** Release the referenced object
+
+        If this references an object, it is
+        released to the referenced recycle bin.
+        The pointer will continue to reference
+        the same recycle bin.
+
+        @par Postconditions
+        @code
+        this->empty()
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
     */
-    void release();
+    void release() noexcept;
 };
 
 } // grammar
