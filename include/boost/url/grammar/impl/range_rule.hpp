@@ -45,10 +45,9 @@ struct range<T>::
 
     virtual
     void
-    move(void* dest) noexcept
+    copy(void* dest) const noexcept
     {
-        ::new(dest) any_rule(
-            std::move(*this));
+        ::new(dest) any_rule(*this);
     }
 
     virtual
@@ -88,11 +87,13 @@ struct range<T>::impl1
     }
 
 private:
+    impl1(impl1 const&) noexcept = default;
+
     void
-    move(void* dest) noexcept override
+    copy(void* dest
+        ) const noexcept override
     {
-        ::new(dest) impl1(
-            std::move(*this));
+        ::new(dest) impl1(*this);
     }
 
     result<T>
@@ -148,17 +149,16 @@ struct range<T>::impl1<R, false>
 private:
     ~impl1()
     {
-        if(! p_.empty())
-            get().~impl();
+        get().~impl();
     }
 
-    impl1(impl1&&) = default;
+    impl1(impl1 const&) noexcept = default;
 
     void
-    move(void* dest) noexcept override
+    copy(void* dest
+        ) const noexcept override
     {
-        ::new(dest) impl1(
-            std::move(*this));
+        ::new(dest) impl1(*this);
     }
 
     result<T>
@@ -204,11 +204,13 @@ struct range<T>::impl2
     }
 
 private:
+    impl2(impl2 const&) noexcept = default;
+
     void
-    move(void* dest) noexcept override
+    copy(void* dest
+        ) const noexcept override
     {
-        ::new(dest) impl2(
-            std::move(*this));
+        ::new(dest) impl2(*this);
     }
 
     result<T>
@@ -274,13 +276,13 @@ private:
             get().~impl();
     }
 
-    impl2(impl2&&) = default;
+    impl2(impl2 const&) noexcept = default;
 
     void
-    move(void* dest) noexcept override
+    copy(void* dest
+        ) const noexcept override
     {
-        ::new(dest) impl2(
-            std::move(*this));
+        ::new(dest) impl2(*this);
     }
 
     result<T>
@@ -472,26 +474,27 @@ range() noexcept
 template<class T>
 range<T>::
 range(
-    range&& other) noexcept
+    range const& other) noexcept
     : s_(other.s_)
     , n_(other.n_)
 {
-    other.get().move(&get());
+    other.get().copy(&get());
 }
 
 template<class T>
 auto
 range<T>::
 operator=(
-    range&& other) noexcept ->
+    range const& other) noexcept ->
         range&
 {
     s_ = other.s_;
     n_ = other.n_;
-    other.s_ = {};
-    other.n_ = 0;    
+    // VFALCO we rely on nothrow copy
+    // construction here, but if necessary we
+    // could construct to a local buffer first.
     get().~any_rule();
-    other.get().move(&get());
+    other.get().copy(&get());
     return *this;
 }
 
