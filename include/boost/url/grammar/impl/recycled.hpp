@@ -37,15 +37,34 @@ recycled_ptr(
 
 template<class T>
 recycled_ptr<T>::
+recycled_ptr(
+    recycled<T>& bin,
+    std::nullptr_t) noexcept
+    : bin_(&bin)
+{
+}
+
+template<class T>
+recycled_ptr<T>::
 recycled_ptr()
-    : recycled_ptr(
-        []() -> B&
+    : recycled_ptr(nullptr)
+{
+    p_ = bin_->try_acquire();
+    if(! p_)
+        p_ = new U;
+}
+
+template<class T>
+recycled_ptr<T>::
+recycled_ptr(
+    std::nullptr_t) noexcept
+    : recycled_ptr([]() -> B&
         {
             // VFALCO this needs the guaranteed
             // constexpr-init macro treatment
             static B r;
             return r;
-        }())
+        }(), nullptr)
 {
 }
 
@@ -57,6 +76,32 @@ recycled_ptr(
     , p_(other.p_)
 {
     other.p_ = nullptr;
+}
+
+template<class T>
+T&
+recycled_ptr<T>::
+acquire()
+{
+    if(! p_)
+    {
+        p_ = bin_->try_acquire();
+        if(! p_)
+            p_ = new U;
+    }
+    return p_->t;
+}
+
+template<class T>
+void
+recycled_ptr<T>::
+release()
+{
+    if(p_)
+    {
+        bin_->release(p_);
+        p_ = nullptr;
+    }
 }
 
 //------------------------------------------------

@@ -176,6 +176,33 @@ public:
 
     /** Constructor
 
+        The container will not hold
+        any instance of `T`.
+
+        @par Example
+        @code
+        static recycled< std::string > bin;
+
+        recycled_ptr< std::string > ps( bin, nullptr );
+
+        // Acquire a string and put it into a known state
+        ps->acquire();
+        ps->clear();
+        @endcode
+
+        @param bin The bin to use for recycling.
+
+        @see
+            @ref acquire,
+            @ref recycled,
+            @ref release.
+    */
+    recycled_ptr(
+        recycled<T>& bin,
+        std::nullptr_t) noexcept;
+
+    /** Constructor
+
         Upon construction, the pointer
         will acquire exclusive access to
         an instance of `T` which is either
@@ -197,6 +224,31 @@ public:
             @ref recycled.
     */
     recycled_ptr();
+
+    /** Constructor
+
+        The container will not hold
+        any instance of `T`.
+
+        @par Example
+        @code
+        recycled_ptr< std::string > ps( nullptr );
+
+        // Acquire a string and put it into a known state
+        ps->acquire();
+        ps->clear();
+        @endcode
+
+        @param bin The bin to use for recycling.
+
+        @see
+            @ref acquire,
+            @ref recycled,
+            @ref release.
+    */
+    explicit
+    recycled_ptr(
+        std::nullptr_t) noexcept;
 
     /** Constructor
 
@@ -242,6 +294,14 @@ public:
     {
         return *get();
     }
+
+    /** Return the pointed-to object
+    */
+    T& acquire();
+
+    /** Release the pointed-to object
+    */
+    void release();
 };
 
 } // grammar
