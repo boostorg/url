@@ -173,7 +173,8 @@ public:
         : it_(first)
         , end_(last)
     {
-        front = *first;
+        if (it_ != end_)
+            front = *first;
     }
 
     bool
@@ -241,7 +242,8 @@ public:
         : it_(first)
         , end_(last)
     {
-        front = *first;
+        if (first != last)
+            front = *first;
     }
 
     bool
