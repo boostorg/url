@@ -1077,8 +1077,11 @@ edit_segments(
     auto const n0 = p1 - p0;
 
     // adjust capacity
-    reserve(size() + n - n0);
+    std::size_t c = size() + n - n0;
+    if (c == 0)
+        return nullptr;
 
+    reserve(c);
     // start of output
     auto dest = s_ + p0;
 
@@ -1148,7 +1151,7 @@ edit_segments(
         2 = "./"
         3 = "/./"
 
-    This is malleable prefix that might need to
+    This is a malleable prefix that might need to
     change according the URL scheme and authority.
 
 */
@@ -1193,8 +1196,10 @@ edit_segments(
                 ':') != string_view::npos ||
             it0.front.empty()))
     {
-        BOOST_ASSERT(nseg > 0);
-        prefix = 2;
+        if (nseg > 0)
+            prefix = 2;
+        else
+            prefix = 0;
     }
     else if(
         abs &&
@@ -1268,7 +1273,7 @@ edit_segments(
     n += prefix + suffix;
     auto dest = edit_segments(
         i0, i1, n, nseg);
-    auto const last = dest + n;
+    char const *const last = dest + n;
 
 /*  Write all characters in the destination:
 

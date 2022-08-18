@@ -1427,6 +1427,10 @@ public:
             };
             check(
                 "",
+                "",
+                "");
+            check(
+                "",
                 "path/to/file.txt",
                 "path/to/file.txt");
             check(
