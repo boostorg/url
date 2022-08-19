@@ -26,6 +26,7 @@ set(BOOST_URL_TESTS_FILES
     host_type.cpp
     ipv4_address.cpp
     ipv6_address.cpp
+    natvis.cpp
     optional.cpp
     params.cpp
     params_encoded.cpp

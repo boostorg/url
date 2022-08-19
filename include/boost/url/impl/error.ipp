@@ -20,6 +20,12 @@ make_error_code(error e)
 {
     struct codes : error_category
     {
+        codes() noexcept
+            : error_category(
+                0xbc15399d7a4ce829)
+        {
+        }
+
         const char*
         name() const noexcept override
         {
