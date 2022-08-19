@@ -891,7 +891,7 @@ struct url_test
         check("/a/path/././to/./somewhere/else", "/a/./path/./to/a", "../a");
         // ".." should be normalized
         check("/a/path/x/../to/y/../somewhere/else", "/b/../a/path/to/a", "../a");
-        // check("/../path/x/../to/y/../somewhere/else", "/a/../../path/to/a", "../a");
+        check("/../path/x/../to/y/../somewhere/else", "/a/../../path/to/a", "../a");
         check("/a/path/to/somewhere/else", "/a/path/to/a/../b", "../b");
         // same parent
         check("/relative/file?some=query#hash", "/relative/path?blubber=1#hash1", "path?blubber=1#hash1");

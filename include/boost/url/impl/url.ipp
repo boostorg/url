@@ -216,6 +216,12 @@ relative(
         segments_view::iterator& first,
         segments_view::iterator last)
     {
+        if (*first == dotdot ||
+            *first == dot)
+        {
+            ++first;
+            return true;
+        }
         auto it = std::next(first);
         std::size_t l = 1;
         while (it != last)
@@ -243,37 +249,17 @@ relative(
         it0 != last0 &&
         it1 != last1)
     {
+        if (consume_dots(it0, last0))
+            continue;
+        if (consume_dots(it1, last1))
+            continue;
         if (*it0 == *it1)
         {
             ++it0;
             ++it1;
         }
-        else if (*it0 == dot)
-        {
-            ++it0;
-        }
-        else if (*it1 == dot)
-        {
-            ++it1;
-        }
-        else if (*it0 == dotdot)
-        {
-            ++it0;
-            if (it1 != begin1)
-                --it1;
-        }
-        else if (*it1 == dotdot)
-        {
-            ++it1;
-            if (it0 != begin0)
-                --it0;
-        }
         else
         {
-            if (consume_dots(it0, last0))
-                continue;
-            if (consume_dots(it1, last1))
-                continue;
             break;
         }
     }
