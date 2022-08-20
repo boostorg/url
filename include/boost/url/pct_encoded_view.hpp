@@ -54,11 +54,10 @@ class copied_strings_base;
     @li Comparison to encoded or plain strings
 
     However, in order to access the string as a
-    as a contiguous character buffer with
-    with percent-decoding applied, the caller
-    must explicitly opt-in to an operation that
-    is potentially allocating. These operations
-    are:
+    contiguous character buffer with percent-
+    -decoding applied, the caller must
+    explicitly opt-in to an operation that is
+    potentially allocating. These operations are:
 
     @li Conversion to `std::string`
     @li Appending to an existing character buffer
