@@ -750,6 +750,13 @@ struct url_test
             if(! BOOST_TEST( rv.has_value() ))
                 return;
             BOOST_TEST_EQ(u.string(), m);
+
+            // in place resolution
+            url base( ub );
+            rv = base.resolve( ur );
+            if(! BOOST_TEST( rv.has_value() ))
+                return;
+            BOOST_TEST_EQ(base.string(), m);
         };
 
         check("g:h"          , "g:h");

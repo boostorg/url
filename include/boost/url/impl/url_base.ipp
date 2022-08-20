@@ -1262,15 +1262,14 @@ set_encoded_fragment(
 
 result<void>
 url_base::
-resolve_impl(
-    url_view_base const& base,
+resolve(
     url_view_base const& ref)
 {
     op_t op(*this);
 
-    if(! base.has_scheme())
+    if(! has_scheme())
     {
-        return error::not_a_base;
+        BOOST_URL_RETURN_EC(error::not_a_base);
     }
 
     //
@@ -1288,100 +1287,72 @@ resolve_impl(
     if(ref.has_authority())
     {
         reserve_impl(
-            base.u_.offset(id_user) +
-                ref.size(), op);
-        clear();
-        set_scheme(base.scheme());
+            u_.offset(id_user) + ref.size(), op);
         set_encoded_authority(
             ref.encoded_authority());
         set_encoded_path(
             ref.encoded_path());
-        normalize_path();
+        if (ref.encoded_path().empty())
+            set_path_absolute(false);
+        else
+            normalize_path();
         if(ref.has_query())
             set_encoded_query(
                 ref.encoded_query());
+        else
+            remove_query();
         if(ref.has_fragment())
             set_encoded_fragment(
                 ref.encoded_fragment());
+        else
+            remove_fragment();
         return {};
     }
     if(ref.encoded_path().empty())
     {
+        reserve_impl(
+            u_.offset(id_query) +
+            ref.size(), op);
+        normalize_path();
         if(ref.has_query())
         {
-            reserve_impl(
-                base.u_.offset(id_query) +
-                    ref.size(), op);
-            clear();
-            set_scheme(base.scheme());
-            if(base.has_authority())
-                set_encoded_authority(
-                    base.encoded_authority());
-            set_encoded_path(
-                base.encoded_path());
-            normalize_path();
             set_encoded_query(
                 ref.encoded_query());
-        }
-        else
-        {
-            reserve_impl(
-                base.u_.offset(id_query) +
-                    ref.size(), op);
-            clear();
-            set_scheme(base.scheme());
-            if(base.has_authority())
-                set_encoded_authority(
-                    base.encoded_authority());
-            set_encoded_path(
-                base.encoded_path());
-            normalize_path();
-            if(base.has_query())
-                set_encoded_query(
-                    base.encoded_query());
         }
         if(ref.has_fragment())
             set_encoded_fragment(
                 ref.encoded_fragment());
         return {};
     }
-    if(ref.encoded_path().starts_with('/'))
+    if(ref.is_path_absolute())
     {
         reserve_impl(
-            base.u_.offset(id_path) +
+            u_.offset(id_path) +
                 ref.size(), op);
-        clear();
-        set_scheme(base.scheme());
-        if(base.has_authority())
-            set_encoded_authority(
-                base.encoded_authority());
         set_encoded_path(
             ref.encoded_path());
         normalize_path();
         if(ref.has_query())
             set_encoded_query(
                 ref.encoded_query());
+        else
+            remove_query();
         if(ref.has_fragment())
             set_encoded_fragment(
                 ref.encoded_fragment());
+        else
+            remove_fragment();
         return {};
     }
+    // General case: ref is relative path
     reserve_impl(
-        base.u_.offset(id_query) +
-            ref.size(), op);
-    clear();
-    set_scheme(base.scheme());
-    if(base.has_authority())
-        set_encoded_authority(
-            base.encoded_authority());
+        u_.offset(id_query) +
+        ref.size(), op);
     // 5.2.3. Merge Paths
     auto es = encoded_segments();
-    if(base.u_.nseg_ > 0)
+    if(es.size() > 0)
     {
-        set_encoded_path(
-            base.encoded_path());
-        if(u_.nseg_ > 0)
-            es.pop_back();
+        es.pop_back();
     }
     es.insert(es.end(),
         ref.encoded_segments().begin(),
@@ -1390,9 +1361,13 @@ resolve_impl(
     if(ref.has_query())
         set_encoded_query(
             ref.encoded_query());
+    else
+        remove_query();
     if(ref.has_fragment())
         set_encoded_fragment(
             ref.encoded_fragment());
+    else
+        remove_fragment();
     return {};
 }
 

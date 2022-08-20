@@ -2454,6 +2454,87 @@ public:
     //
     //--------------------------------------------
 
+    /** Resolve a URL reference against this base URL
+
+        This function attempts to resolve a URL
+        reference `ref` against this base URL
+        in a manner similar to that of a web browser
+        resolving an anchor tag. This URL
+        must satisfy the <em>absolute-URI</em>
+        grammar.
+
+        Relative references are only usable when
+        in the context of a base absolute URI.
+        This process of resolving a relative
+        <em>reference</em> within the context of
+        a <em>base</em> URI is defined in detail
+        in rfc3986 (see below).
+
+        The resolution process works as if the
+        relative reference is appended to the base
+        URI and the result is normalized.
+
+        Given the input base URL, this function
+        resolves the relative reference
+        as if performing the following steps:
+
+        @li Ensure the base URI has at least a scheme
+        @li Normalizing the reference path
+        @li Merge base and reference paths
+        @li Normalize the merged path
+
+        This function places the result of the
+        resolution into this URL in place.
+
+        If an error occurs, the contents of
+        this URL are unspecified and a @ref result
+        with an @ref error_code is returned.
+
+        @par Example
+        @code
+        url base1( "/one/two/three" );
+        base1.resolve("four");
+        assert( base1.string() == "/one/two/four" );
+
+        url base2( "http://example.com/" )
+        base2.resolve("/one");
+        assert( base2.string() == "http://example.com/one" );
+
+        url base3( "http://example.com/one" );
+        base3.resolve("/two");
+        assert( base3.string() == "http://example.com/two" );
+
+        url base4( "http://a/b/c/d;p?q" );
+        base4.resolve("g#s");
+        assert( base4.string() == "http://a/b/c/g#s" );
+        @endcode
+
+        @par BNF
+        @code
+        absolute-URI  = scheme ":" hier-part [ "?" query ]
+        @endcode
+
+        @par Exception Safety
+        Basic guarantee.
+        Calls to allocate may throw.
+
+        @return Error if any occurred
+
+        @param ref The URL reference to resolve.
+
+        @par Specification
+        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-5"
+            >5. Reference Resolution (rfc3986)</a>
+
+        @see
+            @ref url,
+            @ref url_view.
+    */
+    BOOST_URL_DECL
+    result<void>
+    resolve(
+        url_view_base const& base);
+
     friend
     result<void>
     resolve(
@@ -2469,7 +2550,7 @@ private:
     //--------------------------------------------
 
     void  check_invariants() const noexcept;
-    
+
     char* resize_impl(int, std::size_t, op_t&);
     char* resize_impl(int, int, std::size_t, op_t&);
     char* shrink_impl(int, std::size_t, op_t&);
