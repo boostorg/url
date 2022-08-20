@@ -771,6 +771,7 @@ struct url_test
         check("."            , "http://a/b/c/");
         check("./"           , "http://a/b/c/");
         check(".."           , "http://a/b/");
+        check("%2E%2E"       , "http://a/b/");
         check("../"          , "http://a/b/");
         check("../g"         , "http://a/b/g");
         check("../.."        , "http://a/");
@@ -871,9 +872,9 @@ struct url_test
             check("http://cppalliance.org/a/b/../../g",
                   "http://cppalliance.org/g");
             check("http://cppalliance.org/a/b/../../../g",
-                  "http://cppalliance.org/g");
+                  "http://cppalliance.org/../g");
             check("http://cppalliance.org/..",
-                  "http://cppalliance.org/");
+                  "http://cppalliance.org/..");
             check("http://cppalliance.org?%61=b",
                   "http://cppalliance.org?a=b");
         }
@@ -901,11 +902,11 @@ struct url_test
             check(".././a/b/c/./../../g", "../a/g");
             check("%2E%2E/./a/b/c/./../../g", "../a/g");
             check("/a/b/../../g", "/g");
-            check("/a/b/../../../g", "/g");
+            check("/a/b/../../../g", "/../g");
             check("mid/content=5/../6", "mid/6");
             check("mid/content=5/../6/.", "mid/6/");
             check("mid/content=5/../6/..", "mid/");
-            check("/..", "/");
+            check("/..", "/..");
             check(".", "");
             check("..", "..");
             check("", "");

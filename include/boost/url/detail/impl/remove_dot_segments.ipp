@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/remove_dot_segments.hpp>
 #include <boost/assert.hpp>
+#include <boost/core/ignore_unused.hpp>
 #include <cstring>
 
 namespace boost {
@@ -22,76 +23,124 @@ std::size_t
 remove_dot_segments(
     char* dest0,
     char const* end,
-    string_view s,
-    bool remove_unmatched) noexcept
+    string_view s) noexcept
 {
-    // 1. The input buffer is initialized with
+    // 1. The input buffer `s` is initialized with
     // the now-appended path components and the
-    // output buffer is initialized to the empty
-    // string.
+    // output buffer `dest0` is initialized to
+    // the empty string.
     char* dest = dest0;
-    auto append =
-        [&dest, &end]
-        (string_view in)
-    {
-        BOOST_ASSERT(in.size() <= std::size_t(end - dest));
-        std::memcpy(dest, in.data(), in.size());
-        dest += in.size();
-        (void)end;
-    };
 
-    auto find_last_slash =
-        [&dest0, &dest]() -> std::size_t
-    {
-        char* const first = dest0;
-        char* last = dest;
-        while (last != first)
-        {
-            --last;
-            if (*last == '/')
-                return last - first;
-        }
-        return string_view::npos;
-    };
-
-    // Step 2 is a loop through 5 production rules
+    // Step 2 is a loop through 5 production rules:
+    // https://www.rfc-editor.org/rfc/rfc3986#section-5.2.4
+    //
     // There are no transitions between all rules,
     // which enables some optimizations.
-    // A.  If the input buffer begins with a
+    //
+    // Initial:
+    // - Rule A: handle initial dots
+    // If the input buffer begins with a
     // prefix of "../" or "./", then remove
-    // that prefix from the input buffer;
-    // otherwise,
-    // Rule A can only happen at the beginning:
-    // - B and C write "/" to the output
-    // - D can only happen at the end
-    // - E leaves "/" or happens at the end
+    // that prefix from the input buffer.
+    // Rule A can only happen at the beginning.
+    // Errata 4547: Keep "../" in the beginning
+    // https://www.rfc-editor.org/errata/eid4547
+    //
+    // Then:
+    // - Rule D: ignore a final ".." or "."
+    // if the input buffer consists only  of "."
+    // or "..", then remove that from the input
+    // buffer.
+    // Rule D can only happen after Rule A because:
+    // - B and C write "/" to the input
+    // - E writes "/" to input or returns
+    //
+    // Then:
+    // - Rule B: ignore ".": write "/" to the input
+    // - Rule C: apply "..": remove seg and write "/"
+    // - Rule E: copy complete segment
+    auto append =
+        [](char*& first, char const* last, string_view in)
+    {
+        // append `in` to `dest`
+        BOOST_ASSERT(in.size() <= std::size_t(last - first));
+        std::memmove(first, in.data(), in.size());
+        first += in.size();
+        ignore_unused(last);
+    };
+
+    auto dot_starts_with = [](
+        string_view str, string_view dots, std::size_t& n)
+    {
+        // starts_with for encoded/decoded dots
+        // or decoded otherwise. return how many
+        // chars in str match the dots
+        n = 0;
+        for (char c: dots)
+        {
+            if (str.empty())
+            {
+                n = 0;
+                return false;
+            }
+            else if (str.starts_with(c))
+            {
+                str.remove_prefix(1);
+                ++n;
+            }
+            else if (str.size() > 2 &&
+                     str[0] == '%' &&
+                     str[1] == '2' &&
+                     (str[2] == 'e' ||
+                      str[2] == 'E'))
+            {
+                str.remove_prefix(3);
+                n += 3;
+            }
+            else
+            {
+                n = 0;
+                return false;
+            }
+        }
+        return true;
+    };
+
+    auto dot_equal = [&dot_starts_with](
+        string_view str, string_view dots)
+    {
+        std::size_t n = 0;
+        dot_starts_with(str, dots, n);
+        return n == str.size();
+    };
+
+    // Rule A
+    std::size_t n;
     while (!s.empty())
     {
-        if (s.starts_with("../"))
+        if (dot_starts_with(s, "../", n))
         {
-            if (!remove_unmatched)
-                append(s.substr(0, 3));
-            s.remove_prefix(3);
+            // Errata 4547
+            append(dest, end, s.substr(0, n));
+            s.remove_prefix(n);
             continue;
         }
-        if (!s.starts_with("./"))
+        else if (!dot_starts_with(s, "./", n))
+        {
             break;
-        s.remove_prefix(2);
+        }
+        s.remove_prefix(n);
     }
 
-    // D.  if the input buffer consists only
-    // of "." or "..", then remove that from
-    // the input buffer; otherwise,
-    // Rule D can only happen after A is consumed:
-    // - B and C write "/" to the output
-    // - D can only happen at the end
-    // - E leaves "/" or happens at the end
-    if( s == "." ||
-        s == "..")
+    // Rule D
+    if( dot_equal(s, "."))
     {
-        if( ! remove_unmatched &&
-                s == "..")
-            append(s);
+        s = {};
+    }
+    else if( dot_equal(s, "..") )
+    {
+        // Errata 4547
+        append(dest, end, s);
         s = {};
     }
 
@@ -99,88 +148,94 @@ remove_dot_segments(
     // loop as follows:
     while (!s.empty())
     {
-        // B.  if the input buffer begins with a
-        // prefix of "/./" or "/.", where "." is
-        // a complete path segment, then replace
-        // that prefix with "/" in the input
-        // buffer; otherwise,
-        if (s.starts_with("/./"))
+        // Rule B
+        if (dot_starts_with(s, "/./", n))
         {
-            s.remove_prefix(2);
+            s.remove_prefix(n - 1);
             continue;
         }
-        if (s == "/.")
+        if (dot_equal(s, "/."))
         {
-            // equivalent to replacing s with '/'
-            // and executing the next iteration
-            append(s.substr(0, 1));
-            s.remove_prefix(2);
-            continue;
+            // We can't remove "." from a string_view
+            // So what we do here is equivalent to
+            // replacing s with '/' as required
+            // in Rule B and executing the next
+            // iteration, which would append this
+            // '/' to  the output, as required by
+            // Rule E
+            append(dest, end, s.substr(0, 1));
+            s = {};
+            break;
         }
 
-        // C. if the input buffer begins with a
-        // prefix of "/../" or "/..", where ".."
-        // is a complete path segment, then
-        // replace that prefix with "/" in the
-        // input buffer and remove the last
-        // segment and its preceding "/"
-        // (if any) from the output buffer;
-        // otherwise,
-        if (s.starts_with("/../"))
+        // Rule C
+        if (dot_starts_with(s, "/../", n))
         {
-            std::size_t p = find_last_slash();
+            std::size_t p = string_view(
+                dest0, dest - dest0).find_last_of('/');
             if (p != string_view::npos)
-                // "erase" [p, end]
-                dest = dest0 + p;
-            else if (!remove_unmatched)
-                append(s.substr(0, 3));
-            s.remove_prefix(3);
+            {
+                // "erase" [p, end] if not "/.."
+                if (!dot_equal(string_view(dest0 + p, dest - (dest0 + p)), "/.."))
+                {
+                    dest = dest0 + p;
+                }
+                else
+                {
+                    append(dest, end, s.substr(0, n-1));
+                }
+            }
+            else if (dest0 != dest)
+            {
+                dest = dest0;
+            }
+            else
+            {
+                append(dest, end, s.substr(0, n-1));
+            }
+            s.remove_prefix(n-1);
             continue;
         }
-        if (s == "/..")
+        if (dot_equal(s, "/.."))
         {
-            std::size_t p = find_last_slash();
+            std::size_t p = string_view(
+                dest0, dest - dest0).find_last_of('/');
             if (p != string_view::npos)
             {
                 // erase [p, end]
                 dest = dest0 + p;
-                // equivalent to replacing s with '/'
-                // and executing the next iteration.
-                // this is the only point that would
-                // require input memory allocations
-                // in remove_dot_segments
-                append(s.substr(0, 1));
+                append(dest, end, s.substr(0, 1));
             }
-            else if (remove_unmatched)
-                append(s.substr(0, 1));
+            else if (dest0 != dest)
+            {
+                dest = dest0;
+                append(dest, end, s.substr(0, 1));
+            }
             else
-                append(s.substr(0, 3));
-            s.remove_prefix(3);
-            continue;
+            {
+                append(dest, end, s);
+            }
+            s = {};
+            break;
         }
 
-        // E.  move the first path segment in the
-        // input buffer to the end of the output
-        // buffer, including the initial "/"
-        // character (if any) and any subsequent
-        // characters up to, but not including,
-        // the next "/" character or the end of
-        // the input buffer.
+        // Rule E
         std::size_t p = s.find_first_of('/', 1);
         if (p != string_view::npos)
         {
-            append(s.substr(0, p));
+            append(dest, end, s.substr(0, p));
             s.remove_prefix(p);
         }
         else
         {
-            append(s);
+            append(dest, end, s);
             s = {};
         }
     }
 
-    // 3. Finally, the output buffer is returned
-    // as the result of remove_dot_segments.
+    // 3. Finally, the output buffer is set
+    // as the result of remove_dot_segments,
+    // and we return its size
     return dest - dest0;
 }
 
