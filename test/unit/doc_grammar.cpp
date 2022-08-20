@@ -8,9 +8,9 @@
 //
 
 #include <boost/url.hpp>
-
 #include "test_suite.hpp"
 
+#include <boost/core/ignore_unused.hpp>
 #include <iostream>
 
 namespace boost {
@@ -78,7 +78,7 @@ string_view get_token( string_view s ) noexcept
 struct is_visible
 {
     constexpr bool operator()( char ch ) const noexcept
-    {            
+    {
         return ch >= 33 && ch <= 126;
     }
 };
@@ -132,11 +132,13 @@ struct doc_grammar_test
         //[code_grammar_1_5
         result< unsigned short > rv = parse( "16384", unsigned_rule< unsigned short >{} );
         //]
+        ignore_unused(rv);
         }
         {
         //[code_grammar_1_6
         result< string_view > rv = parse( ",", delim_rule(',') );
         //]
+        ignore_unused(rv);
         }
     }
     //--------------------------------------------
@@ -156,16 +158,19 @@ struct doc_grammar_test
         //[code_grammar_2_8
         constexpr auto vowels_and_y = vowels + 'y' + 'Y';
         //]
+        ignore_unused(vowels_and_y);
         }
         {
         //[code_grammar_2_11
         constexpr auto visible_non_vowels = visible_chars - vowels;
         //]
+        ignore_unused(visible_non_vowels);
         }
         {
         //[code_grammar_2_12
         constexpr auto visible_non_vowels_or_y = visible_chars - vowels - 'y';
         //]
+        ignore_unused(visible_non_vowels_or_y);
         }
     }
 
@@ -181,6 +186,7 @@ struct doc_grammar_test
         //[code_grammar_3_2
         result< std::tuple< string_view, unsigned char, string_view, unsigned char > > rv = parse( "v42.44800", version_rule );
         //]
+        ignore_unused(rv);
         }
         {
         //[code_grammar_3_3
@@ -188,6 +194,7 @@ struct doc_grammar_test
 
         result< std::tuple< unsigned char, unsigned char > > rv = parse( "v42.44800", version_rule );
         //]
+        ignore_unused(rv);
         }
         {
         //[code_grammar_3_4
@@ -197,6 +204,7 @@ struct doc_grammar_test
 
         result< unsigned short > rv = parse( ":443", port_rule );
         //]
+        ignore_unused(rv);
         }
         {
         //[code_grammar_3_5
@@ -228,6 +236,7 @@ struct doc_grammar_test
                     squelch( delim_rule( ':' ) ),
                     unsigned_rule< unsigned short >{} ) ) );
         //]
+        ignore_unused(endpoint_rule);
         }
         {
         //[code_grammar_3_7
@@ -240,6 +249,7 @@ struct doc_grammar_test
 
         result< std::tuple< ipv4_address, optional< unsigned short > > > rv = parse( "192.168.0.1:443", endpoint_rule );
         //]
+        ignore_unused(rv);
         }
         {
         //[code_grammar_3_8
@@ -292,6 +302,7 @@ struct doc_grammar_test
         //[code_grammar_5_1
         result< pct_string_view > rv = parse( s, pct_encoded_rule( pchars ) );
         //]
+        ignore_unused(rv);
         }
         {
         //[code_grammar_5_2
@@ -310,6 +321,7 @@ struct doc_grammar_test
             delim_rule( digit_chars ),                      // DIGIT
             squelch( literal_rule( "\r\n" ) ) );            // CRLF
         //]
+        ignore_unused(request_line_rule);
         }
     }
 

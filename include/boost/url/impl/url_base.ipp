@@ -97,7 +97,8 @@ reserve_impl(std::size_t n)
 {
     op_t op(*this);
     reserve_impl(n, op);
-    s_[size()] = '\0';
+    if(s_)
+        s_[size()] = '\0';
 }
 
 // make a copy of u
@@ -1262,74 +1263,14 @@ set_encoded_fragment(
 
 result<void>
 url_base::
-resolve_impl(
-    url_view_base const& base,
+resolve(
     url_view_base const& ref)
 {
     op_t op(*this);
-    auto const remove_dot_segments =
-        [this]
-    {
-        auto segs = encoded_segments();
-        if(segs.empty())
-            return;
-        auto it = segs.begin();
-        int n = 0;
-        for(;;)
-        {
-            if(*it == ".")
-            {
-                if(it != std::prev(segs.end()))
-                    it = segs.erase(it);
-                else
-                    it = segs.replace(it, "");
-            }
-            else if(it == segs.begin())
-            {
-            #if 0
-                if(*it == "..")
-                    it = segs.erase(it);
-                else
-                    ++it;
-            #else
-            /*  Errata 4547
-                https://www.rfc-editor.org/errata/eid4547
-            */
-                if(*it != "..")
-                    ++n;
-                ++it;
-            #endif
-            }
-            else if(*it == "..")
-            {
-                if(n > 0)
-                {
-                    it = segs.erase(std::prev(it));
-                    if( it == segs.begin() ||
-                        it != std::prev(segs.end()))
-                        it = segs.erase(it);
-                    else
-                        it = segs.replace(it, "");
-                    --n;
-                }
-                else
-                {
-                    ++it;
-                }
-            }
-            else
-            {
-                ++n;
-                ++it;
-            }
-            if(it == segs.end())
-                break;
-        }
-    };
 
-    if(! base.has_scheme())
+    if(! has_scheme())
     {
-        return error::not_a_base;
+        BOOST_URL_RETURN_EC(error::not_a_base);
     }
 
     //
@@ -1341,119 +1282,93 @@ resolve_impl(
     {
         reserve_impl(ref.size(), op);
         copy(ref);
-        remove_dot_segments();
+        normalize_path();
         return {};
     }
     if(ref.has_authority())
     {
         reserve_impl(
-            base.u_.offset(id_user) +
-                ref.size(), op);
-        clear();
-        set_scheme(base.scheme());
+            u_.offset(id_user) + ref.size(), op);
         set_encoded_authority(
             ref.encoded_authority());
         set_encoded_path(
             ref.encoded_path());
-        remove_dot_segments();
+        if (ref.encoded_path().empty())
+            set_path_absolute(false);
+        else
+            normalize_path();
         if(ref.has_query())
             set_encoded_query(
                 ref.encoded_query());
+        else
+            remove_query();
         if(ref.has_fragment())
             set_encoded_fragment(
                 ref.encoded_fragment());
+        else
+            remove_fragment();
         return {};
     }
     if(ref.encoded_path().empty())
     {
+        reserve_impl(
+            u_.offset(id_query) +
+            ref.size(), op);
+        normalize_path();
         if(ref.has_query())
         {
-            reserve_impl(
-                base.u_.offset(id_query) +
-                    ref.size(), op);
-            clear();
-            set_scheme(base.scheme());
-            if(base.has_authority())
-                set_encoded_authority(
-                    base.encoded_authority());
-            set_encoded_path(
-                base.encoded_path());
-            remove_dot_segments();
             set_encoded_query(
                 ref.encoded_query());
-        }
-        else
-        {
-            reserve_impl(
-                base.u_.offset(id_query) +
-                    ref.size(), op);
-            clear();
-            set_scheme(base.scheme());
-            if(base.has_authority())
-                set_encoded_authority(
-                    base.encoded_authority());
-            set_encoded_path(
-                base.encoded_path());
-            remove_dot_segments();
-            if(base.has_query())
-                set_encoded_query(
-                    base.encoded_query());
         }
         if(ref.has_fragment())
             set_encoded_fragment(
                 ref.encoded_fragment());
         return {};
     }
-    if(ref.encoded_path().starts_with('/'))
+    if(ref.is_path_absolute())
     {
         reserve_impl(
-            base.u_.offset(id_path) +
+            u_.offset(id_path) +
                 ref.size(), op);
-        clear();
-        set_scheme(base.scheme());
-        if(base.has_authority())
-            set_encoded_authority(
-                base.encoded_authority());
         set_encoded_path(
             ref.encoded_path());
-        remove_dot_segments();
+        normalize_path();
         if(ref.has_query())
             set_encoded_query(
                 ref.encoded_query());
+        else
+            remove_query();
         if(ref.has_fragment())
             set_encoded_fragment(
                 ref.encoded_fragment());
+        else
+            remove_fragment();
         return {};
     }
+    // General case: ref is relative path
     reserve_impl(
-        base.u_.offset(id_query) +
-            ref.size(), op);
-    clear();
-    set_scheme(base.scheme());
-    if(base.has_authority())
-        set_encoded_authority(
-            base.encoded_authority());
+        u_.offset(id_query) +
+        ref.size(), op);
+    // 5.2.3. Merge Paths
+    auto es = encoded_segments();
+    if(es.size() > 0)
     {
-        // 5.2.3. Merge Paths
-        auto es = encoded_segments();
-        if(base.u_.nseg_ > 0)
-        {
-            set_encoded_path(
-                base.encoded_path());
-            if(u_.nseg_ > 0)
-                es.pop_back();
-        }
-        es.insert(es.end(),
-            ref.encoded_segments().begin(),
-            ref.encoded_segments().end());
+        es.pop_back();
     }
-    remove_dot_segments();
+    es.insert(es.end(),
+        ref.encoded_segments().begin(),
+        ref.encoded_segments().end());
+    normalize_path();
     if(ref.has_query())
         set_encoded_query(
             ref.encoded_query());
+    else
+        remove_query();
     if(ref.has_fragment())
         set_encoded_fragment(
             ref.encoded_fragment());
+    else
+        remove_fragment();
     return {};
 }
 
@@ -1504,9 +1419,8 @@ normalize_path()
     char* p_dest = s_ + u_.offset(id_path);
     char* p_end = s_ + u_.offset(id_path + 1);
     std::size_t pn = p.size();
-    bool abs = is_path_absolute();
     std::size_t n = detail::remove_dot_segments(
-        p_dest, p_end, p, abs);
+        p_dest, p_end, p);
     if (n != pn)
     {
         BOOST_ASSERT(n < pn);
@@ -2295,7 +2209,7 @@ edit_params(
                     first.pos,
                 last.pos - first.pos)) -
         (u_.len(id_query) > 0);
-                    
+
     // measure
     std::size_t n = 0;
     std::size_t nparam = 0;

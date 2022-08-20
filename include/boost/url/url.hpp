@@ -69,7 +69,7 @@ public:
     /** Return the maximum number of characters possible
 
         This represents the largest number of
-        characters that are possible in a 
+        characters that are possible in a
         Currently the limit is either 2^32-2
         characters or 2^64-2 characters,
         depending on the system architecture.
@@ -310,7 +310,6 @@ public:
     {
         v0.swap(v1);
     }
-
 
 private:
     char* allocate(std::size_t);
