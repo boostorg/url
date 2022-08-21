@@ -325,7 +325,7 @@ not require dynamic memory allocations.
 [snippet_quicklook_modifying_1b]
 
 Objects of type __url__ are [@https://en.cppreference.com/w/cpp/concepts/regular std::regular].
-Similarly to built-in types, such as `int`, a __url__ is copiable, movable, assignable, default
+Similarly to built-in types, such as `int`, a __url__ is copyable, movable, assignable, default
 constructible, and equality comparable. They support all of the inspection functions of
 __url_view__, and also provide functions to modify all components of the URL.
 
