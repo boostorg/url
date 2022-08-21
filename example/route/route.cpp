@@ -153,7 +153,7 @@ main(int argc, char **argv)
         exec = exec.filename();
         std::cerr
             << "Usage: " << exec.c_str()
-            << " <target> <prefix> <root>\n"
+            << " <target> <prefix> <doc_root>\n"
                "target: path to make a request\n"
                "prefix: url prefix\n"
                "doc_root: dir to look for files\n";
