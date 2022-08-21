@@ -57,5 +57,9 @@
           <ExpandedItem>u_</ExpandedItem>
       </Expand>
   </Type>
+
+  <Type Name="boost::urls::grammar::range&lt;*&gt;">
+    <DisplayString>{s_} [{n_}]</DisplayString>
+  </Type>
  
 </AutoVisualizer>
