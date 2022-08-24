@@ -112,7 +112,7 @@ struct doc_grammar_test
                 if( it != end && *it == ',')
                     return string_view( it++, 1 );
 
-                return error::syntax;
+                return error::mismatch;
             }
         };
         //]

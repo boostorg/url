@@ -68,7 +68,7 @@ enum class error
      * range without contributing additional
      * elements.
     */
-    range_end,
+    end_of_range,
 
     /**
      * Leftover input remaining after match.
@@ -95,7 +95,7 @@ enum class error
 
     /** An integer overflowed during parsing.
     */
-    overflow,
+    out_of_range,
 
     /**
      * An unspecified syntax error was found.

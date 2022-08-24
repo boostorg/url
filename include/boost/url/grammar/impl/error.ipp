@@ -43,10 +43,9 @@ make_error_code(
 case error::need_more: return "need more";
 case error::mismatch: return "mismatch";
 case error::invalid: return "invalid";
-case error::range_end: return "range end";
+case error::end_of_range: return "end of range";
 case error::leftover: return "leftover";
-case error::overflow: return "overflow";
-case error::syntax: return "syntax";
+case error::out_of_range: return "out of range";
             }
         }
 
@@ -57,8 +56,7 @@ case error::syntax: return "syntax";
             switch(static_cast<error>(ev))
             {
 case error::invalid:
-case error::overflow:
-case error::syntax:
+case error::out_of_range:
                 return condition::fatal;
             default:
                 return {ev, *this};

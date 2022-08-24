@@ -615,9 +615,9 @@ parse(
         it, end, next_);
     if( !rv )
     {
-        if(rv.error() != error::range_end)
+        if(rv.error() != error::end_of_range)
         {
-            // rewind unless error::range_end
+            // rewind unless error::end_of_range
             it = it1;
         }
         if(n < N_)
@@ -639,9 +639,9 @@ parse(
             it, end, next_);
         if( !rv )
         {
-            if(rv.error() != error::range_end)
+            if(rv.error() != error::end_of_range)
             {
-                // rewind unless error::range_end
+                // rewind unless error::end_of_range
                 it = it1;
             }
             break;
@@ -685,9 +685,9 @@ parse(
         it, end, first_);
     if( !rv )
     {
-        if(rv.error() != error::range_end)
+        if(rv.error() != error::end_of_range)
         {
-            // rewind unless error::range_end
+            // rewind unless error::end_of_range
             it = it1;
         }
         if(n < N_)
@@ -709,9 +709,9 @@ parse(
             it, end, next_);
         if( !rv )
         {
-            if(rv.error() != error::range_end)
+            if(rv.error() != error::end_of_range)
             {
-                // rewind unless error::range_end
+                // rewind unless error::end_of_range
                 it = it1;
             }
             break;

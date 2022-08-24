@@ -277,7 +277,7 @@ struct range_rule_t;
     the range ends and the input is rewound to
     one past the last character that matched
     successfully. However, if the rule returns
-    the special value @ref error::range_end, the
+    the special value @ref error::end_of_range, the
     input is not rewound. This allows for rules
     which consume input without producing
     elements in the range. For example, to
@@ -327,7 +327,7 @@ struct range_rule_t;
     @see
         @ref alpha_chars,
         @ref delim_rule,
-        @ref error::range_end,
+        @ref error::end_of_range,
         @ref parse,
         @ref range,
         @ref tuple_rule,
@@ -415,7 +415,7 @@ range_rule(
     the range ends and the input is rewound to
     one past the last character that matched
     successfully. However, if the rule returns
-    the special value @ref error::range_end, the
+    the special value @ref error::end_of_range, the
     input is not rewound. This allows for rules
     which consume input without producing
     elements in the range. For example, to
@@ -470,7 +470,7 @@ range_rule(
     @see
         @ref alpha_chars,
         @ref delim_rule,
-        @ref error::range_end,
+        @ref error::end_of_range,
         @ref parse,
         @ref range,
         @ref tuple_rule,

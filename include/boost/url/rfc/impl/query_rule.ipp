@@ -48,7 +48,7 @@ struct query_param_rule_t
     {
         query_param_view t;
 
-        // VFALCO we don't return error::range_end
+        // VFALCO we don't return error::end_of_range
         // here, because the empty string still
         // counts as a 1-element range with
         // key="" and value=(none)

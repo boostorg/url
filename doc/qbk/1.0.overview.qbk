@@ -146,8 +146,6 @@ informal works. In this library we use the term [*URL] to
 refer to all strings which are valid according to the
 top-level grammar rules found in __rfc3986__.
 
-[$url/images/MidwitMeme.svg]
-
 [endsect]
 
 [/-----------------------------------------------------------------------------]
