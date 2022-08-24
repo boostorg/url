@@ -11,8 +11,6 @@ Fuzzing         | --- | ---
 
 # Boost.URL
 
-## This is currently **NOT** an official Boost library.
-
 ## Overview
 
 Boost.URL is a portable C++ library which provides containers and algorithms
