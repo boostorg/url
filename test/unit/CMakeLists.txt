@@ -26,6 +26,7 @@ set(BOOST_URL_TESTS_FILES
     error_types.cpp
     grammar.cpp
     host_type.cpp
+    ignore_case.cpp
     ipv4_address.cpp
     ipv6_address.cpp
     natvis.cpp

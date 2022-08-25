@@ -51,6 +51,7 @@
         <bridgehead renderas="sect3">Types (1/2)</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__authority_view">authority_view</link></member>
+          <member><link linkend="url.ref.boost__urls__ignore_case_param">ignore_case_param</link></member>
           <member><link linkend="url.ref.boost__urls__ipv4_address">ipv4_address</link></member>
           <member><link linkend="url.ref.boost__urls__ipv6_address">ipv6_address</link></member>
           <member><link linkend="url.ref.boost__urls__params">params</link></member>
@@ -80,6 +81,7 @@
         <bridgehead renderas="sect3">Constants</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__error">error</link></member>
+          <member><link linkend="url.ref.boost__urls__ignore_case">ignore_case</link></member>
           <member><link linkend="url.ref.boost__urls__host_type">host_type</link></member>
           <member><link linkend="url.ref.boost__urls__scheme">scheme</link></member>
         </simplelist>

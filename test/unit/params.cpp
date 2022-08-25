@@ -534,3 +534,32 @@ TEST_SUITE(
 
 } // urls
 } // boost
+
+/*
+
+    operator=(std::initializer_list)
+    assign(std::initializer_list)
+    assign(FwdIt, FwdIt)
+    insert(iterator, value_type)
+    insert(iterator, initializer_list)
+    insert(iterator, FwdIt, FwdIt)
+    replace(iterator, value_type)
+    replace(iterator, iterator, FwdIt, FwdIt)
+    replace(iterator, initializer_list)
+    replace(iterator, value_type)
+    erase(iterator)
+    erase(iterator, iterator)
+    push_back(value_type)
+
+    // key/value
+    remove_value(iterator)
+    replace_value(iterator, value)
+    replace(iterator, key, value)
+    replace(iterator, key)
+    insert(iterator, key, value)
+    insert(iterator, key)
+    erase(key)
+    append(key)
+    append(key, value)
+
+*/

@@ -30,6 +30,7 @@ local SOURCES =
     decode_view.cpp
     grammar.cpp
     host_type.cpp
+    ignore_case.cpp
     ipv4_address.cpp
     ipv6_address.cpp
     optional.cpp
