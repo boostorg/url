@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -27,15 +28,12 @@ template<class CharSet>
 result<std::size_t>
 validate_encoding(
     string_view s,
-    CharSet const& allowed,
-    decode_opts const& opt) noexcept
+    decode_opts const& opt,
+    CharSet const& allowed) noexcept
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
         grammar::is_charset<CharSet>::value);
-
-    // can't have % in charset
-    BOOST_ASSERT(! allowed('%'));
 
     // we can't accept plus to space if '+' is not allowed
     BOOST_ASSERT(! opt.plus_to_space || allowed('+'));
@@ -52,14 +50,20 @@ validate_encoding(
             BOOST_URL_RETURN_EC(
                 error::illegal_null);
         }
-        if(allowed(*it))
+        if (*it != '%')
         {
-            // unreserved
-            ++n;
-            ++it;
-            continue;
+            if(allowed(*it))
+            {
+                // unreserved
+                ++n;
+                ++it;
+                continue;
+            }
+            // reserved character in input
+            BOOST_URL_RETURN_EC(
+                error::illegal_reserved_char);
         }
-        if(*it == '%')
+        else
         {
             // escaped
             ++it;
@@ -98,11 +102,7 @@ validate_encoding(
                     error::non_canonical);
             }
             ++n;
-            continue;
         }
-        // reserved character in input
-        BOOST_URL_RETURN_EC(
-            error::illegal_reserved_char);
     }
     BOOST_ASSERT(it == end);
     return n;
@@ -116,8 +116,8 @@ decode(
     char* dest,
     char const* end,
     string_view s,
-    CharSet const& allowed,
-    decode_opts const& opt) noexcept
+    decode_opts const& opt,
+    CharSet const& allowed) noexcept
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
@@ -125,7 +125,7 @@ decode(
 
     auto const rn =
         detail::validate_encoding(
-            s, allowed, opt);
+            s, opt, allowed);
     if( !rn )
         return rn;
     auto const n1 =
@@ -148,7 +148,7 @@ decode(
         result< decode_view >
 {
     result<std::size_t> rn =
-        detail::validate_encoding(s, allowed, opt);
+        detail::validate_encoding(s, opt, allowed);
     if (rn.has_error())
         return rn.error();
     return detail::access::construct(s, *rn, opt);

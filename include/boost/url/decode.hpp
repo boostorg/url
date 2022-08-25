@@ -87,8 +87,8 @@ template<
 result<std::size_t>
 validate_encoding(
     string_view s,
-    CharSet const& allowed,
-    decode_opts const& opt = {}) noexcept;
+    decode_opts const& opt,
+    CharSet const& allowed) noexcept;
 
 /** Validate a percent encoded string and return the number of decoded bytes
 
@@ -215,8 +215,8 @@ decode(
     char* dest,
     char const* end,
     string_view s,
-    CharSet const& allowed,
-    decode_opts const& opt = {}) noexcept;
+    decode_opts const& opt,
+    CharSet const& allowed) noexcept;
 
 /** Write a string with percent-decoding into a buffer.
 

@@ -288,7 +288,7 @@ public:
 
         @return Keyword topic
      */
-    urls::optional<urls::decode_view>
+    boost::optional<urls::decode_view>
     keyword_topic() const noexcept;
 
     /// Return manifest topics
@@ -321,7 +321,7 @@ public:
 
         @return Display name
      */
-    urls::optional<urls::decode_view>
+    boost::optional<urls::decode_view>
     display_name() const noexcept;
 
     // The payload data served over HTTP(S)
@@ -355,7 +355,7 @@ public:
 
         @return Web seed
      */
-    urls::optional<urls::decode_view>
+    boost::optional<urls::decode_view>
     param(urls::string_view key) const noexcept;
 
     friend
@@ -367,11 +367,11 @@ public:
 
 private:
     // get a query parameter as a urls::decode_view
-    urls::optional<urls::decode_view>
+    boost::optional<urls::decode_view>
     decoded_param(urls::string_view key) const noexcept;
 
     // get a query parameter as a urls::url_view
-    urls::optional<urls::url_view>
+    boost::optional<urls::url_view>
     url_param(urls::string_view key) const noexcept;
 
     friend magnet_link_rule_t;
@@ -503,7 +503,7 @@ magnet_link_view::acceptable_sources(MutableString& buffer) const
         is_url_with_key<MutableString>{"as", buffer}};
 }
 
-urls::optional<urls::decode_view>
+boost::optional<urls::decode_view>
 magnet_link_view::keyword_topic() const noexcept
 {
     return decoded_param("kt");
@@ -519,7 +519,7 @@ magnet_link_view::manifest_topics(MutableString& buffer) const
         is_url_with_key<MutableString>{"mt", buffer}};
 }
 
-urls::optional<urls::decode_view>
+boost::optional<urls::decode_view>
 magnet_link_view::display_name() const noexcept
 {
     return decoded_param("dn");
@@ -535,7 +535,7 @@ magnet_link_view::web_seed(MutableString& buffer) const
         is_url_with_key<MutableString>{"ws", buffer}};
 }
 
-urls::optional<urls::decode_view>
+boost::optional<urls::decode_view>
 magnet_link_view::param(urls::string_view key) const noexcept
 {
     urls::params_view ps = u_.params();
@@ -565,7 +565,7 @@ magnet_link_view::param(urls::string_view key) const noexcept
     return boost::none;
 }
 
-urls::optional<urls::decode_view>
+boost::optional<urls::decode_view>
 magnet_link_view::decoded_param(urls::string_view key) const noexcept
 {
     urls::params_encoded_view ps = u_.encoded_params();
@@ -575,7 +575,7 @@ magnet_link_view::decoded_param(urls::string_view key) const noexcept
     return boost::none;
 }
 
-urls::optional<urls::url_view>
+boost::optional<urls::url_view>
 magnet_link_view::url_param(urls::string_view key) const noexcept
 {
     urls::params_encoded_view ps = u_.encoded_params();

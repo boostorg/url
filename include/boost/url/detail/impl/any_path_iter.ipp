@@ -161,7 +161,7 @@ measure(
         return false;
     string_view s(p_, n_);
     n += urls::encoded_size(
-        s, pchars);
+        s, {}, pchars);
     increment();
     return true;
 }
@@ -177,6 +177,7 @@ copy(
         dest,
         end,
         string_view(p_, n_),
+        {},
         pchars);
     increment();
 }
@@ -241,7 +242,7 @@ measure(
         return false;
     auto it = p_;
     auto end = std::next(p_, n_);
-    n += encoded_size_impl(it, end, pchars);
+    n += encoded_size_impl(it, end, {}, pchars);
     increment();
     return true;
 }
@@ -256,7 +257,7 @@ copy(
     auto it = p_;
     auto last = std::next(p_, n_);
     dest += encode_impl(
-        dest, end, it, last, pchars);
+        dest, end, it, last, {}, pchars);
     increment();
 }
 
@@ -306,7 +307,7 @@ measure_impl(
     string_view s,
     std::size_t& n) noexcept
 {
-    n += encoded_size(s, pchars);
+    n += encoded_size(s, {}, pchars);
 }
 
 void
@@ -317,7 +318,7 @@ copy_impl(
     char const* end) noexcept
 {
     dest += encode(
-        dest, end, s, pchars);
+        dest, end, s, {}, pchars);
 }
 
 } // detail

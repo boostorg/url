@@ -271,7 +271,7 @@ public:
             BOOST_TEST(
                 u.set_user(s2).string() == s3);
             auto s = encode_to_string(
-                s2, unreserved_chars + sub_delim_chars);
+                s2, {}, unreserved_chars + sub_delim_chars);
             u.set_user(decode_view(s));
             BOOST_TEST(u.string() == s3);
             BOOST_TEST_EQ(u.user(), s2);
@@ -419,7 +419,7 @@ public:
             BOOST_TEST(
                 u.set_password(s2).string() == s3);
             auto s = encode_to_string(
-                s2, unreserved_chars +
+                s2, {}, unreserved_chars +
                     sub_delim_chars + ':');
             BOOST_TEST(
                 u.set_password(
@@ -575,7 +575,7 @@ public:
             BOOST_TEST_EQ(
                 u.set_userinfo(s2).string(), s3);
             auto s = encode_to_string(
-                s2, unreserved_chars +
+                s2, {}, unreserved_chars +
                     sub_delim_chars + ':');
             BOOST_TEST(
                 u.set_userinfo(
@@ -1422,7 +1422,7 @@ public:
                 url u = parse_uri_reference(s0).value();
                 u.set_path(arg);
                 BOOST_TEST_EQ(u.string(), match);
-                auto s = encode_to_string(arg, pchars);
+                auto s = encode_to_string(arg, {}, pchars);
                 u.set_path(decode_view(s));
                 BOOST_TEST_EQ(u.string(), match);
             };
@@ -1580,7 +1580,7 @@ public:
 
                 u.remove_query();
                 auto s = encode_to_string(
-                    q, detail::query_chars);
+                    q, {}, detail::query_chars);
                 decode_opts opt;
                 opt.plus_to_space = true;
                 auto es = decode_view(s, opt);
@@ -1778,7 +1778,7 @@ public:
                 BOOST_TEST_EQ(u.fragment(), f);
 
                 auto s = encode_to_string(
-                    f, detail::fragment_chars);
+                    f, {}, detail::fragment_chars);
                 u.set_fragment(decode_view(s));
                 BOOST_TEST(u.has_fragment());
                 BOOST_TEST_EQ(u.string(), h);

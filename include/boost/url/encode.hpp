@@ -12,8 +12,9 @@
 #define BOOST_URL_ENCODE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/string_view.hpp>
 #include <boost/url/encode_opts.hpp>
+#include <boost/url/string_view.hpp>
+#include <boost/url/grammar/all_chars.hpp>
 
 namespace boost {
 namespace urls {
@@ -77,12 +78,12 @@ namespace urls {
         @ref encode,
         @ref encode_opts.
 */
-template <class CharSet>
+template <class CharSet = grammar::all_chars_t>
 std::size_t
 encoded_size(
     string_view s,
-    CharSet const& allowed,
-    encode_opts const& opt = {}) noexcept;
+    encode_opts const& opt = {},
+    CharSet const& allowed = {}) noexcept;
 
 /** Write a string with percent-encoding into a buffer.
 
@@ -141,14 +142,14 @@ encoded_size(
         @ref encode,
         @ref encoded_size.
 */
-template <class CharSet>
+template <class CharSet = grammar::all_chars_t>
 std::size_t
 encode(
     char* dest,
     char const* end,
     string_view s,
-    CharSet const& allowed,
-    encode_opts const& opt = {});
+    encode_opts const& opt = {},
+    CharSet const& allowed = {});
 
 /** Return a string with percent-encoding applied
 
@@ -178,10 +179,6 @@ encode(
 
     @param s The string to encode.
 
-    @param opt The options for encoding. If
-    this parameter is omitted, the default
-    options will be used.
-
     @param allowed The set of characters
     allowed to appear unescaped.
     This type must satisfy the requirements
@@ -189,6 +186,10 @@ encode(
     omitted, then no characters are considered
     special. The character set is ignored if
     `opt.non_normal_is_error == false`.
+
+    @param opt The options for encoding. If
+    this parameter is omitted, the default
+    options will be used.
 
     @param a An optional allocator the returned
     string will use. If this parameter is omitted,
@@ -205,7 +206,7 @@ encode(
         @ref encode_opts,
 */
 template<
-    class CharSet,
+    class CharSet = grammar::all_chars_t,
     class Allocator =
         std::allocator<char> >
 std::basic_string<char,
@@ -213,8 +214,8 @@ std::basic_string<char,
         Allocator>
 encode_to_string(
     string_view s,
-    CharSet const& allowed,
     encode_opts const& opt = {},
+    CharSet const& allowed = {},
     Allocator const& a = {});
 
 } // urls

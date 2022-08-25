@@ -188,7 +188,7 @@ accessed through a __string_view__:
 ```
 ]]]
 
-[h3 Decoding]
+[heading Percent-Encoding]
 
 An instance of __decode_view__ provides a number of functions
 to persist a decoded string:

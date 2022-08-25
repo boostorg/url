@@ -47,9 +47,9 @@ struct all_chars_t
 
     constexpr
     bool
-    operator()(char c) const noexcept
+    operator()(char) const noexcept
     {
-        return c != '%';
+        return true;
     }
 
 #ifdef BOOST_URL_USE_SSE2
@@ -73,7 +73,7 @@ struct all_chars_t
 #endif
 };
 
-/** A character set containing the alphabetical characters.
+/** A character set containing all characters.
 
     @see
         @ref all_chars_t

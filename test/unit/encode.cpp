@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -8,11 +9,9 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/grammar/lut_chars.hpp>
-#include "test_suite.hpp"
-#include <boost/url/string_view.hpp>
-#include <boost/url/decode.hpp>
 #include <boost/url/encode.hpp>
+
+#include "test_suite.hpp"
 #include <memory>
 
 namespace boost {
@@ -43,7 +42,7 @@ public:
             opt.space_to_plus =
                 space_to_plus;
             BOOST_TEST(encoded_size(
-                s, test_chars{}, opt) ==
+                s, opt, test_chars{}) ==
                     m0.size());
         }
         // encode
@@ -53,16 +52,16 @@ public:
                 space_to_plus;
             std::string t;
             t.resize(
-                encoded_size(s, test_chars{}, opt));
+                encoded_size(s, opt, test_chars{}));
             encode(
-                &t[0], &t[0] + t.size(), s, test_chars{}, opt);
+                &t[0], &t[0] + t.size(), s, opt, test_chars{});
             BOOST_TEST(t == m0);
         }
         encode_opts opt;
         opt.space_to_plus =
             space_to_plus;
         auto const m = encode_to_string(
-            s, test_chars{}, opt);
+            s, opt, test_chars{});
         if(! BOOST_TEST(m == m0))
             return;
         char buf[64];
@@ -74,7 +73,7 @@ public:
             char* dest = buf;
             char const* end = buf + i;
             std::size_t n = encode(
-                dest, end, s, test_chars{}, opt);
+                dest, end, s, opt, test_chars{});
             string_view r(buf, n);
             if(n == m.size())
             {
@@ -112,22 +111,22 @@ public:
         // space_to_plus
         {
             BOOST_TEST(encode_to_string(
-                " ", test_chars{}, {}) == "%20");
+                " ", {}, test_chars{}) == "%20");
             encode_opts opt;
             BOOST_TEST_EQ(opt.space_to_plus, false);
             BOOST_TEST(encode_to_string(
-                " ", test_chars{}, opt) == "%20");
+                " ", opt, test_chars{}) == "%20");
             BOOST_TEST(encode_to_string(
-                "A", test_chars{}, opt) == "A");
+                "A", opt, test_chars{}) == "A");
             BOOST_TEST(encode_to_string(
-                " A+", test_chars{}, opt) == "%20A+");
+                " A+", opt, test_chars{}) == "%20A+");
             opt.space_to_plus = true;
             BOOST_TEST(encode_to_string(
-                " ", test_chars{}, opt) == "+");
+                " ", opt, test_chars{}) == "+");
             BOOST_TEST(encode_to_string(
-                "A", test_chars{}, opt) == "A");
+                "A", opt, test_chars{}) == "A");
             BOOST_TEST(encode_to_string(
-                " A+", test_chars{}, opt) == "+A+");
+                " A+", opt, test_chars{}) == "+A+");
         }
     }
 

@@ -152,7 +152,7 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    n += encoded_size(s, query_chars);
+    n += encoded_size(s, {}, query_chars);
     increment();
     return true;
 }
@@ -167,6 +167,7 @@ copy(
     dest += encode(
         dest, end,
         string_view(p_, n_),
+        {},
         query_chars);
     increment();
 }
@@ -229,7 +230,7 @@ measure(
     auto it = p_;
     auto end = std::next(p_, n_);
     n += encoded_size_impl(
-        it, end, query_chars);
+        it, end, {}, query_chars);
     increment();
     return true;
 }
@@ -246,7 +247,7 @@ copy(
     dest += encode_impl(
         dest, end,
         it, last,
-        query_chars);
+        {}, query_chars);
     increment();
 }
 
@@ -263,7 +264,7 @@ measure_impl(
     decode_opts opt;
     opt.plus_to_space = true;
     auto rn = detail::validate_encoding(
-        key, query_chars, opt);
+        key, opt, query_chars);
     if( !rn )
     {
         ec = rn.error();
@@ -273,7 +274,7 @@ measure_impl(
     if(value)
     {
         rn = detail::validate_encoding(
-            *value, query_chars, opt);
+            *value, opt, query_chars);
         if( !rn )
         {
             ec = rn.error();
@@ -330,11 +331,11 @@ measure_impl(
     string_view const* value,
     std::size_t& n) noexcept
 {
-    n += encoded_size(key, query_chars);
+    n += encoded_size(key, {}, query_chars);
     if(value)
     {
         ++n; // '='
-        n += encoded_size(*value, query_chars);
+        n += encoded_size(*value, {}, query_chars);
     }
 }
 
@@ -347,12 +348,12 @@ copy_impl(
     char const* end) noexcept
 {
     dest += encode(
-        dest, end, key, query_chars);
+        dest, end, key, {}, query_chars);
     if(value)
     {
         *dest++ = '=';
         dest += encode(
-            dest, end, *value, query_chars);
+            dest, end, *value, {}, query_chars);
     }
 }
 
@@ -369,7 +370,7 @@ measure_impl(
     if(value)
     {
         ++n; // '='
-        n += encoded_size(*value, query_chars);
+        n += encoded_size(*value, {}, query_chars);
     }
 }
 
@@ -391,7 +392,7 @@ copy_impl(
     {
         *dest++ = '=';
         dest += encode(
-            dest, end, *value, query_chars);
+            dest, end, *value, {}, query_chars);
     }
 }
 

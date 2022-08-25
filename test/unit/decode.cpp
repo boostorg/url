@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -68,7 +69,7 @@ public:
             // detail::validate_encoding
             {
                 auto rn = detail::validate_encoding(
-                    s0, *pcs, opt);
+                    s0, opt, *pcs);
                 if(! BOOST_TEST(! rn.has_error()))
                     return;
                 BOOST_TEST_EQ(*rn, s1.size());
@@ -81,7 +82,7 @@ public:
                 {
                     auto const rn = detail::decode(
                         buf, buf + i,
-                            s0, *pcs, opt);
+                            s0, opt, *pcs);
                     if(i < s1.size())
                     {
                         BOOST_TEST(
@@ -142,7 +143,7 @@ public:
             // detail::validate_encoding
             {
                 auto rn = detail::validate_encoding(
-                    s, test_chars{}, opt);
+                    s, opt, test_chars{});
                 BOOST_TEST(rn.has_error());
                 if (!rn.has_error())
                     BOOST_TEST_EQ(s, "");
@@ -152,7 +153,7 @@ public:
                 char buf[16];
                 auto rn = detail::decode(buf,
                     buf + sizeof(buf),
-                        s, *pcs, opt);
+                        s, opt, *pcs);
                 BOOST_TEST(rn.has_error());
             }
             // detail::decode_bytes_unchecked
@@ -341,7 +342,7 @@ public:
             opt.space_to_plus =
                 space_to_plus;
             BOOST_TEST(encoded_size(
-                s, test_chars{}, opt) ==
+                s, opt, test_chars{}) ==
                     m0.size());
         }
         // encode
@@ -351,16 +352,16 @@ public:
                 space_to_plus;
             std::string t;
             t.resize(
-                encoded_size(s, test_chars{}, opt));
+                encoded_size(s, opt, test_chars{}));
             encode(
-                &t[0], &t[0] + t.size(), s, test_chars{}, opt);
+                &t[0], &t[0] + t.size(), s, opt, test_chars{});
             BOOST_TEST(t == m0);
         }
         encode_opts opt;
         opt.space_to_plus =
             space_to_plus;
         auto const m = encode_to_string(
-            s, test_chars{}, opt);
+            s, opt, test_chars{});
         if(! BOOST_TEST(m == m0))
             return;
         char buf[64];
@@ -372,7 +373,7 @@ public:
             char* dest = buf;
             char const* end = buf + i;
             std::size_t n = encode(
-                dest, end, s, test_chars{}, opt);
+                dest, end, s, opt, test_chars{});
             string_view r(buf, n);
             if(n == m.size())
             {

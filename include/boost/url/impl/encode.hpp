@@ -30,8 +30,8 @@ std::size_t
 encoded_size_impl(
     Iter it,
     Iter const end,
-    CharSet const& allowed,
-    encode_opts const& opt = {}) noexcept
+    encode_opts const& opt = {},
+    CharSet const& allowed = {}) noexcept
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
@@ -73,29 +73,29 @@ template<class CharSet>
 std::size_t
 encoded_size(
     string_view s,
-    CharSet const& allowed,
-    encode_opts const& opt) noexcept
+    encode_opts const& opt,
+    CharSet const& allowed) noexcept
 {
     return detail::encoded_size_impl(
         s.data(),
         s.data() + s.size(),
-        allowed,
-        opt);
+        opt,
+        allowed);
 }
 
 //------------------------------------------------
 
 namespace detail {
 
-template<class Iter, class CharSet>
+template<class Iter, class CharSet = grammar::all_chars_t>
 std::size_t
 encode_impl(
     char* dest,
     char const* const end,
     Iter p,
     Iter last,
-    CharSet const& allowed,
-    encode_opts const& opt = {})
+    encode_opts const& opt = {},
+    CharSet const& allowed = {})
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
@@ -172,16 +172,16 @@ encode(
     char* dest,
     char const* const end,
     string_view s,
-    CharSet const& allowed,
-    encode_opts const& opt)
+    encode_opts const& opt,
+    CharSet const& allowed)
 {
     return detail::encode_impl(
         dest,
         end,
         s.data(),
         s.data() + s.size(),
-        allowed,
-        opt);
+        opt,
+        allowed);
 }
 
 //------------------------------------------------
@@ -194,8 +194,8 @@ std::basic_string<char,
         Allocator>
 encode_to_string(
     string_view s,
-    CharSet const& allowed,
     encode_opts const& opt,
+    CharSet const& allowed,
     Allocator const& a)
 {
     // CharSet must satisfy is_charset
@@ -209,12 +209,12 @@ encode_to_string(
     if(s.empty())
         return r;
     auto const n =
-        encoded_size(s, allowed, opt);
+        encoded_size(s, opt, allowed);
     r.resize(n);
     char* dest = &r[0];
     char const* end = dest + n;
     auto const n1 = encode(
-        dest, end, s, allowed, opt);
+        dest, end, s, opt, allowed);
     BOOST_ASSERT(n1 == n);
     (void)n1;
     return r;
