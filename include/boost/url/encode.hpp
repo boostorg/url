@@ -32,7 +32,7 @@ namespace urls {
     @code
     encode_opts opt;
     opt.space_to_plus = false;
-    std::size_t n = encode_bytes( "My Stuff", pchars, opt );
+    std::size_t n = encoded_size( "My Stuff", pchars, opt );
 
     assert( n == 10 );
     @endcode
@@ -43,7 +43,7 @@ namespace urls {
     @code
     encode_opts opt;
     opt.space_to_plus = true;
-    std::size_t n = encode_bytes( "My Stuff", opt, pchars );
+    std::size_t n = encoded_size( "My Stuff", opt, pchars );
 
     assert( n == 8 );
     @endcode
@@ -79,7 +79,7 @@ namespace urls {
 */
 template <class CharSet>
 std::size_t
-encode_bytes(
+encoded_size(
     string_view s,
     CharSet const& allowed,
     encode_opts const& opt = {}) noexcept;
@@ -139,7 +139,7 @@ encode_bytes(
     @see
         @ref decode,
         @ref encode,
-        @ref encode_bytes.
+        @ref encoded_size.
 */
 template <class CharSet>
 std::size_t
@@ -201,7 +201,7 @@ encode(
 
     @see
         @ref encode,
-        @ref encode_bytes,
+        @ref encoded_size,
         @ref encode_opts,
 */
 template<

@@ -46,7 +46,7 @@
 #include <boost/url/rfc/ipv6_address_rule.hpp>
 #include <boost/url/rfc/origin_form_rule.hpp>
 #include <boost/url/rfc/pchars.hpp>
-#include <boost/url/rfc/encoded_rule.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/relative_ref_rule.hpp>
 #include <boost/url/rfc/reserved_chars.hpp>

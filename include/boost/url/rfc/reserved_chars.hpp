@@ -23,7 +23,7 @@ namespace urls {
     the functions @ref grammar::find_if and
     @ref grammar::find_if_not.
     @code
-    result< decode_view > rv = grammar::parse( "Program%20Files", encoded_rule( reserved_chars ) );
+    result< decode_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( reserved_chars ) );
     @endcode
 
     @par Specification
@@ -34,7 +34,7 @@ namespace urls {
         @ref grammar::find_if,
         @ref grammar::find_if_not,
         @ref grammar::parse,
-        @ref encoded_rule.
+        @ref pct_encoded_rule.
 */
 constexpr auto reserved_chars = ~unreserved_chars;
 

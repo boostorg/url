@@ -40,7 +40,7 @@ namespace urls {
         @ref grammar::find_if,
         @ref grammar::find_if_not,
         @ref grammar::parse,
-        @ref encoded_rule.
+        @ref pct_encoded_rule.
 */
 constexpr auto pchars =
     unreserved_chars + sub_delim_chars + ':' + '@';

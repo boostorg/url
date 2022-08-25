@@ -71,8 +71,7 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    auto rn = urls::detail::validate_encoding(
-        s, query_chars, {});
+    auto rn = urls::decode(s, {}, query_chars);
     if( !rn )
     {
         ec = rn.error();
@@ -153,8 +152,7 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    n += urls::encode_bytes(
-        s, query_chars);
+    n += encoded_size(s, query_chars);
     increment();
     return true;
 }
@@ -230,7 +228,7 @@ measure(
         return false;
     auto it = p_;
     auto end = std::next(p_, n_);
-    n += encode_bytes_impl(
+    n += encoded_size_impl(
         it, end, query_chars);
     increment();
     return true;
@@ -332,11 +330,11 @@ measure_impl(
     string_view const* value,
     std::size_t& n) noexcept
 {
-    n += encode_bytes(key, query_chars);
+    n += encoded_size(key, query_chars);
     if(value)
     {
         ++n; // '='
-        n += encode_bytes(*value, query_chars);
+        n += encoded_size(*value, query_chars);
     }
 }
 
@@ -371,7 +369,7 @@ measure_impl(
     if(value)
     {
         ++n; // '='
-        n += encode_bytes(*value, query_chars);
+        n += encoded_size(*value, query_chars);
     }
 }
 

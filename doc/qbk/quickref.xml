@@ -91,14 +91,14 @@
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__decode">decode</link></member>
           <member><link linkend="url.ref.boost__urls__encode">encode</link></member>
-          <member><link linkend="url.ref.boost__urls__encode_bytes">encode_bytes</link></member>
+          <member><link linkend="url.ref.boost__urls__encoded_size">encoded_size</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__decode_opts">decode_opts</link></member>
-          <member><link linkend="url.ref.boost__urls__encode_opts">encode_opts</link></member>
           <member><link linkend="url.ref.boost__urls__decode_view">decode_view</link></member>
+          <member><link linkend="url.ref.boost__urls__encode_opts">encode_opts</link></member>
         </simplelist>
 
       </entry>
@@ -151,7 +151,7 @@
           <member><link linkend="url.ref.boost__urls__ipv4_address_rule">ipv4_address_rule</link></member>
           <member><link linkend="url.ref.boost__urls__ipv6_address_rule">ipv6_address_rule</link></member>
           <member><link linkend="url.ref.boost__urls__pchars">pchars</link></member>
-          <member><link linkend="url.ref.boost__urls__encoded_rule">encoded_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_encoded_rule">pct_encoded_rule</link></member>
           <member><link linkend="url.ref.boost__urls__query_rule">query_rule</link></member>
           <member><link linkend="url.ref.boost__urls__relative_ref_rule">relative_ref_rule</link></member>
           <member><link linkend="url.ref.boost__urls__reserved_chars">reserved_chars</link></member>

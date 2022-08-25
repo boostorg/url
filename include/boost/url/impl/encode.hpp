@@ -27,7 +27,7 @@ namespace detail {
 
 template <class Iter, class CharSet>
 std::size_t
-encode_bytes_impl(
+encoded_size_impl(
     Iter it,
     Iter const end,
     CharSet const& allowed,
@@ -71,12 +71,12 @@ encode_bytes_impl(
 
 template<class CharSet>
 std::size_t
-encode_bytes(
+encoded_size(
     string_view s,
     CharSet const& allowed,
     encode_opts const& opt) noexcept
 {
-    return detail::encode_bytes_impl(
+    return detail::encoded_size_impl(
         s.data(),
         s.data() + s.size(),
         allowed,
@@ -209,7 +209,7 @@ encode_to_string(
     if(s.empty())
         return r;
     auto const n =
-        encode_bytes(s, allowed, opt);
+        encoded_size(s, allowed, opt);
     r.resize(n);
     char* dest = &r[0];
     char const* end = dest + n;

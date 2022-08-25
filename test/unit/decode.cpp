@@ -335,12 +335,12 @@ public:
         string_view m0,
         bool space_to_plus = false)
     {
-        // encode_bytes
+        // encoded_size
         {
             encode_opts opt;
             opt.space_to_plus =
                 space_to_plus;
-            BOOST_TEST(encode_bytes(
+            BOOST_TEST(encoded_size(
                 s, test_chars{}, opt) ==
                     m0.size());
         }
@@ -351,7 +351,7 @@ public:
                 space_to_plus;
             std::string t;
             t.resize(
-                encode_bytes(s, test_chars{}, opt));
+                encoded_size(s, test_chars{}, opt));
             encode(
                 &t[0], &t[0] + t.size(), s, test_chars{}, opt);
             BOOST_TEST(t == m0);

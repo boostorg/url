@@ -12,8 +12,8 @@
 #define BOOST_URL_PARAMS_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/query_param.hpp>
 #include <boost/url/decode_view.hpp>
+#include <boost/url/query_param.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <initializer_list>
 #include <iterator>

@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/detail/userinfo_rule.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/rfc/encoded_rule.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/grammar/parse.hpp>
 
 namespace boost {
@@ -37,7 +37,7 @@ parse(
 
     // user
     auto rv = grammar::parse(
-        it, end, encoded_rule(
+        it, end, pct_encoded_rule(
             grammar::ref(uchars)));
     if(! rv)
         return rv.error();
@@ -55,7 +55,7 @@ parse(
 
     // pass
     rv = grammar::parse(
-        it, end, encoded_rule(
+        it, end, pct_encoded_rule(
             grammar::ref(pwchars)));
     if(! rv)
         return rv.error();

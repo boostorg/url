@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_DETAIL_REG_NAME_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/rfc/encoded_rule.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/unreserved_chars.hpp>
 
 namespace boost {
@@ -45,7 +45,7 @@ namespace detail {
         >Errata ID: 4942</a>
 */
 constexpr auto reg_name_rule =
-    encoded_rule(unreserved_chars + '-' + '.');
+    pct_encoded_rule(unreserved_chars + '-' + '.');
 
 } // detail
 } // urls

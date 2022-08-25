@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_DETAIL_PATH_RULES_HPP
 
 #include <boost/url/rfc/pchars.hpp>
-#include <boost/url/rfc/encoded_rule.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/range_rule.hpp>
 #include <boost/url/grammar/tuple_rule.hpp>
@@ -35,7 +35,7 @@ namespace detail {
         @ref grammar::parse.
 */
 constexpr auto segment_rule =
-    encoded_rule(grammar::ref(pchars));
+    pct_encoded_rule(grammar::ref(pchars));
 
 //------------------------------------------------
 
@@ -52,7 +52,7 @@ constexpr auto segment_rule =
 */
 constexpr auto segment_nz_rule =
     grammar::not_empty_rule(
-        encoded_rule(grammar::ref(pchars)));
+        pct_encoded_rule(grammar::ref(pchars)));
 
 //------------------------------------------------
 
@@ -73,7 +73,7 @@ constexpr auto segment_nz_rule =
 */
 constexpr auto segment_nz_nc_rule =
     grammar::not_empty_rule(
-        encoded_rule(pchars - ':'));
+        pct_encoded_rule(pchars - ':'));
 
 //------------------------------------------------
 
@@ -89,7 +89,7 @@ constexpr auto slash_segment_rule =
     grammar::tuple_rule(
         grammar::squelch(
             grammar::delim_rule('/')),
-        encoded_rule(grammar::ref(pchars)));
+        pct_encoded_rule(grammar::ref(pchars)));
 
 //------------------------------------------------
 

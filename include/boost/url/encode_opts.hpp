@@ -22,7 +22,7 @@ namespace urls {
 
     @see
         @ref encode,
-        @ref encode_bytes.
+        @ref encoded_size.
 */
 struct encode_opts
 {

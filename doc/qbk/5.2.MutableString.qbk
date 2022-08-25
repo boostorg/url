@@ -18,7 +18,7 @@ components of URLs and other things.
 [heading Related Identifiers]
 
 * __decode_view__
-* [link url.ref.boost__urls__encoded_rule `encoded_rule`]
+* [link url.ref.boost__urls__pct_encoded_rule `pct_encoded_rule`]
 
 [heading Requirements]
 

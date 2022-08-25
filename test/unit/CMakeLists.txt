@@ -80,7 +80,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/ipv6_address_rule.cpp
     rfc/origin_form_rule.cpp
     rfc/pchars.cpp
-    rfc/encoded_rule.cpp
+    rfc/pct_encoded_rule.cpp
     rfc/query_rule.cpp
     rfc/relative_ref_rule.cpp
     rfc/reserved_chars.cpp

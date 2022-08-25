@@ -42,7 +42,7 @@ of the RFC:
 pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
 ```
 
-The library provides the __encoded_rule__ for matching
+The library provides the __pct_encoded_rule__ for matching
 strings which are percent-encoded. This function is passed the
 set of characters that may be used without escapes and returns
 a suitable rule. If the input is valid; that is, if there are

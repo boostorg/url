@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_RFC_DETAIL_FRAGMENT_RULE_HPP
 #define BOOST_URL_RFC_DETAIL_FRAGMENT_RULE_HPP
 
-#include <boost/url/rfc/encoded_rule.hpp>
+#include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/tuple_rule.hpp>
@@ -31,7 +31,7 @@ namespace detail {
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
         >3.5. Fragment (rfc3986)</a>
 */
-constexpr auto fragment_rule = encoded_rule(
+constexpr auto fragment_rule = pct_encoded_rule(
     grammar::ref(detail::fragment_chars));
 
 /** Rule for fragment-part

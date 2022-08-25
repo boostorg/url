@@ -29,13 +29,13 @@ in a translation unit of the program.
 
 #include <boost/url/detail/impl/any_path_iter.ipp>
 #include <boost/url/detail/impl/any_query_iter.ipp>
+#include <boost/url/detail/impl/decode_view.ipp>
 #include <boost/url/detail/impl/except.ipp>
 #include <boost/url/detail/impl/normalize.ipp>
 #include <boost/url/detail/impl/path.ipp>
 #include <boost/url/detail/impl/remove_dot_segments.ipp>
 #include <boost/url/detail/impl/params_encoded_iterator_impl.ipp>
 #include <boost/url/detail/impl/params_iterator_impl.ipp>
-#include <boost/url/detail/impl/decode_view.ipp>
 #include <boost/url/detail/impl/segments_encoded_iterator_impl.ipp>
 #include <boost/url/detail/impl/segments_iterator_impl.ipp>
 #include <boost/url/detail/impl/url_impl.ipp>

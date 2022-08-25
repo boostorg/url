@@ -258,7 +258,7 @@ set_user(string_view s)
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = encode_bytes(
+    auto const n = encoded_size(
         s, detail::user_chars);
     auto dest = set_user_impl(n);
     encode(dest, u_.get(id_pass).data(),
@@ -278,7 +278,7 @@ set_user(decode_view s)
     s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
-        detail::encode_bytes_impl(
+        detail::encoded_size_impl(
             s.begin(),
             s.end(),
             detail::user_chars);
@@ -381,7 +381,7 @@ set_password(string_view s)
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = encode_bytes(
+    auto const n = encoded_size(
         s, detail::password_chars);
     auto dest = set_password_impl(n);
     encode(
@@ -404,7 +404,7 @@ set_password(decode_view s)
     s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
-        detail::encode_bytes_impl(
+        detail::encoded_size_impl(
             s.begin(),
             s.end(),
             detail::password_chars);
@@ -495,7 +495,7 @@ set_userinfo(
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = encode_bytes(
+    auto const n = encoded_size(
         s, detail::userinfo_chars);
     auto dest = set_userinfo_impl(n);
     encode(
@@ -532,7 +532,7 @@ set_userinfo(
     s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
-        detail::encode_bytes_impl(
+        detail::encoded_size_impl(
             s.begin(),
             s.end(),
             detail::userinfo_chars);
@@ -686,7 +686,7 @@ set_host(
             return set_host(r.value());
     }
     check_invariants();
-    auto const n = encode_bytes(
+    auto const n = encoded_size(
         s, detail::host_chars);
     auto dest = set_host_impl(n);
     encode(
@@ -717,7 +717,7 @@ set_host(
             return set_host(r.value());
     }
     check_invariants();
-    auto const n = detail::encode_bytes_impl(
+    auto const n = detail::encoded_size_impl(
         s.begin(), s.end(), detail::host_chars);
     auto dest = set_host_impl(n);
     detail::encode_impl(
@@ -1745,7 +1745,7 @@ set_fragment(string_view s)
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = encode_bytes(
+    auto const n = encoded_size(
         s, detail::fragment_chars);
     auto dest = set_fragment_impl(n);
     encode(
@@ -1769,7 +1769,7 @@ set_fragment(
     s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
-        detail::encode_bytes_impl(
+        detail::encoded_size_impl(
             s.begin(),
             s.end(),
             detail::fragment_chars);

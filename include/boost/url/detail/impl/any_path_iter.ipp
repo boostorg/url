@@ -76,8 +76,7 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    auto rn = urls::detail::validate_encoding(
-        s, pchars, {});
+    auto rn = urls::decode(s, {}, pchars);
     if( !rn )
     {
         ec = rn.error();
@@ -161,7 +160,7 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    n += urls::encode_bytes(
+    n += urls::encoded_size(
         s, pchars);
     increment();
     return true;
@@ -242,7 +241,7 @@ measure(
         return false;
     auto it = p_;
     auto end = std::next(p_, n_);
-    n += encode_bytes_impl(it, end, pchars);
+    n += encoded_size_impl(it, end, pchars);
     increment();
     return true;
 }
@@ -270,8 +269,7 @@ measure_impl(
     std::size_t& n,
     error_code& ec) noexcept
 {
-    auto rn = urls::detail::validate_encoding(
-        s, pchars, {});
+    auto rn = urls::decode(s, {}, pchars);
     if( !rn )
     {
         ec = rn.error();
@@ -308,7 +306,7 @@ measure_impl(
     string_view s,
     std::size_t& n) noexcept
 {
-    n += encode_bytes(s, pchars);
+    n += encoded_size(s, pchars);
 }
 
 void

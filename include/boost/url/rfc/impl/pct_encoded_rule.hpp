@@ -88,7 +88,7 @@ finish:
 
 template<class CharSet>
 auto
-encoded_rule_t<CharSet>::
+pct_encoded_rule_t<CharSet>::
 parse(
     char const*& it,
     char const* end) const noexcept ->

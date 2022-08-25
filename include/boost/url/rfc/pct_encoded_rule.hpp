@@ -38,7 +38,7 @@ namespace urls {
     @code
     //  pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
 
-    result< decode_view > rv = grammar::parse( "Program%20Files", encoded_rule( pchars ) );
+    result< decode_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( pchars ) );
     @endcode
 
     @par BNF
@@ -65,11 +65,11 @@ namespace urls {
 template<class CharSet>
 constexpr
 __implementation_defined__
-encoded_rule( CharSet const& cs ) noexcept;
+pct_encoded_rule( CharSet const& cs ) noexcept;
 /**@}*/
 #else
 template<class CharSet>
-struct encoded_rule_t
+struct pct_encoded_rule_t
 {
     using value_type = decode_view;
 
@@ -77,9 +77,9 @@ struct encoded_rule_t
     friend
     constexpr
     auto
-    encoded_rule(
+    pct_encoded_rule(
         CharSet_ const& cs) noexcept ->
-            encoded_rule_t<CharSet_>;
+            pct_encoded_rule_t<CharSet_>;
 
     result<value_type>
     parse(
@@ -88,7 +88,7 @@ struct encoded_rule_t
 
 private:
     constexpr
-    encoded_rule_t(
+    pct_encoded_rule_t(
         CharSet const& cs) noexcept
         : cs_(cs)
     {
@@ -100,9 +100,9 @@ private:
 template<class CharSet>
 constexpr
 auto
-encoded_rule(
+pct_encoded_rule(
     CharSet const& cs) noexcept ->
-        encoded_rule_t<CharSet>
+        pct_encoded_rule_t<CharSet>
 {
     // If an error occurs here it means that
     // the value of your type does not meet
@@ -112,7 +112,7 @@ encoded_rule(
         grammar::is_charset<CharSet>::value,
         "CharSet requirements not met");
 
-    return encoded_rule_t<CharSet>(cs);
+    return pct_encoded_rule_t<CharSet>(cs);
 }
 
 #endif
