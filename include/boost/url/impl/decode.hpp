@@ -144,7 +144,7 @@ auto
 decode(
     string_view s,
     decode_opts const& opt,
-    CharSet const& allowed) ->
+    CharSet const& allowed) noexcept ->
         result< decode_view >
 {
     result<std::size_t> rn =

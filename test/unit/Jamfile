@@ -34,11 +34,11 @@ local SOURCES =
     ipv4_address.cpp
     ipv6_address.cpp
     optional.cpp
-    params.cpp
-    params_encoded.cpp
+    param.cpp
+    params_const_view.cpp
+    params_encoded_const_view.cpp
     params_encoded_view.cpp
     params_view.cpp
-    query_param.cpp
     scheme.cpp
     segments.cpp
     segments_encoded.cpp

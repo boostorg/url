@@ -16,8 +16,8 @@
 #include <boost/url/host_type.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/params_view.hpp>
-#include <boost/url/params_encoded_view.hpp>
+#include <boost/url/params_const_view.hpp>
+#include <boost/url/params_encoded_const_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
@@ -63,10 +63,10 @@ class BOOST_SYMBOL_VISIBLE
     friend class url_base;
     friend class url_view;
     friend class static_url_base;
-    friend class params;
     friend class params_view;
-    friend class params_encoded;
+    friend class params_const_view;
     friend class params_encoded_view;
+    friend class params_encoded_const_view;
     friend class segments;
     friend class segments_view;
     friend class segments_encoded;
@@ -1685,7 +1685,7 @@ public:
 
         @par BNF
         @code
-        query-params    = [ query-param ] *( "&" [ query-param ] )
+        query-params_view    = [ query-param ] *( "&" [ query-param ] )
 
         query-param     = key [ "=" value ]
         @endcode
@@ -1695,11 +1695,11 @@ public:
             >3.4. Query (rfc3986)</a>
 
         @see
-            @ref urls::params_encoded_view,
-            @ref params.
+            @ref urls::params_encoded_const_view,
+            @ref params_view.
     */
     BOOST_URL_DECL
-    params_encoded_view
+    params_encoded_const_view
     encoded_params() const noexcept;
 
     /** Return the query parameters
@@ -1712,7 +1712,7 @@ public:
 
         @par BNF
         @code
-        query-params    = [ query-param ] *( "&" [ query-param ] )
+        query-params_view    = [ query-param ] *( "&" [ query-param ] )
 
         query-param     = key [ "=" value ]
         @endcode
@@ -1722,11 +1722,11 @@ public:
             >3.4. Query (rfc3986)</a>
 
         @see
-            @ref urls::params_view,
+            @ref urls::params_const_view,
             @ref encoded_params.
     */
     BOOST_URL_DECL
-    params_view
+    params_const_view
     params() const noexcept;
 
 
@@ -2068,5 +2068,9 @@ operator<<(
 
 } // urls
 } // boost
+
+// These are here because of circular references
+#include <boost/url/impl/params_const_view.hpp>
+#include <boost/url/impl/params_encoded_const_view.hpp>
 
 #endif

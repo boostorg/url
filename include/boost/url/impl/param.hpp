@@ -8,18 +8,19 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_QUERY_PARAM_HPP
-#define BOOST_URL_IMPL_QUERY_PARAM_HPP
+#ifndef BOOST_URL_IMPL_PARAM_HPP
+#define BOOST_URL_IMPL_PARAM_HPP
 
 namespace boost {
 namespace urls {
 
 inline
-query_param_view::operator query_param_encoded_view() const noexcept
+param_decode_view::
+operator param_view() const noexcept
 {
     if(has_value)
-        return { key.encoded(), value.encoded(), true };
-    return { key.encoded(), string_view(), false };
+        return { key.encoded(), value.encoded() };
+    return { key.encoded() };
 }
 
 } // urls

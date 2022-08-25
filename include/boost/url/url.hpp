@@ -74,7 +74,7 @@ public:
 
     /** Destructor
 
-        Any params, segments, or iterators
+        Any params_view, segments, or iterators
         which reference this object are
         invalidated.
     */
@@ -354,10 +354,5 @@ private:
 };
 } // std
 #endif
-
-#include <boost/url/impl/params.hpp>
-#include <boost/url/impl/params_encoded.hpp>
-#include <boost/url/impl/segments.hpp>
-#include <boost/url/impl/segments_encoded.hpp>
 
 #endif

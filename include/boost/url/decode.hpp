@@ -356,7 +356,8 @@ decode_unchecked(
     char const* end,
     string_view s,
     decode_opts const& opt = {}) noexcept;
-}
+
+} // detail
 
 /** Validate and decode a string view
 
@@ -415,7 +416,7 @@ result< decode_view >
 decode(
     string_view s,
     decode_opts const& opt = {},
-    CharSet const& allowed = {});
+    CharSet const& allowed = {}) noexcept;
 
 } // urls
 } // boost

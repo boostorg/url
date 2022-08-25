@@ -38,7 +38,6 @@
           <member><link linkend="url.ref.boost__urls__parse_authority">parse_authority</link></member>
           <member><link linkend="url.ref.boost__urls__parse_origin_form">parse_origin_form</link></member>
           <member><link linkend="url.ref.boost__urls__parse_path">parse_path</link></member>
-          <member><link linkend="url.ref.boost__urls__parse_query_params">parse_query_params</link></member>
           <member><link linkend="url.ref.boost__urls__parse_relative_ref">parse_relative_ref</link></member>
           <member><link linkend="url.ref.boost__urls__parse_uri">parse_uri</link></member>
           <member><link linkend="url.ref.boost__urls__parse_uri_reference">parse_uri_reference</link></member>
@@ -54,12 +53,13 @@
           <member><link linkend="url.ref.boost__urls__ignore_case_param">ignore_case_param</link></member>
           <member><link linkend="url.ref.boost__urls__ipv4_address">ipv4_address</link></member>
           <member><link linkend="url.ref.boost__urls__ipv6_address">ipv6_address</link></member>
-          <member><link linkend="url.ref.boost__urls__params">params</link></member>
-          <member><link linkend="url.ref.boost__urls__params_encoded">params_encoded</link></member>
-          <member><link linkend="url.ref.boost__urls__params_encoded_view">params_encoded_view</link></member>
+          <member><link linkend="url.ref.boost__urls__param">param</link></member>
+          <member><link linkend="url.ref.boost__urls__param_view">param_view</link></member>
+          <member><link linkend="url.ref.boost__urls__param_decode_view">param_decode_view</link></member>
+          <member><link linkend="url.ref.boost__urls__params_const_view">params_const_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_view">params_view</link></member>
-          <member><link linkend="url.ref.boost__urls__query_param">query_param</link></member>
-          <member><link linkend="url.ref.boost__urls__query_param_view">query_param_view</link></member>
+          <member><link linkend="url.ref.boost__urls__params_encoded_const_view">params_encoded_const_view</link></member>
+          <member><link linkend="url.ref.boost__urls__params_encoded_view">params_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__segments">segments</link></member>
           <member><link linkend="url.ref.boost__urls__segments_encoded">segments_encoded</link></member>
           <member><link linkend="url.ref.boost__urls__segments_encoded_view">segments_encoded_view</link></member>
@@ -147,7 +147,6 @@
 
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__absolute_uri_rule">absolute_uri_rule</link></member>
-          <member><link linkend="url.ref.boost__urls__all_chars">all_chars</link></member>
           <member><link linkend="url.ref.boost__urls__authority_rule">authority_rule</link></member>
           <member><link linkend="url.ref.boost__urls__gen_delim_chars">gen_delim_chars</link></member>
           <member><link linkend="url.ref.boost__urls__ipv4_address_rule">ipv4_address_rule</link></member>
@@ -224,6 +223,7 @@
 
         <bridgehead renderas="sect3">Constants</bridgehead>
         <simplelist type="vert" columns="1">
+          <member><link linkend="url.ref.boost__urls__grammar__all_chars">all_chars</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__alnum_chars">alnum_chars</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__alpha_chars">alpha_chars</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__condition">condition</link></member>

@@ -42,26 +42,27 @@ operator*() const noexcept ->
 // unchecked constructor
 decode_view::
 decode_view(
-    string_view str,
+    string_view s,
     std::size_t n,
     decode_opts opt) noexcept
-    : p_(str.data())
-    , n_(str.size())
+    : p_(s.data())
+    , n_(s.size())
     , dn_(n)
-    , plus_to_space_(opt.plus_to_space)
+    , plus_to_space_(
+        opt.plus_to_space)
 {
 }
 
 decode_view::
 decode_view(
-    string_view str,
+    string_view s,
     decode_opts opt)
-    : p_(str.data())
-    , n_(str.size())
+    : p_(s.data())
+    , n_(s.size())
     , plus_to_space_(opt.plus_to_space)
 {
     opt.non_normal_is_error = false;
-    auto rn = detail::validate_encoding(str, opt);
+    auto rn = detail::validate_encoding(s, opt);
     if ( !rn )
         detail::throw_invalid_argument();
     dn_ = *rn;

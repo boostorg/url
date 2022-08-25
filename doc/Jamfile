@@ -21,7 +21,7 @@ docca.reference reference.qbk
     :
         xsl/custom-overrides.xsl
         [ glob-tree-ex ../include/boost/url : *.hpp *.ipp : detail impl ]
-        #../include/boost/url/grammar/parse.hpp
+        #../include/boost/url/params_view.hpp
     :
         <doxygen:param>PROJECT_NAME=URL
         <doxygen:param>PROJECT_BRIEF="URL Library"

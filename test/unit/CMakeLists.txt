@@ -21,6 +21,7 @@ set(BOOST_URL_TESTS_FILES
     doc_container.cpp
     doc_grammar.cpp
     decode.cpp
+    decode_view.cpp
     encode.cpp
     error.cpp
     error_types.cpp
@@ -31,12 +32,11 @@ set(BOOST_URL_TESTS_FILES
     ipv6_address.cpp
     natvis.cpp
     optional.cpp
-    params.cpp
-    params_encoded.cpp
+    param.cpp
+    params_const_view.cpp
+    params_encoded_const_view.cpp
     params_encoded_view.cpp
     params_view.cpp
-    decode_view.cpp
-    query_param.cpp
     scheme.cpp
     segments.cpp
     segments_encoded.cpp

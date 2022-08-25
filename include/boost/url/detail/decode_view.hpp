@@ -11,6 +11,7 @@
 #define BOOST_URL_DETAIL_PCT_ENCODED_VIEW_HPP
 
 #include <boost/url/decode_opts.hpp>
+#include <utility>
 
 namespace boost {
 namespace urls {
@@ -30,6 +31,26 @@ struct access
         std::size_t n,
         decode_opts const& opt = {}) noexcept;
 };
+
+//------------------------------------------------
+
+struct make_decode_view_t
+{
+    template<class... Args>
+    decode_view
+    operator()(Args&&... args) const
+    {
+        return decode_view(
+            std::forward<Args>(
+                args)...);
+    }
+};
+
+constexpr
+make_decode_view_t
+make_decode_view{};
+
+//------------------------------------------------
 
 } // detail
 } // urls

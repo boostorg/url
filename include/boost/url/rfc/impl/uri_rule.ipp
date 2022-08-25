@@ -76,7 +76,7 @@ parse(
         {
             auto const& v = **rv;
             u.apply_query(
-                v.encoded_string(),
+                v.string(),
                 v.size());
         }
     }

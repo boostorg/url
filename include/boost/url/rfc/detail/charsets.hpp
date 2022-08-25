@@ -60,6 +60,18 @@ query_chars =
 
 constexpr
 auto
+param_key_chars = pchars
+    + '/' + '?' + '[' + ']'
+    - '&' - '=';
+
+constexpr
+auto
+param_value_chars = pchars
+    + '/' + '?'
+    - '&';
+
+constexpr
+auto
 fragment_chars =
     pchars + '/' + '?';
 

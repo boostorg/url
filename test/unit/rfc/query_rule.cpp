@@ -21,8 +21,8 @@ namespace urls {
 
 bool
 operator==(
-    query_param_view const& t0,
-    query_param_view const& t1) noexcept
+    param_decode_view const& t0,
+    param_decode_view const& t1) noexcept
 {
     // VFALCO This needs to be a pct-encoded equality
     return
@@ -39,7 +39,7 @@ public:
     check(
         string_view s,
         std::initializer_list<
-            query_param_view> i)
+            param_view> i)
     {
         auto rv = grammar::parse(
             s, query_rule);
@@ -60,11 +60,11 @@ public:
     {
         check("", {{}});
         check("&", {{},{}});
-        check("x", {{"x","",false}});
-        check("x&", {{"x","",false},{}});
-        check("x=", {{"x","",true}});
-        check("x=y", {{"x","y",true}});
-        check("a=b&c=d", {{"a","b",true},{"c","d",true}});
+        check("x", {{"x"}});
+        check("x&", {{"x"},{}});
+        check("x=", {{"x",""}});
+        check("x=y", {{"x","y"}});
+        check("a=b&c=d", {{"a","b"},{"c","d"}});
     }
 
     void
@@ -72,7 +72,7 @@ public:
     {
         // javadoc
         {
-            result< params_view > rv = grammar::parse( "format=web&id=42&compact", query_rule );
+            result< grammar::range< param_decode_view > > rv = grammar::parse( "format=web&id=42&compact", query_rule );
             (void)rv;
         }
 

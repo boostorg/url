@@ -79,7 +79,7 @@ class decode_view
     std::size_t dn_ = 0;
     bool plus_to_space_ = true;
 
-    using traits_type = std::char_traits<char>;
+    friend struct detail::make_decode_view_t;
 
     friend detail::access;
     friend class url_base;
@@ -100,21 +100,22 @@ class decode_view
         grammar::detail::copied_strings_base& sp) const;
 
 public:
-    /** Type of a decoded character
+    /** The value type
     */
     using value_type = char;
 
-    /// @copydoc value_type
+    /** The reference type
+    */
     using reference = char;
 
-    /// @copydoc value_type
+    /// @copydoc reference
     using const_reference = char;
 
-    /** The unsigned integer type used to represent size.
+    /** The unsigned integer type
     */
     using size_type = std::size_t;
 
-    /** The signed integer type used to represent differences.
+    /** The signed integer type
     */
     using difference_type = std::ptrdiff_t;
 
@@ -135,10 +136,29 @@ public:
     /// @copydoc iterator
     using const_iterator = iterator;
 
+    //--------------------------------------------
+    //
+    // Special Members
+    //
+    //--------------------------------------------
+
     /** Constructor
 
-        Default-constructed objects represent
-        the empty string.
+        Default-constructed views represent
+        empty strings.
+
+        @par Example
+        @code
+        decode_view ds;
+        @endcode
+
+        @par Postconditions
+        @code
+        this->empty() == true
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
     */
     decode_view() noexcept = default;
 
@@ -149,20 +169,30 @@ public:
         unmodified until the view is no longer
         accessed.
 
-        @par Preconditions
-        `s` contains a valid percent-encoded string.
+        @par Example
+        @code
+        decode_view ds( "Program%20Files" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->encoded() == s
+        @endcode
 
         @par Complexity
         Linear in `s.size()`.
 
-        @param s The string
+        @par Exception Safety
+        Exceptions thrown on invalid input.
 
-        @param opt A set of options which may
-        be applied to the decoding algorithm.
-        If this argument is left out, default
-        settings will be used.
+        @param s The encoded string.
 
-        @throw std::invalid_argument The percent-encoded is invalid
+        @param opt The options for decoding. If
+        this parameter is omitted, the default
+        options will be used.
+
+        @throw std::invalid_argument `s` is
+        not a valid percent-encoded string.
     */
     BOOST_URL_DECL
     explicit
@@ -172,47 +202,133 @@ public:
 
     //--------------------------------------------
     //
-    // Iterators
+    // Observers
     //
     //--------------------------------------------
 
-    /** Return an iterator to the beginning
+    /** Return true if the string is empty
+
+        @par Example
+        @code
+        assert( decode_view( "" ).empty() );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
-    const_iterator
+    bool
+    empty() const noexcept
+    {
+        return n_ == 0;
+    }
+
+    /** Return the number of decoded characters
+
+        @par Example
+        @code
+        assert( decode_view( "Program%20Files" ).size() == 13 );
+        @endcode
+
+        @par Effects
+        @code
+        return std::distance( this->begin(), this->end() );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    size_type
+    size() const noexcept
+    {
+        return dn_;
+    }
+
+    /** Return an iterator to the beginning
+
+        @par Example
+        @code
+        auto it = this->begin();
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    iterator
     begin() const noexcept;
 
     /** Return an iterator to the end
+
+        @par Example
+        @code
+        auto it = this->end();
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
-    const_iterator
+    iterator
     end() const noexcept;
 
-    //--------------------------------------------
-    //
-    // Element Access
-    //
-    //--------------------------------------------
+    /** Return the first character
 
-    /** Return the last decoded character
+        @par Example
+        @code
+        assert( decode_view( "Program%20Files" ).front() == 'P' );
+        @endcode
 
         @par Preconditions
         @code
-        not empty()
+        not this->empty()
         @endcode
-    */
-    const_reference
-    back() const noexcept;
 
-    /** Return the first decoded character
+        @par Complexity
+        Constant.
 
-        @par Preconditions
-        @code
-        not empty()
-        @endcode
+        @par Exception Safety
+        Throws nothing.
     */
-    const_reference
+    reference
     front() const noexcept;
 
-    /** Return the underlying encoded character buffer
+    /** Return the last character
+
+        @par Example
+        @code
+        assert( decode_view( "Program%20Files" ).back() == 's' );
+        @endcode
+
+        @par Preconditions
+        @code
+        not this->empty()
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    reference
+    back() const noexcept;
+
+    /** Return the encoded string
+
+        @par Example
+        @code
+        assert( decode_view( "Program%20Files" ).encoded() == "Program%20Files" );
+        @endcode
 
         @par Complexity
         Constant.
@@ -226,40 +342,8 @@ public:
         return {p_, n_};
     }
 
-    //--------------------------------------------
-    //
-    // Observers
-    //
-    //--------------------------------------------
-
-    /** Return true if the view is empty
+    /** Return the decoding options
     */
-    bool
-    empty() const noexcept
-    {
-        return size() == 0;
-    }
-
-    /** Return the number of decoded characters
-
-        This function returns the number of characters
-        that would be produced if percent-decoding was
-        applied to the character buffer.
-
-        @par Complexity
-        Constant,
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    size_type
-    size() const noexcept
-    {
-        return dn_;
-    }
-
-    /** Return the decode options for this view
-     */
     decode_opts
     options() const noexcept
     {

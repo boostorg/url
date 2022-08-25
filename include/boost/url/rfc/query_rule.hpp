@@ -12,8 +12,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_types.hpp>
-#include <boost/url/params_view.hpp>
-#include <boost/url/query_param.hpp>
+#include <boost/url/param.hpp>
+#include <boost/url/grammar/range_rule.hpp>
 #include <cstddef>
 
 namespace boost {
@@ -23,20 +23,20 @@ namespace urls {
 
     @par Value Type
     @code
-    using value_type = params_encoded_view;
+    using value_type = grammar::range< param_decode_view >;
     @endcode
 
     @par Example
     Rules are used with the function @ref grammar::parse.
     @code
-    result< params_encoded_view > rv = grammar::parse( "format=web&id=42&compact", query_rule );
+    result< grammar::range< param_decode_view > > rv = grammar::parse( "format=web&id=42&compact", query_rule );
     @endcode
 
     @par BNF
     @code
     query           = *( pchar / "/" / "?" )
 
-    query-params    = query-param *( "&" query-param )
+    query-params_view    = query-param *( "&" query-param )
     query-param     = key [ "=" value ]
     key             = *qpchar
     value           = *( qpchar / "=" )
@@ -53,8 +53,7 @@ namespace urls {
 
     @see
         @ref grammar::parse,
-        @ref params_encoded_view,
-        @ref parse_query_params.
+        @ref params_encoded_const_view.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ query_rule;
@@ -62,7 +61,7 @@ constexpr __implementation_defined__ query_rule;
 struct query_rule_t
 {
     using value_type =
-        params_view;
+        grammar::range<param_decode_view>;
 
     BOOST_URL_DECL
     result<value_type>

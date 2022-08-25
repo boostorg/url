@@ -56,7 +56,7 @@ parse(
             return rv.error();
         if(rv->has_value())
             u.apply_query(
-                (*rv)->encoded_string(),
+                (*rv)->string(),
                 (*rv)->size());
     }
 

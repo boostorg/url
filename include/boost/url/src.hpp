@@ -27,15 +27,14 @@ in a translation unit of the program.
 // using src.hpp as their main header file
 #include <boost/url.hpp>
 
+#include <boost/url/detail/impl/any_params_iter.ipp>
 #include <boost/url/detail/impl/any_path_iter.ipp>
-#include <boost/url/detail/impl/any_query_iter.ipp>
 #include <boost/url/detail/impl/decode_view.ipp>
 #include <boost/url/detail/impl/except.ipp>
 #include <boost/url/detail/impl/normalize.ipp>
+#include <boost/url/detail/impl/params_iter_impl.ipp>
 #include <boost/url/detail/impl/path.ipp>
 #include <boost/url/detail/impl/remove_dot_segments.ipp>
-#include <boost/url/detail/impl/params_encoded_iterator_impl.ipp>
-#include <boost/url/detail/impl/params_iterator_impl.ipp>
 #include <boost/url/detail/impl/segments_encoded_iterator_impl.ipp>
 #include <boost/url/detail/impl/segments_iterator_impl.ipp>
 #include <boost/url/detail/impl/url_impl.ipp>
@@ -45,12 +44,12 @@ in a translation unit of the program.
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/ipv4_address.ipp>
 #include <boost/url/impl/ipv6_address.ipp>
-#include <boost/url/impl/params.ipp>
-#include <boost/url/impl/params_encoded.ipp>
-#include <boost/url/impl/params_encoded_view.ipp>
 #include <boost/url/impl/params_view.ipp>
+#include <boost/url/impl/params_encoded_view.ipp>
+#include <boost/url/impl/params_encoded_const_view.ipp>
+#include <boost/url/impl/params_const_view.ipp>
 #include <boost/url/impl/decode_view.ipp>
-#include <boost/url/impl/query_param.ipp>
+#include <boost/url/impl/param.ipp>
 #include <boost/url/impl/scheme.ipp>
 #include <boost/url/impl/segments.ipp>
 #include <boost/url/impl/segments_encoded.ipp>

@@ -294,10 +294,12 @@ struct ci_equal
 {
     using is_transparent = void;
 
+    template<
+        class String0, class String1>
     bool
     operator()(
-        string_view s0,
-        string_view s1) const noexcept
+        String0 s0,
+        String1 s1) const noexcept
     {
         return ci_is_equal(s0, s1);
     }

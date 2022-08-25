@@ -18,9 +18,9 @@ namespace urls {
 
 class decode_view::iterator
 {
-    char const* begin_{nullptr};
-    char const* pos_{nullptr};
-    bool plus_to_space_{true};
+    char const* begin_ = nullptr;
+    char const* pos_ = nullptr;
+    bool plus_to_space_ = true;
 
     friend decode_view;
 
@@ -29,8 +29,10 @@ class decode_view::iterator
         bool plus_to_space) noexcept
         : begin_(str)
         , pos_(str)
-        , plus_to_space_(plus_to_space)
-    {}
+        , plus_to_space_(
+            plus_to_space)
+    {
+    }
 
     // end ctor
     iterator(
@@ -40,7 +42,8 @@ class decode_view::iterator
         : begin_(str)
         , pos_(str + n)
         , plus_to_space_(plus_to_space)
-    {}
+    {
+    }
 
 public:
     using value_type = char;
@@ -123,6 +126,8 @@ public:
     }
 };
 
+//------------------------------------------------
+
 inline
 auto
 decode_view::
@@ -204,6 +209,8 @@ append_to(
     s.append(begin(), end());
     return s;
 }
+
+//------------------------------------------------
 
 } // urls
 } // boost

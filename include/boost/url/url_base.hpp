@@ -14,14 +14,14 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/params.hpp>
-#include <boost/url/params_encoded.hpp>
+#include <boost/url/params_view.hpp>
+#include <boost/url/params_encoded_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments.hpp>
 #include <boost/url/segments_encoded.hpp>
 #include <boost/url/url_view_base.hpp>
+#include <boost/url/detail/any_params_iter.hpp>
 #include <boost/url/detail/any_path_iter.hpp>
-#include <boost/url/detail/any_query_iter.hpp>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -33,6 +33,7 @@ namespace urls {
 #ifndef BOOST_URL_DOCS
 namespace detail {
 struct any_path_iter;
+struct params_iter_impl;
 }
 namespace grammar {
 class lut_chars;
@@ -70,9 +71,9 @@ class BOOST_SYMBOL_VISIBLE
     friend class url;
     friend class static_url_base;
     friend class urls::segments;
-    friend class urls::params;
+    friend class urls::params_view;
     friend class segments_encoded;
-    friend class params_encoded;
+    friend class params_encoded_view;
 
     url_base() noexcept = default;
     url_base(detail::url_impl const&) noexcept;
@@ -1041,35 +1042,6 @@ public:
     //
     //--------------------------------------------
 
-private:
-    struct raw_param
-    {
-        std::size_t pos;
-        std::size_t nk;
-        std::size_t nv;
-    };
-
-    raw_param
-    param(
-        std::size_t i) const noexcept;
-
-    char*
-    edit_params(
-        std::size_t i0,
-        std::size_t i1,
-        std::size_t n,
-        std::size_t nparam);
-
-    BOOST_URL_DECL
-    void
-    edit_params(
-        std::size_t i0,
-        std::size_t i1,
-        detail::any_query_iter&& it0,
-        detail::any_query_iter&& it1,
-        bool set_hint = false);
-public:
-
     /** Remove the query.
 
         If a query is present (@ref has_query
@@ -1161,20 +1133,20 @@ public:
 
         @par BNF
         @code
-        query-params    = [ query-param ] *( "&" [ query-param ] )
+        query-params_view    = [ query-param ] *( "&" [ query-param ] )
 
         query-param     = key [ "=" value ]
 
         @endcode
 
         @see
-            @ref urls::params_encoded,
-            @ref params.
+            @ref urls::params_encoded_view,
+            @ref params_view.
     */
-    urls::params_encoded
+    urls::params_encoded_view
     encoded_params() noexcept
     {
-        return urls::params_encoded(*this);
+        return urls::params_encoded_view(*this);
     }
 
     /** Return the query parameters
@@ -1186,20 +1158,20 @@ public:
 
         @par BNF
         @code
-        query-params    = [ query-param ] *( "&" [ query-param ] )
+        query-params_view    = [ query-param ] *( "&" [ query-param ] )
 
         query-param     = key [ "=" value ]
         @endcode
 
         @see
-            @ref urls::params,
+            @ref urls::params_view,
             @ref encoded_params.
 
     */
-    urls::params
+    urls::params_view
     params() noexcept
     {
-        return {*this};
+        return urls::params_view(*this);
     }
 
     //--------------------------------------------
@@ -1467,6 +1439,20 @@ private:
     char* shrink_impl(int, std::size_t);
     char* shrink_impl(int, int, std::size_t);
 
+    char*
+    resize_params(
+        detail::params_iter_impl const&,
+        detail::params_iter_impl const&,
+        std::size_t, std::size_t);
+
+    BOOST_URL_DECL
+    auto
+    edit_params(
+        detail::params_iter_impl const&,
+        detail::params_iter_impl const&,
+        detail::any_params_iter&&) ->
+            detail::params_iter_impl;
+
     BOOST_URL_DECL
     result<void>
     resolve_impl(
@@ -1476,5 +1462,11 @@ private:
 
 } // urls
 } // boost
+
+// These are here because of circular references
+#include <boost/url/impl/params_encoded_view.hpp>
+#include <boost/url/impl/params_view.hpp>
+#include <boost/url/impl/segments.hpp>
+#include <boost/url/impl/segments_encoded.hpp>
 
 #endif

@@ -34,7 +34,7 @@ namespace urls = boost::urls;
  */
 struct is_exact_topic {
     bool
-    operator()(urls::query_param_view p);
+    operator()(urls::param_decode_view p);
 };
 
 /// Callable to identify a magnet url parameter
@@ -62,7 +62,7 @@ public:
         , buf_(buffer) {}
 
     bool
-    operator()(urls::query_param_view p);
+    operator()(urls::param_decode_view p);
 };
 
 /// Callable to convert param values to urls
@@ -75,7 +75,7 @@ public:
  */
 struct to_url {
     urls::url_view
-    operator()(urls::query_param_view p);
+    operator()(urls::param_decode_view p);
 };
 
 /// Callable to convert param values to urls::decode_view
@@ -88,7 +88,7 @@ struct to_url {
  */
 struct to_decoded_value {
     urls::decode_view
-    operator()(urls::query_param_view p)
+    operator()(urls::param_decode_view p)
     {
         return p.value;
     }
@@ -108,7 +108,7 @@ struct to_decoded_value {
  */
 struct to_infohash {
     urls::string_view
-    operator()(urls::query_param_view p);
+    operator()(urls::param_decode_view p);
 };
 
 /// Callable to convert param values to protocols
@@ -125,7 +125,7 @@ struct to_infohash {
  */
 struct to_protocol {
     urls::string_view
-    operator()(urls::query_param_view p);
+    operator()(urls::param_decode_view p);
 };
 
 struct magnet_link_rule_t;
@@ -170,7 +170,7 @@ public:
     /// A view of all exact topics in the magnet_link
     using topics_view =
         filtered_view<
-            urls::params_view,
+            urls::params_const_view,
             urls::url_view,
             is_exact_topic,
             to_url>;
@@ -178,7 +178,7 @@ public:
     /// A view of all info_hashes in the magnet_link
     using info_hashes_view =
         filtered_view<
-            urls::params_view,
+            urls::params_const_view,
             urls::string_view,
             is_exact_topic,
             to_infohash>;
@@ -186,7 +186,7 @@ public:
     /// A view of all protocols in the magnet_link
     using protocols_view =
         filtered_view<
-            urls::params_view,
+            urls::params_const_view,
             urls::string_view,
             is_exact_topic,
             to_protocol>;
@@ -200,7 +200,7 @@ public:
     template <class MutableString>
     using keys_view =
         filtered_view<
-            urls::params_view,
+            urls::params_const_view,
             urls::decode_view,
             is_url_with_key<MutableString>,
             to_decoded_value>;
@@ -379,7 +379,7 @@ private:
 
 bool
 is_exact_topic::
-operator()(urls::query_param_view p)
+operator()(urls::param_decode_view p)
 {
     // These comparisons use the lazy
     // operator== for urls::decode_view
@@ -401,7 +401,7 @@ operator()(urls::query_param_view p)
 template <class MutableString>
 bool
 is_url_with_key<MutableString>::
-operator()(urls::query_param_view p)
+operator()(urls::param_decode_view p)
 {
     if (p.key != k_)
         return false;
@@ -416,7 +416,7 @@ operator()(urls::query_param_view p)
 
 urls::url_view
 to_url::
-operator()(urls::query_param_view p)
+operator()(urls::param_decode_view p)
 {
     // `to_url` is used in topics_view,
     // where the URL is not
@@ -429,7 +429,7 @@ operator()(urls::query_param_view p)
 
 urls::string_view
 to_infohash::
-operator()(urls::query_param_view p)
+operator()(urls::param_decode_view p)
 {
     urls::url_view topic =
         urls::parse_uri(p.value.encoded()).value();
@@ -442,7 +442,7 @@ operator()(urls::query_param_view p)
 
 urls::string_view
 to_protocol::
-operator()(urls::query_param_view p)
+operator()(urls::param_decode_view p)
 {
     urls::url_view topic =
 
@@ -538,12 +538,12 @@ magnet_link_view::web_seed(MutableString& buffer) const
 boost::optional<urls::decode_view>
 magnet_link_view::param(urls::string_view key) const noexcept
 {
-    urls::params_view ps = u_.params();
+    urls::params_const_view ps = u_.params();
     auto it = ps.begin();
     auto end = ps.end();
     while (it != end)
     {
-        urls::query_param_view p = *it;
+        urls::param_decode_view p = *it;
         if (p.key.size() < 2)
         {
             ++it;
@@ -568,7 +568,7 @@ magnet_link_view::param(urls::string_view key) const noexcept
 boost::optional<urls::decode_view>
 magnet_link_view::decoded_param(urls::string_view key) const noexcept
 {
-    urls::params_encoded_view ps = u_.encoded_params();
+    urls::params_encoded_const_view ps = u_.encoded_params();
     auto it = ps.find(key);
     if (it != ps.end() && (*it).has_value)
         return urls::decode_view((*it).value);
@@ -578,7 +578,7 @@ magnet_link_view::decoded_param(urls::string_view key) const noexcept
 boost::optional<urls::url_view>
 magnet_link_view::url_param(urls::string_view key) const noexcept
 {
-    urls::params_encoded_view ps = u_.encoded_params();
+    urls::params_encoded_const_view ps = u_.encoded_params();
     auto it = ps.find(key);
     if (it != ps.end() && (*it).has_value)
     {
@@ -631,7 +631,7 @@ magnet_link_rule_t::parse(
 
     // all topics should parse as valid urls
     if (!std::all_of(pit, pend, [](
-        urls::query_param_view p)
+        urls::param_decode_view p)
     {
         if (!is_exact_topic{}(p))
             return true;

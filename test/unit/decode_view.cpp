@@ -9,10 +9,9 @@
 
 // Test that header file is self-contained.
 #include <boost/url/decode_view.hpp>
+
 #include <boost/core/ignore_unused.hpp>
-
 #include <sstream>
-
 #include "test_suite.hpp"
 
 namespace boost {

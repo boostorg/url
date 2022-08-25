@@ -483,28 +483,18 @@ encoded_query() const noexcept
     return s.substr(1);
 }
 
-params_encoded_view
+params_encoded_const_view
 url_view_base::
 encoded_params() const noexcept
 {
-    auto s = u_.get(id_query);
-    if(s.empty())
-        return params_encoded_view(s, 0);
-    BOOST_ASSERT(s[0] == '?');
-    s.remove_prefix(1);
-    return params_encoded_view(s, u_.nparam_);
+    return params_encoded_const_view(*this);
 }
 
-params_view
+params_const_view
 url_view_base::
 params() const noexcept
 {
-    auto s = u_.get(id_query);
-    if(s.empty())
-        return {s, 0};
-    BOOST_ASSERT(s[0] == '?');
-    s.remove_prefix(1);
-    return {s, u_.nparam_};
+    return params_const_view(*this);
 }
 
 //----------------------------------------------------------

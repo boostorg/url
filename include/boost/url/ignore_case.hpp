@@ -43,7 +43,7 @@ ignore_case{};
     that comparisons should be case-insensitive
     when the value @ref ignore_case is passed.
 */
-struct ignore_case_param
+class ignore_case_param
 {
     /** True if an algorithm should ignore case
 
@@ -52,8 +52,9 @@ struct ignore_case_param
         to determine if the caller has indicated
         that comparisons should ignore case.
     */
-    bool value = false;
+    bool value_ = false;
 
+public:
     /** Constructor
 
         By default, comparisons are
@@ -92,8 +93,22 @@ struct ignore_case_param
         ignore_case_t
     #endif
         ) noexcept
-        : value(true)
+        : value_(true)
     {
+    }
+
+    /** True if an algorithm should ignore case
+
+        Values of type `ignore_case_param`
+        evaluate to true when constructed
+        with the constant @ref ignore_case.
+        Otherwise, they are default-constructed
+        and evaluate to `false`.
+    */
+    operator
+    bool() const noexcept
+    {
+        return value_;
     }
 };
 

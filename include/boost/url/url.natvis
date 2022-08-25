@@ -5,7 +5,7 @@
     <DisplayString>{(addr_>>24)}.{(addr_>>16)%256}.{(addr_>>8)%256}.{addr_%256}</DisplayString>
   </Type>
 
-    <Type Name="boost::urls::decode_view">
+  <Type Name="boost::urls::decode_view">
     <DisplayString Condition="dn_==n_">{p_,[n_]s}</DisplayString>
     <DisplayString Condition="dn_!=n_">{p_,[n_]s} ({dn_})</DisplayString>
   </Type>
@@ -44,11 +44,19 @@
     </Expand>
   </Type>
 
-  <Type Name="boost::urls::url_view_base" Inheritable="true">
-    <DisplayString>{ u_ }</DisplayString>
-      <Expand>
-          <ExpandedItem>u_</ExpandedItem>
-      </Expand>
+  <Type Name="boost::urls::param">
+    <DisplayString Condition="! has_value">{key}</DisplayString>
+    <DisplayString Condition="has_value">{key} = {value}</DisplayString>
+  </Type>
+
+  <Type Name="boost::urls::param_view">
+    <DisplayString Condition="! has_value">{key}</DisplayString>
+    <DisplayString Condition="has_value">{key} = {value}</DisplayString>
+  </Type>
+
+  <Type Name="boost::urls::param_decode_view">
+    <DisplayString Condition="! has_value">{key}</DisplayString>
+    <DisplayString Condition="has_value">{key} = {value}</DisplayString>
   </Type>
 
   <Type Name="boost::urls::authority_view" Inheritable="true">

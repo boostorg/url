@@ -12,78 +12,35 @@
 #define BOOST_URL_IMPL_PARAMS_VIEW_IPP
 
 #include <boost/url/params_view.hpp>
-#include <boost/url/url.hpp>
+#include <boost/url/url_base.hpp>
+#include <boost/url/grammar/ci_string.hpp>
 #include <boost/assert.hpp>
+#include <utility>
 
 namespace boost {
 namespace urls {
 
 //------------------------------------------------
 //
-// Element Access
-//
-//------------------------------------------------
-
-auto
-params_view::
-at(string_view key) const ->
-    decode_view
-{
-    query_param_view r;
-    auto it = find(key);
-    for(;;)
-    {
-        if(it == end())
-            detail::throw_out_of_range();
-        r = *it;
-        if(r.has_value)
-            break;
-        ++it;
-        it = find(it, key);
-    }
-    return r.value;
-}
-
-//------------------------------------------------
-//
-// Iterators
-//
-//------------------------------------------------
-
-auto
-params_view::
-begin() const noexcept ->
-    iterator
-{
-    return { s_ , n_ };
-}
-
-auto
-params_view::
-end() const noexcept ->
-    iterator
-{
-    return { s_, n_, 0 };
-}
-
-//------------------------------------------------
-//
-// Lookup
+// Observers
 //
 //------------------------------------------------
 
 std::size_t
 params_view::
-count(string_view key) const noexcept
+count(
+    string_view key,
+    ignore_case_param ic) const noexcept
 {
     std::size_t n = 0;
-    auto it = find(key);
+    auto it = find(key, ic);
     auto const end_ = end();
     while(it != end_)
     {
         ++n;
         ++it;
-        it = find(it, key);
+        it = find(
+            it, key, ic);
     }
     return n;
 }
@@ -91,21 +48,162 @@ count(string_view key) const noexcept
 auto
 params_view::
 find(
-    iterator from,
-    string_view key) const noexcept ->
+    iterator it,
+    string_view key,
+    ignore_case_param ic) const noexcept ->
         iterator
 {
-    BOOST_ASSERT(from.impl_.end_ ==
-        s_.data() + s_.size());
-
     auto const end_ = end();
-    while(from != end_)
+    if(! ic)
     {
-        if( (*from).key == key )
-            break;
-        ++from;
+        for(;;)
+        {
+            if(it == end_)
+                return it;
+            auto r = *it;
+            if( r.key == key )
+                return it;
+            ++it;
+        }
     }
-    return from;
+    for(;;)
+    {
+        if(it == end_)
+            return it;
+        if( grammar::ci_is_equal(
+                it->key, key))
+            return it;
+        ++it;
+    }
+}
+
+auto
+params_view::
+find_prev(
+    iterator it,
+    string_view key,
+    ignore_case_param ic) const noexcept ->
+        iterator
+{
+    auto const begin_ = begin();
+    if(! ic)
+    {
+        for(;;)
+        {
+            if(it == begin_)
+                return end();
+            --it;
+            if(it->key == key)
+                return it;
+        }
+    }
+    for(;;)
+    {
+        if(it == begin_)
+            return end();
+        --it;
+        if(grammar::ci_is_equal(
+                it->key, key))
+            return it;
+    }
+}
+
+//------------------------------------------------
+//
+// Modifiers
+//
+//------------------------------------------------
+
+std::size_t
+params_view::
+erase(
+    string_view key,
+    ignore_case_param ic) noexcept
+{
+    // VFALCO we can't cache end() here
+    // because it will be invalidated
+    // every time we erase.
+
+    auto it = find_prev(
+        end(), key, ic);
+    if(it == end())
+        return 0;
+    std::size_t n = 0;
+    for(;;)
+    {
+        ++n;
+        auto prev = find_prev(
+            it, key, ic);
+        if(prev == end())
+        {
+            // prev would be invalidated by
+            // erase() so we have to compare
+            // it to end() beforehand.
+            erase(it);
+            break;
+        }
+        erase(it);
+        it = prev;
+    }
+    return n;
+}
+
+//------------------------------------------------
+
+auto
+params_view::
+reset(
+    iterator pos) noexcept ->
+        iterator
+{
+    BOOST_ASSERT(pos.it_.nk > 0);
+    return u_->edit_params(
+        pos.it_, pos.it_.next(),
+        detail::param_value_iter(
+            pos.it_.nk - 1, "", false));
+}
+
+auto
+params_view::
+set(
+    iterator pos,
+    string_view value) ->
+        iterator
+{
+    BOOST_ASSERT(pos.it_.nk > 0);
+    return u_->edit_params(
+        pos.it_, pos.it_.next(),
+        detail::param_value_iter(
+            pos.it_.nk - 1, value, true));
+}
+
+auto
+params_view::
+set(
+    string_view key,
+    string_view value,
+    ignore_case_param ic) ->
+        iterator
+{
+    // VFALCO we can't cache end() here
+    // because it will be invalidated
+    // every time we set or erase.
+
+    auto it0 = find(key, ic);
+    if(it0 == end())
+        return append(
+            param_view(
+                key, value));
+    it0 = set(it0, value);
+    auto it = end();
+    for(;;)
+    {
+        it = find_prev(
+            it, key, ic);
+        if(it == it0)
+            return it0;
+        it = erase(it);
+    }
 }
 
 } // urls
