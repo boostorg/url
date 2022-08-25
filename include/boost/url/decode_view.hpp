@@ -12,8 +12,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/pct_encoding.hpp>
-#include <boost/url/detail/pct_encoded_view.hpp>
+#include <boost/url/decode_opts.hpp>
+#include <boost/url/detail/decode_view.hpp>
 #include <type_traits>
 #include <iterator>
 #include <iosfwd>
@@ -72,7 +72,7 @@ class copied_strings_base;
     is constructed extends unmodified until the
     view is no longer accessed.
 */
-class pct_encoded_view
+class decode_view
 {
     char const* p_ = nullptr;
     std::size_t n_ = 0;
@@ -87,15 +87,15 @@ class pct_encoded_view
     // unchecked constructor
     BOOST_URL_DECL
     explicit
-    pct_encoded_view(
+    decode_view(
         string_view s,
         std::size_t n,
-        pct_decode_opts opt = {}) noexcept;
+        decode_opts opt = {}) noexcept;
 
     /** Return a view whose buffer does not overlap, copying if necessary
     */
     BOOST_URL_DECL
-    pct_encoded_view
+    decode_view
     maybe_copy(
         grammar::detail::copied_strings_base& sp) const;
 
@@ -140,7 +140,7 @@ public:
         Default-constructed objects represent
         the empty string.
     */
-    pct_encoded_view() noexcept = default;
+    decode_view() noexcept = default;
 
     /** Constructor
 
@@ -166,9 +166,9 @@ public:
     */
     BOOST_URL_DECL
     explicit
-    pct_encoded_view(
+    decode_view(
         string_view s,
-        pct_decode_opts opt = {});
+        decode_opts opt = {});
 
     //--------------------------------------------
     //
@@ -260,10 +260,10 @@ public:
 
     /** Return the decode options for this view
      */
-    pct_decode_opts
+    decode_opts
     options() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = plus_to_space_;
         return opt;
     }
@@ -317,7 +317,7 @@ public:
 
         @par Example
         @code
-        void f( pct_encoded_view s )
+        void f( decode_view s )
         {
             thread_local static std::string tmp;
 
@@ -362,7 +362,7 @@ public:
 
         @par Example
         @code
-        void f( pct_encoded_view s )
+        void f( decode_view s )
         {
             thread_local static std::string tmp;
 
@@ -471,7 +471,7 @@ public:
     */
     BOOST_URL_DECL
     int
-    compare(pct_encoded_view other) const noexcept;
+    compare(decode_view other) const noexcept;
 
     //--------------------------------------------
 
@@ -490,8 +490,8 @@ public:
     friend
     bool
     operator==(
-        pct_encoded_view s0,
-        pct_encoded_view s1) noexcept
+        decode_view s0,
+        decode_view s1) noexcept
     {
         return s0.compare(s1) == 0;
     }
@@ -511,8 +511,8 @@ public:
     friend
     bool
     operator!=(
-        pct_encoded_view s0,
-        pct_encoded_view s1) noexcept
+        decode_view s0,
+        decode_view s1) noexcept
     {
         return s0.compare(s1) != 0;
     }
@@ -532,8 +532,8 @@ public:
     friend
     bool
     operator<(
-        pct_encoded_view s0,
-        pct_encoded_view s1) noexcept
+        decode_view s0,
+        decode_view s1) noexcept
     {
         return s0.compare(s1) < 0;
     }
@@ -553,8 +553,8 @@ public:
     friend
     bool
     operator<=(
-        pct_encoded_view s0,
-        pct_encoded_view s1) noexcept
+        decode_view s0,
+        decode_view s1) noexcept
     {
         return s0.compare(s1) <= 0;
     }
@@ -574,8 +574,8 @@ public:
     friend
     bool
     operator>(
-        pct_encoded_view s0,
-        pct_encoded_view s1) noexcept
+        decode_view s0,
+        decode_view s1) noexcept
     {
         return s0.compare(s1) > 0;
     }
@@ -595,8 +595,8 @@ public:
     friend
     bool
     operator>=(
-        pct_encoded_view s0,
-        pct_encoded_view s1) noexcept
+        decode_view s0,
+        decode_view s1) noexcept
     {
         return s0.compare(s1) >= 0;
     }
@@ -628,14 +628,14 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
     bool
 #endif
     operator==(
-        pct_encoded_view s0,
+        decode_view s0,
         String const& s1) noexcept
     {
         return s0.compare(string_view(s1)) == 0;
@@ -666,14 +666,14 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
     bool
 #endif
     operator!=(
-        pct_encoded_view s0,
+        decode_view s0,
         String const& s1) noexcept
     {
         return s0.compare(string_view(s1)) != 0;
@@ -704,14 +704,14 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
     bool
 #endif
     operator<(
-        pct_encoded_view s0,
+        decode_view s0,
         String const& s1) noexcept
     {
         return s0.compare(string_view(s1)) < 0;
@@ -742,14 +742,14 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
     bool
 #endif
     operator<=(
-        pct_encoded_view s0,
+        decode_view s0,
         String const& s1) noexcept
     {
         return s0.compare(string_view(s1)) <= 0;
@@ -780,14 +780,14 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
     bool
 #endif
     operator>(
-        pct_encoded_view s0,
+        decode_view s0,
         String const& s1) noexcept
     {
         return s0.compare(string_view(s1)) > 0;
@@ -818,14 +818,14 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
     bool
 #endif
     operator>=(
-        pct_encoded_view s0,
+        decode_view s0,
         String const& s1) noexcept
     {
         return s0.compare(string_view(s1)) >= 0;
@@ -858,7 +858,7 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
@@ -866,7 +866,7 @@ public:
 #endif
     operator==(
         String const& s0,
-        pct_encoded_view s1) noexcept
+        decode_view s1) noexcept
     {
         return s1.compare(string_view(s0)) == 0;
     }
@@ -896,7 +896,7 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
@@ -904,7 +904,7 @@ public:
 #endif
     operator!=(
         String const& s0,
-        pct_encoded_view s1) noexcept
+        decode_view s1) noexcept
     {
         return s1.compare(string_view(s0)) != 0;
     }
@@ -934,7 +934,7 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
@@ -942,7 +942,7 @@ public:
 #endif
     operator<(
         String const& s0,
-        pct_encoded_view s1) noexcept
+        decode_view s1) noexcept
     {
         return s1.compare(string_view(s0)) > 0;
     }
@@ -972,7 +972,7 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
@@ -980,7 +980,7 @@ public:
 #endif
     operator<=(
         String const& s0,
-        pct_encoded_view s1) noexcept
+        decode_view s1) noexcept
     {
         return s1.compare(string_view(s0)) >= 0;
     }
@@ -1010,7 +1010,7 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
@@ -1018,7 +1018,7 @@ public:
 #endif
     operator>(
         String const& s0,
-        pct_encoded_view s1) noexcept
+        decode_view s1) noexcept
     {
         return s1.compare(string_view(s0)) < 0;
     }
@@ -1048,7 +1048,7 @@ public:
             String, string_view>::value &&
         ! std::is_same<typename
             std::decay<String>::type,
-            pct_encoded_view>::value,
+            decode_view>::value,
         bool
     >::type
 #else
@@ -1056,7 +1056,7 @@ public:
 #endif
     operator>=(
         String const& s0,
-        pct_encoded_view s1) noexcept
+        decode_view s1) noexcept
     {
         return s1.compare(string_view(s0)) <= 0;
     }
@@ -1068,7 +1068,7 @@ public:
     std::ostream&
     operator<<(
         std::ostream& os,
-        pct_encoded_view const& s)
+        decode_view const& s)
     {
         // hidden friend
         s.write(os);
@@ -1096,11 +1096,11 @@ inline
 std::ostream&
 operator<<(
     std::ostream& os,
-    pct_encoded_view const& s);
+    decode_view const& s);
 
 } // urls
 } // boost
 
-#include <boost/url/impl/pct_encoded_view.hpp>
+#include <boost/url/impl/decode_view.hpp>
 
 #endif

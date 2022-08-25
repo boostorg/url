@@ -285,7 +285,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_user(
-        pct_encoded_view s);
+        decode_view s);
 
     /** Set the user.
 
@@ -360,7 +360,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_password(
-        pct_encoded_view s);
+        decode_view s);
 
     /** Set the password.
 
@@ -501,7 +501,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_userinfo(
-        pct_encoded_view s);
+        decode_view s);
 
     //--------------------------------------------
 
@@ -620,7 +620,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_host(
-        pct_encoded_view s);
+        decode_view s);
 
     /** Set the host
 
@@ -980,7 +980,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_path(
-        pct_encoded_view s);
+        decode_view s);
 
     /** Return the path segments
 
@@ -1148,7 +1148,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_query(
-        pct_encoded_view s);
+        decode_view s);
 
     /** Return the query parameters
 
@@ -1290,7 +1290,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_fragment(
-        pct_encoded_view s);
+        decode_view s);
 
     //--------------------------------------------
     //

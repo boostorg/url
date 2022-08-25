@@ -27,7 +27,7 @@ namespace urls {
 auto
 params_view::
 at(string_view key) const ->
-    pct_encoded_view
+    decode_view
 {
     query_param_view r;
     auto it = find(key);

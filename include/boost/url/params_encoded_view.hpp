@@ -78,7 +78,6 @@ class params_encoded_view
     : private detail::parts_base
 {
     friend class url_view_base;
-    friend struct query_rule_t;
 
     string_view s_;
     std::size_t n_ = 0;
@@ -412,7 +411,7 @@ public:
         @ref result.
 */
 BOOST_URL_DECL
-result<params_encoded_view>
+result<params_view>
 parse_query_params(
     string_view s) noexcept;
 

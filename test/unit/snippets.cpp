@@ -539,14 +539,14 @@ parsing_authority()
     }
     {
         struct resolve_f {
-            pct_encoded_view
-            operator()(pct_encoded_view h)
+            decode_view
+            operator()(decode_view h)
             {
                 return h;
             }
         } resolve;
         struct write_request_f {
-            void operator()(pct_encoded_view) {}
+            void operator()(decode_view) {}
             void operator()(ipv4_address) {}
             void operator()(ipv6_address) {}
         } write_request;

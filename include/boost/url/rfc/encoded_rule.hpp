@@ -11,8 +11,7 @@
 #define BOOST_URL_RFC_PCT_ENCODED_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/pct_encoded_view.hpp>
-#include <boost/url/pct_encoding.hpp>
+#include <boost/url/decode_view.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/charset.hpp>
@@ -31,7 +30,7 @@ namespace urls {
    
     @par Value Type
     @code
-    using value_type = pct_encoded_view;
+    using value_type = decode_view;
     @endcode
 
     @par Example
@@ -39,7 +38,7 @@ namespace urls {
     @code
     //  pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
 
-    result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( pchars ) );
+    result< decode_view > rv = grammar::parse( "Program%20Files", encoded_rule( pchars ) );
     @endcode
 
     @par BNF
@@ -59,28 +58,28 @@ namespace urls {
     @see
         @ref grammar::parse,
         @ref pchars,
-        @ref pct_encoded_view.
+        @ref decode_view.
 */
 #ifdef BOOST_URL_DOCS
 /**@{*/
 template<class CharSet>
 constexpr
 __implementation_defined__
-pct_encoded_rule( CharSet const& cs ) noexcept;
+encoded_rule( CharSet const& cs ) noexcept;
 /**@}*/
 #else
 template<class CharSet>
-struct pct_encoded_rule_t
+struct encoded_rule_t
 {
-    using value_type = pct_encoded_view;
+    using value_type = decode_view;
 
     template<class CharSet_>
     friend
     constexpr
     auto
-    pct_encoded_rule(
+    encoded_rule(
         CharSet_ const& cs) noexcept ->
-            pct_encoded_rule_t<CharSet_>;
+            encoded_rule_t<CharSet_>;
 
     result<value_type>
     parse(
@@ -89,7 +88,7 @@ struct pct_encoded_rule_t
 
 private:
     constexpr
-    pct_encoded_rule_t(
+    encoded_rule_t(
         CharSet const& cs) noexcept
         : cs_(cs)
     {
@@ -101,9 +100,9 @@ private:
 template<class CharSet>
 constexpr
 auto
-pct_encoded_rule(
+encoded_rule(
     CharSet const& cs) noexcept ->
-        pct_encoded_rule_t<CharSet>
+        encoded_rule_t<CharSet>
 {
     // If an error occurs here it means that
     // the value of your type does not meet
@@ -113,7 +112,7 @@ pct_encoded_rule(
         grammar::is_charset<CharSet>::value,
         "CharSet requirements not met");
 
-    return pct_encoded_rule_t<CharSet>(cs);
+    return encoded_rule_t<CharSet>(cs);
 }
 
 #endif

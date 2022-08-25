@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_DETAIL_IMPL_PATH_RULES_IPP
 
 #include <boost/url/rfc/detail/path_rules.hpp>
-#include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/encoded_rule.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/parse.hpp>
 

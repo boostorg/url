@@ -89,19 +89,16 @@
 
         <bridgehead renderas="sect3">Functions</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__pct_decode">pct_decode</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_decode_bytes_unchecked">pct_decode_bytes_unchecked</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_decode_unchecked">pct_decode_unchecked</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_encode">pct_encode</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_encode_bytes">pct_encode_bytes</link></member>
-          <member><link linkend="url.ref.boost__urls__validate_pct_encoding">validate_pct_encoding</link></member>
+          <member><link linkend="url.ref.boost__urls__decode">decode</link></member>
+          <member><link linkend="url.ref.boost__urls__encode">encode</link></member>
+          <member><link linkend="url.ref.boost__urls__encode_bytes">encode_bytes</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__pct_decode_opts">pct_decode_opts</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_encode_opts">pct_encode_opts</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_encoded_view">pct_encoded_view</link></member>
+          <member><link linkend="url.ref.boost__urls__decode_opts">decode_opts</link></member>
+          <member><link linkend="url.ref.boost__urls__encode_opts">encode_opts</link></member>
+          <member><link linkend="url.ref.boost__urls__decode_view">decode_view</link></member>
         </simplelist>
 
       </entry>
@@ -148,12 +145,13 @@
 
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__absolute_uri_rule">absolute_uri_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__all_chars">all_chars</link></member>
           <member><link linkend="url.ref.boost__urls__authority_rule">authority_rule</link></member>
           <member><link linkend="url.ref.boost__urls__gen_delim_chars">gen_delim_chars</link></member>
           <member><link linkend="url.ref.boost__urls__ipv4_address_rule">ipv4_address_rule</link></member>
           <member><link linkend="url.ref.boost__urls__ipv6_address_rule">ipv6_address_rule</link></member>
           <member><link linkend="url.ref.boost__urls__pchars">pchars</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_encoded_rule">pct_encoded_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__encoded_rule">encoded_rule</link></member>
           <member><link linkend="url.ref.boost__urls__query_rule">query_rule</link></member>
           <member><link linkend="url.ref.boost__urls__relative_ref_rule">relative_ref_rule</link></member>
           <member><link linkend="url.ref.boost__urls__reserved_chars">reserved_chars</link></member>

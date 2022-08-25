@@ -10,26 +10,26 @@
 #ifndef BOOST_URL_DETAIL_IMPL_PCT_ENCODED_VIEW_IPP
 #define BOOST_URL_DETAIL_IMPL_PCT_ENCODED_VIEW_IPP
 
-#include <boost/url/pct_encoded_view.hpp>
-#include <boost/url/detail/pct_encoded_view.hpp>
+#include <boost/url/decode_view.hpp>
+#include <boost/url/detail/decode_view.hpp>
 
 namespace boost {
 namespace urls {
 
-class pct_encoded_view;
+class decode_view;
 
 namespace detail {
 
-// construct unchecked pct_encoded_view
-pct_encoded_view
+// construct unchecked decode_view
+decode_view
 access::
 construct(
     string_view s,
     std::size_t n,
-    pct_decode_opts const& opt) noexcept
+    decode_opts const& opt) noexcept
 {
     // AFREITAS: move that inline
-    return pct_encoded_view(s, n, opt);
+    return decode_view(s, n, opt);
 }
 
 } // detail

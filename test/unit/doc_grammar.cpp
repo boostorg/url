@@ -290,7 +290,7 @@ struct doc_grammar_test
         {
         string_view s;
         //[code_grammar_5_1
-        result< pct_encoded_view > rv = parse( s, pct_encoded_rule( pchars ) );
+        result< decode_view > rv = parse( s, encoded_rule( pchars ) );
         //]
         }
         {

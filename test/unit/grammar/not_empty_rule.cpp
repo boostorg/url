@@ -12,7 +12,7 @@
 
 #include <boost/url/grammar/digit_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/encoded_rule.hpp>
 #include <boost/url/rfc/unreserved_chars.hpp>
 
 #include "test_rule.hpp"
@@ -29,20 +29,20 @@ struct not_empty_rule_test
         // constexpr
         {
             constexpr auto r = not_empty_rule(
-                pct_encoded_rule( unreserved_chars ));
+                encoded_rule( unreserved_chars ));
             (void)r;
         }
 
         // javadoc
         {
-            result< pct_encoded_view > rv = parse( "Program%20Files",
-                not_empty_rule( pct_encoded_rule( unreserved_chars ) ) );
+            result< decode_view > rv = parse( "Program%20Files",
+                not_empty_rule( encoded_rule( unreserved_chars ) ) );
 
             (void)rv;
         }
 
         constexpr auto r = not_empty_rule(
-            pct_encoded_rule(
+            encoded_rule(
                 grammar::digit_chars));
 
         ok(r, "0", "0");

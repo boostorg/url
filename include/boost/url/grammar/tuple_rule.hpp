@@ -196,10 +196,10 @@ struct squelch_rule_t
     @par Example 1
     With `squelch`:
     @code
-    result< std::tuple< pct_encoded_view, string_view > > rv = parse(
+    result< std::tuple< decode_view, string_view > > rv = parse(
         "www.example.com:443",
         tuple_rule(
-            pct_encoded_rule(unreserved_chars + '-' + '.'),
+            encoded_rule(unreserved_chars + '-' + '.'),
             squelch( delim_rule( ':' ) ),
             token_rule( digit_chars ) ) );
     @endcode
@@ -207,10 +207,10 @@ struct squelch_rule_t
     @par Example 2
     Without `squelch`:
     @code
-    result< std::tuple< pct_encoded_view, string_view, string_view > > rv = parse(
+    result< std::tuple< decode_view, string_view, string_view > > rv = parse(
         "www.example.com:443",
         tuple_rule(
-            pct_encoded_rule(unreserved_chars + '-' + '.'),
+            encoded_rule(unreserved_chars + '-' + '.'),
             delim_rule( ':' ),
             token_rule( digit_chars ) ) );
     @endcode
@@ -223,8 +223,8 @@ struct squelch_rule_t
         @ref parse,
         @ref tuple_rule,
         @ref token_rule,
-        @ref pct_encoded_view,
-        @ref pct_encoded_rule,
+        @ref decode_view,
+        @ref encoded_rule,
         @ref unreserved_chars.
 */
 template<class Rule>

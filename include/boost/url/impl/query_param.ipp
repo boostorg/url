@@ -12,7 +12,6 @@
 #define BOOST_URL_IMPL_QUERY_PARAM_IPP
 
 #include <boost/url/query_param.hpp>
-#include <boost/url/pct_encoding.hpp>
 
 namespace boost {
 namespace urls {

@@ -36,7 +36,7 @@ be used to obtain the __authority_view__ from a __url_view__:
 [snippet_parsing_authority_3a]
 
 Notice that [link url.ref.boost__urls__url_view.authority `authority`]
-does not return a __pct_encoded_view__. The reason is any decoded character
+does not return a __decode_view__. The reason is any decoded character
 `/` could make it ambiguous with the path component. The authority
 is represented through an __authority_view__, a read-only container
 to a non-owning character buffer containing a valid authority.

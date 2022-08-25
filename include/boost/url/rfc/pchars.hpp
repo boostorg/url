@@ -24,7 +24,7 @@ namespace urls {
     the functions @ref grammar::find_if and
     @ref grammar::find_if_not.
     @code
-    result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pchars );
+    result< decode_view > rv = grammar::parse( "Program%20Files", pchars );
     @endcode
 
     @par BNF
@@ -40,7 +40,7 @@ namespace urls {
         @ref grammar::find_if,
         @ref grammar::find_if_not,
         @ref grammar::parse,
-        @ref pct_encoded_rule.
+        @ref encoded_rule.
 */
 constexpr auto pchars =
     unreserved_chars + sub_delim_chars + ':' + '@';

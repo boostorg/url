@@ -32,15 +32,15 @@ namespace grammar {
     @par Example
     Rules are used with the function @ref parse.
     @code
-    result< pct_encoded_view > rv = parse( "Program%20Files",
-        not_empty_rule( pct_encoded_rule( unreserved_chars ) ) );
+    result< decode_view > rv = parse( "Program%20Files",
+        not_empty_rule( encoded_rule( unreserved_chars ) ) );
     @endcode
 
     @param r The rule to match
 
     @see
         @ref parse,
-        @ref pct_encoded_rule,
+        @ref encoded_rule,
         @ref unreserved_chars.
 */
 #ifdef BOOST_URL_DOCS

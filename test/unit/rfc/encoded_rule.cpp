@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/encoded_rule.hpp>
 
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/pchars.hpp>
@@ -18,7 +18,7 @@
 namespace boost {
 namespace urls {
 
-class pct_encoded_rule_test
+class encoded_rule_test
 {
 public:
     void
@@ -26,15 +26,15 @@ public:
     {
         // javadoc
         {
-            result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( pchars ) );
+            result< decode_view > rv = grammar::parse( "Program%20Files", encoded_rule( pchars ) );
             (void)rv;
         }
     }
 };
 
 TEST_SUITE(
-    pct_encoded_rule_test,
-    "boost.url.pct_encoded_rule");
+    encoded_rule_test,
+    "boost.url.encoded_rule");
 
 } // urls
 } // boost

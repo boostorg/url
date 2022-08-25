@@ -13,7 +13,7 @@
 #include <boost/url/authority_view.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/encoded_rule.hpp>
 #include <array>
 #include <ostream>
 

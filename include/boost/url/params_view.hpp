@@ -14,7 +14,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <boost/url/query_param.hpp>
-#include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/decode_view.hpp>
 #include <iterator>
 #include <type_traits>
 
@@ -31,6 +31,7 @@ class params_view
 {
     friend class url_view_base;
     friend class params_encoded_view;
+    friend struct query_rule_t;
 
     string_view s_;
     std::size_t n_ = 0;
@@ -138,6 +139,14 @@ public:
     //
     //--------------------------------------------
 
+    /** Return the encoded string referenced by the container
+    */
+    string_view
+    encoded_string() const noexcept
+    {
+        return s_;
+    }
+
     /** Access the specified element, with bounds checking.
 
         Returns a constant reference to the mapped value of
@@ -156,7 +165,7 @@ public:
         @throw std::out_of_range if no such element exists.
     */
     BOOST_URL_DECL
-    pct_encoded_view
+    decode_view
     at(string_view key) const;
 
     //--------------------------------------------

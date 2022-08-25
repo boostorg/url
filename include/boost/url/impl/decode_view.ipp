@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_IMPL_PCT_ENCODED_VIEW_IPP
 #define BOOST_URL_IMPL_PCT_ENCODED_VIEW_IPP
 
-#include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/decode_view.hpp>
 #include <boost/url/grammar/detail/copied_strings.hpp>
 #include <ostream>
 
@@ -18,7 +18,7 @@ namespace boost {
 namespace urls {
 
 auto
-pct_encoded_view::
+decode_view::
 iterator::
 operator*() const noexcept ->
     reference
@@ -40,11 +40,11 @@ operator*() const noexcept ->
 //------------------------------------------------
 
 // unchecked constructor
-pct_encoded_view::
-pct_encoded_view(
+decode_view::
+decode_view(
     string_view str,
     std::size_t n,
-    pct_decode_opts opt) noexcept
+    decode_opts opt) noexcept
     : p_(str.data())
     , n_(str.size())
     , dn_(n)
@@ -52,30 +52,30 @@ pct_encoded_view(
 {
 }
 
-pct_encoded_view::
-pct_encoded_view(
+decode_view::
+decode_view(
     string_view str,
-    pct_decode_opts opt)
+    decode_opts opt)
     : p_(str.data())
     , n_(str.size())
     , plus_to_space_(opt.plus_to_space)
 {
     opt.non_normal_is_error = false;
-    auto rn = validate_pct_encoding(str, opt);
+    auto rn = detail::validate_encoding(str, opt);
     if ( !rn )
         detail::throw_invalid_argument();
     dn_ = *rn;
 }
 
-pct_encoded_view
-pct_encoded_view::
+decode_view
+decode_view::
 maybe_copy(
     grammar::detail::copied_strings_base& sp) const
 {
-    pct_decode_opts opt;
+    decode_opts opt;
     opt.plus_to_space =
         plus_to_space_;
-    return pct_encoded_view(
+    return decode_view(
         sp.maybe_copy(encoded()),
         dn_,
         opt);
@@ -84,7 +84,7 @@ maybe_copy(
 //------------------------------------------------
 
 auto
-pct_encoded_view::
+decode_view::
 copy(
     char* dest,
     size_type count,
@@ -105,7 +105,7 @@ namespace detail {
 
 template <class T>
 int
-decoded_strcmp(pct_encoded_view s0, T s1)
+decoded_strcmp(decode_view s0, T s1)
 {
     auto const n0 = s0.size();
     auto const n1 = s1.size();
@@ -127,21 +127,21 @@ decoded_strcmp(pct_encoded_view s0, T s1)
 } // detail
 
 int
-pct_encoded_view::
+decode_view::
 compare(string_view other) const noexcept
 {
     return detail::decoded_strcmp(*this, other);
 }
 
 int
-pct_encoded_view::
-compare(pct_encoded_view other) const noexcept
+decode_view::
+compare(decode_view other) const noexcept
 {
     return detail::decoded_strcmp(*this, other);
 }
 
 void
-pct_encoded_view::
+decode_view::
 write(std::ostream& os) const
 {
     auto it = begin();

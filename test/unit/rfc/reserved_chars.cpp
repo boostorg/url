@@ -11,7 +11,7 @@
 #include <boost/url/rfc/reserved_chars.hpp>
 
 #include <boost/url/grammar/parse.hpp>
-#include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/encoded_rule.hpp>
 
 #include "test_rule.hpp"
 
@@ -25,7 +25,7 @@ struct reserved_chars_test
     {
         // javadoc
         {
-            result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( reserved_chars ) );
+            result< decode_view > rv = grammar::parse( "Program%20Files", encoded_rule( reserved_chars ) );
             (void)rv;
         }
 

@@ -56,13 +56,13 @@ segments_iterator_impl(
     begin_ += n;
 }
 
-pct_encoded_view
+decode_view
 segments_iterator_impl::
 dereference() const noexcept
 {
-    pct_decode_opts opt;
+    decode_opts opt;
     opt.plus_to_space = false;
-    return pct_encoded_view(t_.encoded(), opt);
+    return decode_view(t_.encoded(), opt);
 }
 
 

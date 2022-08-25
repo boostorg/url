@@ -42,7 +42,7 @@ class segments_view::
 
 public:
     using value_type = std::string;
-    using reference = pct_encoded_view;
+    using reference = decode_view;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
@@ -55,7 +55,7 @@ public:
     iterator&
     operator=(iterator const&) noexcept = default;
 
-    pct_encoded_view
+    decode_view
     operator*() const noexcept
     {
         return impl_.dereference();
@@ -127,7 +127,7 @@ is_absolute() const noexcept
 //------------------------------------------------
 
 inline
-pct_encoded_view
+decode_view
 segments_view::
 front() const noexcept
 {
@@ -136,7 +136,7 @@ front() const noexcept
 }
 
 inline
-pct_encoded_view
+decode_view
 segments_view::
 back() const noexcept
 {

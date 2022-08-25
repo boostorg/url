@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_types.hpp>
-#include <boost/url/params_encoded_view.hpp>
+#include <boost/url/params_view.hpp>
 #include <boost/url/query_param.hpp>
 #include <cstddef>
 
@@ -62,7 +62,7 @@ constexpr __implementation_defined__ query_rule;
 struct query_rule_t
 {
     using value_type =
-        params_encoded_view;
+        params_view;
 
     BOOST_URL_DECL
     result<value_type>

@@ -15,7 +15,7 @@
 #include <boost/url/grammar/digit_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/token_rule.hpp>
-#include <boost/url/rfc/pct_encoded_rule.hpp>
+#include <boost/url/rfc/encoded_rule.hpp>
 #include <boost/url/rfc/unreserved_chars.hpp>
 
 #include "test_suite.hpp"
@@ -57,20 +57,20 @@ struct tuple_rule_test
     void
     testSquelch()
     {
-        result< std::tuple< pct_encoded_view, string_view > > r1 =
+        result< std::tuple< decode_view, string_view > > r1 =
             parse(
                 "www.example.com:443",
                 tuple_rule(
-                    pct_encoded_rule(unreserved_chars + '-' + '.'),
+                    encoded_rule(unreserved_chars + '-' + '.'),
                     squelch( delim_rule( ':' ) ),
                     token_rule( digit_chars ) ) );
 
         result< std::tuple<
-                pct_encoded_view, string_view, string_view > > r2 =
+                decode_view, string_view, string_view > > r2 =
             parse(
                 "www.example.com:443",
                 tuple_rule(
-                    pct_encoded_rule(unreserved_chars + '-' + '.'),
+                    encoded_rule(unreserved_chars + '-' + '.'),
                     delim_rule( ':' ),
                     token_rule( digit_chars ) ) );
 

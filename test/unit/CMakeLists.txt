@@ -20,6 +20,8 @@ set(BOOST_URL_TESTS_FILES
     authority_view.cpp
     doc_container.cpp
     doc_grammar.cpp
+    decode.cpp
+    encode.cpp
     error.cpp
     error_types.cpp
     grammar.cpp
@@ -32,8 +34,7 @@ set(BOOST_URL_TESTS_FILES
     params_encoded.cpp
     params_encoded_view.cpp
     params_view.cpp
-    pct_encoded_view.cpp
-    pct_encoding.cpp
+    decode_view.cpp
     query_param.cpp
     scheme.cpp
     segments.cpp
@@ -79,7 +80,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/ipv6_address_rule.cpp
     rfc/origin_form_rule.cpp
     rfc/pchars.cpp
-    rfc/pct_encoded_rule.cpp
+    rfc/encoded_rule.cpp
     rfc/query_rule.cpp
     rfc/relative_ref_rule.cpp
     rfc/reserved_chars.cpp

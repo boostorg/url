@@ -8,16 +8,18 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/pct_encoding.hpp>
+#include <boost/url/decode.hpp>
 
 #include <boost/url/grammar/lut_chars.hpp>
 #include "test_suite.hpp"
+#include <boost/url/string_view.hpp>
+#include <boost/url/encode.hpp>
 #include <memory>
 
 namespace boost {
 namespace urls {
 
-class pct_encoding_test
+class decode_test
 {
 public:
     struct test_chars
@@ -27,16 +29,6 @@ public:
         operator()(char c) const noexcept
         {
             return c == 'A' || c == '+';
-        }
-    };
-
-    struct test_chars_null
-    {
-        constexpr
-        bool
-        operator()(char c) const noexcept
-        {
-            return c == 'A' || c == '\0';
         }
     };
 
@@ -58,27 +50,36 @@ public:
         constexpr grammar::lut_chars CS1("A+");
         constexpr grammar::lut_chars CS2 = CS1 + '\0';
         grammar::lut_chars const* pcs = &CS1;
-        pct_decode_opts opt;
+        decode_opts opt;
 
         auto const good = [&](
             string_param s0,
             string_param s1)
         {
-            // validate_pct_encoding
+            // decode -> decode_view
             {
-                auto rn = validate_pct_encoding(
+                auto const r = decode(s0, opt, *pcs);
+                if (BOOST_TEST(r.has_value()))
+                {
+                    BOOST_TEST_EQ(r->size(), s1.size());
+                    BOOST_TEST_EQ(*r, s1);
+                }
+            }
+            // detail::validate_encoding
+            {
+                auto rn = detail::validate_encoding(
                     s0, *pcs, opt);
                 if(! BOOST_TEST(! rn.has_error()))
                     return;
                 BOOST_TEST_EQ(*rn, s1.size());
             }
-            // pct_decode to buffer
+            // decode to buffer
             {
                 char buf[16];
                 for(std::size_t i = 0;
                     i < sizeof(buf); ++i)
                 {
-                    auto const rn = pct_decode(
+                    auto const rn = detail::decode(
                         buf, buf + i,
                             s0, *pcs, opt);
                     if(i < s1.size())
@@ -96,37 +97,37 @@ public:
                     break;
                 }
             }
-            // pct_decode() -> std::string
+            // decode() -> std::string
             {
                 std::string s;
-                s.resize(pct_decode_bytes_unchecked(s0));
+                s.resize(detail::decode_bytes_unchecked(s0));
                 auto rn =
-                    pct_decode(&s[0], &s[0] + s.size(), s0, opt);
+                    detail::decode(&s[0], &s[0] + s.size(), s0, opt);
                 BOOST_TEST(rn.has_value());
                 s.resize(*rn);
                 BOOST_TEST_EQ(s, s1);
             }
-            // pct_decode() -> std::basic_string
+            // decode() -> std::basic_string
             {
                 using A = std::allocator<char>;
                 std::basic_string<char,
                     std::char_traits<char>, A> s(A{});
-                s.resize(pct_decode_bytes_unchecked(s0));
-                auto rn = pct_decode(&s[0], &s[0] + s.size(), s0, opt);
+                s.resize(detail::decode_bytes_unchecked(s0));
+                auto rn = detail::decode(&s[0], &s[0] + s.size(), s0, opt);
                 BOOST_TEST(rn.has_value());
                 BOOST_TEST_EQ(s, s1);
             }
-            // pct_decode_bytes_unchecked
+            // detail::decode_bytes_unchecked
             {
                 auto const n =
-                    pct_decode_bytes_unchecked(s0);
+                    detail::decode_bytes_unchecked(s0);
                 BOOST_TEST_EQ(n, s1.size());
             }
-            // pct_decode_unchecked
+            // decode_unchecked
             {
                 char buf[16];
                 auto const n =
-                    pct_decode_unchecked(
+                    detail::decode_unchecked(
                         buf, buf + sizeof(buf),
                             s0, opt);
                 BOOST_TEST_EQ(n, s1.size());
@@ -138,32 +139,32 @@ public:
         auto const bad = [&](
             string_param s)
         {
-            // validate_pct_encoding
+            // detail::validate_encoding
             {
-                auto rn = validate_pct_encoding(
+                auto rn = detail::validate_encoding(
                     s, test_chars{}, opt);
                 BOOST_TEST(rn.has_error());
                 if (!rn.has_error())
                     BOOST_TEST_EQ(s, "");
             }
-            // pct_decode to buffer
+            // decode to buffer
             {
                 char buf[16];
-                auto rn = pct_decode(buf,
+                auto rn = detail::decode(buf,
                     buf + sizeof(buf),
                         s, *pcs, opt);
                 BOOST_TEST(rn.has_error());
             }
-            // pct_decode_bytes_unchecked
+            // detail::decode_bytes_unchecked
             {
                 // don't crash
-                pct_decode_bytes_unchecked(s);
+                detail::decode_bytes_unchecked(s);
             }
-            // pct_decode_unchecked
+            // detail::decode_unchecked
             {
                 // don't crash
                 char buf[16];
-                pct_decode_unchecked(
+                detail::decode_unchecked(
                     buf, buf + sizeof(buf),
                         s, opt);
             }
@@ -177,7 +178,7 @@ public:
                 {
                     std::memset(
                         buf, 0xff, sizeof(buf));
-                    pct_decode_unchecked(buf,
+                    detail::decode_unchecked(buf,
                         buf + i, s, opt);
                     string_view s1(buf, sizeof(buf));
                     BOOST_TEST(s1.find(' ') ==
@@ -334,31 +335,31 @@ public:
         string_view m0,
         bool space_to_plus = false)
     {
-        // pct_encode_bytes
+        // encode_bytes
         {
-            pct_encode_opts opt;
+            encode_opts opt;
             opt.space_to_plus =
                 space_to_plus;
-            BOOST_TEST(pct_encode_bytes(
+            BOOST_TEST(encode_bytes(
                 s, test_chars{}, opt) ==
                     m0.size());
         }
-        // pct_encode
+        // encode
         {
-            pct_encode_opts opt;
+            encode_opts opt;
             opt.space_to_plus =
                 space_to_plus;
             std::string t;
             t.resize(
-                pct_encode_bytes(s, test_chars{}, opt));
-            pct_encode(
+                encode_bytes(s, test_chars{}, opt));
+            encode(
                 &t[0], &t[0] + t.size(), s, test_chars{}, opt);
             BOOST_TEST(t == m0);
         }
-        pct_encode_opts opt;
+        encode_opts opt;
         opt.space_to_plus =
             space_to_plus;
-        auto const m = pct_encode_to_string(
+        auto const m = encode_to_string(
             s, test_chars{}, opt);
         if(! BOOST_TEST(m == m0))
             return;
@@ -370,7 +371,7 @@ public:
         {
             char* dest = buf;
             char const* end = buf + i;
-            std::size_t n = pct_encode(
+            std::size_t n = encode(
                 dest, end, s, test_chars{}, opt);
             string_view r(buf, n);
             if(n == m.size())
@@ -386,62 +387,19 @@ public:
     };
 
     void
-    testEncode()
-    {
-        check("", "");
-        check(" ", "%20");
-        check("A", "A");
-        check("B", "%42");
-        check("AB", "A%42");
-        check("A B", "A%20%42");
-
-        check("", "", true);
-        check(" ", "+", true);
-        check("A", "A", true);
-        check("B", "%42", true);
-        check("AB", "A%42", true);
-        check("A B", "A+%42", true);
-    }
-
-    void
-    testEncodeExtras()
-    {
-        // space_to_plus
-        {
-            BOOST_TEST(pct_encode_to_string(
-                " ", test_chars{}, {}) == "%20");
-            pct_encode_opts opt;
-            BOOST_TEST_EQ(opt.space_to_plus, false);
-            BOOST_TEST(pct_encode_to_string(
-                " ", test_chars{}, opt) == "%20");
-            BOOST_TEST(pct_encode_to_string(
-                "A", test_chars{}, opt) == "A");
-            BOOST_TEST(pct_encode_to_string(
-                " A+", test_chars{}, opt) == "%20A+");
-            opt.space_to_plus = true;
-            BOOST_TEST(pct_encode_to_string(
-                " ", test_chars{}, opt) == "+");
-            BOOST_TEST(pct_encode_to_string(
-                "A", test_chars{}, opt) == "A");
-            BOOST_TEST(pct_encode_to_string(
-                " A+", test_chars{}, opt) == "+A+");
-        }
-    }
-
-    void
     testValidate()
     {
         auto check = [](
             string_view s,
             error_code ec,
-            pct_decode_opts opt)
+            decode_opts opt)
         {
-            auto r = validate_pct_encoding(s, opt);
+            auto r = detail::validate_encoding(s, opt);
             BOOST_TEST(r.has_error());
             BOOST_TEST(r.error() == ec);
         };
 
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.allow_null = true;
         check("%a", error::missing_pct_hexdig, opt);
         check("%ar", error::bad_pct_hexdig, opt);
@@ -455,14 +413,14 @@ public:
         {
             std::string dest;
             dest.resize(1);
-            result<std::size_t> r = pct_decode(
+            result<std::size_t> r = detail::decode(
                 &dest[0], &dest[1], "%a", opt);
             BOOST_TEST_EQ(r.error(), error::missing_pct_hexdig);
         }
         {
             std::string dest;
             dest.resize(1);
-            result<std::size_t> r = pct_decode(
+            result<std::size_t> r = detail::decode(
                 &dest[0], &dest[1], "%aa%aa", opt);
             BOOST_TEST_EQ(r.error(), error::no_space);
         }
@@ -472,15 +430,13 @@ public:
     run()
     {
         testDecoding();
-        testEncode();
-        testEncodeExtras();
         testValidate();
     }
 };
 
 TEST_SUITE(
-    pct_encoding_test,
-    "boost.url.pct_encoding");
+    decode_test,
+    "boost.url.decode");
 
 } // urls
 } // boost

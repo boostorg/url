@@ -13,7 +13,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/decode_view.hpp>
 
 namespace boost {
 namespace urls {
@@ -49,7 +49,7 @@ struct query_param_view
 {
     /** The percent-decoded key
     */
-    pct_encoded_view key;
+    decode_view key;
 
     /** The percent-decoded value
 
@@ -58,7 +58,7 @@ struct query_param_view
         A value that is present with an empty string
         is distinct from a value that is absent.
     */
-    pct_encoded_view value;
+    decode_view value;
 
     /** True if the value is present
 
@@ -84,8 +84,8 @@ struct query_param_view
 
     /// Constructor
     query_param_view(
-        pct_encoded_view key_,
-        pct_encoded_view value_ = {},
+        decode_view key_,
+        decode_view value_ = {},
         bool has_value_ = false ) noexcept
         : key(key_)
         , value(value_)
@@ -157,8 +157,8 @@ struct query_param_encoded_view
 
     /// Constructor
     query_param_encoded_view(
-        pct_encoded_view key_,
-        pct_encoded_view value_ = {},
+        decode_view key_,
+        decode_view value_ = {},
         bool has_value_ = false ) noexcept
         : key(key_.encoded())
         , value(value_.encoded())
@@ -172,12 +172,12 @@ struct query_param_encoded_view
     {
         if(has_value)
             return {
-                pct_encoded_view(key),
-                pct_encoded_view(value),
+                decode_view(key),
+                decode_view(value),
                 true };
         return {
-            pct_encoded_view(key),
-            pct_encoded_view(),
+            decode_view(key),
+            decode_view(),
             false };
     }
 
@@ -271,8 +271,8 @@ struct query_param
     /** Constructor
     */
     query_param(
-        pct_encoded_view const& key_,
-        pct_encoded_view const& value_,
+        decode_view const& key_,
+        decode_view const& value_,
         bool has_value_)
         : key(key_.to_string())
         , value(value_.to_string())
@@ -298,12 +298,12 @@ struct query_param
     {
         if(has_value)
             return {
-                pct_encoded_view(key),
-                pct_encoded_view(value),
+                decode_view(key),
+                decode_view(value),
                 true };
         return {
-            pct_encoded_view(key),
-            pct_encoded_view(),
+            decode_view(key),
+            decode_view(),
             false };
     }
 

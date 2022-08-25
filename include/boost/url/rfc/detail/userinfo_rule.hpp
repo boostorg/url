@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_types.hpp>
-#include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/decode_view.hpp>
 #include <boost/url/string_view.hpp>
 
 namespace boost {
@@ -37,9 +37,9 @@ struct userinfo_rule_t
 {
     struct value_type
     {
-        pct_encoded_view user;
+        decode_view user;
         bool has_password = false;
-        pct_encoded_view password;
+        decode_view password;
     };
 
     auto
