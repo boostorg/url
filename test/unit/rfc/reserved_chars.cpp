@@ -25,7 +25,7 @@ struct reserved_chars_test
     {
         // javadoc
         {
-            result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( reserved_chars ) );
+            result< decode_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( reserved_chars ) );
             (void)rv;
         }
 

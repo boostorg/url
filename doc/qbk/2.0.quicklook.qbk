@@ -146,7 +146,7 @@ of key/value pairs.
 ```
 ]]]
 
-These functions return __pct_encoded_view__, which are constant
+These functions return __decode_view__, which are constant
 views referring to sub-ranges of the underlying URL string.
 By simply referencing the relevant portion of the URL string,
 its components can represent percent-decoded strings without any
@@ -188,9 +188,9 @@ accessed through a __string_view__:
 ```
 ]]]
 
-[h3 Decoding]
+[heading Percent-Encoding]
 
-An instance of __pct_encoded_view__ provides a number of functions
+An instance of __decode_view__ provides a number of functions
 to persist a decoded string:
 
 [table [[Code][Output]] [[
@@ -204,7 +204,7 @@ to persist a decoded string:
 ```
 ]]]
 
-__pct_encoded_view__ and its decoding functions are designed to
+__decode_view__ and its decoding functions are designed to
 perform no memory allocations unless the algorithm where its being
 used needs the result to be in another container. The design also
 permits recycling objects to reuse their memory, and at least
@@ -279,7 +279,7 @@ As with other __url_view__ functions which return encoded strings, the encoded
 segments container does not allocate memory. Instead it returns views to the
 corresponding portions of the underlying encoded buffer referenced by the URL.
 
-As with other library functions, __pct_encoded_view__ permits accessing
+As with other library functions, __decode_view__ permits accessing
 elements of composed elements while avoiding memory allocations entirely:
 
 [table [[Code][Output]] [[

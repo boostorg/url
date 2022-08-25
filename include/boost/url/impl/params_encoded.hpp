@@ -447,8 +447,8 @@ replace(
     using detail::
         make_enc_params_iter;
     query_param_view v{
-        pct_encoded_view(key),
-        pct_encoded_view{},
+        decode_view(key),
+        decode_view{},
         false};
     u_->edit_params(
         pos.impl_.i_,

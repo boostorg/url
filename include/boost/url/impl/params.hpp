@@ -372,8 +372,8 @@ replace(
     using detail::
         make_plain_params_iter;
     query_param_view v{
-        pct_encoded_view(key),
-        pct_encoded_view(value),
+        decode_view(key),
+        decode_view(value),
         true };
     BOOST_ASSERT(pos.impl_.begin_ ==
         u_->encoded_query().data());
@@ -404,7 +404,7 @@ replace(
         u_->encoded_query().data() +
         u_->encoded_query().size());
     query_param_view v{
-        pct_encoded_view(key), {}, false};
+        decode_view(key), {}, false};
     u_->edit_params(
         pos.impl_.i_,
         pos.impl_.i_ + 1,
@@ -427,8 +427,8 @@ insert(
     return insert(
         before,
         query_param_view{
-            pct_encoded_view(key),
-            pct_encoded_view(value),
+            decode_view(key),
+            decode_view(value),
             true });
 }
 
@@ -443,7 +443,7 @@ insert(
     return insert(
         before,
         query_param_view{
-            pct_encoded_view(key), {}, false});
+            decode_view(key), {}, false});
 }
 
 //------------------------------------------------
@@ -468,7 +468,7 @@ append(
 {
     return insert(
         end(), query_param_view{
-            pct_encoded_view(key), {}, false});
+            decode_view(key), {}, false});
 }
 
 inline
@@ -481,8 +481,8 @@ append(
 {
     return insert(
         end(), query_param_view{
-            pct_encoded_view(key),
-            pct_encoded_view(value),
+            decode_view(key),
+            decode_view(value),
             true});
 }
 

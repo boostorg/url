@@ -39,7 +39,7 @@ public:
     check(
         string_view s,
         std::initializer_list<
-            query_param_encoded_view> i)
+            query_param_view> i)
     {
         auto rv = grammar::parse(
             s, query_rule);
@@ -72,7 +72,7 @@ public:
     {
         // javadoc
         {
-            result< params_encoded_view > rv = grammar::parse( "format=web&id=42&compact", query_rule );
+            result< params_view > rv = grammar::parse( "format=web&id=42&compact", query_rule );
             (void)rv;
         }
 

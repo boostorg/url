@@ -32,7 +32,7 @@ namespace grammar {
     @par Example
     Rules are used with the function @ref parse.
     @code
-    result< pct_encoded_view > rv = parse( "Program%20Files",
+    result< decode_view > rv = parse( "Program%20Files",
         not_empty_rule( pct_encoded_rule( unreserved_chars ) ) );
     @endcode
 

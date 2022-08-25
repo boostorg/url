@@ -31,8 +31,8 @@ apply_scheme(
 void
 url_impl::
 apply_userinfo(
-    pct_encoded_view const& user,
-    pct_encoded_view const* pass) noexcept
+    decode_view const& user,
+    decode_view const* pass) noexcept
 {
     // this function is for
     // authority_view_rule only
@@ -63,7 +63,7 @@ apply_host(
     host_type ht,
     string_view s,
     unsigned char const* addr,
-    pct_encoded_view const& name) noexcept
+    decode_view const& name) noexcept
 {
     // this function is for
     // authority_view_rule only
@@ -132,7 +132,7 @@ apply_path(
     set_size(id_path, s.size());
     // VFALCO we are decoding twice
     decoded_[id_path] =
-        pct_decode_bytes_unchecked(s);
+        detail::decode_bytes_unchecked(s);
     nseg_ = detail::path_segments(s, nseg);
 }
 
@@ -149,13 +149,13 @@ apply_query(
     // the string. once for the range and
     // again for the decoded size.
     decoded_[id_query] =
-        pct_decode_bytes_unchecked(s);
+        detail::decode_bytes_unchecked(s);
 }
 
 void
 url_impl::
 apply_frag(
-    pct_encoded_view s) noexcept
+    decode_view s) noexcept
 {
     set_size(id_frag,
         s.encoded().size() + 1);

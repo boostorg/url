@@ -13,6 +13,8 @@
 #include <boost/url/grammar.hpp>
 
 #include <boost/url/authority_view.hpp>
+#include <boost/url/decode.hpp>
+#include <boost/url/encode.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/host_type.hpp>
@@ -22,8 +24,7 @@
 #include <boost/url/params_encoded.hpp>
 #include <boost/url/params_encoded_view.hpp>
 #include <boost/url/params_view.hpp>
-#include <boost/url/pct_encoding.hpp>
-#include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/decode_view.hpp>
 #include <boost/url/query_param.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments.hpp>

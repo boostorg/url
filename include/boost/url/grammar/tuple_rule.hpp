@@ -196,7 +196,7 @@ struct squelch_rule_t
     @par Example 1
     With `squelch`:
     @code
-    result< std::tuple< pct_encoded_view, string_view > > rv = parse(
+    result< std::tuple< decode_view, string_view > > rv = parse(
         "www.example.com:443",
         tuple_rule(
             pct_encoded_rule(unreserved_chars + '-' + '.'),
@@ -207,7 +207,7 @@ struct squelch_rule_t
     @par Example 2
     Without `squelch`:
     @code
-    result< std::tuple< pct_encoded_view, string_view, string_view > > rv = parse(
+    result< std::tuple< decode_view, string_view, string_view > > rv = parse(
         "www.example.com:443",
         tuple_rule(
             pct_encoded_rule(unreserved_chars + '-' + '.'),
@@ -223,7 +223,7 @@ struct squelch_rule_t
         @ref parse,
         @ref tuple_rule,
         @ref token_rule,
-        @ref pct_encoded_view,
+        @ref decode_view,
         @ref pct_encoded_rule,
         @ref unreserved_chars.
 */

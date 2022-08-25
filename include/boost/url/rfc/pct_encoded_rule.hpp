@@ -11,8 +11,7 @@
 #define BOOST_URL_RFC_PCT_ENCODED_RULE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/pct_encoded_view.hpp>
-#include <boost/url/pct_encoding.hpp>
+#include <boost/url/decode_view.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/charset.hpp>
@@ -31,7 +30,7 @@ namespace urls {
    
     @par Value Type
     @code
-    using value_type = pct_encoded_view;
+    using value_type = decode_view;
     @endcode
 
     @par Example
@@ -39,7 +38,7 @@ namespace urls {
     @code
     //  pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
 
-    result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( pchars ) );
+    result< decode_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( pchars ) );
     @endcode
 
     @par BNF
@@ -59,7 +58,7 @@ namespace urls {
     @see
         @ref grammar::parse,
         @ref pchars,
-        @ref pct_encoded_view.
+        @ref decode_view.
 */
 #ifdef BOOST_URL_DOCS
 /**@{*/
@@ -72,7 +71,7 @@ pct_encoded_rule( CharSet const& cs ) noexcept;
 template<class CharSet>
 struct pct_encoded_rule_t
 {
-    using value_type = pct_encoded_view;
+    using value_type = decode_view;
 
     template<class CharSet_>
     friend

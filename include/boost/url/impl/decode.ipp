@@ -10,15 +10,16 @@
 #ifndef BOOST_URL_IMPL_PCT_ENCODING_IPP
 #define BOOST_URL_IMPL_PCT_ENCODING_IPP
 
-#include <boost/url/pct_encoding.hpp>
+#include <boost/url/decode.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <memory>
 
 namespace boost {
 namespace urls {
+namespace detail {
 
 std::size_t
-pct_decode_bytes_unchecked(
+decode_bytes_unchecked(
     string_view s) noexcept
 {
     auto it = s.data();
@@ -43,11 +44,11 @@ pct_decode_bytes_unchecked(
 }
 
 std::size_t
-pct_decode_unchecked(
+decode_unchecked(
     char* const dest0,
     char const* end,
     string_view s,
-    pct_decode_opts const& opt) noexcept
+    decode_opts const& opt) noexcept
 {
     auto const decode_hex = [](
         char const* it)
@@ -131,10 +132,8 @@ pct_decode_unchecked(
     return dest - dest0;
 }
 
-namespace detail
-{
 result<std::size_t>
-validate_pct_encoding(
+validate_encoding(
     string_view s,
     std::true_type) noexcept
 {
@@ -170,7 +169,7 @@ validate_pct_encoding(
 }
 
 result<std::size_t>
-validate_pct_encoding(
+validate_encoding(
     string_view s,
     std::false_type) noexcept
 {
@@ -217,34 +216,33 @@ validate_pct_encoding(
     }
     return s.size() - pcts * 2;
 }
-}
 
 result<std::size_t>
-validate_pct_encoding(
+validate_encoding(
     string_view s,
-    pct_decode_opts const& opt) noexcept
+    decode_opts const& opt) noexcept
 {
     if (opt.allow_null)
-        return detail::validate_pct_encoding(
+        return detail::validate_encoding(
             s, std::true_type{});
     else
-       return detail::validate_pct_encoding(
+       return detail::validate_encoding(
             s, std::false_type{});
 }
 
 result<std::size_t>
-pct_decode(
+decode(
     char* dest,
     char const* end,
     string_view s,
-    pct_decode_opts const& opt) noexcept
+    decode_opts const& opt) noexcept
 {
     auto const rn =
-        validate_pct_encoding(s, opt);
+        detail::validate_encoding(s, opt);
     if( !rn )
         return rn;
     auto const n1 =
-        pct_decode_unchecked(
+        detail::decode_unchecked(
             dest, end, s, opt);
     if(n1 < *rn)
     {
@@ -253,7 +251,7 @@ pct_decode(
     return n1;
 }
 
-
+} // detail
 } // urls
 } // boost
 

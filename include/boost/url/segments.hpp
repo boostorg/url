@@ -12,7 +12,7 @@
 #define BOOST_URL_SEGMENTS_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/decode_view.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <initializer_list>
 #include <iterator>
@@ -107,10 +107,10 @@ public:
         This type does not make a copy of a segment
         and ownership is retained by the container.
     */
-    using reference = pct_encoded_view;
+    using reference = decode_view;
 
     /// @copydoc reference
-    using const_reference = pct_encoded_view;
+    using const_reference = decode_view;
 
     /** An unsigned integer type
     */
@@ -275,7 +275,7 @@ public:
         @par Complexity
         Constant.
     */
-    pct_encoded_view
+    decode_view
     front() const;
 
     /** Access the last element.
@@ -288,7 +288,7 @@ public:
         @par Complexity
         Constant.
     */
-    pct_encoded_view
+    decode_view
     back() const;
 
     //--------------------------------------------

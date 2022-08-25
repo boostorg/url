@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_IMPL_QUERY_RULE_IPP
 
 #include <boost/url/rfc/query_rule.hpp>
-#include <boost/url/detail/pct_encoded_view.hpp>
+#include <boost/url/detail/decode_view.hpp>
 #include <boost/url/grammar/lut_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/range_rule.hpp>

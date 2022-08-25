@@ -43,7 +43,7 @@ case error::illegal_reserved_char: return "illegal reserved char";
 case error::non_canonical: return "non canonical";
 
 case error::bad_pct_hexdig: return "bad hexdig in pct-encoding";
-case error::incomplete_pct_encoding: return "incomplete pct-encoding";
+case error::incomplete_encoding: return "incomplete pct-encoding";
 case error::missing_pct_hexdig: return "missing hexdig in pct-encoding";
 case error::no_space: return "no space";
 case error::not_a_base: return "not a base";
@@ -60,7 +60,7 @@ case error::not_a_base: return "not a base";
                 return {ev, *this};
 
 case error::bad_pct_hexdig:
-case error::incomplete_pct_encoding:
+case error::incomplete_encoding:
 case error::missing_pct_hexdig:
     return grammar::condition::fatal;
             }

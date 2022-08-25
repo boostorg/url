@@ -11,17 +11,18 @@
 #define BOOST_URL_IMPL_PCT_ENCODED_VIEW_HPP
 
 #include <boost/url/grammar/type_traits.hpp>
+#include <boost/static_assert.hpp>
 
 namespace boost {
 namespace urls {
 
-class pct_encoded_view::iterator
+class decode_view::iterator
 {
     char const* begin_{nullptr};
     char const* pos_{nullptr};
     bool plus_to_space_{true};
 
-    friend pct_encoded_view;
+    friend decode_view;
 
     iterator(
         char const* str,
@@ -124,7 +125,7 @@ public:
 
 inline
 auto
-pct_encoded_view::
+decode_view::
 begin() const noexcept ->
     const_iterator
 {
@@ -133,7 +134,7 @@ begin() const noexcept ->
 
 inline
 auto
-pct_encoded_view::
+decode_view::
 end() const noexcept ->
     const_iterator
 {
@@ -142,7 +143,7 @@ end() const noexcept ->
 
 inline
 auto
-pct_encoded_view::
+decode_view::
 front() const noexcept ->
     const_reference
 {
@@ -152,7 +153,7 @@ front() const noexcept ->
 
 inline
 auto
-pct_encoded_view::
+decode_view::
 back() const noexcept ->
     const_reference
 {
@@ -162,7 +163,7 @@ back() const noexcept ->
 
 template <class MutableString>
 MutableString&
-pct_encoded_view::
+decode_view::
 assign_to(
     MutableString& s) const
 {
@@ -183,7 +184,7 @@ assign_to(
 
 template <class MutableString>
 MutableString&
-pct_encoded_view::
+decode_view::
 append_to(
     MutableString& s) const
 {

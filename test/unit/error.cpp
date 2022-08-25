@@ -54,7 +54,7 @@ public:
         check(error::non_canonical);
 
         check(grammar::condition::fatal, error::bad_pct_hexdig);
-        check(grammar::condition::fatal, error::incomplete_pct_encoding);
+        check(grammar::condition::fatal, error::incomplete_encoding);
         check(grammar::condition::fatal, error::missing_pct_hexdig);
 
         check(error::no_space);

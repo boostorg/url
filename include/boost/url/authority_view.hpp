@@ -14,8 +14,8 @@
 #include <boost/url/host_type.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/pct_encoding.hpp>
-#include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/decode.hpp>
+#include <boost/url/decode_view.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/url_impl.hpp>
 #include <boost/assert.hpp>
@@ -382,10 +382,10 @@ public:
             @ref has_userinfo,
             @ref encoded_userinfo.
     */
-    pct_encoded_view
+    decode_view
     userinfo() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = false;
         return detail::access::construct(
             encoded_userinfo(),
@@ -467,10 +467,10 @@ public:
             @ref has_password,
             @ref password.
     */
-    pct_encoded_view
+    decode_view
     user() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = false;
         return detail::access::construct(
             encoded_user(), u_.decoded_[id_user], opt);
@@ -577,10 +577,10 @@ public:
             @ref has_password,
             @ref password.
     */
-    pct_encoded_view
+    decode_view
     password() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = false;
         return detail::access::construct(
             encoded_password(), u_.decoded_[id_pass], opt);
@@ -722,10 +722,10 @@ public:
             @ref port,
             @ref port_number.
     */
-    pct_encoded_view
+    decode_view
     host() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = false;
         return detail::access::construct(
             encoded_host(), u_.decoded_[id_host], opt);

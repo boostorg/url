@@ -10,8 +10,8 @@
 #ifndef BOOST_URL_RFC_IMPL_PCT_ENCODED_RULE_HPP
 #define BOOST_URL_RFC_IMPL_PCT_ENCODED_RULE_HPP
 
-#include <boost/url/pct_encoding.hpp>
 #include <boost/url/grammar/charset.hpp>
+#include <boost/url/grammar/hexdig_chars.hpp>
 
 namespace boost {
 namespace urls {
@@ -20,11 +20,11 @@ namespace detail {
 
 template<class CharSet>
 auto
-parse_pct_encoded(
+parse_encoded(
     char const*& it,
     char const* end,
     CharSet const& cs) noexcept ->
-        result<pct_encoded_view>
+        result<decode_view>
 {
     auto const start = it;
     // VFALCO TODO
@@ -94,7 +94,7 @@ parse(
     char const* end) const noexcept ->
         result<value_type>
 {
-    return detail::parse_pct_encoded(
+    return detail::parse_encoded(
         it, end, cs_);
 }
 

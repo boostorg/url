@@ -104,8 +104,8 @@ public:
 class view_query_iter
     : public any_query_iter
 {
-    pct_encoded_view::const_iterator p_;
-    pct_encoded_view::const_iterator end_;
+    decode_view::const_iterator p_;
+    decode_view::const_iterator end_;
     std::size_t n_;
     bool done_{false};
 
@@ -115,7 +115,7 @@ class view_query_iter
 public:
     explicit
     view_query_iter(
-        pct_encoded_view s) noexcept;
+        decode_view s) noexcept;
 
     bool
     measure(

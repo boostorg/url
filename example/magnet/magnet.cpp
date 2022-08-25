@@ -78,16 +78,16 @@ struct to_url {
     operator()(urls::query_param_view p);
 };
 
-/// Callable to convert param values to urls::pct_encoded_view
+/// Callable to convert param values to urls::decode_view
 /**
     This callable converts the value of a
-    query parameter into a urls::pct_encoded_view.
+    query parameter into a urls::decode_view.
 
     This callable is used as a transform
     function for the keys_view.
  */
 struct to_decoded_value {
-    urls::pct_encoded_view
+    urls::decode_view
     operator()(urls::query_param_view p)
     {
         return p.value;
@@ -201,7 +201,7 @@ public:
     using keys_view =
         filtered_view<
             urls::params_view,
-            urls::pct_encoded_view,
+            urls::decode_view,
             is_url_with_key<MutableString>,
             to_decoded_value>;
 
@@ -288,7 +288,7 @@ public:
 
         @return Keyword topic
      */
-    urls::optional<urls::pct_encoded_view>
+    boost::optional<urls::decode_view>
     keyword_topic() const noexcept;
 
     /// Return manifest topics
@@ -321,7 +321,7 @@ public:
 
         @return Display name
      */
-    urls::optional<urls::pct_encoded_view>
+    boost::optional<urls::decode_view>
     display_name() const noexcept;
 
     // The payload data served over HTTP(S)
@@ -355,7 +355,7 @@ public:
 
         @return Web seed
      */
-    urls::optional<urls::pct_encoded_view>
+    boost::optional<urls::decode_view>
     param(urls::string_view key) const noexcept;
 
     friend
@@ -366,12 +366,12 @@ public:
     }
 
 private:
-    // get a query parameter as a urls::pct_encoded_view
-    urls::optional<urls::pct_encoded_view>
+    // get a query parameter as a urls::decode_view
+    boost::optional<urls::decode_view>
     decoded_param(urls::string_view key) const noexcept;
 
     // get a query parameter as a urls::url_view
-    urls::optional<urls::url_view>
+    boost::optional<urls::url_view>
     url_param(urls::string_view key) const noexcept;
 
     friend magnet_link_rule_t;
@@ -382,7 +382,7 @@ is_exact_topic::
 operator()(urls::query_param_view p)
 {
     // These comparisons use the lazy
-    // operator== for urls::pct_encoded_view
+    // operator== for urls::decode_view
     // For instance, the comparison also works
     // if the underlying key is "%78%74"/
     if (p.key == "xt")
@@ -503,7 +503,7 @@ magnet_link_view::acceptable_sources(MutableString& buffer) const
         is_url_with_key<MutableString>{"as", buffer}};
 }
 
-urls::optional<urls::pct_encoded_view>
+boost::optional<urls::decode_view>
 magnet_link_view::keyword_topic() const noexcept
 {
     return decoded_param("kt");
@@ -519,7 +519,7 @@ magnet_link_view::manifest_topics(MutableString& buffer) const
         is_url_with_key<MutableString>{"mt", buffer}};
 }
 
-urls::optional<urls::pct_encoded_view>
+boost::optional<urls::decode_view>
 magnet_link_view::display_name() const noexcept
 {
     return decoded_param("dn");
@@ -535,7 +535,7 @@ magnet_link_view::web_seed(MutableString& buffer) const
         is_url_with_key<MutableString>{"ws", buffer}};
 }
 
-urls::optional<urls::pct_encoded_view>
+boost::optional<urls::decode_view>
 magnet_link_view::param(urls::string_view key) const noexcept
 {
     urls::params_view ps = u_.params();
@@ -552,30 +552,30 @@ magnet_link_view::param(urls::string_view key) const noexcept
         auto first = p.key.begin();
         auto mid = std::next(p.key.begin(), 2);
         auto last = p.key.end();
-        urls::pct_encoded_view prefix(
+        urls::decode_view prefix(
             urls::string_view(first.base(), mid.base()));
-        urls::pct_encoded_view suffix(
+        urls::decode_view suffix(
             urls::string_view(mid.base(), last.base()));
         if (prefix == "x." &&
             suffix == key &&
             p.has_value)
-            return urls::pct_encoded_view(p.value);
+            return urls::decode_view(p.value);
         ++it;
     }
     return boost::none;
 }
 
-urls::optional<urls::pct_encoded_view>
+boost::optional<urls::decode_view>
 magnet_link_view::decoded_param(urls::string_view key) const noexcept
 {
     urls::params_encoded_view ps = u_.encoded_params();
     auto it = ps.find(key);
     if (it != ps.end() && (*it).has_value)
-        return urls::pct_encoded_view((*it).value);
+        return urls::decode_view((*it).value);
     return boost::none;
 }
 
-urls::optional<urls::url_view>
+boost::optional<urls::url_view>
 magnet_link_view::url_param(urls::string_view key) const noexcept
 {
     urls::params_encoded_view ps = u_.encoded_params();

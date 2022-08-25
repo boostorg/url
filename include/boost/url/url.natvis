@@ -5,7 +5,7 @@
     <DisplayString>{(addr_>>24)}.{(addr_>>16)%256}.{(addr_>>8)%256}.{addr_%256}</DisplayString>
   </Type>
 
-    <Type Name="boost::urls::pct_encoded_view">
+    <Type Name="boost::urls::decode_view">
     <DisplayString Condition="dn_==n_">{p_,[n_]s}</DisplayString>
     <DisplayString Condition="dn_!=n_">{p_,[n_]s} ({dn_})</DisplayString>
   </Type>

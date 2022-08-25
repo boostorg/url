@@ -258,11 +258,11 @@ set_user(string_view s)
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = pct_encode_bytes(
-        s, detail::user_chars);
+    auto const n = encoded_size(
+        s, {}, detail::user_chars);
     auto dest = set_user_impl(n);
-    pct_encode(dest, u_.get(id_pass).data(),
-        s, detail::user_chars);
+    encode(dest, u_.get(id_pass).data(),
+        s, {}, detail::user_chars);
     u_.decoded_[id_user] = s.size();
     check_invariants();
     return *this;
@@ -270,7 +270,7 @@ set_user(string_view s)
 
 url_base&
 url_base::
-set_user(pct_encoded_view s)
+set_user(decode_view s)
 {
     grammar::detail::copied_strings<
         BOOST_URL_STACK_BYTES> buf(
@@ -278,17 +278,17 @@ set_user(pct_encoded_view s)
     s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
-        detail::pct_encode_bytes_impl(
+        detail::encoded_size_impl(
             s.begin(),
             s.end(),
-            detail::user_chars);
+            {}, detail::user_chars);
     auto dest = set_user_impl(n);
-    detail::pct_encode_impl(
+    detail::encode_impl(
         dest,
         u_.get(id_pass).data(),
         s.begin(),
         s.end(),
-        detail::user_chars);
+        {}, detail::user_chars);
     u_.decoded_[id_user] = s.size();
     check_invariants();
     return *this;
@@ -304,15 +304,15 @@ set_encoded_user(
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const rn =
-        validate_pct_encoding(
+    auto const rv =
+        decode(
             s,
-            detail::user_chars,
-            {});
-    if( !rn )
+            {},
+            detail::user_chars);
+    if( !rv )
         detail::throw_invalid_argument();
     auto dest = set_user_impl(s.size());
-    u_.decoded_[id_user] = *rn;
+    u_.decoded_[id_user] = rv->size();
     if(! s.empty())
     {
         BOOST_ASSERT(dest != nullptr);
@@ -381,13 +381,14 @@ set_password(string_view s)
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = pct_encode_bytes(
-        s, detail::password_chars);
+    auto const n = encoded_size(
+        s, {}, detail::password_chars);
     auto dest = set_password_impl(n);
-    pct_encode(
+    encode(
         dest,
         u_.get(id_host).data() - 1,
         s,
+        {},
         detail::password_chars);
     u_.decoded_[id_pass] = s.size();
     check_invariants();
@@ -396,7 +397,7 @@ set_password(string_view s)
 
 url_base&
 url_base::
-set_password(pct_encoded_view s)
+set_password(decode_view s)
 {
     grammar::detail::copied_strings<
         BOOST_URL_STACK_BYTES> buf(
@@ -404,17 +405,17 @@ set_password(pct_encoded_view s)
     s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
-        detail::pct_encode_bytes_impl(
+        detail::encoded_size_impl(
             s.begin(),
             s.end(),
-            detail::password_chars);
+            {}, detail::password_chars);
     auto dest = set_password_impl(n);
-    detail::pct_encode_impl(
+    detail::encode_impl(
         dest,
         u_.get(id_host).data() - 1,
         s.begin(),
         s.end(),
-        detail::password_chars);
+        {}, detail::password_chars);
     u_.decoded_[id_pass] = s.size();
     check_invariants();
     return *this;
@@ -430,13 +431,13 @@ set_encoded_password(
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const rn = validate_pct_encoding(
-        s, detail::password_chars, {});
-    if( !rn )
+    auto const rv = decode(
+        s, {}, detail::password_chars);
+    if( !rv )
         detail::throw_invalid_argument();
     auto dest =
         set_password_impl(s.size());
-    u_.decoded_[id_pass] = *rn;
+    u_.decoded_[id_pass] = rv->size();
     if(! s.empty())
     {
         BOOST_ASSERT(dest != nullptr);
@@ -495,13 +496,14 @@ set_userinfo(
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = pct_encode_bytes(
-        s, detail::userinfo_chars);
+    auto const n = encoded_size(
+        s, {}, detail::userinfo_chars);
     auto dest = set_userinfo_impl(n);
-    pct_encode(
+    encode(
         dest,
         u_.get(id_host).data() - 1,
         s,
+        {},
         detail::userinfo_chars);
     auto pct_s = u_.get(id_user, id_host);
     auto pct_sep = pct_s.find_first_of(':');
@@ -524,7 +526,7 @@ set_userinfo(
 url_base&
 url_base::
 set_userinfo(
-    pct_encoded_view s)
+    decode_view s)
 {
     grammar::detail::copied_strings<
         BOOST_URL_STACK_BYTES> buf(
@@ -532,17 +534,17 @@ set_userinfo(
     s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
-        detail::pct_encode_bytes_impl(
+        detail::encoded_size_impl(
             s.begin(),
             s.end(),
-            detail::userinfo_chars);
+            {}, detail::userinfo_chars);
     auto dest = set_userinfo_impl(n);
-    detail::pct_encode_impl(
+    detail::encode_impl(
         dest,
         u_.get(id_host).data() - 1,
         s.begin(),
         s.end(),
-        detail::userinfo_chars);
+        {}, detail::userinfo_chars);
     auto pct_s = u_.get(id_user, id_host);
     auto pct_sep = pct_s.find_first_of(':');
     if (pct_sep != string_view::npos)
@@ -686,13 +688,14 @@ set_host(
             return set_host(r.value());
     }
     check_invariants();
-    auto const n = pct_encode_bytes(
-        s, detail::host_chars);
+    auto const n = encoded_size(
+        s, {}, detail::host_chars);
     auto dest = set_host_impl(n);
-    pct_encode(
+    encode(
         dest,
         u_.get(id_path).data(),
         s,
+        {},
         detail::host_chars);
     u_.decoded_[id_host] = s.size();
     u_.host_type_ =
@@ -704,7 +707,7 @@ set_host(
 url_base&
 url_base::
 set_host(
-    pct_encoded_view s)
+    decode_view s)
 {
     grammar::detail::copied_strings<
         BOOST_URL_STACK_BYTES> buf(
@@ -717,15 +720,15 @@ set_host(
             return set_host(r.value());
     }
     check_invariants();
-    auto const n = detail::pct_encode_bytes_impl(
-        s.begin(), s.end(), detail::host_chars);
+    auto const n = detail::encoded_size_impl(
+        s.begin(), s.end(), {}, detail::host_chars);
     auto dest = set_host_impl(n);
-    detail::pct_encode_impl(
+    detail::encode_impl(
         dest,
         u_.get(id_path).data(),
         s.begin(),
         s.end(),
-        detail::host_chars);
+        {}, detail::host_chars);
     u_.decoded_[id_host] = s.size();
     u_.host_type_ =
         urls::host_type::name;
@@ -1407,7 +1410,7 @@ set_path(
 url_base&
 url_base::
 set_path(
-    pct_encoded_view s)
+    decode_view s)
 {
     grammar::detail::copied_strings<
         BOOST_URL_STACK_BYTES> buf(
@@ -1637,7 +1640,7 @@ set_encoded_query(
         detail::enc_query_iter(s),
         true);
     u_.decoded_[id_query] =
-        pct_decode_bytes_unchecked(
+        detail::decode_bytes_unchecked(
             encoded_query());
     check_invariants();
     return *this;
@@ -1661,7 +1664,7 @@ set_query(
         detail::plain_query_iter(s),
         true);
     u_.decoded_[id_query] =
-        pct_decode_bytes_unchecked(
+        detail::decode_bytes_unchecked(
             encoded_query());
     return *this;
 }
@@ -1669,7 +1672,7 @@ set_query(
 url_base&
 url_base::
 set_query(
-    pct_encoded_view s)
+    decode_view s)
 {
     if (s.empty())
         remove_query();
@@ -1684,7 +1687,7 @@ set_query(
         detail::view_query_iter(s),
         true);
     u_.decoded_[id_query] =
-        pct_decode_bytes_unchecked(
+        detail::decode_bytes_unchecked(
             encoded_query());
     return *this;
 }
@@ -1745,13 +1748,14 @@ set_fragment(string_view s)
             this->string());
     s = buf.maybe_copy(s);
     check_invariants();
-    auto const n = pct_encode_bytes(
-        s, detail::fragment_chars);
+    auto const n = encoded_size(
+        s, {}, detail::fragment_chars);
     auto dest = set_fragment_impl(n);
-    pct_encode(
+    encode(
         dest,
         u_.get(id_end).data(),
         s,
+        {},
         detail::fragment_chars);
     u_.decoded_[id_frag] = s.size();
     check_invariants();
@@ -1761,7 +1765,7 @@ set_fragment(string_view s)
 url_base&
 url_base::
 set_fragment(
-    pct_encoded_view s)
+    decode_view s)
 {
     grammar::detail::copied_strings<
         BOOST_URL_STACK_BYTES> buf(
@@ -1769,17 +1773,17 @@ set_fragment(
     s = s.maybe_copy(buf);
     check_invariants();
     auto const n =
-        detail::pct_encode_bytes_impl(
+        detail::encoded_size_impl(
             s.begin(),
             s.end(),
-            detail::fragment_chars);
+            {}, detail::fragment_chars);
     auto dest = set_fragment_impl(n);
-    detail::pct_encode_impl(
+    detail::encode_impl(
         dest,
         u_.get(id_end).data(),
         s.begin(),
         s.end(),
-        detail::fragment_chars);
+        {}, detail::fragment_chars);
     u_.decoded_[id_frag] = s.size();
     check_invariants();
     return *this;
@@ -2016,7 +2020,7 @@ normalize_octets_impl(
             break;
 
         // decode unreserved octets
-        pct_decode_unchecked(
+        detail::decode_unchecked(
             &buf,
             &buf + 1,
             string_view(it, 3));

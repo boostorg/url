@@ -20,6 +20,8 @@ set(BOOST_URL_TESTS_FILES
     authority_view.cpp
     doc_container.cpp
     doc_grammar.cpp
+    decode.cpp
+    encode.cpp
     error.cpp
     error_types.cpp
     grammar.cpp
@@ -32,8 +34,7 @@ set(BOOST_URL_TESTS_FILES
     params_encoded.cpp
     params_encoded_view.cpp
     params_view.cpp
-    pct_encoded_view.cpp
-    pct_encoding.cpp
+    decode_view.cpp
     query_param.cpp
     scheme.cpp
     segments.cpp

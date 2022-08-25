@@ -71,8 +71,7 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    auto rn = urls::validate_pct_encoding(
-        s, query_chars, {});
+    auto rn = urls::decode(s, {}, query_chars);
     if( !rn )
     {
         ec = rn.error();
@@ -153,8 +152,7 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    n += urls::pct_encode_bytes(
-        s, query_chars);
+    n += encoded_size(s, {}, query_chars);
     increment();
     return true;
 }
@@ -166,9 +164,10 @@ copy(
     char const* end) noexcept
 {
     BOOST_ASSERT(p_ != nullptr);
-    dest += pct_encode(
+    dest += encode(
         dest, end,
         string_view(p_, n_),
+        {},
         query_chars);
     increment();
 }
@@ -199,7 +198,7 @@ increment() noexcept
 
 view_query_iter::
 view_query_iter(
-    pct_encoded_view s) noexcept
+    decode_view s) noexcept
     : end_(s.end())
     , n_(0)
 {
@@ -230,8 +229,8 @@ measure(
         return false;
     auto it = p_;
     auto end = std::next(p_, n_);
-    n += pct_encode_bytes_impl(
-        it, end, query_chars);
+    n += encoded_size_impl(
+        it, end, {}, query_chars);
     increment();
     return true;
 }
@@ -245,10 +244,10 @@ copy(
     BOOST_ASSERT(!done_);
     auto it = p_;
     auto last = std::next(p_, n_);
-    dest += pct_encode_impl(
+    dest += encode_impl(
         dest, end,
         it, last,
-        query_chars);
+        {}, query_chars);
     increment();
 }
 
@@ -262,10 +261,10 @@ measure_impl(
     std::size_t& n,
     error_code& ec) noexcept
 {
-    pct_decode_opts opt;
+    decode_opts opt;
     opt.plus_to_space = true;
-    auto rn = validate_pct_encoding(
-        key, query_chars, opt);
+    auto rn = detail::validate_encoding(
+        key, opt, query_chars);
     if( !rn )
     {
         ec = rn.error();
@@ -274,8 +273,8 @@ measure_impl(
     n += key.size();
     if(value)
     {
-        rn = validate_pct_encoding(
-            *value, query_chars, opt);
+        rn = detail::validate_encoding(
+            *value, opt, query_chars);
         if( !rn )
         {
             ec = rn.error();
@@ -332,11 +331,11 @@ measure_impl(
     string_view const* value,
     std::size_t& n) noexcept
 {
-    n += pct_encode_bytes(key, query_chars);
+    n += encoded_size(key, {}, query_chars);
     if(value)
     {
         ++n; // '='
-        n += pct_encode_bytes(*value, query_chars);
+        n += encoded_size(*value, {}, query_chars);
     }
 }
 
@@ -348,13 +347,13 @@ copy_impl(
     char*& dest,
     char const* end) noexcept
 {
-    dest += pct_encode(
-        dest, end, key, query_chars);
+    dest += encode(
+        dest, end, key, {}, query_chars);
     if(value)
     {
         *dest++ = '=';
-        dest += pct_encode(
-            dest, end, *value, query_chars);
+        dest += encode(
+            dest, end, *value, {}, query_chars);
     }
 }
 
@@ -371,7 +370,7 @@ measure_impl(
     if(value)
     {
         ++n; // '='
-        n += pct_encode_bytes(*value, query_chars);
+        n += encoded_size(*value, {}, query_chars);
     }
 }
 
@@ -392,8 +391,8 @@ copy_impl(
     if(value)
     {
         *dest++ = '=';
-        dest += pct_encode(
-            dest, end, *value, query_chars);
+        dest += encode(
+            dest, end, *value, {}, query_chars);
     }
 }
 

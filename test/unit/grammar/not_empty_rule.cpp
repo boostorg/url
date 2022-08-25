@@ -35,7 +35,7 @@ struct not_empty_rule_test
 
         // javadoc
         {
-            result< pct_encoded_view > rv = parse( "Program%20Files",
+            result< decode_view > rv = parse( "Program%20Files",
                 not_empty_rule( pct_encoded_rule( unreserved_chars ) ) );
 
             (void)rv;

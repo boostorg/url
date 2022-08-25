@@ -13,6 +13,7 @@
 
 #include <boost/url/url_view.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
+#include <boost/url/encode.hpp>
 
 #include "test_suite.hpp"
 
@@ -269,9 +270,9 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_user(s2).string() == s3);
-            auto s = pct_encode_to_string(
-                s2, unreserved_chars + sub_delim_chars);
-            u.set_user(pct_encoded_view(s));
+            auto s = encode_to_string(
+                s2, {}, unreserved_chars + sub_delim_chars);
+            u.set_user(decode_view(s));
             BOOST_TEST(u.string() == s3);
             BOOST_TEST_EQ(u.user(), s2);
             BOOST_TEST(u.has_userinfo());
@@ -417,12 +418,12 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST(
                 u.set_password(s2).string() == s3);
-            auto s = pct_encode_to_string(
-                s2, unreserved_chars +
+            auto s = encode_to_string(
+                s2, {}, unreserved_chars +
                     sub_delim_chars + ':');
             BOOST_TEST(
                 u.set_password(
-                     pct_encoded_view(s)).string() == s3);
+                     decode_view(s)).string() == s3);
             BOOST_TEST_EQ(u.password(), s2);
             BOOST_TEST(u.has_userinfo());
         };
@@ -573,12 +574,12 @@ public:
             url u = parse_uri_reference(s1).value();
             BOOST_TEST_EQ(
                 u.set_userinfo(s2).string(), s3);
-            auto s = pct_encode_to_string(
-                s2, unreserved_chars +
+            auto s = encode_to_string(
+                s2, {}, unreserved_chars +
                     sub_delim_chars + ':');
             BOOST_TEST(
                 u.set_userinfo(
-                     pct_encoded_view(s)).string() == s3);
+                     decode_view(s)).string() == s3);
             BOOST_TEST_EQ(u.userinfo(), s2);
             BOOST_TEST(u.has_userinfo());
         };
@@ -806,7 +807,7 @@ public:
         }
         {
             url u;
-            u.set_host(pct_encoded_view("1.2.3.4"));
+            u.set_host(decode_view("1.2.3.4"));
             BOOST_TEST_EQ(u.string(), "//1.2.3.4");
             BOOST_TEST(u.host_type() ==
                 host_type::ipv4);
@@ -861,7 +862,7 @@ public:
         // reg-name
         {
             url u;
-            u.set_host(pct_encoded_view("example.com"));
+            u.set_host(decode_view("example.com"));
             BOOST_TEST_EQ(u.string(), "//example.com");
             BOOST_TEST(u.host_type() ==
                 host_type::name);
@@ -1421,8 +1422,8 @@ public:
                 url u = parse_uri_reference(s0).value();
                 u.set_path(arg);
                 BOOST_TEST_EQ(u.string(), match);
-                auto s = pct_encode_to_string(arg, pchars);
-                u.set_path(pct_encoded_view(s));
+                auto s = encode_to_string(arg, {}, pchars);
+                u.set_path(decode_view(s));
                 BOOST_TEST_EQ(u.string(), match);
             };
             check(
@@ -1578,11 +1579,11 @@ public:
                 BOOST_TEST_EQ(u.query(), q);
 
                 u.remove_query();
-                auto s = pct_encode_to_string(
-                    q, detail::query_chars);
-                pct_decode_opts opt;
+                auto s = encode_to_string(
+                    q, {}, detail::query_chars);
+                decode_opts opt;
                 opt.plus_to_space = true;
-                auto es = pct_encoded_view(s, opt);
+                auto es = decode_view(s, opt);
                 u.set_query(es);
                 BOOST_TEST(u.has_query());
                 BOOST_TEST_EQ(u.string(), us);
@@ -1776,9 +1777,9 @@ public:
                 BOOST_TEST_EQ(u.encoded_fragment(), ef);
                 BOOST_TEST_EQ(u.fragment(), f);
 
-                auto s = pct_encode_to_string(
-                    f, detail::fragment_chars);
-                u.set_fragment(pct_encoded_view(s));
+                auto s = encode_to_string(
+                    f, {}, detail::fragment_chars);
+                u.set_fragment(decode_view(s));
                 BOOST_TEST(u.has_fragment());
                 BOOST_TEST_EQ(u.string(), h);
                 BOOST_TEST_EQ(u.encoded_fragment(), ef);

@@ -12,7 +12,7 @@
 #define BOOST_URL_SEGMENTS_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/decode_view.hpp>
 #include <cstddef>
 #include <iosfwd>
 
@@ -75,10 +75,10 @@ public:
         and ownership is retained by the container.
 
     */
-    using reference = pct_encoded_view;
+    using reference = decode_view;
 
     /// @copydoc reference
-    using const_reference = pct_encoded_view;
+    using const_reference = decode_view;
 
     /** The unsigned integer type used to represent size.
     */
@@ -163,7 +163,7 @@ public:
         @par Complexity
         Constant.
     */
-    pct_encoded_view
+    decode_view
     front() const noexcept;
 
     /** Access the last element.
@@ -176,7 +176,7 @@ public:
         @par Complexity
         Constant.
     */
-    pct_encoded_view
+    decode_view
     back() const noexcept;
 
     //--------------------------------------------

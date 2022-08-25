@@ -192,7 +192,7 @@ public:
     {
         {
             params_view u = parse_query_params(
-                "a=1&b=2+2&c=%61%70%70%6c%65").value().decoded();
+                "a=1&b=2+2&c=%61%70%70%6c%65").value();
             BOOST_TEST_EQ(u.at("b"), "2 2");
             BOOST_TEST_EQ(u.at("c"), "apple");
         }

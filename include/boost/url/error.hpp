@@ -58,7 +58,7 @@ enum class error
 
        This error condition is fatal.
     */
-    incomplete_pct_encoding,
+    incomplete_encoding,
 
     /**
      * Missing hexadecimal digit.

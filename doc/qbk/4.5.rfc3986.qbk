@@ -47,7 +47,7 @@ strings which are percent-encoded. This function is passed the
 set of characters that may be used without escapes and returns
 a suitable rule. If the input is valid; that is, if there are
 no invalid escape sequences, the rule returns a
-__pct_encoded_view__. This is a forward range of characters
+__decode_view__. This is a forward range of characters
 which performs percent-decoding when iterated. It also supports
 equality and comparison to unencoded strings, without allocating
 memory. In the example below we parse the string `s` as a

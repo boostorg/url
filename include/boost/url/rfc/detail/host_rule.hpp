@@ -11,7 +11,7 @@
 #define BOOST_URL_RFC_DETAIL_HOST_RULE_HPP
 
 #include <boost/url/host_type.hpp>
-#include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/decode_view.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
@@ -45,7 +45,7 @@ struct host_rule_t
             urls::host_type::none;
         string_view match;
         unsigned char addr[16] = {};
-        pct_encoded_view name;
+        decode_view name;
     };
 
     auto

@@ -73,7 +73,7 @@ public:
             sv = f(s).value().decoded());
         // forward
         {
-            std::vector<pct_encoded_view> v1;
+            std::vector<decode_view> v1;
             std::copy(
                 sv.begin(),
                 sv.end(),
@@ -82,7 +82,7 @@ public:
         }
         // reverse
         {
-            std::vector<pct_encoded_view> v1;
+            std::vector<decode_view> v1;
             std::copy(
                 reverse(sv.end()),
                 reverse(sv.begin()),

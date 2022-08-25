@@ -195,7 +195,7 @@ path_pop_back( string_view& s )
         return c;
     }
     char c = 0;
-    pct_decode_unchecked(
+    detail::decode_unchecked(
         &c, &c + 1, s.substr(s.size() - 3));
     if (c != '/')
     {
@@ -408,7 +408,7 @@ normalized_path_compare(
             if(end - it < 3)
                 return n;
             char c = 0;
-            pct_decode_unchecked(
+            detail::decode_unchecked(
                 &c,
                 &c + 1,
                 string_view(it, 3));
@@ -478,7 +478,7 @@ normalized_path_compare(
             return c;
         }
         char c = 0;
-        pct_decode_unchecked(
+        detail::decode_unchecked(
             &c, &c + 1, s.substr(s.size() - 3));
         if (c != '/')
         {

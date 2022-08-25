@@ -204,7 +204,7 @@ find(
     auto const end_ = end();
     while(from != end_)
     {
-        if (pct_encoded_view(from.encoded_key()) == key)
+        if (decode_view(from.encoded_key()) == key)
             break;
         ++from;
     }

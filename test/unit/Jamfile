@@ -25,6 +25,9 @@ local SOURCES =
     authority_view.cpp
     error.cpp
     error_types.cpp
+    encode.cpp
+    decode.cpp
+    decode_view.cpp
     grammar.cpp
     host_type.cpp
     ipv4_address.cpp
@@ -34,8 +37,6 @@ local SOURCES =
     params_encoded.cpp
     params_encoded_view.cpp
     params_view.cpp
-    pct_encoded_view.cpp
-    pct_encoding.cpp
     query_param.cpp
     scheme.cpp
     segments.cpp

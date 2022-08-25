@@ -12,7 +12,8 @@
 
 #include <boost/url/detail/any_path_iter.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/pct_encoding.hpp>
+#include <boost/url/decode.hpp>
+#include <boost/url/encode.hpp>
 #include <boost/url/rfc/pchars.hpp>
 
 namespace boost {
@@ -75,8 +76,7 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    auto rn = urls::validate_pct_encoding(
-        s, pchars, {});
+    auto rn = urls::decode(s, {}, pchars);
     if( !rn )
     {
         ec = rn.error();
@@ -160,8 +160,8 @@ measure(
     if(! p_)
         return false;
     string_view s(p_, n_);
-    n += urls::pct_encode_bytes(
-        s, pchars);
+    n += urls::encoded_size(
+        s, {}, pchars);
     increment();
     return true;
 }
@@ -173,10 +173,11 @@ copy(
     char const* end) noexcept
 {
     BOOST_ASSERT(p_ != nullptr);
-    dest += pct_encode(
+    dest += encode(
         dest,
         end,
         string_view(p_, n_),
+        {},
         pchars);
     increment();
 }
@@ -207,7 +208,7 @@ increment() noexcept
 
 view_path_iter::
 view_path_iter(
-    pct_encoded_view s) noexcept
+    decode_view s) noexcept
     : n_(0)
     , end_(s.end())
 {
@@ -241,7 +242,7 @@ measure(
         return false;
     auto it = p_;
     auto end = std::next(p_, n_);
-    n += pct_encode_bytes_impl(it, end, pchars);
+    n += encoded_size_impl(it, end, {}, pchars);
     increment();
     return true;
 }
@@ -255,8 +256,8 @@ copy(
     BOOST_ASSERT(!done_);
     auto it = p_;
     auto last = std::next(p_, n_);
-    dest += pct_encode_impl(
-        dest, end, it, last, pchars);
+    dest += encode_impl(
+        dest, end, it, last, {}, pchars);
     increment();
 }
 
@@ -269,8 +270,7 @@ measure_impl(
     std::size_t& n,
     error_code& ec) noexcept
 {
-    auto rn = urls::validate_pct_encoding(
-        s, pchars, {});
+    auto rn = urls::decode(s, {}, pchars);
     if( !rn )
     {
         ec = rn.error();
@@ -307,7 +307,7 @@ measure_impl(
     string_view s,
     std::size_t& n) noexcept
 {
-    n += pct_encode_bytes(s, pchars);
+    n += encoded_size(s, {}, pchars);
 }
 
 void
@@ -317,8 +317,8 @@ copy_impl(
     char*& dest,
     char const* end) noexcept
 {
-    dest += pct_encode(
-        dest, end, s, pchars);
+    dest += encode(
+        dest, end, s, {}, pchars);
 }
 
 } // detail

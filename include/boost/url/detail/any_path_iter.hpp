@@ -111,8 +111,8 @@ class BOOST_SYMBOL_VISIBLE
     public any_path_iter
 {
     std::size_t n_;
-    pct_encoded_view::const_iterator p_;
-    pct_encoded_view::const_iterator end_;
+    decode_view::const_iterator p_;
+    decode_view::const_iterator end_;
     bool done_{false};
 
     void
@@ -121,7 +121,7 @@ class BOOST_SYMBOL_VISIBLE
 public:
     explicit
     view_path_iter(
-        pct_encoded_view s) noexcept;
+        decode_view s) noexcept;
 
     bool
     measure(

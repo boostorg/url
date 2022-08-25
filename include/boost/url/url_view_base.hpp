@@ -18,11 +18,9 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/params_view.hpp>
 #include <boost/url/params_encoded_view.hpp>
-#include <boost/url/pct_encoding.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
-#include <boost/url/scheme.hpp>
 #include <boost/url/detail/url_impl.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
@@ -568,10 +566,10 @@ public:
             @ref encoded_userinfo,
             @ref has_userinfo.
     */
-    pct_encoded_view
+    decode_view
     userinfo() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = false;
         string_view s = encoded_userinfo();
         return
@@ -654,10 +652,10 @@ public:
             @ref has_password,
             @ref password.
     */
-    pct_encoded_view
+    decode_view
     user() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = false;
         string_view s = encoded_user();
         return
@@ -764,10 +762,10 @@ public:
             @ref has_password,
             @ref user.
     */
-    pct_encoded_view
+    decode_view
     password() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = false;
         string_view s = encoded_password();
         return
@@ -910,10 +908,10 @@ public:
             @ref port,
             @ref port_number.
     */
-    pct_encoded_view
+    decode_view
     host() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = false;
         string_view s = encoded_host();
         return
@@ -1010,7 +1008,7 @@ public:
             @ref port_number.
     */
     BOOST_URL_DECL
-    pct_encoded_view
+    decode_view
     hostname() const noexcept;
 
     /** Return the host as an IPv4 address
@@ -1431,10 +1429,10 @@ public:
             @ref encoded_query,
             @ref has_query.
     */
-    pct_encoded_view
+    decode_view
     path() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = false;
         string_view s = encoded_path();
         return
@@ -1666,10 +1664,10 @@ public:
             @ref encoded_query,
             @ref has_query.
     */
-    pct_encoded_view
+    decode_view
     query() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = true;
         string_view s = encoded_query();
         return
@@ -1837,10 +1835,10 @@ public:
             @ref encoded_fragment,
             @ref has_fragment.
     */
-    pct_encoded_view
+    decode_view
     fragment() const noexcept
     {
-        pct_decode_opts opt;
+        decode_opts opt;
         opt.plus_to_space = false;
         string_view s = encoded_fragment();
         return

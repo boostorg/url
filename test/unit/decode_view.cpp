@@ -8,7 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/pct_encoded_view.hpp>
+#include <boost/url/decode_view.hpp>
 #include <boost/core/ignore_unused.hpp>
 
 #include <sstream>
@@ -18,15 +18,15 @@
 namespace boost {
 namespace urls {
 
-struct pct_encoded_view_test
+struct decode_view_test
 {
     string_view str = "a%20uri+test";
     string_view dec_str = "a uri test";
     string_view no_plus_dec_str = "a uri+test";
     const std::size_t dn = 10;
-    pct_decode_opts no_plus_opt;
+    decode_opts no_plus_opt;
 
-    pct_encoded_view_test()
+    decode_view_test()
     {
         no_plus_opt.plus_to_space = false;
     }
@@ -34,80 +34,80 @@ struct pct_encoded_view_test
     void
     testDecodedView()
     {
-        // pct_encoded_view()
+        // decode_view()
         {
-            pct_encoded_view s;
+            decode_view s;
             BOOST_TEST_EQ(s, "");
             BOOST_TEST_EQ(s.size(), 0u);
             BOOST_TEST_EQ(s.encoded().size(), 0u);
         }
 
-        // pct_encoded_view(char const*)
+        // decode_view(char const*)
         {
-            pct_encoded_view s(str.data());
+            decode_view s(str.data());
             BOOST_TEST_EQ(s, dec_str);
             BOOST_TEST_EQ(s.size(), dn);
             BOOST_TEST_EQ(s.encoded().size(), str.size());
         }
 
-        // pct_encoded_view(char const*, bool plus_to_space)
+        // decode_view(char const*, bool plus_to_space)
         {
-            pct_encoded_view
+            decode_view
                 s(str.data(), no_plus_opt);
             BOOST_TEST_EQ(s, no_plus_dec_str);
             BOOST_TEST_EQ(s.size(), dn);
             BOOST_TEST_EQ(s.encoded().size(), str.size());
         }
 
-        // pct_encoded_view(string_view)
+        // decode_view(string_view)
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             BOOST_TEST_EQ(s, dec_str);
             BOOST_TEST_EQ(s.size(), dn);
             BOOST_TEST_EQ(s.encoded().size(), str.size());
         }
 
-        // pct_encoded_view(string_view, bool plus_to_space)
+        // decode_view(string_view, bool plus_to_space)
         {
-            pct_encoded_view s(str, no_plus_opt);
+            decode_view s(str, no_plus_opt);
             BOOST_TEST_EQ(s, no_plus_dec_str);
             BOOST_TEST_EQ(s.size(), dn);
             BOOST_TEST_EQ(s.encoded().size(), str.size());
         }
 
 #if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
-        // pct_encoded_view(string_view)
+        // decode_view(string_view)
         {
             std::string_view std_str = str;
-            pct_encoded_view s(std_str);
+            decode_view s(std_str);
             BOOST_TEST_EQ(s, dec_str);
             BOOST_TEST_EQ(s.size(), dn);
             BOOST_TEST_EQ(s.encoded().size(), str.size());
         }
 
-        // pct_encoded_view(string_view, bool plus_to_space)
+        // decode_view(string_view, bool plus_to_space)
         {
             std::string_view std_str = str;
-            pct_encoded_view s(std_str, no_plus_opt);
+            decode_view s(std_str, no_plus_opt);
             BOOST_TEST_EQ(s, no_plus_dec_str);
             BOOST_TEST_EQ(s.size(), dn);
             BOOST_TEST_EQ(s.encoded().size(), str.size());
         }
 #endif
 
-        // pct_encoded_view(string_view)
+        // decode_view(string_view)
         {
             std::string ss(str);
-            pct_encoded_view s(ss);
+            decode_view s(ss);
             BOOST_TEST_EQ(s, dec_str);
             BOOST_TEST_EQ(s.size(), dn);
             BOOST_TEST_EQ(s.encoded().size(), str.size());
         }
 
-        // pct_encoded_view(string_view, bool plus_to_space)
+        // decode_view(string_view, bool plus_to_space)
         {
             std::string ss(str);
-            pct_encoded_view s(ss, no_plus_opt);
+            decode_view s(ss, no_plus_opt);
             BOOST_TEST_EQ(s, no_plus_dec_str);
             BOOST_TEST_EQ(s.size(), dn);
             BOOST_TEST_EQ(s.encoded().size(), str.size());
@@ -119,20 +119,20 @@ struct pct_encoded_view_test
     {
         // begin()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             BOOST_TEST_EQ(*s.begin(), s.front());
             BOOST_TEST_NE(s.begin(),
-                pct_encoded_view::iterator{});
+                decode_view::iterator{});
         }
 
         // end()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             auto l = s.end();
             --l;
             BOOST_TEST_EQ(*l, s.back());
             BOOST_TEST_NE(l,
-                pct_encoded_view::iterator{});
+                decode_view::iterator{});
         }
     }
 
@@ -141,19 +141,19 @@ struct pct_encoded_view_test
     {
         // front()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             BOOST_TEST_EQ(s.front(), 'a');
         }
 
         // back()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             BOOST_TEST_EQ(s.back(), 't');
         }
 
         // encoded().data()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             BOOST_TEST_EQ(s.encoded().data(), str.data());
         }
     }
@@ -163,34 +163,34 @@ struct pct_encoded_view_test
     {
         // size()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             BOOST_TEST_EQ(s.size(), dn);
         }
 
         // encoded().size()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             BOOST_TEST_EQ(s.encoded().size(), str.size());
         }
 
         // encoded().length()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             BOOST_TEST_EQ(s.encoded().length(), str.size());
         }
 
         // encoded().max_size()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             BOOST_TEST_GT(s.encoded().max_size(), 0u);
         }
 
         // empty()
         {
-            pct_encoded_view s;
+            decode_view s;
             BOOST_TEST(s.empty());
 
-            pct_encoded_view s2(str);
+            decode_view s2(str);
             BOOST_TEST_NOT(s2.empty());
         }
     }
@@ -200,7 +200,7 @@ struct pct_encoded_view_test
     {
         // copy()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             std::string out(s.size(), ' ');
             s.copy(&out[0], s.size());
             BOOST_TEST_EQ(s, dec_str);
@@ -212,7 +212,7 @@ struct pct_encoded_view_test
     {
         // compare()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             BOOST_TEST_EQ(s.compare(dec_str), 0);
             BOOST_TEST_EQ(s.compare("a a"), 1);
             BOOST_TEST_EQ(s.compare("a z"), -1);
@@ -222,13 +222,13 @@ struct pct_encoded_view_test
 
         // operators
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
 
-            // pct_encoded_view
+            // decode_view
             {
-                pct_encoded_view s0(str);
-                pct_encoded_view s1("a%20tri+test");
-                pct_encoded_view s2("a%20vri+test");
+                decode_view s0(str);
+                decode_view s1("a%20tri+test");
+                decode_view s2("a%20vri+test");
                 BOOST_TEST(s == s0);
                 BOOST_TEST_NOT(s == s1);
                 BOOST_TEST(s != s2);
@@ -306,13 +306,13 @@ struct pct_encoded_view_test
     {
         // to_string()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             BOOST_TEST_EQ(s.to_string(), dec_str);
         }
 
         // append_to()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             std::string o = "init ";
             s.append_to(o);
 
@@ -324,7 +324,7 @@ struct pct_encoded_view_test
 
         // assign_to()
         {
-            pct_encoded_view s(str);
+            decode_view s(str);
             std::string o = "init ";
             s.assign_to(o);
             BOOST_TEST_EQ(o, dec_str);
@@ -336,7 +336,7 @@ struct pct_encoded_view_test
             {
                 BOOST_TEST(sv == dec_str);
             };
-            pct_encoded_view s(str);
+            decode_view s(str);
             f(s.to_string());
         }
 
@@ -346,7 +346,7 @@ struct pct_encoded_view_test
             {
                 BOOST_TEST(sv == dec_str);
             };
-            pct_encoded_view s(str);
+            decode_view s(str);
             f(s.to_string().c_str());
         }
     }
@@ -357,7 +357,7 @@ struct pct_encoded_view_test
         // operator<<
         {
             std::stringstream ss;
-            pct_encoded_view  s(str);
+            decode_view  s(str);
             ss << s;
             BOOST_TEST_EQ(ss.str(), dec_str);
         }
@@ -368,7 +368,7 @@ struct pct_encoded_view_test
     {
         {
             std::stringstream ss;
-            urls::pct_encoded_view ds("test+string");
+            urls::decode_view ds("test+string");
             // no warning about object slicing
             ss << ds;
         }
@@ -380,7 +380,7 @@ struct pct_encoded_view_test
                 b = a;
                 BOOST_TEST_EQ(b.size(), dn);
             };
-            break_stuff(pct_encoded_view{str}.to_string());
+            break_stuff(decode_view{str}.to_string());
         }
 
         {
@@ -398,11 +398,11 @@ struct pct_encoded_view_test
                     boost::ignore_unused(s, dn);
                 }
             };
-            A a1(pct_encoded_view{str}.to_string(), dn);
-            A a2(std::string_view(pct_encoded_view{str}.to_string()), dn);
-            A a3 = std::string_view(pct_encoded_view{str}.to_string());
+            A a1(decode_view{str}.to_string(), dn);
+            A a2(std::string_view(decode_view{str}.to_string()), dn);
+            A a3 = std::string_view(decode_view{str}.to_string());
             // https://en.cppreference.com/w/cpp/language/copy_initialization#Notes
-            // A a4 = pct_encoded_view{str}.to_string();
+            // A a4 = decode_view{str}.to_string();
             boost::ignore_unused(a1, a2, a3);
 #endif
             struct B
@@ -418,31 +418,31 @@ struct pct_encoded_view_test
                     boost::ignore_unused(s, dn);
                 }
             };
-            B b1(pct_encoded_view{str}.to_string(), dn);
+            B b1(decode_view{str}.to_string(), dn);
             B b2(string_view(
-                       pct_encoded_view{str}.to_string()), dn);
+                       decode_view{str}.to_string()), dn);
             B b3 = string_view(
-                pct_encoded_view{str}.to_string());
+                decode_view{str}.to_string());
             // https://en.cppreference.com/w/cpp/language/copy_initialization#Notes
-            // B b4 = pct_encoded_view{str}.to_string();
+            // B b4 = decode_view{str}.to_string();
             boost::ignore_unused(b1, b2, b3);
         }
 
         {
 #if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
             auto f1 = []( std::string_view ) {};
-            f1(pct_encoded_view{str}.to_string());
+            f1(decode_view{str}.to_string());
 #endif
             auto f2 = []( urls::string_view ) {};
-            f2(pct_encoded_view{str}.to_string());
+            f2(decode_view{str}.to_string());
 
             auto f3 = []( std::string const& ) {};
-            f3(pct_encoded_view{str}.to_string());
+            f3(decode_view{str}.to_string());
 
             auto f4 = []( std::basic_string<char,
                          std::char_traits<char>,
                          std::allocator<char>> const&) {};
-            f4(pct_encoded_view{str}.to_string());
+            f4(decode_view{str}.to_string());
         }
     }
 
@@ -462,8 +462,8 @@ struct pct_encoded_view_test
 };
 
 TEST_SUITE(
-    pct_encoded_view_test,
-    "boost.url.pct_encoded_view");
+    decode_view_test,
+    "boost.url.decode_view");
 
 } // urls
 } // boost

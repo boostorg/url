@@ -310,7 +310,7 @@ encoded_hostname() const noexcept
     return s;
 }
 
-pct_encoded_view
+decode_view
 url_view_base::
 hostname() const noexcept
 {
@@ -342,7 +342,7 @@ hostname() const noexcept
         break;
     }
     }
-    pct_decode_opts opt;
+    decode_opts opt;
     opt.plus_to_space = false;
     return detail::access::construct(
         s, n, opt);

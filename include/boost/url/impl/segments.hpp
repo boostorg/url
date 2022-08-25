@@ -12,7 +12,6 @@
 #define BOOST_URL_IMPL_SEGMENTS_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/pct_encoding.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/detail/any_path_iter.hpp>
 #include <boost/url/detail/except.hpp>
@@ -51,7 +50,7 @@ class segments::iterator
 
 public:
     using value_type = std::string;
-    using reference = pct_encoded_view;
+    using reference = decode_view;
     using pointer = void const*;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
@@ -170,7 +169,7 @@ inline
 auto
 segments::
 front() const ->
-    pct_encoded_view
+    decode_view
 {
     BOOST_ASSERT(! empty());
     return *begin();
@@ -180,7 +179,7 @@ inline
 auto
 segments::
 back() const ->
-    pct_encoded_view
+    decode_view
 {
     BOOST_ASSERT(! empty());
     return *std::prev(end());

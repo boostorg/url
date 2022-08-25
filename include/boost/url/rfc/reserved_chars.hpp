@@ -23,7 +23,7 @@ namespace urls {
     the functions @ref grammar::find_if and
     @ref grammar::find_if_not.
     @code
-    result< pct_encoded_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( reserved_chars ) );
+    result< decode_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( reserved_chars ) );
     @endcode
 
     @par Specification
