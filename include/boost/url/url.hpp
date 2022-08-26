@@ -327,9 +327,11 @@ private:
     This function attempts to resolve a URL
     reference `ref` against the base URL `base`
     in a manner similar to that of a web browser
-    resolving an anchor tag. The base URL
-    must satisfy the <em>absolute-URI</em>
-    grammar.
+    resolving an anchor tag.
+
+    The base URL must satisfy the <em>URI</em>
+    grammar. In other words, it must contain
+    a scheme.
 
     Relative references are only usable when
     in the context of a base absolute URI.
