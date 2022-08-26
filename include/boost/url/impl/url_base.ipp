@@ -1348,6 +1348,204 @@ resolve(
     return {};
 }
 
+result<void>
+url_base::
+relative(
+    url_view_base const& href)
+{
+    BOOST_ASSERT(this != &href);
+
+    // Validate input
+    if (!href.is_path_absolute() ||
+        !this->is_path_absolute())
+    {
+        // href is already relative or
+        // cannot calculate a URI relative to another relative URI
+        BOOST_URL_RETURN_EC(error::not_a_base);
+    }
+
+    // Resolve scheme
+    if (href.scheme() == scheme() ||
+        !href.has_scheme())
+    {
+        remove_scheme();
+    }
+    else
+    {
+        set_scheme(href.scheme());
+    }
+
+    // Resolve authority
+    if (has_scheme() ||
+        href.has_authority() != has_authority() ||
+        href.authority() != authority() ||
+        href.has_userinfo() ||
+        href.has_password())
+    {
+        // Otherwise, copy all but scheme from href
+        if (href.has_authority())
+            set_encoded_authority(href.encoded_authority());
+        else
+            remove_authority();
+        set_encoded_path(href.encoded_path());
+        normalize_path();
+        if (href.has_query())
+            set_encoded_query(href.encoded_query());
+        else
+            remove_query();
+        if (href.has_fragment())
+            set_encoded_fragment(href.encoded_fragment());
+        else
+            remove_fragment();
+        return {};
+    }
+    remove_authority();
+
+    // Resolve new path
+    // 0. Get segments
+    auto segs0 = dynamic_cast<url_view_base*>(this)->segments();
+    auto segs1 = href.segments();
+
+    // Reference iterators
+    auto const begin0 = segs0.begin();
+    auto it0 = begin0;
+    auto const end0 = segs0.end();
+    auto const last0 = begin0 != end0 ? std::prev(end0) : end0;
+    auto const begin1 = segs1.begin();
+    auto it1 = begin1;
+    auto const end1 = segs1.end();
+    auto const last1 = begin1 != end1 ? std::prev(end1) : end1;
+
+    // Function to advance the dotdot segments
+    decode_view dotdot("..");
+    decode_view dot(".");
+    auto consume_dots = [dotdot, dot](
+        segments_view::iterator& first,
+        segments_view::iterator last)
+    {
+        if (*first == dotdot ||
+            *first == dot)
+        {
+            ++first;
+            return true;
+        }
+        auto it = std::next(first);
+        std::size_t l = 1;
+        while (it != last)
+        {
+            if (*it == dotdot)
+            {
+                if (--l == 0)
+                {
+                    ++it;
+                    first = it;
+                    break;
+                }
+            }
+            else if (*it != dot)
+            {
+                ++l;
+            }
+            ++it;
+        }
+        return first == it;
+    };
+
+    // 1. Find the longest common path
+    while (
+        it0 != last0 &&
+        it1 != last1)
+    {
+        if (consume_dots(it0, last0))
+            continue;
+        if (consume_dots(it1, last1))
+            continue;
+        if (*it0 == *it1)
+        {
+            ++it0;
+            ++it1;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    // 1.b Check if parent paths are the same
+    if (it0 == last0 &&
+        it1 == last1 &&
+        it0 != end0 &&
+        it1 != end1 &&
+        *it0 == *it1)
+    {
+        // Return empty path
+        if (href.has_query())
+            set_encoded_query(href.encoded_query());
+        else
+            remove_query();
+        set_encoded_path({});
+        if (href.has_fragment())
+            set_encoded_fragment(href.encoded_fragment());
+        else
+            remove_fragment();
+        return {};
+    }
+
+    // 2. Append ".." for each segment left in base
+    std::size_t n = 0;
+    if (it0 != end0)
+    {
+        while (it0 != last0)
+        {
+            if (*it0 == dotdot)
+            {
+                if (n != 0)
+                    --n;
+            }
+            else if (*it0 != dot)
+            {
+                ++n;
+            }
+            ++it0;
+        }
+    }
+    set_encoded_path({});
+    set_path_absolute(false);
+    segments_encoded segs = encoded_segments();
+    while (n--)
+    {
+        segs.push_back(dotdot.encoded());
+    }
+
+    // 3. Append segments left from the reference
+    while (it1 != end1)
+    {
+        if (*it1 == dotdot)
+        {
+            if (!segs.empty())
+                segs.pop_back();
+        }
+        else if (*it1 != dot)
+        {
+            segs.push_back((*it1).encoded());
+        }
+        ++it1;
+    }
+
+    // Query and fragment comes from reference
+    if (href.has_query())
+        set_encoded_query(href.encoded_query());
+    else
+        remove_query();
+
+    if (href.has_fragment())
+        set_encoded_fragment(href.encoded_fragment());
+    else
+        remove_fragment();
+
+    return {};
+}
+
 //------------------------------------------------
 //
 // Normalization

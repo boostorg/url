@@ -536,8 +536,7 @@ resolve(
     any of the url containers that inherit
     from @ref url_base.
 
-    If an error occurs, the contents of
-    `dest` is unspecified and `ec` is set.
+    If the function fails, an error is returned.
 
     @par Example
     @code

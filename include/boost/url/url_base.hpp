@@ -2467,6 +2467,64 @@ public:
     //
     //--------------------------------------------
 
+    /** Compares absolute paths and this URL relative to the other
+
+        This function compares two absolute paths.
+        It sets this URL to a relative path that
+        references the target path relative
+        to the base path represented by this URL.
+
+        Unlike @ref resolve, this function takes
+        two absolute paths to create a relative
+        path.
+
+        If the input URLs contain schemes and
+        authorities, these are resolved. If the
+        schemes and authorities are the same, they
+        are removed before the relative path is
+        calculated. If they are different, only
+        the relative path of the reference URL
+        is returned.
+
+        Given this object as a base URL, this function
+        resolves the reference as if performing
+        the following steps:
+
+        @li Normalize both URLs
+        @li Remove the longest common path from both paths
+        @li Replace each segment left in this base path with ".."
+        @li Append the reference path
+        @li Normalize the resulting URL
+
+        This function places the result of the
+        resolution into this same object in place,
+        which can be any of the url containers
+        that inherit from @ref url_base.
+
+        If the function fails, an error is returned.
+
+        @par Example
+        @code
+        url u( "/relative/sub/foo/sub/file" );
+        relative( "/relative/path" );
+        assert( u.str() == "../../../path" );
+        @endcode
+
+        @par Exception Safety
+        Basic guarantee.
+        Calls to allocate may throw.
+
+        @param href The target URL the relative URL should point to
+
+        @see
+            @ref url,
+            @ref url_view.
+    */
+    BOOST_URL_DECL
+    result<void>
+    relative(
+        url_view_base const& ref);
+
     /** Resolve a URL reference against this base URL
 
         This function attempts to resolve a URL

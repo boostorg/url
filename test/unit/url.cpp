@@ -872,10 +872,18 @@ struct url_test
                 parse_uri_reference(b).value();
             auto ur =
                 parse_uri_reference(r).value();
+
+            // free function
             url dest = parse_uri_reference("x/y" ).value();
             auto rv = relative(ub, ur, dest);
             BOOST_TEST(!rv.has_error());
             BOOST_TEST_EQ(dest.string(), e);
+
+            // in place
+            url base( ub );
+            rv = base.relative( ur );
+            BOOST_TEST(!rv.has_error());
+            BOOST_TEST_EQ(base.string(), e);
         };
 
         // relative URL / absolute paths
