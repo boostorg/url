@@ -194,7 +194,9 @@ relative(
     }
     dest.remove_authority();
 
-    // Resolve path
+    // Resolve new path
+    dest.set_encoded_path({});
+
     // 0. Get segments
     auto segs0 = base.segments();
     auto segs1 = href.segments();
@@ -210,8 +212,8 @@ relative(
     auto const last1 = begin0 != end1 ? std::prev(end1) : end1;
 
     // Function to advance the dotdot segments
-    pct_encoded_view dotdot("..");
-    pct_encoded_view dot(".");
+    decode_view dotdot("..");
+    decode_view dot(".");
     auto consume_dots = [dotdot, dot](
         segments_view::iterator& first,
         segments_view::iterator last)
@@ -272,7 +274,6 @@ relative(
         *it0 == *it1)
     {
         // Return empty path
-        dest.segments() = {};
         if (href.has_query())
             dest.set_encoded_query(href.encoded_query());
         else
@@ -286,7 +287,6 @@ relative(
 
     // 2. Append ".." for each segment left in base
     segments_encoded segs = dest.encoded_segments();
-    segs = {};
     if (it0 != end0)
     {
         dest.set_path_absolute(false);
