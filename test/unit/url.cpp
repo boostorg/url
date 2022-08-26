@@ -937,6 +937,8 @@ struct url_test
             check("mid/content=5/../6", "mid/6");
             check("mid/content=5/../6/.", "mid/6/");
             check("mid/content=5/../6/..", "mid/");
+            check("a/../a"       , "a");
+            check("a/.."       , "");
             check("/..", "/..");
             check(".", "");
             check("..", "..");

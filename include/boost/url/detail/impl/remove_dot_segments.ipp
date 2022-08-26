@@ -175,22 +175,23 @@ remove_dot_segments(
                 dest0, dest - dest0).find_last_of('/');
             if (p != string_view::npos)
             {
+                // output has multiple segments
                 // "erase" [p, end] if not "/.."
-                if (!dot_equal(string_view(dest0 + p, dest - (dest0 + p)), "/.."))
-                {
+                string_view last_seg(dest0 + p, dest - (dest0 + p));
+                if (!dot_equal(last_seg, "/.."))
                     dest = dest0 + p;
-                }
                 else
-                {
                     append(dest, end, "/..");
-                }
             }
             else if (dest0 != dest)
             {
+                // one segment in the output
                 dest = dest0;
+                s.remove_prefix(1);
             }
             else
             {
+                // output is empty
                 append(dest, end, "/..");
             }
             s.remove_prefix(n-1);
@@ -209,7 +210,6 @@ remove_dot_segments(
             else if (dest0 != dest)
             {
                 dest = dest0;
-                append(dest, end, "/");
             }
             else
             {
