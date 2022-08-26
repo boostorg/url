@@ -11,12 +11,14 @@
 #define BOOST_URL_DETAIL_REMOVE_DOT_SEGMENTS_HPP
 
 #include <boost/url/string_view.hpp>
+#include <boost/url/detail/normalize.hpp>
 #include <cstdint>
 
 namespace boost {
 namespace urls {
 namespace detail {
 
+BOOST_URL_DECL
 std::size_t
 remove_dot_segments(
     char* dest,

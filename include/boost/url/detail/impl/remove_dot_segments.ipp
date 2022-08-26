@@ -121,7 +121,7 @@ remove_dot_segments(
         if (dot_starts_with(s, "../", n))
         {
             // Errata 4547
-            append(dest, end, s.substr(0, n));
+            append(dest, end, "../");
             s.remove_prefix(n);
             continue;
         }
@@ -140,7 +140,7 @@ remove_dot_segments(
     else if( dot_equal(s, "..") )
     {
         // Errata 4547
-        append(dest, end, s);
+        append(dest, end, "..");
         s = {};
     }
 
@@ -182,7 +182,7 @@ remove_dot_segments(
                 }
                 else
                 {
-                    append(dest, end, s.substr(0, n-1));
+                    append(dest, end, "/..");
                 }
             }
             else if (dest0 != dest)
@@ -191,7 +191,7 @@ remove_dot_segments(
             }
             else
             {
-                append(dest, end, s.substr(0, n-1));
+                append(dest, end, "/..");
             }
             s.remove_prefix(n-1);
             continue;
@@ -204,16 +204,16 @@ remove_dot_segments(
             {
                 // erase [p, end]
                 dest = dest0 + p;
-                append(dest, end, s.substr(0, 1));
+                append(dest, end, "/");
             }
             else if (dest0 != dest)
             {
                 dest = dest0;
-                append(dest, end, s.substr(0, 1));
+                append(dest, end, "/");
             }
             else
             {
-                append(dest, end, s);
+                append(dest, end, "/..");
             }
             s = {};
             break;

@@ -14,6 +14,7 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/url/encode.hpp>
+#include <boost/url/detail/remove_dot_segments.hpp>
 
 #include "test_suite.hpp"
 
@@ -765,6 +766,7 @@ struct url_test
         check("g/"           , "http://a/b/c/g/");
         check("/g"           , "http://a/g");
         check("//g"          , "http://g");
+        check("//g/a/../a"   , "http://g/a");
         check("?y"           , "http://a/b/c/d;p?y");
         check("g?y"          , "http://a/b/c/g?y");
         check("#s"           , "http://a/b/c/d;p?q#s");
@@ -816,6 +818,13 @@ struct url_test
         check("g?y/../x"     , "http://a/b/c/g?y/../x");
         check("g#s/./x"      , "http://a/b/c/g#s/./x");
         check("g#s/../x"     , "http://a/b/c/g#s/../x");
+
+        {
+            url u("path/to/file.txt");
+            result<void> r = u.resolve(url_view("g/../h"));
+            BOOST_TEST(r.has_error());
+            BOOST_TEST(r.error() == error::not_a_base);
+        }
     }
 
     //--------------------------------------------
@@ -886,20 +895,34 @@ struct url_test
                   "http://cppalliance.org?a=b");
         }
 
-        // remove_dot_segments
+        // normalize path
         {
             auto check = [](string_view p,
                             string_view e) {
+                // normalize
                 url u1 = parse_relative_ref(p).value();
                 u1.normalize_path();
                 BOOST_TEST_EQ(u1.encoded_path(), e);
                 url u2 = parse_relative_ref(e).value();
                 BOOST_TEST_EQ(u1.compare(u2), 0);
                 BOOST_TEST_EQ(u1, u2);
+
+                // remove_dot_segments
+                std::string str;
+                str.resize(p.size());
+                std::size_t n =
+                    urls::detail::remove_dot_segments(
+                    &str[0], &str[0] + str.size(), p);
+                str.resize(n);
+                BOOST_TEST_EQ(str, e);
+
+                // hash
                 std::hash<url_view> h;
                 BOOST_TEST_EQ(h(u1), h(u2));
                 h = std::hash<url_view>(10);
                 BOOST_TEST_EQ(h(u1), h(u2));
+
+
             };
 
             check("/a/b/c/./../../g", "/a/g");
@@ -908,6 +931,7 @@ struct url_test
             check("./a/b/c/./../../g", "a/g");
             check(".././a/b/c/./../../g", "../a/g");
             check("%2E%2E/./a/b/c/./../../g", "../a/g");
+            check("%2e%2E/./a/b/c/./../../g", "../a/g");
             check("/a/b/../../g", "/g");
             check("/a/b/../../../g", "/../g");
             check("mid/content=5/../6", "mid/6");
