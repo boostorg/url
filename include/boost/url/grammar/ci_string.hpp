@@ -13,6 +13,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/detail/ci_string.hpp>
 #include <cstdlib>
 
 namespace boost {
@@ -23,26 +24,6 @@ namespace grammar {
 // characters and strings, for implementing
 // semantics in RFCs. These routines do not
 // use std::locale.
-
-#ifndef BOOST_URL_DOCS
-
-namespace detail {
-
-BOOST_URL_DECL
-bool
-ci_is_equal(
-    string_view s0,
-    string_view s1) noexcept;
-
-BOOST_URL_DECL
-bool
-ci_is_less(
-    string_view s0,
-    string_view s1) noexcept;
-
-} // detail
-
-#endif
 
 //------------------------------------------------
 
@@ -73,11 +54,7 @@ constexpr
 char
 to_lower(char c) noexcept
 {
-    return
-      (c >= 'A' &&
-       c <= 'Z')
-        ? c + 'a' - 'A'
-        : c;
+    return detail::to_lower(c);
 }
 
 /** Return c converted to uppercase
@@ -107,11 +84,7 @@ constexpr
 char
 to_upper(char c) noexcept
 {
-    return
-      (c >= 'a' &&
-       c <= 'z')
-        ? c - ('a' - 'A')
-        : c;
+    return detail::to_upper(c);
 }
 
 //------------------------------------------------
@@ -168,6 +141,8 @@ std::size_t
 ci_digest(
     string_view s) noexcept;
 
+//------------------------------------------------
+
 /** Return true if s0 equals s1 using case-insensitive comparison
 
     The function is defined only for strings
@@ -182,6 +157,36 @@ ci_digest(
         @ref ci_compare,
         @ref ci_is_less.
 */
+#ifdef BOOST_URL_DOCS
+template<
+    class String0,
+    class String1>
+bool
+ci_is_equal(
+    String0 const& s0,
+    String1 const& s1);
+#else
+
+template<
+    class String0,
+    class String1>
+auto
+ci_is_equal(
+    String0 const& s0,
+    String1 const& s1) ->
+        typename std::enable_if<
+            ! std::is_convertible<
+                String0, string_view>::value ||
+            ! std::is_convertible<
+                String1, string_view>::value,
+        bool>::type
+{
+    if( detail::type_id<String0>() >
+        detail::type_id<String1>())
+        return detail::ci_is_equal(s1, s0);
+    return detail::ci_is_equal(s0, s1);
+}
+
 inline
 bool
 ci_is_equal(
@@ -192,6 +197,7 @@ ci_is_equal(
         return false;
     return detail::ci_is_equal(s0, s1);
 }
+#endif
 
 /** Return true if s0 is less than s1 using case-insensitive comparison 
 
@@ -288,7 +294,7 @@ struct ci_equal
 {
     using is_transparent = void;
 
-    std::size_t
+    bool
     operator()(
         string_view s0,
         string_view s1) const noexcept
