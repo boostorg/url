@@ -10,6 +10,8 @@
 // Test that header file is self-contained.
 #include <boost/url/param.hpp>
 
+#include <boost/core/ignore_unused.hpp>
+
 #include "test_suite.hpp"
 
 namespace boost {
@@ -139,6 +141,11 @@ struct param_test
         param_decode_view d2 = { "key", "" };
         param_decode_view d3 = { "key", "value" };
 #endif
+
+        boost::ignore_unused(
+            v0, v1, v2, v3,
+            pv0, pv1, pv2, pv3,
+            d0);
     }
 
     void

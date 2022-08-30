@@ -212,6 +212,20 @@ append_to(
 
 //------------------------------------------------
 
+namespace detail {
+
+template<class... Args>
+decode_view
+make_decode_view_t::
+operator()(Args&&... args) const
+{
+    return decode_view(
+        std::forward<Args>(
+            args)...);
+}
+
+} // detail
+
 } // urls
 } // boost
 

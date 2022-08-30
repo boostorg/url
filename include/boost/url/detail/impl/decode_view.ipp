@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_DETAIL_IMPL_PCT_ENCODED_VIEW_IPP
-#define BOOST_URL_DETAIL_IMPL_PCT_ENCODED_VIEW_IPP
+#ifndef BOOST_URL_DETAIL_IMPL_DECODE_VIEW_IPP
+#define BOOST_URL_DETAIL_IMPL_DECODE_VIEW_IPP
 
 #include <boost/url/decode_view.hpp>
 #include <boost/url/detail/decode_view.hpp>

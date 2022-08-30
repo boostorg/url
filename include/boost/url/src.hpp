@@ -29,6 +29,7 @@ in a translation unit of the program.
 
 #include <boost/url/detail/impl/any_params_iter.ipp>
 #include <boost/url/detail/impl/any_path_iter.ipp>
+#include <boost/url/detail/impl/decode.ipp>
 #include <boost/url/detail/impl/decode_view.ipp>
 #include <boost/url/detail/impl/except.ipp>
 #include <boost/url/detail/impl/normalize.ipp>
@@ -40,7 +41,6 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/url_impl.ipp>
 
 #include <boost/url/impl/authority_view.ipp>
-#include <boost/url/impl/decode.ipp>
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/ipv4_address.ipp>
 #include <boost/url/impl/ipv6_address.ipp>

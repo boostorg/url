@@ -7,8 +7,8 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_DETAIL_PCT_ENCODED_VIEW_HPP
-#define BOOST_URL_DETAIL_PCT_ENCODED_VIEW_HPP
+#ifndef BOOST_URL_DETAIL_DECODE_VIEW_HPP
+#define BOOST_URL_DETAIL_DECODE_VIEW_HPP
 
 #include <boost/url/decode_opts.hpp>
 #include <utility>
@@ -38,12 +38,7 @@ struct make_decode_view_t
 {
     template<class... Args>
     decode_view
-    operator()(Args&&... args) const
-    {
-        return decode_view(
-            std::forward<Args>(
-                args)...);
-    }
+    operator()(Args&&... args) const;
 };
 
 constexpr
