@@ -60,6 +60,8 @@ reserve_impl(
     detail::throw_bad_alloc();
 }
 
+//----------------------------------------------------------
+
 void
 static_url_base::
 cleanup(op_t&)

@@ -149,6 +149,19 @@ cleanup(
         deallocate(op.old);
 }
 
+//----------------------------------------------------------
+
+void
+url::
+swap(url& other) noexcept
+{
+    if (this == &other)
+        return;
+    std::swap(s_, other.s_);
+    std::swap(cap_, other.cap_);
+    std::swap(u_, other.u_);
+}
+
 } // urls
 } // boost
 

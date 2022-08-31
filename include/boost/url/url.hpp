@@ -239,6 +239,78 @@ public:
             url_view_base const&>(u);
     }
 
+    //------------------------------------------------------
+
+    /** Swap the contents.
+
+        Exchanges the contents of this url with another
+        url. All views, iterators and references remain valid.
+
+        If `this == &other`, this function call has no effect.
+
+        @par Example
+        @code
+        url u1( "https://www.example.com" );
+        url u2( "https://www.boost.org" );
+        u1.swap(u2);
+        assert(u1 == "https://www.boost.org" );
+        assert(u2 == "https://www.example.com" );
+        @endcode
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+        Throws nothing.
+
+        @param other The object to swap with
+
+    */
+    BOOST_URL_DECL
+    void
+    swap(url& other) noexcept;
+
+    /** Swap
+
+        Exchanges the contents of `v0` with another `v1`.
+        All views, iterators and references remain
+        valid.
+
+        If `&v0 == &v1`, this function call has no effect.
+
+        @par Example
+        @code
+        url u1( "https://www.example.com" );
+        url u2( "https://www.boost.org" );
+        std::swap(u1, u2);
+        assert(u1 == "https://www.boost.org" );
+        assert(u2 == "https://www.example.com" );
+        @endcode
+
+        @par Effects
+        @code
+        v0.swap( v1 );
+        @endcode
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+        Throws nothing
+
+        @param v0, v1 The objects to swap
+
+        @see
+            @ref url::swap
+    */
+    friend
+    void
+    swap(url& v0, url& v1) noexcept
+    {
+        v0.swap(v1);
+    }
+
+
 private:
     char* allocate(std::size_t);
     void deallocate(char* s);

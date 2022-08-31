@@ -70,6 +70,7 @@ class BOOST_SYMBOL_VISIBLE
     {
         this->url_base::copy(u);
     }
+
 };
 
 //------------------------------------------------
@@ -213,6 +214,7 @@ public:
         copy(u);
         return *this;
     }
+
 };
 
 } // urls
