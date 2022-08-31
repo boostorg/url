@@ -31,6 +31,7 @@
 #include <boost/url/rfc/detail/port_rule.hpp>
 #include <boost/url/rfc/detail/scheme_rule.hpp>
 #include <boost/url/rfc/detail/userinfo_rule.hpp>
+#include <boost/url/rfc/detail/ip_literal_rule.hpp>
 #include <boost/url/grammar/detail/copied_strings.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <cstring>
