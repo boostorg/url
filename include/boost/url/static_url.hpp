@@ -70,6 +70,31 @@ class BOOST_SYMBOL_VISIBLE
     {
         this->url_base::copy(u);
     }
+
+    /** Swap the contents.
+
+        Exchanges the contents of this static_url with another
+        static_url. The contents of the urls are swapped in
+        linear time with no possibility of exceptions.
+        All views, iterators and references are invalidated.
+
+        @par Complexity
+
+        Linear in @ref size() + `other.size()`
+
+        @par Exception Safety
+
+        Throws nothing.
+
+        @param other The static_url to swap with
+
+        If `this == &other`, this function call has no effect.
+    */
+    BOOST_URL_DECL
+    void
+    swap(static_url_base& other) noexcept;
+
+
 };
 
 //------------------------------------------------
@@ -212,6 +237,41 @@ public:
     {
         copy(u);
         return *this;
+    }
+
+    /** Exchange the given static_urls.
+
+        Exchanges the contents of the static_url `lhs` with another
+        static_url `rhs`. The contents of the urls are swapped in
+        linear time with no possibility of exceptions.
+        All views, iterators and references are invalidated.
+
+        @par Effects
+        @code
+        lhs.swap( rhs );
+        @endcode
+
+        @par Complexity
+
+        Linear in `lhs.size() + rhs.size()`.
+
+        @par Exception Safety
+
+        Throws nothing
+
+        @param lhs The static_url to exchange.
+
+        @param rhs The static_url to exchange.
+
+        If `&lhs == &rhs`, this function call has no effect.
+
+        @see @ref static_url::swap
+    */
+    friend
+    void
+    swap(static_url& lhs, static_url& rhs) noexcept
+    {
+        lhs.swap(rhs);
     }
 };
 

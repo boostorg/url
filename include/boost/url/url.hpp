@@ -219,6 +219,67 @@ public:
             url_view_base const&>(u);
     }
 
+    //------------------------------------------------------
+
+    /** Swap the contents.
+
+        Exchanges the contents of this url with another
+        url. Ownership of the underlying memory is swapped in
+        constant time, with no possibility of exceptions.
+        All views, iterators and references remain valid.
+
+        @par Complexity
+
+        Constant
+
+        @par Exception Safety
+
+        Throws nothing.
+
+        @param other The url to swap with
+
+        If `this == &other`, this function call has no effect.
+    */
+    BOOST_URL_DECL
+    void
+    swap(url& other) noexcept;
+
+    /** Exchange the given urls.
+
+        Exchanges the contents of the url `lhs` with another
+        url `rhs`. Ownership of the underlying memory is
+        swapped in constant time, with no possibility of
+        exceptions. All views, iterators and references
+        remain valid.
+
+        @par Effects
+        @code
+        lhs.swap( rhs );
+        @endcode
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+
+        Throws nothing
+
+        @param lhs The url to exchange.
+
+        @param rhs The url to exchange.
+
+        If `&lhs == &rhs`, this function call has no effect.
+
+        @see @ref url::swap
+    */
+    friend
+    void
+    swap(url& lhs, url& rhs) noexcept
+    {
+        lhs.swap(rhs);
+    }
+
+
 private:
     char* allocate(std::size_t);
     void deallocate(char* s);

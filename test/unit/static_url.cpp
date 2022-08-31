@@ -188,6 +188,16 @@ public:
     }
 
     void
+    testSwap()
+    {
+        static_url<4000> u1( "http://a.com");
+        static_url<4000> u2( "http://b.com");
+        std::swap(u1, u2);
+        BOOST_TEST_EQ(u1.string(), "http://b.com");
+        BOOST_TEST_EQ(u2.string(), "http://a.com");
+    }
+
+    void
     run()
     {
         //
@@ -203,6 +213,7 @@ public:
         testSpecial();
         testParts();
         testOstream();
+        testSwap();
     }
 };
 

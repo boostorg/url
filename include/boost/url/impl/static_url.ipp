@@ -59,6 +59,20 @@ reserve_impl(
     detail::throw_bad_alloc();
 }
 
+//----------------------------------------------------------
+
+void
+static_url_base::
+swap(static_url_base& other) noexcept
+{
+    if (this == &other)
+        return;
+    BOOST_ASSERT(cap_ == other.cap_);
+    for (std::size_t i = 0; i < cap_; ++i)
+        std::swap(s_[i], other.s_[i]);
+    std::swap(u_, other.u_);
+}
+
 void
 static_url_base::
 cleanup(op_t&)
