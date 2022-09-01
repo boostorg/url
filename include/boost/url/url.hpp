@@ -224,9 +224,7 @@ public:
     /** Swap the contents.
 
         Exchanges the contents of this url with another
-        url. Ownership of the underlying memory is swapped in
-        constant time, with no possibility of exceptions.
-        All views, iterators and references remain valid.
+        url. All views, iterators and references remain valid.
 
         If `this == &other`, this function call has no effect.
 
@@ -255,10 +253,8 @@ public:
     /** Swap
 
         Exchanges the contents of `v0` with another `v1`.
-        Ownership of the underlying memory is
-        swapped in constant time, with no possibility of
-        exceptions. All views, iterators and references
-        remain valid.
+        All views, iterators and references remain
+        valid.
 
         If `&v0 == &v1`, this function call has no effect.
 

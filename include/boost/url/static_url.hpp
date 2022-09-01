@@ -74,9 +74,8 @@ class BOOST_SYMBOL_VISIBLE
     /** Swap the contents.
 
         Exchanges the contents of this static_url with another
-        static_url. The contents of the urls are swapped in
-        linear time with no possibility of exceptions.
-        All views, iterators and references are invalidated.
+        static_url. All views, iterators and references are
+        invalidated.
 
         If `this == &other`, this function call has no effect.
 
@@ -256,9 +255,8 @@ public:
     /** Swap
 
         Exchanges the contents of the static_url `v0` with another
-        static_url `v1`. The contents of the urls are swapped in
-        linear time with no possibility of exceptions.
-        All views, iterators and references are invalidated.
+        static_url `v1`. All views, iterators and references are
+        invalidated.
 
         If `&v0 == &v1`, this function call has no effect.
 
