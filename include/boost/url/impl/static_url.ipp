@@ -71,6 +71,8 @@ swap(static_url_base& other) noexcept
     for (std::size_t i = 0; i < cap_; ++i)
         std::swap(s_[i], other.s_[i]);
     std::swap(u_, other.u_);
+    std::swap(s_, other.s_);
+    std::swap(u_.cs_, other.u_.cs_);
 }
 
 void

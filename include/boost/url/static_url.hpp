@@ -246,6 +246,13 @@ public:
         return *this;
     }
 
+    /// @copydoc static_url_base::swap
+    void
+    swap(static_url& other) noexcept
+    {
+        static_url_base::swap(other);
+    }
+
     /** Swap
 
         Exchanges the contents of the static_url `v0` with another
