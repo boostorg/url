@@ -63,20 +63,6 @@ reserve_impl(
 
 void
 static_url_base::
-swap(static_url_base& other) noexcept
-{
-    if (this == &other)
-        return;
-    BOOST_ASSERT(cap_ == other.cap_);
-    for (std::size_t i = 0; i < cap_; ++i)
-        std::swap(s_[i], other.s_[i]);
-    std::swap(u_, other.u_);
-    std::swap(s_, other.s_);
-    std::swap(u_.cs_, other.u_.cs_);
-}
-
-void
-static_url_base::
 cleanup(op_t&)
 {
 }
