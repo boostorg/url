@@ -78,22 +78,29 @@ class BOOST_SYMBOL_VISIBLE
         linear time with no possibility of exceptions.
         All views, iterators and references are invalidated.
 
-        @par Complexity
+        If `this == &other`, this function call has no effect.
 
+        @par Example
+        @code
+        static_url< 4000 > u1( "https://www.example.com" );
+        static_url< 4000 > u2( "https://www.boost.org" );
+        u1.swap(u2);
+        assert(u1 == "https://www.boost.org" );
+        assert(u2 == "https://www.example.com" );
+        @endcode
+
+        @par Complexity
         Linear in @ref size() + `other.size()`
 
         @par Exception Safety
-
         Throws nothing.
 
-        @param other The static_url to swap with
+        @param other The object to swap with
 
-        If `this == &other`, this function call has no effect.
     */
     BOOST_URL_DECL
     void
     swap(static_url_base& other) noexcept;
-
 
 };
 
@@ -239,39 +246,45 @@ public:
         return *this;
     }
 
-    /** Exchange the given static_urls.
+    /** Swap
 
-        Exchanges the contents of the static_url `lhs` with another
-        static_url `rhs`. The contents of the urls are swapped in
+        Exchanges the contents of the static_url `v0` with another
+        static_url `v1`. The contents of the urls are swapped in
         linear time with no possibility of exceptions.
         All views, iterators and references are invalidated.
 
+        If `&v0 == &v1`, this function call has no effect.
+
+        @par Example
+        @code
+        static_url< 4000 > u1( "https://www.example.com" );
+        static_url< 4000 > u2( "https://www.boost.org" );
+        std::swap(u1, u2);
+        assert(u1 == "https://www.boost.org" );
+        assert(u2 == "https://www.example.com" );
+        @endcode
+
         @par Effects
         @code
-        lhs.swap( rhs );
+        v0.swap( v1 );
         @endcode
 
         @par Complexity
-
-        Linear in `lhs.size() + rhs.size()`.
+        Linear in `v0.size() + v1.size()`.
 
         @par Exception Safety
-
         Throws nothing
 
-        @param lhs The static_url to exchange.
+        @param v0, v1 The objects to swap
 
-        @param rhs The static_url to exchange.
-
-        If `&lhs == &rhs`, this function call has no effect.
-
-        @see @ref static_url::swap
+        @see
+            @ref static_url::swap
     */
     friend
     void
-    swap(static_url& lhs, static_url& rhs) noexcept
+    swap(static_url& v0, static_url& v1) noexcept
     {
-        lhs.swap(rhs);
+        v0.swap(v1);
     }
 };
 

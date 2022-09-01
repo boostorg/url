@@ -228,55 +228,70 @@ public:
         constant time, with no possibility of exceptions.
         All views, iterators and references remain valid.
 
-        @par Complexity
-
-        Constant
-
-        @par Exception Safety
-
-        Throws nothing.
-
-        @param other The url to swap with
-
         If `this == &other`, this function call has no effect.
-    */
-    BOOST_URL_DECL
-    void
-    swap(url& other) noexcept;
 
-    /** Exchange the given urls.
-
-        Exchanges the contents of the url `lhs` with another
-        url `rhs`. Ownership of the underlying memory is
-        swapped in constant time, with no possibility of
-        exceptions. All views, iterators and references
-        remain valid.
-
-        @par Effects
+        @par Example
         @code
-        lhs.swap( rhs );
+        url u1( "https://www.example.com" );
+        url u2( "https://www.boost.org" );
+        u1.swap(u2);
+        assert(u1 == "https://www.boost.org" );
+        assert(u2 == "https://www.example.com" );
         @endcode
 
         @par Complexity
         Constant
 
         @par Exception Safety
+        Throws nothing.
 
+        @param other The object to swap with
+
+    */
+    BOOST_URL_DECL
+    void
+    swap(url& other) noexcept;
+
+    /** Swap
+
+        Exchanges the contents of `v0` with another `v1`.
+        Ownership of the underlying memory is
+        swapped in constant time, with no possibility of
+        exceptions. All views, iterators and references
+        remain valid.
+
+        If `&v0 == &v1`, this function call has no effect.
+
+        @par Example
+        @code
+        url u1( "https://www.example.com" );
+        url u2( "https://www.boost.org" );
+        std::swap(u1, u2);
+        assert(u1 == "https://www.boost.org" );
+        assert(u2 == "https://www.example.com" );
+        @endcode
+
+        @par Effects
+        @code
+        v0.swap( v1 );
+        @endcode
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
         Throws nothing
 
-        @param lhs The url to exchange.
+        @param v0, v1 The objects to swap
 
-        @param rhs The url to exchange.
-
-        If `&lhs == &rhs`, this function call has no effect.
-
-        @see @ref url::swap
+        @see
+            @ref url::swap
     */
     friend
     void
-    swap(url& lhs, url& rhs) noexcept
+    swap(url& v0, url& v1) noexcept
     {
-        lhs.swap(rhs);
+        v0.swap(v1);
     }
 
 
