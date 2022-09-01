@@ -34,25 +34,10 @@ throw_invalid_argument(
 BOOST_URL_DECL
 void
 BOOST_NORETURN
-throw_invalid_argument(
-    char const* what,
-    source_location const& loc =
-        BOOST_URL_POS);
-
-BOOST_URL_DECL
-void
-BOOST_NORETURN
 throw_length_error(
     char const* what,
     source_location const& loc =
         BOOST_URL_POS);
-
-BOOST_URL_DECL
-void
-BOOST_NORETURN
-throw_out_of_range(
-    source_location const& loc =
-    BOOST_URL_POS);
 
 BOOST_URL_DECL
 void

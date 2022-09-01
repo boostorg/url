@@ -226,11 +226,12 @@ remove_authority() noexcept
 {
     if(! has_authority())
         return *this;
+
     op_t op(*this);
     if(u_.get(id_path
         ).starts_with("//"))
     {
-        // prepend "/."
+        // prepend "/.", can't throw
         auto p = resize_impl(
             id_user, id_path, 2, op);
         p[0] = '/';
@@ -256,12 +257,7 @@ set_encoded_authority(
     pct_string_view s)
 {
     op_t op(*this, detail::ref(s));
-    // [ user [ ':' pass ] "@" ] host [ ":" port ]
-#if 0
-    auto pos1 = s.find_first_of('@');
-    auto pos2 = s.find_last_of(':');
-#endif
-    auto t = grammar::parse(
+    authority_view a = grammar::parse(
         s, authority_rule
             ).value(BOOST_URL_POS);
     auto n = s.size() + 2;
@@ -278,8 +274,7 @@ set_encoded_authority(
         s.data(), s.size());
     if(need_slash)
         dest[n - 1] = '/';
-
-    u_.apply_authority(t);
+    u_.apply_authority(a);
     if(need_slash)
         u_.adjust(
             id_query, id_end, 1);
@@ -367,25 +362,22 @@ set_encoded_userinfo(
                 detail::password_chars);
         auto dest =
             set_userinfo_impl(n0 + n1 + 1, op);
-        detail::re_encode_unchecked(
-            dest,
-            dest + n0,
-            s0,
-            opt,
-            detail::user_chars);
-        dest[n0] = ':';
-        detail::re_encode_unchecked(
-            dest + n0 + 1,
-            dest + n0 + 1 + n1,
-            s1,
-            opt,
-            detail::password_chars);
-        u_.split(id_user, 2 + n0);
         u_.decoded_[id_user] =
-            detail::decode_bytes_unchecked(s0);
+            detail::re_encode_unchecked(
+                dest,
+                dest + n0,
+                s0,
+                opt,
+                detail::user_chars);
+        dest[n0] = ':';
         u_.decoded_[id_pass] =
-            s.decoded_size() -
-                u_.decoded_[id_user];
+            detail::re_encode_unchecked(
+                dest + n0 + 1,
+                dest + n0 + 1 + n1,
+                s1,
+                opt,
+                detail::password_chars);
+        u_.split(id_user, 2 + n0);
     }
     else
     {
@@ -394,15 +386,14 @@ set_encoded_userinfo(
             detail::re_encoded_size(
                 s, opt, detail::user_chars);
         auto dest = set_userinfo_impl(n, op);
-        detail::re_encode_unchecked(
-            dest,
-            dest + n,
-            s,
-            opt,
-            detail::user_chars);
-        u_.split(id_user, 2 + n);
         u_.decoded_[id_user] =
-            s.decoded_size();
+            detail::re_encode_unchecked(
+                dest,
+                dest + n,
+                s,
+                opt,
+                detail::user_chars);
+        u_.split(id_user, 2 + n);
         u_.decoded_[id_pass] = 0;
     }
     return *this;
@@ -440,14 +431,16 @@ set_encoded_user(
         detail::re_encoded_size(
             s, opt, detail::user_chars);
     auto dest = set_user_impl(n, op);
-    detail::re_encode_unchecked(
-        dest,
-        dest + n,
-        s,
-        opt,
-        detail::user_chars);
     u_.decoded_[id_user] =
-        s.decoded_size();
+        detail::re_encode_unchecked(
+            dest,
+            dest + n,
+            s,
+            opt,
+            detail::user_chars);
+    BOOST_ASSERT(
+        u_.decoded_[id_user] ==
+            s.decoded_size());
     return *this;
 }
 
@@ -500,14 +493,16 @@ set_encoded_password(
         detail::re_encoded_size(s, opt,
             detail::password_chars);
     auto dest = set_password_impl(n, op);
-    detail::re_encode_unchecked(
-        dest,
-        dest + n,
-        s,
-        opt,
-        detail::password_chars);
     u_.decoded_[id_pass] =
-        s.decoded_size();
+        detail::re_encode_unchecked(
+            dest,
+            dest + n,
+            s,
+            opt,
+            detail::password_chars);
+    BOOST_ASSERT(
+        u_.decoded_[id_pass] ==
+            s.decoded_size());
     return *this;
 }
 
@@ -537,8 +532,8 @@ set_encoded_host( pct_string_view )         // set host part from encoded text
 set_host_address( string_view )             // set host from ipv4, ipv6, ipvfut, or plain reg-name string
 set_encoded_host_address( pct_string_view ) // set host from ipv4, ipv6, ipvfut, or encoded reg-name string
 
-set_host_ipv4_address( ipv4_address )       // set ipv4
-set_host_ipv6_address( ipv6_address )       // set ipv6
+set_host_address( ipv4_address )            // set ipv4
+set_host_address( ipv6_address )            // set ipv6
 set_host_ipvfuture( string_view )           // set ipvfuture
 set_host_name( string_view )                // set name from plain
 set_encoded_host_name( pct_string_view )    // set name from encoded
@@ -560,7 +555,7 @@ set_host(
             auto rv = parse_ipv6_address(
                 s.substr(1, s.size() - 2));
             if(rv)
-                return set_host_ipv6_address(*rv);
+                return set_host_address(*rv);
         }
         {
             // IPvFuture
@@ -576,7 +571,7 @@ set_host(
         // IPv4-address
         auto rv = parse_ipv4_address(s);
         if(rv)
-            return set_host_ipv4_address(*rv);
+            return set_host_address(*rv);
     }
 
     // reg-name
@@ -613,7 +608,7 @@ set_encoded_host(
             auto rv = parse_ipv6_address(
                 s.substr(1, s.size() - 2));
             if(rv)
-                return set_host_ipv6_address(*rv);
+                return set_host_address(*rv);
         }
         {
             // IPvFuture
@@ -629,7 +624,7 @@ set_encoded_host(
         // IPv4-address
         auto rv = parse_ipv4_address(s);
         if(rv)
-            return set_host_ipv4_address(*rv);
+            return set_host_address(*rv);
     }
 
     // reg-name
@@ -638,13 +633,15 @@ set_encoded_host(
     auto const n = detail::re_encoded_size(
         s, opt, detail::host_chars);
     auto dest = set_host_impl(n, op);
-    detail::re_encode_unchecked(
-        dest,
-        u_.get(id_path).data(),
-        s,
-        opt,
-        detail::host_chars);
-    u_.decoded_[id_host] = s.decoded_size();
+    u_.decoded_[id_host] =
+        detail::re_encode_unchecked(
+            dest,
+            u_.get(id_path).data(),
+            s,
+            opt,
+            detail::host_chars);
+    BOOST_ASSERT(u_.decoded_[id_host] ==
+        s.decoded_size());
     u_.host_type_ =
         urls::host_type::name;
     return *this;
@@ -659,7 +656,7 @@ set_host_address(
         // IPv6-address
         auto rv = parse_ipv6_address(s);
         if(rv)
-            return set_host_ipv6_address(*rv);
+            return set_host_address(*rv);
     }
     {
         // IPvFuture
@@ -673,7 +670,7 @@ set_host_address(
         // IPv4-address
         auto rv = parse_ipv4_address(s);
         if(rv)
-            return set_host_ipv4_address(*rv);
+            return set_host_address(*rv);
     }
 
     // reg-name
@@ -703,7 +700,7 @@ set_encoded_host_address(
         // IPv6-address
         auto rv = parse_ipv6_address(s);
         if(rv)
-            return set_host_ipv6_address(*rv);
+            return set_host_address(*rv);
     }
     {
         // IPvFuture
@@ -717,7 +714,7 @@ set_encoded_host_address(
         // IPv4-address
         auto rv = parse_ipv4_address(s);
         if(rv)
-            return set_host_ipv4_address(*rv);
+            return set_host_address(*rv);
     }
 
     // reg-name
@@ -726,13 +723,15 @@ set_encoded_host_address(
     auto const n = detail::re_encoded_size(
         s, opt, detail::host_chars);
     auto dest = set_host_impl(n, op);
-    detail::re_encode_unchecked(
-        dest,
-        u_.get(id_path).data(),
-        s,
-        opt,
-        detail::host_chars);
-    u_.decoded_[id_host] = s.decoded_size();
+    u_.decoded_[id_host] =
+        detail::re_encode_unchecked(
+            dest,
+            u_.get(id_path).data(),
+            s,
+            opt,
+            detail::host_chars);
+    BOOST_ASSERT(u_.decoded_[id_host] ==
+        s.decoded_size());
     u_.host_type_ =
         urls::host_type::name;
     return *this;
@@ -740,7 +739,7 @@ set_encoded_host_address(
 
 url_base&
 url_base::
-set_host_ipv4_address(
+set_host_address(
     ipv4_address const& addr)
 {
     op_t op(*this);
@@ -760,7 +759,7 @@ set_host_ipv4_address(
 
 url_base&
 url_base::
-set_host_ipv6_address(
+set_host_address(
     ipv6_address const& addr)
 {
     op_t op(*this);
@@ -858,15 +857,18 @@ set_encoded_host_name(
     auto const n = detail::re_encoded_size(
         s, opt, allowed);
     auto dest = set_host_impl(n, op);
-    detail::re_encode_unchecked(
-        dest,
-        dest + n,
-        s,
-        opt,
-        allowed);
+    u_.decoded_[id_host] =
+        detail::re_encode_unchecked(
+            dest,
+            dest + n,
+            s,
+            opt,
+            allowed);
+    BOOST_ASSERT(
+        u_.decoded_[id_host] ==
+            s.decoded_size());
     u_.host_type_ =
         urls::host_type::name;
-    u_.decoded_[id_host] = s.decoded_size();
     return *this;
 }
 
@@ -1007,23 +1009,41 @@ set_path_absolute(
     bool absolute)
 {
     op_t op(*this);
+
+    // check if path empty
     if(u_.len(id_path) == 0)
     {
         if(! absolute)
+        {
+            // already not absolute
             return true;
+        }
+
+        // add '/'
         auto dest = resize_impl(
             id_path, 1, op);
         *dest = '/';
         return true;
     }
 
+    // check if path absolute
     if(s_[u_.offset(id_path)] == '/')
     {
         if(absolute)
+        {
+            // already absolute
             return true;
+        }
+
         if( has_authority() &&
             u_.len(id_path) > 1)
+        {
+            // can't do it, paths are always
+            // absolute when authority present!
             return false;
+        }
+
+        // remove '/'
         auto n = u_.len(id_port);
         u_.split(id_port, n + 1);
         resize_impl(id_port, n, op);
@@ -1031,36 +1051,18 @@ set_path_absolute(
     }
 
     if(! absolute)
+    {
+        // already not absolute
         return true;
+    }
+
+    // add '/'
     auto n = u_.len(id_port);
     auto dest = resize_impl(
         id_port, n + 1, op) + n;
     u_.split(id_port, n);
     *dest = '/';
     return true;
-}
-
-url_base&
-url_base::
-set_encoded_path(
-    pct_string_view s)
-{
-    grammar::detail::copied_strings<
-        BOOST_URL_STACK_BYTES> buf(
-            this->string());
-    s = buf.maybe_copy(s);
-    int abs_hint;
-    if(s.starts_with('/'))
-        abs_hint = 1;
-    else
-        abs_hint = 0;
-    edit_segments(
-        0,
-        u_.nseg_,
-        detail::enc_path_iter(s),
-        detail::enc_path_iter(s),
-        abs_hint);
-    return *this;
 }
 
 url_base&
@@ -1085,11 +1087,27 @@ set_path(
     return *this;
 }
 
-segments_encoded
+url_base&
 url_base::
-encoded_segments() noexcept
+set_encoded_path(
+    pct_string_view s)
 {
-    return segments_encoded(*this);
+    grammar::detail::copied_strings<
+        BOOST_URL_STACK_BYTES> buf(
+            this->string());
+    s = buf.maybe_copy(s);
+    int abs_hint;
+    if(s.starts_with('/'))
+        abs_hint = 1;
+    else
+        abs_hint = 0;
+    edit_segments(
+        0,
+        u_.nseg_,
+        detail::enc_path_iter(s),
+        detail::enc_path_iter(s),
+        abs_hint);
+    return *this;
 }
 
 //------------------------------------------------
@@ -1122,7 +1140,6 @@ set_encoded_query(
     s = buf.maybe_copy(s);
 
     std::size_t n = 0;      // encoded size
-    std::size_t dn = 0;     // decoded size
     std::size_t nparam = 1; // param count
     auto const end = s.end();
     auto p = s.begin();
@@ -1150,7 +1167,6 @@ set_encoded_query(
             n += 3;
             p += 3;
         }
-        ++dn;
     }
 
     // resize
@@ -1159,14 +1175,17 @@ set_encoded_query(
     *dest++ = '?';
 
     // encode
-    detail::re_encode_unchecked(
-        dest,
-        dest + n,
-        s,
-        opt,
-        detail::query_chars);
+    u_.decoded_[id_query] =
+        detail::re_encode_unchecked(
+            dest,
+            dest + n,
+            s,
+            opt,
+            detail::query_chars);
+    BOOST_ASSERT(
+        u_.decoded_[id_query] ==
+            s.decoded_size());
     u_.nparam_ = nparam;
-    u_.decoded_[id_query] = dn;
     return *this;
 }
 
@@ -1210,30 +1229,6 @@ remove_fragment() noexcept
 
 url_base&
 url_base::
-set_encoded_fragment(
-    pct_string_view s)
-{
-    op_t op(*this, detail::ref(s));
-    encode_opts opt;
-    auto const n =
-        detail::re_encoded_size(s,
-            opt, detail::fragment_chars);
-    auto dest = resize_impl(
-        id_frag, n + 1, op);
-    *dest++ = '#';
-    detail::re_encode_unchecked(
-        dest,
-        dest + n,
-        s,
-        opt,
-        detail::fragment_chars);
-    u_.decoded_[id_frag] =
-        s.decoded_size();
-    return *this;
-}
-
-url_base&
-url_base::
 set_fragment(string_view s)
 {
     op_t op(*this, s);
@@ -1250,6 +1245,32 @@ set_fragment(string_view s)
         opt,
         detail::fragment_chars);
     u_.decoded_[id_frag] = s.size();
+    return *this;
+}
+
+url_base&
+url_base::
+set_encoded_fragment(
+    pct_string_view s)
+{
+    op_t op(*this, detail::ref(s));
+    encode_opts opt;
+    auto const n =
+        detail::re_encoded_size(s,
+            opt, detail::fragment_chars);
+    auto dest = resize_impl(
+        id_frag, n + 1, op);
+    *dest++ = '#';
+    u_.decoded_[id_frag] =
+        detail::re_encode_unchecked(
+            dest,
+            dest + n,
+            s,
+            opt,
+            detail::fragment_chars);
+    BOOST_ASSERT(
+        u_.decoded_[id_frag] ==
+            s.decoded_size());
     return *this;
 }
 
@@ -1461,92 +1482,6 @@ resolve_impl(
 // Normalization
 //
 //------------------------------------------------
-
-void
-url_base::
-normalize_octets_impl(
-    int id,
-    grammar::lut_chars const& cs,
-    op_t& op) noexcept
-{
-    char* it = s_ + u_.offset(id);
-    char* end = s_ + u_.offset(id + 1);
-    char buf = 0;
-    char* dest = it;
-    while (it < end)
-    {
-        if (*it != '%')
-        {
-            *dest = *it;
-            ++it;
-            ++dest;
-            continue;
-        }
-        if (end - it < 3)
-            break;
-
-        // decode unreserved octets
-        detail::decode_unchecked(
-            &buf,
-            &buf + 1,
-            string_view(it, 3));
-        if (cs(buf))
-        {
-            *dest = buf;
-            it += 3;
-            ++dest;
-            continue;
-        }
-
-        // uppercase percent-encoding triplets
-        ++it;
-        *it = grammar::to_upper(*it);
-        ++it;
-        *it = grammar::to_upper(*it);
-        ++it;
-        dest += 3;
-    }
-    if (it != dest)
-    {
-        std::size_t diff = it - dest;
-        std::size_t n = u_.len(id) - diff;
-        shrink_impl(id, n, op);
-        s_[size()] = '\0';
-    }
-}
-
-void
-url_base::
-decoded_to_lower_impl(int id) noexcept
-{
-    char* it = s_ + u_.offset(id);
-    char const* const end = s_ + u_.offset(id + 1);
-    while(it < end)
-    {
-        if (*it != '%')
-        {
-            *it = grammar::to_lower(
-                *it);
-            ++it;
-            continue;
-        }
-        it += 3;
-    }
-}
-
-void
-url_base::
-to_lower_impl(int id) noexcept
-{
-    char* it = s_ + u_.offset(id);
-    char const* const end = s_ + u_.offset(id + 1);
-    while(it < end)
-    {
-        *it = grammar::to_lower(
-            *it);
-        ++it;
-    }
-}
 
 url_base&
 url_base::
@@ -2097,7 +2032,7 @@ edit_segments(
     std::size_t nseg = 0;
     bool more = it0.measure(n, ec);
     if(ec.failed())
-        detail::throw_invalid_argument();
+        detail::throw_system_error(ec);
     if(more)
     {
         for(;;)
@@ -2105,7 +2040,7 @@ edit_segments(
             ++nseg;
             more = it0.measure(n, ec);
             if(ec.failed())
-                detail::throw_invalid_argument();
+                detail::throw_system_error(ec);
             if(! more)
                 break;
             ++n;
@@ -2282,6 +2217,10 @@ edit_segments(
     }
     if(suffix == 1)
         *dest++ = '/';
+
+    u_.decoded_[id_path] =
+        detail::decode_bytes_unchecked(
+            u_.get(id_path));
 }
 
 //------------------------------------------------
@@ -2373,10 +2312,7 @@ edit_params(
     error_code ec;
     bool more = it.measure(n, ec);
     if(ec.failed())
-    {
-        // VFALCO shouldn't we throw `ec`?
-        detail::throw_invalid_argument();
-    }
+        detail::throw_system_error(ec);
     if(more)
     {
         ++n; // for '?' or '&'
@@ -2385,10 +2321,7 @@ edit_params(
             ++nparam;
             more = it.measure(n, ec);
             if(ec.failed())
-            {
-                // VFALCO shouldn't we throw `ec`?
-                detail::throw_invalid_argument();
-            }
+                detail::throw_system_error(ec);
             if(! more)
                 break;
             ++n; // for '&'
@@ -2422,6 +2355,94 @@ edit_params(
 
     return detail::params_iter_impl(
         u_, first.pos, first.i);
+}
+
+//------------------------------------------------
+
+void
+url_base::
+normalize_octets_impl(
+    int id,
+    grammar::lut_chars const& cs,
+    op_t& op) noexcept
+{
+    char* it = s_ + u_.offset(id);
+    char* end = s_ + u_.offset(id + 1);
+    char buf = 0;
+    char* dest = it;
+    while (it < end)
+    {
+        if (*it != '%')
+        {
+            *dest = *it;
+            ++it;
+            ++dest;
+            continue;
+        }
+        if (end - it < 3)
+            break;
+
+        // decode unreserved octets
+        detail::decode_unchecked(
+            &buf,
+            &buf + 1,
+            string_view(it, 3));
+        if (cs(buf))
+        {
+            *dest = buf;
+            it += 3;
+            ++dest;
+            continue;
+        }
+
+        // uppercase percent-encoding triplets
+        ++it;
+        *it = grammar::to_upper(*it);
+        ++it;
+        *it = grammar::to_upper(*it);
+        ++it;
+        dest += 3;
+    }
+    if (it != dest)
+    {
+        std::size_t diff = it - dest;
+        std::size_t n = u_.len(id) - diff;
+        shrink_impl(id, n, op);
+        s_[size()] = '\0';
+    }
+}
+
+void
+url_base::
+decoded_to_lower_impl(int id) noexcept
+{
+    char* it = s_ + u_.offset(id);
+    char const* const end = s_ + u_.offset(id + 1);
+    while(it < end)
+    {
+        if (*it != '%')
+        {
+            *it = grammar::to_lower(
+                *it);
+            ++it;
+            continue;
+        }
+        it += 3;
+    }
+}
+
+void
+url_base::
+to_lower_impl(int id) noexcept
+{
+    char* it = s_ + u_.offset(id);
+    char const* const end = s_ + u_.offset(id + 1);
+    while(it < end)
+    {
+        *it = grammar::to_lower(
+            *it);
+        ++it;
+    }
 }
 
 } // urls

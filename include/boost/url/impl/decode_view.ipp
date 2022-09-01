@@ -62,10 +62,8 @@ decode_view(
     , plus_to_space_(opt.plus_to_space)
 {
     opt.non_normal_is_error = false;
-    auto rn = detail::validate_encoding(s, opt);
-    if ( !rn )
-        detail::throw_invalid_argument();
-    dn_ = *rn;
+    dn_ = detail::validate_encoding(
+        s, opt).value(BOOST_URL_POS);
 }
 
 decode_view

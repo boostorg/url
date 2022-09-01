@@ -116,8 +116,8 @@ can be used to identify which type of host is described in the URL.
 
 When the [link url.ref.boost__urls__url_view.host_type `host_type`]
 matches an IP address, the functions
-[link url.ref.boost__urls__url_view.ipv4_address `ipv4_address`],
-[link url.ref.boost__urls__url_view.ipv6_address `ipv6_address`]
+[link url.ref.boost__urls__url_view_base.host_ipv4_address `host_ipv4_address`],
+[link url.ref.boost__urls__url_view_base.host_ipv6_address `host_ipv6_address`]
 can be used to obtain the decoded addresses as integers.
 
 [note

@@ -1725,12 +1725,15 @@ public:
         @code
         query           = *( pchar / "/" / "?" )
 
-        query-part      = [ "?" query ]
+        query-param     = key [ "=" value ]
+        query-params    = [ query-param ] *( "&" query-param )
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
 
         @see
             @ref encoded_params,
@@ -1771,12 +1774,15 @@ public:
         @code
         query           = *( pchar / "/" / "?" )
 
-        query-part      = [ "?" query ]
+        query-param     = key [ "=" value ]
+        query-params    = [ query-param ] *( "&" query-param )
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
 
         @see
             @ref encoded_params,
@@ -1811,12 +1817,15 @@ public:
         @code
         query           = *( pchar / "/" / "?" )
 
-        query-part      = [ "?" query ]
+        query-param     = key [ "=" value ]
+        query-params    = [ query-param ] *( "&" query-param )
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
 
         @see
             @ref encoded_params,
@@ -1851,14 +1860,17 @@ public:
 
         @par BNF
         @code
-        query-params_view    = [ query-param ] *( "&" [ query-param ] )
+        query           = *( pchar / "/" / "?" )
 
         query-param     = key [ "=" value ]
+        query-params    = [ query-param ] *( "&" query-param )
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
 
         @see
             @ref encoded_params,
@@ -1897,10 +1909,17 @@ public:
 
         @par BNF
         @code
-        query-params_view    = [ query-param ] *( "&" [ query-param ] )
+        query           = *( pchar / "/" / "?" )
 
         query-param     = key [ "=" value ]
+        query-params    = [ query-param ] *( "&" query-param )
         @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
 
         @see
             @ref encoded_query,

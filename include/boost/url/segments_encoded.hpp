@@ -72,7 +72,6 @@ class segments_encoded
 
     friend class url_base;
 
-    explicit
     segments_encoded(
         url_base& u) noexcept;
 

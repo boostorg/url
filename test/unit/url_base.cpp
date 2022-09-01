@@ -121,11 +121,15 @@ struct url_base_test
 
         BOOST_TEST_THROWS(
             url().set_scheme(""),
-            std::exception);
+            system_error);
+
+        BOOST_TEST_THROWS(
+            url().set_scheme("http~"),
+            system_error);
 
         BOOST_TEST_THROWS(
             url().set_scheme(scheme::unknown),
-            std::invalid_argument);
+            system_error);
 
         // self-intersection
         modify(
@@ -134,6 +138,149 @@ struct url_base_test
             [](url_base& u)
             {
                 u.set_scheme(
+                    u.encoded_query());
+            });
+    }
+
+    //--------------------------------------------
+    //
+    // Authority
+    //
+    //--------------------------------------------
+
+    void
+    testSetAuthority()
+    {
+        auto const remove = [](
+            string_view s1, string_view s2)
+        {
+            url u;
+            BOOST_TEST_NO_THROW(u = url(s1));
+            BOOST_TEST_EQ(u.remove_authority().string(), s2);
+            BOOST_TEST(u.encoded_authority().empty());
+            BOOST_TEST(! u.has_authority());
+            BOOST_TEST(! u.has_userinfo());
+            BOOST_TEST(! u.has_password());
+            BOOST_TEST(! u.has_port());
+            BOOST_TEST(u.host_address().empty());
+        };
+
+        auto const set = [](string_view s1,
+            string_view s2, string_view s3)
+        {
+            url u;
+            BOOST_TEST_NO_THROW(u = url(s1));
+            BOOST_TEST(u.set_encoded_authority(s2).string() == s3);
+            BOOST_TEST_EQ(u.encoded_authority(), s2);
+            BOOST_TEST(u.has_authority());
+        };
+
+        BOOST_TEST_THROWS(
+            url().set_encoded_authority("x:y"),
+            system_error);
+
+        BOOST_TEST_THROWS(
+            url().set_encoded_authority("%2"),
+            system_error);
+
+        remove("", "");
+        remove("/", "/");
+        remove("/x", "/x");
+        remove("/x/", "/x/");
+        remove("/x/y", "/x/y");
+        remove("x/", "x/");
+        remove("x/y", "x/y");
+        remove("x/y/", "x/y/");
+        remove("x/y/?#", "x/y/?#");
+
+        remove("z:", "z:");
+        remove("z:/", "z:/");
+        remove("z:/x", "z:/x");
+        remove("z:/x/", "z:/x/");
+        remove("z:/x/y", "z:/x/y");
+        remove("z:x/", "z:x/");
+        remove("z:x/y", "z:x/y");
+        remove("z:x/y/", "z:x/y/");
+        remove("z:x/y/?#", "z:x/y/?#");
+        remove("z:x:/y/?#", "z:x:/y/?#");
+
+        remove("//", "");
+        remove("///", "/");
+        remove("///x", "/x");
+        remove("///x/", "/x/");
+        remove("///x/y", "/x/y");
+        remove("//x/", "/");
+        remove("//x/y", "/y");
+        remove("//x/y/", "/y/");
+        remove("//x/y/?#", "/y/?#");
+
+        remove("z://", "z:");
+        remove("z:///", "z:/");
+        remove("z:///x", "z:/x");
+        remove("z:///x/", "z:/x/");
+        remove("z:///x/y", "z:/x/y");
+        remove("z://x/", "z:/");
+        remove("z://x/y", "z:/y");
+        remove("z://x/y/", "z:/y/");
+        remove("z://x/y/?#", "z:/y/?#");
+        remove("z://x:/y/?#", "z:/y/?#");
+        remove("z://x//y/?q#f", "z:/.//y/?q#f");
+
+        set("", "", "//");
+        set("", "x@", "//x@");
+        set("", ":x@", "//:x@");
+        set("", "x:y@", "//x:y@");
+        set("", "x", "//x");
+        set("", "x.y", "//x.y");
+        set("", "x:", "//x:");
+        set("", ":", "//:");
+        set("", ":0", "//:0");
+        set("", ":443", "//:443");
+        set("", ":65536", "//:65536");
+        set("", "1.2.3.4", "//1.2.3.4");
+        set("", "[v1.0]", "//[v1.0]");
+        set("", "[::]", "//[::]");
+        set("", "[::ffff:127.0.0.1]",
+                "//[::ffff:127.0.0.1]");
+        set("", "[::ffff:127.0.0.1]:80",
+                "//[::ffff:127.0.0.1]:80");
+        set("", "user:pass@example.com:80",
+                "//user:pass@example.com:80");
+        set("ws:",
+                "user:pass@example.com:80",
+                "ws://user:pass@example.com:80");
+
+        set("///a", "", "///a");
+        set("///a", "x@", "//x@/a");
+        set("///a", ":x@", "//:x@/a");
+        set("///a", "x:y@", "//x:y@/a");
+        set("///a", "x", "//x/a");
+        set("///a", "x.y", "//x.y/a");
+        set("///a", "x:", "//x:/a");
+        set("///a", ":", "//:/a");
+        set("///a", ":0", "//:0/a");
+        set("///a", ":443", "//:443/a");
+        set("///a", ":65536", "//:65536/a");
+        set("///a", "1.2.3.4", "//1.2.3.4/a");
+        set("///a", "[v1.0]", "//[v1.0]/a");
+        set("///a", "[::]", "//[::]/a");
+        set("///a", "[::ffff:127.0.0.1]",
+                    "//[::ffff:127.0.0.1]/a");
+        set("///a", "[::ffff:127.0.0.1]:80",
+                    "//[::ffff:127.0.0.1]:80/a");
+        set("///a", "user:pass@example.com:80",
+                    "//user:pass@example.com:80/a");
+        set("ws:///a",
+                    "user:pass@example.com:80",
+                    "ws://user:pass@example.com:80/a");
+
+        // self-intersection
+        modify(
+            "x://@?user:pass@example.com:8080",
+            "x://user:pass@example.com:8080?user:pass@example.com:8080",
+            [](url_base& u)
+            {
+                u.set_encoded_authority(
                     u.encoded_query());
             });
     }
@@ -842,12 +989,12 @@ struct url_base_test
             }
         };
 
-        auto const set_host_ipv4_address = [](
+        auto const set_host_ipv4 = [](
             string_view s,
             string_view s1)
         {
             url u;
-            BOOST_TEST_NO_THROW(u.set_host_ipv4_address(ipv4_address(s)));
+            BOOST_TEST_NO_THROW(u.set_host_address(ipv4_address(s)));
             BOOST_TEST_EQ(u.host_type(), host_type::ipv4);
             BOOST_TEST_EQ(u.string(), s1);
             BOOST_TEST_EQ(u.host(), u.encoded_host().decode_to_string());
@@ -860,12 +1007,12 @@ struct url_base_test
             BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
         };
 
-        auto const set_host_ipv6_address = [](
+        auto const set_host_ipv6 = [](
             string_view s,
             string_view s1)
         {
             url u;
-            BOOST_TEST_NO_THROW(u.set_host_ipv6_address(ipv6_address(s)));
+            BOOST_TEST_NO_THROW(u.set_host_address(ipv6_address(s)));
             BOOST_TEST_EQ(u.host_type(), host_type::ipv6);
             BOOST_TEST_EQ(u.string(), s1);
             BOOST_TEST_EQ(u.host(), u.encoded_host().decode_to_string());
@@ -966,11 +1113,11 @@ struct url_base_test
         set_encoded_host_address("www.example.com", "//www.example.com", host_type::name);
         set_encoded_host_address("%5b%3a", "//%5b%3a", host_type::name);
 
-        set_host_ipv4_address("0.0.0.0", "//0.0.0.0");
-        set_host_ipv4_address("127.0.0.1", "//127.0.0.1");
-        set_host_ipv4_address("255.255.255.255", "//255.255.255.255");
+        set_host_ipv4("0.0.0.0", "//0.0.0.0");
+        set_host_ipv4("127.0.0.1", "//127.0.0.1");
+        set_host_ipv4("255.255.255.255", "//255.255.255.255");
 
-        set_host_ipv6_address("1::6:c0a8:1", "//[1::6:c0a8:1]");
+        set_host_ipv6("1::6:c0a8:1", "//[1::6:c0a8:1]");
 
         set_host_ipvfuture("v42.69", "//[v42.69]");
         BOOST_TEST_THROWS(url().set_host_ipvfuture("127.0.0.1"), system_error);
@@ -1160,14 +1307,285 @@ struct url_base_test
     }
 
     void
+    testJavadocs()
+    {
+        //----------------------------------------
+        //
+        // Scheme
+        //
+        //----------------------------------------
+
+        // remove_scheme
+        {
+        assert( url("http://www.example.com/index.htm" ).remove_scheme().string() == "//www.example.com/index.htm" );
+        }
+
+        // set_scheme
+        {
+        assert( url( "http://www.example.com" ).set_scheme( "https" ).scheme_id() == scheme::https );
+        assert( url( "http://example.com/echo.cgi" ).set_scheme( scheme::wss ).string() == "wss://example.com/echo.cgi" );
+        }
+
+        //----------------------------------------
+        //
+        // Authority
+        //
+        //----------------------------------------
+
+        // remove_authority
+        {
+        assert( url( "http://example.com/echo.cgi" ).remove_authority().string() == "http:/echo.cgi" );
+        }
+
+        // set_encoded_authority
+        {
+        assert( url().set_encoded_authority( "My%20Computer" ).has_authority() );
+        }
+
+        //----------------------------------------
+        //
+        // Userinfo
+        //
+        //----------------------------------------
+
+        // remove_userinfo
+        {
+        assert( url( "http://user@example.com" ).remove_userinfo().has_userinfo() == false );
+        }
+
+        // set_userinfo
+        {
+        assert( url( "http://example.com" ).set_userinfo( "user:pass" ).encoded_user() == "user" );
+        }
+
+        // set_encoded_userinfo
+        {
+        assert( url( "http://example.com" ).set_encoded_userinfo( "john%20doe" ).user() == "john doe" );
+        }
+
+        //----------------------------------------
+
+        // set_user
+        {
+        assert( url().set_user("john doe").encoded_userinfo() == "john%20doe" );
+        }
+
+        // set_encoded_user
+        {
+        assert( url().set_encoded_user("john%20doe").userinfo() == "john doe" );
+        }
+
+        // remove_password
+        {
+        assert( url( "http://user:pass@example.com" ).remove_password().encoded_authority() == "user@example.com" );
+        }
+
+        // set_password
+        {
+        assert( url("http://user@example.com").set_password( "pass" ).encoded_userinfo() == "user:pass" );
+        }
+
+        // set_encoded_password
+        {
+        assert( url("http://user@example.com").set_encoded_password( "pass" ).encoded_userinfo() == "user:pass" );
+        }
+
+        //----------------------------------------
+        //
+        // Host
+        //
+        //----------------------------------------
+
+        // set_host
+        {
+        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        }
+
+        // set_encoded_host
+        {
+        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        }
+
+        // set_host_address
+        {
+        assert( url( "http://www.example.com" ).set_host_address( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        }
+
+        // set_encoded_host_address
+        {
+        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        }
+
+        // set_host_address
+        {
+        assert( url("http://www.example.com").set_host_address( ipv4_address( "127.0.0.1" ) ).string() == "http://127.0.0.1" );
+        }
+
+        // set_host_address
+        {
+        assert( url().set_host_address( ipv6_address( "1::6:c0a8:1" ) ).encoded_authority() == "[1::6:c0a8:1]" );
+        }
+
+        // set_host_ipvfuture
+        {
+        assert( url().set_host_ipvfuture( "v42.bis" ).string() == "//[v42.bis]" );
+        }
+
+        // set_host_name
+        {
+        assert( url( "http://www.example.com/index.htm").set_host_name( "localhost" ).host_address() == "localhost" );
+        }
+
+        // set_encoded_host_name
+        {
+        assert( url( "http://www.example.com/index.htm").set_encoded_host_name( "localhost" ).host_address() == "localhost" );
+        }
+
+        //----------------------------------------
+        //
+        // Host
+        //
+        //----------------------------------------
+
+        // remove_port
+        {
+        assert( url( "http://www.example.com:80" ).remove_port().encoded_authority() == "www.example.com" );
+        }
+
+        // set_port
+        {
+        assert( url( "http://www.example.com" ).set_port( 8080 ).encoded_authority() == "www.example.com:8080" );
+        }
+
+        // set_port
+        {
+        assert( url( "http://www.example.com" ).set_port( "8080" ).encoded_authority() == "www.example.com:8080" );
+        }
+
+        //----------------------------------------
+
+        // remove_origin
+        {
+        assert( url( "http://www.example.com/index.htm" ).remove_origin().string() == "/index.htm" );
+        }
+
+        //----------------------------------------
+        //
+        // Path
+        //
+        //----------------------------------------
+
+        // set_path_absolute
+        {
+        url u( "path/to/file.txt" );
+        assert( u.set_path_absolute( true ) );
+        assert( u.string() == "/path/to/file.txt" );
+        }
+
+        // set_path
+        {
+        url u( "http://www.example.com" );
+
+        u.set_path( "path/to/file.txt" );
+
+        assert( u.path() == "/path/to/file.txt" );
+        }
+
+        // set_encoded_path
+        {
+        url u( "http://www.example.com" );
+
+        u.set_encoded_path( "path/to/file.txt" );
+
+        assert( u.encoded_path() == "/path/to/file.txt" );
+        }
+
+        // segments
+        {
+        url u( "http://example.com/path/to/file.txt" );
+
+        segments sv = u.segments();
+
+        (void)sv;
+        }
+
+        // encoded_segments
+        {
+        url u( "http://example.com/path/to/file.txt" );
+
+        segments_encoded sv = u.encoded_segments();
+
+        (void)sv;
+        }
+
+        //----------------------------------------
+        //
+        // Query
+        //
+        //----------------------------------------
+
+        // remove_query
+        {
+        assert( url( "http://www.example.com?id=42" ).remove_query().string() == "http://www.example.com" );
+        }
+
+        // set_query
+        {
+        assert( url( "http://example.com" ).set_query( "id=42" ).query() == "id=42" );
+        }
+
+        // set_encoded_query
+        {
+        assert( url( "http://example.com" ).set_encoded_query( "id=42" ).encoded_query() == "id=42" );
+        }
+
+        // params
+        {
+        params_view pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
+
+        (void)pv;
+        }
+
+        // encoded_params
+        {
+        params_encoded_view pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
+
+        (void)pv;
+        }
+
+        //----------------------------------------
+        //
+        // Fragment
+        //
+        //----------------------------------------
+
+        // remove_fragment
+        {
+        assert( url( "?first=john&last=doe#anchor" ).remove_fragment().string() == "?first=john&last=doe" );
+        }
+
+        // set_fragment
+        {
+        assert( url("?first=john&last=doe" ).set_encoded_fragment( "john doe" ).encoded_fragment() == "john%20doe" );
+        }
+
+        // set_encoded_fragment
+        {
+        assert( url("?first=john&last=doe" ).set_encoded_fragment( "john%2Ddoe" ).fragment() == "john-doe" );
+        }
+    }
+
+    void
     run()
     {
         testSetScheme();
+        testSetAuthority();
         testSetUserinfo();
         testSetUser();
         testSetPassword();
         testSetHost();
         testSetPort();
+        testJavadocs();
     }
 };
 

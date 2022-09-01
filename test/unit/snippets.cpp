@@ -259,7 +259,7 @@ using_urls()
     //]
 
     //[snippet_quicklook_modifying_4
-    u.set_host_ipv4_address( parse_ipv4_address( "192.168.0.1" ).value() )
+    u.set_host_address( parse_ipv4_address( "192.168.0.1" ).value() )
         .set_port( 8080 )
         .remove_userinfo();
     std::cout << u << "\n";

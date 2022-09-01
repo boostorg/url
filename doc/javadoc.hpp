@@ -9,9 +9,9 @@
 
 // https://eel.is/c++draft/structure.specifications#3
 
-/** {brief}
+    /** {brief}
 
-    {description}
+        {description}
 
         Any percent-escapes in the string are
         decoded first.
@@ -19,36 +19,49 @@
         The returned string may contain
         percent escapes.
 
-    @note
+        Reserved characters in the string are
+        percent-escaped in the result.
 
-    @par Example
+        Escapes in the string are preserved,
+        and reserved characters in the string
+        are percent-escaped in the result.
 
-    @par Constraints    (SFINAE)
-    @par Mandates       (static_assert)
-    @par Preconditions  (assert)
-    @par Effects
-    @par Synchronization
-    @par Postconditions
-    @par Complexity
+        @note
+        The interpretation of userinfo as
+        individual user and password components
+        is scheme-dependent. Transmitting
+        passwords in URLs is deprecated.
 
-    @par Exception Safety
+        @par Example
+
+        @par Constraints    (SFINAE)
+        @par Mandates       (static_assert)
+        @par Preconditions  (assert)
+        @par Effects
+        @par Synchronization
+        @par Postconditions
+        @par Complexity
+
+        @par Exception Safety
         Strong guarantee.
         Basic guarantee.
         Calls to allocate may throw.
         Exceptions thrown on invalid input.
-    @throw
-            std::exception {when}
-    @tparam
-    @return
-    @param
 
-    @par BNF
-    @par Specification
-    @li
+        @throw system_error
+        `s` contains an invalid percent-encoding.
 
-    @see
-        @ref
-*/
+        @tparam
+        @return
+        @param
+
+        @par BNF
+        @par Specification
+        @li
+
+        @see
+            @ref
+    */
 
 //------------------------------------------------
 

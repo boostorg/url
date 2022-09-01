@@ -41,26 +41,10 @@ void
 throw_invalid_argument(
     source_location const& loc)
 {
-    throw_exception(
-        std::invalid_argument(""), loc);
-}
-
-void
-throw_invalid_argument(
-    char const* what,
-    source_location const& loc)
-{
-    throw_exception(
-        std::invalid_argument(what), loc);
-}
-
-void
-throw_out_of_range(
-    source_location const& loc)
-{
-    throw_exception(
-        std::out_of_range(
-            "out of range"), loc);
+    throw_system_error(
+        make_error_code(
+            errc::invalid_argument,
+            &loc));
 }
 
 void

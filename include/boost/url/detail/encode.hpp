@@ -281,6 +281,7 @@ re_encoded_size(
 }
 
 // unchecked
+// returns decoded size
 template<class CharSet>
 std::size_t
 re_encode_unchecked(
@@ -309,6 +310,7 @@ re_encode_unchecked(
         *dest++ = hex[c&0xf];
     };
     (void)end;
+    std::size_t dn = 0;
     auto const dest0 = dest;
     auto const last = s.end();
     auto it = s.begin();
@@ -321,11 +323,18 @@ re_encode_unchecked(
             if(*it != '%')
             {
                 if(*it == ' ')
+                {
                     *dest++ = '+';
+                }
                 else if(allowed(*it))
+                {
                     *dest++ = *it;
+                }
                 else
+                {
                     encode(dest, *it, hex);
+                    dn += 2;
+                }
                 ++it;
             }
             else
@@ -335,6 +344,7 @@ re_encode_unchecked(
                 *dest++ = *it++;
                 BOOST_ASSERT(dest != end);
                 *dest++ = *it++;
+                dn += 2;
             }
         }
     }
@@ -346,9 +356,14 @@ re_encode_unchecked(
             if(*it != '%')
             {
                 if(allowed(*it))
+                {
                     *dest++ = *it;
+                }
                 else
+                {
                     encode(dest, *it, hex);
+                    dn += 2;
+                }
                 ++it;
             }
             else
@@ -358,10 +373,11 @@ re_encode_unchecked(
                 *dest++ = *it++;
                 BOOST_ASSERT(dest != end);
                 *dest++ = *it++;
+                dn += 2;
             }
         }
     }
-    return dest0 - dest;
+    return dest - dest0 - dn;
 }
 
 } // detail

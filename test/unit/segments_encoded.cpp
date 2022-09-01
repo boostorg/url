@@ -261,9 +261,9 @@ public:
             BOOST_TEST_EQ(u.string(), "x://y/etc/path/to/file.txt/?q#f");
             BOOST_TEST_EQ(*it, "etc");
 
-            BOOST_TEST_THROWS(se.insert(se.begin(), "%"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.insert(se.begin(), "/"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.insert(se.begin(), "%2g"), std::invalid_argument);
+            BOOST_TEST_THROWS(se.insert(se.begin(), "%"), system_error);
+            BOOST_TEST_THROWS(se.insert(se.begin(), "/"), system_error);
+            BOOST_TEST_THROWS(se.insert(se.begin(), "%2g"), system_error);
         }
 
         {
@@ -292,9 +292,9 @@ public:
             BOOST_TEST_EQ(u.string(), "x:etc/path/to/file.txt/?q#f");
             BOOST_TEST_EQ(*it, "etc");
 
-            BOOST_TEST_THROWS(se.insert(se.begin(), "%"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.insert(se.begin(), "/"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.insert(se.begin(), "%2g"), std::invalid_argument);
+            BOOST_TEST_THROWS(se.insert(se.begin(), "%"), system_error);
+            BOOST_TEST_THROWS(se.insert(se.begin(), "/"), system_error);
+            BOOST_TEST_THROWS(se.insert(se.begin(), "%2g"), system_error);
         }
 
         // insert( const_iterator, FwdIt, FwdIt )
@@ -314,7 +314,7 @@ public:
             std::initializer_list<string_view> bad = {"%"};
             BOOST_TEST_THROWS(se.insert(
                 std::next(se.begin()), bad.begin(), bad.end()),
-                std::invalid_argument);
+                system_error);
 
             // empty range
             it = se.insert(std::next(se.begin()),
@@ -339,7 +339,7 @@ public:
             std::initializer_list<string_view> bad = {"%"};
             BOOST_TEST_THROWS(se.insert(
                 std::next(se.begin()), bad.begin(), bad.end()),
-                std::invalid_argument);
+                system_error);
 
             // empty range
             it = se.insert(std::next(se.begin()),
@@ -437,9 +437,9 @@ public:
             url u = parse_uri("x://y/home/etc/path/to/the/file.txt?q#f").value();
             segments_encoded se = u.encoded_segments();
 
-            BOOST_TEST_THROWS(se.push_back("%"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.push_back("/"), std::invalid_argument);
-            BOOST_TEST_THROWS(se.push_back("%2g"), std::invalid_argument);
+            BOOST_TEST_THROWS(se.push_back("%"), system_error);
+            BOOST_TEST_THROWS(se.push_back("/"), system_error);
+            BOOST_TEST_THROWS(se.push_back("%2g"), system_error);
         }
 
         // pop_back

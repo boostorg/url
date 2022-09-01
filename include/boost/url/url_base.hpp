@@ -104,6 +104,10 @@ class BOOST_SYMBOL_VISIBLE
 
 public:
     //--------------------------------------------
+    //
+    // Observers
+    //
+    //--------------------------------------------
 
     /** Return the encoded URL as a null-terminated string
     */
@@ -125,7 +129,15 @@ public:
     }
 
     /** Clear the contents while preserving the capacity
-    
+
+        @par Postconditions
+        @code
+        this->empty() == true
+        @endcode
+
+        @par Complexity
+        Constant.
+
         @par Exception Safety
         No-throw guarantee.
     */
@@ -139,7 +151,8 @@ public:
 
         This function adjusts the capacity
         of the container in characters, without
-        affecting the current contents.
+        affecting the current contents. Has
+        no effect if `n <= this->capacity()`.
 
         @par Exception Safety
         Strong guarantee.
@@ -167,19 +180,33 @@ public:
         This function removes the scheme if it
         is present.
 
+        @par Example
+        @code
+        assert( url("http://www.example.com/index.htm" ).remove_scheme().string() == "//www.example.com/index.htm" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_scheme() == false && this->scheme_id() == scheme::none
+        @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
+
+        @par Exception Safety
+        Throws nothing.
+
         @par BNF
         @code
         URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
             3.1. Scheme (rfc3986)</a>
 
-        @see @ref set_scheme.
+        @see
+            @ref set_scheme.
     */
     BOOST_URL_DECL
     url_base&
@@ -187,34 +214,35 @@ public:
 
     /** Set the scheme
 
-        This function sets the scheme to the specified
-        string, which must contain a valid scheme
-        without a trailing colon (':'). If the scheme
-        is invalid, an exception is thrown.
+        The scheme is set to the specified
+        string, which must contain a valid
+        scheme without any trailing colon
+        (':').
+        Note that schemes are case-insensitive,
+        and the canonical form is lowercased.
 
         @par Example
         @code
-        url u = parse_uri( "http://www.example.com" );
-
-        u.set_scheme( "https" );         // u is now "https://www.example.com"
-
-        assert( u.string() == "https://www.example.com" );
-
-        u.set_scheme( "1forall");       // throws, invalid scheme
+        assert( url( "http://www.example.com" ).set_scheme( "https" ).scheme_id() == scheme::https );
         @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `s` contains an invalid scheme.
+
+        @param s The scheme to set.
 
         @par BNF
         @code
         scheme        = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
         @endcode
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The scheme to set.
-
-        @throw std::invalid_argument invalid scheme.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
@@ -238,11 +266,11 @@ public:
 
         @par Example
         @code
-        url u;
-        u.set_scheme( scheme::http );           // produces "http:"
-        u.set_scheme( scheme::none );           // produces ""
-        u.set_scheme( scheme::unknown);         // throws, invalid scheme
+        assert( url( "http://example.com/echo.cgi" ).set_scheme( scheme::wss ).string() == "wss://example.com/echo.cgi" );
         @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
 
         @par Exception Safety
         Strong guarantee.
@@ -258,7 +286,11 @@ public:
     */
     BOOST_URL_DECL
     url_base&
+#ifndef BOOST_URL_DOCS
     set_scheme(urls::scheme id);
+#else
+    set_scheme(scheme id);
+#endif
 
     //--------------------------------------------
     //
@@ -268,29 +300,25 @@ public:
 
     /** Remove the authority
 
-        The full authority component is removed
-        if present, which includes the leading
-        double slashes ("//"), the userinfo,
-        the host, and the port.
+        This function removes the authority,
+        which includes the userinfo, host, and
+        a port if present.
 
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
-            3.2. Authority (rfc3986)</a>
-    */
-    BOOST_URL_DECL
-    url_base&
-    remove_authority() noexcept;
+        @par Example
+        @code
+        assert( url( "http://example.com/echo.cgi" ).remove_authority().string() == "http:/echo.cgi" );
+        @endcode
 
-    /** Set the authority
+        @par Postconditions
+        @code
+        this->has_authority() == false && this->has_userinfo() == false && this->has_port() == false
+        @endcode
 
-        This function sets the authority component
-        to the specified encoded string. If a
-        component was present it is replaced.
-        Otherwise, the authority is added
-        including leading double slashes ("//").
+        @par Complexity
+        Linear in `this->size()`.
 
-        The encoded string must be a valid
-        authority or else an exception is thrown.
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -301,17 +329,52 @@ public:
         port          = *DIGIT
         @endcode
 
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
+            3.2. Authority (rfc3986)</a>
+
+        @see
+            @ref set_encoded_authority.
+    */
+    BOOST_URL_DECL
+    url_base&
+    remove_authority() noexcept;
+
+    /** Set the authority
+
+        This function sets the authority
+        to the specified string.
+        The string may contain percent-escapes.
+
+        @par Example
+        @code
+        assert( url().set_encoded_authority( "My%20Computer" ).has_authority() );
+        @endcode
+
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @par BNF
+        @code
+        authority     = [ userinfo "@" ] host [ ":" port ]
+
+        userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
+        host          = IP-literal / IPv4address / reg-name
+        port          = *DIGIT
+        @endcode
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
             3.2. Authority (rfc3986)</a>
 
+        @throw system_eror `s` contains an invalid percent-encoding.
+
         @param s The authority string to set.
 
-        @throw std::exception `s` is not a valid authority.
+        @see
+            @ref remove_authority.
     */
     BOOST_URL_DECL
     url_base&
@@ -325,78 +388,25 @@ public:
     //--------------------------------------------
 
     /** Remove the userinfo
-    */
-    BOOST_URL_DECL
-    url_base&
-    remove_userinfo() noexcept;
 
-    /** Set the userinfo.
+        This function removes the userinfo if
+        present, without removing any authority.
 
-        The userinfo is set to the specified string,
-        replacing any previous userinfo. If a userinfo
-        was not present it is added, even if the
-        userinfo string is empty. The resulting URL
-        will have an authority if it did not have
-        one previously.
+        @par Example
+        @code
+        assert( url( "http://user@example.com" ).remove_userinfo().has_userinfo() == false );
+        @endcode
 
-        Any special or reserved characters in the
-        string are automatically percent-encoded.
+        @par Postconditions
+        @code
+        this->has_userinfo() == false && this->encoded_userinfo().empty == true
+        @endcode
 
-        The interpretation of userinfo as
-        individual user and password components
-        is scheme-dependent. Transmitting
-        passwords in URLs is deprecated.
-
-        This function treats userinfo as a unit
-        independent of the user and password
-        components.
-
-        If the input string has a ":" character,
-        its first occurrence will be considered
-        the separator between the user and the
-        password fields.
-
-        If the username might contain a ":", the
-        functions @ref set_user and
-        @ref set_password should be used
-        separately so that the character can be
-        unambiguously encoded.
+        @par Complexity
+        Linear in `this->size()`.
 
         @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set. This string may
-        contain any characters, including nulls.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
-            3.2.1. User Information (rfc3986)</a>
-    */
-    BOOST_URL_DECL
-    url_base&
-    set_userinfo(
-        string_view s);
-
-    /** Set the userinfo.
-
-        Sets the userinfo of the URL to the given
-        encoded string:
-
-        @li If the string is empty, the userinfo is
-        cleared, else
-
-        @li If the string is not empty, then the userinfo
-        is set to the given string. The user is set to
-        the characters up to the first colon if any,
-        while the password is set to the remaining
-        characters if any.
-        If the URL previously did not have an authority
-        (@ref has_authority returns `false`), a double
-        slash ("//") is prepended to the userinfo.
-        The string must meet the syntactic requirements
-        of <em>userinfo</em> otherwise an exception is
-        thrown.
+        Throws nothing.
 
         @par BNF
         @code
@@ -406,14 +416,141 @@ public:
         password      = *( unreserved / pct-encoded / sub-delims / ":" )
         @endcode
 
-        @par Exception Safety
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
 
+        @see
+            @ref set_encoded_userinfo,
+            @ref set_userinfo.
+    */
+    BOOST_URL_DECL
+    url_base&
+    remove_userinfo() noexcept;
+
+    /** Set the userinfo
+
+        The userinfo is set to the given string,
+        which may contain percent-escapes.
+        Any special or reserved characters in the
+        string are automatically percent-encoded.
+        The effects on the user and password
+        depend on the presence of a colon (':')
+        in the string:
+
+        @li If an unescaped colon exists, the
+        characters up to the colon will become
+        the user and the rest of the characters
+        after the colon will become the password.
+        In this case @ref has_password will return
+        true. Otherwise,
+
+        @li If there is no colon, the user will
+        be set to the string. The function
+        @ref has_password will return false.
+
+        @note
+        The interpretation of the userinfo as
+        individual user and password components
+        is scheme-dependent. Transmitting
+        passwords in URLs is deprecated.
+
+        @par Example
+        @code
+        assert( url( "http://example.com" ).set_userinfo( "user:pass" ).encoded_user() == "user" );
+        @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
+
+        @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
 
         @param s The string to set.
 
-        @throw std::exception Thrown on error
+        @par BNF
+        @code
+        userinfo      = [ [ user ] [ ':' password ] ]
+
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref remove_userinfo,
+            @ref set_encoded_userinfo.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_userinfo(
+        string_view s);
+
+    /** Set the userinfo.
+
+        The userinfo is set to the given string,
+        which may contain percent-escapes.
+        Escapes in the string are preserved,
+        and reserved characters in the string
+        are percent-escaped in the result.
+        The effects on the user and password
+        depend on the presence of a colon (':')
+        in the string:
+
+        @li If an unescaped colon exists, the
+        characters up to the colon will become
+        the user and the rest of the characters
+        after the colon will become the password.
+        In this case @ref has_password will return
+        true. Otherwise,
+
+        @li If there is no colon, the user will
+        be set to the string. The function
+        @ref has_password will return false.
+
+        @note
+        The interpretation of the userinfo as
+        individual user and password components
+        is scheme-dependent. Transmitting
+        passwords in URLs is deprecated.
+
+        @par Example
+        @code
+        assert( url( "http://example.com" ).set_encoded_userinfo( "john%20doe" ).user() == "john doe" );
+        @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `s` contains an invalid percent-encoding.
+
+        @param s The string to set.
+
+        @par BNF
+        @code
+        userinfo      = [ [ user ] [ ':' password ] ]
+
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref remove_userinfo,
+            @ref set_userinfo.
     */
     BOOST_URL_DECL
     url_base&
@@ -422,57 +559,103 @@ public:
 
     //--------------------------------------------
 
-    /** Set the user.
+    /** Set the user
 
-        The user is set to the specified string,
-        replacing any previous user. If a userinfo
-        was not present it is added, even if the
-        user string is empty. The resulting URL
-        will have an authority if it did not have
-        one previously.
-
+        This function sets the user part of the
+        userinfo to the string.
         Any special or reserved characters in the
         string are automatically percent-encoded.
 
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set. This string may
-        contain any characters, including nulls.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
-            3.2.1. User Information (rfc3986)</a>
-    */
-    BOOST_URL_DECL
-    url_base&
-    set_user(
-        string_view s);
-
-    /** Set the user.
-
-        The user is set to the specified string,
-        replacing any previous user. If a userinfo
-        was not present it is added, even if the
-        user string is empty. The resulting URL
-        will have an authority if it did not have
-        one previously.
-
-        The string must be a valid percent-encoded
-        string for the user field, otherwise an
-        exception is thrown.
-
-        @par BNF
+        @par Example
         @code
-        user          = *( unreserved / pct-encoded / sub-delims )
+        assert( url().set_user("john doe").encoded_userinfo() == "john%20doe" );
         @endcode
+
+        @par Postconditions
+        @code
+        this->has_authority() == true && this->has_userinfo() == true
+        @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
 
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
 
         @param s The string to set.
+
+        @par BNF
+        @code
+        userinfo      = [ [ user ] [ ':' password ] ]
+
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref remove_password,
+            @ref set_encoded_password,
+            @ref set_encoded_user,
+            @ref set_password.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_user(
+        string_view s);
+
+    /** Set the user
+
+        This function sets the user part of the
+        userinfo the the string, which may
+        contain percent-escapes.
+        Escapes in the string are preserved,
+        and reserved characters in the string
+        are percent-escaped in the result.
+
+        @par Example
+        @code
+        assert( url().set_encoded_user("john%20doe").userinfo() == "john doe" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_authority() == true && this->has_userinfo() == true
+        @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @throw system_error
+        `s` contains an invalid percent-encoding.
+
+        @param s The string to set.
+
+        @par BNF
+        @code
+        userinfo      = [ [ user ] [ ':' password ] ]
+
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref remove_password,
+            @ref set_encoded_password,
+            @ref set_password,
+            @ref set_user.
     */
     BOOST_URL_DECL
     url_base&
@@ -480,6 +663,51 @@ public:
         pct_string_view s);
 
     /** Remove the password
+
+        This function removes the password from
+        the userinfo if a password exists. If
+        there is no userinfo or no authority,
+        the call has no effect.
+
+        @note
+        The interpretation of the userinfo as
+        individual user and password components
+        is scheme-dependent. Transmitting
+        passwords in URLs is deprecated.
+
+        @par Example
+        @code
+        assert( url( "http://user:pass@example.com" ).remove_password().encoded_authority() == "user@example.com" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_password() == false && this->encoded_password().empty() == true
+        @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        userinfo      = [ [ user ] [ ':' password ] ]
+
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref set_encoded_password,
+            @ref set_encoded_user,
+            @ref set_password,
+            @ref set_user.
     */
     BOOST_URL_DECL
     url_base&
@@ -487,68 +715,109 @@ public:
 
     /** Set the password.
 
-        This function sets the password to the specified
-        string, replacing any previous password:
+        This function sets the password in
+        the userinfo to the string.
+        Reserved characters in the string are
+        percent-escaped in the result.
 
-        @li If the string is empty, the password is
-        cleared, and the first occurring colon (':') is
-        removed from the userinfo if present, otherwise
+        @note
+        The interpretation of the userinfo as
+        individual user and password components
+        is scheme-dependent. Transmitting
+        passwords in URLs is deprecated.
 
-        @li If ths string is not empty then the password
-        is set to the new string.
-        Any special or reserved characters in the
-        string are automatically percent-encoded.
-        If the URL previously did not have an authority
-        (@ref has_authority returns `false`), a double
-        slash ("//") is prepended to the userinfo.
+        @par Example
+        @code
+        assert( url("http://user@example.com").set_password( "pass" ).encoded_userinfo() == "user:pass" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_password() == true && this->password() == s
+        @endcode
 
         @par Exception Safety
-
         Strong guarantee.
         Calls to allocate may throw.
 
         @param s The string to set. This string may
         contain any characters, including nulls.
+
+        @par BNF
+        @code
+        userinfo      = [ [ user ] [ ':' password ] ]
+
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref remove_password,
+            @ref set_encoded_password,
+            @ref set_encoded_user,
+            @ref set_user.
     */
     BOOST_URL_DECL
     url_base&
     set_password(
         string_view s);
 
-    /** Set the password
+    /** Set the password.
 
-        The password is set to the specified
-        string.
+        This function sets the password in
+        the userinfo to the string, which
+        may contain percent-escapes.
         Escapes in the string are preserved,
         and reserved characters in the string
         are percent-escaped in the result.
 
+        @note
+        The interpretation of the userinfo as
+        individual user and password components
+        is scheme-dependent. Transmitting
+        passwords in URLs is deprecated.
+
+        @par Example
+        @code
+        assert( url("http://user@example.com").set_encoded_password( "pass" ).encoded_userinfo() == "user:pass" );
+        @endcode
+
         @par Postconditions
         @code
-        this->has_password() == true && this->has_authority()
+        this->has_password() == true
         @endcode
 
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exceptions thrown on invalid input.
 
-        @throw system_error Invalid percent-encoding in `s`.
+        @throw system_error
+        `s` contains an invalid percent-encoding.
 
-        @param s The string to set.
+        @param s The string to set. This string may
+        contain any characters, including nulls.
 
         @par BNF
         @code
+        userinfo      = [ [ user ] [ ':' password ] ]
+
+        user          = *( unreserved / pct-encoded / sub-delims )
         password      = *( unreserved / pct-encoded / sub-delims / ":" )
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
-            >3.2.1.  User Information</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
 
         @see
             @ref remove_password,
-            @ref set_password
+            @ref set_encoded_password,
+            @ref set_encoded_user,
+            @ref set_user.
     */
     BOOST_URL_DECL
     url_base&
@@ -594,6 +863,20 @@ public:
         assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
         @endcode
 
+        @par Postconditions
+        @code
+        this->has_authority() == true
+        @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
+
         @par BNF
         @code
         host        = IP-literal / IPv4address / reg-name
@@ -603,18 +886,6 @@ public:
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
 
-        @par Postconditions
-        @code
-        this->has_authority() == true
-        @endcode
-
-        @par Complexity
-        Linear in `s.size()`.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
         @par Specification
         @li <a href="https://en.wikipedia.org/wiki/IPv4"
             >IPv4 (Wikipedia)</a>
@@ -623,7 +894,13 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
-        @param s The string to set.
+        @see
+            @ref set_encoded_host,
+            @ref set_encoded_host_address,
+            @ref set_encoded_host_name,
+            @ref set_host_address,
+            @ref set_host_ipvfuture,
+            @ref set_host_name.
     */
     BOOST_URL_DECL
     url_base&
@@ -665,6 +942,24 @@ public:
         assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
         @endcode
 
+        @par Postconditions
+        @code
+        this->has_authority() == true
+        @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `s` contains an invalid percent-encoding.
+
+        @param s The string to set.
+
         @par BNF
         @code
         host        = IP-literal / IPv4address / reg-name
@@ -674,19 +969,6 @@ public:
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
 
-        @par Postconditions
-        @code
-        this->has_authority() == true
-        @endcode
-
-        @par Complexity
-        Linear in `s.size()`.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-        Exceptions thrown on invalid input.
-
         @par Specification
         @li <a href="https://en.wikipedia.org/wiki/IPv4"
             >IPv4 (Wikipedia)</a>
@@ -695,7 +977,13 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
-        @param s The string to set.
+        @see
+            @ref set_encoded_host_address,
+            @ref set_encoded_host_name,
+            @ref set_host,
+            @ref set_host_address,
+            @ref set_host_ipvfuture,
+            @ref set_host_name.
     */
     BOOST_URL_DECL
     url_base&
@@ -732,6 +1020,20 @@ public:
         assert( url( "http://www.example.com" ).set_host_address( "127.0.0.1" ).string() == "http://127.0.0.1" );
         @endcode
 
+        @par Postconditions
+        @code
+        this->has_authority() == true
+        @endcode
+
+        @par Complexity
+        Linear in `s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
+
         @par BNF
         @code
         IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
@@ -763,18 +1065,6 @@ public:
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
 
-        @par Postconditions
-        @code
-        this->has_authority() == true
-        @endcode
-
-        @par Complexity
-        Linear in `s.size()`.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
         @par Specification
         @li <a href="https://en.wikipedia.org/wiki/IPv4"
             >IPv4 (Wikipedia)</a>
@@ -783,7 +1073,14 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
-        @param s The string to set.
+        @see
+            @ref set_encoded_host,
+            @ref set_encoded_host_address,
+            @ref set_encoded_host_name,
+            @ref set_host,
+            @ref set_host_address,
+            @ref set_host_ipvfuture,
+            @ref set_host_name.
     */
     BOOST_URL_DECL
     url_base&
@@ -822,6 +1119,24 @@ public:
         assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
         @endcode
 
+        @par Postconditions
+        @code
+        this->has_authority() == true
+        @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `s` contains an invalid percent-encoding.
+
+        @param s The string to set.
+
         @par BNF
         @code
         IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
@@ -853,19 +1168,6 @@ public:
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
 
-        @par Postconditions
-        @code
-        this->has_authority() == true
-        @endcode
-
-        @par Complexity
-        Linear in `s.size()`.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-        Exceptions thrown on invalid input.
-
         @par Specification
         @li <a href="https://en.wikipedia.org/wiki/IPv4"
             >IPv4 (Wikipedia)</a>
@@ -874,7 +1176,13 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
-        @param s The string to set.
+        @see
+            @ref set_encoded_host,
+            @ref set_encoded_host_name,
+            @ref set_host,
+            @ref set_host_address,
+            @ref set_host_ipvfuture,
+            @ref set_host_name.
     */
     BOOST_URL_DECL
     url_base&
@@ -889,10 +1197,22 @@ public:
 
         @par Example
         @code
-        url u;
-
-        u.set_host_ipv4_address( ipv4_address( "127.0.0.1" ) );
+        assert( url("http://www.example.com").set_host_address( ipv4_address( "127.0.0.1" ) ).string() == "http://127.0.0.1" );
         @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
+
+        @par Postconditions
+        @code
+        this->has_authority() == true && this->host_ipv4_address() == addr && this->host_type() == host_type::ipv4
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param addr The address to set.
 
         @par BNF
         @code
@@ -905,26 +1225,24 @@ public:
                     / "25" %x30-35          ; 250-255
         @endcode
 
-        @par Postconditions
-        @code
-        this->has_authority() == true && this->host_ipv4_address() == addr && this->host_type() == host_type::ipv4
-        @endcode
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
         @par Specification
         @li <a href="https://en.wikipedia.org/wiki/IPv4"
             >IPv4 (Wikipedia)</a>
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
-        @param addr The address to set.
+        @see
+            @ref set_encoded_host,
+            @ref set_encoded_host_address,
+            @ref set_encoded_host_name,
+            @ref set_host,
+            @ref set_host_address,
+            @ref set_host_ipvfuture,
+            @ref set_host_name.
     */
     BOOST_URL_DECL
     url_base&
-    set_host_ipv4_address(
+    set_host_address(
         ipv4_address const& addr);
 
     /** Set the host to an address
@@ -935,10 +1253,22 @@ public:
 
         @par Example
         @code
-        url u;
-
-        u.set_host_ipv6_address( ipv6_address( "1::6:c0a8:1" ) );
+        assert( url().set_host_address( ipv6_address( "1::6:c0a8:1" ) ).encoded_authority() == "[1::6:c0a8:1]" );
         @endcode
+
+        @par Postconditions
+        @code
+        this->has_authority() == true && this->host_ipv6_address() == addr && this->host_type() == host_type::ipv6
+        @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param addr The address to set.
 
         @par BNF
         @code
@@ -959,26 +1289,24 @@ public:
                     ; 16 bits of address represented in hexadecimal
         @endcode
 
-        @par Postconditions
-        @code
-        this->has_authority() == true && this->host_ipv6_address() == addr && this->host_type() == host_type::ipv6
-        @endcode
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc4291"
             >IP Version 6 Addressing Architecture (rfc4291)</a>
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
-        @param addr The address to set.
+        @see
+            @ref set_encoded_host,
+            @ref set_encoded_host_address,
+            @ref set_encoded_host_name,
+            @ref set_host,
+            @ref set_host_address,
+            @ref set_host_ipvfuture,
+            @ref set_host_name.
     */
     BOOST_URL_DECL
     url_base&
-    set_host_ipv6_address(
+    set_host_address(
         ipv6_address const& addr);
 
     /** Set the host to an address
@@ -989,15 +1317,11 @@ public:
 
         @par Example
         @code
-        url u;
-
-        u.set_host_ipvfuture( "v42.bis" );
+        assert( url().set_host_ipvfuture( "v42.bis" ).string() == "//[v42.bis]" );
         @endcode
 
-        @par BNF
-        @code
-        IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
-        @endcode
+        @par Complexity
+        Linear in `this->size() + s.size()`.
 
         @par Postconditions
         @code
@@ -1007,12 +1331,29 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `s` contains an invalid percent-encoding.
+
+        @param addr The address to set.
+
+        @par BNF
+        @code
+        IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+        @endcode
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
-        @param addr The address to set.
+        @see
+            @ref set_encoded_host,
+            @ref set_encoded_host_address,
+            @ref set_encoded_host_name,
+            @ref set_host,
+            @ref set_host_address,
+            @ref set_host_name.
     */
     BOOST_URL_DECL
     url_base&
@@ -1029,14 +1370,7 @@ public:
 
         @par Example
         @code
-        url u;
-
-        u.set_host_name( "www.example.com" );
-        @endcode
-
-        @par BNF
-        @code
-        reg-name    = *( unreserved / pct-encoded / "-" / ".")
+        assert( url( "http://www.example.com/index.htm").set_host_name( "localhost" ).host_address() == "localhost" );
         @endcode
 
         @par Postconditions
@@ -1048,11 +1382,24 @@ public:
         Strong guarantee.
         Calls to allocate may throw.
 
+        @param addr The address to set.
+
+        @par BNF
+        @code
+        reg-name    = *( unreserved / pct-encoded / "-" / ".")
+        @endcode
+
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
-        @param addr The address to set.
+        @see
+            @ref set_encoded_host,
+            @ref set_encoded_host_address,
+            @ref set_encoded_host_name,
+            @ref set_host,
+            @ref set_host_address,
+            @ref set_host_ipvfuture.
     */
     BOOST_URL_DECL
     url_base&
@@ -1062,7 +1409,8 @@ public:
     /** Set the host to a name
 
         The host is set to the specified string,
-        which may be empty.
+        which may contain percent-escapes and
+        can be empty.
         Escapes in the string are preserved,
         and reserved characters in the string
         are percent-escaped in the result.
@@ -1070,14 +1418,7 @@ public:
 
         @par Example
         @code
-        url u;
-
-        u.set_encoded_host_name( "www.example.com" );
-        @endcode
-
-        @par BNF
-        @code
-        reg-name    = *( unreserved / pct-encoded / "-" / ".")
+        assert( url( "http://www.example.com/index.htm").set_encoded_host_name( "localhost" ).host_address() == "localhost" );
         @endcode
 
         @par Postconditions
@@ -1088,12 +1429,29 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `s` contains an invalid percent-encoding.
+
+        @param s The string to set.
+
+        @par BNF
+        @code
+        reg-name    = *( unreserved / pct-encoded / "-" / ".")
+        @endcode
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
-        @param s The string to set.
+        @see
+            @ref set_encoded_host,
+            @ref set_encoded_host_address,
+            @ref set_host,
+            @ref set_host_address,
+            @ref set_host_ipvfuture,
+            @ref set_host_name.
     */
     BOOST_URL_DECL
     url_base&
@@ -1104,22 +1462,38 @@ public:
 
     /** Remove the port
 
-        If a port is present, it is removed.
-        The remainder of the authority component
-        is left unchanged including the leading
-        double slash ("//").
+        If a port exists, it is removed. The rest
+        of the authority is unchanged.
+
+        @par Example
+        @code
+        assert( url( "http://www.example.com:80" ).remove_port().encoded_authority() == "www.example.com" );
+        @endcode
 
         @par Postconditions
         @code
         this->has_port() == false && this->port_number() == 0 && this->port() == ""
         @endcode
 
+        @par Complexity
+        Linear in `this->size()`.
+
         @par Exception Safety
         Throws nothing.
+
+        @par BNF
+        @code
+        authority     = [ userinfo "@" ] host [ ":" port ]
+
+        port          = *DIGIT
+        @endcode
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">
             3.2.3. Port (rfc3986)</a>
+
+        @see
+            @ref set_port.
     */
     BOOST_URL_DECL
     url_base&
@@ -1127,28 +1501,41 @@ public:
 
     /** Set the port
 
-        The port of the URL is set to the specified
-        integer, replacing any previous port.
-        If an authority did not
-        previously exist it is added by prepending
-        a double slash ("//") at the beginning of
-        the URL or after the scheme if a scheme is
-        present.
+        The port is set to the specified integer.
+
+        @par Example
+        @code
+        assert( url( "http://www.example.com" ).set_port( 8080 ).encoded_authority() == "www.example.com:8080" );
+        @endcode
 
         @par Postconditions
         @code
-        this->has_port() == true && this->port_number() == n && this->port() == std::to_string(n)
+        this->has_authority() == true && this->has_port() == true && this->port_number() == n
         @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
 
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
 
+        @param n The port number to set.
+
+        @par BNF
+        @code
+        authority     = [ userinfo "@" ] host [ ":" port ]
+
+        port          = *DIGIT
+        @endcode
+
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">
             3.2.3. Port (rfc3986)</a>
 
-        @param n The port number to set.
+        @see
+            @ref remove_port,
+            @ref set_port.
     */
     BOOST_URL_DECL
     url_base&
@@ -1156,40 +1543,43 @@ public:
 
     /** Set the port
 
-        The port of the URL is set to the specified
-        string, replacing any previous port. The string
-        must meet the syntactic requirements for PORT,
-        which consists only of digits. The string
-        may be empty. In this case the port is still
-        defined, however it is the empty string. To
-        remove the port call @ref remove_port.
-        If an authority did not
-        previously exist it is added by prepending
-        a double slash ("//") at the beginning of
-        the URL or after the scheme if a scheme is
-        present.
+        This port is set to the string, which
+        must contain only digits or be empty.
+        An empty port string is distinct from
+        having no port.
+
+        @par Example
+        @code
+        assert( url( "http://www.example.com" ).set_port( "8080" ).encoded_authority() == "www.example.com:8080" );
+        @endcode
 
         @par Postconditions
         @code
         this->has_port() == true && this->port_number() == n && this->port() == std::to_string(n)
         @endcode
 
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `s` does not contain a valid port.
+
+        @param s The port string to set.
+
         @par BNF
         @code
         port          = *DIGIT
         @endcode
 
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">
             3.2.3. Port (rfc3986)</a>
 
-        @param s The port string to set.
-
-        @throw std::exception `s` is not a valid port string.
+        @see
+            @ref remove_port,
+            @ref set_port.
     */
     BOOST_URL_DECL
     url_base&
@@ -1199,9 +1589,21 @@ public:
 
     /** Remove the origin component
 
-        The origin consists of the everything from the
-        beginning of the URL up to but not including
-        the path.
+        This function removes the origin, which
+        consists of the scheme and authority.
+
+        @par Example
+        @code
+        assert( url( "http://www.example.com/index.htm" ).remove_origin().string() == "/index.htm" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->scheme_id() == scheme::none && this->has_authority() == false
+        @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
 
         @par Exception Safety
         Throws nothing.
@@ -1216,47 +1618,42 @@ public:
     //
     //--------------------------------------------
 
-    /** Set whether the path is absolute.
+    /** Set if the path is absolute
 
-        This modifies the path as needed to
-        make it absolute or relative.
+        This function adjusts the path to make
+        it absolute or not, depending on the
+        parameter.
+
+        @note
+        If an authority is present, the path
+        is always absolute. In this case, the
+        function has no effect.
+
+        @par Example
+        @code
+        url u( "path/to/file.txt" );
+        assert( u.set_path_absolute( true ) );
+        assert( u.string() == "/path/to/file.txt" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->is_path_absolute() == true && this->encoded_path().front() == '/'
+        @endcode
 
         @return true on success.
-    */
-    BOOST_URL_DECL
-    bool
-    set_path_absolute(bool absolute);
 
-    /** Set the path.
-
-        This function validates the given percent-encoded
-        path according to the allowed grammar based
-        on the existing contents of the URL. If the
-        path is valid, the old path is replaced with
-        the new path. Otherwise, an exception is
-        thrown. The requirements for `s` are thus:
-
-        @li If `s` matches <em>path-empty</em>, that is
-        if `s.empty() == true`, the path is valid. Else,
-
-        @li If an authority is present (@ref has_authority
-        returns `true`), the path syntax must match
-        <em>path-abempty</em>. Else, if there is no
-        authority then:
-
-        @li If the new path starts with a forward
-        slash ('/'), the path syntax must match
-        <em>path-absolute</em>. Else, if the
-        path is rootless (does not start with '/'),
-        then:
-
-        @li If a scheme is present, the path syntax
-        must match <em>path-rootless</em>, otherwise
-
-        @li The path syntax must match <em>path-noscheme</em>.
+        @par Complexity
+        Linear in `this->size()`.
 
         @par BNF
         @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
         path-abempty  = *( "/" segment )
         path-absolute = "/" [ segment-nz *( "/" segment ) ]
         path-noscheme = segment-nz-nc *( "/" segment )
@@ -1264,45 +1661,72 @@ public:
         path-empty    = 0<pchar>
         @endcode
 
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3.  Path (rfc3986)</a>
+
+        @see
+            @ref encoded_segments,
+            @ref segments,
+            @ref set_encoded_path,
+            @ref set_path.
+    */
+    BOOST_URL_DECL
+    bool
+    set_path_absolute(bool absolute);
+
+    /** Set the path.
+
+        This function sets the path to the
+        string, which may be empty.
+        Reserved characters in the string are
+        percent-escaped in the result.
+
+        @note
+        The library may adjust the final result
+        to ensure that no other parts of the url
+        will be semantically affected.
+
+        @par Example
+        @code
+        url u( "http://www.example.com" );
+
+        u.set_path( "path/to/file.txt" );
+
+        assert( u.path() == "/path/to/file.txt" );
+        @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
+
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
 
         @param s The string to set.
 
-        @throws std::invalid_argument invalid path.
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+        @endcode
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-    */
-    BOOST_URL_DECL
-    url_base&
-    set_encoded_path(
-        pct_string_view s);
-
-    /** Set the path.
-
-        Sets the path of the URL to the specified
-        plain string. Any reserved characters in the
-        string will be automatically percent-encoded.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set. This string may
-        contain any characters, including nulls.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
+            >3.3.  Path (rfc3986)</a>
 
         @see
-            @ref encoded_path,
             @ref encoded_segments,
-            @ref is_path_absolute,
-            @ref normalize_path,
+            @ref segments,
             @ref set_encoded_path,
             @ref set_path_absolute.
     */
@@ -1311,55 +1735,183 @@ public:
     set_path(
         string_view s);
 
-    /** Return the path segments
+    /** Set the path.
 
-        This function returns the path segments as
-        a bidirectional range.
+        This function sets the path to the
+        string, which may contain percent-escapes
+        and can be empty.
+        Escapes in the string are preserved,
+        and reserved characters in the string
+        are percent-escaped in the result.
+
+        @note
+        The library may adjust the final result
+        to ensure that no other parts of the url
+        will be semantically affected.
+
+        @par Example
+        @code
+        url u( "http://www.example.com" );
+
+        u.set_encoded_path( "path/to/file.txt" );
+
+        assert( u.encoded_path() == "/path/to/file.txt" );
+        @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `s` contains an invalid percent-encoding.
+
+        @param s The string to set.
 
         @par BNF
         @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
 
-        @par Exception Safety
-        Throws nothing.
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+        @endcode
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
+            >3.3.  Path (rfc3986)</a>
 
         @see
-            @ref urls::segments_encoded,
-            @ref segments.
-
+            @ref encoded_segments,
+            @ref segments,
+            @ref set_path,
+            @ref set_path_absolute.
     */
     BOOST_URL_DECL
-    segments_encoded
-    encoded_segments() noexcept;
+    url_base&
+    set_encoded_path(
+        pct_string_view s);
 
-    /** Return the path segments
+    /** Return the path as a container of segments
 
-        This function returns the path segments as
-        a bidirectional range.
+        This function returns a bidirectional
+        view of segments over the path.
+        The returned view references the same
+        underlying character buffer; ownership
+        is not transferred.
+        Any percent-escapes in strings returned
+        when iterating the view are decoded first.
+        The container is modifiable; changes
+        to the container are reflected in the
+        underlying URL.
 
-        @par BNF
+        @par Example
         @code
-        path          = [ "/" ] segment *( "/" segment )
+        url u( "http://example.com/path/to/file.txt" );
+
+        segments sv = u.segments();
         @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
 
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+        @endcode
+
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
+            >3.3.  Path (rfc3986)</a>
 
         @see
-            @ref urls::segments,
-            @ref encoded_segments.
+            @ref encoded_segments,
+            @ref set_encoded_path,
+            @ref set_path,
+            @ref set_path_absolute.
     */
     urls::segments
     segments() noexcept
+    {
+        return {*this};
+    }
+
+    /** Return the path as a container of segments
+
+        This function returns a bidirectional
+        view of segments over the path.
+        The returned view references the same
+        underlying character buffer; ownership
+        is not transferred.
+        Strings returned when iterating the
+        range may contain percent escapes.
+        The container is modifiable; changes
+        to the container are reflected in the
+        underlying URL.
+
+        @par Example
+        @code
+        url u( "http://example.com/path/to/file.txt" );
+
+        segments_encoded sv = u.encoded_segments();
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3.  Path (rfc3986)</a>
+
+        @see
+            @ref encoded_segments,
+            @ref set_encoded_path,
+            @ref set_path,
+            @ref set_path_absolute.
+    */
+    BOOST_URL_DECL
+    segments_encoded
+    encoded_segments() noexcept
     {
         return {*this};
     }
@@ -1370,17 +1922,42 @@ public:
     //
     //--------------------------------------------
 
-    /** Remove the query.
+    /** Remove the query
 
-        If a query is present (@ref has_query
-        returns `true`), then the query is
-        removed including the leading `?`.
+        If a query is present, it is removed.
+        An empty query is distinct from having
+        no query.
+
+        @par Example
+        @code
+        assert( url( "http://www.example.com?id=42" ).remove_query().string() == "http://www.example.com" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_query() == false && this->params().empty()
+        @endcode
 
         @par Exception Safety
         Throws nothing.
 
+        @par BNF
+        @code
+        query           = *( pchar / "/" / "?" )
+
+        query-param     = key [ "=" value ]
+        query-params    = [ query-param ] *( "&" query-param )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
+
         @see
-            @ref has_query,
+            @ref encoded_params,
+            @ref params,
             @ref set_encoded_query,
             @ref set_query.
     */
@@ -1388,17 +1965,23 @@ public:
     url_base&
     remove_query() noexcept;
 
-    /** Set the query.
+    /** Set the query
 
-        Sets the query of the URL to the specified
-        encoded string. The string must contain a
-        valid percent-encoding or else an exception
-        is thrown. When this function returns,
-        @ref has_query will return `true`.
+        This sets the query to the string, which
+        can be empty.
+        An empty query is distinct from having
+        no query.
+        Reserved characters in the string are
+        percent-escaped in the result.
 
-        @par BNF
+        @par Example
         @code
-        query           = *( pchar / "/" / "?" )
+        assert( url( "http://example.com" ).set_query( "id=42" ).query() == "id=42" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_query() == true && this->query() == s
         @endcode
 
         @par Exception Safety
@@ -1407,35 +1990,23 @@ public:
 
         @param s The string to set.
 
-        @throws std::invalid_argument bad encoding.
+        @par BNF
+        @code
+        query           = *( pchar / "/" / "?" )
+
+        query-param     = key [ "=" value ]
+        query-params    = [ query-param ] *( "&" query-param )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
 
         @see
-            @ref has_query,
-            @ref remove_query,
-            @ref set_query.
-    */
-    BOOST_URL_DECL
-    url_base&
-    set_encoded_query(
-        pct_string_view s);
-
-    /** Set the query.
-
-        Sets the query of the URL to the specified
-        plain string. Any reserved characters in the
-        string will be automatically percent-encoded.
-        When this function returns, @ref has_query
-        will return `true`.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set. This string may
-        contain any characters, including nulls.
-
-        @see
-            @ref has_query,
+            @ref encoded_params,
+            @ref params,
             @ref remove_query,
             @ref set_encoded_query.
     */
@@ -1444,56 +2015,160 @@ public:
     set_query(
         string_view s);
 
-    /** Return the query parameters
+    /** Set the query
 
-        This function returns the query
-        parameters as a forward range of
-        key/value pairs.
+        This sets the query to the string, which
+        may contain percent-escapes and can be
+        empty.
+        An empty query is distinct from having
+        no query.
+        Escapes in the string are preserved,
+        and reserved characters in the string
+        are percent-escaped in the result.
 
-        Each string returned by the container
-        is percent-encoded.
+        @par Example
+        @code
+        assert( url( "http://example.com" ).set_encoded_query( "id=42" ).encoded_query() == "id=42" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_query() == true && this->query() == decode_view( s );
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @param s The string to set.
+
+        @throws system_error
+        `s` contains an invalid percent-encoding.
 
         @par BNF
         @code
-        query-params_view    = [ query-param ] *( "&" [ query-param ] )
+        query           = *( pchar / "/" / "?" )
 
         query-param     = key [ "=" value ]
-
+        query-params    = [ query-param ] *( "&" query-param )
         @endcode
 
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
+
         @see
-            @ref urls::params_encoded_view,
-            @ref params_view.
+            @ref encoded_params,
+            @ref params,
+            @ref remove_query,
+            @ref set_query.
     */
-    urls::params_encoded_view
-    encoded_params() noexcept
-    {
-        return urls::params_encoded_view(*this);
-    }
+    BOOST_URL_DECL
+    url_base&
+    set_encoded_query(
+        pct_string_view s);
 
-    /** Return the query parameters
+    /** Return the query as a container of parameters
 
-        This function returns the query
-        parameters as a forward range of
-        key/value pairs where each returned
-        string has percent-decoding applied.
+        This function returns a bidirectional
+        view of key/value pairs over the query.
+        The returned view references the same
+        underlying character buffer; ownership
+        is not transferred.
+        Any percent-escapes in strings returned
+        when iterating the view are decoded first.
+        The container is modifiable; changes
+        to the container are reflected in the
+        underlying URL.
+
+        @par Example
+        @code
+        params_view pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
-        query-params_view    = [ query-param ] *( "&" [ query-param ] )
+        query           = *( pchar / "/" / "?" )
 
         query-param     = key [ "=" value ]
+        query-params    = [ query-param ] *( "&" query-param )
         @endcode
 
-        @see
-            @ref urls::params_view,
-            @ref encoded_params.
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
 
+        @see
+            @ref encoded_params,
+            @ref remove_query,
+            @ref set_encoded_query,
+            @ref set_query.
     */
     urls::params_view
     params() noexcept
     {
         return urls::params_view(*this);
+    }
+
+    /** Return the query as a container of parameters
+
+        This function returns a bidirectional
+        view of key/value pairs over the query.
+        The returned view references the same
+        underlying character buffer; ownership
+        is not transferred.
+        Strings returned when iterating the
+        range may contain percent escapes.
+        The container is modifiable; changes
+        to the container are reflected in the
+        underlying URL.
+
+        @par Example
+        @code
+        params_encoded_view pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        query           = *( pchar / "/" / "?" )
+
+        query-param     = key [ "=" value ]
+        query-params    = [ query-param ] *( "&" query-param )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
+
+        @see
+            @ref params,
+            @ref remove_query,
+            @ref set_encoded_query,
+            @ref set_query.
+    */
+    urls::params_encoded_view
+    encoded_params() noexcept
+    {
+        return urls::params_encoded_view(*this);
     }
 
     //--------------------------------------------
@@ -1502,17 +2177,39 @@ public:
     //
     //--------------------------------------------
 
-    /** Remove the fragment.
+    /** Remove the fragment
 
-        If a fragment is present (@ref has_fragment
-        returns `true`), then the fragment is
-        removed including the leading `#`.
+        This function removes the fragment.
+        An empty fragment is distinct from
+        having no fragment.
+
+        @par Example
+        @code
+        assert( url( "?first=john&last=doe#anchor" ).remove_fragment().string() == "?first=john&last=doe" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_fragment() == false && this->encoded_fragment() == ""
+        @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
 
+        @par BNF
+        @code
+        fragment    = *( pchar / "/" / "?" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
+            >3.5.  Fragment</a>
+
         @see
-            @ref has_fragment,
+            @ref remove_fragment,
             @ref set_encoded_fragment,
             @ref set_fragment.
     */
@@ -1522,16 +2219,25 @@ public:
 
     /** Set the fragment.
 
-        Sets the fragment of the URL to the specified
-        encoded string. The string must contain a
-        valid percent-encoding or else an exception
-        is thrown. When this function returns,
-        @ref has_fragment will return `true`.
+        This function sets the fragment to the
+        specified string, which may be empty.
+        An empty fragment is distinct from
+        having no fragment.
+        Reserved characters in the string are
+        percent-escaped in the result.
 
-        @par BNF
+        @par Example
         @code
-        fragment      = *( pchar / "/" / "?" )
+        assert( url("?first=john&last=doe" ).set_encoded_fragment( "john doe" ).encoded_fragment() == "john%20doe" );
         @endcode
+
+        @par Postconditions
+        @code
+        this->has_fragment() == true && this->fragment() == s
+        @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
 
         @par Exception Safety
         Strong guarantee.
@@ -1539,35 +2245,16 @@ public:
 
         @param s The string to set.
 
-        @throws std::exception bad encoding.
+        @par BNF
+        @code
+        fragment    = *( pchar / "/" / "?" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
+            >3.5.  Fragment</a>
 
         @see
-            @ref has_fragment,
-            @ref remove_fragment,
-            @ref set_fragment.
-    */
-    BOOST_URL_DECL
-    url_base&
-    set_encoded_fragment(
-        pct_string_view s);
-
-    /** Set the fragment.
-
-        Sets the fragment of the URL to the specified
-        plain string. Any reserved characters in the
-        string will be automatically percent-encoded.
-        When this function returns, @ref has_fragment
-        will return `true`.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set. This string may
-        contain any characters, including nulls.
-
-        @see
-            @ref has_fragment,
             @ref remove_fragment,
             @ref set_encoded_fragment.
     */
@@ -1576,24 +2263,63 @@ public:
     set_fragment(
         string_view s);
 
+    /** Set the fragment.
+
+        This function sets the fragment to the
+        specified string, which may contain
+        percent-escapes and which may be empty.
+        An empty fragment is distinct from
+        having no fragment.
+        Escapes in the string are preserved,
+        and reserved characters in the string
+        are percent-escaped in the result.
+
+        @par Example
+        @code
+        assert( url("?first=john&last=doe" ).set_encoded_fragment( "john%2Ddoe" ).fragment() == "john-doe" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_fragment() == true && this->fragment() == decode_view( s )
+        @endcode
+
+        @par Complexity
+        Linear in `this->size() + s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `s` contains an invalid percent-encoding.
+
+        @param s The string to set.
+
+        @par BNF
+        @code
+        fragment    = *( pchar / "/" / "?" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
+            >3.5.  Fragment</a>
+
+        @see
+            @ref remove_fragment,
+            @ref set_fragment.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_encoded_fragment(
+        pct_string_view s);
+
     //--------------------------------------------
     //
     // Normalization
     //
     //--------------------------------------------
-private:
-    void
-    normalize_octets_impl(
-        int id,
-        grammar::lut_chars const& cs,
-        op_t& op) noexcept;
-
-    void
-    decoded_to_lower_impl(int id) noexcept;
-
-    void
-    to_lower_impl(int id) noexcept;
-public:
 
     /** Normalize the URL components
 
@@ -1801,6 +2527,11 @@ private:
     resolve_impl(
         url_view_base const& base,
         url_view_base const& ref);
+
+    void normalize_octets_impl(int,
+        grammar::lut_chars const& cs, op_t&) noexcept;
+    void decoded_to_lower_impl(int id) noexcept;
+    void to_lower_impl(int id) noexcept;
 };
 
 //------------------------------------------------
