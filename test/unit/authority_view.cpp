@@ -186,12 +186,12 @@ public:
                 host_type::name);
             BOOST_TEST(a.encoded_host() ==
                 "");
-            BOOST_TEST(a.ipv4_address()
+            BOOST_TEST(a.host_ipv4_address()
                 == ipv4_address());
-            BOOST_TEST(a.ipv6_address()
+            BOOST_TEST(a.host_ipv6_address()
                 == ipv6_address());
             BOOST_TEST(
-                a.ipvfuture() == "");
+                a.host_ipvfuture() == "");
         }
         {
             auto a = parse_authority("").value();
@@ -225,7 +225,7 @@ public:
             BOOST_TEST(a.host() ==
                 "192.168.0.1");
             BOOST_TEST(
-                a.ipv4_address().to_uint() ==
+                a.host_ipv4_address().to_uint() ==
                     0xc0a80001);
         }
         {
@@ -237,7 +237,7 @@ public:
                 "[1::6:192.168.0.1]");
             BOOST_TEST(a.host() ==
                 "[1::6:192.168.0.1]");
-            BOOST_TEST(a.ipv6_address() ==
+            BOOST_TEST(a.host_ipv6_address() ==
                 ipv6_address("1::6:c0a8:1"));
         }
         {
@@ -249,8 +249,7 @@ public:
                 "[v1.x]");
             BOOST_TEST(a.host() ==
                 "[v1.x]");
-            BOOST_TEST(a.ipvfuture() ==
-                "[v1.x]");
+            BOOST_TEST(a.host_ipvfuture() == "v1.x");
         }
     }
 

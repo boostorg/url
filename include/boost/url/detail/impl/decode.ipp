@@ -141,25 +141,23 @@ std::size_t
 decode_bytes_unchecked(
     string_view s) noexcept
 {
-    auto it = s.data();
-    auto const end =
-        it + s.size();
-    std::size_t n = 0;
-    while(it < end)
+    auto p = s.begin();
+    auto const end = s.end();
+    std::size_t dn = 0;
+    if(s.size() >= 3)
     {
-        if(*it != '%')
+        auto const safe_end = end - 2;
+        while(p < safe_end)
         {
-            // unescaped
-            ++it;
-            ++n;
-            continue;
+            if(*p != '%')
+                p += 1;
+            else
+                p += 3;
+            ++dn;
         }
-        if(end - it < 3)
-            return n;
-        it += 3;
-        ++n;
     }
-    return n;
+    dn += end - p;
+    return dn;
 }
 
 std::size_t

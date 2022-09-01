@@ -413,7 +413,7 @@ public:
 
 TEST_SUITE(
     ipv6_address_test,
-    "boost.url.ipv6_address");
+    "boost.url.host_ipv6_address");
 
 } // urls
 } // boost

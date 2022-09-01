@@ -51,11 +51,18 @@ clear_impl() noexcept
 void
 static_url_base::
 reserve_impl(
-    std::size_t n)
+    std::size_t n,
+    op_t&)
 {
     if(n <= cap_)
         return;
     detail::throw_bad_alloc();
+}
+
+void
+static_url_base::
+cleanup(op_t&)
+{
 }
 
 } // urls

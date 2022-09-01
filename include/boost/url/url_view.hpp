@@ -325,11 +325,11 @@ parse_origin_form(
                   / path-empty
     @endcode
 
-    @throw std::length_error `s.size() > url_view::max_size`
-
     @return A @ref result containing a value or an error
 
     @param s The string to parse
+
+    @throw std::length_error `s.size() > url_view::max_size`
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2

@@ -495,7 +495,7 @@ test(
     log_ <<
         "#" << id << " " <<
         filename(file) << "(" << line << ") "
-        "failed: '" << expr << "'"
+        "failed: " << expr <<
         //" in " << func <<
         "\n";
     log_.flush();

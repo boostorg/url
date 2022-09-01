@@ -142,7 +142,9 @@ encoded_size(
         @ref encode,
         @ref encoded_size.
 */
-template <class CharSet = grammar::all_chars_t>
+template<
+    class CharSet =
+        grammar::all_chars_t>
 std::size_t
 encode(
     char* dest,

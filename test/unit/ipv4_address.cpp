@@ -245,7 +245,7 @@ public:
 
 TEST_SUITE(
     ipv4_address_test,
-    "boost.url.ipv4_address");
+    "boost.url.host_ipv4_address");
 
 } // urls
 } // boost

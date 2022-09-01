@@ -62,7 +62,8 @@ class BOOST_SYMBOL_VISIBLE
     BOOST_URL_DECL static_url_base(
         char* buf, std::size_t cap, string_view s);
     BOOST_URL_DECL void clear_impl() noexcept override;
-    BOOST_URL_DECL void reserve_impl(std::size_t) override;
+    BOOST_URL_DECL void reserve_impl(std::size_t, op_t&) override;
+    BOOST_URL_DECL void cleanup(op_t&) override;
 
     void
     copy(url_view_base const& u)

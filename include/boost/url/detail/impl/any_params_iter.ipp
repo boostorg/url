@@ -194,7 +194,7 @@ copy(
     char const* end) noexcept
 {
     BOOST_ASSERT(p_ != nullptr);
-    dest += encode(
+    dest += encode_unchecked(
         dest,
         end,
         string_view(p_, n_),

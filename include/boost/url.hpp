@@ -27,6 +27,7 @@
 #include <boost/url/params_const_view.hpp>
 #include <boost/url/decode_view.hpp>
 #include <boost/url/param.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments.hpp>
 #include <boost/url/segments_encoded.hpp>

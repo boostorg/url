@@ -75,6 +75,7 @@
 [def __params_encoded_view__    [link url.ref.boost__urls__params_encoded_view `encoded_params_view`]]
 [def __pchars__                 [link url.ref.boost__urls__pchars `pchars`]]
 [def __pct_encoded_rule__       [link url.ref.boost__urls__pct_encoded_rule `pct_encoded_rule`]]
+[def __pct_string_view__        [link url.ref.boost__urls__pct_string_view `pct_string_view`]]
 [def __query_param_view__       [link url.ref.boost__urls__query_param_view `query_param_view`]]
 [def __result__                 [link url.ref.boost__urls__result `result`]]
 [def __segments__               [link url.ref.boost__urls__segments `segments`]]

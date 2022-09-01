@@ -558,7 +558,7 @@ struct params_view_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23=%25&%26==&%3d=%26",
+            "%23=%25&%26==&%3D=%26",
             [](params_view& p)
             {
                 // encodings
@@ -730,7 +730,7 @@ struct params_view_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23=%25&%26==&%3d=%26",
+            "%23=%25&%26==&%3D=%26",
             [](params_view& p)
             {
                 // encodings
@@ -850,7 +850,7 @@ struct params_view_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23=%25&%26==&%3d=%26",
+            "%23=%25&%26==&%3D=%26",
             [](params_view& p)
             {
                 // encodings
@@ -950,7 +950,7 @@ struct params_view_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%3d=%26",
+            "k0=0&k1=1&k2=&k3&k4=4444&%3D=%26",
             [](params_view& p)
             {
                 // encodings
@@ -996,7 +996,7 @@ struct params_view_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%23=%25&%26==&%3d=%26",
+            "k0=0&k1=1&k2=&k3&k4=4444&%23=%25&%26==&%3D=%26",
             [](params_view& p)
             {
                 // encodings
@@ -1043,7 +1043,7 @@ struct params_view_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%23=%25&%26==&%3d=%26",
+            "k0=0&k1=1&k2=&k3&k4=4444&%23=%25&%26==&%3D=%26",
             [](params_view& p)
             {
                 // encodings
@@ -1163,7 +1163,7 @@ struct params_view_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%3d=%26&k2=&k3&k4=4444",
+            "k0=0&k1=1&%3D=%26&k2=&k3&k4=4444",
             [](params_view& p)
             {
                 // encodings
@@ -1249,7 +1249,7 @@ struct params_view_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%23=%25&%26==&%3d=%26&k2=&k3&k4=4444",
+            "k0=0&k1=1&%23=%25&%26==&%3D=%26&k2=&k3&k4=4444",
             [](params_view& p)
             {
                 // encodings
@@ -1335,7 +1335,7 @@ struct params_view_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%23=%25&%26==&%3d=%26&k2=&k3&k4=4444",
+            "k0=0&k1=1&%23=%25&%26==&%3D=%26&k2=&k3&k4=4444",
             [](params_view& p)
             {
                 // encodings
@@ -1673,7 +1673,7 @@ struct params_view_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&%23=%25&%26==&%3d=%26&k3&k4=4444",
+            "k0=0&%23=%25&%26==&%3D=%26&k3&k4=4444",
             [](params_view& p)
             {
                 // encodings
@@ -1736,7 +1736,7 @@ struct params_view_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&%23=%25&%26==&%3d=%26&k3&k4=4444",
+            "k0=0&%23=%25&%26==&%3D=%26&k3&k4=4444",
             [](params_view& p)
             {
                 // encodings

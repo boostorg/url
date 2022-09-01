@@ -16,6 +16,7 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/params_view.hpp>
 #include <boost/url/params_encoded_view.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments.hpp>
 #include <boost/url/segments_encoded.hpp>
@@ -75,12 +76,31 @@ class BOOST_SYMBOL_VISIBLE
     friend class segments_encoded;
     friend class params_encoded_view;
 
+    struct op_t
+    {
+        ~op_t();
+        op_t(url_base&) noexcept;
+        op_t(url_base&, string_view&) noexcept;
+        void move(char*, char const*,
+            std::size_t) noexcept;
+
+        url_base& u;
+        string_view& s;
+        char* old = nullptr;
+
+    private:
+        string_view s_;
+    };
+
     url_base() noexcept = default;
     url_base(detail::url_impl const&) noexcept;
     explicit url_base(string_view);
+    BOOST_URL_DECL void reserve_impl(std::size_t n);
     BOOST_URL_DECL void copy(url_view_base const&);
     BOOST_URL_DECL virtual void clear_impl() noexcept = 0;
-    BOOST_URL_DECL virtual void reserve_impl(std::size_t) = 0;
+    BOOST_URL_DECL virtual void reserve_impl(
+        std::size_t, op_t&) = 0;
+    BOOST_URL_DECL virtual void cleanup(op_t&) = 0;
 
 public:
     //--------------------------------------------
@@ -133,7 +153,7 @@ public:
     void
     reserve(std::size_t n)
     {
-        this->reserve_impl(n);
+        reserve_impl(n);
     }
 
     //--------------------------------------------
@@ -141,10 +161,6 @@ public:
     // Scheme
     //
     //--------------------------------------------
-
-private:
-    void set_scheme_impl(string_view, urls::scheme);
-public:
 
     /** Remove the scheme
 
@@ -250,205 +266,69 @@ public:
     //
     //--------------------------------------------
 
-private:
-    char* set_user_impl(std::size_t n);
-public:
+    /** Remove the authority
 
-    /** Set the user.
-
-        The user is set to the specified string,
-        replacing any previous user. If a userinfo
-        was not present it is added, even if the
-        user string is empty. The resulting URL
-        will have an authority if it did not have
-        one previously.
-
-        Any special or reserved characters in the
-        string are automatically percent-encoded.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set. This string may
-        contain any characters, including nulls.
+        The full authority component is removed
+        if present, which includes the leading
+        double slashes ("//"), the userinfo,
+        the host, and the port.
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
-            3.2.1. User Information (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
+            3.2. Authority (rfc3986)</a>
     */
     BOOST_URL_DECL
     url_base&
-    set_user(
-        string_view s);
+    remove_authority() noexcept;
 
-    /// @copydoc set_user()
-    BOOST_URL_DECL
-    url_base&
-    set_user(
-        decode_view s);
+    /** Set the authority
 
-    /** Set the user.
+        This function sets the authority component
+        to the specified encoded string. If a
+        component was present it is replaced.
+        Otherwise, the authority is added
+        including leading double slashes ("//").
 
-        The user is set to the specified string,
-        replacing any previous user. If a userinfo
-        was not present it is added, even if the
-        user string is empty. The resulting URL
-        will have an authority if it did not have
-        one previously.
-
-        The string must be a valid percent-encoded
-        string for the user field, otherwise an
-        exception is thrown.
+        The encoded string must be a valid
+        authority or else an exception is thrown.
 
         @par BNF
         @code
-        user          = *( unreserved / pct-encoded / sub-delims )
+        authority     = [ userinfo "@" ] host [ ":" port ]
+
+        userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
+        host          = IP-literal / IPv4address / reg-name
+        port          = *DIGIT
         @endcode
 
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
 
-        @param s The string to set.
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
+            3.2. Authority (rfc3986)</a>
+
+        @param s The authority string to set.
+
+        @throw std::exception `s` is not a valid authority.
     */
     BOOST_URL_DECL
     url_base&
-    set_encoded_user(
-        string_view s);
+    set_encoded_authority(
+        pct_string_view s);
 
-private:
-    char* set_password_impl(std::size_t n);
-public:
-
-    /** Remove the password
-    */
-    BOOST_URL_DECL
-    url_base&
-    remove_password() noexcept;
-
-    /** Set the password.
-
-        This function sets the password to the specified
-        string, replacing any previous password:
-
-        @li If the string is empty, the password is
-        cleared, and the first occurring colon (':') is
-        removed from the userinfo if present, otherwise
-
-        @li If ths string is not empty then the password
-        is set to the new string.
-        Any special or reserved characters in the
-        string are automatically percent-encoded.
-        If the URL previously did not have an authority
-        (@ref has_authority returns `false`), a double
-        slash ("//") is prepended to the userinfo.
-
-        @par Exception Safety
-
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set. This string may
-        contain any characters, including nulls.
-    */
-    BOOST_URL_DECL
-    url_base&
-    set_password(
-        string_view s);
-
-    /// @copydoc set_password()
-    BOOST_URL_DECL
-    url_base&
-    set_password(
-        decode_view s);
-
-    /** Set the password.
-
-        The password is set to the encoded string `s`,
-        replacing any previous password:
-
-        @li If the string is empty, the password is
-        cleared, and the first occurring colon (':') is
-        removed from the userinfo if present, otherwise
-
-        @li If ths string is not empty then the password
-        is set to the new string.
-        If the URL previously did not have an authority
-        (@ref has_authority returns `false`), a double
-        slash ("//") is prepended to the userinfo.
-        The string must meet the syntactic requirements
-        of <em>password</em> otherwise an exception is
-        thrown.
-
-        @par ANBF
-        @code
-        password      = *( unreserved / pct-encoded / sub-delims / ":" )
-        @endcode
-
-        @par Exception Safety
-
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set.
-    */
-    BOOST_URL_DECL
-    url_base&
-    set_encoded_password(
-        string_view s);
-
-private:
-    char* set_userinfo_impl(std::size_t n);
-public:
+    //--------------------------------------------
+    //
+    // Userinfo
+    //
+    //--------------------------------------------
 
     /** Remove the userinfo
     */
     BOOST_URL_DECL
     url_base&
     remove_userinfo() noexcept;
-
-    /** Set the userinfo.
-
-        Sets the userinfo of the URL to the given
-        encoded string:
-
-        @li If the string is empty, the userinfo is
-        cleared, else
-
-        @li If the string is not empty, then the userinfo
-        is set to the given string. The user is set to
-        the characters up to the first colon if any,
-        while the password is set to the remaining
-        characters if any.
-        If the URL previously did not have an authority
-        (@ref has_authority returns `false`), a double
-        slash ("//") is prepended to the userinfo.
-        The string must meet the syntactic requirements
-        of <em>userinfo</em> otherwise an exception is
-        thrown.
-
-        @par BNF
-        @code
-        userinfo      = [ [ user ] [ ':' password ] ]
-
-        user          = *( unreserved / pct-encoded / sub-delims )
-        password      = *( unreserved / pct-encoded / sub-delims / ":" )
-        @endcode
-
-        @par Exception Safety
-
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set.
-
-        @throw std::exception Thrown on error
-    */
-    BOOST_URL_DECL
-    url_base&
-    set_encoded_userinfo(
-        string_view s);
 
     /** Set the userinfo.
 
@@ -498,115 +378,243 @@ public:
     set_userinfo(
         string_view s);
 
-    /// @copydoc set_userinfo()
+    /** Set the userinfo.
+
+        Sets the userinfo of the URL to the given
+        encoded string:
+
+        @li If the string is empty, the userinfo is
+        cleared, else
+
+        @li If the string is not empty, then the userinfo
+        is set to the given string. The user is set to
+        the characters up to the first colon if any,
+        while the password is set to the remaining
+        characters if any.
+        If the URL previously did not have an authority
+        (@ref has_authority returns `false`), a double
+        slash ("//") is prepended to the userinfo.
+        The string must meet the syntactic requirements
+        of <em>userinfo</em> otherwise an exception is
+        thrown.
+
+        @par BNF
+        @code
+        userinfo      = [ [ user ] [ ':' password ] ]
+
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
+
+        @throw std::exception Thrown on error
+    */
     BOOST_URL_DECL
     url_base&
-    set_userinfo(
-        decode_view s);
+    set_encoded_userinfo(
+        pct_string_view s);
 
     //--------------------------------------------
 
-private:
-    char* set_host_impl(std::size_t n);
-public:
+    /** Set the user.
 
-    /** Set the host
+        The user is set to the specified string,
+        replacing any previous user. If a userinfo
+        was not present it is added, even if the
+        user string is empty. The resulting URL
+        will have an authority if it did not have
+        one previously.
 
-        The host is set to the specified IPv4,
-        address, replacing any previous host. If
-        an authority was not present, it is added.
+        Any special or reserved characters in the
+        string are automatically percent-encoded.
 
-        @par Postconditions
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set. This string may
+        contain any characters, including nulls.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_user(
+        string_view s);
+
+    /** Set the user.
+
+        The user is set to the specified string,
+        replacing any previous user. If a userinfo
+        was not present it is added, even if the
+        user string is empty. The resulting URL
+        will have an authority if it did not have
+        one previously.
+
+        The string must be a valid percent-encoded
+        string for the user field, otherwise an
+        exception is thrown.
+
+        @par BNF
         @code
-        this->host_type() == host_type::ipv4 && this->ipv4_address() == addr
+        user          = *( unreserved / pct-encoded / sub-delims )
         @endcode
 
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
 
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
-            3.2.2. Host (rfc3986)</a>
-
-        @param addr The address to set.
+        @param s The string to set.
     */
-#ifdef BOOST_URL_DOCS
-    url_base& set_host( ipv4_address const& addr );
-#else
     BOOST_URL_DECL
     url_base&
-    set_host(
-        urls::ipv4_address const& addr);
-#endif
+    set_encoded_user(
+        pct_string_view s);
 
-    /** Set the host
+    /** Remove the password
+    */
+    BOOST_URL_DECL
+    url_base&
+    remove_password() noexcept;
 
-        The host is set to the specified IPv6,
-        address, replacing any previous host.
-        If an authority did not
-        previously exist it is added by prepending
-        a double slash ("//") at the beginning of
-        the URL or after the scheme if a scheme is
-        present.
+    /** Set the password.
 
-        @par Postconditions
-        @code
-        this->host_type() == host_type::ipv6 && this->ipv6_address() == addr
-        @endcode
+        This function sets the password to the specified
+        string, replacing any previous password:
+
+        @li If the string is empty, the password is
+        cleared, and the first occurring colon (':') is
+        removed from the userinfo if present, otherwise
+
+        @li If ths string is not empty then the password
+        is set to the new string.
+        Any special or reserved characters in the
+        string are automatically percent-encoded.
+        If the URL previously did not have an authority
+        (@ref has_authority returns `false`), a double
+        slash ("//") is prepended to the userinfo.
 
         @par Exception Safety
+
         Strong guarantee.
         Calls to allocate may throw.
 
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
-            3.2.2. Host (rfc3986)</a>
-
-        @param addr The address to set.
+        @param s The string to set. This string may
+        contain any characters, including nulls.
     */
-#ifdef BOOST_URL_DOCS
-    url_base& set_host( ipv6_address const& addr );
-#else
     BOOST_URL_DECL
     url_base&
-    set_host(
-        urls::ipv6_address const& addr);
-#endif
+    set_password(
+        string_view s);
+
+    /** Set the password.
+
+        The password is set to the encoded string `s`,
+        replacing any previous password:
+
+        @li If the string is empty, the password is
+        cleared, and the first occurring colon (':') is
+        removed from the userinfo if present, otherwise
+
+        @li If ths string is not empty then the password
+        is set to the new string.
+        If the URL previously did not have an authority
+        (@ref has_authority returns `false`), a double
+        slash ("//") is prepended to the userinfo.
+        The string must meet the syntactic requirements
+        of <em>password</em> otherwise an exception is
+        thrown.
+
+        @par ANBF
+        @code
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Exception Safety
+
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @param s The string to set.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_encoded_password(
+        pct_string_view s);
+
+    //--------------------------------------------
+    //
+    // Host
+    //
+    //--------------------------------------------
 
     /** Set the host
 
-        The host is set to the specified plain
-        string, subject to the following rules:
+        Depending on the contents of the passed
+        string, this function sets the host:
 
         @li If the string is a valid IPv4 address,
-        the address is parsed and the host is set
-        as if an instance of the equivalent
-        @ref urls::ipv4_address were passed instead.
-        In this case @ref url::host_type will return
-        @ref host_type::ipv4. Otherwise,
+        then the host is set to the address.
+        The host type will be @ref host_type::ipv4.
 
-        @li The plain string is percent-encoded and
-        the result is set as the reg-name for the
-        host. In this case @ref url::host_type will
-        return @ref host_type::name.
+        @li If the string is a valid IPv6 address
+        enclosed in square brackets, then the
+        host is set to that address.
+        The host type will be @ref host_type::ipv6.
 
-        In all cases, if an authority did not
-        previously exist it is added by prepending
-        a double slash ("//") at the beginning of
-        the URL or after the scheme if a scheme is
-        present.
+        @li If the string is a valid IPvFuture
+        address enclosed in square brackets, then
+        the host is set to that address.
+        The host type will be @ref host_type::ipvfuture.
+
+        @li Otherwise, the host name is set to
+        the string, which may be empty.
+        Reserved characters in the string are
+        percent-escaped in the result.
+        The host type will be @ref host_type::name.
+
+        In all cases, when this function returns,
+        the URL will contain an authority.
+
+        @par Example
+        @code
+        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        @endcode
+
+        @par BNF
+        @code
+        host        = IP-literal / IPv4address / reg-name
+
+        IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+
+        reg-name    = *( unreserved / pct-encoded / "-" / ".")
+        @endcode
 
         @par Postconditions
         @code
-        this->encoded_host() == s
+        this->has_authority() == true
         @endcode
+
+        @par Complexity
+        Linear in `s.size()`.
 
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
 
         @par Specification
+        @li <a href="https://en.wikipedia.org/wiki/IPv4"
+            >IPv4 (Wikipedia)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291"
+            >IP Version 6 Addressing Architecture (rfc4291)</a>
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
             3.2.2. Host (rfc3986)</a>
 
@@ -617,59 +625,459 @@ public:
     set_host(
         string_view s);
 
-    /// @copydoc set_host(string_view)
-    BOOST_URL_DECL
-    url_base&
-    set_host(
-        decode_view s);
-
     /** Set the host
 
-        The host is set to the specified percent-
-        encoded string, subject to the following
-        rules:
+        Depending on the contents of the passed
+        string, this function sets the host:
 
         @li If the string is a valid IPv4 address,
-        the address is parsed and the host is set
-        as if an instance of the equivalent
-        @ref urls::ipv4_address were passed instead. In
-        this case @ref url::host_type will return
-        @ref host_type::ipv4. Or,
+        then the host is set to the address.
+        The host type will be @ref host_type::ipv4.
 
         @li If the string is a valid IPv6 address
-        enclosed in square brackets ('[' and ']'),
-        the address is parsed and the host is set
-        as if an instance of the equivalent
-        @ref urls::ipv6_address were passed instead. In
-        this case @ref url::host_type will return
-        @ref host_type::ipv4. Or,
+        enclosed in square brackets, then the
+        host is set to that address.
+        The host type will be @ref host_type::ipv6.
 
-        @li If the string is a valid IPvFuture address
-        enclosed in square brackets ('[' and ']'),
-        the address is parsed and the host is set
-        to the specified string. In this case
-        @ref url::host_type will return
-        @ref host_type::ipvfuture. Or,
+        @li If the string is a valid IPvFuture
+        address enclosed in square brackets, then
+        the host is set to that address.
+        The host type will be @ref host_type::ipvfuture.
 
-        @li If the string is a valid percent-encoded
-        string with no characters from the reserved
-        character set, then it is set as the encoded
-        host name. In this case @ref url::host_type
-        will return @ref host_type::name. Otherwise,
+        @li Otherwise, the host name is set to
+        the string. This string can contain percent
+        escapes, or can be empty.
+        Escapes in the string are preserved,
+        and reserved characters in the string
+        are percent-escaped in the result.
+        The host type will be @ref host_type::name.
 
-        @li If the string does not contain a valid
-        percent-encoding for the host field, an
-        exception is thrown.
+        In all cases, when this function returns,
+        the URL will contain an authority.
 
-        In all cases, if an authority did not
-        previously exist it is added by prepending
-        a double slash ("//") at the beginning of
-        the URL or after the scheme if a scheme is
-        present.
-        
+        @par Example
+        @code
+        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        @endcode
+
+        @par BNF
+        @code
+        host        = IP-literal / IPv4address / reg-name
+
+        IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+
+        reg-name    = *( unreserved / pct-encoded / "-" / ".")
+        @endcode
+
         @par Postconditions
         @code
-        this->encoded_host() == s
+        this->has_authority() == true
+        @endcode
+
+        @par Complexity
+        Linear in `s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @par Specification
+        @li <a href="https://en.wikipedia.org/wiki/IPv4"
+            >IPv4 (Wikipedia)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291"
+            >IP Version 6 Addressing Architecture (rfc4291)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
+            3.2.2. Host (rfc3986)</a>
+
+        @param s The string to set.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_encoded_host(pct_string_view s);
+
+    /** Set the host to an address
+
+        Depending on the contents of the passed
+        string, this function sets the host:
+
+        @li If the string is a valid IPv4 address,
+        then the host is set to the address.
+        The host type will be @ref host_type::ipv4.
+
+        @li If the string is a valid IPv6 address,
+        then the host is set to that address.
+        The host type will be @ref host_type::ipv6.
+
+        @li If the string is a valid IPvFuture,
+        then the host is set to that address.
+        The host type will be @ref host_type::ipvfuture.
+
+        @li Otherwise, the host name is set to
+        the string, which may be empty.
+        Reserved characters in the string are
+        percent-escaped in the result.
+        The host type will be @ref host_type::name.
+
+        In all cases, when this function returns,
+        the URL will contain an authority.
+
+        @par Example
+        @code
+        assert( url( "http://www.example.com" ).set_host_address( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        @endcode
+
+        @par BNF
+        @code
+        IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+        dec-octet   = DIGIT                 ; 0-9
+                    / %x31-39 DIGIT         ; 10-99
+                    / "1" 2DIGIT            ; 100-199
+                    / "2" %x30-34 DIGIT     ; 200-249
+                    / "25" %x30-35          ; 250-255
+
+        IPv6address =                            6( h16 ":" ) ls32
+                    /                       "::" 5( h16 ":" ) ls32
+                    / [               h16 ] "::" 4( h16 ":" ) ls32
+                    / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+                    / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+                    / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+                    / [ *4( h16 ":" ) h16 ] "::"              ls32
+                    / [ *5( h16 ":" ) h16 ] "::"              h16
+                    / [ *6( h16 ":" ) h16 ] "::"
+
+        ls32        = ( h16 ":" h16 ) / IPv4address
+                    ; least-significant 32 bits of address
+
+        h16         = 1*4HEXDIG
+                    ; 16 bits of address represented in hexadecimal
+
+        IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+
+        reg-name    = *( unreserved / pct-encoded / "-" / ".")
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_authority() == true
+        @endcode
+
+        @par Complexity
+        Linear in `s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://en.wikipedia.org/wiki/IPv4"
+            >IPv4 (Wikipedia)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291"
+            >IP Version 6 Addressing Architecture (rfc4291)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
+            3.2.2. Host (rfc3986)</a>
+
+        @param s The string to set.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_host_address(string_view s);
+
+    /** Set the host to an address
+
+        Depending on the contents of the passed
+        string, this function sets the host:
+
+        @li If the string is a valid IPv4 address,
+        then the host is set to the address.
+        The host type will be @ref host_type::ipv4.
+
+        @li If the string is a valid IPv6 address,
+        then the host is set to that address.
+        The host type will be @ref host_type::ipv6.
+
+        @li If the string is a valid IPvFuture,
+        then the host is set to that address.
+        The host type will be @ref host_type::ipvfuture.
+
+        @li Otherwise, the host name is set to
+        the string. This string can contain percent
+        escapes, or can be empty.
+        Escapes in the string are preserved,
+        and reserved characters in the string
+        are percent-escaped in the result.
+        The host type will be @ref host_type::name.
+
+        In all cases, when this function returns,
+        the URL will contain an authority.
+
+        @par Example
+        @code
+        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        @endcode
+
+        @par BNF
+        @code
+        IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+        dec-octet   = DIGIT                 ; 0-9
+                    / %x31-39 DIGIT         ; 10-99
+                    / "1" 2DIGIT            ; 100-199
+                    / "2" %x30-34 DIGIT     ; 200-249
+                    / "25" %x30-35          ; 250-255
+
+        IPv6address =                            6( h16 ":" ) ls32
+                    /                       "::" 5( h16 ":" ) ls32
+                    / [               h16 ] "::" 4( h16 ":" ) ls32
+                    / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+                    / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+                    / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+                    / [ *4( h16 ":" ) h16 ] "::"              ls32
+                    / [ *5( h16 ":" ) h16 ] "::"              h16
+                    / [ *6( h16 ":" ) h16 ] "::"
+
+        ls32        = ( h16 ":" h16 ) / IPv4address
+                    ; least-significant 32 bits of address
+
+        h16         = 1*4HEXDIG
+                    ; 16 bits of address represented in hexadecimal
+
+        IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+
+        reg-name    = *( unreserved / pct-encoded / "-" / ".")
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_authority() == true
+        @endcode
+
+        @par Complexity
+        Linear in `s.size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @par Specification
+        @li <a href="https://en.wikipedia.org/wiki/IPv4"
+            >IPv4 (Wikipedia)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291"
+            >IP Version 6 Addressing Architecture (rfc4291)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
+            3.2.2. Host (rfc3986)</a>
+
+        @param s The string to set.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_encoded_host_address(
+        pct_string_view s);
+
+    /** Set the host to an address
+
+        The host is set to the specified IPv4
+        address.
+        The host type will be @ref host_type::ipv4.
+
+        @par Example
+        @code
+        url u;
+
+        u.set_host_ipv4_address( ipv4_address( "127.0.0.1" ) );
+        @endcode
+
+        @par BNF
+        @code
+        IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+        dec-octet   = DIGIT                 ; 0-9
+                    / %x31-39 DIGIT         ; 10-99
+                    / "1" 2DIGIT            ; 100-199
+                    / "2" %x30-34 DIGIT     ; 200-249
+                    / "25" %x30-35          ; 250-255
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_authority() == true && this->host_ipv4_address() == addr && this->host_type() == host_type::ipv4
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://en.wikipedia.org/wiki/IPv4"
+            >IPv4 (Wikipedia)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
+            3.2.2. Host (rfc3986)</a>
+
+        @param addr The address to set.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_host_ipv4_address(
+        ipv4_address const& addr);
+
+    /** Set the host to an address
+
+        The host is set to the specified IPv6
+        address.
+        The host type will be @ref host_type::ipv6.
+
+        @par Example
+        @code
+        url u;
+
+        u.set_host_ipv6_address( ipv6_address( "1::6:c0a8:1" ) );
+        @endcode
+
+        @par BNF
+        @code
+        IPv6address =                            6( h16 ":" ) ls32
+                    /                       "::" 5( h16 ":" ) ls32
+                    / [               h16 ] "::" 4( h16 ":" ) ls32
+                    / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+                    / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+                    / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+                    / [ *4( h16 ":" ) h16 ] "::"              ls32
+                    / [ *5( h16 ":" ) h16 ] "::"              h16
+                    / [ *6( h16 ":" ) h16 ] "::"
+
+        ls32        = ( h16 ":" h16 ) / IPv4address
+                    ; least-significant 32 bits of address
+
+        h16         = 1*4HEXDIG
+                    ; 16 bits of address represented in hexadecimal
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_authority() == true && this->host_ipv6_address() == addr && this->host_type() == host_type::ipv6
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291"
+            >IP Version 6 Addressing Architecture (rfc4291)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
+            3.2.2. Host (rfc3986)</a>
+
+        @param addr The address to set.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_host_ipv6_address(
+        ipv6_address const& addr);
+
+    /** Set the host to an address
+
+        The host is set to the specified IPvFuture
+        address.
+        The host type will be @ref host_type::ipvfuture.
+
+        @par Example
+        @code
+        url u;
+
+        u.set_host_ipvfuture( "v42.bis" );
+        @endcode
+
+        @par BNF
+        @code
+        IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_authority() == true && this->host_ipvfuture) == s && this->host_type() == host_type::ipvfuture
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
+            3.2.2. Host (rfc3986)</a>
+
+        @param addr The address to set.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_host_ipvfuture(
+        string_view s);
+
+    /** Set the host to a name
+
+        The host is set to the specified string,
+        which may be empty.
+        Reserved characters in the string are
+        percent-escaped in the result.
+        The host type will be @ref host_type::name.
+
+        @par Example
+        @code
+        url u;
+
+        u.set_host_name( "www.example.com" );
+        @endcode
+
+        @par BNF
+        @code
+        reg-name    = *( unreserved / pct-encoded / "-" / ".")
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_authority() == true && this->host_ipv6_address() == addr && this->host_type() == host_type::name
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">
+            3.2.2. Host (rfc3986)</a>
+
+        @param addr The address to set.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_host_name(
+        string_view s);
+
+    /** Set the host to a name
+
+        The host is set to the specified string,
+        which may be empty.
+        Escapes in the string are preserved,
+        and reserved characters in the string
+        are percent-escaped in the result.
+        The host type will be @ref host_type::name.
+
+        @par Example
+        @code
+        url u;
+
+        u.set_encoded_host_name( "www.example.com" );
+        @endcode
+
+        @par BNF
+        @code
+        reg-name    = *( unreserved / pct-encoded / "-" / ".")
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_authority() == true && this->host_ipv6_address() == addr && this->host_type() == host_type::name
         @endcode
 
         @par Exception Safety
@@ -681,16 +1089,13 @@ public:
             3.2.2. Host (rfc3986)</a>
 
         @param s The string to set.
-
-        @throw std::exception the percent-encoding is invalid
     */
     BOOST_URL_DECL
     url_base&
-    set_encoded_host(string_view s);
+    set_encoded_host_name(
+        pct_string_view s);
 
-private:
-    char* set_port_impl(std::size_t n);
-public:
+    //--------------------------------------------
 
     /** Remove the port
 
@@ -787,60 +1192,6 @@ public:
 
     //--------------------------------------------
 
-    /** Remove the authority
-
-        The full authority component is removed
-        if present, which includes the leading
-        double slashes ("//"), the userinfo,
-        the host, and the port.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
-            3.2. Authority (rfc3986)</a>
-    */
-    BOOST_URL_DECL
-    url_base&
-    remove_authority() noexcept;
-
-    /** Set the authority
-
-        This function sets the authority component
-        to the specified encoded string. If a
-        component was present it is replaced.
-        Otherwise, the authority is added
-        including leading double slashes ("//").
-
-        The encoded string must be a valid
-        authority or else an exception is thrown.
-
-        @par BNF
-        @code
-        authority     = [ userinfo "@" ] host [ ":" port ]
-
-        userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
-        host          = IP-literal / IPv4address / reg-name
-        port          = *DIGIT
-        @endcode
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
-            3.2. Authority (rfc3986)</a>
-
-        @param s The authority string to set.
-
-        @throw std::exception `s` is not a valid authority.
-    */
-    BOOST_URL_DECL
-    url_base&
-    set_encoded_authority(
-        string_view s);
-
-    //--------------------------------------------
-
     /** Remove the origin component
 
         The origin consists of the everything from the
@@ -859,28 +1210,6 @@ public:
     // Path
     //
     //--------------------------------------------
-
-private:
-    pos_t
-    segment(
-        std::size_t i) const noexcept;
-
-    char*
-    edit_segments(
-        std::size_t i0,
-        std::size_t i1,
-        std::size_t n,
-        std::size_t nseg);
-
-    BOOST_URL_DECL
-    void
-    edit_segments(
-        std::size_t i0,
-        std::size_t i1,
-        detail::any_path_iter&& it0,
-        detail::any_path_iter&& it1,
-        int abs_hint = -1);
-public:
 
     /** Set whether the path is absolute.
 
@@ -945,7 +1274,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_encoded_path(
-        string_view s);
+        pct_string_view s);
 
     /** Set the path.
 
@@ -976,12 +1305,6 @@ public:
     url_base&
     set_path(
         string_view s);
-
-    /// @copydoc set_path()
-    BOOST_URL_DECL
-    url_base&
-    set_path(
-        decode_view s);
 
     /** Return the path segments
 
@@ -1089,7 +1412,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_encoded_query(
-        string_view s);
+        pct_string_view s);
 
     /** Set the query.
 
@@ -1115,12 +1438,6 @@ public:
     url_base&
     set_query(
         string_view s);
-
-    /// @copydoc set_query()
-    BOOST_URL_DECL
-    url_base&
-    set_query(
-        decode_view s);
 
     /** Return the query parameters
 
@@ -1180,10 +1497,6 @@ public:
     //
     //--------------------------------------------
 
-private:
-    char* set_fragment_impl(std::size_t n);
-public:
-
     /** Remove the fragment.
 
         If a fragment is present (@ref has_fragment
@@ -1231,7 +1544,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_encoded_fragment(
-        string_view s);
+        pct_string_view s);
 
     /** Set the fragment.
 
@@ -1258,12 +1571,6 @@ public:
     set_fragment(
         string_view s);
 
-    /// @copydoc set_fragment()
-    BOOST_URL_DECL
-    url_base&
-    set_fragment(
-        decode_view s);
-
     //--------------------------------------------
     //
     // Normalization
@@ -1273,7 +1580,8 @@ private:
     void
     normalize_octets_impl(
         int id,
-        grammar::lut_chars const& cs) noexcept;
+        grammar::lut_chars const& cs,
+        op_t& op) noexcept;
 
     void
     decoded_to_lower_impl(int id) noexcept;
@@ -1433,17 +1741,47 @@ private:
     //
     //--------------------------------------------
 
-    void check_invariants() const noexcept;
-    char* resize_impl(int, std::size_t);
-    char* resize_impl(int, int, std::size_t);
-    char* shrink_impl(int, std::size_t);
-    char* shrink_impl(int, int, std::size_t);
+    void  check_invariants() const noexcept;
+    
+    char* resize_impl(int, std::size_t, op_t&);
+    char* resize_impl(int, int, std::size_t, op_t&);
+    char* shrink_impl(int, std::size_t, op_t&);
+    char* shrink_impl(int, int, std::size_t, op_t&);
+
+    void  set_scheme_impl(string_view, urls::scheme);
+    char* set_user_impl(std::size_t n, op_t& op);
+    char* set_password_impl(std::size_t n, op_t& op);
+    char* set_userinfo_impl(std::size_t n, op_t& op);
+    char* set_host_impl(std::size_t n, op_t& op);
+    char* set_port_impl(std::size_t n, op_t& op);
+
+    pos_t
+    segment(
+        std::size_t i) const noexcept;
+
+    char*
+    resize_segments(
+        std::size_t i0,
+        std::size_t i1,
+        std::size_t n,
+        std::size_t nseg,
+        op_t& op);
+
+    BOOST_URL_DECL
+    void
+    edit_segments(
+        std::size_t i0,
+        std::size_t i1,
+        detail::any_path_iter&& it0,
+        detail::any_path_iter&& it1,
+        int abs_hint = -1);
 
     char*
     resize_params(
         detail::params_iter_impl const&,
         detail::params_iter_impl const&,
-        std::size_t, std::size_t);
+        std::size_t, std::size_t,
+        op_t& op);
 
     BOOST_URL_DECL
     auto
@@ -1459,6 +1797,101 @@ private:
         url_view_base const& base,
         url_view_base const& ref);
 };
+
+//------------------------------------------------
+
+/** Resolve a URL reference against a base URL
+
+    This function attempts to resolve a URL
+    reference `ref` against the base URL `base`
+    in a manner similar to that of a web browser
+    resolving an anchor tag. The base URL
+    must satisfy the <em>absolute-URI</em>
+    grammar.
+
+    Relative references are only usable when
+    in the context of a base absolute URI.
+    This process of resolving a relative
+    <em>reference</em> within the context of
+    a <em>base</em> URI is defined in detail
+    in rfc3986 (see below).
+
+    The resolution process works as if the
+    relative reference is appended to the base
+    URI and the result is normalized.
+
+    Given the input base URL, this function
+    resolves the relative reference
+    as if performing the following steps:
+
+    @li Ensure the base URI has at least a scheme
+    @li Normalizing the reference path
+    @li Merge base and reference paths
+    @li Normalize the merged path
+
+    This function places the result of the
+    resolution into `dest`, which can be
+    any of the url containers that inherit
+    from @ref url_base.
+
+    If an error occurs, the contents of
+    `dest` is unspecified and `ec` is set.
+
+    @par Example
+    @code
+    url dest;
+    error_code ec;
+
+    resolve("/one/two/three", "four", dest, ec);
+    assert( dest.str() == "/one/two/four" );
+
+    resolve("http://example.com/", "/one", dest, ec);
+    assert( dest.str() == "http://example.com/one" );
+
+    resolve("http://example.com/one", "/two", dest, ec);
+    assert( dest.str() == "http://example.com/two" );
+
+    resolve("http://a/b/c/d;p?q", "g#s", dest, ec);
+    assert( dest.str() == "http://a/b/c/g#s" );
+    @endcode
+
+    @par BNF
+    @code
+    absolute-URI  = scheme ":" hier-part [ "?" query ]
+    @endcode
+
+    @par Exception Safety
+    Basic guarantee.
+    Calls to allocate may throw.
+
+    @return Error if any occurred
+
+    @param base The base URL to resolve against.
+
+    @param ref The URL reference to resolve.
+
+    @param dest The container where the result
+    is written, upon success.
+
+    @par Specification
+    <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-5"
+        >5. Reference Resolution (rfc3986)</a>
+
+    @see
+        @ref url,
+        @ref url_view.
+*/
+inline
+result<void>
+resolve(
+    url_view_base const& base,
+    url_view_base const& ref,
+    url_base& dest)
+{
+    BOOST_ASSERT(&dest != &base);
+    BOOST_ASSERT(&dest != &ref);
+    return dest.resolve_impl(base, ref);
+}
 
 } // urls
 } // boost

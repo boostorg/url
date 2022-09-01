@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/except.hpp>
 #include <boost/throw_exception.hpp>
+#include <boost/system/system_error.hpp>
 #include <new>
 #include <stdexcept>
 
@@ -60,6 +61,16 @@ throw_out_of_range(
     throw_exception(
         std::out_of_range(
             "out of range"), loc);
+}
+
+void
+throw_system_error(
+    error_code const& ec,
+    source_location const& loc)
+{
+    throw_exception(
+        boost::system::system_error(
+            ec), loc);
 }
 
 } // detail

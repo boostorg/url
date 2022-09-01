@@ -7,6 +7,46 @@
 // Official repository: https://github.com/CPPAllinace/url
 //
 
+// https://eel.is/c++draft/structure.specifications#3
+
+/** {brief}
+
+    {description}
+
+    @par Example
+    @par BNF
+    @par Constraints
+            sfinae
+    @par Mandates
+            static assertions
+    @par Preconditions
+            assertions
+    @par Effects
+    @par Synchronization
+    @par Postconditions
+    @par Exception Safety
+            Strong guarantee.
+            Basic guarantee.
+            Calls to allocate may throw.
+            Exceptions thrown on invalid input.
+    @throw
+            std::exception {when}
+    @par Complexity
+    @note
+
+    @tparam
+    @return
+    @param
+
+    @par Specification
+    @li
+
+    @see
+        @ref
+*/
+
+//------------------------------------------------
+
 /** {brief}
 
     {description}
@@ -15,15 +55,17 @@
     <!-- Avoid too much symbolism -->
     <!-- Avoid repeating words -->
 
-    @par Requires
-
-    @par Preconditions
-
     @par Example
     @code
     {example}
     // make it short
     @endcode
+
+    @par Mandates
+
+    @par Preconditions
+
+    @par Effects
 
     @note {text}
 

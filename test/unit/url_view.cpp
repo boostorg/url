@@ -399,189 +399,127 @@ public:
         }
     }
 
+    //--------------------------------------------
+    //
+    // Host
+    //
+    //--------------------------------------------
+
+    static
+    std::string
+    bracketed(
+        std::string s)
+    {
+        return
+            std::string("[") + s +
+            std::string("]");
+    }
+
     void
     testHost()
     {
+        auto const ipv4 = [](
+            string_view s)
         {
-            url_view u("res:foo/");
-            BOOST_TEST(u.host_type() ==
-                host_type::none);
-            BOOST_TEST(u.encoded_host() ==
-                "");
-            BOOST_TEST(u.ipv4_address()
-                == ipv4_address());
-            BOOST_TEST(u.ipv6_address()
-                == ipv6_address());
-            BOOST_TEST(
-                u.ipvfuture() == "");
-            BOOST_TEST(u.authority().host_type() ==
-                host_type::none);
-            BOOST_TEST(u.authority().encoded_host() ==
-                "");
-            BOOST_TEST(u.authority().ipv4_address()
-                == ipv4_address());
-            BOOST_TEST(u.authority().ipv6_address()
-                == ipv6_address());
-            BOOST_TEST(
-                u.authority().ipvfuture() == "");
-        }
+            std::string sa = std::string(s);
+            std::string su = "https://" + sa + "/";
+            url_view u;
+            BOOST_TEST_NO_THROW(u = url_view(su));
+            BOOST_TEST_EQ(u.host_type(), host_type::ipv4);
+            BOOST_TEST_EQ(u.host(),
+                u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host(), s);
+            BOOST_TEST_EQ(u.host_address(),
+                u.encoded_host_address().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host_address(), s);
+            BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address(s));
+            BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
+            BOOST_TEST_EQ(u.host_ipvfuture(), "");
+            BOOST_TEST_EQ(u.host_name(), "");
+            BOOST_TEST_EQ(u.encoded_host_name(), "");
+            BOOST_TEST_EQ(u.authority().string(), sa);
+        };
+
+        auto const ipv6 = [](
+            string_view s)
         {
-            url_view u("http://");
-            BOOST_TEST(u.host_type() ==
-                host_type::name);
-            BOOST_TEST(u.encoded_host() ==
-                "");
-            BOOST_TEST(u.authority().host_type() ==
-                host_type::name);
-            BOOST_TEST(u.authority().encoded_host() ==
-                "");
-        }
+            std::string sa = bracketed(s);
+            std::string su = "https://" + sa + "/";
+            url_view u;
+            BOOST_TEST_NO_THROW(u = url_view(su));
+            BOOST_TEST_EQ(u.host_type(), host_type::ipv6);
+            BOOST_TEST_EQ(u.host(),
+                u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host(), sa);
+            BOOST_TEST_EQ(u.host_address(),
+                u.encoded_host_address().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host_address(), s);
+            BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
+            BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address(s));
+            BOOST_TEST_EQ(u.host_ipvfuture(), "");
+            BOOST_TEST_EQ(u.host_name(), "");
+            BOOST_TEST_EQ(u.encoded_host_name(), "");
+            BOOST_TEST_EQ(u.authority().string(), sa);
+        };
+
+        auto const ipvfut = [](
+            string_view s)
         {
-            url_view u("http:///");
-            BOOST_TEST(u.host_type() ==
-                host_type::name);
-            BOOST_TEST(u.encoded_host() ==
-                "");
-            BOOST_TEST(u.authority().host_type() ==
-                host_type::name);
-            BOOST_TEST(u.authority().encoded_host() ==
-                "");
-        }
+            std::string sa = bracketed(s);
+            std::string su = "https://" + sa + "/";
+            url_view u;
+            BOOST_TEST_NO_THROW(u = url_view(su));
+            BOOST_TEST_EQ(u.host_type(), host_type::ipvfuture);
+            BOOST_TEST_EQ(u.host(),
+                u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host(), sa);
+            BOOST_TEST_EQ(u.host_address(),
+                u.encoded_host_address().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host_address(), s);
+            BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
+            BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
+            BOOST_TEST_EQ(u.host_ipvfuture(), s);
+            BOOST_TEST_EQ(u.host_name(), "");
+            BOOST_TEST_EQ(u.encoded_host_name(), "");
+            BOOST_TEST_EQ(u.authority().string(), sa);
+        };
+
+        auto const name = [](
+            string_view s)
         {
-            url_view u("http://www.example.com/");
-            BOOST_TEST(u.host_type() ==
-                host_type::name);
-            BOOST_TEST(u.encoded_host() ==
-                "www.example.com");
-            BOOST_TEST(u.host() ==
-                "www.example.com");
-            BOOST_TEST(u.authority().host_type() ==
-                host_type::name);
-            BOOST_TEST(u.authority().encoded_host() ==
-                "www.example.com");
-            BOOST_TEST(u.authority().host() ==
-                "www.example.com");
-        }
-        {
-            url_view u("http://192.168.0.1/");
-            BOOST_TEST(u.host_type() ==
-                host_type::ipv4);
-            BOOST_TEST(u.encoded_host() ==
-                "192.168.0.1");
-            BOOST_TEST(u.host() ==
-                "192.168.0.1");
-            BOOST_TEST(
-                u.ipv4_address().to_uint() ==
-                    0xc0a80001);
-            BOOST_TEST(u.authority().host_type() ==
-                host_type::ipv4);
-            BOOST_TEST(u.authority().encoded_host() ==
-                "192.168.0.1");
-            BOOST_TEST(u.authority().host() ==
-                "192.168.0.1");
-            BOOST_TEST(
-                u.authority().ipv4_address().to_uint() ==
-                    0xc0a80001);
-        }
-        {
-            url_view u(
-                "http://[1::6:192.168.0.1]:8080/");
-            BOOST_TEST(u.host_type() ==
-                host_type::ipv6);
-            BOOST_TEST(u.encoded_host() ==
-                "[1::6:192.168.0.1]");
-            BOOST_TEST(u.host() ==
-                "[1::6:192.168.0.1]");
-            BOOST_TEST(u.ipv6_address() ==
-                ipv6_address("1::6:c0a8:1"));
-            BOOST_TEST(u.authority().host_type() ==
-                host_type::ipv6);
-            BOOST_TEST(u.authority().encoded_host() ==
-                "[1::6:192.168.0.1]");
-            BOOST_TEST(u.authority().host() ==
-                "[1::6:192.168.0.1]");
-            BOOST_TEST(u.authority().ipv6_address() ==
-                ipv6_address("1::6:c0a8:1"));
-        }
-        {
-            url_view u("http://[v1.x]:8080/");
-            BOOST_TEST_EQ(
-                u.host_type(), host_type::ipvfuture);
-            BOOST_TEST_EQ(
-                u.encoded_host(), "[v1.x]");
-            BOOST_TEST_EQ(
-                u.host(), "[v1.x]");
-            BOOST_TEST_EQ(
-                u.ipvfuture(), "v1.x");
-            BOOST_TEST_EQ(
-                u.authority().host_type(), host_type::ipvfuture);
-            BOOST_TEST_EQ(
-                u.authority().encoded_host(), "[v1.x]");
-            BOOST_TEST_EQ(
-                u.authority().host(), "[v1.x]");
-            BOOST_TEST_EQ(
-                u.authority().ipvfuture(), "[v1.x]");
-        }
+            std::string sa = std::string(s);
+            std::string su = "https://" + sa + "/";
+            url_view u;
+            BOOST_TEST_NO_THROW(u = url_view(su));
+            BOOST_TEST_EQ(u.host_type(), host_type::name);
+            BOOST_TEST_EQ(u.host(),
+                u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host(), s);
+            BOOST_TEST_EQ(u.host_address(),
+                u.encoded_host_address().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host_address(), s);
+            BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
+            BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
+            BOOST_TEST_EQ(u.host_ipvfuture(), "");
+            BOOST_TEST_EQ(u.host_name(),
+                u.encoded_host_name().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host_name(), s);
+            BOOST_TEST_EQ(u.authority().string(), sa);
+        };
+
+        ipv4("0.0.0.0");
+        ipv4("127.0.0.1");
+        ipv4("192.168.0.1");
+        ipv4("255.255.255.255");
+
+        ipv6("1::6:192.168.0.1");
+
+        ipvfut("v1.x");
+
+        name("www.example.com");
+        name("www%2eexample%2ecom");
     }
 
-    void
-    testIPLiteral()
-    {
-        auto const ok = [](
-            string_view s)
-        {
-            BOOST_TEST_NO_THROW(
-                url_view(s));
-        };
-
-        auto const bad = [](
-            string_view s)
-        {
-            BOOST_TEST_THROWS(
-                url_view(s),
-                std::exception);
-        };
-
-        bad("x://::");
-        bad("x://[");
-        bad("x://[:");
-        bad("x://[::");
-        bad("x://[]");
-        bad("x://[v8]");
-
-        ok("x://[::]");
-        ok("x://[v1.0]");
-    }
-
-
-    void
-    testIPvFuture()
-    {
-        auto const ok = [](
-            string_view s)
-        {
-            BOOST_TEST_NO_THROW(
-                url_view(s));
-        };
-
-        auto const bad = [](
-            string_view s)
-        {
-            BOOST_TEST_THROWS(
-                url_view(s),
-                std::exception);
-        };
-
-        bad("x://[v]");
-        bad("x://[v1]");
-        bad("x://[v1.]");
-        bad("x://[v1.@$]");
-        bad("x://[v.1]");
-        bad("x://[w1.1]");
-
-        ok("x://[v1.0]");
-        ok("x://[v1.minor]");
-    }
     void
     testPort()
     {
@@ -1105,8 +1043,6 @@ public:
         testAuthority();
         testUserinfo();
         testHost();
-        testIPLiteral();
-        testIPvFuture();
         testPort();
         testHostAndPort();
         testOrigin();

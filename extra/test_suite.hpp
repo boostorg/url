@@ -377,12 +377,12 @@ test_with_impl(
     }
     std::stringstream ss;
     ss <<
-        "'" << test_output_impl(t) << "' " <<
+        "\"" << test_output_impl(t) << "\" " <<
         lwt_predicate_name(pred) <<
-        " '" << test_output_impl(u) << "' (" <<
-        expr1 << "' " <<
+        " \"" << test_output_impl(u) << "\" (" <<
+        expr1 << " " <<
         lwt_predicate_name(pred) <<
-        " '" << expr2 << "')";
+        " " << expr2 << ")";
     any_runner::instance().test(false, ss.str().c_str(), func, file, line);
     return false;
 }

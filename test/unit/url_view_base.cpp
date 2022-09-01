@@ -191,18 +191,18 @@ struct url_view_base_test
             assert( u.encoded_host() == "www%2droot.example.com" );
         }
 
-        // encoded_hostname()
+        // encoded_host_address()
         {
             url_view u( "wss://[2001:0db8::0370:7334]/index.htm" );
 
-            assert( u.encoded_hostname() == "2001:0db8::0370:7334" );
+            assert( u.encoded_host_address() == "2001:0db8::0370:7334" );
         }
 
         // hostname()
         {
             url_view u( "https://www%2droot.example.com/" );
 
-            assert( u.hostname() == "www-root.example.com" );
+            assert( u.host_address() == "www-root.example.com" );
         }
 
         // host
@@ -216,7 +216,7 @@ struct url_view_base_test
         {
             url_view u( "http://127.0.0.1/index.htm?user=win95" );
 
-            ipv4_address ip = u.ipv4_address();
+            ipv4_address ip = u.host_ipv4_address();
 
             (void)ip;
         }
@@ -225,7 +225,7 @@ struct url_view_base_test
         {
             url_view u( "ftp://[::1]" );
 
-            ipv6_address ip = u.ipv6_address();
+            ipv6_address ip = u.host_ipv6_address();
 
             assert( ip.is_loopback() );
 
@@ -236,7 +236,7 @@ struct url_view_base_test
         {
             url_view u( "http://[v1fe.d:9]" );
 
-            assert( u.ipvfuture() == "v1fe.d:9" );
+            assert( u.host_ipvfuture() == "v1fe.d:9" );
         }
 
         // has_port()

@@ -131,11 +131,7 @@ using_url_views()
 
     {
         //[snippet_decoding_1
-        std::string str;
-        u.query().assign_to(str);
-        str += "\n";
-        u.fragment().append_to(str);
-        std::cout << str << "\n";
+        // VFALCO?
         //]
     }
     {
@@ -193,8 +189,9 @@ using_url_views()
             std::cout << str << "\n";
         };
         //]
+        (void)function;
         //[snippet_decoding_5b
-        function(u.query().to_string());
+        // VFALCO?
         //]
     }
 
@@ -262,7 +259,7 @@ using_urls()
     //]
 
     //[snippet_quicklook_modifying_4
-    u.set_host( parse_ipv4_address( "192.168.0.1" ).value() )
+    u.set_host_ipv4_address( parse_ipv4_address( "192.168.0.1" ).value() )
         .set_port( 8080 )
         .remove_userinfo();
     std::cout << u << "\n";
@@ -539,14 +536,14 @@ parsing_authority()
     }
     {
         struct resolve_f {
-            decode_view
-            operator()(decode_view h)
+            string_view
+            operator()(string_view h)
             {
                 return h;
             }
         } resolve;
         struct write_request_f {
-            void operator()(decode_view) {}
+            void operator()(string_view) {}
             void operator()(ipv4_address) {}
             void operator()(ipv6_address) {}
         } write_request;
@@ -559,10 +556,10 @@ parsing_authority()
             write_request(resolve(u.host()));
             break;
         case host_type::ipv4:
-            write_request(u.ipv4_address());
+            write_request(u.host_ipv4_address());
             break;
         case host_type::ipv6:
-            write_request(u.ipv6_address());
+            write_request(u.host_ipv6_address());
             break;
         default:
             break;

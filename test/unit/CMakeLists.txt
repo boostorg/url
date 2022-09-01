@@ -37,6 +37,7 @@ set(BOOST_URL_TESTS_FILES
     params_encoded_const_view.cpp
     params_encoded_view.cpp
     params_view.cpp
+    pct_string_view.cpp
     scheme.cpp
     segments.cpp
     segments_encoded.cpp

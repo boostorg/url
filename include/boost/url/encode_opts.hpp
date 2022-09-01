@@ -33,6 +33,10 @@ struct encode_opts
             application/x-www-form-urlencoded (w3.org)</a>
     */
     bool space_to_plus = false;
+
+    /** True if lower-cased hex digits should be used
+    */
+    bool lower_case = false;
 };
 
 } // urls

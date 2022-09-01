@@ -30,7 +30,7 @@ struct ipv4_address_rule_test
 
 TEST_SUITE(
     ipv4_address_rule_test,
-    "boost.url.ipv4_address_rule");
+    "boost.url.host_ipv4_address_rule");
 
 } // urls
 } // boost

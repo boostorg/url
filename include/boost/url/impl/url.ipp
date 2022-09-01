@@ -105,7 +105,8 @@ clear_impl() noexcept
 void
 url::
 reserve_impl(
-    std::size_t n)
+    std::size_t n,
+    op_t& op)
 {
     if(n > max_size())
         detail::throw_length_error(
@@ -126,7 +127,8 @@ reserve_impl(
             new_cap = n;
         s = allocate(new_cap);
         std::memcpy(s, s_, size());
-        deallocate(s_);
+        BOOST_ASSERT(! op.old);
+        op.old = s_;
         s_ = s;
     }
     else
@@ -135,6 +137,15 @@ reserve_impl(
         s_[0] = '\0';
     }
     u_.cs_ = s_;
+}
+
+void
+url::
+cleanup(
+    op_t& op)
+{
+    if(op.old)
+        deallocate(op.old);
 }
 
 } // urls

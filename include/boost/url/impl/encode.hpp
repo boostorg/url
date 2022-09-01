@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_IMPL_ENCODE_HPP
 #define BOOST_URL_IMPL_ENCODE_HPP
 
-#include <boost/url/detail/except.hpp>
+#include <boost/url/detail/encode.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/decode_view.hpp>
 #include <boost/url/encode_opts.hpp>
@@ -23,51 +23,7 @@
 namespace boost {
 namespace urls {
 
-namespace detail {
-
-template <class Iter, class CharSet>
-std::size_t
-encoded_size_impl(
-    Iter it,
-    Iter const end,
-    encode_opts const& opt = {},
-    CharSet const& allowed = {}) noexcept
-{
-    // CharSet must satisfy is_charset
-    BOOST_STATIC_ASSERT(
-        grammar::is_charset<CharSet>::value);
-
-    std::size_t n = 0;
-    if (!opt.space_to_plus)
-    {
-        while (it != end)
-        {
-            if (allowed(*it))
-                ++n;
-            else
-                n += 3;
-            ++it;
-        }
-        return n;
-    }
-    // If you are converting space
-    // to plus, then space should
-    // be in the list of reserved
-    // characters!
-    BOOST_ASSERT(!allowed(' '));
-    while (it != end)
-    {
-        if (*it == ' ')
-            ++n;
-        else if (allowed(*it))
-            ++n;
-        else
-            n += 3;
-        ++it;
-    }
-    return n;
-}
-}
+//------------------------------------------------
 
 template<class CharSet>
 std::size_t
@@ -76,6 +32,15 @@ encoded_size(
     encode_opts const& opt,
     CharSet const& allowed) noexcept
 {
+/*  If you get a compile error here, it
+    means that the value you passed does
+    not meet the requirements stated in
+    the documentation.
+*/
+    static_assert(
+        grammar::is_charset<CharSet>::value,
+        "Type requirements not met");
+
     return detail::encoded_size_impl(
         s.data(),
         s.data() + s.size(),
@@ -84,87 +49,6 @@ encoded_size(
 }
 
 //------------------------------------------------
-
-namespace detail {
-
-template<class Iter, class CharSet = grammar::all_chars_t>
-std::size_t
-encode_impl(
-    char* dest,
-    char const* const end,
-    Iter p,
-    Iter last,
-    encode_opts const& opt = {},
-    CharSet const& allowed = {})
-{
-    // CharSet must satisfy is_charset
-    BOOST_STATIC_ASSERT(
-        grammar::is_charset<CharSet>::value);
-
-    // Can't have % in charset
-    BOOST_ASSERT(! allowed('%'));
-
-    static constexpr char hex[] =
-        "0123456789abcdef";
-    auto const dest0 = dest;
-    auto const end3 = end - 3;
-    if(! opt.space_to_plus)
-    {
-        while(p != last)
-        {
-            if(allowed(*p))
-            {
-                if(dest == end)
-                    return dest - dest0;
-                *dest++ = *p++;
-                continue;
-            }
-            if(dest > end3)
-                return dest - dest0;
-            *dest++ = '%';
-            auto const u = static_cast<
-                unsigned char>(*p);
-            *dest++ = hex[u>>4];
-            *dest++ = hex[u&0xf];
-            ++p;
-        }
-        return dest - dest0;
-    }
-    // If you are converting space
-    // to plus, then space should
-    // be in the list of reserved
-    // characters!
-    BOOST_ASSERT(! allowed(' '));
-    while(p != last)
-    {
-        if(allowed(*p))
-        {
-            if(dest == end)
-                return dest - dest0;
-            *dest++ = *p++;
-            continue;
-        }
-        if(*p == ' ')
-        {
-            if(dest == end)
-                return dest - dest0;
-            *dest++ = '+';
-            ++p;
-            continue;
-        }
-        if(dest > end3)
-            return dest - dest0;
-        *dest++ = '%';
-        auto const u = static_cast<
-            unsigned char>(*p);
-        *dest++ = hex[u>>4];
-        *dest++ = hex[u&0xf];
-        ++p;
-    }
-    return dest - dest0;
-}
-
-} // detail
 
 template<class CharSet>
 std::size_t
@@ -175,6 +59,15 @@ encode(
     encode_opts const& opt,
     CharSet const& allowed)
 {
+/*  If you get a compile error here, it
+    means that the value you passed does
+    not meet the requirements stated in
+    the documentation.
+*/
+    static_assert(
+        grammar::is_charset<CharSet>::value,
+        "Type requirements not met");
+
     return detail::encode_impl(
         dest,
         end,
@@ -211,12 +104,8 @@ encode_to_string(
     auto const n =
         encoded_size(s, opt, allowed);
     r.resize(n);
-    char* dest = &r[0];
-    char const* end = dest + n;
-    auto const n1 = encode(
-        dest, end, s, opt, allowed);
-    BOOST_ASSERT(n1 == n);
-    (void)n1;
+    detail::encode_unchecked(
+        &r[0], &r[0] + n, s, opt, allowed);
     return r;
 }
 
