@@ -19,36 +19,149 @@ namespace urls {
 
 struct url_view_base_test
 {
-    void
-    run()
+    //--------------------------------------------
+    //
+    // Host
+    //
+    //--------------------------------------------
+
+    static
+    std::string
+    bracketed(
+        std::string s)
     {
-        //
-        // javadocs
-        //
+        return
+            std::string("[") + s +
+            std::string("]");
+    }
 
-        // url_view()
+    void
+    testHost()
+    {
+        auto const ipv4 = [](
+            string_view s)
         {
-            url_view u( "https://www.example.com/index.htm?text=none#a1" );
-            (void)u;
-        }
-        {
-            result< url_view > rv = parse_uri_reference( "https://www.example.com/index.htm?text=none#a1" );
-            (void)rv;
-        }
-
-        // size()
-        {
-            url_view u( "file:///Program%20Files" );
-            assert( u.size() == 23 );
-        }
-
-        // empty()
-        {
+            std::string sa = std::string(s);
+            std::string su = "https://" + sa + "/";
             url_view u;
-            assert( u.empty() );
+            BOOST_TEST_NO_THROW(u = url_view(su));
+            BOOST_TEST_EQ(u.host_type(), host_type::ipv4);
+            BOOST_TEST_EQ(u.host(),
+                u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host(), s);
+            BOOST_TEST_EQ(u.host_address(),
+                u.encoded_host_address().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host_address(), s);
+            BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address(s));
+            BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
+            BOOST_TEST_EQ(u.host_ipvfuture(), "");
+            BOOST_TEST_EQ(u.host_name(), "");
+            BOOST_TEST_EQ(u.encoded_host_name(), "");
+            BOOST_TEST_EQ(u.authority().string(), sa);
+        };
+
+        auto const ipv6 = [](
+            string_view s)
+        {
+            std::string sa = bracketed(s);
+            std::string su = "https://" + sa + "/";
+            url_view u;
+            BOOST_TEST_NO_THROW(u = url_view(su));
+            BOOST_TEST_EQ(u.host_type(), host_type::ipv6);
+            BOOST_TEST_EQ(u.host(),
+                u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host(), sa);
+            BOOST_TEST_EQ(u.host_address(),
+                u.encoded_host_address().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host_address(), s);
+            BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
+            BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address(s));
+            BOOST_TEST_EQ(u.host_ipvfuture(), "");
+            BOOST_TEST_EQ(u.host_name(), "");
+            BOOST_TEST_EQ(u.encoded_host_name(), "");
+            BOOST_TEST_EQ(u.authority().string(), sa);
+        };
+
+        auto const ipvfut = [](
+            string_view s)
+        {
+            std::string sa = bracketed(s);
+            std::string su = "https://" + sa + "/";
+            url_view u;
+            BOOST_TEST_NO_THROW(u = url_view(su));
+            BOOST_TEST_EQ(u.host_type(), host_type::ipvfuture);
+            BOOST_TEST_EQ(u.host(),
+                u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host(), sa);
+            BOOST_TEST_EQ(u.host_address(),
+                u.encoded_host_address().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host_address(), s);
+            BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
+            BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
+            BOOST_TEST_EQ(u.host_ipvfuture(), s);
+            BOOST_TEST_EQ(u.host_name(), "");
+            BOOST_TEST_EQ(u.encoded_host_name(), "");
+            BOOST_TEST_EQ(u.authority().string(), sa);
+        };
+
+        auto const name = [](
+            string_view s)
+        {
+            std::string sa = std::string(s);
+            std::string su = "https://" + sa + "/";
+            url_view u;
+            BOOST_TEST_NO_THROW(u = url_view(su));
+            BOOST_TEST_EQ(u.host_type(), host_type::name);
+            BOOST_TEST_EQ(u.host(),
+                u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host(), s);
+            BOOST_TEST_EQ(u.host_address(),
+                u.encoded_host_address().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host_address(), s);
+            BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
+            BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
+            BOOST_TEST_EQ(u.host_ipvfuture(), "");
+            BOOST_TEST_EQ(u.host_name(),
+                u.encoded_host_name().decode_to_string());
+            BOOST_TEST_EQ(u.encoded_host_name(), s);
+            BOOST_TEST_EQ(u.authority().string(), sa);
+        };
+
+        ipv4("0.0.0.0");
+        ipv4("127.0.0.1");
+        ipv4("192.168.0.1");
+        ipv4("255.255.255.255");
+
+        ipv6("1::6:192.168.0.1");
+
+        ipvfut("v1.x");
+
+        name("www.example.com");
+        name("www%2eexample%2ecom");
+
+        BOOST_TEST(url_view().encoded_host_address().empty());
+    }
+
+    void
+    testJavadocs()
+    {
+        //----------------------------------------
+        //
+        // Observers
+        //
+        //----------------------------------------
+
+        // size
+        {
+        assert( url_view( "file:///Program%20Files" ).size() == 23 );
         }
 
-        // persist()
+        // empty
+        {
+        assert( url_view( "" ).empty() );
+        }
+
+        // persist
         {
             std::shared_ptr< url_view const > sp;
             {
@@ -73,25 +186,19 @@ struct url_view_base_test
         //
         //----------------------------------------
 
-        // has_scheme()
+        // has_scheme
         {
-            url_view u( "http://www.example.com" );
-
-            assert( u.has_scheme() );
+        assert( url_view( "http://www.example.com" ).has_scheme() );
         }
 
-        // scheme()
+        // scheme
         {
-            url_view u( "http://www.example.com" );
-        
-            assert( u.scheme() == "http" );
+        assert( url_view( "http://www.example.com" ).scheme() == "http" );
         }
 
-        // scheme_id()
+        // scheme_id
         {
-            url_view u( "wss://www.example.com/crypto.cgi" );
-
-            assert( u.scheme_id() == scheme::wss );
+        assert( url_view( "wss://www.example.com/crypto.cgi" ).scheme_id() == scheme::wss );
         }
 
         //----------------------------------------
@@ -100,171 +207,159 @@ struct url_view_base_test
         //
         //----------------------------------------
 
-        // has_authority()
+        // has_authority
         {
-            url_view u( "http://www.example.com/index.htm" );
-
-            assert( u.has_authority() );
+        assert( url_view( "http://www.example.com/index.htm" ).has_authority() );
         }
 
-        // encoded_authority()
+        // authority
         {
-            url_view u( "file://Network%20Drive/My%2DFiles" );
-
-            assert( u.encoded_authority() == "Network%20Drive" );
+        authority_view a = url_view( "https://www.example.com:8080/index.htm" ).authority();
+        (void)a;
         }
 
-        // authority()
+        // encoded_authority
         {
-            url_view u( "https://www.example.com:8080/index.htm" );
-
-            authority_view a = u.authority();
+        assert( url_view( "file://Network%20Drive/My%2DFiles" ).encoded_authority() == "Network%20Drive" );
         }
 
-        // has_userinfo()
-        {
-            url_view u( "http://jane%2Ddoe:pass@example.com" );
+        //----------------------------------------
+        //
+        // Userinfo
+        //
+        //----------------------------------------
 
-            assert( u.has_userinfo() );
+        // has_userinfo
+        {
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).has_userinfo() );
         }
 
-        // encoded_userinfo()
+        // userinfo
         {
-            url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-            assert( u.encoded_userinfo() == "jane%2Ddoe:pass" );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).userinfo() == "jane-doe:pass" );
         }
 
-        // userinfo()
+        // encoded_userinfo
         {
-            url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-            assert( u.userinfo() == "jane-doe:pass" );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).encoded_userinfo() == "jane%2Ddoe:pass" );
         }
 
-        // encoded_user()
+        // user
         {
-            url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-            assert( u.encoded_user() == "jane%2Ddoe" );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).user() == "jane-doe" );
         }
 
-        // user()
+        // encoded_user
         {
-            url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-            assert( u.user() == "jane-doe" );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).encoded_user() == "jane%2Ddoe" );
         }
 
-        // has_password()
+        // has_password
         {
-            url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-            assert( u.has_password() );
-        }
-
-        // encoded_password
-        {
-            url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-            assert( u.encoded_password() == "pass" );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).has_password() );
         }
 
         // password
         {
-            url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-            assert( u.password() == "pass" );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).password() == "pass" );
         }
+
+        // encoded_password
+        {
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).encoded_password() == "pass" );
+        }
+
+        //----------------------------------------
+        //
+        // Host
+        //
+        //----------------------------------------
 
         // host_type
         {
-            url_view u( "https://192.168.0.1/local.htm" );
-
-            assert( u.host_type() == host_type::ipv4 );
-        }
-
-        // encoded_host()
-        {
-            url_view u( "https://www%2droot.example.com/" );
-
-            assert( u.encoded_host() == "www%2droot.example.com" );
-        }
-
-        // encoded_host_address()
-        {
-            url_view u( "wss://[2001:0db8::0370:7334]/index.htm" );
-
-            assert( u.encoded_host_address() == "2001:0db8::0370:7334" );
-        }
-
-        // hostname()
-        {
-            url_view u( "https://www%2droot.example.com/" );
-
-            assert( u.host_address() == "www-root.example.com" );
+        assert( url_view( "https://192.168.0.1/local.htm" ).host_type() == host_type::ipv4 );
         }
 
         // host
         {
-            url_view u( "https://www%2droot.example.com/" );
-
-            assert( u.host() == "www-root.example.com" );
+        assert( url_view( "https://www%2droot.example.com/" ).host() == "www-root.example.com" );
         }
 
-        // ipv4_address()
+        // encoded_host
         {
-            url_view u( "http://127.0.0.1/index.htm?user=win95" );
+        assert( url_view( "https://www%2droot.example.com/" ).encoded_host() == "www%2droot.example.com" );
+        }
 
-            ipv4_address ip = u.host_ipv4_address();
+        // host_address
+        {
+        assert( url_view( "https://[1::6:c0a8:1]/" ).host_address() == "1::6:c0a8:1" );
+        }
 
-            (void)ip;
+        // encoded_host_address
+        {
+        assert( url_view( "https://www%2droot.example.com/" ).encoded_host_address() == "www%2droot.example.com" );
+        }
+
+        // ipv4_address
+        {
+        assert( url_view( "http://127.0.0.1/index.htm?user=win95" ).host_ipv4_address() == ipv4_address( "127.0.0.1" ) );
         }
 
         // ipv6_address
         {
-            url_view u( "ftp://[::1]" );
-
-            ipv6_address ip = u.host_ipv6_address();
-
-            assert( ip.is_loopback() );
-
-            (void)ip;
+        assert( url_view( "ftp://[::1]/" ).host_ipv6_address() == ipv6_address( "::1" ) );
         }
 
-        // ipvfuture()
+        // ipvfuture
         {
-            url_view u( "http://[v1fe.d:9]" );
-
-            assert( u.host_ipvfuture() == "v1fe.d:9" );
+        assert( url_view( "http://[v1fe.d:9]/index.htm" ).host_ipvfuture() == "v1fe.d:9" );
         }
 
-        // has_port()
+        // host_name
         {
-            url_view u( "wss://www.example.com:443" );
-
-            assert( u.has_port() );
+        assert( url_view( "https://www%2droot.example.com/" ).host_name() == "www-root.example.com" );
         }
 
-        // port()
+        // encoded_host_name
         {
-            url_view u( "http://localhost.com:8080" );
-
-            assert( u.port() == "8080" );
+        assert( url_view( "https://www%2droot.example.com/" ).encoded_host_name() == "www%2droot.example.com" );
         }
 
-        // port_number()
-        {
-            url_view u( "http://localhost.com:8080" );
+        //----------------------------------------
+        //
+        // Port
+        //
+        //----------------------------------------
 
-            assert( u.port_number() == 8080 );
+        // has_port
+        {
+        assert( url_view( "wss://www.example.com:443" ).has_port() );
         }
 
-        // encoded_host_and_port()
+        // port
         {
-            url_view u( "http://www.example.com:8080/index.htm" );
+        assert( url_view( "http://localhost.com:8080" ).port() == "8080" );
+        }
 
-            assert( u.encoded_host_and_port() == "www.example.com:8080" );
+        // port_number
+        {
+        assert( url_view( "http://localhost.com:8080" ).port_number() == 8080 );
+        }
+
+        // encoded_host_and_port
+        {
+        assert( url_view( "http://www.example.com:8080/index.htm" ).encoded_host_and_port() == "www.example.com:8080" );
+        }
+
+        //----------------------------------------
+        //
+        // Origin
+        //
+        //----------------------------------------
+
+        // encoded_origin
+        {
+        assert( url_view( "http://www.example.com:8080/index.htm?text=none#h1" ).encoded_origin() == "http://www.example.com:8080" );
         }
 
         //----------------------------------------
@@ -273,25 +368,37 @@ struct url_view_base_test
         //
         //----------------------------------------
 
-        // is_path_absolute()
+        // is_path_absolute
         {
-            url_view u( "/path/to/file.txt" );
-
-            assert( u.is_path_absolute() );
+        assert( url_view( "/path/to/file.txt" ).is_path_absolute() );
         }
 
-        // encoded_path()
+        // path
         {
-            url_view u( "file:///Program%20Files/Games/config.ini" );
-
-            assert( u.encoded_path() == "/Program%20Files/Games/config.ini" );
+        assert( url_view( "file:///Program%20Files/Games/config.ini" ).path() == "/Program Files/Games/config.ini" );
         }
 
-        // path()
+        // encoded_path
         {
-            url_view u( "file:///Program%20Files/Games/config.ini" );
+        assert( url_view( "file:///Program%20Files/Games/config.ini" ).encoded_path() == "/Program%20Files/Games/config.ini" );
+        }
 
-            assert( u.path() == "/Program Files/Games/config.ini" );
+        //----------------------------------------
+        //
+        // Segments
+        //
+        //----------------------------------------
+
+        // segments
+        {
+        segments_view sv = url_view( "/path/to/file.txt" ).segments();
+        (void)sv;
+        }
+
+        // encoded_segments
+        {
+        segments_encoded_view sv = url_view( "/path/to/file.txt" ).encoded_segments();
+        (void)sv;
         }
 
         //----------------------------------------
@@ -300,39 +407,38 @@ struct url_view_base_test
         //
         //----------------------------------------
 
-        // has_query()
+        // has_query
         {
-            url_view u( "/sql?id=42&col=name&page-size=20" );
-
-            assert( u.has_query() );
-        }
-
-        // encoded_query()
-        {
-            url_view u( "/sql?id=42&name=jane%2Ddoe&page+size=20" );
-
-            assert( u.encoded_query() == "id=42&name=jane%2Ddoe&page+size=20" );
+        assert( url_view( "/sql?id=42&col=name&page-size=20" ).has_query() );
         }
 
         // query
         {
-            url_view u( "/sql?id=42&name=jane%2Ddoe&page+size=20" );
-
-            assert( u.query() == "id=42&name=jane-doe&page size=20" );
+        assert( url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).query() == "id=42&name=jane-doe&page size=20" );
         }
 
-        // encoded_query()
+        // encoded_query
         {
-            url_view u( "/sql?id=42&name=jane%2Ddoe&page+size=20" );
-
-            assert( u.encoded_query() == "id=42&name=jane%2Ddoe&page+size=20" );
+        assert( url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_query() == "id=42&name=jane%2Ddoe&page+size=20" );
         }
 
-        // query
+        // params
         {
-            url_view u( "/sql?id=42&name=jane%2Ddoe&page+size=20" );
+        params_const_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
+        (void)pv;
+        }
 
-            assert( u.query() == "id=42&name=jane-doe&page size=20" );
+        // encoded_params
+        {
+        params_encoded_const_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
+        (void)pv;
+        }
+
+        //----------------------------------------
+
+        // encoded_target
+        {
+        assert( url_view( "http://www.example.com/index.html?query#frag" ).encoded_target() == "/index.html?query" );
         }
 
         //----------------------------------------
@@ -341,42 +447,34 @@ struct url_view_base_test
         //
         //----------------------------------------
 
-        // has_fragment()
+        // has_fragment
         {
-            url_view u( "http://www.example.com/index.htm#a%2D1" );
-
-            assert( u.has_fragment() );
+        assert( url_view( "http://www.example.com/index.htm#a%2D1" ).has_fragment() );
         }
 
-        // encoded_fragment()
+        // fragment
         {
-            url_view u( "http://www.example.com/index.htm#a%2D1" );
-
-            assert( u.encoded_fragment() == "a%2D1" );
+        assert( url_view( "http://www.example.com/index.htm#a%2D1" ).fragment() == "a-1" );
         }
 
-        // fragment()
+        // encoded_fragment
         {
-            url_view u( "http://www.example.com/index.htm#a%2D1" );
-
-            assert( u.fragment() == "a-1" );
+        assert( url_view( "http://www.example.com/index.htm#a%2D1" ).encoded_fragment() == "a%2D1" );
         }
 
         //----------------------------------------
 
-        // encoded_target()
+        // encoded_resource
         {
-            url_view u( "http://www.example.com/index.html?query#frag" );
-
-            assert( u.encoded_target() == "/index.html?query" );
+        assert( url_view( "http://www.example.com/index.html?query#frag" ).encoded_resource() == "/index.html?query#frag" );
         }
+    }
 
-        // encoded_resource()
-        {
-            url_view u( "http://www.example.com/index.html?query#frag" );
-
-            assert( u.encoded_resource() == "/index.html?query#frag" );
-        }
+    void
+    run()
+    {
+        testHost();
+        testJavadocs();
     }
 };
 

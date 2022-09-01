@@ -13,31 +13,36 @@
 
     {description}
 
+        Any percent-escapes in the string are
+        decoded first.
+
+        The returned string may contain
+        percent escapes.
+
+    @note
+
     @par Example
-    @par BNF
-    @par Constraints
-            sfinae
-    @par Mandates
-            static assertions
-    @par Preconditions
-            assertions
+
+    @par Constraints    (SFINAE)
+    @par Mandates       (static_assert)
+    @par Preconditions  (assert)
     @par Effects
     @par Synchronization
     @par Postconditions
+    @par Complexity
+
     @par Exception Safety
-            Strong guarantee.
-            Basic guarantee.
-            Calls to allocate may throw.
-            Exceptions thrown on invalid input.
+        Strong guarantee.
+        Basic guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
     @throw
             std::exception {when}
-    @par Complexity
-    @note
-
     @tparam
     @return
     @param
 
+    @par BNF
     @par Specification
     @li
 

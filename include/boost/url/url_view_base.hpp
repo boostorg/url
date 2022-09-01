@@ -101,37 +101,20 @@ public:
     //
     //--------------------------------------------
 
-    /** Return the maximum number of characters possible
-
-        Currently the limit is either 2^32-2
-        characters or 2^64-2 characters,
-        depending on the system architecture.
-        This does not include a null terminator.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    static
-    constexpr
-    std::size_t
-    max_size() noexcept
-    {
-        return BOOST_URL_MAX_SIZE;
-    }
-
     /** Return the number of characters in the URL
 
         This function returns the number of
-        characters in the encoded form of the
-        URL, not including any null terminator,
+        characters in the URL's encoded string,
+        not including any null terminator,
         if present.
 
         @par Example
         @code
-        url_view u( "file:///Program%20Files" );
-
-        assert( u.size() == 23 );
+        assert( url_view( "file:///Program%20Files" ).size() == 23 );
         @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
@@ -144,20 +127,32 @@ public:
 
     /** Return true if the URL is empty
 
-        An empty URL is a <em>relative-ref</em> with
-        zero path segments.
+        The empty string matches the
+        <em>relative-ref</em> grammar.
 
         @par Example
         @code
-        url_view u;
-        assert( u.empty() );
+        assert( url_view( "" ).empty() );
         @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
 
+        @par BNF
+        @code
+        relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+
+        relative-part = "//" authority path-abempty
+                      / path-absolute
+                      / path-noscheme
+                      / path-empty
+        @endcode
+
         @par Specification
-        @li <a href="https://www.rfc-editor.org/rfc/rfc3986.html#section-4.2"
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
             >4.2.  Relative Reference (rfc3986)</a>
     */
     bool
@@ -171,6 +166,9 @@ public:
         This function returns a pointer to
         the first character of the URL, which
         is not guaranteed to be null-terminated.
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
@@ -186,6 +184,9 @@ public:
         This function returns the entire URL,
         with any percent-escaped characters
         preserved.
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
@@ -225,6 +226,12 @@ public:
             // becomes invalid, but sp remains valid.
         }
         @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
     */
     BOOST_URL_DECL
     std::shared_ptr<
@@ -236,17 +243,21 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if this contains a scheme
+    /** Return true a scheme is present
 
         This function returns true if this
         contains a scheme.
 
         @par Example
         @code
-        url_view u( "http://www.example.com" );
-
-        assert( u.has_scheme() );
+        assert( url_view( "http://www.example.com" ).has_scheme() );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -256,9 +267,6 @@ public:
 
         scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
         @endcode
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
@@ -277,13 +285,16 @@ public:
         This function returns the scheme if it
         exists, without a trailing colon (':').
         Otherwise it returns an empty string.
+        Note that schemes are case-insensitive,
+        and the canonical form is lowercased.
 
         @par Example
         @code
-        url_view u( "http://www.example.com" );
-        
-        assert( u.scheme() == "http" );
+        assert( url_view( "http://www.example.com" ).scheme() == "http" );
         @endcode
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -293,9 +304,6 @@ public:
 
         absolute-URI    = scheme ":" hier-part [ "?" query ]
         @endcode
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
@@ -309,21 +317,34 @@ public:
     string_view
     scheme() const noexcept;
 
-    /** Return a constant representing the scheme
+    /** Return the scheme
 
-        This function returns a @ref urls::scheme constant
-        to identify the scheme as a well-known scheme.
-        If the scheme is not recognized, the value
-        @ref urls::scheme::unknown is returned. If
-        this does not contain a scheme, then
-        @ref urls::scheme::none is returned.
+        This function returns a value which
+        depends on the scheme in the URL:
+
+        @li If the scheme is a well-known
+        scheme, corresponding value from
+        the enumeration @ref urls::scheme
+        is returned.
+
+        @li If a scheme is present but is not
+        a well-known scheme, the value
+        returned is @ref urls::scheme::unknown.
+
+        @li Otherwise, if the scheme is absent
+        the value returned is
+        @ref urls::scheme::none.
 
         @par Example
         @code
-        url_view u( "wss://www.example.com/crypto.cgi" );
-
-        assert( u.scheme_id() == scheme::wss );
+        assert( url_view( "wss://www.example.com/crypto.cgi" ).scheme_id() == scheme::wss );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -334,15 +355,13 @@ public:
         scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
             >3.1. Scheme (rfc3986)</a>
 
         @see
-            @ref urls::scheme
+            @ref has_scheme,
+            @ref scheme.
     */
     BOOST_URL_DECL
     urls::scheme
@@ -356,16 +375,22 @@ public:
 
     /** Return true if an authority is present
 
-        This function returns `true` if the URL
-        contains an authority. The authority is
-        always preceded by a double slash ("//").
+        This function returns true if the URL
+        contains an authority. The presence of
+        an authority is denoted by a double
+        slash ("//") at the beginning or after
+        the scheme.
 
         @par Example
         @code
-        url_view u( "http://www.example.com/index.htm" );
-
-        assert( u.has_authority() );
+        assert( url_view( "http://www.example.com/index.htm" ).has_authority() );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -387,9 +412,6 @@ public:
 
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
             >3.2. Authority (rfc3986)</a>
@@ -406,23 +428,21 @@ public:
 
     /** Return the authority
 
-        This function returns the authority as a
+        This function returns the authority as
         an @ref authority_view.
 
         @par Example
         @code
-        url_view u( "https://www.example.com:8080/index.htm" );
-
-        authority_view a = u.authority();
+        authority_view a = url_view( "https://www.example.com:8080/index.htm" ).authority();
         @endcode
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
         authority   = [ userinfo "@" ] host [ ":" port ]
         @endcode
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
@@ -438,23 +458,28 @@ public:
 
     /** Return the authority.
 
-        This function returns the authority as a
-        percent-encoded string.
+        If present, this function returns a
+        string representing the authority (which
+        may be empty).
+        Otherwise it returns an empty string.
+        The returned string may contain
+        percent escapes.
 
         @par Example
         @code
-        url_view u( "file://Network%20Drive/My%2DFiles" );
-
-        assert( u.encoded_authority() == "Network%20Drive" );
+        assert( url_view( "file://Network%20Drive/My%2DFiles" ).encoded_authority() == "Network%20Drive" );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
         authority   = [ userinfo "@" ] host [ ":" port ]
         @endcode
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
@@ -484,6 +509,12 @@ public:
         assert( url_view( "http://jane%2Ddoe:pass@example.com" ).has_userinfo() );
         @endcode
 
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
         @par BNF
         @code
         userinfo    = user [ ":" [ password ] ]
@@ -491,12 +522,19 @@ public:
         authority   = [ userinfo "@" ] host [ ":" port ]
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref has_password,
+            @ref encoded_password,
+            @ref encoded_user,
+            @ref encoded_userinfo,
+            @ref password,
+            @ref user,
+            @ref userinfo.
+
     */
     BOOST_URL_DECL
     bool
@@ -504,15 +542,23 @@ public:
 
     /** Return the userinfo
 
-        This function returns the userinfo as a
-        string with percent-decoding applied.
+        If present, this function returns a
+        string representing the userinfo (which
+        may be empty).
+        Otherwise it returns an empty string.
+        Any percent-escapes in the string are
+        decoded first.
 
         @par Example
         @code
-        url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-        assert( u.userinfo() == "jane-doe" );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).userinfo() == "jane-doe:pass" );
         @endcode
+
+        @par Complexity
+        Linear in `this->userinfo().size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
 
         @par BNF
         @code
@@ -521,32 +567,42 @@ public:
         authority   = [ userinfo "@" ] host [ ":" port ]
         @endcode
 
-        @par Exception Safety
-        Throws nothing
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
+            @ref has_password,
+            @ref has_userinfo,
+            @ref encoded_password,
+            @ref encoded_user,
             @ref encoded_userinfo,
-            @ref has_userinfo.
+            @ref password,
+            @ref user.
     */
     BOOST_URL_DECL
     std::string
     userinfo() const;
 
-    /** Return the encoded userinfo
+    /** Return the userinfo
 
-        This function returns the userinfo
-        as a percent-encoded string.
+        If present, this function returns a
+        string representing the userinfo (which
+        may be empty).
+        Otherwise it returns an empty string.
+        The returned string may contain
+        percent escapes.
 
         @par Example
         @code
-        url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-        assert( u.encoded_userinfo() == "jane%2Ddoe:pass" );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).encoded_userinfo() == "jane%2Ddoe:pass" );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing
 
         @par BNF
         @code
@@ -555,15 +611,17 @@ public:
         authority   = [ userinfo "@" ] host [ ":" port ]
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
+            @ref has_password,
             @ref has_userinfo,
+            @ref encoded_password,
+            @ref encoded_user,
+            @ref password,
+            @ref user,
             @ref userinfo.
     */
     BOOST_URL_DECL
@@ -574,16 +632,23 @@ public:
 
     /** Return the user
 
-        This function returns the user portion of
-        the userinfo as a string with percent-decoding
-        applied.
+        If present, this function returns a
+        string representing the user (which
+        may be empty).
+        Otherwise it returns an empty string.
+        Any percent-escapes in the string are
+        decoded first.
 
         @par Example
         @code
-        url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-        assert( u.user() == "jane-doe" );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).user() == "jane-doe" );
         @endcode
+
+        @par Complexity
+        Linear in `this->user().size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
 
         @par BNF
         @code
@@ -593,34 +658,42 @@ public:
         password    = *( unreserved / pct-encoded / sub-delims / ":" )
         @endcode
 
-        @par Exception Safety
-        Throws nothing
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
+            @ref has_password,
+            @ref has_userinfo,
             @ref encoded_password,
             @ref encoded_user,
-            @ref has_password,
-            @ref password.
+            @ref encoded_userinfo,
+            @ref password,
+            @ref userinfo.
     */
     BOOST_URL_DECL
     std::string
     user() const;
 
-    /** Return the encoded user
+    /** Return the user
 
-        This function returns the user portion of
-        the userinfo as a percent-encoded string.
+        If present, this function returns a
+        string representing the user (which
+        may be empty).
+        Otherwise it returns an empty string.
+        The returned string may contain
+        percent escapes.
 
         @par Example
         @code
-        url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-        assert( u.encoded_user() == "jane%2Ddoe" );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).encoded_user() == "jane%2Ddoe" );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -630,34 +703,39 @@ public:
         password    = *( unreserved / pct-encoded / sub-delims / ":" )
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
-            @ref encoded_password,
             @ref has_password,
+            @ref has_userinfo,
+            @ref encoded_password,
+            @ref encoded_userinfo,
             @ref password,
-            @ref user.
+            @ref user,
+            @ref userinfo.
     */
     BOOST_URL_DECL
     pct_string_view
     encoded_user() const noexcept;
 
-    /** Return true if this contains a password
+    /** Return true if a password is present
 
-        This function returns true if the userinfo
-        contains a password (which may be empty).
+        This function returns true if the
+        userinfo is present and contains
+        a password.
 
         @par Example
         @code
-        url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-        assert( u.has_password() );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).has_password() );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -667,18 +745,18 @@ public:
         password    = *( unreserved / pct-encoded / sub-delims / ":" )
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
+            @ref has_userinfo,
             @ref encoded_password,
             @ref encoded_user,
+            @ref encoded_userinfo,
             @ref password,
-            @ref user.
+            @ref user,
+            @ref userinfo.
     */
     BOOST_URL_DECL
     bool
@@ -686,44 +764,23 @@ public:
 
     /** Return the password
 
-        This function returns the password from the
-        userinfo with percent-decoding applied.
+        If present, this function returns a
+        string representing the password (which
+        may be an empty string).
+        Otherwise it returns an empty string.
+        Any percent-escapes in the string are
+        decoded first.
 
         @par Example
         @code
-        url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-        assert( u.password() == "pass" );
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).password() == "pass" );
         @endcode
+
+        @par Complexity
+        Linear in `this->password().size()`.
 
         @par Exception Safety
-        Throws nothing
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
-            >3.2.1. User Information (rfc3986)</a>
-
-        @see
-            @ref encoded_password,
-            @ref encoded_user,
-            @ref has_password,
-            @ref user.
-    */
-    BOOST_URL_DECL
-    std::string
-    password() const;
-
-    /** Return the encoded password
-
-        This function returns the password portion
-        of the userinfo as a percent-encoded string.
-
-        @par Example
-        @code
-        url_view u( "http://jane%2Ddoe:pass@example.com" );
-
-        assert( u.encoded_password() == "pass" );
-        @endcode
+        Calls to allocate may throw.
 
         @par BNF
         @code
@@ -733,18 +790,59 @@ public:
         password    = *( unreserved / pct-encoded / sub-delims / ":" )
         @endcode
 
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+            >3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref has_password,
+            @ref has_userinfo,
+            @ref encoded_password,
+            @ref encoded_user,
+            @ref encoded_userinfo,
+            @ref user,
+            @ref userinfo.
+    */
+    BOOST_URL_DECL
+    std::string
+    password() const;
+
+    /** Return the password
+
+        This function returns the password portion
+        of the userinfo as a percent-encoded string.
+
+        @par Example
+        @code
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).encoded_password() == "pass" );
+        @endcode
+
+        @par Complexity
+        Constant.
+
         @par Exception Safety
         Throws nothing.
+
+        @par BNF
+        @code
+        userinfo    = user [ ":" [ password ] ]
+
+        user        = *( unreserved / pct-encoded / sub-delims )
+        password    = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
             >3.2.1. User Information (rfc3986)</a>
 
         @see
-            @ref encoded_user,
             @ref has_password,
+            @ref has_userinfo,
+            @ref encoded_user,
+            @ref encoded_userinfo,
             @ref password,
-            @ref user.
+            @ref user,
+            @ref userinfo.
     */
     BOOST_URL_DECL
     pct_string_view
@@ -798,12 +896,18 @@ public:
         of the authority as a string, or the
         empty string if there is no authority.
         Any percent-escapes in the string are
-        decoded.
+        decoded first.
 
         @par Example
         @code
         assert( url_view( "https://www%2droot.example.com/" ).host() == "www-root.example.com" );
         @endcode
+
+        @par Complexity
+        Linear in `this->host().size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
 
         @par BNF
         @code
@@ -813,12 +917,6 @@ public:
 
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
-
-        @par Complexity
-        Linear in `this->host().size()`.
-
-        @par Exception Safety
-        Calls to allocate may throw.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -833,13 +931,19 @@ public:
         This function returns the host portion
         of the authority as a string, or the
         empty string if there is no authority.
-        The value returned may contain
+        The returned string may contain
         percent escapes.
 
         @par Example
         @code
         assert( url_view( "https://www%2droot.example.com/" ).encoded_host() == "www%2droot.example.com" );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -849,12 +953,6 @@ public:
 
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -884,7 +982,7 @@ public:
         @li If the type is @ref host_type::name,
         then the host name string is returned.
         Any percent-escapes in the string are
-        decoded.
+        decoded first.
 
         @li If the type is @ref host_type::none,
         then an empty string is returned.
@@ -894,6 +992,12 @@ public:
         assert( url_view( "https://[1::6:c0a8:1]/" ).host_address() == "1::6:c0a8:1" );
         @endcode
 
+        @par Complexity
+        Linear in `this->host_address().size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
+
         @par BNF
         @code
         host        = IP-literal / IPv4address / reg-name
@@ -902,12 +1006,6 @@ public:
 
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
-
-        @par Complexity
-        Linear in `this->host_address().size()`.
-
-        @par Exception Safety
-        Calls to allocate may throw.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -937,17 +1035,23 @@ public:
         @li If the type is @ref host_type::name,
         then the host name string is returned.
         Any percent-escapes in the string are
-        decoded.
+        decoded first.
 
         @li If the type is @ref host_type::none,
         then an empty string is returned.
-        The value returned may contain
+        The returned string may contain
         percent escapes.
 
         @par Example
         @code
         assert( url_view( "https://www%2droot.example.com/" ).encoded_host_address() == "www%2droot.example.com" );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -957,12 +1061,6 @@ public:
 
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -987,6 +1085,12 @@ public:
         assert( url_view( "http://127.0.0.1/index.htm?user=win95" ).host_ipv4_address() == ipv4_address( "127.0.0.1" ) );
         @endcode
 
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
         @par BNF
         @code
         IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
@@ -997,12 +1101,6 @@ public:
                     / "2" %x30-34 DIGIT     ; 200-249
                     / "25" %x30-35          ; 250-255
         @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -1027,6 +1125,12 @@ public:
         assert( url_view( "ftp://[::1]/" ).host_ipv6_address() == ipv6_address( "::1" ) );
         @endcode
 
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
         @par BNF
         @code
         IPv6address =                            6( h16 ":" ) ls32
@@ -1045,12 +1149,6 @@ public:
         h16         = 1*4HEXDIG
                     ; 16 bits of address represented in hexadecimal
         @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -1074,16 +1172,16 @@ public:
         assert( url_view( "http://[v1fe.d:9]/index.htm" ).host_ipvfuture() == "v1fe.d:9" );
         @endcode
 
-        @par BNF
-        @code
-        IPvFuture  = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
-        @endcode
-
         @par Complexity
         Constant.
 
         @par Exception Safety
         Throws nothing.
+
+        @par BNF
+        @code
+        IPvFuture  = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+        @endcode
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -1101,12 +1199,18 @@ public:
         Otherwise, if the host type is not an
         name, it returns an empty string.
         Any percent-escapes in the string are
-        decoded.
+        decoded first.
 
         @par Example
         @code
         assert( url_view( "https://www%2droot.example.com/" ).host_name() == "www-root.example.com" );
         @endcode
+
+        @par Complexity
+        Linear in `this->host_name().size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
 
         @par BNF
         @code
@@ -1116,12 +1220,6 @@ public:
 
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
-
-        @par Complexity
-        Linear in `this->host_name().size()`.
-
-        @par Exception Safety
-        Calls to allocate may throw.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -1138,13 +1236,19 @@ public:
         a string.
         Otherwise, if the host type is not an
         name, it returns an empty string.
-        The value returned may contain
+        The returned string may contain
         percent escapes.
 
         @par Example
         @code
         assert( url_view( "https://www%2droot.example.com/" ).encoded_host_name() == "www%2droot.example.com" );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -1154,12 +1258,6 @@ public:
 
         reg-name    = *( unreserved / pct-encoded / "-" / ".")
         @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
@@ -1175,17 +1273,21 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if the URL contains a port
+    /** Return true if a port is present
 
-        This function returns true if the
-        authority contains a port.
+        This function returns true if an
+        authority is present and contains a port.
 
         @par Example
         @code
-        url_view u( "wss://www.example.com:443" );
-
-        assert( u.has_port() );
+        assert( url_view( "wss://www.example.com:443" ).has_port() );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -1194,12 +1296,14 @@ public:
         port        = *DIGIT
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
             >3.2.3. Port (rfc3986)</a>
+
+        @see
+            @ref encoded_host_and_port,
+            @ref port,
+            @ref port_number.
     */
     BOOST_URL_DECL
     bool
@@ -1207,58 +1311,71 @@ public:
 
     /** Return the port
 
-        This function returns the port specified
-        in the authority, or an empty string if
-        there is no port.
+        If present, this function returns a
+        string representing the port (which
+        may be empty).
+        Otherwise it returns an empty string.
 
         @par Example
         @code
-        url_view u( "http://localhost.com:8080" );
-
-        assert( u.port() == "8080" );
+        assert( url_view( "http://localhost.com:8080" ).port() == "8080" );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
         port        = *DIGIT
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
             >3.2.3. Port (rfc3986)</a>
+
+        @see
+            @ref encoded_host_and_port,
+            @ref has_port,
+            @ref port_number.
     */
     BOOST_URL_DECL
     string_view
     port() const noexcept;
 
-    /** Return the port as an integer.
+    /** Return the port
 
-        This function returns the port as an
-        integer if the authority specifies
-        a port and the number can be represented.
-        Otherwise it returns zero.
+        If a port is present and the numerical
+        value is representable, it is returned
+        as an unsigned integer. Otherwise, the
+        number zero is returned.
 
         @par Example
         @code
-        url_view u( "http://localhost.com:8080" );
-
-        assert( u.port_number() == 8080 );
+        assert( url_view( "http://localhost.com:8080" ).port_number() == 8080 );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
         port        = *DIGIT
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
             >3.2.3. Port (rfc3986)</a>
+
+        @see
+            @ref encoded_host_and_port,
+            @ref has_port,
+            @ref port.
     */
     BOOST_URL_DECL
     std::uint16_t
@@ -1266,30 +1383,39 @@ public:
 
     /** Return the host and port
 
-        This function returns the host and
-        port of the authority as a single
-        percent-encoded string.
+        If an authority is present, this
+        function returns the host and optional
+        port as a string, which may be empty.
+        Otherwise it returns an empty string.
+        The returned string may contain
+        percent escapes.
 
         @par Example
         @code
-        url_view u( "http://www.example.com:8080/index.htm" );
-
-        assert( u.encoded_host_and_port() == "www.example.com:8080" );
+        assert( url_view( "http://www.example.com:8080/index.htm" ).encoded_host_and_port() == "www.example.com:8080" );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
         authority   = [ userinfo "@" ] host [ ":" port ]
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
             >3.2.2.  Host (rfc3986)</a>
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
             >3.2.3. Port (rfc3986)</a>
+
+        @see
+            @ref has_port,
+            @ref port,
+            @ref port_number.
     */
     BOOST_URL_DECL
     pct_string_view
@@ -1299,21 +1425,28 @@ public:
 
     /** Return the origin
 
-        This function returns the origin as
-        a percent-encoded string. The origin
-        consists of the scheme and authority.
-        This string will be empty if no
-        authority is present.
+        If an authority is present, this
+        function returns the scheme and
+        authority portion of the URL.
+        Otherwise, an empty string is
+        returned.
+        The returned string may contain
+        percent escapes.
 
         @par Example
         @code
-        url_view u( "http://www.example.com:8080/index.htm?text=none#h1" );
-
-        assert( u.encoded_origin() == "http://www.example.com:8080" );
+        assert( url_view( "http://www.example.com:8080/index.htm?text=none#h1" ).encoded_origin() == "http://www.example.com:8080" );
         @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
+
+        @see
+            @ref encoded_resource,
+            @ref encoded_target.
     */
     BOOST_URL_DECL
     pct_string_view
@@ -1325,24 +1458,46 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if the path is absolute.
+    /** Return true if the path is absolute
 
         This function returns true if the path
         begins with a forward slash ('/').
 
         @par Example
         @code
-        url_view u( "/path/to/file.txt" );
-
-        assert( u.is_path_absolute() );
+        assert( url_view( "/path/to/file.txt" ).is_path_absolute() );
         @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
 
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+        @endcode
+
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3.  Path (rfc3986)</a>
+
+        @see
+            @ref encoded_path,
+            @ref encoded_segments.
+            @ref path,
+            @ref segments.
     */
     bool
     is_path_absolute() const noexcept
@@ -1352,89 +1507,189 @@ public:
             u_.cs_[u_.offset(id_path)] == '/';
     }
 
-    /** Return the path.
-
-        This function returns the path as a
-        percent-encoded string.
-
-        @par Example
-        @code
-        url_view u( "file:///Program%20Files/Games/config.ini" );
-
-        assert( u.encoded_path() == "/Program%20Files/Games/config.ini" );
-        @endcode
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-    */
-    BOOST_URL_DECL
-    pct_string_view
-    encoded_path() const noexcept;
-
     /** Return the path
 
         This function returns the path as a
-        string with percent-decoding applied.
+        string. The path may be empty.
+        Any percent-escapes in the string are
+        decoded first.
 
         @par Example
         @code
-        url_view u( "file:///Program%20Files/Games/config.ini" );
-
-        assert( u.path() == "/Program Files/Games/config.ini" );
+        assert( url_view( "file:///Program%20Files/Games/config.ini" ).path() == "/Program Files/Games/config.ini" );
         @endcode
+
+        @par Complexity
+        Linear in `this->path().size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
 
         @par BNF
         @code
-        query           = *( pchar / "/" / "?" )
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
 
-        query-part      = [ "?" query ]
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
         @endcode
-
-        @par Exception Safety
-        Throws nothing
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
 
         @see
-            @ref encoded_query,
-            @ref has_query.
+            @ref is_path_absolute,
+            @ref encoded_path,
+            @ref encoded_segments.
+            @ref segments.
     */
     BOOST_URL_DECL
     std::string
     path() const;
 
-    /** Return the path segments
+    /** Return the path
 
-        This function returns the path segments as
-        a read-only bidirectional range.
+        This function returns the path as a
+        string. The path may be empty.
+        Any percent-escapes in the string are
+        decoded first.
 
-        @par BNF
+        @par Example
         @code
-        path          = [ "/" ] segment *( "/" segment )
+        assert( url_view( "file:///Program%20Files/Games/config.ini" ).encoded_path() == "/Program%20Files/Games/config.ini" );
         @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
+
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+        @endcode
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3. Path (rfc3986)</a>
 
         @see
-            @ref urls::segments_encoded_view,
+            @ref is_path_absolute,
+            @ref encoded_segments.
+            @ref path,
             @ref segments.
+    */
+    BOOST_URL_DECL
+    pct_string_view
+    encoded_path() const noexcept;
 
+    /** Return the path as a container of segments
+
+        This function returns a bidirectional
+        view of strings over the path.
+        The returned view references the same
+        underlying character buffer; ownership
+        is not transferred.
+        Any percent-escapes in strings returned
+        when iterating the view are decoded first.
+
+        @par Example
+        @code
+        segments_view sv = url_view( "/path/to/file.txt" ).segments();
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        path          = [ "/" ] segment *( "/" segment )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+
+        @see
+            @ref is_path_absolute,
+            @ref encoded_path,
+            @ref encoded_segments.
+            @ref path,
+            @ref segments_view.
+    */
+    segments_view
+    segments() const noexcept
+    {
+        return {encoded_path(), u_.nseg_};
+    }
+
+    /** Return the path as a container of segments
+
+        This function returns a bidirectional
+        view of strings over the path.
+        The returned view references the same
+        underlying character buffer; ownership
+        is not transferred.
+        Strings returned when iterating the
+        range may contain percent escapes.
+
+        @par Example
+        @code
+        segments_encoded_view sv = url_view( "/path/to/file.txt" ).encoded_segments();
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        path          = path-abempty    ; begins with "/" or is empty
+                      / path-absolute   ; begins with "/" but not "//"
+                      / path-noscheme   ; begins with a non-colon segment
+                      / path-rootless   ; begins with a segment
+                      / path-empty      ; zero characters
+
+        path-abempty  = *( "/" segment )
+        path-absolute = "/" [ segment-nz *( "/" segment ) ]
+        path-noscheme = segment-nz-nc *( "/" segment )
+        path-rootless = segment-nz *( "/" segment )
+        path-empty    = 0<pchar>
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+
+        @see
+            @ref is_path_absolute,
+            @ref encoded_path,
+            @ref path,
+            @ref segments,
+            @ref segments_encoded_view.
     */
     segments_encoded_view
     encoded_segments() const noexcept
@@ -1443,106 +1698,28 @@ public:
             encoded_path(), u_.nseg_);
     }
 
-    /** Return the path segments
-
-        This function returns the path segments as
-        a read-only bidirectional range.
-
-        @par BNF
-        @code
-        path          = [ "/" ] segment *( "/" segment )
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-
-        @see
-            @ref urls::segments_view,
-            @ref encoded_segments.
-
-    */
-    segments_view
-    segments() const noexcept
-    {
-        return {encoded_path(), u_.nseg_};
-    }
-
-    /** Return the encoded target.
-
-        This function returns the encoded target,
-        which is composed of the path and query.
-
-        @par Example
-        @code
-        url_view u( "http://www.example.com/index.html?query#frag" );
-
-        assert( u.encoded_target() == "/index.html?query" );
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
-
-    */
-    string_view
-    encoded_target() const noexcept
-    {
-        return u_.get(id_path, id_frag);
-    }
-
-    /** Return the encoded resource.
-
-        This function returns the encoded target,
-        which is composed of the path, query, and
-        fragment.
-
-        @par Example
-        @code
-        url_view u( "http://www.example.com/index.html?query#frag" );
-
-        assert( u.encoded_target() == "/index.html?query#frag" );
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
-
-    */
-    BOOST_URL_DECL
-    pct_string_view
-    encoded_resource() const noexcept;
-
     //--------------------------------------------
     //
     // Query
     //
     //--------------------------------------------
 
-    /** Return true if this contains a query
+    /** Return true if a query is present
 
         This function returns true if this
-        contains a query.
+        contains a query. An empty query is
+        distinct from having no query.
 
         @par Example
         @code
-        url_view u( "/sql?id=42&col=name&page-size=20" );
-
-        assert( u.has_query() );
+        assert( url_view( "/sql?id=42&col=name&page-size=20" ).has_query() );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -1551,15 +1728,14 @@ public:
         query-part      = [ "?" query ]
         @endcode
 
-        @par Exception Safety
-        Throws nothing.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4. Query (rfc3986)</a>
 
         @see
+            @ref encoded_params,
             @ref encoded_query,
+            @ref params,
             @ref query.
     */
     BOOST_URL_DECL
@@ -1568,43 +1744,12 @@ public:
 
     /** Return the query
 
-        This function returns the query as
-        a percent-encoded string.
-
-        @par Example
-        @code
-        url_view u( "/sql?id=42&name=jane%2Ddoe&page+size=20" );
-
-        assert( u.encoded_query() == "id=42&name=jane%2Ddoe&page+size=20" );
-        @endcode
-
-        @par BNF
-        @code
-        query           = *( pchar / "/" / "?" )
-
-        query-part      = [ "?" query ]
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
-
-        @see
-            @ref encoded_query,
-            @ref query.
-    */
-    BOOST_URL_DECL
-    pct_string_view
-    encoded_query() const noexcept;
-
-    /** Return the query
-
-        This function returns the query as a
-        string with percent-decoding applied.
-
+        If this contains a query, it is returned
+        as a string (which may be empty).
+        Otherwise, an empty string is returned.
+        Any percent-escapes in the string are
+        decoded first.
+        <br>
         When plus signs appear in the query
         portion of the URL, they are converted
         to spaces automatically upon decoding.
@@ -1613,10 +1758,14 @@ public:
 
         @par Example
         @code
-        url_view u( "/sql?id=42&name=jane%2Ddoe&page+size=20" );
-
-        assert( u.query() == "id=42&name=jane-doe&page size=20" );
+        assert( url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).query() == "id=42&name=jane-doe&page size=20" );
         @endcode
+
+        @par Complexity
+        Linear in `this->query().size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
 
         @par BNF
         @code
@@ -1625,28 +1774,80 @@ public:
         query-part      = [ "?" query ]
         @endcode
 
-        @par Exception Safety
-        Throws nothing
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4. Query (rfc3986)</a>
 
         @see
+            @ref encoded_params,
             @ref encoded_query,
-            @ref has_query.
+            @ref has_query,
+            @ref params.
     */
     BOOST_URL_DECL
     std::string
     query() const;
 
-    /** Return the query parameters
+    /** Return the query
 
-        This function returns the query
-        parameters as a non-modifiable
-        forward range of key/value pairs.
-        Each string returned by the container
-        is percent-encoded.
+        If this contains a query, it is returned
+        as a string (which may be empty).
+        Otherwise, an empty string is returned.
+        The returned string may contain
+        percent escapes.
+
+        @par Example
+        @code
+        assert( url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_query() == "id=42&name=jane%2Ddoe&page+size=20" );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        query           = *( pchar / "/" / "?" )
+
+        query-part      = [ "?" query ]
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
+
+        @see
+            @ref encoded_params,
+            @ref has_query,
+            @ref params,
+            @ref query.
+    */
+    BOOST_URL_DECL
+    pct_string_view
+    encoded_query() const noexcept;
+
+    /** Return the query as a container of parameters
+
+        This function returns a bidirectional
+        view of key/value pairs over the query.
+        The returned view references the same
+        underlying character buffer; ownership
+        is not transferred.
+        Any percent-escapes in strings returned
+        when iterating the view are decoded first.
+
+        @par Example
+        @code
+        params_const_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -1660,39 +1861,91 @@ public:
             >3.4. Query (rfc3986)</a>
 
         @see
-            @ref urls::params_encoded_const_view,
-            @ref params_view.
+            @ref encoded_params,
+            @ref encoded_query,
+            @ref has_query,
+            @ref query.
+    */
+    BOOST_URL_DECL
+    params_const_view
+    params() const noexcept;
+
+    /** Return the query as a container of parameters
+
+        This function returns a bidirectional
+        view of key/value pairs over the query.
+        The returned view references the same
+        underlying character buffer; ownership
+        is not transferred.
+        Strings returned when iterating the
+        range may contain percent escapes.
+
+        @par Example
+        @code
+        params_encoded_const_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
+
+        @par BNF
+        @code
+        query-params_view    = [ query-param ] *( "&" [ query-param ] )
+
+        query-param     = key [ "=" value ]
+        @endcode
+
+        @see
+            @ref encoded_query,
+            @ref has_query,
+            @ref params,
+            @ref query.
     */
     BOOST_URL_DECL
     params_encoded_const_view
     encoded_params() const noexcept;
 
-    /** Return the query parameters
+    //--------------------------------------------
 
-        This function returns the query
-        parameters as a non-modifiable
-        forward range of key/value pairs
-        where each returned string has
-        percent-decoding applied.
+    /** Return the target
 
-        @par BNF
+        This function returns the target, which
+        is the portion of the URL that includes
+        only the path and query.
+        The returned string may contain
+        percent escapes.
+
+        @par Example
         @code
-        query-params_view    = [ query-param ] *( "&" [ query-param ] )
-
-        query-param     = key [ "=" value ]
+        assert( url_view( "http://www.example.com/index.html?query#frag" ).encoded_target() == "/index.html?query" );
         @endcode
 
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
         @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4. Query (rfc3986)</a>
 
         @see
-            @ref urls::params_const_view,
-            @ref encoded_params.
+            @ref encoded_origin,
+            @ref encoded_resource.
     */
     BOOST_URL_DECL
-    params_const_view
-    params() const noexcept;
+    pct_string_view
+    encoded_target() const noexcept;
 
     //--------------------------------------------
     //
@@ -1700,17 +1953,22 @@ public:
     //
     //--------------------------------------------
 
-    /** Return true if a fragment exists
+    /** Return true if a fragment is present
 
         This function returns true if this
-        contains a fragment.
+        contains a fragment. An empty fragment
+        is distinct from having no fragment.
 
         @par Example
         @code
-        url_view u( "http://www.example.com/index.htm#a%2D1" );
-
-        assert( u.has_fragment() );
+        assert( url_view( "http://www.example.com/index.htm#a%2D1" ).has_fragment() );
         @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
 
         @par BNF
         @code
@@ -1718,9 +1976,6 @@ public:
 
         relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
         @endcode
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
@@ -1737,49 +1992,20 @@ public:
     /** Return the fragment
 
         This function returns the fragment as a
-        percent-encoded string.
+        string.
+        Any percent-escapes in the string are
+        decoded first.
 
         @par Example
         @code
-        url_view u( "http://www.example.com/index.htm#a%2D1" );
-
-        assert( u.encoded_fragment() == "a%2D1" );
+        assert( url_view( "http://www.example.com/index.htm#a%2D1" ).fragment() == "a-1" );
         @endcode
 
-        @par BNF
-        @code
-        fragment        = *( pchar / "/" / "?" )
-
-        pchar           = unreserved / pct-encoded / sub-delims / ":" / "@"
-        @endcode
+        @par Complexity
+        Linear in `this->fragment().size()`.
 
         @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
-            >3.5. Fragment (rfc3986)</a>
-
-        @see
-            @ref fragment,
-            @ref has_fragment,
-            @ref pchars.
-    */
-    BOOST_URL_DECL
-    pct_string_view
-    encoded_fragment() const noexcept;
-
-    /** Return the fragment
-
-        This function returns the fragment as a
-        string with percent-decoding applied.
-
-        @par Example
-        @code
-        url_view u( "http://www.example.com/index.htm#a%2D1" );
-
-        assert( u.fragment() == "a-1" );
-        @endcode
+        Calls to allocate may throw.
 
         @par BNF
         @code
@@ -1787,9 +2013,6 @@ public:
 
         fragment-part   = [ "#" fragment ]
         @endcode
-
-        @par Exception Safety
-        Throws nothing
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
@@ -1802,6 +2025,76 @@ public:
     BOOST_URL_DECL
     std::string
     fragment() const;
+
+    /** Return the fragment
+
+        This function returns the fragment as a
+        string.
+
+        @par Example
+        @code
+        assert( url_view( "http://www.example.com/index.htm#a%2D1" ).encoded_fragment() == "a%2D1" );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        fragment        = *( pchar / "/" / "?" )
+
+        pchar           = unreserved / pct-encoded / sub-delims / ":" / "@"
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
+            >3.5. Fragment (rfc3986)</a>
+
+        @see
+            @ref fragment,
+            @ref has_fragment.
+    */
+    BOOST_URL_DECL
+    pct_string_view
+    encoded_fragment() const noexcept;
+
+    //--------------------------------------------
+
+    /** Return the resource
+
+        This function returns the resource, which
+        is the portion of the URL that includes
+        only the path, query, and fragment.
+        The returned string may contain
+        percent escapes.
+
+        @par Example
+        @code
+        assert( url_view( "http://www.example.com/index.html?query#frag" ).encoded_resource() == "/index.html?query#frag" );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
+
+        @see
+            @ref encoded_origin,
+            @ref encoded_target.
+    */
+    BOOST_URL_DECL
+    pct_string_view
+    encoded_resource() const noexcept;
 
     //--------------------------------------------
     //

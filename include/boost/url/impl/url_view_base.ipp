@@ -527,16 +527,6 @@ path() const
 }
 
 //----------------------------------------------------------
-
-pct_string_view
-url_view_base::
-encoded_resource() const noexcept
-{
-    return detail::make_pct_string_view(
-        u_.get(id_path, id_end));
-}
-
-//----------------------------------------------------------
 //
 // Query
 //
@@ -592,6 +582,24 @@ params() const noexcept
 }
 
 //----------------------------------------------------------
+
+pct_string_view
+url_view_base::
+encoded_target() const noexcept
+{
+    auto n =
+        u_.decoded_[id_path] +
+        u_.decoded_[id_query];
+    if(has_query())
+        ++n;
+    BOOST_ASSERT(pct_string_view(
+        u_.get(id_path, id_frag)
+            ).decoded_size() == n);
+    return detail::make_pct_string_view(
+        u_.get(id_path, id_frag), n);
+}
+
+//----------------------------------------------------------
 //
 // Fragment
 //
@@ -632,6 +640,27 @@ fragment() const
     decode_opts opt;
     opt.plus_to_space = false;
     return encoded_fragment().decode_to_string(opt);
+}
+
+//------------------------------------------------
+
+pct_string_view
+url_view_base::
+encoded_resource() const noexcept
+{
+    auto n =
+        u_.decoded_[id_path] +
+        u_.decoded_[id_query] +
+        u_.decoded_[id_frag];
+    if(has_query())
+        ++n;
+    if(has_fragment())
+        ++n;
+    BOOST_ASSERT(pct_string_view(
+        u_.get(id_path, id_end)
+            ).decoded_size() == n);
+    return detail::make_pct_string_view(
+        u_.get(id_path, id_end), n);
 }
 
 //------------------------------------------------

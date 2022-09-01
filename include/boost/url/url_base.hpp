@@ -515,35 +515,40 @@ public:
     set_password(
         string_view s);
 
-    /** Set the password.
+    /** Set the password
 
-        The password is set to the encoded string `s`,
-        replacing any previous password:
+        The password is set to the specified
+        string.
+        Escapes in the string are preserved,
+        and reserved characters in the string
+        are percent-escaped in the result.
 
-        @li If the string is empty, the password is
-        cleared, and the first occurring colon (':') is
-        removed from the userinfo if present, otherwise
+        @par Postconditions
+        @code
+        this->has_password() == true && this->has_authority()
+        @endcode
 
-        @li If ths string is not empty then the password
-        is set to the new string.
-        If the URL previously did not have an authority
-        (@ref has_authority returns `false`), a double
-        slash ("//") is prepended to the userinfo.
-        The string must meet the syntactic requirements
-        of <em>password</em> otherwise an exception is
-        thrown.
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
 
-        @par ANBF
+        @throw system_error Invalid percent-encoding in `s`.
+
+        @param s The string to set.
+
+        @par BNF
         @code
         password      = *( unreserved / pct-encoded / sub-delims / ":" )
         @endcode
 
-        @par Exception Safety
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+            >3.2.1.  User Information</a>
 
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @param s The string to set.
+        @see
+            @ref remove_password,
+            @ref set_password
     */
     BOOST_URL_DECL
     url_base&

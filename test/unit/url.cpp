@@ -103,6 +103,14 @@ struct url_test
     void
     testSpecial()
     {
+        // max_size()
+        {
+            BOOST_TEST_GT(url::max_size(), 0u);
+
+            url u;
+            BOOST_TEST_GT(u.max_size(), 0u);
+        }
+
         // copy
         {
             url u = parse_uri_reference("x://y/z?q#f").value();

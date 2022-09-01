@@ -66,6 +66,26 @@ class BOOST_SYMBOL_VISIBLE url
     using url_view_base::digest;
 
 public:
+    /** Return the maximum number of characters possible
+
+        This represents the largest number of
+        characters that are possible in a 
+        Currently the limit is either 2^32-2
+        characters or 2^64-2 characters,
+        depending on the system architecture.
+        This does not include a null terminator.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    static
+    constexpr
+    std::size_t
+    max_size() noexcept
+    {
+        return BOOST_URL_MAX_SIZE;
+    }
+
     //--------------------------------------------
     //
     // Special Members
