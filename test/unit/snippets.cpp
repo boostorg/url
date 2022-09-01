@@ -189,7 +189,7 @@ using_url_views()
             std::cout << str << "\n";
         };
         //]
-        (void)function;
+        boost::ignore_unused(function);
         //[snippet_decoding_5b
         // VFALCO?
         //]
