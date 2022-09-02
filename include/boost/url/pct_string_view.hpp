@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/decode_opts.hpp>
+#include <boost/url/decode_view.hpp> // VFALCO rethink this
 #include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
 #include <iterator>
@@ -25,18 +26,23 @@ namespace urls {
 
 #ifndef BOOST_URL_DOCS
 class pct_string_view;
+
 namespace detail {
+
 string_view&
 ref(pct_string_view& s) noexcept;
+
 // unchecked
 pct_string_view
 make_pct_string_view(
     string_view s,
     std::size_t dn) noexcept;
+
 // unchecked
 pct_string_view
 make_pct_string_view(
     string_view s) noexcept;
+
 } // detail
 #endif
 
@@ -171,6 +177,24 @@ public:
     decoded_size() const noexcept
     {
         return dn_;
+    }
+
+    /** Return a decoding view
+    */
+    decode_view
+    decoded(
+        decode_opts const& opt = {}) const noexcept
+    {
+        return detail::make_decode_view(
+            s_, dn_, opt);
+    }
+
+    /** Return a decoding view
+    */
+    decode_view
+    operator*() const noexcept
+    {
+        return decoded();
     }
 
     /** Return the string with percent-decoding

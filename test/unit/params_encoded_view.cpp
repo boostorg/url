@@ -31,7 +31,7 @@ struct params_encoded_view_test
     static
     bool
     is_equal(
-        param_decode_view const& p0,
+        param_pct_view const& p0,
         param_view const& p1)
     {
         return
@@ -46,7 +46,7 @@ struct params_encoded_view_test
     check(
         params_encoded_view const& p,
         std::initializer_list<
-            param_view> init)
+            param_pct_view> init)
     {
         if(! BOOST_TEST_EQ(
             p.size(), init.size()))
@@ -84,7 +84,7 @@ struct params_encoded_view_test
     check(
         string_view s,
         std::initializer_list<
-            param_view> init)
+            param_pct_view> init)
     {
         url u("http://user:pass@www.example.com/path/to/file.txt?k=v#f");
         if(s.empty())
@@ -110,9 +110,7 @@ struct params_encoded_view_test
         // reconstruct u
         url u2("http://user:pass@www.example.com/path/to/file.txt?k=v#f");
         u2.encoded_params() = init;
-        BOOST_TEST(
-            u2.encoded_query() ==
-            u.encoded_query());
+        BOOST_TEST_EQ(u2.encoded_query(), u.encoded_query());
         check(u2.encoded_params(), init);
     }
 
@@ -139,16 +137,13 @@ struct params_encoded_view_test
         if(! s1.data())
         {
             BOOST_TEST(! u.has_query());
-            BOOST_TEST(
-                u.encoded_query() == "");
-            BOOST_TEST(
-                u.query() == "");
+            BOOST_TEST_EQ(u.encoded_query(), "");
+            BOOST_TEST(u.query() == "");
         }
         else
         {
             BOOST_TEST(u.has_query());
-            BOOST_TEST(
-                u.encoded_query() == s1);
+            BOOST_TEST_EQ(u.encoded_query(), s1);
         }
     }
 
@@ -227,8 +222,7 @@ struct params_encoded_view_test
             params_encoded_view p0 = u0.encoded_params();
             params_encoded_view p1 = u1.encoded_params();
             p1 = p0;
-            BOOST_TEST_EQ(
-                &p0.url(), &p1.url());
+            BOOST_TEST_EQ(&p0.url(), &p1.url());
             check(p0, {});
             check(p1, {});
         }
@@ -559,11 +553,11 @@ struct params_encoded_view_test
 #if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23=%25&%26==&%3d=%26",
+            "%23&%26==&%3d=%26",
             [](params_encoded_view& p)
             {
                 // encodings
-                p = {{ "#", "%" }, { "&", "=" }, { "=", "&" }};
+                p = {{ "#" }, { "&", "=" }, { "=", "&" }};
             });
 #endif
 
@@ -733,12 +727,12 @@ struct params_encoded_view_test
 #if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23=%25&%26==&%3d=%26",
+            "%23&%26==&%3d=%26",
             [](params_encoded_view& p)
             {
                 // encodings
                 p.assign(
-                    {{ "#", "%" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#" }, { "&", "=" }, { "=", "&" }});
             });
 #endif
 
@@ -855,12 +849,12 @@ struct params_encoded_view_test
 #if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23=%25&%26==&%3d=%26",
+            "%23&%26==&%3d=%26",
             [](params_encoded_view& p)
             {
                 // encodings
                 assign(p,
-                    {{ "#", "%" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#" }, { "&", "=" }, { "=", "&" }});
             });
 #endif
 
@@ -936,14 +930,28 @@ struct params_encoded_view_test
                     *it, { "y", "g" }));
             });
 
+        modify(
+            "",
+            "&key=value",
+            [](params_encoded_view& p)
+            {
+                // should not go through
+                // initializer_list overload
+                auto it = p.append({
+                    string_view("key"),
+                    string_view("value")});
+                BOOST_TEST(is_equal(
+                    *it, { "key", "value" }));
+            });
+
 #if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%23=%25",
+            "k0=0&k1=1&k2=&k3&k4=4444&%23",
             [](params_encoded_view& p)
             {
                 // encodings
-                p.append({ "#", "%" });
+                p.append({ "#" });
             });
 
         modify(
@@ -962,55 +970,6 @@ struct params_encoded_view_test
             {
                 // encodings
                 p.append({ "=", "&" });
-            });
-#endif
-
-        //
-        // append(initializer_list)
-        //
-
-        modify(
-            {},
-            "y=g&z=q",
-            [](params_encoded_view& p)
-            {
-                auto it = p.append(
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "",
-            "&y=g&z=q",
-            [](params_encoded_view& p)
-            {
-                auto it = p.append(
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "t",
-            "t&y=g&z=q",
-            [](params_encoded_view& p)
-            {
-                auto it = p.append(
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-#if 0
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%23=%25&%26==&%3d=%26",
-            [](params_encoded_view& p)
-            {
-                // encodings
-                p.append(
-                    {{ "#", "%" }, { "&", "=" }, { "=", "&" }});
             });
 #endif
 
@@ -1054,12 +1013,61 @@ struct params_encoded_view_test
 #if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%23=%25&%26==&%3d=%26",
+            "k0=0&k1=1&k2=&k3&k4=4444&%23&%26==&%3d=%26",
             [](params_encoded_view& p)
             {
                 // encodings
                 append(p,
-                    {{ "#", "%" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#" }, { "&", "=" }, { "=", "&" }});
+            });
+#endif
+
+        //
+        // append_list(initializer_list)
+        //
+
+        modify(
+            {},
+            "y=g&z=q",
+            [](params_encoded_view& p)
+            {
+                auto it = p.append_list(
+                    {{ "y", "g" }, { "z", "q" }});
+                BOOST_TEST(is_equal(
+                    *it, { "y", "g" }));
+            });
+
+        modify(
+            "",
+            "&y=g&z=q",
+            [](params_encoded_view& p)
+            {
+                auto it = p.append_list(
+                    {{ "y", "g" }, { "z", "q" }});
+                BOOST_TEST(is_equal(
+                    *it, { "y", "g" }));
+            });
+
+        modify(
+            "t",
+            "t&y=g&z=q",
+            [](params_encoded_view& p)
+            {
+                auto it = p.append_list(
+                    {{ "y", "g" }, { "z", "q" }});
+                BOOST_TEST(is_equal(
+                    *it, { "y", "g" }));
+            });
+
+#if 0
+        modify(
+            "k0=0&k1=1&k2=&k3&k4=4444",
+            "k0=0&k1=1&k2=&k3&k4=4444&%23&%26==&%3d=%26",
+            [](params_encoded_view& p)
+            {
+                // encodings
+                p.append_list(
+                    {{ "#" }, { "&", "=" }, { "=", "&" }});
             });
 #endif
 
@@ -1153,15 +1161,30 @@ struct params_encoded_view_test
                     *it, { "y", "g" }));
             });
 
+        modify(
+            "k0=0&k1=1&k2=&k3&k4=4444",
+            "k0=0&k1=1&key=value&k2=&k3&k4=4444",
+            [](params_encoded_view& p)
+            {
+                // should not go through
+                // initializer_list overload
+                auto it = p.insert(
+                    std::next(p.begin(), 2),
+                    {string_view("key"),
+                        string_view("value")});
+                BOOST_TEST(is_equal(
+                    *it, { "key", "value" }));
+            });
+
 #if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%23=%25&k2=&k3&k4=4444",
+            "k0=0&k1=1&%23&k2=&k3&k4=4444",
             [](params_encoded_view& p)
             {
                 // encodings
                 p.insert(std::next(p.begin(), 2),
-                    { "#", "%" });
+                    { "#" });
             });
 
         modify(
@@ -1182,94 +1205,6 @@ struct params_encoded_view_test
                 // encodings
                 p.insert(std::next(p.begin(), 2),
                     { "=", "&" });
-            });
-#endif
-
-        //
-        // insert(iterator, initializer_list)
-        //
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&z=q&k0=0&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_view& p)
-            {
-                auto it = p.insert(
-                    std::next(p.begin(), 0),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&y=g&z=q&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_view& p)
-            {
-                auto it = p.insert(
-                    std::next(p.begin(), 1),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&y=g&z=q&k2=&k3&k4=4444",
-            [](params_encoded_view& p)
-            {
-                auto it = p.insert(
-                    std::next(p.begin(), 2),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&y=g&z=q&k3&k4=4444",
-            [](params_encoded_view& p)
-            {
-                auto it = p.insert(
-                    std::next(p.begin(), 3),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&y=g&z=q&k4=4444",
-            [](params_encoded_view& p)
-            {
-                auto it = p.insert(
-                    std::next(p.begin(), 4),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&y=g&z=q",
-            [](params_encoded_view& p)
-            {
-                auto it = p.insert(
-                    std::next(p.begin(), 5),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-#if 0
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%23=%25&%26==&%3d=%26&k2=&k3&k4=4444",
-            [](params_encoded_view& p)
-            {
-                // encodings
-                p.insert(std::next(p.begin(), 2),
-                    {{ "#", "%" }, { "&", "=" }, { "=", "&" }});
             });
 #endif
 
@@ -1352,12 +1287,100 @@ struct params_encoded_view_test
 #if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%23=%25&%26==&%3d=%26&k2=&k3&k4=4444",
+            "k0=0&k1=1&%23&%26==&%3d=%26&k2=&k3&k4=4444",
             [](params_encoded_view& p)
             {
                 // encodings
                 insert(p, std::next(p.begin(), 2),
-                    {{ "#", "%" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#" }, { "&", "=" }, { "=", "&" }});
+            });
+#endif
+
+        //
+        // insert_list(iterator, initializer_list)
+        //
+
+        modify(
+            "k0=0&k1=1&k2=&k3&k4=4444",
+            "y=g&z=q&k0=0&k1=1&k2=&k3&k4=4444",
+            [](params_encoded_view& p)
+            {
+                auto it = p.insert_list(
+                    std::next(p.begin(), 0),
+                    {{ "y", "g" }, { "z", "q" }});
+                BOOST_TEST(is_equal(
+                    *it, { "y", "g" }));
+            });
+
+        modify(
+            "k0=0&k1=1&k2=&k3&k4=4444",
+            "k0=0&y=g&z=q&k1=1&k2=&k3&k4=4444",
+            [](params_encoded_view& p)
+            {
+                auto it = p.insert_list(
+                    std::next(p.begin(), 1),
+                    {{ "y", "g" }, { "z", "q" }});
+                BOOST_TEST(is_equal(
+                    *it, { "y", "g" }));
+            });
+
+        modify(
+            "k0=0&k1=1&k2=&k3&k4=4444",
+            "k0=0&k1=1&y=g&z=q&k2=&k3&k4=4444",
+            [](params_encoded_view& p)
+            {
+                auto it = p.insert_list(
+                    std::next(p.begin(), 2),
+                    {{ "y", "g" }, { "z", "q" }});
+                BOOST_TEST(is_equal(
+                    *it, { "y", "g" }));
+            });
+
+        modify(
+            "k0=0&k1=1&k2=&k3&k4=4444",
+            "k0=0&k1=1&k2=&y=g&z=q&k3&k4=4444",
+            [](params_encoded_view& p)
+            {
+                auto it = p.insert_list(
+                    std::next(p.begin(), 3),
+                    {{ "y", "g" }, { "z", "q" }});
+                BOOST_TEST(is_equal(
+                    *it, { "y", "g" }));
+            });
+
+        modify(
+            "k0=0&k1=1&k2=&k3&k4=4444",
+            "k0=0&k1=1&k2=&k3&y=g&z=q&k4=4444",
+            [](params_encoded_view& p)
+            {
+                auto it = p.insert_list(
+                    std::next(p.begin(), 4),
+                    {{ "y", "g" }, { "z", "q" }});
+                BOOST_TEST(is_equal(
+                    *it, { "y", "g" }));
+            });
+
+        modify(
+            "k0=0&k1=1&k2=&k3&k4=4444",
+            "k0=0&k1=1&k2=&k3&k4=4444&y=g&z=q",
+            [](params_encoded_view& p)
+            {
+                auto it = p.insert_list(
+                    std::next(p.begin(), 5),
+                    {{ "y", "g" }, { "z", "q" }});
+                BOOST_TEST(is_equal(
+                    *it, { "y", "g" }));
+            });
+
+#if 0
+        modify(
+            "k0=0&k1=1&k2=&k3&k4=4444",
+            "k0=0&k1=1&%23&%26==&%3d=%26&k2=&k3&k4=4444",
+            [](params_encoded_view& p)
+            {
+                // encodings
+                p.insert_list(std::next(p.begin(), 2),
+                    {{ "#" }, { "&", "=" }, { "=", "&" }});
             });
 #endif
 
@@ -1630,12 +1653,12 @@ struct params_encoded_view_test
 #if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&%23=%25&k2=&k3&k4=4444",
+            "k0=0&%23&k2=&k3&k4=4444",
             [](params_encoded_view& p)
             {
                 // encodings
                 p.replace(p.find("k1"),
-                    { "#", "%" });
+                    { "#" });
             });
 #endif
 
@@ -1694,13 +1717,13 @@ struct params_encoded_view_test
 #if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&%23=%25&%26==&%3d=%26&k3&k4=4444",
+            "k0=0&%23&%26==&%3d=%26&k3&k4=4444",
             [](params_encoded_view& p)
             {
                 // encodings
                 p.replace(
                     p.find("k1"), p.find("k3"),
-                    {{ "#", "%" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#" }, { "&", "=" }, { "=", "&" }});
             });
 #endif
 
@@ -1759,20 +1782,20 @@ struct params_encoded_view_test
 #if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&%23=%25&%26==&%3d=%26&k3&k4=4444",
+            "k0=0&%23&%26==&%3d=%26&k3&k4=4444",
             [](params_encoded_view& p)
             {
                 // encodings
                 replace(p,
                     p.find("k1"), p.find("k3"),
-                    {{ "#", "%" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#" }, { "&", "=" }, { "=", "&" }});
             });
 #endif
 
         //----------------------------------------
 
         //
-        // reset(iterator)
+        // unset(iterator)
         //
 
         modify(
@@ -1780,7 +1803,7 @@ struct params_encoded_view_test
             "k0&k1=1&k2=&k3&k4=4444",
             [](params_encoded_view& p)
             {
-                auto it = p.reset(next(p.begin(), 0));
+                auto it = p.unset(next(p.begin(), 0));
                 BOOST_TEST(is_equal(*it, { "k0" }));
             });
 
@@ -1789,7 +1812,7 @@ struct params_encoded_view_test
             "k0=0&k1&k2=&k3&k4=4444",
             [](params_encoded_view& p)
             {
-                auto it = p.reset(next(p.begin(), 1));
+                auto it = p.unset(next(p.begin(), 1));
                 BOOST_TEST(is_equal(*it, { "k1" }));
             });
 
@@ -1798,7 +1821,7 @@ struct params_encoded_view_test
             "k0=0&k1=1&k2&k3&k4=4444",
             [](params_encoded_view& p)
             {
-                auto it = p.reset(next(p.begin(), 2));
+                auto it = p.unset(next(p.begin(), 2));
                 BOOST_TEST(is_equal(*it, { "k2" }));
             });
 
@@ -1807,7 +1830,7 @@ struct params_encoded_view_test
             "k0=0&k1=1&k2=&k3&k4=4444",
             [](params_encoded_view& p)
             {
-                auto it = p.reset(next(p.begin(), 3));
+                auto it = p.unset(next(p.begin(), 3));
                 BOOST_TEST(is_equal(*it, { "k3" }));
             });
 
@@ -1816,7 +1839,7 @@ struct params_encoded_view_test
             "k0=0&k1=1&k2=&k3&k4",
             [](params_encoded_view& p)
             {
-                auto it = p.reset(next(p.begin(), 4));
+                auto it = p.unset(next(p.begin(), 4));
                 BOOST_TEST(is_equal(*it, { "k4" }));
             });
 

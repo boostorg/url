@@ -135,11 +135,11 @@ struct param_test
         param_view pv2 = { "key", "" };
         param_view pv3 = { "key", "value" };
 
-        param_decode_view d0 = {};
+        param_pct_view d0 = {};
 #if 0
-        param_decode_view d1 = { "key" };
-        param_decode_view d2 = { "key", "" };
-        param_decode_view d3 = { "key", "value" };
+        param_pct_view d1 = { "key" };
+        param_pct_view d2 = { "key", "" };
+        param_pct_view d3 = { "key", "value" };
 #endif
 
         boost::ignore_unused(

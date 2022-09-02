@@ -25,7 +25,7 @@ struct gen_delim_chars_test
     {
         // javadoc
         {
-            result< decode_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( gen_delim_chars ) );
+            result< pct_string_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( gen_delim_chars ) );
             (void)rv;
         }
 

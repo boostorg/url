@@ -22,94 +22,6 @@ namespace urls {
 
 //------------------------------------------------
 //
-// Observers
-//
-//------------------------------------------------
-
-std::size_t
-params_view::
-count(
-    string_view key,
-    ignore_case_param ic) const noexcept
-{
-    std::size_t n = 0;
-    auto it = find(key, ic);
-    auto const end_ = end();
-    while(it != end_)
-    {
-        ++n;
-        ++it;
-        it = find(
-            it, key, ic);
-    }
-    return n;
-}
-
-auto
-params_view::
-find(
-    iterator it,
-    string_view key,
-    ignore_case_param ic) const noexcept ->
-        iterator
-{
-    auto const end_ = end();
-    if(! ic)
-    {
-        for(;;)
-        {
-            if(it == end_)
-                return it;
-            auto r = *it;
-            if( r.key == key )
-                return it;
-            ++it;
-        }
-    }
-    for(;;)
-    {
-        if(it == end_)
-            return it;
-        if( grammar::ci_is_equal(
-                it->key, key))
-            return it;
-        ++it;
-    }
-}
-
-auto
-params_view::
-find_prev(
-    iterator it,
-    string_view key,
-    ignore_case_param ic) const noexcept ->
-        iterator
-{
-    auto const begin_ = begin();
-    if(! ic)
-    {
-        for(;;)
-        {
-            if(it == begin_)
-                return end();
-            --it;
-            if(it->key == key)
-                return it;
-        }
-    }
-    for(;;)
-    {
-        if(it == begin_)
-            return end();
-        --it;
-        if(grammar::ci_is_equal(
-                it->key, key))
-            return it;
-    }
-}
-
-//------------------------------------------------
-//
 // Modifiers
 //
 //------------------------------------------------
@@ -123,17 +35,14 @@ erase(
     // VFALCO we can't cache end() here
     // because it will be invalidated
     // every time we erase.
-
-    auto it = find_prev(
-        end(), key, ic);
+    auto it = find_last(key, ic);
     if(it == end())
         return 0;
     std::size_t n = 0;
     for(;;)
     {
         ++n;
-        auto prev = find_prev(
-            it, key, ic);
+        auto prev = find_last(it, key, ic);
         if(prev == end())
         {
             // prev would be invalidated by
@@ -152,14 +61,15 @@ erase(
 
 auto
 params_view::
-reset(
+unset(
     iterator pos) noexcept ->
         iterator
 {
     BOOST_ASSERT(pos.it_.nk > 0);
     string_view s;
     return u_->edit_params(
-        pos.it_, pos.it_.next(),
+        pos.it_,
+        pos.it_.next(),
         detail::param_value_iter(
             pos.it_.nk - 1, s, false));
 }
@@ -173,7 +83,8 @@ set(
 {
     BOOST_ASSERT(pos.it_.nk > 0);
     return u_->edit_params(
-        pos.it_, pos.it_.next(),
+        pos.it_,
+        pos.it_.next(),
         detail::param_value_iter(
             pos.it_.nk - 1, value, true));
 }
@@ -189,21 +100,83 @@ set(
     // VFALCO we can't cache end() here
     // because it will be invalidated
     // every time we set or erase.
-
     auto it0 = find(key, ic);
     if(it0 == end())
-        return append(
-            param_view(
-                key, value));
+        return append({key, value});
     it0 = set(it0, value);
     auto it = end();
     for(;;)
     {
-        it = find_prev(
-            it, key, ic);
+        it = find_last(it, key, ic);
         if(it == it0)
             return it0;
         it = erase(it);
+    }
+}
+
+//------------------------------------------------
+//
+// (implementation)
+//
+//------------------------------------------------
+
+detail::params_iter_impl
+params_view::
+find_impl(
+    detail::params_iter_impl it,
+    string_view key,
+    ignore_case_param ic) const noexcept
+{
+    detail::params_iter_impl end_(u_->u_, 0);
+    if(! ic)
+    {
+        for(;;)
+        {
+            if(it.equal(end_))
+                return it;
+            if(*it.key() == key)
+                return it;
+            it.increment();
+        }
+    }
+    for(;;)
+    {
+        if(it.equal(end_))
+            return it;
+        if( grammar::ci_is_equal(
+                *it.key(), key))
+            return it;
+        it.increment();
+    }
+}
+
+detail::params_iter_impl
+params_view::
+find_last_impl(
+    detail::params_iter_impl it,
+    string_view key,
+    ignore_case_param ic) const noexcept
+{
+    detail::params_iter_impl begin_(u_->u_);
+    if(! ic)
+    {
+        for(;;)
+        {
+            if(it.equal(begin_))
+                return { u_->u_, 0 };
+            it.decrement();
+            if(*it.key() == key)
+                return it;
+        }
+    }
+    for(;;)
+    {
+        if(it.equal(begin_))
+            return { u_->u_, 0 };
+        it.decrement();
+        if(grammar::ci_is_equal(
+                *it.key(), key))
+            return it;
     }
 }
 

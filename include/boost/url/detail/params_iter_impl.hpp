@@ -11,8 +11,8 @@
 #define BOOST_URL_DETAIL_PARAMS_ITER_IMPL_HPP
 
 #include <boost/url/param.hpp>
-#include <boost/url/string_view.hpp>
 #include <boost/url/detail/parts_base.hpp>
+#include <boost/url/detail/url_impl.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
@@ -23,9 +23,9 @@ struct params_iter_impl
     : parts_base
 {
     url_impl const* u = nullptr;
-    std::size_t pos = 0;
-    std::size_t nk = 0;
-    std::size_t nv = 0;
+    std::size_t pos = 0;// to '?' or '&'
+    std::size_t nk = 0; // includes '?' or '&'
+    std::size_t nv = 0; // includes '='
     std::size_t dk = 0;
     std::size_t dv = 0;
     std::size_t i = 0;
@@ -38,7 +38,6 @@ struct params_iter_impl
 
     // begin
     BOOST_URL_DECL
-    explicit
     params_iter_impl(
         url_impl const& u_) noexcept;
 
@@ -56,6 +55,10 @@ struct params_iter_impl
         std::size_t i_) noexcept;
 
     BOOST_URL_DECL
+    param_pct_view
+    dereference() const noexcept;
+
+    BOOST_URL_DECL
     void
     increment() noexcept;
 
@@ -63,9 +66,40 @@ struct params_iter_impl
     void
     decrement() noexcept;
 
-    BOOST_URL_DECL
-    param_decode_view
-    dereference() const noexcept;
+    bool
+    at_end() const noexcept
+    {
+        return nk == 0;
+    }
+
+    bool
+    has_value() const noexcept
+    {
+        return nv > 0;
+    }
+
+    pct_string_view
+    key() const noexcept
+    {
+        return detail::make_pct_string_view(
+            string_view(
+                u->cs_ +
+                    u->offset(id_query) +
+                    pos + 1,
+                nk - 1), dk);
+    }
+
+    pct_string_view
+    value() const noexcept
+    {
+        BOOST_ASSERT(has_value());
+        return detail::make_pct_string_view(
+            string_view(
+                u->cs_ +
+                    u->offset(id_query) +
+                    pos + nk + 1,
+                nv - 1), dv);
+    }
 
     auto
     next() const noexcept ->

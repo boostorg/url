@@ -27,6 +27,12 @@ in a translation unit of the program.
 // using src.hpp as their main header file
 #include <boost/url.hpp>
 
+//------------------------------------------------
+//
+// url
+//
+//------------------------------------------------
+
 #include <boost/url/detail/impl/any_params_iter.ipp>
 #include <boost/url/detail/impl/any_path_iter.ipp>
 #include <boost/url/detail/impl/decode.ipp>
@@ -44,10 +50,10 @@ in a translation unit of the program.
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/ipv4_address.ipp>
 #include <boost/url/impl/ipv6_address.ipp>
+#include <boost/url/impl/params_base.ipp>
+#include <boost/url/impl/params_encoded_base.ipp>
 #include <boost/url/impl/params_view.ipp>
 #include <boost/url/impl/params_encoded_view.ipp>
-#include <boost/url/impl/params_encoded_const_view.ipp>
-#include <boost/url/impl/params_const_view.ipp>
 #include <boost/url/impl/decode_view.ipp>
 #include <boost/url/impl/param.ipp>
 #include <boost/url/impl/pct_string_view.ipp>
@@ -62,24 +68,26 @@ in a translation unit of the program.
 #include <boost/url/impl/url_view.ipp>
 #include <boost/url/impl/url_view_base.ipp>
 
+//------------------------------------------------
+//
+// grammar
+//
+//------------------------------------------------
+
+#include <boost/url/grammar/detail/impl/copied_strings.ipp>
+#include <boost/url/grammar/detail/impl/recycled.ipp>
+
 #include <boost/url/grammar/impl/ci_string.ipp>
 #include <boost/url/grammar/impl/dec_octet_rule.ipp>
 #include <boost/url/grammar/impl/delim_rule.ipp>
 #include <boost/url/grammar/impl/error.ipp>
 #include <boost/url/grammar/impl/literal_rule.ipp>
 
-#include <boost/url/grammar/detail/impl/copied_strings.ipp>
-#include <boost/url/grammar/detail/impl/recycled.ipp>
-
-#include <boost/url/rfc/impl/absolute_uri_rule.ipp>
-#include <boost/url/rfc/impl/authority_rule.ipp>
-#include <boost/url/rfc/impl/ipv4_address_rule.ipp>
-#include <boost/url/rfc/impl/ipv6_address_rule.ipp>
-#include <boost/url/rfc/impl/origin_form_rule.ipp>
-#include <boost/url/rfc/impl/query_rule.ipp>
-#include <boost/url/rfc/impl/relative_ref_rule.ipp>
-#include <boost/url/rfc/impl/uri_rule.ipp>
-#include <boost/url/rfc/impl/uri_reference_rule.ipp>
+//------------------------------------------------
+//
+// rfc
+//
+//------------------------------------------------
 
 #include <boost/url/rfc/detail/impl/h16_rule.ipp>
 #include <boost/url/rfc/detail/impl/hier_part_rule.ipp>
@@ -91,5 +99,15 @@ in a translation unit of the program.
 #include <boost/url/rfc/detail/impl/relative_part_rule.ipp>
 #include <boost/url/rfc/detail/impl/scheme_rule.ipp>
 #include <boost/url/rfc/detail/impl/userinfo_rule.ipp>
+
+#include <boost/url/rfc/impl/absolute_uri_rule.ipp>
+#include <boost/url/rfc/impl/authority_rule.ipp>
+#include <boost/url/rfc/impl/ipv4_address_rule.ipp>
+#include <boost/url/rfc/impl/ipv6_address_rule.ipp>
+#include <boost/url/rfc/impl/origin_form_rule.ipp>
+#include <boost/url/rfc/impl/query_rule.ipp>
+#include <boost/url/rfc/impl/relative_ref_rule.ipp>
+#include <boost/url/rfc/impl/uri_rule.ipp>
+#include <boost/url/rfc/impl/uri_reference_rule.ipp>
 
 #endif

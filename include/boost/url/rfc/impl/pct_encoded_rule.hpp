@@ -11,6 +11,7 @@
 #define BOOST_URL_RFC_IMPL_PCT_ENCODED_RULE_HPP
 
 #include <boost/url/grammar/charset.hpp>
+#include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/hexdig_chars.hpp>
 
 namespace boost {
@@ -24,7 +25,7 @@ parse_encoded(
     char const*& it,
     char const* end,
     CharSet const& cs) noexcept ->
-        result<decode_view>
+        result<pct_string_view>
 {
     auto const start = it;
     // VFALCO TODO
@@ -78,7 +79,7 @@ skip:
             goto skip;
     }
 finish:
-    return access::construct(
+    return make_pct_string_view(
         string_view(start, it - start), n);
 }
 

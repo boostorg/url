@@ -33,8 +33,10 @@ set(BOOST_URL_TESTS_FILES
     natvis.cpp
     optional.cpp
     param.cpp
+    params_base.cpp
+    params_const_encoded_view.cpp
     params_const_view.cpp
-    params_encoded_const_view.cpp
+    params_encoded_base.cpp
     params_encoded_view.cpp
     params_view.cpp
     pct_string_view.cpp

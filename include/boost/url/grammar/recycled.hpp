@@ -285,7 +285,6 @@ public:
             @ref recycled,
             @ref release.
     */
-    explicit
     recycled_ptr(
         std::nullptr_t) noexcept;
 

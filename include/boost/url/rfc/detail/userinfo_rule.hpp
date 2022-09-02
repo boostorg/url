@@ -37,9 +37,9 @@ struct userinfo_rule_t
 {
     struct value_type
     {
-        decode_view user;
+        pct_string_view user;
+        pct_string_view password;
         bool has_password = false;
-        decode_view password;
     };
 
     auto

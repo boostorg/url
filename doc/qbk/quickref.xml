@@ -55,11 +55,11 @@
           <member><link linkend="url.ref.boost__urls__ipv4_address">ipv4_address</link></member>
           <member><link linkend="url.ref.boost__urls__ipv6_address">ipv6_address</link></member>
           <member><link linkend="url.ref.boost__urls__param">param</link></member>
+          <member><link linkend="url.ref.boost__urls__param_pct_view">param_pct_view</link></member>
           <member><link linkend="url.ref.boost__urls__param_view">param_view</link></member>
-          <member><link linkend="url.ref.boost__urls__param_decode_view">param_decode_view</link></member>
+          <member><link linkend="url.ref.boost__urls__params_const_encoded_view">params_const_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_const_view">params_const_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_view">params_view</link></member>
-          <member><link linkend="url.ref.boost__urls__params_encoded_const_view">params_encoded_const_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_encoded_view">params_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__pct_string_view">pct_string_view</link></member>
           <member><link linkend="url.ref.boost__urls__segments">segments</link></member>
@@ -73,11 +73,8 @@
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__segments_view">segments_view</link></member>
           <member><link linkend="url.ref.boost__urls__static_url">static_url</link></member>
-          <member><link linkend="url.ref.boost__urls__static_url_base">static_url_base</link></member>
           <member><link linkend="url.ref.boost__urls__url">url</link></member>
-          <member><link linkend="url.ref.boost__urls__url_base">url_base</link></member>
           <member><link linkend="url.ref.boost__urls__url_view">url_view</link></member>
-          <member><link linkend="url.ref.boost__urls__url_view_base">url_view_base</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">Constants</bridgehead>

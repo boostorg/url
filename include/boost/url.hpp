@@ -21,10 +21,12 @@
 #include <boost/url/ignore_case.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/params_view.hpp>
-#include <boost/url/params_encoded_view.hpp>
-#include <boost/url/params_encoded_const_view.hpp>
+#include <boost/url/params_base.hpp>
+#include <boost/url/params_encoded_base.hpp>
+#include <boost/url/params_const_encoded_view.hpp>
 #include <boost/url/params_const_view.hpp>
+#include <boost/url/params_encoded_view.hpp>
+#include <boost/url/params_view.hpp>
 #include <boost/url/decode_view.hpp>
 #include <boost/url/param.hpp>
 #include <boost/url/pct_string_view.hpp>

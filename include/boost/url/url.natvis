@@ -29,7 +29,7 @@
     <DisplayString Condition="has_value">{key} = {value}</DisplayString>
   </Type>
 
-  <Type Name="boost::urls::param_decode_view">
+  <Type Name="boost::urls::param_pct_view">
     <DisplayString Condition="! has_value">{key}</DisplayString>
     <DisplayString Condition="has_value">{key} = {value}</DisplayString>
   </Type>

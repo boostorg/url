@@ -21,16 +21,6 @@
 namespace boost {
 namespace urls {
 
-#ifndef BOOST_URL_DOCS
-namespace grammar {
-namespace detail {
-class copied_strings_base;
-} // detail
-} // grammar
-#endif
-
-//------------------------------------------------
-
 /** A reference to a valid, percent-encoded string
 
     These views reference strings in parts of URLs
@@ -91,13 +81,6 @@ class decode_view
         string_view s,
         std::size_t n,
         decode_opts opt = {}) noexcept;
-
-    /** Return a view whose buffer does not overlap, copying if necessary
-    */
-    BOOST_URL_DECL
-    decode_view
-    maybe_copy(
-        grammar::detail::copied_strings_base& sp) const;
 
 public:
     /** The value type

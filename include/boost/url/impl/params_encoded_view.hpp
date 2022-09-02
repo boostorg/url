@@ -12,110 +12,27 @@
 #define BOOST_URL_IMPL_PARAMS_ENCODED_VIEW_HPP
 
 #include <boost/url/detail/except.hpp>
-#include <boost/url/detail/params_iter_impl.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
 namespace urls {
 
-//------------------------------------------------
-
-class params_encoded_view::iterator
+inline
+params_encoded_view::
+params_encoded_view(
+    url_base& u) noexcept
+    : params_encoded_base(u)
+    , u_(&u)
 {
-    detail::params_iter_impl it_;
+}
 
-    friend class params_encoded_view;
-
-    iterator(
-        url_view_base const& u) noexcept
-        : it_(u.u_)
-    {
-    }
-
-    // end
-    iterator(
-        url_view_base const& u,
-        int) noexcept
-        : it_(u.u_, 0)
-    {
-    }
-
-    iterator(
-        detail::params_iter_impl const& it) noexcept
-        : it_(it)
-    {
-    }
-
-public:
-    using value_type = param;
-    using reference = param_view;
-    using pointer = param_view;
-    using difference_type = std::ptrdiff_t;
-    using iterator_category =
-        std::forward_iterator_tag;
-
-    iterator() = default;
-
-    iterator&
-    operator++() noexcept
-    {
-        it_.increment();
-        return *this;
-    }
-
-    iterator
-    operator++(int) noexcept
-    {
-        auto tmp = *this;
-        ++*this;
-        return tmp;
-    }
-
-    iterator&
-    operator--() noexcept
-    {
-        it_.decrement();
-        return *this;
-    }
-
-    iterator
-    operator--(int) noexcept
-    {
-        auto tmp = *this;
-        --*this;
-        return tmp;
-    }
-
-    reference
-    operator*() const
-    {
-        return it_.dereference();
-    }
-
-    pointer
-    operator->() const
-    {
-        return it_.dereference();
-    }
-
-    friend
-    bool
-    operator==(
-        iterator const& a,
-        iterator const& b) noexcept
-    {
-        return a.it_.equal(b.it_);
-    }
-
-    friend
-    bool
-    operator!=(
-        iterator const& a,
-        iterator const& b) noexcept
-    {
-        return ! a.it_.equal(b.it_);
-    }
-};
+inline
+params_encoded_view::
+operator
+params_const_encoded_view() const noexcept
+{
+    return {*u_};
+}
 
 //------------------------------------------------
 //
@@ -127,74 +44,12 @@ inline
 params_encoded_view&
 params_encoded_view::
 operator=(std::initializer_list<
-    reference> init)
+    param_pct_view> init)
 {
     assign(init);
     return *this;
 }
 
-//------------------------------------------------
-//
-// Observers
-//
-//------------------------------------------------
-
-inline
-bool
-params_encoded_view::
-empty() const noexcept
-{
-    return u_->u_.nparam_ == 0;
-}
-
-inline
-std::size_t
-params_encoded_view::
-size() const noexcept
-{
-    return u_->u_.nparam_;
-}
-
-inline
-auto
-params_encoded_view::
-begin() const noexcept ->
-    iterator
-{
-    return { *u_ };
-}
-
-inline
-auto
-params_encoded_view::
-end() const noexcept ->
-    iterator
-{
-    return { *u_, 0 };
-}
-
-inline
-bool
-params_encoded_view::
-contains(
-    string_view key,
-    ignore_case_param ic) const
-{
-    return find(begin(),
-        key, ic) != end();
-}
-
-inline
-auto
-params_encoded_view::
-find(
-    string_view key,
-    ignore_case_param ic) const ->
-        iterator
-{
-    return find(
-        begin(), key, ic);
-}
 
 //------------------------------------------------
 //
@@ -216,7 +71,7 @@ inline
 void
 params_encoded_view::
 assign(std::initializer_list<
-    reference> init)
+    param_pct_view> init)
 {
     assign(init.begin(), init.end());
 }
@@ -255,17 +110,6 @@ append(
     return insert(end(), v);
 }
 
-inline
-auto
-params_encoded_view::
-append(
-    std::initializer_list<
-        param_view> init) ->
-    iterator
-{
-    return insert(end(), init);
-}
-
 template<class FwdIt>
 auto
 params_encoded_view::
@@ -288,6 +132,17 @@ append(FwdIt first, FwdIt last) ->
         end(), first, last);
 }
 
+inline
+auto
+params_encoded_view::
+append_list(
+    std::initializer_list<
+        param_view> init) ->
+    iterator
+{
+    return insert_list(end(), init);
+}
+
 //------------------------------------------------
 
 inline
@@ -300,19 +155,6 @@ insert(
 {
     return insert(
         before, &v, &v + 1);
-}
-
-inline
-auto
-params_encoded_view::
-insert(
-    iterator before,
-    std::initializer_list<
-        param_view> init) ->
-    iterator
-{
-    return insert(before,
-        init.begin(), init.end());
 }
 
 template<class FwdIt>
@@ -342,6 +184,19 @@ insert(
         last,
         typename std::iterator_traits<
             FwdIt>::iterator_category{});
+}
+
+inline
+auto
+params_encoded_view::
+insert_list(
+    iterator before,
+    std::initializer_list<
+        param_view> init) ->
+    iterator
+{
+    return insert(before,
+        init.begin(), init.end());
 }
 
 //------------------------------------------------

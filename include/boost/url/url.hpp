@@ -94,9 +94,10 @@ public:
 
     /** Destructor
 
-        Any params_view, segments, or iterators
-        which reference this object are
-        invalidated.
+        Any param views, segment views, or
+        iterators which reference this object are
+        invalidated. The underlying character
+        buffer is destroyed.
     */
     BOOST_URL_DECL
     virtual ~url();

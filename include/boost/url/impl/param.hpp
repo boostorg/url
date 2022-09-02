@@ -14,14 +14,14 @@
 namespace boost {
 namespace urls {
 
+#if 1
 inline
-param_decode_view::
+param_pct_view::
 operator param_view() const noexcept
 {
-    if(has_value)
-        return { key.encoded(), value.encoded() };
-    return { key.encoded() };
+    return { key, value, has_value };
 }
+#endif
 
 } // urls
 } // boost

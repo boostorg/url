@@ -567,11 +567,11 @@ query() const
     return encoded_query().decode_to_string(opt);
 }
 
-params_encoded_const_view
+params_const_encoded_view
 url_view_base::
 encoded_params() const noexcept
 {
-    return params_encoded_const_view(*this);
+    return params_const_encoded_view(*this);
 }
 
 params_const_view

@@ -57,7 +57,7 @@ struct tuple_rule_test
     void
     testSquelch()
     {
-        result< std::tuple< decode_view, string_view > > r1 =
+        result< std::tuple< pct_string_view, string_view > > r1 =
             parse(
                 "www.example.com:443",
                 tuple_rule(
@@ -66,7 +66,7 @@ struct tuple_rule_test
                     token_rule( digit_chars ) ) );
 
         result< std::tuple<
-                decode_view, string_view, string_view > > r2 =
+                pct_string_view, string_view, string_view > > r2 =
             parse(
                 "www.example.com:443",
                 tuple_rule(

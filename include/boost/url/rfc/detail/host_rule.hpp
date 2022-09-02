@@ -45,7 +45,7 @@ struct host_rule_t
             urls::host_type::none;
         string_view match;
         unsigned char addr[16] = {};
-        decode_view name;
+        pct_string_view name;
     };
 
     auto

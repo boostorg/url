@@ -11,7 +11,7 @@
 #define BOOST_URL_DETAIL_URL_IMPL_HPP
 
 #include <boost/url/host_type.hpp>
-#include <boost/url/decode_view.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/detail/parts_base.hpp>
@@ -82,15 +82,15 @@ struct url_impl : parts_base
     void collapse(int, int, std::size_t) noexcept;
 
     void apply_scheme(string_view) noexcept;
-    void apply_userinfo(decode_view const&,
-        decode_view const*) noexcept;
-    void apply_host(host_type, string_view,
-        unsigned char const*, decode_view const&) noexcept;
+    void apply_userinfo(pct_string_view const&,
+        pct_string_view const*) noexcept;
+    void apply_host(host_type, pct_string_view,
+        unsigned char const*) noexcept;
     void apply_port(string_view, unsigned short) noexcept;
     void apply_authority(authority_view const&) noexcept;
-    void apply_path(string_view, std::size_t) noexcept;
-    void apply_query(string_view, std::size_t) noexcept;
-    void apply_frag(decode_view) noexcept;
+    void apply_path(pct_string_view, std::size_t) noexcept;
+    void apply_query(pct_string_view, std::size_t) noexcept;
+    void apply_frag(pct_string_view) noexcept;
 };
 
 //------------------------------------------------

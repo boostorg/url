@@ -47,12 +47,10 @@ segments_iterator_impl(
     std::size_t nseg,
     int) noexcept
     : i_(nseg)
-    , begin_(s.data())
+    , begin_(s.data() + path_prefix(s))
     , pos_(s.data() + s.size())
     , end_(s.data() + s.size())
 {
-    auto const n = path_prefix(s);
-    begin_ += n;
 }
 
 decode_view
@@ -61,7 +59,7 @@ dereference() const noexcept
 {
     decode_opts opt;
     opt.plus_to_space = false;
-    return decode_view(t_.encoded(), opt);
+    return t_.decoded(opt);
 }
 
 

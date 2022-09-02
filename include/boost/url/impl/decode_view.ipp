@@ -66,6 +66,7 @@ decode_view(
         s, opt).value(BOOST_URL_POS);
 }
 
+#if 0
 decode_view
 decode_view::
 maybe_copy(
@@ -79,6 +80,7 @@ maybe_copy(
         dn_,
         opt);
 }
+#endif
 
 //------------------------------------------------
 

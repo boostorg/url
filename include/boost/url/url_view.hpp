@@ -100,8 +100,8 @@ public:
 
     /** Destructor
 
-        Any params_view, segments, or iterators
-        which reference this object are
+        Any param views, segment views, or
+        iterators which reference this object are
         invalidated. The ownership and lifetime
         of the underlying character buffer
         remains unchanged.

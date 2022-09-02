@@ -23,13 +23,13 @@ namespace urls {
 
     @par Value Type
     @code
-    using value_type = grammar::range< param_decode_view >;
+    using value_type = grammar::range< param_pct_view >;
     @endcode
 
     @par Example
     Rules are used with the function @ref grammar::parse.
     @code
-    result< grammar::range< param_decode_view > > rv = grammar::parse( "format=web&id=42&compact", query_rule );
+    result< grammar::range< param_pct_view > > rv = grammar::parse( "format=web&id=42&compact", query_rule );
     @endcode
 
     @par BNF
@@ -53,7 +53,7 @@ namespace urls {
 
     @see
         @ref grammar::parse,
-        @ref params_encoded_const_view.
+        @ref params_const_encoded_view.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ query_rule;
@@ -61,7 +61,7 @@ constexpr __implementation_defined__ query_rule;
 struct query_rule_t
 {
     using value_type =
-        grammar::range<param_decode_view>;
+        grammar::range<param_pct_view>;
 
     BOOST_URL_DECL
     result<value_type>

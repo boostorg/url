@@ -11,8 +11,9 @@
 #ifndef BOOST_URL_DETAIL_SEGMENTS_ITERATOR_IMPL_HPP
 #define BOOST_URL_DETAIL_SEGMENTS_ITERATOR_IMPL_HPP
 
-#include <boost/url/string_view.hpp>
 #include <boost/url/decode_view.hpp>
+#include <boost/url/pct_string_view.hpp>
+#include <boost/url/string_view.hpp>
 #include <string>
 
 namespace boost {
@@ -26,7 +27,7 @@ struct segments_iterator_impl
     char const* pos_ = nullptr;
     char const* next_ = nullptr;
     char const* end_ = nullptr;
-    decode_view t_;
+    pct_string_view t_;
 
     BOOST_URL_DECL
     segments_iterator_impl(

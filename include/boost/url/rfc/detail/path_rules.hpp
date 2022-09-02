@@ -104,7 +104,7 @@ constexpr __implementation_defined__ segment_ns_rule;
 #else
 struct segment_ns_rule_t
 {
-    using value_type = decode_view;
+    using value_type = pct_string_view;
 
     BOOST_URL_DECL
     result<value_type>

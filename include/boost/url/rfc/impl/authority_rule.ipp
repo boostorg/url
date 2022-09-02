@@ -59,9 +59,8 @@ parse(
             it, end, detail::host_rule);
         if(! rv)
             return rv.error();
-        u.apply_host(
-            rv->host_type, rv->match,
-                rv->addr, rv->name);
+        u.apply_host(rv->host_type,
+            rv->match, rv->addr);
     }
 
     // [ ":" port ]

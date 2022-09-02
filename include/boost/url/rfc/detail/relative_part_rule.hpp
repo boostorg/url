@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_types.hpp>
-#include <boost/url/decode_view.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/grammar/range_rule.hpp>
 
@@ -46,7 +46,7 @@ struct relative_part_rule_t
     {
         bool has_authority = false;
         decltype(authority_rule)::value_type authority;
-        grammar::range<decode_view> path;
+        grammar::range<pct_string_view> path;
     };
 
     auto

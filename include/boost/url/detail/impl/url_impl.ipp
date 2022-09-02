@@ -31,24 +31,23 @@ apply_scheme(
 void
 url_impl::
 apply_userinfo(
-    decode_view const& user,
-    decode_view const* pass) noexcept
+    pct_string_view const& user,
+    pct_string_view const* pass) noexcept
 {
     // this function is for
     // authority_view_rule only
     BOOST_ASSERT(is_authority);
 
     // userinfo
-    set_size(
-        id_user,
-        user.encoded().size());
-    decoded_[id_user] = user.size();
+    set_size(id_user, user.size());
+    decoded_[id_user] =
+        user.decoded_size();
     if(pass)
     {
-        set_size(
-            id_pass,
-            pass->encoded().size() + 2);
-        decoded_[id_pass] = pass->size();
+        set_size(id_pass,
+            pass->size() + 2);
+        decoded_[id_pass] =
+            pass->decoded_size();
     }
     else
     {
@@ -61,9 +60,8 @@ void
 url_impl::
 apply_host(
     host_type ht,
-    string_view s,
-    unsigned char const* addr,
-    decode_view const& name) noexcept
+    pct_string_view s,
+    unsigned char const* addr) noexcept
 {
     // this function is for
     // authority_view_rule only
@@ -72,10 +70,8 @@ apply_host(
     // host, port
     host_type_ = ht;
     set_size(id_host, s.size());
-    if(ht == host_type::name)
-        decoded_[id_host] = name.size();
-    else
-        decoded_[id_host] = s.size();
+    decoded_[id_host] =
+        s.decoded_size();
     std::memcpy(
         ip_addr_,
         addr,
@@ -126,40 +122,32 @@ apply_authority(
 void
 url_impl::
 apply_path(
-    string_view s,
+    pct_string_view s,
     std::size_t nseg) noexcept
 {
     set_size(id_path, s.size());
-    // VFALCO we are decoding twice
-    decoded_[id_path] =
-        detail::decode_bytes_unchecked(s);
+    decoded_[id_path] = s.decoded_size();
     nseg_ = detail::path_segments(s, nseg);
 }
 
 void
 url_impl::
 apply_query(
-    string_view s,
+    pct_string_view s,
     std::size_t n) noexcept
 {
     nparam_ = n;
     set_size(id_query, 1 + s.size());
-
-    // VFALCO we are doing two passes over
-    // the string. once for the range and
-    // again for the decoded size.
-    decoded_[id_query] =
-        detail::decode_bytes_unchecked(s);
+    decoded_[id_query] = s.decoded_size();
 }
 
 void
 url_impl::
 apply_frag(
-    decode_view s) noexcept
+    pct_string_view s) noexcept
 {
-    set_size(id_frag,
-        s.encoded().size() + 1);
-    decoded_[id_frag] = s.size();
+    set_size(id_frag, s.size() + 1);
+    decoded_[id_frag] = s.decoded_size();
 }
 
 } // detail

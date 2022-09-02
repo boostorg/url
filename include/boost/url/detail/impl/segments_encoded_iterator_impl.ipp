@@ -78,7 +78,7 @@ increment() noexcept
         next_ = nullptr;
         return;
     }
-    s_ = rv->encoded();
+    s_ = *rv;
 }
 
 void
@@ -101,28 +101,25 @@ decrement() noexcept
             continue;
         // "/" segment
         next_ = pos_;
-        auto rv = grammar::parse(
+        s_ = *grammar::parse(
             next_, end_,
             detail::slash_segment_rule);
-        s_ = rv->encoded();
         return;
     }
     next_ = pos_;
     if(*next_ == '/')
     {
         // "/" segment
-        auto rv = grammar::parse(
+        s_ = *grammar::parse(
             next_, end_,
             detail::slash_segment_rule);
-        s_ = rv->encoded();
     }
     else
     {
         // segment-nz
-        auto rv = grammar::parse(
+        s_ = *grammar::parse(
             next_, end_,
                 detail::slash_segment_rule);
-        s_ = rv->encoded();
     }
 }
 

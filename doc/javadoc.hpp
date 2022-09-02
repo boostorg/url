@@ -26,6 +26,9 @@
         and reserved characters in the string
         are percent-escaped in the result.
 
+        The comparison is performed as if all
+        escaped characters were decoded first.
+
         @note
         The interpretation of userinfo as
         individual user and password components

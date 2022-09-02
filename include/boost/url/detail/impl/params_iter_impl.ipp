@@ -57,6 +57,33 @@ params_iter_impl(
     update();
 }
 
+param_pct_view
+params_iter_impl::
+dereference() const noexcept
+{
+    BOOST_ASSERT(nk > 0);
+    auto const p = u->cs_ +
+        u->offset(id_query) + pos;
+    BOOST_ASSERT(
+        (pos == 0 && *p == '?') ||
+        (pos > 0  && *p == '&'));
+    if(nv)
+        return {
+            detail::make_pct_string_view(
+                string_view(
+                    p + 1, nk - 1),
+                dk),
+            detail::make_pct_string_view(
+                string_view(
+                    p + nk + 1, nv - 1),
+                dv)};
+    return {
+        detail::make_pct_string_view(
+            string_view(
+                p + 1, nk - 1),
+            dk)};
+}
+
 void
 params_iter_impl::
 increment() noexcept
@@ -131,33 +158,6 @@ decrement() noexcept
     dk = nk - dk - 1;
     dv = nv - dv - 1;
     pos -= nv + nk;
-}
-
-param_decode_view
-params_iter_impl::
-dereference() const noexcept
-{
-    BOOST_ASSERT(nk > 0);
-    auto const p = u->cs_ +
-        u->offset(id_query) + pos;
-    BOOST_ASSERT(
-        (pos == 0 && *p == '?') ||
-        (pos > 0  && *p == '&'));
-    if(nv)
-        return {
-            make_decode_view(
-                string_view(
-                    p + 1, nk - 1),
-                dk),
-            make_decode_view(
-                string_view(
-                    p + nk + 1, nv - 1),
-                dv)};
-    return {
-        make_decode_view(
-            string_view(
-                p + 1, nk - 1),
-            dk)};
 }
 
 void

@@ -25,14 +25,14 @@ namespace detail {
 
 struct query_param_rule_t
 {
-    using value_type = param_decode_view;
+    using value_type = param_pct_view;
 
     result<value_type>
     parse(
         char const*& it,
         char const* end) const noexcept
     {
-        param_decode_view t;
+        param_pct_view t;
 
         // VFALCO we don't return error::end_of_range
         // here, because the empty string still
@@ -90,7 +90,7 @@ parse(
 {
     struct increment
     {
-        using value_type = param_decode_view;
+        using value_type = param_pct_view;
 
         result<value_type>
         parse(

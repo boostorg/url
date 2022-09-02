@@ -12,39 +12,44 @@
 #define BOOST_URL_PARAMS_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/decode_view.hpp>
 #include <boost/url/ignore_case.hpp>
-#include <boost/url/param.hpp>
-#include <boost/url/detail/parts_base.hpp>
+#include <boost/url/params_const_view.hpp>
 #include <initializer_list>
-#include <iterator>
-#include <type_traits>
 
 namespace boost {
 namespace urls {
 
 #ifndef BOOST_URL_DOCS
 class url_base;
-class params_encoded_view;
 #endif
-
-//------------------------------------------------
 
 /** A view representing query parameters in a URL
 
     Objects of this type are used to interpret
     the query parameters as a bidirectional view
-    of key value pairs.
-
+    of key/value pairs.
     The view does not retain ownership of the
     elements and instead references the original
     url. The caller is responsible for ensuring
     that the lifetime of the referenced url
     extends until it is no longer referenced.
-
     The view is modifiable; calling non-const
     members will cause changes to the referenced
     url.
+
+    <br>
+
+    The strings produced when iterators are
+    dereferenced belong to the iterator and
+    become invalidated when that particular
+    iterator is incremented, decremented,
+    or destroyed.
+    Any percent-escapes in returned strings
+    are decoded first.
+    Strings passed to member functions do
+    not contain percent-escapes; the percent
+    character ('%') is treated as a literal
+    percent.
 
     @par Example
     @code
@@ -53,12 +58,13 @@ class params_encoded_view;
     params_view p = u.params();
     @endcode
 
-    Strings produced when elements are returned
-    have type @ref decode_view and represent
-    decoded strings. Member functions which
-    accept strings expect decoded strings.
-
     @par Iterator Invalidation
+    Changes to the underlying url's query
+    can invalidate iterators which reference
+    the url.
+    When the url is modified through
+    this container, these iterator invalidation
+    rules apply:
     @li @ref append : Only `end()`.
     @li @ref assign, @ref clear,
         `operator=` : All elements.
@@ -71,70 +77,17 @@ class params_encoded_view;
         after (including `end()`).
 */
 class params_view
-    : private detail::parts_base
+    : public params_base
 {
-    url_base* u_ = nullptr;
-
     friend class url_base;
-    friend class params_encoded_view;
+
+    url_base* u_ = nullptr;
 
     explicit
     params_view(
-        url_base& u) noexcept
-        : u_(&u)
-    {
-    }
+        url_base& u) noexcept;
 
 public:
-    /** The iterator type
-
-        Iterators returned by the container
-        are bidirectional and return constant
-        values of type @ref param_decode_view
-        when dereferenced.
-    */
-#ifdef BOOST_URL_DOCS
-    using iterator = __see_below__;
-#else
-    class iterator;
-#endif
-
-    /// @copydoc iterator
-    using const_iterator = iterator;
-
-    /** The value type
-
-        Values of this type represent parameters
-        whose strings retain unique ownership
-        by making a copy.
-
-        @par Example
-        @code
-        url u( "?first=John&last=Doe" );
-
-        params_view::value_type p( *u.params().find( "first" ) );
-        @endcode
-    */
-    using value_type = param;
-
-    /** The reference type
-
-        This is the type of value returned when
-        iterators of the view are dereferenced.
-    */
-    using reference = param_decode_view;
-
-    /// @copydoc reference
-    using const_reference = reference;
-
-    /** The unsigned integer type
-    */
-    using size_type = std::size_t;
-
-    /** The signed integer type
-    */
-    using difference_type = std::ptrdiff_t;
-
     //--------------------------------------------
     //
     // Special Members
@@ -222,6 +175,11 @@ public:
     operator=(std::initializer_list<
         param_view> init);
 
+    /** Conversion
+    */
+    operator
+    params_const_view() const noexcept;
+
     //--------------------------------------------
     //
     // Observers
@@ -245,244 +203,12 @@ public:
         Throws nothing.
         @endcode
     */
-    auto
-    url() const noexcept ->
-        url_base&
+    url_base&
+    url() const noexcept
     {
         return *u_;
     }
 
-    /** Return true if there are no elements
-
-        When the url has no query, the view is
-        always empty. Otherwise, there will be
-        at least one element.
-
-        @par Example
-        @code
-        assert( ! url( "?key=value" ).params().empty() );
-        @endcode
-
-        @par Effects
-        @code
-        return ! this->url().has_query();
-        @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    bool
-    empty() const noexcept;
-
-    /** Return the number of elements
-
-        When the url has no query, the view is
-        always empty. Otherwise, there will be
-        at least one element.
-
-        @par Example
-        @code
-        assert( url( "?key=value").params().size() == 1 ) );
-        @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    std::size_t
-    size() const noexcept;
-
-    /** Return an iterator to the beginning
-
-        @par Complexity
-        Linear in the size of the first element.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    iterator
-    begin() const noexcept;
-
-    /** Return an iterator to the end
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    iterator
-    end() const noexcept;
-
-    /** Return true if a matching key exists
-
-        @par Example
-        @code
-        assert( url( "?first=John&last=Doe" ).contains( "first" ) );
-        @endcode
-
-        @par Complexity
-        Linear in `this->url().encoded_query().size()`.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @param key The key to match.
-        By default, a case-sensitive
-        comparison is used.
-
-        @param ic An optional parameter. If
-        the value @ref ignore_case is passed
-        here, the comparison will be
-        case-insensitive.
-    */
-    bool
-    contains(
-        string_view key,
-        ignore_case_param ic = {}) const noexcept;
-
-    /** Return the number of matching keys
-
-        @par Example
-        @code
-        assert( url( "?first=John&last=Doe" ).count( "first" ) == 1 );
-        @endcode
-
-        @par Complexity
-        Linear in `this->url().encoded_query().size()`.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @param key The key to match.
-        By default, a case-sensitive
-        comparison is used.
-
-        @param ic An optional parameter. If
-        the value @ref ignore_case is passed
-        here, the comparison will be
-        case-insensitive.
-    */
-    BOOST_URL_DECL
-    std::size_t
-    count(
-        string_view key,
-        ignore_case_param ic = {}) const noexcept;
-
-    /** Find a matching key
-
-        @par Example
-        @code
-        url u( "?first=John&last=Doe" );
-
-        assert( u.params().find( "First", ignore_case )->value == "John" );
-        @endcode
-
-        @par Effects
-        @code
-        return this->find( this->begin(), key, ic );
-        @endcode
-
-        @par Complexity
-        Linear in `this->url().encoded_query().size()`.
-
-        @return an iterator to the element
-
-        @param key The key to match.
-        By default, a case-sensitive
-        comparison is used.
-
-        @param ic An optional parameter. If
-        the value @ref ignore_case is passed
-        here, the comparison will be
-        case-insensitive.
-    */
-    iterator
-    find(
-        string_view key,
-        ignore_case_param ic = {}) const noexcept;
-
-    /** Find a matching key
-
-        This function searches for the key
-        starting at `before` and continuing
-        until either the key is found, or
-        the end of the range is reached in
-        which case `end()` is returned.
-
-        @par Example
-        @code
-        url u( "?First=John&Last=Doe" );
-
-        assert( u.params().find( "first" ) != u.params().find( "first", ignore_case ) );
-        @endcode
-
-        @par Complexity
-        Linear in `this->url().encoded_query().size()`.
-
-        @return an iterator to the element
-
-        @param from The position to begin the
-            search from. This can be `end()`.
-
-        @param key The key to match.
-        By default, a case-sensitive
-        comparison is used.
-
-        @param ic An optional parameter. If
-        the value @ref ignore_case is passed
-        here, the comparison will be
-        case-insensitive.
-    */
-    BOOST_URL_DECL
-    iterator
-    find(
-        iterator from,
-        string_view key,
-        ignore_case_param ic = {}) const noexcept;
-
-    /** Find a matching key
-
-        This function searches for the key
-        starting just prior to `before` and
-        continuing until either the key is found,
-        or the beginning of the range is reached
-        in which case `end()` is returned.
-
-        @par Example
-        @code
-        @endcode
-
-        @par Complexity
-        Linear in `this->url().encoded_query().size()`.
-
-        @return an iterator to the element
-
-        @param before One past the position
-        to begin the search from. This can
-        be `end()`.
-
-        @param key The key to match.
-        By default, a case-sensitive
-        comparison is used.
-
-        @param ic An optional parameter. If
-        the value @ref ignore_case is passed
-        here, the comparison will be
-        case-insensitive.
-    */
-    BOOST_URL_DECL
-    iterator
-    find_prev(
-        iterator before,
-        string_view key,
-        ignore_case_param ic = {}) const noexcept;
-    
     //--------------------------------------------
     //
     // Modifiers
@@ -615,36 +341,6 @@ public:
 
     /** Append elements
 
-        This function appends the params in
-        an <em>initializer-list</em> to the view.
-
-        <br>
-        The `end()` iterator is invalidated.
-
-        @par Example
-        @code
-        url u;
-
-        u.params().append( {{ "first", "John" }, {{ "last", "Doe" }});
-        @endcode
-
-        @par Complexity
-        Linear in `this->url().encoded_query().size()`.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @return An iterator to the first new element.
-
-        @param init The list of params to append.
-    */
-    iterator
-    append(std::initializer_list<
-        param_view> init);
-
-    /** Append elements
-
         This function appends a range of params
         to the view.
 
@@ -676,6 +372,36 @@ public:
     iterator
     append(
         FwdIt first, FwdIt last);
+
+    /** Append elements
+
+        This function appends the params in
+        an <em>initializer-list</em> to the view.
+
+        <br>
+        The `end()` iterator is invalidated.
+
+        @par Example
+        @code
+        url u;
+
+        u.params().append_list( {{ "first", "John" }, {{ "last", "Doe" }});
+        @endcode
+
+        @par Complexity
+        Linear in `this->url().encoded_query().size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @return An iterator to the first new element.
+
+        @param init The list of params to append.
+    */
+    iterator
+    append_list(std::initializer_list<
+        param_view> init);
 
     //--------------------------------------------
 
@@ -712,48 +438,6 @@ public:
     insert(
         iterator before,
         param_view const& p);
-
-    /** Insert elements
-
-        This function inserts the params in
-        an <em>initializer-list</em> before
-        the specified position.
-
-        <br>
-        All iterators that are equal to
-        `before` or come after are invalidated.
-
-        @note
-        The strings referenced by the params
-        must not come from the underlying url,
-        or else the behavior is undefined.
-
-        @par Example
-        @code
-        @endcode
-
-        @par Complexity
-        Linear in `this->url().encoded_query().size()`.
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-
-        @return An iterator to the first
-        element inserted, or `before` if
-        `init.size() == 0`.
-
-        @param before An iterator before which
-        the element will be inserted. This may
-        be equal to `end()`.
-
-        @param init The list of params to insert.
-    */
-    iterator
-    insert(
-        iterator before,
-        std::initializer_list<
-            param_view> init);
 
     /** Insert elements
 
@@ -802,6 +486,48 @@ public:
         iterator before,
         FwdIt first,
         FwdIt last);
+
+    /** Insert elements
+
+        This function inserts the params in
+        an <em>initializer-list</em> before
+        the specified position.
+
+        <br>
+        All iterators that are equal to
+        `before` or come after are invalidated.
+
+        @note
+        The strings referenced by the params
+        must not come from the underlying url,
+        or else the behavior is undefined.
+
+        @par Example
+        @code
+        @endcode
+
+        @par Complexity
+        Linear in `this->url().encoded_query().size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @return An iterator to the first
+        element inserted, or `before` if
+        `init.size() == 0`.
+
+        @param before An iterator before which
+        the element will be inserted. This may
+        be equal to `end()`.
+
+        @param init The list of params to insert.
+    */
+    iterator
+    insert_list(
+        iterator before,
+        std::initializer_list<
+            param_view> init);
 
     //--------------------------------------------
 
@@ -1044,7 +770,7 @@ public:
         @code
         url u( "?first=John&last=Doe" );
 
-        u.params().reset( u.params().begin() );
+        u.params().unset( u.params().begin() );
 
         assert( u.encoded_query() == "first&last=Doe" );
         @endcode
@@ -1061,7 +787,7 @@ public:
     */
     BOOST_URL_DECL
     iterator
-    reset(
+    unset(
         iterator pos) noexcept;
 
     /** Set a value
@@ -1171,6 +897,20 @@ public:
     //--------------------------------------------
 
 private:
+    BOOST_URL_DECL
+    detail::params_iter_impl
+    find_impl(
+        detail::params_iter_impl,
+        string_view,
+        ignore_case_param) const noexcept;
+
+    BOOST_URL_DECL
+    detail::params_iter_impl
+    find_last_impl(
+        detail::params_iter_impl,
+        string_view,
+        ignore_case_param) const noexcept;
+
     template<class FwdIt>
     void
     assign(FwdIt first, FwdIt last,

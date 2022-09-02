@@ -9,7 +9,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/params_encoded_const_view.hpp>
+#include <boost/url/params_const_encoded_view.hpp>
 
 #include <boost/url/url_view.hpp>
 #include <algorithm>
@@ -22,7 +22,7 @@ namespace urls {
 class params_encoded_const_view_test
 {
 public:
-    using T = params_encoded_const_view;
+    using T = params_const_encoded_view;
     struct V
     {
         string_view k;
@@ -48,7 +48,7 @@ public:
         bool
         operator==(
             V const& t0,
-            param_decode_view const& t1) noexcept
+            param_pct_view const& t1) noexcept
         {
             return
                 t0.k == t1.key &&
@@ -59,7 +59,7 @@ public:
         friend
         bool
         operator==(
-            param_decode_view const& t1,
+            param_pct_view const& t1,
             V const& t0) noexcept
         {
             return operator==(t0, t1);
@@ -90,9 +90,9 @@ public:
     void
     testMembers()
     {
-        // params_encoded_const_view()
+        // params_const_encoded_view()
         {
-            params_encoded_const_view v;
+            params_const_encoded_view v;
             BOOST_TEST(v.empty());
             BOOST_TEST_EQ(v.size(), 0U);
             BOOST_TEST_EQ(
@@ -343,7 +343,7 @@ public:
 
 TEST_SUITE(
     params_encoded_const_view_test,
-    "boost.url.params_encoded_const_view");
+    "boost.url.params_const_encoded_view");
 
 } // urls
 } // boost

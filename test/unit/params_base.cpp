@@ -8,8 +8,9 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/params_const_view.hpp>
+#include <boost/url/params_base.hpp>
 
+#include <boost/url/params_const_view.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/url_view.hpp>
 #include "test_suite.hpp"
@@ -17,23 +18,9 @@
 namespace boost {
 namespace urls {
 
-class params_const_view_test
+class params_base_test
 {
 public:
-    void
-    testMembers()
-    {
-        // operator=(params_const_view const&)
-        {
-            url_view u1;
-            url_view u2;
-            params_const_view p1 = u1.params();
-            params_const_view p2 = u2.params();
-            p2 = p1;
-            BOOST_TEST_EQ(p1.begin(), p2.begin());
-        }
-    }
-
     void
     testCapacity()
     {
@@ -145,8 +132,7 @@ public:
 
         // value_type outlives reference
         {
-            url_view u = parse_uri_reference(
-                             "/?a=1&bb=22&ccc=333&dddd=4444#f").value();
+            url_view u("/?a=1&bb=22&ccc=333&dddd=4444#f");
             params_const_view::value_type v;
             {
                 params_const_view ps = u.params();
@@ -156,6 +142,26 @@ public:
             BOOST_TEST_EQ(v.key, "a");
             BOOST_TEST_EQ(v.value, "1");
             BOOST_TEST_EQ(v.has_value, true);
+        }
+
+        // separate references
+        {
+            url_view u("/?a=1&bb=22&ccc=333&dddd=4444#f");
+            params_const_view pv = u.params();
+            auto it0 = pv.begin();
+            auto const& v0 = *it0;
+            auto it1 = it0;
+            ++it1;
+            auto const& v1 = *it1;
+            auto it2 = it1;
+            ++it2;
+            auto const& v2 = *it2;
+            BOOST_TEST_EQ(it0->key, "a");
+            BOOST_TEST_EQ(it1->key, "bb");
+            BOOST_TEST_EQ(it2->key, "ccc");
+            BOOST_TEST_EQ(v0.key, "a");
+            BOOST_TEST_EQ(v1.key, "bb");
+            BOOST_TEST_EQ(v2.key, "ccc");
         }
     }
 
@@ -218,7 +224,6 @@ public:
     void
     run()
     {
-        testMembers();
         testCapacity();
         testLookup();
         testIterators();
@@ -230,8 +235,8 @@ public:
 };
 
 TEST_SUITE(
-    params_const_view_test,
-    "boost.url.params_const_view");
+    params_base_test,
+    "boost.url.params_base");
 
 } // urls
 } // boost

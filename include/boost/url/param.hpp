@@ -12,8 +12,9 @@
 #define BOOST_URL_PARAM_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/decode_view.hpp>
+#include <string>
 
 namespace boost {
 namespace urls {
@@ -24,25 +25,8 @@ struct param_view;
 #endif
 
 /** A query parameter
-
-    This represents an individual key/value
-    pair commonly found in the query part
-    of a URL. A parameter consists of a
-    percent-encoded key followed by an
-    optional percent-encoded value. Both
-    of these strings may be empty; an empty
-    key is distinguishable from the absence
-    of a key, represented when @ref has_value
-    is equal to `false`.
-
-    The strings are represented by views which
-    reference the underlying character buffers
-    without taking ownership; The caller is
-    responsible for ensuring that the lifetime
-    of the character buffers extends until they
-    are no longer referenced.
 */
-struct param_decode_view
+struct param_pct_view
 {
     /** The query parameter key
 
@@ -53,14 +37,12 @@ struct param_decode_view
         over how the query is interpreted.
 
         @note
-        A decode view references an external,
-        encoded character buffer which is
-        decoded upon iteration.
-        Ownership of the referenced buffer is
-        not transferred. See @ref decode_view
-        for available operations.
+        A @ref pct_string_view references a
+        character buffer which may contain
+        percent-escapes; ownership of the
+        buffer is not transferred.
     */
-    decode_view key;
+    pct_string_view key;
 
     /** The query parameter value
 
@@ -71,14 +53,12 @@ struct param_decode_view
         is absent.
 
         @note
-        A decode view references a valid,
-        external, percent-encoded character
-        buffer which is decoded upon iteration.
-        Ownership of the referenced buffer is
-        not transferred. See @ref decode_view
-        for other possible operations.
+        A @ref pct_string_view references a
+        character buffer which may contain
+        percent-escapes; ownership of the
+        buffer is not transferred.
     */
-    decode_view value;
+    pct_string_view value;
 
     /** True if a value is present
 
@@ -97,7 +77,7 @@ struct param_decode_view
         @par Exception Safety
         Throws nothing.
     */
-    param_decode_view() = default;
+    param_pct_view() = default;
 
     /** Constructor
 
@@ -109,12 +89,15 @@ struct param_decode_view
         buffers is not transferred.
 
         @par Exception Safety
-        Throws nothing.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `key` contains an invalid percent-encoding.
 
         @param key The key to use
     */
-    param_decode_view(
-        decode_view key) noexcept
+    param_pct_view(
+        pct_string_view key) noexcept
         : key(key)
     {
     }
@@ -129,21 +112,26 @@ struct param_decode_view
         buffers is not transferred.
 
         @par Exception Safety
-        Throws nothing.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `key` or `value` contain an
+        invalid percent-encoding.
 
         @param key The key to use
 
         @param value The value to use
     */
-    param_decode_view(
-        decode_view key,
-        decode_view value) noexcept
+    param_pct_view(
+        pct_string_view key,
+        pct_string_view value) noexcept
         : key(key)
         , value(value)
         , has_value(true)
     {
     }
 
+#if 1
     /** Conversion
 
         This function returns the query parameter
@@ -164,14 +152,31 @@ struct param_decode_view
     */
     operator
     param_view() const noexcept;
+#endif
 
+#ifndef BOOST_URL_DOCS
     /** Arrow operator support
     */
-    param_decode_view const*
+    param_pct_view const*
     operator->() const noexcept
     {
         return this;
     }
+
+    /** Internal construction
+    */
+    param_pct_view(
+        pct_string_view key,
+        pct_string_view value,
+        bool has_value) noexcept
+        : key(key)
+        , value(has_value
+            ? value
+            : pct_string_view())
+        , has_value(has_value)
+    {
+    }
+#endif
 };
 
 //------------------------------------------------
@@ -195,11 +200,11 @@ struct param_decode_view
 */
 struct param_view
 {
-    /** The percent-encoded key
+    /** The key
     */
     string_view key;
 
-    /** The percent-encoded value
+    /** The value
 
         The presence of a value is indicated by
         `has_value == true`.
@@ -251,14 +256,14 @@ struct param_view
 
     /** Conversion
     */
-    operator param_decode_view() const noexcept
+    operator param_pct_view() const noexcept
     {
         if(has_value)
             return {
-                decode_view(key),
-                decode_view(value)};
+                pct_string_view(key),
+                pct_string_view(value)};
         return {
-            decode_view(key)};
+            pct_string_view(key)};
     }
 
     /** Arrow operator support
@@ -268,6 +273,20 @@ struct param_view
     {
         return this;
     }
+
+#ifndef BOOST_URL_DOCS
+    param_view(
+        string_view key,
+        string_view value,
+        bool has_value) noexcept
+        : key(key)
+        , value(has_value
+            ? value
+            : string_view())
+        , has_value(has_value)
+    {
+    }
+#endif
 };
 
 //------------------------------------------------
@@ -393,10 +412,10 @@ struct param
     /** Constructor
     */
     param(
-        param_decode_view const& v)
-        : key(v.key.to_string())
+        param_pct_view const& v)
+        : key(v.key.decode_to_string())
         , value(v.has_value ?
-            v.value.to_string() :
+            v.value.decode_to_string() :
             std::string())
         , has_value(v.has_value)
     {
@@ -416,14 +435,14 @@ struct param
 
     /** Conversion
     */
-    operator param_decode_view() const noexcept
+    operator param_pct_view() const noexcept
     {
         if(has_value)
             return {
-                decode_view(key),
-                decode_view(value)};
+                pct_string_view(key),
+                pct_string_view(value)};
         return {
-            decode_view(key)};
+            pct_string_view(key)};
     }
 
     /** Conversion
@@ -442,6 +461,20 @@ struct param
     {
         return this;
     }
+
+#ifndef BOOST_URL_DOCS
+    param(
+        string_view key,
+        string_view value,
+        bool has_value) noexcept
+        : key(key)
+        , value(has_value
+            ? value
+            : string_view())
+        , has_value(has_value)
+    {
+    }
+#endif
 };
 
 } // urls

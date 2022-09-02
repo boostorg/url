@@ -21,8 +21,8 @@ namespace urls {
 
 bool
 operator==(
-    param_decode_view const& t0,
-    param_decode_view const& t1) noexcept
+    param_pct_view const& t0,
+    param_pct_view const& t1) noexcept
 {
     // VFALCO This needs to be a pct-encoded equality
     return
@@ -72,7 +72,7 @@ public:
     {
         // javadoc
         {
-            result< grammar::range< param_decode_view > > rv = grammar::parse( "format=web&id=42&compact", query_rule );
+            result< grammar::range< param_pct_view > > rv = grammar::parse( "format=web&id=42&compact", query_rule );
             (void)rv;
         }
 
