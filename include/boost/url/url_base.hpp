@@ -1309,7 +1309,7 @@ public:
     /** Set the host to an address
 
         The host is set to the specified IPvFuture
-        address.
+        string.
         The host type will be @ref host_type::ipvfuture.
 
         @par Example
@@ -1333,7 +1333,7 @@ public:
         @throw system_error
         `s` contains an invalid percent-encoding.
 
-        @param addr The address to set.
+        @param s The string to set.
 
         @par BNF
         @code
@@ -1379,7 +1379,7 @@ public:
         Strong guarantee.
         Calls to allocate may throw.
 
-        @param addr The address to set.
+        @param s The string to set.
 
         @par BNF
         @code

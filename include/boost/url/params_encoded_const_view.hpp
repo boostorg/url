@@ -58,9 +58,9 @@ class url_view_base;
     printed to standard output:
 
     @code
-    params_encoded_const_view pev = parse_query_params( "cust=John&id=42&last_invoice=1001" ).value();
+    url_view u( "?cust=John&id=42&last_invoice=1001" );
 
-    for(auto e : pev)
+    for( auto e : u.encoded_params() )
         std::cout << "key = " << e.key << ", value = " << e.value << std::endl;
     @endcode
 
@@ -69,9 +69,6 @@ class url_view_base;
     the size of the parameter.
     All other operations run in constant time.
     No operations allocate memory.
-
-    @see
-        @ref parse_query_params.
 */
 class params_encoded_const_view
     : private detail::parts_base

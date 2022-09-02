@@ -72,8 +72,7 @@ namespace urls {
         >2.1. Percent-Encoding (rfc3986)</a>
 
     @see
-        @ref decode_opts,
-        @ref validate_encoding.
+        @ref decode_opts.
 */
 template<
     class CharSet =

@@ -633,10 +633,6 @@ public:
         @li @ref host_type::ipv6
         @li @ref host_type::ipvfuture
         @li @ref host_type::name
-        @li @ref host_type::none
-
-        When @ref has_authority is false, the
-        host type will be @ref host_type::none.
 
         @par Example
         @code
