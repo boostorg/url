@@ -37,7 +37,7 @@ make_error_code(error e)
         {
             switch(static_cast<error>(ev))
             {
-            default:
+case error::success: return "success";
 case error::illegal_null: return "illegal null";
 case error::illegal_reserved_char: return "illegal reserved char";
 case error::non_canonical: return "non canonical";
@@ -48,6 +48,7 @@ case error::missing_pct_hexdig: return "missing hexdig in pct-encoding";
 case error::no_space: return "no space";
 case error::not_a_base: return "not a base";
             }
+            return "";
         }
 
         error_condition

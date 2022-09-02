@@ -49,6 +49,8 @@ public:
     void
     run()
     {
+        check(error::success);
+
         check(error::illegal_null);
         check(error::illegal_reserved_char);
         check(error::non_canonical);
@@ -59,6 +61,10 @@ public:
 
         check(error::no_space);
         check(error::not_a_base);
+
+        auto v = static_cast<boost::urls::error>(-1);
+        auto ec = make_error_code(v);
+        BOOST_TEST_EQ(ec.message(), "");
     }
 };
 
