@@ -157,10 +157,11 @@ reset(
         iterator
 {
     BOOST_ASSERT(pos.it_.nk > 0);
+    string_view s;
     return u_->edit_params(
         pos.it_, pos.it_.next(),
         detail::param_value_iter(
-            pos.it_.nk - 1, "", false));
+            pos.it_.nk - 1, s, false));
 }
 
 auto

@@ -159,17 +159,18 @@ reset(
         iterator
 {
     BOOST_ASSERT(pos.it_.nk > 0);
+    pct_string_view s;
     return u_->edit_params(
         pos.it_, pos.it_.next(),
         detail::param_encoded_value_iter(
-            pos.it_.nk - 1, "", false));
+            pos.it_.nk - 1, s, false));
 }
 
 auto
 params_encoded_view::
 set(
     iterator pos,
-    string_view value) ->
+    pct_string_view value) ->
         iterator
 {
     BOOST_ASSERT(pos.it_.nk > 0);
@@ -183,8 +184,8 @@ set(
 auto
 params_encoded_view::
 set(
-    string_view key,
-    string_view value,
+    pct_string_view key,
+    pct_string_view value,
     ignore_case_param ic) ->
         iterator
 {

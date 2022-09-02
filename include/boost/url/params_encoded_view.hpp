@@ -14,6 +14,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ignore_case.hpp>
 #include <boost/url/param.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <initializer_list>
@@ -1136,7 +1137,7 @@ public:
     iterator
     set(
         iterator pos,
-        string_view value);
+        pct_string_view value);
 
     /** Set a value
 
@@ -1198,8 +1199,8 @@ public:
     BOOST_URL_DECL
     iterator
     set(
-        string_view key,
-        string_view value,
+        pct_string_view key,
+        pct_string_view value,
         ignore_case_param ic = {});
 
     //--------------------------------------------

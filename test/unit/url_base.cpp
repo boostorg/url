@@ -1306,6 +1306,185 @@ struct url_base_test
             });
     }
 
+    //--------------------------------------------
+
+    void
+    testQuery()
+    {
+        // has_query
+        {
+            {
+                url u;
+                BOOST_TEST(! u.has_query());
+            }
+            {
+                url u("?");
+                BOOST_TEST(u.has_query());
+            }
+            {
+                url u("?x");
+                BOOST_TEST(u.has_query());
+            }
+        }
+
+        // remove_query
+        {
+            {
+                url u;
+                u.remove_query();
+                BOOST_TEST(! u.has_query());
+            }
+            {
+                url u("?");
+                u.remove_query();
+                BOOST_TEST(! u.has_query());
+            }
+            {
+                url u("?x");
+                u.remove_query();
+                BOOST_TEST(! u.has_query());
+            }
+        }
+
+        // set_encoded_query
+        {
+            {
+                url u;
+                u.set_encoded_query("");
+                BOOST_TEST(u.has_query());
+                BOOST_TEST_EQ(u.string(), "?");
+                BOOST_TEST_EQ(u.encoded_query(), "");
+            }
+            {
+                url u;
+                u.set_encoded_query("x");
+                BOOST_TEST(u.has_query());
+                BOOST_TEST_EQ(u.string(), "?x");
+                BOOST_TEST_EQ(u.encoded_query(), "x");
+            }
+            {
+                url u;
+                u.set_encoded_query("%41");
+                BOOST_TEST(u.has_query());
+                BOOST_TEST_EQ(u.string(), "?%41");
+                BOOST_TEST_EQ(u.encoded_query(), "%41");
+                BOOST_TEST_EQ(u.query(), "A");
+            }
+            {
+                url u;
+                BOOST_TEST_THROWS(
+                    u.set_encoded_query("%%"),
+                    system_error);
+                BOOST_TEST_THROWS(
+                    u.set_encoded_query("%fg"),
+                    system_error);
+            }
+        }
+
+        // set_query
+        {
+            auto good = [](
+                string_view q, string_view us)
+            {
+                url u;
+                u.set_query(q);
+                BOOST_TEST(u.has_query());
+                BOOST_TEST_EQ(u.string(), us);
+                BOOST_TEST_EQ(u.query(), q);
+            };
+            good("", "?");
+            good("x", "?x");
+            good("%41", "?%2541");
+            good("%%fg", "?%25%25fg");
+            good("{}", "?%7B%7D");
+
+            // issue #245
+            {
+                url u;
+                u.set_query("");
+                u.set_query("");
+                BOOST_TEST_EQ(u.string(), "?");
+            }
+        }
+
+        // has_query
+        {
+            url u;
+            BOOST_TEST_NO_THROW(u = url("?query"));
+            BOOST_TEST(u.has_query());
+            u.clear();
+            BOOST_TEST(! u.has_query());
+            BOOST_TEST_NO_THROW(u = url("?"));
+            BOOST_TEST(u.has_query());
+        }
+
+        // remove_query
+        {
+            url u;
+            BOOST_TEST_NO_THROW(u = url("?query"));
+            BOOST_TEST(u.has_query());
+            BOOST_TEST_EQ(u.encoded_query(), "query");
+            BOOST_TEST_EQ(u.params().size(), 1u);
+            BOOST_TEST_EQ(u.remove_query().has_query(), false);
+            BOOST_TEST_EQ(u.encoded_query(), "");
+            BOOST_TEST_EQ(u.query(), "");
+            BOOST_TEST_EQ(u.params().size(), 0u);
+            BOOST_TEST_EQ(u.encoded_params().size(), 0u);
+        }
+
+        // set_encoded_query
+        {
+            url u;
+            BOOST_TEST(! u.has_query());
+            u.set_encoded_query("k1=v1&k2=v2");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST_EQ(u.params().size(), 2u);
+            BOOST_TEST_EQ((*u.params().begin()).key, "k1");
+            BOOST_TEST_EQ((*u.params().begin()).value, "v1");
+            BOOST_TEST_EQ((*std::next(u.params().begin())).key, "k2");
+            BOOST_TEST_EQ((*std::next(u.params().begin())).value, "v2");
+
+            u.set_encoded_query("");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query().empty());
+            BOOST_TEST_EQ(u.params().size(), 1);
+        }
+
+        // set_query
+        {
+            url u;
+            BOOST_TEST(! u.has_query());
+            u.set_query("!@#$%^&*()_+=-;:'{}[]|\\?/>.<,");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST(u.encoded_query() ==
+                "!@%23$%25%5E&*()_+=-;:'%7B%7D%5B%5D%7C%5C?/%3E.%3C,");
+            BOOST_TEST_EQ(u.params().size(), 2u);
+            BOOST_TEST_EQ((*u.params().begin()).key, "!@#$%^");
+            BOOST_TEST_EQ((*u.params().begin()).value, "");
+            BOOST_TEST_EQ((*std::next(u.params().begin())).key, "*()_ ");
+            BOOST_TEST_EQ((*std::next(u.params().begin())).value,
+                "-;:'{}[]|\\?/>.<,");
+        }
+
+        // self-intersection
+        modify(
+            "#abracadabra",
+            "?abracadabra#abracadabra",
+            [](url_base& u)
+            {
+                u.set_encoded_query(
+                    u.encoded_fragment());
+            });
+        modify(
+            "#abracadabra",
+            "?abracadabra#abracadabra",
+            [](url_base& u)
+            {
+                u.set_query(
+                    u.encoded_fragment());
+            });
+    }
+
     void
     testJavadocs()
     {
@@ -1443,7 +1622,7 @@ struct url_base_test
 
         //----------------------------------------
         //
-        // Host
+        // Port
         //
         //----------------------------------------
 
@@ -1585,6 +1764,7 @@ struct url_base_test
         testSetPassword();
         testSetHost();
         testSetPort();
+        testQuery();
         testJavadocs();
     }
 };

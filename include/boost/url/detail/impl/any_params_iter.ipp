@@ -41,103 +41,6 @@ any_params_iter::
 
 //------------------------------------------------
 //
-// encoded_query_iter
-//
-//------------------------------------------------
-
-encoded_query_iter::
-encoded_query_iter(
-    string_view s,
-    not_empty_param ne) noexcept
-    : any_params_iter(
-        s.empty() && ! ne)
-    , s_(clean(s))
-{
-    BOOST_ASSERT(s_.data());
-    rewind();
-}
-
-void
-encoded_query_iter::
-rewind() noexcept
-{
-    if(empty())
-    {
-        p_ = nullptr;
-        return;
-    }
-    p_ = s_.begin();
-    auto pos =
-        s_.find_first_of('&');
-    if(pos != string_view::npos)
-        n_ = pos;
-    else
-        n_ = s_.size();
-}
-
-bool
-encoded_query_iter::
-measure(
-    std::size_t& n,
-    error_code& ec) noexcept
-{
-    if(! p_)
-        return false;
-    // validate
-    string_view s(p_, n_);
-    auto rv = urls::decode(
-        s, {}, query_chars);
-    if(! rv)
-    {
-        ec = rv.error();
-        return false;
-    }
-    n += s.size();
-    increment();
-    return true;
-}
-
-void
-encoded_query_iter::
-copy(
-    char*& dest,
-    char const* end) noexcept
-{
-    (void)end;
-    BOOST_ASSERT(static_cast<
-        std::size_t>(
-            end - dest) >= n_);
-    BOOST_ASSERT(p_ != nullptr);
-    if(n_ > 0)
-    {
-        std::memcpy(
-            dest, p_, n_);
-        dest += n_;
-    }
-    increment();
-}
-
-void
-encoded_query_iter::
-increment() noexcept
-{
-    p_ += n_;
-    if(p_ == s_.end())
-    {
-        p_ = nullptr;
-        return;
-    }
-    ++p_;
-    string_view s(p_, s_.end() - p_);
-    auto pos = s.find_first_of('&');
-    if(pos != string_view::npos)
-        n_ = pos;
-    else
-        n_ = s.size();
-}
-
-//------------------------------------------------
-//
 // query_iter
 //
 //------------------------------------------------
@@ -147,7 +50,7 @@ query_iter(
     string_view s,
     not_empty_param ne) noexcept
     : any_params_iter(
-        s.empty() && ! ne)
+        s.empty() && ! ne, &s_)
     , s_(clean(s))
 {
     BOOST_ASSERT(s_.data());
@@ -221,100 +124,6 @@ increment() noexcept
         n_ = pos;
     else
         n_ = s.size();
-}
-
-//------------------------------------------------
-//
-// decode_query_iter
-//
-//------------------------------------------------
-
-decode_query_iter::
-decode_query_iter(
-    decode_view s,
-    not_empty_param ne) noexcept
-    : any_params_iter(
-        s.empty() && ! ne)
-    , it0_(s.begin())
-    , end_(s.end())
-{
-    rewind();
-}
-
-void
-decode_query_iter::
-rewind() noexcept
-{
-    if(empty())
-    {
-        at_end_ = true;
-        return;
-    }
-    n_ = 0;
-    it_ = it0_;
-    at_end_ = false;
-    auto it = it_;
-    while(it != end_)
-    {
-        if(*it == '&')
-            break;
-        ++it;
-        ++n_;
-    }
-}
-
-bool
-decode_query_iter::
-measure(
-    std::size_t& n,
-    error_code&) noexcept
-{
-    if(at_end_)
-        return false;
-    auto it = it_;
-    auto end = std::next(it_, n_);
-    n += encoded_size_impl(
-        it, end, {}, query_chars);
-    increment();
-    return true;
-}
-
-void
-decode_query_iter::
-copy(
-    char*& dest,
-    char const* end) noexcept
-{
-    BOOST_ASSERT(! at_end_);
-    auto it = it_;
-    auto last = std::next(it_, n_);
-    dest += encode_impl(
-        dest, end,
-        it, last,
-        {}, query_chars);
-    increment();
-}
-
-void
-decode_query_iter::
-increment() noexcept
-{
-    std::advance(it_, n_);
-    if(it_ == end_)
-    {
-        at_end_ = true;
-        return;
-    }
-    ++it_;
-    auto pos = it_;
-    n_ = 0;
-    while (pos != end_)
-    {
-        if (*pos == '&')
-            break;
-        ++pos;
-        ++n_;
-    }
 }
 
 //------------------------------------------------

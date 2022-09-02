@@ -59,23 +59,14 @@ op_t::
 url_base::
 op_t::
 op_t(
-    url_base& u_) noexcept
+    url_base& u_,
+    string_view* s_) noexcept
     : u(u_)
     , s(s_)
 {
     u.check_invariants();
 }
 
-url_base::
-op_t::
-op_t(
-    url_base& u_,
-    string_view& s) noexcept
-    : u(u_)
-    , s(s)
-{
-    u.check_invariants();
-}
 
 void
 url_base::
@@ -83,8 +74,11 @@ op_t::
 move(char* dest, char const* src,
     std::size_t n) noexcept
 {
+    if(s)
+        return detail::move_chars(
+            dest, src, n, *s);
     detail::move_chars(
-        dest, src, n, s);
+        dest, src, n);
 }
 
 //------------------------------------------------
@@ -256,7 +250,7 @@ url_base::
 set_encoded_authority(
     pct_string_view s)
 {
-    op_t op(*this, detail::ref(s));
+    op_t op(*this, &detail::ref(s));
     authority_view a = grammar::parse(
         s, authority_rule
             ).value(BOOST_URL_POS);
@@ -308,7 +302,7 @@ url_base::
 set_userinfo(
     string_view s)
 {
-    op_t op(*this, s);
+    op_t op(*this, &s);
     encode_opts opt;
     auto const n = encoded_size(
         s, opt, detail::userinfo_chars);
@@ -346,7 +340,7 @@ url_base::
 set_encoded_userinfo(
     pct_string_view s)
 {
-    op_t op(*this, detail::ref(s));
+    op_t op(*this, &detail::ref(s));
     encode_opts opt;
     auto const pos = s.find_first_of(':');
     if(pos != string_view::npos)
@@ -405,7 +399,7 @@ url_base&
 url_base::
 set_user(string_view s)
 {
-    op_t op(*this, s);
+    op_t op(*this, &s);
     encode_opts opt;
     auto const n = encoded_size(
         s, opt, detail::user_chars);
@@ -425,7 +419,7 @@ url_base::
 set_encoded_user(
     pct_string_view s)
 {
-    op_t op(*this, detail::ref(s));
+    op_t op(*this, &detail::ref(s));
     encode_opts opt;
     auto const n =
         detail::re_encoded_size(
@@ -467,7 +461,7 @@ url_base&
 url_base::
 set_password(string_view s)
 {
-    op_t op(*this, s);
+    op_t op(*this, &s);
     encode_opts opt;
     auto const n = encoded_size(
         s, opt, detail::password_chars);
@@ -487,7 +481,7 @@ url_base::
 set_encoded_password(
     pct_string_view s)
 {
-    op_t op(*this, detail::ref(s));
+    op_t op(*this, &detail::ref(s));
     encode_opts opt;
     auto const n =
         detail::re_encoded_size(s, opt,
@@ -575,7 +569,7 @@ set_host(
     }
 
     // reg-name
-    op_t op(*this, s);
+    op_t op(*this, &s);
     encode_opts opt;
     auto const n = encoded_size(
         s, opt, detail::host_chars);
@@ -628,7 +622,7 @@ set_encoded_host(
     }
 
     // reg-name
-    op_t op(*this, detail::ref(s));
+    op_t op(*this, &detail::ref(s));
     encode_opts opt;
     auto const n = detail::re_encoded_size(
         s, opt, detail::host_chars);
@@ -674,7 +668,7 @@ set_host_address(
     }
 
     // reg-name
-    op_t op(*this, s);
+    op_t op(*this, &s);
     encode_opts opt;
     auto const n = encoded_size(
         s, opt, detail::host_chars);
@@ -718,7 +712,7 @@ set_encoded_host_address(
     }
 
     // reg-name
-    op_t op(*this, detail::ref(s));
+    op_t op(*this, &detail::ref(s));
     encode_opts opt;
     auto const n = detail::re_encoded_size(
         s, opt, detail::host_chars);
@@ -787,7 +781,7 @@ url_base::
 set_host_ipvfuture(
     string_view s)
 {
-    op_t op(*this, s);
+    op_t op(*this, &s);
     // validate
     grammar::parse(s,
         detail::ipvfuture_rule
@@ -819,7 +813,7 @@ set_host_name(
     if(is_ipv4)
         allowed = allowed - '.';
 
-    op_t op(*this, s);
+    op_t op(*this, &s);
     encode_opts opt;
     auto const n = encoded_size(
         s, opt, allowed);
@@ -852,7 +846,7 @@ set_encoded_host_name(
     if(is_ipv4)
         allowed = allowed - '.';
 
-    op_t op(*this, detail::ref(s));
+    op_t op(*this, &detail::ref(s));
     encode_opts opt;
     auto const n = detail::re_encoded_size(
         s, opt, allowed);
@@ -906,7 +900,7 @@ url_base::
 set_port(
     string_view s)
 {
-    op_t op(*this, s);
+    op_t op(*this, &s);
     auto t = grammar::parse(s,
         detail::port_rule{}
             ).value(BOOST_URL_POS);
@@ -1134,11 +1128,6 @@ set_encoded_query(
 {
     op_t op(*this);
     encode_opts opt;
-    grammar::detail::copied_strings<
-        BOOST_URL_STACK_BYTES> buf(
-            this->string());
-    s = buf.maybe_copy(s);
-
     std::size_t n = 0;      // encoded size
     std::size_t nparam = 1; // param count
     auto const end = s.end();
@@ -1194,20 +1183,11 @@ url_base::
 set_query(
     string_view s)
 {
-    if (s.empty())
-        remove_query();
-    grammar::detail::copied_strings<
-        BOOST_URL_STACK_BYTES> buf(
-            this->string());
-    s = buf.maybe_copy(s);
     edit_params(
         detail::params_iter_impl(u_),
         detail::params_iter_impl(u_, 0),
         detail::query_iter(
             s, detail::not_empty));
-    u_.decoded_[id_query] =
-        detail::decode_bytes_unchecked(
-            encoded_query());
     return *this;
 }
 
@@ -1231,7 +1211,7 @@ url_base&
 url_base::
 set_fragment(string_view s)
 {
-    op_t op(*this, s);
+    op_t op(*this, &s);
     encode_opts opt;
     auto const n = encoded_size(s,
         opt, detail::fragment_chars);
@@ -1253,7 +1233,7 @@ url_base::
 set_encoded_fragment(
     pct_string_view s)
 {
-    op_t op(*this, detail::ref(s));
+    op_t op(*this, &detail::ref(s));
     encode_opts opt;
     auto const n =
         detail::re_encoded_size(s,
@@ -1712,7 +1692,7 @@ set_scheme_impl(
     string_view s,
     urls::scheme id)
 {
-    op_t op(*this, s);
+    op_t op(*this, &s);
     check_invariants();
     grammar::parse(
         s, detail::scheme_rule()
@@ -2302,11 +2282,20 @@ edit_params(
     BOOST_ASSERT(
         first.i == 0 || u_.nparam_ > 0);
 
-    op_t op(*this);
+    op_t op(*this, it.input());
 
-    //
+    // calc decoded size of old range,
+    // minus one if '?' or '&' prefixed
+    auto const dn0 =
+        detail::decode_bytes_unchecked(
+            string_view(
+                u_.cs_ +
+                    u_.offset(id_query) +
+                    first.pos,
+                last.pos - first.pos)) -
+        (u_.len(id_query) > 0);
+                    
     // measure
-    //
     std::size_t n = 0;
     std::size_t nparam = 0;
     error_code ec;
@@ -2328,12 +2317,13 @@ edit_params(
         }
     }
 
-    //
-    // copy
-    //
-    it.rewind();
-    auto dest = resize_params(
+    // resize
+    auto const dest0 = resize_params(
         first, last, n, nparam, op);
+
+    // copy
+    it.rewind();
+    auto dest = dest0;
     if(nparam > 0)
     {
         auto const end = dest + n;
@@ -2349,9 +2339,15 @@ edit_params(
             *dest++ = '&';
         }
     }
-    u_.decoded_[id_query] =
+
+    // calc decoded size of new range,
+    // minus one if '?' or '&' prefixed
+    auto const dn =
         detail::decode_bytes_unchecked(
-            encoded_query());
+            string_view(dest0, dest - dest0)) -
+        (u_.len(id_query) > 0);
+
+    u_.decoded_[id_query] += (dn - dn0);
 
     return detail::params_iter_impl(
         u_, first.pos, first.i);

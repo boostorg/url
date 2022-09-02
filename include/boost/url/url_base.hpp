@@ -79,17 +79,14 @@ class BOOST_SYMBOL_VISIBLE
     struct op_t
     {
         ~op_t();
-        op_t(url_base&) noexcept;
-        op_t(url_base&, string_view&) noexcept;
+        op_t(url_base&,
+            string_view* = nullptr) noexcept;
         void move(char*, char const*,
             std::size_t) noexcept;
 
         url_base& u;
-        string_view& s;
+        string_view* s = nullptr;
         char* old = nullptr;
-
-    private:
-        string_view s_;
     };
 
     url_base() noexcept = default;

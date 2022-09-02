@@ -13,6 +13,7 @@
 #include <boost/url/decode_view.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/param.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/ci_string.hpp>
 #include <boost/static_assert.hpp>
@@ -64,24 +65,26 @@ public:
 class BOOST_SYMBOL_VISIBLE
     any_params_iter
 {
+    string_view* s_ = nullptr;
     bool empty_ = false;
 
 protected:
-    any_params_iter() = default;
-
     explicit
     any_params_iter(
-        bool empty) noexcept
-        : empty_(empty)
+        bool empty,
+        string_view* s = nullptr) noexcept
+        : s_(s)
+        , empty_(empty)
     {
     }
 
     static
-    string_view
-    clean(string_view s) noexcept
+    string_view&
+    clean(string_view& s) noexcept
     {
+        // prevent null
         if(s.data() == nullptr)
-            return string_view("", 0);
+            s = string_view("", 0);
         return s;
     }
 
@@ -89,6 +92,13 @@ public:
     BOOST_URL_DECL
     virtual
     ~any_params_iter() noexcept = 0;
+
+    // Return the input string or nullptr
+    string_view*
+    input() const noexcept
+    {
+        return s_;
+    }
 
     // True if the sequence is empty
     bool
@@ -124,31 +134,7 @@ public:
 
 //------------------------------------------------
 
-// A string of encoded query params_view
-struct BOOST_SYMBOL_VISIBLE
-    encoded_query_iter
-    : public any_params_iter
-{
-    BOOST_URL_DECL
-    explicit
-    encoded_query_iter(
-        string_view s,
-        not_empty_param ne = {}) noexcept;
-
-private:
-    string_view s_;
-    std::size_t n_ = 0;
-    char const* p_ = nullptr;
-
-    void rewind() noexcept override;
-    bool measure(std::size_t&, error_code&) noexcept override;
-    void copy(char*&, char const*) noexcept override;
-    void increment() noexcept;
-};
-
-//------------------------------------------------
-
-// A string of plain query params_view
+// A string of plain query params
 struct BOOST_SYMBOL_VISIBLE
     query_iter
     : any_params_iter
@@ -163,38 +149,6 @@ private:
     string_view s_;
     std::size_t n_ = 0;
     char const* p_ = nullptr;
-
-    void rewind() noexcept override;
-    bool measure(std::size_t&, error_code&) noexcept override;
-    void copy(char*&, char const*) noexcept override;
-    void increment() noexcept;
-};
-
-//------------------------------------------------
-
-// A lazily decoded string of query params_view
-//
-// Note we need to decode, then re-encode using
-// the query charset, because the original lazy
-// string may have been encoded with a different
-// allowed set.
-//
-struct BOOST_SYMBOL_VISIBLE
-    decode_query_iter
-    : any_params_iter
-{
-    BOOST_URL_DECL
-    explicit
-    decode_query_iter(
-        decode_view s,
-        not_empty_param ne = {}) noexcept;
-
-private:
-    decode_view::const_iterator it0_;
-    decode_view::const_iterator end_;
-    std::size_t n_ = 0;
-    decode_view::const_iterator it_;
-    bool at_end_ = false;
 
     void rewind() noexcept override;
     bool measure(std::size_t&, error_code&) noexcept override;
@@ -373,7 +327,9 @@ struct param_value_iter
         std::size_t nk,
         string_view value,
         bool has_value) noexcept
-        : nk_(nk)
+        : any_params_iter(
+            false, &value_)
+        , nk_(nk)
         , value_(value)
         , has_value_(has_value)
     {
@@ -399,9 +355,11 @@ struct param_encoded_value_iter
 {
     param_encoded_value_iter(
         std::size_t nk,
-        string_view value,
+        pct_string_view value,
         bool has_value) noexcept
-        : nk_(nk)
+        : any_params_iter(false,
+            &detail::ref(value_))
+        , nk_(nk)
         , value_(value)
         , has_value_(has_value)
     {
@@ -409,7 +367,7 @@ struct param_encoded_value_iter
 
 private:
     std::size_t nk_ = 0;
-    string_view value_;
+    pct_string_view value_;
     bool has_value_ = false;
     bool at_end_ = false;
 

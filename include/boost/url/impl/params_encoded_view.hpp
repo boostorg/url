@@ -365,10 +365,11 @@ erase(
     iterator last) noexcept ->
         iterator
 {
+    string_view s("", 0);
     return u_->edit_params(
         first.it_,
         last.it_,
-        detail::encoded_query_iter(""));
+        detail::query_iter(s));
 }
 
 //------------------------------------------------
