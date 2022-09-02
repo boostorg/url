@@ -367,7 +367,7 @@ port_number() const noexcept
     return u_.port_number_;
 }
 
-string_view
+pct_string_view
 authority_view::
 encoded_host_and_port() const noexcept
 {
@@ -384,9 +384,6 @@ result<authority_view>
 parse_authority(
     string_view s) noexcept
 {
-    if(s.size() > authority_view::max_size())
-        detail::throw_length_error(
-            "too large");
     return grammar::parse(s, authority_rule);
 }
 

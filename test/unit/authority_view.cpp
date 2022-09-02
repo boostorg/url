@@ -35,14 +35,6 @@ public:
     void
     testObservers()
     {
-        // max_size()
-        {
-            BOOST_TEST_GT(authority_view::max_size(), 0u);
-
-            authority_view a;
-            BOOST_TEST_GT(a.max_size(), 0u);
-        }
-
         // size()
         {
             authority_view a;
