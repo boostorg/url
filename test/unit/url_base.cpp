@@ -786,7 +786,7 @@ struct url_base_test
             BOOST_TEST_NO_THROW(u.set_host(s));
             BOOST_TEST_EQ(u.host_type(), ht);
             BOOST_TEST_EQ(u.string(), s1);
-            BOOST_TEST_EQ(u.host(), u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.host(), u.encoded_host().decode());
             switch(ht)
             {
             case host_type::none:
@@ -799,7 +799,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::ipv6:
                 BOOST_TEST_EQ(u.encoded_host(), s);
@@ -808,7 +808,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address(u.host_address()));
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::ipvfuture:
                 BOOST_TEST_EQ(u.encoded_host(), s);
@@ -817,7 +817,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), u.host_address());
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::name:
                 BOOST_TEST_EQ(u.host_address(), s);
@@ -825,7 +825,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
                 BOOST_TEST_EQ(u.host_name(), s);
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             }
         };
@@ -839,7 +839,7 @@ struct url_base_test
             BOOST_TEST_NO_THROW(u.set_encoded_host(s));
             BOOST_TEST_EQ(u.host_type(), ht);
             BOOST_TEST_EQ(u.string(), s1);
-            BOOST_TEST_EQ(u.host(), u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.host(), u.encoded_host().decode());
             switch(ht)
             {
             case host_type::none:
@@ -852,7 +852,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::ipv6:
                 BOOST_TEST_EQ(u.encoded_host(), s);
@@ -861,7 +861,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address(u.host_address()));
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::ipvfuture:
                 BOOST_TEST_EQ(u.encoded_host(), s);
@@ -870,15 +870,15 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), u.host_address());
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::name:
-                BOOST_TEST_EQ(u.host_address(), pct_string_view(s).decode_to_string());
+                BOOST_TEST_EQ(u.host_address(), pct_string_view(s).decode());
                 BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
-                BOOST_TEST_EQ(u.host_name(), pct_string_view(s).decode_to_string());
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), pct_string_view(s).decode());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             }
         };
@@ -892,7 +892,7 @@ struct url_base_test
             BOOST_TEST_NO_THROW(u.set_host_address(s));
             BOOST_TEST_EQ(u.host_type(), ht);
             BOOST_TEST_EQ(u.string(), s1);
-            BOOST_TEST_EQ(u.host(), u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.host(), u.encoded_host().decode());
             switch(ht)
             {
             case host_type::none:
@@ -905,7 +905,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::ipv6:
                 BOOST_TEST_EQ(u.encoded_host(), bracketed(s));
@@ -914,7 +914,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address(s));
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::ipvfuture:
                 BOOST_TEST_EQ(u.encoded_host(), bracketed(s));
@@ -923,7 +923,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), s);
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::name:
                 BOOST_TEST_EQ(u.host_address(), s);
@@ -931,7 +931,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
                 BOOST_TEST_EQ(u.host_name(), s);
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             }
         };
@@ -945,7 +945,7 @@ struct url_base_test
             BOOST_TEST_NO_THROW(u.set_encoded_host_address(s));
             BOOST_TEST_EQ(u.host_type(), ht);
             BOOST_TEST_EQ(u.string(), s1);
-            BOOST_TEST_EQ(u.host(), u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.host(), u.encoded_host().decode());
             switch(ht)
             {
             case host_type::none:
@@ -958,7 +958,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::ipv6:
                 BOOST_TEST_EQ(u.encoded_host(), bracketed(s));
@@ -967,7 +967,7 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address(s));
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::ipvfuture:
                 BOOST_TEST_EQ(u.encoded_host(), bracketed(s));
@@ -976,15 +976,15 @@ struct url_base_test
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), s);
                 BOOST_TEST_EQ(u.host_name(), "");
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             case host_type::name:
-                BOOST_TEST_EQ(u.host_address(), pct_string_view(s).decode_to_string());
+                BOOST_TEST_EQ(u.host_address(), pct_string_view(s).decode());
                 BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
                 BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
                 BOOST_TEST_EQ(u.host_ipvfuture(), "");
-                BOOST_TEST_EQ(u.host_name(), pct_string_view(s).decode_to_string());
-                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+                BOOST_TEST_EQ(u.host_name(), pct_string_view(s).decode());
+                BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
                 break;
             }
         };
@@ -997,14 +997,14 @@ struct url_base_test
             BOOST_TEST_NO_THROW(u.set_host_address(ipv4_address(s)));
             BOOST_TEST_EQ(u.host_type(), host_type::ipv4);
             BOOST_TEST_EQ(u.string(), s1);
-            BOOST_TEST_EQ(u.host(), u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.host(), u.encoded_host().decode());
             BOOST_TEST_EQ(u.encoded_host(), s);
             BOOST_TEST_EQ(u.host_address(), s);
             BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address(s));
             BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
             BOOST_TEST_EQ(u.host_ipvfuture(), "");
             BOOST_TEST_EQ(u.host_name(), "");
-            BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+            BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
         };
 
         auto const set_host_ipv6 = [](
@@ -1015,14 +1015,14 @@ struct url_base_test
             BOOST_TEST_NO_THROW(u.set_host_address(ipv6_address(s)));
             BOOST_TEST_EQ(u.host_type(), host_type::ipv6);
             BOOST_TEST_EQ(u.string(), s1);
-            BOOST_TEST_EQ(u.host(), u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.host(), u.encoded_host().decode());
             BOOST_TEST_EQ(u.encoded_host(), bracketed(s));
             BOOST_TEST_EQ(u.host_address(), s);
             BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
             BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address(s));
             BOOST_TEST_EQ(u.host_ipvfuture(), "");
             BOOST_TEST_EQ(u.host_name(), "");
-            BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+            BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
         };
 
         auto const set_host_ipvfuture = [](
@@ -1033,14 +1033,14 @@ struct url_base_test
             BOOST_TEST_NO_THROW(u.set_host_ipvfuture(s))
             BOOST_TEST_EQ(u.host_type(), host_type::ipvfuture);
             BOOST_TEST_EQ(u.string(), s1);
-            BOOST_TEST_EQ(u.host(), u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.host(), u.encoded_host().decode());
             BOOST_TEST_EQ(u.encoded_host(), bracketed(s));
             BOOST_TEST_EQ(u.host_address(), s);
             BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
             BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
             BOOST_TEST_EQ(u.host_ipvfuture(), s);
             BOOST_TEST_EQ(u.host_name(), "");
-            BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+            BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
         };
 
         auto const set_host_name = [](
@@ -1052,13 +1052,13 @@ struct url_base_test
             BOOST_TEST_EQ(u.host_type(), host_type::name);
             BOOST_TEST_EQ(u.string(), s1);
             BOOST_TEST_EQ(u.host(), s);
-            BOOST_TEST_EQ(u.host(), u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.host(), u.encoded_host().decode());
             BOOST_TEST_EQ(u.host_address(), s);
             BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
             BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
             BOOST_TEST_EQ(u.host_ipvfuture(), "");
             BOOST_TEST_EQ(u.host_name(), s);
-            BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+            BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
         };
 
         auto const set_encoded_host_name = [](
@@ -1069,18 +1069,18 @@ struct url_base_test
             BOOST_TEST_NO_THROW(u.set_encoded_host_name(s))
             BOOST_TEST_EQ(u.host_type(), host_type::name);
             BOOST_TEST_EQ(u.string(), s1);
-            BOOST_TEST_EQ(u.host(), u.encoded_host().decode_to_string());
+            BOOST_TEST_EQ(u.host(), u.encoded_host().decode());
             auto rv = parse_ipv4_address(s);
             if(! rv)
                 BOOST_TEST_EQ(u.encoded_host(), s);
             else
                 BOOST_TEST_EQ(u.host(), rv->to_string());
-            BOOST_TEST_EQ(u.host_address(), pct_string_view(s).decode_to_string());
+            BOOST_TEST_EQ(u.host_address(), pct_string_view(s).decode());
             BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
             BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
             BOOST_TEST_EQ(u.host_ipvfuture(), "");
-            BOOST_TEST_EQ(u.host_name(), pct_string_view(s).decode_to_string());
-            BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode_to_string());
+            BOOST_TEST_EQ(u.host_name(), pct_string_view(s).decode());
+            BOOST_TEST_EQ(u.host_name(), u.encoded_host_name().decode());
         };
 
         set_host("", "//", host_type::name);

@@ -506,9 +506,9 @@ set_encoded_password(
 /*
 host_type       host_type()                 // ipv4, ipv6, ipvfuture, name
 
-std::string     host()                      // return encoded_host().decode_to_string()
+std::string     host()                      // return encoded_host().decode()
 pct_string_view encoded_host()              // return host part, as-is
-std::string     host_address()              // return encoded_host_address().decode_to_string()
+std::string     host_address()              // return encoded_host_address().decode()
 pct_string_view encoded_host_address()      // ipv4, ipv6, ipvfut, or encoded name, no brackets
 
 ipv4_address    host_ipv4_address()         // return ipv4_address or {}

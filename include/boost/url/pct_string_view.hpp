@@ -15,6 +15,7 @@
 #include <boost/url/decode_view.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/string_token.hpp>
 #include <iterator>
 #include <string>
 #include <type_traits>
@@ -86,6 +87,12 @@ class pct_string_view final
         , dn_(dn)
     {
     }
+
+    BOOST_URL_DECL
+    void
+    decode_impl(
+        string_token::arg& dest,
+        decode_opts const& opt) const;
 
 public:
     // types
@@ -205,11 +212,45 @@ public:
     }
 
     /** Return the string with percent-decoding
+
+        @par token An optional string token.
+        If this parameter is ommitted, then
+        a new `std::string` is returned.
+        Otherwise, the function return type
+        will be the result type of the token.
+
+        @param opt The options for encoding. If
+        this parameter is omitted, the default
+        options will be used.
+
+        @see
+            @ref decode_opts.
     */
-    BOOST_URL_DECL
-    std::string
-    decode_to_string(
-        decode_opts const& opt = {}) const;
+    template<
+        class StringToken =
+            string_token::return_string>
+#ifdef BOOST_URL_DOCS
+    __see_below__
+#else
+    typename StringToken::result_type
+#endif
+    decode(
+        decode_opts opt = {},
+        StringToken&& token = {}) const
+    {
+/*      If you get a compile error here, it
+        means that the token you passed does
+        not meet the requirements stated
+        in the documentation.
+*/
+        static_assert(
+            string_token::is_token<
+                StringToken>::value,
+            "Type requirements not met");
+
+        decode_impl(token, opt);
+        return token.result();
+    }
 
     //--------------------------------------------
 

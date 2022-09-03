@@ -23,6 +23,7 @@
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
 #include <boost/url/detail/url_impl.hpp>
+#include <boost/url/grammar/string_token.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -572,6 +573,20 @@ public:
         Any percent-escapes in the string are
         decoded first.
 
+        @note
+        This function uses the string token
+        return type customization. Depending on
+        the token passed, the return type and
+        behavior of the function can be different.
+        See
+            @ref grammar::append_string,
+            @ref grammar::assign_string,
+            @ref grammar::return_string, and
+            @ref grammar::temp_string
+        for more information.
+
+
+
         @par Example
         @code
         assert( url_view( "http://jane%2Ddoe:pass@example.com" ).userinfo() == "jane-doe:pass" );
@@ -582,6 +597,12 @@ public:
 
         @par Exception Safety
         Calls to allocate may throw.
+
+        @return When called with no arguments,
+        a value of type `std::string` is
+        returned. Otherwise, the return type
+        and meaning depends on the string token
+        passed to the function.
 
         @par BNF
         @code
@@ -603,9 +624,22 @@ public:
             @ref password,
             @ref user.
     */
-    BOOST_URL_DECL
-    std::string
-    userinfo() const;
+    /**@{*/
+#ifdef BOOST_URL_DOCS
+    std::string userinfo() const;
+#endif
+    template<BOOST_URL_STRTOK_TPARAM(StringToken)>
+    BOOST_URL_STRTOK_RETURN(StringToken)
+    userinfo(
+        BOOST_URL_STRTOK_ARG(StringToken, token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_userinfo().decode(
+            opt, std::move(token));
+    }
+    /**@}*/
+
 
     /** Return the userinfo
 

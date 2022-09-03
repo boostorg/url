@@ -74,6 +74,17 @@ public:
         become invalidated when that particular
         iterator is incremented, decremented,
         or destroyed.
+
+        @note
+
+        The implementation may use temporary,
+        recycled storage to store decoded
+        strings. These iterators are meant
+        to be used ephemerally. That is, for
+        short durations such as within a
+        function scope. Do not store
+        iterators with static storage
+        duration or as long-lived objects.
     */
 #ifdef BOOST_URL_DOCS
     using iterator = __see_below__;
