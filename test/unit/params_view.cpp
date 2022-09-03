@@ -31,7 +31,7 @@ struct params_view_test
     static
     bool
     is_equal(
-        param_pct_view const& p0,
+        param_view const& p0,
         param_view const& p1)
     {
         return

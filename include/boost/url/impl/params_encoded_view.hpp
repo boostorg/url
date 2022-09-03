@@ -90,7 +90,7 @@ assign(FwdIt first, FwdIt last)
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::value_type,
-            param_view>::value,
+            param_pct_view>::value,
         "Type requirements not met");
 
     assign(first, last,
@@ -104,7 +104,7 @@ inline
 auto
 params_encoded_view::
 append(
-    param_view const& v) ->
+    param_pct_view const& v) ->
         iterator
 {
     return insert(end(), v);
@@ -125,7 +125,7 @@ append(FwdIt first, FwdIt last) ->
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::value_type,
-            param_view>::value,
+            param_pct_view>::value,
         "Type requirements not met");
 
     return insert(
@@ -137,7 +137,7 @@ auto
 params_encoded_view::
 append_list(
     std::initializer_list<
-        param_view> init) ->
+        param_pct_view> init) ->
     iterator
 {
     return insert_list(end(), init);
@@ -150,7 +150,7 @@ auto
 params_encoded_view::
 insert(
     iterator before,
-    param_view const& v) ->
+    param_pct_view const& v) ->
         iterator
 {
     return insert(
@@ -175,7 +175,7 @@ insert(
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::value_type,
-            param_view>::value,
+            param_pct_view>::value,
         "Type requirements not met");
 
     return insert(
@@ -192,7 +192,7 @@ params_encoded_view::
 insert_list(
     iterator before,
     std::initializer_list<
-        param_view> init) ->
+        param_pct_view> init) ->
     iterator
 {
     return insert(before,
@@ -234,7 +234,7 @@ auto
 params_encoded_view::
 replace(
     iterator pos,
-    param_view const& value) ->
+    param_pct_view const& value) ->
         iterator
 {
     return replace(
@@ -249,7 +249,7 @@ replace(
     iterator from,
     iterator to,
     std::initializer_list<
-        param_view> init) ->
+        param_pct_view> init) ->
     iterator
 {
     return replace(from, to,
@@ -275,12 +275,12 @@ replace(
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::value_type,
-            param_view>::value,
+            param_pct_view>::value,
         "Type requirements not met");
 
     return u_->edit_params(
         from.it_, to.it_,
-        detail::make_params_iter(
+        detail::make_params_encoded_iter(
             first, last));
 }
 

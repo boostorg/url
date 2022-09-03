@@ -36,7 +36,7 @@ namespace urls {
     @code
     query           = *( pchar / "/" / "?" )
 
-    query-params_view    = query-param *( "&" query-param )
+    query-params    = query-param *( "&" query-param )
     query-param     = key [ "=" value ]
     key             = *qpchar
     value           = *( qpchar / "=" )

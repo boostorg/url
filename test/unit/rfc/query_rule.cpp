@@ -24,12 +24,11 @@ operator==(
     param_pct_view const& t0,
     param_pct_view const& t1) noexcept
 {
-    // VFALCO This needs to be a pct-encoded equality
     return
-        t0.key == t1.key &&
+        *t0.key == *t1.key &&
         t0.has_value == t1.has_value &&
         (! t0.has_value ||
-            t0.value == t1.value);
+            *t0.value == *t1.value);
 }
 
 class query_rule_test
@@ -39,7 +38,7 @@ public:
     check(
         string_view s,
         std::initializer_list<
-            param_view> i)
+            param_pct_view> i)
     {
         auto rv = grammar::parse(
             s, query_rule);

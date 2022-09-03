@@ -167,7 +167,7 @@ protected:
     static
     bool
     measure_impl(
-        param_view const& v,
+        param_pct_view const& v,
         std::size_t& n,
         error_code& ec) noexcept;
 
@@ -177,7 +177,7 @@ protected:
     copy_impl(
         char*& dest,
         char const* end,
-        param_view const& v) noexcept;
+        param_pct_view const& v) noexcept;
 };
 
 // A range of encoded query params_view
@@ -190,7 +190,7 @@ struct params_encoded_iter
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::value_type,
-            param_view>::value);
+            param_pct_view>::value);
 
     params_encoded_iter(
         FwdIt first,
@@ -222,8 +222,7 @@ private:
         if(it_ == end_)
             return false;
         return measure_impl(
-            param_view(*it_++),
-                n, ec);
+            *it_++, n, ec);
     }
 
     void
@@ -233,8 +232,7 @@ private:
             ) noexcept override
     {
         copy_impl(
-            dest, end,
-            param_view(*it_++));
+            dest, end, *it_++);
     }
 };
 

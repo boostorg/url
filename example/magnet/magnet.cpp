@@ -13,7 +13,6 @@
     standard output.
 */
 
-
 #include <boost/url/url_view.hpp>
 #include <boost/url/optional.hpp>
 #include <boost/url/rfc/absolute_uri_rule.hpp>
@@ -23,6 +22,8 @@
 #include <iostream>
 
 namespace urls = boost::urls;
+
+#if 0
 
 /// Callable to identify a magnet "exact topic"
 /**
@@ -658,6 +659,7 @@ parse_magnet_link( urls::string_view s ) noexcept
 {
     return urls::grammar::parse(s, magnet_link_rule);
 }
+#endif
 
 int main(int argc, char** argv)
 {
@@ -677,6 +679,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
+#if 0
     urls::result<magnet_link_view> r =
         parse_magnet_link(argv[1]);
     if (!r)
@@ -685,7 +688,6 @@ int main(int argc, char** argv)
     magnet_link_view m = *r;
     std::cout << "link: " << m << "\n";
 
-#if 0
     auto xt = m.exact_topics();
     for (auto h : xt)
         std::cout << "topic: " << h << "\n";

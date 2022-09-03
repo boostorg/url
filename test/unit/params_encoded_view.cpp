@@ -32,7 +32,7 @@ struct params_encoded_view_test
     bool
     is_equal(
         param_pct_view const& p0,
-        param_view const& p1)
+        param_pct_view const& p1)
     {
         return
             p0.key == p1.key &&
@@ -153,7 +153,7 @@ struct params_encoded_view_test
     void
     assign(
         params_encoded_view& p,
-        std::initializer_list<param_view> init)
+        std::initializer_list<param_pct_view> init)
     {
         p.assign(
             init.begin(), init.end());
@@ -163,7 +163,7 @@ struct params_encoded_view_test
     auto
     append(
         params_encoded_view& p,
-        std::initializer_list<param_view> init) ->
+        std::initializer_list<param_pct_view> init) ->
             params_encoded_view::iterator
     {
         return p.append(
@@ -175,7 +175,7 @@ struct params_encoded_view_test
     insert(
         params_encoded_view& p,
         params_encoded_view::iterator before,
-        std::initializer_list<param_view> init) ->
+        std::initializer_list<param_pct_view> init) ->
             params_encoded_view::iterator
     {
         return p.insert(before,
@@ -188,7 +188,7 @@ struct params_encoded_view_test
         params_encoded_view& p,
         params_encoded_view::iterator from,
         params_encoded_view::iterator to,
-        std::initializer_list<param_view> init) ->
+        std::initializer_list<param_pct_view> init) ->
             params_encoded_view::iterator
     {
         return p.replace(from, to,
@@ -861,7 +861,7 @@ struct params_encoded_view_test
         //----------------------------------------
 
         //
-        // append(param_view)
+        // append(param_pct_view)
         //
 
         modify(
@@ -1074,7 +1074,7 @@ struct params_encoded_view_test
         //----------------------------------------
 
         //
-        // insert(iterator, param_view)
+        // insert(iterator, param_pct_view)
         //
 
         modify(
@@ -1592,7 +1592,7 @@ struct params_encoded_view_test
         //----------------------------------------
 
         //
-        // replace(iterator, param_view)
+        // replace(iterator, param_pct_view)
         //
 
         modify(

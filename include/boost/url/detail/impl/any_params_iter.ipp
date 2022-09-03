@@ -135,7 +135,7 @@ increment() noexcept
 bool
 params_encoded_iter_base::
 measure_impl(
-    param_view const& v,
+    param_pct_view const& v,
     std::size_t& n,
     error_code& ec) noexcept
 {
@@ -168,7 +168,7 @@ params_encoded_iter_base::
 copy_impl(
     char*& dest,
     char const* end,
-    param_view const& v) noexcept
+    param_pct_view const& v) noexcept
 {
     (void)end;
     {

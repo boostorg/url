@@ -49,7 +49,7 @@ class url_base;
     @endcode
 
     Strings produced when elements are returned
-    have type @ref param_view and represent
+    have type @ref param_pct_view and represent
     encoded strings. Member functions which
     accept strings expect encoded strings and
     throw exceptions on invalid inputs.
@@ -282,7 +282,7 @@ public:
 
         @par Mandates
         @code
-        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_view >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_pct_view >::value == true
         @endcode
 
         @par Complexity
@@ -332,7 +332,7 @@ public:
     */
     iterator
     append(
-        param_view const& p);
+        param_pct_view const& p);
 
     /** Append elements
 
@@ -348,7 +348,7 @@ public:
 
         @par Mandates
         @code
-        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_view >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_pct_view >::value == true
         @endcode
 
         @par Complexity
@@ -400,7 +400,7 @@ public:
     */
     iterator
     append_list(std::initializer_list<
-        param_view> init);
+        param_pct_view> init);
 
     //--------------------------------------------
 
@@ -438,7 +438,7 @@ public:
     iterator
     insert(
         iterator before,
-        param_view const& p);
+        param_pct_view const& p);
 
     /** Insert elements
 
@@ -460,7 +460,7 @@ public:
 
         @par Mandates
         @code
-        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_view >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_pct_view >::value == true
         @endcode
 
         @par Complexity
@@ -532,7 +532,7 @@ public:
     insert_list(
         iterator before,
         std::initializer_list<
-            param_view> init);
+            param_pct_view> init);
 
     //--------------------------------------------
 
@@ -676,7 +676,7 @@ public:
     iterator
     replace(
         iterator pos,
-        param_view const& p);
+        param_pct_view const& p);
 
     /** Replace elements
 
@@ -716,7 +716,7 @@ public:
         iterator from,
         iterator to,
         std::initializer_list<
-            param_view> init);
+            param_pct_view> init);
 
     /** Replace elements
 
@@ -734,7 +734,7 @@ public:
 
         @par Mandates
         @code
-        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_view >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_pct_view >::value == true
         @endcode
 
         @par Complexity
