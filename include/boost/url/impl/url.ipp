@@ -127,7 +127,7 @@ reserve_impl(
         if( new_cap < n)
             new_cap = n;
         s = allocate(new_cap);
-        std::memcpy(s, s_, size());
+        std::memcpy(s, s_, size() + 1);
         BOOST_ASSERT(! op.old);
         op.old = s_;
         s_ = s;
