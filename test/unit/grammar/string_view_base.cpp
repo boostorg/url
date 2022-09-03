@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
+// Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -8,10 +8,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/grammar/type_traits.hpp>
-
-#include <string>
-#include <vector>
+#include <boost/url/grammar/string_view_base.hpp>
 
 #include "test_suite.hpp"
 
@@ -19,7 +16,7 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-struct type_traits_test
+struct string_view_base_test
 {
     void
     run()
@@ -28,8 +25,8 @@ struct type_traits_test
 };
 
 TEST_SUITE(
-    type_traits_test,
-    "boost.url.grammar.type_traits");
+    string_view_base_test,
+    "boost.url.grammar.string_view_base");
 
 } // grammar
 } // urls

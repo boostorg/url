@@ -21,12 +21,11 @@ docca.reference reference.qbk
     :
         xsl/custom-overrides.xsl
         [ glob-tree-ex ../include/boost/url : *.hpp *.ipp : detail impl ]
-        #../include/boost/url/segments_base.hpp
-        #../include/boost/url/segments_encoded_base.hpp
-        #../include/boost/url/segments_encoded_ref.hpp
-        #../include/boost/url/segments_encoded_view.hpp
-        #../include/boost/url/segments_ref.hpp
-        #../include/boost/url/segments_view.hpp
+        #../include/boost/url/pct_string_view.hpp
+        #../include/boost/url/url_view.hpp
+        #../include/boost/url/url_view_base.hpp
+        #../include/boost/url/grammar/string_token.hpp
+        #../include/boost/url/grammar/string_view_base.hpp
     :
         <doxygen:param>PROJECT_NAME=URL
         <doxygen:param>PROJECT_BRIEF="URL Library"
@@ -39,7 +38,13 @@ docca.reference reference.qbk
             BOOST_SYMBOL_VISIBLE \\
             BOOST_URL_DOCS \\
             BOOST_URL_DECL \\
-            \"BOOST_STATIC_ASSERT(x)=\"
+            __cpp_lib_array_constexpr \\
+            \"BOOST_CONSTEXPR=constexpr\" \\
+            \"BOOST_CXX14_CONSTEXPR=constexpr\" \\
+            \"BOOST_STATIC_ASSERT(x)=\" \\
+            \"BOOST_URL_STRTOK_TPARAM=class StringToken = string_token::return_string\" \\
+            \"BOOST_URL_STRTOK_RETURN=typename StringToken::result_type\" \\
+            \"BOOST_URL_STRTOK_ARG(name)=StringToken&& name = {}\" \\
             "
         <doxygen:param>ABBREVIATE_BRIEF=
         <doxygen:param>INLINE_INHERITED_MEMB=YES

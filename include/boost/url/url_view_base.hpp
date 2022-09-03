@@ -23,6 +23,7 @@
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_view.hpp>
 #include <boost/url/detail/url_impl.hpp>
+#include <boost/url/grammar/string_token.hpp>
 #include <boost/assert.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -215,7 +216,7 @@ public:
         Throws nothing.
     */
     string_view
-    string() const noexcept
+    buffer() const noexcept
     {
         return string_view(
             data(), size());
@@ -243,7 +244,7 @@ public:
             sp = u.persist();
 
             assert( sp->data() != s.data() );       // different buffer
-            assert( sp->string() == s);             // same contents
+            assert( sp->buffer() == s);             // same contents
 
             // s is destroyed and thus u
             // becomes invalid, but sp remains valid.
@@ -572,6 +573,14 @@ public:
         Any percent-escapes in the string are
         decoded first.
 
+        @note
+        This function uses the string token
+        return type customization. Depending on
+        the token passed, the return type and
+        behavior of the function can be different.
+        See @ref string_token::return_string
+        for more information.
+
         @par Example
         @code
         assert( url_view( "http://jane%2Ddoe:pass@example.com" ).userinfo() == "jane-doe:pass" );
@@ -582,6 +591,12 @@ public:
 
         @par Exception Safety
         Calls to allocate may throw.
+
+        @return When called with no arguments,
+        a value of type `std::string` is
+        returned. Otherwise, the return type
+        and meaning depends on the string token
+        passed to the function.
 
         @par BNF
         @code
@@ -603,9 +618,16 @@ public:
             @ref password,
             @ref user.
     */
-    BOOST_URL_DECL
-    std::string
-    userinfo() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    userinfo(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_userinfo().decode(
+            opt, std::move(token));
+    }
 
     /** Return the userinfo
 
@@ -694,9 +716,16 @@ public:
             @ref password,
             @ref userinfo.
     */
-    BOOST_URL_DECL
-    std::string
-    user() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    user(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_user().decode(
+            opt, std::move(token));
+    }
 
     /** Return the user
 
@@ -826,9 +855,16 @@ public:
             @ref user,
             @ref userinfo.
     */
-    BOOST_URL_DECL
-    std::string
-    password() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    password(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_password().decode(
+            opt, std::move(token));
+    }
 
     /** Return the password
 
@@ -945,9 +981,16 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
             >3.2.2. Host (rfc3986)</a>
     */
-    BOOST_URL_DECL
-    std::string
-    host() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    host(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_host().decode(
+            opt, std::move(token));
+    }
 
     /** Return the host
 
@@ -1034,9 +1077,16 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
             >3.2.2. Host (rfc3986)</a>
     */
-    BOOST_URL_DECL
-    std::string
-    host_address() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    host_address(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_host_address().decode(
+            opt, std::move(token));
+    }
 
     /** Return the host
 
@@ -1248,9 +1298,16 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
             >3.2.2. Host (rfc3986)</a>
     */
-    BOOST_URL_DECL
-    std::string
-    host_name() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    host_name(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_host_name().decode(
+            opt, std::move(token));
+    }
 
     /** Return the host name
 
@@ -1573,9 +1630,16 @@ public:
             @ref encoded_segments.
             @ref segments.
     */
-    BOOST_URL_DECL
-    std::string
-    path() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    path(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_path().decode(
+            opt, std::move(token));
+    }
 
     /** Return the path
 
@@ -1808,9 +1872,16 @@ public:
             @ref has_query,
             @ref params.
     */
-    BOOST_URL_DECL
-    std::string
-    query() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    query(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = true;
+        return encoded_query().decode(
+            opt, std::move(token));
+    }
 
     /** Return the query
 
@@ -2059,9 +2130,16 @@ public:
             @ref encoded_fragment,
             @ref has_fragment.
     */
-    BOOST_URL_DECL
-    std::string
-    fragment() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    fragment(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_fragment().decode(
+            opt, std::move(token));
+    }
 
     /** Return the fragment
 
@@ -2528,7 +2606,7 @@ public:
         std::ostream& os,
         url_view_base const& u)
     {
-        return os << u.string();
+        return os << u.buffer();
     }
 };
 
@@ -2551,11 +2629,11 @@ public:
 
     @par Effects
     @code
-    return os << u.string();
+    return os << u.buffer();
     @endcode
 
     @par Complexity
-    Linear in `u.string().size()`
+    Linear in `u.buffer().size()`
 
     @par Exception Safety
     Basic guarantee.

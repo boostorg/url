@@ -36,7 +36,6 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/any_params_iter.ipp>
 #include <boost/url/detail/impl/any_segments_iter.ipp>
 #include <boost/url/detail/impl/decode.ipp>
-#include <boost/url/detail/impl/decode_view.ipp>
 #include <boost/url/detail/impl/except.ipp>
 #include <boost/url/detail/impl/normalize.ipp>
 #include <boost/url/detail/impl/params_iter_impl.ipp>
@@ -86,6 +85,7 @@ in a translation unit of the program.
 #include <boost/url/grammar/impl/delim_rule.ipp>
 #include <boost/url/grammar/impl/error.ipp>
 #include <boost/url/grammar/impl/literal_rule.ipp>
+#include <boost/url/grammar/impl/string_view_base.ipp>
 
 //------------------------------------------------
 //

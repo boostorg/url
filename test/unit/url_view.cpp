@@ -89,8 +89,8 @@ public:
         {
             string_view s = "/index.htm";
             url_view u = parse_relative_ref(s).value();
-            BOOST_TEST_EQ(u.string(), s);
-            BOOST_TEST_EQ(u.string().data(), s.data());
+            BOOST_TEST_EQ(u.buffer(), s);
+            BOOST_TEST_EQ(u.buffer().data(), s.data());
         }
 
         // persist()
@@ -105,7 +105,7 @@ public:
             sp = u.persist();
 
             assert( sp->data() != s.data() );       // different buffer
-            assert( sp->string() == s);        // same contents
+            assert( sp->buffer() == s);        // same contents
 
             // s is destroyed and thus u
             // becomes invalid, but sp remains valid.
@@ -187,7 +187,7 @@ public:
                 BOOST_TEST_EQ(
                     u.encoded_authority(), m);
                 BOOST_TEST_EQ(
-                    u.authority().string(), m);
+                    u.authority().buffer(), m);
             }
             //());
         };

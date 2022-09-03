@@ -47,13 +47,19 @@
 [def __SemiRegular__            [@https://en.cppreference.com/w/cpp/concepts/semiregular ['SemiRegular]]]
 [def __Swappable__              [@https://en.cppreference.com/w/cpp/named_req/Swappable ['Swappable]]]
 [def __CharSet__                [link url.concepts.charset ['CharSet]]]
-[def __MutableString__          [link url.concepts.mutablestring ['MutableString]]]
 [def __Rule__                   [link url.concepts.rule ['Rule]]]
 [def __Rule1__                  [link url.concepts.rule ['Rule1]]]
 [def __Rule2__                  [link url.concepts.rule ['Rule2]]]
 [def __Rules__                  [link url.concepts.rule ['Rules]]]
+
 [def __StringToken__            [link url.concepts.stringtoken ['StringToken]]]
 [def __deduced__                [link url.concepts.stringtoken ['DEDUCED]]]
+[def __is_token__               [link url.ref.boost__urls__string_token__is_token `string_token::is_token`]]
+[def __append_to__              [link url.ref.boost__urls__string_token__append_to `string_token::append_to`]]
+[def __assign_to__              [link url.ref.boost__urls__string_token__assign_to `string_token::assign_to`]]
+[def __preserve_size__          [link url.ref.boost__urls__string_token__preserve_size `string_token::preserve_size`]]
+[def __append_to__              [link url.ref.boost__urls__string_token__return_string `string_token::return_string`]]
+
 
 [def __std_swap__               [@https://en.cppreference.com/w/cpp/algorithm/swap `std::swap`]]
 [def __std_string__             [@https://en.cppreference.com/w/cpp/string/basic_string `std::string`]]

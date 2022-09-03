@@ -257,7 +257,7 @@ public:
             >3.2. Authority (rfc3986)</a>
     */
     string_view
-    string() const noexcept
+    buffer() const noexcept
     {
         return string_view(data(), size());
     }
@@ -1195,7 +1195,7 @@ public:
         std::ostream& os,
         authority_view const& a)
     {
-        return os << a.string();
+        return os << a.buffer();
     }
 };
 

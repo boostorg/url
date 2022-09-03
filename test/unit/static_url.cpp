@@ -31,7 +31,7 @@ public:
         {
             StaticUrl u;
             BOOST_TEST_EQ(*u.c_str(), '\0');
-            BOOST_TEST(u.string().empty());
+            BOOST_TEST(u.buffer().empty());
         }
 
         url c1       = parse_uri("http://1").value();
@@ -43,18 +43,18 @@ public:
         {
             {
                 StaticUrl u(c1);
-                BOOST_TEST_EQ(u.string(), c1.string());
-                BOOST_TEST_NE(u.c_str(), c1.string().data());
+                BOOST_TEST_EQ(u.buffer(), c1.buffer());
+                BOOST_TEST_NE(u.c_str(), c1.buffer().data());
             }
             {
                 StaticUrl u(c2);
-                BOOST_TEST_EQ(u.string(), c2.string());
-                BOOST_TEST_NE(u.c_str(), c2.string().data());
+                BOOST_TEST_EQ(u.buffer(), c2.buffer());
+                BOOST_TEST_NE(u.c_str(), c2.buffer().data());
             }
             {
                 StaticUrl u(c3);
-                BOOST_TEST_EQ(u.string(), c3.string());
-                BOOST_TEST_NE(u.c_str(), c3.string().data());
+                BOOST_TEST_EQ(u.buffer(), c3.buffer());
+                BOOST_TEST_NE(u.c_str(), c3.buffer().data());
             }
             {
                 // different sizes
@@ -67,18 +67,18 @@ public:
         {
             {
                 StaticUrl u(std::move(c1));
-                BOOST_TEST_EQ(u.string(), c1.string());
-                BOOST_TEST_NE(u.c_str(), c1.string().data());
+                BOOST_TEST_EQ(u.buffer(), c1.buffer());
+                BOOST_TEST_NE(u.c_str(), c1.buffer().data());
             }
             {
                 StaticUrl u(std::move(c2));
-                BOOST_TEST_EQ(u.string(), c2.string());
-                BOOST_TEST_NE(u.c_str(), c2.string().data());
+                BOOST_TEST_EQ(u.buffer(), c2.buffer());
+                BOOST_TEST_NE(u.c_str(), c2.buffer().data());
             }
             {
                 StaticUrl u(std::move(c3));
-                BOOST_TEST_EQ(u.string(), c3.string());
-                BOOST_TEST_NE(u.c_str(), c3.string().data());
+                BOOST_TEST_EQ(u.buffer(), c3.buffer());
+                BOOST_TEST_NE(u.c_str(), c3.buffer().data());
             }
         }
 
@@ -87,20 +87,20 @@ public:
             {
                 StaticUrl u(c4);
                 u = c1;
-                BOOST_TEST_EQ(u.string(), c1.string());
-                BOOST_TEST_NE(u.c_str(), c1.string().data());
+                BOOST_TEST_EQ(u.buffer(), c1.buffer());
+                BOOST_TEST_NE(u.c_str(), c1.buffer().data());
             }
             {
                 StaticUrl u(c4);
                 u = c2;
-                BOOST_TEST_EQ(u.string(), c2.string());
-                BOOST_TEST_NE(u.c_str(), c2.string().data());
+                BOOST_TEST_EQ(u.buffer(), c2.buffer());
+                BOOST_TEST_NE(u.c_str(), c2.buffer().data());
             }
             {
                 StaticUrl u(c4);
                 u = c3;
-                BOOST_TEST_EQ(u.string(), c3.string());
-                BOOST_TEST_NE(u.c_str(), c3.string().data());
+                BOOST_TEST_EQ(u.buffer(), c3.buffer());
+                BOOST_TEST_NE(u.c_str(), c3.buffer().data());
             }
             {
                 // different sizes
@@ -115,20 +115,20 @@ public:
             {
                 StaticUrl u(c4);
                 u = std::move(c1);
-                BOOST_TEST_EQ(u.string(), c1.string());
-                BOOST_TEST_NE(u.c_str(), c1.string().data());
+                BOOST_TEST_EQ(u.buffer(), c1.buffer());
+                BOOST_TEST_NE(u.c_str(), c1.buffer().data());
             }
             {
                 StaticUrl u(c4);
                 u = std::move(c2);
-                BOOST_TEST_EQ(u.string(), c2.string());
-                BOOST_TEST_NE(u.c_str(), c2.string().data());
+                BOOST_TEST_EQ(u.buffer(), c2.buffer());
+                BOOST_TEST_NE(u.c_str(), c2.buffer().data());
             }
             {
                 StaticUrl u(c4);
                 u = std::move(c3);
-                BOOST_TEST_EQ(u.string(), c3.string());
-                BOOST_TEST_NE(u.c_str(), c3.string().data());
+                BOOST_TEST_EQ(u.buffer(), c3.buffer());
+                BOOST_TEST_NE(u.c_str(), c3.buffer().data());
             }
         }
 

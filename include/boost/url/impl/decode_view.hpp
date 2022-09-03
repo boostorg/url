@@ -166,66 +166,6 @@ back() const noexcept ->
     return *--end();
 }
 
-template <class MutableString>
-MutableString&
-decode_view::
-assign_to(
-    MutableString& s) const
-{
-    // If you get a compiler error here, it means that
-    // your String type is missing the necessary append
-    // or assign member functions, or that your
-    // value_type is not char!
-    //
-    // This function should only be used
-    // if the container `MutableString` has the
-    // member function `assign(iterator, iterator)`.
-    BOOST_STATIC_ASSERT(
-        grammar::is_mutable_string<
-            MutableString>::value);
-    s.assign(begin(), end());
-    return s;
-}
-
-template <class MutableString>
-MutableString&
-decode_view::
-append_to(
-    MutableString& s) const
-{
-    // If you get a compiler error here, it means that
-    // your String type is missing the necessary append
-    // or assign member functions, or that your
-    // value_type is not char!
-    //
-    // This function should only be used
-    // if the container `MutableString` has the
-    // member function `append(iterator, iterator)`.
-    static_assert(
-        grammar::is_mutable_string<
-            MutableString>::value,
-        "MutableString requirements not met");
-
-    s.append(begin(), end());
-    return s;
-}
-
-//------------------------------------------------
-
-namespace detail {
-
-template<class... Args>
-decode_view
-make_decode_view_t::
-operator()(Args&&... args) const
-{
-    return decode_view(
-        std::forward<Args>(
-            args)...);
-}
-
-} // detail
-
 } // urls
 } // boost
 

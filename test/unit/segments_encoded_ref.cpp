@@ -97,8 +97,8 @@ struct segments_encoded_ref_test
             Type ps1(ps0);
             BOOST_TEST_EQ(&ps0.url(), &ps1.url());
             BOOST_TEST_EQ(
-                ps0.url().string().data(),
-                ps1.url().string().data());
+                ps0.url().buffer().data(),
+                ps1.url().buffer().data());
         }
 
         // operator=(segments_encoded_ref)

@@ -209,7 +209,7 @@ struct segments_view_test
 
     segments_view ps = u.segments();
 
-    assert( ps.buffer().data() == u.string().data() );
+    assert( ps.buffer().data() == u.buffer().data() );
 
     ignore_unused(ps);
         }

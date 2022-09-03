@@ -65,26 +65,6 @@ decode_view(
         s, opt).value(BOOST_URL_POS);
 }
 
-//------------------------------------------------
-
-auto
-decode_view::
-copy(
-    char* dest,
-    size_type count,
-    size_type pos) const ->
-    size_type
-{
-    if( pos > size() )
-        detail::throw_invalid_argument();
-    std::size_t rlen = (std::min)(count, size() - pos);
-    auto first = std::next(begin(), pos);
-    auto last = std::next(first, rlen);
-    while (first != last)
-        *dest++ = *first++;
-    return rlen;
-}
-
 namespace detail {
 
 template <class T>

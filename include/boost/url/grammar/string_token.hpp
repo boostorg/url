@@ -19,8 +19,6 @@
 
 namespace boost {
 namespace urls {
-
-namespace grammar {
 namespace string_token {
 
 /** Base class for string tokens, and algorithm parameters
@@ -338,9 +336,10 @@ preserve_size(
 #endif
 
 } // string_token
-} // grammar
 
-namespace string_token = grammar::string_token;
+namespace grammar {
+namespace string_token = ::boost::urls::string_token;
+} // grammar
 
 } // urls
 } // boost

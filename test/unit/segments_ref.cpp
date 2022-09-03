@@ -99,8 +99,8 @@ struct segments_ref_test
             Type ps(ps0);
             BOOST_TEST_EQ(&ps0.url(), &ps.url());
             BOOST_TEST_EQ(
-                ps0.url().string().data(),
-                ps.url().string().data());
+                ps0.url().buffer().data(),
+                ps.url().buffer().data());
         }
 
         // operator=(segments_ref)

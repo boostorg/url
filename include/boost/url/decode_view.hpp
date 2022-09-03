@@ -13,13 +13,30 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/decode_opts.hpp>
-#include <boost/url/detail/decode_view.hpp>
 #include <type_traits>
 #include <iterator>
 #include <iosfwd>
 
 namespace boost {
 namespace urls {
+
+//------------------------------------------------
+
+#ifndef BOOST_URL_DOCS
+class decode_view;
+
+namespace detail {
+
+// unchecked
+template<class... Args>
+decode_view
+make_decode_view(
+    Args&&... args) noexcept;
+
+} // detail
+#endif
+
+//------------------------------------------------
 
 /** A reference to a valid, percent-encoded string
 
@@ -43,17 +60,6 @@ namespace urls {
     @li Accessing the encoded character buffer
     @li Comparison to encoded or plain strings
 
-    However, in order to access the string as a
-    as a contiguous character buffer with
-    with percent-decoding applied, the caller
-    must explicitly opt-in to an operation that
-    is potentially allocating. These operations
-    are:
-
-    @li Conversion to `std::string`
-    @li Appending to an existing character buffer
-    @li Assigning to an existing character buffer
-
     These objects can only be constructed from
     strings that have a valid percent-encoding,
     otherwise construction fails. The caller is
@@ -69,18 +75,21 @@ class decode_view
     std::size_t dn_ = 0;
     bool plus_to_space_ = true;
 
-    friend struct detail::make_decode_view_t;
+#ifndef BOOST_URL_DOCS
+    template<class... Args>
+    friend
+    decode_view
+    detail::make_decode_view(
+        Args&&... args) noexcept;
+#endif
 
-    friend detail::access;
-    friend class url_base;
-
-    // unchecked constructor
+    // unchecked
     BOOST_URL_DECL
     explicit
     decode_view(
         string_view s,
         std::size_t n,
-        decode_opts opt = {}) noexcept;
+        decode_opts opt) noexcept;
 
 public:
     /** The value type
@@ -139,6 +148,9 @@ public:
         @code
         this->empty() == true
         @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
@@ -306,25 +318,6 @@ public:
     reference
     back() const noexcept;
 
-    /** Return the encoded string
-
-        @par Example
-        @code
-        assert( decode_view( "Program%20Files" ).encoded() == "Program%20Files" );
-        @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    string_view
-    encoded() const noexcept
-    {
-        return {p_, n_};
-    }
-
     /** Return the decoding options
     */
     decode_opts
@@ -333,163 +326,6 @@ public:
         decode_opts opt;
         opt.plus_to_space = plus_to_space_;
         return opt;
-    }
-
-    /** Copy a decoded substring to another character string
-
-        This function copies a substring to the
-        character array pointed to by the
-        destination char string, where `rcount`
-        is the smaller of `count` and
-        `size() - pos`.
-
-        @par Exception Safety
-        Strong guarantee.
-        Exceptions thrown on invalid positions.
-
-        @par Preconditions
-        @code
-        pos > size()
-        @endcode
-
-        @throw std::out_of_range `pos > size()`
-
-        @param dest pointer to the destination character string
-        @param count requested substring length
-        @param pos position of the first character
-
-        @return Number of characters copied
-    */
-    BOOST_URL_DECL
-    size_type
-    copy(
-        char* dest,
-        size_type count,
-        size_type pos = 0) const;
-
-    /** Append the range with percent-decoded applied to an existing string
-
-        This function applies percent-decoding to each character
-        in the referenced buffer and appends it to `s` which
-        must satisfy the requirements of <em>MutableString</em>.
-        In particular this expression must be valid:
-        @code
-        s.append( this->begin(), this->end() );
-        @endcode
-
-        Depending on the implementation of `MutableString`
-        this allows the caller to recycle capacity that
-        resides in an already-existing container when
-        applying percent-decoding, as shown in this example:
-
-        @par Example
-        @code
-        void f( decode_view s )
-        {
-            thread_local static std::string tmp;
-
-            // Existing capacity of `tmp` will be reused first.
-            // If this function is called repeatedly, then the
-            // following three lines will almost never perform a
-            // memory allocation:
-
-            tmp = "The decoded value is '";
-            s.append_to( tmp );
-            tmp += "'\n";
-
-            std::cout << tmp;
-        }
-        @endcode
-
-        @par Mandates
-        @code
-        is_mutable_string_v< MutableString >
-        @endcode
-
-        @par Complexity
-        Linear in `this->size()`, plus `s.append( this->begin(), this->end() )`.
-
-        @return A string representing the
-        entire contents of the decoded range.
-    */
-    template <class MutableString>
-    MutableString&
-    append_to(
-        MutableString& s) const;
-
-    /** Assign the range with percent-decoded applied to an existing string
-
-        This function applies percent-decoding to each character
-        in the referenced buffer and assigns it to `s` which
-        must satisfy the requirements of <em>MutableString</em>.
-        In particular this expression must be valid:
-        @code
-        s.assign( this->begin(), this->end() );
-        @endcode
-
-        @par Example
-        @code
-        void f( decode_view s )
-        {
-            thread_local static std::string tmp;
-
-            // Existing capacity of `tmp` will be reused first.
-            // If this function is called repeatedly, then the
-            // following line will almost never perform a
-            // memory allocation:
-
-            s.assign_to( tmp );
-
-            std::cout << tmp << "\n";
-        }
-        @endcode
-
-        @par Mandates
-        @code
-        is_mutable_string_v< MutableString >
-        @endcode
-
-        Depending on the implementation of `MutableString`
-        this allows the caller to recycle capacity that
-        resides in an already-existing container when
-        applying percent-decoding, as shown in this example:
-
-        @par Complexity
-        Linear in `this->size()`, plus `s.assign( this->begin(), this->end() )`.
-
-        @return A string representing the
-        entire contents of the decoded range.
-    */
-    template <class MutableString>
-    MutableString&
-    assign_to(
-        MutableString& s) const;
-
-    /** Return a std::string with percent-decoding applied
-
-        This function applies percent-decoding to the
-        referenced character buffer, returning the result
-        as a `std::string`.
-
-        @par Complexity
-        Linear in `size()`.
-
-        @par Exception Safety
-        Memory allocations may throw.
-    */
-    std::string
-    to_string() const
-    {
-        std::string r;
-        assign_to(r);
-        return r;
-    }
-
-    /// @copydoc to_string()
-    explicit
-    operator std::string() const
-    {
-        return to_string();
     }
 
     //--------------------------------------------
@@ -1164,6 +1000,23 @@ std::ostream&
 operator<<(
     std::ostream& os,
     decode_view const& s);
+
+//------------------------------------------------
+
+#ifndef BOOST_URL_DOCS
+namespace detail {
+template<class... Args>
+decode_view
+make_decode_view(
+    Args&&... args) noexcept
+{
+    return decode_view(
+        std::forward<Args>(args)...);
+}
+} // detail
+#endif
+
+//------------------------------------------------
 
 } // urls
 } // boost

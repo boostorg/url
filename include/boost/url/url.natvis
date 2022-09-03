@@ -39,10 +39,6 @@
     <DisplayString>{s_}</DisplayString>
   </Type>
 
-  <Type Name="boost::urls::grammar::range&lt;*&gt;">
-    <DisplayString>{s_} [{n_}]</DisplayString>
-  </Type>
-
   <Type Name="boost::urls::detail::url_impl">
     <DisplayString>{cs_,[offset_[id_end]]s}</DisplayString>
     <Expand>
@@ -82,6 +78,20 @@
       <Expand>
         <ExpandedItem>u_</ExpandedItem>    
       </Expand>
+  </Type>
+
+  <Type Name="boost::urls::grammar::range&lt;*&gt;">
+    <DisplayString>{s_} [{n_}]</DisplayString>
+  </Type>
+
+  <Type Name="boost::urls::grammar::recycled_ptr&lt;*&gt;">
+    <DisplayString Condition="p_ == nullptr">nullptr</DisplayString>
+    <DisplayString>{p_->t}</DisplayString>
+    <Expand>
+      <Synthetic Name="[refs]" Condition="p_ != nullptr">
+        <DisplayString>{p_->refs}</DisplayString>
+      </Synthetic>
+    </Expand>
   </Type>
 
 </AutoVisualizer>

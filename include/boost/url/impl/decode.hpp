@@ -35,7 +35,7 @@ decode(
         detail::validate_encoding(s, opt, allowed);
     if (rn.has_error())
         return rn.error();
-    return detail::access::construct(s, *rn, opt);
+    return detail::make_decode_view(s, *rn, opt);
 }
 
 } // urls

@@ -35,7 +35,7 @@ using_url_views()
         //[snippet_accessing_1
         url_view u( "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor" );
         assert(u.scheme() == "https");
-        assert(u.authority().string() == "user:pass@example.com:443");
+        assert(u.authority().buffer() == "user:pass@example.com:443");
         assert(u.userinfo() == "user:pass");
         assert(u.user() == "user");
         assert(u.password() == "pass");
@@ -320,7 +320,7 @@ parsing_urls()
         assert( r1.has_value() );
         url dest;
         resolve(r1.value(), r0.value(), dest);
-        assert(dest.string() == "https://www.example.com/path/to/file.txt");
+        assert(dest.buffer() == "https://www.example.com/path/to/file.txt");
         //]
         boost::ignore_unused(dest);
     }
@@ -377,7 +377,7 @@ parsing_components()
         string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
         url_view u( s );
         assert(u.scheme() == "https");
-        assert(u.authority().string() == "user:pass@example.com:443");
+        assert(u.authority().buffer() == "user:pass@example.com:443");
         assert(u.path() == "/path/to/my-file.txt");
         assert(u.query() == "id=42&name=John Doe Jingleheimer-Schmidt");
         assert(u.fragment() == "page anchor");
@@ -449,7 +449,7 @@ parsing_authority()
     {
         //[snippet_parsing_authority_1
         url_view u( "https:///path/to_resource" );
-        assert( u.authority().string() == "");
+        assert( u.authority().buffer() == "");
         assert( u.has_authority() );
         assert( u.path() == "/path/to_resource" );
         //]
@@ -570,7 +570,7 @@ parsing_authority()
         //[snippet_parsing_authority_10a
         url_view u( "https:///path/to_resource" );
         assert( u.has_authority() );
-        assert( u.authority().string().empty() );
+        assert( u.authority().buffer().empty() );
         assert( u.path() == "/path/to_resource" );
         //]
     }
@@ -605,7 +605,7 @@ parsing_authority()
     {
         //[snippet_parsing_authority_10f
         url_view u( "mailto://John.Doe@example.com" );
-        assert( u.authority().string() == "John.Doe@example.com" );
+        assert( u.authority().buffer() == "John.Doe@example.com" );
         assert( u.path().empty() );
         //]
     }
@@ -1072,14 +1072,14 @@ using_modifying()
         v.set_host("my website.com");
         v.set_path("my file.txt");
         v.set_query("id=42&name=John Doe");
-        assert(v.string() == "https://my%20website.com/my%20file.txt?id=42&name=John%20Doe");
+        assert(v.buffer() == "https://my%20website.com/my%20file.txt?id=42&name=John%20Doe");
         //]
 
         //[snippet_modifying_4
         v.set_scheme("http");
-        assert(v.string() == "http://my%20website.com/my%20file.txt?id=42&name=John%20Doe");
+        assert(v.buffer() == "http://my%20website.com/my%20file.txt?id=42&name=John%20Doe");
         v.set_encoded_host("www.my%20example.com");
-        assert(v.string() == "http://my%20example.com/my%20file.txt?id=42&name=John%20Doe");
+        assert(v.buffer() == "http://my%20example.com/my%20file.txt?id=42&name=John%20Doe");
         //]
 
 
@@ -1260,10 +1260,10 @@ modifying_path()
         //[snippet_modifying_path_3
         url u("https://www.boost.org/./a/../b");
         u.normalize();
-        assert(u.string() == "https://www.boost.org/b");
+        assert(u.buffer() == "https://www.boost.org/b");
         //]
         BOOST_TEST(u.is_path_absolute());
-        BOOST_TEST_EQ(u.string(), "https://www.boost.org/b");
+        BOOST_TEST_EQ(u.buffer(), "https://www.boost.org/b");
         BOOST_TEST_EQ(u.encoded_segments().size(), 1u);
     }
     {
@@ -1316,7 +1316,7 @@ modifying_path()
         // "//path" will be considered the authority component
         url_view u3("https://path/to/file.txt");
         assert(u3.has_authority());
-        assert(u3.authority().string() == "path");
+        assert(u3.authority().buffer() == "path");
         assert(u3.is_path_absolute());
         assert(u3.path() == "/to/file.txt");
         //]
@@ -1387,7 +1387,7 @@ modifying_path()
         //[snippet_modifying_path_9_10
         url u1("https:path/to/file.txt" );
         u1.set_encoded_path("//path/to/file.txt");
-        assert(u1.string() == "https:/.//path/to/file.txt");
+        assert(u1.buffer() == "https:/.//path/to/file.txt");
         //]
     }
     {
@@ -1396,7 +1396,7 @@ modifying_path()
         url u = parse_uri_reference("to/file.txt").value();
         segments_ref segs = u.segments();
         segs.insert(segs.begin(), "path");
-        assert(u.string() == "path/to/file.txt");
+        assert(u.buffer() == "path/to/file.txt");
         //]
         BOOST_TEST_NOT(u.has_scheme());
         BOOST_TEST_NOT(u.has_authority());

@@ -42,8 +42,8 @@
           <member><link linkend="url.ref.boost__urls__param_pct_view">param_pct_view</link></member>
           <member><link linkend="url.ref.boost__urls__param_view">param_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_base">params_base</link></member>
-          <member><link linkend="url.ref.boost__urls__params_const_encoded_view">params_const_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_encoded_base">params_encoded_base</link></member>
+          <member><link linkend="url.ref.boost__urls__params_encoded_ref">params_encoded_ref</link></member>
           <member><link linkend="url.ref.boost__urls__params_encoded_view">params_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_ref">params_ref</link></member>
           <member><link linkend="url.ref.boost__urls__params_view">params_view</link></member>
@@ -203,7 +203,6 @@
         <bridgehead renderas="sect3">Type Traits</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__grammar__is_charset">is_charset</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__is_mutable_string">is_mutable_string</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__is_rule">is_rule</link></member>
         </simplelist>
 
@@ -220,17 +219,18 @@
           <member><link linkend="url.ref.boost__urls__grammar__range">range</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__recycled">recycled</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__recycled_ptr">recycled_ptr</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__string_view_base">string_view_base</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__unsigned_rule">unsigned_rule</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">StringToken</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__grammar__string_token__append_to">append_to</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__string_token__arg">arg</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__string_token__assign_to">assign_to</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__string_token__is_token">is_token</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__string_token__preserve_size">preserve_size</link></member>
-          <member><link linkend="url.ref.boost__urls__grammar__string_token__return_string">return_string</link></member>
+          <member><link linkend="url.ref.boost__urls__string_token__append_to">append_to</link></member>
+          <member><link linkend="url.ref.boost__urls__string_token__arg">arg</link></member>
+          <member><link linkend="url.ref.boost__urls__string_token__assign_to">assign_to</link></member>
+          <member><link linkend="url.ref.boost__urls__string_token__is_token">is_token</link></member>
+          <member><link linkend="url.ref.boost__urls__string_token__preserve_size">preserve_size</link></member>
+          <member><link linkend="url.ref.boost__urls__string_token__return_string">return_string</link></member>
         </simplelist>
 
       </entry>
@@ -253,8 +253,8 @@
         <bridgehead renderas="sect3">Concepts</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.concepts.charset"><emphasis>CharSet</emphasis></link></member>
-          <member><link linkend="url.concepts.mutablestring"><emphasis>MutableString</emphasis></link></member>
           <member><link linkend="url.concepts.rule"><emphasis>Rule</emphasis></link></member>
+          <member><link linkend="url.concepts.stringtoken"><emphasis>StringToken</emphasis></link></member>
         </simplelist>
 
       </entry>

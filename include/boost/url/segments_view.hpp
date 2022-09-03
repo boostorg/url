@@ -36,7 +36,7 @@ namespace urls {
 
     segments_view ps = u.segments();
 
-    assert( ps.buffer().data() == u.string().data() );
+    assert( ps.buffer().data() == u.buffer().data() );
     @endcode
 
     The strings produced when iterators are

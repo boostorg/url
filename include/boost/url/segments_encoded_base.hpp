@@ -86,7 +86,7 @@ public:
 
         @par Example
         @code
-        segments_encoded_view::value_type ps( *url_view( "/path/to/file.txt" ).encoded_segments().back() );
+        segments_encoded_base::value_type ps( url_view( "/path/to/file.txt" ).encoded_segments().back() );
         @endcode
     */
     using value_type = std::string;

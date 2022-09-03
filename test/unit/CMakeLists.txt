@@ -78,6 +78,7 @@ set(BOOST_URL_TESTS_FILES
     grammar/range_rule.cpp
     grammar/recycled.cpp
     grammar/string_token.cpp
+    grammar/string_view_base.cpp
     grammar/token_rule.cpp
     grammar/tuple_rule.cpp
     grammar/type_traits.cpp

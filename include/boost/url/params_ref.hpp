@@ -137,7 +137,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `other.string().size()`.
+        Linear in `other.buffer().size()`.
 
         @par Exception Safety
         Strong guarantee.

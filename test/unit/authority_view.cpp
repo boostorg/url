@@ -63,8 +63,8 @@ public:
         {
             string_view s = "xyz";
             authority_view a = parse_authority(s).value();
-            BOOST_TEST_EQ(a.string(), s);
-            BOOST_TEST_EQ(a.string().data(), s.data());
+            BOOST_TEST_EQ(a.buffer(), s);
+            BOOST_TEST_EQ(a.buffer().data(), s.data());
         }
     }
 

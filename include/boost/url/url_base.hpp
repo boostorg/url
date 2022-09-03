@@ -106,6 +106,12 @@ public:
     //--------------------------------------------
 
     /** Return the encoded URL as a null-terminated string
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
     char const*
     c_str() const noexcept
@@ -117,6 +123,12 @@ public:
 
         This does not include the null terminator,
         which is always present.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
     std::size_t
     capacity() const noexcept
@@ -178,7 +190,7 @@ public:
 
         @par Example
         @code
-        assert( url("http://www.example.com/index.htm" ).remove_scheme().string() == "//www.example.com/index.htm" );
+        assert( url("http://www.example.com/index.htm" ).remove_scheme().buffer() == "//www.example.com/index.htm" );
         @endcode
 
         @par Postconditions
@@ -262,7 +274,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://example.com/echo.cgi" ).set_scheme( scheme::wss ).string() == "wss://example.com/echo.cgi" );
+        assert( url( "http://example.com/echo.cgi" ).set_scheme( scheme::wss ).buffer() == "wss://example.com/echo.cgi" );
         @endcode
 
         @par Complexity
@@ -302,7 +314,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://example.com/echo.cgi" ).remove_authority().string() == "http:/echo.cgi" );
+        assert( url( "http://example.com/echo.cgi" ).remove_authority().buffer() == "http:/echo.cgi" );
         @endcode
 
         @par Postconditions
@@ -856,7 +868,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).buffer() == "http://127.0.0.1" );
         @endcode
 
         @par Postconditions
@@ -935,7 +947,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).buffer() == "http://127.0.0.1" );
         @endcode
 
         @par Postconditions
@@ -1013,7 +1025,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://www.example.com" ).set_host_address( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        assert( url( "http://www.example.com" ).set_host_address( "127.0.0.1" ).buffer() == "http://127.0.0.1" );
         @endcode
 
         @par Postconditions
@@ -1112,7 +1124,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).string() == "http://127.0.0.1" );
+        assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).buffer() == "http://127.0.0.1" );
         @endcode
 
         @par Postconditions
@@ -1193,7 +1205,7 @@ public:
 
         @par Example
         @code
-        assert( url("http://www.example.com").set_host_address( ipv4_address( "127.0.0.1" ) ).string() == "http://127.0.0.1" );
+        assert( url("http://www.example.com").set_host_address( ipv4_address( "127.0.0.1" ) ).buffer() == "http://127.0.0.1" );
         @endcode
 
         @par Complexity
@@ -1313,7 +1325,7 @@ public:
 
         @par Example
         @code
-        assert( url().set_host_ipvfuture( "v42.bis" ).string() == "//[v42.bis]" );
+        assert( url().set_host_ipvfuture( "v42.bis" ).buffer() == "//[v42.bis]" );
         @endcode
 
         @par Complexity
@@ -1590,7 +1602,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://www.example.com/index.htm" ).remove_origin().string() == "/index.htm" );
+        assert( url( "http://www.example.com/index.htm" ).remove_origin().buffer() == "/index.htm" );
         @endcode
 
         @par Postconditions
@@ -1629,7 +1641,7 @@ public:
         @code
         url u( "path/to/file.txt" );
         assert( u.set_path_absolute( true ) );
-        assert( u.string() == "/path/to/file.txt" );
+        assert( u.buffer() == "/path/to/file.txt" );
         @endcode
 
         @par Postconditions
@@ -1921,7 +1933,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://www.example.com?id=42" ).remove_query().string() == "http://www.example.com" );
+        assert( url( "http://www.example.com?id=42" ).remove_query().buffer() == "http://www.example.com" );
         @endcode
 
         @par Postconditions
@@ -2172,7 +2184,7 @@ public:
 
         @par Example
         @code
-        assert( url( "?first=john&last=doe#anchor" ).remove_fragment().string() == "?first=john&last=doe" );
+        assert( url( "?first=john&last=doe#anchor" ).remove_fragment().buffer() == "?first=john&last=doe" );
         @endcode
 
         @par Postconditions
@@ -2487,19 +2499,19 @@ public:
         @code
         url base1( "/one/two/three" );
         base1.resolve("four");
-        assert( base1.string() == "/one/two/four" );
+        assert( base1.buffer() == "/one/two/four" );
 
         url base2( "http://example.com/" )
         base2.resolve("/one");
-        assert( base2.string() == "http://example.com/one" );
+        assert( base2.buffer() == "http://example.com/one" );
 
         url base3( "http://example.com/one" );
         base3.resolve("/two");
-        assert( base3.string() == "http://example.com/two" );
+        assert( base3.buffer() == "http://example.com/two" );
 
         url base4( "http://a/b/c/d;p?q" );
         base4.resolve("g#s");
-        assert( base4.string() == "http://a/b/c/g#s" );
+        assert( base4.buffer() == "http://a/b/c/g#s" );
         @endcode
 
         @par BNF

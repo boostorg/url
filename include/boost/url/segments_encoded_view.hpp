@@ -40,7 +40,7 @@ namespace urls {
 
     segments_encoded_view ps = u.encoded_segments();
 
-    assert( ps.buffer().data() == u.string().data() );
+    assert( ps.buffer().data() == u.buffer().data() );
     @endcode
 
     Strings produced when elements are returned

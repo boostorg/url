@@ -97,7 +97,7 @@ userinfo() const
 {
     decode_opts opt;
     opt.plus_to_space = false;
-    return encoded_userinfo().decode_to_string(opt);
+    return encoded_userinfo().decode(opt);
 }
 
 pct_string_view
@@ -120,7 +120,7 @@ user() const
 {
     decode_opts opt;
     opt.plus_to_space = false;
-    return encoded_user().decode_to_string(opt);
+    return encoded_user().decode(opt);
 }
 
 pct_string_view
@@ -156,7 +156,7 @@ password() const
 {
     decode_opts opt;
     opt.plus_to_space = false;
-    return encoded_password().decode_to_string(opt);
+    return encoded_password().decode(opt);
 }
 
 pct_string_view
@@ -191,9 +191,9 @@ encoded_password() const noexcept
 /*
 host_type       host_type()                 // ipv4, ipv6, ipvfuture, name
 
-std::string     host()                      // return encoded_host().decode_to_string()
+std::string     host()                      // return encoded_host().decode()
 pct_string_view encoded_host()              // return host part, as-is
-std::string     host_address()              // return encoded_host_address().decode_to_string()
+std::string     host_address()              // return encoded_host_address().decode()
 pct_string_view encoded_host_address()      // ipv4, ipv6, ipvfut, or encoded name, no brackets
 
 ipv4_address    host_ipv4_address()         // return ipv4_address or {}
@@ -209,7 +209,7 @@ host() const
 {
     decode_opts opt;
     opt.plus_to_space = false;
-    return encoded_host().decode_to_string(opt);
+    return encoded_host().decode(opt);
 }
 
 pct_string_view
@@ -227,7 +227,7 @@ host_address() const
 {
     decode_opts opt;
     opt.plus_to_space = false;
-    return encoded_host_address().decode_to_string(opt);
+    return encoded_host_address().decode(opt);
 }
 
 pct_string_view
@@ -313,7 +313,7 @@ host_name() const
 {
     decode_opts opt;
     opt.plus_to_space = false;
-    return encoded_host_name().decode_to_string(opt);
+    return encoded_host_name().decode(opt);
 }
 
 pct_string_view

@@ -15,6 +15,8 @@
 #include <boost/url/decode_view.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/string_token.hpp>
+#include <boost/url/grammar/string_view_base.hpp>
 #include <cstddef>
 #include <iterator>
 #include <string>
@@ -52,9 +54,20 @@ make_pct_string_view(
     plus a few odds and ends to make it nice.
 */
 
+/** A reference to a valid percent-encoded string
+
+    Objects of this type behave like a
+    @ref string_view and have the same interface,
+    but offer an additional invariant: they can
+    only be constructed from strings containing
+    valid percent-escapes.
+    Attempting construction from a string
+    containing invalid or malformed percent
+    escapes results in an exception.
+*/
 class pct_string_view final
+    : public grammar::string_view_base
 {
-    string_view s_;
     std::size_t dn_ = 0;
 
 #ifndef BOOST_URL_DOCS
@@ -74,7 +87,8 @@ class pct_string_view final
         char const* p,
         std::size_t n,
         std::size_t dn) noexcept
-        : s_(p, n)
+        : string_view_base(
+            string_view(p, n))
         , dn_(dn)
     {
     }
@@ -83,42 +97,74 @@ class pct_string_view final
     pct_string_view(
         string_view s,
         std::size_t dn) noexcept
-        : s_(s)
+        : string_view_base(s)
         , dn_(dn)
     {
     }
 
+    BOOST_URL_DECL
+    void
+    decode_impl(
+        string_token::arg& dest,
+        decode_opts const& opt) const;
+
 public:
-    // types
-    typedef std::char_traits<char> traits_type;
-    typedef char value_type;
-    typedef char* pointer;
-    typedef char const* const_pointer;
-    typedef char& reference;
-    typedef char const& const_reference;
-    typedef char const* const_iterator;
-    typedef const_iterator iterator;
-    typedef std::reverse_iterator<
-        const_iterator> const_reverse_iterator;
-    typedef const_reverse_iterator reverse_iterator;
-    typedef std::size_t size_type;
-    typedef std::ptrdiff_t difference_type;
-
-    static constexpr std::size_t npos = string_view::npos;
-
-    //--------------------------------------------
-
     /** Constructor
+
+        Default constructed string are empty.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
     constexpr pct_string_view() = default;
 
     /** Constructor
+
+        The copy will reference the same
+        underlying character buffer.
+        Ownership is not transferred.
+
+        @par Postconditions
+        @code
+        this->data() == other.data()
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par other The string to copy.
     */
     constexpr
     pct_string_view(
-        pct_string_view const&) = default;
+        pct_string_view const& other) = default;
 
     /** Constructor
+
+        The newly constructed string will
+        reference the specified character
+        buffer. Ownership is not transferred.
+
+        @par Postconditions
+        @code
+        this->data() == s
+        @endcode
+
+        @par Complexity
+        Linear in `std::strlen(s)`.
+
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The string contains an invalid percent encoding.
+
+        @param s The string to construct from.
     */
     pct_string_view(
         char const* s)
@@ -133,6 +179,26 @@ public:
         std::nullptr_t) = delete;
 
     /** Constructor
+
+        The newly constructed string will
+        reference the specified character
+        buffer. Ownership is not transferred.
+
+        @par Postconditions
+        @code
+        this->data() == s && this->size() == len
+        @endcode
+
+        @par Complexity
+        Linear in `len`.
+
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+         The string contains an invalid percent encoding.
+
+        @param s, len The string to construct from.
     */
     pct_string_view(
         char const* s,
@@ -143,6 +209,26 @@ public:
     }
 
     /** Constructor
+
+        The newly constructed string will
+        reference the specified character
+        buffer. Ownership is not transferred.
+
+        @par Postconditions
+        @code
+        this->data() == first && this->data() + this->size() == last
+        @endcode
+
+        @par Complexity
+        Linear in `len`.
+
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The string contains an invalid percent encoding.
+
+        @param first, last The string to construct from.
     */
 #ifdef BOOST_URL_DOCS
     pct_string_view(
@@ -165,8 +251,25 @@ public:
 
     /** Constructor
 
+        The newly constructed string will
+        reference the specified character
+        buffer. Ownership is not transferred.
+
+        @par Postconditions
+        @code
+        this->data() == s.data() && this->size() == s.size()
+        @endcode
+
+        @par Complexity
+        Linear in `s.size()`.
+
         @par Exception Safety
         Exceptions thrown on invalid input.
+
+        @throw system_error
+        The string contains an invalid percent encoding.
+
+        @param s The string to construct from.
     */
     BOOST_URL_DECL
     pct_string_view(
@@ -174,13 +277,28 @@ public:
 
     /** Assignment
 
+        The copy will reference the same
+        underlying character buffer.
+        Ownership is not transferred.
+
+        @par Postconditions
+        @code
+        this->data() == other.data()
+        @endcode
+
         @par Complexity
         Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par other The string to copy.
     */
     pct_string_view& operator=(
-        pct_string_view const&) = default;
+        pct_string_view const& other) = default;
 
     friend
+    BOOST_URL_DECL
     result<pct_string_view>
     make_pct_string_view(
         string_view s) noexcept;
@@ -188,6 +306,17 @@ public:
     //--------------------------------------------
 
     /** Return the decoded size
+
+        This function returns the number of
+        characters in the resulting string if
+        percent escapes were converted into
+        ordinary characters.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
     std::size_t
     decoded_size() const noexcept
@@ -195,7 +324,21 @@ public:
         return dn_;
     }
 
-    /** Return a decoding view
+    /** Return the string as a range of decoded characters
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @param opt The options to use for decoding
+        percent escapes. If this parameter is
+        omitted, default settings are used.
+
+        @see
+            @ref decode_opts,
+            @ref decode_view.
     */
     decode_view
     decoded(
@@ -205,7 +348,16 @@ public:
             s_, dn_, opt);
     }
 
-    /** Return a decoding view
+    /** Return the string as a range of decoded characters
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @see
+            @ref decode_view.
     */
     decode_view
     operator*() const noexcept
@@ -214,44 +366,60 @@ public:
     }
 
     /** Return the string with percent-decoding
-    */
-    BOOST_URL_DECL
-    std::string
-    decode_to_string(
-        decode_opts const& opt = {}) const;
 
-    //--------------------------------------------
+        This function converts percent escapes
+        in the string into ordinary characters
+        and returns the result.
+        When called with no arguments, the
+        return type is `std::string`.
+        Otherwise, the return type and style
+        of output is determined by which string
+        token is passed.
 
-    /** Conversion
+        @par Example
+        @code
+        assert( pct_string_view( "Program%20Files" ).decode() == "Program Files" );
+        @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
+        String tokens may throw exceptions.
+
+        @param opt The options for encoding. If
+        this parameter is omitted, the default
+        options will be used.
+
+        @param token An optional string token.
+        If this parameter is omitted, then
+        a new `std::string` is returned.
+        Otherwise, the function return type
+        will be the result type of the token.
+
+        @see
+            @ref decode_opts,
+            @ref string_token::return_string.
     */
-    operator
-    string_view() const noexcept
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    decode(
+        decode_opts opt = {},
+        BOOST_URL_STRTOK_ARG(token)) const
     {
-        return s_;
-    }
+/*      If you get a compile error here, it
+        means that the token you passed does
+        not meet the requirements stated
+        in the documentation.
+*/
+        static_assert(
+            string_token::is_token<
+                StringToken>::value,
+            "Type requirements not met");
 
-    /** Conversion
-    */
-#if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
-    operator
-    std::string_view() const noexcept
-    {
-        return std::string_view(s_);
-    }
-#endif
-
-    /** Conversion
-
-        Conversion to std::string is explicit
-        because assigning to string using an
-        implicit constructor will not preserve
-        capacity.
-    */
-    explicit
-    operator
-    std::string() const noexcept
-    {
-        return std::string(s_);
+        decode_impl(token, opt);
+        return token.result();
     }
 
 #ifndef BOOST_URL_DOCS
@@ -265,471 +433,16 @@ public:
 
     //--------------------------------------------
 
-    // iterator support
-
-    BOOST_CONSTEXPR const_iterator begin() const noexcept
-    {
-        return s_.begin();
-    }
-
-    BOOST_CONSTEXPR const_iterator end() const noexcept
-    {
-        return s_.end();
-    }
-
-    BOOST_CONSTEXPR const_iterator cbegin() const noexcept
-    {
-        return s_.cbegin();
-    }
-
-    BOOST_CONSTEXPR const_iterator cend() const noexcept
-    {
-        return s_.cend();
-    }
-
-#ifdef __cpp_lib_array_constexpr
-    constexpr
-#endif
-    const_reverse_iterator rbegin() const noexcept
-    {
-        return s_.rbegin();
-    }
-
-#ifdef __cpp_lib_array_constexpr
-    constexpr
-#endif
-    const_reverse_iterator rend() const noexcept
-    {
-        return s_.rend();
-    }
-
-#ifdef __cpp_lib_array_constexpr
-    constexpr
-#endif
-    const_reverse_iterator crbegin() const noexcept
-    {
-        return s_.crbegin();
-    }
-
-#ifdef __cpp_lib_array_constexpr
-    constexpr
-#endif
-    const_reverse_iterator crend() const noexcept
-    {
-        return s_.crend();
-    }
-
-    // capacity
-
-    BOOST_CONSTEXPR size_type size() const noexcept
-    {
-        return s_.size();
-    }
-
-    BOOST_CONSTEXPR size_type length() const noexcept
-    {
-        return s_.length();
-    }
-
-    BOOST_CONSTEXPR size_type max_size() const noexcept
-    {
-        return s_.max_size();
-    }
-
-    BOOST_CONSTEXPR bool empty() const noexcept
-    {
-        return s_.empty();
-    }
-   
-    // element access
-
-    BOOST_CXX14_CONSTEXPR const_reference
-        operator[]( size_type pos ) const noexcept
-    {
-        return s_[pos];
-    }
-
-    BOOST_CXX14_CONSTEXPR const_reference
-        at( size_type pos ) const
-    {
-        return s_.at(pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR const_reference
-        front() const noexcept
-    {
-        return s_.front();
-    }
-
-    BOOST_CXX14_CONSTEXPR const_reference
-        back() const noexcept
-    {
-        return s_.back();
-    }
-
-    BOOST_CONSTEXPR const_pointer
-        data() const noexcept
-    {
-        return s_.data();
-    }
-
-    // string operations
-
-    BOOST_CXX14_CONSTEXPR size_type copy(
-        char* s, size_type n, size_type pos = 0 ) const
-    {
-        return s_.copy(s, n, pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR string_view substr(
-        size_type pos = 0, size_type n = string_view::npos ) const
-    {
-        return s_.substr(pos, n);
-    }
-
-    // comparison
-
-    BOOST_CXX14_CONSTEXPR int
-        compare( string_view str ) const noexcept
-    {
-        return s_.compare(str);
-    }
-
-    BOOST_CONSTEXPR int compare(
-        size_type pos1, size_type n1, string_view str ) const
-    {
-        return s_.compare(pos1, n1, str);
-    }
-
-    BOOST_CONSTEXPR int compare(
-        size_type pos1, size_type n1, string_view str,
-        size_type pos2, size_type n2 ) const
-    {
-        return s_.compare(pos1, n1, str, pos2, n2);
-    }
-
-    BOOST_CONSTEXPR int compare(
-        char const* s ) const noexcept
-    {
-        return s_.compare(s);
-    }
-
-    BOOST_CONSTEXPR int compare(
-        size_type pos1, size_type n1, char const* s ) const
-    {
-        return s_.compare(pos1, n1, s);
-    }
-
-    BOOST_CONSTEXPR int compare(
-        size_type pos1, size_type n1,
-        char const* s, size_type n2 ) const
-    {
-        return s_.compare(pos1, n1, s, n2);
-    }
-
-    // starts_with
-
-    BOOST_CONSTEXPR bool starts_with(
-        string_view x ) const noexcept
-    {
-        return s_.starts_with(x);
-    }
-
-    BOOST_CONSTEXPR bool starts_with(
-        char x ) const noexcept
-    {
-        return s_.starts_with(x);
-    }
-
-    BOOST_CONSTEXPR bool starts_with(
-        char const* x ) const noexcept
-    {
-        return s_.starts_with(x);
-    }
-
-    // ends_with
-
-    BOOST_CONSTEXPR bool ends_with(
-        string_view x ) const noexcept
-    {
-        return s_.ends_with(x);
-    }
-
-    BOOST_CONSTEXPR bool ends_with(
-        char x ) const noexcept
-    {
-        return s_.ends_with(x);
-    }
-
-    BOOST_CONSTEXPR bool ends_with(
-        char const* x ) const noexcept
-    {
-        return s_.ends_with(x);
-    }
-
-    // find
-
-    BOOST_CONSTEXPR size_type find(
-        string_view str, size_type pos = 0 ) const noexcept
-    {
-        return s_.find(str, pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find(
-        char c, size_type pos = 0 ) const noexcept
-    {
-        return s_.find(c, pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find(
-        char const* s, size_type pos, size_type n ) const noexcept
-    {
-        return s_.find(s, pos, n);
-    }
-
-    BOOST_CONSTEXPR size_type find(
-        char const* s, size_type pos = 0 ) const noexcept
-    {
-        return s_.find(s, pos);
-    }
-
-    // rfind
-
-    BOOST_CONSTEXPR size_type rfind(
-        string_view str, size_type pos = string_view::npos ) const noexcept
-    {
-        return s_.rfind(str, pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type rfind(
-        char c, size_type pos = string_view::npos ) const noexcept
-    {
-        return s_.rfind(c, pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type rfind(
-        char const* s, size_type pos, size_type n ) const noexcept
-    {
-        return s_.rfind(s, pos, n);
-    }
-
-    BOOST_CONSTEXPR size_type rfind(
-        char const* s, size_type pos = string_view::npos ) const noexcept
-    {
-        return s_.rfind(s, pos);
-    }
-
-    // find_first_of
-
-    BOOST_CXX14_CONSTEXPR size_type find_first_of(
-        string_view str, size_type pos = 0 ) const noexcept
-    {
-        return s_.find_first_of(str, pos);
-    }
-
-    BOOST_CONSTEXPR size_type find_first_of(
-        char c, size_type pos = 0 ) const noexcept
-    {
-        return s_.find_first_of(c, pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find_first_of(
-        char const* s, size_type pos, size_type n ) const noexcept
-    {
-        return s_.find_first_of(s, pos, n);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find_first_of(
-        char const* s, size_type pos = 0 ) const noexcept
-    {
-        return s_.find_first_of(s, pos);
-    }
-
-    // find_last_of
-
-    BOOST_CXX14_CONSTEXPR size_type find_last_of(
-        string_view str, size_type pos = string_view::npos ) const noexcept
-    {
-        return s_.find_last_of(str, pos);
-    }
-
-    BOOST_CONSTEXPR size_type find_last_of(
-        char c, size_type pos = string_view::npos ) const noexcept
-    {
-        return s_.find_last_of(c, pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find_last_of(
-        char const* s, size_type pos, size_type n ) const noexcept
-    {
-        return s_.find_last_of(s, pos, n);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find_last_of(
-        char const* s, size_type pos = string_view::npos ) const noexcept
-    {
-        return s_.find_last_of(s, pos);
-    }
-
-    // find_first_not_of
-
-    BOOST_CXX14_CONSTEXPR size_type find_first_not_of(
-        string_view str, size_type pos = 0 ) const noexcept
-    {
-        return s_.find_first_not_of(str, pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find_first_not_of(
-        char c, size_type pos = 0 ) const noexcept
-    {
-        return s_.find_first_not_of(c, pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find_first_not_of(
-        char const* s, size_type pos, size_type n ) const noexcept
-    {
-        return s_.find_first_not_of(s, pos, n);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find_first_not_of(
-        char const* s, size_type pos = 0 ) const noexcept
-    {
-        return s_.find_first_not_of(s, pos);
-    }
-
-    // find_last_not_of
-
-    BOOST_CXX14_CONSTEXPR size_type find_last_not_of(
-        string_view str, size_type pos = string_view::npos ) const noexcept
-    {
-        return s_.find_last_not_of(str, pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find_last_not_of(
-        char c, size_type pos = string_view::npos ) const noexcept
-    {
-        return s_.find_last_not_of(c, pos);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find_last_not_of(
-        char const* s, size_type pos, size_type n ) const noexcept
-    {
-        return s_.find_last_not_of(s, pos, n);
-    }
-
-    BOOST_CXX14_CONSTEXPR size_type find_last_not_of(
-        char const* s, size_type pos = string_view::npos ) const noexcept
-    {
-        return s_.find_last_not_of(s, pos);
-    }
-
-    // contains
-
-    BOOST_CONSTEXPR bool contains( string_view sv ) const noexcept
-    {
-        return s_.contains(sv);
-    }
-
-    BOOST_CXX14_CONSTEXPR bool contains( char c ) const noexcept
-    {
-        return s_.contains(c);
-    }
-
-    BOOST_CONSTEXPR bool contains( char const* s ) const noexcept
-    {
-        return s_.contains(s);
-    }
-
-    // relational operators
-
-    template<class S0, class S1>
-    using is_match = std::integral_constant<bool,
-        std::is_convertible<S0, string_view>::value &&
-        std::is_convertible<S1, string_view>::value && (
-            std::is_same<typename std::decay<S0>::type,
-                pct_string_view>::value ||
-            std::is_same<typename std::decay<S1>::type,
-                pct_string_view>::value)>;
-
-    template<class S0, class S1>
-    BOOST_CXX14_CONSTEXPR friend auto operator==(
-        S0 const& s0, S1 const& s1) noexcept ->
-        typename std::enable_if<
-            is_match<S0, S1>::value, bool>::type
-    {
-        return string_view(s0) == string_view(s1);
-    }
-
-    template<class S0, class S1>
-    BOOST_CXX14_CONSTEXPR friend auto operator!=(
-        S0 const& s0, S1 const& s1) noexcept ->
-        typename std::enable_if<
-            is_match<S0, S1>::value, bool>::type
-    {
-        return string_view(s0) != string_view(s1);
-    }
-
-    template<class S0, class S1>
-    BOOST_CXX14_CONSTEXPR friend auto operator<(
-        S0 const& s0, S1 const& s1) noexcept ->
-        typename std::enable_if<
-            is_match<S0, S1>::value, bool>::type
-    {
-        return string_view(s0) < string_view(s1);
-    }
-
-    template<class S0, class S1>
-    BOOST_CXX14_CONSTEXPR friend auto operator<=(
-        S0 const& s0, S1 const& s1) noexcept ->
-        typename std::enable_if<
-            is_match<S0, S1>::value, bool>::type
-    {
-        return string_view(s0) <= string_view(s1);
-    }
-
-    template<class S0, class S1>
-    BOOST_CXX14_CONSTEXPR friend auto operator>(
-        S0 const& s0, S1 const& s1) noexcept ->
-        typename std::enable_if<
-            is_match<S0, S1>::value, bool>::type
-    {
-        return string_view(s0) > string_view(s1);
-    }
-
-    template<class S0, class S1>
-    BOOST_CXX14_CONSTEXPR friend auto operator>=(
-        S0 const& s0, S1 const& s1) noexcept ->
-        typename std::enable_if<
-            is_match<S0, S1>::value, bool>::type
-    {
-        return string_view(s0) >= string_view(s1);
-    }
-
-    //--------------------------------------------
-
-    inline friend std::size_t hash_value(
-        pct_string_view const& s) noexcept
-    {
-        return hash_value(s.s_);
-    }
-
     // VFALCO No idea why this fails in msvc
+    /** Swap
+    */
     /*BOOST_CXX14_CONSTEXPR*/ void swap(
         pct_string_view& s ) noexcept
     {
-        std::swap(s_, s.s_);
+        string_view_base::swap(s);
         std::swap(dn_, s.dn_);
     }
 };
-
-inline
-std::ostream&
-operator<<(
-    std::ostream& os,
-    pct_string_view const& s)
-{
-    return os << string_view(s);
-}
 
 //------------------------------------------------
 
@@ -746,7 +459,6 @@ ref(pct_string_view& s) noexcept
 }
 
 template<class... Args>
-inline
 pct_string_view
 make_pct_string_view(
     Args&&... args) noexcept
@@ -761,7 +473,24 @@ make_pct_string_view(
 //------------------------------------------------
 
 /** Return a validated percent-encoded string
+
+    This function attempts to construct a
+    percent-encoded string from a character
+    buffer. Upon success, the valid string
+    is returned. Otherwise the result contains
+    an error code. The new string will reference
+    the existing character buffer. Ownership
+    is not transferred.
+
+    @par Complexity
+    Linear in `s.size()`.
+
+    @par Exception Safety
+    Throws nothing.
+
+    @par s The string to construct from.
 */
+BOOST_URL_DECL
 result<pct_string_view>
 make_pct_string_view(
     string_view s) noexcept;

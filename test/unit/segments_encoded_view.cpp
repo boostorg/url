@@ -219,7 +219,7 @@ struct segments_const_encoded_view_test
 
     segments_encoded_view ps = u.encoded_segments();
 
-    assert( ps.buffer().data() == u.string().data() );
+    assert( ps.buffer().data() == u.buffer().data() );
 
     ignore_unused(ps);
         }

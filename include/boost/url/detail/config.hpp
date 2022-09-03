@@ -74,13 +74,13 @@
 #endif
 
 #ifndef BOOST_URL_STRTOK_TPARAM
-#define BOOST_URL_STRTOK_TPARAM(T) class T = string_token::return_string
+#define BOOST_URL_STRTOK_TPARAM class StringToken = string_token::return_string
 #endif
 #ifndef BOOST_URL_STRTOK_RETURN
-#define BOOST_URL_STRTOK_RETURN(T) typename T::result_type
+#define BOOST_URL_STRTOK_RETURN typename StringToken::result_type
 #endif
 #ifndef BOOST_URL_STRTOK_ARG
-#define BOOST_URL_STRTOK_ARG(T, name) T&& name = {}
+#define BOOST_URL_STRTOK_ARG(name) StringToken&& token = {}
 #endif
 
 #if BOOST_WORKAROUND( BOOST_GCC_VERSION, < 80000 ) || \

@@ -201,15 +201,6 @@ has_userinfo() const noexcept
     return true;
 }
 
-std::string
-url_view_base::
-userinfo() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_userinfo().decode_to_string(opt);
-}
-
 pct_string_view
 url_view_base::
 encoded_userinfo() const noexcept
@@ -227,15 +218,6 @@ encoded_userinfo() const noexcept
         s.ends_with('@'));
     s.remove_suffix(1);
     return detail::make_pct_string_view(s);
-}
-
-std::string
-url_view_base::
-user() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_user().decode_to_string(opt);
 }
 
 pct_string_view
@@ -271,15 +253,6 @@ has_password() const noexcept
     return false;
 }
 
-std::string
-url_view_base::
-password() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_password().decode_to_string(opt);
-}
-
 pct_string_view
 url_view_base::
 encoded_password() const noexcept
@@ -312,9 +285,9 @@ encoded_password() const noexcept
 /*
 host_type       host_type()                 // ipv4, ipv6, ipvfuture, name
 
-std::string     host()                      // return encoded_host().decode_to_string()
+std::string     host()                      // return encoded_host().decode()
 pct_string_view encoded_host()              // return host part, as-is
-std::string     host_address()              // return encoded_host_address().decode_to_string()
+std::string     host_address()              // return encoded_host_address().decode()
 pct_string_view encoded_host_address()      // ipv4, ipv6, ipvfut, or encoded name, no brackets
 
 ipv4_address    host_ipv4_address()         // return ipv4_address or {}
@@ -324,15 +297,6 @@ std::string     host_name()                 // return decoded name or ""
 pct_string_view encoded_host_name()         // return encoded host name or ""
 */
 
-std::string
-url_view_base::
-host() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_host().decode_to_string(opt);
-}
-
 pct_string_view
 url_view_base::
 encoded_host() const noexcept
@@ -340,15 +304,6 @@ encoded_host() const noexcept
     return detail::make_pct_string_view(
         u_.get(id_host),
         u_.decoded_[id_host]);
-}
-
-std::string
-url_view_base::
-host_address() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_host_address().decode_to_string(opt);
 }
 
 pct_string_view
@@ -428,15 +383,6 @@ host_ipvfuture() const noexcept
     return s;
 }
 
-std::string
-url_view_base::
-host_name() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_host_name().decode_to_string(opt);
-}
-
 pct_string_view
 url_view_base::
 encoded_host_name() const noexcept
@@ -509,15 +455,6 @@ encoded_origin() const noexcept
 //
 //----------------------------------------------------------
 
-std::string
-url_view_base::
-path() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_path().decode_to_string(opt);
-}
-
 pct_string_view
 url_view_base::
 encoded_path() const noexcept
@@ -571,15 +508,6 @@ encoded_query() const noexcept
     BOOST_ASSERT(
         s.starts_with('?'));
     return s.substr(1);
-}
-
-std::string
-url_view_base::
-query() const
-{
-    decode_opts opt;
-    opt.plus_to_space = true;
-    return encoded_query().decode_to_string(opt);
 }
 
 params_encoded_view
@@ -646,15 +574,6 @@ encoded_fragment() const noexcept
     }
     return detail::make_pct_string_view(
         s, u_.decoded_[id_frag]);
-}
-
-std::string
-url_view_base::
-fragment() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_fragment().decode_to_string(opt);
 }
 
 //------------------------------------------------

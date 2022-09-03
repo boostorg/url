@@ -48,17 +48,17 @@ struct url_view_base_test
             BOOST_TEST_NO_THROW(u = url_view(su));
             BOOST_TEST_EQ(u.host_type(), host_type::ipv4);
             BOOST_TEST_EQ(u.host(),
-                u.encoded_host().decode_to_string());
+                u.encoded_host().decode());
             BOOST_TEST_EQ(u.encoded_host(), s);
             BOOST_TEST_EQ(u.host_address(),
-                u.encoded_host_address().decode_to_string());
+                u.encoded_host_address().decode());
             BOOST_TEST_EQ(u.encoded_host_address(), s);
             BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address(s));
             BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
             BOOST_TEST_EQ(u.host_ipvfuture(), "");
             BOOST_TEST_EQ(u.host_name(), "");
             BOOST_TEST_EQ(u.encoded_host_name(), "");
-            BOOST_TEST_EQ(u.authority().string(), sa);
+            BOOST_TEST_EQ(u.authority().buffer(), sa);
         };
 
         auto const ipv6 = [](
@@ -70,17 +70,17 @@ struct url_view_base_test
             BOOST_TEST_NO_THROW(u = url_view(su));
             BOOST_TEST_EQ(u.host_type(), host_type::ipv6);
             BOOST_TEST_EQ(u.host(),
-                u.encoded_host().decode_to_string());
+                u.encoded_host().decode());
             BOOST_TEST_EQ(u.encoded_host(), sa);
             BOOST_TEST_EQ(u.host_address(),
-                u.encoded_host_address().decode_to_string());
+                u.encoded_host_address().decode());
             BOOST_TEST_EQ(u.encoded_host_address(), s);
             BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
             BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address(s));
             BOOST_TEST_EQ(u.host_ipvfuture(), "");
             BOOST_TEST_EQ(u.host_name(), "");
             BOOST_TEST_EQ(u.encoded_host_name(), "");
-            BOOST_TEST_EQ(u.authority().string(), sa);
+            BOOST_TEST_EQ(u.authority().buffer(), sa);
         };
 
         auto const ipvfut = [](
@@ -92,17 +92,17 @@ struct url_view_base_test
             BOOST_TEST_NO_THROW(u = url_view(su));
             BOOST_TEST_EQ(u.host_type(), host_type::ipvfuture);
             BOOST_TEST_EQ(u.host(),
-                u.encoded_host().decode_to_string());
+                u.encoded_host().decode());
             BOOST_TEST_EQ(u.encoded_host(), sa);
             BOOST_TEST_EQ(u.host_address(),
-                u.encoded_host_address().decode_to_string());
+                u.encoded_host_address().decode());
             BOOST_TEST_EQ(u.encoded_host_address(), s);
             BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
             BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
             BOOST_TEST_EQ(u.host_ipvfuture(), s);
             BOOST_TEST_EQ(u.host_name(), "");
             BOOST_TEST_EQ(u.encoded_host_name(), "");
-            BOOST_TEST_EQ(u.authority().string(), sa);
+            BOOST_TEST_EQ(u.authority().buffer(), sa);
         };
 
         auto const name = [](
@@ -114,18 +114,18 @@ struct url_view_base_test
             BOOST_TEST_NO_THROW(u = url_view(su));
             BOOST_TEST_EQ(u.host_type(), host_type::name);
             BOOST_TEST_EQ(u.host(),
-                u.encoded_host().decode_to_string());
+                u.encoded_host().decode());
             BOOST_TEST_EQ(u.encoded_host(), s);
             BOOST_TEST_EQ(u.host_address(),
-                u.encoded_host_address().decode_to_string());
+                u.encoded_host_address().decode());
             BOOST_TEST_EQ(u.encoded_host_address(), s);
             BOOST_TEST_EQ(u.host_ipv4_address(), ipv4_address());
             BOOST_TEST_EQ(u.host_ipv6_address(), ipv6_address());
             BOOST_TEST_EQ(u.host_ipvfuture(), "");
             BOOST_TEST_EQ(u.host_name(),
-                u.encoded_host_name().decode_to_string());
+                u.encoded_host_name().decode());
             BOOST_TEST_EQ(u.encoded_host_name(), s);
-            BOOST_TEST_EQ(u.authority().string(), sa);
+            BOOST_TEST_EQ(u.authority().buffer(), sa);
         };
 
         ipv4("0.0.0.0");
@@ -174,7 +174,7 @@ struct url_view_base_test
                 sp = u.persist();
 
                 assert( sp->data() != s.data() );       // different buffer
-                assert( sp->string() == s);             // same contents
+                assert( sp->buffer() == s);             // same contents
 
                 // s is destroyed and thus u
                 // becomes invalid, but sp remains valid.
