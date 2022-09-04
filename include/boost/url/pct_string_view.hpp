@@ -18,6 +18,7 @@
 #include <iterator>
 #include <string>
 #include <type_traits>
+#include <utility>
 
 namespace boost {
 namespace urls {
@@ -33,15 +34,10 @@ string_view&
 ref(pct_string_view& s) noexcept;
 
 // unchecked
+template<class... Args>
 pct_string_view
 make_pct_string_view(
-    string_view s,
-    std::size_t dn) noexcept;
-
-// unchecked
-pct_string_view
-make_pct_string_view(
-    string_view s) noexcept;
+    Args&&... args) noexcept;
 
 } // detail
 #endif
@@ -61,15 +57,26 @@ class pct_string_view final
     std::size_t dn_ = 0;
 
 #ifndef BOOST_URL_DOCS
+    template<class... Args>
     friend
     pct_string_view
     detail::make_pct_string_view(
-        string_view, std::size_t) noexcept;
+        Args&&... args) noexcept;
 
     friend
     string_view&
     detail::ref(pct_string_view&) noexcept;
 #endif
+
+    // unchecked construction
+    pct_string_view(
+        char const* p,
+        std::size_t n,
+        std::size_t dn) noexcept
+        : s_(p, n)
+        , dn_(dn)
+    {
+    }
 
     // unchecked construction
     pct_string_view(
@@ -225,7 +232,13 @@ public:
 #endif
 
     /** Conversion
+
+        Conversion to std::string is explicit
+        because assigning to string using an
+        implicit constructor will not preserve
+        capacity.
     */
+    explicit
     operator
     std::string() const noexcept
     {
@@ -711,14 +724,16 @@ ref(pct_string_view& s) noexcept
     return s.s_;
 }
 
+template<class... Args>
 inline
 pct_string_view
 make_pct_string_view(
-    string_view s,
-    std::size_t dn) noexcept
+    Args&&... args) noexcept
 {
-    return pct_string_view(s, dn);
+    return pct_string_view(
+        std::forward<Args>(args)...);
 }
+
 } // detail
 #endif
 

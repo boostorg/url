@@ -802,7 +802,10 @@ struct param_pct_view
     operator
     param()
     {
-        return param(key, value, has_value);
+        return param(
+            static_cast<std::string>(key),
+            static_cast<std::string>(value),
+            has_value);
     }
 
 #ifndef BOOST_URL_DOCS

@@ -29,28 +29,28 @@ namespace detail {
 
 params_iter_impl::
 params_iter_impl(
-    url_impl const& u_) noexcept
-    : u(&u_)
+    url_impl const& impl_) noexcept
+    : impl(&impl_)
 {
     update();
 }
 
 params_iter_impl::
 params_iter_impl(
-    url_impl const& u_,
+    url_impl const& impl_,
     int) noexcept
-    : u(&u_)
-    , pos(u->len(id_query))
-    , i(u->nparam_)
+    : impl(&impl_)
+    , pos(impl->len(id_query))
+    , i(impl->nparam_)
 {
 }
 
 params_iter_impl::
 params_iter_impl(
-    url_impl const& u_,
+    url_impl const& impl_,
     std::size_t pos_,
     std::size_t i_) noexcept
-    : u(&u_)
+    : impl(&impl_)
     , pos(pos_)
     , i(i_)
 {
@@ -62,26 +62,20 @@ params_iter_impl::
 dereference() const noexcept
 {
     BOOST_ASSERT(nk > 0);
-    auto const p = u->cs_ +
-        u->offset(id_query) + pos;
+    auto const p = impl->cs_ +
+        impl->offset(id_query) + pos;
     BOOST_ASSERT(
         (pos == 0 && *p == '?') ||
         (pos > 0  && *p == '&'));
     if(nv)
         return {
             detail::make_pct_string_view(
-                string_view(
-                    p + 1, nk - 1),
-                dk),
+                p + 1, nk - 1, dk),
             detail::make_pct_string_view(
-                string_view(
-                    p + nk + 1, nv - 1),
-                dv)};
+                p + nk + 1, nv - 1, dv)};
     return {
         detail::make_pct_string_view(
-            string_view(
-                p + 1, nk - 1),
-            dk)};
+            p + 1, nk - 1, dk)};
 }
 
 void
@@ -89,7 +83,7 @@ params_iter_impl::
 increment() noexcept
 {
     BOOST_ASSERT(
-        i != u->nparam_);
+        i != impl->nparam_);
     ++i;
     pos += nk + nv;
     update();
@@ -101,12 +95,12 @@ decrement() noexcept
 {
     BOOST_ASSERT(i != 0);
     BOOST_ASSERT(
-        u->len(id_query) > 0);
+        impl->len(id_query) > 0);
     --i;
     dk = 0;
     dv = 0;
-    auto p = u->cs_ +
-        u->offset(id_query) + pos;
+    auto p = impl->cs_ +
+        impl->offset(id_query) + pos;
     auto end = p;
     for(;;)
     {
@@ -166,13 +160,13 @@ update() noexcept
 {
     dk = 0;
     dv = 0;
-    auto s = u->get(id_query);
+    auto s = impl->get(id_query);
     s.remove_prefix(pos);
     if(s.empty())
     {
         // end
         BOOST_ASSERT(pos ==
-            u->len(id_query));
+            impl->len(id_query));
         nk = 0;
         nv = 0;
         return;

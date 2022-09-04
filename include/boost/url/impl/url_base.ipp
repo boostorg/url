@@ -2277,8 +2277,8 @@ edit_params(
     detail::any_params_iter&& it) ->
         detail::params_iter_impl
 {
-    BOOST_ASSERT(first.u == &u_);
-    BOOST_ASSERT(last.u == &u_);
+    BOOST_ASSERT(first.impl == &u_);
+    BOOST_ASSERT(last.impl == &u_);
     BOOST_ASSERT(
         first.i == 0 || u_.nparam_ > 0);
 

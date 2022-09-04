@@ -41,21 +41,20 @@ class lut_chars;
 }
 #endif
 
-/** Common functions for all modifiable URLs
+/** Common functionality for containers
 
-    This base class is used by the library to
-    provide all of the member functions of
-    modifiable URL containers. Users should
-    not use this class directly. Instead,
-    construct an instance of one of the
-    containers or call a parsing function:
+    This base class is used by the library
+    to provide common member functions for
+    containers. This cannot be instantiated
+    directly; Instead, use one of the
+    containers or functions:
 
     @par Containers
         @li @ref url
         @li @ref url_view
         @li @ref static_url
 
-    @par Parsing Functions
+    @par Functions
         @li @ref parse_absolute_uri
         @li @ref parse_origin_form
         @li @ref parse_relative_ref

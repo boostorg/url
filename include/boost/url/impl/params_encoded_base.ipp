@@ -24,6 +24,18 @@ namespace urls {
 //
 //------------------------------------------------
 
+pct_string_view
+params_encoded_base::
+string() const noexcept
+{
+    auto s = impl_->get(id_query);
+    if(s.empty())
+        return {};
+    return detail::make_pct_string_view(
+        s.data() + 1, s.size() - 1,
+            impl_->decoded_[id_query]);
+}
+
 std::size_t
 params_encoded_base::
 count(
@@ -55,7 +67,7 @@ find_impl(
     pct_string_view key,
     ignore_case_param ic) const noexcept
 {
-    detail::params_iter_impl end_(cu_->u_, 0);
+    detail::params_iter_impl end_(*impl_, 0);
     if(! ic)
     {
         for(;;)
@@ -85,13 +97,13 @@ find_last_impl(
     pct_string_view key,
     ignore_case_param ic) const noexcept
 {
-    detail::params_iter_impl begin_(cu_->u_);
+    detail::params_iter_impl begin_(*impl_);
     if(! ic)
     {
         for(;;)
         {
             if(it.equal(begin_))
-                return { cu_->u_, 0 };
+                return { *impl_, 0 };
             it.decrement();
             if(*it.key() == *key)
                 return it;
@@ -100,7 +112,7 @@ find_last_impl(
     for(;;)
     {
         if(it.equal(begin_))
-            return { cu_->u_, 0 };
+            return { *impl_, 0 };
         it.decrement();
         if(grammar::ci_is_equal(
                 *it.key(), *key))

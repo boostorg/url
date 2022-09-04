@@ -23,8 +23,6 @@ namespace urls {
 class url_base;
 #endif
 
-//------------------------------------------------
-
 /** A view representing query parameters in a URL
 
     Objects of this type are used to interpret
@@ -45,13 +43,13 @@ class url_base;
     @code
     url u( "?first=John&last=Doe" );
 
-    params_encoded_view p = u.encoded_encoded_params();
+    params_encoded_view p = u.encoded_params();
     @endcode
 
     Strings produced when elements are returned
     have type @ref param_pct_view and represent
-    encoded strings. Member functions which
-    accept strings expect encoded strings and
+    encoded strings. Strings passed to member
+    functions may contain percent escapes, and
     throw exceptions on invalid inputs.
 
     @par Iterator Invalidation

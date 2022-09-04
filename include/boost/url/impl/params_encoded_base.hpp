@@ -11,6 +11,7 @@
 #ifndef BOOST_URL_IMPL_PARAMS_ENCODED_BASE_HPP
 #define BOOST_URL_IMPL_PARAMS_ENCODED_BASE_HPP
 
+#include <boost/url/url_view.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/params_iter_impl.hpp>
 #include <boost/assert.hpp>
@@ -30,16 +31,16 @@ class params_encoded_base::iterator
 
     // begin
     iterator(
-        url_view_base const& u) noexcept
-        : it_(u.u_)
+        detail::url_impl const& ui) noexcept
+        : it_(ui)
     {
     }
 
     // end
     iterator(
-        url_view_base const& u,
+        detail::url_impl const& ui,
         int) noexcept
-        : it_(u.u_, 0)
+        : it_(ui, 0)
     {
     }
 
@@ -134,7 +135,7 @@ bool
 params_encoded_base::
 empty() const noexcept
 {
-    return cu_->u_.nparam_ == 0;
+    return impl_->nparam_ == 0;
 }
 
 inline
@@ -142,7 +143,7 @@ std::size_t
 params_encoded_base::
 size() const noexcept
 {
-    return cu_->u_.nparam_;
+    return impl_->nparam_;
 }
 
 inline
@@ -151,7 +152,7 @@ params_encoded_base::
 begin() const noexcept ->
     iterator
 {
-    return { *cu_ };
+    return { *impl_ };
 }
 
 inline
@@ -160,7 +161,7 @@ params_encoded_base::
 end() const noexcept ->
     iterator
 {
-    return { *cu_, 0 };
+    return { *impl_, 0 };
 }
 
 inline

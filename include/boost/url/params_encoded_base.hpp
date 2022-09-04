@@ -17,17 +17,26 @@
 #include <boost/url/pct_string_view.hpp>
 #include <boost/url/detail/params_iter_impl.hpp>
 #include <boost/url/detail/parts_base.hpp>
+#include <boost/url/detail/url_impl.hpp>
 #include <iterator>
 #include <type_traits>
 
 namespace boost {
 namespace urls {
 
-#ifndef BOOST_URL_DOCS
-class url_view_base;
-#endif
+/** Common functionality for containers
 
-/** Provides common functionality for encoded param views
+    This base class is used by the library
+    to provide common member functions for
+    containers. This cannot be instantiated
+    directly; Instead, use one of the
+    containers or functions:
+
+    @par Containers
+    @li @ref params_view
+    @li @ref params_const_view
+    @li @ref params_encoded_view
+    @li @ref params_const_encoded_view
 */
 class params_encoded_base
     : private detail::parts_base
@@ -35,11 +44,11 @@ class params_encoded_base
     friend class params_encoded_view;
     friend class params_const_encoded_view;
 
-    url_view_base const* cu_ = nullptr;
+    detail::url_impl const* impl_ = nullptr;
 
     params_encoded_base(
-        url_view_base const& u) noexcept
-        : cu_(&u)
+        detail::url_impl const& impl) noexcept
+        : impl_(&impl)
     {
     }
 
@@ -58,13 +67,13 @@ public:
         <br>
 
         The strings produced when iterators
-        are dereferenced refer to the character
-        buffer of the url. Ownership is not
-        transferred; the caller is responsible
-        for ensuring that the lifetime of the
-        url extends until it is no longer
-        referenced by any container or
-        iterator.
+        are dereferenced refer to the underlying
+        character buffer.
+        Ownership is not transferred; the caller
+        is responsible for ensuring that the
+        lifetime of the buffer extends until
+        it is no longer referenced by any
+        container or iterator.
     */
 #ifdef BOOST_URL_DOCS
     using iterator = __see_below__;
@@ -83,9 +92,7 @@ public:
 
         @par Example
         @code
-        url u( "?first=John&last=Doe" );
-
-        params_const_encoded_view::value_type p( *u.params().find( "first" ) );
+        params_const_encoded_view::value_type qp( *url_view( "?first=John&last=Doe" ).params().find( "first" ) );
         @endcode
 
         @see
@@ -120,43 +127,45 @@ public:
     //
     //--------------------------------------------
 
-    /** Return the referenced url
+    /** Return the query corresponding to these params
 
-        This function returns the url referenced
-        by the view.
+        This function returns the query string
+        referenced by the container.
+        The returned string may contain
+        percent escapes.
 
         @par Example
         @code
-        url u( "?key=value" );
-
-        assert( &u.segments().url() == &u );
+        assert( url_view( "?first=John&last=Doe" ).encoded_params().string() == "first=John&last=Doe" );
         @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
-        @code
         Throws nothing.
+
+        @par BNF
+        @code
+        query-params    = query-param *( "&" query-param )
+        query-param     = key [ "=" value ]
+        key             = *qpchar
+        value           = *( qpchar / "=" )
         @endcode
+
+        @par Specification
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
     */
-    url_view_base const&
-    url() const noexcept
-    {
-        return *cu_;
-    }
+    BOOST_URL_DECL
+    pct_string_view
+    string() const noexcept;
 
     /** Return true if there are no elements
 
-        When the url has no query, the view is
-        always empty. Otherwise, there will be
-        at least one element.
-
         @par Example
         @code
-        assert( ! url_view( "?key=value" ).params().empty() );
-        @endcode
-
-        @par Effects
-        @code
-        return ! this->url().has_query();
+        assert( ! url_view( "?key=value" ).encoded_params().empty() );
         @endcode
 
         @par Complexity
@@ -169,14 +178,10 @@ public:
     empty() const noexcept;
 
     /** Return the number of elements
-
-        When the url has no query, the view is
-        always empty. Otherwise, there will be
-        at least one element.
-
+    
         @par Example
         @code
-        assert( url_view( "?key=value").params().size() == 1 ) );
+        assert( url_view( "?key=value").encoded_params().size() == 1 );
         @endcode
 
         @par Complexity
@@ -223,11 +228,11 @@ public:
 
         @par Example
         @code
-        assert( url( "?first=John&last=Doe" ).contains( "first" ) );
+        assert( url_view( "?first=John&last=Doe" ).encoded_params().contains( "first" ) );
         @endcode
 
         @par Complexity
-        Linear in `this->url().encoded_query().size()`.
+        Linear in `this->string().size()`.
 
         @par Exception Safety
         Exceptions thrown on invalid input.
@@ -260,11 +265,11 @@ public:
 
         @par Example
         @code
-        assert( url( "?first=John&last=Doe" ).count( "first" ) == 1 );
+        assert( url_view( "?first=John&last=Doe" ).encoded_params().count( "first" ) == 1 );
         @endcode
 
         @par Complexity
-        Linear in `this->url().encoded_query().size()`.
+        Linear in `this->string().size()`.
 
         @par Exception Safety
         Exceptions thrown on invalid input.
@@ -306,9 +311,7 @@ public:
 
         @par Example
         @code
-        url u( "?first=John&last=Doe" );
-
-        assert( u.params().find( "First", ignore_case )->value == "John" );
+        assert( url_view( "?first=John&last=Doe" ).encoded_params().find( "First", ignore_case )->value == "John" );
         @endcode
 
         @par Effects
@@ -317,7 +320,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->url().encoded_query().size()`.
+        Linear in `this->string().size()`.
 
         @par Exception Safety
         Exceptions thrown on invalid input.
@@ -360,13 +363,13 @@ public:
 
         @par Example
         @code
-        url u( "?First=John&Last=Doe" );
+        url_view u( "?First=John&Last=Doe" );
 
-        assert( u.params().find( "first" ) != u.params().find( "first", ignore_case ) );
+        assert( u.encoded_params().find( "first" ) != u.encoded_params().find( "first", ignore_case ) );
         @endcode
 
         @par Complexity
-        Linear in `this->url().encoded_query().size()`.
+        Linear in `this->string().size()`.
 
         @par Exception Safety
         Exceptions thrown on invalid input.
@@ -413,10 +416,11 @@ public:
 
         @par Example
         @code
+        assert( url_view( "?first=John&last=Doe" ).encoded_params().find_last( "last" )->value == "Doe" );
         @endcode
 
         @par Complexity
-        Linear in `this->url().encoded_query().size()`.
+        Linear in `this->string().size()`.
 
         @par Exception Safety
         Exceptions thrown on invalid input.
@@ -459,10 +463,13 @@ public:
 
         @par Example
         @code
+        url_view u( "?First=John&Last=Doe" );
+
+        assert( u.encoded_params().find_last( "last" ) != u.encoded_params().find_last( "last", ignore_case ) );
         @endcode
 
         @par Complexity
-        Linear in `this->url().encoded_query().size()`.
+        Linear in `this->string().size()`.
 
         @return an iterator to the element
 
