@@ -22,7 +22,7 @@ namespace detail {
 struct params_iter_impl
     : parts_base
 {
-    url_impl const* u = nullptr;
+    url_impl const* impl = nullptr;
     std::size_t pos = 0;// to '?' or '&'
     std::size_t nk = 0; // includes '?' or '&'
     std::size_t nv = 0; // includes '='
@@ -83,8 +83,8 @@ struct params_iter_impl
     {
         return detail::make_pct_string_view(
             string_view(
-                u->cs_ +
-                    u->offset(id_query) +
+                impl->cs_ +
+                    impl->offset(id_query) +
                     pos + 1,
                 nk - 1), dk);
     }
@@ -95,8 +95,8 @@ struct params_iter_impl
         BOOST_ASSERT(has_value());
         return detail::make_pct_string_view(
             string_view(
-                u->cs_ +
-                    u->offset(id_query) +
+                impl->cs_ +
+                    impl->offset(id_query) +
                     pos + nk + 1,
                 nv - 1), dv);
     }
@@ -116,7 +116,7 @@ struct params_iter_impl
             other) const noexcept
     {
         // different containers
-        BOOST_ASSERT(u == other.u);
+        BOOST_ASSERT(impl == other.impl);
         return i == other.i;
     }
 

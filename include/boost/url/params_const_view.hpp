@@ -21,20 +21,24 @@ namespace urls {
 class url_view_base;
 #endif
 
-//------------------------------------------------
-
 /** A view representing query parameters in a URL
 
     Objects of this type are used to interpret
     the query parameters as a bidirectional view
     of key/value pairs.
+
     The view does not retain ownership of the
     elements and instead references the original
-    url. The caller is responsible for ensuring
-    that the lifetime of the referenced url
+    character buffer. The caller is responsible
+    for ensuring that the lifetime of the buffer
     extends until it is no longer referenced.
 
-    <br>
+    @par Example
+    @code
+    url_view u( "?first=John&last=Doe" );
+
+    params_const_view p = u.params();
+    @endcode
 
     The strings produced when iterators are
     dereferenced belong to the iterator and
@@ -50,7 +54,7 @@ class url_view_base;
 
     @par Example
     @code
-    url u( "?first=John&last=Doe" );
+    url_view u( "?first=John&last=Doe" );
 
     params_const_view p = u.params();
     @endcode
@@ -67,8 +71,8 @@ class params_const_view
     friend class url_view_base;
 
     params_const_view(
-        url_view_base const& u) noexcept
-        : params_base(u)
+        detail::url_impl const& impl) noexcept
+        : params_base(impl)
     {
     }
 
@@ -80,39 +84,17 @@ public:
 
         Ownership is not transferred; the caller
         is responsible for ensuring the lifetime
-        of the character buffer extends until
-        it is no longer referenced.
+        of the buffer extends until it is no
+        longer referenced.
 
         @par Complexity
         Constant
 
         @par Exception Safety
         Throws nothing
-
     */
     params_const_view(
         params_const_view const&) = default;
-
-    /** Assignment
-
-        After the assignment, both views will point to
-        the same underlying object.
-
-        Ownership is not transferred; the caller
-        is responsible for ensuring the lifetime
-        of the character buffer extends until
-        it is no longer referenced.
-
-        @par Complexity
-            Constant
-
-        @par Exception Safety
-            Throws nothing
-
-    */
-    params_const_view&
-    operator=(params_const_view const&) & = default;
-
 };
 
 } // urls

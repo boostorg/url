@@ -23,7 +23,7 @@ inline
 params_view::
 params_view(
     url_base& u) noexcept
-    : params_base(u)
+    : params_base(u.u_)
     , u_(&u)
 {
 }
@@ -33,7 +33,7 @@ params_view::
 operator
 params_const_view() const noexcept
 {
-    return {*u_};
+    return {*impl_};
 }
 
 //------------------------------------------------

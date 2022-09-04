@@ -41,16 +41,16 @@ class params_base::iterator
 
     // begin
     iterator(
-        url_view_base const& u) noexcept
-        : it_(u.u_)
+        detail::url_impl const& impl) noexcept
+        : it_(impl)
     {
     }
 
     // end
     iterator(
-        url_view_base const& u,
+        detail::url_impl const& impl,
         int) noexcept
-        : it_(u.u_, 0)
+        : it_(impl, 0)
     {
     }
 
@@ -157,7 +157,7 @@ bool
 params_base::
 empty() const noexcept
 {
-    return cu_->u_.nparam_ == 0;
+    return impl_->nparam_ == 0;
 }
 
 inline
@@ -165,7 +165,7 @@ std::size_t
 params_base::
 size() const noexcept
 {
-    return cu_->u_.nparam_;
+    return impl_->nparam_;
 }
 
 inline
@@ -174,7 +174,7 @@ params_base::
 begin() const noexcept ->
     iterator
 {
-    return { *cu_ };
+    return { *impl_ };
 }
 
 inline
@@ -183,7 +183,7 @@ params_base::
 end() const noexcept ->
     iterator
 {
-    return { *cu_, 0 };
+    return { *impl_, 0 };
 }
 
 inline

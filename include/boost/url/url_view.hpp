@@ -76,6 +76,8 @@ class BOOST_SYMBOL_VISIBLE url_view
 {
     friend std::hash<url_view>;
     friend class url_view_base;
+    friend class params_base;
+    friend class params_encoded_base;
 
 #ifndef BOOST_URL_DOCS
     // VFALCO docca emits this erroneously

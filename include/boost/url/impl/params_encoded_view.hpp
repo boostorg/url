@@ -21,7 +21,7 @@ inline
 params_encoded_view::
 params_encoded_view(
     url_base& u) noexcept
-    : params_encoded_base(u)
+    : params_encoded_base(u.u_)
     , u_(&u)
 {
 }
@@ -31,7 +31,7 @@ params_encoded_view::
 operator
 params_const_encoded_view() const noexcept
 {
-    return {*u_};
+    return {*impl_};
 }
 
 //------------------------------------------------

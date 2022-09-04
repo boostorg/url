@@ -571,14 +571,14 @@ params_const_encoded_view
 url_view_base::
 encoded_params() const noexcept
 {
-    return params_const_encoded_view(*this);
+    return params_const_encoded_view(u_);
 }
 
 params_const_view
 url_view_base::
 params() const noexcept
 {
-    return params_const_view(*this);
+    return params_const_view(u_);
 }
 
 //----------------------------------------------------------
