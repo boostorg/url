@@ -323,49 +323,6 @@ operator<<(
     return os;
 }
 
-//----------------------------------------------------------
-//
-// log_type
-//
-//----------------------------------------------------------
-
-std::ostream&
-detail::
-log_type::
-stream() noexcept
-{
-    struct buffer : std::stringbuf
-    {
-        int
-        sync() override
-        {
-            auto const& s = this->str();
-            if(s.size() > 0)
-                any_runner::instance().note(s.c_str());
-            this->str("");
-            return 0;
-        }
-    };
-
-    struct ostream : std::ostream
-    {
-        buffer buf_;
-
-        ostream()
-            : std::ostream(&buf_)
-        {
-        }
-
-        ~ostream()
-        {
-            buf_.sync();
-        }
-    };
-
-    static ostream ss;
-    return ss;
-}
-
 } // detail
 } // test_suite
 
@@ -451,6 +408,12 @@ public:
     note(char const* msg) override
     {
         log_ << msg << "\n";
+    }
+
+    std::ostream&
+    log() noexcept override
+    {
+        return log_;
     }
 
     char const*

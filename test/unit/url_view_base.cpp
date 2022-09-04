@@ -475,6 +475,10 @@ struct url_view_base_test
     {
         testHost();
         testJavadocs();
+
+        test_suite::log <<
+            "    sizeof(url_impl) == " <<
+            sizeof(detail::url_impl) << "\n";
     }
 };
 

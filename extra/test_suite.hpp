@@ -102,6 +102,7 @@ public:
     virtual bool test(bool cond,
         char const* expr, char const* func,
         char const* file, int line) = 0;
+    virtual std::ostream& log() noexcept = 0;
 };
 
 //------------------------------------------------
@@ -407,11 +408,8 @@ struct log_type
     operator<<(
         log_type const&, T&& t)
     {
-        return stream() << t;
+        return any_runner::instance().log() << t;
     }
-
-private:
-    static std::ostream& stream() noexcept;
 };
 
 //----------------------------------------------------------
