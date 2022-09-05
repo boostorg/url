@@ -47,9 +47,8 @@ class url_view_base;
     throw exceptions on invalid inputs.
 
     @par Iterator Invalidation
-    Changes to the underlying url's query
-    can invalidate iterators which reference
-    the url.
+    Changes to the underlying character buffer
+    can invalidate iterators which reference it.
 */
 class params_const_encoded_view
     : public params_encoded_base
@@ -66,14 +65,17 @@ class params_const_encoded_view
 public:
     /** Constructor
 
-        After the copy both views will point to
-        the same character buffer.
+        After construction both views will
+        reference the same character buffer.
 
         Ownership is not transferred; the caller
         is responsible for ensuring the lifetime
         of the buffer extends until it is no
         longer referenced.
 
+        @par Postconditions
+        @code
+        this->string().data() == other.string().data()
         @par Complexity
         Constant.
 
@@ -81,7 +83,13 @@ public:
         Throws nothing
     */
     params_const_encoded_view(
-        params_const_encoded_view const&) = default;
+        params_const_encoded_view const& other) = default;
+
+    /** Assignment (deleted)
+    */
+    params_const_encoded_view&
+    operator=(
+        params_const_encoded_view const&) = delete;
 };
 
 } // urls

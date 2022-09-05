@@ -53,6 +53,11 @@ class url_base;
     throw exceptions on invalid inputs.
 
     @par Iterator Invalidation
+    Changes to the underlying character buffer
+    can invalidate iterators which reference it.
+    Modifications made through the container will
+    invalidate some iterators to the underlying
+    character buffer:
     @li @ref append : Only `end()`.
     @li @ref assign, @ref clear,
         `operator=` : All elements.
@@ -109,28 +114,34 @@ public:
 
     /** Assignment
 
-        After assignment, both views will
-        reference the same url. Ownership is not
-        transferred; the caller is responsible
-        for ensuring the lifetime of the url
-        extends until it is no longer
-        referenced.
+        The previous contents of this are
+        replaced by the contents of `other.
 
-        @par Postconditions
+        <br>
+        All iterators are invalidated.
+
+        @note
+        The strings referenced by `other`
+        must not come from the underlying url,
+        or else the behavior is undefined.
+
+        @par Effects
         @code
-        &this->url() == &other.url();
+        this->assign( other.begin(), other.end() );
         @endcode
 
         @par Complexity
-        Constant.
+        Linear in `other.string().size()`.
 
         @par Exception Safety
-        Throws nothing.
+        Strong guarantee.
+        Calls to allocate may throw.
 
-        @param other The other view.
+        @param other The params to assign.
     */
     params_encoded_view&
-    operator=(params_encoded_view const& other) & = default;
+    operator=(
+        params_encoded_view const& other);
 
     /** Assignment
 
@@ -146,7 +157,7 @@ public:
 
         @par Effects
         @code
-        this->assign( init );
+        this->assign( init.begin(), init.end() );
         @endcode
 
         @par Complexity
@@ -155,6 +166,8 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
+        Exception thrown when init contains
+        an invalid percent-encoding.
 
         @param init The list of params to assign.
     */
@@ -182,7 +195,7 @@ public:
         @code
         url u( "?key=value" );
 
-        assert( &u.segments().url() == &u );
+        assert( &u.encoded_params().url() == &u );
         @endcode
 
         @par Exception Safety

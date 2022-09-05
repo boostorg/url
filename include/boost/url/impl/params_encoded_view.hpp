@@ -26,14 +26,6 @@ params_encoded_view(
 {
 }
 
-inline
-params_encoded_view::
-operator
-params_const_encoded_view() const noexcept
-{
-    return {*impl_};
-}
-
 //------------------------------------------------
 //
 // Special Members
@@ -43,13 +35,30 @@ params_const_encoded_view() const noexcept
 inline
 params_encoded_view&
 params_encoded_view::
-operator=(std::initializer_list<
-    param_pct_view> init)
+operator=(
+    params_encoded_view const& other)
 {
-    assign(init);
+    assign(other.begin(), other.end());
     return *this;
 }
 
+inline
+params_encoded_view&
+params_encoded_view::
+operator=(std::initializer_list<
+    param_pct_view> init)
+{
+    assign(init.begin(), init.end());
+    return *this;
+}
+
+inline
+params_encoded_view::
+operator
+params_const_encoded_view() const noexcept
+{
+    return {*impl_};
+}
 
 //------------------------------------------------
 //
@@ -64,8 +73,6 @@ clear() noexcept
 {
     u_->remove_query();
 }
-
-//------------------------------------------------
 
 inline
 void
@@ -89,7 +96,7 @@ assign(FwdIt first, FwdIt last)
     static_assert(
         std::is_convertible<
             typename std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             param_pct_view>::value,
         "Type requirements not met");
 
@@ -124,7 +131,7 @@ append(FwdIt first, FwdIt last) ->
     static_assert(
         std::is_convertible<
             typename std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             param_pct_view>::value,
         "Type requirements not met");
 
@@ -174,7 +181,7 @@ insert(
     static_assert(
         std::is_convertible<
             typename std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             param_pct_view>::value,
         "Type requirements not met");
 
@@ -274,7 +281,7 @@ replace(
     static_assert(
         std::is_convertible<
             typename std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             param_pct_view>::value,
         "Type requirements not met");
 

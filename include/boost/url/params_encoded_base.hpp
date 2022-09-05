@@ -18,8 +18,8 @@
 #include <boost/url/detail/params_iter_impl.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <boost/url/detail/url_impl.hpp>
+#include <cstddef>
 #include <iterator>
-#include <type_traits>
 
 namespace boost {
 namespace urls {
@@ -53,7 +53,7 @@ class params_encoded_base
     }
 
 public:
-    /** A bidirectional InputIterator to a query parameter
+    /** A Bidirectional iterator to a query parameter
 
         Objects of this type allow iteration
         through the parameters in the query.
@@ -161,7 +161,7 @@ public:
     pct_string_view
     string() const noexcept;
 
-    /** Return true if there are no elements
+    /** Return true if there are no params
 
         @par Example
         @code
@@ -177,7 +177,7 @@ public:
     bool
     empty() const noexcept;
 
-    /** Return the number of elements
+    /** Return the number of params
     
         @par Example
         @code
@@ -196,7 +196,7 @@ public:
     /** Return an iterator to the beginning
 
         @par Complexity
-        Linear in the size of the first element.
+        Linear in the size of the first param.
 
         @par Exception Safety
         Throws nothing.
@@ -303,7 +303,7 @@ public:
 
         <br>
 
-        The search starts from the first element
+        The search starts from the first param
         and proceeds forward until either the
         key is found or the end of the range is
         reached, in which case `end()` is
@@ -328,7 +328,7 @@ public:
         @throw system_error
         `key` contains an invalid percent-encoding.
 
-        @return an iterator to the element
+        @return an iterator to the param
 
         @param key The key to match.
         By default, a case-sensitive
@@ -377,7 +377,7 @@ public:
         @throw system_error
         `key` contains an invalid percent-encoding.
 
-        @return an iterator to the element
+        @return an iterator to the param
 
         @param from The position to begin the
             search from. This can be `end()`.
@@ -408,7 +408,7 @@ public:
 
         <br>
 
-        The search starts from the last element
+        The search starts from the last param
         and proceeds backwards until either the
         key is found or the beginning of the
         range is reached, in which case `end()`
@@ -428,7 +428,7 @@ public:
         @throw system_error
         `key` contains an invalid percent-encoding.
 
-        @return an iterator to the element
+        @return an iterator to the param
 
         @param key The key to match.
         By default, a case-sensitive
@@ -471,7 +471,7 @@ public:
         @par Complexity
         Linear in `this->string().size()`.
 
-        @return an iterator to the element
+        @return an iterator to the param
 
         @param before One past the position
         to begin the search from. This can

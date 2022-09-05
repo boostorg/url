@@ -28,16 +28,15 @@ class params_const_view;
 class params_base::iterator
 {
     detail::params_iter_impl it_;
-    grammar::recycled_ptr<
+    mutable grammar::recycled_ptr<
         std::string> key_ = nullptr;
-    grammar::recycled_ptr<
+    mutable grammar::recycled_ptr<
         std::string> value_ = nullptr;
-    bool has_value_ = false;
-    bool valid_ = false;
+    mutable bool has_value_ = false;
+    mutable bool valid_ = false;
 
     friend class params_base;
     friend class params_view;
-    friend class params_const_view;
 
     // begin
     iterator(
@@ -62,7 +61,7 @@ class params_base::iterator
 
     BOOST_URL_DECL
     param_view
-    dereference();
+    dereference() const;
 
 public:
     using value_type = param;
@@ -71,7 +70,7 @@ public:
     using difference_type =
         std::ptrdiff_t;
     using iterator_category =
-        std::input_iterator_tag;
+        std::bidirectional_iterator_tag;
 
     iterator() = default;
 
@@ -116,13 +115,13 @@ public:
     }
 
     reference
-    operator*()
+    operator*() const
     {
         return dereference();
     }
 
     pointer const
-    operator->()
+    operator->() const
     {
         return dereference();
     }

@@ -2265,7 +2265,8 @@ resize_params(
         // the beginning of the query
         s_[u_.offset(id_query)] = '?';
     }
-    s_[size()] = '\0';
+    if(s_)
+        s_[size()] = '\0';
     return dest;
 }
 

@@ -12,18 +12,31 @@
 
 #include <boost/url/url_view.hpp>
 #include <boost/core/ignore_unused.hpp>
+#include <boost/static_assert.hpp>
 
 #include "test_suite.hpp"
 
 namespace boost {
 namespace urls {
 
+BOOST_STATIC_ASSERT(
+    ! std::is_default_constructible<
+        params_const_view>::value);
+
+BOOST_STATIC_ASSERT(
+    std::is_copy_constructible<
+        params_const_view>::value);
+
+BOOST_STATIC_ASSERT(
+    ! std::is_copy_assignable<
+        params_const_view>::value);
+
 struct params_const_view_test
 {
     void
     testJavadocs()
     {
-        // class
+        // {class}
         {
     url_view u( "?first=John&last=Doe" );
 

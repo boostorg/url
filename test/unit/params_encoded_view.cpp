@@ -15,9 +15,22 @@
 #include <boost/url/url_view.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include "test_suite.hpp"
+#include <boost/static_assert.hpp>
 
 namespace boost {
 namespace urls {
+
+BOOST_STATIC_ASSERT(
+    ! std::is_default_constructible<
+        params_encoded_view>::value);
+
+BOOST_STATIC_ASSERT(
+    std::is_copy_constructible<
+        params_encoded_view>::value);
+
+BOOST_STATIC_ASSERT(
+    std::is_copy_assignable<
+        params_encoded_view>::value);
 
 /*  Legend
 
@@ -183,13 +196,14 @@ struct params_encoded_view_test
 
         // operator=(params_encoded_view)
         {
-            url u0, u1;
+            url u0( "?key=value" );
+            url u1;
             params_encoded_view p0 = u0.encoded_params();
             params_encoded_view p1 = u1.encoded_params();
             p1 = p0;
-            BOOST_TEST_EQ(&p0.url(), &p1.url());
-            check(p0, {});
-            check(p1, {});
+            BOOST_TEST_NE(&p0.url(), &p1.url());
+            check(p0, {{ "key", "value" }});
+            check(p1, {{ "key", "value" }});
         }
     }
 
@@ -1773,11 +1787,22 @@ struct params_encoded_view_test
     }
 
     void
+    testJavadocs()
+    {
+        // url()
+        {
+        url u( "?key=value" );
+
+        assert( &u.encoded_params().url() == &u );
+        }
+    }
+    void
     run()
     {
         testSpecial();
         testModifiers();
         testIterator();
+        testJavadocs();
     }
 };
 

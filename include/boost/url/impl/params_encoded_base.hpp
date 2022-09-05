@@ -27,7 +27,6 @@ class params_encoded_base::iterator
 
     friend class params_encoded_base;
     friend class params_encoded_view;
-    friend class params_const_encoded_view;
 
     // begin
     iterator(
@@ -56,12 +55,12 @@ public:
     using pointer = param_pct_view;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
-        std::input_iterator_tag;
+        std::bidirectional_iterator_tag;
 
     iterator() = default;
     iterator(iterator const&) = default;
     iterator& operator=(
-        iterator const&) noexcept = default;
+        iterator const&) = default;
 
     iterator&
     operator++() noexcept

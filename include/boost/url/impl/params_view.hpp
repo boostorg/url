@@ -45,11 +45,21 @@ params_const_view() const noexcept
 inline
 auto
 params_view::
+operator=(params_view const& other) ->
+    params_view&
+{
+    assign(other.begin(), other.end());
+    return *this;
+}
+
+inline
+auto
+params_view::
 operator=(std::initializer_list<
     param_view> init) ->
         params_view&
 {
-    assign(init);
+    assign(init.begin(), init.end());
     return *this;
 }
 
@@ -91,7 +101,7 @@ assign(FwdIt first, FwdIt last)
     static_assert(
         std::is_convertible<
             typename std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             param_view>::value,
         "Type requirements not met");
 
@@ -126,7 +136,7 @@ append(FwdIt first, FwdIt last) ->
     static_assert(
         std::is_convertible<
             typename std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             param_view>::value,
         "Type requirements not met");
 
@@ -176,7 +186,7 @@ insert(
     static_assert(
         std::is_convertible<
             typename std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             param_view>::value,
         "Type requirements not met");
 
@@ -276,7 +286,7 @@ replace(
     static_assert(
         std::is_convertible<
             typename std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             param_view>::value,
         "Type requirements not met");
 

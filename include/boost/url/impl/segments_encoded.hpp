@@ -149,7 +149,7 @@ assign(
     typename std::enable_if<
         std::is_convertible<typename
             std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             string_view>::value>::type
 {
     u_->edit_segments(
@@ -246,7 +246,7 @@ insert(
         typename std::enable_if<
             std::is_convertible<typename
                 std::iterator_traits<
-                    FwdIt>::value_type,
+                    FwdIt>::reference,
                 string_view>::value,
             iterator>::type
 {
@@ -318,7 +318,7 @@ replace(
         typename std::enable_if<
             std::is_convertible<typename
                 std::iterator_traits<
-                    FwdIt>::value_type,
+                    FwdIt>::reference,
                 string_view>::value,
             iterator>::type
 {

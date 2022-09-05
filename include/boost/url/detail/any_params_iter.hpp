@@ -189,7 +189,7 @@ struct params_encoded_iter
     BOOST_STATIC_ASSERT(
         std::is_convertible<
             typename std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             param_pct_view>::value);
 
     params_encoded_iter(
@@ -268,7 +268,7 @@ struct params_iter
     BOOST_STATIC_ASSERT(
         std::is_convertible<
             typename std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             param_view>::value);
 
     params_iter(

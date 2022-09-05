@@ -265,7 +265,7 @@ public:
     typename std::enable_if<
         std::is_convertible<typename
             std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             string_view>::value>::type
 #endif
     assign(FwdIt first, FwdIt last);
@@ -544,7 +544,7 @@ public:
     typename std::enable_if<
         std::is_convertible<typename
             std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             string_view>::value,
         iterator>::type
 #endif
@@ -674,7 +674,7 @@ public:
     typename std::enable_if<
         std::is_convertible<typename
             std::iterator_traits<
-                FwdIt>::value_type,
+                FwdIt>::reference,
             string_view>::value,
         iterator>::type
 #endif

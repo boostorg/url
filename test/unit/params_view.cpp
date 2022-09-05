@@ -183,14 +183,14 @@ struct params_view_test
 
         // operator=(params_view)
         {
-            url u0, u1;
+            url u0("?key=value");;
+            url u1;
             params_view p0 = u0.params();
             params_view p1 = u1.params();
             p1 = p0;
-            BOOST_TEST_EQ(
-                &p0.url(), &p1.url());
-            check(p0, {});
-            check(p1, {});
+            BOOST_TEST_NE(&p0.url(), &p1.url());
+            check(p0, {{"key", "value"}});
+            check(p1, {{"key", "value"}});
         }
     }
 

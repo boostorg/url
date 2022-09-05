@@ -23,7 +23,7 @@ namespace urls {
 param_view
 params_base::
 iterator::
-dereference()
+dereference() const
 {
     if(! valid_)
     {

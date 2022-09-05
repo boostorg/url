@@ -10,7 +10,6 @@
 #ifndef BOOST_URL_DETAIL_IMPL_PARAMS_ITER_IMPL_IPP
 #define BOOST_URL_DETAIL_IMPL_PARAMS_ITER_IMPL_IPP
 
-#include <boost/url/decode_view.hpp>
 #include <boost/url/detail/params_iter_impl.hpp>
 #include <boost/assert.hpp>
 
