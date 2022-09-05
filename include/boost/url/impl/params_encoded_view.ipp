@@ -29,8 +29,8 @@ namespace urls {
 std::size_t
 params_encoded_view::
 erase(
-    string_view key,
-    ignore_case_param ic)
+    pct_string_view key,
+    ignore_case_param ic) noexcept
 {
     // VFALCO we can't cache end() here
     // because it will be invalidated

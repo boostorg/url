@@ -1683,7 +1683,7 @@ struct url_base_test
         {
         url u( "http://example.com/path/to/file.txt" );
 
-        segments sv = u.segments();
+        segments_ref sv = u.segments();
 
         (void)sv;
         }
@@ -1692,7 +1692,7 @@ struct url_base_test
         {
         url u( "http://example.com/path/to/file.txt" );
 
-        segments_encoded sv = u.encoded_segments();
+        segments_encoded_ref sv = u.encoded_segments();
 
         (void)sv;
         }

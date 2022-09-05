@@ -11,7 +11,6 @@
 #define BOOST_URL_IMPL_PCT_ENCODED_VIEW_IPP
 
 #include <boost/url/decode_view.hpp>
-#include <boost/url/grammar/detail/copied_strings.hpp>
 #include <ostream>
 
 namespace boost {
@@ -65,22 +64,6 @@ decode_view(
     dn_ = detail::validate_encoding(
         s, opt).value(BOOST_URL_POS);
 }
-
-#if 0
-decode_view
-decode_view::
-maybe_copy(
-    grammar::detail::copied_strings_base& sp) const
-{
-    decode_opts opt;
-    opt.plus_to_space =
-        plus_to_space_;
-    return decode_view(
-        sp.maybe_copy(encoded()),
-        dn_,
-        opt);
-}
-#endif
 
 //------------------------------------------------
 

@@ -800,12 +800,19 @@ struct param_pct_view
     */
     explicit
     operator
-    param()
+    param() const
     {
         return param(
             static_cast<std::string>(key),
             static_cast<std::string>(value),
             has_value);
+    }
+
+    operator
+    param_view() const noexcept
+    {
+        return param_view(
+            key, value, has_value);
     }
 
 #ifndef BOOST_URL_DOCS

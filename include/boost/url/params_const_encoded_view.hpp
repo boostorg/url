@@ -76,6 +76,8 @@ public:
         @par Postconditions
         @code
         this->buffer().data() == other.buffer().data()
+        @endcode
+
         @par Complexity
         Constant.
 

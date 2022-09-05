@@ -76,6 +76,8 @@ struct url_impl : parts_base
     pos_t offset(int) const noexcept;
     string_view get(int) const noexcept;
     string_view get(int, int) const noexcept;
+    pct_string_view pct_get(int) const noexcept;
+    pct_string_view pct_get(int, int) const noexcept;
     void set_size(int, pos_t) noexcept;
     void split(int, std::size_t) noexcept;
     void adjust(int, int, std::size_t) noexcept;
@@ -91,6 +93,56 @@ struct url_impl : parts_base
     void apply_path(pct_string_view, std::size_t) noexcept;
     void apply_query(pct_string_view, std::size_t) noexcept;
     void apply_frag(pct_string_view) noexcept;
+};
+
+//------------------------------------------------
+
+// this allows a path to come from a
+// url_impl or a separate string_view
+class path_ref
+    : private parts_base
+{
+    url_impl const* impl_ = nullptr;
+    char const* data_ = nullptr;
+    std::size_t size_ = 0;
+    std::size_t nseg_ = 0;
+    std::size_t dn_ = 0;
+
+public:
+    path_ref() = default;
+    path_ref(string_view,
+        std::size_t, std::size_t) noexcept;
+    pct_string_view string() const noexcept;
+    std::size_t size() const noexcept;
+    char const* data() const noexcept;
+    char const* end() const noexcept;
+    std::size_t nseg() const noexcept;
+
+    path_ref(
+        url_impl const& impl) noexcept
+        : impl_(&impl)
+    {
+    }
+
+    bool
+    alias_of(
+        url_impl const& impl) const noexcept
+    {
+        return impl_ == &impl;
+    }
+
+    bool
+    alias_of(
+        path_ref const& ref) const noexcept
+    {
+        if(impl_)
+            return impl_ == ref.impl_;
+        BOOST_ASSERT(data_ != ref.data_ || (
+            size_ == ref.size_ &&
+            nseg_ == ref.nseg_ &&
+            dn_ == ref.dn_));
+        return data_ == ref.data_;
+    }
 };
 
 //------------------------------------------------
@@ -154,6 +206,37 @@ get(int first,
 {
     return { cs_ + offset(first),
         offset(last) - offset(first) };
+}
+
+// return id as pct-string
+inline
+pct_string_view
+url_impl::
+pct_get(
+    int id) const noexcept
+{
+    return make_pct_string_view(
+        cs_ + offset(id),
+        len(id),
+        decoded_[id]);
+}
+
+// return [first, last) as pct-string
+inline
+pct_string_view
+url_impl::
+pct_get(
+    int first,
+    int last) const noexcept
+{
+    auto const pos = offset(first);
+    std::size_t n = 0;
+    for(auto i = first; i < last;)
+        n += decoded_[i++];
+    return make_pct_string_view(
+        cs_ + pos,
+        offset(last) - pos,
+        n);
 }
 
 //------------------------------------------------

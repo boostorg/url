@@ -65,15 +65,17 @@ class BOOST_SYMBOL_VISIBLE
     friend class url_view;
     friend class static_url_base;
     friend class params_base;
-    friend class params_encoded_base;
-    friend class params_view;
     friend class params_const_view;
-    friend class params_encoded_view;
     friend class params_const_encoded_view;
-    friend class segments;
+    friend class params_encoded_base;
+    friend class params_encoded_view;
+    friend class params_view;
+    friend class segments_base;
     friend class segments_view;
-    friend class segments_encoded;
     friend class segments_encoded_view;
+    friend class segments_encoded_base;
+    friend class segments_encoded_ref;
+    friend class segments_ref;
 
     struct shared_impl;
 
@@ -101,6 +103,23 @@ public:
     // Observers
     //
     //--------------------------------------------
+
+    /** Return the maximum number of characters possible
+
+        This represents the largest number of
+        characters that are possible in a url,
+        not including any null terminator.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    static
+    constexpr
+    std::size_t
+    max_size() noexcept
+    {
+        return BOOST_URL_MAX_SIZE;
+    }
 
     /** Return the number of characters in the URL
 
@@ -1642,7 +1661,7 @@ public:
     segments_view
     segments() const noexcept
     {
-        return {encoded_path(), u_.nseg_};
+        return {detail::path_ref(u_)};
     }
 
     /** Return the path as a container of segments
@@ -1696,7 +1715,7 @@ public:
     encoded_segments() const noexcept
     {
         return segments_encoded_view(
-            encoded_path(), u_.nseg_);
+            detail::path_ref(u_));
     }
 
     //--------------------------------------------

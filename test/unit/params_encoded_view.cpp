@@ -13,9 +13,10 @@
 
 #include <boost/url/url.hpp>
 #include <boost/url/url_view.hpp>
-#include <boost/core/ignore_unused.hpp>
-#include "test_suite.hpp"
 #include <boost/static_assert.hpp>
+#include <boost/core/ignore_unused.hpp>
+
+#include "test_suite.hpp"
 
 namespace boost {
 namespace urls {
@@ -178,10 +179,6 @@ struct params_encoded_view_test
     void
     testSpecial()
     {
-        BOOST_STATIC_ASSERT(
-            ! std::is_default_constructible<
-                params_encoded_view>::value);
-
         // params_encoded_view(params_encoded_view)
         {
             url u;

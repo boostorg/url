@@ -83,10 +83,6 @@
 #define BOOST_URL_STRTOK_ARG(T, name) T&& name = {}
 #endif
 
-#ifndef BOOST_URL_STACK_BYTES
-#define BOOST_URL_STACK_BYTES 4096
-#endif
-
 #if BOOST_WORKAROUND( BOOST_GCC_VERSION, < 80000 ) || \
     BOOST_WORKAROUND( BOOST_CLANG_VERSION, < 30900 )
 #define BOOST_URL_RETURN(x) return std::move((x))

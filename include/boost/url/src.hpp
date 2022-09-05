@@ -34,7 +34,7 @@ in a translation unit of the program.
 //------------------------------------------------
 
 #include <boost/url/detail/impl/any_params_iter.ipp>
-#include <boost/url/detail/impl/any_path_iter.ipp>
+#include <boost/url/detail/impl/any_segments_iter.ipp>
 #include <boost/url/detail/impl/decode.ipp>
 #include <boost/url/detail/impl/decode_view.ipp>
 #include <boost/url/detail/impl/except.ipp>
@@ -42,11 +42,11 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/params_iter_impl.ipp>
 #include <boost/url/detail/impl/path.ipp>
 #include <boost/url/detail/impl/remove_dot_segments.ipp>
-#include <boost/url/detail/impl/segments_encoded_iterator_impl.ipp>
-#include <boost/url/detail/impl/segments_iterator_impl.ipp>
+#include <boost/url/detail/impl/segments_iter_impl.ipp>
 #include <boost/url/detail/impl/url_impl.ipp>
 
 #include <boost/url/impl/authority_view.ipp>
+#include <boost/url/impl/decode_view.ipp>
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/ipv4_address.ipp>
 #include <boost/url/impl/ipv6_address.ipp>
@@ -54,13 +54,14 @@ in a translation unit of the program.
 #include <boost/url/impl/params_encoded_base.ipp>
 #include <boost/url/impl/params_view.ipp>
 #include <boost/url/impl/params_encoded_view.ipp>
-#include <boost/url/impl/decode_view.ipp>
+#include <boost/url/impl/parse_path.ipp>
 #include <boost/url/impl/pct_string_view.ipp>
 #include <boost/url/impl/scheme.ipp>
-#include <boost/url/impl/segments.ipp>
-#include <boost/url/impl/segments_encoded.ipp>
+#include <boost/url/impl/segments_base.ipp>
+#include <boost/url/impl/segments_encoded_base.ipp>
+#include <boost/url/impl/segments_encoded_ref.ipp>
 #include <boost/url/impl/segments_encoded_view.ipp>
-#include <boost/url/impl/segments_view.ipp>
+#include <boost/url/impl/segments_ref.ipp>
 #include <boost/url/impl/static_url.ipp>
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_base.ipp>
@@ -73,7 +74,6 @@ in a translation unit of the program.
 //
 //------------------------------------------------
 
-#include <boost/url/grammar/detail/impl/copied_strings.ipp>
 #include <boost/url/grammar/detail/impl/recycled.ipp>
 
 #include <boost/url/grammar/impl/ci_string.ipp>

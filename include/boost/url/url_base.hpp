@@ -18,11 +18,11 @@
 #include <boost/url/params_encoded_view.hpp>
 #include <boost/url/pct_string_view.hpp>
 #include <boost/url/scheme.hpp>
-#include <boost/url/segments.hpp>
-#include <boost/url/segments_encoded.hpp>
+#include <boost/url/segments_ref.hpp>
+#include <boost/url/segments_encoded_ref.hpp>
 #include <boost/url/url_view_base.hpp>
 #include <boost/url/detail/any_params_iter.hpp>
-#include <boost/url/detail/any_path_iter.hpp>
+#include <boost/url/detail/any_segments_iter.hpp>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -33,8 +33,8 @@ namespace urls {
 
 #ifndef BOOST_URL_DOCS
 namespace detail {
-struct any_path_iter;
 struct params_iter_impl;
+struct segments_iter_impl;
 }
 namespace grammar {
 class lut_chars;
@@ -70,9 +70,9 @@ class BOOST_SYMBOL_VISIBLE
 
     friend class url;
     friend class static_url_base;
-    friend class urls::segments;
-    friend class urls::params_view;
-    friend class segments_encoded;
+    friend class params_view;
+    friend class segments_ref;
+    friend class segments_encoded_ref;
     friend class params_encoded_view;
 
     struct op_t
@@ -1848,7 +1848,7 @@ public:
             @ref set_path,
             @ref set_path_absolute.
     */
-    urls::segments
+    urls::segments_ref
     segments() noexcept
     {
         return {*this};
@@ -1871,7 +1871,7 @@ public:
         @code
         url u( "http://example.com/path/to/file.txt" );
 
-        segments_encoded sv = u.encoded_segments();
+        segments_encoded_ref sv = u.encoded_segments();
         @endcode
 
         @par Complexity
@@ -1906,7 +1906,7 @@ public:
             @ref set_path_absolute.
     */
     BOOST_URL_DECL
-    segments_encoded
+    segments_encoded_ref
     encoded_segments() noexcept
     {
         return {*this};
@@ -2164,7 +2164,7 @@ public:
     urls::params_encoded_view
     encoded_params() noexcept
     {
-        return urls::params_encoded_view(*this);
+        return {*this};
     }
 
     //--------------------------------------------
@@ -2566,25 +2566,15 @@ private:
     char* set_host_impl(std::size_t n, op_t& op);
     char* set_port_impl(std::size_t n, op_t& op);
 
-    pos_t
-    segment(
-        std::size_t i) const noexcept;
-
-    char*
-    resize_segments(
-        std::size_t i0,
-        std::size_t i1,
-        std::size_t n,
-        std::size_t nseg,
-        op_t& op);
+    string_view
+    first_segment() const noexcept;
 
     BOOST_URL_DECL
     void
     edit_segments(
-        std::size_t i0,
-        std::size_t i1,
-        detail::any_path_iter&& it0,
-        detail::any_path_iter&& it1,
+        detail::segments_iter_impl const&,
+        detail::segments_iter_impl const&,
+        detail::any_segments_iter&& it0,
         int abs_hint = -1);
 
     char*
@@ -2719,7 +2709,7 @@ resolve(
 // These are here because of circular references
 #include <boost/url/impl/params_encoded_view.hpp>
 #include <boost/url/impl/params_view.hpp>
-#include <boost/url/impl/segments.hpp>
-#include <boost/url/impl/segments_encoded.hpp>
+#include <boost/url/impl/segments_encoded_ref.hpp>
+#include <boost/url/impl/segments_ref.hpp>
 
 #endif
