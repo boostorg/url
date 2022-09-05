@@ -14,16 +14,15 @@
 */
 
 #include <boost/url/url_view.hpp>
+#include <boost/url/url.hpp>
 #include <boost/url/optional.hpp>
 #include <boost/url/rfc/absolute_uri_rule.hpp>
 #include <boost/url/grammar/digit_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include "filtered_view.hpp"
+#include "filter_view.hpp"
 #include <iostream>
 
 namespace urls = boost::urls;
-
-#if 0
 
 /// Callable to identify a magnet "exact topic"
 /**
@@ -35,7 +34,7 @@ namespace urls = boost::urls;
  */
 struct is_exact_topic {
     bool
-    operator()(urls::param_pct_view p);
+    operator()(urls::param_view p);
 };
 
 /// Callable to identify a magnet url parameter
@@ -63,7 +62,7 @@ public:
         , buf_(buffer) {}
 
     bool
-    operator()(urls::param_pct_view p);
+    operator()(urls::param_view p);
 };
 
 /// Callable to convert param values to urls
@@ -74,9 +73,22 @@ public:
     This callable is used as a transform
     function for the topics_view.
  */
-struct to_url {
+struct param_view_to_url {
     urls::url_view
-    operator()(urls::param_pct_view p);
+    operator()(urls::param_view p);
+};
+
+/// Callable to convert param values to urls
+/**
+    This callable converts the value of a
+    query parameter into a urls::url_view.
+
+    This callable is used as a transform
+    function for the topics_view.
+ */
+struct param_view_to_param_key {
+    urls::url_view
+    operator()(urls::param_view p);
 };
 
 /// Callable to convert param values to urls::decode_view
@@ -88,10 +100,10 @@ struct to_url {
     function for the keys_view.
  */
 struct to_decoded_value {
-    urls::decode_view
-    operator()(urls::param_pct_view p)
+    urls::string_view
+    operator()(urls::param_view p)
     {
-        return *p.value;
+        return p.value;
     }
 };
 
@@ -107,9 +119,9 @@ struct to_decoded_value {
     This callable is used as a transform
     function for the info_hashes_view.
  */
-struct to_infohash {
+struct param_view_to_infohash {
     urls::string_view
-    operator()(urls::param_pct_view p);
+    operator()(urls::param_view p);
 };
 
 /// Callable to convert param values to protocols
@@ -126,7 +138,7 @@ struct to_infohash {
  */
 struct to_protocol {
     urls::string_view
-    operator()(urls::param_pct_view p);
+    operator()(urls::param_view p);
 };
 
 struct magnet_link_rule_t;
@@ -170,23 +182,23 @@ class magnet_link_view
 public:
     /// A view of all exact topics in the magnet_link
     using topics_view =
-        filtered_view<
+        filter_view<
             urls::params_const_view,
             urls::url_view,
             is_exact_topic,
-            to_url>;
+            param_view_to_url>;
 
     /// A view of all info_hashes in the magnet_link
     using info_hashes_view =
-        filtered_view<
+        filter_view<
             urls::params_const_view,
             urls::string_view,
             is_exact_topic,
-            to_infohash>;
+            param_view_to_infohash>;
 
     /// A view of all protocols in the magnet_link
     using protocols_view =
-        filtered_view<
+        filter_view<
             urls::params_const_view,
             urls::string_view,
             is_exact_topic,
@@ -200,9 +212,9 @@ public:
      */
     template <class MutableString>
     using keys_view =
-        filtered_view<
+        filter_view<
             urls::params_const_view,
-            urls::decode_view,
+            urls::string_view,
             is_url_with_key<MutableString>,
             to_decoded_value>;
 
@@ -380,7 +392,7 @@ private:
 
 bool
 is_exact_topic::
-operator()(urls::param_pct_view p)
+operator()(urls::param_view p)
 {
     // These comparisons use the lazy
     // operator== for urls::decode_view
@@ -402,12 +414,12 @@ operator()(urls::param_pct_view p)
 template <class MutableString>
 bool
 is_url_with_key<MutableString>::
-operator()(urls::param_pct_view p)
+operator()(urls::param_view p)
 {
     if (p.key != k_)
         return false;
     urls::error_code ec;
-    (*p.value).assign_to(buf_);
+    buf_.assign(p.value.begin(), p.value.end());
     if (ec.failed())
         return false;
     urls::result<urls::url_view> r =
@@ -416,10 +428,10 @@ operator()(urls::param_pct_view p)
 }
 
 urls::url_view
-to_url::
-operator()(urls::param_pct_view p)
+param_view_to_url::
+operator()(urls::param_view p)
 {
-    // `to_url` is used in topics_view,
+    // `param_view_to_url` is used in topics_view,
     // where the URL is not
     // percent-encoded twice.
     // Thus, we can already parse the
@@ -429,8 +441,8 @@ operator()(urls::param_pct_view p)
 }
 
 urls::string_view
-to_infohash::
-operator()(urls::param_pct_view p)
+param_view_to_infohash::
+operator()(urls::param_view p)
 {
     urls::url_view topic =
         urls::parse_uri(p.value).value();
@@ -443,10 +455,9 @@ operator()(urls::param_pct_view p)
 
 urls::string_view
 to_protocol::
-operator()(urls::param_pct_view p)
+operator()(urls::param_view p)
 {
     urls::url_view topic =
-
         urls::parse_uri(p.value).value();
     urls::string_view t = topic.encoded_path();
     std::size_t pos = t.find_last_of(':');
@@ -544,7 +555,7 @@ magnet_link_view::param(urls::string_view key) const noexcept
     auto end = ps.end();
     while (it != end)
     {
-        urls::param_pct_view p = *it;
+        urls::param_view p = *it;
         if (p.key.size() < 2)
         {
             ++it;
@@ -632,7 +643,7 @@ magnet_link_rule_t::parse(
 
     // all topics should parse as valid urls
     if (!std::all_of(pit, pend, [](
-        urls::param_pct_view p)
+        urls::param_view p)
     {
         if (!is_exact_topic{}(p))
             return true;
@@ -659,7 +670,6 @@ parse_magnet_link( urls::string_view s ) noexcept
 {
     return urls::grammar::parse(s, magnet_link_rule);
 }
-#endif
 
 int main(int argc, char** argv)
 {
@@ -679,7 +689,6 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-#if 0
     urls::result<magnet_link_view> r =
         parse_magnet_link(argv[1]);
     if (!r)
@@ -728,7 +737,6 @@ int main(int argc, char** argv)
     auto dn = m.display_name();
     if (dn)
         std::cout << "display name: " << *dn << "\n";
-#endif
 
     return EXIT_SUCCESS;
 }

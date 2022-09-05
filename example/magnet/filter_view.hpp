@@ -25,23 +25,23 @@
    @tparam Transform Type of transform function on filtered elements
  */
 template <class Container, class Value, class Predicate, class Transform>
-class filtered_view
+class filter_view
 {
     Container c_;
     Predicate p_;
     Transform t_;
 
+public:
     using value_type = Value;
 
-public:
     class iterator
     {
-        friend filtered_view;
+        friend filter_view;
 
         using base_iter = typename Container::iterator;
 
         base_iter b_;
-        filtered_view& v_;
+        filter_view& v_;
 
         void
         skip_filtered()
@@ -55,7 +55,7 @@ public:
         }
 
         iterator(
-            filtered_view& v,
+            filter_view& v,
             base_iter it)
             : b_(it)
             , v_(v)
@@ -81,7 +81,7 @@ public:
         }
 
         value_type
-        operator*() const
+        operator*()
         {
             return v_.t_(*b_);
         }
@@ -105,7 +105,7 @@ public:
         }
     };
 
-    filtered_view(
+    filter_view(
         Container const& base,
         Predicate pred = {},
         Transform transform = {})
@@ -123,5 +123,43 @@ public:
         return {*this, c_.end()};
     }
 };
+
+/// The identity function
+template <class T>
+struct identity_fn
+{
+    T operator()(T const& t) { return t; }
+};
+
+/// Return a container view filtered with Predicate
+template <class Container, class Value, class Predicate>
+filter_view<
+    Container,
+    typename Container::value_type,
+    Predicate,
+    identity_fn<typename Container::value_type>>
+filter(Container&& c, Predicate&& p) {
+    return {
+        std::forward<Container>(c),
+        std::forward<Predicate>(p),
+        identity_fn<typename Container::value_type>{}
+    };
+}
+
+/// Return a container view filtered with Predicate and Transform applied
+template <class Container, class Value, class Predicate, class Transform>
+filter_view<
+    Container,
+    typename Container::value_type,
+    Predicate,
+    Transform>
+filter(Container&& c, Predicate&& p, Transform&& t) {
+    return {
+        std::forward<Container>(c),
+        std::forward<Predicate>(p),
+        std::forward<Transform>(t)
+    };
+}
+
 
 #endif
