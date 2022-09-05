@@ -132,7 +132,7 @@ struct param
         , value(std::move(other.value))
         , has_value(other.has_value)
     {
-    #if BOOST_WORKAROUND(BOOST_GCC, < 50000)
+    #ifdef BOOST_URL_COW_STRINGS
         // for copy-on-write std::string
         other.key.clear();
         other.value.clear();
@@ -182,7 +182,7 @@ struct param
         key = std::move(other.key);
         value = std::move(other.value);
         has_value = other.has_value;
-    #if BOOST_WORKAROUND(BOOST_GCC, < 50000)
+    #ifdef BOOST_URL_COW_STRINGS
         // for copy-on-write std::string
         other.key.clear();
         other.value.clear();
