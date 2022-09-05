@@ -108,6 +108,10 @@ using pos_t = size_t;
 #define BOOST_URL_NO_INLINE
 #endif
 
-
+#ifndef BOOST_URL_COW_STRINGS
+#if defined(BOOST_LIBSTDCXX_VERSION) && (BOOST_LIBSTDCXX_VERSION < 60000 || (defined(_GLIBCXX_USE_CXX11_ABI) && _GLIBCXX_USE_CXX11_ABI == 0))
+#define BOOST_URL_COW_STRINGS
+#endif
+#endif
 
 #endif
