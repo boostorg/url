@@ -39,7 +39,7 @@ are represented using containers modeling bidirectional ranges. For
 example the member function
 [link url.ref.boost__urls__url_view_base.encoded_segments `encoded_segments`]
 returns a container called
-[link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]
+[link url.ref.boost__urls__segments_encoded_ref `segments_encoded_ref`]
 which may be iterated, and references the underlying character buffer
 without taking ownership. Here we define the function `segs` which
 returns a `std::list` formed by appending each segment in the path:

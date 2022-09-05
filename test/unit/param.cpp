@@ -35,10 +35,12 @@ struct param_test
     BOOST_STATIC_ASSERT(std::is_move_assignable<param_pct_view>::value);
 
     BOOST_STATIC_ASSERT(std::is_constructible<param_view, param>::value);
-    BOOST_STATIC_ASSERT(std::is_constructible<param, param_pct_view>::value); // explicit
 
-    // not a useful conversion
-    BOOST_STATIC_ASSERT(! std::is_constructible<param_view, param_pct_view>::value);
+    // explicit, expensive
+    BOOST_STATIC_ASSERT(std::is_constructible<param, param_pct_view>::value);
+
+    // cheap, loses pct-validation
+    BOOST_STATIC_ASSERT(std::is_constructible<param_view, param_pct_view>::value);
 
     // expensive constructions
     BOOST_STATIC_ASSERT(! std::is_constructible<param_pct_view, param>::value);

@@ -60,13 +60,13 @@ class url_base;
     character buffer:
     @li @ref append : Only `end()`.
     @li @ref assign, @ref clear,
-        `operator=` : All elements.
-    @li @ref erase : Erased elements and all
-        elements after (including `end()`).
-    @li @ref insert : All elements at or after
+        `operator=` : All params.
+    @li @ref erase : Erased params and all
+        params after (including `end()`).
+    @li @ref insert : All params at or after
         the insertion point (including `end()`).
     @li @ref replace, @ref set : Modified
-        elements and all elements
+        params and all params
         after (including `end()`).
 */
 class params_encoded_view
@@ -76,7 +76,6 @@ class params_encoded_view
 
     url_base* u_ = nullptr;
 
-    explicit
     params_encoded_view(
         url_base& u) noexcept;
 
@@ -149,6 +148,9 @@ public:
         of the query parameters are replaced by
         the contents of the initializer-list.
 
+        <br>
+        All iterators are invalidated.
+
         @par Preconditions
         None of character buffers referenced by
         `init` may overlap the character buffer of
@@ -166,8 +168,10 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when init contains
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `init` contains an invalid percent-encoding.
 
         @param init The list of params to assign.
     */
@@ -176,6 +180,12 @@ public:
         param_pct_view> init);
 
     /** Conversion
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
     operator
     params_const_encoded_view() const noexcept;
@@ -241,7 +251,7 @@ public:
 
     //--------------------------------------------
 
-    /** Assign elements
+    /** Assign params
 
         This function replaces the entire
         contents of the view with the params
@@ -268,8 +278,10 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when params contain
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `init` contains an invalid percent-encoding.
 
         @param init The list of params to assign.
     */
@@ -277,7 +289,7 @@ public:
     assign(std::initializer_list<
         param_pct_view> init);
 
-    /** Assign elements
+    /** Assign params
 
         This function replaces the entire
         contents of the view with the params
@@ -302,8 +314,10 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when params contain
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The range contains an invalid percent-encoding.
 
         @param first, last The range of params
         to assign.
@@ -314,7 +328,7 @@ public:
 
     //--------------------------------------------
 
-    /** Append elements
+    /** Append params
 
         This function appends a param to the view.
 
@@ -334,8 +348,10 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when param contains
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `p` contains an invalid percent-encoding.
 
         @return An iterator to the new element.
 
@@ -345,7 +361,7 @@ public:
     append(
         param_pct_view const& p);
 
-    /** Append elements
+    /** Append params
 
         This function appends a range of params
         to the view.
@@ -368,8 +384,10 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when params contain
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The range contains an invalid percent-encoding.
 
         @return An iterator to the first new element.
 
@@ -381,7 +399,7 @@ public:
     append(
         FwdIt first, FwdIt last);
 
-    /** Append elements
+    /** Append params
 
         This function appends the params in
         an <em>initializer-list</em> to the view.
@@ -402,8 +420,10 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when params contain
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `init` contains an invalid percent-encoding.
 
         @return An iterator to the first new element.
 
@@ -415,7 +435,7 @@ public:
 
     //--------------------------------------------
 
-    /** Insert elements
+    /** Insert params
 
         This function inserts a param
         before the specified position.
@@ -434,8 +454,10 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when param contains
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `p` contains an invalid percent-encoding.
 
         @return An iterator to the inserted
         element.
@@ -451,7 +473,7 @@ public:
         iterator before,
         param_pct_view const& p);
 
-    /** Insert elements
+    /** Insert params
 
         This function inserts a range of
         params before the specified position.
@@ -480,8 +502,10 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when params contain
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The range contains an invalid percent-encoding.
 
         @return An iterator to the first
         element inserted, or `before` if
@@ -501,7 +525,7 @@ public:
         FwdIt first,
         FwdIt last);
 
-    /** Insert elements
+    /** Insert params
 
         This function inserts the params in
         an <em>initializer-list</em> before
@@ -526,8 +550,10 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when params contain
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `init` contains an invalid percent-encoding.
 
         @return An iterator to the first
         element inserted, or `before` if
@@ -547,7 +573,7 @@ public:
 
     //--------------------------------------------
 
-    /** Erase elements
+    /** Erase params
 
         This function removes an element from
         the container.
@@ -579,9 +605,9 @@ public:
     iterator
     erase(iterator pos) noexcept;
 
-    /** Erase elements
+    /** Erase params
 
-        This function removes a range of elements
+        This function removes a range of params
         from the container.
 
         <br>
@@ -602,14 +628,14 @@ public:
         the removed range.
 
         @param first, last The range of
-        elements to erase.
+        params to erase.
     */
     iterator
     erase(
         iterator first,
         iterator last) noexcept;
 
-    /** Erase elements
+    /** Erase params
 
         <br>
         All iterators are invalidated.
@@ -627,10 +653,12 @@ public:
         Linear in `this->url().encoded_query().size()`.
 
         @par Exception Safety
-        Exception thrown when key contain
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
 
-        @return The number of elements removed
+        @throw system_error
+        `key` contains an invalid percent-encoding.
+
+        @return The number of params removed
         from the container.
 
         @param key The key to match.
@@ -645,12 +673,12 @@ public:
     BOOST_URL_DECL
     std::size_t
     erase(
-        string_view key,
-        ignore_case_param ic = {});
+        pct_string_view key,
+        ignore_case_param ic = {}) noexcept;
 
     //--------------------------------------------
 
-    /** Replace elements
+    /** Replace params
 
         This function replaces the contents
         of the element at `pos` with the
@@ -675,8 +703,10 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when param contains
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `p` contains an invalid percent-encoding.
 
         @return An iterator to the element.
 
@@ -689,10 +719,10 @@ public:
         iterator pos,
         param_pct_view const& p);
 
-    /** Replace elements
+    /** Replace params
 
         This function replaces a range of
-        elements with the params in an
+        params with the params in an
         <em>initializer-list</em>.
 
         <br>
@@ -710,14 +740,16 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when params contain
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `init` contains an invalid percent-encoding.
 
         @return An iterator to the first
         element inserted, or one past `to` if
         `init.size() == 0`.
 
-        @param from,to The range of elements
+        @param from,to The range of params
         to replace.
 
         @param init The list of params to assign.
@@ -729,10 +761,10 @@ public:
         std::initializer_list<
             param_pct_view> init);
 
-    /** Replace elements
+    /** Replace params
 
         This function replaces a range of
-        elements with a range of params.
+        params with a range of params.
 
         <br>
         All iterators that are equal to
@@ -754,14 +786,16 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
-        Exception thrown when params contain
-        an invalid percent-encoding.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The range contains an invalid percent-encoding.
 
         @return An iterator to the first
         element inserted, or one past `to` if
         `first == last`.
 
-        @param from,to The range of elements to
+        @param from,to The range of params to
         replace.
 
         @param first, last The range of params
@@ -836,6 +870,10 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `value` contains an invalid percent-encoding.
 
         @return An iterator to the element.
 
@@ -859,9 +897,9 @@ public:
         `this->contains( key, ic )`.
 
         @li If key is contained in the view
-        then one of the matching elements has
+        then one of the matching params has
         its value changed to the specified value.
-        The remaining elements with a matching
+        The remaining params with a matching
         key are erased. Otherwise,
 
         @li If `key` is not contained in the
@@ -891,6 +929,11 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `key` or `value` contain an invalid
+        percent-encoding.
 
         @return An iterator to the appended
         or modified element.

@@ -694,6 +694,7 @@ parsing_path()
     }
     {
         //[snippet_parsing_path_4
+        /*
         url_view u("https://www.boost.org//doc///libs");
         std::cout << u << "\n"
                   "path:             " << u.encoded_path()     << "\n"
@@ -702,6 +703,7 @@ parsing_path()
         std::cout << u.encoded_segments().size() << " segments\n";
         for (auto seg: u.encoded_segments())
             std::cout << "segment: " << seg << "\n";
+        */
         //]
     }
 
@@ -776,10 +778,12 @@ parsing_path()
 
     {
         //[snippet_parsing_path_9
+        /*
         segments_view segs = parse_path("/doc/libs").value();
         assert( segs.size() == 2 );
+        */
         //]
-        boost::ignore_unused(segs);
+        //boost::ignore_unused(segs);
     }
 
     {
@@ -1390,7 +1394,7 @@ modifying_path()
         //[snippet_modifying_path_11
         // should not insert as "pathto/file.txt"
         url u = parse_uri_reference("to/file.txt").value();
-        segments segs = u.segments();
+        segments_ref segs = u.segments();
         segs.insert(segs.begin(), "path");
         assert(u.string() == "path/to/file.txt");
         //]

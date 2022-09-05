@@ -150,6 +150,72 @@ apply_frag(
     decoded_[id_frag] = s.decoded_size();
 }
 
+//------------------------------------------------
+
+path_ref::
+path_ref(
+    string_view s,
+    std::size_t dn,
+    std::size_t nseg) noexcept
+    : data_(s.data())
+    , size_(s.size())
+    , nseg_(nseg)
+    , dn_(dn)
+{
+}
+
+pct_string_view
+path_ref::
+string() const noexcept
+{
+    if(impl_)
+        return make_pct_string_view(
+            impl_->cs_ +
+                impl_->offset(id_path),
+            impl_->len(id_path),
+            impl_->decoded_[id_path]);
+    return make_pct_string_view(
+        data_, size_, dn_);
+}
+
+std::size_t
+path_ref::
+size() const noexcept
+{
+    if(impl_)
+        return impl_->len(id_path);
+    return size_;
+}
+
+char const*
+path_ref::
+data() const noexcept
+{
+    if(impl_)
+        return impl_->cs_ +
+            impl_->offset(id_path);
+    return data_;
+}
+
+char const*
+path_ref::
+end() const noexcept
+{
+    if(impl_)
+        return impl_->cs_ +
+            impl_->offset(id_query);
+    return data_ + size_;
+}
+
+std::size_t
+path_ref::
+nseg() const noexcept
+{
+    if(impl_)
+        return impl_->nseg_;
+    return nseg_;
+}
+
 } // detail
 } // urls
 } // boost

@@ -10,12 +10,9 @@
 #ifndef BOOST_URL_DETAIL_ANY_PARAMS_ITER_HPP
 #define BOOST_URL_DETAIL_ANY_PARAMS_ITER_HPP
 
-#include <boost/url/decode_view.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/param.hpp>
 #include <boost/url/pct_string_view.hpp>
-#include <boost/url/string_view.hpp>
-#include <boost/url/grammar/ci_string.hpp>
 #include <boost/static_assert.hpp>
 #include <cstddef>
 #include <iterator>
@@ -56,6 +53,10 @@ public:
     }
 };
 
+//------------------------------------------------
+//
+// any_params_iter
+//
 //------------------------------------------------
 
 /*  An iterator to a type-erased,
@@ -133,6 +134,10 @@ public:
 };
 
 //------------------------------------------------
+//
+// query_iter
+//
+//------------------------------------------------
 
 // A string of plain query params
 struct BOOST_SYMBOL_VISIBLE
@@ -157,85 +162,9 @@ private:
 };
 
 //------------------------------------------------
-
-// Validating and copying from
-// a string of encoded params_view
-class params_encoded_iter_base
-{
-protected:
-    BOOST_URL_DECL
-    static
-    bool
-    measure_impl(
-        param_pct_view const& v,
-        std::size_t& n,
-        error_code& ec) noexcept;
-
-    BOOST_URL_DECL
-    static
-    void
-    copy_impl(
-        char*& dest,
-        char const* end,
-        param_pct_view const& v) noexcept;
-};
-
-// A range of encoded query params_view
-template<class FwdIt>
-struct params_encoded_iter
-    : any_params_iter
-    , private params_encoded_iter_base
-{
-    BOOST_STATIC_ASSERT(
-        std::is_convertible<
-            typename std::iterator_traits<
-                FwdIt>::reference,
-            param_pct_view>::value);
-
-    params_encoded_iter(
-        FwdIt first,
-        FwdIt last) noexcept
-        : any_params_iter(
-            first == last)
-        , it0_(first)
-        , it_(first)
-        , end_(last)
-    {
-    }
-
-private:
-    FwdIt it0_;
-    FwdIt it_;
-    FwdIt end_;
-
-    void
-    rewind() noexcept override
-    {
-        it_ = it0_;
-    }
-
-    bool
-    measure(
-        std::size_t& n,
-        error_code& ec) noexcept override
-    {
-        if(it_ == end_)
-            return false;
-        return measure_impl(
-            *it_++, n, ec);
-    }
-
-    void
-    copy(
-        char*& dest,
-        char const* end
-            ) noexcept override
-    {
-        copy_impl(
-            dest, end, *it_++);
-    }
-};
-
+//
+// params_iter
+//
 //------------------------------------------------
 
 class params_iter_base
@@ -300,8 +229,7 @@ private:
     {
         if(it_ == end_)
             return false;
-        measure_impl(
-            param_view(*it_++), n);
+        measure_impl(*it_++, n);
         return true;
     }
 
@@ -314,6 +242,100 @@ private:
     }
 };
 
+//------------------------------------------------
+//
+// params_encoded_iter
+//
+//------------------------------------------------
+
+// Validating and copying from
+// a string of encoded params
+class params_encoded_iter_base
+{
+protected:
+    BOOST_URL_DECL
+    static
+    bool
+    measure_impl(
+        param_pct_view const& v,
+        std::size_t& n,
+        error_code& ec) noexcept;
+
+    BOOST_URL_DECL
+    static
+    void
+    copy_impl(
+        char*& dest,
+        char const* end,
+        param_view const& v) noexcept;
+};
+
+// A range of encoded query params_view
+template<class FwdIt>
+struct params_encoded_iter
+    : any_params_iter
+    , private params_encoded_iter_base
+{
+    BOOST_STATIC_ASSERT(
+        std::is_convertible<
+            typename std::iterator_traits<
+                FwdIt>::reference,
+            param_pct_view>::value);
+
+    BOOST_STATIC_ASSERT(
+        std::is_convertible<
+            typename std::iterator_traits<
+                FwdIt>::reference,
+            param_view>::value);
+
+    params_encoded_iter(
+        FwdIt first,
+        FwdIt last) noexcept
+        : any_params_iter(
+            first == last)
+        , it0_(first)
+        , it_(first)
+        , end_(last)
+    {
+    }
+
+private:
+    FwdIt it0_;
+    FwdIt it_;
+    FwdIt end_;
+
+    void
+    rewind() noexcept override
+    {
+        it_ = it0_;
+    }
+
+    bool
+    measure(
+        std::size_t& n,
+        error_code& ec) noexcept override
+    {
+        if(it_ == end_)
+            return false;
+        return measure_impl(
+            *it_++, n, ec);
+    }
+
+    void
+    copy(
+        char*& dest,
+        char const* end
+            ) noexcept override
+    {
+        copy_impl(
+            dest, end, *it_++);
+    }
+};
+
+//------------------------------------------------
+//
+// param_value_iter
+//
 //------------------------------------------------
 
 // An iterator which outputs
@@ -344,6 +366,10 @@ private:
     void copy(char*&, char const*) noexcept override;
 };
 
+//------------------------------------------------
+//
+// param_encoded_value_iter
+//
 //------------------------------------------------
 
 // An iterator which outputs
@@ -377,15 +403,6 @@ private:
 //------------------------------------------------
 
 template<class FwdIt>
-params_encoded_iter<FwdIt>
-make_params_encoded_iter(
-    FwdIt first, FwdIt last)
-{
-    return params_encoded_iter<
-        FwdIt>(first, last);
-}
-
-template<class FwdIt>
 params_iter<FwdIt>
 make_params_iter(
     FwdIt first, FwdIt last)
@@ -394,10 +411,14 @@ make_params_iter(
         FwdIt>(first, last);
 }
 
-bool
-ci_decoded_key_equal(
-    decode_view key,
-    string_view match) noexcept;
+template<class FwdIt>
+params_encoded_iter<FwdIt>
+make_params_encoded_iter(
+    FwdIt first, FwdIt last)
+{
+    return params_encoded_iter<
+        FwdIt>(first, last);
+}
 
 } // detail
 } // urls

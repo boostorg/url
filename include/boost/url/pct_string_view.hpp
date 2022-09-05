@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/decode_opts.hpp>
-#include <boost/url/decode_view.hpp> // VFALCO rethink this
+#include <boost/url/decode_view.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
 #include <iterator>
@@ -244,6 +244,15 @@ public:
     {
         return std::string(s_);
     }
+
+#ifndef BOOST_URL_DOCS
+    // arrow support
+    pct_string_view const*
+    operator->() const noexcept
+    {
+        return this;
+    }
+#endif
 
     //--------------------------------------------
 

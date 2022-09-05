@@ -41,11 +41,14 @@ local SOURCES =
     params_encoded_base.cpp
     params_encoded_view.cpp
     params_view.cpp
+    parse_path.cpp
     pct_string_view.cpp
     scheme.cpp
-    segments.cpp
-    segments_encoded.cpp
+    segments_base.cpp
+    segments_encoded_base.cpp
+    segments_encoded_ref.cpp
     segments_encoded_view.cpp
+    segments_ref.cpp
     segments_view.cpp
     snippets.cpp
     static_url.cpp
@@ -60,7 +63,6 @@ local SOURCES =
     grammar/alpha_chars.cpp
     grammar/charset.cpp
     grammar/ci_string.cpp
-    grammar/copied_strings.cpp
     grammar/dec_octet_rule.cpp
     grammar/delim_rule.cpp
     grammar/digit_chars.cpp

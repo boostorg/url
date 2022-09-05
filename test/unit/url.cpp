@@ -161,6 +161,12 @@ struct url_test
         // reserve
         {
             url u;
+            u.reserve(0);
+            BOOST_TEST_GE(u.capacity(), 0);
+            BOOST_TEST_EQ(u.c_str()[0], '\0');
+        }
+        {
+            url u;
             u.reserve(32);
             BOOST_TEST_GE(u.capacity(), 32u);
             u.reserve(16);
@@ -441,6 +447,13 @@ struct url_test
             {
                 u.set_path(u.query());
             });
+
+        // crash
+        {
+            url u;
+            u.set_path("");
+            BOOST_TEST(u.empty());
+        }
     }
 
     void
@@ -632,14 +645,7 @@ struct url_test
                 url u(u0);
                 u.segments() = init;
                 equal(u.segments(), init);
-                equal(u.encoded_segments(), init);
-                BOOST_TEST_EQ(u.string(), s1);
-            }
-            {
-                url u(u0);
-                u.encoded_segments() = init;
-                equal(u.segments(), init);
-                equal(u.encoded_segments(), init);
+                //equal(u.encoded_segments(), init);
                 BOOST_TEST_EQ(u.string(), s1);
             }
         };

@@ -128,86 +128,7 @@ increment() noexcept
 
 //------------------------------------------------
 //
-// params_encoded_iter_base
-//
-//------------------------------------------------
-
-bool
-params_encoded_iter_base::
-measure_impl(
-    param_pct_view const& v,
-    std::size_t& n,
-    error_code& ec) noexcept
-{
-    decode_opts opt;
-    opt.plus_to_space = true;
-    auto rv = detail::validate_encoding(
-        v.key, opt, query_chars);
-    if(! rv)
-    {
-        ec = rv.error();
-        return false;
-    }
-    n += v.key.size();
-    if(v.has_value)
-    {
-        rv = detail::validate_encoding(
-            v.value, opt, query_chars);
-        if(! rv)
-        {
-            ec = rv.error();
-            return false;
-        }
-        n += 1 + v.value.size();
-    }
-    return true;
-}
-
-void
-params_encoded_iter_base::
-copy_impl(
-    char*& dest,
-    char const* end,
-    param_pct_view const& v) noexcept
-{
-    (void)end;
-    {
-        // avoid self-copy
-        auto const kn = v.key.size();
-        BOOST_ASSERT(end - kn >= dest);
-        if( v.key.data() != dest &&
-            kn > 0)
-        {
-            std::memcpy(
-                dest,
-                v.key.data(),
-                kn);
-        }
-        dest += kn;
-    }
-    if(v.has_value)
-    {
-        BOOST_ASSERT(
-            end - 1 >= dest);
-        *dest++ = '=';
-        auto const vn =
-            v.value.size();
-        BOOST_ASSERT(
-            end - vn >= dest);
-        if(vn > 0)
-        {
-            std::memcpy(
-                dest,
-                v.value.data(),
-                vn);
-            dest += vn;
-        }
-    }
-}
-
-//------------------------------------------------
-//
-// params_iter_base
+// params_iter
 //
 //------------------------------------------------
 
@@ -255,6 +176,89 @@ copy_impl(
 }
 
 //------------------------------------------------
+//
+// params_encoded_iter
+//
+//------------------------------------------------
+
+bool
+params_encoded_iter_base::
+measure_impl(
+    param_pct_view const& v,
+    std::size_t& n,
+    error_code& ec) noexcept
+{
+    decode_opts opt;
+    opt.plus_to_space = true;
+    auto rv = detail::validate_encoding(
+        v.key, opt, query_chars);
+    if(! rv)
+    {
+        ec = rv.error();
+        return false;
+    }
+    n += v.key.size();
+    if(v.has_value)
+    {
+        rv = detail::validate_encoding(
+            v.value, opt, query_chars);
+        if(! rv)
+        {
+            ec = rv.error();
+            return false;
+        }
+        n += 1 + v.value.size();
+    }
+    return true;
+}
+
+void
+params_encoded_iter_base::
+copy_impl(
+    char*& dest,
+    char const* end,
+    param_view const& v) noexcept
+{
+    (void)end;
+    {
+        // avoid self-copy
+        auto const kn = v.key.size();
+        BOOST_ASSERT(end - kn >= dest);
+        if( v.key.data() != dest &&
+            kn > 0)
+        {
+            std::memcpy(
+                dest,
+                v.key.data(),
+                kn);
+        }
+        dest += kn;
+    }
+    if(v.has_value)
+    {
+        BOOST_ASSERT(
+            end - 1 >= dest);
+        *dest++ = '=';
+        auto const vn =
+            v.value.size();
+        BOOST_ASSERT(
+            end - vn >= dest);
+        if(vn > 0)
+        {
+            std::memcpy(
+                dest,
+                v.value.data(),
+                vn);
+            dest += vn;
+        }
+    }
+}
+
+//------------------------------------------------
+//
+// param_value_iter
+//
+//------------------------------------------------
 
 void
 param_value_iter::
@@ -298,6 +302,10 @@ copy(char*& it, char const* end) noexcept
         detail::param_value_chars);
 }
 
+//------------------------------------------------
+//
+// param_encoded_value_iter
+//
 //------------------------------------------------
 
 void
@@ -352,30 +360,6 @@ copy(char*& it, char const* end) noexcept
         value_.data(),
         value_.size());
     it += value_.size();
-}
-
-//------------------------------------------------
-
-bool
-ci_decoded_key_equal(
-    decode_view key,
-    string_view match) noexcept
-{
-    if( key.size() !=
-            match.size())
-        return false;
-    auto it0 = key.begin();
-    auto it1 = match.begin();
-    auto const end = match.end();
-    while(it1 != end)
-    {
-        if( grammar::to_lower(*it0) !=
-            grammar::to_lower(*it1))
-            return false;
-        ++it0;
-        ++it1;
-    }
-    return true;
 }
 
 } // detail

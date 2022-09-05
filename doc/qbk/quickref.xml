@@ -62,10 +62,10 @@
           <member><link linkend="url.ref.boost__urls__params_view">params_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_encoded_view">params_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__pct_string_view">pct_string_view</link></member>
-          <member><link linkend="url.ref.boost__urls__segments_const_view">segments_const_view</link></member>
-          <member><link linkend="url.ref.boost__urls__segments_const_encoded_view">segments_const_encoded_view</link></member>
-          <member><link linkend="url.ref.boost__urls__segments_encoded_view">segments_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__segments_view">segments_view</link></member>
+          <member><link linkend="url.ref.boost__urls__segments_encoded_ref">segments_encoded_ref</link></member>
+          <member><link linkend="url.ref.boost__urls__segments_encoded_view">segments_encoded_view</link></member>
+          <member><link linkend="url.ref.boost__urls__segments_ref">segments_ref</link></member>
         </simplelist>
 
       </entry>

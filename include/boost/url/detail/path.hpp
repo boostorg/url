@@ -21,40 +21,51 @@ namespace detail {
 inline
 std::size_t
 path_prefix(
-    string_view s) noexcept
+    char const* p,
+    std::size_t n) noexcept
 {
-    switch(s.size())
+    switch(n)
     {
     case 0:
         return 0;
 
     case 1:
-        if(s[0] == '/')
+        if(p[0] == '/')
             return 1;
         return 0;
 
     case 2:
-        if(s[0] == '/')
+        if(p[0] == '/')
             return 1;
-        if( s[0] == '.' &&
-            s[1] == '/')
+        if( p[0] == '.' &&
+            p[1] == '/')
             return 2;
         return 0;
 
     default:
-        if(s[0] == '/')
+        if(p[0] == '/')
         {
-            if( s[1] == '.' &&
-                s[2] == '/')
+            if( p[1] == '.' &&
+                p[2] == '/')
                 return 3;
             return 1;
         }
-        if( s[0] == '.' &&
-            s[1] == '/')
+        if( p[0] == '.' &&
+            p[1] == '/')
             return 2;
         break;
     }
     return 0;
+}
+
+// VFALCO DEPRECATED
+inline
+std::size_t
+path_prefix(
+    string_view s) noexcept
+{
+    return path_prefix(
+        s.data(), s.size());
 }
 
 // returns the number of adjusted

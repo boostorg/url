@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
-# Copyright (c) 2021 DMitry Arkhipov (grisumbras@gmail.com)
+# Copyright (c) 2021 Dmitry Arkhipov (grisumbras@gmail.com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -39,11 +39,14 @@ set(BOOST_URL_TESTS_FILES
     params_encoded_base.cpp
     params_encoded_view.cpp
     params_view.cpp
+    parse_path.cpp
     pct_string_view.cpp
     scheme.cpp
-    segments.cpp
-    segments_encoded.cpp
+    segments_base.cpp
+    segments_encoded_base.cpp
+    segments_encoded_ref.cpp
     segments_encoded_view.cpp
+    segments_ref.cpp
     segments_view.cpp
     snippets.cpp
     static_url.cpp
@@ -58,7 +61,6 @@ set(BOOST_URL_TESTS_FILES
     grammar/alpha_chars.cpp
     grammar/charset.cpp
     grammar/ci_string.cpp
-    grammar/copied_strings.cpp
     grammar/dec_octet_rule.cpp
     grammar/delim_rule.cpp
     grammar/digit_chars.cpp

@@ -13,6 +13,7 @@
 
 #include <boost/url/encode_opts.hpp>
 #include <boost/url/pct_string_view.hpp>
+#include <boost/url/grammar/hexdig_chars.hpp>
 #include <cstdlib>
 
 namespace boost {
@@ -250,10 +251,10 @@ encode_unchecked(
 // escapes. Characters not in the
 // allowed set are escaped, and
 // escapes are passed through unchanged.
-
+//
 template<class CharSet>
 std::size_t
-re_encoded_size(
+re_encoded_size_unchecked(
     string_view s,
     encode_opts const&,
     CharSet const& allowed) noexcept
@@ -273,6 +274,13 @@ re_encoded_size(
         }
         else
         {
+            BOOST_ASSERT(end - it >= 3);
+            BOOST_ASSERT(
+                grammar::hexdig_value(
+                    it[1]) >= 0);
+            BOOST_ASSERT(
+                grammar::hexdig_value(
+                    it[2]) >= 0);
             n += 3;
             it += 3;
         }
@@ -285,7 +293,7 @@ re_encoded_size(
 template<class CharSet>
 std::size_t
 re_encode_unchecked(
-    char* dest,
+    char*& dest_,
     char const* const end,
     string_view s,
     encode_opts const& opt,
@@ -310,9 +318,10 @@ re_encode_unchecked(
         *dest++ = hex[c&0xf];
     };
     (void)end;
-    std::size_t dn = 0;
+    auto dest = dest_;
     auto const dest0 = dest;
     auto const last = s.end();
+    std::size_t dn = 0;
     auto it = s.begin();
     if(opt.space_to_plus)
     {
@@ -377,6 +386,7 @@ re_encode_unchecked(
             }
         }
     }
+    dest_ = dest;
     return dest - dest0 - dn;
 }
 
