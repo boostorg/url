@@ -9,12 +9,12 @@
 
 source_group("" FILES
         magnet.cpp
-        filtered_view.hpp
+        filter_view.hpp
         )
 
 add_executable(magnet
         magnet.cpp
-        filtered_view.hpp
+        filter_view.hpp
         )
 
 set_property(TARGET magnet PROPERTY FOLDER "Examples")
