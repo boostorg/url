@@ -2128,6 +2128,9 @@ public:
         according to Syntax-Based comparison
         algorithm.
 
+        @par Complexity
+        Linear in `min( u0.size(), u1.size() )`
+
         @par Exception Safety
         Throws nothing.
 
@@ -2144,13 +2147,41 @@ public:
 
     /** Return the result of comparing two URLs
 
-        The URLs are compared character
-        by character as if they were first
+        The URLs are compared component by
+        component as if they were first
         normalized.
+
+        @par Example
+        @code
+        url_view u0( "http://www.a.com/index.htm" );
+        url_view u1( "http://www.a.com/index.htm" );
+        assert( u0 == u1 );
+        @endcode
 
         @par Effects
         @code
-        return url( u0 ).normalize() == url( u1 ).normalize();
+        url a(u0);
+        a.normalize();
+        url b(u1);
+        b.normalize();
+        return std::make_tuple(
+                   a.scheme(),
+                   a.user(),
+                   a.password(),
+                   a.host(),
+                   a.port(),
+                   a.path(),
+                   a.query(),
+                   a.fragment()) ==
+               std::make_tuple(
+                   b.scheme(),
+                   b.user(),
+                   b.password(),
+                   b.host(),
+                   b.port(),
+                   b.path(),
+                   b.query(),
+                   b.fragment());
         @endcode
 
         @par Complexity
@@ -2158,6 +2189,12 @@ public:
 
         @par Exception Safety
         Throws nothing
+
+        @return `true` if `u0 == u1`
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool
@@ -2170,13 +2207,41 @@ public:
 
     /** Return the result of comparing two URLs
 
-        The URLs are compared character
-        by character as if they were first
+        The URLs are compared component by
+        component as if they were first
         normalized.
+
+        @par Example
+        @code
+        url_view u0( "http://www.a.com/index.htm" );
+        url_view u1( "http://www.b.com/index.htm" );
+        assert( u0 != u1 );
+        @endcode
 
         @par Effects
         @code
-        return url( u0 ).normalize() != url( u1 ).normalize();
+        url a(u0);
+        a.normalize();
+        url b(u1);
+        b.normalize();
+        return std::make_tuple(
+                   a.scheme(),
+                   a.user(),
+                   a.password(),
+                   a.host(),
+                   a.port(),
+                   a.path(),
+                   a.query(),
+                   a.fragment()) !=
+               std::make_tuple(
+                   b.scheme(),
+                   b.user(),
+                   b.password(),
+                   b.host(),
+                   b.port(),
+                   b.path(),
+                   b.query(),
+                   b.fragment());
         @endcode
 
         @par Complexity
@@ -2184,6 +2249,12 @@ public:
 
         @par Exception Safety
         Throws nothing
+
+        @return `true` if `u0 != u1`
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool
@@ -2196,13 +2267,41 @@ public:
 
     /** Return the result of comparing two URLs
 
-        The URLs are compared character
-        by character as if they were first
+        The URLs are compared component by
+        component as if they were first
         normalized.
+
+        @par Example
+        @code
+        url_view u0( "http://www.a.com/index.htm" );
+        url_view u1( "http://www.b.com/index.htm" );
+        assert( u0 < u1 );
+        @endcode
 
         @par Effects
         @code
-        return url( u0 ).normalize() < url( u1 ).normalize();
+        url a(u0);
+        a.normalize();
+        url b(u1);
+        b.normalize();
+        return std::make_tuple(
+                   a.scheme(),
+                   a.user(),
+                   a.password(),
+                   a.host(),
+                   a.port(),
+                   a.path(),
+                   a.query(),
+                   a.fragment()) <
+               std::make_tuple(
+                   b.scheme(),
+                   b.user(),
+                   b.password(),
+                   b.host(),
+                   b.port(),
+                   b.path(),
+                   b.query(),
+                   b.fragment());
         @endcode
 
         @par Complexity
@@ -2210,6 +2309,12 @@ public:
 
         @par Exception Safety
         Throws nothing
+
+        @return `true` if `u0 < u1`
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool
@@ -2222,13 +2327,41 @@ public:
 
     /** Return the result of comparing two URLs
 
-        The URLs are compared character
-        by character as if they were first
+        The URLs are compared component by
+        component as if they were first
         normalized.
+
+        @par Example
+        @code
+        url_view u0( "http://www.b.com/index.htm" );
+        url_view u1( "http://www.b.com/index.htm" );
+        assert( u0 <= u1 );
+        @endcode
 
         @par Effects
         @code
-        return url( u0 ).normalize() <= url( u1 ).normalize();
+        url a(u0);
+        a.normalize();
+        url b(u1);
+        b.normalize();
+        return std::make_tuple(
+                   a.scheme(),
+                   a.user(),
+                   a.password(),
+                   a.host(),
+                   a.port(),
+                   a.path(),
+                   a.query(),
+                   a.fragment()) <=
+               std::make_tuple(
+                   b.scheme(),
+                   b.user(),
+                   b.password(),
+                   b.host(),
+                   b.port(),
+                   b.path(),
+                   b.query(),
+                   b.fragment());
         @endcode
 
         @par Complexity
@@ -2236,6 +2369,12 @@ public:
 
         @par Exception Safety
         Throws nothing
+
+        @return `true` if `u0 <= u1`
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool
@@ -2248,13 +2387,41 @@ public:
 
     /** Return the result of comparing two URLs
 
-        The URLs are compared character
-        by character as if they were first
+        The URLs are compared component by
+        component as if they were first
         normalized.
+
+        @par Example
+        @code
+        url_view u0( "http://www.b.com/index.htm" );
+        url_view u1( "http://www.a.com/index.htm" );
+        assert( u0 > u1 );
+        @endcode
 
         @par Effects
         @code
-        return url( u0 ).normalize() > url( u1 ).normalize();
+        url a(u0);
+        a.normalize();
+        url b(u1);
+        b.normalize();
+        return std::make_tuple(
+                   a.scheme(),
+                   a.user(),
+                   a.password(),
+                   a.host(),
+                   a.port(),
+                   a.path(),
+                   a.query(),
+                   a.fragment()) >
+               std::make_tuple(
+                   b.scheme(),
+                   b.user(),
+                   b.password(),
+                   b.host(),
+                   b.port(),
+                   b.path(),
+                   b.query(),
+                   b.fragment());
         @endcode
 
         @par Complexity
@@ -2262,6 +2429,12 @@ public:
 
         @par Exception Safety
         Throws nothing
+
+        @return `true` if `u0 > u1`
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool
@@ -2274,13 +2447,41 @@ public:
 
     /** Return the result of comparing two URLs
 
-        The URLs are compared character
-        by character as if they were first
+        The URLs are compared component by
+        component as if they were first
         normalized.
+
+        @par Example
+        @code
+        url_view u0( "http://www.a.com/index.htm" );
+        url_view u1( "http://www.a.com/index.htm" );
+        assert( u0 >= u1 );
+        @endcode
 
         @par Effects
         @code
-        return url( u0 ).normalize() >= url( u1 ).normalize();
+        url a(u0);
+        a.normalize();
+        url b(u1);
+        b.normalize();
+        return std::make_tuple(
+                   a.scheme(),
+                   a.user(),
+                   a.password(),
+                   a.host(),
+                   a.port(),
+                   a.path(),
+                   a.query(),
+                   a.fragment()) >=
+               std::make_tuple(
+                   b.scheme(),
+                   b.user(),
+                   b.password(),
+                   b.host(),
+                   b.port(),
+                   b.path(),
+                   b.query(),
+                   b.fragment());
         @endcode
 
         @par Complexity
@@ -2288,6 +2489,12 @@ public:
 
         @par Exception Safety
         Throws nothing
+
+        @return `true` if `u0 >= u1`
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
+            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool
@@ -2319,10 +2526,22 @@ public:
 
     @par Example
     @code
-    url_view_base u( "http://www.example.com/index.htm" );
-
-    std::cout << u << std::endl;
+    url_view u( "http://www.example.com/index.htm" );
+    std::stringstream ss;
+    ss << u;
+    assert( ss.str() == "http://www.example.com/index.htm" );
     @endcode
+
+    @par Effects
+    @code
+    return os << u.string();
+    @endcode
+
+    @par Complexity
+    Linear in `u.string().size()`
+
+    @par Exception Safety
+    Basic guarantee.
 
     @return A reference to the output stream, for chaining
 
