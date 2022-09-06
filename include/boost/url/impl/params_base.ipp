@@ -70,16 +70,16 @@ operator=(
 //
 //------------------------------------------------
 
-std::string
+pct_string_view
 params_base::
-string() const
+buffer() const noexcept
 {
     auto s = impl_->get(id_query);
     if(s.empty())
         return {};
     return detail::make_pct_string_view(
         s.data() + 1, s.size() - 1,
-            impl_->decoded_[id_query]).decode_to_string();
+            impl_->decoded_[id_query]);
 }
 
 std::size_t

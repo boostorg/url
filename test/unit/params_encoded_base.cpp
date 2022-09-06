@@ -311,9 +311,9 @@ struct params_encoded_base_test
     void
     testJavadocs()
     {
-        // string()
+        // buffer()
         {
-        assert( url_view( "?first=John&last=Doe" ).encoded_params().string() == "first=John&last=Doe" );
+        assert( url_view( "?first=John&last=Doe" ).encoded_params().buffer() == "first=John&last=Doe" );
         }
 
         // empty()

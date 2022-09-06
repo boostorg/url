@@ -127,39 +127,27 @@ public:
     //
     //--------------------------------------------
 
-    /** Return the query corresponding to these params
+    /** Return the referenced character buffer.
 
-        This function returns a copy of the query
-        string referenced by the container.
-        Any percent-escapes in the string are
-        decoded first.
+        This function returns the character
+        buffer referenced by the view.
+        The returned string may contain
+        percent escapes.
 
         @par Example
         @code
-        assert( url_view( "?first=John&last=Doe" ).params().string() == "first=John&last=Doe" );
+        assert( url_view( "?first=John&last=Doe" ).params().buffer() == "?first=John&last=Doe" );
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Constant.
 
         @par Exception Safety
-        Calls to allocate may throw.
-
-        @par BNF
-        @code
-        query-params    = query-param *( "&" query-param )
-        query-param     = key [ "=" value ]
-        key             = *qpchar
-        value           = *( qpchar / "=" )
-        @endcode
-
-        @par Specification
-        @li <a href="https://en.wikipedia.org/wiki/Query_string"
-            >Query string (Wikipedia)</a>
+        Throws nothing.
     */
     BOOST_URL_DECL
-    std::string
-    string() const;
+    pct_string_view
+    buffer() const noexcept;
 
     /** Return true if there are no params
 
@@ -231,7 +219,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @par Exception Safety
         Throws nothing.
@@ -265,7 +253,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @par Exception Safety
         Throws nothing.
@@ -312,7 +300,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @return an iterator to the param
 
@@ -354,7 +342,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @return an iterator to the param
 
@@ -398,7 +386,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @return an iterator to the param
 
@@ -440,7 +428,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @return an iterator to the param
 
