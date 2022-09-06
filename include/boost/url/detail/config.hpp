@@ -73,6 +73,16 @@
 # define BOOST_URL_POS BOOST_CURRENT_LOCATION
 #endif
 
+#ifndef BOOST_URL_STRTOK_TPARAM
+#define BOOST_URL_STRTOK_TPARAM(T) class T = string_token::return_string
+#endif
+#ifndef BOOST_URL_STRTOK_RETURN
+#define BOOST_URL_STRTOK_RETURN(T) typename T::result_type
+#endif
+#ifndef BOOST_URL_STRTOK_ARG
+#define BOOST_URL_STRTOK_ARG(T, name) T&& name = {}
+#endif
+
 #ifndef BOOST_URL_STACK_BYTES
 #define BOOST_URL_STACK_BYTES 4096
 #endif

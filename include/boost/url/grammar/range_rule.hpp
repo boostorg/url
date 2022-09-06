@@ -38,6 +38,18 @@ namespace grammar {
     the lifetime of the buffer extends until
     it is no longer referenced by the range.
 
+    @note
+
+    The implementation may use temporary,
+    recycled storage for type-erasure. Objects
+    of type `range` are intended to be used
+    ephemerally. That is, for short durations
+    such as within a function scope. If it is
+    necessary to store the range for a long
+    period of time or with static storage
+    duration, it is necessary to copy the
+    contents to an object of a different type.
+
     @tparam T The value type of the range
 
     @see

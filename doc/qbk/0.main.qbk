@@ -52,6 +52,8 @@
 [def __Rule1__                  [link url.concepts.rule ['Rule1]]]
 [def __Rule2__                  [link url.concepts.rule ['Rule2]]]
 [def __Rules__                  [link url.concepts.rule ['Rules]]]
+[def __StringToken__            [link url.concepts.stringtoken ['StringToken]]]
+[def __deduced__                [link url.concepts.stringtoken ['DEDUCED]]]
 
 [def __std_swap__               [@https://en.cppreference.com/w/cpp/algorithm/swap `std::swap`]]
 [def __std_string__             [@https://en.cppreference.com/w/cpp/string/basic_string `std::string`]]
