@@ -295,7 +295,7 @@ public:
 
         @par Mandates
         @code
-        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_view >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::reference_type, param_view >::value == true
         @endcode
 
         @par Complexity
@@ -357,7 +357,7 @@ public:
 
         @par Mandates
         @code
-        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_view >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::reference_type, param_view >::value == true
         @endcode
 
         @par Complexity
@@ -463,7 +463,7 @@ public:
 
         @par Mandates
         @code
-        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_view >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::reference_type, param_view >::value == true
         @endcode
 
         @par Complexity
@@ -729,7 +729,7 @@ public:
 
         @par Mandates
         @code
-        std::is_convertible< std::iterator_traits< FwdIt >::value_type, param_view >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::reference_type, param_view >::value == true
         @endcode
 
         @par Complexity

@@ -19,6 +19,18 @@
 namespace boost {
 namespace urls {
 
+BOOST_STATIC_ASSERT(
+    ! std::is_default_constructible<
+        params_view>::value);
+
+BOOST_STATIC_ASSERT(
+    std::is_copy_constructible<
+        params_view>::value);
+
+BOOST_STATIC_ASSERT(
+    std::is_copy_assignable<
+        params_view>::value);
+
 /*  Legend
 
     '#' 0x23

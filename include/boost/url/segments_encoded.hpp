@@ -229,7 +229,7 @@ public:
 
         @par Requires
         @code
-        std::is_convertible< std::iterator_traits< FwdIt >::value_type, string_view >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::reference_type, string_view >::value == true
         @endcode
 
         @par Example
@@ -498,7 +498,7 @@ public:
 
         @par Requires
         @code
-        std::is_convertible< std::iterator_traits< FwdIt >::value_type, string_view >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::reference_type, string_view >::value == true
         @endcode
 
         @par Example
