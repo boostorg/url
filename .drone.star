@@ -70,7 +70,7 @@ def main(ctx):
   # ------------------------------------------------------------------
 
   # OSX
-  osx_cxx("OSX: Clang", "g++", packages="", buildscript="drone", buildtype="boost", environment={'B2_TOOLSET': 'clang', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '11,17'}, globalenv=globalenv),
+  osx_cxx("OSX: Clang", "g++", packages="", buildscript="drone", buildtype="boost", xcode_version="13.4.1", environment={'B2_TOOLSET': 'clang', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '11,17'}, globalenv=globalenv),
 
   # GCC (All other versions)
   linux_cxx("GCC 4.9: C++11", "g++-4.9", packages="g++-4.9", buildscript="drone", buildtype="boost", image="cppalliance/droneubuntu1604:1", environment={'B2_TOOLSET': 'gcc-4.9', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '11'}, globalenv=globalenv),
