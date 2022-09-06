@@ -136,7 +136,7 @@ public:
 
         @par Example
         @code
-        assert( url_view( "?first=John&last=Doe" ).encoded_params().string() == "first=John&last=Doe" );
+        assert( url_view( "?first=John&last=Doe" ).encoded_params().buffer() == "first=John&last=Doe" );
         @endcode
 
         @par Complexity
@@ -159,7 +159,7 @@ public:
     */
     BOOST_URL_DECL
     pct_string_view
-    string() const noexcept;
+    buffer() const noexcept;
 
     /** Return true if there are no params
 
@@ -232,7 +232,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @par Exception Safety
         Exceptions thrown on invalid input.
@@ -269,7 +269,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @par Exception Safety
         Exceptions thrown on invalid input.
@@ -320,7 +320,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @par Exception Safety
         Exceptions thrown on invalid input.
@@ -369,7 +369,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @par Exception Safety
         Exceptions thrown on invalid input.
@@ -420,7 +420,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @par Exception Safety
         Exceptions thrown on invalid input.
@@ -469,7 +469,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->string().size()`.
+        Linear in `this->buffer().size()`.
 
         @return an iterator to the param
 

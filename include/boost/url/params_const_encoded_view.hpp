@@ -75,7 +75,7 @@ public:
 
         @par Postconditions
         @code
-        this->string().data() == other.string().data()
+        this->buffer().data() == other.buffer().data()
         @par Complexity
         Constant.
 

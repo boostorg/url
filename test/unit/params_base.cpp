@@ -317,9 +317,9 @@ struct params_base_test
         params_const_view::value_type qp( *url_view( "?first=John&last=Doe" ).params().find( "first" ) );
         }
 
-        // string()
+        // buffer()
         {
-        assert( url_view( "?first=John&last=Doe" ).params().string() == "first=John&last=Doe" );
+        assert( url_view( "?first=John&last=Doe" ).params().buffer() == "first=John&last=Doe" );
         }
 
         // empty()

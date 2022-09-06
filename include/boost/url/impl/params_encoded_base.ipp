@@ -26,7 +26,7 @@ namespace urls {
 
 pct_string_view
 params_encoded_base::
-string() const noexcept
+buffer() const noexcept
 {
     auto s = impl_->get(id_query);
     if(s.empty())
