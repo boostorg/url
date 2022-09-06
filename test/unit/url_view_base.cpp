@@ -11,6 +11,7 @@
 #include <boost/url/url_view_base.hpp>
 
 #include <boost/url/url_view.hpp>
+#include <boost/core/ignore_unused.hpp>
 
 #include "test_suite.hpp"
 
@@ -468,6 +469,64 @@ struct url_view_base_test
         {
         assert( url_view( "http://www.example.com/index.html?query#frag" ).encoded_resource() == "/index.html?query#frag" );
         }
+
+        // url_view_base::op<<
+        {
+            url_view u( "http://www.example.com/index.htm" );
+            std::stringstream ss;
+            ss << u;
+            assert( ss.str() == "http://www.example.com/index.htm" );
+            ignore_unused(ss);
+        }
+
+        // url_view_base::op==
+        {
+            url_view u0( "http://www.a.com/index.htm" );
+            url_view u1( "http://www.a.com/in%64ex.htm" );
+            assert( u0 == u1 );
+            ignore_unused(u0, u1);
+        }
+
+        // url_view_base::op!=
+        {
+            url_view u0( "http://www.a.com/index.htm" );
+            url_view u1( "http://www.b.com/index.htm" );
+            assert( u0 != u1 );
+            ignore_unused(u0, u1);
+        }
+
+        // url_view_base::op<
+        {
+            url_view u0( "http://www.a.com/index.htm" );
+            url_view u1( "http://www.b.com/index.htm" );
+            assert( u0 < u1 );
+            ignore_unused(0, u1);
+        }
+
+        // url_view_base::op<=
+        {
+            url_view u0( "http://www.b.com/index.htm" );
+            url_view u1( "http://www.b.com/index.htm" );
+            assert( u0 <= u1 );
+            ignore_unused(u0, u1);
+        }
+
+        // url_view_base::op>
+        {
+            url_view u0( "http://www.b.com/index.htm" );
+            url_view u1( "http://www.a.com/index.htm" );
+            assert( u0 > u1 );
+            ignore_unused(u0, u1);
+        }
+
+        // url_view_base::op>=
+        {
+            url_view u0( "http://www.a.com/index.htm" );
+            url_view u1( "http://www.a.com/index.htm" );
+            assert( u0 >= u1 );
+            ignore_unused(u0, u1);
+        }
+
     }
 
     void
