@@ -97,7 +97,8 @@ reserve_impl(std::size_t n)
 {
     op_t op(*this);
     reserve_impl(n, op);
-    s_[size()] = '\0';
+    if(s_)
+        s_[size()] = '\0';
 }
 
 // make a copy of u
