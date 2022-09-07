@@ -11,8 +11,6 @@ Fuzzing         | ---                                                           
 
 # Boost.URL
 
-## This is currently **NOT** an official Boost library.
-
 ## Overview
 
 Boost.URL is a portable C++ library which provides containers and algorithms
@@ -21,6 +19,7 @@ Identifier (URI) specification (henceforth referred to as rfc3986). A URL
 is a compact sequence of characters that identifies an abstract or physical
 resource. For example, this is a valid URL which satisfies the
 absolute-URI grammar:
+
 ```
 https://www.example.com/path/to/file.txt?userid=1001&page=2&results=full
 ```

@@ -35,7 +35,7 @@ functionalities for:
 [note
     Currently the library does not handle
     [@https://www.rfc-editor.org/rfc/rfc3987.html Internationalized Resource Identifiers] (IRIs).
-    This are different from URLs, come from Unicode strings instead of
+    These are different from URLs, come from Unicode strings instead of
     low-ASCII strings, and are covered by a separate specification.
 ]
 [heading Features]
@@ -68,11 +68,7 @@ Boost.URL offers these features:
 
 [section Requirements]
 
-The library requires Boost 1.80.0 and a compiler supporting at least C++11.
-
-[note
-    Boost [*1.80.0] or higher is a requirement for installation of this library proposal.
-]
+The library requires a compiler supporting at least C++11.
 
 Aliases for standard types, such as __error_code__ or __string_view__,
 use their Boost equivalents.
@@ -87,21 +83,6 @@ the following line in [*exactly one] source file in your project.
 ```
     #include <boost/url/src.hpp>
 ```
-
-[heading CMake]
-
-The library can work both as a module of the Boost super-project or as an
-independent library that depends on Boost 1.78.0. In both cases,
-the target is available as `boost_url`.
-
-When the library is not a subdirectory of the Boost super-project, the
-Boost libraries will be located with `find_package`, regardless of
-whether it is the root library or not. This behavior can be explicitly
-controlled by setting the variable `BOOST_URL_FIND_PACKAGE_BOOST`.
-
-This allows the library to be compiled independently as the root project,
-as part of the Boost super-project, or as a dependency with
-`add_subdirectory` or `FetchContent`.
 
 [#embedded-devices]
 [heading Embedded]
