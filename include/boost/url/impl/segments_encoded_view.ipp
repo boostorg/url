@@ -17,6 +17,13 @@ namespace boost {
 namespace urls {
 
 segments_encoded_view::
+segments_encoded_view(
+    detail::path_ref const& ref) noexcept
+    : segments_encoded_base(ref)
+{
+}
+
+segments_encoded_view::
 operator
 segments_view() const noexcept
 {

@@ -21,11 +21,15 @@ docca.reference reference.qbk
     :
         xsl/custom-overrides.xsl
         [ glob-tree-ex ../include/boost/url : *.hpp *.ipp : detail impl ]
-        #../include/boost/url/url_base.hpp
+        #../include/boost/url/segments_base.hpp
+        #../include/boost/url/segments_encoded_base.hpp
+        #../include/boost/url/segments_encoded_ref.hpp
+        #../include/boost/url/segments_encoded_view.hpp
+        #../include/boost/url/segments_ref.hpp
+        #../include/boost/url/segments_view.hpp
     :
         <doxygen:param>PROJECT_NAME=URL
         <doxygen:param>PROJECT_BRIEF="URL Library"
-        <doxygen:param>ALIASES="esafe=\"@par Exception Safety\""
         <doxygen:param>FILE_PATTERNS=
         <doxygen:param>EXAMPLE_PATTERNS=
         <doxygen:param>DISTRIBUTE_GROUP_DOC=YES

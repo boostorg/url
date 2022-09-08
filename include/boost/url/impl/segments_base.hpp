@@ -13,6 +13,7 @@
 
 #include <boost/url/grammar/recycled.hpp>
 #include <boost/url/detail/segments_iter_impl.hpp>
+#include <boost/assert.hpp>
 
 namespace boost {
 namespace urls {
@@ -29,6 +30,7 @@ class segments_base::iterator
 
     iterator(detail::path_ref const&) noexcept;
     iterator(detail::path_ref const&, int) noexcept;
+
     iterator(detail::segments_iter_impl const& it) noexcept
         : it_(it)
     {
@@ -41,10 +43,19 @@ class segments_base::iterator
 public:
     using value_type = std::string;
     using reference = string_view;
-    using pointer = string_view;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::bidirectional_iterator_tag;
+    struct pointer
+    {
+        string_view s;
+
+        string_view const*
+        operator->()
+        {
+            return &s;
+        }
+    };
 
     iterator() = default;
     iterator(iterator const&) = default;
@@ -57,22 +68,10 @@ public:
         return dereference();
     }
 
-    struct arrow_proxy
-    {
-        string_view s;
-
-        string_view const*
-        operator->()
-        {
-            return &s;
-        }
-    };
-
-    arrow_proxy
+    pointer
     operator->() const
     {
-        return arrow_proxy{
-            dereference()};
+        return {dereference()};
     }
 
     iterator&
@@ -121,6 +120,26 @@ public:
         return ! it_.equal(other.it_);
     }
 };
+
+//------------------------------------------------
+
+inline
+std::string
+segments_base::
+front() const noexcept
+{
+    BOOST_ASSERT(! empty());
+    return *begin();
+}
+
+inline
+std::string
+segments_base::
+back() const noexcept
+{
+    BOOST_ASSERT(! empty());
+    return *--end();
+}
 
 } // urls
 } // boost

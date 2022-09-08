@@ -110,6 +110,9 @@ public:
         characters that are possible in a url,
         not including any null terminator.
 
+        @par Complexity
+        Constant.
+
         @par Exception Safety
         Throws nothing.
     */
@@ -1658,11 +1661,9 @@ public:
             @ref path,
             @ref segments_view.
     */
+    BOOST_URL_DECL
     segments_view
-    segments() const noexcept
-    {
-        return {detail::path_ref(u_)};
-    }
+    segments() const noexcept;
 
     /** Return the path as a container of segments
 
@@ -1711,12 +1712,9 @@ public:
             @ref segments,
             @ref segments_encoded_view.
     */
+    BOOST_URL_DECL
     segments_encoded_view
-    encoded_segments() const noexcept
-    {
-        return segments_encoded_view(
-            detail::path_ref(u_));
-    }
+    encoded_segments() const noexcept;
 
     //--------------------------------------------
     //

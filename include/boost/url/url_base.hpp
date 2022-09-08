@@ -1848,11 +1848,9 @@ public:
             @ref set_path,
             @ref set_path_absolute.
     */
+    BOOST_URL_DECL
     urls::segments_ref
-    segments() noexcept
-    {
-        return {*this};
-    }
+    segments() noexcept;
 
     /** Return the path as a container of segments
 
@@ -1907,10 +1905,7 @@ public:
     */
     BOOST_URL_DECL
     segments_encoded_ref
-    encoded_segments() noexcept
-    {
-        return {*this};
-    }
+    encoded_segments() noexcept;
 
     //--------------------------------------------
     //
@@ -2570,12 +2565,12 @@ private:
     first_segment() const noexcept;
 
     BOOST_URL_DECL
-    void
+    detail::segments_iter_impl
     edit_segments(
         detail::segments_iter_impl const&,
         detail::segments_iter_impl const&,
         detail::any_segments_iter&& it0,
-        int abs_hint = -1);
+        int absolute = -1);
 
     char*
     resize_params(

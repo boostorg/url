@@ -26,8 +26,9 @@ class segments_encoded_view;
 /** A view representing path segments in a URL
 
     Objects of this type are used to interpret
-    the path as a bidirectional view of segment
-    strings. 
+    the path as a bidirectional view of segments,
+    where each segment is a string which may
+    contain percent-escapes.
 
     The view does not retain ownership of the
     elements and instead references the original
@@ -43,28 +44,37 @@ class segments_encoded_view;
     @code
     url u( "/path/to/file.txt" );
 
-    segments_encoded_ref ps = u.segments();
+    segments_encoded_ref ps = u.encoded_segments();
     @endcode
 
-    Strings produced when elements are returned
-    have type @ref param_pct_view and represent
-    encoded strings. Strings passed to member
-    functions may contain percent escapes, and
-    throw exceptions on invalid inputs.
+    The strings returned when iterators are
+    dereferenced have type @ref pct_string_view
+    and may contain percent-escapes.
+
+    Reserved characters in inputs are
+    automatically escaped.
+    Escapes in inputs are preserved.
+
+    Exceptions are thrown on invalid inputs.
 
     @par Iterator Invalidation
     Changes to the underlying character buffer
     can invalidate iterators which reference it.
     Modifications made through the container will
-    invalidate some iterators to the underlying
-    character buffer:
+    invalidate some or all iterators:
+    <br>
+
     @li @ref push_back : Only `end()`.
+
     @li @ref assign, @ref clear,
-        `operator=` : All elements.
+        @ref operator= : All elements.
+
     @li @ref erase : Erased elements and all
         elements after (including `end()`).
+
     @li @ref insert : All elements at or after
         the insertion point (including `end()`).
+
     @li @ref replace : Modified
         elements and all elements
         after (including `end()`).
@@ -118,16 +128,17 @@ public:
 
     /** Assignment
 
-        The previous contents of this are
-        replaced by a copy of the other segments.
+        The existing contents are replaced
+        by a copy of the other segments.
 
         <br>
         All iterators are invalidated.
 
         @note
-        The strings referenced by `other`
-        must not come from the underlying url,
-        or else the behavior is undefined.
+        None of the character buffers referenced
+        by `other` may overlap the buffer of the
+        underlying url, or else the behavior
+        is undefined.
 
         @par Effects
         @code
@@ -144,27 +155,38 @@ public:
         @param other The segments to assign.
     */
     /** @{ */
+    BOOST_URL_DECL
     segments_encoded_ref&
     operator=(segments_encoded_ref const& other);
 
+    BOOST_URL_DECL
     segments_encoded_ref&
     operator=(segments_encoded_view const& other);
     /** @} */
 
     /** Assignment
 
-        The previous contents of this are
-        replaced by a copy of the segments in
-        the initializer-list, whose strings may
-        contain percent-escapes.
+        The existing contents are replaced
+        by a copy of the contents of the
+        initializer list.
+        Reserved characters in the list are
+        automatically escaped.
+        Escapes in the list are preserved.
 
         <br>
         All iterators are invalidated.
 
+        @par Example
+        @code
+        url u;
+
+        u.encoded_segments() = {"path", "to", "file.txt"};
+        @endcode
+
         @par Preconditions
-        None of character buffers referenced by
-        `init` may overlap the character buffer of
-        the underlying url, or else the behavior
+        None of the character buffers referenced
+        by the list may overlap the character buffer
+        of the underlying url, or else the behavior
         is undefined.
 
         @par Effects
@@ -173,7 +195,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `init.size()`.
+        Linear in `init.size() + this->url().encoded_query().size() + this->url().encoded_fragment().size()`.
 
         @par Exception Safety
         Strong guarantee.
@@ -181,15 +203,19 @@ public:
         Exceptions thrown on invalid input.
 
         @throw system_error
-        `init` contains an invalid percent-encoding.
+        The list contains an invalid percent-encoding.
 
         @param init The list of segments to assign.
     */
+    BOOST_URL_DECL
     segments_encoded_ref&
     operator=(std::initializer_list<
         pct_string_view> init);
 
     /** Conversion
+
+        @see
+            @ref segments_encoded_view.
     */
     operator
     segments_encoded_view() const noexcept;
@@ -213,9 +239,7 @@ public:
         @endcode
 
         @par Exception Safety
-        @code
         Throws nothing.
-        @endcode
     */
     url_base&
     url() const noexcept
@@ -245,7 +269,7 @@ public:
         @endcode
 
         @par Complexity
-        Linear in `this->url().size()`.
+        Linear in `this->url().encoded_query().size() + this->url().encoded_fragment().size()`.
 
         @par Exception Safety
         Throws nothing.
@@ -253,29 +277,33 @@ public:
     void
     clear() noexcept;
 
-    /** Assign params
+    /** Assign segments
 
-        This function replaces the entire
-        contents of the view with the params
-        in the <em>initializer-list</em>.
+        The existing contents are replaced
+        by a copy of the contents of the
+        initializer list.
+        Reserved characters in the list are
+        automatically escaped.
+        Escapes in the list are preserved.
 
         <br>
         All iterators are invalidated.
 
         @note
-        The strings referenced by the params
-        must not come from the underlying url,
-        or else the behavior is undefined.
+        None of the character buffers referenced
+        by the list may overlap the character
+        buffer of the underlying url, or else
+        the behavior is undefined.
 
         @par Example
         @code
         url u;
 
-        u.encoded_params().assign( {{ "first", "John" }, { "last", "Doe" }} );
+        u.segments().assign( {"path", "to", "file.txt"} );
         @endcode
 
         @par Complexity
-        Linear in `init.size()`.
+        Linear in `init.size() + this->url().encoded_query().size() + this->url().encoded_fragment().size()`.
 
         @par Exception Safety
         Strong guarantee.
@@ -283,34 +311,39 @@ public:
         Exceptions thrown on invalid input.
 
         @throw system_error
-        `init` contains an invalid percent-encoding.
+        The list contains an invalid percent-encoding.
 
-        @param init The list of params to assign.
+        @param init The list of segments to assign.
     */
-    segments_encoded_ref&
-    assign(std::initializer_list<pct_string_view> init);
+    BOOST_URL_DECL
+    void
+    assign(std::initializer_list<
+        pct_string_view> init);
 
     /** Assign segments
 
-        This function replaces the entire
-        contents of the view with the segments
-        in the range.
+        The existing contents are replaced
+        by a copy of the contents of the range.
+        Reserved characters in the range are
+        automatically escaped.
+        Escapes in the range are preserved.
 
         <br>
         All iterators are invalidated.
 
         @note
-        The strings referenced by the segments
-        must not come from the underlying url,
-        or else the behavior is undefined.
+        None of the character buffers referenced
+        by the range may overlap the character
+        buffer of the underlying url, or else
+        the behavior is undefined.
 
         @par Mandates
         @code
-        std::is_convertible< std::iterator_traits< FwdIt >::reference_type, param_pct_view >::value == true
+        std::is_convertible< std::iterator_traits< FwdIt >::reference_type, pct_string_view >::value == true
         @endcode
 
         @par Complexity
-        Linear in the size of the range.
+        Linear in `std::distance( first, last ) + this->url().encoded_query().size() + this->url().encoded_fragment().size()`.
 
         @par Exception Safety
         Strong guarantee.
@@ -339,22 +372,18 @@ public:
 
     /** Insert segments
 
-        This function inserts a string as a
-        segment, before the specified position.
-        Escapes in the string are preserved,
-        and reserved characters in the string
-        are percent-escaped in the result.
+        This function inserts a segment
+        before the specified position.
+        Reserved characters in the segment are
+        automatically escaped.
+        Escapes in the segment are preserved.
 
         <br>
         All iterators that are equal to
         `before` or come after are invalidated.
 
-        @par Example
-        @code
-        @endcode
-
         @par Complexity
-        Linear in `this->url().size() + s.size()`.
+        Linear in `s.size() + this->url().encoded_resource().size()`.
 
         @par Exception Safety
         Strong guarantee.
@@ -362,7 +391,7 @@ public:
         Exceptions thrown on invalid input.
 
         @throw system_error
-        `s` contains an invalid percent-encoding.
+        The segment contains an invalid percent-encoding.
 
         @return An iterator to the inserted
         segment.
@@ -381,33 +410,32 @@ public:
 
     /** Insert segments
 
-        This function inserts a range of
-        segment strings before the specified
-        position.
-        Escapes in the strings are preserved,
-        and reserved characters in the string
-        are percent-escaped in the result.
+        This function inserts the segments
+        in an initializer list before the
+        specified position.
+        Reserved characters in the list are
+        automatically escaped.
+        Escapes in the list are preserved.
 
         <br>
         All iterators that are equal to
         `before` or come after are invalidated.
 
         @note
-        The strings referenced by the segments
-        must not come from the underlying url,
-        or else the behavior is undefined.
+        None of the character buffers referenced
+        by the list may overlap the character
+        buffer of the underlying url, or else
+        the behavior is undefined.
 
         @par Example
         @code
-        @endcode
+        url u( "/file.txt" );
 
-        @par Mandates
-        @code
-        std::is_convertible< std::iterator_traits< FwdIt >::reference_type, pct_string_view >::value == true
+        u.encoded_segments().insert( u.encoded_segments().begin(), { "path", "to" } );
         @endcode
 
         @par Complexity
-        Linear in `this->url().size()`.
+        Linear in `init.size() + this->url().encoded_resource().size()`.
 
         @par Exception Safety
         Strong guarantee.
@@ -415,19 +443,19 @@ public:
         Exceptions thrown on invalid input.
 
         @throw system_error
-        The range contains an invalid percent-encoding.
+        The list contains an invalid percent-encoding.
 
         @return An iterator to the first
         element inserted, or `before` if
-        `init.empty()`.
+        `init.size() == 0`.
 
         @param before An iterator before which
-        the element will be inserted. This may
+        the list will be inserted. This may
         be equal to `end()`.
 
-        @param init The list of segments
-        to insert.
+        @param init The list of segments to insert.
     */
+    BOOST_URL_DECL
     iterator
     insert(
         iterator before,
@@ -436,28 +464,29 @@ public:
 
     /** Insert segments
 
-        This function inserts the strings in
-        an <em>initializer-list</em> as segments
-        before the specified position.
-        Escapes in the strings are preserved,
-        and reserved characters in the string
-        are percent-escaped in the result.
+        This function inserts the segments in
+        a range before the specified position.
+        Reserved characters in the range are
+        automatically escaped.
+        Escapes in the range are preserved.
 
         <br>
         All iterators that are equal to
         `before` or come after are invalidated.
 
         @note
-        The strings referenced by the segments
-        must not come from the underlying url,
-        or else the behavior is undefined.
+        None of the character buffers referenced
+        by the range may overlap the character
+        buffer of the underlying url, or else
+        the behavior is undefined.
 
-        @par Example
+        @par Mandates
         @code
+        std::is_convertible< std::iterator_traits< FwdIt >::reference_type, pct_string_view >::value == true
         @endcode
 
         @par Complexity
-        Linear in `this->url().size`.
+        Linear in `std::distance( first, last ) + this->url().encoded_resource().size()`.
 
         @par Exception Safety
         Strong guarantee.
@@ -468,14 +497,15 @@ public:
         The range contains an invalid percent-encoding.
 
         @return An iterator to the first
-        element inserted, or `before` if
-        `init.size() == 0`.
+        segment inserted, or `before` if
+        `init.empty()`.
 
         @param before An iterator before which
-        the element will be inserted. This may
+        the range will be inserted. This may
         be equal to `end()`.
 
-        @param first, last The range of segments to insert.
+        @param first, last The range of segments
+        to insert.
     */
     template<class FwdIt>
 #ifdef BOOST_URL_DOCS
@@ -497,19 +527,14 @@ public:
 
     /** Erase segments
 
-        This function removes a segment from
-        the container.
+        This function removes a segment.
 
         <br>
         All iterators that are equal to
         `pos` or come after are invalidated.
 
-        @par Example
-        @code
-        @endcode
-
         @par Complexity
-        Linear in `this->url().size()`.
+        Linear in `this->url().encoded_resource().size()`.
 
         @par Exception Safety
         Throws nothing.
@@ -532,12 +557,8 @@ public:
         All iterators that are equal to
         `first` or come after are invalidated.
 
-        @par Example
-        @code
-        @endcode
-
         @par Complexity
-        Linear in `this->url().size()`.
+        Linear in `this->url().encoded_resource().size()`.
 
         @par Exception Safety
         Throws nothing.
@@ -546,7 +567,7 @@ public:
         the removed range.
 
         @param first, last The range of
-        params to erase.
+        segments to erase.
     */
     BOOST_URL_DECL
     iterator
@@ -556,17 +577,112 @@ public:
 
     //--------------------------------------------
 
+    /** Replace segments
+
+        This function replaces the segment at
+        the specified position.
+        Reserved characters in the string are
+        automatically escaped.
+        Escapes in the string are preserved.
+
+        <br>
+        All iterators that are equal to
+        `pos` or come after are invalidated.
+
+        @par Complexity
+        Linear in `s.size() + this->url().encoded_resouce().size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @return An iterator to the replaced segment.
+
+        @param pos An iterator to the segment.
+
+        @param s The string to assign.
+    */
+    BOOST_URL_DECL
     iterator
     replace(
         iterator pos,
         pct_string_view s);
 
+    /** Replace segments
+
+        This function replaces a range of
+        segments with one segment.
+        Reserved characters in the string are
+        automatically escaped.
+        Escapes in the string are preserved.
+
+        <br>
+        All iterators that are equal to
+        `from` or come after are invalidated.
+
+        @par Complexity
+        Linear in `s.size() + this->url().encoded_resouce().size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The string contains an invalid percent-encoding.
+
+        @return An iterator to the new segment.
+
+        @param from, to The range of segments to replace.
+
+        @param s The string to assign.
+    */
+    BOOST_URL_DECL
     iterator
     replace(
         iterator from,
         iterator to,
         pct_string_view s);
 
+    /** Replace segments
+
+        This function replaces a range of
+        segments with a list of segments in
+        an initializer list.
+        Reserved characters in the list are
+        automatically escaped.
+        Escapes in the list are preserved.
+
+        <br>
+        All iterators that are equal to
+        `from` or come after are invalidated.
+
+        @par Preconditions
+        None of the character buffers referenced
+        by the list may overlap the character
+        buffer of the underlying url, or else
+        the behavior is undefined.
+
+        @par Complexity
+        Linear in `init.size() + this->url().encoded_resouce().size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The list contains an invalid percent-encoding.
+
+        @return An iterator to the first
+        segment inserted, or one past `to` if
+        `init.size() == 0`.
+
+        @param from, to The range of segments to replace.
+
+        @param init The list of segments to assign.
+    */
+    BOOST_URL_DECL
     iterator
     replace(
         iterator from,
@@ -574,6 +690,43 @@ public:
         std::initializer_list<
             pct_string_view> init);
 
+    /** Replace segments
+
+        This function replaces a range of
+        segments with annother range of segments.
+        Reserved characters in the new range are
+        automatically escaped.
+        Escapes in the new range are preserved.
+
+        <br>
+        All iterators that are equal to
+        `from` or come after are invalidated.
+
+        @par Preconditions
+        None of the character buffers referenced
+        by the new range may overlap the character
+        buffer of the underlying url, or else
+        the behavior is undefined.
+
+        @par Complexity
+        Linear in `std::distance( first, last ) + this->url().encoded_resouce().size()`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The range contains an invalid percent-encoding.
+
+        @return An iterator to the first
+        segment inserted, or one past `to` if
+        `init.size() == 0`.
+
+        @param from, to The range of segments to replace.
+
+        @param first, last The range of segments to assign.
+    */
     template<class FwdIt>
 #ifdef BOOST_URL_DOCS
     iterator
@@ -593,22 +746,20 @@ public:
 
     //--------------------------------------------
 
-    /** Add an element to the end
+    /** Append a segment
 
-        This function appends a segment
-        containing the percent-encoded string
-        `s` to the end of the container.
-        The percent-encoding must be valid or
-        else an exception is thrown.
-        All @ref end iterators are invalidated.
+        This function appends a segment to
+        the end of the path.
+        Reserved characters in the string are
+        automatically escaped.
+        Escapes in the string are preserved.
 
-        @par Example
+        <br>
+        All end iterators are invalidated.
+
+        @par Postconditions
         @code
-        url u = parse_relative_uri( "/path/to" );
-
-        u.segments_encoded_ref().push_back( "file.txt" );
-
-        assert( u.encoded_path() == "/path/to/file.txt" );
+        this->back() == s
         @endcode
 
         @par Exception Safety
@@ -616,35 +767,27 @@ public:
         Calls to allocate may throw.
         Exceptions thrown on invalid input.
 
-        @param s The string to add
+        @throw system_error
+        The string contains an invalid percent-encoding.
 
-        @throw std::invalid_argument invalid percent-encoding
+        @param s The segment to append.
     */
     void
     push_back(
         pct_string_view s);
 
-    /** Remove the last element
+    /** Remove the last segment
 
-        This function removes the last element
-        from the container, which must not be
-        empty or else undefined behavior occurs.
-        Iterators and references to
-        the last element, as well as the
-        @ref end iterator, are invalidated.
+        This function removes the last segment
+        from the container.
+
+        <br>
+        Iterators to the last segment as well
+        as all end iterators are invalidated.
 
         @par Preconditions
         @code
-        not empty()
-        @endcode
-
-        @par Example
-        @code
-        url u = parse_relative_uri( "/path/to/file.txt" );
-
-        u.segments_encoded_ref().pop_back();
-
-        assert( u.encoded_path() == "/path/to" );
+        not this->empty()
         @endcode
 
         @par Exception Safety

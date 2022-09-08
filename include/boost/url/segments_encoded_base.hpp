@@ -47,11 +47,7 @@ class segments_encoded_base
     friend class segments_encoded_view;
 
     segments_encoded_base(
-        detail::path_ref const& ref) noexcept
-        : ref_(ref)
-    {
-    }
-
+        detail::path_ref const& ref) noexcept;
     segments_encoded_base() = default;
 
 public:
@@ -122,6 +118,23 @@ public:
     // Observers
     //
     //--------------------------------------------
+
+    /** Return the maximum number of characters possible
+
+        This represents the largest number of
+        characters that are possible in a path,
+        not including any null terminator.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    static
+    constexpr
+    std::size_t
+    max_size() noexcept
+    {
+        return BOOST_URL_MAX_SIZE;
+    }
 
     /** Return the referenced character buffer.
 
@@ -204,8 +217,8 @@ public:
         This function returns a string with the
         first segment of the path without any
         leading or trailing '/' separators.
-        Any percent-escapes in the string are
-        decoded first.
+        The returned string may contain
+        percent escapes.
 
         @par Preconditions
         @code
@@ -228,11 +241,16 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    BOOST_URL_DECL
     pct_string_view
     front() const noexcept;
 
     /** Return the last segment
+
+        This function returns a string with the
+        last segment of the path without any
+        leading or trailing '/' separators.
+        The returned string may contain
+        percent escapes.
 
         @par Preconditions
         @code
@@ -260,7 +278,6 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    BOOST_URL_DECL
     pct_string_view
     back() const noexcept;
 
@@ -289,6 +306,27 @@ public:
     iterator
     end() const noexcept;
 };
+
+//------------------------------------------------
+
+/** Format to an output stream
+
+    Any percent-escapes are emitted as-is;
+    no decoding is performed.
+
+    @par Complexity
+    Linear in `ps.buffer().size()`.
+
+    @par Effects
+    @code
+    return os << ps.buffer();
+    @endcode
+*/
+BOOST_URL_DECL
+std::ostream&
+operator<<(
+    std::ostream& os,
+    segments_encoded_base const& ps);
 
 } // urls
 } // boost

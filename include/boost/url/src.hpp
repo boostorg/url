@@ -62,6 +62,7 @@ in a translation unit of the program.
 #include <boost/url/impl/segments_encoded_ref.ipp>
 #include <boost/url/impl/segments_encoded_view.ipp>
 #include <boost/url/impl/segments_ref.ipp>
+#include <boost/url/impl/segments_view.ipp>
 #include <boost/url/impl/static_url.ipp>
 #include <boost/url/impl/url.ipp>
 #include <boost/url/impl/url_base.ipp>
