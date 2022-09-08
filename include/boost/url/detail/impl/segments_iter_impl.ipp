@@ -50,6 +50,9 @@ segments_iter_impl(
     , pos(pos_)
     , index(index_)
 {
+    if(index == 0)
+        pos = path_prefix(ref.string());
+    update();
 }
 
 void
@@ -142,7 +145,10 @@ decrement() noexcept
     {
         --p;
         if(*p == '/')
+        {
+            ++dn;
             break;
+        }
         if(*p == '%')
             dn += 2;
     }
