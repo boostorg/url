@@ -36,9 +36,6 @@ struct any_segments_iter;
 struct params_iter_impl;
 struct segments_iter_impl;
 }
-namespace grammar {
-class lut_chars;
-}
 #endif
 
 /** Common functionality for containers
@@ -2607,8 +2604,10 @@ private:
         url_view_base const& base,
         url_view_base const& ref);
 
+    template<class CharSet>
     void normalize_octets_impl(int,
-        grammar::lut_chars const& cs, op_t&) noexcept;
+        CharSet const& allowed, op_t&) noexcept;
+
     void decoded_to_lower_impl(int id) noexcept;
     void to_lower_impl(int id) noexcept;
 };

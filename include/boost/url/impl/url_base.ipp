@@ -1400,6 +1400,68 @@ resolve(
 //
 //------------------------------------------------
 
+template <class Charset>
+void
+url_base::
+normalize_octets_impl(
+    int id,
+    Charset const& allowed,
+    op_t& op) noexcept
+{
+    char* it = s_ + u_.offset(id);
+    char* end = s_ + u_.offset(id + 1);
+    char buf = 0;
+    char* dest = it;
+    while (it < end)
+    {
+        if (*it != '%')
+        {
+            *dest = *it;
+            ++it;
+            ++dest;
+            continue;
+        }
+        if (end - it < 3)
+            break;
+
+        // decode unreserved octets
+        detail::decode_unchecked(
+            &buf,
+            &buf + 1,
+            string_view(it, 3));
+        if (allowed(buf))
+        {
+            *dest = buf;
+            it += 3;
+            ++dest;
+            continue;
+        }
+
+        // uppercase percent-encoding triplets
+        ++it;
+        *it = grammar::to_upper(*it);
+        ++it;
+        *it = grammar::to_upper(*it);
+        ++it;
+        dest += 3;
+    }
+    if (it != dest)
+    {
+        std::size_t diff = it - dest;
+        std::size_t n = u_.len(id) - diff;
+        shrink_impl(id, n, op);
+        s_[size()] = '\0';
+    }
+}
+
+template
+void
+url_base::
+normalize_octets_impl<grammar::lut_chars>(
+    int id,
+    grammar::lut_chars const& allowed,
+    op_t& op) noexcept;
+
 url_base&
 url_base::
 normalize_scheme()
@@ -1441,12 +1503,86 @@ normalize_path()
     char* p_dest = s_ + u_.offset(id_path);
     char* p_end = s_ + u_.offset(id_path + 1);
     std::size_t pn = p.size();
+    std::size_t skip_dot = 0;
+    if (
+        !has_authority() &&
+        p.starts_with("/./"))
+    {
+        // check if removing the "/./" would result in "//"
+        // ex: "/.//", "/././/", "/././/", ...
+        skip_dot = 2;
+        while (p.substr(skip_dot, 3).starts_with("/./"))
+            skip_dot += 2;
+        if (p.substr(skip_dot).starts_with("//"))
+            skip_dot = 2;
+        else
+            skip_dot = 0;
+    }
+    else if (
+        !has_scheme())
+    {
+        if (p.starts_with("./"))
+        {
+            // check if removing the "./" would result in "//"
+            // ex: ".//", "././/", "././/", ...
+            skip_dot = 1;
+            while (p.substr(skip_dot, 3).starts_with("/./"))
+                skip_dot += 2;
+            if (p.substr(skip_dot).starts_with("//"))
+                skip_dot = 2;
+            else
+                skip_dot = 0;
+
+            if ( !skip_dot )
+            {
+                // check if removing "./"s would leave us
+                // a first segment with an ambiguous ":"
+                string_view first_seg = p.substr(2);
+                while (first_seg.starts_with("./"))
+                    first_seg = first_seg.substr(2);
+                std::size_t i = first_seg.find('/');
+                if (i != string_view::npos)
+                    first_seg = first_seg.substr(0, i);
+                if (first_seg.find(':') != string_view::npos)
+                    skip_dot = 2;
+            }
+        }
+        else
+        {
+            // check if normalize_octets_impl
+            // didn't already create a ":"
+            // in the first segment
+            string_view first_seg = p;
+            std::size_t i = first_seg.find('/');
+            if (i != string_view::npos)
+                first_seg = p.substr(0, i);
+            if (first_seg.contains(':'))
+            {
+                // prepend with "./"
+                // (resize_impl never throws)
+                std::size_t n = u_.len(id_path);
+                resize_impl(
+                    id_path,  n + 2, op);
+                std::memmove(
+                    s_ + u_.offset(id_path) + 2,
+                    s_ + u_.offset(id_path),n
+                );
+                p_dest[0] = '.';
+                p_dest[1] = '/';
+                skip_dot = 2;
+                p = encoded_path();
+                p_end = s_ + u_.offset(id_path + 1);
+            }
+        }
+    }
+    p.remove_prefix(skip_dot);
+    p_dest += skip_dot;
     std::size_t n = detail::remove_dot_segments(
         p_dest, p_end, p);
     if (n != pn)
     {
         BOOST_ASSERT(n < pn);
-        shrink_impl(id_path, n, op);
+        shrink_impl(id_path, n + skip_dot, op);
         p = encoded_path();
         if (!p.empty())
             u_.nseg_ = std::count(
@@ -2241,59 +2377,6 @@ edit_params(
 }
 
 //------------------------------------------------
-
-void
-url_base::
-normalize_octets_impl(
-    int id,
-    grammar::lut_chars const& cs,
-    op_t& op) noexcept
-{
-    char* it = s_ + u_.offset(id);
-    char* end = s_ + u_.offset(id + 1);
-    char buf = 0;
-    char* dest = it;
-    while (it < end)
-    {
-        if (*it != '%')
-        {
-            *dest = *it;
-            ++it;
-            ++dest;
-            continue;
-        }
-        if (end - it < 3)
-            break;
-
-        // decode unreserved octets
-        detail::decode_unchecked(
-            &buf,
-            &buf + 1,
-            string_view(it, 3));
-        if (cs(buf))
-        {
-            *dest = buf;
-            it += 3;
-            ++dest;
-            continue;
-        }
-
-        // uppercase percent-encoding triplets
-        ++it;
-        *it = grammar::to_upper(*it);
-        ++it;
-        *it = grammar::to_upper(*it);
-        ++it;
-        dest += 3;
-    }
-    if (it != dest)
-    {
-        std::size_t diff = it - dest;
-        std::size_t n = u_.len(id) - diff;
-        shrink_impl(id, n, op);
-        s_[size()] = '\0';
-    }
-}
 
 void
 url_base::

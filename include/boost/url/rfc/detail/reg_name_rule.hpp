@@ -45,7 +45,7 @@ namespace detail {
         >Errata ID: 4942</a>
 */
 constexpr auto reg_name_rule =
-    pct_encoded_rule(unreserved_chars + '-' + '.');
+    pct_encoded_rule(unreserved_chars + sub_delim_chars);
 
 } // detail
 } // urls
