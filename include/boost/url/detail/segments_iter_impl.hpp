@@ -39,15 +39,21 @@ public:
         segments_iter_impl const&) noexcept = default;
 
     // begin
-    BOOST_URL_DECL
     segments_iter_impl(
         detail::path_ref const&) noexcept;
 
     // end
-    BOOST_URL_DECL
     segments_iter_impl(
         detail::path_ref const&,
         int) noexcept;
+
+    // at index
+    segments_iter_impl(
+        url_impl const& u_,
+        std::size_t pos_,
+        std::size_t i_) noexcept;
+
+    void update() noexcept;
 
     BOOST_URL_DECL
     void

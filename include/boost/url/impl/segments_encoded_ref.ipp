@@ -18,6 +18,54 @@
 namespace boost {
 namespace urls {
 
+//------------------------------------------------
+//
+// Special Members
+//
+//------------------------------------------------
+
+segments_encoded_ref&
+segments_encoded_ref::
+operator=(
+    segments_encoded_ref const& other)
+{
+    assign(other.begin(), other.end());
+    return *this;
+}
+
+segments_encoded_ref&
+segments_encoded_ref::
+operator=(
+    segments_encoded_view const& other)
+{
+    assign(other.begin(), other.end());
+    return *this;
+}
+
+segments_encoded_ref&
+segments_encoded_ref::
+operator=(std::initializer_list<
+    pct_string_view> init)
+{
+    assign(init.begin(), init.end());
+    return *this;
+}
+
+//------------------------------------------------
+//
+// Modifiers
+//
+//------------------------------------------------
+
+void
+segments_encoded_ref::
+assign(
+    std::initializer_list<
+        pct_string_view> init)
+{
+    assign(init.begin(), init.end());
+}
+
 auto
 segments_encoded_ref::
 insert(
@@ -26,12 +74,25 @@ insert(
         iterator
 {
     string_view s = s0;
-    u_->edit_segments(
+    return u_->edit_segments(
         before.it_,
         before.it_,
         detail::make_segments_encoded_iter(
             &s, &s + 1));
-    return std::next(begin(), before.it_.index);
+}
+
+auto
+segments_encoded_ref::
+insert(
+    iterator before,
+    std::initializer_list<
+            pct_string_view> init) ->
+        iterator
+{
+    return insert(
+        before,
+        init.begin(),
+        init.end());
 }
 
 auto
@@ -42,12 +103,56 @@ erase(
         iterator
 {
     string_view s;
-    u_->edit_segments(
+    return u_->edit_segments(
         first.it_,
         last.it_,
         detail::make_segments_encoded_iter(
             &s, &s));
-    return std::next(begin(), first.it_.index);
+}
+
+auto
+segments_encoded_ref::
+replace(
+    iterator pos,
+    pct_string_view s) ->
+        iterator
+{
+    return replace(
+        pos,
+        std::next(pos),
+        &s,
+        &s + 1);
+}
+
+auto
+segments_encoded_ref::
+replace(
+    iterator from,
+    iterator to,
+    pct_string_view s) ->
+        iterator
+{
+    return replace(
+        from,
+        to,
+        &s,
+        &s+1);
+}
+
+auto
+segments_encoded_ref::
+replace(
+    iterator from,
+    iterator to,
+    std::initializer_list<
+        pct_string_view> init) ->
+    iterator
+{
+    return replace(
+        from,
+        to,
+        init.begin(),
+        init.end());
 }
 
 } // urls

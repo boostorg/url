@@ -20,6 +20,13 @@ namespace detail {
 BOOST_URL_DECL
 void
 BOOST_NORETURN
+throw_url_too_large(
+    source_location const& loc =
+        BOOST_URL_POS);
+
+BOOST_URL_DECL
+void
+BOOST_NORETURN
 throw_bad_alloc(
     source_location const& loc =
     BOOST_URL_POS);

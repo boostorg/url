@@ -509,6 +509,15 @@ encoded_origin() const noexcept
 //
 //----------------------------------------------------------
 
+std::string
+url_view_base::
+path() const
+{
+    decode_opts opt;
+    opt.plus_to_space = false;
+    return encoded_path().decode_to_string(opt);
+}
+
 pct_string_view
 url_view_base::
 encoded_path() const noexcept
@@ -517,13 +526,19 @@ encoded_path() const noexcept
         u_.get(id_path), u_.decoded_[id_path]);
 }
 
-std::string
+segments_view
 url_view_base::
-path() const
+segments() const noexcept
 {
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_path().decode_to_string(opt);
+    return {detail::path_ref(u_)};
+}
+
+segments_encoded_view
+url_view_base::
+encoded_segments() const noexcept
+{
+    return segments_encoded_view(
+        detail::path_ref(u_));
 }
 
 //----------------------------------------------------------

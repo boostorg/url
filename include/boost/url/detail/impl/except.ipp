@@ -21,6 +21,15 @@ namespace urls {
 namespace detail {
 
 void
+throw_url_too_large(
+    source_location const& loc)
+{
+    throw_exception(
+        std::length_error(
+            "url too large"), loc);
+}
+
+void
 throw_bad_alloc(
     source_location const& loc)
 {

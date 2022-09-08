@@ -12,6 +12,7 @@
 #define BOOST_URL_IMPL_SEGMENTS_ENCODED_BASE_HPP
 
 #include <boost/url/detail/segments_iter_impl.hpp>
+#include <boost/assert.hpp>
 
 namespace boost {
 namespace urls {
@@ -26,6 +27,11 @@ class segments_encoded_base::iterator
 
     iterator(detail::path_ref const&) noexcept;
     iterator(detail::path_ref const&, int) noexcept;
+
+    iterator(detail::segments_iter_impl const& it) noexcept
+        : it_(it)
+    {
+    }
 
 public:
     using value_type = std::string;
@@ -96,6 +102,26 @@ public:
         return ! it_.equal(other.it_);
     }
 };
+
+//------------------------------------------------
+
+inline
+pct_string_view
+segments_encoded_base::
+front() const noexcept
+{
+    BOOST_ASSERT(! empty());
+    return *begin();
+}
+
+inline
+pct_string_view
+segments_encoded_base::
+back() const noexcept
+{
+    BOOST_ASSERT(! empty());
+    return *--end();
+}
 
 } // urls
 } // boost

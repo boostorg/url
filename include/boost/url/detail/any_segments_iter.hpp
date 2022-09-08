@@ -33,8 +33,14 @@ protected:
     {
     }
 
+    string_view front_;
+
 public:
-    string_view front;
+    string_view
+    front() const noexcept
+    {
+        return front_;
+    }
 
     // Return the input string or nullptr
     string_view*
@@ -67,8 +73,7 @@ public:
 
 //------------------------------------------------
 
-// iterates segments in an
-// plain path string
+// iterates segments in a string
 struct BOOST_SYMBOL_VISIBLE
     path_iter :
     public any_segments_iter
@@ -77,14 +82,11 @@ struct BOOST_SYMBOL_VISIBLE
     path_iter(
         string_view s) noexcept;
 
-private:
+protected:
     string_view s_;
-    std::size_t n_ = 0;
-    char const* p_ = nullptr;
-    char const* p0_;
-    char const* end_;
+    std::size_t pos_;
+    std::size_t next_;
 
-    static string_view clean(string_view s) noexcept;
     void increment() noexcept;
     void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
@@ -93,26 +95,16 @@ private:
 
 //------------------------------------------------
 
-// iterates segments in an
-// encoded path string
+// iterates segments in an encoded string
 struct BOOST_SYMBOL_VISIBLE
     path_encoded_iter
-    : public any_segments_iter
+    : public path_iter
 {
     explicit
     path_encoded_iter(
         pct_string_view s) noexcept;
 
 private:
-    string_view s_;
-    std::size_t n_ = 0;
-    char const* p_ = nullptr;
-    char const* p0_;
-    char const* end_;
-
-    static string_view clean(pct_string_view s) noexcept;
-    void increment() noexcept;
-    void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
     void copy(char*&, char const*) noexcept override;
 };
@@ -153,7 +145,7 @@ struct segments_iter
         , end_(last)
     {
         if (first != last)
-            front = *first;
+            front_ = *first;
     }
 
 private:
@@ -233,7 +225,7 @@ struct segments_encoded_iter
         , end_(last)
     {
         if (it_ != end_)
-            front = *first;
+            front_ = *first;
     }
 
 private:

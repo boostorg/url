@@ -37,36 +37,6 @@ segments_encoded_ref(
 }
 
 inline
-segments_encoded_ref&
-segments_encoded_ref::
-operator=(
-    segments_encoded_ref const& other)
-{
-    assign(other.begin(), other.end());
-    return *this;
-}
-
-inline
-segments_encoded_ref&
-segments_encoded_ref::
-operator=(
-    segments_encoded_view const& other)
-{
-    assign(other.begin(), other.end());
-    return *this;
-}
-
-inline
-segments_encoded_ref&
-segments_encoded_ref::
-operator=(std::initializer_list<
-    pct_string_view> init)
-{
-    assign(init.begin(), init.end());
-    return *this;
-}
-
-inline
 segments_encoded_ref::
 operator
 segments_encoded_view() const noexcept
@@ -88,22 +58,10 @@ clear() noexcept
     erase(begin(), end());
 }
 
-inline
-segments_encoded_ref&
-segments_encoded_ref::
-assign(
-    std::initializer_list<
-        pct_string_view> init)
-{
-    assign(init.begin(), init.end());
-    return *this;
-}
-
 template<class FwdIt>
 auto
 segments_encoded_ref::
-assign(
-    FwdIt first, FwdIt last) ->
+assign(FwdIt first, FwdIt last) ->
     typename std::enable_if<
         std::is_convertible<typename
             std::iterator_traits<
@@ -115,23 +73,6 @@ assign(
         end().it_,
         detail::make_segments_encoded_iter(
             first, last));
-}
-
-//------------------------------------------------
-
-inline
-auto
-segments_encoded_ref::
-insert(
-    iterator before,
-    std::initializer_list<
-            pct_string_view> init) ->
-        iterator
-{
-    return insert(
-        before,
-        init.begin(),
-        init.end());
 }
 
 template<class FwdIt>
@@ -153,67 +94,14 @@ insert(
             FwdIt>::iterator_category{});
 }
 
-template<class FwdIt>
-auto
-segments_encoded_ref::
-insert(
-    iterator before,
-    FwdIt first,
-    FwdIt last,
-    std::forward_iterator_tag) ->
-        iterator
-{
-    u_->edit_segments(
-        before.it_,
-        before.it_,
-        detail::make_segments_encoded_iter(
-            first, last));
-    return std::next(begin(), before.it_.index);
-}
-
-//------------------------------------------------
-
 inline
 auto
 segments_encoded_ref::
-replace(
-    iterator pos,
-    pct_string_view s) ->
+erase(
+    iterator pos) noexcept ->
         iterator
 {
-    return replace(
-        pos, std::next(pos),
-            &s, &s + 1);
-}
-
-inline
-auto
-segments_encoded_ref::
-replace(
-    iterator from,
-    iterator to,
-    pct_string_view s) ->
-        iterator
-{
-    return replace(
-        from, to, &s, &s+1);
-}
-
-inline
-auto
-segments_encoded_ref::
-replace(
-    iterator from,
-    iterator to,
-    std::initializer_list<
-        pct_string_view> init) ->
-    iterator
-{
-    return replace(
-        from,
-        to,
-        init.begin(),
-        init.end());
+    return erase(pos, std::next(pos));
 }
 
 template<class FwdIt>
@@ -231,24 +119,11 @@ replace(
                 pct_string_view>::value,
             iterator>::type
 {
-    u_->edit_segments(
+    return u_->edit_segments(
         from.it_,
         to.it_,
         detail::make_segments_encoded_iter(
             first, last));
-    return std::next(begin(), from.it_.index);
-}
-
-//------------------------------------------------
-
-inline
-auto
-segments_encoded_ref::
-erase(
-    iterator pos) noexcept ->
-        iterator
-{
-    return erase(pos, std::next(pos));
 }
 
 //------------------------------------------------
@@ -268,6 +143,25 @@ segments_encoded_ref::
 pop_back() noexcept
 {
     erase(std::prev(end()));
+}
+
+//------------------------------------------------
+
+template<class FwdIt>
+auto
+segments_encoded_ref::
+insert(
+    iterator before,
+    FwdIt first,
+    FwdIt last,
+    std::forward_iterator_tag) ->
+        iterator
+{
+    return u_->edit_segments(
+        before.it_,
+        before.it_,
+        detail::make_segments_encoded_iter(
+            first, last));
 }
 
 } // urls

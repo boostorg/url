@@ -26,6 +26,36 @@ segments_iter_impl(
     : ref(ref_)
 {
     pos = path_prefix(ref.string());
+    update();
+}
+
+// end
+segments_iter_impl::
+segments_iter_impl(
+    detail::path_ref const& ref_,
+    int) noexcept
+    : ref(ref_)
+    , pos(ref.size())
+    , next(ref.size())
+    , index(ref.nseg())
+{
+}
+
+segments_iter_impl::
+segments_iter_impl(
+    url_impl const& u_,
+    std::size_t pos_,
+    std::size_t index_) noexcept
+    : ref(u_)
+    , pos(pos_)
+    , index(index_)
+{
+}
+
+void
+segments_iter_impl::
+update() noexcept
+{
     auto const end = ref.end();
     char const* const p0 =
         ref.data() + pos;
@@ -47,18 +77,6 @@ segments_iter_impl(
     dn = p - p0 - dn;
     s_ = detail::make_pct_string_view(
         p0, p - p0, dn);
-}
-
-// end
-segments_iter_impl::
-segments_iter_impl(
-    detail::path_ref const& ref_,
-    int) noexcept
-    : ref(ref_)
-    , pos(ref.size())
-    , next(ref.size())
-    , index(ref.nseg())
-{
 }
 
 void

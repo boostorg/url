@@ -17,11 +17,15 @@
 
 #include "test_suite.hpp"
 
+#include <sstream>
+
 namespace boost {
 namespace urls {
 
 struct segments_base_test
 {
+    using Type = segments_base;
+
     static
     void
     check(
@@ -32,7 +36,7 @@ struct segments_base_test
         auto rv = parse_path(s);
         if(! BOOST_TEST(rv.has_value()))
             return;
-        segments_base const& ps(*rv);
+        Type const& ps(*rv);
         BOOST_TEST_EQ(
             ps.buffer().data(), s.data());
         BOOST_TEST_EQ(
@@ -47,6 +51,13 @@ struct segments_base_test
             BOOST_TEST_EQ(ps.back(), *std::prev(init.end()));
         }
 
+        // ostream
+        {
+            std::stringstream ss;
+            ss << ps;
+            BOOST_TEST_EQ(ss.str(), s);
+        }
+
         // forward
         {
             auto it0 = ps.begin();
@@ -54,12 +65,14 @@ struct segments_base_test
             auto const end = ps.end();
             while(it0 != end)
             {
-                segments_base::reference r0(*it0);
-                segments_base::reference r1(*it1);
+                Type::reference r0(*it0);
+                Type::reference r1(*it1);
                 BOOST_TEST_EQ(r0, r1);
                 BOOST_TEST_EQ(*it0, *it1);
-                segments_base::value_type v0(*it0);
-                segments_base::value_type v1(*it1);
+                BOOST_TEST_EQ( // arrow
+                    it0->size(), it1->size());
+                Type::value_type v0(*it0);
+                Type::value_type v1(*it1);
                 BOOST_TEST_EQ(v0, *it1);
                 BOOST_TEST_EQ(v1, *it1);
                 auto prev = it0++;
@@ -82,8 +95,8 @@ struct segments_base_test
                 BOOST_TEST_NE(prev, it0);
                 BOOST_TEST_EQ(--prev, it0);
                 --it1;
-                segments_base::reference r0(*it0);
-                segments_base::reference r1(*it1);
+                Type::reference r0(*it0);
+                Type::reference r1(*it1);
                 BOOST_TEST_EQ(*it0, *it1);
                 BOOST_TEST_EQ(r0, r1);
             }
@@ -92,7 +105,7 @@ struct segments_base_test
     }
 
     void
-    testMembers()
+    testSequence()
     {
     /*  Legend
 
@@ -117,7 +130,7 @@ struct segments_base_test
     {
         // value_type
         {
-        segments_view::value_type ps( url_view( "/path/to/file.txt" ).segments().back() );
+        segments_base::value_type ps( url_view( "/path/to/file.txt" ).segments().back() );
 
         ignore_unused(ps);
         }
@@ -156,7 +169,7 @@ struct segments_base_test
     void
     run()
     {
-        testMembers();
+        testSequence();
         testJavadoc();
     }
 };

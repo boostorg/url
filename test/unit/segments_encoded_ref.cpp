@@ -11,11 +11,10 @@
 // Test that header file is self-contained.
 #include <boost/url/segments_encoded_ref.hpp>
 
-#include <boost/url/parse_path.hpp>
 #include <boost/url/url.hpp>
 #include <boost/static_assert.hpp>
-#include <initializer_list>
-#include <iterator>
+#include <boost/core/ignore_unused.hpp>
+
 #include "test_suite.hpp"
 
 namespace boost {
@@ -302,6 +301,7 @@ struct segments_encoded_ref_test
             check(f, "path/to/file.txt", ".//path/to/file.txt", {"", "path", "to", "file.txt"});
             check(f, "/path/to/file.txt", "/.//path/to/file.txt", {"", "path", "to", "file.txt"});
             check(f, "Program%20Files", ".//Program%20Files", {"", "Program%20Files"});
+            check(f, "x:", "./", {""});
         }
         {
             auto const f = [](Type ps)
@@ -348,7 +348,6 @@ struct segments_encoded_ref_test
             check(f, "index.htm", "index.htm/", {"index.htm", ""});
             check(f, "path/to/file.txt", "path/to/file.txt/", {"path", "to", "file.txt", ""});
             check(f, "/path/to/file.txt", "/path/to/file.txt/", {"path", "to", "file.txt", ""});
-            (void)f;
         }
 
         //
@@ -416,6 +415,10 @@ struct segments_encoded_ref_test
             };
             check(f, "path/to/file.txt", "to/file.txt", {"to", "file.txt"});
             check(f, "/path/to/file.txt", "/to/file.txt", {"to", "file.txt"});
+            check(f, "//x/y/", "/./", {""});
+            check(f, "/x/", "/./", {""});
+            check(f, "x/", "./", {""});
+            check(f, "x:.//", "./", {""});
         }
         {
             auto const f = [](Type ps)
@@ -673,6 +676,43 @@ struct segments_encoded_ref_test
     }
 
     void
+    testEditSegments()
+    {
+    /*  Legend
+
+        '#' 0x23    '/' 0x2f
+        '%' 0x25    ':' 0x3a
+        '.' 0x2e    '?' 0x3f
+    */
+        {
+            auto const f = [](Type ps)
+            {
+                ps.push_back("");
+            };
+            check(f, "",    "./",   {""});
+            check(f, "/",   "/./",  {""});
+            check(f, "./",  ".//",  {"", ""});
+            check(f, "/./", "/.//", {"", ""});
+        }
+        {
+            auto const f = [](Type ps)
+            {
+                ps.push_back("/");
+            };
+            check(f, "",  "%2F",  {"%2F"});
+            check(f, "/", "/%2F", {"%2F"});
+        }
+        {
+            auto const f = [](Type ps)
+            {
+                ps.push_back(":");
+            };
+            check(f, "",  "./:",  {":"});
+            check(f, "/", "/:", {":"});
+        }
+    }
+
+    void
     testRange()
     {
         check( "", {});
@@ -691,6 +731,22 @@ struct segments_encoded_ref_test
     void
     testJavadocs()
     {
+        // {class}
+        {
+    url u( "/path/to/file.txt" );
+
+    segments_encoded_ref ps = u.encoded_segments();
+
+    ignore_unused(ps);
+        }
+
+        // operator=(initializer_list)
+        {
+        url u;
+
+        u.encoded_segments() = {"path", "to", "file.txt"};
+        }
+
         // url()
         {
         url u( "?key=value" );
@@ -705,6 +761,7 @@ struct segments_encoded_ref_test
         testSpecial();
         testObservers();
         testModifiers();
+        testEditSegments();
         testRange();
         testJavadocs();
     }

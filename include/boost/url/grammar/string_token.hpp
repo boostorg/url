@@ -214,7 +214,7 @@ template<
     class Allocator =
         std::allocator<char>>
 __implementation_defined__
-assign(
+assign_to(
     std::basic_string<
         char,
         std::char_traits<char>,

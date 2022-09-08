@@ -65,10 +65,7 @@ class segments_encoded_view
     friend class segments_encoded_ref;
 
     segments_encoded_view(
-        detail::path_ref const& ref) noexcept
-        : segments_encoded_base(ref)
-    {
-    }
+        detail::path_ref const& ref) noexcept;
 
 public:
     /** Constructor

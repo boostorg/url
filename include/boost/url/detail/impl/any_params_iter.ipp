@@ -48,7 +48,7 @@ any_params_iter::
 query_iter::
 query_iter(
     string_view s,
-    not_empty_param ne) noexcept
+    bool ne) noexcept
     : any_params_iter(
         s.empty() && ! ne, &s_)
     , s_(clean(s))

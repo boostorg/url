@@ -8,11 +8,18 @@
 // Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_IMPL_SEGMENTS_VIEW_HPP
-#define BOOST_URL_IMPL_SEGMENTS_VIEW_HPP
+#ifndef BOOST_URL_IMPL_SEGMENTS_VIEW_IPP
+#define BOOST_URL_IMPL_SEGMENTS_VIEW_IPP
 
 namespace boost {
 namespace urls {
+
+segments_view::
+segments_view(
+    detail::path_ref const& ref) noexcept
+    : segments_base(ref)
+{
+}
 
 } // urls
 } // boost

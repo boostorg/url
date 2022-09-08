@@ -1015,6 +1015,7 @@ set_path_absolute(
         auto dest = resize_impl(
             id_path, 1, op);
         *dest = '/';
+        ++u_.decoded_[id_path];
         return true;
     }
 
@@ -1039,6 +1040,7 @@ set_path_absolute(
         auto n = u_.len(id_port);
         u_.split(id_port, n + 1);
         resize_impl(id_port, n, op);
+        --u_.decoded_[id_path];
         return true;
     }
 
@@ -1054,6 +1056,7 @@ set_path_absolute(
         id_port, n + 1, op) + n;
     u_.split(id_port, n);
     *dest = '/';
+    ++u_.decoded_[id_path];
     return true;
 }
 
@@ -1085,6 +1088,20 @@ set_encoded_path(
         detail::path_encoded_iter(s),
         s.starts_with('/'));
     return *this;
+}
+
+segments_ref
+url_base::
+segments() noexcept
+{
+    return {*this};
+}
+
+segments_encoded_ref
+url_base::
+encoded_segments() noexcept
+{
+    return {*this};
 }
 
 //------------------------------------------------
@@ -1170,7 +1187,7 @@ set_query(
         detail::params_iter_impl(u_),
         detail::params_iter_impl(u_, 0),
         detail::query_iter(
-            s, detail::not_empty));
+            s, true));
     return *this;
 }
 
@@ -1478,6 +1495,8 @@ check_invariants() const noexcept
     BOOST_ASSERT(
         u_.len(id_user, id_path) == 0 ||
         u_.get(id_user).starts_with("//"));
+    BOOST_ASSERT(u_.decoded_[id_path] >=
+        ((u_.len(id_path) + 2) / 3));
     BOOST_ASSERT(
         u_.len(id_port) == 0 ||
         u_.get(id_port).starts_with(':'));
@@ -1793,7 +1812,7 @@ first_segment() const noexcept
     return string_view(p0, p - p0);
 }
 
-void
+detail::segments_iter_impl
 url_base::
 edit_segments(
     detail::segments_iter_impl const& it0,
@@ -1815,9 +1834,11 @@ edit_segments(
 
     // Iterator is out of range
     BOOST_ASSERT(it0.index <= u_.nseg_);
+    BOOST_ASSERT(it0.pos <= u_.len(id_path));
 
     // Iterator is out of range
     BOOST_ASSERT(it1.index <= u_.nseg_);
+    BOOST_ASSERT(it1.pos <= u_.len(id_path));
 
     bool const is_abs = is_path_absolute();
     if(has_authority())
@@ -1872,6 +1893,14 @@ edit_segments(
         // segment.
         ++pos1;
     }
+    // calc decoded size of old range
+    auto const dn0 =
+        detail::decode_bytes_unchecked(
+            string_view(
+                u_.cs_ +
+                    u_.offset(id_path) +
+                    pos0,
+                pos1 - pos0));
 
 //------------------------------------------------
 //
@@ -1882,7 +1911,7 @@ edit_segments(
 //  2 = "./"
 //  3 = "/./"
 //
-    int prefix = 0;
+    std::size_t prefix = 0;
     if(it0.index > 0)
     {
         // first segment unchanged
@@ -1891,35 +1920,22 @@ edit_segments(
     else if(nseg > 0)
     {
         // first segment from src
-        if(! src.front.empty())
+        if(! src.front().empty())
         {
-            if( src.front == "." &&
-                nseg > 1)
-            {
+            if( src.front() == "." &&
+                    nseg > 1)
                 prefix = 2 + absolute;
-            }
-            else if( has_scheme() ||
-                ! src.front.contains(':'))
-            {
-                prefix = absolute;
-            }
+            else if(absolute)
+                prefix = 1;
+            else if(has_scheme() ||
+                    ! src.front().contains(':'))
+                prefix = 0;
             else
-            {
-                prefix = 2 + absolute;
-            }
-        }
-        else if(absolute)
-        {
-            prefix = 3;
-        }
-        else if(has_scheme() ||
-            src.front.contains(':'))
-        {
-            prefix = 0;
+                prefix = 2;
         }
         else
         {
-            prefix = 2;
+            prefix = 2 + absolute;
         }
     }
     else
@@ -1946,28 +1962,14 @@ edit_segments(
         case 1:
             // empty
             BOOST_ASSERT(*p == '/');
-            if(absolute)
-            {
-                if(has_authority())
-                    prefix = 1;
-                else
-                    prefix = 3;
-            }
-            else
-            {
-                if( has_scheme() ||
-                    it1.dereference().contains(':'))
-                    prefix = 0;
-                else
-                    prefix = 2;
-            }
+            prefix = 2 + absolute;
             break;
         }
     }
 
 //  append '/' to new segs
 //  if inserting at front.
-    int const suffix =
+    std::size_t const suffix =
         it1.index == 0 &&
         u_.nseg_ > 0 &&
         nseg > 0;
@@ -1980,17 +1982,21 @@ edit_segments(
     char* dest;
     char const* end;
     {
-        // amount we are removing
         auto const nremove = pos1 - pos0;
-        nchar = prefix + nchar + suffix;
-/*      if( nchar > max_size() ||
-            prefix + suffix > max_size() - nchar)
-            detail::throw_length_error(
-                "url_base::max_size");
-        if(nchar > max_size() - size())
-            detail::throw_length_error(
-                "url_base::max_size");
-*/
+        // check overflow
+        if( nchar <= max_size() && (
+            prefix + suffix <=
+                max_size() - nchar))
+        {
+            nchar = prefix + nchar + suffix;
+            if( nchar <= nremove ||
+                nchar - nremove <=
+                    max_size() - size())
+                goto ok;
+        }
+        // too large
+        detail::throw_url_too_large();
+    ok:
         auto const new_size =
             size() + nchar - nremove;
         reserve_impl(new_size, op);
@@ -2016,6 +2022,7 @@ edit_segments(
 //
 //  prefix [ segment [ '/' segment ] ] suffix
 //
+    auto const dest0 = dest;
     switch(prefix)
     {
     case 3:
@@ -2045,11 +2052,24 @@ edit_segments(
         if(suffix)
             *dest++ = '/';
     }
+    BOOST_ASSERT(dest == dest0 + nchar);
 
-    // VFALCO This could be better
-    u_.decoded_[id_path] =
+    // calc decoded size of new range,
+    auto const dn =
         detail::decode_bytes_unchecked(
-            u_.get(id_path));}
+            string_view(dest0, dest - dest0));
+    auto const dn1 =
+        u_.decoded_[id_path] + dn - dn0;
+#if 0
+    BOOST_ASSERT(dn1 ==
+        detail::decode_bytes_unchecked(
+            u_.get(id_path)));
+#endif
+    u_.decoded_[id_path] = dn1;
+
+    return detail::segments_iter_impl(
+        u_, pos0, it0.index);
+}
 
 //------------------------------------------------
 
@@ -2078,6 +2098,8 @@ resize_params(
     // old size of [first, last)
     auto const n0 =
         last.pos - first.pos;
+
+    // VFALCO OVERFLOW CHECK HERE
 
     // adjust capacity
     reserve_impl(

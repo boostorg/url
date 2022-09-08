@@ -38,6 +38,13 @@ iterator(
 
 //------------------------------------------------
 
+segments_encoded_base::
+segments_encoded_base(
+    detail::path_ref const& ref) noexcept
+    : ref_(ref)
+{
+}
+
 pct_string_view
 segments_encoded_base::
 buffer() const noexcept
@@ -66,22 +73,6 @@ size() const noexcept
     return ref_.nseg();
 }
 
-pct_string_view
-segments_encoded_base::
-front() const noexcept
-{
-    BOOST_ASSERT(! empty());
-    return *begin();
-}
-
-pct_string_view
-segments_encoded_base::
-back() const noexcept
-{
-    BOOST_ASSERT(! empty());
-    return *--end();
-}
-
 auto
 segments_encoded_base::
 begin() const noexcept ->
@@ -96,6 +87,17 @@ end() const noexcept ->
     iterator
 {
     return iterator(ref_, 0);
+}
+
+//------------------------------------------------
+
+std::ostream&
+operator<<(
+    std::ostream& os,
+    segments_encoded_base const& ps)
+{
+    os << ps.buffer();
+    return os;
 }
 
 } // urls

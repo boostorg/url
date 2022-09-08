@@ -48,11 +48,10 @@ struct params_iter_impl
         int) noexcept;
 
     // at index
-    BOOST_URL_DECL
     params_iter_impl(
-        url_impl const& u_,
-        std::size_t pos_,
-        std::size_t i_) noexcept;
+        url_impl const&,
+        std::size_t,
+        std::size_t) noexcept;
 
     BOOST_URL_DECL
     param_pct_view

@@ -30,61 +30,71 @@ path_iter::
 path_iter(
     string_view s) noexcept
     : any_segments_iter(&s_)
-    , s_(clean(s))
-    , p0_(s.data())
-    , end_(s.data() + s.size())
+    , s_(s)
 {
     rewind();
-    front = { p_, n_ };
-}
-
-string_view
-path_iter::
-clean(string_view s) noexcept
-{
-    // prevent null
-    if(s.data() == nullptr)
-        return string_view("", 0);
-    return s;
 }
 
 void
 path_iter::
 increment() noexcept
 {
-    p_ += n_;
-    if(p_ == end_)
+    pos_ = next_;
+    if(pos_ == s_.size())
     {
-        p_ = nullptr;
+        pos_ = string_view::npos;
         return;
     }
-    ++p_;
-    string_view s(p_, end_ - p_);
-    auto pos = s.find_first_of('/');
-    if(pos != string_view::npos)
-        n_ = pos;
-    else
-        n_ = s.size();
+    // skip '/'
+    ++pos_;
+    auto const end =
+        s_.data() + s_.size();
+    auto const p0 =
+        s_.data() + pos_;
+    auto p = p0;
+    while(p != end)
+    {
+        if(*p == '/')
+        {
+            next_ = p - s_.data();
+            return;
+        }
+        ++p;
+    }
+    next_ = s_.size();
 }
 
 void
 path_iter::
 rewind() noexcept
 {
-    if(p0_ != end_)
+    pos_ = 0;
+    auto p0 = s_.data();
+    auto const end = p0 + s_.size();
+    if(p0 != end)
     {
-        auto p0 = p0_;
+        // skip leading '/'
+        // of absolute-path
         if(*p0 == '/')
+        {
             ++p0;
-        p_ = p0;
+            ++pos_;
+        }
         auto p = p0;
-        while(p != end_)
+        while(p != end)
         {
             if(*p == '/')
                 break;
             ++p;
         }
-        n_ = p - p0;
+        front_ = string_view(
+            p0, p - p0);
+        next_ = p - s_.data();
+    }
+    else
+    {
+        pos_ = string_view::npos;
+        front_ = { p0, 0 };
     }
 }
 
@@ -93,11 +103,14 @@ path_iter::
 measure(
     std::size_t& n) noexcept
 {
-    if(! p_)
+    if(pos_ == string_view::npos)
         return false;
-    string_view s(p_, n_);
+    string_view s = s_.substr(
+        pos_, next_ - pos_);
     n += urls::encoded_size(
-        s, {}, pchars);
+        s,
+        {},
+        pchars);
     increment();
     return true;
 }
@@ -108,11 +121,14 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    BOOST_ASSERT(p_ != nullptr);
+    BOOST_ASSERT(pos_ !=
+        string_view::npos);
+    string_view s = s_.substr(
+        pos_, next_ - pos_);
     dest += encode(
         dest,
         end,
-        string_view(p_, n_),
+        s,
         {},
         pchars);
     increment();
@@ -127,63 +143,8 @@ copy(
 path_encoded_iter::
 path_encoded_iter(
     pct_string_view s) noexcept
-    : any_segments_iter(&s_)
-    , s_(clean(s))
-    , p0_(s.data())
-    , end_(s.data() + s.size())
+    : path_iter(s)
 {
-    rewind();
-    front = { p_, n_ };
-}
-
-string_view
-path_encoded_iter::
-clean(pct_string_view s) noexcept
-{
-    // prevent null
-    if(s.data() == nullptr)
-        return string_view("", 0);
-    return s;
-}
-
-void
-path_encoded_iter::
-increment() noexcept
-{
-    p_ += n_;
-    if(p_ == end_)
-    {
-        p_ = nullptr;
-        return;
-    }
-    ++p_;
-    string_view s(p_, end_ - p_);
-    auto pos = s.find_first_of('/');
-    if(pos != string_view::npos)
-        n_ = pos;
-    else
-        n_ = s.size();
-}
-
-void
-path_encoded_iter::
-rewind() noexcept
-{
-    if(p0_ != end_)
-    {
-        auto p0 = p0_;
-        if(*p0 == '/')
-            ++p0;
-        p_ = p0;
-        auto p = p0;
-        while(p != end_)
-        {
-            if(*p == '/')
-                break;
-            ++p;
-        }
-        n_ = p - p0;
-    }
 }
 
 bool
@@ -191,9 +152,10 @@ path_encoded_iter::
 measure(
     std::size_t& n) noexcept
 {
-    if(! p_)
+    if(pos_ == string_view::npos)
         return false;
-    string_view s(p_, n_);
+    string_view s = s_.substr(
+        pos_, next_ - pos_);
     encode_opts opt;
     n += detail::re_encoded_size_unchecked(
         s,
@@ -209,22 +171,17 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    (void)end;
-    BOOST_ASSERT(static_cast<
-        std::size_t>(
-            end - dest) >= n_);
-    BOOST_ASSERT(p_ != nullptr);
-    if(n_ > 0)
-    {
-        string_view s(p_, n_);
-        encode_opts opt;
-        detail::re_encode_unchecked(
-            dest,
-            end,
-            s,
-            opt,
-            pchars);
-    }
+    BOOST_ASSERT(pos_ !=
+        string_view::npos);
+    string_view s = s_.substr(
+        pos_, next_ - pos_);
+    encode_opts opt;
+    detail::re_encode_unchecked(
+        dest,
+        end,
+        s,
+        opt,
+        pchars);
     increment();
 }
 

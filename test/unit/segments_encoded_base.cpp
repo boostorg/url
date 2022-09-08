@@ -24,6 +24,7 @@ namespace urls {
 
 struct segments_encoded_base_test
 {
+    using Type = segments_encoded_base;
     static
     void
     check(
@@ -34,7 +35,7 @@ struct segments_encoded_base_test
         auto rv = parse_path(s);
         if(! BOOST_TEST(rv.has_value()))
             return;
-        segments_encoded_base const& ps(*rv);
+        Type const& ps(*rv);
         BOOST_TEST_EQ(
             ps.buffer().data(), s.data());
         BOOST_TEST_EQ(
@@ -45,8 +46,17 @@ struct segments_encoded_base_test
             return;
         if(init.size() > 0 && ! ps.empty())
         {
-            BOOST_TEST_EQ(ps.front(), *init.begin());
-            BOOST_TEST_EQ(ps.back(), *std::prev(init.end()));
+            BOOST_TEST_EQ(
+                ps.front(), *init.begin());
+            BOOST_TEST_EQ(
+                ps.back(), *std::prev(init.end()));
+        }
+
+        // ostream
+        {
+            std::stringstream ss;
+            ss << ps;
+            BOOST_TEST_EQ(ss.str(), s);
         }
 
         // forward
@@ -56,12 +66,14 @@ struct segments_encoded_base_test
             auto const end = ps.end();
             while(it0 != end)
             {
-                segments_encoded_base::reference r0(*it0);
-                segments_encoded_base::reference r1(*it1);
+                Type::reference r0(*it0);
+                Type::reference r1(*it1);
                 BOOST_TEST_EQ(r0, r1);
                 BOOST_TEST_EQ(*it0, *it1);
-                segments_encoded_base::value_type v0(*it0);
-                segments_encoded_base::value_type v1(*it1);
+                BOOST_TEST_EQ( // arrow
+                    it0->size(), it1->size());
+                Type::value_type v0(*it0);
+                Type::value_type v1(*it1);
                 BOOST_TEST_EQ(v0, *it1);
                 BOOST_TEST_EQ(v1, *it1);
                 auto prev = it0++;
@@ -84,8 +96,8 @@ struct segments_encoded_base_test
                 BOOST_TEST_NE(prev, it0);
                 BOOST_TEST_EQ(--prev, it0);
                 --it1;
-                segments_encoded_base::reference r0(*it0);
-                segments_encoded_base::reference r1(*it1);
+                Type::reference r0(*it0);
+                Type::reference r1(*it1);
                 BOOST_TEST_EQ(*it0, *it1);
                 BOOST_TEST_EQ(r0, r1);
             }
@@ -94,7 +106,7 @@ struct segments_encoded_base_test
     }
 
     void
-    testMembers()
+    testSequence()
     {
         check( "", { });
         check( "/", { });
@@ -114,7 +126,7 @@ struct segments_encoded_base_test
     {
         // value_type
         {
-        segments_encoded_view::value_type ps( *url_view( "/path/to/file.txt" ).encoded_segments().back() );
+        segments_encoded_base::value_type ps( *url_view( "/path/to/file.txt" ).encoded_segments().back() );
 
         ignore_unused(ps);
         }
@@ -153,7 +165,7 @@ struct segments_encoded_base_test
     void
     run()
     {
-        testMembers();
+        testSequence();
         testJavadocs();
     }
 };

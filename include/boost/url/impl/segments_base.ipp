@@ -57,6 +57,13 @@ iterator(
 
 //------------------------------------------------
 
+segments_base::
+segments_base(
+    detail::path_ref const& ref) noexcept
+    : ref_(ref)
+{
+}
+
 pct_string_view
 segments_base::
 buffer() const noexcept
@@ -85,22 +92,6 @@ size() const noexcept
     return ref_.nseg();
 }
 
-std::string
-segments_base::
-front() const noexcept
-{
-    BOOST_ASSERT(! empty());
-    return *begin();
-}
-
-std::string
-segments_base::
-back() const noexcept
-{
-    BOOST_ASSERT(! empty());
-    return *--end();
-}
-
 auto
 segments_base::
 begin() const noexcept ->
@@ -116,6 +107,18 @@ end() const noexcept ->
 {
     return iterator(ref_, 0);
 }
+
+//------------------------------------------------
+
+std::ostream&
+operator<<(
+    std::ostream& os,
+    segments_base const& ps)
+{
+    os << ps.buffer();
+    return os;
+}
+
 } // urls
 } // boost
 

@@ -16,6 +16,7 @@
 #include <boost/url/detail/segments_iter_impl.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <boost/url/detail/url_impl.hpp>
+#include <iosfwd>
 
 namespace boost {
 namespace urls {
@@ -44,11 +45,7 @@ class segments_base
     friend class segments_view;
 
     segments_base(
-        detail::path_ref const& ref) noexcept
-        : ref_(ref)
-    {
-    }
-
+        detail::path_ref const& ref) noexcept;
     segments_base() = default;
 
 public:
@@ -88,7 +85,7 @@ public:
 
         @par Example
         @code
-        segments_view::value_type ps( *url_view( "/path/to/file.txt" ).segments().back() );
+        segments_base::value_type ps( url_view( "/path/to/file.txt" ).segments().back() );
         @endcode
     */
     using value_type = std::string;
@@ -116,6 +113,23 @@ public:
     // Observers
     //
     //--------------------------------------------
+
+    /** Return the maximum number of characters possible
+
+        This represents the largest number of
+        characters that are possible in a path,
+        not including any null terminator.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    static
+    constexpr
+    std::size_t
+    max_size() noexcept
+    {
+        return BOOST_URL_MAX_SIZE;
+    }
 
     /** Return the referenced character buffer.
 
@@ -222,7 +236,6 @@ public:
         @par Exception Safety
         Calls to allocate may throw.
     */
-    BOOST_URL_DECL
     std::string
     front() const noexcept;
 
@@ -254,7 +267,6 @@ public:
         @par Exception Safety
         Calls to allocate may throw.
     */
-    BOOST_URL_DECL
     std::string
     back() const noexcept;
 
@@ -283,6 +295,27 @@ public:
     iterator
     end() const noexcept;
 };
+
+//------------------------------------------------
+
+/** Format to an output stream
+
+    Any percent-escapes are emitted as-is;
+    no decoding is performed.
+
+    @par Complexity
+    Linear in `ps.buffer().size()`.
+
+    @par Effects
+    @code
+    return os << ps.buffer();
+    @endcode
+*/
+BOOST_URL_DECL
+std::ostream&
+operator<<(
+    std::ostream& os,
+    segments_base const& ps);
 
 } // urls
 } // boost

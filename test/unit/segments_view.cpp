@@ -46,6 +46,16 @@ struct segments_view_test
             BOOST_TEST_EQ(
                 ps0.buffer().data(), ps1.buffer().data());
         }
+
+        // ostream
+        {
+            segments_view ps = parse_path(
+                "/path/to/file.txt").value();
+            std::stringstream ss;
+            ss << ps;
+            BOOST_TEST_EQ(ss.str(),
+                "/path/to/file.txt");
+        }
     }
 
     void

@@ -23,37 +23,6 @@ namespace urls {
 namespace detail {
 
 //------------------------------------------------
-
-struct not_empty_t
-{
-};
-
-// Causes empty strings to transform
-// into one-element range of params.
-constexpr not_empty_t not_empty{};
-
-class not_empty_param
-{
-    bool value_ = false;
-
-public:
-    constexpr
-    not_empty_param() noexcept = default;
-
-    constexpr
-    not_empty_param(
-        not_empty_t) noexcept
-        : value_(true)
-    {
-    }
-
-    operator bool() const noexcept
-    {
-        return value_;
-    }
-};
-
-//------------------------------------------------
 //
 // any_params_iter
 //
@@ -144,11 +113,12 @@ struct BOOST_SYMBOL_VISIBLE
     query_iter
     : any_params_iter
 {
+    // ne = never empty
     BOOST_URL_DECL
     explicit
     query_iter(
         string_view s,
-        not_empty_param ne = {}) noexcept;
+        bool ne = false) noexcept;
 
 private:
     string_view s_;

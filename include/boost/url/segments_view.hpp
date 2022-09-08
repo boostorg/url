@@ -65,10 +65,7 @@ class segments_view
     friend class segments_ref;
 
     segments_view(
-        detail::path_ref const& ref) noexcept
-        : segments_base(ref)
-    {
-    }
+        detail::path_ref const& ref) noexcept;
 
 public:
     /** Constructor
@@ -104,7 +101,5 @@ public:
 
 } // urls
 } // boost
-
-#include <boost/url/impl/segments_view.hpp>
 
 #endif
