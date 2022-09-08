@@ -65,6 +65,11 @@ decode_unchecked(
     string_view s,
     decode_opts const& opt = {}) noexcept;
 
+BOOST_URL_DECL
+char
+decode_one(
+    char const* it) noexcept;
+
 } // detail
 } // urls
 } // boost

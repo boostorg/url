@@ -868,8 +868,8 @@ struct url_test
             auto check = [](string_view before,
                             string_view after)
             {
-                url u1 = parse_uri(before).value();
-                url_view u2 = parse_uri(after).value();
+                url u1 = parse_uri_reference(before).value();
+                url_view u2 = parse_uri_reference(after).value();
                 BOOST_TEST_EQ(u1.compare(u2), 0);
                 BOOST_TEST_EQ(u1, u2);
                 u1.normalize();
@@ -900,6 +900,23 @@ struct url_test
                   "http://cppalliance.org/..");
             check("http://cppalliance.org?%61=b",
                   "http://cppalliance.org?a=b");
+            // issue 396
+            check("/.//my:sharona",
+                  "/.//my:sharona");
+            check("/././/my:sharona",
+                  "/.//my:sharona");
+            check(".//my:sharona",
+                  ".//my:sharona");
+            check("././/my:sharona",
+                  ".//my:sharona");
+            // issue 395
+            check("./my:sharona",
+                  "./my:sharona");
+            check("././my:sharona",
+                  "./my:sharona");
+            // issue 391
+            check("my%3Asharona",
+                  "./my:sharona");
         }
 
         // normalize path
