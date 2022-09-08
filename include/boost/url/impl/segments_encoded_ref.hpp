@@ -23,29 +23,6 @@ namespace urls {
 
 //------------------------------------------------
 //
-// Special Members
-//
-//------------------------------------------------
-
-inline
-segments_encoded_ref::
-segments_encoded_ref(
-    url_base& u) noexcept
-    : segments_encoded_base(u.u_)
-    , u_(&u)
-{
-}
-
-inline
-segments_encoded_ref::
-operator
-segments_encoded_view() const noexcept
-{
-    return {detail::path_ref(u_->u_)};
-}
-
-//------------------------------------------------
-//
 // Modifiers
 //
 //------------------------------------------------

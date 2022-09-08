@@ -107,9 +107,10 @@ measure(
         return false;
     string_view s = s_.substr(
         pos_, next_ - pos_);
+    encode_opts opt;
     n += urls::encoded_size(
         s,
-        {},
+        opt,
         pchars);
     increment();
     return true;
@@ -125,11 +126,12 @@ copy(
         string_view::npos);
     string_view s = s_.substr(
         pos_, next_ - pos_);
+    encode_opts opt;
     dest += encode(
         dest,
         end,
         s,
-        {},
+        opt,
         pchars);
     increment();
 }
@@ -197,7 +199,11 @@ measure_impl(
     string_view s,
     std::size_t& n) noexcept
 {
-    n += encoded_size(s, {}, pchars);
+    encode_opts opt;
+    n += encoded_size(
+        s,
+        opt,
+        pchars);
 }
 
 void
@@ -207,8 +213,13 @@ copy_impl(
     char*& dest,
     char const* end) noexcept
 {
+    encode_opts opt;
     dest += encode(
-        dest, end, s, {}, pchars);
+        dest,
+        end,
+        s,
+        opt,
+        pchars);
 }
 
 //------------------------------------------------

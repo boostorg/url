@@ -217,6 +217,7 @@ public:
         @see
             @ref segments_encoded_view.
     */
+    BOOST_URL_DECL
     operator
     segments_encoded_view() const noexcept;
 

@@ -51,7 +51,15 @@ segments_iter_impl(
     , index(index_)
 {
     if(index == 0)
+    {
         pos = path_prefix(ref.string());
+    }
+    else if(pos != ref.size())
+    {
+        BOOST_ASSERT(
+            ref.data()[pos] == '/');
+        ++pos; // skip '/'
+    }
     update();
 }
 
@@ -62,8 +70,8 @@ update() noexcept
     auto const end = ref.end();
     char const* const p0 =
         ref.data() + pos;
+    dn = 0;
     auto p = p0;
-    //dn = 0;
     while(p != end)
     {
         if(*p == '/')
@@ -97,8 +105,8 @@ increment() noexcept
     auto p = ref.data() + pos;
     BOOST_ASSERT(p != end);
     BOOST_ASSERT(*p == '/');
-    ++p;
     dn = 0;
+    ++p; // skip '/'
     auto const p0 = p;
     while(p != end)
     {

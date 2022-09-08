@@ -1954,7 +1954,13 @@ edit_segments(
             BOOST_ASSERT(*p == '/');
             if(p[1] != '/')
             {
-                prefix = absolute;
+                if(absolute)
+                    prefix = 1;
+                else if(has_scheme() ||
+                        ! it1.dereference().contains(':'))
+                    prefix = 0;
+                else
+                    prefix = 2;
                 break;
             }
             // empty

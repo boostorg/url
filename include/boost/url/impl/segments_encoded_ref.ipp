@@ -24,6 +24,22 @@ namespace urls {
 //
 //------------------------------------------------
 
+segments_encoded_ref::
+segments_encoded_ref(
+    url_base& u) noexcept
+    : segments_encoded_base(
+        detail::path_ref(u.u_))
+    , u_(&u)
+{
+}
+
+segments_encoded_ref::
+operator
+segments_encoded_view() const noexcept
+{
+    return segments_encoded_view(ref_);
+}
+
 segments_encoded_ref&
 segments_encoded_ref::
 operator=(

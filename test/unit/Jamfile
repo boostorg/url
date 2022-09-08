@@ -9,7 +9,6 @@
 
 import testing ;
 
-
 project
     : requirements
       $(c11-requires)
@@ -18,7 +17,6 @@ project
       <include>.
       <include>../../extra
     ;
-
 
 local SOURCES =
     ../../extra/test_main.cpp
@@ -50,6 +48,7 @@ local SOURCES =
     segments_encoded_ref.cpp
     segments_encoded_view.cpp
     segments_ref.cpp
+    segments_test.cpp
     segments_view.cpp
     snippets.cpp
     static_url.cpp

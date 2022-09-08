@@ -181,7 +181,7 @@ public:
         @code
         url u;
 
-        u.segments() = {"path", "to", "file.txt"};
+        u.segments() = { "path", "to", "file.txt" };
         @endcode
 
         @par Preconditions
@@ -296,7 +296,7 @@ public:
         @code
         url u;
 
-        u.segments().assign( {"path", "to", "file.txt"} );
+        u.segments().assign( { "path", "to", "file.txt" } );
         @endcode
 
         @par Complexity
@@ -765,8 +765,8 @@ private:
 } // urls
 } // boost
 
-// VFALCO This include is at the bottom of
-// url.hpp because of a circular dependency
+// This include is at the bottom of
+// url_base.hpp because of a circular dependency
 //
 // #include <boost/url/impl/segments_ref.hpp>
 

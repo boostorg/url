@@ -16,7 +16,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/core/ignore_unused.hpp>
 
-#include "test_suite.hpp"
+#include "segments_test.hpp"
 
 namespace boost {
 namespace urls {
@@ -43,75 +43,6 @@ BOOST_STATIC_ASSERT(
 
 struct segments_ref_test
 {
-    // check that parsed string
-    // produces a sequence
-    static
-    void
-    check(
-        string_view s,
-        std::initializer_list<
-            string_view> init)
-    {
-        auto rv = parse_uri_reference(s);
-        if(! BOOST_TEST(rv.has_value()))
-            return;
-        url u = *rv;
-        Type ps(u.segments());
-        BOOST_TEST_EQ(
-            ps.is_absolute(), s.starts_with('/'));
-        BOOST_TEST_EQ(ps.empty(), init.size() == 0);
-        if(! BOOST_TEST_EQ(ps.size(), init.size()))
-            return;
-        if(init.size() > 0 && ! ps.empty())
-        {
-            BOOST_TEST_EQ(ps.front(), *init.begin());
-            BOOST_TEST_EQ(ps.back(), *std::prev(init.end()));
-        }
-
-        // forward
-        {
-            auto it0 = ps.begin();
-            auto it1 = init.begin();
-            auto const end = ps.end();
-            while(it0 != end)
-            {
-                segments_encoded_base::reference r0(*it0);
-                segments_encoded_base::reference r1(*it1);
-                BOOST_TEST_EQ(r0, r1);
-                BOOST_TEST_EQ(*it0, *it1);
-                segments_encoded_base::value_type v0(*it0);
-                segments_encoded_base::value_type v1(*it1);
-                BOOST_TEST_EQ(v0, *it1);
-                BOOST_TEST_EQ(v1, *it1);
-                auto prev = it0++;
-                BOOST_TEST_NE(prev, it0);
-                BOOST_TEST_EQ(++prev, it0);
-                ++it1;
-                BOOST_TEST_EQ(v0, v1);;
-            }
-        }
-
-        // reverse
-        if(init.size() > 0)
-        {
-            auto const begin = ps.begin();
-            auto it0 = ps.end();
-            auto it1 = init.end();
-            do
-            {
-                auto prev = it0--;
-                BOOST_TEST_NE(prev, it0);
-                BOOST_TEST_EQ(--prev, it0);
-                --it1;
-                segments_encoded_base::reference r0(*it0);
-                segments_encoded_base::reference r1(*it1);
-                BOOST_TEST_EQ(*it0, *it1);
-                BOOST_TEST_EQ(r0, r1);
-            }
-            while(it0 != begin);
-        }
-    }
-
     // check that modification produces
     // the string and correct sequence
     static
@@ -161,26 +92,23 @@ struct segments_ref_test
     void
     testSpecial()
     {
-        // segments_ref(
-        //      segments_ref const&)
+        // segments_ref(segments_ref)
         {
             url u("/index.htm");
             Type ps0 = u.segments();
-            Type ps1(ps0);
-            BOOST_TEST_EQ(&ps0.url(), &ps1.url());
+            Type ps(ps0);
+            BOOST_TEST_EQ(&ps0.url(), &ps.url());
             BOOST_TEST_EQ(
                 ps0.url().string().data(),
-                ps1.url().string().data());
+                ps.url().string().data());
         }
 
         // operator=(segments_ref)
         {
-            url u1("/index.htm");
+            url u1("/index%2Ehtm");
             url u2("/path/to/file.txt");
-            Type ps1 =
-                u1.segments();
-            Type ps2 =
-                u2.segments();
+            Type ps1 = u1.segments();
+            Type ps2 = u2.segments();
             BOOST_TEST_NE(
                 ps1.buffer().data(),
                 ps2.buffer().data());
@@ -197,10 +125,8 @@ struct segments_ref_test
         {
             url u1("/index.htm");
             url_view u2("/path/to/file.txt");
-            Type ps1 =
-                u1.segments();
-            segments_view ps2 =
-                u2.segments();
+            Type ps1 = u1.segments();
+            segments_view ps2 = u2.segments();
             BOOST_TEST_NE(
                 ps1.buffer().data(),
                 ps2.buffer().data());
@@ -215,10 +141,21 @@ struct segments_ref_test
 
         // operator=(initializer_list)
         {
+            url u;
+            u.segments() = { "path", "to", "file#" };
+            BOOST_TEST_EQ(
+                u.encoded_path(), "path/to/file%23");
         }
 
-        // operator segments_encoded_view()
+        // operator segments_view()
         {
+            url u;
+            u.segments() = { "path", "to", "file#" };
+            segments_view ps = u.segments();
+            auto it = ps.begin();
+            BOOST_TEST_EQ(*it++, "path");
+            BOOST_TEST_EQ(*it++, "to");
+            BOOST_TEST_EQ(*it++, "file#");
         }
     }
 
@@ -268,7 +205,7 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.assign({ "path", "to", "file.txt" });
+                ps.assign({ "path", "to", "file.txt?" });
             };
             auto const g = [](Type ps)
             {
@@ -278,14 +215,14 @@ struct segments_ref_test
                 {
                     ps.assign(init.begin(), init.end());
                 };
-                assign({ "path", "to", "file.txt" });
+                assign({ "path", "to", "file.txt?" });
             };
-            check(f, g, "", "path/to/file.txt", {"path", "to", "file.txt"});
-            check(f, g, "/", "/path/to/file.txt", {"path", "to", "file.txt"});
-            check(f, g, "/index.htm", "/path/to/file.txt", {"path", "to", "file.txt"});
-            check(f, g, "index.htm", "path/to/file.txt", {"path", "to", "file.txt"});
-            check(f, g, "/path/to/file.txt", "/path/to/file.txt", {"path", "to", "file.txt"});
-            check(f, g, "Program%20Files", "path/to/file.txt", {"path", "to", "file.txt"});
+            check(f, g, "", "path/to/file.txt%3F", {"path", "to", "file.txt?"});
+            check(f, g, "/", "/path/to/file.txt%3F", {"path", "to", "file.txt?"});
+            check(f, g, "/index.htm", "/path/to/file.txt%3F", {"path", "to", "file.txt?"});
+            check(f, g, "index.htm", "path/to/file.txt%3F", {"path", "to", "file.txt?"});
+            check(f, g, "/path/to/file.txt", "/path/to/file.txt%3F", {"path", "to", "file.txt?"});
+            check(f, g, "Program%20Files", "path/to/file.txt%3F", {"path", "to", "file.txt?"});
         }
 
         //
@@ -295,7 +232,8 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.insert(ps.begin(), "");
+                auto it = ps.insert(ps.begin(), "");
+                BOOST_TEST_EQ(*it, "");
             };
             check(f, "", "./", {""});
             check(f, "/", "/./", {""});
@@ -309,7 +247,8 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.insert(ps.begin(), "my seg");
+                auto it = ps.insert(ps.begin(), "my seg");
+                BOOST_TEST_EQ(*it, "my seg");
             };
             check(f, "", "my%20seg", {"my seg"});
             check(f, "/", "/my%20seg", {"my seg"});
@@ -322,7 +261,8 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.insert(std::next(ps.begin(), 1), "my seg");
+                auto it = ps.insert(std::next(ps.begin(), 1), "my seg");
+                BOOST_TEST_EQ(*it, "my seg");
             };
             check(f, "path/to/file.txt", "path/my%20seg/to/file.txt", {"path", "my seg", "to", "file.txt"});
             check(f, "/path/to/file.txt", "/path/my%20seg/to/file.txt", {"path", "my seg", "to", "file.txt"});
@@ -330,7 +270,8 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.insert(ps.end(), "my seg");
+                auto it = ps.insert(ps.end(), "my seg");
+                BOOST_TEST_EQ(*it, "my seg");
             };
             check(f, "", "my%20seg", {"my seg"});
             check(f, "/", "/my%20seg", {"my seg"});
@@ -343,7 +284,8 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.insert(ps.end(), "");
+                auto it = ps.insert(ps.end(), "");
+                BOOST_TEST_EQ(*it, "");
             };
             check(f, "", "./", {""});
             check(f, "/", "/./", {""});
@@ -361,7 +303,8 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.insert(ps.begin(), { "u", "v" });
+                auto it = ps.insert(ps.begin(), { "u", "v#" });
+                BOOST_TEST_EQ(*it, "u");
             };
             auto const g = [](Type ps)
             {
@@ -369,23 +312,25 @@ struct segments_ref_test
                     std::initializer_list<
                         string_view> init)
                 {
-                    ps.insert(ps.begin(),
+                    auto it = ps.insert(ps.begin(),
                         init.begin(), init.end());
+                    BOOST_TEST_EQ(*it, "u");
                 };
-                insert({ "u", "v" });
+                insert({ "u", "v#" });
             };
-            check(f, g, "", "u/v", {"u", "v"});
-            check(f, g, "/", "/u/v", {"u", "v"});
-            check(f, g, "/index.htm", "/u/v/index.htm", {"u", "v", "index.htm"});
-            check(f, g, "index.htm", "u/v/index.htm", {"u", "v", "index.htm"});
-            check(f, g, "path/to/file.txt", "u/v/path/to/file.txt", {"u", "v", "path", "to", "file.txt"});
-            check(f, g, "/path/to/file.txt", "/u/v/path/to/file.txt", {"u", "v", "path", "to", "file.txt"});
-            check(f, g, "Program%20Files", "u/v/Program%20Files", {"u", "v", "Program Files"});
+            check(f, g, "", "u/v%23", {"u", "v#"});
+            check(f, g, "/", "/u/v%23", {"u", "v#"});
+            check(f, g, "/index.htm", "/u/v%23/index.htm", {"u", "v#", "index.htm"});
+            check(f, g, "index.htm", "u/v%23/index.htm", {"u", "v#", "index.htm"});
+            check(f, g, "path/to/file.txt", "u/v%23/path/to/file.txt", {"u", "v#", "path", "to", "file.txt"});
+            check(f, g, "/path/to/file.txt", "/u/v%23/path/to/file.txt", {"u", "v#", "path", "to", "file.txt"});
+            check(f, g, "Program%20Files", "u/v%23/Program%20Files", {"u", "v#", "Program Files"});
         }
         {
             auto const f = [](Type ps)
             {
-                ps.insert(ps.begin(), { "", "" });
+                auto it = ps.insert(ps.begin(), { "", "" });
+                BOOST_TEST_EQ(*it, "");
             };
             auto const g = [](Type ps)
             {
@@ -393,8 +338,9 @@ struct segments_ref_test
                     std::initializer_list<
                         string_view> init)
                 {
-                    ps.insert(ps.begin(),
+                    auto it = ps.insert(ps.begin(),
                         init.begin(), init.end());
+                    BOOST_TEST_EQ(*it, "");
                 };
                 insert({ "", "" });
             };
@@ -414,7 +360,9 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.erase(std::next(ps.begin(), 0));
+                auto it = ps.erase(std::next(ps.begin(), 0));
+                if(it != ps.end())
+                    BOOST_TEST_EQ(*it, ps.front());
             };
             check(f, "path/to/file.txt", "to/file.txt", {"to", "file.txt"});
             check(f, "/path/to/file.txt", "/to/file.txt", {"to", "file.txt"});
@@ -422,11 +370,14 @@ struct segments_ref_test
             check(f, "/x/", "/./", {""});
             check(f, "x/", "./", {""});
             check(f, "x:.//", "./", {""});
+            check(f, ".//:", "./:", {":"});
+            check(f, "x:.//:", ":", {":"});
         }
         {
             auto const f = [](Type ps)
             {
-                ps.erase(std::next(ps.begin(), 1));
+                auto it = ps.erase(std::next(ps.begin(), 1));
+                BOOST_TEST_EQ(*it, "file.txt");
             };
             check(f, "path/to/file.txt", "path/file.txt", {"path", "file.txt"});
             check(f, "/path/to/file.txt", "/path/file.txt", {"path", "file.txt"});
@@ -434,7 +385,8 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.erase(std::next(ps.begin(), 2));
+                auto it = ps.erase(std::next(ps.begin(), 2));
+                BOOST_TEST_EQ(it, ps.end());
             };
             check(f, "path/to/file.txt", "path/to", {"path", "to"});
             check(f, "/path/to/file.txt", "/path/to", {"path", "to"});
@@ -449,15 +401,16 @@ struct segments_ref_test
         }
 
         //
-        // erase(iterator, iterator
+        // erase(iterator, iterator)
         //
 
         {
             auto const f = [](Type ps)
             {
-                ps.erase(
+                auto it = ps.erase(
                     std::next(ps.begin(), 0),
                     std::next(ps.begin(), 2));
+                BOOST_TEST_EQ(*it, "the");
             };
             check(f, "path/to/the/file.txt", "the/file.txt", {"the", "file.txt"});
             check(f, "/path/to/the/file.txt", "/the/file.txt", {"the", "file.txt"});
@@ -465,9 +418,10 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.erase(
+                auto it = ps.erase(
                     std::next(ps.begin(), 1),
                     std::next(ps.begin(), 3));
+                BOOST_TEST_EQ(*it, "file.txt");
             };
             check(f, "path/to/the/file.txt", "path/file.txt", {"path", "file.txt"});
             check(f, "/path/to/the/file.txt", "/path/file.txt", {"path", "file.txt"});
@@ -475,9 +429,10 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.erase(
+                auto it = ps.erase(
                     std::next(ps.begin(), 2),
                     std::next(ps.begin(), 4));
+                BOOST_TEST_EQ(it, ps.end());
             };
             check(f, "path/to/the/file.txt", "path/to", {"path", "to"});
             check(f, "/path/to/the/file.txt", "/path/to", {"path", "to"});
@@ -490,7 +445,8 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(std::next(ps.begin(), 0), "");
+                auto it = ps.replace(std::next(ps.begin(), 0), "");
+                BOOST_TEST_EQ(*it, "");
             };
             check(f, "path/to/file.txt", ".//to/file.txt", {"", "to", "file.txt"});
             check(f, "/path/to/file.txt", "/.//to/file.txt", {"", "to", "file.txt"});
@@ -498,7 +454,8 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(std::next(ps.begin(), 1), "");
+                auto it = ps.replace(std::next(ps.begin(), 1), "");
+                BOOST_TEST_EQ(*it, "");
             };
             check(f, "path/to/file.txt", "path//file.txt", {"path", "", "file.txt"});
             check(f, "/path/to/file.txt", "/path//file.txt", {"path", "", "file.txt"});
@@ -506,7 +463,8 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(std::next(ps.begin(), 0), "test");
+                auto it = ps.replace(std::next(ps.begin(), 0), "test");
+                BOOST_TEST_EQ(*it, "test");
             };
             check(f, "path/to/file.txt", "test/to/file.txt", {"test", "to", "file.txt"});
             check(f, "/path/to/file.txt", "/test/to/file.txt", {"test", "to", "file.txt"});
@@ -514,7 +472,8 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(std::next(ps.begin(), 1), "test");
+                auto it = ps.replace(std::next(ps.begin(), 1), "test");
+                BOOST_TEST_EQ(*it, "test");
             };
             check(f, "path/to/file.txt", "path/test/file.txt", {"path", "test", "file.txt"});
             check(f, "/path/to/file.txt", "/path/test/file.txt", {"path", "test", "file.txt"});
@@ -522,10 +481,22 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(std::next(ps.begin(), 2), "test");
+                auto it = ps.replace(std::next(ps.begin(), 2), "test");
+                BOOST_TEST_EQ(*it, "test");
             };
             check(f, "path/to/file.txt", "path/to/test", {"path", "to", "test"});
             check(f, "/path/to/file.txt", "/path/to/test", {"path", "to", "test"});
+        }
+        {
+            auto const f = [](Type ps)
+            {
+                auto it = ps.replace(ps.begin(), ":");
+                BOOST_TEST_EQ(*it, ":");
+            };
+            check(f, "path/to/file.txt", "./:/to/file.txt", {":", "to", "file.txt"});
+            check(f, "/:/to/file.txt", "/:/to/file.txt", {":", "to", "file.txt"});
+            check(f, "x:path/to/file.txt", ":/to/file.txt", {":", "to", "file.txt"});
+            check(f, "x:/path/to/file.txt", "/:/to/file.txt", {":", "to", "file.txt"});
         }
 
         //
@@ -535,10 +506,11 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(
+                auto it = ps.replace(
                     std::next(ps.begin(), 0),
                     std::next(ps.begin(), 2),
                     string_view(""));
+                BOOST_TEST_EQ(*it, "");
             };
             check(f, "path/to/the/file.txt", ".//the/file.txt", {"", "the", "file.txt"});
             check(f, "/path/to/the/file.txt", "/.//the/file.txt", {"", "the", "file.txt"});
@@ -546,10 +518,11 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(
+                auto it = ps.replace(
                     std::next(ps.begin(), 1),
                     std::next(ps.begin(), 3),
                     "");
+                BOOST_TEST_EQ(*it, "");
             };
             check(f, "path/to/the/file.txt", "path//file.txt", {"path", "", "file.txt"});
             check(f, "/path/to/the/file.txt", "/path//file.txt", {"path", "", "file.txt"});
@@ -557,10 +530,11 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(
+                auto it = ps.replace(
                     std::next(ps.begin(), 2),
                     std::next(ps.begin(), 4),
                     "");
+                BOOST_TEST_EQ(*it, "");
             };
             check(f, "path/to/the/file.txt", "path/to/", {"path", "to", ""});
             check(f, "/path/to/the/file.txt", "/path/to/", {"path", "to", ""});
@@ -568,10 +542,11 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(
+                auto it = ps.replace(
                     std::next(ps.begin(), 0),
                     std::next(ps.begin(), 2),
                     "test");
+                BOOST_TEST_EQ(*it, "test");
             };
             check(f, "path/to/the/file.txt", "test/the/file.txt", {"test", "the", "file.txt"});
             check(f, "/path/to/the/file.txt", "/test/the/file.txt", {"test", "the", "file.txt"});
@@ -579,10 +554,11 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(
+                auto it = ps.replace(
                     std::next(ps.begin(), 1),
                     std::next(ps.begin(), 3),
                     "test");
+                BOOST_TEST_EQ(*it, "test");
             };
             check(f, "path/to/the/file.txt", "path/test/file.txt", {"path", "test", "file.txt"});
             check(f, "/path/to/the/file.txt", "/path/test/file.txt", {"path", "test", "file.txt"});
@@ -590,10 +566,11 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(
+                auto it = ps.replace(
                     std::next(ps.begin(), 2),
                     std::next(ps.begin(), 4),
                     "test");
+                BOOST_TEST_EQ(*it, "test");
             };
             check(f, "path/to/the/file.txt", "path/to/test", {"path", "to", "test"});
             check(f, "/path/to/the/file.txt", "/path/to/test", {"path", "to", "test"});
@@ -607,10 +584,11 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(
+                auto it = ps.replace(
                     std::next(ps.begin(), 0),
                     std::next(ps.begin(), 2),
                     { "t", "u", "v" });
+                BOOST_TEST_EQ(*it, "t");
             };
             auto const g = [](Type ps)
             {
@@ -618,10 +596,11 @@ struct segments_ref_test
                     std::initializer_list<
                         string_view> init)
                 {
-                    ps.replace(
+                    auto it = ps.replace(
                         std::next(ps.begin(), 0),
                         std::next(ps.begin(), 2),
                         init.begin(), init.end());
+                        BOOST_TEST_EQ(*it, "t");
                 };
                 replace({ "t", "u", "v" });
             };
@@ -631,10 +610,11 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(
+                auto it = ps.replace(
                     std::next(ps.begin(), 1),
                     std::next(ps.begin(), 3),
                     { "t", "u", "v" });
+                BOOST_TEST_EQ(*it, "t");
             };
             auto const g = [](Type ps)
             {
@@ -642,10 +622,11 @@ struct segments_ref_test
                     std::initializer_list<
                         string_view> init)
                 {
-                    ps.replace(
+                    auto it = ps.replace(
                         std::next(ps.begin(), 1),
                         std::next(ps.begin(), 3),
                         init.begin(), init.end());
+                    BOOST_TEST_EQ(*it, "t");
                 };
                 replace({ "t", "u", "v" });
             };
@@ -655,10 +636,11 @@ struct segments_ref_test
         {
             auto const f = [](Type ps)
             {
-                ps.replace(
+                auto it = ps.replace(
                     std::next(ps.begin(), 2),
                     std::next(ps.begin(), 4),
                     { "t", "u", "v" });
+                BOOST_TEST_EQ(*it, "t");
             };
             auto const g = [](Type ps)
             {
@@ -666,27 +648,22 @@ struct segments_ref_test
                     std::initializer_list<
                         string_view> init)
                 {
-                    ps.replace(
+                    auto it = ps.replace(
                         std::next(ps.begin(), 2),
                         std::next(ps.begin(), 4),
                         init.begin(), init.end());
+                    BOOST_TEST_EQ(*it, "t");
                 };
                 replace({ "t", "u", "v" });
             };
             check(f, g, "path/to/the/file.txt", "path/to/t/u/v", {"path", "to", "t", "u", "v"});
             check(f, g, "/path/to/the/file.txt", "/path/to/t/u/v", {"path", "to", "t", "u", "v"});
         }
-    }
 
-    void
-    testEditSegments()
-    {
-    /*  Legend
+        //
+        // push_back
+        //
 
-        '#' 0x23    '/' 0x2f
-        '%' 0x25    ':' 0x3a
-        '.' 0x2e    '?' 0x3f
-    */
         {
             auto const f = [](Type ps)
             {
@@ -713,22 +690,23 @@ struct segments_ref_test
             check(f, "",  "./:",  {":"});
             check(f, "/", "/:", {":"});
         }
-    }
 
-    void
-    testRange()
-    {
-        check( "", {});
-        check( "/", {});
-        check( "./", { "" });
-        check( "./usr", { "usr" });
-        check( "/index.htm", { "index.htm" });
-        check( "/images/cat-pic.gif", { "images", "cat-pic.gif" });
-        check( "images/cat-pic.gif", { "images", "cat-pic.gif" });
-        check( "/fast//query", { "fast", "", "query" });
-        check( "fast//",  { "fast", "", "" });
-        check( "/./", { "" });
-        check( ".//", { "", "" });
+        //
+        // pop_back
+        //
+        {
+            auto const f = [](Type ps)
+            {
+                ps.pop_back();
+            };
+            check(f, "/path/to/file.txt",  "/path/to",  {"path", "to"});
+            check(f, "/path/to/",  "/path/to",  {"path", "to"});
+            check(f, ".//",  "./",  {""});
+            check(f, "/.//",  "/./",  {""});
+            check(f, "x://y//",  "/",  {""});
+            check(f, "x://y/.//",  "/./",  {""});
+            check(f, "x://y/.///",  "/.//",  {"", ""});
+        }
     }
 
     void
@@ -747,7 +725,7 @@ struct segments_ref_test
         {
         url u;
 
-        u.segments() = {"path", "to", "file.txt"};
+        u.segments() = { "path", "to", "file.txt" };
         }
 
         // url()
@@ -755,6 +733,20 @@ struct segments_ref_test
         url u( "?key=value" );
 
         assert( &u.segments().url() == &u );
+        }
+
+        // assign(initializer_list)
+        {
+        url u;
+         
+        u.segments().assign( { "path", "to", "file.txt" } );
+        }
+
+        // insert(iterator, initializer_list)
+        {
+        url u( "/file.txt" );
+
+        u.segments().insert( u.segments().begin(), { "path", "to" } );
         }
     }
 
@@ -766,8 +758,6 @@ struct segments_ref_test
         testSpecial();
         testObservers();
         testModifiers();
-        testEditSegments();
-        testRange();
         testJavadocs();
     }
 };
