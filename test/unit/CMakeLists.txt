@@ -39,6 +39,7 @@ set(BOOST_URL_TESTS_FILES
     params_encoded_base.cpp
     params_encoded_view.cpp
     params_view.cpp
+    parse.cpp
     parse_path.cpp
     pct_string_view.cpp
     scheme.cpp

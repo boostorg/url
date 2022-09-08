@@ -16,6 +16,7 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/optional.hpp>
+#include <boost/url/parse.hpp>
 #include <boost/url/rfc/absolute_uri_rule.hpp>
 #include <boost/url/grammar/digit_chars.hpp>
 #include <boost/url/grammar/parse.hpp>

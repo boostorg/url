@@ -10,9 +10,10 @@
 // Test that header file is self-contained.
 #include <boost/url/url_view.hpp>
 
-#include <boost/url/grammar/parse.hpp>
-#include <boost/url/rfc/uri_reference_rule.hpp>
+#include <boost/url/parse.hpp>
+
 #include "test_rule.hpp"
+
 #include <sstream>
 
 namespace boost {
@@ -877,18 +878,6 @@ public:
             ok("/%25");
             ok("/%25%2e");
         }
-
-        // path/coverage
-    #if 0
-        {
-            auto rv = grammar::parse(
-                "/1/2/3/4/5",
-                relative_part_rule);
-            auto const& v = *rv;
-            BOOST_TEST_EQ(v.path.path, "/1/2/3/4/5");
-            BOOST_TEST_EQ(v.path.count, 5u);
-        }
-    #endif
     }
 
     void

@@ -19,6 +19,7 @@
 
 
 #include <boost/url/error.hpp>
+#include <boost/url/parse.hpp>
 #include <boost/url/segments_encoded_ref.hpp>
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/string_view.hpp>

@@ -11,6 +11,7 @@
 // Test that header file is self-contained.
 #include <boost/url/segments_encoded_ref.hpp>
 
+#include <boost/url/parse.hpp>
 #include <boost/url/url.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/core/ignore_unused.hpp>

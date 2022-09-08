@@ -54,6 +54,7 @@ in a translation unit of the program.
 #include <boost/url/impl/params_encoded_base.ipp>
 #include <boost/url/impl/params_view.ipp>
 #include <boost/url/impl/params_encoded_view.ipp>
+#include <boost/url/impl/parse.ipp>
 #include <boost/url/impl/parse_path.ipp>
 #include <boost/url/impl/pct_string_view.ipp>
 #include <boost/url/impl/scheme.ipp>
