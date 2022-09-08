@@ -2536,7 +2536,7 @@ public:
     BOOST_URL_DECL
     result<void>
     resolve(
-        url_view_base const& base);
+        url_view_base const& ref);
 
     friend
     result<void>
