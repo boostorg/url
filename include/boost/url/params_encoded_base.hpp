@@ -14,12 +14,9 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ignore_case.hpp>
 #include <boost/url/param.hpp>
-#include <boost/url/pct_string_view.hpp>
 #include <boost/url/detail/params_iter_impl.hpp>
-#include <boost/url/detail/parts_base.hpp>
 #include <boost/url/detail/url_impl.hpp>
-#include <cstddef>
-#include <iterator>
+#include <iosfwd>
 
 namespace boost {
 namespace urls {
@@ -33,24 +30,22 @@ namespace urls {
     containers or functions:
 
     @par Containers
+    @li @ref params_ref
     @li @ref params_view
-    @li @ref params_const_view
+    @li @ref params_encoded_ref
     @li @ref params_encoded_view
-    @li @ref params_const_encoded_view
 */
 class params_encoded_base
-    : private detail::parts_base
 {
+    friend class url_view_base;
+    friend class params_encoded_ref;
     friend class params_encoded_view;
-    friend class params_const_encoded_view;
 
-    detail::url_impl const* impl_ = nullptr;
+    detail::query_ref ref_;
 
     params_encoded_base(
-        detail::url_impl const& impl) noexcept
-        : impl_(&impl)
-    {
-    }
+        detail::query_ref const& ref) noexcept;
+    params_encoded_base() = default;
 
 public:
     /** A Bidirectional iterator to a query parameter
@@ -92,7 +87,7 @@ public:
 
         @par Example
         @code
-        params_const_encoded_view::value_type qp( *url_view( "?first=John&last=Doe" ).params().find( "first" ) );
+        params_encoded_view::value_type qp( *url_view( "?first=John&last=Doe" ).params().find( "first" ) );
         @endcode
 
         @see
@@ -126,6 +121,23 @@ public:
     // Observers
     //
     //--------------------------------------------
+
+    /** Return the maximum number of characters possible
+
+        This represents the largest number of
+        characters that are possible in a path,
+        not including any null terminator.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    static
+    constexpr
+    std::size_t
+    max_size() noexcept
+    {
+        return BOOST_URL_MAX_SIZE;
+    }
 
     /** Return the query corresponding to these params
 
@@ -174,6 +186,7 @@ public:
         @par Exception Safety
         Throws nothing.
     */
+    BOOST_URL_DECL
     bool
     empty() const noexcept;
 
@@ -190,6 +203,7 @@ public:
         @par Exception Safety
         Throws nothing.
     */
+    BOOST_URL_DECL
     std::size_t
     size() const noexcept;
 
@@ -201,6 +215,7 @@ public:
         @par Exception Safety
         Throws nothing.
     */
+    BOOST_URL_DECL
     iterator
     begin() const noexcept;
 
@@ -212,6 +227,7 @@ public:
         @par Exception Safety
         Throws nothing.
     */
+    BOOST_URL_DECL
     iterator
     end() const noexcept;
 
@@ -219,9 +235,9 @@ public:
 
     /** Return true if a matching key exists
 
-        This function examines the
-        parameters in the container to
-        find a match for the specified key,
+        This function examines the parameters
+        in the container to find a match for
+        the specified key,
         which may contain percent escapes.
         The comparison is performed as if all
         escaped characters were decoded first.
@@ -296,8 +312,8 @@ public:
 
         This function examines the parameters
         in the container to find a match for
-        the specified key, which may contain
-        percent escapes.
+        the specified key,
+        which may contain percent escapes.
         The comparison is performed as if all
         escaped characters were decoded first.
 
@@ -508,11 +524,30 @@ private:
         ignore_case_param) const noexcept;
 };
 
+//------------------------------------------------
+
+/** Format to an output stream
+
+    Any percent-escapes are emitted as-is;
+    no decoding is performed.
+
+    @par Complexity
+    Linear in `ps.buffer().size()`.
+
+    @par Effects
+    @code
+    return os << ps.buffer();
+    @endcode
+*/
+BOOST_URL_DECL
+std::ostream&
+operator<<(
+    std::ostream& os,
+    params_encoded_base const& qp);
+
 } // urls
 } // boost
 
-// This is in <boost/url/url_view_base.hpp>
-//
-// #include <boost/url/impl/params_encoded_base.hpp>
+#include <boost/url/impl/params_encoded_base.hpp>
 
 #endif

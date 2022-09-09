@@ -28,7 +28,8 @@ class segments_encoded_base::iterator
     iterator(detail::path_ref const&) noexcept;
     iterator(detail::path_ref const&, int) noexcept;
 
-    iterator(detail::segments_iter_impl const& it) noexcept
+    iterator(
+        detail::segments_iter_impl const& it) noexcept
         : it_(it)
     {
     }

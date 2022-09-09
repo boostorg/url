@@ -12,6 +12,7 @@
 #define BOOST_URL_IMPL_SEGMENTS_BASE_IPP
 
 #include <boost/url/segments_base.hpp>
+#include <ostream>
 
 namespace boost {
 namespace urls {
@@ -36,7 +37,6 @@ dereference() const
     return *s_;
 }
 
-// begin
 segments_base::
 iterator::
 iterator(
@@ -45,7 +45,6 @@ iterator(
 {
 }
 
-// end
 segments_base::
 iterator::
 iterator(
@@ -55,6 +54,32 @@ iterator(
 {
 }
 
+segments_base::
+iterator::
+iterator(
+    iterator const& other) noexcept
+    : it_(other.it_)
+{
+    // don't copy recycled_ptr
+}
+
+auto
+segments_base::
+iterator::
+operator=(
+    iterator const& other) noexcept ->
+        iterator&
+{
+    // don't copy recycled_ptr
+    it_ = other.it_;
+    valid_ = false;
+    return *this;
+}
+
+//------------------------------------------------
+//
+// segments_base
+//
 //------------------------------------------------
 
 segments_base::
@@ -68,14 +93,14 @@ pct_string_view
 segments_base::
 buffer() const noexcept
 {
-    return ref_.string();
+    return ref_.buffer();
 }
 
 bool
 segments_base::
 is_absolute() const noexcept
 {
-    return ref_.string().starts_with('/');
+    return ref_.buffer().starts_with('/');
 }
 
 bool

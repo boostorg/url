@@ -13,8 +13,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/segments_base.hpp>
-#include <cstddef>
-#include <iosfwd>
+#include <boost/url/string_view.hpp>
 
 namespace boost {
 namespace urls {
@@ -70,6 +69,29 @@ class segments_view
 public:
     /** Constructor
 
+        Default-constructed segments have
+        zero elements.
+
+        @par Example
+        @code
+        segments_view ps;
+        @endcode
+
+        @par Effects
+        @code
+        return segments_view( "" );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    segments_view() = default;
+
+    /** Constructor
+
         After construction, both views will
         reference the same underlying character
         buffer.
@@ -93,10 +115,82 @@ public:
     segments_view(
         segments_view const& other) = default;
 
-    /** Assignment (deleted)
+    /** Constructor
+
+        This function constructs segments from
+        a valid path string, which can contain
+        percent escapes.
+        Upon construction, the view will reference
+        the character buffer pointed to by `s`.
+        caller is responsible for ensuring
+        that the lifetime of the buffer
+        extends until the view is destroyed.
+
+        @par Example
+        @code
+        segments_view ps( "/path/to/file.txt" );
+        @endcode
+
+        @par Effects
+        @code
+        return parse_path( s ).value();
+        @endcode
+
+        @par Postconditions
+        @code
+        this->buffer().data() == s.data()
+        @endcode
+
+        @par Complexity
+        Linear in `s`.
+
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `s` contains an invalid path.
+
+        @param s The string to parse.
+
+        @par BNF
+        @code
+        path = [ "/" ] [ segment *( "/" segment ) ]
+
+        segment = *pchar
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3.  Path</a>
+    */
+    BOOST_URL_DECL
+    segments_view(
+        string_view s);
+
+    /** Assignment
+
+        After assignment, both views will
+        reference the same underlying character
+        buffer.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the buffer extends until it is no
+        longer referenced.
+
+        @par Postconditions
+        @code
+        this->buffer().data() == other.buffer().data()
+        @endcode
+
+        @par Complexity
+        Constant
+
+        @par Exception Safety
+        Throws nothing
     */
     segments_view&
-    operator=(segments_view const& other) = delete;
+    operator=(segments_view const& other) = default;
 };
 
 } // urls

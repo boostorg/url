@@ -12,6 +12,7 @@
 #define BOOST_URL_IMPL_SEGMENTS_ENCODED_VIEW_IPP
 
 #include <boost/url/segments_encoded_view.hpp>
+#include <boost/url/parse_path.hpp>
 
 namespace boost {
 namespace urls {
@@ -20,6 +21,15 @@ segments_encoded_view::
 segments_encoded_view(
     detail::path_ref const& ref) noexcept
     : segments_encoded_base(ref)
+{
+}
+
+segments_encoded_view::
+segments_encoded_view(
+    string_view s)
+    : segments_encoded_view(
+        parse_path(s).value(
+            BOOST_URL_POS))
 {
 }
 

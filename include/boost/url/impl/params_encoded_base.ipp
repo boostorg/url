@@ -12,11 +12,39 @@
 #define BOOST_URL_IMPL_PARAMS_ENCODED_BASE_IPP
 
 #include <boost/url/params_encoded_base.hpp>
-#include <boost/url/url_view_base.hpp>
-#include <boost/assert.hpp>
+#include <ostream>
 
 namespace boost {
 namespace urls {
+
+params_encoded_base::
+iterator::
+iterator(
+    detail::query_ref const& ref) noexcept
+    : it_(ref)
+{
+}
+
+params_encoded_base::
+iterator::
+iterator(
+    detail::query_ref const& ref, int) noexcept
+    : it_(ref, 0)
+{
+}
+
+//------------------------------------------------
+//
+// params_encoded_base
+//
+//------------------------------------------------
+
+params_encoded_base::
+params_encoded_base(
+    detail::query_ref const& ref) noexcept
+    : ref_(ref)
+{
+}
 
 //------------------------------------------------
 //
@@ -28,13 +56,40 @@ pct_string_view
 params_encoded_base::
 buffer() const noexcept
 {
-    auto s = impl_->get(id_query);
-    if(s.empty())
-        return {};
-    return detail::make_pct_string_view(
-        s.data() + 1, s.size() - 1,
-            impl_->decoded_[id_query]);
+    return ref_.buffer();
 }
+
+bool
+params_encoded_base::
+empty() const noexcept
+{
+    return ref_.nparam() == 0;
+}
+
+std::size_t
+params_encoded_base::
+size() const noexcept
+{
+    return ref_.nparam();
+}
+
+auto
+params_encoded_base::
+begin() const noexcept ->
+    iterator
+{
+    return { ref_ };
+}
+
+auto
+params_encoded_base::
+end() const noexcept ->
+    iterator
+{
+    return { ref_, 0 };
+}
+
+//------------------------------------------------
 
 std::size_t
 params_encoded_base::
@@ -67,7 +122,7 @@ find_impl(
     pct_string_view key,
     ignore_case_param ic) const noexcept
 {
-    detail::params_iter_impl end_(*impl_, 0);
+    detail::params_iter_impl end_(ref_, 0);
     if(! ic)
     {
         for(;;)
@@ -97,13 +152,13 @@ find_last_impl(
     pct_string_view key,
     ignore_case_param ic) const noexcept
 {
-    detail::params_iter_impl begin_(*impl_);
+    detail::params_iter_impl begin_(ref_);
     if(! ic)
     {
         for(;;)
         {
             if(it.equal(begin_))
-                return { *impl_, 0 };
+                return { ref_, 0 };
             it.decrement();
             if(*it.key() == *key)
                 return it;
@@ -112,12 +167,23 @@ find_last_impl(
     for(;;)
     {
         if(it.equal(begin_))
-            return { *impl_, 0 };
+            return { ref_, 0 };
         it.decrement();
         if(grammar::ci_is_equal(
                 *it.key(), *key))
             return it;
     }
+}
+
+//------------------------------------------------
+
+std::ostream&
+operator<<(
+    std::ostream& os,
+    params_encoded_base const& qp)
+{
+    os << qp.buffer();
+    return os;
 }
 
 } // urls

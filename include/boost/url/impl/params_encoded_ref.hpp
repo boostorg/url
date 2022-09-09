@@ -8,57 +8,14 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_IMPL_PARAMS_ENCODED_VIEW_HPP
-#define BOOST_URL_IMPL_PARAMS_ENCODED_VIEW_HPP
+#ifndef BOOST_URL_IMPL_PARAMS_ENCODED_REF_HPP
+#define BOOST_URL_IMPL_PARAMS_ENCODED_REF_HPP
 
 #include <boost/url/detail/except.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
 namespace urls {
-
-inline
-params_encoded_view::
-params_encoded_view(
-    url_base& u) noexcept
-    : params_encoded_base(u.u_)
-    , u_(&u)
-{
-}
-
-//------------------------------------------------
-//
-// Special Members
-//
-//------------------------------------------------
-
-inline
-params_encoded_view&
-params_encoded_view::
-operator=(
-    params_encoded_view const& other)
-{
-    assign(other.begin(), other.end());
-    return *this;
-}
-
-inline
-params_encoded_view&
-params_encoded_view::
-operator=(std::initializer_list<
-    param_pct_view> init)
-{
-    assign(init.begin(), init.end());
-    return *this;
-}
-
-inline
-params_encoded_view::
-operator
-params_const_encoded_view() const noexcept
-{
-    return {*impl_};
-}
 
 //------------------------------------------------
 //
@@ -68,24 +25,15 @@ params_const_encoded_view() const noexcept
 
 inline
 void
-params_encoded_view::
+params_encoded_ref::
 clear() noexcept
 {
     u_->remove_query();
 }
 
-inline
-void
-params_encoded_view::
-assign(std::initializer_list<
-    param_pct_view> init)
-{
-    assign(init.begin(), init.end());
-}
-
 template<class FwdIt>
 void
-params_encoded_view::
+params_encoded_ref::
 assign(FwdIt first, FwdIt last)
 {
 /*  If you get a compile error here, it
@@ -105,11 +53,9 @@ assign(FwdIt first, FwdIt last)
             FwdIt>::iterator_category{});
 }
 
-//------------------------------------------------
-
 inline
 auto
-params_encoded_view::
+params_encoded_ref::
 append(
     param_pct_view const& v) ->
         iterator
@@ -117,10 +63,22 @@ append(
     return insert(end(), v);
 }
 
+inline
+auto
+params_encoded_ref::
+append_list(
+    std::initializer_list<
+        param_pct_view> init) ->
+    iterator
+{
+    return insert_list(end(), init);
+}
+
 template<class FwdIt>
 auto
-params_encoded_view::
-append(FwdIt first, FwdIt last) ->
+params_encoded_ref::
+append(
+    FwdIt first, FwdIt last) ->
     iterator
 {
 /*  If you get a compile error here, it
@@ -139,34 +97,9 @@ append(FwdIt first, FwdIt last) ->
         end(), first, last);
 }
 
-inline
-auto
-params_encoded_view::
-append_list(
-    std::initializer_list<
-        param_pct_view> init) ->
-    iterator
-{
-    return insert_list(end(), init);
-}
-
-//------------------------------------------------
-
-inline
-auto
-params_encoded_view::
-insert(
-    iterator before,
-    param_pct_view const& v) ->
-        iterator
-{
-    return insert(
-        before, &v, &v + 1);
-}
-
 template<class FwdIt>
 auto
-params_encoded_view::
+params_encoded_ref::
 insert(
     iterator before,
     FwdIt first,
@@ -195,33 +128,19 @@ insert(
 
 inline
 auto
-params_encoded_view::
-insert_list(
-    iterator before,
-    std::initializer_list<
-        param_pct_view> init) ->
-    iterator
-{
-    return insert(before,
-        init.begin(), init.end());
-}
-
-//------------------------------------------------
-
-inline
-auto
-params_encoded_view::
+params_encoded_ref::
 erase(
     iterator pos) noexcept ->
     iterator
 {
     return erase(
-        pos, std::next(pos));
+        pos,
+        std::next(pos));
 }
 
 inline
 auto
-params_encoded_view::
+params_encoded_ref::
 erase(
     iterator first,
     iterator last) noexcept ->
@@ -234,38 +153,9 @@ erase(
         detail::query_iter(s));
 }
 
-//------------------------------------------------
-
-inline
-auto
-params_encoded_view::
-replace(
-    iterator pos,
-    param_pct_view const& value) ->
-        iterator
-{
-    return replace(
-        pos, std::next(pos),
-            &value, &value + 1);
-}
-
-inline
-auto
-params_encoded_view::
-replace(
-    iterator from,
-    iterator to,
-    std::initializer_list<
-        param_pct_view> init) ->
-    iterator
-{
-    return replace(from, to,
-        init.begin(), init.end());
-}
-
 template<class FwdIt>
 auto
-params_encoded_view::
+params_encoded_ref::
 replace(
     iterator from,
     iterator to,
@@ -299,7 +189,7 @@ replace(
 
 template<class FwdIt>
 void
-params_encoded_view::
+params_encoded_ref::
 assign(FwdIt first, FwdIt last,
     std::forward_iterator_tag)
 {
@@ -312,7 +202,7 @@ assign(FwdIt first, FwdIt last,
 
 template<class FwdIt>
 auto
-params_encoded_view::
+params_encoded_ref::
 insert(
     iterator before,
     FwdIt first,

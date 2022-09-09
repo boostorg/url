@@ -11,6 +11,9 @@
 #ifndef BOOST_URL_IMPL_SEGMENTS_VIEW_IPP
 #define BOOST_URL_IMPL_SEGMENTS_VIEW_IPP
 
+#include <boost/url/segments_view.hpp>
+#include <boost/url/parse_path.hpp>
+
 namespace boost {
 namespace urls {
 
@@ -18,6 +21,15 @@ segments_view::
 segments_view(
     detail::path_ref const& ref) noexcept
     : segments_base(ref)
+{
+}
+
+segments_view::
+segments_view(
+    string_view s)
+    : segments_view(
+        parse_path(s).value(
+            BOOST_URL_POS))
 {
 }
 

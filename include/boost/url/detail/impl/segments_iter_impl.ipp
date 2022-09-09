@@ -25,7 +25,7 @@ segments_iter_impl(
     detail::path_ref const& ref_) noexcept
     : ref(ref_)
 {
-    pos = path_prefix(ref.string());
+    pos = path_prefix(ref.buffer());
     update();
 }
 
@@ -52,7 +52,7 @@ segments_iter_impl(
 {
     if(index == 0)
     {
-        pos = path_prefix(ref.string());
+        pos = path_prefix(ref.buffer());
     }
     else if(pos != ref.size())
     {
@@ -135,7 +135,7 @@ decrement() noexcept
     if(index == 0)
     {
         next = pos;
-        pos = path_prefix(ref.string());
+        pos = path_prefix(ref.buffer());
         s_ = string_view(
             ref.data() + pos,
             next - pos);
@@ -143,7 +143,7 @@ decrement() noexcept
         return;
     }
     auto const begin = ref.data() +
-        path_prefix(ref.string());
+        path_prefix(ref.buffer());
     next = pos;
     auto p = ref.data() + next;
     auto const p1 = p;

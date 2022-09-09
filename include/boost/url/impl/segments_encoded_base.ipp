@@ -13,11 +13,11 @@
 
 #include <boost/url/segments_encoded_base.hpp>
 #include <boost/assert.hpp>
+#include <ostream>
 
 namespace boost {
 namespace urls {
 
-// begin
 segments_encoded_base::
 iterator::
 iterator(
@@ -26,7 +26,6 @@ iterator(
 {
 }
 
-// end
 segments_encoded_base::
 iterator::
 iterator(
@@ -37,6 +36,10 @@ iterator(
 }
 
 //------------------------------------------------
+//
+// segments_encoded_base
+//
+//------------------------------------------------
 
 segments_encoded_base::
 segments_encoded_base(
@@ -45,18 +48,24 @@ segments_encoded_base(
 {
 }
 
+//------------------------------------------------
+//
+// Observers
+//
+//------------------------------------------------
+
 pct_string_view
 segments_encoded_base::
 buffer() const noexcept
 {
-    return ref_.string();
+    return ref_.buffer();
 }
 
 bool
 segments_encoded_base::
 is_absolute() const noexcept
 {
-    return ref_.string().starts_with('/');
+    return ref_.buffer().starts_with('/');
 }
 
 bool

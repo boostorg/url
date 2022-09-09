@@ -726,6 +726,9 @@ operator<<(
 
 #ifndef BOOST_URL_DOCS
 namespace detail {
+// obtain modifiable reference to
+// underlying string, to handle
+// self-intersection on modifiers.
 inline
 string_view&
 ref(pct_string_view& s) noexcept

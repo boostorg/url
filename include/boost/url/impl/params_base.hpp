@@ -11,17 +11,12 @@
 #ifndef BOOST_URL_IMPL_PARAMS_BASE_HPP
 #define BOOST_URL_IMPL_PARAMS_BASE_HPP
 
-#include <boost/url/detail/except.hpp>
 #include <boost/url/grammar/recycled.hpp>
-#include <boost/assert.hpp>
+#include <boost/url/detail/params_iter_impl.hpp>
+#include <iterator>
 
 namespace boost {
 namespace urls {
-
-#ifndef BOOST_URL_DOCS
-class params_view;
-class params_const_view;
-#endif
 
 //------------------------------------------------
 
@@ -36,32 +31,20 @@ class params_base::iterator
     mutable bool valid_ = false;
 
     friend class params_base;
-    friend class params_view;
-
-    // begin
-    iterator(
-        detail::url_impl const& impl) noexcept
-        : it_(impl)
-    {
-    }
-
-    // end
-    iterator(
-        detail::url_impl const& impl,
-        int) noexcept
-        : it_(impl, 0)
-    {
-    }
-
-    iterator(
-        detail::params_iter_impl const& it) noexcept
-        : it_(it)
-    {
-    }
+    friend class params_ref;
 
     BOOST_URL_DECL
     param_view
     dereference() const;
+
+    iterator(detail::query_ref const& ref) noexcept;
+    iterator(detail::query_ref const& impl, int) noexcept;
+
+    iterator(
+        detail::params_iter_impl const& it)
+        : it_(it)
+    {
+    }
 
 public:
     using value_type = param;
@@ -126,64 +109,22 @@ public:
         return dereference();
     }
 
-    friend
     bool
     operator==(
-        iterator const& it0,
-        iterator const& it1) noexcept
+        iterator const& other) const noexcept
     {
-        return it0.it_.equal(it1.it_);
+        return it_.equal(other.it_);
     }
 
-    friend
     bool
     operator!=(
-        iterator const& it0,
-        iterator const& it1) noexcept
+        iterator const& other) const noexcept
     {
-        return ! it0.it_.equal(it1.it_);
+        return ! it_.equal(other.it_);
     }
 };
 
 //------------------------------------------------
-//
-// Observers
-//
-//------------------------------------------------
-
-inline
-bool
-params_base::
-empty() const noexcept
-{
-    return impl_->nparam_ == 0;
-}
-
-inline
-std::size_t
-params_base::
-size() const noexcept
-{
-    return impl_->nparam_;
-}
-
-inline
-auto
-params_base::
-begin() const noexcept ->
-    iterator
-{
-    return { *impl_ };
-}
-
-inline
-auto
-params_base::
-end() const noexcept ->
-    iterator
-{
-    return { *impl_, 0 };
-}
 
 inline
 bool
@@ -192,8 +133,8 @@ contains(
     string_view key,
     ignore_case_param ic) const noexcept
 {
-    return find(begin(),
-        key, ic) != end();
+    return find(
+        begin(),key, ic) != end();
 }
 
 inline

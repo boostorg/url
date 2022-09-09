@@ -14,11 +14,8 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ignore_case.hpp>
 #include <boost/url/pct_string_view.hpp>
-#include <boost/url/detail/segments_iter_impl.hpp>
-#include <boost/url/detail/parts_base.hpp>
 #include <boost/url/detail/url_impl.hpp>
-#include <cstddef>
-#include <iterator>
+#include <iosfwd>
 
 namespace boost {
 namespace urls {
@@ -38,7 +35,6 @@ namespace urls {
     @li @ref segments_encoded_view
 */
 class segments_encoded_base
-    : private detail::parts_base
 {
     detail::path_ref ref_;
 

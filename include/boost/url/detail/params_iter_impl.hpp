@@ -22,13 +22,13 @@ namespace detail {
 struct params_iter_impl
     : parts_base
 {
-    url_impl const* impl = nullptr;
-    std::size_t pos = 0;// to '?' or '&'
-    std::size_t nk = 0; // includes '?' or '&'
-    std::size_t nv = 0; // includes '='
-    std::size_t dk = 0;
-    std::size_t dv = 0;
-    std::size_t i = 0;
+    query_ref ref;
+    std::size_t index = 0;
+    std::size_t pos;
+    std::size_t nk;
+    std::size_t nv;
+    std::size_t dk;
+    std::size_t dv;
 
     params_iter_impl() = default;
     params_iter_impl(
@@ -39,66 +39,25 @@ struct params_iter_impl
     // begin
     BOOST_URL_DECL
     params_iter_impl(
-        url_impl const& u_) noexcept;
+        query_ref const&) noexcept;
 
     // end
     BOOST_URL_DECL
     params_iter_impl(
-        url_impl const& u_,
+        query_ref const&,
         int) noexcept;
 
     // at index
     params_iter_impl(
-        url_impl const&,
+        query_ref const&,
         std::size_t,
         std::size_t) noexcept;
-
-    BOOST_URL_DECL
-    param_pct_view
-    dereference() const noexcept;
-
-    BOOST_URL_DECL
-    void
-    increment() noexcept;
-
-    BOOST_URL_DECL
-    void
-    decrement() noexcept;
-
-    bool
-    at_end() const noexcept
-    {
-        return nk == 0;
-    }
-
-    bool
-    has_value() const noexcept
-    {
-        return nv > 0;
-    }
-
-    pct_string_view
-    key() const noexcept
-    {
-        return detail::make_pct_string_view(
-            string_view(
-                impl->cs_ +
-                    impl->offset(id_query) +
-                    pos + 1,
-                nk - 1), dk);
-    }
-
-    pct_string_view
-    value() const noexcept
-    {
-        BOOST_ASSERT(has_value());
-        return detail::make_pct_string_view(
-            string_view(
-                impl->cs_ +
-                    impl->offset(id_query) +
-                    pos + nk + 1,
-                nv - 1), dv);
-    }
+    void setup() noexcept;
+    BOOST_URL_DECL void increment() noexcept;
+    BOOST_URL_DECL void decrement() noexcept;
+    BOOST_URL_DECL param_pct_view
+        dereference() const noexcept;
+    pct_string_view key() const noexcept;
 
     auto
     next() const noexcept ->
@@ -115,12 +74,9 @@ struct params_iter_impl
             other) const noexcept
     {
         // different containers
-        BOOST_ASSERT(impl == other.impl);
-        return i == other.i;
+        BOOST_ASSERT(ref.alias_of(other.ref));
+        return index == other.index;
     }
-
-private:
-    void update() noexcept;
 };
 
 } // detail

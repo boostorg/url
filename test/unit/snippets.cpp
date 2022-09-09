@@ -224,9 +224,9 @@ using_url_views()
 
     {
         //[snippet_encoded_compound_elements_2
-        params_const_view params_view = u.params();
+        params_view params_ref = u.params();
 
-        for( auto v : params_view )
+        for( auto v : params_ref )
         {
             std::cout <<
                 "key = " << v.key <<
@@ -266,7 +266,7 @@ using_urls()
     //]
 
     //[snippet_quicklook_modifying_5
-    params_view p = u.params();
+    params_ref p = u.params();
     p.replace(p.find("name"), {"name", "John Doe"});
     std::cout << u << "\n";
     //]
@@ -874,7 +874,7 @@ parsing_query()
     {
         //[snippet_parsing_query_1
         url_view u("https://www.example.com/get-customer.php?id=409&name=Joe&individual");
-        params_const_view ps = u.params();
+        params_view ps = u.params();
         assert(ps.size() == 3);
         //]
         //[snippet_parsing_query_1a
@@ -963,7 +963,7 @@ parsing_query()
     {
         //[snippet_parsing_query_8
         url_view u("https://www.example.com/get-customer.php?key-1=value-1&key-2=&key-3&&=value-4");
-        params_const_view ps = u.params();
+        params_view ps = u.params();
         assert(ps.size() == 5);
         //]
         //[snippet_parsing_query_8a

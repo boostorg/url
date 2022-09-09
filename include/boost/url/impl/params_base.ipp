@@ -12,13 +12,10 @@
 #define BOOST_URL_IMPL_PARAMS_BASE_IPP
 
 #include <boost/url/params_base.hpp>
-#include <boost/url/url_base.hpp>
-#include <boost/assert.hpp>
+#include <ostream>
 
 namespace boost {
 namespace urls {
-
-//------------------------------------------------
 
 param_view
 params_base::
@@ -33,12 +30,13 @@ dereference() const
         // otherwise when we resize it larger
         // we will again have to value-init (?)
         // the new chars.
+        param_pct_view qp = it_.dereference();
         key_.acquire();
         value_.acquire();
-        (*it_.key()).assign_to(*key_);
-        has_value_ = it_.has_value();
+        (*qp.key).assign_to(*key_);
+        has_value_ = qp.has_value;
         if(has_value_)
-            (*it_.value()).assign_to(*value_);
+            (*qp.value).assign_to(*value_);
         valid_ = true;
     }
     return { *key_, *value_, has_value_ };
@@ -47,9 +45,26 @@ dereference() const
 params_base::
 iterator::
 iterator(
+    detail::query_ref const& ref) noexcept
+    : it_(ref)
+{
+}
+
+params_base::
+iterator::
+iterator(
+    detail::query_ref const& ref, int) noexcept
+    : it_(ref, 0)
+{
+}
+
+params_base::
+iterator::
+iterator(
     iterator const& other) noexcept
     : it_(other.it_)
 {
+    // don't copy recycled_ptr
 }
 
 auto
@@ -59,6 +74,7 @@ operator=(
     iterator const& other) noexcept ->
         iterator&
 {
+    // don't copy recycled_ptr
     it_ = other.it_;
     valid_ = false;
     return *this;
@@ -66,21 +82,55 @@ operator=(
 
 //------------------------------------------------
 //
-// Observers
+// params_base
 //
 //------------------------------------------------
+
+params_base::
+params_base(
+    detail::query_ref const& ref) noexcept
+    : ref_(ref)
+{
+}
 
 pct_string_view
 params_base::
 buffer() const noexcept
 {
-    auto s = impl_->get(id_query);
-    if(s.empty())
-        return {};
-    return detail::make_pct_string_view(
-        s.data() + 1, s.size() - 1,
-            impl_->decoded_[id_query]);
+    return ref_.buffer();
 }
+
+bool
+params_base::
+empty() const noexcept
+{
+    return ref_.nparam() == 0;
+}
+
+std::size_t
+params_base::
+size() const noexcept
+{
+    return ref_.nparam();
+}
+
+auto
+params_base::
+begin() const noexcept ->
+    iterator
+{
+    return { ref_ };
+}
+
+auto
+params_base::
+end() const noexcept ->
+    iterator
+{
+    return { ref_, 0 };
+}
+
+//------------------------------------------------
 
 std::size_t
 params_base::
@@ -113,7 +163,7 @@ find_impl(
     string_view key,
     ignore_case_param ic) const noexcept
 {
-    detail::params_iter_impl end_(*impl_, 0);
+    detail::params_iter_impl end_(ref_, 0);
     if(! ic)
     {
         for(;;)
@@ -143,13 +193,13 @@ find_last_impl(
     string_view key,
     ignore_case_param ic) const noexcept
 {
-    detail::params_iter_impl begin_(*impl_);
+    detail::params_iter_impl begin_(ref_);
     if(! ic)
     {
         for(;;)
         {
             if(it.equal(begin_))
-                return { *impl_, 0 };
+                return { ref_, 0 };
             it.decrement();
             if(*it.key() == key)
                 return it;
@@ -158,12 +208,23 @@ find_last_impl(
     for(;;)
     {
         if(it.equal(begin_))
-            return { *impl_, 0 };
+            return { ref_, 0 };
         it.decrement();
         if(grammar::ci_is_equal(
                 *it.key(), key))
             return it;
     }
+}
+
+//------------------------------------------------
+
+std::ostream&
+operator<<(
+    std::ostream& os,
+    params_base const& qp)
+{
+    os << qp.buffer();
+    return os;
 }
 
 } // urls

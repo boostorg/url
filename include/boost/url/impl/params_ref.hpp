@@ -8,10 +8,10 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_IMPL_PARAMS_VIEW_HPP
-#define BOOST_URL_IMPL_PARAMS_VIEW_HPP
+#ifndef BOOST_URL_IMPL_PARAMS_REF_HPP
+#define BOOST_URL_IMPL_PARAMS_REF_HPP
 
-#include <boost/url/params_const_view.hpp>
+#include <boost/url/params_view.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/grammar/recycled.hpp>
 #include <boost/assert.hpp>
@@ -20,20 +20,12 @@ namespace boost {
 namespace urls {
 
 inline
-params_view::
-params_view(
+params_ref::
+params_ref(
     url_base& u) noexcept
     : params_base(u.u_)
     , u_(&u)
 {
-}
-
-inline
-params_view::
-operator
-params_const_view() const noexcept
-{
-    return {*impl_};
 }
 
 //------------------------------------------------
@@ -44,22 +36,12 @@ params_const_view() const noexcept
 
 inline
 auto
-params_view::
-operator=(params_view const& other) ->
-    params_view&
-{
-    assign(other.begin(), other.end());
-    return *this;
-}
-
-inline
-auto
-params_view::
+params_ref::
 operator=(std::initializer_list<
     param_view> init) ->
-        params_view&
+        params_ref&
 {
-    assign(init.begin(), init.end());
+    assign(init);
     return *this;
 }
 
@@ -71,7 +53,7 @@ operator=(std::initializer_list<
 
 inline
 void
-params_view::
+params_ref::
 clear() noexcept
 {
     u_->remove_query();
@@ -79,18 +61,9 @@ clear() noexcept
 
 //------------------------------------------------
 
-inline
-void
-params_view::
-assign(std::initializer_list<
-    param_view> init)
-{
-    assign(init.begin(), init.end());
-}
-
 template<class FwdIt>
 void
-params_view::
+params_ref::
 assign(FwdIt first, FwdIt last)
 {
 /*  If you get a compile error here, it
@@ -110,11 +83,9 @@ assign(FwdIt first, FwdIt last)
             FwdIt>::iterator_category{});
 }
 
-//------------------------------------------------
-
 inline
 auto
-params_view::
+params_ref::
 append(
     param_view const& v) ->
         iterator
@@ -122,9 +93,20 @@ append(
     return insert(end(), v);
 }
 
+inline
+auto
+params_ref::
+append_list(
+    std::initializer_list<
+        param_view> init) ->
+    iterator
+{
+    return insert_list(end(), init);
+}
+
 template<class FwdIt>
 auto
-params_view::
+params_ref::
 append(FwdIt first, FwdIt last) ->
     iterator
 {
@@ -144,34 +126,9 @@ append(FwdIt first, FwdIt last) ->
         end(), first, last);
 }
 
-inline
-auto
-params_view::
-append_list(
-    std::initializer_list<
-        param_view> init) ->
-    iterator
-{
-    return insert_list(end(), init);
-}
-
-//------------------------------------------------
-
-inline
-auto
-params_view::
-insert(
-    iterator before,
-    param_view const& v) ->
-        iterator
-{
-    return insert(
-        before, &v, &v + 1);
-}
-
 template<class FwdIt>
 auto
-params_view::
+params_ref::
 insert(
     iterator before,
     FwdIt first,
@@ -200,33 +157,19 @@ insert(
 
 inline
 auto
-params_view::
-insert_list(
-    iterator before,
-    std::initializer_list<
-        param_view> init) ->
-    iterator
-{
-    return insert(before,
-        init.begin(), init.end());
-}
-
-//------------------------------------------------
-
-inline
-auto
-params_view::
+params_ref::
 erase(
     iterator pos) noexcept ->
     iterator
 {
     return erase(
-        pos, std::next(pos));
+        pos,
+        std::next(pos));
 }
 
 inline
 auto
-params_view::
+params_ref::
 erase(
     iterator first,
     iterator last) noexcept ->
@@ -239,38 +182,9 @@ erase(
         detail::query_iter(s));
 }
 
-//------------------------------------------------
-
-inline
-auto
-params_view::
-replace(
-    iterator pos,
-    param_view const& value) ->
-        iterator
-{
-    return replace(
-        pos, std::next(pos),
-            &value, &value + 1);
-}
-
-inline
-auto
-params_view::
-replace(
-    iterator from,
-    iterator to,
-    std::initializer_list<
-        param_view> init) ->
-    iterator
-{
-    return replace(from, to,
-        init.begin(), init.end());
-}
-
 template<class FwdIt>
 auto
-params_view::
+params_ref::
 replace(
     iterator from,
     iterator to,
@@ -304,7 +218,7 @@ replace(
 
 template<class FwdIt>
 void
-params_view::
+params_ref::
 assign(FwdIt first, FwdIt last,
     std::forward_iterator_tag)
 {
@@ -317,7 +231,7 @@ assign(FwdIt first, FwdIt last,
 
 template<class FwdIt>
 auto
-params_view::
+params_ref::
 insert(
     iterator before,
     FwdIt first,

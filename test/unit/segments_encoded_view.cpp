@@ -26,7 +26,7 @@ namespace urls {
 using Type = segments_encoded_view;
 
 BOOST_STATIC_ASSERT(
-    ! std::is_default_constructible<
+    std::is_default_constructible<
         Type>::value);
 
 BOOST_STATIC_ASSERT(
@@ -34,8 +34,12 @@ BOOST_STATIC_ASSERT(
         Type>::value);
 
 BOOST_STATIC_ASSERT(
-    ! std::is_copy_assignable<
+    std::is_copy_assignable<
         Type>::value);
+
+BOOST_STATIC_ASSERT(
+    std::is_default_constructible<
+        Type::iterator>::value);
 
 struct segments_const_encoded_view_test
 {
@@ -114,14 +118,50 @@ struct segments_const_encoded_view_test
     void
     testMembers()
     {
-        // segments_encoded_view(
-        //      segments_encoded_view const&)
+        // segments_encoded_view()
+        {
+            segments_encoded_view ps;
+            BOOST_TEST(ps.empty());
+            BOOST_TEST(! ps.is_absolute());
+            BOOST_TEST_EQ(ps.buffer(), "");
+            BOOST_TEST_EQ(ps.size(), 0);
+        }
+
+        // segments_encoded_view(segments_encoded_view)
         {
             segments_encoded_view ps0 =
                 parse_path("/path/to/file.txt").value();
             segments_encoded_view ps1(ps0);
             BOOST_TEST_EQ(
-                ps0.buffer().data(), ps1.buffer().data());
+                ps0.buffer().data(),
+                ps1.buffer().data());
+        }
+
+        // segments_encoded_view(string_view)
+        {
+            try
+            {
+                string_view s = "/path/to/file.txt";
+                segments_encoded_view ps(s);
+                BOOST_TEST_PASS();
+                BOOST_TEST_EQ(
+                    ps.buffer().data(), s.data());
+                BOOST_TEST_EQ(ps.buffer(), s);
+            }
+            catch(std::exception const&)
+            {
+                BOOST_TEST_FAIL();
+            }
+        }
+
+        // operator=(segments_encoded_view)
+        {
+            segments_encoded_view ps0("/path/to/file.txt");
+            segments_encoded_view ps1("/index.htm");
+            ps0 = ps1;
+            BOOST_TEST_EQ(
+                ps0.buffer().data(),
+                ps1.buffer().data());
         }
 
         // operator segments_view()
@@ -130,12 +170,13 @@ struct segments_const_encoded_view_test
                 parse_path( "/path/to/file.txt" ).value();
             segments_view ps1(ps0);
             BOOST_TEST_EQ(
-                ps0.buffer().data(), ps1.buffer().data());
+                ps0.buffer().data(),
+                ps1.buffer().data());
         }
 
         // ostream
         {
-            segments_view ps = parse_path(
+            segments_encoded_view ps = parse_path(
                 "/path/to/file.txt").value();
             std::stringstream ss;
             ss << ps;

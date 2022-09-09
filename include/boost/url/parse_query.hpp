@@ -5,28 +5,28 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/boostorg/url
+// Official repository: https://github.com/CPPAlliance/url
 //
 
-#ifndef BOOST_URL_PARSE_PATH_HPP
-#define BOOST_URL_PARSE_PATH_HPP
+#ifndef BOOST_URL_PARSE_PARAMS_HPP
+#define BOOST_URL_PARSE_PARAMS_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_types.hpp>
-#include <boost/url/segments_encoded_view.hpp>
+#include <boost/url/params_encoded_view.hpp>
+#include <boost/url/string_view.hpp>
 
 namespace boost {
 namespace urls {
 
-/** Parse a string and return an encoded segment view
+/** Parse a string and return an encoded params view
 
     This function parses the string and returns the
-    corresponding path object if the string is valid,
+    corresponding params object if the string is valid,
     otherwise returns an error.
 
     @par BNF
     @code
-    path          = [ "/" ] segment *( "/" segment )
     @endcode
 
     @par Exception Safety
@@ -38,15 +38,13 @@ namespace urls {
     @param s The string to parse
 
     @par Specification
-    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-        >3.3.  Path (rfc3986)</a>
 
     @see
-        @ref segments_encoded_view.
+        @ref params_encoded_view.
 */
 BOOST_URL_DECL
-result<segments_encoded_view>
-parse_path(string_view s) noexcept;
+result<params_encoded_view>
+parse_query(string_view s) noexcept;
 
 } // urls
 } // boost

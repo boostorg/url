@@ -36,13 +36,14 @@ set(BOOST_URL_TESTS_FILES
     optional.cpp
     param.cpp
     params_base.cpp
-    params_const_encoded_view.cpp
-    params_const_view.cpp
-    params_encoded_base.cpp
     params_encoded_view.cpp
     params_view.cpp
+    params_encoded_base.cpp
+    params_encoded_ref.cpp
+    params_ref.cpp
     parse.cpp
     parse_path.cpp
+    parse_query.cpp
     pct_string_view.cpp
     scheme.cpp
     segments_base.cpp

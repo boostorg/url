@@ -93,8 +93,7 @@ class segments_ref
     friend class url_base;
     friend class segments_encoded_ref;
 
-    segments_ref(
-        url_base& u) noexcept;
+    segments_ref(url_base& u) noexcept;
 
 public:
     //--------------------------------------------

@@ -14,12 +14,12 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/params_view.hpp>
-#include <boost/url/params_encoded_view.hpp>
+#include <boost/url/params_encoded_ref.hpp>
+#include <boost/url/params_ref.hpp>
 #include <boost/url/pct_string_view.hpp>
 #include <boost/url/scheme.hpp>
-#include <boost/url/segments_ref.hpp>
 #include <boost/url/segments_encoded_ref.hpp>
+#include <boost/url/segments_ref.hpp>
 #include <boost/url/url_view_base.hpp>
 #include <boost/url/detail/any_params_iter.hpp>
 #include <boost/url/detail/any_segments_iter.hpp>
@@ -70,10 +70,10 @@ class BOOST_SYMBOL_VISIBLE
 
     friend class url;
     friend class static_url_base;
-    friend class params_view;
+    friend class params_ref;
     friend class segments_ref;
     friend class segments_encoded_ref;
-    friend class params_encoded_view;
+    friend class params_encoded_ref;
 
     struct op_t
     {
@@ -2077,7 +2077,7 @@ public:
 
         @par Example
         @code
-        params_view pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
+        params_ref pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
         @endcode
 
         @par Complexity
@@ -2106,11 +2106,9 @@ public:
             @ref set_encoded_query,
             @ref set_query.
     */
-    urls::params_view
-    params() noexcept
-    {
-        return urls::params_view(*this);
-    }
+    BOOST_URL_DECL
+    params_ref
+    params() noexcept;
 
     /** Return the query as a container of parameters
 
@@ -2127,7 +2125,7 @@ public:
 
         @par Example
         @code
-        params_encoded_view pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
+        params_encoded_ref pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
         @endcode
 
         @par Complexity
@@ -2156,11 +2154,9 @@ public:
             @ref set_encoded_query,
             @ref set_query.
     */
-    urls::params_encoded_view
-    encoded_params() noexcept
-    {
-        return {*this};
-    }
+    BOOST_URL_DECL
+    params_encoded_ref
+    encoded_params() noexcept;
 
     //--------------------------------------------
     //
@@ -2572,13 +2568,6 @@ private:
         detail::any_segments_iter&& it0,
         int absolute = -1);
 
-    char*
-    resize_params(
-        detail::params_iter_impl const&,
-        detail::params_iter_impl const&,
-        std::size_t, std::size_t,
-        op_t& op);
-
     BOOST_URL_DECL
     auto
     edit_params(
@@ -2702,9 +2691,9 @@ resolve(
 } // boost
 
 // These are here because of circular references
-#include <boost/url/impl/params_encoded_view.hpp>
-#include <boost/url/impl/params_view.hpp>
-#include <boost/url/impl/segments_encoded_ref.hpp>
+#include <boost/url/impl/params_ref.hpp>
+#include <boost/url/impl/params_encoded_ref.hpp>
 #include <boost/url/impl/segments_ref.hpp>
+#include <boost/url/impl/segments_encoded_ref.hpp>
 
 #endif

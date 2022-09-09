@@ -19,6 +19,12 @@ namespace boost {
 namespace urls {
 namespace detail {
 
+//------------------------------------------------
+//
+// url_impl
+//
+//------------------------------------------------
+
 void
 url_impl::
 apply_scheme(
@@ -151,6 +157,17 @@ apply_frag(
 }
 
 //------------------------------------------------
+//
+// path_ref
+//
+//------------------------------------------------
+
+path_ref::
+path_ref(
+    url_impl const& impl) noexcept
+    : impl_(&impl)
+{
+}
 
 path_ref::
 path_ref(
@@ -166,7 +183,7 @@ path_ref(
 
 pct_string_view
 path_ref::
-string() const noexcept
+buffer() const noexcept
 {
     if(impl_)
         return make_pct_string_view(
@@ -214,6 +231,108 @@ nseg() const noexcept
     if(impl_)
         return impl_->nseg_;
     return nseg_;
+}
+
+//------------------------------------------------
+//
+// query_ref
+//
+//------------------------------------------------
+
+query_ref::
+query_ref(
+    url_impl const& impl) noexcept
+    : impl_(&impl)
+{
+}
+
+query_ref::
+query_ref(
+    string_view s,
+    std::size_t dn,
+    std::size_t nparam) noexcept
+    : data_(s.data())
+    , size_(s.size())
+    , nparam_(nparam)
+    , dn_(dn)
+{
+}
+
+pct_string_view
+query_ref::
+buffer() const noexcept
+{
+    if(impl_)
+    {
+        auto pos = impl_->offset_[id_query];
+        auto pos1 = impl_->offset_[id_frag];
+        if(pos < pos1)
+        {
+            ++pos; // no '?'
+            return make_pct_string_view(
+                impl_->cs_ + pos,
+                pos1 - pos,
+                impl_->decoded_[id_query]);
+        }
+        // empty
+        return make_pct_string_view(
+            impl_->cs_ + pos,
+            0,
+            0);
+    }
+    // no '?'
+    return make_pct_string_view(
+        data_, size_, dn_);
+}
+
+// with '?'
+std::size_t
+query_ref::
+size() const noexcept
+{
+    if(impl_)
+        return impl_->len(id_query);
+    if(size_ > 0)
+        return size_ + 1;
+    return 0;
+}
+
+// no '?'
+char const*
+query_ref::
+begin() const noexcept
+{
+    if(impl_)
+    {
+        // using the offset array here
+        auto pos = impl_->offset_[id_query];
+        auto pos1 = impl_->offset_[id_frag];
+        if(pos < pos1)
+            return impl_->cs_ + pos + 1; // no '?'
+        // empty
+        return impl_->cs_ + pos;
+    }
+    return data_;
+
+}
+
+char const*
+query_ref::
+end() const noexcept
+{
+    if(impl_)
+        return impl_->cs_ +
+            impl_->offset(id_frag);
+    return data_ + size_;
+}
+
+std::size_t
+query_ref::
+nparam() const noexcept
+{
+    if(impl_)
+        return impl_->nparam_;
+    return nparam_;
 }
 
 } // detail

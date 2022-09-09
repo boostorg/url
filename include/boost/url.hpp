@@ -24,13 +24,14 @@
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/param.hpp>
 #include <boost/url/params_base.hpp>
-#include <boost/url/params_const_encoded_view.hpp>
-#include <boost/url/params_const_view.hpp>
 #include <boost/url/params_encoded_base.hpp>
+#include <boost/url/params_encoded_ref.hpp>
 #include <boost/url/params_encoded_view.hpp>
+#include <boost/url/params_ref.hpp>
 #include <boost/url/params_view.hpp>
 #include <boost/url/parse.hpp>
 #include <boost/url/parse_path.hpp>
+#include <boost/url/parse_query.hpp>
 #include <boost/url/pct_string_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments_base.hpp>

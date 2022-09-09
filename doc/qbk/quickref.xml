@@ -42,9 +42,9 @@
           <member><link linkend="url.ref.boost__urls__param_view">param_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_base">params_base</link></member>
           <member><link linkend="url.ref.boost__urls__params_const_encoded_view">params_const_encoded_view</link></member>
-          <member><link linkend="url.ref.boost__urls__params_const_view">params_const_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_encoded_base">params_encoded_base</link></member>
           <member><link linkend="url.ref.boost__urls__params_encoded_view">params_encoded_view</link></member>
+          <member><link linkend="url.ref.boost__urls__params_ref">params_ref</link></member>
           <member><link linkend="url.ref.boost__urls__params_view">params_view</link></member>
           <member><link linkend="url.ref.boost__urls__pct_string_view">pct_string_view</link></member>
           <member><link linkend="url.ref.boost__urls__segments_base">segments_base</link></member>

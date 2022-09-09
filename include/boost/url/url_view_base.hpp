@@ -16,8 +16,8 @@
 #include <boost/url/host_type.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/params_const_view.hpp>
-#include <boost/url/params_const_encoded_view.hpp>
+#include <boost/url/params_view.hpp>
+#include <boost/url/params_encoded_view.hpp>
 #include <boost/url/pct_string_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments_encoded_view.hpp>
@@ -65,11 +65,11 @@ class BOOST_SYMBOL_VISIBLE
     friend class url_view;
     friend class static_url_base;
     friend class params_base;
-    friend class params_const_view;
-    friend class params_const_encoded_view;
-    friend class params_encoded_base;
-    friend class params_encoded_view;
     friend class params_view;
+    friend class params_encoded_view;
+    friend class params_encoded_base;
+    friend class params_encoded_ref;
+    friend class params_ref;
     friend class segments_base;
     friend class segments_view;
     friend class segments_encoded_view;
@@ -1867,7 +1867,7 @@ public:
 
         @par Example
         @code
-        params_const_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
+        params_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
         @endcode
 
         @par Complexity
@@ -1897,7 +1897,7 @@ public:
             @ref query.
     */
     BOOST_URL_DECL
-    params_const_view
+    params_view
     params() const noexcept;
 
     /** Return the query as a container of parameters
@@ -1912,7 +1912,7 @@ public:
 
         @par Example
         @code
-        params_const_encoded_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
+        params_encoded_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
         @endcode
 
         @par Complexity
@@ -1946,7 +1946,7 @@ public:
             @ref query.
     */
     BOOST_URL_DECL
-    params_const_encoded_view
+    params_encoded_view
     encoded_params() const noexcept;
 
     //--------------------------------------------
@@ -2573,9 +2573,5 @@ operator<<(
 
 } // urls
 } // boost
-
-// These are here because of circular references
-#include <boost/url/impl/params_base.hpp>
-#include <boost/url/impl/params_encoded_base.hpp>
 
 #endif

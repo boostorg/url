@@ -12,10 +12,15 @@
 
 #include <boost/url/url.hpp>
 #include <boost/url/url_view.hpp>
-#include <boost/url/params_const_view.hpp>
+#include <boost/url/params_view.hpp>
 #include <boost/core/ignore_unused.hpp>
 
 #include "test_suite.hpp"
+
+#ifdef assert
+#undef assert
+#endif
+#define assert BOOST_TEST
 
 namespace boost {
 namespace urls {
@@ -38,7 +43,7 @@ struct params_base_test
     static
     void
     check(
-        params_const_view const& p,
+        params_view const& p,
         std::initializer_list<
             param_view> init)
     {
@@ -83,7 +88,7 @@ struct params_base_test
         else
             u.set_encoded_query(
                 s.substr(1));
-        params_view p = u.params();
+        params_ref p = u.params();
         if(! BOOST_TEST_EQ(
             p.size(), init.size()))
             return;
@@ -191,8 +196,8 @@ struct params_base_test
         {
             url_view u0("?x=1&y=2&x=3&z=4");
             url_view u1("?%78=1&%79=2&%78=3&%7a=4");
-            params_const_view p0 = u0.params();
-            params_const_view p1 = u1.params();
+            params_view p0 = u0.params();
+            params_view p1 = u1.params();
 
             // contains
             BOOST_TEST(p0.contains("x"));
@@ -244,7 +249,7 @@ struct params_base_test
             url_view u(
                 "?a=1&%62=2&c=3&c=4"
                 "&c=5&d=6&e=7&d=8&f=9#f");
-            params_const_view p = u.params();
+            params_view p = u.params();
             BOOST_TEST_EQ(p.count("a"), 1);
             BOOST_TEST_EQ(p.count("b"), 1);
             BOOST_TEST_EQ(p.count("c"), 3);
@@ -314,7 +319,7 @@ struct params_base_test
     {
         // value_type
         {
-        params_const_view::value_type qp( *url_view( "?first=John&last=Doe" ).params().find( "first" ) );
+        params_view::value_type qp( *url_view( "?first=John&last=Doe" ).params().find( "first" ) );
         }
 
         // buffer()

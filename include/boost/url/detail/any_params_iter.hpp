@@ -30,7 +30,7 @@ namespace detail {
 
 /*  An iterator to a type-erased,
     possibly encoded sequence of
-    query params_view.
+    query params_ref.
 */  
 class BOOST_SYMBOL_VISIBLE
     any_params_iter
@@ -158,7 +158,7 @@ protected:
         param_view const& v) noexcept;
 };
 
-// A range of plain query params_view
+// A range of plain query params_ref
 template<class FwdIt>
 struct params_iter
     : any_params_iter
@@ -240,7 +240,7 @@ protected:
         param_view const& v) noexcept;
 };
 
-// A range of encoded query params_view
+// A range of encoded query params_ref
 template<class FwdIt>
 struct params_encoded_iter
     : any_params_iter

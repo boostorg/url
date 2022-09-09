@@ -1123,6 +1123,18 @@ remove_query() noexcept
 
 url_base&
 url_base::
+set_query(
+    string_view s)
+{
+    edit_params(
+        detail::params_iter_impl(u_),
+        detail::params_iter_impl(u_, 0),
+        detail::query_iter(s, true));
+    return *this;
+}
+
+url_base&
+url_base::
 set_encoded_query(
     pct_string_view s)
 {
@@ -1178,17 +1190,18 @@ set_encoded_query(
     return *this;
 }
 
-url_base&
+params_ref
 url_base::
-set_query(
-    string_view s)
+params() noexcept
 {
-    edit_params(
-        detail::params_iter_impl(u_),
-        detail::params_iter_impl(u_, 0),
-        detail::query_iter(
-            s, true));
-    return *this;
+    return {*this};
+}
+
+params_encoded_ref
+url_base::
+encoded_params() noexcept
+{
+    return {*this};
 }
 
 //------------------------------------------------
@@ -2079,45 +2092,86 @@ edit_segments(
 
 //------------------------------------------------
 
-/*  The query param range [first, last)
-    is resized to contain `n` chars
-    and nparam elements.
-*/
-char*
+auto
 url_base::
-resize_params(
-    detail::params_iter_impl const& first,
-    detail::params_iter_impl const& last,
-    std::size_t n,
-    std::size_t nparam,
-    op_t& op)
+edit_params(
+    detail::params_iter_impl const& it0,
+    detail::params_iter_impl const& it1,
+    detail::any_params_iter&& src) ->
+        detail::params_iter_impl
 {
-    BOOST_ASSERT(last.i >= first.i);
-    BOOST_ASSERT(
-        last.i - first.i <= u_.nparam_);
+    auto pos0 = u_.offset(id_query);
+    auto pos1 = pos0 + it1.pos;
+    pos0 = pos0 + it0.pos;
 
-    // new number of params_view
+    // Iterator doesn't belong to this url
+    BOOST_ASSERT(it0.ref.alias_of(u_));
+
+    // Iterator doesn't belong to this url
+    BOOST_ASSERT(it1.ref.alias_of(u_));
+
+    // Iterator is in the wrong order
+    BOOST_ASSERT(it0.index <= it1.index);
+
+    // Iterator is out of range
+    BOOST_ASSERT(it0.index <= u_.nparam_);
+    BOOST_ASSERT(pos0 <= u_.offset(id_frag));
+
+    // Iterator is out of range
+    BOOST_ASSERT(it1.index <= u_.nparam_);
+    BOOST_ASSERT(pos1 <= u_.offset(id_frag));
+
+    // calc decoded size of old range,
+    // minus one if '?' or '&' prefixed
+    auto const dn0 =
+        detail::decode_bytes_unchecked(
+            string_view(
+                u_.cs_ + pos0,
+                pos1 - pos0)) - (
+                    u_.len(id_query) > 0);
+
+//------------------------------------------------
+//
+//  Measure the number of encoded characters
+//  of output, and the number of inserted
+//  segments including internal separators.
+//
+
+    std::size_t nchar = 0;
+    std::size_t nparam = 0;
+    error_code ec;
+    bool more = src.measure(nchar, ec);
+    if(ec.failed())
+        detail::throw_system_error(ec);
+    if(more)
+    {
+        ++nchar; // for '?' or '&'
+        for(;;)
+        {
+            ++nparam;
+            more = src.measure(nchar, ec);
+            if(ec.failed())
+                detail::throw_system_error(ec);
+            if(! more)
+                break;
+            ++nchar; // for '&'
+        }
+    }
+
+    op_t op(*this, src.input());
+
+//------------------------------------------------
+//
+//  Resize
+//
+#if 1
+    // VFALCO OVERFLOW CHECK HERE
     auto const nparam1 =
         u_.nparam_ + nparam - (
-            last.i - first.i);
-
-    // old size of [first, last)
-    auto const n0 =
-        last.pos - first.pos;
-
-    // VFALCO OVERFLOW CHECK HERE
-
-    // adjust capacity
-    reserve_impl(
-        size() + n - n0, op);
-
-    auto const src = u_.cs_ +
-        u_.offset(id_query);
-    auto dest = s_ +
-        u_.offset(id_query) +
-        first.pos;
-
-    // move and size
+            it1.index - it0.index);
+    auto const nremove = pos1 - pos0;
+    reserve_impl(size() + nchar - nremove, op);
+    auto dest = s_ + pos0;
     if(u_.nparam_ > 0)
     {
         // needed when we move
@@ -2125,15 +2179,13 @@ resize_params(
         s_[u_.offset(id_query)] = '&';
     }
     op.move(
-        dest + n,
-        src + last.pos,
-        size() -
-            u_.offset(id_query) -
-            last.pos);
+        dest + nchar,
+        u_.cs_ + pos1,
+        size() - pos1);
     u_.set_size(
         id_query,
         u_.len(id_query) +
-            n - n0);
+            nchar - nremove);
     u_.nparam_ = nparam1;
     if(nparam1 > 0)
     {
@@ -2143,74 +2195,25 @@ resize_params(
     }
     if(s_)
         s_[size()] = '\0';
-    return dest;
-}
-
-auto
-url_base::
-edit_params(
-    detail::params_iter_impl const& first,
-    detail::params_iter_impl const& last,
-    detail::any_params_iter&& it) ->
-        detail::params_iter_impl
-{
-    BOOST_ASSERT(first.impl == &u_);
-    BOOST_ASSERT(last.impl == &u_);
-    BOOST_ASSERT(
-        first.i == 0 || u_.nparam_ > 0);
-
-    op_t op(*this, it.input());
-
-    // calc decoded size of old range,
-    // minus one if '?' or '&' prefixed
-    auto const dn0 =
-        detail::decode_bytes_unchecked(
-            string_view(
-                u_.cs_ +
-                    u_.offset(id_query) +
-                    first.pos,
-                last.pos - first.pos)) -
-        (u_.len(id_query) > 0);
-
-    // measure
-    std::size_t n = 0;
-    std::size_t nparam = 0;
-    error_code ec;
-    bool more = it.measure(n, ec);
-    if(ec.failed())
-        detail::throw_system_error(ec);
-    if(more)
-    {
-        ++n; // for '?' or '&'
-        for(;;)
-        {
-            ++nparam;
-            more = it.measure(n, ec);
-            if(ec.failed())
-                detail::throw_system_error(ec);
-            if(! more)
-                break;
-            ++n; // for '&'
-        }
-    }
-
-    // resize
+    auto const dest0 = dest;
+#else
     auto const dest0 = resize_params(
-        first, last, n, nparam, op);
+        it0, it1, nchar, nparam, op);
+#endif
 
     // copy
-    it.rewind();
-    auto dest = dest0;
+    src.rewind();
+    //auto dest = dest0;
     if(nparam > 0)
     {
-        auto const end = dest + n;
-        if(first.i == 0)
+        auto const end = dest + nchar;
+        if(it0.index == 0)
             *dest++ = '?';
         else
             *dest++ = '&';
         for(;;)
         {
-            it.copy(dest, end);
+            src.copy(dest, end);
             if(--nparam == 0)
                 break;
             *dest++ = '&';
@@ -2221,13 +2224,15 @@ edit_params(
     // minus one if '?' or '&' prefixed
     auto const dn =
         detail::decode_bytes_unchecked(
-            string_view(dest0, dest - dest0)) -
-        (u_.len(id_query) > 0);
+            string_view(dest0, dest - dest0)) - (
+                u_.len(id_query) > 0);
 
     u_.decoded_[id_query] += (dn - dn0);
 
     return detail::params_iter_impl(
-        u_, first.pos, first.i);
+        u_,
+        pos0 - u_.offset_[id_query],
+        it0.index);
 }
 
 //------------------------------------------------

@@ -582,18 +582,18 @@ query() const
     return encoded_query().decode_to_string(opt);
 }
 
-params_const_encoded_view
+params_encoded_view
 url_view_base::
 encoded_params() const noexcept
 {
-    return params_const_encoded_view(u_);
+    return params_encoded_view(u_);
 }
 
-params_const_view
+params_view
 url_view_base::
 params() const noexcept
 {
-    return params_const_view(u_);
+    return params_view(u_);
 }
 
 //----------------------------------------------------------

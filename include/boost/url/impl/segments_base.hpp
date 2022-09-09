@@ -14,6 +14,7 @@
 #include <boost/url/grammar/recycled.hpp>
 #include <boost/url/detail/segments_iter_impl.hpp>
 #include <boost/assert.hpp>
+#include <iterator>
 
 namespace boost {
 namespace urls {
@@ -28,17 +29,18 @@ class segments_base::iterator
     friend class segments_base;
     friend class segments_ref;
 
-    iterator(detail::path_ref const&) noexcept;
-    iterator(detail::path_ref const&, int) noexcept;
-
-    iterator(detail::segments_iter_impl const& it) noexcept
-        : it_(it)
-    {
-    }
-
     BOOST_URL_DECL
     string_view
     dereference() const;
+
+    iterator(detail::path_ref const&) noexcept;
+    iterator(detail::path_ref const&, int) noexcept;
+
+    iterator(
+        detail::segments_iter_impl const& it) noexcept
+        : it_(it)
+    {
+    }
 
 public:
     using value_type = std::string;
@@ -46,6 +48,7 @@ public:
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::bidirectional_iterator_tag;
+
     struct pointer
     {
         string_view s;
@@ -58,9 +61,14 @@ public:
     };
 
     iterator() = default;
-    iterator(iterator const&) = default;
+
+    BOOST_URL_DECL
+    iterator(
+        iterator const&) noexcept;
+
+    BOOST_URL_DECL
     iterator& operator=(
-        iterator const&) = default;
+        iterator const&) noexcept;
 
     reference
     operator*() const

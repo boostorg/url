@@ -16,6 +16,11 @@
 
 #include "test_suite.hpp"
 
+#ifdef assert
+#undef assert
+#endif
+#define assert BOOST_TEST
+
 namespace boost {
 namespace urls {
 
@@ -37,7 +42,7 @@ struct params_encoded_base_test
     static
     void
     check(
-        params_const_encoded_view const& p,
+        params_encoded_view const& p,
         std::initializer_list<
             param_pct_view> init)
     {
@@ -82,7 +87,7 @@ struct params_encoded_base_test
         else
             u.set_encoded_query(
                 s.substr(1));
-        params_encoded_view p = u.encoded_params();
+        params_encoded_ref p = u.encoded_params();
         if(! BOOST_TEST_EQ(
             p.size(), init.size()))
             return;
@@ -190,8 +195,8 @@ struct params_encoded_base_test
         {
             url_view u0("?x=1&y=2&x=3&z=4");
             url_view u1("?%78=1&%79=2&%78=3&%7a=4");
-            params_const_encoded_view p0 = u0.encoded_params();
-            params_const_encoded_view p1 = u1.encoded_params();
+            params_encoded_view p0 = u0.encoded_params();
+            params_encoded_view p1 = u1.encoded_params();
 
             // contains
             BOOST_TEST(p0.contains("x"));
@@ -243,7 +248,7 @@ struct params_encoded_base_test
             url_view u(
                 "?a=1&%62=2&c=3&c=4"
                 "&c=5&d=6&e=7&d=8&f=9#f");
-            params_const_encoded_view p = u.encoded_params();
+            params_encoded_view p = u.encoded_params();
             BOOST_TEST_EQ(p.count("a"), 1);
             BOOST_TEST_EQ(p.count("b"), 1);
             BOOST_TEST_EQ(p.count("c"), 3);

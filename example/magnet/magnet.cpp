@@ -184,7 +184,7 @@ public:
     /// A view of all exact topics in the magnet_link
     using topics_view =
         filter_view<
-            urls::params_const_view,
+            urls::params_view,
             urls::url_view,
             is_exact_topic,
             param_view_to_url>;
@@ -192,7 +192,7 @@ public:
     /// A view of all info_hashes in the magnet_link
     using info_hashes_view =
         filter_view<
-            urls::params_const_view,
+            urls::params_view,
             urls::string_view,
             is_exact_topic,
             param_view_to_infohash>;
@@ -200,7 +200,7 @@ public:
     /// A view of all protocols in the magnet_link
     using protocols_view =
         filter_view<
-            urls::params_const_view,
+            urls::params_view,
             urls::string_view,
             is_exact_topic,
             to_protocol>;
@@ -214,7 +214,7 @@ public:
     template <class MutableString>
     using keys_view =
         filter_view<
-            urls::params_const_view,
+            urls::params_view,
             urls::string_view,
             is_url_with_key<MutableString>,
             to_decoded_value>;
@@ -551,7 +551,7 @@ magnet_link_view::web_seed(MutableString& buffer) const
 boost::optional<urls::decode_view>
 magnet_link_view::param(urls::string_view key) const noexcept
 {
-    urls::params_const_view ps = u_.params();
+    urls::params_view ps = u_.params();
     auto it = ps.begin();
     auto end = ps.end();
     while (it != end)
@@ -581,7 +581,7 @@ magnet_link_view::param(urls::string_view key) const noexcept
 boost::optional<urls::decode_view>
 magnet_link_view::decoded_param(urls::string_view key) const noexcept
 {
-    urls::params_const_encoded_view ps = u_.encoded_params();
+    urls::params_encoded_view ps = u_.encoded_params();
     auto it = ps.find(key);
     if (it != ps.end() && (*it).has_value)
         return urls::decode_view((*it).value);
@@ -591,7 +591,7 @@ magnet_link_view::decoded_param(urls::string_view key) const noexcept
 boost::optional<urls::url_view>
 magnet_link_view::url_param(urls::string_view key) const noexcept
 {
-    urls::params_const_encoded_view ps = u_.encoded_params();
+    urls::params_encoded_view ps = u_.encoded_params();
     auto it = ps.find(key);
     if (it != ps.end() && (*it).has_value)
     {

@@ -53,7 +53,7 @@ namespace urls {
 
     @see
         @ref grammar::parse,
-        @ref params_const_encoded_view.
+        @ref params_encoded_view.
 */
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ query_rule;

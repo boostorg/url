@@ -17,177 +17,69 @@ namespace boost {
 namespace urls {
 namespace detail {
 
-/*  pos offset from beginning of query,
-            includes the leading '?'
-    nk  size of key including '?' or '&'
-    nv  size of value including '='
-    dk  decoded key size, no '?' or '&'
-    dv  decoded value size, no '='
-    i   zero-based index of param
+/*  index   zero-based index of param
+    pos     offset from start   0 = '?'
+    nk      size of key         with '?' or '&'
+    nv      size of value       with '='
+    dk      decoded key size    no '?' or '&'
+    dv      decoded value size  no '='
 */
-
 params_iter_impl::
 params_iter_impl(
-    url_impl const& impl_) noexcept
-    : impl(&impl_)
+    query_ref const& ref_) noexcept
+    : ref(ref_)
+    , index(0)
+    , pos(0)
 {
-    update();
+    if(index < ref_.nparam())
+        setup();
 }
 
 params_iter_impl::
 params_iter_impl(
-    url_impl const& impl_,
+    query_ref const& ref_,
     int) noexcept
-    : impl(&impl_)
-    , pos(impl->len(id_query))
-    , i(impl->nparam_)
+    : ref(ref_)
+    , index(ref_.nparam())
+    , pos(ref_.size())
 {
 }
 
 params_iter_impl::
 params_iter_impl(
-    url_impl const& impl_,
+    query_ref const& ref_,
     std::size_t pos_,
-    std::size_t i_) noexcept
-    : impl(&impl_)
+    std::size_t index_) noexcept
+    : ref(ref_)
+    , index(index_)
     , pos(pos_)
-    , i(i_)
 {
-    update();
-}
-
-param_pct_view
-params_iter_impl::
-dereference() const noexcept
-{
-    BOOST_ASSERT(nk > 0);
-    auto const p = impl->cs_ +
-        impl->offset(id_query) + pos;
     BOOST_ASSERT(
-        (pos == 0 && *p == '?') ||
-        (pos > 0  && *p == '&'));
-    if(nv)
-        return {
-            detail::make_pct_string_view(
-                p + 1, nk - 1, dk),
-            detail::make_pct_string_view(
-                p + nk + 1, nv - 1, dv)};
-    return {
-        detail::make_pct_string_view(
-            p + 1, nk - 1, dk)};
+        pos <= ref.size());
+    if(index < ref_.nparam())
+        setup();
 }
 
+// set up state for key/value at pos
 void
 params_iter_impl::
-increment() noexcept
+setup() noexcept
 {
-    BOOST_ASSERT(
-        i != impl->nparam_);
-    ++i;
-    pos += nk + nv;
-    update();
-}
-
-void
-params_iter_impl::
-decrement() noexcept
-{
-    BOOST_ASSERT(i != 0);
-    BOOST_ASSERT(
-        impl->len(id_query) > 0);
-    --i;
-    dk = 0;
+    dk = 1;
     dv = 0;
-    auto p = impl->cs_ +
-        impl->offset(id_query) + pos;
-    auto end = p;
-    for(;;)
-    {
-        --p;
-        if( *p == '&' ||
-            *p == '?')
-        {
-            // key only
-            nk = static_cast<
-                std::size_t>(
-                    end - p);
-            dk = nk - dk - 1;
-            nv = 0;
-            pos -= nk;
-            return;
-        }
-        if(*p == '=')
-            break;
-        if(*p == '%')
-            dk += 2;
-    }
-    // maybe value
-    nv = static_cast<
-        std::size_t>(
-            end - p);
-    for(;;)
-    {
-        --p;
-        if( *p == '&' ||
-            *p == '?')
-            break;
-        if(*p == '%')
-        {
-            dv += 2;
-            continue;
-        }
-        if(*p == '=')
-        {
-            // maybe value
-            nv = static_cast<
-                std::size_t>(
-                    end - p);
-        }
-    }
-    // key
-    nk = static_cast<
-        std::size_t>(
-            end - p - nv);
-    dk = nk - dk - 1;
-    dv = nv - dv - 1;
-    pos -= nv + nk;
-}
-
-void
-params_iter_impl::
-update() noexcept
-{
-    dk = 0;
-    dv = 0;
-    auto s = impl->get(id_query);
-    s.remove_prefix(pos);
-    if(s.empty())
-    {
-        // end
-        BOOST_ASSERT(pos ==
-            impl->len(id_query));
-        nk = 0;
-        nv = 0;
-        return;
-    }
-    BOOST_ASSERT(
-        s.front() == '?' ||
-        s.front() == '&');
-    // key
-    auto p0 = s.begin();
-    auto const end = s.end();
+    auto const end = ref.end();
+    BOOST_ASSERT(pos != ref.size());
+    auto p0 = ref.begin() + pos;
     auto p = p0;
+    // key
     for(;;)
     {
-        ++p;
         if( p == end ||
             *p == '&')
         {
             // no value
-            nk = static_cast<
-                std::size_t>(
-                    p - s.begin());
-            dk = nk - dk - 1;
+            nk = 1 + p - p0;
+            dk = nk - dk;
             nv = 0;
             return;
         }
@@ -200,12 +92,12 @@ update() noexcept
             dk += 2;
             p += 2;
         }
+        ++p;
     }
-    nk = static_cast<
-        std::size_t>(
-            p - s.begin());
-    dk = nk - dk - 1;
+    nk = 1 + p - p0;
+    dk = nk - dk;
     p0 = p;
+
     // value
     for(;;)
     {
@@ -221,10 +113,120 @@ update() noexcept
             p += 2;
         }
     }
-    nv = static_cast<
-        std::size_t>(
-            p - p0);
+    nv = p - p0;
     dv = nv - dv - 1;
+}
+
+void
+params_iter_impl::
+increment() noexcept
+{
+    BOOST_ASSERT(
+        index < ref.nparam());
+    pos += nk + nv;
+    ++index;
+    if(index < ref.nparam())
+        setup();
+}
+
+void
+params_iter_impl::
+decrement() noexcept
+{
+    BOOST_ASSERT(index > 0);
+    --index;
+    dk = 1;
+    dv = 0;
+    auto const begin = ref.begin();
+    BOOST_ASSERT(pos > 0);
+    auto p1 = begin + (pos - 1);
+    auto p = p1;
+    for(;;)
+    {
+        if(p == begin)
+        {
+            // key
+            nk = 1 + p1 - p;
+            dk = nk - dk;
+            nv = 0;
+            pos -= nk;
+            return;
+        }
+        else if(*--p == '&')
+        {
+            // key
+            nk = p1 - p;
+            dk = nk - dk;
+            nv = 0;
+            pos -= nk;
+            return;
+        }
+        if(*p == '=')
+        {
+            // maybe value
+            nv = p1 - p;
+            break;
+        }
+        if(*p == '%')
+            dk += 2;
+    }
+    for(;;)
+    {
+        if(p == begin)
+        {
+            // key and value
+            nk = 1 + p1 - p - nv;
+            dk = nk - dk;
+            dv = nv - dv - 1;
+            pos -= nk + nv;
+            return;
+        }
+        if(*--p == '&')
+            break;
+        if(*p == '=')
+        {
+            // maybe value
+            nv = p1 - p;
+        }
+        else if(*p == '%')
+        {
+            dv += 2;
+        }
+    }
+    // key and value
+    nk = p1 - p - nv;
+    dk = nk - dk;
+    dv = nv - dv - 1;
+    pos -= nk + nv;
+}
+
+param_pct_view
+params_iter_impl::
+dereference() const noexcept
+{
+    BOOST_ASSERT(index < ref.nparam());
+    BOOST_ASSERT(pos < ref.size());
+    auto const p = ref.begin() + pos;
+    if(nv)
+        return {
+            detail::make_pct_string_view(
+                p, nk - 1, dk),
+            detail::make_pct_string_view(
+                p + nk, nv - 1, dv)};
+    return {
+        detail::make_pct_string_view(
+            p, nk - 1, dk)};
+}
+
+pct_string_view
+params_iter_impl::
+key() const noexcept
+{
+    BOOST_ASSERT(index < ref.nparam());
+    BOOST_ASSERT(pos < ref.size());
+    auto const p = ref.begin() + pos;
+    return detail::make_pct_string_view(
+        p, nk - 1, dk);
 }
 
 } // detail

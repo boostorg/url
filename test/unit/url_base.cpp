@@ -1720,14 +1720,14 @@ struct url_base_test
 
         // params
         {
-        params_view pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
+        params_ref pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
 
         (void)pv;
         }
 
         // encoded_params
         {
-        params_encoded_view pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
+        params_encoded_ref pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
 
         (void)pv;
         }

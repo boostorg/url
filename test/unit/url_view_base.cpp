@@ -425,13 +425,13 @@ struct url_view_base_test
 
         // params
         {
-        params_const_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
+        params_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
         (void)pv;
         }
 
         // encoded_params
         {
-        params_const_encoded_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
+        params_encoded_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
         (void)pv;
         }
 

@@ -52,10 +52,13 @@ in a translation unit of the program.
 #include <boost/url/impl/ipv6_address.ipp>
 #include <boost/url/impl/params_base.ipp>
 #include <boost/url/impl/params_encoded_base.ipp>
-#include <boost/url/impl/params_view.ipp>
+#include <boost/url/impl/params_encoded_ref.ipp>
 #include <boost/url/impl/params_encoded_view.ipp>
+#include <boost/url/impl/params_ref.ipp>
+#include <boost/url/impl/params_view.ipp>
 #include <boost/url/impl/parse.ipp>
 #include <boost/url/impl/parse_path.ipp>
+#include <boost/url/impl/parse_query.ipp>
 #include <boost/url/impl/pct_string_view.ipp>
 #include <boost/url/impl/scheme.ipp>
 #include <boost/url/impl/segments_base.ipp>

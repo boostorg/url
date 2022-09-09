@@ -110,19 +110,14 @@ class path_ref
 
 public:
     path_ref() = default;
+    path_ref(url_impl const& impl) noexcept;
     path_ref(string_view,
         std::size_t, std::size_t) noexcept;
-    pct_string_view string() const noexcept;
+    pct_string_view buffer() const noexcept;
     std::size_t size() const noexcept;
     char const* data() const noexcept;
     char const* end() const noexcept;
     std::size_t nseg() const noexcept;
-
-    path_ref(
-        url_impl const& impl) noexcept
-        : impl_(&impl)
-    {
-    }
 
     bool
     alias_of(
@@ -140,6 +135,51 @@ public:
         BOOST_ASSERT(data_ != ref.data_ || (
             size_ == ref.size_ &&
             nseg_ == ref.nseg_ &&
+            dn_ == ref.dn_));
+        return data_ == ref.data_;
+    }
+};
+
+//------------------------------------------------
+
+// this allows a params to come from a
+// url_impl or a separate string_view
+class query_ref
+    : private parts_base
+{
+    url_impl const* impl_ = nullptr;
+    char const* data_ = nullptr;
+    std::size_t size_ = 0;
+    std::size_t nparam_ = 0;
+    std::size_t dn_ = 0;
+
+public:
+    query_ref() = default;
+    query_ref(url_impl const& impl) noexcept;
+    query_ref(string_view,
+        std::size_t, std::size_t) noexcept;
+    pct_string_view buffer() const noexcept;
+    std::size_t size() const noexcept; // with '?'
+    char const* begin() const noexcept; // no '?'
+    char const* end() const noexcept;
+    std::size_t nparam() const noexcept;
+
+    bool
+    alias_of(
+        url_impl const& impl) const noexcept
+    {
+        return impl_ == &impl;
+    }
+
+    bool
+    alias_of(
+        query_ref const& ref) const noexcept
+    {
+        if(impl_)
+            return impl_ == ref.impl_;
+        BOOST_ASSERT(data_ != ref.data_ || (
+            size_ == ref.size_ &&
+            nparam_ == ref.nparam_ &&
             dn_ == ref.dn_));
         return data_ == ref.data_;
     }
