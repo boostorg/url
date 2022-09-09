@@ -1,13 +1,13 @@
 [![Boost.URL](https://raw.githubusercontent.com/vinniefalco/url/master/doc/images/repo-logo.png)](http://master.url.cpp.al/)
 
-Branch          | [`master`](https://github.com/CPPAlliance/url/tree/master) | [`develop`](https://github.com/CPPAlliance/url/tree/develop) |
---------------- | ----------------------------------------------------------- | ------------------------------------------------------------- |
-Docs            | [![Documentation](https://img.shields.io/badge/docs-master-brightgreen.svg)](http://master.url.cpp.al/) | [![Documentation](https://img.shields.io/badge/docs-develop-brightgreen.svg)](http://develop.url.cpp.al/)
-[Drone](https://drone.io/) | [![Build Status](https://drone.cpp.al/api/badges/CPPAlliance/url/status.svg?ref=refs/heads/master)](https://drone.cpp.al/CPPAlliance/url) | [![Build Status](https://drone.cpp.al/api/badges/CPPAlliance/url/status.svg?ref=refs/heads/develop)](https://drone.cpp.al/CPPAlliance/url)
-[GitHub Actions](https://github.com/) | [![CI](https://github.com/CPPAlliance/url/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/CPPAlliance/url/actions/workflows/ci.yml) | [![CI](https://github.com/CPPAlliance/url/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/CPPAlliance/url/actions/workflows/ci.yml)
-[codecov.io](https://codecov.io) | [![codecov](https://codecov.io/gh/CPPAlliance/url/branch/master/graph/badge.svg)](https://codecov.io/gh/CPPAlliance/url/branch/master) | [![codecov](https://codecov.io/gh/CPPAlliance/url/branch/develop/graph/badge.svg)](https://codecov.io/gh/CPPAlliance/url/branch/develop)
-Matrix          | --- | --- 
-Fuzzing         | --- | --- 
+Branch          | [`master`](https://github.com/boostorg/url/tree/master)                                                                                             | [`develop`](https://github.com/boostorg/url/tree/develop) |
+--------------- |-----------------------------------------------------------------------------------------------------------------------------------------------------| ------------------------------------------------------------- |
+Docs            | [![Documentation](https://img.shields.io/badge/docs-master-brightgreen.svg)](http://master.url.cpp.al/)                                             | [![Documentation](https://img.shields.io/badge/docs-develop-brightgreen.svg)](http://develop.url.cpp.al/)
+[Drone](https://drone.io/) | [![Build Status](https://drone.cpp.al/api/badges/boostorg/url/status.svg?ref=refs/heads/master)](https://drone.cpp.al/boostorg/url)                 | [![Build Status](https://drone.cpp.al/api/badges/boostorg/url/status.svg?ref=refs/heads/develop)](https://drone.cpp.al/boostorg/url)
+[GitHub Actions](https://github.com/) | [![CI](https://github.com/boostorg/url/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/boostorg/url/actions/workflows/ci.yml) | [![CI](https://github.com/boostorg/url/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/boostorg/url/actions/workflows/ci.yml)
+[codecov.io](https://codecov.io) | [![codecov](https://codecov.io/gh/CPPAlliance/url/branch/master/graph/badge.svg)](https://codecov.io/gh/CPPAlliance/url/branch/master)              | [![codecov](https://codecov.io/gh/CPPAlliance/url/branch/develop/graph/badge.svg)](https://codecov.io/gh/CPPAlliance/url/branch/develop)
+Matrix          | ---                                                                                                                                                 | --- 
+Fuzzing         | ---                                                                                                                                                 | --- 
 
 # Boost.URL
 
