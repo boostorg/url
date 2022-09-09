@@ -13,9 +13,6 @@ import boostbook ;
 import os ;
 import ../../../tools/docca/docca.jam ;
 
-path-constant broot : ../../../ ;
-
-path-constant out : . ;
 
 docca.reference reference.qbk
     :
@@ -74,15 +71,6 @@ docca.reference reference.qbk
 # Produce the Boost.Book XML from the QuickBook
 #
 
-install stylesheets
-    :
-        $(broot)/doc/src/boostbook.css
-    :
-        <location>$(out)/html
-    ;
-
-explicit stylesheets ;
-
 install images
     :
         [ glob images/*.png images/*.svg ]
@@ -103,16 +91,6 @@ xml url_doc
 
 explicit url_doc ;
 
-install treeimages
-    :
-        [ glob $(broot)/doc/src/images/*.png ]
-        images/doc-logo.png
-    :
-        <location>$(out)/html/images
-    ;
-
-explicit treeimages ;
-
 #-------------------------------------------------------------------------------
 #
 # HTML documentation for $(BOOST_ROOT)/doc/html
@@ -124,24 +102,15 @@ boostbook url
         url_doc
     :
         <xsl:param>boost.root=../../../..
-        <xsl:param>nav.layout=none
-        <xsl:param>boost.image.src=images/doc-logo.png
-        <xsl:param>boost.image.alt="Boost.URL Logo"
-        <xsl:param>boost.image.w=880
-        <xsl:param>boost.image.h=80
-        <xsl:param>boost.graphics.root=images/
-        <xsl:param>html.stylesheet=boostbook.css
         <xsl:param>chapter.autolabel=1
         <xsl:param>chunk.section.depth=8                # Depth to which sections should be chunked
         <xsl:param>chunk.first.sections=1               # Chunk the first top-level section?
-        <xsl:param>toc.max.depth=8                      # How many levels should be created for each TOC?
         <xsl:param>toc.section.depth=8                  # How deep should recursive sections appear in the TOC?
+        <xsl:param>toc.max.depth=8                      # How many levels should be created for each TOC?
         #<xsl:param>generate.toc=""
         <xsl:param>generate.toc="chapter toc,title section nop reference nop part toc"
         <include>../../../tools/boostbook/dtd
     :
-        <dependency>stylesheets
-        <dependency>treeimages
         <dependency>images
     ;
 
