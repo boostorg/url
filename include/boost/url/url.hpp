@@ -109,7 +109,7 @@ public:
 
         This function constructs a URL from
         the string `s`, which must contain a
-        valid URI or <em>relative-ref</em> or
+        valid <em>URI</em> or <em>relative-ref</em> or
         else an exception is thrown.
 
         @par BNF
@@ -119,7 +119,15 @@ public:
         relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
         @endcode
 
-        @throw std::invalid_argument parse error.
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The string contains an invalid <em>URI-reference</em>.
+
+        @throw std::length_error `s.size() > max_size()`.
 
         @param s The string to parse.
 
@@ -149,6 +157,12 @@ public:
 
         This function constructs a copy of `u`.
 
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @throw std::length_error `u.size() > max_size()`.
+
         @param u The url to construct from.
     */
     url(url_view_base const& u)
@@ -159,6 +173,12 @@ public:
     /** Constructor
 
         This function constructs a copy of `u`.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @throw std::length_error `u.size() > max_size()`.
 
         @param u The url to construct from.
     */
@@ -191,6 +211,12 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+
+        @throw std::length_error `u.size() > max_size()`.
 
         @param u The url to copy.
     */
