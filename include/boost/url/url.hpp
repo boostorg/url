@@ -121,7 +121,7 @@ public:
 
     /** Constructor
 
-        This function constructs a url from
+        This function constructs a URL from
         the string `s`, which must contain a
         valid <em>URI</em> or <em>relative-ref</em>
         or else an exception is thrown.
@@ -204,7 +204,10 @@ public:
         Linear in `u.size()`.
 
         @par Exception Safety
+        Strong guarantee.
         Calls to allocate may throw.
+
+        @throw std::length_error `u.size() > max_size()`.
 
         @param u The url to copy.
     */
@@ -227,7 +230,10 @@ public:
         Linear in `u.size()`.
 
         @par Exception Safety
+        Strong guarantee.
         Calls to allocate may throw.
+
+        @throw std::length_error `u.size() > max_size()`.
 
         @param u The url to copy.
     */
@@ -282,6 +288,8 @@ public:
         Strong guarantee.
         Calls to allocate may throw.
 
+        @throw std::length_error `u.size() > max_size()`.
+
         @param u The url to copy.
     */
     url&
@@ -320,10 +328,6 @@ public:
             url_view_base const&>(u);
     }
 
-    //--------------------------------------------
-    //
-    // Observers
-    //
     //--------------------------------------------
 
     /** Swap the contents.
