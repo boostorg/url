@@ -30,7 +30,10 @@ dereference() const
         // we will again have to value-init (?)
         // the new chars.
         s_.acquire();
-        (*it_.dereference()).assign_to(*s_);
+        decode_opts opt;
+        opt.plus_to_space = false;
+        it_.dereference().decode(opt,
+            string_token::assign_to(*s_));
         valid_ = true;
     }
     return *s_;

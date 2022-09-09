@@ -106,6 +106,12 @@ public:
     //--------------------------------------------
 
     /** Return the encoded URL as a null-terminated string
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
     char const*
     c_str() const noexcept
@@ -117,6 +123,12 @@ public:
 
         This does not include the null terminator,
         which is always present.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
     std::size_t
     capacity() const noexcept

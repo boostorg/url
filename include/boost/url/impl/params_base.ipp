@@ -27,21 +27,23 @@ dereference() const
 {
     if(! valid_)
     {
-        // VFALCO This could be better,
-        // we should never shrink size() for
-        // a recycled std::string, because
-        // otherwise when we resize it larger
-        // we will again have to value-init (?)
-        // the new chars.
+        // VFALCO This could be done with
+        // one string instead of two.
         key_.acquire();
         value_.acquire();
-        (*it_.key()).assign_to(*key_);
-        has_value_ = it_.has_value();
-        if(has_value_)
-            (*it_.value()).assign_to(*value_);
+        decode_opts opt;
+        opt.plus_to_space = true;
+        it_.key().decode(opt,
+            string_token::preserve_size(*key_));
+        if(it_.has_value())
+            it_.value().decode(opt,
+                string_token::preserve_size(*value_));
         valid_ = true;
-    }
-    return { *key_, *value_, has_value_ };
+    };
+    return {
+        string_view(key_->data(), it_.dk),
+        string_view(value_->data(), it_.dv),
+        it_.has_value()};
 }
 
 params_base::

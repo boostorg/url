@@ -203,6 +203,7 @@
           <member><link linkend="url.ref.boost__urls__grammar__is_charset">is_charset</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__is_mutable_string">is_mutable_string</link></member>
           <member><link linkend="url.ref.boost__urls__grammar__is_rule">is_rule</link></member>
+          <member><link linkend="url.ref.boost__urls__grammar__is_string_token">is_string_token</link></member>
         </simplelist>
 
       </entry>

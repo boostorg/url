@@ -21,12 +21,7 @@ docca.reference reference.qbk
     :
         xsl/custom-overrides.xsl
         [ glob-tree-ex ../include/boost/url : *.hpp *.ipp : detail impl ]
-        #../include/boost/url/segments_base.hpp
-        #../include/boost/url/segments_encoded_base.hpp
-        #../include/boost/url/segments_encoded_ref.hpp
-        #../include/boost/url/segments_encoded_view.hpp
-        #../include/boost/url/segments_ref.hpp
-        #../include/boost/url/segments_view.hpp
+        #../include/boost/url/grammar/string_token.hpp
     :
         <doxygen:param>PROJECT_NAME=URL
         <doxygen:param>PROJECT_BRIEF="URL Library"
@@ -39,7 +34,10 @@ docca.reference reference.qbk
             BOOST_SYMBOL_VISIBLE \\
             BOOST_URL_DOCS \\
             BOOST_URL_DECL \\
-            \"BOOST_STATIC_ASSERT(x)=\"
+            \"BOOST_STATIC_ASSERT(x)=\" \\
+            \"BOOST_URL_STRTOK_TPARAM(T)=class T\" \\
+            \"BOOST_URL_STRTOK_RETURN(T)=__deduced__\" \\
+            \"BOOST_URL_STRTOK_ARG(T,n)=T&& n\" \\
             "
         <doxygen:param>ABBREVIATE_BRIEF=
         <doxygen:param>INLINE_INHERITED_MEMB=YES

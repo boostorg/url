@@ -30,6 +30,18 @@ make_pct_string_view(
 
 } // detail
 
+void
+pct_string_view::
+decode_impl(
+    string_token::arg& dest,
+    decode_opts const& opt) const
+{
+    auto p = dest.prepare(dn_);
+    if(dn_ > 0)
+        detail::decode_unchecked(
+            p, p + dn_, s_, opt);
+}
+
 //------------------------------------------------
 
 pct_string_view::
@@ -39,25 +51,6 @@ pct_string_view(
         make_pct_string_view(s
             ).value(BOOST_URL_POS))
 {
-}
-
-//------------------------------------------------
-
-std::string
-pct_string_view::
-decode_to_string(
-    decode_opts const& opt) const
-{
-    std::string s;
-    if(dn_ > 0)
-    {
-        s.resize(dn_);
-        detail::decode_unchecked(
-            &s[0],
-            &s[0] + s.size(),
-            s_, opt);
-    }
-    return s;
 }
 
 //------------------------------------------------

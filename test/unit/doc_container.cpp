@@ -25,7 +25,7 @@ struct doc_container_test
     {
         std::list< std::string > seq;
         for( auto s : u.encoded_segments() )
-            seq.push_back( s.decode_to_string() );
+            seq.push_back( s.decode() );
         return seq;
     }
     //]
