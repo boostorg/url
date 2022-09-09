@@ -184,10 +184,12 @@ echo BOOST_BRANCH: $BOOST_BRANCH
 cd ..
 git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
 cd boost-root
-mkdir -p libs/$SELF
-cp -r $DRONE_BUILD_DIR/* libs/$SELF
+# mkdir -p libs/$SELF
+# cp -r $DRONE_BUILD_DIR/* libs/$SELF
 # git submodule update --init tools/boostdep
 git submodule update --init --recursive
+mkdir -p libs/$SELF
+cp -r $DRONE_BUILD_DIR/* libs/$SELF
 
 # CMake tests
 cd libs/$SELF
