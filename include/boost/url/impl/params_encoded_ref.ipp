@@ -90,7 +90,7 @@ insert(
 
 auto
 params_encoded_ref::
-insert_list(
+insert(
     iterator before,
     std::initializer_list<
         param_pct_view> init) ->

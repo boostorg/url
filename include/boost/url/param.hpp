@@ -13,6 +13,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/pct_string_view.hpp>
+#include <cstddef>
 #include <string>
 
 namespace boost {
@@ -22,6 +23,16 @@ namespace urls {
 struct param_pct_view;
 struct param_view;
 #endif
+
+/** The type of no_value
+*/
+struct no_value_t
+{
+};
+
+/** Constant indicating no value in a param
+*/
+constexpr no_value_t no_value{};
 
 //------------------------------------------------
 
@@ -239,12 +250,25 @@ struct param
         Calls to allocate may throw.
 
         @param key The key to set.
+
+        @see
+            @ref no_value.
     */
+    /**@{*/
     param(
-        string_view key)
+        string_view key,
+        no_value_t) noexcept
         : key(key)
     {
     }
+
+    param(
+        string_view key,
+        std::nullptr_t) noexcept
+        : key(key)
+    {
+    }
+    /**@}*/
 
     /** Constructor
 
@@ -474,12 +498,25 @@ struct param_view
         Throws nothing.
 
         @param key The key to set.
+
+        @see
+            @ref no_value.
     */
+    /**@{*/
     param_view(
-        string_view key) noexcept
+        string_view key,
+        no_value_t) noexcept
         : key(key)
     {
     }
+
+    param_view(
+        string_view key,
+        std::nullptr_t) noexcept
+        : key(key)
+    {
+    }
+    /**@}*/
 
     /** Constructor
 
@@ -735,12 +772,25 @@ struct param_pct_view
         `key` contains an invalid percent-encoding.
 
         @param key The key to set.
+
+        @see
+            @ref no_value.
     */
+    /**@{*/
     param_pct_view(
-        pct_string_view key) noexcept
+        pct_string_view key,
+        no_value_t) noexcept
         : key(key)
     {
     }
+
+    param_pct_view(
+        pct_string_view key,
+        std::nullptr_t) noexcept
+        : key(key)
+    {
+    }
+    /**@}*/
 
     /** Constructor
 

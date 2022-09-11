@@ -162,10 +162,10 @@ struct params_encoded_view_test
         using T = params_encoded_view;
 
         check( T(""), {} );
-        check( T("key"), {{"key"}} );
+        check( T("key"), {{"key", no_value}} );
         check( T("key="), {{"key", ""}} );
         check( T("key=value"), {{"key", "value"}} );
-        check( T("key=value&"), {{"key", "value"}, {""}} );
+        check( T("key=value&"), {{"key", "value"}, {"", no_value}} );
 
         check( T(
             "first=John"
@@ -176,11 +176,11 @@ struct params_encoded_view_test
                 {"first", "John"},
                 {"last", "Doe"},
                 {"k3", ""},
-                {"k4"},
+                {"k4", no_value},
                 {}});
         check( T(""), {} );
         check( T("&"), { {}, {} } );
-        check( T("key"), { { "key" } } );
+        check( T("key"), { { "key", no_value } } );
         check( T("key="), { { "key", "" } } );
         check( T("key=value"), { { "key", "value" } } );
         check( T("first=John&last=Doe"), { { "first", "John" }, { "last", "Doe" } } );

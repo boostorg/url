@@ -15,6 +15,7 @@
 #include <boost/url/decode_view.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
+#include <cstddef>
 #include <iterator>
 #include <string>
 #include <type_traits>
@@ -126,6 +127,11 @@ public:
     {
     }
 
+    /** Constructor (deleted)
+    */
+    pct_string_view(
+        std::nullptr_t) = delete;
+
     /** Constructor
     */
     pct_string_view(
@@ -167,6 +173,9 @@ public:
         string_view s);
 
     /** Assignment
+
+        @par Complexity
+        Constant.
     */
     pct_string_view& operator=(
         pct_string_view const&) = default;

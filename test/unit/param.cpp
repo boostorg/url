@@ -107,9 +107,9 @@ struct param_test
 
         //----------------------------------------
 
-        // param(string_view)
+        // param(string_view, no_value_t)
         {
-            param qp("key");
+            param qp("key", no_value);
             check(qp, "key", "", false);
         }
 
@@ -176,9 +176,9 @@ struct param_test
             check(qp, "", "", false);
         }
 
-        // param_view(string_view)
+        // param_view(string_view, no_value_t)
         {
-            param_view qp("key");
+            param_view qp("key", no_value);
             check(qp, "key", "", false);
         }
 
@@ -213,7 +213,7 @@ struct param_test
                 BOOST_TEST_NE(qp.value.data(), pv.value.data());
             }
             {
-                param_view pv("key");
+                param_view pv("key", no_value);
                 param qp(pv);
                 check(qp, "key", "", false);
                 BOOST_TEST_NE(qp.key.data(), pv.key.data());
@@ -259,7 +259,7 @@ struct param_test
 
         // param_pct_view(pct_string_view)
         {
-            param_view qp("key");
+            param_view qp("key", no_value);
             check(qp, "key", "", false);
         }
 
@@ -289,19 +289,19 @@ struct param_test
     testNatvis()
     {
         param v0 = {};
-        param v1 = { "key" };
+        param v1 = { "key", no_value };
         param v2 = { "key", "" };
         param v3 = { "key", "value" };
         boost::ignore_unused(v0,  v1,  v2,  v3);
 
         param_view pv0 = {};
-        param_view pv1 = { "key" };
+        param_view pv1 = { "key", no_value };
         param_view pv2 = { "key", "" };
         param_view pv3 = { "key", "value" };
         boost::ignore_unused(pv0, pv1, pv2, pv3);
 
         param_pct_view d0 = {};
-        param_pct_view d1 = { "key" };
+        param_pct_view d1 = { "key", no_value };
         param_pct_view d2 = { "key", "" };
         param_pct_view d3 = { "key", "value" };
         boost::ignore_unused(d0,  d1,  d2,  d3);

@@ -38,7 +38,7 @@ BOOST_STATIC_ASSERT(
     '#' 0x23
     '%' 0x25
     '&' 0x26
-    '=' 0x3d
+    '=' 0x3D
 */
 struct params_encoded_ref_test
 {
@@ -228,7 +228,7 @@ struct params_encoded_ref_test
             "y",
             [](params_encoded_ref& p)
             {
-                p = {{ "y" }};
+                p = {{ "y", no_value }};
             });
 
         modify(
@@ -260,7 +260,7 @@ struct params_encoded_ref_test
             "y=g&z",
             [](params_encoded_ref& p)
             {
-                p = {{ "y", "g" }, { "z" }};
+                p = {{ "y", "g" }, { "z", no_value }};
             });
 
         modify(
@@ -276,7 +276,7 @@ struct params_encoded_ref_test
             "y",
             [](params_encoded_ref& p)
             {
-                p = {{ "y" }};
+                p = {{ "y", no_value }};
             });
 
         modify(
@@ -308,19 +308,17 @@ struct params_encoded_ref_test
             "y=g&z",
             [](params_encoded_ref& p)
             {
-                p = {{ "y", "g" }, { "z" }};
+                p = {{ "y", "g" }, { "z", no_value }};
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23&%26==&%3d=%26",
+            "%23&%26==&%3D=%26",
             [](params_encoded_ref& p)
             {
                 // encodings
-                p = {{ "#" }, { "&", "=" }, { "=", "&" }};
+                p = {{ "#", no_value }, { "&", "=" }, { "=", "&" }};
             });
-#endif
 
         //----------------------------------------
 
@@ -393,7 +391,7 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 p.assign(
-                    {{ "y" }});
+                    {{ "y", no_value }});
             });
 
         modify(
@@ -429,7 +427,7 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 p.assign(
-                    {{ "y", "g" }, { "z" } });
+                    {{ "y", "g" }, { "z", no_value } });
             });
 
         modify(
@@ -446,7 +444,7 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 p.assign(
-                    {{ "y" }});
+                    {{ "y", no_value }});
             });
 
         modify(
@@ -482,20 +480,18 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 p.assign(
-                    {{ "y", "g" }, { "z" } });
+                    {{ "y", "g" }, { "z", no_value } });
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23&%26==&%3d=%26",
+            "%23&%26==&%3D=%26",
             [](params_encoded_ref& p)
             {
                 // encodings
                 p.assign(
-                    {{ "#" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
             });
-#endif
 
         //
         // assign(FwdIt, FwdIt)
@@ -515,7 +511,7 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 assign(p,
-                    {{ "y" }});
+                    {{ "y", no_value }});
             });
 
         modify(
@@ -551,7 +547,7 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 assign(p,
-                    {{ "y", "g" }, { "z" } });
+                    {{ "y", "g" }, { "z", no_value } });
             });
 
         modify(
@@ -568,7 +564,7 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 assign(p,
-                    {{ "y" }});
+                    {{ "y", no_value }});
             });
 
         modify(
@@ -604,20 +600,18 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 assign(p,
-                    {{ "y", "g" }, { "z" } });
+                    {{ "y", "g" }, { "z", no_value } });
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23&%26==&%3d=%26",
+            "%23&%26==&%3D=%26",
             [](params_encoded_ref& p)
             {
                 // encodings
                 assign(p,
-                    {{ "#" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
             });
-#endif
 
         //----------------------------------------
 
@@ -631,9 +625,9 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 auto it = p.append(
-                    { "y" });
+                    { "y", no_value });
                 BOOST_TEST(is_equal(
-                    *it, { "y" }));
+                    *it, { "y", no_value }));
             });
 
         modify(
@@ -664,9 +658,9 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 auto it = p.append(
-                    { "y" });
+                    { "y", no_value });
                 BOOST_TEST(is_equal(
-                    *it, { "y" }));
+                    *it, { "y", no_value }));
             });
 
         modify(
@@ -705,14 +699,13 @@ struct params_encoded_ref_test
                     *it, { "key", "value" }));
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
             "k0=0&k1=1&k2=&k3&k4=4444&%23",
             [](params_encoded_ref& p)
             {
                 // encodings
-                p.append({ "#" });
+                p.append({ "#", no_value });
             });
 
         modify(
@@ -726,13 +719,12 @@ struct params_encoded_ref_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%3d=%26",
+            "k0=0&k1=1&k2=&k3&k4=4444&%3D=%26",
             [](params_encoded_ref& p)
             {
                 // encodings
                 p.append({ "=", "&" });
             });
-#endif
 
         //
         // append(FwdIt, FwdIt)
@@ -771,20 +763,18 @@ struct params_encoded_ref_test
                     *it, { "y", "g" }));
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%23&%26==&%3d=%26",
+            "k0=0&k1=1&k2=&k3&k4=4444&%23&%26==&%3D=%26",
             [](params_encoded_ref& p)
             {
                 // encodings
                 append(p,
-                    {{ "#" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
             });
-#endif
 
         //
-        // append_list(initializer_list)
+        // append(initializer_list)
         //
 
         modify(
@@ -792,7 +782,7 @@ struct params_encoded_ref_test
             "y=g&z=q",
             [](params_encoded_ref& p)
             {
-                auto it = p.append_list(
+                auto it = p.append(
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
                     *it, { "y", "g" }));
@@ -803,7 +793,7 @@ struct params_encoded_ref_test
             "&y=g&z=q",
             [](params_encoded_ref& p)
             {
-                auto it = p.append_list(
+                auto it = p.append(
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
                     *it, { "y", "g" }));
@@ -814,23 +804,21 @@ struct params_encoded_ref_test
             "t&y=g&z=q",
             [](params_encoded_ref& p)
             {
-                auto it = p.append_list(
+                auto it = p.append(
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
                     *it, { "y", "g" }));
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%23&%26==&%3d=%26",
+            "k0=0&k1=1&k2=&k3&k4=4444&%23&%26==&%3D=%26",
             [](params_encoded_ref& p)
             {
                 // encodings
-                p.append_list(
-                    {{ "#" }, { "&", "=" }, { "=", "&" }});
+                p.append(
+                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
             });
-#endif
 
         //----------------------------------------
 
@@ -937,7 +925,6 @@ struct params_encoded_ref_test
                     *it, { "key", "value" }));
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
             "k0=0&k1=1&%23&k2=&k3&k4=4444",
@@ -945,7 +932,7 @@ struct params_encoded_ref_test
             {
                 // encodings
                 p.insert(std::next(p.begin(), 2),
-                    { "#" });
+                    { "#", no_value });
             });
 
         modify(
@@ -960,14 +947,13 @@ struct params_encoded_ref_test
 
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%3d=%26&k2=&k3&k4=4444",
+            "k0=0&k1=1&%3D=%26&k2=&k3&k4=4444",
             [](params_encoded_ref& p)
             {
                 // encodings
                 p.insert(std::next(p.begin(), 2),
                     { "=", "&" });
             });
-#endif
 
         //
         // insert(iterator, FwdIt, FwdIt)
@@ -1045,20 +1031,18 @@ struct params_encoded_ref_test
                     *it, { "y", "g" }));
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%23&%26==&%3d=%26&k2=&k3&k4=4444",
+            "k0=0&k1=1&%23&%26==&%3D=%26&k2=&k3&k4=4444",
             [](params_encoded_ref& p)
             {
                 // encodings
                 insert(p, std::next(p.begin(), 2),
-                    {{ "#" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
             });
-#endif
 
         //
-        // insert_list(iterator, initializer_list)
+        // insert(iterator, initializer_list)
         //
 
         modify(
@@ -1066,7 +1050,7 @@ struct params_encoded_ref_test
             "y=g&z=q&k0=0&k1=1&k2=&k3&k4=4444",
             [](params_encoded_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 0),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
@@ -1078,7 +1062,7 @@ struct params_encoded_ref_test
             "k0=0&y=g&z=q&k1=1&k2=&k3&k4=4444",
             [](params_encoded_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 1),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
@@ -1090,7 +1074,7 @@ struct params_encoded_ref_test
             "k0=0&k1=1&y=g&z=q&k2=&k3&k4=4444",
             [](params_encoded_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 2),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
@@ -1102,7 +1086,7 @@ struct params_encoded_ref_test
             "k0=0&k1=1&k2=&y=g&z=q&k3&k4=4444",
             [](params_encoded_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 3),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
@@ -1114,7 +1098,7 @@ struct params_encoded_ref_test
             "k0=0&k1=1&k2=&k3&y=g&z=q&k4=4444",
             [](params_encoded_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 4),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
@@ -1126,24 +1110,22 @@ struct params_encoded_ref_test
             "k0=0&k1=1&k2=&k3&k4=4444&y=g&z=q",
             [](params_encoded_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 5),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
                     *it, { "y", "g" }));
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%23&%26==&%3d=%26&k2=&k3&k4=4444",
+            "k0=0&k1=1&%23&%26==&%3D=%26&k2=&k3&k4=4444",
             [](params_encoded_ref& p)
             {
                 // encodings
-                p.insert_list(std::next(p.begin(), 2),
-                    {{ "#" }, { "&", "=" }, { "=", "&" }});
+                p.insert(std::next(p.begin(), 2),
+                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
             });
-#endif
 
         //----------------------------------------
         
@@ -1181,7 +1163,7 @@ struct params_encoded_ref_test
                 auto it = p.erase(
                     std::next(p.begin(), 2));
                 BOOST_TEST(is_equal(
-                    *it, { "k3" }));
+                    *it, { "k3", no_value }));
             });
 
         modify(
@@ -1230,7 +1212,7 @@ struct params_encoded_ref_test
                     std::next(p.begin(), 1),
                     std::next(p.begin(), 3));
                 BOOST_TEST(is_equal(
-                    *it, { "k3" }));
+                    *it, { "k3", no_value }));
             });
 
         modify(
@@ -1411,7 +1393,6 @@ struct params_encoded_ref_test
                     is_equal(*it, { "y", "g" }));
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
             "k0=0&%23&k2=&k3&k4=4444",
@@ -1419,9 +1400,8 @@ struct params_encoded_ref_test
             {
                 // encodings
                 p.replace(p.find("k1"),
-                    { "#" });
+                    { "#", no_value });
             });
-#endif
 
         //
         // replace(iterator, iterator, initializer_list)
@@ -1475,18 +1455,16 @@ struct params_encoded_ref_test
                 BOOST_TEST_EQ(it, p.end());
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&%23&%26==&%3d=%26&k3&k4=4444",
+            "k0=0&%23&%26==&%3D=%26&k3&k4=4444",
             [](params_encoded_ref& p)
             {
                 // encodings
                 p.replace(
                     p.find("k1"), p.find("k3"),
-                    {{ "#" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
             });
-#endif
 
         //
         // replace(iterator, iterator, FwdIt, FwdIt)
@@ -1540,18 +1518,16 @@ struct params_encoded_ref_test
                 BOOST_TEST_EQ(it, p.end());
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&%23&%26==&%3d=%26&k3&k4=4444",
+            "k0=0&%23&%26==&%3D=%26&k3&k4=4444",
             [](params_encoded_ref& p)
             {
                 // encodings
                 replace(p,
                     p.find("k1"), p.find("k3"),
-                    {{ "#" }, { "&", "=" }, { "=", "&" }});
+                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
             });
-#endif
 
         //----------------------------------------
 
@@ -1565,7 +1541,7 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 auto it = p.unset(next(p.begin(), 0));
-                BOOST_TEST(is_equal(*it, { "k0" }));
+                BOOST_TEST(is_equal(*it, { "k0", no_value }));
             });
 
         modify(
@@ -1574,7 +1550,7 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 auto it = p.unset(next(p.begin(), 1));
-                BOOST_TEST(is_equal(*it, { "k1" }));
+                BOOST_TEST(is_equal(*it, { "k1", no_value }));
             });
 
         modify(
@@ -1583,7 +1559,7 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 auto it = p.unset(next(p.begin(), 2));
-                BOOST_TEST(is_equal(*it, { "k2" }));
+                BOOST_TEST(is_equal(*it, { "k2", no_value }));
             });
 
         modify(
@@ -1592,7 +1568,7 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 auto it = p.unset(next(p.begin(), 3));
-                BOOST_TEST(is_equal(*it, { "k3" }));
+                BOOST_TEST(is_equal(*it, { "k3", no_value }));
             });
 
         modify(
@@ -1601,7 +1577,7 @@ struct params_encoded_ref_test
             [](params_encoded_ref& p)
             {
                 auto it = p.unset(next(p.begin(), 4));
-                BOOST_TEST(is_equal(*it, { "k4" }));
+                BOOST_TEST(is_equal(*it, { "k4", no_value }));
             });
 
         //
@@ -1653,16 +1629,14 @@ struct params_encoded_ref_test
                 BOOST_TEST(is_equal(*it, { "k4", "42" }));
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k2=&k3&k4=4444",
             "k0=0&k1=1&k2=%23%25%26=&k3&k4=4444",
             [](params_encoded_ref& p)
             {
                 // encodings
-                p.set(next(p.begin(), 2), "#%&=");
+                p.set(next(p.begin(), 2), "#%25&=");
             });
-#endif
 
         //
         // set(string_view, string_view, ignore_case_param)
@@ -1728,16 +1702,14 @@ struct params_encoded_ref_test
                 BOOST_TEST_EQ(p.count("k4"), 1);
             });
 
-#if 0
         modify(
             "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
             "k0=0&k1=1&k0=2&K2=%23%25%26=&k3=4&k4=6",
             [](params_encoded_ref& p)
             {
                 // encodings
-                p.set("k2", "#%&=", ignore_case);
+                p.set("k2", "#%25&=", ignore_case);
             });
-#endif
     }
 
     void

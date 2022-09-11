@@ -73,7 +73,7 @@ insert(
 
 auto
 params_ref::
-insert_list(
+insert(
     iterator before,
     std::initializer_list<
         param_view> init) ->

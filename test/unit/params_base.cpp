@@ -125,7 +125,7 @@ struct params_base_test
             {
                 url_view u("?");
                 BOOST_TEST(! u.params().empty());
-                check(u.params(), {{""}});
+                check(u.params(), {{"", no_value}});
             }
             {
                 url_view u("?k=v");
@@ -156,7 +156,7 @@ struct params_base_test
                     { "k0", "0" },
                     { "k1", "1" },
                     { "k2", "" },
-                    { "k3" },
+                    { "k3", no_value },
                     { "k4", "4444" }});
             }
         }
@@ -216,16 +216,10 @@ struct params_base_test
             BOOST_TEST_EQ(p1.count("X", ignore_case), 2);
 
             // find
-            BOOST_TEST_EQ(
-                p0.find("x"), p0.begin());
-            BOOST_TEST_EQ(
-                p1.find("x"), p1.begin());
-            BOOST_TEST_EQ(
-                p0.find("X", ignore_case),
-                p0.begin());
-            BOOST_TEST_EQ(
-                p1.find("X", ignore_case),
-                p1.begin());
+            BOOST_TEST_EQ(p0.find("x"), p0.begin());
+            BOOST_TEST_EQ(p1.find("x"), p1.begin());
+            BOOST_TEST_EQ(p0.find("X", ignore_case), p0.begin());
+            BOOST_TEST_EQ(p1.find("X", ignore_case), p1.begin());
 
             // find(from)
             BOOST_TEST_EQ(
@@ -306,7 +300,7 @@ struct params_base_test
         check( "", {} );
         check( "?", { {} } );
         check( "?&", { {}, {} } );
-        check( "?key", { { "key" } } );
+        check( "?key", { { "key", no_value } } );
         check( "?key=", { { "key", "" } } );
         check( "?key=value", { { "key", "value" } } );
         check( "?first=John&last=Doe", { { "first", "John" }, { "last", "Doe" } } );

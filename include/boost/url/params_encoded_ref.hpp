@@ -379,7 +379,7 @@ public:
         @code
         url u;
 
-        u.encoded_params().append_list( {{ "first", "John" }, {{ "last", "Doe" }});
+        u.encoded_params().append( {{ "first", "John" }, {{ "last", "Doe" }});
         @endcode
 
         @par Complexity
@@ -398,7 +398,7 @@ public:
         @param init The list of params to append.
     */
     iterator
-    append_list(
+    append(
         std::initializer_list<
             param_pct_view> init);
 
@@ -523,7 +523,7 @@ public:
     */
     BOOST_URL_DECL
     iterator
-    insert_list(
+    insert(
         iterator before,
         std::initializer_list<
             param_pct_view> init);

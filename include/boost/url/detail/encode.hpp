@@ -325,7 +325,6 @@ re_encode_unchecked(
     auto it = s.begin();
     if(opt.space_to_plus)
     {
-        BOOST_ASSERT(allowed(' '));
         while(it != last)
         {
             BOOST_ASSERT(dest != end);

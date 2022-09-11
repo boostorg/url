@@ -10,7 +10,6 @@
 #ifndef BOOST_URL_DETAIL_ANY_PARAMS_ITER_HPP
 #define BOOST_URL_DETAIL_ANY_PARAMS_ITER_HPP
 
-#include <boost/url/error_types.hpp>
 #include <boost/url/param.hpp>
 #include <boost/url/pct_string_view.hpp>
 #include <boost/static_assert.hpp>
@@ -84,13 +83,12 @@ public:
 
     // Measure and increment the current
     // element. Returns false on end of
-    // range or error. Upon success, n is
-    // increased by the encoded size.
+    // range. n is increased by the
+    // encoded size.
     virtual
     bool
     measure(
-        std::size_t& n,
-        error_code& ec) noexcept = 0;
+        std::size_t& n) noexcept = 0;
 
     // Copy and increment the current
     // element. encoding is performed
@@ -126,7 +124,7 @@ private:
     char const* p_ = nullptr;
 
     void rewind() noexcept override;
-    bool measure(std::size_t&, error_code&) noexcept override;
+    bool measure(std::size_t&) noexcept override;
     void copy(char*&, char const*) noexcept override;
     void increment() noexcept;
 };
@@ -194,8 +192,7 @@ private:
 
     bool
     measure(
-        std::size_t& n,
-        error_code&) noexcept override
+        std::size_t& n) noexcept override
     {
         if(it_ == end_)
             return false;
@@ -228,8 +225,7 @@ protected:
     bool
     measure_impl(
         param_pct_view const& v,
-        std::size_t& n,
-        error_code& ec) noexcept;
+        std::size_t& n) noexcept;
 
     BOOST_URL_DECL
     static
@@ -282,13 +278,11 @@ private:
 
     bool
     measure(
-        std::size_t& n,
-        error_code& ec) noexcept override
+        std::size_t& n) noexcept override
     {
         if(it_ == end_)
             return false;
-        return measure_impl(
-            *it_++, n, ec);
+        return measure_impl(*it_++, n);
     }
 
     void
@@ -297,8 +291,7 @@ private:
         char const* end
             ) noexcept override
     {
-        copy_impl(
-            dest, end, *it_++);
+        copy_impl(dest, end, *it_++);
     }
 };
 
@@ -332,7 +325,7 @@ private:
     bool at_end_ = false;
 
     void rewind() noexcept override;
-    bool measure(std::size_t&, error_code&) noexcept override;
+    bool measure(std::size_t&) noexcept override;
     void copy(char*&, char const*) noexcept override;
 };
 
@@ -366,7 +359,7 @@ private:
     bool at_end_ = false;
 
     void rewind() noexcept override;
-    bool measure(std::size_t&, error_code&) noexcept override;
+    bool measure(std::size_t&) noexcept override;
     void copy(char*&, char const*) noexcept override;
 };
 

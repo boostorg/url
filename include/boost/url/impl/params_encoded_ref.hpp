@@ -66,12 +66,12 @@ append(
 inline
 auto
 params_encoded_ref::
-append_list(
+append(
     std::initializer_list<
         param_pct_view> init) ->
     iterator
 {
-    return insert_list(end(), init);
+    return insert(end(), init);
 }
 
 template<class FwdIt>

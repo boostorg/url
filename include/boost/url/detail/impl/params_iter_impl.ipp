@@ -215,7 +215,8 @@ dereference() const noexcept
                 p + nk, nv - 1, dv)};
     return {
         detail::make_pct_string_view(
-            p, nk - 1, dk)};
+            p, nk - 1, dk),
+        no_value};
 }
 
 pct_string_view

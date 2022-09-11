@@ -2139,20 +2139,13 @@ edit_params(
 
     std::size_t nchar = 0;
     std::size_t nparam = 0;
-    error_code ec;
-    bool more = src.measure(nchar, ec);
-    if(ec.failed())
-        detail::throw_system_error(ec);
-    if(more)
+    if(src.measure(nchar))
     {
         ++nchar; // for '?' or '&'
         for(;;)
         {
             ++nparam;
-            more = src.measure(nchar, ec);
-            if(ec.failed())
-                detail::throw_system_error(ec);
-            if(! more)
+            if(! src.measure(nchar))
                 break;
             ++nchar; // for '&'
         }

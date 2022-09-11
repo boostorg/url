@@ -230,7 +230,7 @@ struct params_ref_test
             "y",
             [](params_ref& p)
             {
-                p = {{ "y" }};
+                p = {{ "y", no_value }};
             });
 
         modify(
@@ -262,7 +262,7 @@ struct params_ref_test
             "y=g&z",
             [](params_ref& p)
             {
-                p = {{ "y", "g" }, { "z" }};
+                p = {{ "y", "g" }, { "z", no_value }};
             });
 
         modify(
@@ -278,7 +278,7 @@ struct params_ref_test
             "y",
             [](params_ref& p)
             {
-                p = {{ "y" }};
+                p = {{ "y", no_value }};
             });
 
         modify(
@@ -310,7 +310,7 @@ struct params_ref_test
             "y=g&z",
             [](params_ref& p)
             {
-                p = {{ "y", "g" }, { "z" }};
+                p = {{ "y", "g" }, { "z", no_value }};
             });
 
         modify(
@@ -393,7 +393,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 p.assign(
-                    {{ "y" }});
+                    {{ "y", no_value }});
             });
 
         modify(
@@ -429,7 +429,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 p.assign(
-                    {{ "y", "g" }, { "z" } });
+                    {{ "y", "g" }, { "z", no_value } });
             });
 
         modify(
@@ -446,7 +446,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 p.assign(
-                    {{ "y" }});
+                    {{ "y", no_value }});
             });
 
         modify(
@@ -482,7 +482,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 p.assign(
-                    {{ "y", "g" }, { "z" } });
+                    {{ "y", "g" }, { "z", no_value } });
             });
 
         modify(
@@ -513,7 +513,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 assign(p,
-                    {{ "y" }});
+                    {{ "y", no_value }});
             });
 
         modify(
@@ -549,7 +549,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 assign(p,
-                    {{ "y", "g" }, { "z" } });
+                    {{ "y", "g" }, { "z", no_value } });
             });
 
         modify(
@@ -566,7 +566,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 assign(p,
-                    {{ "y" }});
+                    {{ "y", no_value }});
             });
 
         modify(
@@ -602,7 +602,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 assign(p,
-                    {{ "y", "g" }, { "z" } });
+                    {{ "y", "g" }, { "z", no_value } });
             });
 
         modify(
@@ -627,9 +627,9 @@ struct params_ref_test
             [](params_ref& p)
             {
                 auto it = p.append(
-                    { "y" });
+                    { "y", no_value });
                 BOOST_TEST(is_equal(
-                    *it, { "y" }));
+                    *it, { "y", no_value }));
             });
 
         modify(
@@ -660,9 +660,9 @@ struct params_ref_test
             [](params_ref& p)
             {
                 auto it = p.append(
-                    { "y" });
+                    { "y", no_value });
                 BOOST_TEST(is_equal(
-                    *it, { "y" }));
+                    *it, { "y", no_value }));
             });
 
         modify(
@@ -776,7 +776,7 @@ struct params_ref_test
             });
 
         //
-        // append_list(initializer_list)
+        // append(initializer_list)
         //
 
         modify(
@@ -784,7 +784,7 @@ struct params_ref_test
             "y=g&z=q",
             [](params_ref& p)
             {
-                auto it = p.append_list(
+                auto it = p.append(
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
                     *it, { "y", "g" }));
@@ -795,7 +795,7 @@ struct params_ref_test
             "&y=g&z=q",
             [](params_ref& p)
             {
-                auto it = p.append_list(
+                auto it = p.append(
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
                     *it, { "y", "g" }));
@@ -806,7 +806,7 @@ struct params_ref_test
             "t&y=g&z=q",
             [](params_ref& p)
             {
-                auto it = p.append_list(
+                auto it = p.append(
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
                     *it, { "y", "g" }));
@@ -818,7 +818,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 // encodings
-                p.append_list(
+                p.append(
                     {{ "#", "%" }, { "&", "=" }, { "=", "&" }});
             });
 
@@ -1044,7 +1044,7 @@ struct params_ref_test
             });
 
         //
-        // insert_list(iterator, initializer_list)
+        // insert(iterator, initializer_list)
         //
 
         modify(
@@ -1052,7 +1052,7 @@ struct params_ref_test
             "y=g&z=q&k0=0&k1=1&k2=&k3&k4=4444",
             [](params_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 0),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
@@ -1064,7 +1064,7 @@ struct params_ref_test
             "k0=0&y=g&z=q&k1=1&k2=&k3&k4=4444",
             [](params_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 1),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
@@ -1076,7 +1076,7 @@ struct params_ref_test
             "k0=0&k1=1&y=g&z=q&k2=&k3&k4=4444",
             [](params_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 2),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
@@ -1088,7 +1088,7 @@ struct params_ref_test
             "k0=0&k1=1&k2=&y=g&z=q&k3&k4=4444",
             [](params_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 3),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
@@ -1100,7 +1100,7 @@ struct params_ref_test
             "k0=0&k1=1&k2=&k3&y=g&z=q&k4=4444",
             [](params_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 4),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
@@ -1112,7 +1112,7 @@ struct params_ref_test
             "k0=0&k1=1&k2=&k3&k4=4444&y=g&z=q",
             [](params_ref& p)
             {
-                auto it = p.insert_list(
+                auto it = p.insert(
                     std::next(p.begin(), 5),
                     {{ "y", "g" }, { "z", "q" }});
                 BOOST_TEST(is_equal(
@@ -1125,7 +1125,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 // encodings
-                p.insert_list(std::next(p.begin(), 2),
+                p.insert(std::next(p.begin(), 2),
                     {{ "#", "%" }, { "&", "=" }, { "=", "&" }});
             });
 
@@ -1165,7 +1165,7 @@ struct params_ref_test
                 auto it = p.erase(
                     std::next(p.begin(), 2));
                 BOOST_TEST(is_equal(
-                    *it, { "k3" }));
+                    *it, { "k3", no_value }));
             });
 
         modify(
@@ -1214,7 +1214,7 @@ struct params_ref_test
                     std::next(p.begin(), 1),
                     std::next(p.begin(), 3));
                 BOOST_TEST(is_equal(
-                    *it, { "k3" }));
+                    *it, { "k3", no_value }));
             });
 
         modify(
@@ -1543,7 +1543,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 auto it = p.unset(next(p.begin(), 0));
-                BOOST_TEST(is_equal(*it, { "k0" }));
+                BOOST_TEST(is_equal(*it, { "k0", no_value }));
             });
 
         modify(
@@ -1552,7 +1552,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 auto it = p.unset(next(p.begin(), 1));
-                BOOST_TEST(is_equal(*it, { "k1" }));
+                BOOST_TEST(is_equal(*it, { "k1", no_value }));
             });
 
         modify(
@@ -1561,7 +1561,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 auto it = p.unset(next(p.begin(), 2));
-                BOOST_TEST(is_equal(*it, { "k2" }));
+                BOOST_TEST(is_equal(*it, { "k2", no_value }));
             });
 
         modify(
@@ -1570,7 +1570,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 auto it = p.unset(next(p.begin(), 3));
-                BOOST_TEST(is_equal(*it, { "k3" }));
+                BOOST_TEST(is_equal(*it, { "k3", no_value }));
             });
 
         modify(
@@ -1579,7 +1579,7 @@ struct params_ref_test
             [](params_ref& p)
             {
                 auto it = p.unset(next(p.begin(), 4));
-                BOOST_TEST(is_equal(*it, { "k4" }));
+                BOOST_TEST(is_equal(*it, { "k4", no_value }));
             });
 
         //

@@ -96,12 +96,12 @@ append(
 inline
 auto
 params_ref::
-append_list(
+append(
     std::initializer_list<
         param_view> init) ->
     iterator
 {
-    return insert_list(end(), init);
+    return insert(end(), init);
 }
 
 template<class FwdIt>

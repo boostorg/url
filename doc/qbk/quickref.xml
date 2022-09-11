@@ -37,6 +37,7 @@
           <member><link linkend="url.ref.boost__urls__ignore_case_param">ignore_case_param</link></member>
           <member><link linkend="url.ref.boost__urls__ipv4_address">ipv4_address</link></member>
           <member><link linkend="url.ref.boost__urls__ipv6_address">ipv6_address</link></member>
+          <member><link linkend="url.ref.boost__urls__no_value_t">no_value_t</link></member>
           <member><link linkend="url.ref.boost__urls__param">param</link></member>
           <member><link linkend="url.ref.boost__urls__param_pct_view">param_pct_view</link></member>
           <member><link linkend="url.ref.boost__urls__param_view">param_view</link></member>
@@ -71,6 +72,7 @@
           <member><link linkend="url.ref.boost__urls__error">error</link></member>
           <member><link linkend="url.ref.boost__urls__ignore_case">ignore_case</link></member>
           <member><link linkend="url.ref.boost__urls__host_type">host_type</link></member>
+          <member><link linkend="url.ref.boost__urls__no_value">no_value</link></member>
           <member><link linkend="url.ref.boost__urls__scheme">scheme</link></member>
         </simplelist>
       </entry>
