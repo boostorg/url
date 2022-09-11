@@ -13,10 +13,8 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/detail/segments_iter_impl.hpp>
-#include <boost/url/string_view.hpp>
-#include <boost/url/detail/except.hpp>
 #include <boost/url/detail/any_segments_iter.hpp>
-#include <iterator>
+#include <type_traits>
 
 namespace boost {
 namespace urls {
@@ -36,15 +34,23 @@ clear() noexcept
 }
 
 template<class FwdIt>
-auto
+void
 segments_encoded_ref::
-assign(FwdIt first, FwdIt last) ->
-    typename std::enable_if<
-        std::is_convertible<typename
-            std::iterator_traits<
-                FwdIt>::reference,
-            pct_string_view>::value>::type
+assign(
+    FwdIt first, FwdIt last)
 {
+/*  If you get a compile error here, it
+    means that the iterators you passed
+    do not meet the requirements stated
+    in the documentation.
+*/
+    static_assert(
+        std::is_convertible<
+            typename std::iterator_traits<
+                FwdIt>::reference,
+            string_view>::value,
+        "Type requirements not met");
+
     u_->edit_segments(
         begin().it_,
         end().it_,
@@ -59,14 +65,24 @@ insert(
     iterator before,
     FwdIt first,
     FwdIt last) ->
-        typename std::enable_if<
-            std::is_convertible<typename
-                std::iterator_traits<
-                    FwdIt>::reference,
-                pct_string_view>::value,
-            iterator>::type
+        iterator
 {
-    return insert(before, first, last,
+/*  If you get a compile error here, it
+    means that the iterators you passed
+    do not meet the requirements stated
+    in the documentation.
+*/
+    static_assert(
+        std::is_convertible<
+            typename std::iterator_traits<
+                FwdIt>::reference,
+            string_view>::value,
+        "Type requirements not met");
+
+    return insert(
+        before,
+        first,
+        last,
         typename std::iterator_traits<
             FwdIt>::iterator_category{});
 }
@@ -89,13 +105,20 @@ replace(
     iterator to,
     FwdIt first,
     FwdIt last) ->
-        typename std::enable_if<
-            std::is_convertible<typename
-                std::iterator_traits<
-                    FwdIt>::reference,
-                pct_string_view>::value,
-            iterator>::type
+        iterator
 {
+/*  If you get a compile error here, it
+    means that the iterators you passed
+    do not meet the requirements stated
+    in the documentation.
+*/
+    static_assert(
+        std::is_convertible<
+            typename std::iterator_traits<
+                FwdIt>::reference,
+            string_view>::value,
+        "Type requirements not met");
+
     return u_->edit_segments(
         from.it_,
         to.it_,

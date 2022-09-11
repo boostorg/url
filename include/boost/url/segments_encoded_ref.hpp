@@ -14,6 +14,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/segments_encoded_base.hpp>
 #include <initializer_list>
+#include <iterator>
 
 namespace boost {
 namespace urls {
@@ -358,15 +359,7 @@ public:
         to assign.
     */
     template<class FwdIt>
-#ifdef BOOST_URL_DOCS
     void
-#else
-    typename std::enable_if<
-        std::is_convertible<typename
-            std::iterator_traits<
-                FwdIt>::reference,
-            pct_string_view>::value>::type
-#endif
     assign(FwdIt first, FwdIt last);
 
     //--------------------------------------------
@@ -509,16 +502,7 @@ public:
         to insert.
     */
     template<class FwdIt>
-#ifdef BOOST_URL_DOCS
     iterator
-#else
-    typename std::enable_if<
-        std::is_convertible<typename
-            std::iterator_traits<
-                FwdIt>::reference,
-            pct_string_view>::value,
-        iterator>::type
-#endif
     insert(
         iterator before,
         FwdIt first,
@@ -729,16 +713,7 @@ public:
         @param first, last The range of segments to assign.
     */
     template<class FwdIt>
-#ifdef BOOST_URL_DOCS
     iterator
-#else
-    typename std::enable_if<
-        std::is_convertible<typename
-            std::iterator_traits<
-                FwdIt>::reference,
-            pct_string_view>::value,
-        iterator>::type
-#endif
     replace(
         iterator from,
         iterator to,
