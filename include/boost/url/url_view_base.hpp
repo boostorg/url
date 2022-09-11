@@ -66,17 +66,17 @@ class BOOST_SYMBOL_VISIBLE
     friend class url_view;
     friend class static_url_base;
     friend class params_base;
-    friend class params_view;
-    friend class params_encoded_view;
     friend class params_encoded_base;
     friend class params_encoded_ref;
+    friend class params_encoded_view;
     friend class params_ref;
+    friend class params_view;
     friend class segments_base;
-    friend class segments_view;
-    friend class segments_encoded_view;
     friend class segments_encoded_base;
     friend class segments_encoded_ref;
+    friend class segments_encoded_view;
     friend class segments_ref;
+    friend class segments_view;
 
     struct shared_impl;
 
@@ -182,7 +182,7 @@ public:
     bool
     empty() const noexcept
     {
-        return size() == 0;
+        return u_.offset(id_end) == 0;
     }
 
     /** Return a pointer to the URL's character buffer
@@ -206,8 +206,12 @@ public:
     /** Return the URL string
 
         This function returns the entire URL,
-        with any percent-escaped characters
-        preserved.
+        which main contain percent escapes.
+
+        @par Example
+        @code
+        assert( url_view( "http://www.example.com" ).buffer() == "http://www.example.com" );
+        @endcode
 
         @par Complexity
         Constant.
@@ -459,6 +463,9 @@ public:
         @code
         authority_view a = url_view( "https://www.example.com:8080/index.htm" ).authority();
         @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.

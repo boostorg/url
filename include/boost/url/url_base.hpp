@@ -105,7 +105,16 @@ public:
     //
     //--------------------------------------------
 
-    /** Return the encoded URL as a null-terminated string
+    /** Return the url as a null-terminated string
+
+        This function returns a pointer to a null
+        terminated string representing the url,
+        which may contain percent escapes.
+
+        @par Example
+        @code
+        assert( std::strlen( url( "http://www.example.com" ).c_str() ) == 22 );
+        @endcode
 
         @par Complexity
         Constant.
@@ -283,10 +292,12 @@ public:
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The scheme is invalid.
 
         @param id The scheme to set.
-
-        @throw std::invalid_argument invalid scheme.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
@@ -364,6 +375,11 @@ public:
         Calls to allocate may throw.
         Exceptions thrown on invalid input.
 
+        @throw system_eror
+        The string contains an invalid percent-encoding.
+
+        @param s The authority string to set.
+
         @par BNF
         @code
         authority     = [ userinfo "@" ] host [ ":" port ]
@@ -376,11 +392,6 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
             3.2. Authority (rfc3986)</a>
-
-        @throw system_eror `s` contains an invalid percent-encoding.
-
-        @param s The authority string to set.
-
         @see
             @ref remove_authority.
     */
@@ -685,7 +696,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://user:pass@example.com" ).remove_password().encoded_authority() == "user@example.com" );
+        assert( url( "http://user:pass@example.com" ).remove_password().authority().buffer() == "user@example.com" );
         @endcode
 
         @par Postconditions
@@ -1261,7 +1272,7 @@ public:
 
         @par Example
         @code
-        assert( url().set_host_address( ipv6_address( "1::6:c0a8:1" ) ).encoded_authority() == "[1::6:c0a8:1]" );
+        assert( url().set_host_address( ipv6_address( "1::6:c0a8:1" ) ).authority().buffer() == "[1::6:c0a8:1]" );
         @endcode
 
         @par Postconditions
@@ -1475,7 +1486,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://www.example.com:80" ).remove_port().encoded_authority() == "www.example.com" );
+        assert( url( "http://www.example.com:80" ).remove_port().authority().buffer() == "www.example.com" );
         @endcode
 
         @par Postconditions
@@ -1513,7 +1524,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://www.example.com" ).set_port( 8080 ).encoded_authority() == "www.example.com:8080" );
+        assert( url( "http://www.example.com" ).set_port( 8080 ).authority().buffer() == "www.example.com:8080" );
         @endcode
 
         @par Postconditions
@@ -1558,7 +1569,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://www.example.com" ).set_port( "8080" ).encoded_authority() == "www.example.com:8080" );
+        assert( url( "http://www.example.com" ).set_port( "8080" ).authority().buffer() == "www.example.com:8080" );
         @endcode
 
         @par Postconditions
