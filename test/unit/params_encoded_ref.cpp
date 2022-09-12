@@ -11,12 +11,20 @@
 // Test that header file is self-contained.
 #include <boost/url/params_encoded_ref.hpp>
 
+#include <boost/url/parse.hpp>
+#include <boost/url/parse_query.hpp>
 #include <boost/url/url.hpp>
-#include <boost/url/url_view.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/core/ignore_unused.hpp>
 
 #include "test_suite.hpp"
+
+#include <iterator>
+
+#ifdef assert
+#undef assert
+#endif
+#define assert BOOST_TEST
 
 namespace boost {
 namespace urls {
@@ -55,10 +63,11 @@ struct params_encoded_ref_test
                 p0.value == p1.value);
     }
 
+    // check the sequence
     static
     void
     check(
-        params_encoded_ref const& p,
+        params_encoded_view const& p,
         std::initializer_list<
             param_pct_view> init)
     {
@@ -70,8 +79,7 @@ struct params_encoded_ref_test
         auto const end = init.end();
         while(it1 != end)
         {
-            BOOST_TEST(is_equal(
-                *it0, *it1));
+            BOOST_TEST(is_equal(*it0, *it1));
             auto tmp = it0++;
             BOOST_TEST_EQ(++tmp, it0);
             ++it1;
@@ -86,44 +94,57 @@ struct params_encoded_ref_test
                 auto tmp = it0--;
                 BOOST_TEST_EQ(--tmp, it0);
                 --it1;
-                BOOST_TEST(is_equal(
-                    *it0, *it1));
+                BOOST_TEST(is_equal(*it0, *it1));
             }
             while(it1 != init.begin());
         }
     }
 
+    // check that modification produces
+    // the string and correct sequence
     static
     void
-    modify(
+    check(
+        void(*f)(params_encoded_ref),
         string_view s0,
         string_view s1,
-        void(*f)(params_encoded_ref&))
-     {
-        url u("http://user:pass@www.example.com/path/to/file.txt?k=v#f");
-        if(! s0.data())
+        std::initializer_list<
+            param_pct_view> init)
+    {
+        url u;
         {
-            u.remove_query();
-            BOOST_TEST_EQ(u.encoded_query(), "");
+            auto rv = parse_uri_reference(s0);
+            if(! BOOST_TEST(rv.has_value()))
+                return;
+            u = *rv;
         }
-        else
+        params_encoded_ref ps(u.encoded_params());
+        f(ps);
+        BOOST_TEST_EQ(u.encoded_query(), s1);
+        if(! BOOST_TEST_EQ(
+                ps.size(), init.size()))
+            return;
+        check(ps, init);
         {
-            u.set_encoded_query(s0);
-            BOOST_TEST_EQ(u.encoded_query(), s0);
+            auto rv = parse_query(s1);
+            if(! BOOST_TEST(rv.has_value()))
+                return;
+            check(*rv, init);
         }
-        auto p = u.encoded_params();
-        f(p);
-        if(! s1.data())
-        {
-            BOOST_TEST(! u.has_query());
-            BOOST_TEST_EQ(u.encoded_query(), "");
-            BOOST_TEST(u.query() == "");
-        }
-        else
-        {
-            BOOST_TEST(u.has_query());
-            BOOST_TEST_EQ(u.encoded_query(), s1);
-        }
+    }
+
+    static
+    void
+    check(
+        void(*f1)(params_encoded_ref),
+        void(*f2)(params_encoded_ref),
+        string_view s0,
+        string_view s1,
+        std::initializer_list<
+            param_pct_view> init)
+    {
+        check(f1, s0, s1, init);
+        check(f2, s0, s1, init);
     }
 
     //--------------------------------------------
@@ -132,21 +153,25 @@ struct params_encoded_ref_test
     void
     assign(
         params_encoded_ref& p,
-        std::initializer_list<param_pct_view> init)
+        std::initializer_list<
+            param_pct_view> init)
     {
         p.assign(
-            init.begin(), init.end());
+            init.begin(),
+            init.end());
     };
 
     static
     auto
     append(
         params_encoded_ref& p,
-        std::initializer_list<param_pct_view> init) ->
-            params_encoded_ref::iterator
+        std::initializer_list<
+            param_pct_view> init) ->
+        params_encoded_ref::iterator
     {
         return p.append(
-            init.begin(), init.end());
+            init.begin(),
+            init.end());
     };
 
     static
@@ -154,11 +179,14 @@ struct params_encoded_ref_test
     insert(
         params_encoded_ref& p,
         params_encoded_ref::iterator before,
-        std::initializer_list<param_pct_view> init) ->
-            params_encoded_ref::iterator
+        std::initializer_list<
+            param_pct_view> init) ->
+        params_encoded_ref::iterator
     {
-        return p.insert(before,
-            init.begin(), init.end());
+        return p.insert(
+            before,
+            init.begin(),
+            init.end());
     };
 
     static
@@ -167,11 +195,15 @@ struct params_encoded_ref_test
         params_encoded_ref& p,
         params_encoded_ref::iterator from,
         params_encoded_ref::iterator to,
-        std::initializer_list<param_pct_view> init) ->
-            params_encoded_ref::iterator
+        std::initializer_list<
+            param_pct_view> init) ->
+        params_encoded_ref::iterator
     {
-        return p.replace(from, to,
-            init.begin(), init.end());
+        return p.replace(
+            from,
+            to,
+            init.begin(),
+            init.end());
     };
 
     //--------------------------------------------
@@ -181,14 +213,13 @@ struct params_encoded_ref_test
     {
         // params_encoded_ref(params_encoded_ref)
         {
-            url u;
+            url u("?key=value");
             params_encoded_ref p0 = u.encoded_params();
             BOOST_TEST_EQ(&p0.url(), &u);
             params_encoded_ref p1(p0);
-            BOOST_TEST_EQ(
-                &p0.url(), &p1.url());
-            check(p0, {});
-            check(p1, {});
+            BOOST_TEST_EQ(&p0.url(), &p1.url());
+            check(p0, { {"key","value"} });
+            check(p1, { {"key","value"} });
         }
 
         // operator=(params_encoded_ref)
@@ -199,1559 +230,401 @@ struct params_encoded_ref_test
             params_encoded_ref p1 = u1.encoded_params();
             p1 = p0;
             BOOST_TEST_NE(&p0.url(), &p1.url());
-            check(p0, {{ "key", "value" }});
-            check(p1, {{ "key", "value" }});
+            check(p0, { {"key","value"} });
+            check(p1, { {"key","value"} });
+        }
+
+        // operator=(initializer_list)
+        {
+            url u;
+            u.encoded_params() = {
+                {"first", "John"},
+                {"last", "Doe"}};
+            check(u.encoded_params(),{
+                {"first", "John"},
+                {"last", "Doe"}});
+        }
+
+        // operator params_encoded_view
+        {
+            url u;
+            params_encoded_view qp = u.encoded_params();
+            BOOST_TEST_EQ(
+                qp.buffer().data(), u.buffer().data());
+        }
+    }
+
+    void
+    testObservers()
+    {
+        // url()
+        {
+            url u;
+            params_encoded_ref qp = u.encoded_params();
+            BOOST_TEST_EQ(&qp.url(), &u);
         }
     }
 
     void
     testModifiers()
     {
-        using std::next;
-
-        //----------------------------------------
-
-        //
-        // operator=(initializer_list)
-        //
-
-        modify(
-            {},
-            {},
-            [](params_encoded_ref& p)
+        // clear()
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                p = {};
-            });
+                qp.clear();
+            };
+            check(f, "", "", {});
+            check(f, "?", "", {});
+            check(f, "?first=John&last=Doe", "", {});
+        }
 
-        modify(
-            {},
-            "y",
-            [](params_encoded_ref& p)
-            {
-                p = {{ "y", no_value }};
-            });
-
-        modify(
-            {},
-            "y=",
-            [](params_encoded_ref& p)
-            {
-                p = {{ "y", "" }};
-            });
-
-        modify(
-            {},
-            "y=g",
-            [](params_encoded_ref& p)
-            {
-                p = {{ "y", "g" }};
-            });
-
-        modify(
-            {},
-            "y=g&",
-            [](params_encoded_ref& p)
-            {
-                p = {{ "y", "g" }, {}};
-            });
-
-        modify(
-            {},
-            "y=g&z",
-            [](params_encoded_ref& p)
-            {
-                p = {{ "y", "g" }, { "z", no_value }};
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            {},
-            [](params_encoded_ref& p)
-            {
-                p = {};
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y",
-            [](params_encoded_ref& p)
-            {
-                p = {{ "y", no_value }};
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=",
-            [](params_encoded_ref& p)
-            {
-                p = {{ "y", "" }};
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g",
-            [](params_encoded_ref& p)
-            {
-                p = {{ "y", "g" }};
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&",
-            [](params_encoded_ref& p)
-            {
-                p = {{ "y", "g" }, {}};
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&z",
-            [](params_encoded_ref& p)
-            {
-                p = {{ "y", "g" }, { "z", no_value }};
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23&%26==&%3D=%26",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p = {{ "#", no_value }, { "&", "=" }, { "=", "&" }};
-            });
-
-        //----------------------------------------
-
-        //
-        // clear
-        //
-
-        modify(
-            "",
-            {},
-            [](params_encoded_ref& p)
-            {
-                p.clear();
-                BOOST_TEST(! p.url().has_query());
-            });
-
-        modify(
-            "key",
-            {},
-            [](params_encoded_ref& p)
-            {
-                p.clear();
-                BOOST_TEST(! p.url().has_query());
-            });
-
-        modify(
-            "key=",
-            {},
-            [](params_encoded_ref& p)
-            {
-                p.clear();
-                BOOST_TEST(! p.url().has_query());
-            });
-
-        modify(
-            "key=value",
-            {},
-            [](params_encoded_ref& p)
-            {
-                p.clear();
-                BOOST_TEST(! p.url().has_query());
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            {},
-            [](params_encoded_ref& p)
-            {
-                p.clear();
-                BOOST_TEST(! p.url().has_query());
-            });
-
-        //----------------------------------------
-
-        //
         // assign(initializer_list)
-        //
-
-        modify(
-            {},
-            {},
-            [](params_encoded_ref& p)
+        // assign(FwdIt first, FwdIt)
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                p.assign({});
-            });
-
-        modify(
-            {},
-            "y",
-            [](params_encoded_ref& p)
+                qp.assign({ {"first", nullptr}, {"last",""}, {"full", "John Doe"} });
+            };
+            auto const g = [](params_encoded_ref qp)
             {
-                p.assign(
-                    {{ "y", no_value }});
-            });
+                assign(qp, { {"first",nullptr}, {"last",""}, {"full", "John Doe"} });
+            };
+            check(f, g, "", "first&last=&full=John%20Doe",
+                { {"first",no_value}, {"last",""}, {"full","John%20Doe"} });
+        }
 
-        modify(
-            {},
-            "y=",
-            [](params_encoded_ref& p)
-            {
-                p.assign(
-                    {{ "y", "" }});
-            });
-
-        modify(
-            {},
-            "y=g",
-            [](params_encoded_ref& p)
-            {
-                p.assign(
-                    {{ "y", "g" }});
-            });
-
-        modify(
-            {},
-            "y=g&",
-            [](params_encoded_ref& p)
-            {
-                p.assign(
-                    {{ "y", "g" }, {} });
-            });
-
-        modify(
-            {},
-            "y=g&z",
-            [](params_encoded_ref& p)
-            {
-                p.assign(
-                    {{ "y", "g" }, { "z", no_value } });
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            {},
-            [](params_encoded_ref& p)
-            {
-                p.assign({});
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y",
-            [](params_encoded_ref& p)
-            {
-                p.assign(
-                    {{ "y", no_value }});
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=",
-            [](params_encoded_ref& p)
-            {
-                p.assign(
-                    {{ "y", "" }});
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g",
-            [](params_encoded_ref& p)
-            {
-                p.assign(
-                    {{ "y", "g" }});
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&",
-            [](params_encoded_ref& p)
-            {
-                p.assign(
-                    {{ "y", "g" }, {} });
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&z",
-            [](params_encoded_ref& p)
-            {
-                p.assign(
-                    {{ "y", "g" }, { "z", no_value } });
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23&%26==&%3D=%26",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.assign(
-                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
-            });
-
-        //
-        // assign(FwdIt, FwdIt)
-        //
-
-        modify(
-            {},
-            {},
-            [](params_encoded_ref& p)
-            {
-                p.assign({});
-            });
-
-        modify(
-            {},
-            "y",
-            [](params_encoded_ref& p)
-            {
-                assign(p,
-                    {{ "y", no_value }});
-            });
-
-        modify(
-            {},
-            "y=",
-            [](params_encoded_ref& p)
-            {
-                assign(p,
-                    {{ "y", "" }});
-            });
-
-        modify(
-            {},
-            "y=g",
-            [](params_encoded_ref& p)
-            {
-                assign(p,
-                    {{ "y", "g" }});
-            });
-
-        modify(
-            {},
-            "y=g&",
-            [](params_encoded_ref& p)
-            {
-                assign(p,
-                    {{ "y", "g" }, {} });
-            });
-
-        modify(
-            {},
-            "y=g&z",
-            [](params_encoded_ref& p)
-            {
-                assign(p,
-                    {{ "y", "g" }, { "z", no_value } });
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            {},
-            [](params_encoded_ref& p)
-            {
-                assign(p, {});
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y",
-            [](params_encoded_ref& p)
-            {
-                assign(p,
-                    {{ "y", no_value }});
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=",
-            [](params_encoded_ref& p)
-            {
-                assign(p,
-                    {{ "y", "" }});
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g",
-            [](params_encoded_ref& p)
-            {
-                assign(p,
-                    {{ "y", "g" }});
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&",
-            [](params_encoded_ref& p)
-            {
-                assign(p,
-                    {{ "y", "g" }, {} });
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&z",
-            [](params_encoded_ref& p)
-            {
-                assign(p,
-                    {{ "y", "g" }, { "z", no_value } });
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "%23&%26==&%3D=%26",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                assign(p,
-                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
-            });
-
-        //----------------------------------------
-
-        //
         // append(param_pct_view)
-        //
-
-        modify(
-            {},
-            "y",
-            [](params_encoded_ref& p)
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.append(
-                    { "y", no_value });
-                BOOST_TEST(is_equal(
-                    *it, { "y", no_value }));
-            });
-
-        modify(
-            {},
-            "y=",
-            [](params_encoded_ref& p)
+                auto it = qp.append({"=","&#"});
+                BOOST_TEST(is_equal(*it, {"%3D","%26%23"}));
+            };
+            check(f, "?", "&%3D=%26%23", { {"",no_value}, {"%3D","%26%23"} });
+            check(f, "?key=value", "key=value&%3D=%26%23", { {"key","value"}, {"%3D","%26%23"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.append(
-                    { "y", "" });
-                BOOST_TEST(is_equal(
-                    *it, { "y", "" }));
-            });
+                // self-intersect
+                auto it = qp.append({"middle",qp.begin()->value});
+                BOOST_TEST(is_equal(*it, {"middle","John"}));
+            };
+            check(f, "?first=John&last=Doe", "first=John&last=Doe&middle=John",
+                { {"first","John"}, {"last","Doe"}, {"middle","John"} });
+        }
 
-        modify(
-            {},
-            "y=g",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.append(
-                    { "y", "g" });
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "",
-            "&y",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.append(
-                    { "y", no_value });
-                BOOST_TEST(is_equal(
-                    *it, { "y", no_value }));
-            });
-
-        modify(
-            "",
-            "&y=",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.append(
-                    { "y", "" });
-                BOOST_TEST(is_equal(
-                    *it, { "y", "" }));
-            });
-
-        modify(
-            "",
-            "&y=g",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.append(
-                    { "y", "g" });
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "",
-            "&key=value",
-            [](params_encoded_ref& p)
-            {
-                // should not go through
-                // initializer_list overload
-                auto it = p.append({
-                    string_view("key"),
-                    string_view("value")});
-                BOOST_TEST(is_equal(
-                    *it, { "key", "value" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%23",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.append({ "#", no_value });
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%26==",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.append({ "&", "=" });
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%3D=%26",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.append({ "=", "&" });
-            });
-
-        //
-        // append(FwdIt, FwdIt)
-        //
-
-        modify(
-            {},
-            "y=g&z=q",
-            [](params_encoded_ref& p)
-            {
-                auto it = append(p,
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "",
-            "&y=g&z=q",
-            [](params_encoded_ref& p)
-            {
-                auto it = append(p,
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "t",
-            "t&y=g&z=q",
-            [](params_encoded_ref& p)
-            {
-                auto it = append(p,
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%23&%26==&%3D=%26",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                append(p,
-                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
-            });
-
-        //
         // append(initializer_list)
-        //
-
-        modify(
-            {},
-            "y=g&z=q",
-            [](params_encoded_ref& p)
+        // append(FwdIt first, FwdIt)
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.append(
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "",
-            "&y=g&z=q",
-            [](params_encoded_ref& p)
+                qp.append({ {"first", nullptr}, {"last",""}, {"full", "John Doe"} });
+            };
+            auto const g = [](params_encoded_ref qp)
             {
-                auto it = p.append(
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
+                append(qp, { {"first",nullptr}, {"last",""}, {"full", "John Doe"} });
+            };
+            check(f, g, "", "first&last=&full=John%20Doe",
+                { {"first",no_value}, {"last",""}, {"full","John%20Doe"} });
+            check(f, g, "?", "&first&last=&full=John%20Doe",
+                { {"",no_value}, {"first",no_value}, {"last",""}, {"full","John%20Doe"} });
+            check(f, g, "?key=value", "key=value&first&last=&full=John%20Doe",
+                { {"key","value"}, {"first",no_value}, {"last",""}, {"full","John%20Doe"} });
+        }
 
-        modify(
-            "t",
-            "t&y=g&z=q",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.append(
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&%23&%26==&%3D=%26",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.append(
-                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
-            });
-
-        //----------------------------------------
-
-        //
         // insert(iterator, param_pct_view)
-        //
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&k0=0&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.insert(
-                    std::next(p.begin(), 0),
-                    { "y", "g" });
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&k0=0&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+                // self-intersect
+                auto it = qp.insert(std::next(qp.begin(),0),
+                    {"middle",qp.begin()->value});
+                BOOST_TEST(is_equal(*it, {"middle","John"}));
+            };
+            check(f, "?first=John&last=Doe", "middle=John&first=John&last=Doe",
+                { {"middle","John"}, {"first","John"}, {"last","Doe"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.insert(
-                    std::next(p.begin(), 0),
-                    { "y", "g" });
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&y=g&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+                // self-intersect
+                auto it = qp.insert(std::next(qp.begin(),1),
+                    {"middle",qp.begin()->value});
+                BOOST_TEST(is_equal(*it, {"middle","John"}));
+            };
+            check(f, "?first=John&last=Doe", "first=John&middle=John&last=Doe",
+                { {"first","John"}, {"middle","John"}, {"last","Doe"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.insert(
-                    std::next(p.begin(), 1),
-                    { "y", "g" });
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
+                // self-intersect
+                auto it = qp.insert(std::next(qp.begin(),2),
+                    {"middle",qp.begin()->value});
+                BOOST_TEST(is_equal(*it, {"middle","John"}));
+            };
+            check(f, "?first=John&last=Doe", "first=John&last=Doe&middle=John",
+                { {"first","John"}, {"last","Doe"}, {"middle","John"} });
+        }
 
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&y=g&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.insert(
-                    std::next(p.begin(), 2),
-                    { "y", "g" });
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&y=g&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.insert(
-                    std::next(p.begin(), 3),
-                    { "y", "g" });
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&y=g&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.insert(
-                    std::next(p.begin(), 4),
-                    { "y", "g" });
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&y=g",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.insert(
-                    std::next(p.begin(), 5),
-                    { "y", "g" });
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&key=value&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                // should not go through
-                // initializer_list overload
-                auto it = p.insert(
-                    std::next(p.begin(), 2),
-                    {string_view("key"),
-                        string_view("value")});
-                BOOST_TEST(is_equal(
-                    *it, { "key", "value" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%23&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.insert(std::next(p.begin(), 2),
-                    { "#", no_value });
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%26==&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.insert(std::next(p.begin(), 2),
-                    { "&", "=" });
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%3D=%26&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.insert(std::next(p.begin(), 2),
-                    { "=", "&" });
-            });
-
-        //
-        // insert(iterator, FwdIt, FwdIt)
-        //
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&z=q&k0=0&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = insert(p,
-                    std::next(p.begin(), 0),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&y=g&z=q&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = insert(p,
-                    std::next(p.begin(), 1),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&y=g&z=q&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = insert(p,
-                    std::next(p.begin(), 2),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&y=g&z=q&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = insert(p,
-                    std::next(p.begin(), 3),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&y=g&z=q&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = insert(p,
-                    std::next(p.begin(), 4),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&y=g&z=q",
-            [](params_encoded_ref& p)
-            {
-                auto it = insert(p,
-                    std::next(p.begin(), 5),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%23&%26==&%3D=%26&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                insert(p, std::next(p.begin(), 2),
-                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
-            });
-
-        //
         // insert(iterator, initializer_list)
-        //
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&z=q&k0=0&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+        // insert(iterator, FwdIt first, FwdIt)
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.insert(
-                    std::next(p.begin(), 0),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&y=g&z=q&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+                auto it = qp.insert(std::next(qp.begin(),0),
+                    { {"first","John"}, {"last","Doe"} });
+                BOOST_TEST(is_equal(*it, {"first","John"}));
+                BOOST_TEST_EQ(it, qp.begin());
+            };
+            auto const g = [](params_encoded_ref qp)
             {
-                auto it = p.insert(
-                    std::next(p.begin(), 1),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&y=g&z=q&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+                auto it = qp.insert(std::next(qp.begin(),0),
+                    { {"first","John"}, {"last","Doe"} });
+                BOOST_TEST(is_equal(*it, {"first","John"}));
+                BOOST_TEST_EQ(it, qp.begin());
+            };
+            check(f, g, "?k1&k2=&k3=v3",
+                "first=John&last=Doe&k1&k2=&k3=v3",
+                { {"first","John"}, {"last","Doe"}, {"k1",no_value}, {"k2",""}, {"k3","v3"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.insert(
-                    std::next(p.begin(), 2),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&y=g&z=q&k3&k4=4444",
-            [](params_encoded_ref& p)
+                auto it = qp.insert(std::next(qp.begin(),1),
+                    { {"first","John"}, {"last","Doe"} });
+                BOOST_TEST(is_equal(*it, {"first","John"}));
+                BOOST_TEST_EQ(it, std::next(qp.begin(), 1));
+            };
+            auto const g = [](params_encoded_ref qp)
             {
-                auto it = p.insert(
-                    std::next(p.begin(), 3),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&y=g&z=q&k4=4444",
-            [](params_encoded_ref& p)
+                auto it = qp.insert(std::next(qp.begin(),1),
+                    { {"first","John"}, {"last","Doe"} });
+                BOOST_TEST(is_equal(*it, {"first","John"}));
+                BOOST_TEST_EQ(it, std::next(qp.begin(), 1));
+            };
+            check(f, g, "?k1&k2=&k3=v3",
+                "k1&first=John&last=Doe&k2=&k3=v3",
+                { {"k1",no_value}, {"first","John"}, {"last","Doe"}, {"k2",""}, {"k3","v3"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.insert(
-                    std::next(p.begin(), 4),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444&y=g&z=q",
-            [](params_encoded_ref& p)
+                auto it = qp.insert(std::next(qp.begin(),2),
+                    { {"first","John"}, {"last","Doe"} });
+                BOOST_TEST(is_equal(*it, {"first","John"}));
+                BOOST_TEST_EQ(it, std::next(qp.begin(), 2));
+            };
+            auto const g = [](params_encoded_ref qp)
             {
-                auto it = p.insert(
-                    std::next(p.begin(), 5),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(is_equal(
-                    *it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&%23&%26==&%3D=%26&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+                auto it = qp.insert(std::next(qp.begin(),2),
+                    { {"first","John"}, {"last","Doe"} });
+                BOOST_TEST(is_equal(*it, {"first","John"}));
+                BOOST_TEST_EQ(it, std::next(qp.begin(), 2));
+            };
+            check(f, g, "?k1&k2=&k3=v3",
+                "k1&k2=&first=John&last=Doe&k3=v3",
+                { {"k1",no_value}, {"k2",""}, {"first","John"}, {"last","Doe"}, {"k3","v3"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                // encodings
-                p.insert(std::next(p.begin(), 2),
-                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
-            });
+                auto it = qp.insert(std::next(qp.begin(),3),
+                    { {"first","John"}, {"last","Doe"} });
+                BOOST_TEST(is_equal(*it, {"first","John"}));
+                BOOST_TEST_EQ(it, std::next(qp.begin(), 3));
+            };
+            auto const g = [](params_encoded_ref qp)
+            {
+                auto it = qp.insert(std::next(qp.begin(),3),
+                    { {"first","John"}, {"last","Doe"} });
+                BOOST_TEST(is_equal(*it, {"first","John"}));
+                BOOST_TEST_EQ(it, std::next(qp.begin(), 3));
+            };
+            check(f, g, "?k1&k2=&k3=v3",
+                "k1&k2=&k3=v3&first=John&last=Doe",
+                { {"k1",no_value}, {"k2",""}, {"k3","v3"}, {"first","John"}, {"last","Doe"} });
+        }
 
-        //----------------------------------------
-        
-        //
         // erase(iterator)
-        //
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.erase(
-                    std::next(p.begin(), 0));
-                BOOST_TEST(is_equal(
-                    *it, { "k1", "1" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+                auto it = qp.erase(std::next(qp.begin(),0));
+                BOOST_TEST(is_equal(*it, {"last","Doe"}));
+            };
+            check(f, "?first=John&last=Doe", "last=Doe", { {"last","Doe"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.erase(
-                    std::next(p.begin(), 1));
-                BOOST_TEST(is_equal(
-                    *it, { "k2", "" }));
-            });
+                auto it = qp.erase(std::next(qp.begin(),1));
+                BOOST_TEST_EQ(it, qp.end());
+            };
+            check(f, "?first=John&last=Doe", "first=John", { {"first","John"} });
+        }
 
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.erase(
-                    std::next(p.begin(), 2));
-                BOOST_TEST(is_equal(
-                    *it, { "k3", no_value }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.erase(
-                    std::next(p.begin(), 3));
-                BOOST_TEST(is_equal(
-                    *it, { "k4", "4444" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.erase(
-                    std::next(p.begin(), 4));
-                BOOST_TEST_EQ(it, p.end());
-            });
-
-        //
         // erase(iterator, iterator)
-        //
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.erase(
-                    std::next(p.begin(), 0),
-                    std::next(p.begin(), 2));
-                BOOST_TEST(is_equal(
-                    *it, { "k2", "" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k3&k4=4444",
-            [](params_encoded_ref& p)
+                auto it = qp.erase(
+                    std::next(qp.begin(),0),
+                    std::next(qp.begin(),2));
+                BOOST_TEST(is_equal(*it, {"k2","key"}));
+            };
+            check(f, "?k0&k1=&k2=key", "k2=key", { {"k2","key"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.erase(
-                    std::next(p.begin(), 1),
-                    std::next(p.begin(), 3));
-                BOOST_TEST(is_equal(
-                    *it, { "k3", no_value }));
-            });
+                auto it = qp.erase(
+                    std::next(qp.begin(),1),
+                    std::next(qp.begin(),3));
+                BOOST_TEST_EQ(it, qp.end());
+            };
+            check(f, "?k0&k1=&k2=key", "k0", { {"k0",no_value} });
+        }
 
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k4=4444",
-            [](params_encoded_ref& p)
+        // erase(pct_string_view, ignore_case_param)
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.erase(
-                    std::next(p.begin(), 2),
-                    std::next(p.begin(), 4));
-                BOOST_TEST(is_equal(
-                    *it, { "k4", "4444" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.erase(
-                    std::next(p.begin(), 3),
-                    std::next(p.begin(), 5));
-                BOOST_TEST_EQ(it, p.end());
-            });
-
-        //
-        // erase(string_view, ignore_case_param)
-        //
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto n = p.erase("K0");
-                BOOST_TEST_EQ(n, 0);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k1=1&K2=3&k3=4&K2=5&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto n = p.erase("k0");
+                // self-intersect
+                auto n = qp.erase(qp.find_last("k1", ignore_case)->value);
                 BOOST_TEST_EQ(n, 2);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k1=1&K2=3&k3=4&K2=5&k4=6",
-            [](params_encoded_ref& p)
+            };
+            check(f, "?k0&k1=&k2=key&k1=value&k3=4&K1=k1", "k0&k2=key&k3=4&K1=k1",
+                { {"k0",no_value}, {"k2","key"}, {"k3","4"}, {"K1","k1"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto n = p.erase("K0", ignore_case);
-                BOOST_TEST_EQ(n, 2);
-            });
+                auto n = qp.erase("k1", ignore_case);
+                BOOST_TEST_EQ(n, 3);
+            };
+            check(f, "?k0&k1=&k2=key&k1=value&k3=4&K1=5", "k0&k2=key&k3=4",
+                { {"k0",no_value}, {"k2","key"}, {"k3","4"} });
+        }
 
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k0=2&K2=3&k3=4&K2=5&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto n = p.erase("k1");
-                BOOST_TEST_EQ(n, 1);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k0=2&K2=3&k3=4&K2=5&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto n = p.erase("K1", ignore_case);
-                BOOST_TEST_EQ(n, 1);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto n = p.erase("k2");
-                BOOST_TEST_EQ(n, 0);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=1&k0=2&k3=4&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto n = p.erase("K2");
-                BOOST_TEST_EQ(n, 2);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=1&k0=2&k3=4&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto n = p.erase("k2", ignore_case);
-                BOOST_TEST_EQ(n, 2);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=1&k0=2&K2=3&K2=5&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto n = p.erase("k3");
-                BOOST_TEST_EQ(n, 1);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5",
-            [](params_encoded_ref& p)
-            {
-                auto n = p.erase("k4");
-                BOOST_TEST_EQ(n, 1);
-            });
-
-        //----------------------------------------
-
-        //
         // replace(iterator, param_pct_view)
-        //
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.replace(
-                    p.find("k0"), { "y", "g" });
-                BOOST_TEST(
-                    is_equal(*it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&y=g&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
+                auto it = qp.replace(std::next(qp.begin(),0),
+                    {"=","&#"});
+                BOOST_TEST(is_equal(*it, {"%3D","%26%23"}));
+            };
+            check(f, "?first=John&last=Doe", "%3D=%26%23&last=Doe",
+                { {"%3D","%26%23"}, {"last","Doe"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.replace(
-                    p.find("k1"), { "y", "g" });
-                BOOST_TEST(
-                    is_equal(*it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&y=g&k3&k4=4444",
-            [](params_encoded_ref& p)
+                auto it = qp.replace(std::next(qp.begin(),1),
+                    {"=","&#"});
+                BOOST_TEST(is_equal(*it, {"%3D","%26%23"}));
+            };
+            check(f, "?first=John&last=Doe", "first=John&%3D=%26%23",
+                { {"first","John"}, {"%3D","%26%23"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.replace(
-                    p.find("k2"), { "y", "g" });
-                BOOST_TEST(
-                    is_equal(*it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&y=g&k4=4444",
-            [](params_encoded_ref& p)
+                // self-intersect
+                auto it = qp.replace(std::next(qp.begin(),0),
+                    *std::next(qp.begin(),1));
+                BOOST_TEST(is_equal(*it, {"last","Doe"}));
+            };
+            check(f, "?first=John&last=Doe", "last=Doe&last=Doe",
+                { {"last","Doe"}, {"last","Doe"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = p.replace(
-                    p.find("k3"), { "y", "g" });
-                BOOST_TEST(
-                    is_equal(*it, { "y", "g" }));
-            });
+                // self-intersect
+                auto it = qp.replace(std::next(qp.begin(),1),
+                    *std::next(qp.begin(),0));
+                BOOST_TEST(is_equal(*it, {"first","John"}));
+            };
+            check(f, "?first=John&last=Doe", "first=John&first=John",
+                { {"first","John"}, {"first","John"} });
+        }
 
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&y=g",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.replace(
-                    p.find("k4"), { "y", "g" });
-                BOOST_TEST(
-                    is_equal(*it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&%23&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.replace(p.find("k1"),
-                    { "#", no_value });
-            });
-
-        //
         // replace(iterator, iterator, initializer_list)
-        //
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&z=q&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.replace(
-                    p.find("k0"), p.find("k3"),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(
-                    is_equal(*it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&y=g&z=q&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.replace(
-                    p.find("k1"), p.find("k4"),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(
-                    is_equal(*it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&y=g&z=q",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.replace(
-                    p.find("k2"), p.end(),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(
-                    is_equal(*it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            {},
-            [](params_encoded_ref& p)
-            {
-                // clear
-                auto it = p.replace(
-                    p.find("k0"), p.end(), {});
-                BOOST_TEST_EQ(it, p.begin());
-                BOOST_TEST_EQ(it, p.end());
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&%23&%26==&%3D=%26&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.replace(
-                    p.find("k1"), p.find("k3"),
-                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
-            });
-
-        //
         // replace(iterator, iterator, FwdIt, FwdIt)
-        //
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "y=g&z=q&k3&k4=4444",
-            [](params_encoded_ref& p)
+        {
+            auto const f = [](params_encoded_ref qp)
             {
-                auto it = replace(p,
-                    p.find("k0"), p.find("k3"),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(
-                    is_equal(*it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&y=g&z=q&k4=4444",
-            [](params_encoded_ref& p)
+                auto it = qp.replace(
+                    std::next(qp.begin(),0),
+                    std::next(qp.begin(),2),
+                    {{"%3D","%26%23"}});
+                BOOST_TEST(is_equal(*it, {"%3D","%26%23"}));
+            };
+            auto const g = [](params_encoded_ref qp)
             {
-                auto it = replace(p,
-                    p.find("k1"), p.find("k4"),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(
-                    is_equal(*it, { "y", "g" }));
-            });
+                auto it = replace(qp,
+                    std::next(qp.begin(),0),
+                    std::next(qp.begin(),2),
+                    {{"%3D","%26%23"}});
+                BOOST_TEST(is_equal(*it, {"%3D","%26%23"}));
+            };
+            check(f, g, "?k0&k1=&k2=key", "%3D=%26%23&k2=key",
+                { {"%3D","%26%23"}, {"k2","key"} });
+        }
 
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&y=g&z=q",
-            [](params_encoded_ref& p)
-            {
-                auto it = replace(p,
-                    p.find("k2"), p.end(),
-                    {{ "y", "g" }, { "z", "q" }});
-                BOOST_TEST(
-                    is_equal(*it, { "y", "g" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            {},
-            [](params_encoded_ref& p)
-            {
-                // clear
-                auto it = replace(p,
-                    p.find("k0"), p.end(), {});
-                BOOST_TEST_EQ(it, p.begin());
-                BOOST_TEST_EQ(it, p.end());
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&%23&%26==&%3D=%26&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                replace(p,
-                    p.find("k1"), p.find("k3"),
-                    {{ "#", no_value }, { "&", "=" }, { "=", "&" }});
-            });
-
-        //----------------------------------------
-
-        //
         // unset(iterator)
-        //
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.unset(next(p.begin(), 0));
-                BOOST_TEST(is_equal(*it, { "k0", no_value }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.unset(next(p.begin(), 1));
-                BOOST_TEST(is_equal(*it, { "k1", no_value }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.unset(next(p.begin(), 2));
-                BOOST_TEST(is_equal(*it, { "k2", no_value }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.unset(next(p.begin(), 3));
-                BOOST_TEST(is_equal(*it, { "k3", no_value }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.unset(next(p.begin(), 4));
-                BOOST_TEST(is_equal(*it, { "k4", no_value }));
-            });
-
-        //
-        // set(iterator, string_view)
-        //
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=42&k1=1&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.set(next(p.begin(), 0), "42");
-                BOOST_TEST(is_equal(*it, { "k0", "42" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=42&k2=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.set(next(p.begin(), 1), "42");
-                BOOST_TEST(is_equal(*it, { "k1", "42" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=42&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.set(next(p.begin(), 2), "42");
-                BOOST_TEST(is_equal(*it, { "k2", "42" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3=42&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.set(next(p.begin(), 3), "42");
-                BOOST_TEST(is_equal(*it, { "k3", "42" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=&k3&k4=42",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.set(next(p.begin(), 4), "42");
-                BOOST_TEST(is_equal(*it, { "k4", "42" }));
-            });
-
-        modify(
-            "k0=0&k1=1&k2=&k3&k4=4444",
-            "k0=0&k1=1&k2=%23%25%26=&k3&k4=4444",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.set(next(p.begin(), 2), "#%25&=");
-            });
-
-        //
-        // set(string_view, string_view, ignore_case_param)
-        //
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=x&k1=1&K2=3&k3=4&K2=5&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.set("k0", "x");
-                BOOST_TEST(is_equal(*it, { "k0", "x" }));
-                BOOST_TEST_EQ(p.count("k0"), 1);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=x&k0=2&K2=3&k3=4&K2=5&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.set("k1", "x");
-                BOOST_TEST(is_equal(*it, { "k1", "x" }));
-                BOOST_TEST_EQ(p.count("k1"), 1);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6&k2=x",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.set("k2", "x");
-                BOOST_TEST(is_equal(*it, { "k2", "x" }));
-                BOOST_TEST_EQ(p.count("k2"), 1);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=1&k0=2&K2=x&k3=4&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.set("k2", "x", ignore_case);
-                BOOST_TEST(is_equal(*it, { "K2", "x" }));
-                BOOST_TEST_EQ(p.count("k2", ignore_case), 1);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=1&k0=2&K2=3&k3=x&K2=5&k4=6",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.set("k3", "x");
-                BOOST_TEST(is_equal(*it, { "k3", "x" }));
-                BOOST_TEST_EQ(p.count("k3"), 1);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=x",
-            [](params_encoded_ref& p)
-            {
-                auto it = p.set("k4", "x");
-                BOOST_TEST(is_equal(*it, { "k4", "x" }));
-                BOOST_TEST_EQ(p.count("k4"), 1);
-            });
-
-        modify(
-            "k0=0&k1=1&k0=2&K2=3&k3=4&K2=5&k4=6",
-            "k0=0&k1=1&k0=2&K2=%23%25%26=&k3=4&k4=6",
-            [](params_encoded_ref& p)
-            {
-                // encodings
-                p.set("k2", "#%25&=", ignore_case);
-            });
-    }
-
-    void
-    testIterator()
-    {
-        using T = params_encoded_ref::iterator;
-
-        // iterator()
         {
-            T t0;
-            T t1;
-            BOOST_TEST_EQ(t0, t1);
+            auto const f = [](params_encoded_ref qp)
+            {
+                auto it = qp.unset(std::next(qp.begin(),0));
+                BOOST_TEST(is_equal(*it, {"k0", no_value}));
+            };
+            check(f, "?k0&k1=&k2=key", "k0&k1=&k2=key",
+                { {"k0",no_value}, {"k1",""}, {"k2","key"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
+            {
+                auto it = qp.unset(std::next(qp.begin(),1));
+                BOOST_TEST(is_equal(*it, {"k1", no_value}));
+            };
+            check(f, "?k0&k1=&k2=key", "k0&k1&k2=key",
+                { {"k0",no_value}, {"k1",no_value}, {"k2","key"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
+            {
+                auto it = qp.unset(std::next(qp.begin(),2));
+                BOOST_TEST(is_equal(*it, {"k2", no_value}));
+            };
+            check(f, "?k0&k1=&k2=key", "k0&k1=&k2",
+                { {"k0",no_value}, {"k1",""}, {"k2",no_value} });
         }
 
-        // operator==()
+        // set(iterator, pct_string_view)
         {
-            url u;
-            BOOST_TEST_EQ(
-                u.encoded_params().begin(),
-                u.encoded_params().begin());
-        }
-
-        // operator!=()
-        {
-            url u("?");
-            BOOST_TEST_NE(
-                u.encoded_params().begin(),
-                u.encoded_params().end());
-        }
-
-        // value_type outlives reference
-        {
-            params_encoded_ref::value_type v;
+            auto const f = [](params_encoded_ref qp)
             {
-                url u("/?a=1&bb=22&ccc=333&dddd=4444#f");
-                params_encoded_ref ps = u.encoded_params();
-                params_encoded_ref::reference r = *ps.begin();
-                v = params_encoded_ref::value_type(r);
-            }
-            BOOST_TEST_EQ(v.key, "a");
-            BOOST_TEST_EQ(v.value, "1");
-            BOOST_TEST_EQ(v.has_value, true);
+                // self-intersect
+                auto it = qp.set(std::next(qp.begin(),0),
+                    qp.find("k2")->value);
+                BOOST_TEST(is_equal(*it, {"k0", "key"}));
+            };
+            check(f, "?k0&k1=&k2=key", "k0=key&k1=&k2=key",
+                { {"k0","key"}, {"k1",""}, {"k2","key"} });
+        }
+        {
+            auto const f = [](params_encoded_ref qp)
+            {
+                auto it = qp.set(std::next(qp.begin(),1), "%26%23");
+                BOOST_TEST(is_equal(*it, {"k1", "%26%23"}));
+            };
+            check(f, "?k0&k1=&k2=key", "k0&k1=%26%23&k2=key",
+                { {"k0",no_value}, {"k1","%26%23"}, {"k2","key"} });
         }
     }
 
@@ -1764,13 +637,82 @@ struct params_encoded_ref_test
 
         assert( &u.encoded_params().url() == &u );
         }
+
+        // assign(initializer_list)
+        {
+        url u;
+
+        u.encoded_params().assign({ { "first", "John" }, { "last", "Doe" } });
+        }
+
+        // append(param_pct_view)
+        {
+        url u;
+
+        u.encoded_params().append( { "first", "John" } );
+        }
+
+        // append(initializer_list)
+        {
+        url u;
+
+        u.encoded_params().append({ {"first", "John"}, {"last", "Doe"} });
+        }
+
+        // erase(iterator)
+        {
+        url u( "?first=John&last=Doe" );
+
+        params_encoded_ref::iterator it = u.encoded_params().erase( u.encoded_params().begin() );
+
+        assert( u.encoded_query() == "last=Doe" );
+
+        ignore_unused(it);
+        }
+
+        // replace(iterator, param_pct_view)
+        {
+        url u( "?first=John&last=Doe" );
+
+        u.encoded_params().replace( u.encoded_params().begin(), {"title", "Mr"});
+
+        assert( u.encoded_query() == "title=Mr&last=Doe" );
+        }
+
+        // unset(iterator)
+        {
+        url u( "?first=John&last=Doe" );
+
+        u.encoded_params().unset( u.encoded_params().begin() );
+
+        assert( u.encoded_query() == "first&last=Doe" );
+        }
+
+        // set(iterator, pct_string_view)
+        {
+        url u( "?id=42&id=69" );
+
+        u.encoded_params().set( u.encoded_params().begin(), "none" );
+
+        assert( u.encoded_query() == "id=none&id=69" );
+        }
+
+        // set(pct_string_view, pct_string_view)
+        {
+        url u( "?id=42&id=69" );
+
+        u.encoded_params().set( "id", "none" );
+
+        assert( u.encoded_params().count( "id" ) == 1 );
+        }
     }
+
     void
     run()
     {
         testSpecial();
+        testObservers();
         testModifiers();
-        testIterator();
         testJavadocs();
     }
 };

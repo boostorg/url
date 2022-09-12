@@ -59,9 +59,11 @@ url_base::
 op_t::
 op_t(
     url_base& u_,
-    string_view* s_) noexcept
+    string_view* s0_,
+    string_view* s1_) noexcept
     : u(u_)
-    , s(s_)
+    , s0(s0_)
+    , s1(s1_)
 {
     u.check_invariants();
 }
@@ -69,14 +71,21 @@ op_t(
 void
 url_base::
 op_t::
-move(char* dest, char const* src,
+move(
+    char* dest,
+    char const* src,
     std::size_t n) noexcept
 {
     if(! n)
         return;
-    if(s)
+    if(s0)
+    {
+        if(s1)
+            return detail::move_chars(
+             dest, src, n, *s0, *s1);
         return detail::move_chars(
-            dest, src, n, *s);
+            dest, src, n, *s0);
+    }
     detail::move_chars(
         dest, src, n);
 }
@@ -2151,13 +2160,13 @@ edit_params(
         }
     }
 
-    op_t op(*this, src.input());
+    op_t op(*this, &src.s0, &src.s1);
 
 //------------------------------------------------
 //
 //  Resize
 //
-#if 1
+
     // VFALCO OVERFLOW CHECK HERE
     auto const nparam1 =
         u_.nparam_ + nparam - (
@@ -2189,10 +2198,6 @@ edit_params(
     if(s_)
         s_[size()] = '\0';
     auto const dest0 = dest;
-#else
-    auto const dest0 = resize_params(
-        it0, it1, nchar, nparam, op);
-#endif
 
     // copy
     src.rewind();

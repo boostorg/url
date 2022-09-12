@@ -265,7 +265,7 @@ public:
         All iterators are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
 
@@ -273,7 +273,7 @@ public:
         @code
         url u;
 
-        u.encoded_params().assign( {{ "first", "John" }, { "last", "Doe" }} );
+        u.encoded_params().assign({ { "first", "John" }, { "last", "Doe" } });
         @endcode
 
         @par Complexity
@@ -305,7 +305,7 @@ public:
         All iterators are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
 
@@ -379,7 +379,7 @@ public:
         @code
         url u;
 
-        u.encoded_params().append( {{ "first", "John" }, {{ "last", "Doe" }});
+        u.encoded_params().append({ {"first", "John"}, {"last", "Doe"} });
         @endcode
 
         @par Complexity
@@ -410,9 +410,10 @@ public:
         <br>
         The `end()` iterator is invalidated.
 
-        @par Example
-        @code
-        @endcode
+        @note
+        The strings referenced by the inputs
+        must not come from the underlying url,
+        or else the behavior is undefined.
 
         @par Mandates
         @code
@@ -451,10 +452,6 @@ public:
         All iterators that are equal to
         `before` or come after are invalidated.
 
-        @par Example
-        @code
-        @endcode
-
         @par Complexity
         Linear in `this->url().encoded_query().size()`.
 
@@ -492,13 +489,9 @@ public:
         `before` or come after are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
-
-        @par Example
-        @code
-        @endcode
 
         @par Complexity
         Linear in `this->url().encoded_query().size()`.
@@ -538,13 +531,9 @@ public:
         `before` or come after are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
-
-        @par Example
-        @code
-        @endcode
 
         @par Mandates
         @code
@@ -623,10 +612,6 @@ public:
         All iterators that are equal to
         `first` or come after are invalidated.
 
-        @par Example
-        @code
-        @endcode
-
         @par Complexity
         Linear in `this->url().encoded_query().size()`.
 
@@ -648,10 +633,6 @@ public:
 
         <br>
         All iterators are invalidated.
-
-        @par Example
-        @code
-        @endcode
 
         @par Postconditions
         @code
@@ -697,6 +678,11 @@ public:
         All iterators that are equal to
         `pos` or come after are invalidated.
 
+        @note
+        The strings passed in must not come
+        from the element being replaced,
+        or else the behavior is undefined.
+
         @par Example
         @code
         url u( "?first=John&last=Doe" );
@@ -740,7 +726,7 @@ public:
         `from` or come after are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
 
@@ -782,7 +768,7 @@ public:
         `from` or come after are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
 
@@ -866,6 +852,11 @@ public:
         All iterators that are equal to
         `pos` or come after are invalidated.
 
+        @note
+        The string passed in must not come
+        from the element being replaced,
+        or else the behavior is undefined.
+
         @par Example
         @code
         url u( "?id=42&id=69" );
@@ -919,6 +910,11 @@ public:
 
         <br>
         All iterators are invalidated.
+
+        @note
+        The strings passed in must not come
+        from the element being replaced,
+        or else the behavior is undefined.
 
         @par Example
         @code

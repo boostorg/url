@@ -57,10 +57,10 @@ inline
 auto
 params_encoded_ref::
 append(
-    param_pct_view const& v) ->
+    param_pct_view const& p) ->
         iterator
 {
-    return insert(end(), v);
+    return insert(end(), p);
 }
 
 inline
@@ -131,7 +131,7 @@ auto
 params_encoded_ref::
 erase(
     iterator pos) noexcept ->
-    iterator
+        iterator
 {
     return erase(
         pos,

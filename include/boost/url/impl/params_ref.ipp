@@ -62,13 +62,13 @@ auto
 params_ref::
 insert(
     iterator before,
-    param_view const& v) ->
+    param_view const& p) ->
         iterator
 {
-    return insert(
-        before,
-        &v,
-        &v + 1);
+    return u_->edit_params(
+        before.it_,
+        before.it_,
+        detail::param_iter(p));
 }
 
 auto
@@ -91,28 +91,28 @@ erase(
     string_view key,
     ignore_case_param ic) noexcept
 {
-    // VFALCO we can't cache end() here
-    // because it will be invalidated
-    // every time we erase.
-    auto it = find_last(key, ic);
-    if(it == end())
-        return 0;
+    // end() can't be fully cached,
+    // since erase invalidates it.
+    iterator it;
+    {
+        auto const end_ = end();
+        it = find_last(end_, key, ic);
+        if(it == end_)
+            return 0;
+    }
     std::size_t n = 0;
     for(;;)
     {
         ++n;
-        auto prev = find_last(it, key, ic);
+        // Use it->key instead of key,
+        // to handle self-intersection
+        auto prev = find_last(it, it->key, ic);
         if(prev == end())
-        {
-            // prev would be invalidated by
-            // erase() so we have to compare
-            // it to end() beforehand.
-            erase(it);
             break;
-        }
         erase(it);
         it = prev;
     }
+    erase(it);
     return n;
 }
 
@@ -120,12 +120,13 @@ auto
 params_ref::
 replace(
     iterator pos,
-    param_view const& value) ->
+    param_view const& p) ->
         iterator
 {
-    return replace(
-        pos, std::next(pos),
-            &value, &value + 1);
+    return u_->edit_params(
+        pos.it_,
+        std::next(pos).it_,
+        detail::param_iter(p));
 }
 
 auto

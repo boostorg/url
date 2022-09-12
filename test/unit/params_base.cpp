@@ -4,16 +4,15 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/boostorg/url
+// Official repository: httqp://github.com/boostorg/url
 //
 
 // Test that header file is self-contained.
 #include <boost/url/params_base.hpp>
 
-#include <boost/url/url.hpp>
 #include <boost/url/url_view.hpp>
-#include <boost/url/params_view.hpp>
 #include <boost/core/ignore_unused.hpp>
+#include <boost/static_assert.hpp>
 
 #include "test_suite.hpp"
 
@@ -24,6 +23,22 @@
 
 namespace boost {
 namespace urls {
+
+BOOST_STATIC_ASSERT(
+    ! std::is_default_constructible<
+        params_base>::value);
+
+BOOST_STATIC_ASSERT(
+    ! std::is_copy_constructible<
+        params_base>::value);
+
+BOOST_STATIC_ASSERT(
+    ! std::is_copy_assignable<
+        params_base>::value);
+
+BOOST_STATIC_ASSERT(
+    std::is_default_constructible<
+        params_base::iterator>::value);
 
 struct params_base_test
 {
@@ -82,32 +97,8 @@ struct params_base_test
         std::initializer_list<
             param_view> init)
     {
-        url u("http://user:pass@www.example.com/path/to/file.txt?k=v#f");
-        if(s.empty())
-            u.remove_query();
-        else
-            u.set_encoded_query(
-                s.substr(1));
-        params_ref p = u.params();
-        if(! BOOST_TEST_EQ(
-            p.size(), init.size()))
-            return;
-        auto it0 = p.begin();
-        auto it1 = init.begin();
-        auto const end = init.end();
-        while(it1 != end)
-        {
-            if(! BOOST_TEST(is_equal(
-                    *it0, *it1)))
-                return;
-            ++it0;
-            ++it1;
-        }
-        // reconstruct u
-        url u2("http://user:pass@www.example.com/path/to/file.txt?k=v#f");
-        u2.params() = init;
-        BOOST_TEST_EQ(u2.encoded_query(), u.encoded_query());
-        check(u2.params(), init);
+        url_view u(s);
+        check(u.params(), init);
     }
 
     //--------------------------------------------
@@ -295,6 +286,49 @@ struct params_base_test
     }
 
     void
+    testIterator()
+    {
+        using T = params_base::iterator;
+
+        // iterator()
+        {
+            T t0;
+            T t1;
+            BOOST_TEST_EQ(t0, t1);
+        }
+
+        // operator==()
+        {
+            url_view u;
+            BOOST_TEST_EQ(
+                u.encoded_params().begin(),
+                u.encoded_params().begin());
+        }
+
+        // operator!=()
+        {
+            url_view u("?");
+            BOOST_TEST_NE(
+                u.encoded_params().begin(),
+                u.encoded_params().end());
+        }
+
+        // value_type outlives reference
+        {
+            params_base::value_type v;
+            {
+                url_view u("/?a=1&bb=22&ccc=333&dddd=4444#f");
+                params_view qp = u.encoded_params();
+                params_base::reference r = *qp.begin();
+                v = params_base::value_type(r);
+            }
+            BOOST_TEST_EQ(v.key, "a");
+            BOOST_TEST_EQ(v.value, "1");
+            BOOST_TEST_EQ(v.has_value, true);
+        }
+    }
+
+    void
     testRange()
     {
         check( "", {} );
@@ -374,6 +408,7 @@ struct params_base_test
     run()
     {
         testObservers();
+        testIterator();
         testRange();
         testJavadocs();
     }

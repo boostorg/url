@@ -256,33 +256,63 @@ template<class CharSet>
 std::size_t
 re_encoded_size_unchecked(
     string_view s,
-    encode_opts const&,
+    encode_opts const& opt,
     CharSet const& allowed) noexcept
 {
     std::size_t n = 0;
     auto const end = s.end();
     auto it = s.begin();
-    while(it != end)
+    if(opt.space_to_plus)
     {
-        if(*it != '%')
+        while(it != end)
         {
-            if(allowed(*it))
-                n += 1; 
+            if(*it != '%')
+            {
+                if( allowed(*it)
+                    || *it == ' ')
+                    n += 1; 
+                else
+                    n += 3;
+                ++it;
+            }
             else
+            {
+                BOOST_ASSERT(end - it >= 3);
+                BOOST_ASSERT(
+                    grammar::hexdig_value(
+                        it[1]) >= 0);
+                BOOST_ASSERT(
+                    grammar::hexdig_value(
+                        it[2]) >= 0);
                 n += 3;
-            ++it;
+                it += 3;
+            }
         }
-        else
+    }
+    else
+    {
+        while(it != end)
         {
-            BOOST_ASSERT(end - it >= 3);
-            BOOST_ASSERT(
-                grammar::hexdig_value(
-                    it[1]) >= 0);
-            BOOST_ASSERT(
-                grammar::hexdig_value(
-                    it[2]) >= 0);
-            n += 3;
-            it += 3;
+            if(*it != '%')
+            {
+                if(allowed(*it))
+                    n += 1; 
+                else
+                    n += 3;
+                ++it;
+            }
+            else
+            {
+                BOOST_ASSERT(end - it >= 3);
+                BOOST_ASSERT(
+                    grammar::hexdig_value(
+                        it[1]) >= 0);
+                BOOST_ASSERT(
+                    grammar::hexdig_value(
+                        it[2]) >= 0);
+                n += 3;
+                it += 3;
+            }
         }
     }
     return n;

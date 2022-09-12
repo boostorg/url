@@ -135,69 +135,77 @@ decrement() noexcept
 {
     BOOST_ASSERT(index > 0);
     --index;
-    dk = 1;
-    dv = 0;
+    dk = 1; // for '&' or '?'
+    dv = 1; // for '='
     auto const begin = ref.begin();
     BOOST_ASSERT(pos > 0);
     auto p1 = begin + (pos - 1);
     auto p = p1;
+    // find key or '='
     for(;;)
     {
         if(p == begin)
         {
             // key
-            nk = 1 + p1 - p;
-            dk = nk - dk;
+            nk = 1 + p1 - p; // with '?'
+            dk = nk - dv;
             nv = 0;
+            dv = 0;
             pos -= nk;
             return;
         }
         else if(*--p == '&')
         {
             // key
-            nk = p1 - p;
-            dk = nk - dk;
+            nk = p1 - p; // with '&'
+            dk = nk - dv;
             nv = 0;
+            dv = 0;
             pos -= nk;
             return;
         }
         if(*p == '=')
         {
-            // maybe value
-            nv = p1 - p;
+            // value
+            nv = p1 - p; // with '='
             break;
         }
         if(*p == '%')
-            dk += 2;
+            dv += 2;
     }
+    // find key and value
     for(;;)
     {
         if(p == begin)
         {
             // key and value
-            nk = 1 + p1 - p - nv;
+            nk = 1 + p1 - p - nv; // with '?'
             dk = nk - dk;
-            dv = nv - dv - 1;
+            dv = nv - dv;
             pos -= nk + nv;
             return;
         }
         if(*--p == '&')
-            break;
+        {
+            // key and value
+            nk = p1 - p - nv; // with '&'
+            dk = nk - dk;
+            dv = nv - dv;
+            pos -= nk + nv;
+            return;
+        }
         if(*p == '=')
         {
-            // maybe value
-            nv = p1 - p;
+            // value
+            nv = p1 - p; // with '='
+            dv += dk;
+            dk = 0;
         }
         else if(*p == '%')
         {
-            dv += 2;
+            dk += 2;
         }
     }
-    // key and value
-    nk = p1 - p - nv;
-    dk = nk - dk;
-    dv = nv - dv - 1;
-    pos -= nk + nv;
 }
 
 param_pct_view

@@ -87,10 +87,10 @@ inline
 auto
 params_ref::
 append(
-    param_view const& v) ->
+    param_view const& p) ->
         iterator
 {
-    return insert(end(), v);
+    return insert(end(), p);
 }
 
 inline

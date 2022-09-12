@@ -79,12 +79,14 @@ class BOOST_SYMBOL_VISIBLE
     {
         ~op_t();
         op_t(url_base&,
+            string_view* = nullptr,
             string_view* = nullptr) noexcept;
         void move(char*, char const*,
             std::size_t) noexcept;
 
         url_base& u;
-        string_view* s = nullptr;
+        string_view* s0 = nullptr;
+        string_view* s1 = nullptr;
         char* old = nullptr;
     };
 

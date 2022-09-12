@@ -43,9 +43,13 @@ class params_base
 
     detail::query_ref ref_;
 
+    params_base() = default;
+    params_base(
+        params_base const&) = default;
+    params_base& operator=(
+        params_base const&) = default;
     params_base(
         detail::query_ref const& ref) noexcept;
-    params_base() = default;
 
 public:
     /** A Bidirectional iterator to a query parameter

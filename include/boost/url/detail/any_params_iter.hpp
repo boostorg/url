@@ -34,40 +34,41 @@ namespace detail {
 class BOOST_SYMBOL_VISIBLE
     any_params_iter
 {
-    string_view* s_ = nullptr;
     bool empty_ = false;
 
 protected:
     explicit
     any_params_iter(
-        bool empty,
-        string_view* s = nullptr) noexcept
-        : s_(s)
-        , empty_(empty)
+        bool empty) noexcept
+        : empty_(empty)
     {
     }
 
-    static
-    string_view&
-    clean(string_view& s) noexcept
+    any_params_iter(
+        bool empty,
+        string_view const& s0_) noexcept
+        : empty_(empty)
+        , s0(s0_)
     {
-        // prevent null
-        if(s.data() == nullptr)
-            s = string_view("", 0);
-        return s;
+    }
+
+    any_params_iter(
+        bool empty,
+        string_view const& s0_,
+        string_view const& s1_) noexcept
+        : empty_(empty)
+        , s0(s0_)
+        , s1(s1_)
+    {
     }
 
 public:
+    string_view s0;
+    string_view s1;
+
     BOOST_URL_DECL
     virtual
     ~any_params_iter() noexcept = 0;
-
-    // Return the input string or nullptr
-    string_view*
-    input() const noexcept
-    {
-        return s_;
-    }
 
     // True if the sequence is empty
     bool
@@ -81,14 +82,14 @@ public:
     void
     rewind() noexcept = 0;
 
-    // Measure and increment the current
-    // element. Returns false on end of
-    // range. n is increased by the
-    // encoded size.
+    // Measure and increment current element
+    // element.
+    // Returns false on end of range.
+    // n is increased by encoded size.
+    // Can throw on bad percent-escape
     virtual
     bool
-    measure(
-        std::size_t& n) noexcept = 0;
+    measure(std::size_t& n) = 0;
 
     // Copy and increment the current
     // element. encoding is performed
@@ -120,8 +121,9 @@ struct BOOST_SYMBOL_VISIBLE
 
 private:
     string_view s_;
-    std::size_t n_ = 0;
-    char const* p_ = nullptr;
+    std::size_t n_;
+    char const* p_;
+    bool at_end_;
 
     void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
@@ -131,11 +133,37 @@ private:
 
 //------------------------------------------------
 //
-// params_iter
+// param_iter
 //
 //------------------------------------------------
 
-class params_iter_base
+// A 1-param range allowing
+// self-intersection
+struct BOOST_SYMBOL_VISIBLE
+    param_iter
+    : any_params_iter
+{
+    BOOST_URL_DECL
+    explicit
+    param_iter(
+        param_view const&) noexcept;
+
+private:
+    bool has_value_;
+    bool at_end_ = false;
+
+    void rewind() noexcept override;
+    bool measure(std::size_t&) noexcept override;
+    void copy(char*&, char const*) noexcept override;
+};
+
+//------------------------------------------------
+//
+// params_iter_base
+//
+//------------------------------------------------
+
+struct params_iter_base
 {
 protected:
     // return encoded size
@@ -143,8 +171,8 @@ protected:
     static
     void
     measure_impl(
-        param_view const& v,
-        std::size_t& n) noexcept;
+        std::size_t& n,
+        param_view const& p) noexcept;
 
     // encode to dest
     BOOST_URL_DECL
@@ -155,6 +183,8 @@ protected:
         char const* end,
         param_view const& v) noexcept;
 };
+
+//------------------------------------------------
 
 // A range of plain query params_ref
 template<class FwdIt>
@@ -196,7 +226,7 @@ private:
     {
         if(it_ == end_)
             return false;
-        measure_impl(*it_++, n);
+       measure_impl(n, *it_++);
         return true;
     }
 
@@ -211,21 +241,49 @@ private:
 
 //------------------------------------------------
 //
+// param_encoded_iter
+//
+//------------------------------------------------
+
+// A 1-param encoded range
+// allowing self-intersection
+struct BOOST_SYMBOL_VISIBLE
+    param_encoded_iter
+    : any_params_iter
+{
+    // constructor argument will
+    // throw on invalid input
+    BOOST_URL_DECL
+    explicit
+    param_encoded_iter(
+        param_pct_view const&) noexcept;
+
+private:
+    bool has_value_;
+    bool at_end_ = false;
+
+    void rewind() noexcept override;
+    bool measure(std::size_t&) noexcept override;
+    void copy(char*&, char const*) noexcept override;
+};
+
+//------------------------------------------------
+//
 // params_encoded_iter
 //
 //------------------------------------------------
 
 // Validating and copying from
 // a string of encoded params
-class params_encoded_iter_base
+struct params_encoded_iter_base
 {
 protected:
     BOOST_URL_DECL
     static
-    bool
+    void
     measure_impl(
-        param_pct_view const& v,
-        std::size_t& n) noexcept;
+        std::size_t& n,
+        param_view const& v) noexcept;
 
     BOOST_URL_DECL
     static
@@ -235,6 +293,8 @@ protected:
         char const* end,
         param_view const& v) noexcept;
 };
+
+//------------------------------------------------
 
 // A range of encoded query params_ref
 template<class FwdIt>
@@ -278,11 +338,15 @@ private:
 
     bool
     measure(
-        std::size_t& n) noexcept override
+        std::size_t& n) override
     {
         if(it_ == end_)
             return false;
-        return measure_impl(*it_++, n);
+        // param_pct_view conversion
+        // will throw on invalid input
+         measure_impl(n,
+            param_pct_view(*it_++));
+        return true;
     }
 
     void
@@ -302,25 +366,24 @@ private:
 //------------------------------------------------
 
 // An iterator which outputs
-// exactly one value
+// one value on an existing key
 struct param_value_iter
     : any_params_iter
 {
     param_value_iter(
         std::size_t nk,
-        string_view value,
+        string_view const& value,
         bool has_value) noexcept
         : any_params_iter(
-            false, &value_)
+            false,
+            value)
         , nk_(nk)
-        , value_(value)
         , has_value_(has_value)
     {
     }
 
 private:
     std::size_t nk_ = 0;
-    string_view value_;
     bool has_value_ = false;
     bool at_end_ = false;
 
@@ -335,26 +398,25 @@ private:
 //
 //------------------------------------------------
 
-// An iterator which outputs
-// exactly one encoded value
+// An iterator which outputs one
+// encoded value on an existing key
 struct param_encoded_value_iter
     : any_params_iter
 {
     param_encoded_value_iter(
         std::size_t nk,
-        pct_string_view value,
+        pct_string_view const& value,
         bool has_value) noexcept
-        : any_params_iter(false,
-            &detail::ref(value_))
+        : any_params_iter(
+            false,
+            value)
         , nk_(nk)
-        , value_(value)
         , has_value_(has_value)
     {
     }
 
 private:
     std::size_t nk_ = 0;
-    pct_string_view value_;
     bool has_value_ = false;
     bool at_end_ = false;
 

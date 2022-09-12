@@ -258,7 +258,7 @@ public:
         All iterators are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
 
@@ -294,7 +294,7 @@ public:
         All iterators are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
 
@@ -360,7 +360,7 @@ public:
         @code
         url u;
 
-        u.params().append( {{ "first", "John" }, {{ "last", "Doe" }});
+        u.params().append({ { "first", "John" }, { "last", "Doe" } });
         @endcode
 
         @par Complexity
@@ -387,9 +387,10 @@ public:
         <br>
         The `end()` iterator is invalidated.
 
-        @par Example
-        @code
-        @endcode
+        @note
+        The strings referenced by the inputs
+        must not come from the underlying url,
+        or else the behavior is undefined.
 
         @par Mandates
         @code
@@ -424,10 +425,6 @@ public:
         All iterators that are equal to
         `before` or come after are invalidated.
 
-        @par Example
-        @code
-        @endcode
-
         @par Complexity
         Linear in `this->url().encoded_query().size()`.
 
@@ -461,13 +458,9 @@ public:
         `before` or come after are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
-
-        @par Example
-        @code
-        @endcode
 
         @par Complexity
         Linear in `this->url().encoded_query().size()`.
@@ -503,13 +496,9 @@ public:
         `before` or come after are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
-
-        @par Example
-        @code
-        @endcode
 
         @par Mandates
         @code
@@ -584,10 +573,6 @@ public:
         All iterators that are equal to
         `first` or come after are invalidated.
 
-        @par Example
-        @code
-        @endcode
-
         @par Complexity
         Linear in `this->url().encoded_query().size()`.
 
@@ -609,10 +594,6 @@ public:
 
         <br>
         All iterators are invalidated.
-
-        @par Example
-        @code
-        @endcode
 
         @par Postconditions
         @code
@@ -694,7 +675,7 @@ public:
         `from` or come after are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
 
@@ -732,7 +713,7 @@ public:
         `from` or come after are invalidated.
 
         @note
-        The strings referenced by the params
+        The strings referenced by the inputs
         must not come from the underlying url,
         or else the behavior is undefined.
 
