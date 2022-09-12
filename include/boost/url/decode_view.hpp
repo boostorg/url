@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/decode_opts.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <type_traits>
 #include <iterator>
 #include <iosfwd>
@@ -180,20 +181,23 @@ public:
         @par Exception Safety
         Exceptions thrown on invalid input.
 
+        @throw system_error
+        The string contains an invalid percent encoding.
+
         @param s The encoded string.
 
         @param opt The options for decoding. If
         this parameter is omitted, the default
         options will be used.
-
-        @throw std::invalid_argument `s` is
-        not a valid percent-encoded string.
     */
     BOOST_URL_DECL
     explicit
     decode_view(
-        string_view s,
-        decode_opts opt = {});
+        BOOST_URL_PCT_STRING_VIEW s,
+        decode_opts opt = {}) noexcept
+        : decode_view(string_view(s), s.decoded_size(), opt)
+    {
+    }
 
     //--------------------------------------------
     //
@@ -1002,6 +1006,13 @@ operator<<(
     decode_view const& s);
 
 //------------------------------------------------
+
+inline
+decode_view
+pct_string_view::operator*() const noexcept
+{
+    return decode_view(*this);
+}
 
 #ifndef BOOST_URL_DOCS
 namespace detail {

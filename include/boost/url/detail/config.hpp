@@ -110,4 +110,6 @@ using pos_t = size_t;
 #endif
 #endif
 
+#define BOOST_URL_PCT_STRING_VIEW pct_string_view
+
 #endif
