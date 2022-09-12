@@ -12,7 +12,6 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/decode_opts.hpp>
-#include <boost/url/decode_view.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/string_token.hpp>
@@ -29,6 +28,7 @@ namespace urls {
 //------------------------------------------------
 
 #ifndef BOOST_URL_DOCS
+class decode_view;
 class pct_string_view;
 
 namespace detail {
@@ -152,11 +152,11 @@ public:
 
         @par Postconditions
         @code
-        this->data() == s
+        this->data() == string_view(s).data()
         @endcode
 
         @par Complexity
-        Linear in `std::strlen(s)`.
+        Linear in `string_view(s).size()`.
 
         @par Exception Safety
         Exceptions thrown on invalid input.
@@ -164,10 +164,22 @@ public:
         @throw system_error
         The string contains an invalid percent encoding.
 
+        @tparam String A type convertible to @ref string_view
+
         @param s The string to construct from.
     */
+    template<
+        class String
+#ifndef BOOST_URL_DOCS
+        , class = typename std::enable_if<
+            std::is_convertible<
+                String,
+                string_view
+                    >::value>::type
+#endif
+    >
     pct_string_view(
-        char const* s)
+        String const& s)
         : pct_string_view(
             string_view(s))
     {
@@ -332,38 +344,11 @@ public:
         @par Exception Safety
         Throws nothing.
 
-        @param opt The options to use for decoding
-        percent escapes. If this parameter is
-        omitted, default settings are used.
-
-        @see
-            @ref decode_opts,
-            @ref decode_view.
-    */
-    decode_view
-    decoded(
-        decode_opts const& opt = {}) const noexcept
-    {
-        return detail::make_decode_view(
-            s_, dn_, opt);
-    }
-
-    /** Return the string as a range of decoded characters
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
-
         @see
             @ref decode_view.
     */
     decode_view
-    operator*() const noexcept
-    {
-        return decoded();
-    }
+    operator*() const noexcept;
 
     /** Return the string with percent-decoding
 

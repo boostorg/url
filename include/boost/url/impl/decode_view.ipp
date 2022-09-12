@@ -52,19 +52,6 @@ decode_view(
 {
 }
 
-decode_view::
-decode_view(
-    string_view s,
-    decode_opts opt)
-    : p_(s.data())
-    , n_(s.size())
-    , plus_to_space_(opt.plus_to_space)
-{
-    opt.non_normal_is_error = false;
-    dn_ = detail::validate_encoding(
-        s, opt).value(BOOST_URL_POS);
-}
-
 namespace detail {
 
 template <class T>

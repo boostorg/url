@@ -10,6 +10,7 @@
 // Test that header file is self-contained.
 #include <boost/url/rfc/query_rule.hpp>
 
+#include <boost/url/decode_view.hpp>
 #include <boost/url/grammar/range_rule.hpp>
 
 #include "test_rule.hpp"
