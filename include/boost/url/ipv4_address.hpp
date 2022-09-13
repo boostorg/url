@@ -15,6 +15,7 @@
 #include <boost/url/error.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/grammar/string_token.hpp>
 #include <string>
 #include <array>
 #include <cstdint>
@@ -156,24 +157,44 @@ public:
 
     /** Return the address as a string in dotted decimal format
 
+        When called with no arguments, the
+        return type is `std::string`.
+        Otherwise, the return type and style
+        of output is determined by which string
+        token is passed.
+
+        @par Example
+        @code
+        assert( ipv4_address(0x01020304).to_string() == "1.2.3.4" );
+        @endcode
+
+        @par Complexity
+        Constant.
+
         @par Exception Safety
         Strong guarantee.
         Calls to allocate may throw.
+        String tokens may throw exceptions.
 
-        @param a An optional allocator the returned
-        string will use. If this parameter is omitted,
-        the default allocator is used.
+        @return The return type of the string token.
+        If the token parameter is omitted, then
+        a new `std::string` is returned.
+        Otherwise, the function return type
+        will be the result type of the token.
 
-        @return A string using the specified allocator.
+        @param token An optional string token.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc4291#section-2.2">
+            2.2. Text Representation of Addresses (rfc4291)</a>
     */
-    template<class Allocator =
-        std::allocator<char>>
-    std::basic_string<char, std::char_traits<char>, Allocator>
-    to_string(Allocator const& a = {}) const
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    to_string(
+        BOOST_URL_STRTOK_ARG(token)) const
     {
-        char buf[max_str_len];
-        auto const n = print_impl(buf);
-        return {buf, n, a};
+        to_string_impl(token);
+        return token.result();
     }
 
     /** Write a dotted decimal string representing the address to a buffer
@@ -281,6 +302,11 @@ private:
     std::size_t
     print_impl(
         char* dest) const noexcept;
+
+    BOOST_URL_DECL
+    void
+    to_string_impl(
+        string_token::arg& t) const;
 
     uint_type addr_ = 0;
 };

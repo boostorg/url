@@ -224,6 +224,17 @@ print_impl(
     return dest - dest0;
 }
 
+void
+ipv6_address::
+to_string_impl(
+    string_token::arg& t) const
+{
+    char buf[max_str_len];
+    auto const n = print_impl(buf);
+    char* dest = t.prepare(n);
+    std::memcpy(dest, buf, n);
+}
+
 //------------------------------------------------
 
 auto
