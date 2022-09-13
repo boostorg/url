@@ -137,6 +137,47 @@ print_impl(
     return dest - start;
 }
 
+std::size_t
+ipv4_address::
+print_size() const noexcept
+{
+    std::size_t n = 3;
+    auto const count =
+        []( std::size_t& n,
+            unsigned char v)
+        {
+            if(v >= 100)
+            {
+                ++n;
+                v %= 100;
+            }
+            if(v >= 10)
+            {
+                ++n;
+                v %= 10;
+            }
+            ++n;
+        };
+    auto const v = to_uint();
+    count(n, (v >> 24) & 0xff);
+    count(n, (v >> 16) & 0xff);
+    count(n, (v >>  8) & 0xff);
+    count(n, (v      ) & 0xff);
+    return n;
+}
+
+void
+ipv4_address::
+to_string_impl(
+    string_token::arg& t) const
+{
+    std::size_t n = print_size();
+    char* dest = t.prepare(n);
+    std::size_t n2 = print_impl(dest);
+    BOOST_ASSERT(n == n2);
+    ignore_unused(n2);
+}
+
 //------------------------------------------------
 
 auto
