@@ -19,6 +19,7 @@ Run the linuxdocs.sh script which can be found in the doc/tools directory:
 tools/linuxdocs.sh
 ```
 
+
 ## Mac OSX
 
 Run the osxdocs.sh script which can be found in the doc/tools directory:
