@@ -6,8 +6,7 @@ Docs            | [![Documentation](https://img.shields.io/badge/docs-master-bri
 [Drone](https://drone.io/) | [![Build Status](https://drone.cpp.al/api/badges/boostorg/url/status.svg?ref=refs/heads/master)](https://drone.cpp.al/boostorg/url)                 | [![Build Status](https://drone.cpp.al/api/badges/boostorg/url/status.svg?ref=refs/heads/develop)](https://drone.cpp.al/boostorg/url)
 [GitHub Actions](https://github.com/) | [![CI](https://github.com/boostorg/url/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/boostorg/url/actions/workflows/ci.yml) | [![CI](https://github.com/boostorg/url/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/boostorg/url/actions/workflows/ci.yml)
 [codecov.io](https://codecov.io) | [![codecov](https://codecov.io/gh/CPPAlliance/url/branch/master/graph/badge.svg)](https://codecov.io/gh/CPPAlliance/url/branch/master)              | [![codecov](https://codecov.io/gh/CPPAlliance/url/branch/develop/graph/badge.svg)](https://codecov.io/gh/CPPAlliance/url/branch/develop)
-Matrix          | ---                                                                                                                                                 | --- 
-Fuzzing         | ---                                                                                                                                                 | --- 
+Matrix          | [![Matrix](https://img.shields.io/badge/matrix-master-brightgreen.svg)](http://www.boost.org/development/tests/master/developer/url.html)           | [![Matrix](https://img.shields.io/badge/matrix-develop-brightgreen.svg)](http://www.boost.org/development/tests/develop/developer/url.html)
 
 # Boost.URL
 
