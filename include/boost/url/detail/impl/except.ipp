@@ -21,49 +21,34 @@ namespace urls {
 namespace detail {
 
 void
-throw_url_too_large(
+throw_system_error(
+    error_code const& ec,
     source_location const& loc)
 {
     throw_exception(
-        std::length_error(
-            "url too large"), loc);
+        boost::system::system_error(ec), loc);
 }
 
 void
-throw_bad_alloc(
+throw_errc(
+    errc::errc_t ev,
     source_location const& loc)
 {
-    throw_exception(
-        std::bad_alloc(), loc);
-}
-
-void
-throw_length_error(
-    char const* what,
-    source_location const& loc)
-{
-    throw_exception(
-        std::length_error(what), loc);
+    throw_system_error(make_error_code(ev), loc);
 }
 
 void
 throw_invalid_argument(
     source_location const& loc)
 {
-    throw_system_error(
-        make_error_code(
-            errc::invalid_argument,
-            &loc));
+    throw_errc(errc::invalid_argument, loc);
 }
 
 void
-throw_system_error(
-    error_code const& ec,
+throw_length_error(
     source_location const& loc)
 {
-    throw_exception(
-        boost::system::system_error(
-            ec), loc);
+    throw_errc(errc::value_too_large, loc);
 }
 
 } // detail

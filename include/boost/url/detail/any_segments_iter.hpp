@@ -100,7 +100,6 @@ private:
 
 // A 1-segment range
 // allowing self-intersection
-// iterates segments in an encoded string
 struct BOOST_SYMBOL_VISIBLE
     segment_iter
     : any_segments_iter
@@ -198,7 +197,6 @@ private:
 
 // A 1-segment range
 // allowing self-intersection
-// iterates segments in an encoded string
 struct BOOST_SYMBOL_VISIBLE
     segment_encoded_iter
     : any_segments_iter

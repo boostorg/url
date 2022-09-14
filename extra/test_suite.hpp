@@ -373,7 +373,8 @@ test_with_impl(
 {
     if(pred(t, u))
     {
-        any_runner::instance().test(true, "", func, file, line);
+        any_runner::instance().test(
+            true, "", func, file, line);
         return true;
     }
     std::stringstream ss;
@@ -384,7 +385,8 @@ test_with_impl(
         expr1 << " " <<
         lwt_predicate_name(pred) <<
         " " << expr2 << ")";
-    any_runner::instance().test(false, ss.str().c_str(), func, file, line);
+    any_runner::instance().test(
+        false, ss.str().c_str(), func, file, line);
     return false;
 }
 
@@ -398,7 +400,7 @@ test_with_impl(
 # pragma GCC diagnostic pop
 #endif
 
-//----------------------------------------------------------
+//------------------------------------------------
 
 struct log_type
 {
@@ -412,7 +414,7 @@ struct log_type
     }
 };
 
-//----------------------------------------------------------
+//------------------------------------------------
 
 } // detail
 

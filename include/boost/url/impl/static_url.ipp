@@ -57,7 +57,7 @@ reserve_impl(
 {
     if(n <= cap_)
         return;
-    detail::throw_bad_alloc();
+    detail::throw_length_error();
 }
 
 //----------------------------------------------------------

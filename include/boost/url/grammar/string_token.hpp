@@ -174,7 +174,7 @@ struct append_to_t
     {
         std::size_t n0 = s_.size();
         if(n > s_.max_size() - n0)
-            urls::detail::throw_bad_alloc();
+            urls::detail::throw_length_error();
         s_.resize(n0 + n);
         return &s_[n0];
     }

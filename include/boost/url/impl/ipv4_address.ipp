@@ -73,8 +73,7 @@ to_buffer(
     std::size_t dest_size) const
 {
     if(dest_size < max_str_len)
-        detail::throw_length_error(
-            "buffer overflow");
+        detail::throw_length_error();
     auto n = print_impl(dest);
     return string_view(dest, n);
 }

@@ -107,9 +107,12 @@ public:
 
     /** Return the maximum number of characters possible
 
-        This represents the largest number of
-        characters that are possible in a url,
+        This represents the largest number
+        of characters that are theoretically
+        possible to represent in a url,
         not including any null terminator.
+        In practice the actual possible size
+        may be lower than this number.
 
         @par Complexity
         Constant.
