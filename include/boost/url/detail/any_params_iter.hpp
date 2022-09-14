@@ -31,51 +31,32 @@ namespace detail {
     possibly encoded sequence of
     query params_ref.
 */  
-class BOOST_SYMBOL_VISIBLE
+struct BOOST_SYMBOL_VISIBLE
     any_params_iter
 {
-    bool empty_ = false;
-
 protected:
-    explicit
     any_params_iter(
-        bool empty) noexcept
-        : empty_(empty)
-    {
-    }
-
-    any_params_iter(
-        bool empty,
-        string_view const& s0_) noexcept
-        : empty_(empty)
-        , s0(s0_)
-    {
-    }
-
-    any_params_iter(
-        bool empty,
-        string_view const& s0_,
-        string_view const& s1_) noexcept
-        : empty_(empty)
-        , s0(s0_)
+        bool empty_,
+        string_view s0_ = {},
+        string_view s1_ = {}) noexcept
+        : s0(s0_)
         , s1(s1_)
+        , empty(empty_)
     {
     }
 
 public:
+    // these are adjusted
+    // when self-intersecting
     string_view s0;
     string_view s1;
+
+    // True if the sequence is empty
+    bool empty = false;
 
     BOOST_URL_DECL
     virtual
     ~any_params_iter() noexcept = 0;
-
-    // True if the sequence is empty
-    bool
-    empty() const noexcept
-    {
-        return empty_;
-    }
 
     // Rewind the iterator to the beginning
     virtual
@@ -251,8 +232,6 @@ struct BOOST_SYMBOL_VISIBLE
     param_encoded_iter
     : any_params_iter
 {
-    // constructor argument will
-    // throw on invalid input
     BOOST_URL_DECL
     explicit
     param_encoded_iter(
@@ -342,9 +321,8 @@ private:
     {
         if(it_ == end_)
             return false;
-        // param_pct_view conversion
-        // will throw on invalid input
-         measure_impl(n,
+        // throw on invalid input
+        measure_impl(n,
             param_pct_view(*it_++));
         return true;
     }

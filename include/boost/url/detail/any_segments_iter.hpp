@@ -20,54 +20,38 @@ namespace boost {
 namespace urls {
 namespace detail {
 
-class BOOST_SYMBOL_VISIBLE
+struct BOOST_SYMBOL_VISIBLE
     any_segments_iter
 {
-    string_view* s_ = nullptr;
-
 protected:
     explicit
     any_segments_iter(
-        string_view* s = nullptr) noexcept
-        : s_(s)
+        string_view s_ = {}) noexcept
+        : s(s_)
     {
     }
-
-    string_view front_;
 
 public:
-    string_view
-    front() const noexcept
-    {
-        return front_;
-    }
+    // this is adjusted
+    // when self-intersecting
+    string_view s;
 
-    // Return the input string or nullptr
-    string_view*
-    input() const noexcept
-    {
-        return s_;
-    }
+    // the first segment,
+    // to handle special cases
+    string_view front;
 
     // Rewind the iterator to the beginning
-    virtual
-    void
-    rewind() noexcept = 0;
+    virtual void rewind() noexcept = 0;
 
     // Measure and increment the current
     // element. n is increased by the
     // encoded size. Returns false on
     // end of range. 
-    virtual bool measure(
-        std::size_t& n) noexcept = 0;
+    virtual bool measure(std::size_t& n) = 0;
 
     // Copy and increment the current
-    // element. encoding is performed
-    // if needed.
-    virtual
-    void
-    copy(
-        char*& dest,
+    // element, encoding as needed.
+    virtual void copy(char*& dest,
         char const* end) noexcept = 0;
 };
 
@@ -75,15 +59,14 @@ public:
 
 // iterates segments in a string
 struct BOOST_SYMBOL_VISIBLE
-    path_iter :
-    public any_segments_iter
+    path_iter
+    : any_segments_iter
 {
     explicit
     path_iter(
         string_view s) noexcept;
 
 protected:
-    string_view s_;
     std::size_t pos_;
     std::size_t next_;
 
@@ -111,16 +94,42 @@ private:
 
 //------------------------------------------------
 //
+// segment_iter
+//
+//------------------------------------------------
+
+// A 1-segment range
+// allowing self-intersection
+// iterates segments in an encoded string
+struct BOOST_SYMBOL_VISIBLE
+    segment_iter
+    : any_segments_iter
+{
+    explicit
+    segment_iter(
+        string_view s) noexcept;
+
+private:
+    bool at_end_ = false;
+    void rewind() noexcept override;
+    bool measure(std::size_t&) noexcept override;
+    void copy(char*&, char const*) noexcept override;
+};
+
+//------------------------------------------------
+//
 // segments_iter
 //
 //------------------------------------------------
 
-class segments_iter_base
+struct segments_iter_base
 {
 protected:
-    BOOST_URL_DECL static void measure_impl(
+    BOOST_URL_DECL static void
+    measure_impl(
         string_view, std::size_t&) noexcept;
-    BOOST_URL_DECL static void copy_impl(
+    BOOST_URL_DECL static void
+    copy_impl(
         string_view, char*&, char const*) noexcept;
 };
 
@@ -145,7 +154,7 @@ struct segments_iter
         , end_(last)
     {
         if (first != last)
-            front_ = *first;
+            front = *first;
     }
 
 private:
@@ -183,19 +192,45 @@ private:
 
 //------------------------------------------------
 //
+// segment_encoded_iter
+//
+//------------------------------------------------
+
+// A 1-segment range
+// allowing self-intersection
+// iterates segments in an encoded string
+struct BOOST_SYMBOL_VISIBLE
+    segment_encoded_iter
+    : any_segments_iter
+{
+    explicit
+    segment_encoded_iter(
+        pct_string_view const& s) noexcept;
+
+private:
+    bool at_end_ = false;
+    void rewind() noexcept override;
+    bool measure(std::size_t&) noexcept override;
+    void copy(char*&, char const*) noexcept override;
+};
+
+//------------------------------------------------
+//
 // segments_encoded_iter
 //
 //------------------------------------------------
 
 // Validating and copying from
 // a string of encoded segments
-class segments_encoded_iter_base
+struct segments_encoded_iter_base
 {
 protected:
-    BOOST_URL_DECL static bool measure_impl(
-        pct_string_view, std::size_t&) noexcept;
-    BOOST_URL_DECL static void copy_impl(
-        string_view, char*&, char const*) noexcept;
+    BOOST_URL_DECL static void
+    measure_impl(
+        std::size_t&, string_view) noexcept;
+    BOOST_URL_DECL static void
+    copy_impl(
+        char*&, char const*, string_view) noexcept;
 };
 
 // iterates segments in an
@@ -224,8 +259,11 @@ struct segments_encoded_iter
         , it0_(first)
         , end_(last)
     {
-        if (it_ != end_)
-            front_ = *first;
+        if(it_ != end_)
+        {
+            // throw on invalid input
+            front = pct_string_view(*first);
+        }
     }
 
 private:
@@ -241,12 +279,13 @@ private:
 
     bool
     measure(
-        std::size_t& n) noexcept override
+        std::size_t& n) override
     {
         if(it_ == end_)
             return false;
-        if(! measure_impl(*it_, n))
-            return false;
+        // throw on invalid input
+        measure_impl(n,
+            pct_string_view(*it_));
         ++it_;
         return true;
     }
@@ -257,8 +296,7 @@ private:
         char const* end
             ) noexcept override
     {
-        copy_impl(*it_, dest, end);
-        ++it_;
+        copy_impl(dest, end, *it_++);
     }
 };
 

@@ -12,6 +12,7 @@
 #define BOOST_URL_IMPL_PARAMS_REF_HPP
 
 #include <boost/url/params_view.hpp>
+#include <boost/url/detail/any_params_iter.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/grammar/recycled.hpp>
 #include <boost/assert.hpp>

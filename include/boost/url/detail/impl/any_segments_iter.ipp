@@ -28,9 +28,8 @@ namespace detail {
 
 path_iter::
 path_iter(
-    string_view s) noexcept
-    : any_segments_iter(&s_)
-    , s_(s)
+    string_view s_) noexcept
+    : any_segments_iter(s_)
 {
     rewind();
 }
@@ -40,7 +39,7 @@ path_iter::
 increment() noexcept
 {
     pos_ = next_;
-    if(pos_ == s_.size())
+    if(pos_ == s.size())
     {
         pos_ = string_view::npos;
         return;
@@ -48,20 +47,20 @@ increment() noexcept
     // skip '/'
     ++pos_;
     auto const end =
-        s_.data() + s_.size();
+        s.data() + s.size();
     auto const p0 =
-        s_.data() + pos_;
+        s.data() + pos_;
     auto p = p0;
     while(p != end)
     {
         if(*p == '/')
         {
-            next_ = p - s_.data();
+            next_ = p - s.data();
             return;
         }
         ++p;
     }
-    next_ = s_.size();
+    next_ = s.size();
 }
 
 void
@@ -69,8 +68,8 @@ path_iter::
 rewind() noexcept
 {
     pos_ = 0;
-    auto p0 = s_.data();
-    auto const end = p0 + s_.size();
+    auto p0 = s.data();
+    auto const end = p0 + s.size();
     if(p0 != end)
     {
         // skip leading '/'
@@ -87,14 +86,14 @@ rewind() noexcept
                 break;
             ++p;
         }
-        front_ = string_view(
+        front = string_view(
             p0, p - p0);
-        next_ = p - s_.data();
+        next_ = p - s.data();
     }
     else
     {
         pos_ = string_view::npos;
-        front_ = { p0, 0 };
+        front = { p0, 0 };
     }
 }
 
@@ -105,11 +104,12 @@ measure(
 {
     if(pos_ == string_view::npos)
         return false;
-    string_view s = s_.substr(
-        pos_, next_ - pos_);
     encode_opts opt;
-    n += urls::encoded_size(
-        s,
+    opt.space_to_plus = false;
+    n += encoded_size(
+        s.substr(
+            pos_,
+            next_ - pos_),
         opt,
         pchars);
     increment();
@@ -124,13 +124,14 @@ copy(
 {
     BOOST_ASSERT(pos_ !=
         string_view::npos);
-    string_view s = s_.substr(
-        pos_, next_ - pos_);
     encode_opts opt;
+    opt.space_to_plus = false;
     dest += encode(
         dest,
         end,
-        s,
+        s.substr(
+            pos_,
+            next_ - pos_),
         opt,
         pchars);
     increment();
@@ -156,11 +157,12 @@ measure(
 {
     if(pos_ == string_view::npos)
         return false;
-    string_view s = s_.substr(
-        pos_, next_ - pos_);
     encode_opts opt;
+    opt.space_to_plus = false;
     n += detail::re_encoded_size_unchecked(
-        s,
+        s.substr(
+            pos_,
+            next_ - pos_),
         opt,
         pchars);
     increment();
@@ -175,16 +177,69 @@ copy(
 {
     BOOST_ASSERT(pos_ !=
         string_view::npos);
-    string_view s = s_.substr(
-        pos_, next_ - pos_);
     encode_opts opt;
+    opt.space_to_plus = false;
     detail::re_encode_unchecked(
+        dest,
+        end,
+        s.substr(
+            pos_,
+            next_ - pos_),
+        opt,
+        pchars);
+    increment();
+}
+
+//------------------------------------------------
+//
+// segment_iter
+//
+//------------------------------------------------
+
+segment_iter::
+segment_iter(
+    string_view s_) noexcept
+    : any_segments_iter(s_)
+{
+    front = s;
+}
+
+void
+segment_iter::
+rewind() noexcept
+{
+    at_end_ = false;
+}
+
+bool
+segment_iter::
+measure(
+    std::size_t& n) noexcept
+{
+    if(at_end_)
+        return false;
+    encode_opts opt;
+    opt.space_to_plus = false;
+    n += encoded_size(
+        s,
+        opt,
+        pchars);
+    at_end_ = true;
+    return true;
+}
+
+void
+segment_iter::
+copy(char*& dest, char const* end) noexcept
+{
+    encode_opts opt;
+    opt.space_to_plus = false;
+    dest += encode(
         dest,
         end,
         s,
         opt,
         pchars);
-    increment();
 }
 
 //------------------------------------------------
@@ -200,6 +255,7 @@ measure_impl(
     std::size_t& n) noexcept
 {
     encode_opts opt;
+    opt.space_to_plus = false;
     n += encoded_size(
         s,
         opt,
@@ -214,7 +270,60 @@ copy_impl(
     char const* end) noexcept
 {
     encode_opts opt;
+    opt.space_to_plus = false;
     dest += encode(
+        dest,
+        end,
+        s,
+        opt,
+        pchars);
+}
+
+//------------------------------------------------
+//
+// segment_encoded_iter
+//
+//------------------------------------------------
+
+segment_encoded_iter::
+segment_encoded_iter(
+    pct_string_view const& s_) noexcept
+    : any_segments_iter(s_)
+{
+    front = s;
+}
+
+void
+segment_encoded_iter::
+rewind() noexcept
+{
+    at_end_ = false;
+}
+
+bool
+segment_encoded_iter::
+measure(
+    std::size_t& n) noexcept
+{
+    if(at_end_)
+        return false;
+    encode_opts opt;
+    opt.space_to_plus = false;
+    n += detail::re_encoded_size_unchecked(
+        s,
+        opt,
+        pchars);
+    at_end_ = true;
+    return true;
+}
+
+void
+segment_encoded_iter::
+copy(char*& dest, char const* end) noexcept
+{
+    encode_opts opt;
+    opt.space_to_plus = false;
+    detail::re_encode_unchecked(
         dest,
         end,
         s,
@@ -228,28 +337,29 @@ copy_impl(
 //
 //------------------------------------------------
 
-bool
+void
 segments_encoded_iter_base::
 measure_impl(
-    pct_string_view s,
-    std::size_t& n) noexcept
+    std::size_t& n,
+    string_view s) noexcept
 {
     encode_opts opt;
+    opt.space_to_plus = false;
     n += detail::re_encoded_size_unchecked(
         s,
         opt,
         pchars);
-    return true;
 }
 
 void
 segments_encoded_iter_base::
 copy_impl(
-    string_view s,
     char*& dest,
-    char const* end) noexcept
+    char const* end,
+    string_view s) noexcept
 {
     encode_opts opt;
+    opt.space_to_plus = false;
     detail::re_encode_unchecked(
         dest,
         end,
