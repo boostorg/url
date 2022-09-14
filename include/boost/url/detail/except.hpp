@@ -10,47 +10,34 @@
 #ifndef BOOST_URL_DETAIL_EXCEPT_HPP
 #define BOOST_URL_DETAIL_EXCEPT_HPP
 
-#include <boost/url/error.hpp>
+#include <boost/url/error_types.hpp>
 #include <boost/assert/source_location.hpp>
 
 namespace boost {
 namespace urls {
 namespace detail {
 
-BOOST_URL_DECL
-void
-BOOST_NORETURN
-throw_url_too_large(
+BOOST_URL_DECL void BOOST_NORETURN
+throw_system_error(
+    error_code const& ec,
     source_location const& loc =
         BOOST_URL_POS);
 
-BOOST_URL_DECL
-void
-BOOST_NORETURN
-throw_bad_alloc(
+BOOST_URL_DECL void BOOST_NORETURN
+throw_errc(
+    errc::errc_t ev,
     source_location const& loc =
-    BOOST_URL_POS);
+        BOOST_URL_POS);
 
-BOOST_URL_DECL
-void
-BOOST_NORETURN
+//-----
+
+BOOST_URL_DECL void BOOST_NORETURN
 throw_invalid_argument(
     source_location const& loc =
         BOOST_URL_POS);
 
-BOOST_URL_DECL
-void
-BOOST_NORETURN
+BOOST_URL_DECL void BOOST_NORETURN
 throw_length_error(
-    char const* what,
-    source_location const& loc =
-        BOOST_URL_POS);
-
-BOOST_URL_DECL
-void
-BOOST_NORETURN
-throw_system_error(
-    error_code const& ec,
     source_location const& loc =
         BOOST_URL_POS);
 

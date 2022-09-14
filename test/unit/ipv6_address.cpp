@@ -115,7 +115,7 @@ public:
             char buf2[10];
             BOOST_TEST_THROWS(
                 a.to_buffer(buf2, sizeof(buf2)),
-                std::length_error);
+                system_error);
         }
 
         // is_unspecified

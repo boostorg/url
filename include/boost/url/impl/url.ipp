@@ -110,8 +110,7 @@ reserve_impl(
     op_t& op)
 {
     if(n > max_size())
-        detail::throw_length_error(
-            "too large");
+        detail::throw_length_error();
     if(n <= cap_)
         return;
     char* s;
@@ -149,7 +148,7 @@ cleanup(
         deallocate(op.old);
 }
 
-//----------------------------------------------------------
+//------------------------------------------------
 
 void
 url::

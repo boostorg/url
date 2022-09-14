@@ -84,7 +84,12 @@ class BOOST_SYMBOL_VISIBLE
 
     @par Example
     @code
-    static_url< 4000 > u( "https://www.example.com" );
+    static_url< 1024 > u( "https://www.example.com" );
+    @endcode
+
+    @par Invariants
+    @code
+    this->capacity() == Capacity
     @endcode
 
     @tparam Capacity The maximum capacity
@@ -105,11 +110,54 @@ class static_url
     using url_view_base::digest;
 
 public:
+    //--------------------------------------------
+    //
+    // Special Members
+    //
+    //--------------------------------------------
+
     /** Destructor
+
+        Any params, segments, or iterators which
+        reference this object are invalidated.
+        The underlying character buffer is
+        destroyed, invalidating all references
+        to it.
     */
     ~static_url() = default;
 
     /** Constructor
+
+        Default constructed urls contain
+        a zero-length string. This matches
+        the grammar for a relative-ref with
+        an empty path and no query or
+        fragment.
+
+        @par Example
+        @code
+        static_url< 1024 > u;
+        @endcode
+
+        @par Postconditions
+        @code
+        this->empty() == true
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+        @endcode
+
+        @par Specification
+        <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
+            >4.2. Relative Reference (rfc3986)</a>
     */
     static_url() noexcept
         : static_url_base(
@@ -117,19 +165,35 @@ public:
     {
     }
 
-    /** Construct from a string.
+    /** Constructor.
 
-        This function constructs a URL from
+        This function constructs a url from
         the string `s`, which must contain a
-        valid URI or <em>relative-ref</em> or
-        else an exception is thrown. Upon
-        successful construction, the view
-        refers to the characters in the
-        buffer pointed to by `s`.
-        Ownership is not transferred; The
-        caller is responsible for ensuring
-        that the lifetime of the buffer
-        extends until the view is destroyed.
+        valid <em>URI</em> or <em>relative-ref</em>
+        or else an exception is thrown.
+        The new url retains ownership by
+        making a copy of the passed string.
+
+        @par Example
+        @code
+        static_url< 1024 > u( "https://www.example.com" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->buffer().data() != s.data()
+        @endcode
+
+        @par Complexity
+        Linear in `s.size()`.
+
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The input does not contain a valid url.
+
+        @param s The string to parse.
 
         @par BNF
         @code
@@ -138,16 +202,13 @@ public:
         relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
         @endcode
 
-        @throw std::exception parse error.
-
-        @param s The string to parse.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
             >4.1. URI Reference</a>
     */
     explicit
-    static_url(string_view s)
+    static_url(
+        string_view s)
         : static_url_base(
             buf_, sizeof(buf_), s)
     {
@@ -155,15 +216,24 @@ public:
 
     /** Constructor
 
-        This constructs a copy of `u`.
+        The newly constructed object will
+        contain a copy of `u`.
+
+        @par Postconditions
+        @code
+        this->buffer() == u.buffer() && this->buffer.data() != u.buffer().data()
+        @endcode
+
+        @par Complexity
+        Linear in `u.size()`.
 
         @par Exception Safety
-        Strong guarantee.
+        Exception thrown if maximum size exceeded.
 
-        @throw std::length_error insufficient space
+        @param u The url to copy.
     */
     static_url(
-        static_url const& u)
+        static_url const& u) noexcept
         : static_url()
     {
         copy(u);
@@ -171,12 +241,24 @@ public:
 
     /** Constructor
 
-        This constructs a copy of `u`.
+        The newly constructed object will
+        contain a copy of `u`.
+
+        @par Postconditions
+        @code
+        this->buffer() == u.buffer() && this->buffer.data() != u.buffer().data()
+        @endcode
+
+        @par Complexity
+        Linear in `u.size()`.
 
         @par Exception Safety
-        Strong guarantee.
+        Exception thrown if capacity exceeded.
 
-        @throw std::length_error insufficient space
+        @throw system_error
+        Capacity would be exceeded.
+
+        @param u The url to copy.
     */
     static_url(
         url_view_base const& u)
@@ -187,10 +269,21 @@ public:
 
     /** Assignment
 
+        The contents of `u` are copied and
+        the previous contents of `this` are
+        destroyed.
+
+        @par Complexity
+        Linear in `u.size()`.
+
         @par Exception Safety
         Strong guarantee.
+        Exception thrown if capacity exceeded.
 
-        @throw std::length_error insufficient space
+        @throw system_error
+        Capacity would be exceeded.
+
+        @param u The url to copy.
     */
     static_url&
     operator=(
@@ -202,10 +295,21 @@ public:
 
     /** Assignment
 
+        The contents of `u` are copied and
+        the previous contents of `this` are
+        destroyed.
+
+        @par Complexity
+        Linear in `u.size()`.
+
         @par Exception Safety
         Strong guarantee.
+        Exception thrown if capacity exceeded.
 
-        @throw std::length_error insufficient space
+        @throw system_error
+        Capacity would be exceeded.
+
+        @param u The url to copy.
     */
     static_url&
     operator=(
@@ -214,7 +318,6 @@ public:
         copy(u);
         return *this;
     }
-
 };
 
 } // urls

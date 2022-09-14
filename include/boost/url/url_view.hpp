@@ -199,6 +199,32 @@ public:
     BOOST_URL_DECL
     url_view&
     operator=(url_view_base const&) noexcept;
+
+    //--------------------------------------------
+    //
+    // Observers
+    //
+    //--------------------------------------------
+
+    /** Return the maximum number of characters possible
+
+        This represents the largest number of
+        characters that are possible in a url,
+        not including any null terminator.
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    static
+    constexpr
+    std::size_t
+    max_size() noexcept
+    {
+        return BOOST_URL_MAX_SIZE;
+    }
 };
 
 } // urls

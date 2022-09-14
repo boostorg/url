@@ -74,10 +74,11 @@ public:
 
     /** Destructor
 
-        Any param views, segment views, or
-        iterators which reference this object are
-        invalidated. The underlying character
-        buffer is destroyed.
+        Any params, segments, or iterators which
+        reference this object are invalidated.
+        The underlying character buffer is
+        destroyed, invalidating all references
+        to it.
     */
     BOOST_URL_DECL
     virtual ~url();
@@ -90,13 +91,26 @@ public:
         an empty path and no query or
         fragment.
 
+        @par Example
+        @code
+        url u;
+        @endcode
+
+        @par Postconditions
+        @code
+        this->empty() == true
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
         @par BNF
         @code
         relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
         @endcode
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
@@ -105,12 +119,36 @@ public:
     BOOST_URL_DECL
     url() noexcept;
 
-    /** Construct from a string
+    /** Constructor
 
-        This function constructs a URL from
+        This function constructs a url from
         the string `s`, which must contain a
-        valid URI or <em>relative-ref</em> or
-        else an exception is thrown.
+        valid <em>URI</em> or <em>relative-ref</em>
+        or else an exception is thrown.
+        The new url retains ownership by
+        allocating a copy of the passed string.
+
+        @par Example
+        @code
+        url u( "https://www.example.com" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->buffer().data() != s.data()
+        @endcode
+
+        @par Complexity
+        Linear in `s.size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The input does not contain a valid url.
+
+        @param s The string to parse.
 
         @par BNF
         @code
@@ -118,10 +156,6 @@ public:
 
         relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
         @endcode
-
-        @throw std::invalid_argument parse error.
-
-        @param s The string to parse.
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
@@ -133,23 +167,46 @@ public:
 
     /** Constructor
 
-        This function performs a move-construction
-        from `u`. After the move. the state of `u`
-        will be as-if default constructed.
+        The contents of `u` are transferred
+        to the newly constructed object,
+        which includes the underlying
+        character buffer.
+        After construction, the moved-from
+        object will be as if default constructed.
+
+        @par Postconditions
+        @code
+        u.empty() == true
+        @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
 
-        @param u The url to construct from.
+        @param u The url to move from.
     */
     BOOST_URL_DECL
     url(url&& u) noexcept;
 
     /** Constructor
 
-        This function constructs a copy of `u`.
+        The newly constructed object will
+        contain a copy of `u`.
 
-        @param u The url to construct from.
+        @par Postconditions
+        @code
+        this->buffer() == u.buffer() && this->buffer().data() != u.buffer().data()
+        @endcode
+
+        @par Complexity
+        Linear in `u.size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
+
+        @param u The url to copy.
     */
     url(url_view_base const& u)
     {
@@ -158,9 +215,21 @@ public:
 
     /** Constructor
 
-        This function constructs a copy of `u`.
+        The newly constructed object will
+        contain a copy of `u`.
 
-        @param u The url to construct from.
+        @par Postconditions
+        @code
+        this->buffer() == u.buffer() && this->buffer().data() != u.buffer().data()
+        @endcode
+
+        @par Complexity
+        Linear in `u.size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
+
+        @param u The url to copy.
     */
     url(url const& u)
         : url(static_cast<
@@ -170,9 +239,20 @@ public:
 
     /** Assignment
 
-        This function performs a move-assignment
-        from `u`. After the move. the state of `u`
-        will be as-if default constructed.
+        The contents of `u` are transferred to
+        `this`, including the underlying
+        character buffer. The previous contents
+        of `this` are destroyed.
+        After assignment, the moved-from
+        object will be as if default constructed.
+
+        @par Postconditions
+        @code
+        u.empty() == true
+        @endcode
+
+        @par Complexity
+        Constant.
 
         @par Exception Safety
         Throws nothing.
@@ -185,8 +265,18 @@ public:
 
     /** Assignment
 
-        This function assigns a copy of `u`
-        to `*this`.
+        The contents of `u` are copied and
+        the previous contents of `this` are
+        destroyed.
+        Capacity is preserved, or increases.
+
+        @par Postconditions
+        @code
+        this->buffer() == u.buffer() && this->buffer().data() != u.buffer().data()
+        @endcode
+
+        @par Complexity
+        Linear in `u.size()`.
 
         @par Exception Safety
         Strong guarantee.
@@ -204,8 +294,18 @@ public:
 
     /** Assignment
 
-        This function assigns a copy of `u`
-        to `*this`.
+        The contents of `u` are copied and
+        the previous contents of `this` are
+        destroyed.
+        Capacity is preserved, or increases.
+
+        @par Postconditions
+        @code
+        this->buffer() == u.buffer() && this->buffer().data() != u.buffer().data()
+        @endcode
+
+        @par Complexity
+        Linear in `u.size()`.
 
         @par Exception Safety
         Strong guarantee.
@@ -220,7 +320,11 @@ public:
             url_view_base const&>(u);
     }
 
-    //------------------------------------------------------
+    //--------------------------------------------
+    //
+    // Observers
+    //
+    //--------------------------------------------
 
     /** Swap the contents.
 

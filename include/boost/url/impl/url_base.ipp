@@ -2024,7 +2024,7 @@ edit_segments(
                 goto ok;
         }
         // too large
-        detail::throw_url_too_large();
+        detail::throw_length_error();
     ok:
         auto const new_size =
             size() + nchar - nremove;
@@ -2169,7 +2169,7 @@ edit_params(
                 max_size() - size())
         {
             // too large
-            detail::throw_url_too_large();
+            detail::throw_length_error();
         }
         auto const nparam1 =
             u_.nparam_ + nparam - (
