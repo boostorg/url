@@ -17,8 +17,6 @@ set(BOOST_URL_TESTS_FILES
     CMakeLists.txt
     Jamfile
     test_rule.hpp
-    segments_test.hpp
-    segments_test.cpp
     authority_view.cpp
     doc_container.cpp
     doc_grammar.cpp

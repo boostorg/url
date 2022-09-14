@@ -86,15 +86,13 @@ auto
 segments_encoded_ref::
 insert(
     iterator before,
-    pct_string_view s0) ->
+    pct_string_view s) ->
         iterator
 {
-    string_view s = s0;
     return u_->edit_segments(
         before.it_,
         before.it_,
-        detail::make_segments_encoded_iter(
-            &s, &s + 1));
+        detail::segment_encoded_iter(s));
 }
 
 auto
@@ -133,11 +131,10 @@ replace(
     pct_string_view s) ->
         iterator
 {
-    return replace(
-        pos,
-        std::next(pos),
-        &s,
-        &s + 1);
+    return u_->edit_segments(
+        pos.it_,
+        std::next(pos).it_,
+        detail::segment_encoded_iter(s));
 }
 
 auto
@@ -148,11 +145,10 @@ replace(
     pct_string_view s) ->
         iterator
 {
-    return replace(
-        from,
-        to,
-        &s,
-        &s+1);
+    return u_->edit_segments(
+        from.it_,
+        to.it_,
+        detail::segment_encoded_iter(s));
 }
 
 auto

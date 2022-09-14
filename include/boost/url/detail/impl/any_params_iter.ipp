@@ -59,7 +59,7 @@ void
 query_iter::
 rewind() noexcept
 {
-    if(empty())
+    if(empty)
     {
         at_end_ = true;
         return;

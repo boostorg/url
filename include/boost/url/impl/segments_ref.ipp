@@ -90,8 +90,7 @@ insert(
     return u_->edit_segments(
         before.it_,
         before.it_,
-        detail::make_segments_iter(
-            &s, &s + 1));
+        detail::segment_iter(s));
 }
 
 auto
@@ -131,11 +130,10 @@ replace(
     string_view s) ->
         iterator
 {
-    return replace(
-        pos,
-        std::next(pos),
-        &s,
-        &s + 1);
+    return u_->edit_segments(
+        pos.it_,
+        std::next(pos).it_,
+        detail::segment_iter(s));
 }
 
 auto
@@ -146,11 +144,10 @@ replace(
     string_view s) ->
         iterator
 {
-    return replace(
-        from,
-        to,
-        &s,
-        &s + 1);
+    return u_->edit_segments(
+        from.it_,
+        to.it_,
+        detail::segment_iter(s));
 }
 
 auto

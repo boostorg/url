@@ -16,7 +16,8 @@
 #include <boost/url/host_type.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/url_view.hpp>
-#include <boost/url/detail/decode.hpp>
+#include <boost/url/detail/any_params_iter.hpp>
+#include <boost/url/detail/any_segments_iter.hpp>
 #include <boost/url/detail/encode.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/move_chars.hpp>
@@ -1942,15 +1943,15 @@ edit_segments(
     else if(nseg > 0)
     {
         // first segment from src
-        if(! src.front().empty())
+        if(! src.front.empty())
         {
-            if( src.front() == "." &&
+            if( src.front == "." &&
                     nseg > 1)
                 prefix = 2 + absolute;
             else if(absolute)
                 prefix = 1;
             else if(has_scheme() ||
-                    ! src.front().contains(':'))
+                    ! src.front.contains(':'))
                 prefix = 0;
             else
                 prefix = 2;
@@ -2006,7 +2007,7 @@ edit_segments(
 //
 //  Resize
 //
-    op_t op(*this, src.input());
+    op_t op(*this, &src.s);
     char* dest;
     char const* end;
     {
@@ -2086,14 +2087,7 @@ edit_segments(
     auto const dn =
         detail::decode_bytes_unchecked(
             string_view(dest0, dest - dest0));
-    auto const dn1 =
-        u_.decoded_[id_path] + dn - dn0;
-#if 0
-    BOOST_ASSERT(dn1 ==
-        detail::decode_bytes_unchecked(
-            u_.get(id_path)));
-#endif
-    u_.decoded_[id_path] = dn1;
+    u_.decoded_[id_path] += dn - dn0;
 
     return detail::segments_iter_impl(
         u_, pos0, it0.index);
@@ -2160,55 +2154,68 @@ edit_params(
         }
     }
 
-    op_t op(*this, &src.s0, &src.s1);
-
 //------------------------------------------------
 //
 //  Resize
 //
-
-    // VFALCO OVERFLOW CHECK HERE
-    auto const nparam1 =
-        u_.nparam_ + nparam - (
-            it1.index - it0.index);
-    auto const nremove = pos1 - pos0;
-    reserve_impl(size() + nchar - nremove, op);
-    auto dest = s_ + pos0;
-    if(u_.nparam_ > 0)
+    op_t op(*this, &src.s0, &src.s1);
+    char* dest;
+    char const* end;
     {
-        // needed when we move
-        // the beginning of the query
-        s_[u_.offset(id_query)] = '&';
+        auto const nremove = pos1 - pos0;
+        // check overflow
+        if( nchar > nremove &&
+            nchar - nremove >
+                max_size() - size())
+        {
+            // too large
+            detail::throw_url_too_large();
+        }
+        auto const nparam1 =
+            u_.nparam_ + nparam - (
+                it1.index - it0.index);
+        reserve_impl(size() + nchar - nremove, op);
+        dest = s_ + pos0;
+        end = dest + nchar;
+        if(u_.nparam_ > 0)
+        {
+            // needed when we move
+            // the beginning of the query
+            s_[u_.offset(id_query)] = '&';
+        }
+        op.move(
+            dest + nchar,
+            u_.cs_ + pos1,
+            size() - pos1);
+        u_.set_size(
+            id_query,
+            u_.len(id_query) +
+                nchar - nremove);
+        u_.nparam_ = nparam1;
+        if(nparam1 > 0)
+        {
+            // needed when we erase
+            // the beginning of the query
+            s_[u_.offset(id_query)] = '?';
+        }
+        if(s_)
+            s_[size()] = '\0';
     }
-    op.move(
-        dest + nchar,
-        u_.cs_ + pos1,
-        size() - pos1);
-    u_.set_size(
-        id_query,
-        u_.len(id_query) +
-            nchar - nremove);
-    u_.nparam_ = nparam1;
-    if(nparam1 > 0)
-    {
-        // needed when we erase
-        // the beginning of the query
-        s_[u_.offset(id_query)] = '?';
-    }
-    if(s_)
-        s_[size()] = '\0';
     auto const dest0 = dest;
 
-    // copy
-    src.rewind();
-    //auto dest = dest0;
+//------------------------------------------------
+//
+//  Output params and internal separators:
+//
+//  [ '?' param ] [ '&' param ]
+//
     if(nparam > 0)
     {
-        auto const end = dest + nchar;
         if(it0.index == 0)
             *dest++ = '?';
         else
             *dest++ = '&';
+        src.rewind();
         for(;;)
         {
             src.copy(dest, end);

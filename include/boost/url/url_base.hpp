@@ -21,8 +21,6 @@
 #include <boost/url/segments_encoded_ref.hpp>
 #include <boost/url/segments_ref.hpp>
 #include <boost/url/url_view_base.hpp>
-#include <boost/url/detail/any_params_iter.hpp>
-#include <boost/url/detail/any_segments_iter.hpp>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -33,6 +31,8 @@ namespace urls {
 
 #ifndef BOOST_URL_DOCS
 namespace detail {
+struct any_params_iter;
+struct any_segments_iter;
 struct params_iter_impl;
 struct segments_iter_impl;
 }
