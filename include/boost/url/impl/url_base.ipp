@@ -1403,28 +1403,32 @@ relative(
 
     // Resolve new path
     // 0. Get segments
-    auto segs0 = dynamic_cast<url_view_base*>(this)->segments();
-    auto segs1 = href.segments();
+    auto segs0 = dynamic_cast<url_view_base*>(this)->encoded_segments();
+    auto segs1 = href.encoded_segments();
 
     // Reference iterators
     auto const begin0 = segs0.begin();
     auto it0 = begin0;
     auto const end0 = segs0.end();
     auto const last0 = begin0 != end0 ? std::prev(end0) : end0;
+
     auto const begin1 = segs1.begin();
     auto it1 = begin1;
     auto const end1 = segs1.end();
     auto const last1 = begin1 != end1 ? std::prev(end1) : end1;
 
     // Function to advance the dotdot segments
-    decode_view dotdot("..");
-    decode_view dot(".");
+    pct_string_view dotdot_str("..");
+    pct_string_view dot_str(".");
+    decode_view dotdot(dotdot_str);
+    decode_view dot(dot_str);
+
     auto consume_dots = [dotdot, dot](
-        segments_view::iterator& first,
-        segments_view::iterator last)
+        segments_encoded_view::iterator& first,
+        segments_encoded_view::iterator last)
     {
-        if (*first == dotdot ||
-            *first == dot)
+        if (decode_view(*first) == dotdot ||
+            decode_view(*first) == dot)
         {
             ++first;
             return true;
@@ -1433,7 +1437,7 @@ relative(
         std::size_t l = 1;
         while (it != last)
         {
-            if (*it == dotdot)
+            if (decode_view(*it) == dotdot)
             {
                 if (--l == 0)
                 {
@@ -1442,7 +1446,7 @@ relative(
                     break;
                 }
             }
-            else if (*it != dot)
+            else if (decode_view(*it) != dot)
             {
                 ++l;
             }
@@ -1460,7 +1464,7 @@ relative(
             continue;
         if (consume_dots(it1, last1))
             continue;
-        if (*it0 == *it1)
+        if (decode_view(*it0) == decode_view(*it1))
         {
             ++it0;
             ++it1;
@@ -1476,7 +1480,7 @@ relative(
         it1 == last1 &&
         it0 != end0 &&
         it1 != end1 &&
-        *it0 == *it1)
+        decode_view(*it0) == decode_view(*it1))
     {
         // Return empty path
         if (href.has_query())
@@ -1497,12 +1501,12 @@ relative(
     {
         while (it0 != last0)
         {
-            if (*it0 == dotdot)
+            if (decode_view(*it0) == dotdot)
             {
                 if (n != 0)
                     --n;
             }
-            else if (*it0 != dot)
+            else if (decode_view(*it0) != dot)
             {
                 ++n;
             }
@@ -1511,23 +1515,23 @@ relative(
     }
     set_encoded_path({});
     set_path_absolute(false);
-    segments_encoded segs = encoded_segments();
+    segments_encoded_ref segs = encoded_segments();
     while (n--)
     {
-        segs.push_back(dotdot.encoded());
+        segs.push_back(dotdot_str);
     }
 
     // 3. Append segments left from the reference
     while (it1 != end1)
     {
-        if (*it1 == dotdot)
+        if (decode_view(*it1) == dotdot)
         {
             if (!segs.empty())
                 segs.pop_back();
         }
-        else if (*it1 != dot)
+        else if (decode_view(*it1) != dot)
         {
-            segs.push_back((*it1).encoded());
+            segs.push_back(*it1);
         }
         ++it1;
     }

@@ -2616,6 +2616,13 @@ public:
         url_view_base const& ref,
         url_base& dest);
 
+    friend
+    result<void>
+    relative(
+        url_view_base const& base,
+        url_view_base const& href,
+        url_base& dest);
+
 private:
     //--------------------------------------------
     //
@@ -2766,6 +2773,79 @@ resolve(
     if (&dest != &base)
         dest.copy(base);
     return dest.resolve(ref);
+}
+
+/** Compares two absolute paths and make one relative to the other
+
+    This function compares the absolute paths in
+    two urls. It returns a new url with a relative
+    path that references the target path relative
+    to the base path.
+
+    Unlike @ref resolve, this function takes
+    two absolute paths to create a relative
+    path.
+
+    If the input URLs contain schemes and
+    authorities, these are resolved. If the
+    schemes and authorities are the same, they
+    are removed before the relative path is
+    calculated. If they are different, only
+    the relative path of the reference URL
+    is returned.
+
+    Given the input base URL, this function
+    resolves the reference URL as if performing
+    the following steps:
+
+    @li Normalize both URLs
+    @li Remove the longest common path from both paths
+    @li Replace each segment in the base path with ".."
+    @li Append the reference path
+
+    This function places the result of the
+    resolution into `dest`, which can be
+    any of the url containers that inherit
+    from @ref url_base.
+
+    If the function fails, an error is returned.
+
+    @par Example
+    @code
+    url dest;
+    error_code ec;
+    relative("/relative/sub/foo/sub/file", "/relative/path", dest, ec);
+    assert( dest.str() == "../../../path" );
+    @endcode
+
+    @par Exception Safety
+    Basic guarantee.
+    Calls to allocate may throw.
+
+    @param base The base URL to resolve against.
+
+    @param href The target URL the relative URL should point to
+
+    @param dest The container where the relative result
+    is written, upon success.
+
+    @param ec Set to the error if any occurred.
+
+    @see
+        @ref url,
+        @ref url_view.
+*/
+inline
+result<void>
+relative(
+    url_view_base const& base,
+    url_view_base const& href,
+    url_base& dest)
+{
+    BOOST_ASSERT(&dest != &href);
+    if (&dest != &base)
+        dest.copy(base);
+    return dest.relative(href);
 }
 
 } // urls

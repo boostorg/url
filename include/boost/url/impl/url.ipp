@@ -139,18 +139,6 @@ reserve_impl(
     impl_.cs_ = s_;
 }
 
-result<void>
-relative(
-    url_view_base const& base,
-    url_view_base const& href,
-    url_base& dest)
-{
-    BOOST_ASSERT(&dest != &base);
-    BOOST_ASSERT(&dest != &href);
-    dest.copy(base);
-    return dest.relative(href);
-}
-
 void
 url::
 cleanup(
