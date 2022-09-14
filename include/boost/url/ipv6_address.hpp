@@ -343,10 +343,6 @@ private:
         char* dest) const noexcept;
 
     BOOST_URL_DECL
-    std::size_t
-    print_size() const noexcept;
-
-    BOOST_URL_DECL
     void
     to_string_impl(
         string_token::arg& t) const;

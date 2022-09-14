@@ -225,128 +225,15 @@ print_impl(
     return dest - dest0;
 }
 
-std::size_t
-ipv6_address::
-print_size() const noexcept
-{
-    auto const count_zeroes =
-    []( unsigned char const* first,
-        unsigned char const* const last)
-    {
-        std::size_t n = 0;
-        while(first != last)
-        {
-            if( first[0] != 0 ||
-                first[1] != 0)
-                break;
-            n += 2;
-            first += 2;
-        }
-        return n;
-    };
-    auto const count_hex =
-    []( std::size_t& n,
-        unsigned short v)
-    {
-        if(v >= 0x1000)
-        {
-            n += 4;
-        }
-        else if(v >= 0x100)
-        {
-            n += 3;
-        }
-        else if(v >= 0x10)
-        {
-            n += 2;
-        }
-        else
-        {
-            n += 1;
-        }
-    };
-    std::size_t count = 0;
-    // find the longest run of zeroes
-    std::size_t best_len = 0;
-    int best_pos = -1;
-    auto it = addr_.data();
-    auto const v4 =
-        is_v4_mapped();
-    auto const end = v4 ?
-        (it + addr_.size() - 4)
-        : it + addr_.size();
-    while(it != end)
-    {
-        auto n = count_zeroes(
-            it, end);
-        if(n == 0)
-        {
-            it += 2;
-            continue;
-        }
-        if(n > best_len)
-        {
-            best_pos = static_cast<
-                int>(it - addr_.data());
-            best_len = n;
-        }
-        it += n;
-    }
-    it = addr_.data();
-    if(best_pos != 0)
-    {
-        unsigned short v =
-            (it[0] * 256U) + it[1];
-        count_hex(count, v);
-        it += 2;
-    }
-    else
-    {
-        ++count;
-        it += best_len;
-        if(it == end)
-            ++count;
-    }
-    while(it != end)
-    {
-        ++count;
-        if(it - addr_.data() ==
-            best_pos)
-        {
-            it += best_len;
-            if(it == end)
-                ++count;
-            continue;
-        }
-        unsigned short v =
-            (it[0] * 256U) + it[1];
-        count_hex(count, v);
-        it += 2;
-    }
-    if(v4)
-    {
-        ipv4_address::bytes_type bytes;
-        bytes[0] = it[0];
-        bytes[1] = it[1];
-        bytes[2] = it[2];
-        bytes[3] = it[3];
-        ipv4_address a(bytes);
-        ++count;
-        count += a.print_size();
-    }
-    return count;
-}
-
 void
 ipv6_address::
 to_string_impl(
     string_token::arg& t) const
 {
-    std::size_t n = print_size();
+    char buf[max_str_len];
+    auto const n = print_impl(buf);
     char* dest = t.prepare(n);
-    std::size_t n2 = print_impl(dest);
-    BOOST_ASSERT(n == n2);
-    ignore_unused(n2);
+    std::memcpy(dest, buf, n);
 }
 
 //------------------------------------------------
