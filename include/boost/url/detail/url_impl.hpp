@@ -154,10 +154,13 @@ class query_ref
     std::size_t dn_ = 0;
 
 public:
+    query_ref(
+        string_view s,      // buffer, no '?'
+        std::size_t dn,     // decoded size
+        std::size_t nparam
+            ) noexcept;
     query_ref() = default;
     query_ref(url_impl const& impl) noexcept;
-    query_ref(string_view,
-        std::size_t, std::size_t) noexcept;
     pct_string_view buffer() const noexcept;
     std::size_t size() const noexcept; // with '?'
     char const* begin() const noexcept; // no '?'

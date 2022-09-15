@@ -64,20 +64,16 @@ parse(
     // [ "?" query ]
     {
         auto rv = grammar::parse(
-            it, end,
-            grammar::optional_rule(
-                grammar::tuple_rule(
-                    grammar::squelch(
-                        grammar::delim_rule('?')),
-                    query_rule)));
+            it, end, detail::query_part_rule);
         if(! rv)
             return rv.error();
-        if(rv->has_value())
+        if(rv->has_query)
         {
-            auto const& v = **rv;
+            // map "?" to { {} }
             u.apply_query(
-                v.string(),
-                v.size());
+                rv->query,
+                rv->count +
+                    rv->query.empty());
         }
     }
 

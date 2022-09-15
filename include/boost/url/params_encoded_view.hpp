@@ -57,6 +57,7 @@ class params_encoded_view
     friend class url_view_base;
     friend class params_view;
     friend class params_encoded_ref;
+    friend struct query_rule_t;
 
     params_encoded_view(
         detail::query_ref const& ref) noexcept;

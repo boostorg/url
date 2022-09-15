@@ -241,13 +241,6 @@ nseg() const noexcept
 
 query_ref::
 query_ref(
-    url_impl const& impl) noexcept
-    : impl_(&impl)
-{
-}
-
-query_ref::
-query_ref(
     string_view s,
     std::size_t dn,
     std::size_t nparam) noexcept
@@ -255,6 +248,13 @@ query_ref(
     , size_(s.size())
     , nparam_(nparam)
     , dn_(dn)
+{
+}
+
+query_ref::
+query_ref(
+    url_impl const& impl) noexcept
+    : impl_(&impl)
 {
 }
 

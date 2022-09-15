@@ -12,8 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/error_types.hpp>
-#include <boost/url/param.hpp>
-#include <boost/url/grammar/range_rule.hpp>
+#include <boost/url/params_encoded_view.hpp>
 #include <cstddef>
 
 namespace boost {
@@ -23,20 +22,20 @@ namespace urls {
 
     @par Value Type
     @code
-    using value_type = grammar::range< param_pct_view >;
+    using value_type = params_encoded_view;
     @endcode
 
     @par Example
     Rules are used with the function @ref grammar::parse.
     @code
-    result< grammar::range< param_pct_view > > rv = grammar::parse( "format=web&id=42&compact", query_rule );
+    result< params_encoded_view > rv = grammar::parse( "format=web&id=42&compact", query_rule );
     @endcode
 
     @par BNF
     @code
     query           = *( pchar / "/" / "?" )
 
-    query-params    = query-param *( "&" query-param )
+    query-params    = [ query-param ] *( "&" query-param )
     query-param     = key [ "=" value ]
     key             = *qpchar
     value           = *( qpchar / "=" )
@@ -60,8 +59,7 @@ constexpr __implementation_defined__ query_rule;
 #else
 struct query_rule_t
 {
-    using value_type =
-        grammar::range<param_pct_view>;
+    using value_type = params_encoded_view;
 
     BOOST_URL_DECL
     result<value_type>

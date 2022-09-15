@@ -11,73 +11,12 @@
 #define BOOST_URL_RFC_IMPL_QUERY_RULE_IPP
 
 #include <boost/url/rfc/query_rule.hpp>
-#include <boost/url/grammar/lut_chars.hpp>
-#include <boost/url/grammar/parse.hpp>
-#include <boost/url/grammar/range_rule.hpp>
-#include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
+#include <boost/url/error.hpp>
+#include <boost/url/grammar/hexdig_chars.hpp>
 
 namespace boost {
 namespace urls {
-
-namespace detail {
-
-struct query_param_rule_t
-{
-    using value_type = param_pct_view;
-
-    result<value_type>
-    parse(
-        char const*& it,
-        char const* end) const noexcept
-    {
-        param_pct_view t;
-
-        // VFALCO we don't return error::end_of_range
-        // here, because the empty string still
-        // counts as a 1-element range with
-        // key="" and value=(none)
-
-        // key
-        {
-            auto rv = grammar::parse(it, end,
-                pct_encoded_rule(grammar::ref(
-                    detail::param_key_chars)));
-            if(! rv)
-                return rv.error();    
-            t.key = *rv;
-        }
-
-        // "="
-        {
-            auto rv = grammar::parse(
-                it, end,
-                grammar::delim_rule('='));
-            t.has_value = rv.has_value();
-            if(! t.has_value)
-            {
-                // key with no value
-                return t;
-            }
-        }
-
-        // value
-        {
-            auto rv = grammar::parse(it, end,
-                pct_encoded_rule(grammar::ref(
-                    detail::param_value_chars)));
-            if(! rv)
-                return rv.error();
-            t.value = *rv;
-        }
-
-        return t;
-    }
-};
-
-static constexpr query_param_rule_t query_param_rule{};
-
-} // detail
 
 auto
 query_rule_t::
@@ -87,34 +26,64 @@ parse(
         ) const noexcept ->
     result<value_type>
 {
-    struct increment
+    if(it == end)
     {
-        using value_type = param_pct_view;
-
-        result<value_type>
-        parse(
-            char const*& it,
-            char const* end) const noexcept
+        // empty string = 0 params
+        return params_encoded_view(
+            detail::query_ref(
+                string_view(it, 0), 0, 0));
+    }
+    auto const it0 = it;
+    std::size_t dn = 0;
+    std::size_t nparam = 1;
+    while(it != end)
+    {
+        if(*it == '&')
         {
-            // "&"
-            {
-                auto rv = grammar::parse(
-                    it, end,
-                    grammar::delim_rule('&'));
-                if(! rv)
-                    return rv.error();
-            }
-
-            return grammar::parse(it, end,
-                detail::query_param_rule);
+            ++nparam;
+            ++it;
+            continue;
         }
-    };
-
-    return grammar::parse(
-        it, end,
-        grammar::range_rule(
-            detail::query_param_rule,
-            increment{}));
+        if(detail::query_chars(*it))
+        {
+            ++it;
+            continue;
+        }
+        if(*it == '%')
+        {
+            if(end - it < 3)
+            {
+                // missing HEXDIG
+                BOOST_URL_RETURN_EC(
+                    error::missing_pct_hexdig);
+            }
+            if (!grammar::hexdig_chars(it[1]) ||
+                !grammar::hexdig_chars(it[2]))
+            {
+                // expected HEXDIG
+                BOOST_URL_RETURN_EC(
+                    error::bad_pct_hexdig);
+            }
+            if (it[1] == '0' &&
+                it[2] == '0')
+            {
+                // null in input
+                BOOST_URL_RETURN_EC(
+                    error::illegal_null);
+            }
+            it += 3;
+            dn += 2;
+            continue;
+        }
+        // got reserved character
+        break;
+    }
+    std::size_t const n(it - it0);
+    return params_encoded_view(
+        detail::query_ref(
+            string_view(it, n),
+            n - dn,
+            nparam));
 }
 
 } // urls

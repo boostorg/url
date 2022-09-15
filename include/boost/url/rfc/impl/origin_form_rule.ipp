@@ -45,19 +45,20 @@ parse(
             rv->size());
     }
 
+    // [ "?" query ]
     {
-        auto rv = grammar::parse(it, end,
-            grammar::optional_rule(
-                grammar::tuple_rule(
-                    grammar::squelch(
-                        grammar::delim_rule('?')),
-                    query_rule)));
+        auto rv = grammar::parse(
+            it, end, detail::query_part_rule);
         if(! rv)
             return rv.error();
-        if(rv->has_value())
+        if(rv->has_query)
+        {
+            // map "?" to { {} }
             u.apply_query(
-                (*rv)->string(),
-                (*rv)->size());
+                rv->query,
+                rv->count +
+                    rv->query.empty());
+        }
     }
 
     return u.construct();
