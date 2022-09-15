@@ -349,9 +349,16 @@ public:
             @ref password,
             @ref user.
     */
-    BOOST_URL_DECL
-    std::string
-    userinfo() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    userinfo(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_userinfo().decode(
+            opt, std::move(token));
+    }
 
     /** Return the userinfo
 
@@ -440,9 +447,16 @@ public:
             @ref password,
             @ref userinfo.
     */
-    BOOST_URL_DECL
-    std::string
-    user() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    user(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_user().decode(
+            opt, std::move(token));
+    }
 
     /** Return the user
 
@@ -572,9 +586,16 @@ public:
             @ref user,
             @ref userinfo.
     */
-    BOOST_URL_DECL
-    std::string
-    password() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    password(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_password().decode(
+            opt, std::move(token));
+    }
 
     /** Return the password
 
@@ -687,9 +708,16 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
             >3.2.2. Host (rfc3986)</a>
     */
-    BOOST_URL_DECL
-    std::string
-    host() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    host(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_host().decode(
+            opt, std::move(token));
+    }
 
     /** Return the host
 
@@ -776,9 +804,16 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
             >3.2.2. Host (rfc3986)</a>
     */
-    BOOST_URL_DECL
-    std::string
-    host_address() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    host_address(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_host_address().decode(
+            opt, std::move(token));
+    }
 
     /** Return the host
 
@@ -990,9 +1025,16 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
             >3.2.2. Host (rfc3986)</a>
     */
-    BOOST_URL_DECL
-    std::string
-    host_name() const;
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    host_name(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        decode_opts opt;
+        opt.plus_to_space = false;
+        return encoded_host_name().decode(
+            opt, std::move(token));
+    }
 
     /** Return the host name
 
