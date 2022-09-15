@@ -91,15 +91,6 @@ has_userinfo() const noexcept
     return true;
 }
 
-std::string
-authority_view::
-userinfo() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_userinfo().decode(opt);
-}
-
 pct_string_view
 authority_view::
 encoded_userinfo() const noexcept
@@ -112,15 +103,6 @@ encoded_userinfo() const noexcept
         s.ends_with('@'));
     s.remove_suffix(1);
     return detail::make_pct_string_view(s);
-}
-
-std::string
-authority_view::
-user() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_user().decode(opt);
 }
 
 pct_string_view
@@ -148,15 +130,6 @@ has_password() const noexcept
     BOOST_ASSERT(n == 0 || u_.get(
         id_pass).ends_with('@'));
     return false;
-}
-
-std::string
-authority_view::
-password() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_password().decode(opt);
 }
 
 pct_string_view
@@ -203,15 +176,6 @@ std::string     host_name()                 // return decoded name or ""
 pct_string_view encoded_host_name()         // return encoded host name or ""
 */
 
-std::string
-authority_view::
-host() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_host().decode(opt);
-}
-
 pct_string_view
 authority_view::
 encoded_host() const noexcept
@@ -219,15 +183,6 @@ encoded_host() const noexcept
     return detail::make_pct_string_view(
         u_.get(id_host),
         u_.decoded_[id_host]);
-}
-
-std::string
-authority_view::
-host_address() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_host_address().decode(opt);
 }
 
 pct_string_view
@@ -305,15 +260,6 @@ host_ipvfuture() const noexcept
     BOOST_ASSERT(s.back() == ']');
     s = s.substr(1, s.size() - 2);
     return s;
-}
-
-std::string
-authority_view::
-host_name() const
-{
-    decode_opts opt;
-    opt.plus_to_space = false;
-    return encoded_host_name().decode(opt);
 }
 
 pct_string_view
