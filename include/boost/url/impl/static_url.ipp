@@ -26,7 +26,7 @@ static_url_base(
     s_ = buf;
     cap_ = cap;
     s_[0] = '\0';
-    u_.cs_ = s_;
+    impl_.cs_ = s_;
 }
 
 static_url_base::
@@ -44,9 +44,9 @@ void
 static_url_base::
 clear_impl() noexcept
 {
-    u_ = detail::url_impl(false);
+    impl_ = {from::url};
     s_[0] = '\0';
-    u_.cs_ = s_;
+    impl_.cs_ = s_;
 }
 
 void

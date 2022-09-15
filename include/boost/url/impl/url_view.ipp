@@ -48,8 +48,17 @@ url_view(string_view s)
 url_view::
 url_view(
     url_view_base const& u) noexcept
-    : url_view_base(u.u_)
+    : url_view_base(u.impl_)
 {
+    if (u.pi_->from_ == from::url)
+    {
+        pi_ = u.pi_;
+    }
+    else
+    {
+        impl_ = u.impl_;
+        pi_ = &impl_;
+    }
 }
 
 url_view&
@@ -57,7 +66,15 @@ url_view::
 operator=(
     url_view_base const& u) noexcept
 {
-    u_ = u.u_;
+    if (u.pi_->from_ == from::url)
+    {
+        pi_ = u.pi_;
+    }
+    else
+    {
+        impl_ = u.impl_;
+        pi_ = &impl_;
+    }
     return *this;
 }
 

@@ -52,15 +52,11 @@ struct url_impl : parts_base
     scheme scheme_ =
         urls::scheme::none;
 
-    // true if this belongs to
-    // authority_view. in this case id_user
-    // will not have the leading "//".
-    bool is_authority;
+    from from_ = from::string;
 
-    explicit
     url_impl(
-        bool b) noexcept
-        : is_authority(b)
+        from b) noexcept
+        : from_(b)
     {
     }
 
@@ -152,6 +148,7 @@ class query_ref
     std::size_t size_ = 0;
     std::size_t nparam_ = 0;
     std::size_t dn_ = 0;
+    bool question_mark_ = false;
 
 public:
     query_ref(

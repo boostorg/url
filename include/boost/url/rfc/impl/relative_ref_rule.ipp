@@ -30,7 +30,7 @@ parse(
         ) const noexcept ->
     result<value_type>
 {
-    detail::url_impl u(false);
+    detail::url_impl u(detail::url_impl::from::string);
     u.cs_ = it;
 
     // relative-part

@@ -32,6 +32,18 @@ struct parts_base
         id_frag,        // leading '#'
         id_end          // one past the end
     };
+
+    enum class from : char {
+        // this belongs to a string
+        string,
+        // this belongs to url_base
+        // segments/params containers point to
+        // another url
+        url,
+        // this belongs to authority_view
+        // id_user will not have the leading "//"
+        authority,
+    };
 };
 
 } // detail

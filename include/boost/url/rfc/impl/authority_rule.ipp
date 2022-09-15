@@ -29,7 +29,7 @@ parse(
         ) const noexcept ->
     result<value_type>
 {
-    detail::url_impl u(true);
+    detail::url_impl u(detail::url_impl::from::authority);
     u.cs_ = it;
 
     // [ userinfo "@" ]

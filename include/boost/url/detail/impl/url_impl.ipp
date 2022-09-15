@@ -42,7 +42,7 @@ apply_userinfo(
 {
     // this function is for
     // authority_view_rule only
-    BOOST_ASSERT(is_authority);
+    BOOST_ASSERT(from_ == from::authority);
 
     // userinfo
     set_size(id_user, user.size());
@@ -71,7 +71,7 @@ apply_host(
 {
     // this function is for
     // authority_view_rule only
-    BOOST_ASSERT(is_authority);
+    BOOST_ASSERT(from_ == from::authority);
 
     // host, port
     host_type_ = ht;
@@ -92,7 +92,7 @@ apply_port(
 {
     // this function is for
     // authority_view_rule only
-    BOOST_ASSERT(is_authority);
+    BOOST_ASSERT(from_ == from::authority);
 
     port_number_ = pn;
     set_size(id_port, 1 + s.size());
@@ -103,12 +103,12 @@ url_impl::
 apply_authority(
     authority_view const& a) noexcept
 {
-    BOOST_ASSERT(! is_authority);
+    BOOST_ASSERT(from_ != from::authority);
 
     // userinfo
     set_size(id_user,
         a.u_.len(id_user) +
-        (is_authority ? 0 : 2));
+        (from_ == from::authority ? 0 : 2));
     set_size(id_pass, a.u_.len(id_pass));
     decoded_[id_user] = a.u_.decoded_[id_user];
     decoded_[id_pass] = a.u_.decoded_[id_pass];
@@ -165,8 +165,19 @@ apply_frag(
 path_ref::
 path_ref(
     url_impl const& impl) noexcept
-    : impl_(&impl)
 {
+    if(impl.from_ == url_impl::from::url)
+    {
+        impl_ = &impl;
+    }
+    else
+    {
+        string_view s = impl.get(id_path);
+        data_ = s.data();
+        size_ = s.size();
+        nseg_ = impl.nseg_;
+        dn_ = impl.decoded_[id_path];
+    }
 }
 
 path_ref::
@@ -254,8 +265,24 @@ query_ref(
 query_ref::
 query_ref(
     url_impl const& impl) noexcept
-    : impl_(&impl)
 {
+    if(impl.from_ == url_impl::from::url)
+    {
+        impl_ = &impl;
+    }
+    else
+    {
+        string_view s = impl.get(id_query);
+        if (!s.empty())
+        {
+            s.remove_prefix(1);
+            question_mark_ = true;
+        }
+        data_ = s.data();
+        size_ = s.size();
+        nparam_ = impl.nparam_;
+        dn_ = impl.decoded_[id_query];
+    }
 }
 
 pct_string_view
@@ -294,7 +321,7 @@ size() const noexcept
         return impl_->len(id_query);
     if(size_ > 0)
         return size_ + 1;
-    return 0;
+    return question_mark_;
 }
 
 // no '?'

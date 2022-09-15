@@ -30,7 +30,7 @@ namespace urls {
 params_encoded_ref::
 params_encoded_ref(
     url_base& u) noexcept
-    : params_encoded_base(u.u_)
+    : params_encoded_base(u.impl_)
     , u_(&u)
 {
 }
@@ -229,7 +229,7 @@ find_impl(
     pct_string_view key,
     ignore_case_param ic) const noexcept
 {
-    detail::params_iter_impl end_(u_->u_, 0);
+    detail::params_iter_impl end_(u_->impl_, 0);
     if(! ic)
     {
         for(;;)
@@ -259,13 +259,13 @@ find_last_impl(
     pct_string_view key,
     ignore_case_param ic) const noexcept
 {
-    detail::params_iter_impl begin_(u_->u_);
+    detail::params_iter_impl begin_(u_->impl_);
     if(! ic)
     {
         for(;;)
         {
             if(it.equal(begin_))
-                return { u_->u_, 0 };
+                return { u_->impl_, 0 };
             it.decrement();
             if(*it.key() == *key)
                 return it;
@@ -274,7 +274,7 @@ find_last_impl(
     for(;;)
     {
         if(it.equal(begin_))
-            return { u_->u_, 0 };
+            return { u_->impl_, 0 };
         it.decrement();
         if(grammar::ci_is_equal(
                 *it.key(), *key))
