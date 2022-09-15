@@ -29,7 +29,7 @@ segments_ref::
 segments_ref(
     url_base& u) noexcept
     : segments_base(
-        detail::path_ref(u.u_))
+        detail::path_ref(u.impl_))
     , u_(&u)
 {
 }

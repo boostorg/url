@@ -24,7 +24,7 @@ inline
 params_ref::
 params_ref(
     url_base& u) noexcept
-    : params_base(u.u_)
+    : params_base(u.impl_)
     , u_(&u)
 {
 }

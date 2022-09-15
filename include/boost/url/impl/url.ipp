@@ -43,13 +43,13 @@ url(string_view s)
 
 url::
 url(url&& u) noexcept
-    : url_base(u.u_)
+    : url_base(u.impl_)
 {
     s_ = u.s_;
     cap_ = u.cap_;
     u.s_ = nullptr;
     u.cap_ = 0;
-    u.u_ = detail::url_impl(false);
+    u.impl_ = {from::url};
 }
 
 url&
@@ -58,12 +58,12 @@ operator=(url&& u) noexcept
 {
     if(s_)
         deallocate(s_);
-    u_ = u.u_;
+    impl_ = u.impl_;
     s_ = u.s_;
     cap_ = u.cap_;
     u.s_ = nullptr;
     u.cap_ = 0;
-    u.u_ = detail::url_impl(false);
+    u.impl_ = {from::url};
     return *this;
 }
 
@@ -92,13 +92,13 @@ clear_impl() noexcept
     if(s_)
     {
         // preserve capacity
-        u_ = detail::url_impl(false);
+        impl_ = {from::url};
         s_[0] = '\0';
-        u_.cs_ = s_;
+        impl_.cs_ = s_;
     }
     else
     {
-        BOOST_ASSERT(u_.cs_ ==
+        BOOST_ASSERT(impl_.cs_ ==
             detail::empty_c_str_);
     }
 }
@@ -136,7 +136,7 @@ reserve_impl(
         s_ = allocate(n);
         s_[0] = '\0';
     }
-    u_.cs_ = s_;
+    impl_.cs_ = s_;
 }
 
 void
@@ -158,7 +158,12 @@ swap(url& other) noexcept
         return;
     std::swap(s_, other.s_);
     std::swap(cap_, other.cap_);
-    std::swap(u_, other.u_);
+    std::swap(impl_, other.impl_);
+    std::swap(pi_, other.pi_);
+    if (pi_ == &other.impl_)
+        pi_ = &impl_;
+    if (other.pi_ == &impl_)
+        other.pi_ = &other.impl_;
 }
 
 } // urls

@@ -28,7 +28,7 @@ segments_encoded_ref::
 segments_encoded_ref(
     url_base& u) noexcept
     : segments_encoded_base(
-        detail::path_ref(u.u_))
+        detail::path_ref(u.impl_))
     , u_(&u)
 {
 }

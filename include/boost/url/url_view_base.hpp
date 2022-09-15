@@ -59,7 +59,8 @@ class BOOST_SYMBOL_VISIBLE
     url_view_base
     : private detail::parts_base
 {
-    detail::url_impl u_;
+    detail::url_impl impl_;
+    detail::url_impl const* pi_;
 
     friend class url;
     friend class url_base;
@@ -82,12 +83,22 @@ class BOOST_SYMBOL_VISIBLE
 
     BOOST_URL_DECL
     url_view_base() noexcept;
+
     BOOST_URL_DECL
     explicit url_view_base(
         detail::url_impl const&) noexcept;
+
     ~url_view_base() = default;
+
     url_view_base(
-        url_view_base const&) = default;
+        url_view_base const& o) noexcept
+        : impl_(o.impl_)
+        , pi_(o.pi_)
+    {
+        if (pi_ == &o.impl_)
+            pi_ = &impl_;
+    }
+
     url_view_base& operator=(
         url_view_base const&) = delete;
 
@@ -149,7 +160,7 @@ public:
     std::size_t
     size() const noexcept
     {
-        return u_.offset(id_end);
+        return pi_->offset(id_end);
     }
 
     /** Return true if the URL is empty
@@ -185,7 +196,7 @@ public:
     bool
     empty() const noexcept
     {
-        return u_.offset(id_end) == 0;
+        return pi_->offset(id_end) == 0;
     }
 
     /** Return a pointer to the URL's character buffer
@@ -203,7 +214,7 @@ public:
     char const*
     data() const noexcept
     {
-        return u_.cs_;
+        return pi_->cs_;
     }
 
     /** Return the URL string
@@ -454,7 +465,7 @@ public:
     bool
     has_authority() const noexcept
     {
-        return u_.len(id_user) > 0;
+        return pi_->len(id_user) > 0;
     }
 
     /** Return the authority
@@ -956,7 +967,7 @@ public:
     urls::host_type
     host_type() const noexcept
     {
-        return u_.host_type_;
+        return pi_->host_type_;
     }
 
     /** Return the host
@@ -1593,8 +1604,8 @@ public:
     is_path_absolute() const noexcept
     {
         return
-            u_.len(id_path) > 0 &&
-            u_.cs_[u_.offset(id_path)] == '/';
+            pi_->len(id_path) > 0 &&
+            pi_->cs_[pi_->offset(id_path)] == '/';
     }
 
     /** Return the path

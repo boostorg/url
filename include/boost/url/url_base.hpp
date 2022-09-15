@@ -124,7 +124,7 @@ public:
     char const*
     c_str() const noexcept
     {
-        return u_.cs_;
+        return pi_->cs_;
     }
 
     /** Return the number of characters that can be stored without reallocating

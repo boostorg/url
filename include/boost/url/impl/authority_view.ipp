@@ -51,7 +51,7 @@ authority_view::
 
 authority_view::
 authority_view() noexcept
-    : u_(true)
+    : u_(from::authority)
 {
 }
 
