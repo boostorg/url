@@ -102,7 +102,8 @@ encoded_userinfo() const noexcept
     BOOST_ASSERT(
         s.ends_with('@'));
     s.remove_suffix(1);
-    return detail::make_pct_string_view(s);
+    return detail::make_pct_string_view(
+        s, u_.decoded_[id_user] + u_.decoded_[id_pass] + has_password());
 }
 
 pct_string_view
