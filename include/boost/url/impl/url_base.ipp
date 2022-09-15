@@ -2242,11 +2242,12 @@ edit_params(
 
 //------------------------------------------------
 
+template<class CharSet>
 void
 url_base::
 normalize_octets_impl(
     int id,
-    grammar::lut_chars const& cs,
+    CharSet const& allowed,
     op_t& op) noexcept
 {
     char* it = s_ + u_.offset(id);
@@ -2270,7 +2271,7 @@ normalize_octets_impl(
             &buf,
             &buf + 1,
             string_view(it, 3));
-        if (cs(buf))
+        if (allowed(buf))
         {
             *dest = buf;
             it += 3;
