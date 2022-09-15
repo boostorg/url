@@ -160,6 +160,19 @@ decode_bytes_unchecked(
     return dn;
 }
 
+char
+decode_one(
+    char const* const it) noexcept
+{
+    auto d0 = grammar::hexdig_value(it[0]);
+    auto d1 = grammar::hexdig_value(it[1]);
+    return static_cast<char>(
+        ((static_cast<
+            unsigned char>(d0) << 4) +
+        (static_cast<
+            unsigned char>(d1))));
+}
+
 std::size_t
 decode_unchecked(
     char* const dest0,
@@ -167,17 +180,6 @@ decode_unchecked(
     string_view s,
     decode_opts const& opt) noexcept
 {
-    auto const decode_hex = [](
-        char const* it)
-    {
-        auto d0 = grammar::hexdig_value(it[0]);
-        auto d1 = grammar::hexdig_value(it[1]);
-        return static_cast<char>(
-            ((static_cast<
-                unsigned char>(d0) << 4) +
-            (static_cast<
-                unsigned char>(d1))));
-    };
     auto it = s.data();
     auto const last = it + s.size();
     auto dest = dest0;
@@ -210,7 +212,7 @@ decode_unchecked(
                         0, end - dest);
                     return dest - dest0;
                 }
-                *dest++ = decode_hex(it);
+                *dest++ = decode_one(it);
                 it += 2;
                 continue;
             }
@@ -239,7 +241,7 @@ decode_unchecked(
                     0, end - dest);
                 return dest - dest0;
             }
-            *dest++ = decode_hex(it);
+            *dest++ = decode_one(it);
             it += 2;
             continue;
         }

@@ -1410,7 +1410,7 @@ normalize_octets_impl(
 {
     char* it = s_ + u_.offset(id);
     char* end = s_ + u_.offset(id + 1);
-    char buf = 0;
+    char d = 0;
     char* dest = it;
     while (it < end)
     {
@@ -1425,13 +1425,10 @@ normalize_octets_impl(
             break;
 
         // decode unreserved octets
-        detail::decode_unchecked(
-            &buf,
-            &buf + 1,
-            string_view(it, 3));
-        if (allowed(buf))
+        d = detail::decode_one(it + 1);
+        if (allowed(d))
         {
-            *dest = buf;
+            *dest = d;
             it += 3;
             ++dest;
             continue;
@@ -1453,14 +1450,6 @@ normalize_octets_impl(
         s_[size()] = '\0';
     }
 }
-
-template
-void
-url_base::
-normalize_octets_impl<grammar::lut_chars>(
-    int id,
-    grammar::lut_chars const& allowed,
-    op_t& op) noexcept;
 
 url_base&
 url_base::
