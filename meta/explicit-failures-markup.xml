@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <explicit-failures-markup>
-    <!-- json -->
-    <library name="json">
+    <!-- url -->
+    <library name="url">
         <mark-unusable>
             <toolset name="*c++98"/>
             <toolset name="*gnu98"/>
