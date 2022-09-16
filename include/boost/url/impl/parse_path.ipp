@@ -23,41 +23,37 @@ namespace urls {
 result<segments_encoded_view>
 parse_path(string_view s) noexcept
 {
-    if(s.empty())
-        return segments_encoded_view(
-            detail::path_ref(s, 0, 0));
-    if(s[0] == '/')
+    auto it = s.data();
+    auto const end = it + s.size();
+    std::size_t dn = 0;
+    std::size_t nseg = 0;
+    if( it != end &&
+            *it != '/')
+        ++nseg;
+    while(it != end)
     {
+        if(*it == '/')
+        {
+            ++it;
+            ++dn;
+            ++nseg;
+            continue;
+        }
         auto rv = grammar::parse(
-            s, detail::path_abempty_rule);
+            it, end, detail::segment_rule);
         if(! rv)
             return rv.error();
-
-        // VFALCO We are needlessly recalculating
-        // the decoded size here.
-        return segments_encoded_view(
-            detail::path_ref(
-                rv->string(),
-                detail::decode_bytes_unchecked(
-                    rv->string()),
-                detail::path_segments(
-                    rv->string(),
-                    rv->size())));
+        if(rv->empty())
+        {
+            BOOST_URL_RETURN_EC(
+                grammar::error::mismatch);
+        }
+        dn += rv->decoded_size();
     }
-    {
-        auto rv = grammar::parse(
-            s, detail::path_rootless_rule);
-        if(! rv)
-            return rv.error();
-        return segments_encoded_view(
-            detail::path_ref(
-                rv->string(),
-                detail::decode_bytes_unchecked(
-                    rv->string()),
-                detail::path_segments(
-                    rv->string(),
-                    rv->size())));
-    }
+    // adjust nseg
+    nseg = detail::path_segments(s, nseg);
+    return segments_encoded_view(
+        detail::path_ref(s, dn, nseg));
 }
 
 } // urls

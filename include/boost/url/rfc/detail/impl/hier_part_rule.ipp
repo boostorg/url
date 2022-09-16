@@ -31,18 +31,20 @@ parse(
     if(it == end)
     {
         // path-empty
-        return {};
+        return t;
     }
     if(end - it == 1)
     {
         if(*it == '/')
         {
+            // path-absolute
             t.path = detail::make_pct_string_view(
                 it, 1, 1);
             t.segment_count = 1;
             ++it;
             return t;
         }
+        // path-rootless
         auto rv = grammar::parse(
             it, end, segment_rule);
         if(! rv)
@@ -54,6 +56,7 @@ parse(
     if( it[0] == '/' &&
         it[1] == '/')
     {
+        // "//" authority
         it += 2;
         auto rv = grammar::parse(
             it, end, authority_rule);
@@ -62,10 +65,14 @@ parse(
         t.authority = *rv;
         t.has_authority = true;
     }
+    if(it == end)
+    {
+        // path-empty
+        return t;
+    }
     auto const it0 = it;
     std::size_t dn = 0;
-    if( it != end &&
-        *it != '/')
+    if(*it != '/')
     {
         auto rv = grammar::parse(
             it, end, segment_rule);

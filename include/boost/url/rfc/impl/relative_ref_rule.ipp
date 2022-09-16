@@ -43,8 +43,7 @@ parse(
         if(rv->has_authority)
             u.apply_authority(rv->authority);
         u.apply_path(
-            rv->path.string(),
-            rv->path.size());
+            rv->path, rv->segment_count);
     }
 
     // [ "?" query ]

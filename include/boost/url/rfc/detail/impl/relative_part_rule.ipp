@@ -18,6 +18,8 @@ namespace boost {
 namespace urls {
 namespace detail {
 
+constexpr auto pchars_nc = pchars - ':';
+
 auto
 relative_part_rule_t::
 parse(
@@ -30,57 +32,93 @@ parse(
     if(it == end)
     {
         // path-empty
-        t.path = {};
-        t.has_authority = false;
-        BOOST_URL_RETURN(t);
+        return t;
     }
-    if(it[0] != '/')
+    if(end - it == 1)
     {
-        auto rv = grammar::parse(
-            it, end,
-            path_noscheme_rule);
-        if( rv )
+        if(*it == '/')
         {
-            // path-noscheme
-            t.path = std::move(*rv);
-            t.has_authority = false;
-            BOOST_URL_RETURN(t);
+            // path-absolute
+            t.path = detail::make_pct_string_view(
+                it, 1, 1);
+            t.segment_count = 1;
+            ++it;
+            return t;
+        }
+        if(*it != ':')
+        {
+            // path-noscheme or
+            // path-empty
+            auto rv = grammar::parse(
+                it, end, segment_rule);
+            if(! rv)
+                return rv.error();
+            if(! rv->empty())
+            {
+                t.path = *rv;
+                t.segment_count = 1;
+            }
         }
         // path-empty
-        t.path = {};
-        t.has_authority = false;
-        BOOST_URL_RETURN(t);
+        return t;
     }
-    if( end - it == 1 ||
-        it[1] != '/')
+    if( it[0] == '/' &&
+        it[1] == '/')
     {
-        // path-absolute
-        auto rv = grammar::parse(
-            it, end,
-            path_absolute_rule);
-        t.path = std::move(*rv);
-        t.has_authority = false;
-        BOOST_URL_RETURN(t);
-    }
-
-    // "//" authority path-abempty
-    it += 2;
-    {
+        // "//" authority
+        it += 2;
         auto rv = grammar::parse(
             it, end, authority_rule);
         if(! rv)
             return rv.error();
         t.authority = *rv;
-    }
-    {
-        auto rv = grammar::parse(
-            it, end, path_abempty_rule);
-        if(! rv)
-            return rv.error();
-        t.path = std::move(*rv);
         t.has_authority = true;
     }
-    BOOST_URL_RETURN(t);
+    if(it == end)
+    {
+        // path-empty
+        return t;
+    }
+    auto const it0 = it;
+    std::size_t dn = 0;
+    if(*it != '/')
+    {
+        // segment_nc
+        auto rv = grammar::parse(it, end,
+            pct_encoded_rule(pchars_nc));
+        if(! rv)
+            return rv.error();
+        if(rv->empty())
+            return t;
+        dn += rv->decoded_size();
+        ++t.segment_count;
+        if( it != end &&
+            *it == ':')
+        {
+            BOOST_URL_RETURN_EC(
+                grammar::error::mismatch);
+        }
+    }
+    while(it != end)
+    {
+        if(*it == '/')
+        {
+            ++dn;
+            ++it;
+            ++t.segment_count;
+            continue;
+        }
+        auto rv = grammar::parse(
+            it, end, segment_rule);
+        if(! rv)
+            return rv.error();
+        if(rv->empty())
+            break;
+        dn += rv->decoded_size();
+    }
+    t.path = detail::make_pct_string_view(
+        it0, it - it0, dn);
+    return t;
 }
 
 } // detail
