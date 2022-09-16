@@ -207,7 +207,8 @@ private:
     {
         if(it_ == end_)
             return false;
-       measure_impl(n, *it_++);
+       measure_impl(n,
+           param_view(*it_++));
         return true;
     }
 
@@ -216,7 +217,8 @@ private:
         char*& dest,
         char const* end) noexcept override
     {
-        copy_impl(dest, end, *it_++);
+        copy_impl(dest, end,
+            param_view(*it_++));
     }
 };
 
@@ -285,12 +287,6 @@ struct params_encoded_iter
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::reference,
-            param_pct_view>::value);
-
-    BOOST_STATIC_ASSERT(
-        std::is_convertible<
-            typename std::iterator_traits<
-                FwdIt>::reference,
             param_view>::value);
 
     params_encoded_iter(
@@ -323,7 +319,8 @@ private:
             return false;
         // throw on invalid input
         measure_impl(n,
-            param_pct_view(*it_++));
+            param_pct_view(
+                param_view(*it_++)));
         return true;
     }
 
@@ -333,7 +330,8 @@ private:
         char const* end
             ) noexcept override
     {
-        copy_impl(dest, end, *it_++);
+        copy_impl(dest, end,
+            param_view(*it_++));
     }
 };
 

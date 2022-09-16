@@ -155,7 +155,7 @@ struct params_encoded_ref_test
     assign(
         QP&& p,
         std::initializer_list<
-            param_pct_view> init)
+            param_view> init)
     {
         p.assign(
             init.begin(),
@@ -168,7 +168,7 @@ struct params_encoded_ref_test
     append(
         QP&& p,
         std::initializer_list<
-            param_pct_view> init) ->
+            param_view> init) ->
         params_encoded_ref::iterator
     {
         return p.append(
@@ -183,7 +183,7 @@ struct params_encoded_ref_test
         QP&& p,
         params_encoded_ref::iterator before,
         std::initializer_list<
-            param_pct_view> init) ->
+            param_view> init) ->
         params_encoded_ref::iterator
     {
         return p.insert(
@@ -200,7 +200,7 @@ struct params_encoded_ref_test
         params_encoded_ref::iterator from,
         params_encoded_ref::iterator to,
         std::initializer_list<
-            param_pct_view> init) ->
+            param_view> init) ->
         params_encoded_ref::iterator
     {
         return p.replace(
