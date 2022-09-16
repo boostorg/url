@@ -21,6 +21,11 @@
 namespace boost {
 namespace urls {
 
+#ifdef assert
+#undef assert
+#endif
+#define assert BOOST_TEST
+
 BOOST_STATIC_ASSERT(
     ! std::is_default_constructible<
         segments_encoded_base>::value);

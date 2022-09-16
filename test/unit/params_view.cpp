@@ -19,23 +19,26 @@
 namespace boost {
 namespace urls {
 
-using Type = params_view;
+#ifdef assert
+#undef assert
+#endif
+#define assert BOOST_TEST
 
 BOOST_STATIC_ASSERT(
     std::is_default_constructible<
-        Type>::value);
+        params_view>::value);
 
 BOOST_STATIC_ASSERT(
     std::is_copy_constructible<
-        Type>::value);
+        params_view>::value);
 
 BOOST_STATIC_ASSERT(
     std::is_copy_assignable<
-        Type>::value);
+        params_view>::value);
 
 BOOST_STATIC_ASSERT(
     std::is_default_constructible<
-        Type::iterator>::value);
+        params_view::iterator>::value);
 
 struct params_view_test
 {

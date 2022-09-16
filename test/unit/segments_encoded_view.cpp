@@ -20,26 +20,29 @@
 
 #include <sstream>
 
+#ifdef assert
+#undef assert
+#endif
+#define assert BOOST_TEST
+
 namespace boost {
 namespace urls {
 
-using Type = segments_encoded_view;
-
 BOOST_STATIC_ASSERT(
     std::is_default_constructible<
-        Type>::value);
+        segments_encoded_view>::value);
 
 BOOST_STATIC_ASSERT(
     std::is_copy_constructible<
-        Type>::value);
+        segments_encoded_view>::value);
 
 BOOST_STATIC_ASSERT(
     std::is_copy_assignable<
-        Type>::value);
+        segments_encoded_view>::value);
 
 BOOST_STATIC_ASSERT(
     std::is_default_constructible<
-        Type::iterator>::value);
+        segments_encoded_view::iterator>::value);
 
 struct segments_const_encoded_view_test
 {
@@ -80,6 +83,16 @@ struct segments_const_encoded_view_test
             {
                 BOOST_TEST_FAIL();
             }
+
+            // reserved character
+            BOOST_TEST_THROWS(segments_encoded_view("?"), system_error);
+
+            // invalid percent-escape
+            BOOST_TEST_THROWS(segments_encoded_view("%"), system_error);
+            BOOST_TEST_THROWS(segments_encoded_view("%F"), system_error);
+            BOOST_TEST_THROWS(segments_encoded_view("%FX"), system_error);
+            BOOST_TEST_THROWS(segments_encoded_view("%%"), system_error);
+            BOOST_TEST_THROWS(segments_encoded_view("FA%"), system_error);
         }
 
         // operator=(segments_encoded_view)
