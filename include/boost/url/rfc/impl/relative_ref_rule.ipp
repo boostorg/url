@@ -12,7 +12,7 @@
 
 #include <boost/url/rfc/relative_ref_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
-#include <boost/url/rfc/detail/fragment_rule.hpp>
+#include <boost/url/rfc/detail/fragment_part_rule.hpp>
 #include <boost/url/rfc/detail/relative_part_rule.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/tuple_rule.hpp>
@@ -73,8 +73,8 @@ parse(
             it, end, detail::fragment_part_rule);
         if(! rv)
             return rv.error();
-        if(rv->has_value())
-            u.apply_frag(**rv);
+        if(rv->has_fragment)
+            u.apply_frag(rv->fragment);
     }
 
     return u.construct();

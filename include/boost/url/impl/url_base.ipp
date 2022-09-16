@@ -25,7 +25,6 @@
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
-#include <boost/url/rfc/detail/fragment_rule.hpp>
 #include <boost/url/rfc/detail/host_rule.hpp>
 #include <boost/url/rfc/detail/ipvfuture_rule.hpp>
 #include <boost/url/rfc/detail/path_rules.hpp>

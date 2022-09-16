@@ -45,7 +45,7 @@ struct relative_part_rule_t
     struct value_type
     {
         bool has_authority = false;
-        decltype(authority_rule)::value_type authority;
+        authority_view authority;
         grammar::range<pct_string_view> path;
     };
 
