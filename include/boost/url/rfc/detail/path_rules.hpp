@@ -35,7 +35,7 @@ namespace detail {
         @ref grammar::parse.
 */
 constexpr auto segment_rule =
-    pct_encoded_rule(grammar::ref(pchars));
+    pct_encoded_rule(pchars);
 
 //------------------------------------------------
 

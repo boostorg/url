@@ -28,65 +28,74 @@ parse(
     result<value_type>
 {
     value_type t;
-
     if(it == end)
     {
         // path-empty
-        BOOST_URL_RETURN(t);
+        return {};
     }
-    if(it[0] != '/')
+    if(end - it == 1)
     {
-        // path-rootless
-        auto const it0 = it;
-        auto rv = grammar::parse(
-            it, end,
-            path_rootless_rule);
-        if( rv )
+        if(*it == '/')
         {
-            t.path = std::move(*rv);
-            BOOST_URL_RETURN(t);
+            t.path = detail::make_pct_string_view(
+                it, 1, 1);
+            t.segment_count = 1;
+            ++it;
+            return t;
         }
-        it = it0;
-
-        // path-empty
-        BOOST_URL_RETURN(t);
-    }
-    if( end - it == 1 ||
-        it[1] != '/')
-    {
-        // path-absolute
         auto rv = grammar::parse(
-            it, end,
-            path_absolute_rule);
+            it, end, segment_rule);
         if(! rv)
             return rv.error();
-        t.path = std::move(*rv);
-        t.has_authority = false;
-        BOOST_URL_RETURN(t);
+        t.path = *rv;
+        t.segment_count = 1;
+        return t;
     }
-
-    // "//" authority path-abempty
-    it += 2;
-    // authority
+    if( it[0] == '/' &&
+        it[1] == '/')
     {
+        it += 2;
         auto rv = grammar::parse(
             it, end, authority_rule);
         if(! rv)
             return rv.error();
         t.authority = *rv;
-    }
-
-    // path-abempty
-    {
-        auto rv = grammar::parse(
-            it, end, path_abempty_rule);
-        if(! rv)
-            return rv.error();
-        t.path = std::move(*rv);
         t.has_authority = true;
     }
-
-    BOOST_URL_RETURN(t);
+    auto const it0 = it;
+    std::size_t dn = 0;
+    if( it != end &&
+        *it != '/')
+    {
+        auto rv = grammar::parse(
+            it, end, segment_rule);
+        if(! rv)
+            return rv.error();
+        if(rv->empty())
+            return t;
+        dn += rv->decoded_size();
+        ++t.segment_count;
+    }
+    while(it != end)
+    {
+        if(*it == '/')
+        {
+            ++dn;
+            ++it;
+            ++t.segment_count;
+            continue;
+        }
+        auto rv = grammar::parse(
+            it, end, segment_rule);
+        if(! rv)
+            return rv.error();
+        if(rv->empty())
+            break;
+        dn += rv->decoded_size();
+    }
+    t.path = detail::make_pct_string_view(
+        it0, it - it0, dn);
+    return t;
 }
 
 } // detail

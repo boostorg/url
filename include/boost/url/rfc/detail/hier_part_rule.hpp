@@ -37,10 +37,12 @@ struct hier_part_rule_t
 {
     struct value_type
     {
-        bool has_authority = false;
         authority_view authority;
-        grammar::range<
-            pct_string_view> path;
+        pct_string_view path;
+        std::size_t segment_count = 0;
+        bool has_authority = false;
+
+        //grammar::range<pct_string_view> path;
     };
 
     BOOST_URL_DECL
