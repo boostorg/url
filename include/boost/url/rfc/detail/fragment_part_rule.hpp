@@ -51,7 +51,7 @@ struct fragment_part_rule_t
         ++it;
         auto rv = grammar::parse(
             it, end, pct_encoded_rule(
-                detail::fragment_chars));
+                fragment_chars));
         if(! rv)
             return rv.error();
         value_type t;

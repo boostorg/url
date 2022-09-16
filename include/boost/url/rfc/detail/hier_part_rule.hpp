@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/pct_string_view.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
-#include <boost/url/grammar/range_rule.hpp>
+#include <cstdlib>
 
 namespace boost {
 namespace urls {

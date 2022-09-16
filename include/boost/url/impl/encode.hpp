@@ -12,7 +12,6 @@
 
 #include <boost/url/detail/encode.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/url/decode_view.hpp>
 #include <boost/url/encode_opts.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/hexdig_chars.hpp>

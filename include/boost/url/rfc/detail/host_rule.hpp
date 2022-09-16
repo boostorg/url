@@ -11,11 +11,10 @@
 #define BOOST_URL_RFC_DETAIL_HOST_RULE_HPP
 
 #include <boost/url/host_type.hpp>
-#include <boost/url/decode_view.hpp>
-#include <boost/url/string_view.hpp>
+#include <boost/url/error_types.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
-#include <boost/url/error_types.hpp>
 
 namespace boost {
 namespace urls {

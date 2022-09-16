@@ -7,50 +7,14 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_IMPL_PCT_ENCODED_VIEW_IPP
-#define BOOST_URL_IMPL_PCT_ENCODED_VIEW_IPP
+#ifndef BOOST_URL_IMPL_DECODE_VIEW_IPP
+#define BOOST_URL_IMPL_DECODE_VIEW_IPP
 
 #include <boost/url/decode_view.hpp>
 #include <ostream>
 
 namespace boost {
 namespace urls {
-
-auto
-decode_view::
-iterator::
-operator*() const noexcept ->
-    reference
-{
-    if (plus_to_space_ &&
-        *pos_ == '+')
-        return ' ';
-    if (*pos_ != '%')
-        return *pos_;
-    auto d0 = grammar::hexdig_value(pos_[1]);
-    auto d1 = grammar::hexdig_value(pos_[2]);
-    return static_cast<char>(
-        ((static_cast<
-              unsigned char>(d0) << 4) +
-         (static_cast<
-             unsigned char>(d1))));
-}
-
-//------------------------------------------------
-
-// unchecked constructor
-decode_view::
-decode_view(
-    string_view s,
-    std::size_t n,
-    decode_opts opt) noexcept
-    : p_(s.data())
-    , n_(s.size())
-    , dn_(n)
-    , plus_to_space_(
-        opt.plus_to_space)
-{
-}
 
 namespace detail {
 
@@ -76,6 +40,42 @@ decoded_strcmp(decode_view s0, T s1)
 }
 
 } // detail
+
+//------------------------------------------------
+
+auto
+decode_view::
+iterator::
+operator*() const noexcept ->
+    reference
+{
+    if (plus_to_space_ &&
+        *pos_ == '+')
+        return ' ';
+    if (*pos_ != '%')
+        return *pos_;
+    auto d0 = grammar::hexdig_value(pos_[1]);
+    auto d1 = grammar::hexdig_value(pos_[2]);
+    return static_cast<char>(
+        ((static_cast<
+              unsigned char>(d0) << 4) +
+         (static_cast<
+             unsigned char>(d1))));
+}
+
+// unchecked constructor
+decode_view::
+decode_view(
+    string_view s,
+    std::size_t n,
+    decode_opts opt) noexcept
+    : p_(s.data())
+    , n_(s.size())
+    , dn_(n)
+    , plus_to_space_(
+        opt.plus_to_space)
+{
+}
 
 int
 decode_view::

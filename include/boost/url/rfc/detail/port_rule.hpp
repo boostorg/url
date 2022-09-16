@@ -48,6 +48,8 @@ struct port_rule
         char const* end) const noexcept;
 };
 
+//------------------------------------------------
+
 /** Rule for port-part
 
     @par BNF
