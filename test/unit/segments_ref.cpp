@@ -18,6 +18,11 @@
 
 #include "test_suite.hpp"
 
+#ifdef assert
+#undef assert
+#endif
+#define assert BOOST_TEST
+
 namespace boost {
 namespace urls {
 
