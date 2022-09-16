@@ -44,6 +44,10 @@ class segments_base
     segments_base(
         detail::path_ref const& ref) noexcept;
     segments_base() = default;
+    segments_base(
+        segments_base const&) = default;
+    segments_base& operator=(
+        segments_base const&) = default;
 
 public:
     /** A Bidirectional iterator to a path segment

@@ -176,31 +176,6 @@ struct segments_view_test
     }
 
     void
-    testRange()
-    {
-    /*  Legend
-
-        '#' %23     '?' %3F
-        '.' %2E     '[' %5B
-        '/' %2F     ']' %5D
-    */
-        check( "", {});
-        check( "./", { "" });
-        check( ".//", { "", "" });
-        check( "/", {});
-        check( "/./", { "" });
-        check( "/.//", { "", "" });
-        check( "/%3F", {"?"});
-        check( "%2E/", {".", ""});
-        check( "./usr", { "usr" });
-        check( "/index.htm", { "index.htm" });
-        check( "/images/cat-pic.gif", { "images", "cat-pic.gif" });
-        check( "images/cat-pic.gif", { "images", "cat-pic.gif" });
-        check( "/fast//query", { "fast", "", "query" });
-        check( "fast//",  { "fast", "", "" });
-    }
-
-    void
     testJavadocs()
     {
         // {class}
@@ -219,7 +194,6 @@ struct segments_view_test
     run()
     {
         testMembers();
-        testRange();
         testJavadocs();
     }
 };
