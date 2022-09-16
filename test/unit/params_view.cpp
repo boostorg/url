@@ -74,6 +74,16 @@ struct params_view_test
             {
                 BOOST_TEST_FAIL();
             }
+
+            // reserved character
+            BOOST_TEST_THROWS(params_view("#"), system_error);
+
+            // invalid percent-escape
+            BOOST_TEST_THROWS(params_view("%"), system_error);
+            BOOST_TEST_THROWS(params_view("%F"), system_error);
+            BOOST_TEST_THROWS(params_view("%FX"), system_error);
+            BOOST_TEST_THROWS(params_view("%%"), system_error);
+            BOOST_TEST_THROWS(params_view("FA%"), system_error);
         }
 
         // operator=(params_view)
