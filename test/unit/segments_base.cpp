@@ -53,7 +53,8 @@ struct segments_base_test
         auto rv = parse_uri_reference(s);
         if(! BOOST_TEST(rv.has_value()))
             return;
-        segments_base const& ps(rv->encoded_segments());
+        segments_base const& ps(
+            segments_view(rv->encoded_segments()));
         BOOST_TEST_EQ(ps.buffer().data(), s.data());
         BOOST_TEST_EQ(ps.is_absolute(), s.starts_with('/'));
         BOOST_TEST_EQ(ps.empty(), match.size() == 0);
@@ -121,85 +122,92 @@ struct segments_base_test
     void
     testObservers()
     {
+#if BOOST_WORKAROUND(BOOST_MSVC, <= 1910)
+#define Ty(x) static_cast<segments_base const&>(segments_view(x))
+#else
+//#define Ty(x) static_cast<segments_base const&>(x)
+#define Ty(x) static_cast<segments_base const&>(segments_view(x))
+#endif
         // is_absolute()
         {
-            BOOST_TEST(static_cast<segments_base const&>(
+            BOOST_TEST(Ty(
                 url_view("/index.htm").segments()).is_absolute());
-            BOOST_TEST(! static_cast<segments_base const&>(
+            BOOST_TEST(! Ty(
                 url_view("index.htm").segments()).is_absolute());
-            BOOST_TEST(static_cast<segments_base const&>(
+            BOOST_TEST(Ty(
                 segments_view("/index.htm")).is_absolute());
-            BOOST_TEST(! static_cast<segments_base const&>(
+            BOOST_TEST(! Ty(
                 segments_view("index.htm")).is_absolute());
-            BOOST_TEST(static_cast<segments_base const&>(
+            BOOST_TEST(Ty(
                 parse_path("/index.htm").value()).is_absolute());
-            BOOST_TEST(! static_cast<segments_base const&>(
+            BOOST_TEST(! Ty(
                 parse_path("index.htm").value()).is_absolute());
         }
 
         // empty()
         {
-            BOOST_TEST(static_cast<segments_base const&>(
+            BOOST_TEST(Ty(
                 url_view("/").segments()).empty());
-            BOOST_TEST(! static_cast<segments_base const&>(
+            BOOST_TEST(! Ty(
                 url_view("x").segments()).empty());
-            BOOST_TEST(static_cast<segments_base const&>(
+            BOOST_TEST(Ty(
                 segments_view("/")).empty());
-            BOOST_TEST(! static_cast<segments_base const&>(
+            BOOST_TEST(! Ty(
                 segments_view("x")).empty());
-            BOOST_TEST(static_cast<segments_base const&>(
+            BOOST_TEST(Ty(
                 parse_path("/").value()).empty());
-            BOOST_TEST(! static_cast<segments_base const&>(
+            BOOST_TEST(! Ty(
                 parse_path("x").value()).empty());
         }
 
         // size()
         {
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 url_view("/").segments()).size(), 0);
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 url_view("x").segments()).size(), 1);
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 segments_view("/")).size(), 0);
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 segments_view("x")).size(), 1);
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 parse_path("/").value()).size(), 0);
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 parse_path("x").value()).size(), 1);
         }
 
         // front()
         {
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 url_view("/x/y").segments()).front(), "x");
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 url_view("x/y").segments()).front(), "x");
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 segments_view("/x/y")).front(), "x");
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 segments_view("x/y")).front(), "x");
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 parse_path("/x/y").value()).front(), "x");
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 parse_path("x/y").value()).front(), "x");
         }
 
         // back()
         {
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 url_view("/x/y").segments()).back(), "y");
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 url_view("x/y").segments()).back(), "y");
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 segments_view("/x/y")).back(), "y");
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 segments_view("x/y")).back(), "y");
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 parse_path("/x/y").value()).back(), "y");
-            BOOST_TEST_EQ(static_cast<segments_base const&>(
+            BOOST_TEST_EQ(Ty(
                 parse_path("x/y").value()).back(), "y");
         }
+#undef Ty
     }
 
     void

@@ -125,11 +125,11 @@ struct segments_iter_base
 {
 protected:
     BOOST_URL_DECL static void
-    measure_impl(
-        string_view, std::size_t&) noexcept;
+    measure_impl(std::size_t&,
+        string_view) noexcept;
     BOOST_URL_DECL static void
-    copy_impl(
-        string_view, char*&, char const*) noexcept;
+    copy_impl(char*&, char const*,
+        string_view) noexcept;
 };
 
 // iterates segments in a
@@ -173,7 +173,8 @@ private:
     {
         if(it_ == end_)
             return false;
-        measure_impl(*it_, n);
+        measure_impl(n,
+            string_view(*it_));
         ++it_;
         return true;
     }
@@ -184,8 +185,8 @@ private:
         char const* end
             ) noexcept override
     {
-        copy_impl(*it_, dest, end);
-        ++it_;
+        copy_impl(dest, end,
+            string_view(*it_++));
     }
 };
 
@@ -224,11 +225,11 @@ struct segments_encoded_iter_base
 {
 protected:
     BOOST_URL_DECL static void
-    measure_impl(
-        std::size_t&, string_view) noexcept;
+    measure_impl(std::size_t&,
+        string_view) noexcept;
     BOOST_URL_DECL static void
-    copy_impl(
-        char*&, char const*, string_view) noexcept;
+    copy_impl(char*&, char const*,
+        string_view) noexcept;
 };
 
 // iterates segments in an
@@ -242,17 +243,11 @@ struct segments_encoded_iter
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::reference,
-            pct_string_view>::value);
-
-    BOOST_STATIC_ASSERT(
-        std::is_convertible<
-            typename std::iterator_traits<
-                FwdIt>::reference,
             string_view>::value);
 
     segments_encoded_iter(
         FwdIt first,
-        FwdIt last) noexcept
+        FwdIt last)
         : it_(first)
         , it0_(first)
         , end_(last)
@@ -260,7 +255,8 @@ struct segments_encoded_iter
         if(it_ != end_)
         {
             // throw on invalid input
-            front = pct_string_view(*first);
+            front = pct_string_view(
+                string_view(*first));
         }
     }
 
@@ -283,8 +279,8 @@ private:
             return false;
         // throw on invalid input
         measure_impl(n,
-            pct_string_view(*it_));
-        ++it_;
+            pct_string_view(
+                string_view(*it_++)));
         return true;
     }
 
@@ -294,7 +290,8 @@ private:
         char const* end
             ) noexcept override
     {
-        copy_impl(dest, end, *it_++);
+        copy_impl(dest, end,
+            string_view(*it_++));
     }
 };
 

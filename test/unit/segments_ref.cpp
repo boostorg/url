@@ -736,6 +736,8 @@ struct segments_ref_test
         url u( "?key=value" );
 
         assert( &u.segments().url() == &u );
+
+        ignore_unused(u);
         }
 
         // assign(initializer_list)

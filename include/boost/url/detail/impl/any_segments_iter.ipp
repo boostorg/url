@@ -251,8 +251,8 @@ copy(char*& dest, char const* end) noexcept
 void
 segments_iter_base::
 measure_impl(
-    string_view s,
-    std::size_t& n) noexcept
+    std::size_t& n,
+    string_view s) noexcept
 {
     encode_opts opt;
     opt.space_to_plus = false;
@@ -265,9 +265,9 @@ measure_impl(
 void
 segments_iter_base::
 copy_impl(
-    string_view s,
     char*& dest,
-    char const* end) noexcept
+    char const* end,
+    string_view s) noexcept
 {
     encode_opts opt;
     opt.space_to_plus = false;

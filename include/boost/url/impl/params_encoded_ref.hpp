@@ -45,7 +45,7 @@ assign(FwdIt first, FwdIt last)
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::reference,
-            param_pct_view>::value,
+            param_view>::value,
         "Type requirements not met");
 
     assign(first, last,
@@ -90,7 +90,7 @@ append(
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::reference,
-            param_pct_view>::value,
+            param_view>::value,
         "Type requirements not met");
 
     return insert(
@@ -115,7 +115,7 @@ insert(
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::reference,
-            param_pct_view>::value,
+            param_view>::value,
         "Type requirements not met");
 
     return insert(
@@ -172,7 +172,7 @@ replace(
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::reference,
-            param_pct_view>::value,
+            param_view>::value,
         "Type requirements not met");
 
     return u_->edit_params(

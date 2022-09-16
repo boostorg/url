@@ -834,7 +834,51 @@ struct param_pct_view
         , has_value(true)
     {
     }
- 
+
+    /** Construction
+
+        This converts a param which may
+        contain unvalidated percent-escapes into
+        a param whose key and value are
+        guaranteed to contain strings with no
+        invalid percent-escapes, otherwise
+        an exception is thrown.
+
+        The new key and value will reference
+        the same corresponding underlying
+        character buffers.
+        Ownership of the buffers is not transferred;
+        the caller is responsible for ensuring that
+        the assigned buffers remain valid until
+        they are no longer referenced.
+
+        @par Example
+        @code
+        param_pct_view qp( param_view( "key", "value" ) );
+        @endcode
+
+        @par Complexity
+        Linear in `key.size() + value.size()`.
+
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `key` or `value` contains an invalid percent escape.
+
+        @param p The param to construct from.
+    */
+    explicit
+    param_pct_view(
+        param_view const& p)
+        : key(p.key)
+        , value(p.has_value
+            ? pct_string_view(p.value)
+            : pct_string_view())
+        , has_value(p.has_value)
+    {
+    }
+
     /** Conversion
 
         This function performs a conversion from
