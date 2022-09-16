@@ -149,10 +149,11 @@ struct params_encoded_ref_test
 
     //--------------------------------------------
 
+    template<class QP>
     static
     void
     assign(
-        params_encoded_ref& p,
+        QP&& p,
         std::initializer_list<
             param_pct_view> init)
     {
@@ -161,10 +162,11 @@ struct params_encoded_ref_test
             init.end());
     };
 
+    template<class QP>
     static
     auto
     append(
-        params_encoded_ref& p,
+        QP&& p,
         std::initializer_list<
             param_pct_view> init) ->
         params_encoded_ref::iterator
@@ -174,10 +176,11 @@ struct params_encoded_ref_test
             init.end());
     };
 
+    template<class QP>
     static
     auto
     insert(
-        params_encoded_ref& p,
+        QP&& p,
         params_encoded_ref::iterator before,
         std::initializer_list<
             param_pct_view> init) ->
@@ -189,10 +192,11 @@ struct params_encoded_ref_test
             init.end());
     };
 
+    template<class QP>
     static
     auto
     replace(
-        params_encoded_ref& p,
+        QP&& p,
         params_encoded_ref::iterator from,
         params_encoded_ref::iterator to,
         std::initializer_list<
@@ -243,6 +247,14 @@ struct params_encoded_ref_test
             check(u.encoded_params(),{
                 {"first", "John"},
                 {"last", "Doe"}});
+
+            // reserved character
+            BOOST_TEST_NO_THROW((u.encoded_params() =
+                { {"#", no_value} }));
+
+            // invalid pecent-escape
+            BOOST_TEST_THROWS((u.encoded_params() =
+                { {"%", no_value} }), system_error);
         }
 
         // operator params_encoded_view
@@ -285,10 +297,18 @@ struct params_encoded_ref_test
             auto const f = [](params_encoded_ref qp)
             {
                 qp.assign({ {"first", nullptr}, {"last",""}, {"full", "John Doe"} });
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(qp.assign(
+                    { {"%%", no_value} }), system_error);
             };
             auto const g = [](params_encoded_ref qp)
             {
                 assign(qp, { {"first",nullptr}, {"last",""}, {"full", "John Doe"} });
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(qp.assign(
+                    { {"%%", no_value} }), system_error);
             };
             check(f, g, "", "first&last=&full=John%20Doe",
                 { {"first",no_value}, {"last",""}, {"full","John%20Doe"} });
@@ -300,6 +320,10 @@ struct params_encoded_ref_test
             {
                 auto it = qp.append({"=","&#"});
                 BOOST_TEST(is_equal(*it, {"%3D","%26%23"}));
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(qp.append(
+                    {"%F", no_value}), system_error);
             };
             check(f, "?", "&%3D=%26%23", { {"",no_value}, {"%3D","%26%23"} });
             check(f, "?key=value", "key=value&%3D=%26%23", { {"key","value"}, {"%3D","%26%23"} });
@@ -321,10 +345,18 @@ struct params_encoded_ref_test
             auto const f = [](params_encoded_ref qp)
             {
                 qp.append({ {"first", nullptr}, {"last",""}, {"full", "John Doe"} });
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(qp.append(
+                    { {"%FG", no_value} }), system_error);
             };
             auto const g = [](params_encoded_ref qp)
             {
                 append(qp, { {"first",nullptr}, {"last",""}, {"full", "John Doe"} });
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(append(qp,
+                    { {"%FG", no_value} }), system_error);
             };
             check(f, g, "", "first&last=&full=John%20Doe",
                 { {"first",no_value}, {"last",""}, {"full","John%20Doe"} });
@@ -342,6 +374,10 @@ struct params_encoded_ref_test
                 auto it = qp.insert(std::next(qp.begin(),0),
                     {"middle",qp.begin()->value});
                 BOOST_TEST(is_equal(*it, {"middle","John"}));
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(qp.insert(std::next(qp.begin(), 0),
+                    {"", "%"}), system_error);
             };
             check(f, "?first=John&last=Doe", "middle=John&first=John&last=Doe",
                 { {"middle","John"}, {"first","John"}, {"last","Doe"} });
@@ -378,6 +414,10 @@ struct params_encoded_ref_test
                     { {"first","John"}, {"last","Doe"} });
                 BOOST_TEST(is_equal(*it, {"first","John"}));
                 BOOST_TEST_EQ(it, qp.begin());
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(qp.insert(std::next(qp.begin(), 0),
+                    { {"key", "%%"} }), system_error);
             };
             auto const g = [](params_encoded_ref qp)
             {
@@ -385,6 +425,10 @@ struct params_encoded_ref_test
                     { {"first","John"}, {"last","Doe"} });
                 BOOST_TEST(is_equal(*it, {"first","John"}));
                 BOOST_TEST_EQ(it, qp.begin());
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(insert(qp, std::next(qp.begin(), 0),
+                    { {"key", "%FX"} }), system_error);
             };
             check(f, g, "?k1&k2=&k3=v3",
                 "first=John&last=Doe&k1&k2=&k3=v3",
@@ -495,6 +539,9 @@ struct params_encoded_ref_test
                 // self-intersect
                 auto n = qp.erase(qp.find_last("k1", ignore_case)->value);
                 BOOST_TEST_EQ(n, 2);
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(qp.erase("%"), system_error);
             };
             check(f, "?k0&k1=&k2=key&k1=value&k3=4&K1=k1", "k0&k2=key&k3=4&K1=k1",
                 { {"k0",no_value}, {"k2","key"}, {"k3","4"}, {"K1","k1"} });
@@ -516,6 +563,10 @@ struct params_encoded_ref_test
                 auto it = qp.replace(std::next(qp.begin(),0),
                     {"=","&#"});
                 BOOST_TEST(is_equal(*it, {"%3D","%26%23"}));
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(qp.replace(std::next(qp.begin(), 0),
+                    {"", "00%"}), system_error);
             };
             check(f, "?first=John&last=Doe", "%3D=%26%23&last=Doe",
                 { {"%3D","%26%23"}, {"last","Doe"} });
@@ -563,6 +614,12 @@ struct params_encoded_ref_test
                     std::next(qp.begin(),2),
                     {{"%3D","%26%23"}});
                 BOOST_TEST(is_equal(*it, {"%3D","%26%23"}));
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(qp.replace(
+                        std::next(qp.begin(),0),
+                        std::next(qp.begin(),2),
+                    { {"%", "%"} }), system_error);
             };
             auto const g = [](params_encoded_ref qp)
             {
@@ -571,6 +628,12 @@ struct params_encoded_ref_test
                     std::next(qp.begin(),2),
                     {{"%3D","%26%23"}});
                 BOOST_TEST(is_equal(*it, {"%3D","%26%23"}));
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(replace(qp,
+                        std::next(qp.begin(),0),
+                        std::next(qp.begin(),2),
+                    { {"%", "%"} }), system_error);
             };
             check(f, g, "?k0&k1=&k2=key", "%3D=%26%23&k2=key",
                 { {"%3D","%26%23"}, {"k2","key"} });
@@ -613,6 +676,10 @@ struct params_encoded_ref_test
                 auto it = qp.set(std::next(qp.begin(),0),
                     qp.find("k2")->value);
                 BOOST_TEST(is_equal(*it, {"k0", "key"}));
+
+                // invalid pecent-escape
+                BOOST_TEST_THROWS(qp.set(std::next(qp.begin(),0),
+                    "%"), system_error);
             };
             check(f, "?k0&k1=&k2=key", "k0=key&k1=&k2=key",
                 { {"k0","key"}, {"k1",""}, {"k2","key"} });
