@@ -67,12 +67,12 @@ set(BOOST_URL_TESTS_FILES
     grammar/delim_rule.cpp
     grammar/digit_chars.cpp
     grammar/grammar_error.cpp
+    grammar/grammar_parse.cpp
     grammar/hexdig_chars.cpp
     grammar/literal_rule.cpp
     grammar/lut_chars.cpp
     grammar/not_empty_rule.cpp
     grammar/optional_rule.cpp
-    grammar/parse.cpp
     grammar/range_rule.cpp
     grammar/recycled.cpp
     grammar/string_token.cpp

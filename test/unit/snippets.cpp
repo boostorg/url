@@ -28,6 +28,11 @@ using namespace boost::urls;
 
 #include <iostream>
 
+#ifdef assert
+#undef assert
+#endif
+#define assert BOOST_TEST
+
 void
 using_url_views()
 {

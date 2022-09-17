@@ -13,13 +13,13 @@ project
     : requirements
       $(c11-requires)
       <library>/boost/filesystem//boost_filesystem/<warnings>off
+      <library>/boost/url//boost_url
       <source>../../extra/test_main.cpp
       <include>.
       <include>../../extra
     ;
 
 local SOURCES =
-    ../../extra/test_main.cpp
     authority_view.cpp
     error.cpp
     error_types.cpp
@@ -67,12 +67,12 @@ local SOURCES =
     grammar/delim_rule.cpp
     grammar/digit_chars.cpp
     grammar/grammar_error.cpp
+    grammar/grammar_parse.cpp
     grammar/hexdig_chars.cpp
     grammar/literal_rule.cpp
     grammar/lut_chars.cpp
     grammar/not_empty_rule.cpp
     grammar/optional_rule.cpp
-    grammar/parse.cpp
     grammar/range_rule.cpp
     grammar/recycled.cpp
     grammar/string_token.cpp
@@ -101,7 +101,7 @@ local SOURCES =
     ;
 for local f in $(SOURCES)
 {
-    run $(f) /boost/url//boost_url ;
+    run $(f) : <warnings>off ;
 }
-run doc_grammar.cpp /boost/url//boost_url : : : <warnings>off ;
-run doc_container.cpp /boost/url//boost_url : : : <warnings>off ;
+run doc_grammar.cpp : : : <warnings>off ;
+run doc_container.cpp : : : <warnings>off ;
