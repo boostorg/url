@@ -115,6 +115,8 @@ void
 url_base::
 copy(url_view_base const& u)
 {
+    if (this == &u)
+        return;
     op_t op(*this);
     if(u.size() == 0)
     {
