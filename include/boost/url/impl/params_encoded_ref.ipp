@@ -40,7 +40,8 @@ params_encoded_ref::
 operator=(
     params_encoded_ref const& other)
 {
-    assign(other.begin(), other.end());
+    if (this != &other)
+        assign(other.begin(), other.end());
     return *this;
 }
 

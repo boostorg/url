@@ -189,8 +189,9 @@ public:
     operator=(
         url_view const& other) noexcept
     {
-        *this = static_cast<
-            url_view_base const&>(other);
+        if (this != &other)
+            *this = static_cast<
+                url_view_base const&>(other);
         return *this;
     }
 
