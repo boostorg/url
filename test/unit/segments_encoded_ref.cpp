@@ -97,7 +97,7 @@ struct segments_encoded_ref_test
             string_view> init)
     {
         ps.assign(init.begin(), init.end());
-    };
+    }
 
     template<class PS>
     static

@@ -160,7 +160,7 @@ struct params_encoded_ref_test
         p.assign(
             init.begin(),
             init.end());
-    };
+    }
 
     template<class QP>
     static
@@ -174,7 +174,7 @@ struct params_encoded_ref_test
         return p.append(
             init.begin(),
             init.end());
-    };
+    }
 
     template<class QP>
     static
@@ -190,7 +190,7 @@ struct params_encoded_ref_test
             before,
             init.begin(),
             init.end());
-    };
+    }
 
     template<class QP>
     static
@@ -208,7 +208,7 @@ struct params_encoded_ref_test
             to,
             init.begin(),
             init.end());
-    };
+    }
 
     //--------------------------------------------
 

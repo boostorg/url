@@ -45,7 +45,7 @@ segments_ref&
 segments_ref::
 operator=(segments_ref const& other)
 {
-    if (this != &other)
+    if (u_ != other.u_)
         assign(other.begin(), other.end());
     return *this;
 }
