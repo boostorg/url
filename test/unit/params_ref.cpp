@@ -29,8 +29,6 @@
 namespace boost {
 namespace urls {
 
-using params_ref = params_ref;
-
 BOOST_STATIC_ASSERT(
     ! std::is_default_constructible<
         params_ref>::value);
@@ -42,6 +40,10 @@ BOOST_STATIC_ASSERT(
 BOOST_STATIC_ASSERT(
     std::is_copy_assignable<
         params_ref>::value);
+
+//------------------------------------------------
+
+#define BIGSTR "123456789012345678901234567890"
 
 struct params_ref_test
 {
@@ -203,6 +205,7 @@ struct params_ref_test
 
     //--------------------------------------------
 
+    static
     void
     testSpecial()
     {
@@ -249,6 +252,7 @@ struct params_ref_test
         }
     }
 
+    static
     void
     testObservers()
     {
@@ -260,6 +264,7 @@ struct params_ref_test
         }
     }
 
+    static
     void
     testModifiers()
     {
@@ -288,6 +293,19 @@ struct params_ref_test
             check(f, g, "", "first&last=&full=John%20Doe",
                 { {"first",no_value}, {"last",""}, {"full","John Doe"} });
         }
+        {
+            auto const f = [](params_ref qp)
+            {
+                qp.assign({ {BIGSTR, nullptr}, {"last",BIGSTR}, {BIGSTR, BIGSTR} });
+            };
+            auto const g = [](params_ref qp)
+            {
+                assign(qp, { {BIGSTR, nullptr}, {"last",BIGSTR}, {BIGSTR, BIGSTR} });
+            };
+            check(f, g, "", 
+                BIGSTR "&last=" BIGSTR "&" BIGSTR "=" BIGSTR,
+                { {BIGSTR, nullptr}, {"last",BIGSTR}, {BIGSTR, BIGSTR} });
+        }
 
         // append(param_view)
         {
@@ -309,6 +327,16 @@ struct params_ref_test
             check(f, "?first=John&last=Doe", "first=John&last=Doe&middle=John",
                 { {"first","John"}, {"last","Doe"}, {"middle","John"} });
         }
+        {
+            auto const f = [](params_ref qp)
+            {
+                auto it = qp.append({BIGSTR,BIGSTR});
+                BOOST_TEST(is_equal(*it, {BIGSTR,BIGSTR}));
+            };
+            check(f, "?", "&" BIGSTR "=" BIGSTR, { {"",no_value}, {BIGSTR,BIGSTR} });
+            check(f, "?key=value", "key=value&" BIGSTR "=" BIGSTR,
+                { {"key","value"}, {BIGSTR,BIGSTR} });
+        }
 
         // append(initializer_list)
         // append(FwdIt first, FwdIt)
@@ -327,6 +355,18 @@ struct params_ref_test
                 { {"",no_value}, {"first",no_value}, {"last",""}, {"full","John Doe"} });
             check(f, g, "?key=value", "key=value&first&last=&full=John%20Doe",
                 { {"key","value"}, {"first",no_value}, {"last",""}, {"full","John Doe"} });
+        }
+        {
+            auto const f = [](params_ref qp)
+            {
+                qp.append({ {BIGSTR, nullptr}, {"last",BIGSTR}, {BIGSTR, BIGSTR} });
+            };
+            auto const g = [](params_ref qp)
+            {
+                append(qp, { {BIGSTR, nullptr}, {"last",BIGSTR}, {BIGSTR, BIGSTR} });
+            };
+            check(f, g, "", BIGSTR "&last=" BIGSTR "&" BIGSTR "=" BIGSTR,
+                { {BIGSTR,no_value}, {"last",BIGSTR}, {BIGSTR,BIGSTR} });
         }
 
         // insert(iterator, param_view)
@@ -362,6 +402,16 @@ struct params_ref_test
             };
             check(f, "?first=John&last=Doe", "first=John&last=Doe&middle=John",
                 { {"first","John"}, {"last","Doe"}, {"middle","John"} });
+        }
+        {
+            auto const f = [](params_ref qp)
+            {
+                auto it = qp.insert(std::next(qp.begin(),0),
+                    {"middle",BIGSTR});
+                BOOST_TEST(is_equal(*it, {"middle",BIGSTR}));
+            };
+            check(f, "?first=John&last=Doe", "middle=" BIGSTR "&first=John&last=Doe",
+                { {"middle",BIGSTR}, {"first","John"}, {"last","Doe"} });
         }
 
         // insert(iterator, initializer_list)
@@ -441,6 +491,25 @@ struct params_ref_test
             check(f, g, "?k1&k2=&k3=v3",
                 "k1&k2=&k3=v3&first=John&last=Doe",
                 { {"k1",no_value}, {"k2",""}, {"k3","v3"}, {"first","John"}, {"last","Doe"} });
+        }
+        {
+            auto const f = [](params_ref qp)
+            {
+                auto it = qp.insert(std::next(qp.begin(),0),
+                    { {"first",BIGSTR}, {BIGSTR,"Doe"} });
+                BOOST_TEST(is_equal(*it, {"first",BIGSTR}));
+                BOOST_TEST_EQ(it, qp.begin());
+            };
+            auto const g = [](params_ref qp)
+            {
+                auto it = qp.insert(std::next(qp.begin(),0),
+                    { {"first",BIGSTR}, {BIGSTR,"Doe"} });
+                BOOST_TEST(is_equal(*it, {"first",BIGSTR}));
+                BOOST_TEST_EQ(it, qp.begin());
+            };
+            check(f, g, "?k1&k2=&k3=v3",
+                "first=" BIGSTR "&" BIGSTR "=Doe&k1&k2=&k3=v3",
+                { {"first",BIGSTR}, {BIGSTR, "Doe"}, {"k1",no_value}, {"k2",""}, {"k3","v3"} });
         }
 
         // erase(iterator)
@@ -547,6 +616,16 @@ struct params_ref_test
             check(f, "?first=John&last=Doe", "first=John&first=John",
                 { {"first","John"}, {"first","John"} });
         }
+        {
+            auto const f = [](params_ref qp)
+            {
+                auto it = qp.replace(std::next(qp.begin(),0),
+                    {"=",BIGSTR});
+                BOOST_TEST(is_equal(*it, {"=",BIGSTR}));
+            };
+            check(f, "?first=John&last=Doe", "%3D=" BIGSTR "&last=Doe",
+                { {"=",BIGSTR}, {"last","Doe"} });
+        }
 
         // replace(iterator, iterator, initializer_list)
         // replace(iterator, iterator, FwdIt, FwdIt)
@@ -569,6 +648,26 @@ struct params_ref_test
             };
             check(f, g, "?k0&k1=&k2=key", "%3D=%26%23&k2=key",
                 { {"=","&#"}, {"k2","key"} });
+        }
+        {
+            auto const f = [](params_ref qp)
+            {
+                auto it = qp.replace(
+                    std::next(qp.begin(),0),
+                    std::next(qp.begin(),2),
+                    {{"=",BIGSTR}});
+                BOOST_TEST(is_equal(*it, {"=",BIGSTR}));
+            };
+            auto const g = [](params_ref qp)
+            {
+                auto it = replace(qp,
+                    std::next(qp.begin(),0),
+                    std::next(qp.begin(),2),
+                    {{"=",BIGSTR}});
+                BOOST_TEST(is_equal(*it, {"=",BIGSTR}));
+            };
+            check(f, g, "?k0&k1=&k2=key", "%3D=" BIGSTR "&k2=key",
+                { {"=",BIGSTR}, {"k2","key"} });
         }
 
         // unset(iterator)
@@ -621,8 +720,18 @@ struct params_ref_test
             check(f, "?k0&k1=&k2=key", "k0&k1=%26%23&k2=key",
                 { {"k0",no_value}, {"k1","&#"}, {"k2","key"} });
         }
+        {
+            auto const f = [](params_ref qp)
+            {
+                auto it = qp.set(std::next(qp.begin(),1), BIGSTR);
+                BOOST_TEST(is_equal(*it, {"k1", BIGSTR}));
+            };
+            check(f, "?k0&k1=&k2=key", "k0&k1=" BIGSTR "&k2=key",
+                { {"k0",no_value}, {"k1",BIGSTR}, {"k2","key"} });
+        }
     }
 
+    static
     void
     testJavadocs()
     {
@@ -702,13 +811,20 @@ struct params_ref_test
         }
     }
 
+    static
     void
-    run()
+    testAll()
     {
         testSpecial();
         testObservers();
         testModifiers();
         testJavadocs();
+    }
+
+    void
+    run()
+    {
+        testAll();
     }
 };
 

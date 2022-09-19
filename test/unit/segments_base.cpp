@@ -76,8 +76,10 @@ struct segments_base_test
                 segments_base::reference r1(*it1);
                 BOOST_TEST_EQ(r0, r1);
                 BOOST_TEST_EQ(*it0, *it1);
+            #ifndef BOOST_URL_ITERATOR_STRINGS
                 BOOST_TEST_EQ( // arrow
                     it0->size(), it1->size());
+            #endif
                 segments_base::value_type v0(*it0);
                 segments_base::value_type v1(*it1);
                 BOOST_TEST_EQ(v0, *it1);
