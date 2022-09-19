@@ -65,12 +65,12 @@
 # define BOOST_URL_POS ::boost::source_location()
 #else
 # define BOOST_URL_ERR(ev) (::boost::system::error_code( (ev), [] { \
-         static constexpr auto loc(BOOST_CURRENT_LOCATION); \
+         static constexpr auto loc((BOOST_CURRENT_LOCATION)); \
          return &loc; }()))
 # define BOOST_URL_RETURN_EC(ev) \
-    static constexpr auto loc ## __LINE__(BOOST_CURRENT_LOCATION); \
+    static constexpr auto loc ## __LINE__((BOOST_CURRENT_LOCATION)); \
     return ::boost::system::error_code((ev), &loc ## __LINE__)
-# define BOOST_URL_POS BOOST_CURRENT_LOCATION
+# define BOOST_URL_POS (BOOST_CURRENT_LOCATION)
 #endif
 
 #ifndef BOOST_URL_STRTOK_TPARAM
