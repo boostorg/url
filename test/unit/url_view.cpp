@@ -11,6 +11,7 @@
 #include <boost/url/url_view.hpp>
 
 #include <boost/url/parse.hpp>
+#include <boost/url/url.hpp>
 
 #include "test_rule.hpp"
 
@@ -47,6 +48,21 @@ public:
             url_view u2;
             u2 = u1;
             BOOST_TEST_EQ(u2.data(), u1.data());
+        }
+
+        // operator=(url_view const&)
+        {
+            url_view u1("x://y/z?#");
+            u1 = u1;
+            BOOST_TEST_EQ(u1.data(), u1.data());
+        }
+
+        // operator=(url_view_base const&)
+        {
+            url u1("x://y/z?#");
+            url_view u2 = u1;
+            u2 = u1;
+            BOOST_TEST_EQ(u1.data(), u2.data());
         }
 
         // url_view(string_view)

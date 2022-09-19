@@ -159,7 +159,7 @@ struct params_encoded_ref_test
         qp.assign(
             init.begin(),
             init.end());
-    };
+    }
 
     static
     auto
@@ -172,7 +172,7 @@ struct params_encoded_ref_test
         return qp.append(
             init.begin(),
             init.end());
-    };
+    }
 
     static
     auto
@@ -187,7 +187,7 @@ struct params_encoded_ref_test
             before,
             init.begin(),
             init.end());
-    };
+    }
 
     static
     auto
@@ -204,7 +204,7 @@ struct params_encoded_ref_test
             to,
             init.begin(),
             init.end());
-    };
+    }
 
     //--------------------------------------------
 

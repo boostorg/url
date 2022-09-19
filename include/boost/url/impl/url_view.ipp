@@ -66,6 +66,9 @@ url_view::
 operator=(
     url_view_base const& u) noexcept
 {
+    if (pi_ == u.pi_)
+        return *this;
+
     if (u.pi_->from_ == from::url)
     {
         pi_ = u.pi_;

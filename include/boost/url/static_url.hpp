@@ -165,7 +165,7 @@ public:
     {
     }
 
-    /** Constructor.
+    /** Constructor
 
         This function constructs a url from
         the string `s`, which must contain a
@@ -289,7 +289,8 @@ public:
     operator=(
         static_url const& u)
     {
-        copy(u);
+        if (this != &u)
+            copy(u);
         return *this;
     }
 
