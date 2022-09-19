@@ -149,61 +149,57 @@ struct params_encoded_ref_test
 
     //--------------------------------------------
 
-    template<class QP>
     static
     void
     assign(
-        QP&& p,
+        params_encoded_ref& qp,
         std::initializer_list<
             param_view> init)
     {
-        p.assign(
+        qp.assign(
             init.begin(),
             init.end());
     };
 
-    template<class QP>
     static
     auto
     append(
-        QP&& p,
+        params_encoded_ref& qp,
         std::initializer_list<
             param_view> init) ->
         params_encoded_ref::iterator
     {
-        return p.append(
+        return qp.append(
             init.begin(),
             init.end());
     };
 
-    template<class QP>
     static
     auto
     insert(
-        QP&& p,
+        params_encoded_ref& qp,
         params_encoded_ref::iterator before,
         std::initializer_list<
             param_view> init) ->
         params_encoded_ref::iterator
     {
-        return p.insert(
+        return qp.insert(
             before,
             init.begin(),
             init.end());
     };
 
-    template<class QP>
     static
     auto
     replace(
-        QP&& p,
+        params_encoded_ref& qp,
         params_encoded_ref::iterator from,
         params_encoded_ref::iterator to,
         std::initializer_list<
             param_view> init) ->
         params_encoded_ref::iterator
     {
-        return p.replace(
+        return qp.replace(
             from,
             to,
             init.begin(),

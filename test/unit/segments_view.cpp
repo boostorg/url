@@ -47,7 +47,7 @@ BOOST_STATIC_ASSERT(
 struct segments_view_test
 {
     void
-    testMembers()
+    testSpecialMembers()
     {
         // segments_view()
         {
@@ -134,7 +134,7 @@ struct segments_view_test
     void
     run()
     {
-        testMembers();
+        testSpecialMembers();
         testJavadocs();
     }
 };

@@ -89,20 +89,20 @@ struct segments_encoded_ref_test
         check(f2, s0, s1, init);
     }
 
-    template<class PS>
     static
     void
-    assign(PS&& ps,
+    assign(
+        segments_encoded_ref& ps,
         std::initializer_list<
             string_view> init)
     {
         ps.assign(init.begin(), init.end());
     };
 
-    template<class PS>
     static
     auto
-    insert(PS&& ps,
+    insert(
+        segments_encoded_ref& ps,
         segments_encoded_ref::iterator before,
         std::initializer_list<
             string_view> init) ->
@@ -112,10 +112,10 @@ struct segments_encoded_ref_test
             init.begin(), init.end());
     }
 
-    template<class PS>
     static
     auto
-    replace(PS&& ps,
+    replace(
+        segments_encoded_ref& ps,
         segments_encoded_ref::iterator from,
         segments_encoded_ref::iterator to,
         std::initializer_list<
@@ -380,15 +380,8 @@ struct segments_encoded_ref_test
             };
             auto const g = [](segments_encoded_ref ps)
             {
-                auto const insert = [&ps](
-                    std::initializer_list<
-                        pct_string_view> init)
-                {
-                    auto it = ps.insert(ps.begin(),
-                        init.begin(), init.end());
-                    BOOST_TEST_EQ(*it, "");
-                };
-                insert({ "", "" });
+                auto it = insert(ps, ps.begin(), { "", "" });
+                BOOST_TEST_EQ(*it, "");
             };
             check(f, g, "", ".//", {"", ""});
             check(f, g, "/", "/.//", {"", ""});
