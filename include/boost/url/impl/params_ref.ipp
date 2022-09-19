@@ -32,7 +32,7 @@ params_ref::
 operator=(params_ref const& other) ->
     params_ref&
 {
-    if (this != &other)
+    if (!ref_.alias_of(other.ref_))
         assign(other.begin(), other.end());
     return *this;
 }
