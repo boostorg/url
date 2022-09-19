@@ -62,7 +62,7 @@ public:
             url u1("x://y/z?#");
             url_view u2 = u1;
             u2 = u1;
-            BOOST_TEST_EQ(u1.data(), u1.data());
+            BOOST_TEST_EQ(u1.data(), u2.data());
         }
 
         // url_view(string_view)
