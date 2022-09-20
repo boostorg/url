@@ -14,201 +14,77 @@
 #include <boost/url/encode_opts.hpp>
 #include <boost/url/pct_string_view.hpp>
 #include <boost/url/grammar/hexdig_chars.hpp>
+#include <boost/core/ignore_unused.hpp>
 #include <cstdlib>
 
 namespace boost {
 namespace urls {
 namespace detail {
 
+constexpr
+char const* const hexdigs[] = {
+    "0123456789ABCDEF",
+    "0123456789abcdef" };
+
 //------------------------------------------------
 
-// checked encode
+// unsafe encode just
+// asserts on the output buffer
 //
-// The destination range is enforced
-// to ensure no buffer overruns
-
-template<class FwdIt, class CharSet>
-std::size_t
-encoded_size_impl(
-    FwdIt it,
-    FwdIt const end,
-    encode_opts const& opt,
-    CharSet const& allowed) noexcept
-{
-    std::size_t n = 0;
-    if(! opt.space_to_plus)
-    {
-        while (it != end)
-        {
-            if (allowed(*it))
-                n += 1;
-            else
-                n += 3;
-            ++it;
-        }
-        return n;
-    }
-    // If you are converting space
-    // to plus, then space should
-    // be in the list of reserved
-    // characters!
-    BOOST_ASSERT(!allowed(' '));
-    while (it != end)
-    {
-        if (*it == ' ')
-            ++n;
-        else if (allowed(*it))
-            ++n;
-        else
-            n += 3;
-        ++it;
-    }
-    return n;
-}
-
-template<
-    class FwdIt, 
-    class CharSet>
-std::size_t
-encode_impl(
-    char* dest,
-    char const* const end,
-    FwdIt p,
-    FwdIt last,
-    encode_opts const& opt,
-    CharSet const& allowed)
-{
-    // Can't have % in charset
-    BOOST_ASSERT(! allowed('%'));
-
-    static constexpr char lo[] =
-        "0123456789abcdef";
-    static constexpr char hi[] =
-        "0123456789ABCDEF";
-    char const* const hex =
-        opt.lower_case ? lo : hi;
-    auto const encode = [hex](
-        char*& dest,
-        unsigned char c) noexcept
-    {
-        *dest++ = '%';
-        *dest++ = hex[c>>4];
-        *dest++ = hex[c&0xf];
-    };
-
-    auto const dest0 = dest;
-    auto const end3 = end - 3;
-    if(! opt.space_to_plus)
-    {
-        // VFALCO we could in theory
-        // optimize this with another
-        // loop up to safe_last, where
-        // safe_last = it + (last/it)/3,
-        // and increment safe_last by
-        // 2 every time we output an
-        // unescaped character
-
-        while(p != last)
-        {
-            if(allowed(*p))
-            {
-                if(dest == end)
-                    return dest - dest0;
-                *dest++ = *p++;
-                continue;
-            }
-            if(dest > end3)
-                return dest - dest0;
-            encode(dest, *p++);
-        }
-        return dest - dest0;
-    }
-    // If you are converting space
-    // to plus, then space should
-    // be in the list of reserved
-    // characters!
-    BOOST_ASSERT(! allowed(' '));
-
-    // VFALCO Same note as above
-    while(p != last)
-    {
-        if(allowed(*p))
-        {
-            if(dest == end)
-                return dest - dest0;
-            *dest++ = *p++;
-            continue;
-        }
-        if(*p == ' ')
-        {
-            if(dest == end)
-                return dest - dest0;
-            *dest++ = '+';
-            ++p;
-            continue;
-        }
-        if(dest > end3)
-            return dest - dest0;
-        encode(dest, *p++);
-    }
-    return dest - dest0;
-}
-
-//------------------------------------------------
-
-// unchecked encode
-
 template<class CharSet>
 std::size_t
-encode_unchecked(
+encode_unsafe(
     char* dest,
     char const* end,
     char const* it,
     char const* const last,
-    encode_opts const& opt,
-    CharSet const& allowed)
+    CharSet const& unreserved,
+    encode_opts const& opt)
 {
-    BOOST_ASSERT(! allowed('%'));
-    BOOST_ASSERT(
-        ! opt.space_to_plus ||
-        ! allowed(' '));
-    static constexpr char lo[] =
-        "0123456789abcdef";
-    static constexpr char hi[] =
-        "0123456789ABCDEF";
+    // '%' must be reserved
+    BOOST_ASSERT(! unreserved('%'));
+
+    ignore_unused(end);
+
     char const* const hex =
-        opt.lower_case ? lo : hi;
-    auto const encode = [end](
+        detail::hexdigs[opt.lower_case];
+    auto const encode = [end, hex](
         char*& dest,
-        unsigned char c,
-        char const* hex) noexcept
+        unsigned char c) noexcept
     {
-        (void)end;
+        ignore_unused(end);
         *dest++ = '%';
         BOOST_ASSERT(dest != end);
         *dest++ = hex[c>>4];
         BOOST_ASSERT(dest != end);
         *dest++ = hex[c&0xf];
     };
-    (void)end;
+
     auto const dest0 = dest;
     if(! opt.space_to_plus)
     {
         while(it != last)
         {
             BOOST_ASSERT(dest != end);
-            if(allowed(*it))
+            if(unreserved(*it))
                 *dest++ = *it++;
             else
-                encode(dest, *it++, hex);
+                encode(dest, *it++);
         }
     }
     else
     {
+        // VFALCO space is usually reserved,
+        // and we depend on this for an
+        // optimization. if this assert
+        // goes off we can split the loop
+        // below into two versions.
+        BOOST_ASSERT(! unreserved(' '));
+
         while(it != last)
         {
             BOOST_ASSERT(dest != end);
-            if(allowed(*it))
+            if(unreserved(*it))
             {
                 *dest++ = *it++;
             }
@@ -219,7 +95,7 @@ encode_unchecked(
             }
             else
             {
-                encode(dest, *it++, hex);
+                encode(dest, *it++);
             }
         }
     }
@@ -228,20 +104,20 @@ encode_unchecked(
 
 template<class CharSet>
 std::size_t
-encode_unchecked(
+encode_unsafe(
     char* dest,
     char const* const end,
     string_view s,
-    encode_opts const& opt,
-    CharSet const& allowed)
+    CharSet const& unreserved,
+    encode_opts const& opt)
 {
-    return encode_unchecked(
+    return encode_unsafe(
         dest,
         end,
         s.begin(),
         s.end(),
-        opt,
-        allowed);
+        unreserved,
+        opt);
 }
 
 //------------------------------------------------
@@ -249,15 +125,15 @@ encode_unchecked(
 // re-encode is to percent-encode a
 // string that can already contain
 // escapes. Characters not in the
-// allowed set are escaped, and
+// unreserved set are escaped, and
 // escapes are passed through unchanged.
 //
 template<class CharSet>
 std::size_t
-re_encoded_size_unchecked(
+re_encoded_size_unsafe(
     string_view s,
-    encode_opts const& opt,
-    CharSet const& allowed) noexcept
+    CharSet const& unreserved,
+    encode_opts const& opt) noexcept
 {
     std::size_t n = 0;
     auto const end = s.end();
@@ -268,7 +144,7 @@ re_encoded_size_unchecked(
         {
             if(*it != '%')
             {
-                if( allowed(*it)
+                if( unreserved(*it)
                     || *it == ' ')
                     n += 1; 
                 else
@@ -295,7 +171,7 @@ re_encoded_size_unchecked(
         {
             if(*it != '%')
             {
-                if(allowed(*it))
+                if(unreserved(*it))
                     n += 1; 
                 else
                     n += 3;
@@ -322,37 +198,34 @@ re_encoded_size_unchecked(
 // returns decoded size
 template<class CharSet>
 std::size_t
-re_encode_unchecked(
+re_encode_unsafe(
     char*& dest_,
     char const* const end,
     string_view s,
-    encode_opts const& opt,
-    CharSet const& allowed) noexcept
+    CharSet const& unreserved,
+    encode_opts const& opt) noexcept
 {
-    static constexpr char lo[] =
-        "0123456789abcdef";
-    static constexpr char hi[] =
-        "0123456789ABCDEF";
     char const* const hex =
-        opt.lower_case ? lo : hi;
-    auto const encode = [end](
+        detail::hexdigs[opt.lower_case];
+    auto const encode = [end, hex](
         char*& dest,
-        unsigned char c,
-        char const* hex) noexcept
+        unsigned char c) noexcept
     {
-        (void)end;
+        ignore_unused(end);
         *dest++ = '%';
         BOOST_ASSERT(dest != end);
         *dest++ = hex[c>>4];
         BOOST_ASSERT(dest != end);
         *dest++ = hex[c&0xf];
     };
-    (void)end;
+    ignore_unused(end);
+
     auto dest = dest_;
     auto const dest0 = dest;
     auto const last = s.end();
     std::size_t dn = 0;
     auto it = s.begin();
+
     if(opt.space_to_plus)
     {
         while(it != last)
@@ -364,13 +237,13 @@ re_encode_unchecked(
                 {
                     *dest++ = '+';
                 }
-                else if(allowed(*it))
+                else if(unreserved(*it))
                 {
                     *dest++ = *it;
                 }
                 else
                 {
-                    encode(dest, *it, hex);
+                    encode(dest, *it);
                     dn += 2;
                 }
                 ++it;
@@ -393,13 +266,13 @@ re_encode_unchecked(
             BOOST_ASSERT(dest != end);
             if(*it != '%')
             {
-                if(allowed(*it))
+                if(unreserved(*it))
                 {
                     *dest++ = *it;
                 }
                 else
                 {
-                    encode(dest, *it, hex);
+                    encode(dest, *it);
                     dn += 2;
                 }
                 ++it;

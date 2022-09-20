@@ -39,7 +39,7 @@ parse(
         if(*it == '/')
         {
             // path-absolute
-            t.path = detail::make_pct_string_view(
+            t.path = make_pct_string_view_unsafe(
                 it, 1, 1);
             t.segment_count = 1;
             ++it;
@@ -116,7 +116,7 @@ parse(
             break;
         dn += rv->decoded_size();
     }
-    t.path = detail::make_pct_string_view(
+    t.path = make_pct_string_view_unsafe(
         it0, it - it0, dn);
     return t;
 }

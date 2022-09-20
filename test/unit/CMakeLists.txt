@@ -20,7 +20,6 @@ set(BOOST_URL_TESTS_FILES
     authority_view.cpp
     doc_container.cpp
     doc_grammar.cpp
-    decode.cpp
     decode_view.cpp
     encode.cpp
     error.cpp

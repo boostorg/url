@@ -255,7 +255,7 @@ url_impl::
 pct_get(
     int id) const noexcept
 {
-    return make_pct_string_view(
+    return make_pct_string_view_unsafe(
         cs_ + offset(id),
         len(id),
         decoded_[id]);
@@ -273,7 +273,7 @@ pct_get(
     std::size_t n = 0;
     for(auto i = first; i < last;)
         n += decoded_[i++];
-    return make_pct_string_view(
+    return make_pct_string_view_unsafe(
         cs_ + pos,
         offset(last) - pos,
         n);

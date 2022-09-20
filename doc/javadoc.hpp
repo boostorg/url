@@ -7,6 +7,22 @@
 // Official repository: https://github.com/CPPAllinace/url
 //
 
+Correct hyphenation:
+
+Nouns: never hyphenated
+1. The percent encoding
+2. Each percent escape
+
+Adjectives: hyphenated when the noun comes after
+3. Returns a percent-escaped string
+4. Removes percent-encoding from the string
+
+Adjectives: not hyphenated when the noun comes before
+5. The string `s` must be percent encoded.
+6. The string may not be percent escaped.
+
+
+
 // https://eel.is/c++draft/structure.specifications#3
 
     /** {brief}

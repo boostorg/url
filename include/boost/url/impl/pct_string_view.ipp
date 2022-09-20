@@ -18,18 +18,6 @@
 namespace boost {
 namespace urls {
 
-namespace detail {
-
-pct_string_view
-make_pct_string_view(
-    string_view s) noexcept
-{
-    return make_pct_string_view(s,
-        decode_bytes_unchecked(s));
-}
-
-} // detail
-
 void
 pct_string_view::
 decode_impl(
@@ -38,7 +26,7 @@ decode_impl(
 {
     auto p = dest.prepare(dn_);
     if(dn_ > 0)
-        detail::decode_unchecked(
+        detail::decode_unsafe(
             p, p + dn_, s_, opt);
 }
 
@@ -96,7 +84,8 @@ make_pct_string_view(
             error::incomplete_encoding);
     }
     dn += n;
-    return detail::make_pct_string_view(s, dn);
+    return make_pct_string_view_unsafe(
+        s.data(), s.size(), dn);
 }
 
 } // urls

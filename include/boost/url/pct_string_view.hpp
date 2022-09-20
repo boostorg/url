@@ -31,28 +31,18 @@ namespace urls {
 class decode_view;
 class pct_string_view;
 
-namespace detail {
+pct_string_view
+make_pct_string_view_unsafe(
+    char const*, std::size_t,
+        std::size_t) noexcept;
 
+namespace detail {
 string_view&
 ref(pct_string_view& s) noexcept;
-
-// unchecked
-template<class... Args>
-pct_string_view
-make_pct_string_view(
-    Args&&... args) noexcept;
-
 } // detail
 #endif
 
 //------------------------------------------------
-
-/*  The contract of this type is:
-
-    Just like string_view except the string
-    always contains valid percent-encoding,
-    plus a few odds and ends to make it nice.
-*/
 
 /** A reference to a valid percent-encoded string
 
@@ -68,8 +58,8 @@ make_pct_string_view(
 
     @par Operators
     The following operators are supported between
-    @ref pct_string_view and any object that is convertible
-    to @ref string_view:
+    @ref pct_string_view and any object that is
+    convertible to @ref string_view
 
     @code
     bool operator==( pct_string_view, pct_string_view ) noexcept;
@@ -86,33 +76,23 @@ class pct_string_view final
     std::size_t dn_ = 0;
 
 #ifndef BOOST_URL_DOCS
-    template<class... Args>
     friend
     pct_string_view
-    detail::make_pct_string_view(
-        Args&&... args) noexcept;
+    make_pct_string_view_unsafe(
+        char const*, std::size_t,
+            std::size_t) noexcept;
 
     friend
     string_view&
     detail::ref(pct_string_view&) noexcept;
 #endif
 
-    // unchecked construction
+    // unsafe
     pct_string_view(
-        char const* p,
-        std::size_t n,
+        char const* data,
+        std::size_t size,
         std::size_t dn) noexcept
-        : string_view_base(
-            string_view(p, n))
-        , dn_(dn)
-    {
-    }
-
-    // unchecked construction
-    pct_string_view(
-        string_view s,
-        std::size_t dn) noexcept
-        : string_view_base(s)
+        : string_view_base(data, size)
         , dn_(dn)
     {
     }
@@ -417,29 +397,21 @@ ref(pct_string_view& s) noexcept
     return s.s_;
 }
 
-template<class... Args>
-pct_string_view
-make_pct_string_view(
-    Args&&... args) noexcept
-{
-    return pct_string_view(
-        std::forward<Args>(args)...);
-}
-
 } // detail
 #endif
 
 //------------------------------------------------
 
-/** Return a validated percent-encoded string
+/** Return a valid percent-encoded string
 
-    This function attempts to construct a
-    percent-encoded string from a character
-    buffer. Upon success, the valid string
-    is returned. Otherwise the result contains
-    an error code. The new string will reference
-    the existing character buffer. Ownership
-    is not transferred.
+    If `s` is a valid percent-encoded string,
+    the function returns the buffer as a valid
+    view which may be used to perform decoding
+    or measurements.
+    Otherwise the result contains an error code.
+    Upon success, returned view will reference
+    the original character buffer;
+    Ownership is not transferred.
 
     @par Complexity
     Linear in `s.size()`.
@@ -447,12 +419,30 @@ make_pct_string_view(
     @par Exception Safety
     Throws nothing.
 
-    @par s The string to construct from.
+    @param s The string to validate.
 */
 BOOST_URL_DECL
 result<pct_string_view>
 make_pct_string_view(
     string_view s) noexcept;
+
+#ifndef BOOST_URL_DOCS
+// VFALCO semi-private for now
+inline
+pct_string_view
+make_pct_string_view_unsafe(
+    char const* data,
+    std::size_t size,
+    std::size_t decoded_size) noexcept
+{
+#if 0
+    BOOST_ASSERT(! make_pct_string_view(
+        string_view(data, size)).has_error());
+#endif
+    return pct_string_view(
+        data, size, decoded_size);
+}
+#endif
 
 } // urls
 } // boost

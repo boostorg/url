@@ -12,7 +12,6 @@
 #define BOOST_URL_DETAIL_DECODE_HPP
 
 #include <boost/url/decode_opts.hpp>
-#include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
 #include <cstdlib>
 
@@ -20,60 +19,26 @@ namespace boost {
 namespace urls {
 namespace detail {
 
-template<
-    class CharSet>
-result<std::size_t>
-validate_encoding(
-    string_view s,
-    decode_opts const& opt,
-    CharSet const& allowed) noexcept;
-
-BOOST_URL_DECL
-result<std::size_t>
-validate_encoding(
-    string_view s,
-    decode_opts const& opt = {}) noexcept;
-
-template<
-    class CharSet>
-result<std::size_t>
-decode(
-    char* dest,
-    char const* end,
-    string_view s,
-    decode_opts const& opt,
-    CharSet const& allowed) noexcept;
-
-BOOST_URL_DECL
-result<std::size_t>
-decode(
-    char* dest,
-    char const* end,
-    string_view s,
-    decode_opts const& opt = {}) noexcept;
-
-BOOST_URL_DECL
-std::size_t
-decode_bytes_unchecked(
-    string_view s) noexcept;
-
-BOOST_URL_DECL
-std::size_t
-decode_unchecked(
-    char* dest,
-    char const* end,
-    string_view s,
-    decode_opts const& opt = {}) noexcept;
-
 BOOST_URL_DECL
 char
 decode_one(
     char const* it) noexcept;
 
+BOOST_URL_DECL
+std::size_t
+decode_bytes_unsafe(
+    string_view s) noexcept;
+
+BOOST_URL_DECL
+std::size_t
+decode_unsafe(
+    char* dest,
+    char const* end,
+    string_view s,
+    decode_opts const& opt = {}) noexcept;
+
 } // detail
 } // urls
 } // boost
-
-#include <boost/url/detail/impl/decode.hpp>
 
 #endif

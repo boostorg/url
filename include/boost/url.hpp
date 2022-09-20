@@ -13,7 +13,6 @@
 #include <boost/url/grammar.hpp>
 
 #include <boost/url/authority_view.hpp>
-#include <boost/url/decode.hpp>
 #include <boost/url/decode_view.hpp>
 #include <boost/url/encode.hpp>
 #include <boost/url/error.hpp>

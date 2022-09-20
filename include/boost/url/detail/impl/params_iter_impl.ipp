@@ -217,12 +217,12 @@ dereference() const noexcept
     auto const p = ref.begin() + pos;
     if(nv)
         return {
-            detail::make_pct_string_view(
+            make_pct_string_view_unsafe(
                 p, nk - 1, dk),
-            detail::make_pct_string_view(
+            make_pct_string_view_unsafe(
                 p + nk, nv - 1, dv)};
     return {
-        detail::make_pct_string_view(
+        make_pct_string_view_unsafe(
             p, nk - 1, dk),
         no_value};
 }
@@ -234,7 +234,7 @@ key() const noexcept
     BOOST_ASSERT(index < ref.nparam());
     BOOST_ASSERT(pos < ref.size());
     auto const p = ref.begin() + pos;
-    return detail::make_pct_string_view(
+    return make_pct_string_view_unsafe(
         p, nk - 1, dk);
 }
 

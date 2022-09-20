@@ -13,6 +13,7 @@
     standard output.
 */
 
+#include <boost/url/decode_view.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/optional.hpp>

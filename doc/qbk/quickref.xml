@@ -96,7 +96,6 @@
       <entry valign="top">
         <bridgehead renderas="sect3">Functions</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__decode">decode</link></member>
           <member><link linkend="url.ref.boost__urls__encode">encode</link></member>
           <member><link linkend="url.ref.boost__urls__encoded_size">encoded_size</link></member>
         </simplelist>

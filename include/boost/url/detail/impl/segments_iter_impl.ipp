@@ -86,7 +86,7 @@ update() noexcept
     }
     next = p - ref.data();
     dn = p - p0 - dn;
-    s_ = detail::make_pct_string_view(
+    s_ = make_pct_string_view_unsafe(
         p0, p - p0, dn);
 }
 
@@ -122,7 +122,7 @@ increment() noexcept
     }
     next = p - ref.data();
     dn = p - p0 - dn;
-    s_ = detail::make_pct_string_view(
+    s_ = make_pct_string_view_unsafe(
         p0, p - p0, dn);
 }
 
@@ -162,7 +162,7 @@ decrement() noexcept
     }
     dn = p1 - p - dn;
     pos = p - ref.data();
-    s_ = detail::make_pct_string_view(
+    s_ = make_pct_string_view_unsafe(
         p + 1, p1 - p - 1, dn);
 }
 

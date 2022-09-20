@@ -17,7 +17,7 @@ namespace urls {
 /** Options for removing percent-encoding from strings
 
     @see
-        @ref decode
+        @ref make_pct_string_view
 */
 struct decode_opts
 {

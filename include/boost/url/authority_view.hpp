@@ -15,7 +15,6 @@
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/pct_string_view.hpp>
-#include <boost/url/decode.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/detail/url_impl.hpp>
 #include <boost/assert.hpp>

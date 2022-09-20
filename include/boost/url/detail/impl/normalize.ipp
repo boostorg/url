@@ -32,7 +32,7 @@ pop_encoded_front(
     }
     else
     {
-        detail::decode_unchecked(
+        detail::decode_unsafe(
             &c,
             &c + 1,
             s.substr(0, 3));
@@ -61,8 +61,8 @@ compare_encoded(
         if (c1 < c0)
             return 1;
     }
-    n0 += detail::decode_bytes_unchecked(lhs);
-    n1 += detail::decode_bytes_unchecked(rhs);
+    n0 += detail::decode_bytes_unsafe(lhs);
+    n1 += detail::decode_bytes_unsafe(rhs);
     if (n0 == n1)
         return 0;
     if (n0 < n1)
@@ -106,8 +106,8 @@ ci_compare_encoded(
         if (c1 < c0)
             return 1;
     }
-    n0 += detail::decode_bytes_unchecked(lhs);
-    n1 += detail::decode_bytes_unchecked(rhs);
+    n0 += detail::decode_bytes_unsafe(lhs);
+    n1 += detail::decode_bytes_unsafe(rhs);
     if (n0 == n1)
         return 0;
     if (n0 < n1)
@@ -201,7 +201,7 @@ path_starts_with(
             ++it;
             return;
         }
-        detail::decode_unchecked(
+        detail::decode_unsafe(
             &c,
             &c + 1,
             string_view(it, 3));
@@ -250,7 +250,7 @@ path_ends_with(
             c = *--end;
             return;
         }
-        detail::decode_unchecked(
+        detail::decode_unsafe(
             &c,
             &c + 1,
             string_view(std::prev(

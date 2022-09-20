@@ -48,6 +48,16 @@ protected:
     {
     }
 
+    /** Constructor
+    */
+    constexpr
+    string_view_base(
+        char const* data,
+        std::size_t size) noexcept
+        : s_(data, size)
+    {
+    }
+
     /** Swap
     */
     // VFALCO No idea why this fails in msvc

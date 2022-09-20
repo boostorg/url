@@ -197,12 +197,12 @@ path_ref::
 buffer() const noexcept
 {
     if(impl_)
-        return make_pct_string_view(
+        return make_pct_string_view_unsafe(
             impl_->cs_ +
                 impl_->offset(id_path),
             impl_->len(id_path),
             impl_->decoded_[id_path]);
-    return make_pct_string_view(
+    return make_pct_string_view_unsafe(
         data_, size_, dn_);
 }
 
@@ -296,19 +296,19 @@ buffer() const noexcept
         if(pos < pos1)
         {
             ++pos; // no '?'
-            return make_pct_string_view(
+            return make_pct_string_view_unsafe(
                 impl_->cs_ + pos,
                 pos1 - pos,
                 impl_->decoded_[id_query]);
         }
         // empty
-        return make_pct_string_view(
+        return make_pct_string_view_unsafe(
             impl_->cs_ + pos,
             0,
             0);
     }
     // no '?'
-    return make_pct_string_view(
+    return make_pct_string_view_unsafe(
         data_, size_, dn_);
 }
 

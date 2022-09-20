@@ -181,7 +181,14 @@ encoded_authority() const noexcept
         BOOST_ASSERT(has_authority());
         s.remove_prefix(2);
     }
-    return detail::make_pct_string_view(s);
+    return make_pct_string_view_unsafe(
+        s.data(),
+        s.size(),
+        pi_->decoded_[id_user] +
+            pi_->decoded_[id_pass] +
+            pi_->decoded_[id_host] +
+            pi_->decoded_[id_port] +
+            has_password());
 }
 
 //------------------------------------------------
@@ -237,8 +244,12 @@ encoded_userinfo() const noexcept
     BOOST_ASSERT(
         s.ends_with('@'));
     s.remove_suffix(1);
-    return detail::make_pct_string_view(
-        s, pi_->decoded_[id_user] + pi_->decoded_[id_pass] + has_password());
+    return make_pct_string_view_unsafe(
+        s.data(),
+        s.size(),
+        pi_->decoded_[id_user] +
+            pi_->decoded_[id_pass] +
+            has_password());
 }
 
 pct_string_view
@@ -252,8 +263,10 @@ encoded_user() const noexcept
             has_authority());
         s.remove_prefix(2);
     }
-    return detail::make_pct_string_view(
-        s, pi_->decoded_[id_user]);
+    return make_pct_string_view_unsafe(
+        s.data(),
+        s.size(),
+        pi_->decoded_[id_user]);
 }
 
 pct_string_view
@@ -269,14 +282,16 @@ encoded_password() const noexcept
         s.remove_prefix(1);
         BOOST_FALLTHROUGH;
     case 0:
-        return detail::make_pct_string_view(s, 0);
+        return make_pct_string_view_unsafe(
+            s.data(), s.size(), 0);
     default:
         break;
     }
     BOOST_ASSERT(s.ends_with('@'));
     BOOST_ASSERT(s.starts_with(':'));
-    return detail::make_pct_string_view(
-        s.substr(1, s.size() - 2),
+    return make_pct_string_view_unsafe(
+        s.data() + 1,
+        s.size() - 2,
         pi_->decoded_[id_pass]);
 }
 
@@ -304,9 +319,7 @@ pct_string_view
 url_view_base::
 encoded_host() const noexcept
 {
-    return detail::make_pct_string_view(
-        pi_->get(id_host),
-        pi_->decoded_[id_host]);
+    return pi_->pct_get(id_host);
 }
 
 pct_string_view
@@ -342,7 +355,10 @@ encoded_host_address() const noexcept
         break;
     }
     }
-    return detail::make_pct_string_view(s, n);
+    return make_pct_string_view_unsafe(
+        s.data(),
+        s.size(),
+        n);
 }
 
 urls::ipv4_address
@@ -394,8 +410,10 @@ encoded_host_name() const noexcept
             urls::host_type::name)
         return {};
     string_view s = pi_->get(id_host);
-    return detail::make_pct_string_view(
-        s, pi_->decoded_[id_host]);
+    return make_pct_string_view_unsafe(
+        s.data(),
+        s.size(),
+        pi_->decoded_[id_host]);
 }
 
 //------------------------------------------------
@@ -443,8 +461,7 @@ pct_string_view
 url_view_base::
 encoded_path() const noexcept
 {
-    return detail::make_pct_string_view(
-        pi_->get(id_path), pi_->decoded_[id_path]);
+    return pi_->pct_get(id_path);
 }
 
 segments_view
@@ -538,8 +555,10 @@ encoded_fragment() const noexcept
             s.starts_with('#'));
         s.remove_prefix(1);
     }
-    return detail::make_pct_string_view(
-        s, pi_->decoded_[id_frag]);
+    return make_pct_string_view_unsafe(
+        s.data(),
+        s.size(),
+        pi_->decoded_[id_frag]);
 }
 
 //------------------------------------------------
@@ -552,8 +571,7 @@ pct_string_view
 url_view_base::
 encoded_host_and_port() const noexcept
 {
-    return detail::make_pct_string_view(
-        pi_->get(id_host, id_path));
+    return pi_->pct_get(id_host, id_path);
 }
 
 pct_string_view
@@ -580,8 +598,9 @@ encoded_resource() const noexcept
     BOOST_ASSERT(pct_string_view(
         pi_->get(id_path, id_end)
             ).decoded_size() == n);
-    return detail::make_pct_string_view(
-        pi_->get(id_path, id_end), n);
+    auto s = pi_->get(id_path, id_end);
+    return make_pct_string_view_unsafe(
+        s.data(), s.size(), n);
 }
 
 pct_string_view
@@ -596,8 +615,9 @@ encoded_target() const noexcept
     BOOST_ASSERT(pct_string_view(
         pi_->get(id_path, id_frag)
             ).decoded_size() == n);
-    return detail::make_pct_string_view(
-        pi_->get(id_path, id_frag), n);
+    auto s = pi_->get(id_path, id_frag);
+    return make_pct_string_view_unsafe(
+        s.data(), s.size(), n);
 }
 
 //------------------------------------------------

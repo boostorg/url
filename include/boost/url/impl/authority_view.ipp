@@ -102,8 +102,12 @@ encoded_userinfo() const noexcept
     BOOST_ASSERT(
         s.ends_with('@'));
     s.remove_suffix(1);
-    return detail::make_pct_string_view(
-        s, u_.decoded_[id_user] + u_.decoded_[id_pass] + has_password());
+    return make_pct_string_view_unsafe(
+        s.data(),
+        s.size(),
+        u_.decoded_[id_user] +
+            u_.decoded_[id_pass] +
+            has_password());
 }
 
 pct_string_view
@@ -111,8 +115,10 @@ authority_view::
 encoded_user() const noexcept
 {
     auto s = u_.get(id_user);
-    return detail::make_pct_string_view(
-        s, u_.decoded_[id_user]);
+    return make_pct_string_view_unsafe(
+        s.data(),
+        s.size(),
+        u_.decoded_[id_user]);
 }
 
 bool
@@ -146,14 +152,16 @@ encoded_password() const noexcept
         s.remove_prefix(1);
         BOOST_FALLTHROUGH;
     case 0:
-        return detail::make_pct_string_view(s, 0);
+        return make_pct_string_view_unsafe(
+            s.data(), s.size(), 0);
     default:
         break;
     }
     BOOST_ASSERT(s.ends_with('@'));
     BOOST_ASSERT(s.starts_with(':'));
-    return detail::make_pct_string_view(
-        s.substr(1, s.size() - 2),
+    return make_pct_string_view_unsafe(
+        s.data() + 1,
+        s.size() - 2,
         u_.decoded_[id_pass]);
 }
 
@@ -181,9 +189,7 @@ pct_string_view
 authority_view::
 encoded_host() const noexcept
 {
-    return detail::make_pct_string_view(
-        u_.get(id_host),
-        u_.decoded_[id_host]);
+    return u_.pct_get(id_host);
 }
 
 pct_string_view
@@ -219,7 +225,8 @@ encoded_host_address() const noexcept
         break;
     }
     }
-    return detail::make_pct_string_view(s, n);
+    return make_pct_string_view_unsafe(
+        s.data(), s.size(), n);
 }
 
 urls::ipv4_address
@@ -270,9 +277,7 @@ encoded_host_name() const noexcept
     if(u_.host_type_ !=
             urls::host_type::name)
         return {};
-    string_view s = u_.get(id_host);
-    return detail::make_pct_string_view(
-        s, u_.decoded_[id_host]);
+    return u_.pct_get(id_host);
 }
 
 //------------------------------------------------

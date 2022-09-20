@@ -12,7 +12,6 @@
 
 #include <boost/url/detail/any_params_iter.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/decode.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 
 namespace boost {
@@ -92,8 +91,8 @@ measure(
     opt.space_to_plus = false;
     n += encoded_size(
         string_view(p_, n_),
-        opt,
-        query_chars);
+        query_chars,
+        opt);
     increment();
     return true;
 }
@@ -107,12 +106,12 @@ copy(
     BOOST_ASSERT(! at_end_);
     encode_opts opt;
     opt.space_to_plus = false;
-    dest += encode_unchecked(
+    dest += encode_unsafe(
         dest,
         end,
         string_view(p_, n_),
-        opt,
-        query_chars);
+        query_chars,
+        opt);
     increment();
 }
 
@@ -169,15 +168,15 @@ measure(std::size_t& n) noexcept
     opt.space_to_plus = false;
     n += encoded_size(
         s0,
-        opt,
-        detail::param_key_chars);
+        detail::param_key_chars,
+        opt);
     if(has_value_)
     {
         ++n; // '='
         n += encoded_size(
             s1,
-            opt,
-            detail::param_value_chars);
+            detail::param_value_chars,
+            opt);
     }
     at_end_ = true;
     return true;
@@ -194,19 +193,19 @@ copy(
     opt.space_to_plus = false;
     dest += encode(
         dest,
-        end,
+        end - dest,
         s0,
-        opt,
-        detail::param_key_chars);
+        detail::param_key_chars,
+        opt);
     if(has_value_)
     {
         *dest++ = '=';
         dest += encode(
             dest,
-            end,
+            end - dest,
             s1,
-            opt,
-            detail::param_value_chars);
+            detail::param_value_chars,
+            opt);
     }
 }
 
@@ -226,15 +225,15 @@ measure_impl(
     opt.space_to_plus = false;
     n += encoded_size(
         p.key,
-        opt,
-        detail::param_key_chars);
+        detail::param_key_chars,
+        opt);
     if(p.has_value)
     {
         ++n; // '='
         n += encoded_size(
             p.value,
-            opt,
-            detail::param_value_chars);
+            detail::param_value_chars,
+            opt);
     }
 }
 
@@ -249,19 +248,19 @@ copy_impl(
     opt.space_to_plus = false;
     dest += encode(
         dest,
-        end,
+        end - dest,
         p.key,
-        opt,
-        detail::param_key_chars);
+        detail::param_key_chars,
+        opt);
     if(p.has_value)
     {
         *dest++ = '=';
         dest += encode(
             dest,
-            end,
+            end - dest,
             p.value,
-            opt,
-            detail::param_value_chars);
+            detail::param_value_chars,
+            opt);
     }
 }
 
@@ -297,16 +296,15 @@ measure(std::size_t& n) noexcept
         return false;
     encode_opts opt;
     opt.space_to_plus = false;
-    n += detail::re_encoded_size_unchecked(
+    n += detail::re_encoded_size_unsafe(
         s0,
-        opt,
-        detail::param_key_chars);
+        detail::param_key_chars,
+        opt);
     if(has_value_)
-        n += detail::re_encoded_size_unchecked(
+        n += detail::re_encoded_size_unsafe(
             s1,
-            opt,
-            detail::param_value_chars
-                ) + 1; // for '='
+            detail::param_value_chars,
+            opt) + 1; // for '='
     at_end_ = true;
     return true;
 }
@@ -319,21 +317,21 @@ copy(
 {
     encode_opts opt;
     opt.space_to_plus = false;
-    detail::re_encode_unchecked(
+    detail::re_encode_unsafe(
         dest,
         end,
         s0,
-        opt,
-        detail::param_key_chars);
+        detail::param_key_chars,
+        opt);
     if(has_value_)
     {
         *dest++ = '=';
-        detail::re_encode_unchecked(
+        detail::re_encode_unsafe(
             dest,
             end,
             s1,
-            opt,
-            detail::param_value_chars);
+            detail::param_value_chars,
+            opt);
     }
 }
 
@@ -352,16 +350,15 @@ measure_impl(
 {
     encode_opts opt;
     opt.space_to_plus = false;
-    n += detail::re_encoded_size_unchecked(
+    n += detail::re_encoded_size_unsafe(
         p.key,
-        opt,
-        detail::param_key_chars);
+        detail::param_key_chars,
+        opt);
     if(p.has_value)
-        n += detail::re_encoded_size_unchecked(
+        n += detail::re_encoded_size_unsafe(
             p.value,
-            opt,
-            detail::param_value_chars
-                ) + 1; // for '='
+            detail::param_value_chars,
+            opt) + 1; // for '='
 }
 
 void
@@ -373,21 +370,21 @@ copy_impl(
 {
     encode_opts opt;
     opt.space_to_plus = false;
-    detail::re_encode_unchecked(
+    detail::re_encode_unsafe(
         dest,
         end,
         p.key,
-        opt,
-        detail::param_key_chars);
+        detail::param_key_chars,
+        opt);
     if(p.has_value)
     {
         *dest++ = '=';
-        detail::re_encode_unchecked(
+        detail::re_encode_unsafe(
             dest,
             end,
             p.value,
-            opt,
-            detail::param_value_chars);
+            detail::param_value_chars,
+            opt);
     }
 }
 
@@ -418,9 +415,8 @@ measure(
         opt.space_to_plus = false;
         n += encoded_size(
             s0,
-            opt,
-            detail::param_value_chars
-                ) + 1; // for '='
+            detail::param_value_chars,
+            opt) + 1; // for '='
     }
     at_end_ = true;
     return true;
@@ -438,10 +434,10 @@ copy(char*& it, char const* end) noexcept
     opt.space_to_plus = false;
     it += encode(
         it,
-        end,
+        end - it,
         s0,
-        opt,
-        detail::param_value_chars);
+        detail::param_value_chars,
+        opt);
 }
 
 //------------------------------------------------
@@ -469,11 +465,10 @@ measure(
     {
         encode_opts opt;
         opt.space_to_plus = false;
-        n += detail::re_encoded_size_unchecked(
+        n += detail::re_encoded_size_unsafe(
             s0,
-            opt,
-            detail::param_value_chars
-                ) + 1; // for '='
+            detail::param_value_chars,
+            opt) + 1; // for '='
     }
     at_end_ = true;
     return true;
@@ -491,12 +486,12 @@ copy(
     *dest++ = '=';
     encode_opts opt;
     opt.space_to_plus = false;
-    detail::re_encode_unchecked(
+    detail::re_encode_unsafe(
         dest,
         end,
         s0,
-        opt,
-        detail::param_value_chars);
+        detail::param_value_chars,
+        opt);
 }
 
 } // detail

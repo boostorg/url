@@ -12,7 +12,6 @@
 
 #include <boost/url/detail/any_segments_iter.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/decode.hpp>
 #include <boost/url/encode.hpp>
 #include <boost/url/rfc/pchars.hpp>
 
@@ -110,8 +109,8 @@ measure(
         s.substr(
             pos_,
             next_ - pos_),
-        opt,
-        pchars);
+        pchars,
+        opt);
     increment();
     return true;
 }
@@ -128,12 +127,12 @@ copy(
     opt.space_to_plus = false;
     dest += encode(
         dest,
-        end,
+        end - dest,
         s.substr(
             pos_,
             next_ - pos_),
-        opt,
-        pchars);
+        pchars,
+        opt);
     increment();
 }
 
@@ -159,12 +158,12 @@ measure(
         return false;
     encode_opts opt;
     opt.space_to_plus = false;
-    n += detail::re_encoded_size_unchecked(
+    n += detail::re_encoded_size_unsafe(
         s.substr(
             pos_,
             next_ - pos_),
-        opt,
-        pchars);
+        pchars,
+        opt);
     increment();
     return true;
 }
@@ -179,14 +178,14 @@ copy(
         string_view::npos);
     encode_opts opt;
     opt.space_to_plus = false;
-    detail::re_encode_unchecked(
+    detail::re_encode_unsafe(
         dest,
         end,
         s.substr(
             pos_,
             next_ - pos_),
-        opt,
-        pchars);
+        pchars,
+        opt);
     increment();
 }
 
@@ -222,8 +221,8 @@ measure(
     opt.space_to_plus = false;
     n += encoded_size(
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
     at_end_ = true;
     return true;
 }
@@ -236,10 +235,10 @@ copy(char*& dest, char const* end) noexcept
     opt.space_to_plus = false;
     dest += encode(
         dest,
-        end,
+        end - dest,
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 //------------------------------------------------
@@ -258,8 +257,8 @@ measure_impl(
     opt.space_to_plus = false;
     n += encoded_size(
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 void
@@ -273,10 +272,10 @@ copy_impl(
     opt.space_to_plus = false;
     dest += encode(
         dest,
-        end,
+        end - dest,
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 //------------------------------------------------
@@ -309,10 +308,10 @@ measure(
         return false;
     encode_opts opt;
     opt.space_to_plus = false;
-    n += detail::re_encoded_size_unchecked(
+    n += detail::re_encoded_size_unsafe(
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
     at_end_ = true;
     return true;
 }
@@ -323,12 +322,12 @@ copy(char*& dest, char const* end) noexcept
 {
     encode_opts opt;
     opt.space_to_plus = false;
-    detail::re_encode_unchecked(
+    detail::re_encode_unsafe(
         dest,
         end,
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 //------------------------------------------------
@@ -345,10 +344,10 @@ measure_impl(
 {
     encode_opts opt;
     opt.space_to_plus = false;
-    n += detail::re_encoded_size_unchecked(
+    n += detail::re_encoded_size_unsafe(
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 void
@@ -360,12 +359,12 @@ copy_impl(
 {
     encode_opts opt;
     opt.space_to_plus = false;
-    detail::re_encode_unchecked(
+    detail::re_encode_unsafe(
         dest,
         end,
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 } // detail

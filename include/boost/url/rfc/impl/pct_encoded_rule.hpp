@@ -79,8 +79,8 @@ skip:
             goto skip;
     }
 finish:
-    return make_pct_string_view(
-        string_view(start, it - start), n);
+    return make_pct_string_view_unsafe(
+        start, it - start, n);
 }
 
 } // detail

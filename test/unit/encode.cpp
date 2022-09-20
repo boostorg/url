@@ -11,8 +11,17 @@
 // Test that header file is self-contained.
 #include <boost/url/encode.hpp>
 
+#include <boost/url/rfc/pchars.hpp>
+#include <boost/core/ignore_unused.hpp>
+
 #include "test_suite.hpp"
+
 #include <memory>
+
+#ifdef assert
+#undef assert
+#endif
+#define assert BOOST_TEST
 
 namespace boost {
 namespace urls {
@@ -42,7 +51,7 @@ public:
             opt.space_to_plus =
                 space_to_plus;
             BOOST_TEST(encoded_size(
-                s, opt, test_chars{}) ==
+                s, test_chars{}, opt) ==
                     m0.size());
         }
         // encode
@@ -52,16 +61,16 @@ public:
                 space_to_plus;
             std::string t;
             t.resize(
-                encoded_size(s, opt, test_chars{}));
+                encoded_size(s, test_chars{}, opt));
             encode(
-                &t[0], &t[0] + t.size(), s, opt, test_chars{});
+                &t[0], t.size(), s, test_chars{}, opt);
             BOOST_TEST(t == m0);
         }
         encode_opts opt;
         opt.space_to_plus =
             space_to_plus;
-        auto const m = encode_to_string(
-            s, opt, test_chars{});
+        auto const m = encode(
+            s, test_chars{}, opt, {});
         if(! BOOST_TEST(m == m0))
             return;
         char buf[64];
@@ -71,9 +80,8 @@ public:
             i <= sizeof(buf); ++i)
         {
             char* dest = buf;
-            char const* end = buf + i;
             std::size_t n = encode(
-                dest, end, s, opt, test_chars{});
+                dest, i, s, test_chars{}, opt);
             string_view r(buf, n);
             if(n == m.size())
             {
@@ -110,23 +118,40 @@ public:
     {
         // space_to_plus
         {
-            BOOST_TEST(encode_to_string(
-                " ", {}, test_chars{}) == "%20");
+            BOOST_TEST(encode(
+                " ", test_chars{}, {}, {}) == "%20");
             encode_opts opt;
             BOOST_TEST_EQ(opt.space_to_plus, false);
-            BOOST_TEST(encode_to_string(
-                " ", opt, test_chars{}) == "%20");
-            BOOST_TEST(encode_to_string(
-                "A", opt, test_chars{}) == "A");
-            BOOST_TEST(encode_to_string(
-                " A+", opt, test_chars{}) == "%20A+");
+            BOOST_TEST(encode(
+                " ", test_chars{}, opt, {}) == "%20");
+            BOOST_TEST(encode(
+                "A", test_chars{}, opt, {}) == "A");
+            BOOST_TEST(encode(
+                " A+", test_chars{}, opt, {}) == "%20A+");
             opt.space_to_plus = true;
-            BOOST_TEST(encode_to_string(
-                " ", opt, test_chars{}) == "+");
-            BOOST_TEST(encode_to_string(
-                "A", opt, test_chars{}) == "A");
-            BOOST_TEST(encode_to_string(
-                " A+", opt, test_chars{}) == "+A+");
+            BOOST_TEST(encode(
+                " ", test_chars{}, opt, {}) == "+");
+            BOOST_TEST(encode(
+                "A", test_chars{}, opt, {}) == "A");
+            BOOST_TEST(encode(
+                " A+", test_chars{}, opt, {}) == "+A+");
+        }
+    }
+
+    void
+    testJavadocs()
+    {
+        // encoded_size()
+        {
+    assert( encoded_size( "My Stuff", pchars ) == 10 );
+        }
+
+        // encode()
+        {
+    char buf[100];
+    assert( encode( buf, sizeof(buf), "Program Files", pchars ) == 15 );
+
+    ignore_unused(buf);
         }
     }
 
@@ -135,6 +160,7 @@ public:
     {
         testEncode();
         testEncodeExtras();
+        testJavadocs();
     }
 };
 
