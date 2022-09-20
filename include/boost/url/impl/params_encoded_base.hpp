@@ -38,9 +38,11 @@ class params_encoded_base::iterator
     }
 
 public:
-    using value_type = param;
-    using reference = param_pct_view;
-    using pointer = param_pct_view;
+    using value_type =
+        params_encoded_base::value_type;
+    using reference =
+        params_encoded_base::reference;
+    using pointer = reference;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::bidirectional_iterator_tag;

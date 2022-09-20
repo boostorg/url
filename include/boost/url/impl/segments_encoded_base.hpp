@@ -35,9 +35,11 @@ class segments_encoded_base::iterator
     }
 
 public:
-    using value_type = std::string;
-    using reference = pct_string_view;
-    using pointer = pct_string_view;
+    using value_type =
+        segments_encoded_base::value_type;
+    using reference =
+        segments_encoded_base::reference;
+    using pointer = reference;
     using difference_type = std::ptrdiff_t;
     using iterator_category =
         std::bidirectional_iterator_tag;
