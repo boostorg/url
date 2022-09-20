@@ -53,15 +53,15 @@ public:
             std::string t;
             t.resize(
                 encoded_size(s, opt, test_chars{}));
-            encode(
+            detail::encode(
                 &t[0], &t[0] + t.size(), s, opt, test_chars{});
             BOOST_TEST(t == m0);
         }
         encode_opts opt;
         opt.space_to_plus =
             space_to_plus;
-        auto const m = encode_to_string(
-            s, opt, test_chars{});
+        auto const m = encode(
+            s, {}, opt, test_chars{});
         if(! BOOST_TEST(m == m0))
             return;
         char buf[64];
@@ -72,7 +72,7 @@ public:
         {
             char* dest = buf;
             char const* end = buf + i;
-            std::size_t n = encode(
+            std::size_t n = detail::encode(
                 dest, end, s, opt, test_chars{});
             string_view r(buf, n);
             if(n == m.size())
@@ -110,23 +110,23 @@ public:
     {
         // space_to_plus
         {
-            BOOST_TEST(encode_to_string(
-                " ", {}, test_chars{}) == "%20");
+            BOOST_TEST(encode(
+                " ", {}, {}, test_chars{}) == "%20");
             encode_opts opt;
             BOOST_TEST_EQ(opt.space_to_plus, false);
-            BOOST_TEST(encode_to_string(
-                " ", opt, test_chars{}) == "%20");
-            BOOST_TEST(encode_to_string(
-                "A", opt, test_chars{}) == "A");
-            BOOST_TEST(encode_to_string(
-                " A+", opt, test_chars{}) == "%20A+");
+            BOOST_TEST(encode(
+                " ", {}, opt, test_chars{}) == "%20");
+            BOOST_TEST(encode(
+                "A", {}, opt, test_chars{}) == "A");
+            BOOST_TEST(encode(
+                " A+", {}, opt, test_chars{}) == "%20A+");
             opt.space_to_plus = true;
-            BOOST_TEST(encode_to_string(
-                " ", opt, test_chars{}) == "+");
-            BOOST_TEST(encode_to_string(
-                "A", opt, test_chars{}) == "A");
-            BOOST_TEST(encode_to_string(
-                " A+", opt, test_chars{}) == "+A+");
+            BOOST_TEST(encode(
+                " ", {}, opt, test_chars{}) == "+");
+            BOOST_TEST(encode(
+                "A", {}, opt, test_chars{}) == "A");
+            BOOST_TEST(encode(
+                " A+", {}, opt, test_chars{}) == "+A+");
         }
     }
 

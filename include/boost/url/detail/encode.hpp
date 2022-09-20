@@ -419,8 +419,21 @@ re_encode_unchecked(
     return dest - dest0 - dn;
 }
 
+template<
+    class CharSet =
+        grammar::all_chars_t>
+std::size_t
+encode(
+    char* dest,
+    char const* end,
+    string_view s,
+    encode_opts const& opt = {},
+    CharSet const& allowed = {});
+
 } // detail
 } // urls
 } // boost
+
+#include <boost/url/detail/impl/encode.hpp>
 
 #endif

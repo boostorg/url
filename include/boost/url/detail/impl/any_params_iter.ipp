@@ -192,7 +192,7 @@ copy(
     BOOST_ASSERT(! at_end_);
     encode_opts opt;
     opt.space_to_plus = false;
-    dest += encode(
+    dest += detail::encode(
         dest,
         end,
         s0,

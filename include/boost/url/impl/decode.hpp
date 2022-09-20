@@ -23,19 +23,15 @@
 namespace boost {
 namespace urls {
 
-template< class CharSet >
+template< class StringToken >
 auto
 decode(
-    string_view s,
-    decode_opts const& opt,
-    CharSet const& allowed) noexcept ->
-        result< decode_view >
+    BOOST_URL_PCT_STRING_VIEW s,
+    StringToken&& token,
+    decode_opts const& opt) noexcept ->
+        result< BOOST_URL_STRTOK_RETURN >
 {
-    result<std::size_t> rn =
-        detail::validate_encoding(s, opt, allowed);
-    if (rn.has_error())
-        return rn.error();
-    return detail::make_decode_view(s, *rn, opt);
+    return s.decode(opt, std::move(token));
 }
 
 } // urls

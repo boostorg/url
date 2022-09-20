@@ -16,6 +16,7 @@
 #include <boost/url/decode_view.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <boost/url/detail/decode.hpp>
 #include <boost/url/grammar/all_chars.hpp>
 #include <boost/url/grammar/charset.hpp>
@@ -49,19 +50,11 @@ namespace urls {
     @par Exception Safety
     Throws nothing.
 
-    @return The number of bytes written to
-    the destination buffer, which does not
-    include any null termination.
+    @return The decoded string.
 
     @param s The string to decode.
 
-    @param allowed The set of characters
-    allowed to appear unescaped.
-    This type must satisfy the requirements
-    of <em>CharSet</em>. If this parameter is
-    omitted, then no characters are considered
-    special. The character set is ignored if
-    `opt.non_normal_is_error == false`.
+    @param token A string token
 
     @param opt The options for decoding. If
     this parameter is omitted, the default
@@ -74,14 +67,12 @@ namespace urls {
     @see
         @ref decode_opts.
 */
-template<
-    class CharSet =
-        grammar::all_chars_t>
-result<decode_view>
+template<BOOST_URL_STRTOK_TPARAM>
+result<BOOST_URL_STRTOK_RETURN>
 decode(
-    string_view s,
-    decode_opts const& opt = {},
-    CharSet const& allowed = {}) noexcept;
+    BOOST_URL_PCT_STRING_VIEW s,
+    BOOST_URL_STRTOK_ARG(token),
+    decode_opts const& opt = {}) noexcept;
 
 } // urls
 } // boost

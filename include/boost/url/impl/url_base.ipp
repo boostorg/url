@@ -301,7 +301,7 @@ set_userinfo(
     auto const n = encoded_size(
         s, opt, detail::userinfo_chars);
     auto dest = set_userinfo_impl(n, op);
-    encode(
+    detail::encode(
         dest,
         dest + n,
         s,
@@ -584,7 +584,7 @@ set_host(
     auto const n = encoded_size(
         s, opt, detail::host_chars);
     auto dest = set_host_impl(n, op);
-    encode(
+    detail::encode(
         dest,
         impl_.get(id_path).data(),
         s,
@@ -683,7 +683,7 @@ set_host_address(
     auto const n = encoded_size(
         s, opt, detail::host_chars);
     auto dest = set_host_impl(n, op);
-    encode(
+    detail::encode(
         dest,
         impl_.get(id_path).data(),
         s,

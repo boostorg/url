@@ -59,7 +59,7 @@ public:
         {
             // decode -> decode_view
             {
-                auto const r = decode(s0, opt, *pcs);
+                auto const r = decode(s0, {}, opt);
                 if (BOOST_TEST(r.has_value()))
                 {
                     BOOST_TEST_EQ(r->size(), s1.size());
@@ -353,15 +353,15 @@ public:
             std::string t;
             t.resize(
                 encoded_size(s, opt, test_chars{}));
-            encode(
+            detail::encode(
                 &t[0], &t[0] + t.size(), s, opt, test_chars{});
             BOOST_TEST(t == m0);
         }
         encode_opts opt;
         opt.space_to_plus =
             space_to_plus;
-        auto const m = encode_to_string(
-            s, opt, test_chars{});
+        auto const m = encode(
+            s, {}, opt, test_chars{});
         if(! BOOST_TEST(m == m0))
             return;
         char buf[64];
@@ -372,7 +372,7 @@ public:
         {
             char* dest = buf;
             char const* end = buf + i;
-            std::size_t n = encode(
+            std::size_t n = detail::encode(
                 dest, end, s, opt, test_chars{});
             string_view r(buf, n);
             if(n == m.size())
