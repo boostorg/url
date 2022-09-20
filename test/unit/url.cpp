@@ -275,14 +275,27 @@ struct url_test
             BOOST_TEST(! u.is_path_absolute());
             BOOST_TEST_EQ(u.buffer(), "x:y");
         }
+        {
+            url u( "//x" );
+            BOOST_TEST( ! u.is_path_absolute() );
+            u.set_path("");
+            BOOST_TEST( ! u.is_path_absolute() );
+            BOOST_TEST_EQ(u.encoded_path(), "");
+            u.set_path_absolute(true);
+            BOOST_TEST( u.is_path_absolute() );
+            BOOST_TEST_EQ(u.encoded_path(), "/");
+            u.set_path("");
+            BOOST_TEST( ! u.is_path_absolute() );
+            BOOST_TEST_EQ(u.encoded_path(), "");
+        }
 
         // set_encoded_path
         {
             // empty
             url u = parse_uri("x://y/path/to/file.txt?q#f").value();
             u.set_encoded_path("");
-            BOOST_TEST_EQ(u.encoded_path(), "/");
-            BOOST_TEST_EQ(u.buffer(), "x://y/?q#f");
+            BOOST_TEST_EQ(u.encoded_path(), "");
+            BOOST_TEST_EQ(u.buffer(), "x://y?q#f");
         }
         {
             // path-abempty
@@ -693,8 +706,8 @@ struct url_test
 
         perform( "/", "/", {}, [](url& u) { u.segments().clear(); });
         perform( "/", "/", {}, [](url& u) { u.encoded_segments().clear(); });
-        perform( "//x/", "//x/", {}, [](url& u) { u.segments().clear(); });
-        perform( "//x/", "//x/", {}, [](url& u) { u.encoded_segments().clear(); });
+        perform( "//x/", "//x", {}, [](url& u) { u.segments().clear(); });
+        perform( "//x/", "//x", {}, [](url& u) { u.encoded_segments().clear(); });
         perform( "/x", "/x/y", { "x", "y" }, [](url& u) { u.segments().push_back("y"); });
         perform( "/x", "/x/y", { "x", "y" }, [](url& u) { u.encoded_segments().push_back("y"); });
         perform( "/x/", "/x//y", { "x", "", "y" }, [](url& u) { u.segments().push_back("y"); });

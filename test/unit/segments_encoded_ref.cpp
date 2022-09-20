@@ -235,7 +235,7 @@ struct segments_encoded_ref_test
             check(f, "index.htm", "", {});
             check(f, "/path/to/file.txt", "/", {});
             check(f, "Program%20Files", "", {});
-            check(f, "x://y/", "/", {});
+            check(f, "x://y/", "", {});
         }
 
         //

@@ -35,14 +35,14 @@ struct parts_base
 
     enum class from : char {
         // this belongs to a string
-        string,
+        string = 0,
         // this belongs to url_base
         // segments/params containers point to
         // another url
-        url,
+        url = 1,
         // this belongs to authority_view
         // id_user will not have the leading "//"
-        authority,
+        authority = 2,
     };
 };
 

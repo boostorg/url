@@ -45,38 +45,38 @@
       <Synthetic Name="scheme" Condition="scheme_!=scheme::none">
         <DisplayString>{cs_,[offset_[id_user]-1]s} {scheme_}</DisplayString>
       </Synthetic>
-      <Synthetic Name="user" Condition="! is_authority &amp;&amp; offset_[id_pass]-offset_[id_user]>2">
+      <Synthetic Name="user" Condition="from_ != 2 &amp;&amp; offset_[id_pass]-offset_[id_user]>2">
         <DisplayString>{cs_+offset_[id_user]+2,[offset_[id_pass]-offset_[id_user]-2]s} ({decoded_[id_user]})</DisplayString>
       </Synthetic>
-      <Synthetic Name="user" Condition="is_authority &amp;&amp; offset_[id_pass]-offset_[id_user]>0">
+      <Synthetic Name="user" Condition="from_ == 2 &amp;&amp; offset_[id_pass]-offset_[id_user]>0">
         <DisplayString>{cs_+offset_[id_user],[offset_[id_pass]-offset_[id_user]]s} ({decoded_[id_user]})</DisplayString>
       </Synthetic>
       <Synthetic Name="pass" Condition="offset_[id_host]-offset_[id_pass]>=2">
         <DisplayString>{cs_+offset_[id_pass]+1,[offset_[id_host]-offset_[id_pass]-2]s} ({decoded_[id_pass]})</DisplayString>
       </Synthetic>
-      <Synthetic Name="host" Condition="is_authority || offset_[id_pass]-offset_[id_user]>=2">
+      <Synthetic Name="host" Condition="from_ == 2 || offset_[id_pass]-offset_[id_user]>=2">
         <DisplayString Condition="host_type_==host_type::none">{host_type_}</DisplayString>
-        <DisplayString Condition="host_type_!=host_type::none">{cs_+offset_[id_host],[offset_[id_port]-offset_[id_host]]s} ({decoded_[id_host]}) type={host_type_}</DisplayString>
+        <DisplayString Condition="host_type_!=host_type::none">{cs_+offset_[id_host],[offset_[id_port]-offset_[id_host]]s}</DisplayString>
       </Synthetic>
       <Synthetic Name="port" Condition="offset_[id_path]-offset_[id_port]>=1">
         <DisplayString>{cs_+offset_[id_port]+1,[offset_[id_path]-offset_[id_port]-1]s} = {port_number_}</DisplayString>
       </Synthetic>
-      <Synthetic Name="path" Condition="! is_authority">
-        <DisplayString>{cs_+offset_[id_path],[offset_[id_query]-offset_[id_path]]s} [{nseg_}]</DisplayString>
+      <Synthetic Name="path" Condition="from_ != 2">
+        <DisplayString>{cs_+offset_[id_path],[offset_[id_query]-offset_[id_path]]s}</DisplayString>
       </Synthetic>
       <Synthetic Name="query" Condition="offset_[id_frag]-offset_[id_query]>=1">
-        <DisplayString>{cs_+offset_[id_query]+1,[offset_[id_frag]-offset_[id_query]-1]s} [{nparam_}]</DisplayString>
+        <DisplayString>{cs_+offset_[id_query]+1,[offset_[id_frag]-offset_[id_query]-1]s}</DisplayString>
       </Synthetic>
       <Synthetic Name="frag" Condition="offset_[id_end]-offset_[id_frag]>=1">
-        <DisplayString>{cs_+offset_[id_frag]+1,[offset_[id_end]-offset_[id_frag]-1]s} ({decoded_[id_frag]})</DisplayString>
+        <DisplayString>{cs_+offset_[id_frag]+1,[offset_[id_end]-offset_[id_frag]-1]s})</DisplayString>
       </Synthetic>
     </Expand>
   </Type>
 
   <Type Name="boost::urls::url_view_base" Inheritable="true">
-      <DisplayString>{u_}</DisplayString>
+      <DisplayString>{*pi_}</DisplayString>
       <Expand>
-        <ExpandedItem>u_</ExpandedItem>    
+        <ExpandedItem>*pi_</ExpandedItem>    
       </Expand>
   </Type>
 

@@ -1991,13 +1991,6 @@ edit_segments(
     BOOST_ASSERT(it1.index <= impl_.nseg_);
     BOOST_ASSERT(it1.pos <= impl_.len(id_path));
 
-    bool const is_abs = is_path_absolute();
-    if(has_authority())
-        absolute = 1; // must be absolute
-    else if(absolute < 0)
-        absolute = is_abs; // preserve
-    auto const path_pos = impl_.offset(id_path);
-
 //------------------------------------------------
 //
 //  Measure the number of encoded characters
@@ -2062,6 +2055,30 @@ edit_segments(
 //  2 = "./"
 //  3 = "/./"
 //
+    bool const is_abs = is_path_absolute();
+    if(has_authority())
+    {
+        // Check if the new
+        // path would be empty
+        if( nseg == 0 &&
+            it0.index == 0 &&
+            it1.index == impl_.nseg_)
+        {
+            BOOST_ASSERT(nchar == 0);
+            absolute = 0;
+        }
+        else
+        {
+            // prefix "/" required
+            absolute = 1;
+        }
+    }
+    else if(absolute < 0)
+    {
+        absolute = is_abs; // preserve
+    }
+    auto const path_pos = impl_.offset(id_path);
+
     std::size_t prefix = 0;
     if(it0.index > 0)
     {
