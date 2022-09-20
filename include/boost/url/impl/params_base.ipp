@@ -17,34 +17,6 @@
 namespace boost {
 namespace urls {
 
-param_view
-params_base::
-iterator::
-dereference() const
-{
-    if(! valid_)
-    {
-        // VFALCO This could be done with
-        // one string instead of two.
-        key_.acquire();
-        value_.acquire();
-        decode_opts opt;
-        opt.plus_to_space = true;
-        param_pct_view qp = it_.dereference();
-        qp.key.decode(opt,
-            string_token::preserve_size(*key_));
-        has_value_ = qp.has_value;
-        if(has_value_)
-            qp.value.decode(opt,
-                string_token::preserve_size(*value_));
-        valid_ = true;
-    };
-    return {
-        string_view(key_->data(), it_.dk),
-        string_view(value_->data(), it_.dv),
-        has_value_};
-}
-
 params_base::
 iterator::
 iterator(
@@ -59,28 +31,6 @@ iterator(
     detail::query_ref const& ref, int) noexcept
     : it_(ref, 0)
 {
-}
-
-params_base::
-iterator::
-iterator(
-    iterator const& other) noexcept
-    : it_(other.it_)
-{
-    // don't copy recycled_ptr
-}
-
-auto
-params_base::
-iterator::
-operator=(
-    iterator const& other) noexcept ->
-        iterator&
-{
-    // don't copy recycled_ptr
-    it_ = other.it_;
-    valid_ = false;
-    return *this;
 }
 
 //------------------------------------------------

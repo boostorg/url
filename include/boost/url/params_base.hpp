@@ -115,10 +115,10 @@ public:
         @see
             @ref param_view.
     */
-    using reference = param_view;
+    using reference = param;
 
     /// @copydoc reference
-    using const_reference = param_view;
+    using const_reference = param;
 
     /** An unsigned integer type to represent sizes.
     */
@@ -319,7 +319,7 @@ public:
 
         @par Example
         @code
-        assert( url_view( "?first=John&last=Doe" ).params().find( "First", ignore_case )->value == "John" );
+        assert( (*url_view( "?first=John&last=Doe" ).params().find( "First", ignore_case )).value == "John" );
         @endcode
 
         @par Effects
@@ -410,7 +410,7 @@ public:
 
         @par Example
         @code
-        assert( url_view( "?first=John&last=Doe" ).params().find_last( "last" )->value == "Doe" );
+        assert( (*url_view( "?first=John&last=Doe" ).params().find_last( "last" )).value == "Doe" );
         @endcode
 
         @par Complexity

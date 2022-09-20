@@ -11,7 +11,6 @@
 #ifndef BOOST_URL_IMPL_SEGMENTS_BASE_HPP
 #define BOOST_URL_IMPL_SEGMENTS_BASE_HPP
 
-#include <boost/url/grammar/recycled.hpp>
 #include <boost/url/detail/segments_iter_impl.hpp>
 #include <boost/assert.hpp>
 #include <iterator>
@@ -22,16 +21,9 @@ namespace urls {
 class segments_base::iterator
 {
     detail::segments_iter_impl it_;
-    mutable grammar::recycled_ptr<
-        std::string> s_ = nullptr;
-    mutable bool valid_ = false;
 
     friend class segments_base;
     friend class segments_ref;
-
-    BOOST_URL_DECL
-    string_view
-    dereference() const;
 
     iterator(detail::path_ref const&) noexcept;
     iterator(detail::path_ref const&, int) noexcept;
@@ -43,49 +35,29 @@ class segments_base::iterator
     }
 
 public:
-    using value_type = std::string;
-    using reference = string_view;
-    using difference_type = std::ptrdiff_t;
+    using value_type = segments_base::value_type;
+    using reference = segments_base::reference;
+    using pointer = reference;
+    using difference_type =
+        segments_base::difference_type;
     using iterator_category =
         std::bidirectional_iterator_tag;
 
-    struct pointer
-    {
-        string_view s;
-
-        string_view const*
-        operator->()
-        {
-            return &s;
-        }
-    };
-
     iterator() = default;
-
-    BOOST_URL_DECL
-    iterator(
-        iterator const&) noexcept;
-
-    BOOST_URL_DECL
+    iterator(iterator const&) = default;
     iterator& operator=(
-        iterator const&) noexcept;
+        iterator const&) noexcept = default;
 
+    BOOST_URL_DECL
     reference
-    operator*() const
-    {
-        return dereference();
-    }
+    operator*() const;
 
-    pointer
-    operator->() const
-    {
-        return {dereference()};
-    }
+    // the return value is too expensive
+    pointer operator->() const = delete;
 
     iterator&
     operator++() noexcept
     {
-        valid_ = false;
         it_.increment();
         return *this;
     }
@@ -93,7 +65,6 @@ public:
     iterator&
     operator--() noexcept
     {
-        valid_ = false;
         it_.decrement();
         return *this;
     }

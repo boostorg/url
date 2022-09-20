@@ -15,6 +15,7 @@
 #include <boost/url/ignore_case.hpp>
 #include <boost/url/detail/url_impl.hpp>
 #include <iosfwd>
+#include <string>
 
 namespace boost {
 namespace urls {
@@ -96,10 +97,10 @@ public:
         This is the type of value returned when
         iterators of the view are dereferenced.
     */
-    using reference = string_view;
+    using reference = std::string;
 
     /// @copydoc reference
-    using const_reference = string_view;
+    using const_reference = std::string;
 
     /** An unsigned integer type used to represent size.
     */

@@ -321,7 +321,7 @@ struct params_ref_test
             auto const f = [](params_ref qp)
             {
                 // self-intersect
-                auto it = qp.append({"middle",qp.begin()->value});
+                auto it = qp.append({"middle",(*qp.begin()).value});
                 BOOST_TEST(is_equal(*it, {"middle","John"}));
             };
             check(f, "?first=John&last=Doe", "first=John&last=Doe&middle=John",
@@ -375,7 +375,7 @@ struct params_ref_test
             {
                 // self-intersect
                 auto it = qp.insert(std::next(qp.begin(),0),
-                    {"middle",qp.begin()->value});
+                    {"middle",(*qp.begin()).value});
                 BOOST_TEST(is_equal(*it, {"middle","John"}));
             };
             check(f, "?first=John&last=Doe", "middle=John&first=John&last=Doe",
@@ -386,7 +386,7 @@ struct params_ref_test
             {
                 // self-intersect
                 auto it = qp.insert(std::next(qp.begin(),1),
-                    {"middle",qp.begin()->value});
+                    {"middle",(*qp.begin()).value});
                 BOOST_TEST(is_equal(*it, {"middle","John"}));
             };
             check(f, "?first=John&last=Doe", "first=John&middle=John&last=Doe",
@@ -397,7 +397,7 @@ struct params_ref_test
             {
                 // self-intersect
                 auto it = qp.insert(std::next(qp.begin(),2),
-                    {"middle",qp.begin()->value});
+                    {"middle",(*qp.begin()).value});
                 BOOST_TEST(is_equal(*it, {"middle","John"}));
             };
             check(f, "?first=John&last=Doe", "first=John&last=Doe&middle=John",
@@ -557,7 +557,7 @@ struct params_ref_test
             auto const f = [](params_ref qp)
             {
                 // self-intersect
-                auto n = qp.erase(qp.find_last("k1", ignore_case)->value);
+                auto n = qp.erase((*qp.find_last("k1", ignore_case)).value);
                 BOOST_TEST_EQ(n, 2);
             };
             check(f, "?k0&k1=&k2=key&k1=value&k3=4&K1=k1", "k0&k2=key&k3=4&K1=k1",
@@ -705,7 +705,7 @@ struct params_ref_test
             {
                 // self-intersect
                 auto it = qp.set(std::next(qp.begin(),0),
-                    qp.find("k2")->value);
+                    (*qp.find("k2")).value);
                 BOOST_TEST(is_equal(*it, {"k0", "key"}));
             };
             check(f, "?k0&k1=&k2=key", "k0=key&k1=&k2=key",

@@ -628,14 +628,14 @@ struct param_view
 
     // aggregate construction
     param_view(
-        string_view key,
-        string_view value,
-        bool has_value) noexcept
-        : key(key)
-        , value(has_value
-            ? value
+        string_view key_,
+        string_view value_,
+        bool has_value_) noexcept
+        : key(key_)
+        , value(has_value_
+            ? value_
             : string_view())
-        , has_value(has_value)
+        , has_value(has_value_)
     {
     }
 #endif

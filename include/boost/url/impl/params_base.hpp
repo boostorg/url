@@ -11,7 +11,6 @@
 #ifndef BOOST_URL_IMPL_PARAMS_BASE_HPP
 #define BOOST_URL_IMPL_PARAMS_BASE_HPP
 
-#include <boost/url/grammar/recycled.hpp>
 #include <boost/url/detail/params_iter_impl.hpp>
 #include <iterator>
 
@@ -23,19 +22,9 @@ namespace urls {
 class params_base::iterator
 {
     detail::params_iter_impl it_;
-    mutable grammar::recycled_ptr<
-        std::string> key_ = nullptr;
-    mutable grammar::recycled_ptr<
-        std::string> value_ = nullptr;
-    mutable bool has_value_ = false;
-    mutable bool valid_ = false;
 
     friend class params_base;
     friend class params_ref;
-
-    BOOST_URL_DECL
-    param_view
-    dereference() const;
 
     iterator(detail::query_ref const& ref) noexcept;
     iterator(detail::query_ref const& impl, int) noexcept;
@@ -47,28 +36,22 @@ class params_base::iterator
     }
 
 public:
-    using value_type = param;
-    using reference = param_view;
-    using pointer = param_view;
+    using value_type = params_base::value_type;
+    using reference = params_base::reference;
+    using pointer = reference;
     using difference_type =
-        std::ptrdiff_t;
+        params_base::difference_type;
     using iterator_category =
         std::bidirectional_iterator_tag;
 
     iterator() = default;
-
-    BOOST_URL_DECL
-    iterator(
-        iterator const&) noexcept;
-
-    BOOST_URL_DECL
+    iterator(iterator const&) = default;
     iterator& operator=(
-        iterator const&) noexcept;
+        iterator const&) noexcept = default;
 
     iterator&
     operator++() noexcept
     {
-        valid_ = false;
         it_.increment();
         return *this;
     }
@@ -84,7 +67,6 @@ public:
     iterator&
     operator--() noexcept
     {
-        valid_ = false;
         it_.decrement();
         return *this;
     }
@@ -100,14 +82,16 @@ public:
     reference
     operator*() const
     {
-        return dereference();
+        param_pct_view p =
+            it_.dereference();
+        return reference(
+            p.key.decode(),
+            p.value.decode(),
+            p.has_value);
     }
 
-    pointer const
-    operator->() const
-    {
-        return dereference();
-    }
+    // the return value is too expensive
+    pointer operator->() const = delete;
 
     bool
     operator==(

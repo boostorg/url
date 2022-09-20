@@ -377,7 +377,7 @@ struct params_base_test
 
         // find()
         {
-        assert( url_view( "?first=John&last=Doe" ).params().find( "First", ignore_case )->value == "John" );
+        assert( (*url_view( "?first=John&last=Doe" ).params().find( "First", ignore_case )).value == "John" );
         }
 
         // find()
@@ -391,7 +391,7 @@ struct params_base_test
 
         // find_last()
         {
-        assert( url_view( "?first=John&last=Doe" ).params().find_last( "last" )->value == "Doe" );
+        assert( (*url_view( "?first=John&last=Doe" ).params().find_last( "last" )).value == "Doe" );
         }
 
         // find_last()

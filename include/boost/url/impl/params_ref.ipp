@@ -107,7 +107,7 @@ erase(
         ++n;
         // Use it->key instead of key,
         // to handle self-intersection
-        auto prev = find_last(it, it->key, ic);
+        auto prev = find_last(it, (*it).key, ic);
         if(prev == end())
             break;
         erase(it);
