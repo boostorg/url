@@ -172,7 +172,7 @@ test_output_impl(T const&) ->
 // specialize test output for char pointers to avoid printing as cstring
 template<class T>
        const void* test_output_impl(T volatile* v) { return const_cast<T*>(v); }
-inline const void* test_output_impl(const char* v) { return v; }
+inline const char* test_output_impl(const char* v) { return v; }
 inline const void* test_output_impl(const unsigned char* v) { return v; }
 inline const void* test_output_impl(const signed char* v) { return v; }
 inline const void* test_output_impl(char* v) { return v; }

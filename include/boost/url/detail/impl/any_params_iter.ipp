@@ -89,11 +89,11 @@ measure(
     if(at_end_)
         return false;
     encode_opts opt;
-    opt.space_to_plus = false;
+    opt.space_to_plus = true;
     n += encoded_size(
         string_view(p_, n_),
         opt,
-        query_chars);
+        query_chars - '+');
     increment();
     return true;
 }
@@ -106,13 +106,13 @@ copy(
 {
     BOOST_ASSERT(! at_end_);
     encode_opts opt;
-    opt.space_to_plus = false;
+    opt.space_to_plus = true;
     dest += encode_unchecked(
         dest,
         end,
         string_view(p_, n_),
         opt,
-        query_chars);
+        query_chars - '+');
     increment();
 }
 

@@ -20,14 +20,14 @@ namespace urls {
 struct decode_view_test
 {
     string_view str = "a%20uri+test";
-    string_view dec_str = "a uri test";
-    string_view no_plus_dec_str = "a uri+test";
+    string_view dec_str = "a uri+test";
+    string_view plus_dec_str = "a uri test";
     const std::size_t dn = 10;
-    decode_opts no_plus_opt;
+    decode_opts plus_opt;
 
     decode_view_test()
     {
-        no_plus_opt.plus_to_space = false;
+        plus_opt.plus_to_space = true;
     }
 
     void
@@ -50,8 +50,8 @@ struct decode_view_test
         // decode_view(char const*, bool plus_to_space)
         {
             decode_view
-                s(str.data(), no_plus_opt);
-            BOOST_TEST_EQ(s, no_plus_dec_str);
+                s(str.data(), plus_opt);
+            BOOST_TEST_EQ(s, plus_dec_str);
             BOOST_TEST_EQ(s.size(), dn);
         }
 
@@ -64,8 +64,8 @@ struct decode_view_test
 
         // decode_view(string_view, bool plus_to_space)
         {
-            decode_view s(str, no_plus_opt);
-            BOOST_TEST_EQ(s, no_plus_dec_str);
+            decode_view s(str, plus_opt);
+            BOOST_TEST_EQ(s, plus_dec_str);
             BOOST_TEST_EQ(s.size(), dn);
         }
 
@@ -81,8 +81,8 @@ struct decode_view_test
         // decode_view(string_view, bool plus_to_space)
         {
             std::string_view std_str = str;
-            decode_view s(std_str, no_plus_opt);
-            BOOST_TEST_EQ(s, no_plus_dec_str);
+            decode_view s(std_str, plus_opt);
+            BOOST_TEST_EQ(s, plus_dec_str);
             BOOST_TEST_EQ(s.size(), dn);
         }
 #endif
@@ -98,8 +98,8 @@ struct decode_view_test
         // decode_view(string_view, bool plus_to_space)
         {
             std::string ss(str);
-            decode_view s(ss, no_plus_opt);
-            BOOST_TEST_EQ(s, no_plus_dec_str);
+            decode_view s(ss, plus_opt);
+            BOOST_TEST_EQ(s, plus_dec_str);
             BOOST_TEST_EQ(s.size(), dn);
         }
     }
@@ -238,18 +238,18 @@ struct decode_view_test
 
             // string literals
             {
-                BOOST_TEST(s == "a uri test");
-                BOOST_TEST_NOT(s == "a tri test");
-                BOOST_TEST(s != "a vri test");
-                BOOST_TEST_NOT(s != "a uri test");
-                BOOST_TEST(s < "a vri test");
-                BOOST_TEST_NOT(s < "a uri test");
-                BOOST_TEST(s <= "a vri test");
-                BOOST_TEST(s <= "a uri test");
-                BOOST_TEST(s > "a tri test");
-                BOOST_TEST_NOT(s > "a uri test");
-                BOOST_TEST(s >= "a tri test");
-                BOOST_TEST(s >= "a uri test");
+                BOOST_TEST_EQ(s, "a uri+test");
+                BOOST_TEST_NE(s, "a tri+test");
+                BOOST_TEST_NE(s, "a vri+test");
+                BOOST_TEST_NE(s, "a uri test");
+                BOOST_TEST_LT(s, "a vri+test");
+                BOOST_TEST_LT(s, "a vri test");
+                BOOST_TEST_LE(s, "a vri+test");
+                BOOST_TEST_LE(s, "a uri+test");
+                BOOST_TEST_GT(s, "a tri+test");
+                BOOST_TEST_NOT(s > "a uri+test");
+                BOOST_TEST_GE(s, "a tri+test");
+                BOOST_TEST_GE(s, "a uri+test");
             }
 
         }

@@ -1405,6 +1405,17 @@ struct url_base_test
                 u.set_query("");
                 BOOST_TEST_EQ(u.buffer(), "?");
             }
+
+            // issue #237
+            {
+                url u;
+                u.set_query(" +");
+                BOOST_TEST_EQ(u.encoded_query(), "+%2B");
+                BOOST_TEST_EQ(u.query(), " +");
+                u.set_encoded_query(" +%20%2B");
+                BOOST_TEST_EQ(u.encoded_query(), "+%2B%20%2B");
+                BOOST_TEST_EQ(u.query(), " + +");
+            }
         }
 
         // has_query
@@ -1456,12 +1467,12 @@ struct url_base_test
             BOOST_TEST(! u.has_query());
             u.set_query("!@#$%^&*()_+=-;:'{}[]|\\?/>.<,");
             BOOST_TEST(u.has_query());
-            BOOST_TEST(u.encoded_query() ==
-                "!@%23$%25%5E&*()_+=-;:'%7B%7D%5B%5D%7C%5C?/%3E.%3C,");
+            BOOST_TEST_EQ(u.encoded_query(),
+                "!@%23$%25%5E&*()_%2B=-;:'%7B%7D%5B%5D%7C%5C?/%3E.%3C,");
             BOOST_TEST_EQ(u.params().size(), 2u);
             BOOST_TEST_EQ((*u.params().begin()).key, "!@#$%^");
             BOOST_TEST_EQ((*u.params().begin()).value, "");
-            BOOST_TEST_EQ((*std::next(u.params().begin())).key, "*()_ ");
+            BOOST_TEST_EQ((*std::next(u.params().begin())).key, "*()_+");
             BOOST_TEST_EQ((*std::next(u.params().begin())).value,
                 "-;:'{}[]|\\?/>.<,");
         }

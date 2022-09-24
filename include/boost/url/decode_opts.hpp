@@ -31,7 +31,7 @@ struct decode_opts
         @li <a href="https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1">
             application/x-www-form-urlencoded (w3.org)</a>
     */
-    bool plus_to_space = true;
+    bool plus_to_space = false;
 
     /** True if decoding a non-normal string is an error
     */
