@@ -110,8 +110,8 @@ measure(
         s.substr(
             pos_,
             next_ - pos_),
-        opt,
-        pchars);
+        pchars,
+        opt);
     increment();
     return true;
 }
@@ -132,8 +132,8 @@ copy(
         s.substr(
             pos_,
             next_ - pos_),
-        opt,
-        pchars);
+        pchars,
+        opt);
     increment();
 }
 
@@ -163,8 +163,8 @@ measure(
         s.substr(
             pos_,
             next_ - pos_),
-        opt,
-        pchars);
+        pchars,
+        opt);
     increment();
     return true;
 }
@@ -185,8 +185,8 @@ copy(
         s.substr(
             pos_,
             next_ - pos_),
-        opt,
-        pchars);
+        pchars,
+        opt);
     increment();
 }
 
@@ -222,8 +222,8 @@ measure(
     opt.space_to_plus = false;
     n += encoded_size(
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
     at_end_ = true;
     return true;
 }
@@ -238,8 +238,8 @@ copy(char*& dest, char const* end) noexcept
         dest,
         end,
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 //------------------------------------------------
@@ -258,8 +258,8 @@ measure_impl(
     opt.space_to_plus = false;
     n += encoded_size(
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 void
@@ -275,8 +275,8 @@ copy_impl(
         dest,
         end,
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 //------------------------------------------------
@@ -311,8 +311,8 @@ measure(
     opt.space_to_plus = false;
     n += detail::re_encoded_size_unchecked(
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
     at_end_ = true;
     return true;
 }
@@ -327,8 +327,8 @@ copy(char*& dest, char const* end) noexcept
         dest,
         end,
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 //------------------------------------------------
@@ -347,8 +347,8 @@ measure_impl(
     opt.space_to_plus = false;
     n += detail::re_encoded_size_unchecked(
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 void
@@ -364,8 +364,8 @@ copy_impl(
         dest,
         end,
         s,
-        opt,
-        pchars);
+        pchars,
+        opt);
 }
 
 } // detail

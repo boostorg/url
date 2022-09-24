@@ -83,9 +83,76 @@ template <class CharSet = grammar::all_chars_t>
 std::size_t
 encoded_size(
     string_view s,
-    encode_opts const& opt = {},
-    CharSet const& allowed = {}) noexcept;
+    CharSet const& allowed = {},
+    encode_opts const& opt = {}) noexcept;
 
+/** Write a string with percent-encoding into a buffer.
+
+    This function applies percent-encoding to
+    the given plain string, by escaping all
+    characters that are not in the specified
+    <em>CharSet</em>.
+
+    The output is written to the destination,
+    and will be truncated if there is
+    insufficient space.
+
+    @par Example
+    @code
+    char *dest = new char[MAX_LENGTH];
+    std::size_t encoded_size = encode( dest, dest + MAX_LENGTH,
+            "Program Files", encode_opts{}, pchars );
+
+    assert( encoded_size == 15 );
+    assert( strncmp( "Program%20Files", dest, encoded_size ) == 0 );
+    @endcode
+
+    @par Exception Safety
+    Throws nothing.
+
+    @return `true` if the output was large
+    enough to hold the entire result.
+
+    @param[in, out] dest A pointer to the
+    beginning of the output buffer. Upon
+    return, the argument will be changed
+    to one past the last character written.
+
+    @param end A pointer to one past the end
+    of the output buffer.
+
+    @param s The string to encode.
+
+    @param opt The options for encoding. If
+    this parameter is omitted, the default
+    options will be used.
+
+    @param allowed The set of characters
+    allowed to appear unescaped.
+    This type must satisfy the requirements
+    of <em>CharSet</em>. If this parameter is
+    omitted, then no characters are considered
+    special. The character set is ignored if
+    `opt.non_normal_is_error == false`.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
+        >2.1. Percent-Encoding (rfc3986)</a>
+
+    @see
+        @ref decode,
+        @ref encode,
+        @ref encoded_size.
+*/
+template<
+    class CharSet = grammar::all_chars_t>
+std::size_t
+encode(
+    char* dest,
+    char const* end,
+    string_view s,
+    CharSet const& allowed = {},
+    encode_opts const& opt = {});
 
 /** Return a string with percent-encoding applied
 
@@ -147,9 +214,9 @@ template<
 BOOST_URL_STRTOK_RETURN
 encode(
     string_view s,
-    BOOST_URL_STRTOK_ARG(token),
+    CharSet const& allowed = {},
     encode_opts const& opt = {},
-    CharSet const& allowed = {}) noexcept;
+    BOOST_URL_STRTOK_ARG(token)) noexcept;
 
 } // urls
 } // boost

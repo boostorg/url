@@ -27,8 +27,8 @@ template< class StringToken >
 auto
 decode(
     BOOST_URL_PCT_STRING_VIEW s,
-    StringToken&& token,
-    decode_opts const& opt) noexcept ->
+    decode_opts const& opt,
+    StringToken&& token) noexcept ->
         result< BOOST_URL_STRTOK_RETURN >
 {
     return s.decode(opt, std::move(token));

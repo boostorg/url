@@ -32,8 +32,8 @@ std::size_t
 encoded_size_impl(
     FwdIt it,
     FwdIt const end,
-    encode_opts const& opt,
-    CharSet const& allowed) noexcept
+    CharSet const& allowed,
+    encode_opts const& opt) noexcept
 {
     std::size_t n = 0;
     if(! opt.space_to_plus)
@@ -75,8 +75,8 @@ encode_impl(
     char const* const end,
     FwdIt p,
     FwdIt last,
-    encode_opts const& opt,
-    CharSet const& allowed)
+    CharSet const& allowed,
+    encode_opts const& opt)
 {
     // Can't have % in charset
     BOOST_ASSERT(! allowed('%'));
@@ -165,8 +165,8 @@ encode_unchecked(
     char const* end,
     char const* it,
     char const* const last,
-    encode_opts const& opt,
-    CharSet const& allowed)
+    CharSet const& allowed,
+    encode_opts const& opt)
 {
     BOOST_ASSERT(! allowed('%'));
     BOOST_ASSERT(
@@ -232,16 +232,16 @@ encode_unchecked(
     char* dest,
     char const* const end,
     string_view s,
-    encode_opts const& opt,
-    CharSet const& allowed)
+    CharSet const& allowed,
+    encode_opts const& opt)
 {
     return encode_unchecked(
         dest,
         end,
         s.begin(),
         s.end(),
-        opt,
-        allowed);
+        allowed,
+        opt);
 }
 
 //------------------------------------------------
@@ -256,8 +256,8 @@ template<class CharSet>
 std::size_t
 re_encoded_size_unchecked(
     string_view s,
-    encode_opts const& opt,
-    CharSet const& allowed) noexcept
+    CharSet const& allowed,
+    encode_opts const& opt) noexcept
 {
     std::size_t n = 0;
     auto const end = s.end();
@@ -326,8 +326,8 @@ re_encode_unchecked(
     char*& dest_,
     char const* const end,
     string_view s,
-    encode_opts const& opt,
-    CharSet const& allowed) noexcept
+    CharSet const& allowed,
+    encode_opts const& opt) noexcept
 {
     static constexpr char lo[] =
         "0123456789abcdef";
@@ -419,21 +419,8 @@ re_encode_unchecked(
     return dest - dest0 - dn;
 }
 
-template<
-    class CharSet =
-        grammar::all_chars_t>
-std::size_t
-encode(
-    char* dest,
-    char const* end,
-    string_view s,
-    encode_opts const& opt = {},
-    CharSet const& allowed = {});
-
 } // detail
 } // urls
 } // boost
-
-#include <boost/url/detail/impl/encode.hpp>
 
 #endif

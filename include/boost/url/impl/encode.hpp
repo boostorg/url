@@ -28,8 +28,8 @@ template<class CharSet>
 std::size_t
 encoded_size(
     string_view s,
-    encode_opts const& opt,
-    CharSet const& allowed) noexcept
+    CharSet const& allowed,
+    encode_opts const& opt) noexcept
 {
 /*  If you get a compile error here, it
     means that the value you passed does
@@ -43,12 +43,38 @@ encoded_size(
     return detail::encoded_size_impl(
         s.data(),
         s.data() + s.size(),
-        opt,
-        allowed);
+        allowed,
+        opt);
 }
 
 //------------------------------------------------
 
+template<class CharSet>
+std::size_t
+encode(
+    char* dest,
+    char const* const end,
+    string_view s,
+    CharSet const& allowed,
+    encode_opts const& opt)
+{
+    /*  If you get a compile error here, it
+    means that the value you passed does
+    not meet the requirements stated in
+    the documentation.
+*/
+    static_assert(
+        grammar::is_charset<CharSet>::value,
+        "Type requirements not met");
+
+    return detail::encode_impl(
+        dest,
+        end,
+        s.data(),
+        s.data() + s.size(),
+        allowed,
+        opt);
+}
 
 //------------------------------------------------
 
@@ -58,19 +84,19 @@ template<
 BOOST_URL_STRTOK_RETURN
 encode(
     string_view s,
-    StringToken&& token,
+    CharSet const& allowed,
     encode_opts const& opt,
-    CharSet const& allowed) noexcept
+    StringToken&& token) noexcept
 {
     // CharSet must satisfy is_charset
     BOOST_STATIC_ASSERT(
         grammar::is_charset<CharSet>::value);
     auto const n =
-        encoded_size(s, opt, allowed);
+        encoded_size(s, allowed, opt);
     auto p = token.prepare(n);
     if(n > 0)
         detail::encode_unchecked(
-            p, p + n, s, opt, allowed);
+            p, p + n, s, allowed, opt);
     return token.result();
 }
 

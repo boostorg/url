@@ -71,8 +71,8 @@ template<BOOST_URL_STRTOK_TPARAM>
 result<BOOST_URL_STRTOK_RETURN>
 decode(
     BOOST_URL_PCT_STRING_VIEW s,
-    BOOST_URL_STRTOK_ARG(token),
-    decode_opts const& opt = {}) noexcept;
+    decode_opts const& opt = {},
+    BOOST_URL_STRTOK_ARG(token)) noexcept;
 
 } // urls
 } // boost
