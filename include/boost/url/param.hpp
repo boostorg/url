@@ -12,6 +12,7 @@
 #define BOOST_URL_PARAM_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/detail/optional_string.hpp>
 #include <boost/url/pct_string_view.hpp>
 #include <cstddef>
 #include <string>
@@ -228,52 +229,8 @@ struct param
     /** Constructor
 
         This constructs a parameter with a key
-        and no value.
-        No validation is performed on the strings.
-        Ownership of the key is acquired by
-        making a copy.
-
-        @par Example
-        @code
-        param qp( "key" );
-        @endcode
-
-        @par Postconditions
-        @code
-        this->key == key && this->value == "" && this->has_value == false
-        @endcode
-
-        @par Complexity
-        Linear in `key.size()`.
-
-        @par Exception Safety
-        Calls to allocate may throw.
-
-        @param key The key to set.
-
-        @see
-            @ref no_value.
-    */
-    /**@{*/
-    param(
-        string_view key,
-        no_value_t) noexcept
-        : key(key)
-    {
-    }
-
-    param(
-        string_view key,
-        std::nullptr_t) noexcept
-        : key(key)
-    {
-    }
-    /**@}*/
-
-    /** Constructor
-
-        This constructs a parameter with a key
         and value.
+
         No validation is performed on the strings.
         Ownership of the key and value is acquired
         by making copies.
@@ -281,6 +238,22 @@ struct param
         @par Example
         @code
         param qp( "key", "value" );
+        @endcode
+
+        @code
+        param qp( "key", optional<string_view>("value") );
+        @endcode
+
+        @code
+        param qp( "key", boost::none );
+        @endcode
+
+        @code
+        param qp( "key", nullptr );
+        @endcode
+
+        @code
+        param qp( "key", no_value );
         @endcode
 
         @par Postconditions
@@ -294,14 +267,18 @@ struct param
         @par Exception Safety
         Calls to allocate may throw.
 
+        @tparam OptionalString An optional string
+        type, such as @ref string_view,
+        `std::nullptr`, @ref no_value_t, or
+        `optional<string_view>`.
+
         @param key, value The key and value to set.
     */
+    template <class OptionalString>
     param(
         string_view key,
-        string_view value)
-        : key(key)
-        , value(value)
-        , has_value(true)
+        OptionalString const& value)
+        : param(key, detail::get_optional_string(value))
     {
     }
 
@@ -368,6 +345,14 @@ struct param
     {
     }
 #endif
+
+private:
+    param(
+        string_view key,
+        detail::optional_string const& value)
+        : param(key, value.s, value.b)
+    {
+    }
 };
 
 //------------------------------------------------
@@ -472,55 +457,6 @@ struct param_view
     /** Constructor
 
         This constructs a parameter with a key
-        and no value.
-        No validation is performed on the strings.
-        The new key will reference the same
-        underlying character buffer.
-        Ownership of the buffers is not transferred;
-        the caller is responsible for ensuring that
-        the assigned buffers remain valid until
-        they are no longer referenced.
-
-        @par Example
-        @code
-        param_view qp( "key" );
-        @endcode
-
-        @par Postconditions
-        @code
-        this->key.data() == key.data() && this->value == "" && this->has_value == false
-        @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @param key The key to set.
-
-        @see
-            @ref no_value.
-    */
-    /**@{*/
-    param_view(
-        string_view key,
-        no_value_t) noexcept
-        : key(key)
-    {
-    }
-
-    param_view(
-        string_view key,
-        std::nullptr_t) noexcept
-        : key(key)
-    {
-    }
-    /**@}*/
-
-    /** Constructor
-
-        This constructs a parameter with a key
         and value.
         No validation is performed on the strings.
         The new key and value will reference
@@ -547,14 +483,18 @@ struct param_view
         @par Exception Safety
         Throws nothing.
 
+        @tparam OptionalString An optional string
+        type, such as @ref string_view,
+        `std::nullptr`, @ref no_value_t, or
+        `optional<string_view>`.
+
         @param key, value The key and value to set.
     */
+    template <class OptionalString>
     param_view(
         string_view key,
-        string_view value) noexcept
-        : key(key)
-        , value(value)
-        , has_value(true)
+        OptionalString const& value) noexcept
+        : param_view(key, detail::get_optional_string(value))
     {
     }
 
@@ -639,6 +579,14 @@ struct param_view
     {
     }
 #endif
+
+private:
+    param_view(
+        string_view key,
+        detail::optional_string const& value)
+        : param_view(key, value.s, value.b)
+    {
+    }
 };
 
 //------------------------------------------------
@@ -742,58 +690,6 @@ struct param_pct_view
 
     /** Constructor
 
-        This constructs a parameter with a key,
-        which may contain percent escapes,
-        and no value.
-        The new key will reference the same
-        underlying character buffer.
-        Ownership of the buffers is not transferred;
-        the caller is responsible for ensuring that
-        the assigned buffers remain valid until
-        they are no longer referenced.
-
-        @par Example
-        @code
-        param_pct_view qp( "key" );
-        @endcode
-
-        @par Postconditions
-        @code
-        this->key.data() == key.data() && this->value == "" && this->has_value == false
-        @endcode
-
-        @par Complexity
-        Linear in `key.size()`.
-
-        @par Exception Safety
-        Exceptions thrown on invalid input.
-
-        @throw system_error
-        `key` contains an invalid percent-encoding.
-
-        @param key The key to set.
-
-        @see
-            @ref no_value.
-    */
-    /**@{*/
-    param_pct_view(
-        pct_string_view key,
-        no_value_t) noexcept
-        : key(key)
-    {
-    }
-
-    param_pct_view(
-        pct_string_view key,
-        std::nullptr_t) noexcept
-        : key(key)
-    {
-    }
-    /**@}*/
-
-    /** Constructor
-
         This constructs a parameter with a key
         and value, which may both contain percent
         escapes.
@@ -832,6 +728,55 @@ struct param_pct_view
         : key(key)
         , value(value)
         , has_value(true)
+    {
+    }
+
+    /** Constructor
+
+        This constructs a parameter with a key
+        and optional value, which may both
+        contain percent escapes.
+
+        The new key and value will reference
+        the same corresponding underlying
+        character buffers.
+
+        Ownership of the buffers is not transferred;
+        the caller is responsible for ensuring that
+        the assigned buffers remain valid until
+        they are no longer referenced.
+
+        @par Example
+        @code
+        param_pct_view qp( "key", optional<string_view>("value") );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->key.data() == key.data() && this->value->data() == value->data() && this->has_value == true
+        @endcode
+
+        @par Complexity
+        Linear in `key.size() + value->size()`.
+
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `key` or `value` contains an invalid percent-encoding.
+
+        @tparam OptionalString An optional
+        @ref string_view type, such as
+        `boost::optional<string_view>` or
+        `std::optional<string_view>`.
+
+        @param key, value The key and value to set.
+    */
+    template <class OptionalString>
+    param_pct_view(
+        pct_string_view key,
+        OptionalString const& value)
+        : param_pct_view(key, detail::get_optional_string(value))
     {
     }
 
@@ -930,6 +875,14 @@ struct param_pct_view
     {
     }
 #endif
+
+private:
+    param_pct_view(
+        pct_string_view key,
+        detail::optional_string const& value)
+        : param_pct_view(key, value.s, value.b)
+    {
+    }
 };
 
 //------------------------------------------------
