@@ -50,15 +50,14 @@ struct is_exact_topic {
     This callable is used as a filter for
     the keys_view.
  */
-template <class MutableString>
 class is_url_with_key {
     urls::string_view k_;
-    MutableString& buf_;
+    std::string& buf_;
 public:
     explicit
     is_url_with_key(
         urls::string_view key,
-        MutableString& buffer)
+        std::string& buffer)
         : k_(key)
         , buf_(buffer) {}
 
@@ -75,20 +74,7 @@ public:
     function for the topics_view.
  */
 struct param_view_to_url {
-    urls::url_view
-    operator()(urls::param_view p);
-};
-
-/// Callable to convert param values to urls
-/**
-    This callable converts the value of a
-    query parameter into a urls::url_view.
-
-    This callable is used as a transform
-    function for the topics_view.
- */
-struct param_view_to_param_key {
-    urls::url_view
+    urls::url
     operator()(urls::param_view p);
 };
 
@@ -101,7 +87,7 @@ struct param_view_to_param_key {
     function for the keys_view.
  */
 struct to_decoded_value {
-    urls::string_view
+    std::string
     operator()(urls::param_view p)
     {
         return p.value;
@@ -185,7 +171,7 @@ public:
     using topics_view =
         filter_view<
             urls::params_view,
-            urls::url_view,
+            urls::url,
             is_exact_topic,
             param_view_to_url>;
 
@@ -193,7 +179,7 @@ public:
     using info_hashes_view =
         filter_view<
             urls::params_view,
-            urls::string_view,
+            std::string,
             is_exact_topic,
             param_view_to_infohash>;
 
@@ -201,7 +187,7 @@ public:
     using protocols_view =
         filter_view<
             urls::params_view,
-            urls::string_view,
+            std::string,
             is_exact_topic,
             to_protocol>;
 
@@ -211,12 +197,11 @@ public:
         to a list of urls with the same query
         parameter keys.
      */
-    template <class MutableString>
     using keys_view =
         filter_view<
             urls::params_view,
-            urls::string_view,
-            is_url_with_key<MutableString>,
+            std::string,
+            is_url_with_key,
             to_decoded_value>;
 
     /// URNs to the file or files hashes
@@ -259,9 +244,8 @@ public:
 
         @return A view of all address trackers in the link
      */
-    template <class MutableString>
-    keys_view<MutableString>
-    address_trackers(MutableString& buffer) const;
+    keys_view
+    address_trackers(std::string& buffer) const;
 
     /// Return view of exact sources
     /**
@@ -273,9 +257,8 @@ public:
 
         @return A view of all exact sources
      */
-    template <class MutableString>
-    keys_view<MutableString>
-    exact_sources(MutableString& buffer) const;
+    keys_view
+    exact_sources(std::string& buffer) const;
 
     /// Return view of acceptable sources
     /**
@@ -288,9 +271,8 @@ public:
 
         @return A view of all acceptable sources
      */
-    template <class MutableString>
-    keys_view<MutableString>
-    acceptable_sources(MutableString& buffer) const;
+    keys_view
+    acceptable_sources(std::string& buffer) const;
 
     /// Return keyword topic
     /**
@@ -319,9 +301,8 @@ public:
 
         @return A view of manifest topics
      */
-    template <class MutableString>
-    keys_view<MutableString>
-    manifest_topics(MutableString& buffer) const;
+    keys_view
+    manifest_topics(std::string& buffer) const;
 
     /// Return display name
     /**
@@ -350,9 +331,8 @@ public:
 
         @return Web seed
      */
-    template <class MutableString>
-    keys_view<MutableString>
-    web_seed(MutableString& buffer) const;
+    keys_view
+    web_seed(std::string& buffer) const;
 
     /// Return extra supplement parameter
     /**
@@ -412,9 +392,8 @@ operator()(urls::param_view p)
             urls::grammar::digit_chars);
 }
 
-template <class MutableString>
 bool
-is_url_with_key<MutableString>::
+is_url_with_key::
 operator()(urls::param_view p)
 {
     if (p.key != k_)
@@ -428,7 +407,7 @@ operator()(urls::param_view p)
     return r.has_value();
 }
 
-urls::url_view
+urls::url
 param_view_to_url::
 operator()(urls::param_view p)
 {
@@ -437,8 +416,11 @@ operator()(urls::param_view p)
     // percent-encoded twice.
     // Thus, we can already parse the
     // encoded value.
-    return
-        urls::parse_uri(p.value).value();
+    auto ur =
+        urls::parse_uri(p.value);
+    BOOST_ASSERT(ur);
+    urls::url u = *ur;
+    return u;
 }
 
 urls::string_view
@@ -486,34 +468,31 @@ magnet_link_view::protocols() const noexcept
     return {u_.params()};
 }
 
-template <class MutableString>
 auto
-magnet_link_view::address_trackers(MutableString& buffer) const
-    -> keys_view<MutableString>
+magnet_link_view::address_trackers(std::string& buffer) const
+    -> keys_view
 {
     return {
         u_.params(),
-        is_url_with_key<MutableString>{"tr", buffer}};
+        is_url_with_key{"tr", buffer}};
 }
 
-template <class MutableString>
 auto
-magnet_link_view::exact_sources(MutableString& buffer) const
-    -> keys_view<MutableString>
+magnet_link_view::exact_sources(std::string& buffer) const
+    -> keys_view
 {
     return {
         u_.params(),
-        is_url_with_key<MutableString>{"xs", buffer}};
+        is_url_with_key{"xs", buffer}};
 }
 
-template <class MutableString>
 auto
-magnet_link_view::acceptable_sources(MutableString& buffer) const
-    -> keys_view<MutableString>
+magnet_link_view::acceptable_sources(std::string& buffer) const
+    -> keys_view
 {
     return {
         u_.params(),
-        is_url_with_key<MutableString>{"as", buffer}};
+        is_url_with_key{"as", buffer}};
 }
 
 boost::optional<urls::decode_view>
@@ -522,14 +501,13 @@ magnet_link_view::keyword_topic() const noexcept
     return decoded_param("kt");
 }
 
-template <class MutableString>
 auto
-magnet_link_view::manifest_topics(MutableString& buffer) const
-    -> keys_view<MutableString>
+magnet_link_view::manifest_topics(std::string& buffer) const
+    -> keys_view
 {
     return {
         u_.params(),
-        is_url_with_key<MutableString>{"mt", buffer}};
+        is_url_with_key{"mt", buffer}};
 }
 
 boost::optional<urls::decode_view>
@@ -538,14 +516,13 @@ magnet_link_view::display_name() const noexcept
     return decoded_param("dn");
 }
 
-template <class MutableString>
 auto
-magnet_link_view::web_seed(MutableString& buffer) const
-    -> keys_view<MutableString>
+magnet_link_view::web_seed(std::string& buffer) const
+    -> keys_view
 {
     return {
         u_.params(),
-        is_url_with_key<MutableString>{"ws", buffer}};
+        is_url_with_key{"ws", buffer}};
 }
 
 boost::optional<urls::decode_view>

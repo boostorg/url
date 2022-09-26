@@ -681,6 +681,7 @@ struct segments_ref_test
                     std::next(ps.begin(), 0),
                     std::next(ps.begin(), 2),
                     { "t", "u", "v" });
+                ignore_unused(it);
             };
             check(f, g, "path/to/the/file.txt", "t/u/v/the/file.txt", {"t", "u", "v", "the", "file.txt"});
             check(f, g, "/path/to/the/file.txt", "/t/u/v/the/file.txt", {"t", "u", "v", "the", "file.txt"});
@@ -700,6 +701,7 @@ struct segments_ref_test
                     std::next(ps.begin(), 1),
                     std::next(ps.begin(), 3),
                     { "t", "u", "v" });
+                ignore_unused(it);
             };
             check(f, g, "path/to/the/file.txt", "path/t/u/v/file.txt", {"path", "t", "u", "v", "file.txt"});
             check(f, g, "/path/to/the/file.txt", "/path/t/u/v/file.txt", {"path", "t", "u", "v", "file.txt"});
@@ -719,6 +721,7 @@ struct segments_ref_test
                     std::next(ps.begin(), 2),
                     std::next(ps.begin(), 4),
                     { "t", "u", "v" });
+                ignore_unused(it);
             };
             check(f, g, "path/to/the/file.txt", "path/to/t/u/v", {"path", "to", "t", "u", "v"});
             check(f, g, "/path/to/the/file.txt", "/path/to/t/u/v", {"path", "to", "t", "u", "v"});
@@ -738,6 +741,7 @@ struct segments_ref_test
                     std::next(ps.begin(), 1),
                     std::next(ps.begin(), 3),
                     { BIGSTR, BIGSTR, BIGSTR });
+                ignore_unused(it);
             };
             check(f, g, "path/to/the/file.txt",
                 "path/" BIGSTR "/" BIGSTR "/" BIGSTR "/file.txt",
