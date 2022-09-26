@@ -1212,17 +1212,6 @@ struct CharSet
 };
 //]
 
-//[snippet_mutable_string_exemplar
-struct MutableString
-{
-    template< class InputIt >
-    void assign( InputIt first, InputIt last );
-
-    template< class InputIt >
-    void append( InputIt first, InputIt last );
-};
-//]
-
 void
 modifying_path()
 {
