@@ -228,47 +228,6 @@ public:
 
         @par Postconditions
         @code
-        this->data() == first && this->data() + this->size() == last
-        @endcode
-
-        @par Complexity
-        Linear in `len`.
-
-        @par Exception Safety
-        Exceptions thrown on invalid input.
-
-        @throw system_error
-        The string contains an invalid percent encoding.
-
-        @param first, last The string to construct from.
-    */
-#ifdef BOOST_URL_DOCS
-    pct_string_view(
-        char const* first,
-        char const* last);
-#else
-    template<class End>
-    pct_string_view(
-        char const* first,
-        End last,
-        typename std::enable_if<
-            std::is_same<End,
-            char const*>::value
-                >::type* = 0)
-        : pct_string_view(
-            string_view(first, last))
-    {
-    }
-#endif
-
-    /** Constructor
-
-        The newly constructed string will
-        reference the specified character
-        buffer. Ownership is not transferred.
-
-        @par Postconditions
-        @code
         this->data() == s.data() && this->size() == s.size()
         @endcode
 

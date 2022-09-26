@@ -11,6 +11,7 @@
 #include <boost/url/param.hpp>
 
 #include <boost/core/ignore_unused.hpp>
+#include <boost/optional.hpp>
 
 #include "test_suite.hpp"
 
@@ -125,6 +126,18 @@ struct param_test
             }
         }
 
+        // param(string_view, optional<string_view>)
+        {
+            {
+                param qp("key", optional<string_view>("value"));
+                check(qp, "key", "value", true);
+            }
+            {
+                param qp("key", optional<string_view>(none));
+                check(qp, "key", "", false);
+            }
+        }
+
         // operator=(param_view)
         {
             param qp;
@@ -191,6 +204,18 @@ struct param_test
             {
                 param_view qp("key", "");
                 check(qp, "key", "", true);
+            }
+        }
+
+        // param_view(string_view, optional<string_view>)
+        {
+            {
+                param_view qp("key", optional<string_view>("value"));
+                check(qp, "key", "value", true);
+            }
+            {
+                param_view qp("key", optional<string_view>(none));
+                check(qp, "key", "", false);
             }
         }
 
@@ -272,6 +297,18 @@ struct param_test
             {
                 param_view qp("key", "");
                 check(qp, "key", "", true);
+            }
+        }
+
+        // param_pct_view(pct_string_view, optional<pct_string_view>)
+        {
+            {
+                param_view qp("key", optional<string_view>("value"));
+                check(qp, "key", "value", true);
+            }
+            {
+                param_view qp("key", optional<string_view>(none));
+                check(qp, "key", "", false);
             }
         }
 
