@@ -22,36 +22,7 @@ namespace detail {
 // https://lemire.me/blog/2020/04/30/for-case-insensitive-string-comparisons-avoid-char-by-char-functions/
 // https://github.com/lemire/Code-used-on-Daniel-Lemire-s-blog/blob/master/2020/04/30/tolower.cpp
 
-bool
-ci_is_equal(
-    string_view s0,
-    string_view s1) noexcept
-{
-    auto n = s0.size();
-    auto p1 = s0.data();
-    auto p2 = s1.data();
-    char a, b;
-    // fast loop
-    while(n--)
-    {
-        a = *p1++;
-        b = *p2++;
-        if(a != b)
-            goto slow;
-    }
-    return true;
-slow:
-    do
-    {
-        if( to_lower(a) !=
-            to_lower(b))
-            return false;
-        a = *p1++;
-        b = *p2++;
-    }
-    while(n--);
-    return true;
-}
+extern template bool ci_is_equal<string_view, string_view>(string_view const&, string_view const&);
 
 //------------------------------------------------
 

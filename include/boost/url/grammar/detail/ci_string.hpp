@@ -106,16 +106,10 @@ to_upper(char c) noexcept
 //------------------------------------------------
 
 template<class S0, class S1>
-auto
+bool
 ci_is_equal(
     S0 const& s0,
-    S1 const& s1) ->
-        typename std::enable_if<
-            ! std::is_convertible<
-                S0, string_view>::value ||
-            ! std::is_convertible<
-                S1, string_view>::value,
-        bool>::type
+    S1 const& s1)
 {
 /*  If you get a compile error here, it
     means that a range you passed does
@@ -140,31 +134,33 @@ ci_is_equal(
         detail::type_id<S0>() <=
         detail::type_id<S1>());
 
-    auto it0 = s0.begin();
-    auto it1 = s1.begin();
-    auto const end0 = s0.end();
-    auto const end1 = s1.end();
-    for(;;)
+    auto n = s0.size();
+    auto p1 = s0.begin();
+    auto p2 = s1.begin();
+    char a, b;
+    // fast loop
+    while(n--)
     {
-        if(it0 == end0)
-            return it1 == end1;
-        if(it1 == end1)
-            return false;
-        if( to_lower(*it0) !=
-            to_lower(*it1))
-            return false;
-        ++it0;
-        ++it1;
+        a = *p1++;
+        b = *p2++;
+        if(a != b)
+            goto slow;
     }
+    return true;
+slow:
+    do
+    {
+        if( to_lower(a) !=
+            to_lower(b))
+            return false;
+        a = *p1++;
+        b = *p2++;
+    }
+    while(n--);
+    return true;
 }
 
 //------------------------------------------------
-
-BOOST_URL_DECL
-bool
-ci_is_equal(
-    string_view s0,
-    string_view s1) noexcept;
 
 BOOST_URL_DECL
 bool

@@ -12,6 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/grammar/detail/charset.hpp>
+#include <boost/core/ignore_unused.hpp>
 
 namespace boost {
 namespace urls {
@@ -58,8 +59,8 @@ struct all_chars_t
         char const* first,
         char const* last) const noexcept
     {
-        return detail::find_if_pred(
-            *this, first, last);
+        ignore_unused(last);
+        return first;
     }
 
     char const*
@@ -67,8 +68,8 @@ struct all_chars_t
         char const* first,
         char const* last) const noexcept
     {
-        return detail::find_if_not_pred(
-            *this, first, last);
+        ignore_unused(first);
+        return last;
     }
 #endif
 };
