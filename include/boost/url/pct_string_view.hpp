@@ -61,9 +61,24 @@ make_pct_string_view(
     but offer an additional invariant: they can
     only be constructed from strings containing
     valid percent-escapes.
+
     Attempting construction from a string
     containing invalid or malformed percent
     escapes results in an exception.
+
+    @par Operators
+    The following operators are supported between
+    @ref pct_string_view and any object that is convertible
+    to @ref string_view:
+
+    @code
+    bool operator==( pct_string_view, pct_string_view ) noexcept;
+    bool operator!=( pct_string_view, pct_string_view ) noexcept;
+    bool operator<=( pct_string_view, pct_string_view ) noexcept;
+    bool operator< ( pct_string_view, pct_string_view ) noexcept;
+    bool operator> ( pct_string_view, pct_string_view ) noexcept;
+    bool operator>=( pct_string_view, pct_string_view ) noexcept;
+    @endcode
 */
 class pct_string_view final
     : public grammar::string_view_base

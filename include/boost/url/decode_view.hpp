@@ -68,6 +68,21 @@ make_decode_view(
     of the character buffer from which the view
     is constructed extends unmodified until the
     view is no longer accessed.
+
+    @par Operators
+    The following operators are supported between
+    @ref decode_view and any object that is convertible
+    to @ref string_view:
+
+    @code
+    bool operator==( decode_view, decode_view ) noexcept;
+    bool operator!=( decode_view, decode_view ) noexcept;
+    bool operator<=( decode_view, decode_view ) noexcept;
+    bool operator< ( decode_view, decode_view ) noexcept;
+    bool operator> ( decode_view, decode_view ) noexcept;
+    bool operator>=( decode_view, decode_view ) noexcept;
+    @endcode
+
 */
 class decode_view
 {
@@ -382,593 +397,101 @@ public:
 
     //--------------------------------------------
 
-    /** Return the result of comparing s0 and s1
-
-        This function compares the two strings that
-        result after applying percent-decoding to
-        `s0` and `s1`. Does not allocate.
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    friend
-    bool
-    operator==(
-        decode_view s0,
-        decode_view s1) noexcept
-    {
-        return s0.compare(s1) == 0;
-    }
-
-    /** Return the result of comparing s0 and s1
-
-        This function compares the two strings that
-        result after applying percent-decoding to
-        `s0` and `s1`. Does not allocate.
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    friend
-    bool
-    operator!=(
-        decode_view s0,
-        decode_view s1) noexcept
-    {
-        return s0.compare(s1) != 0;
-    }
-
-    /** Return the result of comparing s0 and s1
-
-        This function compares the two strings that
-        result after applying percent-decoding to
-        `s0` and `s1`. Does not allocate.
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    friend
-    bool
-    operator<(
-        decode_view s0,
-        decode_view s1) noexcept
-    {
-        return s0.compare(s1) < 0;
-    }
-
-    /** Return the result of comparing s0 and s1
-
-        This function compares the two strings that
-        result after applying percent-decoding to
-        `s0` and `s1`. Does not allocate.
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    friend
-    bool
-    operator<=(
-        decode_view s0,
-        decode_view s1) noexcept
-    {
-        return s0.compare(s1) <= 0;
-    }
-
-    /** Return the result of comparing s0 and s1
-
-        This function compares the two strings that
-        result after applying percent-decoding to
-        `s0` and `s1`. Does not allocate.
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    friend
-    bool
-    operator>(
-        decode_view s0,
-        decode_view s1) noexcept
-    {
-        return s0.compare(s1) > 0;
-    }
-
-    /** Return the result of comparing s0 and s1
-
-        This function compares the two strings that
-        result after applying percent-decoding to
-        `s0` and `s1`. Does not allocate.
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    friend
-    bool
-    operator>=(
-        decode_view s0,
-        decode_view s1) noexcept
-    {
-        return s0.compare(s1) >= 0;
-    }
-
-    //--------------------------------------------
-
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string that
-        results from applying percent-decoding to
-        `s0`, to the string `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
+    // relational operators
 #ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
-#endif
-    operator==(
-        decode_view s0,
-        String const& s1) noexcept
+private:
+    template<class S0, class S1>
+    using is_match = std::integral_constant<bool,
+        // both decode_view or convertible to string_view
+        (
+            std::is_same<typename std::decay<S0>::type, decode_view>::value ||
+            std::is_convertible<S0, string_view>::value) &&
+        (
+            std::is_same<typename std::decay<S1>::type, decode_view>::value ||
+            std::is_convertible<S1, string_view>::value) &&
+        // not both are convertible to string view
+        (
+            !std::is_convertible<S0, string_view>::value ||
+            !std::is_convertible<S1, string_view>::value)>;
+
+    static
+    int
+    decode_compare(decode_view s0, decode_view s1) noexcept
     {
-        return s0.compare(string_view(s1)) == 0;
+        return s0.compare(s1);
     }
 
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string that
-        results from applying percent-decoding to
-        `s0`, to the string `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
-#ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
-#endif
-    operator!=(
-        decode_view s0,
-        String const& s1) noexcept
+    template <class S>
+    static
+    int
+    decode_compare(decode_view s0, S const& s1) noexcept
     {
-        return s0.compare(string_view(s1)) != 0;
+        return s0.compare(s1);
     }
 
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string that
-        results from applying percent-decoding to
-        `s0`, to the string `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
-#ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
-#endif
-    operator<(
-        decode_view s0,
-        String const& s1) noexcept
+    template <class S>
+    static
+    int
+    decode_compare(S const& s0, decode_view s1) noexcept
     {
-        return s0.compare(string_view(s1)) < 0;
+        return -s1.compare(s0);
+    }
+public:
+
+    template<class S0, class S1>
+    BOOST_CXX14_CONSTEXPR friend auto operator==(
+        S0 const& s0, S1 const& s1) noexcept ->
+        typename std::enable_if<
+            is_match<S0, S1>::value, bool>::type
+    {
+        return decode_compare(s0, s1) == 0;
     }
 
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string that
-        results from applying percent-decoding to
-        `s0`, to the string `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
-#ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
-#endif
-    operator<=(
-        decode_view s0,
-        String const& s1) noexcept
+    template<class S0, class S1>
+    BOOST_CXX14_CONSTEXPR friend auto operator!=(
+        S0 const& s0, S1 const& s1) noexcept ->
+        typename std::enable_if<
+            is_match<S0, S1>::value, bool>::type
     {
-        return s0.compare(string_view(s1)) <= 0;
+        return decode_compare(s0, s1) != 0;
     }
 
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string that
-        results from applying percent-decoding to
-        `s0`, to the string `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
-#ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
-#endif
-    operator>(
-        decode_view s0,
-        String const& s1) noexcept
+    template<class S0, class S1>
+    BOOST_CXX14_CONSTEXPR friend auto operator<(
+        S0 const& s0, S1 const& s1) noexcept ->
+        typename std::enable_if<
+            is_match<S0, S1>::value, bool>::type
     {
-        return s0.compare(string_view(s1)) > 0;
+        return decode_compare(s0, s1) < 0;
     }
 
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string that
-        results from applying percent-decoding to
-        `s0`, to the string `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
-#ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
-#endif
-    operator>=(
-        decode_view s0,
-        String const& s1) noexcept
+    template<class S0, class S1>
+    BOOST_CXX14_CONSTEXPR friend auto operator<=(
+        S0 const& s0, S1 const& s1) noexcept ->
+        typename std::enable_if<
+            is_match<S0, S1>::value, bool>::type
     {
-        return s0.compare(string_view(s1)) >= 0;
+        return decode_compare(s0, s1) <= 0;
     }
 
-    //--------------------------------------------
-
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string `s0`, to
-        the string that results from applying
-        percent-decoding to `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
-#ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
-#endif
-    operator==(
-        String const& s0,
-        decode_view s1) noexcept
+    template<class S0, class S1>
+    BOOST_CXX14_CONSTEXPR friend auto operator>(
+        S0 const& s0, S1 const& s1) noexcept ->
+        typename std::enable_if<
+            is_match<S0, S1>::value, bool>::type
     {
-        return s1.compare(string_view(s0)) == 0;
+        return decode_compare(s0, s1) > 0;
     }
 
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string `s0`, to
-        the string that results from applying
-        percent-decoding to `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
-#ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
-#endif
-    operator!=(
-        String const& s0,
-        decode_view s1) noexcept
+    template<class S0, class S1>
+    BOOST_CXX14_CONSTEXPR friend auto operator>=(
+        S0 const& s0, S1 const& s1) noexcept ->
+        typename std::enable_if<
+            is_match<S0, S1>::value, bool>::type
     {
-        return s1.compare(string_view(s0)) != 0;
+        return decode_compare(s0, s1) >= 0;
     }
-
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string `s0`, to
-        the string that results from applying
-        percent-decoding to `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
-#ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
 #endif
-    operator<(
-        String const& s0,
-        decode_view s1) noexcept
-    {
-        return s1.compare(string_view(s0)) > 0;
-    }
-
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string `s0`, to
-        the string that results from applying
-        percent-decoding to `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
-#ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
-#endif
-    operator<=(
-        String const& s0,
-        decode_view s1) noexcept
-    {
-        return s1.compare(string_view(s0)) >= 0;
-    }
-
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string `s0`, to
-        the string that results from applying
-        percent-decoding to `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
-#ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
-#endif
-    operator>(
-        String const& s0,
-        decode_view s1) noexcept
-    {
-        return s1.compare(string_view(s0)) < 0;
-    }
-
-    /** Return the result of comparing s0 and s1
-
-        This function compares the string `s0`, to
-        the string that results from applying
-        percent-decoding to `s1`. Does not allocate.
-
-        @par Constraints
-        @code
-        std::is_convertible_v< String, string_view >
-        @endcode
-
-        @par Complexity
-        Linear in `s0.size() + s1.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    template <class String>
-    friend
-#ifndef BOOST_URL_DOCS
-    typename std::enable_if<
-        std::is_convertible<
-            String, string_view>::value &&
-        ! std::is_same<typename
-            std::decay<String>::type,
-            decode_view>::value,
-        bool
-    >::type
-#else
-    bool
-#endif
-    operator>=(
-        String const& s0,
-        decode_view s1) noexcept
-    {
-        return s1.compare(string_view(s0)) <= 0;
-    }
-
-    //--------------------------------------------
 
     // hidden friend
     friend
