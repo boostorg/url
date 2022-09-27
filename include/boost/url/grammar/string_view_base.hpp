@@ -760,41 +760,6 @@ private:
             std::is_convertible<S1 const volatile*,
                 string_view_base const volatile*>::value))>;
 public:
-#endif
-
-    /** Comparison
-
-        These functions perform a lexicographical
-        comparison of the contents of two strings.
-        At least one of the strings must be
-        derived from @ref string_view_base, with
-        the other string being convertible to
-        @ref string_view.
-
-        @par Complexity
-        Linear in `s1.size() + s2.size()`.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @param s1, s2 The strings to compare.
-    */
-#ifdef BOOST_URL_DOCS
-    /**@{*/
-    template<class String1, class String2>
-    friend bool operator==(String1 s1, String2 s2) noexcept;
-    template<class String1, class String2>
-    friend bool operator!=(String1 s1, String2 s2) noexcept;
-    template<class String1, class String2>
-    friend bool operator<=(String1 s1, String2 s2) noexcept;
-    template<class String1, class String2>
-    friend bool operator< (String1 s1, String2 s2) noexcept;
-    template<class String1, class String2>
-    friend bool operator> (String1 s1, String2 s2) noexcept;
-    template<class String1, class String2>
-    friend bool operator>=(String1 s1, String2 s2) noexcept;
-    /**@}*/
-#else
 
     template<class S0, class S1>
     BOOST_CXX14_CONSTEXPR friend auto operator==(
