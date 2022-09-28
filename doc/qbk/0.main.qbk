@@ -125,6 +125,7 @@
 
 [/-----------------------------------------------------------------------------]
 
+[import ../../example/mailto/mailto.cpp]
 [import ../../example/magnet/magnet.cpp]
 [import ../../example/route/route.cpp]
 [import ../../test/unit/snippets.cpp]

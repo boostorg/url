@@ -16,6 +16,10 @@
 [example_qrcode]
 [endsect]
 
+[section mailto URLs]
+[example_mailto]
+[endsect]
+
 [section Magnet Link]
 [example_magnet]
 [endsect]

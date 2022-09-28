@@ -7,7 +7,11 @@
 # Official repository: https://github.com/boostorg/url
 #
 
-build-project qrcode ;
-build-project mailto ;
-build-project magnet ;
-build-project route ;
+project : requirements  ;
+
+project
+    : requirements
+      <library>/boost/url//boost_url
+    ;
+
+exe mailto : mailto.cpp ;
