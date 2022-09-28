@@ -7,7 +7,13 @@
 # Official repository: https://github.com/boostorg/url
 #
 
-build-project qrcode ;
-build-project mailto ;
-build-project magnet ;
-build-project route ;
+source_group("" FILES
+        mailto.cpp
+        )
+
+add_executable(mailto
+        mailto.cpp
+        )
+
+set_property(TARGET mailto PROPERTY FOLDER "Examples")
+target_link_libraries(mailto PRIVATE Boost::url)

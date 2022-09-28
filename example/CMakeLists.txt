@@ -8,5 +8,6 @@
 #
 
 add_subdirectory(qrcode)
+add_subdirectory(mailto)
 add_subdirectory(magnet)
 add_subdirectory(route)
