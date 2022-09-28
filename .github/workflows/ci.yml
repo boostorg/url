@@ -36,49 +36,53 @@ jobs:
           # Linux, gcc
           - toolset: gcc-4.8
             cxxstd: "11"
-            os: ubuntu-18.04
+            os: ubuntu-22.04
+            container: ubuntu:18.04
             install:
               - g++-4.8
           - toolset: gcc-4.9
             cxxstd: "11"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             container: ubuntu:16.04
             install:
               - g++-4.9
           - toolset: gcc-5
             cxxstd: "11,14"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             container: ubuntu:16.04
             install:
               - g++-5
           - toolset: gcc-6
             cxxstd: "11,14"
-            os: ubuntu-18.04
+            os: ubuntu-22.04
+            container: ubuntu:18.04
             install:
               - g++-6
           - toolset: gcc-7
             cxxstd: "14,17"
-            os: ubuntu-18.04
+            os: ubuntu-22.04
+            container: ubuntu:18.04
             install:
               - g++-7
           - toolset: gcc-8
             cxxstd: "17"
-            os: ubuntu-18.04
+            os: ubuntu-22.04
+            container: ubuntu:18.04
             install:
               - g++-8
           - toolset: gcc-9
             cxxstd: "17"
-            os: ubuntu-18.04
+            os: ubuntu-22.04
             install:
               - g++-9
           - toolset: gcc-10
             cxxstd: "17"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             install:
               - g++-10
           - toolset: gcc-11
             cxxstd: "17,20"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             install:
               - g++-11
             sources:
@@ -87,7 +91,7 @@ jobs:
             toolset: gcc-11
             cxxstd: "17,20"
             ubsan: 1
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             install:
               - g++-11
             sources:
@@ -97,38 +101,43 @@ jobs:
           - toolset: clang
             compiler: clang++-3.8
             cxxstd: "11"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             container: ubuntu:16.04
             install:
               - clang-3.8
           - toolset: clang
             compiler: clang++-4.0
             cxxstd: "11,14"
-            os: ubuntu-18.04
+            os: ubuntu-22.04
+            container: ubuntu:18.04
             install:
               - clang-4.0
           - toolset: clang
             compiler: clang++-5.0
             cxxstd: "11,14"
-            os: ubuntu-18.04
+            os: ubuntu-22.04
+            container: ubuntu:18.04
             install:
               - clang-5.0
           - toolset: clang
             compiler: clang++-6.0
             cxxstd: "14,17"
-            os: ubuntu-18.04
+            os: ubuntu-22.04
+            container: ubuntu:18.04
             install:
               - clang-6.0
           - toolset: clang
             compiler: clang++-7
             cxxstd: "17"
-            os: ubuntu-18.04
+            os: ubuntu-22.04
+            container: ubuntu:18.04
             install:
               - clang-7
           - toolset: clang
             compiler: clang++-8
             cxxstd: "17"
-            os: ubuntu-18.04
+            os: ubuntu-22.04
+            container: ubuntu:18.04
             install:
               - clang-8
               - g++-7
@@ -136,7 +145,8 @@ jobs:
           - toolset: clang
             compiler: clang++-9
             cxxstd: "14,17"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
+            container: ubuntu:18.04
             install:
               - clang-9
           - toolset: clang
@@ -154,7 +164,7 @@ jobs:
           - toolset: clang
             compiler: clang++-12
             cxxstd: "17,20"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             install:
               - clang-12
           - toolset: clang
@@ -186,7 +196,7 @@ jobs:
 
           - name: CMake tests
             cmake_tests: 1
-            os: ubuntu-20.04
+            os: ubuntu-22.04
 
     timeout-minutes: 120
     runs-on: ${{matrix.os}}
@@ -210,12 +220,13 @@ jobs:
 
                     # install pip:
                     python_version=$(python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
-                    if python3 -c "import sys; result = 0 if float($python_version) < float(3.6) else 1; sys.exit(result)"; then
-                      wget https://bootstrap.pypa.io/pip/$python_version/get-pip.py
-                      python3 get-pip.py
+                    if [[ ${python_version} =~ ^3\.[0-5]$ ]]; then
+                        true
                     else
-                      apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y python3-pip
+                        apt-get install -y python3-distutils
                     fi
+                    wget https://bootstrap.pypa.io/pip/$python_version/get-pip.py
+                    python3 get-pip.py
 
                     # install git:
                     # apt-get install -y git
@@ -224,8 +235,7 @@ jobs:
 
                     # install cmake:
                     # apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y cmake
-                    pip3 install cmake
-
+                    sudo pip3 install cmake
                 fi
             fi
             git config --global pack.threads 0
@@ -451,8 +461,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-20.04, build_shared: ON,  build_type: Debug, generator: 'Unix Makefiles' }
-          - { os: ubuntu-20.04, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles' }
+          - { os: ubuntu-22.04, build_shared: ON,  build_type: Debug, generator: 'Unix Makefiles' }
+          - { os: ubuntu-22.04, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles' }
           - { os: windows-2019, build_shared: ON,  build_type: Debug, generator: 'Visual Studio 16 2019' }
           - { os: windows-2019, build_shared: OFF, build_type: Debug, generator: 'Visual Studio 16 2019' }
 
