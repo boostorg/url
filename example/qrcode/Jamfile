@@ -7,6 +7,11 @@
 # Official repository: https://github.com/boostorg/url
 #
 
-add_subdirectory(qrcode)
-add_subdirectory(magnet)
-add_subdirectory(route)
+project : requirements  ;
+
+project
+    : requirements
+      <library>/boost/url//boost_url
+    ;
+
+exe qrcode : qrcode.cpp ;

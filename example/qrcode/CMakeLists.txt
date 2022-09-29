@@ -7,6 +7,13 @@
 # Official repository: https://github.com/boostorg/url
 #
 
-add_subdirectory(qrcode)
-add_subdirectory(magnet)
-add_subdirectory(route)
+source_group("" FILES
+        qrcode.cpp
+        )
+
+add_executable(qrcode
+        qrcode.cpp
+        )
+
+set_property(TARGET qrcode PROPERTY FOLDER "Examples")
+target_link_libraries(qrcode PRIVATE Boost::url)
