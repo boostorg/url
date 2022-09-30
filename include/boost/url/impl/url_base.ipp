@@ -931,73 +931,9 @@ url_base&
 url_base::
 remove_origin() noexcept
 {
-    op_t op(*this);
-    check_invariants();
-    if(impl_.len(id_scheme,
-        id_path) == 0)
-    {
-        // no origin
-        return *this;
-    }
-
-    impl_.decoded_[id_user] = 0;
-    impl_.decoded_[id_pass] = 0;
-    impl_.decoded_[id_host] = 0;
-    impl_.host_type_ =
-        urls::host_type::none;
-    impl_.port_number_ = 0;
-
-    // Check if we will be left with
-    // "//" or a rootless segment
-    // with a colon
-    auto s = impl_.get(id_path);
-    if(s.starts_with("//"))
-    {
-        // need "."
-        auto dest = resize_impl(
-            id_scheme, id_path, 1, op);
-        dest[0] = '.';
-        impl_.split(id_scheme, 0);
-        impl_.split(id_user, 0);
-        impl_.split(id_pass, 0);
-        impl_.split(id_host, 0);
-        impl_.split(id_port, 0);
-        return *this;
-    }
-    if( s.empty() ||
-        s.starts_with('/'))
-    {
-        // path-empty,
-        // path-absolute
-        resize_impl(
-            id_scheme, id_path, 0, op);
-        check_invariants();
-        return *this;
-    }
-    auto const p =
-        url_view_base::encoded_segments();
-    BOOST_ASSERT(! p.empty());
-    auto it = p.begin();
-    if((*it).find_first_of(':') ==
-        string_view::npos)
-    {
-        // path-noscheme
-        resize_impl(
-            id_scheme, id_path, 0, op);
-        check_invariants();
-        return *this;
-    }
-
-    // need "./"
-    auto dest = resize_impl(
-        id_scheme, id_path, 2, op);
-    dest[0] = '.';
-    dest[1] = '/';
-    impl_.split(id_scheme, 0);
-    impl_.split(id_user, 0);
-    impl_.split(id_pass, 0);
-    impl_.split(id_host, 0);
-    impl_.split(id_port, 0);
+    // these two calls perform 2 memmoves instead of 1
+    remove_authority();
+    remove_scheme();
     return *this;
 }
 

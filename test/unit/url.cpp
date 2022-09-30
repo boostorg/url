@@ -215,9 +215,16 @@ struct url_test
         remove("/x/?#", "/x/?#");
         remove("w:", "");
         remove("w::", "./:");
-        remove("x://y//z", ".//z");
+        remove("x://y//z", "/.//z");
         remove("http://user:pass@example.com:80/path/to/file.txt",
-               "/path/to/file.txt"); 
+               "/path/to/file.txt");
+
+        {
+            // issue #394
+            url u( "http://www.example.com//kyle:xy" );
+            u.remove_origin();
+            BOOST_TEST_EQ( u.buffer(), "/.//kyle:xy" );
+        }
     }
 
     //--------------------------------------------
