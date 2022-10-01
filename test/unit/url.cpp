@@ -295,6 +295,12 @@ struct url_test
             BOOST_TEST( ! u.is_path_absolute() );
             BOOST_TEST_EQ(u.encoded_path(), "");
         }
+        {
+            // issue 390
+            url u( "/kyle:xy" );
+            u.set_path_absolute( false );
+            BOOST_TEST_EQ( u.buffer(), "./kyle:xy" );
+        }
 
         // set_encoded_path
         {
