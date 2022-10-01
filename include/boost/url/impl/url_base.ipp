@@ -1048,6 +1048,22 @@ set_path_absolute(
             return false;
         }
 
+        auto p = encoded_path();
+        auto pos = p.find_first_of(":/", 1);
+        if (pos != string_view::npos &&
+            p[pos] == ':')
+        {
+            // prepend with .
+            auto n = impl_.len(id_path);
+            resize_impl(id_path, n + 1, op);
+            std::memmove(
+                s_ + impl_.offset(id_path) + 1,
+                s_ + impl_.offset(id_path), n);
+            *(s_ + impl_.offset(id_path)) = '.';
+            ++impl_.decoded_[id_path];
+            return true;
+        }
+
         // remove '/'
         auto n = impl_.len(id_port);
         impl_.split(id_port, n + 1);
