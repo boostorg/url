@@ -62,8 +62,8 @@ namespace urls {
     this parameter is omitted, the default
     options will be used.
 
-    @param allowed The set of characters
-    allowed to appear unescaped.
+    @param unescaped The set of characters
+    unescaped to appear unescaped.
     This type must satisfy the requirements
     of <em>CharSet</em>. If this parameter is
     omitted, then no characters are considered
@@ -83,7 +83,7 @@ template <class CharSet = grammar::all_chars_t>
 std::size_t
 encoded_size(
     string_view s,
-    CharSet const& allowed = {},
+    CharSet const& unescaped = {},
     encode_opts const& opt = {}) noexcept;
 
 /** Write a string with percent-encoding into a buffer.
@@ -127,8 +127,8 @@ encoded_size(
     this parameter is omitted, the default
     options will be used.
 
-    @param allowed The set of characters
-    allowed to appear unescaped.
+    @param unescaped The set of characters
+    unescaped to appear unescaped.
     This type must satisfy the requirements
     of <em>CharSet</em>. If this parameter is
     omitted, then no characters are considered
@@ -151,7 +151,7 @@ encode(
     char* dest,
     char const* end,
     string_view s,
-    CharSet const& allowed = {},
+    CharSet const& unescaped,
     encode_opts const& opt = {});
 
 /** Return a string with percent-encoding applied
@@ -182,8 +182,8 @@ encode(
 
     @param token A string token.
 
-    @param allowed The set of characters
-    allowed to appear unescaped.
+    @param unescaped The set of characters
+    unescaped to appear unescaped.
     This type must satisfy the requirements
     of <em>CharSet</em>. If this parameter is
     omitted, then no characters are considered
@@ -214,7 +214,7 @@ template<
 BOOST_URL_STRTOK_RETURN
 encode(
     string_view s,
-    CharSet const& allowed = {},
+    CharSet const& unescaped,
     encode_opts const& opt = {},
     BOOST_URL_STRTOK_ARG(token)) noexcept;
 
