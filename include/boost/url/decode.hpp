@@ -24,17 +24,73 @@
 namespace boost {
 namespace urls {
 
-/** Validate and decode a string view
+/** Decode a string view into a buffer.
+
+    This function applies percent-decoding to
+    the given percent-encoded string, by
+    converting escape sequences into their
+    character equivalent.
+
+    The output is written to the destination,
+    and will be truncated if there is
+    insufficient space.
+
+    @par Example
+    @code
+    char *dest = new char[MAX_LENGTH];
+    std::size_t decoded_size = decode( dest, dest + MAX_LENGTH,
+            "Program%20Files", decode_opts{} );
+
+    assert( decoded_size == 13 );
+    assert( strncmp( "Program%20Files", dest, decoded_size ) == 0 );
+    @endcode
+
+    @par Exception Safety
+    Throws nothing.
+
+    @return `true` if the output was large
+    enough to hold the entire result.
+
+    @param[in, out] dest A pointer to the
+    beginning of the output buffer. Upon
+    return, the argument will be changed
+    to one past the last character written.
+
+    @param end A pointer to one past the end
+    of the output buffer.
+
+    @param s The string to decode.
+
+    @param opt The options for decoding. If
+    this parameter is omitted, the default
+    options will be used.
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
+        >2.1. Percent-Encoding (rfc3986)</a>
+
+    @see
+        @ref encode,
+        @ref encoded_size.
+*/
+template<
+    class CharSet = grammar::all_chars_t>
+std::size_t
+decode(
+    char* dest,
+    char const* end,
+    BOOST_URL_PCT_STRING_VIEW s,
+    decode_opts const& opt = {})
+{
+    return *detail::decode(dest, end, s, opt);
+}
+
+/** Decode a string view
 
     This function returns a view that applies
     percent-decoding to the given percent-encoded
     string, by converting escape sequences into
     their character equivalent.
-
-    The function validates the input string
-    and returns a view of the decoded bytes.
-    If the input string is invalid, the result
-    contains an error.
 
     @par Example
     @code
