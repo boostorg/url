@@ -60,11 +60,8 @@ public:
             // decode -> decode_view
             {
                 auto const r = decode(s0, opt, {});
-                if (BOOST_TEST(r.has_value()))
-                {
-                    BOOST_TEST_EQ(r->size(), s1.size());
-                    BOOST_TEST_EQ(*r, s1);
-                }
+                BOOST_TEST_EQ(r.size(), s1.size());
+                BOOST_TEST_EQ(r, s1);
             }
             // detail::validate_encoding
             {

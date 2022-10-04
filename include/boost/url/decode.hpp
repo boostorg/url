@@ -68,7 +68,7 @@ namespace urls {
         @ref decode_opts.
 */
 template<BOOST_URL_STRTOK_TPARAM>
-result<BOOST_URL_STRTOK_RETURN>
+BOOST_URL_STRTOK_RETURN
 decode(
     BOOST_URL_PCT_STRING_VIEW s,
     decode_opts const& opt = {},

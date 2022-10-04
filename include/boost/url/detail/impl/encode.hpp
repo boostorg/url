@@ -32,11 +32,10 @@ encode(
     encode_opts const& opt,
     CharSet const& allowed)
 {
-    /*  If you get a compile error here, it
+    /* If you get a compile error here, it
     means that the value you passed does
     not meet the requirements stated in
-    the documentation.
-*/
+    the documentation. */
     static_assert(
         grammar::is_charset<CharSet>::value,
         "Type requirements not met");

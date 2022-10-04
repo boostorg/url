@@ -29,7 +29,7 @@ decode(
     BOOST_URL_PCT_STRING_VIEW s,
     decode_opts const& opt,
     StringToken&& token) noexcept ->
-        result< BOOST_URL_STRTOK_RETURN >
+        BOOST_URL_STRTOK_RETURN
 {
     return s.decode(opt, std::move(token));
 }
