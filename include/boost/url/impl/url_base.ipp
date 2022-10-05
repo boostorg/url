@@ -1080,17 +1080,6 @@ encoded_segments() noexcept
 
 url_base&
 url_base::
-remove_query() noexcept
-{
-    op_t op(*this);
-    resize_impl(id_query, 0, op);
-    impl_.nparam_ = 0;
-    impl_.decoded_[id_query] = 0;
-    return *this;
-}
-
-url_base&
-url_base::
 set_query(
     string_view s)
 {
@@ -1170,6 +1159,17 @@ url_base::
 encoded_params() noexcept
 {
     return {*this};
+}
+
+url_base&
+url_base::
+remove_query() noexcept
+{
+    op_t op(*this);
+    resize_impl(id_query, 0, op);
+    impl_.nparam_ = 0;
+    impl_.decoded_[id_query] = 0;
+    return *this;
 }
 
 //------------------------------------------------

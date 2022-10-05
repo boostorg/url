@@ -1924,49 +1924,6 @@ public:
     //
     //--------------------------------------------
 
-    /** Remove the query
-
-        If a query is present, it is removed.
-        An empty query is distinct from having
-        no query.
-
-        @par Example
-        @code
-        assert( url( "http://www.example.com?id=42" ).remove_query().buffer() == "http://www.example.com" );
-        @endcode
-
-        @par Postconditions
-        @code
-        this->has_query() == false && this->params().empty()
-        @endcode
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par BNF
-        @code
-        query           = *( pchar / "/" / "?" )
-
-        query-param     = key [ "=" value ]
-        query-params    = [ query-param ] *( "&" query-param )
-        @endcode
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
-            >3.4.  Query (rfc3986)</a>
-        @li <a href="https://en.wikipedia.org/wiki/Query_string"
-            >Query string (Wikipedia)</a>
-
-        @see
-            @ref encoded_params,
-            @ref params,
-            @ref set_encoded_query,
-            @ref set_query.
-    */
-    BOOST_URL_DECL
-    url_base&
-    remove_query() noexcept;
-
     /** Set the query
 
         This sets the query to the string, which
@@ -2168,6 +2125,49 @@ public:
     BOOST_URL_DECL
     params_encoded_ref
     encoded_params() noexcept;
+
+    /** Remove the query
+
+        If a query is present, it is removed.
+        An empty query is distinct from having
+        no query.
+
+        @par Example
+        @code
+        assert( url( "http://www.example.com?id=42" ).remove_query().buffer() == "http://www.example.com" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_query() == false && this->params().empty()
+        @endcode
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        query           = *( pchar / "/" / "?" )
+
+        query-param     = key [ "=" value ]
+        query-params    = [ query-param ] *( "&" query-param )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
+
+        @see
+            @ref encoded_params,
+            @ref params,
+            @ref set_encoded_query,
+            @ref set_query.
+    */
+    BOOST_URL_DECL
+    url_base&
+    remove_query() noexcept;
 
     //--------------------------------------------
     //

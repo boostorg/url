@@ -1289,9 +1289,7 @@ public:
 
         If the host type is @ref host_type::name,
         this function returns the name as
-        a string.
-        Otherwise, if the host type is not an
-        name, it returns an empty string.
+        a string. Otherwise an empty string is returned.
         Any percent-escapes in the string are
         decoded first.
 

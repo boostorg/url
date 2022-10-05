@@ -74,6 +74,8 @@
 [def __error_code__             [link url.ref.boost__urls__error_code `error_code`]]
 [def __ipv4_address__           [link url.ref.boost__urls__ipv4_address `ipv4_address`]]
 [def __ipv4_address_rule__      [link url.ref.boost__urls__ipv4_address_rule `ipv4_address_rule`]]
+[def __ipv6_address__           [link url.ref.boost__urls__ipv6_address `ipv6_address`]]
+[def __ipv6_address_rule__      [link url.ref.boost__urls__ipv6_address `ipv6_address_rule`]]
 [def __optional__               [link url.ref.boost__urls__optional `optional`]]
 [def __origin_form_rule__       [link url.ref.boost__urls__origin_form_rule `origin_form_rule`]]
 [def __parse_uri__              [link url.ref.boost__urls__parse_uri `parse_uri`]]
@@ -86,10 +88,10 @@
 [def __pct_string_view__        [link url.ref.boost__urls__pct_string_view `pct_string_view`]]
 [def __query_param_view__       [link url.ref.boost__urls__query_param_view `query_param_view`]]
 [def __result__                 [link url.ref.boost__urls__result `result`]]
-[def __segments__               [link url.ref.boost__urls__segments `segments`]]
-[def __segments_encoded__       [link url.ref.boost__urls__segments_encoded `segments_encoded`]]
-[def __segments_encoded_ref__   [link url.ref.boost__urls__segments_encoded_ref `segments_encoded_ref`]]
 [def __segments_ref__           [link url.ref.boost__urls__segments_ref `segments_ref`]]
+[def __segments_view__          [link url.ref.boost__urls__segments_view `segments_view`]]
+[def __segments_encoded_ref__   [link url.ref.boost__urls__segments_encoded_ref `segments_encoded_ref`]]
+[def __segments_encoded_view__  [link url.ref.boost__urls__segments_encoded_view `segments_encoded_view`]]
 [def __static_url__             [link url.ref.boost__urls__static_url `static_url`]]
 [def __string_view__            [link url.ref.boost__urls__string_view `string_view`]]
 [def __url__                    [link url.ref.boost__urls__url `url`]]
@@ -135,8 +137,7 @@
 [/-----------------------------------------------------------------------------]
 
 [include 1.0.overview.qbk]
-[include 2.0.quicklook.qbk]
-[include 3.0.containers.qbk]
+[include 3.0.urls.qbk]
 [include 4.0.grammar.qbk]
 [include 5.0.concepts.qbk]
 [include 6.0.examples.qbk]
@@ -152,3 +153,18 @@
 [endsect]
 
 [xinclude index.xml]
+
+[/
+Overview
+    Requirements
+    Nomenclature
+    Security Review (Bishop Fox)
+    Quick Look
+URL
+    General
+    Parsing
+    Containers
+    Segments
+    Params
+...
+]

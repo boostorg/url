@@ -14,42 +14,34 @@
 [/-----------------------------------------------------------------------------]
 
 Boost.URL is a portable C++ library which provides containers and algorithms
-which model a "URL", more formally described using the
+which model a "URL," more formally described using the
 [@https://datatracker.ietf.org/doc/html/rfc3986 Uniform Resource Identifier (URI)]
 specification (henceforth referred to as __rfc3986__). A URL is a compact sequence
 of characters that identifies an abstract or physical resource. For example,
-this is a valid URL which satisfies the ['absolute-URI] grammar:
+this is a valid URL which satisfies the
+[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.3 ['absolute-URI]]
+grammar:
 
 [teletype]
 ```
-    https://www.example.com/path/to/file.txt?userid=1001&page=2&results=full
+    https://www.example.com/path/to/file.txt?userid=1001&pages=3&results=full#page1
 ```
 
-This library understands the various grammars related to URLs and provides
-functionalities for:
+This library understands the grammars related to URLs and provides
+functionality to validate, parse, examine, and modify urls, and apply
+normalization or resolution algorithms.
 
-* Validating and parsing of strings,
-* Manipulation of URL strings, and
-* Algorithms such as normalization and resolution.
-
-[note
-    Currently the library does not handle
-    [@https://www.rfc-editor.org/rfc/rfc3987.html Internationalized Resource Identifiers] (IRIs).
-    These are different from URLs, come from Unicode strings instead of
-    low-ASCII strings, and are covered by a separate specification.
-]
 [heading Features]
 
 While the library is general purpose, special care has been taken to ensure
 that the implementation and data representation are friendly to network
 programs which need to handle URLs efficiently and securely, including the
 case where the inputs come from untrusted sources.
-
-Interfaces are provided for using error codes instead of exceptions as needed,
-and all algorithms provide a mechanism for avoiding memory allocations entirely
-if desired. Another feature of the library is that all container mutations
-leave the URL in a valid state. Code which uses Boost.URL will be easy to
-read, flexible, and performant.
+Interfaces are provided for using error codes instead of exceptions as
+needed, and most algorithms have the means to opt-out of dynamic memory
+allocation. Another feature of the library is that all modifications will
+leave the URL in a valid state. Code which uses this library will be easy
+to read, flexible, and performant.
 
 Boost.URL offers these features:
 
@@ -63,6 +55,13 @@ Boost.URL offers these features:
 * Supports `-fno-exceptions`, detected automatically
 * Link to a built static or dynamic Boost library, or use header-only
 * Work well on embedded devices
+
+[note
+    Currently the library does not handle
+    [@https://www.rfc-editor.org/rfc/rfc3987.html Internationalized Resource Identifiers] (IRIs).
+    These are different from URLs, come from Unicode strings instead of
+    low-ASCII strings, and are covered by a separate specification.
+]
 
 [/-----------------------------------------------------------------------------]
 
@@ -84,12 +83,12 @@ the following line in [*exactly one] source file in your project.
     #include <boost/url/src.hpp>
 ```
 
-[#embedded-devices]
 [heading Embedded]
 
 Boost.URL works great on embedded devices. It can be used in a
 way that avoids all dynamic memory allocations. Furthermore it
-is designed to work without exceptions if desired.
+offers alternative interfaces that work without exceptions if
+desired.
 
 [endsect]
 
@@ -157,5 +156,7 @@ This library wouldn't be where it is today without the help of
 for design advice and general assistance.
 
 [/-----------------------------------------------------------------------------]
+
+[include 2.0.quicklook.qbk]
 
 [endsect]
