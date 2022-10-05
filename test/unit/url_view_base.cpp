@@ -415,23 +415,23 @@ struct url_view_base_test
 
         // query
         {
-        assert( url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).query() == "id=42&name=jane-doe&page size=20" );
+        assert( url_view( "/sql?id=42&name=jane%2Ddoe&page%20size=20" ).query() == "id=42&name=jane-doe&page size=20" );
         }
 
         // encoded_query
         {
-        assert( url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_query() == "id=42&name=jane%2Ddoe&page+size=20" );
+        assert( url_view( "/sql?id=42&name=jane%2Ddoe&page%20size=20" ).encoded_query() == "id=42&name=jane%2Ddoe&page%20size=20" );
         }
 
         // params
         {
-        params_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
+        params_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page%20size=20" ).params();
         (void)pv;
         }
 
         // encoded_params
         {
-        params_encoded_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
+        params_encoded_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page%20size=20" ).encoded_params();
         (void)pv;
         }
 

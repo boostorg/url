@@ -1899,7 +1899,7 @@ public:
         BOOST_URL_STRTOK_ARG(token)) const
     {
         decode_opts opt;
-        opt.plus_to_space = true;
+        opt.plus_to_space = false;
         return encoded_query().decode(
             opt, std::move(token));
     }

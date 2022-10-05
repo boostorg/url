@@ -1104,7 +1104,7 @@ set_encoded_query(
 {
     op_t op(*this);
     encode_opts opt;
-    opt.space_to_plus = true;
+    opt.space_to_plus = false;
     std::size_t n = 0;      // encoded size
     std::size_t nparam = 1; // param count
     auto const end = s.end();
@@ -1141,7 +1141,7 @@ set_encoded_query(
     *dest++ = '?';
 
     // encode
-    auto cs = detail::query_chars - '+';
+    auto cs = detail::query_chars;
     impl_.decoded_[id_query] =
         detail::re_encode_unchecked(
             dest,

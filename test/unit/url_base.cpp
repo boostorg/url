@@ -11,6 +11,7 @@
 #include <boost/url/url_base.hpp>
 
 #include <boost/url/url.hpp>
+#include <boost/url/encode.hpp>
 #include "test_suite.hpp"
 
 /*  Legend
@@ -1408,13 +1409,28 @@ struct url_base_test
 
             // issue #237
             {
-                url u;
-                u.set_query(" +");
-                BOOST_TEST_EQ(u.encoded_query(), "+%2B");
-                BOOST_TEST_EQ(u.query(), " +");
-                u.set_encoded_query(" +%20%2B");
-                BOOST_TEST_EQ(u.encoded_query(), "+%2B%20%2B");
-                BOOST_TEST_EQ(u.query(), " + +");
+                {
+                    // general syntax: no plus-to-space
+                    url u;
+                    u.set_query(" +");
+                    BOOST_TEST_EQ(u.encoded_query(), "%20+");
+                    BOOST_TEST_EQ(u.query(), " +");
+                    u.set_encoded_query(" +%20%2B");
+                    BOOST_TEST_EQ(u.encoded_query(), "%20+%20%2B");
+                    BOOST_TEST_EQ(u.query(), " + +");
+                }
+                {
+                    // http syntax: plus-to-space
+                    url u;
+                    u.set_encoded_query("+%2B");
+                    BOOST_TEST_EQ(u.encoded_query(), "+%2B");
+                    decode_opts opt;
+                    opt.plus_to_space = true;
+                    BOOST_TEST_EQ(u.encoded_query().decode(opt), " +");
+                    u.set_encoded_query("+%2B%20%2B");
+                    BOOST_TEST_EQ(u.encoded_query(), "+%2B%20%2B");
+                    BOOST_TEST_EQ(u.encoded_query().decode(opt), " + +");
+                }
             }
         }
 
@@ -1468,7 +1484,7 @@ struct url_base_test
             u.set_query("!@#$%^&*()_+=-;:'{}[]|\\?/>.<,");
             BOOST_TEST(u.has_query());
             BOOST_TEST_EQ(u.encoded_query(),
-                "!@%23$%25%5E&*()_%2B=-;:'%7B%7D%5B%5D%7C%5C?/%3E.%3C,");
+                "!@%23$%25%5E&*()_+=-;:'%7B%7D%5B%5D%7C%5C?/%3E.%3C,");
             BOOST_TEST_EQ(u.params().size(), 2u);
             BOOST_TEST_EQ((*u.params().begin()).key, "!@#$%^");
             BOOST_TEST_EQ((*u.params().begin()).value, "");
