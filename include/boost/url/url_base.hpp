@@ -191,43 +191,6 @@ public:
     //
     //--------------------------------------------
 
-    /** Remove the scheme
-
-        This function removes the scheme if it
-        is present.
-
-        @par Example
-        @code
-        assert( url("http://www.example.com/index.htm" ).remove_scheme().buffer() == "//www.example.com/index.htm" );
-        @endcode
-
-        @par Postconditions
-        @code
-        this->has_scheme() == false && this->scheme_id() == scheme::none
-        @endcode
-
-        @par Complexity
-        Linear in `this->size()`.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par BNF
-        @code
-        URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-        @endcode
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
-            3.1. Scheme (rfc3986)</a>
-
-        @see
-            @ref set_scheme.
-    */
-    BOOST_URL_DECL
-    url_base&
-    remove_scheme() noexcept;
-
     /** Set the scheme
 
         The scheme is set to the specified
@@ -282,7 +245,7 @@ public:
 
         @par Example
         @code
-        assert( url( "http://example.com/echo.cgi" ).set_scheme( scheme::wss ).buffer() == "wss://example.com/echo.cgi" );
+        assert( url( "http://example.com/echo.cgi" ).set_scheme_id( scheme::wss ).buffer() == "wss://example.com/echo.cgi" );
         @endcode
 
         @par Complexity
@@ -305,16 +268,94 @@ public:
     BOOST_URL_DECL
     url_base&
 #ifndef BOOST_URL_DOCS
-    set_scheme(urls::scheme id);
+    set_scheme_id(urls::scheme id);
 #else
-    set_scheme(scheme id);
+    set_scheme_id(scheme id);
 #endif
+
+    /** Remove the scheme
+
+        This function removes the scheme if it
+        is present.
+
+        @par Example
+        @code
+        assert( url("http://www.example.com/index.htm" ).remove_scheme().buffer() == "//www.example.com/index.htm" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_scheme() == false && this->scheme_id() == scheme::none
+        @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
+            3.1. Scheme (rfc3986)</a>
+
+        @see
+            @ref set_scheme.
+    */
+    BOOST_URL_DECL
+    url_base&
+    remove_scheme() noexcept;
 
     //--------------------------------------------
     //
     // Authority
     //
     //--------------------------------------------
+
+    /** Set the authority
+
+        This function sets the authority
+        to the specified string.
+        The string may contain percent-escapes.
+
+        @par Example
+        @code
+        assert( url().set_encoded_authority( "My%20Computer" ).has_authority() );
+        @endcode
+
+        @par Exception Safety
+        Strong guarantee.
+        Calls to allocate may throw.
+        Exceptions thrown on invalid input.
+
+        @throw system_eror
+        The string contains an invalid percent-encoding.
+
+        @param s The authority string to set.
+
+        @par BNF
+        @code
+        authority     = [ userinfo "@" ] host [ ":" port ]
+
+        userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
+        host          = IP-literal / IPv4address / reg-name
+        port          = *DIGIT
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
+            3.2. Authority (rfc3986)</a>
+        @see
+            @ref remove_authority.
+    */
+    BOOST_URL_DECL
+    url_base&
+    set_encoded_authority(
+        pct_string_view s);
 
     /** Remove the authority
 
@@ -358,93 +399,11 @@ public:
     url_base&
     remove_authority() noexcept;
 
-    /** Set the authority
-
-        This function sets the authority
-        to the specified string.
-        The string may contain percent-escapes.
-
-        @par Example
-        @code
-        assert( url().set_encoded_authority( "My%20Computer" ).has_authority() );
-        @endcode
-
-        @par Exception Safety
-        Strong guarantee.
-        Calls to allocate may throw.
-        Exceptions thrown on invalid input.
-
-        @throw system_eror
-        The string contains an invalid percent-encoding.
-
-        @param s The authority string to set.
-
-        @par BNF
-        @code
-        authority     = [ userinfo "@" ] host [ ":" port ]
-
-        userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
-        host          = IP-literal / IPv4address / reg-name
-        port          = *DIGIT
-        @endcode
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">
-            3.2. Authority (rfc3986)</a>
-        @see
-            @ref remove_authority.
-    */
-    BOOST_URL_DECL
-    url_base&
-    set_encoded_authority(
-        pct_string_view s);
-
     //--------------------------------------------
     //
     // Userinfo
     //
     //--------------------------------------------
-
-    /** Remove the userinfo
-
-        This function removes the userinfo if
-        present, without removing any authority.
-
-        @par Example
-        @code
-        assert( url( "http://user@example.com" ).remove_userinfo().has_userinfo() == false );
-        @endcode
-
-        @par Postconditions
-        @code
-        this->has_userinfo() == false && this->encoded_userinfo().empty == true
-        @endcode
-
-        @par Complexity
-        Linear in `this->size()`.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par BNF
-        @code
-        userinfo      = [ [ user ] [ ':' password ] ]
-
-        user          = *( unreserved / pct-encoded / sub-delims )
-        password      = *( unreserved / pct-encoded / sub-delims / ":" )
-        @endcode
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
-            3.2.1. User Information (rfc3986)</a>
-
-        @see
-            @ref set_encoded_userinfo,
-            @ref set_userinfo.
-    */
-    BOOST_URL_DECL
-    url_base&
-    remove_userinfo() noexcept;
 
     /** Set the userinfo
 
@@ -575,6 +534,47 @@ public:
     set_encoded_userinfo(
         pct_string_view s);
 
+    /** Remove the userinfo
+
+        This function removes the userinfo if
+        present, without removing any authority.
+
+        @par Example
+        @code
+        assert( url( "http://user@example.com" ).remove_userinfo().has_userinfo() == false );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_userinfo() == false && this->encoded_userinfo().empty == true
+        @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        userinfo      = [ [ user ] [ ':' password ] ]
+
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref set_encoded_userinfo,
+            @ref set_userinfo.
+    */
+    BOOST_URL_DECL
+    url_base&
+    remove_userinfo() noexcept;
+
     //--------------------------------------------
 
     /** Set the user
@@ -679,57 +679,6 @@ public:
     url_base&
     set_encoded_user(
         pct_string_view s);
-
-    /** Remove the password
-
-        This function removes the password from
-        the userinfo if a password exists. If
-        there is no userinfo or no authority,
-        the call has no effect.
-
-        @note
-        The interpretation of the userinfo as
-        individual user and password components
-        is scheme-dependent. Transmitting
-        passwords in URLs is deprecated.
-
-        @par Example
-        @code
-        assert( url( "http://user:pass@example.com" ).remove_password().authority().buffer() == "user@example.com" );
-        @endcode
-
-        @par Postconditions
-        @code
-        this->has_password() == false && this->encoded_password().empty() == true
-        @endcode
-
-        @par Complexity
-        Linear in `this->size()`.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par BNF
-        @code
-        userinfo      = [ [ user ] [ ':' password ] ]
-
-        user          = *( unreserved / pct-encoded / sub-delims )
-        password      = *( unreserved / pct-encoded / sub-delims / ":" )
-        @endcode
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
-            3.2.1. User Information (rfc3986)</a>
-
-        @see
-            @ref set_encoded_password,
-            @ref set_encoded_user,
-            @ref set_password,
-            @ref set_user.
-    */
-    BOOST_URL_DECL
-    url_base&
-    remove_password() noexcept;
 
     /** Set the password.
 
@@ -842,6 +791,57 @@ public:
     set_encoded_password(
         pct_string_view s);
 
+    /** Remove the password
+
+        This function removes the password from
+        the userinfo if a password exists. If
+        there is no userinfo or no authority,
+        the call has no effect.
+
+        @note
+        The interpretation of the userinfo as
+        individual user and password components
+        is scheme-dependent. Transmitting
+        passwords in URLs is deprecated.
+
+        @par Example
+        @code
+        assert( url( "http://user:pass@example.com" ).remove_password().authority().buffer() == "user@example.com" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_password() == false && this->encoded_password().empty() == true
+        @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        userinfo      = [ [ user ] [ ':' password ] ]
+
+        user          = *( unreserved / pct-encoded / sub-delims )
+        password      = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">
+            3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref set_encoded_password,
+            @ref set_encoded_user,
+            @ref set_password,
+            @ref set_user.
+    */
+    BOOST_URL_DECL
+    url_base&
+    remove_password() noexcept;
+
     //--------------------------------------------
     //
     // Host
@@ -917,6 +917,8 @@ public:
             @ref set_encoded_host_address,
             @ref set_encoded_host_name,
             @ref set_host_address,
+            @ref set_host_ipv4,
+            @ref set_host_ipv6,
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
@@ -1000,6 +1002,8 @@ public:
             @ref set_encoded_host_name,
             @ref set_host,
             @ref set_host_address,
+            @ref set_host_ipv4,
+            @ref set_host_ipv6,
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
@@ -1097,6 +1101,8 @@ public:
             @ref set_encoded_host_name,
             @ref set_host,
             @ref set_host_address,
+            @ref set_host_ipv4,
+            @ref set_host_ipv6,
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
@@ -1199,6 +1205,8 @@ public:
             @ref set_encoded_host_name,
             @ref set_host,
             @ref set_host_address,
+            @ref set_host_ipv4,
+            @ref set_host_ipv6,
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
@@ -1215,7 +1223,7 @@ public:
 
         @par Example
         @code
-        assert( url("http://www.example.com").set_host_address( ipv4_address( "127.0.0.1" ) ).buffer() == "http://127.0.0.1" );
+        assert( url("http://www.example.com").set_host_ipv4( ipv4_address( "127.0.0.1" ) ).buffer() == "http://127.0.0.1" );
         @endcode
 
         @par Complexity
@@ -1255,12 +1263,13 @@ public:
             @ref set_encoded_host_name,
             @ref set_host,
             @ref set_host_address,
+            @ref set_host_ipv6,
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
     BOOST_URL_DECL
     url_base&
-    set_host_address(
+    set_host_ipv4(
         ipv4_address const& addr);
 
     /** Set the host to an address
@@ -1271,7 +1280,7 @@ public:
 
         @par Example
         @code
-        assert( url().set_host_address( ipv6_address( "1::6:c0a8:1" ) ).authority().buffer() == "[1::6:c0a8:1]" );
+        assert( url().set_host_ipv6( ipv6_address( "1::6:c0a8:1" ) ).authority().buffer() == "[1::6:c0a8:1]" );
         @endcode
 
         @par Postconditions
@@ -1319,12 +1328,13 @@ public:
             @ref set_encoded_host_name,
             @ref set_host,
             @ref set_host_address,
+            @ref set_host_ipv4,
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
     BOOST_URL_DECL
     url_base&
-    set_host_address(
+    set_host_ipv6(
         ipv6_address const& addr);
 
     /** Set the host to an address
@@ -1371,6 +1381,8 @@ public:
             @ref set_encoded_host_name,
             @ref set_host,
             @ref set_host_address,
+            @ref set_host_ipv4,
+            @ref set_host_ipv6,
             @ref set_host_name.
     */
     BOOST_URL_DECL
@@ -1417,6 +1429,8 @@ public:
             @ref set_encoded_host_name,
             @ref set_host,
             @ref set_host_address,
+            @ref set_host_ipv4,
+            @ref set_host_ipv6,
             @ref set_host_ipvfuture.
     */
     BOOST_URL_DECL
@@ -1468,6 +1482,8 @@ public:
             @ref set_encoded_host_address,
             @ref set_host,
             @ref set_host_address,
+            @ref set_host_ipv4,
+            @ref set_host_ipv6,
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
@@ -1478,52 +1494,13 @@ public:
 
     //--------------------------------------------
 
-    /** Remove the port
-
-        If a port exists, it is removed. The rest
-        of the authority is unchanged.
-
-        @par Example
-        @code
-        assert( url( "http://www.example.com:80" ).remove_port().authority().buffer() == "www.example.com" );
-        @endcode
-
-        @par Postconditions
-        @code
-        this->has_port() == false && this->port_number() == 0 && this->port() == ""
-        @endcode
-
-        @par Complexity
-        Linear in `this->size()`.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par BNF
-        @code
-        authority     = [ userinfo "@" ] host [ ":" port ]
-
-        port          = *DIGIT
-        @endcode
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">
-            3.2.3. Port (rfc3986)</a>
-
-        @see
-            @ref set_port.
-    */
-    BOOST_URL_DECL
-    url_base&
-    remove_port() noexcept;
-
     /** Set the port
 
         The port is set to the specified integer.
 
         @par Example
         @code
-        assert( url( "http://www.example.com" ).set_port( 8080 ).authority().buffer() == "www.example.com:8080" );
+        assert( url( "http://www.example.com" ).set_port_number( 8080 ).authority().buffer() == "www.example.com:8080" );
         @endcode
 
         @par Postconditions
@@ -1557,7 +1534,7 @@ public:
     */
     BOOST_URL_DECL
     url_base&
-    set_port(std::uint16_t n);
+    set_port_number(std::uint16_t n);
 
     /** Set the port
 
@@ -1603,21 +1580,19 @@ public:
     url_base&
     set_port(string_view s);
 
-    //--------------------------------------------
+    /** Remove the port
 
-    /** Remove the origin component
-
-        This function removes the origin, which
-        consists of the scheme and authority.
+        If a port exists, it is removed. The rest
+        of the authority is unchanged.
 
         @par Example
         @code
-        assert( url( "http://www.example.com/index.htm" ).remove_origin().buffer() == "/index.htm" );
+        assert( url( "http://www.example.com:80" ).remove_port().authority().buffer() == "www.example.com" );
         @endcode
 
         @par Postconditions
         @code
-        this->scheme_id() == scheme::none && this->has_authority() == false
+        this->has_port() == false && this->port_number() == 0 && this->port() == ""
         @endcode
 
         @par Complexity
@@ -1625,10 +1600,24 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @par BNF
+        @code
+        authority     = [ userinfo "@" ] host [ ":" port ]
+
+        port          = *DIGIT
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">
+            3.2.3. Port (rfc3986)</a>
+
+        @see
+            @ref set_port.
     */
     BOOST_URL_DECL
     url_base&
-    remove_origin() noexcept;
+    remove_port() noexcept;
 
     //--------------------------------------------
     //
@@ -2323,6 +2312,37 @@ public:
     url_base&
     set_encoded_fragment(
         pct_string_view s);
+
+    //--------------------------------------------
+    //
+    // Compound Fields
+    //
+    //--------------------------------------------
+
+    /** Remove the origin component
+
+        This function removes the origin, which
+        consists of the scheme and authority.
+
+        @par Example
+        @code
+        assert( url( "http://www.example.com/index.htm" ).remove_origin().buffer() == "/index.htm" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->scheme_id() == scheme::none && this->has_authority() == false
+        @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    BOOST_URL_DECL
+    url_base&
+    remove_origin() noexcept;
 
     //--------------------------------------------
     //

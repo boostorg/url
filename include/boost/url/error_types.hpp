@@ -71,21 +71,35 @@ namespace errc = boost::system::errc;
     class result
     {
     public:
+        //
         // Return true if the result contains an error
+        //
         constexpr bool has_error() const noexcept;
 
-        // These return true if the result contains a value
+        //
+        // Return the error
+        //
+        constexpr error_code error() const noexcept;
+
+        //
+        // Return true if the result contains a value
+        //
         constexpr bool has_value() const noexcept;
         constexpr explicit operator bool() const noexcept;
 
-        // Return the value or throw an exception if has_value()==false
+        //
+        // Return the value, or throw an exception
+        //
         constexpr T& value();
-        constexpr T& operator*();
         constexpr T const& value() const;
-        constexpr T const& operator*() const;
 
-        // Return the error, which is default constructed if has_error()==false
-        constexpr error_code error() const noexcept;
+        // Return the value.
+        // Precondition: has_value()==true
+        //
+        constexpr T& operator*() noexcept;
+        constexpr T* operator->() noexcept;
+        constexpr T const& operator*() const noexcept;
+        constexpr T const* operator->() const noexcept;
 
         ...more
     @endcode
@@ -105,18 +119,20 @@ namespace errc = boost::system::errc;
     This statement captures the result in a local
     variable and inspects the error condition:
     @code
-    result< url_view > r = parse_uri( "http://example.com/path/to/file.txt" );
+    result< url_view > rv = parse_uri( "http://example.com/path/to/file.txt" );
 
-    if( !r )
+    if(! rv )
         std::cout << r.error();
     else
-        std::cout << r.value();
+        std::cout << *rv;
     @endcode
 
-    @note For a full synopsis of the type, please see
-    the corresponding documentation in Boost.System.
-
     @tparam T The type of value held by the result.
+
+    @see
+        @li <a href="https://boost.org/libs/system/doc/html/system.html#ref_resultt_e"
+            >`boost::system::result`</a>
+
 */
 template<class T>
 using result = boost::system::result<T, error_code>;

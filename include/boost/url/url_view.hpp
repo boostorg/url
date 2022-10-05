@@ -102,14 +102,12 @@ public:
 
     /** Destructor
 
-        Any param views, segment views, or
-        iterators which reference this object are
-        invalidated. The ownership and lifetime
-        of the underlying character buffer
-        remains unchanged.
+        Any params, segments, iterators, or
+        other views which reference the same
+        underlying character buffer remain
+        valid.
     */
-    BOOST_URL_DECL
-    ~url_view();
+    ~url_view() = default;
 
     /** Constructor
 
@@ -120,13 +118,26 @@ public:
         an empty path and no query or
         fragment.
 
+        @par Example
+        @code
+        url_view u;
+        @endcode
+
+        @par Postconditions
+        @code
+        this->empty() == true
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
         @par BNF
         @code
         relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
         @endcode
-
-        @par Exception Safety
-        Throws nothing.
 
         @par Specification
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
@@ -135,19 +146,40 @@ public:
     BOOST_URL_DECL
     url_view() noexcept;
 
-    /** Construct from a string.
+    /** Constructor
 
         This function constructs a URL from
         the string `s`, which must contain a
-        valid URI or <em>relative-ref</em> or
-        else an exception is thrown. Upon
+        valid <em>URI</em> or <em>relative-ref</em>
+        or else an exception is thrown. Upon
         successful construction, the view
         refers to the characters in the
         buffer pointed to by `s`.
-        Ownership is not transferred; The
-        caller is responsible for ensuring
-        that the lifetime of the buffer
-        extends until the view is destroyed.
+        Ownership is not transferred; The caller
+        is responsible for ensuring that the
+        lifetime of the buffer extends until
+        it is no longer referenced.
+
+        @par Example
+        @code
+        url_view u( "http://www.example.com/index.htm" );
+        @endcode
+
+        @par Effects
+        @code
+        return parse_uri_reference( s ).value();
+        @endcode
+
+        @par Complexity
+        Linear in `s.size()`.
+
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The input failed to parse correctly.
+
+        @param s The string to parse.
 
         @par BNF
         @code
@@ -156,19 +188,33 @@ public:
         relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
         @endcode
 
-        @throw std::invalid_argument parse error.
-
-        @param s The string to parse.
-
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
             >4.1. URI Reference</a>
+
+        @see
+            @ref parse_uri_reference.
     */
     BOOST_URL_DECL
     explicit
     url_view(string_view s);
 
     /** Constructor
+
+        After construction, both views will
+        reference the same underlying character
+        buffer. Ownership is not transferred.
+
+        @par Postconditions
+        @code
+        this->buffer().data() == other.buffer().data()
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
     url_view(
         url_view const& other) noexcept
@@ -178,12 +224,42 @@ public:
     }
 
     /** Constructor
+
+        After construction, both views will
+        reference the same underlying character
+        buffer. Ownership is not transferred.
+
+        @par Postconditions
+        @code
+        this->buffer().data() == other.buffer().data()
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
     BOOST_URL_DECL
     url_view(
-        url_view_base const&) noexcept;
+        url_view_base const& other) noexcept;
 
     /** Assignment
+
+        After assignment, both views will
+        reference the same underlying character
+        buffer. Ownership is not transferred.
+
+        @par Postconditions
+        @code
+        this->buffer().data() == other.buffer().data()
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
     url_view&
     operator=(
@@ -196,10 +272,25 @@ public:
     }
 
     /** Assignment
+
+        After assignment, both views will
+        reference the same underlying character
+        buffer. Ownership is not transferred.
+
+        @par Postconditions
+        @code
+        this->buffer().data() == other.buffer().data()
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
     */
     BOOST_URL_DECL
-    url_view&
-    operator=(url_view_base const&) noexcept;
+    url_view& operator=(
+        url_view_base const& other) noexcept;
 
     //--------------------------------------------
     //

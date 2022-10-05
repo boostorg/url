@@ -203,6 +203,24 @@ has_userinfo() const noexcept
     return true;
 }
 
+bool
+url_view_base::
+has_password() const noexcept
+{
+    auto const n = pi_->len(id_pass);
+    if(n > 1)
+    {
+        BOOST_ASSERT(pi_->get(id_pass
+            ).starts_with(':'));
+        BOOST_ASSERT(pi_->get(id_pass
+            ).ends_with('@'));
+        return true;
+    }
+    BOOST_ASSERT(n == 0 || pi_->get(
+        id_pass).ends_with('@'));
+    return false;
+}
+
 pct_string_view
 url_view_base::
 encoded_userinfo() const noexcept
@@ -236,24 +254,6 @@ encoded_user() const noexcept
     }
     return detail::make_pct_string_view(
         s, pi_->decoded_[id_user]);
-}
-
-bool
-url_view_base::
-has_password() const noexcept
-{
-    auto const n = pi_->len(id_pass);
-    if(n > 1)
-    {
-        BOOST_ASSERT(pi_->get(id_pass
-            ).starts_with(':'));
-        BOOST_ASSERT(pi_->get(id_pass
-            ).ends_with('@'));
-        return true;
-    }
-    BOOST_ASSERT(n == 0 || pi_->get(
-        id_pass).ends_with('@'));
-    return false;
 }
 
 pct_string_view
@@ -434,25 +434,6 @@ port_number() const noexcept
 }
 
 //------------------------------------------------
-
-pct_string_view
-url_view_base::
-encoded_host_and_port() const noexcept
-{
-    return detail::make_pct_string_view(
-        pi_->get(id_host, id_path));
-}
-
-pct_string_view
-url_view_base::
-encoded_origin() const noexcept
-{
-    if(pi_->len(id_user) < 2)
-        return {};
-    return pi_->get(id_scheme, id_path);
-}
-
-//------------------------------------------------
 //
 // Path
 //
@@ -528,24 +509,6 @@ params() const noexcept
 }
 
 //------------------------------------------------
-
-pct_string_view
-url_view_base::
-encoded_target() const noexcept
-{
-    auto n =
-        pi_->decoded_[id_path] +
-        pi_->decoded_[id_query];
-    if(has_query())
-        ++n;
-    BOOST_ASSERT(pct_string_view(
-        pi_->get(id_path, id_frag)
-            ).decoded_size() == n);
-    return detail::make_pct_string_view(
-        pi_->get(id_path, id_frag), n);
-}
-
-//------------------------------------------------
 //
 // Fragment
 //
@@ -580,6 +543,27 @@ encoded_fragment() const noexcept
 }
 
 //------------------------------------------------
+//
+// Compound Fields
+//
+//------------------------------------------------
+
+pct_string_view
+url_view_base::
+encoded_host_and_port() const noexcept
+{
+    return detail::make_pct_string_view(
+        pi_->get(id_host, id_path));
+}
+
+pct_string_view
+url_view_base::
+encoded_origin() const noexcept
+{
+    if(pi_->len(id_user) < 2)
+        return {};
+    return pi_->get(id_scheme, id_path);
+}
 
 pct_string_view
 url_view_base::
@@ -598,6 +582,22 @@ encoded_resource() const noexcept
             ).decoded_size() == n);
     return detail::make_pct_string_view(
         pi_->get(id_path, id_end), n);
+}
+
+pct_string_view
+url_view_base::
+encoded_target() const noexcept
+{
+    auto n =
+        pi_->decoded_[id_path] +
+        pi_->decoded_[id_query];
+    if(has_query())
+        ++n;
+    BOOST_ASSERT(pct_string_view(
+        pi_->get(id_path, id_frag)
+            ).decoded_size() == n);
+    return detail::make_pct_string_view(
+        pi_->get(id_path, id_frag), n);
 }
 
 //------------------------------------------------

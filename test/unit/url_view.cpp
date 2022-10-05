@@ -12,10 +12,16 @@
 
 #include <boost/url/parse.hpp>
 #include <boost/url/url.hpp>
+#include <boost/core/ignore_unused.hpp>
 
 #include "test_rule.hpp"
 
 #include <sstream>
+
+#ifdef assert
+#undef assert
+#endif
+#define assert BOOST_TEST
 
 namespace boost {
 namespace urls {
@@ -917,6 +923,36 @@ public:
     }
 
     void
+    testJavadocs()
+    {
+        // {class}
+        {
+    url_view u( "https://www.example.com/index.htm?text=none#a1" );
+
+    ignore_unused(u);
+        }
+        {
+    result< url_view > rv = parse_uri_reference( "https://www.example.com/index.htm?text=none#a1" );
+
+    ignore_unused(rv);
+        }
+
+        // url_view()
+        {
+        url_view u;
+
+        ignore_unused(u);
+        }
+
+        // url_view(string_view)
+        {
+        url_view u( "http://www.example.com/index.htm" );
+
+        ignore_unused(u);
+        }
+    }
+
+    void
     run()
     {
         testSpecialMembers();
@@ -936,6 +972,8 @@ public:
         testRelativePart();
 
         testParseOriginForm();
+
+        testJavadocs();
     }
 };
 

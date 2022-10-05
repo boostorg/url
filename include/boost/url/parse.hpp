@@ -236,16 +236,16 @@ parse_uri(
 
     @par BNF
     @code
+    URI-reference = URI / relative-ref
+
     URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
 
     hier-part     = "//" authority path-abempty
                   / path-absolute
                   / path-rootless
                   / path-empty
-
-    URI-reference = URI / relative-ref
-
-    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
 
     relative-part = "//" authority path-abempty
                   / path-absolute

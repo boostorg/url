@@ -21,12 +21,14 @@ namespace urls {
 
 /** A modifiable container for a URL.
 
-    Objects of this type hold URLs which may be
-    inspected and modified. The derived class
-    is responsible for providing storage.
-
-    The underlying string stored in the container
-    is always null-terminated.
+    This container owns a url, represented
+    by a null-terminated character buffer
+    which is managed by performing dymamic
+    memory allocations as needed.
+    The contents may be inspected and modified,
+    and the implementation maintains a useful
+    invariant: changes to the url always
+    leave it in a valid state.
 
     @par Exception Safety
 
@@ -74,11 +76,11 @@ public:
 
     /** Destructor
 
-        Any params, segments, or iterators which
-        reference this object are invalidated.
-        The underlying character buffer is
-        destroyed, invalidating all references
-        to it.
+        Any params, segments, iterators, or
+        views which reference this object are
+        invalidated. The underlying character
+        buffer is destroyed, invalidating all
+        references to it.
     */
     BOOST_URL_DECL
     virtual ~url();
@@ -131,6 +133,11 @@ public:
         @par Example
         @code
         url u( "https://www.example.com" );
+        @endcode
+
+        @par Effects
+        @code
+        return url( parse_uri_reference( s ).value() );
         @endcode
 
         @par Postconditions

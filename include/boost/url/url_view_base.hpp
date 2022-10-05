@@ -139,10 +139,10 @@ public:
         return BOOST_URL_MAX_SIZE;
     }
 
-    /** Return the number of characters in the URL
+    /** Return the number of characters in the url
 
         This function returns the number of
-        characters in the URL's encoded string,
+        characters in the url's encoded string,
         not including any null terminator,
         if present.
 
@@ -163,7 +163,7 @@ public:
         return pi_->offset(id_end);
     }
 
-    /** Return true if the URL is empty
+    /** Return true if the url is empty
 
         The empty string matches the
         <em>relative-ref</em> grammar.
@@ -199,10 +199,10 @@ public:
         return pi_->offset(id_end) == 0;
     }
 
-    /** Return a pointer to the URL's character buffer
+    /** Return a pointer to the url's character buffer
 
         This function returns a pointer to
-        the first character of the URL, which
+        the first character of the url, which
         is not guaranteed to be null-terminated.
 
         @par Complexity
@@ -217,9 +217,9 @@ public:
         return pi_->cs_;
     }
 
-    /** Return the URL string
+    /** Return the url string
 
-        This function returns the entire URL,
+        This function returns the entire url,
         which main contain percent escapes.
 
         @par Example
@@ -240,10 +240,10 @@ public:
             data(), size());
     }
 
-    /** Return a shared, persistent copy of the URL
+    /** Return a shared, persistent copy of the url
 
         This function returns a read-only copy of
-        the URL, with shared lifetime. The returned
+        the url, with shared lifetime. The returned
         value owns (persists) the underlying string.
         The algorithm used to create the value
         minimizes the number of individual memory
@@ -362,7 +362,7 @@ public:
     /** Return the scheme
 
         This function returns a value which
-        depends on the scheme in the URL:
+        depends on the scheme in the url:
 
         @li If the scheme is a well-known
         scheme, corresponding value from
@@ -417,7 +417,7 @@ public:
 
     /** Return true if an authority is present
 
-        This function returns true if the URL
+        This function returns true if the url
         contains an authority. The presence of
         an authority is denoted by a double
         slash ("//") at the beginning or after
@@ -584,6 +584,48 @@ public:
     BOOST_URL_DECL
     bool
     has_userinfo() const noexcept;
+
+    /** Return true if a password is present
+
+        This function returns true if the
+        userinfo is present and contains
+        a password.
+
+        @par Example
+        @code
+        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).has_password() );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        userinfo    = user [ ":" [ password ] ]
+
+        user        = *( unreserved / pct-encoded / sub-delims )
+        password    = *( unreserved / pct-encoded / sub-delims / ":" )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
+            >3.2.1. User Information (rfc3986)</a>
+
+        @see
+            @ref has_userinfo,
+            @ref encoded_password,
+            @ref encoded_user,
+            @ref encoded_userinfo,
+            @ref password,
+            @ref user,
+            @ref userinfo.
+    */
+    BOOST_URL_DECL
+    bool
+    has_password() const noexcept;
 
     /** Return the userinfo
 
@@ -792,48 +834,6 @@ public:
     BOOST_URL_DECL
     pct_string_view
     encoded_user() const noexcept;
-
-    /** Return true if a password is present
-
-        This function returns true if the
-        userinfo is present and contains
-        a password.
-
-        @par Example
-        @code
-        assert( url_view( "http://jane%2Ddoe:pass@example.com" ).has_password() );
-        @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par BNF
-        @code
-        userinfo    = user [ ":" [ password ] ]
-
-        user        = *( unreserved / pct-encoded / sub-delims )
-        password    = *( unreserved / pct-encoded / sub-delims / ":" )
-        @endcode
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
-            >3.2.1. User Information (rfc3986)</a>
-
-        @see
-            @ref has_userinfo,
-            @ref encoded_password,
-            @ref encoded_user,
-            @ref encoded_userinfo,
-            @ref password,
-            @ref user,
-            @ref userinfo.
-    */
-    BOOST_URL_DECL
-    bool
-    has_password() const noexcept;
 
     /** Return the password
 
@@ -1482,77 +1482,6 @@ public:
     std::uint16_t
     port_number() const noexcept;
 
-    /** Return the host and port
-
-        If an authority is present, this
-        function returns the host and optional
-        port as a string, which may be empty.
-        Otherwise it returns an empty string.
-        The returned string may contain
-        percent escapes.
-
-        @par Example
-        @code
-        assert( url_view( "http://www.example.com:8080/index.htm" ).encoded_host_and_port() == "www.example.com:8080" );
-        @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par BNF
-        @code
-        authority   = [ userinfo "@" ] host [ ":" port ]
-        @endcode
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2.  Host (rfc3986)</a>
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
-            >3.2.3. Port (rfc3986)</a>
-
-        @see
-            @ref has_port,
-            @ref port,
-            @ref port_number.
-    */
-    BOOST_URL_DECL
-    pct_string_view
-    encoded_host_and_port() const noexcept;
-
-    //--------------------------------------------
-
-    /** Return the origin
-
-        If an authority is present, this
-        function returns the scheme and
-        authority portion of the URL.
-        Otherwise, an empty string is
-        returned.
-        The returned string may contain
-        percent escapes.
-
-        @par Example
-        @code
-        assert( url_view( "http://www.example.com:8080/index.htm?text=none#h1" ).encoded_origin() == "http://www.example.com:8080" );
-        @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @see
-            @ref encoded_resource,
-            @ref encoded_target.
-    */
-    BOOST_URL_DECL
-    pct_string_view
-    encoded_origin() const noexcept;
-
     //--------------------------------------------
     //
     // Path
@@ -1857,7 +1786,7 @@ public:
         decoded first.
         <br>
         When plus signs appear in the query
-        portion of the URL, they are converted
+        portion of the url, they are converted
         to spaces automatically upon decoding.
         This behavior can be changed by setting
         decode options.
@@ -2042,41 +1971,6 @@ public:
     encoded_params() const noexcept;
 
     //--------------------------------------------
-
-    /** Return the target
-
-        This function returns the target, which
-        is the portion of the URL that includes
-        only the path and query.
-        The returned string may contain
-        percent escapes.
-
-        @par Example
-        @code
-        assert( url_view( "http://www.example.com/index.html?query#frag" ).encoded_target() == "/index.html?query" );
-        @endcode
-
-        @par Complexity
-        Constant.
-
-        @par Exception Safety
-        Throws nothing.
-
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
-
-        @see
-            @ref encoded_origin,
-            @ref encoded_resource.
-    */
-    BOOST_URL_DECL
-    pct_string_view
-    encoded_target() const noexcept;
-
-    //--------------------------------------------
     //
     // Fragment
     //
@@ -2084,13 +1978,14 @@ public:
 
     /** Return true if a fragment is present
 
-        This function returns true if this
-        contains a fragment. An empty fragment
-        is distinct from having no fragment.
+        This function returns true if the url
+        contains a fragment.
+        An empty fragment is distinct from
+        no fragment.
 
         @par Example
         @code
-        assert( url_view( "http://www.example.com/index.htm#a%2D1" ).has_fragment() );
+        assert( url_view( "http://www.example.com/index.htm#anchor" ).has_fragment() );
         @endcode
 
         @par Complexity
@@ -2120,10 +2015,27 @@ public:
 
     /** Return the fragment
 
-        This function returns the fragment as a
-        string.
-        Any percent-escapes in the string are
-        decoded first.
+        This function calculates the fragment
+        of the url, with percent escapes decoded
+        and without the leading pound sign ('#')
+        whose presence indicates that the url
+        contains a fragment.
+
+        <br>
+
+        This function accepts an optional
+        <em>StringToken</em> parameter which
+        controls the return type and behavior
+        of the function:
+
+        @li When called with no arguments,
+        the return type of the function is
+        `std::string`. Otherwise
+
+        @li When called with a string token,
+        the behavior and return type of the
+        function depends on the type of string
+        token being passed.
 
         @par Example
         @code
@@ -2135,6 +2047,11 @@ public:
 
         @par Exception Safety
         Calls to allocate may throw.
+        String tokens may throw exceptions.
+
+        @param token An optional string token to
+        use. If this parameter is omitted, the
+        function returns a new `std::string`.
 
         @par BNF
         @code
@@ -2165,7 +2082,11 @@ public:
     /** Return the fragment
 
         This function returns the fragment as a
-        string.
+        string with percent-escapes.
+        Ownership is not transferred; the
+        string returned references the underlying
+        character buffer, which must remain valid
+        or else undefined behavior occurs.
 
         @par Example
         @code
@@ -2198,11 +2119,84 @@ public:
     encoded_fragment() const noexcept;
 
     //--------------------------------------------
+    //
+    // Compound Fields
+    //
+    //--------------------------------------------
+
+    /** Return the host and port
+
+        If an authority is present, this
+        function returns the host and optional
+        port as a string, which may be empty.
+        Otherwise it returns an empty string.
+        The returned string may contain
+        percent escapes.
+
+        @par Example
+        @code
+        assert( url_view( "http://www.example.com:8080/index.htm" ).encoded_host_and_port() == "www.example.com:8080" );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        authority   = [ userinfo "@" ] host [ ":" port ]
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
+            >3.2.2.  Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
+            >3.2.3. Port (rfc3986)</a>
+
+        @see
+            @ref has_port,
+            @ref port,
+            @ref port_number.
+    */
+    BOOST_URL_DECL
+    pct_string_view
+    encoded_host_and_port() const noexcept;
+
+    /** Return the origin
+
+        If an authority is present, this
+        function returns the scheme and
+        authority portion of the url.
+        Otherwise, an empty string is
+        returned.
+        The returned string may contain
+        percent escapes.
+
+        @par Example
+        @code
+        assert( url_view( "http://www.example.com:8080/index.htm?text=none#h1" ).encoded_origin() == "http://www.example.com:8080" );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @see
+            @ref encoded_resource,
+            @ref encoded_target.
+    */
+    BOOST_URL_DECL
+    pct_string_view
+    encoded_origin() const noexcept;
 
     /** Return the resource
 
         This function returns the resource, which
-        is the portion of the URL that includes
+        is the portion of the url that includes
         only the path, query, and fragment.
         The returned string may contain
         percent escapes.
@@ -2232,13 +2226,46 @@ public:
     pct_string_view
     encoded_resource() const noexcept;
 
+    /** Return the target
+
+        This function returns the target, which
+        is the portion of the url that includes
+        only the path and query.
+        The returned string may contain
+        percent escapes.
+
+        @par Example
+        @code
+        assert( url_view( "http://www.example.com/index.html?query#frag" ).encoded_target() == "/index.html?query" );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
+            >3.3. Path (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4. Query (rfc3986)</a>
+
+        @see
+            @ref encoded_origin,
+            @ref encoded_resource.
+    */
+    BOOST_URL_DECL
+    pct_string_view
+    encoded_target() const noexcept;
+
     //--------------------------------------------
     //
     // Comparison
     //
     //--------------------------------------------
 
-    /** Return the result of comparing this with another URL
+    /** Return the result of comparing this with another url
 
         This function compares two URLs
         according to Syntax-Based comparison
@@ -2633,9 +2660,9 @@ public:
 
 //------------------------------------------------
 
-/** Format the URL to the output stream
+/** Format the url to the output stream
 
-    This function serializes the URL to
+    This function serializes the url to
     the specified output stream. Any
     percent-escapes are emitted as-is;
     no decoding is performed.
@@ -2663,7 +2690,7 @@ public:
 
     @param os The output stream to write to.
 
-    @param u The URL to write.
+    @param u The url to write.
 */
 std::ostream&
 operator<<(

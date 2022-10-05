@@ -127,7 +127,11 @@ public:
         @note For a non-throwing parse function,
         use @ref parse_ipv4_address.
 
-        @throw std::invalid_argument parse error.
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        The input failed to parse correctly.
 
         @param s The string to parse.
 

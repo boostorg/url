@@ -22,9 +22,9 @@ namespace urls {
     buffers into or out of functions. Ownership
     of the underlying character buffer is not
     transferred; the caller is responsible for
-    ensuring that the lifetime of the object
-    owning the character buffer extends until
-    the string view is no longer referenced.
+    ensuring that the lifetime of character
+    buffer extends until it is no longer
+    referenced.
 */
 typedef boost::core::string_view string_view;
 

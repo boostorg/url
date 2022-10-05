@@ -76,7 +76,7 @@ struct url_base_test
         {
             url u;
             BOOST_TEST_NO_THROW(u = url(s1));
-            BOOST_TEST(u.set_scheme(id).buffer() == s2);
+            BOOST_TEST(u.set_scheme_id(id).buffer() == s2);
             BOOST_TEST_EQ(u.scheme_id(), id);
         };
 
@@ -128,7 +128,7 @@ struct url_base_test
             system_error);
 
         BOOST_TEST_THROWS(
-            url().set_scheme(scheme::unknown),
+            url().set_scheme_id(scheme::unknown),
             system_error);
 
         // self-intersection
@@ -994,7 +994,7 @@ struct url_base_test
             string_view s1)
         {
             url u;
-            BOOST_TEST_NO_THROW(u.set_host_address(ipv4_address(s)));
+            BOOST_TEST_NO_THROW(u.set_host_ipv4(ipv4_address(s)));
             BOOST_TEST_EQ(u.host_type(), host_type::ipv4);
             BOOST_TEST_EQ(u.buffer(), s1);
             BOOST_TEST_EQ(u.host(), u.encoded_host().decode());
@@ -1012,7 +1012,7 @@ struct url_base_test
             string_view s1)
         {
             url u;
-            BOOST_TEST_NO_THROW(u.set_host_address(ipv6_address(s)));
+            BOOST_TEST_NO_THROW(u.set_host_ipv6(ipv6_address(s)));
             BOOST_TEST_EQ(u.host_type(), host_type::ipv6);
             BOOST_TEST_EQ(u.buffer(), s1);
             BOOST_TEST_EQ(u.host(), u.encoded_host().decode());
@@ -1177,7 +1177,7 @@ struct url_base_test
         {
             url u;
             BOOST_TEST_NO_THROW(u = url(s1));
-            BOOST_TEST(u.set_port(n).buffer() == s2);
+            BOOST_TEST(u.set_port_number(n).buffer() == s2);
             BOOST_TEST(u.has_port());
             BOOST_TEST_EQ(u.port_number(), n);
         };
@@ -1494,16 +1494,14 @@ struct url_base_test
         //
         //----------------------------------------
 
-        // remove_scheme
-        {
-        assert( url("http://www.example.com/index.htm" ).remove_scheme().buffer() == "//www.example.com/index.htm" );
-        }
-
         // set_scheme
-        {
         assert( url( "http://www.example.com" ).set_scheme( "https" ).scheme_id() == scheme::https );
-        assert( url( "http://example.com/echo.cgi" ).set_scheme( scheme::wss ).buffer() == "wss://example.com/echo.cgi" );
-        }
+
+        // set_scheme_id
+        assert( url( "http://example.com/echo.cgi" ).set_scheme_id( scheme::wss ).buffer() == "wss://example.com/echo.cgi" );
+
+        // remove_scheme
+        assert( url("http://www.example.com/index.htm" ).remove_scheme().buffer() == "//www.example.com/index.htm" );
 
         //----------------------------------------
         //
@@ -1511,15 +1509,11 @@ struct url_base_test
         //
         //----------------------------------------
 
-        // remove_authority
-        {
-        assert( url( "http://example.com/echo.cgi" ).remove_authority().buffer() == "http:/echo.cgi" );
-        }
-
         // set_encoded_authority
-        {
         assert( url().set_encoded_authority( "My%20Computer" ).has_authority() );
-        }
+
+        // remove_authority
+        assert( url( "http://example.com/echo.cgi" ).remove_authority().buffer() == "http:/echo.cgi" );
 
         //----------------------------------------
         //
@@ -1527,47 +1521,31 @@ struct url_base_test
         //
         //----------------------------------------
 
-        // remove_userinfo
-        {
-        assert( url( "http://user@example.com" ).remove_userinfo().has_userinfo() == false );
-        }
-
         // set_userinfo
-        {
         assert( url( "http://example.com" ).set_userinfo( "user:pass" ).encoded_user() == "user" );
-        }
 
         // set_encoded_userinfo
-        {
         assert( url( "http://example.com" ).set_encoded_userinfo( "john%20doe" ).user() == "john doe" );
-        }
+
+        // remove_userinfo
+        assert( url( "http://user@example.com" ).remove_userinfo().has_userinfo() == false );
 
         //----------------------------------------
 
         // set_user
-        {
         assert( url().set_user("john doe").encoded_userinfo() == "john%20doe" );
-        }
 
         // set_encoded_user
-        {
         assert( url().set_encoded_user("john%20doe").userinfo() == "john doe" );
-        }
-
-        // remove_password
-        {
-        assert( url( "http://user:pass@example.com" ).remove_password().encoded_authority() == "user@example.com" );
-        }
 
         // set_password
-        {
         assert( url("http://user@example.com").set_password( "pass" ).encoded_userinfo() == "user:pass" );
-        }
 
         // set_encoded_password
-        {
         assert( url("http://user@example.com").set_encoded_password( "pass" ).encoded_userinfo() == "user:pass" );
-        }
+
+        // remove_password
+        assert( url( "http://user:pass@example.com" ).remove_password().encoded_authority() == "user@example.com" );
 
         //----------------------------------------
         //
@@ -1576,49 +1554,31 @@ struct url_base_test
         //----------------------------------------
 
         // set_host
-        {
         assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).buffer() == "http://127.0.0.1" );
-        }
 
         // set_encoded_host
-        {
         assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).buffer() == "http://127.0.0.1" );
-        }
 
         // set_host_address
-        {
         assert( url( "http://www.example.com" ).set_host_address( "127.0.0.1" ).buffer() == "http://127.0.0.1" );
-        }
 
         // set_encoded_host_address
-        {
         assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).buffer() == "http://127.0.0.1" );
-        }
 
-        // set_host_address
-        {
-        assert( url("http://www.example.com").set_host_address( ipv4_address( "127.0.0.1" ) ).buffer() == "http://127.0.0.1" );
-        }
+        // set_host_ipv4
+        assert( url("http://www.example.com").set_host_ipv4( ipv4_address( "127.0.0.1" ) ).buffer() == "http://127.0.0.1" );
 
-        // set_host_address
-        {
-        assert( url().set_host_address( ipv6_address( "1::6:c0a8:1" ) ).encoded_authority() == "[1::6:c0a8:1]" );
-        }
+        // set_host_ipv6
+        assert( url().set_host_ipv6( ipv6_address( "1::6:c0a8:1" ) ).encoded_authority() == "[1::6:c0a8:1]" );
 
         // set_host_ipvfuture
-        {
         assert( url().set_host_ipvfuture( "v42.bis" ).buffer() == "//[v42.bis]" );
-        }
 
         // set_host_name
-        {
         assert( url( "http://www.example.com/index.htm").set_host_name( "localhost" ).host_address() == "localhost" );
-        }
 
         // set_encoded_host_name
-        {
         assert( url( "http://www.example.com/index.htm").set_encoded_host_name( "localhost" ).host_address() == "localhost" );
-        }
 
         //----------------------------------------
         //
@@ -1626,27 +1586,14 @@ struct url_base_test
         //
         //----------------------------------------
 
-        // remove_port
-        {
-        assert( url( "http://www.example.com:80" ).remove_port().encoded_authority() == "www.example.com" );
-        }
+        // set_port
+        assert( url( "http://www.example.com" ).set_port_number( 8080 ).encoded_authority() == "www.example.com:8080" );
 
         // set_port
-        {
-        assert( url( "http://www.example.com" ).set_port( 8080 ).encoded_authority() == "www.example.com:8080" );
-        }
-
-        // set_port
-        {
         assert( url( "http://www.example.com" ).set_port( "8080" ).encoded_authority() == "www.example.com:8080" );
-        }
 
-        //----------------------------------------
-
-        // remove_origin
-        {
-        assert( url( "http://www.example.com/index.htm" ).remove_origin().buffer() == "/index.htm" );
-        }
+        // remove_port
+        assert( url( "http://www.example.com:80" ).remove_port().encoded_authority() == "www.example.com" );
 
         //----------------------------------------
         //
@@ -1704,19 +1651,13 @@ struct url_base_test
         //----------------------------------------
 
         // remove_query
-        {
         assert( url( "http://www.example.com?id=42" ).remove_query().buffer() == "http://www.example.com" );
-        }
 
         // set_query
-        {
         assert( url( "http://example.com" ).set_query( "id=42" ).query() == "id=42" );
-        }
 
         // set_encoded_query
-        {
         assert( url( "http://example.com" ).set_encoded_query( "id=42" ).encoded_query() == "id=42" );
-        }
 
         // params
         {
@@ -1739,19 +1680,22 @@ struct url_base_test
         //----------------------------------------
 
         // remove_fragment
-        {
         assert( url( "?first=john&last=doe#anchor" ).remove_fragment().buffer() == "?first=john&last=doe" );
-        }
 
         // set_fragment
-        {
         assert( url("?first=john&last=doe" ).set_encoded_fragment( "john doe" ).encoded_fragment() == "john%20doe" );
-        }
 
         // set_encoded_fragment
-        {
         assert( url("?first=john&last=doe" ).set_encoded_fragment( "john%2Ddoe" ).fragment() == "john-doe" );
-        }
+
+        //----------------------------------------
+        //
+        // Compound Fields
+        //
+        //----------------------------------------
+
+        // remove_origin
+        assert( url( "http://www.example.com/index.htm" ).remove_origin().buffer() == "/index.htm" );
     }
 
     void

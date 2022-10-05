@@ -31,11 +31,6 @@ construct() const noexcept
 //------------------------------------------------
 
 url_view::
-~url_view()
-{
-}
-
-url_view::
 url_view() noexcept = default;
 
 url_view::

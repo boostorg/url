@@ -141,6 +141,27 @@ copy(url_view_base const& u)
 
 url_base&
 url_base::
+set_scheme(string_view s)
+{
+    set_scheme_impl(
+        s, string_to_scheme(s));
+    return *this;
+}
+
+url_base&
+url_base::
+set_scheme_id(urls::scheme id)
+{
+    if(id == urls::scheme::unknown)
+        detail::throw_invalid_argument();
+    if(id == urls::scheme::none)
+        return remove_scheme();
+    set_scheme_impl(to_string(id), id);
+    return *this;
+}
+
+url_base&
+url_base::
 remove_scheme() noexcept
 {
     op_t op(*this);
@@ -197,32 +218,41 @@ remove_scheme() noexcept
     return *this;
 }
 
-url_base&
-url_base::
-set_scheme(string_view s)
-{
-    set_scheme_impl(
-        s, string_to_scheme(s));
-    return *this;
-}
-
-url_base&
-url_base::
-set_scheme(urls::scheme id)
-{
-    if(id == urls::scheme::unknown)
-        detail::throw_invalid_argument();
-    if(id == urls::scheme::none)
-        return remove_scheme();
-    set_scheme_impl(to_string(id), id);
-    return *this;
-}
-
 //------------------------------------------------
 //
 // Authority
 //
 //------------------------------------------------
+
+url_base&
+url_base::
+set_encoded_authority(
+    pct_string_view s)
+{
+    op_t op(*this, &detail::ref(s));
+    authority_view a = grammar::parse(
+        s, authority_rule
+            ).value(BOOST_URL_POS);
+    auto n = s.size() + 2;
+    auto const need_slash =
+        ! is_path_absolute() &&
+        impl_.len(id_path) > 0;
+    if(need_slash)
+        ++n;
+    auto dest = resize_impl(
+        id_user, id_path, n, op);
+    dest[0] = '/';
+    dest[1] = '/';
+    std::memcpy(dest + 2,
+        s.data(), s.size());
+    if(need_slash)
+        dest[n - 1] = '/';
+    impl_.apply_authority(a);
+    if(need_slash)
+        impl_.adjust(
+            id_query, id_end, 1);
+    return *this;
+}
 
 url_base&
 url_base::
@@ -255,57 +285,11 @@ remove_authority() noexcept
     return *this;
 }
 
-url_base&
-url_base::
-set_encoded_authority(
-    pct_string_view s)
-{
-    op_t op(*this, &detail::ref(s));
-    authority_view a = grammar::parse(
-        s, authority_rule
-            ).value(BOOST_URL_POS);
-    auto n = s.size() + 2;
-    auto const need_slash =
-        ! is_path_absolute() &&
-        impl_.len(id_path) > 0;
-    if(need_slash)
-        ++n;
-    auto dest = resize_impl(
-        id_user, id_path, n, op);
-    dest[0] = '/';
-    dest[1] = '/';
-    std::memcpy(dest + 2,
-        s.data(), s.size());
-    if(need_slash)
-        dest[n - 1] = '/';
-    impl_.apply_authority(a);
-    if(need_slash)
-        impl_.adjust(
-            id_query, id_end, 1);
-    return *this;
-}
-
 //------------------------------------------------
 //
 // Userinfo
 //
 //------------------------------------------------
-
-url_base&
-url_base::
-remove_userinfo() noexcept
-{
-    if(impl_.len(id_pass) == 0)
-        return *this; // no userinfo
-
-    op_t op(*this);
-    // keep authority '//'
-    resize_impl(
-        id_user, id_host, 2, op);
-    impl_.decoded_[id_user] = 0;
-    impl_.decoded_[id_pass] = 0;
-    return *this;
-}
 
 url_base&
 url_base::
@@ -403,6 +387,22 @@ set_encoded_userinfo(
     return *this;
 }
 
+url_base&
+url_base::
+remove_userinfo() noexcept
+{
+    if(impl_.len(id_pass) == 0)
+        return *this; // no userinfo
+
+    op_t op(*this);
+    // keep authority '//'
+    resize_impl(
+        id_user, id_host, 2, op);
+    impl_.decoded_[id_user] = 0;
+    impl_.decoded_[id_pass] = 0;
+    return *this;
+}
+
 //------------------------------------------------
 
 url_base&
@@ -452,23 +452,6 @@ set_encoded_user(
 
 url_base&
 url_base::
-remove_password() noexcept
-{
-    auto const n = impl_.len(id_pass);
-    if(n < 2)
-        return *this; // no password
-
-    op_t op(*this);
-    // clear password, retain '@'
-    auto dest =
-        resize_impl(id_pass, 1, op);
-    dest[0] = '@';
-    impl_.decoded_[id_pass] = 0;
-    return *this;
-}
-
-url_base&
-url_base::
 set_password(string_view s)
 {
     op_t op(*this, &s);
@@ -510,6 +493,23 @@ set_encoded_password(
     return *this;
 }
 
+url_base&
+url_base::
+remove_password() noexcept
+{
+    auto const n = impl_.len(id_pass);
+    if(n < 2)
+        return *this; // no password
+
+    op_t op(*this);
+    // clear password, retain '@'
+    auto dest =
+        resize_impl(id_pass, 1, op);
+    dest[0] = '@';
+    impl_.decoded_[id_pass] = 0;
+    return *this;
+}
+
 //------------------------------------------------
 //
 // Host
@@ -536,8 +536,8 @@ set_encoded_host( pct_string_view )         // set host part from encoded text
 set_host_address( string_view )             // set host from ipv4, ipv6, ipvfut, or plain reg-name string
 set_encoded_host_address( pct_string_view ) // set host from ipv4, ipv6, ipvfut, or encoded reg-name string
 
-set_host_address( ipv4_address )            // set ipv4
-set_host_address( ipv6_address )            // set ipv6
+set_host_ipv4( ipv4_address )               // set ipv4
+set_host_ipv6( ipv6_address )               // set ipv6
 set_host_ipvfuture( string_view )           // set ipvfuture
 set_host_name( string_view )                // set name from plain
 set_encoded_host_name( pct_string_view )    // set name from encoded
@@ -559,7 +559,7 @@ set_host(
             auto rv = parse_ipv6_address(
                 s.substr(1, s.size() - 2));
             if(rv)
-                return set_host_address(*rv);
+                return set_host_ipv6(*rv);
         }
         {
             // IPvFuture
@@ -575,7 +575,7 @@ set_host(
         // IPv4-address
         auto rv = parse_ipv4_address(s);
         if(rv)
-            return set_host_address(*rv);
+            return set_host_ipv4(*rv);
     }
 
     // reg-name
@@ -612,7 +612,7 @@ set_encoded_host(
             auto rv = parse_ipv6_address(
                 s.substr(1, s.size() - 2));
             if(rv)
-                return set_host_address(*rv);
+                return set_host_ipv6(*rv);
         }
         {
             // IPvFuture
@@ -628,7 +628,7 @@ set_encoded_host(
         // IPv4-address
         auto rv = parse_ipv4_address(s);
         if(rv)
-            return set_host_address(*rv);
+            return set_host_ipv4(*rv);
     }
 
     // reg-name
@@ -660,7 +660,7 @@ set_host_address(
         // IPv6-address
         auto rv = parse_ipv6_address(s);
         if(rv)
-            return set_host_address(*rv);
+            return set_host_ipv6(*rv);
     }
     {
         // IPvFuture
@@ -674,7 +674,7 @@ set_host_address(
         // IPv4-address
         auto rv = parse_ipv4_address(s);
         if(rv)
-            return set_host_address(*rv);
+            return set_host_ipv4(*rv);
     }
 
     // reg-name
@@ -704,7 +704,7 @@ set_encoded_host_address(
         // IPv6-address
         auto rv = parse_ipv6_address(s);
         if(rv)
-            return set_host_address(*rv);
+            return set_host_ipv6(*rv);
     }
     {
         // IPvFuture
@@ -718,7 +718,7 @@ set_encoded_host_address(
         // IPv4-address
         auto rv = parse_ipv4_address(s);
         if(rv)
-            return set_host_address(*rv);
+            return set_host_ipv4(*rv);
     }
 
     // reg-name
@@ -743,7 +743,7 @@ set_encoded_host_address(
 
 url_base&
 url_base::
-set_host_address(
+set_host_ipv4(
     ipv4_address const& addr)
 {
     op_t op(*this);
@@ -763,7 +763,7 @@ set_host_address(
 
 url_base&
 url_base::
-set_host_address(
+set_host_ipv6(
     ipv6_address const& addr)
 {
     op_t op(*this);
@@ -880,17 +880,7 @@ set_encoded_host_name(
 
 url_base&
 url_base::
-remove_port() noexcept
-{
-    op_t op(*this);
-    resize_impl(id_port, 0, op);
-    impl_.port_number_ = 0;
-    return *this;
-}
-
-url_base&
-url_base::
-set_port(
+set_port_number(
     std::uint16_t n)
 {
     op_t op(*this);
@@ -925,6 +915,20 @@ set_port(
     return *this;
 }
 
+url_base&
+url_base::
+remove_port() noexcept
+{
+    op_t op(*this);
+    resize_impl(id_port, 0, op);
+    impl_.port_number_ = 0;
+    return *this;
+}
+
+//------------------------------------------------
+//
+// Compound Fields
+//
 //------------------------------------------------
 
 url_base&

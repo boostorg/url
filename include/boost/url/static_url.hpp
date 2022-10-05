@@ -75,12 +75,15 @@ class BOOST_SYMBOL_VISIBLE
 
 //------------------------------------------------
 
-/** A URL with fixed-capacity storage
+/** A modifiable container for a URL.
 
-    This container acts like @ref url,
-    except that dynamic allocations are
-    never performed. Instead, the capacity
-    for the data comes from inline storage.
+    This container owns a url, represented
+    by an inline, null-terminated character
+    buffer with fixed capacity.
+    The contents may be inspected and modified,
+    and the implementation maintains a useful
+    invariant: changes to the url always
+    leave it in a valid state.
 
     @par Example
     @code
@@ -118,11 +121,11 @@ public:
 
     /** Destructor
 
-        Any params, segments, or iterators which
-        reference this object are invalidated.
-        The underlying character buffer is
-        destroyed, invalidating all references
-        to it.
+        Any params, segments, iterators, or
+        views which reference this object are
+        invalidated. The underlying character
+        buffer is destroyed, invalidating all
+        references to it.
     */
     ~static_url() = default;
 
@@ -177,6 +180,11 @@ public:
         @par Example
         @code
         static_url< 1024 > u( "https://www.example.com" );
+        @endcode
+
+        @par Effects
+        @code
+        return static_url( parse_uri_reference( s ).value() );
         @endcode
 
         @par Postconditions
@@ -271,23 +279,25 @@ public:
 
         The contents of `u` are copied and
         the previous contents of `this` are
-        destroyed.
+        discarded.
+        Capacity remains unchanged.
+
+        @par Postconditions
+        @code
+        this->buffer() == u.buffer() && this->buffer().data() != u.buffer().data()
+        @endcode
 
         @par Complexity
         Linear in `u.size()`.
 
         @par Exception Safety
-        Strong guarantee.
-        Exception thrown if capacity exceeded.
-
-        @throw system_error
-        Capacity would be exceeded.
+        Throws nothing.
 
         @param u The url to copy.
     */
     static_url&
     operator=(
-        static_url const& u)
+        static_url const& u) noexcept
     {
         if (this != &u)
             copy(u);
@@ -298,7 +308,12 @@ public:
 
         The contents of `u` are copied and
         the previous contents of `this` are
-        destroyed.
+        discarded.
+
+        @par Postconditions
+        @code
+        this->buffer() == u.buffer() && this->buffer().data() != u.buffer().data()
+        @endcode
 
         @par Complexity
         Linear in `u.size()`.

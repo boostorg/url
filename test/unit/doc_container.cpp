@@ -20,6 +20,24 @@ namespace urls {
 
 struct doc_container_test
 {
+    static
+    void
+    doc_parsing()
+    {
+        {
+        //[code_containers_1_1
+            result< url_view > r = parse_uri( "https://www.example.com/path/to/file.txt" );
+        //]
+        }
+        {
+        //[code_containers_1_2
+            url_view u1 = parse_uri_reference( "wss://example.com/quote.cgi?symbol=BOOST&currency=USD" ).value();
+
+            url_view u2( "wss://example.com/quote.cgi?symbol=BOOST&currency=USD" );
+        //]
+        }
+    }
+
     //[code_container_4_1
     auto segs( url_view const& u ) -> std::list< std::string >
     {

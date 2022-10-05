@@ -60,6 +60,7 @@ using_url_views()
         //[snippet_parsing_2
         result<url_view> r = parse_uri( s );
         //]
+        boost::ignore_unused(r);
     }
 
     {
@@ -67,6 +68,7 @@ using_url_views()
         //[snippet_parsing_3
         url_view u = r.value();
         //]
+        boost::ignore_unused(u);
     }
 
     {
@@ -74,6 +76,7 @@ using_url_views()
         //[snippet_parsing_4
         url_view u = *r;
         //]
+        boost::ignore_unused(u);
     }
 
     url_view u( s );
@@ -93,6 +96,7 @@ using_url_views()
         assert(u1.fragment().empty());
         assert(!u1.has_fragment());
         //]
+        boost::ignore_unused(u1);
     }
 
     {
@@ -260,12 +264,12 @@ using_urls()
     //]
 
     //[snippet_quicklook_modifying_3
-    u.set_scheme( scheme::https ); // equivalent to u.set_scheme( "https" );
+    u.set_scheme_id( scheme::https ); // equivalent to u.set_scheme( "https" );
     //]
 
     //[snippet_quicklook_modifying_4
-    u.set_host_address( parse_ipv4_address( "192.168.0.1" ).value() )
-        .set_port( 8080 )
+    u.set_host_ipv4( ipv4_address( "192.168.0.1" ) )
+        .set_port_number( 8080 )
         .remove_userinfo();
     std::cout << u << "\n";
     //]
@@ -280,23 +284,6 @@ using_urls()
 void
 parsing_urls()
 {
-    {
-        //[snippet_parsing_url_1
-        result< url_view > r = parse_uri( "https://www.example.com/path/to/file.txt" );
-        //]
-        boost::ignore_unused(r);
-    }
-
-    {
-        //[snippet_parsing_url_1b
-        url_view u( "https://www.example.com/path/to/file.txt" );
-        //]
-
-        //[snippet_parsing_url_1bb
-        std::cout << u;
-        //]
-    }
-
     {
         //[snippet_parsing_url_1bc
         result< url > rv = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
