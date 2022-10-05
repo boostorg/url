@@ -162,30 +162,20 @@ set_scheme_id(urls::scheme id)
 
 url_base&
 url_base::
-remove_scheme() noexcept
+remove_scheme()
 {
     op_t op(*this);
-    auto const n = impl_.len(id_scheme);
-    if(n == 0)
+    auto const sn = impl_.len(id_scheme);
+    if(sn == 0)
         return *this;
-    auto const p = impl_.offset(id_path);
-    // Check if we are changing
-    // path-rootless to path-noscheme
-    bool const need_dot =
-        [this, p]
-    {
-        if(has_authority())
-            return false;
-        if(impl_.nseg_ == 0)
-            return false;
-        BOOST_ASSERT(impl_.len(id_path) > 0);
-        if(s_[p] == '/')
-            return false;
-        if(! first_segment().contains(':'))
-            return false;
-        return true;
-    }();
-    if(! need_dot)
+    auto const po = impl_.offset(id_path);
+    auto fseg = first_segment();
+    bool const encode_colon =
+        !has_authority() &&
+        impl_.nseg_ > 0 &&
+        s_[po] != '/' &&
+        fseg.contains(':');
+    if(!encode_colon)
     {
         // just remove the scheme
         resize_impl(id_scheme, 0, op);
@@ -193,26 +183,85 @@ remove_scheme() noexcept
         check_invariants();
         return *this;
     }
-    // remove the scheme but add "./"
-    // to the beginning of the path
-    BOOST_ASSERT(n >= 2);
+    // encode any ":" in the first path segment
+    BOOST_ASSERT(sn >= 2);
+    auto pn = impl_.len(id_path);
+    std::size_t cn = 0;
+    for (char c: fseg)
+        cn += c == ':';
+    std::size_t new_size =
+        size() - sn + 2 * cn;
+    bool need_resize = new_size > size();
+    if (need_resize)
+    {
+        resize_impl(
+            id_path, pn + 2 * cn, op);
+    }
     // move [id_scheme, id_path) left
     op.move(
         s_,
-        s_ + n,
-        p - n);
-    // move [id_path, id_end) left
+        s_ + sn,
+        po - sn);
+    // move [id_path, id_query) left
+    auto qo = impl_.offset(id_query);
     op.move(
-        s_ + p - (n - 2),
-        s_ + p,
-        impl_.offset(id_end) - p);
+        s_ + po - sn,
+        s_ + po,
+        qo - po);
+    // move [id_query, id_end) left
+    op.move(
+        s_ + qo - sn + 2 * cn,
+        s_ + qo,
+        impl_.offset(id_end) - qo);
+
     // adjust part offsets.
-    // (p is invalidated)
-    impl_.adjust(id_user, id_path, 0-n);
-    impl_.adjust(id_query, id_end, 0-(n - 2));
-    auto dest = s_ + impl_.offset(id_path);
-    dest[0] = '.';
-    dest[1] = '/';
+    // (po and qo are invalidated)
+    if (need_resize)
+    {
+        impl_.adjust(id_user, id_end, 0 - sn);
+    }
+    else
+    {
+        impl_.adjust(id_user, id_path, 0 - sn);
+        impl_.adjust(id_query, id_end, 0 - sn + 2 * cn);
+    }
+    if (encode_colon)
+    {
+        // move the 2nd, 3rd, ... segments
+        auto begin = s_ + impl_.offset(id_path);
+        auto it = begin;
+        auto end = begin + pn;
+        while (*it != '/' &&
+               it != end)
+            ++it;
+        // we don't need op here because this is
+        // an internal operation
+        std::memmove(it + (2 * cn), it, end - it);
+
+        // move 1st segment
+        auto src = s_ + impl_.offset(id_path) + pn;
+        auto dest = s_ + impl_.offset(id_query);
+        src -= end - it;
+        dest -= end - it;
+        pn -= end - it;
+        do {
+            --src;
+            --dest;
+            if (*src != ':')
+            {
+                *dest = *src;
+            }
+            else
+            {
+                // use uppercase as required by
+                // syntax-based normalization
+                *dest-- = 'A';
+                *dest-- = '3';
+                *dest = '%';
+            }
+            --pn;
+        } while (pn);
+    }
     s_[size()] = '\0';
     impl_.scheme_ = urls::scheme::none;
     return *this;
@@ -256,14 +305,15 @@ set_encoded_authority(
 
 url_base&
 url_base::
-remove_authority() noexcept
+remove_authority()
 {
     if(! has_authority())
         return *this;
 
     op_t op(*this);
-    if(impl_.get(id_path
-        ).starts_with("//"))
+    auto path = impl_.get(id_path);
+    bool const need_dot = path.starts_with("//");
+    if(need_dot)
     {
         // prepend "/.", can't throw
         auto p = resize_impl(
@@ -938,7 +988,7 @@ remove_port() noexcept
 
 url_base&
 url_base::
-remove_origin() noexcept
+remove_origin()
 {
     // these two calls perform 2 memmoves instead of 1
     remove_authority();
@@ -1102,8 +1152,8 @@ set_encoded_query(
 {
     op_t op(*this);
     encode_opts opt;
-    std::size_t n = 0;      // encoded size
-    std::size_t nparam = 1; // param count
+    auto n = 0;      // encoded size
+    auto nparam = 1; // param count
     auto const end = s.end();
     auto p = s.begin();
 
@@ -1416,8 +1466,8 @@ normalize_octets_impl(
     }
     if (it != dest)
     {
-        std::size_t diff = it - dest;
-        std::size_t n = impl_.len(id) - diff;
+        auto diff = it - dest;
+        auto n = impl_.len(id) - diff;
         shrink_impl(id, n, op);
         s_[size()] = '\0';
     }
@@ -1460,11 +1510,13 @@ normalize_path()
 {
     op_t op(*this);
     normalize_octets_impl(id_path, detail::path_chars, op);
-    string_view p = encoded_path();
+    string_view p = impl_.get(id_path);
     char* p_dest = s_ + impl_.offset(id_path);
     char* p_end = s_ + impl_.offset(id_path + 1);
-    std::size_t pn = p.size();
-    std::size_t skip_dot = 0;
+    auto pn = p.size();
+    auto skip_dot = 0;
+    bool encode_colons = false;
+    string_view first_seg;
     if (
         !has_authority() &&
         p.starts_with("/./"))
@@ -1498,14 +1550,13 @@ normalize_path()
             {
                 // check if removing "./"s would leave us
                 // a first segment with an ambiguous ":"
-                string_view first_seg = p.substr(2);
+                first_seg = p.substr(2);
                 while (first_seg.starts_with("./"))
                     first_seg = first_seg.substr(2);
-                std::size_t i = first_seg.find('/');
+                auto i = first_seg.find('/');
                 if (i != string_view::npos)
                     first_seg = first_seg.substr(0, i);
-                if (first_seg.find(':') != string_view::npos)
-                    skip_dot = 2;
+                encode_colons = first_seg.contains(':');
             }
         }
         else
@@ -1513,32 +1564,69 @@ normalize_path()
             // check if normalize_octets_impl
             // didn't already create a ":"
             // in the first segment
-            string_view first_seg = p;
-            std::size_t i = first_seg.find('/');
+            first_seg = p;
+            auto i = first_seg.find('/');
             if (i != string_view::npos)
                 first_seg = p.substr(0, i);
-            if (first_seg.contains(':'))
-            {
-                // prepend with "./"
-                // (resize_impl never throws)
-                std::size_t n = impl_.len(id_path);
-                resize_impl(
-                    id_path,  n + 2, op);
-                std::memmove(
-                    s_ + impl_.offset(id_path) + 2,
-                    s_ + impl_.offset(id_path),n
-                );
-                p_dest[0] = '.';
-                p_dest[1] = '/';
-                skip_dot = 2;
-                p = encoded_path();
-                p_end = s_ + impl_.offset(id_path + 1);
-            }
+            encode_colons = first_seg.contains(':');
         }
+    }
+    if (encode_colons)
+    {
+        // prepend with "./"
+        // (resize_impl never throws)
+        auto cn =
+            std::count(
+                first_seg.begin(),
+                first_seg.end(),
+                ':');
+        resize_impl(
+            id_path, pn + (2 * cn), op);
+        // move the 2nd, 3rd, ... segments
+        auto begin = s_ + impl_.offset(id_path);
+        auto it = begin;
+        auto end = begin + pn;
+        while (string_view(it, 2) == "./")
+            it += 2;
+        while (*it != '/' &&
+               it != end)
+            ++it;
+        // we don't need op here because this is
+        // an internal operation
+        std::memmove(it + (2 * cn), it, end - it);
+
+        // move 1st segment
+        auto src = s_ + impl_.offset(id_path) + pn;
+        auto dest = s_ + impl_.offset(id_query);
+        src -= end - it;
+        dest -= end - it;
+        pn -= end - it;
+        do {
+            --src;
+            --dest;
+            if (*src != ':')
+            {
+                *dest = *src;
+            }
+            else
+            {
+                // use uppercase as required by
+                // syntax-based normalization
+                *dest-- = 'A';
+                *dest-- = '3';
+                *dest = '%';
+            }
+            --pn;
+        } while (pn);
+        skip_dot = 0;
+        p = impl_.get(id_path);
+        pn = p.size();
+        p_dest = s_ + impl_.offset(id_path);
+        p_end = s_ + impl_.offset(id_path + 1);
     }
     p.remove_prefix(skip_dot);
     p_dest += skip_dot;
-    std::size_t n = detail::remove_dot_segments(
+    auto n = detail::remove_dot_segments(
         p_dest, p_end, p);
     if (n != pn)
     {
@@ -1997,7 +2085,9 @@ edit_segments(
     }
     auto const path_pos = impl_.offset(id_path);
 
+    std::size_t nchar = 0;
     std::size_t prefix = 0;
+    bool encode_colons = false;
     if(it0.index > 0)
     {
         // first segment unchanged
@@ -2017,7 +2107,10 @@ edit_segments(
                     ! src.front.contains(':'))
                 prefix = 0;
             else
-                prefix = 2;
+            {
+                prefix = 0;
+                encode_colons = true;
+            }
         }
         else
         {
@@ -2072,10 +2165,11 @@ edit_segments(
 //  of output, and the number of inserted
 //  segments including internal separators.
 //
+    src.encode_colons = encode_colons;
     std::size_t nseg = 0;
-    std::size_t nchar = 0;
     if(src.measure(nchar))
     {
+        src.encode_colons = false;
         for(;;)
         {
             ++nseg;
@@ -2202,12 +2296,14 @@ edit_segments(
     src.rewind();
     if(nseg > 0)
     {
+        src.encode_colons = encode_colons;
         for(;;)
         {
             src.copy(dest, end);
             if(--nseg == 0)
                 break;
             *dest++ = '/';
+            src.encode_colons = false;
         }
         if(suffix)
             *dest++ = '/';

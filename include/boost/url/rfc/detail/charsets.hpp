@@ -75,6 +75,11 @@ auto
 fragment_chars =
     pchars + '/' + '?';
 
+constexpr
+auto
+nocolon_pchars =
+    pchars - ':';
+
 } // detail
 } // urls
 } // boost

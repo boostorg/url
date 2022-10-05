@@ -44,7 +44,15 @@ public:
     // 0 = zero
     // 1 = one
     // 2 = two, or more
-    std::size_t fast_nseg = 0;
+    int fast_nseg = 0;
+
+    // whether the segments should encode colons
+    // when we measure and copy. the calling
+    // function will use this for the first
+    // segment in some cases, such as:
+    // "x:y:z" -> remove_scheme -> "y%3Az"
+    // as "y:z" would no longer represent a path
+    bool encode_colons = false;
 
     // Rewind the iterator to the beginning
     virtual void rewind() noexcept = 0;
@@ -132,10 +140,10 @@ struct segments_iter_base
 protected:
     BOOST_URL_DECL static void
     measure_impl(std::size_t&,
-        string_view) noexcept;
+        string_view, bool) noexcept;
     BOOST_URL_DECL static void
     copy_impl(char*&, char const*,
-        string_view) noexcept;
+        string_view, bool) noexcept;
 };
 
 // iterates segments in a
@@ -191,7 +199,8 @@ private:
         if(it_ == end_)
             return false;
         measure_impl(n,
-            string_view(*it_));
+            string_view(*it_),
+            encode_colons);
         ++it_;
         return true;
     }
@@ -199,11 +208,11 @@ private:
     void
     copy(
         char*& dest,
-        char const* end
-            ) noexcept override
+        char const* end) noexcept override
     {
         copy_impl(dest, end,
-            string_view(*it_++));
+            string_view(*it_++),
+            encode_colons);
     }
 };
 
@@ -243,10 +252,10 @@ struct segments_encoded_iter_base
 protected:
     BOOST_URL_DECL static void
     measure_impl(std::size_t&,
-        string_view) noexcept;
+        string_view, bool) noexcept;
     BOOST_URL_DECL static void
     copy_impl(char*&, char const*,
-        string_view) noexcept;
+        string_view, bool) noexcept;
 };
 
 // iterates segments in an
@@ -306,18 +315,19 @@ private:
         // throw on invalid input
         measure_impl(n,
             pct_string_view(
-                string_view(*it_++)));
+                string_view(*it_++)),
+            encode_colons);
         return true;
     }
 
     void
     copy(
         char*& dest,
-        char const* end
-            ) noexcept override
+        char const* end) noexcept override
     {
         copy_impl(dest, end,
-            string_view(*it_++));
+            string_view(*it_++),
+            encode_colons);
     }
 };
 

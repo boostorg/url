@@ -28,6 +28,7 @@ struct doc_3_urls_test
         //[code_containers_1_1
             result< url_view > r = parse_uri( "https://www.example.com/path/to/file.txt" );
         //]
+            ignore_unused(r);
         }
         {
         //[code_containers_1_2
@@ -35,6 +36,7 @@ struct doc_3_urls_test
 
             url_view u2( "wss://example.com/quote.cgi?symbol=BOOST&currency=USD" );
         //]
+            ignore_unused(u1, u2);
         }
     }
 

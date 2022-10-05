@@ -209,7 +209,7 @@ inline std::string test_output_impl( char const& v )
 {
     if( std::isprint( static_cast<unsigned char>( v ) ) )
     {
-        return std::string( 1, v );
+        return { 1, v };
     }
     else
     {
@@ -439,6 +439,9 @@ constexpr detail::log_type log{};
 #define BOOST_TEST_EQ(expr1,expr2) \
     BOOST_TEST_WITH( expr1, expr2, \
         ::test_suite::detail::lw_test_eq() )
+
+#define BOOST_TEST_CSTR_EQ(expr1,expr2) \
+    BOOST_TEST_EQ( string_view(expr1), string_view(expr2) )
 
 #define BOOST_TEST_NE(expr1,expr2) \
     BOOST_TEST_WITH( expr1, expr2, \
