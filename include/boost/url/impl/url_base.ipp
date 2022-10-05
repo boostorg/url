@@ -171,24 +171,31 @@ remove_scheme()
     auto const po = impl_.offset(id_path);
     // Check if we are changing
     // path-rootless to path-noscheme
-    bool const need_dot =
-        [this, po]
+    bool const become_first =
+        [this]
     {
-        if(has_authority())
+        return !has_authority() &&
+               impl_.nseg_ > 0;
+    }();
+    // AFREITAS: can this ever be true?
+    bool const need_dot =
+        [this, become_first, po]
+    {
+        if (!become_first)
             return false;
-        if(impl_.nseg_ == 0)
+        std::size_t ps = impl_.len(id_path);
+        if(impl_.len(id_path) < 2)
             return false;
-        BOOST_ASSERT(impl_.len(id_path) > 0);
-        if(s_[po] == '/')
-            return false;
-        return false;
+        return (s_[po] == '/' &&
+                s_[po+1] == '/') &&
+               (ps == 2 ||
+                s_[po+1] != '/');
     }();
     bool const encode_colon =
-        [this, need_dot, po]
+        [this, need_dot, become_first, po]
     {
-        if (need_dot)
-            return false;
-        if(has_authority())
+        if (need_dot ||
+            !become_first)
             return false;
         if(s_[po] == '/')
             return false;

@@ -87,11 +87,15 @@ struct url_base_test
         remove("x:/",   "/");
         remove("x:a",   "a");
         remove("x:a/",  "a/");
+        remove("x:/a", "/a");
+        remove("x://a", "//a");
+        remove("x:///a", "///a");
         remove("x://",  "//");
         remove("x:a:",  "a%3A");
         remove("x:a:/", "a%3A/");
         remove("yabba:dabba:doo", "dabba%3Adoo");
         remove("x::::", "%3A%3A%3A");
+
 
         remove("x://a.b/1/2",      "//a.b/1/2");
         remove("x://a:b@c.d/1/?#", "//a:b@c.d/1/?#");
