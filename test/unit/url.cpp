@@ -214,7 +214,7 @@ struct url_test
         remove("/x/", "/x/");
         remove("/x/?#", "/x/?#");
         remove("w:", "");
-        remove("w::", "./:");
+        remove("w::", "%3A");
         remove("x://y//z", "/.//z");
         remove("http://user:pass@example.com:80/path/to/file.txt",
                "/path/to/file.txt");
@@ -622,6 +622,25 @@ struct url_test
         BOOST_TEST_EQ(u.buffer(), s1);
     }
 
+    template<class F>
+    static
+    void
+    perform(
+        string_view s0,
+        string_view s1,
+        std::initializer_list<
+            string_view> dec_init,
+        std::initializer_list<
+            string_view> enc_init,
+        F const& f)
+    {
+        url u = parse_uri_reference(s0).value();
+        f(u);
+        equal(u.segments(), dec_init);
+        equal(u.encoded_segments(), enc_init);
+        BOOST_TEST_EQ(u.buffer(), s1);
+    }
+
     void
     testSegments()
     {
@@ -726,8 +745,8 @@ struct url_test
         perform( "/x/", "/x//y", { "x", "", "y" }, [](url& u) { u.segments().push_back("y"); });
         perform( "/x/", "/x//y", { "x", "", "y" }, [](url& u) { u.encoded_segments().push_back("y"); });
         perform( "//x//", "/.//", { "", "" }, [](url& u) { u.remove_authority(); });
-        perform( "x:y:z", "./y:z", { "y:z" }, [](url& u) { u.remove_scheme(); });
-        perform( "x:y:z/", "./y:z/", { "y:z", "" }, [](url& u) { u.remove_scheme(); });
+        perform( "x:y:z", "y%3Az", { "y:z" }, { "y%3Az" }, [](url& u) { u.remove_scheme(); });
+        perform( "x:y:z/", "y%3Az/", { "y:z", "" }, { "y%3Az", "" }, [](url& u) { u.remove_scheme(); });
         perform( "./y:z", "x:y:z", { "y:z" }, [](url& u) { u.set_scheme("x"); });
         perform( "./y:z/", "x:y:z/", { "y:z", "" }, [](url& u) { u.set_scheme("x"); });
         perform( "y", "//x/y", { "y" }, [](url& u) { u.set_encoded_authority("x"); });

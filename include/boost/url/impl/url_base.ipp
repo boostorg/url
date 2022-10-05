@@ -162,30 +162,39 @@ set_scheme_id(urls::scheme id)
 
 url_base&
 url_base::
-remove_scheme() noexcept
+remove_scheme()
 {
     op_t op(*this);
-    auto const n = impl_.len(id_scheme);
-    if(n == 0)
+    auto const sn = impl_.len(id_scheme);
+    if(sn == 0)
         return *this;
-    auto const p = impl_.offset(id_path);
+    auto const po = impl_.offset(id_path);
     // Check if we are changing
     // path-rootless to path-noscheme
     bool const need_dot =
-        [this, p]
+        [this, po]
     {
         if(has_authority())
             return false;
         if(impl_.nseg_ == 0)
             return false;
         BOOST_ASSERT(impl_.len(id_path) > 0);
-        if(s_[p] == '/')
+        if(s_[po] == '/')
             return false;
-        if(! first_segment().contains(':'))
-            return false;
-        return true;
+        return false;
     }();
-    if(! need_dot)
+    bool const encode_colon =
+        [this, need_dot, po]
+    {
+        if (need_dot)
+            return false;
+        if(has_authority())
+            return false;
+        if(s_[po] == '/')
+            return false;
+        return first_segment().contains(':');
+    }();
+    if(!need_dot && !encode_colon)
     {
         // just remove the scheme
         resize_impl(id_scheme, 0, op);
@@ -193,26 +202,77 @@ remove_scheme() noexcept
         check_invariants();
         return *this;
     }
-    // remove the scheme but add "./"
-    // to the beginning of the path
-    BOOST_ASSERT(n >= 2);
+    // remove the scheme but add "./" or
+    // encode any ":" in the first path segment
+    BOOST_ASSERT(sn >= 2);
+    auto pn = impl_.len(id_path);
+    std::size_t cn = 0;
+    for (char c: first_segment())
+        cn += c == ':';
+    std::size_t new_size =
+        size() - sn + 2 * need_dot + 2 * cn;
+    bool need_resize = new_size > size();
+    if (need_resize)
+    {
+        resize_impl(
+            id_path, pn + 2 * need_dot + 2 * cn, op);
+    }
     // move [id_scheme, id_path) left
     op.move(
         s_,
-        s_ + n,
-        p - n);
-    // move [id_path, id_end) left
+        s_ + sn,
+        po - sn);
+    // move [id_path, id_query) left
+    std::size_t qo = impl_.offset(id_query);
     op.move(
-        s_ + p - (n - 2),
-        s_ + p,
-        impl_.offset(id_end) - p);
+        s_ + po - sn + 2 * need_dot,
+        s_ + po,
+        qo - po);
+    // move [id_query, id_end) left
+    op.move(
+        s_ + qo - sn + 2 * need_dot + 2 * cn,
+        s_ + qo,
+        impl_.offset(id_end) - qo);
+
     // adjust part offsets.
-    // (p is invalidated)
-    impl_.adjust(id_user, id_path, 0-n);
-    impl_.adjust(id_query, id_end, 0-(n - 2));
-    auto dest = s_ + impl_.offset(id_path);
-    dest[0] = '.';
-    dest[1] = '/';
+    // (po and qo are invalidated)
+    if (need_resize)
+    {
+        impl_.adjust(id_user, id_end, 0 - sn);
+    }
+    else
+    {
+        impl_.adjust(id_user, id_path, 0 - sn);
+        impl_.adjust(id_query, id_end, 0 - sn + 2 * need_dot + 2 * cn);
+    }
+
+    if (need_dot)
+    {
+        auto dest = s_ + impl_.offset(id_path);
+        dest[0] = '.';
+        dest[1] = '/';
+    }
+    if (encode_colon)
+    {
+        auto src = s_ + impl_.offset(id_path) + pn + 2 * need_dot;
+        auto end = s_ + impl_.offset(id_query);
+        auto dest = end;
+        do {
+            --src;
+            --dest;
+            if (*src != ':')
+            {
+                *dest = *src;
+            }
+            else
+            {
+                *dest-- = 'A';
+                *dest-- = '3';
+                *dest = '%';
+            }
+            --pn;
+        } while (pn);
+    }
     s_[size()] = '\0';
     impl_.scheme_ = urls::scheme::none;
     return *this;
@@ -938,7 +998,7 @@ remove_port() noexcept
 
 url_base&
 url_base::
-remove_origin() noexcept
+remove_origin()
 {
     // these two calls perform 2 memmoves instead of 1
     remove_authority();

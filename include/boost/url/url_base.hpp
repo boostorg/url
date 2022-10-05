@@ -191,6 +191,43 @@ public:
     //
     //--------------------------------------------
 
+    /** Remove the scheme
+
+        This function removes the scheme if it
+        is present.
+
+        @par Example
+        @code
+        assert( url("http://www.example.com/index.htm" ).remove_scheme().buffer() == "//www.example.com/index.htm" );
+        @endcode
+
+        @par Postconditions
+        @code
+        this->has_scheme() == false && this->scheme_id() == scheme::none
+        @endcode
+
+        @par Complexity
+        Linear in `this->size()`.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
+            3.1. Scheme (rfc3986)</a>
+
+        @see
+            @ref set_scheme.
+    */
+    BOOST_URL_DECL
+    url_base&
+    remove_scheme();
+
     /** Set the scheme
 
         The scheme is set to the specified

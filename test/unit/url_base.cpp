@@ -56,8 +56,8 @@ struct url_base_test
         {
             url u;
             BOOST_TEST_NO_THROW(u = url(s1));
-            BOOST_TEST(u.remove_scheme().buffer() == s2);
-            BOOST_TEST(u.scheme_id() == scheme::none);
+            BOOST_TEST_EQ(u.remove_scheme().buffer(), s2);
+            BOOST_TEST_EQ(u.scheme_id(), scheme::none);
             BOOST_TEST(u.scheme().empty());
         };
 
@@ -88,8 +88,10 @@ struct url_base_test
         remove("x:a",   "a");
         remove("x:a/",  "a/");
         remove("x://",  "//");
-        remove("x:a:",  "./a:");
-        remove("x:a:/", "./a:/");
+        remove("x:a:",  "a%3A");
+        remove("x:a:/", "a%3A/");
+        remove("yabba:dabba:doo", "dabba%3Adoo");
+        remove("x::::", "%3A%3A%3A");
 
         remove("x://a.b/1/2",      "//a.b/1/2");
         remove("x://a:b@c.d/1/?#", "//a:b@c.d/1/?#");
