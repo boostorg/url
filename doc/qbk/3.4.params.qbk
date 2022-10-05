@@ -1,5 +1,5 @@
 [/
-    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -9,8 +9,7 @@
 
 [/-----------------------------------------------------------------------------]
 
-[#section.query]
-[section:query Query]
+[section Params]
 
 The URL query augments the information in the path to identify a resource
 within the scope of the scheme and authority. Unlike the URL path, the

@@ -1327,25 +1327,6 @@ struct url_base_test
             }
         }
 
-        // remove_query
-        {
-            {
-                url u;
-                u.remove_query();
-                BOOST_TEST(! u.has_query());
-            }
-            {
-                url u("?");
-                u.remove_query();
-                BOOST_TEST(! u.has_query());
-            }
-            {
-                url u("?x");
-                u.remove_query();
-                BOOST_TEST(! u.has_query());
-            }
-        }
-
         // set_encoded_query
         {
             {
@@ -1464,6 +1445,25 @@ struct url_base_test
             BOOST_TEST_EQ((*std::next(u.params().begin())).key, "*()_ ");
             BOOST_TEST_EQ((*std::next(u.params().begin())).value,
                 "-;:'{}[]|\\?/>.<,");
+        }
+
+        // remove_query
+        {
+            {
+                url u;
+                u.remove_query();
+                BOOST_TEST(! u.has_query());
+            }
+            {
+                url u("?");
+                u.remove_query();
+                BOOST_TEST(! u.has_query());
+            }
+            {
+                url u("?x");
+                u.remove_query();
+                BOOST_TEST(! u.has_query());
+            }
         }
 
         // self-intersection
@@ -1650,9 +1650,6 @@ struct url_base_test
         //
         //----------------------------------------
 
-        // remove_query
-        assert( url( "http://www.example.com?id=42" ).remove_query().buffer() == "http://www.example.com" );
-
         // set_query
         assert( url( "http://example.com" ).set_query( "id=42" ).query() == "id=42" );
 
@@ -1672,6 +1669,9 @@ struct url_base_test
 
         (void)pv;
         }
+
+        // remove_query
+        assert( url( "http://www.example.com?id=42" ).remove_query().buffer() == "http://www.example.com" );
 
         //----------------------------------------
         //
