@@ -169,39 +169,12 @@ remove_scheme()
     if(sn == 0)
         return *this;
     auto const po = impl_.offset(id_path);
-    // Check if we are changing
-    // path-rootless to path-noscheme
-    bool const become_first =
-        [this]
-    {
-        return !has_authority() &&
-               impl_.nseg_ > 0;
-    }();
-    // AFREITAS: can this ever be true?
-    bool const need_dot =
-        [this, become_first, po]
-    {
-        if (!become_first)
-            return false;
-        std::size_t ps = impl_.len(id_path);
-        if(impl_.len(id_path) < 2)
-            return false;
-        return (s_[po] == '/' &&
-                s_[po+1] == '/') &&
-               (ps == 2 ||
-                s_[po+1] != '/');
-    }();
     bool const encode_colon =
-        [this, need_dot, become_first, po]
-    {
-        if (need_dot ||
-            !become_first)
-            return false;
-        if(s_[po] == '/')
-            return false;
-        return first_segment().contains(':');
-    }();
-    if(!need_dot && !encode_colon)
+        !has_authority() &&
+        impl_.nseg_ > 0 &&
+        s_[po] != '/' &&
+        first_segment().contains(':');
+    if(!encode_colon)
     {
         // just remove the scheme
         resize_impl(id_scheme, 0, op);
@@ -209,7 +182,6 @@ remove_scheme()
         check_invariants();
         return *this;
     }
-    // remove the scheme but add "./" or
     // encode any ":" in the first path segment
     BOOST_ASSERT(sn >= 2);
     auto pn = impl_.len(id_path);
@@ -217,12 +189,12 @@ remove_scheme()
     for (char c: first_segment())
         cn += c == ':';
     std::size_t new_size =
-        size() - sn + 2 * need_dot + 2 * cn;
+        size() - sn + 2 * cn;
     bool need_resize = new_size > size();
     if (need_resize)
     {
         resize_impl(
-            id_path, pn + 2 * need_dot + 2 * cn, op);
+            id_path, pn + 2 * cn, op);
     }
     // move [id_scheme, id_path) left
     op.move(
@@ -232,12 +204,12 @@ remove_scheme()
     // move [id_path, id_query) left
     std::size_t qo = impl_.offset(id_query);
     op.move(
-        s_ + po - sn + 2 * need_dot,
+        s_ + po - sn,
         s_ + po,
         qo - po);
     // move [id_query, id_end) left
     op.move(
-        s_ + qo - sn + 2 * need_dot + 2 * cn,
+        s_ + qo - sn + 2 * cn,
         s_ + qo,
         impl_.offset(id_end) - qo);
 
@@ -250,20 +222,25 @@ remove_scheme()
     else
     {
         impl_.adjust(id_user, id_path, 0 - sn);
-        impl_.adjust(id_query, id_end, 0 - sn + 2 * need_dot + 2 * cn);
-    }
-
-    if (need_dot)
-    {
-        auto dest = s_ + impl_.offset(id_path);
-        dest[0] = '.';
-        dest[1] = '/';
+        impl_.adjust(id_query, id_end, 0 - sn + 2 * cn);
     }
     if (encode_colon)
     {
-        auto src = s_ + impl_.offset(id_path) + pn + 2 * need_dot;
-        auto end = s_ + impl_.offset(id_query);
-        auto dest = end;
+        // move the 2nd, 3rd, ... segments
+        auto begin = s_ + impl_.offset(id_path);
+        auto it = begin;
+        auto end = begin + pn;
+        while (*it != '/' &&
+               it != end)
+            ++it;
+        std::memmove(it + (2 * cn), it, end - it);
+
+        // move 1st segment
+        auto src = s_ + impl_.offset(id_path) + pn;
+        auto dest = s_ + impl_.offset(id_query);
+        src -= end - it;
+        dest -= end - it;
+        pn -= end - it;
         do {
             --src;
             --dest;
