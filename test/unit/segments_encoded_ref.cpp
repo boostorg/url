@@ -198,6 +198,16 @@ struct segments_encoded_ref_test
             BOOST_TEST_EQ(*it++, "to%3F");
             BOOST_TEST_EQ(*it++, "file%23");
         }
+
+        // operator segments_encoded_view()
+        {
+            url u;
+            u.encoded_segments() = { "x:y", "a:b" };
+            segments_encoded_view ps = u.encoded_segments();
+            auto it = ps.begin();
+            BOOST_TEST_CSTR_EQ(*it++, "x%3Ay");
+            BOOST_TEST_CSTR_EQ(*it++, "a:b");
+        }
     }
 
     void
@@ -719,7 +729,7 @@ struct segments_encoded_ref_test
             {
                 ps.push_back(":");
             };
-            check(f, "",  "./:",  {":"});
+            check(f, "",  "%3A",  {"%3A"});
             check(f, "/", "/:", {":"});
         }
 
@@ -774,7 +784,7 @@ struct segments_encoded_ref_test
             {
                 ps.push_back(":");
             };
-            check(f, "",  "./:",  {":"});
+            check(f, "",  "%3A",  {"%3A"});
             check(f, "/", "/:", {":"});
         }
     }

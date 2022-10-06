@@ -201,7 +201,7 @@ struct url_test
             string_view s1, string_view s2)
         {
             url u = parse_uri_reference(s1).value();
-            BOOST_TEST_EQ(u.remove_origin().buffer(), s2);
+            BOOST_TEST_CSTR_EQ(u.remove_origin().buffer(), s2);
             BOOST_TEST(u.encoded_origin().empty());
             BOOST_TEST(! u.has_authority());
         };
@@ -215,6 +215,7 @@ struct url_test
         remove("/x/?#", "/x/?#");
         remove("w:", "");
         remove("w::", "%3A");
+        remove("w::/:", "%3A/:");
         remove("x://y//z", "/.//z");
         remove("http://user:pass@example.com:80/path/to/file.txt",
                "/path/to/file.txt");
@@ -223,7 +224,7 @@ struct url_test
             // issue #394
             url u( "http://www.example.com//kyle:xy" );
             u.remove_origin();
-            BOOST_TEST_EQ( u.buffer(), "/.//kyle:xy" );
+            BOOST_TEST_CSTR_EQ( u.buffer(), "/.//kyle:xy" );
         }
     }
 
@@ -352,9 +353,9 @@ struct url_test
             BOOST_TEST_EQ(u.encoded_path(), "file.txt");
             BOOST_TEST_EQ(u.buffer(), "file.txt");
             u.set_encoded_path(":file.txt");
-            BOOST_TEST_EQ(u.encoded_path(), "./:file.txt");
+            BOOST_TEST_EQ(u.encoded_path(), "%3Afile.txt");
             u.set_encoded_path("http:index.htm");
-            BOOST_TEST_EQ(u.encoded_path(), "./http:index.htm");
+            BOOST_TEST_EQ(u.encoded_path(), "http%3Aindex.htm");
         }
 
         // set_encoded_path
@@ -392,7 +393,7 @@ struct url_test
             check(
                 "x",
                 "http:path/to/file.",
-                "./http:path/to/file.");
+                "http%3Apath/to/file.");
             check(
                 "x:",
                 "y:z/",
@@ -437,7 +438,7 @@ struct url_test
             check(
                 "x",
                 "http:path/to/file.",
-                "./http:path/to/file.");
+                "http%3Apath/to/file.");
             check(
                 "x:",
                 "y:z/",
@@ -1013,8 +1014,6 @@ struct url_test
                 BOOST_TEST_EQ(h(u1), h(u2));
                 h = std::hash<url_view>(10);
                 BOOST_TEST_EQ(h(u1), h(u2));
-
-
             };
 
             check("/a/b/c/./../../g", "/a/g");

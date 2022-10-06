@@ -557,7 +557,7 @@ struct segments_ref_test
                 auto it = ps.replace(ps.begin(), ":");
                 BOOST_TEST_EQ(*it, ":");
             };
-            check(f, "path/to/file.txt", "./:/to/file.txt", {":", "to", "file.txt"});
+            check(f, "path/to/file.txt", "%3A/to/file.txt", {":", "to", "file.txt"});
             check(f, "/:/to/file.txt", "/:/to/file.txt", {":", "to", "file.txt"});
             check(f, "x:path/to/file.txt", ":/to/file.txt", {":", "to", "file.txt"});
             check(f, "x:/path/to/file.txt", "/:/to/file.txt", {":", "to", "file.txt"});
@@ -775,7 +775,7 @@ struct segments_ref_test
             {
                 ps.push_back(":");
             };
-            check(f, "",  "./:",  {":"});
+            check(f, "",  "%3A",  {":"});
             check(f, "/", "/:", {":"});
         }
 
