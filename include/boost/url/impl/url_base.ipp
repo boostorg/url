@@ -1636,10 +1636,10 @@ normalize_path()
             id_path, pn + (2 * cn), op);
         // move the 2nd, 3rd, ... segments
         auto begin = s_ + impl_.offset(id_path);
-        while (string_view(begin, 2) == "./")
-            begin += 2;
         auto it = begin;
         auto end = begin + pn;
+        while (string_view(it, 2) == "./")
+            it += 2;
         while (*it != '/' &&
                it != end)
             ++it;
