@@ -2038,6 +2038,8 @@ edit_segments(
 //  3 = "/./"
 //
     bool const is_abs = is_path_absolute();
+    bool encode_colons = false;
+    std::size_t nchar = 0;
     if(has_authority())
     {
         // Check if the new
@@ -2084,7 +2086,12 @@ edit_segments(
                     ! src.front.contains(':'))
                 prefix = 0;
             else
-                prefix = 2;
+            {
+                prefix = 0;
+                encode_colons = true;
+                for (char c: src.front)
+                    nchar += 2 * (c == ':');
+            }
         }
         else
         {
@@ -2271,10 +2278,11 @@ edit_segments(
     {
         for(;;)
         {
-            src.copy(dest, end);
+            src.copy(dest, end, encode_colons);
             if(--nseg == 0)
                 break;
             *dest++ = '/';
+            encode_colons = false;
         }
         if(suffix)
             *dest++ = '/';

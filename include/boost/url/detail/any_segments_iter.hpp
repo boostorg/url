@@ -58,7 +58,8 @@ public:
     // Copy and increment the current
     // element, encoding as needed.
     virtual void copy(char*& dest,
-        char const* end) noexcept = 0;
+        char const* end,
+        bool encode_colons) noexcept = 0;
 };
 
 //------------------------------------------------
@@ -79,7 +80,7 @@ protected:
     void increment() noexcept;
     void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
-    void copy(char*&, char const*) noexcept override;
+    void copy(char*&, char const*, bool reencode_colons) noexcept override;
 };
 
 //------------------------------------------------
@@ -95,7 +96,7 @@ struct BOOST_SYMBOL_VISIBLE
 
 private:
     bool measure(std::size_t&) noexcept override;
-    void copy(char*&, char const*) noexcept override;
+    void copy(char*&, char const*, bool encode_colons) noexcept override;
 };
 
 //------------------------------------------------
@@ -118,7 +119,7 @@ private:
     bool at_end_ = false;
     void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
-    void copy(char*&, char const*) noexcept override;
+    void copy(char*&, char const*, bool encode_colons) noexcept override;
 };
 
 //------------------------------------------------
@@ -135,7 +136,7 @@ protected:
         string_view) noexcept;
     BOOST_URL_DECL static void
     copy_impl(char*&, char const*,
-        string_view) noexcept;
+        string_view, bool) noexcept;
 };
 
 // iterates segments in a
@@ -199,11 +200,12 @@ private:
     void
     copy(
         char*& dest,
-        char const* end
-            ) noexcept override
+        char const* end,
+        bool encode_colons) noexcept override
     {
         copy_impl(dest, end,
-            string_view(*it_++));
+            string_view(*it_++),
+            encode_colons);
     }
 };
 
@@ -227,7 +229,7 @@ private:
     bool at_end_ = false;
     void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
-    void copy(char*&, char const*) noexcept override;
+    void copy(char*&, char const*, bool encode_colons) noexcept override;
 };
 
 //------------------------------------------------
@@ -246,7 +248,7 @@ protected:
         string_view) noexcept;
     BOOST_URL_DECL static void
     copy_impl(char*&, char const*,
-        string_view) noexcept;
+        string_view, bool) noexcept;
 };
 
 // iterates segments in an
@@ -313,11 +315,12 @@ private:
     void
     copy(
         char*& dest,
-        char const* end
-            ) noexcept override
+        char const* end,
+        bool encode_colons) noexcept override
     {
         copy_impl(dest, end,
-            string_view(*it_++));
+            string_view(*it_++),
+            encode_colons);
     }
 };
 

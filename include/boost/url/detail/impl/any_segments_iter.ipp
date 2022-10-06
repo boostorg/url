@@ -124,12 +124,16 @@ void
 path_iter::
 copy(
     char*& dest,
-    char const* end) noexcept
+    char const* end,
+    bool encode_colons) noexcept
 {
     BOOST_ASSERT(pos_ !=
         string_view::npos);
     encode_opts opt;
     opt.space_to_plus = false;
+    auto cs = pchars;
+    if (encode_colons)
+        cs = cs - ':';
     dest += encode(
         dest,
         end - dest,
@@ -137,7 +141,7 @@ copy(
             pos_,
             next_ - pos_),
         pchars,
-        opt);
+        cs);
     increment();
 }
 
@@ -177,12 +181,17 @@ void
 path_encoded_iter::
 copy(
     char*& dest,
-    char const* end) noexcept
+    char const* end,
+    bool encode_colons) noexcept
 {
     BOOST_ASSERT(pos_ !=
         string_view::npos);
     encode_opts opt;
     opt.space_to_plus = false;
+    detail::re_encode_unsafe(
+    auto cs = pchars;
+    if (encode_colons)
+        cs = cs - ':';
     detail::re_encode_unsafe(
         dest,
         end,
@@ -190,7 +199,7 @@ copy(
             pos_,
             next_ - pos_),
         pchars,
-        opt);
+        cs);
     increment();
 }
 
@@ -235,16 +244,22 @@ measure(
 
 void
 segment_iter::
-copy(char*& dest, char const* end) noexcept
+copy(
+    char*& dest,
+    char const* end,
+    bool encode_colons) noexcept
 {
     encode_opts opt;
     opt.space_to_plus = false;
+    auto cs = pchars;
+    if (encode_colons)
+        cs = cs - ':';
     dest += encode(
         dest,
         end - dest,
         s,
         pchars,
-        opt);
+        cs);
 }
 
 //------------------------------------------------
@@ -272,16 +287,20 @@ segments_iter_base::
 copy_impl(
     char*& dest,
     char const* end,
-    string_view s) noexcept
+    string_view s,
+    bool encode_colons) noexcept
 {
     encode_opts opt;
     opt.space_to_plus = false;
+    auto cs = pchars;
+    if (encode_colons)
+        cs = cs - ':';
     dest += encode(
         dest,
         end - dest,
         s,
         pchars,
-        opt);
+        cs);
 }
 
 //------------------------------------------------
@@ -325,16 +344,22 @@ measure(
 
 void
 segment_encoded_iter::
-copy(char*& dest, char const* end) noexcept
+copy(
+    char*& dest,
+    char const* end,
+    bool encode_colons) noexcept
 {
     encode_opts opt;
     opt.space_to_plus = false;
+    auto cs = pchars;
+    if (encode_colons)
+        cs = cs - ':';
     detail::re_encode_unsafe(
         dest,
         end,
         s,
         pchars,
-        opt);
+        cs);
 }
 
 //------------------------------------------------
@@ -362,16 +387,20 @@ segments_encoded_iter_base::
 copy_impl(
     char*& dest,
     char const* end,
-    string_view s) noexcept
+    string_view s,
+    bool encode_colons) noexcept
 {
     encode_opts opt;
     opt.space_to_plus = false;
+    auto cs = pchars;
+    if (encode_colons)
+        cs = cs - ':';
     detail::re_encode_unsafe(
         dest,
         end,
         s,
         pchars,
-        opt);
+        cs);
 }
 
 } // detail
