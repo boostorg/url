@@ -977,12 +977,12 @@ struct url_test
                   ".//my:sharona");
             // issue 395
             check("./my:sharona",
-                  "./my:sharona");
+                  "my%3Asharona");
             check("././my:sharona",
-                  "./my:sharona");
+                  "my%3Asharona");
             // issue 391
             check("my%3Asharona",
-                  "./my:sharona");
+                  "my%3Asharona");
             // issue 579
             check("https://www.boost.org/doc/../%69%6e%64%65%78%20file.html",
                   "https://www.boost.org/index%20file.html");

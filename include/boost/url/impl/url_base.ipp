@@ -1560,11 +1560,13 @@ normalize_path()
 {
     op_t op(*this);
     normalize_octets_impl(id_path, detail::path_chars, op);
-    string_view p = encoded_path();
+    string_view p = impl_.get(id_path);
     char* p_dest = s_ + impl_.offset(id_path);
     char* p_end = s_ + impl_.offset(id_path + 1);
     std::size_t pn = p.size();
     std::size_t skip_dot = 0;
+    bool encode_colons = false;
+    string_view first_seg;
     if (
         !has_authority() &&
         p.starts_with("/./"))
@@ -1598,14 +1600,13 @@ normalize_path()
             {
                 // check if removing "./"s would leave us
                 // a first segment with an ambiguous ":"
-                string_view first_seg = p.substr(2);
+                first_seg = p.substr(2);
                 while (first_seg.starts_with("./"))
                     first_seg = first_seg.substr(2);
                 std::size_t i = first_seg.find('/');
                 if (i != string_view::npos)
                     first_seg = first_seg.substr(0, i);
-                if (first_seg.find(':') != string_view::npos)
-                    skip_dot = 2;
+                encode_colons = first_seg.contains(':');
             }
         }
         else
@@ -1613,28 +1614,61 @@ normalize_path()
             // check if normalize_octets_impl
             // didn't already create a ":"
             // in the first segment
-            string_view first_seg = p;
+            first_seg = p;
             std::size_t i = first_seg.find('/');
             if (i != string_view::npos)
                 first_seg = p.substr(0, i);
-            if (first_seg.contains(':'))
-            {
-                // prepend with "./"
-                // (resize_impl never throws)
-                std::size_t n = impl_.len(id_path);
-                resize_impl(
-                    id_path,  n + 2, op);
-                std::memmove(
-                    s_ + impl_.offset(id_path) + 2,
-                    s_ + impl_.offset(id_path),n
-                );
-                p_dest[0] = '.';
-                p_dest[1] = '/';
-                skip_dot = 2;
-                p = encoded_path();
-                p_end = s_ + impl_.offset(id_path + 1);
-            }
+            encode_colons = first_seg.contains(':');
         }
+    }
+    if (encode_colons)
+    {
+        // prepend with "./"
+        // (resize_impl never throws)
+        std::size_t cn =
+            std::count(
+                first_seg.begin(),
+                first_seg.end(),
+                ':');
+        resize_impl(
+            id_path, pn + (2 * cn), op);
+        // move the 2nd, 3rd, ... segments
+        auto begin = s_ + impl_.offset(id_path);
+        while (string_view(begin, 2) == "./")
+            begin += 2;
+        auto it = begin;
+        auto end = begin + pn;
+        while (*it != '/' &&
+               it != end)
+            ++it;
+        std::memmove(it + (2 * cn), it, end - it);
+
+        // move 1st segment
+        auto src = s_ + impl_.offset(id_path) + pn;
+        auto dest = s_ + impl_.offset(id_query);
+        src -= end - it;
+        dest -= end - it;
+        pn -= end - it;
+        do {
+            --src;
+            --dest;
+            if (*src != ':')
+            {
+                *dest = *src;
+            }
+            else
+            {
+                *dest-- = 'A';
+                *dest-- = '3';
+                *dest = '%';
+            }
+            --pn;
+        } while (pn);
+        skip_dot = 0;
+        p = impl_.get(id_path);
+        pn = p.size();
+        p_dest = s_ + impl_.offset(id_path);
+        p_end = s_ + impl_.offset(id_path + 1);
     }
     p.remove_prefix(skip_dot);
     p_dest += skip_dot;
