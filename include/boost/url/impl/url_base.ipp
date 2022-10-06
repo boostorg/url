@@ -169,11 +169,12 @@ remove_scheme()
     if(sn == 0)
         return *this;
     auto const po = impl_.offset(id_path);
+    auto fseg = first_segment();
     bool const encode_colon =
         !has_authority() &&
         impl_.nseg_ > 0 &&
         s_[po] != '/' &&
-        first_segment().contains(':');
+        fseg.contains(':');
     if(!encode_colon)
     {
         // just remove the scheme
@@ -186,7 +187,7 @@ remove_scheme()
     BOOST_ASSERT(sn >= 2);
     auto pn = impl_.len(id_path);
     std::size_t cn = 0;
-    for (char c: first_segment())
+    for (char c: fseg)
         cn += c == ':';
     std::size_t new_size =
         size() - sn + 2 * cn;
@@ -202,7 +203,7 @@ remove_scheme()
         s_ + sn,
         po - sn);
     // move [id_path, id_query) left
-    std::size_t qo = impl_.offset(id_query);
+    auto qo = impl_.offset(id_query);
     op.move(
         s_ + po - sn,
         s_ + po,
@@ -308,10 +309,11 @@ remove_authority()
     op_t op(*this);
     auto path = impl_.get(id_path);
     bool const need_dot = path.starts_with("//");
+    auto fseg = first_segment();
     bool const encode_colon =
         !is_path_absolute() &&
         !has_scheme() &&
-        first_segment().contains(':');
+        fseg.contains(':');
     if(need_dot)
     {
         // prepend "/.", can't throw
@@ -328,9 +330,9 @@ remove_authority()
     {
         // encode colons in first segment
         pos_t pn = impl_.len(id_path);
-        std::size_t cn = 0;
+        auto cn = 0;
         if (encode_colon)
-            for (char c: first_segment())
+            for (char c: fseg)
                 cn += (c == ':');
         resize_impl(
             id_user,
@@ -1202,8 +1204,8 @@ set_encoded_query(
 {
     op_t op(*this);
     encode_opts opt;
-    std::size_t n = 0;      // encoded size
-    std::size_t nparam = 1; // param count
+    auto n = 0;      // encoded size
+    auto nparam = 1; // param count
     auto const end = s.end();
     auto p = s.begin();
 
@@ -1516,8 +1518,8 @@ normalize_octets_impl(
     }
     if (it != dest)
     {
-        std::size_t diff = it - dest;
-        std::size_t n = impl_.len(id) - diff;
+        auto diff = it - dest;
+        auto n = impl_.len(id) - diff;
         shrink_impl(id, n, op);
         s_[size()] = '\0';
     }
@@ -1563,8 +1565,8 @@ normalize_path()
     string_view p = impl_.get(id_path);
     char* p_dest = s_ + impl_.offset(id_path);
     char* p_end = s_ + impl_.offset(id_path + 1);
-    std::size_t pn = p.size();
-    std::size_t skip_dot = 0;
+    auto pn = p.size();
+    auto skip_dot = 0;
     bool encode_colons = false;
     string_view first_seg;
     if (
@@ -1603,7 +1605,7 @@ normalize_path()
                 first_seg = p.substr(2);
                 while (first_seg.starts_with("./"))
                     first_seg = first_seg.substr(2);
-                std::size_t i = first_seg.find('/');
+                auto i = first_seg.find('/');
                 if (i != string_view::npos)
                     first_seg = first_seg.substr(0, i);
                 encode_colons = first_seg.contains(':');
@@ -1615,7 +1617,7 @@ normalize_path()
             // didn't already create a ":"
             // in the first segment
             first_seg = p;
-            std::size_t i = first_seg.find('/');
+            auto i = first_seg.find('/');
             if (i != string_view::npos)
                 first_seg = p.substr(0, i);
             encode_colons = first_seg.contains(':');
@@ -1625,7 +1627,7 @@ normalize_path()
     {
         // prepend with "./"
         // (resize_impl never throws)
-        std::size_t cn =
+        auto cn =
             std::count(
                 first_seg.begin(),
                 first_seg.end(),
@@ -1672,7 +1674,7 @@ normalize_path()
     }
     p.remove_prefix(skip_dot);
     p_dest += skip_dot;
-    std::size_t n = detail::remove_dot_segments(
+    auto n = detail::remove_dot_segments(
         p_dest, p_end, p);
     if (n != pn)
     {

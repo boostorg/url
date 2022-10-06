@@ -131,17 +131,16 @@ copy(
         string_view::npos);
     encode_opts opt;
     opt.space_to_plus = false;
-    auto cs = pchars;
-    if (encode_colons)
-        cs = cs - ':';
     dest += encode(
         dest,
         end - dest,
         s.substr(
             pos_,
             next_ - pos_),
-        pchars,
-        cs);
+        encode_colons ?
+            nocolon_pchars :
+            pchars,
+        opt);
     increment();
 }
 
@@ -189,17 +188,15 @@ copy(
     encode_opts opt;
     opt.space_to_plus = false;
     detail::re_encode_unsafe(
-    auto cs = pchars;
-    if (encode_colons)
-        cs = cs - ':';
-    detail::re_encode_unsafe(
         dest,
         end,
         s.substr(
             pos_,
             next_ - pos_),
-        pchars,
-        cs);
+        encode_colons ?
+            nocolon_pchars :
+            pchars,
+        opt);
     increment();
 }
 
@@ -251,15 +248,14 @@ copy(
 {
     encode_opts opt;
     opt.space_to_plus = false;
-    auto cs = pchars;
-    if (encode_colons)
-        cs = cs - ':';
     dest += encode(
         dest,
         end - dest,
         s,
-        pchars,
-        cs);
+        encode_colons ?
+            nocolon_pchars :
+            pchars,
+        opt);
 }
 
 //------------------------------------------------
@@ -292,15 +288,14 @@ copy_impl(
 {
     encode_opts opt;
     opt.space_to_plus = false;
-    auto cs = pchars;
-    if (encode_colons)
-        cs = cs - ':';
     dest += encode(
         dest,
         end - dest,
         s,
-        pchars,
-        cs);
+        encode_colons ?
+            nocolon_pchars :
+            pchars,
+        opt);
 }
 
 //------------------------------------------------
@@ -351,15 +346,14 @@ copy(
 {
     encode_opts opt;
     opt.space_to_plus = false;
-    auto cs = pchars;
-    if (encode_colons)
-        cs = cs - ':';
     detail::re_encode_unsafe(
         dest,
         end,
         s,
-        pchars,
-        cs);
+        encode_colons ?
+            nocolon_pchars :
+            pchars,
+        opt);
 }
 
 //------------------------------------------------
@@ -392,15 +386,14 @@ copy_impl(
 {
     encode_opts opt;
     opt.space_to_plus = false;
-    auto cs = pchars;
-    if (encode_colons)
-        cs = cs - ':';
     detail::re_encode_unsafe(
         dest,
         end,
         s,
-        pchars,
-        cs);
+        encode_colons ?
+            nocolon_pchars :
+            pchars,
+        opt);
 }
 
 } // detail
