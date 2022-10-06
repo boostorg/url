@@ -397,7 +397,7 @@ public:
     */
     BOOST_URL_DECL
     url_base&
-    remove_authority() noexcept;
+    remove_authority();
 
     //--------------------------------------------
     //
@@ -2342,7 +2342,7 @@ public:
     */
     BOOST_URL_DECL
     url_base&
-    remove_origin() noexcept;
+    remove_origin();
 
     //--------------------------------------------
     //

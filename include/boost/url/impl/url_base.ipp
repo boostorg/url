@@ -300,14 +300,19 @@ set_encoded_authority(
 
 url_base&
 url_base::
-remove_authority() noexcept
+remove_authority()
 {
     if(! has_authority())
         return *this;
 
     op_t op(*this);
-    if(impl_.get(id_path
-        ).starts_with("//"))
+    auto path = impl_.get(id_path);
+    bool const need_dot = path.starts_with("//");
+    bool const encode_colon =
+        !is_path_absolute() &&
+        !has_scheme() &&
+        first_segment().contains(':');
+    if(need_dot)
     {
         // prepend "/.", can't throw
         auto p = resize_impl(
@@ -318,6 +323,57 @@ remove_authority() noexcept
         impl_.split(id_pass, 0);
         impl_.split(id_host, 0);
         impl_.split(id_port, 0);
+    }
+    else if(encode_colon)
+    {
+        // encode colons in first segment
+        pos_t pn = impl_.len(id_path);
+        std::size_t cn = 0;
+        if (encode_colon)
+            for (char c: first_segment())
+                cn += (c == ':');
+        resize_impl(
+            id_user,
+            id_query,
+            pn + (2 * cn),
+            op);
+        impl_.split(id_user, 0);
+        impl_.split(id_pass, 0);
+        impl_.split(id_host, 0);
+        impl_.split(id_port, 0);
+        if (encode_colon)
+        {
+            // move the 2nd, 3rd, ... segments
+            auto begin = s_ + impl_.offset(id_path);
+            auto it = begin;
+            auto end = begin + pn;
+            while (*it != '/' &&
+                   it != end)
+                ++it;
+            std::memmove(it + (2 * cn), it, end - it);
+
+            // move 1st segment
+            auto src = s_ + impl_.offset(id_path) + pn;
+            auto dest = s_ + impl_.offset(id_query);
+            src -= end - it;
+            dest -= end - it;
+            pn -= end - it;
+            do {
+                --src;
+                --dest;
+                if (*src != ':')
+                {
+                    *dest = *src;
+                }
+                else
+                {
+                    *dest-- = 'A';
+                    *dest-- = '3';
+                    *dest = '%';
+                }
+                --pn;
+            } while (pn);
+        }
     }
     else
     {
