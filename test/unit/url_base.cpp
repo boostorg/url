@@ -199,6 +199,9 @@ struct url_base_test
         remove("x/y", "x/y");
         remove("x/y/", "x/y/");
         remove("x/y/?#", "x/y/?#");
+        remove("x/y/?#", "x/y/?#");
+
+
 
         remove("z:", "z:");
         remove("z:/", "z:/");
