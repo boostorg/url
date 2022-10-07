@@ -73,8 +73,7 @@ namespace urls {
         @ref encode,
         @ref encoded_size.
 */
-template<
-    class CharSet = grammar::all_chars_t>
+inline
 std::size_t
 decode(
     char* dest,
