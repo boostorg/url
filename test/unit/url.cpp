@@ -858,6 +858,26 @@ struct url_test
             BOOST_TEST(r.has_error());
             BOOST_TEST(r.error() == error::not_a_base);
         }
+
+        // resolve self
+        {
+            {
+                url u("https://example.com/one/../two%2F..%2Fthree");
+                url eu(u);
+                result<void> r = u.resolve(u);
+                BOOST_TEST(r.has_value());
+                eu.normalize();
+                BOOST_TEST_EQ(u, eu);
+            }
+
+            {
+                url u("//example.com/one/../two%2F..%2Fthree");
+                url u1(u);
+                result<void> r = u1.resolve(u1);
+                BOOST_TEST(r.has_error());
+                BOOST_TEST(r.error() == error::not_a_base);
+            }
+        }
     }
 
     //--------------------------------------------

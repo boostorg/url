@@ -1246,12 +1246,19 @@ url_base::
 resolve(
     url_view_base const& ref)
 {
-    op_t op(*this);
+    if (this == &ref &&
+        has_scheme())
+    {
+        normalize();
+        return {};
+    }
 
     if(! has_scheme())
     {
         BOOST_URL_RETURN_EC(error::not_a_base);
     }
+
+    op_t op(*this);
 
     //
     // 5.2.2. Transform References
