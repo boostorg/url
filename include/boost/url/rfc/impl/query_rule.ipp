@@ -64,13 +64,6 @@ parse(
                 BOOST_URL_RETURN_EC(
                     error::bad_pct_hexdig);
             }
-            if (it[1] == '0' &&
-                it[2] == '0')
-            {
-                // null in input
-                BOOST_URL_RETURN_EC(
-                    error::illegal_null);
-            }
             it += 3;
             dn += 2;
             continue;
