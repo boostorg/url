@@ -11,6 +11,7 @@
 
 #include "test_suite.hpp"
 
+#include <boost/core/ignore_unused.hpp>
 #include <iostream>
 #include <list>
 #include <string>

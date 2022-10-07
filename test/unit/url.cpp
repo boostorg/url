@@ -1124,6 +1124,61 @@ struct url_test
     //--------------------------------------------
 
     void
+    testNull()
+    {
+        url_view u("http://h%00s/pa%00th?qu%00ry#fr%00ag");
+
+        auto stl_equal =
+            [](std::string const& s0, std::string const& s1)
+        {
+        // only std::equal works when the string contains NUL
+        if (s0.size() != s1.size())
+            return false;
+        return std::equal(s0.begin(), s0.end(), s1.begin());
+        };
+
+        std::string h = u.host();
+        BOOST_TEST_NE(h, "h");
+        BOOST_TEST_NE(h, "h\0s");
+        std::string eh("h\0s");
+        BOOST_TEST_NE(h, eh);
+        BOOST_TEST_NOT(stl_equal(h, eh));
+        eh = {"h\0s", 3};
+        BOOST_TEST_EQ(h, eh);
+        BOOST_TEST(stl_equal(h, eh));
+
+        std::string p = u.path();
+        BOOST_TEST_NE(p, "/pa");
+        BOOST_TEST_NE(p, "/pa\0th");
+        std::string ep("/pa\0th");
+        BOOST_TEST_NE(p, ep);
+        BOOST_TEST_NOT(stl_equal(p, ep));
+        ep = {"/pa\0th", 6};
+        BOOST_TEST_EQ(p, ep);
+        BOOST_TEST(stl_equal(p, ep));
+
+        std::string q = u.query();
+        BOOST_TEST_NE(q, "qu");
+        BOOST_TEST_NE(q, "qu\0ry");
+        std::string eq("qu\0ry");
+        BOOST_TEST_NE(q, eq);
+        BOOST_TEST_NOT(stl_equal(q, eq));
+        eq = {"qu\0ry", 5};
+        BOOST_TEST_EQ(q, eq);
+        BOOST_TEST(stl_equal(q, eq));
+
+        std::string f = u.fragment();
+        BOOST_TEST_NE(f, "fr");
+        BOOST_TEST_NE(f, "fr\0ag");
+        std::string ef("fr\0ag");
+        BOOST_TEST_NE(f, ef);
+        BOOST_TEST_NOT(stl_equal(f, ef));
+        ef = {"fr\0ag", 5};
+        BOOST_TEST_EQ(f, ef);
+        BOOST_TEST(stl_equal(f, ef));
+    }
+
+    void
     run()
     {
         testSpecial();
@@ -1136,6 +1191,7 @@ struct url_test
         testOstream();
         testNormalize();
         testSwap();
+        testNull();
     }
 };
 
