@@ -81,6 +81,7 @@ decode(
     BOOST_URL_PCT_STRING_VIEW s,
     decode_opts const& opt = {})
 {
+    BOOST_ASSERT(s.data() != dest);
     return *detail::decode(dest, end, s, opt);
 }
 
