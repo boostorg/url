@@ -234,6 +234,8 @@ remove_scheme()
         while (*it != '/' &&
                it != end)
             ++it;
+        // we don't need op here because this is
+        // an internal operation
         std::memmove(it + (2 * cn), it, end - it);
 
         // move 1st segment
@@ -251,6 +253,8 @@ remove_scheme()
             }
             else
             {
+                // use uppercase as required by
+                // syntax-based normalization
                 *dest-- = 'A';
                 *dest-- = '3';
                 *dest = '%';
@@ -1587,6 +1591,8 @@ normalize_path()
         while (*it != '/' &&
                it != end)
             ++it;
+        // we don't need op here because this is
+        // an internal operation
         std::memmove(it + (2 * cn), it, end - it);
 
         // move 1st segment
@@ -1604,6 +1610,8 @@ normalize_path()
             }
             else
             {
+                // use uppercase as required by
+                // syntax-based normalization
                 *dest-- = 'A';
                 *dest-- = '3';
                 *dest = '%';
