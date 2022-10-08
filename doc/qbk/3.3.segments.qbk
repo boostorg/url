@@ -11,74 +11,71 @@
 
 [section Segments]
 
-Every URL defines a
-[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.3 ['path]].
-For opaque schemes such as
-[@https://datatracker.ietf.org/doc/html/rfc6068 mailto],
-the path is considered a single unit which can be used with functions like
-[link url.ref.boost__urls__url_view_base.encoded_path `encoded_path`]
-or
-[link url.ref.boost__urls__url_base.set_path `set_path`].
-In this case it is up to the user to apply the scheme-specific
-syntax and semantics to further refine the URL contents, either
-for validation or interpretation.
-For URLs using hierarchical schemes such as
-[@https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.1 http]
-or
-[@https://datatracker.ietf.org/doc/html/rfc6455#section-11.1.2 wss],
-the path is interpreted as a slash delimited sequence of
-percent-escaped strings called ['segments]. The following URL
+Hierarchical schemes often interpret the path as a slash-delimited
+sequence of percent-encoded strings called segments.
+In this library the segments may be accessed using these separate,
+bidirectional view types which reference the underlying URL:
+
+[table Segments Types [
+    [Type]
+    [Accessor]
+    [Description]
+][
+    [__segments_view__]
+    [[link url.ref.boost__urls__url_view_base.segments `segments`]]
+    [
+    A read-only range of decoded segments.
+    ]
+][
+    [__segments_ref__]
+    [[link url.ref.boost__urls__url_base.segments `segments`]]
+    [
+    A modifiable range of decoded segments.
+    ]
+][
+    [__segments_encoded_view__]
+    [[link url.ref.boost__urls__url_view_base.encoded_segments `encoded_segments`]]
+    [
+    A read-only range of segments.
+    ]
+][
+    [__segments_encoded_ref__]
+    [[link url.ref.boost__urls__url_base.encoded_segments `encoded_segments`]]
+    [
+    A modifiable range of segments.
+    ]
+]]
+
+First we observe these invariants about paths and segments:
+
+* All URLs have a path
+* A path is absolute, relative, or empty
+* Paths starting with "/" are absolute
+* A relative path can never follow an authority
+* Every path maps to a unique range of segments,
+  plus a `bool` indicating if the path is absolute.
+* Every range of segments, plus a `bool` indicating
+  if the path is absolute, maps to a unique path.
+
+The following URL
 contains a path with three segments: "path", "to", and "file.txt":
 ```
 http://www.example.com/path/to/file.txt
 ```
 
-We use the word path to refer to the path string, and the word
-segments to mean a slash delimited sequence. In this library segments
-are represented using containers modeling bidirectional ranges. For
-example the member function
-[link url.ref.boost__urls__url_view_base.encoded_segments `encoded_segments`]
-returns a container called
-[link url.ref.boost__urls__segments_encoded_ref `segments_encoded_ref`]
-which may be iterated, and references the underlying character buffer
-without taking ownership. Here we define the function `segs` which
-returns a `std::list` formed by appending each segment in the path:
+To understand the relationship between the path and segments,
+we will define this function `segs` which returns a list of
+strings corresponding to the elements in a container of segments:
 
 [code_container_4_1]
 
-[note
-    In the remainder of this section we use the
-    sequence returned from a call to the `segs`
-    function above to demonstrate the outcomes of
-    parsing and modification of path segments.
-    For example, calling
-    ```
-        segs( url_view( "/path/to/file.txt" ) )
-    ```
-    produces the sequence.
-    ```
-        { "path", "to", "file.txt" }
-    ```
-    The term sequence always refers to the elements
-    returned by `segs`.
-]
-
-We start with the following invariants about paths:
-
-* All URLs have a path, even if empty.
-* A path starting with "/" is absolute, otherwise it is relative.
-* With an authority, the path can only be absolute or empty.
-* Every absolute or relative path maps to a unique sequence.
-* Every sequence determines a unique absolute or relative path.
-
 In this table we show the result of invoking `segs` with
-different URLs containing paths. This demonstrates how
-the library achieves the invariants described above for
-various interesting cases:
+different paths. This demonstrates how the library achieves
+the invariants described above for various interesting cases:
 
-[table Path Sequences [
+[table Segments [
     [s]
-    [`segs( url( s ) )`]
+    [`segs( s )`]
     [absolute]
 ][
     [`""`]
@@ -141,11 +138,10 @@ For example consider the following URL:
 url u = url().set_path( "kyle:xy" );
 ```
 
-The library will produce the URL string `"./kyle:xy"` and not
-`"kyle:xy"`, because the latter would have a scheme which is
-clearly not intended. This table shows a URL string, a
-modification operation, and the URL string which results from
-applying the operation:
+The library will produce the URL string `"kyle%3Axy"` and not
+`"kyle:xy"`, because the latter would have an unintended scheme.
+The table below demonstrates the results achieved by performing
+various modifications to a URL containing a path:
 
 [/
     Functions which may need

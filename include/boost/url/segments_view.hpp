@@ -39,13 +39,9 @@ namespace urls {
     assert( ps.buffer().data() == u.buffer().data() );
     @endcode
 
-    The strings produced when iterators are
-    dereferenced belong to the iterator and
-    become invalidated when that particular
-    iterator is incremented, decremented,
-    or destroyed.
-    Any percent-escapes in returned strings
-    are decoded first.
+    Percent escapes in strings returned when
+    dereferencing iterators are automatically
+    decoded.
 
     @par Iterator Invalidation
     Changes to the underlying character buffer

@@ -17,7 +17,7 @@ string literal containing a
 [@https://datatracker.ietf.org/doc/html/rfc3986#section-3 ['URI]]:
 
 [c++]
-[code_containers_1_1]
+[code_urls_parsing_1]
 
 The function returns a __result__ which holds a __url_view__
 if the string is a valid URL. Otherwise it holds an __error_code__.
@@ -38,7 +38,7 @@ to the
 grammar, throwing an exception upon failure. The following two statements
 are equivalent:
 
-[code_containers_1_2]
+[code_urls_parsing_2]
 
 In this library, free functions which parse things are named with the
 word "parse" followed by the name of the grammar used to match the string.
@@ -81,10 +81,6 @@ is suited for this purpose. All the URL parsing functions are listed here:
     [[teletype]`http://www.boost.org/index.html`]
     [Any ['URI] or ['relative-ref]]
 ]]
-
-
-
-
 
 The URL is stored in its serialized form. Therefore, it can
 always be easily output, sent, or embedded as part of a

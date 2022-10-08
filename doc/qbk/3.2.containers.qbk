@@ -131,9 +131,15 @@ These members are used to inspect and modify the scheme:
 
 The authority is an optional part whose presence is indicated by
 an unescaped double slash ("//") immediately following the scheme,
-or at the beginning if the scheme is not present.
+or at the beginning if the scheme is not present. It contains
+three components: an optional userinfo, the host, and an optional port.
+The authority in this diagram has all three components:
 
-These members are used to inspect and modify the authority as a unit:
+[$url/images/AuthorityDiagram.svg]
+
+An empty authority, corresponding to just a zero-length host component,
+is distinct from the absence of an authority.
+These members are used to inspect and modify the authority as a whole string:
 
 [table Authority Observers [
     [Function]
@@ -586,7 +592,7 @@ These members are used to inspect and modify the host:
 [heading Port]
 
 The port is a string of digits, possibly of zero length. The presence of
-a port is indicated by a colon prefix (":") comeing after the host and
+a port is indicated by a colon prefix (":") appearing after the host and
 userinfo. A zero length port string is distinct from the absence of a port.
 The library represents the port with both a decimal string and an unsigned
 16-bit integer. If the numeric value of the string would exceed the range

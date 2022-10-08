@@ -41,17 +41,12 @@ class params_view;
 
     <br>
 
-    The strings produced when iterators are
-    dereferenced belong to the iterator and
-    become invalidated when that particular
-    iterator is incremented, decremented,
-    or destroyed.
-    Any percent-escapes in returned strings
-    are decoded first.
-    Strings passed to member functions do
-    not contain percent-escapes; the percent
-    character ('%') is treated as a literal
-    percent.
+    Percent escapes in strings returned when
+    dereferencing iterators are automatically
+    decoded.
+    Reserved characters in strings supplied
+    to modifier functions are automatically
+    percent-escaped.
 
     @par Example
     @code
@@ -64,15 +59,20 @@ class params_view;
     Changes to the underlying character buffer
     can invalidate iterators which reference it.
     Modifications made through the container will
-    invalidate some iterators to the underlying
-    character buffer:
+    invalidate some or all iterators:
+    <br>
+
     @li @ref append : Only `end()`.
+
     @li @ref assign, @ref clear,
         `operator=` : All elements.
+
     @li @ref erase : Erased elements and all
         elements after (including `end()`).
+
     @li @ref insert : All elements at or after
         the insertion point (including `end()`).
+
     @li @ref replace, @ref set : Modified
         elements and all elements
         after (including `end()`).

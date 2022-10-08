@@ -36,17 +36,9 @@ namespace urls {
     params_view p = u.params();
     @endcode
 
-    The strings produced when iterators are
-    dereferenced belong to the iterator and
-    become invalidated when that particular
-    iterator is incremented, decremented,
-    or destroyed.
-    Any percent-escapes in returned strings
-    are decoded first.
-    Strings passed to member functions do
-    not contain percent-escapes; the percent
-    character ('%') is treated as a literal
-    percent.
+    Percent escapes in strings returned when
+    dereferencing iterators are automatically
+    decoded.
 
     @par Iterator Invalidation
     Changes to the underlying character buffer

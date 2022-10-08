@@ -11,105 +11,180 @@
 
 [section Params]
 
-The URL query augments the information in the path to identify a resource
-within the scope of the scheme and authority. Unlike the URL path, the
-query string always contains non-hierarchical data.
+While the query is specified as a plain string, it is usually
+interpreted as a set of key-value pairs commonly referred to as 
+[@https://en.wikipedia.org/wiki/Query_string ['URL Parameters]],
+although here we use the term ['query parameters] or ['params]
+for short. There is no official, standard specification of the
+query parameters format, but the W3C recommendations and HTML 5
+have this to say:
 
-Although the field is opaque and there is no mandatory syntax for
-interpreting queries, its strings are usually interpreted as key-value
-parameters delimited by the '&' or ';' character. In contexts where a
-query is interpreted as key/value pairs, it is called the
-['query parameters], ['query params], or just [*params].
-In addition to interacting with the query as a single string, the
-library provides container adaptors modeling ranges of individual
-query parameters.
+* The query string is composed of a series of key-value pairs.
 
-The URL below contains the query "[teletype]`?id=409&name=Joe&individual`"
-with the three parameters "[teletype]`id=409`", "[teletype]`name=Joe`", and
-"[teletype]`individual`":
+* Within each pair, the field name and value are separated by an
+  equals sign, "=".
 
-[snippet_parsing_query_0]
+* The series of pairs is separated by the ampersand, "&".
 
-If the URL has no query, [link url.ref.boost__urls__url_view.query `query`]
-returns an empty string. The function
-[link url.ref.boost__urls__url_view.has_query `has_query`]
-can be used to determine whether this empty string means there is
-no query or an empty query string in the URL.
+* Most web frameworks allow multiple values to have the same key.
 
-[snippet_parsing_query_5]
+* Key comparisons are usually case sensitive, but the receiving
+  authority is ultimately responsible for deciding this.
 
-When using the query string as parameters, note that decoded
-query strings might include ambiguous `&` and `=` characters.
-In the following example, the decoded query implies there are
-two query parameters while there is only one parameter whose
-value includes a `&` character.
+This URL has two query parameters, `first` and `last` whose
+values are "John" and "Doe" respectively:
+[teletype]
+```
+http://www.example.com?first=John&last=Doe
+```
 
-[snippet_parsing_query_7]
+Like the path, the library permits access to the params as
+using these separate, bidirectional view types which reference
+the underlying URL:
 
-The reason the decoded variant of a query is still allowed is
-because protocols are also allowed to interpret queries as
-opaque strings, in which case the `&` character is not ambiguous.
+[table Params Types [
+    [Type]
+    [Accessor]
+    [Description]
+][
+    [__params_view__]
+    [[link url.ref.boost__urls__url_view_base.params `params`]]
+    [
+    A read-only range of decoded params.
+    ]
+][
+    [__params_ref__]
+    [[link url.ref.boost__urls__url_base.params `params`]]
+    [
+    A modifiable range of decoded params.
+    ]
+][
+    [__params_encoded_view__]
+    [[link url.ref.boost__urls__url_view_base.encoded_params `encoded_params`]]
+    [
+    A read-only range of params.
+    ]
+][
+    [__params_encoded_ref__]
+    [[link url.ref.boost__urls__url_base.encoded_params `encoded_params`]]
+    [
+    A modifiable range of params.
+    ]
+]]
 
-When the query string represents parameters, the decoded
-parameters can be accessed safely through a parameter view.
+A param always has a key, even if it is the empty string.
+The value is optional; an empty string is distinct from
+no value. To represent individual params the library uses
+these types, distinguished by their ownership model and
+whether or not percent-escapes are possible:
 
-[snippet_parsing_query_1]
+[table Param Types [
+    [Type]
+    [String Type]
+    [Description]
+][
+    [__param__]
+    [__std_string__]
+    [
+    A key-value pair with ownership of the strings.
+    This can be used to hold decoded strings, or to
+    allow the caller to take ownership of a param
+    by making a copy.
+    ]
+][
+    [__param_view__]
+    [__string_view__]
+    [
+    A key-value pair without percent-escapes,
+    referencing externally managed character buffers.
+    ]
+][
+    [__param_pct_view__]
+    [__pct_string_view__]
+    [
+    A key-value pair which may contain percent-escapes,
+    referencing externally managed character buffers.
+    ]
+]]
 
-Parameter views are lightweight references to the underlying path string.
-Each parameter is represented as a structure with fields to refer to the
-key and value. An extra field `has_value` is used to indicate whether
-the value is absent.
+Param types can be constructed from initializer lists,
+allowing for convenient notation. To represent a missing
+value, the constant
+[link url.ref.boost__urls__no_value `no_value`]
+or `nullptr` may be used. This table shows some examples
+of initializer lists used to construct a param type, and
+the resulting data members:
 
-[snippet_parsing_query_1a]
+[table Param Initializers [
+    [Statement]
+    [`qp.key`]
+    [`qp.value`]
+    [`qp.has_value`]
+][
+    [`param qp = { "first", "John" };`]
+    [`"First"`]
+    [`"John"`]
+    [`true`]
+][
+    [`param qp = { "first", "" };`]
+    [`"First"`]
+    [`""`]
+    [`true`]
+][
+    [`param qp = { "first", no_value };`]
+    [`"First"`]
+    [`""`]
+    [`false`]
+][
+    [`param qp = { "", "Doe" };`]
+    [`""`]
+    [`"Doe"`]
+    [`true`]
+]]
 
-[warning
-    Ownership of the string is not transferred; the caller is responsible for
-    ensuring that the lifetime of the string extends until the container is
-    destroyed.
-]
+To understand the relationship between the query and the
+resulting range of params, first we will define this
+function `parms` which returns a list of params
+corresponding to the elements in a container
+of params:
 
-In addition to accessor functions which treat the query as a single string,
-the library provides container adaptors modeling ranges of query parameters.
+[code_container_5_1]
 
-Note that a parameter value might be either empty or absent. The
-presence of a value is indicated by the presence of an equals ('=')
-sign appearing after the key. This means the value may be absent,
-empty, or contain characters.
+In the table below we show the result of invoking `parms` with
+different queries. This demonstrates how the syntax of the query
+maps to the parameter structure:
 
-The key of a query parameter might also be empty. This means that
-a query parameter may be completely empty. In this case the
-parameter is said to have a zero-length or empty key, and
-no value.
+[table Params Sequences [
+    [s]
+    [`parms( s )`]
+][
+    [`"?first=John&last=Doe"`]
+    [`{ { "first", "John" }, { "last", "Doe" } }`]
+][
+    [`"?id=42&unsorted"`]
+    [`{ { "id", "42" }, { "last", no_value } }`]
+][
+    [`"?col=cust&row="`]
+    [`{ { "col", "cust" }, { "row", "" } }`]
+][
+    [`"?justify=left&"`]
+    [`{ { "justify", "left" }, { "", no_value } }`]
+][
+    [`"?"`]
+    [`{ { "", no_value } }`]
+][
+    [`""`]
+    [`{ }`]
+]]
 
-The URL below demonstrates all the ways that keys and values may
-appear in query parameters:
+It may be surprising that an empty query string ("?")
+produces a sequence with one empty param. This is by
+design, otherwise the sequence would not be
+distinguishable from the case where there
+is no query string (last two rows of the
+table above).
 
-[snippet_parsing_query_8]
-
-1) The regular key and value pair:
-
-[snippet_parsing_query_8a]
-
-2) A key with an empty value:
-
-[snippet_parsing_query_8b]
-
-3) A key with no value:
-
-[snippet_parsing_query_8c]
-
-4) A key with no value:
-
-[snippet_parsing_query_8d]
-
-[note
-    The URL reserved characters `:`, `@`, `?`, and `/` may appear
-    unencoded with URL queries, as they are not ambiguous with
-    other URL components.
-
-    [snippet_parsing_query_9]
-]
-
-[/-----------------------------------------------------------------------------]
+For complete details on containers used to represent
+query strings as params please view the reference.
 
 [endsect]

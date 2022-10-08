@@ -48,15 +48,12 @@ class segments_view;
     segments_ref ps = u.segments();
     @endcode
 
-    The strings returned when iterators are
-    dereferenced have type @ref string_view,
-    and are owned by their iterators.
-    A string become invalidated when
-    its iterator is incremented, decremented,
-    or destroyed.
-
-    Reserved characters in inputs are
-    automatically escaped.
+    Percent escapes in strings returned when
+    dereferencing iterators are automatically
+    decoded.
+    Reserved characters in strings supplied
+    to modifier functions are automatically
+    percent-escaped.
 
     @par Iterator Invalidation
     Changes to the underlying character buffer

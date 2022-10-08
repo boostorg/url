@@ -79,6 +79,9 @@
 [def __optional__               [link url.ref.boost__urls__optional `optional`]]
 [def __origin_form_rule__       [link url.ref.boost__urls__origin_form_rule `origin_form_rule`]]
 [def __parse_uri__              [link url.ref.boost__urls__parse_uri `parse_uri`]]
+[def __param__                  [link url.ref.boost__urls__param `param`]]
+[def __param_view__             [link url.ref.boost__urls__param_view `param_view`]]
+[def __param_pct_view__         [link url.ref.boost__urls__param_pct_view `param_pct_view`]]
 [def __params_ref__             [link url.ref.boost__urls__params_ref `params_ref`]]
 [def __params_view__            [link url.ref.boost__urls__params_view `params_view`]]
 [def __params_encoded_ref__     [link url.ref.boost__urls__params_encoded_ref `params_encoded_ref`]]
@@ -131,7 +134,7 @@
 [import ../../example/magnet/magnet.cpp]
 [import ../../example/route/route.cpp]
 [import ../../test/unit/snippets.cpp]
-[import ../../test/unit/doc_container.cpp]
+[import ../../test/unit/doc_3_urls.cpp]
 [import ../../test/unit/doc_grammar.cpp]
 
 [/-----------------------------------------------------------------------------]
@@ -153,18 +156,3 @@
 [endsect]
 
 [xinclude index.xml]
-
-[/
-Overview
-    Requirements
-    Nomenclature
-    Security Review (Bishop Fox)
-    Quick Look
-URL
-    General
-    Parsing
-    Containers
-    Segments
-    Params
-...
-]

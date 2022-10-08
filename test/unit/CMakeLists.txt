@@ -18,7 +18,7 @@ set(BOOST_URL_TESTS_FILES
     Jamfile
     test_rule.hpp
     authority_view.cpp
-    doc_container.cpp
+    doc_3_urls.cpp
     doc_grammar.cpp
     decode_view.cpp
     encode.cpp

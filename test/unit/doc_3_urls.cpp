@@ -18,7 +18,7 @@
 namespace boost {
 namespace urls {
 
-struct doc_container_test
+struct doc_3_urls_test
 {
     static
     void
@@ -39,11 +39,23 @@ struct doc_container_test
     }
 
     //[code_container_4_1
-    auto segs( url_view const& u ) -> std::list< std::string >
+    auto segs( string_view s ) -> std::list< std::string >
     {
+        url_view u( s );
         std::list< std::string > seq;
-        for( auto s : u.encoded_segments() )
-            seq.push_back( s.decode() );
+        for( auto seg : u.encoded_segments() )
+            seq.push_back( seg.decode() );
+        return seq;
+    }
+    //]
+
+    //[code_container_5_1
+    auto parms( string_view s ) -> std::list< param >
+    {
+        url_view u( s );
+        std::list< param > seq;
+        for( auto qp : u.params() )
+            seq.push_back( qp );
         return seq;
     }
     //]
@@ -90,7 +102,7 @@ struct doc_container_test
         // segs()
         {
             url_view u;
-            segs(u);
+            segs("http://example.com/path/to/file.txt");
         }
 
         path_segments();
@@ -98,8 +110,8 @@ struct doc_container_test
 };
 
 TEST_SUITE(
-    doc_container_test,
-    "boost.url.doc.container");
+    doc_3_urls_test,
+    "boost.url.doc.3_urls");
 
 } // urls
 } // boost
