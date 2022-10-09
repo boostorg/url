@@ -46,6 +46,7 @@ in a translation unit of the program.
 
 #include <boost/url/impl/authority_view.ipp>
 #include <boost/url/impl/decode_view.ipp>
+#include <boost/url/impl/decode.ipp>
 #include <boost/url/impl/error.ipp>
 #include <boost/url/impl/ipv4_address.ipp>
 #include <boost/url/impl/ipv6_address.ipp>

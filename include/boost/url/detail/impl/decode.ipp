@@ -138,21 +138,6 @@ decode(
 }
 
 std::size_t
-decode(
-    char* dest,
-    char const* end,
-    pct_string_view s,
-    decode_opts const& opt = {})
-{
-    auto const n1 =
-        detail::decode_unchecked(
-            dest, end, s, opt);
-    if(n1 < s.decoded_size())
-        return 0;
-    return n1;
-}
-
-std::size_t
 decode_bytes_unchecked(
     string_view s) noexcept
 {
