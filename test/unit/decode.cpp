@@ -425,10 +425,32 @@ public:
     }
 
     void
+    testJavadocs()
+    {
+        {
+            static constexpr std::size_t MAX_LENGTH = 128;
+
+            char *dest = new char[MAX_LENGTH];
+            std::size_t decoded_size = decode( dest, dest + MAX_LENGTH,
+                                              "Program%20Files", decode_opts{} );
+            assert( decoded_size == 13 );
+            assert( strncmp( "Program Files", dest, decoded_size ) == 0 );
+        }
+
+        {
+            std::string v = decode( "Program%20Files" );
+            assert( v == "Program Files" );
+            assert( v.size() == 13 );
+        }
+
+    }
+
+    void
     run()
     {
         testDecoding();
         testValidate();
+        testJavadocs();
     }
 };
 

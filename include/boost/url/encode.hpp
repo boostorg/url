@@ -63,7 +63,7 @@ namespace urls {
     options will be used.
 
     @param unescaped The set of characters
-    unescaped to appear unescaped.
+    allowed to appear unescaped.
     This type must satisfy the requirements
     of <em>CharSet</em>. If this parameter is
     omitted, then no characters are considered
@@ -183,7 +183,7 @@ encode(
     @param token A string token.
 
     @param unescaped The set of characters
-    unescaped to appear unescaped.
+    allowed to appear unescaped.
     This type must satisfy the requirements
     of <em>CharSet</em>. If this parameter is
     omitted, then no characters are considered

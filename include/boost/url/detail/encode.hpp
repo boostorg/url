@@ -32,7 +32,7 @@ std::size_t
 encoded_size_impl(
     FwdIt it,
     FwdIt const end,
-    CharSet const& allowed,
+    CharSet const& unescaped,
     encode_opts const& opt) noexcept
 {
     std::size_t n = 0;
@@ -40,7 +40,7 @@ encoded_size_impl(
     {
         while (it != end)
         {
-            if (allowed(*it))
+            if (unescaped(*it))
                 n += 1;
             else
                 n += 3;
@@ -52,12 +52,12 @@ encoded_size_impl(
     // to plus, then space should
     // be in the list of reserved
     // characters!
-    BOOST_ASSERT(!allowed(' '));
+    BOOST_ASSERT(!unescaped(' '));
     while (it != end)
     {
         if (*it == ' ')
             ++n;
-        else if (allowed(*it))
+        else if (unescaped(*it))
             ++n;
         else
             n += 3;
@@ -75,11 +75,11 @@ encode_impl(
     char const* const end,
     FwdIt p,
     FwdIt last,
-    CharSet const& allowed,
+    CharSet const& unescaped,
     encode_opts const& opt)
 {
     // Can't have % in charset
-    BOOST_ASSERT(! allowed('%'));
+    BOOST_ASSERT(! unescaped('%'));
 
     static constexpr char lo[] =
         "0123456789abcdef";
@@ -110,7 +110,7 @@ encode_impl(
 
         while(p != last)
         {
-            if(allowed(*p))
+            if(unescaped(*p))
             {
                 if(dest == end)
                     return dest - dest0;
@@ -127,12 +127,12 @@ encode_impl(
     // to plus, then space should
     // be in the list of reserved
     // characters!
-    BOOST_ASSERT(! allowed(' '));
+    BOOST_ASSERT(! unescaped(' '));
 
     // VFALCO Same note as above
     while(p != last)
     {
-        if(allowed(*p))
+        if(unescaped(*p))
         {
             if(dest == end)
                 return dest - dest0;
@@ -165,13 +165,13 @@ encode_unchecked(
     char const* end,
     char const* it,
     char const* const last,
-    CharSet const& allowed,
+    CharSet const& unescaped,
     encode_opts const& opt)
 {
-    BOOST_ASSERT(! allowed('%'));
+    BOOST_ASSERT(! unescaped('%'));
     BOOST_ASSERT(
         ! opt.space_to_plus ||
-        ! allowed(' '));
+        ! unescaped(' '));
     static constexpr char lo[] =
         "0123456789abcdef";
     static constexpr char hi[] =
@@ -197,7 +197,7 @@ encode_unchecked(
         while(it != last)
         {
             BOOST_ASSERT(dest != end);
-            if(allowed(*it))
+            if(unescaped(*it))
                 *dest++ = *it++;
             else
                 encode(dest, *it++, hex);
@@ -208,7 +208,7 @@ encode_unchecked(
         while(it != last)
         {
             BOOST_ASSERT(dest != end);
-            if(allowed(*it))
+            if(unescaped(*it))
             {
                 *dest++ = *it++;
             }
@@ -232,7 +232,7 @@ encode_unchecked(
     char* dest,
     char const* const end,
     string_view s,
-    CharSet const& allowed,
+    CharSet const& unescaped,
     encode_opts const& opt)
 {
     return encode_unchecked(
@@ -240,7 +240,7 @@ encode_unchecked(
         end,
         s.begin(),
         s.end(),
-        allowed,
+        unescaped,
         opt);
 }
 
@@ -249,14 +249,14 @@ encode_unchecked(
 // re-encode is to percent-encode a
 // string that can already contain
 // escapes. Characters not in the
-// allowed set are escaped, and
+// unescaped set are escaped, and
 // escapes are passed through unchanged.
 //
 template<class CharSet>
 std::size_t
 re_encoded_size_unchecked(
     string_view s,
-    CharSet const& allowed,
+    CharSet const& unescaped,
     encode_opts const& opt) noexcept
 {
     std::size_t n = 0;
@@ -268,7 +268,7 @@ re_encoded_size_unchecked(
         {
             if(*it != '%')
             {
-                if( allowed(*it)
+                if( unescaped(*it)
                     || *it == ' ')
                     n += 1; 
                 else
@@ -295,7 +295,7 @@ re_encoded_size_unchecked(
         {
             if(*it != '%')
             {
-                if(allowed(*it))
+                if(unescaped(*it))
                     n += 1; 
                 else
                     n += 3;
@@ -326,7 +326,7 @@ re_encode_unchecked(
     char*& dest_,
     char const* const end,
     string_view s,
-    CharSet const& allowed,
+    CharSet const& unescaped,
     encode_opts const& opt) noexcept
 {
     static constexpr char lo[] =
@@ -364,7 +364,7 @@ re_encode_unchecked(
                 {
                     *dest++ = '+';
                 }
-                else if(allowed(*it))
+                else if(unescaped(*it))
                 {
                     *dest++ = *it;
                 }
@@ -393,7 +393,7 @@ re_encode_unchecked(
             BOOST_ASSERT(dest != end);
             if(*it != '%')
             {
-                if(allowed(*it))
+                if(unescaped(*it))
                 {
                     *dest++ = *it;
                 }

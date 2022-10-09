@@ -28,7 +28,7 @@ template<class CharSet>
 std::size_t
 encoded_size(
     string_view s,
-    CharSet const& allowed,
+    CharSet const& unescaped,
     encode_opts const& opt) noexcept
 {
 /*  If you get a compile error here, it
@@ -43,7 +43,7 @@ encoded_size(
     return detail::encoded_size_impl(
         s.data(),
         s.data() + s.size(),
-        allowed,
+        unescaped,
         opt);
 }
 
@@ -55,7 +55,7 @@ encode(
     char* dest,
     char const* const end,
     string_view s,
-    CharSet const& allowed,
+    CharSet const& unescaped,
     encode_opts const& opt)
 {
     /*  If you get a compile error here, it
@@ -72,7 +72,7 @@ encode(
         end,
         s.data(),
         s.data() + s.size(),
-        allowed,
+        unescaped,
         opt);
 }
 
@@ -84,7 +84,7 @@ template<
 BOOST_URL_STRTOK_RETURN
 encode(
     string_view s,
-    CharSet const& allowed,
+    CharSet const& unescaped,
     encode_opts const& opt,
     StringToken&& token) noexcept
 {
@@ -92,11 +92,11 @@ encode(
     BOOST_STATIC_ASSERT(
         grammar::is_charset<CharSet>::value);
     auto const n =
-        encoded_size(s, allowed, opt);
+        encoded_size(s, unescaped, opt);
     auto p = token.prepare(n);
     if(n > 0)
         detail::encode_unchecked(
-            p, p + n, s, allowed, opt);
+            p, p + n, s, unescaped, opt);
     return token.result();
 }
 

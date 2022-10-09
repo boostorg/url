@@ -30,7 +30,7 @@ encode(
     char const* const end,
     string_view s,
     encode_opts const& opt,
-    CharSet const& allowed)
+    CharSet const& unescaped)
 {
     /* If you get a compile error here, it
     means that the value you passed does
@@ -46,7 +46,7 @@ encode(
         s.data(),
         s.data() + s.size(),
         opt,
-        allowed);
+        unescaped);
 }
 
 } // detail

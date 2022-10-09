@@ -24,7 +24,7 @@
 namespace boost {
 namespace urls {
 
-/** Decode a string view into a buffer.
+/** Apply percent-decoding to a string
 
     This function applies percent-decoding to
     the given percent-encoded string, by
@@ -39,17 +39,16 @@ namespace urls {
     @code
     char *dest = new char[MAX_LENGTH];
     std::size_t decoded_size = decode( dest, dest + MAX_LENGTH,
-            "Program%20Files", decode_opts{} );
-
+                                      "Program%20Files", decode_opts{} );
     assert( decoded_size == 13 );
-    assert( strncmp( "Program%20Files", dest, decoded_size ) == 0 );
+    assert( strncmp( "Program Files", dest, decoded_size ) == 0 );
     @endcode
 
     @par Exception Safety
     Throws nothing.
 
-    @return `true` if the output was large
-    enough to hold the entire result.
+    @return Number of characters that have been
+    decoded.
 
     @param[in, out] dest A pointer to the
     beginning of the output buffer. Upon
@@ -73,19 +72,15 @@ namespace urls {
         @ref encode,
         @ref encoded_size.
 */
-inline
+BOOST_URL_DECL
 std::size_t
 decode(
     char* dest,
     char const* end,
     BOOST_URL_PCT_STRING_VIEW s,
-    decode_opts const& opt = {})
-{
-    BOOST_ASSERT(s.data() != dest);
-    return *detail::decode(dest, end, s, opt);
-}
+    decode_opts const& opt = {});
 
-/** Decode a string view
+/** Apply percent-decoding to a string
 
     This function returns a view that applies
     percent-decoding to the given percent-encoded
@@ -94,13 +89,9 @@ decode(
 
     @par Example
     @code
-    result< decode_view > r = decode( "Program%20Files" );
-    assert( r.has_value() );
-
-    decode_view v = *r;
+    std::string v = decode( "Program%20Files" );
     assert( v == "Program Files" );
     assert( v.size() == 13 );
-    assert( v.encoded().size() == 15 );
     @endcode
 
     @par Exception Safety
