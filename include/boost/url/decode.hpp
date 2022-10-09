@@ -37,6 +37,7 @@ namespace urls {
 
     @par Example
     @code
+    static constexpr std::size_t MAX_LENGTH = 128;
     char *dest = new char[MAX_LENGTH];
     std::size_t decoded_size = decode( dest, dest + MAX_LENGTH,
                                       "Program%20Files", decode_opts{} );
