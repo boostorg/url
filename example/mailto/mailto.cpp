@@ -13,15 +13,15 @@
     standard output.
 */
 
-#include "mailto_grammar.hpp"
-#include <boost/url/optional.hpp>
-#include <boost/url/url_view.hpp>
-#include <boost/url/url.hpp>
 #include <boost/url/grammar/ci_string.hpp>
 #include <boost/url/grammar/parse.hpp>
+#include <boost/url/optional.hpp>
 #include <boost/url/rfc/absolute_uri_rule.hpp>
-#include <iostream>
+#include <boost/url/url.hpp>
+#include <boost/url/url_view.hpp>
 #include <algorithm>
+#include <iostream>
+#include "rfc.hpp"
 
 namespace urls = boost::urls;
 

@@ -58,13 +58,13 @@ constexpr auto wsp_chars =
 /// The set of obs_ctext characters
 struct obs_ctext_chars_t
 {
-    static constexpr unsigned char c1 = 0x01;
-    static constexpr unsigned char c2 = 0x08;
-    static constexpr unsigned char c3 = 0x11;
-    static constexpr unsigned char c4 = 0x12;
-    static constexpr unsigned char c5 = 0x14;
-    static constexpr unsigned char c6 = 0x31;
-    static constexpr unsigned char c7 = char(0x127);
+    static constexpr unsigned char c1 = char(1);
+    static constexpr unsigned char c2 = char(8);
+    static constexpr unsigned char c3 = char(11);
+    static constexpr unsigned char c4 = char(12);
+    static constexpr unsigned char c5 = char(14);
+    static constexpr unsigned char c6 = char(31);
+    static constexpr unsigned char c7 = char(127);
 
     constexpr obs_ctext_chars_t() noexcept = default;
 
