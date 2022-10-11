@@ -181,6 +181,8 @@ ci_is_equal(
                 String1, string_view>::value,
         bool>::type
 {
+    // this overload supports forward iterators and
+    // does not assume the existence string_view::size
     if( detail::type_id<String0>() >
         detail::type_id<String1>())
         return detail::ci_is_equal(s1, s0);
@@ -193,6 +195,8 @@ ci_is_equal(
     string_view s0,
     string_view s1) noexcept
 {
+    // this overload is faster as it makes use of
+    // string_view::size
     if(s0.size() != s1.size())
         return false;
     return detail::ci_is_equal(s0, s1);
