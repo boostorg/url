@@ -1386,6 +1386,74 @@ modifying_path()
     }
 }
 
+void
+normalizing()
+{
+    {
+        //[snippet_normalizing_1
+        url_view u1("https://www.boost.org/index.html");
+        url_view u2("https://www.boost.org/doc/../index.html");
+        assert(u1.buffer() != u2.buffer());
+        //]
+    }
+
+    {
+        //[snippet_normalizing_2
+        url_view u1("https://www.boost.org/index.html");
+        url_view u2("https://www.boost.org/doc/../index.html");
+        assert(u1 == u2);
+        //]
+    }
+
+    {
+        //[snippet_normalizing_3
+        url_view u1("https://www.boost.org/index.html");
+        url u2("https://www.boost.org/doc/../index.html");
+        assert(u1 == u2);
+        u2.normalize();
+        assert(u1.buffer() == u2.buffer());
+        //]
+    }
+
+    {
+        //[snippet_normalizing_4
+        url u("https://www.boost.org/doc/../%69%6e%64%65%78%20file.html");
+        u.normalize();
+        assert(u.buffer() == "https://www.boost.org/index%20file.html");
+        //]
+    }
+
+    {
+        //[snippet_normalizing_5
+        auto normalize_http_url =
+            [](url& u)
+        {
+            u.normalize();
+            if (u.port() == "80" ||
+                u.port().empty())
+                u.remove_port();
+            if (u.has_authority() &&
+                u.encoded_path().empty())
+                u.set_path_absolute(true);
+        };
+
+        url u1("https://www.boost.org");
+        normalize_http_url(u1);
+        url u2("https://www.boost.org/");
+        normalize_http_url(u2);
+        url u3("https://www.boost.org:/");
+        normalize_http_url(u3);
+        url u4("https://www.boost.org:80/");
+        normalize_http_url(u4);
+
+        BOOST_TEST_EQ(u1.buffer(), "https://www.boost.org/");
+        BOOST_TEST_EQ(u2.buffer(), "https://www.boost.org/");
+        BOOST_TEST_EQ(u3.buffer(), "https://www.boost.org/");
+        BOOST_TEST_EQ(u4.buffer(), "https://www.boost.org/");
+        //]
+    }
+}
+
 //[snippet_using_static_pool_1
 // VFALCO NOPE
 //]
@@ -1412,6 +1480,7 @@ public:
         ignore_unused(&grammar_parse);
         ignore_unused(&grammar_customization);
         ignore_unused(&modifying_path);
+        normalizing();
 
         BOOST_TEST_PASS();
     }
