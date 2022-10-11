@@ -29,7 +29,7 @@ parse_encoded(
 {
     auto const start = it;
     // VFALCO TODO
-    // opt.plus_to_space?
+    // opt.space_as_plus?
     std::size_t n = 0;
     char const* it0;
 skip:

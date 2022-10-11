@@ -12,7 +12,7 @@
 #define BOOST_URL_ENCODE_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/encode_opts.hpp>
+#include <boost/url/encoding_opts.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/all_chars.hpp>
 #include <boost/url/grammar/string_token.hpp>
@@ -55,7 +55,7 @@ namespace urls {
 
     @see
         @ref encode,
-        @ref encode_opts,
+        @ref encoding_opts,
         @ref make_pct_string_view.
 */
 template<class CharSet>
@@ -63,7 +63,7 @@ std::size_t
 encoded_size(
     string_view s,
     CharSet const& unreserved,
-    encode_opts const& opt = {}) noexcept;
+    encoding_opts opt = {}) noexcept;
 
 //------------------------------------------------
 
@@ -121,7 +121,21 @@ encode(
     std::size_t size,
     string_view s,
     CharSet const& unreserved,
-    encode_opts const& opt = {});
+    encoding_opts opt = {});
+
+#ifndef BOOST_URL_DOCS
+// VFALCO semi-private for now
+template<class CharSet>
+std::size_t
+encode_unsafe(
+    char* dest,
+    std::size_t size,
+    string_view s,
+    CharSet const& unreserved,
+    encoding_opts opt);
+#endif
+
+//------------------------------------------------
 
 /** Return a percent-encoded string
 
@@ -132,8 +146,8 @@ encode(
 
     @par Example
     @code
-    encode_opts opt;
-    opt.space_to_plus = true;
+    encoding_opts opt;
+    opt.space_as_plus = true;
     std::string s = encode( "My Stuff", opt, pchars );
 
     assert( s == "My+Stuff" );
@@ -162,7 +176,7 @@ encode(
     @see
         @ref encode,
         @ref encoded_size,
-        @ref encode_opts,
+        @ref encoding_opts,
 */
 template<
     BOOST_URL_STRTOK_TPARAM,
@@ -171,7 +185,7 @@ BOOST_URL_STRTOK_RETURN
 encode(
     string_view s,
     CharSet const& unreserved,
-    encode_opts const& opt = {},
+    encoding_opts opt = {},
     BOOST_URL_STRTOK_ARG(token)) noexcept;
 
 } // urls

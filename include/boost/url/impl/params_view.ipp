@@ -19,8 +19,19 @@ namespace urls {
 
 params_view::
 params_view(
-    detail::query_ref const& ref) noexcept
-    : params_base(ref)
+    detail::query_ref const& ref,
+    encoding_opts opt) noexcept
+    : params_base(ref, opt)
+{
+}
+
+//------------------------------------------------
+
+params_view::
+params_view(
+    params_view const& other,
+    encoding_opts opt)
+    : params_base(other.ref_, opt)
 {
 }
 
@@ -29,7 +40,19 @@ params_view(
     string_view s)
     : params_view(
         parse_query(s).value(
-            BOOST_URL_POS))
+            BOOST_URL_POS),
+        {true, false, false})
+{
+}
+
+params_view::
+params_view(
+    string_view s,
+    encoding_opts opt)
+    : params_view(
+        parse_query(s).value(
+            BOOST_URL_POS),
+        opt)
 {
 }
 

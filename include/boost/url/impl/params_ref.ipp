@@ -41,7 +41,7 @@ params_ref::
 operator
 params_view() const noexcept
 {
-    return {ref_};
+    return { ref_, opt_ };
 }
 
 //------------------------------------------------
@@ -66,10 +66,12 @@ insert(
     param_view const& p) ->
         iterator
 {
-    return u_->edit_params(
-        before.it_,
-        before.it_,
-        detail::param_iter(p));
+    return iterator(
+        u_->edit_params(
+            before.it_,
+            before.it_,
+            detail::param_iter(p)),
+        opt_);
 }
 
 auto
@@ -124,10 +126,12 @@ replace(
     param_view const& p) ->
         iterator
 {
-    return u_->edit_params(
-        pos.it_,
-        std::next(pos).it_,
-        detail::param_iter(p));
+    return iterator(
+        u_->edit_params(
+            pos.it_,
+            std::next(pos).it_,
+            detail::param_iter(p)),
+        opt_);
 }
 
 auto
@@ -154,11 +158,13 @@ unset(
 {
     BOOST_ASSERT(pos.it_.nk > 0);
     string_view s;
-    return u_->edit_params(
-        pos.it_,
-        pos.it_.next(),
-        detail::param_value_iter(
-            pos.it_.nk - 1, s, false));
+    return iterator(
+        u_->edit_params(
+            pos.it_,
+            pos.it_.next(),
+            detail::param_value_iter(
+                pos.it_.nk - 1, s, false)),
+        opt_);
 }
 
 auto
@@ -169,11 +175,13 @@ set(
         iterator
 {
     BOOST_ASSERT(pos.it_.nk > 0);
-    return u_->edit_params(
-        pos.it_,
-        pos.it_.next(),
-        detail::param_value_iter(
-            pos.it_.nk - 1, value, true));
+    return iterator(
+        u_->edit_params(
+            pos.it_,
+            pos.it_.next(),
+            detail::param_value_iter(
+                pos.it_.nk - 1, value, true)),
+        opt_);
 }
 
 auto

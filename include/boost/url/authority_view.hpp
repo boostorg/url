@@ -353,8 +353,8 @@ public:
     userinfo(
         BOOST_URL_STRTOK_ARG(token)) const
     {
-        decode_opts opt;
-        opt.plus_to_space = false;
+        encoding_opts opt;
+        opt.space_as_plus = false;
         return encoded_userinfo().decode(
             opt, std::move(token));
     }
@@ -451,8 +451,8 @@ public:
     user(
         BOOST_URL_STRTOK_ARG(token)) const
     {
-        decode_opts opt;
-        opt.plus_to_space = false;
+        encoding_opts opt;
+        opt.space_as_plus = false;
         return encoded_user().decode(
             opt, std::move(token));
     }
@@ -590,8 +590,8 @@ public:
     password(
         BOOST_URL_STRTOK_ARG(token)) const
     {
-        decode_opts opt;
-        opt.plus_to_space = false;
+        encoding_opts opt;
+        opt.space_as_plus = false;
         return encoded_password().decode(
             opt, std::move(token));
     }
@@ -712,8 +712,8 @@ public:
     host(
         BOOST_URL_STRTOK_ARG(token)) const
     {
-        decode_opts opt;
-        opt.plus_to_space = false;
+        encoding_opts opt;
+        opt.space_as_plus = false;
         return encoded_host().decode(
             opt, std::move(token));
     }
@@ -808,8 +808,8 @@ public:
     host_address(
         BOOST_URL_STRTOK_ARG(token)) const
     {
-        decode_opts opt;
-        opt.plus_to_space = false;
+        encoding_opts opt;
+        opt.space_as_plus = false;
         return encoded_host_address().decode(
             opt, std::move(token));
     }
@@ -1029,8 +1029,8 @@ public:
     host_name(
         BOOST_URL_STRTOK_ARG(token)) const
     {
-        decode_opts opt;
-        opt.plus_to_space = false;
+        encoding_opts opt;
+        opt.space_as_plus = false;
         return encoded_host_name().decode(
             opt, std::move(token));
     }

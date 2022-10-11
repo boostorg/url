@@ -11,7 +11,7 @@
 #ifndef BOOST_URL_DETAIL_DECODE_HPP
 #define BOOST_URL_DETAIL_DECODE_HPP
 
-#include <boost/url/decode_opts.hpp>
+#include <boost/url/encoding_opts.hpp>
 #include <boost/url/string_view.hpp>
 #include <cstdlib>
 
@@ -35,7 +35,7 @@ decode_unsafe(
     char* dest,
     char const* end,
     string_view s,
-    decode_opts const& opt = {}) noexcept;
+    encoding_opts opt = {}) noexcept;
 
 } // detail
 } // urls

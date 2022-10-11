@@ -59,13 +59,13 @@ decode_unsafe(
     char* const dest0,
     char const* end,
     string_view s,
-    decode_opts const& opt) noexcept
+    encoding_opts opt) noexcept
 {
     auto it = s.data();
     auto const last = it + s.size();
     auto dest = dest0;
 
-    if(opt.plus_to_space)
+    if(opt.space_as_plus)
     {
         while(it != last)
         {

@@ -49,7 +49,7 @@ iterator::
 operator*() const noexcept ->
     reference
 {
-    if (plus_to_space_ &&
+    if (space_as_plus_ &&
         *pos_ == '+')
         return ' ';
     if (*pos_ != '%')
@@ -68,12 +68,12 @@ decode_view::
 decode_view(
     string_view s,
     std::size_t n,
-    decode_opts opt) noexcept
+    encoding_opts opt) noexcept
     : p_(s.data())
     , n_(s.size())
     , dn_(n)
-    , plus_to_space_(
-        opt.plus_to_space)
+    , space_as_plus_(
+        opt.space_as_plus)
 {
 }
 

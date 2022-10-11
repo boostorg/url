@@ -87,8 +87,11 @@ measure(
 {
     if(at_end_)
         return false;
-    encode_opts opt;
-    opt.space_to_plus = false;
+    // When interacting with the query as
+    // an intact string, we do not treat
+    // the plus sign as an encoded space.
+    encoding_opts opt;
+    opt.space_as_plus = false;
     n += encoded_size(
         string_view(p_, n_),
         query_chars,
@@ -104,11 +107,14 @@ copy(
     char const* end) noexcept
 {
     BOOST_ASSERT(! at_end_);
-    encode_opts opt;
-    opt.space_to_plus = false;
+    // When interacting with the query as
+    // an intact string, we do not treat
+    // the plus sign as an encoded space.
+    encoding_opts opt;
+    opt.space_as_plus = false;
     dest += encode_unsafe(
         dest,
-        end,
+        end - dest,
         string_view(p_, n_),
         query_chars,
         opt);
@@ -164,8 +170,8 @@ measure(std::size_t& n) noexcept
 {
     if(at_end_)
         return false;
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     n += encoded_size(
         s0,
         detail::param_key_chars,
@@ -189,8 +195,8 @@ copy(
     char const* end) noexcept
 {
     BOOST_ASSERT(! at_end_);
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     dest += encode(
         dest,
         end - dest,
@@ -221,8 +227,8 @@ measure_impl(
     std::size_t& n,
     param_view const& p) noexcept
 {
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     n += encoded_size(
         p.key,
         detail::param_key_chars,
@@ -244,8 +250,8 @@ copy_impl(
     char const* end,
     param_view const& p) noexcept
 {
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     dest += encode(
         dest,
         end - dest,
@@ -294,8 +300,8 @@ measure(std::size_t& n) noexcept
 {
     if(at_end_)
         return false;
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     n += detail::re_encoded_size_unsafe(
         s0,
         detail::param_key_chars,
@@ -315,8 +321,8 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     detail::re_encode_unsafe(
         dest,
         end,
@@ -348,8 +354,8 @@ measure_impl(
     std::size_t& n,
     param_view const& p) noexcept
 {
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     n += detail::re_encoded_size_unsafe(
         p.key,
         detail::param_key_chars,
@@ -368,8 +374,8 @@ copy_impl(
     char const* end,
     param_view const& p) noexcept
 {
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     detail::re_encode_unsafe(
         dest,
         end,
@@ -411,8 +417,8 @@ measure(
     n += nk_; // skip key
     if(has_value_)
     {
-        encode_opts opt;
-        opt.space_to_plus = false;
+        encoding_opts opt;
+        opt.space_as_plus = false;
         n += encoded_size(
             s0,
             detail::param_value_chars,
@@ -430,8 +436,8 @@ copy(char*& it, char const* end) noexcept
     if(! has_value_)
         return;
     *it++ = '=';
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     it += encode(
         it,
         end - it,
@@ -463,8 +469,8 @@ measure(
     n += nk_; // skip key
     if(has_value_)
     {
-        encode_opts opt;
-        opt.space_to_plus = false;
+        encoding_opts opt;
+        opt.space_as_plus = false;
         n += detail::re_encoded_size_unsafe(
             s0,
             detail::param_value_chars,
@@ -484,8 +490,8 @@ copy(
     if(! has_value_)
         return;
     *dest++ = '=';
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     detail::re_encode_unsafe(
         dest,
         end,

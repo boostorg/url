@@ -84,7 +84,9 @@ class params_ref
 
     url_base* u_ = nullptr;
 
-    params_ref(url_base& u) noexcept;
+    params_ref(
+        url_base& u,
+        encoding_opts opt) noexcept;
 
 public:
     //--------------------------------------------
@@ -117,6 +119,10 @@ public:
     */
     params_ref(
         params_ref const& other) = default;
+
+    params_ref(
+        params_ref const& other,
+        encoding_opts opt) noexcept;
 
     /** Assignment
 

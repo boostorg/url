@@ -15,6 +15,11 @@
 
 #include "test_suite.hpp"
 
+#ifdef assert
+#undef assert
+#endif
+#define assert BOOST_TEST
+
 namespace boost {
 namespace urls {
 
@@ -335,7 +340,7 @@ struct url_view_base_test
         assert( url_view( "/sql?id=42&col=name&page-size=20" ).has_query() );
 
         // query
-        assert( url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).query() == "id=42&name=jane-doe&page size=20" );
+        assert( url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).query() == "id=42&name=jane-doe&page+size=20" );
 
         // encoded_query
         assert( url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_query() == "id=42&name=jane%2Ddoe&page+size=20" );

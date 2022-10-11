@@ -297,7 +297,7 @@ set_userinfo(
     string_view s)
 {
     op_t op(*this, &s);
-    encode_opts opt;
+    encoding_opts opt;
     auto const n = encoded_size(
         s, detail::userinfo_chars, opt);
     auto dest = set_userinfo_impl(n, op);
@@ -335,7 +335,7 @@ set_encoded_userinfo(
     pct_string_view s)
 {
     op_t op(*this, &detail::ref(s));
-    encode_opts opt;
+    encoding_opts opt;
     auto const pos = s.find_first_of(':');
     if(pos != string_view::npos)
     {
@@ -413,13 +413,13 @@ url_base::
 set_user(string_view s)
 {
     op_t op(*this, &s);
-    encode_opts opt;
+    encoding_opts opt;
     auto const n = encoded_size(
         s, detail::user_chars, opt);
     auto dest = set_user_impl(n, op);
-    detail::encode_unsafe(
+    encode_unsafe(
         dest,
-        impl_.get(id_pass).data(),
+        n,
         s,
         detail::user_chars,
         opt);
@@ -433,7 +433,7 @@ set_encoded_user(
     pct_string_view s)
 {
     op_t op(*this, &detail::ref(s));
-    encode_opts opt;
+    encoding_opts opt;
     auto const n =
         detail::re_encoded_size_unsafe(
             s, detail::user_chars, opt);
@@ -458,13 +458,13 @@ url_base::
 set_password(string_view s)
 {
     op_t op(*this, &s);
-    encode_opts opt;
+    encoding_opts opt;
     auto const n = encoded_size(
         s, detail::password_chars, opt);
     auto dest = set_password_impl(n, op);
-    detail::encode_unsafe(
+    encode_unsafe(
         dest,
-        dest + n,
+        n,
         s,
         detail::password_chars,
         opt);
@@ -478,7 +478,7 @@ set_encoded_password(
     pct_string_view s)
 {
     op_t op(*this, &detail::ref(s));
-    encode_opts opt;
+    encoding_opts opt;
     auto const n =
         detail::re_encoded_size_unsafe(
             s,
@@ -585,7 +585,7 @@ set_host(
 
     // reg-name
     op_t op(*this, &s);
-    encode_opts opt;
+    encoding_opts opt;
     auto const n = encoded_size(
         s, detail::host_chars, opt);
     auto dest = set_host_impl(n, op);
@@ -638,7 +638,7 @@ set_encoded_host(
 
     // reg-name
     op_t op(*this, &detail::ref(s));
-    encode_opts opt;
+    encoding_opts opt;
     auto const n = detail::re_encoded_size_unsafe(
         s, detail::host_chars, opt);
     auto dest = set_host_impl(n, op);
@@ -684,7 +684,7 @@ set_host_address(
 
     // reg-name
     op_t op(*this, &s);
-    encode_opts opt;
+    encoding_opts opt;
     auto const n = encoded_size(
         s, detail::host_chars, opt);
     auto dest = set_host_impl(n, op);
@@ -728,7 +728,7 @@ set_encoded_host_address(
 
     // reg-name
     op_t op(*this, &detail::ref(s));
-    encode_opts opt;
+    encoding_opts opt;
     auto const n = detail::re_encoded_size_unsafe(
         s, detail::host_chars, opt);
     auto dest = set_host_impl(n, op);
@@ -829,13 +829,13 @@ set_host_name(
         allowed = allowed - '.';
 
     op_t op(*this, &s);
-    encode_opts opt;
+    encoding_opts opt;
     auto const n = encoded_size(
         s, allowed, opt);
     auto dest = set_host_impl(n, op);
-    detail::encode_unsafe(
+    encode_unsafe(
         dest,
-        dest + n,
+        n,
         s,
         allowed,
         opt);
@@ -862,7 +862,7 @@ set_encoded_host_name(
         allowed = allowed - '.';
 
     op_t op(*this, &detail::ref(s));
-    encode_opts opt;
+    encoding_opts opt;
     auto const n = detail::re_encoded_size_unsafe(
         s, allowed, opt);
     auto dest = set_host_impl(n, op);
@@ -1101,7 +1101,7 @@ set_encoded_query(
     pct_string_view s)
 {
     op_t op(*this);
-    encode_opts opt;
+    encoding_opts opt;
     std::size_t n = 0;      // encoded size
     std::size_t nparam = 1; // param count
     auto const end = s.end();
@@ -1156,7 +1156,17 @@ params_ref
 url_base::
 params() noexcept
 {
-    return {*this};
+    return params_ref(
+        *this,
+        encoding_opts{
+            true, false, false});
+}
+
+params_ref
+url_base::
+params(encoding_opts opt) noexcept
+{
+    return params_ref(*this, opt);
 }
 
 params_encoded_ref
@@ -1198,7 +1208,7 @@ url_base::
 set_fragment(string_view s)
 {
     op_t op(*this, &s);
-    encode_opts opt;
+    encoding_opts opt;
     auto const n = encoded_size(
         s,
         detail::fragment_chars,
@@ -1206,9 +1216,9 @@ set_fragment(string_view s)
     auto dest = resize_impl(
         id_frag, n + 1, op);
     *dest++ = '#';
-    detail::encode_unsafe(
+    encode_unsafe(
         dest,
-        dest + n,
+        n,
         s,
         detail::fragment_chars,
         opt);
@@ -1222,7 +1232,7 @@ set_encoded_fragment(
     pct_string_view s)
 {
     op_t op(*this, &detail::ref(s));
-    encode_opts opt;
+    encoding_opts opt;
     auto const n =
         detail::re_encoded_size_unsafe(
             s,

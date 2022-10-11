@@ -365,17 +365,6 @@ void
 parsing_components()
 {
     {
-        //[snippet_components_1
-        string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
-        url_view u( s );
-        assert(u.scheme() == "https");
-        assert(u.authority().buffer() == "user:pass@example.com:443");
-        assert(u.path() == "/path/to/my-file.txt");
-        assert(u.query() == "id=42&name=John Doe Jingleheimer-Schmidt");
-        assert(u.fragment() == "page anchor");
-        //]
-    }
-    {
         //[snippet_components_2a
         url_view u( "https://www.ietf.org/rfc/rfc2396.txt" );
         assert(u.scheme() == "https");

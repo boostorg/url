@@ -522,7 +522,17 @@ params_view
 url_view_base::
 params() const noexcept
 {
-    return params_view(*pi_);
+    return params_view(
+        *pi_,
+        encoding_opts{
+            true,false,false});
+}
+
+params_view
+url_view_base::
+params(encoding_opts opt) const noexcept
+{
+    return params_view(*pi_, opt);
 }
 
 //------------------------------------------------

@@ -2078,6 +2078,10 @@ public:
     params_ref
     params() noexcept;
 
+    BOOST_URL_DECL
+    params_ref
+    params(encoding_opts opt) noexcept;
+
     /** Return the query as a container of parameters
 
         This function returns a bidirectional

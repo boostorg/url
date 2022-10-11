@@ -20,17 +20,17 @@ class decode_view::iterator
 {
     char const* begin_ = nullptr;
     char const* pos_ = nullptr;
-    bool plus_to_space_ = true;
+    bool space_as_plus_ = true;
 
     friend decode_view;
 
     iterator(
         char const* str,
-        bool plus_to_space) noexcept
+        bool space_as_plus) noexcept
         : begin_(str)
         , pos_(str)
-        , plus_to_space_(
-            plus_to_space)
+        , space_as_plus_(
+            space_as_plus)
     {
     }
 
@@ -38,10 +38,10 @@ class decode_view::iterator
     iterator(
         char const* str,
         size_type n,
-        bool plus_to_space) noexcept
+        bool space_as_plus) noexcept
         : begin_(str)
         , pos_(str + n)
-        , plus_to_space_(plus_to_space)
+        , space_as_plus_(space_as_plus)
     {
     }
 
@@ -134,7 +134,7 @@ decode_view::
 begin() const noexcept ->
     const_iterator
 {
-    return {p_, plus_to_space_};
+    return {p_, space_as_plus_};
 }
 
 inline
@@ -143,7 +143,7 @@ decode_view::
 end() const noexcept ->
     const_iterator
 {
-    return {p_, n_, plus_to_space_};
+    return {p_, n_, space_as_plus_};
 }
 
 inline

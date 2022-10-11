@@ -52,7 +52,8 @@ class params_view
     friend class params_ref;
 
     params_view(
-        detail::query_ref const& ref) noexcept;
+        detail::query_ref const& ref,
+        encoding_opts opt) noexcept;
 
 public:
     /** Constructor
@@ -101,6 +102,10 @@ public:
     */
     params_view(
         params_view const& other) = default;
+
+    params_view(
+        params_view const& other,
+        encoding_opts opt);
 
     /** Constructor
 
@@ -157,6 +162,11 @@ public:
     BOOST_URL_DECL
     params_view(
         string_view s);
+
+    BOOST_URL_DECL
+    params_view(
+        string_view s,
+        encoding_opts opt);
 
     /** Assignment
 

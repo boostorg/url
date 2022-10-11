@@ -43,22 +43,22 @@ public:
     check(
         string_view s,
         string_view m0,
-        bool space_to_plus = false)
+        bool space_as_plus = false)
     {
         // encoded_size
         {
-            encode_opts opt;
-            opt.space_to_plus =
-                space_to_plus;
+            encoding_opts opt;
+            opt.space_as_plus =
+                space_as_plus;
             BOOST_TEST(encoded_size(
                 s, test_chars{}, opt) ==
                     m0.size());
         }
         // encode
         {
-            encode_opts opt;
-            opt.space_to_plus =
-                space_to_plus;
+            encoding_opts opt;
+            opt.space_as_plus =
+                space_as_plus;
             std::string t;
             t.resize(
                 encoded_size(s, test_chars{}, opt));
@@ -66,9 +66,9 @@ public:
                 &t[0], t.size(), s, test_chars{}, opt);
             BOOST_TEST(t == m0);
         }
-        encode_opts opt;
-        opt.space_to_plus =
-            space_to_plus;
+        encoding_opts opt;
+        opt.space_as_plus =
+            space_as_plus;
         auto const m = encode(
             s, test_chars{}, opt, {});
         if(! BOOST_TEST(m == m0))
@@ -116,19 +116,19 @@ public:
     void
     testEncodeExtras()
     {
-        // space_to_plus
+        // space_as_plus
         {
             BOOST_TEST(encode(
                 " ", test_chars{}, {}, {}) == "%20");
-            encode_opts opt;
-            BOOST_TEST_EQ(opt.space_to_plus, false);
+            encoding_opts opt;
+            BOOST_TEST_EQ(opt.space_as_plus, false);
             BOOST_TEST(encode(
                 " ", test_chars{}, opt, {}) == "%20");
             BOOST_TEST(encode(
                 "A", test_chars{}, opt, {}) == "A");
             BOOST_TEST(encode(
                 " A+", test_chars{}, opt, {}) == "%20A+");
-            opt.space_to_plus = true;
+            opt.space_as_plus = true;
             BOOST_TEST(encode(
                 " ", test_chars{}, opt, {}) == "+");
             BOOST_TEST(encode(

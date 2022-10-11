@@ -15,12 +15,14 @@
 #include <boost/url/authority_view.hpp>
 #include <boost/url/decode_view.hpp>
 #include <boost/url/encode.hpp>
+#include <boost/url/encoding_opts.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/host_type.hpp>
 #include <boost/url/ignore_case.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/ipv6_address.hpp>
+#include <boost/url/optional.hpp>
 #include <boost/url/param.hpp>
 #include <boost/url/params_base.hpp>
 #include <boost/url/params_encoded_base.hpp>
@@ -34,11 +36,11 @@
 #include <boost/url/pct_string_view.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/segments_base.hpp>
-#include <boost/url/segments_view.hpp>
 #include <boost/url/segments_encoded_base.hpp>
 #include <boost/url/segments_encoded_ref.hpp>
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/segments_ref.hpp>
+#include <boost/url/segments_view.hpp>
 #include <boost/url/static_url.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/url.hpp>
@@ -46,6 +48,7 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/url_view_base.hpp>
 #include <boost/url/urls.hpp>
+#include <boost/url/variant.hpp>
 
 #include <boost/url/rfc/absolute_uri_rule.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
