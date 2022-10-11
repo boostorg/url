@@ -1409,12 +1409,10 @@ normalize_octets_impl(
         }
 
         // uppercase percent-encoding triplets
+        *dest++ = '%';
         ++it;
-        *it = grammar::to_upper(*it);
-        ++it;
-        *it = grammar::to_upper(*it);
-        ++it;
-        dest += 3;
+        *dest++ = grammar::to_upper(*it++);
+        *dest++ = grammar::to_upper(*it++);
     }
     if (it != dest)
     {
