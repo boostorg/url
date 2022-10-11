@@ -22,7 +22,7 @@ void
 pct_string_view::
 decode_impl(
     string_token::arg& dest,
-    decode_opts const& opt) const
+    encoding_opts opt) const
 {
     auto p = dest.prepare(dn_);
     if(dn_ > 0)

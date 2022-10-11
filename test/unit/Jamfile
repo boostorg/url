@@ -24,6 +24,7 @@ local SOURCES =
     error.cpp
     error_types.cpp
     encode.cpp
+    encoding_opts.cpp
     decode_view.cpp
     grammar.cpp
     host_type.cpp

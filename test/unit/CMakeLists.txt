@@ -22,6 +22,7 @@ set(BOOST_URL_TESTS_FILES
     doc_grammar.cpp
     decode_view.cpp
     encode.cpp
+    encoding_opts.cpp
     error.cpp
     error_types.cpp
     grammar.cpp

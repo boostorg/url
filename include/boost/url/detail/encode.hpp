@@ -11,7 +11,7 @@
 #ifndef BOOST_URL_DETAIL_ENCODE_HPP
 #define BOOST_URL_DETAIL_ENCODE_HPP
 
-#include <boost/url/encode_opts.hpp>
+#include <boost/url/encoding_opts.hpp>
 #include <boost/url/pct_string_view.hpp>
 #include <boost/url/grammar/hexdig_chars.hpp>
 #include <boost/core/ignore_unused.hpp>
@@ -28,100 +28,6 @@ char const* const hexdigs[] = {
 
 //------------------------------------------------
 
-// unsafe encode just
-// asserts on the output buffer
-//
-template<class CharSet>
-std::size_t
-encode_unsafe(
-    char* dest,
-    char const* end,
-    char const* it,
-    char const* const last,
-    CharSet const& unreserved,
-    encode_opts const& opt)
-{
-    // '%' must be reserved
-    BOOST_ASSERT(! unreserved('%'));
-
-    ignore_unused(end);
-
-    char const* const hex =
-        detail::hexdigs[opt.lower_case];
-    auto const encode = [end, hex](
-        char*& dest,
-        unsigned char c) noexcept
-    {
-        ignore_unused(end);
-        *dest++ = '%';
-        BOOST_ASSERT(dest != end);
-        *dest++ = hex[c>>4];
-        BOOST_ASSERT(dest != end);
-        *dest++ = hex[c&0xf];
-    };
-
-    auto const dest0 = dest;
-    if(! opt.space_to_plus)
-    {
-        while(it != last)
-        {
-            BOOST_ASSERT(dest != end);
-            if(unreserved(*it))
-                *dest++ = *it++;
-            else
-                encode(dest, *it++);
-        }
-    }
-    else
-    {
-        // VFALCO space is usually reserved,
-        // and we depend on this for an
-        // optimization. if this assert
-        // goes off we can split the loop
-        // below into two versions.
-        BOOST_ASSERT(! unreserved(' '));
-
-        while(it != last)
-        {
-            BOOST_ASSERT(dest != end);
-            if(unreserved(*it))
-            {
-                *dest++ = *it++;
-            }
-            else if(*it == ' ')
-            {
-                *dest++ = '+';
-                ++it;
-            }
-            else
-            {
-                encode(dest, *it++);
-            }
-        }
-    }
-    return dest - dest0;
-}
-
-template<class CharSet>
-std::size_t
-encode_unsafe(
-    char* dest,
-    char const* const end,
-    string_view s,
-    CharSet const& unreserved,
-    encode_opts const& opt)
-{
-    return encode_unsafe(
-        dest,
-        end,
-        s.begin(),
-        s.end(),
-        unreserved,
-        opt);
-}
-
-//------------------------------------------------
-
 // re-encode is to percent-encode a
 // string that can already contain
 // escapes. Characters not in the
@@ -133,12 +39,12 @@ std::size_t
 re_encoded_size_unsafe(
     string_view s,
     CharSet const& unreserved,
-    encode_opts const& opt) noexcept
+    encoding_opts opt) noexcept
 {
     std::size_t n = 0;
     auto const end = s.end();
     auto it = s.begin();
-    if(opt.space_to_plus)
+    if(opt.space_as_plus)
     {
         while(it != end)
         {
@@ -203,7 +109,7 @@ re_encode_unsafe(
     char const* const end,
     string_view s,
     CharSet const& unreserved,
-    encode_opts const& opt) noexcept
+    encoding_opts opt) noexcept
 {
     char const* const hex =
         detail::hexdigs[opt.lower_case];
@@ -226,7 +132,7 @@ re_encode_unsafe(
     std::size_t dn = 0;
     auto it = s.begin();
 
-    if(opt.space_to_plus)
+    if(opt.space_as_plus)
     {
         while(it != last)
         {

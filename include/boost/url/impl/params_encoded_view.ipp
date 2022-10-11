@@ -37,7 +37,7 @@ params_encoded_view::
 operator
 params_view() const noexcept
 {
-    return { ref_ };
+    return { ref_, encoding_opts{} };
 }
 
 } // urls

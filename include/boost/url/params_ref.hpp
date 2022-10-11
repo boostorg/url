@@ -84,7 +84,9 @@ class params_ref
 
     url_base* u_ = nullptr;
 
-    params_ref(url_base& u) noexcept;
+    params_ref(
+        url_base& u,
+        encoding_opts opt) noexcept;
 
 public:
     //--------------------------------------------
@@ -117,6 +119,36 @@ public:
     */
     params_ref(
         params_ref const& other) = default;
+
+    /** Constructor
+
+        After construction, both views will
+        reference the same url but this
+        instance will use the specified
+        @ref encoding_opts when the values
+        are decoded.
+
+        Ownership is not transferred; the
+        caller is responsible for ensuring
+        the lifetime of the url extends
+        until it is no longer referenced.
+
+        @par Postconditions
+        @code
+        &this->url() == &other.url()
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @param other The other view.
+    */
+    params_ref(
+        params_ref const& other,
+        encoding_opts opt) noexcept;
 
     /** Assignment
 

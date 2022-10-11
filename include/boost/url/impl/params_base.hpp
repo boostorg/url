@@ -22,16 +22,25 @@ namespace urls {
 class params_base::iterator
 {
     detail::params_iter_impl it_;
+    bool space_as_plus_ = true;
 
     friend class params_base;
     friend class params_ref;
 
-    iterator(detail::query_ref const& ref) noexcept;
-    iterator(detail::query_ref const& impl, int) noexcept;
+    iterator(
+        detail::query_ref const& ref,
+        encoding_opts opt) noexcept;
 
     iterator(
-        detail::params_iter_impl const& it)
+        detail::query_ref const& impl,
+        encoding_opts opt,
+        int) noexcept;
+
+    iterator(
+        detail::params_iter_impl const& it,
+        encoding_opts opt) noexcept
         : it_(it)
+        , space_as_plus_(opt.space_as_plus)
     {
     }
 
@@ -79,16 +88,9 @@ public:
         return tmp;
     }
 
+    BOOST_URL_DECL
     reference
-    operator*() const
-    {
-        param_pct_view p =
-            it_.dereference();
-        return reference(
-            p.key.decode(),
-            p.value.decode(),
-            p.has_value);
-    }
+    operator*() const;
 
     // the return value is too expensive
     pointer operator->() const = delete;
@@ -111,6 +113,14 @@ public:
 //------------------------------------------------
 
 inline
+params_base::
+params_base() noexcept
+    // space_as_plus = true
+    : opt_(true, false, false)
+{
+}
+
+inline
 bool
 params_base::
 contains(
@@ -129,8 +139,10 @@ find(
     ignore_case_param ic) const noexcept ->
         iterator
 {
-    return find_impl(
-        begin().it_, key, ic);
+    return iterator(
+        find_impl(
+            begin().it_, key, ic),
+        opt_);
 }
 
 inline
@@ -142,8 +154,10 @@ find(
     ignore_case_param ic) const noexcept ->
         iterator
 {
-    return find_impl(
-        it.it_, key, ic);
+    return iterator(
+        find_impl(
+            it.it_, key, ic),
+        opt_);
 }
 
 inline
@@ -154,8 +168,10 @@ find_last(
     ignore_case_param ic) const noexcept ->
         iterator
 {
-    return find_last_impl(
-        end().it_, key, ic);
+    return iterator(
+        find_last_impl(
+            end().it_, key, ic),
+        opt_);
 }
 
 inline
@@ -167,8 +183,10 @@ find_last(
     ignore_case_param ic) const noexcept ->
         iterator
 {
-    return find_last_impl(
-        it.it_, key, ic);
+    return iterator(
+        find_last_impl(
+            it.it_, key, ic),
+        opt_);
 }
 
 } // urls

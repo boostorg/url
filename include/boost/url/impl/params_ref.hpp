@@ -23,8 +23,9 @@ namespace urls {
 inline
 params_ref::
 params_ref(
-    url_base& u) noexcept
-    : params_base(u.impl_)
+    url_base& u,
+    encoding_opts opt) noexcept
+    : params_base(u.impl_, opt)
     , u_(&u)
 {
 }
@@ -34,6 +35,15 @@ params_ref(
 // Special Members
 //
 //------------------------------------------------
+
+inline
+params_ref::
+params_ref(
+    params_ref const& other,
+    encoding_opts opt) noexcept
+    : params_ref(*other.u_, opt)
+{
+}
 
 inline
 auto
@@ -177,10 +187,12 @@ erase(
         iterator
 {
     string_view s("", 0);
-    return u_->edit_params(
-        first.it_,
-        last.it_,
-        detail::query_iter(s));
+    return iterator(
+        u_->edit_params(
+            first.it_,
+            last.it_,
+            detail::query_iter(s)),
+        opt_);
 }
 
 template<class FwdIt>
@@ -205,10 +217,12 @@ replace(
             param_view>::value,
         "Type requirements not met");
 
-    return u_->edit_params(
-        from.it_, to.it_,
-        detail::make_params_iter(
-            first, last));
+    return iterator(
+        u_->edit_params(
+            from.it_, to.it_,
+            detail::make_params_iter(
+                first, last)),
+        opt_);
 }
 
 //------------------------------------------------
@@ -240,11 +254,13 @@ insert(
     std::forward_iterator_tag) ->
         iterator
 {
-    return u_->edit_params(
-        before.it_,
-        before.it_,
-        detail::make_params_iter(
-            first, last));
+    return iterator(
+        u_->edit_params(
+            before.it_,
+            before.it_,
+            detail::make_params_iter(
+                first, last)),
+        opt_);
 }
 
 } // urls

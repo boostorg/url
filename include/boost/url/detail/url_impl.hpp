@@ -157,6 +157,7 @@ public:
         std::size_t nparam
             ) noexcept;
     query_ref() = default;
+    BOOST_URL_DECL
     query_ref(url_impl const& impl) noexcept;
     pct_string_view buffer() const noexcept;
     std::size_t size() const noexcept; // with '?'
