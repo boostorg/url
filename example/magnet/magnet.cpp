@@ -13,11 +13,11 @@
     standard output.
 */
 
-#include <boost/url/decode_view.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/optional.hpp>
 #include <boost/url/parse.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <boost/url/rfc/absolute_uri_rule.hpp>
 #include <boost/url/grammar/digit_chars.hpp>
 #include <boost/url/grammar/parse.hpp>
@@ -26,21 +26,22 @@
 
 namespace urls = boost::urls;
 
-/// Callable to identify a magnet "exact topic"
-/**
+/** Callable to identify a magnet "exact topic"
+
     This callable evaluates if a query parameter
     represents a magnet "exact topic".
 
     This callable is used as a filter for
     the topics_view.
  */
-struct is_exact_topic {
+struct is_exact_topic
+{
     bool
     operator()(urls::param_view p);
 };
 
-/// Callable to identify a magnet url parameter
-/**
+/** Callable to identify a magnet url parameter
+
     This callable evaluates if a query parameter
     has a given key and a url as its value.
 
@@ -51,43 +52,42 @@ struct is_exact_topic {
     This callable is used as a filter for
     the keys_view.
  */
-class is_url_with_key {
+class is_url_with_key
+{
     urls::string_view k_;
-    std::string& buf_;
 public:
-    explicit
     is_url_with_key(
-        urls::string_view key,
-        std::string& buffer)
-        : k_(key)
-        , buf_(buffer) {}
+        urls::string_view key)
+        : k_(key) {}
 
     bool
     operator()(urls::param_view p);
 };
 
-/// Callable to convert param values to urls
-/**
+/** Callable to convert param values to urls
+
     This callable converts the value of a
     query parameter into a urls::url_view.
 
     This callable is used as a transform
     function for the topics_view.
  */
-struct param_view_to_url {
+struct param_view_to_url
+{
     urls::url
     operator()(urls::param_view p);
 };
 
-/// Callable to convert param values to urls::decode_view
-/**
+/** Callable to convert param values to std::string
+
     This callable converts the value of a
-    query parameter into a urls::decode_view.
+    query parameter into a std::string.
 
     This callable is used as a transform
     function for the keys_view.
  */
-struct to_decoded_value {
+struct to_decoded_value
+{
     std::string
     operator()(urls::param_view p)
     {
@@ -95,8 +95,8 @@ struct to_decoded_value {
     }
 };
 
-/// Callable to convert param values to info_hashes
-/**
+/** Callable to convert param values to info_hashes
+
     This callable converts the value of a
     query parameter into a urls::string_view with
     its infohash.
@@ -107,13 +107,14 @@ struct to_decoded_value {
     This callable is used as a transform
     function for the info_hashes_view.
  */
-struct param_view_to_infohash {
+struct param_view_to_infohash
+{
     urls::string_view
     operator()(urls::param_view p);
 };
 
-/// Callable to convert param values to protocols
-/**
+/** Callable to convert param values to protocols
+
     This callable converts the value of a
     query parameter into a urls::string_view with
     its protocol.
@@ -124,15 +125,16 @@ struct param_view_to_infohash {
     This callable is used as a transform
     function for the protocols_view.
  */
-struct to_protocol {
+struct to_protocol
+{
     urls::string_view
     operator()(urls::param_view p);
 };
 
 struct magnet_link_rule_t;
 
-/// A new url type for magnet links
-/**
+/** A new url type for magnet links
+
     This class represents a reference to a
     magnet link.
 
@@ -192,12 +194,12 @@ public:
             is_exact_topic,
             to_protocol>;
 
-    /// A view of all urls with the specified key in the magnet_link
-    /**
+    /** A view of all urls with the specified key in the magnet_link
+
         A number of fields in a magnet link refer
         to a list of urls with the same query
         parameter keys.
-     */
+    */
     using keys_view =
         filter_view<
             urls::params_view,
@@ -205,78 +207,69 @@ public:
             is_url_with_key,
             to_decoded_value>;
 
-    /// URNs to the file or files hashes
-    /**
-       An exact topic is the main field of a
-       magnet link. A magnet link must contain
-       one or more exact topics with the query
-       key "xt" or ["xt.1", "xt.2", ...].
+    /** URNs to the file or files hashes
 
-       The value of each exact topic is a URN
-       representing the file hash and the protocol
-       to access the file.
+        An exact topic is the main field of a
+        magnet link. A magnet link must contain
+        one or more exact topics with the query
+        key "xt" or ["xt.1", "xt.2", ...].
 
-       @return A view of all exact topic URNs in the link
-     */
+        The value of each exact topic is a URN
+        representing the file hash and the protocol
+        to access the file.
+
+        @return A view of all exact topic URNs in the link
+    */
     topics_view
     exact_topics() const noexcept;
 
-    /// Info hash of the file or files
-    /**
-       @return A view of all info hashes in exact topics
-     */
+    /** Info hash of the file or files
+
+        @return A view of all info hashes in exact topics
+    */
     info_hashes_view
     info_hashes() const noexcept;
 
-    /// Protocol of the exact topics
-    /**
-       @return A view of all protocols in exact topics
-     */
+    /** Protocol of the exact topics
+
+        @return A view of all protocols in exact topics
+    */
     protocols_view
     protocols() const noexcept;
 
-    /// Return view of address trackers
-    /**
+    /** Return view of address trackers
+
         A tracker URL is used to obtain resources
         for BitTorrent downloads.
 
-        @param buffer Temporary buffer to decode
-        a url returned by the view.
-
         @return A view of all address trackers in the link
-     */
+    */
     keys_view
-    address_trackers(std::string& buffer) const;
+    address_trackers() const;
 
-    /// Return view of exact sources
-    /**
+    /** Return view of exact sources
+
         An exact source URL is a direct download
         link to the file.
 
-        @param buffer Temporary buffer to decode
-        a url returned by the view.
-
         @return A view of all exact sources
-     */
+    */
     keys_view
-    exact_sources(std::string& buffer) const;
+    exact_sources() const;
 
-    /// Return view of acceptable sources
-    /**
+    /** Return view of acceptable sources
+
         An acceptable source URL is a direct
         download link to the file that can be
         used as a fallback for exact sources.
 
-        @param buffer Temporary buffer to decode
-        a url returned by the view.
-
         @return A view of all acceptable sources
-     */
+    */
     keys_view
-    acceptable_sources(std::string& buffer) const;
+    acceptable_sources() const;
 
-    /// Return keyword topic
-    /**
+    /** Return keyword topic
+
         The keyword topic is the search keywords
         to use in P2P networks.
 
@@ -284,12 +277,12 @@ public:
         kt=martin+luther+king+mp3
 
         @return Keyword topic
-     */
-    boost::optional<urls::decode_view>
+    */
+    boost::optional<std::string>
     keyword_topic() const noexcept;
 
-    /// Return manifest topics
-    /**
+    /** Return manifest topics
+
         This function returns a link to the
         metafile that contains a list of magneto.
 
@@ -297,16 +290,13 @@ public:
         @li <a href="http://rakjar.de/gnuticles/MAGMA-Specsv22.txt"
             >MAGnet MAnifest</a>
 
-        @param buffer Temporary buffer to decode
-        a url returned by the view.
-
         @return A view of manifest topics
-     */
+    */
     keys_view
-    manifest_topics(std::string& buffer) const;
+    manifest_topics() const;
 
-    /// Return display name
-    /**
+    /** Return display name
+
         This function returns a filename to
         display to the user. This field is
         only used for convenience.
@@ -316,27 +306,22 @@ public:
             >MAGnet MAnifest</a>
 
         @return Display name
-     */
-    boost::optional<urls::decode_view>
+    */
+    boost::optional<urls::pct_string_view>
     display_name() const noexcept;
 
-    // The payload data served over HTTP(S)
+    /** Return web seed
 
-    /// Return web seed
-    /**
         The web seed represents the payload data
         served over HTTP(S).
 
-        @param buffer Temporary buffer to decode
-        a url returned by the view.
-
         @return Web seed
-     */
+    */
     keys_view
-    web_seed(std::string& buffer) const;
+    web_seed() const;
 
-    /// Return extra supplement parameter
-    /**
+    /** Return extra supplement parameter
+
         This function returns informal options
         and parameters of the magnet link.
 
@@ -349,8 +334,8 @@ public:
         x.parameter_name=parameter_data
 
         @return Web seed
-     */
-    boost::optional<urls::decode_view>
+    */
+    boost::optional<urls::pct_string_view>
     param(urls::string_view key) const noexcept;
 
     friend
@@ -361,9 +346,9 @@ public:
     }
 
 private:
-    // get a query parameter as a urls::decode_view
-    boost::optional<urls::decode_view>
-    decoded_param(urls::string_view key) const noexcept;
+    // get a query parameter as a urls::pct_string_view
+    boost::optional<urls::pct_string_view>
+    encoded_param(urls::string_view key) const noexcept;
 
     // get a query parameter as a urls::url_view
     boost::optional<urls::url_view>
@@ -377,7 +362,7 @@ is_exact_topic::
 operator()(urls::param_view p)
 {
     // These comparisons use the lazy
-    // operator== for urls::decode_view
+    // operator== for urls::pct_string_view
     // For instance, the comparison also works
     // if the underlying key is "%78%74"/
     if (p.key == "xt")
@@ -400,11 +385,12 @@ operator()(urls::param_view p)
     if (p.key != k_)
         return false;
     urls::error_code ec;
-    buf_.assign(p.value.begin(), p.value.end());
+    std::string buf(
+        p.value.begin(), p.value.end());
     if (ec.failed())
         return false;
     urls::result<urls::url_view> r =
-        urls::parse_uri(buf_);
+        urls::parse_uri(buf);
     return r.has_value();
 }
 
@@ -470,63 +456,67 @@ magnet_link_view::protocols() const noexcept
 }
 
 auto
-magnet_link_view::address_trackers(std::string& buffer) const
+magnet_link_view::address_trackers() const
     -> keys_view
 {
     return {
         u_.params(),
-        is_url_with_key{"tr", buffer}};
+        is_url_with_key{"tr"}};
 }
 
 auto
-magnet_link_view::exact_sources(std::string& buffer) const
+magnet_link_view::exact_sources() const
     -> keys_view
 {
     return {
         u_.params(),
-        is_url_with_key{"xs", buffer}};
+        is_url_with_key{"xs"}};
 }
 
 auto
-magnet_link_view::acceptable_sources(std::string& buffer) const
+magnet_link_view::acceptable_sources() const
     -> keys_view
 {
     return {
         u_.params(),
-        is_url_with_key{"as", buffer}};
+        is_url_with_key{"as"}};
 }
 
-boost::optional<urls::decode_view>
+boost::optional<std::string>
 magnet_link_view::keyword_topic() const noexcept
 {
-    return decoded_param("kt");
+    urls::optional<urls::pct_string_view> o =
+        encoded_param("kt");
+    if (o)
+        return o->decode();
+    return boost::none;
 }
 
 auto
-magnet_link_view::manifest_topics(std::string& buffer) const
+magnet_link_view::manifest_topics() const
     -> keys_view
 {
     return {
         u_.params(),
-        is_url_with_key{"mt", buffer}};
+        is_url_with_key{"mt"}};
 }
 
-boost::optional<urls::decode_view>
+boost::optional<urls::pct_string_view>
 magnet_link_view::display_name() const noexcept
 {
-    return decoded_param("dn");
+    return encoded_param("dn");
 }
 
 auto
-magnet_link_view::web_seed(std::string& buffer) const
+magnet_link_view::web_seed() const
     -> keys_view
 {
     return {
         u_.params(),
-        is_url_with_key{"ws", buffer}};
+        is_url_with_key{"ws"}};
 }
 
-boost::optional<urls::decode_view>
+boost::optional<urls::pct_string_view>
 magnet_link_view::param(urls::string_view key) const noexcept
 {
     urls::params_view ps = u_.params();
@@ -543,26 +533,26 @@ magnet_link_view::param(urls::string_view key) const noexcept
         auto first = p.key.begin();
         auto mid = std::next(p.key.begin(), 2);
         auto last = p.key.end();
-        urls::decode_view prefix(
+        urls::pct_string_view prefix(
             urls::string_view(first, mid));
-        urls::decode_view suffix(
+        urls::pct_string_view suffix(
             urls::string_view(mid, last));
         if (prefix == "x." &&
             suffix == key &&
             p.has_value)
-            return urls::decode_view(p.value);
+            return urls::pct_string_view(p.value);
         ++it;
     }
     return boost::none;
 }
 
-boost::optional<urls::decode_view>
-magnet_link_view::decoded_param(urls::string_view key) const noexcept
+boost::optional<urls::pct_string_view>
+magnet_link_view::encoded_param(urls::string_view key) const noexcept
 {
     urls::params_encoded_view ps = u_.encoded_params();
     auto it = ps.find(key);
     if (it != ps.end() && (*it).has_value)
-        return urls::decode_view((*it).value);
+        return urls::pct_string_view((*it).value);
     return boost::none;
 }
 
@@ -688,24 +678,23 @@ int main(int argc, char** argv)
     for (auto p : ps)
         std::cout << "protocol: " << p << "\n";
 
-    std::string buffer;
-    auto tr = m.address_trackers(buffer);
+    auto tr = m.address_trackers();
     for (auto h : tr)
         std::cout << "tracker: " << h << "\n";
 
-    auto xs = m.exact_sources(buffer);
+    auto xs = m.exact_sources();
     for (auto x : xs)
         std::cout << "exact source: " << x << "\n";
 
-    auto as = m.acceptable_sources(buffer);
+    auto as = m.acceptable_sources();
     for (auto a : as)
         std::cout << "topic: " << a << "\n";
 
-    auto mt = m.manifest_topics(buffer);
+    auto mt = m.manifest_topics();
     for (auto a : mt)
         std::cout << "manifest topic: " << a << "\n";
 
-    auto ws = m.web_seed(buffer);
+    auto ws = m.web_seed();
     for (auto a : ws)
         std::cout << "web seed: " << a << "\n";
 
