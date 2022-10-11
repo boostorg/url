@@ -199,7 +199,8 @@ public:
         @throw system_error
         The string contains an invalid percent encoding.
 
-        @param s The encoded string.
+        @param s A percent-encoded string that has
+        already been validated.
 
         @param opt The options for decoding. If
         this parameter is omitted, the default
@@ -208,7 +209,7 @@ public:
     BOOST_URL_DECL
     explicit
     decode_view(
-        BOOST_URL_PCT_STRING_VIEW s,
+        pct_string_view s,
         decode_opts opt = {}) noexcept
         : decode_view(string_view(s), s.decoded_size(), opt)
     {
