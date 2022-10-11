@@ -220,6 +220,20 @@ struct params_ref_test
             check(p1, { {"key","value"} });
         }
 
+        // params_ref(params_ref, encoding_opts)
+        {
+            encoding_opts opt;
+            opt.space_as_plus = true;
+            url u("?key=my+value");
+            params_ref p0 = u.params(opt);
+            BOOST_TEST_EQ(&p0.url(), &u);
+            opt.space_as_plus = false;
+            params_ref p1(p0, opt);
+            BOOST_TEST_EQ(&p0.url(), &p1.url());
+            check(p0, { {"key","my value"} });
+            check(p1, { {"key","my+value"} });
+        }
+
         // operator=(params_ref)
         {
             url u0( "?key=value" );

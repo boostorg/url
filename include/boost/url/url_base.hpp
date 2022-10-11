@@ -2090,6 +2090,60 @@ public:
         The returned view references the same
         underlying character buffer; ownership
         is not transferred.
+        Any percent-escapes in strings returned
+        when iterating the view are decoded first.
+        The container is modifiable; changes
+        to the container are reflected in the
+        underlying URL.
+
+        @par Example
+        @code
+        encoding_opts opt;
+        opt.space_as_plus = true;
+        params_ref pv = url( "/sql?id=42&name=jane+doe&page+size=20" ).params(opt);
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @param opt The options for decoding. If
+        this parameter is omitted, the `space_as_plus`
+        is used.
+
+        @par BNF
+        @code
+        query           = *( pchar / "/" / "?" )
+
+        query-param     = key [ "=" value ]
+        query-params    = [ query-param ] *( "&" query-param )
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+            >3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string"
+            >Query string (Wikipedia)</a>
+
+        @see
+            @ref encoded_params,
+            @ref remove_query,
+            @ref set_encoded_query,
+            @ref set_query.
+    */
+    BOOST_URL_DECL
+    params_ref
+    params(encoding_opts opt) noexcept;
+
+    /** Return the query as a container of parameters
+
+        This function returns a bidirectional
+        view of key/value pairs over the query.
+        The returned view references the same
+        underlying character buffer; ownership
+        is not transferred.
         Strings returned when iterating the
         range may contain percent escapes.
         The container is modifiable; changes

@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/encode.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/url/encode_opts.hpp>
+#include <boost/url/encoding_opts.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/hexdig_chars.hpp>
 #include <boost/url/grammar/type_traits.hpp>
@@ -29,7 +29,7 @@ std::size_t
 encoded_size(
     string_view s,
     CharSet const& unreserved,
-    encode_opts const& opt) noexcept
+    encoding_opts opt) noexcept
 {
 /*  If you get a compile error here, it
     means that the value you passed does
@@ -44,7 +44,8 @@ encoded_size(
     auto it = s.data();
     auto const last = it + s.size();
 
-    if(! opt.space_to_plus)
+    if(! opt.space_as_plus ||
+        unreserved(' '))
     {
         while(it != last)
         {
@@ -57,18 +58,12 @@ encoded_size(
     }
     else
     {
-        // VFALCO space is usually reserved,
-        // and we depend on this for an
-        // optimization. if this assert
-        // goes off we can split the loop
-        // below into two versions.
-        BOOST_ASSERT(! unreserved(' '));
-
         while(it != last)
         {
             auto c = *it;
-            if( unreserved(c) ||
-                c == ' ')
+            if(unreserved(c))
+                ++n;
+            else if(c == ' ')
                 ++n;
             else
                 n += 3;
@@ -87,7 +82,7 @@ encode(
     std::size_t size,
     string_view s,
     CharSet const& unreserved,
-    encode_opts const& opt)
+    encoding_opts opt)
 {
 /*  If you get a compile error here, it
     means that the value you passed does
@@ -112,17 +107,13 @@ encode(
         *dest++ = hex[c&0xf];
     };
 
-    // VFALCO we could in theory optimize these
-    // loops with another loop up to safe_last,
-    // where safe_last = it + (last/it)/3,
-    // and increment safe_last by 2 every
-    // time we output an unescaped character
     auto it = s.data();
     auto const end = dest + size;
     auto const last = it + s.size();
     auto const dest0 = dest;
     auto const end3 = end - 3;
-    if(! opt.space_to_plus)
+
+    if(! opt.space_as_plus)
     {
         while(it != last)
         {
@@ -139,7 +130,7 @@ encode(
         }
         return dest - dest0;
     }
-    else
+    else if(! unreserved(' '))
     {
         // VFALCO space is usually reserved,
         // and we depend on this for an
@@ -175,6 +166,84 @@ encode(
 
 //------------------------------------------------
 
+// unsafe encode just
+// asserts on the output buffer
+//
+template<class CharSet>
+std::size_t
+encode_unsafe(
+    char* dest,
+    std::size_t size,
+    string_view s,
+    CharSet const& unreserved,
+    encoding_opts opt)
+{
+    // '%' must be reserved
+    BOOST_ASSERT(! unreserved('%'));
+
+    auto it = s.data();
+    auto const last = it + s.size();
+    auto const end = dest + size;
+    ignore_unused(end);
+
+    char const* const hex =
+        detail::hexdigs[opt.lower_case];
+    auto const encode = [end, hex](
+        char*& dest,
+        unsigned char c) noexcept
+    {
+        ignore_unused(end);
+        *dest++ = '%';
+        BOOST_ASSERT(dest != end);
+        *dest++ = hex[c>>4];
+        BOOST_ASSERT(dest != end);
+        *dest++ = hex[c&0xf];
+    };
+
+    auto const dest0 = dest;
+    if(! opt.space_as_plus)
+    {
+        while(it != last)
+        {
+            BOOST_ASSERT(dest != end);
+            if(unreserved(*it))
+                *dest++ = *it++;
+            else
+                encode(dest, *it++);
+        }
+    }
+    else
+    {
+        // VFALCO space is usually reserved,
+        // and we depend on this for an
+        // optimization. if this assert
+        // goes off we can split the loop
+        // below into two versions.
+        BOOST_ASSERT(! unreserved(' '));
+
+        while(it != last)
+        {
+            BOOST_ASSERT(dest != end);
+            if(unreserved(*it))
+            {
+                *dest++ = *it++;
+            }
+            else if(*it == ' ')
+            {
+                *dest++ = '+';
+                ++it;
+            }
+            else
+            {
+                encode(dest, *it++);
+            }
+        }
+    }
+    return dest - dest0;
+}
+
+//------------------------------------------------
+
 template<
     class StringToken,
     class CharSet>
@@ -182,7 +251,7 @@ BOOST_URL_STRTOK_RETURN
 encode(
     string_view s,
     CharSet const& unreserved,
-    encode_opts const& opt,
+    encoding_opts opt,
     StringToken&& token) noexcept
 {
 /*  If you get a compile error here, it
@@ -198,8 +267,8 @@ encode(
         s, unreserved, opt);
     auto p = token.prepare(n);
     if(n > 0)
-        detail::encode_unsafe(
-            p, p + n, s, unreserved, opt);
+        encode_unsafe(
+            p, n, s, unreserved, opt);
     return token.result();
 }
 

@@ -11,7 +11,7 @@
 #define BOOST_URL_PCT_STRING_VIEW_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/decode_opts.hpp>
+#include <boost/url/encoding_opts.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/string_token.hpp>
@@ -101,7 +101,7 @@ class pct_string_view final
     void
     decode_impl(
         string_token::arg& dest,
-        decode_opts const& opt) const;
+        encoding_opts opt) const;
 
 public:
     /** Constructor
@@ -338,13 +338,13 @@ public:
         will be the result type of the token.
 
         @see
-            @ref decode_opts,
+            @ref encoding_opts,
             @ref string_token::return_string.
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
     decode(
-        decode_opts opt = {},
+        encoding_opts opt = {},
         BOOST_URL_STRTOK_ARG(token)) const
     {
 /*      If you get a compile error here, it

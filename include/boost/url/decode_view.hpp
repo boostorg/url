@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
-#include <boost/url/decode_opts.hpp>
+#include <boost/url/encoding_opts.hpp>
 #include <boost/url/pct_string_view.hpp>
 #include <type_traits>
 #include <iterator>
@@ -89,7 +89,7 @@ class decode_view
     char const* p_ = nullptr;
     std::size_t n_ = 0;
     std::size_t dn_ = 0;
-    bool plus_to_space_ = true;
+    bool space_as_plus_ = true;
 
 #ifndef BOOST_URL_DOCS
     template<class... Args>
@@ -105,7 +105,7 @@ class decode_view
     decode_view(
         string_view s,
         std::size_t n,
-        decode_opts opt) noexcept;
+        encoding_opts opt) noexcept;
 
 public:
     /** The value type
@@ -210,8 +210,11 @@ public:
     explicit
     decode_view(
         pct_string_view s,
-        decode_opts opt = {}) noexcept
-        : decode_view(string_view(s), s.decoded_size(), opt)
+        encoding_opts opt = {}) noexcept
+        : decode_view(
+            string_view(s),
+            s.decoded_size(),
+            opt)
     {
     }
 
@@ -340,11 +343,11 @@ public:
 
     /** Return the decoding options
     */
-    decode_opts
+    encoding_opts
     options() const noexcept
     {
-        decode_opts opt;
-        opt.plus_to_space = plus_to_space_;
+        encoding_opts opt;
+        opt.space_as_plus = space_as_plus_;
         return opt;
     }
 

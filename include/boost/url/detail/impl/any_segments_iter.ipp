@@ -108,8 +108,8 @@ measure(
 {
     if(pos_ == string_view::npos)
         return false;
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     n += encoded_size(
         s.substr(
             pos_,
@@ -130,8 +130,8 @@ copy(
 {
     BOOST_ASSERT(pos_ !=
         string_view::npos);
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     dest += encode(
         dest,
         end - dest,
@@ -165,8 +165,8 @@ measure(
 {
     if(pos_ == string_view::npos)
         return false;
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     n += detail::re_encoded_size_unsafe(
         s.substr(
             pos_,
@@ -187,8 +187,8 @@ copy(
 {
     BOOST_ASSERT(pos_ !=
         string_view::npos);
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     detail::re_encode_unsafe(
         dest,
         end,
@@ -231,8 +231,8 @@ measure(
 {
     if(at_end_)
         return false;
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     n += encoded_size(
         s,
         encode_colons ?
@@ -249,8 +249,8 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     dest += encode(
         dest,
         end - dest,
@@ -274,8 +274,8 @@ measure_impl(
     string_view s,
     bool encode_colons) noexcept
 {
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     n += encoded_size(
         s,
         encode_colons ?
@@ -292,8 +292,8 @@ copy_impl(
     string_view s,
     bool encode_colons) noexcept
 {
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     dest += encode(
         dest,
         end - dest,
@@ -333,8 +333,8 @@ measure(
 {
     if(at_end_)
         return false;
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     n += detail::re_encoded_size_unsafe(
         s,
         encode_colons ?
@@ -351,8 +351,8 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     detail::re_encode_unsafe(
         dest,
         end,
@@ -376,8 +376,8 @@ measure_impl(
     string_view s,
     bool encode_colons) noexcept
 {
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     n += detail::re_encoded_size_unsafe(
         s,
         encode_colons ?
@@ -394,8 +394,8 @@ copy_impl(
     string_view s,
     bool encode_colons) noexcept
 {
-    encode_opts opt;
-    opt.space_to_plus = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     detail::re_encode_unsafe(
         dest,
         end,

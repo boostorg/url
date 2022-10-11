@@ -23,8 +23,8 @@ iterator::
 operator*() const ->
     reference
 {
-    decode_opts opt;
-    opt.plus_to_space = false;
+    encoding_opts opt;
+    opt.space_as_plus = false;
     return it_.dereference().decode(opt);
 }
 

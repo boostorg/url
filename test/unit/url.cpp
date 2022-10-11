@@ -819,6 +819,7 @@ struct url_test
         check("g/"           , "http://a/b/c/g/");
         check("/g"           , "http://a/g");
         check("//g"          , "http://g");
+        check("//g?q#f"      , "http://g?q#f");
         check("//g/a/../a"   , "http://g/a");
         check("?y"           , "http://a/b/c/d;p?y");
         check("g?y"          , "http://a/b/c/g?y");
@@ -849,6 +850,7 @@ struct url_test
         check("../../../../g", "http://a/../../g");
 
         check("/./g"         , "http://a/g");
+        check("/./g?q#f"     , "http://a/g?q#f");
 
         // VFALCO RFC says this:
         //check("/../g"        , "http://a/g");
@@ -967,6 +969,8 @@ struct url_test
             check("http://cppalliance.org?%61=b",
                   "http://cppalliance.org?a=b");
             // issue 396
+            check("/./my:sharona",
+                  "/my:sharona");
             check("/.//my:sharona",
                   "/.//my:sharona");
             check("/././/my:sharona",

@@ -1428,13 +1428,13 @@ struct url_base_test
         {
             url u;
             BOOST_TEST(! u.has_query());
-            u.set_encoded_query("k1=v1&k2=v2");
+            u.set_encoded_query("k1=v1&k2=#v2");
             BOOST_TEST(u.has_query());
             BOOST_TEST_EQ(u.params().size(), 2u);
             BOOST_TEST_EQ((*u.params().begin()).key, "k1");
             BOOST_TEST_EQ((*u.params().begin()).value, "v1");
             BOOST_TEST_EQ((*std::next(u.params().begin())).key, "k2");
-            BOOST_TEST_EQ((*std::next(u.params().begin())).value, "v2");
+            BOOST_TEST_EQ((*std::next(u.params().begin())).value, "#v2");
 
             u.set_encoded_query("");
             BOOST_TEST(u.has_query());

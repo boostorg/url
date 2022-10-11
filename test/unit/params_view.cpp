@@ -89,6 +89,26 @@ struct params_view_test
             BOOST_TEST_THROWS(params_view("FA%"), system_error);
         }
 
+        // params_view(string_view, encoding_opts)
+        {
+            try
+            {
+                encoding_opts opt;
+                opt.space_as_plus = true;
+                string_view s = "name=John+Doe";
+                params_view qp(s, opt);
+                BOOST_TEST_PASS();
+                BOOST_TEST_EQ(
+                    qp.buffer().data(), s.data());
+                BOOST_TEST_EQ(qp.buffer(), s);
+                BOOST_TEST_EQ((*qp.find("name")).value, "John Doe");
+            }
+            catch(std::exception const&)
+            {
+                BOOST_TEST_FAIL();
+            }
+        }
+
         // operator=(params_view)
         {
             params_view qp0("first=John&last=Doe");

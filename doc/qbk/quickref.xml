@@ -47,16 +47,15 @@
           <member><link linkend="url.ref.boost__urls__params_encoded_view">params_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__params_ref">params_ref</link></member>
           <member><link linkend="url.ref.boost__urls__params_view">params_view</link></member>
-          <member><link linkend="url.ref.boost__urls__pct_string_view">pct_string_view</link></member>
           <member><link linkend="url.ref.boost__urls__segments_base">segments_base</link></member>
           <member><link linkend="url.ref.boost__urls__segments_view">segments_view</link></member>
+          <member><link linkend="url.ref.boost__urls__segments_encoded_base">segments_encoded_base</link></member>
         </simplelist>
       </entry>
 
       <entry valign="top">
         <bridgehead renderas="sect3">Types (2/2)</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__segments_encoded_base">segments_encoded_base</link></member>
           <member><link linkend="url.ref.boost__urls__segments_encoded_ref">segments_encoded_ref</link></member>
           <member><link linkend="url.ref.boost__urls__segments_encoded_view">segments_encoded_view</link></member>
           <member><link linkend="url.ref.boost__urls__segments_ref">segments_ref</link></member>
@@ -80,7 +79,6 @@
       <entry valign="top">
         <bridgehead renderas="sect3">Functions</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__make_pct_string_view">make_pct_string_view</link></member>
           <member><link linkend="url.ref.boost__urls__operator_lt__lt_">operator&lt;&lt;</link></member>
           <member><link linkend="url.ref.boost__urls__parse_absolute_uri">parse_absolute_uri</link></member>
           <member><link linkend="url.ref.boost__urls__parse_authority">parse_authority</link></member>
@@ -98,13 +96,14 @@
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__encode">encode</link></member>
           <member><link linkend="url.ref.boost__urls__encoded_size">encoded_size</link></member>
+          <member><link linkend="url.ref.boost__urls__make_pct_string_view">make_pct_string_view</link></member>
         </simplelist>
 
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__decode_opts">decode_opts</link></member>
           <member><link linkend="url.ref.boost__urls__decode_view">decode_view</link></member>
-          <member><link linkend="url.ref.boost__urls__encode_opts">encode_opts</link></member>
+          <member><link linkend="url.ref.boost__urls__encoding_opts">encoding_opts</link></member>
+          <member><link linkend="url.ref.boost__urls__pct_string_view">pct_string_view</link></member>
         </simplelist>
 
       </entry>

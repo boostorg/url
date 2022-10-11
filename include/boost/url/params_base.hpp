@@ -12,6 +12,7 @@
 #define BOOST_URL_PARAMS_BASE_HPP
 
 #include <boost/url/detail/config.hpp>
+#include <boost/url/encoding_opts.hpp>
 #include <boost/url/ignore_case.hpp>
 #include <boost/url/param.hpp>
 #include <boost/url/detail/params_iter_impl.hpp>
@@ -42,14 +43,17 @@ class params_base
     friend class params_view;
 
     detail::query_ref ref_;
+    encoding_opts opt_;
 
-    params_base() = default;
+    params_base() noexcept;
+    BOOST_URL_DECL
+    params_base(
+        detail::query_ref const& ref,
+        encoding_opts opt) noexcept;
     params_base(
         params_base const&) = default;
     params_base& operator=(
         params_base const&) = default;
-    params_base(
-        detail::query_ref const& ref) noexcept;
 
 public:
     /** A Bidirectional iterator to a query parameter

@@ -28,8 +28,6 @@ parse_encoded(
         result<pct_string_view>
 {
     auto const start = it;
-    // VFALCO TODO
-    // opt.plus_to_space?
     std::size_t n = 0;
     char const* it0;
 skip:

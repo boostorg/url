@@ -20,17 +20,42 @@ namespace urls {
 params_base::
 iterator::
 iterator(
-    detail::query_ref const& ref) noexcept
+    detail::query_ref const& ref,
+    encoding_opts opt) noexcept
     : it_(ref)
+    , space_as_plus_(opt.space_as_plus)
 {
 }
 
 params_base::
 iterator::
 iterator(
-    detail::query_ref const& ref, int) noexcept
+    detail::query_ref const& ref,
+    encoding_opts opt,
+    int) noexcept
     : it_(ref, 0)
+    , space_as_plus_(opt.space_as_plus)
 {
+}
+
+//------------------------------------------------
+
+auto
+params_base::
+iterator::
+operator*() const ->
+    reference
+
+{
+    encoding_opts opt;
+    opt.space_as_plus =
+        space_as_plus_;
+    param_pct_view p =
+        it_.dereference();
+    return reference(
+        p.key.decode(opt),
+        p.value.decode(opt),
+        p.has_value);
 }
 
 //------------------------------------------------
@@ -41,8 +66,10 @@ iterator(
 
 params_base::
 params_base(
-    detail::query_ref const& ref) noexcept
+    detail::query_ref const& ref,
+    encoding_opts opt) noexcept
     : ref_(ref)
+    , opt_(opt)
 {
 }
 
@@ -72,7 +99,7 @@ params_base::
 begin() const noexcept ->
     iterator
 {
-    return { ref_ };
+    return iterator(ref_, opt_);
 }
 
 auto
@@ -80,7 +107,7 @@ params_base::
 end() const noexcept ->
     iterator
 {
-    return { ref_, 0 };
+    return iterator(ref_, opt_, 0);
 }
 
 //------------------------------------------------

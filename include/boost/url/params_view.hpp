@@ -52,7 +52,8 @@ class params_view
     friend class params_ref;
 
     params_view(
-        detail::query_ref const& ref) noexcept;
+        detail::query_ref const& ref,
+        encoding_opts opt) noexcept;
 
 public:
     /** Constructor
@@ -101,6 +102,34 @@ public:
     */
     params_view(
         params_view const& other) = default;
+
+    /** Constructor
+
+        After construction both views will
+        reference the same character buffer
+        but this instance will use the specified
+        @ref encoding_opts when the values
+        are decoded.
+
+        Ownership is not transferred; the caller
+        is responsible for ensuring the lifetime
+        of the buffer extends until it is no
+        longer referenced.
+
+        @par Postconditions
+        @code
+        this->buffer().data() == other.buffer().data()
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing
+    */
+    params_view(
+        params_view const& other,
+        encoding_opts opt) noexcept;
 
     /** Constructor
 
@@ -157,6 +186,74 @@ public:
     BOOST_URL_DECL
     params_view(
         string_view s);
+
+    /** Constructor
+
+        This function constructs params from
+        a valid query parameter string, which
+        can contain percent escapes.
+
+        This instance will use the specified
+        @ref encoding_opts when the values
+        are decoded.
+
+        Unlike the parameters in URLs, the string
+        passed here should not start with "?".
+        Upon construction, the view will
+        reference the character buffer pointed
+        to by `s`. The caller is responsible
+        for ensuring that the lifetime of the
+        buffer extends until it is no longer
+        referenced.
+
+        @par Example
+        @code
+        encoding_opts opt;
+        opt.space_as_plus = true;
+        params_view qp( "name=John+Doe", opt );
+        @endcode
+
+        @par Effects
+        @code
+        return params_view(parse_query( s ).value(), opt);
+        @endcode
+
+        @par Postconditions
+        @code
+        this->buffer().data() == s.data()
+        @endcode
+
+        @par Complexity
+        Linear in `s`.
+
+        @par Exception Safety
+        Exceptions thrown on invalid input.
+
+        @throw system_error
+        `s` contains an invalid query parameter
+        string.
+
+        @param s The string to parse.
+
+        @param opt The options for decoding. If
+        this parameter is omitted, `space_as_plus`
+        is used.
+
+        @par BNF
+        @code
+        query-params    = [ query-param ] *( "&" query-param )
+
+        query-param     = key [ "=" value ]
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+            >3.4.  Query</a>
+    */
+    BOOST_URL_DECL
+    params_view(
+        string_view s,
+        encoding_opts opt);
 
     /** Assignment
 
