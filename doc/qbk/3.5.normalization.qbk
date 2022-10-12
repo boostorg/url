@@ -14,17 +14,18 @@ resource. URLs comparisons serve the same purpose, where two strings
 are compared as if they were normalized.
 
 There is no way to determine whether two URLs refer to the same
-resource without has full knowledge or control of them. Thus,
+resource without full knowledge or control of them. Thus,
 equivalence is based on string comparisons augmented by additional
 URL and scheme rules. This means comparison is not sufficient to
-determine whether two URIs identify different resources as the
+determine whether two URLs identify different resources as the
 same resource can always be served from different addresses.
 
 For this reason, comparison methods are designed to minimize
 false negatives while strictly avoiding false positives.
-In other words, if two URLs compare equal, they represent the
-same resource. If they are considered different, they might
-still refer to the same resource depending on the application.
+In other words, if two URLs compare equal, they definitely
+represent the same resource. If they are considered different,
+they might still refer to the same resource depending on the
+application.
 
 Context-dependent rules can be considered to minimize the number
 of false negatives, where cheaper methods have a higher chance
@@ -65,7 +66,7 @@ to minimize false negatives:
 # Percent-Encoding Normalization: decode octets that do not require percent-encoding
 # Path Segment Normalization: path segments "." and ".." are resolved
 
-Following example normalizes percent-encoding and path segments:
+The following example normalizes the percent-encoding and path segments of a URL:
 
 [snippet_normalizing_4]
 
@@ -83,3 +84,5 @@ specific schemes are:
 # Replacing authority with empty string for the default authority
 # Normalizing extra subcomponents with case-insensitive data
 # Normalizing paths with case-insensitive data
+
+[endsect]

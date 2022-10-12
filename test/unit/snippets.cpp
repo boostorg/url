@@ -1446,10 +1446,10 @@ normalizing()
         url u4("https://www.boost.org:80/");
         normalize_http_url(u4);
 
-        BOOST_TEST_EQ(u1.buffer(), "https://www.boost.org/");
-        BOOST_TEST_EQ(u2.buffer(), "https://www.boost.org/");
-        BOOST_TEST_EQ(u3.buffer(), "https://www.boost.org/");
-        BOOST_TEST_EQ(u4.buffer(), "https://www.boost.org/");
+        assert(u1.buffer() == "https://www.boost.org/");
+        assert(u2.buffer() == "https://www.boost.org/");
+        assert(u3.buffer() == "https://www.boost.org/");
+        assert(u4.buffer() == "https://www.boost.org/");
         //]
     }
 }
