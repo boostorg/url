@@ -130,6 +130,8 @@
 
 [/-----------------------------------------------------------------------------]
 
+[import ../../example/qrcode/qrcode.cpp]
+[import ../../example/finicky/finicky.cpp]
 [import ../../example/mailto/mailto.cpp]
 [import ../../example/magnet/magnet.cpp]
 [import ../../example/route/route.cpp]
