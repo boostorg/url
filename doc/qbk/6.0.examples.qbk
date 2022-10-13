@@ -16,6 +16,10 @@
 [example_qrcode]
 [endsect]
 
+[section Finicky]
+[example_finicky]
+[endsect]
+
 [section mailto URLs]
 [example_mailto]
 [endsect]

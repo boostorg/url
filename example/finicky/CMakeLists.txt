@@ -7,8 +7,13 @@
 # Official repository: https://github.com/boostorg/url
 #
 
-add_subdirectory(qrcode)
-add_subdirectory(finicky)
-add_subdirectory(mailto)
-add_subdirectory(magnet)
-add_subdirectory(route)
+source_group("" FILES
+        finicky.cpp
+        )
+
+add_executable(finicky
+        finicky.cpp
+        )
+
+set_property(TARGET finicky PROPERTY FOLDER "Examples")
+target_link_libraries(finicky PRIVATE Boost::url Boost::json Boost::regex)
