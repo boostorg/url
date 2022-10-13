@@ -980,6 +980,11 @@ struct url_test
                   "my%3Asharona");
             check("././my:sharona",
                   "my%3Asharona");
+            // issue 382
+            check("./my:sha:rona",
+                  "my%3Asha%3Arona");
+            check("././my:sha:rona",
+                  "my%3Asha%3Arona");
             // issue 391
             check("my%3Asharona",
                   "my%3Asharona");

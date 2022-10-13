@@ -94,6 +94,7 @@ struct url_base_test
         remove("x:a:",  "a%3A");
         remove("x:a:/", "a%3A/");
         remove("yabba:dabba:doo", "dabba%3Adoo");
+        remove("yabba:dabba:doo:doo", "dabba%3Adoo%3Adoo");
         remove("x::::", "%3A%3A%3A");
 
 
