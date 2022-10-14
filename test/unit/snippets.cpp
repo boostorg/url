@@ -1454,6 +1454,162 @@ normalizing()
     }
 }
 
+void
+encoding()
+{
+    {
+        //[snippet_encoding_1
+        std::string s = encode("hello world!", unreserved_chars);
+        assert(s == "hello%20world%21");
+        //]
+    }
+
+    {
+        //[snippet_encoding_2
+        encode_opts opt;
+        opt.space_to_plus = true;
+        std::string s = encode("msg=hello world", pchars, opt);
+        assert(s == "msg=hello+world");
+        //]
+    }
+
+    {
+        //[snippet_encoding_3
+        std::string s;
+        encode("hello ", pchars, {}, string_token::assign_to(s));
+        encode("world", pchars, {}, string_token::append_to(s));
+        assert(s == "hello%20world");
+        //]
+    }
+
+    {
+        //[snippet_encoding_4
+        string_view e = "hello world";
+        std::string s;
+        s.reserve(encoded_size(e, pchars));
+        encode(e, pchars, {}, string_token::assign_to(s));
+        assert(s == "hello%20world");
+        //]
+    }
+
+    {
+        //[snippet_encoding_5
+        string_view e = "hello world";
+        std::string s;
+        s.resize(encoded_size(e, pchars));
+        encode(&s[0], s.size(), e, pchars);
+        assert(s == "hello%20world");
+        //]
+    }
+
+    {
+        //[snippet_encoding_6
+        pct_string_view sv = "hello%20world";
+        assert(sv == "hello%20world");
+        //]
+    }
+
+    {
+        //[snippet_encoding_7
+        result<pct_string_view> rs =
+            make_pct_string_view("hello%20world");
+        assert(rs.has_value());
+        pct_string_view sv = rs.value();
+        assert(sv == "hello%20world");
+        //]
+    }
+
+    {
+        //[snippet_encoding_8
+        pct_string_view s = "path/to/file";
+        url u;
+        u.set_encoded_path(s);
+        assert(u.buffer() == "path/to/file");
+        //]
+    }
+
+    {
+        //[snippet_encoding_9
+        url u;
+        u.set_encoded_path("path/to/file");
+        assert(u.buffer() == "path/to/file");
+        //]
+    }
+
+    {
+        //[snippet_encoding_10
+        url_view uv("path/to/file");
+        url u;
+        u.set_encoded_path(uv.encoded_path());
+        assert(u.buffer() == "path/to/file");
+        //]
+    }
+
+    {
+        //[snippet_encoding_11
+        pct_string_view es("hello%20world");
+        assert(es == "hello%20world");
+
+        decode_view dv("hello%20world");
+        assert(dv == "hello world");
+        //]
+    }
+
+    {
+        //[snippet_encoding_12
+        result<pct_string_view> rs =
+            make_pct_string_view("hello%20world");
+        assert(rs.has_value());
+        pct_string_view s = rs.value();
+        decode_view dv = *s;
+        assert(dv == "hello world");
+        //]
+    }
+
+    {
+        //[snippet_encoding_13
+        url_view u =
+            parse_relative_ref("user/john%20doe/profile%20photo.jpg").value();
+        std::vector<std::string> route =
+            {"user", "john doe", "profile photo.jpg"};
+        auto segs = u.encoded_segments();
+        auto it0 = segs.begin();
+        auto end0 = segs.end();
+        auto it1 = route.begin();
+        auto end1 = route.end();
+        while (
+            it0 != end0 &&
+            it1 != end1)
+        {
+            pct_string_view seg0 = *it0;
+            decode_view dseg0 = *seg0;
+            string_view seg1 = *it1;
+            if (dseg0 == seg1)
+            {
+                ++it0;
+                ++it1;
+            }
+            else
+            {
+                break;
+            }
+        }
+        bool route_match = it0 == end0 && it1 == end1;
+        assert(route_match);
+        //]
+    }
+
+    {
+        //[snippet_encoding_14
+        pct_string_view s = "user/john%20doe/profile%20photo.jpg";
+        std::string buf;
+        buf.resize(s.decoded_size());
+        s.decode({}, string_token::assign_to(buf));
+        assert(buf == "user/john doe/profile photo.jpg");
+        //]
+    }
+}
+
 //[snippet_using_static_pool_1
 // VFALCO NOPE
 //]
@@ -1481,6 +1637,7 @@ public:
         ignore_unused(&grammar_customization);
         ignore_unused(&modifying_path);
         normalizing();
+        encoding();
 
         BOOST_TEST_PASS();
     }
