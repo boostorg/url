@@ -2661,6 +2661,19 @@ public:
     {
         return os << u.buffer();
     }
+
+private:
+    //--------------------------------------------
+    //
+    // implementation
+    //
+    //--------------------------------------------
+    BOOST_URL_DECL
+    static
+    int
+    segments_compare(
+        segments_encoded_view seg0,
+        segments_encoded_view seg1) noexcept;
 };
 
 //------------------------------------------------
