@@ -1405,8 +1405,7 @@ normalize_octets_impl(
             ++dest;
             continue;
         }
-        if (end - it < 3)
-            break;
+        BOOST_ASSERT(end - it >= 3);
 
         // decode unreserved octets
         d = detail::decode_one(it + 1);
