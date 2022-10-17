@@ -71,6 +71,7 @@ rewind() noexcept
     auto const end = p0 + s.size();
     if(p0 != end)
     {
+        fast_nseg = 1;
         // skip leading '/'
         // of absolute-path
         if(*p0 == '/')
@@ -82,7 +83,10 @@ rewind() noexcept
         while(p != end)
         {
             if(*p == '/')
+            {
+                ++fast_nseg;
                 break;
+            }
             ++p;
         }
         front = string_view(
@@ -93,6 +97,7 @@ rewind() noexcept
     {
         pos_ = string_view::npos;
         front = { p0, 0 };
+        fast_nseg = 0;
     }
 }
 
@@ -201,6 +206,7 @@ segment_iter(
     : any_segments_iter(s_)
 {
     front = s;
+    fast_nseg = 1;
 }
 
 void
@@ -290,6 +296,7 @@ segment_encoded_iter(
     : any_segments_iter(s_)
 {
     front = s;
+    fast_nseg = 1;
 }
 
 void
