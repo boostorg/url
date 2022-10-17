@@ -40,6 +40,12 @@ public:
     // to handle special cases
     string_view front;
 
+    // quick number of segments
+    // 0 = zero
+    // 1 = one
+    // 2 = two, or more
+    std::size_t fast_nseg = 0;
+
     // Rewind the iterator to the beginning
     virtual void rewind() noexcept = 0;
 
@@ -152,8 +158,19 @@ struct segments_iter
         , it0_(first)
         , end_(last)
     {
-        if (first != last)
+        if(first != last)
+        {
             front = *first;
+            auto it = first;
+            if(++it == last)
+                fast_nseg = 1;
+            else
+                fast_nseg = 2;
+        }
+        else
+        {
+            fast_nseg = 0;
+        }
     }
 
 private:
@@ -257,6 +274,15 @@ struct segments_encoded_iter
             // throw on invalid input
             front = pct_string_view(
                 string_view(*first));
+            auto it = first;
+            if(++it == last)
+                fast_nseg = 1;
+            else
+                fast_nseg = 2;
+        }
+        else
+        {
+            fast_nseg = 0;
         }
     }
 

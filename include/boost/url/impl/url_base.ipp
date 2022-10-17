@@ -1963,61 +1963,6 @@ edit_segments(
 
 //------------------------------------------------
 //
-//  Measure the number of encoded characters
-//  of output, and the number of inserted
-//  segments including internal separators.
-//
-    std::size_t nseg = 0;
-    std::size_t nchar = 0;
-    if(src.measure(nchar))
-    {
-        for(;;)
-        {
-            ++nseg;
-            if(! src.measure(nchar))
-                break;
-            ++nchar;
-        }
-    }
-
-//------------------------------------------------
-//
-//  Calculate [pos0, pos1) to remove
-//
-    auto pos0 = it0.pos;
-    if(it0.index == 0)
-    {
-        // patch pos for prefix
-        pos0 = 0;
-    }
-    auto pos1 = it1.pos;
-    if(it1.index == 0)
-    {
-        // patch pos for prefix
-        pos1 = detail::path_prefix(
-            impl_.get(id_path));
-    }
-    else if(
-        it0.index == 0 &&
-        it1.index < impl_.nseg_ &&
-        nseg == 0)
-    {
-        // Remove the slash from segment it1
-        // if it is becoming the new first
-        // segment.
-        ++pos1;
-    }
-    // calc decoded size of old range
-    auto const dn0 =
-        detail::decode_bytes_unsafe(
-            string_view(
-                impl_.cs_ +
-                    impl_.offset(id_path) +
-                    pos0,
-                pos1 - pos0));
-
-//------------------------------------------------
-//
 //  Calculate output prefix
 //
 //  0 = ""
@@ -2030,11 +1975,14 @@ edit_segments(
     {
         // Check if the new
         // path would be empty
-        if( nseg == 0 &&
+        if( src.fast_nseg == 0 &&
             it0.index == 0 &&
             it1.index == impl_.nseg_)
         {
-            BOOST_ASSERT(nchar == 0);
+            // VFALCO we don't have
+            // access to nchar this early
+            //
+            //BOOST_ASSERT(nchar == 0);
             absolute = 0;
         }
         else
@@ -2053,15 +2001,15 @@ edit_segments(
     if(it0.index > 0)
     {
         // first segment unchanged
-        prefix = nseg > 0;
+        prefix = src.fast_nseg > 0;
     }
-    else if(nseg > 0)
+    else if(src.fast_nseg > 0)
     {
         // first segment from src
         if(! src.front.empty())
         {
             if( src.front == "." &&
-                    nseg > 1)
+                    src.fast_nseg > 1)
                 prefix = 2 + absolute;
             else if(absolute)
                 prefix = 1;
@@ -2116,7 +2064,75 @@ edit_segments(
     std::size_t const suffix =
         it1.index == 0 &&
         impl_.nseg_ > 0 &&
-        nseg > 0;
+        src.fast_nseg > 0;
+
+//------------------------------------------------
+//
+//  Measure the number of encoded characters
+//  of output, and the number of inserted
+//  segments including internal separators.
+//
+    std::size_t nseg = 0;
+    std::size_t nchar = 0;
+    if(src.measure(nchar))
+    {
+        for(;;)
+        {
+            ++nseg;
+            if(! src.measure(nchar))
+                break;
+            ++nchar;
+        }
+    }
+
+    switch(src.fast_nseg)
+    {
+    case 0:
+        BOOST_ASSERT(nseg == 0);
+        break;
+    case 1:
+        BOOST_ASSERT(nseg == 1);
+        break;
+    case 2:
+        BOOST_ASSERT(nseg >= 2);
+        break;
+    }
+
+//------------------------------------------------
+//
+//  Calculate [pos0, pos1) to remove
+//
+    auto pos0 = it0.pos;
+    if(it0.index == 0)
+    {
+        // patch pos for prefix
+        pos0 = 0;
+    }
+    auto pos1 = it1.pos;
+    if(it1.index == 0)
+    {
+        // patch pos for prefix
+        pos1 = detail::path_prefix(
+            impl_.get(id_path));
+    }
+    else if(
+        it0.index == 0 &&
+        it1.index < impl_.nseg_ &&
+        nseg == 0)
+    {
+        // Remove the slash from segment it1
+        // if it is becoming the new first
+        // segment.
+        ++pos1;
+    }
+    // calc decoded size of old range
+    auto const dn0 =
+        detail::decode_bytes_unsafe(
+            string_view(
+                impl_.cs_ +
+                    impl_.offset(id_path) +
+                    pos0,
+                pos1 - pos0));
 
 //------------------------------------------------
 //
