@@ -734,6 +734,7 @@ segments_compare(
         [](
             std::size_t& n,
             decode_view& dseg,
+            segments_encoded_view::iterator& begin,
             segments_encoded_view::iterator& it,
             decode_view::iterator& cit,
             std::size_t& skip,
@@ -757,23 +758,32 @@ segments_compare(
             at_slash = false;
             while (cit == dseg.begin())
             {
-                --it;
-                if (*it == "..")
+                if (it != begin)
+                    --it;
+                else
+                    break;
+                if (**it == "..")
                 {
                     ++skip;
                 }
-                else if (skip)
-                {
-                    --skip;
-                }
                 else if (**it != ".")
                 {
-                    dseg = **it;
-                    cit = dseg.end();
+                    if (skip)
+                    {
+                        --skip;
+                    }
+                    else
+                    {
+                        dseg = **it;
+                        cit = dseg.end();
+                    }
                 }
             }
-            --cit;
             --n;
+            if (it == begin)
+            {
+                return "/.."[n];
+            }
             if (cit == dseg.begin())
             {
                 at_slash = true;
@@ -781,38 +791,51 @@ segments_compare(
             }
             else
             {
+                --cit;
                 return *cit;
             }
         }
     };
 
+    auto begin0 = seg0.begin();
     auto it0 = seg0.end();
     decode_view dseg0;
+    if (it0 != seg0.begin())
+    {
+        --it0;
+        dseg0 = **it0;
+    }
     decode_view::iterator cit0 = dseg0.end();
     std::size_t skip0 = 0;
     bool at_slash0 = true;
     while (n0 > n1)
     {
-        consume_last(n0, dseg0, it0, cit0, skip0, at_slash0);
+        consume_last(n0, dseg0, begin0,it0, cit0, skip0, at_slash0);
     }
 
+    auto begin1 = seg1.begin();
     auto it1 = seg1.end();
     decode_view dseg1;
+    if (it1 != seg1.begin())
+    {
+        --it1;
+        dseg1 = **it1;
+    }
     decode_view::iterator cit1 = dseg1.end();
     std::size_t skip1 = 0;
     bool at_slash1 = true;
     while (n1 > n0)
     {
-        consume_last(n1, dseg1, it1, cit1, skip1, at_slash1);
+        consume_last(n1, dseg1, begin1,it1, cit1, skip1, at_slash1);
     }
 
     int cmp = 0;
     while (n0)
     {
         char c0 = consume_last(
-            n0, dseg0, it0, cit0, skip0, at_slash0);
+            n0, dseg0, begin0, it0, cit0, skip0, at_slash0);
         char c1 = consume_last(
-            n1, dseg1, it1, cit1, skip1, at_slash1);
+            n1, dseg1, begin1, it1, cit1, skip1, at_slash1);
         if (c0 < c1)
             cmp = -1;
         else if (c1 < c0)
