@@ -15,7 +15,7 @@
 #include <boost/url/parse.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
-#include <boost/url/detail/remove_dot_segments.hpp>
+#include <boost/url/detail/normalize.hpp>
 
 #include "test_suite.hpp"
 

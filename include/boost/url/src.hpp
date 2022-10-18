@@ -40,7 +40,6 @@ in a translation unit of the program.
 #include <boost/url/detail/impl/normalize.ipp>
 #include <boost/url/detail/impl/params_iter_impl.ipp>
 #include <boost/url/detail/impl/path.ipp>
-#include <boost/url/detail/impl/remove_dot_segments.ipp>
 #include <boost/url/detail/impl/segments_iter_impl.ipp>
 #include <boost/url/detail/impl/url_impl.ipp>
 

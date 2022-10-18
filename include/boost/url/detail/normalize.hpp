@@ -139,6 +139,34 @@ ci_digest(
     string_view s,
     fnv_1a& hasher) noexcept;
 
+BOOST_URL_DECL
+std::size_t
+remove_dot_segments(
+    char* dest,
+    char const* end,
+    string_view s) noexcept;
+
+void
+pop_last_segment(
+    string_view& s,
+    string_view& c,
+    std::size_t& level,
+    bool r) noexcept;
+
+char
+path_pop_back( string_view& s );
+
+void
+normalized_path_digest(
+    string_view s,
+    bool remove_unmatched,
+    fnv_1a& hasher) noexcept;
+
+int
+segments_compare(
+    segments_encoded_view seg0,
+    segments_encoded_view seg1) noexcept;
+
 } // detail
 } // urls
 } // boost
