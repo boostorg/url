@@ -114,7 +114,9 @@ measure(
         s.substr(
             pos_,
             next_ - pos_),
-        pchars,
+        pos_ == 0 && encode_colons ?
+            nocolon_pchars :
+            pchars,
         opt);
     increment();
     return true;
@@ -124,8 +126,7 @@ void
 path_iter::
 copy(
     char*& dest,
-    char const* end,
-    bool encode_colons) noexcept
+    char const* end) noexcept
 {
     BOOST_ASSERT(pos_ !=
         string_view::npos);
@@ -137,7 +138,7 @@ copy(
         s.substr(
             pos_,
             next_ - pos_),
-        encode_colons ?
+        pos_ == 0 && encode_colons ?
             nocolon_pchars :
             pchars,
         opt);
@@ -170,7 +171,9 @@ measure(
         s.substr(
             pos_,
             next_ - pos_),
-        pchars,
+        pos_ == 0 && encode_colons ?
+            nocolon_pchars :
+            pchars,
         opt);
     increment();
     return true;
@@ -180,8 +183,7 @@ void
 path_encoded_iter::
 copy(
     char*& dest,
-    char const* end,
-    bool encode_colons) noexcept
+    char const* end) noexcept
 {
     BOOST_ASSERT(pos_ !=
         string_view::npos);
@@ -193,7 +195,7 @@ copy(
         s.substr(
             pos_,
             next_ - pos_),
-        encode_colons ?
+        pos_ == 0 && encode_colons ?
             nocolon_pchars :
             pchars,
         opt);
@@ -220,6 +222,7 @@ segment_iter::
 rewind() noexcept
 {
     at_end_ = false;
+    at_first_ = true;
 }
 
 bool
@@ -233,9 +236,12 @@ measure(
     opt.space_to_plus = false;
     n += encoded_size(
         s,
-        pchars,
+        encode_colons && at_first_ ?
+            nocolon_pchars :
+            pchars,
         opt);
     at_end_ = true;
+    at_first_ = false;
     return true;
 }
 
@@ -243,8 +249,7 @@ void
 segment_iter::
 copy(
     char*& dest,
-    char const* end,
-    bool encode_colons) noexcept
+    char const* end) noexcept
 {
     encode_opts opt;
     opt.space_to_plus = false;
@@ -252,10 +257,11 @@ copy(
         dest,
         end - dest,
         s,
-        encode_colons ?
+        encode_colons && at_first_ ?
             nocolon_pchars :
             pchars,
         opt);
+    at_first_ = false;
 }
 
 //------------------------------------------------
@@ -268,13 +274,16 @@ void
 segments_iter_base::
 measure_impl(
     std::size_t& n,
-    string_view s) noexcept
+    string_view s,
+    bool encode_colons) noexcept
 {
     encode_opts opt;
     opt.space_to_plus = false;
     n += encoded_size(
         s,
-        pchars,
+        encode_colons ?
+            nocolon_pchars :
+            pchars,
         opt);
 }
 
@@ -318,6 +327,7 @@ segment_encoded_iter::
 rewind() noexcept
 {
     at_end_ = false;
+    at_first_ = true;
 }
 
 bool
@@ -331,8 +341,11 @@ measure(
     opt.space_to_plus = false;
     n += detail::re_encoded_size_unsafe(
         s,
-        pchars,
+        encode_colons && at_first_ ?
+            nocolon_pchars :
+            pchars,
         opt);
+    at_first_ = false;
     at_end_ = true;
     return true;
 }
@@ -341,8 +354,7 @@ void
 segment_encoded_iter::
 copy(
     char*& dest,
-    char const* end,
-    bool encode_colons) noexcept
+    char const* end) noexcept
 {
     encode_opts opt;
     opt.space_to_plus = false;
@@ -350,10 +362,11 @@ copy(
         dest,
         end,
         s,
-        encode_colons ?
+        encode_colons && at_first_ ?
             nocolon_pchars :
             pchars,
         opt);
+    at_first_ = false;
 }
 
 //------------------------------------------------
@@ -366,13 +379,16 @@ void
 segments_encoded_iter_base::
 measure_impl(
     std::size_t& n,
-    string_view s) noexcept
+    string_view s,
+    bool encode_colons) noexcept
 {
     encode_opts opt;
     opt.space_to_plus = false;
     n += detail::re_encoded_size_unsafe(
         s,
-        pchars,
+        encode_colons ?
+            nocolon_pchars :
+            pchars,
         opt);
 }
 

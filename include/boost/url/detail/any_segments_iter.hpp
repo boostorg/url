@@ -44,7 +44,9 @@ public:
     // 0 = zero
     // 1 = one
     // 2 = two, or more
-    std::size_t fast_nseg = 0;
+    int fast_nseg = 0;
+
+    bool encode_colons = false;
 
     // Rewind the iterator to the beginning
     virtual void rewind() noexcept = 0;
@@ -58,8 +60,7 @@ public:
     // Copy and increment the current
     // element, encoding as needed.
     virtual void copy(char*& dest,
-        char const* end,
-        bool encode_colons) noexcept = 0;
+        char const* end) noexcept = 0;
 };
 
 //------------------------------------------------
@@ -80,7 +81,7 @@ protected:
     void increment() noexcept;
     void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
-    void copy(char*&, char const*, bool reencode_colons) noexcept override;
+    void copy(char*&, char const*) noexcept override;
 };
 
 //------------------------------------------------
@@ -96,7 +97,7 @@ struct BOOST_SYMBOL_VISIBLE
 
 private:
     bool measure(std::size_t&) noexcept override;
-    void copy(char*&, char const*, bool encode_colons) noexcept override;
+    void copy(char*&, char const*) noexcept override;
 };
 
 //------------------------------------------------
@@ -117,9 +118,10 @@ struct BOOST_SYMBOL_VISIBLE
 
 private:
     bool at_end_ = false;
+    bool at_first_ = true;
     void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
-    void copy(char*&, char const*, bool encode_colons) noexcept override;
+    void copy(char*&, char const*) noexcept override;
 };
 
 //------------------------------------------------
@@ -133,7 +135,7 @@ struct segments_iter_base
 protected:
     BOOST_URL_DECL static void
     measure_impl(std::size_t&,
-        string_view) noexcept;
+        string_view, bool) noexcept;
     BOOST_URL_DECL static void
     copy_impl(char*&, char const*,
         string_view, bool) noexcept;
@@ -192,7 +194,8 @@ private:
         if(it_ == end_)
             return false;
         measure_impl(n,
-            string_view(*it_));
+            string_view(*it_),
+            encode_colons && it_ == it0_);
         ++it_;
         return true;
     }
@@ -200,8 +203,7 @@ private:
     void
     copy(
         char*& dest,
-        char const* end,
-        bool encode_colons) noexcept override
+        char const* end) noexcept override
     {
         copy_impl(dest, end,
             string_view(*it_++),
@@ -226,10 +228,11 @@ struct BOOST_SYMBOL_VISIBLE
         pct_string_view const& s) noexcept;
 
 private:
+    bool at_first_ = true;
     bool at_end_ = false;
     void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
-    void copy(char*&, char const*, bool encode_colons) noexcept override;
+    void copy(char*&, char const*) noexcept override;
 };
 
 //------------------------------------------------
@@ -245,7 +248,7 @@ struct segments_encoded_iter_base
 protected:
     BOOST_URL_DECL static void
     measure_impl(std::size_t&,
-        string_view) noexcept;
+        string_view, bool) noexcept;
     BOOST_URL_DECL static void
     copy_impl(char*&, char const*,
         string_view, bool) noexcept;
@@ -306,21 +309,23 @@ private:
         if(it_ == end_)
             return false;
         // throw on invalid input
+        bool e = encode_colons && it_ == it0_;
         measure_impl(n,
             pct_string_view(
-                string_view(*it_++)));
+                string_view(*it_++)),
+            e);
         return true;
     }
 
     void
     copy(
         char*& dest,
-        char const* end,
-        bool encode_colons) noexcept override
+        char const* end) noexcept override
     {
+        bool e = encode_colons && it_ == it0_;
         copy_impl(dest, end,
             string_view(*it_++),
-            encode_colons);
+            e);
     }
 };
 

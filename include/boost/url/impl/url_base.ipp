@@ -2059,8 +2059,6 @@ edit_segments(
 //  3 = "/./"
 //
     bool const is_abs = is_path_absolute();
-    bool encode_colons = false;
-    std::size_t nchar = 0;
     if(has_authority())
     {
         // Check if the new
@@ -2087,6 +2085,7 @@ edit_segments(
     }
     auto const path_pos = impl_.offset(id_path);
 
+    std::size_t nchar = 0;
     std::size_t prefix = 0;
     if(it0.index > 0)
     {
@@ -2109,9 +2108,7 @@ edit_segments(
             else
             {
                 prefix = 0;
-                encode_colons = true;
-                for (char c: src.front)
-                    nchar += 2 * (c == ':');
+                src.encode_colons = true;
             }
         }
         else
@@ -2168,7 +2165,6 @@ edit_segments(
 //  segments including internal separators.
 //
     std::size_t nseg = 0;
-    std::size_t nchar = 0;
     if(src.measure(nchar))
     {
         for(;;)
@@ -2299,11 +2295,11 @@ edit_segments(
     {
         for(;;)
         {
-            src.copy(dest, end, encode_colons);
+            src.copy(dest, end);
             if(--nseg == 0)
                 break;
             *dest++ = '/';
-            encode_colons = false;
+            src.encode_colons = false;
         }
         if(suffix)
             *dest++ = '/';
