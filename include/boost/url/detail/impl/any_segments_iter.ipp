@@ -114,7 +114,7 @@ measure(
         s.substr(
             pos_,
             next_ - pos_),
-        pos_ == 0 && encode_colons ?
+        encode_colons ?
             nocolon_pchars :
             pchars,
         opt);
@@ -138,7 +138,7 @@ copy(
         s.substr(
             pos_,
             next_ - pos_),
-        pos_ == 0 && encode_colons ?
+        encode_colons ?
             nocolon_pchars :
             pchars,
         opt);
@@ -171,7 +171,7 @@ measure(
         s.substr(
             pos_,
             next_ - pos_),
-        pos_ == 0 && encode_colons ?
+        encode_colons ?
             nocolon_pchars :
             pchars,
         opt);
@@ -195,7 +195,7 @@ copy(
         s.substr(
             pos_,
             next_ - pos_),
-        pos_ == 0 && encode_colons ?
+        encode_colons ?
             nocolon_pchars :
             pchars,
         opt);
@@ -222,7 +222,6 @@ segment_iter::
 rewind() noexcept
 {
     at_end_ = false;
-    at_first_ = true;
 }
 
 bool
@@ -236,12 +235,11 @@ measure(
     opt.space_to_plus = false;
     n += encoded_size(
         s,
-        encode_colons && at_first_ ?
+        encode_colons ?
             nocolon_pchars :
             pchars,
         opt);
     at_end_ = true;
-    at_first_ = false;
     return true;
 }
 
@@ -257,11 +255,10 @@ copy(
         dest,
         end - dest,
         s,
-        encode_colons && at_first_ ?
+        encode_colons ?
             nocolon_pchars :
             pchars,
         opt);
-    at_first_ = false;
 }
 
 //------------------------------------------------
@@ -327,7 +324,6 @@ segment_encoded_iter::
 rewind() noexcept
 {
     at_end_ = false;
-    at_first_ = true;
 }
 
 bool
@@ -341,11 +337,10 @@ measure(
     opt.space_to_plus = false;
     n += detail::re_encoded_size_unsafe(
         s,
-        encode_colons && at_first_ ?
+        encode_colons ?
             nocolon_pchars :
             pchars,
         opt);
-    at_first_ = false;
     at_end_ = true;
     return true;
 }
@@ -362,11 +357,10 @@ copy(
         dest,
         end,
         s,
-        encode_colons && at_first_ ?
+        encode_colons ?
             nocolon_pchars :
             pchars,
         opt);
-    at_first_ = false;
 }
 
 //------------------------------------------------

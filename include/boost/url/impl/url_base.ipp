@@ -2087,6 +2087,7 @@ edit_segments(
 
     std::size_t nchar = 0;
     std::size_t prefix = 0;
+    bool encode_colons = false;
     if(it0.index > 0)
     {
         // first segment unchanged
@@ -2108,7 +2109,7 @@ edit_segments(
             else
             {
                 prefix = 0;
-                src.encode_colons = true;
+                encode_colons = true;
             }
         }
         else
@@ -2164,9 +2165,11 @@ edit_segments(
 //  of output, and the number of inserted
 //  segments including internal separators.
 //
+    src.encode_colons = encode_colons;
     std::size_t nseg = 0;
     if(src.measure(nchar))
     {
+        src.encode_colons = false;
         for(;;)
         {
             ++nseg;
@@ -2293,6 +2296,7 @@ edit_segments(
     src.rewind();
     if(nseg > 0)
     {
+        src.encode_colons = encode_colons;
         for(;;)
         {
             src.copy(dest, end);

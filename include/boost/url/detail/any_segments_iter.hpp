@@ -118,7 +118,6 @@ struct BOOST_SYMBOL_VISIBLE
 
 private:
     bool at_end_ = false;
-    bool at_first_ = true;
     void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
     void copy(char*&, char const*) noexcept override;
@@ -195,7 +194,7 @@ private:
             return false;
         measure_impl(n,
             string_view(*it_),
-            encode_colons && it_ == it0_);
+            encode_colons);
         ++it_;
         return true;
     }
@@ -228,7 +227,6 @@ struct BOOST_SYMBOL_VISIBLE
         pct_string_view const& s) noexcept;
 
 private:
-    bool at_first_ = true;
     bool at_end_ = false;
     void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
@@ -309,11 +307,10 @@ private:
         if(it_ == end_)
             return false;
         // throw on invalid input
-        bool e = encode_colons && it_ == it0_;
         measure_impl(n,
             pct_string_view(
                 string_view(*it_++)),
-            e);
+            encode_colons);
         return true;
     }
 
@@ -322,10 +319,9 @@ private:
         char*& dest,
         char const* end) noexcept override
     {
-        bool e = encode_colons && it_ == it0_;
         copy_impl(dest, end,
             string_view(*it_++),
-            e);
+            encode_colons);
     }
 };
 
