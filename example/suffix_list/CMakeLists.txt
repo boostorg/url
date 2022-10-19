@@ -7,13 +7,13 @@
 # Official repository: https://github.com/boostorg/url
 #
 
-project : requirements  ;
+source_group("" FILES
+        suffix_list.cpp
+        )
 
-project
-    : requirements
-      <library>/boost/url//boost_url
-      <library>/boost/json//boost_json
-      <library>/boost/regex//boost_regex
-    ;
+add_executable(suffix_list
+        suffix_list.cpp
+        )
 
-exe finicky : finicky.cpp ;
+set_property(TARGET suffix_list PROPERTY FOLDER "Examples")
+target_link_libraries(suffix_list PRIVATE Boost::url)
