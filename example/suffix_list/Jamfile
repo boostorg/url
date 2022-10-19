@@ -12,8 +12,6 @@ project : requirements  ;
 project
     : requirements
       <library>/boost/url//boost_url
-      <library>/boost/json//boost_json
-      <library>/boost/regex//boost_regex
     ;
 
-exe finicky : finicky.cpp ;
+exe suffix_list : suffix_list.cpp ;

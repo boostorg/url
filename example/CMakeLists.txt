@@ -9,6 +9,7 @@
 
 add_subdirectory(qrcode)
 add_subdirectory(finicky)
+add_subdirectory(suffix_list)
 add_subdirectory(mailto)
 add_subdirectory(magnet)
 add_subdirectory(route)

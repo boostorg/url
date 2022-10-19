@@ -8,6 +8,8 @@
 #
 
 build-project qrcode ;
+build-project finicky ;
+build-project suffix_list ;
 build-project mailto ;
 build-project magnet ;
 build-project route ;
