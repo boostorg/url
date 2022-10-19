@@ -46,6 +46,12 @@ public:
     // 2 = two, or more
     int fast_nseg = 0;
 
+    // whether the segments should encode colons
+    // when we measure and copy. the calling
+    // function will use this for the first
+    // segment in some cases, such as:
+    // "x:y:z" -> remove_scheme -> "y%3Az"
+    // as "y:z" would no longer represent a path
     bool encode_colons = false;
 
     // Rewind the iterator to the beginning
