@@ -118,7 +118,7 @@ public:
 
     /** Constructor
 
-        The copy will reference the same
+        The copy references the same
         underlying character buffer.
         Ownership is not transferred.
 
@@ -141,9 +141,9 @@ public:
 
     /** Constructor
 
-        The newly constructed string will
-        reference the specified character
-        buffer. Ownership is not transferred.
+        The newly constructed string references
+        the specified character buffer.
+        Ownership is not transferred.
 
         @par Postconditions
         @code
@@ -187,9 +187,9 @@ public:
 
     /** Constructor
 
-        The newly constructed string will
-        reference the specified character
-        buffer. Ownership is not transferred.
+        The newly constructed string references
+        the specified character buffer. Ownership
+        is not transferred.
 
         @par Postconditions
         @code
@@ -217,9 +217,9 @@ public:
 
     /** Constructor
 
-        The newly constructed string will
-        reference the specified character
-        buffer. Ownership is not transferred.
+        The newly constructed string references
+        the specified character buffer. Ownership
+        is not transferred.
 
         @par Postconditions
         @code
@@ -243,7 +243,7 @@ public:
 
     /** Assignment
 
-        The copy will reference the same
+        The copy references the same
         underlying character buffer.
         Ownership is not transferred.
 
@@ -329,13 +329,13 @@ public:
 
         @param opt The options for encoding. If
         this parameter is omitted, the default
-        options will be used.
+        options are used.
 
         @param token An optional string token.
         If this parameter is omitted, then
         a new `std::string` is returned.
         Otherwise, the function return type
-        will be the result type of the token.
+        is the result type of the token.
 
         @see
             @ref encoding_opts,
@@ -409,7 +409,7 @@ ref(pct_string_view& s) noexcept
     view which may be used to perform decoding
     or measurements.
     Otherwise the result contains an error code.
-    Upon success, returned view will reference
+    Upon success, the returned view references
     the original character buffer;
     Ownership is not transferred.
 

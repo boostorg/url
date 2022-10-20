@@ -128,7 +128,7 @@ struct param
         Upon construction, this acquires
         ownership of the members of other
         via move construction. The moved
-        from object will be as if default
+        from object is as if default
         constructed.
 
         @par Complexity
@@ -177,7 +177,7 @@ struct param
         Upon assignment, this acquires
         ownership of the members of other
         via move assignment. The moved
-        from object will be as if default
+        from object is as if default
         constructed.
 
         @par Complexity
@@ -459,7 +459,7 @@ struct param_view
         This constructs a parameter with a key
         and value.
         No validation is performed on the strings.
-        The new key and value will reference
+        The new key and value reference
         the same corresponding underlying
         character buffers.
         Ownership of the buffers is not transferred;
@@ -693,7 +693,7 @@ struct param_pct_view
         This constructs a parameter with a key
         and value, which may both contain percent
         escapes.
-        The new key and value will reference
+        The new key and value reference
         the same corresponding underlying
         character buffers.
         Ownership of the buffers is not transferred;
@@ -737,7 +737,7 @@ struct param_pct_view
         and optional value, which may both
         contain percent escapes.
 
-        The new key and value will reference
+        The new key and value reference
         the same corresponding underlying
         character buffers.
 
@@ -789,7 +789,7 @@ struct param_pct_view
         invalid percent-escapes, otherwise
         an exception is thrown.
 
-        The new key and value will reference
+        The new key and value reference
         the same corresponding underlying
         character buffers.
         Ownership of the buffers is not transferred;

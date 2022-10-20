@@ -64,7 +64,7 @@ http://www.example.com/path/to/file.txt
 ```
 
 To understand the relationship between the path and segments,
-we will define this function `segs` which returns a list of
+we define this function `segs` which returns a list of
 strings corresponding to the elements in a container of segments:
 
 [code_container_4_1]
@@ -163,7 +163,7 @@ For example consider the following URL:
 url u = url().set_path( "kyle:xy" );
 ```
 
-The library will produce the URL string `"kyle%3Axy"` and not
+The library produces the URL string `"kyle%3Axy"` and not
 `"kyle:xy"`, because the latter would have an unintended scheme.
 The table below demonstrates the results achieved by performing
 various modifications to a URL containing a path:

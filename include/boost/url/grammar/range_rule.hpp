@@ -176,14 +176,14 @@ public:
 
     /** Constructor
 
-        The new range will reference the
+        The new range references the
         same underlying character buffer.
         Ownership is not transferred; the
         caller is responsible for ensuring
         that the lifetime of the buffer
         extends until it is no longer
         referenced. The moved-from object
-        will become as if default-constructed.
+        becomes as if default-constructed.
 
         @par Exception Safety
         Throws nothing.
@@ -192,7 +192,7 @@ public:
 
     /** Constructor
 
-        The copy will reference the same
+        The copy references the same
         underlying character buffer.
         Ownership is not transferred; the
         caller is responsible for ensuring
@@ -207,12 +207,12 @@ public:
 
     /** Constructor
 
-        After the move, this will reference the
+        After the move, this references the
         same underlying character buffer. Ownership
         is not transferred; the caller is responsible
         for ensuring that the lifetime of the buffer
         extends until it is no longer referenced.
-        The moved-from object will become as if
+        The moved-from object becomes as if
         default-constructed.
 
         @par Exception Safety
@@ -223,7 +223,7 @@ public:
 
     /** Assignment
 
-        The copy will reference the same
+        The copy references the same
         underlying character buffer.
         Ownership is not transferred; the
         caller is responsible for ensuring
@@ -465,7 +465,7 @@ range_rule(
 
     @param first The rule to use for matching
     the first element. If this rule returns
-    an error, the range will be empty.
+    an error, the range is empty.
 
     @param next The rule to use for matching
     each subsequent element. The range extends

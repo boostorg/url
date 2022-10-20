@@ -41,7 +41,7 @@ struct parts_base
         // another url
         url = 1,
         // this belongs to authority_view
-        // id_user will not have the leading "//"
+        // id_user does not have the leading "//"
         authority = 2,
     };
 };

@@ -421,15 +421,15 @@ public:
         in the string:
 
         @li If an unescaped colon exists, the
-        characters up to the colon will become
+        characters up to the colon become
         the user and the rest of the characters
-        after the colon will become the password.
-        In this case @ref has_password will return
+        after the colon become the password.
+        In this case @ref has_password returns
         true. Otherwise,
 
-        @li If there is no colon, the user will
-        be set to the string. The function
-        @ref has_password will return false.
+        @li If there is no colon, the user is
+        set to the string. The function
+        @ref has_password returns false.
 
         @note
         The interpretation of the userinfo as
@@ -484,15 +484,15 @@ public:
         in the string:
 
         @li If an unescaped colon exists, the
-        characters up to the colon will become
+        characters up to the colon become
         the user and the rest of the characters
-        after the colon will become the password.
-        In this case @ref has_password will return
+        after the colon become the password.
+        In this case @ref has_password returns
         true. Otherwise,
 
-        @li If there is no colon, the user will
-        be set to the string. The function
-        @ref has_password will return false.
+        @li If there is no colon, the user is
+        set to the string. The function
+        @ref has_password returns false.
 
         @note
         The interpretation of the userinfo as
@@ -860,26 +860,26 @@ public:
 
         @li If the string is a valid IPv4 address,
         then the host is set to the address.
-        The host type will be @ref host_type::ipv4.
+        The host type is @ref host_type::ipv4.
 
         @li If the string is a valid IPv6 address
         enclosed in square brackets, then the
         host is set to that address.
-        The host type will be @ref host_type::ipv6.
+        The host type is @ref host_type::ipv6.
 
         @li If the string is a valid IPvFuture
         address enclosed in square brackets, then
         the host is set to that address.
-        The host type will be @ref host_type::ipvfuture.
+        The host type is @ref host_type::ipvfuture.
 
         @li Otherwise, the host name is set to
         the string, which may be empty.
         Reserved characters in the string are
         percent-escaped in the result.
-        The host type will be @ref host_type::name.
+        The host type is @ref host_type::name.
 
         In all cases, when this function returns,
-        the URL will contain an authority.
+        the URL contains an authority.
 
         @par Example
         @code
@@ -939,17 +939,17 @@ public:
 
         @li If the string is a valid IPv4 address,
         then the host is set to the address.
-        The host type will be @ref host_type::ipv4.
+        The host type is @ref host_type::ipv4.
 
         @li If the string is a valid IPv6 address
         enclosed in square brackets, then the
         host is set to that address.
-        The host type will be @ref host_type::ipv6.
+        The host type is @ref host_type::ipv6.
 
         @li If the string is a valid IPvFuture
         address enclosed in square brackets, then
         the host is set to that address.
-        The host type will be @ref host_type::ipvfuture.
+        The host type is @ref host_type::ipvfuture.
 
         @li Otherwise, the host name is set to
         the string. This string can contain percent
@@ -957,10 +957,10 @@ public:
         Escapes in the string are preserved,
         and reserved characters in the string
         are percent-escaped in the result.
-        The host type will be @ref host_type::name.
+        The host type is @ref host_type::name.
 
         In all cases, when this function returns,
-        the URL will contain an authority.
+        the URL contains an authority.
 
         @par Example
         @code
@@ -1023,24 +1023,24 @@ public:
 
         @li If the string is a valid IPv4 address,
         then the host is set to the address.
-        The host type will be @ref host_type::ipv4.
+        The host type is @ref host_type::ipv4.
 
         @li If the string is a valid IPv6 address,
         then the host is set to that address.
-        The host type will be @ref host_type::ipv6.
+        The host type is @ref host_type::ipv6.
 
         @li If the string is a valid IPvFuture,
         then the host is set to that address.
-        The host type will be @ref host_type::ipvfuture.
+        The host type is @ref host_type::ipvfuture.
 
         @li Otherwise, the host name is set to
         the string, which may be empty.
         Reserved characters in the string are
         percent-escaped in the result.
-        The host type will be @ref host_type::name.
+        The host type is @ref host_type::name.
 
         In all cases, when this function returns,
-        the URL will contain an authority.
+        the URL contains an authority.
 
         @par Example
         @code
@@ -1122,15 +1122,15 @@ public:
 
         @li If the string is a valid IPv4 address,
         then the host is set to the address.
-        The host type will be @ref host_type::ipv4.
+        The host type is @ref host_type::ipv4.
 
         @li If the string is a valid IPv6 address,
         then the host is set to that address.
-        The host type will be @ref host_type::ipv6.
+        The host type is @ref host_type::ipv6.
 
         @li If the string is a valid IPvFuture,
         then the host is set to that address.
-        The host type will be @ref host_type::ipvfuture.
+        The host type is @ref host_type::ipvfuture.
 
         @li Otherwise, the host name is set to
         the string. This string can contain percent
@@ -1138,10 +1138,10 @@ public:
         Escapes in the string are preserved,
         and reserved characters in the string
         are percent-escaped in the result.
-        The host type will be @ref host_type::name.
+        The host type is @ref host_type::name.
 
         In all cases, when this function returns,
-        the URL will contain an authority.
+        the URL contains an authority.
 
         @par Example
         @code
@@ -1224,7 +1224,7 @@ public:
 
         The host is set to the specified IPv4
         address.
-        The host type will be @ref host_type::ipv4.
+        The host type is @ref host_type::ipv4.
 
         @par Example
         @code
@@ -1281,7 +1281,7 @@ public:
 
         The host is set to the specified IPv6
         address.
-        The host type will be @ref host_type::ipv6.
+        The host type is @ref host_type::ipv6.
 
         @par Example
         @code
@@ -1346,7 +1346,7 @@ public:
 
         The host is set to the specified IPvFuture
         string.
-        The host type will be @ref host_type::ipvfuture.
+        The host type is @ref host_type::ipvfuture.
 
         @par Example
         @code
@@ -1401,7 +1401,7 @@ public:
         which may be empty.
         Reserved characters in the string are
         percent-escaped in the result.
-        The host type will be @ref host_type::name.
+        The host type is @ref host_type::name.
 
         @par Example
         @code
@@ -1451,7 +1451,7 @@ public:
         Escapes in the string are preserved,
         and reserved characters in the string
         are percent-escaped in the result.
-        The host type will be @ref host_type::name.
+        The host type is @ref host_type::name.
 
         @par Example
         @code
@@ -1697,7 +1697,7 @@ public:
         @note
         The library may adjust the final result
         to ensure that no other parts of the url
-        will be semantically affected.
+        is semantically affected.
 
         @par Example
         @code
@@ -1759,7 +1759,7 @@ public:
         @note
         The library may adjust the final result
         to ensure that no other parts of the url
-        will be semantically affected.
+        is semantically affected.
 
         @par Example
         @code

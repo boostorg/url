@@ -22,7 +22,7 @@ namespace grammar {
 
     This adapts another rule such that
     when an empty string is successfully
-    parsed, the result will be an error.
+    parsed, the result is an error.
 
     @par Value Type
     @code

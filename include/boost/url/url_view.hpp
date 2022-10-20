@@ -201,7 +201,7 @@ public:
 
     /** Constructor
 
-        After construction, both views will
+        After construction, both views
         reference the same underlying character
         buffer. Ownership is not transferred.
 
@@ -225,7 +225,7 @@ public:
 
     /** Constructor
 
-        After construction, both views will
+        After construction, both views
         reference the same underlying character
         buffer. Ownership is not transferred.
 
@@ -246,7 +246,7 @@ public:
 
     /** Assignment
 
-        After assignment, both views will
+        After assignment, both views
         reference the same underlying character
         buffer. Ownership is not transferred.
 
@@ -273,7 +273,7 @@ public:
 
     /** Assignment
 
-        After assignment, both views will
+        After assignment, both views
         reference the same underlying character
         buffer. Ownership is not transferred.
 

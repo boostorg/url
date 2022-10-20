@@ -48,7 +48,7 @@ public:
 
     // whether the segments should encode colons
     // when we measure and copy. the calling
-    // function will use this for the first
+    // function uses this for the first
     // segment in some cases, such as:
     // "x:y:z" -> remove_scheme -> "y%3Az"
     // as "y:z" would no longer represent a path

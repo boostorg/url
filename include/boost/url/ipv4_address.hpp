@@ -107,8 +107,8 @@ public:
     /** Construct from an array of bytes.
 
         This function constructs an address
-        from the array in `bytes`, which will
-        be interpreted in big-endian.
+        from the array in `bytes`, which is
+        interpreted in big-endian.
 
         @param bytes The value to construct from.
     */
@@ -184,7 +184,7 @@ public:
         If the token parameter is omitted, then
         a new `std::string` is returned.
         Otherwise, the function return type
-        will be the result type of the token.
+        is the result type of the token.
 
         @param token An optional string token.
 

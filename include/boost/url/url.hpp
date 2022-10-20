@@ -179,7 +179,7 @@ public:
         which includes the underlying
         character buffer.
         After construction, the moved-from
-        object will be as if default constructed.
+        object is as if default constructed.
 
         @par Postconditions
         @code
@@ -199,8 +199,8 @@ public:
 
     /** Constructor
 
-        The newly constructed object will
-        contain a copy of `u`.
+        The newly constructed object
+        contains a copy of `u`.
 
         @par Postconditions
         @code
@@ -225,8 +225,8 @@ public:
 
     /** Constructor
 
-        The newly constructed object will
-        contain a copy of `u`.
+        The newly constructed object
+        contains a copy of `u`.
 
         @par Postconditions
         @code
@@ -257,7 +257,7 @@ public:
         character buffer. The previous contents
         of `this` are destroyed.
         After assignment, the moved-from
-        object will be as if default constructed.
+        object is as if default constructed.
 
         @par Postconditions
         @code

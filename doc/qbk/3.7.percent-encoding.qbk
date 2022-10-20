@@ -67,7 +67,7 @@ __pct_string_view__.
 
 [snippet_encoding_9]
 
-If the input is invalid, note that exception will be thrown while the
+If the input is invalid, note that an exception is thrown while the
 __pct_string_view__ is implicitly constructed and not from the modifying
 function.
 

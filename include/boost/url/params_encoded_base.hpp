@@ -266,7 +266,7 @@ public:
 
         @param ic An optional parameter. If
         the value @ref ignore_case is passed
-        here, the comparison will be
+        here, the comparison is
         case-insensitive.
     */
     bool
@@ -303,7 +303,7 @@ public:
 
         @param ic An optional parameter. If
         the value @ref ignore_case is passed
-        here, the comparison will be
+        here, the comparison is
         case-insensitive.
     */
     BOOST_URL_DECL
@@ -356,7 +356,7 @@ public:
 
         @param ic An optional parameter. If
         the value @ref ignore_case is passed
-        here, the comparison will be
+        here, the comparison is
         case-insensitive.
     */
     iterator
@@ -408,7 +408,7 @@ public:
 
         @param ic An optional parameter. If
         the value @ref ignore_case is passed
-        here, the comparison will be
+        here, the comparison is
         case-insensitive.
     */
     iterator
@@ -456,7 +456,7 @@ public:
 
         @param ic An optional parameter. If
         the value @ref ignore_case is passed
-        here, the comparison will be
+        here, the comparison is
         case-insensitive.
     */
     iterator
@@ -503,7 +503,7 @@ public:
 
         @param ic An optional parameter. If
         the value @ref ignore_case is passed
-        here, the comparison will be
+        here, the comparison is
         case-insensitive.
     */
     iterator

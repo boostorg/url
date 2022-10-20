@@ -143,7 +143,7 @@ the resulting data members:
 ]]
 
 To understand the relationship between the query and the
-resulting range of params, first we will define this
+resulting range of params, first we define this
 function `parms` which returns a list of params
 corresponding to the elements in a container
 of params:

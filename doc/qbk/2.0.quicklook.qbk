@@ -33,7 +33,7 @@ scope.
 Alternatively, individual headers may be included to obtain the declarations
  for specific types.
 
-You will need to link your program with the Boost.URL built library. You must install binaries
+You need to link your program with the Boost.URL built library. You must install binaries
 in a location that can be found by your linker.
 
 If you followed the [@http://www.boost.org/doc/libs/release/more/getting_started/index.html Boost Getting Started]
@@ -63,7 +63,7 @@ might uses Boost.URL.
 
 This "header-only" configuration needs `BOOST_URL_NO_LIB` defined when building
 with compilers supporting auto-linking, such as Microsoft Visual C++. The macro
-will instruct Boost to deactivate auto-linking.
+instructs Boost to deactivate auto-linking.
 
 [h3 Parsing]
 
@@ -124,9 +124,9 @@ Accessing the parts of the URL is easy:
 
 URL paths can be further divided into path segments with
 the function [link url.ref.boost__urls__url_view.segments `url_view::segments`].
-Although URL query strings are often used to represent key/value pairs, they
-are not a compound element because this interpretation is not defined by
-__rfc3986__. Users can treat the query as a single entity.
+Although URL query strings are often used to represent key/value pairs, this
+interpretation is not defined by __rfc3986__.
+Users can treat the query as a single entity.
 __url_view__ provides the function
 [link url.ref.boost__urls__url_view.params `url_view::params`] to extract this view
 of key/value pairs.
@@ -339,7 +339,7 @@ Or we can use a predefined constant:
 
 The scheme must be valid, however, or an exception is thrown.
 All modifying functions perform validation on their input. Attemping
-to set part of the URL to an invalid string will result in an exception.
+to set part of the URL to an invalid string results in an exception.
 It is not possible for a __url__ to hold syntactically illegal text.
 
 Modification functions return a reference to the object, so chaining

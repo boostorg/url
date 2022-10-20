@@ -36,7 +36,7 @@ class params_view;
     that the lifetime of the referenced url
     extends until it is no longer referenced.
     The view is modifiable; calling non-const
-    members will cause changes to the referenced
+    members causes changes to the referenced
     url.
 
     <br>
@@ -58,7 +58,7 @@ class params_view;
     @par Iterator Invalidation
     Changes to the underlying character buffer
     can invalidate iterators which reference it.
-    Modifications made through the container will
+    Modifications made through the container
     invalidate some or all iterators:
     <br>
 
@@ -97,7 +97,7 @@ public:
 
     /** Constructor
 
-        After construction, both views will
+        After construction, both views
         reference the same url. Ownership is not
         transferred; the caller is responsible
         for ensuring the lifetime of the url
@@ -468,7 +468,7 @@ public:
         element.
 
         @param before An iterator before which
-        the param will be inserted. This may
+        the param is inserted. This may
         be equal to `end()`.
 
         @param p The param to insert.
@@ -506,7 +506,7 @@ public:
         `init.size() == 0`.
 
         @param before An iterator before which
-        the element will be inserted. This may
+        the element is inserted. This may
         be equal to `end()`.
 
         @param init The list of params to insert.
@@ -549,7 +549,7 @@ public:
         `first == last`.
 
         @param before An iterator before which
-        the element will be inserted. This may
+        the element is inserted. This may
         be equal to `end()`.
 
         @param first, last The range of params
@@ -647,7 +647,7 @@ public:
 
         @param ic An optional parameter. If
         the value @ref ignore_case is passed
-        here, the comparison will be
+        here, the comparison is
         case-insensitive.
     */
     BOOST_URL_DECL
@@ -786,7 +786,7 @@ public:
         This function removes the value of
         an element at the specified position.
         After the call returns, `has_value`
-        for the element will be false.
+        for the element is false.
 
         <br>
         All iterators that are equal to
@@ -848,7 +848,7 @@ public:
         @param value The value to assign. The
         empty string still counts as a value.
         That is, `has_value` for the element
-        will be true.
+        is true.
     */
     BOOST_URL_DECL
     iterator
@@ -906,11 +906,11 @@ public:
         @param value The value to assign. The
         empty string still counts as a value.
         That is, `has_value` for the element
-        will be true.
+        is true.
 
         @param ic An optional parameter. If
         the value @ref ignore_case is passed
-        here, the comparison will be
+        here, the comparison is
         case-insensitive.
     */
     BOOST_URL_DECL

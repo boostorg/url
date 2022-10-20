@@ -26,7 +26,7 @@ namespace grammar {
 
     This matches a series of rules in the
     order specified. Upon success the input
-    will be adjusted to point to the first
+    is adjusted to point to the first
     unconsumed character. There is no
     implicit specification of linear white
     space between each rule.

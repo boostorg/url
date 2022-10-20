@@ -65,10 +65,10 @@ In this table:
     [
         Attempt to parse the buffer of characters defined by
         the range `[it,end)`. Upon success, the return result
-        will hold an instance of the rule's value type, and
-        the reference parameter `it` will be modified to point
+        holds an instance of the rule's value type, and
+        the reference parameter `it` is modified to point
         to the first unconsumed character. Otherwise, upon
-        failure the result will hold an error. In this case
+        failure the result holds an error. In this case
         the implementation defines if and how the reference
         parameter `it` is modified.
     ]

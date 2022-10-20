@@ -135,7 +135,7 @@ public:
 
         Conversion to std::string is explicit
         because assigning to string using an
-        implicit constructor will not preserve
+        implicit constructor does not preserve
         capacity.
     */
     explicit

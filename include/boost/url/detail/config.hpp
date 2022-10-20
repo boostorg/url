@@ -60,7 +60,7 @@
 
 // Add source location to error codes
 #ifdef BOOST_URL_NO_SOURCE_LOCATION
-# define BOOST_URL_ERR(ev) (ev)
+# define BOOST_URL_ERR(ev) (::boost::system::error_code(ev))
 # define BOOST_URL_RETURN_EC(ev) return (ev)
 # define BOOST_URL_POS ::boost::source_location()
 #else

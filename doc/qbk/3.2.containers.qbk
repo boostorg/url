@@ -174,7 +174,7 @@ These members are used to inspect and modify the authority as a whole string:
     [__pct_string_view__]
     [
     Set the authority to the string, which may contain percent escapes.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.remove_authority `remove_authority`]]
@@ -321,42 +321,42 @@ These members are used to inspect and modify the userinfo:
     [__string_view__]
     [
     Set the user to the string.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_user `set_password`]]
     [__string_view__]
     [
     Set the password to the string.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_userinfo `set_userinfo`]]
     [__string_view__]
     [
     Set the userinfo to the string.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_encoded_user `set_encoded_user`]]
     [__pct_string_view__]
     [
     Set the user to the string, which may contain percent escapes.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_encoded_password `set_encoded_password`]]
     [__pct_string_view__]
     [
     Set the password to the string, which may contain percent escapes.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_encoded_userinfo `set_encoded_userinfo`]]
     [__pct_string_view__]
     [
     Set the userinfo to the string, which may contain percent escapes.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.remove_password `remove_password`]]
@@ -395,7 +395,7 @@ These members are used to inspect and modify the host:
     [[link url.ref.boost__urls__host_type `host_type`]]
     [
     Return the host type enumeration constant.
-    If there is no authority, this will be the value
+    If there is no authority, this is the value
     [link url.ref.boost__urls__host_type `host_type::none`].
     ]
 ][
@@ -455,7 +455,7 @@ These members are used to inspect and modify the host:
     [__pct_string_view__]
     [
     Return the host, or an empty string if there is no authority.
-    This will include enclosing brackets if the host type is
+    This includes enclosing brackets if the host type is
     [link url.ref.boost__urls__host_type `host_type::ipv6`] or
     [link url.ref.boost__urls__host_type `host_type::ipvfuture`].
     ]
@@ -490,13 +490,13 @@ These members are used to inspect and modify the host:
     Set the host to the string, depending on the contents. If
     the string is a valid IPv4 address, a valid IPv6 address
     enclosed in brackets, or a valid IPvFuture address enclosed
-    in brackets then the resulting host type will be
+    in brackets then the resulting host type is
     [link url.ref.boost__urls__host_type `host_type::ipv4`],
     [link url.ref.boost__urls__host_type `host_type::ipv6`], or
     [link url.ref.boost__urls__host_type `host_type::ipvfuture`]
-    respectively. Otherwise, the host type will be
+    respectively. Otherwise, the host type is
     [link url.ref.boost__urls__host_type `host_type::name`], and
-    any reserved characters will be percent-escaped automatically.
+    any reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_host_address `set_host_address`]]
@@ -504,26 +504,26 @@ These members are used to inspect and modify the host:
     [
     Set the host to the string, depending on the contents. If
     the string is a valid IPv4 address, a valid IPv6 address, or
-    a valid IPvFuture address then the resulting host type will be
+    a valid IPvFuture address then the resulting host type is
     [link url.ref.boost__urls__host_type `host_type::ipv4`],
     [link url.ref.boost__urls__host_type `host_type::ipv6`], or
     [link url.ref.boost__urls__host_type `host_type::ipvfuture`]
-    respectively. Otherwise, the host type will be
+    respectively. Otherwise, the host type is
     [link url.ref.boost__urls__host_type `host_type::name`], and
-    any reserved characters will be percent-escaped automatically.
+    any reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_host_ipv4 `set_host_ipv4`]]
     [__ipv4_address__]
     [
-    Set the host to the IPv4 address. The host type will be
+    Set the host to the IPv4 address. The host type is
     [link url.ref.boost__urls__host_type `host_type::ipv4`].
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_host_ipv6 `set_host_ipv6`]]
     [__ipv6_address__]
     [
-    Set the host to the IPv6 address. The host type will be
+    Set the host to the IPv6 address. The host type is
     [link url.ref.boost__urls__host_type `host_type::ipv6`].
     ]
 ][
@@ -531,7 +531,7 @@ These members are used to inspect and modify the host:
     [__string_view__]
     [
     Set the host to the IPvFuture address, which should not include
-    square brackets. The host type will be
+    square brackets. The host type is
     [link url.ref.boost__urls__host_type `host_type::ipvfuture`].
     If the string is not a valid IPvFuture address, an exception
     is thrown.
@@ -541,8 +541,8 @@ These members are used to inspect and modify the host:
     [__string_view__]
     [
     Set the host to the string.
-    Any reserved characters will be percent-escaped automatically.
-    The host type will be
+    Any reserved characters are percent-escaped automatically.
+    The host type is
     [link url.ref.boost__urls__host_type `host_type::name`].
     ]
 ][
@@ -552,14 +552,14 @@ These members are used to inspect and modify the host:
     Set the host to the string, depending on the contents. If
     the string is a valid IPv4 address, a valid IPv6 address
     enclosed in brackets, or a valid IPvFuture address enclosed
-    in brackets then the resulting host type will be
+    in brackets then the resulting host type is
     [link url.ref.boost__urls__host_type `host_type::ipv4`],
     [link url.ref.boost__urls__host_type `host_type::ipv6`], or
     [link url.ref.boost__urls__host_type `host_type::ipvfuture`]
-    respectively. Otherwise, the host type will be
+    respectively. Otherwise, the host type is
     [link url.ref.boost__urls__host_type `host_type::name`], the
     string may contain percent escapes, and any reserved characters
-    will be percent-escaped automatically.
+    are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_encoded_host_address `set_encoded_host_address`]]
@@ -567,22 +567,22 @@ These members are used to inspect and modify the host:
     [
     Set the host to the string, depending on the contents. If
     the string is a valid IPv4 address, a valid IPv6 address, or
-    a valid IPvFuture address then the resulting host type will be
+    a valid IPvFuture address then the resulting host type is
     [link url.ref.boost__urls__host_type `host_type::ipv4`],
     [link url.ref.boost__urls__host_type `host_type::ipv6`], or
     [link url.ref.boost__urls__host_type `host_type::ipvfuture`]
-    respectively. Otherwise, the host type will be
+    respectively. Otherwise, the host type is
     [link url.ref.boost__urls__host_type `host_type::name`], the
     string may contain percent escapes, and and
-    any reserved characters will be percent-escaped automatically.
+    any reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_encoded_host_name `set_encoded_host_name`]]
     [__pct_string_view__]
     [
     Set the host to the string, which may contain percent escapes.
-    Any reserved characters will be percent-escaped automatically.
-    The host type will be
+    Any reserved characters are percent-escaped automatically.
+    The host type is
     [link url.ref.boost__urls__host_type `host_type::name`].
     ]
 ]]
@@ -648,7 +648,7 @@ These members are used to inspect and modify the port:
     []
     [
     Remove the port if present.
-    This will not remove the authority.
+    This does not remove the authority.
     ]
 ]]
 
@@ -708,7 +708,7 @@ These members are used to inspect and modify the path:
     [__string_view__]
     [
     Set the path to the string.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_path_absolute `set_path_absolute`]]
@@ -721,7 +721,7 @@ These members are used to inspect and modify the path:
     [__pct_string_view__]
     [
     Set the path to the string, which may contain percent escapes.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.segments `segments`]]
@@ -798,14 +798,14 @@ These members are used to inspect and modify the query:
     [__string_view__]
     [
     Set the query to a string.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_encoded_query `set_encoded_query`]]
     [__pct_string_view__]
     [
     Set the query to a string, which may contain percent escapes.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.params `params`]]
@@ -875,14 +875,14 @@ These members are used to inspect and modify the fragment:
     [__string_view__]
     [
     Set the fragment to the string.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.set_encoded_fragment `set_encoded_fragment`]]
     [__pct_string_view__]
     [
     Set the fragment to the string, which may contain percent escapes.
-    Reserved characters will be percent-escaped automatically.
+    Reserved characters are percent-escaped automatically.
     ]
 ][
     [[link url.ref.boost__urls__url_base.remove_fragment `remove_fragment`]]

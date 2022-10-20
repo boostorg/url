@@ -224,8 +224,8 @@ public:
 
     /** Constructor
 
-        The newly constructed object will
-        contain a copy of `u`.
+        The newly constructed object contains
+        a copy of `u`.
 
         @par Postconditions
         @code
@@ -249,8 +249,8 @@ public:
 
     /** Constructor
 
-        The newly constructed object will
-        contain a copy of `u`.
+        The newly constructed object contains
+        a copy of `u`.
 
         @par Postconditions
         @code
