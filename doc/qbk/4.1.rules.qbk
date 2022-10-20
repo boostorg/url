@@ -65,9 +65,9 @@ result assigned from an __error_code__ indicating
 the failure. When using overloads of __parse__ which
 have a character pointer as both an in and out
 parameter, it is up to the rule to define which
-character will be pointed to upon error. When the
-rule matches successfully, the pointer will always
-be changed to point to the first unconsumed character
+character is pointed to upon error. When the
+rule matches successfully, the pointer is always
+changed to point to the first unconsumed character
 in the input, or to the `end` pointer if all input
 was consumed.
 

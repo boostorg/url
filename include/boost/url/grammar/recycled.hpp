@@ -166,11 +166,11 @@ public:
 
     /** Constructor
 
-        Upon construction, this will acquire
+        Upon construction, this acquires
         exclusive access to an object of type
         `T` which is either recycled from the
         specified bin, or newly allocated.
-        The object will be in an unknown but
+        The object is in an unknown but
         valid state.
 
         @par Example
@@ -198,8 +198,8 @@ public:
 
     /** Constructor
 
-        After construction, this will be empty
-        and refer to the specified recycle bin.
+        After construction, this is empty and
+        refers to the specified recycle bin.
 
         @par Example
         @code
@@ -233,11 +233,11 @@ public:
 
     /** Constructor
 
-        Upon construction, this will acquire
+        Upon construction, this acquires
         exclusive access to an object of type
         `T` which is either recycled from a
         global recycle bin, or newly allocated.
-        The object will be in an unknown but
+        The object is in an unknown but
         valid state.
 
         @par Example
@@ -260,8 +260,8 @@ public:
 
     /** Constructor
 
-        After construction, this will be empty
-        and refer to a global recycle bin.
+        After construction, this is empty
+        and refers to a global recycle bin.
 
         @par Example
         @code
@@ -291,9 +291,9 @@ public:
     /** Constructor
 
         If `other` references an object, the
-        newly constructed pointer will acquire
-        shared ownership. Otherwise this will
-        be empty. The new pointer will reference
+        newly constructed pointer acquires
+        shared ownership. Otherwise this is
+        empty. The new pointer references
         the same recycle bin as `other`.
 
         @par Postconditions
@@ -314,8 +314,7 @@ public:
         If `other` references an object,
         ownership is transferred including
         a reference to the recycle bin. After
-        the move, the moved-from object will
-        be empty.
+        the move, the moved-from object is empty.
 
         @par Postconditions
         @code
@@ -335,8 +334,7 @@ public:
         If `other` references an object,
         ownership is transferred including
         a reference to the recycle bin. After
-        the move, the moved-from object will
-        be empty.
+        the move, the moved-from object is empty.
 
         @par Effects
         @code
@@ -476,7 +474,7 @@ public:
 
         If this references an object, it is
         released to the referenced recycle bin.
-        The pointer will continue to reference
+        The pointer continues to reference
         the same recycle bin.
 
         @par Postconditions

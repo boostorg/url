@@ -62,9 +62,9 @@ enum class error
      *
      * This indicates that the input was consumed
      * when parsing a @ref range. The @ref range_rule
-     * will avoid rewinding the input buffer when
+     * avoids rewinding the input buffer when
      * this error is returned. Thus the consumed
-     * characters will be considered part of the
+     * characters are be considered part of the
      * range without contributing additional
      * elements.
     */

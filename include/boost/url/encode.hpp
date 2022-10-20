@@ -43,11 +43,11 @@ namespace urls {
     @param s The string to measure.
 
     @param unreserved The set of characters
-    that will not be percent-encoded.
+    that is not percent-encoded.
 
     @param opt The options for encoding. If
     this parameter is omitted, the default
-    options will be used.
+    options are be used.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
@@ -94,16 +94,16 @@ encoded_size(
     @param size The number of writable
     characters pointed to by `dest`.
     If this is less than `encoded_size(s)`,
-    the result will be truncated.
+    the result is truncated.
 
     @param s The string to encode.
 
     @param unreserved The set of characters
-    that will not be percent-encoded.
+    that is not percent-encoded.
 
     @param opt The options for encoding. If
     this parameter is omitted, the default
-    options will be used.
+    options are used.
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1"
@@ -161,11 +161,11 @@ encode_unsafe(
     @param s The string to encode.
 
     @param unreserved The set of characters
-    that will not be percent-encoded.
+    that is not percent-encoded.
 
     @param opt The options for encoding. If
     this parameter is omitted, the default
-    options will be used.
+    options are used.
 
     @param token A string token.
 

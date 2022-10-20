@@ -201,7 +201,7 @@ set(
         iterator
 {
     // VFALCO we can't cache end() here
-    // because it will be invalidated
+    // because it is invalidated
     // every time we set or erase.
     auto it0 = find(key, ic);
     if(it0 == end())

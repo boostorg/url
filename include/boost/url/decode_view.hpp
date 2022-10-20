@@ -204,7 +204,7 @@ public:
 
         @param opt The options for decoding. If
         this parameter is omitted, the default
-        options will be used.
+        options are used.
     */
     BOOST_URL_DECL
     explicit

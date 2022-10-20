@@ -947,7 +947,7 @@ public:
         @li @ref host_type::none
 
         When @ref has_authority is false, the
-        host type will be @ref host_type::none.
+        host type is @ref host_type::none.
 
         @par Example
         @code

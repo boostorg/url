@@ -36,7 +36,7 @@ namespace string_token {
     to be used once and then destroyed.
 
     @par Example
-    The declared function will accept any
+    The declared function accepts any
     temporary instance of `arg` to be
     used for writing:
     @code

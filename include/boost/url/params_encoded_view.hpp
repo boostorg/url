@@ -88,7 +88,7 @@ public:
 
     /** Constructor
 
-        After construction both views will
+        After construction both views
         reference the same character buffer.
 
         Ownership is not transferred; the caller
@@ -117,8 +117,8 @@ public:
         can contain percent escapes. Unlike
         the parameters in URLs, the string
         passed here should not start with "?".
-        Upon construction, the view will
-        reference the character buffer pointed
+        Upon construction, the view
+        references the character buffer pointed
         to by `s`. The caller is responsible
         for ensuring that the lifetime of the
         buffer extends until it is no longer
@@ -168,7 +168,7 @@ public:
 
     /** Assignment
 
-        After assignment, both views will
+        After assignment, both views
         reference the same underlying character
         buffer.
 

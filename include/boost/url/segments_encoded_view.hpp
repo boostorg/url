@@ -93,7 +93,7 @@ public:
 
     /** Constructor
 
-        After construction, both views will
+        After construction, both views
         reference the same character buffer.
 
         Ownership is not transferred; the caller
@@ -120,7 +120,7 @@ public:
         This function constructs segments from
         a valid path string, which can contain
         percent escapes.
-        Upon construction, the view will reference
+        Upon construction, the view references
         the character buffer pointed to by `s`.
         caller is responsible for ensuring
         that the lifetime of the buffer
@@ -169,7 +169,7 @@ public:
 
     /** Assignment
 
-        After assignment, both views will
+        After assignment, both views
         reference the same underlying character
         buffer.
 

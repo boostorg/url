@@ -24,7 +24,7 @@ namespace grammar {
 /** Parse a character buffer using a rule
 
     @param it A pointer to the start. The
-    caller's variable will be changed to
+    caller's variable is changed to
     reflect the amount of input consumed.
 
     @param end A pointer to the end.

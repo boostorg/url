@@ -73,7 +73,7 @@ When using this library to process or create URLs, it is necessary
 to choose which of these top-level production rules are applicable
 for a given use-case:
 ['absolute-URI], ['origin-form], ['relative-ref], ['URI], or
-['URI-reference]. These will be discussed in greater depth later.
+['URI-reference]. These are discussed in greater depth later.
 
 [/-----------------------------------------------------------------------------]
 
@@ -190,7 +190,7 @@ of something that is not a URL):
     [Opaque URL with `mailto` scheme. Identifies e-mail address.]
 ][
     [`index.html`]
-    [URL reference. Missing scheme and host.]
+    [URL reference. Missing scheme and authority.]
 ][
     [`www.boost.org`]
     [A Protocol-Relative Link (PRL). [*Not a URL].]

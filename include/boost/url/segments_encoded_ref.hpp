@@ -38,7 +38,7 @@ class segments_encoded_view;
     extends until it is no longer referenced.
 
     The view is modifiable; calling non-const
-    members will cause changes to the referenced
+    members causes changes to the referenced
     url.
 
     @par Example
@@ -61,7 +61,7 @@ class segments_encoded_view;
     @par Iterator Invalidation
     Changes to the underlying character buffer
     can invalidate iterators which reference it.
-    Modifications made through the container will
+    Modifications made through the container
     invalidate some or all iterators:
     <br>
 
@@ -104,7 +104,7 @@ public:
 
     /** Constructor
 
-        After construction, both views will
+        After construction, both views
         reference the same url. Ownership is not
         transferred; the caller is responsible
         for ensuring the lifetime of the url
@@ -391,7 +391,7 @@ public:
         segment.
 
         @param before An iterator before which
-        the segment will be inserted. This may
+        the segment is inserted. This may
         be equal to `end()`.
 
         @param s The segment to insert.
@@ -444,7 +444,7 @@ public:
         `init.size() == 0`.
 
         @param before An iterator before which
-        the list will be inserted. This may
+        the list is inserted. This may
         be equal to `end()`.
 
         @param init The list of segments to insert.
@@ -495,7 +495,7 @@ public:
         `init.empty()`.
 
         @param before An iterator before which
-        the range will be inserted. This may
+        the range is inserted. This may
         be equal to `end()`.
 
         @param first, last The range of segments

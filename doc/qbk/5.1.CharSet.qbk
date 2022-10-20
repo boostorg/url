@@ -59,7 +59,7 @@ In this table:
 
         The implementation of
         [link url.ref.boost__urls__grammar__find_if `find_if`]
-        will call this function if provided by the character
+        calls this function if provided by the character
         set, allowing optimized or otherwise performant
         implementations to be developed. If this member
         function is not provided, a default implementation
@@ -81,7 +81,7 @@ In this table:
 
         The implementation of
         [link url.ref.boost__urls__grammar__find_if_not `find_if_not`]
-        will call this function if provided by the character
+        calls this function if provided by the character
         set, allowing optimized or otherwise performant
         implementations to be developed. If this member
         function is not provided, a default implementation

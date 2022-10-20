@@ -12,7 +12,7 @@
 Functions which perform percent-decoding return values using
 __std_string__ when called without special arguments. This is
 the best default for ergonomics, and a good enough default for
-performance considering that many decoded strings will fit in
+performance considering that many decoded strings fit in
 the small buffer available to most standard implementations.
 Some use-cases may desire more control over how these
 algorithms acquire and store data in strings, for example:
