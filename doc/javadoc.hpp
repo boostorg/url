@@ -91,6 +91,8 @@ Adjectives: not hyphenated when the noun comes before
     <!-- Assume the user has read the whole exposition -->
     <!-- Avoid too much symbolism -->
     <!-- Avoid repeating words -->
+    <!-- Use the present tense -->
+    <!-- Lists should use noun-phrases -->
 
     @par Example
     @code

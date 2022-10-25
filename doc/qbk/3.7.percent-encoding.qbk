@@ -17,7 +17,7 @@ with the specified __CharSet__.
 [snippet_encoding_1]
 
 A few parameters, such as encoding spaces as plus (`+`), can be adjusted
- with [link url.ref.boost__urls__encode_opts `encode_opts`]:
+ with [link url.ref.boost__urls__encoding_opts `encode_opts`]:
 
 [snippet_encoding_2]
 
@@ -92,7 +92,7 @@ that the underlying buffer always dereferences to decoded characters.
 [snippet_encoding_11]
 
 A __decode_view__ can also be created from a __pct_string_view__ with the
-[link url.ref.boost__urls__pct_string_view.operator_star_ `operator*`].
+[link url.ref.boost__urls__pct_string_view.operator__star_ `operator*`].
 The also gives us an opportunity to validate external strings:
 
 [snippet_encoding_12]
@@ -112,3 +112,4 @@ token can be customized.
 [snippet_encoding_14]
 
 [endsect]
+
