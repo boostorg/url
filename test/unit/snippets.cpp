@@ -52,12 +52,12 @@ using_url_views()
         //]
     }
 
-    //[snippet_parsing_1
+    //[code_urls_parsing_1
     string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
     //]
 
     {
-        //[snippet_parsing_2
+        //[code_urls_parsing_2
         result<url_view> r = parse_uri( s );
         //]
         boost::ignore_unused(r);
@@ -284,6 +284,27 @@ using_urls()
 void
 parsing_urls()
 {
+    {
+        //[snippet_parsing_url_1
+        result< url > ru = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+        if ( ru.has_value() )
+        {
+            url u = *ru;
+            assert(u.encoded_path() == "/path/to/file.txt");
+        }
+        //]
+        boost::ignore_unused(ru);
+    }
+
+    {
+        //[snippet_parsing_url_1bb
+        url u = parse_uri_reference( "https://www.example.com/path/to/file.txt" ).value();
+
+        assert(u.encoded_path() == "/path/to/file.txt");
+        //]
+        boost::ignore_unused(u);
+    }
+
     {
         //[snippet_parsing_url_1bc
         result< url > rv = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
