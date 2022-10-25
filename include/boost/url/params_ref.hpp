@@ -145,6 +145,10 @@ public:
         Throws nothing.
 
         @param other The other view.
+        @param opt The options for decoding. If
+        this parameter is omitted, `space_as_plus`
+        is used.
+
     */
     params_ref(
         params_ref const& other,
