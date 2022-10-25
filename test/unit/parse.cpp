@@ -20,6 +20,11 @@ struct parse_test
     void
     run()
     {
+        // issue 497
+        {
+            url_view u = parse_uri_reference("?~").value();
+            BOOST_TEST(u.query() == "~");
+        }
     }
 };
 
