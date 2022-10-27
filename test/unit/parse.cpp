@@ -22,8 +22,9 @@ struct parse_test
     {
         // issue 497
         {
-            url_view u = parse_uri_reference("?~").value();
-            BOOST_TEST(u.query() == "~");
+            auto ru = parse_uri_reference("?~");
+            BOOST_TEST_NO_THROW(ru);
+            BOOST_TEST(ru->query() == "~");
         }
     }
 };
