@@ -70,7 +70,7 @@ instructs Boost to deactivate auto-linking.
 Say you have the following URL that you want to parse:
 
 [c++]
-[snippet_parsing_1]
+[code_urls_parsing_1]
 
 In this example, __string_view__ is an alias to `boost::core::string_view`, a
 `string_view` implementation that is implicitly convertible to `std::string_view`.
@@ -79,7 +79,7 @@ __result__.
 
 You can parse the string by calling this function:
 
-[snippet_parsing_2]
+[code_urls_parsing_2]
 
 The function __parse_uri__ returns an object of type `__result__<__url_view__>`
 which is a container resembling a variant that holds either an error or an object.
