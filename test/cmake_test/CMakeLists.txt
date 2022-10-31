@@ -13,11 +13,11 @@ if(BOOST_CI_INSTALL_TEST)
     find_package(boost_url REQUIRED)
 else()
     set(DEPENDENCIES
-        throw_exception core assert static_assert
-        config type_traits predef mp11 optional
-        winapi container_hash move intrusive
-        variant2 align system container io utility
-        detail preprocessor integer
+        # boostdep --brief url
+        # Primary dependencies
+        align assert config core mp11 optional static_assert system throw_exception type_traits variant2
+        # Secondary dependencies
+        detail move predef utility winapi preprocessor io
     )
     foreach (dep ${DEPENDENCIES})
         if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../${dep}/CMakeLists.txt")

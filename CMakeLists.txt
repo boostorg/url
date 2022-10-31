@@ -84,7 +84,6 @@ function(boost_url_setup_properties target)
                 Boost::align
                 Boost::assert
                 Boost::config
-                Boost::container
                 Boost::core
                 Boost::mp11
                 Boost::optional
