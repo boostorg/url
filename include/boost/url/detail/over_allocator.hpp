@@ -16,7 +16,7 @@
 #include <boost/type_traits/is_final.hpp>
 #include <boost/type_traits/type_with_alignment.hpp>
 #ifdef BOOST_NO_CXX11_ALLOCATOR
-# include <boost/container/allocator_traits.hpp>
+# include <boost/core/allocator_traits.hpp>
 #endif
 #include <cstddef>
 #include <memory>
@@ -33,7 +33,7 @@ namespace detail {
 #ifdef BOOST_NO_CXX11_ALLOCATOR
 template<class Alloc>
 using allocator_traits =
-    boost::container::allocator_traits<Alloc>;
+    boost::allocator_traits<Alloc>;
 #else
 template<class Alloc>
 using allocator_traits = std::allocator_traits<Alloc>;
