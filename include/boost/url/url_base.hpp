@@ -2617,8 +2617,8 @@ public:
         Basic guarantee.
         Calls to allocate may throw.
 
-        @return A @ref result containing nothing on
-        success, otherwise an error code.
+        @return An empty @ref result upon success,
+        otherwise an error code if `!base.has_scheme()`.
 
         @param ref The URL reference to resolve.
 
@@ -2764,7 +2764,7 @@ private:
     Calls to allocate may throw.
 
     @return An empty @ref result upon success,
-    otherwise an error code.
+    otherwise an error code if `!base.has_scheme()`.
 
     @param base The base URL to resolve against.
 
@@ -2788,7 +2788,6 @@ resolve(
     url_view_base const& ref,
     url_base& dest)
 {
-    BOOST_ASSERT(&dest != &ref);
     if (&dest != &base)
         dest.copy(base);
     return dest.resolve(ref);
