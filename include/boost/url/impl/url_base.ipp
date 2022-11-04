@@ -1318,7 +1318,7 @@ resolve(
     if (this == &ref &&
         has_scheme())
     {
-        normalize();
+        normalize_path();
         return {};
     }
 

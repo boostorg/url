@@ -1110,6 +1110,36 @@ struct url_test
             check("../a/b", "%2E%2E%2Fa/b", 1);
             check("../a/b", "%2E%2E/a/b", 0);
         }
+
+        // resolve preconditions
+        {
+            // base != ref / base.has_scheme()
+            {
+                url_view base = parse_uri("http://www.example.com/user/").value();
+                url_view ref = parse_relative_ref("./../user/./27/../35").value();
+                url dest;
+                resolve(base, ref, dest);
+                BOOST_TEST_CSTR_EQ(dest.buffer(), "http://www.example.com/user/35");
+            }
+
+            // base == ref
+            // dest becomes `url(base).normalize_path()`
+            {
+                url_view base = parse_uri("http://www.example.com/user/").value();
+                url dest;
+                resolve(base, base, dest);
+                BOOST_TEST_CSTR_EQ(dest.buffer(), "http://www.example.com/user/");
+            }
+
+            // dest == ref
+            // dest becomes `url(base).normalize_path()`
+            {
+                url base = parse_uri("http://www.example.com/user/").value();
+                resolve(base, base, base);
+                BOOST_TEST_CSTR_EQ(base.buffer(), "http://www.example.com/user/");
+            }
+
+        }
     }
 
     void
