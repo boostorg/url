@@ -108,7 +108,6 @@ these per-commit analyses:
 
 * Coverage reports
 * Compilation and tests on Drone.io and GitHub Actions
-* Fuzzing using clang-llvm and machine learning
 * Regular code audits for security
 
 [/-----------------------------------------------------------------------------]
