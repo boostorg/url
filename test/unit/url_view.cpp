@@ -56,12 +56,24 @@ public:
             BOOST_TEST_EQ(u2.data(), u1.data());
         }
 
+#if defined(__clang__) && defined(__has_warning)
+# if __has_warning("-Wself-assign-overloaded")
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wself-assign-overloaded"
+# endif
+#endif
         // operator=(url_view const&)
         {
             url_view u1("x://y/z?#");
             u1 = u1;
             BOOST_TEST_EQ(u1.data(), u1.data());
         }
+
+#if defined(__clang__) && defined(__has_warning)
+# if __has_warning("-Wself-assign-overloaded")
+#  pragma clang diagnostic pop
+# endif
+#endif
 
         // operator=(url_view_base const&)
         {

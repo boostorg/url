@@ -29,7 +29,7 @@ public:
             ipv6_address a;
             BOOST_TEST(
                 a == ipv6_address());
-            ipv6_address::bytes_type b{};
+            ipv6_address::bytes_type b{{}};
             BOOST_TEST_EQ(a.to_bytes(), b);
         }
 

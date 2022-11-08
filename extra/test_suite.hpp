@@ -124,6 +124,7 @@ namespace detail {
 #elif defined(_MSC_VER)
 # pragma warning(push)
 # pragma warning(disable: 4389)
+# pragma warning(disable: 4018)
 #elif defined(__GNUC__) && !(defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC) || defined(__ECC)) && (__GNUC__ * 100 + __GNUC_MINOR__) >= 406
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wsign-compare"
@@ -220,20 +221,6 @@ inline std::string test_output_impl( char const& v )
     }
 }
 
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-
-#if defined(__clang__) && defined(__has_warning)
-# if __has_warning("-Wsign-compare")
-#  pragma clang diagnostic pop
-# endif
-#elif defined(_MSC_VER)
-# pragma warning(pop)
-#elif defined(__GNUC__) && !(defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC) || defined(__ECC)) && (__GNUC__ * 100 + __GNUC_MINOR__) >= 406
-# pragma GCC diagnostic pop
-#endif
-
 bool
 test_impl(
     bool cond,
@@ -265,60 +252,59 @@ no_throw_failed_impl(
     char const* file,
     int line);
 
-// In the comparisons below, it is possible that
-// T and U are signed and unsigned integer types,
-// which generates warnings in some compilers.
-// A cleaner fix would require common_type trait
-// or some meta-programming, which would introduce
-// a dependency on Boost.TypeTraits. To avoid
-// the dependency we just disable the warnings.
-#if defined(__clang__) && defined(__has_warning)
-# if __has_warning("-Wsign-compare")
-#  pragma clang diagnostic push
-#  pragma clang diagnostic ignored "-Wsign-compare"
-# endif
-#elif defined(_MSC_VER)
-# pragma warning(push)
-# pragma warning(disable: 4389)
-#elif defined(__GNUC__) && !(defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC) || defined(__ECC)) && (__GNUC__ * 100 + __GNUC_MINOR__) >= 406
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wsign-compare"
-#endif
-
 struct lw_test_eq
 {
     template <typename T, typename U>
-    bool operator()(const T& t, const U& u) const { return t == u; }
+    bool operator()(const T& t, const U& u) const
+    {
+        return t == u;
+    }
 };
 
 struct lw_test_ne
 {
+
     template <typename T, typename U>
-    bool operator()(const T& t, const U& u) const { return t != u; }
+    bool operator()(const T& t, const U& u) const
+    {
+        return t != u;
+    }
 };
 
 struct lw_test_lt
 {
     template <typename T, typename U>
-    bool operator()(const T& t, const U& u) const { return t < u; }
-};
-
-struct lw_test_le
-{
-    template <typename T, typename U>
-    bool operator()(const T& t, const U& u) const { return t <= u; }
+    bool operator()(const T& t, const U& u) const
+    {
+        return t < u;
+    }
 };
 
 struct lw_test_gt
 {
     template <typename T, typename U>
-    bool operator()(const T& t, const U& u) const { return t > u; }
+    bool operator()(const T& t, const U& u) const
+    {
+        return t > u;
+    }
+};
+
+struct lw_test_le
+{
+    template <typename T, typename U>
+    bool operator()(const T& t, const U& u) const
+    {
+        return t <= u;
+    }
 };
 
 struct lw_test_ge
 {
     template <typename T, typename U>
-    bool operator()(const T& t, const U& u) const { return t >= u; }
+    bool operator()(const T& t, const U& u) const
+    {
+        return t >= u;
+    }
 };
 
 // lwt_predicate_name

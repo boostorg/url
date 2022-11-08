@@ -368,7 +368,7 @@ host_ipv4_address() const noexcept
     if(pi_->host_type_ !=
             urls::host_type::ipv4)
         return {};
-    ipv4_address::bytes_type b{};
+    ipv4_address::bytes_type b{{}};
     std::memcpy(
         &b[0], &pi_->ip_addr_[0], b.size());
     return urls::ipv4_address(b);
@@ -381,7 +381,7 @@ host_ipv6_address() const noexcept
     if(pi_->host_type_ !=
             urls::host_type::ipv6)
         return {};
-    ipv6_address::bytes_type b{};
+    ipv6_address::bytes_type b{{}};
     std::memcpy(
         &b[0], &pi_->ip_addr_[0], b.size());
     return urls::ipv6_address(b);

@@ -104,9 +104,10 @@ def main(ctx):
   linux_cxx("S390x: GCC 11", "g++-11", packages="g++-11", buildtype="boost", buildscript="drone", image="cppalliance/droneubuntu2004:multiarch", environment={'B2_TOOLSET': 'gcc-11', 'B2_CXXFLAGS': '-Werror', 'B2_CXXSTD': '17'}, arch="s390x", globalenv=globalenv),
 
   # MSVC
-  windows_cxx("MSVC 14.1", "", image="cppalliance/dronevs2017", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.1", 'B2_CXXFLAGS': '/WX', "B2_CXXSTD": "11,14,17"},globalenv=globalenv),
-  windows_cxx("MSVC 14.2: C++14,17,latest", "", image="cppalliance/dronevs2019", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.2", 'B2_CXXFLAGS': '/WX', "B2_CXXSTD": "14,17,latest"},globalenv=globalenv),
-  windows_cxx("MSVC 14.3: C++17,20", "", image="cppalliance/dronevs2022", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.3", 'B2_CXXFLAGS': '/WX', "B2_CXXSTD": "17,20"},globalenv=globalenv),
+  windows_cxx("MSVC 14.1 (Win32)", "", image="cppalliance/dronevs2017", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.1", "B2_ADDRESS_MODEL": '32', "B2_CXXSTD": "11,14,17"},globalenv=globalenv),
+  windows_cxx("MSVC 14.1", "", image="cppalliance/dronevs2017", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.1", "B2_CXXSTD": "11,14,17"},globalenv=globalenv),
+  windows_cxx("MSVC 14.2: C++14,17,latest", "", image="cppalliance/dronevs2019", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.2", "B2_CXXSTD": "14,17,latest"},globalenv=globalenv),
+  windows_cxx("MSVC 14.3: C++17,20", "", image="cppalliance/dronevs2022", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.3", "B2_CXXSTD": "17,20"},globalenv=globalenv),
 ]
 
 # from https://github.com/boostorg/boost-ci
