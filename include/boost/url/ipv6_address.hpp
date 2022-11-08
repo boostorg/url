@@ -351,7 +351,7 @@ private:
     to_string_impl(
         string_token::arg& t) const;
 
-    bytes_type addr_{};
+    bytes_type addr_{{}};
 };
 
 /** Format the address to an output stream

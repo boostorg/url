@@ -29,7 +29,7 @@ struct range_rule_test
 {
     struct big_rule
     {
-        char unused[4096];
+        char unused[4096]{};
         using value_type = string_view;
 
         result<value_type>

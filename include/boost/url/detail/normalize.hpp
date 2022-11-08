@@ -22,14 +22,17 @@ class fnv_1a
 public:
     using digest_type = std::size_t;
 
+#if BOOST_URL_ARCH == 64
     static constexpr std::size_t const prime =
-        sizeof(std::size_t) == 4 ?
-        static_cast<std::size_t>(0x01000193UL) :
         static_cast<std::size_t>(0x100000001B3ULL);
     static constexpr std::size_t init_hash  =
-        sizeof(std::size_t) == 4 ?
-        static_cast<std::size_t>(0x811C9DC5UL) :
         static_cast<std::size_t>(0xcbf29ce484222325ULL);
+#else
+    static constexpr std::size_t const prime =
+        static_cast<std::size_t>(0x01000193UL);
+    static constexpr std::size_t init_hash  =
+        static_cast<std::size_t>(0x811C9DC5UL);
+#endif
 
     explicit
     fnv_1a(std::size_t salt) noexcept
