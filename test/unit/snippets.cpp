@@ -140,7 +140,8 @@ using_url_views()
 
     {
         //[snippet_decoding_1
-        // VFALCO?
+        decode_view dv("id=42&name=John%20Doe%20Jingleheimer%2DSchmidt");
+        std::cout << dv << "\n";
         //]
     }
     {
@@ -199,15 +200,6 @@ using_url_views()
         };
         //]
         (void)function;
-        //[snippet_decoding_5b
-        // VFALCO?
-        //]
-    }
-
-    {
-        //[snippet_allocators_1
-        // VFALCO - Fix me!
-        //]
     }
 
     {
