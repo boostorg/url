@@ -200,7 +200,6 @@ to persist a decoded string:
 [teletype]
 ```
     id=42&name=John Doe Jingleheimer-Schmidt
-    page anchor
 ```
 ]]]
 

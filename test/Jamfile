@@ -27,6 +27,24 @@ project
 
   ;
 
+project
+  : default-build
+
+    <warnings>extra
+
+  : requirements
+
+    <toolset>msvc:<warnings-as-errors>on
+    <toolset>gcc:<warnings-as-errors>on
+    <toolset>clang:<warnings-as-errors>on
+    <toolset>gcc:<cxxflags>"-Wno-unused-but-set-variable"      # Warnings in dependencies
+    <toolset>clang:<cxxflags>"-Wno-unknown-warning-option"
+    <toolset>clang-13:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
+    <toolset>clang-14:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
+    <toolset>clang-15:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
+
+  ;
+
 build-project extra ;
 build-project limits ;
 build-project unit ;

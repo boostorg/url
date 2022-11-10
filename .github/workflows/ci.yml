@@ -336,8 +336,8 @@ jobs:
             # cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
             # git submodule update --init tools/boostdep
             git submodule update --init --recursive
-            mkdir -p libs/$SELF
-            cp -r $GITHUB_WORKSPACE/* libs/$SELF
+            mkdir -p libs/$LIBRARY
+            cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
           
             DEPINST_ARGS+=("$LIBRARY")
             python tools/boostdep/depinst/depinst.py "${DEPINST_ARGS[@]}"
