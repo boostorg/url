@@ -277,7 +277,45 @@ void
 parsing_urls()
 {
     {
+        auto handle_error = [](error_code e)
+        {
+            boost::ignore_unused(e);
+        };
         //[snippet_parsing_url_1
+        result< url > ru = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+        if ( ru )
+        {
+            url u = *ru;
+            assert(u.encoded_path() == "/path/to/file.txt");
+        }
+        else
+        {
+            error_code e = ru.error();
+            handle_error(e);
+        }
+        //]
+    }
+
+    {
+        auto handle_error = [](system_error& e)
+        {
+            boost::ignore_unused(e);
+        };
+        //[snippet_parsing_url_1b
+        try
+        {
+            url u = parse_uri_reference( "https://www.example.com/path/to/file.txt" ).value();
+            assert(u.encoded_path() == "/path/to/file.txt");
+        }
+        catch (system_error &e)
+        {
+            handle_error(e);
+        }
+        //]
+    }
+
+    {
+        //[snippet_parsing_url_1b2
         result< url > ru = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
         if ( ru.has_value() )
         {

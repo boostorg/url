@@ -22,9 +22,26 @@ struct parse_test
     {
         // issue 497
         {
-            auto ru = parse_uri_reference("?~");
-            BOOST_TEST_NO_THROW(ru);
-            BOOST_TEST(ru->query() == "~");
+            auto r = parse_uri_reference("?~");
+            BOOST_TEST_NO_THROW(r);
+            BOOST_TEST(r->query() == "~");
+        }
+        // parse docs
+        {
+            result< url_view > r = parse_relative_ref( "//www.boost.org/index.html?field=value#downloads" );
+            if ( r.has_value() )
+            {
+                url_view u = *r;
+                assert(u.encoded_path() == "/index.html");
+            }
+        }
+        {
+            result< url_view > r = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+            if ( r.has_value() )
+            {
+                url_view u = *r;
+                assert(u.encoded_path() == "/path/to/file.txt");
+            }
         }
     }
 };
