@@ -102,23 +102,25 @@ __url_view__, it does not perform any dynamic memory allocations.
 
 [heading Result Type]
 
-In many places, functions in the library have a return type which uses the
-__result__ alias template. This class allows the parsing algorithms to
-report errors without referring to exceptions.
+These functions have a return type which uses the __result__ alias
+template. This class allows the parsing algorithms to report
+errors without referring to exceptions.
 
-The functions `result::has_value` and `result::has_error` can be used to
-check if the result contains an error.
+The functions `result::operator bool()` and `result::operator*`
+can be used to check if the result contains an error.
 
 [snippet_parsing_url_1]
 
-This ensures `result::value` does not throw an error. In contexts where
-it is acceptable to throw errors, `result::value` can be used directly.
+Since `result::operator bool()` is already checking if `result` contains an
+error, `result::operator*` provides an unchecked alternative to get a value
+from `result`. In contexts where it is acceptable to throw errors,
+`result::value` can be used directly.
+
+[snippet_parsing_url_1b]
 
 Check the reference for __result__ for a synopsis of the type. For complete
 information please consult the full
 [@boost:/libs/system/doc/html/system.html#ref_resultt_e `result`]
 documentation in [@boost:/libs/system/doc/html/system.html Boost.System].
-
-
 
 [endsect]
