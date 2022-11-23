@@ -58,12 +58,20 @@ standard output.
 [example_magnet]
 [endsect]
 
-[section Route]
+[section File Router]
 
-This example defines a route for a URL path. If the specified route matches and the file
-exists, the example prints its contents to standard output.
+This example defines a router that associates URL paths to a directory in the filesystem. If
+the specified route matches and the file exists, the example prints its contents to standard output.
 
-[example_route]
+[example_file_router]
+[endsect]
+
+[section Router]
+
+This example defines a router for URL paths. If the specified route matches one of the existing
+routes, the example executes the underlying callback function.
+
+[example_router]
 [endsect]
 
 [endsect]

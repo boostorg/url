@@ -31,7 +31,7 @@ struct decode_view_test
     }
 
     void
-    testDecodedView()
+    testDecodeView()
     {
         // decode_view()
         {
@@ -162,6 +162,81 @@ struct decode_view_test
     }
 
     void
+    testModifiers()
+    {
+        // remove_prefix()
+        {
+            decode_view s(str, no_plus_opt);
+            s.remove_prefix(2);
+            BOOST_TEST_EQ(s, "uri test");
+        }
+
+        // remove_suffix()
+        {
+            decode_view s(str);
+            s.remove_suffix(5);
+            BOOST_TEST_EQ(s, "a uri");
+        }
+    }
+
+    void
+    testOperations()
+    {
+        // starts_with()
+        {
+            decode_view s(str);
+            BOOST_TEST(s.starts_with("a uri"));
+            BOOST_TEST_NOT(s.starts_with("a uri test b"));
+            BOOST_TEST(s.starts_with('a'));
+            BOOST_TEST_NOT(s.starts_with("a url"));
+        }
+
+        // ends_with()
+        {
+            decode_view s(str, no_plus_opt);
+            BOOST_TEST(s.ends_with("uri test"));
+            BOOST_TEST_NOT(s.ends_with("b a uri test"));
+            BOOST_TEST(s.ends_with('t'));
+            BOOST_TEST_NOT(s.ends_with("url test"));
+        }
+
+        // find()
+        {
+            decode_view s(str);
+            auto it = s.find('t');
+            BOOST_TEST(it != s.end());
+            BOOST_TEST_EQ(*it.base(), 't');
+        }
+
+        // find()
+        {
+            decode_view s;
+            auto it = s.find('t');
+            BOOST_TEST(it == s.end());
+        }
+
+        // rfind()
+        {
+            decode_view s(str);
+            auto it = s.rfind('t');
+            BOOST_TEST(it != s.end());
+            BOOST_TEST_EQ(*it.base(), 't');
+            BOOST_TEST_EQ(*s.rfind('i'), 'i');
+            it = s.rfind('x');
+            BOOST_TEST(it == s.end());
+            it = s.rfind('a');
+            BOOST_TEST(it == s.begin());
+        }
+
+        // rfind()
+        {
+            decode_view s;
+            auto it = s.rfind('t');
+            BOOST_TEST(it == s.end());
+        }
+    }
+
+    void
     testCompare()
     {
         // compare()
@@ -281,10 +356,12 @@ struct decode_view_test
     void
     run()
     {
-        testDecodedView();
+        testDecodeView();
         testIter();
         testAccessors();
         testObservers();
+        testModifiers();
+        testOperations();
         testCompare();
         testStream();
         testPR127Cases();

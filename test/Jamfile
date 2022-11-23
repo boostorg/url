@@ -19,14 +19,13 @@ project
     <toolset>clang:<warnings-as-errors>on
     <toolset>msvc:<cxxflags>"/we4265" # Extra errors that are disabled by default
     <toolset>gcc:<cxxflags>"-Wno-unused-but-set-variable"      # Warnings in dependencies
-    <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized"        # Warnings in variant2
+    <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized"        # Warnings in dependencies
     <toolset>clang-4:<cxxflags>"-Wno-unused-but-set-variable"  # Warnings in dependencies
     <toolset>clang-5:<cxxflags>"-Wno-unused-but-set-variable"  # Warnings in dependencies
     <toolset>clang-6:<cxxflags>"-Wno-unused-but-set-variable"  # Warnings in dependencies
     <toolset>clang-13:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
     <toolset>clang-14:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
     <toolset>clang-15:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
-
   ;
 
 project

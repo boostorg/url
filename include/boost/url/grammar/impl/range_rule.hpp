@@ -372,9 +372,9 @@ public:
 
     iterator() = default;
     iterator(
-        iterator const&) noexcept = default;
+        iterator const&) = default;
     iterator& operator=(
-        iterator const&) noexcept = default;
+        iterator const&) = default;
 
     reference
     operator*() const noexcept

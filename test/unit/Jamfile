@@ -17,6 +17,7 @@ project
       <source>../../extra/test_main.cpp
       <include>.
       <include>../../extra
+      <include>../../example/router
     ;
 
 local SOURCES =
@@ -99,6 +100,7 @@ local SOURCES =
     rfc/unreserved_chars.cpp
     rfc/uri_rule.cpp
     rfc/uri_reference_rule.cpp
+    example/router/router.cpp
     ;
 for local f in $(SOURCES)
 {

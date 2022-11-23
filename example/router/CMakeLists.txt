@@ -7,10 +7,13 @@
 # Official repository: https://github.com/boostorg/url
 #
 
-add_subdirectory(qrcode)
-add_subdirectory(finicky)
-add_subdirectory(suffix_list)
-add_subdirectory(mailto)
-add_subdirectory(magnet)
-add_subdirectory(file_router)
-add_subdirectory(router)
+source_group("" FILES
+        router.cpp
+        )
+
+add_executable(router
+        router.cpp
+        )
+
+set_property(TARGET router PROPERTY FOLDER "Examples")
+target_link_libraries(router PRIVATE Boost::url Boost::beast)

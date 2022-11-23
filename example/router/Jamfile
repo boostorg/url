@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
+# Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -11,8 +11,11 @@ project : requirements  ;
 
 project
     : requirements
+      <toolset>clang-4:<warnings-as-errors>off
+      <toolset>clang-5:<warnings-as-errors>off
+      <define>BOOST_ASIO_DISABLE_FENCED_BLOCK
       <library>/boost/url//boost_url
-      <library>/boost/filesystem//boost_filesystem/<warnings>off
+      <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized"
     ;
 
-exe route : route.cpp ;
+exe router : router.cpp ;
