@@ -99,6 +99,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/unreserved_chars.cpp
     rfc/uri_rule.cpp
     rfc/uri_reference_rule.cpp
+    experimental/router.cpp
     )
 
 set(SUITE_FILES ../../extra/test_main.cpp ../../extra/test_suite.hpp)
