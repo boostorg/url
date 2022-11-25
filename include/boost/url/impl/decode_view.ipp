@@ -101,6 +101,112 @@ write(std::ostream& os) const
         os.put(*it++);
 }
 
+void
+decode_view::
+remove_prefix( size_type n )
+{
+    auto it = begin();
+    while (n)
+    {
+        ++it;
+        --n;
+    }
+    n_ -= (it.base() - begin().base());
+    dn_ -= n;
+    p_ = it.base();
+}
+
+void
+decode_view::
+remove_suffix( size_type n )
+{
+    auto it = end();
+    while (n)
+    {
+        --it;
+        --n;
+    }
+    n_ -= (end().base() - it.base());
+    dn_ -= n;
+}
+
+bool
+decode_view::
+starts_with( string_view sv ) const noexcept
+{
+    if (sv.size() > size())
+        return false;
+    auto it0 = begin();
+    auto it1 = sv.begin();
+    std::size_t n = sv.size();
+    while (n)
+    {
+        if (*it0 != *it1)
+            return false;
+        ++it0;
+        ++it1;
+        --n;
+    }
+    return true;
+}
+
+bool
+decode_view::
+ends_with( string_view sv ) const noexcept
+{
+    if (sv.size() > size())
+        return false;
+    auto it0 = end();
+    auto it1 = sv.end();
+    std::size_t n = sv.size();
+    --it0;
+    --it1;
+    while (n - 1)
+    {
+        if (*it0 != *it1)
+            return false;
+        --it0;
+        --it1;
+        --n;
+    }
+    return *it0 != *it1;
+}
+
+decode_view::const_iterator
+decode_view::
+find( char ch ) const noexcept
+{
+    auto it = begin();
+    auto end = this->end();
+    while (it != end)
+    {
+        if (*it == ch)
+            return it;
+        ++it;
+    }
+    return it;
+}
+
+decode_view::const_iterator
+decode_view::
+rfind( char ch ) const noexcept
+{
+    if (empty())
+        return end();
+    auto it = end();
+    auto begin = this->begin();
+    --it;
+    while (it != begin)
+    {
+        if (*it == ch)
+            return it;
+        --it;
+    }
+    if (*it == ch)
+        return it;
+    return end();
+}
+
 } // urls
 } // boost
 

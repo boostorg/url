@@ -341,6 +341,106 @@ public:
     reference
     back() const noexcept;
 
+    /** Checks if the string begins with the given prefix
+
+        @par Example
+        @code
+        assert( decode_view( "Program%20Files" ).starts_with() == "Program" );
+        @endcode
+
+        @par Complexity
+        Linear.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    BOOST_URL_DECL
+    bool
+    starts_with( string_view sv ) const noexcept;
+
+    /** Checks if the string ends with the given prefix
+
+        @par Example
+        @code
+        assert( decode_view( "Program%20Files" ).ends_with() == "Files" );
+        @endcode
+
+        @par Complexity
+        Linear.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    BOOST_URL_DECL
+    bool
+    ends_with( string_view sv ) const noexcept;
+
+    /** Finds the first occurrence of character in this view
+
+        @par Complexity
+        Linear.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    BOOST_URL_DECL
+    const_iterator
+    find( char ch ) const noexcept;
+
+    /** Finds the first occurrence of character in this view
+
+        @par Complexity
+        Linear.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    BOOST_URL_DECL
+    const_iterator
+    rfind( char ch ) const noexcept;
+
+    /** Remove the first characters
+
+        @par Example
+        @code
+        decode_view d( "Program%20Files" );
+        d.remove_prefix( 8 );
+        assert( d == "Files" );
+        @endcode
+
+        @par Preconditions
+        @code
+        not this->empty()
+        @endcode
+
+        @par Complexity
+        Linear.
+    */
+    BOOST_URL_DECL
+    void
+    remove_prefix( size_type n );
+
+    /** Remove the last characters
+
+        @par Example
+        @code
+        decode_view d( "Program%20Files" );
+        d.remove_prefix( 6 );
+        assert( d == "Program" );
+        @endcode
+
+        @par Preconditions
+        @code
+        not this->empty()
+        @endcode
+
+        @par Complexity
+        Linear.
+    */
+    BOOST_URL_DECL
+    void
+    remove_suffix( size_type n );
+
     /** Return the decoding options
     */
     encoding_opts
