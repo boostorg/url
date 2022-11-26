@@ -7,20 +7,19 @@
 // Official repository: https://github.com/boostorg/url
 //
 
+#include <boost/url/detail/except.hpp>
+
 namespace boost {
 namespace urls {
 namespace experimental {
 
 template <class T>
 void
-router<T>::route(pct_string_view path, T const& resource)
+router<T>::route(string_view path, T const& resource)
 {
-    // Parse dynamic path segments
+    // Parse dynamic route segments
     if (path.starts_with("/"))
-        path = make_pct_string_view_unsafe(
-            path.data(),
-            path.size() - 1,
-            path.decoded_size() - 1);
+        path.remove_prefix(1);
     auto segs =
         grammar::parse(path, detail::dynamic_path_rule).value();
     auto it = segs.begin();
@@ -30,6 +29,9 @@ router<T>::route(pct_string_view path, T const& resource)
     node* cur = &nodes_.front();
     while (it != end)
     {
+        if ((*it).string() == "." ||
+            (*it).string() == "..")
+            urls::detail::throw_invalid_argument();
         auto cit = std::find_if(
             cur->child_idx.begin(),
             cur->child_idx.end(),
@@ -46,6 +48,9 @@ router<T>::route(pct_string_view path, T const& resource)
     // Insert new nodes
     while (it != end)
     {
+        if ((*it).string() == "." ||
+            (*it).string() == "..")
+            urls::detail::throw_invalid_argument();
         node child;
         child.seg = *it;
         std::size_t cur_id = cur - nodes_.data();
@@ -76,8 +81,30 @@ router<T>::match(string_view request)
     segments_encoded_view segs = *r;
     auto it = segs.begin();
     auto end = segs.end();
+    int level = 0;
     while (it != end)
     {
+        if (**it == ".")
+        {
+            ++it;
+            continue;
+        }
+        if (**it == "..")
+        {
+            ++it;
+            if (level > 0 ||
+                cur == &nodes_.front())
+                --level;
+            else
+                cur = &nodes_[cur->parent_idx];
+            continue;
+        }
+        if (level < 0)
+        {
+            ++level;
+            ++it;
+            continue;
+        }
         auto cit = std::find_if(
             cur->child_idx.begin(),
             cur->child_idx.end(),
@@ -85,14 +112,13 @@ router<T>::match(string_view request)
                 return nodes_[i].seg.match(*it);
             });
         if (cit == cur->child_idx.end())
-        {
-            BOOST_URL_RETURN_EC(
-                grammar::error::mismatch);
-        }
-        cur = &nodes_[*cit];
+            ++level;
+        else
+            cur = &nodes_[*cit];
         ++it;
     }
-    if (!cur->resource)
+    if (!cur->resource ||
+        level != 0)
     {
         BOOST_URL_RETURN_EC(
             grammar::error::mismatch);

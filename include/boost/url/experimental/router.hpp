@@ -94,7 +94,7 @@ public:
             https://fmt.dev/latest/syntax.html
      */
     void
-    route(pct_string_view path, T const& resource);
+    route(string_view path, T const& resource);
 
     /** Match URL path to corresponding resource
 

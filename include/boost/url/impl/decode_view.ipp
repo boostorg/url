@@ -106,13 +106,14 @@ decode_view::
 remove_prefix( size_type n )
 {
     auto it = begin();
+    auto n0 = n;
     while (n)
     {
         ++it;
         --n;
     }
     n_ -= (it.base() - begin().base());
-    dn_ -= n;
+    dn_ -= n0;
     p_ = it.base();
 }
 
@@ -121,13 +122,14 @@ decode_view::
 remove_suffix( size_type n )
 {
     auto it = end();
+    auto n0 = n;
     while (n)
     {
         --it;
         --n;
     }
     n_ -= (end().base() - it.base());
-    dn_ -= n;
+    dn_ -= n0;
 }
 
 bool
@@ -169,7 +171,25 @@ ends_with( string_view sv ) const noexcept
         --it1;
         --n;
     }
-    return *it0 != *it1;
+    return *it0 == *it1;
+}
+
+bool
+decode_view::
+starts_with( char ch ) const noexcept
+{
+    return
+        !empty() &&
+        front() == ch;
+}
+
+bool
+decode_view::
+ends_with( char ch ) const noexcept
+{
+    return
+        !empty() &&
+        back() == ch;
 }
 
 decode_view::const_iterator

@@ -345,7 +345,7 @@ public:
 
         @par Example
         @code
-        assert( decode_view( "Program%20Files" ).starts_with() == "Program" );
+        assert( decode_view( "Program%20Files" ).starts_with("Program") );
         @endcode
 
         @par Complexity
@@ -362,7 +362,7 @@ public:
 
         @par Example
         @code
-        assert( decode_view( "Program%20Files" ).ends_with() == "Files" );
+        assert( decode_view( "Program%20Files" ).ends_with("Files") );
         @endcode
 
         @par Complexity
@@ -374,6 +374,40 @@ public:
     BOOST_URL_DECL
     bool
     ends_with( string_view sv ) const noexcept;
+
+    /** Checks if the string begins with the given prefix
+
+        @par Example
+        @code
+        assert( decode_view( "Program%20Files" ).starts_with('P') );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    BOOST_URL_DECL
+    bool
+    starts_with( char ch ) const noexcept;
+
+    /** Checks if the string ends with the given prefix
+
+        @par Example
+        @code
+        assert( decode_view( "Program%20Files" ).ends_with('s') );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+    */
+    BOOST_URL_DECL
+    bool
+    ends_with( char ch ) const noexcept;
 
     /** Finds the first occurrence of character in this view
 
