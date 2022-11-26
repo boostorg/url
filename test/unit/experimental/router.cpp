@@ -316,19 +316,23 @@ struct router_test
         good("user/{name}", "user/b/../johndoe");
         good("user/b", "user/c/../b");
         good("user/b", "../a/user/c/../b");
+        good("user/././{name}", "user/johndoe");
+        good("user/b/../{name}", "user/johndoe");
+        good("user/c/../b", "user/b");
+        good("../a/user/c/../b", "user/b");
 
         // pct-encoded segments
         good("%75ser/{name}", "user/johndoe");
         good("user/{name}", "%75ser/johndoe");
 
-        // pct-encoded segments
+        // empty segments
         good("user//{name}", "user//johndoe");
         bad("user//{name}", "user/johndoe");
 
         // create lazy range that allows iterating
         //     the match results
         // support optional dynamic segments
-        // support {}* / {}+ for one or more
+        // support {id*:} / {id+} for one or more
         //     segments
         // allow multiple {}s per segment?
     }

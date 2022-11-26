@@ -27,11 +27,54 @@ router<T>::route(string_view path, T const& resource)
 
     // Iterate existing nodes
     node* cur = &nodes_.front();
+    int level = 0;
     while (it != end)
     {
-        if ((*it).string() == "." ||
-            (*it).string() == "..")
-            urls::detail::throw_invalid_argument();
+        string_view seg = (*it).string();
+        if (seg == ".")
+        {
+            ++it;
+            continue;
+        }
+        if (seg == "..")
+        {
+            // discount unmatched leaf or
+            // keep track of levels behind root
+            if (level > 0 ||
+                cur == &nodes_.front())
+            {
+                --level;
+                ++it;
+                continue;
+            }
+            // move to parent deleting current
+            // if it carries no resource
+            std::size_t p_idx = cur->parent_idx;
+            if (cur == &nodes_.back() &&
+                !cur->resource &&
+                cur->child_idx.empty())
+            {
+                node* p = &nodes_[p_idx];
+                std::size_t cur_idx = cur - nodes_.data();
+                p->child_idx.erase(
+                    std::remove(
+                        p->child_idx.begin(),
+                        p->child_idx.end(),
+                        cur_idx));
+                nodes_.pop_back();
+            }
+            cur = &nodes_[p_idx];
+            ++it;
+            continue;
+        }
+        // discount unmatched root parent
+        if (level < 0)
+        {
+            ++level;
+            ++it;
+            continue;
+        }
+        // look for child
         auto cit = std::find_if(
             cur->child_idx.begin(),
             cur->child_idx.end(),
@@ -39,27 +82,27 @@ router<T>::route(string_view path, T const& resource)
             {
                 return nodes_[ci].seg == *it;
             });
-        if (cit == cur->child_idx.end())
-            break;
-        cur = &nodes_[*cit];
+        if (cit != cur->child_idx.end())
+        {
+            // move to existing child
+            cur = &nodes_[*cit];
+        }
+        else
+        {
+            // create child if it doesn't exist
+            node child;
+            child.seg = *it;
+            std::size_t cur_id = cur - nodes_.data();
+            child.parent_idx = cur_id;
+            nodes_.push_back(std::move(child));
+            nodes_[cur_id].child_idx.push_back(nodes_.size() - 1);
+            cur = &nodes_.back();
+        }
         ++it;
     }
-
-    // Insert new nodes
-    while (it != end)
+    if (level != 0)
     {
-        if ((*it).string() == "." ||
-            (*it).string() == "..")
-            urls::detail::throw_invalid_argument();
-        node child;
-        child.seg = *it;
-        std::size_t cur_id = cur - nodes_.data();
-        child.parent_idx = cur_id;
-        nodes_.push_back(std::move(child));
-        cur = &nodes_[cur_id];
-        cur->child_idx.push_back(nodes_.size() - 1);
-        cur = &nodes_.back();
-        ++it;
+        urls::detail::throw_invalid_argument();
     }
     cur->resource = resource;
 }
