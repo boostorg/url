@@ -126,7 +126,7 @@ struct identifier_rule_t
         static constexpr auto identifier_chars =
             grammar::alnum_chars + grammar::lut_chars('_');
         ++it;
-        it = identifier_chars.find_if_not(it, end);
+        it = grammar::find_if_not(it, end, identifier_chars);
         return string_view(begin, it);
     }
 };
