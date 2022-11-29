@@ -50,7 +50,7 @@ class router
 {
     struct node
     {
-        detail::dynamic_segment seg{};
+        detail::segment_template seg{};
         optional<T> resource{boost::none};
         std::size_t parent_idx{std::size_t(-1)};
         std::vector<std::size_t> child_idx;
@@ -67,12 +67,14 @@ public:
         // as well as the rule T.
         // AFREITAS: Is this going to be lazy?
         node const* leaf_;
-    public:
+
+        friend router;
+
         explicit
         match_results(node const& leaf_)
             : leaf_(&leaf_)
         {}
-
+    public:
         T const& operator*() const
         {
             return *leaf_->resource;
@@ -102,7 +104,7 @@ public:
         @return The match results
      */
     result<match_results>
-    match(string_view request);
+    match(pct_string_view request);
 };
 
 } // experimental
@@ -112,6 +114,4 @@ public:
 #include <boost/url/experimental/impl/router.hpp>
 
 #endif
-
-
 

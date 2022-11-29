@@ -356,7 +356,7 @@ public:
     */
     BOOST_URL_DECL
     bool
-    starts_with( string_view sv ) const noexcept;
+    starts_with( string_view s ) const noexcept;
 
     /** Checks if the string ends with the given prefix
 
@@ -373,7 +373,7 @@ public:
     */
     BOOST_URL_DECL
     bool
-    ends_with( string_view sv ) const noexcept;
+    ends_with( string_view s ) const noexcept;
 
     /** Checks if the string begins with the given prefix
 

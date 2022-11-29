@@ -21,7 +21,7 @@ router<T>::route(string_view path, T const& resource)
     if (path.starts_with("/"))
         path.remove_prefix(1);
     auto segs =
-        grammar::parse(path, detail::dynamic_path_rule).value();
+        grammar::parse(path, detail::path_template_rule).value();
     auto it = segs.begin();
     auto end = segs.end();
 
@@ -109,7 +109,7 @@ router<T>::route(string_view path, T const& resource)
 
 template <class T>
 auto
-router<T>::match(string_view request)
+router<T>::match(pct_string_view request)
     -> result<match_results>
 {
     // Parse request as regular path
