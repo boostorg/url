@@ -55,6 +55,8 @@ struct router_test
         good("user/{}", "user/johndoe");
         good("user/{name}", "user/johndoe");
         good("user/{id}", "user/123");
+        good("user/{name}/{op}", "user/johndoe/r");
+        good("user/{name}/op/{op}", "user/johndoe/op/r");
 
         // dot segments
         good("user/{name}", "user/././johndoe");
@@ -78,6 +80,7 @@ struct router_test
         // allow multiple {}s per segment?
         // create lazy range that allows iterating
         //     the match results
+        // create match
     }
 
     void
