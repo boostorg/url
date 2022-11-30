@@ -61,14 +61,13 @@ public:
         return str_;
     }
 
-
     string_view
     id() const
     {
         if (is_literal_)
             return {};
         return string_view{str_}
-            .substr(1, str_.find_first_of(":}") - 1);
+            .substr(1, str_.find_first_of('}') - 1);
     }
 
     bool
@@ -96,60 +95,6 @@ public:
     }
 };
 
-// The syntax of dynamic url components is a
-// subset of:
-// https://fmt.dev/latest/syntax.html
-
-// digit             ::=  "0"..."9"
-constexpr auto integer_chars =
-    grammar::lut_chars("0123456789");
-
-// identifier        ::=  id_start id_continue*
-// id_start          ::=  "a"..."z" | "A"..."Z" | "_"
-// id_continue       ::=  id_start | digit
-struct identifier_rule_t
-{
-    using value_type = string_view;
-
-    urls::result<value_type>
-    parse(
-        char const*& it,
-        char const* end
-    ) const noexcept
-    {
-        if (it == end)
-            return grammar::error::need_more;
-        char const* begin = it;
-        if (!grammar::alpha_chars(*it) &&
-            *it != '_')
-            return grammar::error::invalid;
-        static constexpr auto identifier_chars =
-            grammar::alnum_chars + grammar::lut_chars('_');
-        ++it;
-        it = grammar::find_if_not(it, end, identifier_chars);
-        return string_view(begin, it);
-    }
-};
-
-constexpr auto identifier_rule = identifier_rule_t{};
-
-// arg_id ::=  integer | identifier
-constexpr auto arg_id_rule =
-    grammar::variant_rule(
-        grammar::token_rule(integer_chars),
-        identifier_rule);
-
-// replacement_field ::=  "{" [arg_id] "}"
-constexpr auto replacement_field_rule =
-    grammar::tuple_rule(
-        grammar::squelch(
-            grammar::delim_rule('{')),
-        grammar::squelch(
-            grammar::optional_rule(
-                arg_id_rule)),
-        grammar::squelch(
-            grammar::delim_rule('}')));
-
 struct segment_template_rule_t
 {
     using value_type = segment_template;
@@ -160,25 +105,43 @@ struct segment_template_rule_t
         char const* end
     ) const noexcept
     {
-        auto begin = it;
-        auto rv = grammar::variant_rule(
-            replacement_field_rule,
-            urls::detail::segment_rule)
-                .parse(it, end);
-        if (!rv)
-            return rv.error();
         segment_template t;
-        if (rv->index() == 0)
+        if (it != end &&
+            *it == '{')
         {
-            // segment replacement
-            t.str_ = {begin, it};
-            t.is_literal_ = false;
-            return t;
+            // replacement field
+            auto is_id =
+                [](char const* it, char const* end) -> bool
+            {
+                if (it == end)
+                    return true;
+                if (grammar::alpha_chars(*it)
+                    || *it == '_')
+                    return grammar::find_if_not(
+                        it + 1, end,
+                        grammar::alnum_chars + grammar::lut_chars('_')) == end;
+                return grammar::find_if_not(
+                         it, end, grammar::lut_chars("0123456789")) == end;
+            };
+            auto it0 = it;
+            ++it;
+            auto send =
+                grammar::find_if(
+                    it, end, grammar::lut_chars('}'));
+            if (send != end &&
+                is_id(it, send))
+            {
+                it = send + 1;
+                t.str_ = string_view(it0, send + 1);
+                t.is_literal_ = false;
+                return t;
+            }
+            it = it0;
         }
         // literal segment
-        string_view seg = variant2::get<1>(*rv);
-        make_pct_string_view(seg)
-            ->decode({}, urls::string_token::assign_to(t.str_));
+        auto rv = grammar::parse(
+            it, end, urls::detail::segment_rule);
+        rv->decode({}, urls::string_token::assign_to(t.str_));
         t.is_literal_ = true;
         return t;
     }
