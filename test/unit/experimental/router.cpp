@@ -76,17 +76,62 @@ struct router_test
         good("user//{name}", "user//johndoe");
         bad("user//{name}", "user/johndoe");
 
-        // support {id?:} / {id+} / {id+} for zero, one or more
-        // allow multiple {}s per segment?
-        // create lazy range that allows iterating
-        //     the match results
-        // create match
+        // optional segment
+        good("user/{name}/{op?}", "user/johndoe");
+        good("user/{name}/{op?}", "user/johndoe/");
+        good("user/{name}/{op?}", "user/johndoe/r");
+        bad("user/{name}/{op?}", "user/johndoe/r/r");
+        good("user/{name}/{op?}/b", "user/johndoe/r/b");
+        good("user/{name}/{op?}/b", "user/johndoe/b");
+        good("user/{name}/{op?}/{op2?}", "user/johndoe");
+        good("user/{name}/{op?}/{op2?}", "user/johndoe/");
+        good("user/{name}/{op?}/{op2?}", "user/johndoe/r");
+        good("user/{name}/{op?}/{op2?}/b", "user/johndoe/b");
+        good("user/{name}/{op?}/{op2?}/b", "user/johndoe//b");
+        good("user/{name}/{op?}/{op2?}/b", "user/johndoe/r/b");
+
+        // star segment
+        good("user/{name}/{op*}", "user/johndoe");
+        good("user/{name}/{op*}", "user/johndoe/");
+        good("user/{name}/{op*}", "user/johndoe/r");
+        good("user/{name}/{op*}", "user/johndoe/r/r1");
+        good("user/{name}/{op*}", "user/johndoe/r/r1/r2");
+        good("user/{name}/{op*}/{op2*}", "user/johndoe");
+        good("user/{name}/{op*}/{op2*}", "user/johndoe/");
+        good("user/{name}/{op*}/{op2*}", "user/johndoe/r");
+        good("user/{name}/{op*}/b", "user/johndoe/b");
+        good("user/{name}/{op*}/b", "user/johndoe/r/b");
+        good("user/{name}/{op*}/b", "user/johndoe/r/r1/b");
+        good("user/{name}/{op*}/b", "user/johndoe/r/r1/r2/b");
+        good("user/{name}/{op*}/b", "user/johndoe/b");
+
+        // plus segment
+        bad("user/{name}/{op+}", "user/johndoe");
+        good("user/{name}/{op+}", "user/johndoe/");
+        good("user/{name}/{op+}", "user/johndoe/r");
+        good("user/{name}/{op+}", "user/johndoe/r/r1");
+        good("user/{name}/{op+}", "user/johndoe/r/r1/r2");
+        bad("user/{name}/{op+}/{op2+}", "user/johndoe");
+        bad("user/{name}/{op+}/{op2+}", "user/johndoe/");
+        bad("user/{name}/{op+}/{op2+}", "user/johndoe/r");
+        bad("user/{name}/{op+}/b", "user/johndoe/b");
+        good("user/{name}/{op+}/b", "user/johndoe/r/b");
+        good("user/{name}/{op+}/b", "user/johndoe/r/r1/b");
+        good("user/{name}/{op+}/b", "user/johndoe/r/r1/r2/b");
+        bad("user/{name}/{op+}/b", "user/johndoe/b");
+
     }
 
     void
     run()
     {
         testPatterns();
+
+        // to be continued:
+        // - create lazy range that allows iterating
+        //     the match results
+        // - complete match results
+        // - create base_router
     }
 };
 

@@ -39,8 +39,17 @@ struct match_any_t {};
 // A dynamic path segment
 class segment_template
 {
+    enum class modifier : std::uint8_t
+    {
+        none,
+        optional,
+        star,
+        plus
+    };
+
     std::string str_;
     bool is_literal_ = true;
+    modifier modifier_ = modifier::none;
 
     friend struct segment_template_rule_t;
 public:
@@ -82,6 +91,30 @@ public:
         return is_literal_;
     }
 
+    bool
+    has_modifier() const
+    {
+        return modifier_ != modifier::none;
+    }
+
+    bool
+    is_optional() const
+    {
+        return modifier_ == modifier::optional;
+    }
+
+    bool
+    is_star() const
+    {
+        return modifier_ == modifier::star;
+    }
+
+    bool
+    is_plus() const
+    {
+        return modifier_ == modifier::plus;
+    }
+
     friend
     bool operator==(
         segment_template const& a,
@@ -110,31 +143,50 @@ struct segment_template_rule_t
             *it == '{')
         {
             // replacement field
-            auto is_id =
-                [](char const* it, char const* end) -> bool
-            {
-                if (it == end)
-                    return true;
-                if (grammar::alpha_chars(*it)
-                    || *it == '_')
-                    return grammar::find_if_not(
-                        it + 1, end,
-                        grammar::alnum_chars + grammar::lut_chars('_')) == end;
-                return grammar::find_if_not(
-                         it, end, grammar::lut_chars("0123456789")) == end;
-            };
             auto it0 = it;
             ++it;
             auto send =
                 grammar::find_if(
                     it, end, grammar::lut_chars('}'));
-            if (send != end &&
-                is_id(it, send))
+            if (send != end)
             {
-                it = send + 1;
-                t.str_ = string_view(it0, send + 1);
-                t.is_literal_ = false;
-                return t;
+                string_view s(it, send);
+                static constexpr auto digit_cs =
+                    grammar::lut_chars("0123456789");
+                static constexpr auto id_start_cs =
+                    grammar::alpha_chars + grammar::lut_chars('_');
+                static constexpr auto id_cs =
+                    grammar::alnum_chars + grammar::lut_chars('_');
+                static constexpr auto modifiers_cs =
+                    grammar::lut_chars("?*+");
+                static constexpr auto id_rule =
+                    grammar::tuple_rule(
+                        grammar::variant_rule(
+                            grammar::tuple_rule(
+                                grammar::delim_rule(id_start_cs),
+                                grammar::optional_rule(
+                                    grammar::token_rule(id_cs))
+                                    ),
+                            grammar::token_rule(digit_cs)),
+                        grammar::optional_rule(
+                            grammar::delim_rule(modifiers_cs)));
+                if (s.empty() ||
+                    grammar::parse(s, id_rule))
+                {
+                    it = send + 1;
+                    t.str_ = string_view(it0, send + 1);
+                    t.is_literal_ = false;
+                    if (s.ends_with('?'))
+                        t.modifier_ =
+                            segment_template::modifier::optional;
+                    else if (s.ends_with('*'))
+                        t.modifier_ =
+                            segment_template::modifier::star;
+                    else if (s.ends_with('+'))
+                        t.modifier_ =
+                            segment_template::modifier::plus;
+                    return t;
+                }
             }
             it = it0;
         }

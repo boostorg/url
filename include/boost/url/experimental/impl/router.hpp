@@ -109,30 +109,22 @@ router<T>::route(string_view path, T const& resource)
 
 template <class T>
 auto
-router<T>::match(pct_string_view request)
-    -> result<match_results>
+router<T>::try_match(
+    segments_encoded_view::const_iterator it,
+    segments_encoded_view::const_iterator end,
+    node const* cur,
+    int level)
+    -> node const*
 {
-    // Parse request as regular path
-    auto r = parse_path(request);
-    if (!r)
-    {
-        BOOST_URL_RETURN_EC(r.error());
-    }
-
-    // Iterate nodes
-    node const* cur = &nodes_.front();
-    segments_encoded_view segs = *r;
-    auto it = segs.begin();
-    auto end = segs.end();
-    int level = 0;
     while (it != end)
     {
-        if (**it == ".")
+        pct_string_view s = *it;
+        if (*s == ".")
         {
             ++it;
             continue;
         }
-        if (**it == "..")
+        if (*s == "..")
         {
             ++it;
             if (level > 0 ||
@@ -148,25 +140,89 @@ router<T>::match(pct_string_view request)
             ++it;
             continue;
         }
-        auto cit = std::find_if(
-            cur->child_idx.begin(),
-            cur->child_idx.end(),
-            [this, &it](std::size_t i) {
-                return nodes_[i].seg.match(*it);
-            });
-        if (cit == cur->child_idx.end())
-            ++level;
-        else
-            cur = &nodes_[*cit];
+        node const* r = nullptr;
+        for (auto i: cur->child_idx)
+        {
+            auto& c = nodes_[i];
+            if (c.seg.match(s))
+            {
+                if (c.seg.is_literal() ||
+                    !c.seg.has_modifier())
+                {
+                    r = try_match(
+                        std::next(it), end, &c, level);
+                }
+                else if (c.seg.is_optional())
+                {
+                    r = try_match(
+                        std::next(it), end, &c, level);
+                    if (r)
+                        break;
+                    r = try_match(
+                        it, end, &c, level);
+                }
+                else
+                {
+                    auto it1 = it;
+                    if (c.seg.is_plus())
+                        ++it1;
+                    while (it1 != end)
+                    {
+                        r = try_match(
+                            it1, end, &c, level);
+                        if (r)
+                            break;
+                        ++it1;
+                    }
+                    r = try_match(
+                        it1, end, &c, level);
+                    if (r)
+                        break;
+                }
+            }
+        }
+        if (r)
+            return r;
+        ++level;
         ++it;
     }
-    if (!cur->resource ||
-        level != 0)
+    if (level != 0)
     {
-        BOOST_URL_RETURN_EC(
-            grammar::error::mismatch);
+        // the path ended below or above an
+        // existing node
+        return nullptr;
     }
-    return match_results(*cur);
+    if (!cur->resource)
+    {
+        // we reached a node with no resource,
+        // but it might still have only child
+        // optional segments with resources
+        return cur->find_optional_resource(nodes_);
+    }
+    return cur;
+}
+
+template <class T>
+auto
+router<T>::match(pct_string_view request)
+    -> result<match_results>
+{
+    // Parse request as regular path
+    auto r = parse_path(request);
+    if (!r)
+    {
+        BOOST_URL_RETURN_EC(r.error());
+    }
+    segments_encoded_view segs = *r;
+
+    // Iterate nodes
+    node const* cur = try_match(
+        segs.begin(), segs.end(),
+        &nodes_.front(), 0);
+    if (cur)
+        return match_results(*cur);
+    BOOST_URL_RETURN_EC(
+        grammar::error::mismatch);
 }
 
 } // experimental

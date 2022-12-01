@@ -54,6 +54,28 @@ class router
         optional<T> resource{boost::none};
         std::size_t parent_idx{std::size_t(-1)};
         std::vector<std::size_t> child_idx;
+
+        node const*
+        find_optional_resource(
+            std::vector<node> const& ns) const
+        {
+            if (resource)
+                return this;
+            if (child_idx.empty())
+                return nullptr;
+            for (auto i: child_idx)
+            {
+                auto& c = ns[i];
+                if (!c.seg.is_optional() &&
+                    !c.seg.is_star())
+                    continue;
+                auto n =
+                    c.find_optional_resource(ns);
+                if (n)
+                    return n;
+            }
+            return nullptr;
+        }
     };
 
     // Pool of other nodes in the resource tree
@@ -105,6 +127,14 @@ public:
      */
     result<match_results>
     match(pct_string_view request);
+
+private:
+    node const*
+    try_match(
+        segments_encoded_view::const_iterator it,
+        segments_encoded_view::const_iterator end,
+        node const* root,
+        int level);
 };
 
 } // experimental
