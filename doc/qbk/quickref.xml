@@ -80,6 +80,9 @@
         <bridgehead renderas="sect3">Functions</bridgehead>
         <simplelist type="vert" columns="1">
           <member><link linkend="url.ref.boost__urls__operator_lt__lt_">operator&lt;&lt;</link></member>
+          <member><link linkend="url.ref.boost__urls__arg">arg</link></member>
+          <member><link linkend="url.ref.boost__urls__format">format</link></member>
+          <member><link linkend="url.ref.boost__urls__format_to">format_to</link></member>
           <member><link linkend="url.ref.boost__urls__parse_absolute_uri">parse_absolute_uri</link></member>
           <member><link linkend="url.ref.boost__urls__parse_authority">parse_authority</link></member>
           <member><link linkend="url.ref.boost__urls__parse_origin_form">parse_origin_form</link></member>
@@ -107,6 +110,7 @@
         </simplelist>
 
       </entry>
+
       <entry valign="top">
 
         <bridgehead renderas="sect3">Types</bridgehead>

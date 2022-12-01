@@ -26,6 +26,7 @@ local SOURCES =
     encode.cpp
     encoding_opts.cpp
     decode_view.cpp
+    format.cpp
     grammar.cpp
     host_type.cpp
     ignore_case.cpp
