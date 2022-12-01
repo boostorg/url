@@ -35,6 +35,13 @@
 namespace boost {
 namespace urls {
 
+#ifndef BOOST_URL_DOCS
+namespace detail {
+struct pattern;
+}
+#endif
+
+
 /** Common functionality for containers
 
     This base class is used by the library
@@ -78,6 +85,7 @@ class BOOST_SYMBOL_VISIBLE
     friend class segments_encoded_view;
     friend class segments_ref;
     friend class segments_view;
+    friend struct detail::pattern;
 
     struct shared_impl;
 

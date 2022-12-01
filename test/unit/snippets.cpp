@@ -456,6 +456,76 @@ parsing_components()
 }
 
 void
+formatting_components()
+{
+    // I have spent a lot of time on this and have no
+    // idea how to fix this bug in GCC 4.8 and GCC 5.0
+    // without help from the pros.
+#if !BOOST_WORKAROUND( BOOST_GCC_VERSION, < 60000 )
+    {
+        //[snippet_format_1
+        url u = format("{}://{}:{}/rfc/{}", "https", "www.ietf.org", 80, "rfc2396.txt");
+        assert(u.buffer() == "https://www.ietf.org:80/rfc/rfc2396.txt");
+        //]
+    }
+
+    {
+        //[snippet_format_2
+        url u = format("https://{}/{}", "www.boost.org", "Hello world!");
+        assert(u.buffer() == "https://www.boost.org/Hello%20world!");
+        //]
+    }
+
+    {
+        //[snippet_format_3a
+        url u = format("{}:{}", "mailto", "someone@example.com");
+        assert(u.buffer() == "mailto:someone@example.com");
+        assert(u.scheme() == "mailto");
+        assert(u.path() == "someone@example.com");
+        //]
+    }
+    {
+        //[snippet_format_3b
+        url u = format("{}{}", "mailto:", "someone@example.com");
+        assert(u.buffer() == "mailto%3Asomeone@example.com");
+        assert(!u.has_scheme());
+        assert(u.path() == "mailto:someone@example.com");
+        assert(u.encoded_path() == "mailto%3Asomeone@example.com");
+        //]
+    }
+
+    {
+        //[snippet_format_4
+        static_url<50> u;
+        format_to(u, "{}://{}:{}/rfc/{}", "https", "www.ietf.org", 80, "rfc2396.txt");
+        assert(u.buffer() == "https://www.ietf.org:80/rfc/rfc2396.txt");
+        //]
+    }
+
+    {
+        //[snippet_format_5a
+        url u = format("{0}://{2}:{1}/{3}{4}{3}", "https", 80, "www.ietf.org", "abra", "cad");
+        assert(u.buffer() == "https://www.ietf.org:80/abracadabra");
+        //]
+    }
+    {
+        //[snippet_format_5b
+        url u = format("https://example.com/~{username}", arg("username", "mark"));
+        assert(u.buffer() == "https://example.com/~mark");
+        //]
+    }
+
+    {
+        //[snippet_format_5c
+        string_view fmt = "{scheme}://{host}:{port}/{dir}/{file}";
+        url u = format(fmt, {{"scheme", "https"}, {"port", 80}, {"host", "example.com"}, {"dir", "path/to"}, {"file", "file.txt"}});
+        assert(u.buffer() == "https://example.com:80/path/to/file.txt");
+        //]
+    }
+#endif
+}
+
+void
 parsing_scheme()
 {
     {
@@ -1667,6 +1737,7 @@ public:
         ignore_unused(&using_urls);
         // parsing_urls();
         parsing_components();
+        formatting_components();
         ignore_unused(&parsing_scheme);
         ignore_unused(&parsing_authority);
         ignore_unused(&parsing_path);

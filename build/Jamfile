@@ -1,5 +1,6 @@
 #
 # Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+# Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -14,6 +15,7 @@ project boost/url
       <link>static:<define>BOOST_URL_STATIC_LINK=1
       <define>BOOST_URL_SOURCE
       <toolset>msvc-14.0:<build>no
+      <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized" # variant2
     : usage-requirements
       <link>shared:<define>BOOST_URL_DYN_LINK=1
       <link>static:<define>BOOST_URL_STATIC_LINK=1

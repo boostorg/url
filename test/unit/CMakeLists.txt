@@ -25,6 +25,7 @@ set(BOOST_URL_TESTS_FILES
     encoding_opts.cpp
     error.cpp
     error_types.cpp
+    format.cpp
     grammar.cpp
     host_type.cpp
     ignore_case.cpp

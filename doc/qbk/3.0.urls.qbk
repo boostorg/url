@@ -300,6 +300,7 @@ URLs
 [include 3.5.normalization.qbk]
 [include 3.6.stringtoken.qbk]
 [include 3.7.percent-encoding.qbk]
+[include 3.8.formatting.qbk]
 
 [endsect]
 

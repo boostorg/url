@@ -35,6 +35,7 @@ struct any_params_iter;
 struct any_segments_iter;
 struct params_iter_impl;
 struct segments_iter_impl;
+struct pattern;
 }
 #endif
 
@@ -71,6 +72,7 @@ class BOOST_SYMBOL_VISIBLE
     friend class segments_ref;
     friend class segments_encoded_ref;
     friend class params_encoded_ref;
+    friend struct detail::pattern;
 
     struct op_t
     {
