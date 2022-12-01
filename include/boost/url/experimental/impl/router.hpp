@@ -141,6 +141,36 @@ router<T>::try_match(
             continue;
         }
         node const* r = nullptr;
+
+        // branch: do we have more than one
+        // NFA matching node at this level?
+        // If so, we need to potentially branch
+        // to find which path leads to valid
+        // resource. Otherwise, we can just
+        // consume the node and input without
+        // any recursive function calls.
+        bool branch = false;
+        if (cur->child_idx.size() > 1)
+        {
+            int branches_lb = 0;
+            for (auto i: cur->child_idx)
+            {
+                auto& c = nodes_[i];
+                if (c.seg.is_literal() ||
+                    !c.seg.has_modifier())
+                    branches_lb += c.seg.match(s);
+                else
+                    branches_lb = 2;
+                if (branches_lb > 1)
+                {
+                    branch = true;
+                    break;
+                }
+            }
+        }
+        // true if we matched any `it` without
+        // branching
+        bool match_any = false;
         for (auto i: cur->child_idx)
         {
             auto& c = nodes_[i];
@@ -149,33 +179,64 @@ router<T>::try_match(
                 if (c.seg.is_literal() ||
                     !c.seg.has_modifier())
                 {
-                    r = try_match(
-                        std::next(it), end, &c, level);
+                    if (branch)
+                    {
+                        r = try_match(
+                            std::next(it), end, &c, level);
+                        if (r)
+                            break;
+                    }
+                    else
+                    {
+                        cur = &c;
+                        match_any = true;
+                        break;
+                    }
                 }
                 else if (c.seg.is_optional())
                 {
+                    // try complete continuation
+                    // consuming the input,
+                    // which is the longest and
+                    // most likely match
                     r = try_match(
                         std::next(it), end, &c, level);
                     if (r)
                         break;
+                    // try complete continuation
+                    // consuming no input
                     r = try_match(
                         it, end, &c, level);
+                    if (r)
+                        break;
                 }
                 else
                 {
-                    auto it1 = it;
+                    auto first = it;
                     if (c.seg.is_plus())
-                        ++it1;
-                    while (it1 != end)
+                        ++first;
+                    // {*} is usually the last
+                    // template segment in a path.
+                    // try complete continuation
+                    // match for every subrange
+                    // from {last, last} to
+                    // {first, last}.
+                    // We try {last, last} first,
+                    // which is the longest
+                    // and most likely match.
+                    auto start = end;
+                    while (start != first)
                     {
                         r = try_match(
-                            it1, end, &c, level);
+                            start, end, &c, level);
                         if (r)
                             break;
-                        ++it1;
+                        --start;
                     }
+                    if (r)
+                        break;
                     r = try_match(
-                        it1, end, &c, level);
+                        start, end, &c, level);
                     if (r)
                         break;
                 }
@@ -183,7 +244,8 @@ router<T>::try_match(
         }
         if (r)
             return r;
-        ++level;
+        if (!match_any)
+            ++level;
         ++it;
     }
     if (level != 0)
@@ -194,9 +256,11 @@ router<T>::try_match(
     }
     if (!cur->resource)
     {
-        // we reached a node with no resource,
-        // but it might still have only child
-        // optional segments with resources
+        // we consumed all the input and reached
+        // a node with no resource, but it might
+        // still have child optional segments
+        // with resources we can reach without
+        // consuming any input
         return cur->find_optional_resource(nodes_);
     }
     return cur;
@@ -216,11 +280,11 @@ router<T>::match(pct_string_view request)
     segments_encoded_view segs = *r;
 
     // Iterate nodes
-    node const* cur = try_match(
+    node const* n = try_match(
         segs.begin(), segs.end(),
         &nodes_.front(), 0);
-    if (cur)
-        return match_results(*cur);
+    if (n)
+        return match_results(*n);
     BOOST_URL_RETURN_EC(
         grammar::error::mismatch);
 }

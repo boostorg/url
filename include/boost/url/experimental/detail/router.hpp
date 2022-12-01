@@ -39,7 +39,7 @@ struct match_any_t {};
 // A dynamic path segment
 class segment_template
 {
-    enum class modifier : std::uint8_t
+    enum class modifier : unsigned char
     {
         none,
         optional,
