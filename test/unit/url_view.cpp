@@ -752,6 +752,9 @@ public:
             BOOST_TEST(r.has_error());
             BOOST_TEST_THROWS(
                 r.value(), std::exception);
+
+            BOOST_TEST(parse_uri(
+                "http://example.com:a").has_error());
         }
 
         // parse_relative_ref
