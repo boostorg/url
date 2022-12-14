@@ -65,7 +65,13 @@ parse(
         t.authority = *rv;
         t.has_authority = true;
     }
-    if(it == end)
+    // the authority requires an absolute path
+    // or an empty path
+    if(it == end || (
+        t.has_authority && (
+            *it != '/' &&
+            *it != '?' &&
+            *it != '#')))
     {
         // path-empty
         return t;
