@@ -377,7 +377,7 @@ struct quoted_string_rule_t {
     }
 };
 
-constexpr quoted_string_rule_t quoted_string_rule;
+constexpr quoted_string_rule_t quoted_string_rule{};
 
 /// Rule for local-part = dot-atom-text / quoted-string
 constexpr auto local_part_rule =
