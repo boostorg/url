@@ -181,8 +181,8 @@ template<
 inline
 auto
 make_any_iter_rule2(
-    R0 const& r0,
-    R1 const& r1) ->
+    R0 const&,
+    R1 const&) ->
         any_iter_rule<typename
             R0::value_type> const*
 {
