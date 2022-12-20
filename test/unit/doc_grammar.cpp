@@ -268,7 +268,7 @@ struct doc_grammar_test
     {
         {
         //[code_grammar_4_1
-        constexpr auto chunk_ext_rule = range_rule(
+        auto const chunk_ext_rule = range_rule(
             tuple_rule( squelch( delim_rule( ';' ) ), token_rule( alnum_chars ) ) );
         //]
         //[code_grammar_4_2
@@ -280,7 +280,7 @@ struct doc_grammar_test
         }
         {
         //[code_grammar_4_3
-        constexpr auto token_list_rule = range_rule(
+        auto token_list_rule = range_rule(
             token_rule( alnum_chars ),
             tuple_rule( squelch( delim_rule( ',' ) ), token_rule( alnum_chars ) ),
             1 );
