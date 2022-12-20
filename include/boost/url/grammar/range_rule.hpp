@@ -15,6 +15,7 @@
 #include <boost/url/string_view.hpp>
 #include <boost/url/grammar/parse.hpp>
 #include <boost/url/grammar/type_traits.hpp>
+#include <boost/url/grammar/detail/any_iter_rule.hpp>
 #include <boost/static_assert.hpp>
 #include <cstddef>
 #include <iterator>
@@ -59,73 +60,20 @@ namespace grammar {
 template<class T>
 class range
 {
-    // buffer size for type-erased rule
-    static constexpr
-        std::size_t BufferSize = 128;
-
-    struct small_buffer
-    {
-        alignas(alignof(::max_align_t))
-        unsigned char buf[BufferSize];
-
-        void const* addr() const noexcept
-        {
-            return buf;
-        }
-
-        void* addr() noexcept
-        {
-            return buf;
-        }
-    };
-
-    small_buffer sb_;
     string_view s_;
     std::size_t n_ = 0;
-
-    //--------------------------------------------
-
-    struct any_rule;
-
-    template<class R, bool>
-    struct impl1;
-
-    template<
-        class R0, class R1, bool>
-    struct impl2;
+    detail::any_iter_rule<
+        T> const* r_;
 
     template<
         class R0, class R1>
     friend struct range_rule_t;
 
-    any_rule&
-    get() noexcept
-    {
-        return *reinterpret_cast<
-            any_rule*>(sb_.addr());
-    }
-
-    any_rule const&
-    get() const noexcept
-    {
-        return *reinterpret_cast<
-            any_rule const*>(
-                sb_.addr());
-    }
-
-    template<class R>
     range(
         string_view s,
         std::size_t n,
-        R const& r);
-
-    template<
-        class R0, class R1>
-    range(
-        string_view s,
-        std::size_t n,
-        R0 const& first,
-        R1 const& next);
+        detail::any_iter_rule<
+            T> const*) noexcept;
 
 public:
     /** The type of each element of the range
@@ -176,22 +124,6 @@ public:
 
     /** Constructor
 
-        The new range references the
-        same underlying character buffer.
-        Ownership is not transferred; the
-        caller is responsible for ensuring
-        that the lifetime of the buffer
-        extends until it is no longer
-        referenced. The moved-from object
-        becomes as if default-constructed.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    range(range&&) noexcept;
-
-    /** Constructor
-
         The copy references the same
         underlying character buffer.
         Ownership is not transferred; the
@@ -204,22 +136,6 @@ public:
         Throws nothing.
     */
     range(range const&) noexcept;
-
-    /** Constructor
-
-        After the move, this references the
-        same underlying character buffer. Ownership
-        is not transferred; the caller is responsible
-        for ensuring that the lifetime of the buffer
-        extends until it is no longer referenced.
-        The moved-from object becomes as if
-        default-constructed.
-
-        @par Exception Safety
-        Throws nothing.
-    */
-    range&
-    operator=(range&&) noexcept;
 
     /** Assignment
 
@@ -366,13 +282,29 @@ struct range_rule_t<R>
         char const*& it,
         char const* end) const;
 
+    range_rule_t&
+    operator=(range_rule_t const&) = delete;
+
+    ~range_rule_t()
+    {
+        r_->release();
+    }
+
+    range_rule_t(
+        range_rule_t const& other) noexcept
+        : r_(other.r_->acquire())
+        , N_(other.N_)
+        , M_(other.M_)
+    {
+    }
+
 private:
     constexpr
     range_rule_t(
         R const& next,
         std::size_t N,
         std::size_t M) noexcept
-        : next_(next)
+        : r_(detail::make_any_iter_rule1(next))
         , N_(N)
         , M_(M)
     {
@@ -387,7 +319,8 @@ private:
         std::size_t N,
         std::size_t M) noexcept;
 
-    R const next_;
+    detail::any_iter_rule<typename
+        R::value_type> const* r_;
     std::size_t N_;
     std::size_t M_;
 };
@@ -511,6 +444,22 @@ struct range_rule_t
         char const*& it,
         char const* end) const;
 
+    range_rule_t&
+    operator=(range_rule_t const&) = delete;
+
+    ~range_rule_t()
+    {
+        r_->release();
+    }
+
+    range_rule_t(
+        range_rule_t const& other) noexcept
+        : r_(other.r_->acquire())
+        , N_(other.N_)
+        , M_(other.M_)
+    {
+    }
+
 private:
     constexpr
     range_rule_t(
@@ -518,8 +467,8 @@ private:
         R1 const& next,
         std::size_t N,
         std::size_t M) noexcept
-        : first_(first)
-        , next_(next)
+        : r_(detail::make_any_iter_rule2<
+            R0, R1>(first, next))
         , N_(N)
         , M_(M)
     {
@@ -543,8 +492,8 @@ private:
         range_rule_t<R0_, R1_>;
 #endif
 
-    R0 const first_;
-    R1 const next_;
+    detail::any_iter_rule<typename
+        R0::value_type> const* r_;
     std::size_t N_;
     std::size_t M_;
 };

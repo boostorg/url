@@ -75,7 +75,7 @@ struct range_rule_test
     void
     testRange()
     {
-        constexpr auto r0 = range_rule(
+        auto r0 = range_rule(
             tuple_rule(
                 squelch(
                     delim_rule(';')),
@@ -98,18 +98,6 @@ struct range_rule_test
             BOOST_TEST_EQ(v3.size(), 0);
         }
 
-        // range(range&&)
-        {
-            auto v0 = parse(";a;b;c", r0).value();
-            range<string_view> v(std::move(v0));
-            BOOST_TEST(v0.empty());
-            BOOST_TEST_EQ(v0.size(), 0);
-            BOOST_TEST_EQ(v0.begin(), v0.end());
-            BOOST_TEST(! v.empty());
-            BOOST_TEST_EQ(v.size(), 3);
-            BOOST_TEST_EQ(v.string(), ";a;b;c");
-        }
-
         // range(range const&)
         {
             auto v0 = parse(";a;b;c", r0).value();
@@ -120,19 +108,6 @@ struct range_rule_test
             BOOST_TEST(! v.empty());
             BOOST_TEST_EQ(v.size(), 3);
             BOOST_TEST_EQ(v.string(), ";a;b;c");
-        }
-
-        // operator=(range&&)
-        {
-            auto v0 = parse(";a;b;c", r0).value();
-            auto v1 = parse(";x;y", r0).value();
-            v1 = std::move(v0);
-            BOOST_TEST(v0.empty());
-            BOOST_TEST_EQ(v0.size(), 0);
-            BOOST_TEST_EQ(v0.begin(), v0.end());
-            BOOST_TEST(! v1.empty());
-            BOOST_TEST_EQ(v1.size(), 3);
-            BOOST_TEST_EQ(v1.string(), ";a;b;c");
         }
 
         // operator=(range const&)
@@ -152,7 +127,7 @@ struct range_rule_test
         // upper limit
         {
             {
-                constexpr auto r = range_rule(
+                auto r = range_rule(
                     tuple_rule(
                         squelch(
                             delim_rule(';')),
@@ -167,7 +142,7 @@ struct range_rule_test
                 bad(r, ";a;b;c;d;e", error::mismatch);
             }
             {
-                constexpr auto r = range_rule(
+                auto r = range_rule(
                     token_rule(alpha_chars),
                     tuple_rule(
                         squelch(
@@ -187,7 +162,7 @@ struct range_rule_test
         // big rules
         {
             {
-                constexpr auto r = range_rule(
+                auto r = range_rule(
                     big_rule{},
                     2, 3);
 
@@ -199,7 +174,7 @@ struct range_rule_test
                 bad(r, ";a;b;c;d;e", error::mismatch);
             }
             {
-                constexpr auto r = range_rule(
+                auto r = range_rule(
                     big_rule{}, big_rule{},
                     2, 3);
 
@@ -218,7 +193,7 @@ struct range_rule_test
     {
         // constexpr
         {
-            constexpr auto r = range_rule(
+            auto r = range_rule(
                 token_rule(alpha_chars),
                 tuple_rule(
                     squelch(
