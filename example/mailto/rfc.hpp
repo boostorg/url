@@ -342,7 +342,7 @@ struct cfws_rule_t {
     }
 };
 
-constexpr cfws_rule_t cfws_rule;
+constexpr cfws_rule_t cfws_rule{};
 
 /// Rule for qcontent = qtext / quoted-pair
 constexpr auto qcontent_rule =
