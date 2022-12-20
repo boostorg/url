@@ -161,7 +161,7 @@ struct dot_atom_text_rule_t {
     }
 };
 
-constexpr dot_atom_text_rule_t dot_atom_text_rule;
+constexpr dot_atom_text_rule_t dot_atom_text_rule{};
 
 /// Rule for "[" *dtext-no-obs "]"
 constexpr auto quoted_dtext_no_obs =
@@ -220,7 +220,7 @@ struct obs_fws_rule_t {
     }
 };
 
-constexpr obs_fws_rule_t obs_fws_rule;
+constexpr obs_fws_rule_t obs_fws_rule{};
 
 /// Rule for FWS = ([*WSP CRLF] 1*WSP) / obs-FWS
 constexpr auto fws_rule =
