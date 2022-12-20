@@ -139,13 +139,29 @@ constexpr auto atext_token =
     grammar::token_rule(atext_chars);
 
 /// Rule for dot-atom-text = 1*atext *("." 1*atext)
-constexpr auto dot_atom_text_rule =
-    grammar::range_rule(
-        atext_token,
-        grammar::tuple_rule(
-            grammar::squelch(
-                grammar::delim_rule('.')),
-            atext_token));
+struct dot_atom_text_rule_t {
+    using value_type = urls::string_view;
+
+    urls::result< value_type >
+    parse(
+        char const*& it,
+        char const* end) const noexcept
+    {
+        static auto r = grammar::range_rule(
+            atext_token,
+            grammar::tuple_rule(
+                grammar::squelch(
+                    grammar::delim_rule('.')),
+                atext_token));
+        auto it0 = it;
+        auto rv = r.parse(it, end);
+        if (rv)
+            return urls::string_view(it0, it);
+        return rv.error();
+    }
+};
+
+constexpr dot_atom_text_rule_t dot_atom_text_rule;
 
 /// Rule for "[" *dtext-no-obs "]"
 constexpr auto quoted_dtext_no_obs =
@@ -183,12 +199,28 @@ constexpr auto quoted_pair_rule =
         obs_qp_rule);
 
 /// Rule for obs-FWS = 1*WSP *(CRLF 1*WSP)
-constexpr auto obs_fws_rule =
-    grammar::tuple_rule(
-        grammar::token_rule(wsp_chars),
-        grammar::range_rule(
-            grammar::delim_rule(crlf_chars),
-            grammar::token_rule(wsp_chars)));
+struct obs_fws_rule_t {
+    using value_type = urls::string_view;
+
+    urls::result< value_type >
+    parse(
+        char const*& it,
+        char const* end) const noexcept
+    {
+        static auto r = grammar::tuple_rule(
+            grammar::token_rule(wsp_chars),
+            grammar::range_rule(
+                grammar::delim_rule(crlf_chars),
+                grammar::token_rule(wsp_chars)));
+        auto it0 = it;
+        auto rv = r.parse(it, end);
+        if (rv)
+            return urls::string_view(it0, it);
+        return rv.error();
+    }
+};
+
+constexpr obs_fws_rule_t obs_fws_rule;
 
 /// Rule for FWS = ([*WSP CRLF] 1*WSP) / obs-FWS
 constexpr auto fws_rule =
@@ -286,15 +318,31 @@ constexpr auto comment_rule =
     detail::ccontent_and_comment_rules::comment_rule_t{};
 
 /// Rule for CFWS = (1*([FWS] comment) [FWS]) / FWS
-constexpr auto cfws_rule =
-    grammar::variant_rule(
-        grammar::tuple_rule(
-            grammar::range_rule(
-                grammar::tuple_rule(
-                    grammar::optional_rule(fws_rule),
-                    comment_rule), 1),
-            grammar::optional_rule(fws_rule)),
-        fws_rule);
+struct cfws_rule_t {
+    using value_type = urls::string_view;
+
+    urls::result< value_type >
+    parse(
+        char const*& it,
+        char const* end) const noexcept
+    {
+        static auto r = grammar::variant_rule(
+            grammar::tuple_rule(
+                grammar::range_rule(
+                    grammar::tuple_rule(
+                        grammar::optional_rule(fws_rule),
+                        comment_rule), 1),
+                grammar::optional_rule(fws_rule)),
+            fws_rule);
+        auto it0 = it;
+        auto rv = r.parse(it, end);
+        if (rv)
+            return urls::string_view(it0, it);
+        return rv.error();
+    }
+};
+
+constexpr cfws_rule_t cfws_rule;
 
 /// Rule for qcontent = qtext / quoted-pair
 constexpr auto qcontent_rule =
@@ -303,17 +351,33 @@ constexpr auto qcontent_rule =
         quoted_pair_rule);
 
 /// Rule for quoted-string = [CFWS] DQUOTE *([FWS] qcontent) [FWS] DQUOTE [CFWS]
-constexpr auto quoted_string_rule =
-    grammar::tuple_rule(
-        grammar::optional_rule(cfws_rule),
-        grammar::delim_rule('"'),
-        grammar::range_rule(
-            grammar::tuple_rule(
-                grammar::optional_rule(fws_rule),
-                qcontent_rule)),
-        grammar::optional_rule(fws_rule),
-        grammar::delim_rule('"'),
-        grammar::optional_rule(cfws_rule));
+struct quoted_string_rule_t {
+    using value_type = urls::string_view;
+
+    urls::result< value_type >
+    parse(
+        char const*& it,
+        char const* end) const noexcept
+    {
+        static auto r = grammar::tuple_rule(
+            grammar::optional_rule(cfws_rule),
+            grammar::delim_rule('"'),
+            grammar::range_rule(
+                grammar::tuple_rule(
+                    grammar::optional_rule(fws_rule),
+                    qcontent_rule)),
+            grammar::optional_rule(fws_rule),
+            grammar::delim_rule('"'),
+            grammar::optional_rule(cfws_rule));
+        auto it0 = it;
+        auto rv = r.parse(it, end);
+        if (rv)
+            return urls::string_view(it0, it);
+        return rv.error();
+    }
+};
+
+constexpr quoted_string_rule_t quoted_string_rule;
 
 /// Rule for local-part = dot-atom-text / quoted-string
 constexpr auto local_part_rule =
@@ -330,13 +394,29 @@ constexpr auto addr_spec_rule =
         domain_rule);
 
 /// Rule for to = addr-spec *("," addr-spec )
-constexpr auto to_rule =
-    grammar::range_rule(
-        addr_spec_rule,
-        grammar::tuple_rule(
-            grammar::squelch(
-                grammar::delim_rule(',')),
-            addr_spec_rule));
+struct to_rule_t {
+    using value_type = urls::string_view;
+
+    urls::result< value_type >
+    parse(
+        char const*& it,
+        char const* end) const noexcept
+    {
+        static auto r = grammar::range_rule(
+            addr_spec_rule,
+            grammar::tuple_rule(
+                grammar::squelch(
+                    grammar::delim_rule(',')),
+                addr_spec_rule));
+        auto it0 = it;
+        auto rv = r.parse(it, end);
+        if (rv)
+            return urls::string_view(it0, it);
+        return rv.error();
+    }
+};
+
+constexpr to_rule_t to_rule;
 
 /// Rule for hfvalue = *qchar
 constexpr auto hfvalue_rule = urls::pct_encoded_rule(qchars);
