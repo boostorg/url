@@ -12,6 +12,8 @@ project : requirements  ;
 project
     : requirements
       <library>/boost/url//boost_url
+      <toolset>gcc-8:<cxxflags>"-Wno-maybe-uninitialized"
+      <toolset>gcc-9:<cxxflags>"-Wno-maybe-uninitialized"
     ;
 
 exe mailto : mailto.cpp ;
