@@ -416,7 +416,7 @@ struct to_rule_t {
     }
 };
 
-constexpr to_rule_t to_rule;
+constexpr to_rule_t to_rule{};
 
 /// Rule for hfvalue = *qchar
 constexpr auto hfvalue_rule = urls::pct_encoded_rule(qchars);
