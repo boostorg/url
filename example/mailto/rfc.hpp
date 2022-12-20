@@ -207,10 +207,10 @@ struct obs_fws_rule_t {
         char const*& it,
         char const* end) const noexcept
     {
-        static auto r = grammar::tuple_rule(
+        static auto r = grammar::range_rule(
             grammar::token_rule(wsp_chars),
-            grammar::range_rule(
-                grammar::delim_rule(crlf_chars),
+            grammar::tuple_rule(
+                grammar::squelch(grammar::delim_rule(crlf_chars)),
                 grammar::token_rule(wsp_chars)));
         auto it0 = it;
         auto rv = r.parse(it, end);
