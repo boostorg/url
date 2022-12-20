@@ -151,7 +151,7 @@ template<
     class R0,
     class R1
     , class = void
-    , typename = std::enable_if<
+    , class = typename std::enable_if<
         ! std::is_empty<R0>::value ||
         ! std::is_empty<R1>::value>::type
 >
@@ -174,7 +174,7 @@ make_any_iter_rule2(
 template<
     class R0,
     class R1
-    , typename = std::enable_if<
+    , class = typename std::enable_if<
         std::is_empty<R0>::value &&
         std::is_empty<R1>::value>::type
 >
@@ -191,8 +191,8 @@ make_any_iter_rule2(
         typename R1::value_type>::value);
 
     static
-    constexpr
-    iter_rule0_v0<R0, R1> r(2);
+    iter_rule0_v0<
+        R0, R1> const r(2);
 
     return &r;
 }
@@ -202,7 +202,7 @@ make_any_iter_rule2(
 template<
     class R
     , class = void
-    , typename = std::enable_if<
+    , class = typename std::enable_if<
         ! std::is_empty<R>::value>::type
 >
 constexpr
@@ -217,7 +217,7 @@ make_any_iter_rule1(
 
 template<
     class R
-    , typename = std::enable_if<
+    , class = typename std::enable_if<
         std::is_empty<R>::value>::type
 >
 constexpr
@@ -228,8 +228,8 @@ make_any_iter_rule1(
             R::value_type> const*
 {
     static
-    constexpr
-    iter_rule0_v0<R> r(2);
+    iter_rule0_v0<
+        R> const r(2);
 
     return &r;
 }
