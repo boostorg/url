@@ -143,6 +143,16 @@ struct range_rule_test
             }
             {
                 auto r = range_rule(
+                    tuple_rule(
+                        squelch(
+                            delim_rule(';')),
+                        token_rule(alpha_chars)),
+                    0);
+
+                check(r, "", {});
+            }
+            {
+                auto r = range_rule(
                     token_rule(alpha_chars),
                     tuple_rule(
                         squelch(
