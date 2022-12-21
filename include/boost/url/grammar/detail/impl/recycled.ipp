@@ -15,7 +15,9 @@
 #include <utility>
 
 #ifdef _MSC_VER
-#define WIN32_LEAN_AND_MEAN
+#ifndef WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #include <debugapi.h>
 #endif
