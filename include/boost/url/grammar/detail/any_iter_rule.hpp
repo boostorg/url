@@ -178,7 +178,6 @@ template<
         std::is_empty<R0>::value &&
         std::is_empty<R1>::value>::type
 >
-inline
 auto
 make_any_iter_rule2(
     R0 const&,
@@ -220,7 +219,6 @@ template<
     , class = typename std::enable_if<
         std::is_empty<R>::value>::type
 >
-inline
 auto
 make_any_iter_rule1(
     R const&) ->
