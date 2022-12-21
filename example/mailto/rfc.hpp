@@ -139,7 +139,8 @@ constexpr auto atext_token =
     grammar::token_rule(atext_chars);
 
 /// Rule for dot-atom-text = 1*atext *("." 1*atext)
-struct dot_atom_text_rule_t {
+struct dot_atom_text_rule_t
+{
     using value_type = urls::string_view;
 
     urls::result< value_type >
@@ -199,7 +200,8 @@ constexpr auto quoted_pair_rule =
         obs_qp_rule);
 
 /// Rule for obs-FWS = 1*WSP *(CRLF 1*WSP)
-struct obs_fws_rule_t {
+struct obs_fws_rule_t
+{
     using value_type = urls::string_view;
 
     urls::result< value_type >
@@ -237,7 +239,8 @@ constexpr auto fws_rule =
 namespace detail
 {
     // workaround for value-based recursive rules
-    struct ccontent_and_comment_rules {
+    struct ccontent_and_comment_rules
+    {
         struct ccontent_rule_t
         {
             using value_type = urls::string_view;
@@ -318,7 +321,8 @@ constexpr auto comment_rule =
     detail::ccontent_and_comment_rules::comment_rule_t{};
 
 /// Rule for CFWS = (1*([FWS] comment) [FWS]) / FWS
-struct cfws_rule_t {
+struct cfws_rule_t
+{
     using value_type = urls::string_view;
 
     urls::result< value_type >
@@ -394,7 +398,8 @@ constexpr auto addr_spec_rule =
         domain_rule);
 
 /// Rule for to = addr-spec *("," addr-spec )
-struct to_rule_t {
+struct to_rule_t
+{
     using value_type = urls::string_view;
 
     urls::result< value_type >
@@ -402,7 +407,7 @@ struct to_rule_t {
         char const*& it,
         char const* end) const noexcept
     {
-        static auto r = grammar::range_rule(
+        static auto const r = grammar::range_rule(
             addr_spec_rule,
             grammar::tuple_rule(
                 grammar::squelch(
