@@ -995,6 +995,13 @@ struct url_test
             // issue 579
             check("https://www.boost.org/doc/../%69%6e%64%65%78%20file.html",
                   "https://www.boost.org/index%20file.html");
+            // issue 646
+            BOOST_TEST_NE(
+                url("https://@www.boost.org/"),
+                url("https://www.boost.org/"));
+            BOOST_TEST_NE(
+                url("https://:@www.boost.org/"),
+                url("https://@www.boost.org/"));
         }
 
         // normalize path
