@@ -185,7 +185,7 @@ cmake -DBOOST_ENABLE_CMAKE=1 -DBUILD_TESTING=ON -DBoost_VERBOSE=1 \
 cmake --build .
 ctest --output-on-failure -R boost_$SELF
 
-elif [ "$DRONE_JOB_BUILDTYPE" == "cmake1" ]; then
+elif [ "$DRONE_JOB_BUILDTYPE" == "cmake-install" ]; then
 
 echo '==================================> INSTALL'
 
