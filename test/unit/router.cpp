@@ -9,13 +9,12 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/experimental/router.hpp>
+#include <boost/url/router.hpp>
 
 #include "test_suite.hpp"
 
 namespace boost {
 namespace urls {
-namespace experimental {
 
 struct router_test
 {
@@ -119,7 +118,6 @@ struct router_test
         good("user/{name}/{op+}/b", "user/johndoe/r/r1/b");
         good("user/{name}/{op+}/b", "user/johndoe/r/r1/r2/b");
         bad("user/{name}/{op+}/b", "user/johndoe/b");
-
     }
 
     void
@@ -128,6 +126,7 @@ struct router_test
         testPatterns();
 
         // to be continued:
+        // - use the urls::format url_template syntax
         // - create lazy range that allows iterating
         //     the match results
         // - complete match results
@@ -137,6 +136,5 @@ struct router_test
 
 TEST_SUITE(router_test, "boost.url.router");
 
-} // experimental
 } // urls
 } // boost

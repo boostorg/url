@@ -11,7 +11,6 @@
 
 namespace boost {
 namespace urls {
-namespace experimental {
 
 template <class T>
 void
@@ -289,7 +288,6 @@ router<T>::match(pct_string_view request)
         grammar::error::mismatch);
 }
 
-} // experimental
 } // urls
 } // boost
 

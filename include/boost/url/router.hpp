@@ -16,12 +16,11 @@
 #include <boost/url/optional.hpp>
 #include <boost/url/parse_path.hpp>
 #include <boost/url/rfc/detail/path_rules.hpp>
-#include <boost/url/experimental/detail/router.hpp>
+#include <boost/url/detail/router.hpp>
 #include <vector>
 
 namespace boost {
 namespace urls {
-namespace experimental {
 
 /** A URL router.
 
@@ -137,11 +136,10 @@ private:
         int level);
 };
 
-} // experimental
 } // urls
 } // boost
 
-#include <boost/url/experimental/impl/router.hpp>
+#include <boost/url/impl/router.hpp>
 
 #endif
 

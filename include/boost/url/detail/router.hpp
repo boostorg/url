@@ -7,8 +7,8 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_EXPERIMENTAL_DETAIL_ROUTER_HPP
-#define BOOST_URL_EXPERIMENTAL_DETAIL_ROUTER_HPP
+#ifndef BOOST_URL_DETAIL_ROUTER_HPP
+#define BOOST_URL_DETAIL_ROUTER_HPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/decode_view.hpp>
@@ -31,7 +31,6 @@
 
 namespace boost {
 namespace urls {
-namespace experimental {
 namespace detail {
 
 struct match_any_t {};
@@ -213,7 +212,6 @@ constexpr auto path_template_rule =
                 segment_template_rule)));
 
 } // detail
-} // experimental
 } // urls
 } // boost
 

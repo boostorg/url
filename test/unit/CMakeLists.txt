@@ -44,6 +44,7 @@ set(BOOST_URL_TESTS_FILES
     parse_path.cpp
     parse_query.cpp
     pct_string_view.cpp
+    router.cpp
     scheme.cpp
     segments_base.cpp
     segments_encoded_base.cpp
@@ -99,7 +100,6 @@ set(BOOST_URL_TESTS_FILES
     rfc/unreserved_chars.cpp
     rfc/uri_rule.cpp
     rfc/uri_reference_rule.cpp
-    experimental/router.cpp
     )
 
 set(SUITE_FILES ../../extra/test_main.cpp ../../extra/test_suite.hpp)
