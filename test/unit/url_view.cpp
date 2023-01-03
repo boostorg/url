@@ -135,8 +135,8 @@ public:
         {
             string_view s = "/index.htm";
             url_view u = parse_relative_ref(s).value();
-            BOOST_TEST_EQ(u.buffer(), s);
-            BOOST_TEST_EQ(u.buffer().data(), s.data());
+            BOOST_TEST_EQ(u, s);
+            BOOST_TEST_EQ(u.data(), s.data());
         }
 
         // persist()
@@ -157,6 +157,13 @@ public:
             // becomes invalid, but sp remains valid.
         }
         }
+
+        // operator string_view()
+        {
+            auto const f = []( string_view ) {};
+            f( url_view("x") );
+        }
+
     }
 
     void
