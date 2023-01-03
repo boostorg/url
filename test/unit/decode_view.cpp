@@ -188,6 +188,7 @@ struct decode_view_test
             BOOST_TEST(s.starts_with("a uri"));
             BOOST_TEST_NOT(s.starts_with("a uri test b"));
             BOOST_TEST(s.starts_with('a'));
+            BOOST_TEST_NOT(s.starts_with("a url"));
         }
 
         // ends_with()
@@ -196,6 +197,7 @@ struct decode_view_test
             BOOST_TEST(s.ends_with("uri test"));
             BOOST_TEST_NOT(s.ends_with("b a uri test"));
             BOOST_TEST(s.ends_with('t'));
+            BOOST_TEST_NOT(s.ends_with("url test"));
         }
 
         // find()
@@ -219,6 +221,9 @@ struct decode_view_test
             auto it = s.rfind('t');
             BOOST_TEST(it != s.end());
             BOOST_TEST_EQ(*it.base(), 't');
+            BOOST_TEST_EQ(*s.rfind('i'), 'i');
+            it = s.rfind('x');
+            BOOST_TEST(it == s.end());
         }
 
         // rfind()
