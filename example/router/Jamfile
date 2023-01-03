@@ -12,6 +12,7 @@ project : requirements  ;
 project
     : requirements
       <library>/boost/url//boost_url
+      <include>.
     ;
 
 exe router : router.cpp ;
