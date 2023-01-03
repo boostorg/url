@@ -144,13 +144,15 @@ router<T>::try_match(
         // branch: do we have more than one
         // NFA matching node at this level?
         // If so, we need to potentially branch
-        // to find which path leads to valid
+        // to find which path leads to a valid
         // resource. Otherwise, we can just
         // consume the node and input without
         // any recursive function calls.
         bool branch = false;
         if (cur->child_idx.size() > 1)
         {
+            // lower bound on the possible number
+            // of branches
             int branches_lb = 0;
             for (auto i: cur->child_idx)
             {

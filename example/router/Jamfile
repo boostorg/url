@@ -12,7 +12,11 @@ project : requirements  ;
 project
     : requirements
       <library>/boost/url//boost_url
-      <library>/boost/filesystem//boost_filesystem/<warnings>off
+      <source>../../extra/test_main.cpp
+      <include>.
+      <include>../../extra
     ;
 
-exe route : route.cpp ;
+exe router : router.cpp ;
+
+run router_test.cpp : : : ;

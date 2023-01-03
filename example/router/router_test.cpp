@@ -9,7 +9,7 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/url/router.hpp>
+#include <router.hpp>
 
 #include "test_suite.hpp"
 

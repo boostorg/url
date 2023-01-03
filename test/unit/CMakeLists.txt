@@ -44,7 +44,6 @@ set(BOOST_URL_TESTS_FILES
     parse_path.cpp
     parse_query.cpp
     pct_string_view.cpp
-    router.cpp
     scheme.cpp
     segments_base.cpp
     segments_encoded_base.cpp

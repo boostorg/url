@@ -7,7 +7,7 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-//[example_route
+//[example_file_router
 
 /*
     This example defines a route for a URL path.

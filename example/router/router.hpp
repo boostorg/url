@@ -139,7 +139,7 @@ private:
 } // urls
 } // boost
 
-#include <boost/url/impl/router.hpp>
+#include <impl/router.hpp>
 
 #endif
 
