@@ -248,6 +248,20 @@ public:
             data(), size());
     }
 
+    /** Return the URL as a string_view
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+    */
+    operator string_view() const noexcept
+    {
+        return buffer();
+    }
+
     /** Return a shared, persistent copy of the url
 
         This function returns a read-only copy of
