@@ -90,6 +90,18 @@ public:
             BOOST_TEST_THROWS(url_view("{}"),
                 std::exception);
         }
+
+        // implicit url_view(string_view)
+        {
+            auto const f = []( url_view ) {};
+            f( "x" );
+        }
+
+        // implicit url_view(String)
+        {
+            auto const f = []( url_view ) {};
+            f( "x" );
+        }
     }
 
     void
