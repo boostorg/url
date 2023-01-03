@@ -13,6 +13,7 @@ project
     : requirements
       <library>/boost/url//boost_url
       <include>.
+      <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized"
     ;
 
 exe router : router.cpp ;
