@@ -16,6 +16,7 @@
 */
 
 #include <router.hpp>
+#include <impl/router.ipp> // in at least one source file
 #include <iostream>
 
 namespace urls = boost::urls;

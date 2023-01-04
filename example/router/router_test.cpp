@@ -9,6 +9,7 @@
 
 // Test that header file is self-contained.
 #include <router.hpp>
+#include <impl/router.ipp> // in at least one source file
 
 #include "test_suite.hpp"
 
@@ -26,12 +27,13 @@ struct router_test
         {
             router<int> r;
             r.route(pattern, 1);
-            using match_res = router<int>::match_results;
+            // using match_res = router<int>::match_results;
+            using match_res = int;
             result<match_res> rm = r.match(request);
             if (BOOST_TEST(rm))
             {
                 match_res m = *rm;
-                BOOST_TEST_EQ(*m, 1);
+                BOOST_TEST_EQ(m, 1);
             }
         };
 
@@ -41,7 +43,8 @@ struct router_test
         {
             router<int> r;
             r.route(pattern, 1);
-            using match_res = router<int>::match_results;
+            // using match_res = router<int>::match_results;
+            using match_res = int;
             result<match_res> rm = r.match(request);
             BOOST_TEST_NOT(rm);
         };
@@ -125,11 +128,9 @@ struct router_test
         testPatterns();
 
         // to be continued:
-        // - use the urls::format url_template syntax
-        // - create lazy range that allows iterating
-        //     the match results
-        // - complete match results
-        // - create base_router
+        // - move detail/router.hpp to .ipp
+        // - use the urls::format rules in url_template syntax
+        // - allow iterating the match results
     }
 };
 

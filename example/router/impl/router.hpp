@@ -13,282 +13,73 @@ namespace boost {
 namespace urls {
 
 template <class T>
+class router<T>::match_results
+{
+    router_base::node const* leaf_;
+
+    friend router;
+
+    explicit
+    match_results(node const& leaf_)
+        : leaf_(&leaf_)
+    {}
+public:
+    T const& operator*() const
+    {
+        return *leaf_->resource;
+    }
+};
+
+template <class T>
+template <class U>
 void
-router<T>::route(string_view path, T const& resource)
+router<T>::
+route(string_view path, U&& resource)
 {
-    // Parse dynamic route segments
-    if (path.starts_with("/"))
-        path.remove_prefix(1);
-    auto segs =
-        grammar::parse(path, detail::path_template_rule).value();
-    auto it = segs.begin();
-    auto end = segs.end();
+    BOOST_STATIC_ASSERT(
+        std::is_same<T, U>::value        ||
+        std::is_convertible<T, U>::value ||
+        std::is_base_of<T, U>::value);
+    using U_ = typename std::decay<U>::type;
+    struct impl : any_resource
+    {
+        U_ u;
 
-    // Iterate existing nodes
-    node* cur = &nodes_.front();
-    int level = 0;
-    while (it != end)
-    {
-        string_view seg = (*it).string();
-        if (seg == ".")
+        explicit
+        impl(U&& u_)
+            : u(std::forward<U>(u_))
         {
-            ++it;
-            continue;
         }
-        if (seg == "..")
+
+        void const*
+        get() const noexcept override
         {
-            // discount unmatched leaf or
-            // keep track of levels behind root
-            if (level > 0 ||
-                cur == &nodes_.front())
-            {
-                --level;
-                ++it;
-                continue;
-            }
-            // move to parent deleting current
-            // if it carries no resource
-            std::size_t p_idx = cur->parent_idx;
-            if (cur == &nodes_.back() &&
-                !cur->resource &&
-                cur->child_idx.empty())
-            {
-                node* p = &nodes_[p_idx];
-                std::size_t cur_idx = cur - nodes_.data();
-                p->child_idx.erase(
-                    std::remove(
-                        p->child_idx.begin(),
-                        p->child_idx.end(),
-                        cur_idx));
-                nodes_.pop_back();
-            }
-            cur = &nodes_[p_idx];
-            ++it;
-            continue;
+            return static_cast<T const*>(&u);
         }
-        // discount unmatched root parent
-        if (level < 0)
-        {
-            ++level;
-            ++it;
-            continue;
-        }
-        // look for child
-        auto cit = std::find_if(
-            cur->child_idx.begin(),
-            cur->child_idx.end(),
-            [this, &it](std::size_t ci) -> bool
-            {
-                return nodes_[ci].seg == *it;
-            });
-        if (cit != cur->child_idx.end())
-        {
-            // move to existing child
-            cur = &nodes_[*cit];
-        }
-        else
-        {
-            // create child if it doesn't exist
-            node child;
-            child.seg = *it;
-            std::size_t cur_id = cur - nodes_.data();
-            child.parent_idx = cur_id;
-            nodes_.push_back(std::move(child));
-            nodes_[cur_id].child_idx.push_back(nodes_.size() - 1);
-            cur = &nodes_.back();
-        }
-        ++it;
-    }
-    if (level != 0)
-    {
-        urls::detail::throw_invalid_argument();
-    }
-    cur->resource = resource;
+    };
+    any_resource const* p = new impl(
+        std::forward<U>(resource));
+    route_impl( path, p );
 }
 
 template <class T>
 auto
-router<T>::try_match(
-    segments_encoded_view::const_iterator it,
-    segments_encoded_view::const_iterator end,
-    node const* cur,
-    int level)
-    -> node const*
+router<T>::
+match(pct_string_view request)
+    -> result<T>
 {
-    while (it != end)
+    auto p = match_impl( request );
+    if(!p)
     {
-        pct_string_view s = *it;
-        if (*s == ".")
-        {
-            ++it;
-            continue;
-        }
-        if (*s == "..")
-        {
-            ++it;
-            if (level > 0 ||
-                cur == &nodes_.front())
-                --level;
-            else
-                cur = &nodes_[cur->parent_idx];
-            continue;
-        }
-        if (level < 0)
-        {
-            ++level;
-            ++it;
-            continue;
-        }
-        node const* r = nullptr;
-
-        // branch: do we have more than one
-        // NFA matching node at this level?
-        // If so, we need to potentially branch
-        // to find which path leads to a valid
-        // resource. Otherwise, we can just
-        // consume the node and input without
-        // any recursive function calls.
-        bool branch = false;
-        if (cur->child_idx.size() > 1)
-        {
-            // lower bound on the possible number
-            // of branches
-            int branches_lb = 0;
-            for (auto i: cur->child_idx)
-            {
-                auto& c = nodes_[i];
-                if (c.seg.is_literal() ||
-                    !c.seg.has_modifier())
-                    branches_lb += c.seg.match(s);
-                else
-                    branches_lb = 2;
-                if (branches_lb > 1)
-                {
-                    branch = true;
-                    break;
-                }
-            }
-        }
-        // true if we matched any `it` without
-        // branching
-        bool match_any = false;
-        for (auto i: cur->child_idx)
-        {
-            auto& c = nodes_[i];
-            if (c.seg.match(s))
-            {
-                if (c.seg.is_literal() ||
-                    !c.seg.has_modifier())
-                {
-                    if (branch)
-                    {
-                        r = try_match(
-                            std::next(it), end, &c, level);
-                        if (r)
-                            break;
-                    }
-                    else
-                    {
-                        cur = &c;
-                        match_any = true;
-                        break;
-                    }
-                }
-                else if (c.seg.is_optional())
-                {
-                    // try complete continuation
-                    // consuming the input,
-                    // which is the longest and
-                    // most likely match
-                    r = try_match(
-                        std::next(it), end, &c, level);
-                    if (r)
-                        break;
-                    // try complete continuation
-                    // consuming no input
-                    r = try_match(
-                        it, end, &c, level);
-                    if (r)
-                        break;
-                }
-                else
-                {
-                    auto first = it;
-                    if (c.seg.is_plus())
-                        ++first;
-                    // {*} is usually the last
-                    // template segment in a path.
-                    // try complete continuation
-                    // match for every subrange
-                    // from {last, last} to
-                    // {first, last}.
-                    // We try {last, last} first,
-                    // which is the longest
-                    // and most likely match.
-                    auto start = end;
-                    while (start != first)
-                    {
-                        r = try_match(
-                            start, end, &c, level);
-                        if (r)
-                            break;
-                        --start;
-                    }
-                    if (r)
-                        break;
-                    r = try_match(
-                        start, end, &c, level);
-                    if (r)
-                        break;
-                }
-            }
-        }
-        if (r)
-            return r;
-        if (!match_any)
-            ++level;
-        ++it;
+        BOOST_URL_RETURN_EC(
+            grammar::error::mismatch);
     }
-    if (level != 0)
-    {
-        // the path ended below or above an
-        // existing node
-        return nullptr;
-    }
-    if (!cur->resource)
-    {
-        // we consumed all the input and reached
-        // a node with no resource, but it might
-        // still have child optional segments
-        // with resources we can reach without
-        // consuming any input
-        return cur->find_optional_resource(nodes_);
-    }
-    return cur;
+    BOOST_ASSERT(p->resource);
+    return *reinterpret_cast<
+        T const*>(p->resource->get());
 }
 
-template <class T>
-auto
-router<T>::match(pct_string_view request)
-    -> result<match_results>
-{
-    // Parse request as regular path
-    auto r = parse_path(request);
-    if (!r)
-    {
-        BOOST_URL_RETURN_EC(r.error());
-    }
-    segments_encoded_view segs = *r;
 
-    // Iterate nodes
-    node const* n = try_match(
-        segs.begin(), segs.end(),
-        &nodes_.front(), 0);
-    if (n)
-        return match_results(*n);
-    BOOST_URL_RETURN_EC(
-        grammar::error::mismatch);
-}
 
 } // urls
 } // boost

@@ -33,16 +33,17 @@ namespace boost {
 namespace urls {
 namespace detail {
 
-struct match_any_t {};
-
 // A path segment template
 class segment_template
 {
     enum class modifier : unsigned char
     {
         none,
+        // {id?}
         optional,
+        // {id*}
         star,
+        // {id+}
         plus
     };
 
