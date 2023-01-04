@@ -9,7 +9,7 @@
 
 // Test that header file is self-contained.
 #include <router.hpp>
-#include <impl/router.ipp> // in at least one source file
+#include <src.hpp>
 
 #include "test_suite.hpp"
 
@@ -128,9 +128,9 @@ struct router_test
         testPatterns();
 
         // to be continued:
-        // - move detail/router.hpp to .ipp
-        // - use the urls::format rules in url_template syntax
+        // - use the urls::format grammar rules in url_template syntax
         // - allow iterating the match results
+        // - improve example with more routes, so it makes more sense
     }
 };
 

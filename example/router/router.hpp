@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <detail/router.hpp>
 #include <memory>
+#include <vector>
 
 namespace boost {
 namespace urls {

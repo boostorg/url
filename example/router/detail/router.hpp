@@ -10,24 +10,12 @@
 #ifndef BOOST_URL_DETAIL_ROUTER_HPP
 #define BOOST_URL_DETAIL_ROUTER_HPP
 
-#include <boost/url/detail/config.hpp>
-#include <boost/url/decode_view.hpp>
-#include <boost/url/variant.hpp>
-#include <boost/url/string_view.hpp>
-#include <boost/url/grammar/all_chars.hpp>
-#include <boost/url/grammar/alnum_chars.hpp>
-#include <boost/url/grammar/alpha_chars.hpp>
-#include <boost/url/grammar/lut_chars.hpp>
+#include <boost/url/pct_string_view.hpp>
+#include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/optional_rule.hpp>
-#include <boost/url/grammar/token_rule.hpp>
-#include <boost/url/grammar/variant_rule.hpp>
-#include <boost/url/grammar/not_empty_rule.hpp>
-#include <boost/url/grammar/detail/charset.hpp>
-#include <boost/url/rfc/pchars.hpp>
-#include <boost/url/rfc/detail/path_rules.hpp>
-#include <boost/core/ignore_unused.hpp>
-#include <vector>
-#include <locale>
+#include <boost/url/grammar/range_rule.hpp>
+#include <boost/url/grammar/tuple_rule.hpp>
+#include <string>
 
 namespace boost {
 namespace urls {
@@ -55,14 +43,9 @@ class segment_template
 public:
     segment_template() = default;
 
+    BOOST_URL_DECL
     bool
-    match(pct_string_view seg) const
-    {
-        if (is_literal_)
-            return *seg == str_;
-
-        return true;
-    }
+    match(pct_string_view seg) const;
 
     string_view
     string() const
@@ -70,14 +53,9 @@ public:
         return str_;
     }
 
+    BOOST_URL_DECL
     string_view
-    id() const
-    {
-        if (is_literal_)
-            return {};
-        return string_view{str_}
-            .substr(1, str_.find_first_of('}') - 1);
-    }
+    id() const;
 
     bool
     empty() const
@@ -132,71 +110,12 @@ struct segment_template_rule_t
 {
     using value_type = segment_template;
 
+    BOOST_URL_DECL
     urls::result<value_type>
     parse(
         char const*& it,
         char const* end
-    ) const noexcept
-    {
-        segment_template t;
-        if (it != end &&
-            *it == '{')
-        {
-            // replacement field
-            auto it0 = it;
-            ++it;
-            auto send =
-                grammar::find_if(
-                    it, end, grammar::lut_chars('}'));
-            if (send != end)
-            {
-                string_view s(it, send);
-                static constexpr auto digit_cs =
-                    grammar::lut_chars("0123456789");
-                static constexpr auto id_start_cs =
-                    grammar::alpha_chars + grammar::lut_chars('_');
-                static constexpr auto id_cs =
-                    grammar::alnum_chars + grammar::lut_chars('_');
-                static constexpr auto modifiers_cs =
-                    grammar::lut_chars("?*+");
-                static constexpr auto id_rule =
-                    grammar::tuple_rule(
-                        grammar::variant_rule(
-                            grammar::tuple_rule(
-                                grammar::delim_rule(id_start_cs),
-                                grammar::optional_rule(
-                                    grammar::token_rule(id_cs))
-                                    ),
-                            grammar::token_rule(digit_cs)),
-                        grammar::optional_rule(
-                            grammar::delim_rule(modifiers_cs)));
-                if (s.empty() ||
-                    grammar::parse(s, id_rule))
-                {
-                    it = send + 1;
-                    t.str_ = string_view(it0, send + 1);
-                    t.is_literal_ = false;
-                    if (s.ends_with('?'))
-                        t.modifier_ =
-                            segment_template::modifier::optional;
-                    else if (s.ends_with('*'))
-                        t.modifier_ =
-                            segment_template::modifier::star;
-                    else if (s.ends_with('+'))
-                        t.modifier_ =
-                            segment_template::modifier::plus;
-                    return t;
-                }
-            }
-            it = it0;
-        }
-        // literal segment
-        auto rv = grammar::parse(
-            it, end, urls::detail::segment_rule);
-        rv->decode({}, urls::string_token::assign_to(t.str_));
-        t.is_literal_ = true;
-        return t;
-    }
+    ) const noexcept;
 };
 
 constexpr auto segment_template_rule = segment_template_rule_t{};

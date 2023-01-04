@@ -79,8 +79,5 @@ match(pct_string_view request)
         T const*>(p->resource->get());
 }
 
-
-
 } // urls
 } // boost
-

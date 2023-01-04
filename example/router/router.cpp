@@ -16,8 +16,9 @@
 */
 
 #include <router.hpp>
-#include <impl/router.ipp> // in at least one source file
+#include <src.hpp>
 #include <iostream>
+#include <functional>
 
 namespace urls = boost::urls;
 using string_view = urls::string_view;
@@ -41,7 +42,7 @@ main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    urls::router<int> r;
+    urls::router<std::function<void()>> r;
 
     auto m = r.match(argv[1]);
     if (m)

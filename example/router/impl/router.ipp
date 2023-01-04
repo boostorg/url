@@ -7,8 +7,10 @@
 // Official repository: https://github.com/boostorg/url
 //
 
+#include <router.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/pct_string_view.hpp>
+#include <boost/url/decode_view.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/optional.hpp>
 #include <boost/url/parse_path.hpp>
