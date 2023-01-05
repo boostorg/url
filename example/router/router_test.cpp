@@ -18,37 +18,43 @@ namespace urls {
 
 struct router_test
 {
+    static
+    void
+    good(
+        string_view pattern,
+        string_view request)
+    {
+        router<int> r;
+        r.route(pattern, 1);
+        router<int>::match_results m = r.match(request);
+        if (BOOST_TEST(m))
+        {
+            BOOST_TEST(m.has_value());
+            BOOST_TEST_NOT(m.has_error());
+            BOOST_TEST_EQ(*m, 1);
+            BOOST_TEST_EQ(m.value(), 1);
+        }
+    };
+
+    static
+    void
+    bad(
+        string_view pattern,
+        string_view request)
+    {
+        router<int> r;
+        r.route(pattern, 1);
+        router<int>::match_results rm = r.match(request);
+        BOOST_TEST_NOT(rm);
+        BOOST_TEST_NOT(rm.has_value());
+        BOOST_TEST(rm.has_error());
+        BOOST_TEST_THROWS(rm.value(), system_error);
+    };
+
+    static
     void
     testPatterns()
     {
-        auto good =[](
-            string_view pattern,
-            string_view request)
-        {
-            router<int> r;
-            r.route(pattern, 1);
-            // using match_res = router<int>::match_results;
-            using match_res = int;
-            result<match_res> rm = r.match(request);
-            if (BOOST_TEST(rm))
-            {
-                match_res m = *rm;
-                BOOST_TEST_EQ(m, 1);
-            }
-        };
-
-        auto bad =[](
-            string_view pattern,
-            string_view request)
-        {
-            router<int> r;
-            r.route(pattern, 1);
-            // using match_res = router<int>::match_results;
-            using match_res = int;
-            result<match_res> rm = r.match(request);
-            BOOST_TEST_NOT(rm);
-        };
-
         good("user", "user");
         good("user/view", "user/view");
 
@@ -128,7 +134,8 @@ struct router_test
         testPatterns();
 
         // to be continued:
-        // - allow iterating the match results
+        // - return match results
+        //     - match_results can lazily return indexes or ids
         // - improve example with more routes, so it makes more sense
     }
 };

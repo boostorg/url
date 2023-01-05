@@ -43,12 +43,32 @@ protected:
         // A pointer to the resource
         any_resource const* resource{nullptr};
 
+        // The complete match for the resource
+        std::string path_template;
+
         // Index of the parent node in the
         // implementation pool of nodes
         std::size_t parent_idx{std::size_t(-1)};
 
         // Index of child nodes in the pool
         std::vector<std::size_t> child_idx;
+    };
+
+    class match_results_base
+    {
+    protected:
+        node const* leaf_;
+
+        explicit
+        match_results_base(node const* leaf)
+            : leaf_(leaf)
+        {}
+    public:
+        explicit
+        operator bool() const;
+        bool has_value() const;
+        bool has_error() const;
+        error_code error() const;
     };
 
     BOOST_URL_DECL
@@ -93,7 +113,22 @@ class router : public router_base
 {
 public:
     /// A range type with the match results
-    class match_results;
+    class match_results
+        : public match_results_base
+    {
+        friend router;
+
+        match_results(node const* leaf)
+            : match_results_base(leaf)
+        {}
+
+    public:
+        T const&
+        operator*() const;
+
+        T const&
+        value() const;
+    };
 
     /// Constructor
     router() = default;
@@ -115,7 +150,7 @@ public:
         @param request Request path
         @return The match results
      */
-    result<T>
+    match_results
     match(pct_string_view request);
 };
 

@@ -13,24 +13,6 @@ namespace boost {
 namespace urls {
 
 template <class T>
-class router<T>::match_results
-{
-    router_base::node const* leaf_;
-
-    friend router;
-
-    explicit
-    match_results(node const& leaf_)
-        : leaf_(&leaf_)
-    {}
-public:
-    T const& operator*() const
-    {
-        return *leaf_->resource;
-    }
-};
-
-template <class T>
 template <class U>
 void
 router<T>::
@@ -66,17 +48,32 @@ template <class T>
 auto
 router<T>::
 match(pct_string_view request)
-    -> result<T>
+    -> match_results
 {
-    auto p = match_impl( request );
-    if(!p)
-    {
-        BOOST_URL_RETURN_EC(
-            grammar::error::mismatch);
-    }
-    BOOST_ASSERT(p->resource);
+    return { match_impl( request ) };
+}
+
+template <class T>
+T const&
+router<T>::match_results::
+operator*() const
+{
+    BOOST_ASSERT(leaf_);
+    BOOST_ASSERT(leaf_->resource);
     return *reinterpret_cast<
-        T const*>(p->resource->get());
+        T const*>(leaf_->resource->get());
+}
+
+template <class T>
+T const&
+router<T>::match_results::
+value() const
+{
+    if( has_value() )
+    {
+        return operator*();
+    }
+    detail::throw_system_error(grammar::error::mismatch);
 }
 
 } // urls

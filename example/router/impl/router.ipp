@@ -191,6 +191,7 @@ route_impl(
         delete cur->resource;
     }
     cur->resource = resource;
+    cur->path_template = path;
 }
 
 router_base::node const*
@@ -429,6 +430,32 @@ match_impl(string_view s) const noexcept
     return impl_->match_impl(s);
 }
 
+router_base::match_results_base::
+operator bool() const
+{
+    return leaf_ && leaf_->resource;
+}
+
+bool
+router_base::match_results_base::
+has_value() const
+{
+    return leaf_ && leaf_->resource;
+}
+
+bool
+router_base::match_results_base::
+has_error() const
+{
+    return !has_value();
+}
+
+error_code
+router_base::match_results_base::
+error() const
+{
+    return grammar::error::mismatch;
+}
 
 } // urls
 } // boost
