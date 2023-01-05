@@ -12,10 +12,10 @@
 namespace boost {
 namespace urls {
 
-template <class T>
+template <class T, std::size_t N>
 template <class U>
 void
-router<T>::
+router<T, N>::
 route(string_view path, U&& resource)
 {
     BOOST_STATIC_ASSERT(
@@ -44,18 +44,28 @@ route(string_view path, U&& resource)
     route_impl( path, p );
 }
 
-template <class T>
+template <class T, std::size_t N>
 auto
-router<T>::
-match(pct_string_view request)
+router<T, N>::
+match(pct_string_view request) const noexcept
     -> match_results
 {
-    return { match_impl( request ) };
+    string_view matches[N];
+    string_view ids[N];
+    string_view* matches_it = matches;
+    string_view* ids_it = ids;
+    auto p = match_impl( request, matches_it, ids_it );
+    if (p)
+        return {
+            p, matches, ids,
+            static_cast<std::size_t>(
+                matches_it - matches) };
+    return {};
 }
 
-template <class T>
+template <class T, std::size_t N>
 T const&
-router<T>::match_results::
+router<T, N>::match_results::
 operator*() const
 {
     BOOST_ASSERT(leaf_);
@@ -64,9 +74,9 @@ operator*() const
         T const*>(leaf_->resource->get());
 }
 
-template <class T>
+template <class T, std::size_t N>
 T const&
-router<T>::match_results::
+router<T, N>::match_results::
 value() const
 {
     if( has_value() )

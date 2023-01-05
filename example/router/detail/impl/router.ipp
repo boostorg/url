@@ -40,8 +40,14 @@ id() const
 {
     if (is_literal_)
         return {};
-    return string_view{str_}
-        .substr(1, str_.find_first_of('}') - 1);
+    string_view r = {str_};
+    r.remove_prefix(1);
+    r.remove_suffix(1);
+    if (r.ends_with('?') ||
+        r.ends_with('+') ||
+        r.ends_with('*'))
+        r.remove_suffix(1);
+    return r;
 }
 
 auto

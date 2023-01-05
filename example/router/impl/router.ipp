@@ -45,7 +45,10 @@ public:
 
     // match a node
     router_base::node const*
-    match_impl(string_view request) const;
+    match_impl(
+        string_view request,
+        string_view*& matches,
+        string_view*& ids) const;
 
 private:
     // try to match from this root node
@@ -54,7 +57,9 @@ private:
         segments_encoded_view::const_iterator it,
         segments_encoded_view::const_iterator end,
         node const* root,
-        int level) const;
+        int level,
+        string_view*& matches,
+        string_view*& ids) const;
 
     // check if a node has a resource when we
     // also consider optional paths through
@@ -63,14 +68,18 @@ private:
     node const*
     find_optional_resource(
         const node* root,
-        std::vector<node> const& ns);
+        std::vector<node> const& ns,
+        string_view*& matches,
+        string_view*& ids);
 };
 
 router_base::node const*
 router_base::impl::
 find_optional_resource(
     const node* root,
-    std::vector<node> const& ns)
+    std::vector<node> const& ns,
+    string_view*& matches,
+    string_view*& ids)
 {
     BOOST_ASSERT(root);
     if (root->resource)
@@ -85,10 +94,16 @@ find_optional_resource(
             continue;
         // Child nodes are also
         // potentially optional.
-        auto n =
-            find_optional_resource(&c, ns);
+        auto matches0 = matches;
+        auto ids0 = ids;
+        *matches++ = {};
+        *ids++ = c.seg.id();
+        auto n = find_optional_resource(
+            &c, ns, matches, ids);
         if (n)
             return n;
+        matches = matches0;
+        ids = ids0;
     }
     return nullptr;
 }
@@ -200,7 +215,9 @@ try_match(
     segments_encoded_view::const_iterator it,
     segments_encoded_view::const_iterator end,
     node const* cur,
-    int level) const
+    int level,
+    string_view*& matches,
+    string_view*& ids) const
 {
     while (it != end)
     {
@@ -218,7 +235,14 @@ try_match(
             ++it;
             if (level <= 0 &&
                 cur != &nodes_.front())
+            {
+                if (!cur->seg.is_literal())
+                {
+                    --matches;
+                    --ids;
+                }
                 cur = &nodes_[cur->parent_idx];
+            }
             else
                 // there's no parent, so we
                 // discount that from the implicit
@@ -284,20 +308,55 @@ try_match(
             auto& c = nodes_[i];
             if (c.seg.match(s))
             {
-                if (c.seg.is_literal() ||
-                    !c.seg.has_modifier())
+                if (c.seg.is_literal())
                 {
                     // just continue from the
                     // next segment
                     if (branch)
                     {
                         r = try_match(
-                            std::next(it), end, &c, level);
+                            std::next(it), end,
+                            &c, level,
+                            matches, ids);
                         if (r)
                             break;
                     }
                     else
                     {
+                        cur = &c;
+                        match_any = true;
+                        break;
+                    }
+                }
+                else if (!c.seg.has_modifier())
+                {
+                    // just continue from the
+                    // next segment
+                    if (branch)
+                    {
+                        auto matches0 = matches;
+                        auto ids0 = ids;
+                        *matches++ = *it;
+                        *ids++ = c.seg.id();
+                        r = try_match(
+                            std::next(it), end, &c,
+                            level, matches, ids);
+                        if (r)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            // rewind
+                            matches = matches0;
+                            ids = ids0;
+                        }
+                    }
+                    else
+                    {
+                        // only path possible
+                        *matches++ = *it;
+                        *ids++ = c.seg.id();
                         cur = &c;
                         match_any = true;
                         break;
@@ -312,21 +371,39 @@ try_match(
                     // input, which is the
                     // longest and most likely
                     // match
+                    auto matches0 = matches;
+                    auto ids0 = ids;
+                    *matches++ = *it;
+                    *ids++ = c.seg.id();
                     r = try_match(
-                        std::next(it), end, &c, level);
+                        std::next(it), end,
+                        &c, level, matches, ids);
                     if (r)
                         break;
+                    // rewind
+                    matches = matches0;
+                    ids = ids0;
                     // try complete continuation
                     // consuming no segment
+                    *matches++ = {};
+                    *ids++ = c.seg.id();
                     r = try_match(
-                        it, end, &c, level);
+                        it, end, &c,
+                        level, matches, ids);
                     if (r)
                         break;
+                    // rewind
+                    matches = matches0;
+                    ids = ids0;
                 }
                 else
                 {
                     // attempt to match many
                     // segments
+                    auto matches0 = matches;
+                    auto ids0 = ids;
+                    *matches++ = *it;
+                    *ids++ = c.seg.id();
                     auto first = it;
                     // if this is a plus seg, we
                     // already consumed the first
@@ -346,17 +423,36 @@ try_match(
                     while (start != first)
                     {
                         r = try_match(
-                            start, end, &c, level);
+                            start, end, &c,
+                            level, matches, ids);
                         if (r)
+                        {
+                            string_view prev = *std::prev(start);
+                            *matches0 = {
+                                matches0->data(),
+                                prev.data() + prev.size()};
                             break;
+                        }
+                        matches = matches0 + 1;
+                        ids = ids0 + 1;
                         --start;
                     }
                     if (r)
+                    {
                         break;
+                    }
+                    // start == first
+                    matches = matches0 + 1;
+                    ids = ids0 + 1;
                     r = try_match(
-                        start, end, &c, level);
+                        start, end, &c,
+                        level, matches, ids);
                     if (r)
+                    {
+                        if (!c.seg.is_plus())
+                            *matches0 = {};
                         break;
+                    }
                 }
             }
         }
@@ -385,14 +481,18 @@ try_match(
         // still have child optional segments
         // with resources we can reach without
         // consuming any input
-        return find_optional_resource(cur, nodes_);
+        return find_optional_resource(
+            cur, nodes_, matches, ids);
     }
     return cur;
 }
 
 router_base::node const*
 router_base::impl::
-match_impl(string_view request) const
+match_impl(
+    string_view request,
+    string_view*& matches,
+    string_view*& ids) const
 {
     // Parse request as regular path
     auto r = parse_path(request);
@@ -406,7 +506,8 @@ match_impl(string_view request) const
     // Iterate nodes from the root
     return try_match(
         segs.begin(), segs.end(),
-        &nodes_.front(), 0);
+        &nodes_.front(), 0,
+        matches, ids);
 }
 
 BOOST_URL_DECL
@@ -425,9 +526,12 @@ route_impl(
 
 router_base::node const*
 router_base::
-match_impl(string_view s) const noexcept
+match_impl(
+    string_view s,
+    string_view*& matches,
+    string_view*& ids) const noexcept
 {
-    return impl_->match_impl(s);
+    return impl_->match_impl(s, matches, ids);
 }
 
 router_base::match_results_base::
@@ -455,6 +559,100 @@ router_base::match_results_base::
 error() const
 {
     return grammar::error::mismatch;
+}
+
+auto
+router_base::match_results_base::
+at( size_type pos ) const
+    -> const_reference
+{
+    if (pos < size_)
+    {
+        return matches_[pos];
+    }
+    boost::throw_exception(
+        std::out_of_range(""));
+}
+
+auto
+router_base::match_results_base::
+operator[]( size_type pos ) const
+    -> const_reference
+{
+    BOOST_ASSERT(pos < size_);
+    return matches_[pos];
+}
+
+auto
+router_base::match_results_base::
+at( string_view id ) const
+    -> const_reference
+{
+    for (std::size_t i = 0; i < size_; ++i)
+    {
+        if (ids_[i] == id)
+            return matches_[i];
+    }
+    boost::throw_exception(
+        std::out_of_range(""));
+}
+
+auto
+router_base::match_results_base::
+operator[]( string_view id ) const
+    -> const_reference
+{
+    for (std::size_t i = 0; i < size_; ++i)
+    {
+        if (ids_[i] == id)
+            return matches_[i];
+    }
+    BOOST_ASSERT(false);
+}
+
+auto
+router_base::match_results_base::
+find( string_view id ) const
+    -> const_iterator
+{
+    for (std::size_t i = 0; i < size_; ++i)
+    {
+        if (ids_[i] == id)
+            return matches_ + i;
+    }
+    BOOST_ASSERT(false);
+}
+
+auto
+router_base::match_results_base::
+begin() const
+    -> const_iterator
+{
+    return &matches_[0];
+}
+
+auto
+router_base::match_results_base::
+end() const
+    -> const_iterator
+{
+    return &matches_[size_];
+}
+
+auto
+router_base::match_results_base::
+empty() const noexcept
+    -> bool
+{
+    return size_ == 0;
+}
+
+auto
+router_base::match_results_base::
+size() const noexcept
+    -> size_type
+{
+    return size_;
 }
 
 } // urls

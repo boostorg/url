@@ -14,6 +14,7 @@
 #include <detail/router.hpp>
 #include <memory>
 #include <vector>
+#include <stdexcept>
 
 namespace boost {
 namespace urls {
@@ -57,18 +58,74 @@ protected:
     class match_results_base
     {
     protected:
-        node const* leaf_;
+        node const* leaf_ = nullptr;
+        string_view* matches_ = nullptr;
+        string_view* ids_ = nullptr;
+        std::size_t size_ = 0;
+
+        match_results_base() = default;
 
         explicit
-        match_results_base(node const* leaf)
+        match_results_base(
+            node const* leaf,
+            string_view* matches,
+            string_view* ids,
+            std::size_t N)
             : leaf_(leaf)
+            , matches_(matches)
+            , ids_(ids)
+            , size_(N)
         {}
     public:
+        using iterator = string_view*;
+        using const_iterator = string_view const*;
+        using size_type = std::size_t;
+        using difference_type = std::ptrdiff_t;
+        using reference = string_view&;
+        using const_reference = string_view const&;
+        using pointer = string_view*;
+        using const_pointer = string_view const*;
+
+        // result-like functions
         explicit
         operator bool() const;
-        bool has_value() const;
-        bool has_error() const;
-        error_code error() const;
+
+        bool
+        has_value() const;
+
+        bool
+        has_error() const;
+
+        error_code
+        error() const;
+
+        // vector-like functions
+        const_reference
+        at( size_type pos ) const;
+
+        const_reference
+        at( string_view id ) const;
+
+        const_reference
+        operator[]( size_type pos ) const;
+
+        const_reference
+        operator[]( string_view id ) const;
+
+        const_iterator
+        find( string_view id ) const;
+
+        const_iterator
+        begin() const;
+
+        const_iterator
+        end() const;
+
+        bool
+        empty() const noexcept;
+
+        size_type
+        size() const noexcept;
     };
 
     BOOST_URL_DECL
@@ -82,7 +139,10 @@ protected:
 
     BOOST_URL_DECL
     node const*
-    match_impl(string_view s) const noexcept;
+    match_impl(
+        string_view s,
+        string_view*& matches,
+        string_view*& names) const noexcept;
 };
 
 
@@ -92,6 +152,12 @@ protected:
     URL requests to an object which represents
     how the it should be handled. These
     values are usually callback functions.
+
+    @tparam T type of resource associated with
+    each path template
+
+    @tparam N maximum number of replacement fields
+    in a path template
 
     @par Exception Safety
 
@@ -108,7 +174,7 @@ protected:
         @ref parse_uri_reference,
         @ref resolve.
 */
-template <class T>
+template <class T, std::size_t N = 20>
 class router : public router_base
 {
 public:
@@ -116,11 +182,27 @@ public:
     class match_results
         : public match_results_base
     {
+        string_view matches_storage_[N];
+        string_view ids_storage_[N];
+
         friend router;
 
-        match_results(node const* leaf)
-            : match_results_base(leaf)
-        {}
+        match_results() = default;
+
+        match_results(
+            node const* leaf,
+            string_view matches[N],
+            string_view ids[N],
+            std::size_t n)
+            : match_results_base(
+                leaf, matches_storage_, ids_storage_, n)
+        {
+            for (std::size_t i = 0; i < n; ++i)
+            {
+                matches_storage_[i] = matches[i];
+                ids_storage_[i] = ids[i];
+            }
+        }
 
     public:
         T const&
@@ -151,7 +233,7 @@ public:
         @return The match results
      */
     match_results
-    match(pct_string_view request);
+    match(pct_string_view request) const noexcept;
 };
 
 } // urls
