@@ -603,12 +603,7 @@ router_base::match_results_base::
 operator[]( string_view id ) const
     -> const_reference
 {
-    for (std::size_t i = 0; i < size_; ++i)
-    {
-        if (ids_[i] == id)
-            return matches_[i];
-    }
-    BOOST_ASSERT(false);
+    return at(id);
 }
 
 auto
@@ -621,7 +616,7 @@ find( string_view id ) const
         if (ids_[i] == id)
             return matches_ + i;
     }
-    BOOST_ASSERT(false);
+    return matches_ + size_;
 }
 
 auto
