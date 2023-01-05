@@ -234,6 +234,17 @@ public:
      */
     match_results
     match(pct_string_view request) const noexcept;
+
+    /** Match URL path and stores results into args
+
+        @param request Request path
+        @param args Storage for the matches
+
+        @return True if we found a match
+     */
+    template <class ...Args>
+    result<T>
+    match_to(pct_string_view request, Args&... args) const;
 };
 
 } // urls

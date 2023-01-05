@@ -8,6 +8,8 @@
 //
 
 #include <boost/url/detail/except.hpp>
+#include <boost/url/grammar/unsigned_rule.hpp>
+#include <boost/mp11/algorithm.hpp>
 
 namespace boost {
 namespace urls {
@@ -61,6 +63,91 @@ match(pct_string_view request) const noexcept
             static_cast<std::size_t>(
                 matches_it - matches) };
     return {};
+}
+
+namespace detail {
+template <class Tuple>
+struct push_fn
+{
+    string_view* it;
+    Tuple tp;
+    bool any_fail = false;
+
+    push_fn(string_view* matches, Tuple&& t)
+        : it(matches)
+        , tp(std::move(t))
+    {}
+
+    template <std::size_t I>
+    void
+    operator()( mp11::mp_size_t<I> ){
+        convert(*it++, std::get<I>(tp));
+    }
+
+private:
+    void
+    convert(string_view match, string_view& res)
+    {
+        res = match;
+    }
+
+    void
+    convert(string_view match, std::string& res)
+    {
+        res = match;
+    }
+
+    template <
+        class T,
+        typename std::enable_if<
+            std::is_integral<T>::value,
+            int>::type = 0>
+    void
+    convert(string_view match, T& res)
+    {
+        auto rv = grammar::parse(
+            match, grammar::unsigned_rule<T>{});
+        if (rv)
+        {
+            res = *rv;
+            return;
+        }
+        any_fail = true;
+    }
+};
+}
+
+template <class T, std::size_t N>
+template <class ...Args>
+result<T>
+router<T, N>::
+match_to(pct_string_view request, Args&... args) const
+{
+    static constexpr std::size_t M = sizeof...(Args);
+    string_view matches[M];
+    string_view ids[M];
+    string_view* matches_it = matches;
+    string_view* ids_it = ids;
+    auto p = match_impl( request, matches_it, ids_it );
+    if (!p)
+    {
+        BOOST_URL_RETURN_EC(
+            grammar::error::mismatch);
+    }
+    auto n = static_cast<std::size_t>(
+        matches_it - matches);
+    if (n != M)
+        return false;
+    auto tp = std::forward_as_tuple(args...);
+    detail::push_fn<decltype(tp)> f(matches, std::move(tp));
+    mp11::mp_for_each<mp11::mp_iota_c<M>>(f);
+    if (f.any_fail)
+    {
+        BOOST_URL_RETURN_EC(
+            grammar::error::mismatch);
+    }
+    return *reinterpret_cast<
+        T const*>(p->resource->get());
 }
 
 template <class T, std::size_t N>
