@@ -91,6 +91,12 @@ public:
                 std::exception);
         }
 
+        // url_view(string_view) no ambiguous
+        {
+            string_view s = "";
+            BOOST_TEST_NO_THROW(url_view( s ));
+        }
+
         // implicit url_view(string_view)
         {
             auto const f = []( url_view ) {};
