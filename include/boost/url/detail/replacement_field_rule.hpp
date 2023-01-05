@@ -24,6 +24,7 @@ struct replacement_field_rule_t
 {
     using value_type = string_view;
 
+    BOOST_URL_DECL
     result<value_type>
     parse(
         char const*& it,
@@ -39,6 +40,7 @@ struct identifier_rule_t
 {
     using value_type = string_view;
 
+    BOOST_URL_DECL
     result<value_type>
     parse(
         char const*& it,
