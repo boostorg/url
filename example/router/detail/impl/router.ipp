@@ -16,6 +16,7 @@
 #include <boost/url/grammar/lut_chars.hpp>
 #include <boost/url/grammar/token_rule.hpp>
 #include <boost/url/grammar/variant_rule.hpp>
+#include <boost/url/detail/replacement_field_rule.hpp>
 #include <detail/router.hpp>
 
 namespace boost {
@@ -63,29 +64,19 @@ parse(
         if (send != end)
         {
             string_view s(it, send);
-            static constexpr auto digit_cs =
-                grammar::lut_chars("0123456789");
-            static constexpr auto id_start_cs =
-                grammar::alpha_chars + grammar::lut_chars('_');
-            static constexpr auto id_cs =
-                grammar::alnum_chars + grammar::lut_chars('_');
             static constexpr auto modifiers_cs =
                 grammar::lut_chars("?*+");
             static constexpr auto id_rule =
                 grammar::tuple_rule(
-                    grammar::variant_rule(
-                        grammar::tuple_rule(
-                            grammar::delim_rule(id_start_cs),
-                            grammar::optional_rule(
-                                grammar::token_rule(id_cs))
-                                ),
-                        grammar::token_rule(digit_cs)),
+                    grammar::optional_rule(
+                        arg_id_rule),
                     grammar::optional_rule(
                         grammar::delim_rule(modifiers_cs)));
             if (s.empty() ||
                 grammar::parse(s, id_rule))
             {
                 it = send + 1;
+
                 t.str_ = string_view(it0, send + 1);
                 t.is_literal_ = false;
                 if (s.ends_with('?'))
@@ -105,6 +96,7 @@ parse(
     // literal segment
     auto rv = grammar::parse(
         it, end, urls::detail::segment_rule);
+    BOOST_ASSERT(rv);
     rv->decode({}, urls::string_token::assign_to(t.str_));
     t.is_literal_ = true;
     return t;

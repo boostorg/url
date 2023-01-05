@@ -128,7 +128,6 @@ struct router_test
         testPatterns();
 
         // to be continued:
-        // - use the urls::format grammar rules in url_template syntax
         // - allow iterating the match results
         // - improve example with more routes, so it makes more sense
     }

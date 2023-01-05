@@ -106,6 +106,13 @@ public:
     }
 };
 
+// A segment template is either a literal string
+// or a replacement field (as in a format_string).
+// Fields cannot contain format specs and might
+// have one of the following modifiers:
+// - ?: optional segment
+// - *: zero or more segments
+// - +: one or more segments
 struct segment_template_rule_t
 {
     using value_type = segment_template;
