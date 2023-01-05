@@ -82,8 +82,8 @@ struct router_test
     void
     testPatterns()
     {
-        good("user", "user", {});
-        good("user/view", "user/view", {});
+        good("user", "user");
+        good("user/view", "user/view");
 
         // match all / no type
         good("user/{}", "user/johndoe", {"johndoe"});

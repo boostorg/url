@@ -15,6 +15,7 @@
 #include <boost/url/optional.hpp>
 #include <boost/url/parse_path.hpp>
 #include <boost/url/rfc/detail/path_rules.hpp>
+#include <vector>
 
 namespace boost {
 namespace urls {

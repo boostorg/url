@@ -13,7 +13,6 @@
 #include <boost/url/detail/config.hpp>
 #include <detail/router.hpp>
 #include <memory>
-#include <vector>
 #include <stdexcept>
 
 namespace boost {
@@ -52,7 +51,7 @@ protected:
         std::size_t parent_idx{std::size_t(-1)};
 
         // Index of child nodes in the pool
-        std::vector<std::size_t> child_idx;
+        detail::child_idx_vector child_idx;
     };
 
     class match_results_base
