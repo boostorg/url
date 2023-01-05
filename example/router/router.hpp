@@ -134,7 +134,8 @@ protected:
     void
     route_impl(
         string_view s,
-        any_resource const* p);
+        any_resource const* p,
+        std::size_t maxn);
 
     BOOST_URL_DECL
     node const*

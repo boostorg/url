@@ -161,15 +161,13 @@ struct router_test
         testPatterns();
 
         // to be continued:
-        // - node::children should have a small buffer
-        // - ::route() should count level of matches and throw if route contains more
-        //   replacement fields that we can
+        // - implement Peter's `matches`
         // - router<T> can provide storage for all resources
+        // - coverage...
+        //     - test branching
         // - fix matching * and + with ".." in it
         //     - if there are more ".." than segments, there's no match
-        // - test branching
-        // - coverage...
-        // - implement Peter's `matches`
+        //       for * or + segments
         // - improve example with more routes, so it makes more sense
     }
 };

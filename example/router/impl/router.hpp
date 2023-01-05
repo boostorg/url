@@ -41,7 +41,7 @@ route(string_view path, U&& resource)
     };
     any_resource const* p = new impl(
         std::forward<U>(resource));
-    route_impl( path, p );
+    route_impl( path, p, N );
 }
 
 template <class T, std::size_t N>

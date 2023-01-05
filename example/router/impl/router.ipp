@@ -42,7 +42,8 @@ public:
     void
     route_impl(
         string_view path,
-        any_resource const* resource);
+        any_resource const* resource,
+        std::size_t maxn);
 
     // match a node
     router_base::node const*
@@ -113,8 +114,10 @@ void
 router_base::impl::
 route_impl(
     string_view path,
-    router_base::any_resource const* resource)
+    router_base::any_resource const* resource,
+    std::size_t maxn)
 {
+    std::size_t n = 0;
     // Parse dynamic route segments
     if (path.starts_with("/"))
         path.remove_prefix(1);
@@ -152,6 +155,11 @@ route_impl(
                 !cur->resource &&
                 cur->child_idx.empty())
             {
+                if (!cur->seg.is_literal())
+                {
+                    BOOST_ASSERT(n != 0);
+                    --n;
+                }
                 node* p = &nodes_[p_idx];
                 std::size_t cur_idx = cur - nodes_.data();
                 p->child_idx.erase(
@@ -195,6 +203,16 @@ route_impl(
             nodes_.push_back(std::move(child));
             nodes_[cur_id].child_idx.push_back(nodes_.size() - 1);
             cur = &nodes_.back();
+        }
+        if (!cur->seg.is_literal())
+        {
+            if (n == maxn)
+            {
+                boost::throw_exception(
+                    std::invalid_argument(
+                        "exceeds max fields"));
+            }
+            ++n;
         }
         ++it;
     }
@@ -520,9 +538,10 @@ void
 router_base::
 route_impl(
     string_view s,
-    any_resource const* p)
+    any_resource const* p,
+    std::size_t maxn)
 {
-    impl_->route_impl(s, p);
+    impl_->route_impl(s, p, maxn);
 }
 
 router_base::node const*
