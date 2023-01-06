@@ -8,6 +8,7 @@
 //
 
 #include <boost/url/detail/except.hpp>
+#include <boost/url/decode_view.hpp>
 #include <boost/url/grammar/unsigned_rule.hpp>
 #include <boost/mp11/algorithm.hpp>
 
@@ -92,9 +93,9 @@ private:
     }
 
     void
-    convert(string_view match, std::string& res)
+    convert(pct_string_view match, std::string& res)
     {
-        res = match;
+        match.decode({}, string_token::assign_to(res));
     }
 
     template <
@@ -103,16 +104,30 @@ private:
             std::is_integral<T>::value,
             int>::type = 0>
     void
-    convert(string_view match, T& res)
+    convert(pct_string_view match, T& res)
     {
-        auto rv = grammar::parse(
-            match, grammar::unsigned_rule<T>{});
-        if (rv)
+        auto dmatch = *match;
+        static constexpr T Digits10 =
+            std::numeric_limits<
+                T>::digits10 + 1;
+        if (dmatch.size() > Digits10)
         {
-            res = *rv;
+            any_fail = true;
             return;
         }
-        any_fail = true;
+        char digits[Digits10];
+        auto it0 = dmatch.begin();
+        char* it1 = digits;
+        auto end0 = dmatch.end();
+        while (it0 != end0)
+            *it1++ = *it0++;
+        auto rv = grammar::parse(
+            {digits, const_cast<char const*>(it1)},
+            grammar::unsigned_rule<T>{});
+        if (!rv)
+            any_fail = true;
+        else
+            res = *rv;
     }
 };
 }
@@ -138,8 +153,9 @@ match_to(pct_string_view request, Args&... args) const
         matches_it - matches);
     if (n != M)
         return false;
-    auto tp = std::forward_as_tuple(args...);
-    detail::push_fn<decltype(tp)> f(matches, std::move(tp));
+    detail::push_fn<std::tuple<Args&&...>> f(
+        matches, std::forward_as_tuple(
+            std::forward<Args>(args)...));
     mp11::mp_for_each<mp11::mp_iota_c<M>>(f);
     if (f.any_fail)
     {
