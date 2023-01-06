@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <detail/router.hpp>
 #include <memory>
+#include <vector>
 #include <stdexcept>
 
 namespace boost {
@@ -25,30 +26,25 @@ class router_base
     std::unique_ptr<impl> impl_;
 
 protected:
-    // A type-erased router resource
-    struct any_resource
-    {
-        virtual ~any_resource() = default;
-        virtual void const* get() const noexcept = 0;
-    };
-
     // A node in the resource tree
     // Each segment in the resource tree might be
     // associated with
     struct node
     {
+        static constexpr std::size_t npos{std::size_t(-1)};
+
         // literal segment or replacement field
         detail::segment_template seg{};
 
         // A pointer to the resource
-        any_resource const* resource{nullptr};
+        std::size_t resource_idx = std::size_t(-1);
 
         // The complete match for the resource
         std::string path_template;
 
         // Index of the parent node in the
         // implementation pool of nodes
-        std::size_t parent_idx{std::size_t(-1)};
+        std::size_t parent_idx{npos};
 
         // Index of child nodes in the pool
         detail::child_idx_vector child_idx;
@@ -134,7 +130,7 @@ protected:
     void
     route_impl(
         string_view s,
-        any_resource const* p,
+        std::size_t idx,
         std::size_t maxn);
 
     BOOST_URL_DECL
@@ -184,18 +180,21 @@ public:
     {
         string_view matches_storage_[N];
         string_view ids_storage_[N];
+        T const* data_{nullptr};
 
         friend router;
 
         match_results() = default;
 
         match_results(
+            T const* data,
             node const* leaf,
             string_view matches[N],
             string_view ids[N],
             std::size_t n)
             : match_results_base(
                 leaf, matches_storage_, ids_storage_, n)
+            , data_(data)
         {
             for (std::size_t i = 0; i < n; ++i)
             {
@@ -245,6 +244,9 @@ public:
     template <class ...Args>
     result<T>
     match_to(pct_string_view request, Args&... args) const;
+
+private:
+    std::vector<T> data_;
 };
 
 } // urls

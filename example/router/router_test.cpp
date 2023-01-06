@@ -210,8 +210,6 @@ struct router_test
         testMatchTo();
 
         // to be continued:
-        // - router<T> can provide storage for all resources
-        //     - no need for allocations
         // - coverage...
         //     - test branching
         // - improve example with more routes, so it makes more sense

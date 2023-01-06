@@ -22,29 +22,10 @@ router<T, N>::
 route(string_view path, U&& resource)
 {
     BOOST_STATIC_ASSERT(
-        std::is_same<T, U>::value        ||
-        std::is_convertible<T, U>::value ||
-        std::is_base_of<T, U>::value);
-    using U_ = typename std::decay<U>::type;
-    struct impl : any_resource
-    {
-        U_ u;
-
-        explicit
-        impl(U&& u_)
-            : u(std::forward<U>(u_))
-        {
-        }
-
-        void const*
-        get() const noexcept override
-        {
-            return static_cast<T const*>(&u);
-        }
-    };
-    any_resource const* p = new impl(
-        std::forward<U>(resource));
-    route_impl( path, p, N );
+        std::is_same<T, U>::value ||
+        std::is_convertible<T, U>::value);
+    data_.emplace_back(std::forward<U>(resource));
+    route_impl( path, data_.size() - 1, N );
 }
 
 template <class T, std::size_t N>
@@ -60,7 +41,7 @@ match(pct_string_view request) const noexcept
     auto p = match_impl( request, matches_it, ids_it );
     if (p)
         return {
-            p, matches, ids,
+            data_.data(), p, matches, ids,
             static_cast<std::size_t>(
                 matches_it - matches) };
     return {};
@@ -162,8 +143,7 @@ match_to(pct_string_view request, Args&... args) const
         BOOST_URL_RETURN_EC(
             grammar::error::mismatch);
     }
-    return *reinterpret_cast<
-        T const*>(p->resource->get());
+    return data_[p->resource_idx];
 }
 
 template <class T, std::size_t N>
@@ -172,9 +152,8 @@ router<T, N>::match_results::
 operator*() const
 {
     BOOST_ASSERT(leaf_);
-    BOOST_ASSERT(leaf_->resource);
-    return *reinterpret_cast<
-        T const*>(leaf_->resource->get());
+    BOOST_ASSERT(leaf_->resource_idx != node::npos);
+    return data_[leaf_->resource_idx];
 }
 
 template <class T, std::size_t N>

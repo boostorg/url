@@ -32,17 +32,11 @@ public:
         nodes_.push_back(node{});
     }
 
-    ~impl()
-    {
-        for (auto &r: nodes_)
-            delete r.resource;
-    }
-
     // include a node for a resource
     void
     route_impl(
         string_view path,
-        any_resource const* resource,
+        std::size_t resource_idx,
         std::size_t maxn);
 
     // match a node
@@ -84,7 +78,7 @@ find_optional_resource(
     string_view*& ids)
 {
     BOOST_ASSERT(root);
-    if (root->resource)
+    if (root->resource_idx != node::npos)
         return root;
     if (root->child_idx.empty())
         return nullptr;
@@ -114,7 +108,7 @@ void
 router_base::impl::
 route_impl(
     string_view path,
-    router_base::any_resource const* resource,
+    std::size_t resource_idx,
     std::size_t maxn)
 {
     std::size_t n = 0;
@@ -152,7 +146,7 @@ route_impl(
             // if it carries no resource
             std::size_t p_idx = cur->parent_idx;
             if (cur == &nodes_.back() &&
-                !cur->resource &&
+                cur->resource_idx == node::npos &&
                 cur->child_idx.empty())
             {
                 if (!cur->seg.is_literal())
@@ -220,11 +214,7 @@ route_impl(
     {
         urls::detail::throw_invalid_argument();
     }
-    if (cur->resource)
-    {
-        delete cur->resource;
-    }
-    cur->resource = resource;
+    cur->resource_idx = resource_idx;
     cur->path_template = path;
 }
 
@@ -519,7 +509,7 @@ try_match(
         // existing node
         return nullptr;
     }
-    if (!cur->resource)
+    if (cur->resource_idx == node::npos)
     {
         // we consumed all the input and reached
         // a node with no resource, but it might
@@ -564,10 +554,10 @@ void
 router_base::
 route_impl(
     string_view s,
-    any_resource const* p,
+    std::size_t idx,
     std::size_t maxn)
 {
-    impl_->route_impl(s, p, maxn);
+    impl_->route_impl(s, idx, maxn);
 }
 
 router_base::node const*
@@ -583,14 +573,14 @@ match_impl(
 router_base::match_results_base::
 operator bool() const
 {
-    return leaf_ && leaf_->resource;
+    return leaf_ && leaf_->resource_idx != node::npos;
 }
 
 bool
 router_base::match_results_base::
 has_value() const
 {
-    return leaf_ && leaf_->resource;
+    return leaf_ && leaf_->resource_idx != node::npos;
 }
 
 bool
