@@ -22,10 +22,11 @@ struct router_test
     void
     testPatterns()
     {
+        // literal
         good("user", "user");
         good("user/view", "user/view");
 
-        // unique segment match
+        // replace segment match
         good("user/{}", "user/johndoe", {"johndoe"});
         good("user/{name}", "user/johndoe", {"johndoe"}, {{"name", "johndoe"}});
         good("user/{id}", "user/123", {"123"}, {{"id", "123"}});
@@ -42,6 +43,7 @@ struct router_test
         good("user/././{name}", "user/johndoe", {"johndoe"}, {{"name", "johndoe"}});
         good("user/b/../{name}", "user/johndoe", {"johndoe"}, {{"name", "johndoe"}});
         good("user/c/../b", "user/b");
+        good("user/{name}/../{name}", "user/johndoe", {"johndoe"}, {{"name", "johndoe"}});
         good("../a/user/c/../b", "user/b");
 
         // pct-encoded segments
@@ -125,25 +127,45 @@ struct router_test
         good("user/{name}/{op+}", "user/johndoe/r/../s", {"johndoe", "s"}, {{"name", "johndoe"}, {"op", "s"}});
         bad("user/{name}/{op+}", "user/johndoe/r/../s/..");
         bad("user/{name}/{op+}", "user/johndoe/r/../s/../..");
+
+        // segment tree
+        good({"user/view", "user/{}"}, 1, "user/johndoe", {"johndoe"});
+        good({"user/view", "user/{}"}, 0, "user/view", {});
+        good({"user/{}", "user/view"}, 1, "user/view", {});
+        good({"user/view", "user/{file*}"}, 1, "user/path/to/file.txt", {"path/to/file.txt"}, {{"file", "path/to/file.txt"}});
+        good({"user/view", "user/{name}", "user/{file+}"}, 1, "user/johndoe", {"johndoe"}, {{"name", "johndoe"}});
+        good({"user/view", "user/{name}", "user/{file+}"}, 2, "user/path/to/file.txt", {"path/to/file.txt"}, {{"file", "path/to/file.txt"}});
+
+        // above root
+        bad("user/../..");
+
+        // max num of matches
+        bad("{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}");
+
+        // invalid path
+        bad("user", "invalid{path}");
     }
 
     static
     void
     good(
-        string_view pattern,
+        std::initializer_list<string_view> patterns,
+        std::size_t match_idx,
         string_view request,
         std::initializer_list<string_view> matches = {},
         std::initializer_list<std::pair<string_view, string_view>> args = {})
     {
         router<int> r;
-        r.route(pattern, 1);
+        std::size_t i = 0;
+        for (auto p: patterns)
+            r.route(p, i++);
         router<int>::match_results m = r.match(request);
         if (!BOOST_TEST(m))
             return;
         BOOST_TEST(m.has_value());
         BOOST_TEST_NOT(m.has_error());
-        BOOST_TEST_EQ(*m, 1);
-        BOOST_TEST_EQ(m.value(), 1);
+        BOOST_TEST_EQ(*m, match_idx);
+        BOOST_TEST_EQ(m.value(), match_idx);
 
         BOOST_TEST_EQ(matches.size(), m.size());
 
@@ -174,12 +196,23 @@ struct router_test
 
     static
     void
+    good(
+        string_view pattern,
+        string_view request,
+        std::initializer_list<string_view> matches = {},
+        std::initializer_list<std::pair<string_view, string_view>> args = {})
+    {
+        return good({pattern}, 0, request, matches, args);
+    };
+
+    static
+    void
     bad(
         string_view pattern,
         string_view request)
     {
         router<int> r;
-        r.route(pattern, 1);
+        BOOST_TEST_NO_THROW(r.route(pattern, 0));
         router<int>::match_results rm = r.match(request);
         BOOST_TEST_NOT(rm);
         BOOST_TEST_NOT(rm.has_value());
@@ -187,17 +220,26 @@ struct router_test
         BOOST_TEST_THROWS(rm.value(), system_error);
     };
 
+    static
+    void
+    bad(
+        string_view pattern)
+    {
+        router<int> r;
+        BOOST_TEST_THROWS(r.route(pattern, 0), system_error);
+    };
+
     void
     testMatchTo()
     {
         router<int> r;
-        r.route("user/{name}/{op}/{id}", 1);
+        r.route("user/{name}/{op}/{id}", 0);
         string_view user;
         std::string op;
         std::size_t id{0};
         result<int> m = r.match_to("user/john/transaction/3%32", user, op, id);
         BOOST_TEST(m);
-        BOOST_TEST_EQ(*m, 1);
+        BOOST_TEST_EQ(*m, 0);
         BOOST_TEST_EQ(user, "john");
         BOOST_TEST_EQ(op, "transaction");
         BOOST_TEST_EQ(id, 32);
@@ -210,8 +252,6 @@ struct router_test
         testMatchTo();
 
         // to be continued:
-        // - coverage...
-        //     - test branching
         // - improve example with more routes, so it makes more sense
     }
 };

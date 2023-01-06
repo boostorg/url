@@ -72,7 +72,8 @@ public:
     bool
     has_modifier() const
     {
-        return modifier_ != modifier::none;
+        return !is_literal() &&
+               modifier_ != modifier::none;
     }
 
     bool
@@ -102,7 +103,25 @@ public:
             return false;
         if (a.is_literal_)
             return a.str_ == b.str_;
-        return true;
+        return a.modifier_ == b.modifier_;
+    }
+
+    // segments have precedence:
+    //     - literal
+    //     - unique
+    //     - optional
+    //     - plus
+    //     - star
+    friend
+    bool operator<(
+        segment_template const& a,
+        segment_template const& b)
+    {
+        if (b.is_literal())
+            return false;
+        if (a.is_literal())
+            return !b.is_literal();
+        return a.modifier_ < b.modifier_;
     }
 };
 

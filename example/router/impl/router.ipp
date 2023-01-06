@@ -80,8 +80,7 @@ find_optional_resource(
     BOOST_ASSERT(root);
     if (root->resource_idx != node::npos)
         return root;
-    if (root->child_idx.empty())
-        return nullptr;
+    BOOST_ASSERT(!root->child_idx.empty());
     for (auto i: root->child_idx)
     {
         auto& c = ns[i];
@@ -135,8 +134,7 @@ route_impl(
         {
             // discount unmatched leaf or
             // keep track of levels behind root
-            if (level > 0 ||
-                cur == &nodes_.front())
+            if (cur == &nodes_.front())
             {
                 --level;
                 ++it;
@@ -196,15 +194,22 @@ route_impl(
             child.parent_idx = cur_id;
             nodes_.push_back(std::move(child));
             nodes_[cur_id].child_idx.push_back(nodes_.size() - 1);
+            if (nodes_[cur_id].child_idx.size() > 1)
+            {
+                std::sort(
+                    nodes_[cur_id].child_idx.begin(),
+                    nodes_[cur_id].child_idx.end(),
+                    [this](std::size_t ai, std::size_t bi) {
+                        return nodes_[ai].seg < nodes_[bi].seg;
+                    });
+            }
             cur = &nodes_.back();
         }
         if (!cur->seg.is_literal())
         {
             if (n == maxn)
             {
-                boost::throw_exception(
-                    std::invalid_argument(
-                        "exceeds max fields"));
+                urls::detail::throw_invalid_argument();
             }
             ++n;
         }
@@ -295,8 +300,9 @@ try_match(
                 }
                 else
                 {
-                    // everything not literal counts
-                    // as more than one path already
+                    // everything not matching
+                    // a single path counts as
+                    // more than one path already
                     branches_lb = 2;
                 }
                 if (branches_lb > 1)
@@ -443,7 +449,6 @@ try_match(
                     if (c.seg.is_plus())
                     {
                         ++first;
-                        --nnondot;
                     }
                     // {*} is usually the last
                     // match in a path.
