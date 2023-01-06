@@ -50,6 +50,7 @@ protected:
         detail::child_idx_vector child_idx;
     };
 
+public:
     class match_results_base
     {
     protected:
@@ -123,6 +124,7 @@ protected:
         size() const noexcept;
     };
 
+protected:
     BOOST_URL_DECL
     router_base();
 
