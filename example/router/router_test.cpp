@@ -26,6 +26,12 @@ struct router_test
         good("user", "user");
         good("user/view", "user/view");
 
+        // empty
+        good("", "/");
+        good("/", "/");
+        good("", "");
+        good("/", "");
+
         // replace segment match
         good("user/{}", "user/johndoe", {"johndoe"});
         good("user/{name}", "user/johndoe", {"johndoe"}, {{"name", "johndoe"}});
@@ -250,9 +256,6 @@ struct router_test
     {
         testPatterns();
         testMatchTo();
-
-        // to be continued:
-        // - improve example with more routes, so it makes more sense
     }
 };
 

@@ -535,6 +535,11 @@ match_impl(
     string_view*& ids) const
 {
     // Parse request as regular path
+    if (request.starts_with("/"))
+        request.remove_prefix(1);
+    // parse_path is inconsistent for empty paths
+    if (request.empty())
+        request = "./";
     auto r = parse_path(request);
     if (!r)
     {

@@ -23,7 +23,7 @@ route(string_view path, U&& resource)
 {
     BOOST_STATIC_ASSERT(
         std::is_same<T, U>::value ||
-        std::is_convertible<T, U>::value);
+        std::is_convertible<U, T>::value);
     data_.emplace_back(std::forward<U>(resource));
     route_impl( path, data_.size() - 1, N );
 }
@@ -31,7 +31,7 @@ route(string_view path, U&& resource)
 template <class T, std::size_t N>
 auto
 router<T, N>::
-match(pct_string_view request) const noexcept
+match(string_view request) const noexcept
     -> match_results
 {
     string_view matches[N];
@@ -117,7 +117,7 @@ template <class T, std::size_t N>
 template <class ...Args>
 result<T>
 router<T, N>::
-match_to(pct_string_view request, Args&... args) const
+match_to(string_view request, Args&... args) const
 {
     static constexpr std::size_t M = sizeof...(Args);
     string_view matches[M];

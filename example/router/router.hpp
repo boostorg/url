@@ -232,7 +232,7 @@ public:
         @return The match results
      */
     match_results
-    match(pct_string_view request) const noexcept;
+    match(string_view request) const noexcept;
 
     /** Match URL path and stores results into args
 
@@ -243,7 +243,7 @@ public:
      */
     template <class ...Args>
     result<T>
-    match_to(pct_string_view request, Args&... args) const;
+    match_to(string_view request, Args&... args) const;
 
 private:
     std::vector<T> data_;
