@@ -417,18 +417,44 @@ try_match(
                 }
                 else
                 {
+                    // check if the next segments
+                    // won't send us to a parent
+                    // directory
+                    auto first = it;
+                    std::size_t ndotdot = 0;
+                    std::size_t nnondot = 0;
+                    auto it1 = it;
+                    while (it1 != end)
+                    {
+                        if (*it1 == "..")
+                        {
+                            ++ndotdot;
+                            if (ndotdot >= (nnondot + c.seg.is_star()))
+                                break;
+                        }
+                        else if (*it1 != ".")
+                        {
+                            ++nnondot;
+                        }
+                        ++it1;
+                    }
+                    if (it1 != end)
+                        break;
+
                     // attempt to match many
                     // segments
                     auto matches0 = matches;
                     auto ids0 = ids;
                     *matches++ = *it;
                     *ids++ = c.seg.id();
-                    auto first = it;
                     // if this is a plus seg, we
                     // already consumed the first
                     // segment
                     if (c.seg.is_plus())
+                    {
                         ++first;
+                        --nnondot;
+                    }
                     // {*} is usually the last
                     // match in a path.
                     // try complete continuation
