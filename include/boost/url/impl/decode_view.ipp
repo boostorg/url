@@ -134,13 +134,13 @@ remove_suffix( size_type n )
 
 bool
 decode_view::
-starts_with( string_view sv ) const noexcept
+starts_with( string_view s ) const noexcept
 {
-    if (sv.size() > size())
+    if (s.size() > size())
         return false;
     auto it0 = begin();
-    auto it1 = sv.begin();
-    std::size_t n = sv.size();
+    auto it1 = s.begin();
+    std::size_t n = s.size();
     while (n)
     {
         if (*it0 != *it1)
@@ -154,13 +154,13 @@ starts_with( string_view sv ) const noexcept
 
 bool
 decode_view::
-ends_with( string_view sv ) const noexcept
+ends_with( string_view s ) const noexcept
 {
-    if (sv.size() > size())
+    if (s.size() > size())
         return false;
     auto it0 = end();
-    auto it1 = sv.end();
-    std::size_t n = sv.size();
+    auto it1 = s.end();
+    std::size_t n = s.size();
     --it0;
     --it1;
     while (n - 1)
