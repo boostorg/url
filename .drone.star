@@ -199,7 +199,7 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
         elif type == 'tsan':
             name = 'TSan (' + name + ')'
         elif type == 'ubsan':
-            name = 'UBSsan (' + name + ')'
+            name = 'UBSan (' + name + ')'
         elif type == 'cmake':
             name = 'CMake (' + name + ')'
         elif type == 'cmake-install':
@@ -310,7 +310,9 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
                 image = 'cppalliance/droneubuntu1804:1'
             else:
                 image = 'cppalliance/droneubuntu1604:1'
-        elif compiler in ['arm64-gcc', 's390x-gcc', 'arm64-clang', 's390x-clang']:
+        elif compiler in ['s390x-gcc', 's390x-clang']:
+            image = 'cppalliance/droneubuntu2204:multiarch'
+        elif compiler in ['arm64-gcc', 'arm64-clang']:
             image = 'cppalliance/droneubuntu2004:multiarch'
         elif compiler == 'clang':
             if version[0] >= 13:
@@ -424,11 +426,11 @@ def compiler_supports(compiler, version, cxx):
 def compilers_in_range(ranges_str):
     supported = {
         'gcc': ['12', '11', '10', '9', '8', '7', '6', '5', '4.9', '4.8'],
-        's390x-gcc': ['11'],
+        's390x-gcc': ['12'],
         'arm64-gcc': ['11'],
         'clang': ['15', '14', '13', '12', '11', '10', '9', '8', '7', '6.0', '5.0', '4.0', '3.8'],
         'apple-clang': ['13.4.1'],
-        's390x-clang': ['12'],
+        's390x-clang': ['15'],
         'arm64-clang': ['12'],
         'msvc': ['14.3', '14.2', '14.1'],
         'x64-msvc': ['14.1'],
