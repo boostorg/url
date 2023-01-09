@@ -239,7 +239,7 @@ serve(urls::router<handler> r, asio::ip::address address, unsigned short port)
             if (method_ok && rpath)
             {
                 urls::matches m;
-                if (auto h = r.match(rpath->buffer(), m))
+                if (auto h = r.match(*rpath, m))
                 {
                     // good request
                     http::message_generator res = (*h)(req, m);

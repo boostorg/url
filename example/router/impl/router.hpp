@@ -32,14 +32,14 @@ template <class T>
 template <std::size_t N>
 T const*
 router<T>::
-match(string_view request, matches_storage<N>& m) const noexcept
+match(segments_encoded_view path, matches_storage<N>& m) const noexcept
 {
     string_view matches[N];
     string_view ids[N];
     string_view* matches_it = matches;
     string_view* ids_it = ids;
     std::size_t idx = match_impl(
-        request, matches_it, ids_it );
+        path, matches_it, ids_it );
     if (idx != std::size_t(-1))
     {
         BOOST_ASSERT(matches_it >= matches);

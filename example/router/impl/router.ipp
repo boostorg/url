@@ -65,7 +65,7 @@ public:
     // match a node and return the element
     std::size_t
     match_impl(
-        string_view request,
+        segments_encoded_view path,
         string_view*& matches,
         string_view*& ids) const;
 
@@ -538,27 +538,17 @@ try_match(
 std::size_t
 impl::
 match_impl(
-    string_view request,
+    segments_encoded_view path,
     string_view*& matches,
     string_view*& ids) const
 {
-    // Parse request as regular path
-    if (request.starts_with("/"))
-        request.remove_prefix(1);
     // parse_path is inconsistent for empty paths
-    if (request.empty())
-        request = "./";
-    auto r = parse_path(request);
-    if (!r)
-    {
-        // cannot find match for invalid path
-        return std::size_t(-1);
-    }
-    segments_encoded_view segs = *r;
+    if (path.empty())
+        path = segments_encoded_view("./");
 
     // Iterate nodes from the root
     node const*p = try_match(
-        segs.begin(), segs.end(),
+        path.begin(), path.end(),
         &nodes_.front(), 0,
         matches, ids);
     if (p)
@@ -591,12 +581,12 @@ route_impl(
 std::size_t
 router_base::
 match_impl(
-    string_view s,
+    segments_encoded_view path,
     string_view*& matches,
     string_view*& ids) const noexcept
 {
     return reinterpret_cast<impl*>(impl_)
-        ->match_impl(s, matches, ids);
+        ->match_impl(path, matches, ids);
 }
 
 } // urls

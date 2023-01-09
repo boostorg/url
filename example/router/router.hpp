@@ -13,6 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <matches_storage.hpp>
 #include <detail/router.hpp>
+#include <boost/url/segments_encoded_view.hpp>
 #include <vector>
 
 namespace boost {
@@ -39,7 +40,7 @@ protected:
     BOOST_URL_DECL
     std::size_t
     match_impl(
-        string_view s,
+        segments_encoded_view path,
         string_view*& matches,
         string_view*& names) const noexcept;
 };
@@ -98,7 +99,7 @@ public:
      */
     template <std::size_t N>
     T const*
-    match(string_view request, matches_storage<N>& m) const noexcept;
+    match(segments_encoded_view path, matches_storage<N>& m) const noexcept;
 
     /** Match URL path and stores results into args
 

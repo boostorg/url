@@ -144,9 +144,6 @@ struct router_test
 
         // above root
         bad("user/../..");
-
-        // invalid path
-        bad("user", "invalid{path}");
     }
 
     static
