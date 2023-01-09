@@ -15,24 +15,24 @@
 namespace boost {
 namespace urls {
 
-template <class T, std::size_t N>
+template <class T>
 template <class U>
 void
-router<T, N>::
+router<T>::
 route(string_view path, U&& resource)
 {
     BOOST_STATIC_ASSERT(
         std::is_same<T, U>::value ||
         std::is_convertible<U, T>::value);
     data_.emplace_back(std::forward<U>(resource));
-    route_impl( path, data_.size() - 1, N );
+    route_impl( path, data_.size() - 1 );
 }
 
-template <class T, std::size_t N>
-auto
-router<T, N>::
-match(string_view request) const noexcept
-    -> match_results
+template <class T>
+template <std::size_t N>
+bool
+router<T>::
+match(string_view request, match_results<N>& m) const noexcept
 {
     string_view matches[N];
     string_view ids[N];
@@ -40,11 +40,14 @@ match(string_view request) const noexcept
     string_view* ids_it = ids;
     auto p = match_impl( request, matches_it, ids_it );
     if (p)
-        return {
-            data_.data(), p, matches, ids,
-            static_cast<std::size_t>(
-                matches_it - matches) };
-    return {};
+    {
+        m = { data_.data(), p, matches, ids,
+              static_cast<std::size_t>(
+                  matches_it - matches) };
+        return true;
+    }
+    m = {};
+    return false;
 }
 
 namespace detail {
@@ -113,10 +116,10 @@ private:
 };
 }
 
-template <class T, std::size_t N>
+template <class T>
 template <class ...Args>
 result<T>
-router<T, N>::
+router<T>::
 match_to(string_view request, Args&... args) const
 {
     static constexpr std::size_t M = sizeof...(Args);
@@ -146,9 +149,10 @@ match_to(string_view request, Args&... args) const
     return data_[p->resource_idx];
 }
 
-template <class T, std::size_t N>
+template <class T>
+template <std::size_t N>
 T const&
-router<T, N>::match_results::
+router<T>::match_results<N>::
 operator*() const
 {
     BOOST_ASSERT(leaf_);
@@ -156,9 +160,10 @@ operator*() const
     return data_[leaf_->resource_idx];
 }
 
-template <class T, std::size_t N>
+template <class T>
+template <std::size_t N>
 T const&
-router<T, N>::match_results::
+router<T>::match_results<N>::
 value() const
 {
     if( has_value() )

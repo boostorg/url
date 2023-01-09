@@ -210,6 +210,7 @@ serve(urls::router<handler> r, asio::ip::address address, unsigned short port)
      * server. This is an implementation detail
      * in the context of this example.
      */
+    std::cout << "Listening on http://" << address << ":" << port << "\n";
     asio::io_context ioc(1);
     asio::ip::tcp::acceptor acceptor(ioc, {address, port});
     for(;;)
@@ -238,8 +239,8 @@ serve(urls::router<handler> r, asio::ip::address address, unsigned short port)
             auto rpath = urls::parse_path(req.target());
             if (method_ok && rpath)
             {
-                auto match = r.match(rpath->buffer());
-                if (match)
+                urls::router<handler>::match_results<20> match;
+                if (r.match(rpath->buffer(), match))
                 {
                     // good request
                     auto& handler = *match;

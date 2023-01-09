@@ -145,9 +145,6 @@ struct router_test
         // above root
         bad("user/../..");
 
-        // max num of matches
-        bad("{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}");
-
         // invalid path
         bad("user", "invalid{path}");
     }
@@ -165,7 +162,8 @@ struct router_test
         std::size_t i = 0;
         for (auto p: patterns)
             r.route(p, i++);
-        router<int>::match_results m = r.match(request);
+        router<int>::match_results<20> m;
+        BOOST_TEST(r.match(request, m));
         if (!BOOST_TEST(m))
             return;
         BOOST_TEST(m.has_value());
@@ -219,7 +217,8 @@ struct router_test
     {
         router<int> r;
         BOOST_TEST_NO_THROW(r.route(pattern, 0));
-        router<int>::match_results rm = r.match(request);
+        router<int>::match_results<20> rm;
+        BOOST_TEST_NOT(r.match(request, rm));
         BOOST_TEST_NOT(rm);
         BOOST_TEST_NOT(rm.has_value());
         BOOST_TEST(rm.has_error());

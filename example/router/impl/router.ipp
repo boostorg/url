@@ -36,8 +36,7 @@ public:
     void
     route_impl(
         string_view path,
-        std::size_t resource_idx,
-        std::size_t maxn);
+        std::size_t resource_idx);
 
     // match a node
     router_base::node const*
@@ -107,10 +106,8 @@ void
 router_base::impl::
 route_impl(
     string_view path,
-    std::size_t resource_idx,
-    std::size_t maxn)
+    std::size_t resource_idx)
 {
-    std::size_t n = 0;
     // Parse dynamic route segments
     if (path.starts_with("/"))
         path.remove_prefix(1);
@@ -147,11 +144,6 @@ route_impl(
                 cur->resource_idx == node::npos &&
                 cur->child_idx.empty())
             {
-                if (!cur->seg.is_literal())
-                {
-                    BOOST_ASSERT(n != 0);
-                    --n;
-                }
                 node* p = &nodes_[p_idx];
                 std::size_t cur_idx = cur - nodes_.data();
                 p->child_idx.erase(
@@ -204,14 +196,6 @@ route_impl(
                     });
             }
             cur = &nodes_.back();
-        }
-        if (!cur->seg.is_literal())
-        {
-            if (n == maxn)
-            {
-                urls::detail::throw_invalid_argument();
-            }
-            ++n;
         }
         ++it;
     }
@@ -564,10 +548,9 @@ void
 router_base::
 route_impl(
     string_view s,
-    std::size_t idx,
-    std::size_t maxn)
+    std::size_t idx)
 {
-    impl_->route_impl(s, idx, maxn);
+    impl_->route_impl(s, idx);
 }
 
 router_base::node const*

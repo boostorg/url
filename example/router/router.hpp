@@ -132,8 +132,7 @@ protected:
     void
     route_impl(
         string_view s,
-        std::size_t idx,
-        std::size_t maxn);
+        std::size_t idx);
 
     BOOST_URL_DECL
     node const*
@@ -172,11 +171,12 @@ protected:
         @ref parse_uri_reference,
         @ref resolve.
 */
-template <class T, std::size_t N = 20>
+template <class T>
 class router : public router_base
 {
 public:
     /// A range type with the match results
+    template <std::size_t N = 20>
     class match_results
         : public match_results_base
     {
@@ -185,8 +185,6 @@ public:
         T const* data_{nullptr};
 
         friend router;
-
-        match_results() = default;
 
         match_results(
             T const* data,
@@ -206,6 +204,8 @@ public:
         }
 
     public:
+        match_results() = default;
+
         T const&
         operator*() const;
 
@@ -233,8 +233,9 @@ public:
         @param request Request path
         @return The match results
      */
-    match_results
-    match(string_view request) const noexcept;
+    template <std::size_t N>
+    bool
+    match(string_view request, match_results<N>& m) const noexcept;
 
     /** Match URL path and stores results into args
 
