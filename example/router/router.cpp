@@ -157,7 +157,7 @@ file_response(string_view doc_root, string_view path, request_t const& req)
         res.keep_alive(req.keep_alive());
         res.body() = "The resource '" + std::string(path) + "' was not found in " + jpath;
         res.prepare_payload();
-        return std::move(res);
+        BOOST_URL_RETURN(res);
     }
     http::response<http::file_body> res{
         std::piecewise_construct,
@@ -167,7 +167,7 @@ file_response(string_view doc_root, string_view path, request_t const& req)
     res.set(http::field::content_type, mime_type(path));
     res.content_length(size);
     res.keep_alive(req.keep_alive());
-    return std::move(res);
+    BOOST_URL_RETURN(res);
 }
 
 // Append an HTTP rel-path to a local filesystem path.
