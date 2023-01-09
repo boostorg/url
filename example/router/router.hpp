@@ -33,13 +33,13 @@ protected:
 
     BOOST_URL_DECL
     void
-    route_impl(
+    insert_impl(
         string_view s,
         std::size_t idx);
 
     BOOST_URL_DECL
     std::size_t
-    match_impl(
+    find_impl(
         segments_encoded_view path,
         string_view*& matches,
         string_view*& names) const noexcept;
@@ -90,7 +90,7 @@ public:
      */
     template <class U>
     void
-    route(string_view pattern, U&& v);
+    insert(string_view pattern, U&& v);
 
     /** Match URL path to corresponding resource
 
@@ -99,18 +99,7 @@ public:
      */
     template <std::size_t N>
     T const*
-    match(segments_encoded_view path, matches_storage<N>& m) const noexcept;
-
-    /** Match URL path and stores results into args
-
-        @param request Request path
-        @param args Storage for the matches
-
-        @return True if we found a match
-     */
-    template <class ...Args>
-    result<T>
-    match_to(string_view request, Args&... args) const;
+    find(segments_encoded_view path, matches_storage<N>& m) const noexcept;
 
 private:
     std::vector<T> data_;

@@ -58,13 +58,13 @@ public:
 
     // include a node for a resource
     void
-    route_impl(
+    insert_impl(
         string_view path,
         std::size_t resource_idx);
 
     // match a node and return the element
     std::size_t
-    match_impl(
+    find_impl(
         segments_encoded_view path,
         string_view*& matches,
         string_view*& ids) const;
@@ -128,7 +128,7 @@ find_optional_resource(
 
 void
 impl::
-route_impl(
+insert_impl(
     string_view path,
     std::size_t resource_idx)
 {
@@ -537,7 +537,7 @@ try_match(
 
 std::size_t
 impl::
-match_impl(
+find_impl(
     segments_encoded_view path,
     string_view*& matches,
     string_view*& ids) const
@@ -570,23 +570,23 @@ router_base::
 
 void
 router_base::
-route_impl(
+insert_impl(
     string_view s,
     std::size_t idx)
 {
     reinterpret_cast<impl*>(impl_)
-        ->route_impl(s, idx);
+        ->insert_impl(s, idx);
 }
 
 std::size_t
 router_base::
-match_impl(
+find_impl(
     segments_encoded_view path,
     string_view*& matches,
     string_view*& ids) const noexcept
 {
     return reinterpret_cast<impl*>(impl_)
-        ->match_impl(path, matches, ids);
+        ->find_impl(path, matches, ids);
 }
 
 } // urls

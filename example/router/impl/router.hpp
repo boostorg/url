@@ -19,26 +19,26 @@ template <class T>
 template <class U>
 void
 router<T>::
-route(string_view pattern, U&& v)
+insert(string_view pattern, U&& v)
 {
     BOOST_STATIC_ASSERT(
         std::is_same<T, U>::value ||
         std::is_convertible<U, T>::value);
     data_.emplace_back(std::forward<U>(v));
-    route_impl( pattern, data_.size() - 1 );
+    insert_impl( pattern, data_.size() - 1 );
 }
 
 template <class T>
 template <std::size_t N>
 T const*
 router<T>::
-match(segments_encoded_view path, matches_storage<N>& m) const noexcept
+find(segments_encoded_view path, matches_storage<N>& m) const noexcept
 {
     string_view matches[N];
     string_view ids[N];
     string_view* matches_it = matches;
     string_view* ids_it = ids;
-    std::size_t idx = match_impl(
+    std::size_t idx = find_impl(
         path, matches_it, ids_it );
     if (idx != std::size_t(-1))
     {
@@ -116,32 +116,6 @@ private:
             res = *rv;
     }
 };
-}
-
-template <class T>
-template <class ...Args>
-result<T>
-router<T>::
-match_to(string_view request, Args&... args) const
-{
-    static constexpr std::size_t M = sizeof...(Args);
-    matches_storage<M> m;
-    auto p = match(request, m);
-    if (!p)
-    {
-        BOOST_URL_RETURN_EC(
-            grammar::error::mismatch);
-    }
-    detail::push_fn<std::tuple<Args&&...>> f(
-        m.matches_storage_, std::forward_as_tuple(
-            std::forward<Args>(args)...));
-    mp11::mp_for_each<mp11::mp_iota_c<M>>(f);
-    if (f.any_fail)
-    {
-        BOOST_URL_RETURN_EC(
-            grammar::error::mismatch);
-    }
-    return *p;
 }
 
 } // urls

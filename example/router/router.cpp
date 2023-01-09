@@ -95,18 +95,18 @@ main(int argc, char **argv)
      */
     urls::router<handler> r;
 
-    r.route("/", [&](request_t const& req, urls::matches const&) {
+    r.insert("/", [&](request_t const& req, urls::matches const&) {
         return string_response("Hello!", req);
     });
 
-    r.route("/user/{name}", [&](request_t const& req, urls::matches const& m) {
+    r.insert("/user/{name}", [&](request_t const& req, urls::matches const& m) {
         std::string msg = "Hello, ";
         urls::pct_string_view(m[0]).decode({}, urls::string_token::append_to(msg));
         msg += "!";
         return string_response(msg, req);
     });
 
-    r.route("/user", [&](request_t const& req, urls::matches const&) {
+    r.insert("/user", [&](request_t const& req, urls::matches const&) {
         std::string msg = "Users: ";
         auto names = {"johndoe", "maria", "alice"};
         for (auto name: names) {
@@ -119,7 +119,7 @@ main(int argc, char **argv)
         return string_response(msg, req);
     });
 
-    r.route("/public/{path+}", [&](request_t const& req, urls::matches m) {
+    r.insert("/public/{path+}", [&](request_t const& req, urls::matches m) {
         return file_response(doc_root, m["path"], req);
     });
 
@@ -239,7 +239,7 @@ serve(urls::router<handler> r, asio::ip::address address, unsigned short port)
             if (method_ok && rpath)
             {
                 urls::matches m;
-                if (auto h = r.match(*rpath, m))
+                if (auto h = r.find(*rpath, m))
                 {
                     // good request
                     http::message_generator res = (*h)(req, m);

@@ -158,10 +158,10 @@ struct router_test
         router<int> r;
         std::size_t i = 0;
         for (auto p: patterns)
-            r.route(p, i++);
+            r.insert(p, i++);
         matches m;
         int const* v;
-        BOOST_TEST(v = r.match(request, m));
+        BOOST_TEST(v = r.find(request, m));
         if (!BOOST_TEST(v))
             return;
         BOOST_TEST_EQ(*v, match_idx);
@@ -211,10 +211,10 @@ struct router_test
         string_view request)
     {
         router<int> r;
-        BOOST_TEST_NO_THROW(r.route(pattern, 0));
+        BOOST_TEST_NO_THROW(r.insert(pattern, 0));
         matches m;
         int const* v;
-        BOOST_TEST_NOT(v = r.match(request, m));
+        BOOST_TEST_NOT(v = r.find(request, m));
         BOOST_TEST_NOT(v);
     };
 
@@ -223,30 +223,13 @@ struct router_test
     bad(string_view pattern)
     {
         router<int> r;
-        BOOST_TEST_THROWS(r.route(pattern, 0), system_error);
+        BOOST_TEST_THROWS(r.insert(pattern, 0), system_error);
     };
-
-    void
-    testMatchTo()
-    {
-        router<int> r;
-        r.route("user/{name}/{op}/{id}", 0);
-        string_view user;
-        std::string op;
-        std::size_t id{0};
-        result<int> m = r.match_to("user/john/transaction/3%32", user, op, id);
-        BOOST_TEST(m);
-        BOOST_TEST_EQ(*m, 0);
-        BOOST_TEST_EQ(user, "john");
-        BOOST_TEST_EQ(op, "transaction");
-        BOOST_TEST_EQ(id, 32);
-    }
 
     void
     run()
     {
         testPatterns();
-        testMatchTo();
     }
 };
 
