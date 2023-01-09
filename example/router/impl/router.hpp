@@ -19,13 +19,13 @@ template <class T>
 template <class U>
 void
 router<T>::
-route(string_view path, U&& resource)
+route(string_view pattern, U&& v)
 {
     BOOST_STATIC_ASSERT(
         std::is_same<T, U>::value ||
         std::is_convertible<U, T>::value);
-    data_.emplace_back(std::forward<U>(resource));
-    route_impl( path, data_.size() - 1 );
+    data_.emplace_back(std::forward<U>(v));
+    route_impl( pattern, data_.size() - 1 );
 }
 
 template <class T>

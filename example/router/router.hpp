@@ -89,7 +89,7 @@ public:
      */
     template <class U>
     void
-    route(string_view path, U&& resource);
+    route(string_view pattern, U&& v);
 
     /** Match URL path to corresponding resource
 
