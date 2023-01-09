@@ -36,9 +36,8 @@ namespace asio = boost::asio;
 namespace beast = boost::beast;
 namespace http = beast::http;
 using string_view = urls::string_view;
-using match_results = urls::router_base::match_results_base;
 using request_t = http::request<http::string_body>;
-using handler = std::function<http::message_generator(request_t const&, match_results)>;
+using handler = std::function<http::message_generator(request_t const&, urls::matches)>;
 
 /*
  * Auxiliary functions
@@ -96,18 +95,18 @@ main(int argc, char **argv)
      */
     urls::router<handler> r;
 
-    r.route("/", [&](request_t const& req, match_results const&) {
+    r.route("/", [&](request_t const& req, urls::matches const&) {
         return string_response("Hello!", req);
     });
 
-    r.route("/user/{name}", [&](request_t const& req, match_results const& m) {
+    r.route("/user/{name}", [&](request_t const& req, urls::matches const& m) {
         std::string msg = "Hello, ";
         urls::pct_string_view(m[0]).decode({}, urls::string_token::append_to(msg));
         msg += "!";
         return string_response(msg, req);
     });
 
-    r.route("/user", [&](request_t const& req, match_results const&) {
+    r.route("/user", [&](request_t const& req, urls::matches const&) {
         std::string msg = "Users: ";
         auto names = {"johndoe", "maria", "alice"};
         for (auto name: names) {
@@ -120,7 +119,7 @@ main(int argc, char **argv)
         return string_response(msg, req);
     });
 
-    r.route("/public/{path+}", [&](request_t const& req, match_results m) {
+    r.route("/public/{path+}", [&](request_t const& req, urls::matches m) {
         return file_response(doc_root, m["path"], req);
     });
 
@@ -239,12 +238,11 @@ serve(urls::router<handler> r, asio::ip::address address, unsigned short port)
             auto rpath = urls::parse_path(req.target());
             if (method_ok && rpath)
             {
-                urls::router<handler>::match_results<20> match;
-                if (r.match(rpath->buffer(), match))
+                urls::matches m;
+                if (auto h = r.match(rpath->buffer(), m))
                 {
                     // good request
-                    auto& handler = *match;
-                    http::message_generator res = handler(req, match);
+                    http::message_generator res = (*h)(req, m);
                     beast::write(socket, std::move(res), ec);
                 }
                 else
