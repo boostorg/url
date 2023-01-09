@@ -20,10 +20,34 @@
 namespace boost {
 namespace urls {
 
-class router_base::impl
+// A node in the resource tree
+// Each segment in the resource tree might be
+// associated with
+struct node
+{
+    static constexpr std::size_t npos{std::size_t(-1)};
+
+    // literal segment or replacement field
+    detail::segment_template seg{};
+
+    // A pointer to the resource
+    std::size_t resource_idx = std::size_t(-1);
+
+    // The complete match for the resource
+    std::string path_template;
+
+    // Index of the parent node in the
+    // implementation pool of nodes
+    std::size_t parent_idx{npos};
+
+    // Index of child nodes in the pool
+    detail::child_idx_vector child_idx;
+};
+
+class impl
 {
     // Pool of nodes in the resource tree
-    std::vector<router_base::node> nodes_;
+    std::vector<node> nodes_;
 
 public:
     impl()
@@ -38,8 +62,8 @@ public:
         string_view path,
         std::size_t resource_idx);
 
-    // match a node
-    router_base::node const*
+    // match a node and return the element
+    std::size_t
     match_impl(
         string_view request,
         string_view*& matches,
@@ -68,8 +92,8 @@ private:
         string_view*& ids);
 };
 
-router_base::node const*
-router_base::impl::
+node const*
+impl::
 find_optional_resource(
     const node* root,
     std::vector<node> const& ns,
@@ -103,7 +127,7 @@ find_optional_resource(
 }
 
 void
-router_base::impl::
+impl::
 route_impl(
     string_view path,
     std::size_t resource_idx)
@@ -207,8 +231,8 @@ route_impl(
     cur->path_template = path;
 }
 
-router_base::node const*
-router_base::impl::
+node const*
+impl::
 try_match(
     segments_encoded_view::const_iterator it,
     segments_encoded_view::const_iterator end,
@@ -511,8 +535,8 @@ try_match(
     return cur;
 }
 
-router_base::node const*
-router_base::impl::
+std::size_t
+impl::
 match_impl(
     string_view request,
     string_view*& matches,
@@ -528,15 +552,18 @@ match_impl(
     if (!r)
     {
         // cannot find match for invalid path
-        return nullptr;
+        return std::size_t(-1);
     }
     segments_encoded_view segs = *r;
 
     // Iterate nodes from the root
-    return try_match(
+    node const*p = try_match(
         segs.begin(), segs.end(),
         &nodes_.front(), 0,
         matches, ids);
+    if (p)
+        return p->resource_idx;
+    return std::size_t(-1);
 }
 
 BOOST_URL_DECL
@@ -544,139 +571,32 @@ router_base::
 router_base()
     : impl_(new impl{}) {}
 
+BOOST_URL_DECL
+router_base::
+~router_base()
+{
+    delete reinterpret_cast<impl*>(impl_);
+}
+
 void
 router_base::
 route_impl(
     string_view s,
     std::size_t idx)
 {
-    impl_->route_impl(s, idx);
+    reinterpret_cast<impl*>(impl_)
+        ->route_impl(s, idx);
 }
 
-router_base::node const*
+std::size_t
 router_base::
 match_impl(
     string_view s,
     string_view*& matches,
     string_view*& ids) const noexcept
 {
-    return impl_->match_impl(s, matches, ids);
-}
-
-router_base::match_results_base::
-operator bool() const
-{
-    return leaf_ && leaf_->resource_idx != node::npos;
-}
-
-bool
-router_base::match_results_base::
-has_value() const
-{
-    return leaf_ && leaf_->resource_idx != node::npos;
-}
-
-bool
-router_base::match_results_base::
-has_error() const
-{
-    return !has_value();
-}
-
-error_code
-router_base::match_results_base::
-error() const
-{
-    return grammar::error::mismatch;
-}
-
-auto
-router_base::match_results_base::
-at( size_type pos ) const
-    -> const_reference
-{
-    if (pos < size_)
-    {
-        return matches_[pos];
-    }
-    boost::throw_exception(
-        std::out_of_range(""));
-}
-
-auto
-router_base::match_results_base::
-operator[]( size_type pos ) const
-    -> const_reference
-{
-    BOOST_ASSERT(pos < size_);
-    return matches_[pos];
-}
-
-auto
-router_base::match_results_base::
-at( string_view id ) const
-    -> const_reference
-{
-    for (std::size_t i = 0; i < size_; ++i)
-    {
-        if (ids_[i] == id)
-            return matches_[i];
-    }
-    boost::throw_exception(
-        std::out_of_range(""));
-}
-
-auto
-router_base::match_results_base::
-operator[]( string_view id ) const
-    -> const_reference
-{
-    return at(id);
-}
-
-auto
-router_base::match_results_base::
-find( string_view id ) const
-    -> const_iterator
-{
-    for (std::size_t i = 0; i < size_; ++i)
-    {
-        if (ids_[i] == id)
-            return matches_ + i;
-    }
-    return matches_ + size_;
-}
-
-auto
-router_base::match_results_base::
-begin() const
-    -> const_iterator
-{
-    return &matches_[0];
-}
-
-auto
-router_base::match_results_base::
-end() const
-    -> const_iterator
-{
-    return &matches_[size_];
-}
-
-auto
-router_base::match_results_base::
-empty() const noexcept
-    -> bool
-{
-    return size_ == 0;
-}
-
-auto
-router_base::match_results_base::
-size() const noexcept
-    -> size_type
-{
-    return size_;
+    return reinterpret_cast<impl*>(impl_)
+        ->match_impl(s, matches, ids);
 }
 
 } // urls

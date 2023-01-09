@@ -155,28 +155,26 @@ struct router_test
         std::initializer_list<string_view> patterns,
         std::size_t match_idx,
         string_view request,
-        std::initializer_list<string_view> matches = {},
+        std::initializer_list<string_view> ms = {},
         std::initializer_list<std::pair<string_view, string_view>> args = {})
     {
         router<int> r;
         std::size_t i = 0;
         for (auto p: patterns)
             r.route(p, i++);
-        router<int>::match_results<20> m;
-        BOOST_TEST(r.match(request, m));
-        if (!BOOST_TEST(m))
+        matches m;
+        int const* v;
+        BOOST_TEST(v = r.match(request, m));
+        if (!BOOST_TEST(v))
             return;
-        BOOST_TEST(m.has_value());
-        BOOST_TEST_NOT(m.has_error());
-        BOOST_TEST_EQ(*m, match_idx);
-        BOOST_TEST_EQ(m.value(), match_idx);
+        BOOST_TEST_EQ(*v, match_idx);
 
-        BOOST_TEST_EQ(matches.size(), m.size());
+        BOOST_TEST_EQ(ms.size(), m.size());
 
         {
-            auto it0 = matches.begin();
+            auto it0 = ms.begin();
             auto it1 = m.begin();
-            auto end0 = matches.end();
+            auto end0 = ms.end();
             auto end1 = m.end();
             while (
                 it0 != end0 &&
@@ -217,18 +215,15 @@ struct router_test
     {
         router<int> r;
         BOOST_TEST_NO_THROW(r.route(pattern, 0));
-        router<int>::match_results<20> rm;
-        BOOST_TEST_NOT(r.match(request, rm));
-        BOOST_TEST_NOT(rm);
-        BOOST_TEST_NOT(rm.has_value());
-        BOOST_TEST(rm.has_error());
-        BOOST_TEST_THROWS(rm.value(), system_error);
+        matches m;
+        int const* v;
+        BOOST_TEST_NOT(v = r.match(request, m));
+        BOOST_TEST_NOT(v);
     };
 
     static
     void
-    bad(
-        string_view pattern)
+    bad(string_view pattern)
     {
         router<int> r;
         BOOST_TEST_THROWS(r.route(pattern, 0), system_error);

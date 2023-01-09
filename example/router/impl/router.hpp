@@ -30,24 +30,26 @@ route(string_view path, U&& resource)
 
 template <class T>
 template <std::size_t N>
-bool
+T const*
 router<T>::
-match(string_view request, match_results<N>& m) const noexcept
+match(string_view request, matches_storage<N>& m) const noexcept
 {
     string_view matches[N];
     string_view ids[N];
     string_view* matches_it = matches;
     string_view* ids_it = ids;
-    auto p = match_impl( request, matches_it, ids_it );
-    if (p)
+    std::size_t idx = match_impl(
+        request, matches_it, ids_it );
+    if (idx != std::size_t(-1))
     {
-        m = { data_.data(), p, matches, ids,
+        BOOST_ASSERT(matches_it >= matches);
+        m = { matches, ids,
               static_cast<std::size_t>(
                   matches_it - matches) };
-        return true;
+        return &data_[idx];
     }
     m = {};
-    return false;
+    return nullptr;
 }
 
 namespace detail {
@@ -123,22 +125,15 @@ router<T>::
 match_to(string_view request, Args&... args) const
 {
     static constexpr std::size_t M = sizeof...(Args);
-    string_view matches[M];
-    string_view ids[M];
-    string_view* matches_it = matches;
-    string_view* ids_it = ids;
-    auto p = match_impl( request, matches_it, ids_it );
+    matches_storage<M> m;
+    auto p = match(request, m);
     if (!p)
     {
         BOOST_URL_RETURN_EC(
             grammar::error::mismatch);
     }
-    auto n = static_cast<std::size_t>(
-        matches_it - matches);
-    if (n != M)
-        return false;
     detail::push_fn<std::tuple<Args&&...>> f(
-        matches, std::forward_as_tuple(
+        m.matches_storage_, std::forward_as_tuple(
             std::forward<Args>(args)...));
     mp11::mp_for_each<mp11::mp_iota_c<M>>(f);
     if (f.any_fail)
@@ -146,31 +141,7 @@ match_to(string_view request, Args&... args) const
         BOOST_URL_RETURN_EC(
             grammar::error::mismatch);
     }
-    return data_[p->resource_idx];
-}
-
-template <class T>
-template <std::size_t N>
-T const&
-router<T>::match_results<N>::
-operator*() const
-{
-    BOOST_ASSERT(leaf_);
-    BOOST_ASSERT(leaf_->resource_idx != node::npos);
-    return data_[leaf_->resource_idx];
-}
-
-template <class T>
-template <std::size_t N>
-T const&
-router<T>::match_results<N>::
-value() const
-{
-    if( has_value() )
-    {
-        return operator*();
-    }
-    detail::throw_system_error(grammar::error::mismatch);
+    return *p;
 }
 
 } // urls
