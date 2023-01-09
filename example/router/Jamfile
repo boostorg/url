@@ -13,6 +13,8 @@ project
     : requirements
       <toolset>clang-4:<warnings-as-errors>off
       <toolset>clang-5:<warnings-as-errors>off
+      <toolset>clang-4:<cxxflags>"-Wno-warnings"
+      <toolset>clang-5:<cxxflags>"-Wno-warnings"
       <define>BOOST_ASIO_DISABLE_FENCED_BLOCK
       <library>/boost/url//boost_url
       <include>.
