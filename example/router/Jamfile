@@ -13,6 +13,7 @@ project
     : requirements
       <toolset>clang-4:<warnings-as-errors>off
       <toolset>clang-5:<warnings-as-errors>off
+      <define>BOOST_ASIO_DISABLE_FENCED_BLOCK
       <library>/boost/url//boost_url
       <include>.
       <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized"
