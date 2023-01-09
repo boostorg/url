@@ -18,10 +18,12 @@ def main(ctx):
          'msvc >=14.1',
          'arm64-gcc latest',
          's390x-gcc latest',
+         # 'freebsd-gcc latest',
          'apple-clang *',
          'arm64-clang latest',
          's390x-clang latest',
-         'x64-msvc latest'],
+         'freebsd-clang latest',
+         'x86-msvc latest'],
         # Standards
         '>=11')
 
@@ -169,13 +171,16 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
             'gcc': 'GCC',
             's390x-gcc': 'S390x-GCC',
             'arm64-gcc': 'ARM64-GCC',
+            'freebsd-gcc': 'FreeBSD-GCC',
             'clang': 'Clang',
             'apple-clang': 'Apple-Clang',
             's390x-clang': 'S390x-Clang',
             'arm64-clang': 'ARM64-Clang',
-            'msvc': 'MSVC (x86)',
-            'x64-msvc': 'MSVC (x64)'
+            'freebsd-clang': 'FreeBSD-Clang',
+            'msvc': 'MSVC (x64)',
+            'x86-msvc': 'MSVC (x86)'
         }
+
         uccompiler = uccompiler_names[compiler] if compiler in uccompiler_names else compiler
 
         # Create job name
@@ -199,7 +204,7 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
         elif type == 'tsan':
             name = 'TSan (' + name + ')'
         elif type == 'ubsan':
-            name = 'UBSsan (' + name + ')'
+            name = 'UBSan (' + name + ')'
         elif type == 'cmake':
             name = 'CMake (' + name + ')'
         elif type == 'cmake-install':
@@ -269,7 +274,7 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
                 environment['B2_TOOLSET'] = 'clang-' + str(version[0]) + '.' + str(version[1])
         elif compiler.endswith('msvc'):
             environment['B2_TOOLSET'] = 'msvc-' + str(version[0]) + '.' + str(version[1])
-            if compiler == 'x64-msvc':
+            if compiler == 'x86-msvc':
                 environment['B2_ADDRESS_MODEL'] = '32'
 
         # environment['B2_DEFINES']
@@ -289,6 +294,10 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
         # environment['CMAKE_INSTALL_TEST']
         if type == 'cmake-install':
             environment['CMAKE_INSTALL_TEST'] = '1'
+
+        # environment['B2_LINKFLAGS']. switch gcc11 to a var?
+        if compiler == 'freebsd-gcc':
+            environment['B2_LINKFLAGS'] = '-Wl,-rpath=/usr/local/lib/gcc11'
 
         # Build type in script
         buildtype = type
@@ -310,7 +319,9 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
                 image = 'cppalliance/droneubuntu1804:1'
             else:
                 image = 'cppalliance/droneubuntu1604:1'
-        elif compiler in ['arm64-gcc', 's390x-gcc', 'arm64-clang', 's390x-clang']:
+        elif compiler in ['s390x-gcc', 's390x-clang']:
+            image = 'cppalliance/droneubuntu2204:multiarch'
+        elif compiler in ['arm64-gcc', 'arm64-clang']:
             image = 'cppalliance/droneubuntu2004:multiarch'
         elif compiler == 'clang':
             if version[0] >= 13:
@@ -375,6 +386,16 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
                     xcode_version="13.4.1",
                     environment=environment,
                     globalenv=globalenv))
+        elif compiler.startswith('freebsd'):
+            jobs.append(
+                freebsd_cxx(
+                    name,
+                    compiler_exec,
+                    buildscript="drone",
+                    buildtype=buildtype,
+                    freebsd_version="13.1",
+                    environment=environment,
+                    globalenv=globalenv))
         else:
             jobs.append(
                 linux_cxx(
@@ -424,14 +445,16 @@ def compiler_supports(compiler, version, cxx):
 def compilers_in_range(ranges_str):
     supported = {
         'gcc': ['12', '11', '10', '9', '8', '7', '6', '5', '4.9', '4.8'],
-        's390x-gcc': ['11'],
+        's390x-gcc': ['12'],
         'arm64-gcc': ['11'],
+        'freebsd-gcc': ['11', '10', '9', '8'],
         'clang': ['15', '14', '13', '12', '11', '10', '9', '8', '7', '6.0', '5.0', '4.0', '3.8'],
         'apple-clang': ['13.4.1'],
-        's390x-clang': ['12'],
+        's390x-clang': ['14'],
         'arm64-clang': ['12'],
+        'freebsd-clang': ['15', '14', '13', '12', '11', '10'],
         'msvc': ['14.3', '14.2', '14.1'],
-        'x64-msvc': ['14.1'],
+        'x86-msvc': ['14.1'],
     }
     parts = ranges_str.split()
     name = parts[0]
