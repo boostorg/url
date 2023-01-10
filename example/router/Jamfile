@@ -15,7 +15,6 @@ project
       <toolset>clang-5:<warnings-as-errors>off
       <define>BOOST_ASIO_DISABLE_FENCED_BLOCK
       <library>/boost/url//boost_url
-      <include>.
       <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized"
     ;
 
@@ -23,6 +22,5 @@ exe router : router.cpp ;
 
 run router_test.cpp ../../extra/test_main.cpp
     : requirements
-        <include>.
         <include>../../extra
     ;

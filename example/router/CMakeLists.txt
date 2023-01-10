@@ -17,7 +17,6 @@ add_executable(router
 
 set_property(TARGET router PROPERTY FOLDER "Examples")
 target_link_libraries(router PRIVATE Boost::url Boost::beast)
-target_include_directories(router PRIVATE .)
 
 # router_test.cpp
 set(SUITE_FILES ../../extra/test_main.cpp ../../extra/test_suite.hpp)

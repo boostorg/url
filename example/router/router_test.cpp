@@ -8,8 +8,8 @@
 //
 
 // Test that header file is self-contained.
-#include <router.hpp>
-#include <src.hpp>
+#include "router.hpp"
+#include "src.hpp"
 
 #include "test_suite.hpp"
 

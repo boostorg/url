@@ -17,7 +17,7 @@
 #include <boost/url/grammar/token_rule.hpp>
 #include <boost/url/grammar/variant_rule.hpp>
 #include <boost/url/detail/replacement_field_rule.hpp>
-#include <detail/router.hpp>
+#include "../router.hpp"
 
 namespace boost {
 namespace urls {
