@@ -77,7 +77,6 @@ public:
 
 #ifdef BOOST_URL_DOCS
     /// @copydoc find
-    template <std::size_t N>
     T const*
     find(segments_encoded_view path, matches& m) const noexcept;
 #endif
