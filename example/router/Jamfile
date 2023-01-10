@@ -19,8 +19,3 @@ project
     ;
 
 exe router : router.cpp ;
-
-run router_test.cpp ../../extra/test_main.cpp
-    : requirements
-        <include>../../extra
-    ;

@@ -18,6 +18,7 @@
 #include <boost/url/grammar/variant_rule.hpp>
 #include <boost/url/rfc/detail/path_rules.hpp>
 #include <boost/url/detail/replacement_field_rule.hpp>
+#include <vector>
 
 namespace boost {
 namespace urls {
@@ -107,6 +108,98 @@ parse(
     t.is_literal_ = true;
     return t;
 }
+
+// a small vector for child nodes...
+// we shouldn't expect many children per node, and
+// we don't want to allocate for that. But we also
+// cannot cap the max number of child nodes because
+// especially the root nodes can potentially an
+// exponentially higher number of child nodes.
+class child_idx_vector
+{
+    static constexpr std::size_t N = 5;
+    std::size_t static_child_idx[N]{};
+    std::size_t* child_idx{nullptr};
+    std::size_t size_{0};
+    std::size_t cap_{0};
+
+public:
+    ~child_idx_vector()
+    {
+        delete[] child_idx;
+    }
+
+    bool
+    empty() const
+    {
+        return size_ == 0;
+    }
+
+    std::size_t
+    size() const
+    {
+        return size_;
+    }
+
+    std::size_t*
+    begin()
+    {
+        if (size_ > N)
+        {
+            return child_idx;
+        }
+        return static_child_idx;
+    }
+
+    std::size_t*
+    end()
+    {
+        return begin() + size_;
+    }
+
+    std::size_t const*
+    begin() const
+    {
+        if (size_ > N)
+        {
+            return child_idx;
+        }
+        return static_child_idx;
+    }
+
+    std::size_t const*
+    end() const
+    {
+        return begin() + size_;
+    }
+
+    void
+    erase(std::size_t* it)
+    {
+        BOOST_ASSERT(it - begin() >= 0);
+        std::memmove(it - 1, it, end() - it);
+        --size_;
+    }
+
+    void
+    push_back(std::size_t v)
+    {
+        if (size_ == N && !child_idx)
+        {
+            child_idx = new std::size_t[N*2];
+            cap_ = N*2;
+            std::memcpy(child_idx, static_child_idx, N);
+        }
+        else if (child_idx && size_ == cap_)
+        {
+            auto* tmp = new std::size_t[cap_*2];
+            std::memcpy(tmp, child_idx, cap_);
+            delete[] child_idx;
+            cap_ = cap_*2;
+        }
+        begin()[size_++] = v;
+    }
+};
 
 // A node in the resource tree
 // Each segment in the resource tree might be
@@ -229,8 +322,14 @@ insert_impl(
     // Parse dynamic route segments
     if (path.starts_with("/"))
         path.remove_prefix(1);
-    auto segs =
-        grammar::parse(path, detail::path_template_rule).value();
+    auto segsr =
+        grammar::parse(path, detail::path_template_rule);
+    if (!segsr)
+    {
+        delete v;
+        segsr.value();
+    }
+    auto segs = *segsr;
     auto it = segs.begin();
     auto end = segs.end();
 
@@ -306,12 +405,17 @@ insert_impl(
             nodes_[cur_id].child_idx.push_back(nodes_.size() - 1);
             if (nodes_[cur_id].child_idx.size() > 1)
             {
-                std::sort(
-                    nodes_[cur_id].child_idx.begin(),
-                    nodes_[cur_id].child_idx.end(),
-                    [this](std::size_t ai, std::size_t bi) {
-                        return nodes_[ai].seg < nodes_[bi].seg;
-                    });
+                // keep nodes sorted
+                auto& cs = nodes_[cur_id].child_idx;
+                std::size_t n = cs.size() - 1;
+                while (n)
+                {
+                    if (nodes_[cs.begin()[n]].seg < nodes_[cs.begin()[n - 1]].seg)
+                        std::swap(cs.begin()[n], cs.begin()[n - 1]);
+                    else
+                        break;
+                    --n;
+                }
             }
             cur = &nodes_.back();
         }
@@ -319,6 +423,7 @@ insert_impl(
     }
     if (level != 0)
     {
+        delete v;
         urls::detail::throw_invalid_argument();
     }
     cur->resource = v;

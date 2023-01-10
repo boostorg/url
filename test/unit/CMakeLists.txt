@@ -99,6 +99,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/unreserved_chars.cpp
     rfc/uri_rule.cpp
     rfc/uri_reference_rule.cpp
+    example/router/router.cpp
     )
 
 set(SUITE_FILES ../../extra/test_main.cpp ../../extra/test_suite.hpp)
@@ -107,6 +108,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${BOOST_URL_TESTS_FILES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${SUITE_FILES})
 add_executable(boost_url_tests ${BOOST_URL_TESTS_FILES} ${SUITE_FILES})
 target_include_directories(boost_url_tests PRIVATE . ../../extra)
+target_include_directories(boost_url_tests PRIVATE ../../example/router)
 # The include dependencies are found in the CMakeLists.txt
 # of the root project directory.
 # See: BOOST_URL_UNIT_TEST_LIBRARIES
