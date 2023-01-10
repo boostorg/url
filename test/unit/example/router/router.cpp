@@ -8,6 +8,10 @@
 //
 
 // Test that header file is self-contained.
+#ifndef BOOST_URL_SOURCE
+#define BOOST_URL_SOURCE
+#endif
+
 #include "router.hpp"
 #include "src.hpp"
 
