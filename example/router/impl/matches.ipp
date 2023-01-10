@@ -7,11 +7,10 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#include "../matches_storage.hpp"
+#include "../matches.hpp"
 
 namespace boost {
 namespace urls {
-namespace detail {
 
 auto
 matches_base::
@@ -102,7 +101,6 @@ size() const noexcept
     return size_;
 }
 
-} // detail
 } // urls
 } // boost
 

@@ -11,10 +11,10 @@
 #define BOOST_URL_ROUTER_HPP
 
 #include <boost/url/detail/config.hpp>
-#include "matches_storage.hpp"
-#include "detail/router.hpp"
 #include <boost/url/segments_encoded_view.hpp>
 #include <vector>
+#include "detail/router.hpp"
+#include "matches.hpp"
 
 namespace boost {
 namespace urls {

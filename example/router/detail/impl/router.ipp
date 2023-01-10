@@ -10,14 +10,14 @@
 #ifndef BOOST_URL_DETAIL_ROUTER_IPP
 #define BOOST_URL_DETAIL_ROUTER_IPP
 
-#include <boost/url/detail/config.hpp>
+#include "../router.hpp"
 #include <boost/url/grammar/alnum_chars.hpp>
 #include <boost/url/grammar/alpha_chars.hpp>
 #include <boost/url/grammar/lut_chars.hpp>
 #include <boost/url/grammar/token_rule.hpp>
 #include <boost/url/grammar/variant_rule.hpp>
+#include <boost/url/rfc/detail/path_rules.hpp>
 #include <boost/url/detail/replacement_field_rule.hpp>
-#include "../router.hpp"
 
 namespace boost {
 namespace urls {
