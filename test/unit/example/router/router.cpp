@@ -160,7 +160,7 @@ struct router_test
         std::initializer_list<std::pair<string_view, string_view>> args = {})
     {
         router<int> r;
-        std::size_t i = 0;
+        int i = 0;
         for (auto p: patterns)
             r.insert(p, i++);
         matches m;
