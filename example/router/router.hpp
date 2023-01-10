@@ -12,7 +12,6 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/parse_path.hpp>
-#include <vector>
 #include "detail/router.hpp"
 #include "matches.hpp"
 
@@ -80,9 +79,6 @@ public:
     T const*
     find(segments_encoded_view path, matches& m) const noexcept;
 #endif
-
-private:
-    std::vector<T> data_;
 };
 
 } // urls

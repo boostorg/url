@@ -253,21 +253,29 @@ class router_base
 {
     void* impl_{nullptr};
 
+public:
+    // A type-erased router resource
+    struct any_resource
+    {
+        virtual ~any_resource() = default;
+        virtual void const* get() const noexcept = 0;
+    };
+
 protected:
     BOOST_URL_DECL
     router_base();
 
     BOOST_URL_DECL
-    ~router_base();
+    virtual ~router_base();
 
     BOOST_URL_DECL
     void
     insert_impl(
         string_view s,
-        std::size_t idx);
+        any_resource const* v);
 
     BOOST_URL_DECL
-    std::size_t
+    any_resource const*
     find_impl(
         segments_encoded_view path,
         string_view*& matches,

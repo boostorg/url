@@ -22,10 +22,32 @@ router<T>::
 insert(string_view pattern, U&& v)
 {
     BOOST_STATIC_ASSERT(
-        std::is_same<T, U>::value ||
-        std::is_convertible<U, T>::value);
-    data_.emplace_back(std::forward<U>(v));
-    insert_impl( pattern, data_.size() - 1 );
+        std::is_same<T, U>::value        ||
+        std::is_convertible<U, T>::value ||
+        std::is_base_of<T, U>::value);
+    using U_ = typename std::decay<
+        typename std::conditional<
+            std::is_base_of<T, U>::value, U, T
+            >::type>::type;
+    struct impl : any_resource
+    {
+        U_ u;
+
+        explicit
+            impl(U&& u_)
+            : u(std::forward<U>(u_))
+        {
+        }
+
+        void const*
+        get() const noexcept override
+        {
+            return static_cast<T const*>(&u);
+        }
+    };
+    any_resource const* p = new impl(
+        std::forward<U>(v));
+    insert_impl( pattern, p );
 }
 
 template <class T>
@@ -35,14 +57,15 @@ find(segments_encoded_view path, matches_base& m) const noexcept
 {
     string_view* matches_it = m.matches();
     string_view* ids_it = m.ids();
-    std::size_t idx = find_impl(
+    any_resource const* p = find_impl(
         path, matches_it, ids_it );
-    if (idx != std::size_t(-1))
+    if (p)
     {
         BOOST_ASSERT(matches_it >= m.matches());
         m.resize(static_cast<std::size_t>(
             matches_it - m.matches()));
-        return &data_[idx];
+        return reinterpret_cast<
+            T const*>(p->get());
     }
     m.resize(0);
     return nullptr;

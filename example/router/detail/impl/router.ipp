@@ -119,7 +119,7 @@ struct node
     detail::segment_template seg{};
 
     // A pointer to the resource
-    std::size_t resource_idx = std::size_t(-1);
+    router_base::any_resource const* resource{nullptr};
 
     // The complete match for the resource
     std::string path_template;
@@ -144,14 +144,20 @@ public:
         nodes_.push_back(node{});
     }
 
+    ~impl()
+    {
+        for (auto &r: nodes_)
+            delete r.resource;
+    }
+
     // include a node for a resource
     void
     insert_impl(
         string_view path,
-        std::size_t resource_idx);
+        router_base::any_resource const* v);
 
     // match a node and return the element
-    std::size_t
+    router_base::any_resource const*
     find_impl(
         segments_encoded_view path,
         string_view*& matches,
@@ -189,7 +195,7 @@ find_optional_resource(
     string_view*& ids)
 {
     BOOST_ASSERT(root);
-    if (root->resource_idx != node::npos)
+    if (root->resource)
         return root;
     BOOST_ASSERT(!root->child_idx.empty());
     for (auto i: root->child_idx)
@@ -218,7 +224,7 @@ void
 impl::
 insert_impl(
     string_view path,
-    std::size_t resource_idx)
+    router_base::any_resource const* v)
 {
     // Parse dynamic route segments
     if (path.starts_with("/"))
@@ -253,7 +259,7 @@ insert_impl(
             // if it carries no resource
             std::size_t p_idx = cur->parent_idx;
             if (cur == &nodes_.back() &&
-                cur->resource_idx == node::npos &&
+                !cur->resource &&
                 cur->child_idx.empty())
             {
                 node* p = &nodes_[p_idx];
@@ -315,7 +321,7 @@ insert_impl(
     {
         urls::detail::throw_invalid_argument();
     }
-    cur->resource_idx = resource_idx;
+    cur->resource = v;
     cur->path_template = path;
 }
 
@@ -610,7 +616,7 @@ try_match(
         // existing node
         return nullptr;
     }
-    if (cur->resource_idx == node::npos)
+    if (!cur->resource)
     {
         // we consumed all the input and reached
         // a node with no resource, but it might
@@ -623,7 +629,7 @@ try_match(
     return cur;
 }
 
-std::size_t
+router_base::any_resource const*
 impl::
 find_impl(
     segments_encoded_view path,
@@ -640,8 +646,8 @@ find_impl(
         &nodes_.front(), 0,
         matches, ids);
     if (p)
-        return p->resource_idx;
-    return std::size_t(-1);
+        return p->resource;
+    return nullptr;
 }
 
 router_base::
@@ -658,18 +664,19 @@ void
 router_base::
 insert_impl(
     string_view s,
-    std::size_t idx)
+    any_resource const* v)
 {
     reinterpret_cast<impl*>(impl_)
-        ->insert_impl(s, idx);
+        ->insert_impl(s, v);
 }
 
-std::size_t
+auto
 router_base::
 find_impl(
     segments_encoded_view path,
     string_view*& matches,
     string_view*& ids) const noexcept
+    -> any_resource const*
 {
     return reinterpret_cast<impl*>(impl_)
         ->find_impl(path, matches, ids);
