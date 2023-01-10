@@ -11,39 +11,13 @@
 #define BOOST_URL_ROUTER_HPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/segments_encoded_view.hpp>
+#include <boost/url/parse_path.hpp>
 #include <vector>
 #include "detail/router.hpp"
 #include "matches.hpp"
 
 namespace boost {
 namespace urls {
-
-/// Base class for all routers
-class router_base
-{
-    void* impl_{nullptr};
-
-protected:
-    BOOST_URL_DECL
-    router_base();
-
-    BOOST_URL_DECL
-    ~router_base();
-
-    BOOST_URL_DECL
-    void
-    insert_impl(
-        string_view s,
-        std::size_t idx);
-
-    BOOST_URL_DECL
-    std::size_t
-    find_impl(
-        segments_encoded_view path,
-        string_view*& matches,
-        string_view*& names) const noexcept;
-};
 
 /** A URL router.
 
@@ -74,7 +48,8 @@ protected:
         @ref resolve.
 */
 template <class T>
-class router : public router_base
+class router
+    : private detail::router_base
 {
 public:
     /// Constructor

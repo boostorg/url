@@ -17,7 +17,6 @@
 // include in one and no more than one source file
 #include "detail/impl/router.ipp"
 #include "impl/matches.ipp"
-#include "impl/router.ipp"
 
 #endif
 

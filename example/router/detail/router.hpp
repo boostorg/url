@@ -249,6 +249,31 @@ public:
     }
 };
 
+class router_base
+{
+    void* impl_{nullptr};
+
+protected:
+    BOOST_URL_DECL
+    router_base();
+
+    BOOST_URL_DECL
+    ~router_base();
+
+    BOOST_URL_DECL
+    void
+    insert_impl(
+        string_view s,
+        std::size_t idx);
+
+    BOOST_URL_DECL
+    std::size_t
+    find_impl(
+        segments_encoded_view path,
+        string_view*& matches,
+        string_view*& names) const noexcept;
+};
+
 } // detail
 } // urls
 } // boost
