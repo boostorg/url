@@ -17,7 +17,7 @@ matches_base::
 at( size_type pos ) const
     -> const_reference
 {
-    if (pos < size_)
+    if (pos < size())
     {
         return matches()[pos];
     }
@@ -30,7 +30,7 @@ matches_base::
 operator[]( size_type pos ) const
     -> const_reference
 {
-    BOOST_ASSERT(pos < size_);
+    BOOST_ASSERT(pos < size());
     return matches()[pos];
 }
 
@@ -39,7 +39,7 @@ matches_base::
 at( string_view id ) const
     -> const_reference
 {
-    for (std::size_t i = 0; i < size_; ++i)
+    for (std::size_t i = 0; i < size(); ++i)
     {
         if (ids()[i] == id)
             return matches()[i];
@@ -61,12 +61,12 @@ matches_base::
 find( string_view id ) const
     -> const_iterator
 {
-    for (std::size_t i = 0; i < size_; ++i)
+    for (std::size_t i = 0; i < size(); ++i)
     {
         if (ids()[i] == id)
             return matches() + i;
     }
-    return matches() + size_;
+    return matches() + size();
 }
 
 auto
@@ -82,7 +82,7 @@ matches_base::
 end() const
     -> const_iterator
 {
-    return &matches()[size_];
+    return &matches()[size()];
 }
 
 auto
@@ -90,15 +90,7 @@ matches_base::
 empty() const noexcept
     -> bool
 {
-    return size_ == 0;
-}
-
-auto
-matches_base::
-size() const noexcept
-    -> size_type
-{
-    return size_;
+    return size() == 0;
 }
 
 } // urls

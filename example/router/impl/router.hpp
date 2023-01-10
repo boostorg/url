@@ -29,26 +29,22 @@ insert(string_view pattern, U&& v)
 }
 
 template <class T>
-template <std::size_t N>
 T const*
 router<T>::
-find(segments_encoded_view path, matches_storage<N>& m) const noexcept
+find(segments_encoded_view path, matches_base& m) const noexcept
 {
-    string_view matches[N];
-    string_view ids[N];
-    string_view* matches_it = matches;
-    string_view* ids_it = ids;
+    string_view* matches_it = m.matches();
+    string_view* ids_it = m.ids();
     std::size_t idx = find_impl(
         path, matches_it, ids_it );
     if (idx != std::size_t(-1))
     {
-        BOOST_ASSERT(matches_it >= matches);
-        m = { matches, ids,
-              static_cast<std::size_t>(
-                  matches_it - matches) };
+        BOOST_ASSERT(matches_it >= m.matches());
+        m.resize(static_cast<std::size_t>(
+            matches_it - m.matches()));
         return &data_[idx];
     }
-    m = {};
+    m.resize(0);
     return nullptr;
 }
 

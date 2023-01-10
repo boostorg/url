@@ -97,9 +97,15 @@ public:
         @param request Request path
         @return The match results
      */
+    T const*
+    find(segments_encoded_view path, matches_base& m) const noexcept;
+
+#ifdef BOOST_URL_DOCS
+    /// @copydoc find
     template <std::size_t N>
     T const*
-    find(segments_encoded_view path, matches_storage<N>& m) const noexcept;
+    find(segments_encoded_view path, matches& m) const noexcept;
+#endif
 
 private:
     std::vector<T> data_;

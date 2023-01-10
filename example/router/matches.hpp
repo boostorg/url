@@ -18,24 +18,6 @@ namespace urls {
 // Base route match results
 class matches_base
 {
-protected:
-    std::size_t size_ = 0;
-
-    virtual
-    string_view const*
-    matches() const = 0;
-
-    virtual
-    string_view const*
-    ids() const = 0;
-
-    matches_base() = default;
-
-    explicit
-    matches_base(
-        std::size_t size)
-        : size_(size)
-    {}
 public:
     using iterator = string_view*;
     using const_iterator = string_view const*;
@@ -45,6 +27,34 @@ public:
     using const_reference = string_view const&;
     using pointer = string_view*;
     using const_pointer = string_view const*;
+
+    matches_base() = default;
+
+    virtual ~matches_base() = default;
+
+    virtual
+    string_view const*
+    matches() const = 0;
+
+    virtual
+    string_view const*
+    ids() const = 0;
+
+    virtual
+    string_view*
+    matches() = 0;
+
+    virtual
+    string_view*
+    ids() = 0;
+
+    virtual
+    std::size_t
+    size() const = 0;
+
+    virtual
+    void
+    resize(std::size_t) = 0;
 
     const_reference
     at( size_type pos ) const;
@@ -69,9 +79,6 @@ public:
 
     bool
     empty() const noexcept;
-
-    size_type
-    size() const noexcept;
 };
 
 /// A range type with the match results
@@ -81,15 +88,12 @@ class matches_storage
 {
     string_view matches_storage_[N];
     string_view ids_storage_[N];
-
-    template <class T>
-    friend class router;
+    std::size_t size_;
 
     matches_storage(
         string_view matches[N],
         string_view ids[N],
         std::size_t n)
-        : matches_base(n)
     {
         for (std::size_t i = 0; i < n; ++i)
         {
@@ -98,7 +102,23 @@ class matches_storage
         }
     }
 
-protected:
+    virtual
+    string_view*
+    matches() override
+    {
+        return matches_storage_;
+    }
+
+    virtual
+    string_view*
+    ids() override
+    {
+        return ids_storage_;
+    }
+
+public:
+    matches_storage() = default;
+
     virtual
     string_view const*
     matches() const override
@@ -113,8 +133,19 @@ protected:
         return ids_storage_;
     }
 
-public:
-    matches_storage() = default;
+    virtual
+    std::size_t
+    size() const override
+    {
+        return size_;
+    }
+
+    virtual
+    void
+    resize(std::size_t n) override
+    {
+        size_ = n;
+    }
 };
 
 /// Default type for storing route match results
