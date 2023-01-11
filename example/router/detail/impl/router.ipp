@@ -39,8 +39,8 @@ string_view
 segment_template::
 id() const
 {
-    if (is_literal_)
-        return {};
+    // if (is_literal_) return {};
+    BOOST_ASSERT(!is_literal());
     string_view r = {str_};
     r.remove_prefix(1);
     r.remove_suffix(1);
