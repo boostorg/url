@@ -145,6 +145,7 @@ struct router_test
         good({"user/view", "user/{file*}"}, 1, "user/path/to/file.txt", {"path/to/file.txt"}, {{"file", "path/to/file.txt"}});
         good({"user/view", "user/{name}", "user/{file+}"}, 1, "user/johndoe", {"johndoe"}, {{"name", "johndoe"}});
         good({"user/view", "user/{name}", "user/{file+}"}, 2, "user/path/to/file.txt", {"path/to/file.txt"}, {{"file", "path/to/file.txt"}});
+        good({"a/a", "a/b", "a/c", "a/d", "a/e", "a/f", "a/g", "a/h", "a/i", "a/j", "a/k"}, 0, "a/a", {}, {});
 
         // above root
         bad("user/../..");
