@@ -165,7 +165,7 @@ struct router_test
             r.insert(p, i++);
         matches m;
         int const* v;
-        BOOST_TEST(v = r.find(request, m));
+        v = r.find(request, m);
         if (!BOOST_TEST(v))
             return;
         BOOST_TEST_EQ(*v, match_idx);
@@ -218,7 +218,7 @@ struct router_test
         BOOST_TEST_NO_THROW(r.insert(pattern, 0));
         matches m;
         int const* v;
-        BOOST_TEST_NOT(v = r.find(request, m));
+        v = r.find(request, m);
         BOOST_TEST_NOT(v);
     };
 
