@@ -149,6 +149,9 @@ struct router_test
 
         // above root
         bad("user/../..");
+
+        // neither segment nor field
+        bad("user/{", "user/johndoe");
     }
 
     static
@@ -216,7 +219,15 @@ struct router_test
         string_view request)
     {
         router<int> r;
-        BOOST_TEST_NO_THROW(r.insert(pattern, 0));
+        try
+        {
+            r.insert(pattern, 0);
+        }
+        catch (...)
+        {
+            BOOST_TEST(true);
+            return;
+        }
         matches m;
         int const* v;
         v = r.find(request, m);
