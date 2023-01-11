@@ -177,7 +177,7 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
             's390x-clang': 'S390x-Clang',
             'arm64-clang': 'ARM64-Clang',
             'freebsd-clang': 'FreeBSD-Clang',
-            'msvc': 'MSVC',
+            'msvc': 'MSVC (x64)',
             'x86-msvc': 'MSVC (x86)'
         }
 
@@ -446,7 +446,7 @@ def compilers_in_range(ranges_str):
         'freebsd-gcc': ['11', '10', '9', '8'],
         'clang': ['15', '14', '13', '12', '11', '10', '9', '8', '7', '6.0', '5.0', '4.0', '3.8'],
         'apple-clang': ['13.4.1'],
-        's390x-clang': ['15'],
+        's390x-clang': ['14'],
         'arm64-clang': ['12'],
         'freebsd-clang': ['15', '14', '13', '12', '11', '10'],
         'msvc': ['14.3', '14.2', '14.1'],
