@@ -18,10 +18,12 @@ def main(ctx):
          'msvc >=14.1',
          'arm64-gcc latest',
          's390x-gcc latest',
+         # 'freebsd-gcc latest',
          'apple-clang *',
          'arm64-clang latest',
          's390x-clang latest',
-         'x64-msvc latest'],
+         'freebsd-clang latest',
+         'x86-msvc latest'],
         # Standards
         '>=11')
 
@@ -169,13 +171,16 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
             'gcc': 'GCC',
             's390x-gcc': 'S390x-GCC',
             'arm64-gcc': 'ARM64-GCC',
+            'freebsd-gcc': 'FreeBSD-GCC',
             'clang': 'Clang',
             'apple-clang': 'Apple-Clang',
             's390x-clang': 'S390x-Clang',
             'arm64-clang': 'ARM64-Clang',
-            'msvc': 'MSVC (x86)',
-            'x64-msvc': 'MSVC (x64)'
+            'freebsd-clang': 'FreeBSD-Clang',
+            'msvc': 'MSVC',
+            'x86-msvc': 'MSVC (x86)'
         }
+
         uccompiler = uccompiler_names[compiler] if compiler in uccompiler_names else compiler
 
         # Create job name
@@ -269,7 +274,7 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
                 environment['B2_TOOLSET'] = 'clang-' + str(version[0]) + '.' + str(version[1])
         elif compiler.endswith('msvc'):
             environment['B2_TOOLSET'] = 'msvc-' + str(version[0]) + '.' + str(version[1])
-            if compiler == 'x64-msvc':
+            if compiler == 'x86-msvc':
                 environment['B2_ADDRESS_MODEL'] = '32'
 
         # environment['B2_DEFINES']
@@ -377,6 +382,16 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
                     xcode_version="13.4.1",
                     environment=environment,
                     globalenv=globalenv))
+        elif compiler.startswith('freebsd'):
+            jobs.append(
+                freebsd_cxx(
+                    name,
+                    compiler_exec,
+                    buildscript="drone",
+                    buildtype=buildtype,
+                    freebsd_version="13.1",
+                    environment=environment,
+                    globalenv=globalenv))
         else:
             jobs.append(
                 linux_cxx(
@@ -428,12 +443,14 @@ def compilers_in_range(ranges_str):
         'gcc': ['12', '11', '10', '9', '8', '7', '6', '5', '4.9', '4.8'],
         's390x-gcc': ['12'],
         'arm64-gcc': ['11'],
+        'freebsd-gcc': ['11', '10', '9', '8'],
         'clang': ['15', '14', '13', '12', '11', '10', '9', '8', '7', '6.0', '5.0', '4.0', '3.8'],
         'apple-clang': ['13.4.1'],
         's390x-clang': ['15'],
         'arm64-clang': ['12'],
+        'freebsd-clang': ['15', '14', '13', '12', '11', '10'],
         'msvc': ['14.3', '14.2', '14.1'],
-        'x64-msvc': ['14.1'],
+        'x86-msvc': ['14.1'],
     }
     parts = ranges_str.split()
     name = parts[0]
