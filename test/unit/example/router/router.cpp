@@ -175,18 +175,23 @@ struct router_test
         BOOST_TEST_EQ(*v, match_idx);
 
         BOOST_TEST_EQ(ms.size(), m.size());
+        BOOST_TEST_EQ(ms.size() == 0, m.empty());
 
         {
             auto it0 = ms.begin();
             auto it1 = m.begin();
             auto end0 = ms.end();
             auto end1 = m.end();
+            std::size_t j = 0;
             while (
                 it0 != end0 &&
                 it1 != end1)
             {
-                BOOST_TEST_EQ(*it0++, *it1++);
+                BOOST_TEST_EQ(*it0, *it1++);
+                BOOST_TEST_EQ(*it0, m[j]);
+                BOOST_TEST_EQ(*it0++, m.at(j++));
             }
+            BOOST_TEST_THROWS(m.at(j), std::out_of_range);
         }
 
         {
@@ -196,8 +201,11 @@ struct router_test
             {
                 BOOST_TEST(m.find(it->first) != m.end());
                 BOOST_TEST_EQ(m[it->first], it->second);
+                BOOST_TEST_EQ(m.at(it->first), it->second);
                 ++it;
             }
+            BOOST_TEST(m.find("XXX") == m.end());
+            BOOST_TEST_THROWS(m.at("XXX"), std::out_of_range);
         }
     };
 
