@@ -295,6 +295,10 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
         if type == 'cmake-install':
             environment['CMAKE_INSTALL_TEST'] = '1'
 
+        # environment['B2_LINKFLAGS']. switch gcc11 to a var?
+        if compiler == 'freebsd-gcc':
+            environment['B2_LINKFLAGS'] = '-Wl,-rpath=/usr/local/lib/gcc11'
+
         # Build type in script
         buildtype = type
         if type in ['asan', 'tsan', 'ubsan']:
