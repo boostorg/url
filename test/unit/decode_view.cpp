@@ -224,6 +224,8 @@ struct decode_view_test
             BOOST_TEST_EQ(*s.rfind('i'), 'i');
             it = s.rfind('x');
             BOOST_TEST(it == s.end());
+            it = s.rfind('a');
+            BOOST_TEST(it == s.begin());
         }
 
         // rfind()
