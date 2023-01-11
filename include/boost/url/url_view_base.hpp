@@ -228,7 +228,7 @@ public:
     /** Return the url string
 
         This function returns the entire url,
-        which main contain percent escapes.
+        which may contain percent escapes.
 
         @par Example
         @code
