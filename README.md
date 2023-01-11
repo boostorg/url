@@ -68,7 +68,7 @@ u.set_scheme( "http" )
  .set_encoded_path( "/index.htm" )
  .remove_query()
  .remove_fragment()
- .params().append( "key", "value" );
+ .params().append( {"key", "value"} );
 
 std::cout << u;
 
