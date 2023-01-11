@@ -206,7 +206,6 @@ public:
         this parameter is omitted, the default
         options are used.
     */
-    BOOST_URL_DECL
     explicit
     decode_view(
         pct_string_view s,
