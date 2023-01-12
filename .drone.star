@@ -27,15 +27,24 @@ def main(ctx):
         # Standards
         '>=11')
 
-
 # from https://github.com/boostorg/boost-ci
 load("@boost_ci//ci/drone/:functions.star", "linux_cxx", "windows_cxx", "osx_cxx", "freebsd_cxx")
 
 
-# This generator function should later be shared in a common repository
+# Generate a list of jobs for the specified ranges of compiler versions
+# compiler_ranges: The main parameter is the compiler ranges, including the range of versions we want to test
+#                  for each compiler
+# cxx_range: range of C++ standards to be tested with each compiler
+# max_cxx: maximum number of C++ standards to be tested with each compiler. The `max_cxx` most recent
+#          supported standards will be tested for each
+# coverage: whether we should create an extra special coverage job
+# docs: whether we should create an extra special docs job
+# asan: whether we should create an extra special asan job
+# tsan: whether we should create an extra special tsan job
+# ubsan: whether we should create an extra special ubsan job
+# cmake: whether we should create an extra special cmake job
 def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, asan=True, tsan=True, ubsan=True,
-             cmake=True,
-             warnings_as_errors=True):
+             cmake=True):
     # Get compiler versions we should test
     compilers = []
     latest_compilers = []
@@ -281,11 +290,6 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
         if type in ['codecov', 'asan', 'tsan', 'ubsan']:
             environment['B2_DEFINES'] = 'BOOST_NO_STRESS_TEST=1'
 
-        # environment['B2_CXXFLAGS']
-        if warnings_as_errors:
-            if not compiler.endswith('msvc'):
-                environment['B2_CXXFLAGS'] = '-Werror'
-
         # environment['CODECOV_TOKEN']
         if type == 'codecov':
             environment['CODECOV_TOKEN'] = {"from_secret": "codecov_token"}
@@ -414,7 +418,9 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
 
     return jobs
 
-
+# Returns whether the specified compiler/version support a given standard
+# Ex: Checking if GCC 14 supports C++11
+# - compiler_supports('gcc', '14', '11') -> True
 def compiler_supports(compiler, version, cxx):
     if compiler.endswith('gcc'):
         return \
@@ -441,8 +447,9 @@ def compiler_supports(compiler, version, cxx):
             (cxx == '03' or cxx == '98')
     return False
 
-
-def compilers_in_range(ranges_str):
+# Get list of available compiler versions in a semver range
+# - compilers_in_range('gcc >=10') -> [('gcc', '12'), ('gcc', '11'), ('gcc', '10')]
+def compilers_in_range(compiler_range_str):
     supported = {
         'gcc': ['12', '11', '10', '9', '8', '7', '6', '5', '4.9', '4.8'],
         's390x-gcc': ['12'],
@@ -456,118 +463,170 @@ def compilers_in_range(ranges_str):
         'msvc': ['14.3', '14.2', '14.1'],
         'x86-msvc': ['14.1'],
     }
-    parts = ranges_str.split()
+    # Split compiler and semver version
+    parts = compiler_range_str.split(' ', 1)
     name = parts[0]
-    semver_req = parts[1].strip()
-    if semver_req == 'latest':
+    semver_requirements_str = parts[1].strip()
+
+    # The shortcut "<compiler-name> latest" is also supported
+    if semver_requirements_str == 'latest':
         return [(name, supported[name][0])]
 
+    # Create list of available compilers in the range
     compilers = []
-    request_ranges = parse_semver_range(semver_req)
-    for supported_vstr in supported[name]:
-        if version_match(supported_vstr, request_ranges):
-            compilers.append((name, supported_vstr))
+    semver_requirements = parse_semver_range(semver_requirements_str)
+    for supported_version_str in supported[name]:
+        if version_match(supported_version_str, semver_requirements):
+            compilers.append((name, supported_version_str))
     return compilers
 
-
-def cxxs_in_range(ranges_str):
+# Get the C++ standard versions in a range of versions
+# Each C++ standard version can be represented by the two or
+# four char year version.
+# - cxxs_in_range('>=98 <=11') -> ['98', '03', '11']
+# - cxxs_in_range('>=1998 <=2011') -> ['98', '03', '11']
+def cxxs_in_range(ranges):
     supported_cxx = [1998, 2003, 2011, 2014, 2017, 2020]
     cxxs = []
 
     # Replace with 4 digit major so semver makes sense
-    ranges = parse_semver_range(ranges_str)
-    for range in ranges:
-        if range[1] < 98:
-            range[1] += 2000
-        elif range[1] < 100:
-            range[1] += 1900
+    if type(ranges) == "string":
+        ranges = parse_semver_range(ranges)
+    disjunction = ranges
+
+    for conjunction in disjunction:
+        for comparator in conjunction:
+            if comparator[1] < 98:
+                comparator[1] += 2000
+            elif comparator[1] < 100:
+                comparator[1] += 1900
 
     # Extract matching versions as 2 digit string
     for v in supported_cxx:
-        if version_match((v, 0, 0), ranges):
+        if version_match((v, 0, 0), disjunction):
             cxxs.append(str(v)[-2:])
     return cxxs
 
-
+# Check if a semver range contains a version
+# Each parameter can be a string or a version or range that has already been parsed.
+# - version_match('1.2.4', '>1.2.3') -> True
+# - version_match('1.0.0', '>1.2.3 || <0.1.2') -> True
+# - version_match('0.0.0', '>1.2.3 <2.0.0 || <0.1.2') -> True
 def version_match(v, ranges):
     if type(v) == "string":
         v = parse_semver(v)
     if type(ranges) == "string":
         ranges = parse_semver_range(ranges)
+    disjunction = ranges
+    any_in_disjunction = False
+    for conjunction in disjunction:
+        all_in_conjunction = True
+        for comparator in conjunction:
+            match = False
+            op = comparator[0]
+            if op.startswith('>'):
+                if v[0] > comparator[1]:
+                    match = True
+                elif v[0] < comparator[1]:
+                    match = False
+                elif v[1] > comparator[2]:
+                    match = True
+                elif v[1] < comparator[2]:
+                    match = False
+                elif v[2] > comparator[3]:
+                    match = True
+                else:
+                    match = op == '>=' and v[2] == comparator[3]
+            elif op.startswith('<'):
+                if v[0] < comparator[1]:
+                    match = True
+                elif v[0] > comparator[1]:
+                    match = False
+                elif v[1] < comparator[2]:
+                    match = True
+                elif v[1] > comparator[2]:
+                    match = False
+                elif v[2] < comparator[3]:
+                    match = True
+                else:
+                    match = op == '<=' and v[2] == comparator[3]
+            if op == '=':
+                match = v[0:2] == comparator[1:3]
+            if not match:
+                all_in_conjunction = False
+                break
+        if all_in_conjunction:
+            any_in_disjunction = True
+            break
+    return any_in_disjunction
 
-    for range in ranges:
-        if range[0] == '>' or range[0] == '>=':
-            if v[0] > range[1]:
-                return True
-            if v[0] < range[1]:
-                continue
-            if v[1] > range[2]:
-                return True
-            if v[1] < range[2]:
-                continue
-            if v[2] > range[3]:
-                return True
-            return not range[0] == '>' and v[2] == range[3]
-
-        if range[0] == '<' or range[0] == '<=':
-            if v[0] < range[1]:
-                return True
-            if v[0] > range[1]:
-                continue
-            if v[1] < range[2]:
-                return True
-            if v[1] > range[2]:
-                continue
-            if v[2] < range[3]:
-                return True
-            return not range[0] == '<' and v[2] == range[3]
-
-        if range[0] == '=':
-            return v[0] < range[1] and v[1] < range[2] and v[2] < range[3]
-
-        if range[0] == '^':
-            if range[1] == 0 and range[2] == 0:
-                return v[2] == range[3]
-            if range[1] == 0:
-                return v[1] == range[2] and v[2] >= range[3]
-            if v[0] != range[1]:
-                continue
-            if v[1] > range[2]:
-                return True
-            if v[1] < range[2]:
-                continue
-            return v[2] >= range[3]
-    return False
-
-
+# Parse a semver range
+# A semver range contains one or more semver comparators.
+# Each comparator can have one of the following operators:
+# - *: all versions
+# - =, >, <, >=, <=: version comparison
+# - ^: any compatible version (greater than X and less than next major release)
+# - ~: any patch-level change (greater than X and less than next minor release)
+# - ~: any patch-level change (greater than X and less than next minor release)
+# - -: the operator "-" is not supported (replace "X - Y" with ">=X <=Y")
+# Disjunctions are separated by "||" and each disjunction
+# contains a conjunction of one or more predicates.
+# The result type is a list of disjunctions of conjunctions.
+# Ex:
+# - parse_semver_range('>1.2.3') -> [[['>', 1, 2, 3]]]
+# - parse_semver_range('>1.2.3 || <0.1.2') -> [[['>', 1, 2, 3]], [['<', 0, 1, 2]]]
+# - parse_semver_range('>1.2.3 <2.0.0 || <0.1.2') -> [[['>', 1, 2, 3], ['<', 2, 0, 0]], [['<', 0, 1, 2]]]
 def parse_semver_range(range_strs):
     # req :== range * ( "||" range )
     # range :== ( compiler " " op semver ) | "*"
     # op :== '>' | '<' | '>=' | '<=' | '=' | '^'
     range_strs = range_strs.strip()
     ranges = []
-    for range_str in range_strs.split('||'):
-        if range_str == '*':
-            ranges.append(('>=', 0, 0, 0))
-            continue
-        # op
-        op = '='
-        if range_str[:2] in ['>=', '<=']:
-            op = range_str[:2]
-            version_str = range_str[2:].strip()
-        elif range_str[0] in ['>', '<', '=', '^']:
-            op = range_str[0]
-            version_str = range_str[1:].strip()
-        else:
-            version_str = range_str
-        # semver = major "." minor "." patch
-        # prerelease tags are not supported
-        [major, minor, patch] = parse_semver(version_str)
-        # apply op
-        ranges.append([op, major, minor, patch])
+    disjunction_str = range_strs.split('||')
+    for conjunction_str in disjunction_str:
+        ranges.append([])
+        for comparator_str in conjunction_str.split(' '):
+            # "*" is special in that it's not followed by a version
+            if comparator_str == '*':
+                ranges[-1].append(('>=', 0, 0, 0))
+                continue
+            # split operator from semver string
+            op = '='
+            if comparator_str[:2] in ['>=', '<=']:
+                op = comparator_str[:2]
+                version_str = comparator_str[2:].strip()
+            elif comparator_str[0] in ['>', '<', '=', '^', '~']:
+                op = comparator_str[0]
+                version_str = comparator_str[1:].strip()
+            else:
+                version_str = comparator_str
+            # semver = major "." minor "." patch
+            # prerelease tags are not supported
+            [major, minor, patch] = parse_semver(version_str)
+            # store the components of the conjunction
+            if op in ['>=', '<=', '>', '<', '=']:
+                ranges[-1].append([op, major, minor, patch])
+            elif op == '^':
+                if major > 0:
+                    ranges[-1].append(['>=', major, minor, patch])
+                    ranges[-1].append(['<', major + 1, 0, 0])
+                else:
+                    ranges[-1].append(['>=', 0, minor, patch])
+                    ranges[-1].append(['<', 0, minor + 1, 0])
+            elif op == '~':
+                minor_is_defined = version_str.find('.') != -1
+                if minor_is_defined:
+                    ranges[-1].append(['>=', major, minor, patch])
+                    ranges[-1].append(['<', major, minor + 1, 0])
+                else:
+                    ranges[-1].append(['>=', major, minor, patch])
+                    ranges[-1].append(['<', major + 1, 0, 0])
     return ranges
 
-
+# Parse a semver string
+# Ex:
+# - parse_semver('1.2.3') -> [1, 2, 3]
+# - parse_semver('1')     -> [1, 0, 0]
 def parse_semver(version_str):
     version_parts = version_str.split('.')
     major = int(version_parts[0]) if len(version_parts) > 0 else 0
