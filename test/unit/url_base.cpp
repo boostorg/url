@@ -1686,6 +1686,13 @@ struct url_base_test
         (void)pv;
         }
 
+        // set_params
+        assert( url( "http://example.com" ).set_params( {{"id", "42"}} ).encoded_query() == "id=42" );
+
+        // set_encoded_params
+        assert( url( "http://example.com" ).set_encoded_params( {{"id", "42"}} ).encoded_query() == "id=42" );
+
+
         // remove_query
         assert( url( "http://www.example.com?id=42" ).remove_query().buffer() == "http://www.example.com" );
 
