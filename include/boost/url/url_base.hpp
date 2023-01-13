@@ -1966,7 +1966,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4.  Query (rfc3986)</a>
         @li <a href="https://en.wikipedia.org/wiki/Query_string"
             >Query string (Wikipedia)</a>
@@ -2022,7 +2022,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4.  Query (rfc3986)</a>
         @li <a href="https://en.wikipedia.org/wiki/Query_string"
             >Query string (Wikipedia)</a>
@@ -2071,7 +2071,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4.  Query (rfc3986)</a>
         @li <a href="https://en.wikipedia.org/wiki/Query_string"
             >Query string (Wikipedia)</a>
@@ -2125,7 +2125,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4.  Query (rfc3986)</a>
         @li <a href="https://en.wikipedia.org/wiki/Query_string"
             >Query string (Wikipedia)</a>
@@ -2173,7 +2173,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4.  Query (rfc3986)</a>
         @li <a href="https://en.wikipedia.org/wiki/Query_string"
             >Query string (Wikipedia)</a>
@@ -2216,7 +2216,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4.  Query (rfc3986)</a>
         @li <a href="https://en.wikipedia.org/wiki/Query_string"
             >Query string (Wikipedia)</a>
