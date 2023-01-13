@@ -1228,6 +1228,22 @@ encoded_params() noexcept
 
 url_base&
 url_base::
+set_params( std::initializer_list<param_view> ps ) noexcept
+{
+    params().assign(ps);
+    return *this;
+}
+
+url_base&
+url_base::
+set_encoded_params( std::initializer_list< param_pct_view > ps ) noexcept
+{
+    encoded_params().assign(ps);
+    return *this;
+}
+
+url_base&
+url_base::
 remove_query() noexcept
 {
     op_t op(*this);
