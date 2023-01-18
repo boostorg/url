@@ -240,7 +240,7 @@ public:
 
         @par Example
         @code
-        assert( parse_authority( "www.example.com" ).value().encoded_authority() == "www.example.com" );
+        assert( parse_authority( "www.example.com" ).value().buffer() == "www.example.com" );
         @endcode
 
         @par BNF
