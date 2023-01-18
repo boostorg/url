@@ -347,6 +347,9 @@ public:
             result< authority_view > rv = parse_authority( "user:pass@www.example.com:8080" );
             (void)rv;
         }
+        {
+            BOOST_TEST( parse_authority( "www.example.com" ).value().buffer() == "www.example.com" );
+        }
 
         testSpecialMembers();
         testObservers();
