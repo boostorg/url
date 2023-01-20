@@ -31,43 +31,37 @@
 #include <iostream>
 #include <functional>
 
-/*
- * Aliases
- */
-
 namespace urls = boost::urls;
 namespace asio = boost::asio;
 namespace beast = boost::beast;
 namespace http = beast::http;
 using string_view = urls::string_view;
 using request_t = http::request<http::string_body>;
-using handler = std::function<http::message_generator(request_t const&, urls::matches)>;
-
-/*
- * Auxiliary functions
- */
+struct connection;
+using handler = std::function<void(connection&, urls::matches)>;
 
 int
-serve(urls::router<handler> r, asio::ip::address a, unsigned short port);
+serve(urls::router<handler> r, asio::ip::address a, unsigned short port, std::string doc_root);
 
-string_view
-mime_type(string_view path);
+struct connection
+{
+    connection(asio::io_context& ioc)
+        : socket(ioc) {}
 
-http::response<http::string_body>
-string_response(
-    string_view msg,
-    request_t const& req);
+    void
+    string_reply(string_view msg);
 
-http::message_generator
-file_response(
-    string_view doc_root,
-    string_view path,
-    request_t const& req);
+    void
+    file_reply(string_view path);
 
-std::string
-path_cat(
-    beast::string_view base,
-    beast::string_view path);
+    void
+    error_reply(http::status, string_view msg);
+
+    beast::error_code ec;
+    asio::ip::tcp::socket socket;
+    std::string doc_root;
+    request_t req;
+};
 
 int
 main(int argc, char **argv)
@@ -99,18 +93,18 @@ main(int argc, char **argv)
      */
     urls::router<handler> r;
 
-    r.insert("/", [&](request_t const& req, urls::matches const&) {
-        return string_response("Hello!", req);
+    r.insert("/", [&](connection& c, urls::matches const&) {
+        c.string_reply("Hello!");
     });
 
-    r.insert("/user/{name}", [&](request_t const& req, urls::matches const& m) {
+    r.insert("/user/{name}", [&](connection& c, urls::matches const& m) {
         std::string msg = "Hello, ";
         urls::pct_string_view(m[0]).decode({}, urls::string_token::append_to(msg));
         msg += "!";
-        return string_response(msg, req);
+        c.string_reply(msg);
     });
 
-    r.insert("/user", [&](request_t const& req, urls::matches const&) {
+    r.insert("/user", [&](connection& c, urls::matches const&) {
         std::string msg = "Users: ";
         auto names = {"johndoe", "maria", "alice"};
         for (auto name: names) {
@@ -120,19 +114,90 @@ main(int argc, char **argv)
             msg += name;
             msg += "</a> ";
         }
-        return string_response(msg, req);
+        c.string_reply(msg);
     });
 
-    r.insert("/public/{path+}", [&](request_t const& req, urls::matches m) {
-        return file_response(doc_root, m["path"], req);
+    r.insert("/public/{path+}", [&](connection& c, urls::matches m) {
+        c.file_reply(m["path"]);
     });
 
-    return serve(std::move(r), address, port);
+    return serve(std::move(r), address, port, std::move(doc_root));
 }
 
-auto
-string_response(string_view msg, request_t const& req)
-    -> http::response<http::string_body>
+#define ROUTER_CHECK(cond)       if(!(cond)) { break; }
+#define ROUTER_CHECK_EC(ec, cat) if(ec.failed()) { std::cerr << "cat: " << ec.message() << "\n"; break; }
+
+int
+serve(urls::router<handler> r, asio::ip::address address, unsigned short port, std::string doc_root)
+{
+    /*
+     * Serve the routes with a simple synchronous
+     * server. This is an implementation detail
+     * in the context of this example.
+     */
+    std::cout << "Listening on http://" << address << ":" << port << "\n";
+    asio::io_context ioc(1);
+    asio::ip::tcp::acceptor acceptor(ioc, {address, port});
+    urls::matches m;
+    for(;;)
+    {
+        connection c(ioc);
+        c.doc_root = doc_root;
+        acceptor.accept(c.socket);
+        beast::flat_buffer buffer;
+        for(;;)
+        {
+            // Read a request
+            http::read(c.socket, buffer, c.req, c.ec);
+            ROUTER_CHECK(c.ec != http::error::end_of_stream)
+            ROUTER_CHECK_EC(c.ec, read)
+            // Handle request
+            auto rpath = urls::parse_path(c.req.target());
+            if (c.req.method() != http::verb::get &&
+                c.req.method() != http::verb::head)
+                c.error_reply(
+                    http::status::bad_request,
+                    std::string("Unknown HTTP-method: ") +
+                        std::string(c.req.method_string()));
+            else if (!rpath)
+                c.error_reply(http::status::bad_request, "Illegal request-target");
+            else if (auto h = r.find(*rpath, m))
+                (*h)(c, m);
+            else
+                c.error_reply(
+                    http::status::not_found,
+                    "The resource '" +
+                        std::string(rpath->buffer()) +
+                        "' was not found.");
+            ROUTER_CHECK_EC(c.ec, write)
+            ROUTER_CHECK(c.req.keep_alive())
+        }
+        c.socket.shutdown(asio::ip::tcp::socket::shutdown_send, c.ec);
+    }
+    return EXIT_SUCCESS;
+}
+
+#undef ROUTER_CHECK_EC
+#undef ROUTER_CHECK
+
+void
+connection::
+error_reply(http::status s, string_view msg)
+{
+    // invalid route
+    http::response<http::string_body> res{s, req.version()};
+    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+    res.set(http::field::content_type, "text/html");
+    res.keep_alive(req.keep_alive());
+    res.body() = msg;
+    res.prepare_payload();
+    http::write(socket, res, ec);
+}
+
+
+void
+connection::
+string_reply(string_view msg)
 {
     http::response<http::string_body> res{http::status::ok, req.version()};
     res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
@@ -140,28 +205,34 @@ string_response(string_view msg, request_t const& req)
     res.keep_alive(req.keep_alive());
     res.body() = msg;
     res.prepare_payload();
-    return res;
+    http::write(socket, res, ec);
 }
 
-auto
-file_response(string_view doc_root, string_view path, request_t const& req)
-    -> http::message_generator
+string_view
+mime_type(string_view path);
+
+std::string
+path_cat(
+    beast::string_view base,
+    beast::string_view path);
+
+void
+connection::
+file_reply(string_view path)
 {
     beast::error_code ec;
     http::file_body::value_type body;
     std::string jpath = path_cat(doc_root, path);
     body.open(jpath.c_str(), beast::file_mode::scan, ec);
-    auto const size = body.size();
     if(ec == beast::errc::no_such_file_or_directory)
     {
-        http::response<http::string_body> res{http::status::not_found, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, "text/html");
-        res.keep_alive(req.keep_alive());
-        res.body() = "The resource '" + std::string(path) + "' was not found in " + jpath;
-        res.prepare_payload();
-        BOOST_URL_RETURN(res);
+        error_reply(
+            http::status::not_found,
+            "The resource '" + std::string(path) +
+                "' was not found in " + jpath);
+        return;
     }
+    auto const size = body.size();
     http::response<http::file_body> res{
         std::piecewise_construct,
         std::make_tuple(std::move(body)),
@@ -170,7 +241,7 @@ file_response(string_view doc_root, string_view path, request_t const& req)
     res.set(http::field::content_type, mime_type(path));
     res.content_length(size);
     res.keep_alive(req.keep_alive());
-    BOOST_URL_RETURN(res);
+    http::write(socket, res, ec);
 }
 
 // Append an HTTP rel-path to a local filesystem path.
@@ -203,94 +274,6 @@ path_cat(
             c = path_separator;
 #endif
     return result;
-}
-
-int
-serve(urls::router<handler> r, asio::ip::address address, unsigned short port)
-{
-    /*
-     * Serve the routes with a simple synchronous
-     * server. This is an implementation detail
-     * in the context of this example.
-     */
-    std::cout << "Listening on http://" << address << ":" << port << "\n";
-    asio::io_context ioc(1);
-    asio::ip::tcp::acceptor acceptor(ioc, {address, port});
-    for(;;)
-    {
-        asio::ip::tcp::socket socket{ioc};
-        acceptor.accept(socket);
-        beast::error_code ec;
-        beast::flat_buffer buffer;
-        for(;;)
-        {
-            // Read a request
-            http::request<http::string_body> req;
-            http::read(socket, buffer, req, ec);
-            if(ec == http::error::end_of_stream)
-                break;
-            if(ec)
-            {
-                std::cerr << "read: " << ec.message() << "\n";
-                break;
-            }
-
-            // Handle request
-            bool const method_ok =
-                req.method() == http::verb::get ||
-                req.method() == http::verb::head;
-            auto rpath = urls::parse_path(req.target());
-            if (method_ok && rpath)
-            {
-                urls::matches m;
-                if (auto h = r.find(*rpath, m))
-                {
-                    // good request
-                    http::message_generator res = (*h)(req, m);
-                    beast::write(socket, std::move(res), ec);
-                }
-                else
-                {
-                    // invalid route
-                    http::response<http::string_body> res{http::status::not_found, req.version()};
-                    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-                    res.set(http::field::content_type, "text/html");
-                    res.keep_alive(req.keep_alive());
-                    res.body() = "The resource '" + std::string(rpath->buffer()) + "' was not found.";
-                    res.prepare_payload();
-                    http::write(socket, res, ec);
-                }
-            }
-            else
-            {
-                // bad request
-                http::response<http::string_body> res{http::status::bad_request, req.version()};
-                res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-                res.set(http::field::content_type, "text/html");
-                res.keep_alive(req.keep_alive());
-                if (!method_ok)
-                {
-                    res.body() = "Unknown HTTP-method: ";
-                    res.body() += req.method_string();
-                }
-                else
-                    res.body() = std::string("Illegal request-target");
-                res.prepare_payload();
-                http::write(socket, res, ec);
-            }
-            if(ec)
-            {
-                std::cerr << "write: " << ec.message() << "\n";
-                break;
-            }
-            if(!req.keep_alive())
-            {
-                break;
-            }
-        }
-        socket.shutdown(asio::ip::tcp::socket::shutdown_send, ec);
-    }
-    return EXIT_SUCCESS;
 }
 
 string_view
