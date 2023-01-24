@@ -700,6 +700,7 @@ struct format_test
         BOOST_TEST_THROWS(format("{}://[", "http"), system_error);
         BOOST_TEST_THROWS(format("{://"), system_error);
         BOOST_TEST_THROWS(format("http:%"), system_error);
+        BOOST_TEST_THROWS(format("{}:\\", "A"), system_error);
 
         // static_url
         {
@@ -819,6 +820,7 @@ struct format_test
                     {{"basePath", "v2"}, {"path", "index.html"}, {"port", 80}, {"username", "joe"}}).buffer(),
                 "https://joe.gigantic-server.com:80/v2/index.html");
         }
+
     }
 
     void
