@@ -23,8 +23,19 @@ struct parse_test
         // issue 497
         {
             auto r = parse_uri_reference("?~");
-            BOOST_TEST_NO_THROW(r);
+            BOOST_TEST_NO_THROW(r.value());
             BOOST_TEST(r->query() == "~");
+        }
+        // issue 665
+        {
+            {
+                auto r = parse_uri_reference("A:\\");
+                BOOST_TEST_THROWS(r.value(), system_error);
+            }
+            {
+                auto r = parse_uri_reference("A:\"");
+                BOOST_TEST_THROWS(r.value(), system_error);
+            }
         }
         // parse docs
         {

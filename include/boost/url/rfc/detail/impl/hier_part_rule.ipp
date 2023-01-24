@@ -50,7 +50,7 @@ parse(
         if(! rv)
             return rv.error();
         t.path = *rv;
-        t.segment_count = 1;
+        t.segment_count = !t.path.empty();
         return t;
     }
     if( it[0] == '/' &&
