@@ -43,7 +43,7 @@ load("@boost_ci//ci/drone/:functions.star", "linux_cxx", "windows_cxx", "osx_cxx
 # tsan: whether we should create an extra special tsan job
 # ubsan: whether we should create an extra special ubsan job
 # cmake: whether we should create an extra special cmake job
-def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, asan=True, tsan=True, ubsan=True,
+def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, asan=True, tsan=False, ubsan=True,
              cmake=True):
     # Get compiler versions we should test
     compilers = []

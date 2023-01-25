@@ -17,3 +17,7 @@ add_subdirectory(extra)
 add_subdirectory(limits)
 add_subdirectory(unit)
 #add_subdirectory(wpt)
+
+if (BOOST_URL_BUILD_FUZZERS)
+    add_subdirectory(fuzz)
+endif()
