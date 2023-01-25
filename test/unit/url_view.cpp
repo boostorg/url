@@ -541,6 +541,16 @@ public:
             BOOST_TEST_EQ(u.authority().port(), "65536");
             BOOST_TEST_EQ(u.authority().port_number(), 0);
         }
+        // issue 666
+        {
+            url_view u("http://:233337");
+            BOOST_TEST(u.has_port());
+            BOOST_TEST_EQ(u.port(), "233337");
+            BOOST_TEST_EQ(u.port_number(), 0);
+            BOOST_TEST(u.authority().has_port());
+            BOOST_TEST_EQ(u.authority().port(), "233337");
+            BOOST_TEST_EQ(u.authority().port_number(), 0);
+        }
     }
 
     void
