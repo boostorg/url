@@ -50,7 +50,11 @@ load("@boost_ci//ci/drone/:functions.star", "linux_cxx", "windows_cxx", "osx_cxx
 # ubsan: whether we should create an extra special ubsan job
 # cmake: whether we should create an extra special cmake job
 def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, asan=True, tsan=False, ubsan=True,
-             cmake=True):
+             cmake=True, packages=[]):
+    # swap: `packages` variable will be reused
+    packages_requested=list(packages)
+    packages=[]
+
     # Get compiler versions we should test
     # Each compiler is a tuple (represented as a list) of:
     # - compiler name
@@ -203,6 +207,9 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
                 packages.append('libc++-dev')
             if version[0] == 6:
                 packages.append('libc++abi-dev')
+
+        if packages_requested:
+            packages.extend(packages_requested)
 
         # Create uppercase compiler name
         uccompiler_names = {
