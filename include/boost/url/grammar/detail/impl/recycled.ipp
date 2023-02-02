@@ -13,13 +13,10 @@
 #include <cstdlib>
 #include <mutex>
 #include <utility>
-
-#ifdef _MSC_VER
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#include <debugapi.h>
+#ifdef BOOST_URL_REPORT
+# ifdef _MSC_VER
+#  include <intrin.h>
+# endif
 #endif
 
 namespace boost {
@@ -50,10 +47,10 @@ struct all_reports
     {
         // breakpoint here to view report
 #ifdef BOOST_URL_REPORT
-    #ifdef _MSC_VER
+# ifdef _MSC_VER
         if(count_max > 0)
-            ::DebugBreak();
-    #endif
+            ::__debugbreak();
+# endif
 #endif
     }
 };

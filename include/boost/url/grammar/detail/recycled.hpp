@@ -71,7 +71,7 @@ void
 recycled_add(
     std::size_t n) noexcept
 {
-    recycler_add_impl(n);
+    recycled_add_impl(n);
 }
 
 inline
@@ -79,7 +79,7 @@ void
 recycled_remove(
     std::size_t n) noexcept
 {
-    recycler_remove_impl(n);
+    recycled_remove_impl(n);
 }
 
 #else
