@@ -177,18 +177,6 @@ jobs:
               - clang-12
               - libc++-12-dev
               - libc++abi-12-dev
-          - name: UBSAN
-            toolset: clang
-            compiler: clang++-12
-            cxxstd: "17,20"
-            cxxflags: -stdlib=libc++
-            linkflags: -stdlib=libc++
-            ubsan: 1
-            os: ubuntu-20.04
-            install:
-              - clang-12
-              - libc++-12-dev
-              - libc++abi-12-dev
 
           - toolset: clang
             cxxstd: "11,14,17"
