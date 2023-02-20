@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/string_view.hpp>
 #include <boost/url/detail/except.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/make_void.hpp>
 #include <memory>
 #include <string>
 
