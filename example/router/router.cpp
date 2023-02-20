@@ -41,7 +41,11 @@ struct connection;
 using handler = std::function<void(connection&, urls::matches)>;
 
 int
-serve(urls::router<handler> r, asio::ip::address a, unsigned short port, std::string doc_root);
+serve(
+    urls::router<handler> const& r,
+    asio::ip::address const& a,
+    unsigned short port,
+    std::string const& doc_root);
 
 struct connection
 {
@@ -121,14 +125,18 @@ main(int argc, char **argv)
         c.file_reply(m["path"]);
     });
 
-    return serve(std::move(r), address, port, std::move(doc_root));
+    return serve(r, address, port, doc_root);
 }
 
 #define ROUTER_CHECK(cond)       if(!(cond)) { break; }
-#define ROUTER_CHECK_EC(ec, cat) if(ec.failed()) { std::cerr << "cat: " << ec.message() << "\n"; break; }
+#define ROUTER_CHECK_EC(ec, cat) if(ec.failed()) { std::cerr << #cat << ": " << ec.message() << "\n"; break; }
 
 int
-serve(urls::router<handler> r, asio::ip::address address, unsigned short port, std::string doc_root)
+serve(
+    urls::router<handler> const& r,
+    asio::ip::address const& address,
+    unsigned short port,
+    std::string const& doc_root)
 {
     /*
      * Serve the routes with a simple synchronous
@@ -220,7 +228,6 @@ void
 connection::
 file_reply(string_view path)
 {
-    beast::error_code ec;
     http::file_body::value_type body;
     std::string jpath = path_cat(doc_root, path);
     body.open(jpath.c_str(), beast::file_mode::scan, ec);
