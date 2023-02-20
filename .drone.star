@@ -25,7 +25,13 @@ def main(ctx):
          'freebsd-clang latest',
          'x86-msvc latest'],
         # Standards
-        '>=11')
+        '>=11') + [
+               linux_cxx("GCC 12 (no-mutex)", "g++-12", packages="g++-12", buildscript="drone", buildtype="boost",
+                         image="cppalliance/droneubuntu2204:1",
+                         environment={'B2_TOOLSET': 'gcc-12', 'B2_DEFINES': 'BOOST_URL_DISABLE_THREADS=1',
+                                      'B2_CXXSTD': '17'}, globalenv={'B2_CI_VERSION': '1', 'B2_VARIANT': 'release'}),
+           ]
+
 
 # from https://github.com/boostorg/boost-ci
 load("@boost_ci//ci/drone/:functions.star", "linux_cxx", "windows_cxx", "osx_cxx", "freebsd_cxx")
@@ -418,6 +424,7 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
 
     return jobs
 
+
 # Returns whether the specified compiler/version support a given standard
 # Ex: Checking if GCC 14 supports C++11
 # - compiler_supports('gcc', '14', '11') -> True
@@ -446,6 +453,7 @@ def compiler_supports(compiler, version, cxx):
             (cxx == '11' and version_match(version, '>=14.1')) or \
             (cxx == '03' or cxx == '98')
     return False
+
 
 # Get list of available compiler versions in a semver range
 # - compilers_in_range('gcc >=10') -> [('gcc', '12'), ('gcc', '11'), ('gcc', '10')]
@@ -480,6 +488,7 @@ def compilers_in_range(compiler_range_str):
             compilers.append((name, supported_version_str))
     return compilers
 
+
 # Get the C++ standard versions in a range of versions
 # Each C++ standard version can be represented by the two or
 # four char year version.
@@ -506,6 +515,7 @@ def cxxs_in_range(ranges):
         if version_match((v, 0, 0), disjunction):
             cxxs.append(str(v)[-2:])
     return cxxs
+
 
 # Check if a semver range contains a version
 # Each parameter can be a string or a version or range that has already been parsed.
@@ -559,6 +569,7 @@ def version_match(v, ranges):
             any_in_disjunction = True
             break
     return any_in_disjunction
+
 
 # Parse a semver range
 # A semver range contains one or more semver comparators.
@@ -622,6 +633,7 @@ def parse_semver_range(range_strs):
                     ranges[-1].append(['>=', major, minor, patch])
                     ranges[-1].append(['<', major + 1, 0, 0])
     return ranges
+
 
 # Parse a semver string
 # Ex:

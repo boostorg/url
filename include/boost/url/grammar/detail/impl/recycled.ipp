@@ -11,8 +11,9 @@
 #define BOOST_URL_GRAMMAR_DETAIL_IMPL_RECYCLED_IPP
 
 #include <cstdlib>
-#include <mutex>
 #include <utility>
+#include <atomic>
+
 #ifdef BOOST_URL_REPORT
 # ifdef _MSC_VER
 #  include <intrin.h>
@@ -26,22 +27,20 @@ namespace detail {
 
 struct all_reports
 {
-    std::mutex m;
-
     // current count
-    std::size_t count = 0;
+    std::atomic<std::size_t> count = {0};
 
     // current bytes
-    std::size_t bytes = 0;
+    std::atomic<std::size_t> bytes = {0};
 
     // highest total ptr count
-    std::size_t count_max = 0;
+    std::atomic<std::size_t> count_max = {0};
 
     // highest total bytes
-    std::size_t bytes_max = 0;
+    std::atomic<std::size_t> bytes_max = {0};
 
     // largest single allocation
-    std::size_t alloc_max = 0;
+    std::atomic<std::size_t> alloc_max = {0};
 
     ~all_reports()
     {
@@ -61,30 +60,36 @@ void
 recycled_add_impl(
     std::size_t n) noexcept
 {
-    std::lock_guard<
-        std::mutex> m(all_reports_.m);
-
     auto& a = all_reports_;
 
-    a.count++;
-    if( a.count_max < a.count)
-        a.count_max = a.count;
+    std::size_t new_count = ++a.count;
+    std::size_t old_count_max = a.count_max;
+    while (
+        old_count_max < new_count &&
+        !a.count_max.compare_exchange_weak(
+            old_count_max, new_count))
+    {}
 
-    a.bytes += n;
-    if( a.bytes_max < a.bytes)
-        a.bytes_max = a.bytes;
+    std::size_t new_bytes = a.bytes.fetch_add(n);
+    std::size_t old_bytes_max = a.bytes_max;
+    while (
+        old_bytes_max < new_bytes &&
+        !a.bytes_max.compare_exchange_weak(
+            old_bytes_max, new_bytes))
+    {}
 
-    if( a.alloc_max < n)
-        a.alloc_max = n;
+    std::size_t old_alloc_max = a.alloc_max;
+    while (
+        old_alloc_max < n &&
+        !a.alloc_max.compare_exchange_weak(
+            old_alloc_max, n))
+    {}
 }
 
 void
 recycled_remove_impl(
     std::size_t n) noexcept
 {
-    std::lock_guard<
-        std::mutex> m(all_reports_.m);
-
     all_reports_.count--;
     all_reports_.bytes-=n;
 }
