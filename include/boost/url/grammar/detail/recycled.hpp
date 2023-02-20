@@ -10,7 +10,6 @@
 #ifndef BOOST_URL_GRAMMAR_DETAIL_RECYCLED_HPP
 #define BOOST_URL_GRAMMAR_DETAIL_RECYCLED_HPP
 
-#include <mutex>
 #include <utility>
 
 namespace boost {
