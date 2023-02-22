@@ -119,4 +119,14 @@ using pos_t = size_t;
 # error Unknown or unsupported architecture, please open an issue
 #endif
 
+namespace boost {
+namespace urls {
+
+// avoid some of Boost.TypeTraits for just this
+template<class...> struct make_void { typedef void type; };
+template<class... Ts> using void_t = typename make_void<Ts...>::type;
+
+} // urls
+} // boost
+
 #endif
