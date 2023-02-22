@@ -70,7 +70,7 @@ recycled_add_impl(
             old_count_max, new_count))
     {}
 
-    std::size_t new_bytes = a.bytes.fetch_add(n);
+    std::size_t new_bytes = a.bytes.fetch_add(n) + n;
     std::size_t old_bytes_max = a.bytes_max;
     while (
         old_bytes_max < new_bytes &&
