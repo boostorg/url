@@ -11,7 +11,6 @@
 #define BOOST_URL_DETAIL_OPTIONAL_STRING_HPP
 
 #include <boost/url/string_view.hpp>
-#include <boost/type_traits/make_void.hpp>
 
 namespace boost {
 namespace urls {
@@ -47,7 +46,7 @@ struct is_dereferenceable : std::false_type
 template <class T>
 struct is_dereferenceable<
     T,
-    boost::void_t<
+    void_t<
         decltype(*std::declval<T>())
         >> : std::true_type
 {};
