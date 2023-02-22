@@ -52,6 +52,10 @@ load("@boost_ci//ci/drone/:functions.star", "linux_cxx", "windows_cxx", "osx_cxx
 def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, asan=True, tsan=False, ubsan=True,
              cmake=True):
     # Get compiler versions we should test
+    # Each compiler is a tuple (represented as a list) of:
+    # - compiler name
+    # - compiler version
+    # - job type (one of 'boost', 'codecov', 'cmake-install', 'cmake', 'asan', 'tsan', 'ubsan', 'docs')
     compilers = []
     latest_compilers = []
     oldest_compilers = []
@@ -91,11 +95,15 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
 
     # Choose compilers for special job types
     latest_gcc = None
+    latest_apple_clang = None
     for desc in latest_compilers:
         [compiler, version_str, type] = desc
         if compiler == 'gcc':
             latest_gcc = desc
-            break
+        if compiler == 'apple-clang':
+            latest_apple_clang = desc
+
+    # Create special job types
     if latest_gcc != None:
         if coverage:
             coverage_desc = latest_gcc[:]
@@ -125,6 +133,21 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
             docs_desc = latest_gcc[:]
             docs_desc[2] = 'docs'
             compilers = [docs_desc] + compilers
+
+    if latest_apple_clang != None:
+        if asan:
+            asan_desc = latest_apple_clang[:]
+            asan_desc[2] = 'asan'
+            compilers = [asan_desc] + compilers
+        if tsan:
+            tsan_desc = latest_apple_clang[:]
+            tsan_desc[2] = 'tsan'
+            compilers = [tsan_desc] + compilers
+        if ubsan:
+            ubsan_desc = latest_apple_clang[:]
+            ubsan_desc[2] = 'ubsan'
+            compilers = [ubsan_desc] + compilers
+
     compilers = latest_compilers + oldest_compilers + compilers
 
     # Standards we should test whenever possible
@@ -266,7 +289,8 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
         # environment['B2_UBSAN']
         if type == 'ubsan':
             environment['B2_UBSAN'] = '1'
-            environment['B2_LINKFLAGS'] = '-fuse-ld=gold'
+            if compiler.endswith('gcc'):
+                environment['B2_LINKFLAGS'] = '-fuse-ld=gold'
 
         # environment['B2_CXXSTD']
         if type not in ['docs', 'cmake', 'cmake-install']:
