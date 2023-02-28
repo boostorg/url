@@ -18,11 +18,10 @@ namespace urls {
 error_code
 make_error_code(error e)
 {
-    struct codes : error_category
+    struct cat_type : error_category
     {
-        virtual ~codes() = default;
-
-        codes() noexcept
+        constexpr
+        cat_type() noexcept
             : error_category(
                 0xbc15399d7a4ce829)
         {
@@ -70,7 +69,7 @@ case error::missing_pct_hexdig:
         }
     };
 
-    static codes const cat{};
+    static constexpr cat_type const cat{};
     return error_code{static_cast<
         std::underlying_type<error>::type>(e), cat};
 }

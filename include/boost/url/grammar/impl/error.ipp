@@ -20,11 +20,10 @@ error_code
 make_error_code(
     error e) noexcept
 {
-    struct codes : error_category
+    struct cat_type : error_category
     {
-        virtual ~codes() = default;
-
-        codes() noexcept
+        constexpr
+        cat_type() noexcept
             : error_category(
                 0x0536e50a30f9e9f2)
         {
@@ -66,7 +65,7 @@ case error::out_of_range:
         }
     };
 
-    static codes const cat{};
+    static constexpr cat_type cat{};
     return error_code{static_cast<
         std::underlying_type<error>::type>(e), cat};
 }
