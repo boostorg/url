@@ -42,7 +42,7 @@ struct BOOST_SYMBOL_VISIBLE
     BOOST_URL_DECL system::error_condition
         default_error_condition(
             int code) const noexcept override;
-    error_cat_type() noexcept
+    BOOST_SYSTEM_CONSTEXPR error_cat_type() noexcept
         : error_category(0xbc15399d7a4ce829)
     {
     }
@@ -55,7 +55,8 @@ system::error_code
 make_error_code(
     error ev) noexcept
 {
-    static detail::error_cat_type const cat{};
+    static BOOST_SYSTEM_CONSTEXPR
+        detail::error_cat_type cat{};
     return system::error_code{
         static_cast<std::underlying_type<
             error>::type>(ev), cat};
