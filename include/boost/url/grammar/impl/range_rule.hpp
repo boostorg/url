@@ -384,7 +384,7 @@ public:
 
     bool
     operator==(
-        iterator other) const noexcept
+        iterator const& other) const noexcept
     {
         // can't compare iterators
         // from different containers!
@@ -395,7 +395,7 @@ public:
 
     bool
     operator!=(
-        iterator other) const noexcept
+        iterator const& other) const noexcept
     {
         return !(*this == other);
     }
