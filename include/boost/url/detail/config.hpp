@@ -90,12 +90,10 @@
 #define BOOST_URL_RETURN(x) return (x)
 #endif
 
-using pos_t = size_t;
-
 #ifndef BOOST_URL_MAX_SIZE
 // we leave room for a null,
-// and still fit in pos_t
-#define BOOST_URL_MAX_SIZE ((pos_t(-1))-1)
+// and still fit in size_t
+#define BOOST_URL_MAX_SIZE ((std::size_t(-1))-1)
 #endif
 
 #ifdef BOOST_GCC
