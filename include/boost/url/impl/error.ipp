@@ -71,6 +71,22 @@ return grammar::condition::fatal;
     }
 }
 
+//-----------------------------------------------
+
+// msvc 14.0 has a bug that warns about inability
+// to use constexpr construction here, even though
+// there's no constexpr construction
+#if defined(_MSC_VER) && _MSC_VER <= 1900
+# pragma warning( push )
+# pragma warning( disable : 4592 )
+#endif
+
+error_cat_type error_cat;
+
+#if defined(_MSC_VER) && _MSC_VER <= 1900
+# pragma warning( pop )
+#endif
+
 } // detail
 
 } // urls

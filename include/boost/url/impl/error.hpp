@@ -48,18 +48,21 @@ struct BOOST_SYMBOL_VISIBLE
     }
 };
 
+BOOST_URL_DECL extern
+    error_cat_type error_cat;
+
 } // detail
 
 inline
+BOOST_SYSTEM_CONSTEXPR
 system::error_code
 make_error_code(
     error ev) noexcept
 {
-    static BOOST_SYSTEM_CONSTEXPR
-        detail::error_cat_type cat{};
     return system::error_code{
         static_cast<std::underlying_type<
-            error>::type>(ev), cat};
+            error>::type>(ev),
+        detail::error_cat};
 }
 
 } // urls
