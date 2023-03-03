@@ -1226,6 +1226,21 @@ struct url_test
     }
 
     void
+    testConst()
+    {
+        auto f1 = [](segments_view /*seg*/) {};
+        auto f2 = [](params_view /*ps*/) {};
+        auto f3 = [](segments_encoded_view /*seg*/) {};
+        auto f4 = [](params_encoded_view /*ps*/) {};
+
+        const url u("/foobar");
+        f1(u.segments());
+        f2(u.params());
+        f3(u.encoded_segments());
+        f4(u.encoded_params());
+    }
+
+    void
     run()
     {
         testSpecial();
@@ -1239,6 +1254,7 @@ struct url_test
         testNormalize();
         testSwap();
         testNull();
+        testConst();
     }
 };
 
