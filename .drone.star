@@ -25,7 +25,7 @@ def main(ctx):
          'freebsd-clang latest',
          'x86-msvc latest'],
         # Standards
-        '>=11') + [
+        '>=11', cache_dir='cache') + [
                linux_cxx("GCC 12 (no-mutex)", "g++-12", packages="g++-12", buildscript="drone", buildtype="boost",
                          image="cppalliance/droneubuntu2204:1",
                          environment={'B2_TOOLSET': 'gcc-12', 'B2_DEFINES': 'BOOST_URL_DISABLE_THREADS=1',
@@ -50,7 +50,7 @@ load("@boost_ci//ci/drone/:functions.star", "linux_cxx", "windows_cxx", "osx_cxx
 # ubsan: whether we should create an extra special ubsan job
 # cmake: whether we should create an extra special cmake job
 def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, asan=True, tsan=False, ubsan=True,
-             cmake=True, packages=[]):
+             cmake=True, cache_dir=None, packages=[]):
     # swap: `packages` variable will be reused
     packages_requested=list(packages)
     packages=[]
@@ -159,6 +159,7 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
 
     # Create job descriptions
     jobs = []
+    images_used = []
     for desc in compilers:
         # Parse version
         [compiler, version_str, type] = desc
@@ -397,6 +398,14 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
             elif image == 'cppalliance/droneubuntu2204:1':
                 llvm_os = 'jammy'
 
+        if cache_dir != None and image_supports_caching(image, compiler):
+            environment['drone_cache_mount'] = cache_dir
+            if image in images_used:
+                environment['drone_cache_rebuild'] = 'false'
+            else:
+                environment['drone_cache_rebuild'] = 'true'
+                images_used += [image]
+
         # arch
         arch = None
         if compiler.startswith('arm64-'):
@@ -484,6 +493,13 @@ def compiler_supports(compiler, version, cxx):
             (cxx == '11' and version_match(version, '>=14.1')) or \
             (cxx == '03' or cxx == '98')
     return False
+
+
+# Check if the image supports caching
+# This is based on an exclude-list since we want to assume
+# new images will support caching
+def image_supports_caching(image_str, compiler_str):
+    return image_str == None or not (image_str[:19] == 'cppalliance/dronevs' or compiler_str[:6] == 's390x-')
 
 
 # Get list of available compiler versions in a semver range
