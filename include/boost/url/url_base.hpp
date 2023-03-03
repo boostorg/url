@@ -1872,6 +1872,13 @@ public:
     urls::segments_ref
     segments() noexcept;
 
+    /// @copydoc url_view_base::segments
+    segments_view
+    segments() const noexcept
+    {
+        return url_view_base::segments();
+    }
+
     /** Return the path as a container of segments
 
         This function returns a bidirectional
@@ -1926,6 +1933,13 @@ public:
     BOOST_URL_DECL
     segments_encoded_ref
     encoded_segments() noexcept;
+
+    /// @copydoc url_view_base::encoded_segments
+    segments_encoded_view
+    encoded_segments() const noexcept
+    {
+        return url_view_base::encoded_segments();
+    }
 
     //--------------------------------------------
     //
@@ -2087,6 +2101,13 @@ public:
     params_ref
     params() noexcept;
 
+    /// @copydoc url_view_base::params
+    params_view
+    params() const noexcept
+    {
+        return url_view_base::params();
+    }
+
     /** Return the query as a container of parameters
 
         This function returns a bidirectional
@@ -2140,6 +2161,13 @@ public:
     BOOST_URL_DECL
     params_ref
     params(encoding_opts opt) noexcept;
+
+    /// @copydoc url_view_base::encoded_params
+    params_encoded_view
+    encoded_params() const noexcept
+    {
+        return url_view_base::encoded_params();
+    }
 
     /** Return the query as a container of parameters
 
