@@ -212,7 +212,7 @@ public:
     url_view(
         String const& s)
         : url_view(
-            string_view(s))
+            detail::to_sv(s))
     {
     }
 
