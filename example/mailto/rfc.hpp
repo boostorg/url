@@ -356,7 +356,7 @@ struct hfname_rule_t
         it += s.size();
         auto r = grammar::parse(s, hfvalue_rule);
         if (!r)
-            return r;
+            return r.error();
 
         // The user agent interpreting a 'mailto' URI SHOULD NOT create a
         // message if any of the header fields are considered dangerous

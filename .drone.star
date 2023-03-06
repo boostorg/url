@@ -13,17 +13,19 @@
 def main(ctx):
     return generate(
         # Compilers
-        ['gcc >=4.8',
-         'clang >=3.8',
-         'msvc >=14.1',
-         'arm64-gcc latest',
-         's390x-gcc latest',
-         # 'freebsd-gcc latest',
-         'apple-clang *',
-         'arm64-clang latest',
-         's390x-clang latest',
-         'freebsd-clang latest',
-         'x86-msvc latest'],
+        [
+            'gcc >=4.8',
+            'clang >=3.8',
+            'msvc >=14.1',
+            'arm64-gcc latest',
+            's390x-gcc latest',
+            # 'freebsd-gcc latest',
+            'apple-clang *',
+            'arm64-clang latest',
+            's390x-clang latest',
+            'freebsd-clang latest',
+            'x86-msvc latest'
+        ],
         # Standards
         '>=11', cache_dir='cache') + [
                linux_cxx("GCC 12 (no-mutex)", "g++-12", packages="g++-12", buildscript="drone", buildtype="boost",
@@ -52,8 +54,8 @@ load("@boost_ci//ci/drone/:functions.star", "linux_cxx", "windows_cxx", "osx_cxx
 def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, asan=True, tsan=False, ubsan=True,
              cmake=True, cache_dir=None, packages=[]):
     # swap: `packages` variable will be reused
-    packages_requested=list(packages)
-    packages=[]
+    packages_requested = list(packages)
+    packages = []
 
     # Get compiler versions we should test
     # Each compiler is a tuple (represented as a list) of:
@@ -183,7 +185,15 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
             packages = ['docbook', 'docbook-xml', 'docbook-xsl', 'xsltproc', 'libsaxonhe-java', 'default-jre-headless',
                         'flex', 'libfl-dev', 'bison', 'unzip', 'rsync']
         elif compiler.endswith('gcc'):
-            if version[0] >= 5:
+            if version_str == '8.0.1':
+                # The image supports 8.0.1 and 8.4 via apt-get
+                # Explicitly testing 8.0.1 is useful since gcc >=8 <8.4 contains a bug regarding ambiguity in implicit
+                # conversions to boost::core::string_view in C++17 mode.
+                packages = ['--allow-downgrades', 'libmpx2=8-20180414-1ubuntu2', 'libgcc-8-dev=8-20180414-1ubuntu2',
+                            'cpp-8=8-20180414-1ubuntu2',
+                            'gcc-8-base=8-20180414-1ubuntu2', 'gcc-8=8-20180414-1ubuntu2', 'g++-8=8-20180414-1ubuntu2',
+                            'libstdc++-8-dev=8-20180414-1ubuntu2']
+            elif version[0] >= 5:
                 packages = ['g++-' + str(version[0])]
             else:
                 packages = ['g++-' + str(version[0]) + '.' + str(version[1])]
@@ -506,7 +516,7 @@ def image_supports_caching(image_str, compiler_str):
 # - compilers_in_range('gcc >=10') -> [('gcc', '12'), ('gcc', '11'), ('gcc', '10')]
 def compilers_in_range(compiler_range_str):
     supported = {
-        'gcc': ['12', '11', '10', '9', '8', '7', '6', '5', '4.9', '4.8'],
+        'gcc': ['12', '11', '10', '9', '8.4', '8.0.1', '7', '6', '5', '4.9', '4.8'],
         's390x-gcc': ['12'],
         'arm64-gcc': ['11'],
         'freebsd-gcc': ['11', '10', '9', '8'],

@@ -592,8 +592,7 @@ struct host_template_rule_t
             // any_host_template_rule can always
             // be empty, so it's never invalid
             BOOST_ASSERT(rv);
-            return *rv;
-
+            return detail::to_sv(*rv);
         }
         // IP-literals need to be enclosed in
         // "[]" if using ':' in the template
@@ -619,7 +618,6 @@ struct host_template_rule_t
         // closing "]"
         BOOST_ASSERT(rv);
         return string_view{it0, it};
-
     }
 };
 

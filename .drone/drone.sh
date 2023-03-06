@@ -6,6 +6,8 @@
 
 set -xe
 
+echo "==================================> ENVIRONMENT"
+
 TRAVIS_BUILD_DIR=$(pwd)
 export TRAVIS_BUILD_DIR
 DRONE_BUILD_DIR=$(pwd)
@@ -20,6 +22,21 @@ export USER
 export CC=${CC:-gcc}
 export PATH=~/.local/bin:/usr/local/bin:$PATH
 printenv
+
+echo "==================================> PACKAGES"
+
+for package in ${PACKAGES// / }; do
+  if [[ "$package" == "--"* ]]; then
+    continue
+  fi
+  package_no_version=${package%%=*}
+  echo "Versions available for $package_no_version"
+  apt-cache policy "$package_no_version" || true
+done
+
+if command -v "$CXX" &>/dev/null; then
+  $CXX --version
+fi
 
 common_install() {
   if [ "$TRAVIS_OS_NAME" == "osx" ]; then

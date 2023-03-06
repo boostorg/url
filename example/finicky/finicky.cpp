@@ -251,7 +251,7 @@ int main(int argc, char** argv)
                         it->value().is_string(),
                         "authority field should be a string");
                     u.set_encoded_authority(
-                        it->value().as_string());
+                        it->value().as_string().subview());
                 }
 
                 it = uo.find("username");
@@ -263,7 +263,7 @@ int main(int argc, char** argv)
                         it->value().is_string(),
                         "username field should be a string");
                     u.set_encoded_user(
-                        it->value().as_string());
+                        it->value().as_string().subview());
                 }
 
                 it = uo.find("password");
@@ -273,7 +273,7 @@ int main(int argc, char** argv)
                         it->value().is_string(),
                         "password field should be a string");
                     u.set_encoded_password(
-                        it->value().as_string());
+                        it->value().as_string().subview());
                 }
 
                 it = uo.find("userinfo");
@@ -283,7 +283,7 @@ int main(int argc, char** argv)
                         it->value().is_string(),
                         "userinfo field should be a string");
                     u.set_encoded_userinfo(
-                        it->value().as_string());
+                        it->value().as_string().subview());
                 }
 
                 it = uo.find("host");
@@ -293,7 +293,7 @@ int main(int argc, char** argv)
                         it->value().is_string(),
                         "host field should be a string");
                     u.set_encoded_host(
-                        it->value().as_string());
+                        it->value().as_string().subview());
                 }
 
                 it = uo.find("port");
@@ -303,7 +303,7 @@ int main(int argc, char** argv)
                         it->value().is_string(),
                         "port field should be a string");
                     u.set_port(
-                        it->value().as_string());
+                        it->value().as_string().subview());
                 }
 
                 it = uo.find("path");
@@ -315,7 +315,7 @@ int main(int argc, char** argv)
                         it->value().is_string(),
                         "path field should be a string");
                     u.set_encoded_path(
-                        it->value().as_string());
+                        it->value().as_string().subview());
                 }
 
                 it = uo.find("query");
@@ -327,7 +327,7 @@ int main(int argc, char** argv)
                         it->value().is_string(),
                         "query field should be a string");
                     u.set_encoded_query(
-                        it->value().as_string());
+                        it->value().as_string().subview());
                 }
 
                 it = uo.find("fragment");
@@ -339,7 +339,7 @@ int main(int argc, char** argv)
                         it->value().is_string(),
                         "fragment field should be a string");
                     u.set_encoded_fragment(
-                        it->value().as_string());
+                        it->value().as_string().subview());
                 }
             }
         }
@@ -379,7 +379,7 @@ int main(int argc, char** argv)
             // Look for match and change browser
             if (url_match(mit->value(), u))
             {
-                browser = hbit->value().as_string();
+                browser = hbit->value().as_string().subview();
                 break;
             }
         }
