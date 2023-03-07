@@ -23,6 +23,12 @@
 #include <iomanip>
 #include <sstream>
 
+#ifdef BOOST_TEST_CSTR_EQ
+#undef BOOST_TEST_CSTR_EQ
+#define BOOST_TEST_CSTR_EQ(expr1,expr2) \
+    BOOST_TEST_EQ( boost::urls::detail::to_sv(expr1), boost::urls::detail::to_sv(expr2) )
+#endif
+
 /*  Legend
 
     '#' 0x23    ':' 0x3a
@@ -303,19 +309,34 @@ struct url_test
             BOOST_TEST_EQ( u.buffer(), "./kyle:xy" );
         }
         {
-            // issue 674: 1
-            auto ok = [](string_view u0, string_view p)
+            // issue 674
             {
-                urls::url u(u0);
-                u.set_path(p);
-                BOOST_TEST_CSTR_EQ(u.buffer(), p);
+                auto ok = [](string_view u0, string_view p)
+                {
+                  urls::url u(u0);
+                  u.set_path(p);
+                  BOOST_TEST_CSTR_EQ(u.buffer(), p);
+                  u.normalize();
+                  BOOST_TEST_CSTR_EQ(u.buffer(), p);
+                };
+                ok("/", "/");
+                ok("/", "");
+                ok("", "/");
+                ok("", "");
+            }
+            {
+                urls::url u;
+                BOOST_TEST_EQ(u.encoded_segments().size(), 0);
+                u.set_path("/");
+                BOOST_TEST_EQ(u.encoded_segments().size(), 0);
+                u.set_path("/./");
+                BOOST_TEST_EQ(u.encoded_segments().size(), 1);
+                BOOST_TEST_CSTR_EQ(u.buffer(), "/./");
                 u.normalize();
-                BOOST_TEST_CSTR_EQ(u.buffer(), p);
-            };
-            ok("/", "/");
-            ok("/", "");
-            ok("", "/");
-            ok("", "");
+                BOOST_TEST_CSTR_EQ(u.buffer(), "/");
+                BOOST_TEST_CSTR_EQ(u.encoded_target(), "/");
+                BOOST_TEST_EQ(u.encoded_segments().size(), 0);
+            }
         }
 
         // set_encoded_path
