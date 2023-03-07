@@ -302,6 +302,21 @@ struct url_test
             u.set_path_absolute( false );
             BOOST_TEST_EQ( u.buffer(), "./kyle:xy" );
         }
+        {
+            // issue 674: 1
+            auto ok = [](string_view u0, string_view p)
+            {
+                urls::url u(u0);
+                u.set_path(p);
+                BOOST_TEST_CSTR_EQ(u.buffer(), p);
+                u.normalize();
+                BOOST_TEST_CSTR_EQ(u.buffer(), p);
+            };
+            ok("/", "/");
+            ok("/", "");
+            ok("", "/");
+            ok("", "");
+        }
 
         // set_encoded_path
         {
@@ -367,8 +382,8 @@ struct url_test
             {
                 url u = parse_uri_reference(s0).value();
                 u.set_encoded_path(arg);
-                BOOST_TEST(
-                    u.buffer() == match);
+                BOOST_TEST_CSTR_EQ(
+                    u.buffer(), match);
             };
             check(
                 "",

@@ -286,6 +286,7 @@ struct segments_encoded_ref_test
         // insert(iterator, pct_string_view)
         //
 
+        // inserting extra "" as first segment
         {
             auto const f = [](segments_encoded_ref ps)
             {
@@ -297,6 +298,9 @@ struct segments_encoded_ref_test
                     "%%"), system_error);
             };
             check(f, "", "./", {""});
+            // path "/" represents empty segment range: {}
+            BOOST_TEST(url_view("/").encoded_segments().empty());
+            // path "/./" represents segment range: {""}
             check(f, "/", "/./", {""});
             check(f, "/index.htm", "/.//index.htm", {"", "index.htm"});
             check(f, "index.htm", ".//index.htm", {"", "index.htm"});
@@ -495,15 +499,16 @@ struct segments_encoded_ref_test
         // replace(iterator, pct_string_view)
         //
 
+        // replace first with empty segment
         {
             auto const f = [](segments_encoded_ref ps)
             {
-                auto it = ps.replace(std::next(ps.begin(), 0), "");
+                auto it = ps.replace(ps.begin(), "");
                 BOOST_TEST_EQ(*it, "");
 
                 // invalid percent escape
-                BOOST_TEST_THROWS(ps.replace(std::next(ps.begin(), 0),
-                    "00%"), system_error);
+                BOOST_TEST_THROWS(ps.replace(
+                    ps.begin(), "00%"), system_error);
             };
             check(f, "path/to/file.txt", ".//to/file.txt", {"", "to", "file.txt"});
             check(f, "/path/to/file.txt", "/.//to/file.txt", {"", "to", "file.txt"});
