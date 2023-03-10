@@ -313,11 +313,13 @@ struct url_test
             {
                 auto ok = [](string_view u0, string_view p)
                 {
-                  urls::url u(u0);
-                  u.set_path(p);
-                  BOOST_TEST_CSTR_EQ(u.buffer(), p);
-                  u.normalize();
-                  BOOST_TEST_CSTR_EQ(u.buffer(), p);
+                    urls::url u(u0);
+                     u.set_encoded_path(p);
+                    BOOST_TEST_CSTR_EQ(u.buffer(), p);
+                    u.set_path(p);
+                    BOOST_TEST_CSTR_EQ(u.buffer(), p);
+                    u.normalize();
+                    BOOST_TEST_CSTR_EQ(u.buffer(), p);
                 };
                 ok("/", "/");
                 ok("/", "");
@@ -344,27 +346,28 @@ struct url_test
             // empty
             url u = parse_uri("x://y/path/to/file.txt?q#f").value();
             u.set_encoded_path("");
-            BOOST_TEST_EQ(u.encoded_path(), "");
-            BOOST_TEST_EQ(u.buffer(), "x://y?q#f");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "");
+            BOOST_TEST_CSTR_EQ(u.buffer(), "x://y?q#f");
         }
         {
             // path-abempty
             url u = parse_uri("x://y/path/to/file.txt?q#f").value();
             u.set_encoded_path("/x");
-            BOOST_TEST_EQ(u.encoded_path(), "/x");
-            BOOST_TEST_EQ(u.buffer(), "x://y/x?q#f");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/x");
+            BOOST_TEST_CSTR_EQ(u.buffer(), "x://y/x?q#f");
             u.set_encoded_path("x/");
-            BOOST_TEST_EQ(u.buffer(), "x://y/x/?q#f");
+            BOOST_TEST_CSTR_EQ(u.buffer(), "x://y/x/?q#f");
         }
         {
             // path-absolute
             url u = parse_relative_ref("/path/to/file.txt").value();
             u.set_encoded_path("/home/file.txt");
-            BOOST_TEST_EQ(u.encoded_path(), "/home/file.txt");
-            BOOST_TEST_EQ(u.buffer(), "/home/file.txt");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/home/file.txt");
+            BOOST_TEST_CSTR_EQ(u.buffer(), "/home/file.txt");
             u.set_encoded_path("//home/file.txt");
+            BOOST_TEST_CSTR_EQ(u.buffer(), "/.//home/file.txt");
             equal(u, { "", "home", "file.txt" });
-            BOOST_TEST_EQ(u.encoded_path(), "/.//home/file.txt");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/.//home/file.txt");
             BOOST_TEST_THROWS(u.set_encoded_path("/home/%ile.txt"),
                 system_error);
         }
@@ -372,26 +375,26 @@ struct url_test
             // path-rootless
             url u = parse_uri("x:mailto").value();
             u.set_encoded_path("file.txt");
-            BOOST_TEST_EQ(u.encoded_path(), "file.txt");
-            BOOST_TEST_EQ(u.buffer(), "x:file.txt");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "file.txt");
+            BOOST_TEST_CSTR_EQ(u.buffer(), "x:file.txt");
             u.set_encoded_path(":file.txt");
-            BOOST_TEST_EQ(u.encoded_path(), ":file.txt");
-            BOOST_TEST_EQ(u.buffer(), "x::file.txt");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), ":file.txt");
+            BOOST_TEST_CSTR_EQ(u.buffer(), "x::file.txt");
             // to path-absolute
             u.set_encoded_path("/file.txt");
-            BOOST_TEST_EQ(u.encoded_path(), "/file.txt");
-            BOOST_TEST_EQ(u.buffer(), "x:/file.txt");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/file.txt");
+            BOOST_TEST_CSTR_EQ(u.buffer(), "x:/file.txt");
         }
         {
             // path-noscheme
             url u = parse_relative_ref("mailto").value();
             u.set_encoded_path("file.txt");
-            BOOST_TEST_EQ(u.encoded_path(), "file.txt");
-            BOOST_TEST_EQ(u.buffer(), "file.txt");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "file.txt");
+            BOOST_TEST_CSTR_EQ(u.buffer(), "file.txt");
             u.set_encoded_path(":file.txt");
-            BOOST_TEST_EQ(u.encoded_path(), "%3Afile.txt");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "%3Afile.txt");
             u.set_encoded_path("http:index.htm");
-            BOOST_TEST_EQ(u.encoded_path(), "http%3Aindex.htm");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "http%3Aindex.htm");
         }
 
         // set_encoded_path
@@ -445,7 +448,7 @@ struct url_test
             {
                 url u = parse_uri_reference(s0).value();
                 u.set_path(arg);
-                BOOST_TEST_EQ(u.buffer(), match);
+                BOOST_TEST_CSTR_EQ(u.buffer(), match);
             };
             check(
                 "",
@@ -459,6 +462,10 @@ struct url_test
                 "",
                 "/path/to/file.txt",
                 "/path/to/file.txt");
+            check(
+                "",
+                "/path%2Fto%2Ffile.txt",
+                "/path%252Fto%252Ffile.txt");
             check(
                 "",
                 "//index.htm",
@@ -564,23 +571,23 @@ struct url_test
                 url u;
                 u.set_encoded_fragment("");
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST_EQ(u.buffer(), "#");
-                BOOST_TEST_EQ(u.encoded_fragment(), "");
+                BOOST_TEST_CSTR_EQ(u.buffer(), "#");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "");
             }
             {
                 url u;
                 u.set_encoded_fragment("x");
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST_EQ(u.buffer(), "#x");
-                BOOST_TEST_EQ(u.encoded_fragment(), "x");
+                BOOST_TEST_CSTR_EQ(u.buffer(), "#x");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "x");
             }
             {
                 url u;
                 u.set_encoded_fragment("%41");
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST_EQ(u.buffer(), "#%41");
-                BOOST_TEST_EQ(u.encoded_fragment(), "%41");
-                BOOST_TEST_EQ(u.fragment(), "A");
+                BOOST_TEST_CSTR_EQ(u.buffer(), "#%41");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "%41");
+                BOOST_TEST_CSTR_EQ(u.fragment(), "A");
             }
             {
                 url u;
@@ -601,9 +608,9 @@ struct url_test
                 url u;
                 u.set_fragment(f);
                 BOOST_TEST(u.has_fragment());
-                BOOST_TEST_EQ(u.buffer(), h);
-                BOOST_TEST_EQ(u.encoded_fragment(), ef);
-                BOOST_TEST_EQ(u.fragment(), f);
+                BOOST_TEST_CSTR_EQ(u.buffer(), h);
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), ef);
+                BOOST_TEST_CSTR_EQ(u.fragment(), f);
             };
 
             good("", "#", "");
@@ -656,7 +663,7 @@ struct url_test
         f(u);
         equal(u.segments(), init);
         equal(u.encoded_segments(), init);
-        BOOST_TEST_EQ(u.buffer(), s1);
+        BOOST_TEST_CSTR_EQ(u.buffer(), s1);
     }
 
     template<class F>
@@ -675,7 +682,7 @@ struct url_test
         f(u);
         equal(u.segments(), dec_init);
         equal(u.encoded_segments(), enc_init);
-        BOOST_TEST_EQ(u.buffer(), s1);
+        BOOST_TEST_CSTR_EQ(u.buffer(), s1);
     }
 
     void
@@ -729,7 +736,7 @@ struct url_test
                 u.segments() = init;
                 equal(u.segments(), init);
                 //equal(u.encoded_segments(), init);
-                BOOST_TEST_EQ(u.buffer(), s1);
+                BOOST_TEST_CSTR_EQ(u.buffer(), s1);
             }
         };
 
@@ -839,14 +846,14 @@ struct url_test
             result<void> rv = resolve(ub, ur, u);
             if(! BOOST_TEST( rv.has_value() ))
                 return;
-            BOOST_TEST_EQ(u.buffer(), m);
+            BOOST_TEST_CSTR_EQ(u.buffer(), m);
 
             // in place resolution
             url base( ub );
             rv = base.resolve( ur );
             if(! BOOST_TEST( rv.has_value() ))
                 return;
-            BOOST_TEST_EQ(base.buffer(), m);
+            BOOST_TEST_CSTR_EQ(base.buffer(), m);
         };
 
         check("g:h"          , "g:h");

@@ -72,47 +72,6 @@ public:
 };
 
 //------------------------------------------------
-
-// iterates segments in a string
-struct BOOST_SYMBOL_VISIBLE
-    path_iter
-    : any_segments_iter
-{
-    virtual ~path_iter() = default;
-
-    explicit
-    path_iter(
-        string_view s) noexcept;
-
-protected:
-    std::size_t pos_;
-    std::size_t next_;
-
-    void increment() noexcept;
-    void rewind() noexcept override;
-    bool measure(std::size_t&) noexcept override;
-    void copy(char*&, char const*) noexcept override;
-};
-
-//------------------------------------------------
-
-// iterates segments in an encoded string
-struct BOOST_SYMBOL_VISIBLE
-    path_encoded_iter
-    : public path_iter
-{
-    virtual ~path_encoded_iter() = default;
-
-    explicit
-    path_encoded_iter(
-        pct_string_view s) noexcept;
-
-private:
-    bool measure(std::size_t&) noexcept override;
-    void copy(char*&, char const*) noexcept override;
-};
-
-//------------------------------------------------
 //
 // segment_iter
 //

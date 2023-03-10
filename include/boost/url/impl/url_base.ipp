@@ -1088,13 +1088,115 @@ url_base::
 set_path(
     string_view s)
 {
-    edit_segments(
-        detail::segments_iter_impl(
-            detail::path_ref(impl_)),
-        detail::segments_iter_impl(
-            detail::path_ref(impl_), 0),
-        detail::path_iter(s),
-        s.starts_with('/'));
+    op_t op(*this, &s);
+    encoding_opts opt;
+
+//------------------------------------------------
+//
+//  Calculate encoded size
+//
+// - "/"s are not encoded
+// - "%2F"s are not encoded
+//
+// - reserved path chars are re-encoded
+// - colons in first segment might need to be re-encoded
+// - the path might need to receive a prefix
+    auto const n = encoded_size(
+        s, detail::path_chars, opt);
+    std::size_t n_reencode_colons = 0;
+    string_view first_seg;
+    if (!has_scheme() &&
+        !has_authority() &&
+        !s.starts_with('/'))
+    {
+        // the first segment with unencoded colons would look
+        // like the scheme
+        first_seg = detail::to_sv(s);
+        std::size_t p = s.find('/');
+        if (p != string_view::npos)
+            first_seg = s.substr(0, p);
+        n_reencode_colons = std::count(
+            first_seg.begin(), first_seg.end(), ':');
+    }
+    // the authority can only be followed by an empty or relative path
+    // if we have an authority and the path is a non-empty relative path, we
+    // add the "/" prefix to make it valid.
+    bool make_absolute =
+        has_authority() &&
+        !s.starts_with('/') &&
+        !s.empty();
+    // a path starting with "//" might look like the authority.
+    // we add a "/." prefix to prevent that
+    bool add_dot_segment =
+        !make_absolute &&
+        s.starts_with("//");
+
+//------------------------------------------------
+//
+//  Re-encode data
+//
+    auto dest = set_path_impl(
+        n + make_absolute + 2 * n_reencode_colons + 2 * add_dot_segment, op);
+    impl_.decoded_[id_path] = 0;
+    if (!dest)
+    {
+        impl_.nseg_ = 0;
+        return *this;
+    }
+    if (make_absolute)
+    {
+        *dest++ = '/';
+        impl_.decoded_[id_path] += 1;
+    }
+    else if (add_dot_segment)
+    {
+        *dest++ = '/';
+        *dest++ = '.';
+        impl_.decoded_[id_path] += 2;
+    }
+    dest += encode_unsafe(
+        dest,
+        impl_.get(id_query).data() - dest,
+        first_seg,
+        detail::segment_chars - ':',
+        opt);
+    dest += encode_unsafe(
+        dest,
+        impl_.get(id_query).data() - dest,
+        s.substr(first_seg.size()),
+        detail::path_chars,
+        opt);
+    impl_.decoded_[id_path] += s.size();
+    BOOST_ASSERT(!dest || dest == impl_.get(id_query).data());
+    BOOST_ASSERT(
+        impl_.decoded_[id_path] ==
+        s.size() + make_absolute + 2 * add_dot_segment);
+
+//------------------------------------------------
+//
+//  Update path parameters
+//
+    // get the encoded_path with the replacements we applied
+    if (s == "/")
+    {
+        // "/" maps to sequence {}
+        impl_.nseg_ = 0;
+    }
+    else if (!s.empty())
+    {
+        if (s.starts_with("/./"))
+            s = s.substr(2);
+        // count segments as number of '/'s + 1
+        impl_.nseg_ = std::count(
+            s.begin() + 1, s.end(), '/') + 1;
+    }
+    else
+    {
+        // an empty relative path maps to sequence {}
+        impl_.nseg_ = 0;
+    }
+
+    check_invariants();
     return *this;
 }
 
@@ -1103,13 +1205,113 @@ url_base::
 set_encoded_path(
     pct_string_view s)
 {
-    edit_segments(
-        detail::segments_iter_impl(
-            detail::path_ref(impl_)),
-        detail::segments_iter_impl(
-            detail::path_ref(impl_), 0),
-        detail::path_encoded_iter(s),
-        s.starts_with('/'));
+    op_t op(*this, &detail::ref(s));
+    encoding_opts opt;
+
+//------------------------------------------------
+//
+//  Calculate re-encoded output size
+//
+// - reserved path chars are re-encoded
+// - colons in first segment might need to be re-encoded
+// - the path might need to receive a prefix
+    auto const n = detail::re_encoded_size_unsafe(
+        s, detail::path_chars, opt);
+    std::size_t n_reencode_colons = 0;
+    string_view first_seg;
+    if (!has_scheme() &&
+        !has_authority() &&
+        !s.starts_with('/'))
+    {
+        // the first segment with unencoded colons would look
+        // like the scheme
+        first_seg = detail::to_sv(s);
+        std::size_t p = s.find('/');
+        if (p != string_view::npos)
+            first_seg = s.substr(0, p);
+        n_reencode_colons = std::count(
+            first_seg.begin(), first_seg.end(), ':');
+    }
+    // the authority can only be followed by an empty or relative path
+    // if we have an authority and the path is a non-empty relative path, we
+    // add the "/" prefix to make it valid.
+    bool make_absolute =
+        has_authority() &&
+        !s.starts_with('/') &&
+        !s.empty();
+    // a path starting with "//" might look like the authority
+    // we add a "/." prefix to prevent that
+    bool add_dot_segment =
+        !make_absolute &&
+        s.starts_with("//");
+
+//------------------------------------------------
+//
+//  Re-encode data
+//
+    auto dest = set_path_impl(
+        n + make_absolute + 2 * n_reencode_colons + 2 * add_dot_segment, op);
+    impl_.decoded_[id_path] = 0;
+    if (!dest)
+    {
+        impl_.nseg_ = 0;
+        return *this;
+    }
+    if (make_absolute)
+    {
+        *dest++ = '/';
+        impl_.decoded_[id_path] += 1;
+    }
+    else if (add_dot_segment)
+    {
+        *dest++ = '/';
+        *dest++ = '.';
+        impl_.decoded_[id_path] += 2;
+    }
+    impl_.decoded_[id_path] +=
+        detail::re_encode_unsafe(
+            dest,
+            impl_.get(id_query).data(),
+            first_seg,
+            detail::segment_chars - ':',
+            opt);
+    impl_.decoded_[id_path] +=
+        detail::re_encode_unsafe(
+            dest,
+            impl_.get(id_query).data(),
+            s.substr(first_seg.size()),
+            detail::path_chars,
+            opt);
+    BOOST_ASSERT(dest == impl_.get(id_query).data());
+    BOOST_ASSERT(
+        impl_.decoded_[id_path] ==
+        s.decoded_size() + make_absolute + 2 * add_dot_segment);
+
+//------------------------------------------------
+//
+//  Update path parameters
+//
+    // get the encoded_path with the replacements we applied
+    if (s == "/")
+    {
+        // "/" maps to sequence {}
+        impl_.nseg_ = 0;
+    }
+    else if (!s.empty())
+    {
+        if (s.starts_with("/./"))
+            s = s.substr(2);
+        // count segments as number of '/'s + 1
+        impl_.nseg_ = std::count(
+            s.begin() + 1, s.end(), '/') + 1;
+    }
+    else
+    {
+        // an empty relative path maps to sequence {}
+        impl_.nseg_ = 0;
+    }
+
+    check_invariants();
     return *this;
 }
 
@@ -1563,7 +1765,8 @@ normalize_path()
             skip_dot = 0;
     }
     else if (
-        !has_scheme())
+        !has_scheme() &&
+        !has_authority())
     {
         if (p.starts_with("./"))
         {
@@ -2044,6 +2247,19 @@ set_port_impl(
     check_invariants();
     return dest + 3;
 }
+
+char*
+url_base::
+set_path_impl(
+    std::size_t n,
+    op_t& op)
+{
+    check_invariants();
+    auto const dest = resize_impl(
+        id_path, n, op);
+    return dest;
+}
+
 
 //------------------------------------------------
 
