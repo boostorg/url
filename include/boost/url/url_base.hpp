@@ -1703,6 +1703,14 @@ public:
         to ensure that no other parts of the url
         is semantically affected.
 
+        @note
+        This function does not encode '/' chars, which
+        are unreserved for paths but reserved for
+        path segments. If a path segment should include
+        encoded '/'s to differentiate it from path separators,
+        the functions @ref set_encoded_path or @ref segments
+        should be used instead.
+
         @par Example
         @code
         url u( "http://www.example.com" );
@@ -2809,6 +2817,7 @@ private:
     char* set_userinfo_impl(std::size_t n, op_t& op);
     char* set_host_impl(std::size_t n, op_t& op);
     char* set_port_impl(std::size_t n, op_t& op);
+    char* set_path_impl(std::size_t n, op_t& op);
 
     string_view
     first_segment() const noexcept;
