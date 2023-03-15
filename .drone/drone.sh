@@ -81,7 +81,13 @@ common_install() {
   fi
 
   # Boost cache key
-  boost_hash=$(git ls-remote https://github.com/boostorg/boost.git $BOOST_BRANCH | awk '{ print $1 }')
+  #
+  # This key varies every few hours on an update of boost:
+  # boost_hash=$(git ls-remote https://github.com/boostorg/boost.git $BOOST_BRANCH | awk '{ print $1 }')
+  #
+  # This key finds the most recent git tag and will vary every few months:
+  boost_hash=$(git ls-remote --tags https://github.com/boostorg/boost | fgrep -v ".beta" | fgrep -v ".rc" | tail -n 1 | cut -f 1)
+
   os_name=$(uname -s)
   boost_cache_key=$os_name-boost-$boost_hash
 
@@ -117,30 +123,31 @@ common_install() {
   git clone https://github.com/boostorg/boost-ci.git boost-ci-cloned --depth 1
   cp -prf boost-ci-cloned/ci .
   rm -rf boost-ci-cloned
-  if [ "$boost_cache_hit" != true ]; then
-    . ./ci/common_install.sh
-    if command -v rsync &>/dev/null && [ "$drone_cache_rebuild" == true ]; then
-      if command -v apt-get &>/dev/null; then
-        apt-get install -y rsync
-      fi
-      mkdir "$cache_dir"/boost
-      rsync -a "$BOOST_ROOT/" "$cache_dir/boost"
-      echo "$boost_cache_key" >"$cache_dir/boost_cache_key.txt"
-    fi
-  else
+  if [ "$boost_cache_hit" = true ]; then
     cd ..
     mkdir boost-root
     cd boost-root
     BOOST_ROOT="$(pwd)"
     export BOOST_ROOT
-    ls "$cache_dir/boost"
     if command -v apt-get &>/dev/null; then
       apt-get install -y rsync
     fi
     rsync -a "$cache_dir/boost/" "$BOOST_ROOT"
     rm -rf "$BOOST_ROOT/libs/$SELF"
-    rsync -a "$BOOST_CI_SRC_FOLDER/" "$BOOST_ROOT/libs/$SELF" --exclude cache
-    $python_executable tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools "$SELF"
+    mkdir "$BOOST_ROOT/libs/$SELF"
+    cd $DRONE_WORKSPACE
+  fi
+  . ./ci/common_install.sh
+
+  if [ "$drone_cache_rebuild" == true ]; then
+    if command -v apt-get &>/dev/null; then
+      apt-get install -y rsync
+    fi
+    mkdir -p "$cache_dir"/boost
+    rsync -a --delete "$BOOST_ROOT/" "$cache_dir/boost" --exclude "$BOOST_ROOT/libs/$SELF/cache"
+    # and as a double measure
+    rm -rf $cache_dir/boost/libs/$SELF/cache
+    echo "$boost_cache_key" >"$cache_dir/boost_cache_key.txt"
   fi
 }
 
