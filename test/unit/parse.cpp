@@ -37,6 +37,10 @@ struct parse_test
                 BOOST_TEST_THROWS(r.value(), system_error);
             }
         }
+        // reg-name might have ipv4 prefix
+        {
+            BOOST_TEST_NOT(parse_relative_ref("//0.1.0.1%"));
+        }
         // parse docs
         {
             result< url_view > r = parse_relative_ref( "//www.boost.org/index.html?field=value#downloads" );
