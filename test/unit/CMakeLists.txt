@@ -100,6 +100,7 @@ set(BOOST_URL_TESTS_FILES
     rfc/uri_rule.cpp
     rfc/uri_reference_rule.cpp
     example/router/router.cpp
+    compat/ada.cpp
     )
 
 set(SUITE_FILES ../../extra/test_main.cpp ../../extra/test_suite.hpp)

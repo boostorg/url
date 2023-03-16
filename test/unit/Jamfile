@@ -101,6 +101,7 @@ local SOURCES =
     rfc/uri_rule.cpp
     rfc/uri_reference_rule.cpp
     example/router/router.cpp
+    compat/ada.cpp
     ;
 for local f in $(SOURCES)
 {
