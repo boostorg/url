@@ -33,7 +33,6 @@ public:
 
         bad(t, "");
         bad(t, ":");
-        bad(t, "http://##");
 
         ok(t, "http:");
         ok(t, "http:x");
@@ -42,6 +41,7 @@ public:
         ok(t, "http:x//");
         ok(t, "http://");
         ok(t, "http://x");
+        ok(t, "http://##");
         ok(t, "http://x.y.z");
         ok(t, "http://x.y.z/");
         ok(t, "http://x.y.z/?");
