@@ -943,6 +943,22 @@ struct url_test
                 BOOST_TEST(r.error() == error::not_a_base);
             }
         }
+
+        // copying authority depends on same scheme
+        {
+            {
+                url u("http://auth/path");
+                url ref("http:path2");
+                BOOST_TEST(u.resolve(ref));
+                BOOST_TEST_CSTR_EQ(u, "http://auth/path2");
+            }
+            {
+                url u("http://auth/path");
+                url ref("https:path2");
+                BOOST_TEST(u.resolve(ref));
+                BOOST_TEST_CSTR_EQ(u, "https:path2");
+            }
+        }
     }
 
     //--------------------------------------------

@@ -1552,7 +1552,8 @@ resolve(
     // https://datatracker.ietf.org/doc/html/rfc3986#section-5.2.2
     //
 
-    if(ref.has_scheme())
+    if( ref.has_scheme() &&
+        ref.scheme() != scheme())
     {
         reserve_impl(ref.size(), op);
         copy(ref);
