@@ -58,6 +58,9 @@ public:
 
         // magnet link
         ok(t, "magnet:?xt=urn:btih:d2474e86c");
+
+        // reg-name might have ipv4 prefix
+        ok(t, "http://192.168.0.1.3.a");
     }
 };
 

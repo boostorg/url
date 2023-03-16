@@ -70,12 +70,29 @@ parse(
             it0, it - it0);
         return t;
     }
+
     // IPv4address
     {
         auto rv = grammar::parse(
             it, end, ipv4_address_rule);
         if( rv )
         {
+            auto it02 = it;
+            auto rv2 = grammar::parse(
+                it, end,
+                detail::reg_name_rule);
+            if (rv2.has_value() &&
+                !rv2->empty())
+            {
+                t.name = string_view(
+                    it0, it - it0);
+                t.host_type =
+                    urls::host_type::name;
+                t.match = string_view(
+                    it0, it - it0);
+                return t;
+            }
+            it = it02;
             auto const b =
                 rv->to_bytes();
             std::memcpy(
@@ -91,6 +108,7 @@ parse(
 
         it = it0; // rewind
     }
+
     // reg-name
     {
         auto rv = grammar::parse(
