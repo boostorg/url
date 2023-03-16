@@ -1737,7 +1737,7 @@ url_base::
 normalize_path()
 {
     op_t op(*this);
-    normalize_octets_impl(id_path, detail::path_chars, op);
+    normalize_octets_impl(id_path, detail::segment_chars, op);
     string_view p = impl_.get(id_path);
     char* p_dest = s_ + impl_.offset(id_path);
     char* p_end = s_ + impl_.offset(id_path + 1);
@@ -2205,10 +2205,24 @@ set_host_impl(
     if(impl_.len(id_user) == 0)
     {
         // add authority
+        bool make_absolute =
+            !is_path_absolute() &&
+            impl_.len(id_path) != 0;
+        auto pn = impl_.len(id_path);
+        auto po = impl_.offset(id_path);
         auto dest = resize_impl(
-            id_user, n + 2, op);
+            id_user, n + 2 + make_absolute, op);
         impl_.split(id_user, 2);
         impl_.split(id_pass, 0);
+        impl_.split(id_host, n);
+        impl_.split(id_port, 0);
+        impl_.split(id_path, pn + make_absolute);
+        if (make_absolute)
+        {
+            std::memmove(dest + n + 3, s_ + po, pn);
+            dest[n + 2] = '/';
+            ++impl_.decoded_[id_path];
+        }
         dest[0] = '/';
         dest[1] = '/';
         check_invariants();
