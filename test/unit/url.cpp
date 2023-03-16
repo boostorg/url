@@ -339,6 +339,13 @@ struct url_test
                 BOOST_TEST_CSTR_EQ(u.encoded_target(), "/");
                 BOOST_TEST_EQ(u.encoded_segments().size(), 0);
             }
+            // path normalization does not encode "/"
+            {
+                string_view s = "/a%2Fb/";
+                urls::url u(s);
+                u.normalize();
+                BOOST_TEST_CSTR_EQ(u.buffer(), s);
+            }
         }
 
         // set_encoded_path
