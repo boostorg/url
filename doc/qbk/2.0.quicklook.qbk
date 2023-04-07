@@ -22,8 +22,6 @@ and interface style of the library.
     [snippet_headers_3]
 ]
 
-[h4 Compiled library]
-
 We begin by including the library header file which brings all the symbols into
 scope.
 
@@ -33,37 +31,11 @@ scope.
 Alternatively, individual headers may be included to obtain the declarations
  for specific types.
 
-You need to link your program with the Boost.URL built library. You must install binaries
-in a location that can be found by your linker.
+Boost.URL is a compiled library. You need to link your program with the Boost.URL built library.
+You must install binaries in a location that can be found by your linker.
 
 If you followed the [@http://www.boost.org/doc/libs/release/more/getting_started/index.html Boost Getting Started]
 instructions, that's already been done for you.
-
-[h4 Header-only]
-
-To use Boost.URL as header-only; that is, to eliminate the requirement to link
-a program to a static or dynamic Boost.URL library, place the following line
-in [*exactly one] new or existing source file in your project.
-
-[c++]
-```
-    // In exactly *one* source file
-    #include <boost/url/src.hpp>
-```
-
-Then define `BOOST_URL_NO_LIB` and include the library headers in any file that
-might uses Boost.URL.
-
-[c++]
-```
-    // In any other source file
-    #define BOOST_URL_NO_LIB
-    #include <boost/url.hpp>
-```
-
-This "header-only" configuration needs `BOOST_URL_NO_LIB` defined when building
-with compilers supporting auto-linking, such as Microsoft Visual C++. The macro
-instructs Boost to deactivate auto-linking.
 
 [h3 Parsing]
 

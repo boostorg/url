@@ -7,13 +7,8 @@
 # Official repository: https://github.com/boostorg/url
 #
 
-source_group("" FILES
-        router.cpp
-        )
-
-add_executable(router
-        router.cpp
-        )
-
-set_property(TARGET router PROPERTY FOLDER "Examples")
+add_executable(router router.cpp impl/matches.cpp detail/impl/router.cpp)
 target_link_libraries(router PRIVATE Boost::url Boost::beast)
+
+source_group("" FILES router.cpp)
+set_property(TARGET router PROPERTY FOLDER "Examples")

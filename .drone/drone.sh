@@ -317,6 +317,11 @@ elif [ "$DRONE_JOB_BUILDTYPE" == "cmake-install" ]; then
   # cp -r $DRONE_WORKSPACE/* libs/$SELF
   # git submodule update --init tools/boostdep
   git submodule update --init --recursive
+  if [ ! -d "libs/$SELF" ]; then
+    mkdir -p "libs/$SELF"
+  fi
+  find "libs/$SELF" -mindepth 1 -delete
+
   mkdir -p "libs/$SELF"
   cp -r "$DRONE_WORKSPACE"/* "libs/$SELF"
 
