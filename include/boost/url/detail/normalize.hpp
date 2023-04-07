@@ -12,6 +12,8 @@
 #define BOOST_URL_DETAIL_NORMALIZED_HPP
 
 #include <boost/url/string_view.hpp>
+#include <boost/url/segments_encoded_view.hpp>
+#include <boost/url/detail/normalize.hpp>
 
 namespace boost {
 namespace urls {

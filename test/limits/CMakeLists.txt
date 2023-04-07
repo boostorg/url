@@ -12,7 +12,7 @@ set(SUITE_FILES ../../extra/test_main.cpp ../../extra/test_suite.hpp)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES limits.cpp Jamfile)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${SUITE_FILES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../src PREFIX "_extra" FILES ../../src/src.cpp)
-add_executable(boost_url_limits limits.cpp Jamfile ${SUITE_FILES} ../../src/src.cpp)
+add_executable(boost_url_limits limits.cpp Jamfile ${SUITE_FILES} ${BOOST_URL_SOURCES})
 target_include_directories(boost_url_limits PRIVATE ../../include ../../extra ../../..)
 target_compile_definitions(boost_url_limits PRIVATE
     BOOST_URL_MAX_SIZE=16

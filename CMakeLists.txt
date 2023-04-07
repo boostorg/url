@@ -104,13 +104,13 @@ file(GLOB_RECURSE BOOST_URL_HEADERS CONFIGURE_DEPENDS
     include/boost/*.natvis
 )
 
-set(BOOST_URL_SOURCES src/src.cpp)
+file(GLOB_RECURSE BOOST_URL_SOURCES CONFIGURE_DEPENDS
+    src/*.cpp)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/include/boost PREFIX "" FILES ${BOOST_URL_HEADERS})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "" FILES ${BOOST_URL_SOURCES})
-
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "url" FILES ${BOOST_URL_SOURCES})
 
 add_library(boost_url ${BOOST_URL_HEADERS} ${BOOST_URL_SOURCES})
 add_library(Boost::url ALIAS boost_url)
