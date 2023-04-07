@@ -11,6 +11,7 @@
 #define BOOST_URL_DETAIL_ROUTER_HPP
 
 #include <boost/url/pct_string_view.hpp>
+#include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/optional_rule.hpp>
 #include <boost/url/grammar/range_rule.hpp>

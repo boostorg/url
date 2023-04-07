@@ -95,6 +95,13 @@ function(boost_url_setup_properties target)
                 Boost::variant2
         )
     endif()
+
+    if(BUILD_SHARED_LIBS)
+        target_compile_definitions(${target} PUBLIC BOOST_URL_DYN_LINK=1)
+    else()
+        target_compile_definitions(${target} PUBLIC BOOST_URL_STATIC_LINK=1)
+    endif()
+    target_compile_definitions(${target} PRIVATE BOOST_URL_SOURCE)
 endfunction()
 
 
@@ -104,13 +111,12 @@ file(GLOB_RECURSE BOOST_URL_HEADERS CONFIGURE_DEPENDS
     include/boost/*.natvis
 )
 
-set(BOOST_URL_SOURCES src/src.cpp)
+file(GLOB_RECURSE BOOST_URL_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/include/boost PREFIX "" FILES ${BOOST_URL_HEADERS})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "" FILES ${BOOST_URL_SOURCES})
-
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "url" FILES ${BOOST_URL_SOURCES})
 
 add_library(boost_url ${BOOST_URL_HEADERS} ${BOOST_URL_SOURCES})
 add_library(Boost::url ALIAS boost_url)
@@ -121,6 +127,8 @@ if(BUILD_SHARED_LIBS)
 else()
     target_compile_definitions(boost_url PUBLIC BOOST_URL_STATIC_LINK=1)
 endif()
+target_compile_definitions(boost_url PRIVATE BOOST_URL_SOURCE)
+
 
 
 if(BOOST_URL_INSTALL AND NOT BOOST_SUPERPROJECT_VERSION)

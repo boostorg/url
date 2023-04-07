@@ -11,19 +11,17 @@
 project boost/url
     : requirements
       $(c11-requires)
-      <link>shared:<define>BOOST_URL_DYN_LINK=1
-      <link>static:<define>BOOST_URL_STATIC_LINK=1
       <define>BOOST_URL_SOURCE
       <toolset>msvc-14.0:<build>no
       <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized" # variant2
-    : usage-requirements
+    : common-requirements
       <link>shared:<define>BOOST_URL_DYN_LINK=1
       <link>static:<define>BOOST_URL_STATIC_LINK=1
     : source-location ../src
     ;
 
 alias url_sources
-   : src.cpp
+   : [ glob-tree-ex ../src : *.cpp ]
    ;
 
 explicit url_sources ;

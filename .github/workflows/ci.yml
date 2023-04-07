@@ -8,11 +8,13 @@ name: CI
 
 on:
   pull_request:
-  push:
     branches:
       - master
       - develop
       - feature/**
+  push:
+    branches:
+      - '*'
 
 concurrency:
   group: ${{format('{0}:{1}', github.repository, github.ref)}}
@@ -324,7 +326,10 @@ jobs:
             # cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
             # git submodule update --init tools/boostdep
             git submodule update --init --recursive
-            mkdir -p libs/$LIBRARY
+            if [ ! -d "libs/$LIBRARY" ]; then
+              mkdir -p libs/$LIBRARY
+            fi
+            find libs/$LIBRARY -mindepth 1 -delete
             cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
           
             DEPINST_ARGS+=("$LIBRARY")
@@ -453,6 +458,8 @@ jobs:
           - { os: ubuntu-22.04, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles' }
           - { os: windows-2019, build_shared: ON,  build_type: Debug, generator: 'Visual Studio 16 2019' }
           - { os: windows-2019, build_shared: OFF, build_type: Debug, generator: 'Visual Studio 16 2019' }
+          - { os: windows-2022, build_shared: ON,  build_type: Debug, generator: 'Visual Studio 17 2022' }
+          - { os: windows-2022, build_shared: OFF, build_type: Debug, generator: 'Visual Studio 17 2022' }
 
     timeout-minutes: 120
     runs-on: ${{matrix.os}}

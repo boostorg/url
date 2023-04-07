@@ -104,10 +104,13 @@ set(BOOST_URL_TESTS_FILES
     )
 
 set(SUITE_FILES ../../extra/test_main.cpp ../../extra/test_suite.hpp)
+set(EXAMPLE_FILES ../../example/router/impl/matches.cpp ../../example/router/detail/impl/router.cpp)
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${BOOST_URL_TESTS_FILES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${SUITE_FILES})
-add_executable(boost_url_tests ${BOOST_URL_TESTS_FILES} ${SUITE_FILES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../example/router PREFIX "_router" FILES ${EXAMPLE_FILES})
+
+add_executable(boost_url_tests ${BOOST_URL_TESTS_FILES} ${SUITE_FILES} ${EXAMPLE_FILES})
 target_include_directories(boost_url_tests PRIVATE . ../../extra)
 target_include_directories(boost_url_tests PRIVATE ../../example/router)
 # The include dependencies are found in the CMakeLists.txt
@@ -121,11 +124,15 @@ target_link_libraries(boost_url_tests PRIVATE
 add_test(NAME boost_url_tests COMMAND boost_url_tests)
 add_dependencies(boost_url_all_tests boost_url_tests)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(boost_url_tests PUBLIC -Wno-error=unused-but-set-variable)
+    target_compile_options(
+        boost_url_tests
+        PUBLIC
+        -Wno-unused-but-set-variable
+        -Wno-unused-function)
     if (TARGET boost_filesystem AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         get_target_property(FS_IS_IMPORTED boost_filesystem IMPORTED)
         if (FS_IS_IMPORTED)
-            target_compile_options(boost_filesystem PUBLIC -Wno-error=restrict)
+            target_compile_options(boost_filesystem PUBLIC -Wno-restrict)
         endif()
     endif()
 endif()

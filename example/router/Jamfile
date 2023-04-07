@@ -18,4 +18,4 @@ project
       <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized"
     ;
 
-exe router : router.cpp ;
+exe router : router.cpp impl/matches.cpp detail/impl/router.cpp ;

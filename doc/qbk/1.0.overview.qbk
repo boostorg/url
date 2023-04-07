@@ -49,7 +49,6 @@ Boost.URL offers these features:
 * Containers that maintain valid URLs
 * Parsing algorithms that work without exceptions
 * Control over storage and allocation for URLs
-* Optionally header-only library, without linking
 * Support for `-fno-exceptions`, detected automatically
 * Features that work well on embedded devices
 
@@ -68,19 +67,6 @@ The library requires a compiler supporting at least C++11.
 
 Aliases for standard types, such as __error_code__ or __string_view__,
 use their Boost equivalents.
-
-[heading Header-Only]
-
-To use the library as header-only; that is, to eliminate the requirement
-to link a program to a static or dynamic Boost.URL library, simply place
-the following line in [*exactly one] source file in your project.
-
-[c++]
-```
-    #include <boost/url/src.hpp>
-```
-
-[heading Embedded]
 
 Boost.URL works great on embedded devices. It can be used in a
 way that avoids all dynamic memory allocations. Furthermore it
