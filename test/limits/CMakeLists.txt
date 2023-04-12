@@ -11,7 +11,7 @@ set(SUITE_FILES ../../extra/test_main.cpp ../../extra/test_suite.hpp)
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES limits.cpp Jamfile)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${SUITE_FILES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../src PREFIX "_extra" FILES ../../src/src.cpp)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../src PREFIX "url" FILES ${BOOST_URL_SOURCES})
 add_executable(boost_url_limits limits.cpp Jamfile ${SUITE_FILES} ${BOOST_URL_SOURCES})
 target_include_directories(boost_url_limits PRIVATE ../../include ../../extra ../../..)
 target_compile_definitions(boost_url_limits PRIVATE
@@ -30,6 +30,5 @@ else()
         Boost::system
         Boost::variant2)
 endif()
-target_link_libraries(boost_url_limits INTERFACE Boost::url)
 add_test(NAME boost_url_limits COMMAND boost_url_limits)
 add_dependencies(boost_url_all_tests boost_url_limits)
