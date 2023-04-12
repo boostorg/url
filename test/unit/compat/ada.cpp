@@ -9142,6 +9142,2961 @@ struct ada_test
         }();
     }
 
+    static
+    void
+    adaSettersTests()
+    {
+        //  Tests for setters of https://url.spec.whatwg.org/#urlutils-members
+        //
+        // This file contains a JSON object.
+        // Other than 'comment', each key is an attribute of the `URL` interface
+        // defined in WHATWG’s URL Standard.
+        // The values are arrays of test case objects for that attribute.
+        //
+        // To run a test case for the attribute `attr`:
+        //
+        // * Create a new `URL` object with the value for the 'href' key
+        //   the constructor single parameter. (Without a base URL.)
+        //   This must not throw.
+        // * Set the attribute `attr` to (invoke its setter with)
+        //   with the value of for 'new_value' key.
+        // * The value for the 'expected' key is another object.
+        //   For each `key` / `value` pair of that object,
+        //   get the attribute `key` (invoke its getter).
+        //   The returned string must be equal to `value`.
+        //
+        // Note: the 'href' setter is already covered by urltestdata.json.
+        // protocol
+        {
+            // The empty string is not a valid scheme. Setter leaves the URL unchanged.
+            {
+                result<url> r = parse_uri_reference("a://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // BOOST_TEST_NO_THROW(u.set_scheme(""));
+                // BOOST_TEST_CSTR_EQ(u, "a://example.net");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "a");
+                u.remove_scheme();
+                BOOST_TEST_CSTR_EQ(u, "//example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("a://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("b"));
+                BOOST_TEST_CSTR_EQ(u, "b://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "b");
+            }
+            {
+                result<url> r = parse_uri_reference("javascript:alert(1)");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("defuse"));
+                BOOST_TEST_CSTR_EQ(u, "defuse:alert(1)");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "defuse");
+            }
+            // Upper-case ASCII is lower-cased
+            {
+                result<url> r = parse_uri_reference("a://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("B"));
+                // BOOST_TEST_CSTR_EQ(u, "b://example.net");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "b");
+                // Although schemes are case-insensitive, the canonical form
+                // is lowercase and documents that specify schemes must do so
+                // with lowercase letters
+                BOOST_TEST_CSTR_EQ(u, "B://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "B");
+                u.normalize_scheme();
+                BOOST_TEST_CSTR_EQ(u, "b://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "b");
+            }
+            // Non-ASCII is rejected
+            {
+                result<url> r = parse_uri_reference("a://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_scheme("é"), system_error);
+                BOOST_TEST_CSTR_EQ(u, "a://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "a");
+            }
+            // No leading digit
+            {
+                result<url> r = parse_uri_reference("a://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_scheme("0b"), system_error);
+                BOOST_TEST_CSTR_EQ(u, "a://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "a");
+            }
+            // No leading punctuation
+            {
+                result<url> r = parse_uri_reference("a://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_scheme("+b"), system_error);
+                BOOST_TEST_CSTR_EQ(u, "a://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "a");
+            }
+            {
+                result<url> r = parse_uri_reference("a://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("bC0+-."));
+                // BOOST_TEST_CSTR_EQ(u, "bc0+-.://example.net");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "bc0+-.");
+                BOOST_TEST_CSTR_EQ(u, "bC0+-.://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "bC0+-.");
+                u.normalize_scheme();
+                BOOST_TEST_CSTR_EQ(u, "bc0+-.://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "bc0+-.");
+            }
+            // Only some punctuation is acceptable
+            {
+                result<url> r = parse_uri_reference("a://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_scheme("b,c"), system_error);
+                BOOST_TEST_CSTR_EQ(u, "a://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "a");
+            }
+            // Non-ASCII is rejected
+            {
+                result<url> r = parse_uri_reference("a://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_scheme("bé"), system_error);
+                BOOST_TEST_CSTR_EQ(u, "a://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "a");
+            }
+            // Ada can’t switch from URL containing username/password/port to file
+            // Boost.URL handles the general syntax defined in RFC3986
+            // so there's no concept of a special scheme
+            {
+                result<url> r = parse_uri_reference("http://test@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("file"));
+                // BOOST_TEST_CSTR_EQ(u, "http://test@example.net/");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+                BOOST_TEST_CSTR_EQ(u, "file://test@example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "file");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net:1234");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("file"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net:1234/");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "https");
+                BOOST_TEST_CSTR_EQ(u, "file://example.net:1234");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "file");
+            }
+            {
+                result<url> r = parse_uri_reference("wss://x:x@example.net:1234");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("file"));
+                // BOOST_TEST_CSTR_EQ(u, "wss://x:x@example.net:1234/");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "wss");
+                BOOST_TEST_CSTR_EQ(u, "file://x:x@example.net:1234");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "file");
+            }
+            // Ada can’t switch from file URL with no host
+            // Boost.URL handles the general syntax defined in RFC3986
+            // so there's no concept of a special scheme
+            {
+                result<url> r = parse_uri_reference("file://localhost/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("http"));
+                // BOOST_TEST_CSTR_EQ(u, "file:///");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "file");
+                BOOST_TEST_CSTR_EQ(u, "http://localhost/");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+            }
+            {
+                result<url> r = parse_uri_reference("file:///test");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("https"));
+                // BOOST_TEST_CSTR_EQ(u, "file:///test");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "file");
+                BOOST_TEST_CSTR_EQ(u, "https:///test");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "https");
+            }
+            {
+                result<url> r = parse_uri_reference("file:");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("wss"));
+                // BOOST_TEST_CSTR_EQ(u, "file:///");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "file");
+                BOOST_TEST_CSTR_EQ(u, "wss:");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "wss");
+            }
+            // Ada can’t switch from special scheme to non-special
+            // Boost.URL handles the general syntax defined in RFC3986
+            // so there's no concept of a special scheme
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("b"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+                BOOST_TEST_CSTR_EQ(u, "b://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "b");
+            }
+            {
+                result<url> r = parse_uri_reference("file://hi/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("s"));
+                // BOOST_TEST_CSTR_EQ(u, "file://hi/path");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "file");
+                BOOST_TEST_CSTR_EQ(u, "s://hi/path");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "s");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("s"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "https");
+                BOOST_TEST_CSTR_EQ(u, "s://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "s");
+            }
+            {
+                result<url> r = parse_uri_reference("ftp://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("test"));
+                // BOOST_TEST_CSTR_EQ(u, "ftp://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "ftp");
+                BOOST_TEST_CSTR_EQ(u, "test://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "test");
+            }
+            // Cannot-be-a-base URL doesn’t have a host, but URL in a special scheme must.
+            {
+                result<url> r = parse_uri_reference("mailto:me@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("http"));
+                // BOOST_TEST_CSTR_EQ(u, "mailto:me@example.net");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "mailto");
+                BOOST_TEST_CSTR_EQ(u, "http:me@example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+            }
+            // Ada can’t switch from non-special scheme to special
+            // Boost.URL handles the general syntax defined in RFC3986
+            // so there's no concept of a special scheme
+            {
+                result<url> r = parse_uri_reference("ssh://me@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("http"));
+                // BOOST_TEST_CSTR_EQ(u, "ssh://me@example.net");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "ssh");
+                BOOST_TEST_CSTR_EQ(u, "http://me@example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+            }
+            {
+                result<url> r = parse_uri_reference("ssh://me@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("https"));
+                // BOOST_TEST_CSTR_EQ(u, "ssh://me@example.net");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "ssh");
+                BOOST_TEST_CSTR_EQ(u, "https://me@example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "https");
+            }
+            {
+                result<url> r = parse_uri_reference("ssh://me@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("file"));
+                // BOOST_TEST_CSTR_EQ(u, "ssh://me@example.net");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "ssh");
+                BOOST_TEST_CSTR_EQ(u, "file://me@example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "file");
+            }
+            {
+                result<url> r = parse_uri_reference("ssh://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("file"));
+                // BOOST_TEST_CSTR_EQ(u, "ssh://example.net");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "ssh");
+                BOOST_TEST_CSTR_EQ(u, "file://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "file");
+            }
+            {
+                result<url> r = parse_uri_reference("nonsense:///test");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("https"));
+                // BOOST_TEST_CSTR_EQ(u, "nonsense:///test");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "nonsense");
+                BOOST_TEST_CSTR_EQ(u, "https:///test");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "https");
+            }
+            // Ada ignores substrings after the first ':'
+            // Boost.URL throws on invalid schemes
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_scheme("https:foo : bar"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "https");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+            }
+            // Ada ignores substrings after the first ':'
+            // Boost.URL throws on invalid schemes
+            {
+                // Ada accepts literal `<>`s in path
+                // Boost.URL only accepts segment-nz = 1*pchar
+                result<url> r = parse_uri_reference("data:text/html,<p>Test");
+                BOOST_TEST_NOT(r);
+                // if (!BOOST_TEST(r)) return;
+                // url u = *r;
+                // BOOST_TEST_NO_THROW(u.set_scheme("view-source+data:foo : bar"));
+                // BOOST_TEST_CSTR_EQ(u, "view-source+data:text/html,<p>Test");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "view-source+data");
+            }
+            // Ada sets port to null if it is the default for new scheme.
+            // Boost.URL keeps the URL the way the user defined it
+            {
+                result<url> r = parse_uri_reference("http://foo.com:443/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("https"));
+                // BOOST_TEST_CSTR_EQ(u, "https://foo.com/");
+                BOOST_TEST_CSTR_EQ(u, "https://foo.com:443/");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "https");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u.port(), "443");
+            }
+            // Ada strips tab and newline
+            // Boost.URL does not accept invalid chars
+            {
+                result<url> r = parse_uri_reference("http://test/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_scheme("h\r\ntt\tps"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "https://test/");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "https");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "http://test/");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("http://test/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_scheme("https\r"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "https://test/");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "https");
+                BOOST_TEST_CSTR_EQ(u, "http://test/");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+            }
+            // Non-tab/newline C0 controls result in no-op
+            // Boost.URL string_view constructor parses until it finds null
+            {
+                result<url> r = parse_uri_reference("http://test/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_scheme("https\x00" ""));
+                // BOOST_TEST_CSTR_EQ(u, "http://test/");
+                // BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+                BOOST_TEST_CSTR_EQ(u, "https://test/");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "https");
+            }
+            {
+                result<url> r = parse_uri_reference("http://test/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_scheme("https\x0c" ""), system_error);
+                BOOST_TEST_CSTR_EQ(u, "http://test/");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+            }
+            {
+                result<url> r = parse_uri_reference("http://test/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_scheme("https\x0e" ""), system_error);
+                BOOST_TEST_CSTR_EQ(u, "http://test/");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+            }
+            {
+                result<url> r = parse_uri_reference("http://test/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_scheme("https "), system_error);
+                BOOST_TEST_CSTR_EQ(u, "http://test/");
+                BOOST_TEST_CSTR_EQ(u.scheme(), "http");
+            }
+        }
+        // username
+        {
+            // In Ada, no host means no username
+            // Boost.URL creates the host when the username is set
+            {
+                result<url> r = parse_uri_reference("file:///home/you/index.html");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
+                // BOOST_TEST_CSTR_EQ(u, "file:///home/you/index.html");
+                // BOOST_TEST_CSTR_EQ(u.encoded_user(), "");
+                BOOST_TEST_CSTR_EQ(u, "file://me@/home/you/index.html");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "me");
+            }
+            // In Ada, no host means no username
+            // Boost.URL creates the host when the username is set
+            {
+                result<url> r = parse_uri_reference("unix:/run/foo.socket");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
+                // BOOST_TEST_CSTR_EQ(u, "unix:/run/foo.socket");
+                // BOOST_TEST_CSTR_EQ(u.encoded_user(), "");
+                BOOST_TEST_CSTR_EQ(u, "unix://me@/run/foo.socket");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "me");
+            }
+            // In Ada, cannot-be-a-base (no host) means no username
+            // Boost.URL still replaces the username
+            {
+                result<url> r = parse_uri_reference("mailto:you@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
+                // BOOST_TEST_CSTR_EQ(u, "mailto:you@example.net");
+                BOOST_TEST_CSTR_EQ(u, "mailto://me@/you@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "me");
+            }
+            {
+                result<url> r = parse_uri_reference("javascript:alert(1)");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user("wario"));
+                // BOOST_TEST_CSTR_EQ(u, "javascript:alert(1)");
+                // BOOST_TEST_CSTR_EQ(u.encoded_user(), "");
+                BOOST_TEST_CSTR_EQ(u, "javascript://wario@/alert(1)");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "wario");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
+                // BOOST_TEST_CSTR_EQ(u, "http://me@example.net/");
+                BOOST_TEST_CSTR_EQ(u, "http://me@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "me");
+            }
+            {
+                result<url> r = parse_uri_reference("http://:secret@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
+                // BOOST_TEST_CSTR_EQ(u, "http://me:secret@example.net/");
+                BOOST_TEST_CSTR_EQ(u, "http://me:secret@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "me");
+            }
+            {
+                // Boost.URL differentiates between an empty user an no user
+                result<url> r = parse_uri_reference("http://me@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user(""));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_user(), "");
+                BOOST_TEST_CSTR_EQ(u, "http://@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("http://me:secret@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user(""));
+                BOOST_TEST_CSTR_EQ(u, "http://:secret@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "");
+            }
+            // UTF-8 percent encoding with the userinfo encode set.
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // Boost.URL creates a string view which ends the buffer at the
+                // first null char
+                BOOST_TEST_NO_THROW(u.set_encoded_user("\x00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"));
+                // BOOST_TEST_CSTR_EQ(u, "http://%00%01%09%0A%0D%1F%20!%22%23$%&'()*+,-.%2F09%3A%3B%3C%3D%3E%3F%40AZ%5B%5C%5D%5E_%60az%7B%7C%7D~%7F%C2%80%C2%81%C3%89%C3%A9@example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_user(), "%00%01%09%0A%0D%1F%20!%22%23$%&'()*+,-.%2F09%3A%3B%3C%3D%3E%3F%40AZ%5B%5C%5D%5E_%60az%7B%7C%7D~%7F%C2%80%C2%81%C3%89%C3%A9");
+                BOOST_TEST_CSTR_EQ(u, "http://@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "");
+            }
+            // Bytes already percent-encoded are left as-is.
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user("%c3%89té"));
+                // Boost.URL does not create unrequested absolute paths
+                // BOOST_TEST_CSTR_EQ(u, "http://%c3%89t%C3%A9@example.net/");
+                BOOST_TEST_CSTR_EQ(u, "http://%c3%89t%C3%A9@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "%c3%89t%C3%A9");
+            }
+            {
+                result<url> r = parse_uri_reference("sc:///");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user("x"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_user(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://x@/");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "x");
+            }
+            {
+                result<url> r = parse_uri_reference("javascript://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user("wario"));
+                BOOST_TEST_CSTR_EQ(u, "javascript://wario@x/");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "wario");
+            }
+            {
+                result<url> r = parse_uri_reference("file://test/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_user("test"));
+                // BOOST_TEST_CSTR_EQ(u, "file://test/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_user(), "");
+                BOOST_TEST_CSTR_EQ(u, "file://test@test/");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "test");
+            }
+        }
+        // password
+        {
+            // In Ada, no host means no password
+            // Boost.URL creates an empty host
+            {
+                result<url> r = parse_uri_reference("file:///home/me/index.html");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password("secret"));
+                // BOOST_TEST_CSTR_EQ(u, "file:///home/me/index.html");
+                // BOOST_TEST_CSTR_EQ(u.encoded_password(), "");
+                BOOST_TEST_CSTR_EQ(u, "file://:secret@/home/me/index.html");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "secret");
+            }
+            // In Ada, no host means no password
+            // Boost.URL creates an empty host
+            {
+                result<url> r = parse_uri_reference("unix:/run/foo.socket");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password("secret"));
+                // BOOST_TEST_CSTR_EQ(u, "unix:/run/foo.socket");
+                // BOOST_TEST_CSTR_EQ(u.encoded_password(), "");
+                BOOST_TEST_CSTR_EQ(u, "unix://:secret@/run/foo.socket");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "secret");
+            }
+            // In Ada, cannot-be-a-base means no password
+            // Boost.URL creates an empty host
+            {
+                result<url> r = parse_uri_reference("mailto:me@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password("secret"));
+                // BOOST_TEST_CSTR_EQ(u, "mailto:me@example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_password(), "");
+                BOOST_TEST_CSTR_EQ(u, "mailto://:secret@/me@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "secret");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password("secret"));
+                // BOOST_TEST_CSTR_EQ(u, "http://:secret@example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_password(), "secret");
+                BOOST_TEST_CSTR_EQ(u, "http://:secret@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "secret");
+            }
+            {
+                result<url> r = parse_uri_reference("http://me@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password("secret"));
+                // BOOST_TEST_CSTR_EQ(u, "http://me:secret@example.net/");
+                BOOST_TEST_CSTR_EQ(u, "http://me:secret@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "secret");
+            }
+            {
+                result<url> r = parse_uri_reference("http://:secret@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password(""));
+                // Boost.URL distinguishes between empty password and no password
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                BOOST_TEST_CSTR_EQ(u, "http://:@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("http://me:secret@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password(""));
+                // BOOST_TEST_CSTR_EQ(u, "http://me@example.net/");
+                BOOST_TEST_CSTR_EQ(u, "http://me:@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "");
+            }
+            // UTF-8 percent encoding with the userinfo encode set.
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password("\x00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"));
+                // BOOST_TEST_CSTR_EQ(u, "http://:%00%01%09%0A%0D%1F%20!%22%23$%&'()*+,-.%2F09%3A%3B%3C%3D%3E%3F%40AZ%5B%5C%5D%5E_%60az%7B%7C%7D~%7F%C2%80%C2%81%C3%89%C3%A9@example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_password(), "%00%01%09%0A%0D%1F%20!%22%23$%&'()*+,-.%2F09%3A%3B%3C%3D%3E%3F%40AZ%5B%5C%5D%5E_%60az%7B%7C%7D~%7F%C2%80%C2%81%C3%89%C3%A9");
+                BOOST_TEST_CSTR_EQ(u, "http://:@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "");
+            }
+            // Bytes already percent-encoded are left as-is.
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password("%c3%89té"));
+                BOOST_TEST_CSTR_EQ(u, "http://:%c3%89t%C3%A9@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "%c3%89t%C3%A9");
+            }
+            {
+                result<url> r = parse_uri_reference("sc:///");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password("x"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_password(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://:x@/");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "x");
+            }
+            {
+                result<url> r = parse_uri_reference("javascript://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password("bowser"));
+                BOOST_TEST_CSTR_EQ(u, "javascript://:bowser@x/");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "bowser");
+            }
+            {
+                result<url> r = parse_uri_reference("file://test/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_password("test"));
+                // BOOST_TEST_CSTR_EQ(u, "file://test/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_password(), "");
+                BOOST_TEST_CSTR_EQ(u, "file://:test@test/");
+                BOOST_TEST_CSTR_EQ(u.encoded_password(), "test");
+            }
+        }
+        // host
+        {
+            // Non-special scheme
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("\x00" "");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("\x00" ""));
+                // BOOST_TEST_CSTR_EQ(u, "sc://x/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "x");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "x");
+                BOOST_TEST_CSTR_EQ(u, "sc:///");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("\t");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("\t"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%09/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%09");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%09");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("\n");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("\n"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%0A/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%0A");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%0A");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("\r");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("\r"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%0D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%0D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%0D");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port(" ");
+                BOOST_TEST_NO_THROW(u.set_encoded_host(" "));
+                // BOOST_TEST_CSTR_EQ(u, "sc://x/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "x");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "x");
+                BOOST_TEST_CSTR_EQ(u, "sc://%20/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%20");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%20");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("#");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("#"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%23/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%23");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%23");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("/");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("/"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%2F/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%2F");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%2F");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("?");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("?"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%3F/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%3F");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%3F");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("@");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("@"));
+                // BOOST_TEST_CSTR_EQ(u, "sc://x/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "x");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "x");
+                BOOST_TEST_CSTR_EQ(u, "sc://%40/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%40");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%40");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("ß");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("ß"));
+                BOOST_TEST_CSTR_EQ(u, "sc://%C3%9F/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%C3%9F");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%C3%9F");
+            }
+            // IDNA Nontransitional_Processing
+            {
+                result<url> r = parse_uri_reference("https://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("ß");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("ß"));
+                // BOOST_TEST_CSTR_EQ(u, "https://xn--zca/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "xn--zca");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "xn--zca");
+                BOOST_TEST_CSTR_EQ(u, "https://%C3%9F/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%C3%9F");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%C3%9F");
+            }
+            // Cannot-be-a-base means no host
+            {
+                result<url> r = parse_uri_reference("mailto:me@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                // BOOST_TEST_CSTR_EQ(u, "mailto:me@example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u, "mailto://example.com/me@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+            }
+            // Cannot-be-a-base means no host
+            {
+                result<url> r = parse_uri_reference("data:text/plain,Stuff");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.net");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.net"));
+                // BOOST_TEST_CSTR_EQ(u, "data:text/plain,Stuff");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u, "data://example.net/text/plain,Stuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:8080");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_NO_THROW(u.set_port("8080"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "8080");
+            }
+            // Port number is unchanged if not specified in the new value
+            {
+                result<url> r = parse_uri_reference("http://example.net:8080");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "8080");
+            }
+            // Port number is unchanged if not specified
+            {
+                result<url> r = parse_uri_reference("http://example.net:8080");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_NO_THROW(u.set_port(""));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com:");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // The empty host is not valid for special schemes
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("");
+                BOOST_TEST_NO_THROW(u.set_encoded_host(""));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+            }
+            // The empty host is OK for non-special schemes
+            {
+                result<url> r = parse_uri_reference("view-source+http://example.net/foo");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("");
+                BOOST_TEST_NO_THROW(u.set_encoded_host(""));
+                BOOST_TEST_CSTR_EQ(u, "view-source+http:///foo");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+            }
+            // Path-only URLs can gain a host
+            {
+                result<url> r = parse_uri_reference("a:/foo");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.net");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.net"));
+                BOOST_TEST_CSTR_EQ(u, "a://example.net/foo");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+            }
+            // IPv4 address syntax is normalized in Ada
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("0x7F000001:8080");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("0x7F000001"));
+                BOOST_TEST_NO_THROW(u.set_port("8080"));
+                // BOOST_TEST_CSTR_EQ(u, "http://127.0.0.1:8080/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "127.0.0.1:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "127.0.0.1");
+                BOOST_TEST_CSTR_EQ(u, "http://0x7F000001:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "0x7F000001:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "0x7F000001");
+                BOOST_TEST_CSTR_EQ(u.port(), "8080");
+            }
+            // Valid IPv6 address syntax is normalized
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("[::0:01]:2");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[::0:01]"));
+                BOOST_TEST_NO_THROW(u.set_port("2"));
+                // Boost.URL also normalizes the IPv6 when parsing
+                // The value is recoded from the binary address representation
+                BOOST_TEST_CSTR_EQ(u, "http://[::1]:2");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "[::1]:2");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "[::1]");
+                BOOST_TEST_CSTR_EQ(u.port(), "2");
+            }
+            // IPv6 literal address with port, crbug.com/1012416
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("[2001:db8::2]:4002");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[2001:db8::2]"));
+                BOOST_TEST_NO_THROW(u.set_port("4002"));
+                // BOOST_TEST_CSTR_EQ(u, "http://[2001:db8::2]:4002/");
+                BOOST_TEST_CSTR_EQ(u, "http://[2001:db8::2]:4002");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "[2001:db8::2]:4002");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "[2001:db8::2]");
+                BOOST_TEST_CSTR_EQ(u.port(), "4002");
+            }
+            // Default port number is removed in Ada
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:80");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_NO_THROW(u.set_port("80"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com:80");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:80");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u.port(), "80");
+            }
+            // Default port number is removed
+            {
+                result<url> r = parse_uri_reference("https://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:443");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_NO_THROW(u.set_port("443"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.com/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "https://example.com:443");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:443");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "443");
+            }
+            // Default port number is only removed for the relevant scheme
+            {
+                result<url> r = parse_uri_reference("https://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:80");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_NO_THROW(u.set_port("80"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.com:80/");
+                BOOST_TEST_CSTR_EQ(u, "https://example.com:80");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:80");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "80");
+            }
+            // Port number is removed if new port is scheme default and existing URL has a non-default port
+            {
+                result<url> r = parse_uri_reference("http://example.net:8080");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:80");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_NO_THROW(u.set_port("80"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com:80");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:80");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "80");
+            }
+            // Stuff after a / delimiter is ignored in Ada
+            // Boost.URL encodes invalid chars
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com/stuff");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com/stuff"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com%2Fstuff/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%2Fstuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%2Fstuff");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a / delimiter is ignored in Ada
+            // Boost.URL does not accept invalid port numbers
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:8080/stuff");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_THROWS(u.set_port("8080/stuff"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a ? delimiter is ignored in Ada
+            // Boost.URL encodes invalid host chars
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com?stuff");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com?stuff"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com%3Fstuff/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%3Fstuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%3Fstuff");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a ? delimiter is ignored
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:8080?stuff");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_THROWS(u.set_port("8080?stuff"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a # delimiter is ignored in Ada
+            // Boost.URL encodes invalid host chars
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com#stuff");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com#stuff"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com%23stuff/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%23stuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%23stuff");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a # delimiter is ignored in Ada
+            // Boost.URL does not accept invalid port chars
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:8080#stuff");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_THROWS(u.set_port("8080#stuff"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a \ delimiter is ignored for special schemes in Ada
+            // Boost.URL encodes invalid host chars
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com\\stuff");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com\\stuff"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com%5Cstuff/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%5Cstuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%5Cstuff");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a \ delimiter is ignored for special schemes in Ada
+            // Boost.URL does not accept invalid port chars
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:8080\\stuff");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_THROWS(u.set_port("8080\\stuff"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // \ is not a delimiter for non-special schemes, but still forbidden in hosts
+            // Boost.URL encodes invalid host chars
+            {
+                result<url> r = parse_uri_reference("view-source+http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com\\stuff");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com\\stuff"));
+                // BOOST_TEST_CSTR_EQ(u, "view-source+http://example.net/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "view-source+http://example.com%5Cstuff/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%5Cstuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%5Cstuff");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // In Ada, anything other than ASCII digit stops the port parser in a setter but is not an error
+            // Boost.URL does nto accept invalid port chars
+            {
+                result<url> r = parse_uri_reference("view-source+http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:8080stuff2");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "view-source+http://example.com:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "view-source+http://example.com/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // In Ada, anything other than ASCII digit stops the port parser in a setter but is not an error
+            // Boost.URL does not accept invalid port chars
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:8080stuff2");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Anything other than ASCII digit stops the port parser in a setter but is not an error
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:8080+2");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_THROWS(u.set_port("8080+2"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Port numbers are 16 bit integers
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:65535");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_NO_THROW(u.set_port("65535"));
+                BOOST_TEST_CSTR_EQ(u, "http://example.com:65535/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:65535");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "65535");
+            }
+            // Ada fails at port overflow
+            // Boost.URL parses any valid port number as a string
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("example.com:65536");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                BOOST_TEST_NO_THROW(u.set_port("65536"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com:65536/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:65536");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "65536");
+            }
+            // Broken IPv6 is invalid in Ada
+            // Boost.URL identifies a ref-name that needs encoding
+            {
+                result<url> r = parse_uri_reference("http://example.net/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("[google.com]");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[google.com]"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://%5Bgoogle.com%5D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%5Bgoogle.com%5D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5Bgoogle.com%5D");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("[::1.2.3.4x]");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.2.3.4x]"));
+                // Ada rejects invalid Ip Address
+                // Boost.URL identifies a valid reg-name
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://%5B%3A%3A1.2.3.4x%5D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%5B%3A%3A1.2.3.4x%5D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.3.4x%5D");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("[::1.2.3.]");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.2.3.]"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://%5B%3A%3A1.2.3.%5D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%5B%3A%3A1.2.3.%5D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.3.%5D");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("[::1.2.]");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.2.]"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://%5B%3A%3A1.2.%5D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%5B%3A%3A1.2.%5D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.%5D");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("[::1.]");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.]"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://%5B%3A%3A1.%5D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%5B%3A%3A1.%5D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.%5D");
+            }
+            // Ada treats file as a special scheme
+            {
+                result<url> r = parse_uri_reference("file://y/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("x:123");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("x"));
+                BOOST_TEST_NO_THROW(u.set_port("123"));
+                // BOOST_TEST_CSTR_EQ(u, "file://y/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "y");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "y");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "file://x:123/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "x:123");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "x");
+                BOOST_TEST_CSTR_EQ(u.port(), "123");
+            }
+            {
+                result<url> r = parse_uri_reference("file://y/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("loc%41lhost");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("loc%41lhost"));
+                // BOOST_TEST_CSTR_EQ(u, "file:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "file://loc%41lhost/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "loc%41lhost");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "loc%41lhost");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("file://hi/x");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("");
+                BOOST_TEST_NO_THROW(u.set_encoded_host(""));
+                BOOST_TEST_CSTR_EQ(u, "file:///x");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://test@test/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("");
+                BOOST_TEST_NO_THROW(u.set_encoded_host(""));
+                // BOOST_TEST_CSTR_EQ(u, "sc://test@test/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "test");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "test");
+                // BOOST_TEST_CSTR_EQ(u.encoded_user(), "test");
+                BOOST_TEST_CSTR_EQ(u, "sc://test@/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "test");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://test:12/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("");
+                BOOST_TEST_NO_THROW(u.set_encoded_host(""));
+                // BOOST_TEST_CSTR_EQ(u, "sc://test:12/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "test:12");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "test");
+                // BOOST_TEST_CSTR_EQ(u.port(), "12");
+                BOOST_TEST_CSTR_EQ(u, "sc://:12/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), ":12");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u.port(), "12");
+            }
+            // Leading / is not stripped
+            {
+                result<url> r = parse_uri_reference("http://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("///bad.com");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("///bad.com"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "http://%2F%2F%2Fbad.com/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%2F%2F%2Fbad.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%2F%2F%2Fbad.com");
+            }
+            // Leading / is not stripped
+            {
+                result<url> r = parse_uri_reference("sc://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("///bad.com");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("///bad.com"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%2F%2F%2Fbad.com/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%2F%2F%2Fbad.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%2F%2F%2Fbad.com");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("a%C2%ADb");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("a%C2%ADb"));
+                // BOOST_TEST_CSTR_EQ(u, "https://ab/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "ab");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "ab");
+                BOOST_TEST_CSTR_EQ(u, "https://a%C2%ADb/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "a%C2%ADb");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "a%C2%ADb");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("\xad" "");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("\xad" ""));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.com/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "https://%AD/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%AD");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%AD");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("%C2%AD");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("%C2%AD"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.com/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "https://%C2%AD/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%C2%AD");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%C2%AD");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // u.set_encoded_host_and_port("xn--");
+                BOOST_TEST_NO_THROW(u.set_encoded_host("xn--"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.com/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "https://xn--/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "xn--");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "xn--");
+            }
+        }
+        // hostname
+        {
+            // Non-special scheme
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("\x00" ""));
+                // BOOST_TEST_CSTR_EQ(u, "sc://x/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "x");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "x");
+                BOOST_TEST_CSTR_EQ(u, "sc:///");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("\t"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%09/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%09");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%09");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("\n"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%0A/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%0A");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%0A");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("\r"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%0D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%0D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%0D");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host(" "));
+                // BOOST_TEST_CSTR_EQ(u, "sc://x/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "x");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "x");
+                BOOST_TEST_CSTR_EQ(u, "sc://%20/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%20");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%20");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("#"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%23/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%23");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%23");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("/"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%2F/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%2F");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%2F");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("?"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%3F/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%3F");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%3F");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("@"));
+                // BOOST_TEST_CSTR_EQ(u, "sc://x/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "x");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "x");
+                BOOST_TEST_CSTR_EQ(u, "sc://%40/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%40");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%40");
+            }
+            // Cannot-be-a-base means no host in Ada
+            {
+                result<url> r = parse_uri_reference("mailto:me@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                // BOOST_TEST_CSTR_EQ(u, "mailto:me@example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u, "mailto://example.com/me@example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+            }
+            // Cannot-be-a-base means no host in Ada
+            {
+                result<url> r = parse_uri_reference("data:text/plain,Stuff");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.net"));
+                // BOOST_TEST_CSTR_EQ(u, "data:text/plain,Stuff");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u, "data://example.net/text/plain,Stuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net:8080");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u.port(), "8080");
+            }
+            // The empty host is not valid for special schemes
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host(""));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+            }
+            // The empty host is OK for non-special schemes
+            {
+                result<url> r = parse_uri_reference("view-source+http://example.net/foo");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host(""));
+                BOOST_TEST_CSTR_EQ(u, "view-source+http:///foo");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+            }
+            // Path-only URLs can gain a host
+            {
+                result<url> r = parse_uri_reference("a:/foo");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.net"));
+                BOOST_TEST_CSTR_EQ(u, "a://example.net/foo");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+            }
+            // IPv4 address syntax is normalized
+            {
+                result<url> r = parse_uri_reference("http://example.net:8080");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("0x7F000001"));
+                // BOOST_TEST_CSTR_EQ(u, "http://127.0.0.1:8080/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "127.0.0.1:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "127.0.0.1");
+                BOOST_TEST_CSTR_EQ(u, "http://0x7F000001:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "0x7F000001:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "0x7F000001");
+                BOOST_TEST_CSTR_EQ(u.port(), "8080");
+            }
+            // IPv6 address syntax is normalized
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[::0:01]"));
+                // Boost.URL also normalizes the IPv6 when parsing
+                // The value is recoded from the binary address representation
+                BOOST_TEST_CSTR_EQ(u, "http://[::1]");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "[::1]");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "[::1]");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // : delimiter invalidates entire value
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com:8080"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com%3A8080/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%3A8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%3A8080");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // : delimiter invalidates entire value
+            {
+                result<url> r = parse_uri_reference("http://example.net:8080/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com:"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com%3A:8080/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%3A:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%3A");
+                BOOST_TEST_CSTR_EQ(u.port(), "8080");
+            }
+            // Stuff after a / delimiter is ignored
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com/stuff"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com%2Fstuff/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%2Fstuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%2Fstuff");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a ? delimiter is ignored
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com?stuff"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com%3Fstuff/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%3Fstuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%3Fstuff");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a # delimiter is ignored
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com#stuff"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com%23stuff/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%23stuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%23stuff");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a \ delimiter is ignored for special schemes
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com\\stuff"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "http://example.com%5Cstuff/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%5Cstuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%5Cstuff");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // \ is not a delimiter for non-special schemes, but still forbidden in hosts
+            {
+                result<url> r = parse_uri_reference("view-source+http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("example.com\\stuff"));
+                // BOOST_TEST_CSTR_EQ(u, "view-source+http://example.net/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "view-source+http://example.com%5Cstuff/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com%5Cstuff");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com%5Cstuff");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Broken IPv6
+            {
+                result<url> r = parse_uri_reference("http://example.net/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[google.com]"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://%5Bgoogle.com%5D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%5Bgoogle.com%5D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5Bgoogle.com%5D");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.2.3.4x]"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://%5B%3A%3A1.2.3.4x%5D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%5B%3A%3A1.2.3.4x%5D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.3.4x%5D");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.2.3.]"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://%5B%3A%3A1.2.3.%5D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%5B%3A%3A1.2.3.%5D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.3.%5D");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.2.]"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://%5B%3A%3A1.2.%5D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%5B%3A%3A1.2.%5D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.%5D");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.]"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u, "http://%5B%3A%3A1.%5D/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%5B%3A%3A1.%5D");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.%5D");
+            }
+            {
+                result<url> r = parse_uri_reference("file://y/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("x:123"));
+                // BOOST_TEST_CSTR_EQ(u, "file://y/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "y");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "y");
+                BOOST_TEST_CSTR_EQ(u, "file://x%3A123/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "x%3A123");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "x%3A123");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("file://y/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("loc%41lhost"));
+                // BOOST_TEST_CSTR_EQ(u, "file:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "file://loc%41lhost/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "loc%41lhost");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "loc%41lhost");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("file://hi/x");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host(""));
+                BOOST_TEST_CSTR_EQ(u, "file:///x");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://test@test/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host(""));
+                // BOOST_TEST_CSTR_EQ(u, "sc://test@test/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "test");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "test");
+                // BOOST_TEST_CSTR_EQ(u.encoded_user(), "test");
+                BOOST_TEST_CSTR_EQ(u, "sc://test@/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u.encoded_user(), "test");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://test:12/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host(""));
+                // BOOST_TEST_CSTR_EQ(u, "sc://test:12/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "test:12");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "test");
+                BOOST_TEST_CSTR_EQ(u, "sc://:12/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), ":12");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u.port(), "12");
+            }
+            // Drop /. from path
+            {
+                result<url> r = parse_uri_reference("non-spec:/.//p");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("h"));
+                // BOOST_TEST_CSTR_EQ(u, "non-spec://h//p");
+                BOOST_TEST_CSTR_EQ(u, "non-spec://h/.//p");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "h");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "h");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//p");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/.//p");
+            }
+            {
+                result<url> r = parse_uri_reference("non-spec:/.//p");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host(""));
+                // BOOST_TEST_CSTR_EQ(u, "non-spec:////p");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//p");
+                BOOST_TEST_CSTR_EQ(u, "non-spec:///.//p");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/.//p");
+            }
+            // Leading / is not stripped
+            {
+                result<url> r = parse_uri_reference("http://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("///bad.com"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.com/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "http://%2F%2F%2Fbad.com/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%2F%2F%2Fbad.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%2F%2F%2Fbad.com");
+            }
+            // Leading / is not stripped
+            {
+                result<url> r = parse_uri_reference("sc://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("///bad.com"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://%2F%2F%2Fbad.com/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%2F%2F%2Fbad.com");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%2F%2F%2Fbad.com");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("a%C2%ADb"));
+                // BOOST_TEST_CSTR_EQ(u, "https://ab/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "ab");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "ab");
+                BOOST_TEST_CSTR_EQ(u, "https://a%C2%ADb/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "a%C2%ADb");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "a%C2%ADb");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("\xad"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.com/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "https://%AD/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%AD");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%AD");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("%C2%AD"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.com/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "https://%C2%AD/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "%C2%AD");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "%C2%AD");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.com/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_host("xn--"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.com/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
+                BOOST_TEST_CSTR_EQ(u, "https://xn--/");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "xn--");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "xn--");
+            }
+        }
+        // port
+        {
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("8080"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "8080");
+            }
+            // Port number is removed if empty is the new value
+            {
+                result<url> r = parse_uri_reference("http://example.net:8080");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port(""));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net:");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Default port number is removed
+            {
+                result<url> r = parse_uri_reference("http://example.net:8080");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("80"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net:80");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:80");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "80");
+            }
+            // Default port number is removed
+            {
+                result<url> r = parse_uri_reference("https://example.net:4433");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("443"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net:443");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:443");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "443");
+            }
+            // Default port number is only removed for the relevant scheme
+            {
+                result<url> r = parse_uri_reference("https://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("80"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net:80/");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net:80");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:80");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "80");
+            }
+            // Stuff after a / delimiter is ignored
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_port("8080/stuff"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a ? delimiter is ignored
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_port("8080?stuff"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a # delimiter is ignored
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_port("8080#stuff"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Stuff after a \ delimiter is ignored for special schemes
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_port("8080\\stuff"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Anything other than ASCII digit stops the port parser in a setter but is not an error
+            {
+                result<url> r = parse_uri_reference("view-source+http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "view-source+http://example.net:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "view-source+http://example.net/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Anything other than ASCII digit stops the port parser in a setter but is not an error
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Anything other than ASCII digit stops the port parser in a setter but is not an error
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_port("8080+2"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "");
+            }
+            // Port numbers are 16 bit integers
+            {
+                result<url> r = parse_uri_reference("http://example.net/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("65535"));
+                BOOST_TEST_CSTR_EQ(u, "http://example.net:65535/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:65535");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "65535");
+            }
+            // Port numbers are 16 bit integers, overflowing is an error in Ada
+            {
+                result<url> r = parse_uri_reference("http://example.net:8080/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("65536"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net:65536/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:65536");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "65536");
+            }
+            // Setting port to a string that doesn't parse as a number
+            {
+                result<url> r = parse_uri_reference("http://example.net:8080/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_port("randomstring"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "8080");
+            }
+            // Port numbers are 16 bit integers, overflowing is an error
+            {
+                result<url> r = parse_uri_reference("non-special://example.net:8080/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("65536"));
+                // BOOST_TEST_CSTR_EQ(u, "non-special://example.net:8080/path");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
+                // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u, "non-special://example.net:65536/path");
+                BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:65536");
+                BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
+                BOOST_TEST_CSTR_EQ(u.port(), "65536");
+            }
+            {
+                result<url> r = parse_uri_reference("file://test/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("12"));
+                // BOOST_TEST_CSTR_EQ(u, "file://test/");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "file://test:12/");
+                BOOST_TEST_CSTR_EQ(u.port(), "12");
+            }
+            {
+                result<url> r = parse_uri_reference("file://localhost/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("12"));
+                // BOOST_TEST_CSTR_EQ(u, "file:///");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "file://localhost:12/");
+                BOOST_TEST_CSTR_EQ(u.port(), "12");
+            }
+            {
+                result<url> r = parse_uri_reference("non-base:value");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("12"));
+                // BOOST_TEST_CSTR_EQ(u, "non-base:value");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "non-base://:12/value");
+                BOOST_TEST_CSTR_EQ(u.port(), "12");
+            }
+            {
+                result<url> r = parse_uri_reference("sc:///");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("12"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:///");
+                // BOOST_TEST_CSTR_EQ(u.port(), "");
+                BOOST_TEST_CSTR_EQ(u, "sc://:12/");
+                BOOST_TEST_CSTR_EQ(u.port(), "12");
+            }
+            {
+                result<url> r = parse_uri_reference("sc://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("12"));
+                BOOST_TEST_CSTR_EQ(u, "sc://x:12/");
+                BOOST_TEST_CSTR_EQ(u.port(), "12");
+            }
+            {
+                result<url> r = parse_uri_reference("javascript://x/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_port("12"));
+                BOOST_TEST_CSTR_EQ(u, "javascript://x:12/");
+                BOOST_TEST_CSTR_EQ(u.port(), "12");
+            }
+            // Leading u0009 on special scheme
+            {
+                result<url> r = parse_uri_reference("https://domain.com:443");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_port("\t8080"), system_error);
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u.port(), "443");
+            }
+            // Leading u0009 on non-special scheme
+            {
+                result<url> r = parse_uri_reference("wpt++://domain.com:443");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_port("\t8080"), system_error);
+                // BOOST_TEST_CSTR_EQ(u.port(), "8080");
+                BOOST_TEST_CSTR_EQ(u.port(), "443");
+            }
+            // Should use all ascii prefixed characters as port
+            {
+                result<url> r = parse_uri_reference("https://www.google.com:4343");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_THROWS(u.set_port("4wpt"), system_error);
+                // BOOST_TEST_CSTR_EQ(u.port(), "4");
+                BOOST_TEST_CSTR_EQ(u.port(), "4343");
+            }
+        }
+        // pathname
+        {
+            // Opaque paths cannot be set
+            {
+                result<url> r = parse_uri_reference("mailto:me@example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("/foo"));
+                // BOOST_TEST_CSTR_EQ(u, "mailto:me@example.net");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "me@example.net");
+                BOOST_TEST_CSTR_EQ(u, "mailto:/foo");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo");
+            }
+            {
+                result<url> r = parse_uri_reference("data:original");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("new value"));
+                // BOOST_TEST_CSTR_EQ(u, "data:original");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "original");
+                BOOST_TEST_CSTR_EQ(u, "data:new%20value");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "new%20value");
+            }
+            {
+                result<url> r = parse_uri_reference("sc:original");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("new value"));
+                // BOOST_TEST_CSTR_EQ(u, "sc:original");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "original");
+                BOOST_TEST_CSTR_EQ(u, "sc:new%20value");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "new%20value");
+            }
+            // Special URLs cannot have their paths erased
+            {
+                result<url> r = parse_uri_reference("file:///some/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path(""));
+                // BOOST_TEST_CSTR_EQ(u, "file:///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
+                BOOST_TEST_CSTR_EQ(u, "file://");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "");
+            }
+            // Non-special URLs can have their paths erased
+            {
+                result<url> r = parse_uri_reference("foo://somehost/some/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path(""));
+                BOOST_TEST_CSTR_EQ(u, "foo://somehost");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "");
+            }
+            // Non-special URLs with an empty host can have their paths erased
+            {
+                result<url> r = parse_uri_reference("foo:///some/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path(""));
+                BOOST_TEST_CSTR_EQ(u, "foo://");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "");
+            }
+            // Path-only URLs cannot have their paths erased
+            {
+                result<url> r = parse_uri_reference("foo:/some/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path(""));
+                // BOOST_TEST_CSTR_EQ(u, "foo:/");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
+                BOOST_TEST_CSTR_EQ(u, "foo:");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "");
+            }
+            // Path-only URLs always have an initial slash
+            {
+                result<url> r = parse_uri_reference("foo:/some/path");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("test"));
+                // BOOST_TEST_CSTR_EQ(u, "foo:/test");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test");
+                BOOST_TEST_CSTR_EQ(u, "foo:test");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "test");
+            }
+            {
+                result<url> r = parse_uri_reference("unix:/run/foo.socket?timeout=10");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("/var/log/../run/bar.socket"));
+                // BOOST_TEST_CSTR_EQ(u, "unix:/var/run/bar.socket?timeout=10");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/var/run/bar.socket");
+                BOOST_TEST_CSTR_EQ(u, "unix:/var/log/../run/bar.socket?timeout=10");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/var/log/../run/bar.socket");
+                u.normalize_path();
+                BOOST_TEST_CSTR_EQ(u, "unix:/var/run/bar.socket?timeout=10");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/var/run/bar.socket");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("home"));
+                BOOST_TEST_CSTR_EQ(u, "https://example.net/home#nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/home");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("../home"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/home#nav");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/home");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net/../home#nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/../home");
+                u.normalize_path();
+                BOOST_TEST_CSTR_EQ(u, "https://example.net/../home#nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/../home");
+            }
+            // \ is a segment delimiter for 'special' URLs
+            {
+                result<url> r = parse_uri_reference("http://example.net/home?lang=fr#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("\\a\\%2E\\b\\%2e.\\c"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/a/c?lang=fr#nav");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/a/c");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/%5Ca%5C%2E%5Cb%5C%2e.%5Cc?lang=fr#nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%5Ca%5C%2E%5Cb%5C%2e.%5Cc");
+            }
+            // \ is *not* a segment delimiter for non-'special' URLs
+            {
+                result<url> r = parse_uri_reference("view-source+http://example.net/home?lang=fr#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("\\a\\%2E\\b\\%2e.\\c"));
+                // BOOST_TEST_CSTR_EQ(u, "view-source+http://example.net/\\a\\%2E\\b\\%2e.\\c?lang=fr#nav");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/\\a\\%2E\\b\\%2e.\\c");
+                BOOST_TEST_CSTR_EQ(u, "view-source+http://example.net/%5Ca%5C%2E%5Cb%5C%2e.%5Cc?lang=fr#nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%5Ca%5C%2E%5Cb%5C%2e.%5Cc");
+            }
+            // UTF-8 percent encoding with the default encode set. Tabs and newlines are removed.
+            {
+                result<url> r = parse_uri_reference("a:/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // Boost.URL does not accept invalid hexdig
+                BOOST_TEST_THROWS(u.set_encoded_path("%00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9");
+            }
+            // Bytes already percent-encoded are left as-is, including %2E outside dotted segments.
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("%2e%2E%c3%89té"));
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/%2e%2E%c3%89t%C3%A9");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%2e%2E%c3%89t%C3%A9");
+            }
+            // ? needs to be encoded
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("?"));
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/%3F");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%3F");
+            }
+            // # needs to be encoded
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("#"));
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/%23");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%23");
+            }
+            // ? needs to be encoded, non-special scheme
+            {
+                result<url> r = parse_uri_reference("sc://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("?"));
+                BOOST_TEST_CSTR_EQ(u, "sc://example.net/%3F");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%3F");
+            }
+            // # needs to be encoded, non-special scheme
+            {
+                result<url> r = parse_uri_reference("sc://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("#"));
+                BOOST_TEST_CSTR_EQ(u, "sc://example.net/%23");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%23");
+            }
+            // ? doesn't mess up encoding
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("/?é"));
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/%3F%C3%A9");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%3F%C3%A9");
+            }
+            // # doesn't mess up encoding
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("/#é"));
+                BOOST_TEST_CSTR_EQ(u, "http://example.net/%23%C3%A9");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%23%C3%A9");
+            }
+            // File URLs and (back)slashes
+            {
+                result<url> r = parse_uri_reference("file://monkey/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("\\\\"));
+                // BOOST_TEST_CSTR_EQ(u, "file://monkey//");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//");
+                BOOST_TEST_CSTR_EQ(u, "file://monkey/%5C%5C");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%5C%5C");
+            }
+            // File URLs and (back)slashes
+            {
+                result<url> r = parse_uri_reference("file:///unicorn");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("//\\/"));
+                // BOOST_TEST_CSTR_EQ(u, "file://////");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "////");
+                BOOST_TEST_CSTR_EQ(u, "file:////%5C/");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "//%5C/");
+            }
+            // File URLs and (back)slashes
+            {
+                result<url> r = parse_uri_reference("file:///unicorn");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("//monkey/..//"));
+                // BOOST_TEST_CSTR_EQ(u, "file://///");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "///");
+                BOOST_TEST_CSTR_EQ(u, "file:////monkey/..//");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "//monkey/..//");
+            }
+            // Serialize /. in path
+            {
+                result<url> r = parse_uri_reference("non-spec:/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("/.//p"));
+                BOOST_TEST_CSTR_EQ(u, "non-spec:/.//p");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//p");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/.//p");
+            }
+            {
+                result<url> r = parse_uri_reference("non-spec:/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("/..//p"));
+                // BOOST_TEST_CSTR_EQ(u, "non-spec:/.//p");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//p");
+                BOOST_TEST_CSTR_EQ(u, "non-spec:/..//p");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/..//p");
+            }
+            {
+                result<url> r = parse_uri_reference("non-spec:/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("//p"));
+                BOOST_TEST_CSTR_EQ(u, "non-spec:/.//p");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//p");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "/.//p");
+            }
+            // Drop /. from path
+            {
+                result<url> r = parse_uri_reference("non-spec:/.//");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("p"));
+                // BOOST_TEST_CSTR_EQ(u, "non-spec:/p");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/p");
+                BOOST_TEST_CSTR_EQ(u, "non-spec:p");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "p");
+            }
+            // Non-special URLs with non-opaque paths percent-encode U+0020
+            {
+                result<url> r = parse_uri_reference("data:/nospace");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("space "));
+                // BOOST_TEST_CSTR_EQ(u, "data:/space%20");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/space%20");
+                BOOST_TEST_CSTR_EQ(u, "data:space%20");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "space%20");
+            }
+            {
+                result<url> r = parse_uri_reference("sc:/nospace");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_path("space "));
+                // BOOST_TEST_CSTR_EQ(u, "sc:/space%20");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/space%20");
+                BOOST_TEST_CSTR_EQ(u, "sc:space%20");
+                BOOST_TEST_CSTR_EQ(u.encoded_path(), "space%20");
+            }
+        }
+        // search
+        {
+            {
+                result<url> r = parse_uri_reference("https://example.net#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_query("lang=fr"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/?lang=fr#nav");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net?lang=fr#nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_query(), "lang=fr");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_query("lang=fr"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/?lang=fr#nav");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net?lang=fr#nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_query(), "lang=fr");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_query("?lang=fr"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net?lang=fr#nav");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net??lang=fr#nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_query(), "?lang=fr");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_query("??lang=fr"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/??lang=fr#nav");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net???lang=fr#nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_query(), "??lang=fr");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_query("?"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/?#nav");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net??#nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_query(), "?");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_query(""));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/#nav");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net?#nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_query(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net?lang=en-US");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_query(""));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net?");
+                BOOST_TEST_CSTR_EQ(u.encoded_query(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_query(""));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net?");
+                BOOST_TEST_CSTR_EQ(u.encoded_query(), "");
+            }
+            // UTF-8 percent encoding with the query encode set. Tabs and newlines are removed.
+            {
+                result<url> r = parse_uri_reference("a:/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // Boost.URL does not accept invalid octets
+                BOOST_TEST_THROWS(u.set_encoded_query("%00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "a:/?%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9");
+                // BOOST_TEST_CSTR_EQ(u.encoded_query(), "%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9");
+            }
+            // Bytes already percent-encoded are left as-is
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_query("%c3%89té"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/?%c3%89t%C3%A9");
+                // BOOST_TEST_CSTR_EQ(u.encoded_query(), "%c3%89t%C3%A9");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net?%c3%89t%C3%A9");
+                BOOST_TEST_CSTR_EQ(u.encoded_query(), "%c3%89t%C3%A9");
+            }
+            // Drop trailing spaces from trailing opaque paths
+            {
+                result<url> r = parse_uri_reference("data:space ?query");
+                // Boost.URL does not accept parsing invalid path chars
+                BOOST_TEST_NOT(r);
+                // if (!BOOST_TEST(r)) return;
+                // url u = *r;
+                // BOOST_TEST_NO_THROW(u.set_encoded_query(""));
+                // BOOST_TEST_CSTR_EQ(u, "data:space");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "space");
+                // BOOST_TEST_CSTR_EQ(u.encoded_query(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("sc:space ?query");
+                // Boost.URL does not accept parsing invalid path chars
+                BOOST_TEST_NOT(r);
+                // if (!BOOST_TEST(r)) return;
+                // url u = *r;
+                // BOOST_TEST_NO_THROW(u.set_encoded_query(""));
+                // BOOST_TEST_CSTR_EQ(u, "sc:space");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "space");
+                // BOOST_TEST_CSTR_EQ(u.encoded_query(), "");
+            }
+            // Do not drop trailing spaces from non-trailing opaque paths
+            {
+                result<url> r = parse_uri_reference("data:space  ?query#fragment");
+                // Boost.URL does not accept parsing invalid path chars
+                BOOST_TEST_NOT(r);
+                // if (!BOOST_TEST(r)) return;
+                // url u = *r;
+                // BOOST_TEST_NO_THROW(u.set_encoded_query(""));
+                // BOOST_TEST_CSTR_EQ(u, "data:space  #fragment");
+                // BOOST_TEST_CSTR_EQ(u.encoded_query(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("sc:space  ?query#fragment");
+                // Boost.URL does not accept parsing invalid path chars
+                BOOST_TEST_NOT(r);
+                // if (!BOOST_TEST(r)) return;
+                // url u = *r;
+                // BOOST_TEST_NO_THROW(u.set_encoded_query(""));
+                // BOOST_TEST_CSTR_EQ(u, "sc:space  #fragment");
+                // BOOST_TEST_CSTR_EQ(u.encoded_query(), "");
+            }
+        }
+        // hash
+        {
+            {
+                result<url> r = parse_uri_reference("https://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("main"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/#main");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net#main");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "main");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("main"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/#main");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net#main");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "main");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net?lang=en-US");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("#nav"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/?lang=en-US##nav");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net?lang=en-US##nav");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "#nav");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("main"));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/?lang=en-US#main");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net?lang=en-US#main");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "main");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment(""));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/?lang=en-US#");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net?lang=en-US#");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment(""));
+                // BOOST_TEST_CSTR_EQ(u, "https://example.net/?lang=en-US");
+                BOOST_TEST_CSTR_EQ(u, "https://example.net?lang=en-US#");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("foo bar"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/#foo%20bar");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net#foo%20bar");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "foo%20bar");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("foo\"bar"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/#foo%22bar");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net#foo%22bar");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "foo%22bar");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("foo<bar"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/#foo%3Cbar");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net#foo%3Cbar");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "foo%3Cbar");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("foo>bar"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/#foo%3Ebar");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net#foo%3Ebar");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "foo%3Ebar");
+            }
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("foo`bar"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/#foo%60bar");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net#foo%60bar");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "foo%60bar");
+            }
+            // Simple percent-encoding; tabs and newlines are removed
+            {
+                result<url> r = parse_uri_reference("a:/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                // Boost.URL does not accept invalid octets
+                BOOST_TEST_THROWS(u.set_encoded_fragment("%00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"), system_error);
+                // BOOST_TEST_CSTR_EQ(u, "a:/#%00%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9");
+                // BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "%00%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9");
+            }
+            // Percent-encode NULLs in fragment
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("a%00" "b"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/#a%00b");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net#a%00b");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "a%00b");
+            }
+            // Percent-encode NULLs in fragment
+            {
+                result<url> r = parse_uri_reference("non-spec:/");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("a%00" "b"));
+                BOOST_TEST_CSTR_EQ(u, "non-spec:/#a%00b");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "a%00b");
+            }
+            // Bytes already percent-encoded are left as-is
+            {
+                result<url> r = parse_uri_reference("http://example.net");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("%c3%89té"));
+                // BOOST_TEST_CSTR_EQ(u, "http://example.net/#%c3%89t%C3%A9");
+                BOOST_TEST_CSTR_EQ(u, "http://example.net#%c3%89t%C3%A9");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "%c3%89t%C3%A9");
+            }
+            {
+                result<url> r = parse_uri_reference("javascript:alert(1)");
+                if (!BOOST_TEST(r)) return;
+                url u = *r;
+                BOOST_TEST_NO_THROW(u.set_encoded_fragment("castle"));
+                BOOST_TEST_CSTR_EQ(u, "javascript:alert(1)#castle");
+                BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "castle");
+            }
+            // Drop trailing spaces from trailing opaque paths
+            {
+                result<url> r = parse_uri_reference("data:space                   #fragment");
+                // Boost.URL does not accept parsing invalid path chars
+                BOOST_TEST_NOT(r);
+                // if (!BOOST_TEST(r)) return;
+                // url u = *r;
+                // BOOST_TEST_NO_THROW(u.set_encoded_fragment(""));
+                // BOOST_TEST_CSTR_EQ(u, "data:space");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "space");
+                // BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("sc:space    #fragment");
+                // Boost.URL does not accept parsing invalid path chars
+                BOOST_TEST_NOT(r);
+                // if (!BOOST_TEST(r)) return;
+                // url u = *r;
+                // BOOST_TEST_NO_THROW(u.set_encoded_fragment(""));
+                // BOOST_TEST_CSTR_EQ(u, "sc:space");
+                // BOOST_TEST_CSTR_EQ(u.encoded_path(), "space");
+                // BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "");
+            }
+            // Do not drop trailing spaces from non-trailing opaque paths
+            {
+                result<url> r = parse_uri_reference("data:space  ?query#fragment");
+                // Boost.URL does not accept parsing invalid path chars
+                BOOST_TEST_NOT(r);
+                // if (!BOOST_TEST(r)) return;
+                // url u = *r;
+                // BOOST_TEST_NO_THROW(u.set_encoded_fragment(""));
+                // BOOST_TEST_CSTR_EQ(u, "data:space  ?query");
+                // BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "");
+            }
+            {
+                result<url> r = parse_uri_reference("sc:space  ?query#fragment");
+                // Boost.URL does not accept parsing invalid path chars
+                BOOST_TEST_NOT(r);
+                // if (!BOOST_TEST(r)) return;
+                // url u = *r;
+                // BOOST_TEST_NO_THROW(u.set_encoded_fragment(""));
+                // BOOST_TEST_CSTR_EQ(u, "sc:space  ?query");
+                // BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "");
+            }
+        }
+    }
+
     void
     run()
     {
@@ -9151,6 +12106,7 @@ struct ada_test
         // https://github.com/ada-url/ada
         adaBasicTests();
         urlTestData();
+        adaSettersTests();
     }
 };
 

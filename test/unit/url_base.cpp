@@ -23,6 +23,12 @@
     ':' 0x3a
 */
 
+#ifdef BOOST_TEST_CSTR_EQ
+#undef BOOST_TEST_CSTR_EQ
+#define BOOST_TEST_CSTR_EQ(expr1,expr2) \
+    BOOST_TEST_EQ( boost::urls::detail::to_sv(expr1), boost::urls::detail::to_sv(expr2) )
+#endif
+
 namespace boost {
 namespace urls {
 
