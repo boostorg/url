@@ -329,7 +329,7 @@ struct url_base_test
         {
             url u;
             BOOST_TEST_NO_THROW(u = url(s1));
-            BOOST_TEST(u.set_encoded_userinfo(s2).buffer() == s3);
+            BOOST_TEST_EQ(u.set_encoded_userinfo(s2).buffer(), s3);
             BOOST_TEST_EQ(u.encoded_userinfo(), s2);
             BOOST_TEST(u.has_userinfo());
         };
@@ -619,6 +619,57 @@ struct url_base_test
                 u.set_user(
                     u.encoded_query());
             });
+
+        // path doesn't become host
+        {
+            url u("mailto:example.net");
+            BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
+            BOOST_TEST_CSTR_EQ(u, "mailto://me@/example.net");
+            BOOST_TEST_NOT(u.buffer() == "mailto://me@example.net");
+            BOOST_TEST_CSTR_EQ(u.encoded_user(), "me");
+        }
+        {
+            url u("mailto:you@example.net");
+            BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
+            BOOST_TEST_CSTR_EQ(u, "mailto://me@/you@example.net");
+            BOOST_TEST_NOT(u.buffer() == "mailto://me@you@example.net");
+            BOOST_TEST_CSTR_EQ(u.encoded_user(), "me");
+        }
+        {
+            url u("mailto:a@b.c");
+            BOOST_TEST_NO_THROW(u.set_encoded_password("secret"));
+            BOOST_TEST_CSTR_EQ(u, "mailto://:secret@/a@b.c");
+        }
+        {
+            url u("mailto:a@b.c");
+            BOOST_TEST_NO_THROW(u.set_encoded_userinfo("u:p"));
+            BOOST_TEST_CSTR_EQ(u, "mailto://u:p@/a@b.c");
+        }
+        {
+            url u("mailto://h/a@b.c");
+            BOOST_TEST_NO_THROW(u.set_encoded_userinfo("u:p"));
+            BOOST_TEST_CSTR_EQ(u, "mailto://u:p@h/a@b.c");
+        }
+        {
+            url u("mailto:a@b.c");
+            BOOST_TEST_NO_THROW(u.set_encoded_userinfo("u"));
+            BOOST_TEST_CSTR_EQ(u, "mailto://u@/a@b.c");
+        }
+        {
+            url u("mailto://h/a@b.c");
+            BOOST_TEST_NO_THROW(u.set_encoded_userinfo("u"));
+            BOOST_TEST_CSTR_EQ(u, "mailto://u@h/a@b.c");
+        }
+        {
+            url u("mailto:a@b.c");
+            BOOST_TEST_NO_THROW(u.set_encoded_host("host"));
+            BOOST_TEST_CSTR_EQ(u, "mailto://host/a@b.c");
+        }
+        {
+            url u("mailto:a@b.c");
+            BOOST_TEST_NO_THROW(u.set_port("80"));
+            BOOST_TEST_CSTR_EQ(u, "mailto://:80/a@b.c");
+        }
     }
 
     void

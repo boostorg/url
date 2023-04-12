@@ -2136,12 +2136,22 @@ set_user_impl(
         return dest + 2;
     }
     // add authority
+    bool const make_absolute =
+        !is_path_absolute() &&
+        !impl_.get(id_path).empty();
     auto dest = resize_impl(
-        id_user, 2 + n + 1, op);
+        id_user, 2 + n + 1 + make_absolute, op);
     impl_.split(id_user, 2 + n);
     dest[0] = '/';
     dest[1] = '/';
     dest[2 + n] = '@';
+    if (make_absolute)
+    {
+        impl_.split(id_pass, 1);
+        impl_.split(id_host, 0);
+        impl_.split(id_port, 0);
+        dest[3 + n] = '/';
+    }
     check_invariants();
     return dest + 2;
 }
@@ -2164,15 +2174,25 @@ set_password_impl(
         return dest + 1;
     }
     // add authority
+    bool const make_absolute =
+            !is_path_absolute() &&
+            !impl_.get(id_path).empty();
     auto const dest =
         resize_impl(
         id_user, id_host,
-        2 + 1 + n + 1, op);
+        2 + 1 + n + 1 + make_absolute, op);
     impl_.split(id_user, 2);
     dest[0] = '/';
     dest[1] = '/';
     dest[2] = ':';
     dest[2 + n + 1] = '@';
+    if (make_absolute)
+    {
+        impl_.split(id_pass, 2 + n);
+        impl_.split(id_host, 0);
+        impl_.split(id_port, 0);
+        dest[4 + n] = '/';
+    }
     check_invariants();
     return dest + 3;
 }
@@ -2185,12 +2205,22 @@ set_userinfo_impl(
 {
     // "//" {dest} "@"
     check_invariants();
+    bool const make_absolute =
+            !is_path_absolute() &&
+            !impl_.get(id_path).empty();
     auto dest = resize_impl(
-        id_user, id_host, n + 3, op);
+        id_user, id_host, n + 3 + make_absolute, op);
     impl_.split(id_user, n + 2);
     dest[0] = '/';
     dest[1] = '/';
     dest[n + 2] = '@';
+    if (make_absolute)
+    {
+        impl_.split(id_pass, 1);
+        impl_.split(id_host, 0);
+        impl_.split(id_port, 0);
+        dest[3 + n] = '/';
+    }
     check_invariants();
     return dest + 2;
 }
@@ -2209,7 +2239,6 @@ set_host_impl(
             !is_path_absolute() &&
             impl_.len(id_path) != 0;
         auto pn = impl_.len(id_path);
-        auto po = impl_.offset(id_path);
         auto dest = resize_impl(
             id_user, n + 2 + make_absolute, op);
         impl_.split(id_user, 2);
@@ -2219,7 +2248,6 @@ set_host_impl(
         impl_.split(id_path, pn + make_absolute);
         if (make_absolute)
         {
-            std::memmove(dest + n + 3, s_ + po, pn);
             dest[n + 2] = '/';
             ++impl_.decoded_[id_path];
         }
@@ -2251,14 +2279,23 @@ set_port_impl(
         check_invariants();
         return dest + 1;
     }
+    bool make_absolute =
+        !is_path_absolute() &&
+        impl_.len(id_path) != 0;
     auto dest = resize_impl(
-        id_user, 3 + n, op);
+        id_user, 3 + n + make_absolute, op);
     impl_.split(id_user, 2);
     impl_.split(id_pass, 0);
     impl_.split(id_host, 0);
     dest[0] = '/';
     dest[1] = '/';
     dest[2] = ':';
+    if (make_absolute)
+    {
+        impl_.split(id_port, n + 1);
+        dest[n + 3] = '/';
+        ++impl_.decoded_[id_path];
+    }
     check_invariants();
     return dest + 3;
 }
