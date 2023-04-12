@@ -121,7 +121,11 @@ target_link_libraries(boost_url_tests PRIVATE
 add_test(NAME boost_url_tests COMMAND boost_url_tests)
 add_dependencies(boost_url_all_tests boost_url_tests)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(boost_url_tests PUBLIC -Wno-unused-but-set-variable)
+    target_compile_options(
+        boost_url_tests
+        PUBLIC
+        -Wno-unused-but-set-variable
+        -Wno-unused-function)
     if (TARGET boost_filesystem AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         get_target_property(FS_IS_IMPORTED boost_filesystem IMPORTED)
         if (FS_IS_IMPORTED)

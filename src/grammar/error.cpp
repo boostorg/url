@@ -96,6 +96,28 @@ message(
     }
 }
 
+//-----------------------------------------------
+
+// msvc 14.0 has a bug that warns about inability
+// to use constexpr construction here, even though
+// there's no constexpr construction
+#if defined(_MSC_VER) && _MSC_VER <= 1900
+# pragma warning( push )
+# pragma warning( disable : 4592 )
+#endif
+
+#if defined(__cpp_constinit) && __cpp_constinit >= 201907L
+constinit error_cat_type error_cat;
+constinit condition_cat_type condition_cat;
+#else
+error_cat_type error_cat;
+condition_cat_type condition_cat;
+#endif
+
+#if defined(_MSC_VER) && _MSC_VER <= 1900
+# pragma warning( pop )
+#endif
+
 } // detail
 
 } // grammar
