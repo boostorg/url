@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_RFC_DETAIL_IMPL_HOST_RULE_IPP
 #define BOOST_URL_RFC_DETAIL_IMPL_HOST_RULE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/rfc/ipv4_address_rule.hpp>
 #include <boost/url/rfc/detail/host_rule.hpp>
 #include <boost/url/rfc/detail/ip_literal_rule.hpp>

@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_IMPL_IPV6_ADDRESS_IPP
 #define BOOST_URL_IMPL_IPV6_ADDRESS_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/ipv6_address.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/rfc/ipv6_address_rule.hpp>

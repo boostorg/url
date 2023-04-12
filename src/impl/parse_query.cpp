@@ -11,6 +11,7 @@
 #ifndef BOOST_URL_IMPL_PARSE_QUERY_IPP
 #define BOOST_URL_IMPL_PARSE_QUERY_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/parse_query.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/grammar/parse.hpp>

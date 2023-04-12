@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_IMPL_SCHEME_IPP
 #define BOOST_URL_IMPL_SCHEME_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/scheme.hpp>
 #include <boost/url/grammar/ci_string.hpp>
 

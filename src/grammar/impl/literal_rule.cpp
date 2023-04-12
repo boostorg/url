@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_GRAMMAR_IMPL_LITERAL_RULE_IPP
 #define BOOST_URL_GRAMMAR_IMPL_LITERAL_RULE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/literal_rule.hpp>
 #include <boost/assert.hpp>

@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_IMPL_IPV4_ADDRESS_IPP
 #define BOOST_URL_IMPL_IPV4_ADDRESS_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/ipv4_address.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/grammar/parse.hpp>

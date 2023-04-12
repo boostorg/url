@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_IMPL_GRAMMAR_DEC_OCTET_RULE_IPP
 #define BOOST_URL_IMPL_GRAMMAR_DEC_OCTET_RULE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/dec_octet_rule.hpp>
 #include <boost/url/grammar/digit_chars.hpp>

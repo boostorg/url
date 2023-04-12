@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_DETAIL_IMPL_REPLACEMENT_FIELD_RULE_IPP
 #define BOOST_URL_DETAIL_IMPL_REPLACEMENT_FIELD_RULE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/detail/replacement_field_rule.hpp>
 #include <boost/url/grammar/alnum_chars.hpp>
 #include <boost/url/grammar/alpha_chars.hpp>

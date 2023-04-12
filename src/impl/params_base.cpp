@@ -11,6 +11,7 @@
 #ifndef BOOST_URL_IMPL_PARAMS_BASE_IPP
 #define BOOST_URL_IMPL_PARAMS_BASE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/decode_view.hpp>
 #include <boost/url/params_base.hpp>
 #include <boost/url/grammar/ci_string.hpp>

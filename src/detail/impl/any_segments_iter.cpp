@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_DETAIL_IMPL_ANY_SEGMENTS_ITER_IPP
 #define BOOST_URL_DETAIL_IMPL_ANY_SEGMENTS_ITER_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/url/detail/any_segments_iter.hpp>
 #include <boost/url/string_view.hpp>

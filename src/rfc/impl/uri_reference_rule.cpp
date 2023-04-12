@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_RFC_IMPL_URI_REFERENCE_RULE_IPP
 #define BOOST_URL_RFC_IMPL_URI_REFERENCE_RULE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/rfc/uri_reference_rule.hpp>
 #include <boost/url/rfc/uri_rule.hpp>
 #include <boost/url/rfc/relative_ref_rule.hpp>

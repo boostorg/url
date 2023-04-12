@@ -23,7 +23,7 @@ project boost/url
     ;
 
 alias url_sources
-   : [ glob-tree-ex ../src/ : *.cpp ]
+   : [ glob-tree-ex ../src : *.cpp ]
    ;
 
 explicit url_sources ;

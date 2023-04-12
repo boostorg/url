@@ -7,9 +7,8 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_GRAMMAR_DETAIL_IMPL_RECYCLED_IPP
-#define BOOST_URL_GRAMMAR_DETAIL_IMPL_RECYCLED_IPP
-
+#include <boost/url/detail/config.hpp>
+#include <boost/url/grammar/detail/recycled.hpp>
 #include <cstdlib>
 #include <utility>
 #include <atomic>
@@ -98,5 +97,3 @@ recycled_remove_impl(
 } // grammar
 } // urls
 } // boost
-
-#endif

@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_RFC_IMPL_ORIGIN_FORM_RULE_IPP
 #define BOOST_URL_RFC_IMPL_ORIGIN_FORM_RULE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/rfc/origin_form_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
 #include <boost/url/rfc/detail/path_rules.hpp>

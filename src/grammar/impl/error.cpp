@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_GRAMMAR_IMPL_ERROR_IPP
 #define BOOST_URL_GRAMMAR_IMPL_ERROR_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/grammar/error.hpp>
 
 namespace boost {

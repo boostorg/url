@@ -11,6 +11,7 @@
 #ifndef BOOST_URL_IMPL_PARSE_IPP
 #define BOOST_URL_IMPL_PARSE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/parse.hpp>
 #include <boost/url/rfc/absolute_uri_rule.hpp>
 #include <boost/url/rfc/relative_ref_rule.hpp>

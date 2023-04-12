@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_IMPL_STATIC_URL_IPP
 #define BOOST_URL_IMPL_STATIC_URL_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/parse.hpp>
 #include <boost/url/static_url.hpp>
 #include <boost/url/url_view.hpp>

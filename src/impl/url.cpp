@@ -11,6 +11,7 @@
 #ifndef BOOST_URL_IMPL_URL_IPP
 #define BOOST_URL_IMPL_URL_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/parse.hpp>
 #include <boost/assert.hpp>

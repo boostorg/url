@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_DETAIL_IMPL_EXCEPT_IPP
 #define BOOST_URL_DETAIL_IMPL_EXCEPT_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/system/system_error.hpp>

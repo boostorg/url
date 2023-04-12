@@ -11,6 +11,7 @@
 #ifndef BOOST_URL_IMPL_SEGMENTS_BASE_IPP
 #define BOOST_URL_IMPL_SEGMENTS_BASE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/segments_base.hpp>
 #include <ostream>
 

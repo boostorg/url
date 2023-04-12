@@ -11,6 +11,7 @@
 #ifndef BOOST_URL_IMPL_PARAMS_ENCODED_REF_IPP
 #define BOOST_URL_IMPL_PARAMS_ENCODED_REF_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/decode_view.hpp>
 #include <boost/url/params_encoded_ref.hpp>
 #include <boost/url/params_encoded_view.hpp>

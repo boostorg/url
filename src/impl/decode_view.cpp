@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_IMPL_DECODE_VIEW_IPP
 #define BOOST_URL_IMPL_DECODE_VIEW_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/decode_view.hpp>
 #include <boost/url/grammar/hexdig_chars.hpp>
 #include <ostream>

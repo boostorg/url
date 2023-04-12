@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_RFC_IMPL_AUTHORITY_RULE_IPP
 #define BOOST_URL_RFC_IMPL_AUTHORITY_RULE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/grammar/delim_rule.hpp>
 #include <boost/url/grammar/optional_rule.hpp>

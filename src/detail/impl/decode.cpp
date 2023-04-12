@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_DETAIL_IMPL_DECODE_IPP
 #define BOOST_URL_DETAIL_IMPL_DECODE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/detail/decode.hpp>
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/grammar/hexdig_chars.hpp>

@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_IMPL_AUTHORITY_VIEW_IPP
 #define BOOST_URL_IMPL_AUTHORITY_VIEW_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/authority_view.hpp>
 #include <boost/url/detail/normalize.hpp>
 #include <boost/url/grammar/parse.hpp>

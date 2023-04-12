@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_RFC_DETAIL_IMPL_HIER_PART_RULE_IPP
 #define BOOST_URL_RFC_DETAIL_IMPL_HIER_PART_RULE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/rfc/detail/hier_part_rule.hpp>
 #include <boost/url/rfc/detail/path_rules.hpp>
 #include <boost/url/grammar/parse.hpp>

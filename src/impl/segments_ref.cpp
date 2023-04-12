@@ -11,6 +11,7 @@
 #ifndef BOOST_URL_IMPL_SEGMENTS_REF_IPP
 #define BOOST_URL_IMPL_SEGMENTS_REF_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/segments_ref.hpp>
 #include <boost/url/url.hpp>
 #include <boost/url/detail/path.hpp>

@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_DETAIL_IMPL_IPVFUTURE_RULE_IPP
 #define BOOST_URL_DETAIL_IMPL_IPVFUTURE_RULE_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/rfc/detail/ipvfuture_rule.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>

@@ -10,6 +10,7 @@
 #ifndef BOOST_URL_DETAIL_IMPL_FORMAT_ARGS_IPP
 #define BOOST_URL_DETAIL_IMPL_FORMAT_ARGS_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/encode.hpp>
 #include <boost/url/detail/format_args.hpp>
 #include <boost/url/detail/replacement_field_rule.hpp>

@@ -11,6 +11,7 @@
 #ifndef BOOST_URL_IMPL_PARSE_PATH_IPP
 #define BOOST_URL_IMPL_PARSE_PATH_IPP
 
+#include <boost/url/detail/config.hpp>
 #include <boost/url/parse_path.hpp>
 #include <boost/url/error.hpp>
 #include <boost/url/detail/path.hpp>
