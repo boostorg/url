@@ -100,8 +100,7 @@ clear_impl() noexcept
     }
     else
     {
-        BOOST_ASSERT(impl_.cs_ ==
-            detail::empty_c_str_);
+        BOOST_ASSERT(impl_.cs_[0] == 0);
     }
 }
 
