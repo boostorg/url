@@ -1243,6 +1243,7 @@ set_encoded_path(
     // we add a "/." prefix to prevent that
     bool add_dot_segment =
         !make_absolute &&
+        !has_authority() &&
         s.starts_with("//");
 
 //------------------------------------------------

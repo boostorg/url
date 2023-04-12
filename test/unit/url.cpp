@@ -403,6 +403,13 @@ struct url_test
             u.set_encoded_path("http:index.htm");
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "http%3Aindex.htm");
         }
+        {
+            // multiple empty segments with host
+            url u = parse_uri_reference("file:///unicorn").value();
+            u.set_encoded_path("//\\/");
+            BOOST_TEST_CSTR_EQ(u, "file:////%5C/");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "//%5C/");
+        }
 
         // set_encoded_path
         {
