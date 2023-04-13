@@ -83,11 +83,7 @@ case error::missing_pct_hexdig:
 # pragma warning( disable : 4592 )
 #endif
 
-#if defined(__cpp_constinit) && __cpp_constinit >= 201907L
-constinit error_cat_type error_cat;
-#else
 error_cat_type error_cat;
-#endif
 
 #if defined(_MSC_VER) && _MSC_VER <= 1900
 # pragma warning( pop )
