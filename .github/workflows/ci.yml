@@ -453,6 +453,8 @@ jobs:
           - { os: ubuntu-22.04, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles' }
           - { os: windows-2019, build_shared: ON,  build_type: Debug, generator: 'Visual Studio 16 2019' }
           - { os: windows-2019, build_shared: OFF, build_type: Debug, generator: 'Visual Studio 16 2019' }
+          - { os: windows-2022, build_shared: ON,  build_type: Debug, generator: 'Visual Studio 17 2022' }
+          - { os: windows-2022, build_shared: OFF, build_type: Debug, generator: 'Visual Studio 17 2022' }
 
     timeout-minutes: 120
     runs-on: ${{matrix.os}}
