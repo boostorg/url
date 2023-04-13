@@ -121,6 +121,8 @@ if(BUILD_SHARED_LIBS)
 else()
     target_compile_definitions(boost_url PUBLIC BOOST_URL_STATIC_LINK=1)
 endif()
+target_compile_definitions(boost_url PRIVATE BOOST_URL_SOURCE)
+
 
 
 if(BOOST_URL_INSTALL AND NOT BOOST_SUPERPROJECT_VERSION)
