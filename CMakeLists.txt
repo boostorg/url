@@ -95,6 +95,13 @@ function(boost_url_setup_properties target)
                 Boost::variant2
         )
     endif()
+
+    if(BUILD_SHARED_LIBS)
+        target_compile_definitions(${target} PUBLIC BOOST_URL_DYN_LINK=1)
+    else()
+        target_compile_definitions(${target} PUBLIC BOOST_URL_STATIC_LINK=1)
+    endif()
+    target_compile_definitions(${target} PRIVATE BOOST_URL_SOURCE)
 endfunction()
 
 
