@@ -324,7 +324,10 @@ jobs:
             # cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
             # git submodule update --init tools/boostdep
             git submodule update --init --recursive
-            mkdir -p libs/$LIBRARY
+            if [ ! -d "libs/$LIBRARY" ]; then
+              mkdir -p libs/$LIBRARY
+            fi
+            rm -f libs/$LIBRARY/*
             cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
           
             DEPINST_ARGS+=("$LIBRARY")
