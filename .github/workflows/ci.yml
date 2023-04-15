@@ -26,7 +26,7 @@ env:
   DEFAULT_BUILD_VARIANT: debug,release
 
 jobs:
-  posix:
+  build:
     defaults:
       run:
         shell: bash
@@ -35,482 +35,160 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Linux, gcc
-          - toolset: gcc-4.8
-            cxxstd: "11"
-            os: ubuntu-22.04
-            container: ubuntu:18.04
-            install:
-              - g++-4.8
-          - toolset: gcc-4.9
-            cxxstd: "11"
-            os: ubuntu-22.04
-            container: ubuntu:16.04
-            install:
-              - g++-4.9
-          - toolset: gcc-5
-            cxxstd: "11,14"
-            os: ubuntu-22.04
-            container: ubuntu:16.04
-            install:
-              - g++-5
-          - toolset: gcc-6
-            cxxstd: "11,14"
-            os: ubuntu-22.04
-            container: ubuntu:18.04
-            install:
-              - g++-6
-          - toolset: gcc-7
-            cxxstd: "14,17"
-            os: ubuntu-22.04
-            container: ubuntu:18.04
-            install:
-              - g++-7
-          - toolset: gcc-8
-            cxxstd: "17"
-            os: ubuntu-22.04
-            container: ubuntu:18.04
-            install:
-              - g++-8
-          - toolset: gcc-9
-            cxxstd: "17"
-            os: ubuntu-22.04
-            install:
-              - g++-9
-          - toolset: gcc-10
-            cxxstd: "17"
-            os: ubuntu-22.04
-            install:
-              - g++-10
-          - toolset: gcc-11
-            cxxstd: "17,20"
-            os: ubuntu-22.04
-            install:
-              - g++-11
-            sources:
-              - "ppa:ubuntu-toolchain-r/test"
-          - name: UBSAN
-            toolset: gcc-11
-            cxxstd: "17,20"
-            ubsan: 1
-            os: ubuntu-22.04
-            install:
-              - g++-11
-            sources:
-              - "ppa:ubuntu-toolchain-r/test"
+          # Latest
+          - { name: 'GCC 11 (Latest): C++17-20', toolset: gcc-11, cxx: g++-11, cc: gcc-11, cxxstd: "17,20", os: ubuntu-22.04, install: [ g++-11 ], sources: [ "ppa:ubuntu-toolchain-r/test" ] }
+          - { name: 'Clang 12 (Latest): C++17-20', toolset: clang, cxx: clang++-12, cc: clang-12, cxxstd: "17,20", os: ubuntu-22.04, install: [ clang-12 ] }
+          - { name: 'MSVC 14.3 (Latest): C++17-20', toolset: msvc-14.3, cxxstd: "17,20", address-model: '32,64', os: windows-2022 }
+          - { name: 'Clang 12 + libc++ (Latest): C++17-20', toolset: clang, cxx: clang++-12, cc: clang-12, cxxstd: "17,20", cxxflags: -stdlib=libc++, linkflags: -stdlib=libc++, os: ubuntu-20.04, install: [ clang-12, libc++-12-dev, libc++abi-12-dev ] }
+          - { name: 'AppleClang (Latest): C++11-17', toolset: clang, cxxstd: "11,14,17", os: macos-11 }
 
-          # Linux, clang
-          - toolset: clang
-            compiler: clang++-3.8
-            cxxstd: "11"
-            os: ubuntu-22.04
-            container: ubuntu:16.04
-            install:
-              - clang-3.8
-          - toolset: clang
-            compiler: clang++-4.0
-            cxxstd: "11,14"
-            os: ubuntu-22.04
-            container: ubuntu:18.04
-            install:
-              - clang-4.0
-          - toolset: clang
-            compiler: clang++-5.0
-            cxxstd: "11,14"
-            os: ubuntu-22.04
-            container: ubuntu:18.04
-            install:
-              - clang-5.0
-          - toolset: clang
-            compiler: clang++-6.0
-            cxxstd: "14,17"
-            os: ubuntu-22.04
-            container: ubuntu:18.04
-            install:
-              - clang-6.0
-          - toolset: clang
-            compiler: clang++-7
-            cxxstd: "17"
-            os: ubuntu-22.04
-            container: ubuntu:18.04
-            install:
-              - clang-7
-          - toolset: clang
-            compiler: clang++-8
-            cxxstd: "17"
-            os: ubuntu-22.04
-            container: ubuntu:18.04
-            install:
-              - clang-8
-              - g++-7
-            gcc_toolchain: 7
-          - toolset: clang
-            compiler: clang++-9
-            cxxstd: "14,17"
-            os: ubuntu-22.04
-            container: ubuntu:18.04
-            install:
-              - clang-9
-          - toolset: clang
-            compiler: clang++-10
-            cxxstd: "14,17"
-            os: ubuntu-20.04
-            install:
-              - clang-10
-          - toolset: clang
-            compiler: clang++-11
-            cxxstd: "14,17"
-            os: ubuntu-20.04
-            install:
-              - clang-11
-          - toolset: clang
-            compiler: clang++-12
-            cxxstd: "17,20"
-            os: ubuntu-22.04
-            install:
-              - clang-12
-          - toolset: clang
-            compiler: clang++-12
-            cxxstd: "17,20"
-            cxxflags: -stdlib=libc++
-            linkflags: -stdlib=libc++
-            os: ubuntu-20.04
-            install:
-              - clang-12
-              - libc++-12-dev
-              - libc++abi-12-dev
+          # Oldest
+          - { name: 'GCC 4.8 (Oldest): C++11', toolset: gcc-4.8, cxx: g++-4.8, cc: gcc-4.8, cxxstd: "11", os: ubuntu-22.04, container: 'ubuntu:18.04', install: [ g++-4.8 ] }
+          - { name: 'Clang 3.8 (Oldest): C++11', toolset: clang, cxx: clang++-3.8, cc: clang-3.8, cxxstd: "11", os: ubuntu-22.04, container: 'ubuntu:16.04', install: [ clang-3.8 ] }
+          - { name: 'MSVC 14.2 (Oldest): C++14-17', toolset: msvc-14.2, cxxstd: "14,17", address-model: '32,64', os: windows-2019 }
 
-          - toolset: clang
-            cxxstd: "11,14,17"
-            os: macos-11
+          # Special
+          - { name: 'UBSan (GCC 11: C++17-20)', toolset: gcc-11, cxx: g++-11, cc: gcc-11, cxxstd: "17,20", ubsan: true, os: ubuntu-22.04, install: [ g++-11 ], sources: [ "ppa:ubuntu-toolchain-r/test" ] }
+          - { name: 'Shared (GCC)', generator: 'Unix Makefiles', os: ubuntu-22.04, build_shared: true, build_type: Debug, cmake: true }
+          - { name: 'Shared (VS 2019)', toolset: msvc-14.2, generator: 'Visual Studio 16 2019', address-model: '32,64', cxxstd: "17,20", os: windows-2019, build_shared: true, build_type: Debug }
+          - { name: 'Shared (VS 2022)', toolset: msvc-14.3, generator: 'Visual Studio 17 2022', address-model: '32,64', cxxstd: "17,20", os: windows-2022, build_shared: true, build_type: Debug }
 
-          - name: CMake tests
-            cmake_tests: 1
-            os: ubuntu-22.04
+          # GCC
+          - { name: 'GCC 10: C++17', toolset: gcc-10, cxx: g++-10, cc: gcc-10, cxxstd: "17", os: ubuntu-22.04, install: [ g++-10 ] }
+          - { name: 'GCC 9: C++17', toolset: gcc-9, cxx: g++-9, cc: gcc-9, cxxstd: "17", os: ubuntu-22.04, install: [ g++-9 ] }
+          - { name: 'GCC 8: C++17', toolset: gcc-8, cxx: g++-8, cc: gcc-8, cxxstd: "17", os: ubuntu-22.04, container: 'ubuntu:18.04', install: [ g++-8 ] }
+          - { name: 'GCC 7: C++14-17', toolset: gcc-7, cxx: g++-7, cc: gcc-7, cxxstd: "14,17", os: ubuntu-22.04, container: 'ubuntu:18.04', install: [ g++-7 ] }
+          - { name: 'GCC 6: C++11-14', toolset: gcc-6, cxx: g++-6, cc: gcc-6, cxxstd: "11,14", os: ubuntu-22.04, container: 'ubuntu:18.04', install: [ g++-6 ] }
+          - { name: 'GCC 5: C++11-14', toolset: gcc-5, cxx: g++-5, cc: gcc-5, cxxstd: "11,14", os: ubuntu-22.04, container: 'ubuntu:16.04', install: [ g++-5 ] }
+          - { name: 'GCC 4.9: C++11', toolset: gcc-4.9, cxx: g++-4.9, cc: gcc-4.9, cxxstd: "11", os: ubuntu-22.04, container: 'ubuntu:16.04', install: [ g++-4.9 ] }
 
+          # Clang
+          - { name: 'Clang 11: C++14-17', toolset: clang, cxx: clang++-11, cc: clang-11, cxxstd: "14,17", os: ubuntu-20.04, install: [ clang-11 ] }
+          - { name: 'Clang 10: C++14-17', toolset: clang, cxx: clang++-10, cc: clang-10, cxxstd: "14,17", os: ubuntu-20.04, install: [ clang-10 ] }
+          - { name: 'Clang 9: C++14-17', toolset: clang, cxx: clang++-9, cc: clang-9, cxxstd: "14,17", os: ubuntu-22.04, container: 'ubuntu:18.04', install: [ clang-9 ] }
+          - { name: 'Clang 8: C++17', toolset: clang, cxx: clang++-8, cc: clang-8, cxxstd: "17", os: ubuntu-22.04, container: 'ubuntu:18.04', install: [ clang-8, g++-7 ], gcc_toolchain: 7 }
+          - { name: 'Clang 7: C++17', toolset: clang, cxx: clang++-7, cc: clang-7, cxxstd: "17", os: ubuntu-22.04, container: 'ubuntu:18.04', install: [ clang-7 ] }
+          - { name: 'Clang 6.0: C++14-17', toolset: clang, cxx: clang++-6.0, cc: clang-6.0, cxxstd: "14,17", os: ubuntu-22.04, container: 'ubuntu:18.04', install: [ clang-6.0 ] }
+          - { name: 'Clang 5.0: C++11-14', toolset: clang, cxx: clang++-5.0, cc: clang-5.0, cxxstd: "11,14", os: ubuntu-22.04, container: 'ubuntu:18.04', install: [ clang-5.0 ] }
+          - { name: 'Clang 4.0: C++11-14', toolset: clang, cxx: clang++-4.0, cc: clang-4.0, cxxstd: "11,14", os: ubuntu-22.04, container: 'ubuntu:18.04', install: [ clang-4.0 ] }
+
+    name: ${{ matrix.name }}
     timeout-minutes: 120
     runs-on: ${{matrix.os}}
     container: ${{matrix.container}}
 
     steps:
-      - name: Setup environment
-        run: |
-            if [ -f "/etc/debian_version" ]
-            then
-                echo "DEBIAN_FRONTEND=noninteractive" >> $GITHUB_ENV
-                export DEBIAN_FRONTEND=noninteractive
-            fi
-            if [ -n "${{matrix.container}}" ]
-            then
-                echo "GHA_CONTAINER=${{matrix.container}}" >> $GITHUB_ENV
-                if [ -f "/etc/debian_version" ]
-                then
-                    apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
-                    apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y sudo software-properties-common tzdata wget curl apt-transport-https make apt-file unzip libssl-dev build-essential autotools-dev autoconf automake g++ libc++-helpers python ruby cpio gcc-multilib g++-multilib pkgconf python3 ccache libpython-dev
-
-                    # install pip:
-                    python_version=$(python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
-                    if [[ ${python_version} =~ ^3\.[0-5]$ ]]; then
-                        true
-                    else
-                        apt-get install -y python3-distutils
-                    fi
-                    wget https://bootstrap.pypa.io/pip/$python_version/get-pip.py
-                    python3 get-pip.py
-
-                    # install git:
-                    # apt-get install -y git
-                    apt-add-repository ppa:git-core/ppa
-                    apt-get -o Acquire::Retries=$NET_RETRY_COUNT update && apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y git
-
-                    # install cmake:
-                    # apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y cmake
-                    sudo pip3 install cmake
-                fi
-            fi
-            git config --global pack.threads 0
-
-      - uses: actions/checkout@v3
+      - name: Clone Boost.URL
+        uses: actions/checkout@v3
 
       - name: Install packages
-        if: matrix.install
-        run: |
-            SOURCE_KEYS=(${{join(matrix.source_keys, ' ')}})
-            SOURCES=(${{join(matrix.sources, ' ')}})
-            for key in "${SOURCE_KEYS[@]}"
-            do
-                for i in {1..$NET_RETRY_COUNT}
-                do
-                    wget -O - "$key" | sudo apt-key add - && break || sleep 2
-                done
-            done
-            if [ ${#SOURCES[@]} -gt 0 ]
-            then
-                APT_ADD_REPO_COMMON_ARGS=("-y")
-                APT_ADD_REPO_HAS_SOURCE_ARGS=0
-                SOFTWARE_PROPERTIES_VERSION="$(dpkg-query --showformat='${Version}' --show software-properties-common)"
-                if dpkg --compare-versions "$SOFTWARE_PROPERTIES_VERSION" ge "0.96.24.20"
-                then
-                    APT_ADD_REPO_COMMON_ARGS+=("-n")
-                fi
-                if dpkg --compare-versions "$SOFTWARE_PROPERTIES_VERSION" ge "0.98.10"
-                then
-                    APT_ADD_REPO_HAS_SOURCE_ARGS=1
-                fi
-                for source in "${SOURCES[@]}"
-                do
-                    for i in {1..$NET_RETRY_COUNT}
-                    do
-                        APT_ADD_REPO_ARGS=("${APT_ADD_REPO_COMMON_ARGS[@]}")
-                        if [ $APT_ADD_REPO_HAS_SOURCE_ARGS -ne 0 ]
-                        then
-                            case "$source" in
-                            "ppa:"*)
-                                APT_ADD_REPO_ARGS+=("-P")
-                                ;;
-                            "deb "*)
-                                APT_ADD_REPO_ARGS+=("-S")
-                                ;;
-                            *)
-                                APT_ADD_REPO_ARGS+=("-U")
-                                ;;
-                            esac
-                        fi
-                        APT_ADD_REPO_ARGS+=("$source")
-                        sudo -E apt-add-repository "${APT_ADD_REPO_ARGS[@]}" && break || sleep 2
-                    done
-                done
-            fi
-            sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
-            sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y ${{join(matrix.install, ' ')}}
-
-      - name: Setup GCC Toolchain
-        if: matrix.gcc_toolchain
-        run: |
-            GCC_TOOLCHAIN_ROOT="$HOME/gcc-toolchain"
-            echo "GCC_TOOLCHAIN_ROOT=\"$GCC_TOOLCHAIN_ROOT\"" >> $GITHUB_ENV
-            MULTIARCH_TRIPLET="$(dpkg-architecture -qDEB_HOST_MULTIARCH)"
-            mkdir -p "$GCC_TOOLCHAIN_ROOT"
-            ln -s /usr/include "$GCC_TOOLCHAIN_ROOT/include"
-            ln -s /usr/bin "$GCC_TOOLCHAIN_ROOT/bin"
-            mkdir -p "$GCC_TOOLCHAIN_ROOT/lib/gcc/$MULTIARCH_TRIPLET"
-            ln -s "/usr/lib/gcc/$MULTIARCH_TRIPLET/${{matrix.gcc_toolchain}}" "$GCC_TOOLCHAIN_ROOT/lib/gcc/$MULTIARCH_TRIPLET/${{matrix.gcc_toolchain}}"
-
-      - name: Setup Boost
-        run: |
-            echo GITHUB_REPOSITORY: $GITHUB_REPOSITORY
-            LIBRARY=${GITHUB_REPOSITORY#*/}
-            echo LIBRARY: $LIBRARY
-            echo "LIBRARY=$LIBRARY" >> $GITHUB_ENV
-            echo GITHUB_BASE_REF: $GITHUB_BASE_REF
-            echo GITHUB_REF: $GITHUB_REF
-            REF=${GITHUB_BASE_REF:-$GITHUB_REF}
-            REF=${REF#refs/heads/}
-            echo REF: $REF
-            BOOST_BRANCH=develop && [ "$REF" == "master" ] && BOOST_BRANCH=master || true
-            echo BOOST_BRANCH: $BOOST_BRANCH
-            BUILD_JOBS=$((nproc || sysctl -n hw.ncpu) 2> /dev/null)
-            echo "BUILD_JOBS=$BUILD_JOBS" >> $GITHUB_ENV
-            echo "CMAKE_BUILD_PARALLEL_LEVEL=$BUILD_JOBS" >> $GITHUB_ENV
-            DEPINST_ARGS=()
-            GIT_VERSION="$(git --version | sed -e 's/git version //')"
-            if $(dpkg --compare-versions "$GIT_VERSION" ge 2.8.0)
-            then
-                DEPINST_ARGS+=("--git_args" "--jobs $GIT_FETCH_JOBS")
-            fi
-            cd ..
-            git clone -b "$BOOST_BRANCH" --depth 1 "https://github.com/boostorg/boost.git" "boost-root"
-            
-            cd boost-root
-            # mkdir -p libs/$LIBRARY
-            # cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
-            # git submodule update --init tools/boostdep
-            git submodule update --init --recursive
-            if [ ! -d "libs/$LIBRARY" ]; then
-              mkdir -p libs/$LIBRARY
-            fi
-            find libs/$LIBRARY -mindepth 1 -delete
-            cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
-          
-            DEPINST_ARGS+=("$LIBRARY")
-            python tools/boostdep/depinst/depinst.py "${DEPINST_ARGS[@]}"
-            if [ -z "${{matrix.cmake_tests}}" ]
-            then
-                ./bootstrap.sh
-                ./b2 headers
-                if [ -n "${{matrix.compiler}}" -o -n "$GCC_TOOLCHAIN_ROOT" ]
-                then
-                    echo -n "using ${{matrix.toolset}} : : ${{matrix.compiler}}" > ~/user-config.jam
-                    if [ -n "$GCC_TOOLCHAIN_ROOT" ]
-                    then
-                        echo -n " : <compileflags>\"--gcc-toolchain=$GCC_TOOLCHAIN_ROOT\" <linkflags>\"--gcc-toolchain=$GCC_TOOLCHAIN_ROOT\"" >> ~/user-config.jam
-                    fi
-                    echo " ;" >> ~/user-config.jam
-                fi
-            fi
-
-      - name: Run tests
-        if: matrix.cmake_tests == ''
-        run: |
-            cd ../boost-root
-            B2_ARGS=("-j" "$BUILD_JOBS" "toolset=${{matrix.toolset}}" "cxxstd=${{matrix.cxxstd}}")
-            if [ -n "${{matrix.build_variant}}" ]
-            then
-                B2_ARGS+=("variant=${{matrix.build_variant}}")
-            else
-                B2_ARGS+=("variant=$DEFAULT_BUILD_VARIANT")
-            fi
-            if [ -n "${{matrix.threading}}" ]
-            then
-                B2_ARGS+=("threading=${{matrix.threading}}")
-            fi
-            if [ -n "${{matrix.ubsan}}" ]
-            then
-                export UBSAN_OPTIONS="print_stacktrace=1"
-                B2_ARGS+=("cxxflags=-fsanitize=undefined -fno-sanitize-recover=undefined" "linkflags=-fsanitize=undefined -fuse-ld=gold" "define=UBSAN=1" "debug-symbols=on" "visibility=global")
-            fi
-            if [ -n "${{matrix.cxxflags}}" ]
-            then
-                B2_ARGS+=("cxxflags=${{matrix.cxxflags}}")
-            fi
-            if [ -n "${{matrix.linkflags}}" ]
-            then
-                B2_ARGS+=("linkflags=${{matrix.linkflags}}")
-            fi
-            B2_ARGS+=("libs/$LIBRARY/test")
-            ./b2 "${B2_ARGS[@]}"
-
-      - name: Run CMake tests
-        if: matrix.cmake_tests != ''
-        run: |
-            cd ../boost-root
-            git submodule update --init --recursive
-            cd libs/$LIBRARY
-            mkdir __build__ && cd __build__
-            cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
-            cmake --build . --target install
-
-  windows:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          #- toolset: msvc-14.1
-          #  cxxstd: "14,17,latest"
-          #  addrmd: 32,64
-          #  os: windows-2016
-          - toolset: msvc-14.2
-            cxxstd: "14,17"
-            addrmd: 32,64
-            os: windows-2019
-          - toolset: msvc-14.3
-            cxxstd: "17,20"
-            addrmd: 32,64
-            os: windows-2022
-#          - toolset: gcc
-#            cxxstd: "11,14,17"
-#            addrmd: 64
-#            os: windows-2019
-
-    runs-on: ${{matrix.os}}
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Boost
-        shell: cmd
-        run: |
-            echo GITHUB_REPOSITORY: %GITHUB_REPOSITORY%
-            for /f %%i in ("%GITHUB_REPOSITORY%") do set LIBRARY=%%~nxi
-            echo LIBRARY: %LIBRARY%
-            echo LIBRARY=%LIBRARY%>>%GITHUB_ENV%
-            echo GITHUB_BASE_REF: %GITHUB_BASE_REF%
-            echo GITHUB_REF: %GITHUB_REF%
-            if "%GITHUB_BASE_REF%" == "" set GITHUB_BASE_REF=%GITHUB_REF%
-            set BOOST_BRANCH=develop
-            for /f %%i in ("%GITHUB_BASE_REF%") do if "%%~nxi" == "master" set BOOST_BRANCH=master
-            echo BOOST_BRANCH: %BOOST_BRANCH%
-            cd ..
-            git clone -b %BOOST_BRANCH% --depth 1 https://github.com/boostorg/boost.git boost-root
-            cd boost-root
-            xcopy /s /e /q %GITHUB_WORKSPACE% libs\%LIBRARY%\
-            git submodule update --init tools/boostdep
-            python tools/boostdep/depinst/depinst.py --git_args "--jobs %GIT_FETCH_JOBS%" %LIBRARY%
-            cmd /c bootstrap
-            b2 -d0 headers
-
-      - name: Run tests
-        shell: cmd
-        run: |
-            cd ../boost-root
-            b2 -j %NUMBER_OF_PROCESSORS% libs/%LIBRARY%/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} address-model=${{matrix.addrmd}} variant=debug,release
-
-  CMake:
-    defaults:
-      run:
-        shell: bash
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { os: ubuntu-22.04, build_shared: ON,  build_type: Debug, generator: 'Unix Makefiles' }
-          - { os: ubuntu-22.04, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles' }
-          - { os: windows-2019, build_shared: ON,  build_type: Debug, generator: 'Visual Studio 16 2019' }
-          - { os: windows-2019, build_shared: OFF, build_type: Debug, generator: 'Visual Studio 16 2019' }
-          - { os: windows-2022, build_shared: ON,  build_type: Debug, generator: 'Visual Studio 17 2022' }
-          - { os: windows-2022, build_shared: OFF, build_type: Debug, generator: 'Visual Studio 17 2022' }
-
-    timeout-minutes: 120
-    runs-on: ${{matrix.os}}
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Fetch Boost.CI
-        uses: actions/checkout@v3
+        if: ${{ !startsWith(matrix.os, 'windows') && (matrix.container || matrix.install) }}
+        uses: ./.github/actions/package_install
+        id: package-install
         with:
-          repository: boostorg/boost-ci
-          ref: master
-          path: boost-ci-cloned
+          apt-get: ${{ join(matrix.install, ' ') }} ${{ matrix.container && 'sudo software-properties-common tzdata wget curl apt-transport-https make apt-file unzip libssl-dev build-essential autotools-dev autoconf automake g++ libc++-helpers python ruby cpio gcc-multilib g++-multilib pkgconf python3 ccache libpython-dev python3-distutils python3-pip git cmake' }}
+          apt-get-ignore-missing: ${{ matrix.container && 'true' }}
 
-      - name: Get CI scripts folder
-        run: |
-            # Copy ci folder if not testing Boost.CI
-            [[ "$GITHUB_REPOSITORY" =~ "boost-ci" ]] || cp -r boost-ci-cloned/ci .
-            rm -rf boost-ci-cloned
-      - name: Setup Boost
-        env: {B2_DONT_BOOTSTRAP: 1}
-        run: source ci/github/install.sh
+      - name: Clone Boost
+        uses: ./.github/actions/boost_clone
+        with:
+          boost_dir: ../boost-source
+          branch: ${{ (github.ref_name == 'master' && github.ref_name) || 'develop' }}
+          scan-modules-dir: .
+          scan-modules-ignore: url
 
-      - name: Run CMake tests
+      - name: Patch Boost
+        working-directory: ../boost-source
+        id: patch
+        shell: bash
         run: |
-            cd "$BOOST_ROOT"
-            mkdir __build_cmake_test__ && cd __build_cmake_test__
-            cmake -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBOOST_INCLUDE_LIBRARIES=$SELF -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DBUILD_TESTING=ON -DBoost_VERBOSE=ON ..
-            cmake --build . --target tests boost_url_tests boost_url_limits boost_url_extra --config ${{matrix.build_type}}
-            ctest --output-on-failure --build-config ${{matrix.build_type}}
-      - name: Run CMake subdir tests
-        run: |
-            cmake_test_folder="$BOOST_ROOT/libs/$SELF/test/cmake_test" # New unified folder
-            [ -d "$cmake_test_folder" ] || cmake_test_folder="$BOOST_ROOT/libs/$SELF/test/cmake_subdir_test"
-            cd "$cmake_test_folder"
-            mkdir __build_cmake_subdir_test__ && cd __build_cmake_subdir_test__
-            cmake -G "${{matrix.generator}}" -DBOOST_CI_INSTALL_TEST=OFF -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBUILD_SHARED_LIBS=${{matrix.build_shared}} ..
-            cmake --build . --config ${{matrix.build_type}}
-            ctest --output-on-failure --build-config ${{matrix.build_type}}
-      - name: Install Library
-        run: |
-            cd "$BOOST_ROOT"
-            mkdir __build_cmake_install_test__ && cd __build_cmake_install_test__
-            cmake -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBOOST_INCLUDE_LIBRARIES=$SELF -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DCMAKE_INSTALL_PREFIX=~/.local -DBoost_VERBOSE=ON -DBoost_DEBUG=ON ..
-            cmake --build . --target install --config ${{matrix.build_type}}
-      - name: Run CMake install tests
-        run: |
-            cmake_test_folder="$BOOST_ROOT/libs/$SELF/test/cmake_test" # New unified folder
-            [ -d "$cmake_test_folder" ] || cmake_test_folder="$BOOST_ROOT/libs/$SELF/test/cmake_install_test"
-            cd "$cmake_test_folder"
-            mkdir __build_cmake_install_test__ && cd __build_cmake_install_test__
-            cmake -G "${{matrix.generator}}" -DBOOST_CI_INSTALL_TEST=ON -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DCMAKE_PREFIX_PATH=~/.local ..
-            cmake --build . --config ${{matrix.build_type}}
-            ctest --output-on-failure --build-config ${{matrix.build_type}}
+          set -xe
+          module=${GITHUB_REPOSITORY#*/}
+          echo "module=$module" >> $GITHUB_OUTPUT
+          workspace_root=$(echo "$GITHUB_WORKSPACE" | sed 's/\\/\//g')
+          rm -r "libs/$module" || true
+          cd ..
+          mkdir boost-root || true
+          cp -r "boost-source"/* "boost-root"
+          cd boost-root
+          mkdir "libs/$module"
+          cp -r "$workspace_root"/* "libs/$module"
+          cxxstd=${{ matrix.cxxstd }}
+          latest_std=$(echo $cxxstd | awk -F ',' '{print $NF}')
+          echo "latest_std=$latest_std" >> $GITHUB_OUTPUT
 
+      - name: Boost Workflow
+        uses: ./.github/actions/cmake_workflow
+        with:
+          source-dir: ../boost-root
+          build-dir: __build_cmake_test__
+          generator: ${{ matrix.generator }}
+          build-type: ${{ matrix.build_type || 'Debug' }}
+          build-target: tests boost_url_tests boost_url_limits boost_url_extra
+          run-tests: true
+          install-prefix: $GITHUB_WORKSPACE/.local
+          cxxstd: ${{ steps.patch.outputs.latest_std }}
+          cxx: ${{ matrix.cxx }}
+          cc: ${{ matrix.cc }}
+          cmake-min-version: 3.15 # min-version with cmake --install
+          extra-args: ${{ format('-D Boost_VERBOSE=ON -D BOOST_INCLUDE_LIBRARIES={0} -D BUILD_SHARED_LIBS={1}', steps.patch.outputs.module, (matrix.build_shared && 'ON') || 'OFF') }}
+          ref-source-dir: ../boost-root/libs/url
+
+      - name: Subdir Workflow
+        uses: ./.github/actions/cmake_workflow
+        with:
+          source-dir: ../boost-root/libs/${{ steps.patch.outputs.module }}/test/cmake_test
+          build-dir: __build_cmake_subdir_test__
+          generator: ${{ matrix.generator }}
+          build-type: ${{ matrix.build_type || 'Debug' }}
+          cxxstd: ${{ steps.patch.outputs.latest_std }}
+          cxx: ${{ matrix.cxx }}
+          cc: ${{ matrix.cc }}
+          install: false
+          cmake-min-version: 3.11
+          extra-args: ${{ format('-D BOOST_CI_INSTALL_TEST=OFF -D BUILD_SHARED_LIBS={0}', (matrix.build_shared && 'ON') || 'OFF') }}
+          ref-source-dir: ../boost-root/libs/url/test/cmake_test
+
+      - name: Package Workflow
+        uses: ./.github/actions/cmake_workflow
+        with:
+          source-dir: ../boost-root/libs/${{ steps.patch.outputs.module }}/test/cmake_test
+          build-dir: __build_cmake_install_test__
+          generator: ${{ matrix.generator }}
+          build-type: ${{ matrix.build_type || 'Debug' }}
+          cxxstd: ${{ steps.patch.outputs.latest_std }}
+          cxx: ${{ matrix.cxx }}
+          cc: ${{ matrix.cc }}
+          install: false
+          extra-args: ${{ format('-D BOOST_CI_INSTALL_TEST=ON -D CMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/.local -D BUILD_SHARED_LIBS={0}', (matrix.build_shared && 'ON') || 'OFF') }}
+          ref-source-dir: ../boost-root/libs/url/test/cmake_test
+
+      - name: Root Workflow
+        uses: ./.github/actions/cmake_workflow
+        with:
+          source-dir: .
+          build-dir: __build_root_test__
+          generator: ${{ matrix.generator }}
+          build-type: ${{ matrix.build_type || 'Debug' }}
+          build-target: tests boost_url_tests boost_url_limits boost_url_extra
+          run-tests: false
+          install: false
+          cxxstd: ${{ steps.patch.outputs.latest_std }}
+          cxx: ${{ matrix.cxx }}
+          cc: ${{ matrix.cc }}
+          extra-args: ${{ format('-D Boost_VERBOSE=ON -D BUILD_TESTING=ON -D BUILD_SHARED_LIBS={0} -D BOOST_SRC_DIR="../boost-root"', (matrix.build_shared && 'ON') || 'OFF') }}
+          ref-source-dir: ../boost-root/libs/url
+
+      - name: Release Workflow
+        uses: ./.github/actions/b2_workflow
+        with:
+          source-dir: ../boost-root
+          modules: url
+          toolset: ${{ matrix.toolset }}
+          cxx: ${{ (startsWith(matrix.cxx, 'clang') && matrix.cxx) || '' }}
+          cxxstd: ${{ matrix.cxxstd }}
+          cxxflags: ${{ matrix.cxxflags }}
+          linkflags: ${{ matrix.linkflags }}
+          address-model: ${{ matrix.address-model }}
+          ubsan: ${{ matrix.ubsan }}
+          gcc_toolchain: ${{ matrix.gcc_toolchain }}

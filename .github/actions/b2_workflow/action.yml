@@ -1,0 +1,141 @@
+name: 'B2 Workflow'
+description: 'This action runs a complete B2 workflow from source files'
+inputs:
+  source-dir:
+    description: 'The boost source directory.'
+    required: false
+    default: '.'
+  build-variant:
+    description: 'Custom build variants.'
+    required: false
+    default: ''
+  modules:
+    description: 'The list of modules we should test.'
+    required: true
+    default: ''
+  gcc_toolchain:
+    description: 'Create a special GCC toolchain for this version of GCC and update user-config.jam'
+    required: false
+    default: ''
+  toolset:
+    description: 'Toolset name.'
+    required: false
+    default: ''
+  address-model:
+    description: 'Valid b2 list of address models.'
+    required: false
+    default: ''
+  cxx:
+    description: 'Path to C++ compiler.'
+    required: false
+    default: ''
+  cxxflags:
+    description: 'Extra compiler flags.'
+    required: false
+    default: ''
+  linkflags:
+    description: 'Extra linker flags.'
+    required: false
+    default: ''
+  cxxstd:
+    description: 'List of standards with which cmake will build and test the program.'
+    required: false
+    default: ''
+  ubsan:
+    description: 'List of standards with which cmake will build and test the program.'
+    required: false
+    default: 'false'
+  threading:
+    description: 'b2 threading option.'
+    required: false
+    default: ''
+  trace-commands:
+    description: 'Trace commands executed by the workflow.'
+    required: false
+    default: 'false'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get CPU cores
+      uses: SimenB/github-actions-cpu-cores@v1
+      id: cpu-cores
+
+    - name: Setup msvc dev-cmd
+      if: runner.os == 'Windows'
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Bootstrap
+      working-directory: ${{ inputs.source-dir }}
+      shell: bash
+      run: |
+        ${{ (inputs.trace-commands == 'true' && 'set -xe') || '' }}
+        ./bootstrap.sh
+        ./b2 headers
+
+    - name: Setup GCC Toolchain
+      if: ${{ inputs.gcc_toolchain }}
+      shell: bash
+      run: |
+        ${{ (inputs.trace-commands == 'true' && 'set -xe') || '' }}
+        # Create dir for toolchain
+        GCC_TOOLCHAIN_ROOT="$HOME/gcc-toolchain"
+        mkdir -p "$GCC_TOOLCHAIN_ROOT"
+        echo "GCC_TOOLCHAIN_ROOT=\"$GCC_TOOLCHAIN_ROOT\"" >> $GITHUB_ENV
+        
+        # Create symlinks for compiler into the toolchain dir
+        MULTIARCH_TRIPLET="$(dpkg-architecture -qDEB_HOST_MULTIARCH)"
+        ln -s /usr/include "$GCC_TOOLCHAIN_ROOT/include"
+        ln -s /usr/bin "$GCC_TOOLCHAIN_ROOT/bin"
+        mkdir -p "$GCC_TOOLCHAIN_ROOT/lib/gcc/$MULTIARCH_TRIPLET"
+        ln -s "/usr/lib/gcc/$MULTIARCH_TRIPLET/${{inputs.gcc_toolchain}}" "$GCC_TOOLCHAIN_ROOT/lib/gcc/$MULTIARCH_TRIPLET/${{inputs.gcc_toolchain}}"
+        
+        # Write toolchain data to ~/user-config.jam
+        if [ -n "${{ inputs.cxx }}" -o -n "$GCC_TOOLCHAIN_ROOT" ]; then
+            echo -n "using ${{inputs.toolset}} : : ${{inputs.cxx}}" > ~/user-config.jam
+            if [ -n "$GCC_TOOLCHAIN_ROOT" ]; then
+                echo -n " : <compileflags>\"--gcc-toolchain=$GCC_TOOLCHAIN_ROOT\" <linkflags>\"--gcc-toolchain=$GCC_TOOLCHAIN_ROOT\"" >> ~/user-config.jam
+            fi
+            echo " ;" >> ~/user-config.jam
+        fi
+
+    - name: Setup user-config.jam
+      if: ${{ !inputs.gcc_toolchain }}
+      shell: bash
+      run: |
+        ${{ (inputs.trace-commands == 'true' && 'set -xe') || '' }}
+        if [ -n "${{ inputs.cxx }}" -o -n "$GCC_TOOLCHAIN_ROOT" ]; then
+            echo -n "using ${{ inputs.toolset }} : : ${{ inputs.cxx }}" > ~/user-config.jam
+            if [ -n "$GCC_TOOLCHAIN_ROOT" ]
+            then
+                echo -n " : <compileflags>\"--gcc-toolchain=$GCC_TOOLCHAIN_ROOT\" <linkflags>\"--gcc-toolchain=$GCC_TOOLCHAIN_ROOT\"" >> ~/user-config.jam
+            fi
+            echo " ;" >> ~/user-config.jam
+        fi
+
+    - name: B2 Workflow
+      working-directory: ${{ inputs.source-dir }}
+      shell: bash
+      run: |
+        ${{ (inputs.trace-commands == 'true' && 'set -xe') || '' }}
+        
+        B2_ARGS+=(${{ (steps.cpu-cores.outputs.count != '1' && format('"-j" "{0}"', steps.cpu-cores.outputs.count)) || '' }})
+        B2_ARGS+=(${{ (inputs.toolset && format('"toolset={0}"', inputs.toolset)) || '' }})
+        B2_ARGS+=(${{ (inputs.address-model && format('"address-model={0}"', inputs.address-model)) || '' }})
+        B2_ARGS+=(${{ (inputs.cxxstd && format('"cxxstd={0}"', inputs.cxxstd)) || '' }})
+        B2_ARGS+=(${{ (inputs.build-variant && format('"variant={0}"', inputs.build-variant)) || '' }})
+        B2_ARGS+=(${{ (inputs.threading && format('"threading={0}"', inputs.threading)) || '' }})
+        ${{ (inputs.ubsan == 'true' && 'export UBSAN_OPTIONS="print_stacktrace=1"') || '' }}
+        B2_ARGS+=(${{ (inputs.ubsan == 'true' && '"cxxflags=-fsanitize=undefined -fno-sanitize-recover=undefined" "linkflags=-fsanitize=undefined -fuse-ld=gold" "define=UBSAN=1" "debug-symbols=on" "visibility=global"') || '' }})
+        B2_ARGS+=(${{ (inputs.cxxflags && format('"cxxflags={0}"', inputs.cxxflags)) || '' }})
+        B2_ARGS+=(${{ (inputs.linkflags && format('"linkflags={0}"', inputs.linkflags)) || '' }})
+        
+        modules="${{ inputs.modules }}"
+        for module in ${modules//,/ }
+        do
+            B2_ARGS+=("libs/$module/test")
+        done
+        
+        set -x        
+        ./b2 "${B2_ARGS[@]}"
+        set +x

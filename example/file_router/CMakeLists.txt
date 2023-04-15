@@ -7,20 +7,12 @@
 # Official repository: https://github.com/boostorg/url
 #
 
-source_group("" FILES
-        file_router.cpp
-        )
-
-add_executable(file_router
-        file_router.cpp
-        )
-
-set_property(TARGET file_router PROPERTY FOLDER "Examples")
+add_executable(file_router file_router.cpp)
 target_link_libraries(file_router PRIVATE Boost::url Boost::filesystem)
 if (TARGET boost_filesystem AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     get_target_property(FS_IS_IMPORTED boost_filesystem IMPORTED)
-    if (FS_IS_IMPORTED)
-        target_compile_options(boost_filesystem PUBLIC -Wno-error=restrict)
-    endif()
+    target_compile_options(boost_filesystem PUBLIC $<$<BOOL:${FS_IS_IMPORTED}>:-Wno-error=restrict>)
 endif()
 
+source_group("" FILES file_router.cpp)
+set_property(TARGET file_router PROPERTY FOLDER "Examples")

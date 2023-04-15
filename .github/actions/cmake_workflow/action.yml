@@ -1,0 +1,534 @@
+name: 'CMake Workflow'
+description: 'This action runs a complete CMake workflow from source files'
+inputs:
+  source-dir:
+    description: 'Directory for the source files.'
+    required: false
+    default: '.'
+  build-dir:
+    description: 'Directory for the binaries relative to the source directory.'
+    required: false
+    default: 'build'
+  cmake-min-version:
+    description: 'The minimum cmake version for this workflow. If the existing version is below that, the action attempts to update CMake.'
+    required: false
+    default: '3.5'
+  cmake_exec:
+    description: 'The cmake executable'
+    required: false
+    default: 'cmake'
+  cc:
+    description: 'Path to C compiler.'
+    required: false
+    default: ''
+  cxx:
+    description: 'Path to C++ compiler.'
+    required: false
+    default: ''
+  cxxstd:
+    description: 'List of standards with which cmake will build and test the program.'
+    required: false
+    default: ''
+  toolchain:
+    description: 'Path to toolchain.'
+    required: false
+    default: ''
+  generator:
+    description: 'Generator name.'
+    required: false
+    default: ''
+  build-type:
+    description: 'Build type.'
+    required: false
+    default: 'Release'
+  build-target:
+    description: 'Targets to build instead of the default target'
+    required: false
+    default: ''
+  install-prefix:
+    description: 'Path where the library should be installed.'
+    required: false
+    default: '.local/usr'
+  run-tests:
+    description: 'Whether we should run tests.'
+    required: false
+    default: 'true'
+  install:
+    description: 'Whether we should install the library.'
+    required: false
+    default: 'true'
+  extra-args:
+    description: 'Extra arguments to cmake configure command.'
+    required: false
+    default: ''
+  create-annotations:
+    description: 'Create github annotations on errors.'
+    required: false
+    default: 'true'
+  ref-source-dir:
+    description: 'A reference source directory for annotations.'
+    required: false
+    default: ''
+  trace-commands:
+    description: 'Trace commands executed by the workflow.'
+    required: false
+    default: 'false'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get CPU cores
+      uses: SimenB/github-actions-cpu-cores@v1
+      id: cpu-cores
+
+    - name: Setup msvc dev-cmd
+      if: runner.os == 'Windows'
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: CMake Features
+      shell: bash
+      id: version
+      working-directory: ${{ inputs.source_dir }}
+      run: |
+        ${{ (inputs.trace-commands == 'true' && 'set -xe') || '' }} 
+
+        # Extract cmake min version
+        cmake_min_version=${{ inputs.cmake-min-version }}
+        IFS='.' read -r -a version_components <<< "$cmake_min_version"
+        major_min_version=${version_components[0]}
+        minor_min_version=${version_components[1]:-0}
+        patch_min_version=${version_components[2]:-0}
+        cmake_min_version="$major_min_version.$minor_min_version.$patch_min_version"
+        
+        # Extract cmake current version
+        cmake_version_output=$(cmake --version)
+        # extract the version number using a regular expression
+        regex='[0-9]+\.[0-9]+\.[0-9]+'
+        [[ $cmake_version_output =~ $regex ]]
+        cmake_version=${BASH_REMATCH[0]}
+        IFS='.' read -r -a version_components <<< "$cmake_version"
+        major_version=${version_components[0]}
+        minor_version=${version_components[1]}
+        patch_version=${version_components[2]}
+        
+        # Check version requirements
+        version_is_ge=false
+        if [ "$major_version" -gt "$major_min_version" ]; then
+          version_is_ge=true
+        elif [ "$major_version" -lt "$major_min_version" ]; then
+          version_is_ge=false
+        else
+          # major versions are equal, check minor versions
+          if [ "$minor_version" -gt "$minor_min_version" ]; then
+            version_is_ge=true
+          elif [ "$minor_version" -lt "$minor_min_version" ]; then
+            version_is_ge=false
+          else
+            # major and minor versions are equal, check patch versions
+            if [ "$patch_version" -ge "$patch_min_version" ]; then
+              version_is_ge=true
+            else
+              version_is_ge=false
+            fi
+          fi
+        fi
+  
+        # Update cmake if needed
+        if [ "$version_is_ge" == "false" ]; then
+          url_os=${{ runner.os }}
+          url_os="$(echo "$url_os" | tr '[:upper:]' '[:lower:]')"
+          if [ "$minor_min_version" -le "19" ]; then
+            if [ "$url_os" == "windows" ]; then
+              url_os="win${{ (runner.arch == 'X86' && '32') || '64' }}"
+            elif [ "$url_os" == "linux" ]; then
+              url_os="Linux"
+            elif [ "$url_os" == "macos" ]; then
+              if [ "$minor_min_version" -le "18" ]; then
+                url_os="Darwin"
+              elif [ "$patch_min_version" -le "2" ]; then
+                url_os="Darwin"  
+              fi
+            fi
+          fi
+        
+          url_arch=${{ runner.arch }}
+          url_arch="$(echo "$url_arch" | tr '[:upper:]' '[:lower:]')"
+          if [ "$url_os" == "windows" ]; then
+            url_arch="${{ (startswith(runner.arch, 'ARM') && 'arm64') || 'x86_64' }}"
+          elif [ "$url_os" == "win32" ]; then
+            url_arch="x86"
+          elif [ "$url_os" == "win64" ]; then
+            url_arch="x64"
+          elif [ "$url_os" == "linux" ]; then
+            url_arch="${{ (startswith(runner.arch, 'ARM') && 'aarch64') || 'x86_64' }}"
+          elif [ "$url_os" == "Linux" ]; then
+            url_arch="${{ (startswith(runner.arch, 'ARM') && 'aarch64') || 'x86_64' }}"
+          elif [ "$url_os" == "macos" ]; then
+            url_arch="universal"
+          fi
+        
+          url_extension="${{ (runner.os == 'Windows' && 'zip') || 'tar.gz' }}"
+        
+          cmake_basename="cmake-$cmake_min_version-$url_os-$url_arch"
+          cmake_filename="$cmake_basename.$url_extension"
+          cmake_url="https://cmake.org/files/v$major_min_version.$minor_min_version/$cmake_filename"
+          if command -v curl &> /dev/null; then
+            curl -o "$cmake_filename" "$cmake_url"
+          elif command -v wget &> /dev/null; then
+            wget -O "$cmake_filename" "$cmake_url"
+          fi
+          
+          ${{ (runner.os == 'Windows' && 'unzip $cmake_filename') || (inputs.trace-commands == 'true' && 'tar -xvf $cmake_filename') || 'tar -xf $cmake_filename' }}
+          cmake_bin_path="$(pwd)/$cmake_basename/bin"
+          echo "$cmake_bin_path" >> $GITHUB_PATH
+          export PATH=$PATH:"$cmake_bin_path"
+          $cmake_bin_path/cmake --version
+        
+          cmake_version="$cmake_min_version"
+          major_version="$major_min_version"
+          minor_version="$minor_min_version"
+          patch_version="$patch_min_version"
+        fi
+        
+        # Identify features
+        if [ "$minor_version" -ge 13 ]; then
+          ${{ (inputs.trace-commands == 'true' && 'echo "CMake version is greater than or equal to 3.13"') || '' }}
+          ${{ (inputs.trace-commands == 'true' && 'echo "-B <path-to-build> syntax is supported"') || '' }}
+          path_to_build=true
+        else
+          ${{ (inputs.trace-commands == 'true' && 'echo "CMake version is NOT greater than or equal to 3.13"') || '' }}
+          ${{ (inputs.trace-commands == 'true' && 'echo "-B <path-to-build> syntax is NOT supported"') || '' }}
+          path_to_build=false
+        fi
+
+        if [ "$minor_version" -ge 12 ]; then
+          ${{ (inputs.trace-commands == 'true' && 'echo "CMake version is greater than or equal to 3.12"') || '' }}
+          ${{ (inputs.trace-commands == 'true' && 'echo "-j <threads> syntax is supported"') || '' }}
+          parallel_build=true
+        else
+          ${{ (inputs.trace-commands == 'true' && 'echo "CMake version is NOT greater than or equal to 3.12"') || '' }}
+          ${{ (inputs.trace-commands == 'true' && 'echo "-j <threads> syntax is NOT supported"') || '' }}
+          parallel_build=false
+        fi
+        
+        if [ "$minor_version" -ge 15 ]; then
+          ${{ (inputs.trace-commands == 'true' && 'echo "CMake version is greater than or equal to 3.15"') || '' }}
+          ${{ (inputs.trace-commands == 'true' && 'echo "--target with multiple targets is supported"') || '' }}
+          ${{ (inputs.trace-commands == 'true' && 'echo "cmake --install is supported"') || '' }}
+          build_multiple_targets=true
+          cmake_install=true
+        else
+          ${{ (inputs.trace-commands == 'true' && 'echo "CMake version is NOT greater than or equal to 3.15"') || '' }}
+          ${{ (inputs.trace-commands == 'true' && 'echo "--target with multiple targets is NOT supported"') || '' }}
+          ${{ (inputs.trace-commands == 'true' && 'echo "cmake --install is NOT supported"') || '' }}
+          build_multiple_targets=false
+          cmake_install=false
+        fi
+        
+        generator="${{ inputs.generator }}"
+        if [ "$generator" == "" ]; then
+          generator=$(cmake --system-information | sed -n 's/^CMAKE_GENERATOR [[:space:]]*"\([^"]*\)".*/\1/p')
+        fi
+        if [ "$generator" == "" ]; then
+          generator=${{ ((runner.os == 'macOS') && '"XCode"') || ((runner.os == 'Windows') && '"Visual Studio"') || '"Unix Makefiles"' }}
+        fi
+        
+        if [[ $generator == "Visual Studio"* ]]; then
+          generator_is_multi_config=true
+        elif [ "$generator" == "Xcode" ]; then
+          generator_is_multi_config=true
+        elif [ "$generator" == "Ninja Multi-Config" ]; then
+          generator_is_multi_config=true
+        else
+          generator_is_multi_config=false
+        fi
+        ${{ (inputs.trace-commands == 'true' && 'if [ "$generator_is_multi_config" == "true" ]; then echo "Generator is multi-config"; fi') || '' }}
+        
+        echo "cmake_version=$cmake_version" >> $GITHUB_OUTPUT
+        echo "major_version=$major_version" >> $GITHUB_OUTPUT
+        echo "minor_version=$minor_version" >> $GITHUB_OUTPUT
+        echo "patch_version=$patch_version" >> $GITHUB_OUTPUT
+        echo "cmake_min_version=$cmake_min_version" >> $GITHUB_OUTPUT
+        echo "major_min_version=$major_min_version" >> $GITHUB_OUTPUT
+        echo "minor_min_version=$minor_min_version" >> $GITHUB_OUTPUT
+        echo "patch_min_version=$patch_min_version" >> $GITHUB_OUTPUT
+        echo "path_to_build=$path_to_build" >> $GITHUB_OUTPUT
+        echo "parallel_build=$parallel_build" >> $GITHUB_OUTPUT
+        echo "build_multiple_targets=$build_multiple_targets" >> $GITHUB_OUTPUT
+        echo "cmake_install=$cmake_install" >> $GITHUB_OUTPUT
+        echo "generator_is_multi_config=$generator_is_multi_config" >> $GITHUB_OUTPUT
+
+    - name: CMake Workflow
+      shell: bash
+      working-directory: ${{ inputs.source_dir }}
+      run: |
+        ${{ (inputs.trace-commands == 'true' && 'set -xe') || '' }}
+        
+        # compiler executables
+        cc=${{ inputs.cc }}
+        if [ "$cc" != "" ]; then
+            if command -v $cc &> /dev/null; then
+              cc="$(which $cc)"
+            elif command -v /usr/bin/$cc &> /dev/null; then
+              cc="/usr/bin/$cc"
+            fi
+        fi
+        cxx=${{ inputs.cxx }}
+        if [ "$cxx" != "" ]; then
+            if command -v $cxx &> /dev/null; then
+              cxx="$(which $cxx)"
+            elif command -v /usr/bin/$cxx &> /dev/null; then
+              cxx="/usr/bin/$cxx"
+            fi
+        fi
+        
+        # std versions
+        cxxstds=${{ inputs.cxxstd }}
+        if [ "$cxxstds" == "" ]; then
+            cxxstds="defaultcxx"
+        fi
+        main_cxxstd=${cxxstds##*,}
+        
+        run_tests="${{ inputs.run-tests }}"
+        if [ "$run_tests" == "true" ]; then
+          cmake_enable_test_args="-D BUILD_TESTING=ON"
+        fi
+        
+        # absolute directories
+        working_dir="$(pwd)"
+        source_dir="${{ inputs.source-dir }}"
+        if [[ $source_dir != /* ]]; then
+          source_dir="$(readlink -f "$source_dir" 2>/dev/null || realpath -e "$source_dir" 2>/dev/null || echo "$working_dir/$source_dir")"
+        fi
+        
+        ref_source_dir="${{ inputs.ref-source-dir || inputs.source-dir }}"
+        if [[ $ref_source_dir != /* ]]; then
+          ref_source_dir="$(readlink -f "$ref_source_dir" 2>/dev/null || realpath -e "$ref_source_dir" 2>/dev/null || echo "$working_dir/$ref_source_dir")"
+        fi
+        
+        build_dir="${{ inputs.build-dir }}"
+        if [[ $build_dir != /* ]]; then
+          build_dir="$(readlink -f "$source_dir/$build_dir" 2>/dev/null || realpath -e "$source_dir/$build_dir" 2>/dev/null || echo "$source_dir/$build_dir")"
+        fi
+        
+        # iterate stds
+        for cxxstd in ${cxxstds//,/ }
+        do
+            if [ "$cxxstd" != "defaultcxx" ]; then
+              echo "==================================> C++$cxxstd"
+            fi
+            std_build_dir="$build_dir$( [ "$cxxstd" == "$main_cxxstd" ] && echo "" || echo "-$cxxstd" )"
+
+            # Configure step
+            CONFIGURE_ARGS=(${{ (steps.version.outputs.path_to_build == 'true' && '"-S" "$source_dir" "-B" "$std_build_dir"') || '' }})
+            CONFIGURE_ARGS+=(${{ (inputs.generator && format('"-G" "{0}"', inputs.generator)) || '' }})
+            CONFIGURE_ARGS+=(${{ ((steps.version.outputs.generator_is_multi_config == 'false' && inputs.build-type) && format('"-D" "CMAKE_BUILD_TYPE={0}"', inputs.build-type)) || '' }})
+            CONFIGURE_ARGS+=(${{ ((steps.version.outputs.generator_is_multi_config == 'true' && inputs.build-type) && format('"-D" "CMAKE_CONFIGURATION_TYPES={0}"', inputs.build-type)) || '' }})
+            CONFIGURE_ARGS+=(${{ (inputs.toolchain && format('"-D" "CMAKE_TOOLCHAIN_FILE={0}"', inputs.toolchain)) || '' }})
+            CONFIGURE_ARGS+=(${{ (inputs.toolchain && format('"-D" "CMAKE_TOOLCHAIN_FILE={0}"', inputs.toolchain)) || '' }})
+            CONFIGURE_ARGS+=(${{ (inputs.install-prefix && format('"-D" "CMAKE_INSTALL_PREFIX={0}"', inputs.install-prefix)) || '' }})
+            CONFIGURE_ARGS+=(${{ (inputs.run-tests && '"-D" "BUILD_TESTING=ON"') || '' }})
+            CONFIGURE_ARGS+=(${{ (inputs.cc && '"-D" "CMAKE_C_COMPILER=$cc"') || '' }})
+            CONFIGURE_ARGS+=(${{ (inputs.cxx && '"-D" "CMAKE_CXX_COMPILER=$cxx"') || '' }})
+            CONFIGURE_ARGS+=($( [ "$cxxstd" == "defaultcxx" ] && echo "" || echo "-D CMAKE_CXX_STANDARD=$cxxstd" ))
+            CONFIGURE_ARGS+=(${{ inputs.extra-args }})
+            SOURCE_DIR_ARG=${{ (steps.version.outputs.path_to_build == 'false' && '"$source_dir"') || '' }}
+        
+            mkdir "$std_build_dir" || true
+            cd "$std_build_dir"
+            set +e
+            set -x
+            cmake "${CONFIGURE_ARGS[@]}" $SOURCE_DIR_ARG 2>&1 | tee -a "$std_build_dir/cmake-configure-output.txt"
+            ${{ (inputs.trace-commands != 'true' && 'set +x') || '' }}
+            cmake_exit_code=$?
+            set -e
+            cd "$working_dir"
+        
+            # Configure step annotations
+            if [[ ${{ inputs.create-annotations }}  == "true" ]]; then
+              cmake_regex="^CMake (Warning|Error)( at ([^:]+):([[:digit:]]+) \\(([^:]+)\\))?:(.*)"
+              message_type=""
+              lines=""
+              while read line; do
+                  if [[ "$message_type" != "" ]]; then
+                      ${{ (inputs.trace-commands == 'true' && 'echo "$line"') || '' }}
+                      ${{ (inputs.trace-commands == 'true' && 'echo "$lines"') || '' }}
+                      lines="$lines\n$line"
+                      ${{ (inputs.trace-commands == 'true' && 'echo "$lines"') || '' }}
+                      if [[ "${lines: -4}" != "\n\n" ]]; then
+                        continue
+                      fi
+                  else
+                      if [[ $line == "CMake Error"* ]]; then
+                        message_type="error"
+                        lines="$line"
+                        continue
+                      elif [[ $line == "CMake Warning"* ]]; then
+                        message_type="warning"
+                        lines="$line"
+                        continue
+                      fi
+                  fi
+        
+                  ${{ (inputs.trace-commands == 'true' && 'echo "$lines"') || '' }}
+                  if [[ $lines =~ $cmake_regex ]]; then
+                    filename=${BASH_REMATCH[3]}
+                    if [ "$filename" != "" ]; then
+                      ${{ runner.os != 'macOS' && 'filename="$(realpath -m --relative-to="$ref_source_dir" "$source_dir/$filename")"' }}
+                    fi
+                    line_number=${BASH_REMATCH[4]}
+                    error_type=${BASH_REMATCH[1]}
+                    error_code=${BASH_REMATCH[5]}
+                    error_message=${BASH_REMATCH[6]}
+                    error_message="${error_message:2}"
+                    error_message=$(echo $error_message | sed 's/....$//')
+                    error_message=$(echo "$error_message" | sed 's/:\\n\\n/: /g')
+                    error_message=$(echo "$error_message" | sed 's/.\\n/. /g')
+                    error_message=$(echo "$error_message" | sed 's/\\n/. /g')
+                    error_message=$(echo "$error_message" | sed 's/\n/. /g')
+                    if [ "$filename" == "" ]; then
+                      echo "::$message_type title:CMake-$error_type::CMake: $error_message"
+                    else
+                      echo "::$message_type file=$filename,line=$line_number,title:CMake-$error_type::CMake: $error_message"
+                    fi
+                  fi
+                  message_type=""
+                  lines=""
+              done < "$std_build_dir/cmake-configure-output.txt"
+            fi
+        
+            if [[ $cmake_exit_code -ne 0 ]]; then
+              echo "CMake configuration step failed with exit code $cmake_exit_code"
+              false
+            fi
+
+            # Build step
+            set +e
+            jobs_args="${{ (steps.version.outputs.parallel_build == 'false' && '') || format('-j {0}', steps.cpu-cores.outputs.count) }}"
+            if [[ "${{ steps.version.outputs.build_multiple_targets }}" == "true" || "${{ inputs.build-target }}" != *" "* ]]; then
+              set -x
+              cmake --build "$std_build_dir" --config ${{ inputs.build-type }} $jobs_args ${{ (inputs.build-target != '' && format('--target {0}', inputs.build-target)) || '' }} 2>&1 | tee -a "$std_build_dir/cmake-build-output.txt"
+              ${{ (inputs.trace-commands != 'true' && 'set +x') || '' }}
+            else
+              build_targets="${{ inputs.build-target }}"
+              for build_target in ${build_targets// / }; do
+                set -x
+                cmake --build "$std_build_dir" --config ${{ inputs.build-type }} $jobs_args --target $build_target 2>&1 | tee -a "$std_build_dir/cmake-build-output.txt"
+                ${{ (inputs.trace-commands != 'true' && 'set +x') || '' }}
+              done
+            fi
+            cmake_exit_code=$?
+            set -e
+            
+            # Build step annotations
+            if [[ ${{ inputs.create-annotations }}  == "true" ]]; then
+              msvc_regex="^([^\\(\\)]+)\\(([[:digit:]]+)\\): (warning|error) ([^:]+): (.*)$"
+              gcc_clang_regex="^([^:]+):([[:digit:]]+):([[:digit:]]+)?: (warning|error):([^\\[]*)(\\[-W[A-Za-z0-9-]*\\])?$"
+              while read line; do
+                  ${{ (inputs.trace-commands == 'true' && 'echo "$line"') || '' }}
+                  if [[ "$line" =~ $gcc_clang_regex ]]; then
+                    filename=${BASH_REMATCH[1]}
+                    ${{ runner.os != 'macOS' && 'filename="$(realpath -m --relative-to="$ref_source_dir" "$filename")"' }}
+                    if [[ $filename == ../* ]]; then
+                      continue
+                    fi
+                    error_type=${BASH_REMATCH[4]}
+                    line_number=${BASH_REMATCH[2]}
+                    column=${BASH_REMATCH[3]}
+                    title="Build Error"
+                    msg=""
+                    compiler="${{ inputs.cxx }}"
+                    if [ "$compiler" != "" ]; then
+                      compiler=$(basename $compiler)
+                      title="$title - $compiler"
+                      msg="$compiler"
+                    fi
+                    error_message=${BASH_REMATCH[5]}
+                    if [ "$msg" != "" ]; then
+                      msg="$msg: $error_message"
+                    else
+                      msg="$error_message"
+                    fi
+                    error_code=${BASH_REMATCH[6]}
+                    if [ "$error_code" != "" ]; then
+                      title="$title - $error_code"
+                      msg="$msg ($error_code)"
+                    fi
+                    echo "::$error_type file=$filename,line=$line_number,col:$column,title:$title::$msg"
+                  elif [[ "$line" =~ $msvc_regex ]]; then
+                    filename=${BASH_REMATCH[1]}
+                    ${{ runner.os != 'macOS' && 'filename="$(realpath -m --relative-to="$ref_source_dir" "$filename")"' }}
+                    if [[ $filename == ../* ]]; then
+                      continue
+                    fi
+                    line_number=${BASH_REMATCH[2]}
+                    error_type=${BASH_REMATCH[3]}
+                    error_code=${BASH_REMATCH[4]}
+                    error_message=${BASH_REMATCH[5]}
+                    compiler="${{ inputs.cxx }}"
+                    if [ "$compiler" != ""]; then
+                      compiler=$(basename $compiler)
+                    fi
+                    echo "::$error_type file=$filename,line=$line_number,title:$compiler: $error_type $error_code::$compiler: $error_message ($error_type - $error_code)"
+                  fi
+              done < "$std_build_dir/cmake-build-output.txt"
+            fi
+        
+            if [[ $cmake_exit_code -ne 0 ]]; then
+              echo "CMake build step failed with exit code $cmake_exit_code"
+              false
+            fi
+            
+            # Install step
+            mkdir "${{ inputs.install-prefix }}" || true
+            if [[ "${{ inputs.install }}" == true && "$cxxstd" == "$main_cxxstd" ]]; then
+              if [[ ${{ steps.version.outputs.cmake_install }}  == "true" ]]; then
+                set -x
+                cmake --install "$std_build_dir" --config ${{ inputs.build-type }} --prefix "${{ inputs.install-prefix }}" 2>&1 | tee -a "$std_build_dir/cmake-install-output.txt"
+                ${{ (inputs.trace-commands != 'true' && 'set +x') || '' }}
+              else
+                set -x
+                cmake --build "$std_build_dir" --config ${{ inputs.build-type }} --target install || true 2>&1 | tee -a "$std_build_dir/cmake-install-output.txt"
+                ${{ (inputs.trace-commands != 'true' && 'set +x') || '' }}
+              fi
+            fi
+        
+            # Test step
+            if [[ "$run_tests" == true && "$cxxstd" == "$main_cxxstd" ]]; then
+              set +e
+              ctest --test-dir "$std_build_dir" $jobs_args -C ${{ inputs.build-type }} --no-tests=error --progress --output-on-failure  2>&1 | tee -a "$std_build_dir/cmake-test-output.txt"
+              cmake_exit_code=$?
+              set -e
+              
+              # Test step annotations
+              if [[ "${{ inputs.create-annotations }}" == true ]]; then
+                boost_test_regex="^#[[:digit:]]+ ([^\\(\\)]+)\\(([[:digit:]]+)\\) failed: (.*)"
+                while read line; do
+                  if [[ "$line" =~ $boost_test_regex ]]; then
+                    filename=${BASH_REMATCH[1]}
+                    if [ -e "$ref_source_dir/$filename" ]; then
+                      ${{ runner.os != 'macOS' && 'filename="$(realpath -m --relative-to="$ref_source_dir" "$ref_source_dir/$filename")"' }}
+                    else
+                      test_filename=$(find "$ref_source_dir/test" -name "$filename" | head -n 1 | xargs)
+                      if [ "$test_filename" != "" ]; then
+                        ${{ runner.os != 'macOS' && 'filename="$(realpath -m --relative-to="$ref_source_dir" "$test_filename")"' }}
+                      else
+                        ref_filename=$(find "$ref_source_dir" -name "$filename" | head -n 1 | xargs)
+                        if [ "$ref_filename" == "" ]; then
+                          ${{ runner.os != 'macOS' && 'filename="$(realpath -m --relative-to="$ref_source_dir" "$ref_filename")"' }}
+                        fi
+                      fi
+                    fi
+                    line_number=${BASH_REMATCH[2]}
+                    error_message=${BASH_REMATCH[3]}
+                    echo "::error file=$filename,line=$line_number,title:Boost.Test::Boost.Test: $error_message"
+                  fi
+                done < "$std_build_dir/cmake-test-output.txt"
+              fi
+        
+              if [[ $cmake_exit_code -ne 0 ]]; then
+                echo "CMake test step failed with exit code $cmake_exit_code"
+                false
+              fi
+            fi
+        done
