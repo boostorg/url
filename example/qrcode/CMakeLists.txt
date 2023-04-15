@@ -7,13 +7,7 @@
 # Official repository: https://github.com/boostorg/url
 #
 
-source_group("" FILES
-        qrcode.cpp
-        )
-
-add_executable(qrcode
-        qrcode.cpp
-        )
-
-set_property(TARGET qrcode PROPERTY FOLDER "Examples")
+add_executable(qrcode qrcode.cpp)
 target_link_libraries(qrcode PRIVATE Boost::url)
+source_group("" FILES qrcode.cpp)
+set_property(TARGET qrcode PROPERTY FOLDER "Examples")

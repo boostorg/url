@@ -116,9 +116,9 @@ def generate(compiler_ranges, cxx_range, max_cxx=2, coverage=True, docs=True, as
             coverage_desc[2] = 'codecov'
             latest_compilers = [coverage_desc] + latest_compilers
         if cmake:
-            cmake_desc = latest_gcc[:]
-            cmake_desc[2] = 'cmake-install'
-            compilers = [cmake_desc] + compilers
+            # cmake_desc = latest_gcc[:]
+            # cmake_desc[2] = 'cmake-install'
+            # compilers = [cmake_desc] + compilers
 
             cmake_desc = latest_gcc[:]
             cmake_desc[2] = 'cmake'

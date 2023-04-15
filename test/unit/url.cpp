@@ -1224,7 +1224,12 @@ struct url_test
                 resolve(base, base, base);
                 BOOST_TEST_CSTR_EQ(base.buffer(), "http://www.example.com/user/");
             }
+        }
 
+        // complete string comparison
+        {
+            url_view u("https://user:p%61ss@www.%65xample.com:443/p%61th/to/page?k%65y=h%65llo%20world#fr%61gment");
+            BOOST_TEST_EQ(u, url_view("https://user:pass@www.example.com:443/path/to/page?key=hello%20world#fragment"));
         }
     }
 
