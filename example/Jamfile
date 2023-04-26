@@ -14,3 +14,4 @@ build-project mailto ;
 build-project magnet ;
 build-project file_router ;
 # build-project router ;
+build-project sanitize ;
