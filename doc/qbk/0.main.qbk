@@ -142,6 +142,7 @@
 [import ../../example/magnet/magnet.cpp]
 [import ../../example/file_router/file_router.cpp]
 [import ../../example/router/router.cpp]
+[import ../../example/sanitize/sanitize.cpp]
 [import ../../test/unit/snippets.cpp]
 [import ../../test/unit/doc_3_urls.cpp]
 [import ../../test/unit/doc_grammar.cpp]
