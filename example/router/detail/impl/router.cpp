@@ -51,14 +51,14 @@ public:
     bool
     match(pct_string_view seg) const;
 
-    string_view
+    core::string_view
     string() const
     {
         return str_;
     }
 
     BOOST_URL_DECL
-    string_view
+    core::string_view
     id() const;
 
     bool
@@ -141,7 +141,7 @@ struct segment_template_rule_t
     using value_type = segment_template;
 
     BOOST_URL_DECL
-    urls::result<value_type>
+    system::result<value_type>
     parse(
         char const*& it,
         char const* end
@@ -172,13 +172,13 @@ match(pct_string_view seg) const
     return true;
 }
 
-string_view
+core::string_view
 segment_template::
 id() const
 {
     // if (is_literal_) return {};
     BOOST_ASSERT(!is_literal());
-    string_view r = {str_};
+    core::string_view r = {str_};
     r.remove_prefix(1);
     r.remove_suffix(1);
     if (r.ends_with('?') ||
@@ -193,7 +193,7 @@ segment_template_rule_t::
 parse(
     char const*& it,
     char const* end) const noexcept
-    -> urls::result<value_type>
+    -> system::result<value_type>
 {
     segment_template t;
     if (it != end &&
@@ -207,7 +207,7 @@ parse(
                 it, end, grammar::lut_chars('}'));
         if (send != end)
         {
-            string_view s(it, send);
+            core::string_view s(it, send);
             static constexpr auto modifiers_cs =
                 grammar::lut_chars("?*+");
             static constexpr auto id_rule =
@@ -221,7 +221,7 @@ parse(
             {
                 it = send + 1;
 
-                t.str_ = string_view(it0, send + 1);
+                t.str_ = core::string_view(it0, send + 1);
                 t.is_literal_ = false;
                 if (s.ends_with('?'))
                     t.modifier_ =
@@ -404,15 +404,15 @@ public:
     // include a node for a resource
     void
     insert_impl(
-        string_view path,
+        core::string_view path,
         router_base::any_resource const* v);
 
     // match a node and return the element
     router_base::any_resource const*
     find_impl(
         segments_encoded_view path,
-        string_view*& matches,
-        string_view*& ids) const;
+        core::string_view*& matches,
+        core::string_view*& ids) const;
 
 private:
     // try to match from this root node
@@ -422,8 +422,8 @@ private:
         segments_encoded_view::const_iterator end,
         node const* root,
         int level,
-        string_view*& matches,
-        string_view*& ids) const;
+        core::string_view*& matches,
+        core::string_view*& ids) const;
 
     // check if a node has a resource when we
     // also consider optional paths through
@@ -433,8 +433,8 @@ private:
     find_optional_resource(
         const node* root,
         std::vector<node> const& ns,
-        string_view*& matches,
-        string_view*& ids);
+        core::string_view*& matches,
+        core::string_view*& ids);
 };
 
 node const*
@@ -442,8 +442,8 @@ impl::
 find_optional_resource(
     const node* root,
     std::vector<node> const& ns,
-    string_view*& matches,
-    string_view*& ids)
+    core::string_view*& matches,
+    core::string_view*& ids)
 {
     BOOST_ASSERT(root);
     if (root->resource)
@@ -474,7 +474,7 @@ find_optional_resource(
 void
 impl::
 insert_impl(
-    string_view path,
+    core::string_view path,
     router_base::any_resource const* v)
 {
     // Parse dynamic route segments
@@ -496,7 +496,7 @@ insert_impl(
     int level = 0;
     while (it != end)
     {
-        string_view seg = (*it).string();
+        core::string_view seg = (*it).string();
         if (seg == ".")
         {
             ++it;
@@ -595,8 +595,8 @@ try_match(
     segments_encoded_view::const_iterator end,
     node const* cur,
     int level,
-    string_view*& matches,
-    string_view*& ids) const
+    core::string_view*& matches,
+    core::string_view*& ids) const
 {
     while (it != end)
     {
@@ -832,7 +832,7 @@ try_match(
                             level, matches, ids);
                         if (r)
                         {
-                            string_view prev = *std::prev(start);
+                            core::string_view prev = *std::prev(start);
                             *matches0 = {
                                 matches0->data(),
                                 prev.data() + prev.size()};
@@ -896,8 +896,8 @@ router_base::any_resource const*
 impl::
 find_impl(
     segments_encoded_view path,
-    string_view*& matches,
-    string_view*& ids) const
+    core::string_view*& matches,
+    core::string_view*& ids) const
 {
     // parse_path is inconsistent for empty paths
     if (path.empty())
@@ -926,7 +926,7 @@ router_base::
 void
 router_base::
 insert_impl(
-    string_view s,
+    core::string_view s,
     any_resource const* v)
 {
     reinterpret_cast<impl*>(impl_)
@@ -937,8 +937,8 @@ auto
 router_base::
 find_impl(
     segments_encoded_view path,
-    string_view*& matches,
-    string_view*& ids) const noexcept
+    core::string_view*& matches,
+    core::string_view*& ids) const noexcept
     -> any_resource const*
 {
     return reinterpret_cast<impl*>(impl_)

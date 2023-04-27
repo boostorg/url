@@ -32,7 +32,7 @@ struct delim_rule_test
 
         // javadoc
         {
-            result< string_view > rv = parse( ".", delim_rule('.') );
+            system::result< core::string_view > rv = parse( ".", delim_rule('.') );
 
             (void)rv;
         }

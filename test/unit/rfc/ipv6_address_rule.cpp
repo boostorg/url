@@ -22,7 +22,7 @@ struct ipv6_address_rule_test
     {
         // javadoc
         {
-            result< ipv6_address > rv = grammar::parse( "2001:0db8:85a3:0000:0000:8a2e:0370:7334", ipv6_address_rule );
+            system::result< ipv6_address > rv = grammar::parse( "2001:0db8:85a3:0000:0000:8a2e:0370:7334", ipv6_address_rule );
             (void)rv;
         }
     }

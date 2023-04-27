@@ -27,7 +27,7 @@ port_rule::
 parse(
     char const*& it,
     char const* end) const noexcept ->
-        result<value_type>
+        system::result<value_type>
 {
     value_type t;
     auto const start = it;
@@ -46,7 +46,7 @@ parse(
         if (rv)
         {
             // number < max uint16_t
-            t.str = string_view(start, it);
+            t.str = core::string_view(start, it);
             t.has_number = true;
             t.number = *rv;
             return t;
@@ -61,14 +61,14 @@ parse(
             {
                 ++it;
             }
-            t.str = string_view(start, it);
+            t.str = core::string_view(start, it);
             t.has_number = true;
             t.number = 0;
             return t;
         }
     }
     // no digits
-    t.str = string_view(start, it);
+    t.str = core::string_view(start, it);
     t.has_number = it != end;
     t.number = 0;
     return t;
@@ -79,7 +79,7 @@ port_part_rule_t::
 parse(
     char const*& it,
     char const* end) const noexcept ->
-        result<value_type>
+        system::result<value_type>
 {
     value_type t;
     if( it == end ||

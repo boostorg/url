@@ -62,7 +62,7 @@ operator=(segments_view const& other)
 segments_ref&
 segments_ref::
 operator=(std::initializer_list<
-    string_view> init)
+    core::string_view> init)
 {
     assign(init.begin(), init.end());
     return *this;
@@ -77,7 +77,7 @@ operator=(std::initializer_list<
 void
 segments_ref::
 assign(std::initializer_list<
-    string_view> init)
+    core::string_view> init)
 {
     assign(init.begin(), init.end());
 }
@@ -86,7 +86,7 @@ auto
 segments_ref::
 insert(
     iterator before,
-    string_view s) ->
+    core::string_view s) ->
         iterator
 {
     return u_->edit_segments(
@@ -100,7 +100,7 @@ segments_ref::
 insert(
     iterator before,
     std::initializer_list<
-            string_view> init) ->
+            core::string_view> init) ->
         iterator
 {
     return insert(
@@ -117,7 +117,7 @@ erase(
     iterator last) noexcept ->
         iterator
 {
-    string_view s;
+    core::string_view s;
     return u_->edit_segments(
         first.it_,
         last.it_,
@@ -129,7 +129,7 @@ auto
 segments_ref::
 replace(
     iterator pos,
-    string_view s) ->
+    core::string_view s) ->
         iterator
 {
     return u_->edit_segments(
@@ -143,7 +143,7 @@ segments_ref::
 replace(
     iterator from,
     iterator to,
-    string_view s) ->
+    core::string_view s) ->
         iterator
 {
     return u_->edit_segments(
@@ -158,7 +158,7 @@ replace(
     iterator from,
     iterator to,
     std::initializer_list<
-        string_view> init) ->
+        core::string_view> init) ->
     iterator
 {
     return replace(

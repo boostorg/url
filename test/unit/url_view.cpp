@@ -83,7 +83,7 @@ public:
             BOOST_TEST_EQ(u1.data(), u2.data());
         }
 
-        // url_view(string_view)
+        // url_view(core::string_view)
         {
             BOOST_TEST_NO_THROW(url_view(
                 "http://example.com/path/to/file.txt?#"));
@@ -91,13 +91,13 @@ public:
                 std::exception);
         }
 
-        // url_view(string_view) no ambiguous
+        // url_view(core::string_view) no ambiguous
         {
-            string_view s = "";
+            core::string_view s = "";
             BOOST_TEST_NO_THROW(url_view( s ));
         }
 
-        // implicit url_view(string_view)
+        // implicit url_view(core::string_view)
         {
             auto const f = []( url_view ) {};
             f( "x" );
@@ -131,7 +131,7 @@ public:
 
         // data()
         {
-            string_view s = "/index.htm";
+            core::string_view s = "/index.htm";
             url_view u(s);
             BOOST_TEST_NE(u.data(), nullptr);
             BOOST_TEST_EQ(u.data(), s.data());
@@ -139,7 +139,7 @@ public:
 
         // string()
         {
-            string_view s = "/index.htm";
+            core::string_view s = "/index.htm";
             url_view u = parse_relative_ref(s).value();
             BOOST_TEST_EQ(u, s);
             BOOST_TEST_EQ(u.data(), s.data());
@@ -164,9 +164,9 @@ public:
         }
         }
 
-        // operator string_view()
+        // operator core::string_view()
         {
-            auto const f = []( string_view ) {};
+            auto const f = []( core::string_view ) {};
             f( url_view("x") );
         }
 
@@ -176,11 +176,11 @@ public:
     testScheme()
     {
         auto const check = [](
-            string_view s,
+            core::string_view s,
             char const* m,
             scheme id)
         {
-            result<url_view> r =
+            system::result<url_view> r =
                 parse_uri_reference(s);
             if(! BOOST_TEST(r))
                 return;
@@ -188,7 +188,7 @@ public:
             if(m)
             {
                 BOOST_TEST(u.scheme() ==
-                           string_view(m));
+                           core::string_view(m));
                 BOOST_TEST(
                     u.scheme_id() == id);
             }
@@ -201,9 +201,9 @@ public:
         };
 
         auto const bad = [](
-            string_view s)
+            core::string_view s)
         {
-            result<url_view> r =
+            system::result<url_view> r =
                 parse_uri_reference(s);
             BOOST_TEST(r.has_error());
         };
@@ -227,7 +227,7 @@ public:
     testAuthority()
     {
         auto const no =
-            [](string_view s)
+            [](core::string_view s)
         {
             BOOST_TEST_NO_THROW([s]
             {
@@ -236,7 +236,7 @@ public:
             }());
         };
         auto const yes =
-            [](string_view s, string_view m)
+            [](core::string_view s, core::string_view m)
         {
             //BOOST_TEST_NO_THROW(
             //[&]
@@ -281,7 +281,7 @@ public:
     testUserinfo()
     {
         auto const no =
-            [](string_view s)
+            [](core::string_view s)
         {
             BOOST_TEST_NO_THROW(
             [s]{
@@ -290,9 +290,9 @@ public:
             }());
         };
         auto const yes =
-            []( string_view s,
-                string_view m1,
-                string_view m2)
+            []( core::string_view s,
+                core::string_view m1,
+                core::string_view m2)
         {
             BOOST_TEST_NO_THROW(
             [&]{
@@ -699,11 +699,11 @@ public:
     testFragment()
     {
         auto const check = [](
-            string_view s,
+            core::string_view s,
             char const* encoded,
-            string_view plain)
+            core::string_view plain)
         {
-            result<url_view> r =
+            system::result<url_view> r =
                 parse_uri_reference(s);
             if(! BOOST_TEST(r))
                 return;
@@ -714,7 +714,7 @@ public:
                     u.has_fragment());
                 BOOST_TEST(
                     u.encoded_fragment() ==
-                        string_view(encoded));
+                        core::string_view(encoded));
                 BOOST_TEST_EQ(
                     u.fragment(), plain);
             }
@@ -725,9 +725,9 @@ public:
             }
         };
 
-        auto const bad = [](string_view s)
+        auto const bad = [](core::string_view s)
         {
-            result<url_view> r =
+            system::result<url_view> r =
                 parse_uri_reference(s);
             BOOST_TEST(r.has_error());
         };
@@ -762,7 +762,7 @@ public:
     {
         // parse_absolute_uri
         {
-            result<url_view> r;
+            system::result<url_view> r;
 
             r = parse_absolute_uri(
                 "http://user:pass@example.com:443/path/to/file.txt?q");
@@ -777,7 +777,7 @@ public:
 
         // parse_uri
         {
-            result<url_view> r;
+            system::result<url_view> r;
 
             r = parse_uri(
                 "http://user:pass@example.com:443/path/to/file.txt?q#f");
@@ -795,7 +795,7 @@ public:
 
         // parse_relative_ref
         {
-            result<url_view> r;
+            system::result<url_view> r;
 
             r = parse_relative_ref(
                 "//example.com/path/to/file.txt?q#f");
@@ -810,7 +810,7 @@ public:
 
         // parse_uri_reference
         {
-            result<url_view> r;
+            system::result<url_view> r;
 
             r = parse_uri_reference(
                 "http://user:pass@example.com:443/path/to/file.txt?q#f");
@@ -854,7 +854,7 @@ public:
     testRelativePart()
     {
         auto const ok = [](
-            string_view s)
+            core::string_view s)
         {
             BOOST_TEST_NO_THROW(
                 parse_relative_ref(s).value());
@@ -983,7 +983,7 @@ public:
     ignore_unused(u);
         }
         {
-    result< url_view > rv = parse_uri_reference( "https://www.example.com/index.htm?text=none#a1" );
+    system::result< url_view > rv = parse_uri_reference( "https://www.example.com/index.htm?text=none#a1" );
 
     ignore_unused(rv);
         }
@@ -995,7 +995,7 @@ public:
         ignore_unused(u);
         }
 
-        // url_view(string_view)
+        // url_view(core::string_view)
         {
         url_view u( "http://www.example.com/index.htm" );
 

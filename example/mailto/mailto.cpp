@@ -135,12 +135,12 @@ private:
     // Count number of addresses in a string
     static
     std::size_t
-    addr_in_str(urls::string_view s);
+    addr_in_str(boost::core::string_view s);
 
     // Get the ith address from a string
     static
-    urls::optional<urls::pct_string_view>
-    get_nth_address(urls::string_view to, std::size_t &i) noexcept;
+    boost::optional<urls::pct_string_view>
+    get_nth_address(boost::core::string_view to, std::size_t &i) noexcept;
 
     // Get param value or empty otherwise
     urls::pct_string_view
@@ -157,7 +157,7 @@ struct mailto_rule_t
     using value_type = mailto_view;
 
     /// Parse a sequence of characters into a mailto_view
-    urls::result< value_type >
+    boost::system::result< value_type >
     parse( char const*& it, char const* end ) const noexcept;
 };
 
@@ -168,8 +168,8 @@ constexpr mailto_rule_t mailto_rule{};
     This is a more convenient user-facing function
     to parse mailto URLs.
 */
-urls::result< mailto_view >
-parse_mailto( urls::string_view s ) noexcept
+boost::system::result< mailto_view >
+parse_mailto( boost::core::string_view s ) noexcept
 {
     return urls::grammar::parse(s, mailto_rule);
 }
@@ -196,7 +196,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    urls::result<mailto_view> r =
+    boost::system::result<mailto_view> r =
         parse_mailto(argv[1]);
     if (!r)
         return EXIT_FAILURE;
@@ -326,7 +326,7 @@ mailto_view::encoded_body() const noexcept
 }
 
 std::size_t
-mailto_view::addr_in_str(urls::string_view s)
+mailto_view::addr_in_str(boost::core::string_view s)
 {
     std::size_t n = 0;
     bool empty = true;
@@ -346,11 +346,11 @@ mailto_view::addr_in_str(urls::string_view s)
     return n;
 }
 
-urls::optional<urls::pct_string_view>
-mailto_view::get_nth_address(urls::string_view to, std::size_t &i) noexcept
+boost::optional<urls::pct_string_view>
+mailto_view::get_nth_address(boost::core::string_view to, std::size_t &i) noexcept
 {
     auto p = to.find(',');
-    while (p != urls::string_view::npos)
+    while (p != boost::core::string_view::npos)
     {
         if (i == 0)
             return urls::pct_string_view(
@@ -381,10 +381,10 @@ mailto_view::param_or_empty(urls::pct_string_view k) const noexcept
 
 auto
 mailto_rule_t::parse( char const*& it, char const* end ) const noexcept
-    -> urls::result< value_type >
+    -> boost::system::result< value_type >
 {
     // Syntax-based rules
-    urls::result<urls::url_view> r =
+    boost::system::result<urls::url_view> r =
         urls::grammar::parse(it, end, urls::absolute_uri_rule);
     if (!r)
         return r.error();

@@ -6,8 +6,10 @@
 //
 
 #include <boost/url/parse.hpp>
+#include <boost/core/detail/string_view.hpp>
 
 using namespace boost::urls;
+namespace core = boost::core;
 
 enum class parser {
     absolute_uri,
@@ -18,9 +20,9 @@ enum class parser {
 };
 
 bool
-fuzz_parse(parser p, string_view sv)
+fuzz_parse(parser p, core::string_view sv)
 {
-    result<url_view> r;
+    boost::system::result<url_view> r;
     switch (p)
     {
         case parser::absolute_uri:
@@ -53,7 +55,7 @@ LLVMFuzzerTestOneInput(
     try
     {
         auto p = static_cast<parser>(data[0] % 5);
-        string_view s{reinterpret_cast<
+        core::string_view s{reinterpret_cast<
             const char*>(data + 1), size - 1};
         fuzz_parse(p, s);
     }

@@ -44,15 +44,15 @@ protected:
     BOOST_URL_DECL
     void
     insert_impl(
-        string_view s,
+        core::string_view s,
         any_resource const* v);
 
     BOOST_URL_DECL
     any_resource const*
     find_impl(
         segments_encoded_view path,
-        string_view*& matches,
-        string_view*& names) const noexcept;
+        core::string_view*& matches,
+        core::string_view*& names) const noexcept;
 };
 
 } // detail

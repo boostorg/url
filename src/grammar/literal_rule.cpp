@@ -25,7 +25,7 @@ literal_rule::
 parse(
     char const*& it,
     char const* end) const noexcept ->
-        result<value_type>
+        system::result<value_type>
 {
     // Can't have a literal
     // with an empty string!
@@ -42,7 +42,7 @@ parse(
                 error::mismatch);
         }
         it += n_;
-        return string_view(
+        return core::string_view(
             it - n_, it);
     }
     if(n > 0)

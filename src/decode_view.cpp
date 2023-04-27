@@ -68,7 +68,7 @@ operator*() const noexcept ->
 // unchecked constructor
 decode_view::
 decode_view(
-    string_view s,
+    core::string_view s,
     std::size_t n,
     encoding_opts opt) noexcept
     : p_(s.data())
@@ -81,7 +81,7 @@ decode_view(
 
 int
 decode_view::
-compare(string_view other) const noexcept
+compare(core::string_view other) const noexcept
 {
     return detail::decoded_strcmp(*this, other);
 }
@@ -136,7 +136,7 @@ remove_suffix( size_type n )
 
 bool
 decode_view::
-starts_with( string_view s ) const noexcept
+starts_with( core::string_view s ) const noexcept
 {
     if (s.size() > size())
         return false;
@@ -156,7 +156,7 @@ starts_with( string_view s ) const noexcept
 
 bool
 decode_view::
-ends_with( string_view s ) const noexcept
+ends_with( core::string_view s ) const noexcept
 {
     if (s.size() > size())
         return false;

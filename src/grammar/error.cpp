@@ -52,7 +52,7 @@ case error::out_of_range: return "out of range";
     }
 }
 
-error_condition
+system::error_condition
 error_cat_type::
 default_error_condition(
     int ev) const noexcept

@@ -23,7 +23,7 @@ namespace detail {
 
 void
 throw_system_error(
-    error_code const& ec,
+    system::error_code const& ec,
     source_location const& loc)
 {
     throw_exception(
@@ -32,7 +32,7 @@ throw_system_error(
 
 void
 throw_errc(
-    errc::errc_t ev,
+    boost::system::errc::errc_t ev,
     source_location const& loc)
 {
     throw_system_error(make_error_code(ev), loc);
@@ -42,14 +42,14 @@ void
 throw_invalid_argument(
     source_location const& loc)
 {
-    throw_errc(errc::invalid_argument, loc);
+    throw_errc(boost::system::errc::invalid_argument, loc);
 }
 
 void
 throw_length_error(
     source_location const& loc)
 {
-    throw_errc(errc::value_too_large, loc);
+    throw_errc(boost::system::errc::value_too_large, loc);
 }
 
 } // detail

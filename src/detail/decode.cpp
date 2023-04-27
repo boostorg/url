@@ -35,7 +35,7 @@ decode_one(
 
 std::size_t
 decode_bytes_unsafe(
-    string_view s) noexcept
+    core::string_view s) noexcept
 {
     auto p = s.begin();
     auto const end = s.end();
@@ -60,7 +60,7 @@ std::size_t
 decode_unsafe(
     char* const dest0,
     char const* end,
-    string_view s,
+    core::string_view s,
     encoding_opts opt) noexcept
 {
     auto it = s.data();

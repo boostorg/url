@@ -29,7 +29,7 @@ struct tuple_rule_test
     template<class R>
     static
     void
-    ok( string_view s,
+    ok( core::string_view s,
         R const& r)
     {
         BOOST_TEST(
@@ -39,7 +39,7 @@ struct tuple_rule_test
     template<class R>
     static
     void
-    bad(string_view s,
+    bad(core::string_view s,
         R const& r)
     {
         BOOST_TEST(
@@ -57,7 +57,7 @@ struct tuple_rule_test
     void
     testSquelch()
     {
-        result< std::tuple< pct_string_view, string_view > > r1 =
+        system::result< std::tuple< pct_string_view, core::string_view > > r1 =
             parse(
                 "www.example.com:443",
                 tuple_rule(
@@ -65,8 +65,8 @@ struct tuple_rule_test
                     squelch( delim_rule( ':' ) ),
                     token_rule( digit_chars ) ) );
 
-        result< std::tuple<
-                pct_string_view, string_view, string_view > > r2 =
+        system::result< std::tuple<
+                pct_string_view, core::string_view, core::string_view > > r2 =
             parse(
                 "www.example.com:443",
                 tuple_rule(
@@ -97,7 +97,7 @@ struct tuple_rule_test
 
         // javadoc
         {
-            result< std::tuple< unsigned char, unsigned char, unsigned char, unsigned char > > rv =
+            system::result< std::tuple< unsigned char, unsigned char, unsigned char, unsigned char > > rv =
                 parse( "192.168.0.1", 
                     tuple_rule(
                         dec_octet_rule,

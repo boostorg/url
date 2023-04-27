@@ -21,10 +21,10 @@ namespace impl {
 
 //[code_grammar_1_1
 template< class Rule >
-auto parse( string_view s, Rule const& r) -> result< typename Rule::value_type >;
+auto parse( core::string_view s, Rule const& r) -> system::result< typename Rule::value_type >;
 
 template< class Rule >
-auto parse( char const *& it, char const* end, Rule const& r) -> result< typename Rule::value_type >;
+auto parse( char const *& it, char const* end, Rule const& r) -> system::result< typename Rule::value_type >;
 //]
 
 } // impl
@@ -52,7 +52,7 @@ constexpr ws_chars_t ws_chars{};
 //]
 
 //[code_grammar_2_5
-string_view get_token( string_view s ) noexcept
+core::string_view get_token( core::string_view s ) noexcept
 {
     auto it0 = s.data();
     auto const end = it0 + s.size();
@@ -70,7 +70,7 @@ string_view get_token( string_view s ) noexcept
     auto it1 = find_if( it0, end, ws_chars );
 
     // [it0, it1) is the part we want
-    return string_view( it0, it1 - it0 );
+    return core::string_view( it0, it1 - it0 );
 }
 //]
 
@@ -103,14 +103,14 @@ struct doc_grammar_test
         struct comma_rule_t
         {
             // The type of value returned upon success
-            using value_type = string_view;
+            using value_type = core::string_view;
 
             // The algorithm which checks for a match
-            result< value_type >
+            system::result< value_type >
             parse( char const*& it, char const* end ) const
             {
                 if( it != end && *it == ',')
-                    return string_view( it++, 1 );
+                    return core::string_view( it++, 1 );
 
                 return error::mismatch;
             }
@@ -123,20 +123,20 @@ struct doc_grammar_test
 
         {
         //[code_grammar_1_4
-        result< string_view > rv = parse( ",", comma_rule );
+        system::result< core::string_view > rv = parse( ",", comma_rule );
 
         assert( rv.has_value() && rv.value() == "," );
         //]
         }
         {
         //[code_grammar_1_5
-        result< unsigned short > rv = parse( "16384", unsigned_rule< unsigned short >{} );
+        system::result< unsigned short > rv = parse( "16384", unsigned_rule< unsigned short >{} );
         //]
         ignore_unused(rv);
         }
         {
         //[code_grammar_1_6
-        result< string_view > rv = parse( ",", delim_rule(',') );
+        system::result< core::string_view > rv = parse( ",", delim_rule(',') );
         //]
         ignore_unused(rv);
         }
@@ -184,7 +184,7 @@ struct doc_grammar_test
         //]
 
         //[code_grammar_3_2
-        result< std::tuple< string_view, unsigned char, string_view, unsigned char > > rv = parse( "v42.44800", version_rule );
+        system::result< std::tuple< core::string_view, unsigned char, core::string_view, unsigned char > > rv = parse( "v42.44800", version_rule );
         //]
         ignore_unused(rv);
         }
@@ -192,7 +192,7 @@ struct doc_grammar_test
         //[code_grammar_3_3
         constexpr auto version_rule = tuple_rule( squelch( delim_rule( 'v' ) ), dec_octet_rule, squelch( delim_rule( '.' ) ), dec_octet_rule );
 
-        result< std::tuple< unsigned char, unsigned char > > rv = parse( "v42.44800", version_rule );
+        system::result< std::tuple< unsigned char, unsigned char > > rv = parse( "v42.44800", version_rule );
         //]
         ignore_unused(rv);
         }
@@ -202,7 +202,7 @@ struct doc_grammar_test
 
         constexpr auto port_rule = tuple_rule( squelch( delim_rule( ':' ) ), unsigned_rule< unsigned short >{} );
 
-        result< unsigned short > rv = parse( ":443", port_rule );
+        system::result< unsigned short > rv = parse( ":443", port_rule );
         //]
         ignore_unused(rv);
         }
@@ -212,7 +212,7 @@ struct doc_grammar_test
 
         constexpr auto port_rule = optional_rule( tuple_rule( squelch( delim_rule( ':' ) ), unsigned_rule< unsigned short >{} ) );
 
-        result< optional< unsigned short > > rv = parse( ":8080", port_rule );
+        system::result< boost::optional< unsigned short > > rv = parse( ":8080", port_rule );
 
         assert( rv->has_value() && rv->value() == 8080 );
         //]
@@ -247,7 +247,7 @@ struct doc_grammar_test
                     squelch( delim_rule( ':' ) ),
                     unsigned_rule< unsigned short >{} ) ) );
 
-        result< std::tuple< ipv4_address, optional< unsigned short > > > rv = parse( "192.168.0.1:443", endpoint_rule );
+        system::result< std::tuple< ipv4_address, boost::optional< unsigned short > > > rv = parse( "192.168.0.1:443", endpoint_rule );
         //]
         ignore_unused(rv);
         }
@@ -259,7 +259,7 @@ struct doc_grammar_test
             authority_rule,
             delim_rule('*') );
 
-        result< variant< url_view, url_view, authority_view, string_view > > rv = parse( "/results.htm?page=4", request_target_rule );
+        system::result< variant2::variant< url_view, url_view, authority_view, core::string_view > > rv = parse( "/results.htm?page=4", request_target_rule );
         //]
         }
     }
@@ -272,7 +272,7 @@ struct doc_grammar_test
             tuple_rule( squelch( delim_rule( ';' ) ), token_rule( alnum_chars ) ) );
         //]
         //[code_grammar_4_2
-        result< range< string_view > > rv = parse( ";johndoe;janedoe;end", chunk_ext_rule );
+        system::result< range< core::string_view > > rv = parse( ";johndoe;janedoe;end", chunk_ext_rule );
 
         for( auto s : rv.value() )
             std::cout << s << "\n";
@@ -286,7 +286,7 @@ struct doc_grammar_test
             1 );
         //]
         //[code_grammar_4_4
-        result< range< string_view > > rv = parse( "johndoe,janedoe,end", token_list_rule );
+        system::result< range< core::string_view > > rv = parse( "johndoe,janedoe,end", token_list_rule );
 
         for( auto s : rv.value() )
             std::cout << s << "\n";
@@ -298,9 +298,9 @@ struct doc_grammar_test
     snippets5()
     {
         {
-        string_view s;
+        core::string_view s;
         //[code_grammar_5_1
-        result< pct_string_view > rv = parse( s, pct_encoded_rule( pchars ) );
+        system::result< pct_string_view > rv = parse( s, pct_encoded_rule( pchars ) );
         //]
         ignore_unused(rv);
         }

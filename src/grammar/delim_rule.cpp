@@ -23,7 +23,7 @@ ch_delim_rule::
 parse(
     char const*& it,
     char const* end) const noexcept ->
-        result<value_type>
+        system::result<value_type>
 {
     if(it == end)
     {
@@ -37,7 +37,7 @@ parse(
         BOOST_URL_RETURN_EC(
             error::mismatch);
     }
-    return string_view{
+    return core::string_view{
         it++, 1 };
 };
 

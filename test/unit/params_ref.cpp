@@ -103,8 +103,8 @@ struct params_ref_test
     void
     check(
         void(*f)(params_ref),
-        string_view s0,
-        string_view s1,
+        core::string_view s0,
+        core::string_view s1,
         std::initializer_list<
             param_pct_view> init)
     {
@@ -135,8 +135,8 @@ struct params_ref_test
     check(
         void(*f1)(params_ref),
         void(*f2)(params_ref),
-        string_view s0,
-        string_view s1,
+        core::string_view s0,
+        core::string_view s1,
         std::initializer_list<
             param_pct_view> init)
     {
@@ -815,7 +815,7 @@ struct params_ref_test
         assert( u.encoded_query() == "id=none&id=69" );
         }
 
-        // set(string_view, string_view)
+        // set(core::string_view, core::string_view)
         {
         url u( "?id=42&id=69" );
 

@@ -36,7 +36,7 @@ operator[]( size_type pos ) const
 
 auto
 matches_base::
-at( string_view id ) const
+at( core::string_view id ) const
     -> const_reference
 {
     for (std::size_t i = 0; i < size(); ++i)
@@ -50,7 +50,7 @@ at( string_view id ) const
 
 auto
 matches_base::
-operator[]( string_view id ) const
+operator[]( core::string_view id ) const
     -> const_reference
 {
     return at(id);
@@ -58,7 +58,7 @@ operator[]( string_view id ) const
 
 auto
 matches_base::
-find( string_view id ) const
+find( core::string_view id ) const
     -> const_iterator
 {
     for (std::size_t i = 0; i < size(); ++i)

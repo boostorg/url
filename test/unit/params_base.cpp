@@ -93,7 +93,7 @@ struct params_base_test
     static
     void
     check(
-        string_view s,
+        core::string_view s,
         std::initializer_list<
             param_view> init)
     {

@@ -79,21 +79,21 @@ class BOOST_SYMBOL_VISIBLE
     {
         ~op_t();
         op_t(url_base&,
-            string_view* = nullptr,
-            string_view* = nullptr) noexcept;
+            core::string_view* = nullptr,
+            core::string_view* = nullptr) noexcept;
         void move(char*, char const*,
             std::size_t) noexcept;
 
         url_base& u;
-        string_view* s0 = nullptr;
-        string_view* s1 = nullptr;
+        core::string_view* s0 = nullptr;
+        core::string_view* s1 = nullptr;
         char* old = nullptr;
     };
 
     virtual ~url_base() noexcept = default;
     url_base() noexcept = default;
     url_base(detail::url_impl const&) noexcept;
-    explicit url_base(string_view);
+    explicit url_base(core::string_view);
     BOOST_URL_DECL void reserve_impl(std::size_t n);
     BOOST_URL_DECL void copy(url_view_base const&);
     BOOST_URL_DECL virtual void clear_impl() noexcept = 0;
@@ -241,7 +241,7 @@ public:
     */
     BOOST_URL_DECL
     url_base&
-    set_scheme(string_view s);
+    set_scheme(core::string_view s);
 
     /** Set the scheme
 
@@ -474,7 +474,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_userinfo(
-        string_view s);
+        core::string_view s);
 
     /** Set the userinfo.
 
@@ -633,7 +633,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_user(
-        string_view s);
+        core::string_view s);
 
     /** Set the user
 
@@ -740,7 +740,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_password(
-        string_view s);
+        core::string_view s);
 
     /** Set the password.
 
@@ -934,7 +934,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_host(
-        string_view s);
+        core::string_view s);
 
     /** Set the host
 
@@ -1117,7 +1117,7 @@ public:
     */
     BOOST_URL_DECL
     url_base&
-    set_host_address(string_view s);
+    set_host_address(core::string_view s);
 
     /** Set the host to an address
 
@@ -1397,7 +1397,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_host_ipvfuture(
-        string_view s);
+        core::string_view s);
 
     /** Set the host to a name
 
@@ -1445,7 +1445,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_host_name(
-        string_view s);
+        core::string_view s);
 
     /** Set the host to a name
 
@@ -1587,7 +1587,7 @@ public:
     */
     BOOST_URL_DECL
     url_base&
-    set_port(string_view s);
+    set_port(core::string_view s);
 
     /** Remove the port
 
@@ -1757,7 +1757,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_path(
-        string_view s);
+        core::string_view s);
 
     /** Set the path.
 
@@ -2003,7 +2003,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_query(
-        string_view s);
+        core::string_view s);
 
     /** Set the query
 
@@ -2473,7 +2473,7 @@ public:
     BOOST_URL_DECL
     url_base&
     set_fragment(
-        string_view s);
+        core::string_view s);
 
     /** Set the fragment.
 
@@ -2742,7 +2742,7 @@ public:
 
         If an error occurs, the contents of
         this URL are unspecified and a @ref result
-        with an @ref error_code is returned.
+        with an @ref system::error_code is returned.
 
         @par Example
         @code
@@ -2786,12 +2786,12 @@ public:
             @ref url_view.
     */
     BOOST_URL_DECL
-    result<void>
+    system::result<void>
     resolve(
         url_view_base const& ref);
 
     friend
-    result<void>
+    system::result<void>
     resolve(
         url_view_base const& base,
         url_view_base const& ref,
@@ -2811,7 +2811,7 @@ private:
     char* shrink_impl(int, std::size_t, op_t&);
     char* shrink_impl(int, int, std::size_t, op_t&);
 
-    void  set_scheme_impl(string_view, urls::scheme);
+    void  set_scheme_impl(core::string_view, urls::scheme);
     char* set_user_impl(std::size_t n, op_t& op);
     char* set_password_impl(std::size_t n, op_t& op);
     char* set_userinfo_impl(std::size_t n, op_t& op);
@@ -2819,7 +2819,7 @@ private:
     char* set_port_impl(std::size_t n, op_t& op);
     char* set_path_impl(std::size_t n, op_t& op);
 
-    string_view
+    core::string_view
     first_segment() const noexcept;
 
     BOOST_URL_DECL
@@ -2839,7 +2839,7 @@ private:
             detail::params_iter_impl;
 
     BOOST_URL_DECL
-    result<void>
+    system::result<void>
     resolve_impl(
         url_view_base const& base,
         url_view_base const& ref);
@@ -2895,7 +2895,7 @@ private:
     @par Example
     @code
     url dest;
-    error_code ec;
+    system::error_code ec;
 
     resolve("/one/two/three", "four", dest, ec);
     assert( dest.str() == "/one/two/four" );
@@ -2938,7 +2938,7 @@ private:
         @ref url_view.
 */
 inline
-result<void>
+system::result<void>
 resolve(
     url_view_base const& base,
     url_view_base const& ref,

@@ -23,40 +23,40 @@
 namespace boost {
 namespace urls {
 
-result<url_view>
+system::result<url_view>
 parse_absolute_uri(
-    string_view s)
+    core::string_view s)
 {
     return grammar::parse(
         s, absolute_uri_rule);
 }
 
-result<url_view>
+system::result<url_view>
 parse_origin_form(
-    string_view s)
+    core::string_view s)
 {
     return grammar::parse(
         s, origin_form_rule);
 }
 
-result<url_view>
+system::result<url_view>
 parse_relative_ref(
-    string_view s)
+    core::string_view s)
 {
     return grammar::parse(
         s, relative_ref_rule);
 }
-result<url_view>
+system::result<url_view>
 parse_uri(
-    string_view s)
+    core::string_view s)
 {
     return grammar::parse(
         s, uri_rule);
 }
 
-result<url_view>
+system::result<url_view>
 parse_uri_reference(
-    string_view s)
+    core::string_view s)
 {
     return grammar::parse(
         s, uri_reference_rule);

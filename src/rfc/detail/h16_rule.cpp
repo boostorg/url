@@ -27,7 +27,7 @@ parse(
     char const*& it,
     char const* end
         ) const noexcept ->
-    result<value_type>
+    system::result<value_type>
 {
     // VFALCO it might be impossible for
     // this condition to be true (coverage)

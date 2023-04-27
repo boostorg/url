@@ -25,7 +25,7 @@ public:
     {
         // javadoc
         {
-            result< url_view > rv = grammar::parse( "https://www.example.com/index.htm?id=guest#s1", uri_rule );
+            system::result< url_view > rv = grammar::parse( "https://www.example.com/index.htm?id=guest#s1", uri_rule );
             (void)rv;
         }
 

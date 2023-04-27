@@ -35,7 +35,7 @@ struct variant_rule_test
 
         // javadoc
         {
-            result< variant< url_view, url_view, authority_view, string_view > > rv = grammar::parse(
+            system::result< variant2::variant< url_view, url_view, authority_view, core::string_view > > rv = grammar::parse(
                 "/index.html?width=full",
                 variant_rule(
                     origin_form_rule,
@@ -46,9 +46,9 @@ struct variant_rule_test
             (void)rv;
         }
 
-        ok(r, "(", variant<string_view, string_view>(
+        ok(r, "(", variant<core::string_view, core::string_view>(
             variant2::in_place_index_t<0>{}, "("));
-        ok(r, ")", variant<string_view, string_view>(
+        ok(r, ")", variant<core::string_view, core::string_view>(
             variant2::in_place_index_t<1>{}, ")"));
         bad(r, "", error::mismatch);
         bad(r, "[]", error::mismatch);

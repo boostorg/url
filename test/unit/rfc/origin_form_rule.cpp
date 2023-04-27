@@ -22,7 +22,7 @@ struct origin_form_rule_test
     {
         // javadoc
         {
-            result< url_view > rv = grammar::parse( "/index.htm?layout=mobile", origin_form_rule );
+            system::result< url_view > rv = grammar::parse( "/index.htm?layout=mobile", origin_form_rule );
             (void)rv;
         }
     }

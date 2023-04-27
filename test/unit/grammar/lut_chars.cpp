@@ -78,7 +78,7 @@ struct lut_chars_test
         {
             constexpr lut_chars vowel_chars = "AEIOU" "aeiou";
 
-            result< string_view > rv = parse( "Aiea", token_rule( vowel_chars ) );
+            system::result< core::string_view > rv = parse( "Aiea", token_rule( vowel_chars ) );
 
             (void)rv;
         }

@@ -113,11 +113,11 @@ struct params_encoded_view_test
                 qp1.buffer().data());
         }
 
-        // params_encoded_view(string_view)
+        // params_encoded_view(core::string_view)
         {
             try
             {
-                string_view s = "first=John&last=Doe";
+                core::string_view s = "first=John&last=Doe";
                 params_encoded_view qp(s);
                 BOOST_TEST_PASS();
                 BOOST_TEST_EQ(
@@ -130,14 +130,14 @@ struct params_encoded_view_test
             }
 
             // reserved character
-            BOOST_TEST_THROWS(params_encoded_view("#"), system_error);
+            BOOST_TEST_THROWS(params_encoded_view("#"), system::system_error);
 
             // invalid percent-escape
-            BOOST_TEST_THROWS(params_encoded_view("%"), system_error);
-            BOOST_TEST_THROWS(params_encoded_view("%F"), system_error);
-            BOOST_TEST_THROWS(params_encoded_view("%FX"), system_error);
-            BOOST_TEST_THROWS(params_encoded_view("%%"), system_error);
-            BOOST_TEST_THROWS(params_encoded_view("FA%"), system_error);
+            BOOST_TEST_THROWS(params_encoded_view("%"), system::system_error);
+            BOOST_TEST_THROWS(params_encoded_view("%F"), system::system_error);
+            BOOST_TEST_THROWS(params_encoded_view("%FX"), system::system_error);
+            BOOST_TEST_THROWS(params_encoded_view("%%"), system::system_error);
+            BOOST_TEST_THROWS(params_encoded_view("FA%"), system::system_error);
         }
 
         // operator=(params_encoded_view)

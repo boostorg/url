@@ -20,33 +20,33 @@ namespace urls {
 class matches_base
 {
 public:
-    using iterator = string_view*;
-    using const_iterator = string_view const*;
+    using iterator = core::string_view*;
+    using const_iterator = core::string_view const*;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
-    using reference = string_view&;
-    using const_reference = string_view const&;
-    using pointer = string_view*;
-    using const_pointer = string_view const*;
+    using reference = core::string_view&;
+    using const_reference = core::string_view const&;
+    using pointer = core::string_view*;
+    using const_pointer = core::string_view const*;
 
     matches_base() = default;
 
     virtual ~matches_base() = default;
 
     virtual
-    string_view const*
+    core::string_view const*
     matches() const = 0;
 
     virtual
-    string_view const*
+    core::string_view const*
     ids() const = 0;
 
     virtual
-    string_view*
+    core::string_view*
     matches() = 0;
 
     virtual
-    string_view*
+    core::string_view*
     ids() = 0;
 
     virtual
@@ -61,16 +61,16 @@ public:
     at( size_type pos ) const;
 
     const_reference
-    at( string_view id ) const;
+    at( core::string_view id ) const;
 
     const_reference
     operator[]( size_type pos ) const;
 
     const_reference
-    operator[]( string_view id ) const;
+    operator[]( core::string_view id ) const;
 
     const_iterator
-    find( string_view id ) const;
+    find( core::string_view id ) const;
 
     const_iterator
     begin() const;
@@ -87,13 +87,13 @@ template <std::size_t N = 20>
 class matches_storage
     : public matches_base
 {
-    string_view matches_storage_[N];
-    string_view ids_storage_[N];
+    core::string_view matches_storage_[N];
+    core::string_view ids_storage_[N];
     std::size_t size_;
 
     matches_storage(
-        string_view matches[N],
-        string_view ids[N],
+        core::string_view matches[N],
+        core::string_view ids[N],
         std::size_t n)
     {
         for (std::size_t i = 0; i < n; ++i)
@@ -104,14 +104,14 @@ class matches_storage
     }
 
     virtual
-    string_view*
+    core::string_view*
     matches() override
     {
         return matches_storage_;
     }
 
     virtual
-    string_view*
+    core::string_view*
     ids() override
     {
         return ids_storage_;
@@ -121,14 +121,14 @@ public:
     matches_storage() = default;
 
     virtual
-    string_view const*
+    core::string_view const*
     matches() const override
     {
         return matches_storage_;
     }
 
     virtual
-    string_view const*
+    core::string_view const*
     ids() const override
     {
         return ids_storage_;

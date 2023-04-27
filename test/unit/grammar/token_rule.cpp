@@ -29,7 +29,7 @@ struct token_rule_test
 
         // javadoc
         {
-            result< string_view > rv = parse( "abcdef", token_rule( alpha_chars ) );
+            system::result< core::string_view > rv = parse( "abcdef", token_rule( alpha_chars ) );
 
             (void)rv;
         }

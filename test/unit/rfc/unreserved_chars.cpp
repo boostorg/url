@@ -25,7 +25,7 @@ struct unreserved_chars_test
     {
         // javadoc
         {
-            result< pct_string_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( unreserved_chars ) );
+            system::result< pct_string_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( unreserved_chars ) );
             (void)rv;
         }
 

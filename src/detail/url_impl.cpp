@@ -30,7 +30,7 @@ namespace detail {
 void
 url_impl::
 apply_scheme(
-    string_view s) noexcept
+    core::string_view s) noexcept
 {
     scheme_ = string_to_scheme(s);
     set_size(id_scheme, s.size() + 1);
@@ -89,7 +89,7 @@ apply_host(
 void
 url_impl::
 apply_port(
-    string_view s,
+    core::string_view s,
     unsigned short pn) noexcept
 {
     // this function is for
@@ -174,7 +174,7 @@ path_ref(
     }
     else
     {
-        string_view s = impl.get(id_path);
+        core::string_view s = impl.get(id_path);
         data_ = s.data();
         size_ = s.size();
         nseg_ = impl.nseg_;
@@ -184,7 +184,7 @@ path_ref(
 
 path_ref::
 path_ref(
-    string_view s,
+    core::string_view s,
     std::size_t dn,
     std::size_t nseg) noexcept
     : data_(s.data())
@@ -254,7 +254,7 @@ nseg() const noexcept
 
 query_ref::
 query_ref(
-    string_view s,
+    core::string_view s,
     std::size_t dn,
     std::size_t nparam) noexcept
     : data_(s.data())
@@ -274,7 +274,7 @@ query_ref(
     }
     else
     {
-        string_view s = impl.get(id_query);
+        core::string_view s = impl.get(id_query);
         if (!s.empty())
         {
             s.remove_prefix(1);

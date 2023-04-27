@@ -25,7 +25,7 @@ struct pchars_test
     {
         // javadoc
         {
-            result< pct_string_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( pchars ) );
+            system::result< pct_string_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( pchars ) );
             (void)rv;
         }
         test_char_set(

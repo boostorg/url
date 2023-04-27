@@ -42,14 +42,14 @@ ipv6_address(
 
 ipv6_address::
 ipv6_address(
-    string_view s)
+    core::string_view s)
     : ipv6_address(
         parse_ipv6_address(s
             ).value(BOOST_URL_POS))
 {
 }
 
-string_view
+core::string_view
 ipv6_address::
 to_buffer(
     char* dest,
@@ -58,7 +58,7 @@ to_buffer(
     if(dest_size < max_str_len)
         detail::throw_length_error();
     auto n = print_impl(dest);
-    return string_view(dest, n);
+    return core::string_view(dest, n);
 }
 
 bool
@@ -241,8 +241,8 @@ to_string_impl(
 
 auto
 parse_ipv6_address(
-    string_view s) noexcept ->
-        result<ipv6_address>
+    core::string_view s) noexcept ->
+        system::result<ipv6_address>
 {
     return grammar::parse(
         s, ipv6_address_rule);

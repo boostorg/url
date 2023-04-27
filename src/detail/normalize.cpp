@@ -27,7 +27,7 @@ namespace detail {
 
 void
 pop_encoded_front(
-    string_view& s,
+    core::string_view& s,
     char& c,
     std::size_t& n) noexcept
 {
@@ -49,8 +49,8 @@ pop_encoded_front(
 
 int
 compare_encoded(
-    string_view lhs,
-    string_view rhs) noexcept
+    core::string_view lhs,
+    core::string_view rhs) noexcept
 {
     std::size_t n0 = 0;
     std::size_t n1 = 0;
@@ -78,7 +78,7 @@ compare_encoded(
 
 void
 digest_encoded(
-    string_view s,
+    core::string_view s,
     fnv_1a& hasher) noexcept
 {
     char c = 0;
@@ -92,8 +92,8 @@ digest_encoded(
 
 int
 ci_compare_encoded(
-    string_view lhs,
-    string_view rhs) noexcept
+    core::string_view lhs,
+    core::string_view rhs) noexcept
 {
     std::size_t n0 = 0;
     std::size_t n1 = 0;
@@ -123,7 +123,7 @@ ci_compare_encoded(
 
 void
 ci_digest_encoded(
-    string_view s,
+    core::string_view s,
     fnv_1a& hasher) noexcept
 {
     char c = 0;
@@ -138,8 +138,8 @@ ci_digest_encoded(
 
 int
 compare(
-    string_view lhs,
-    string_view rhs) noexcept
+    core::string_view lhs,
+    core::string_view rhs) noexcept
 {
     auto rlen = (std::min)(lhs.size(), rhs.size());
     for (std::size_t i = 0; i < rlen; ++i)
@@ -160,8 +160,8 @@ compare(
 
 int
 ci_compare(
-    string_view lhs,
-    string_view rhs) noexcept
+    core::string_view lhs,
+    core::string_view rhs) noexcept
 {
     auto rlen = (std::min)(lhs.size(), rhs.size());
     for (std::size_t i = 0; i < rlen; ++i)
@@ -182,7 +182,7 @@ ci_compare(
 
 void
 ci_digest(
-    string_view s,
+    core::string_view s,
     fnv_1a& hasher) noexcept
 {
     for (char c: s)
@@ -194,11 +194,11 @@ ci_digest(
 
 std::size_t
 path_starts_with(
-    string_view lhs,
-    string_view rhs) noexcept
+    core::string_view lhs,
+    core::string_view rhs) noexcept
 {
     auto consume_one = [](
-        string_view::iterator& it,
+        core::string_view::iterator& it,
         char &c)
     {
         if(*it != '%')
@@ -210,7 +210,7 @@ path_starts_with(
         detail::decode_unsafe(
             &c,
             &c + 1,
-            string_view(it, 3));
+            core::string_view(it, 3));
         if (c != '/')
         {
             it += 3;
@@ -242,12 +242,12 @@ path_starts_with(
 
 std::size_t
 path_ends_with(
-    string_view lhs,
-    string_view rhs) noexcept
+    core::string_view lhs,
+    core::string_view rhs) noexcept
 {
     auto consume_last = [](
-        string_view::iterator& it,
-        string_view::iterator& end,
+        core::string_view::iterator& it,
+        core::string_view::iterator& end,
         char& c)
     {
         if ((end - it) < 3 ||
@@ -259,7 +259,7 @@ path_ends_with(
         detail::decode_unsafe(
             &c,
             &c + 1,
-            string_view(std::prev(
+            core::string_view(std::prev(
                 end, 3), 3));
         if (c != '/')
         {
@@ -293,7 +293,7 @@ std::size_t
 remove_dot_segments(
     char* dest0,
     char const* end,
-    string_view s) noexcept
+    core::string_view s) noexcept
 {
     // 1. The input buffer `s` is initialized with
     // the now-appended path components and the
@@ -330,7 +330,7 @@ remove_dot_segments(
     // - Rule C: apply "..": remove seg and write "/"
     // - Rule E: copy complete segment
     auto append =
-        [](char*& first, char const* last, string_view in)
+        [](char*& first, char const* last, core::string_view in)
     {
         // append `in` to `dest`
         BOOST_ASSERT(in.size() <= std::size_t(last - first));
@@ -340,7 +340,7 @@ remove_dot_segments(
     };
 
     auto dot_starts_with = [](
-        string_view str, string_view dots, std::size_t& n)
+        core::string_view str, core::string_view dots, std::size_t& n)
     {
         // starts_with for encoded/decoded dots
         // or decoded otherwise. return how many
@@ -377,7 +377,7 @@ remove_dot_segments(
     };
 
     auto dot_equal = [&dot_starts_with](
-        string_view str, string_view dots)
+        core::string_view str, core::string_view dots)
     {
         std::size_t n = 0;
         dot_starts_with(str, dots, n);
@@ -426,7 +426,7 @@ remove_dot_segments(
         }
         if (dot_equal(s, "/."))
         {
-            // We can't remove "." from a string_view
+            // We can't remove "." from a core::string_view
             // So what we do here is equivalent to
             // replacing s with '/' as required
             // in Rule B and executing the next
@@ -441,13 +441,13 @@ remove_dot_segments(
         // Rule C
         if (dot_starts_with(s, "/../", n))
         {
-            std::size_t p = string_view(
+            std::size_t p = core::string_view(
                 dest0, dest - dest0).find_last_of('/');
-            if (p != string_view::npos)
+            if (p != core::string_view::npos)
             {
                 // output has multiple segments
                 // "erase" [p, end] if not "/.."
-                string_view last_seg(dest0 + p, dest - (dest0 + p));
+                core::string_view last_seg(dest0 + p, dest - (dest0 + p));
                 if (!dot_equal(last_seg, "/.."))
                     dest = dest0 + p;
                 else
@@ -469,9 +469,9 @@ remove_dot_segments(
         }
         if (dot_equal(s, "/.."))
         {
-            std::size_t p = string_view(
+            std::size_t p = core::string_view(
                 dest0, dest - dest0).find_last_of('/');
-            if (p != string_view::npos)
+            if (p != core::string_view::npos)
             {
                 // erase [p, end]
                 dest = dest0 + p;
@@ -491,7 +491,7 @@ remove_dot_segments(
 
         // Rule E
         std::size_t p = s.find_first_of('/', 1);
-        if (p != string_view::npos)
+        if (p != core::string_view::npos)
         {
             append(dest, end, s.substr(0, p));
             s.remove_prefix(p);
@@ -510,7 +510,7 @@ remove_dot_segments(
 }
 
 char
-path_pop_back( string_view& s )
+path_pop_back( core::string_view& s )
 {
     if (s.size() < 3 ||
         *std::prev(s.end(), 3) != '%')
@@ -534,8 +534,8 @@ path_pop_back( string_view& s )
 
 void
 pop_last_segment(
-    string_view& s,
-    string_view& c,
+    core::string_view& s,
+    core::string_view& c,
     std::size_t& level,
     bool r) noexcept
 {
@@ -597,8 +597,8 @@ pop_last_segment(
         // the input buffer.
         std::size_t p = s.size() > 1
             ? s.find_last_of('/', s.size() - 2)
-            : string_view::npos;
-        if (p != string_view::npos)
+            : core::string_view::npos;
+        if (p != core::string_view::npos)
         {
             c = s.substr(p + 1);
             s.remove_suffix(c.size());
@@ -636,11 +636,11 @@ pop_last_segment(
 
 void
 normalized_path_digest(
-    string_view s,
+    core::string_view s,
     bool remove_unmatched,
     fnv_1a& hasher) noexcept
 {
-    string_view child;
+    core::string_view child;
     std::size_t level = 0;
     do
     {

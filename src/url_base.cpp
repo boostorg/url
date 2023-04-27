@@ -65,8 +65,8 @@ url_base::
 op_t::
 op_t(
     url_base& impl_,
-    string_view* s0_,
-    string_view* s1_) noexcept
+    core::string_view* s0_,
+    core::string_view* s1_) noexcept
     : u(impl_)
     , s0(s0_)
     , s1(s1_)
@@ -147,7 +147,7 @@ copy(url_view_base const& u)
 
 url_base&
 url_base::
-set_scheme(string_view s)
+set_scheme(core::string_view s)
 {
     set_scheme_impl(
         s, string_to_scheme(s));
@@ -350,7 +350,7 @@ remove_authority()
 url_base&
 url_base::
 set_userinfo(
-    string_view s)
+    core::string_view s)
 {
     op_t op(*this, &s);
     encoding_opts opt;
@@ -366,7 +366,7 @@ set_userinfo(
     auto const pos = impl_.get(
         id_user, id_host
             ).find_first_of(':');
-    if(pos != string_view::npos)
+    if(pos != core::string_view::npos)
     {
         impl_.split(id_user, pos);
         // find ':' in plain string
@@ -393,7 +393,7 @@ set_encoded_userinfo(
     op_t op(*this, &detail::ref(s));
     encoding_opts opt;
     auto const pos = s.find_first_of(':');
-    if(pos != string_view::npos)
+    if(pos != core::string_view::npos)
     {
         // user:pass
         auto const s0 = s.substr(0, pos);
@@ -466,7 +466,7 @@ remove_userinfo() noexcept
 
 url_base&
 url_base::
-set_user(string_view s)
+set_user(core::string_view s)
 {
     op_t op(*this, &s);
     encoding_opts opt;
@@ -511,7 +511,7 @@ set_encoded_user(
 
 url_base&
 url_base::
-set_password(string_view s)
+set_password(core::string_view s)
 {
     op_t op(*this, &s);
     encoding_opts opt;
@@ -586,21 +586,21 @@ pct_string_view encoded_host_address()      // ipv4, ipv6, ipvfut, or encoded na
 
 ipv4_address    host_ipv4_address()         // return ipv4_address or {}
 ipv6_address    host_ipv6_address()         // return ipv6_address or {}
-string_view     host_ipvfuture()            // return ipvfuture or {}
+core::string_view     host_ipvfuture()            // return ipvfuture or {}
 std::string     host_name()                 // return decoded name or ""
 pct_string_view encoded_host_name()         // return encoded host name or ""
 
 --------------------------------------------------
 
-set_host( string_view )                     // set host part from plain text
+set_host( core::string_view )                     // set host part from plain text
 set_encoded_host( pct_string_view )         // set host part from encoded text
-set_host_address( string_view )             // set host from ipv4, ipv6, ipvfut, or plain reg-name string
+set_host_address( core::string_view )             // set host from ipv4, ipv6, ipvfut, or plain reg-name string
 set_encoded_host_address( pct_string_view ) // set host from ipv4, ipv6, ipvfut, or encoded reg-name string
 
 set_host_ipv4( ipv4_address )               // set ipv4
 set_host_ipv6( ipv6_address )               // set ipv6
-set_host_ipvfuture( string_view )           // set ipvfuture
-set_host_name( string_view )                // set name from plain
+set_host_ipvfuture( core::string_view )           // set ipvfuture
+set_host_name( core::string_view )                // set name from plain
 set_encoded_host_name( pct_string_view )    // set name from encoded
 */
 
@@ -608,7 +608,7 @@ set_encoded_host_name( pct_string_view )    // set name from encoded
 url_base&
 url_base::
 set_host(
-    string_view s)
+    core::string_view s)
 {
     if( s.size() > 2 &&
         s.front() == '[' &&
@@ -715,7 +715,7 @@ set_encoded_host(
 url_base&
 url_base::
 set_host_address(
-    string_view s)
+    core::string_view s)
 {
     {
         // IPv6-address
@@ -850,7 +850,7 @@ set_host_ipv6(
 url_base&
 url_base::
 set_host_ipvfuture(
-    string_view s)
+    core::string_view s)
 {
     op_t op(*this, &s);
     // validate
@@ -871,7 +871,7 @@ set_host_ipvfuture(
 url_base&
 url_base::
 set_host_name(
-    string_view s)
+    core::string_view s)
 {
     bool is_ipv4 = false;
     if(s.size() >= 7) // "0.0.0.0"
@@ -959,7 +959,7 @@ set_port_number(
 url_base&
 url_base::
 set_port(
-    string_view s)
+    core::string_view s)
 {
     op_t op(*this, &s);
     auto t = grammar::parse(s,
@@ -1051,7 +1051,7 @@ set_path_absolute(
 
         auto p = encoded_path();
         auto pos = p.find_first_of(":/", 1);
-        if (pos != string_view::npos &&
+        if (pos != core::string_view::npos &&
             p[pos] == ':')
         {
             // prepend with .
@@ -1092,7 +1092,7 @@ set_path_absolute(
 url_base&
 url_base::
 set_path(
-    string_view s)
+    core::string_view s)
 {
     op_t op(*this, &s);
     encoding_opts opt;
@@ -1110,7 +1110,7 @@ set_path(
     auto const n = encoded_size(
         s, detail::path_chars, opt);
     std::size_t n_reencode_colons = 0;
-    string_view first_seg;
+    core::string_view first_seg;
     if (!has_scheme() &&
         !has_authority() &&
         !s.starts_with('/'))
@@ -1119,7 +1119,7 @@ set_path(
         // like the scheme
         first_seg = detail::to_sv(s);
         std::size_t p = s.find('/');
-        if (p != string_view::npos)
+        if (p != core::string_view::npos)
             first_seg = s.substr(0, p);
         n_reencode_colons = std::count(
             first_seg.begin(), first_seg.end(), ':');
@@ -1224,7 +1224,7 @@ set_encoded_path(
     auto const n = detail::re_encoded_size_unsafe(
         s, detail::path_chars, opt);
     std::size_t n_reencode_colons = 0;
-    string_view first_seg;
+    core::string_view first_seg;
     if (!has_scheme() &&
         !has_authority() &&
         !s.starts_with('/'))
@@ -1233,7 +1233,7 @@ set_encoded_path(
         // like the scheme
         first_seg = detail::to_sv(s);
         std::size_t p = s.find('/');
-        if (p != string_view::npos)
+        if (p != core::string_view::npos)
             first_seg = s.substr(0, p);
         n_reencode_colons = std::count(
             first_seg.begin(), first_seg.end(), ':');
@@ -1345,7 +1345,7 @@ encoded_segments() noexcept
 url_base&
 url_base::
 set_query(
-    string_view s)
+    core::string_view s)
 {
     edit_params(
         detail::params_iter_impl(impl_),
@@ -1480,7 +1480,7 @@ remove_fragment() noexcept
 
 url_base&
 url_base::
-set_fragment(string_view s)
+set_fragment(core::string_view s)
 {
     op_t op(*this, &s);
     encoding_opts opt;
@@ -1535,7 +1535,7 @@ set_encoded_fragment(
 //
 //------------------------------------------------
 
-result<void>
+system::result<void>
 url_base::
 resolve(
     url_view_base const& ref)
@@ -1745,13 +1745,13 @@ normalize_path()
 {
     op_t op(*this);
     normalize_octets_impl(id_path, detail::segment_chars, op);
-    string_view p = impl_.get(id_path);
+    core::string_view p = impl_.get(id_path);
     char* p_dest = s_ + impl_.offset(id_path);
     char* p_end = s_ + impl_.offset(id_path + 1);
     auto pn = p.size();
     auto skip_dot = 0;
     bool encode_colons = false;
-    string_view first_seg;
+    core::string_view first_seg;
 
 //------------------------------------------------
 //
@@ -1796,7 +1796,7 @@ normalize_path()
                 while (first_seg.starts_with("./"))
                     first_seg = first_seg.substr(2);
                 auto i = first_seg.find('/');
-                if (i != string_view::npos)
+                if (i != core::string_view::npos)
                     first_seg = first_seg.substr(0, i);
                 encode_colons = first_seg.contains(':');
             }
@@ -1808,7 +1808,7 @@ normalize_path()
             // in the first segment
             first_seg = p;
             auto i = first_seg.find('/');
-            if (i != string_view::npos)
+            if (i != core::string_view::npos)
                 first_seg = p.substr(0, i);
             encode_colons = first_seg.contains(':');
         }
@@ -1833,7 +1833,7 @@ normalize_path()
         auto begin = s_ + impl_.offset(id_path);
         auto it = begin;
         auto end = begin + pn;
-        while (string_view(it, 2) == "./")
+        while (core::string_view(it, 2) == "./")
             it += 2;
         while (*it != '/' &&
                it != end)
@@ -2074,7 +2074,7 @@ shrink_impl(
 void
 url_base::
 set_scheme_impl(
-    string_view s,
+    core::string_view s,
     urls::scheme id)
 {
     op_t op(*this, &s);
@@ -2324,7 +2324,7 @@ set_path_impl(
 
 // return the first segment of the path.
 // this is needed for some algorithms.
-string_view
+core::string_view
 url_base::
 first_segment() const noexcept
 {
@@ -2337,13 +2337,13 @@ first_segment() const noexcept
     auto const end = impl_.cs_ +
         impl_.offset(id_query);
     if(impl_.nseg_ == 1)
-        return string_view(
+        return core::string_view(
             p0, end - p0);
     auto p = p0;
     while(*p != '/')
         ++p;
     BOOST_ASSERT(p < end);
-    return string_view(p0, p - p0);
+    return core::string_view(p0, p - p0);
 }
 
 detail::segments_iter_impl
@@ -2561,7 +2561,7 @@ edit_segments(
     // calc decoded size of old range
     auto const dn0 =
         detail::decode_bytes_unsafe(
-            string_view(
+            core::string_view(
                 impl_.cs_ +
                     impl_.offset(id_path) +
                     pos0,
@@ -2652,7 +2652,7 @@ edit_segments(
     // calc decoded size of new range,
     auto const dn =
         detail::decode_bytes_unsafe(
-            string_view(dest0, dest - dest0));
+            core::string_view(dest0, dest - dest0));
     impl_.decoded_[id_path] += dn - dn0;
 
     return detail::segments_iter_impl(
@@ -2694,7 +2694,7 @@ edit_params(
     // minus one if '?' or '&' prefixed
     auto const dn0 =
         detail::decode_bytes_unsafe(
-            string_view(
+            core::string_view(
                 impl_.cs_ + pos0,
                 pos1 - pos0)) - (
                     impl_.len(id_query) > 0);
@@ -2795,7 +2795,7 @@ edit_params(
     // minus one if '?' or '&' prefixed
     auto const dn =
         detail::decode_bytes_unsafe(
-            string_view(dest0, dest - dest0)) - (
+            core::string_view(dest0, dest - dest0)) - (
                 impl_.len(id_query) > 0);
 
     impl_.decoded_[id_query] += (dn - dn0);

@@ -54,10 +54,10 @@ struct segments_ref_test
     void
     check(
         void(*f)(segments_ref),
-        string_view s0,
-        string_view s1,
+        core::string_view s0,
+        core::string_view s1,
         std::initializer_list<
-            string_view> init)
+            core::string_view> init)
     {
         auto rv = parse_uri_reference(s0);
         if(! BOOST_TEST(rv.has_value()))
@@ -84,9 +84,9 @@ struct segments_ref_test
     void
     check(
         void(*f1)(segments_ref), void(*f2)(segments_ref),
-        string_view s0, string_view s1,
+        core::string_view s0, core::string_view s1,
         std::initializer_list<
-            string_view> init)
+            core::string_view> init)
     {
         check(f1, s0, s1, init);
         check(f2, s0, s1, init);
@@ -97,7 +97,7 @@ struct segments_ref_test
     assign(
         segments_ref& ps,
         std::initializer_list<
-            string_view> init)
+            core::string_view> init)
     {
         ps.assign(init.begin(), init.end());
     };
@@ -108,7 +108,7 @@ struct segments_ref_test
         segments_ref& ps,
         segments_ref::iterator before,
         std::initializer_list<
-            string_view> init) ->
+            core::string_view> init) ->
         segments_ref::iterator
     {
         return ps.insert(before,
@@ -122,7 +122,7 @@ struct segments_ref_test
         segments_ref::iterator from,
         segments_ref::iterator to,
         std::initializer_list<
-            string_view> init) ->
+            core::string_view> init) ->
         segments_ref::iterator
     {
         return ps.replace(from, to,
@@ -279,7 +279,7 @@ struct segments_ref_test
         }
 
         //
-        // insert(iterator, string_view)
+        // insert(iterator, core::string_view)
         //
 
         {
@@ -503,7 +503,7 @@ struct segments_ref_test
         }
 
         //
-        // replace(iterator, string_view)
+        // replace(iterator, core::string_view)
         //
 
         {
@@ -573,7 +573,7 @@ struct segments_ref_test
         }
 
         //
-        // replace(iterator, string_view)
+        // replace(iterator, core::string_view)
         //
 
         {
@@ -582,7 +582,7 @@ struct segments_ref_test
                 auto it = ps.replace(
                     std::next(ps.begin(), 0),
                     std::next(ps.begin(), 2),
-                    string_view(""));
+                    core::string_view(""));
                 BOOST_TEST_EQ(*it, "");
             };
             check(f, "path/to/the/file.txt", ".//the/file.txt", {"", "the", "file.txt"});

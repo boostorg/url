@@ -35,7 +35,7 @@ struct not_empty_rule_test
 
         // javadoc
         {
-            result< pct_string_view > rv = parse( "Program%20Files",
+            system::result< pct_string_view > rv = parse( "Program%20Files",
                 not_empty_rule( pct_encoded_rule( unreserved_chars ) ) );
 
             (void)rv;
@@ -54,7 +54,7 @@ struct not_empty_rule_test
         bad(r, "%x", error::invalid);
 
         {
-            string_view s("$");
+            core::string_view s("$");
             auto it = s.data();
             auto const end = it + s.size();
             auto rv = parse(it, end, r);

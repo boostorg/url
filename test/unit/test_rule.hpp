@@ -39,7 +39,7 @@ template<class CharSet>
 void
 test_char_set(
     CharSet const& cs,
-    string_view s) noexcept
+    core::string_view s) noexcept
 {
     // each char in s is in the set.
     for(char c : s)
@@ -104,7 +104,7 @@ template<class R>
 typename std::enable_if<
     grammar::is_rule<R>::value>::type
 ok( R const& r,
-    string_view s)
+    core::string_view s)
 {
     BOOST_TEST(grammar::parse(s, r).has_value());
 }
@@ -114,7 +114,7 @@ template<class R, class V>
 typename std::enable_if<
     grammar::is_rule<R>::value>::type
 ok( R const& r,
-    string_view s,
+    core::string_view s,
     V const& v)
 {
     auto rv = grammar::parse(s, r);
@@ -128,7 +128,7 @@ typename std::enable_if<
     grammar::is_rule<R>::value>::type
 bad(
     R const& r,
-    string_view s)
+    core::string_view s)
 {
     BOOST_TEST(grammar::parse(s, r).has_error());
 }
@@ -139,8 +139,8 @@ typename std::enable_if<
     grammar::is_rule<R>::value>::type
 bad(
     R const& r,
-    string_view s,
-    error_code const& e)
+    core::string_view s,
+    system::error_code const& e)
 {
     auto rv = grammar::parse(s, r);
     if(BOOST_TEST(rv.has_error()))

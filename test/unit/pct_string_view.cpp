@@ -41,9 +41,9 @@ struct pct_string_view_test
             BOOST_TEST(S("%25", 3) == "%25");
         }
 
-        // operator string_view
+        // operator core::string_view
         {
-            auto const f = [](string_view)
+            auto const f = [](core::string_view)
             {
             };
             f(S());
@@ -57,8 +57,8 @@ struct pct_string_view_test
         BOOST_TEST(S("x") == S("x"));
         BOOST_TEST(S("x") == "x");
         BOOST_TEST("x" == S("x"));
-        BOOST_TEST(S("x") == string_view("x"));
-        BOOST_TEST(string_view("x") == S("x"));
+        BOOST_TEST(S("x") == core::string_view("x"));
+        BOOST_TEST(core::string_view("x") == S("x"));
         BOOST_TEST(std::string("x") == S("x"));
         BOOST_TEST(S("x") == std::string("x"));
     #if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
@@ -70,8 +70,8 @@ struct pct_string_view_test
         BOOST_TEST(S("x") != S("y"));
         BOOST_TEST(S("x") != "y");
         BOOST_TEST("x" != S("y"));
-        BOOST_TEST(S("x") != string_view("y"));
-        BOOST_TEST(string_view("x") != S("y"));
+        BOOST_TEST(S("x") != core::string_view("y"));
+        BOOST_TEST(core::string_view("x") != S("y"));
         BOOST_TEST(std::string("x") != S("y"));
         BOOST_TEST(S("x") != std::string("y"));
     #if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
@@ -83,8 +83,8 @@ struct pct_string_view_test
         BOOST_TEST(S("x") < S("y"));
         BOOST_TEST(S("x") < "y");
         BOOST_TEST("x" < S("y"));
-        BOOST_TEST(S("x") < string_view("y"));
-        BOOST_TEST(string_view("x") < S("y"));
+        BOOST_TEST(S("x") < core::string_view("y"));
+        BOOST_TEST(core::string_view("x") < S("y"));
         BOOST_TEST(std::string("x") < S("y"));
         BOOST_TEST(S("x") < std::string("y"));
     #if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
@@ -96,8 +96,8 @@ struct pct_string_view_test
         BOOST_TEST(S("x") <= S("x"));
         BOOST_TEST(S("x") <= "x");
         BOOST_TEST("x" <= S("x"));
-        BOOST_TEST(S("x") <= string_view("x"));
-        BOOST_TEST(string_view("x") <= S("x"));
+        BOOST_TEST(S("x") <= core::string_view("x"));
+        BOOST_TEST(core::string_view("x") <= S("x"));
         BOOST_TEST(std::string("x") <= S("x"));
         BOOST_TEST(S("x") <= std::string("x"));
     #if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
@@ -109,8 +109,8 @@ struct pct_string_view_test
         BOOST_TEST(S("y") > S("x"));
         BOOST_TEST(S("y") > "x");
         BOOST_TEST("y" > S("x"));
-        BOOST_TEST(S("y") > string_view("x"));
-        BOOST_TEST(string_view("y") > S("x"));
+        BOOST_TEST(S("y") > core::string_view("x"));
+        BOOST_TEST(core::string_view("y") > S("x"));
         BOOST_TEST(std::string("y") > S("x"));
         BOOST_TEST(S("y") > std::string("x"));
     #if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
@@ -122,8 +122,8 @@ struct pct_string_view_test
         BOOST_TEST(S("x") >= S("x"));
         BOOST_TEST(S("x") >= "x");
         BOOST_TEST("x" >= S("x"));
-        BOOST_TEST(S("x") >= string_view("x"));
-        BOOST_TEST(string_view("x") >= S("x"));
+        BOOST_TEST(S("x") >= core::string_view("x"));
+        BOOST_TEST(core::string_view("x") >= S("x"));
         BOOST_TEST(std::string("x") >= S("x"));
         BOOST_TEST(S("x") >= std::string("x"));
     #if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
@@ -152,7 +152,7 @@ TEST_SUITE(
 
 std::string     query()
 pct_string_view encoded_query()
-                set_query( string_view )
+                set_query( core::string_view )
                 set_encoded_query( pct_string_view )
 
 1. u.set_query( u.query() )                     // works

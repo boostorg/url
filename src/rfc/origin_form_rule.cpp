@@ -28,7 +28,7 @@ parse(
     char const*& it,
     char const* end
         ) const noexcept ->
-    result<value_type>
+    system::result<value_type>
 {
     detail::url_impl u(detail::url_impl::from::string);
     u.cs_ = it;

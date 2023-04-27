@@ -41,8 +41,8 @@ public:
 
     void
     check(
-        string_view s,
-        string_view m0,
+        core::string_view s,
+        core::string_view m0,
         bool space_as_plus = false)
     {
         // encoded_size
@@ -82,7 +82,7 @@ public:
             char* dest = buf;
             std::size_t n = encode(
                 dest, i, s, test_chars{}, opt);
-            string_view r(buf, n);
+            core::string_view r(buf, n);
             if(n == m.size())
             {
                 BOOST_TEST_EQ(i, m.size());
@@ -90,7 +90,7 @@ public:
                 break;
             }
             BOOST_TEST(
-                string_view(buf, n) ==
+                core::string_view(buf, n) ==
                 m.substr(0, n));
         }
     };

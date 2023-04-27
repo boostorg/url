@@ -25,7 +25,7 @@ public:
     {
         // javadoc
         {
-            result< url_view > rv = grammar::parse( "ws://echo.example.com/?name=boost#demo", uri_reference_rule );
+            system::result< url_view > rv = grammar::parse( "ws://echo.example.com/?name=boost#demo", uri_reference_rule );
             (void)rv;
         }
     }

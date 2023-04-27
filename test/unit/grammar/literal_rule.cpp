@@ -34,7 +34,7 @@ struct literal_rule_test
 
         // javadoc
         {
-            result< string_view > rv = parse( "HTTP", literal_rule( "HTTP" ) );
+            system::result< core::string_view > rv = parse( "HTTP", literal_rule( "HTTP" ) );
             (void)rv;
         }
 

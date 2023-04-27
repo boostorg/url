@@ -36,7 +36,7 @@ struct optional_rule_test
 
         // javadoc
         {
-            result< optional< string_view > > rv = parse( "", optional_rule( token_rule( alpha_chars ) ) );
+            system::result< boost::optional< core::string_view > > rv = parse( "", optional_rule( token_rule( alpha_chars ) ) );
 
             (void)rv;
         }
@@ -45,10 +45,10 @@ struct optional_rule_test
             token_rule(alpha_chars));
 
         ok(r, "");
-        ok(r, "a", string_view("a"));
+        ok(r, "a", core::string_view("a"));
 
         {
-            string_view s("$");
+            core::string_view s("$");
             auto it = s.data();
             auto const end = it + s.size();
             auto rv = parse(it, end, r);

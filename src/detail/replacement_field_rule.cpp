@@ -31,7 +31,7 @@ replacement_field_rule_t::
 parse(
     char const*& it,
     char const* const end) const noexcept ->
-        result<value_type>
+        system::result<value_type>
 {
     static constexpr auto replacement_field_rules =
         grammar::tuple_rule(
@@ -56,7 +56,7 @@ parse(
         BOOST_URL_RETURN_EC(
             grammar::error::mismatch);
     }
-    return string_view(it0, it);
+    return core::string_view(it0, it);
 }
 
 auto
@@ -64,7 +64,7 @@ identifier_rule_t::
 parse(
     char const*& it,
     char const* const end) const noexcept
-        -> result<value_type>
+        -> system::result<value_type>
 {
     static constexpr auto identifier_rules =
         grammar::tuple_rule(
@@ -82,7 +82,7 @@ parse(
         BOOST_URL_RETURN_EC(
             grammar::error::mismatch);
     }
-    return string_view(it0, it);
+    return core::string_view(it0, it);
 }
 
 auto
@@ -90,7 +90,7 @@ format_spec_rule_t::
 parse(
     char const*& it,
     char const* const end) const noexcept
-        -> result<value_type>
+        -> system::result<value_type>
 {
     if (it == end)
         return {};
@@ -128,7 +128,7 @@ parse(
         }
     }
 
-    return string_view(start, it);
+    return core::string_view(start, it);
 }
 
 } // detail

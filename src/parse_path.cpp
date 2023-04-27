@@ -21,8 +21,8 @@
 namespace boost {
 namespace urls {
 
-result<segments_encoded_view>
-parse_path(string_view s) noexcept
+system::result<segments_encoded_view>
+parse_path(core::string_view s) noexcept
 {
     auto it = s.data();
     auto const end = it + s.size();

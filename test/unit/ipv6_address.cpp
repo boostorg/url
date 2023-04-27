@@ -75,12 +75,12 @@ public:
                 a.to_string() == "::ffff:1.2.3.4");
         }
 
-        // ipv6_address(string_view)
+        // ipv6_address(core::string_view)
         {
             ipv6_address a("::");
             BOOST_TEST_EQ(a, ipv6_address());
             BOOST_TEST_THROWS(ipv6_address("x"),
-                system_error);
+                system::system_error);
         }
 
         // to_bytes
@@ -115,7 +115,7 @@ public:
             char buf2[10];
             BOOST_TEST_THROWS(
                 a.to_buffer(buf2, sizeof(buf2)),
-                system_error);
+                system::system_error);
         }
 
         // is_unspecified
@@ -168,7 +168,7 @@ public:
 
     static
     void
-    bad(string_view s)
+    bad(core::string_view s)
     {
         BOOST_TEST(parse_ipv6_address(
             s).has_error());
@@ -176,7 +176,7 @@ public:
 
     static
     void
-    good(string_view s)
+    good(core::string_view s)
     {
         BOOST_TEST(ipv6_address(
             s).to_string() == s);
@@ -184,7 +184,7 @@ public:
 
     static
     void
-    trip(string_view s0, string_view s1)
+    trip(core::string_view s0, core::string_view s1)
     {
         auto ip0 = ipv6_address(s0);
         BOOST_TEST_EQ(ip0.to_string(), s1);
@@ -212,7 +212,7 @@ public:
     static
     void
     check(
-        string_view s,
+        core::string_view s,
         std::uint64_t u0,
         std::uint64_t u1)
     {

@@ -79,7 +79,7 @@ pct_vmeasure(
         {
             ++it1;
         }
-        string_view id(id_start, it1);
+        core::string_view id(id_start, it1);
 
         // move to specs start
         if (it1 != end &&
@@ -178,7 +178,7 @@ pct_vformat(
         {
             ++it1;
         }
-        string_view id(id_start, it1);
+        core::string_view id(id_start, it1);
 
         // move to specs part
         if (it1 != end &&

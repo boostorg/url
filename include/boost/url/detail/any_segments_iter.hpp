@@ -26,7 +26,7 @@ struct BOOST_SYMBOL_VISIBLE
 protected:
     explicit
     any_segments_iter(
-        string_view s_ = {}) noexcept
+        core::string_view s_ = {}) noexcept
         : s(s_)
     {
     }
@@ -36,11 +36,11 @@ protected:
 public:
     // this is adjusted
     // when self-intersecting
-    string_view s;
+    core::string_view s;
 
     // the first segment,
     // to handle special cases
-    string_view front;
+    core::string_view front;
 
     // quick number of segments
     // 0 = zero
@@ -87,7 +87,7 @@ struct BOOST_SYMBOL_VISIBLE
 
     explicit
     segment_iter(
-        string_view s) noexcept;
+        core::string_view s) noexcept;
 
 private:
     bool at_end_ = false;
@@ -107,10 +107,10 @@ struct segments_iter_base
 protected:
     BOOST_URL_DECL static void
     measure_impl(std::size_t&,
-        string_view, bool) noexcept;
+        core::string_view, bool) noexcept;
     BOOST_URL_DECL static void
     copy_impl(char*&, char const*,
-        string_view, bool) noexcept;
+        core::string_view, bool) noexcept;
 };
 
 // iterates segments in a
@@ -124,7 +124,7 @@ struct segments_iter
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::reference,
-            string_view>::value);
+            core::string_view>::value);
 
     segments_iter(
         FwdIt first,
@@ -221,10 +221,10 @@ struct segments_encoded_iter_base
 protected:
     BOOST_URL_DECL static void
     measure_impl(std::size_t&,
-        string_view, bool) noexcept;
+        core::string_view, bool) noexcept;
     BOOST_URL_DECL static void
     copy_impl(char*&, char const*,
-        string_view, bool) noexcept;
+        core::string_view, bool) noexcept;
 };
 
 // iterates segments in an
@@ -238,7 +238,7 @@ struct segments_encoded_iter
         std::is_convertible<
             typename std::iterator_traits<
                 FwdIt>::reference,
-            string_view>::value);
+            core::string_view>::value);
 
     segments_encoded_iter(
         FwdIt first,
