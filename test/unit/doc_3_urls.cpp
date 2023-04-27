@@ -27,7 +27,7 @@ struct doc_3_urls_test
     {
         {
         //[code_containers_1_1
-            result< url_view > r = parse_uri( "https://www.example.com/path/to/file.txt" );
+            system::result< url_view > r = parse_uri( "https://www.example.com/path/to/file.txt" );
         //]
             ignore_unused(r);
         }
@@ -42,7 +42,7 @@ struct doc_3_urls_test
     }
 
     //[code_container_4_1
-    auto segs( string_view s ) -> std::list< std::string >
+    auto segs( core::string_view s ) -> std::list< std::string >
     {
         url_view u( s );
         std::list< std::string > seq;
@@ -53,7 +53,7 @@ struct doc_3_urls_test
     //]
 
     //[code_container_5_1
-    auto parms( string_view s ) -> std::list< param >
+    auto parms( core::string_view s ) -> std::list< param >
     {
         url_view u( s );
         std::list< param > seq;
@@ -67,8 +67,8 @@ struct doc_3_urls_test
     path_segments()
     {
         auto check = [](
-            string_view path,
-            std::initializer_list<string_view> segs,
+            core::string_view path,
+            std::initializer_list<core::string_view> segs,
             bool path_abs)
         {
             auto r1 = parse_path(path);

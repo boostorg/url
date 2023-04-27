@@ -27,7 +27,7 @@ params_encoded_view(
 
 params_encoded_view::
 params_encoded_view(
-    string_view s)
+    core::string_view s)
     : params_encoded_view(
         parse_query(s).value(
             BOOST_URL_POS))

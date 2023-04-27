@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/detail/any_params_iter.hpp>
 #include <boost/url/encode.hpp>
-#include <boost/url/string_view.hpp>
+#include <boost/core/detail/string_view.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 
 namespace boost {
@@ -48,7 +48,7 @@ any_params_iter::
 
 query_iter::
 query_iter(
-    string_view s,
+    core::string_view s,
     bool ne) noexcept
     : any_params_iter(
         s.empty() && ! ne, s)
@@ -70,7 +70,7 @@ rewind() noexcept
     {
         auto pos =
             s0.find_first_of('&');
-        if(pos != string_view::npos)
+        if(pos != core::string_view::npos)
             n_ = pos;
         else
             n_ = s0.size();
@@ -95,7 +95,7 @@ measure(
     encoding_opts opt;
     opt.space_as_plus = false;
     n += encoded_size(
-        string_view(p_, n_),
+        core::string_view(p_, n_),
         query_chars,
         opt);
     increment();
@@ -117,7 +117,7 @@ copy(
     dest += encode_unsafe(
         dest,
         end - dest,
-        string_view(p_, n_),
+        core::string_view(p_, n_),
         query_chars,
         opt);
     increment();
@@ -134,9 +134,9 @@ increment() noexcept
         return;
     }
     ++p_;
-    string_view s(p_, s0.end() - p_);
+    core::string_view s(p_, s0.end() - p_);
     auto pos = s.find_first_of('&');
-    if(pos != string_view::npos)
+    if(pos != core::string_view::npos)
         n_ = pos;
     else
         n_ = s.size();

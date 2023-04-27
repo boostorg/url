@@ -22,7 +22,7 @@ struct ipv4_address_rule_test
     {
         // javadoc
         {
-            result< ipv4_address > rv = grammar::parse( "192.168.0.1", ipv4_address_rule );
+            system::result< ipv4_address > rv = grammar::parse( "192.168.0.1", ipv4_address_rule );
             (void)rv;
         }
     }

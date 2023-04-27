@@ -267,7 +267,7 @@ public:
     */
     bool
     contains(
-        string_view key,
+        core::string_view key,
         ignore_case_param ic = {}) const noexcept;
 
     /** Return the number of matching keys
@@ -302,7 +302,7 @@ public:
     BOOST_URL_DECL
     std::size_t
     count(
-        string_view key,
+        core::string_view key,
         ignore_case_param ic = {}) const noexcept;
 
     /** Find a matching key
@@ -347,7 +347,7 @@ public:
     */
     iterator
     find(
-        string_view key,
+        core::string_view key,
         ignore_case_param ic = {}) const noexcept;
 
     /** Find a matching key
@@ -393,7 +393,7 @@ public:
     iterator
     find(
         iterator from,
-        string_view key,
+        core::string_view key,
         ignore_case_param ic = {}) const noexcept;
 
     /** Find a matching key
@@ -433,7 +433,7 @@ public:
     */
     iterator
     find_last(
-        string_view key,
+        core::string_view key,
         ignore_case_param ic = {}) const noexcept;
 
     /** Find a matching key
@@ -480,7 +480,7 @@ public:
     iterator
     find_last(
         iterator before,
-        string_view key,
+        core::string_view key,
         ignore_case_param ic = {}) const noexcept;
 
 private:
@@ -488,14 +488,14 @@ private:
     detail::params_iter_impl
     find_impl(
         detail::params_iter_impl,
-        string_view,
+        core::string_view,
         ignore_case_param) const noexcept;
 
     BOOST_URL_DECL
     detail::params_iter_impl
     find_last_impl(
         detail::params_iter_impl,
-        string_view,
+        core::string_view,
         ignore_case_param) const noexcept;
 };
 

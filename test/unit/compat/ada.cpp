@@ -28,7 +28,7 @@ struct ada_test
     void
     setHostShouldReturnFalseSometimes()
     {
-        result<url> r = parse_uri("mailto:a@b.com");
+        system::result<url> r = parse_uri("mailto:a@b.com");
         BOOST_TEST_CSTR_EQ(r->scheme(), "mailto");
         BOOST_TEST_CSTR_EQ(r->path(), "a@b.com");
         // This is an invalid operation in ada, which is reasonable since
@@ -46,7 +46,7 @@ struct ada_test
     void
     setHostShouldReturnTrueSometimes()
     {
-        result<url> r = parse_uri("https://www.google.com");
+        system::result<url> r = parse_uri("https://www.google.com");
         BOOST_TEST_NO_THROW(r->set_encoded_host("something"));
     }
 
@@ -54,7 +54,7 @@ struct ada_test
     void
     setHostnameShouldReturnFalseSometimes()
     {
-        result<url> r = parse_uri("mailto:a@b.com");
+        system::result<url> r = parse_uri("mailto:a@b.com");
         // This is an invalid operation in ada, while Boost.URL will
         // encode the host and adjust the URL.
         BOOST_TEST_NO_THROW(r->set_host_address("something"));
@@ -68,7 +68,7 @@ struct ada_test
     void
     setHostnameShouldReturnTrueSometimes()
     {
-        result<url> r = parse_uri("https://www.google.com");
+        system::result<url> r = parse_uri("https://www.google.com");
         BOOST_TEST_NO_THROW(r->set_host_address("something"));
     }
 
@@ -76,7 +76,7 @@ struct ada_test
     void
     readme1()
     {
-        result<url> u = parse_uri("https://www.google.com");
+        system::result<url> u = parse_uri("https://www.google.com");
         BOOST_TEST(u);
     }
 
@@ -84,7 +84,7 @@ struct ada_test
     void
     readme2()
     {
-        result<url> u = parse_uri("https://www.google.com");
+        system::result<url> u = parse_uri("https://www.google.com");
         if (!BOOST_TEST(u))
             return;
         u->set_encoded_user("username");
@@ -98,7 +98,7 @@ struct ada_test
     void
     readme3()
     {
-        result<url> u = parse_uri("https://www.google.com");
+        system::result<url> u = parse_uri("https://www.google.com");
         if (!BOOST_TEST(u))
             return;
         u->set_scheme("wss");
@@ -112,7 +112,7 @@ struct ada_test
     void
     readme4()
     {
-        result<url> u = parse_uri("https://www.google.com");
+        system::result<url> u = parse_uri("https://www.google.com");
         if (!BOOST_TEST(u))
             return;
         u->set_encoded_host("github.com");
@@ -123,7 +123,7 @@ struct ada_test
     void
     readme5()
     {
-        result<url> u = parse_uri("https://www.google.com");
+        system::result<url> u = parse_uri("https://www.google.com");
         if (!BOOST_TEST(u))
             return;
         u->set_port("8080");
@@ -134,7 +134,7 @@ struct ada_test
     void
     readme6()
     {
-        result<url> u = parse_uri("https://www.google.com");
+        system::result<url> u = parse_uri("https://www.google.com");
         if (!BOOST_TEST(u))
             return;
         u->set_encoded_path("/my-super-long-path");
@@ -145,7 +145,7 @@ struct ada_test
     void
     readme7()
     {
-        result<url> u = parse_uri("https://www.google.com");
+        system::result<url> u = parse_uri("https://www.google.com");
         if (!BOOST_TEST(u))
             return;
         u->set_encoded_query("target=self");
@@ -158,7 +158,7 @@ struct ada_test
     void
     readme8()
     {
-        result<url> u = parse_uri("https://www.google.com");
+        system::result<url> u = parse_uri("https://www.google.com");
         if (!BOOST_TEST(u))
             return;
         u->set_encoded_fragment("is-this-the-real-life");
@@ -186,7 +186,7 @@ struct ada_test
         // Ada supports URLs with whitespaces so that these whitespaces
         // are not considered part of the path
         // Boost.URL doesn't support whitespaces in the URL
-        result<url> u = parse_uri("data:space    ?test");
+        system::result<url> u = parse_uri("data:space    ?test");
         BOOST_TEST_NOT(u);
         u = parse_uri("data:space%20%20%20%20?test");
         if (!BOOST_TEST(u))
@@ -212,7 +212,7 @@ struct ada_test
         // Ada supports URLs with whitespaces so that these whitespaces
         // are not considered part of the path
         // Boost.URL doesn't support whitespaces in the URL
-        result<url> u = parse_uri("data:space    ?test#test");
+        system::result<url> u = parse_uri("data:space    ?test#test");
         BOOST_TEST_NOT(u);
         u = parse_uri("data:space%20%20%20%20?test#test");
         if (!BOOST_TEST(u))
@@ -229,7 +229,7 @@ struct ada_test
     void
     nodejs4()
     {
-        result<url> u = parse_uri("file:///var/log/system.log");
+        system::result<url> u = parse_uri("file:///var/log/system.log");
         if (!BOOST_TEST(u))
             return;
         // This test uses set_href in ada.
@@ -275,22 +275,22 @@ struct ada_test
     {
         // Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/script-tests/segments.js
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://example\t.\norg");
+            system::result<url> ref = parse_uri_reference("http://example\t.\norg");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://user:pass@foo:21/bar;par?b#c");
+            system::result<url> ref = parse_uri_reference("http://user:pass@foo:21/bar;par?b#c");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -304,14 +304,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "c");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("https://test:@test");
+            system::result<url> ref = parse_uri_reference("https://test:@test");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -323,14 +323,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("https://:@test");
+            system::result<url> ref = parse_uri_reference("https://:@test");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -341,14 +341,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-special://test:@test/x");
+            system::result<url> ref = parse_uri_reference("non-special://test:@test/x");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -359,14 +359,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/x");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-special://:@test/x");
+            system::result<url> ref = parse_uri_reference("non-special://:@test/x");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -376,14 +376,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/x");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:foo.com");
+            system::result<url> ref = parse_uri_reference("http:foo.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -393,54 +393,54 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/foo.com");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("\t   :foo.com   \n");
+            system::result<url> ref = parse_uri_reference("\t   :foo.com   \n");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference(" foo.com  ");
+            system::result<url> ref = parse_uri_reference(" foo.com  ");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("a:\t foo.com");
+            system::result<url> ref = parse_uri_reference("a:\t foo.com");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("http://f:21/ b ? d # e ");
+            system::result<url> ref = parse_uri_reference("http://f:21/ b ? d # e ");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("lolscheme:x x#x x");
+            system::result<url> ref = parse_uri_reference("lolscheme:x x#x x");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://f:/c");
+            system::result<url> ref = parse_uri_reference("http://f:/c");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -450,14 +450,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/c");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://f:0/c");
+            system::result<url> ref = parse_uri_reference("http://f:0/c");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -469,14 +469,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/c");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://f:00000000000000/c");
+            system::result<url> ref = parse_uri_reference("http://f:00000000000000/c");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -488,14 +488,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/c");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://f:00000000000000000000080/c");
+            system::result<url> ref = parse_uri_reference("http://f:00000000000000000000080/c");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -505,140 +505,140 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/c");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
-            result<url> ref = parse_uri_reference("http://f:b/c");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> ref = parse_uri_reference("http://f:b/c");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("http://f: /c");
+            system::result<url> ref = parse_uri_reference("http://f: /c");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://f:\n/c");
+            system::result<url> ref = parse_uri_reference("http://f:\n/c");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
-            result<url> ref = parse_uri_reference("http://f:fifty-two/c");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> ref = parse_uri_reference("http://f:fifty-two/c");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
-            result<url> ref = parse_uri_reference("http://f:999999/c");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> ref = parse_uri_reference("http://f:999999/c");
             // Boost.URL does not fail on port overflow
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
-            result<url> ref = parse_uri_reference("non-special://f:999999/c");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> ref = parse_uri_reference("non-special://f:999999/c");
             // Boost.URL does not fail on port overflow
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("http://f: 21 / b ? d # e ");
+            system::result<url> ref = parse_uri_reference("http://f: 21 / b ? d # e ");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not fail on empty references
-            result<url> ref = parse_uri_reference("");
+            system::result<url> ref = parse_uri_reference("");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("  \t");
+            system::result<url> ref = parse_uri_reference("  \t");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference(":foo.com/");
+            system::result<url> ref = parse_uri_reference(":foo.com/");
             // Boost.URL requires segment-nz-nc
             // A URL should have a scheme or the first path segment
             // cannot contain a colon (":")
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference(":foo.com\\");
+            system::result<url> ref = parse_uri_reference(":foo.com\\");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference(":");
+            system::result<url> ref = parse_uri_reference(":");
             // Boost.URL requires segment-nz-nc
             // A URL should have a scheme or the first path segment
             // cannot contain a colon (":")
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference(":a");
+            system::result<url> ref = parse_uri_reference(":a");
             // Boost.URL requires segment-nz-nc
             // A URL should have a scheme or the first path segment
             // cannot contain a colon (":")
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference(":/");
+            system::result<url> ref = parse_uri_reference(":/");
             // Boost.URL requires segment-nz-nc
             // A URL should have a scheme or the first path segment
             // cannot contain a colon (":")
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference(":\\");
+            system::result<url> ref = parse_uri_reference(":\\");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference(":#");
+            system::result<url> ref = parse_uri_reference(":#");
             // Boost.URL requires segment-nz-nc
             // A URL should have a scheme or the first path segment
             // cannot contain a colon (":")
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#");
+            system::result<url> ref = parse_uri_reference("#");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -648,14 +648,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/bar");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#/");
+            system::result<url> ref = parse_uri_reference("#/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -666,22 +666,22 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("#\\");
+            system::result<url> ref = parse_uri_reference("#\\");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#;?");
+            system::result<url> ref = parse_uri_reference("#;?");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -692,14 +692,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), ";?");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("?");
+            system::result<url> ref = parse_uri_reference("?");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -709,14 +709,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/bar");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/");
+            system::result<url> ref = parse_uri_reference("/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -726,24 +726,24 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference(":23");
+            system::result<url> ref = parse_uri_reference(":23");
             // Boost.URL requires segment-nz-nc
             // A URL should have a scheme or the first path segment
             // cannot contain a colon (":")
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/:23");
+            system::result<url> ref = parse_uri_reference("/:23");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -753,50 +753,50 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/:23");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("\\x");
+            system::result<url> ref = parse_uri_reference("\\x");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("\\\\x\\hello");
+            system::result<url> ref = parse_uri_reference("\\\\x\\hello");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("::");
+            system::result<url> ref = parse_uri_reference("::");
             // Boost.URL requires segment-nz-nc
             // A URL should have a scheme or the first path segment
             // cannot contain a colon (":")
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("::23");
+            system::result<url> ref = parse_uri_reference("::23");
             // Boost.URL requires segment-nz-nc
             // A URL should have a scheme or the first path segment
             // cannot contain a colon (":")
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("foo://");
+            system::result<url> ref = parse_uri_reference("foo://");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -804,14 +804,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.scheme(), "foo");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://a:b@c:29/d");
+            system::result<url> ref = parse_uri_reference("http://a:b@c:29/d");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -823,14 +823,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/d");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http::@c:29");
+            system::result<url> ref = parse_uri_reference("http::@c:29");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -840,32 +840,32 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/:@c:29");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "&" in username
             // Expected username in Ada: "&a"
-            result<url> ref = parse_uri_reference("http://&a:foo(b]c@d:2/");
+            system::result<url> ref = parse_uri_reference("http://&a:foo(b]c@d:2/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not passwords with unencoded "@"
             // Expected password in Ada: "%3A%40c"
-            result<url> ref = parse_uri_reference("http://::@c@d:2");
+            system::result<url> ref = parse_uri_reference("http://::@c@d:2");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://foo.com:b@d/");
+            system::result<url> ref = parse_uri_reference("http://foo.com:b@d/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -876,38 +876,38 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://foo.com/\\@");
+            system::result<url> ref = parse_uri_reference("http://foo.com/\\@");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http:\\\\foo.com\\");
+            system::result<url> ref = parse_uri_reference("http:\\\\foo.com\\");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http:\\\\a\\b:c\\d@foo.com\\");
+            system::result<url> ref = parse_uri_reference("http:\\\\a\\b:c\\d@foo.com\\");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("foo:/");
+            system::result<url> ref = parse_uri_reference("foo:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -916,14 +916,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("foo:/bar.com/");
+            system::result<url> ref = parse_uri_reference("foo:/bar.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -932,14 +932,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/bar.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("foo://///////");
+            system::result<url> ref = parse_uri_reference("foo://///////");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -948,14 +948,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "///////");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("foo://///////bar.com/");
+            system::result<url> ref = parse_uri_reference("foo://///////bar.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -964,14 +964,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "///////bar.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("foo:////://///");
+            system::result<url> ref = parse_uri_reference("foo:////://///");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -980,14 +980,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "//://///");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("c:/foo");
+            system::result<url> ref = parse_uri_reference("c:/foo");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -996,14 +996,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("//foo/bar");
+            system::result<url> ref = parse_uri_reference("//foo/bar");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1013,14 +1013,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/bar");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://foo/path;a??e#f#g");
+            system::result<url> ref = parse_uri_reference("http://foo/path;a??e#f#g");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1032,14 +1032,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "f#g");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://foo/abcd?efgh?ijkl");
+            system::result<url> ref = parse_uri_reference("http://foo/abcd?efgh?ijkl");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1050,14 +1050,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "efgh?ijkl");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://foo/abcd#foo?bar");
+            system::result<url> ref = parse_uri_reference("http://foo/abcd#foo?bar");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1068,50 +1068,50 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "foo?bar");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "[" in paths
-            result<url> ref = parse_uri_reference("[61:24:74]:98");
+            system::result<url> ref = parse_uri_reference("[61:24:74]:98");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "[" in paths
-            result<url> ref = parse_uri_reference("http:[61:27]/:foo");
+            system::result<url> ref = parse_uri_reference("http:[61:27]/:foo");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
-            result<url> ref = parse_uri_reference("http://[1::2]:3:4");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> ref = parse_uri_reference("http://[1::2]:3:4");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
-            result<url> ref = parse_uri_reference("http://2001::1");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> ref = parse_uri_reference("http://2001::1");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
-            result<url> ref = parse_uri_reference("http://2001::1]");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> ref = parse_uri_reference("http://2001::1]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
-            result<url> ref = parse_uri_reference("http://2001::1]:80");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> ref = parse_uri_reference("http://2001::1]:80");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://[2001::1]");
+            system::result<url> ref = parse_uri_reference("http://[2001::1]");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1121,14 +1121,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://[::127.0.0.1]");
+            system::result<url> ref = parse_uri_reference("http://[::127.0.0.1]");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1139,19 +1139,19 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "[::7f00:1]");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
-            result<url> ref = parse_uri_reference("http://[::127.0.0.1.]");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> ref = parse_uri_reference("http://[::127.0.0.1.]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://[0:0:0:0:0:0:13.1.68.3]");
+            system::result<url> ref = parse_uri_reference("http://[0:0:0:0:0:0:13.1.68.3]");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1162,14 +1162,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "[::d01:4403]");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://[2001::1]:80");
+            system::result<url> ref = parse_uri_reference("http://[2001::1]:80");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1179,14 +1179,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:/example.com/");
+            system::result<url> ref = parse_uri_reference("http:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1196,14 +1196,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ftp:/example.com/");
+            system::result<url> ref = parse_uri_reference("ftp:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1212,14 +1212,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("https:/example.com/");
+            system::result<url> ref = parse_uri_reference("https:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1228,14 +1228,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("madeupscheme:/example.com/");
+            system::result<url> ref = parse_uri_reference("madeupscheme:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1244,14 +1244,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:/example.com/");
+            system::result<url> ref = parse_uri_reference("file:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1260,40 +1260,40 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("file://example:1/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("file://example:1/");
             // Boost.URL does validate individual schemes
             // Ada and Node.js fail on "file" URLs with ports
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("file://example:test/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("file://example:test/");
             // Boost.URL does validate individual schemes
             // Ada and Node.js fail on "file" URLs with ports
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("file://example%/");
+            system::result<url> ref = parse_uri_reference("file://example%/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("file://[example]/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("file://[example]/");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ftps:/example.com/");
+            system::result<url> ref = parse_uri_reference("ftps:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1302,14 +1302,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("gopher:/example.com/");
+            system::result<url> ref = parse_uri_reference("gopher:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1318,14 +1318,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ws:/example.com/");
+            system::result<url> ref = parse_uri_reference("ws:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1334,14 +1334,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("wss:/example.com/");
+            system::result<url> ref = parse_uri_reference("wss:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1350,14 +1350,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("data:/example.com/");
+            system::result<url> ref = parse_uri_reference("data:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1366,14 +1366,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("javascript:/example.com/");
+            system::result<url> ref = parse_uri_reference("javascript:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1382,14 +1382,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("mailto:/example.com/");
+            system::result<url> ref = parse_uri_reference("mailto:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1398,14 +1398,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:example.com/");
+            system::result<url> ref = parse_uri_reference("http:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1415,14 +1415,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ftp:example.com/");
+            system::result<url> ref = parse_uri_reference("ftp:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1431,14 +1431,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("https:example.com/");
+            system::result<url> ref = parse_uri_reference("https:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1447,14 +1447,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("madeupscheme:example.com/");
+            system::result<url> ref = parse_uri_reference("madeupscheme:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1463,14 +1463,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ftps:example.com/");
+            system::result<url> ref = parse_uri_reference("ftps:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1479,14 +1479,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("gopher:example.com/");
+            system::result<url> ref = parse_uri_reference("gopher:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1495,14 +1495,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ws:example.com/");
+            system::result<url> ref = parse_uri_reference("ws:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1511,14 +1511,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("wss:example.com/");
+            system::result<url> ref = parse_uri_reference("wss:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1527,14 +1527,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("data:example.com/");
+            system::result<url> ref = parse_uri_reference("data:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1543,14 +1543,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("javascript:example.com/");
+            system::result<url> ref = parse_uri_reference("javascript:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1559,14 +1559,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("mailto:example.com/");
+            system::result<url> ref = parse_uri_reference("mailto:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1575,14 +1575,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "example.com/");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/a/b/c");
+            system::result<url> ref = parse_uri_reference("/a/b/c");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1592,22 +1592,22 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/a/b/c");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("/a/ /c");
+            system::result<url> ref = parse_uri_reference("/a/ /c");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/a%2fc");
+            system::result<url> ref = parse_uri_reference("/a%2fc");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1619,14 +1619,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/a%2Fc");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/a/%2f/c");
+            system::result<url> ref = parse_uri_reference("/a/%2f/c");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1638,22 +1638,22 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/a/%2F/c");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("#β");
+            // system::result<url> ref = parse_uri_reference("#β");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("data:text/html,test#test");
+            system::result<url> ref = parse_uri_reference("data:text/html,test#test");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1663,14 +1663,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "test");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("tel:1234567890");
+            system::result<url> ref = parse_uri_reference("tel:1234567890");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1680,14 +1680,14 @@ struct ada_test
         }();
         // Based on https://felixfbecker.github.io/whatwg-url-custom-host-repro/
         []{
-            result<url> base = parse_uri("http://example.org/");
+            system::result<url> base = parse_uri("http://example.org/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ssh://example.com/foo/bar.git");
+            system::result<url> ref = parse_uri_reference("ssh://example.com/foo/bar.git");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1698,54 +1698,54 @@ struct ada_test
         }();
         // Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/file.html
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("file:c:\\foo\\bar.html");
+            system::result<url> ref = parse_uri_reference("file:c:\\foo\\bar.html");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("  File:c|////foo\\bar.html");
+            system::result<url> ref = parse_uri_reference("  File:c|////foo\\bar.html");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "|" in paths
-            result<url> ref = parse_uri_reference("C|/foo/bar");
+            system::result<url> ref = parse_uri_reference("C|/foo/bar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("/C|\\foo\\bar");
+            system::result<url> ref = parse_uri_reference("/C|\\foo\\bar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "|" in paths
-            result<url> ref = parse_uri_reference("//C|/foo/bar");
+            system::result<url> ref = parse_uri_reference("//C|/foo/bar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("//server/file");
+            system::result<url> ref = parse_uri_reference("//server/file");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1755,30 +1755,30 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/file");
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("\\\\server\\file");
+            system::result<url> ref = parse_uri_reference("\\\\server\\file");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("/\\server/file");
+            system::result<url> ref = parse_uri_reference("/\\server/file");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///foo/bar.txt");
+            system::result<url> ref = parse_uri_reference("file:///foo/bar.txt");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1787,14 +1787,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/bar.txt");
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///home/me");
+            system::result<url> ref = parse_uri_reference("file:///home/me");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1803,14 +1803,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/home/me");
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("//");
+            system::result<url> ref = parse_uri_reference("//");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1820,14 +1820,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("///");
+            system::result<url> ref = parse_uri_reference("///");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1836,14 +1836,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("///test");
+            system::result<url> ref = parse_uri_reference("///test");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1852,14 +1852,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test");
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://test");
+            system::result<url> ref = parse_uri_reference("file://test");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1870,14 +1870,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://localhost");
+            system::result<url> ref = parse_uri_reference("file://localhost");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1887,14 +1887,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://localhost/");
+            system::result<url> ref = parse_uri_reference("file://localhost/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1903,14 +1903,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://localhost/test");
+            system::result<url> ref = parse_uri_reference("file://localhost/test");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1919,14 +1919,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test");
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("test");
+            system::result<url> ref = parse_uri_reference("test");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1935,14 +1935,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/tmp/mock/test");
         }();
         []{
-            result<url> base = parse_uri("file:///tmp/mock/path");
+            system::result<url> base = parse_uri("file:///tmp/mock/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:test");
+            system::result<url> ref = parse_uri_reference("file:test");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1952,14 +1952,14 @@ struct ada_test
         }();
         // Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/script-tests/path.js
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/././foo");
+            system::result<url> ref = parse_uri_reference("http://example.com/././foo");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1969,14 +1969,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/./.foo");
+            system::result<url> ref = parse_uri_reference("http://example.com/./.foo");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -1986,14 +1986,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/.foo");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/.");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/.");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2003,14 +2003,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/./");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/./");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2020,14 +2020,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/bar/..");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/bar/..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2037,14 +2037,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/bar/../");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/bar/../");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2054,14 +2054,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/..bar");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/..bar");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2071,14 +2071,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/..bar");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/bar/../ton");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/bar/../ton");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2088,14 +2088,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/ton");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/bar/../ton/../../a");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/bar/../ton/../../a");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2105,14 +2105,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/a");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/../../..");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/../../..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2126,14 +2126,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/../../../ton");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/../../../ton");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2147,14 +2147,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/ton");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/%2e");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/%2e");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2164,22 +2164,22 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("http://example.com/foo/%2e%2");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/%2e%2");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2193,14 +2193,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%2E.bar");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com////../..");
+            system::result<url> ref = parse_uri_reference("http://example.com////../..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2210,14 +2210,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "//");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/bar//../..");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/bar//../..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2227,14 +2227,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo/bar//..");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo/bar//..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2244,14 +2244,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/bar/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2261,14 +2261,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/%20foo");
+            system::result<url> ref = parse_uri_reference("http://example.com/%20foo");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2278,46 +2278,46 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%20foo");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("http://example.com/foo%");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo%");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("http://example.com/foo%2");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo%2");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("http://example.com/foo%2zbar");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo%2zbar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://example.com/foo%2Â©zbar");
+            // system::result<url> ref = parse_uri_reference("http://example.com/foo%2Â©zbar");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo%41%7a");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo%41%7a");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2329,22 +2329,22 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/fooAz");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://example.com/foo\t\x91" "%91");
+            // system::result<url> ref = parse_uri_reference("http://example.com/foo\t\x91" "%91");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/foo%00%51");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo%00%51");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2356,14 +2356,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo%00Q");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/(%28:%3A%29)");
+            system::result<url> ref = parse_uri_reference("http://example.com/(%28:%3A%29)");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2375,14 +2375,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/((::))");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/%3A%3a%3C%3c");
+            system::result<url> ref = parse_uri_reference("http://example.com/%3A%3a%3C%3c");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2394,30 +2394,30 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/::%3C%3C");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://example.com/foo\tbar");
+            system::result<url> ref = parse_uri_reference("http://example.com/foo\tbar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://example.com\\\\foo\\\\bar");
+            system::result<url> ref = parse_uri_reference("http://example.com\\\\foo\\\\bar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/%7Ffp3%3Eju%3Dduvgw%3Dd");
+            system::result<url> ref = parse_uri_reference("http://example.com/%7Ffp3%3Eju%3Dduvgw%3Dd");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2429,14 +2429,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%7Ffp3%3Eju=duvgw=d");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.com/@asdf%40");
+            system::result<url> ref = parse_uri_reference("http://example.com/@asdf%40");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2448,47 +2448,47 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/@asdf@");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://example.com/你好你好");
+            // system::result<url> ref = parse_uri_reference("http://example.com/你好你好");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://example.com/‥/foo");
+            // system::result<url> ref = parse_uri_reference("http://example.com/‥/foo");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://example.com/\ufeff/foo");
+            // system::result<url> ref = parse_uri_reference("http://example.com/\ufeff/foo");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://example.com/\u202e/foo/\u202d/bar");
+            // system::result<url> ref = parse_uri_reference("http://example.com/\u202e/foo/\u202d/bar");
             // BOOST_TEST_NOT(ref);
         }();
         // Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/script-tests/relative.js
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://www.google.com/foo?bar=baz#");
+            system::result<url> ref = parse_uri_reference("http://www.google.com/foo?bar=baz#");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2499,30 +2499,30 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "bar=baz");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://www.google.com/foo?bar=baz# »");
+            // system::result<url> ref = parse_uri_reference("http://www.google.com/foo?bar=baz# »");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("data:test# »");
+            // system::result<url> ref = parse_uri_reference("data:test# »");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://www.google.com");
+            system::result<url> ref = parse_uri_reference("http://www.google.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2533,14 +2533,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://192.0x00A80001");
+            system::result<url> ref = parse_uri_reference("http://192.0x00A80001");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2551,14 +2551,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "192.168.0.1");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://www/foo%2Ehtml");
+            system::result<url> ref = parse_uri_reference("http://www/foo%2Ehtml");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2570,14 +2570,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo.html");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://www/foo/%2E/html");
+            system::result<url> ref = parse_uri_reference("http://www/foo/%2E/html");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2587,21 +2587,21 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/html");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://user:pass@/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://user:pass@/");
             // Boost.URL and Node.js do not fail
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://%25DOMAIN:foobar@foodomain.com/");
+            system::result<url> ref = parse_uri_reference("http://%25DOMAIN:foobar@foodomain.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2612,22 +2612,22 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http:\\\\www.google.com\\foo");
+            system::result<url> ref = parse_uri_reference("http:\\\\www.google.com\\foo");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://foo:80/");
+            system::result<url> ref = parse_uri_reference("http://foo:80/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2637,14 +2637,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://foo:81/");
+            system::result<url> ref = parse_uri_reference("http://foo:81/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2655,14 +2655,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("httpa://foo:80/");
+            system::result<url> ref = parse_uri_reference("httpa://foo:80/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2673,19 +2673,19 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://foo:-80/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://foo:-80/");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("https://foo:443/");
+            system::result<url> ref = parse_uri_reference("https://foo:443/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2695,14 +2695,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("https://foo:80/");
+            system::result<url> ref = parse_uri_reference("https://foo:80/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2713,14 +2713,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ftp://foo:21/");
+            system::result<url> ref = parse_uri_reference("ftp://foo:21/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2730,14 +2730,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ftp://foo:80/");
+            system::result<url> ref = parse_uri_reference("ftp://foo:80/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2748,14 +2748,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("gopher://foo:70/");
+            system::result<url> ref = parse_uri_reference("gopher://foo:70/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2766,14 +2766,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("gopher://foo:443/");
+            system::result<url> ref = parse_uri_reference("gopher://foo:443/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2784,14 +2784,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ws://foo:80/");
+            system::result<url> ref = parse_uri_reference("ws://foo:80/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2801,14 +2801,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ws://foo:81/");
+            system::result<url> ref = parse_uri_reference("ws://foo:81/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2819,14 +2819,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ws://foo:443/");
+            system::result<url> ref = parse_uri_reference("ws://foo:443/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2837,14 +2837,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ws://foo:815/");
+            system::result<url> ref = parse_uri_reference("ws://foo:815/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2855,14 +2855,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("wss://foo:80/");
+            system::result<url> ref = parse_uri_reference("wss://foo:80/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2873,14 +2873,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("wss://foo:81/");
+            system::result<url> ref = parse_uri_reference("wss://foo:81/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2891,14 +2891,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("wss://foo:443/");
+            system::result<url> ref = parse_uri_reference("wss://foo:443/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2908,14 +2908,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("wss://foo:815/");
+            system::result<url> ref = parse_uri_reference("wss://foo:815/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2926,14 +2926,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:/example.com/");
+            system::result<url> ref = parse_uri_reference("http:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2942,14 +2942,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ftp:/example.com/");
+            system::result<url> ref = parse_uri_reference("ftp:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2958,14 +2958,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("https:/example.com/");
+            system::result<url> ref = parse_uri_reference("https:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2974,14 +2974,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("madeupscheme:/example.com/");
+            system::result<url> ref = parse_uri_reference("madeupscheme:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -2990,14 +2990,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:/example.com/");
+            system::result<url> ref = parse_uri_reference("file:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3006,14 +3006,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ftps:/example.com/");
+            system::result<url> ref = parse_uri_reference("ftps:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3022,14 +3022,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("gopher:/example.com/");
+            system::result<url> ref = parse_uri_reference("gopher:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3038,14 +3038,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ws:/example.com/");
+            system::result<url> ref = parse_uri_reference("ws:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3054,14 +3054,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("wss:/example.com/");
+            system::result<url> ref = parse_uri_reference("wss:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3070,14 +3070,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("data:/example.com/");
+            system::result<url> ref = parse_uri_reference("data:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3086,14 +3086,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("javascript:/example.com/");
+            system::result<url> ref = parse_uri_reference("javascript:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3102,14 +3102,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("mailto:/example.com/");
+            system::result<url> ref = parse_uri_reference("mailto:/example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3118,14 +3118,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:example.com/");
+            system::result<url> ref = parse_uri_reference("http:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3134,14 +3134,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ftp:example.com/");
+            system::result<url> ref = parse_uri_reference("ftp:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3150,14 +3150,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("https:example.com/");
+            system::result<url> ref = parse_uri_reference("https:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3166,14 +3166,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("madeupscheme:example.com/");
+            system::result<url> ref = parse_uri_reference("madeupscheme:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3182,14 +3182,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ftps:example.com/");
+            system::result<url> ref = parse_uri_reference("ftps:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3198,14 +3198,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("gopher:example.com/");
+            system::result<url> ref = parse_uri_reference("gopher:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3214,14 +3214,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ws:example.com/");
+            system::result<url> ref = parse_uri_reference("ws:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3230,14 +3230,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("wss:example.com/");
+            system::result<url> ref = parse_uri_reference("wss:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3246,14 +3246,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("data:example.com/");
+            system::result<url> ref = parse_uri_reference("data:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3262,14 +3262,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("javascript:example.com/");
+            system::result<url> ref = parse_uri_reference("javascript:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3278,14 +3278,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "example.com/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("mailto:example.com/");
+            system::result<url> ref = parse_uri_reference("mailto:example.com/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3295,14 +3295,14 @@ struct ada_test
         }();
         // Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/segments-userinfo-vs-host.html
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:@www.example.com");
+            system::result<url> ref = parse_uri_reference("http:@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3311,14 +3311,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "www.example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:/@www.example.com");
+            system::result<url> ref = parse_uri_reference("http:/@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3327,14 +3327,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "www.example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://@www.example.com");
+            system::result<url> ref = parse_uri_reference("http://@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3345,14 +3345,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:a:b@www.example.com");
+            system::result<url> ref = parse_uri_reference("http:a:b@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3361,14 +3361,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "www.example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:/a:b@www.example.com");
+            system::result<url> ref = parse_uri_reference("http:/a:b@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3377,14 +3377,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "www.example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://a:b@www.example.com");
+            system::result<url> ref = parse_uri_reference("http://a:b@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3396,14 +3396,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://@pple.com");
+            system::result<url> ref = parse_uri_reference("http://@pple.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3414,14 +3414,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http::b@www.example.com");
+            system::result<url> ref = parse_uri_reference("http::b@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3430,14 +3430,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "www.example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:/:b@www.example.com");
+            system::result<url> ref = parse_uri_reference("http:/:b@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3446,14 +3446,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "www.example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://:b@www.example.com");
+            system::result<url> ref = parse_uri_reference("http://:b@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3464,84 +3464,84 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http:/:@/www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http:/:@/www.example.com");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://user@/www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://user@/www.example.com");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http:@/www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http:@/www.example.com");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http:/@/www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http:/@/www.example.com");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://@/www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://@/www.example.com");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("https:@/www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("https:@/www.example.com");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http:a:b@/www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http:a:b@/www.example.com");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http:/a:b@/www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http:/a:b@/www.example.com");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://a:b@/www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://a:b@/www.example.com");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http::@/www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http::@/www.example.com");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:a:@www.example.com");
+            system::result<url> ref = parse_uri_reference("http:a:@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3550,14 +3550,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "www.example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:/a:@www.example.com");
+            system::result<url> ref = parse_uri_reference("http:/a:@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3566,14 +3566,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "www.example.com");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://a:@www.example.com");
+            system::result<url> ref = parse_uri_reference("http://a:@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3585,14 +3585,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://www.@pple.com");
+            system::result<url> ref = parse_uri_reference("http://www.@pple.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3604,33 +3604,33 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http:@:www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http:@:www.example.com");
             // Boost.URL does not fail on paths that resemble hosts
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http:/@:www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http:/@:www.example.com");
             // Boost.URL does not fail on paths that resemble hosts
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://@:www.example.com");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://@:www.example.com");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://:@www.example.com");
+            system::result<url> ref = parse_uri_reference("http://:@www.example.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3642,14 +3642,14 @@ struct ada_test
         }();
         // Others
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/");
+            system::result<url> ref = parse_uri_reference("/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3659,14 +3659,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/test.txt");
+            system::result<url> ref = parse_uri_reference("/test.txt");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3676,14 +3676,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test.txt");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference(".");
+            system::result<url> ref = parse_uri_reference(".");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3694,14 +3694,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("..");
+            system::result<url> ref = parse_uri_reference("..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3712,14 +3712,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("test.txt");
+            system::result<url> ref = parse_uri_reference("test.txt");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3729,14 +3729,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test.txt");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("./test.txt");
+            system::result<url> ref = parse_uri_reference("./test.txt");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3746,14 +3746,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test.txt");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("../test.txt");
+            system::result<url> ref = parse_uri_reference("../test.txt");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3767,14 +3767,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test.txt");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("../aaa/test.txt");
+            system::result<url> ref = parse_uri_reference("../aaa/test.txt");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3788,14 +3788,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/aaa/test.txt");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("../../test.txt");
+            system::result<url> ref = parse_uri_reference("../../test.txt");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3809,22 +3809,22 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test.txt");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("中/test.txt");
+            // system::result<url> ref = parse_uri_reference("中/test.txt");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://www.example2.com");
+            system::result<url> ref = parse_uri_reference("http://www.example2.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3835,14 +3835,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("//www.example2.com");
+            system::result<url> ref = parse_uri_reference("//www.example2.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3853,14 +3853,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:...");
+            system::result<url> ref = parse_uri_reference("file:...");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3870,14 +3870,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/...");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:..");
+            system::result<url> ref = parse_uri_reference("file:..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3887,14 +3887,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://www.example.com/test");
+            system::result<url> base = parse_uri("http://www.example.com/test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:a");
+            system::result<url> ref = parse_uri_reference("file:a");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3906,14 +3906,14 @@ struct ada_test
         // Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/host.html
         // Basic canonicalization, uppercase should be converted to lowercase
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://ExAmPlE.CoM");
+            system::result<url> ref = parse_uri_reference("http://ExAmPlE.CoM");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -3924,224 +3924,224 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("http://example example.com");
+            system::result<url> ref = parse_uri_reference("http://example example.com");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("http://Goo%20 goo%7C|.com");
+            system::result<url> ref = parse_uri_reference("http://Goo%20 goo%7C|.com");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://[]");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://[]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://[:]");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://[:]");
             BOOST_TEST_NOT(base && ref);
         }();
         // U+3000 is mapped to U+0020 (space) which is disallowed
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://GOO\xa0" "\u3000goo.com");
+            // system::result<url> ref = parse_uri_reference("http://GOO\xa0" "\u3000goo.com");
             // BOOST_TEST_NOT(ref);
         }();
         // Other types of space (no-break, zero-width, zero-width-no-break) are name-prepped away to nothing. U+200B, U+2060, and U+FEFF, are ignored
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://GOO\u200b\u2060\ufeffgoo.com");
+            // system::result<url> ref = parse_uri_reference("http://GOO\u200b\u2060\ufeffgoo.com");
             // BOOST_TEST_NOT(ref);
         }();
         // Leading and trailing C0 control or space
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("\x00" "\x1b" "\x04" "\x12" " http://example.com/\x1f" " \r ");
+            // system::result<url> ref = parse_uri_reference("\x00" "\x1b" "\x04" "\x12" " http://example.com/\x1f" " \r ");
             // BOOST_TEST_NOT(ref);
         }();
         // Ideographic full stop (full-width period for Chinese, etc.) should be treated as a dot. U+3002 is mapped to U+002E (dot)
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://www.foo。bar.com");
+            // system::result<url> ref = parse_uri_reference("http://www.foo。bar.com");
             // BOOST_TEST_NOT(ref);
         }();
         // Invalid unicode characters should fail... U+FDD0 is disallowed; %ef%b7%90 is U+FDD0
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://\ufdd0zyx.com");
+            // system::result<url> ref = parse_uri_reference("http://\ufdd0zyx.com");
             // BOOST_TEST_NOT(ref);
         }();
         // This is the same as previous but escaped
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("http://%ef%b7%90zyx.com");
+            system::result<url> ref = parse_uri_reference("http://%ef%b7%90zyx.com");
             BOOST_TEST(ref);
         }();
         // U+FFFD
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("https://�");
+            // system::result<url> ref = parse_uri_reference("https://�");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("https://%EF%BF%BD");
+            system::result<url> ref = parse_uri_reference("https://%EF%BF%BD");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("https://x/�?�#�");
+            // system::result<url> ref = parse_uri_reference("https://x/�?�#�");
             // BOOST_TEST_NOT(ref);
         }();
         // Domain is ASCII, but a label is invalid IDNA
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid IDNA
-            result<url> ref = parse_uri_reference("http://a.b.c.xn--pokxncvks");
+            system::result<url> ref = parse_uri_reference("http://a.b.c.xn--pokxncvks");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid IDNA
-            result<url> ref = parse_uri_reference("http://10.0.0.xn--pokxncvks");
+            system::result<url> ref = parse_uri_reference("http://10.0.0.xn--pokxncvks");
             BOOST_TEST(ref);
         }();
         // IDNA labels should be matched case-insensitively
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid IDNA
-            result<url> ref = parse_uri_reference("http://a.b.c.XN--pokxncvks");
+            system::result<url> ref = parse_uri_reference("http://a.b.c.XN--pokxncvks");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid IDNA
-            result<url> ref = parse_uri_reference("http://a.b.c.Xn--pokxncvks");
+            system::result<url> ref = parse_uri_reference("http://a.b.c.Xn--pokxncvks");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid IDNA
-            result<url> ref = parse_uri_reference("http://10.0.0.XN--pokxncvks");
+            system::result<url> ref = parse_uri_reference("http://10.0.0.XN--pokxncvks");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid IDNA
-            result<url> ref = parse_uri_reference("http://10.0.0.xN--pokxncvks");
+            system::result<url> ref = parse_uri_reference("http://10.0.0.xN--pokxncvks");
             BOOST_TEST(ref);
         }();
         // Test name prepping, fullwidth input should be converted to ASCII and NOT IDN-ized. This is 'Go' in fullwidth UTF-8/UTF-16.
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://Ｇｏ.com");
+            // system::result<url> ref = parse_uri_reference("http://Ｇｏ.com");
             // BOOST_TEST_NOT(ref);
         }();
         // URL spec forbids the following. https://www.w3.org/Bugs/Public/show_bug.cgi?id=24257
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://％４１.com");
+            // system::result<url> ref = parse_uri_reference("http://％４１.com");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("http://%ef%bc%85%ef%bc%94%ef%bc%91.com");
+            system::result<url> ref = parse_uri_reference("http://%ef%bc%85%ef%bc%94%ef%bc%91.com");
             BOOST_TEST(ref);
         }();
         // ...%00 in fullwidth should fail (also as escaped UTF-8 input)
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://％００.com");
+            // system::result<url> ref = parse_uri_reference("http://％００.com");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("http://%ef%bc%85%ef%bc%90%ef%bc%90.com");
+            system::result<url> ref = parse_uri_reference("http://%ef%bc%85%ef%bc%90%ef%bc%90.com");
             BOOST_TEST(ref);
         }();
         // Basic IDN support, UTF-8 and UTF-16 input should be converted to IDN
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://你好你好");
+            // system::result<url> ref = parse_uri_reference("http://你好你好");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("https://faß.ExAmPlE/");
+            // system::result<url> ref = parse_uri_reference("https://faß.ExAmPlE/");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("sc://faß.ExAmPlE/");
+            // system::result<url> ref = parse_uri_reference("sc://faß.ExAmPlE/");
             // BOOST_TEST_NOT(ref);
         }();
         // Invalid escaped characters should fail and the percents should be escaped. https://www.w3.org/Bugs/Public/show_bug.cgi?id=24191
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("http://%zz%66%a.com");
+            system::result<url> ref = parse_uri_reference("http://%zz%66%a.com");
             BOOST_TEST_NOT(ref);
         }();
         // If we get an invalid character that has been escaped.
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://%25");
+            system::result<url> ref = parse_uri_reference("http://%25");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://hello%00");
+            system::result<url> ref = parse_uri_reference("http://hello%00");
             BOOST_TEST(ref);
         }();
         // Escaped numbers should be treated like IP addresses if they are.
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://%30%78%63%30%2e%30%32%35%30.01");
+            system::result<url> ref = parse_uri_reference("http://%30%78%63%30%2e%30%32%35%30.01");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4152,14 +4152,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "192.168.0.1");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://%30%78%63%30%2e%30%32%35%30.01%2e");
+            system::result<url> ref = parse_uri_reference("http://%30%78%63%30%2e%30%32%35%30.01%2e");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4170,51 +4170,51 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "192.168.0.1");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://192.168.0.257");
+            system::result<url> ref = parse_uri_reference("http://192.168.0.257");
             BOOST_TEST(ref);
         }();
         // Invalid escaping in hosts causes failure
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("http://%3g%78%63%30%2e%30%32%35%30%2E.01");
+            system::result<url> ref = parse_uri_reference("http://%3g%78%63%30%2e%30%32%35%30%2E.01");
             BOOST_TEST_NOT(ref);
         }();
         // A space in a host causes failure
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("http://192.168.0.1 hello");
+            system::result<url> ref = parse_uri_reference("http://192.168.0.1 hello");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("https://x x:12");
+            system::result<url> ref = parse_uri_reference("https://x x:12");
             BOOST_TEST_NOT(ref);
         }();
         // Fullwidth and escaped UTF-8 fullwidth should still be treated as IP
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://０Ｘｃ０．０２５０．０１");
+            // system::result<url> ref = parse_uri_reference("http://０Ｘｃ０．０２５０．０１");
             // BOOST_TEST_NOT(ref);
         }();
         // Domains with empty labels
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://./");
+            system::result<url> ref = parse_uri_reference("http://./");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4224,14 +4224,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://../");
+            system::result<url> ref = parse_uri_reference("http://../");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4242,14 +4242,14 @@ struct ada_test
         }();
         // Non-special domains with empty labels
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("h://.");
+            system::result<url> ref = parse_uri_reference("h://.");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4259,74 +4259,74 @@ struct ada_test
         }();
         // Broken IPv6
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://[www.google.com]/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://[www.google.com]/");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://[google.com]");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://[google.com]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://[::1.2.3.4x]");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://[::1.2.3.4x]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://[::1.2.3.]");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://[::1.2.3.]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://[::1.2.]");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://[::1.2.]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://[::.1.2]");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://[::.1.2]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://[::1.]");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://[::1.]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://[::.1]");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://[::.1]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://[::%31]");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://[::%31]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://%5B::1]");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://%5B::1]");
             BOOST_TEST_NOT(base && ref);
         }();
         // Misc Unicode
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://foo:💩@example.com/bar");
+            // system::result<url> ref = parse_uri_reference("http://foo:💩@example.com/bar");
             // BOOST_TEST_NOT(ref);
         }();
         // resolving a fragment against any scheme succeeds
         []{
-            result<url> base = parse_uri("test:test");
+            system::result<url> base = parse_uri("test:test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#");
+            system::result<url> ref = parse_uri_reference("#");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4335,14 +4335,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "test");
         }();
         []{
-            result<url> base = parse_uri("mailto:x@x.com");
+            system::result<url> base = parse_uri("mailto:x@x.com");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#x");
+            system::result<url> ref = parse_uri_reference("#x");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4352,14 +4352,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "x");
         }();
         []{
-            result<url> base = parse_uri("data:,");
+            system::result<url> base = parse_uri("data:,");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#x");
+            system::result<url> ref = parse_uri_reference("#x");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4369,14 +4369,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "x");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#x");
+            system::result<url> ref = parse_uri_reference("#x");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4386,14 +4386,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "x");
         }();
         []{
-            result<url> base = parse_uri("test:test?test");
+            system::result<url> base = parse_uri("test:test?test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#");
+            system::result<url> ref = parse_uri_reference("#");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4404,43 +4404,43 @@ struct ada_test
         }();
         // multiple @ in authority state
         []{
-            result<url> base = parse_uri("http://doesnotmatter/");
+            system::result<url> base = parse_uri("http://doesnotmatter/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support multiple "@" in the authority
             // Ada and Node.js would consider the last "@" as the separator
-            result<url> ref = parse_uri_reference("https://@test@test@example:800/");
+            system::result<url> ref = parse_uri_reference("https://@test@test@example:800/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://doesnotmatter/");
+            system::result<url> base = parse_uri("http://doesnotmatter/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support multiple "@" in the authority
             // Ada and Node.js would consider the last "@" as the separator
-            result<url> ref = parse_uri_reference("https://@@@example");
+            system::result<url> ref = parse_uri_reference("https://@@@example");
             BOOST_TEST_NOT(ref);
         }();
         // non-az-09 characters
         []{
-            result<url> base = parse_uri("http://doesnotmatter/");
+            system::result<url> base = parse_uri("http://doesnotmatter/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid authority char "`"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://`{}:`{}@h/`{}?`{}");
+            system::result<url> ref = parse_uri_reference("http://`{}:`{}@h/`{}?`{}");
             BOOST_TEST_NOT(ref);
         }();
         // byte is ' and url is special
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://host/?'");
+            system::result<url> ref = parse_uri_reference("http://host/?'");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4451,14 +4451,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "'");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("notspecial://host/?'");
+            system::result<url> ref = parse_uri_reference("notspecial://host/?'");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4470,14 +4470,14 @@ struct ada_test
         }();
         // Credentials in base
         []{
-            result<url> base = parse_uri("http://user@example.org/smth");
+            system::result<url> base = parse_uri("http://user@example.org/smth");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/some/path");
+            system::result<url> ref = parse_uri_reference("/some/path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4488,22 +4488,22 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/some/path");
         }();
         []{
-            result<url> base = parse_uri("http://user:pass@example.org:21/smth");
+            system::result<url> base = parse_uri("http://user:pass@example.org:21/smth");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not fail on empty references
-            result<url> ref = parse_uri_reference("");
+            system::result<url> ref = parse_uri_reference("");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("http://user:pass@example.org:21/smth");
+            system::result<url> base = parse_uri("http://user:pass@example.org:21/smth");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/some/path");
+            system::result<url> ref = parse_uri_reference("/some/path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4516,14 +4516,14 @@ struct ada_test
         }();
         // a set of tests designed by zcorpan for relative URLs with unknown schemes
         []{
-            result<url> base = parse_uri("sc:/pa/pa");
+            system::result<url> base = parse_uri("sc:/pa/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("i");
+            system::result<url> ref = parse_uri_reference("i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4532,14 +4532,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/pa/i");
         }();
         []{
-            result<url> base = parse_uri("sc://ho/pa");
+            system::result<url> base = parse_uri("sc://ho/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("i");
+            system::result<url> ref = parse_uri_reference("i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4549,14 +4549,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/i");
         }();
         []{
-            result<url> base = parse_uri("sc:///pa/pa");
+            system::result<url> base = parse_uri("sc:///pa/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("i");
+            system::result<url> ref = parse_uri_reference("i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4565,14 +4565,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/pa/i");
         }();
         []{
-            result<url> base = parse_uri("sc:/pa/pa");
+            system::result<url> base = parse_uri("sc:/pa/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("../i");
+            system::result<url> ref = parse_uri_reference("../i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4581,14 +4581,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/i");
         }();
         []{
-            result<url> base = parse_uri("sc://ho/pa");
+            system::result<url> base = parse_uri("sc://ho/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("../i");
+            system::result<url> ref = parse_uri_reference("../i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4602,14 +4602,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/i");
         }();
         []{
-            result<url> base = parse_uri("sc:///pa/pa");
+            system::result<url> base = parse_uri("sc:///pa/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("../i");
+            system::result<url> ref = parse_uri_reference("../i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4618,14 +4618,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/i");
         }();
         []{
-            result<url> base = parse_uri("sc:/pa/pa");
+            system::result<url> base = parse_uri("sc:/pa/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/i");
+            system::result<url> ref = parse_uri_reference("/i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4634,14 +4634,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/i");
         }();
         []{
-            result<url> base = parse_uri("sc://ho/pa");
+            system::result<url> base = parse_uri("sc://ho/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/i");
+            system::result<url> ref = parse_uri_reference("/i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4651,14 +4651,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/i");
         }();
         []{
-            result<url> base = parse_uri("sc:///pa/pa");
+            system::result<url> base = parse_uri("sc:///pa/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/i");
+            system::result<url> ref = parse_uri_reference("/i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4667,14 +4667,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/i");
         }();
         []{
-            result<url> base = parse_uri("sc:/pa/pa");
+            system::result<url> base = parse_uri("sc:/pa/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("?i");
+            system::result<url> ref = parse_uri_reference("?i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4684,14 +4684,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "i");
         }();
         []{
-            result<url> base = parse_uri("sc://ho/pa");
+            system::result<url> base = parse_uri("sc://ho/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("?i");
+            system::result<url> ref = parse_uri_reference("?i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4702,14 +4702,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "i");
         }();
         []{
-            result<url> base = parse_uri("sc:///pa/pa");
+            system::result<url> base = parse_uri("sc:///pa/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("?i");
+            system::result<url> ref = parse_uri_reference("?i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4719,14 +4719,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "i");
         }();
         []{
-            result<url> base = parse_uri("sc:sd");
+            system::result<url> base = parse_uri("sc:sd");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#i");
+            system::result<url> ref = parse_uri_reference("#i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4736,14 +4736,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "i");
         }();
         []{
-            result<url> base = parse_uri("sc:sd/sd");
+            system::result<url> base = parse_uri("sc:sd/sd");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#i");
+            system::result<url> ref = parse_uri_reference("#i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4753,14 +4753,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "i");
         }();
         []{
-            result<url> base = parse_uri("sc:/pa/pa");
+            system::result<url> base = parse_uri("sc:/pa/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#i");
+            system::result<url> ref = parse_uri_reference("#i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4770,14 +4770,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "i");
         }();
         []{
-            result<url> base = parse_uri("sc://ho/pa");
+            system::result<url> base = parse_uri("sc://ho/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#i");
+            system::result<url> ref = parse_uri_reference("#i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4788,14 +4788,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "i");
         }();
         []{
-            result<url> base = parse_uri("sc:///pa/pa");
+            system::result<url> base = parse_uri("sc:///pa/pa");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#i");
+            system::result<url> ref = parse_uri_reference("#i");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4806,14 +4806,14 @@ struct ada_test
         }();
         // make sure that relative URL logic works on known typically non-relative schemes too
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("about:/../");
+            system::result<url> ref = parse_uri_reference("about:/../");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4826,14 +4826,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("data:/../");
+            system::result<url> ref = parse_uri_reference("data:/../");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4846,14 +4846,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("javascript:/../");
+            system::result<url> ref = parse_uri_reference("javascript:/../");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4866,14 +4866,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("mailto:/../");
+            system::result<url> ref = parse_uri_reference("mailto:/../");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4887,73 +4887,73 @@ struct ada_test
         }();
         // unknown schemes and their hosts
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("sc://ñ.test/");
+            // system::result<url> ref = parse_uri_reference("sc://ñ.test/");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("sc://%/");
+            system::result<url> ref = parse_uri_reference("sc://%/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("sc://@/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("sc://@/");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support multiple "@" in the authority
             // Ada and Node.js would consider the last "@" as the separator
-            result<url> ref = parse_uri_reference("sc://te@s:t@/");
+            system::result<url> ref = parse_uri_reference("sc://te@s:t@/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("sc://:/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("sc://:/");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("sc://:12/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("sc://:12/");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
             // Boost.URL does not support unicode
-            // result<url> base = parse_uri("sc://ñ");
+            // system::result<url> base = parse_uri("sc://ñ");
             // BOOST_TEST_NOT(base);
         }();
         // unknown schemes and backslashes
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("sc:\\../");
+            system::result<url> ref = parse_uri_reference("sc:\\../");
             BOOST_TEST_NOT(ref);
         }();
         // unknown scheme with path looking like a password
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("sc::a@example.net");
+            system::result<url> ref = parse_uri_reference("sc::a@example.net");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -4963,747 +4963,747 @@ struct ada_test
         }();
         // unknown scheme with bogus percent-encoding
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("wow:%NBD");
+            system::result<url> ref = parse_uri_reference("wow:%NBD");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("wow:%1G");
+            system::result<url> ref = parse_uri_reference("wow:%1G");
             BOOST_TEST_NOT(ref);
         }();
         // unknown scheme with non-URL characters
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("wow:\uffff");
+            // system::result<url> ref = parse_uri_reference("wow:\uffff");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://example.com/\ud800\U000107fe\udfff\ufdd0\ufdcf\ufdefﷰ\ufffe\uffff?\ud800\U000107fe\udfff\ufdd0\ufdcf\ufdefﷰ\ufffe\uffff");
+            // system::result<url> ref = parse_uri_reference("http://example.com/\ud800\U000107fe\udfff\ufdd0\ufdcf\ufdefﷰ\ufffe\uffff?\ud800\U000107fe\udfff\ufdd0\ufdcf\ufdefﷰ\ufffe\uffff");
             // BOOST_TEST_NOT(ref);
         }();
         // Forbidden host code points
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("sc://a\x00" "b/");
+            // system::result<url> ref = parse_uri_reference("sc://a\x00" "b/");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("sc://a b/");
+            system::result<url> ref = parse_uri_reference("sc://a b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char "<"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("sc://a<b");
+            system::result<url> ref = parse_uri_reference("sc://a<b");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char ">"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("sc://a>b");
+            system::result<url> ref = parse_uri_reference("sc://a>b");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("sc://a[b/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("sc://a[b/");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("sc://a\\b/");
+            system::result<url> ref = parse_uri_reference("sc://a\\b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("sc://a]b/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("sc://a]b/");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char "^"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("sc://a^b");
+            system::result<url> ref = parse_uri_reference("sc://a^b");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char "|"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("sc://a|b/");
+            system::result<url> ref = parse_uri_reference("sc://a|b/");
             BOOST_TEST_NOT(ref);
         }();
         // Forbidden host codepoints: tabs and newlines are removed during preprocessing
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("foo://ho\tst/");
+            system::result<url> ref = parse_uri_reference("foo://ho\tst/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("foo://ho\nst/");
+            system::result<url> ref = parse_uri_reference("foo://ho\nst/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("foo://ho\rst/");
+            system::result<url> ref = parse_uri_reference("foo://ho\rst/");
             BOOST_TEST_NOT(ref);
         }();
         // Forbidden domain code-points
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("http://a\x00" "b/");
+            // system::result<url> ref = parse_uri_reference("http://a\x00" "b/");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x01
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x01" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x01" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x02
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x02" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x02" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x03
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x03" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x03" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x04
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x04" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x04" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x05
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x05" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x05" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x06
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x06" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x06" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://a\x07" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x07" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://a\x08" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x08" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://a\x0b" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x0b" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://a\x0c" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x0c" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x0e
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x0e" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x0e" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x0f
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x0f" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x0f" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x10
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x10" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x10" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x11
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x11" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x11" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x12
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x12" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x12" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x13
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x13" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x13" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x14
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x14" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x14" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x15
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x15" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x15" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x16
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x16" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x16" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x17
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x17" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x17" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x18
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x18" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x18" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x19
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x19" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x19" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x1a
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x1a" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x1a" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x1b
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x1b" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x1b" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x1c
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x1c" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x1c" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x1d
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x1d" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x1d" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x1e
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x1e" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x1e" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x1f
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x1f" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x1f" "b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("http://a b/");
+            system::result<url> ref = parse_uri_reference("http://a b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("http://a%b/");
+            system::result<url> ref = parse_uri_reference("http://a%b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char "<"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a<b");
+            system::result<url> ref = parse_uri_reference("http://a<b");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char ">"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a>b");
+            system::result<url> ref = parse_uri_reference("http://a>b");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://a[b/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://a[b/");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://a]b/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://a]b/");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char "^"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a^b");
+            system::result<url> ref = parse_uri_reference("http://a^b");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char "|"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a|b/");
+            system::result<url> ref = parse_uri_reference("http://a|b/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char \x7f
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://a\x7f" "b/");
+            system::result<url> ref = parse_uri_reference("http://a\x7f" "b/");
             BOOST_TEST_NOT(ref);
         }();
         // Forbidden domain codepoints: tabs and newlines are removed during preprocessing
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://ho\tst/");
+            system::result<url> ref = parse_uri_reference("http://ho\tst/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://ho\nst/");
+            system::result<url> ref = parse_uri_reference("http://ho\nst/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://ho\rst/");
+            system::result<url> ref = parse_uri_reference("http://ho\rst/");
             BOOST_TEST_NOT(ref);
         }();
         // Encoded forbidden domain codepoints in special URLs
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%00st/");
+            system::result<url> ref = parse_uri_reference("http://ho%00st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%01st/");
+            system::result<url> ref = parse_uri_reference("http://ho%01st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%02st/");
+            system::result<url> ref = parse_uri_reference("http://ho%02st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%03st/");
+            system::result<url> ref = parse_uri_reference("http://ho%03st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%04st/");
+            system::result<url> ref = parse_uri_reference("http://ho%04st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%05st/");
+            system::result<url> ref = parse_uri_reference("http://ho%05st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%06st/");
+            system::result<url> ref = parse_uri_reference("http://ho%06st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%07st/");
+            system::result<url> ref = parse_uri_reference("http://ho%07st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%08st/");
+            system::result<url> ref = parse_uri_reference("http://ho%08st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%09st/");
+            system::result<url> ref = parse_uri_reference("http://ho%09st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%0Ast/");
+            system::result<url> ref = parse_uri_reference("http://ho%0Ast/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%0Bst/");
+            system::result<url> ref = parse_uri_reference("http://ho%0Bst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%0Cst/");
+            system::result<url> ref = parse_uri_reference("http://ho%0Cst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%0Dst/");
+            system::result<url> ref = parse_uri_reference("http://ho%0Dst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%0Est/");
+            system::result<url> ref = parse_uri_reference("http://ho%0Est/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%0Fst/");
+            system::result<url> ref = parse_uri_reference("http://ho%0Fst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%10st/");
+            system::result<url> ref = parse_uri_reference("http://ho%10st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%11st/");
+            system::result<url> ref = parse_uri_reference("http://ho%11st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%12st/");
+            system::result<url> ref = parse_uri_reference("http://ho%12st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%13st/");
+            system::result<url> ref = parse_uri_reference("http://ho%13st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%14st/");
+            system::result<url> ref = parse_uri_reference("http://ho%14st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%15st/");
+            system::result<url> ref = parse_uri_reference("http://ho%15st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%16st/");
+            system::result<url> ref = parse_uri_reference("http://ho%16st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%17st/");
+            system::result<url> ref = parse_uri_reference("http://ho%17st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%18st/");
+            system::result<url> ref = parse_uri_reference("http://ho%18st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%19st/");
+            system::result<url> ref = parse_uri_reference("http://ho%19st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%1Ast/");
+            system::result<url> ref = parse_uri_reference("http://ho%1Ast/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%1Bst/");
+            system::result<url> ref = parse_uri_reference("http://ho%1Bst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%1Cst/");
+            system::result<url> ref = parse_uri_reference("http://ho%1Cst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%1Dst/");
+            system::result<url> ref = parse_uri_reference("http://ho%1Dst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%1Est/");
+            system::result<url> ref = parse_uri_reference("http://ho%1Est/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%1Fst/");
+            system::result<url> ref = parse_uri_reference("http://ho%1Fst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%20st/");
+            system::result<url> ref = parse_uri_reference("http://ho%20st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%23st/");
+            system::result<url> ref = parse_uri_reference("http://ho%23st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%25st/");
+            system::result<url> ref = parse_uri_reference("http://ho%25st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%2Fst/");
+            system::result<url> ref = parse_uri_reference("http://ho%2Fst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%3Ast/");
+            system::result<url> ref = parse_uri_reference("http://ho%3Ast/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%3Cst/");
+            system::result<url> ref = parse_uri_reference("http://ho%3Cst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%3Est/");
+            system::result<url> ref = parse_uri_reference("http://ho%3Est/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%3Fst/");
+            system::result<url> ref = parse_uri_reference("http://ho%3Fst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%40st/");
+            system::result<url> ref = parse_uri_reference("http://ho%40st/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%5Bst/");
+            system::result<url> ref = parse_uri_reference("http://ho%5Bst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%5Cst/");
+            system::result<url> ref = parse_uri_reference("http://ho%5Cst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%5Dst/");
+            system::result<url> ref = parse_uri_reference("http://ho%5Dst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%7Cst/");
+            system::result<url> ref = parse_uri_reference("http://ho%7Cst/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("http://ho%7Fst/");
+            system::result<url> ref = parse_uri_reference("http://ho%7Fst/");
             BOOST_TEST(ref);
         }();
         // Allowed host/domain code points
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid authority char """
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://!\"$&\'()*+,-.;=_`{}~/");
+            system::result<url> ref = parse_uri_reference("http://!\"$&\'()*+,-.;=_`{}~/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("sc://\x01" "\x02" "\x03" "\x04" "\x05" "\x06" "\x07" "\x08" "\x0b" "\x0c" "\x0e" "\x0f" "\x10" "\x11" "\x12" "\x13" "\x14" "\x15" "\x16" "\x17" "\x18" "\x19" "\x1a" "\x1b" "\x1c" "\x1d" "\x1e" "\x1f" "\x7f" "!\"$%&\'()*+,-.;=_`{}~/");
+            system::result<url> ref = parse_uri_reference("sc://\x01" "\x02" "\x03" "\x04" "\x05" "\x06" "\x07" "\x08" "\x0b" "\x0c" "\x0e" "\x0f" "\x10" "\x11" "\x12" "\x13" "\x14" "\x15" "\x16" "\x17" "\x18" "\x19" "\x1a" "\x1b" "\x1c" "\x1d" "\x1e" "\x1f" "\x7f" "!\"$%&\'()*+,-.;=_`{}~/");
             BOOST_TEST_NOT(ref);
         }();
         // Hosts and percent-encoding
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("ftp://example.com%80/");
+            system::result<url> ref = parse_uri_reference("ftp://example.com%80/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("ftp://example.com%A0/");
+            system::result<url> ref = parse_uri_reference("ftp://example.com%A0/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("https://example.com%80/");
+            system::result<url> ref = parse_uri_reference("https://example.com%80/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("https://example.com%A0/");
+            system::result<url> ref = parse_uri_reference("https://example.com%A0/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("ftp://%e2%98%83");
+            system::result<url> ref = parse_uri_reference("ftp://%e2%98%83");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("https://%e2%98%83");
+            system::result<url> ref = parse_uri_reference("https://%e2%98%83");
             BOOST_TEST(ref);
         }();
         // tests from jsdom/whatwg-url designed for code coverage
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://127.0.0.1:10100/relative_import.html");
+            system::result<url> ref = parse_uri_reference("http://127.0.0.1:10100/relative_import.html");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5713,14 +5713,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/relative_import.html");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://facebook.com/?foo=%7B%22abc%22");
+            system::result<url> ref = parse_uri_reference("http://facebook.com/?foo=%7B%22abc%22");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5731,14 +5731,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "foo=%7B%22abc%22");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("https://localhost:3000/jqueryui@1.2.3");
+            system::result<url> ref = parse_uri_reference("https://localhost:3000/jqueryui@1.2.3");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5750,23 +5750,23 @@ struct ada_test
         }();
         // tab/LF/CR
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("h\tt\nt\rp://h\to\ns\rt:9\t0\n0\r0/p\ta\nt\rh?q\tu\ne\rry#f\tr\na\rg");
+            system::result<url> ref = parse_uri_reference("h\tt\nt\rp://h\to\ns\rt:9\t0\n0\r0/p\ta\nt\rh?q\tu\ne\rry#f\tr\na\rg");
             BOOST_TEST_NOT(ref);
         }();
         // Stringification of URL.searchParams
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("?a=b&c=d");
+            system::result<url> ref = parse_uri_reference("?a=b&c=d");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5777,14 +5777,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "a=b&c=d");
         }();
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("??a=b&c=d");
+            system::result<url> ref = parse_uri_reference("??a=b&c=d");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5796,14 +5796,14 @@ struct ada_test
         }();
         // Scheme only
         []{
-            result<url> base = parse_uri("http://example.org/foo/bar");
+            system::result<url> base = parse_uri("http://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http:");
+            system::result<url> ref = parse_uri_reference("http:");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5813,22 +5813,22 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/bar");
         }();
         []{
-            result<url> base = parse_uri("https://example.org/foo/bar");
-            result<url> ref = parse_uri_reference("http:");
+            system::result<url> base = parse_uri("https://example.org/foo/bar");
+            system::result<url> ref = parse_uri_reference("http:");
             // Boost.URL does validate individual schemes
             // Ada and Node.js fail on "http:" with no authority
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("https://example.org/foo/bar");
+            system::result<url> base = parse_uri("https://example.org/foo/bar");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("sc:");
+            system::result<url> ref = parse_uri_reference("sc:");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5837,59 +5837,59 @@ struct ada_test
         }();
         // Percent encoding of fragments
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("http://foo.bar/baz?qux#foo\x08" "bar");
+            system::result<url> ref = parse_uri_reference("http://foo.bar/baz?qux#foo\x08" "bar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid fragment char """
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://foo.bar/baz?qux#foo\"bar");
+            system::result<url> ref = parse_uri_reference("http://foo.bar/baz?qux#foo\"bar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid fragment char "<"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://foo.bar/baz?qux#foo<bar");
+            system::result<url> ref = parse_uri_reference("http://foo.bar/baz?qux#foo<bar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid fragment char ">"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://foo.bar/baz?qux#foo>bar");
+            system::result<url> ref = parse_uri_reference("http://foo.bar/baz?qux#foo>bar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid fragment char "`"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://foo.bar/baz?qux#foo`bar");
+            system::result<url> ref = parse_uri_reference("http://foo.bar/baz?qux#foo`bar");
             BOOST_TEST_NOT(ref);
         }();
         // IPv4 parsing (via https://github.com/nodejs/node/pull/10317)
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://1.2.3.4/");
+            system::result<url> ref = parse_uri_reference("http://1.2.3.4/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5898,14 +5898,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://1.2.3.4./");
+            system::result<url> ref = parse_uri_reference("http://1.2.3.4./");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5914,14 +5914,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://192.168.257");
+            system::result<url> ref = parse_uri_reference("http://192.168.257");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5932,14 +5932,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "192.168.1.1");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://192.168.257.");
+            system::result<url> ref = parse_uri_reference("http://192.168.257.");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5950,14 +5950,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "192.168.1.1");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://192.168.257.com");
+            system::result<url> ref = parse_uri_reference("http://192.168.257.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5968,14 +5968,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://256");
+            system::result<url> ref = parse_uri_reference("http://256");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -5986,14 +5986,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "0.0.1.0");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://256.com");
+            system::result<url> ref = parse_uri_reference("http://256.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6004,14 +6004,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://999999999");
+            system::result<url> ref = parse_uri_reference("http://999999999");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6022,14 +6022,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "59.154.201.255");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://999999999.");
+            system::result<url> ref = parse_uri_reference("http://999999999.");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6040,14 +6040,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "59.154.201.255");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://999999999.com");
+            system::result<url> ref = parse_uri_reference("http://999999999.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6058,21 +6058,21 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
-            result<url> ref = parse_uri_reference("http://10000000000");
+            system::result<url> base = parse_uri("http://other.com/");
+            system::result<url> ref = parse_uri_reference("http://10000000000");
             // Boost.URL does not fail on port overflow
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://10000000000.com");
+            system::result<url> ref = parse_uri_reference("http://10000000000.com");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6083,14 +6083,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://4294967295");
+            system::result<url> ref = parse_uri_reference("http://4294967295");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6101,20 +6101,20 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "255.255.255.255");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL does support invalid IDNA
-            result<url> ref = parse_uri_reference("http://4294967296");
+            system::result<url> ref = parse_uri_reference("http://4294967296");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://0xffffffff");
+            system::result<url> ref = parse_uri_reference("http://0xffffffff");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6125,28 +6125,28 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "255.255.255.255");
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://0xffffffff1");
+            system::result<url> ref = parse_uri_reference("http://0xffffffff1");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://256.256.256.256");
+            system::result<url> ref = parse_uri_reference("http://256.256.256.256");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("https://0x.0x.0");
+            system::result<url> ref = parse_uri_reference("https://0x.0x.0");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6158,29 +6158,29 @@ struct ada_test
         }();
         // More IPv4 parsing (via https://github.com/jsdom/whatwg-url/issues/92)
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("https://0x100000000/test");
+            system::result<url> ref = parse_uri_reference("https://0x100000000/test");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("https://256.0.0.1/test");
+            system::result<url> ref = parse_uri_reference("https://256.0.0.1/test");
             BOOST_TEST(ref);
         }();
         // file URLs containing percent-encoded Windows drive letters (shouldn't work)
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///C%3A/");
+            system::result<url> ref = parse_uri_reference("file:///C%3A/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6191,14 +6191,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/C:/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///C%7C/");
+            system::result<url> ref = parse_uri_reference("file:///C%7C/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6207,67 +6207,67 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/C%7C/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("file://%43%3A");
+            system::result<url> ref = parse_uri_reference("file://%43%3A");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("file://%43%7C");
+            system::result<url> ref = parse_uri_reference("file://%43%7C");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char "|"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("file://%43|");
+            system::result<url> ref = parse_uri_reference("file://%43|");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("file://C%7C");
+            system::result<url> ref = parse_uri_reference("file://C%7C");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("file://%43%7C/");
+            system::result<url> ref = parse_uri_reference("file://%43%7C/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("https://%43%7C/");
+            system::result<url> ref = parse_uri_reference("https://%43%7C/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support invalid authority char "|"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("asdf://%43|/");
+            system::result<url> ref = parse_uri_reference("asdf://%43|/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does support invalid encoded chars
-            result<url> ref = parse_uri_reference("asdf://%43%7C/");
+            system::result<url> ref = parse_uri_reference("asdf://%43%7C/");
             BOOST_TEST(ref);
         }();
         // file URLs relative to other file URLs (via https://github.com/jsdom/whatwg-url/pull/60)
         []{
-            result<url> base = parse_uri("file:///C:/Users/Domenic/Dropbox/GitHub/tmpvar/jsdom/test/level2/html/files/anchor.html");
+            system::result<url> base = parse_uri("file:///C:/Users/Domenic/Dropbox/GitHub/tmpvar/jsdom/test/level2/html/files/anchor.html");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("pix/submit.gif");
+            system::result<url> ref = parse_uri_reference("pix/submit.gif");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6276,14 +6276,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/C:/Users/Domenic/Dropbox/GitHub/tmpvar/jsdom/test/level2/html/files/pix/submit.gif");
         }();
         []{
-            result<url> base = parse_uri("file:///C:/");
+            system::result<url> base = parse_uri("file:///C:/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("..");
+            system::result<url> ref = parse_uri_reference("..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6291,14 +6291,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "file:///C:/");
         }();
         []{
-            result<url> base = parse_uri("file:///");
+            system::result<url> base = parse_uri("file:///");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("..");
+            system::result<url> ref = parse_uri_reference("..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6309,14 +6309,14 @@ struct ada_test
         }();
         // More file URL tests by zcorpan and annevk
         []{
-            result<url> base = parse_uri("file:///C:/a/b");
+            system::result<url> base = parse_uri("file:///C:/a/b");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/");
+            system::result<url> ref = parse_uri_reference("/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6324,14 +6324,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "file:///C:/");
         }();
         []{
-            result<url> base = parse_uri("file://h/C:/a/b");
+            system::result<url> base = parse_uri("file://h/C:/a/b");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/");
+            system::result<url> ref = parse_uri_reference("/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6339,14 +6339,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "file://h/C:/");
         }();
         []{
-            result<url> base = parse_uri("file://h/a/b");
+            system::result<url> base = parse_uri("file://h/a/b");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/");
+            system::result<url> ref = parse_uri_reference("/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6356,14 +6356,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("file:///C:/a/b");
+            system::result<url> base = parse_uri("file:///C:/a/b");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("//d:");
+            system::result<url> ref = parse_uri_reference("//d:");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6371,14 +6371,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "file:///d:");
         }();
         []{
-            result<url> base = parse_uri("file:///C:/a/b");
+            system::result<url> base = parse_uri("file:///C:/a/b");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("//d:/..");
+            system::result<url> ref = parse_uri_reference("//d:/..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6386,14 +6386,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "file:///d:/");
         }();
         []{
-            result<url> base = parse_uri("file:///ab:/");
+            system::result<url> base = parse_uri("file:///ab:/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("..");
+            system::result<url> ref = parse_uri_reference("..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6403,14 +6403,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("file:///1:/");
+            system::result<url> base = parse_uri("file:///1:/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("..");
+            system::result<url> ref = parse_uri_reference("..");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6420,22 +6420,22 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("file:///test?test#test");
+            system::result<url> base = parse_uri("file:///test?test#test");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not fail on empty references
-            result<url> ref = parse_uri_reference("");
+            system::result<url> ref = parse_uri_reference("");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("file:///test?test#test");
+            system::result<url> base = parse_uri("file:///test?test#test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:");
+            system::result<url> ref = parse_uri_reference("file:");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6445,14 +6445,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "test");
         }();
         []{
-            result<url> base = parse_uri("file:///test?test#test");
+            system::result<url> base = parse_uri("file:///test?test#test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("?x");
+            system::result<url> ref = parse_uri_reference("?x");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6462,14 +6462,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "x");
         }();
         []{
-            result<url> base = parse_uri("file:///test?test#test");
+            system::result<url> base = parse_uri("file:///test?test#test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:?x");
+            system::result<url> ref = parse_uri_reference("file:?x");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6479,14 +6479,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "x");
         }();
         []{
-            result<url> base = parse_uri("file:///test?test#test");
+            system::result<url> base = parse_uri("file:///test?test#test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#x");
+            system::result<url> ref = parse_uri_reference("#x");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6497,14 +6497,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "x");
         }();
         []{
-            result<url> base = parse_uri("file:///test?test#test");
+            system::result<url> base = parse_uri("file:///test?test#test");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:#x");
+            system::result<url> ref = parse_uri_reference("file:#x");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6516,46 +6516,46 @@ struct ada_test
         }();
         // File URLs and many (back)slashes
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("file:\\\\//");
+            system::result<url> ref = parse_uri_reference("file:\\\\//");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("file:\\\\\\\\");
+            system::result<url> ref = parse_uri_reference("file:\\\\\\\\");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("file:\\\\\\\\?fox");
+            system::result<url> ref = parse_uri_reference("file:\\\\\\\\?fox");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("file:\\\\\\\\#guppy");
+            system::result<url> ref = parse_uri_reference("file:\\\\\\\\#guppy");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://spider///");
+            system::result<url> ref = parse_uri_reference("file://spider///");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6565,22 +6565,22 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "///");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("file:\\\\localhost//");
+            system::result<url> ref = parse_uri_reference("file:\\\\localhost//");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///localhost//cat");
+            system::result<url> ref = parse_uri_reference("file:///localhost//cat");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6589,22 +6589,22 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/localhost//cat");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("file://\\/localhost//cat");
+            system::result<url> ref = parse_uri_reference("file://\\/localhost//cat");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://localhost//a//../..//");
+            system::result<url> ref = parse_uri_reference("file://localhost//a//../..//");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6613,14 +6613,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "///");
         }();
         []{
-            result<url> base = parse_uri("file:///elephant");
+            system::result<url> base = parse_uri("file:///elephant");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/////mouse");
+            system::result<url> ref = parse_uri_reference("/////mouse");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6629,30 +6629,30 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "///mouse");
         }();
         []{
-            result<url> base = parse_uri("file://lion/");
+            system::result<url> base = parse_uri("file://lion/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("\\//pig");
+            system::result<url> ref = parse_uri_reference("\\//pig");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file://lion/");
+            system::result<url> base = parse_uri("file://lion/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("\\/localhost//pig");
+            system::result<url> ref = parse_uri_reference("\\/localhost//pig");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file://lion/");
+            system::result<url> base = parse_uri("file://lion/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("//localhost//pig");
+            system::result<url> ref = parse_uri_reference("//localhost//pig");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6660,14 +6660,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "file:////pig");
         }();
         []{
-            result<url> base = parse_uri("file://lion/");
+            system::result<url> base = parse_uri("file://lion/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/..//localhost//pig");
+            system::result<url> ref = parse_uri_reference("/..//localhost//pig");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6675,14 +6675,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "file://lion//localhost//pig");
         }();
         []{
-            result<url> base = parse_uri("file://ape/");
+            system::result<url> base = parse_uri("file://ape/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://");
+            system::result<url> ref = parse_uri_reference("file://");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6691,14 +6691,14 @@ struct ada_test
         }();
         // File URLs with non-empty hosts
         []{
-            result<url> base = parse_uri("file://tea/");
+            system::result<url> base = parse_uri("file://tea/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/rooibos");
+            system::result<url> ref = parse_uri_reference("/rooibos");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6708,14 +6708,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/rooibos");
         }();
         []{
-            result<url> base = parse_uri("file://tea/");
+            system::result<url> base = parse_uri("file://tea/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/?chai");
+            system::result<url> ref = parse_uri_reference("/?chai");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6727,70 +6727,70 @@ struct ada_test
         }();
         // Windows drive letter handling with the 'file:' base URL
         []{
-            result<url> base = parse_uri("file://host/dir/file");
+            system::result<url> base = parse_uri("file://host/dir/file");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "|" in paths
-            result<url> ref = parse_uri_reference("C|");
+            system::result<url> ref = parse_uri_reference("C|");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file://host/D:/dir1/dir2/file");
+            system::result<url> base = parse_uri("file://host/D:/dir1/dir2/file");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "|" in paths
-            result<url> ref = parse_uri_reference("C|");
+            system::result<url> ref = parse_uri_reference("C|");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file://host/dir/file");
+            system::result<url> base = parse_uri("file://host/dir/file");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "|" in paths
-            result<url> ref = parse_uri_reference("C|#");
+            system::result<url> ref = parse_uri_reference("C|#");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file://host/dir/file");
+            system::result<url> base = parse_uri("file://host/dir/file");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "|" in paths
-            result<url> ref = parse_uri_reference("C|?");
+            system::result<url> ref = parse_uri_reference("C|?");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file://host/dir/file");
+            system::result<url> base = parse_uri("file://host/dir/file");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "|" in paths
-            result<url> ref = parse_uri_reference("C|/");
+            system::result<url> ref = parse_uri_reference("C|/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file://host/dir/file");
+            system::result<url> base = parse_uri("file://host/dir/file");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("C|\n/");
+            system::result<url> ref = parse_uri_reference("C|\n/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file://host/dir/file");
+            system::result<url> base = parse_uri("file://host/dir/file");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("C|\\");
+            system::result<url> ref = parse_uri_reference("C|\\");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file://host/dir/file");
+            system::result<url> base = parse_uri("file://host/dir/file");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("C");
+            system::result<url> ref = parse_uri_reference("C");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6800,23 +6800,23 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/dir/C");
         }();
         []{
-            result<url> base = parse_uri("file://host/dir/file");
+            system::result<url> base = parse_uri("file://host/dir/file");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "|" in paths
-            result<url> ref = parse_uri_reference("C|a");
+            system::result<url> ref = parse_uri_reference("C|a");
             BOOST_TEST_NOT(ref);
         }();
         // Windows drive letter quirk in the file slash state
         []{
-            result<url> base = parse_uri("file:///c:/baz/qux");
+            system::result<url> base = parse_uri("file:///c:/baz/qux");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/c:/foo/bar");
+            system::result<url> ref = parse_uri_reference("/c:/foo/bar");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6825,30 +6825,30 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/c:/foo/bar");
         }();
         []{
-            result<url> base = parse_uri("file:///c:/baz/qux");
+            system::result<url> base = parse_uri("file:///c:/baz/qux");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "|" in paths
-            result<url> ref = parse_uri_reference("/c|/foo/bar");
+            system::result<url> ref = parse_uri_reference("/c|/foo/bar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file:///c:/baz/qux");
+            system::result<url> base = parse_uri("file:///c:/baz/qux");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("file:\\c:\\foo\\bar");
+            system::result<url> ref = parse_uri_reference("file:\\c:\\foo\\bar");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file://host/path");
+            system::result<url> base = parse_uri("file://host/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/c:/foo/bar");
+            system::result<url> ref = parse_uri_reference("/c:/foo/bar");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6859,14 +6859,14 @@ struct ada_test
         }();
         // Do not drop the host in the presence of a drive letter
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://example.net/C:/");
+            system::result<url> ref = parse_uri_reference("file://example.net/C:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6876,14 +6876,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/C:/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://1.2.3.4/C:/");
+            system::result<url> ref = parse_uri_reference("file://1.2.3.4/C:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6892,14 +6892,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/C:/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://[1::8]/C:/");
+            system::result<url> ref = parse_uri_reference("file://[1::8]/C:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6909,22 +6909,22 @@ struct ada_test
         }();
         // Copy the host from the base URL in the following cases
         []{
-            result<url> base = parse_uri("file://host/");
+            system::result<url> base = parse_uri("file://host/");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "|" in paths
-            result<url> ref = parse_uri_reference("C|/");
+            system::result<url> ref = parse_uri_reference("C|/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("file://host/");
+            system::result<url> base = parse_uri("file://host/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/C:/");
+            system::result<url> ref = parse_uri_reference("/C:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6934,14 +6934,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/C:/");
         }();
         []{
-            result<url> base = parse_uri("file://host/");
+            system::result<url> base = parse_uri("file://host/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:C:/");
+            system::result<url> ref = parse_uri_reference("file:C:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6951,14 +6951,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/C:/");
         }();
         []{
-            result<url> base = parse_uri("file://host/");
+            system::result<url> base = parse_uri("file://host/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:/C:/");
+            system::result<url> ref = parse_uri_reference("file:/C:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6969,14 +6969,14 @@ struct ada_test
         }();
         // Copy the empty host from the input in the following cases
         []{
-            result<url> base = parse_uri("file://host/");
+            system::result<url> base = parse_uri("file://host/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("//C:/");
+            system::result<url> ref = parse_uri_reference("//C:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6984,14 +6984,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "file:///C:/");
         }();
         []{
-            result<url> base = parse_uri("file://host/");
+            system::result<url> base = parse_uri("file://host/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://C:/");
+            system::result<url> ref = parse_uri_reference("file://C:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -6999,14 +6999,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "file:///C:/");
         }();
         []{
-            result<url> base = parse_uri("file://host/");
+            system::result<url> base = parse_uri("file://host/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("///C:/");
+            system::result<url> ref = parse_uri_reference("///C:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7015,14 +7015,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/C:/");
         }();
         []{
-            result<url> base = parse_uri("file://host/");
+            system::result<url> base = parse_uri("file://host/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///C:/");
+            system::result<url> ref = parse_uri_reference("file:///C:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7032,32 +7032,32 @@ struct ada_test
         }();
         // Windows drive letter quirk (no host)
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support "|" in paths
-            result<url> ref = parse_uri_reference("file:/C|/");
+            system::result<url> ref = parse_uri_reference("file:/C|/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid authority char "|"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("file://C|/");
+            system::result<url> ref = parse_uri_reference("file://C|/");
             BOOST_TEST_NOT(ref);
         }();
         // file URLs without base URL by Rimas Misevičius
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:");
+            system::result<url> ref = parse_uri_reference("file:");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7067,14 +7067,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:?q=v");
+            system::result<url> ref = parse_uri_reference("file:?q=v");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7082,14 +7082,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "file:///?q=v");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:#frag");
+            system::result<url> ref = parse_uri_reference("file:#frag");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7098,14 +7098,14 @@ struct ada_test
         }();
         // file: drive letter cases from https://crbug.com/1078698
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///Y:");
+            system::result<url> ref = parse_uri_reference("file:///Y:");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7114,14 +7114,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/Y:");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///Y:/");
+            system::result<url> ref = parse_uri_reference("file:///Y:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7130,14 +7130,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/Y:/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///./Y");
+            system::result<url> ref = parse_uri_reference("file:///./Y");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7146,14 +7146,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/Y");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///./Y:");
+            system::result<url> ref = parse_uri_reference("file:///./Y:");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7162,21 +7162,21 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/Y:");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("\\\\\\.\\Y:");
+            system::result<url> ref = parse_uri_reference("\\\\\\.\\Y:");
             BOOST_TEST_NOT(ref);
         }();
         // file: drive letter cases from https://crbug.com/1078698 but lowercased
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///y:");
+            system::result<url> ref = parse_uri_reference("file:///y:");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7185,14 +7185,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/y:");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///y:/");
+            system::result<url> ref = parse_uri_reference("file:///y:/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7201,14 +7201,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/y:/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///./y");
+            system::result<url> ref = parse_uri_reference("file:///./y");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7217,14 +7217,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/y");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///./y:");
+            system::result<url> ref = parse_uri_reference("file:///./y:");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7233,21 +7233,21 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/y:");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("\\\\\\.\\y:");
+            system::result<url> ref = parse_uri_reference("\\\\\\.\\y:");
             BOOST_TEST_NOT(ref);
         }();
         // Additional file URL tests for (https://github.com/whatwg/url/issues/405)
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://localhost//a//../..//foo");
+            system::result<url> ref = parse_uri_reference("file://localhost//a//../..//foo");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7256,14 +7256,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "///foo");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file://localhost////foo");
+            system::result<url> ref = parse_uri_reference("file://localhost////foo");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7272,14 +7272,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "////foo");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:////foo");
+            system::result<url> ref = parse_uri_reference("file:////foo");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7288,14 +7288,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "//foo");
         }();
         []{
-            result<url> base = parse_uri("file:///");
+            system::result<url> base = parse_uri("file:///");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///one/two");
+            system::result<url> ref = parse_uri_reference("file:///one/two");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7304,14 +7304,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/one/two");
         }();
         []{
-            result<url> base = parse_uri("file:///");
+            system::result<url> base = parse_uri("file:///");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:////one/two");
+            system::result<url> ref = parse_uri_reference("file:////one/two");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7320,14 +7320,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "//one/two");
         }();
         []{
-            result<url> base = parse_uri("file:///");
+            system::result<url> base = parse_uri("file:///");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("//one/two");
+            system::result<url> ref = parse_uri_reference("//one/two");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7337,14 +7337,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/two");
         }();
         []{
-            result<url> base = parse_uri("file:///");
+            system::result<url> base = parse_uri("file:///");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("///one/two");
+            system::result<url> ref = parse_uri_reference("///one/two");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7353,14 +7353,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/one/two");
         }();
         []{
-            result<url> base = parse_uri("file:///");
+            system::result<url> base = parse_uri("file:///");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("////one/two");
+            system::result<url> ref = parse_uri_reference("////one/two");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7369,14 +7369,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "//one/two");
         }();
         []{
-            result<url> base = parse_uri("file:////");
+            system::result<url> base = parse_uri("file:////");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:///.//");
+            system::result<url> ref = parse_uri_reference("file:///.//");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7386,14 +7386,14 @@ struct ada_test
         }();
         // File URL tests for https://github.com/whatwg/url/issues/549
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:.//p");
+            system::result<url> ref = parse_uri_reference("file:.//p");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7401,14 +7401,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "file:////p");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("file:/.//p");
+            system::result<url> ref = parse_uri_reference("file:/.//p");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7417,14 +7417,14 @@ struct ada_test
         }();
         // IPv6 tests
         []{
-            result<url> base = parse_uri("http://example.net/");
+            system::result<url> base = parse_uri("http://example.net/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://[1:0::]");
+            system::result<url> ref = parse_uri_reference("http://[1:0::]");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7435,128 +7435,128 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "[1::]");
         }();
         []{
-            result<url> base = parse_uri("http://example.net/");
-            result<url> ref = parse_uri_reference("http://[0:1:2:3:4:5:6:7:8]");
+            system::result<url> base = parse_uri("http://example.net/");
+            system::result<url> ref = parse_uri_reference("http://[0:1:2:3:4:5:6:7:8]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("https://[0::0::0]");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("https://[0::0::0]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("https://[0:.0]");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("https://[0:.0]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("https://[0:0:]");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("https://[0:0:]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("https://[0:1:2:3:4:5:6:7.0.0.0.1]");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("https://[0:1:2:3:4:5:6:7.0.0.0.1]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("https://[0:1.00.0.0.0]");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("https://[0:1.00.0.0.0]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("https://[0:1.290.0.0.0]");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("https://[0:1.290.0.0.0]");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("https://[0:1.23.23]");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("https://[0:1.23.23]");
             BOOST_TEST_NOT(base && ref);
         }();
         // Empty host
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://?");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://?");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://#");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://#");
             // Boost.URL does not fail on empty hostname
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         // Port overflow (2^32 + 81)
         []{
-            result<url> base = parse_uri("http://example.org/");
-            result<url> ref = parse_uri_reference("http://f:4294967377/c");
+            system::result<url> base = parse_uri("http://example.org/");
+            system::result<url> ref = parse_uri_reference("http://f:4294967377/c");
             // Boost.URL does not fail on port overflow
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         // Port overflow (2^64 + 81)
         []{
-            result<url> base = parse_uri("http://example.org/");
-            result<url> ref = parse_uri_reference("http://f:18446744073709551697/c");
+            system::result<url> base = parse_uri("http://example.org/");
+            system::result<url> ref = parse_uri_reference("http://f:18446744073709551697/c");
             // Boost.URL does not fail on port overflow
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         // Port overflow (2^128 + 81)
         []{
-            result<url> base = parse_uri("http://example.org/");
-            result<url> ref = parse_uri_reference("http://f:340282366920938463463374607431768211537/c");
+            system::result<url> base = parse_uri("http://example.org/");
+            system::result<url> ref = parse_uri_reference("http://f:340282366920938463463374607431768211537/c");
             // Boost.URL does not fail on port overflow
             BOOST_TEST(base);
             BOOST_TEST(ref);
         }();
         // Non-special-URL path tests
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("sc://ñ");
+            // system::result<url> ref = parse_uri_reference("sc://ñ");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("sc://ñ?x");
+            // system::result<url> ref = parse_uri_reference("sc://ñ?x");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("sc://ñ#x");
+            // system::result<url> ref = parse_uri_reference("sc://ñ#x");
             // BOOST_TEST_NOT(ref);
         }();
         []{
             // Boost.URL does not support unicode
-            // result<url> base = parse_uri("sc://ñ");
+            // system::result<url> base = parse_uri("sc://ñ");
             // BOOST_TEST_NOT(base);
         }();
         []{
             // Boost.URL does not support unicode
-            // result<url> base = parse_uri("sc://ñ");
+            // system::result<url> base = parse_uri("sc://ñ");
             // BOOST_TEST_NOT(base);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("sc://?");
+            system::result<url> ref = parse_uri_reference("sc://?");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7564,14 +7564,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.scheme(), "sc");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("sc://#");
+            system::result<url> ref = parse_uri_reference("sc://#");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7579,14 +7579,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.scheme(), "sc");
         }();
         []{
-            result<url> base = parse_uri("sc://x/");
+            system::result<url> base = parse_uri("sc://x/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("///");
+            system::result<url> ref = parse_uri_reference("///");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7595,14 +7595,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("sc://x/");
+            system::result<url> base = parse_uri("sc://x/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("////");
+            system::result<url> ref = parse_uri_reference("////");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7611,14 +7611,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "//");
         }();
         []{
-            result<url> base = parse_uri("sc://x/");
+            system::result<url> base = parse_uri("sc://x/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("////x/");
+            system::result<url> ref = parse_uri_reference("////x/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7627,14 +7627,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "//x/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("tftp://foobar.com/someconfig;mode=netascii");
+            system::result<url> ref = parse_uri_reference("tftp://foobar.com/someconfig;mode=netascii");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7644,14 +7644,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/someconfig;mode=netascii");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("telnet://user:pass@foobar.com:23/");
+            system::result<url> ref = parse_uri_reference("telnet://user:pass@foobar.com:23/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7663,14 +7663,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ut2004://10.10.10.10:7777/Index.ut2");
+            system::result<url> ref = parse_uri_reference("ut2004://10.10.10.10:7777/Index.ut2");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7680,14 +7680,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/Index.ut2");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("redis://foo:bar@somehost:6379/0?baz=bam&qux=baz");
+            system::result<url> ref = parse_uri_reference("redis://foo:bar@somehost:6379/0?baz=bam&qux=baz");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7700,14 +7700,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "baz=bam&qux=baz");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("rsync://foo@host:911/sup");
+            system::result<url> ref = parse_uri_reference("rsync://foo@host:911/sup");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7719,14 +7719,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/sup");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("git://github.com/foo/bar.git");
+            system::result<url> ref = parse_uri_reference("git://github.com/foo/bar.git");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7736,14 +7736,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/bar.git");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("irc://myserver.com:6999/channel?passwd");
+            system::result<url> ref = parse_uri_reference("irc://myserver.com:6999/channel?passwd");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7755,14 +7755,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "passwd");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("dns://fw.example.org:9999/foo.bar.org?type=TXT");
+            system::result<url> ref = parse_uri_reference("dns://fw.example.org:9999/foo.bar.org?type=TXT");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7774,14 +7774,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "type=TXT");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("ldap://localhost:389/ou=People,o=JNDITutorial");
+            system::result<url> ref = parse_uri_reference("ldap://localhost:389/ou=People,o=JNDITutorial");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7792,14 +7792,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/ou=People,o=JNDITutorial");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("git+https://github.com/foo/bar");
+            system::result<url> ref = parse_uri_reference("git+https://github.com/foo/bar");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7809,14 +7809,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo/bar");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("urn:ietf:rfc:2648");
+            system::result<url> ref = parse_uri_reference("urn:ietf:rfc:2648");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7825,14 +7825,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "ietf:rfc:2648");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("tag:joe@example.org,2001:foo/bar");
+            system::result<url> ref = parse_uri_reference("tag:joe@example.org,2001:foo/bar");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7842,14 +7842,14 @@ struct ada_test
         }();
         // Serialize /. in path
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-spec:/.//");
+            system::result<url> ref = parse_uri_reference("non-spec:/.//");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7859,14 +7859,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-spec:/..//");
+            system::result<url> ref = parse_uri_reference("non-spec:/..//");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7879,14 +7879,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-spec:/a/..//");
+            system::result<url> ref = parse_uri_reference("non-spec:/a/..//");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7895,14 +7895,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "//");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-spec:/.//path");
+            system::result<url> ref = parse_uri_reference("non-spec:/.//path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7912,14 +7912,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//path");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-spec:/..//path");
+            system::result<url> ref = parse_uri_reference("non-spec:/..//path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7932,14 +7932,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//path");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-spec:/a/..//path");
+            system::result<url> ref = parse_uri_reference("non-spec:/a/..//path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7948,14 +7948,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "//path");
         }();
         []{
-            result<url> base = parse_uri("non-spec:/p");
+            system::result<url> base = parse_uri("non-spec:/p");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/.//path");
+            system::result<url> ref = parse_uri_reference("/.//path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7965,14 +7965,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//path");
         }();
         []{
-            result<url> base = parse_uri("non-spec:/p");
+            system::result<url> base = parse_uri("non-spec:/p");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("/..//path");
+            system::result<url> ref = parse_uri_reference("/..//path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -7985,14 +7985,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//path");
         }();
         []{
-            result<url> base = parse_uri("non-spec:/p");
+            system::result<url> base = parse_uri("non-spec:/p");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("..//path");
+            system::result<url> ref = parse_uri_reference("..//path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8005,14 +8005,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "//path");
         }();
         []{
-            result<url> base = parse_uri("non-spec:/p");
+            system::result<url> base = parse_uri("non-spec:/p");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("a/..//path");
+            system::result<url> ref = parse_uri_reference("a/..//path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8021,22 +8021,22 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "//path");
         }();
         []{
-            result<url> base = parse_uri("non-spec:/..//p");
+            system::result<url> base = parse_uri("non-spec:/..//p");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not fail on empty references
-            result<url> ref = parse_uri_reference("");
+            system::result<url> ref = parse_uri_reference("");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("non-spec:/..//p");
+            system::result<url> base = parse_uri("non-spec:/..//p");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("path");
+            system::result<url> ref = parse_uri_reference("path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8050,14 +8050,14 @@ struct ada_test
         }();
         // Do not serialize /. in path
         []{
-            result<url> base = parse_uri("non-spec:/.//p");
+            system::result<url> base = parse_uri("non-spec:/.//p");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("../path");
+            system::result<url> ref = parse_uri_reference("../path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8067,22 +8067,22 @@ struct ada_test
         }();
         // percent encoded hosts in non-special-URLs
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("non-special://%E2%80%A0/");
+            system::result<url> ref = parse_uri_reference("non-special://%E2%80%A0/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-special://H%4fSt/path");
+            system::result<url> ref = parse_uri_reference("non-special://H%4fSt/path");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8093,14 +8093,14 @@ struct ada_test
         }();
         // IPv6 in non-special-URLs
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-special://[1:2:0:0:5:0:0:0]/");
+            system::result<url> ref = parse_uri_reference("non-special://[1:2:0:0:5:0:0:0]/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8111,14 +8111,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "[1:2:0:0:5::]");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-special://[1:2:0:0:0:0:0:3]/");
+            system::result<url> ref = parse_uri_reference("non-special://[1:2:0:0:0:0:0:3]/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8129,14 +8129,14 @@ struct ada_test
             BOOST_TEST_NOT(u.encoded_host() == "[1:2::3]");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("non-special://[1:2::3]:80/");
+            system::result<url> ref = parse_uri_reference("non-special://[1:2::3]:80/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8146,19 +8146,19 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("non-special://[:80/");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("non-special://[:80/");
             BOOST_TEST_NOT(base && ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("blob:https://example.com:443/");
+            system::result<url> ref = parse_uri_reference("blob:https://example.com:443/");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8167,14 +8167,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "https://example.com:443/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("blob:d3958f5c-0777-0845-9dcf-2cb28783acaf");
+            system::result<url> ref = parse_uri_reference("blob:d3958f5c-0777-0845-9dcf-2cb28783acaf");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8183,14 +8183,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "d3958f5c-0777-0845-9dcf-2cb28783acaf");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("blob:");
+            system::result<url> ref = parse_uri_reference("blob:");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8199,14 +8199,14 @@ struct ada_test
         }();
         // Invalid IPv4 radix digits
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://0x7f.0.0.0x7g");
+            system::result<url> ref = parse_uri_reference("http://0x7f.0.0.0x7g");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8217,14 +8217,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://0X7F.0.0.0X7G");
+            system::result<url> ref = parse_uri_reference("http://0X7F.0.0.0X7G");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8236,20 +8236,20 @@ struct ada_test
         }();
         // Invalid IPv4 portion of IPv6 address
         []{
-            result<url> base = parse_uri("about:blank");
-            result<url> ref = parse_uri_reference("http://[::127.0.0.0.1]");
+            system::result<url> base = parse_uri("about:blank");
+            system::result<url> ref = parse_uri_reference("http://[::127.0.0.0.1]");
             BOOST_TEST_NOT(base && ref);
         }();
         // Uncompressed IPv6 addresses with 0
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://[0:1:0:1:0:1:0:1]");
+            system::result<url> ref = parse_uri_reference("http://[0:1:0:1:0:1:0:1]");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8259,14 +8259,14 @@ struct ada_test
             // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://[1:0:1:0:1:0:1:0]");
+            system::result<url> ref = parse_uri_reference("http://[1:0:1:0:1:0:1:0]");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8277,23 +8277,23 @@ struct ada_test
         }();
         // Percent-encoded query and fragment
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid query char """
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://example.org/test?\"");
+            system::result<url> ref = parse_uri_reference("http://example.org/test?\"");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.org/test?#");
+            system::result<url> ref = parse_uri_reference("http://example.org/test?#");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8303,40 +8303,40 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid query char "<"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://example.org/test?<");
+            system::result<url> ref = parse_uri_reference("http://example.org/test?<");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid query char ">"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("http://example.org/test?>");
+            system::result<url> ref = parse_uri_reference("http://example.org/test?>");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://example.org/test?⌣");
+            // system::result<url> ref = parse_uri_reference("http://example.org/test?⌣");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("http://example.org/test?%23%23");
+            system::result<url> ref = parse_uri_reference("http://example.org/test?%23%23");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8347,41 +8347,41 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_query(), "%23%23");
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("http://example.org/test?%GH");
+            system::result<url> ref = parse_uri_reference("http://example.org/test?%GH");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("http://example.org/test?a#%EF");
+            system::result<url> ref = parse_uri_reference("http://example.org/test?a#%EF");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("http://example.org/test?a#%GH");
+            system::result<url> ref = parse_uri_reference("http://example.org/test?a#%GH");
             BOOST_TEST_NOT(ref);
         }();
         // URLs that require a non-about:blank base. (Also serve as invalid base tests.)
         // Bases that don't fail to parse but fail to be bases
         // Other base URL tests, that must succeed
         []{
-            result<url> base = parse_uri("a:/");
+            system::result<url> base = parse_uri("a:/");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("test-a-colon-slash.html");
+            system::result<url> ref = parse_uri_reference("test-a-colon-slash.html");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8390,14 +8390,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test-a-colon-slash.html");
         }();
         []{
-            result<url> base = parse_uri("a://");
+            system::result<url> base = parse_uri("a://");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("test-a-colon-slash-slash.html");
+            system::result<url> ref = parse_uri_reference("test-a-colon-slash-slash.html");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8406,14 +8406,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test-a-colon-slash-slash.html");
         }();
         []{
-            result<url> base = parse_uri("a:/b");
+            system::result<url> base = parse_uri("a:/b");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("test-a-colon-slash-b.html");
+            system::result<url> ref = parse_uri_reference("test-a-colon-slash-b.html");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8422,14 +8422,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "/test-a-colon-slash-b.html");
         }();
         []{
-            result<url> base = parse_uri("a://b");
+            system::result<url> base = parse_uri("a://b");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("test-a-colon-slash-slash-b.html");
+            system::result<url> ref = parse_uri_reference("test-a-colon-slash-slash-b.html");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8440,35 +8440,35 @@ struct ada_test
         }();
         // Null code point in fragment
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("http://example.org/test?a#b\x00" "c");
+            // system::result<url> ref = parse_uri_reference("http://example.org/test?a#b\x00" "c");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("non-spec://example.org/test?a#b\x00" "c");
+            // system::result<url> ref = parse_uri_reference("non-spec://example.org/test?a#b\x00" "c");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("non-spec:/test?a#b\x00" "c");
+            // system::result<url> ref = parse_uri_reference("non-spec:/test?a#b\x00" "c");
             // BOOST_TEST_NOT(ref);
         }();
         // First scheme char - not allowed: https://github.com/whatwg/url/issues/464
         []{
-            result<url> base = parse_uri("file:///some/dir/bar.html");
+            system::result<url> base = parse_uri("file:///some/dir/bar.html");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("10.0.0.7:8080/foo.html");
+            system::result<url> ref = parse_uri_reference("10.0.0.7:8080/foo.html");
             // Boost.URL requires segment-nz-nc
             // A URL should have a scheme or the first path segment
             // cannot contain a colon (":")
@@ -8476,14 +8476,14 @@ struct ada_test
         }();
         // Subsequent scheme chars - not allowed
         []{
-            result<url> base = parse_uri("file:///some/dir/bar.html");
+            system::result<url> base = parse_uri("file:///some/dir/bar.html");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("a!@$*=/foo.html");
+            system::result<url> ref = parse_uri_reference("a!@$*=/foo.html");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8493,14 +8493,14 @@ struct ada_test
         }();
         // First and subsequent scheme chars - allowed
         []{
-            result<url> base = parse_uri("http://example.com/dir/file");
+            system::result<url> base = parse_uri("http://example.com/dir/file");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("a1234567890-+.:foo/bar");
+            system::result<url> ref = parse_uri_reference("a1234567890-+.:foo/bar");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8510,53 +8510,53 @@ struct ada_test
         }();
         // IDNA ignored code points in file URLs hosts
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("file://a\xad" "b/p");
+            // system::result<url> ref = parse_uri_reference("file://a\xad" "b/p");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("file://a%C2%ADb/p");
+            system::result<url> ref = parse_uri_reference("file://a%C2%ADb/p");
             BOOST_TEST(ref);
         }();
         // IDNA hostnames which get mapped to 'localhost'
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("file://loC𝐀𝐋𝐇𝐨𝐬𝐭/usr/bin");
+            // system::result<url> ref = parse_uri_reference("file://loC𝐀𝐋𝐇𝐨𝐬𝐭/usr/bin");
             // BOOST_TEST_NOT(ref);
         }();
         // Empty host after the domain to ASCII
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("file://\xad" "/p");
+            // system::result<url> ref = parse_uri_reference("file://\xad" "/p");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("file://%C2%AD/p");
+            system::result<url> ref = parse_uri_reference("file://%C2%AD/p");
             BOOST_TEST(ref);
         }();
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1647058
         []{
-            result<url> base = parse_uri("https://example.org/##link");
+            system::result<url> base = parse_uri("https://example.org/##link");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("#link");
+            system::result<url> ref = parse_uri_reference("#link");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8568,139 +8568,139 @@ struct ada_test
         }();
         // UTF-8 percent-encode of C0 control percent-encode set and supersets
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("non-special:cannot-be-a-base-url-\x00" "\x01" "\x1f" "\x1e" "~\x7f" "\x80" "");
+            // system::result<url> ref = parse_uri_reference("non-special:cannot-be-a-base-url-\x00" "\x01" "\x1f" "\x1e" "~\x7f" "\x80" "");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid path char "{"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("https://www.example.com/path{\x7f" "path.html?query'\x7f" "=query#fragment<\x7f" "fragment");
+            system::result<url> ref = parse_uri_reference("https://www.example.com/path{\x7f" "path.html?query'\x7f" "=query#fragment<\x7f" "fragment");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("http://example.org");
+            system::result<url> base = parse_uri("http://example.org");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid query char "\x7f"
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("https://user:pass[\x7f" "@foo/bar");
+            system::result<url> ref = parse_uri_reference("https://user:pass[\x7f" "@foo/bar");
             BOOST_TEST_NOT(ref);
         }();
         // Tests for the distinct percent-encode sets
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("foo:// !\"$%&\'()*+,-.;<=>@[\\]^_`{|}~@host/");
+            system::result<url> ref = parse_uri_reference("foo:// !\"$%&\'()*+,-.;<=>@[\\]^_`{|}~@host/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("wss:// !\"$%&\'()*+,-.;<=>@[]^_`{|}~@host/");
+            system::result<url> ref = parse_uri_reference("wss:// !\"$%&\'()*+,-.;<=>@[]^_`{|}~@host/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("foo://joe: !\"$%&\'()*+,-.:;<=>@[\\]^_`{|}~@host/");
+            system::result<url> ref = parse_uri_reference("foo://joe: !\"$%&\'()*+,-.:;<=>@[\\]^_`{|}~@host/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support whitespace in input
-            result<url> ref = parse_uri_reference("wss://joe: !\"$%&\'()*+,-.:;<=>@[]^_`{|}~@host/");
+            system::result<url> ref = parse_uri_reference("wss://joe: !\"$%&\'()*+,-.:;<=>@[]^_`{|}~@host/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support incomplete octets
-            result<url> ref = parse_uri_reference("foo://!\"$%&\'()*+,-.;=_`{}~/");
+            system::result<url> ref = parse_uri_reference("foo://!\"$%&\'()*+,-.;=_`{}~/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid authority char """
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("wss://!\"$&\'()*+,-.;=_`{}~/");
+            system::result<url> ref = parse_uri_reference("wss://!\"$&\'()*+,-.;=_`{}~/");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("foo://host/ !\"$%&\'()*+,-./:;<=>@[\\]^_`{|}~");
+            system::result<url> ref = parse_uri_reference("foo://host/ !\"$%&\'()*+,-./:;<=>@[\\]^_`{|}~");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("wss://host/ !\"$%&\'()*+,-./:;<=>@[\\]^_`{|}~");
+            system::result<url> ref = parse_uri_reference("wss://host/ !\"$%&\'()*+,-./:;<=>@[\\]^_`{|}~");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("foo://host/dir/? !\"$%&\'()*+,-./:;<=>?@[\\]^_`{|}~");
+            system::result<url> ref = parse_uri_reference("foo://host/dir/? !\"$%&\'()*+,-./:;<=>?@[\\]^_`{|}~");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("wss://host/dir/? !\"$%&\'()*+,-./:;<=>?@[\\]^_`{|}~");
+            system::result<url> ref = parse_uri_reference("wss://host/dir/? !\"$%&\'()*+,-./:;<=>?@[\\]^_`{|}~");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("foo://host/dir/# !\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~");
+            system::result<url> ref = parse_uri_reference("foo://host/dir/# !\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support escape chars in input
-            result<url> ref = parse_uri_reference("wss://host/dir/# !\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~");
+            system::result<url> ref = parse_uri_reference("wss://host/dir/# !\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~");
             BOOST_TEST_NOT(ref);
         }();
         // Ensure that input schemes are not ignored when resolving non-special URLs
         []{
-            result<url> base = parse_uri("abc://host/path");
+            system::result<url> base = parse_uri("abc://host/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("abc:rootless");
+            system::result<url> ref = parse_uri_reference("abc:rootless");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8708,14 +8708,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "abc:rootless");
         }();
         []{
-            result<url> base = parse_uri("abc:/path");
+            system::result<url> base = parse_uri("abc:/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("abc:rootless");
+            system::result<url> ref = parse_uri_reference("abc:rootless");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8723,14 +8723,14 @@ struct ada_test
             BOOST_TEST_NOT(u.buffer() == "abc:rootless");
         }();
         []{
-            result<url> base = parse_uri("abc:path");
+            system::result<url> base = parse_uri("abc:path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("abc:rootless");
+            system::result<url> ref = parse_uri_reference("abc:rootless");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8739,14 +8739,14 @@ struct ada_test
             BOOST_TEST_CSTR_EQ(u.encoded_path(), "rootless");
         }();
         []{
-            result<url> base = parse_uri("abc://host/path");
+            system::result<url> base = parse_uri("abc://host/path");
             if (!BOOST_TEST(base))
                 return;
-            result<url> ref = parse_uri_reference("abc:/rooted");
+            system::result<url> ref = parse_uri_reference("abc:/rooted");
             if (!BOOST_TEST(ref))
                 return;
             url u;
-            result<void> r = resolve(*base, *ref, u);
+            system::result<void> r = resolve(*base, *ref, u);
             BOOST_TEST(r);
             u.normalize_authority();
             u.normalize_path();
@@ -8755,389 +8755,389 @@ struct ada_test
         }();
         // Empty query and fragment with blank should throw an error
         []{
-            result<url> r = parse_uri_reference("#");
+            system::result<url> r = parse_uri_reference("#");
             url u = *r;
         }();
         []{
-            result<url> r = parse_uri_reference("?");
+            system::result<url> r = parse_uri_reference("?");
             url u = *r;
         }();
         // Last component looks like a number, but not valid IPv4
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://1.2.3.4.5");
+            system::result<url> ref = parse_uri_reference("http://1.2.3.4.5");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://1.2.3.4.5.");
+            system::result<url> ref = parse_uri_reference("http://1.2.3.4.5.");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://0..0x300/");
+            system::result<url> ref = parse_uri_reference("http://0..0x300/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://0..0x300./");
+            system::result<url> ref = parse_uri_reference("http://0..0x300./");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://256.256.256.256.256");
+            system::result<url> ref = parse_uri_reference("http://256.256.256.256.256");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("http://other.com/");
+            system::result<url> base = parse_uri("http://other.com/");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://256.256.256.256.256.");
+            system::result<url> ref = parse_uri_reference("http://256.256.256.256.256.");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://1.2.3.08");
+            system::result<url> ref = parse_uri_reference("http://1.2.3.08");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://1.2.3.08.");
+            system::result<url> ref = parse_uri_reference("http://1.2.3.08.");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://1.2.3.09");
+            system::result<url> ref = parse_uri_reference("http://1.2.3.09");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://09.2.3.4");
+            system::result<url> ref = parse_uri_reference("http://09.2.3.4");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://09.2.3.4.");
+            system::result<url> ref = parse_uri_reference("http://09.2.3.4.");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://01.2.3.4.5");
+            system::result<url> ref = parse_uri_reference("http://01.2.3.4.5");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://01.2.3.4.5.");
+            system::result<url> ref = parse_uri_reference("http://01.2.3.4.5.");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://0x100.2.3.4");
+            system::result<url> ref = parse_uri_reference("http://0x100.2.3.4");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://0x100.2.3.4.");
+            system::result<url> ref = parse_uri_reference("http://0x100.2.3.4.");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://0x1.2.3.4.5");
+            system::result<url> ref = parse_uri_reference("http://0x1.2.3.4.5");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://0x1.2.3.4.5.");
+            system::result<url> ref = parse_uri_reference("http://0x1.2.3.4.5.");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://foo.1.2.3.4");
+            system::result<url> ref = parse_uri_reference("http://foo.1.2.3.4");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://foo.1.2.3.4.");
+            system::result<url> ref = parse_uri_reference("http://foo.1.2.3.4.");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://foo.2.3.4");
+            system::result<url> ref = parse_uri_reference("http://foo.2.3.4");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://foo.2.3.4.");
+            system::result<url> ref = parse_uri_reference("http://foo.2.3.4.");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://foo.09");
+            system::result<url> ref = parse_uri_reference("http://foo.09");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://foo.09.");
+            system::result<url> ref = parse_uri_reference("http://foo.09.");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://foo.0x4");
+            system::result<url> ref = parse_uri_reference("http://foo.0x4");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL can parse an overflown IPv4address as a valid reg-name
             // All chars in the invalid IPv4address are unreserved
-            result<url> ref = parse_uri_reference("http://foo.0x4.");
+            system::result<url> ref = parse_uri_reference("http://foo.0x4.");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not fail when a component looks like a number
             // All unreserved chars are accepted
-            result<url> ref = parse_uri_reference("http://foo.09..");
+            system::result<url> ref = parse_uri_reference("http://foo.09..");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not fail when a component looks like a number
             // All unreserved chars are accepted
-            result<url> ref = parse_uri_reference("http://0999999999999999999/");
+            system::result<url> ref = parse_uri_reference("http://0999999999999999999/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not fail when a component looks like a number
             // All unreserved chars are accepted
-            result<url> ref = parse_uri_reference("http://foo.0x");
+            system::result<url> ref = parse_uri_reference("http://foo.0x");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not fail when a component looks like a number
             // All unreserved chars are accepted
-            result<url> ref = parse_uri_reference("http://foo.0XFfFfFfFfFfFfFfFfFfAcE123");
+            system::result<url> ref = parse_uri_reference("http://foo.0XFfFfFfFfFfFfFfFfFfAcE123");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("http://💩.123/");
+            // system::result<url> ref = parse_uri_reference("http://💩.123/");
             // BOOST_TEST_NOT(ref);
         }();
         // U+0000 and U+FFFF in various places
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("https://\x00" "y");
+            // system::result<url> ref = parse_uri_reference("https://\x00" "y");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            if (!BOOST_TEST(base))
-                return;
-            // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("https://x/\x00" "y");
-            // BOOST_TEST_NOT(ref);
-        }();
-        []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("https://x/?\x00" "y");
+            // system::result<url> ref = parse_uri_reference("https://x/\x00" "y");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("https://x/?#\x00" "y");
+            // system::result<url> ref = parse_uri_reference("https://x/?\x00" "y");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
-            // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("https://\uffffy");
-            // BOOST_TEST_NOT(ref);
-        }();
-        []{
-            result<url> base = parse_uri("about:blank");
-            if (!BOOST_TEST(base))
-                return;
-            // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("https://x/\uffffy");
-            // BOOST_TEST_NOT(ref);
-        }();
-        []{
-            result<url> base = parse_uri("about:blank");
-            if (!BOOST_TEST(base))
-                return;
-            // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("https://x/?\uffffy");
-            // BOOST_TEST_NOT(ref);
-        }();
-        []{
-            result<url> base = parse_uri("about:blank");
-            if (!BOOST_TEST(base))
-                return;
-            // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("https://x/?#\uffffy");
-            // BOOST_TEST_NOT(ref);
-        }();
-        []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("non-special:\x00" "y");
+            // system::result<url> ref = parse_uri_reference("https://x/?#\x00" "y");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
+            // Boost.URL does not support unicode input
+            // system::result<url> ref = parse_uri_reference("https://\uffffy");
+            // BOOST_TEST_NOT(ref);
+        }();
+        []{
+            system::result<url> base = parse_uri("about:blank");
+            if (!BOOST_TEST(base))
+                return;
+            // Boost.URL does not support unicode input
+            // system::result<url> ref = parse_uri_reference("https://x/\uffffy");
+            // BOOST_TEST_NOT(ref);
+        }();
+        []{
+            system::result<url> base = parse_uri("about:blank");
+            if (!BOOST_TEST(base))
+                return;
+            // Boost.URL does not support unicode input
+            // system::result<url> ref = parse_uri_reference("https://x/?\uffffy");
+            // BOOST_TEST_NOT(ref);
+        }();
+        []{
+            system::result<url> base = parse_uri("about:blank");
+            if (!BOOST_TEST(base))
+                return;
+            // Boost.URL does not support unicode input
+            // system::result<url> ref = parse_uri_reference("https://x/?#\uffffy");
+            // BOOST_TEST_NOT(ref);
+        }();
+        []{
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("non-special:x/\x00" "y");
+            // system::result<url> ref = parse_uri_reference("non-special:\x00" "y");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("non-special:x/?\x00" "y");
+            // system::result<url> ref = parse_uri_reference("non-special:x/\x00" "y");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Invalid input: contains "\0"
-            // result<url> ref = parse_uri_reference("non-special:x/?#\x00" "y");
+            // system::result<url> ref = parse_uri_reference("non-special:x/?\x00" "y");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
+            if (!BOOST_TEST(base))
+                return;
+            // Invalid input: contains "\0"
+            // system::result<url> ref = parse_uri_reference("non-special:x/?#\x00" "y");
+            // BOOST_TEST_NOT(ref);
+        }();
+        []{
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("non-special:\uffffy");
+            // system::result<url> ref = parse_uri_reference("non-special:\uffffy");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("non-special:x/\uffffy");
+            // system::result<url> ref = parse_uri_reference("non-special:x/\uffffy");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("non-special:x/?\uffffy");
+            // system::result<url> ref = parse_uri_reference("non-special:x/?\uffffy");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("non-special:x/?#\uffffy");
+            // system::result<url> ref = parse_uri_reference("non-special:x/?#\uffffy");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not fail on empty references
-            result<url> ref = parse_uri_reference("");
+            system::result<url> ref = parse_uri_reference("");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does not support invalid path char """
             // Node.js and Ada would attempt to encode these chars
-            result<url> ref = parse_uri_reference("https://example.com/\"quoted\"");
+            system::result<url> ref = parse_uri_reference("https://example.com/\"quoted\"");
             BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             if (!BOOST_TEST(base))
                 return;
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("https://a%C2%ADb/");
+            system::result<url> ref = parse_uri_reference("https://a%C2%ADb/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does not support unicode input
-            // result<url> ref = parse_uri_reference("https://\xad" "/");
+            // system::result<url> ref = parse_uri_reference("https://\xad" "/");
             // BOOST_TEST_NOT(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid encoded unicode
-            result<url> ref = parse_uri_reference("https://%C2%AD/");
+            system::result<url> ref = parse_uri_reference("https://%C2%AD/");
             BOOST_TEST(ref);
         }();
         []{
-            result<url> base = parse_uri("about:blank");
+            system::result<url> base = parse_uri("about:blank");
             // Boost.URL does support invalid IDNA
-            result<url> ref = parse_uri_reference("https://xn--/");
+            system::result<url> ref = parse_uri_reference("https://xn--/");
             BOOST_TEST(ref);
         }();
     }
@@ -9170,7 +9170,7 @@ struct ada_test
         {
             // The empty string is not a valid scheme. Setter leaves the URL unchanged.
             {
-                result<url> r = parse_uri_reference("a://example.net");
+                system::result<url> r = parse_uri_reference("a://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // BOOST_TEST_NO_THROW(u.set_scheme(""));
@@ -9181,7 +9181,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "");
             }
             {
-                result<url> r = parse_uri_reference("a://example.net");
+                system::result<url> r = parse_uri_reference("a://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("b"));
@@ -9189,7 +9189,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "b");
             }
             {
-                result<url> r = parse_uri_reference("javascript:alert(1)");
+                system::result<url> r = parse_uri_reference("javascript:alert(1)");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("defuse"));
@@ -9198,7 +9198,7 @@ struct ada_test
             }
             // Upper-case ASCII is lower-cased
             {
-                result<url> r = parse_uri_reference("a://example.net");
+                system::result<url> r = parse_uri_reference("a://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("B"));
@@ -9215,33 +9215,33 @@ struct ada_test
             }
             // Non-ASCII is rejected
             {
-                result<url> r = parse_uri_reference("a://example.net");
+                system::result<url> r = parse_uri_reference("a://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_scheme("é"), system_error);
+                BOOST_TEST_THROWS(u.set_scheme("é"), system::system_error);
                 BOOST_TEST_CSTR_EQ(u, "a://example.net");
                 BOOST_TEST_CSTR_EQ(u.scheme(), "a");
             }
             // No leading digit
             {
-                result<url> r = parse_uri_reference("a://example.net");
+                system::result<url> r = parse_uri_reference("a://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_scheme("0b"), system_error);
+                BOOST_TEST_THROWS(u.set_scheme("0b"), system::system_error);
                 BOOST_TEST_CSTR_EQ(u, "a://example.net");
                 BOOST_TEST_CSTR_EQ(u.scheme(), "a");
             }
             // No leading punctuation
             {
-                result<url> r = parse_uri_reference("a://example.net");
+                system::result<url> r = parse_uri_reference("a://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_scheme("+b"), system_error);
+                BOOST_TEST_THROWS(u.set_scheme("+b"), system::system_error);
                 BOOST_TEST_CSTR_EQ(u, "a://example.net");
                 BOOST_TEST_CSTR_EQ(u.scheme(), "a");
             }
             {
-                result<url> r = parse_uri_reference("a://example.net");
+                system::result<url> r = parse_uri_reference("a://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("bC0+-."));
@@ -9255,19 +9255,19 @@ struct ada_test
             }
             // Only some punctuation is acceptable
             {
-                result<url> r = parse_uri_reference("a://example.net");
+                system::result<url> r = parse_uri_reference("a://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_scheme("b,c"), system_error);
+                BOOST_TEST_THROWS(u.set_scheme("b,c"), system::system_error);
                 BOOST_TEST_CSTR_EQ(u, "a://example.net");
                 BOOST_TEST_CSTR_EQ(u.scheme(), "a");
             }
             // Non-ASCII is rejected
             {
-                result<url> r = parse_uri_reference("a://example.net");
+                system::result<url> r = parse_uri_reference("a://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_scheme("bé"), system_error);
+                BOOST_TEST_THROWS(u.set_scheme("bé"), system::system_error);
                 BOOST_TEST_CSTR_EQ(u, "a://example.net");
                 BOOST_TEST_CSTR_EQ(u.scheme(), "a");
             }
@@ -9275,7 +9275,7 @@ struct ada_test
             // Boost.URL handles the general syntax defined in RFC3986
             // so there's no concept of a special scheme
             {
-                result<url> r = parse_uri_reference("http://test@example.net");
+                system::result<url> r = parse_uri_reference("http://test@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("file"));
@@ -9285,7 +9285,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "file");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net:1234");
+                system::result<url> r = parse_uri_reference("https://example.net:1234");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("file"));
@@ -9295,7 +9295,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "file");
             }
             {
-                result<url> r = parse_uri_reference("wss://x:x@example.net:1234");
+                system::result<url> r = parse_uri_reference("wss://x:x@example.net:1234");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("file"));
@@ -9308,7 +9308,7 @@ struct ada_test
             // Boost.URL handles the general syntax defined in RFC3986
             // so there's no concept of a special scheme
             {
-                result<url> r = parse_uri_reference("file://localhost/");
+                system::result<url> r = parse_uri_reference("file://localhost/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("http"));
@@ -9318,7 +9318,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "http");
             }
             {
-                result<url> r = parse_uri_reference("file:///test");
+                system::result<url> r = parse_uri_reference("file:///test");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("https"));
@@ -9328,7 +9328,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "https");
             }
             {
-                result<url> r = parse_uri_reference("file:");
+                system::result<url> r = parse_uri_reference("file:");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("wss"));
@@ -9341,7 +9341,7 @@ struct ada_test
             // Boost.URL handles the general syntax defined in RFC3986
             // so there's no concept of a special scheme
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("b"));
@@ -9351,7 +9351,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "b");
             }
             {
-                result<url> r = parse_uri_reference("file://hi/path");
+                system::result<url> r = parse_uri_reference("file://hi/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("s"));
@@ -9361,7 +9361,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "s");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net");
+                system::result<url> r = parse_uri_reference("https://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("s"));
@@ -9371,7 +9371,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "s");
             }
             {
-                result<url> r = parse_uri_reference("ftp://example.net");
+                system::result<url> r = parse_uri_reference("ftp://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("test"));
@@ -9382,7 +9382,7 @@ struct ada_test
             }
             // Cannot-be-a-base URL doesn’t have a host, but URL in a special scheme must.
             {
-                result<url> r = parse_uri_reference("mailto:me@example.net");
+                system::result<url> r = parse_uri_reference("mailto:me@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("http"));
@@ -9395,7 +9395,7 @@ struct ada_test
             // Boost.URL handles the general syntax defined in RFC3986
             // so there's no concept of a special scheme
             {
-                result<url> r = parse_uri_reference("ssh://me@example.net");
+                system::result<url> r = parse_uri_reference("ssh://me@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("http"));
@@ -9405,7 +9405,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "http");
             }
             {
-                result<url> r = parse_uri_reference("ssh://me@example.net");
+                system::result<url> r = parse_uri_reference("ssh://me@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("https"));
@@ -9415,7 +9415,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "https");
             }
             {
-                result<url> r = parse_uri_reference("ssh://me@example.net");
+                system::result<url> r = parse_uri_reference("ssh://me@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("file"));
@@ -9425,7 +9425,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "file");
             }
             {
-                result<url> r = parse_uri_reference("ssh://example.net");
+                system::result<url> r = parse_uri_reference("ssh://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("file"));
@@ -9435,7 +9435,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "file");
             }
             {
-                result<url> r = parse_uri_reference("nonsense:///test");
+                system::result<url> r = parse_uri_reference("nonsense:///test");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("https"));
@@ -9447,10 +9447,10 @@ struct ada_test
             // Ada ignores substrings after the first ':'
             // Boost.URL throws on invalid schemes
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_scheme("https:foo : bar"), system_error);
+                BOOST_TEST_THROWS(u.set_scheme("https:foo : bar"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "https://example.net/");
                 // BOOST_TEST_CSTR_EQ(u.scheme(), "https");
                 BOOST_TEST_CSTR_EQ(u, "http://example.net");
@@ -9461,7 +9461,7 @@ struct ada_test
             {
                 // Ada accepts literal `<>`s in path
                 // Boost.URL only accepts segment-nz = 1*pchar
-                result<url> r = parse_uri_reference("data:text/html,<p>Test");
+                system::result<url> r = parse_uri_reference("data:text/html,<p>Test");
                 BOOST_TEST_NOT(r);
                 // if (!BOOST_TEST(r)) return;
                 // url u = *r;
@@ -9472,7 +9472,7 @@ struct ada_test
             // Ada sets port to null if it is the default for new scheme.
             // Boost.URL keeps the URL the way the user defined it
             {
-                result<url> r = parse_uri_reference("http://foo.com:443/");
+                system::result<url> r = parse_uri_reference("http://foo.com:443/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("https"));
@@ -9485,10 +9485,10 @@ struct ada_test
             // Ada strips tab and newline
             // Boost.URL does not accept invalid chars
             {
-                result<url> r = parse_uri_reference("http://test/");
+                system::result<url> r = parse_uri_reference("http://test/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_scheme("h\r\ntt\tps"), system_error);
+                BOOST_TEST_THROWS(u.set_scheme("h\r\ntt\tps"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "https://test/");
                 // BOOST_TEST_CSTR_EQ(u.scheme(), "https");
                 // BOOST_TEST_CSTR_EQ(u.port(), "");
@@ -9497,19 +9497,19 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "");
             }
             {
-                result<url> r = parse_uri_reference("http://test/");
+                system::result<url> r = parse_uri_reference("http://test/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_scheme("https\r"), system_error);
+                BOOST_TEST_THROWS(u.set_scheme("https\r"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "https://test/");
                 // BOOST_TEST_CSTR_EQ(u.scheme(), "https");
                 BOOST_TEST_CSTR_EQ(u, "http://test/");
                 BOOST_TEST_CSTR_EQ(u.scheme(), "http");
             }
             // Non-tab/newline C0 controls result in no-op
-            // Boost.URL string_view constructor parses until it finds null
+            // Boost.URL core::string_view constructor parses until it finds null
             {
-                result<url> r = parse_uri_reference("http://test/");
+                system::result<url> r = parse_uri_reference("http://test/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_scheme("https\x00" ""));
@@ -9519,26 +9519,26 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.scheme(), "https");
             }
             {
-                result<url> r = parse_uri_reference("http://test/");
+                system::result<url> r = parse_uri_reference("http://test/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_scheme("https\x0c" ""), system_error);
+                BOOST_TEST_THROWS(u.set_scheme("https\x0c" ""), system::system_error);
                 BOOST_TEST_CSTR_EQ(u, "http://test/");
                 BOOST_TEST_CSTR_EQ(u.scheme(), "http");
             }
             {
-                result<url> r = parse_uri_reference("http://test/");
+                system::result<url> r = parse_uri_reference("http://test/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_scheme("https\x0e" ""), system_error);
+                BOOST_TEST_THROWS(u.set_scheme("https\x0e" ""), system::system_error);
                 BOOST_TEST_CSTR_EQ(u, "http://test/");
                 BOOST_TEST_CSTR_EQ(u.scheme(), "http");
             }
             {
-                result<url> r = parse_uri_reference("http://test/");
+                system::result<url> r = parse_uri_reference("http://test/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_scheme("https "), system_error);
+                BOOST_TEST_THROWS(u.set_scheme("https "), system::system_error);
                 BOOST_TEST_CSTR_EQ(u, "http://test/");
                 BOOST_TEST_CSTR_EQ(u.scheme(), "http");
             }
@@ -9548,7 +9548,7 @@ struct ada_test
             // In Ada, no host means no username
             // Boost.URL creates the host when the username is set
             {
-                result<url> r = parse_uri_reference("file:///home/you/index.html");
+                system::result<url> r = parse_uri_reference("file:///home/you/index.html");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
@@ -9560,7 +9560,7 @@ struct ada_test
             // In Ada, no host means no username
             // Boost.URL creates the host when the username is set
             {
-                result<url> r = parse_uri_reference("unix:/run/foo.socket");
+                system::result<url> r = parse_uri_reference("unix:/run/foo.socket");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
@@ -9572,7 +9572,7 @@ struct ada_test
             // In Ada, cannot-be-a-base (no host) means no username
             // Boost.URL still replaces the username
             {
-                result<url> r = parse_uri_reference("mailto:you@example.net");
+                system::result<url> r = parse_uri_reference("mailto:you@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
@@ -9581,7 +9581,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_user(), "me");
             }
             {
-                result<url> r = parse_uri_reference("javascript:alert(1)");
+                system::result<url> r = parse_uri_reference("javascript:alert(1)");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user("wario"));
@@ -9591,7 +9591,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_user(), "wario");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
@@ -9600,7 +9600,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_user(), "me");
             }
             {
-                result<url> r = parse_uri_reference("http://:secret@example.net");
+                system::result<url> r = parse_uri_reference("http://:secret@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user("me"));
@@ -9610,7 +9610,7 @@ struct ada_test
             }
             {
                 // Boost.URL differentiates between an empty user an no user
-                result<url> r = parse_uri_reference("http://me@example.net");
+                system::result<url> r = parse_uri_reference("http://me@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user(""));
@@ -9620,7 +9620,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_user(), "");
             }
             {
-                result<url> r = parse_uri_reference("http://me:secret@example.net");
+                system::result<url> r = parse_uri_reference("http://me:secret@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user(""));
@@ -9629,7 +9629,7 @@ struct ada_test
             }
             // UTF-8 percent encoding with the userinfo encode set.
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // Boost.URL creates a string view which ends the buffer at the
@@ -9642,7 +9642,7 @@ struct ada_test
             }
             // Bytes already percent-encoded are left as-is.
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user("%c3%89té"));
@@ -9652,7 +9652,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_user(), "%c3%89t%C3%A9");
             }
             {
-                result<url> r = parse_uri_reference("sc:///");
+                system::result<url> r = parse_uri_reference("sc:///");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user("x"));
@@ -9662,7 +9662,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_user(), "x");
             }
             {
-                result<url> r = parse_uri_reference("javascript://x/");
+                system::result<url> r = parse_uri_reference("javascript://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user("wario"));
@@ -9670,7 +9670,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_user(), "wario");
             }
             {
-                result<url> r = parse_uri_reference("file://test/");
+                system::result<url> r = parse_uri_reference("file://test/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_user("test"));
@@ -9685,7 +9685,7 @@ struct ada_test
             // In Ada, no host means no password
             // Boost.URL creates an empty host
             {
-                result<url> r = parse_uri_reference("file:///home/me/index.html");
+                system::result<url> r = parse_uri_reference("file:///home/me/index.html");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password("secret"));
@@ -9697,7 +9697,7 @@ struct ada_test
             // In Ada, no host means no password
             // Boost.URL creates an empty host
             {
-                result<url> r = parse_uri_reference("unix:/run/foo.socket");
+                system::result<url> r = parse_uri_reference("unix:/run/foo.socket");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password("secret"));
@@ -9709,7 +9709,7 @@ struct ada_test
             // In Ada, cannot-be-a-base means no password
             // Boost.URL creates an empty host
             {
-                result<url> r = parse_uri_reference("mailto:me@example.net");
+                system::result<url> r = parse_uri_reference("mailto:me@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password("secret"));
@@ -9719,7 +9719,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_password(), "secret");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password("secret"));
@@ -9729,7 +9729,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_password(), "secret");
             }
             {
-                result<url> r = parse_uri_reference("http://me@example.net");
+                system::result<url> r = parse_uri_reference("http://me@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password("secret"));
@@ -9738,7 +9738,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_password(), "secret");
             }
             {
-                result<url> r = parse_uri_reference("http://:secret@example.net");
+                system::result<url> r = parse_uri_reference("http://:secret@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password(""));
@@ -9748,7 +9748,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_password(), "");
             }
             {
-                result<url> r = parse_uri_reference("http://me:secret@example.net");
+                system::result<url> r = parse_uri_reference("http://me:secret@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password(""));
@@ -9758,7 +9758,7 @@ struct ada_test
             }
             // UTF-8 percent encoding with the userinfo encode set.
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password("\x00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"));
@@ -9769,7 +9769,7 @@ struct ada_test
             }
             // Bytes already percent-encoded are left as-is.
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password("%c3%89té"));
@@ -9777,7 +9777,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_password(), "%c3%89t%C3%A9");
             }
             {
-                result<url> r = parse_uri_reference("sc:///");
+                system::result<url> r = parse_uri_reference("sc:///");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password("x"));
@@ -9787,7 +9787,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_password(), "x");
             }
             {
-                result<url> r = parse_uri_reference("javascript://x/");
+                system::result<url> r = parse_uri_reference("javascript://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password("bowser"));
@@ -9795,7 +9795,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_password(), "bowser");
             }
             {
-                result<url> r = parse_uri_reference("file://test/");
+                system::result<url> r = parse_uri_reference("file://test/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_password("test"));
@@ -9809,7 +9809,7 @@ struct ada_test
         {
             // Non-special scheme
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("\x00" "");
@@ -9822,7 +9822,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("\t");
@@ -9834,7 +9834,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%09");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("\n");
@@ -9847,7 +9847,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%0A");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("\r");
@@ -9860,7 +9860,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%0D");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port(" ");
@@ -9873,7 +9873,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%20");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("#");
@@ -9886,7 +9886,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%23");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("/");
@@ -9899,7 +9899,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%2F");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("?");
@@ -9912,7 +9912,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%3F");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("@");
@@ -9925,7 +9925,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%40");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("ß");
@@ -9936,7 +9936,7 @@ struct ada_test
             }
             // IDNA Nontransitional_Processing
             {
-                result<url> r = parse_uri_reference("https://x/");
+                system::result<url> r = parse_uri_reference("https://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("ß");
@@ -9950,7 +9950,7 @@ struct ada_test
             }
             // Cannot-be-a-base means no host
             {
-                result<url> r = parse_uri_reference("mailto:me@example.net");
+                system::result<url> r = parse_uri_reference("mailto:me@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com");
@@ -9962,7 +9962,7 @@ struct ada_test
             }
             // Cannot-be-a-base means no host
             {
-                result<url> r = parse_uri_reference("data:text/plain,Stuff");
+                system::result<url> r = parse_uri_reference("data:text/plain,Stuff");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.net");
@@ -9973,7 +9973,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:8080");
@@ -9987,7 +9987,7 @@ struct ada_test
             }
             // Port number is unchanged if not specified in the new value
             {
-                result<url> r = parse_uri_reference("http://example.net:8080");
+                system::result<url> r = parse_uri_reference("http://example.net:8080");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com");
@@ -10000,7 +10000,7 @@ struct ada_test
             }
             // Port number is unchanged if not specified
             {
-                result<url> r = parse_uri_reference("http://example.net:8080");
+                system::result<url> r = parse_uri_reference("http://example.net:8080");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:");
@@ -10017,7 +10017,7 @@ struct ada_test
             }
             // The empty host is not valid for special schemes
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("");
@@ -10029,7 +10029,7 @@ struct ada_test
             }
             // The empty host is OK for non-special schemes
             {
-                result<url> r = parse_uri_reference("view-source+http://example.net/foo");
+                system::result<url> r = parse_uri_reference("view-source+http://example.net/foo");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("");
@@ -10039,7 +10039,7 @@ struct ada_test
             }
             // Path-only URLs can gain a host
             {
-                result<url> r = parse_uri_reference("a:/foo");
+                system::result<url> r = parse_uri_reference("a:/foo");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.net");
@@ -10049,7 +10049,7 @@ struct ada_test
             }
             // IPv4 address syntax is normalized in Ada
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("0x7F000001:8080");
@@ -10065,7 +10065,7 @@ struct ada_test
             }
             // Valid IPv6 address syntax is normalized
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("[::0:01]:2");
@@ -10080,7 +10080,7 @@ struct ada_test
             }
             // IPv6 literal address with port, crbug.com/1012416
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("[2001:db8::2]:4002");
@@ -10094,7 +10094,7 @@ struct ada_test
             }
             // Default port number is removed in Ada
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:80");
@@ -10110,7 +10110,7 @@ struct ada_test
             }
             // Default port number is removed
             {
-                result<url> r = parse_uri_reference("https://example.net");
+                system::result<url> r = parse_uri_reference("https://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:443");
@@ -10127,7 +10127,7 @@ struct ada_test
             }
             // Default port number is only removed for the relevant scheme
             {
-                result<url> r = parse_uri_reference("https://example.net");
+                system::result<url> r = parse_uri_reference("https://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:80");
@@ -10141,7 +10141,7 @@ struct ada_test
             }
             // Port number is removed if new port is scheme default and existing URL has a non-default port
             {
-                result<url> r = parse_uri_reference("http://example.net:8080");
+                system::result<url> r = parse_uri_reference("http://example.net:8080");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:80");
@@ -10159,7 +10159,7 @@ struct ada_test
             // Stuff after a / delimiter is ignored in Ada
             // Boost.URL encodes invalid chars
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com/stuff");
@@ -10176,12 +10176,12 @@ struct ada_test
             // Stuff after a / delimiter is ignored in Ada
             // Boost.URL does not accept invalid port numbers
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:8080/stuff");
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
-                BOOST_TEST_THROWS(u.set_port("8080/stuff"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080/stuff"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
@@ -10194,7 +10194,7 @@ struct ada_test
             // Stuff after a ? delimiter is ignored in Ada
             // Boost.URL encodes invalid host chars
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com?stuff");
@@ -10210,12 +10210,12 @@ struct ada_test
             }
             // Stuff after a ? delimiter is ignored
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:8080?stuff");
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
-                BOOST_TEST_THROWS(u.set_port("8080?stuff"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080?stuff"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
@@ -10228,7 +10228,7 @@ struct ada_test
             // Stuff after a # delimiter is ignored in Ada
             // Boost.URL encodes invalid host chars
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com#stuff");
@@ -10245,12 +10245,12 @@ struct ada_test
             // Stuff after a # delimiter is ignored in Ada
             // Boost.URL does not accept invalid port chars
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:8080#stuff");
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
-                BOOST_TEST_THROWS(u.set_port("8080#stuff"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080#stuff"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
@@ -10263,7 +10263,7 @@ struct ada_test
             // Stuff after a \ delimiter is ignored for special schemes in Ada
             // Boost.URL encodes invalid host chars
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com\\stuff");
@@ -10280,12 +10280,12 @@ struct ada_test
             // Stuff after a \ delimiter is ignored for special schemes in Ada
             // Boost.URL does not accept invalid port chars
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:8080\\stuff");
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
-                BOOST_TEST_THROWS(u.set_port("8080\\stuff"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080\\stuff"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
@@ -10298,7 +10298,7 @@ struct ada_test
             // \ is not a delimiter for non-special schemes, but still forbidden in hosts
             // Boost.URL encodes invalid host chars
             {
-                result<url> r = parse_uri_reference("view-source+http://example.net/path");
+                system::result<url> r = parse_uri_reference("view-source+http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com\\stuff");
@@ -10315,12 +10315,12 @@ struct ada_test
             // In Ada, anything other than ASCII digit stops the port parser in a setter but is not an error
             // Boost.URL does nto accept invalid port chars
             {
-                result<url> r = parse_uri_reference("view-source+http://example.net/path");
+                system::result<url> r = parse_uri_reference("view-source+http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:8080stuff2");
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
-                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "view-source+http://example.com:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
@@ -10333,12 +10333,12 @@ struct ada_test
             // In Ada, anything other than ASCII digit stops the port parser in a setter but is not an error
             // Boost.URL does not accept invalid port chars
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:8080stuff2");
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
-                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
@@ -10350,12 +10350,12 @@ struct ada_test
             }
             // Anything other than ASCII digit stops the port parser in a setter but is not an error
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:8080+2");
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
-                BOOST_TEST_THROWS(u.set_port("8080+2"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080+2"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.com:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.com:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
@@ -10367,7 +10367,7 @@ struct ada_test
             }
             // Port numbers are 16 bit integers
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:65535");
@@ -10381,7 +10381,7 @@ struct ada_test
             // Ada fails at port overflow
             // Boost.URL parses any valid port number as a string
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("example.com:65536");
@@ -10399,7 +10399,7 @@ struct ada_test
             // Broken IPv6 is invalid in Ada
             // Boost.URL identifies a ref-name that needs encoding
             {
-                result<url> r = parse_uri_reference("http://example.net/");
+                system::result<url> r = parse_uri_reference("http://example.net/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("[google.com]");
@@ -10412,7 +10412,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5Bgoogle.com%5D");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net/");
+                system::result<url> r = parse_uri_reference("http://example.net/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("[::1.2.3.4x]");
@@ -10427,7 +10427,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.3.4x%5D");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net/");
+                system::result<url> r = parse_uri_reference("http://example.net/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("[::1.2.3.]");
@@ -10440,7 +10440,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.3.%5D");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net/");
+                system::result<url> r = parse_uri_reference("http://example.net/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("[::1.2.]");
@@ -10453,7 +10453,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.%5D");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net/");
+                system::result<url> r = parse_uri_reference("http://example.net/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("[::1.]");
@@ -10467,7 +10467,7 @@ struct ada_test
             }
             // Ada treats file as a special scheme
             {
-                result<url> r = parse_uri_reference("file://y/");
+                system::result<url> r = parse_uri_reference("file://y/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("x:123");
@@ -10483,7 +10483,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "123");
             }
             {
-                result<url> r = parse_uri_reference("file://y/");
+                system::result<url> r = parse_uri_reference("file://y/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("loc%41lhost");
@@ -10497,7 +10497,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "");
             }
             {
-                result<url> r = parse_uri_reference("file://hi/x");
+                system::result<url> r = parse_uri_reference("file://hi/x");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("");
@@ -10508,7 +10508,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "");
             }
             {
-                result<url> r = parse_uri_reference("sc://test@test/");
+                system::result<url> r = parse_uri_reference("sc://test@test/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("");
@@ -10523,7 +10523,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_user(), "test");
             }
             {
-                result<url> r = parse_uri_reference("sc://test:12/");
+                system::result<url> r = parse_uri_reference("sc://test:12/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("");
@@ -10539,7 +10539,7 @@ struct ada_test
             }
             // Leading / is not stripped
             {
-                result<url> r = parse_uri_reference("http://example.com/");
+                system::result<url> r = parse_uri_reference("http://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("///bad.com");
@@ -10553,7 +10553,7 @@ struct ada_test
             }
             // Leading / is not stripped
             {
-                result<url> r = parse_uri_reference("sc://example.com/");
+                system::result<url> r = parse_uri_reference("sc://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("///bad.com");
@@ -10566,7 +10566,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%2F%2F%2Fbad.com");
             }
             {
-                result<url> r = parse_uri_reference("https://example.com/");
+                system::result<url> r = parse_uri_reference("https://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("a%C2%ADb");
@@ -10579,7 +10579,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "a%C2%ADb");
             }
             {
-                result<url> r = parse_uri_reference("https://example.com/");
+                system::result<url> r = parse_uri_reference("https://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("\xad" "");
@@ -10592,7 +10592,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%AD");
             }
             {
-                result<url> r = parse_uri_reference("https://example.com/");
+                system::result<url> r = parse_uri_reference("https://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("%C2%AD");
@@ -10605,7 +10605,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%C2%AD");
             }
             {
-                result<url> r = parse_uri_reference("https://example.com/");
+                system::result<url> r = parse_uri_reference("https://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // u.set_encoded_host_and_port("xn--");
@@ -10622,7 +10622,7 @@ struct ada_test
         {
             // Non-special scheme
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("\x00" ""));
@@ -10634,7 +10634,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("\t"));
@@ -10646,7 +10646,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%09");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("\n"));
@@ -10658,7 +10658,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%0A");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("\r"));
@@ -10670,7 +10670,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%0D");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host(" "));
@@ -10682,7 +10682,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%20");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("#"));
@@ -10694,7 +10694,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%23");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("/"));
@@ -10706,7 +10706,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%2F");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("?"));
@@ -10718,7 +10718,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%3F");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("@"));
@@ -10731,7 +10731,7 @@ struct ada_test
             }
             // Cannot-be-a-base means no host in Ada
             {
-                result<url> r = parse_uri_reference("mailto:me@example.net");
+                system::result<url> r = parse_uri_reference("mailto:me@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
@@ -10742,7 +10742,7 @@ struct ada_test
             }
             // Cannot-be-a-base means no host in Ada
             {
-                result<url> r = parse_uri_reference("data:text/plain,Stuff");
+                system::result<url> r = parse_uri_reference("data:text/plain,Stuff");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.net"));
@@ -10752,7 +10752,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net:8080");
+                system::result<url> r = parse_uri_reference("http://example.net:8080");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com"));
@@ -10764,7 +10764,7 @@ struct ada_test
             }
             // The empty host is not valid for special schemes
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host(""));
@@ -10775,7 +10775,7 @@ struct ada_test
             }
             // The empty host is OK for non-special schemes
             {
-                result<url> r = parse_uri_reference("view-source+http://example.net/foo");
+                system::result<url> r = parse_uri_reference("view-source+http://example.net/foo");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host(""));
@@ -10784,7 +10784,7 @@ struct ada_test
             }
             // Path-only URLs can gain a host
             {
-                result<url> r = parse_uri_reference("a:/foo");
+                system::result<url> r = parse_uri_reference("a:/foo");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.net"));
@@ -10793,7 +10793,7 @@ struct ada_test
             }
             // IPv4 address syntax is normalized
             {
-                result<url> r = parse_uri_reference("http://example.net:8080");
+                system::result<url> r = parse_uri_reference("http://example.net:8080");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("0x7F000001"));
@@ -10807,7 +10807,7 @@ struct ada_test
             }
             // IPv6 address syntax is normalized
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("[::0:01]"));
@@ -10820,7 +10820,7 @@ struct ada_test
             }
             // : delimiter invalidates entire value
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com:8080"));
@@ -10834,7 +10834,7 @@ struct ada_test
             }
             // : delimiter invalidates entire value
             {
-                result<url> r = parse_uri_reference("http://example.net:8080/path");
+                system::result<url> r = parse_uri_reference("http://example.net:8080/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com:"));
@@ -10848,7 +10848,7 @@ struct ada_test
             }
             // Stuff after a / delimiter is ignored
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com/stuff"));
@@ -10862,7 +10862,7 @@ struct ada_test
             }
             // Stuff after a ? delimiter is ignored
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com?stuff"));
@@ -10876,7 +10876,7 @@ struct ada_test
             }
             // Stuff after a # delimiter is ignored
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com#stuff"));
@@ -10890,7 +10890,7 @@ struct ada_test
             }
             // Stuff after a \ delimiter is ignored for special schemes
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com\\stuff"));
@@ -10904,7 +10904,7 @@ struct ada_test
             }
             // \ is not a delimiter for non-special schemes, but still forbidden in hosts
             {
-                result<url> r = parse_uri_reference("view-source+http://example.net/path");
+                system::result<url> r = parse_uri_reference("view-source+http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("example.com\\stuff"));
@@ -10918,7 +10918,7 @@ struct ada_test
             }
             // Broken IPv6
             {
-                result<url> r = parse_uri_reference("http://example.net/");
+                system::result<url> r = parse_uri_reference("http://example.net/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("[google.com]"));
@@ -10930,7 +10930,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5Bgoogle.com%5D");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net/");
+                system::result<url> r = parse_uri_reference("http://example.net/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.2.3.4x]"));
@@ -10942,7 +10942,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.3.4x%5D");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net/");
+                system::result<url> r = parse_uri_reference("http://example.net/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.2.3.]"));
@@ -10954,7 +10954,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.3.%5D");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net/");
+                system::result<url> r = parse_uri_reference("http://example.net/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.2.]"));
@@ -10966,7 +10966,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.2.%5D");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net/");
+                system::result<url> r = parse_uri_reference("http://example.net/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("[::1.]"));
@@ -10978,7 +10978,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%5B%3A%3A1.%5D");
             }
             {
-                result<url> r = parse_uri_reference("file://y/");
+                system::result<url> r = parse_uri_reference("file://y/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("x:123"));
@@ -10991,7 +10991,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "");
             }
             {
-                result<url> r = parse_uri_reference("file://y/");
+                system::result<url> r = parse_uri_reference("file://y/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("loc%41lhost"));
@@ -11004,7 +11004,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "");
             }
             {
-                result<url> r = parse_uri_reference("file://hi/x");
+                system::result<url> r = parse_uri_reference("file://hi/x");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host(""));
@@ -11014,7 +11014,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "");
             }
             {
-                result<url> r = parse_uri_reference("sc://test@test/");
+                system::result<url> r = parse_uri_reference("sc://test@test/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host(""));
@@ -11028,7 +11028,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_user(), "test");
             }
             {
-                result<url> r = parse_uri_reference("sc://test:12/");
+                system::result<url> r = parse_uri_reference("sc://test:12/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host(""));
@@ -11042,7 +11042,7 @@ struct ada_test
             }
             // Drop /. from path
             {
-                result<url> r = parse_uri_reference("non-spec:/.//p");
+                system::result<url> r = parse_uri_reference("non-spec:/.//p");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("h"));
@@ -11054,7 +11054,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_path(), "/.//p");
             }
             {
-                result<url> r = parse_uri_reference("non-spec:/.//p");
+                system::result<url> r = parse_uri_reference("non-spec:/.//p");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host(""));
@@ -11069,7 +11069,7 @@ struct ada_test
             }
             // Leading / is not stripped
             {
-                result<url> r = parse_uri_reference("http://example.com/");
+                system::result<url> r = parse_uri_reference("http://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("///bad.com"));
@@ -11082,7 +11082,7 @@ struct ada_test
             }
             // Leading / is not stripped
             {
-                result<url> r = parse_uri_reference("sc://example.com/");
+                system::result<url> r = parse_uri_reference("sc://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("///bad.com"));
@@ -11094,7 +11094,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%2F%2F%2Fbad.com");
             }
             {
-                result<url> r = parse_uri_reference("https://example.com/");
+                system::result<url> r = parse_uri_reference("https://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("a%C2%ADb"));
@@ -11106,7 +11106,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "a%C2%ADb");
             }
             {
-                result<url> r = parse_uri_reference("https://example.com/");
+                system::result<url> r = parse_uri_reference("https://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("\xad"));
@@ -11118,7 +11118,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%AD");
             }
             {
-                result<url> r = parse_uri_reference("https://example.com/");
+                system::result<url> r = parse_uri_reference("https://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("%C2%AD"));
@@ -11130,7 +11130,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_host(), "%C2%AD");
             }
             {
-                result<url> r = parse_uri_reference("https://example.com/");
+                system::result<url> r = parse_uri_reference("https://example.com/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_host("xn--"));
@@ -11145,7 +11145,7 @@ struct ada_test
         // port
         {
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("8080"));
@@ -11157,7 +11157,7 @@ struct ada_test
             }
             // Port number is removed if empty is the new value
             {
-                result<url> r = parse_uri_reference("http://example.net:8080");
+                system::result<url> r = parse_uri_reference("http://example.net:8080");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port(""));
@@ -11169,7 +11169,7 @@ struct ada_test
             }
             // Default port number is removed
             {
-                result<url> r = parse_uri_reference("http://example.net:8080");
+                system::result<url> r = parse_uri_reference("http://example.net:8080");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("80"));
@@ -11184,7 +11184,7 @@ struct ada_test
             }
             // Default port number is removed
             {
-                result<url> r = parse_uri_reference("https://example.net:4433");
+                system::result<url> r = parse_uri_reference("https://example.net:4433");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("443"));
@@ -11199,7 +11199,7 @@ struct ada_test
             }
             // Default port number is only removed for the relevant scheme
             {
-                result<url> r = parse_uri_reference("https://example.net");
+                system::result<url> r = parse_uri_reference("https://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("80"));
@@ -11211,10 +11211,10 @@ struct ada_test
             }
             // Stuff after a / delimiter is ignored
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_port("8080/stuff"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080/stuff"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
@@ -11226,10 +11226,10 @@ struct ada_test
             }
             // Stuff after a ? delimiter is ignored
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_port("8080?stuff"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080?stuff"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
@@ -11241,10 +11241,10 @@ struct ada_test
             }
             // Stuff after a # delimiter is ignored
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_port("8080#stuff"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080#stuff"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
@@ -11256,10 +11256,10 @@ struct ada_test
             }
             // Stuff after a \ delimiter is ignored for special schemes
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_port("8080\\stuff"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080\\stuff"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
@@ -11271,10 +11271,10 @@ struct ada_test
             }
             // Anything other than ASCII digit stops the port parser in a setter but is not an error
             {
-                result<url> r = parse_uri_reference("view-source+http://example.net/path");
+                system::result<url> r = parse_uri_reference("view-source+http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "view-source+http://example.net:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
@@ -11286,10 +11286,10 @@ struct ada_test
             }
             // Anything other than ASCII digit stops the port parser in a setter but is not an error
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080stuff2"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
@@ -11301,10 +11301,10 @@ struct ada_test
             }
             // Anything other than ASCII digit stops the port parser in a setter but is not an error
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_port("8080+2"), system_error);
+                BOOST_TEST_THROWS(u.set_port("8080+2"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
@@ -11316,7 +11316,7 @@ struct ada_test
             }
             // Port numbers are 16 bit integers
             {
-                result<url> r = parse_uri_reference("http://example.net/path");
+                system::result<url> r = parse_uri_reference("http://example.net/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("65535"));
@@ -11327,7 +11327,7 @@ struct ada_test
             }
             // Port numbers are 16 bit integers, overflowing is an error in Ada
             {
-                result<url> r = parse_uri_reference("http://example.net:8080/path");
+                system::result<url> r = parse_uri_reference("http://example.net:8080/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("65536"));
@@ -11342,10 +11342,10 @@ struct ada_test
             }
             // Setting port to a string that doesn't parse as a number
             {
-                result<url> r = parse_uri_reference("http://example.net:8080/path");
+                system::result<url> r = parse_uri_reference("http://example.net:8080/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_port("randomstring"), system_error);
+                BOOST_TEST_THROWS(u.set_port("randomstring"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "http://example.net:8080/path");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host_and_port(), "example.net:8080");
                 // BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.net");
@@ -11357,7 +11357,7 @@ struct ada_test
             }
             // Port numbers are 16 bit integers, overflowing is an error
             {
-                result<url> r = parse_uri_reference("non-special://example.net:8080/path");
+                system::result<url> r = parse_uri_reference("non-special://example.net:8080/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("65536"));
@@ -11371,7 +11371,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "65536");
             }
             {
-                result<url> r = parse_uri_reference("file://test/");
+                system::result<url> r = parse_uri_reference("file://test/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("12"));
@@ -11381,7 +11381,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "12");
             }
             {
-                result<url> r = parse_uri_reference("file://localhost/");
+                system::result<url> r = parse_uri_reference("file://localhost/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("12"));
@@ -11391,7 +11391,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "12");
             }
             {
-                result<url> r = parse_uri_reference("non-base:value");
+                system::result<url> r = parse_uri_reference("non-base:value");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("12"));
@@ -11401,7 +11401,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "12");
             }
             {
-                result<url> r = parse_uri_reference("sc:///");
+                system::result<url> r = parse_uri_reference("sc:///");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("12"));
@@ -11411,7 +11411,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "12");
             }
             {
-                result<url> r = parse_uri_reference("sc://x/");
+                system::result<url> r = parse_uri_reference("sc://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("12"));
@@ -11419,7 +11419,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.port(), "12");
             }
             {
-                result<url> r = parse_uri_reference("javascript://x/");
+                system::result<url> r = parse_uri_reference("javascript://x/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_port("12"));
@@ -11428,28 +11428,28 @@ struct ada_test
             }
             // Leading u0009 on special scheme
             {
-                result<url> r = parse_uri_reference("https://domain.com:443");
+                system::result<url> r = parse_uri_reference("https://domain.com:443");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_port("\t8080"), system_error);
+                BOOST_TEST_THROWS(u.set_port("\t8080"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u.port(), "8080");
                 BOOST_TEST_CSTR_EQ(u.port(), "443");
             }
             // Leading u0009 on non-special scheme
             {
-                result<url> r = parse_uri_reference("wpt++://domain.com:443");
+                system::result<url> r = parse_uri_reference("wpt++://domain.com:443");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_port("\t8080"), system_error);
+                BOOST_TEST_THROWS(u.set_port("\t8080"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u.port(), "8080");
                 BOOST_TEST_CSTR_EQ(u.port(), "443");
             }
             // Should use all ascii prefixed characters as port
             {
-                result<url> r = parse_uri_reference("https://www.google.com:4343");
+                system::result<url> r = parse_uri_reference("https://www.google.com:4343");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
-                BOOST_TEST_THROWS(u.set_port("4wpt"), system_error);
+                BOOST_TEST_THROWS(u.set_port("4wpt"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u.port(), "4");
                 BOOST_TEST_CSTR_EQ(u.port(), "4343");
             }
@@ -11458,7 +11458,7 @@ struct ada_test
         {
             // Opaque paths cannot be set
             {
-                result<url> r = parse_uri_reference("mailto:me@example.net");
+                system::result<url> r = parse_uri_reference("mailto:me@example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("/foo"));
@@ -11468,7 +11468,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_path(), "/foo");
             }
             {
-                result<url> r = parse_uri_reference("data:original");
+                system::result<url> r = parse_uri_reference("data:original");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("new value"));
@@ -11478,7 +11478,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_path(), "new%20value");
             }
             {
-                result<url> r = parse_uri_reference("sc:original");
+                system::result<url> r = parse_uri_reference("sc:original");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("new value"));
@@ -11489,7 +11489,7 @@ struct ada_test
             }
             // Special URLs cannot have their paths erased
             {
-                result<url> r = parse_uri_reference("file:///some/path");
+                system::result<url> r = parse_uri_reference("file:///some/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path(""));
@@ -11500,7 +11500,7 @@ struct ada_test
             }
             // Non-special URLs can have their paths erased
             {
-                result<url> r = parse_uri_reference("foo://somehost/some/path");
+                system::result<url> r = parse_uri_reference("foo://somehost/some/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path(""));
@@ -11509,7 +11509,7 @@ struct ada_test
             }
             // Non-special URLs with an empty host can have their paths erased
             {
-                result<url> r = parse_uri_reference("foo:///some/path");
+                system::result<url> r = parse_uri_reference("foo:///some/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path(""));
@@ -11518,7 +11518,7 @@ struct ada_test
             }
             // Path-only URLs cannot have their paths erased
             {
-                result<url> r = parse_uri_reference("foo:/some/path");
+                system::result<url> r = parse_uri_reference("foo:/some/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path(""));
@@ -11529,7 +11529,7 @@ struct ada_test
             }
             // Path-only URLs always have an initial slash
             {
-                result<url> r = parse_uri_reference("foo:/some/path");
+                system::result<url> r = parse_uri_reference("foo:/some/path");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("test"));
@@ -11539,7 +11539,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_path(), "test");
             }
             {
-                result<url> r = parse_uri_reference("unix:/run/foo.socket?timeout=10");
+                system::result<url> r = parse_uri_reference("unix:/run/foo.socket?timeout=10");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("/var/log/../run/bar.socket"));
@@ -11552,7 +11552,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_path(), "/var/run/bar.socket");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net#nav");
+                system::result<url> r = parse_uri_reference("https://example.net#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("home"));
@@ -11560,7 +11560,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_path(), "/home");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net#nav");
+                system::result<url> r = parse_uri_reference("https://example.net#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("../home"));
@@ -11574,7 +11574,7 @@ struct ada_test
             }
             // \ is a segment delimiter for 'special' URLs
             {
-                result<url> r = parse_uri_reference("http://example.net/home?lang=fr#nav");
+                system::result<url> r = parse_uri_reference("http://example.net/home?lang=fr#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("\\a\\%2E\\b\\%2e.\\c"));
@@ -11585,7 +11585,7 @@ struct ada_test
             }
             // \ is *not* a segment delimiter for non-'special' URLs
             {
-                result<url> r = parse_uri_reference("view-source+http://example.net/home?lang=fr#nav");
+                system::result<url> r = parse_uri_reference("view-source+http://example.net/home?lang=fr#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("\\a\\%2E\\b\\%2e.\\c"));
@@ -11596,17 +11596,17 @@ struct ada_test
             }
             // UTF-8 percent encoding with the default encode set. Tabs and newlines are removed.
             {
-                result<url> r = parse_uri_reference("a:/");
+                system::result<url> r = parse_uri_reference("a:/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // Boost.URL does not accept invalid hexdig
-                BOOST_TEST_THROWS(u.set_encoded_path("%00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"), system_error);
+                BOOST_TEST_THROWS(u.set_encoded_path("%00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9");
                 // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9");
             }
             // Bytes already percent-encoded are left as-is, including %2E outside dotted segments.
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("%2e%2E%c3%89té"));
@@ -11615,7 +11615,7 @@ struct ada_test
             }
             // ? needs to be encoded
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("?"));
@@ -11624,7 +11624,7 @@ struct ada_test
             }
             // # needs to be encoded
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("#"));
@@ -11633,7 +11633,7 @@ struct ada_test
             }
             // ? needs to be encoded, non-special scheme
             {
-                result<url> r = parse_uri_reference("sc://example.net");
+                system::result<url> r = parse_uri_reference("sc://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("?"));
@@ -11642,7 +11642,7 @@ struct ada_test
             }
             // # needs to be encoded, non-special scheme
             {
-                result<url> r = parse_uri_reference("sc://example.net");
+                system::result<url> r = parse_uri_reference("sc://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("#"));
@@ -11651,7 +11651,7 @@ struct ada_test
             }
             // ? doesn't mess up encoding
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("/?é"));
@@ -11660,7 +11660,7 @@ struct ada_test
             }
             // # doesn't mess up encoding
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("/#é"));
@@ -11669,7 +11669,7 @@ struct ada_test
             }
             // File URLs and (back)slashes
             {
-                result<url> r = parse_uri_reference("file://monkey/");
+                system::result<url> r = parse_uri_reference("file://monkey/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("\\\\"));
@@ -11680,7 +11680,7 @@ struct ada_test
             }
             // File URLs and (back)slashes
             {
-                result<url> r = parse_uri_reference("file:///unicorn");
+                system::result<url> r = parse_uri_reference("file:///unicorn");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("//\\/"));
@@ -11691,7 +11691,7 @@ struct ada_test
             }
             // File URLs and (back)slashes
             {
-                result<url> r = parse_uri_reference("file:///unicorn");
+                system::result<url> r = parse_uri_reference("file:///unicorn");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("//monkey/..//"));
@@ -11702,7 +11702,7 @@ struct ada_test
             }
             // Serialize /. in path
             {
-                result<url> r = parse_uri_reference("non-spec:/");
+                system::result<url> r = parse_uri_reference("non-spec:/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("/.//p"));
@@ -11711,7 +11711,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_path(), "/.//p");
             }
             {
-                result<url> r = parse_uri_reference("non-spec:/");
+                system::result<url> r = parse_uri_reference("non-spec:/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("/..//p"));
@@ -11721,7 +11721,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_path(), "/..//p");
             }
             {
-                result<url> r = parse_uri_reference("non-spec:/");
+                system::result<url> r = parse_uri_reference("non-spec:/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("//p"));
@@ -11731,7 +11731,7 @@ struct ada_test
             }
             // Drop /. from path
             {
-                result<url> r = parse_uri_reference("non-spec:/.//");
+                system::result<url> r = parse_uri_reference("non-spec:/.//");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("p"));
@@ -11742,7 +11742,7 @@ struct ada_test
             }
             // Non-special URLs with non-opaque paths percent-encode U+0020
             {
-                result<url> r = parse_uri_reference("data:/nospace");
+                system::result<url> r = parse_uri_reference("data:/nospace");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("space "));
@@ -11752,7 +11752,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_path(), "space%20");
             }
             {
-                result<url> r = parse_uri_reference("sc:/nospace");
+                system::result<url> r = parse_uri_reference("sc:/nospace");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_path("space "));
@@ -11765,7 +11765,7 @@ struct ada_test
         // search
         {
             {
-                result<url> r = parse_uri_reference("https://example.net#nav");
+                system::result<url> r = parse_uri_reference("https://example.net#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_query("lang=fr"));
@@ -11774,7 +11774,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_query(), "lang=fr");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                system::result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_query("lang=fr"));
@@ -11783,7 +11783,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_query(), "lang=fr");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                system::result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_query("?lang=fr"));
@@ -11792,7 +11792,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_query(), "?lang=fr");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                system::result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_query("??lang=fr"));
@@ -11801,7 +11801,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_query(), "??lang=fr");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                system::result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_query("?"));
@@ -11810,7 +11810,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_query(), "?");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                system::result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_query(""));
@@ -11819,7 +11819,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_query(), "");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net?lang=en-US");
+                system::result<url> r = parse_uri_reference("https://example.net?lang=en-US");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_query(""));
@@ -11828,7 +11828,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_query(), "");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net");
+                system::result<url> r = parse_uri_reference("https://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_query(""));
@@ -11838,17 +11838,17 @@ struct ada_test
             }
             // UTF-8 percent encoding with the query encode set. Tabs and newlines are removed.
             {
-                result<url> r = parse_uri_reference("a:/");
+                system::result<url> r = parse_uri_reference("a:/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // Boost.URL does not accept invalid octets
-                BOOST_TEST_THROWS(u.set_encoded_query("%00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"), system_error);
+                BOOST_TEST_THROWS(u.set_encoded_query("%00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "a:/?%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9");
                 // BOOST_TEST_CSTR_EQ(u.encoded_query(), "%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9");
             }
             // Bytes already percent-encoded are left as-is
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_query("%c3%89té"));
@@ -11859,7 +11859,7 @@ struct ada_test
             }
             // Drop trailing spaces from trailing opaque paths
             {
-                result<url> r = parse_uri_reference("data:space ?query");
+                system::result<url> r = parse_uri_reference("data:space ?query");
                 // Boost.URL does not accept parsing invalid path chars
                 BOOST_TEST_NOT(r);
                 // if (!BOOST_TEST(r)) return;
@@ -11870,7 +11870,7 @@ struct ada_test
                 // BOOST_TEST_CSTR_EQ(u.encoded_query(), "");
             }
             {
-                result<url> r = parse_uri_reference("sc:space ?query");
+                system::result<url> r = parse_uri_reference("sc:space ?query");
                 // Boost.URL does not accept parsing invalid path chars
                 BOOST_TEST_NOT(r);
                 // if (!BOOST_TEST(r)) return;
@@ -11882,7 +11882,7 @@ struct ada_test
             }
             // Do not drop trailing spaces from non-trailing opaque paths
             {
-                result<url> r = parse_uri_reference("data:space  ?query#fragment");
+                system::result<url> r = parse_uri_reference("data:space  ?query#fragment");
                 // Boost.URL does not accept parsing invalid path chars
                 BOOST_TEST_NOT(r);
                 // if (!BOOST_TEST(r)) return;
@@ -11892,7 +11892,7 @@ struct ada_test
                 // BOOST_TEST_CSTR_EQ(u.encoded_query(), "");
             }
             {
-                result<url> r = parse_uri_reference("sc:space  ?query#fragment");
+                system::result<url> r = parse_uri_reference("sc:space  ?query#fragment");
                 // Boost.URL does not accept parsing invalid path chars
                 BOOST_TEST_NOT(r);
                 // if (!BOOST_TEST(r)) return;
@@ -11905,7 +11905,7 @@ struct ada_test
         // hash
         {
             {
-                result<url> r = parse_uri_reference("https://example.net");
+                system::result<url> r = parse_uri_reference("https://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("main"));
@@ -11914,7 +11914,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "main");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net#nav");
+                system::result<url> r = parse_uri_reference("https://example.net#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("main"));
@@ -11923,7 +11923,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "main");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net?lang=en-US");
+                system::result<url> r = parse_uri_reference("https://example.net?lang=en-US");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("#nav"));
@@ -11932,7 +11932,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "#nav");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                system::result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("main"));
@@ -11941,7 +11941,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "main");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                system::result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment(""));
@@ -11950,7 +11950,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "");
             }
             {
-                result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
+                system::result<url> r = parse_uri_reference("https://example.net?lang=en-US#nav");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment(""));
@@ -11959,7 +11959,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("foo bar"));
@@ -11968,7 +11968,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "foo%20bar");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("foo\"bar"));
@@ -11977,7 +11977,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "foo%22bar");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("foo<bar"));
@@ -11986,7 +11986,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "foo%3Cbar");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("foo>bar"));
@@ -11995,7 +11995,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "foo%3Ebar");
             }
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("foo`bar"));
@@ -12005,17 +12005,17 @@ struct ada_test
             }
             // Simple percent-encoding; tabs and newlines are removed
             {
-                result<url> r = parse_uri_reference("a:/");
+                system::result<url> r = parse_uri_reference("a:/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 // Boost.URL does not accept invalid octets
-                BOOST_TEST_THROWS(u.set_encoded_fragment("%00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"), system_error);
+                BOOST_TEST_THROWS(u.set_encoded_fragment("%00" "\x01" "\t\n\r\x1f" " !\"#$%&\'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7f" "\x80" "\x81" "Éé"), system::system_error);
                 // BOOST_TEST_CSTR_EQ(u, "a:/#%00%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9");
                 // BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "%00%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9");
             }
             // Percent-encode NULLs in fragment
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("a%00" "b"));
@@ -12025,7 +12025,7 @@ struct ada_test
             }
             // Percent-encode NULLs in fragment
             {
-                result<url> r = parse_uri_reference("non-spec:/");
+                system::result<url> r = parse_uri_reference("non-spec:/");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("a%00" "b"));
@@ -12034,7 +12034,7 @@ struct ada_test
             }
             // Bytes already percent-encoded are left as-is
             {
-                result<url> r = parse_uri_reference("http://example.net");
+                system::result<url> r = parse_uri_reference("http://example.net");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("%c3%89té"));
@@ -12043,7 +12043,7 @@ struct ada_test
                 BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "%c3%89t%C3%A9");
             }
             {
-                result<url> r = parse_uri_reference("javascript:alert(1)");
+                system::result<url> r = parse_uri_reference("javascript:alert(1)");
                 if (!BOOST_TEST(r)) return;
                 url u = *r;
                 BOOST_TEST_NO_THROW(u.set_encoded_fragment("castle"));
@@ -12052,7 +12052,7 @@ struct ada_test
             }
             // Drop trailing spaces from trailing opaque paths
             {
-                result<url> r = parse_uri_reference("data:space                   #fragment");
+                system::result<url> r = parse_uri_reference("data:space                   #fragment");
                 // Boost.URL does not accept parsing invalid path chars
                 BOOST_TEST_NOT(r);
                 // if (!BOOST_TEST(r)) return;
@@ -12063,7 +12063,7 @@ struct ada_test
                 // BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "");
             }
             {
-                result<url> r = parse_uri_reference("sc:space    #fragment");
+                system::result<url> r = parse_uri_reference("sc:space    #fragment");
                 // Boost.URL does not accept parsing invalid path chars
                 BOOST_TEST_NOT(r);
                 // if (!BOOST_TEST(r)) return;
@@ -12075,7 +12075,7 @@ struct ada_test
             }
             // Do not drop trailing spaces from non-trailing opaque paths
             {
-                result<url> r = parse_uri_reference("data:space  ?query#fragment");
+                system::result<url> r = parse_uri_reference("data:space  ?query#fragment");
                 // Boost.URL does not accept parsing invalid path chars
                 BOOST_TEST_NOT(r);
                 // if (!BOOST_TEST(r)) return;
@@ -12085,7 +12085,7 @@ struct ada_test
                 // BOOST_TEST_CSTR_EQ(u.encoded_fragment(), "");
             }
             {
-                result<url> r = parse_uri_reference("sc:space  ?query#fragment");
+                system::result<url> r = parse_uri_reference("sc:space  ?query#fragment");
                 // Boost.URL does not accept parsing invalid path chars
                 BOOST_TEST_NOT(r);
                 // if (!BOOST_TEST(r)) return;

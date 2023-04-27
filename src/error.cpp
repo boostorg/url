@@ -56,7 +56,7 @@ case error::not_a_base: return "not a base";
     return "";
 }
 
-error_condition
+system::error_condition
 error_cat_type::
 default_error_condition(
     int ev) const noexcept

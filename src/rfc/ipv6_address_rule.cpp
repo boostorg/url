@@ -55,7 +55,7 @@ parse(
     char const*& it,
     char const* const end
         ) const noexcept ->
-    result<ipv6_address>
+    system::result<ipv6_address>
 {
     int n = 8;      // words needed
     int b = -1;     // value of n
@@ -63,7 +63,7 @@ parse(
     bool c = false; // need colon
     auto prev = it;
     ipv6_address::bytes_type bytes;
-    result<detail::h16_rule_t::value_type> rv;
+    system::result<detail::h16_rule_t::value_type> rv;
     for(;;)
     {
         if(it == end)

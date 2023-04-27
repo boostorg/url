@@ -70,14 +70,14 @@ public:
                 a.to_uint() == 0x01020304);
         }
 
-        // ipv4_address(string_view)
+        // ipv4_address(core::string_view)
         {
             ipv4_address a("1.2.3.4");
             BOOST_TEST(
                 a.to_uint() == 0x01020304);
             BOOST_TEST_THROWS(
                 ipv4_address("x"),
-                system_error);
+                system::system_error);
         }
 
         // to_bytes
@@ -111,7 +111,7 @@ public:
             char buf2[10];
             BOOST_TEST_THROWS(
                 a.to_buffer(buf2, sizeof(buf2)),
-                system_error);
+                system::system_error);
         }
 
         // is_loopback
@@ -190,21 +190,21 @@ public:
     testParse()
     {
         auto const bad = [](
-            string_view s)
+            core::string_view s)
         {
             auto r = parse_ipv4_address(s);
             BOOST_TEST(r.has_error());
         };
 
         auto const good = [](
-            string_view s)
+            core::string_view s)
         {
             auto r = parse_ipv4_address(s);
             BOOST_TEST(r.has_value());
         };
 
         auto const check = [](
-            string_view s,
+            core::string_view s,
             ipv4_address::uint_type v)
         {
             auto r = parse_ipv4_address(s);

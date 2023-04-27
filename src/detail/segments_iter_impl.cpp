@@ -138,7 +138,7 @@ decrement() noexcept
     {
         next = pos;
         pos = path_prefix(ref.buffer());
-        s_ = string_view(
+        s_ = core::string_view(
             ref.data() + pos,
             next - pos);
         BOOST_ASSERT(! s_.ends_with('/'));

@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     std::string line;
     while (std::getline(fin, line))
     {
-        urls::string_view sv(line);
+        boost::core::string_view sv(line);
         if (sv.starts_with("//") && suffix.empty())
         {
             comment.append(sv.substr(3));

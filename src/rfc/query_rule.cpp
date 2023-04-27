@@ -25,14 +25,14 @@ parse(
     char const*& it,
     char const* end
         ) const noexcept ->
-    result<value_type>
+    system::result<value_type>
 {
     if(it == end)
     {
         // empty string = 0 params
         return params_encoded_view(
             detail::query_ref(
-                string_view(it, 0), 0, 0));
+                core::string_view(it, 0), 0, 0));
     }
     auto const it0 = it;
     std::size_t dn = 0;
@@ -75,7 +75,7 @@ parse(
     std::size_t const n(it - it0);
     return params_encoded_view(
         detail::query_ref(
-            string_view(it0, n),
+            core::string_view(it0, n),
             n - dn,
             nparam));
 }

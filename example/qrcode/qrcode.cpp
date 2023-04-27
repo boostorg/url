@@ -15,10 +15,12 @@
 */
 
 #include <boost/url/url.hpp>
+#include <boost/core/detail/string_view.hpp>
 #include <boost/url/parse.hpp>
 #include <iostream>
 
 namespace urls = boost::urls;
+namespace core = boost::core;
 
 int main(int argc, char** argv)
 {
@@ -53,9 +55,9 @@ int main(int argc, char** argv)
     // Encoding
     if (argc >= 5)
     {
-         urls::string_view output_encoding =
-            urls::string_view(argv[3]) == "Shift_JIS" ||
-            urls::string_view(argv[3]) == "ISO-8859-1" ?
+         core::string_view output_encoding =
+            core::string_view(argv[3]) == "Shift_JIS" ||
+            core::string_view(argv[3]) == "ISO-8859-1" ?
                 argv[4] : "UTF-8";
          ps.append({"choe", output_encoding});
     }

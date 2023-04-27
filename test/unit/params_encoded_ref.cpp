@@ -106,8 +106,8 @@ struct params_encoded_ref_test
     void
     check(
         void(*f)(params_encoded_ref),
-        string_view s0,
-        string_view s1,
+        core::string_view s0,
+        core::string_view s1,
         std::initializer_list<
             param_pct_view> init)
     {
@@ -138,8 +138,8 @@ struct params_encoded_ref_test
     check(
         void(*f1)(params_encoded_ref),
         void(*f2)(params_encoded_ref),
-        string_view s0,
-        string_view s1,
+        core::string_view s0,
+        core::string_view s1,
         std::initializer_list<
             param_pct_view> init)
     {
@@ -250,7 +250,7 @@ struct params_encoded_ref_test
 
             // invalid pecent-escape
             BOOST_TEST_THROWS((u.encoded_params() =
-                { {"%", no_value} }), system_error);
+                { {"%", no_value} }), system::system_error);
         }
 
         // operator params_encoded_view
@@ -296,7 +296,7 @@ struct params_encoded_ref_test
 
                 // invalid pecent-escape
                 BOOST_TEST_THROWS(qp.assign(
-                    { {"%%", no_value} }), system_error);
+                    { {"%%", no_value} }), system::system_error);
             };
             auto const g = [](params_encoded_ref qp)
             {
@@ -304,7 +304,7 @@ struct params_encoded_ref_test
 
                 // invalid pecent-escape
                 BOOST_TEST_THROWS(qp.assign(
-                    { {"%%", no_value} }), system_error);
+                    { {"%%", no_value} }), system::system_error);
             };
             check(f, g, "", "first&last=&full=John%20Doe",
                 { {"first",no_value}, {"last",""}, {"full","John%20Doe"} });
@@ -319,7 +319,7 @@ struct params_encoded_ref_test
 
                 // invalid pecent-escape
                 BOOST_TEST_THROWS(qp.append(
-                    {"%F", no_value}), system_error);
+                    {"%F", no_value}), system::system_error);
             };
             check(f, "?", "&%3D=%26%23", { {"",no_value}, {"%3D","%26%23"} });
             check(f, "?key=value", "key=value&%3D=%26%23", { {"key","value"}, {"%3D","%26%23"} });
@@ -344,7 +344,7 @@ struct params_encoded_ref_test
 
                 // invalid pecent-escape
                 BOOST_TEST_THROWS(qp.append(
-                    { {"%FG", no_value} }), system_error);
+                    { {"%FG", no_value} }), system::system_error);
             };
             auto const g = [](params_encoded_ref qp)
             {
@@ -352,7 +352,7 @@ struct params_encoded_ref_test
 
                 // invalid pecent-escape
                 BOOST_TEST_THROWS(append(qp,
-                    { {"%FG", no_value} }), system_error);
+                    { {"%FG", no_value} }), system::system_error);
             };
             check(f, g, "", "first&last=&full=John%20Doe",
                 { {"first",no_value}, {"last",""}, {"full","John%20Doe"} });
@@ -373,7 +373,7 @@ struct params_encoded_ref_test
 
                 // invalid pecent-escape
                 BOOST_TEST_THROWS(qp.insert(std::next(qp.begin(), 0),
-                    {"", "%"}), system_error);
+                    {"", "%"}), system::system_error);
             };
             check(f, "?first=John&last=Doe", "middle=John&first=John&last=Doe",
                 { {"middle","John"}, {"first","John"}, {"last","Doe"} });
@@ -413,7 +413,7 @@ struct params_encoded_ref_test
 
                 // invalid pecent-escape
                 BOOST_TEST_THROWS(qp.insert(std::next(qp.begin(), 0),
-                    { {"key", "%%"} }), system_error);
+                    { {"key", "%%"} }), system::system_error);
             };
             auto const g = [](params_encoded_ref qp)
             {
@@ -424,7 +424,7 @@ struct params_encoded_ref_test
 
                 // invalid pecent-escape
                 BOOST_TEST_THROWS(insert(qp, std::next(qp.begin(), 0),
-                    { {"key", "%FX"} }), system_error);
+                    { {"key", "%FX"} }), system::system_error);
             };
             check(f, g, "?k1&k2=&k3=v3",
                 "first=John&last=Doe&k1&k2=&k3=v3",
@@ -537,7 +537,7 @@ struct params_encoded_ref_test
                 BOOST_TEST_EQ(n, 2);
 
                 // invalid pecent-escape
-                BOOST_TEST_THROWS(qp.erase("%"), system_error);
+                BOOST_TEST_THROWS(qp.erase("%"), system::system_error);
             };
             check(f, "?k0&k1=&k2=key&k1=value&k3=4&K1=k1", "k0&k2=key&k3=4&K1=k1",
                 { {"k0",no_value}, {"k2","key"}, {"k3","4"}, {"K1","k1"} });
@@ -562,7 +562,7 @@ struct params_encoded_ref_test
 
                 // invalid pecent-escape
                 BOOST_TEST_THROWS(qp.replace(std::next(qp.begin(), 0),
-                    {"", "00%"}), system_error);
+                    {"", "00%"}), system::system_error);
             };
             check(f, "?first=John&last=Doe", "%3D=%26%23&last=Doe",
                 { {"%3D","%26%23"}, {"last","Doe"} });
@@ -615,7 +615,7 @@ struct params_encoded_ref_test
                 BOOST_TEST_THROWS(qp.replace(
                         std::next(qp.begin(),0),
                         std::next(qp.begin(),2),
-                    { {"%", "%"} }), system_error);
+                    { {"%", "%"} }), system::system_error);
             };
             auto const g = [](params_encoded_ref qp)
             {
@@ -629,7 +629,7 @@ struct params_encoded_ref_test
                 BOOST_TEST_THROWS(replace(qp,
                         std::next(qp.begin(),0),
                         std::next(qp.begin(),2),
-                    { {"%", "%"} }), system_error);
+                    { {"%", "%"} }), system::system_error);
             };
             check(f, g, "?k0&k1=&k2=key", "%3D=%26%23&k2=key",
                 { {"%3D","%26%23"}, {"k2","key"} });
@@ -675,7 +675,7 @@ struct params_encoded_ref_test
 
                 // invalid pecent-escape
                 BOOST_TEST_THROWS(qp.set(std::next(qp.begin(),0),
-                    "%"), system_error);
+                    "%"), system::system_error);
             };
             check(f, "?k0&k1=&k2=key", "k0=key&k1=&k2=key",
                 { {"k0","key"}, {"k1",""}, {"k2","key"} });

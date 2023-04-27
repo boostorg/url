@@ -27,7 +27,7 @@ parse(
     char const*& it,
     char const* const end
         ) const noexcept ->
-    result<value_type>
+    system::result<value_type>
 {
     auto rv = grammar::parse(
         it, end,

@@ -31,10 +31,11 @@
 #include <functional>
 
 namespace urls = boost::urls;
+namespace core = boost::core;
 namespace asio = boost::asio;
 namespace beast = boost::beast;
 namespace http = beast::http;
-using string_view = urls::string_view;
+using string_view = core::string_view;
 using request_t = http::request<http::string_body>;
 struct connection;
 using handler = std::function<void(connection&, urls::matches)>;
@@ -52,13 +53,13 @@ struct connection
         : socket(ioc) {}
 
     void
-    string_reply(string_view msg);
+    string_reply(core::string_view msg);
 
     void
-    file_reply(string_view path);
+    file_reply(core::string_view path);
 
     void
-    error_reply(http::status, string_view msg);
+    error_reply(http::status, core::string_view msg);
 
     beast::error_code ec;
     asio::ip::tcp::socket socket;
@@ -74,9 +75,9 @@ main(int argc, char **argv)
      */
     if (argc != 4)
     {
-        string_view exec = argv[0];
+        core::string_view exec = argv[0];
         auto file_pos = exec.find_last_of("/\\");
-        if (file_pos != string_view::npos)
+        if (file_pos != core::string_view::npos)
             exec = exec.substr(file_pos + 1);
         std::cerr
             << "Usage: " << exec
@@ -189,7 +190,7 @@ serve(
 
 void
 connection::
-error_reply(http::status s, string_view msg)
+error_reply(http::status s, core::string_view msg)
 {
     // invalid route
     http::response<http::string_body> res{s, req.version()};
@@ -204,7 +205,7 @@ error_reply(http::status s, string_view msg)
 
 void
 connection::
-string_reply(string_view msg)
+string_reply(core::string_view msg)
 {
     http::response<http::string_body> res{http::status::ok, req.version()};
     res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
@@ -215,8 +216,8 @@ string_reply(string_view msg)
     http::write(socket, res, ec);
 }
 
-string_view
-mime_type(string_view path);
+core::string_view
+mime_type(core::string_view path);
 
 std::string
 path_cat(
@@ -225,7 +226,7 @@ path_cat(
 
 void
 connection::
-file_reply(string_view path)
+file_reply(core::string_view path)
 {
     http::file_body::value_type body;
     std::string jpath = path_cat(doc_root, path);
@@ -254,8 +255,8 @@ file_reply(string_view path)
 // The returned path is normalized for the platform.
 std::string
 path_cat(
-    string_view base,
-    string_view path)
+    core::string_view base,
+    core::string_view path)
 {
     if (base.empty())
         return std::string(path);
@@ -282,8 +283,8 @@ path_cat(
     return result;
 }
 
-string_view
-mime_type(string_view path)
+core::string_view
+mime_type(core::string_view path)
 {
     using beast::iequals;
     auto const ext = [&path]

@@ -27,7 +27,7 @@ parse(
     char const*& it,
     char const* const end
         ) const noexcept ->
-    result<value_type>
+    system::result<value_type>
 {
     value_type t;
 
@@ -60,7 +60,7 @@ parse(
                 b.size());
             t.host_type =
                 urls::host_type::ipv6;
-            t.match = string_view(
+            t.match = core::string_view(
                 it0, it - it0);
             return t;
         }
@@ -68,7 +68,7 @@ parse(
         // IPvFuture
         t.host_type =
             urls::host_type::ipvfuture;
-        t.match = string_view(
+        t.match = core::string_view(
             it0, it - it0);
         return t;
     }
@@ -86,11 +86,11 @@ parse(
             if (rv2.has_value() &&
                 !rv2->empty())
             {
-                t.name = string_view(
+                t.name = core::string_view(
                     it0, it - it0);
                 t.host_type =
                     urls::host_type::name;
-                t.match = string_view(
+                t.match = core::string_view(
                     it0, it - it0);
                 return t;
             }
@@ -103,7 +103,7 @@ parse(
                 b.size());
             t.host_type =
                 urls::host_type::ipv4;
-            t.match = string_view(
+            t.match = core::string_view(
                 it0, it - it0);
             return t;
         }
@@ -121,7 +121,7 @@ parse(
         t.name = *rv;
         t.host_type =
             urls::host_type::name;
-        t.match = string_view(
+        t.match = core::string_view(
             it0, it - it0);
         return t;
     }

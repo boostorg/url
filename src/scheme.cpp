@@ -19,7 +19,7 @@ namespace urls {
 
 scheme
 string_to_scheme(
-    string_view s) noexcept
+    core::string_view s) noexcept
 {
     using grammar::to_lower;
     switch(s.size())
@@ -90,7 +90,7 @@ string_to_scheme(
     return scheme::unknown;
 }
 
-string_view
+core::string_view
 to_string(scheme s) noexcept
 {
     switch(s)

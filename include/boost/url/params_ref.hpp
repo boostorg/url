@@ -657,7 +657,7 @@ public:
     BOOST_URL_DECL
     std::size_t
     erase(
-        string_view key,
+        core::string_view key,
         ignore_case_param ic = {}) noexcept;
 
     //--------------------------------------------
@@ -858,7 +858,7 @@ public:
     iterator
     set(
         iterator pos,
-        string_view value);
+        core::string_view value);
 
     /** Set a value
 
@@ -920,8 +920,8 @@ public:
     BOOST_URL_DECL
     iterator
     set(
-        string_view key,
-        string_view value,
+        core::string_view key,
+        core::string_view value,
         ignore_case_param ic = {});
 
     //--------------------------------------------
@@ -931,14 +931,14 @@ private:
     detail::params_iter_impl
     find_impl(
         detail::params_iter_impl,
-        string_view,
+        core::string_view,
         ignore_case_param) const noexcept;
 
     BOOST_URL_DECL
     detail::params_iter_impl
     find_last_impl(
         detail::params_iter_impl,
-        string_view,
+        core::string_view,
         ignore_case_param) const noexcept;
 
     template<class FwdIt>

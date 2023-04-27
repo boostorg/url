@@ -15,7 +15,7 @@
 #include <boost/url/error_types.hpp>
 #include <boost/url/params_encoded_base.hpp>
 #include <boost/url/params_view.hpp>
-#include <boost/url/string_view.hpp>
+#include <boost/core/detail/string_view.hpp>
 #include <iosfwd>
 #include <utility>
 
@@ -164,7 +164,7 @@ public:
     */
     BOOST_URL_DECL
     params_encoded_view(
-        string_view s);
+        core::string_view s);
 
     /** Assignment
 
@@ -229,8 +229,8 @@ public:
 
     BOOST_URL_DECL
     friend
-        result<params_encoded_view>
-        parse_query(string_view s) noexcept;
+        system::result<params_encoded_view>
+        parse_query(core::string_view s) noexcept;
 };
 
 } // urls

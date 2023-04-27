@@ -225,7 +225,7 @@ apply(
             u.impl_.decoded_[parts::id_port] =
                 pct_string_view(dest, dest1 - dest)
                     ->decoded_size() + 1;
-            string_view up = {dest - 1, dest1};
+            core::string_view up = {dest - 1, dest1};
             auto p = grammar::parse(up, detail::port_part_rule).value();
             if (p.has_port)
                 u.impl_.port_number_ = p.port_number;
@@ -331,7 +331,7 @@ apply(
             fragment_chars, pctx, fctx);
         u.impl_.decoded_[parts::id_frag] +=
             make_pct_string_view(
-                string_view(dest, dest1 - dest))
+                core::string_view(dest, dest1 - dest))
                 ->decoded_size() + 1;
     }
 }
@@ -359,7 +359,7 @@ struct pct_encoded_fmt_string_rule_t
         CharSet_ const& cs) noexcept ->
     pct_encoded_fmt_string_rule_t<CharSet_>;
 
-    result<value_type>
+    system::result<value_type>
     parse(
         char const*& it,
         char const* end) const noexcept
@@ -388,7 +388,7 @@ struct pct_encoded_fmt_string_rule_t
             rv = literal_rule.parse(it, end);
         }
 
-        return string_view(start, it - start);
+        return core::string_view(start, it - start);
     }
 
 private:
@@ -436,7 +436,7 @@ struct fmt_token_rule_t
         CharSet_ const& cs) noexcept ->
     fmt_token_rule_t<CharSet_>;
 
-    result<value_type>
+    system::result<value_type>
     parse(
         char const*& it,
         char const* end) const noexcept
@@ -483,7 +483,7 @@ struct fmt_token_rule_t
                 grammar::error::need_more);
         }
 
-        return string_view(start, it - start);
+        return core::string_view(start, it - start);
     }
 
 private:
@@ -512,8 +512,8 @@ struct userinfo_template_rule_t
 {
     struct value_type
     {
-        string_view user;
-        string_view password;
+        core::string_view user;
+        core::string_view password;
         bool has_password = false;
     };
 
@@ -522,7 +522,7 @@ struct userinfo_template_rule_t
         char const*& it,
         char const* end
             ) const noexcept ->
-        result<value_type>
+        system::result<value_type>
     {
         static constexpr auto uchars =
             unreserved_chars +
@@ -567,14 +567,14 @@ constexpr userinfo_template_rule_t userinfo_template_rule{};
 
 struct host_template_rule_t
 {
-    using value_type = string_view;
+    using value_type = core::string_view;
 
     auto
     parse(
         char const*& it,
         char const* end
             ) const noexcept ->
-        result<value_type>
+        system::result<value_type>
     {
         if(it == end)
         {
@@ -622,7 +622,7 @@ struct host_template_rule_t
         // the rule might fail to match the
         // closing "]"
         BOOST_ASSERT(rv);
-        return string_view{it0, it};
+        return core::string_view{it0, it};
     }
 };
 
@@ -632,7 +632,7 @@ struct authority_template_rule_t
 {
     using value_type = pattern;
 
-    result<value_type>
+    system::result<value_type>
     parse(
         char const*& it,
         char const* end
@@ -704,9 +704,9 @@ constexpr authority_template_rule_t authority_template_rule{};
 
 struct scheme_template_rule_t
 {
-    using value_type = string_view;
+    using value_type = core::string_view;
 
-    result<value_type>
+    system::result<value_type>
     parse(
         char const*& it,
         char const* end) const noexcept
@@ -764,7 +764,7 @@ struct scheme_template_rule_t
             it = grammar::find_if_not(
                 it, end, scheme_chars);
         }
-        return string_view(start, it - start);
+        return core::string_view(start, it - start);
     }
 };
 
@@ -778,7 +778,7 @@ struct pattern_rule_t
 {
     using value_type = pattern;
 
-    result<value_type>
+    system::result<value_type>
     parse(
         char const*& it,
         char const* const end
@@ -935,9 +935,9 @@ struct pattern_rule_t
 
 constexpr pattern_rule_t pattern_rule{};
 
-result<pattern>
+system::result<pattern>
 parse_pattern(
-    string_view s)
+    core::string_view s)
 {
     return grammar::parse(
         s, pattern_rule);

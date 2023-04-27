@@ -27,7 +27,7 @@ public:
     {
         // javadoc
         {
-            result< authority_view > rv = grammar::parse( "user:pass@example.com:8080", authority_rule );
+            system::result< authority_view > rv = grammar::parse( "user:pass@example.com:8080", authority_rule );
         }
 
         auto const& r = authority_rule;

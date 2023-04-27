@@ -19,9 +19,9 @@ namespace urls {
 
 struct decode_view_test
 {
-    string_view str = "a%20uri+test";
-    string_view dec_str = "a uri+test";
-    string_view no_plus_dec_str = "a uri test";
+    core::string_view str = "a%20uri+test";
+    core::string_view dec_str = "a uri+test";
+    core::string_view no_plus_dec_str = "a uri test";
     const std::size_t dn = 10;
     encoding_opts no_plus_opt;
 
@@ -55,14 +55,14 @@ struct decode_view_test
             BOOST_TEST_EQ(s.size(), dn);
         }
 
-        // decode_view(string_view)
+        // decode_view(core::string_view)
         {
             decode_view s(str);
             BOOST_TEST_EQ(s, dec_str);
             BOOST_TEST_EQ(s.size(), dn);
         }
 
-        // decode_view(string_view, bool space_as_plus)
+        // decode_view(core::string_view, bool space_as_plus)
         {
             decode_view s(str, no_plus_opt);
             BOOST_TEST_EQ(s, no_plus_dec_str);
@@ -70,7 +70,7 @@ struct decode_view_test
         }
 
 #if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
-        // decode_view(string_view)
+        // decode_view(core::string_view)
         {
             std::string_view std_str = str;
             decode_view s(std_str);
@@ -78,7 +78,7 @@ struct decode_view_test
             BOOST_TEST_EQ(s.size(), dn);
         }
 
-        // decode_view(string_view, bool space_as_plus)
+        // decode_view(core::string_view, bool space_as_plus)
         {
             std::string_view std_str = str;
             decode_view s(std_str, no_plus_opt);
@@ -87,7 +87,7 @@ struct decode_view_test
         }
 #endif
 
-        // decode_view(string_view)
+        // decode_view(core::string_view)
         {
             std::string ss(str);
             decode_view s(ss);
@@ -95,7 +95,7 @@ struct decode_view_test
             BOOST_TEST_EQ(s.size(), dn);
         }
 
-        // decode_view(string_view, bool space_as_plus)
+        // decode_view(core::string_view, bool space_as_plus)
         {
             std::string ss(str);
             decode_view s(ss, no_plus_opt);
@@ -272,11 +272,11 @@ struct decode_view_test
                 BOOST_TEST(s >= s0);
             }
 
-            // string_view
+            // core::string_view
             {
-                string_view str0(dec_str);
-                string_view str1("a tri test");
-                string_view str2("a vri test");
+                core::string_view str0(dec_str);
+                core::string_view str1("a tri test");
+                core::string_view str2("a vri test");
                 BOOST_TEST(s == str0);
                 BOOST_TEST_NOT(s == str1);
                 BOOST_TEST(s != str2);

@@ -52,8 +52,8 @@ struct param_test
     {
         auto const check =
             []( param const& qp,
-                string_view key,
-                string_view value,
+                core::string_view key,
+                core::string_view value,
                 bool has_value)
         {
             BOOST_TEST_EQ(qp.key, key);
@@ -108,13 +108,13 @@ struct param_test
 
         //----------------------------------------
 
-        // param(string_view, no_value_t)
+        // param(core::string_view, no_value_t)
         {
             param qp("key", no_value);
             check(qp, "key", "", false);
         }
 
-        // param(string_view, string_view)
+        // param(core::string_view, core::string_view)
         {
             {
                 param qp("key", "value");
@@ -126,14 +126,14 @@ struct param_test
             }
         }
 
-        // param(string_view, optional<string_view>)
+        // param(core::string_view, optional<core::string_view>)
         {
             {
-                param qp("key", optional<string_view>("value"));
+                param qp("key", optional<core::string_view>("value"));
                 check(qp, "key", "value", true);
             }
             {
-                param qp("key", optional<string_view>(none));
+                param qp("key", optional<core::string_view>(none));
                 check(qp, "key", "", false);
             }
         }
@@ -174,8 +174,8 @@ struct param_test
     {
         auto const check =
             []( param_view const& qp,
-                string_view key,
-                string_view value,
+                core::string_view key,
+                core::string_view value,
                 bool has_value)
         {
             BOOST_TEST_EQ(qp.key, key);
@@ -189,13 +189,13 @@ struct param_test
             check(qp, "", "", false);
         }
 
-        // param_view(string_view, no_value_t)
+        // param_view(core::string_view, no_value_t)
         {
             param_view qp("key", no_value);
             check(qp, "key", "", false);
         }
 
-        // param_view(string_view, string_view)
+        // param_view(core::string_view, core::string_view)
         {
             {
                 param_view qp("key", "value");
@@ -207,14 +207,14 @@ struct param_test
             }
         }
 
-        // param_view(string_view, optional<string_view>)
+        // param_view(core::string_view, optional<core::string_view>)
         {
             {
-                param_view qp("key", optional<string_view>("value"));
+                param_view qp("key", optional<core::string_view>("value"));
                 check(qp, "key", "value", true);
             }
             {
-                param_view qp("key", optional<string_view>(none));
+                param_view qp("key", optional<core::string_view>(none));
                 check(qp, "key", "", false);
             }
         }
@@ -303,11 +303,11 @@ struct param_test
         // param_pct_view(pct_string_view, optional<pct_string_view>)
         {
             {
-                param_view qp("key", optional<string_view>("value"));
+                param_view qp("key", optional<core::string_view>("value"));
                 check(qp, "key", "value", true);
             }
             {
-                param_view qp("key", optional<string_view>(none));
+                param_view qp("key", optional<core::string_view>(none));
                 check(qp, "key", "", false);
             }
         }

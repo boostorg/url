@@ -35,7 +35,7 @@ static_url_base::
 static_url_base(
     char* buf,
     std::size_t cap,
-    string_view s)
+    core::string_view s)
     : static_url_base(buf, cap)
 {
     copy(parse_uri_reference(s

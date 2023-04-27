@@ -115,17 +115,17 @@
 
         <bridgehead renderas="sect3">Types</bridgehead>
         <simplelist type="vert" columns="1">
-          <member><link linkend="url.ref.boost__urls__errc">errc</link></member>
-          <member><link linkend="url.ref.boost__urls__error_category">error_category</link></member>
-          <member><link linkend="url.ref.boost__urls__error_code">error_code</link></member>
-          <member><link linkend="url.ref.boost__urls__error_condition">error_condition</link></member>
-          <member><link linkend="url.ref.boost__urls__generic_category">generic_category</link></member>
-          <member><link linkend="url.ref.boost__urls__optional">optional</link></member>
-          <member><link linkend="url.ref.boost__urls__result">result</link></member>
-          <member><link linkend="url.ref.boost__urls__string_view">string_view</link></member>
-          <member><link linkend="url.ref.boost__urls__system_category">system_category</link></member>
-          <member><link linkend="url.ref.boost__urls__system_error">system_error</link></member>
-          <member><link linkend="url.ref.boost__urls__variant">variant</link></member>
+          <member><link linkend="url.ref.boost__urls__errc"><emphasis role="red">errc</emphasis></link></member>
+          <member><link linkend="url.ref.boost__urls__error_category"><emphasis role="red">error_category</emphasis></link></member>
+          <member><link linkend="url.ref.boost__urls__error_code"><emphasis role="red">error_code</emphasis></link></member>
+          <member><link linkend="url.ref.boost__urls__error_condition"><emphasis role="red">error_condition</emphasis></link></member>
+          <member><link linkend="url.ref.boost__urls__generic_category"><emphasis role="red">generic_category</emphasis></link></member>
+          <member><link linkend="url.ref.boost__urls__optional"><emphasis role="red">optional</emphasis></link></member>
+          <member><link linkend="url.ref.boost__urls__result"><emphasis role="red">result</emphasis></link></member>
+          <member><link linkend="url.ref.boost__urls__string_view"><emphasis role="red">string_view</emphasis></link></member>
+          <member><link linkend="url.ref.boost__urls__system_category"><emphasis role="red">system_category</emphasis></link></member>
+          <member><link linkend="url.ref.boost__urls__system_error"><emphasis role="red">system_error</emphasis></link></member>
+          <member><link linkend="url.ref.boost__urls__variant"><emphasis role="red">variant</emphasis></link></member>
         </simplelist>
 
       </entry>

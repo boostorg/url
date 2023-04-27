@@ -20,6 +20,7 @@
 #include <boost/url/grammar/vchars.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/unreserved_chars.hpp>
+#include <boost/core/detail/string_view.hpp>
 #include <algorithm>
 
 namespace urls = boost::urls;
@@ -208,9 +209,9 @@ namespace detail
     struct ccontent_and_comment_rules {
         struct ccontent_rule_t
         {
-            using value_type = urls::string_view;
+            using value_type = boost::core::string_view;
 
-            urls::result< value_type >
+            boost::system::result< value_type >
             parse(
                 char const*& it,
                 char const* end
@@ -220,7 +221,7 @@ namespace detail
                 bool v = ccontent_and_comment_rules::
                     parse_ccontent(it, end);
                 if (v)
-                    return urls::string_view(it0, it);
+                    return boost::core::string_view(it0, it);
                 return grammar::error::invalid;
             }
         };
@@ -241,9 +242,9 @@ namespace detail
 
         struct comment_rule_t
         {
-            using value_type = urls::string_view;
+            using value_type = boost::core::string_view;
 
-            urls::result< value_type >
+            boost::system::result< value_type >
             parse(
                 char const*& it,
                 char const* end
@@ -253,7 +254,7 @@ namespace detail
                 bool v = ccontent_and_comment_rules::
                     parse_comment(it, end);
                 if (v)
-                    return urls::string_view(it0, it);
+                    return boost::core::string_view(it0, it);
                 return grammar::error::invalid;
             }
         };
@@ -344,15 +345,15 @@ constexpr auto hfvalue_rule = urls::pct_encoded_rule(qchars);
 /// Rule for hfname = *qchar
 struct hfname_rule_t
 {
-    using value_type = urls::string_view;
+    using value_type = boost::core::string_view;
 
-    urls::result<value_type>
+    boost::system::result<value_type>
     parse(
         char const*& it,
         char const* end
     ) const noexcept
     {
-        urls::string_view s(it, end);
+        boost::core::string_view s(it, end);
         it += s.size();
         auto r = grammar::parse(s, hfvalue_rule);
         if (!r)
@@ -360,13 +361,13 @@ struct hfname_rule_t
 
         // The user agent interpreting a 'mailto' URI SHOULD NOT create a
         // message if any of the header fields are considered dangerous
-        static const urls::string_view valid_k[] = {
+        static const boost::core::string_view valid_k[] = {
             "to", "subject", "keywords",
             "cc", "body",    "in-reply-to"
         };
         if (std::any_of(
                 std::begin(valid_k), std::end(valid_k),
-                [s](urls::string_view valid_k)
+                [s](boost::core::string_view valid_k)
             {
                 return grammar::ci_is_equal(s, valid_k);
             }))

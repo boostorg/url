@@ -13,7 +13,7 @@
 #include <boost/url/host_type.hpp>
 #include <boost/url/pct_string_view.hpp>
 #include <boost/url/scheme.hpp>
-#include <boost/url/string_view.hpp>
+#include <boost/core/detail/string_view.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <boost/assert.hpp>
 #include <cstdint>
@@ -70,8 +70,8 @@ struct url_impl : parts_base
     std::size_t len(int, int) const noexcept;
     std::size_t len(int) const noexcept;
     std::size_t offset(int) const noexcept;
-    string_view get(int) const noexcept;
-    string_view get(int, int) const noexcept;
+    core::string_view get(int) const noexcept;
+    core::string_view get(int, int) const noexcept;
     pct_string_view pct_get(int) const noexcept;
     pct_string_view pct_get(int, int) const noexcept;
     void set_size(int, std::size_t) noexcept;
@@ -79,12 +79,12 @@ struct url_impl : parts_base
     void adjust(int, int, std::size_t) noexcept;
     void collapse(int, int, std::size_t) noexcept;
 
-    void apply_scheme(string_view) noexcept;
+    void apply_scheme(core::string_view) noexcept;
     void apply_userinfo(pct_string_view const&,
         pct_string_view const*) noexcept;
     void apply_host(host_type, pct_string_view,
         unsigned char const*) noexcept;
-    void apply_port(string_view, unsigned short) noexcept;
+    void apply_port(core::string_view, unsigned short) noexcept;
     void apply_authority(authority_view const&) noexcept;
     void apply_path(pct_string_view, std::size_t) noexcept;
     void apply_query(pct_string_view, std::size_t) noexcept;
@@ -94,7 +94,7 @@ struct url_impl : parts_base
 //------------------------------------------------
 
 // this allows a path to come from a
-// url_impl or a separate string_view
+// url_impl or a separate core::string_view
 class path_ref
     : private parts_base
 {
@@ -107,7 +107,7 @@ class path_ref
 public:
     path_ref() = default;
     path_ref(url_impl const& impl) noexcept;
-    path_ref(string_view,
+    path_ref(core::string_view,
         std::size_t, std::size_t) noexcept;
     pct_string_view buffer() const noexcept;
     std::size_t size() const noexcept;
@@ -139,7 +139,7 @@ public:
 //------------------------------------------------
 
 // this allows a params to come from a
-// url_impl or a separate string_view
+// url_impl or a separate core::string_view
 class query_ref
     : private parts_base
 {
@@ -152,7 +152,7 @@ class query_ref
 
 public:
     query_ref(
-        string_view s,      // buffer, no '?'
+        core::string_view s,      // buffer, no '?'
         std::size_t dn,     // decoded size
         std::size_t nparam
             ) noexcept;
@@ -230,7 +230,7 @@ offset(int id) const noexcept ->
 
 // return id as string
 inline
-string_view
+core::string_view
 url_impl::
 get(int id) const noexcept
 {
@@ -240,7 +240,7 @@ get(int id) const noexcept
 
 // return [first, last) as string
 inline
-string_view
+core::string_view
 url_impl::
 get(int first,
     int last) const noexcept

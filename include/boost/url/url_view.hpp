@@ -24,7 +24,7 @@ namespace urls {
     strings constructed from a parsed, external
     character buffer whose storage is managed
     by the caller. That is, it acts like a
-    @ref string_view in terms of ownership.
+    @ref core::string_view in terms of ownership.
     The caller is responsible for ensuring
     that the lifetime of the underlying
     character buffer extends until it is no
@@ -48,7 +48,7 @@ namespace urls {
     contain an error. The error can be converted to
     an exception by the caller if desired:
     @code
-    result< url_view > rv = parse_uri_reference( "https://www.example.com/index.htm?text=none#a1" );
+    system::result< url_view > rv = parse_uri_reference( "https://www.example.com/index.htm?text=none#a1" );
     @endcode
 
     @par BNF
@@ -196,16 +196,16 @@ public:
             @ref parse_uri_reference.
     */
     BOOST_URL_DECL
-    url_view(string_view s);
+    url_view(core::string_view s);
 
-    /// @copydoc url_view(string_view)
+    /// @copydoc url_view(core::string_view)
     template<
         class String
 #ifndef BOOST_URL_DOCS
         , class = typename std::enable_if<
             std::is_convertible<
                 String,
-                string_view
+                core::string_view
                     >::value>::type
 #endif
     >

@@ -124,7 +124,7 @@ inline
 bool
 params_base::
 contains(
-    string_view key,
+    core::string_view key,
     ignore_case_param ic) const noexcept
 {
     return find(
@@ -135,7 +135,7 @@ inline
 auto
 params_base::
 find(
-    string_view key,
+    core::string_view key,
     ignore_case_param ic) const noexcept ->
         iterator
 {
@@ -150,7 +150,7 @@ auto
 params_base::
 find(
     iterator it,
-    string_view key,
+    core::string_view key,
     ignore_case_param ic) const noexcept ->
         iterator
 {
@@ -164,7 +164,7 @@ inline
 auto
 params_base::
 find_last(
-    string_view key,
+    core::string_view key,
     ignore_case_param ic) const noexcept ->
         iterator
 {
@@ -179,7 +179,7 @@ auto
 params_base::
 find_last(
     iterator it,
-    string_view key,
+    core::string_view key,
     ignore_case_param ic) const noexcept ->
         iterator
 {

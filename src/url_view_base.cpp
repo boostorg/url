@@ -117,7 +117,7 @@ has_scheme() const noexcept
     return true;
 }
 
-string_view
+core::string_view
 url_view_base::
 scheme() const noexcept
 {
@@ -313,7 +313,7 @@ pct_string_view encoded_host_address()      // ipv4, ipv6, ipvfut, or encoded na
 
 ipv4_address    host_ipv4_address()         // return ipv4_address or {}
 ipv6_address    host_ipv6_address()         // return ipv6_address or {}
-string_view     host_ipvfuture()            // return ipvfuture or {}
+core::string_view     host_ipvfuture()            // return ipvfuture or {}
 std::string     host_name()                 // return decoded name or ""
 pct_string_view encoded_host_name()         // return encoded host name or ""
 */
@@ -329,7 +329,7 @@ pct_string_view
 url_view_base::
 encoded_host_address() const noexcept
 {
-    string_view s = pi_->get(id_host);
+    core::string_view s = pi_->get(id_host);
     std::size_t n;
     switch(pi_->host_type_)
     {
@@ -390,14 +390,14 @@ host_ipv6_address() const noexcept
     return urls::ipv6_address(b);
 }
 
-string_view
+core::string_view
 url_view_base::
 host_ipvfuture() const noexcept
 {
     if(pi_->host_type_ !=
             urls::host_type::ipvfuture)
         return {};
-    string_view s = pi_->get(id_host);
+    core::string_view s = pi_->get(id_host);
     BOOST_ASSERT(s.size() >= 6);
     BOOST_ASSERT(s.front() == '[');
     BOOST_ASSERT(s.back() == ']');
@@ -412,7 +412,7 @@ encoded_host_name() const noexcept
     if(pi_->host_type_ !=
             urls::host_type::name)
         return {};
-    string_view s = pi_->get(id_host);
+    core::string_view s = pi_->get(id_host);
     return make_pct_string_view_unsafe(
         s.data(),
         s.size(),
@@ -433,7 +433,7 @@ has_port() const noexcept
     return true;
 }
 
-string_view
+core::string_view
 url_view_base::
 port() const noexcept
 {

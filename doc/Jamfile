@@ -35,6 +35,7 @@ docca.reference reference.qbk
             \"BOOST_CONSTEXPR=constexpr\" \\
             \"BOOST_CXX14_CONSTEXPR=constexpr\" \\
             \"BOOST_STATIC_ASSERT(x)=\" \\
+            \"BOOST_URL_DEPRECATED(x)=\" \\
             \"BOOST_URL_STRTOK_TPARAM=class StringToken = string_token::return_string\" \\
             \"BOOST_URL_STRTOK_RETURN=typename StringToken::result_type\" \\
             \"BOOST_URL_STRTOK_ARG(name)=StringToken&& name = {}\" \\

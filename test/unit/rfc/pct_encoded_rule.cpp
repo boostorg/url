@@ -26,7 +26,7 @@ public:
     {
         // javadoc
         {
-            result< pct_string_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( pchars ) );
+            system::result< pct_string_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( pchars ) );
             (void)rv;
         }
     }

@@ -241,14 +241,14 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    string_view
+    core::string_view
     buffer() const noexcept
     {
-        return string_view(
+        return core::string_view(
             data(), size());
     }
 
-    /** Return the URL as a string_view
+    /** Return the URL as a core::string_view
 
         @par Complexity
         Constant.
@@ -257,7 +257,7 @@ public:
         Throws nothing.
 
     */
-    operator string_view() const noexcept
+    operator core::string_view() const noexcept
     {
         return buffer();
     }
@@ -378,7 +378,7 @@ public:
             @ref scheme_id.
     */
     BOOST_URL_DECL
-    string_view
+    core::string_view
     scheme() const noexcept;
 
     /** Return the scheme
@@ -1304,7 +1304,7 @@ public:
             >3.2.2. Host (rfc3986)</a>
     */
     BOOST_URL_DECL
-    string_view
+    core::string_view
     host_ipvfuture() const noexcept;
 
     /** Return the host name
@@ -1463,7 +1463,7 @@ public:
             @ref port_number.
     */
     BOOST_URL_DECL
-    string_view
+    core::string_view
     port() const noexcept;
 
     /** Return the port

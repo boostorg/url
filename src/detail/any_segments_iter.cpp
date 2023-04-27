@@ -13,7 +13,7 @@
 #include <boost/url/detail/config.hpp>
 #include <boost/url/rfc/detail/charsets.hpp>
 #include <boost/url/detail/any_segments_iter.hpp>
-#include <boost/url/string_view.hpp>
+#include <boost/core/detail/string_view.hpp>
 #include <boost/url/encode.hpp>
 #include <boost/url/rfc/pchars.hpp>
 
@@ -29,7 +29,7 @@ namespace detail {
 
 segment_iter::
 segment_iter(
-    string_view s_) noexcept
+    core::string_view s_) noexcept
     : any_segments_iter(s_)
 {
     front = s;
@@ -90,7 +90,7 @@ void
 segments_iter_base::
 measure_impl(
     std::size_t& n,
-    string_view s,
+    core::string_view s,
     bool encode_colons) noexcept
 {
     encoding_opts opt;
@@ -108,7 +108,7 @@ segments_iter_base::
 copy_impl(
     char*& dest,
     char const* end,
-    string_view s,
+    core::string_view s,
     bool encode_colons) noexcept
 {
     encoding_opts opt;
@@ -192,7 +192,7 @@ void
 segments_encoded_iter_base::
 measure_impl(
     std::size_t& n,
-    string_view s,
+    core::string_view s,
     bool encode_colons) noexcept
 {
     encoding_opts opt;
@@ -210,7 +210,7 @@ segments_encoded_iter_base::
 copy_impl(
     char*& dest,
     char const* end,
-    string_view s,
+    core::string_view s,
     bool encode_colons) noexcept
 {
     encoding_opts opt;

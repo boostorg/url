@@ -68,11 +68,11 @@ struct segments_view_test
                 ps1.buffer().data());
         }
 
-        // segments_view(string_view)
+        // segments_view(core::string_view)
         {
             try
             {
-                string_view s = "/path/to/file.txt";
+                core::string_view s = "/path/to/file.txt";
                 segments_view ps(s);
                 BOOST_TEST_PASS();
                 BOOST_TEST_EQ(
@@ -85,14 +85,14 @@ struct segments_view_test
             }
 
             // reserved character
-            BOOST_TEST_THROWS(segments_view("?"), system_error);
+            BOOST_TEST_THROWS(segments_view("?"), system::system_error);
 
             // invalid percent-escape
-            BOOST_TEST_THROWS(segments_view("%"), system_error);
-            BOOST_TEST_THROWS(segments_view("%F"), system_error);
-            BOOST_TEST_THROWS(segments_view("%FX"), system_error);
-            BOOST_TEST_THROWS(segments_view("%%"), system_error);
-            BOOST_TEST_THROWS(segments_view("FA%"), system_error);
+            BOOST_TEST_THROWS(segments_view("%"), system::system_error);
+            BOOST_TEST_THROWS(segments_view("%F"), system::system_error);
+            BOOST_TEST_THROWS(segments_view("%FX"), system::system_error);
+            BOOST_TEST_THROWS(segments_view("%%"), system::system_error);
+            BOOST_TEST_THROWS(segments_view("FA%"), system::system_error);
         }
 
         // operator=(segments_view)

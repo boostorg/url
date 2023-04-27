@@ -56,10 +56,10 @@ struct segments_encoded_ref_test
     void
     check(
         void(*f)(segments_encoded_ref),
-        string_view s0,
-        string_view s1,
+        core::string_view s0,
+        core::string_view s1,
         std::initializer_list<
-            string_view> init)
+            core::string_view> init)
     {
         auto rv = parse_uri_reference(s0);
         if(! BOOST_TEST(rv.has_value()))
@@ -87,9 +87,9 @@ struct segments_encoded_ref_test
     check(
         void(*f1)(segments_encoded_ref),
         void(*f2)(segments_encoded_ref),
-        string_view s0, string_view s1,
+        core::string_view s0, core::string_view s1,
         std::initializer_list<
-            string_view> init)
+            core::string_view> init)
     {
         check(f1, s0, s1, init);
         check(f2, s0, s1, init);
@@ -100,7 +100,7 @@ struct segments_encoded_ref_test
     assign(
         segments_encoded_ref& ps,
         std::initializer_list<
-            string_view> init)
+            core::string_view> init)
     {
         ps.assign(init.begin(), init.end());
     }
@@ -111,7 +111,7 @@ struct segments_encoded_ref_test
         segments_encoded_ref& ps,
         segments_encoded_ref::iterator before,
         std::initializer_list<
-            string_view> init) ->
+            core::string_view> init) ->
         segments_encoded_ref::iterator
     {
         return ps.insert(before,
@@ -125,7 +125,7 @@ struct segments_encoded_ref_test
         segments_encoded_ref::iterator from,
         segments_encoded_ref::iterator to,
         std::initializer_list<
-            string_view> init) ->
+            core::string_view> init) ->
         segments_encoded_ref::iterator
     {
         return ps.replace(from, to,
@@ -265,14 +265,14 @@ struct segments_encoded_ref_test
                 ps.assign({ "path", "to%23", "file.txt?" });
 
                 // invalid percent-escape
-                BOOST_TEST_THROWS(ps.assign({ "%" }), system_error);
+                BOOST_TEST_THROWS(ps.assign({ "%" }), system::system_error);
             };
             auto const g = [](segments_encoded_ref ps)
             {
                 assign(ps, { "path", "to%23", "file.txt?" });
 
                 // invalid percent-escape
-                BOOST_TEST_THROWS(assign(ps, { "%" }), system_error);
+                BOOST_TEST_THROWS(assign(ps, { "%" }), system::system_error);
             };
             check(f, g, "", "path/to%23/file.txt%3F", {"path", "to%23", "file.txt%3F"});
             check(f, g, "/", "/path/to%23/file.txt%3F", {"path", "to%23", "file.txt%3F"});
@@ -295,7 +295,7 @@ struct segments_encoded_ref_test
 
                 // invalid percent-escape
                 BOOST_TEST_THROWS(ps.insert(ps.begin(),
-                    "%%"), system_error);
+                    "%%"), system::system_error);
             };
             check(f, "", "./", {""});
             // path "/" represents empty segment range: {}
@@ -373,7 +373,7 @@ struct segments_encoded_ref_test
 
                 // invalid percent-escape
                 BOOST_TEST_THROWS(ps.insert(ps.begin(),
-                    { "%F" }), system_error);
+                    { "%F" }), system::system_error);
             };
             auto const g = [](segments_encoded_ref ps)
             {
@@ -382,7 +382,7 @@ struct segments_encoded_ref_test
 
                 // invalid percent-escape
                 BOOST_TEST_THROWS(insert(ps, ps.begin(),
-                    { "%F" }), system_error);
+                    { "%F" }), system::system_error);
             };
             check(f, g, "", "u%23/v%20", {"u%23", "v%20"});
             check(f, g, "/", "/u%23/v%20", {"u%23", "v%20"});
@@ -508,7 +508,7 @@ struct segments_encoded_ref_test
 
                 // invalid percent escape
                 BOOST_TEST_THROWS(ps.replace(
-                    ps.begin(), "00%"), system_error);
+                    ps.begin(), "00%"), system::system_error);
             };
             check(f, "path/to/file.txt", ".//to/file.txt", {"", "to", "file.txt"});
             check(f, "/path/to/file.txt", "/.//to/file.txt", {"", "to", "file.txt"});
@@ -566,7 +566,7 @@ struct segments_encoded_ref_test
                 // invalid percent escape
                 BOOST_TEST_THROWS(ps.replace(
                     std::next(ps.begin(), 0), std::next(ps.begin(), 2),
-                    "0%"), system_error);
+                    "0%"), system::system_error);
             };
             check(f, "path/to/the/file.txt", ".//the/file.txt", {"", "the", "file.txt"});
             check(f, "/path/to/the/file.txt", "/.//the/file.txt", {"", "the", "file.txt"});
@@ -650,7 +650,7 @@ struct segments_encoded_ref_test
                 BOOST_TEST_THROWS(ps.replace(
                     std::next(ps.begin(), 0),
                     std::next(ps.begin(), 2),
-                    { "x", "%FG" }), system_error);
+                    { "x", "%FG" }), system::system_error);
             };
             auto const g = [](segments_encoded_ref ps)
             {
@@ -664,7 +664,7 @@ struct segments_encoded_ref_test
                 BOOST_TEST_THROWS(replace(ps,
                     std::next(ps.begin(), 0),
                     std::next(ps.begin(), 2),
-                    { "x", "%" }), system_error);
+                    { "x", "%" }), system::system_error);
             };
             check(f, g, "path/to/the/file.txt", "t/u%20%3F/v/the/file.txt", {"t", "u%20%3F", "v", "the", "file.txt"});
             check(f, g, "/path/to/the/file.txt", "/t/u%20%3F/v/the/file.txt", {"t", "u%20%3F", "v", "the", "file.txt"});
@@ -720,7 +720,7 @@ struct segments_encoded_ref_test
                 ps.push_back("");
 
                 // invalid percent-escape
-                BOOST_TEST_THROWS(ps.push_back("%"), system_error);
+                BOOST_TEST_THROWS(ps.push_back("%"), system::system_error);
             };
             check(f, "",    "./",   {""});
             check(f, "/",   "/./",  {""});

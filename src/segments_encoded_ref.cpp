@@ -118,7 +118,7 @@ erase(
     iterator last) noexcept ->
         iterator
 {
-    string_view s;
+    core::string_view s;
     return u_->edit_segments(
         first.it_,
         last.it_,

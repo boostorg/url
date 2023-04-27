@@ -31,7 +31,7 @@ parse(
     char const*& it,
     char const* const end
         ) const noexcept ->
-    result<value_type>
+    system::result<value_type>
 {
     static constexpr auto
         minor_chars = 
@@ -63,7 +63,7 @@ parse(
         BOOST_URL_RETURN_EC(
             grammar::error::invalid);
     }
-    t.str = string_view(
+    t.str = core::string_view(
         it0, it - it0);
     return t;
 }

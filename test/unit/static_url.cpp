@@ -56,17 +56,17 @@ struct static_url_test
             BOOST_TEST(u.buffer().empty());
         }
 
-        // static_url(string_view)
+        // static_url(core::string_view)
         {
             // invalid
             BOOST_TEST_THROWS(
                 static_url<1024>("$:$"),
-                system_error);
+                system::system_error);
 
             // too large
             BOOST_TEST_THROWS(
                 static_url<2>("http://www.example.com"),
-                system_error);
+                system::system_error);
 
             // URI
             BOOST_TEST_NO_THROW(
@@ -81,7 +81,7 @@ struct static_url_test
         // static_url(url_view_base)
         {
             {
-                string_view s = "/path/to/file.txt";
+                core::string_view s = "/path/to/file.txt";
                 static_url<24> u0(s);
                 static_url<20> u1(u0);
                 BOOST_TEST_EQ(u0.buffer(), u1.buffer());
@@ -89,16 +89,16 @@ struct static_url_test
                 BOOST_TEST_NE(u1.buffer().data(), s.data());
             }
             {
-                string_view s = "/path/to/file.txt";
+                core::string_view s = "/path/to/file.txt";
                 static_url<24> u0(s);
                 static_url<32> u1(u0);
                 BOOST_TEST_EQ(u0.buffer(), u1.buffer());
             }
             {
-                string_view s = "/path/to/file.txt";
+                core::string_view s = "/path/to/file.txt";
                 static_url<24> u0(s);
                 BOOST_TEST_THROWS(
-                    static_url<8>(u0), system_error);
+                    static_url<8>(u0), system::system_error);
             }
 
             BOOST_TEST_EQ(
@@ -115,7 +115,7 @@ struct static_url_test
         // operator=(url_view_base)
         {
             {
-                string_view s = "/path/to/file.txt";
+                core::string_view s = "/path/to/file.txt";
                 static_url<24> u0(s);
                 static_url<20> u1;
                 u1 = u0;
@@ -124,17 +124,17 @@ struct static_url_test
                 BOOST_TEST_NE(u1.buffer().data(), s.data());
             }
             {
-                string_view s = "/path/to/file.txt";
+                core::string_view s = "/path/to/file.txt";
                 static_url<24> u0(s);
                 static_url<32> u1;
                 u1 = u0;
                 BOOST_TEST_EQ(u0.buffer(), u1.buffer());
             }
             {
-                string_view s = "/path/to/file.txt";
+                core::string_view s = "/path/to/file.txt";
                 static_url<24> u0(s);
                 static_url<8> u1;
-                BOOST_TEST_THROWS(u1 = u0, system_error);
+                BOOST_TEST_THROWS(u1 = u0, system::system_error);
             }
             {
                 static_url<24> u("http://www.example.com");
@@ -178,7 +178,7 @@ struct static_url_test
         ignore_unused(u);
         }
 
-        // static_url(string_view)
+        // static_url(core::string_view)
         {
         static_url< 1024 > u( "https://www.example.com" );
 

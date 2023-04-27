@@ -40,7 +40,7 @@ ipv4_address(
 
 ipv4_address::
 ipv4_address(
-    string_view s)
+    core::string_view s)
     : ipv4_address(
         parse_ipv4_address(s
             ).value(BOOST_URL_POS))
@@ -68,7 +68,7 @@ to_uint() const noexcept ->
     return addr_;
 }
 
-string_view
+core::string_view
 ipv4_address::
 to_buffer(
     char* dest,
@@ -77,7 +77,7 @@ to_buffer(
     if(dest_size < max_str_len)
         detail::throw_length_error();
     auto n = print_impl(dest);
-    return string_view(dest, n);
+    return core::string_view(dest, n);
 }
 
 bool
@@ -156,8 +156,8 @@ to_string_impl(
 
 auto
 parse_ipv4_address(
-    string_view s) noexcept ->
-        result<ipv4_address>
+    core::string_view s) noexcept ->
+        system::result<ipv4_address>
 {
     return grammar::parse(
         s, ipv4_address_rule);

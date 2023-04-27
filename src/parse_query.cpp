@@ -21,8 +21,8 @@
 namespace boost {
 namespace urls {
 
-result<params_encoded_view>
-parse_query(string_view s) noexcept
+system::result<params_encoded_view>
+parse_query(core::string_view s) noexcept
 {
     // Handle empty strings differently.
     // We produce {}, versus empty but

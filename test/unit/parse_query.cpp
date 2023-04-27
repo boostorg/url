@@ -20,7 +20,7 @@ struct parse_query_test
     void
     testParse()
     {
-        result<params_encoded_view> rv;
+        system::result<params_encoded_view> rv;
 
         rv = parse_query( "key=value" );
     }

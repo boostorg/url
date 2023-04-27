@@ -25,9 +25,9 @@ namespace urls {
 namespace detail {
 
 std::size_t
-get_uvalue( string_view a )
+get_uvalue( core::string_view a )
 {
-    string_view str(a);
+    core::string_view str(a);
     auto rv = grammar::parse(
         str, grammar::unsigned_rule<std::size_t>{});
     if (rv)
@@ -38,12 +38,12 @@ get_uvalue( string_view a )
 std::size_t
 get_uvalue( char a )
 {
-    string_view str(&a, 1);
+    core::string_view str(&a, 1);
     return get_uvalue(str);
 }
 
 char const*
-formatter<string_view>::
+formatter<core::string_view>::
 parse(format_parse_context& ctx)
 {
     char const* it = ctx.begin();
@@ -142,9 +142,9 @@ parse(format_parse_context& ctx)
 }
 
 std::size_t
-formatter<string_view>::
+formatter<core::string_view>::
 measure(
-    string_view str,
+    core::string_view str,
     measure_context& ctx,
     grammar::lut_chars const& cs) const
 {
@@ -164,8 +164,8 @@ measure(
 }
 
 char*
-formatter<string_view>::
-format(string_view str, format_context& ctx, grammar::lut_chars const& cs) const
+formatter<core::string_view>::
+format(core::string_view str, format_context& ctx, grammar::lut_chars const& cs) const
 {
     std::size_t w = width;
     if (width_idx != std::size_t(-1) ||
@@ -210,7 +210,7 @@ format(string_view str, format_context& ctx, grammar::lut_chars const& cs) const
 void
 get_width_from_args(
     std::size_t arg_idx,
-    string_view arg_name,
+    core::string_view arg_name,
     format_args args,
     std::size_t& w)
 {

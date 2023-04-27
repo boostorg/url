@@ -27,7 +27,7 @@ segments_encoded_view(
 
 segments_encoded_view::
 segments_encoded_view(
-    string_view s)
+    core::string_view s)
     : segments_encoded_view(
         parse_path(s).value(
             BOOST_URL_POS))

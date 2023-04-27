@@ -63,7 +63,7 @@ struct format_test
         }
         auto segs_equal = [](
             segments_encoded_view segs,
-            std::initializer_list<string_view> il)
+            std::initializer_list<core::string_view> il)
         {
             if (BOOST_TEST_EQ(segs.size(), il.size()))
             {
@@ -82,7 +82,7 @@ struct format_test
 
         auto params_equal = [](
             params_encoded_view params,
-            std::initializer_list<std::pair<string_view, string_view>> il)
+            std::initializer_list<std::pair<core::string_view, core::string_view>> il)
         {
             if (BOOST_TEST_EQ(params.size(), il.size()))
             {
@@ -700,13 +700,13 @@ struct format_test
         }
 
         // invalid format strings
-        BOOST_TEST_THROWS(format("{:"), system_error);
-        BOOST_TEST_THROWS(format("{}://www.a.com", "1nvalid scheme"), system_error);
-        BOOST_TEST_THROWS(format("{}://{}:{}@{}:a", "http", 'u', 'p', "a.b"), system_error);
-        BOOST_TEST_THROWS(format("{}://[", "http"), system_error);
-        BOOST_TEST_THROWS(format("{://"), system_error);
-        BOOST_TEST_THROWS(format("http:%"), system_error);
-        BOOST_TEST_THROWS(format("{}:\\", "A"), system_error);
+        BOOST_TEST_THROWS(format("{:"), system::system_error);
+        BOOST_TEST_THROWS(format("{}://www.a.com", "1nvalid scheme"), system::system_error);
+        BOOST_TEST_THROWS(format("{}://{}:{}@{}:a", "http", 'u', 'p', "a.b"), system::system_error);
+        BOOST_TEST_THROWS(format("{}://[", "http"), system::system_error);
+        BOOST_TEST_THROWS(format("{://"), system::system_error);
+        BOOST_TEST_THROWS(format("http:%"), system::system_error);
+        BOOST_TEST_THROWS(format("{}:\\", "A"), system::system_error);
 
         // static_url
         {
@@ -726,12 +726,12 @@ struct format_test
         }
         {
             static_url<10> u;
-            BOOST_TEST_THROWS(format_to(u, "{}://{}", "https", "www.boost.org"), system_error);
+            BOOST_TEST_THROWS(format_to(u, "{}://{}", "https", "www.boost.org"), system::system_error);
         }
 
 
         // escaped '{' always throws because '{'s are not allowed in URLs
-        BOOST_TEST_THROWS(format("{scheme}:{path}/{{}", "mailto", 'a'), system_error);
+        BOOST_TEST_THROWS(format("{scheme}:{path}/{{}", "mailto", 'a'), system::system_error);
 
         // "{}" with no format arg is ignored
         BOOST_TEST_CSTR_EQ(format("/{}/{}/{}", 'a', 'b').buffer(), "/a/b/");
@@ -750,7 +750,7 @@ struct format_test
             BOOST_TEST_CSTR_EQ(format("{0:.>{2}s}/{1}", 'a', 'b', 5).buffer(), "....a/b");
             BOOST_TEST_CSTR_EQ(format("{:.>{b}s}", 'a', arg("b", 5)).buffer(), "....a");
             BOOST_TEST_CSTR_EQ(format("{:.>{b}s}", 'a', arg("b", '5')).buffer(), "....a");
-            BOOST_TEST_THROWS(format("{:cx}", 'a'), system_error);
+            BOOST_TEST_THROWS(format("{:cx}", 'a'), system::system_error);
 
             BOOST_TEST_CSTR_EQ(format("{:d}", 99).buffer(), "99");
             BOOST_TEST_CSTR_EQ(format("{:#d}", 99).buffer(), "99");
@@ -779,7 +779,7 @@ struct format_test
             BOOST_TEST_CSTR_EQ(format("{0:.>{2}d}/{1}", std::size_t(99), 'b', 6).buffer(), "....99/b");
             BOOST_TEST_CSTR_EQ(format("{:.>{b}d}", std::size_t(99), arg("b", 6)).buffer(), "....99");
             BOOST_TEST_CSTR_EQ(format("{:.>{b}d}", 99, arg("b", '6')).buffer(), "....99");
-            BOOST_TEST_THROWS(format("{:dx}", 99), system_error);
+            BOOST_TEST_THROWS(format("{:dx}", 99), system::system_error);
 
         }
 

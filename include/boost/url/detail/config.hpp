@@ -117,6 +117,12 @@
 # error Unknown or unsupported architecture, please open an issue
 #endif
 
+#if defined(BOOST_MSVC) || defined(BOOST_URL_DOCS)
+#define BOOST_URL_DEPRECATED(msg)
+#else
+#define BOOST_URL_DEPRECATED(msg) BOOST_DEPRECATED(msg)
+#endif
+
 namespace boost {
 namespace urls {
 

@@ -38,7 +38,7 @@ params_view(
 
 params_view::
 params_view(
-    string_view s)
+    core::string_view s)
     : params_view(
         parse_query(s).value(
             BOOST_URL_POS),
@@ -48,7 +48,7 @@ params_view(
 
 params_view::
 params_view(
-    string_view s,
+    core::string_view s,
     encoding_opts opt)
     : params_view(
         parse_query(s).value(

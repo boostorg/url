@@ -118,7 +118,7 @@ end() const noexcept ->
 std::size_t
 params_base::
 count(
-    string_view key,
+    core::string_view key,
     ignore_case_param ic) const noexcept
 {
     std::size_t n = 0;
@@ -143,7 +143,7 @@ detail::params_iter_impl
 params_base::
 find_impl(
     detail::params_iter_impl it,
-    string_view key,
+    core::string_view key,
     ignore_case_param ic) const noexcept
 {
     detail::params_iter_impl end_(ref_, 0);
@@ -173,7 +173,7 @@ detail::params_iter_impl
 params_base::
 find_last_impl(
     detail::params_iter_impl it,
-    string_view key,
+    core::string_view key,
     ignore_case_param ic) const noexcept
 {
     detail::params_iter_impl begin_(ref_);

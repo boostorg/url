@@ -53,7 +53,7 @@ public:
 
         // data()
         {
-            string_view s = "x";
+            core::string_view s = "x";
             authority_view a = parse_authority(s).value();
             BOOST_TEST_NE(a.data(), nullptr);
             BOOST_TEST_EQ(a.data(), s.data());
@@ -61,7 +61,7 @@ public:
 
         // string()
         {
-            string_view s = "xyz";
+            core::string_view s = "xyz";
             authority_view a = parse_authority(s).value();
             BOOST_TEST_EQ(a.buffer(), s);
             BOOST_TEST_EQ(a.buffer().data(), s.data());
@@ -72,9 +72,9 @@ public:
     testUserinfo()
     {
         auto const yes =
-            []( string_view s,
-                string_view m1,
-                string_view m2)
+            []( core::string_view s,
+                core::string_view m1,
+                core::string_view m2)
         {
             BOOST_TEST_NO_THROW(
             [&]{
@@ -344,7 +344,7 @@ public:
             (void)a;
         }
         {
-            result< authority_view > rv = parse_authority( "user:pass@www.example.com:8080" );
+            system::result< authority_view > rv = parse_authority( "user:pass@www.example.com:8080" );
             (void)rv;
         }
         {

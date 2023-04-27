@@ -27,7 +27,7 @@ scheme_rule::
 parse(
     char const*& it,
     char const* end) const noexcept ->
-        result<value_type>
+        system::result<value_type>
 {
     auto const start = it;
     if(it == end)
@@ -52,7 +52,7 @@ parse(
     it = grammar::find_if_not(
         it + 1, end, scheme_chars);
     value_type t;
-    t.scheme = string_view(
+    t.scheme = core::string_view(
         start, it - start);
     t.scheme_id = string_to_scheme(
         t.scheme);

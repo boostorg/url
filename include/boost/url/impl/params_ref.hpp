@@ -186,7 +186,7 @@ erase(
     iterator last) noexcept ->
         iterator
 {
-    string_view s("", 0);
+    core::string_view s("", 0);
     return iterator(
         u_->edit_params(
             first.it_,

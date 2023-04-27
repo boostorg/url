@@ -93,7 +93,7 @@ insert(
 std::size_t
 params_ref::
 erase(
-    string_view key,
+    core::string_view key,
     ignore_case_param ic) noexcept
 {
     // end() can't be fully cached,
@@ -159,7 +159,7 @@ unset(
         iterator
 {
     BOOST_ASSERT(pos.it_.nk > 0);
-    string_view s;
+    core::string_view s;
     return iterator(
         u_->edit_params(
             pos.it_,
@@ -173,7 +173,7 @@ auto
 params_ref::
 set(
     iterator pos,
-    string_view value) ->
+    core::string_view value) ->
         iterator
 {
     BOOST_ASSERT(pos.it_.nk > 0);
@@ -189,8 +189,8 @@ set(
 auto
 params_ref::
 set(
-    string_view key,
-    string_view value,
+    core::string_view key,
+    core::string_view value,
     ignore_case_param ic) ->
         iterator
 {
@@ -221,7 +221,7 @@ detail::params_iter_impl
 params_ref::
 find_impl(
     detail::params_iter_impl it,
-    string_view key,
+    core::string_view key,
     ignore_case_param ic) const noexcept
 {
     detail::params_iter_impl end_(u_->impl_, 0);
@@ -251,7 +251,7 @@ detail::params_iter_impl
 params_ref::
 find_last_impl(
     detail::params_iter_impl it,
-    string_view key,
+    core::string_view key,
     ignore_case_param ic) const noexcept
 {
     detail::params_iter_impl begin_(u_->impl_);

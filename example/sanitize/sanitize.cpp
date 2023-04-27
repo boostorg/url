@@ -56,23 +56,23 @@
 #include <array>
 
 namespace urls = boost::urls;
-using string_view = urls::string_view;
+namespace core = boost::core;
 
 struct url_components
 {
-    string_view scheme;
-    string_view user;
-    string_view password;
-    string_view hostname;
-    string_view port;
-    string_view path;
-    string_view query;
-    string_view fragment;
+    core::string_view scheme;
+    core::string_view user;
+    core::string_view password;
+    core::string_view hostname;
+    core::string_view port;
+    core::string_view path;
+    core::string_view query;
+    core::string_view fragment;
 };
 
-string_view
-port_of_scheme(string_view scheme_str) {
-    static std::array<std::pair<string_view, string_view>, 21> scheme_ports =
+core::string_view
+port_of_scheme(core::string_view scheme_str) {
+    static std::array<std::pair<core::string_view, core::string_view>, 21> scheme_ports =
     {{
          {"http", "80"},
          {"ftp", "21"},
@@ -97,7 +97,7 @@ port_of_scheme(string_view scheme_str) {
          {"", "65535"}
     }};
 
-    auto iequals = [](string_view a, string_view b)
+    auto iequals = [](core::string_view a, core::string_view b)
     {
         if (b.size() != a.size()) {
             return false;
@@ -113,7 +113,7 @@ port_of_scheme(string_view scheme_str) {
     auto const& it = std::find_if(
         scheme_ports.begin(),
         scheme_ports.end(),
-        [&](std::pair<string_view, string_view> const& s) {
+        [&](std::pair<core::string_view, core::string_view> const& s) {
         return iequals(s.first, scheme_str);
     });
 
@@ -126,7 +126,7 @@ port_of_scheme(string_view scheme_str) {
 
 void
 extract_relative_ref(
-    string_view hostinfo_relative,
+    core::string_view hostinfo_relative,
     url_components &out)
 {
     // split path and query#fragment
@@ -134,7 +134,7 @@ extract_relative_ref(
     auto it = urls::grammar::find_if(
         hostinfo_relative.begin(),
         hostinfo_relative.end(), path_end_chars);
-    string_view query_and_frag = hostinfo_relative.substr(it - hostinfo_relative.begin());
+    core::string_view query_and_frag = hostinfo_relative.substr(it - hostinfo_relative.begin());
     if (query_and_frag != hostinfo_relative)
         out.path = hostinfo_relative.substr(
             0, query_and_frag.data() - hostinfo_relative.data());
@@ -144,9 +144,9 @@ extract_relative_ref(
     // ?query#fragment
     if (query_and_frag.front() == '?') {
         query_and_frag = query_and_frag.substr(1);
-        string_view::size_type hash_pos = query_and_frag.find('#');
-        if (hash_pos != string_view::npos) {
-            string_view fragment_part = query_and_frag.substr(hash_pos);
+        core::string_view::size_type hash_pos = query_and_frag.find('#');
+        if (hash_pos != core::string_view::npos) {
+            core::string_view fragment_part = query_and_frag.substr(hash_pos);
             out.fragment = fragment_part.substr(1);
             out.query = query_and_frag.substr(
                 0, fragment_part.data() - query_and_frag.data());
@@ -162,15 +162,15 @@ extract_relative_ref(
 
 void
 extract_userinfo_relative(
-    string_view relative_ref,
-    string_view userinfo_relative,
-    string_view host_info,
+    core::string_view relative_ref,
+    core::string_view userinfo_relative,
+    core::string_view host_info,
     url_components& out) {
     // We expect userinfo_relative to point to the first character of
     // the hostname.  If there's a port it is the first colon,
     // except with IPv6.
     auto host_end_pos = host_info.find(':');
-    if (host_end_pos == string_view::npos)
+    if (host_end_pos == core::string_view::npos)
     {
         // definitely no port
         out.hostname = userinfo_relative.substr(
@@ -180,7 +180,7 @@ extract_userinfo_relative(
 
     // extract hostname and port
     out.hostname = userinfo_relative.substr(0, host_end_pos);
-    string_view host_relative = userinfo_relative.substr(host_end_pos + 1);
+    core::string_view host_relative = userinfo_relative.substr(host_end_pos + 1);
     out.port = host_relative.substr(0, relative_ref.data() - host_relative.data());
 
     // validate port
@@ -204,7 +204,7 @@ extract_userinfo_relative(
 
 void
 extract_scheme_relative(
-    string_view scheme_relative,
+    core::string_view scheme_relative,
     url_components &out)
 {
     // hostinfo
@@ -216,12 +216,12 @@ extract_scheme_relative(
     auto path_offset = (std::min)(
         scheme_relative.size(),
         static_cast<std::size_t>(it - scheme_relative.begin()));
-    string_view host_info = scheme_relative.substr(0, path_offset);
+    core::string_view host_info = scheme_relative.substr(0, path_offset);
 
     // userinfo
-    string_view relative_ref = scheme_relative.substr(path_offset);
+    core::string_view relative_ref = scheme_relative.substr(path_offset);
     auto host_offset = host_info.find_last_of('@');
-    if (host_offset == string_view::npos)
+    if (host_offset == core::string_view::npos)
         return extract_userinfo_relative(
             relative_ref,
             scheme_relative,
@@ -229,19 +229,19 @@ extract_scheme_relative(
             out);
 
     // password
-    string_view userinfo_at_relative = scheme_relative.substr(host_offset);
-    string_view userinfo(host_info.data(), userinfo_at_relative.data() - host_info.data());
+    core::string_view userinfo_at_relative = scheme_relative.substr(host_offset);
+    core::string_view userinfo(host_info.data(), userinfo_at_relative.data() - host_info.data());
     auto password_offset = std::min(userinfo.size(), userinfo.find(':'));
     if (password_offset != userinfo.size()) {
         out.user = scheme_relative.substr(0, password_offset);
-        string_view password = scheme_relative.substr(password_offset + 1);
+        core::string_view password = scheme_relative.substr(password_offset + 1);
         out.password = password.substr(0, userinfo_at_relative.data() - password.data());
     } else {
         out.user = scheme_relative.substr(0, userinfo_at_relative.data() - scheme_relative.data());
     }
 
     // userinfo-relative
-    string_view userinfo_relative = userinfo_at_relative.substr(1);
+    core::string_view userinfo_relative = userinfo_at_relative.substr(1);
     it = urls::grammar::find_if(
         userinfo_relative.begin(),
         userinfo_relative.end(),
@@ -259,7 +259,7 @@ extract_scheme_relative(
 
 void
 extract_uri_components(
-   string_view s,
+   core::string_view s,
    url_components &out)
 {
     if (s.starts_with("//") && !s.starts_with("///"))
@@ -287,7 +287,7 @@ extract_uri_components(
     }
 
     // The usual route, parse scheme first
-    string_view scheme_relative = s;
+    core::string_view scheme_relative = s;
     if (has_scheme)
         scheme_relative = s.substr(out.scheme.size() + 1);
 
@@ -307,11 +307,11 @@ extract_uri_components(
         // this is the authority and "www.boost.org" is a perfectly valid
         // path segment.
         auto first_seg_offset = (std::min)(s.size(), s.find_first_of('/'));
-        string_view first_seg = s.substr(0, first_seg_offset);
+        core::string_view first_seg = s.substr(0, first_seg_offset);
         auto host_delimiter_pos = first_seg.find_first_of(".:");
         bool const looks_like_authority =
             urls::parse_authority(first_seg) &&
-            host_delimiter_pos != string_view::npos &&
+            host_delimiter_pos != core::string_view::npos &&
             host_delimiter_pos != first_seg.size() - 1;
         if (looks_like_authority)
             return extract_scheme_relative(s, out);
@@ -328,7 +328,7 @@ extract_uri_components(
 }
 
 void
-sanitize_uri(string_view s, urls::url_base& dest) {
+sanitize_uri(core::string_view s, urls::url_base& dest) {
     url_components o;
     dest.clear();
     extract_uri_components(s, o);
@@ -351,7 +351,7 @@ sanitize_uri(string_view s, urls::url_base& dest) {
 }
 
 urls::url
-sanitize_uri(string_view s) {
+sanitize_uri(core::string_view s) {
     urls::url u;
     sanitize_uri(s, u);
     return u;
@@ -394,9 +394,9 @@ main(int argc, char **argv)
 {
     if (argc != 2)
     {
-        string_view exec = argv[0];
+        core::string_view exec = argv[0];
         auto p = exec.find_last_of("/\\");
-        if (p != string_view::npos)
+        if (p != core::string_view::npos)
             exec = exec.substr(p);
         std::cerr
             << "Usage: " << exec
@@ -405,9 +405,9 @@ main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    string_view uri_str = argv[1];
+    core::string_view uri_str = argv[1];
 
-    urls::result<urls::url_view> ru = urls::parse_uri_reference(uri_str);
+    boost::system::result<urls::url_view> ru = urls::parse_uri_reference(uri_str);
     if (ru)
     {
         urls::url_view u = *ru;

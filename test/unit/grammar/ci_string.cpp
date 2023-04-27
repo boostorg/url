@@ -31,11 +31,11 @@ public:
     void
     testToUpperLower()
     {
-        string_view s0 =
+        core::string_view s0 =
             "0123456789"
             "abcdefghijklmnopqrstuvwxyz"
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        string_view s1 =
+        core::string_view s1 =
             "0123456789"
             "abcdefghijklmnopqrstuvwxyz"
             "abcdefghijklmnopqrstuvwxyz";

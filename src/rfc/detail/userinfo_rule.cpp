@@ -12,7 +12,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/rfc/detail/userinfo_rule.hpp>
-#include <boost/url/string_view.hpp>
+#include <boost/core/detail/string_view.hpp>
 #include <boost/url/rfc/pct_encoded_rule.hpp>
 #include <boost/url/rfc/sub_delim_chars.hpp>
 #include <boost/url/rfc/unreserved_chars.hpp>
@@ -28,7 +28,7 @@ parse(
     char const*& it,
     char const* const end
         ) const noexcept ->
-    result<value_type>
+    system::result<value_type>
 {
     static constexpr auto uchars =
         unreserved_chars +

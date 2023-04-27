@@ -59,7 +59,7 @@ authority_view() noexcept
 
 authority_view::
 authority_view(
-    string_view s)
+    core::string_view s)
     : authority_view(
         parse_authority(s
             ).value(BOOST_URL_POS))
@@ -182,7 +182,7 @@ pct_string_view encoded_host_address()      // ipv4, ipv6, ipvfut, or encoded na
 
 ipv4_address    host_ipv4_address()         // return ipv4_address or {}
 ipv6_address    host_ipv6_address()         // return ipv6_address or {}
-string_view     host_ipvfuture()            // return ipvfuture or {}
+core::string_view     host_ipvfuture()            // return ipvfuture or {}
 std::string     host_name()                 // return decoded name or ""
 pct_string_view encoded_host_name()         // return encoded host name or ""
 */
@@ -198,7 +198,7 @@ pct_string_view
 authority_view::
 encoded_host_address() const noexcept
 {
-    string_view s = u_.get(id_host);
+    core::string_view s = u_.get(id_host);
     std::size_t n;
     switch(u_.host_type_)
     {
@@ -257,14 +257,14 @@ host_ipv6_address() const noexcept
     return urls::ipv6_address(b);
 }
 
-string_view
+core::string_view
 authority_view::
 host_ipvfuture() const noexcept
 {
     if(u_.host_type_ !=
             urls::host_type::ipvfuture)
         return {};
-    string_view s = u_.get(id_host);
+    core::string_view s = u_.get(id_host);
     BOOST_ASSERT(s.size() >= 6);
     BOOST_ASSERT(s.front() == '[');
     BOOST_ASSERT(s.back() == ']');
@@ -300,7 +300,7 @@ has_port() const noexcept
     return true;
 }
 
-string_view
+core::string_view
 authority_view::
 port() const noexcept
 {
@@ -334,9 +334,9 @@ encoded_host_and_port() const noexcept
 //
 //------------------------------------------------
 
-result<authority_view>
+system::result<authority_view>
 parse_authority(
-    string_view s) noexcept
+    core::string_view s) noexcept
 {
     return grammar::parse(s, authority_rule);
 }

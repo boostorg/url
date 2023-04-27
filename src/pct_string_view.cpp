@@ -36,7 +36,7 @@ decode_impl(
 
 pct_string_view::
 pct_string_view(
-    string_view s)
+    core::string_view s)
     : pct_string_view(
         make_pct_string_view(s
             ).value(BOOST_URL_POS))
@@ -45,9 +45,9 @@ pct_string_view(
 
 //------------------------------------------------
 
-result<pct_string_view>
+system::result<pct_string_view>
 make_pct_string_view(
-    string_view s) noexcept
+    core::string_view s) noexcept
 {
     auto p = s.begin();
     auto const end = s.end();

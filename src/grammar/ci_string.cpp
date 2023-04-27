@@ -26,8 +26,8 @@ namespace detail {
 
 bool
 ci_is_equal(
-    string_view s0,
-    string_view s1) noexcept
+    core::string_view s0,
+    core::string_view s1) noexcept
 {
     auto n = s0.size();
     auto p1 = s0.data();
@@ -59,8 +59,8 @@ slow:
 
 bool
 ci_is_less(
-    string_view s0,
-    string_view s1) noexcept
+    core::string_view s0,
+    core::string_view s1) noexcept
 {
     auto p1 = s0.data();
     auto p2 = s1.data();
@@ -81,8 +81,8 @@ ci_is_less(
 
 int
 ci_compare(
-    string_view s0,
-    string_view s1) noexcept
+    core::string_view s0,
+    core::string_view s1) noexcept
 {
     int bias;
     std::size_t n;
@@ -122,7 +122,7 @@ ci_compare(
 
 std::size_t
 ci_digest(
-    string_view s) noexcept
+    core::string_view s) noexcept
 {
     // Only 4 and 8 byte sizes are supported
     static_assert(

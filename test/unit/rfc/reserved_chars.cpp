@@ -25,11 +25,11 @@ struct reserved_chars_test
     {
         // javadoc
         {
-            result< pct_string_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( reserved_chars ) );
+            system::result< pct_string_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( reserved_chars ) );
             (void)rv;
         }
 
-        // Need to construct this string_view
+        // Need to construct this core::string_view
         // manually because of the leading null
         char const res[] =
             "\x00\x01\x02\x03\x04\x05\x06\x07" "\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"
@@ -50,7 +50,7 @@ struct reserved_chars_test
             "\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7" "\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff";
         test_char_set(
             reserved_chars,
-            string_view(res, sizeof(res) - 1));
+            core::string_view(res, sizeof(res) - 1));
     }
 };
 

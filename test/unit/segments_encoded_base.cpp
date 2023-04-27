@@ -47,7 +47,7 @@ struct segments_encoded_base_test
 {
     void
     check(
-        string_view s,
+        core::string_view s,
         std::initializer_list<
             segments_encoded_base::reference> match)
     {

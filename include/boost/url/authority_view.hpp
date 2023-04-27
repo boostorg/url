@@ -31,7 +31,7 @@ namespace urls {
     strings constructed from a parsed, external
     character buffer whose storage is managed
     by the caller. That is, it acts like a
-    @ref string_view in terms of ownership.
+    @ref core::string_view in terms of ownership.
     The caller is responsible for ensuring
     that the lifetime of the underlying
     character buffer extends until it is no
@@ -55,7 +55,7 @@ namespace urls {
     contain an error. The error can be converted to
     an exception by the caller if desired:
     @code
-    result< authority_view > rv = parse_authority( "user:pass@www.example.com:8080" );
+    system::result< authority_view > rv = parse_authority( "user:pass@www.example.com:8080" );
     @endcode
 
     @par BNF
@@ -159,7 +159,7 @@ public:
     */
     BOOST_URL_DECL
     explicit
-    authority_view(string_view s);
+    authority_view(core::string_view s);
 
     /** Constructor
     */
@@ -255,10 +255,10 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
             >3.2. Authority (rfc3986)</a>
     */
-    string_view
+    core::string_view
     buffer() const noexcept
     {
-        return string_view(data(), size());
+        return core::string_view(data(), size());
     }
 
     //--------------------------------------------
@@ -987,7 +987,7 @@ public:
             >3.2.2. Host (rfc3986)</a>
     */
     BOOST_URL_DECL
-    string_view
+    core::string_view
     host_ipvfuture() const noexcept;
 
     /** Return the host name
@@ -1148,7 +1148,7 @@ public:
             @ref port_number.
     */
     BOOST_URL_DECL
-    string_view
+    core::string_view
     port() const noexcept;
 
     /** Return the port
@@ -1450,9 +1450,9 @@ operator<<(
         @ref authority_view.
 */
 BOOST_URL_DECL
-result<authority_view>
+system::result<authority_view>
 parse_authority(
-    string_view s) noexcept;
+    core::string_view s) noexcept;
 
 //------------------------------------------------
 
