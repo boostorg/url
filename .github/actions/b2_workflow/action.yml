@@ -61,10 +61,6 @@ runs:
       uses: SimenB/github-actions-cpu-cores@v1
       id: cpu-cores
 
-    - name: Setup msvc dev-cmd
-      if: runner.os == 'Windows'
-      uses: ilammy/msvc-dev-cmd@v1
-
     - name: Bootstrap
       working-directory: ${{ inputs.source-dir }}
       shell: bash
