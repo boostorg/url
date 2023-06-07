@@ -90,10 +90,10 @@ jobs:
           apt-get-ignore-missing: ${{ matrix.container && 'true' }}
 
       - name: Clone Boost
-        uses: ./.github/actions/boost_clone
+        uses: alandefreitas/cpp-actions/boost-clone@develop
         with:
-          boost_dir: ../boost-source
           branch: ${{ (github.ref_name == 'master' && github.ref_name) || 'develop' }}
+          boost-dir: ../boost-source
           scan-modules-dir: .
           scan-modules-ignore: url
 
