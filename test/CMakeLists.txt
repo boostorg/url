@@ -8,6 +8,12 @@
 # Official repository: https://github.com/boostorg/url
 #
 
+# Custom target used by the boost super-project
+if(NOT TARGET tests)
+    add_custom_target(tests)
+    set_property(TARGET tests PROPERTY FOLDER _deps)
+endif()
+
 # Custom target for all tests
 if(NOT TARGET boost_url_all_tests)
     add_custom_target(boost_url_all_tests)
