@@ -29,6 +29,7 @@ set(__ignore__ ${CMAKE_C_COMPILER})
 option(BOOST_URL_BUILD_TESTS "Build boost::url tests" ${BUILD_TESTING})
 option(BOOST_URL_BUILD_FUZZERS "Build boost::url fuzzers" OFF)
 option(BOOST_URL_BUILD_EXAMPLES "Build boost::url examples" ${BOOST_URL_IS_ROOT})
+option(BOOST_URL_DISABLE_THREADS "Disable threads" OFF)
 set(BOOST_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../.." CACHE STRING "Boost source dir to use when running CMake from this directory")
 
 #######################################################
@@ -108,6 +109,9 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "url" FILES ${BOOST_URL
 function(boost_url_setup_properties target)
     target_compile_features(${target} PUBLIC cxx_constexpr)
     target_compile_definitions(${target} PUBLIC BOOST_URL_NO_LIB=1)
+    if (BOOST_URL_DISABLE_THREADS)
+        target_compile_definitions(${target} PUBLIC BOOST_URL_DISABLE_THREADS=1)
+    endif()
     target_include_directories(${target} PUBLIC "${PROJECT_SOURCE_DIR}/include")
     target_link_libraries(${target} PUBLIC ${BOOST_URL_DEPENDENCIES})
     target_compile_definitions(${target} PUBLIC $<IF:$<BOOL:${BUILD_SHARED_LIBS}>,BOOST_URL_DYN_LINK=1,BOOST_URL_STATIC_LINK=1>)
