@@ -8,6 +8,8 @@
 cmake_minimum_required(VERSION 3.5...3.16)
 
 project(cmake_subdir_test LANGUAGES CXX)
+set(__ignore__ ${CMAKE_C_COMPILER})
+set(__ignore__ ${CMAKE_C_FLAGS})
 
 if(BOOST_CI_INSTALL_TEST)
     find_package(Boost CONFIG REQUIRED COMPONENTS url)

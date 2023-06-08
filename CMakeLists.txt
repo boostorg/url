@@ -21,7 +21,7 @@ set(BOOST_URL_IS_ROOT OFF)
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(BOOST_URL_IS_ROOT ON)
 endif ()
-set(__ignore__ CMAKE_C_COMPILER)
+set(__ignore__ ${CMAKE_C_COMPILER})
 
 #######################################################
 ### Options                                         ###
