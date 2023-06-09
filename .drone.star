@@ -515,7 +515,7 @@ def image_supports_caching(image_str, compiler_str):
 # - compilers_in_range('gcc >=10') -> [('gcc', '12'), ('gcc', '11'), ('gcc', '10')]
 def compilers_in_range(compiler_range_str):
     supported = {
-        'gcc': ['12', '11', '10', '9', '8.4', '8.0.1', '7', '6', '5', '4.9', '4.8'],
+        'gcc': ['12', '11', '10', '9', '8.4', '7', '6', '5', '4.9', '4.8'],
         's390x-gcc': ['12'],
         'arm64-gcc': ['11'],
         'freebsd-gcc': ['11', '10', '9', '8'],
