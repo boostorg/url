@@ -87,6 +87,8 @@ Boost.URL has been tested with the following compilers:
 
 and these architectures: x86, x64, ARM64, S390x.
 
+We do not test and support gcc 8.0.1.
+
 [heading Quality Assurance]
 
 The development infrastructure for the library includes
