@@ -533,9 +533,8 @@ run(std::ostream& out,
 // alone executables that run unit tests.
 int main(int argc, char const* const* argv)
 {
-#ifdef _MSC_VER
-    int flags = _CrtSetDbgFlag(
-        _CRTDBG_REPORT_FLAG);
+#if defined(_MSC_VER) && !defined(__clang__)
+    int flags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
     flags |= _CRTDBG_LEAK_CHECK_DF;
     _CrtSetDbgFlag(flags);
 #endif
