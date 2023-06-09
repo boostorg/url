@@ -158,6 +158,146 @@ apply_frag(
     decoded_[id_frag] = s.decoded_size();
 }
 
+// return length of [first, last)
+auto
+url_impl::
+len(
+    int first,
+    int last) const noexcept ->
+        std::size_t
+{
+    BOOST_ASSERT(first <= last);
+    BOOST_ASSERT(last <= id_end);
+    return offset(last) - offset(first);
+}
+
+// return length of part
+auto
+url_impl::
+len(int id) const noexcept ->
+    std::size_t
+{
+    return id == id_end
+        ? zero_
+        : ( offset(id + 1) -
+            offset(id) );
+}
+
+// return offset of id
+auto
+url_impl::
+offset(int id) const noexcept ->
+    std::size_t
+{
+    return
+        id == id_scheme
+        ? zero_
+        : offset_[id];
+}
+
+// return id as string
+core::string_view
+url_impl::
+get(int id) const noexcept
+{
+    return {
+        cs_ + offset(id), len(id) };
+}
+
+// return [first, last) as string
+core::string_view
+url_impl::
+get(int first,
+    int last) const noexcept
+{
+    return { cs_ + offset(first),
+        offset(last) - offset(first) };
+}
+
+// return id as pct-string
+pct_string_view
+url_impl::
+pct_get(
+    int id) const noexcept
+{
+    return make_pct_string_view_unsafe(
+        cs_ + offset(id),
+        len(id),
+        decoded_[id]);
+}
+
+// return [first, last) as pct-string
+pct_string_view
+url_impl::
+pct_get(
+    int first,
+    int last) const noexcept
+{
+    auto const pos = offset(first);
+    std::size_t n = 0;
+    for(auto i = first; i < last;)
+        n += decoded_[i++];
+    return make_pct_string_view_unsafe(
+        cs_ + pos,
+        offset(last) - pos,
+        n);
+}
+
+//------------------------------------------------
+
+// change id to size n
+void
+url_impl::
+set_size(
+    int id,
+    std::size_t n) noexcept
+{
+    auto d = n - len(id);
+    for(auto i = id + 1;
+        i <= id_end; ++i)
+        offset_[i] += d;
+}
+
+// trim id to size n,
+// moving excess into id+1
+void
+url_impl::
+split(
+    int id,
+    std::size_t n) noexcept
+{
+    BOOST_ASSERT(id < id_end - 1);
+    //BOOST_ASSERT(n <= len(id));
+    offset_[id + 1] = offset(id) + n;
+}
+
+// add n to [first, last]
+void
+url_impl::
+adjust(
+    int first,
+    int last,
+    std::size_t n) noexcept
+{
+    for(int i = first;
+            i <= last; ++i)
+        offset_[i] += n;
+}
+
+// set [first, last) offset
+void
+url_impl::
+collapse(
+    int first,
+    int last,
+    std::size_t n) noexcept
+{
+    for(int i = first + 1;
+            i < last; ++i)
+        offset_[i] = n;
+}
+
+
 //------------------------------------------------
 //
 // path_ref

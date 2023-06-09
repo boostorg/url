@@ -219,6 +219,32 @@ set(
     }
 }
 
+auto
+params_encoded_ref::
+erase(
+    iterator pos) noexcept ->
+        iterator
+{
+    return erase(
+        pos,
+        std::next(pos));
+}
+
+auto
+params_encoded_ref::
+erase(
+    iterator first,
+    iterator last) noexcept ->
+        iterator
+{
+    core::string_view s("", 0);
+    return u_->edit_params(
+        first.it_,
+        last.it_,
+        detail::query_iter(s));
+}
+
+
 //------------------------------------------------
 //
 // (implementation)

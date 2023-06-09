@@ -47,7 +47,6 @@ class segment_template
 public:
     segment_template() = default;
 
-    BOOST_URL_DECL
     bool
     match(pct_string_view seg) const;
 
@@ -57,7 +56,6 @@ public:
         return str_;
     }
 
-    BOOST_URL_DECL
     core::string_view
     id() const;
 
@@ -140,7 +138,6 @@ struct segment_template_rule_t
 {
     using value_type = segment_template;
 
-    BOOST_URL_DECL
     system::result<value_type>
     parse(
         char const*& it,

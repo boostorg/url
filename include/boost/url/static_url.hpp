@@ -49,7 +49,7 @@ class static_url;
         @li @ref parse_uri
         @li @ref parse_uri_reference
 */
-class BOOST_SYMBOL_VISIBLE
+class BOOST_URL_DECL
     static_url_base
     : public url_base
 {
@@ -57,13 +57,13 @@ class BOOST_SYMBOL_VISIBLE
     friend class static_url;
 
     ~static_url_base() = default;
-    BOOST_URL_DECL static_url_base(
+    static_url_base(
         char* buf, std::size_t cap) noexcept;
-    BOOST_URL_DECL static_url_base(
+    static_url_base(
         char* buf, std::size_t cap, core::string_view s);
-    BOOST_URL_DECL void clear_impl() noexcept override;
-    BOOST_URL_DECL void reserve_impl(std::size_t, op_t&) override;
-    BOOST_URL_DECL void cleanup(op_t&) override;
+    void clear_impl() noexcept override;
+    void reserve_impl(std::size_t, op_t&) override;
+    void cleanup(op_t&) override;
 
     void
     copy(url_view_base const& u)
