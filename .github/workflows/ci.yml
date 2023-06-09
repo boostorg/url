@@ -44,8 +44,8 @@ jobs:
             clang >=3.8
             msvc >=14.20
             apple-clang *
-          # mingw *
-          # clang-cl *
+            mingw *
+            clang-cl *
           standards: '>=11'
           latest-factors: |
             gcc Coverage UBSan
