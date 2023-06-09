@@ -20,6 +20,19 @@ if(NOT TARGET boost_url_all_tests)
     set_property(TARGET boost_url_all_tests PROPERTY FOLDER Dependencies)
 endif()
 
+# Replicate error flags from Jamfile
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_CXX_COMPILER_VERSION_MAJOR EQUAL 7)
+    set(BOOST_URL_TEST_FLAGS "-Wall -Werror -Wno-unused-but-set-variable -Wno-maybe-uninitialized")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set(BOOST_URL_TEST_FLAGS "-Wall -Werror -Wno-unused-but-set-variable")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION_MAJOR EQUAL 4)
+    set(BOOST_URL_TEST_FLAGS "-Wall -Werror -Wno-unused-but-set-variable")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(BOOST_URL_TEST_FLAGS "-Wall -Werror")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(BOOST_URL_TEST_FLAGS "/W4 /WX")
+endif()
+
 set(SUITE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/../extra/test_main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../extra/test_suite.hpp)

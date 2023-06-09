@@ -16,6 +16,9 @@ endif()
 
 # Files
 file(GLOB_RECURSE BOOST_URL_TESTS_FILES CONFIGURE_DEPENDS *.cpp *.hpp)
+set_source_files_properties(${BOOST_URL_TESTS_FILES} PROPERTIES COMPILE_FLAGS ${BOOST_URL_TEST_FLAGS})
+set_property(SOURCE doc_grammar.cpp PROPERTY COMPILE_FLAGS "")
+set_property(SOURCE doc_3_urls.cpp PROPERTY COMPILE_FLAGS "")
 list(APPEND BOOST_URL_TESTS_FILES CMakeLists.txt Jamfile)
 set(EXAMPLE_FILES ../../example/router/impl/matches.cpp ../../example/router/detail/impl/router.cpp)
 
