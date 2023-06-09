@@ -60,7 +60,7 @@ struct pattern;
         @li @ref parse_uri
         @li @ref parse_uri_reference
 */
-class BOOST_SYMBOL_VISIBLE
+class BOOST_URL_DECL
     url_base
     : public url_view_base
 {
@@ -94,12 +94,12 @@ class BOOST_SYMBOL_VISIBLE
     url_base() noexcept = default;
     url_base(detail::url_impl const&) noexcept;
     explicit url_base(core::string_view);
-    BOOST_URL_DECL void reserve_impl(std::size_t n);
-    BOOST_URL_DECL void copy(url_view_base const&);
-    BOOST_URL_DECL virtual void clear_impl() noexcept = 0;
-    BOOST_URL_DECL virtual void reserve_impl(
+    void reserve_impl(std::size_t n);
+    void copy(url_view_base const&);
+    virtual void clear_impl() noexcept = 0;
+    virtual void reserve_impl(
         std::size_t, op_t&) = 0;
-    BOOST_URL_DECL virtual void cleanup(op_t&) = 0;
+    virtual void cleanup(op_t&) = 0;
 
 public:
     //--------------------------------------------
@@ -239,7 +239,6 @@ public:
         @see
             @ref remove_scheme.
     */
-    BOOST_URL_DECL
     url_base&
     set_scheme(core::string_view s);
 
@@ -274,7 +273,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">
             3.1. Scheme (rfc3986)</a>
     */
-    BOOST_URL_DECL
     url_base&
 #ifndef BOOST_URL_DOCS
     set_scheme_id(urls::scheme id);
@@ -315,7 +313,6 @@ public:
         @see
             @ref set_scheme.
     */
-    BOOST_URL_DECL
     url_base&
     remove_scheme();
 
@@ -361,7 +358,6 @@ public:
         @see
             @ref remove_authority.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_authority(
         pct_string_view s);
@@ -404,7 +400,6 @@ public:
         @see
             @ref set_encoded_authority.
     */
-    BOOST_URL_DECL
     url_base&
     remove_authority();
 
@@ -471,7 +466,6 @@ public:
             @ref remove_userinfo,
             @ref set_encoded_userinfo.
     */
-    BOOST_URL_DECL
     url_base&
     set_userinfo(
         core::string_view s);
@@ -538,7 +532,6 @@ public:
             @ref remove_userinfo,
             @ref set_userinfo.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_userinfo(
         pct_string_view s);
@@ -580,7 +573,6 @@ public:
             @ref set_encoded_userinfo,
             @ref set_userinfo.
     */
-    BOOST_URL_DECL
     url_base&
     remove_userinfo() noexcept;
 
@@ -630,7 +622,6 @@ public:
             @ref set_encoded_user,
             @ref set_password.
     */
-    BOOST_URL_DECL
     url_base&
     set_user(
         core::string_view s);
@@ -684,7 +675,6 @@ public:
             @ref set_password,
             @ref set_user.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_user(
         pct_string_view s);
@@ -737,7 +727,6 @@ public:
             @ref set_encoded_user,
             @ref set_user.
     */
-    BOOST_URL_DECL
     url_base&
     set_password(
         core::string_view s);
@@ -795,7 +784,6 @@ public:
             @ref set_encoded_user,
             @ref set_user.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_password(
         pct_string_view s);
@@ -847,7 +835,6 @@ public:
             @ref set_password,
             @ref set_user.
     */
-    BOOST_URL_DECL
     url_base&
     remove_password() noexcept;
 
@@ -931,7 +918,6 @@ public:
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
-    BOOST_URL_DECL
     url_base&
     set_host(
         core::string_view s);
@@ -1016,7 +1002,6 @@ public:
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_host(pct_string_view s);
 
@@ -1115,7 +1100,6 @@ public:
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
-    BOOST_URL_DECL
     url_base&
     set_host_address(core::string_view s);
 
@@ -1219,7 +1203,6 @@ public:
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_host_address(
         pct_string_view s);
@@ -1276,7 +1259,6 @@ public:
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
-    BOOST_URL_DECL
     url_base&
     set_host_ipv4(
         ipv4_address const& addr);
@@ -1341,7 +1323,6 @@ public:
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
-    BOOST_URL_DECL
     url_base&
     set_host_ipv6(
         ipv6_address const& addr);
@@ -1394,7 +1375,6 @@ public:
             @ref set_host_ipv6,
             @ref set_host_name.
     */
-    BOOST_URL_DECL
     url_base&
     set_host_ipvfuture(
         core::string_view s);
@@ -1442,7 +1422,6 @@ public:
             @ref set_host_ipv6,
             @ref set_host_ipvfuture.
     */
-    BOOST_URL_DECL
     url_base&
     set_host_name(
         core::string_view s);
@@ -1496,7 +1475,6 @@ public:
             @ref set_host_ipvfuture,
             @ref set_host_name.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_host_name(
         pct_string_view s);
@@ -1541,7 +1519,6 @@ public:
             @ref remove_port,
             @ref set_port.
     */
-    BOOST_URL_DECL
     url_base&
     set_port_number(std::uint16_t n);
 
@@ -1585,7 +1562,6 @@ public:
             @ref remove_port,
             @ref set_port.
     */
-    BOOST_URL_DECL
     url_base&
     set_port(core::string_view s);
 
@@ -1624,7 +1600,6 @@ public:
         @see
             @ref set_port.
     */
-    BOOST_URL_DECL
     url_base&
     remove_port() noexcept;
 
@@ -1687,7 +1662,6 @@ public:
             @ref set_encoded_path,
             @ref set_path.
     */
-    BOOST_URL_DECL
     bool
     set_path_absolute(bool absolute);
 
@@ -1754,7 +1728,6 @@ public:
             @ref set_encoded_path,
             @ref set_path_absolute.
     */
-    BOOST_URL_DECL
     url_base&
     set_path(
         core::string_view s);
@@ -1820,7 +1793,6 @@ public:
             @ref set_path,
             @ref set_path_absolute.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_path(
         pct_string_view s);
@@ -1876,7 +1848,6 @@ public:
             @ref set_path,
             @ref set_path_absolute.
     */
-    BOOST_URL_DECL
     urls::segments_ref
     segments() noexcept;
 
@@ -1938,7 +1909,6 @@ public:
             @ref set_path,
             @ref set_path_absolute.
     */
-    BOOST_URL_DECL
     segments_encoded_ref
     encoded_segments() noexcept;
 
@@ -2000,7 +1970,6 @@ public:
             @ref remove_query,
             @ref set_encoded_query.
     */
-    BOOST_URL_DECL
     url_base&
     set_query(
         core::string_view s);
@@ -2056,7 +2025,6 @@ public:
             @ref remove_query,
             @ref set_query.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_query(
         pct_string_view s);
@@ -2105,7 +2073,6 @@ public:
             @ref set_encoded_query,
             @ref set_query.
     */
-    BOOST_URL_DECL
     params_ref
     params() noexcept;
 
@@ -2166,7 +2133,6 @@ public:
             @ref set_encoded_query,
             @ref set_query.
     */
-    BOOST_URL_DECL
     params_ref
     params(encoding_opts opt) noexcept;
 
@@ -2221,7 +2187,6 @@ public:
             @ref set_encoded_query,
             @ref set_query.
     */
-    BOOST_URL_DECL
     params_encoded_ref
     encoded_params() noexcept;
 
@@ -2275,7 +2240,6 @@ public:
             @ref set_encoded_query,
             @ref set_query.
     */
-    BOOST_URL_DECL
     url_base&
     set_params( std::initializer_list<param_view> ps ) noexcept;
 
@@ -2336,7 +2300,6 @@ public:
             @ref set_encoded_query,
             @ref set_query.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_params( std::initializer_list< param_pct_view > ps ) noexcept;
 
@@ -2379,7 +2342,6 @@ public:
             @ref set_encoded_query,
             @ref set_query.
     */
-    BOOST_URL_DECL
     url_base&
     remove_query() noexcept;
 
@@ -2425,7 +2387,6 @@ public:
             @ref set_encoded_fragment,
             @ref set_fragment.
     */
-    BOOST_URL_DECL
     url_base&
     remove_fragment() noexcept;
 
@@ -2470,7 +2431,6 @@ public:
             @ref remove_fragment,
             @ref set_encoded_fragment.
     */
-    BOOST_URL_DECL
     url_base&
     set_fragment(
         core::string_view s);
@@ -2522,7 +2482,6 @@ public:
             @ref remove_fragment,
             @ref set_fragment.
     */
-    BOOST_URL_DECL
     url_base&
     set_encoded_fragment(
         pct_string_view s);
@@ -2554,7 +2513,6 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    BOOST_URL_DECL
     url_base&
     remove_origin();
 
@@ -2578,7 +2536,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize();
 
@@ -2598,7 +2555,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize_scheme();
 
@@ -2621,7 +2577,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize_authority();
 
@@ -2645,7 +2600,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize_path();
 
@@ -2668,7 +2622,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize_query();
 
@@ -2691,7 +2644,6 @@ public:
             >6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
     */
-    BOOST_URL_DECL
     url_base&
     normalize_fragment();
 
@@ -2785,7 +2737,6 @@ public:
             @ref url,
             @ref url_view.
     */
-    BOOST_URL_DECL
     system::result<void>
     resolve(
         url_view_base const& ref);
@@ -2822,7 +2773,6 @@ private:
     core::string_view
     first_segment() const noexcept;
 
-    BOOST_URL_DECL
     detail::segments_iter_impl
     edit_segments(
         detail::segments_iter_impl const&,
@@ -2830,7 +2780,6 @@ private:
         detail::any_segments_iter&& it0,
         int absolute = -1);
 
-    BOOST_URL_DECL
     auto
     edit_params(
         detail::params_iter_impl const&,
@@ -2838,7 +2787,6 @@ private:
         detail::any_params_iter&&) ->
             detail::params_iter_impl;
 
-    BOOST_URL_DECL
     system::result<void>
     resolve_impl(
         url_view_base const& base,

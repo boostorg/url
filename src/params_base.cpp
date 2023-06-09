@@ -20,6 +20,8 @@
 namespace boost {
 namespace urls {
 
+//------------------------------------------------
+
 params_base::
 iterator::
 iterator(
@@ -41,7 +43,6 @@ iterator(
 {
 }
 
-//------------------------------------------------
 
 auto
 params_base::
@@ -66,6 +67,77 @@ operator*() const ->
 // params_base
 //
 //------------------------------------------------
+
+params_base::
+params_base() noexcept
+    // space_as_plus = true
+    : opt_(true, false, false)
+{
+}
+
+bool
+params_base::
+contains(
+    core::string_view key,
+    ignore_case_param ic) const noexcept
+{
+    return find(
+        begin(),key, ic) != end();
+}
+
+auto
+params_base::
+find(
+    core::string_view key,
+    ignore_case_param ic) const noexcept ->
+        iterator
+{
+    return iterator(
+        find_impl(
+            begin().it_, key, ic),
+        opt_);
+}
+
+auto
+params_base::
+find(
+    iterator it,
+    core::string_view key,
+    ignore_case_param ic) const noexcept ->
+        iterator
+{
+    return iterator(
+        find_impl(
+            it.it_, key, ic),
+        opt_);
+}
+
+auto
+params_base::
+find_last(
+    core::string_view key,
+    ignore_case_param ic) const noexcept ->
+        iterator
+{
+    return iterator(
+        find_last_impl(
+            end().it_, key, ic),
+        opt_);
+}
+
+auto
+params_base::
+find_last(
+    iterator it,
+    core::string_view key,
+    ignore_case_param ic) const noexcept ->
+        iterator
+{
+    return iterator(
+        find_last_impl(
+            it.it_, key, ic),
+        opt_);
+}
 
 params_base::
 params_base(

@@ -60,7 +60,7 @@ namespace urls {
         @ref parse_uri_reference,
         @ref resolve.
 */
-class BOOST_SYMBOL_VISIBLE url
+class BOOST_URL_DECL url
     : public url_base
 {
     friend std::hash<url>;
@@ -82,7 +82,6 @@ public:
         buffer is destroyed, invalidating all
         references to it.
     */
-    BOOST_URL_DECL
     virtual ~url();
 
     /** Constructor
@@ -118,7 +117,6 @@ public:
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
             >4.2. Relative Reference (rfc3986)</a>
     */
-    BOOST_URL_DECL
     url() noexcept;
 
     /** Constructor
@@ -168,7 +166,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.1"
             >4.1. URI Reference</a>
     */
-    BOOST_URL_DECL
     explicit
     url(core::string_view s);
 
@@ -194,7 +191,6 @@ public:
 
         @param u The url to move from.
     */
-    BOOST_URL_DECL
     url(url&& u) noexcept;
 
     /** Constructor
@@ -272,7 +268,6 @@ public:
 
         @param u The url to assign from.
     */
-    BOOST_URL_DECL
     url&
     operator=(url&& u) noexcept;
 
@@ -362,7 +357,6 @@ public:
         @param other The object to swap with
 
     */
-    BOOST_URL_DECL
     void
     swap(url& other) noexcept;
 
@@ -512,9 +506,9 @@ private:
     char* allocate(std::size_t);
     void deallocate(char* s);
 
-    BOOST_URL_DECL void clear_impl() noexcept override;
-    BOOST_URL_DECL void reserve_impl(std::size_t, op_t&) override;
-    BOOST_URL_DECL void cleanup(op_t&) override;
+    void clear_impl() noexcept override;
+    void reserve_impl(std::size_t, op_t&) override;
+    void cleanup(op_t&) override;
 };
 
 } // urls

@@ -124,7 +124,6 @@ struct BOOST_SYMBOL_VISIBLE
     param_iter
     : any_params_iter
 {
-    BOOST_URL_DECL
     explicit
     param_iter(
         param_view const&) noexcept;
@@ -234,7 +233,6 @@ struct BOOST_SYMBOL_VISIBLE
     param_encoded_iter
     : any_params_iter
 {
-    BOOST_URL_DECL
     explicit
     param_encoded_iter(
         param_pct_view const&) noexcept;

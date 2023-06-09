@@ -35,19 +35,15 @@ public:
     };
 
 protected:
-    BOOST_URL_DECL
     router_base();
 
-    BOOST_URL_DECL
     virtual ~router_base();
 
-    BOOST_URL_DECL
     void
     insert_impl(
         core::string_view s,
         any_resource const* v);
 
-    BOOST_URL_DECL
     any_resource const*
     find_impl(
         segments_encoded_view path,
