@@ -465,6 +465,28 @@ struct format_test
             BOOST_TEST_NOT( u.has_query() );
         }
         {
+            url u = format("{}", 0);
+            BOOST_TEST_CSTR_EQ(u.buffer(), "0");
+            BOOST_TEST_NOT( u.has_authority() );
+            BOOST_TEST_NOT( u.has_userinfo() );
+            BOOST_TEST( u.encoded_host().empty() );
+            BOOST_TEST_CSTR_EQ( u.encoded_path(), "0" );
+            BOOST_TEST_NOT( u.is_path_absolute() );
+            segs_equal( u.encoded_segments(), {"0"});
+            BOOST_TEST_NOT( u.has_query() );
+        }
+        {
+            url u = format("{}", 0U);
+            BOOST_TEST_CSTR_EQ(u.buffer(), "0");
+            BOOST_TEST_NOT( u.has_authority() );
+            BOOST_TEST_NOT( u.has_userinfo() );
+            BOOST_TEST( u.encoded_host().empty() );
+            BOOST_TEST_CSTR_EQ( u.encoded_path(), "0" );
+            BOOST_TEST_NOT( u.is_path_absolute() );
+            segs_equal( u.encoded_segments(), {"0"});
+            BOOST_TEST_NOT( u.has_query() );
+        }
+        {
             url u = format("/a");
             BOOST_TEST_CSTR_EQ(u.buffer(), "/a");
             BOOST_TEST_NOT( u.has_authority() );
