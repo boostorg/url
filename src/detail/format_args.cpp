@@ -373,13 +373,14 @@ measure(
         dn += measure_one(sign, cs);
         ++n;
     }
-    while (v > 0)
+    do
     {
         int d = v % 10;
         v /= 10;
         dn += measure_one('0' + static_cast<char>(d), cs);
         ++n;
     }
+    while (v > 0);
 
     std::size_t w = width;
     if (width_idx != std::size_t(-1) ||
@@ -412,13 +413,14 @@ measure(
         dn += measure_one(sign, cs);
         ++n;
     }
-    while (v != 0)
+    do
     {
         int d = v % 10;
         v /= 10;
         dn += measure_one('0' + static_cast<char>(d), cs);
         ++n;
     }
+    while (v != 0);
 
     std::size_t w = width;
     if (width_idx != std::size_t(-1) ||
@@ -457,13 +459,14 @@ format(
     {
         ++n;
     }
-    while (v > 0)
+    do
     {
         if (v >= 10)
             p *= 10;
         v /= 10;
         ++n;
     }
+    while (v > 0);
     static constexpr auto m =
         std::numeric_limits<long long int>::digits10;
     BOOST_ASSERT(n <= m + 1);
@@ -559,13 +562,14 @@ grammar::lut_chars const& cs) const
     {
         ++n;
     }
-    while (v > 0)
+    do
     {
         if (v >= 10)
             p *= 10;
         v /= 10;
         ++n;
     }
+    while (v > 0);
     static constexpr auto m =
         std::numeric_limits<unsigned long long int>::digits10;
     BOOST_ASSERT(n <= m + 1);
