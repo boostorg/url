@@ -26,6 +26,7 @@ project
     <toolset>clang-13:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
     <toolset>clang-14:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
     <toolset>clang-15:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
+    <toolset>gcc,<target-os>windows:<cxxflags>"-Wno-error=array-bounds"
     <undefined-sanitizer>norecover:<link>static                # different typeinfos confuse ubsan
     <undefined-sanitizer>norecover:<visibility>global
     ;

@@ -21,6 +21,11 @@ namespace boost {
 namespace urls {
 namespace detail {
 
+#if defined(__GNUC__) && ! defined(__clang__) && defined(__MINGW32__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
+
 //------------------------------------------------
 //
 // url_impl
@@ -503,6 +508,10 @@ nparam() const noexcept
         return impl_->nparam_;
     return nparam_;
 }
+
+#if defined(__GNUC__) && ! defined(__clang__) && defined(__MINGW32__)
+#pragma GCC diagnostic pop
+#endif
 
 } // detail
 } // urls
