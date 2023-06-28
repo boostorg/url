@@ -29,8 +29,19 @@ env:
   DEFAULT_BUILD_VARIANT: debug,release
 
 jobs:
+  runner-selection:
+    # runs-on: ubuntu-latest
+    runs-on: ${{ github.repository_owner == 'boostorg' && fromJSON('[ "self-hosted", "linux", "x64", "ubuntu-latest-aws" ]') || 'ubuntu-latest' }}
+    outputs:
+      labelmatrix: ${{ steps.aws_hosted_runners.outputs.labelmatrix }}
+    steps:
+      - name: AWS Hosted Runners
+        id: aws_hosted_runners
+        uses: cppalliance/aws-hosted-runners@v1.0.0
+
   cpp-matrix:
-    runs-on: ubuntu-latest
+    needs: [runner-selection]
+    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['ubuntu-latest'] }}
     name: Generate Test Matrix
     outputs:
       matrix: ${{ steps.cpp-matrix.outputs.matrix }}
@@ -57,7 +68,7 @@ jobs:
           trace-commands: true
 
   build:
-    needs: cpp-matrix
+    needs: [cpp-matrix,runner-selection]
     defaults:
       run:
         shell: bash
@@ -67,7 +78,7 @@ jobs:
         include: ${{ fromJSON(needs.cpp-matrix.outputs.matrix) }}
 
     name: ${{ matrix.name }}
-    runs-on: ${{matrix.runs-on}}
+    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)[matrix.runs-on] }}
     container: ${{matrix.container}}
     timeout-minutes: 120
 
@@ -250,13 +261,13 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
 
   changelog:
-    needs: cpp-matrix
+    needs: [cpp-matrix,runner-selection]
     defaults:
       run:
         shell: bash
 
     name: Changelog Summary
-    runs-on: ubuntu-22.04
+    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['ubuntu-22.04'] }}
     timeout-minutes: 120
 
     steps:
