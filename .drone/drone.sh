@@ -105,6 +105,9 @@ common_install() {
     fi
   fi
 
+  # !!! See: https://github.com/boostorg/url/issues/760
+  boost_cache_hit=false
+
   # Setup boost
   # If no cache: Clone, patch with boost-ci/ci, run common_install, and cache the result
   # If cache hit: Copy boost from cache, patch $SELF, and look for new dependencies with depinst
