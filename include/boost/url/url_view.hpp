@@ -204,7 +204,12 @@ public:
             std::is_convertible<
                 String,
                 core::string_view
-                    >::value>::type
+                    >::value &&
+            !std::is_convertible<
+                String*,
+                url_view_base*
+                    >::value
+            >::type
 #endif
     >
     url_view(

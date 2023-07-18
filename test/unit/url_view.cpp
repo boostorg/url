@@ -108,6 +108,15 @@ public:
             auto const f = []( url_view ) {};
             f( "x" );
         }
+
+        // issue #756
+        {
+            url u("http://example.com");
+            auto foo = [&u](url_view uv) {
+                BOOST_TEST(uv.buffer().data() == u.buffer().data());
+            };
+            foo(u);
+        }
     }
 
     void
