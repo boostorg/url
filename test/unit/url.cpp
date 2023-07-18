@@ -232,6 +232,28 @@ struct url_test
             u.remove_origin();
             BOOST_TEST_CSTR_EQ( u.buffer(), "/.//kyle:xy" );
         }
+
+        {
+            // issue #446
+            boost::urls::url u;
+            u.set_scheme("https")
+                .set_host("special-api.com")
+                .set_port("443")
+                .set_path("/prefix/api/v1");
+            u.segments().push_back("applications");
+            u.segments().push_back("01");
+            u.segments().push_back("devices");
+            u.params().append({"since", "2022-01-01"});
+            BOOST_TEST_EQ(
+                u.buffer(),
+                "https://special-api.com:443/prefix/api/v1/applications/01/devices?since=2022-01-01");
+            auto f = [](url_view u) {
+                BOOST_TEST_EQ(
+                    u.buffer(),
+                    "https://special-api.com/some/path");
+            };
+            f(url{"https://"}.set_host("special-api.com").set_path("some/path"));
+        }
     }
 
     //--------------------------------------------
