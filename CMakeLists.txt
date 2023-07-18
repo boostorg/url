@@ -1,6 +1,7 @@
 #
 # Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
 # Copyright (c) 2021 DMitry Arkhipov (grisumbras@gmail.com)
+# Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -8,9 +9,11 @@
 # Official repository: https://github.com/boostorg/url
 #
 
-#######################################################
-### Project                                         ###
-#######################################################
+#-------------------------------------------------
+#
+# Project
+#
+#-------------------------------------------------
 cmake_minimum_required(VERSION 3.8)
 set(BOOST_URL_VERSION 2)
 if (BOOST_SUPERPROJECT_VERSION)
@@ -23,18 +26,22 @@ if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
 endif ()
 set(__ignore__ ${CMAKE_C_COMPILER})
 
-#######################################################
-### Options                                         ###
-#######################################################
+#-------------------------------------------------
+#
+# Options
+#
+#-------------------------------------------------
 option(BOOST_URL_BUILD_TESTS "Build boost::url tests" ${BUILD_TESTING})
 option(BOOST_URL_BUILD_FUZZERS "Build boost::url fuzzers" OFF)
 option(BOOST_URL_BUILD_EXAMPLES "Build boost::url examples" ${BOOST_URL_IS_ROOT})
 option(BOOST_URL_DISABLE_THREADS "Disable threads" OFF)
 set(BOOST_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../.." CACHE STRING "Boost source dir to use when running CMake from this directory")
 
-#######################################################
-### Boost modules                                   ###
-#######################################################
+#-------------------------------------------------
+#
+# Boost modules
+#
+#-------------------------------------------------
 # The boost super-project requires one explicit dependency per-line.
 set(BOOST_URL_DEPENDENCIES
         Boost::align
@@ -54,14 +61,22 @@ foreach (BOOST_URL_DEPENDENCY ${BOOST_URL_DEPENDENCIES})
         list(APPEND BOOST_URL_INCLUDE_LIBRARIES ${CMAKE_MATCH_1})
     endif ()
 endforeach ()
-set(BOOST_URL_UNIT_TEST_LIBRARIES container filesystem unordered)
-set(BOOST_URL_EXAMPLE_LIBRARIES json regex beast)
+# Conditional dependencies
+if (BOOST_URL_BUILD_TESTS)
+    set(BOOST_URL_UNIT_TEST_LIBRARIES container filesystem unordered)
+endif()
+if (BOOST_URL_BUILD_EXAMPLES)
+    set(BOOST_URL_EXAMPLE_LIBRARIES json regex beast)
+endif()
+# Complete dependency list
 set(BOOST_INCLUDE_LIBRARIES ${BOOST_URL_INCLUDE_LIBRARIES} ${BOOST_URL_UNIT_TEST_LIBRARIES} ${BOOST_URL_EXAMPLE_LIBRARIES})
 set(BOOST_EXCLUDE_LIBRARIES url)
 
-#######################################################
-### Add Boost Subdirectory                          ###
-#######################################################
+#-------------------------------------------------
+#
+# Add Boost Subdirectory
+#
+#-------------------------------------------------
 if (NOT BOOST_SUPERPROJECT_VERSION)
     set(CMAKE_FOLDER Dependencies)
     # Find absolute BOOST_SRC_DIR
@@ -98,9 +113,11 @@ if (NOT BOOST_SUPERPROJECT_VERSION)
     unset(CMAKE_FOLDER)
 endif ()
 
-#######################################################
-### Library                                         ###
-#######################################################
+#-------------------------------------------------
+#
+# Library
+#
+#-------------------------------------------------
 file(GLOB_RECURSE BOOST_URL_HEADERS CONFIGURE_DEPENDS include/boost/*.hpp include/boost/*.natvis)
 file(GLOB_RECURSE BOOST_URL_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -121,9 +138,11 @@ add_library(boost_url ${BOOST_URL_HEADERS} ${BOOST_URL_SOURCES})
 add_library(Boost::url ALIAS boost_url)
 boost_url_setup_properties(boost_url)
 
-#######################################################
-### Tests                                           ###
-#######################################################
+#-------------------------------------------------
+#
+# Tests
+#
+#-------------------------------------------------
 if (BOOST_URL_BUILD_TESTS)
     if (BOOST_URL_IS_ROOT)
         include(CTest)
@@ -131,6 +150,11 @@ if (BOOST_URL_BUILD_TESTS)
     add_subdirectory(test)
 endif ()
 
+#-------------------------------------------------
+#
+# Examples
+#
+#-------------------------------------------------
 if (BOOST_URL_BUILD_EXAMPLES)
     add_subdirectory(example)
 endif ()
