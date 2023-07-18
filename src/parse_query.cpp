@@ -37,7 +37,7 @@ parse_query(core::string_view s) noexcept
         return rv.error();
     return params_encoded_view(
         detail::query_ref(
-            s.data(), s.size(), rv->size()));
+            s, s.size(), rv->size()));
 }
 
 } // urls
