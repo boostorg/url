@@ -20,9 +20,36 @@ struct parse_query_test
     void
     testParse()
     {
-        system::result<params_encoded_view> rv;
+        {
+            system::result<params_encoded_view> rv;
+            rv = parse_query( "key=value" );
+            BOOST_TEST( ! rv.has_error() );
+            BOOST_TEST( rv->size() == 1 );
+            BOOST_TEST( rv->begin()->key == "key" );
+            BOOST_TEST( rv->begin()->value == "value" );
+        }
 
-        rv = parse_query( "key=value" );
+        // issue #757
+        {
+            auto data = std::string("abc=def&ghi=jkl&mno=pqr");
+            core::string_view view( data.data(), data.size() - 2 );
+            system::result<params_encoded_view> rv;
+            rv = parse_query( view );
+            BOOST_TEST( ! rv.has_error() );
+            params_encoded_view params = *rv;
+            BOOST_TEST( params.size() == 3 );
+            auto it = params.begin();
+            BOOST_TEST_EQ( it->key, "abc" );
+            BOOST_TEST_EQ( it->value, "def" );
+            ++it;
+            BOOST_TEST_EQ( it->key, "ghi" );
+            BOOST_TEST_EQ( it->value, "jkl" );
+            ++it;
+            BOOST_TEST_EQ( it->key, "mno" );
+            BOOST_TEST_EQ( it->value, "p" );
+            ++it;
+            BOOST_TEST( it == params.end() );
+        }
     }
 
     void
