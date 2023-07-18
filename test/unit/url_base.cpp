@@ -1229,6 +1229,18 @@ struct url_base_test
                 u.set_host(
                     u.query());
             });
+
+        {
+            // issue #755
+            url u1;
+            u1.set_scheme("http");
+            u1.set_host("127.0.0.1.org");
+            BOOST_TEST_EQ(u1.buffer(), "http://127.0.0.1.org");
+            BOOST_TEST_EQ(u1.host_type(), host_type::name);
+            url u2(u1.buffer());
+            BOOST_TEST_EQ(u2.host_type(), u1.host_type());
+            BOOST_TEST_EQ(u2.host_type(), host_type::name);
+        }
     }
 
     void
