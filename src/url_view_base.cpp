@@ -419,6 +419,24 @@ encoded_host_name() const noexcept
         pi_->decoded_[id_host]);
 }
 
+pct_string_view
+url_view_base::
+encoded_zone_id() const noexcept
+{
+    if(pi_->host_type_ !=
+        urls::host_type::ipv6)
+        return {};
+    core::string_view s = pi_->get(id_host);
+    BOOST_ASSERT(s.front() == '[');
+    BOOST_ASSERT(s.back() == ']');
+    s = s.substr(1, s.size() - 2);
+    auto pos = s.find("%25");
+    if (pos == core::string_view::npos)
+        return {};
+    s.remove_prefix(pos + 3);
+    return *make_pct_string_view(s);
+}
+
 //------------------------------------------------
 
 bool
