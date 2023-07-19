@@ -1368,6 +1368,88 @@ public:
     pct_string_view
     encoded_host_name() const noexcept;
 
+    /** Return the IPv6 Zone ID
+
+        If the host type is @ref host_type::ipv6,
+        this function returns the Zone ID as
+        a string. Otherwise an empty string is returned.
+        Any percent-escapes in the string are
+        decoded first.
+
+        @par Example
+        @code
+        assert( url_view( "http://[fe80::1%25eth0]/" ).zone_id() == "eth0" );
+        @endcode
+
+        @par Complexity
+        Linear in `this->encoded_zone_id().size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
+
+        @par BNF
+        @code
+        host        = IP-literal / IPv4address / reg-name
+
+        IP-literal = "[" ( IPv6address / IPv6addrz / IPvFuture  ) "]"
+
+        ZoneID = 1*( unreserved / pct-encoded )
+
+        IPv6addrz = IPv6address "%25" ZoneID
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc6874"
+            >Representing IPv6 Zone Identifiers in Address Literals and Uniform Resource Identifiers</a>
+    */
+    template<BOOST_URL_STRTOK_TPARAM>
+    BOOST_URL_STRTOK_RETURN
+    zone_id(
+        BOOST_URL_STRTOK_ARG(token)) const
+    {
+        encoding_opts opt;
+        opt.space_as_plus = false;
+        return encoded_zone_id().decode(
+            opt, std::move(token));
+    }
+
+    /** Return the IPv6 Zone ID
+
+        If the host type is @ref host_type::ipv6,
+        this function returns the Zone ID as
+        a string. Otherwise an empty string is returned.
+        The returned string may contain
+        percent escapes.
+
+        @par Example
+        @code
+        assert( url_view( "http://[fe80::1%25eth0]/" ).encoded_zone_id() == "eth0" );
+        @endcode
+
+        @par Complexity
+        Constant.
+
+        @par Exception Safety
+        Throws nothing.
+
+        @par BNF
+        @code
+        host        = IP-literal / IPv4address / reg-name
+
+        IP-literal = "[" ( IPv6address / IPv6addrz / IPvFuture  ) "]"
+
+        ZoneID = 1*( unreserved / pct-encoded )
+
+        IPv6addrz = IPv6address "%25" ZoneID
+        @endcode
+
+        @par Specification
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc6874"
+            >Representing IPv6 Zone Identifiers in Address Literals and Uniform Resource Identifiers</a>
+    */
+    pct_string_view
+    encoded_zone_id() const noexcept;
+
     //--------------------------------------------
     //
     // Port

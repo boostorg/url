@@ -600,6 +600,24 @@ public:
             BOOST_TEST(u.authority().encoded_host_and_port() ==
                 "xyz:99999");
         }
+        {
+            // zone_id
+            auto check = [](core::string_view u0, core::string_view zone_id)
+            {
+                auto ru = parse_uri(u0);
+                BOOST_TEST(ru.has_value());
+                auto const& u = *ru;
+                BOOST_TEST_EQ(u.encoded_zone_id(), zone_id);
+                pct_string_view ps{zone_id};
+                BOOST_TEST_EQ(u.zone_id(), ps.decode());
+            };
+            check("http://[fe80::1%25eth0]/", "eth0");
+            check("http://[2001:db8::1%25eth1]/index.html", "eth1");
+            check("ftp://[fe80::2%25wlan0]:8080/files/", "wlan0");
+            check("ftp://[fe80::2]:8080/files/", "");
+            check("ftp://a.com/files/", "");
+            BOOST_TEST_NOT(parse_uri("http://[fe80::1%25]/").has_value());
+        }
     }
 
     void

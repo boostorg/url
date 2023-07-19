@@ -178,8 +178,8 @@ public:
     void
     good(core::string_view s)
     {
-        BOOST_TEST(ipv6_address(
-            s).to_string() == s);
+        BOOST_TEST_EQ(ipv6_address(
+            s).to_string(), s);
     }
 
     static
