@@ -69,7 +69,7 @@ jobs:
           factors: |
             gcc Asan Shared No-Threads
             msvc Shared x86
-            clang Time-Trace
+            clang Time-Trace Fuzz
             mingw Shared
           trace-commands: true
 
@@ -120,19 +120,42 @@ jobs:
         shell: bash
         run: |
           set -xe
+          # Identify boost module being tested
           module=${GITHUB_REPOSITORY#*/}
           echo "module=$module" >> $GITHUB_OUTPUT
+          
+          # Identify GitHub workspace root
           workspace_root=$(echo "$GITHUB_WORKSPACE" | sed 's/\\/\//g')
+          echo -E "workspace_root=$workspace_root" >> $GITHUB_OUTPUT
+          
+          # Remove module from boost-source
           rm -r "libs/$module" || true
           cd ..
+          
+          # Copy cached boost-source to an isolated boost-root
           mkdir boost-root || true
           cp -r "boost-source"/* "boost-root"
+          
+          # Set boost-root output 
           cd boost-root
+          boost_root="$(pwd)"
+          boost_root=$(echo "$boost_root" | sed 's/\\/\//g')
+          echo -E "boost_root=$boost_root" >> $GITHUB_OUTPUT
+          
+          # Patch boost-root with workspace module 
           mkdir "libs/$module"
           cp -r "$workspace_root"/* "libs/$module"
-          cxxstd=${{ matrix.cxxstd }}
-          latest_std=$(echo $cxxstd | awk -F ',' '{print $NF}')
-          echo "latest_std=$latest_std" >> $GITHUB_OUTPUT
+
+      - name: Fuzz corpus
+        if: ${{ matrix.fuzz }}
+        uses: actions/cache@v3.3.1
+        id: cache-corpus
+        with:
+          path: ${{ steps.patch.outputs.workspace_root }}/corpus.tar
+          key: corpus-${{ github.run_id }}
+          enableCrossOsArchive: true
+          restore-keys: | 
+            corpus-
 
       - name: Boost CMake Workflow
         uses: alandefreitas/cpp-actions/cmake-workflow@v1.5.0
@@ -141,7 +164,7 @@ jobs:
           build-dir: __build_cmake_test__
           generator: ${{ matrix.generator }}
           build-type: ${{ matrix.build-type }}
-          build-target: tests boost_url_tests boost_url_limits boost_url_extra
+          build-target: tests boost_url_tests boost_url_limits boost_url_extra ${{ (matrix.fuzz && 'fuzz') || ''}}
           run-tests: true
           install-prefix: $GITHUB_WORKSPACE/.local
           cxxstd: ${{ matrix.latest-cxxstd }}
@@ -151,7 +174,7 @@ jobs:
           cxxflags: ${{ matrix.cxxflags }}
           shared: ${{ matrix.shared }}
           cmake-version: '>=3.15'
-          extra-args: ${{ format('-D Boost_VERBOSE=ON -D BOOST_INCLUDE_LIBRARIES={0} -D BOOST_URL_DISABLE_THREADS={1}', steps.patch.outputs.module, ( matrix.no-threads && 'ON' ) || 'OFF') }}
+          extra-args: -D Boost_VERBOSE=ON -D BOOST_INCLUDE_LIBRARIES=${{ steps.patch.outputs.module }} -D BOOST_URL_DISABLE_THREADS=${{ ( matrix.no-threads && 'ON' ) || 'OFF' }} -D BOOST_URL_BUILD_FUZZERS=${{ ( matrix.fuzz && format('ON -D BOOST_URL_FUZZER_CORPUS_PATH={0}/corpus.tar', steps.patch.outputs.workspace_root) ) || 'OFF' }}
           export-compile-commands: ${{ matrix.time-trace }}
           package: false
           package-artifact: false
