@@ -65,8 +65,7 @@ namespace grammar {
         @ref delim_rule,
         @ref parse,
         @ref origin_form_rule,
-        @ref url_view,
-        @ref variant.
+        @ref url_view.
 */
 #ifdef BOOST_URL_DOCS
 template<class... Rules>

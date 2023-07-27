@@ -26,7 +26,7 @@ namespace grammar {
     This matches the specified character.
     The value is a reference to the character
     in the underlying buffer, expressed as a
-    @ref core::string_view. The function @ref squelch
+    `core::string_view`. The function @ref squelch
     may be used to turn this into `void` instead.
     If there is no more input, the error code
     @ref error::need_more is returned.
@@ -94,7 +94,7 @@ delim_rule( char ch ) noexcept
     belongs to the specified character set.
     The value is a reference to the character
     in the underlying buffer, expressed as a
-    @ref core::string_view. The function @ref squelch
+    `core::string_view`. The function @ref squelch
     may be used to turn this into `void` instead.
     If there is no more input, the error code
     @ref error::need_more is returned.

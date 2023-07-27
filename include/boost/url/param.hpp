@@ -268,7 +268,7 @@ struct param
         Calls to allocate may throw.
 
         @tparam OptionalString An optional string
-        type, such as @ref core::string_view,
+        type, such as `core::string_view`,
         `std::nullptr`, @ref no_value_t, or
         `optional<core::string_view>`.
 
@@ -484,7 +484,7 @@ struct param_view
         Throws nothing.
 
         @tparam OptionalString An optional string
-        type, such as @ref core::string_view,
+        type, such as `core::string_view`,
         `std::nullptr`, @ref no_value_t, or
         `optional<core::string_view>`.
 
@@ -766,7 +766,7 @@ struct param_pct_view
         `key` or `value` contains an invalid percent-encoding.
 
         @tparam OptionalString An optional
-        @ref core::string_view type, such as
+        `core::string_view` type, such as
         `boost::optional<core::string_view>` or
         `std::optional<core::string_view>`.
 
