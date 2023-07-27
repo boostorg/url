@@ -2694,7 +2694,7 @@ public:
 
         If an error occurs, the contents of
         this URL are unspecified and a @ref result
-        with an @ref system::error_code is returned.
+        with an `system::error_code` is returned.
 
         @par Example
         @code

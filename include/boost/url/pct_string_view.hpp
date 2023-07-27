@@ -47,7 +47,7 @@ ref(pct_string_view& s) noexcept;
 /** A reference to a valid percent-encoded string
 
     Objects of this type behave like a
-    @ref core::string_view and have the same interface,
+    `core::string_view` and have the same interface,
     but offer an additional invariant: they can
     only be constructed from strings containing
     valid percent-escapes.
@@ -59,7 +59,7 @@ ref(pct_string_view& s) noexcept;
     @par Operators
     The following operators are supported between
     @ref pct_string_view and any object that is
-    convertible to @ref core::string_view
+    convertible to `core::string_view`
 
     @code
     bool operator==( pct_string_view, pct_string_view ) noexcept;
@@ -159,7 +159,7 @@ public:
         @throw system_error
         The string contains an invalid percent encoding.
 
-        @tparam String A type convertible to @ref core::string_view
+        @tparam String A type convertible to `core::string_view`
 
         @param s The string to construct from.
     */

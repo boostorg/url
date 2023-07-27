@@ -72,7 +72,7 @@ make_decode_view(
     @par Operators
     The following operators are supported between
     @ref decode_view and any object that is convertible
-    to @ref core::string_view
+    to `core::string_view`
 
     @code
     bool operator==( decode_view, decode_view ) noexcept;
