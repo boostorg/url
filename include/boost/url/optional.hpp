@@ -20,7 +20,7 @@ namespace urls {
 
     @note This alias is no longer supported and
     should not be used in new code. Please use
-    `core::string_view` instead.
+    `boost::optional` instead.
 
     This alias is included for backwards
     compatibility with earlier versions of the
