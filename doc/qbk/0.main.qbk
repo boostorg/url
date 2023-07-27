@@ -107,7 +107,6 @@
 [def __url_base__               [link url.ref.boost__urls__url_base `url_base`]]
 [def __url_view__               [link url.ref.boost__urls__url_view `url_view`]]
 [def __url_view_base__          [link url.ref.boost__urls__url_view_base `url_view_base`]]
-[def __variant__                [link url.ref.boost__urls__variant `variant`]]
 
 [def __dec_octet_rule__         [link url.ref.boost__urls__grammar__dec_octet_rule `dec_octet_rule`]]
 [def __delim_rule__             [link url.ref.boost__urls__grammar__delim_rule `delim_rule`]]

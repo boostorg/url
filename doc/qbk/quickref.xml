@@ -126,7 +126,6 @@
           <member><link linkend="url.ref.boost__urls__string_view"><emphasis role="red">string_view</emphasis></link></member>
           <member><link linkend="url.ref.boost__urls__system_category"><emphasis role="red">system_category</emphasis></link></member>
           <member><link linkend="url.ref.boost__urls__system_error"><emphasis role="red">system_error</emphasis></link></member>
-          <member><link linkend="url.ref.boost__urls__variant"><emphasis role="red">variant</emphasis></link></member>
         </simplelist>
 
       </entry>
