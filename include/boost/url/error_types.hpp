@@ -26,7 +26,7 @@ namespace error_types {
 
     @note This alias is no longer supported and
     should not be used in new code. Please use
-    `core::string_view` instead.
+    `system::error_category` instead.
 
     This alias is included for backwards
     compatibility with earlier versions of the
@@ -48,7 +48,7 @@ using error_category
 
     @note This alias is no longer supported and
     should not be used in new code. Please use
-    `core::string_view` instead.
+    `system::error_code` instead.
 
     This alias is included for backwards
     compatibility with earlier versions of the
@@ -70,7 +70,7 @@ using error_code
 
     @note This alias is no longer supported and
     should not be used in new code. Please use
-    `core::string_view` instead.
+    `system::error_condition` instead.
 
     This alias is included for backwards
     compatibility with earlier versions of the
@@ -92,7 +92,7 @@ using error_condition
 
     @note This alias is no longer supported and
     should not be used in new code. Please use
-    `core::string_view` instead.
+    `system::system_error` instead.
 
     This alias is included for backwards
     compatibility with earlier versions of the
@@ -189,7 +189,7 @@ namespace errc = boost::system::errc;
 
     @note This alias is no longer supported and
     should not be used in new code. Please use
-    `core::string_view` instead.
+    `system::result` instead.
 
     This alias is included for backwards
     compatibility with earlier versions of the
