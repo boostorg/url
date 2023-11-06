@@ -1,0 +1,155 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+
+== Parsing
+
+Algorithms which parse URLs return a view which references the
+underlying character buffer without taking ownership, avoiding
+memory allocations and copies. The following example parses a
+string literal containing a
+https://datatracker.ietf.org/doc/html/rfc3986#section-3[__URI__,window=blank_]:
+
+
+[source,cpp]
+----
+// code_urls_parsing_1
+----
+
+
+The function returns a `result` which holds a `url_view`
+if the string is a valid URL. Otherwise it holds an `error_code`.
+It is impossible to construct a `url_view` which refers to an
+invalid URL.
+
+// [warning
+//     The caller is responsible for ensuring that the lifetime
+//     of the character buffer extends until it is no longer
+//     referenced by the view. These are the same semantics
+//     as that of __std_string_view__.
+// ]
+
+For convenience, a URL view can be constructed directly from the character
+buffer in a `string_view`. In this case, it parses the string according
+to the
+https://datatracker.ietf.org/doc/html/rfc3986#section-4.1[__URI-reference__,window=blank_]
+grammar, throwing an exception upon failure. The following two statements
+are equivalent:
+
+[source,cpp]
+----
+// code_urls_parsing_2
+----
+
+
+In this library, free functions which parse things are named with the
+word "parse" followed by the name of the grammar used to match the string.
+There are several varieties of URLs, and depending on the use-case a
+particular grammar may be needed. In the target of an HTTP GET request
+for example, the scheme and fragment are omitted. This corresponds to the
+https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1[__origin-form__,window=blank_]
+production rule described in `rfc7230`. The function
+`parse_origin_form`
+is suited for this purpose. All the URL parsing functions are listed here:
+
+// [table Parsing Functions [
+//     [Function]
+//     [Grammar]
+//     [Example]
+//     [Notes]
+// ][
+//     [[link url.ref.boost__urls__parse_absolute_uri `parse_absolute_uri`]]
+//     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.3 ['absolute-URI]]]
+//     [[teletype]`http://www.boost.org/index.html?field=value`]
+//     [No fragment]
+// ][
+//     [[link url.ref.boost__urls__parse_origin_form `parse_origin_form`]]
+//     [[@https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1 ['origin-form]]]
+//     [[teletype]`/index.html?field=value`]
+//     [Used in HTTP]
+// ][
+//     [[link url.ref.boost__urls__parse_relative_ref `parse_relative_ref`]]
+//     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.2 ['relative-ref]]]
+//     [[teletype]`//www.boost.org/index.html?field=value#downloads`]
+//     []
+// ][
+//     [[link url.ref.boost__urls__parse_uri `parse_uri`]]
+//     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3 ['URI]]]
+//     [[teletype]`http://www.boost.org/index.html?field=value#downloads`]
+//     []
+// ][
+//     [[link url.ref.boost__urls__parse_uri_reference `parse_uri_reference`]]
+//     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.1 ['URI-reference]]]
+//     [[teletype]`http://www.boost.org/index.html`]
+//     [Any ['URI] or ['relative-ref]]
+// ]]
+
+The URL is stored in its serialized form. Therefore, it can
+always be easily output, sent, or embedded as part of a
+protocol:
+
+[source,cpp]
+----
+// snippet_parsing_url_1bb
+----
+
+
+A `url` is an allocating container which owns its character buffer.
+Upon construction from `url_view`, it allocates dynamic storage
+to hold a copy of the string.
+
+[source,cpp]
+----
+// snippet_parsing_url_1bc
+----
+
+
+A `static_url` is a container which owns its character buffer for
+a URL whose maximum size is known. Upon construction from
+`url_view`, it does not perform any dynamic memory allocations.
+
+[source,cpp]
+----
+// snippet_parsing_url_1bd
+----
+
+
+=== Result Type
+
+These functions have a return type which uses the `result` alias
+template. This class allows the parsing algorithms to report
+errors without referring to exceptions.
+
+The functions `result::operator bool()` and `result::operator*`
+can be used to check if the result contains an error.
+
+[source,cpp]
+----
+// snippet_parsing_url_1
+----
+
+
+Since `result::operator bool()` is already checking if `result` contains an
+error, `result::operator*` provides an unchecked alternative to get a value
+from `result`. In contexts where it is acceptable to throw errors,
+`result::value` can be used directly.
+
+[source,cpp]
+----
+// snippet_parsing_url_1b
+----
+
+
+Check the reference for `result` for a synopsis of the type. For complete
+information please consult the full
+https://www.boost.org/doc/libs/1_83_0//libs/system/doc/html/system.html#ref_resultt_e[`result`,window=blank_]
+documentation in https://www.boost.org/doc/libs/1_83_0//libs/system/doc/html/system.html[Boost.System,window=blank_].
+
+
+
