@@ -8,17 +8,17 @@
 //
 
 
-== URLs
+= URLs
 
 A URL, short for "Uniform Resource Locator," is a compact string
 of characters identifying an abstract or physical resource.
 It has these five parts, with may be optional or disallowed
 depending on the context:
 
-// [$url/images/PartsDiagram.svg]
+image:PartsDiagram.svg[]
 
 Each part's syntax is defined by a set of production rules in
-`rfc3986`. All valid URLs conform to this grammar, also called
+https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_]. All valid URLs conform to this grammar, also called
 the "generic syntax." Here is an example URL which describes a
 file and its location on a network host:
 
@@ -31,40 +31,55 @@ https://www.example.com/path/to/file.txt?userid=1001&pages=3&results=full#page1
 
 The parts and their corresponding text is as follows:
 
-// [table Example Parts [
-//     [Part]
-//     [Text]
-// ][
-//     [[link url.urls.containers.scheme ['scheme]]]
-//     ["https"]
-// ][
-//     [[link url.urls.containers.authority ['authority]]]
-//     ["www.example.com"]
-// ][
-//     [[link url.urls.containers.path ['path]]]
-//     ["/path/to/file.txt"]
-// ][
-//     [[link url.urls.containers.query ['query]]]
-//     ["userid=1001&pages=3&results=full"]
-// ][
-//     [[link url.urls.containers.fragment ['fragment]]]
-//     ["page1"]
-// ]]
+[cols="a,a"]
+|===
+// Headers
+|Part|Text
+
+// Row 1, Column 1
+|__scheme__
+// Row 1, Column 2
+|"https"
+
+// Row 2, Column 1
+|__authority__
+// Row 2, Column 2
+|"www.example.com"
+
+// Row 3, Column 1
+|__path__
+// Row 3, Column 2
+|"/path/to/file.txt"
+
+// Row 4, Column 1
+|__query__
+// Row 4, Column 2
+|"userid=1001&pages=3&results=full"
+
+// Row 5, Column 1
+|__fragment__
+// Row 5, Column 2
+|"page1"
+
+|===
+
 
 The production rule for the example above is called a __URI__,
 which can contain all five parts. The specification using
-https://datatracker.ietf.org/doc/html/rfc2234[__ABNF__,window=blank_]
+https://datatracker.ietf.org/doc/html/rfc2234[__ABNF notation__,window=blank_]
 is:
 
 
-```
-URI           = scheme ":" hier-part // [ "?" query ] // [ "#" fragment ]
+[source]
+----
+URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
 
 hier-part     = "//" authority path-abempty
               / path-absolute
               / path-rootless
               / path-empty
-```
+----
+
 
 In this notation, the square brackets ("\// [" and "\]") denote optional
 elements, quoted text represents character literals, and slashes are
@@ -80,7 +95,7 @@ __URI-reference__. These are discussed in greater depth later.
 
 
 
-=== Scheme
+== Scheme
 
 The most important part is the __scheme__, whose production rule is:
 
@@ -98,28 +113,44 @@ https://en.wikipedia.org/wiki/Internet_Assigned_Numbers_Authority[Internet Assig
 Here are some registered schemes and their corresponding
 specifications:
 
-// [table Public Schemes [
-//     [Scheme]
-//     [Specification]
-// ][
-//     [[*http]]
-//     [[@https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.1 http URI Scheme (rfc7230)]]
-// ][
-//     [[*magnet]]
-//     [[@https://en.wikipedia.org/wiki/Magnet_URI_scheme Magnet URI scheme]]
-// ][
-//     [[*mailto]]
-//     [[@https://datatracker.ietf.org/doc/html/rfc6068 The 'mailto' URI Scheme (rfc6068)]]
-// ][
-//     [[*payto]]
-//     [[@https://datatracker.ietf.org/doc/html/rfc8905 The 'payto' URI Scheme for Payments (rfc8905)]]
-// ][
-//     [[*telnet]]
-//     [[@https://datatracker.ietf.org/doc/html/rfc4248 The telnet URI Scheme (rfc4248)]]
-// ][
-//     [[*urn]]
-//     [[@https://datatracker.ietf.org/doc/html/rfc2141 URN Syntax]]
-// ]]
+[cols="a,a"]
+|===
+// Headers
+|Scheme|Specification
+
+// Row 1, Column 1
+|**http**
+// Row 1, Column 2
+|https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.1[http URI Scheme (rfc7230),window=blank_]
+
+// Row 2, Column 1
+|**magnet**
+// Row 2, Column 2
+|https://en.wikipedia.org/wiki/Magnet_URI_scheme[Magnet URI scheme,window=blank_]
+
+// Row 3, Column 1
+|**mailto**
+// Row 3, Column 2
+|https://datatracker.ietf.org/doc/html/rfc6068[The 'mailto' URI Scheme (rfc6068),window=blank_]
+
+// Row 4, Column 1
+|**payto**
+// Row 4, Column 2
+|https://datatracker.ietf.org/doc/html/rfc8905[The 'payto' URI Scheme for Payments (rfc8905),window=blank_]
+// Row 4, Column 4
+
+// Row 5, Column 1
+|**telnet**
+// Row 5, Column 2
+|https://datatracker.ietf.org/doc/html/rfc4248[The telnet URI Scheme (rfc4248),window=blank_]
+
+// Row 6, Column 1
+|**urn**
+// Row 6, Column 2
+|https://datatracker.ietf.org/doc/html/rfc2141[URN Syntax,window=blank_]
+
+|===
+
 
 Private schemes are possible, defined by organizations to enumerate internal
 resources such as documents or physical devices, or to facilitate the operation
@@ -130,19 +161,28 @@ that private does not imply secret; some private schemes such as Amazon's "s3"
 have publicly available specifications and are quite popular. Here are some
 examples:
 
-// [table Private Schemes [
-//     [Scheme]
-//     [Specification]
-// ][
-//     [[*app]]
-//     [[@https://www.w3.org/TR/app-uri/ app: URL Scheme]]
-// ][
-//     [[*odbc]]
-//     [[@https://datatracker.ietf.org/doc/html/draft-patrick-lambert-odbc-uri-scheme ODBC URI Scheme]]
-// ][
-//     [[*slack]]
-//     [[@https://api.slack.com/reference/deep-linking Reference: Deep linking into Slack]]
-// ]]
+[cols="a,a"]
+|===
+// Headers
+|Scheme|Specification
+
+// Row 1, Column 1
+|**app**
+// Row 1, Column 2
+|https://www.w3.org/TR/app-uri/[app: URL Scheme,window=blank_]
+
+// Row 2, Column 1
+|**odbc**
+// Row 2, Column 2
+|https://datatracker.ietf.org/doc/html/draft-patrick-lambert-odbc-uri-scheme[ODBC URI Scheme,window=blank_]
+
+// Row 3, Column 1
+|**slack**
+// Row 3, Column 2
+|https://api.slack.com/reference/deep-linking[Reference: Deep linking into Slack,window=blank_]
+
+|===
+
 
 In some cases the scheme is implied by the surrounding context and
 therefore omitted. Here is a complete HTTP/1.1 GET request for the
@@ -165,47 +205,66 @@ https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1[HTTP specification,w
 thusly:
 
 
-```
-origin-form    = absolute-path // [ "?" query ]
+[source]
+----
+origin-form    = absolute-path [ "?" query ]
 
 absolute-path  = 1*( "/" segment )
-```
+----
 
-// [note
-// All URLs have a scheme, whether it is explicit or implicit.
-// The scheme determines what the rest of the URL means.
-// ]
+
+[NOTE]
+====
+All URLs have a scheme, whether it is explicit or implicit.
+The scheme determines what the rest of the URL means.
+====
+
 
 Here are some more examples of URLs using various schemes (and one example
 of something that is not a URL):
 
 
-// [table Scheme Examples [
-//     [URL]
-//     [Notes]
-// ][
-//     [`https://www.boost.org/index.html`]
-//     [Hierarchical URL with `https` protocol. Resource in the HTTP protocol.]
-// ][
-//     [`ftp://host.dom/etc/motd`]
-//     [Hierarchical URL with `ftp` scheme. Resource in the FTP protocol.]
-// ][
-//     [`urn:isbn:045145052`]
-//     [Opaque URL with `urn` scheme. Identifies `isbn` resource.]
-// ][
-//     [`mailto:person@example.com`]
-//     [Opaque URL with `mailto` scheme. Identifies e-mail address.]
-// ][
-//     [`index.html`]
-//     [URL reference. Missing scheme and authority.]
-// ][
-//     [`www.boost.org`]
-//     [A Protocol-Relative Link (PRL). [*Not a URL].]
-// ]]
+[cols="a,a"]
+|===
+// Headers
+|URL|Notes
+
+// Row 1, Column 1
+|`pass:[https://www.boost.org/index.html]`
+// Row 1, Column 2
+|Hierarchical URL with `https` protocol. Resource in the HTTP protocol.
+
+// Row 2, Column 1
+|`pass:[ftp://host.dom/etc/motd]`
+// Row 2, Column 2
+|Hierarchical URL with `ftp` scheme. Resource in the FTP protocol.
+
+// Row 3, Column 1
+|`urn:isbn:045145052`
+// Row 3, Column 2
+|Opaque URL with `urn` scheme. Identifies `isbn` resource.
+
+// Row 4, Column 1
+|`mailto:person@example.com`
+// Row 4, Column 2
+|Opaque URL with `mailto` scheme. Identifies e-mail address.
+
+// Row 5, Column 1
+|`index.html`
+// Row 5, Column 2
+|URL reference. Missing scheme and authority.
+
+// Row 6, Column 1
+|`www.boost.org`
+// Row 6, Column 2
+|A Protocol-Relative Link (PRL). **Not**.
+
+|===
 
 
 
-=== Authority
+
+== Authority
 
 The authority determines how a resource can be accessed.
 It contains two parts: the
@@ -218,9 +277,11 @@ which identify a communication endpoint having dominion
 over the resource described in the remainder of the URL.
 This is the ABNF specification for the authority part:
 
-```
-authority   = // [ user [ ":" password ] "@" ] host // [ ":" port ]
-```
+[source]
+----
+authority   = [ user [ ":" password ] "@" ] host [ ":" port ]
+----
+
 
 The combination of user and optional password is called the
 __userinfo__.
@@ -235,7 +296,7 @@ https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3[__port__,window=blan
 which identify a communication endpoint having dominion
 over the resource described in the remainder of the URL.
 
-// [$url/images/AuthorityDiagram.svg]
+image:AuthorityDiagram.svg[]
 
 Some observations:
 
@@ -247,28 +308,42 @@ Some observations:
 The host subcomponent represents where resources
 are located. 
 
-// [note
-//     Note that if an authority is present, the host is always
-//     defined even if it is the empty string (corresponding
-//     to a zero-length ['reg-name] in the BNF).
-// 
-//     [snippet_parsing_authority_10a]
-// ]
+[NOTE]
+====
+Note that if an authority is present, the host is always
+defined even if it is the empty string (corresponding
+to a zero-length __reg-name__ in the BNF).
+
+// snippet_parsing_authority_10a
+[source,cpp]
+----
+url_view u( "https:///path/to_resource" );
+assert( u.has_authority() );
+assert( u.authority().buffer().empty() );
+assert( u.path() == "/path/to_resource" );
+----
+
+====
+
 
 The authority component also influences how we should
 interpret the URL path. If the authority is present,
 the path component must either be empty or begin with
 a slash.
 
-// [note Although the specification allows the format `username:password`,
-// the password component should be used with care.
-// 
-// It is not recommended to transfer password data through URLs
-// unless this is an empty string indicating no password.]
+[NOTE]
+====
+Although the specification allows the format `username:password`,
+the password component should be used with care.
+
+It is not recommended to transfer password data through URLs
+unless this is an empty string indicating no password.
+====
 
 
 
-=== Containers
+
+== Containers
 
 This library provides the following containers, which
 are capable of storing any possible URL:
@@ -299,14 +374,14 @@ use with URLs.
 //     StringToken
 //     Percent Encoding
 
-// [include 3.1.parsing.qbk]
-// [include 3.2.containers.qbk]
-// [include 3.3.segments.qbk]
-// [include 3.4.params.qbk]
-// [include 3.5.normalization.qbk]
-// [include 3.6.stringtoken.qbk]
-// [include 3.7.percent-encoding.qbk]
-// [include 3.8.formatting.qbk]
+
+
+
+
+
+
+
+
 
 
 

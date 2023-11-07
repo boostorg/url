@@ -8,7 +8,7 @@
 //
 
 
-== Rule
+= Rule
 
 A __Rule__ defines an algorithm used to match an input buffer of
 ASCII characters against a set of syntactical specifications.
@@ -18,11 +18,11 @@ rules for productions typically found in RFC documents. Rules
 are not invoked directly; instead, rule variables are used with
 overloads of `parse` which provide a convenient, uniform front end.
 
-=== Related Identifiers
+== Related Identifiers
 
 `is_rule`, `parse`.
 
-=== Requirements
+== Requirements
 
 In this table:
 
@@ -31,79 +31,84 @@ In this table:
 * `it` is an __lvalue__ with type `char const*`
 * `end` is a value of type `char const*`
 
-// [table Valid expressions
-// [[Expression] [Type] [Semantics, Pre/Post-conditions]]
-// [
-//     [
-//     ```
-//     T(t)
-//     ```
-//     ]
-//     []
-//     [
-//         Copy construction of `T` throws nothing.
-// 
-//         `std::is_nothrow_copy_constructible<T>::value == true`
-//     ]
-// ][
-//     [
-//     ```
-//     T::value_type
-//     ```
-//     ]
-//     []
-//     [
-//         Values of this type are returned by the rule when the
-//         parse operation is successful
-//     ]
-// ][
-//     [
-//     ```
-//     t.parse(it,end)
-//     ```
-//     ]
-//     [`result<T::value_type>`]
-//     [
-//         Attempt to parse the buffer of characters defined by
-//         the range `[it,end)`. Upon success, the return result
-//         holds an instance of the rule's value type, and
-//         the reference parameter `it` is modified to point
-//         to the first unconsumed character. Otherwise, upon
-//         failure the result holds an error. In this case
-//         the implementation defines if and how the reference
-//         parameter `it` is modified.
-//     ]
-// ]]
-// 
-// [heading Exemplar]
-// 
-// For best results, it is suggested that all constructors for
-// rules be marked `constexpr`.
-// 
-// ```
-// struct Rule
-// {
-//     struct value_type;
-// 
-//     constexpr Rule( Rule const& ) noexcept = default;
-// 
-//     auto parse( char const*& it, char const* end ) const -> result< value_type >;
-// };
-// 
-// // Declare a variable of type Rule for notational convenience
-// constexpr Rule rule{};
-// ```
-// 
-// [heading Models]
-// 
-// * __dec_octet_rule__
-// * __delim_rule__
-// * __not_empty_rule__
-// * __optional_rule__
-// * __range_rule__
-// * __token_rule__
-// * __tuple_rule__
-// * __unsigned_rule__
-// * __variant_rule__
-// 
-// [endsect]
+[cols="a,a,a"]
+|===
+// Headers
+|Expression|Type|Semantics, Pre/Post-conditions
+
+// Row 1, Column 1
+|[source,cpp]
+----
+T(t)
+----
+
+// Row 1, Column 2
+| -
+// Row 1, Column 3
+|Copy construction of `T` throws nothing.
+
+`std::is_nothrow_copy_constructible<T>::value == true`
+
+// Row 2, Column 1
+|[source,cpp]
+----
+T::value_type
+----
+
+// Row 2, Column 2
+| -
+// Row 2, Column 3
+|Values of this type are returned by the rule when the
+        parse operation is successful
+
+// Row 3, Column 1
+|[source,cpp]
+----
+t.parse(it,end)
+----
+
+// Row 3, Column 2
+|`result<T::value_type>`
+// Row 3, Column 3
+|Attempt to parse the buffer of characters defined by
+the range `// [it,end)`. Upon success, the return result
+holds an instance of the rule's value type, and
+the reference parameter `it` is modified to point
+to the first unconsumed character. Otherwise, upon
+failure the result holds an error. In this case
+the implementation defines if and how the reference
+parameter `it` is modified.
+
+|===
+
+== Exemplar
+
+For best results, it is suggested that all constructors for
+rules be marked `constexpr`.
+
+[source,cpp]
+----
+struct Rule
+{
+    struct value_type;
+
+    constexpr Rule( Rule const& ) noexcept = default;
+
+    auto parse( char const*& it, char const* end ) const -> result< value_type >;
+};
+
+// Declare a variable of type Rule for notational convenience
+constexpr Rule rule{};
+----
+
+== Model
+
+* `grammar::dec_octet_rule`
+* `grammar::delim_rule`
+* `grammar::not_empty_rule`
+* `grammar::optional_rule`
+* `grammar::range_rule`
+* `grammar::token_rule`
+* `grammar::tuple_rule`
+* `grammar::unsigned_rule`
+* `grammar::variant_rule`

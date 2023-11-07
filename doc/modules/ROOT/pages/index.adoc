@@ -7,16 +7,12 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-
-== Boost.URL
-
-
-
+= Boost.URL
 
 Boost.URL is a portable C++ library which provides containers and algorithms
 which model a "URL," more formally described using the
 https://datatracker.ietf.org/doc/html/rfc3986[Uniform Resource Identifier (URI),window=blank_]
-specification (henceforth referred to as `rfc3986`). A URL is a compact sequence
+specification (henceforth referred to as https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_]). A URL is a compact sequence
 of characters that identifies an abstract or physical resource. For example,
 this is a valid URL:
 
@@ -31,7 +27,7 @@ This library understands the grammars related to URLs and provides
 functionality to validate, parse, examine, and modify urls, and apply
 normalization or resolution algorithms.
 
-=== Features
+== Features
 
 While the library is general purpose, special care has been taken to ensure
 that the implementation and data representation are friendly to network
@@ -47,23 +43,25 @@ Boost.URL offers these features:
 
 * C++11 as only requirement
 * Fast compilation, few templates
-* Strict compliance with `rfc3986`
+* Strict compliance with https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_]
 * Containers that maintain valid URLs
 * Parsing algorithms that work without exceptions
 * Control over storage and allocation for URLs
 * Support for `-fno-exceptions`, detected automatically
 * Features that work well on embedded devices
 
-// [note
-//     Currently the library does not handle
-//     [@https://www.rfc-editor.org/rfc/rfc3987.html Internationalized Resource Identifiers] (IRIs).
-//     These are different from URLs, come from Unicode strings instead of
-//     low-ASCII strings, and are covered by a separate specification.
-// ]
+[NOTE]
+====
+Currently the library does not handle
+https://www.rfc-editor.org/rfc/rfc3987.html[Internationalized Resource Identifiers,window=blank_] (IRIs).
+These are different from URLs, come from Unicode strings instead of
+low-ASCII strings, and are covered by a separate specification.
+====
 
 
 
-=== Requirements
+
+== Requirements
 
 The library requires a compiler supporting at least C++11.
 
@@ -79,7 +77,7 @@ desired.
 
 
 
-=== Tested Compilers
+== Tested Compilers
 
 Boost.URL has been tested with the following compilers:
 
@@ -91,7 +89,7 @@ and these architectures: x86, x64, ARM64, S390x.
 
 We do not test and support gcc 8.0.1.
 
-=== Quality Assurance
+== Quality Assurance
 
 The development infrastructure for the library includes
 these per-commit analyses:
@@ -102,7 +100,7 @@ these per-commit analyses:
 
 
 
-=== Nomenclature
+== Nomenclature
 
 Various names have been used historically to refer to different
 flavors of resource identifiers, including __URI__, __URL__, __URN__,
@@ -110,13 +108,13 @@ and even __IRI__. Over time, the distinction between URIs and URLs
 has disappeared when discussed in technical documents and
 informal works. In this library we use the term **URL** to
 refer to all strings which are valid according to the
-top-level grammar rules found in `rfc3986`.
+top-level grammar rules found in https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_].
 
 
 
 
 
-=== ABNF
+== ABNF
 
 This documentation uses the Augmented
 https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form[Backus-Naur Form,window=blank_]
@@ -131,7 +129,7 @@ the library.
 
 
 
-=== Acknowledgments
+== Acknowledgments
 
 This library wouldn't be where it is today without the help of
 https://github.com/pdimov[Peter Dimov,window=blank_]
@@ -139,6 +137,6 @@ for design advice and general assistance.
 
 
 
-// [include 2.0.quicklook.qbk]
+
 
 

@@ -8,9 +8,9 @@
 //
 
 
-== Character Sets
+= Character Sets
 
-A __character__ represents a subset of low-ASCII characters,
+A __character set__ represents a subset of low-ASCII characters,
 used as a building block for constructing rules. The library
 models them as callable predicates invocable with this
 equivalent signature:
@@ -22,14 +22,20 @@ bool( char ch ) const noexcept;
 ----
 
 
-The `CharSet` concept describes the requirements on
+The __CharSet__ concept describes the requirements on
 syntax and semantics for these types. Here we declare
 a character set type that includes the horizontal and
 vertical whitespace characters:
 
 [source,cpp]
 ----
-// code_grammar_2_2
+struct ws_chars_t
+{
+    constexpr bool operator()( char c ) const noexcept
+    {
+        return c == '\t' || c == ' ' || c == '\r' || c == '\n';
+    }
+};
 ----
 
 
@@ -38,7 +44,7 @@ the requirements:
 
 [source,cpp]
 ----
-// code_grammar_2_3
+static_assert( is_charset< ws_chars_t >::value, "CharSet requirements not met" );
 ----
 
 
@@ -49,7 +55,7 @@ abstraction:
 
 [source,cpp]
 ----
-// code_grammar_2_4
+constexpr ws_chars_t ws_chars{};
 ----
 
 
@@ -65,50 +71,73 @@ character:
 
 [source,cpp]
 ----
-// code_grammar_2_5
+core::string_view get_token( core::string_view s ) noexcept
+{
+    auto it0 = s.data();
+    auto const end = it0 + s.size();
+
+    // find the first non-whitespace character
+    it0 = find_if_not( it0, end, ws_chars );
+
+    if( it0 == end )
+    {
+        // all whitespace or empty string
+        return {};
+    }
+
+    // find the next whitespace character
+    auto it1 = find_if( it0, end, ws_chars );
+
+    // [it0, it1) is the part we want
+    return core::string_view( it0, it1 - it0 );
+}
 ----
 
 
 The function can now be called thusly:
 
+// code_grammar_2_6
 [source,cpp]
 ----
-// code_grammar_2_6
+assert( get_token( " \t john-doe\r\n \t jane-doe\r\n") == "john-doe" );
 ----
 
 
 The library provides these often-used character sets:
 
-// [table Character Sets [
-//     [Value]
-//     [Description]
-// ][
-//     [[link url.ref.boost__urls__grammar__alnum_chars `alnum_chars`]]
-//     [
-//         Contains the uppercase and lowercase letters, and digits.
-//     ]
-// ][
-//     [[link url.ref.boost__urls__grammar__alpha_chars `alpha_chars`]]
-//     [
-//         Contains the uppercase and lowercase letters.
-//     ]
-// ][
-//     [[link url.ref.boost__urls__grammar__digit_chars `digit_chars`]]
-//     [
-//         Contains the decimal digit characters.
-//     ]
-// ][
-//     [[link url.ref.boost__urls__grammar__hexdig_chars `hexdig_chars`]]
-//     [
-//         Contains the uppercase and lowercase hexadecimal
-//         digit characters.
-//     ]
-// ][
-//     [[link url.ref.boost__urls__grammar__vchars `vchars`]]
-//     [
-//         Contains the visible characters (i.e. non whitespace).
-//     ]
-// ]]
+[cols="a,a"]
+|===
+// Headers
+|Value|Description
+
+// Row 1, Column 1
+|`alnum_chars`
+// Row 1, Column 2
+|Contains the uppercase and lowercase letters, and digits.
+
+// Row 2, Column 1
+|`alpha_chars`
+// Row 2, Column 2
+|Contains the uppercase and lowercase letters.
+
+// Row 3, Column 1
+|`digit_chars`
+// Row 3, Column 2
+|Contains the decimal digit characters.
+
+// Row 4, Column 1
+|`hexdig_chars`
+// Row 4, Column 2
+|Contains the uppercase and lowercase hexadecimal
+        digit characters.
+
+// Row 5, Column 1
+|`vchars`
+// Row 5, Column 2
+|Contains the visible characters (i.e. non whitespace).
+
+|===
+
 
 
 Some of the character sets in the library have implementations
@@ -119,18 +148,19 @@ using Streaming SIMD Extensions 2
 (https://en.wikipedia.org/wiki/SSE2[SSE2,window=blank_]),
 available on all x86 and x64 architectures.
 
-=== The lut_chars Type
+== The lut_chars Type
 
-The `lut_chars` type satisfies the `CharSet`
+The `lut_chars` type satisfies the __CharSet__
 requirements and offers an optimized `constexpr`
 implementation which provides enhanced performance
 and notational convenience for specifying character
 sets. Compile-time instances can be constructed
 from strings:
 
+// code_grammar_2_7
 [source,cpp]
 ----
-// code_grammar_2_7
+constexpr lut_chars vowels = "AEIOU" "aeiou";
 ----
 
 
@@ -138,9 +168,10 @@ We can use `operator+` and `operator-` notation to add and
 remove elements from the set at compile time. For example,
 sometimes the character 'y' sounds like a vowel:
 
+// code_grammar_2_8
 [source,cpp]
 ----
-// code_grammar_2_8
+constexpr auto vowels_and_y = vowels + 'y' + 'Y';
 ----
 
 
@@ -151,7 +182,14 @@ Here we create the set of visible characters using a lambda:
 
 [source,cpp]
 ----
-// code_grammar_2_9
+struct is_visible
+{
+    constexpr bool operator()( char ch ) const noexcept
+    {
+        return ch >= 33 && ch <= 126;
+    }
+};
+constexpr lut_chars visible_chars( is_visible{} ); // (since C++11)
 ----
 
 
@@ -159,23 +197,25 @@ Alternatively:
 
 [source,cpp]
 ----
-// code_grammar_2_10
+constexpr lut_chars visible_chars( [](char ch) { return ch >= 33 && ch <= 126; } ); // (since C++17)
 ----
 
 
 Differences can be calculated with `operator-`:
 
+// code_grammar_2_11
 [source,cpp]
 ----
-// code_grammar_2_11
+constexpr auto visible_non_vowels = visible_chars - vowels;
 ----
 
 
 We can also remove individual characters:
 
+// code_grammar_2_12
 [source,cpp]
 ----
-// code_grammar_2_12
+constexpr auto visible_non_vowels_or_y = visible_chars - vowels - 'y';
 ----
 
 

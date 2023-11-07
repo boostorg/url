@@ -8,7 +8,8 @@
 //
 
 
-// [section:grammar Customization]
+[#grammar]
+= Customization
 
 For a wide range of applications the library's container interfaces
 are sufficient for URLs using the generic syntax or the well known
@@ -17,7 +18,7 @@ to go beyond what the library offers:
 
 * Create new custom containers for other schemes
 * Incorporate the parsing of URLs in an enclosing grammar
-* Parse `rfc3986` elements in non-URL contexts
+* Parse https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_] elements in non-URL contexts
   (`authority_view` is an example of this).
 * Define new ABNF rules used to parse non-URL strings
 
@@ -49,22 +50,26 @@ understanding of this notation is necessary to achieve
 best results for learning how to use the custom parsing
 features.
 
-// [note
-//     Code samples and identifiers in this customization
-//     section are written as if the following declarations
-//     are in effect:
-// 
-//     ```
-//     #include <boost/url/grammar.hpp>
-// 
-//     using namespace ::boost::urls::grammar;
-//     ```
-// ]
+[NOTE]
+====
+Code samples and identifiers in this customization
+section are written as if the following declarations
+are in effect:
 
-// [include 4.1.rules.qbk]
-// [include 4.2.charset.qbk]
-// [include 4.3.combinators.qbk]
-// [include 4.4.range.qbk]
-// [include 4.5.rfc3986.qbk]
+[source,cpp]
+----
+#include <boost/url/grammar.hpp>
+
+using namespace ::boost::urls::grammar;
+----
+
+====
+
+
+
+
+
+
+
 
 
