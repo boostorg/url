@@ -113,6 +113,7 @@ jobs:
           boost-dir: ../boost-source
           scan-modules-dir: .
           scan-modules-ignore: url
+          trace-commands: ${{ env.ACTIONS_STEP_DEBUG == 'true' }}
 
       - name: Patch Boost
         working-directory: ../boost-source
