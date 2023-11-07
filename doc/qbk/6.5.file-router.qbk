@@ -1,5 +1,5 @@
 [/
-    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -9,15 +9,11 @@
 
 [/-----------------------------------------------------------------------------]
 
-[section Examples]
+[section File Router]
 
-[include 6.1.qrcode.qbk]
-[include 6.2.finicky.qbk]
-[include 6.3.mailto.qbk]
-[include 6.4.magnet-link.qbk]
-[include 6.5.file-router.qbk]
-[include 6.6.router.qbk]
-[include 6.7.sanitize.qbk]
+This example defines a router that associates URL paths to a directory in the filesystem. If
+the specified route matches and the file exists, the example prints its contents to standard output.
 
+[example_file_router]
 [endsect]
 

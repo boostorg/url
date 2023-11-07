@@ -8,7 +8,7 @@
 //
 
 
-== StringToken
+= StringToken
 
 A string token is an rvalue passed to a function template which
 customizes the return type of the function and also controls how
@@ -18,7 +18,7 @@ function call in which it appears as a parameter. A string
 token cannot be copied, moved, or assigned, and must be
 destroyed when the function returns or throws.
 
-=== Requirements
+== Requirements
 
 In this table:
 
@@ -26,73 +26,81 @@ In this table:
 * `t` is an rvalue reference of type T
 * `n` is a value of type `std::size_t`
 
-// [table Valid expressions
-// [[Expression] [Result] [Semantics, Pre/Post-conditions]]
-// [
-//     [
-//     ```
-//     std::derived_from<T,string_token::arg>
-//     ```
-//     ]
-//     [
-//     ```
-//     true
-//     ```
-//     ]
-//     [
-//         All string tokens must be publicly and
-//         unambiguously derived from
-//         [link url.ref.boost__urls__string_token__arg `string_token::arg`].
-//     ]
-// ][
-//     [
-//     ```
-//     T::result_type
-//     ```
-//     ]
-//     []
-//     [
-//         This type determines the return type of functions
-//         which accept a string token.
-//     ]
-// ][
-//     [
-//     ```
-//     t.prepare(n);
-//     ```
-//     ]
-//     [
-//     ```
-//     char*
-//     ```
-//     ]
-//     [
-//         This function overrides the virtual function in the base.
-//         It must return a pointer to a character buffer of at least
-//         size `n`, otherwise throw an exception.
-//     ]
-// ][
-//     [
-//     ```
-//     t.result();
-//     ```
-//     ]
-//     [
-//     ```
-//     T::result_type
-//     ```
-//     ]
-//     [
-//         This function is invoked by the algorithm to receive the result
-//         from the string token.
-//         It is only invoked if `prepare` returned successfuly and the
-//         string token was not destroyed.
-//     ]
-// ]]
+[cols="a,a,a"]
+|===
+// Headers
+|Expression|Result|Semantics, Pre/Post-conditions
+
+// Row 1, Column 1
+|[source,cpp]
+----
+std::derived_from<T,string_token::arg>
+----
+
+// Row 1, Column 2
+|[source,cpp]
+----
+true
+----
+
+// Row 1, Column 3
+|All string tokens must be publicly and
+unambiguously derived from
+`string_token::arg`.
+
+// Row 2, Column 1
+|[source,cpp]
+----
+T::result_type
+----
+
+// Row 2, Column 2
+|
+// Row 2, Column 3
+|This type determines the return type of functions
+which accept a string token.
+
+// Row 3, Column 1
+|[source,cpp]
+----
+t.prepare(n);
+----
+
+// Row 3, Column 2
+|[source,cpp]
+----
+char*
+----
+
+// Row 3, Column 3
+|This function overrides the virtual function in the base.
+It must return a pointer to a character buffer of at least
+size `n`, otherwise throw an exception.
+
+// Row 4, Column 1
+|[source,cpp]
+----
+t.result();
+----
+
+// Row 4, Column 3
+|[source,cpp]
+----
+T::result_type
+----
+
+// Row 4, Column 5
+|This function is invoked by the algorithm to receive the result
+from the string token.
+It is only invoked if `prepare` returned successfuly and the
+string token was not destroyed.
+
+|===
 
 
 
-=== Algorithm Requirements
+
+== Algorithm Requirements
 
 When an algorithm accepts a string token, it must meet these requirements:
 
@@ -105,7 +113,7 @@ String tokens cannot be reused.
 
 
 
-=== Exemplars
+== Exemplars
 
 String token prototype:
 
@@ -166,9 +174,9 @@ algorithm( StringToken&& token = {} ) ->
 
 Models
 
-* `append_to`
-* `assign_to`
-* `preserve_size`
-* `append_to`
+* `string_token::return_string`
+* `string_token::assign_to`
+* `string_token::preserve_size`
+* `string_token::return_string`
 
 

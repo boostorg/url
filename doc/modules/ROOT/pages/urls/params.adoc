@@ -10,12 +10,12 @@
 
 
 
-== Params
+= Params
 
 While the query is specified as a plain string, it is usually
 interpreted as a set of key-value pairs commonly referred to as 
-https://en.wikipedia.org/wiki/Query_string[__URL__,window=blank_],
-although here we use the term __query__ or __params__
+https://en.wikipedia.org/wiki/Query_string[__URL Parameters__,window=blank_],
+although here we use the term __query parameters__ or __params__
 for short. There is no official, standard specification of the
 query parameters format, but the W3C recommendations and HTML 5
 have this to say:
@@ -45,35 +45,41 @@ Like the path, the library permits access to the params as
 using these separate, bidirectional view types which reference
 the underlying URL:
 
-// [table Params Types [
-//     [Type]
-//     [Accessor]
-//     [Description]
-// ][
-//     [__params_view__]
-//     [[link url.ref.boost__urls__url_view_base.params `params`]]
-//     [
-//     A read-only range of decoded params.
-//     ]
-// ][
-//     [__params_ref__]
-//     [[link url.ref.boost__urls__url_base.params `params`]]
-//     [
-//     A modifiable range of decoded params.
-//     ]
-// ][
-//     [__params_encoded_view__]
-//     [[link url.ref.boost__urls__url_view_base.encoded_params `encoded_params`]]
-//     [
-//     A read-only range of params.
-//     ]
-// ][
-//     [__params_encoded_ref__]
-//     [[link url.ref.boost__urls__url_base.encoded_params `encoded_params`]]
-//     [
-//     A modifiable range of params.
-//     ]
-// ]]
+[cols="a,a,a"]
+|===
+// Headers
+|Type|Accessor|Description
+
+// Row 1, Column 1
+|`params_view`
+// Row 1, Column 2
+|`params`
+// Row 1, Column 3
+|A read-only range of decoded params.
+
+// Row 2, Column 1
+|`params_ref`
+// Row 2, Column 2
+|`params`
+// Row 2, Column 3
+|A modifiable range of decoded params.
+
+// Row 3, Column 1
+|`params_encoded_view`
+// Row 3, Column 2
+|`encoded_params`
+// Row 3, Column 3
+|A read-only range of params.
+
+// Row 4, Column 1
+|`params_encoded_ref`
+// Row 4, Column 2
+|`encoded_params`
+// Row 4, Column 3
+|A modifiable range of params.
+
+|===
+
 
 A param always has a key, even if it is the empty string.
 The value is optional; an empty string is distinct from
@@ -81,34 +87,39 @@ no value. To represent individual params the library uses
 these types, distinguished by their ownership model and
 whether or not percent-escapes are possible:
 
-// [table Param Types [
-//     [Type]
-//     [String Type]
-//     [Description]
-// ][
-//     [__param__]
-//     [__std_string__]
-//     [
-//     A key-value pair with ownership of the strings.
-//     This can be used to hold decoded strings, or to
-//     allow the caller to take ownership of a param
-//     by making a copy.
-//     ]
-// ][
-//     [__param_view__]
-//     [__string_view__]
-//     [
-//     A key-value pair without percent-escapes,
-//     referencing externally managed character buffers.
-//     ]
-// ][
-//     [__param_pct_view__]
-//     [__pct_string_view__]
-//     [
-//     A key-value pair which may contain percent-escapes,
-//     referencing externally managed character buffers.
-//     ]
-// ]]
+[cols="a,a,a"]
+|===
+// Headers
+|Type|String Type|Description
+
+// Row 1, Column 1
+|`param`
+// Row 1, Column 2
+|https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_]
+// Row 1, Column 3
+|A key-value pair with ownership of the strings.
+    This can be used to hold decoded strings, or to
+    allow the caller to take ownership of a param
+    by making a copy.
+
+// Row 2, Column 1
+|`param_view`
+// Row 2, Column 2
+|`string_view`
+// Row 2, Column 3
+|A key-value pair without percent-escapes,
+    referencing externally managed character buffers.
+
+// Row 3, Column 1
+|`param_pct_view`
+// Row 3, Column 2
+|`pct_string_view`
+// Row 3, Column 3
+|A key-value pair which may contain percent-escapes,
+    referencing externally managed character buffers.
+
+|===
+
 
 Param types can be constructed from initializer lists,
 allowing for convenient notation. To represent a missing
@@ -118,32 +129,49 @@ or `nullptr` may be used. This table shows some examples
 of initializer lists used to construct a param type, and
 the resulting data members:
 
-// [table Param Initializers [
-//     [Statement]
-//     [`qp.key`]
-//     [`qp.value`]
-//     [`qp.has_value`]
-// ][
-//     [`param qp = { "first", "John" };`]
-//     [`"First"`]
-//     [`"John"`]
-//     [`true`]
-// ][
-//     [`param qp = { "first", "" };`]
-//     [`"First"`]
-//     [`""`]
-//     [`true`]
-// ][
-//     [`param qp = { "first", no_value };`]
-//     [`"First"`]
-//     [`""`]
-//     [`false`]
-// ][
-//     [`param qp = { "", "Doe" };`]
-//     [`""`]
-//     [`"Doe"`]
-//     [`true`]
-// ]]
+[cols="a,a,a,a"]
+|===
+// Headers
+|Statement|`qp.key`|`qp.value`|`qp.has_value`
+
+// Row 1, Column 1
+|`param qp = { "first", "John" };`
+// Row 1, Column 2
+|`"First"`
+// Row 1, Column 3
+|`"John"`
+// Row 1, Column 4
+|`true`
+
+// Row 2, Column 1
+|`param qp = { "first", "" };`
+// Row 2, Column 2
+|`"First"`
+// Row 2, Column 3
+|`""`
+// Row 2, Column 4
+|`true`
+
+// Row 3, Column 1
+|`param qp = { "first", no_value };`
+// Row 3, Column 2
+|`"First"`
+// Row 3, Column 3
+|`""`
+// Row 3, Column 4
+|`false`
+
+// Row 4, Column 1
+|`param qp = { "", "Doe" };`
+// Row 4, Column 2
+|`""`
+// Row 4, Column 3
+|`"Doe"`
+// Row 4, Column 4
+|`true`
+
+|===
+
 
 To understand the relationship between the query and the
 resulting range of params, first we define this
@@ -151,9 +179,17 @@ function `parms` which returns a list of params
 corresponding to the elements in a container
 of params:
 
+// code_container_5_1
 [source,cpp]
 ----
-// code_container_5_1
+auto parms( core::string_view s ) -> std::list< param >
+{
+    url_view u( s );
+    std::list< param > seq;
+    for( auto qp : u.params() )
+        seq.push_back( qp );
+    return seq;
+}
 ----
 
 
@@ -161,28 +197,43 @@ In the table below we show the result of invoking `parms` with
 different queries. This demonstrates how the syntax of the query
 maps to the parameter structure:
 
-// [table Params Sequences [
-//     [s]
-//     [`parms( s )`]
-// ][
-//     [`"?first=John&last=Doe"`]
-//     [`{ { "first", "John" }, { "last", "Doe" } }`]
-// ][
-//     [`"?id=42&unsorted"`]
-//     [`{ { "id", "42" }, { "last", no_value } }`]
-// ][
-//     [`"?col=cust&row="`]
-//     [`{ { "col", "cust" }, { "row", "" } }`]
-// ][
-//     [`"?justify=left&"`]
-//     [`{ { "justify", "left" }, { "", no_value } }`]
-// ][
-//     [`"?"`]
-//     [`{ { "", no_value } }`]
-// ][
-//     [`""`]
-//     [`{ }`]
-// ]]
+[cols="a,a"]
+|===
+// Headers
+|s|`parms( s )`
+
+// Row 1, Column 1
+|`"?first=John&last=Doe"`
+// Row 1, Column 2
+|`{ { "first", "John" }, { "last", "Doe" } }`
+
+// Row 2, Column 1
+|`"?id=42&unsorted"`
+// Row 2, Column 2
+|`{ { "id", "42" }, { "last", no_value } }`
+
+// Row 3, Column 1
+|`"?col=cust&row="`
+// Row 3, Column 2
+|`{ { "col", "cust" }, { "row", "" } }`
+
+// Row 4, Column 1
+|`"?justify=left&"`
+// Row 4, Column 2
+|`{ { "justify", "left" }, { "", no_value } }`
+
+// Row 5, Column 1
+|`"?"`
+// Row 5, Column 2
+|`{ { "", no_value } }`
+
+// Row 6, Column 1
+|`""`
+// Row 6, Column 2
+|`{ }`
+
+|===
+
 
 It may be surprising that an empty query string ("?")
 produces a sequence with one empty param. This is by

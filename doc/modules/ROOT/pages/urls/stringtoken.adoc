@@ -8,10 +8,10 @@
 //
 
 
-== String Token
+= String Token
 
 Functions which perform percent-decoding return values using
-`std::string` when called without special arguments. This is
+https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_] when called without special arguments. This is
 the best default for ergonomics, and a good enough default for
 performance considering that many decoded strings fit in
 the small buffer available to most standard implementations.
@@ -23,7 +23,7 @@ algorithms acquire and store data in strings, for example:
 * Appending to existing strings
 
 The library provides a special customization mechanism called
-`StringToken` to control how algorithms which require an output
+__StringToken__ to control how algorithms which require an output
 buffer acquire their storage. The signature
 
 

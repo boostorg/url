@@ -8,9 +8,9 @@
 //
 
 
-== Parse Rules
+= Parse Rules
 
-A `Rule` is an object which tries to match the beginning of
+A __Rule__ is an object which tries to match the beginning of
 an input character buffer against a particular syntax.
 It returns a `result` containing a value if the match
 was successful, or an `error_code` if the match failed.
@@ -24,19 +24,38 @@ parsed sequentially:
 
 [source,cpp]
 ----
-// code_grammar_1_1
+template< class Rule >
+auto parse( core::string_view s, Rule const& r) -> system::result< typename Rule::value_type >;
+
+template< class Rule >
+auto parse( char const *& it, char const* end, Rule const& r) -> system::result< typename Rule::value_type >;
 ----
 
 
-To satisfy the `Rule` concept, a `class` or `struct` must declare
+To satisfy the __Rule__ concept, a `class` or `struct` must declare
 the nested type `value_type` indicating the type of value returned
 upon success, and a `const` member function `parse` with a prescribed
 signature. In the following code we define a rule that matches a
 single comma:
 
+// code_grammar_1_2
 [source,cpp]
 ----
-// code_grammar_1_2
+struct comma_rule_t
+{
+    // The type of value returned upon success
+    using value_type = core::string_view;
+
+    // The algorithm which checks for a match
+    system::result< value_type >
+    parse( char const*& it, char const* end ) const
+    {
+        if( it != end && *it == ',')
+            return core::string_view( it++, 1 );
+
+        return error::mismatch;
+    }
+};
 ----
 
 
@@ -44,18 +63,22 @@ Since rules are passed by value, we declare a `constexpr` variable
 of the type for syntactical convenience. Variable names for rules
 are usually suffixed with `_rule`:
 
+// code_grammar_1_3
 [source,cpp]
 ----
-// code_grammar_1_3
+constexpr comma_rule_t comma_rule{};
 ----
 
 
 Now we can call `parse` with the string of input and the rule
 variable thusly:
 
+// code_grammar_1_4
 [source,cpp]
 ----
-// code_grammar_1_4
+system::result< core::string_view > rv = parse( ",", comma_rule );
+
+assert( rv.has_value() && rv.value() == "," );
 ----
 
 
@@ -65,9 +88,10 @@ an unsigned decimal integer. Here we construct the rule at
 run time and specify the type of unsigned integer used to
 hold the result with a template parameter:
 
+// code_grammar_1_5
 [source,cpp]
 ----
-// code_grammar_1_5
+system::result< unsigned short > rv = parse( "16384", unsigned_rule< unsigned short >{} );
 ----
 
 
@@ -76,13 +100,14 @@ passed character literal. This is a more general version of the
 comma rule which we defined earlier. There is also an overload
 which matches exactly one character from a character set.
 
+// code_grammar_1_6
 [source,cpp]
 ----
-// code_grammar_1_6
+system::result< core::string_view > rv = parse( ",", delim_rule(',') );
 ----
 
 
-=== Error Handling
+== Error Handling
 
 When a rule fails to match, or if the rule detects a
 unrecoverable problem with the input, it returns a
@@ -97,7 +122,7 @@ in the input, or to the `end` pointer if all input
 was consumed.
 
 It is the responsibilty of library and user-defined
-implementations of __compound__ (explained later)
+implementations of __compound rules__ (explained later)
 to rewind their internal pointer if a parsing operation
 was unsuccessful, and they wish to attempt parsing the
 same input using a different rule.

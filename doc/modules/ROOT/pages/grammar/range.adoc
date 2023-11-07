@@ -8,7 +8,7 @@
 //
 
 
-== Ranges
+= Ranges
 
 
 
@@ -31,9 +31,11 @@ rule allowing for a prescribed number of repetitions of a specified
 rule. The following rule matches the grammar for __chunk-ext__
 defined above:
 
+// code_grammar_4_1
 [source,cpp]
 ----
-// code_grammar_4_1
+constexpr auto chunk_ext_rule = range_rule(
+    tuple_rule( squelch( delim_rule( ';' ) ), token_rule( alnum_chars ) ) );
 ----
 
 
@@ -43,9 +45,13 @@ case, the type is `string_view` because the tuple has one unsquelched
 element, the `token_rule`. The range can be iterated to produce results,
 without allocating memory for each element. The following code:
 
+// code_grammar_4_2
 [source,cpp]
 ----
-// code_grammar_4_2
+system::result< range< core::string_view > > rv = parse( ";johndoe;janedoe;end", chunk_ext_rule );
+
+for( auto s : rv.value() )
+    std::cout << s << "\n";
 ----
 
 
@@ -77,17 +83,25 @@ the minimum number of repetitions, or both the minimum and maximum
 number of repetitions. Since our list may not be empty, the following
 rule perfectly captures the __token-list__ grammar:
 
+// code_grammar_4_3
 [source,cpp]
 ----
-// code_grammar_4_3
+constexpr auto token_list_rule = range_rule(
+    token_rule( alnum_chars ),
+    tuple_rule( squelch( delim_rule( ',' ) ), token_rule( alnum_chars ) ),
+    1 );
 ----
 
 
 The following code:
 
+// code_grammar_4_4
 [source,cpp]
 ----
-// code_grammar_4_4
+system::result< range< core::string_view > > rv = parse( "johndoe,janedoe,end", token_list_rule );
+
+for( auto s : rv.value() )
+    std::cout << s << "\n";
 ----
 
 
@@ -102,68 +116,71 @@ end
 
 
 In the next section we discuss the available rules
-which are specific to `rfc3986`.
+which are specific to https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_].
 
-=== More
+== More
 
 These are the rules and compound rules provided by the
 library. For more details please see the corresponding
 reference sections.
 
-// [table Grammar Symbols [
-//     [Name]
-//     [Description]
-// ][
-//     [__dec_octet_rule__]
-//     [
-//     Match an integer from 0 and 255.
-//     ]
-// ][
-//     [__delim_rule__]
-//     [
-//     Match a character literal.
-//     ]
-// ][
-//     [__literal_rule__]
-//     [
-//     Match a character string exactly.
-//     ]
-// ][
-//     [__not_empty_rule__]
-//     [
-//     Make a matching empty string into an error instead.
-//     ]
-// ][
-//     [__optional_rule__]
-//     [
-//     Ignore a rule if parsing fails, leaving
-//     the input pointer unchanged.
-//     ]
-// ][
-//     [__range_rule__]
-//     [
-//     Match a repeating number of elements.
-//     ]
-// ][
-//     [__token_rule__]
-//     [
-//     Match a string of characters from a character set.
-//     ]
-// ][
-//     [__tuple_rule__]
-//     [
-//     Match a sequence of specified rules, in order.
-//     ]
-// ][
-//     [__unsigned_rule__]
-//     [
-//     Match an unsigned integer in decimal form.
-//     ]
-// ][
-//     [__variant_rule__]
-//     [
-//     Match one of a set of alternatives specified by rules.
-//     ]
-// ]]
+[cols="a,a"]
+|===
+// Headers
+|Name|Description
+
+// Row 1, Column 1
+|`dec_octet_rule`
+// Row 1, Column 2
+|Match an integer from 0 and 255.
+
+// Row 2, Column 1
+|`delim_rule`
+// Row 2, Column 2
+|Match a character literal.
+
+// Row 3, Column 1
+|`literal_rule`
+// Row 3, Column 2
+|Match a character string exactly.
+
+// Row 4, Column 1
+|`not_empty_rule`
+// Row 4, Column 2
+|Make a matching empty string into an error instead.
+
+// Row 5, Column 1
+|`optional_rule`
+// Row 5, Column 2
+|Ignore a rule if parsing fails, leaving
+    the input pointer unchanged.
+
+// Row 6, Column 1
+|`range_rule`
+// Row 6, Column 2
+|Match a repeating number of elements.
+
+// Row 7, Column 1
+|`token_rule`
+// Row 7, Column 2
+|Match a string of characters from a character set.
+
+// Row 8, Column 1
+|`tuple_rule`
+// Row 8, Column 2
+|Match a sequence of specified rules, in order.
+
+// Row 9, Column 1
+|`unsigned_rule`
+// Row 9, Column 2
+|Match an unsigned integer in decimal form.
+
+// Row 10, Column 1
+|`variant_rule`
+// Row 10, Column 2
+|Match one of a set of alternatives specified by rules.
+
+|===
+
 
 

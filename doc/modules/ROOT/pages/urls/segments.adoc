@@ -10,42 +10,48 @@
 
 
 
-== Segments
+= Segments
 
 Hierarchical schemes often interpret the path as a slash-delimited
 sequence of percent-encoded strings called segments.
 In this library the segments may be accessed using these separate,
 bidirectional view types which reference the underlying URL:
 
-// [table Segments Types [
-//     [Type]
-//     [Accessor]
-//     [Description]
-// ][
-//     [__segments_view__]
-//     [[link url.ref.boost__urls__url_view_base.segments `segments`]]
-//     [
-//     A read-only range of decoded segments.
-//     ]
-// ][
-//     [__segments_ref__]
-//     [[link url.ref.boost__urls__url_base.segments `segments`]]
-//     [
-//     A modifiable range of decoded segments.
-//     ]
-// ][
-//     [__segments_encoded_view__]
-//     [[link url.ref.boost__urls__url_view_base.encoded_segments `encoded_segments`]]
-//     [
-//     A read-only range of segments.
-//     ]
-// ][
-//     [__segments_encoded_ref__]
-//     [[link url.ref.boost__urls__url_base.encoded_segments `encoded_segments`]]
-//     [
-//     A modifiable range of segments.
-//     ]
-// ]]
+[cols="a,a,a"]
+|===
+// Headers
+|Type|Accessor|Description
+
+// Row 1, Column 1
+|`segments_view`
+// Row 1, Column 2
+|`segments`
+// Row 1, Column 3
+|A read-only range of decoded segments.
+
+// Row 2, Column 1
+|`segments_ref`
+// Row 2, Column 2
+|`segments`
+// Row 2, Column 3
+|A modifiable range of decoded segments.
+
+// Row 3, Column 1
+|`segments_encoded_view`
+// Row 3, Column 2
+|`encoded_segments`
+// Row 3, Column 3
+|A read-only range of segments.
+
+// Row 4, Column 1
+|`segments_encoded_ref`
+// Row 4, Column 2
+|`encoded_segments`
+// Row 4, Column 3
+|A modifiable range of segments.
+
+|===
+
 
 First we observe these invariants about paths and segments:
 
@@ -73,9 +79,17 @@ we define this function `segs` which returns a list of
 strings corresponding to the elements in a container of segments:
 
 
+// code_container_4_1
 [source,cpp]
 ----
-// code_container_4_1
+auto segs( core::string_view s ) -> std::list< std::string >
+{
+    url_view u( s );
+    std::list< std::string > seq;
+    for( auto seg : u.encoded_segments() )
+        seq.push_back( seg.decode() );
+    return seq;
+}
 ----
 
 
@@ -83,59 +97,97 @@ In this table we show the result of invoking `segs` with
 different paths. This demonstrates how the library achieves
 the invariants described above for various interesting cases:
 
-// [table Segments [
-//     [s]
-//     [`segs( s )`]
-//     [absolute]
-// ][
-//     [`""`]
-//     [`{ }`]
-//     []
-// ][
-//     [`"/"`]
-//     [`{ }`]
-//     [yes]
-// ][
-//     [`"./"`]
-//     [`{ "" }`]
-//     []
-// ][
-//      [`"usr"`]
-//      [`{ "usr" }`]
-//      []
-// ][
-//     [`"./usr"`]
-//     [`{ "usr" }`]
-//     []
-// ][
-//     [`"/index.htm"`]
-//     [`{ "index.htm" }`]
-//     [yes]
-// ][
-//     [`"/images/cat-pic.gif"`]
-//     [`{ "images", "cat-pic.gif" }`]
-//     [yes]
-// ][
-//     [`"images/cat-pic.gif"`]
-//     [`{ "images", "cat-pic.gif" }`]
-//     []
-// ][
-//     [`"/fast//query"`]
-//     [`{ "fast", "", "query" }`]
-//     [yes]
-// ][
-//     [`"fast//"`]
-//     [`{ "fast", "", "" }`]
-//     []
-// ][
-//     [`"/./"`]
-//     [`{ "" }`]
-//     [yes]
-// ][
-//     [`".//"`]
-//     [`{ "", "" }`]
-//     []
-// ]]
+[cols="a,a,a"]
+|===
+// Headers
+|s|`segs( s )`|absolute
+
+// Row 1, Column 1
+|`""`
+// Row 1, Column 2
+|`{ }`
+// Row 1, Column 3
+|
+
+// Row 2, Column 1
+|`"/"`
+// Row 2, Column 2
+|`{ }`
+// Row 2, Column 3
+|yes
+
+// Row 3, Column 1
+|`"./"`
+// Row 3, Column 2
+|`{ "" }`
+// Row 3, Column 3
+|
+
+// Row 4, Column 1
+|`"usr"`
+// Row 4, Column 2
+|`{ "usr" }`
+// Row 4, Column 3
+|
+
+// Row 5, Column 1
+|`"./usr"`
+// Row 5, Column 2
+|`{ "usr" }`
+// Row 5, Column 3
+|
+
+// Row 6, Column 1
+|`"/index.htm"`
+// Row 6, Column 2
+|`{ "index.htm" }`
+// Row 6, Column 3
+|yes
+
+// Row 7, Column 1
+|`"/images/cat-pic.gif"`
+// Row 7, Column 2
+|`{ "images", "cat-pic.gif" }`
+// Row 7, Column 3
+|yes
+
+// Row 8, Column 1
+|`"images/cat-pic.gif"`
+// Row 8, Column 2
+|`{ "images", "cat-pic.gif" }`
+// Row 8, Column 3
+|
+
+// Row 9, Column 1
+|`"/fast//query"`
+// Row 9, Column 2
+|`{ "fast", "", "query" }`
+// Row 9, Column 3
+|yes
+
+// Row 10, Column 1
+|`"fast//"`
+// Row 10, Column 2
+|`{ "fast", "", "" }`
+// Row 10, Column 3
+|
+
+// Row 11, Column 1
+|`"/./"`
+// Row 11, Column 2
+|`{ "" }`
+// Row 11, Column 3
+|yes
+
+// Row 12, Column 1
+|`".//"`
+// Row 12, Column 2
+|`{ "", "" }`
+// Row 12, Column 3
+|
+
+|===
+
 
 This implies that two paths may map to the same sequence of
 segments . In the paths `"usr"` and `"./usr"`, the `"./"`
@@ -212,59 +264,97 @@ various modifications to a URL containing a path:
 //         set_encoded_path()
 //         edit_segments()
 
-// [table Path Operations [
-//     [URL]
-//     [Operation]
-//     [Result]
-// ][
-//     [`"info:kyle:xy"`]
-//     [`remove_scheme()`]
-//     [`"kyle%3Axy"`]
-// ][
-//     [`"kyle%3Axy"`]
-//     [`set_scheme( "gopher" )`]
-//     [`"gopher:kyle:xy"`]
-// ][
-//     [`"http://www.example.com//kyle:xy"`]
-//     [`remove_authority()`]
-//     [`"http:/.//kyle:xy"`]
-// ][
-//     [`"//www.example.com//kyle:xy"`]
-//     [`remove_authority()`]
-//     [`"/.//kyle:xy"`]
-// ][
-//     [`"http://www.example.com//kyle:xy"`]
-//     [`remove_origin()`]
-//     [`"/.//kyle:xy"`]
-// ][
-//     [`"info:kyle:xy"`]
-//     [`remove_origin()`]
-//     [`"kyle%3Axy"`]
-// ][
-//     [`"/kyle:xy"`]
-//     [`set_path_absolute( false )`]
-//     [`"kyle%3Axy"`]
-// ][
-//     [`"kyle%3Axy"`]
-//     [`set_path_absolute( true )`]
-//     [`"/kyle:xy"`]
-// ][
-//     [`""`]
-//     [`set_path( "kyle:xy" )`]
-//     [`"kyle%3Axy"`]
-// ][
-//     [`""`]
-//     [`set_path( "//foo/fighters.txt" )`]
-//     [`"/.//foo/fighters.txt"`]
-// ][
-//     [`"my%3Asharona/billa%3Abong"`]
-//     [`normalize()`]
-//     [`"my%3Asharona/billa:bong"`]
-// ][
-//     [`"./my:sharona"`]
-//     [`normalize()`]
-//     [`"my%3Asharona"`]
-// ]]
+[cols="a,a,a"]
+|===
+// Headers
+|URL|Operation|Result
+
+// Row 1, Column 1
+|`"info:kyle:xy"`
+// Row 1, Column 2
+|`remove_scheme()`
+// Row 1, Column 3
+|`"kyle%3Axy"`
+
+// Row 2, Column 1
+|`"kyle%3Axy"`
+// Row 2, Column 2
+|`set_scheme( "gopher" )`
+// Row 2, Column 3
+|`"gopher:kyle:xy"`
+
+// Row 3, Column 1
+|`"http://www.example.com//kyle:xy"`
+// Row 3, Column 2
+|`remove_authority()`
+// Row 3, Column 3
+|`"http:/.//kyle:xy"`
+
+// Row 4, Column 1
+|`"//www.example.com//kyle:xy"`
+// Row 4, Column 2
+|`remove_authority()`
+// Row 4, Column 3
+|`"/.//kyle:xy"`
+
+// Row 5, Column 1
+|`"http://www.example.com//kyle:xy"`
+// Row 5, Column 2
+|`remove_origin()`
+// Row 5, Column 3
+|`"/.//kyle:xy"`
+
+// Row 6, Column 1
+|`"info:kyle:xy"`
+// Row 6, Column 2
+|`remove_origin()`
+// Row 6, Column 3
+|`"kyle%3Axy"`
+
+// Row 7, Column 1
+|`"/kyle:xy"`
+// Row 7, Column 2
+|`set_path_absolute( false )`
+// Row 7, Column 3
+|`"kyle%3Axy"`
+
+// Row 8, Column 1
+|`"kyle%3Axy"`
+// Row 8, Column 2
+|`set_path_absolute( true )`
+// Row 8, Column 3
+|`"/kyle:xy"`
+
+// Row 9, Column 1
+|`""`
+// Row 9, Column 2
+|`set_path( "kyle:xy" )`
+// Row 9, Column 3
+|`"kyle%3Axy"`
+
+// Row 10, Column 1
+|`""`
+// Row 10, Column 2
+|`set_path( "//foo/fighters.txt" )`
+// Row 10, Column 3
+|`"/.//foo/fighters.txt"`
+
+// Row 11, Column 1
+|`"my%3Asharona/billa%3Abong"`
+// Row 11, Column 2
+|`normalize()`
+// Row 11, Column 3
+|`"my%3Asharona/billa:bong"`
+
+// Row 12, Column 1
+|`"./my:sharona"`
+// Row 12, Column 2
+|`normalize()`
+// Row 12, Column 3
+|`"my%3Asharona"`
+
+|===
+
 
 For the full set of containers and functions for operating
 on paths and segments, please consult the reference.

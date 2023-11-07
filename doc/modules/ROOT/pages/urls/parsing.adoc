@@ -8,7 +8,7 @@
 //
 
 
-== Parsing
+= Parsing
 
 Algorithms which parse URLs return a view which references the
 underlying character buffer without taking ownership, avoiding
@@ -17,9 +17,10 @@ string literal containing a
 https://datatracker.ietf.org/doc/html/rfc3986#section-3[__URI__,window=blank_]:
 
 
+// code_urls_parsing_1
 [source,cpp]
 ----
-// code_urls_parsing_1
+boost::core::string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
 ----
 
 
@@ -42,9 +43,10 @@ https://datatracker.ietf.org/doc/html/rfc3986#section-4.1[__URI-reference__,wind
 grammar, throwing an exception upon failure. The following two statements
 are equivalent:
 
+// code_urls_parsing_2
 [source,cpp]
 ----
-// code_urls_parsing_2
+boost::system::result<url_view> r = parse_uri( s );
 ----
 
 
@@ -54,49 +56,73 @@ There are several varieties of URLs, and depending on the use-case a
 particular grammar may be needed. In the target of an HTTP GET request
 for example, the scheme and fragment are omitted. This corresponds to the
 https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1[__origin-form__,window=blank_]
-production rule described in `rfc7230`. The function
+production rule described in https://tools.ietf.org/html/rfc7230[rfc7230,window=blank_]. The function
 `parse_origin_form`
 is suited for this purpose. All the URL parsing functions are listed here:
 
-// [table Parsing Functions [
-//     [Function]
-//     [Grammar]
-//     [Example]
-//     [Notes]
-// ][
-//     [[link url.ref.boost__urls__parse_absolute_uri `parse_absolute_uri`]]
-//     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.3 ['absolute-URI]]]
-//     [[teletype]`http://www.boost.org/index.html?field=value`]
-//     [No fragment]
-// ][
-//     [[link url.ref.boost__urls__parse_origin_form `parse_origin_form`]]
-//     [[@https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1 ['origin-form]]]
-//     [[teletype]`/index.html?field=value`]
-//     [Used in HTTP]
-// ][
-//     [[link url.ref.boost__urls__parse_relative_ref `parse_relative_ref`]]
-//     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.2 ['relative-ref]]]
-//     [[teletype]`//www.boost.org/index.html?field=value#downloads`]
-//     []
-// ][
-//     [[link url.ref.boost__urls__parse_uri `parse_uri`]]
-//     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-3 ['URI]]]
-//     [[teletype]`http://www.boost.org/index.html?field=value#downloads`]
-//     []
-// ][
-//     [[link url.ref.boost__urls__parse_uri_reference `parse_uri_reference`]]
-//     [[@https://datatracker.ietf.org/doc/html/rfc3986#section-4.1 ['URI-reference]]]
-//     [[teletype]`http://www.boost.org/index.html`]
-//     [Any ['URI] or ['relative-ref]]
-// ]]
+[cols="a,a,a,a"]
+|===
+// Headers
+|Function|Grammar|Example|Notes
+
+// Row 1, Column 1
+|`parse_absolute_uri`
+// Row 1, Column 2
+|https://datatracker.ietf.org/doc/html/rfc3986#section-4.3[__absolute-URI__,window=blank_]
+// Row 1, Column 3
+|`pass:[http://www.boost.org/index.html?field=value]`
+// Row 1, Column 4
+|No fragment
+
+// Row 2, Column 1
+|`parse_origin_form`
+// Row 2, Column 2
+|https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1[__origin-form__,window=blank_]
+// Row 2, Column 3
+|`pass:[/index.html?field=value]`
+// Row 2, Column 4
+|Used in HTTP
+
+// Row 3, Column 1
+|`parse_relative_ref`
+// Row 3, Column 2
+|https://datatracker.ietf.org/doc/html/rfc3986#section-4.2[__relative-ref__,window=blank_]
+// Row 3, Column 3
+|`pass:[//www.boost.org/index.html?field=value#downloads]`
+// Row 3, Column 4
+|
+
+// Row 4, Column 1
+|`parse_uri`
+// Row 4, Column 2
+|https://datatracker.ietf.org/doc/html/rfc3986#section-3[__URI__,window=blank_]
+// Row 4, Column 3
+|`pass:[http://www.boost.org/index.html?field=value#downloads]`
+// Row 4, Column 4
+|
+
+// Row 5, Column 1
+|`parse_uri_reference`
+// Row 5, Column 2
+|https://datatracker.ietf.org/doc/html/rfc3986#section-4.1[__URI-reference__,window=blank_]
+// Row 5, Column 3
+|`pass:[http://www.boost.org/index.html]`
+// Row 5, Column 4
+|Any __URI__ or __relative-ref__
+
+|===
+
 
 The URL is stored in its serialized form. Therefore, it can
 always be easily output, sent, or embedded as part of a
 protocol:
 
+// snippet_parsing_url_1bb
 [source,cpp]
 ----
-// snippet_parsing_url_1bb
+url u = parse_uri_reference( "https://www.example.com/path/to/file.txt" ).value();
+
+assert(u.encoded_path() == "/path/to/file.txt");
 ----
 
 
@@ -104,9 +130,12 @@ A `url` is an allocating container which owns its character buffer.
 Upon construction from `url_view`, it allocates dynamic storage
 to hold a copy of the string.
 
+// snippet_parsing_url_1bc
 [source,cpp]
 ----
-// snippet_parsing_url_1bc
+boost::system::result< url > rv = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+
+static_assert( std::is_convertible< boost::system::result< url_view >, boost::system::result< url > >::value, "" );
 ----
 
 
@@ -114,13 +143,16 @@ A `static_url` is a container which owns its character buffer for
 a URL whose maximum size is known. Upon construction from
 `url_view`, it does not perform any dynamic memory allocations.
 
+// snippet_parsing_url_1bd
 [source,cpp]
 ----
-// snippet_parsing_url_1bd
+boost::system::result< static_url<1024> > rv = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+
+static_assert( std::is_convertible< boost::system::result< static_url<1024> >, boost::system::result< url > >::value, "" );
 ----
 
 
-=== Result Type
+== Result Type
 
 These functions have a return type which uses the `result` alias
 template. This class allows the parsing algorithms to report
@@ -129,9 +161,20 @@ errors without referring to exceptions.
 The functions `result::operator bool()` and `result::operator*`
 can be used to check if the result contains an error.
 
+// snippet_parsing_url_1
 [source,cpp]
 ----
-// snippet_parsing_url_1
+boost::system::result< url > ru = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+if ( ru )
+{
+    url u = *ru;
+    assert(u.encoded_path() == "/path/to/file.txt");
+}
+else
+{
+    boost::system::error_code e = ru.error();
+    handle_error(e);
+}
 ----
 
 
@@ -140,9 +183,18 @@ error, `result::operator*` provides an unchecked alternative to get a value
 from `result`. In contexts where it is acceptable to throw errors,
 `result::value` can be used directly.
 
+// snippet_parsing_url_1b
 [source,cpp]
 ----
-// snippet_parsing_url_1b
+try
+{
+    url u = parse_uri_reference( "https://www.example.com/path/to/file.txt" ).value();
+    assert(u.encoded_path() == "/path/to/file.txt");
+}
+catch (boost::system::system_error &e)
+{
+    handle_error(e);
+}
 ----
 
 

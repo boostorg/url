@@ -8,7 +8,7 @@
 //
 
 
-== Normalization
+= Normalization
 
 Normalization allows us to determine if two URLs refer to the same
 resource. URLs comparisons serve the same purpose, where two strings
@@ -40,20 +40,26 @@ of producing false negatives:
 Simple String Comparison can be performed by accessing the underlying
 buffer of URLs:
 
+// snippet_normalizing_1
 [source,cpp]
 ----
-// snippet_normalizing_1
+url_view u1("https://www.boost.org/index.html");
+url_view u2("https://www.boost.org/doc/../index.html");
+assert(u1.buffer() != u2.buffer());
 ----
 
 
-By only considering the rules of `rfc3986`, Simple String
+By only considering the rules of https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_], Simple String
 Comparison fails to identify the URLs above point to the same
 resource. The comparison operators implement Syntax-Based
-Normalization, which implements the rules defined by `rfc3986`.
+Normalization, which implements the rules defined by https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_].
 
+// snippet_normalizing_2
 [source,cpp]
 ----
-// snippet_normalizing_2
+url_view u1("https://www.boost.org/index.html");
+url_view u2("https://www.boost.org/doc/../index.html");
+assert(u1 == u2);
 ----
 
 
@@ -66,13 +72,18 @@ same underlying representation. In other words, Simple String
 Comparison of two normalized URLs is equivalent to
 Syntax-Based Normalization.
 
+// snippet_normalizing_3
 [source,cpp]
 ----
-// snippet_normalizing_3
+url_view u1("https://www.boost.org/index.html");
+url u2("https://www.boost.org/doc/../index.html");
+assert(u1 == u2);
+u2.normalize();
+assert(u1.buffer() == u2.buffer());
 ----
 
 
-Normalization uses the following definitions of `rfc3986`
+Normalization uses the following definitions of https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_]
 to minimize false negatives:
 
 * Case Normalization: percent-encoding triplets are normalized to use uppercase letters
@@ -81,9 +92,12 @@ to minimize false negatives:
 
 The following example normalizes the percent-encoding and path segments of a URL:
 
+// snippet_normalizing_4
 [source,cpp]
 ----
-// snippet_normalizing_4
+url u("https://www.boost.org/doc/../%69%6e%64%65%78%20file.html");
+u.normalize();
+assert(u.buffer() == "https://www.boost.org/index%20file.html");
 ----
 
 
@@ -92,9 +106,34 @@ for Scheme-Based and Protocol-Based Normalization. One common
 scheme-specific rule is ignoring the default port for that
 scheme and empty absolute paths:
 
+// snippet_normalizing_5
 [source,cpp]
 ----
-// snippet_normalizing_5
+auto normalize_http_url =
+    [](url& u)
+{
+    u.normalize();
+    if (u.port() == "80" ||
+        u.port().empty())
+        u.remove_port();
+    if (u.has_authority() &&
+        u.encoded_path().empty())
+        u.set_path_absolute(true);
+};
+
+url u1("https://www.boost.org");
+normalize_http_url(u1);
+url u2("https://www.boost.org/");
+normalize_http_url(u2);
+url u3("https://www.boost.org:/");
+normalize_http_url(u3);
+url u4("https://www.boost.org:80/");
+normalize_http_url(u4);
+
+assert(u1.buffer() == "https://www.boost.org/");
+assert(u2.buffer() == "https://www.boost.org/");
+assert(u3.buffer() == "https://www.boost.org/");
+assert(u4.buffer() == "https://www.boost.org/");
 ----
 
 

@@ -8,19 +8,26 @@
 //
 
 
-== Quick Look
+= Quick Look
 
 This section is intended to give the reader a brief overview of the features
 and interface style of the library.
 
-=== Integration
+== Integration
 
-// [note
-//     Sample code and identifiers used throughout are written as if
-//     the following declarations are in effect:
-// 
-//     [snippet_headers_3]
-// ]
+[NOTE]
+====
+Sample code and identifiers used throughout are written as if
+the following declarations are in effect:
+
+[source,cpp]
+----
+#include <boost/url.hpp>
+using namespace boost::urls;
+----
+
+====
+
 
 We begin by including the library header file which brings all the symbols into
 scope.
@@ -28,7 +35,7 @@ scope.
 
 [source,cpp]
 ----
-// snippet_headers_1
+#include <boost/url.hpp>
 ----
 
 
@@ -41,14 +48,15 @@ You must install binaries in a location that can be found by your linker.
 If you followed the http://www.boost.org/doc/libs/release/more/getting_started/index.html[Boost Getting Started,window=blank_]
 instructions, that's already been done for you.
 
-=== Parsing
+== Parsing
 
 Say you have the following URL that you want to parse:
 
 
+// code_urls_parsing_1
 [source,cpp]
 ----
-// code_urls_parsing_1
+boost::core::string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
 ----
 
 
@@ -59,9 +67,10 @@ The library namespace includes the aliases `string_view`, `error_code`, and
 
 You can parse the string by calling this function:
 
+// code_urls_parsing_2
 [source,cpp]
 ----
-// code_urls_parsing_2
+boost::system::result<url_view> r = parse_uri( s );
 ----
 
 
@@ -71,17 +80,19 @@ A number of functions are available to parse different types of URL.
 
 We can immediately call `result::value` to obtain a `url_view`.
 
+// snippet_parsing_3
 [source,cpp]
 ----
-// snippet_parsing_3
+url_view u = r.value();
 ----
 
 
 Or simply
 
+// snippet_parsing_4
 [source,cpp]
 ----
-// snippet_parsing_4
+url_view u = *r;
 ----
 
 
@@ -95,52 +106,85 @@ https://www.boost.org/doc/libs/1_83_0//libs/system/doc/html/system.html#ref_quer
 https://www.boost.org/doc/libs/1_83_0//libs/system/doc/html/system.html#ref_queries[`result::has_error`,window=blank_] could
 also be used to check if the string has been parsed without errors.
 
-// [note
-//     It is worth noting that __parse_uri__ does not allocate any memory dynamically.
-//     Like a __string_view__, a __url_view__ does not retain ownership of the underlying
-//     string buffer.
-// 
-//     As long as the contents of the original string are unmodified, constructed
-//     URL views always contain a valid URL in its correctly serialized form.
-// 
-//     If the input does not match the URL grammar, an error code
-//     is reported through __result__ rather than exceptions.
-//     Exceptions only thrown on excessive input length.
-// ]
+[NOTE]
+====
+It is worth noting that `parse_uri` does not allocate any memory dynamically.
+Like a `string_view`, a `url_view` does not retain ownership of the underlying
+string buffer.
 
-=== Accessing
+As long as the contents of the original string are unmodified, constructed
+URL views always contain a valid URL in its correctly serialized form.
+
+If the input does not match the URL grammar, an error code
+is reported through `result` rather than exceptions.
+Exceptions only thrown on excessive input length.
+====
+
+
+== Accessing
 
 Accessing the parts of the URL is easy:
 
+// snippet_accessing_1
 [source,cpp]
 ----
-// snippet_accessing_1
+url_view u( "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor" );
+assert(u.scheme() == "https");
+assert(u.authority().buffer() == "user:pass@example.com:443");
+assert(u.userinfo() == "user:pass");
+assert(u.user() == "user");
+assert(u.password() == "pass");
+assert(u.host() == "example.com");
+assert(u.port() == "443");
+assert(u.path() == "/path/to/my-file.txt");
+assert(u.query() == "id=42&name=John Doe Jingleheimer-Schmidt");
+assert(u.fragment() == "page anchor");
 ----
 
 
 URL paths can be further divided into path segments with
 the function `url_view::segments`.
 Although URL query strings are often used to represent key/value pairs, this
-interpretation is not defined by `rfc3986`.
+interpretation is not defined by https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_].
 Users can treat the query as a single entity.
 `url_view` provides the function
 `url_view::params` to extract this view
 of key/value pairs.
 
-// [table [[Code][Output]] [[
-// [c++]
-// [snippet_accessing_1b]
-// ][
-// [teletype]
-// ```
-//     path
-//     to
-//     my-file.txt
-// 
-//     id: 42
-//     name: John Doe Jingleheimer-Schmidt
-// ```
-// ]]]
+[cols="a,a"]
+|===
+// Headers
+|Code|Output
+
+// Row 1, Column 1
+|
+// snippet_accessing_1b
+[source,cpp]
+----
+for (auto seg: u.segments())
+    std::cout << seg << "\n";
+std::cout << "\n";
+
+for (auto param: u.params())
+    std::cout << param.key << ": " << param.value << "\n";
+std::cout << "\n";
+----
+
+// Row 1, Column 2
+|
+[source]
+----
+path
+to
+my-file.txt
+
+id: 42
+name: John Doe Jingleheimer-Schmidt
+----
+
+
+|===
+
 
 These functions return views referring to substrings and sub-ranges
 of the underlying URL.
@@ -148,33 +192,44 @@ By simply referencing the relevant portion of the URL string internally,
 its components can represent percent-decoded strings and be converted
 to other types without any previous memory allocation.
 
+// snippet_token_1
 [source,cpp]
 ----
-// snippet_token_1
+std::string h = u.host();
+assert(h == "example.com");
 ----
 
 
 A special `string_token` type can also be used to specify how a portion of the URL should be encoded and returned.
 
+// snippet_token_2
 [source,cpp]
 ----
-// snippet_token_2
+std::string h = "host: ";
+u.host(string_token::append_to(h));
+assert(h == "host: example.com");
 ----
 
 
 These functions might also return empty strings
 
+// snippet_accessing_2a
 [source,cpp]
 ----
-// snippet_accessing_2a
+url_view u1 = parse_uri( "http://www.example.com" ).value();
+assert(u1.fragment().empty());
+assert(!u1.has_fragment());
 ----
 
 
 for both empty and absent components
 
+// snippet_accessing_2b
 [source,cpp]
 ----
-// snippet_accessing_2b
+url_view u2 = parse_uri( "http://www.example.com/#" ).value();
+assert(u2.fragment().empty());
+assert(u2.has_fragment());
 ----
 
 
@@ -187,40 +242,80 @@ When applicable, the encoded components can also be directly
 accessed through a `string_view` without any
 need to allocate memory:
 
-// [table [[Code][Output]] [[
-// [c++]
-// [snippet_accessing_4]
-// ][
-// [teletype]
-// ```
-//     url       : https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor
-//     scheme    : https
-//     authority : user:pass@example.com:443
-//     userinfo  : user:pass
-//     user      : user
-//     password  : pass
-//     host      : example.com
-//     port      : 443
-//     path      : /path/to/my%2dfile.txt
-//     query     : id=42&name=John%20Doe+Jingleheimer%2DSchmidt
-//     fragment  : page%20anchor
-// ```
-// ]]]
+[cols="a,a"]
+|===
+// Headers
+|Code|Output
 
-=== Percent-Encoding
+// Row 1, Column 1
+|
+// snippet_accessing_4
+[source,cpp]
+----
+std::cout <<
+    "url       : " << u                     << "\n"
+    "scheme    : " << u.scheme()            << "\n"
+    "authority : " << u.encoded_authority() << "\n"
+    "userinfo  : " << u.encoded_userinfo()  << "\n"
+    "user      : " << u.encoded_user()      << "\n"
+    "password  : " << u.encoded_password()  << "\n"
+    "host      : " << u.encoded_host()      << "\n"
+    "port      : " << u.port()              << "\n"
+    "path      : " << u.encoded_path()      << "\n"
+    "query     : " << u.encoded_query()     << "\n"
+    "fragment  : " << u.encoded_fragment()  << "\n";
+----
+
+// Row 1, Column 2
+|
+[source]
+----
+url       : https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor
+scheme    : https
+authority : user:pass@example.com:443
+userinfo  : user:pass
+user      : user
+password  : pass
+host      : example.com
+port      : 443
+path      : /path/to/my%2dfile.txt
+query     : id=42&name=John%20Doe+Jingleheimer%2DSchmidt
+fragment  : page%20anchor
+----
+
+
+|===
+
+
+== Percent-Encoding
 
 An instance of `decode_view` provides a number of functions
 to persist a decoded string:
 
-// [table [[Code][Output]] [[
-// [c++]
-// [snippet_decoding_1]
-// ][
-// [teletype]
-// ```
-//     id=42&name=John Doe Jingleheimer-Schmidt
-// ```
-// ]]]
+[cols="a,a"]
+|===
+// Headers
+|Code|Output
+
+// Row 1, Column 1
+|
+// snippet_decoding_1
+[source,cpp]
+----
+decode_view dv("id=42&name=John%20Doe%20Jingleheimer%2DSchmidt");
+std::cout << dv << "\n";
+----
+
+// Row 1, Column 2
+|
+[source]
+----
+id=42&name=John Doe Jingleheimer-Schmidt
+----
+
+
+|===
+
 
 `decode_view` and its decoding functions are designed to
 perform no memory allocations unless the algorithm where its being
@@ -243,15 +338,32 @@ If `u2.host()` returned a value type, then two memory allocations
 would be necessary for this operation. Another common use case
 is converting URL path segments into filesystem paths:
 
-// [table [[Code][Output]] [[
-// [c++]
-// [snippet_decoding_3]
-// ][
-// [teletype]
-// ```
-//     path: "path/to/my-file.txt"
-// ```
-// ]]]
+[cols="a,a"]
+|===
+// Headers
+|Code|Output
+
+// Row 1, Column 1
+|
+// snippet_decoding_3
+[source,cpp]
+----
+boost::filesystem::path p;
+for (auto seg: u.segments())
+    p.append(seg.begin(), seg.end());
+std::cout << "path: " << p << "\n";
+----
+
+// Row 1, Column 2
+|
+[source]
+----
+path: "path/to/my-file.txt"
+----
+
+
+|===
+
 
 In this example, only the internal allocations of
 `filesystem::path` need to happen. In many common
@@ -260,9 +372,21 @@ such as finding the appropriate route for a URL
 in a web server:
 
 
+// snippet_decoding_4a
 [source,cpp]
 ----
-// snippet_decoding_4a
+auto match = [](
+    std::vector<std::string> const& route,
+    url_view u)
+{
+    auto segs = u.segments();
+    if (route.size() != segs.size())
+        return false;
+    return std::equal(
+        route.begin(),
+        route.end(),
+        segs.begin());
+};
 ----
 
 
@@ -270,14 +394,20 @@ This allows us to easily match files in the document
 root directory of a web server:
 
 
+// snippet_decoding_4b
 [source,cpp]
 ----
-// snippet_decoding_4b
+std::vector<std::string> route =
+    {"community", "reviews.html"};
+if (match(route, u))
+{
+    handle_route(route, u);
+}
 ----
 
 
 // [#compound-elements]
-=== Compound elements
+== Compound elements
 
 The path and query parts of the URL are treated specially by the library.
 While they can be accessed as individual encoded strings, they can also be
@@ -286,16 +416,34 @@ accessed through special view types.
 This code calls
 `encoded_segments`
 to obtain the path segments as a container that returns encoded strings:
-// [table [[Code][Output]] [[
-// [c++]
-// [snippet_compound_elements_1]
-// ][
-// ```
-//     path
-//     to
-//     my-file.txt
-// ```
-// ]]]
+[cols="a,a"]
+|===
+// Headers
+|Code|Output
+
+// Row 1, Column 1
+|
+// snippet_compound_elements_1
+[source,cpp]
+----
+segments_encoded_view segs = u.encoded_segments();
+for( auto v : segs )
+{
+    std::cout << v << "\n";
+}
+----
+
+// Row 1, Column 2
+|[source,cpp]
+----
+path
+to
+my-file.txt
+----
+
+
+|===
+
 
 As with other `url_view` functions which return encoded strings, the encoded
 segments container does not allocate memory. Instead it returns views to the
@@ -304,30 +452,68 @@ corresponding portions of the underlying encoded buffer referenced by the URL.
 As with other library functions, `decode_view` permits accessing
 elements of composed elements while avoiding memory allocations entirely:
 
-// [table [[Code][Output]] [[
-// [c++]
-// [snippet_encoded_compound_elements_1]
-// ][
-// [teletype]
-// ```
-//     path
-//     to
-//     my-file.txt
-// ```
-// ]][[
-//   [c++]
-//   [snippet_encoded_compound_elements_2]
-//   ][
-//   [teletype]
-// ```
-//     key = id, value = 42
-//     key = name, value = John Doe
-// ```
-// ]]]
+[cols="a,a"]
+|===
+// Headers
+|Code|Output
+
+// Row 1, Column 1
+|
+// snippet_encoded_compound_elements_1
+[source,cpp]
+----
+segments_encoded_view segs = u.encoded_segments();
+
+for( pct_string_view v : segs )
+{
+    decode_view dv = *v;
+    std::cout << dv << "\n";
+}
+----
+
+// Row 1, Column 2
+|
+[source]
+----
+path
+to
+my-file.txt
+----
+
+
+// Row 2, Column 1
+|
+  // snippet_encoded_compound_elements_2
+[source,cpp]
+----
+params_encoded_view params_ref = u.encoded_params();
+
+for( auto v : params_ref )
+{
+    decode_view dk(v.key);
+    decode_view dv(v.value);
+
+    std::cout <<
+        "key = " << dk <<
+        ", value = " << dv << "\n";
+}
+----
+
+// Row 2, Column 2
+|
+[source]
+----
+key = id, value = 42
+key = name, value = John Doe
+----
+
+
+|===
 
 
 
-=== Modifying
+
+== Modifying
 
 The library provides the containers `url` and `static_url` which supporting
 modification of the URL contents. A `url` or `static_url` must be constructed
@@ -338,9 +524,10 @@ character buffer, the `url` container uses the default allocator to
  control a resizable character buffer which it owns.
 
 
+// snippet_quicklook_modifying_1
 [source,cpp]
 ----
-// snippet_quicklook_modifying_1
+url u = parse_uri( s ).value();
 ----
 
 
@@ -348,9 +535,10 @@ On the other hand, a `static_url` has fixed-capacity storage and does
 not require dynamic memory allocations.
 
 
+// snippet_quicklook_modifying_1b
 [source,cpp]
 ----
-// snippet_quicklook_modifying_1b
+static_url<1024> su = parse_uri( s ).value();
 ----
 
 
@@ -361,17 +549,19 @@ constructible, and equality comparable. They support all the inspection function
 
 Changing the scheme is easy:
 
+// snippet_quicklook_modifying_2
 [source,cpp]
 ----
-// snippet_quicklook_modifying_2
+u.set_scheme( "https" );
 ----
 
 
 Or we can use a predefined constant:
 
+// snippet_quicklook_modifying_3
 [source,cpp]
 ----
-// snippet_quicklook_modifying_3
+u.set_scheme_id( scheme::https ); // equivalent to u.set_scheme( "https" );
 ----
 
 
@@ -386,29 +576,62 @@ It is not possible for a `url` to hold syntactically illegal text.
 Modification functions return a reference to the object, so chaining
 is possible:
 
-// [table [[Code][Output]] [[
-// [c++]
-// [snippet_quicklook_modifying_4]
-// ][
-// [teletype]
-// ```
-//     https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor
-// ```
-// ]]]
+[cols="a,a"]
+|===
+// Headers
+|Code|Output
+
+// Row 1, Column 1
+|
+// snippet_quicklook_modifying_4
+[source,cpp]
+----
+u.set_host_ipv4( ipv4_address( "192.168.0.1" ) )
+    .set_port_number( 8080 )
+    .remove_userinfo();
+std::cout << u << "\n";
+----
+
+// Row 1, Column 2
+|
+[source]
+----
+https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor
+----
+
+
+|===
+
 
 All non-const operations offer the strong exception safety guarantee.
 
 The path segment and query parameter containers returned by a `url` offer
 modifiable range functionality, using member functions of the container:
 
-// [table [[Code][Output]] [[
-// [c++]
-// [snippet_quicklook_modifying_5]
-// ][
-// [teletype]
-// ```
-//     https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&name=Vinnie%20Falco#page%20anchor
-// ```
-// ]]]
+[cols="a,a"]
+|===
+// Headers
+|Code|Output
+
+// Row 1, Column 1
+|
+// snippet_quicklook_modifying_5
+[source,cpp]
+----
+params_ref p = u.params();
+p.replace(p.find("name"), {"name", "John Doe"});
+std::cout << u << "\n";
+----
+
+// Row 1, Column 2
+|
+[source]
+----
+https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&name=Vinnie%20Falco#page%20anchor
+----
+
+
+|===
+
 
 
