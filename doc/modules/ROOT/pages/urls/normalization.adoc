@@ -7,38 +7,29 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-
 = Normalization
 
-Normalization allows us to determine if two URLs refer to the same
-resource. URLs comparisons serve the same purpose, where two strings
-are compared as if they were normalized.
+Normalization allows us to determine if two URLs refer to the same resource.
+URLs comparisons serve the same purpose, where two strings are compared as if they were normalized.
 
-There is no way to determine whether two URLs refer to the same
-resource without full knowledge or control of them. Thus,
-equivalence is based on string comparisons augmented by additional
-URL and scheme rules. This means comparison is not sufficient to
-determine whether two URLs identify different resources as the
-same resource can always be served from different addresses.
+There is no way to determine whether two URLs refer to the same resource without full knowledge or control of them.
+Thus, equivalence is based on string comparisons augmented by additional URL and scheme rules.
+This means comparison is not sufficient to determine whether two URLs identify different resources as the same resource can always be served from different addresses.
 
-For this reason, comparison methods are designed to minimize
-false negatives while strictly avoiding false positives.
-In other words, if two URLs compare equal, they definitely
-represent the same resource. If they are considered different,
-they might still refer to the same resource depending on the
-application.
+For this reason, comparison methods are designed to minimize false negatives while strictly avoiding false positives.
+In other words, if two URLs compare equal, they definitely represent the same resource.
+If they are considered different, they might still refer to the same resource depending on the application.
 
-Context-dependent rules can be considered to minimize the number
-of false negatives, where cheaper methods have a higher chance
-of producing false negatives:
+Context-dependent rules can be considered to minimize the number of false negatives, where cheaper methods have a higher chance of producing false negatives:
 
 * Simple String Comparison
 * Syntax-Based Normalization
 * Scheme-Based Normalization
 * Protocol-Based Normalization
 
-Simple String Comparison can be performed by accessing the underlying
-buffer of URLs:
+== Simple String Comparison
+
+Simple String Comparison can be performed by accessing the underlying buffer of URLs:
 
 // snippet_normalizing_1
 [source,cpp]
@@ -48,11 +39,11 @@ url_view u2("https://www.boost.org/doc/../index.html");
 assert(u1.buffer() != u2.buffer());
 ----
 
+By only considering the rules of https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_], Simple String Comparison fails to identify the URLs above point to the same resource.
 
-By only considering the rules of https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_], Simple String
-Comparison fails to identify the URLs above point to the same
-resource. The comparison operators implement Syntax-Based
-Normalization, which implements the rules defined by https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_].
+== Syntax-Based Normalization
+
+The comparison operators implement Syntax-Based Normalization, which implements the rules defined by https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_].
 
 // snippet_normalizing_2
 [source,cpp]
@@ -62,26 +53,23 @@ url_view u2("https://www.boost.org/doc/../index.html");
 assert(u1 == u2);
 ----
 
-
-In mutable URLs, the member function
-`normalize`
-can used to be apply Syntax-Based Normalization to a URL.
-A normalized URL is represented by a canonical string where
-any two strings that would compare equal end up with the
-same underlying representation. In other words, Simple String
-Comparison of two normalized URLs is equivalent to
-Syntax-Based Normalization.
+In mutable URLs, the member function `normalize` can also be used to apply Syntax-Based Normalization to a URL.
+A normalized URL is represented by a canonical string where any two strings that would compare equal end up with the same underlying representation.
+In other words, Simple String Comparison of two normalized URLs is equivalent to Syntax-Based Normalization.
 
 // snippet_normalizing_3
 [source,cpp]
 ----
 url_view u1("https://www.boost.org/index.html");
 url u2("https://www.boost.org/doc/../index.html");
+assert(u1.buffer() != u2.buffer());
 assert(u1 == u2);
 u2.normalize();
 assert(u1.buffer() == u2.buffer());
+assert(u1 == u2);
 ----
 
+=== Syntax-Based Normalization Procedure
 
 Normalization uses the following definitions of https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_]
 to minimize false negatives:
@@ -100,11 +88,10 @@ u.normalize();
 assert(u.buffer() == "https://www.boost.org/index%20file.html");
 ----
 
+== Scheme and Protocol-Based Normalization
 
-Syntax-Based Normalization can also be used as a first step
-for Scheme-Based and Protocol-Based Normalization. One common
-scheme-specific rule is ignoring the default port for that
-scheme and empty absolute paths:
+Syntax-Based Normalization can also be used as a first step for Scheme-Based and Protocol-Based Normalization.
+One common scheme-specific rule is ignoring the default port for that scheme and empty absolute paths:
 
 // snippet_normalizing_5
 [source,cpp]
@@ -136,9 +123,7 @@ assert(u3.buffer() == "https://www.boost.org/");
 assert(u4.buffer() == "https://www.boost.org/");
 ----
 
-
-Other criteria commonly used to minimize false negatives for
-specific schemes are:
+Other criteria commonly used to minimize false negatives for specific schemes are:
 
 * Handling empty authority component as an error or localhost
 * Replacing authority with empty string for the default authority

@@ -10,34 +10,23 @@
 
 = RFC 3986
 
-Functions like `parse_uri` are sufficient for converting URLs but
-they require that the entire string is consumed. When URLs appear as
-components of a larger grammar, it is desired to use composition
-of rules based parsing to process these along with other elements
-potentially unrelated to resource locators. To achieve this, the
-library provides rules for the top-level BNF productions found
-in https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_] and a rule for matching percent-encoded strings.
+Functions like `parse_uri` are sufficient for converting URLs, but they require that the entire string is consumed.
+When URLs appear as components of a larger grammar, it is desired to use composition of rules based parsing to process these along with other elements potentially unrelated to resource locators.
+To achieve this, the library provides rules for the top-level BNF productions found in https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_] and a rule for matching percent-encoded strings.
 
 == Percent Encoding
 
-The percent-encoding mechanism is used to represent a data octet
-in a component when the corresponding character is outside the
-allowed set or is being used as a delimiter of, or within, the
-component. An encoded octet (also called an __escape__) is
-encoded as the percent character ('%') followed by a two-digit
-hexadecimal number representing the octet's numeric value:
+The percent-encoding mechanism is used to represent a data octet in a component when the corresponding character is outside the allowed set or is being used as a delimiter of, or within, the component.
+An encoded octet (also called an __escape__) is encoded as the percent character ('%') followed by a two-digit hexadecimal number representing the octet's numeric value:
 
 [source,cpp]
 ----
 pct-encoded   = "%" HEXDIG HEXDIG
 ----
 
-
-URL components with possible percent-encoded characters are
-specified in the components BNF using the __pct-encoded__
-production, along with the characters which are not
-considered to be part of the reserved set. For example,
-this is how path characters are described in
+URL components with possible percent-encoded characters are specified in the components BNF using the __pct-encoded__
+production, along with the characters which are not considered to be part of the reserved set.
+For example, this is how path characters are described in
 https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3 Path,window=blank_]
 of the RFC:
 
@@ -46,17 +35,13 @@ of the RFC:
 pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
 ----
 
-
-The library provides the `pct_encoded_rule` for matching
-strings which are percent-encoded. This function is passed the
-set of characters that may be used without escapes and returns
-a suitable rule. If the input is valid; that is, if there are
-no invalid escape sequences, the rule returns a
-`decode_view`. This is a forward range of characters
-which performs percent-decoding when iterated. It also supports
-equality and comparison to unencoded strings, without allocating
-memory. In the example below we parse the string `s` as a
-series of zero or more `pchars`:
+The library provides the `pct_encoded_rule` for matching strings which are percent-encoded.
+This function is passed the set of characters that may be used without escapes and returns a suitable rule.
+If the input is valid; that is, if there are no invalid escape sequences, the rule returns a
+`decode_view`.
+This is a forward range of characters which performs percent-decoding when iterated.
+It also supports equality and comparison to unencoded strings, without allocating memory.
+In the example below we parse the string `s` as a series of zero or more `pchars`:
 
 // code_grammar_5_1
 [source,cpp]
@@ -64,11 +49,9 @@ series of zero or more `pchars`:
 system::result< pct_string_view > rv = parse( s, pct_encoded_rule( pchars ) );
 ----
 
+These constants are used and provided by the library to specify rules for percent-encoded URL components:
 
-These constants are used and provided by the library to
-specify rules for percent-encoded URL components:
-
-[cols="a,a"]
+[cols="1,3a"]
 |===
 // Headers
 |Name|BNF
@@ -76,7 +59,8 @@ specify rules for percent-encoded URL components:
 // Row 1, Column 1
 |`gen_delim_chars`
 // Row 1, Column 2
-|[source]
+|
+[source]
 ----
 gen-delims    = ":" / "/" / "?" / "#" / "[" / "]" / "@"
 ----
@@ -84,9 +68,10 @@ gen-delims    = ":" / "/" / "?" / "#" / "[" / "]" / "@"
 // Row 2, Column 1
 |`pchars`
 // Row 2, Column 2
-|[source]
+|
+[source]
 ----
-pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+pchar     = unreserved / pct-encoded / sub-delims / ":" / "@"
 ----
 
 // Row 3, Column 1
@@ -97,7 +82,8 @@ pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
 // Row 4, Column 1
 |`sub_delim_chars`
 // Row 4, Column 2
-|[source]
+|
+[source]
 ----
 sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
               / "*" / "+" / "," / ";" / "="
@@ -106,24 +92,19 @@ sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
 // Row 5, Column 1
 |`unreserved_chars`
 // Row 5, Column 2
-|[source]
+|
+[source]
 ----
 unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
 ----
 
 |===
 
-
 == URL Rules
 
-When a URL can appear in the context of a larger grammar, it may
-be desired to express the enclosing grammar in a single rule that
-incoporates the URL as an element. To achieve this, the library
-makes public the rules used to implement high-level parsing of
-complete strings as URL components, so that these components
-may be parsed as part of a larger string containing non-URL
-elements. Here we present a rule suitable for parsing the
-the HTTP
+When a URL can appear in the context of a larger grammar, it may be desired to express the enclosing grammar in a single rule that incoporates the URL as an element.
+To achieve this, the library makes public the rules used to implement high-level parsing of complete strings as URL components, so that these components may be parsed as part of a larger string containing non-URL elements.
+Here we present a rule suitable for parsing the the HTTP
 https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1[__request-line__,window=blank_]:
 
 // code_grammar_5_2
@@ -145,11 +126,9 @@ constexpr auto request_line_rule = tuple_rule(
     squelch( literal_rule( "\r\n" ) ) );            // CRLF
 ----
 
+The library offers these rules to allow custom rule definitions to integrate the various styles of valid URL rules:
 
-The library offers these rules to allow custom rule definitions
-to integrate the various styles of valid URL rules:
-
-[cols="a,a"]
+[cols="1,3a"]
 |===
 // Headers
 |Name|BNF
@@ -157,7 +136,8 @@ to integrate the various styles of valid URL rules:
 // Row 1, Column 1
 |`absolute_uri_rule`
 // Row 1, Column 2
-|[source]
+|
+[source]
 ----
 absolute-URI    = scheme ":" hier-part [ "?" query ]
 
@@ -170,7 +150,8 @@ hier-part       = "//" authority path-abempty
 // Row 2, Column 1
 |`authority_rule`
 // Row 2, Column 3
-|[source,cpp]
+|
+[source,cpp]
 ----
 authority       = [ userinfo "@" ] host [ ":" port ]
 ----
@@ -178,7 +159,8 @@ authority       = [ userinfo "@" ] host [ ":" port ]
 // Row 3, Column 1
 |`origin_form_rule`
 // Row 3, Column 2
-|[source]
+|
+[source]
 ----
 origin-form    = absolute-path [ "?" query ]
 
@@ -188,7 +170,8 @@ absolute-path = 1*( "/" segment )
 // Row 4, Column 1
 |`relative_ref_rule`
 // Row 4, Column 2
-|[source]
+|
+[source]
 ----
 relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
 ----
@@ -196,7 +179,8 @@ relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
 // Row 5, Column 1
 |`uri_reference_rule`
 // Row 5, Column 2
-|[source,cpp]
+|
+[source,cpp]
 ----
 URI-reference   = URI / relative-ref
 ----
@@ -204,9 +188,10 @@ URI-reference   = URI / relative-ref
 // Row 6, Column 1
 |`uri_rule`
 // Row 6, Column 2
-|[source,cpp]
+|
+[source,cpp]
 ----
-URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+URI     = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
 ----
 
 |===
