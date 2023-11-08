@@ -10,8 +10,8 @@
 
 = Formatting
 
-Algorithms to format URLs construct a mutable URL by parsing and applying
-arguments to a URL template. The following example uses the `format`
+Algorithms to format URLs construct a mutable URL by parsing and applying arguments to a URL template.
+The following example uses the `format`
 function to construct an absolute URL:
 
 
@@ -22,16 +22,10 @@ url u = format("{}://{}:{}/rfc/{}", "https", "www.ietf.org", 80, "rfc2396.txt");
 assert(u.buffer() == "https://www.ietf.org:80/rfc/rfc2396.txt");
 ----
 
+The rules for a format URL string are the same as for a https://en.cppreference.com/w/cpp/utility/format/basic_format_string[`std::format_string`,window=blank_], where replacement fields are delimited by curly braces.
+The URL type is inferred from the format string.
 
-The rules for a format URL string are the same
-as for a https://en.cppreference.com/w/cpp/utility/format/basic_format_string[`std::format_string`,window=blank_], where replacement
-fields are delimited by curly braces. The URL
-type is inferred from the format string.
-
-The URL components to which replacement fields
-belong are identified before replacement is
-applied and any invalid characters for that
-formatted argument are percent-escaped:
+The URL components to which replacement fields belong are identified before replacement is applied and any invalid characters for that formatted argument are percent-escaped:
 
 
 // snippet_format_2
@@ -41,12 +35,8 @@ url u = format("https://{}/{}", "www.boost.org", "Hello world!");
 assert(u.buffer() == "https://www.boost.org/Hello%20world!");
 ----
 
-
-Delimiters in the URL template, such as `":"`,
-`"//"`, `"?"`, and `"#"`, unambiguously associate each
-replacement field to a URL component. All other
-characters are normalized to ensure the URL is
-valid:
+Delimiters in the URL template, such as `":"`, `"//"`, `"?"`, and `"#"`, unambiguously associate each replacement field to a URL component.
+All other characters are normalized to ensure the URL is valid:
 
 
 // snippet_format_3a
@@ -70,9 +60,7 @@ assert(u.path() == "mailto:someone@example.com");
 assert(u.encoded_path() == "mailto%3Asomeone@example.com");
 ----
 
-
-The function `format_to` can be used to format URLs
-into any modifiable URL container.
+The function `format_to` can be used to format URLs into any modifiable URL container.
 
 
 // snippet_format_4
@@ -83,9 +71,7 @@ format_to(u, "{}://{}:{}/rfc/{}", "https", "www.ietf.org", 80, "rfc2396.txt");
 assert(u.buffer() == "https://www.ietf.org:80/rfc/rfc2396.txt");
 ----
 
-
-As with https://en.cppreference.com/w/cpp/utility/format/format[`std::format`,window=blank_], positional and named arguments are
-supported.
+As with https://en.cppreference.com/w/cpp/utility/format/format[`std::format`,window=blank_], positional and named arguments are supported.
 
 
 // snippet_format_5a
@@ -95,9 +81,7 @@ url u = format("{0}://{2}:{1}/{3}{4}{3}", "https", 80, "www.ietf.org", "abra", "
 assert(u.buffer() == "https://www.ietf.org:80/abracadabra");
 ----
 
-
-The `arg` function can be used to associate names
-with arguments:
+The `arg` function can be used to associate names with arguments:
 
 
 // snippet_format_5b
@@ -107,11 +91,9 @@ url u = format("https://example.com/~{username}", arg("username", "mark"));
 assert(u.buffer() == "https://example.com/~mark");
 ----
 
-
 A second overload based on https://en.cppreference.com/w/cpp/utility/initializer_list[`std::initializer_list`,window=blank_]
 is provided for both `format` and `format_to`.
-These overloads can help with lists of named
-arguments:
+These overloads can help with lists of named arguments:
 
 
 // snippet_format_5c
@@ -121,6 +103,4 @@ boost::core::string_view fmt = "{scheme}://{host}:{port}/{dir}/{file}";
 url u = format(fmt, {{"scheme", "https"}, {"port", 80}, {"host", "example.com"}, {"dir", "path/to"}, {"file", "file.txt"}});
 assert(u.buffer() == "https://example.com:80/path/to/file.txt");
 ----
-
-
 

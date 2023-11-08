@@ -12,8 +12,7 @@
 
 == Encoding
 
-The `encode` can be used to percent-encode strings
-with the specified __CharSet__.
+The `encode` can be used to percent-encode strings with the specified __CharSet__.
 
 // snippet_encoding_1
 [source,cpp]
@@ -22,9 +21,7 @@ std::string s = encode("hello world!", unreserved_chars);
 assert(s == "hello%20world%21");
 ----
 
-
-A few parameters, such as encoding spaces as plus (`+`), can be adjusted
- with `encode_opts`:
+A few parameters, such as encoding spaces as plus (`+`), can be adjusted with `encode_opts`:
 
 // snippet_encoding_2
 [source,cpp]
@@ -34,7 +31,6 @@ opt.space_as_plus = true;
 std::string s = encode("msg=hello world", pchars, opt);
 assert(s == "msg=hello+world");
 ----
-
 
 The result type of the function can also be specified via a __StringToken__
 so that strings can be reused or appended.
@@ -48,9 +44,7 @@ encode("world", pchars, {}, string_token::append_to(s));
 assert(s == "hello%20world");
 ----
 
-
-We can also use `encoded_size` to
-determine the required size before attempting to encode:
+We can also use `encoded_size` to determine the required size before attempting to encode:
 
 // snippet_encoding_4
 [source,cpp]
@@ -61,7 +55,6 @@ s.reserve(encoded_size(e, pchars));
 encode(e, pchars, {}, string_token::assign_to(s));
 assert(s == "hello%20world");
 ----
-
 
 In other scenarios, strings can also be directly encoded into buffers:
 
@@ -75,7 +68,6 @@ encode(&s[0], s.size(), e, pchars);
 assert(s == "hello%20world");
 ----
 
-
 == Validating
 
 The class `pct_string_view` represents a reference percent-encoded strings:
@@ -87,11 +79,8 @@ pct_string_view sv = "hello%20world";
 assert(sv == "hello%20world");
 ----
 
-
-`pct_string_view` is analogous to `string_view`, with the main difference
-that the percent-encoding of the underlying buffer is always validated.
-Attempting to directly construct a `pct_string_view` from an invalid
-string throws an exception.
+`pct_string_view` is analogous to `string_view`, with the main difference that the percent-encoding of the underlying buffer is always validated.
+Attempting to directly construct a `pct_string_view` from an invalid string throws an exception.
 
 To simply validate a string without recurring to exceptions, a `result`
 can be returned with the
@@ -107,13 +96,11 @@ pct_string_view sv = rs.value();
 assert(sv == "hello%20world");
 ----
 
-
 This means `make_pct_string_view`
 can also be used to validate strings and keep that information for future use.
 The modifying functions in classes such as `url` expect instances of
-`pct_string_view` that have already been validated. This completely
-removes the responsibility of revalidating this information or throwing
-exceptions from these functions:
+`pct_string_view` that have already been validated.
+This completely removes the responsibility of revalidating this information or throwing exceptions from these functions:
 
 // snippet_encoding_8
 [source,cpp]
@@ -124,9 +111,7 @@ u.set_encoded_path(s);
 assert(u.buffer() == "path/to/file");
 ----
 
-
-When exceptions are acceptable, a common pattern is to let a literal string
-or other type convertible to `string_view` be implicitly converted to
+When exceptions are acceptable, a common pattern is to let a literal string or other type convertible to `string_view` be implicitly converted to
 `pct_string_view`.
 
 // snippet_encoding_9
@@ -137,14 +122,11 @@ u.set_encoded_path("path/to/file");
 assert(u.buffer() == "path/to/file");
 ----
 
-
 If the input is invalid, note that an exception is thrown while the
-`pct_string_view` is implicitly constructed and not from the modifying
-function.
+`pct_string_view` is implicitly constructed and not from the modifying function.
 
 Reusing the validation guarantee is particularly useful when the
-`pct_string_view` comes from another source where the data is also
-ensured to be validated:
+`pct_string_view` comes from another source where the data is also ensured to be validated:
 
 // snippet_encoding_10
 [source,cpp]
@@ -155,7 +137,6 @@ u.set_encoded_path(uv.encoded_path());
 assert(u.buffer() == "path/to/file");
 ----
 
-
 In the example above,
 `set_encoded_path`
 does not to revalidate any information from
@@ -165,8 +146,7 @@ because these references are passed as `pct_string_view`.
 == Decode
 
 The class `pct_string_view` represents a reference percent-encoded strings.
-`decode_view` is analogous to `pct_string_view`, with the main difference
-that the underlying buffer always dereferences to decoded characters.
+`decode_view` is analogous to `pct_string_view`, with the main difference that the underlying buffer always dereferences to decoded characters.
 
 // snippet_encoding_11
 [source,cpp]
@@ -177,7 +157,6 @@ assert(es == "hello%20world");
 decode_view dv("hello%20world");
 assert(dv == "hello world");
 ----
-
 
 A `decode_view` can also be created from a `pct_string_view` with the
 `operator*`.
@@ -194,10 +173,7 @@ decode_view dv = *s;
 assert(dv == "hello world");
 ----
 
-
-This is particularly useful when the decoded string need to be accessed
-for comparisons with no necessity to explicitly decoding the
-string into a buffer:
+This is particularly useful when the decoded string need to be accessed for comparisons with no necessity to explicitly decoding the string into a buffer:
 
 // snippet_encoding_13
 [source,cpp]
@@ -232,12 +208,11 @@ bool route_match = it0 == end0 && it1 == end1;
 assert(route_match);
 ----
 
-
 The member function
 `pct_string_view::decode`
-can be used to decode the data into a buffer. Like the free-function
-`encode`, decoding options and the string
-token can be customized.
+can be used to decode the data into a buffer.
+Like the free-function
+`encode`, decoding options and the string token can be customized.
 
 // snippet_encoding_14
 [source,cpp]

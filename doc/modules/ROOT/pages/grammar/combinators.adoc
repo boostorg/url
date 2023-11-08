@@ -11,16 +11,11 @@
 = Compound Rules
 
 The rules shown so far have defined
-https://en.wikipedia.org/wiki/Terminal_and_nonterminal_symbols[__terminal symbols__,window=blank_],
-representing indivisible units of grammar. To parse more
-complex things, a
+https://en.wikipedia.org/wiki/Terminal_and_nonterminal_symbols[__terminal symbols__,window=blank_], representing indivisible units of grammar.
+To parse more complex things, a
 https://en.wikipedia.org/wiki/Parser_combinator[__parser combinator__,window=blank_]
-(or __compound rule__) is a rule which accepts as parameters one
-or more rules and combines them to form a higher order algorithm.
-In this section we introduce the compound rules provided by the
-library, and how they may be used to express more complex grammars.
-
-
+(or __compound rule__) is a rule which accepts as parameters one or more rules and combines them to form a higher order algorithm.
+In this section we introduce the compound rules provided by the library, and how they may be used to express more complex grammars.
 
 == Tuple Rule
 
@@ -31,86 +26,86 @@ Consider the following grammar:
 version = "v" dec-octet "." dec-octet
 ----
 
-
-We can express this using `tuple_rule`, which matches one
-or more specified rules in sequence. The folllowing defines
-a sequence using some character literals and two decimal octets,
-which is a fancy way of saying a number between 0 and 255:
+We can express this using `tuple_rule`, which matches one or more specified rules in sequence.
+The folllowing defines a sequence using some character literals and two decimal octets, which is a fancy way of saying a number between 0 and 255:
 
 // code_grammar_3_1
 [source,cpp]
 ----
-constexpr auto version_rule = tuple_rule( delim_rule( 'v' ), dec_octet_rule, delim_rule( '.' ), dec_octet_rule );
+constexpr auto version_rule = tuple_rule(
+    delim_rule( 'v' ), dec_octet_rule, delim_rule( '.' ), dec_octet_rule );
 ----
 
-
-This rule has a value type of `std::tuple`, whose types correspond
-to the value type of each rule specified upon construction. The decimal
-octets are represented by the `dec_octet_rule` which stores its
-result in an `unsigned char`:
+This rule has a value type of `std::tuple`, whose types correspond to the value type of each rule specified upon construction.
+The decimal octets are represented by the `dec_octet_rule` which stores its result in an `unsigned char`:
 
 // code_grammar_3_2
 [source,cpp]
 ----
-system::result< std::tuple< core::string_view, unsigned char, core::string_view, unsigned char > > rv = parse( "v42.44800", version_rule );
+system::result<
+    std::tuple<
+        core::string_view,
+        unsigned char,
+        core::string_view,
+        unsigned char > > rv =
+    parse( "v42.44800", version_rule );
 ----
 
-
 To extract elements from `std::tuple` the function https://en.cppreference.com/w/cpp/utility/tuple/get[`std::get`,window=blank_]
-must be used. In this case, we don't care to know the value for
-the matching character literals. The `tuple_rule` discards match
-results whose value type is `void`. We can use the `squelch`
-compound rule to convert a matching value type to `void`, and
-reformulate our rule:
+must be used.
+In this case, we don't care to know the value for the matching character literals.
+The `tuple_rule` discards match results whose value type is `void`.
+We can use the `squelch`
+compound rule to convert a matching value type to `void`, and reformulate our rule:
 
 // code_grammar_3_3
 [source,cpp]
 ----
-constexpr auto version_rule = tuple_rule( squelch( delim_rule( 'v' ) ), dec_octet_rule, squelch( delim_rule( '.' ) ), dec_octet_rule );
+constexpr auto version_rule = tuple_rule(
+    squelch( delim_rule( 'v' ) ),
+    dec_octet_rule,
+    squelch( delim_rule( '.' ) ),
+    dec_octet_rule );
 
-system::result< std::tuple< unsigned char, unsigned char > > rv = parse( "v42.44800", version_rule );
+system::result<
+    std::tuple< unsigned char, unsigned char > > rv =
+        parse( "v42.44800", version_rule );
 ----
 
-
-When all but one of the value types is `void`, the `std::tuple` is
-elided and the remaining value type is promoted to the result of
-the match:
+When all but one of the value types is `void`, the `std::tuple` is elided and the remaining value type is promoted to the result of the match:
 
 // code_grammar_3_4
 [source,cpp]
 ----
 // port     = ":" unsigned-short
 
-constexpr auto port_rule = tuple_rule( squelch( delim_rule( ':' ) ), unsigned_rule< unsigned short >{} );
+constexpr auto port_rule = tuple_rule(
+    squelch( delim_rule( ':' ) ), unsigned_rule< unsigned short >{} );
 
 system::result< unsigned short > rv = parse( ":443", port_rule );
 ----
 
-
-
-
 == Optional Rule
 
-BNF elements in brackets denote optional components. These are
-expressed using `optional_rule`, whose value type is an
-`optional`. For example, we can adapt the port rule from
-above to be an optional component:
+BNF elements in brackets denote optional components.
+These are expressed using `optional_rule`, whose value type is an
+`optional`.
+For example, we can adapt the port rule from above to be an optional component:
 
 // code_grammar_3_5
 [source,cpp]
 ----
 // port     = [ ":" unsigned-short ]
 
-constexpr auto port_rule = optional_rule( tuple_rule( squelch( delim_rule( ':' ) ), unsigned_rule< unsigned short >{} ) );
+constexpr auto port_rule = optional_rule(tuple_rule(
+    squelch( delim_rule( ':' ) ), unsigned_rule< unsigned short >{} ) );
 
 system::result< boost::optional< unsigned short > > rv = parse( ":8080", port_rule );
 
 assert( rv->has_value() && rv->value() == 8080 );
 ----
 
-
-In this example we build up a rule to represent an
-endpoint as an IPv4 address with an optional port:
+In this example we build up a rule to represent an endpoint as an IPv4 address with an optional port:
 
 // code_grammar_3_6
 [source,cpp]
@@ -133,10 +128,8 @@ constexpr auto endpoint_rule = tuple_rule(
             unsigned_rule< unsigned short >{} ) ) );
 ----
 
-
 This can be simplified; the library provides `ipv4_address_rule`
-whose result type is `ipv4_address`, offering more utility
-than representing the address simply as a collection of four numbers:
+whose result type is `ipv4_address`, offering more utility than representing the address simply as a collection of four numbers:
 
 // code_grammar_3_7
 [source,cpp]
@@ -148,17 +141,15 @@ constexpr auto endpoint_rule = tuple_rule(
             squelch( delim_rule( ':' ) ),
             unsigned_rule< unsigned short >{} ) ) );
 
-system::result< std::tuple< ipv4_address, boost::optional< unsigned short > > > rv = parse( "192.168.0.1:443", endpoint_rule );
+system::result<
+    std::tuple< ipv4_address, boost::optional< unsigned short > > > rv =
+        parse( "192.168.0.1:443", endpoint_rule );
 ----
-
-
-
 
 == Variant Rule
 
-BNF elements separated by unquoted slashes represent a set
-of alternatives from which one element may match. We represent
-them using `variant_rule`, whose value type is a variant.
+BNF elements separated by unquoted slashes represent a set of alternatives from which one element may match.
+We represent them using `variant_rule`, whose value type is a variant.
 Consider the following HTTP production rule which comes from
 https://datatracker.ietf.org/doc/html/rfc7230#section-5.3"[rfc7230,window=blank_]:
 
@@ -170,11 +161,8 @@ request-target = origin-form
                 / asterisk-form
 ----
 
-
-The __request-target__ can be exactly one of these things. Here we
-define the rule, using `origin_form_rule`, `absolute_uri_rule`,
-and `authority_rule` which come with the library, and obtain
-a result from parsing a string:
+The __request-target__ can be exactly one of these things.
+Here we define the rule, using `origin_form_rule`, `absolute_uri_rule`, and `authority_rule` which come with the library, and obtain a result from parsing a string:
 
 // code_grammar_3_8
 [source,cpp]
@@ -185,12 +173,12 @@ constexpr auto request_target_rule = variant_rule(
     authority_rule,
     delim_rule('*') );
 
-system::result< variant2::variant< url_view, url_view, authority_view, core::string_view > > rv = parse( "/results.htm?page=4", request_target_rule );
+system::result<
+    variant2::variant< url_view, url_view, authority_view, core::string_view > > rv =
+        parse( "/results.htm?page=4", request_target_rule );
 ----
 
-
-In the next section we discuss facilities to parse a
-repeating number of elements.
+In the next section we discuss facilities to parse a repeating number of elements.
 
 
 

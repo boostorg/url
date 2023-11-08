@@ -11,6 +11,6 @@
 [#helpcard]
 = Help Card
 
-image:HelpCard.svg[]
+image::HelpCard.svg[]
 
 

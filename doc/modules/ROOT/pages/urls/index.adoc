@@ -15,7 +15,7 @@ of characters identifying an abstract or physical resource.
 It has these five parts, with may be optional or disallowed
 depending on the context:
 
-image:PartsDiagram.svg[]
+image::PartsDiagram.svg[]
 
 Each part's syntax is defined by a set of production rules in
 https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_]. All valid URLs conform to this grammar, also called
@@ -296,7 +296,7 @@ https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3[__port__,window=blan
 which identify a communication endpoint having dominion
 over the resource described in the remainder of the URL.
 
-image:AuthorityDiagram.svg[]
+image::AuthorityDiagram.svg[]
 
 Some observations:
 

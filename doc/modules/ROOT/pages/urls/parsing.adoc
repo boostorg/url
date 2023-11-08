@@ -20,7 +20,9 @@ https://datatracker.ietf.org/doc/html/rfc3986#section-3[__URI__,window=blank_]:
 // code_urls_parsing_1
 [source,cpp]
 ----
-boost::core::string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
+boost::core::string_view s =
+    "https://user:pass@example.com:443/path/to/my%2dfile.txt?"
+    "?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
 ----
 
 
@@ -29,12 +31,13 @@ if the string is a valid URL. Otherwise it holds an `error_code`.
 It is impossible to construct a `url_view` which refers to an
 invalid URL.
 
-// [warning
-//     The caller is responsible for ensuring that the lifetime
-//     of the character buffer extends until it is no longer
-//     referenced by the view. These are the same semantics
-//     as that of __std_string_view__.
-// ]
+[WARNING]
+====
+The caller is responsible for ensuring that the lifetime
+of the character buffer extends until it is no longer
+referenced by the view. These are the same semantics
+as that of `std::string_view`.
+====
 
 For convenience, a URL view can be constructed directly from the character
 buffer in a `string_view`. In this case, it parses the string according
@@ -133,9 +136,13 @@ to hold a copy of the string.
 // snippet_parsing_url_1bc
 [source,cpp]
 ----
-boost::system::result< url > rv = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+boost::system::result< url > rv =
+    parse_uri_reference( "https://www.example.com/path/to/file.txt" );
 
-static_assert( std::is_convertible< boost::system::result< url_view >, boost::system::result< url > >::value, "" );
+static_assert(
+    std::is_convertible<
+        boost::system::result< url_view >,
+        boost::system::result< url > >::value, "" );
 ----
 
 
@@ -146,9 +153,13 @@ a URL whose maximum size is known. Upon construction from
 // snippet_parsing_url_1bd
 [source,cpp]
 ----
-boost::system::result< static_url<1024> > rv = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+boost::system::result< static_url<1024> > rv =
+    parse_uri_reference( "https://www.example.com/path/to/file.txt" );
 
-static_assert( std::is_convertible< boost::system::result< static_url<1024> >, boost::system::result< url > >::value, "" );
+static_assert(
+    std::is_convertible<
+        boost::system::result< static_url<1024> >,
+        boost::system::result< url > >::value, "" );
 ----
 
 
@@ -164,7 +175,8 @@ can be used to check if the result contains an error.
 // snippet_parsing_url_1
 [source,cpp]
 ----
-boost::system::result< url > ru = parse_uri_reference( "https://www.example.com/path/to/file.txt" );
+boost::system::result< url > ru =
+    parse_uri_reference( "https://www.example.com/path/to/file.txt" );
 if ( ru )
 {
     url u = *ru;
@@ -188,7 +200,8 @@ from `result`. In contexts where it is acceptable to throw errors,
 ----
 try
 {
-    url u = parse_uri_reference( "https://www.example.com/path/to/file.txt" ).value();
+    url u = parse_uri_reference(
+        "https://www.example.com/path/to/file.txt" ).value();
     assert(u.encoded_path() == "/path/to/file.txt");
 }
 catch (boost::system::system_error &e)
