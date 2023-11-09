@@ -7,7 +7,6 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-
 = Character Sets
 
 A __character set__ represents a subset of low-ASCII characters, used as a building block for constructing rules.
@@ -80,10 +79,9 @@ core::string_view get_token( core::string_view s ) noexcept
 
 The function can now be called thusly:
 
-// code_grammar_2_6
 [source,cpp]
 ----
-assert( get_token( " \t john-doe\r\n \t jane-doe\r\n") == "john-doe" );
+include::example$unit/doc_grammar.cpp[tag=code_grammar_2_6,indent=0]
 ----
 
 The library provides these often-used character sets:
@@ -131,19 +129,17 @@ requirements and offers an optimized `constexpr`
 implementation which provides enhanced performance and notational convenience for specifying character sets.
 Compile-time instances can be constructed from strings:
 
-// code_grammar_2_7
 [source,cpp]
 ----
-constexpr lut_chars vowels = "AEIOU" "aeiou";
+include::example$unit/doc_grammar.cpp[tag=code_grammar_2_7,indent=0]
 ----
 
 We can use `operator+` and `operator-` notation to add and remove elements from the set at compile time.
 For example, sometimes the character 'y' sounds like a vowel:
 
-// code_grammar_2_8
 [source,cpp]
 ----
-constexpr auto vowels_and_y = vowels + 'y' + 'Y';
+include::example$unit/doc_grammar.cpp[tag=code_grammar_2_8,indent=0]
 ----
 
 The type is named after its implementation, which is a lookup table ("lut") of packed bits.
@@ -172,18 +168,16 @@ constexpr lut_chars visible_chars(
 
 Differences can be calculated with `operator-`:
 
-// code_grammar_2_11
 [source,cpp]
 ----
-constexpr auto visible_non_vowels = visible_chars - vowels;
+include::example$unit/doc_grammar.cpp[tag=code_grammar_2_11,indent=0]
 ----
 
 We can also remove individual characters:
 
-// code_grammar_2_12
 [source,cpp]
 ----
-constexpr auto visible_non_vowels_or_y = visible_chars - vowels - 'y';
+include::example$unit/doc_grammar.cpp[tag=code_grammar_2_12,indent=0]
 ----
 
 

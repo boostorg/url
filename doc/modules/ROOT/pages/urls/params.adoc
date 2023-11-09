@@ -156,17 +156,9 @@ This table shows some examples of initializer lists used to construct a param ty
 
 To understand the relationship between the query and the resulting range of params, first we define this function `parms` which returns a list of params corresponding to the elements in a container of params:
 
-// code_container_5_1
 [source,cpp]
 ----
-auto parms( core::string_view s ) -> std::list< param >
-{
-    url_view u( s );
-    std::list< param > seq;
-    for( auto qp : u.params() )
-        seq.push_back( qp );
-    return seq;
-}
+include::example$unit/doc_3_urls.cpp[tag=code_container_5_1,indent=0]
 ----
 
 In the table below we show the result of invoking `parms` with different queries.

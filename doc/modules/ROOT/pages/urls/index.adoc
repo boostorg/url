@@ -314,13 +314,9 @@ Note that if an authority is present, the host is always
 defined even if it is the empty string (corresponding
 to a zero-length __reg-name__ in the BNF).
 
-// snippet_parsing_authority_10a
 [source,cpp]
 ----
-url_view u( "https:///path/to_resource" );
-assert( u.has_authority() );
-assert( u.authority().buffer().empty() );
-assert( u.path() == "/path/to_resource" );
+include::example$unit/snippets.cpp[tag=snippet_parsing_authority_10a,indent=0]
 ----
 
 ====

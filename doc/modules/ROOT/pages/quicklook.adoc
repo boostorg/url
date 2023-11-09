@@ -46,13 +46,9 @@ instructions, that's already been done for you.
 
 Say you have the following URL that you want to parse:
 
-
-// code_urls_parsing_1
 [source,cpp]
 ----
-boost::core::string_view s =
-    "https://user:pass@example.com:443/path/to/my%2dfile.txt?"
-    "id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
+include::example$unit/snippets.cpp[tag=code_urls_parsing_1,indent=0]
 ----
 
 In this example, `string_view` is an alias to `boost::core::string_view`, a
@@ -62,10 +58,9 @@ The library namespace includes the aliases `string_view`, `error_code`, and
 
 You can parse the string by calling this function:
 
-// code_urls_parsing_2
 [source,cpp]
 ----
-boost::system::result<url_view> r = parse_uri( s );
+include::example$unit/snippets.cpp[tag=code_urls_parsing_2,indent=0]
 ----
 
 The function `parse_uri` returns an object of type ``result`<`url_view`>` which is a container resembling a variant that holds either an error or an object.
@@ -73,18 +68,16 @@ A number of functions are available to parse different types of URL.
 
 We can immediately call `result::value` to obtain a `url_view`.
 
-// snippet_parsing_3
 [source,cpp]
 ----
-url_view u = r.value();
+include::example$unit/snippets.cpp[tag=snippet_parsing_3,indent=0]
 ----
 
 Or simply
 
-// snippet_parsing_4
 [source,cpp]
 ----
-url_view u = *r;
+include::example$unit/snippets.cpp[tag=snippet_parsing_4,indent=0]
 ----
 
 When there are no errors, https://www.boost.org/doc/libs/1_83_0//libs/system/doc/html/system.html#ref_checked_value_access_2[`result::value`,window=blank_]
@@ -111,22 +104,9 @@ Exceptions only thrown on excessive input length.
 
 Accessing the parts of the URL is easy:
 
-// snippet_accessing_1
 [source,cpp]
 ----
-url_view u(
-    "https://user:pass@example.com:443/path/to/my%2dfile.txt?"
-    "id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor" );
-assert(u.scheme() == "https");
-assert(u.authority().buffer() == "user:pass@example.com:443");
-assert(u.userinfo() == "user:pass");
-assert(u.user() == "user");
-assert(u.password() == "pass");
-assert(u.host() == "example.com");
-assert(u.port() == "443");
-assert(u.path() == "/path/to/my-file.txt");
-assert(u.query() == "id=42&name=John Doe Jingleheimer-Schmidt");
-assert(u.fragment() == "page anchor");
+include::example$unit/snippets.cpp[tag=snippet_accessing_1,indent=0]
 ----
 
 URL paths can be further divided into path segments with the function `url_view::segments`.
@@ -140,16 +120,9 @@ Users can treat the query as a single entity.
 Code::
 +
 --
-// snippet_accessing_1b
 [source,cpp]
 ----
-for (auto seg: u.segments())
-    std::cout << seg << "\n";
-std::cout << "\n";
-
-for (auto param: u.params())
-    std::cout << param.key << ": " << param.value << "\n";
-std::cout << "\n";
+include::example$unit/snippets.cpp[tag=snippet_accessing_1b,indent=0]
 ----
 --
 
@@ -171,41 +144,30 @@ name: John Doe Jingleheimer-Schmidt
 These functions return views referring to substrings and sub-ranges of the underlying URL.
 By simply referencing the relevant portion of the URL string internally, its components can represent percent-decoded strings and be converted to other types without any previous memory allocation.
 
-// snippet_token_1
 [source,cpp]
 ----
-std::string h = u.host();
-assert(h == "example.com");
+include::example$unit/snippets.cpp[tag=snippet_token_1,indent=0]
 ----
 
 A special `string_token` type can also be used to specify how a portion of the URL should be encoded and returned.
 
-// snippet_token_2
 [source,cpp]
 ----
-std::string h = "host: ";
-u.host(string_token::append_to(h));
-assert(h == "host: example.com");
+include::example$unit/snippets.cpp[tag=snippet_token_2,indent=0]
 ----
 
 These functions might also return empty strings
 
-// snippet_accessing_2a
 [source,cpp]
 ----
-url_view u1 = parse_uri( "http://www.example.com" ).value();
-assert(u1.fragment().empty());
-assert(!u1.has_fragment());
+include::example$unit/snippets.cpp[tag=snippet_accessing_2a,indent=0]
 ----
 
 for both empty and absent components
 
-// snippet_accessing_2b
 [source,cpp]
 ----
-url_view u2 = parse_uri( "http://www.example.com/#" ).value();
-assert(u2.fragment().empty());
-assert(u2.has_fragment());
+include::example$unit/snippets.cpp[tag=snippet_accessing_2b,indent=0]
 ----
 
 Many components do not have corresponding functions such as
@@ -220,21 +182,9 @@ When applicable, the encoded components can also be directly accessed through a 
 Code::
 +
 --
-// snippet_accessing_4
 [source,cpp]
 ----
-std::cout <<
-    "url       : " << u                     << "\n"
-    "scheme    : " << u.scheme()            << "\n"
-    "authority : " << u.encoded_authority() << "\n"
-    "userinfo  : " << u.encoded_userinfo()  << "\n"
-    "user      : " << u.encoded_user()      << "\n"
-    "password  : " << u.encoded_password()  << "\n"
-    "host      : " << u.encoded_host()      << "\n"
-    "port      : " << u.port()              << "\n"
-    "path      : " << u.encoded_path()      << "\n"
-    "query     : " << u.encoded_query()     << "\n"
-    "fragment  : " << u.encoded_fragment()  << "\n";
+include::example$unit/snippets.cpp[tag=snippet_accessing_4,indent=0]
 ----
 --
 
@@ -267,11 +217,9 @@ An instance of `decode_view` provides a number of functions to persist a decoded
 Code::
 +
 --
-// snippet_decoding_1
 [source,cpp]
 ----
-decode_view dv("id=42&name=John%20Doe%20Jingleheimer%2DSchmidt");
-std::cout << dv << "\n";
+include::example$unit/snippets.cpp[tag=snippet_decoding_1,indent=0]
 ----
 --
 
@@ -304,13 +252,9 @@ Another common use case is converting URL path segments into filesystem paths:
 Code::
 +
 --
-// snippet_decoding_3
 [source,cpp]
 ----
-boost::filesystem::path p;
-for (auto seg: u.segments())
-    p.append(seg.begin(), seg.end());
-std::cout << "path: " << p << "\n";
+include::example$unit/snippets.cpp[tag=snippet_decoding_3,indent=0]
 ----
 --
 
@@ -328,34 +272,16 @@ In this example, only the internal allocations of
 `filesystem::path` need to happen.
 In many common use cases, no allocations are necessary at all, such as finding the appropriate route for a URL in a web server:
 
-// snippet_decoding_4a
 [source,cpp]
 ----
-auto match = [](
-    std::vector<std::string> const& route,
-    url_view u)
-{
-    auto segs = u.segments();
-    if (route.size() != segs.size())
-        return false;
-    return std::equal(
-        route.begin(),
-        route.end(),
-        segs.begin());
-};
+include::example$unit/snippets.cpp[tag=snippet_decoding_4a,indent=0]
 ----
 
 This allows us to easily match files in the document root directory of a web server:
 
-// snippet_decoding_4b
 [source,cpp]
 ----
-std::vector<std::string> route =
-    {"community", "reviews.html"};
-if (match(route, u))
-{
-    handle_route(route, u);
-}
+include::example$unit/snippets.cpp[tag=snippet_decoding_4b,indent=0]
 ----
 
 // [#compound-elements]
@@ -373,14 +299,9 @@ to obtain the path segments as a container that returns encoded strings:
 Code::
 +
 --
-// snippet_compound_elements_1
 [source,cpp]
 ----
-segments_encoded_view segs = u.encoded_segments();
-for( auto v : segs )
-{
-    std::cout << v << "\n";
-}
+include::example$unit/snippets.cpp[tag=snippet_compound_elements_1,indent=0]
 ----
 --
 
@@ -406,16 +327,9 @@ As with other library functions, `decode_view` permits accessing elements of com
 Code::
 +
 --
-// snippet_encoded_compound_elements_1
 [source,cpp]
 ----
-segments_encoded_view segs = u.encoded_segments();
-
-for( pct_string_view v : segs )
-{
-    decode_view dv = *v;
-    std::cout << dv << "\n";
-}
+include::example$unit/snippets.cpp[tag=snippet_encoded_compound_elements_1,indent=0]
 ----
 --
 
@@ -436,20 +350,9 @@ my-file.txt
 Code::
 +
 --
-// snippet_encoded_compound_elements_2
 [source,cpp]
 ----
-params_encoded_view params_ref = u.encoded_params();
-
-for( auto v : params_ref )
-{
-    decode_view dk(v.key);
-    decode_view dv(v.value);
-
-    std::cout <<
-        "key = " << dk <<
-        ", value = " << dv << "\n";
-}
+include::example$unit/snippets.cpp[tag=snippet_encoded_compound_elements_2,indent=0]
 ----
 --
 
@@ -472,19 +375,17 @@ A `url` or `static_url` must be constructed from an existing `url_view`.
 Unlike the `url_view`, which does not gain ownership of the underlying character buffer, the `url` container uses the default allocator to control a resizable character buffer which it owns.
 
 
-// snippet_quicklook_modifying_1
 [source,cpp]
 ----
-url u = parse_uri( s ).value();
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_1,indent=0]
 ----
 
 On the other hand, a `static_url` has fixed-capacity storage and does not require dynamic memory allocations.
 
 
-// snippet_quicklook_modifying_1b
 [source,cpp]
 ----
-static_url<1024> su = parse_uri( s ).value();
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_1b,indent=0]
 ----
 
 Objects of type `url` are https://en.cppreference.com/w/cpp/concepts/regular[std::regular,window=blank_].
@@ -494,18 +395,16 @@ They support all the inspection functions of
 
 Changing the scheme is easy:
 
-// snippet_quicklook_modifying_2
 [source,cpp]
 ----
-u.set_scheme( "https" );
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_2,indent=0]
 ----
 
 Or we can use a predefined constant:
 
-// snippet_quicklook_modifying_3
 [source,cpp]
 ----
-u.set_scheme_id( scheme::https ); // equivalent to u.set_scheme( "https" );
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_3,indent=0]
 ----
 
 The scheme must be valid, however, or an exception is thrown.
@@ -523,13 +422,9 @@ Modification functions return a reference to the object, so chaining is possible
 Code::
 +
 --
-// snippet_quicklook_modifying_4
 [source,cpp]
 ----
-u.set_host_ipv4( ipv4_address( "192.168.0.1" ) )
-    .set_port_number( 8080 )
-    .remove_userinfo();
-std::cout << u << "\n";
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_4,indent=0]
 ----
 --
 
@@ -552,12 +447,9 @@ The path segment and query parameter containers returned by a `url` offer modifi
 Code::
 +
 --
-// snippet_quicklook_modifying_5
 [source,cpp]
 ----
-params_ref p = u.params();
-p.replace(p.find("name"), {"name", "John Doe"});
-std::cout << u << "\n";
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_5,indent=0]
 ----
 --
 

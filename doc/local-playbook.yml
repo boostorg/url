@@ -35,4 +35,5 @@ antora:
       index_latest_only: true
 asciidoc:
   extensions:
+    - ./lib/boost-link-inline-macro.js
     - '@asciidoctor/tabs'
