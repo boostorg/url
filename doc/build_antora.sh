@@ -20,6 +20,8 @@ echo "Installing npm dependencies..."
 npm ci
 
 echo "Building docs in custom dir..."
+PATH="$(pwd)/node_modules/.bin:${PATH}"
+export PATH
 npx antora --clean --fetch "$PLAYBOOK"
 echo "Done"
 

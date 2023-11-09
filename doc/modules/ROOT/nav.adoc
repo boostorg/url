@@ -26,4 +26,5 @@
 ** xref:examples/file-router.adoc[]
 ** xref:examples/router.adoc[]
 ** xref:examples/sanitize.adoc[]
+* xref:reference:boost/urls.adoc[Reference]
 * xref:HelpCard.adoc[]
