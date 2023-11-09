@@ -31,12 +31,9 @@ Context-dependent rules can be considered to minimize the number of false negati
 
 Simple String Comparison can be performed by accessing the underlying buffer of URLs:
 
-// snippet_normalizing_1
 [source,cpp]
 ----
-url_view u1("https://www.boost.org/index.html");
-url_view u2("https://www.boost.org/doc/../index.html");
-assert(u1.buffer() != u2.buffer());
+include::example$unit/snippets.cpp[tag=snippet_normalizing_1,indent=0]
 ----
 
 By only considering the rules of https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_], Simple String Comparison fails to identify the URLs above point to the same resource.
@@ -45,28 +42,18 @@ By only considering the rules of https://tools.ietf.org/html/rfc3986[rfc3986,win
 
 The comparison operators implement Syntax-Based Normalization, which implements the rules defined by https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_].
 
-// snippet_normalizing_2
 [source,cpp]
 ----
-url_view u1("https://www.boost.org/index.html");
-url_view u2("https://www.boost.org/doc/../index.html");
-assert(u1 == u2);
+include::example$unit/snippets.cpp[tag=snippet_normalizing_2,indent=0]
 ----
 
 In mutable URLs, the member function `normalize` can also be used to apply Syntax-Based Normalization to a URL.
 A normalized URL is represented by a canonical string where any two strings that would compare equal end up with the same underlying representation.
 In other words, Simple String Comparison of two normalized URLs is equivalent to Syntax-Based Normalization.
 
-// snippet_normalizing_3
 [source,cpp]
 ----
-url_view u1("https://www.boost.org/index.html");
-url u2("https://www.boost.org/doc/../index.html");
-assert(u1.buffer() != u2.buffer());
-assert(u1 == u2);
-u2.normalize();
-assert(u1.buffer() == u2.buffer());
-assert(u1 == u2);
+include::example$unit/snippets.cpp[tag=snippet_normalizing_3,indent=0]
 ----
 
 === Syntax-Based Normalization Procedure
@@ -80,12 +67,9 @@ to minimize false negatives:
 
 The following example normalizes the percent-encoding and path segments of a URL:
 
-// snippet_normalizing_4
 [source,cpp]
 ----
-url u("https://www.boost.org/doc/../%69%6e%64%65%78%20file.html");
-u.normalize();
-assert(u.buffer() == "https://www.boost.org/index%20file.html");
+include::example$unit/snippets.cpp[tag=snippet_normalizing_4,indent=0]
 ----
 
 == Scheme and Protocol-Based Normalization
@@ -93,34 +77,9 @@ assert(u.buffer() == "https://www.boost.org/index%20file.html");
 Syntax-Based Normalization can also be used as a first step for Scheme-Based and Protocol-Based Normalization.
 One common scheme-specific rule is ignoring the default port for that scheme and empty absolute paths:
 
-// snippet_normalizing_5
 [source,cpp]
 ----
-auto normalize_http_url =
-    [](url& u)
-{
-    u.normalize();
-    if (u.port() == "80" ||
-        u.port().empty())
-        u.remove_port();
-    if (u.has_authority() &&
-        u.encoded_path().empty())
-        u.set_path_absolute(true);
-};
-
-url u1("https://www.boost.org");
-normalize_http_url(u1);
-url u2("https://www.boost.org/");
-normalize_http_url(u2);
-url u3("https://www.boost.org:/");
-normalize_http_url(u3);
-url u4("https://www.boost.org:80/");
-normalize_http_url(u4);
-
-assert(u1.buffer() == "https://www.boost.org/");
-assert(u2.buffer() == "https://www.boost.org/");
-assert(u3.buffer() == "https://www.boost.org/");
-assert(u4.buffer() == "https://www.boost.org/");
+include::example$unit/snippets.cpp[tag=snippet_normalizing_5,indent=0]
 ----
 
 Other criteria commonly used to minimize false negatives for specific schemes are:

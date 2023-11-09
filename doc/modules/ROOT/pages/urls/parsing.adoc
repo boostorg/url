@@ -17,12 +17,9 @@ string literal containing a
 https://datatracker.ietf.org/doc/html/rfc3986#section-3[__URI__,window=blank_]:
 
 
-// code_urls_parsing_1
 [source,cpp]
 ----
-boost::core::string_view s =
-    "https://user:pass@example.com:443/path/to/my%2dfile.txt?"
-    "?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";
+include::example$unit/snippets.cpp[tag=code_urls_parsing_1,indent=0]
 ----
 
 
@@ -46,10 +43,9 @@ https://datatracker.ietf.org/doc/html/rfc3986#section-4.1[__URI-reference__,wind
 grammar, throwing an exception upon failure. The following two statements
 are equivalent:
 
-// code_urls_parsing_2
 [source,cpp]
 ----
-boost::system::result<url_view> r = parse_uri( s );
+include::example$unit/snippets.cpp[tag=code_urls_parsing_2,indent=0]
 ----
 
 
@@ -123,9 +119,7 @@ protocol:
 // snippet_parsing_url_1bb
 [source,cpp]
 ----
-url u = parse_uri_reference( "https://www.example.com/path/to/file.txt" ).value();
-
-assert(u.encoded_path() == "/path/to/file.txt");
+include::example$unit/snippets.cpp[tag=snippet_parsing_url_1bb,indent=0]
 ----
 
 
@@ -136,13 +130,7 @@ to hold a copy of the string.
 // snippet_parsing_url_1bc
 [source,cpp]
 ----
-boost::system::result< url > rv =
-    parse_uri_reference( "https://www.example.com/path/to/file.txt" );
-
-static_assert(
-    std::is_convertible<
-        boost::system::result< url_view >,
-        boost::system::result< url > >::value, "" );
+include::example$unit/snippets.cpp[tag=snippet_parsing_url_1bc,indent=0]
 ----
 
 
@@ -153,13 +141,7 @@ a URL whose maximum size is known. Upon construction from
 // snippet_parsing_url_1bd
 [source,cpp]
 ----
-boost::system::result< static_url<1024> > rv =
-    parse_uri_reference( "https://www.example.com/path/to/file.txt" );
-
-static_assert(
-    std::is_convertible<
-        boost::system::result< static_url<1024> >,
-        boost::system::result< url > >::value, "" );
+include::example$unit/snippets.cpp[tag=snippet_parsing_url_1bd,indent=0]
 ----
 
 
@@ -175,18 +157,7 @@ can be used to check if the result contains an error.
 // snippet_parsing_url_1
 [source,cpp]
 ----
-boost::system::result< url > ru =
-    parse_uri_reference( "https://www.example.com/path/to/file.txt" );
-if ( ru )
-{
-    url u = *ru;
-    assert(u.encoded_path() == "/path/to/file.txt");
-}
-else
-{
-    boost::system::error_code e = ru.error();
-    handle_error(e);
-}
+include::example$unit/snippets.cpp[tag=snippet_parsing_url_1,indent=0]
 ----
 
 
@@ -198,16 +169,7 @@ from `result`. In contexts where it is acceptable to throw errors,
 // snippet_parsing_url_1b
 [source,cpp]
 ----
-try
-{
-    url u = parse_uri_reference(
-        "https://www.example.com/path/to/file.txt" ).value();
-    assert(u.encoded_path() == "/path/to/file.txt");
-}
-catch (boost::system::system_error &e)
-{
-    handle_error(e);
-}
+include::example$unit/snippets.cpp[tag=snippet_parsing_url_1b,indent=0]
 ----
 
 

@@ -43,10 +43,9 @@ This is a forward range of characters which performs percent-decoding when itera
 It also supports equality and comparison to unencoded strings, without allocating memory.
 In the example below we parse the string `s` as a series of zero or more `pchars`:
 
-// code_grammar_5_1
 [source,cpp]
 ----
-system::result< pct_string_view > rv = parse( s, pct_encoded_rule( pchars ) );
+include::example$unit/doc_grammar.cpp[tag=code_grammar_5_1,indent=0]
 ----
 
 These constants are used and provided by the library to specify rules for percent-encoded URL components:
@@ -107,23 +106,9 @@ To achieve this, the library makes public the rules used to implement high-level
 Here we present a rule suitable for parsing the the HTTP
 https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1[__request-line__,window=blank_]:
 
-// code_grammar_5_2
 [source,cpp]
 ----
-// request-line   = method SP request-target SP HTTP-version CRLF
-
-constexpr auto request_line_rule = tuple_rule(
-    not_empty_rule( token_rule( alpha_chars ) ),    // method
-    squelch( delim_rule( ' ' ) ),                   // SP
-    variant_rule(
-        absolute_uri_rule,                          // absolute-uri or
-        relative_ref_rule),                         // relative-ref
-    squelch( delim_rule( ' ' ) ),
-    squelch( literal_rule( "HTTP/" ) ),             // "HTTP/"
-    delim_rule( digit_chars ),                      // DIGIT
-    squelch( delim_rule( '.' ) ),                   // "."
-    delim_rule( digit_chars ),                      // DIGIT
-    squelch( literal_rule( "\r\n" ) ) );            // CRLF
+include::example$unit/doc_grammar.cpp[tag=code_grammar_5_2,indent=0]
 ----
 
 The library offers these rules to allow custom rule definitions to integrate the various styles of valid URL rules:

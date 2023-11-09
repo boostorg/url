@@ -66,17 +66,9 @@ http://www.example.com/path/to/file.txt
 To understand the relationship between the path and segments, we define this function `segs` which returns a list of strings corresponding to the elements in a container of segments:
 
 
-// code_container_4_1
 [source,cpp]
 ----
-auto segs( core::string_view s ) -> std::list< std::string >
-{
-    url_view u( s );
-    std::list< std::string > seq;
-    for( auto seg : u.encoded_segments() )
-        seq.push_back( seg.decode() );
-    return seq;
-}
+include::example$unit/doc_3_urls.cpp[tag=code_container_4_1,indent=0]
 ----
 
 In this table we show the result of invoking `segs` with different paths.

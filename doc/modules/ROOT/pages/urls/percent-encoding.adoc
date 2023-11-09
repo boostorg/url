@@ -7,18 +7,15 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-
 = Percent Encoding
 
 == Encoding
 
 The `encode` can be used to percent-encode strings with the specified __CharSet__.
 
-// snippet_encoding_1
 [source,cpp]
 ----
-std::string s = encode("hello world!", unreserved_chars);
-assert(s == "hello%20world%21");
+include::example$unit/snippets.cpp[tag=snippet_encoding_1,indent=0]
 ----
 
 A few parameters, such as encoding spaces as plus (`+`), can be adjusted with `encode_opts`:
@@ -26,10 +23,7 @@ A few parameters, such as encoding spaces as plus (`+`), can be adjusted with `e
 // snippet_encoding_2
 [source,cpp]
 ----
-encoding_opts opt;
-opt.space_as_plus = true;
-std::string s = encode("msg=hello world", pchars, opt);
-assert(s == "msg=hello+world");
+include::example$unit/snippets.cpp[tag=snippet_encoding_2,indent=0]
 ----
 
 The result type of the function can also be specified via a __StringToken__
@@ -38,10 +32,7 @@ so that strings can be reused or appended.
 // snippet_encoding_3
 [source,cpp]
 ----
-std::string s;
-encode("hello ", pchars, {}, string_token::assign_to(s));
-encode("world", pchars, {}, string_token::append_to(s));
-assert(s == "hello%20world");
+include::example$unit/snippets.cpp[tag=snippet_encoding_3,indent=0]
 ----
 
 We can also use `encoded_size` to determine the required size before attempting to encode:
@@ -49,11 +40,7 @@ We can also use `encoded_size` to determine the required size before attempting 
 // snippet_encoding_4
 [source,cpp]
 ----
-boost::core::string_view e = "hello world";
-std::string s;
-s.reserve(encoded_size(e, pchars));
-encode(e, pchars, {}, string_token::assign_to(s));
-assert(s == "hello%20world");
+include::example$unit/snippets.cpp[tag=snippet_encoding_4,indent=0]
 ----
 
 In other scenarios, strings can also be directly encoded into buffers:
@@ -61,11 +48,7 @@ In other scenarios, strings can also be directly encoded into buffers:
 // snippet_encoding_5
 [source,cpp]
 ----
-boost::core::string_view e = "hello world";
-std::string s;
-s.resize(encoded_size(e, pchars));
-encode(&s[0], s.size(), e, pchars);
-assert(s == "hello%20world");
+include::example$unit/snippets.cpp[tag=snippet_encoding_5,indent=0]
 ----
 
 == Validating
@@ -75,8 +58,7 @@ The class `pct_string_view` represents a reference percent-encoded strings:
 // snippet_encoding_6
 [source,cpp]
 ----
-pct_string_view sv = "hello%20world";
-assert(sv == "hello%20world");
+include::example$unit/snippets.cpp[tag=snippet_encoding_6,indent=0]
 ----
 
 `pct_string_view` is analogous to `string_view`, with the main difference that the percent-encoding of the underlying buffer is always validated.
@@ -89,11 +71,7 @@ can be returned with the
 // snippet_encoding_7
 [source,cpp]
 ----
-boost::system::result<pct_string_view> rs =
-    make_pct_string_view("hello%20world");
-assert(rs.has_value());
-pct_string_view sv = rs.value();
-assert(sv == "hello%20world");
+include::example$unit/snippets.cpp[tag=snippet_encoding_7,indent=0]
 ----
 
 This means `make_pct_string_view`
@@ -105,10 +83,7 @@ This completely removes the responsibility of revalidating this information or t
 // snippet_encoding_8
 [source,cpp]
 ----
-pct_string_view s = "path/to/file";
-url u;
-u.set_encoded_path(s);
-assert(u.buffer() == "path/to/file");
+include::example$unit/snippets.cpp[tag=snippet_encoding_8,indent=0]
 ----
 
 When exceptions are acceptable, a common pattern is to let a literal string or other type convertible to `string_view` be implicitly converted to
@@ -117,9 +92,7 @@ When exceptions are acceptable, a common pattern is to let a literal string or o
 // snippet_encoding_9
 [source,cpp]
 ----
-url u;
-u.set_encoded_path("path/to/file");
-assert(u.buffer() == "path/to/file");
+include::example$unit/snippets.cpp[tag=snippet_encoding_9,indent=0]
 ----
 
 If the input is invalid, note that an exception is thrown while the
@@ -131,10 +104,7 @@ Reusing the validation guarantee is particularly useful when the
 // snippet_encoding_10
 [source,cpp]
 ----
-url_view uv("path/to/file");
-url u;
-u.set_encoded_path(uv.encoded_path());
-assert(u.buffer() == "path/to/file");
+include::example$unit/snippets.cpp[tag=snippet_encoding_10,indent=0]
 ----
 
 In the example above,
@@ -151,11 +121,7 @@ The class `pct_string_view` represents a reference percent-encoded strings.
 // snippet_encoding_11
 [source,cpp]
 ----
-pct_string_view es("hello%20world");
-assert(es == "hello%20world");
-
-decode_view dv("hello%20world");
-assert(dv == "hello world");
+include::example$unit/snippets.cpp[tag=snippet_encoding_11,indent=0]
 ----
 
 A `decode_view` can also be created from a `pct_string_view` with the
@@ -165,12 +131,7 @@ The also gives us an opportunity to validate external strings:
 // snippet_encoding_12
 [source,cpp]
 ----
-boost::system::result<pct_string_view> rs =
-    make_pct_string_view("hello%20world");
-assert(rs.has_value());
-pct_string_view s = rs.value();
-decode_view dv = *s;
-assert(dv == "hello world");
+include::example$unit/snippets.cpp[tag=snippet_encoding_12,indent=0]
 ----
 
 This is particularly useful when the decoded string need to be accessed for comparisons with no necessity to explicitly decoding the string into a buffer:
@@ -178,34 +139,7 @@ This is particularly useful when the decoded string need to be accessed for comp
 // snippet_encoding_13
 [source,cpp]
 ----
-url_view u =
-    parse_relative_ref("user/john%20doe/profile%20photo.jpg").value();
-std::vector<std::string> route =
-    {"user", "john doe", "profile photo.jpg"};
-auto segs = u.encoded_segments();
-auto it0 = segs.begin();
-auto end0 = segs.end();
-auto it1 = route.begin();
-auto end1 = route.end();
-while (
-    it0 != end0 &&
-    it1 != end1)
-{
-    pct_string_view seg0 = *it0;
-    decode_view dseg0 = *seg0;
-    boost::core::string_view seg1 = *it1;
-    if (dseg0 == seg1)
-    {
-        ++it0;
-        ++it1;
-    }
-    else
-    {
-        break;
-    }
-}
-bool route_match = it0 == end0 && it1 == end1;
-assert(route_match);
+include::example$unit/snippets.cpp[tag=snippet_encoding_13,indent=0]
 ----
 
 The member function
@@ -217,11 +151,7 @@ Like the free-function
 // snippet_encoding_14
 [source,cpp]
 ----
-pct_string_view s = "user/john%20doe/profile%20photo.jpg";
-std::string buf;
-buf.resize(s.decoded_size());
-s.decode({}, string_token::assign_to(buf));
-assert(buf == "user/john doe/profile photo.jpg");
+include::example$unit/snippets.cpp[tag=snippet_encoding_14,indent=0]
 ----
 
 
