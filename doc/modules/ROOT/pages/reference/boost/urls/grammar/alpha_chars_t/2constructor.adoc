@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#D4D9C8A0172230F989B2A6FD23247504C5731DC0]
+== alpha_chars_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+alpha_chars_t() noexcept = default;
+----
+
+Defined in file <include/boost/url/grammar/alpha_chars.hpp> on line 50
+

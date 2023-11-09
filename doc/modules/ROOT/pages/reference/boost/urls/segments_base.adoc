@@ -1,0 +1,87 @@
+:relfileprefix: ../../
+[#81EF5C3814CDD7DCB06D54E70796A3749502E3A4]
+== Class segments_base
+
+pass:v,q[Common functionality for containers]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class segments_base;
+----
+
+Defined in file <include/boost/url/segments_base.hpp> on line 37
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_base/iterator.adoc[`pass:v[iterator]`] |
+|===
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_base/const_iterator.adoc[`pass:v[const_iterator]`] |xref:reference/boost/urls/segments_base/iterator.adoc[iterator]
+
+|xref:reference/boost/urls/segments_base/value_type.adoc[`pass:v[value_type]`] |pass:v,q[The value type]
+
+|xref:reference/boost/urls/segments_base/reference.adoc[`pass:v[reference]`] |pass:v,q[The reference type]
+
+|xref:reference/boost/urls/segments_base/const_reference.adoc[`pass:v[const_reference]`] |pass:v,q[The reference type]
+
+|xref:reference/boost/urls/segments_base/size_type.adoc[`pass:v[size_type]`] |pass:v,q[An unsigned integer type used to represent size.]
+
+|xref:reference/boost/urls/segments_base/difference_type.adoc[`pass:v[difference_type]`] |pass:v,q[A signed integer type used to represent differences.]
+
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_base/buffer.adoc[`pass:v[buffer]`] |pass:v,q[Return the referenced character buffer.]
+
+|xref:reference/boost/urls/segments_base/is_absolute.adoc[`pass:v[is_absolute]`] |pass:v,q[Returns true if this references an absolute path.]
+
+|xref:reference/boost/urls/segments_base/empty.adoc[`pass:v[empty]`] |pass:v,q[Return true if there are no segments]
+
+|xref:reference/boost/urls/segments_base/size.adoc[`pass:v[size]`] |pass:v,q[Return the number of segments]
+
+|xref:reference/boost/urls/segments_base/front.adoc[`pass:v[front]`] |pass:v,q[Return the first segment]
+
+|xref:reference/boost/urls/segments_base/back.adoc[`pass:v[back]`] |pass:v,q[Return the last segment]
+
+|xref:reference/boost/urls/segments_base/begin.adoc[`pass:v[begin]`] |pass:v,q[Return an iterator to the beginning]
+
+|xref:reference/boost/urls/segments_base/end.adoc[`pass:v[end]`] |pass:v,q[Return an iterator to the end]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_base/8friend-04.adoc[`pass:v[url_view_base]`] |
+|xref:reference/boost/urls/segments_base/8friend-0a.adoc[`pass:v[segments_ref]`] |
+|xref:reference/boost/urls/segments_base/8friend-02.adoc[`pass:v[segments_view]`] |
+|===
+
+=== Description
+
+pass:v,q[This base class is used by the library] pass:v,q[to provide common member functions for]
+pass:v,q[containers. This cannot be instantiated]
+pass:v,q[directly; Instead, use one of the]
+pass:v,q[containers or functions:]
+
+=== Containers
+
+* xref:reference/boost/urls/segments_ref.adoc[segments_ref]
+
+* xref:reference/boost/urls/segments_view.adoc[segments_view]
+
+* xref:reference/boost/urls/segments_encoded_ref.adoc[segments_encoded_ref]
+
+* xref:reference/boost/urls/segments_encoded_view.adoc[segments_encoded_view]
+
+

@@ -1,0 +1,49 @@
+:relfileprefix: ../../../
+[#E7247B6ED2F3D8AF8D2C7167CDF5CCC86B2AD9FA]
+== empty
+
+pass:v,q[Return true if the url is empty]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+empty() const noexcept;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 201
+
+=== Description
+
+pass:v,q[The empty string matches the] pass:v,q[relative-ref] pass:v,q[grammar.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "" ).empty() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+
+relative-part = "//" authority path-abempty
+              / path-absolute
+              / path-noscheme
+              / path-empty
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-4.2[4.2.  Relative Reference (rfc3986)]
+
+

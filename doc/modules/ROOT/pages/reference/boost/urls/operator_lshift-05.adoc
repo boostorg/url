@@ -1,0 +1,49 @@
+:relfileprefix: ../../
+[#550F303795665897E84B1835ACA60B9F00D1B235]
+== operator<<
+
+pass:v,q[Format the url to the output stream]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/url_view_base.adoc[url_view_base]& u);
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 2778
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 2722
+
+=== Description
+
+pass:v,q[This function serializes the url to] pass:v,q[the specified output stream. Any]
+pass:v,q[percent-escapes are emitted as-is;]
+pass:v,q[no decoding is performed.]
+
+=== Example
+[,cpp]
+----
+url_view u( "http://www.example.com/index.htm" );
+std::stringstream ss;
+ss << u;
+assert( ss.str() == "http://www.example.com/index.htm" );
+----
+
+=== Effects
+[,cpp]
+----
+return os << u.buffer();
+----
+
+=== Complexity
+pass:v,q[Linear in `u.buffer().size()`]
+
+=== Exception Safety
+pass:v,q[Basic guarantee.]
+
+

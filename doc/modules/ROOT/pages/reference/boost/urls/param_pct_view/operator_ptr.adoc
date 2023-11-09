@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#09D1CC98741F3E3352DC078F13EB48F86B534630]
+== operator->
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+const xref:reference/boost/urls/param_pct_view.adoc[param_pct_view]*
+operator->() const noexcept;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 859
+

@@ -1,0 +1,37 @@
+:relfileprefix: ../../../
+[#63823226B3AAA6BADBF076A1788E7EC9C58E8535]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+operator=(const xref:reference/boost/urls/url.adoc[url]& u);
+----
+
+Defined in file <include/boost/url/url.hpp> on line 326
+
+=== Description
+
+pass:v,q[The contents of `u` are copied and] pass:v,q[the previous contents of `this` are]
+pass:v,q[destroyed.]
+pass:v,q[Capacity is preserved, or increases.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer() == u.buffer() && this->buffer().data() != u.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Linear in `u.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

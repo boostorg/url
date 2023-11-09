@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#516B38BBD8D69086B8F08E173D47D4131AAB29A6]
+== arg
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+arg(const xref:reference/boost/urls/string_token/arg.adoc[arg]&) = delete;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 74
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#DC17DE91A296479D145A2EBB62BD54ED0F1B4984]
+== Friend static_url_base
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend xref:reference/boost/urls/static_url_base.adoc[static_url_base];
+----
+
+Defined in file <include/boost/url/url_base.hpp> on line 71
+

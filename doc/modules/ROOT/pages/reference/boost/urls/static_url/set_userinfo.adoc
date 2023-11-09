@@ -1,0 +1,72 @@
+:relfileprefix: ../../../
+[#85ED63A1D2FD09E3AEC3830176621D5EF61F5CC9]
+== set_userinfo
+
+pass:v,q[Set the userinfo]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/static_url.adoc[static_url]&
+set_userinfo(string_view s);
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 357
+
+=== Description
+
+pass:v,q[The userinfo is set to the given string,] pass:v,q[which may contain percent-escapes.]
+pass:v,q[Any special or reserved characters in the]
+pass:v,q[string are automatically percent-encoded.]
+pass:v,q[The effects on the user and password]
+pass:v,q[depend on the presence of a colon (':')]
+pass:v,q[in the string:]
+
+* pass:v,q[If an unescaped colon exists, the]
+pass:v,q[characters up to the colon become]
+pass:v,q[the user and the rest of the characters]
+pass:v,q[after the colon become the password.]
+pass:v,q[In this case]
+xref:reference/boost/urls/url_view_base/has_password.adoc[has_password]
+pass:v,q[returns]
+pass:v,q[true. Otherwise,]
+
+* pass:v,q[If there is no colon, the user is]
+pass:v,q[set to the string. The function]
+xref:reference/boost/urls/url_view_base/has_password.adoc[has_password]
+pass:v,q[returns false.]
+[NOTE]
+pass:v,q[The interpretation of the userinfo as]
+pass:v,q[individual user and password components]
+pass:v,q[is scheme-dependent. Transmitting]
+pass:v,q[passwords in URLs is deprecated.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://example.com" ).set_userinfo( "user:pass" ).encoded_user() == "user" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size() + s.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+userinfo      = [ [ user ] [ ':' password ] ]
+
+user          = *( unreserved / pct-encoded / sub-delims )
+password      = *( unreserved / pct-encoded / sub-delims / ":" )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1[            3.2.1. User Information (rfc3986)]
+
+

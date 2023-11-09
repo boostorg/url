@@ -1,0 +1,24 @@
+:relfileprefix: ../../../
+[#48C42B41D6AC0AF3FBC45543E4EA5C1CDED16A8F]
+== ipv6_address
+
+pass:v,q[Constructor.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+ipv6_address() = default;
+----
+
+Defined in file <include/boost/url/ipv6_address.hpp> on line 103
+
+=== Description
+
+pass:v,q[Default constructed objects represent] pass:v,q[the unspecified address.]
+
+* link:https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.2[2.5.2. The Unspecified Address]
+
+

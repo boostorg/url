@@ -1,0 +1,9 @@
+:relfileprefix: ../
+[#589DB5103C519B0058B64D28E38994794E95A3B0]
+== Namespace empty_
+
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/empty_/empty_value.adoc[`pass:v[empty_value]`] |
+|===

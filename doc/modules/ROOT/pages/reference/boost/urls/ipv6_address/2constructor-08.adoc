@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#8D42AD0FE8415391E886566C934684F6C0F8FBDA]
+== ipv6_address
+
+pass:v,q[Construct from an IPv4 address.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ipv6_address(const xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]& addr) noexcept;
+----
+
+Declared in file <include/boost/url/ipv6_address.hpp> on line 141
+
+Defined in file <src/ipv6_address.cpp> on line 32
+
+=== Description
+
+pass:v,q[This function constructs an IPv6 address] pass:v,q[from the IPv4 address `addr`. The resulting]
+pass:v,q[address is an IPv4-Mapped IPv6 Address.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.5.2[2.5.5.2. IPv4-Mapped IPv6 Address (rfc4291)]
+
+

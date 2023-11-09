@@ -1,0 +1,19 @@
+:relfileprefix: ../../../../
+[#0300D2493EAB6030FCAB34A716B6CA44CF5533A5]
+== Friend optional_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class R_>
+friend
+constexpr
+xref:reference/boost/urls/grammar/optional_rule_t.adoc[optional_rule_t]<R_>
+optional_rule(const R_& r);
+----
+
+Defined in file <include/boost/url/grammar/optional_rule.hpp> on line 76
+

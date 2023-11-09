@@ -1,0 +1,57 @@
+:relfileprefix: ../../../
+[#4393553BE77FF81999E6FDFFA2035BD97A544CAB]
+== path
+
+pass:v,q[Return the path]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class StringToken = xref:reference/boost/urls/string_token.adoc[string_token]::xref:reference/boost/urls/string_token/return_string.adoc[return_string]>
+StringToken::result_type
+path(StringToken&& token) const;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 1663
+
+=== Description
+
+pass:v,q[This function returns the path as a] pass:v,q[string. The path may be empty.]
+pass:v,q[Any percent-escapes in the string are]
+pass:v,q[decoded first.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "file:///Program%20Files/Games/config.ini" ).path() == "/Program Files/Games/config.ini" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->path().size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+path          = path-abempty    ; begins with "/" or is empty
+              / path-absolute   ; begins with "/" but not "//"
+              / path-noscheme   ; begins with a non-colon segment
+              / path-rootless   ; begins with a segment
+              / path-empty      ; zero characters
+
+path-abempty  = *( "/" segment )
+path-absolute = "/" [ segment-nz *( "/" segment ) ]
+path-noscheme = segment-nz-nc *( "/" segment )
+path-rootless = segment-nz *( "/" segment )
+path-empty    = 0<pchar>
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3. Path (rfc3986)]
+
+

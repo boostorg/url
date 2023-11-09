@@ -1,0 +1,21 @@
+:relfileprefix: ../../../
+[#963494D2D606A2834E893410E05D88AAF680A96C]
+== range_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class Rule>
+constexpr
+xref:reference/boost/urls/grammar/range_rule_t-09.adoc[range_rule_t]<Rule>
+range_rule(
+    const Rule& next,
+    size_t N = 0,
+    size_t M = std::size_t(-1)) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 396
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#195000D6A259E36402603C23FBA145380CF211BD]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/pct_string_view.adoc[pct_string_view];
+----
+
+Defined in file <include/boost/url/rfc/pct_encoded_rule.hpp> on line 71
+

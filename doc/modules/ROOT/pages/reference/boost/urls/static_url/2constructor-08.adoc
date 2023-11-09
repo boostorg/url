@@ -1,0 +1,64 @@
+:relfileprefix: ../../../
+[#8206642C3EF08970B5BFB7EBDBC9AA8089E268BD]
+== static_url
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+static_url(string_view s);
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 217
+
+=== Description
+
+pass:v,q[This function constructs a url from] pass:v,q[the string `s`, which must contain a]
+pass:v,q[valid]
+pass:v,q[URI]
+pass:v,q[or]
+pass:v,q[relative-ref]
+pass:v,q[or else an exception is thrown.]
+pass:v,q[The new url retains ownership by]
+pass:v,q[making a copy of the passed string.]
+
+=== Example
+[,cpp]
+----
+static_url< 1024 > u( "https://www.example.com" );
+----
+
+=== Effects
+[,cpp]
+----
+return static_url( parse_uri_reference( s ).value() );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() != s.data()
+----
+
+=== Complexity
+pass:v,q[Linear in `s.size()`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-4.1[4.1. URI Reference]
+
+

@@ -1,0 +1,53 @@
+:relfileprefix: ../../../
+[#686848CF93CFF57B5DCED202CE102F3389FDD928]
+== remove_fragment
+
+pass:v,q[Remove the fragment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_base.adoc[url_base]&
+remove_fragment() noexcept;
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 2390
+
+Defined in file <src/url_base.cpp> on line 1471
+
+=== Description
+
+pass:v,q[This function removes the fragment.] pass:v,q[An empty fragment is distinct from]
+pass:v,q[having no fragment.]
+
+=== Example
+[,cpp]
+----
+assert( url( "?first=john&last=doe#anchor" ).remove_fragment().buffer() == "?first=john&last=doe" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_fragment() == false && this->encoded_fragment() == ""
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+fragment    = *( pchar / "/" / "?" )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.5[3.5.  Fragment]
+
+

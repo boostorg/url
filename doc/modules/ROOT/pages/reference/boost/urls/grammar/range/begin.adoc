@@ -1,0 +1,19 @@
+:relfileprefix: ../../../../
+[#6A67822D3767E4B319B1CD9BBA465F3A382981FF]
+== begin
+
+pass:v,q[Return an iterator to the beginning]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/grammar/range/iterator.adoc[iterator]
+begin() const noexcept;
+----
+
+Declared in file <include/boost/url/grammar/range_rule.hpp> on line 242
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 581
+

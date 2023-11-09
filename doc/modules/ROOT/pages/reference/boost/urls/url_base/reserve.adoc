@@ -1,0 +1,30 @@
+:relfileprefix: ../../../
+[#47901A8D3FDE64F8228CAAE6F00C68940761B114]
+== reserve
+
+pass:v,q[Adjust the capacity without changing the size]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+reserve(size_t n);
+----
+
+Defined in file <include/boost/url/url_base.hpp> on line 186
+
+=== Description
+
+pass:v,q[This function adjusts the capacity] pass:v,q[of the container in characters, without]
+pass:v,q[affecting the current contents. Has]
+pass:v,q[no effect if `n]
+pass:v,q[<]
+pass:v,q[= this->capacity()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

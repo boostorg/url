@@ -1,0 +1,19 @@
+:relfileprefix: ../../../
+[#A53B637854788D97F449FB6574CCEFBD241C4544]
+== Friend operator<<
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/authority_view.adoc[authority_view]& a);
+----
+
+Defined in file <include/boost/url/authority_view.hpp> on line 1358
+

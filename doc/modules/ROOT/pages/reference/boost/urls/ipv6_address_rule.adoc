@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#1CD95B31680617251AF337E4F6B0DC82EC8C8A58]
+== ipv6_address_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/ipv6_address_rule_t.adoc[ipv6_address_rule_t] ipv6_address_rule;
+----
+
+Defined in file <include/boost/url/rfc/ipv6_address_rule.hpp> on line 80
+

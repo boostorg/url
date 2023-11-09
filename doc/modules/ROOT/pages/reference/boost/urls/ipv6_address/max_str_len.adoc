@@ -1,0 +1,27 @@
+:relfileprefix: ../../../
+[#F6A5712D7D206D7680F90BB94C995C65D21D99DF]
+== max_str_len
+
+pass:v,q[The number of characters in the longest possible IPv6 string.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+static
+const size_t max_str_len;
+----
+
+Defined in file <include/boost/url/ipv6_address.hpp> on line 81
+
+=== Description
+
+pass:v,q[The longest IPv6 address is:]
+[,cpp]
+----
+ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
+----
+
+

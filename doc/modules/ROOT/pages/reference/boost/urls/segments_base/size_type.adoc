@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#AB473BB0C2BE1E18AF38D05A51505C4FE60B1984]
+== size_type
+
+pass:v,q[An unsigned integer type used to represent size.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using size_type = size_t;
+----
+
+Defined in file <include/boost/url/segments_base.hpp> on line 107
+

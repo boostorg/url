@@ -1,0 +1,28 @@
+:relfileprefix: ../../
+[#A31C257F331F5E9F2D02B404AEF84F9C62B4F765]
+== Class relative_ref_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct relative_ref_rule_t;
+----
+
+Defined in file <include/boost/url/rfc/relative_ref_rule.hpp> on line 50
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/relative_ref_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/relative_ref_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+

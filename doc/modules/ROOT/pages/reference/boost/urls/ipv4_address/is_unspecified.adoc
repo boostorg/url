@@ -1,0 +1,19 @@
+:relfileprefix: ../../../
+[#BFA8CE71977DB05A528A33A6DE31FA3E291895F3]
+== is_unspecified
+
+pass:v,q[Return true if the address is unspecified]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+is_unspecified() const noexcept;
+----
+
+Declared in file <include/boost/url/ipv4_address.hpp> on line 232
+
+Defined in file <src/ipv4_address.cpp> on line 91
+

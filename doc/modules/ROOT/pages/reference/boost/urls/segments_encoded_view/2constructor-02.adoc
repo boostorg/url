@@ -1,0 +1,65 @@
+:relfileprefix: ../../../
+[#2E1D0E3A2F32C13A46ACB3A6C07A35C711847144]
+== segments_encoded_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+segments_encoded_view(string_view s);
+----
+
+Declared in file <include/boost/url/segments_encoded_view.hpp> on line 167
+
+Defined in file <src/segments_encoded_view.cpp> on line 28
+
+=== Description
+
+pass:v,q[This function constructs segments from] pass:v,q[a valid path string, which can contain]
+pass:v,q[percent escapes.]
+pass:v,q[Upon construction, the view references]
+pass:v,q[the character buffer pointed to by `s`.]
+pass:v,q[caller is responsible for ensuring]
+pass:v,q[that the lifetime of the buffer]
+pass:v,q[extends until the view is destroyed.]
+
+=== Example
+[,cpp]
+----
+segments_encoded_view ps( "/path/to/file.txt" );
+----
+
+=== Effects
+[,cpp]
+----
+return parse_path( s ).value();
+----
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() == s.data()
+----
+
+=== Complexity
+pass:v,q[Linear in `s`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+path = [ "/" ] [ segment *( "/" segment ) ]
+
+segment = *pchar
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3.  Path]
+
+

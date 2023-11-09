@@ -1,0 +1,55 @@
+:relfileprefix: ../../../
+[#FA933C39F4A68FD6DC66BF02EC7DBF9F78B6ABB7]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_ref.adoc[segments_ref]&
+operator=(initializer_list<string_view> init);
+----
+
+Declared in file <include/boost/url/segments_ref.hpp> on line 204
+
+Defined in file <src/segments_ref.cpp> on line 62
+
+=== Description
+
+pass:v,q[The existing contents are replaced] pass:v,q[by a copy of the contents of the]
+pass:v,q[initializer list.]
+pass:v,q[Reserved characters in the list are]
+pass:v,q[automatically escaped.]
+pass:v,q[All iterators are invalidated.]
+
+=== Example
+[,cpp]
+----
+url u;
+
+u.segments() = { "path", "to", "file.txt" };
+----
+
+=== Preconditions
+pass:v,q[None of the character buffers referenced]
+pass:v,q[by the list may overlap the character]
+pass:v,q[buffer of the underlying url, or else]
+pass:v,q[the behavior is undefined.]
+
+=== Effects
+[,cpp]
+----
+this->assign( init.begin(), init.end() );
+----
+
+=== Complexity
+pass:v,q[Linear in `init.size() + this->url().encoded_query().size() + this->url().encoded_fragment().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

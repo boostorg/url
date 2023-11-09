@@ -1,0 +1,66 @@
+:relfileprefix: ../../../
+[#EC8501D51E823F96FA5424E940180B16FDBB99F5]
+== segments
+
+pass:v,q[Return the path as a container of segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_ref.adoc[segments_ref]
+segments() noexcept;
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 1851
+
+Defined in file <src/url_base.cpp> on line 1325
+
+=== Description
+
+pass:v,q[This function returns a bidirectional] pass:v,q[view of segments over the path.]
+pass:v,q[The returned view references the same]
+pass:v,q[underlying character buffer; ownership]
+pass:v,q[is not transferred.]
+pass:v,q[Any percent-escapes in strings returned]
+pass:v,q[when iterating the view are decoded first.]
+pass:v,q[The container is modifiable; changes]
+pass:v,q[to the container are reflected in the]
+pass:v,q[underlying URL.]
+
+=== Example
+[,cpp]
+----
+url u( "http://example.com/path/to/file.txt" );
+
+segments sv = u.segments();
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+path          = path-abempty    ; begins with "/" or is empty
+              / path-absolute   ; begins with "/" but not "//"
+              / path-noscheme   ; begins with a non-colon segment
+              / path-rootless   ; begins with a segment
+              / path-empty      ; zero characters
+
+path-abempty  = *( "/" segment )
+path-absolute = "/" [ segment-nz *( "/" segment ) ]
+path-noscheme = segment-nz-nc *( "/" segment )
+path-rootless = segment-nz *( "/" segment )
+path-empty    = 0<pchar>
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3.  Path (rfc3986)]
+
+

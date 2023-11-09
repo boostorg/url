@@ -1,0 +1,19 @@
+:relfileprefix: ../../../../
+[#06F0F6D5570DE487E3AA23E80BD13883E6B1EBC4]
+== Friend operator<<
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/grammar/string_view_base.adoc[string_view_base]& s);
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 843
+

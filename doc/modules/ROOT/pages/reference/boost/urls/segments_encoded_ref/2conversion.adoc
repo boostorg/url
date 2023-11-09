@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#C2F05ED3115908FB58B62E02B5125EB480FC09FA]
+== operator segments_encoded_view
+
+pass:v,q[Conversion]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+operator xref:reference/boost/urls/segments_encoded_view.adoc[segments_encoded_view]() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_encoded_ref.hpp> on line 222
+
+Defined in file <src/segments_encoded_ref.cpp> on line 37
+

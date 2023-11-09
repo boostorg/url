@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#C8F81445AE0AF4D0F861623107ABF4407F77F018]
+== operator==
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+operator==(const xref:reference/boost/urls/segments_base/iterator.adoc[iterator]& other) const noexcept;
+----
+
+Defined in file <include/boost/url/impl/segments_base.hpp> on line 88
+

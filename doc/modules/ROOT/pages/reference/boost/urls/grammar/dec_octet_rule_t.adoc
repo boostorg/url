@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#C5A17CBE91DBB693A327490034F68C3B254E1362]
+== Class dec_octet_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct dec_octet_rule_t;
+----
+
+Defined in file <include/boost/url/grammar/dec_octet_rule.hpp> on line 56
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/dec_octet_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/dec_octet_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+

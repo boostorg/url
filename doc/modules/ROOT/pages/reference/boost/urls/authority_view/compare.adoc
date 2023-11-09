@@ -1,0 +1,32 @@
+:relfileprefix: ../../../
+[#89BE7FC1F88469D29530033CA85B3BED4AAD41FB]
+== compare
+
+pass:v,q[Return the result of comparing this with another authority]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+int
+compare(const xref:reference/boost/urls/authority_view.adoc[authority_view]& other) const noexcept;
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 1232
+
+Defined in file <src/authority_view.cpp> on line 350
+
+=== Description
+
+pass:v,q[This function compares two authorities] pass:v,q[according to Syntax-Based comparison]
+pass:v,q[algorithm.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2[6.2.2 Syntax-Based Normalization (rfc3986)]
+
+

@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#84AA1AA7D1633F901613AFC33BAF4ABE315FD866]
+== contains
+
+pass:v,q[Return true if matching characters are found]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+bool
+contains(string_view sv) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 735
+
+=== Description
+
+pass:v,q[See `core::string_view::contains`]
+
+

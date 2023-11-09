@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#5C9A5450D0A98A0275C644FB65395B53BD87FC09]
+== const_iterator
+
+xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using const_iterator = xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator];
+----
+
+Defined in file <include/boost/url/params_encoded_base.hpp> on line 84
+

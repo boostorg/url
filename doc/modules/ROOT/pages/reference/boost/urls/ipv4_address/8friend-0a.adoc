@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#AB810AABE6D27541F8E635B8CE784F74BC1150E4]
+== Friend ipv6_address
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend xref:reference/boost/urls/ipv6_address.adoc[ipv6_address];
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 303
+

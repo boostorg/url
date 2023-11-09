@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#043819266360B45D013F8C688DCA6C6063BAFF86]
+== iterator
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+iterator(const xref:reference/boost/urls/params_base/iterator.adoc[iterator]&) = default;
+----
+
+Defined in file <include/boost/url/impl/params_base.hpp> on line 57
+

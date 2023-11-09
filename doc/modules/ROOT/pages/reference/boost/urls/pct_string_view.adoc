@@ -1,0 +1,81 @@
+:relfileprefix: ../../
+[#B7D2A57D498C57F2EAD1EE6D183F5DFDE0AAF97D]
+== Class pct_string_view
+
+pass:v,q[A reference to a valid percent-encoded string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class pct_string_view
+    : public xref:reference/boost/urls/grammar.adoc[grammar]::xref:reference/boost/urls/grammar/string_view_base.adoc[string_view_base];
+----
+
+Declared in file <include/boost/url/pct_string_view.hpp> on line 32
+
+Defined in file <include/boost/url/pct_string_view.hpp> on line 73
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/pct_string_view/2constructor-00.adoc[`pass:v[pct_string_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/pct_string_view/2constructor-07.adoc[`pass:v[pct_string_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/pct_string_view/2constructor-0c.adoc[`pass:v[pct_string_view]`] |
+|xref:reference/boost/urls/pct_string_view/2constructor-0f.adoc[`pass:v[pct_string_view]`] |pass:v,q[Constructor (deleted)]
+
+|xref:reference/boost/urls/pct_string_view/2constructor-06.adoc[`pass:v[pct_string_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/pct_string_view/2constructor-0d.adoc[`pass:v[pct_string_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/pct_string_view/operator_assign.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/pct_string_view/decoded_size.adoc[`pass:v[decoded_size]`] |pass:v,q[Return the decoded size]
+
+|xref:reference/boost/urls/pct_string_view/operator_star.adoc[`pass:v[operator*]`] |pass:v,q[Return the string as a range of decoded characters]
+
+|xref:reference/boost/urls/pct_string_view/decode.adoc[`pass:v[decode]`] |pass:v,q[Return the string with percent-decoding]
+
+|xref:reference/boost/urls/pct_string_view/operator_ptr.adoc[`pass:v[operator->]`] |
+|xref:reference/boost/urls/pct_string_view/swap.adoc[`pass:v[swap]`] |pass:v,q[Swap]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/pct_string_view/8friend-02.adoc[`pass:v[make_pct_string_view_unsafe]`] |
+|xref:reference/boost/urls/pct_string_view/8friend-05.adoc[`pass:v[]`] |
+|xref:reference/boost/urls/pct_string_view/8friend-0b.adoc[`pass:v[make_pct_string_view]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type behave like a] pass:v,q[`core::string_view` and have the same interface,]
+pass:v,q[but offer an additional invariant: they can]
+pass:v,q[only be constructed from strings containing]
+pass:v,q[valid percent-escapes.]
+pass:v,q[Attempting construction from a string]
+pass:v,q[containing invalid or malformed percent]
+pass:v,q[escapes results in an exception.]
+
+=== Operators
+pass:v,q[The following operators are supported between]
+xref:reference/boost/urls/pct_string_view/2constructor-00.adoc[pct_string_view]
+pass:v,q[and any object that is]
+pass:v,q[convertible to `core::string_view`]
+[,cpp]
+----
+bool operator==( pct_string_view, pct_string_view ) noexcept;
+bool operator!=( pct_string_view, pct_string_view ) noexcept;
+bool operator<=( pct_string_view, pct_string_view ) noexcept;
+bool operator< ( pct_string_view, pct_string_view ) noexcept;
+bool operator> ( pct_string_view, pct_string_view ) noexcept;
+bool operator>=( pct_string_view, pct_string_view ) noexcept;
+----
+
+

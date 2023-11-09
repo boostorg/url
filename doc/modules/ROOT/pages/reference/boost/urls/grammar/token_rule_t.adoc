@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#B1528435EC7B0AB1FD5233F1918E2A282976E643]
+== Class token_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet>
+struct token_rule_t;
+----
+
+Defined in file <include/boost/url/grammar/token_rule.hpp> on line 57
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/token_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/token_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/token_rule_t/8friend.adoc[`pass:v[token_rule]`] |
+|===
+

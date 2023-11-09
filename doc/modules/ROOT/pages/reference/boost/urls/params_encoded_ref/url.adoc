@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#45B32BA8A0D404CB107811139D643BB9F5337E98]
+== url
+
+pass:v,q[Return the referenced url]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_base.adoc[url_base]&
+url() const noexcept;
+----
+
+Defined in file <include/boost/url/params_encoded_ref.hpp> on line 217
+
+=== Description
+
+pass:v,q[This function returns the url referenced] pass:v,q[by the view.]
+
+=== Example
+[,cpp]
+----
+url u( "?key=value" );
+
+assert( &u.encoded_params().url() == &u );
+----
+
+=== Exception Safety
+[,cpp]
+----
+Throws nothing.
+----
+
+

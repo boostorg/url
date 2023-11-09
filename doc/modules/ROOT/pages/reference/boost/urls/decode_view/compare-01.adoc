@@ -1,0 +1,30 @@
+:relfileprefix: ../../../
+[#14320699371DBD96F87E209DE3717FA06806C01A]
+== compare
+
+pass:v,q[Return the result of comparing to another string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+int
+compare(xref:reference/boost/urls/decode_view.adoc[decode_view] other) const noexcept;
+----
+
+Declared in file <include/boost/url/decode_view.hpp> on line 532
+
+Defined in file <src/decode_view.cpp> on line 89
+
+=== Description
+
+pass:v,q[The length of the sequences to compare is the smaller of] pass:v,q[`size()` and `other.size()`.]
+pass:v,q[The function compares the two strings as if by calling]
+pass:v,q[`char_traits]
+pass:v,q[<char]
+pass:v,q[>::compare(to_string().data(), v.to_string().data(), rlen)`.]
+pass:v,q[This means the comparison is performed with]
+pass:v,q[percent-decoding applied to the current string.]
+
+

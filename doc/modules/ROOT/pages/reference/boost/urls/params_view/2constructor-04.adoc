@@ -1,0 +1,76 @@
+:relfileprefix: ../../../
+[#413AFD68344C490515F3A7E5A11F6B9CAEBA0F54]
+== params_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+params_view(
+    string_view s,
+    xref:reference/boost/urls/encoding_opts.adoc[encoding_opts] opt);
+----
+
+Declared in file <include/boost/url/params_view.hpp> on line 253
+
+Defined in file <src/params_view.cpp> on line 49
+
+=== Description
+
+pass:v,q[This function constructs params from] pass:v,q[a valid query parameter string, which]
+pass:v,q[can contain percent escapes.]
+pass:v,q[This instance will use the specified]
+xref:reference/boost/urls/encoding_opts.adoc[encoding_opts]
+pass:v,q[when the values]
+pass:v,q[are decoded.]
+pass:v,q[Unlike the parameters in URLs, the string]
+pass:v,q[passed here should not start with "?".]
+pass:v,q[Upon construction, the view will]
+pass:v,q[reference the character buffer pointed]
+pass:v,q[to by `s`. The caller is responsible]
+pass:v,q[for ensuring that the lifetime of the]
+pass:v,q[buffer extends until it is no longer]
+pass:v,q[referenced.]
+
+=== Example
+[,cpp]
+----
+encoding_opts opt;
+opt.space_as_plus = true;
+params_view qp( "name=John+Doe", opt );
+----
+
+=== Effects
+[,cpp]
+----
+return params_view(parse_query( s ).value(), opt);
+----
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() == s.data()
+----
+
+=== Complexity
+pass:v,q[Linear in `s`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+query-params    = [ query-param ] *( "&" query-param )
+
+query-param     = key [ "=" value ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.4[3.4.  Query]
+
+

@@ -1,0 +1,71 @@
+:relfileprefix: ../../
+[#7EC753F2C6F05BF96788F23982ABC87F624C1813]
+== Class param
+
+pass:v,q[A query parameter]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct param;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 75
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/param/2constructor-09.adoc[`pass:v[param]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/param/2constructor-07.adoc[`pass:v[param]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/param/2constructor-0d.adoc[`pass:v[param]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/param/operator_assign-0b.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/param/operator_assign-0cd.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/param/2constructor-0b.adoc[`pass:v[param]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/param/operator_assign-0cb.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/param/operator_assign-03.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/param/operator_ptr.adoc[`pass:v[operator->]`] |
+|xref:reference/boost/urls/param/2constructor-0a.adoc[`pass:v[param]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type represent a single key] pass:v,q[and value pair in a query string where a key]
+pass:v,q[is always present and may be empty, while the]
+pass:v,q[presence of a value is indicated by]
+xref:reference/boost/urls/param/has_value.adoc[has_value]
+pass:v,q[equal to true.]
+pass:v,q[An empty value is distinct from no value.]
+pass:v,q[Depending on where the object was obtained,]
+pass:v,q[the strings may or may not contain percent]
+pass:v,q[escapes.]
+pass:v,q[For most usages, key comparisons are]
+pass:v,q[case-sensitive and duplicate keys in]
+pass:v,q[a query are possible. However, it is]
+pass:v,q[the authority that has final control]
+pass:v,q[over how the query is interpreted.]
+
+=== BNF
+[,cpp]
+----
+query-params    = query-param *( "&" query-param )
+query-param     = key [ "=" value ]
+key             = *qpchar
+value           = *( qpchar / "=" )
+----
+
+=== Specification
+
+* link:https://en.wikipedia.org/wiki/Query_string[Query string (Wikipedia)]
+
+

@@ -1,0 +1,40 @@
+:relfileprefix: ../../../
+[#0E2EFD59D37FF0084AC5C9BC05B6F3427C53131E]
+== param_pct_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+param_pct_view() = default;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 689
+
+=== Description
+
+pass:v,q[Default constructed query parameters] pass:v,q[have an empty key and no value.]
+
+=== Example
+[,cpp]
+----
+param_pct_view qp;
+----
+
+=== Postconditions
+[,cpp]
+----
+this->key == "" && this->value == "" && this->has_value == false
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

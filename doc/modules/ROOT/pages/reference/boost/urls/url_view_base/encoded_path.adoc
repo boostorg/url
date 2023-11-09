@@ -1,0 +1,58 @@
+:relfileprefix: ../../../
+[#18D96A6D5D0C4B118803F8128E539BDAB7D21E15]
+== encoded_path
+
+pass:v,q[Return the path]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+encoded_path() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 1716
+
+Defined in file <src/url_view_base.cpp> on line 481
+
+=== Description
+
+pass:v,q[This function returns the path as a] pass:v,q[string. The path may be empty.]
+pass:v,q[Any percent-escapes in the string are]
+pass:v,q[decoded first.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "file:///Program%20Files/Games/config.ini" ).encoded_path() == "/Program%20Files/Games/config.ini" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+path          = path-abempty    ; begins with "/" or is empty
+              / path-absolute   ; begins with "/" but not "//"
+              / path-noscheme   ; begins with a non-colon segment
+              / path-rootless   ; begins with a segment
+              / path-empty      ; zero characters
+
+path-abempty  = *( "/" segment )
+path-absolute = "/" [ segment-nz *( "/" segment ) ]
+path-noscheme = segment-nz-nc *( "/" segment )
+path-rootless = segment-nz *( "/" segment )
+path-empty    = 0<pchar>
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3. Path (rfc3986)]
+
+

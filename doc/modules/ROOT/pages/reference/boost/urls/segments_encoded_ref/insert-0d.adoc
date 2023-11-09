@@ -1,0 +1,53 @@
+:relfileprefix: ../../../
+[#DAC1302C79C8F51446CB28AA9DBED58F1F6AAE13]
+== insert
+
+pass:v,q[Insert segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_encoded_base.adoc[segments_encoded_base]::xref:reference/boost/urls/segments_encoded_base/iterator.adoc[iterator]
+insert(
+    xref:reference/boost/urls/segments_encoded_base.adoc[segments_encoded_base]::xref:reference/boost/urls/segments_encoded_base/iterator.adoc[iterator] before,
+    initializer_list<xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]> init);
+----
+
+Declared in file <include/boost/url/segments_encoded_ref.hpp> on line 453
+
+Defined in file <src/segments_encoded_ref.cpp> on line 100
+
+=== Description
+
+pass:v,q[This function inserts the segments] pass:v,q[in an initializer list before the]
+pass:v,q[specified position.]
+pass:v,q[Reserved characters in the list are]
+pass:v,q[automatically escaped.]
+pass:v,q[Escapes in the list are preserved.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`before` or come after are invalidated.]
+[NOTE]
+pass:v,q[None of the character buffers referenced]
+pass:v,q[by the list may overlap the character]
+pass:v,q[buffer of the underlying url, or else]
+pass:v,q[the behavior is undefined.]
+
+=== Example
+[,cpp]
+----
+url u( "/file.txt" );
+
+u.encoded_segments().insert( u.encoded_segments().begin(), { "path", "to" } );
+----
+
+=== Complexity
+pass:v,q[Linear in `init.size() + this->url().encoded_resource().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+

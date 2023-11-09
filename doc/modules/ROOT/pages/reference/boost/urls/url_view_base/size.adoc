@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#6F913088C0451AB934FC12066A2BA6B82552A053]
+== size
+
+pass:v,q[Return the number of characters in the url]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+size() const noexcept;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 165
+
+=== Description
+
+pass:v,q[This function returns the number of] pass:v,q[characters in the url's encoded string,]
+pass:v,q[not including any null terminator,]
+pass:v,q[if present.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "file:///Program%20Files" ).size() == 23 );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

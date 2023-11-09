@@ -1,0 +1,37 @@
+:relfileprefix: ../../../
+[#5DCEC646D511AC3B88C7D854E73C237AE3CEFBC4]
+== replace
+
+pass:v,q[Replace segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator]
+replace(
+    xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator] pos,
+    string_view s);
+----
+
+Declared in file <include/boost/url/segments_ref.hpp> on line 555
+
+Defined in file <src/segments_ref.cpp> on line 128
+
+=== Description
+
+pass:v,q[This function replaces the segment at] pass:v,q[the specified position.]
+pass:v,q[Reserved characters in the string are]
+pass:v,q[automatically escaped.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`pos` or come after are invalidated.]
+
+=== Complexity
+pass:v,q[Linear in `s.size() + this->url().encoded_resouce().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

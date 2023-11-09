@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#D575C96E40C885310B49B4B6DBA1BAD9890BEA6E]
+== id_path
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+id_path
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 30
+

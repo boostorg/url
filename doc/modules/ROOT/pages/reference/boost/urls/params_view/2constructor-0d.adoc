@@ -1,0 +1,39 @@
+:relfileprefix: ../../../
+[#D75EB8FCE93A3AEC3B1F50765F245689804746A2]
+== params_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+params_view() = default;
+----
+
+Defined in file <include/boost/url/params_view.hpp> on line 80
+
+=== Description
+
+pass:v,q[Default-constructed params have] pass:v,q[zero elements.]
+
+=== Example
+[,cpp]
+----
+params_view qp;
+----
+
+=== Effects
+[,cpp]
+----
+return params_view( "" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

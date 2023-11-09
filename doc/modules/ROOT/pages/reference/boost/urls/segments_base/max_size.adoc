@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#E1E276D479797DCDA52A2A781EC4D3D9D68A0F9F]
+== max_size
+
+pass:v,q[Return the maximum number of characters possible]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+static
+size_t
+max_size() noexcept;
+----
+
+Defined in file <include/boost/url/segments_base.hpp> on line 128
+
+=== Description
+
+pass:v,q[This represents the largest number of] pass:v,q[characters that are possible in a path,]
+pass:v,q[not including any null terminator.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

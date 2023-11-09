@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#3BFB282120808444CAFBE09FA8E52715D7F961EC]
+== value_type
+
+pass:v,q[The value type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = char;
+----
+
+Defined in file <include/boost/url/decode_view.hpp> on line 113
+

@@ -1,0 +1,41 @@
+:relfileprefix: ../../../
+[#FA6D558C8D31B60CA4166BD1C5E72A6645C904D8]
+== contains
+
+pass:v,q[Return true if a matching key exists]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+contains(
+    string_view key,
+    xref:reference/boost/urls/ignore_case_param.adoc[ignore_case_param] ic = = {}) const noexcept;
+----
+
+Declared in file <include/boost/url/params_base.hpp> on line 262
+
+Defined in file <src/params_base.cpp> on line 78
+
+=== Description
+
+pass:v,q[This function examines the parameters] pass:v,q[in the container to find a match for]
+pass:v,q[the specified key.]
+pass:v,q[The comparison is performed as if all]
+pass:v,q[escaped characters were decoded first.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "?first=John&last=Doe" ).params().contains( "first" ) );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->buffer().size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,35 @@
+:relfileprefix: ../../
+[#B81D6807C275E61428E59ED2926DAD5FBA63930E]
+== operator<<
+
+pass:v,q[Format to an output stream]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]& qp);
+----
+
+Declared in file <include/boost/url/params_encoded_base.hpp> on line 539
+
+Defined in file <src/params_encoded_base.cpp> on line 183
+
+=== Description
+
+pass:v,q[Any percent-escapes are emitted as-is;] pass:v,q[no decoding is performed.]
+
+=== Complexity
+pass:v,q[Linear in `ps.buffer().size()`.]
+
+=== Effects
+[,cpp]
+----
+return os << ps.buffer();
+----
+
+

@@ -1,0 +1,43 @@
+:relfileprefix: ../../../
+[#3494A3E44FB4A32EEDFACD0D5D1D995E343DC6D2]
+== decode_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+decode_view(
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] s,
+    xref:reference/boost/urls/encoding_opts.adoc[encoding_opts] opt = = {}) noexcept;
+----
+
+Defined in file <include/boost/url/decode_view.hpp> on line 209
+
+=== Description
+
+pass:v,q[This constructs a view from the character] pass:v,q[buffer `s`, which must remain valid and]
+pass:v,q[unmodified until the view is no longer]
+pass:v,q[accessed.]
+
+=== Example
+[,cpp]
+----
+decode_view ds( "Program%20Files" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->encoded() == s
+----
+
+=== Complexity
+pass:v,q[Linear in `s.size()`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+

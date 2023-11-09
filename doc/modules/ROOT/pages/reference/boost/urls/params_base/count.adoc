@@ -1,0 +1,41 @@
+:relfileprefix: ../../../
+[#49443BDC4BD58A9458709D92836E13F1DEB4A9E4]
+== count
+
+pass:v,q[Return the number of matching keys]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+count(
+    string_view key,
+    xref:reference/boost/urls/ignore_case_param.adoc[ignore_case_param] ic = = {}) const noexcept;
+----
+
+Declared in file <include/boost/url/params_base.hpp> on line 296
+
+Defined in file <src/params_base.cpp> on line 190
+
+=== Description
+
+pass:v,q[This function examines the] pass:v,q[parameters in the container to] pass:v,q[find the number of matches for]
+pass:v,q[the specified key.]
+pass:v,q[The comparison is performed as if all]
+pass:v,q[escaped characters were decoded first.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "?first=John&last=Doe" ).params().count( "first" ) == 1 );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->buffer().size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,40 @@
+:relfileprefix: ../../../
+[#F5D99DAA115AFDB88797C9D62F481F106981528F]
+== append
+
+pass:v,q[Append elements]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator]
+append(const xref:reference/boost/urls/param_view.adoc[param_view]& p);
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 380
+
+Defined in file <include/boost/url/impl/params_ref.hpp> on line 97
+
+=== Description
+
+pass:v,q[This function appends a param to the view.]
+pass:v,q[The `end()` iterator is invalidated.]
+
+=== Example
+[,cpp]
+----
+url u;
+
+u.params().append( { "first", "John" } );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

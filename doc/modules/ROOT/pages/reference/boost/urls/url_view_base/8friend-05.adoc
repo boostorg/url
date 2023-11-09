@@ -1,0 +1,71 @@
+:relfileprefix: ../../../
+[#58AD20530274EF7937A0319DF58297205B8C72AD]
+== Friend operator<
+
+pass:v,q[Return the result of comparing two URLs]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+bool
+operator<(
+    const xref:reference/boost/urls/url_view_base.adoc[url_view_base]& u0,
+    const xref:reference/boost/urls/url_view_base.adoc[url_view_base]& u1) noexcept;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 2533
+
+=== Description
+
+pass:v,q[The URLs are compared component by] pass:v,q[component as if they were first]
+pass:v,q[normalized.]
+
+=== Example
+[,cpp]
+----
+url_view u0( "http://www.a.com/index.htm" );
+url_view u1( "http://www.b.com/index.htm" );
+assert( u0 < u1 );
+----
+
+=== Effects
+[,cpp]
+----
+url a(u0);
+a.normalize();
+url b(u1);
+b.normalize();
+return std::make_tuple(
+           a.scheme(),
+           a.user(),
+           a.password(),
+           a.host(),
+           a.port(),
+           a.path(),
+           a.query(),
+           a.fragment()) <
+       std::make_tuple(
+           b.scheme(),
+           b.user(),
+           b.password(),
+           b.host(),
+           b.port(),
+           b.path(),
+           b.query(),
+           b.fragment());
+----
+
+=== Complexity
+pass:v,q[Linear in `min( u0.size(), u1.size() )`]
+
+=== Exception Safety
+pass:v,q[Throws nothing]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2[6.2.2 Syntax-Based Normalization (rfc3986)]
+
+

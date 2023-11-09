@@ -1,0 +1,18 @@
+:relfileprefix: ../../
+[#74586946756B3CFA5DAB97B0812B4221E9A27821]
+== Namespace error_types
+
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/error_types/error_category.adoc[`pass:v[error_category]`] |pass:v,q[The type of error category used by the library]
+
+|xref:reference/boost/urls/error_types/error_code.adoc[`pass:v[error_code]`] |pass:v,q[The type of error code used by the library]
+
+|xref:reference/boost/urls/error_types/error_condition.adoc[`pass:v[error_condition]`] |pass:v,q[The type of error condition used by the library]
+
+|xref:reference/boost/urls/error_types/system_error.adoc[`pass:v[system_error]`] |pass:v,q[The type of system error thrown by the library]
+
+|xref:reference/boost/urls/error_types/result.adoc[`pass:v[result]`] |pass:v,q[The type of result returned by library functions]
+
+|===

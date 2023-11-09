@@ -1,0 +1,52 @@
+:relfileprefix: ../../../
+[#83F2FC9A30079047B34417B3362701ABE917F370]
+== Class iterator
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class iterator;
+----
+
+Declared in file <include/boost/url/segments_encoded_base.hpp> on line 79
+
+Defined in file <include/boost/url/impl/segments_encoded_base.hpp> on line 20
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_encoded_base/iterator/value_type.adoc[`pass:v[value_type]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/reference.adoc[`pass:v[reference]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/pointer.adoc[`pass:v[pointer]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/difference_type.adoc[`pass:v[difference_type]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/iterator_category.adoc[`pass:v[iterator_category]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_encoded_base/iterator/2constructor-06.adoc[`pass:v[iterator]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/2constructor-02.adoc[`pass:v[iterator]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/operator_assign.adoc[`pass:v[operator=]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/operator_star.adoc[`pass:v[operator*]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/operator_ptr.adoc[`pass:v[operator->]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/operator_inc-08.adoc[`pass:v[operator++]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/operator_dec-00.adoc[`pass:v[operator--]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/operator_inc-0e.adoc[`pass:v[operator++]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/operator_dec-05.adoc[`pass:v[operator--]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/operator_eq.adoc[`pass:v[operator==]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/operator_not_eq.adoc[`pass:v[operator!=]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_encoded_base/iterator/8friend-0a.adoc[`pass:v[url_base]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/8friend-00.adoc[`pass:v[segments_encoded_base]`] |
+|xref:reference/boost/urls/segments_encoded_base/iterator/8friend-03.adoc[`pass:v[segments_encoded_ref]`] |
+|===
+

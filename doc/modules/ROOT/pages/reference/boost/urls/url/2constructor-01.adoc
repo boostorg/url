@@ -1,0 +1,39 @@
+:relfileprefix: ../../../
+[#121D210F8BA48565E623FD1D5FBE0D42C2457F39]
+== url
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+url(xref:reference/boost/urls/url.adoc[url]&& u) noexcept;
+----
+
+Declared in file <include/boost/url/url.hpp> on line 194
+
+Defined in file <src/url.cpp> on line 46
+
+=== Description
+
+pass:v,q[The contents of `u` are transferred] pass:v,q[to the newly constructed object,]
+pass:v,q[which includes the underlying]
+pass:v,q[character buffer.]
+pass:v,q[After construction, the moved-from]
+pass:v,q[object is as if default constructed.]
+
+=== Postconditions
+[,cpp]
+----
+u.empty() == true
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#A35B1CAC18A68E5514679C201D34950F2127BDC6]
+== string_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using string_type = basic_string<char, char_traits<char>, Alloc>;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 225
+

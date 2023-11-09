@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#6F4696830AD3DC02B7FC72E4FD15A2F2B464379B]
+== value_type
+
+pass:v,q[The value type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef char value_type;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 89
+

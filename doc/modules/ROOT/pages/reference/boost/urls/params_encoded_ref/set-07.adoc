@@ -1,0 +1,67 @@
+:relfileprefix: ../../../
+[#7C2F50F8E1CC00DAE8541398FCED8122BB7688D2]
+== set
+
+pass:v,q[Set a value]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+set(
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] key,
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] value,
+    xref:reference/boost/urls/ignore_case_param.adoc[ignore_case_param] ic = = {});
+----
+
+Declared in file <include/boost/url/params_encoded_ref.hpp> on line 951
+
+Defined in file <src/params_encoded_ref.cpp> on line 197
+
+=== Description
+
+pass:v,q[This function performs one of two] pass:v,q[actions depending on the value of]
+pass:v,q[`this->contains( key, ic )`.]
+
+* pass:v,q[If key is contained in the view]
+pass:v,q[then one of the matching params has]
+pass:v,q[its value changed to the specified value.]
+pass:v,q[The remaining params with a matching]
+pass:v,q[key are erased. Otherwise,]
+
+* pass:v,q[If `key` is not contained in the]
+pass:v,q[view, then the function apppends the]
+pass:v,q[param `{ key, value }`.]
+pass:v,q[All iterators are invalidated.]
+[NOTE]
+pass:v,q[The strings passed in must not come]
+pass:v,q[from the element being replaced,]
+pass:v,q[or else the behavior is undefined.]
+
+=== Example
+[,cpp]
+----
+url u( "?id=42&id=69" );
+
+u.encoded_params().set( "id", "none" );
+
+assert( u.encoded_params().count( "id" ) == 1 );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->count( key, ic ) == 1 && this->find( key, ic )->value == value
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+

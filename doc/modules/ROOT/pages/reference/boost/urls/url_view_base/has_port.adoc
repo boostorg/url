@@ -1,0 +1,48 @@
+:relfileprefix: ../../../
+[#E55E6E3A146CCB4D0EF9348402421BEEE1683765]
+== has_port
+
+pass:v,q[Return true if a port is present]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+has_port() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 1491
+
+Defined in file <src/url_view_base.cpp> on line 442
+
+=== Description
+
+pass:v,q[This function returns true if an] pass:v,q[authority is present and contains a port.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "wss://www.example.com:443" ).has_port() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+authority   = [ userinfo "@" ] host [ ":" port ]
+
+port        = *DIGIT
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3[3.2.3. Port (rfc3986)]
+
+

@@ -1,0 +1,38 @@
+:relfileprefix: ../../../
+[#2B56F156BEBF86C0474641622D295F4C4180C8C2]
+== Class tuple_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class R0,
+    class... Rn>
+class tuple_rule_t
+    : xref:reference/boost/empty_.adoc[empty_]::xref:reference/boost/empty_/empty_value.adoc[empty_value]<tuple<R0, Rn...>>;
+----
+
+Defined in file <include/boost/url/grammar/tuple_rule.hpp> on line 89
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/tuple_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/tuple_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/tuple_rule_t/8friend.adoc[`pass:v[tuple_rule]`] |
+|===
+

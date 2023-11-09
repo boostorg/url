@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#276DD474D1BF5285853DF32BFD5F44F935AEF49E]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = string_view;
+----
+
+Defined in file <include/boost/url/grammar/token_rule.hpp> on line 59
+

@@ -1,0 +1,19 @@
+:relfileprefix: ../../../
+[#52AB2E64DB4F8B0D4709BE66E4EBD8ADA4BAAF1C]
+== Friend operator<<
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]& addr);
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 291
+

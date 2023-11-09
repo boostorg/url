@@ -1,0 +1,105 @@
+:relfileprefix: ../../
+[#C21DD46D44E85FD6039919A7A5CA0CF44504668F]
+== Class url_view
+
+pass:v,q[A non-owning reference to a valid URL]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class url_view
+    : public xref:reference/boost/urls/url_view_base.adoc[url_view_base];
+----
+
+Declared in file <include/boost/url/detail/url_impl.hpp> on line 24
+
+Defined in file <include/boost/url/url_view.hpp> on line 74
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/url_view/2destructor.adoc[`pass:v[~url_view]`] |pass:v,q[Destructor]
+
+|xref:reference/boost/urls/url_view/2constructor-0c.adoc[`pass:v[url_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/url_view/2constructor-025.adoc[`pass:v[url_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/url_view/2constructor-00.adoc[`pass:v[url_view]`] |
+|xref:reference/boost/urls/url_view/2constructor-024.adoc[`pass:v[url_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/url_view/2constructor-0a.adoc[`pass:v[url_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/url_view/operator_assign-02.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/url_view/operator_assign-0f.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/url_view/8friend-0d.adoc[`pass:v[hash]`] |
+|xref:reference/boost/urls/url_view/8friend-04.adoc[`pass:v[url_view_base]`] |
+|xref:reference/boost/urls/url_view/8friend-03.adoc[`pass:v[params_base]`] |
+|xref:reference/boost/urls/url_view/8friend-08.adoc[`pass:v[params_encoded_base]`] |
+|xref:reference/boost/urls/url_view/8friend-00.adoc[`pass:v[url_impl]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type represent valid URL] pass:v,q[strings constructed from a parsed, external]
+pass:v,q[character buffer whose storage is managed]
+pass:v,q[by the caller. That is, it acts like a]
+pass:v,q[`core::string_view` in terms of ownership.]
+pass:v,q[The caller is responsible for ensuring]
+pass:v,q[that the lifetime of the underlying]
+pass:v,q[character buffer extends until it is no]
+pass:v,q[longer referenced.]
+
+=== Example 1
+pass:v,q[Construction from a string parses the input]
+pass:v,q[as a]
+pass:v,q[URI-reference]
+pass:v,q[and throws an]
+pass:v,q[exception on error. Upon success, the]
+pass:v,q[constructed object points to the passed]
+pass:v,q[character buffer; ownership is not]
+pass:v,q[transferred.]
+[,cpp]
+----
+url_view u( "https://www.example.com/index.htm?text=none#a1" );
+----
+
+=== Example 2
+pass:v,q[Parsing functions like]
+xref:reference/boost/urls/parse_uri_reference.adoc[parse_uri_reference]
+pass:v,q[return a]
+pass:v,q[result]
+pass:v,q[containing either a valid]
+xref:reference/boost/urls/url_view/2constructor-0c.adoc[url_view]
+pass:v,q[upon succcess, otherwise they]
+pass:v,q[contain an error. The error can be converted to]
+pass:v,q[an exception by the caller if desired:]
+[,cpp]
+----
+system::result< url_view > rv = parse_uri_reference( "https://www.example.com/index.htm?text=none#a1" );
+----
+
+=== BNF
+[,cpp]
+----
+URI-reference = URI / relative-ref
+
+URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+----
+
+=== Specification
+
+* link:https://tools.ietf.org/html/rfc3986[Uniform Resource Identifier (URI): Generic Syntax (rfc3986)]
+
+

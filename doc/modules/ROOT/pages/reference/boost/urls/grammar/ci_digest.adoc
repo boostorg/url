@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#F4B94BCC554FFC86CBFCB719B4B53B5BF589B972]
+== ci_digest
+
+pass:v,q[Return the case-insensitive digest of a string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+ci_digest(string_view s) noexcept;
+----
+
+Declared in file <include/boost/url/grammar/ci_string.hpp> on line 140
+
+Defined in file <src/grammar/ci_string.cpp> on line 123
+
+=== Description
+
+pass:v,q[The hash function is non-cryptographic and] pass:v,q[not hardened against algorithmic complexity]
+pass:v,q[attacks.]
+pass:v,q[Returned digests are suitable for usage in]
+pass:v,q[unordered containers.]
+pass:v,q[The function is defined only for strings]
+pass:v,q[containing low-ASCII characters.]
+
+

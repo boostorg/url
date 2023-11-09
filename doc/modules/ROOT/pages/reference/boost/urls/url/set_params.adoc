@@ -1,0 +1,59 @@
+:relfileprefix: ../../../
+[#5A99DB6CA9389962E75AA4FA9185CA8A9649C8DE]
+== set_params
+
+pass:v,q[Set the query params]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+set_params(initializer_list<xref:reference/boost/urls/param_view.adoc[param_view]> ps);
+----
+
+Defined in file <include/boost/url/url.hpp> on line 474
+
+=== Description
+
+pass:v,q[This sets the query params to the list] pass:v,q[of param_view, which can be empty.]
+pass:v,q[An empty list of params is distinct from]
+pass:v,q[having no params.]
+pass:v,q[Reserved characters in the string are]
+pass:v,q[percent-escaped in the result.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://example.com" ).set_params( {"id", "42"} ).query() == "id=42" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_query() == true
+----
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== Complexity
+pass:v,q[Linear.]
+
+=== BNF
+[,cpp]
+----
+query           = *( pchar / "/" / "?" )
+
+query-param     = key [ "=" value ]
+query-params    = [ query-param ] *( "&" query-param )
+----
+
+=== Specification
+
+* pass:v,q[://en.wikipedia.org/wiki/Query_string"]
+pass:v,q[>Query string (Wikipedia)]
+
+

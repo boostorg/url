@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#1C6D9DA860C58E05891363A480E028440B37A6EA]
+== operator->
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+const xref:reference/boost/urls/param.adoc[param]*
+operator->() const noexcept;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 329
+

@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#211BED3B7E0848C911BC30AD1B26D456683B329C]
+== compare
+
+pass:v,q[Return the result of comparing to another string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+int
+compare(string_view str) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 355
+
+=== Description
+
+pass:v,q[See `core::string_view::compare`]
+
+

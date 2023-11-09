@@ -1,0 +1,62 @@
+:relfileprefix: ../../../
+[#81A755DD8B180E39465FEEB846D8B3E12F900F80]
+== has_authority
+
+pass:v,q[Return true if an authority is present]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+has_authority() const noexcept;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 480
+
+=== Description
+
+pass:v,q[This function returns true if the url] pass:v,q[contains an authority. The presence of]
+pass:v,q[an authority is denoted by a double]
+pass:v,q[slash ("//") at the beginning or after]
+pass:v,q[the scheme.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://www.example.com/index.htm" ).has_authority() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+authority       = [ userinfo "@" ] host [ ":" port ]
+
+URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+URI-reference   = URI / relative-ref
+
+relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
+
+hier-part       = "//" authority path-abempty
+                ; (more...)
+
+relative-part   = "//" authority path-abempty
+                ; (more...)
+
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2[3.2. Authority (rfc3986)]
+
+

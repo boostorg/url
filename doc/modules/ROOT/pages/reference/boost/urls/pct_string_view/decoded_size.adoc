@@ -1,0 +1,30 @@
+:relfileprefix: ../../../
+[#24CF6B397298DCBA9437290C55E1E6495392DCD6]
+== decoded_size
+
+pass:v,q[Return the decoded size]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+decoded_size() const noexcept;
+----
+
+Defined in file <include/boost/url/pct_string_view.hpp> on line 287
+
+=== Description
+
+pass:v,q[This function returns the number of] pass:v,q[characters in the resulting string if]
+pass:v,q[percent escapes were converted into]
+pass:v,q[ordinary characters.]
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

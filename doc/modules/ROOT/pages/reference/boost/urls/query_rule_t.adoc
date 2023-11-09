@@ -1,0 +1,28 @@
+:relfileprefix: ../../
+[#E0B41E5A453E95719CDDA2A0A0DF733284000A83]
+== Class query_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct query_rule_t;
+----
+
+Defined in file <include/boost/url/rfc/query_rule.hpp> on line 60
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/query_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/query_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+

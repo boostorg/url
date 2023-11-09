@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#AE917E97B67286B369FDC587488548C1C18EA271]
+== delim_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet>
+constexpr
+enable_if<!std::is_convertible<CharSet, char>::value, xref:reference/boost/urls/grammar/cs_delim_rule.adoc[cs_delim_rule]<CharSet>>::type
+delim_rule(const CharSet& cs) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/delim_rule.hpp> on line 164
+

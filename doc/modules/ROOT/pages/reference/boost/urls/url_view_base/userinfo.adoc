@@ -1,0 +1,59 @@
+:relfileprefix: ../../../
+[#4BDC9DECC5615F117EE7DF17CB6FFE8F09C26737]
+== userinfo
+
+pass:v,q[Return the userinfo]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class StringToken = xref:reference/boost/urls/string_token.adoc[string_token]::xref:reference/boost/urls/string_token/return_string.adoc[return_string]>
+StringToken::result_type
+userinfo(StringToken&& token) const;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 696
+
+=== Description
+
+pass:v,q[If present, this function returns a] pass:v,q[string representing the userinfo (which]
+pass:v,q[may be empty).]
+pass:v,q[Otherwise it returns an empty string.]
+pass:v,q[Any percent-escapes in the string are]
+pass:v,q[decoded first.]
+[NOTE]
+pass:v,q[This function uses the string token]
+pass:v,q[return type customization. Depending on]
+pass:v,q[the token passed, the return type and]
+pass:v,q[behavior of the function can be different.]
+pass:v,q[See]
+xref:reference/boost/urls/string_token/return_string.adoc[string_token::return_string]
+pass:v,q[for more information.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://jane%2Ddoe:pass@example.com" ).userinfo() == "jane-doe:pass" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->userinfo().size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+userinfo    = user [ ":" [ password ] ]
+
+authority   = [ userinfo "@" ] host [ ":" port ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1[3.2.1. User Information (rfc3986)]
+
+

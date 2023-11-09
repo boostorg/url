@@ -1,0 +1,18 @@
+:relfileprefix: ../../../../
+[#F0A6D7FFBA379CC3AB4BD6CA3BE48F415E5C3590]
+== find_if_not
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+const char*
+find_if_not(
+    const char* first,
+    const char* last) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/vchars.hpp> on line 67
+

@@ -1,0 +1,40 @@
+:relfileprefix: ../../../
+[#1561A9CBA6B9507C67E212FFB6C9EF5E5D3FF9FB]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/segments_view.adoc[segments_view]&
+operator=(const xref:reference/boost/urls/segments_view.adoc[segments_view]& other) = default;
+----
+
+Defined in file <include/boost/url/segments_view.hpp> on line 188
+
+=== Description
+
+pass:v,q[After assignment, both views] pass:v,q[reference the same underlying character]
+pass:v,q[buffer.]
+pass:v,q[Ownership is not transferred; the caller]
+pass:v,q[is responsible for ensuring the lifetime]
+pass:v,q[of the buffer extends until it is no]
+pass:v,q[longer referenced.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() == other.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Constant]
+
+=== Exception Safety
+pass:v,q[Throws nothing]
+
+

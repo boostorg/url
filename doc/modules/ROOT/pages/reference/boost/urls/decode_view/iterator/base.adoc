@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#445D3856E6B16151022FBBB2B3376F44279101A5]
+== base
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+const char*
+base();
+----
+
+Defined in file <include/boost/url/impl/decode_view.hpp> on line 108
+

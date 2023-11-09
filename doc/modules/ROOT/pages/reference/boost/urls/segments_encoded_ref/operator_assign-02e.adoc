@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#2E5AD95CC9DAAD250D2F73F5F4F0A438724F36B4]
+== operator=
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_encoded_ref.adoc[segments_encoded_ref]&
+operator=(const xref:reference/boost/urls/segments_encoded_view.adoc[segments_encoded_view]& other);
+----
+
+Declared in file <include/boost/url/segments_encoded_ref.hpp> on line 164
+
+Defined in file <src/segments_encoded_ref.cpp> on line 54
+

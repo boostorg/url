@@ -1,0 +1,57 @@
+:relfileprefix: ../../../
+[#E1EA7232292C922071D86BBE4BCEE8021ACCFD96]
+== query
+
+pass:v,q[Return the query]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class StringToken = xref:reference/boost/urls/string_token.adoc[string_token]::xref:reference/boost/urls/string_token/return_string.adoc[return_string]>
+StringToken::result_type
+query(StringToken&& token) const;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 1901
+
+=== Description
+
+pass:v,q[If this contains a query, it is returned] pass:v,q[as a string (which may be empty).]
+pass:v,q[Otherwise, an empty string is returned.]
+pass:v,q[Any percent-escapes in the string are]
+pass:v,q[decoded first.]
+pass:v,q[When plus signs appear in the query]
+pass:v,q[portion of the url, they are converted]
+pass:v,q[to spaces automatically upon decoding.]
+pass:v,q[This behavior can be changed by setting]
+pass:v,q[decode options.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).query() == "id=42&name=jane-doe&page size=20" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->query().size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+query           = *( pchar / "/" / "?" )
+
+query-param     = key [ "=" value ]
+query-params    = [ query-param ] *( "&" query-param )
+----
+
+=== Specification
+
+* pass:v,q[://en.wikipedia.org/wiki/Query_string"]
+pass:v,q[>Query string (Wikipedia)]
+
+

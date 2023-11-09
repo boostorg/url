@@ -1,0 +1,47 @@
+:relfileprefix: ../../../
+[#98BC68EC7F65E0FC7DDBB29E552A78F6A92726DE]
+== assign
+
+pass:v,q[Assign elements]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+assign(initializer_list<xref:reference/boost/urls/param_view.adoc[param_view]> init);
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 315
+
+Defined in file <src/params_ref.cpp> on line 55
+
+=== Description
+
+pass:v,q[This function replaces the entire] pass:v,q[contents of the view with the params]
+pass:v,q[in the]
+pass:v,q[initializer-list]
+pass:v,q[.]
+pass:v,q[All iterators are invalidated.]
+[NOTE]
+pass:v,q[The strings referenced by the inputs]
+pass:v,q[must not come from the underlying url,]
+pass:v,q[or else the behavior is undefined.]
+
+=== Example
+[,cpp]
+----
+url u;
+
+u.params().assign( {{ "first", "John" }, { "last", "Doe" }} );
+----
+
+=== Complexity
+pass:v,q[Linear in `init.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

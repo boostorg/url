@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#E30981A9EF8B843108002585DC418FD0177A1C06]
+== end
+
+pass:v,q[Return an iterator to the end]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/decode_view/iterator.adoc[iterator]
+end() const noexcept;
+----
+
+Declared in file <include/boost/url/decode_view.hpp> on line 298
+
+Defined in file <include/boost/url/impl/decode_view.hpp> on line 140
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+auto it = this->end();
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

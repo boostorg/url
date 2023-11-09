@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#4BDBFB5617C06E85897EEE16209F67399C3849E1]
+== id_user
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+id_user
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 26
+

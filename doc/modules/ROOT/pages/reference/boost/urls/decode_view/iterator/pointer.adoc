@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#B28810C937F1A2E8827BF9BEA80F724D70359A93]
+== pointer
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using pointer = const void*;
+----
+
+Defined in file <include/boost/url/impl/decode_view.hpp> on line 51
+

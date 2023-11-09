@@ -1,0 +1,41 @@
+:relfileprefix: ../../../
+[#0DEE2B8DCC44C7A22EE568D0C18B6AB9C8257DE5]
+== front
+
+pass:v,q[Return the first character]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/decode_view/reference.adoc[reference]
+front() const noexcept;
+----
+
+Declared in file <include/boost/url/decode_view.hpp> on line 319
+
+Defined in file <include/boost/url/impl/decode_view.hpp> on line 149
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( decode_view( "Program%20Files" ).front() == 'P' );
+----
+
+=== Preconditions
+[,cpp]
+----
+not this->empty()
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

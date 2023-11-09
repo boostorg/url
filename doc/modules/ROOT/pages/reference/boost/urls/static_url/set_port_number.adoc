@@ -1,0 +1,53 @@
+:relfileprefix: ../../../
+[#BEFBDCFAAA5B4B91D44C6CCB1DA63E2A79D16C64]
+== set_port_number
+
+pass:v,q[Set the port]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/static_url.adoc[static_url]&
+set_port_number(uint16_t n);
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 392
+
+=== Description
+
+pass:v,q[The port is set to the specified integer.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://www.example.com" ).set_port_number( 8080 ).authority().buffer() == "www.example.com:8080" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_authority() == true && this->has_port() == true && this->port_number() == n
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+authority     = [ userinfo "@" ] host [ ":" port ]
+
+port          = *DIGIT
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3[            3.2.3. Port (rfc3986)]
+
+

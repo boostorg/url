@@ -1,0 +1,32 @@
+:relfileprefix: ../../../
+[#06C2D76819C322D48C04D815F29737D17D3F4E71]
+== erase
+
+pass:v,q[Erase segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_encoded_base.adoc[segments_encoded_base]::xref:reference/boost/urls/segments_encoded_base/iterator.adoc[iterator]
+erase(xref:reference/boost/urls/segments_encoded_base.adoc[segments_encoded_base]::xref:reference/boost/urls/segments_encoded_base/iterator.adoc[iterator] pos) noexcept;
+----
+
+Declared in file <include/boost/url/segments_encoded_ref.hpp> on line 532
+
+Defined in file <include/boost/url/impl/segments_encoded_ref.hpp> on line 90
+
+=== Description
+
+pass:v,q[This function removes a segment.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`pos` or come after are invalidated.]
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_resource().size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

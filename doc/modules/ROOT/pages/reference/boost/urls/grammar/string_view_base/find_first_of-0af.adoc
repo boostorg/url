@@ -1,0 +1,26 @@
+:relfileprefix: ../../../../
+[#AF891490BD1857F7C0D3A42D26647F4E35D4B5AA]
+== find_first_of
+
+pass:v,q[Return the position of the first match]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type]
+find_first_of(
+    const char* s,
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] pos,
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] n) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 587
+
+=== Description
+
+pass:v,q[See `core::string_view::find_first_of`]
+
+

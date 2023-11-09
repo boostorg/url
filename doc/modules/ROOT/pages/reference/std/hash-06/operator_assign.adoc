@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#2BF5DCBE13B1F0E86355AD548234CC62F782E848]
+== operator=
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/std/hash-06.adoc[hash]&
+operator=(const xref:reference/std/hash-06.adoc[hash]&) = default;
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 451
+

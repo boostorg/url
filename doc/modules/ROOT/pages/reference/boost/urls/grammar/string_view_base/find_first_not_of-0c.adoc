@@ -1,0 +1,25 @@
+:relfileprefix: ../../../../
+[#C26290A9B388AD9989FFB0A9ED525314D6AFA28C]
+== find_first_not_of
+
+pass:v,q[Return the position of the first non-match]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type]
+find_first_not_of(
+    const char* s,
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] pos = 0) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 681
+
+=== Description
+
+pass:v,q[See `core::string_view::find_first_not_of`]
+
+

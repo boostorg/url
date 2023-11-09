@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#0F6E5F164203777EEE7A4E5B8574475079EF95F8]
+== make_error_condition
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+error_condition
+make_error_condition(xref:reference/boost/urls/grammar/condition.adoc[condition] c) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/impl/error.hpp> on line 108
+

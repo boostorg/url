@@ -1,0 +1,30 @@
+:relfileprefix: ../../../
+[#54ABC40717AD72D5E4424AF0C619FF5B4499674A]
+== Class cs_delim_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet>
+struct cs_delim_rule;
+----
+
+Defined in file <include/boost/url/grammar/delim_rule.hpp> on line 127
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/cs_delim_rule/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/cs_delim_rule/2constructor.adoc[`pass:v[cs_delim_rule]`] |
+|xref:reference/boost/urls/grammar/cs_delim_rule/parse.adoc[`pass:v[parse]`] |
+|===
+

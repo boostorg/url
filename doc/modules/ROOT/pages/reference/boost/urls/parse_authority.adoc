@@ -1,0 +1,52 @@
+:relfileprefix: ../../
+[#765EC2FF23FC4AECDEF7E86FD117D85B165A5826]
+== parse_authority
+
+pass:v,q[Parse an authority]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/authority_view.adoc[authority_view]>
+parse_authority(string_view s) noexcept;
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 1432
+
+Defined in file <src/authority_view.cpp> on line 337
+
+=== Description
+
+pass:v,q[This function parses a string according to] pass:v,q[the authority grammar below, and returns an]
+xref:reference/boost/urls/authority_view.adoc[authority_view]
+pass:v,q[referencing the string.]
+pass:v,q[Ownership of the string is not transferred;]
+pass:v,q[the caller is responsible for ensuring that]
+pass:v,q[the lifetime of the string extends until the]
+pass:v,q[view is no longer being accessed.]
+
+=== BNF
+[,cpp]
+----
+authority     = [ userinfo "@" ] host [ ":" port ]
+
+userinfo      = user [ ":" [ password ] ]
+
+user          = *( unreserved / pct-encoded / sub-delims )
+password      = *( unreserved / pct-encoded / sub-delims / ":" )
+
+host          = IP-literal / IPv4address / reg-name
+
+port          = *DIGIT
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2[3.2. Authority (rfc3986)]
+
+

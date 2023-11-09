@@ -1,0 +1,23 @@
+:relfileprefix: ../../../
+[#75A15412A73102EE3077681E03A89B6FA5D48A58]
+== lower_case
+
+pass:v,q[True if hexadecimal digits are emitted as lower case]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool lower_case;
+----
+
+Defined in file <include/boost/url/encoding_opts.hpp> on line 57
+
+=== Description
+
+pass:v,q[By default, percent-encoding algorithms] pass:v,q[emit hexadecimal digits A through F as]
+pass:v,q[uppercase letters. When this option is]
+pass:v,q[`true`, lowercase letters are used.]
+
+

@@ -1,0 +1,95 @@
+:relfileprefix: ../../
+[#FFACD68C814DE5D7F43C18FDCC5B1F3548CD63AB]
+== resolve
+
+pass:v,q[Resolve a URL reference against a base URL]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<void>
+resolve(
+    const xref:reference/boost/urls/url_view_base.adoc[url_view_base]& base,
+    const xref:reference/boost/urls/url_view_base.adoc[url_view_base]& ref,
+    xref:reference/boost/urls/url_base.adoc[url_base]& dest);
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 2744
+
+Defined in file <include/boost/url/url_base.hpp> on line 2888
+
+=== Description
+
+pass:v,q[This function attempts to resolve a URL] pass:v,q[reference `ref` against the base URL `base`]
+pass:v,q[in a manner similar to that of a web browser]
+pass:v,q[resolving an anchor tag.]
+pass:v,q[The base URL must satisfy the]
+pass:v,q[URI]
+pass:v,q[grammar. In other words, it must contain]
+pass:v,q[a scheme.]
+pass:v,q[Relative references are only usable when]
+pass:v,q[in the context of a base absolute URI.]
+pass:v,q[This process of resolving a relative]
+pass:v,q[reference]
+pass:v,q[within the context of]
+pass:v,q[a]
+pass:v,q[base]
+pass:v,q[URI is defined in detail]
+pass:v,q[in rfc3986 (see below).]
+pass:v,q[The resolution process works as if the]
+pass:v,q[relative reference is appended to the base]
+pass:v,q[URI and the result is normalized.]
+pass:v,q[Given the input base URL, this function]
+pass:v,q[resolves the relative reference]
+pass:v,q[as if performing the following steps:]
+
+* pass:v,q[Ensure the base URI has at least a scheme]
+
+* pass:v,q[Normalizing the reference path]
+
+* pass:v,q[Merge base and reference paths]
+
+* pass:v,q[Normalize the merged path]
+pass:v,q[This function places the result of the]
+pass:v,q[resolution into `dest`, which can be]
+pass:v,q[any of the url containers that inherit]
+pass:v,q[from]
+xref:reference/boost/urls/url_base.adoc[url_base.]
+pass:v,q[If an error occurs, the contents of]
+pass:v,q[`dest` is unspecified and `ec` is set.]
+
+=== Example
+[,cpp]
+----
+url dest;
+system::error_code ec;
+
+resolve("/one/two/three", "four", dest, ec);
+assert( dest.str() == "/one/two/four" );
+
+resolve("http://example.com/", "/one", dest, ec);
+assert( dest.str() == "http://example.com/one" );
+
+resolve("http://example.com/one", "/two", dest, ec);
+assert( dest.str() == "http://example.com/two" );
+
+resolve("http://a/b/c/d;p?q", "g#s", dest, ec);
+assert( dest.str() == "http://a/b/c/g#s" );
+----
+
+=== BNF
+[,cpp]
+----
+absolute-URI  = scheme ":" hier-part [ "?" query ]
+----
+
+=== Exception Safety
+pass:v,q[Basic guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== Specification
+link:https://datatracker.ietf.org/doc/html/rfc3986#section-5[5. Reference Resolution (rfc3986)]
+
+

@@ -1,0 +1,45 @@
+:relfileprefix: ../../../
+[#209E95BB5D8E1468C63E69D5F61ED31C6EE4F377]
+== replace
+
+pass:v,q[Replace segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator]
+replace(
+    xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator] from,
+    xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator] to,
+    initializer_list<string_view> init);
+----
+
+Declared in file <include/boost/url/segments_ref.hpp> on line 625
+
+Defined in file <src/segments_ref.cpp> on line 155
+
+=== Description
+
+pass:v,q[This function replaces a range of] pass:v,q[segments with a list of segments in]
+pass:v,q[an initializer list.]
+pass:v,q[Reserved characters in the list are]
+pass:v,q[automatically escaped.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`from` or come after are invalidated.]
+
+=== Preconditions
+pass:v,q[None of the character buffers referenced]
+pass:v,q[by the list may overlap the character]
+pass:v,q[buffer of the underlying url, or else]
+pass:v,q[the behavior is undefined.]
+
+=== Complexity
+pass:v,q[Linear in `init.size() + this->url().encoded_resouce().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#1F5D5DD5721D72135510D3C05C5236F454A97660]
+== begin
+
+pass:v,q[Return an iterator to the beginning]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+begin() const noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_base.hpp> on line 219
+
+Defined in file <src/params_encoded_base.cpp> on line 79
+
+=== Description
+
+
+=== Complexity
+pass:v,q[Linear in the size of the first param.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

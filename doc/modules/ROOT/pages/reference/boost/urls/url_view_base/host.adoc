@@ -1,0 +1,52 @@
+:relfileprefix: ../../../
+[#202728BCE232AA7C6148C53A32E11E918836CFE1]
+== host
+
+pass:v,q[Return the host]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class StringToken = xref:reference/boost/urls/string_token.adoc[string_token]::xref:reference/boost/urls/string_token/return_string.adoc[return_string]>
+StringToken::result_type
+host(StringToken&& token) const;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 1014
+
+=== Description
+
+pass:v,q[This function returns the host portion] pass:v,q[of the authority as a string, or the]
+pass:v,q[empty string if there is no authority.]
+pass:v,q[Any percent-escapes in the string are]
+pass:v,q[decoded first.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "https://www%2droot.example.com/" ).host() == "www-root.example.com" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->host().size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+host        = IP-literal / IPv4address / reg-name
+
+IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+
+reg-name    = *( unreserved / pct-encoded / "-" / ".")
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

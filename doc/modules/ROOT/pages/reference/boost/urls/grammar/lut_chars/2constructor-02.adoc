@@ -1,0 +1,19 @@
+:relfileprefix: ../../../../
+[#2D8E61E78A99C1DB908F883A00891D75CC10010D]
+== lut_chars
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class Pred,
+    class = enable_if<detail::is_pred<Pred>::value && !std::is_base_of<lut_chars, Pred>::value>::type>
+constexpr
+lut_chars(const Pred& pred) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/lut_chars.hpp> on line 235
+

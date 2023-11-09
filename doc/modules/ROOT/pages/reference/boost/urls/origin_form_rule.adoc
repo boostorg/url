@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#39CB0CA0E6AF789604E01B0850B3C7F7DC68576C]
+== origin_form_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/origin_form_rule_t.adoc[origin_form_rule_t] origin_form_rule;
+----
+
+Defined in file <include/boost/url/rfc/origin_form_rule.hpp> on line 66
+

@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#B091AF119EF16D94F41FABB7794976F496D76715]
+== swap
+
+pass:v,q[Swap]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+swap(xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]& s) noexcept;
+----
+
+Defined in file <include/boost/url/pct_string_view.hpp> on line 378
+

@@ -1,0 +1,42 @@
+:relfileprefix: ../../../
+[#CAD809F6272B6BFE2F49A0FBC89639922E01ACD6]
+== contains
+
+pass:v,q[Return true if a matching key exists]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+contains(
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] key,
+    xref:reference/boost/urls/ignore_case_param.adoc[ignore_case_param] ic = = {}) const noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_base.hpp> on line 267
+
+Defined in file <include/boost/url/impl/params_encoded_base.hpp> on line 122
+
+=== Description
+
+pass:v,q[This function examines the parameters] pass:v,q[in the container to find a match for]
+pass:v,q[the specified key,]
+pass:v,q[which may contain percent escapes.]
+pass:v,q[The comparison is performed as if all]
+pass:v,q[escaped characters were decoded first.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "?first=John&last=Doe" ).encoded_params().contains( "first" ) );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->buffer().size()`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+

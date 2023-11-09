@@ -1,0 +1,21 @@
+:relfileprefix: ../../../../
+[#5F5B30C9E8B35A7E6F75400815E4D9097D8032D0]
+== fatal
+
+pass:v,q[A fatal error in syntax was encountered.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+fatal = 1
+----
+
+Defined in file <include/boost/url/grammar/error.hpp> on line 121
+
+=== Description
+
+pass:v,q[This indicates that parsing cannot continue.]
+
+

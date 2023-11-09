@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#E9AFFD1AC900667057970AF877752D351D1A08D4]
+== query_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/query_rule_t.adoc[query_rule_t] query_rule;
+----
+
+Defined in file <include/boost/url/rfc/query_rule.hpp> on line 72
+

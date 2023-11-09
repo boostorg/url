@@ -1,0 +1,24 @@
+:relfileprefix: ../../../
+[#4AED18A435E4701F86DA8ED5B1EE1A47FA81200B]
+== Class alnum_chars_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct alnum_chars_t;
+----
+
+Defined in file <include/boost/url/grammar/alnum_chars.hpp> on line 53
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/alnum_chars_t/operator_call.adoc[`pass:v[operator()]`] |
+|xref:reference/boost/urls/grammar/alnum_chars_t/find_if.adoc[`pass:v[find_if]`] |
+|xref:reference/boost/urls/grammar/alnum_chars_t/find_if_not.adoc[`pass:v[find_if_not]`] |
+|===
+

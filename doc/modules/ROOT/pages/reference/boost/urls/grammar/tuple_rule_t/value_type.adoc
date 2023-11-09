@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#FE1D1590B72735D5F3CBB762246F95E419EA6D0D]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = mp_eval_if_c<IsList, T, mp_first, T>;
+----
+
+Defined in file <include/boost/url/grammar/tuple_rule.hpp> on line 102
+

@@ -1,0 +1,19 @@
+:relfileprefix: ../../../
+[#C88BB7482A3D39893C8A196AD90529979F6F5392]
+== is_loopback
+
+pass:v,q[Return true if the address is a loopback address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+is_loopback() const noexcept;
+----
+
+Declared in file <include/boost/url/ipv4_address.hpp> on line 226
+
+Defined in file <src/ipv4_address.cpp> on line 83
+

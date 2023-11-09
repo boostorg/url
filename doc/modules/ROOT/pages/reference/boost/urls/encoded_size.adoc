@@ -1,0 +1,45 @@
+:relfileprefix: ../../
+[#5EAF2405CF5AFC5E41A669F5AB83ACCECB732788]
+== encoded_size
+
+pass:v,q[Return the buffer size needed for percent-encoding]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet>
+size_t
+encoded_size(
+    string_view s,
+    const CharSet& unreserved,
+    xref:reference/boost/urls/encoding_opts.adoc[encoding_opts] opt = = {}) noexcept;
+----
+
+Declared in file <include/boost/url/encode.hpp> on line 62
+
+Defined in file <include/boost/url/impl/encode.hpp> on line 28
+
+=== Description
+
+pass:v,q[This function returns the exact number] pass:v,q[of bytes necessary to store the result]
+pass:v,q[of applying percent-encoding to the]
+pass:v,q[string using the given options and]
+pass:v,q[character set.]
+pass:v,q[No encoding is actually performed.]
+
+=== Example
+[,cpp]
+----
+assert( encoded_size( "My Stuff", pchars ) == 10 );
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-2.1[2.1. Percent-Encoding (rfc3986)]
+
+

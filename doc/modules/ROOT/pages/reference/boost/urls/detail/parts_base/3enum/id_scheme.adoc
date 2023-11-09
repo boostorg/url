@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#683466BAE90F5081646502DB14E59894AD9B832F]
+== id_scheme
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+id_scheme = -1
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 25
+

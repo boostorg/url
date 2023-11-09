@@ -1,0 +1,53 @@
+:relfileprefix: ../../../
+[#21866A535603FD893C795D403DC2400759BF13F3]
+== remove_query
+
+pass:v,q[Remove the query]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/static_url.adoc[static_url]&
+remove_query() noexcept;
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 410
+
+=== Description
+
+pass:v,q[If a query is present, it is removed.] pass:v,q[An empty query is distinct from having]
+pass:v,q[no query.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://www.example.com?id=42" ).remove_query().buffer() == "http://www.example.com" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_query() == false && this->params().empty()
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+query           = *( pchar / "/" / "?" )
+
+query-param     = key [ "=" value ]
+query-params    = [ query-param ] *( "&" query-param )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.4[3.4.  Query (rfc3986)]
+
+* link:https://en.wikipedia.org/wiki/Query_string[Query string (Wikipedia)]
+
+

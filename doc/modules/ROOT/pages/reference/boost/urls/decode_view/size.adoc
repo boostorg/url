@@ -1,0 +1,39 @@
+:relfileprefix: ../../../
+[#A6D135B1868BD4622556546CC734DEE3B7BB84A0]
+== size
+
+pass:v,q[Return the number of decoded characters]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/decode_view/size_type.adoc[size_type]
+size() const noexcept;
+----
+
+Defined in file <include/boost/url/decode_view.hpp> on line 263
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( decode_view( "Program%20Files" ).size() == 13 );
+----
+
+=== Effects
+[,cpp]
+----
+return std::distance( this->begin(), this->end() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

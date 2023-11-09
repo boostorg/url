@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#14FA97295CA6526D1E442B17575CAE30596FE2E8]
+== capacity
+
+pass:v,q[Return the number of characters that can be stored without reallocating]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+capacity() const noexcept;
+----
+
+Defined in file <include/boost/url/url_base.hpp> on line 145
+
+=== Description
+
+pass:v,q[This does not include the null terminator,] pass:v,q[which is always present.]
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

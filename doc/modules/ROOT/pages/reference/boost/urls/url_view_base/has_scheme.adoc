@@ -1,0 +1,50 @@
+:relfileprefix: ../../../
+[#8B0487D9FBD591BF3D4E4663ECA58B192C9CE2C0]
+== has_scheme
+
+pass:v,q[Return true a scheme is present]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+has_scheme() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 339
+
+Defined in file <src/url_view_base.cpp> on line 105
+
+=== Description
+
+pass:v,q[This function returns true if this] pass:v,q[contains a scheme.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://www.example.com" ).has_scheme() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.1[3.1. Scheme (rfc3986)]
+
+

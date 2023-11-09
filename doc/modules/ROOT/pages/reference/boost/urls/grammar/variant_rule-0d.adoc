@@ -1,0 +1,24 @@
+:relfileprefix: ../../../
+[#D5E705CC1202FD256D389B27967A11C3F2F63B19]
+== variant_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class R0,
+    class... Rn>
+constexpr
+xref:reference/boost/urls/grammar/variant_rule_t.adoc[variant_rule_t]<R0, Rn...>
+variant_rule(
+    const R0& r0,
+    const Rn&... rn) noexcept;
+----
+
+Declared in file <include/boost/url/grammar/variant_rule.hpp> on line 117
+
+Defined in file <include/boost/url/grammar/impl/variant_rule.hpp> on line 102
+

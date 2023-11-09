@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#615B8A94C6FEC86269F0BCC9F1ADB37777CC1CE6]
+== difference_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using difference_type = xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/difference_type.adoc[difference_type];
+----
+
+Defined in file <include/boost/url/impl/segments_base.hpp> on line 41
+

@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#646CC64A90199572F4B0279DCA18EC4FDD14E12D]
+== difference_type
+
+pass:v,q[A signed integer type used to represent differences.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using difference_type = ptrdiff_t;
+----
+
+Defined in file <include/boost/url/segments_base.hpp> on line 111
+

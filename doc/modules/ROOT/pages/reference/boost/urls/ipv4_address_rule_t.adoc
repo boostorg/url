@@ -1,0 +1,28 @@
+:relfileprefix: ../../
+[#4E115ECEDCC2C0E65F1B2EE96D5B5317EB2CEB71]
+== Class ipv4_address_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct ipv4_address_rule_t;
+----
+
+Defined in file <include/boost/url/rfc/ipv4_address_rule.hpp> on line 58
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv4_address_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv4_address_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+

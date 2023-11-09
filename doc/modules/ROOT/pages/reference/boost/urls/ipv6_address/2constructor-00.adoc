@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#02F7282B6DD61C36C647E88EB5025179BC600E0C]
+== ipv6_address
+
+pass:v,q[Construct from a string.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ipv6_address(string_view s);
+----
+
+Declared in file <include/boost/url/ipv6_address.hpp> on line 170
+
+Defined in file <src/ipv6_address.cpp> on line 43
+
+=== Description
+
+pass:v,q[This function constructs an address from] pass:v,q[the string `s`, which must contain a valid]
+pass:v,q[IPv6 address string or else an exception]
+pass:v,q[is thrown.]
+[NOTE]
+pass:v,q[For a non-throwing parse function,]
+pass:v,q[use]
+xref:reference/boost/urls/parse_ipv6_address.adoc[parse_ipv6_address.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

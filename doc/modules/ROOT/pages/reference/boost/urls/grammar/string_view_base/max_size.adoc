@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#432B7AAA38EB271D2167C3D0EB375202F1872AF5]
+== max_size
+
+pass:v,q[Return the maximum allowed size]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type]
+max_size() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 261
+
+=== Description
+
+pass:v,q[See `core::string_view::max_size`]
+
+

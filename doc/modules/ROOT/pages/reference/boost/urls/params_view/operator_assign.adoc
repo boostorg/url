@@ -1,0 +1,38 @@
+:relfileprefix: ../../../
+[#8C2D2B2F943C82088BB272A9E97CB4191B785DB2]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_view.adoc[params_view]&
+operator=(const xref:reference/boost/urls/params_view.adoc[params_view]&) = default;
+----
+
+Defined in file <include/boost/url/params_view.hpp> on line 278
+
+=== Description
+
+pass:v,q[After assignment, both views reference] pass:v,q[the same underlying character buffer.]
+pass:v,q[Ownership is not transferred; the caller]
+pass:v,q[is responsible for ensuring the lifetime]
+pass:v,q[of the buffer extends until it is no]
+pass:v,q[longer referenced.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() == other.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Constant]
+
+=== Exception Safety
+pass:v,q[Throws nothing]
+
+

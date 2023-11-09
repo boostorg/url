@@ -1,0 +1,25 @@
+:relfileprefix: ../../../../
+[#4C44FBCE69ED1C02A1310D666FD31418B896C162]
+== operator->
+
+pass:v,q[Return the referenced object]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+T*
+operator->() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/recycled.hpp> on line 455
+
+=== Description
+
+pass:v,q[If this is empty, `nullptr` is returned.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

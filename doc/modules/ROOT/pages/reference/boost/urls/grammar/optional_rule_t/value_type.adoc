@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#26FAA8F2D2242274E5EC299CBAE00123C28AB75E]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = optional<Rule::value_type>;
+----
+
+Defined in file <include/boost/url/grammar/optional_rule.hpp> on line 68
+

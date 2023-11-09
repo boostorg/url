@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#F89F30963B9C5F5CE2B231352F27DFD6C86A2941]
+== Friend url_impl
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend url_impl;
+----
+
+Defined in file <include/boost/url/authority_view.hpp> on line 90
+

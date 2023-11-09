@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#6239B3EC52F1D8528430D9BBEEDF24A0E7557A2C]
+== operator segments_view
+
+pass:v,q[Conversion]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+operator xref:reference/boost/urls/segments_view.adoc[segments_view]() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_ref.hpp> on line 214
+
+Defined in file <src/segments_ref.cpp> on line 38
+

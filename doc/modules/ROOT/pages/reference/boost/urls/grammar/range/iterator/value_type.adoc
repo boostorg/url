@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#D7750699A71CE502C0A2BF764044BCA90B6AA98B]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = T;
+----
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 365
+

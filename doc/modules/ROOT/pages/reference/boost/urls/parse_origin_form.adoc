@@ -1,0 +1,48 @@
+:relfileprefix: ../../
+[#2787F4E65120EE88BCF51D9292945A6220610884]
+== parse_origin_form
+
+pass:v,q[Return a reference to a parsed URL string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/url_view.adoc[url_view]>
+parse_origin_form(string_view s);
+----
+
+Declared in file <include/boost/url/parse.hpp> on line 112
+
+Defined in file <src/parse.cpp> on line 34
+
+=== Description
+
+pass:v,q[This function parses a string according] pass:v,q[to the grammar below and returns a view]
+pass:v,q[referencing the passed string upon success,]
+pass:v,q[else returns an error.]
+pass:v,q[Ownership of the string is not transferred;]
+pass:v,q[the caller is responsible for ensuring that]
+pass:v,q[the lifetime of the character buffer extends]
+pass:v,q[until the view is no longer being accessed.]
+
+=== Example
+[,cpp]
+----
+system::result< url_view > = parse_origin_form( "/index.htm?layout=mobile" );
+----
+
+=== BNF
+[,cpp]
+----
+origin-form    = absolute-path [ "?" query ]
+
+absolute-path = 1*( "/" segment )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1[5.3.1.  origin-form (rfc7230)]
+
+

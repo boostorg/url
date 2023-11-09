@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#7F239D42C987DE59FAE02E25A61D94E4E29B9D41]
+== ref
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet>
+constexpr
+enable_if<is_charset<CharSet>::value && !std::is_same<CharSet, detail::charset_ref<CharSet>>::value, charset_ref<CharSet>>::type
+ref(const CharSet& cs) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/charset.hpp> on line 197
+

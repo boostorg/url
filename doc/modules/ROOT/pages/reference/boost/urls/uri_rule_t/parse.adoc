@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#E1FC7A816068ED74FFF94F2C8C7DF323D0ABBAAB]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/uri_rule_t/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* const end) const noexcept;
+----
+
+Declared in file <include/boost/url/rfc/uri_rule.hpp> on line 55
+
+Defined in file <src/rfc/uri_rule.cpp> on line 28
+

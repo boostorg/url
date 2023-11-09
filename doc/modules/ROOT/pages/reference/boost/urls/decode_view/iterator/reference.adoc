@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#670AA7917E8756CBEB1F95EC02F716F54D9577ED]
+== reference
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using reference = char;
+----
+
+Defined in file <include/boost/url/impl/decode_view.hpp> on line 50
+

@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#2AD61C5E481A5D37CEEECA43CBF4B766ABB9F834]
+== alnum_chars
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/grammar/alnum_chars_t.adoc[alnum_chars_t] alnum_chars;
+----
+
+Defined in file <include/boost/url/grammar/alnum_chars.hpp> on line 86
+

@@ -1,0 +1,21 @@
+:relfileprefix: ../../../
+[#FDA3EF92405987381E31BD9408D689D6CE5CEA84]
+== const_reference
+
+pass:v,q[The reference type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using const_reference = xref:reference/boost/urls/param.adoc[param];
+----
+
+Defined in file <include/boost/url/params_base.hpp> on line 124
+
+=== Description
+
+pass:v,q[This is the type of value returned when] pass:v,q[iterators of the view are dereferenced.]
+
+

@@ -1,0 +1,42 @@
+:relfileprefix: ../../../../
+[#5631E67936C7B3C85010D8FB06002786645641DC]
+== recycled_ptr
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+recycled_ptr();
+----
+
+Declared in file <include/boost/url/grammar/recycled.hpp> on line 272
+
+Defined in file <include/boost/url/grammar/impl/recycled.hpp> on line 120
+
+=== Description
+
+pass:v,q[Upon construction, this acquires] pass:v,q[exclusive access to an object of type]
+pass:v,q[`T` which is either recycled from a]
+pass:v,q[global recycle bin, or newly allocated.]
+pass:v,q[The object is in an unknown but]
+pass:v,q[valid state.]
+
+=== Example
+[,cpp]
+----
+recycled_ptr< std::string > ps;
+
+// Put the string into a known state
+ps->clear();
+----
+
+=== Postconditions
+[,cpp]
+----
+&this->bin() != nullptr && ! this->empty()
+----
+
+

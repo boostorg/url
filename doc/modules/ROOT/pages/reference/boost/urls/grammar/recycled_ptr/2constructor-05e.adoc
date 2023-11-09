@@ -1,0 +1,42 @@
+:relfileprefix: ../../../../
+[#5E347CE7638A764FB1E4E80581656B5739D9F69E]
+== recycled_ptr
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+recycled_ptr(nullptr_t) noexcept;
+----
+
+Declared in file <include/boost/url/grammar/recycled.hpp> on line 301
+
+Defined in file <include/boost/url/grammar/impl/recycled.hpp> on line 128
+
+=== Description
+
+pass:v,q[After construction, this is empty] pass:v,q[and refers to a global recycle bin.]
+
+=== Example
+[,cpp]
+----
+recycled_ptr< std::string > ps( nullptr );
+
+// Acquire a string and put it into a known state
+ps->acquire();
+ps->clear();
+----
+
+=== Postconditions
+[,cpp]
+----
+&this->bin() != nullptr && this->empty()
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

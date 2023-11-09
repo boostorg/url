@@ -1,0 +1,55 @@
+:relfileprefix: ../../../
+[#7113C6D67A485E67D80B42BE0BE89DC4EA88734E]
+== persist
+
+pass:v,q[Return a shared, persistent copy of the url]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+shared_ptr<const xref:reference/boost/urls/url_view.adoc[url_view]>
+persist() const;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 297
+
+Defined in file <src/url_view_base.cpp> on line 83
+
+=== Description
+
+pass:v,q[This function returns a read-only copy of] pass:v,q[the url, with shared lifetime. The returned]
+pass:v,q[value owns (persists) the underlying string.]
+pass:v,q[The algorithm used to create the value]
+pass:v,q[minimizes the number of individual memory]
+pass:v,q[allocations, making it more efficient than]
+pass:v,q[when using direct standard library functions.]
+
+=== Example
+[,cpp]
+----
+std::shared_ptr< url_view const > sp;
+{
+    std::string s( "http://example.com" );
+    url_view u( s );                        // u references characters in s
+
+    assert( u.data() == s.data() );         // same buffer
+
+    sp = u.persist();
+
+    assert( sp->data() != s.data() );       // different buffer
+    assert( sp->buffer() == s);             // same contents
+
+    // s is destroyed and thus u
+    // becomes invalid, but sp remains valid.
+}
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+

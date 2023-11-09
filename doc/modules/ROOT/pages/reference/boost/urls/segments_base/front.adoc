@@ -1,0 +1,51 @@
+:relfileprefix: ../../../
+[#119DC0C2924F27E7945E850B01F095000E7BC905]
+== front
+
+pass:v,q[Return the first segment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string
+front() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_base.hpp> on line 241
+
+Defined in file <include/boost/url/impl/segments_base.hpp> on line 105
+
+=== Description
+
+pass:v,q[This function returns a string with the] pass:v,q[first segment of the path without any]
+pass:v,q[leading or trailing '/' separators.]
+pass:v,q[Any percent-escapes in the string are]
+pass:v,q[decoded first.]
+
+=== Preconditions
+[,cpp]
+----
+this->empty() == false
+----
+
+=== Effects
+[,cpp]
+----
+return *begin();
+----
+
+=== Example
+[,cpp]
+----
+assert( url_view( "/path/to/file.txt" ).segments().front() == "path" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->front().size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+

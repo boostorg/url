@@ -1,0 +1,51 @@
+:relfileprefix: ../../../
+[#320831A1DFD3675AC8157AA78C43C1013E4509BF]
+== authority_view
+
+pass:v,q[Construct from a string.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+authority_view(string_view s);
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 158
+
+Defined in file <src/authority_view.cpp> on line 60
+
+=== Description
+
+pass:v,q[This function attempts to construct] pass:v,q[an authority from the string `s`,]
+pass:v,q[which must be a valid ['authority] or]
+pass:v,q[else an exception is thrown. Upon]
+pass:v,q[successful construction, the view]
+pass:v,q[refers to the characters in the]
+pass:v,q[buffer pointed to by `s`.]
+pass:v,q[Ownership is not transferred; The]
+pass:v,q[caller is responsible for ensuring]
+pass:v,q[that the lifetime of the buffer]
+pass:v,q[extends until the view is destroyed.]
+
+=== BNF
+[,cpp]
+----
+authority     = [ userinfo "@" ] host [ ":" port ]
+
+userinfo      = user [ ":" [ password ] ]
+
+user          = *( unreserved / pct-encoded / sub-delims )
+password      = *( unreserved / pct-encoded / sub-delims / ":" )
+
+host          = IP-literal / IPv4address / reg-name
+
+port          = *DIGIT
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2[3.2. Authority (rfc3986)]
+
+

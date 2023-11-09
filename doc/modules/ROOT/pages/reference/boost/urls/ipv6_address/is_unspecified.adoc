@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#A203BFA7746CCBBE994790418DDF894F9A7D9802]
+== is_unspecified
+
+pass:v,q[Return true if the address is unspecified]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+is_unspecified() const noexcept;
+----
+
+Declared in file <include/boost/url/ipv6_address.hpp> on line 261
+
+Defined in file <src/ipv6_address.cpp> on line 71
+
+=== Description
+
+pass:v,q[The address 0:0:0:0:0:0:0:0 is called the] pass:v,q[unspecified address. It indicates the]
+pass:v,q[absence of an address.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.2[            2.5.2. The Unspecified Address (rfc4291)]
+
+

@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#A120182657BCD0170BF37F010515FADE5721FF94]
+== optional
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class T>
+using optional = optional<T>;
+----
+
+Defined in file <include/boost/url/optional.hpp> on line 39
+

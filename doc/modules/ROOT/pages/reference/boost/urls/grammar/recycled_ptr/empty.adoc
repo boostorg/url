@@ -1,0 +1,24 @@
+:relfileprefix: ../../../../
+[#D2EC9AC2C3D12CB19B162BA4D45B7DFBCB2870AD]
+== empty
+
+pass:v,q[Return true if this does not reference an object]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+empty() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/recycled.hpp> on line 403
+
+=== Description
+
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

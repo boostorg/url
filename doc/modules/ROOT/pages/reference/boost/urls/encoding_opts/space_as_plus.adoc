@@ -1,0 +1,31 @@
+:relfileprefix: ../../../
+[#A73C64AA0088A5259A7B553D4D44165233B68AA1]
+== space_as_plus
+
+pass:v,q[True if spaces encode to and from plus signs]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool space_as_plus;
+----
+
+Defined in file <include/boost/url/encoding_opts.hpp> on line 48
+
+=== Description
+
+pass:v,q[This option controls whether or not] pass:v,q[the PLUS character ("+") is used to]
+pass:v,q[represent the SP character (" ") when]
+pass:v,q[encoding or decoding.]
+pass:v,q[Although not prescribed by the RFC, plus]
+pass:v,q[signs are commonly treated as spaces upon]
+pass:v,q[decoding when used in the query of URLs]
+pass:v,q[using well known schemes such as HTTP.]
+
+=== Specification
+
+* link:https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1[            application/x-www-form-urlencoded (w3.org)]
+
+

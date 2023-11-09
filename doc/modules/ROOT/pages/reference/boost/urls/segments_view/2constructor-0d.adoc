@@ -1,0 +1,39 @@
+:relfileprefix: ../../../
+[#D1C1D0FBB5797834209C6AAE0B58D612C86C479F]
+== segments_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+segments_view(const xref:reference/boost/urls/segments_view.adoc[segments_view]& other) = default;
+----
+
+Defined in file <include/boost/url/segments_view.hpp> on line 111
+
+=== Description
+
+pass:v,q[After construction, viewss] pass:v,q[reference the same underlying character]
+pass:v,q[buffer.]
+pass:v,q[Ownership is not transferred; the caller]
+pass:v,q[is responsible for ensuring the lifetime]
+pass:v,q[of the buffer extends until it is no]
+pass:v,q[longer referenced.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() == other.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Constant]
+
+=== Exception Safety
+pass:v,q[Throws nothing]
+
+

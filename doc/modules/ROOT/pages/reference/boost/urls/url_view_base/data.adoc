@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#2365A32B6D73FA24B8E646CBE139F303C3B9A04D]
+== data
+
+pass:v,q[Return a pointer to the url's character buffer]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+const char*
+data() const noexcept;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 219
+
+=== Description
+
+pass:v,q[This function returns a pointer to] pass:v,q[the first character of the url, which]
+pass:v,q[is not guaranteed to be null-terminated.]
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

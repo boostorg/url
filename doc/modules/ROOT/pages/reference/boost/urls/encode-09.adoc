@@ -1,0 +1,48 @@
+:relfileprefix: ../../
+[#9AFE8BBE491369CEC5857C0AF9A53BEFD1CC115C]
+== encode
+
+pass:v,q[Apply percent-encoding to a string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet>
+size_t
+encode(
+    char* dest,
+    size_t size,
+    string_view s,
+    const CharSet& unreserved,
+    xref:reference/boost/urls/encoding_opts.adoc[encoding_opts] opt = = {});
+----
+
+Declared in file <include/boost/url/encode.hpp> on line 118
+
+Defined in file <include/boost/url/impl/encode.hpp> on line 79
+
+=== Description
+
+pass:v,q[This function applies percent-encoding] pass:v,q[to the string using the given options and]
+pass:v,q[character set. The destination buffer]
+pass:v,q[provided by the caller is used to store]
+pass:v,q[the result, which may be truncated if]
+pass:v,q[there is insufficient space.]
+
+=== Example
+[,cpp]
+----
+char buf[100];
+assert( encode( buf, sizeof(buf), "Program Files", pchars ) == 15 );
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-2.1[2.1. Percent-Encoding (rfc3986)]
+
+

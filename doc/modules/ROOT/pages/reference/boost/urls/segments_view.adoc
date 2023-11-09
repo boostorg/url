@@ -1,0 +1,69 @@
+:relfileprefix: ../../
+[#64D24E2D9E11842076036A2888DA3B2B16491EB0]
+== Class segments_view
+
+pass:v,q[A view representing path segments in a URL]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class segments_view
+    : public xref:reference/boost/urls/segments_base.adoc[segments_base];
+----
+
+Declared in file <include/boost/url/segments_ref.hpp> on line 24
+
+Defined in file <include/boost/url/segments_view.hpp> on line 55
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_view/2constructor-0c.adoc[`pass:v[segments_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/segments_view/2constructor-0d.adoc[`pass:v[segments_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/segments_view/2constructor-0e.adoc[`pass:v[segments_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/segments_view/operator_assign.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_view/8friend-07.adoc[`pass:v[url_view_base]`] |
+|xref:reference/boost/urls/segments_view/8friend-0d.adoc[`pass:v[segments_encoded_view]`] |
+|xref:reference/boost/urls/segments_view/8friend-0b.adoc[`pass:v[segments_ref]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type are used to interpret] pass:v,q[the path as a bidirectional view of segment]
+pass:v,q[strings.]
+pass:v,q[The view does not retain ownership of the]
+pass:v,q[elements and instead references the original]
+pass:v,q[character buffer. The caller is responsible]
+pass:v,q[for ensuring that the lifetime of the buffer]
+pass:v,q[extends until it is no longer referenced.]
+
+=== Example
+[,cpp]
+----
+url_view u( "/path/to/file.txt" );
+
+segments_view ps = u.segments();
+
+assert( ps.buffer().data() == u.buffer().data() );
+----
+pass:v,q[Percent escapes in strings returned when]
+pass:v,q[dereferencing iterators are automatically]
+pass:v,q[decoded.]
+
+=== Iterator Invalidation
+pass:v,q[Changes to the underlying character buffer]
+pass:v,q[can invalidate iterators which reference it.]
+
+

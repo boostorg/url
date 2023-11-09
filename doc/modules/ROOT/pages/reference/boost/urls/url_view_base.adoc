@@ -1,0 +1,194 @@
+:relfileprefix: ../../
+[#50454D8431239193177E33750F16ED5F49F6AC28]
+== Class url_view_base
+
+pass:v,q[Common functionality for containers]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class url_view_base
+    : xref:reference/boost/urls/detail.adoc[detail]::xref:reference/boost/urls/detail/parts_base.adoc[parts_base];
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 65
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/url_view_base/digest.adoc[`pass:v[digest]`] |
+|xref:reference/boost/urls/url_view_base/size.adoc[`pass:v[size]`] |pass:v,q[Return the number of characters in the url]
+
+|xref:reference/boost/urls/url_view_base/empty.adoc[`pass:v[empty]`] |pass:v,q[Return true if the url is empty]
+
+|xref:reference/boost/urls/url_view_base/data.adoc[`pass:v[data]`] |pass:v,q[Return a pointer to the url's character buffer]
+
+|xref:reference/boost/urls/url_view_base/buffer.adoc[`pass:v[buffer]`] |pass:v,q[Return the url string]
+
+|xref:reference/boost/urls/url_view_base/2conversion.adoc[`pass:v[operator string_view]`] |pass:v,q[Return the URL as a core::string_view]
+
+|xref:reference/boost/urls/url_view_base/persist.adoc[`pass:v[persist]`] |pass:v,q[Return a shared, persistent copy of the url]
+
+|xref:reference/boost/urls/url_view_base/has_scheme.adoc[`pass:v[has_scheme]`] |pass:v,q[Return true a scheme is present]
+
+|xref:reference/boost/urls/url_view_base/scheme.adoc[`pass:v[scheme]`] |pass:v,q[Return the scheme]
+
+|xref:reference/boost/urls/url_view_base/scheme_id.adoc[`pass:v[scheme_id]`] |pass:v,q[Return the scheme]
+
+|xref:reference/boost/urls/url_view_base/has_authority.adoc[`pass:v[has_authority]`] |pass:v,q[Return true if an authority is present]
+
+|xref:reference/boost/urls/url_view_base/authority.adoc[`pass:v[authority]`] |pass:v,q[Return the authority]
+
+|xref:reference/boost/urls/url_view_base/encoded_authority.adoc[`pass:v[encoded_authority]`] |pass:v,q[Return the authority.]
+
+|xref:reference/boost/urls/url_view_base/has_userinfo.adoc[`pass:v[has_userinfo]`] |pass:v,q[Return true if a userinfo is present]
+
+|xref:reference/boost/urls/url_view_base/has_password.adoc[`pass:v[has_password]`] |pass:v,q[Return true if a password is present]
+
+|xref:reference/boost/urls/url_view_base/userinfo.adoc[`pass:v[userinfo]`] |pass:v,q[Return the userinfo]
+
+|xref:reference/boost/urls/url_view_base/encoded_userinfo.adoc[`pass:v[encoded_userinfo]`] |pass:v,q[Return the userinfo]
+
+|xref:reference/boost/urls/url_view_base/user.adoc[`pass:v[user]`] |pass:v,q[Return the user]
+
+|xref:reference/boost/urls/url_view_base/encoded_user.adoc[`pass:v[encoded_user]`] |pass:v,q[Return the user]
+
+|xref:reference/boost/urls/url_view_base/password.adoc[`pass:v[password]`] |pass:v,q[Return the password]
+
+|xref:reference/boost/urls/url_view_base/encoded_password.adoc[`pass:v[encoded_password]`] |pass:v,q[Return the password]
+
+|xref:reference/boost/urls/url_view_base/host_type.adoc[`pass:v[host_type]`] |pass:v,q[Return the host type]
+
+|xref:reference/boost/urls/url_view_base/host.adoc[`pass:v[host]`] |pass:v,q[Return the host]
+
+|xref:reference/boost/urls/url_view_base/encoded_host.adoc[`pass:v[encoded_host]`] |pass:v,q[Return the host]
+
+|xref:reference/boost/urls/url_view_base/host_address.adoc[`pass:v[host_address]`] |pass:v,q[Return the host]
+
+|xref:reference/boost/urls/url_view_base/encoded_host_address.adoc[`pass:v[encoded_host_address]`] |pass:v,q[Return the host]
+
+|xref:reference/boost/urls/url_view_base/host_ipv4_address.adoc[`pass:v[host_ipv4_address]`] |pass:v,q[Return the host IPv4 address]
+
+|xref:reference/boost/urls/url_view_base/host_ipv6_address.adoc[`pass:v[host_ipv6_address]`] |pass:v,q[Return the host IPv6 address]
+
+|xref:reference/boost/urls/url_view_base/host_ipvfuture.adoc[`pass:v[host_ipvfuture]`] |pass:v,q[Return the host IPvFuture address]
+
+|xref:reference/boost/urls/url_view_base/host_name.adoc[`pass:v[host_name]`] |pass:v,q[Return the host name]
+
+|xref:reference/boost/urls/url_view_base/encoded_host_name.adoc[`pass:v[encoded_host_name]`] |pass:v,q[Return the host name]
+
+|xref:reference/boost/urls/url_view_base/zone_id.adoc[`pass:v[zone_id]`] |pass:v,q[Return the IPv6 Zone ID]
+
+|xref:reference/boost/urls/url_view_base/encoded_zone_id.adoc[`pass:v[encoded_zone_id]`] |pass:v,q[Return the IPv6 Zone ID]
+
+|xref:reference/boost/urls/url_view_base/has_port.adoc[`pass:v[has_port]`] |pass:v,q[Return true if a port is present]
+
+|xref:reference/boost/urls/url_view_base/port.adoc[`pass:v[port]`] |pass:v,q[Return the port]
+
+|xref:reference/boost/urls/url_view_base/port_number.adoc[`pass:v[port_number]`] |pass:v,q[Return the port]
+
+|xref:reference/boost/urls/url_view_base/is_path_absolute.adoc[`pass:v[is_path_absolute]`] |pass:v,q[Return true if the path is absolute]
+
+|xref:reference/boost/urls/url_view_base/path.adoc[`pass:v[path]`] |pass:v,q[Return the path]
+
+|xref:reference/boost/urls/url_view_base/encoded_path.adoc[`pass:v[encoded_path]`] |pass:v,q[Return the path]
+
+|xref:reference/boost/urls/url_view_base/segments.adoc[`pass:v[segments]`] |pass:v,q[Return the path as a container of segments]
+
+|xref:reference/boost/urls/url_view_base/encoded_segments.adoc[`pass:v[encoded_segments]`] |pass:v,q[Return the path as a container of segments]
+
+|xref:reference/boost/urls/url_view_base/has_query.adoc[`pass:v[has_query]`] |pass:v,q[Return true if a query is present]
+
+|xref:reference/boost/urls/url_view_base/query.adoc[`pass:v[query]`] |pass:v,q[Return the query]
+
+|xref:reference/boost/urls/url_view_base/encoded_query.adoc[`pass:v[encoded_query]`] |pass:v,q[Return the query]
+
+|xref:reference/boost/urls/url_view_base/params-06.adoc[`pass:v[params]`] |pass:v,q[Return the query as a container of parameters]
+
+|xref:reference/boost/urls/url_view_base/params-05.adoc[`pass:v[params]`] |
+|xref:reference/boost/urls/url_view_base/encoded_params.adoc[`pass:v[encoded_params]`] |pass:v,q[Return the query as a container of parameters]
+
+|xref:reference/boost/urls/url_view_base/has_fragment.adoc[`pass:v[has_fragment]`] |pass:v,q[Return true if a fragment is present]
+
+|xref:reference/boost/urls/url_view_base/fragment.adoc[`pass:v[fragment]`] |pass:v,q[Return the fragment]
+
+|xref:reference/boost/urls/url_view_base/encoded_fragment.adoc[`pass:v[encoded_fragment]`] |pass:v,q[Return the fragment]
+
+|xref:reference/boost/urls/url_view_base/encoded_host_and_port.adoc[`pass:v[encoded_host_and_port]`] |pass:v,q[Return the host and port]
+
+|xref:reference/boost/urls/url_view_base/encoded_origin.adoc[`pass:v[encoded_origin]`] |pass:v,q[Return the origin]
+
+|xref:reference/boost/urls/url_view_base/encoded_resource.adoc[`pass:v[encoded_resource]`] |pass:v,q[Return the resource]
+
+|xref:reference/boost/urls/url_view_base/encoded_target.adoc[`pass:v[encoded_target]`] |pass:v,q[Return the target]
+
+|xref:reference/boost/urls/url_view_base/compare.adoc[`pass:v[compare]`] |pass:v,q[Return the result of comparing this with another url]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/url_view_base/8friend-08a.adoc[`pass:v[url]`] |
+|xref:reference/boost/urls/url_view_base/8friend-075.adoc[`pass:v[url_base]`] |
+|xref:reference/boost/urls/url_view_base/8friend-0e4.adoc[`pass:v[url_view]`] |
+|xref:reference/boost/urls/url_view_base/8friend-0e8.adoc[`pass:v[static_url_base]`] |
+|xref:reference/boost/urls/url_view_base/8friend-07e.adoc[`pass:v[params_base]`] |
+|xref:reference/boost/urls/url_view_base/8friend-0d8.adoc[`pass:v[params_encoded_base]`] |
+|xref:reference/boost/urls/url_view_base/8friend-076.adoc[`pass:v[params_encoded_ref]`] |
+|xref:reference/boost/urls/url_view_base/8friend-04e.adoc[`pass:v[params_encoded_view]`] |
+|xref:reference/boost/urls/url_view_base/8friend-0fe.adoc[`pass:v[params_ref]`] |
+|xref:reference/boost/urls/url_view_base/8friend-07f.adoc[`pass:v[params_view]`] |
+|xref:reference/boost/urls/url_view_base/8friend-0a.adoc[`pass:v[segments_base]`] |
+|xref:reference/boost/urls/url_view_base/8friend-03f.adoc[`pass:v[segments_encoded_base]`] |
+|xref:reference/boost/urls/url_view_base/8friend-070.adoc[`pass:v[segments_encoded_ref]`] |
+|xref:reference/boost/urls/url_view_base/8friend-0e2.adoc[`pass:v[segments_encoded_view]`] |
+|xref:reference/boost/urls/url_view_base/8friend-08b.adoc[`pass:v[segments_ref]`] |
+|xref:reference/boost/urls/url_view_base/8friend-0f3.adoc[`pass:v[segments_view]`] |
+|xref:reference/boost/urls/url_view_base/8friend-0dc.adoc[`pass:v[pattern]`] |
+|xref:reference/boost/urls/url_view_base/8friend-07c.adoc[`pass:v[operator==]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/url_view_base/8friend-02.adoc[`pass:v[operator!=]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/url_view_base/8friend-05.adoc[`pass:v[operator<]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/url_view_base/8friend-04a.adoc[`pass:v[operator<=]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/url_view_base/8friend-073.adoc[`pass:v[operator>]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/url_view_base/8friend-06.adoc[`pass:v[operator>=]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/url_view_base/8friend-031.adoc[`pass:v[operator<<]`] |
+|===
+
+=== Description
+
+pass:v,q[This base class is used by the library] pass:v,q[to provide common member functions for]
+pass:v,q[containers. This cannot be instantiated]
+pass:v,q[directly; Instead, use one of the]
+pass:v,q[containers or functions:]
+
+=== Containers
+
+* xref:reference/boost/urls/url.adoc[url]
+
+* xref:reference/boost/urls/url_view.adoc[url_view]
+
+* xref:reference/boost/urls/static_url.adoc[static_url]
+
+=== Functions
+
+* xref:reference/boost/urls/parse_absolute_uri.adoc[parse_absolute_uri]
+
+* xref:reference/boost/urls/parse_origin_form.adoc[parse_origin_form]
+
+* xref:reference/boost/urls/parse_relative_ref.adoc[parse_relative_ref]
+
+* xref:reference/boost/urls/parse_uri.adoc[parse_uri]
+
+* xref:reference/boost/urls/parse_uri_reference.adoc[parse_uri_reference]
+
+

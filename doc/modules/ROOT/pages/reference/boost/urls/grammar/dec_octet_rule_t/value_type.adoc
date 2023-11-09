@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#1C72A713B6C58D7AF38A258A391B05DDAE3C0E91]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = unsigned char;
+----
+
+Defined in file <include/boost/url/grammar/dec_octet_rule.hpp> on line 58
+

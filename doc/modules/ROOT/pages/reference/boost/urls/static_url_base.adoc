@@ -1,0 +1,53 @@
+:relfileprefix: ../../
+[#766B2A7637BC757151160341F70C4EB3D6399DBF]
+== Class static_url_base
+
+pass:v,q[Common implementation for all static URLs]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class static_url_base
+    : public xref:reference/boost/urls/url_base.adoc[url_base];
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 52
+
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/static_url_base/8friend.adoc[`pass:v[static_url]`] |
+|===
+
+=== Description
+
+pass:v,q[This base class is used by the library] pass:v,q[to provide common functionality for]
+pass:v,q[static URLs. Users should not use this]
+pass:v,q[class directly. Instead, construct an]
+pass:v,q[instance of one of the containers]
+pass:v,q[or call a parsing function.]
+
+=== Containers
+
+* xref:reference/boost/urls/url.adoc[url]
+
+* xref:reference/boost/urls/url_view.adoc[url_view]
+
+* xref:reference/boost/urls/static_url.adoc[static_url]
+
+=== Parsing Functions
+
+* xref:reference/boost/urls/parse_absolute_uri.adoc[parse_absolute_uri]
+
+* xref:reference/boost/urls/parse_origin_form.adoc[parse_origin_form]
+
+* xref:reference/boost/urls/parse_relative_ref.adoc[parse_relative_ref]
+
+* xref:reference/boost/urls/parse_uri.adoc[parse_uri]
+
+* xref:reference/boost/urls/parse_uri_reference.adoc[parse_uri_reference]
+
+

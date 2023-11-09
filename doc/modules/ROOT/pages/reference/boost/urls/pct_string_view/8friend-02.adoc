@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#23F2ED36A85625D81CA4BA2AE93314813B5AD402]
+== Friend make_pct_string_view_unsafe
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+make_pct_string_view_unsafe(
+    const char*,
+    size_t,
+    size_t) noexcept;
+----
+
+Defined in file <include/boost/url/pct_string_view.hpp> on line 79
+

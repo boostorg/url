@@ -1,0 +1,24 @@
+:relfileprefix: ../../../
+[#2EB3AE0F05D25156151C01BEB838A7CC31214C52]
+== Class op_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct op_t;
+----
+
+Defined in file <src/url_base.cpp> on line 78
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/url_base/op_t/2destructor.adoc[`pass:v[~op_t]`] |
+|xref:reference/boost/urls/url_base/op_t/2constructor.adoc[`pass:v[op_t]`] |
+|xref:reference/boost/urls/url_base/op_t/move.adoc[`pass:v[move]`] |
+|===
+

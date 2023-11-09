@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#81B55406F64FA63A12BEF399A8AD56DB3848E404]
+== pointer
+
+pass:v,q[The pointer type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef char* pointer;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 91
+

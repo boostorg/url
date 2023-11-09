@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#91093228A272F2C7FA65CD4B905B05432DFA9161]
+== Class optional_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class Rule>
+struct optional_rule_t
+    : private xref:reference/boost/empty_.adoc[empty_]::xref:reference/boost/empty_/empty_value.adoc[empty_value]<Rule>;
+----
+
+Defined in file <include/boost/url/grammar/optional_rule.hpp> on line 65
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/optional_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/optional_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/optional_rule_t/8friend.adoc[`pass:v[optional_rule]`] |
+|===
+

@@ -1,0 +1,53 @@
+:relfileprefix: ../../../
+[#65BFACBFB9AD940F6773BB4E97650A8C316515B5]
+== encoded_host
+
+pass:v,q[Return the host]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+encoded_host() const noexcept;
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 743
+
+Defined in file <src/authority_view.cpp> on line 190
+
+=== Description
+
+pass:v,q[This function returns the host portion] pass:v,q[of the authority as a string, or the]
+pass:v,q[empty string if there is no authority.]
+pass:v,q[The returned string may contain]
+pass:v,q[percent escapes.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "https://www%2droot.example.com/" ).encoded_host() == "www%2droot.example.com" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+host        = IP-literal / IPv4address / reg-name
+
+IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+
+reg-name    = *( unreserved / pct-encoded / "-" / ".")
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

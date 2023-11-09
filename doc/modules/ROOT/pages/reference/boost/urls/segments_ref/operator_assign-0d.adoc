@@ -1,0 +1,45 @@
+:relfileprefix: ../../../
+[#D4F1A89C2F1C6BF35BE824A4EB14329EA5805F04]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_ref.adoc[segments_ref]&
+operator=(const xref:reference/boost/urls/segments_ref.adoc[segments_ref]& other);
+----
+
+Declared in file <include/boost/url/segments_ref.hpp> on line 157
+
+Defined in file <src/segments_ref.cpp> on line 45
+
+=== Description
+
+pass:v,q[The existing contents are replaced] pass:v,q[by a copy of the other segments.]
+pass:v,q[All iterators are invalidated.]
+[NOTE]
+pass:v,q[None of the character buffers referenced]
+pass:v,q[by `other` may overlap the buffer of the]
+pass:v,q[underlying url, or else the behavior]
+pass:v,q[is undefined.]
+
+=== Effects
+[,cpp]
+----
+this->assign( other.begin(), other.end() );
+----
+
+=== Complexity
+pass:v,q[Linear in `other.buffer().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[@]
+pass:v,q[{]
+
+

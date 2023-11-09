@@ -1,0 +1,93 @@
+:relfileprefix: ../../
+[#DBE2F5FFE06B8D4CE871C58F218906BB5D3CCB52]
+== Class params_encoded_base
+
+pass:v,q[Common functionality for containers]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class params_encoded_base;
+----
+
+Defined in file <include/boost/url/params_encoded_base.hpp> on line 38
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/params_encoded_base/iterator.adoc[`pass:v[iterator]`] |
+|===
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/params_encoded_base/const_iterator.adoc[`pass:v[const_iterator]`] |xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+
+|xref:reference/boost/urls/params_encoded_base/value_type.adoc[`pass:v[value_type]`] |pass:v,q[The value type]
+
+|xref:reference/boost/urls/params_encoded_base/reference.adoc[`pass:v[reference]`] |pass:v,q[The reference type]
+
+|xref:reference/boost/urls/params_encoded_base/const_reference.adoc[`pass:v[const_reference]`] |pass:v,q[The reference type]
+
+|xref:reference/boost/urls/params_encoded_base/size_type.adoc[`pass:v[size_type]`] |pass:v,q[An unsigned integer type to represent sizes.]
+
+|xref:reference/boost/urls/params_encoded_base/difference_type.adoc[`pass:v[difference_type]`] |pass:v,q[A signed integer type used to represent differences.]
+
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/params_encoded_base/buffer.adoc[`pass:v[buffer]`] |pass:v,q[Return the query corresponding to these params]
+
+|xref:reference/boost/urls/params_encoded_base/empty.adoc[`pass:v[empty]`] |pass:v,q[Return true if there are no params]
+
+|xref:reference/boost/urls/params_encoded_base/size.adoc[`pass:v[size]`] |pass:v,q[Return the number of params]
+
+|xref:reference/boost/urls/params_encoded_base/begin.adoc[`pass:v[begin]`] |pass:v,q[Return an iterator to the beginning]
+
+|xref:reference/boost/urls/params_encoded_base/end.adoc[`pass:v[end]`] |pass:v,q[Return an iterator to the end]
+
+|xref:reference/boost/urls/params_encoded_base/contains.adoc[`pass:v[contains]`] |pass:v,q[Return true if a matching key exists]
+
+|xref:reference/boost/urls/params_encoded_base/count.adoc[`pass:v[count]`] |pass:v,q[Return the number of matching keys]
+
+|xref:reference/boost/urls/params_encoded_base/find-03.adoc[`pass:v[find]`] |pass:v,q[Find a matching key]
+
+|xref:reference/boost/urls/params_encoded_base/find-00.adoc[`pass:v[find]`] |pass:v,q[Find a matching key]
+
+|xref:reference/boost/urls/params_encoded_base/find_last-05.adoc[`pass:v[find_last]`] |pass:v,q[Find a matching key]
+
+|xref:reference/boost/urls/params_encoded_base/find_last-0d.adoc[`pass:v[find_last]`] |pass:v,q[Find a matching key]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/params_encoded_base/8friend-09.adoc[`pass:v[url_view_base]`] |
+|xref:reference/boost/urls/params_encoded_base/8friend-06e.adoc[`pass:v[params_encoded_ref]`] |
+|xref:reference/boost/urls/params_encoded_base/8friend-06a.adoc[`pass:v[params_encoded_view]`] |
+|===
+
+=== Description
+
+pass:v,q[This base class is used by the library] pass:v,q[to provide common member functions for]
+pass:v,q[containers. This cannot be instantiated]
+pass:v,q[directly; Instead, use one of the]
+pass:v,q[containers or functions:]
+
+=== Containers
+
+* xref:reference/boost/urls/params_ref.adoc[params_ref]
+
+* xref:reference/boost/urls/params_view.adoc[params_view]
+
+* xref:reference/boost/urls/params_encoded_ref.adoc[params_encoded_ref]
+
+* xref:reference/boost/urls/params_encoded_view.adoc[params_encoded_view]
+
+

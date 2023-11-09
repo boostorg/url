@@ -1,0 +1,17 @@
+:relfileprefix: ../../../../
+[#4946D08A9C912134D27ADC26816D62F77070EE02]
+== operator=
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/segments_encoded_base/iterator.adoc[iterator]&
+operator=(const xref:reference/boost/urls/segments_encoded_base/iterator.adoc[iterator]&) = default;
+----
+
+Defined in file <include/boost/url/impl/segments_encoded_base.hpp> on line 49
+

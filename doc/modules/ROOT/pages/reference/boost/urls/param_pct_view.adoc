@@ -1,0 +1,74 @@
+:relfileprefix: ../../
+[#48C6CB256C6192408CA76B0F901A5699D9E83462]
+== Class param_pct_view
+
+pass:v,q[A query parameter]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct param_pct_view;
+----
+
+Declared in file <include/boost/url/param.hpp> on line 24
+
+Defined in file <include/boost/url/param.hpp> on line 638
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/param_pct_view/2constructor-00.adoc[`pass:v[param_pct_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/param_pct_view/2constructor-0e.adoc[`pass:v[param_pct_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/param_pct_view/2constructor-05.adoc[`pass:v[param_pct_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/param_pct_view/2constructor-03.adoc[`pass:v[param_pct_view]`] |pass:v,q[Construction]
+
+|xref:reference/boost/urls/param_pct_view/2conversion-00.adoc[`pass:v[operator param]`] |pass:v,q[Conversion]
+
+|xref:reference/boost/urls/param_pct_view/2conversion-0c.adoc[`pass:v[operator param_view]`] |
+|xref:reference/boost/urls/param_pct_view/operator_ptr.adoc[`pass:v[operator->]`] |
+|xref:reference/boost/urls/param_pct_view/2constructor-02.adoc[`pass:v[param_pct_view]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type represent a single key] pass:v,q[and value pair in a query string where a key]
+pass:v,q[is always present and may be empty, while the]
+pass:v,q[presence of a value is indicated by]
+xref:reference/boost/urls/param_pct_view/has_value.adoc[has_value]
+pass:v,q[equal to true.]
+pass:v,q[An empty value is distinct from no value.]
+pass:v,q[The strings may have percent escapes, and]
+pass:v,q[offer an additional invariant: they never]
+pass:v,q[contain an invalid percent-encoding.]
+pass:v,q[For most usages, key comparisons are]
+pass:v,q[case-sensitive and duplicate keys in]
+pass:v,q[a query are possible. However, it is]
+pass:v,q[the authority that has final control]
+pass:v,q[over how the query is interpreted.]
+pass:v,q[Keys and values in this object reference]
+pass:v,q[external character buffers.]
+pass:v,q[Ownership of the buffers is not transferred;]
+pass:v,q[the caller is responsible for ensuring that]
+pass:v,q[the assigned buffers remain valid until]
+pass:v,q[they are no longer referenced.]
+
+=== BNF
+[,cpp]
+----
+query-params    = query-param *( "&" query-param )
+query-param     = key [ "=" value ]
+key             = *qpchar
+value           = *( qpchar / "=" )
+----
+
+=== Specification
+
+* link:https://en.wikipedia.org/wiki/Query_string[Query string (Wikipedia)]
+
+

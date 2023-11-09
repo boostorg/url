@@ -1,0 +1,23 @@
+:relfileprefix: ../../
+[#E5D77944F75B4B52D345E8CD568FC4CA14EE0D8F]
+== Class is_error_code_enum
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<>
+struct is_error_code_enum<xref:reference/boost/urls.adoc[urls]::xref:reference/boost/urls/grammar.adoc[grammar]::xref:reference/boost/urls/grammar/error.adoc[error]>;
+----
+
+Defined in file <include/boost/url/grammar/impl/error.hpp> on line 17
+
+=== Static Data Members
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/system/is_error_code_enum-0e/value.adoc[`pass:v[value]`] |
+|===
+

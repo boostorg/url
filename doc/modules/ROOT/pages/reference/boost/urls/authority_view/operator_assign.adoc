@@ -1,0 +1,19 @@
+:relfileprefix: ../../../
+[#B94D56E716CC7870C607932A4AEB800006216638]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/authority_view.adoc[authority_view]&
+operator=(const xref:reference/boost/urls/authority_view.adoc[authority_view]&) noexcept = default;
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 168
+
+Defined in file <src/authority_view.cpp> on line 73
+

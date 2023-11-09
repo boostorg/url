@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#8E90F44BEB8297FD3F187E290895170B2447D5E8]
+== ipv4_address
+
+pass:v,q[Construct from a string.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ipv4_address(string_view s);
+----
+
+Declared in file <include/boost/url/ipv4_address.hpp> on line 146
+
+Defined in file <src/ipv4_address.cpp> on line 41
+
+=== Description
+
+pass:v,q[This function constructs an address from] pass:v,q[the string `s`, which must contain a valid]
+pass:v,q[IPv4 address string or else an exception]
+pass:v,q[is thrown.]
+[NOTE]
+pass:v,q[For a non-throwing parse function,]
+pass:v,q[use]
+xref:reference/boost/urls/parse_ipv4_address.adoc[parse_ipv4_address.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

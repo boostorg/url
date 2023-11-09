@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#89B0F26F1B13E918A6C31C45BBA666DAAEB8CF0A]
+== Class ignore_case_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct ignore_case_t;
+----
+
+Defined in file <include/boost/url/ignore_case.hpp> on line 19
+
+

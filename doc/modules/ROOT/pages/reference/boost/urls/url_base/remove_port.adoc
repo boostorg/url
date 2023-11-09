@@ -1,0 +1,54 @@
+:relfileprefix: ../../../
+[#0036B4C48B224BC00F10074BDFEB342E8368C00F]
+== remove_port
+
+pass:v,q[Remove the port]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_base.adoc[url_base]&
+remove_port() noexcept;
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 1603
+
+Defined in file <src/url_base.cpp> on line 979
+
+=== Description
+
+pass:v,q[If a port exists, it is removed. The rest] pass:v,q[of the authority is unchanged.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://www.example.com:80" ).remove_port().authority().buffer() == "www.example.com" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_port() == false && this->port_number() == 0 && this->port() == ""
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+authority     = [ userinfo "@" ] host [ ":" port ]
+
+port          = *DIGIT
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3[            3.2.3. Port (rfc3986)]
+
+

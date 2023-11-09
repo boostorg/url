@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#22E267791321BAB14970F9E3F198E60DF1134A67]
+== param_pct_view
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+param_pct_view(
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] key,
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] value,
+    bool has_value) noexcept;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 866
+

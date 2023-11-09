@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#049C1A9154896E8C07BC3EDB08AB02BFB42FD843]
+== size
+
+pass:v,q[Return the number of segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+size() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_encoded_base.hpp> on line 212
+
+Defined in file <src/segments_encoded_base.cpp> on line 79
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( url_view( "/path/to/file.txt" ).encoded_segments().size() == 3 );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

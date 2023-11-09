@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#D2D1AC1354754CEA4A37D2002B3C8D9FB9ACADEE]
+== const_iterator
+
+xref:reference/boost/urls/segments_base/iterator.adoc[iterator]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using const_iterator = xref:reference/boost/urls/segments_base/iterator.adoc[iterator];
+----
+
+Defined in file <include/boost/url/segments_base.hpp> on line 80
+

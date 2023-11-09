@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#78650DE4048958912F6F68FF9CD5A20D48267731]
+== reference
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using reference = const T&;
+----
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 366
+

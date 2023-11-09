@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#86478BD00FE9276508CF34E69BDEA72ABB7E2C1B]
+== find
+
+pass:v,q[Finds the first occurrence of character in this view]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/decode_view/const_iterator.adoc[const_iterator]
+find(char ch) const noexcept;
+----
+
+Declared in file <include/boost/url/decode_view.hpp> on line 420
+
+Defined in file <src/decode_view.cpp> on line 197
+
+=== Description
+
+
+=== Complexity
+pass:v,q[Linear.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

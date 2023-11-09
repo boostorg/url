@@ -1,0 +1,59 @@
+:relfileprefix: ../../../
+[#68C99387C5727D6198ADA7189E21CBB2E83A3A12]
+== encoded_params
+
+pass:v,q[Return the query as a container of parameters]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_encoded_ref.adoc[params_encoded_ref]
+encoded_params() noexcept;
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 2190
+
+Defined in file <src/url_base.cpp> on line 1431
+
+=== Description
+
+pass:v,q[This function returns a bidirectional] pass:v,q[view of key/value pairs over the query.]
+pass:v,q[The returned view references the same]
+pass:v,q[underlying character buffer; ownership]
+pass:v,q[is not transferred.]
+pass:v,q[Strings returned when iterating the]
+pass:v,q[range may contain percent escapes.]
+pass:v,q[The container is modifiable; changes]
+pass:v,q[to the container are reflected in the]
+pass:v,q[underlying URL.]
+
+=== Example
+[,cpp]
+----
+params_encoded_ref pv = url( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_params();
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+query           = *( pchar / "/" / "?" )
+
+query-param     = key [ "=" value ]
+query-params    = [ query-param ] *( "&" query-param )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.4[3.4.  Query (rfc3986)]
+
+* link:https://en.wikipedia.org/wiki/Query_string[Query string (Wikipedia)]
+
+

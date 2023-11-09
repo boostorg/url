@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#A38205D61974FEB4A8A9675266338A1383071633]
+== find_if_not
+
+pass:v,q[Find the first character in the string that is not in CharSet]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet>
+const char*
+find_if_not(
+    const char* const first,
+    const char* const last,
+    const CharSet& cs) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/charset.hpp> on line 124
+
+=== Description
+
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#1D5D6483DB70251D3272BD800CAD71B6E5F0E1AB]
+== difference_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using difference_type = ptrdiff_t;
+----
+
+Defined in file <include/boost/url/impl/segments_encoded_base.hpp> on line 43
+

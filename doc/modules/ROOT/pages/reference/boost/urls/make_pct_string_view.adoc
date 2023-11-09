@@ -1,0 +1,38 @@
+:relfileprefix: ../../
+[#9A0212FC07D095C80A34528E74B46D8E2860C859]
+== make_pct_string_view
+
+pass:v,q[Return a valid percent-encoded string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]>
+make_pct_string_view(string_view s) noexcept;
+----
+
+Declared in file <include/boost/url/pct_string_view.hpp> on line 266
+
+Declared in file <include/boost/url/pct_string_view.hpp> on line 425
+
+Defined in file <src/pct_string_view.cpp> on line 48
+
+=== Description
+
+pass:v,q[If `s` is a valid percent-encoded string,] pass:v,q[the function returns the buffer as a valid]
+pass:v,q[view which may be used to perform decoding]
+pass:v,q[or measurements.]
+pass:v,q[Otherwise the result contains an error code.]
+pass:v,q[Upon success, the returned view references]
+pass:v,q[the original character buffer;]
+pass:v,q[Ownership is not transferred.]
+
+=== Complexity
+pass:v,q[Linear in `s.size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

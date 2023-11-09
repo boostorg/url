@@ -1,0 +1,26 @@
+:relfileprefix: ../../../
+[#3281090008CFD2FAE8228D7FBD1180A426A06232]
+== wss
+
+pass:v,q[The Secure WebSocket URI Scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+wss
+----
+
+Defined in file <include/boost/url/scheme.hpp> on line 118
+
+=== Description
+
+pass:v,q[URLs of this type indicate a resource which] pass:v,q[is interacted with using the Secure WebSocket]
+pass:v,q[protocol.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc6455[            The WebSocket Protocol (rfc6455)]
+
+

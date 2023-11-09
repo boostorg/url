@@ -1,0 +1,39 @@
+:relfileprefix: ../../../
+[#9B7D6A78083E6BEECF3F13039B041B208FB920A9]
+== param
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+param() = default;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 124
+
+=== Description
+
+pass:v,q[Default constructed query parameters] pass:v,q[have an empty key and no value.]
+
+=== Example
+[,cpp]
+----
+param qp;
+----
+
+=== Postconditions
+[,cpp]
+----
+this->key == "" && this->value == "" && this->has_value == false
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

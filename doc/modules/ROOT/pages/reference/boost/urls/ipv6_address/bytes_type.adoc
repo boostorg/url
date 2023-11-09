@@ -1,0 +1,21 @@
+:relfileprefix: ../../../
+[#DC72E7891693640452FEAB08875587D083CDC7B1]
+== bytes_type
+
+pass:v,q[The type used to represent an address as an array of bytes.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using bytes_type = array<unsigned char, 16>;
+----
+
+Defined in file <include/boost/url/ipv6_address.hpp> on line 89
+
+=== Description
+
+pass:v,q[Octets are stored in network byte order.]
+
+

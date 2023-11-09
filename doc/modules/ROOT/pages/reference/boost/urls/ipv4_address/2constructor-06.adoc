@@ -1,0 +1,25 @@
+:relfileprefix: ../../../
+[#681E9AE3406D4893A8E953DA4A3E9DD55795FE7C]
+== ipv4_address
+
+pass:v,q[Construct from an unsigned integer.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ipv4_address(xref:reference/boost/urls/ipv4_address/uint_type.adoc[uint_type] u) noexcept;
+----
+
+Declared in file <include/boost/url/ipv4_address.hpp> on line 103
+
+Defined in file <src/ipv4_address.cpp> on line 23
+
+=== Description
+
+pass:v,q[This function constructs an address from] pass:v,q[the unsigned integer `u`, where the most]
+pass:v,q[significant byte forms the first octet]
+pass:v,q[of the resulting address.]
+
+

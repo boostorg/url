@@ -1,0 +1,50 @@
+:relfileprefix: ../../../
+[#E377F1A20682E6856A7DABA1C17C8DE2CE226C43]
+== scheme
+
+pass:v,q[Return the scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string_view
+scheme() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 375
+
+Defined in file <src/url_view_base.cpp> on line 120
+
+=== Description
+
+pass:v,q[This function returns the scheme if it] pass:v,q[exists, without a trailing colon (':').]
+pass:v,q[Otherwise it returns an empty string.]
+pass:v,q[Note that schemes are case-insensitive,]
+pass:v,q[and the canonical form is lowercased.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://www.example.com" ).scheme() == "http" );
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+scheme          = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+
+URI             = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+absolute-URI    = scheme ":" hier-part [ "?" query ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.1[3.1. Scheme (rfc3986)]
+
+

@@ -1,0 +1,58 @@
+:relfileprefix: ../../../
+[#1558A4DCDDED638A1D69100D8F961DEEBC9829B3]
+== set_encoded_user
+
+pass:v,q[Set the user]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+set_encoded_user(xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] s);
+----
+
+Defined in file <include/boost/url/url.hpp> on line 429
+
+=== Description
+
+pass:v,q[This function sets the user part of the] pass:v,q[userinfo the the string, which may]
+pass:v,q[contain percent-escapes.]
+pass:v,q[Escapes in the string are preserved,]
+pass:v,q[and reserved characters in the string]
+pass:v,q[are percent-escaped in the result.]
+
+=== Example
+[,cpp]
+----
+assert( url().set_encoded_user("john%20doe").userinfo() == "john doe" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_authority() == true && this->has_userinfo() == true
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size() + s.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+userinfo      = [ [ user ] [ ':' password ] ]
+
+user          = *( unreserved / pct-encoded / sub-delims )
+password      = *( unreserved / pct-encoded / sub-delims / ":" )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1[            3.2.1. User Information (rfc3986)]
+
+

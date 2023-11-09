@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#DBF179A9C850B7616AFB1A7825F03E08CD17D296]
+== operator*
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_encoded_base/iterator/reference.adoc[reference]
+operator*() const noexcept;
+----
+
+Defined in file <include/boost/url/impl/segments_encoded_base.hpp> on line 52
+

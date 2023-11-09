@@ -1,0 +1,62 @@
+:relfileprefix: ../../../
+[#41C435DC3521F0CF1347FCE3FCB0C6DCDFFE8B77]
+== set_encoded_query
+
+pass:v,q[Set the query]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_base.adoc[url_base]&
+set_encoded_query(xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] s);
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 2028
+
+Defined in file <src/url_base.cpp> on line 1357
+
+=== Description
+
+pass:v,q[This sets the query to the string, which] pass:v,q[may contain percent-escapes and can be]
+pass:v,q[empty.]
+pass:v,q[An empty query is distinct from having]
+pass:v,q[no query.]
+pass:v,q[Escapes in the string are preserved,]
+pass:v,q[and reserved characters in the string]
+pass:v,q[are percent-escaped in the result.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://example.com" ).set_encoded_query( "id=42" ).encoded_query() == "id=42" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_query() == true && this->query() == decode_view( s );
+----
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+query           = *( pchar / "/" / "?" )
+
+query-param     = key [ "=" value ]
+query-params    = [ query-param ] *( "&" query-param )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.4[3.4.  Query (rfc3986)]
+
+* link:https://en.wikipedia.org/wiki/Query_string[Query string (Wikipedia)]
+
+

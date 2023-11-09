@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#4E585415BFF6890CC0579468C83D4565665DDD1C]
+== reference
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using reference = xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/reference.adoc[reference];
+----
+
+Defined in file <include/boost/url/impl/segments_base.hpp> on line 39
+

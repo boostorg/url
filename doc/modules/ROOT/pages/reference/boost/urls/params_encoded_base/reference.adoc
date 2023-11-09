@@ -1,0 +1,21 @@
+:relfileprefix: ../../../
+[#054E0898AE109AEADA4DC9A25605191C3F447927]
+== reference
+
+pass:v,q[The reference type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using reference = xref:reference/boost/urls/param_pct_view.adoc[param_pct_view];
+----
+
+Defined in file <include/boost/url/params_encoded_base.hpp> on line 110
+
+=== Description
+
+pass:v,q[This is the type of value returned when] pass:v,q[iterators of the view are dereferenced.]
+
+

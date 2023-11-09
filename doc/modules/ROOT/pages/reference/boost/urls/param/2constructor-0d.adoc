@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#DFDB241993DFD63308868E90931BF4C422EC6451]
+== param
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+param(const xref:reference/boost/urls/param.adoc[param]& other) = default;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 173
+
+=== Description
+
+pass:v,q[Upon construction, this becomes a copy] pass:v,q[of `other`.]
+
+=== Postconditions
+[,cpp]
+----
+this->key == other.key && this->value == other.value && this->has_value == other.has_value
+----
+
+=== Complexity
+pass:v,q[Linear in `other.key.size() + other.value.size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+=== other The object to construct from.
+
+

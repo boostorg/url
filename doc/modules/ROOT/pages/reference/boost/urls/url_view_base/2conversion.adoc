@@ -1,0 +1,26 @@
+:relfileprefix: ../../../
+[#D093AD5D83A62AF0A5D9D34865857A27B7E58091]
+== operator string_view
+
+pass:v,q[Return the URL as a core::string_view]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+operator string_view() const noexcept;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 257
+
+=== Description
+
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

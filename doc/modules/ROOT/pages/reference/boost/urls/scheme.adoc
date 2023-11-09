@@ -1,0 +1,45 @@
+:relfileprefix: ../../
+[#3FBB8E8EE00C20B8A628639C6E30D44A93002FF5]
+== Enum scheme
+
+pass:v,q[Identifies a known URL scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+enum scheme;
+----
+
+Defined in file <include/boost/url/scheme.hpp> on line 33
+
+=== Members
+[,cols=2]
+|===
+|Name |Description
+|none |pass:v,q[Indicates that no scheme is present]
+
+|unknown |pass:v,q[Indicates the scheme is not a well-known scheme]
+
+|ftp |pass:v,q[File Transfer Protocol (FTP)]
+
+|file |pass:v,q[File URI Scheme]
+
+|http |pass:v,q[The Hypertext Transfer Protocol URI Scheme]
+
+|https |pass:v,q[The Secure Hypertext Transfer Protocol URI Scheme]
+
+|ws |pass:v,q[The WebSocket URI Scheme]
+
+|wss |pass:v,q[The Secure WebSocket URI Scheme]
+
+|===
+
+=== Description
+
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.1[3.1. Scheme (rfc3986)]
+

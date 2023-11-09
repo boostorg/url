@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#3CBE7CA427D085EC3105453C475CA4D4B4AB7C87]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/authority_view.adoc[authority_view];
+----
+
+Defined in file <include/boost/url/rfc/authority_rule.hpp> on line 52
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#780DE9FA4CF4782080F93F3F5D8C4E8B9C6C5686]
+== type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef T type;
+----
+
+Defined in file </home/runner/work/mrdocs/mrdocs/boost/libs/core/include/boost/core/empty_value.hpp> on line 54
+

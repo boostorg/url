@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#2BF881C6644C0162552C0E20CDB7F437CCF459FE]
+== const_reference
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using const_reference = char;
+----
+
+Defined in file <include/boost/url/impl/decode_view.hpp> on line 52
+

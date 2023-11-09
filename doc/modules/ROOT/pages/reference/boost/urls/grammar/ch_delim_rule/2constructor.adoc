@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#D779BE589EDA327810006A8C9AA478A8D644EAA5]
+== ch_delim_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+ch_delim_rule(char ch) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/delim_rule.hpp> on line 65
+

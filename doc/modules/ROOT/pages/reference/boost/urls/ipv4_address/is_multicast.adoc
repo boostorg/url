@@ -1,0 +1,19 @@
+:relfileprefix: ../../../
+[#46147DAB3B419E6228E5DA7FC8C47F0F1A3AB061]
+== is_multicast
+
+pass:v,q[Return true if the address is a multicast address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+is_multicast() const noexcept;
+----
+
+Declared in file <include/boost/url/ipv4_address.hpp> on line 238
+
+Defined in file <src/ipv4_address.cpp> on line 98
+

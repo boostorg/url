@@ -1,0 +1,11 @@
+:relfileprefix: ../../../
+[#F4924F69CD97C02AAAE3F530F8027DA4A10CC5E2]
+== Friend 
+
+
+
+=== Synopsis
+
+
+Defined in file <include/boost/url/decode_view.hpp> on line 95
+

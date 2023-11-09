@@ -1,0 +1,34 @@
+:relfileprefix: ../../../../
+[#F3808FC83560C3D485387D1DE71BD767718427CD]
+== recycled_ptr
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+recycled_ptr(xref:reference/boost/urls/grammar/recycled_ptr.adoc[recycled_ptr]&& other) noexcept;
+----
+
+Declared in file <include/boost/url/grammar/recycled.hpp> on line 342
+
+Defined in file <include/boost/url/grammar/impl/recycled.hpp> on line 152
+
+=== Description
+
+pass:v,q[If `other` references an object,] pass:v,q[ownership is transferred including]
+pass:v,q[a reference to the recycle bin. After]
+pass:v,q[the move, the moved-from object is empty.]
+
+=== Postconditions
+[,cpp]
+----
+&this->bin() == &other->bin() && ! this->empty() && other.empty()
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

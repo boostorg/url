@@ -1,0 +1,100 @@
+:relfileprefix: ../../../
+[#FBDA4FB06BC1B54B6D74BCB22C53C8EE26D68DA1]
+== Class range
+
+pass:v,q[A forward range of parsed elements]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class T>
+class range;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 60
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/range/iterator.adoc[`pass:v[iterator]`] |pass:v,q[A constant, forward iterator to elements of the range]
+
+|===
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/range/value_type.adoc[`pass:v[value_type]`] |pass:v,q[The type of each element of the range]
+
+|xref:reference/boost/urls/grammar/range/reference.adoc[`pass:v[reference]`] |pass:v,q[The type of each element of the range]
+
+|xref:reference/boost/urls/grammar/range/const_reference.adoc[`pass:v[const_reference]`] |pass:v,q[The type of each element of the range]
+
+|xref:reference/boost/urls/grammar/range/pointer.adoc[`pass:v[pointer]`] |pass:v,q[Provided for compatibility, unused]
+
+|xref:reference/boost/urls/grammar/range/size_type.adoc[`pass:v[size_type]`] |pass:v,q[The type used to represent unsigned integers]
+
+|xref:reference/boost/urls/grammar/range/difference_type.adoc[`pass:v[difference_type]`] |pass:v,q[The type used to represent signed integers]
+
+|xref:reference/boost/urls/grammar/range/const_iterator.adoc[`pass:v[const_iterator]`] |pass:v,q[A constant, forward iterator to elements of the range]
+
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/range/2destructor.adoc[`pass:v[~range]`] |pass:v,q[Destructor]
+
+|xref:reference/boost/urls/grammar/range/2constructor-01e.adoc[`pass:v[range]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/range/2constructor-08.adoc[`pass:v[range]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/range/2constructor-01b.adoc[`pass:v[range]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/range/operator_assign-08.adoc[`pass:v[operator=]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/range/operator_assign-0e.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/grammar/range/begin.adoc[`pass:v[begin]`] |pass:v,q[Return an iterator to the beginning]
+
+|xref:reference/boost/urls/grammar/range/end.adoc[`pass:v[end]`] |pass:v,q[Return an iterator to the end]
+
+|xref:reference/boost/urls/grammar/range/empty.adoc[`pass:v[empty]`] |pass:v,q[Return true if the range is empty]
+
+|xref:reference/boost/urls/grammar/range/size.adoc[`pass:v[size]`] |pass:v,q[Return the number of elements in the range]
+
+|xref:reference/boost/urls/grammar/range/string.adoc[`pass:v[string]`] |pass:v,q[Return the matching part of the string]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/range/8friend.adoc[`pass:v[range_rule_t]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type are forward ranges] pass:v,q[returned when parsing using the]
+xref:reference/boost/urls/grammar/range_rule-02.adoc[range_rule.]
+pass:v,q[Iteration is performed by re-parsing the]
+pass:v,q[underlying character buffer. Ownership]
+pass:v,q[of the buffer is not transferred; the]
+pass:v,q[caller is responsible for ensuring that]
+pass:v,q[the lifetime of the buffer extends until]
+pass:v,q[it is no longer referenced by the range.]
+[NOTE]
+
+pass:v,q[The implementation may use temporary,]
+pass:v,q[recycled storage for type-erasure. Objects]
+pass:v,q[of type `range` are intended to be used]
+pass:v,q[ephemerally. That is, for short durations]
+pass:v,q[such as within a function scope. If it is]
+pass:v,q[necessary to store the range for a long]
+pass:v,q[period of time or with static storage]
+pass:v,q[duration, it is necessary to copy the]
+pass:v,q[contents to an object of a different type.]
+
+

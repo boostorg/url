@@ -1,0 +1,47 @@
+:relfileprefix: ../../../
+[#586DA1BD75E17D2E9D967C96F546373E4502BE04]
+== insert
+
+pass:v,q[Insert elements]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class FwdIt>
+xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator]
+insert(
+    xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator] before,
+    FwdIt first,
+    FwdIt last);
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 558
+
+Defined in file <include/boost/url/impl/params_ref.hpp> on line 141
+
+=== Description
+
+pass:v,q[This function inserts a range of] pass:v,q[params before the specified position.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`before` or come after are invalidated.]
+[NOTE]
+pass:v,q[The strings referenced by the inputs]
+pass:v,q[must not come from the underlying url,]
+pass:v,q[or else the behavior is undefined.]
+
+=== Mandates
+[,cpp]
+----
+std::is_convertible< std::iterator_traits< FwdIt >::reference_type, param_view >::value == true
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

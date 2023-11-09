@@ -1,0 +1,51 @@
+:relfileprefix: ../../../
+[#4E168D5ABC21E62286CEA097D8DF8B5F728B1E11]
+== set_port
+
+pass:v,q[Set the port]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+set_port(string_view s);
+----
+
+Defined in file <include/boost/url/url.hpp> on line 458
+
+=== Description
+
+pass:v,q[This port is set to the string, which] pass:v,q[must contain only digits or be empty.]
+pass:v,q[An empty port string is distinct from]
+pass:v,q[having no port.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://www.example.com" ).set_port( "8080" ).authority().buffer() == "www.example.com:8080" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_port() == true && this->port_number() == n && this->port() == std::to_string(n)
+----
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+port          = *DIGIT
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3[            3.2.3. Port (rfc3986)]
+
+

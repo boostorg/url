@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#26EC8ABBC6C50796688912E8F779547917C622CC]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/ipv4_address.adoc[ipv4_address];
+----
+
+Defined in file <include/boost/url/rfc/ipv4_address_rule.hpp> on line 60
+

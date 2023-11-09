@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#37EB3766F9846BC324BD596E88F0624164923385]
+== operator params_view
+
+pass:v,q[Conversion]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+operator xref:reference/boost/urls/params_view.adoc[params_view]() const noexcept;
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 221
+
+Defined in file <src/params_ref.cpp> on line 42
+

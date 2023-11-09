@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#0E5E387F992B4ECE91BFD799DCEEDADCBAD20BB4]
+== absolute_uri_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/absolute_uri_rule_t.adoc[absolute_uri_rule_t] absolute_uri_rule;
+----
+
+Defined in file <include/boost/url/rfc/absolute_uri_rule.hpp> on line 68
+

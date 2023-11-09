@@ -1,0 +1,33 @@
+:relfileprefix: ../../../
+[#3CC6111A9C8E52DEE16C3C9DDF71911D3731123F]
+== clear
+
+pass:v,q[Clear the contents while preserving the capacity]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+clear() noexcept;
+----
+
+Defined in file <include/boost/url/url_base.hpp> on line 164
+
+=== Description
+
+
+=== Postconditions
+[,cpp]
+----
+this->empty() == true
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[No-throw guarantee.]
+
+

@@ -1,0 +1,65 @@
+:relfileprefix: ../../../
+[#255B09B5774049DF6917247ABA3D257B26A9371D]
+== url_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+url_view(string_view s);
+----
+
+Declared in file <include/boost/url/url_view.hpp> on line 197
+
+Defined in file <src/url_view.cpp> on line 38
+
+=== Description
+
+pass:v,q[This function constructs a URL from] pass:v,q[the string `s`, which must contain a]
+pass:v,q[valid]
+pass:v,q[URI]
+pass:v,q[or]
+pass:v,q[relative-ref]
+pass:v,q[or else an exception is thrown. Upon]
+pass:v,q[successful construction, the view]
+pass:v,q[refers to the characters in the]
+pass:v,q[buffer pointed to by `s`.]
+pass:v,q[Ownership is not transferred; The caller]
+pass:v,q[is responsible for ensuring that the]
+pass:v,q[lifetime of the buffer extends until]
+pass:v,q[it is no longer referenced.]
+
+=== Example
+[,cpp]
+----
+url_view u( "http://www.example.com/index.htm" );
+----
+
+=== Effects
+[,cpp]
+----
+return parse_uri_reference( s ).value();
+----
+
+=== Complexity
+pass:v,q[Linear in `s.size()`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-4.1[4.1. URI Reference]
+
+

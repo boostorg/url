@@ -1,0 +1,54 @@
+:relfileprefix: ../../
+[#405CDC97CBD22C478A3843BAC379AFD731AA5F79]
+== parse_relative_ref
+
+pass:v,q[Return a reference to a parsed URL string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/url_view.adoc[url_view]>
+parse_relative_ref(string_view s);
+----
+
+Declared in file <include/boost/url/parse.hpp> on line 165
+
+Defined in file <src/parse.cpp> on line 42
+
+=== Description
+
+pass:v,q[This function parses a string according] pass:v,q[to the grammar below and returns a view]
+pass:v,q[referencing the passed string upon success,]
+pass:v,q[else returns an error.]
+pass:v,q[Ownership of the string is not transferred;]
+pass:v,q[the caller is responsible for ensuring that]
+pass:v,q[the lifetime of the character buffer extends]
+pass:v,q[until the view is no longer being accessed.]
+
+=== Example
+[,cpp]
+----
+system::result< url_view > = parse_relative_ref( "images/dot.gif?v=hide#a" );
+----
+
+=== BNF
+[,cpp]
+----
+relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+
+relative-part = "//" authority path-abempty
+              / path-absolute
+              / path-noscheme
+              / path-abempty
+              / path-empty
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-4.2[4.2. Relative Reference (rfc3986)]
+
+* link:https://www.rfc-editor.org/errata/eid5428[Errata ID: 5428 (rfc3986)]
+
+

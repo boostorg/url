@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#CDF19EBB42B5FC5FA65F45F352976CD19485CDF3]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/param.adoc[param]&
+operator=(const xref:reference/boost/urls/param.adoc[param]&) = default;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 224
+
+=== Description
+
+pass:v,q[Upon assignment, this becomes a copy] pass:v,q[of `other`.]
+
+=== Postconditions
+[,cpp]
+----
+this->key == other.key && this->value == other.value && this->has_value == other.has_value
+----
+
+=== Complexity
+pass:v,q[Linear in `other.key.size() + other.value.size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+=== other The object to assign from.
+
+

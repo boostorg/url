@@ -1,0 +1,67 @@
+:relfileprefix: ../../../
+[#9AD6406FF4EAA95725C1EA110E914F0306FEA4F0]
+== params_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+params_view(string_view s);
+----
+
+Declared in file <include/boost/url/params_view.hpp> on line 186
+
+Defined in file <src/params_view.cpp> on line 39
+
+=== Description
+
+pass:v,q[This function constructs params from] pass:v,q[a valid query parameter string, which]
+pass:v,q[can contain percent escapes. Unlike]
+pass:v,q[the parameters in URLs, the string]
+pass:v,q[passed here should not start with "?".]
+pass:v,q[Upon construction, the view references]
+pass:v,q[the character buffer pointed to by `s`.]
+pass:v,q[The caller is responsible for ensuring]
+pass:v,q[that the lifetime of the buffer extends]
+pass:v,q[until it is no longer referenced.]
+
+=== Example
+[,cpp]
+----
+params_view qp( "first=John&last=Doe" );
+----
+
+=== Effects
+[,cpp]
+----
+return parse_query( s ).value();
+----
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() == s.data()
+----
+
+=== Complexity
+pass:v,q[Linear in `s`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+query-params    = [ query-param ] *( "&" query-param )
+
+query-param     = key [ "=" value ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.4[3.4.  Query]
+
+

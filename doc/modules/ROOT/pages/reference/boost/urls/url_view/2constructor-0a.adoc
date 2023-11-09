@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#A3986858EE7D646CC3B4CB4C744E93982B1DE17B]
+== url_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+url_view(const xref:reference/boost/urls/url_view_base.adoc[url_view_base]& other) noexcept;
+----
+
+Declared in file <include/boost/url/url_view.hpp> on line 263
+
+Defined in file <src/url_view.cpp> on line 45
+
+=== Description
+
+pass:v,q[After construction, both views] pass:v,q[reference the same underlying character]
+pass:v,q[buffer. Ownership is not transferred.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() == other.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

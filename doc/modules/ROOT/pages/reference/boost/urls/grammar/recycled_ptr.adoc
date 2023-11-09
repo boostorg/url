@@ -1,0 +1,85 @@
+:relfileprefix: ../../../
+[#9F35E92680FF498FC7690FA3D4FE3FA43C837DB4]
+== Class recycled_ptr
+
+pass:v,q[A pointer to shared instance of T]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class T>
+class recycled_ptr;
+----
+
+Declared in file <include/boost/url/grammar/recycled.hpp> on line 91
+
+Defined in file <include/boost/url/grammar/recycled.hpp> on line 150
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/recycled_ptr/2destructor.adoc[`pass:v[~recycled_ptr]`] |pass:v,q[Destructor]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/2constructor-08.adoc[`pass:v[recycled_ptr]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/2constructor-0ac.adoc[`pass:v[recycled_ptr]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/2constructor-056.adoc[`pass:v[recycled_ptr]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/2constructor-05e.adoc[`pass:v[recycled_ptr]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/2constructor-0ab.adoc[`pass:v[recycled_ptr]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/2constructor-0f.adoc[`pass:v[recycled_ptr]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/operator_assign-0b.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/operator_assign-09.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/empty.adoc[`pass:v[empty]`] |pass:v,q[Return true if this does not reference an object]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/2conversion.adoc[`pass:v[operator bool]`] |pass:v,q[Return true if this references an object]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/bin.adoc[`pass:v[bin]`] |pass:v,q[Return the referenced recycle bin]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/get.adoc[`pass:v[get]`] |pass:v,q[Return the referenced object]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/operator_ptr.adoc[`pass:v[operator->]`] |pass:v,q[Return the referenced object]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/operator_star.adoc[`pass:v[operator*]`] |pass:v,q[Return the referenced object]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/acquire.adoc[`pass:v[acquire]`] |pass:v,q[Return the referenced object]
+
+|xref:reference/boost/urls/grammar/recycled_ptr/release.adoc[`pass:v[release]`] |pass:v,q[Release the referenced object]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/recycled_ptr/8friend.adoc[`pass:v[recycled]`] |
+|===
+
+=== Description
+
+pass:v,q[This is a smart pointer container which can] pass:v,q[acquire shared ownership of an instance of]
+pass:v,q[`T` upon or after construction. The instance]
+pass:v,q[is guaranteed to be in a valid, but unknown]
+pass:v,q[state. Every recycled pointer references]
+pass:v,q[a valid recycle bin.]
+
+=== Example
+[,cpp]
+----
+static recycled< std::string > bin;
+
+recycled_ptr< std::string > ps( bin );
+
+// Put the string into a known state
+ps->clear();
+----
+
+

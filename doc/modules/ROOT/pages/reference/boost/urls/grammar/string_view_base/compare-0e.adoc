@@ -1,0 +1,28 @@
+:relfileprefix: ../../../../
+[#E20A8FE539D9A38B7058783A31490904F7FC82AA]
+== compare
+
+pass:v,q[Return the result of comparing to another string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+int
+compare(
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] pos1,
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] n1,
+    string_view str,
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] pos2,
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] n2) const;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 375
+
+=== Description
+
+pass:v,q[See `core::string_view::compare`]
+
+

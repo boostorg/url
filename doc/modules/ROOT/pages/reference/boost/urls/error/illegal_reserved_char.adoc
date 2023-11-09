@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#8F1A78799FAA227699A34DFC5D0C8C7F4BF2BF8B]
+== illegal_reserved_char
+
+pass:v,q[Illegal reserved character in encoded string.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+illegal_reserved_char
+----
+
+Defined in file <include/boost/url/error.hpp> on line 40
+

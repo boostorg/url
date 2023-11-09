@@ -1,0 +1,51 @@
+:relfileprefix: ../../../
+[#48B89671AEA050699387EAFF05B538D0DAC8096F]
+== has_query
+
+pass:v,q[Return true if a query is present]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+has_query() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 1852
+
+Defined in file <src/url_view_base.cpp> on line 509
+
+=== Description
+
+pass:v,q[This function returns true if this] pass:v,q[contains a query. An empty query is]
+pass:v,q[distinct from having no query.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "/sql?id=42&col=name&page-size=20" ).has_query() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+query           = *( pchar / "/" / "?" )
+
+query-param     = key [ "=" value ]
+query-params    = [ query-param ] *( "&" query-param )
+----
+
+=== Specification
+
+* pass:v,q[://en.wikipedia.org/wiki/Query_string"]
+pass:v,q[>Query string (Wikipedia)]
+
+

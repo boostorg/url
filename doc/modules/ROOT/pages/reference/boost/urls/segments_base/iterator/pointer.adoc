@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#609D913960B5D6E41D4DFB3767D880895B9959E2]
+== pointer
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using pointer = xref:reference/boost/urls/segments_base/iterator/reference.adoc[reference];
+----
+
+Defined in file <include/boost/url/impl/segments_base.hpp> on line 40
+

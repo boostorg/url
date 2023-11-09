@@ -1,0 +1,17 @@
+:relfileprefix: ../
+[#673531113644A9B008EA45611F7C206CCA28ECFE]
+== Class is_nothrow_copy_constructible
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct is_nothrow_copy_constructible
+    : xref:reference/std/__is_nothrow_constructible_impl.adoc[__is_nothrow_constructible_impl]<_Tp, __add_lval_ref_t<const _Tp>>;
+----
+
+Defined in file </usr/include/c++/13/type_traits> on line 1131
+
+

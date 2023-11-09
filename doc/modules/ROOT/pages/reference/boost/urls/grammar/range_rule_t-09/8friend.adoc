@@ -1,0 +1,25 @@
+:relfileprefix: ../../../../
+[#869F81E41B60B74B82952A3CADCEF23A3C74C879]
+== Friend range_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class R0_,
+    class R1_>
+friend
+constexpr
+enable_if<!std::is_integral<R1_>::value, xref:reference/boost/urls/grammar/range_rule_t-09.adoc[range_rule_t]<R0_, R1_>>::type
+range_rule(
+    const R0_& first,
+    const R1_& next,
+    size_t N,
+    size_t M) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 528
+

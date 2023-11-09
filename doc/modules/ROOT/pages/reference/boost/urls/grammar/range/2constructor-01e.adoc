@@ -1,0 +1,26 @@
+:relfileprefix: ../../../../
+[#1E050A482E82B570CFF510A4E77F71B3C84526B6]
+== range
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+range() noexcept;
+----
+
+Declared in file <include/boost/url/grammar/range_rule.hpp> on line 175
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 509
+
+=== Description
+
+pass:v,q[Default-constructed ranges have] pass:v,q[zero elements.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

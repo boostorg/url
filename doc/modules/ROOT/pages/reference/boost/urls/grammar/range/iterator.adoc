@@ -1,0 +1,48 @@
+:relfileprefix: ../../../../
+[#942A0D885736A3A33F2D77CC96AAB6E674911106]
+== Class iterator
+
+pass:v,q[A constant, forward iterator to elements of the range]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class iterator;
+----
+
+Declared in file <include/boost/url/grammar/range_rule.hpp> on line 157
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 360
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/range/iterator/value_type.adoc[`pass:v[value_type]`] |
+|xref:reference/boost/urls/grammar/range/iterator/reference.adoc[`pass:v[reference]`] |
+|xref:reference/boost/urls/grammar/range/iterator/pointer.adoc[`pass:v[pointer]`] |
+|xref:reference/boost/urls/grammar/range/iterator/difference_type.adoc[`pass:v[difference_type]`] |
+|xref:reference/boost/urls/grammar/range/iterator/iterator_category.adoc[`pass:v[iterator_category]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/range/iterator/2constructor-05.adoc[`pass:v[iterator]`] |
+|xref:reference/boost/urls/grammar/range/iterator/2constructor-03.adoc[`pass:v[iterator]`] |
+|xref:reference/boost/urls/grammar/range/iterator/operator_assign.adoc[`pass:v[operator=]`] |
+|xref:reference/boost/urls/grammar/range/iterator/operator_star.adoc[`pass:v[operator*]`] |
+|xref:reference/boost/urls/grammar/range/iterator/operator_eq.adoc[`pass:v[operator==]`] |
+|xref:reference/boost/urls/grammar/range/iterator/operator_not_eq.adoc[`pass:v[operator!=]`] |
+|xref:reference/boost/urls/grammar/range/iterator/operator_inc-06.adoc[`pass:v[operator++]`] |
+|xref:reference/boost/urls/grammar/range/iterator/operator_inc-05.adoc[`pass:v[operator++]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/range/iterator/8friend.adoc[`pass:v[range]`] |
+|===
+

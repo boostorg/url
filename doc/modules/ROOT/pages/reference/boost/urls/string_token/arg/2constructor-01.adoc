@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#12A7371BEBD4E289E9A202A3371D859F35565516]
+== arg
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+arg() = default;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 72
+

@@ -1,0 +1,75 @@
+:relfileprefix: ../../../
+[#F0DA2ED19849F038500434456075FE390AF17758]
+== set_path
+
+pass:v,q[Set the path.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+set_path(string_view s);
+----
+
+Defined in file <include/boost/url/url.hpp> on line 465
+
+=== Description
+
+pass:v,q[This function sets the path to the] pass:v,q[string, which may be empty.]
+pass:v,q[Reserved characters in the string are]
+pass:v,q[percent-escaped in the result.]
+[NOTE]
+pass:v,q[The library may adjust the final result]
+pass:v,q[to ensure that no other parts of the url]
+pass:v,q[is semantically affected.]
+[NOTE]
+pass:v,q[This function does not encode '/' chars, which]
+pass:v,q[are unreserved for paths but reserved for]
+pass:v,q[path segments. If a path segment should include]
+pass:v,q[encoded '/'s to differentiate it from path separators,]
+pass:v,q[the functions]
+xref:reference/boost/urls/url_base/set_encoded_path.adoc[set_encoded_path]
+pass:v,q[or]
+xref:reference/boost/urls/url_base/segments-04.adoc[segments]
+pass:v,q[should be used instead.]
+
+=== Example
+[,cpp]
+----
+url u( "http://www.example.com" );
+
+u.set_path( "path/to/file.txt" );
+
+assert( u.path() == "/path/to/file.txt" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size() + s.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+path          = path-abempty    ; begins with "/" or is empty
+              / path-absolute   ; begins with "/" but not "//"
+              / path-noscheme   ; begins with a non-colon segment
+              / path-rootless   ; begins with a segment
+              / path-empty      ; zero characters
+
+path-abempty  = *( "/" segment )
+path-absolute = "/" [ segment-nz *( "/" segment ) ]
+path-noscheme = segment-nz-nc *( "/" segment )
+path-rootless = segment-nz *( "/" segment )
+path-empty    = 0<pchar>
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3.  Path (rfc3986)]
+
+

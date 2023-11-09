@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#7AAA649131832F66A2BF0D57BF7D81A647E8AADE]
+== operator()
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+operator()(const xref:reference/boost.adoc[boost]::xref:reference/boost/urls.adoc[urls]::xref:reference/boost/urls/url_view.adoc[url_view]& u) const noexcept;
+----
+
+Defined in file <include/boost/url/url_view.hpp> on line 361
+

@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#65B65556D7C0D492AD33575C376715EC67170996]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/static_url.adoc[static_url]&
+operator=(const xref:reference/boost/urls/static_url.adoc[static_url]& u) noexcept;
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 298
+
+=== Description
+
+pass:v,q[The contents of `u` are copied and] pass:v,q[the previous contents of `this` are]
+pass:v,q[discarded.]
+pass:v,q[Capacity remains unchanged.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer() == u.buffer() && this->buffer().data() != u.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Linear in `u.size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

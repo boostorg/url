@@ -1,0 +1,15 @@
+:relfileprefix: ../../
+[#4106CEBF91FC3908BA1B3F0D34EE3938D1BE273A]
+== type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef xref:reference/std/integral_constant.adoc[integral_constant]<_Tp, __v> type;
+----
+
+Defined in file </usr/include/c++/13/type_traits> on line 66
+

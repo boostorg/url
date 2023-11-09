@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#35CE5F031E5EED2F0AA078CC2B2D1C717A9F5248]
+== operator*
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_encoded_base/iterator/reference.adoc[reference]
+operator*() const;
+----
+
+Defined in file <include/boost/url/impl/params_encoded_base.hpp> on line 85
+

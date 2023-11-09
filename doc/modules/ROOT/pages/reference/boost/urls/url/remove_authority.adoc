@@ -1,0 +1,55 @@
+:relfileprefix: ../../../
+[#B845145621BD7E4F273CB54384E12AD19C12B789]
+== remove_authority
+
+pass:v,q[Remove the authority]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+remove_authority();
+----
+
+Defined in file <include/boost/url/url.hpp> on line 418
+
+=== Description
+
+pass:v,q[This function removes the authority,] pass:v,q[which includes the userinfo, host, and]
+pass:v,q[a port if present.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://example.com/echo.cgi" ).remove_authority().buffer() == "http:/echo.cgi" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_authority() == false && this->has_userinfo() == false && this->has_port() == false
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+authority     = [ userinfo "@" ] host [ ":" port ]
+
+userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
+host          = IP-literal / IPv4address / reg-name
+port          = *DIGIT
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2[            3.2. Authority (rfc3986)]
+
+

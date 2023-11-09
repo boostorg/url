@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#6F5CC11A90CBD43328C29AEEBFBDF5B2D0F7560C]
+== starts_with
+
+pass:v,q[Return true if a matching prefix exists]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+bool
+starts_with(string_view x) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 419
+
+=== Description
+
+pass:v,q[See `core::string_view::starts_with`]
+
+

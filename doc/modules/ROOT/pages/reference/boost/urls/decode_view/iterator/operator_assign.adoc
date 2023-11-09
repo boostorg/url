@@ -1,0 +1,17 @@
+:relfileprefix: ../../../../
+[#58647B8D098D4B13D03A81A3FF3180E2DD8AA3CB]
+== operator=
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/decode_view/iterator.adoc[iterator]&
+operator=(const xref:reference/boost/urls/decode_view/iterator.adoc[iterator]&) = default;
+----
+
+Defined in file <include/boost/url/impl/decode_view.hpp> on line 62
+

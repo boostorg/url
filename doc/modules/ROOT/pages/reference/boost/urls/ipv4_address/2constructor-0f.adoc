@@ -1,0 +1,24 @@
+:relfileprefix: ../../../
+[#F6B1163F2E8666A48589A53C9E613D413451EC43]
+== ipv4_address
+
+pass:v,q[Construct from an array of bytes.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ipv4_address(const xref:reference/boost/urls/ipv4_address/bytes_type.adoc[bytes_type]& bytes) noexcept;
+----
+
+Declared in file <include/boost/url/ipv4_address.hpp> on line 116
+
+Defined in file <src/ipv4_address.cpp> on line 30
+
+=== Description
+
+pass:v,q[This function constructs an address] pass:v,q[from the array in `bytes`, which is]
+pass:v,q[interpreted in big-endian.]
+
+

@@ -1,0 +1,31 @@
+:relfileprefix: ../../../
+[#42726910F2427D128024073F85C296753C07F6A3]
+== max_size
+
+pass:v,q[Return the maximum number of characters possible]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+static
+size_t
+max_size() noexcept;
+----
+
+Defined in file <include/boost/url/url_view.hpp> on line 331
+
+=== Description
+
+pass:v,q[This represents the largest number of] pass:v,q[characters that are possible in a url,]
+pass:v,q[not including any null terminator.]
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

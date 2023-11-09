@@ -1,0 +1,17 @@
+:relfileprefix: ../../../../
+[#2F47F879EFF0B79F0C6FF75E14B0F22E5C9F5466]
+== rbegin
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/const_reverse_iterator.adoc[const_reverse_iterator]
+rbegin() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 194
+

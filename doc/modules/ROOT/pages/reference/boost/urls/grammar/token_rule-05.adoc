@@ -1,0 +1,19 @@
+:relfileprefix: ../../../
+[#557EEAB2A78ABC4FAA4C040B2DF50AB8B5E1869B]
+== token_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet_>
+constexpr
+xref:reference/boost/urls/grammar/token_rule_t.adoc[token_rule_t]<CharSet_>
+token_rule(const CharSet_&) noexcept;
+----
+
+Declared in file <include/boost/url/grammar/token_rule.hpp> on line 74
+
+

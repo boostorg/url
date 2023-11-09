@@ -1,0 +1,23 @@
+:relfileprefix: ../../../
+[#2D652568F2DAD9E16C82089C30A30DFC469B238E]
+== value
+
+pass:v,q[The value]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string value;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 93
+
+=== Description
+
+pass:v,q[The presence of a value is indicated by] xref:reference/boost/urls/param/has_value.adoc[has_value]
+pass:v,q[equal to true.]
+pass:v,q[An empty value is distinct from no value.]
+
+

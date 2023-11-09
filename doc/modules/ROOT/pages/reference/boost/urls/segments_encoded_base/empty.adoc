@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#18748690750F1070863A4B6D6ED2EB35D789B18C]
+== empty
+
+pass:v,q[Return true if there are no segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+empty() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_encoded_base.hpp> on line 195
+
+Defined in file <src/segments_encoded_base.cpp> on line 72
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( ! url_view( "/index.htm" ).encoded_segments().empty() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

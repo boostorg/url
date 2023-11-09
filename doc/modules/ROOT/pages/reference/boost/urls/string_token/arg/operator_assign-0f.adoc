@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#F32232D8D4A68154AC2E936EF6EA76863A526490]
+== operator=
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/string_token/arg.adoc[arg]&
+operator=(xref:reference/boost/urls/string_token/arg.adoc[arg]&&) = delete;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 75
+

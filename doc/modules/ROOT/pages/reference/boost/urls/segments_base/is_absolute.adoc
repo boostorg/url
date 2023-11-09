@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#1BAB3433832A245AA83C1C72C7FD984F78E7E16F]
+== is_absolute
+
+pass:v,q[Returns true if this references an absolute path.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+is_absolute() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_base.hpp> on line 175
+
+Defined in file <src/segments_base.cpp> on line 69
+
+=== Description
+
+pass:v,q[Absolute paths always start with a] pass:v,q[forward slash ('/').]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "/path/to/file.txt" ).segments().is_absolute() == true );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

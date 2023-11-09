@@ -1,0 +1,112 @@
+:relfileprefix: ../../
+[#D478A26944ABDAA7A869D6D562BF3F059C54E3B9]
+== Namespace grammar
+
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/string_view_base.adoc[`pass:v[string_view_base]`] |pass:v,q[Common functionality for string views]
+
+|xref:reference/boost/urls/grammar/operator_eq.adoc[`pass:v[operator==]`] |
+|xref:reference/boost/urls/grammar/operator_not_eq.adoc[`pass:v[operator!=]`] |
+|xref:reference/boost/urls/grammar/operator_lt.adoc[`pass:v[operator<]`] |
+|xref:reference/boost/urls/grammar/operator_le.adoc[`pass:v[operator<=]`] |
+|xref:reference/boost/urls/grammar/operator_gt.adoc[`pass:v[operator>]`] |
+|xref:reference/boost/urls/grammar/operator_ge.adoc[`pass:v[operator>=]`] |
+|xref:reference/boost/urls/grammar/hash_value.adoc[`pass:v[hash_value]`] |pass:v,q[Return the hash of this value]
+
+|xref:reference/boost/urls/grammar/operator_lshift.adoc[`pass:v[operator<<]`] |pass:v,q[Format a string to an output stream]
+
+|xref:reference/boost/urls/grammar/is_rule-0a.adoc[`pass:v[is_rule]`] |
+|xref:reference/boost/urls/grammar/is_rule-0f.adoc[`pass:v[is_rule]`] |
+|xref:reference/boost/urls/grammar/hexdig_chars_t.adoc[`pass:v[hexdig_chars_t]`] |
+|xref:reference/boost/urls/grammar/hexdig_chars.adoc[`pass:v[hexdig_chars]`] |
+|xref:reference/boost/urls/grammar/hexdig_value.adoc[`pass:v[hexdig_value]`] |pass:v,q[Return the decimal value of a hex character]
+
+|xref:reference/boost/urls/grammar/parse-06.adoc[`pass:v[parse]`] |pass:v,q[Parse a character buffer using a rule]
+
+|xref:reference/boost/urls/grammar/parse-02.adoc[`pass:v[parse]`] |pass:v,q[Parse a character buffer using a rule]
+
+|xref:reference/boost/urls/grammar/ref-03.adoc[`pass:v[ref]`] |
+|xref:reference/boost/urls/grammar/ref-01.adoc[`pass:v[ref]`] |
+|xref:reference/boost/urls/grammar/error.adoc[`pass:v[error]`] |pass:v,q[Error codes returned when using rules]
+
+|xref:reference/boost/urls/grammar/condition.adoc[`pass:v[condition]`] |pass:v,q[Error conditions for errors received from rules]
+
+|xref:reference/boost/urls/grammar/make_error_code.adoc[`pass:v[make_error_code]`] |
+|xref:reference/boost/urls/grammar/make_error_condition.adoc[`pass:v[make_error_condition]`] |
+|xref:reference/boost/urls/grammar/is_charset-06.adoc[`pass:v[is_charset]`] |
+|xref:reference/boost/urls/grammar/is_charset-0c.adoc[`pass:v[is_charset]`] |
+|xref:reference/boost/urls/grammar/find_if.adoc[`pass:v[find_if]`] |pass:v,q[Find the first character in the string that is in the set.]
+
+|xref:reference/boost/urls/grammar/find_if_not.adoc[`pass:v[find_if_not]`] |pass:v,q[Find the first character in the string that is not in CharSet]
+
+|xref:reference/boost/urls/grammar/ref-07.adoc[`pass:v[ref]`] |
+|xref:reference/boost/urls/grammar/all_chars_t.adoc[`pass:v[all_chars_t]`] |
+|xref:reference/boost/urls/grammar/all_chars.adoc[`pass:v[all_chars]`] |pass:v,q[A character set containing all characters.]
+
+|xref:reference/boost/urls/grammar/lut_chars.adoc[`pass:v[lut_chars]`] |pass:v,q[A set of characters]
+
+|xref:reference/boost/urls/grammar/operator_plus.adoc[`pass:v[operator+]`] |pass:v,q[Return the union of two character sets.]
+
+|xref:reference/boost/urls/grammar/operator_minus.adoc[`pass:v[operator-]`] |pass:v,q[Return a new character set by subtracting]
+
+|xref:reference/boost/urls/grammar/variant_rule_t.adoc[`pass:v[variant_rule_t]`] |
+|xref:reference/boost/urls/grammar/variant_rule-0b.adoc[`pass:v[variant_rule]`] |
+|xref:reference/boost/urls/grammar/variant_rule-0d.adoc[`pass:v[variant_rule]`] |
+|xref:reference/boost/urls/grammar/unsigned_rule.adoc[`pass:v[unsigned_rule]`] |
+|xref:reference/boost/urls/grammar/digit_chars_t.adoc[`pass:v[digit_chars_t]`] |
+|xref:reference/boost/urls/grammar/digit_chars.adoc[`pass:v[digit_chars]`] |
+|xref:reference/boost/urls/grammar/ch_delim_rule.adoc[`pass:v[ch_delim_rule]`] |
+|xref:reference/boost/urls/grammar/delim_rule-02.adoc[`pass:v[delim_rule]`] |
+|xref:reference/boost/urls/grammar/cs_delim_rule.adoc[`pass:v[cs_delim_rule]`] |
+|xref:reference/boost/urls/grammar/delim_rule-0a.adoc[`pass:v[delim_rule]`] |
+|xref:reference/boost/urls/grammar/optional_rule_t.adoc[`pass:v[optional_rule_t]`] |
+|xref:reference/boost/urls/grammar/optional_rule-0c.adoc[`pass:v[optional_rule]`] |
+|xref:reference/boost/urls/grammar/optional_rule-03.adoc[`pass:v[optional_rule]`] |
+|xref:reference/boost/urls/grammar/tuple_rule_t.adoc[`pass:v[tuple_rule_t]`] |
+|xref:reference/boost/urls/grammar/tuple_rule-00.adoc[`pass:v[tuple_rule]`] |
+|xref:reference/boost/urls/grammar/tuple_rule-0e.adoc[`pass:v[tuple_rule]`] |
+|xref:reference/boost/urls/grammar/squelch.adoc[`pass:v[squelch]`] |
+|xref:reference/boost/urls/grammar/to_lower.adoc[`pass:v[to_lower]`] |pass:v,q[Return c converted to lowercase]
+
+|xref:reference/boost/urls/grammar/to_upper.adoc[`pass:v[to_upper]`] |pass:v,q[Return c converted to uppercase]
+
+|xref:reference/boost/urls/grammar/ci_compare.adoc[`pass:v[ci_compare]`] |pass:v,q[Return the case-insensitive comparison of s0 and s1]
+
+|xref:reference/boost/urls/grammar/ci_digest.adoc[`pass:v[ci_digest]`] |pass:v,q[Return the case-insensitive digest of a string]
+
+|xref:reference/boost/urls/grammar/ci_is_equal-0a.adoc[`pass:v[ci_is_equal]`] |
+|xref:reference/boost/urls/grammar/ci_is_equal-0b.adoc[`pass:v[ci_is_equal]`] |
+|xref:reference/boost/urls/grammar/ci_is_less.adoc[`pass:v[ci_is_less]`] |pass:v,q[Return true if s0 is less than s1 using case-insensitive comparison]
+
+|xref:reference/boost/urls/grammar/ci_hash.adoc[`pass:v[ci_hash]`] |
+|xref:reference/boost/urls/grammar/ci_equal.adoc[`pass:v[ci_equal]`] |
+|xref:reference/boost/urls/grammar/ci_less.adoc[`pass:v[ci_less]`] |
+|xref:reference/boost/urls/grammar/aligned_storage.adoc[`pass:v[aligned_storage]`] |
+|xref:reference/boost/urls/grammar/recycled.adoc[`pass:v[recycled]`] |pass:v,q[A thread-safe collection of instances of T]
+
+|xref:reference/boost/urls/grammar/recycled_ptr.adoc[`pass:v[recycled_ptr]`] |pass:v,q[A pointer to shared instance of T]
+
+|xref:reference/boost/urls/grammar/alpha_chars_t.adoc[`pass:v[alpha_chars_t]`] |
+|xref:reference/boost/urls/grammar/alpha_chars.adoc[`pass:v[alpha_chars]`] |pass:v,q[A character set containing the alphabetical characters.]
+
+|xref:reference/boost/urls/grammar/token_rule_t.adoc[`pass:v[token_rule_t]`] |
+|xref:reference/boost/urls/grammar/token_rule-05.adoc[`pass:v[token_rule]`] |
+|xref:reference/boost/urls/grammar/token_rule-0c.adoc[`pass:v[token_rule]`] |
+|xref:reference/boost/urls/grammar/range.adoc[`pass:v[range]`] |pass:v,q[A forward range of parsed elements]
+
+|xref:reference/boost/urls/grammar/range_rule_t-09.adoc[`pass:v[range_rule_t]`] |
+|xref:reference/boost/urls/grammar/range_rule_t-01.adoc[`pass:v[range_rule_t]`] |
+|xref:reference/boost/urls/grammar/range_rule-0c.adoc[`pass:v[range_rule]`] |
+|xref:reference/boost/urls/grammar/range_rule-09.adoc[`pass:v[range_rule]`] |
+|xref:reference/boost/urls/grammar/range_rule-0d.adoc[`pass:v[range_rule]`] |
+|xref:reference/boost/urls/grammar/range_rule-02.adoc[`pass:v[range_rule]`] |
+|xref:reference/boost/urls/grammar/alnum_chars_t.adoc[`pass:v[alnum_chars_t]`] |
+|xref:reference/boost/urls/grammar/alnum_chars.adoc[`pass:v[alnum_chars]`] |
+|xref:reference/boost/urls/grammar/vchars_t.adoc[`pass:v[vchars_t]`] |
+|xref:reference/boost/urls/grammar/vchars.adoc[`pass:v[vchars]`] |
+|xref:reference/boost/urls/grammar/dec_octet_rule_t.adoc[`pass:v[dec_octet_rule_t]`] |
+|xref:reference/boost/urls/grammar/dec_octet_rule.adoc[`pass:v[dec_octet_rule]`] |
+|xref:reference/boost/urls/grammar/literal_rule.adoc[`pass:v[literal_rule]`] |
+|===

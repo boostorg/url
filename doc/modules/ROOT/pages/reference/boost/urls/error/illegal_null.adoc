@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#B0043A96D2CA09DD915544F24B76C8056327584C]
+== illegal_null
+
+pass:v,q[Null encountered in pct-encoded.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+illegal_null
+----
+
+Defined in file <include/boost/url/error.hpp> on line 35
+

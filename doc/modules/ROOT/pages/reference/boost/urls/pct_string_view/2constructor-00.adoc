@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#07A3A6C3199DD3089A9D0DFCD2F5B2E4C76336DB]
+== pct_string_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+pct_string_view() = default;
+----
+
+Defined in file <include/boost/url/pct_string_view.hpp> on line 117
+
+=== Description
+
+pass:v,q[Default constructed string are empty.]
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

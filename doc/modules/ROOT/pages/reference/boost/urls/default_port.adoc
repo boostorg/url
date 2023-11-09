@@ -1,0 +1,40 @@
+:relfileprefix: ../../
+[#D2158D48C656A3B412A7F9AE17EE89DACDE3B0B0]
+== default_port
+
+pass:v,q[Return the default port for a known scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+uint16_t
+default_port(xref:reference/boost/urls/scheme.adoc[scheme] s) noexcept;
+----
+
+Declared in file <include/boost/url/scheme.hpp> on line 174
+
+Defined in file <src/scheme.cpp> on line 111
+
+=== Description
+
+pass:v,q[This function returns the default port] pass:v,q[for the known schemes. If the value does]
+pass:v,q[not represent a known scheme or the scheme]
+pass:v,q[does not represent a protocol, the function]
+pass:v,q[returns zero.]
+pass:v,q[The following ports are returned by the]
+pass:v,q[function:]
+
+* xref:reference/boost/urls/scheme/ftp.adoc[scheme::ftp]
+pass:v,q[= 21]
+
+* xref:reference/boost/urls/scheme/http.adoc[scheme::http,]
+xref:reference/boost/urls/scheme/ws.adoc[scheme::ws]
+pass:v,q[= 80]
+
+* xref:reference/boost/urls/scheme/https.adoc[scheme::https,]
+xref:reference/boost/urls/scheme/wss.adoc[scheme::wss]
+pass:v,q[= 443]
+
+

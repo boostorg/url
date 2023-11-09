@@ -1,0 +1,35 @@
+:relfileprefix: ../../
+[#177342135A1AA9382BBC2302956F8ECCC662202E]
+== operator<<
+
+pass:v,q[Format to an output stream]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/segments_encoded_base.adoc[segments_encoded_base]& ps);
+----
+
+Declared in file <include/boost/url/segments_encoded_base.hpp> on line 326
+
+Defined in file <src/segments_encoded_base.cpp> on line 104
+
+=== Description
+
+pass:v,q[Any percent-escapes are emitted as-is;] pass:v,q[no decoding is performed.]
+
+=== Complexity
+pass:v,q[Linear in `ps.buffer().size()`.]
+
+=== Effects
+[,cpp]
+----
+return os << ps.buffer();
+----
+
+

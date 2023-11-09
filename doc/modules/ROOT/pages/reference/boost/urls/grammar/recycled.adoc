@@ -1,0 +1,51 @@
+:relfileprefix: ../../../
+[#C76BF9C1DF3F4A4BFE52D0E7C12E7F176ED73317]
+== Class recycled
+
+pass:v,q[A thread-safe collection of instances of T]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class T>
+class recycled;
+----
+
+Defined in file <include/boost/url/grammar/recycled.hpp> on line 73
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/recycled/2destructor.adoc[`pass:v[~recycled]`] |pass:v,q[Destructor]
+
+|xref:reference/boost/urls/grammar/recycled/2constructor.adoc[`pass:v[recycled]`] |pass:v,q[Constructor]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/recycled/8friend.adoc[`pass:v[recycled_ptr]`] |
+|===
+
+=== Description
+
+pass:v,q[Instances of this type may be used to control] pass:v,q[where recycled instances of T come from when]
+pass:v,q[used with]
+xref:reference/boost/urls/grammar/recycled_ptr.adoc[recycled_ptr.]
+
+=== Example
+[,cpp]
+----
+static recycled< std::string > bin;
+
+recycled_ptr< std::string > ps( bin );
+
+// Put the string into a known state
+ps->clear();
+----
+
+

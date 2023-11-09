@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#1F2F4D8DF2F65FD028C3A266BD0D05D1434B4C3D]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/variant.adoc[variant]<R0::value_type, Rn::value_type...>;
+----
+
+Defined in file <include/boost/url/grammar/variant_rule.hpp> on line 81
+

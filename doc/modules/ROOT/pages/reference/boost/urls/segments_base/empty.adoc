@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#064977DBB746FFB258D20C8DEB8E299CF902CA3D]
+== empty
+
+pass:v,q[Return true if there are no segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+empty() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_base.hpp> on line 192
+
+Defined in file <src/segments_base.cpp> on line 76
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( ! url_view( "/index.htm" ).segments().empty() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

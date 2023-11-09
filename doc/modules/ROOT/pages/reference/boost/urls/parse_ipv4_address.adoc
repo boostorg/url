@@ -1,0 +1,19 @@
+:relfileprefix: ../../
+[#DC7D671659778C8C0AB62523AC0A0BD62B4C5D2F]
+== parse_ipv4_address
+
+pass:v,q[Return an IPv4 address from an IP address string in dotted decimal form]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]>
+parse_ipv4_address(string_view s) noexcept;
+----
+
+Declared in file <include/boost/url/ipv4_address.hpp> on line 337
+
+Defined in file <src/ipv4_address.cpp> on line 157
+

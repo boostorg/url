@@ -1,0 +1,25 @@
+:relfileprefix: ../../../
+[#FC8E1CF94AB32C2C136E0A78F6212D1D55854962]
+== http
+
+pass:v,q[The Hypertext Transfer Protocol URI Scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+http
+----
+
+Defined in file <include/boost/url/scheme.hpp> on line 80
+
+=== Description
+
+pass:v,q[URLs of this type indicate a resource which] pass:v,q[is interacted with using the HTTP protocol.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc7230[            Hypertext Transfer Protocol (HTTP/1.1) (rfc7230)]
+
+

@@ -1,0 +1,25 @@
+:relfileprefix: ../../../
+[#509AA779441231DC0E884DFD7D55241A4B2820C2]
+== ~static_url
+
+pass:v,q[Destructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+virtual
+~static_url() = default;
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 130
+
+=== Description
+
+pass:v,q[Any params, segments, iterators, or] pass:v,q[views which reference this object are]
+pass:v,q[invalidated. The underlying character]
+pass:v,q[buffer is destroyed, invalidating all]
+pass:v,q[references to it.]
+
+

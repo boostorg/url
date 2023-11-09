@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#CF4BE56729217E767D02D48D08D11C0825F14C80]
+== broadcast
+
+pass:v,q[Return an address object that represents the broadcast address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+static
+xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]
+broadcast() noexcept;
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 283
+

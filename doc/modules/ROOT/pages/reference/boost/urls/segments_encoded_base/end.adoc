@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#157E37468042157BBCE2A3A617DA9BB8072F2F70]
+== end
+
+pass:v,q[Return an iterator to the end]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_encoded_base/iterator.adoc[iterator]
+end() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_encoded_base.hpp> on line 306
+
+Defined in file <src/segments_encoded_base.cpp> on line 94
+
+=== Description
+
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

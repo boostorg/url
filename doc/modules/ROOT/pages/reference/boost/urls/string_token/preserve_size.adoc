@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#9E868632512DBBB9D58749EA9E493A0252D045E2]
+== preserve_size
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class Alloc = allocator<char>>
+xref:reference/boost/urls/string_token/preserve_size_t.adoc[preserve_size_t]<Alloc>
+preserve_size(basic_string<char, char_traits<char>, Alloc>& s);
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 327
+

@@ -1,0 +1,25 @@
+:relfileprefix: ../../../../
+[#991AA2F0864E397D312C51DEDBC590F19C2F9A48]
+== substr
+
+pass:v,q[Return a view to part of the string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+string_view
+substr(
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] pos = 0,
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] n = core::string_view::npos) const;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 343
+
+=== Description
+
+pass:v,q[See `core::string_view::substr`]
+
+

@@ -1,0 +1,198 @@
+:relfileprefix: ../../../
+[#6359E4103B8AAF5508C81F586B66D7BC7615C086]
+== Class string_view_base
+
+pass:v,q[Common functionality for string views]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class string_view_base;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 36
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/string_view_base/traits_type.adoc[`pass:v[traits_type]`] |pass:v,q[The character traits]
+
+|xref:reference/boost/urls/grammar/string_view_base/value_type.adoc[`pass:v[value_type]`] |pass:v,q[The value type]
+
+|xref:reference/boost/urls/grammar/string_view_base/pointer.adoc[`pass:v[pointer]`] |pass:v,q[The pointer type]
+
+|xref:reference/boost/urls/grammar/string_view_base/const_pointer.adoc[`pass:v[const_pointer]`] |pass:v,q[The const pointer type]
+
+|xref:reference/boost/urls/grammar/string_view_base/reference.adoc[`pass:v[reference]`] |pass:v,q[The reference type]
+
+|xref:reference/boost/urls/grammar/string_view_base/const_reference.adoc[`pass:v[const_reference]`] |pass:v,q[The const reference type]
+
+|xref:reference/boost/urls/grammar/string_view_base/const_iterator.adoc[`pass:v[const_iterator]`] |pass:v,q[The const iterator type]
+
+|xref:reference/boost/urls/grammar/string_view_base/iterator.adoc[`pass:v[iterator]`] |pass:v,q[The iterator type]
+
+|xref:reference/boost/urls/grammar/string_view_base/const_reverse_iterator.adoc[`pass:v[const_reverse_iterator]`] |pass:v,q[The const reverse iterator type]
+
+|xref:reference/boost/urls/grammar/string_view_base/reverse_iterator.adoc[`pass:v[reverse_iterator]`] |pass:v,q[The reverse iterator type]
+
+|xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[`pass:v[size_type]`] |pass:v,q[The size type]
+
+|xref:reference/boost/urls/grammar/string_view_base/difference_type.adoc[`pass:v[difference_type]`] |pass:v,q[The difference type]
+
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/string_view_base/2conversion-0e.adoc[`pass:v[operator string_view]`] |pass:v,q[Conversion]
+
+|xref:reference/boost/urls/grammar/string_view_base/2conversion-06.adoc[`pass:v[operator string]`] |pass:v,q[Conversion]
+
+|xref:reference/boost/urls/grammar/string_view_base/begin.adoc[`pass:v[begin]`] |pass:v,q[Return an iterator to the beginning]
+
+|xref:reference/boost/urls/grammar/string_view_base/end.adoc[`pass:v[end]`] |pass:v,q[Return an iterator to the end]
+
+|xref:reference/boost/urls/grammar/string_view_base/cbegin.adoc[`pass:v[cbegin]`] |pass:v,q[Return an iterator to the beginning]
+
+|xref:reference/boost/urls/grammar/string_view_base/cend.adoc[`pass:v[cend]`] |pass:v,q[Return an iterator to the end]
+
+|xref:reference/boost/urls/grammar/string_view_base/rbegin.adoc[`pass:v[rbegin]`] |
+|xref:reference/boost/urls/grammar/string_view_base/rend.adoc[`pass:v[rend]`] |
+|xref:reference/boost/urls/grammar/string_view_base/crbegin.adoc[`pass:v[crbegin]`] |
+|xref:reference/boost/urls/grammar/string_view_base/crend.adoc[`pass:v[crend]`] |
+|xref:reference/boost/urls/grammar/string_view_base/size.adoc[`pass:v[size]`] |pass:v,q[Return the size]
+
+|xref:reference/boost/urls/grammar/string_view_base/length.adoc[`pass:v[length]`] |pass:v,q[Return the size]
+
+|xref:reference/boost/urls/grammar/string_view_base/max_size.adoc[`pass:v[max_size]`] |pass:v,q[Return the maximum allowed size]
+
+|xref:reference/boost/urls/grammar/string_view_base/empty.adoc[`pass:v[empty]`] |pass:v,q[Return true if the string is empty]
+
+|xref:reference/boost/urls/grammar/string_view_base/operator_subs.adoc[`pass:v[operator[]]`] |pass:v,q[Access a character]
+
+|xref:reference/boost/urls/grammar/string_view_base/at.adoc[`pass:v[at]`] |pass:v,q[Access a character]
+
+|xref:reference/boost/urls/grammar/string_view_base/front.adoc[`pass:v[front]`] |pass:v,q[Return the first character]
+
+|xref:reference/boost/urls/grammar/string_view_base/back.adoc[`pass:v[back]`] |pass:v,q[Return the last character]
+
+|xref:reference/boost/urls/grammar/string_view_base/data.adoc[`pass:v[data]`] |pass:v,q[Return a pointer to the character buffer]
+
+|xref:reference/boost/urls/grammar/string_view_base/copy.adoc[`pass:v[copy]`] |pass:v,q[Copy the characters to another buffer]
+
+|xref:reference/boost/urls/grammar/string_view_base/substr.adoc[`pass:v[substr]`] |pass:v,q[Return a view to part of the string]
+
+|xref:reference/boost/urls/grammar/string_view_base/compare-02.adoc[`pass:v[compare]`] |pass:v,q[Return the result of comparing to another string]
+
+|xref:reference/boost/urls/grammar/string_view_base/compare-0a.adoc[`pass:v[compare]`] |pass:v,q[Return the result of comparing to another string]
+
+|xref:reference/boost/urls/grammar/string_view_base/compare-0e.adoc[`pass:v[compare]`] |pass:v,q[Return the result of comparing to another string]
+
+|xref:reference/boost/urls/grammar/string_view_base/compare-07.adoc[`pass:v[compare]`] |pass:v,q[Return the result of comparing to another string]
+
+|xref:reference/boost/urls/grammar/string_view_base/compare-0b.adoc[`pass:v[compare]`] |pass:v,q[Return the result of comparing to another string]
+
+|xref:reference/boost/urls/grammar/string_view_base/compare-0c.adoc[`pass:v[compare]`] |pass:v,q[Return the result of comparing to another string]
+
+|xref:reference/boost/urls/grammar/string_view_base/starts_with-06.adoc[`pass:v[starts_with]`] |pass:v,q[Return true if a matching prefix exists]
+
+|xref:reference/boost/urls/grammar/string_view_base/starts_with-0b.adoc[`pass:v[starts_with]`] |pass:v,q[Return true if a matching prefix exists]
+
+|xref:reference/boost/urls/grammar/string_view_base/starts_with-0d.adoc[`pass:v[starts_with]`] |pass:v,q[Return true if a matching prefix exists]
+
+|xref:reference/boost/urls/grammar/string_view_base/ends_with-0a.adoc[`pass:v[ends_with]`] |pass:v,q[Return true if a matching suffix exists]
+
+|xref:reference/boost/urls/grammar/string_view_base/ends_with-06.adoc[`pass:v[ends_with]`] |pass:v,q[Return true if a matching suffix exists]
+
+|xref:reference/boost/urls/grammar/string_view_base/ends_with-0c.adoc[`pass:v[ends_with]`] |pass:v,q[Return true if a matching suffix exists]
+
+|xref:reference/boost/urls/grammar/string_view_base/find-0d.adoc[`pass:v[find]`] |pass:v,q[Return the position of matching characters]
+
+|xref:reference/boost/urls/grammar/string_view_base/find-00.adoc[`pass:v[find]`] |pass:v,q[Return the position of matching characters]
+
+|xref:reference/boost/urls/grammar/string_view_base/find-07.adoc[`pass:v[find]`] |pass:v,q[Return the position of matching characters]
+
+|xref:reference/boost/urls/grammar/string_view_base/find-0c.adoc[`pass:v[find]`] |pass:v,q[Return the position of matching characters]
+
+|xref:reference/boost/urls/grammar/string_view_base/rfind-0ed.adoc[`pass:v[rfind]`] |pass:v,q[Return the position of matching characters]
+
+|xref:reference/boost/urls/grammar/string_view_base/rfind-0eb.adoc[`pass:v[rfind]`] |pass:v,q[Return the position of matching characters]
+
+|xref:reference/boost/urls/grammar/string_view_base/rfind-0b.adoc[`pass:v[rfind]`] |pass:v,q[Return the position of matching characters]
+
+|xref:reference/boost/urls/grammar/string_view_base/rfind-0d.adoc[`pass:v[rfind]`] |pass:v,q[Return the position of matching characters]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_first_of-0ab.adoc[`pass:v[find_first_of]`] |pass:v,q[Return the position of the first match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_first_of-04.adoc[`pass:v[find_first_of]`] |pass:v,q[Return the position of the first match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_first_of-0af.adoc[`pass:v[find_first_of]`] |pass:v,q[Return the position of the first match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_first_of-08.adoc[`pass:v[find_first_of]`] |pass:v,q[Return the position of the first match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_last_of-00.adoc[`pass:v[find_last_of]`] |pass:v,q[Return the position of the last match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_last_of-0c.adoc[`pass:v[find_last_of]`] |pass:v,q[Return the position of the last match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_last_of-02.adoc[`pass:v[find_last_of]`] |pass:v,q[Return the position of the last match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_last_of-08.adoc[`pass:v[find_last_of]`] |pass:v,q[Return the position of the last match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_first_not_of-0e.adoc[`pass:v[find_first_not_of]`] |pass:v,q[Return the position of the first non-match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_first_not_of-02.adoc[`pass:v[find_first_not_of]`] |pass:v,q[Return the position of the first non-match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_first_not_of-0a.adoc[`pass:v[find_first_not_of]`] |pass:v,q[Return the position of the first non-match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_first_not_of-0c.adoc[`pass:v[find_first_not_of]`] |pass:v,q[Return the position of the first non-match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_last_not_of-03.adoc[`pass:v[find_last_not_of]`] |pass:v,q[Return the position of the last non-match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_last_not_of-0d.adoc[`pass:v[find_last_not_of]`] |pass:v,q[Return the position of the last non-match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_last_not_of-01.adoc[`pass:v[find_last_not_of]`] |pass:v,q[Return the position of the last non-match]
+
+|xref:reference/boost/urls/grammar/string_view_base/find_last_not_of-06.adoc[`pass:v[find_last_not_of]`] |pass:v,q[Return the position of the last non-match]
+
+|xref:reference/boost/urls/grammar/string_view_base/contains-08.adoc[`pass:v[contains]`] |pass:v,q[Return true if matching characters are found]
+
+|xref:reference/boost/urls/grammar/string_view_base/contains-04.adoc[`pass:v[contains]`] |pass:v,q[Return true if matching characters are found]
+
+|xref:reference/boost/urls/grammar/string_view_base/contains-03.adoc[`pass:v[contains]`] |pass:v,q[Return true if matching characters are found]
+
+|===
+=== Static Data Members
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/string_view_base/npos.adoc[`pass:v[npos]`] |pass:v,q[A constant used to represent "no position"]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/string_view_base/8friend-095.adoc[`pass:v[operator==]`] |
+|xref:reference/boost/urls/grammar/string_view_base/8friend-017.adoc[`pass:v[operator!=]`] |
+|xref:reference/boost/urls/grammar/string_view_base/8friend-010.adoc[`pass:v[operator<]`] |
+|xref:reference/boost/urls/grammar/string_view_base/8friend-0c.adoc[`pass:v[operator<=]`] |
+|xref:reference/boost/urls/grammar/string_view_base/8friend-0d.adoc[`pass:v[operator>]`] |
+|xref:reference/boost/urls/grammar/string_view_base/8friend-02.adoc[`pass:v[operator>=]`] |
+|xref:reference/boost/urls/grammar/string_view_base/8friend-09d.adoc[`pass:v[hash_value]`] |pass:v,q[Return the hash of this value]
+
+|xref:reference/boost/urls/grammar/string_view_base/8friend-00.adoc[`pass:v[operator<<]`] |
+|===
+
+=== Description
+
+pass:v,q[This base class is used to provide common] pass:v,q[member functions for reference types that]
+pass:v,q[behave like string views. This cannot be]
+pass:v,q[instantiated directly; Instead, derive]
+pass:v,q[from the type and provide constructors]
+pass:v,q[which offer any desired preconditions]
+pass:v,q[and invariants.]
+
+

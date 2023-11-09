@@ -1,0 +1,53 @@
+:relfileprefix: ../../../
+[#F0887477DC879F9C7AAC34D6FB4538E1BFB31DC4]
+== url
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+url() noexcept = default;
+----
+
+Declared in file <include/boost/url/url.hpp> on line 120
+
+Defined in file <src/url.cpp> on line 36
+
+=== Description
+
+pass:v,q[Default constructed urls contain] pass:v,q[a zero-length string. This matches]
+pass:v,q[the grammar for a relative-ref with]
+pass:v,q[an empty path and no query or]
+pass:v,q[fragment.]
+
+=== Example
+[,cpp]
+----
+url u;
+----
+
+=== Postconditions
+[,cpp]
+----
+this->empty() == true
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+----
+
+=== Specification
+link:https://datatracker.ietf.org/doc/html/rfc3986#section-4.2[4.2. Relative Reference (rfc3986)]
+
+

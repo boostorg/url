@@ -1,0 +1,25 @@
+:relfileprefix: ../../../
+[#5BC94B210D0EC426342A37455D28AFAFE9708E74]
+== disallow_null
+
+pass:v,q[True if nulls are not allowed]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool disallow_null;
+----
+
+Defined in file <include/boost/url/encoding_opts.hpp> on line 68
+
+=== Description
+
+pass:v,q[Normally all possible character values] pass:v,q[(from 0 to 255) are allowed, with reserved]
+pass:v,q[characters being replaced with escapes]
+pass:v,q[upon encoding. When this option is true,]
+pass:v,q[attempting to decode a null will result]
+pass:v,q[in an error.]
+
+

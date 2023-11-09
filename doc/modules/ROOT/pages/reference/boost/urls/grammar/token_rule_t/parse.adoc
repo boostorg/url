@@ -1,0 +1,20 @@
+:relfileprefix: ../../../../
+[#6CA909C3DB7FC15195CF541C31948A21A94622AB]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/grammar/token_rule_t/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* end) const noexcept;
+----
+
+Declared in file <include/boost/url/grammar/token_rule.hpp> on line 65
+
+Defined in file <include/boost/url/grammar/impl/token_rule.hpp> on line 19
+

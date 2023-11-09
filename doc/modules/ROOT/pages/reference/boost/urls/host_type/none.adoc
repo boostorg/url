@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#432A0C4EED3B876DF6FD2C6AA2FBB6986A0F813A]
+== none
+
+pass:v,q[No host is specified.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+none
+----
+
+Defined in file <include/boost/url/host_type.hpp> on line 32
+

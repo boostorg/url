@@ -1,0 +1,21 @@
+:relfileprefix: ../../../
+[#F0783FE5BE510D880893F4FA68FD2D3E3D076D27]
+== reference
+
+pass:v,q[The reference type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using reference = xref:reference/boost/urls/param.adoc[param];
+----
+
+Defined in file <include/boost/url/params_base.hpp> on line 121
+
+=== Description
+
+pass:v,q[This is the type of value returned when] pass:v,q[iterators of the view are dereferenced.]
+
+

@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#A6C018F0D6A972E9E553628917D298DA412172D0]
+== out_of_range
+
+pass:v,q[An integer overflowed during parsing.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+out_of_range
+----
+
+Defined in file <include/boost/url/grammar/error.hpp> on line 98
+

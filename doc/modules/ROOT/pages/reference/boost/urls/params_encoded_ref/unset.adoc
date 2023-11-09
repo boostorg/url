@@ -1,0 +1,44 @@
+:relfileprefix: ../../../
+[#E03B996AE9A11D2AAD8BA52E0B752DF99E8D4AAA]
+== unset
+
+pass:v,q[Remove the value on an element]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+unset(xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator] pos) noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_ref.hpp> on line 832
+
+Defined in file <src/params_encoded_ref.cpp> on line 168
+
+=== Description
+
+pass:v,q[This function removes the value of] pass:v,q[an element at the specified position.]
+pass:v,q[After the call returns, `has_value`]
+pass:v,q[for the element is false.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`pos` or come after are invalidated.]
+
+=== Example
+[,cpp]
+----
+url u( "?first=John&last=Doe" );
+
+u.encoded_params().unset( u.encoded_params().begin() );
+
+assert( u.encoded_query() == "first&last=Doe" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

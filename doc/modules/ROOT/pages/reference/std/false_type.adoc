@@ -1,0 +1,15 @@
+:relfileprefix: ../
+[#95352803A3A41D841A2508C971BDD618D775F37B]
+== false_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using false_type = xref:reference/std/integral_constant.adoc[integral_constant]<bool, false>;
+----
+
+Defined in file </usr/include/c++/13/type_traits> on line 85
+

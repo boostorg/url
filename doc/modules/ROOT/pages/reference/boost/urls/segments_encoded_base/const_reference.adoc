@@ -1,0 +1,21 @@
+:relfileprefix: ../../../
+[#EE061BF81CFEDEA6EA895ABE5A6F0ACBD335D7EA]
+== const_reference
+
+pass:v,q[The reference type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using const_reference = xref:reference/boost/urls/pct_string_view.adoc[pct_string_view];
+----
+
+Defined in file <include/boost/url/segments_encoded_base.hpp> on line 106
+
+=== Description
+
+pass:v,q[This is the type of value returned when] pass:v,q[iterators of the view are dereferenced.]
+
+

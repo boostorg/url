@@ -1,0 +1,43 @@
+:relfileprefix: ../../../
+[#899D5E5B0E48025D62950EF628FAE1B74D291B35]
+== swap
+
+pass:v,q[Swap the contents.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+swap(xref:reference/boost/urls/url.adoc[url]& other) noexcept;
+----
+
+Declared in file <include/boost/url/url.hpp> on line 360
+
+Defined in file <src/url.cpp> on line 154
+
+=== Description
+
+pass:v,q[Exchanges the contents of this url with another] pass:v,q[url. All views, iterators and references remain valid.]
+pass:v,q[If `this ==]
+pass:v,q[&other]
+pass:v,q[`, this function call has no effect.]
+
+=== Example
+[,cpp]
+----
+url u1( "https://www.example.com" );
+url u2( "https://www.boost.org" );
+u1.swap(u2);
+assert(u1 == "https://www.boost.org" );
+assert(u2 == "https://www.example.com" );
+----
+
+=== Complexity
+pass:v,q[Constant]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

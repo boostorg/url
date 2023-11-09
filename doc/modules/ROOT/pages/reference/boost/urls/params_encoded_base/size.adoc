@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#CC5EE402C72D6096F3B0477FC9EF554034E569DF]
+== size
+
+pass:v,q[Return the number of params]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+size() const noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_base.hpp> on line 208
+
+Defined in file <src/params_encoded_base.cpp> on line 72
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( url_view( "?key=value").encoded_params().size() == 1 );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,31 @@
+:relfileprefix: ../../../
+[#3A066774005889FA3107881169B9466C12397E0E]
+== ignore_case_param
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+ignore_case_param() noexcept = default;
+----
+
+Defined in file <include/boost/url/ignore_case.hpp> on line 71
+
+=== Description
+
+pass:v,q[By default, comparisons are] pass:v,q[case-sensitive.]
+
+=== Example
+pass:v,q[This function performs case-sensitive]
+pass:v,q[comparisons when called with no]
+pass:v,q[arguments:]
+[,cpp]
+----
+void f( ignore_case_param = {} );
+----
+
+

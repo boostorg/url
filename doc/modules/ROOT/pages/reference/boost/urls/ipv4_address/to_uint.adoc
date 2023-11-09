@@ -1,0 +1,19 @@
+:relfileprefix: ../../../
+[#B061233F0C9FF5584311973CD2B761A264F8F604]
+== to_uint
+
+pass:v,q[Return the address as an unsigned integer.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/ipv4_address/uint_type.adoc[uint_type]
+to_uint() const noexcept;
+----
+
+Declared in file <include/boost/url/ipv4_address.hpp> on line 159
+
+Defined in file <src/ipv4_address.cpp> on line 63
+

@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#BB2473EDDB14F803374CD9B0CF692678FF54F8E0]
+== to_lower
+
+pass:v,q[Return c converted to lowercase]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+char
+to_lower(char c) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/ci_string.hpp> on line 53
+
+=== Description
+
+pass:v,q[This function returns the character,] pass:v,q[converting it to lowercase if it is]
+pass:v,q[uppercase.]
+pass:v,q[The function is defined only for]
+pass:v,q[low-ASCII characters.]
+
+=== Example
+[,cpp]
+----
+assert( to_lower( 'A' ) == 'a' );
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

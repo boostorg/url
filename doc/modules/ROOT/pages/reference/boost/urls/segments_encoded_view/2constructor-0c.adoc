@@ -1,0 +1,40 @@
+:relfileprefix: ../../../
+[#C01E452D901155D58E75BA49F20CFA69D189D693]
+== segments_encoded_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+segments_encoded_view() = default;
+----
+
+Defined in file <include/boost/url/segments_encoded_view.hpp> on line 92
+
+=== Description
+
+pass:v,q[Default-constructed segments have] pass:v,q[zero elements.]
+
+=== Example
+[,cpp]
+----
+segments_encoded_view ps;
+----
+
+=== Effects
+[,cpp]
+----
+return segments_encoded_view( "" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

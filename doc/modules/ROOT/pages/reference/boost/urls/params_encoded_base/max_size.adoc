@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#62124474CFFD4B2099D49494869D3D930004C2CC]
+== max_size
+
+pass:v,q[Return the maximum number of characters possible]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+static
+size_t
+max_size() noexcept;
+----
+
+Defined in file <include/boost/url/params_encoded_base.hpp> on line 138
+
+=== Description
+
+pass:v,q[This represents the largest number of] pass:v,q[characters that are possible in a path,]
+pass:v,q[not including any null terminator.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,37 @@
+:relfileprefix: ../../../../
+[#748253C08DC3B24AD30AEC881354E7D8943C39A4]
+== lut_chars
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+lut_chars(const char* s) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/lut_chars.hpp> on line 188
+
+=== Description
+
+pass:v,q[This function constructs a character] pass:v,q[set which has as members, all of the]
+pass:v,q[characters present in the null-terminated]
+pass:v,q[string `s`.]
+
+=== Example
+[,cpp]
+----
+constexpr lut_chars digits = "0123456789";
+----
+
+=== Complexity
+pass:v,q[Linear in `::strlen(s)`, or constant]
+pass:v,q[if `s` is a constant expression.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

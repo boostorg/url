@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#C8133C8D467B954873B4A52B28030256517F2523]
+== size
+
+pass:v,q[Return the number of segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+size() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_base.hpp> on line 209
+
+Defined in file <src/segments_base.cpp> on line 83
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( url_view( "/path/to/file.txt" ).segments().size() == 3 );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

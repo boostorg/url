@@ -1,0 +1,24 @@
+:relfileprefix: ../../
+[#C9D67B6D3CA448C9F07A10D4F4DB634E359E07E2]
+== encode_unsafe
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet>
+size_t
+encode_unsafe(
+    char* dest,
+    size_t size,
+    string_view s,
+    const CharSet& unreserved,
+    xref:reference/boost/urls/encoding_opts.adoc[encoding_opts] opt);
+----
+
+Declared in file <include/boost/url/encode.hpp> on line 129
+
+Defined in file <include/boost/url/impl/encode.hpp> on line 173
+

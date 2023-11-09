@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#50DA31B7C6D8005AE735EDFC3034FD6FB2D9FD47]
+== Friend params_view
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend xref:reference/boost/urls/params_view.adoc[params_view];
+----
+
+Defined in file <include/boost/url/params_base.hpp> on line 43
+

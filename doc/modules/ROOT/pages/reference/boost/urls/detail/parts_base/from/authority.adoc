@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#E7A0F989F1BCF74AB209B64A1714D3B69AC72A53]
+== authority
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+authority = 2
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 45
+

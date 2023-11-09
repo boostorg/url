@@ -1,0 +1,35 @@
+:relfileprefix: ../../../../
+[#C2A258987FE00644548B6AA14334FC66BBA43AED]
+== release
+
+pass:v,q[Release the referenced object]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+release() noexcept;
+----
+
+Declared in file <include/boost/url/grammar/recycled.hpp> on line 501
+
+Defined in file <include/boost/url/grammar/impl/recycled.hpp> on line 205
+
+=== Description
+
+pass:v,q[If this references an object, it is] pass:v,q[released to the referenced recycle bin.]
+pass:v,q[The pointer continues to reference]
+pass:v,q[the same recycle bin.]
+
+=== Postconditions
+[,cpp]
+----
+this->empty()
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

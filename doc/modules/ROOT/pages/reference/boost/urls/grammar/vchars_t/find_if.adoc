@@ -1,0 +1,18 @@
+:relfileprefix: ../../../../
+[#302F9843E360C63856ACF457371EA6B46F384259]
+== find_if
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+const char*
+find_if(
+    const char* first,
+    const char* last) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/vchars.hpp> on line 58
+

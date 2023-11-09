@@ -1,0 +1,30 @@
+:relfileprefix: ../../../../
+[#FEEB9C1A221BEFC8D83DC11A1BF767D1B7B5A883]
+== operator()
+
+pass:v,q[Return true if ch is in the character set.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+bool
+operator()(unsigned char ch) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/lut_chars.hpp> on line 256
+
+=== Description
+
+pass:v,q[This function returns true if the] pass:v,q[character `ch` is in the set, otherwise]
+pass:v,q[it returns false.]
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,62 @@
+:relfileprefix: ../../../
+[#EFD205C2FD02E34A0FAE1B9CA2ED6E03A0C2D512]
+== Class lut_chars
+
+pass:v,q[A set of characters]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class lut_chars;
+----
+
+Defined in file <include/boost/url/grammar/lut_chars.hpp> on line 64
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/lut_chars/2constructor-079.adoc[`pass:v[lut_chars]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/lut_chars/2constructor-074.adoc[`pass:v[lut_chars]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/grammar/lut_chars/2constructor-02.adoc[`pass:v[lut_chars]`] |
+|xref:reference/boost/urls/grammar/lut_chars/operator_call.adoc[`pass:v[operator()]`] |pass:v,q[Return true if ch is in the character set.]
+
+|xref:reference/boost/urls/grammar/lut_chars/operator_bitnot.adoc[`pass:v[operator~]`] |pass:v,q[Return a new character set which is the complement of another character set.]
+
+|xref:reference/boost/urls/grammar/lut_chars/find_if.adoc[`pass:v[find_if]`] |
+|xref:reference/boost/urls/grammar/lut_chars/find_if_not.adoc[`pass:v[find_if_not]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/lut_chars/8friend-02.adoc[`pass:v[operator+]`] |pass:v,q[Return the union of two character sets.]
+
+|xref:reference/boost/urls/grammar/lut_chars/8friend-07.adoc[`pass:v[operator-]`] |pass:v,q[Return a new character set by subtracting]
+
+|===
+
+=== Description
+
+pass:v,q[The characters defined by instances of] pass:v,q[this set are provided upon construction.]
+pass:v,q[The `constexpr` implementation allows]
+pass:v,q[these to become compile-time constants.]
+
+=== Example
+pass:v,q[Character sets are used with rules and the]
+pass:v,q[functions]
+xref:reference/boost/urls/grammar/lut_chars/find_if.adoc[find_if]
+pass:v,q[and]
+xref:reference/boost/urls/grammar/lut_chars/find_if_not.adoc[find_if_not.]
+[,cpp]
+----
+constexpr lut_chars vowel_chars = "AEIOU" "aeiou";
+
+system::result< core::string_view > rv = parse( "Aiea", token_rule( vowel_chars ) );
+----
+
+

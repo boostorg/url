@@ -1,0 +1,28 @@
+:relfileprefix: ../../
+[#662B9641EB21566F2A2D071DFBC44BC251FF8562]
+== Class uri_reference_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct uri_reference_rule_t;
+----
+
+Defined in file <include/boost/url/rfc/uri_reference_rule.hpp> on line 53
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/uri_reference_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/uri_reference_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+

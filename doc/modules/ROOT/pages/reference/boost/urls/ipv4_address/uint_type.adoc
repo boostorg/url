@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#8261702C54ED3800FF421AA04398155889307EA1]
+== uint_type
+
+pass:v,q[The type used to represent an address as an unsigned integer]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using uint_type = uint_least32_t;
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 66
+

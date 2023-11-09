@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#33D4906C3671F3D77BC37DAF2E3E0B324C8D1D82]
+== ipv4_address_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/ipv4_address_rule_t.adoc[ipv4_address_rule_t] ipv4_address_rule;
+----
+
+Defined in file <include/boost/url/rfc/ipv4_address_rule.hpp> on line 72
+

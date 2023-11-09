@@ -1,0 +1,22 @@
+:relfileprefix: ../../../
+[#EBBE8F3298387113D53427BF555F4903BC00F215]
+== tuple_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class R0,
+    class... Rn>
+constexpr
+xref:reference/boost/urls/grammar/tuple_rule_t.adoc[tuple_rule_t]<R0, Rn...>
+tuple_rule(
+    const R0& r0,
+    const Rn&... rn) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/tuple_rule.hpp> on line 138
+

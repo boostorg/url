@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#FEFD73EAB578C47CDFA48BA9DFDC8E4953A67A21]
+== Class is_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class T>
+struct xref:reference/boost/urls/grammar/is_rule-0a.adoc[is_rule]<T, xref:reference/boost/urls/void_t.adoc[void_t]<decltype(std::declval<system::result<typename T::value_type> &>() = std::declval<const T &>().parse(std::declval<const char *&>(), std::declval<const char *>()))>>
+    : xref:reference/std.adoc[std]::xref:reference/std/is_nothrow_copy_constructible.adoc[is_nothrow_copy_constructible]<T>;
+----
+
+Defined in file <include/boost/url/grammar/type_traits.hpp> on line 53
+
+

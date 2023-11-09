@@ -1,0 +1,45 @@
+:relfileprefix: ../../../
+[#98262D7ACAFC245758EF1A07A66B3325A46C5D4A]
+== set
+
+pass:v,q[Set a value]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator]
+set(
+    xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator] pos,
+    string_view value);
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 848
+
+Defined in file <src/params_ref.cpp> on line 172
+
+=== Description
+
+pass:v,q[This function replaces the value of an] pass:v,q[element at the specified position.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`pos` or come after are invalidated.]
+
+=== Example
+[,cpp]
+----
+url u( "?id=42&id=69" );
+
+u.params().set( u.params().begin(), "none" );
+
+assert( u.encoded_query() == "id=none&id=69" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

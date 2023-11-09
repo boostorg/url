@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#7E4FCB2C3A48A78D429F666771F1186ABCA7D500]
+== operator()
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+operator()(const xref:reference/boost.adoc[boost]::xref:reference/boost/urls.adoc[urls]::xref:reference/boost/urls/static_url.adoc[static_url]<N>& u) const noexcept;
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 459
+

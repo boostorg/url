@@ -1,0 +1,37 @@
+:relfileprefix: ../../../
+[#A63567DDE5556963408B1CE43C110213E94A0724]
+== normalize_path
+
+pass:v,q[Normalize the URL path]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_base.adoc[url_base]&
+normalize_path();
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 2603
+
+Defined in file <src/url_base.cpp> on line 1742
+
+=== Description
+
+pass:v,q[Applies Syntax-based normalization to the] pass:v,q[URL path.]
+pass:v,q[Percent-encoding triplets are normalized]
+pass:v,q[to uppercase letters. Percent-encoded]
+pass:v,q[octets that correspond to unreserved]
+pass:v,q[characters are decoded. Redundant]
+pass:v,q[path-segments are removed.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2[6.2.2 Syntax-Based Normalization (rfc3986)]
+
+

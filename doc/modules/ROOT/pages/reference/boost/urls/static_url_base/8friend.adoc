@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#23898C840A01F2C570C11DA20BCC939B01C42373]
+== Friend static_url
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<size_t Capacity>
+friend class static_url;
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 56
+

@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#EF156171F045D6B00225B7B780A4CA0937D073DA]
+== not_a_base
+
+pass:v,q[The URL is not a base URL]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+not_a_base
+----
+
+Defined in file <include/boost/url/error.hpp> on line 82
+

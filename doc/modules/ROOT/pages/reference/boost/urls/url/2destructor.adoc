@@ -1,0 +1,27 @@
+:relfileprefix: ../../../
+[#F208F02D08B040EFBBF5A85CFBB2A3034657BCDF]
+== ~url
+
+pass:v,q[Destructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+virtual
+~url();
+----
+
+Declared in file <include/boost/url/url.hpp> on line 85
+
+Defined in file <src/url.cpp> on line 24
+
+=== Description
+
+pass:v,q[Any params, segments, iterators, or] pass:v,q[views which reference this object are]
+pass:v,q[invalidated. The underlying character]
+pass:v,q[buffer is destroyed, invalidating all]
+pass:v,q[references to it.]
+
+

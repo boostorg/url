@@ -1,0 +1,22 @@
+:relfileprefix: ../../
+[#E2910ABB4DF247D668C1774464FA459C6A710A67]
+== operator==
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class S0,
+    class S1>
+constexpr
+enable_if<is_match<S0, S1>::value, bool>::type
+operator==(
+    const S0& s0,
+    const S1& s1) noexcept;
+----
+
+Defined in file <include/boost/url/decode_view.hpp> on line 579
+

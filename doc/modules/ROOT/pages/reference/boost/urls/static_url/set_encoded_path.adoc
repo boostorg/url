@@ -1,0 +1,68 @@
+:relfileprefix: ../../../
+[#66D345C44ACF2CECD5FB51E09B8679AD2AAD9B4D]
+== set_encoded_path
+
+pass:v,q[Set the path.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/static_url.adoc[static_url]&
+set_encoded_path(xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] s);
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 403
+
+=== Description
+
+pass:v,q[This function sets the path to the] pass:v,q[string, which may contain percent-escapes]
+pass:v,q[and can be empty.]
+pass:v,q[Escapes in the string are preserved,]
+pass:v,q[and reserved characters in the string]
+pass:v,q[are percent-escaped in the result.]
+[NOTE]
+pass:v,q[The library may adjust the final result]
+pass:v,q[to ensure that no other parts of the url]
+pass:v,q[is semantically affected.]
+
+=== Example
+[,cpp]
+----
+url u( "http://www.example.com" );
+
+u.set_encoded_path( "path/to/file.txt" );
+
+assert( u.encoded_path() == "/path/to/file.txt" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size() + s.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+path          = path-abempty    ; begins with "/" or is empty
+              / path-absolute   ; begins with "/" but not "//"
+              / path-noscheme   ; begins with a non-colon segment
+              / path-rootless   ; begins with a segment
+              / path-empty      ; zero characters
+
+path-abempty  = *( "/" segment )
+path-absolute = "/" [ segment-nz *( "/" segment ) ]
+path-noscheme = segment-nz-nc *( "/" segment )
+path-rootless = segment-nz *( "/" segment )
+path-empty    = 0<pchar>
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3.  Path (rfc3986)]
+
+

@@ -1,0 +1,46 @@
+:relfileprefix: ../../../../
+[#AC8AB5B1FAEA312BF7E7C867FABFF3369F7B06B8]
+== recycled_ptr
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+recycled_ptr(
+    xref:reference/boost/urls/grammar/recycled.adoc[recycled]<T>& bin,
+    nullptr_t) noexcept;
+----
+
+Declared in file <include/boost/url/grammar/recycled.hpp> on line 243
+
+Defined in file <include/boost/url/grammar/impl/recycled.hpp> on line 111
+
+=== Description
+
+pass:v,q[After construction, this is empty and] pass:v,q[refers to the specified recycle bin.]
+
+=== Example
+[,cpp]
+----
+static recycled< std::string > bin;
+
+recycled_ptr< std::string > ps( bin, nullptr );
+
+// Acquire a string and put it into a known state
+ps->acquire();
+ps->clear();
+----
+
+=== Postconditions
+[,cpp]
+----
+&this->bin() == &bin && this->empty()
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

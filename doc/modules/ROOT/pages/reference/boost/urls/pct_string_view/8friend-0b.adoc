@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#B826D002B1ED0789F43D98E3A14878387913B07F]
+== Friend make_pct_string_view
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+result<xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]>
+make_pct_string_view(string_view s) noexcept;
+----
+
+Defined in file <include/boost/url/pct_string_view.hpp> on line 266
+

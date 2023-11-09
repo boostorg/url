@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#667DEA785409D5F8AB86BDA44EE3D7A980ECB7B5]
+== pct_string_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+pct_string_view(
+    const char* s,
+    size_t len);
+----
+
+Defined in file <include/boost/url/pct_string_view.hpp> on line 210
+
+=== Description
+
+pass:v,q[The newly constructed string references] pass:v,q[the specified character buffer. Ownership]
+pass:v,q[is not transferred.]
+
+=== Postconditions
+[,cpp]
+----
+this->data() == s && this->size() == len
+----
+
+=== Complexity
+pass:v,q[Linear in `len`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+

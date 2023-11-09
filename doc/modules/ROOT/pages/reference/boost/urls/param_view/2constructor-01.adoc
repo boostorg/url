@@ -1,0 +1,49 @@
+:relfileprefix: ../../../
+[#19181CDEA6EEC4DCF69558845AFF42959B14D0B7]
+== param_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class OptionalString>
+param_view(
+    string_view key,
+    const OptionalString& value) noexcept;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 494
+
+=== Description
+
+pass:v,q[This constructs a parameter with a key] pass:v,q[and value.] pass:v,q[No validation is performed on the strings.]
+pass:v,q[The new key and value reference]
+pass:v,q[the same corresponding underlying]
+pass:v,q[character buffers.]
+pass:v,q[Ownership of the buffers is not transferred;]
+pass:v,q[the caller is responsible for ensuring that]
+pass:v,q[the assigned buffers remain valid until]
+pass:v,q[they are no longer referenced.]
+
+=== Example
+[,cpp]
+----
+param_view qp( "key", "value" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->key.data() == key.data() && this->value.data() == value.data() && this->has_value == true
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

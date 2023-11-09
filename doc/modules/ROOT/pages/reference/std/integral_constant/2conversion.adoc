@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#51D8C0246F1E6CA97A92128F5501B4316FAC9292]
+== operator value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+operator xref:reference/std/integral_constant/value_type.adoc[value_type]() const noexcept;
+----
+
+Defined in file </usr/include/c++/13/type_traits> on line 67
+

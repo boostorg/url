@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#F846DA32260FABA8E961472CC09115BE9DEA263F]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/ipv6_address.adoc[ipv6_address]>
+parse(
+    const char*& it,
+    const char* end) const noexcept;
+----
+
+Declared in file <include/boost/url/rfc/ipv6_address_rule.hpp> on line 72
+
+Defined in file <src/rfc/ipv6_address_rule.cpp> on line 52
+

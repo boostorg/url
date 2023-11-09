@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#CF66F7D8C2B2B2754FDC2DB9486D4D1C5E513E52]
+== Class ci_less
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct ci_less;
+----
+
+Defined in file <include/boost/url/grammar/ci_string.hpp> on line 338
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/ci_less/is_transparent.adoc[`pass:v[is_transparent]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/ci_less/operator_call.adoc[`pass:v[operator()]`] |
+|===
+

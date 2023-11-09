@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#CD246A89B33D4A770622834DE81895B07A578D11]
+== ~arg
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+virtual
+~arg() = default;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 71
+

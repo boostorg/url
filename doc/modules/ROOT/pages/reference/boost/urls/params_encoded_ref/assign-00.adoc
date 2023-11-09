@@ -1,0 +1,48 @@
+:relfileprefix: ../../../
+[#0CA607ECE8F06D76063410D18AF4A569D43CCE71]
+== assign
+
+pass:v,q[Assign params]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+assign(initializer_list<xref:reference/boost/urls/param_pct_view.adoc[param_pct_view]> init);
+----
+
+Declared in file <include/boost/url/params_encoded_ref.hpp> on line 289
+
+Defined in file <src/params_encoded_ref.cpp> on line 72
+
+=== Description
+
+pass:v,q[This function replaces the entire] pass:v,q[contents of the view with the params]
+pass:v,q[in the]
+pass:v,q[initializer-list]
+pass:v,q[.]
+pass:v,q[All iterators are invalidated.]
+[NOTE]
+pass:v,q[The strings referenced by the inputs]
+pass:v,q[must not come from the underlying url,]
+pass:v,q[or else the behavior is undefined.]
+
+=== Example
+[,cpp]
+----
+url u;
+
+u.encoded_params().assign({ { "first", "John" }, { "last", "Doe" } });
+----
+
+=== Complexity
+pass:v,q[Linear in `init.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+

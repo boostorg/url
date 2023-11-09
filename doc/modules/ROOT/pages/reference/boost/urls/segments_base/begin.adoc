@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#44914712F0D354E4811160B903FAAA70148D735E]
+== begin
+
+pass:v,q[Return an iterator to the beginning]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_base/iterator.adoc[iterator]
+begin() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_base.hpp> on line 285
+
+Defined in file <src/segments_base.cpp> on line 90
+
+=== Description
+
+
+=== Complexity
+pass:v,q[Linear in `this->front().size()` or] pass:v,q[constant if `this->empty()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

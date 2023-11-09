@@ -1,0 +1,48 @@
+:relfileprefix: ../../../
+[#228D776D409426D5835D0B91DB74DBB18A13B39B]
+== port_number
+
+pass:v,q[Return the port]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+uint16_t
+port_number() const noexcept;
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 1168
+
+Defined in file <src/authority_view.cpp> on line 314
+
+=== Description
+
+pass:v,q[If a port is present and the numerical] pass:v,q[value is representable, it is returned]
+pass:v,q[as an unsigned integer. Otherwise, the]
+pass:v,q[number zero is returned.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://localhost.com:8080" ).port_number() == 8080 );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+port        = *DIGIT
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3[3.2.3. Port (rfc3986)]
+
+

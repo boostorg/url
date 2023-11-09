@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#28F15DF1C8C5E52B3DA5838EABC5A1112FA1CE30]
+== is_v4_mapped
+
+pass:v,q[Return true if the address is a mapped IPv4 address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+is_v4_mapped() const noexcept;
+----
+
+Declared in file <include/boost/url/ipv6_address.hpp> on line 288
+
+Defined in file <src/ipv6_address.cpp> on line 78
+
+=== Description
+
+pass:v,q[This address type is used to represent the] pass:v,q[addresses of IPv4 nodes as IPv6 addresses.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.5.2[            2.5.5.2. IPv4-Mapped IPv6 Address (rfc4291)]
+
+

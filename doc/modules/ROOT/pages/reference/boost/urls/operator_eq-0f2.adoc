@@ -1,0 +1,19 @@
+:relfileprefix: ../../
+[#F286C4527B7E956DD39FE86BCD4D42D0C90BAA0D]
+== operator==
+
+pass:v,q[Return true if two addresses are equal]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+operator==(
+    const xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]& a1,
+    const xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]& a2) noexcept;
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 243
+

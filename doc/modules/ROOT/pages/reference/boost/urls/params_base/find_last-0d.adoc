@@ -1,0 +1,45 @@
+:relfileprefix: ../../../
+[#DB2D9EC25BDA12E6645AD297E29EF19413B6C175]
+== find_last
+
+pass:v,q[Find a matching key]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_base/iterator.adoc[iterator]
+find_last(
+    xref:reference/boost/urls/params_base/iterator.adoc[iterator] before,
+    string_view key,
+    xref:reference/boost/urls/ignore_case_param.adoc[ignore_case_param] ic = = {}) const noexcept;
+----
+
+Declared in file <include/boost/url/params_base.hpp> on line 473
+
+Defined in file <src/params_base.cpp> on line 128
+
+=== Description
+
+pass:v,q[This function examines the] pass:v,q[parameters in the container to] pass:v,q[find a match for the specified key.]
+pass:v,q[The comparison is performed as if all]
+pass:v,q[escaped characters were decoded first.]
+pass:v,q[The search starts prior to `before`]
+pass:v,q[and proceeds backwards until either the]
+pass:v,q[key is found or the beginning of the]
+pass:v,q[range is reached, in which case `end()`]
+pass:v,q[is returned.]
+
+=== Example
+[,cpp]
+----
+url_view u( "?First=John&Last=Doe" );
+
+assert( u.params().find_last( "last" ) != u.params().find_last( "last", ignore_case ) );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->buffer().size()`.]
+
+

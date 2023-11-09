@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#C59A833529FE4C371E6B2A13E0C56B80A6F4BEFB]
+== iterator
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+iterator() = default;
+----
+
+Defined in file <include/boost/url/impl/params_base.hpp> on line 56
+

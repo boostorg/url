@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#8EAA41872A1D48C496DCEFDF7F333F93007FCDBD]
+== Friend range
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend xref:reference/boost/urls/grammar/range.adoc[range]<T>;
+----
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 426
+

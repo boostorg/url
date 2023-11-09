@@ -1,0 +1,44 @@
+:relfileprefix: ../../../
+[#37B5B84A5FA7A33255D25A18F48B7A0E33756038]
+== param_pct_view
+
+pass:v,q[Construction]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+param_pct_view(const xref:reference/boost/urls/param_view.adoc[param_view]& p);
+----
+
+Defined in file <include/boost/url/param.hpp> on line 816
+
+=== Description
+
+pass:v,q[This converts a param which may] pass:v,q[contain unvalidated percent-escapes into]
+pass:v,q[a param whose key and value are]
+pass:v,q[guaranteed to contain strings with no]
+pass:v,q[invalid percent-escapes, otherwise]
+pass:v,q[an exception is thrown.]
+pass:v,q[The new key and value reference]
+pass:v,q[the same corresponding underlying]
+pass:v,q[character buffers.]
+pass:v,q[Ownership of the buffers is not transferred;]
+pass:v,q[the caller is responsible for ensuring that]
+pass:v,q[the assigned buffers remain valid until]
+pass:v,q[they are no longer referenced.]
+
+=== Example
+[,cpp]
+----
+param_pct_view qp( param_view( "key", "value" ) );
+----
+
+=== Complexity
+pass:v,q[Linear in `key.size() + value.size()`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+

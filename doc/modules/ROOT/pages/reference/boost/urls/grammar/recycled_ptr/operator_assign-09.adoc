@@ -1,0 +1,42 @@
+:relfileprefix: ../../../../
+[#90F08C8D07D0E8B78C524F70A71CDDD292A33D1D]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/grammar/recycled_ptr.adoc[recycled_ptr]&
+operator=(const xref:reference/boost/urls/grammar/recycled_ptr.adoc[recycled_ptr]& other) noexcept;
+----
+
+Declared in file <include/boost/url/grammar/recycled.hpp> on line 394
+
+Defined in file <include/boost/url/grammar/impl/recycled.hpp> on line 178
+
+=== Description
+
+pass:v,q[If `other` references an object,] pass:v,q[this acquires shared ownership and]
+pass:v,q[references the same recycle bin as]
+pass:v,q[`other`. The previous object if any]
+pass:v,q[is released.]
+
+=== Effects
+[,cpp]
+----
+this->release()
+----
+
+=== Postconditions
+[,cpp]
+----
+&this->bin() == &other->bin() && this->get() == other.get()
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

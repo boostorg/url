@@ -1,0 +1,35 @@
+:relfileprefix: ../../../../
+[#C50486B42C84C8E6C81A5D4356B9291CDF0F3A8F]
+== prepare
+
+pass:v,q[Return a modifiable character buffer]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+virtual
+char*
+prepare(size_t n) = 0;
+----
+
+Declared in file <include/boost/url/grammar/string_token.hpp> on line 68
+
+
+=== Description
+
+pass:v,q[This function attempts to obtain a] pass:v,q[character buffer with space for at]
+pass:v,q[least `n` characters. Upon success,]
+pass:v,q[a pointer to the beginning of the]
+pass:v,q[buffer is returned. Ownership is not]
+pass:v,q[transferred; the caller should not]
+pass:v,q[attempt to free the storage. The]
+pass:v,q[buffer shall remain valid until]
+pass:v,q[`this` is destroyed.]
+[NOTE]
+pass:v,q[This function may only be called once.]
+pass:v,q[After invoking the function, the only]
+pass:v,q[valid operation is destruction.]
+
+

@@ -1,0 +1,50 @@
+:relfileprefix: ../../../
+[#D9BE0DFC81282C1FC53BFD36DE4E5BA998EDE8F9]
+== set
+
+pass:v,q[Set a value]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+set(
+    xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator] pos,
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] value);
+----
+
+Declared in file <include/boost/url/params_encoded_ref.hpp> on line 879
+
+Defined in file <src/params_encoded_ref.cpp> on line 182
+
+=== Description
+
+pass:v,q[This function replaces the value of an] pass:v,q[element at the specified position.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`pos` or come after are invalidated.]
+[NOTE]
+pass:v,q[The string passed in must not come]
+pass:v,q[from the element being replaced,]
+pass:v,q[or else the behavior is undefined.]
+
+=== Example
+[,cpp]
+----
+url u( "?id=42&id=69" );
+
+u.encoded_params().set( u.encoded_params().begin(), "none" );
+
+assert( u.encoded_query() == "id=none&id=69" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+

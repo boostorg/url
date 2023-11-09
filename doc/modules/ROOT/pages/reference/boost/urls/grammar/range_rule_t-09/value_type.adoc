@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#2FED3D5D3224664FE6E6830DFFD4817EBABCF26C]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/grammar/range.adoc[range]<R0::value_type>;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 506
+

@@ -1,0 +1,101 @@
+:relfileprefix: ../../
+[#76131245504820822D6345111D273CAF01DC7534]
+== Class ipv6_address
+
+pass:v,q[An IP version 6 style address.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class ipv6_address;
+----
+
+Defined in file <include/boost/url/ipv6_address.hpp> on line 64
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv6_address/bytes_type.adoc[`pass:v[bytes_type]`] |pass:v,q[The type used to represent an address as an array of bytes.]
+
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv6_address/2constructor-04.adoc[`pass:v[ipv6_address]`] |pass:v,q[Constructor.]
+
+|xref:reference/boost/urls/ipv6_address/2constructor-06.adoc[`pass:v[ipv6_address]`] |pass:v,q[Constructor.]
+
+|xref:reference/boost/urls/ipv6_address/operator_assign.adoc[`pass:v[operator=]`] |pass:v,q[Copy Assignment]
+
+|xref:reference/boost/urls/ipv6_address/2constructor-0a.adoc[`pass:v[ipv6_address]`] |pass:v,q[Construct from an array of bytes.]
+
+|xref:reference/boost/urls/ipv6_address/2constructor-08.adoc[`pass:v[ipv6_address]`] |pass:v,q[Construct from an IPv4 address.]
+
+|xref:reference/boost/urls/ipv6_address/2constructor-00.adoc[`pass:v[ipv6_address]`] |pass:v,q[Construct from a string.]
+
+|xref:reference/boost/urls/ipv6_address/to_bytes.adoc[`pass:v[to_bytes]`] |pass:v,q[Return the address as bytes, in network byte order]
+
+|xref:reference/boost/urls/ipv6_address/to_string.adoc[`pass:v[to_string]`] |pass:v,q[Return the address as a string.]
+
+|xref:reference/boost/urls/ipv6_address/to_buffer.adoc[`pass:v[to_buffer]`] |pass:v,q[Write a dotted decimal string representing the address to a buffer]
+
+|xref:reference/boost/urls/ipv6_address/is_unspecified.adoc[`pass:v[is_unspecified]`] |pass:v,q[Return true if the address is unspecified]
+
+|xref:reference/boost/urls/ipv6_address/is_loopback.adoc[`pass:v[is_loopback]`] |pass:v,q[Return true if the address is a loopback address]
+
+|xref:reference/boost/urls/ipv6_address/is_v4_mapped.adoc[`pass:v[is_v4_mapped]`] |pass:v,q[Return true if the address is a mapped IPv4 address]
+
+|===
+=== Static Data Members
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv6_address/max_str_len.adoc[`pass:v[max_str_len]`] |pass:v,q[The number of characters in the longest possible IPv6 string.]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv6_address/8friend-0d.adoc[`pass:v[operator==]`] |pass:v,q[Return true if two addresses are equal]
+
+|xref:reference/boost/urls/ipv6_address/8friend-01.adoc[`pass:v[operator!=]`] |pass:v,q[Return true if two addresses are not equal]
+
+|xref:reference/boost/urls/ipv6_address/8friend-0b.adoc[`pass:v[operator<<]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type are used to construct,] pass:v,q[parse, and manipulate IP version 6 addresses.]
+
+=== BNF
+[,cpp]
+----
+IPv6address =                            6( h16 ":" ) ls32
+            /                       "::" 5( h16 ":" ) ls32
+            / [               h16 ] "::" 4( h16 ":" ) ls32
+            / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+            / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+            / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+            / [ *4( h16 ":" ) h16 ] "::"              ls32
+            / [ *5( h16 ":" ) h16 ] "::"              h16
+            / [ *6( h16 ":" ) h16 ] "::"
+
+ls32        = ( h16 ":" h16 ) / IPv4address
+            ; least-significant 32 bits of address
+
+h16         = 1*4HEXDIG
+            ; 16 bits of address represented in hexadecimal
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc4291[IP Version 6 Addressing Architecture (rfc4291)]
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

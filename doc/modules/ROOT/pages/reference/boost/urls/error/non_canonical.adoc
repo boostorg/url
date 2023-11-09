@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#2C3B97562CC0A57D1045AA21307C45DD3E59ED9D]
+== non_canonical
+
+pass:v,q[A grammar element was not in canonical form.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+non_canonical
+----
+
+Defined in file <include/boost/url/error.hpp> on line 45
+

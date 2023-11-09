@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#265CCC67C26CF073D6A8ADB65BE594D8C476627F]
+== pop_back
+
+pass:v,q[Remove the last segment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+pop_back() noexcept;
+----
+
+Declared in file <include/boost/url/segments_encoded_ref.hpp> on line 772
+
+Defined in file <include/boost/url/impl/segments_encoded_ref.hpp> on line 140
+
+=== Description
+
+pass:v,q[This function removes the last segment] pass:v,q[from the container.]
+pass:v,q[Iterators to the last segment as well]
+pass:v,q[as all end iterators are invalidated.]
+
+=== Preconditions
+[,cpp]
+----
+not this->empty()
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

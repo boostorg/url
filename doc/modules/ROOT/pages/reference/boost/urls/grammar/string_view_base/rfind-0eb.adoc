@@ -1,0 +1,25 @@
+:relfileprefix: ../../../../
+[#EBBCEBB9F0A9E0DA1C3455BE310996D806491CA3]
+== rfind
+
+pass:v,q[Return the position of matching characters]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type]
+rfind(
+    char c,
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] pos = core::string_view::npos) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 535
+
+=== Description
+
+pass:v,q[See `core::string_view::rfind`]
+
+

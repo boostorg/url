@@ -1,0 +1,33 @@
+:relfileprefix: ../../../
+[#9F6FEDA3D8FC0A8B5F21304C51AEA63BF5629127]
+== static_url
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+static_url(const xref:reference/boost/urls/static_url.adoc[static_url]& u) noexcept;
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 243
+
+=== Description
+
+pass:v,q[The newly constructed object contains] pass:v,q[a copy of `u`.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer() == u.buffer() && this->buffer.data() != u.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Linear in `u.size()`.]
+
+=== Exception Safety
+pass:v,q[Exception thrown if maximum size exceeded.]
+
+

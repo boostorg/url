@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#2D891C485B4E0FDAA21CA5E7E4BEAAB097247BF1]
+== operator()
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+operator()(string_view s) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/ci_string.hpp> on line 265
+

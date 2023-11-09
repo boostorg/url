@@ -1,0 +1,29 @@
+:relfileprefix: ../../../../
+[#F086595C445BA6594AE9B66898B94C6F682FC708]
+== operator bool
+
+pass:v,q[Return true if this references an object]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+operator bool() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/recycled.hpp> on line 419
+
+=== Description
+
+
+=== Effects
+[,cpp]
+----
+return ! this->empty();
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

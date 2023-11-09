@@ -1,0 +1,40 @@
+:relfileprefix: ../../../
+[#7803D59BC35005E8FCA79A01D6BA2CABC157449F]
+== decode_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+decode_view() noexcept = default;
+----
+
+Defined in file <include/boost/url/decode_view.hpp> on line 174
+
+=== Description
+
+pass:v,q[Default-constructed views represent] pass:v,q[empty strings.]
+
+=== Example
+[,cpp]
+----
+decode_view ds;
+----
+
+=== Postconditions
+[,cpp]
+----
+this->empty() == true
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

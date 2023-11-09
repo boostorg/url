@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#4D6580F7C657E4CAB8117D861159663B5D8DDDA1]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/url_view.adoc[url_view];
+----
+
+Defined in file <include/boost/url/rfc/uri_reference_rule.hpp> on line 55
+

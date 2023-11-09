@@ -1,0 +1,31 @@
+:relfileprefix: ../../../
+[#335C78E3457256A4A599F739956C8E65F7A9BDBE]
+== empty
+
+pass:v,q[Return true if the authority is empty]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+empty() const noexcept;
+----
+
+Defined in file <include/boost/url/authority_view.hpp> on line 210
+
+=== Description
+
+pass:v,q[An empty authority has an empty host,] pass:v,q[no userinfo, and no port.]
+
+=== Example
+[,cpp]
+----
+assert( authority_view( "" ).empty() );
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

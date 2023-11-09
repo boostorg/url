@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#FF05697587B013E34ABCDEB4106720362219F8C7]
+== value_type
+
+pass:v,q[The value type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/param.adoc[param];
+----
+
+Defined in file <include/boost/url/params_base.hpp> on line 111
+
+=== Description
+
+pass:v,q[Values of this type represent parameters] pass:v,q[whose strings retain unique ownership by]
+pass:v,q[making a copy.]
+
+=== Example
+[,cpp]
+----
+params_view::value_type qp( *url_view( "?first=John&last=Doe" ).params().find( "first" ) );
+----
+
+

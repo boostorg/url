@@ -1,0 +1,17 @@
+:relfileprefix: ../../
+[#E13F3168F2E8CA12FE3769EE52E3763C575B8928]
+== make_error_code
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+error_code
+make_error_code(xref:reference/boost/urls/error.adoc[error] ev) noexcept;
+----
+
+Defined in file <include/boost/url/impl/error.hpp> on line 64
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#E2E360F3BC0BD6A2D485F9BF7C874BCB0E19877D]
+== pointer
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using pointer = xref:reference/boost/urls/params_base/iterator/reference.adoc[reference];
+----
+
+Defined in file <include/boost/url/impl/params_base.hpp> on line 50
+

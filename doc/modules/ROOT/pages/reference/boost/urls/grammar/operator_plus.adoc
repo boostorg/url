@@ -1,0 +1,42 @@
+:relfileprefix: ../../../
+[#44F13B9E5D27CC7979D0DC5E2965651E58F41047]
+== operator+
+
+pass:v,q[Return the union of two character sets.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/lut_chars.adoc[lut_chars]
+operator+(
+    const xref:reference/boost/urls/grammar/lut_chars.adoc[lut_chars]& cs0,
+    const xref:reference/boost/urls/grammar/lut_chars.adoc[lut_chars]& cs1) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/lut_chars.hpp> on line 291
+
+=== Description
+
+pass:v,q[This function returns a new character] pass:v,q[set which contains all of the characters]
+pass:v,q[in `cs0` as well as all of the characters]
+pass:v,q[in `cs`.]
+
+=== Example
+pass:v,q[This creates a character set which]
+pass:v,q[includes all letters and numbers]
+[,cpp]
+----
+constexpr lut_chars alpha_chars(
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz");
+
+constexpr lut_chars alnum_chars = alpha_chars + "0123456789";
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+

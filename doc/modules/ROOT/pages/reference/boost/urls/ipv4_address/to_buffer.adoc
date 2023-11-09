@@ -1,0 +1,26 @@
+:relfileprefix: ../../../
+[#2C4AF6CFDDE03CAF610E5DBB6EA32CC4D631D462]
+== to_buffer
+
+pass:v,q[Write a dotted decimal string representing the address to a buffer]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string_view
+to_buffer(
+    char* dest,
+    size_t dest_size) const;
+----
+
+Declared in file <include/boost/url/ipv4_address.hpp> on line 218
+
+Defined in file <src/ipv4_address.cpp> on line 71
+
+=== Description
+
+pass:v,q[The resulting buffer is not null-terminated.]
+
+

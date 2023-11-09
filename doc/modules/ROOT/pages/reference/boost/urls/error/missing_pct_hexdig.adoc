@@ -1,0 +1,21 @@
+:relfileprefix: ../../../
+[#5FDE2A7184D342603C7B7EAE8C2D48C0245441A4]
+== missing_pct_hexdig
+
+pass:v,q[Missing hexadecimal digit.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+missing_pct_hexdig
+----
+
+Defined in file <include/boost/url/error.hpp> on line 68
+
+=== Description
+
+pass:v,q[This error condition is fatal.]
+
+

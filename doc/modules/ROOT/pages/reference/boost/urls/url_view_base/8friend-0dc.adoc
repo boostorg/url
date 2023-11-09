@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#DC4EB4D1705B25FD6BA454658F5D2CD416631721]
+== Friend pattern
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend pattern;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 88
+

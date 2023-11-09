@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#EB30E6743F036D7ADFE88B0BC550D6693498FACD]
+== Friend query_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend xref:reference/boost/urls/query_rule_t.adoc[query_rule_t];
+----
+
+Defined in file <include/boost/url/params_encoded_view.hpp> on line 60
+

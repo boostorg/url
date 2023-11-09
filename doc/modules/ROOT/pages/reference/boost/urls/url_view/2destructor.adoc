@@ -1,0 +1,23 @@
+:relfileprefix: ../../../
+[#0B6674E95610B53D1FED27CFDA295C68E752FC56]
+== ~url_view
+
+pass:v,q[Destructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+~url_view() = default;
+----
+
+Defined in file <include/boost/url/url_view.hpp> on line 110
+
+=== Description
+
+pass:v,q[Any params, segments, iterators, or] pass:v,q[other views which reference the same]
+pass:v,q[underlying character buffer remain]
+pass:v,q[valid.]
+
+

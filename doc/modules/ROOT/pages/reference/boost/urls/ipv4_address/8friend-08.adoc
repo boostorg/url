@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#89A748600C79A4297BFAB0B44DFD52FDA1F07A0E]
+== Friend operator!=
+
+pass:v,q[Return true if two addresses are not equal]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+bool
+operator!=(
+    const xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]& a1,
+    const xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]& a2) noexcept;
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 254
+

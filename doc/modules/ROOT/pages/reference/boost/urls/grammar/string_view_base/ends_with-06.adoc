@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#6EAAA9A6D7430E98587273B1A10619F1B6C8B6B3]
+== ends_with
+
+pass:v,q[Return true if a matching suffix exists]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+bool
+ends_with(char x) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 461
+
+=== Description
+
+pass:v,q[See `core::string_view::ends_with`]
+
+

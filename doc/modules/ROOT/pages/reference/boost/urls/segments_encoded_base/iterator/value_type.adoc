@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#4CE484667EBCA30C926A2B27C942AE6584774F1C]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/segments_encoded_base.adoc[segments_encoded_base]::xref:reference/boost/urls/segments_encoded_base/value_type.adoc[value_type];
+----
+
+Defined in file <include/boost/url/impl/segments_encoded_base.hpp> on line 38
+

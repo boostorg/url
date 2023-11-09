@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#6D1732550E992608487F11FDD7798D79A52C66EA]
+== operator string
+
+pass:v,q[Conversion]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+operator string() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 142
+
+=== Description
+
+pass:v,q[Conversion to std::string is explicit] pass:v,q[because assigning to string using an]
+pass:v,q[implicit constructor does not preserve]
+pass:v,q[capacity.]
+
+

@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#01632C4885BE4536F568C86F0AC1BB9F9F235473]
+== value_type
+
+pass:v,q[The value type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = string;
+----
+
+Defined in file <include/boost/url/segments_encoded_base.hpp> on line 96
+
+=== Description
+
+pass:v,q[Values of this type represent a segment] pass:v,q[where unique ownership is retained by]
+pass:v,q[making a copy.]
+
+=== Example
+[,cpp]
+----
+segments_encoded_base::value_type ps( url_view( "/path/to/file.txt" ).encoded_segments().back() );
+----
+
+

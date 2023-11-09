@@ -1,0 +1,11 @@
+:relfileprefix: ../
+[#2D6401F9D9FEEE5B1128FCF1FEDC33EBA65C3962]
+== Namespace system
+
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/system/is_error_code_enum-01.adoc[`pass:v[is_error_code_enum]`] |
+|xref:reference/boost/system/is_error_code_enum-0e.adoc[`pass:v[is_error_code_enum]`] |
+|xref:reference/boost/system/is_error_condition_enum.adoc[`pass:v[is_error_condition_enum]`] |
+|===

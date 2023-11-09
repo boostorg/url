@@ -1,0 +1,19 @@
+:relfileprefix: ../../
+[#6D6CE9DB8BB6E91FC270854A384780671330486E]
+== to_string
+
+pass:v,q[Return the normalized string for a known scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string_view
+to_string(xref:reference/boost/urls/scheme.adoc[scheme] s) noexcept;
+----
+
+Declared in file <include/boost/url/scheme.hpp> on line 151
+
+Defined in file <src/scheme.cpp> on line 93
+

@@ -1,0 +1,17 @@
+:relfileprefix: ../../
+[#20D436A2EB959516372EC02C6FC1788D893BC010]
+== no_value
+
+pass:v,q[Constant indicating no value in a param]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/no_value_t.adoc[no_value_t] no_value;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 36
+

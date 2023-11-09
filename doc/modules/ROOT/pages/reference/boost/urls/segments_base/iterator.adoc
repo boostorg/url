@@ -1,0 +1,51 @@
+:relfileprefix: ../../../
+[#BF40DF9B21BB9FEA272673F0BB44A692610822CE]
+== Class iterator
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class iterator;
+----
+
+Declared in file <include/boost/url/segments_base.hpp> on line 76
+
+Defined in file <include/boost/url/impl/segments_base.hpp> on line 21
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_base/iterator/value_type.adoc[`pass:v[value_type]`] |
+|xref:reference/boost/urls/segments_base/iterator/reference.adoc[`pass:v[reference]`] |
+|xref:reference/boost/urls/segments_base/iterator/pointer.adoc[`pass:v[pointer]`] |
+|xref:reference/boost/urls/segments_base/iterator/difference_type.adoc[`pass:v[difference_type]`] |
+|xref:reference/boost/urls/segments_base/iterator/iterator_category.adoc[`pass:v[iterator_category]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_base/iterator/2constructor-0a.adoc[`pass:v[iterator]`] |
+|xref:reference/boost/urls/segments_base/iterator/2constructor-00.adoc[`pass:v[iterator]`] |
+|xref:reference/boost/urls/segments_base/iterator/operator_assign.adoc[`pass:v[operator=]`] |
+|xref:reference/boost/urls/segments_base/iterator/operator_star.adoc[`pass:v[operator*]`] |
+|xref:reference/boost/urls/segments_base/iterator/operator_ptr.adoc[`pass:v[operator->]`] |
+|xref:reference/boost/urls/segments_base/iterator/operator_inc-08.adoc[`pass:v[operator++]`] |
+|xref:reference/boost/urls/segments_base/iterator/operator_dec-0f.adoc[`pass:v[operator--]`] |
+|xref:reference/boost/urls/segments_base/iterator/operator_inc-07.adoc[`pass:v[operator++]`] |
+|xref:reference/boost/urls/segments_base/iterator/operator_dec-0d.adoc[`pass:v[operator--]`] |
+|xref:reference/boost/urls/segments_base/iterator/operator_eq.adoc[`pass:v[operator==]`] |
+|xref:reference/boost/urls/segments_base/iterator/operator_not_eq.adoc[`pass:v[operator!=]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_base/iterator/8friend-04.adoc[`pass:v[segments_base]`] |
+|xref:reference/boost/urls/segments_base/iterator/8friend-01.adoc[`pass:v[segments_ref]`] |
+|===
+

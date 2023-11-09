@@ -1,0 +1,17 @@
+:relfileprefix: ../../
+[#8C81399AAB71F66A39C6ACE31A132B8F754A9059]
+== value
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+static
+const _Tp value;
+----
+
+Defined in file </usr/include/c++/13/type_traits> on line 64
+

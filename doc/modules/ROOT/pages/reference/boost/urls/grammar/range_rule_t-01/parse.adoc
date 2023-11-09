@@ -1,0 +1,20 @@
+:relfileprefix: ../../../../
+[#A893004DC6ACB2639516CA6A4AD2537F0513C802]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/grammar/range_rule_t-01/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* end) const;
+----
+
+Declared in file <include/boost/url/grammar/range_rule.hpp> on line 364
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 601
+

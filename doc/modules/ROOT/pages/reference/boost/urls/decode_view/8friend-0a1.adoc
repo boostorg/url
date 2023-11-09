@@ -1,0 +1,19 @@
+:relfileprefix: ../../../
+[#A121F2E7E6985BF0EDDA42749FDED03FBB26FEB6]
+== Friend operator<<
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/decode_view.adoc[decode_view]& s);
+----
+
+Defined in file <include/boost/url/decode_view.hpp> on line 634
+

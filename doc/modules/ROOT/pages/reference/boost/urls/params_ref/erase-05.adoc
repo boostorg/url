@@ -1,0 +1,42 @@
+:relfileprefix: ../../../
+[#5A6BA503439FA9FC73718E16938825A66EAD6CCB]
+== erase
+
+pass:v,q[Erase elements]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator]
+erase(xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator] pos) noexcept;
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 595
+
+Defined in file <src/params_ref.cpp> on line 214
+
+=== Description
+
+pass:v,q[This function removes an element from] pass:v,q[the container.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`pos` or come after are invalidated.]
+
+=== Example
+[,cpp]
+----
+url u( "?first=John&last=Doe" );
+
+params_ref::iterator it = u.params().erase( u.params().begin() );
+
+assert( u.encoded_query() == "last=Doe" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

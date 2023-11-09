@@ -1,0 +1,33 @@
+:relfileprefix: ../../../
+[#63CAC787ADE5DC40E47973D0F32236FE84A91779]
+== Class append_to_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class Alloc>
+struct append_to_t
+    : xref:reference/boost/urls/string_token/arg.adoc[arg];
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 156
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/string_token/append_to_t/string_type.adoc[`pass:v[string_type]`] |
+|xref:reference/boost/urls/string_token/append_to_t/result_type.adoc[`pass:v[result_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/string_token/append_to_t/2constructor.adoc[`pass:v[append_to_t]`] |
+|xref:reference/boost/urls/string_token/append_to_t/prepare.adoc[`pass:v[prepare]`] |
+|xref:reference/boost/urls/string_token/append_to_t/result.adoc[`pass:v[result]`] |
+|===
+

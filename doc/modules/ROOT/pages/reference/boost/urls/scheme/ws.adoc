@@ -1,0 +1,25 @@
+:relfileprefix: ../../../
+[#2AFEC5DDA8E577DAE11ADDE3B76F8A33B29C5E8D]
+== ws
+
+pass:v,q[The WebSocket URI Scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ws
+----
+
+Defined in file <include/boost/url/scheme.hpp> on line 105
+
+=== Description
+
+pass:v,q[URLs of this type indicate a resource which] pass:v,q[is interacted with using the WebSocket protocol.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc6455[            The WebSocket Protocol (rfc6455)]
+
+

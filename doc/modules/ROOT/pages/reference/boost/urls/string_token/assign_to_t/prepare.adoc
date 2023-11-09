@@ -1,0 +1,17 @@
+:relfileprefix: ../../../../
+[#816D2FE0D5F30AFFC09F6E62BB94F6C17D975638]
+== prepare
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+virtual
+char*
+prepare(size_t n) override;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 238
+

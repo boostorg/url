@@ -1,0 +1,18 @@
+:relfileprefix: ../../../../
+[#6B1AACB2DD9F104AF42AC902B8B352EB0B47DBA1]
+== npos
+
+pass:v,q[A constant used to represent "no position"]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+static
+const size_t npos;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 113
+

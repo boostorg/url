@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#FD1B151185605489128D5F84B50B94EC95FA7486]
+== Enum error
+
+pass:v,q[Error codes returned when using rules]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+enum error;
+----
+
+Defined in file <include/boost/url/grammar/error.hpp> on line 26
+
+=== Members
+[,cols=2]
+|===
+|Name |Description
+|need_more |pass:v,q[More input is needed to match the rule]
+
+|mismatch |pass:v,q[The rule did not match the input.]
+
+|end_of_range |pass:v,q[A rule reached the end of a range]
+
+|leftover |pass:v,q[Leftover input remaining after match.]
+
+|invalid |pass:v,q[A rule encountered unrecoverable invalid input.]
+
+|out_of_range |pass:v,q[An integer overflowed during parsing.]
+
+|syntax |pass:v,q[An unspecified syntax error was found.]
+
+|===
+

@@ -1,0 +1,40 @@
+:relfileprefix: ../../../
+[#9B5D52B0D72E30AF718C27104C7F588264CE294D]
+== remove_origin
+
+pass:v,q[Remove the origin component]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+remove_origin();
+----
+
+Defined in file <include/boost/url/url.hpp> on line 488
+
+=== Description
+
+pass:v,q[This function removes the origin, which] pass:v,q[consists of the scheme and authority.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://www.example.com/index.htm" ).remove_origin().buffer() == "/index.htm" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->scheme_id() == scheme::none && this->has_authority() == false
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

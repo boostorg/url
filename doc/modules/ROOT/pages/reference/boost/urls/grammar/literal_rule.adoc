@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#5CC8AD7BF16E19467EE031C88A4670AE5195E9F0]
+== Class literal_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class literal_rule;
+----
+
+Defined in file <include/boost/url/grammar/literal_rule.hpp> on line 49
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/literal_rule/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/literal_rule/2constructor.adoc[`pass:v[literal_rule]`] |
+|xref:reference/boost/urls/grammar/literal_rule/parse.adoc[`pass:v[parse]`] |
+|===
+

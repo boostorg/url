@@ -1,0 +1,37 @@
+:relfileprefix: ../../../
+[#6774BCD23EDA647E53FD4A48845684F01649F06E]
+== Class variant_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class R0,
+    class... Rn>
+class variant_rule_t;
+----
+
+Defined in file <include/boost/url/grammar/variant_rule.hpp> on line 78
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/variant_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/variant_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/variant_rule_t/8friend.adoc[`pass:v[variant_rule]`] |
+|===
+

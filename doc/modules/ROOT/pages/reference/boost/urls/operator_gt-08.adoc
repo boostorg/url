@@ -1,0 +1,31 @@
+:relfileprefix: ../../
+[#8E56FC9B92FEE03A77C0F6573A87237B68001A89]
+== operator>
+
+pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+operator>(
+    const xref:reference/boost/urls/authority_view.adoc[authority_view]& a0,
+    const xref:reference/boost/urls/authority_view.adoc[authority_view]& a1) noexcept;
+----
+
+Defined in file <include/boost/url/authority_view.hpp> on line 1326
+
+=== Description
+
+
+=== Complexity
+pass:v,q[Linear in `min( a0.size(), a1.size() )`]
+
+=== Exception Safety
+pass:v,q[Throws nothing]
+
+

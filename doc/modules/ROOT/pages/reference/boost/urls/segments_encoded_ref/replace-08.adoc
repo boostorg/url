@@ -1,0 +1,47 @@
+:relfileprefix: ../../../
+[#8BCB285F470D8A32F52715F0E4F2DE0C4630F59E]
+== replace
+
+pass:v,q[Replace segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_encoded_base.adoc[segments_encoded_base]::xref:reference/boost/urls/segments_encoded_base/iterator.adoc[iterator]
+replace(
+    xref:reference/boost/urls/segments_encoded_base.adoc[segments_encoded_base]::xref:reference/boost/urls/segments_encoded_base/iterator.adoc[iterator] from,
+    xref:reference/boost/urls/segments_encoded_base.adoc[segments_encoded_base]::xref:reference/boost/urls/segments_encoded_base/iterator.adoc[iterator] to,
+    initializer_list<xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]> init);
+----
+
+Declared in file <include/boost/url/segments_encoded_ref.hpp> on line 671
+
+Defined in file <src/segments_encoded_ref.cpp> on line 156
+
+=== Description
+
+pass:v,q[This function replaces a range of] pass:v,q[segments with a list of segments in]
+pass:v,q[an initializer list.]
+pass:v,q[Reserved characters in the list are]
+pass:v,q[automatically escaped.]
+pass:v,q[Escapes in the list are preserved.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`from` or come after are invalidated.]
+
+=== Preconditions
+pass:v,q[None of the character buffers referenced]
+pass:v,q[by the list may overlap the character]
+pass:v,q[buffer of the underlying url, or else]
+pass:v,q[the behavior is undefined.]
+
+=== Complexity
+pass:v,q[Linear in `init.size() + this->url().encoded_resouce().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+

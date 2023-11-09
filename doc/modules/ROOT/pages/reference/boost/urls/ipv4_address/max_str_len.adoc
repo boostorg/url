@@ -1,0 +1,23 @@
+:relfileprefix: ../../../
+[#A298E847763719711B68D624D3189F7719C64F1F]
+== max_str_len
+
+pass:v,q[The number of characters in the longest possible IPv4 string.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+static
+const size_t max_str_len;
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 60
+
+=== Description
+
+pass:v,q[The longest ipv4 address string is "255.255.255.255".]
+
+

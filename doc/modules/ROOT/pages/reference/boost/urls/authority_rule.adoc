@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#91673A5709C4A9603429814C4586AF0200820783]
+== authority_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/authority_rule_t.adoc[authority_rule_t] authority_rule;
+----
+
+Defined in file <include/boost/url/rfc/authority_rule.hpp> on line 63
+

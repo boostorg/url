@@ -1,0 +1,37 @@
+:relfileprefix: ../../
+[#60B1C557201864648541ED7C0CF1A39FA5EC00CB]
+== Enum host_type
+
+pass:v,q[Identifies the type of host in a URL.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+enum host_type;
+----
+
+Defined in file <include/boost/url/host_type.hpp> on line 24
+
+=== Members
+[,cols=2]
+|===
+|Name |Description
+|none |pass:v,q[No host is specified.]
+
+|name |pass:v,q[A host is specified by reg-name.]
+
+|ipv4 |pass:v,q[A host is specified by] xref:reference/boost/urls/ipv4_address.adoc[ipv4_address.]
+
+|ipv6 |pass:v,q[A host is specified by] xref:reference/boost/urls/ipv6_address.adoc[ipv6_address.]
+
+|ipvfuture |pass:v,q[A host is specified by IPvFuture.]
+
+|===
+
+=== Description
+
+pass:v,q[Values of this type are returned by URL views] pass:v,q[and containers to indicate the type of host]
+pass:v,q[present in a URL.]
+

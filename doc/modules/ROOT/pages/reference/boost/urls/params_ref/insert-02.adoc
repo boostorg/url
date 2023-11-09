@@ -1,0 +1,41 @@
+:relfileprefix: ../../../
+[#2110AB12ED5342A98CB6B14892A2969CC2F7B3E2]
+== insert
+
+pass:v,q[Insert elements]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator]
+insert(
+    xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator] before,
+    initializer_list<xref:reference/boost/urls/param_view.adoc[param_view]> init);
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 514
+
+Defined in file <src/params_ref.cpp> on line 79
+
+=== Description
+
+pass:v,q[This function inserts the params in] pass:v,q[an] pass:v,q[initializer-list]
+pass:v,q[before]
+pass:v,q[the specified position.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`before` or come after are invalidated.]
+[NOTE]
+pass:v,q[The strings referenced by the inputs]
+pass:v,q[must not come from the underlying url,]
+pass:v,q[or else the behavior is undefined.]
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

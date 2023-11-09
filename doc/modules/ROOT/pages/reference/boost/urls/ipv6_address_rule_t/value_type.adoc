@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#E167519BF67AA5636DDD6F1FD22F9BAF6133A693]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/ipv6_address.adoc[ipv6_address];
+----
+
+Defined in file <include/boost/url/rfc/ipv6_address_rule.hpp> on line 68
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#64195FE7E1A8D06FD5DF5DDA47D191BE1751321D]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = string_view;
+----
+
+Defined in file <include/boost/url/grammar/delim_rule.hpp> on line 63
+

@@ -1,0 +1,42 @@
+:relfileprefix: ../../../
+[#B3D66661180658978F60BD1A11B64962F9ECEB1A]
+== replace
+
+pass:v,q[Replace elements]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator]
+replace(
+    xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator] from,
+    xref:reference/boost/urls/params_base.adoc[params_base]::xref:reference/boost/urls/params_base/iterator.adoc[iterator] to,
+    initializer_list<xref:reference/boost/urls/param_view.adoc[param_view]> init);
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 727
+
+Defined in file <src/params_ref.cpp> on line 139
+
+=== Description
+
+pass:v,q[This function replaces a range of] pass:v,q[elements with the params in an]
+pass:v,q[initializer-list]
+pass:v,q[.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`from` or come after are invalidated.]
+[NOTE]
+pass:v,q[The strings referenced by the inputs]
+pass:v,q[must not come from the underlying url,]
+pass:v,q[or else the behavior is undefined.]
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#02F7C9BD0D290626B9819DCC478147F38072E0C0]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/pct_encoded_rule_t/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* end) const noexcept;
+----
+
+Declared in file <include/boost/url/rfc/pct_encoded_rule.hpp> on line 81
+
+Defined in file <include/boost/url/rfc/impl/pct_encoded_rule.hpp> on line 88
+

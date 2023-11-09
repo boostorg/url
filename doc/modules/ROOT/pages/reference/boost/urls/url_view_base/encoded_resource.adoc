@@ -1,0 +1,45 @@
+:relfileprefix: ../../../
+[#C8B30D3E3896E2CDF5C5C2CDE313A2A95C9260B0]
+== encoded_resource
+
+pass:v,q[Return the resource]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+encoded_resource() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 2299
+
+Defined in file <src/url_view_base.cpp> on line 617
+
+=== Description
+
+pass:v,q[This function returns the resource, which] pass:v,q[is the portion of the url that includes]
+pass:v,q[only the path, query, and fragment.]
+pass:v,q[The returned string may contain]
+pass:v,q[percent escapes.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://www.example.com/index.html?query#frag" ).encoded_resource() == "/index.html?query#frag" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3. Path (rfc3986)]
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.4[3.4. Query (rfc3986)]
+
+

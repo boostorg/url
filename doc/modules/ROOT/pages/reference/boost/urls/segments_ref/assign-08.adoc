@@ -1,0 +1,48 @@
+:relfileprefix: ../../../
+[#8E6BFF8CB2C9CDC0375C445F8990737B458409DF]
+== assign
+
+pass:v,q[Assign segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+assign(initializer_list<string_view> init);
+----
+
+Declared in file <include/boost/url/segments_ref.hpp> on line 308
+
+Defined in file <src/segments_ref.cpp> on line 77
+
+=== Description
+
+pass:v,q[The existing contents are replaced] pass:v,q[by a copy of the contents of the]
+pass:v,q[initializer list.]
+pass:v,q[Reserved characters in the list are]
+pass:v,q[automatically escaped.]
+pass:v,q[All iterators are invalidated.]
+[NOTE]
+pass:v,q[None of the character buffers referenced]
+pass:v,q[by `init` may overlap the character buffer]
+pass:v,q[of the underlying url, or else the behavior]
+pass:v,q[is undefined.]
+
+=== Example
+[,cpp]
+----
+url u;
+
+u.segments().assign( { "path", "to", "file.txt" } );
+----
+
+=== Complexity
+pass:v,q[Linear in `init.size() + this->url().encoded_query().size() + this->url().encoded_fragment().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

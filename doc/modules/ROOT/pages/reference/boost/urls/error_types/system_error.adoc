@@ -1,0 +1,31 @@
+:relfileprefix: ../../../
+[#4C718E4650527F1EF308DEFDAEC8A29F8D57EA11]
+== system_error
+
+pass:v,q[The type of system error thrown by the library]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using system_error = system_error;
+----
+
+Defined in file <include/boost/url/error_types.hpp> on line 109
+
+=== Description
+
+[NOTE]
+pass:v,q[This alias is no longer supported and] pass:v,q[should not be used in new code. Please use]
+pass:v,q[`system::system_error` instead.]
+pass:v,q[This alias is included for backwards]
+pass:v,q[compatibility with earlier versions of the]
+pass:v,q[library.]
+pass:v,q[However, it will be removed in future releases,]
+pass:v,q[and using it in new code is not recommended.]
+pass:v,q[Please use the updated version instead to]
+pass:v,q[ensure compatibility with future versions of]
+pass:v,q[the library.]
+
+

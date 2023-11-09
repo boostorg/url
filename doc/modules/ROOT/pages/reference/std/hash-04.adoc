@@ -1,0 +1,27 @@
+:relfileprefix: ../
+[#438341A56D843AA8DC5DCE33F976F4E3E58B647C]
+== Class hash
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<>
+struct hash<xref:reference/boost.adoc[boost]::xref:reference/boost/urls.adoc[urls]::xref:reference/boost/urls/url.adoc[url]>;
+----
+
+Defined in file <include/boost/url/url.hpp> on line 522
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/std/hash-04/2constructor-01.adoc[`pass:v[hash]`] |
+|xref:reference/std/hash-04/2constructor-00.adoc[`pass:v[hash]`] |
+|xref:reference/std/hash-04/operator_assign.adoc[`pass:v[operator=]`] |
+|xref:reference/std/hash-04/2constructor-06.adoc[`pass:v[hash]`] |
+|xref:reference/std/hash-04/operator_call.adoc[`pass:v[operator()]`] |
+|===
+

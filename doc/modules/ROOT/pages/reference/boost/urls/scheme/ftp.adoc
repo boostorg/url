@@ -1,0 +1,27 @@
+:relfileprefix: ../../../
+[#77CB9B3FC0F1B472CF782C4EC45A338AA196CFDA]
+== ftp
+
+pass:v,q[File Transfer Protocol (FTP)]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ftp
+----
+
+Defined in file <include/boost/url/scheme.hpp> on line 55
+
+=== Description
+
+pass:v,q[FTP is a standard communication protocol] pass:v,q[used for the transfer of computer files]
+pass:v,q[from a server to a client on a computer]
+pass:v,q[network.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/draft-yevstifeyev-ftp-uri-scheme[           The 'ftp' URI Scheme]
+
+

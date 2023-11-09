@@ -1,0 +1,44 @@
+:relfileprefix: ../../../
+[#1D29EE576F75F55B5F2E430D0788BEB76AD7E818]
+== decode
+
+pass:v,q[Return the string with percent-decoding]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class StringToken = xref:reference/boost/urls/string_token.adoc[string_token]::xref:reference/boost/urls/string_token/return_string.adoc[return_string]>
+StringToken::result_type
+decode(
+    xref:reference/boost/urls/encoding_opts.adoc[encoding_opts] opt = = {},
+    StringToken&& token) const;
+----
+
+Defined in file <include/boost/url/pct_string_view.hpp> on line 345
+
+=== Description
+
+pass:v,q[This function converts percent escapes] pass:v,q[in the string into ordinary characters]
+pass:v,q[and returns the result.]
+pass:v,q[When called with no arguments, the]
+pass:v,q[return type is `std::string`.]
+pass:v,q[Otherwise, the return type and style]
+pass:v,q[of output is determined by which string]
+pass:v,q[token is passed.]
+
+=== Example
+[,cpp]
+----
+assert( pct_string_view( "Program%20Files" ).decode() == "Program Files" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[String tokens may throw exceptions.]
+
+

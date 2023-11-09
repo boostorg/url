@@ -1,0 +1,65 @@
+:relfileprefix: ../../../
+[#680D50F4D016E3F4E71B749785EE24D66341E679]
+== fragment
+
+pass:v,q[Return the fragment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class StringToken = xref:reference/boost/urls/string_token.adoc[string_token]::xref:reference/boost/urls/string_token/return_string.adoc[return_string]>
+StringToken::result_type
+fragment(StringToken&& token) const;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 2149
+
+=== Description
+
+pass:v,q[This function calculates the fragment] pass:v,q[of the url, with percent escapes decoded]
+pass:v,q[and without the leading pound sign ('#')]
+pass:v,q[whose presence indicates that the url]
+pass:v,q[contains a fragment.]
+pass:v,q[This function accepts an optional]
+pass:v,q[StringToken]
+pass:v,q[parameter which]
+pass:v,q[controls the return type and behavior]
+pass:v,q[of the function:]
+
+* pass:v,q[When called with no arguments,]
+pass:v,q[the return type of the function is]
+pass:v,q[`std::string`. Otherwise]
+
+* pass:v,q[When called with a string token,]
+pass:v,q[the behavior and return type of the]
+pass:v,q[function depends on the type of string]
+pass:v,q[token being passed.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://www.example.com/index.htm#a%2D1" ).fragment() == "a-1" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->fragment().size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[String tokens may throw exceptions.]
+
+=== BNF
+[,cpp]
+----
+fragment        = *( pchar / "/" / "?" )
+
+fragment-part   = [ "#" fragment ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.5[3.5. Fragment (rfc3986)]
+
+

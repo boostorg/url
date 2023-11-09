@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#BBFC37DEF5FCC3FC80FFD1A5D7BEA50C7750B389]
+== size
+
+pass:v,q[Return the number of params]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+size() const noexcept;
+----
+
+Declared in file <include/boost/url/params_base.hpp> on line 207
+
+Defined in file <src/params_base.cpp> on line 165
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( url_view( "?key=value").params().size() == 1 );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

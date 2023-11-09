@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#A28920C1779083875069AE1BCB12230A5EABEB59]
+== digit_chars
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/grammar/digit_chars_t.adoc[digit_chars_t] digit_chars;
+----
+
+Defined in file <include/boost/url/grammar/digit_chars.hpp> on line 78
+

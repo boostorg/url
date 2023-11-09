@@ -1,0 +1,28 @@
+:relfileprefix: ../../../../
+[#DB58372848DDCAF549B36DB2B22AF3B7E6645833]
+== end_of_range
+
+pass:v,q[A rule reached the end of a range]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+end_of_range
+----
+
+Defined in file <include/boost/url/grammar/error.hpp> on line 71
+
+=== Description
+
+pass:v,q[This indicates that the input was consumed] pass:v,q[when parsing a] xref:reference/boost/urls/grammar/range.adoc[range.]
+pass:v,q[The]
+xref:reference/boost/urls/grammar/range_rule-02.adoc[range_rule]
+pass:v,q[avoids rewinding the input buffer when]
+pass:v,q[this error is returned. Thus the consumed]
+pass:v,q[characters are be considered part of the]
+pass:v,q[range without contributing additional]
+pass:v,q[elements.]
+
+

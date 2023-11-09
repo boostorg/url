@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#3947467B0AA88F2659DAFA213AC47F71EDEC81D3]
+== c_str
+
+pass:v,q[Return the url as a null-terminated string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+const char*
+c_str() const noexcept;
+----
+
+Defined in file <include/boost/url/url_base.hpp> on line 128
+
+=== Description
+
+pass:v,q[This function returns a pointer to a null] pass:v,q[terminated string representing the url,]
+pass:v,q[which may contain percent escapes.]
+
+=== Example
+[,cpp]
+----
+assert( std::strlen( url( "http://www.example.com" ).c_str() ) == 22 );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

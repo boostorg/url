@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#B33D61106EC78D661F2A754CFD462C5B5A7E39A7]
+== options
+
+pass:v,q[Return the decoding options]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/encoding_opts.adoc[encoding_opts]
+options() const noexcept;
+----
+
+Defined in file <include/boost/url/decode_view.hpp> on line 479
+

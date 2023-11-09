@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#7E864D3FA78AAD91A064FB3F20A6DDF9D3A722E3]
+== const_reference
+
+pass:v,q[The const reference type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef const char& const_reference;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 97
+

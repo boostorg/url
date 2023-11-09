@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#BF60DEA75D883C09BCA26306CABF4A1E27C15C7E]
+== iterator
+
+pass:v,q[The iterator type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef xref:reference/boost/urls/grammar/string_view_base/const_iterator.adoc[const_iterator] iterator;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 101
+

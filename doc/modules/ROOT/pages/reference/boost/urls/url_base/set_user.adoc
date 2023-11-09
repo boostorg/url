@@ -1,0 +1,58 @@
+:relfileprefix: ../../../
+[#196CB7CBAEAC397E28BFE121DE1C4D455B001306]
+== set_user
+
+pass:v,q[Set the user]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_base.adoc[url_base]&
+set_user(string_view s);
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 625
+
+Defined in file <src/url_base.cpp> on line 467
+
+=== Description
+
+pass:v,q[This function sets the user part of the] pass:v,q[userinfo to the string.]
+pass:v,q[Any special or reserved characters in the]
+pass:v,q[string are automatically percent-encoded.]
+
+=== Example
+[,cpp]
+----
+assert( url().set_user("john doe").encoded_userinfo() == "john%20doe" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_authority() == true && this->has_userinfo() == true
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size() + s.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+userinfo      = [ [ user ] [ ':' password ] ]
+
+user          = *( unreserved / pct-encoded / sub-delims )
+password      = *( unreserved / pct-encoded / sub-delims / ":" )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1[            3.2.1. User Information (rfc3986)]
+
+

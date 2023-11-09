@@ -1,0 +1,17 @@
+:relfileprefix: ../../../../
+[#8C0E5B5D44B594F9AA3AC086458CF3188554BDC0]
+== string
+
+pass:v,q[Return the matching part of the string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string_view
+string() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 266
+

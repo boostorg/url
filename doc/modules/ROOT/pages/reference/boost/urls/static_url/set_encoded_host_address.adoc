@@ -1,0 +1,108 @@
+:relfileprefix: ../../../
+[#8E55D7B8EBC7ECE14327DDA4AFE1DAD36B22C596]
+== set_encoded_host_address
+
+pass:v,q[Set the host to an address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/static_url.adoc[static_url]&
+set_encoded_host_address(xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] s);
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 380
+
+=== Description
+
+pass:v,q[Depending on the contents of the passed] pass:v,q[string, this function sets the host:]
+
+* pass:v,q[If the string is a valid IPv4 address,]
+pass:v,q[then the host is set to the address.]
+pass:v,q[The host type is]
+xref:reference/boost/urls/host_type/ipv4.adoc[host_type::ipv4.]
+
+* pass:v,q[If the string is a valid IPv6 address,]
+pass:v,q[then the host is set to that address.]
+pass:v,q[The host type is]
+xref:reference/boost/urls/host_type/ipv6.adoc[host_type::ipv6.]
+
+* pass:v,q[If the string is a valid IPvFuture,]
+pass:v,q[then the host is set to that address.]
+pass:v,q[The host type is]
+xref:reference/boost/urls/host_type/ipvfuture.adoc[host_type::ipvfuture.]
+
+* pass:v,q[Otherwise, the host name is set to]
+pass:v,q[the string. This string can contain percent]
+pass:v,q[escapes, or can be empty.]
+pass:v,q[Escapes in the string are preserved,]
+pass:v,q[and reserved characters in the string]
+pass:v,q[are percent-escaped in the result.]
+pass:v,q[The host type is]
+xref:reference/boost/urls/host_type/name.adoc[host_type::name.]
+pass:v,q[In all cases, when this function returns,]
+pass:v,q[the URL contains an authority.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://www.example.com" ).set_host( "127.0.0.1" ).buffer() == "http://127.0.0.1" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_authority() == true
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size() + s.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+dec-octet   = DIGIT                 ; 0-9
+            / %x31-39 DIGIT         ; 10-99
+            / "1" 2DIGIT            ; 100-199
+            / "2" %x30-34 DIGIT     ; 200-249
+            / "25" %x30-35          ; 250-255
+
+IPv6address =                            6( h16 ":" ) ls32
+            /                       "::" 5( h16 ":" ) ls32
+            / [               h16 ] "::" 4( h16 ":" ) ls32
+            / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+            / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+            / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+            / [ *4( h16 ":" ) h16 ] "::"              ls32
+            / [ *5( h16 ":" ) h16 ] "::"              h16
+            / [ *6( h16 ":" ) h16 ] "::"
+
+ls32        = ( h16 ":" h16 ) / IPv4address
+            ; least-significant 32 bits of address
+
+h16         = 1*4HEXDIG
+            ; 16 bits of address represented in hexadecimal
+
+IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+
+reg-name    = *( unreserved / pct-encoded / "-" / ".")
+----
+
+=== Specification
+
+* link:https://en.wikipedia.org/wiki/IPv4[IPv4 (Wikipedia)]
+
+* link:https://datatracker.ietf.org/doc/html/rfc4291[IP Version 6 Addressing Architecture (rfc4291)]
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[            3.2.2. Host (rfc3986)]
+
+

@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#0DD2E27DC42FD9AF9D8A020C5C449721A8DDB54A]
+== Friend tuple_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class R0_,
+    class... Rn_>
+friend
+constexpr
+xref:reference/boost/urls/grammar/tuple_rule_t.adoc[tuple_rule_t]<R0_, Rn_...>
+tuple_rule(
+    const R0_& r0,
+    const Rn_&... rn) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/tuple_rule.hpp> on line 106
+

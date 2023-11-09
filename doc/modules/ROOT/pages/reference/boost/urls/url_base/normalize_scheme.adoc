@@ -1,0 +1,33 @@
+:relfileprefix: ../../../
+[#8B23B601AC2D11BCD730992F4A8727EC1A4106B2]
+== normalize_scheme
+
+pass:v,q[Normalize the URL scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_base.adoc[url_base]&
+normalize_scheme();
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 2558
+
+Defined in file <src/url_base.cpp> on line 1711
+
+=== Description
+
+pass:v,q[Applies Syntax-based normalization to the] pass:v,q[URL scheme.]
+pass:v,q[The scheme is normalized to lowercase.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2[6.2.2 Syntax-Based Normalization (rfc3986)]
+
+

@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#936117EC86AB16C709052BFA1E8ADAF96471BF9F]
+== aligned_storage
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class T>
+using aligned_storage = aligned_storage_impl<detail::nearest_pow2(sizeof(T), 64), (alignof(::max_align_t) > alignof(T)) ? alignof(::max_align_t) : alignof(T)>;
+----
+
+Defined in file <include/boost/url/grammar/recycled.hpp> on line 44
+

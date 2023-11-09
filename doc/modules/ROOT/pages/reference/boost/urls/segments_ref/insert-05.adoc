@@ -1,0 +1,37 @@
+:relfileprefix: ../../../
+[#50571B2ABD3FF66CDF80D79DDF69F27B00EFD388]
+== insert
+
+pass:v,q[Insert segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator]
+insert(
+    xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator] before,
+    string_view s);
+----
+
+Declared in file <include/boost/url/segments_ref.hpp> on line 377
+
+Defined in file <src/segments_ref.cpp> on line 85
+
+=== Description
+
+pass:v,q[This function inserts a segment] pass:v,q[before the specified position.]
+pass:v,q[Reserved characters in the segment are]
+pass:v,q[automatically escaped.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`before` or come after are invalidated.]
+
+=== Complexity
+pass:v,q[Linear in `s.size() + this->url().encoded_resource().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

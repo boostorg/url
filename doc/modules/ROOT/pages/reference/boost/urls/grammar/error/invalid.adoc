@@ -1,0 +1,25 @@
+:relfileprefix: ../../../../
+[#78A47A015765CE603C1E2DEB90F6B51B3C6A451A]
+== invalid
+
+pass:v,q[A rule encountered unrecoverable invalid input.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+invalid
+----
+
+Defined in file <include/boost/url/grammar/error.hpp> on line 94
+
+=== Description
+
+pass:v,q[This error is returned when input is matching] pass:v,q[but one of the requirements is violated. For]
+pass:v,q[example if a percent escape is found, but]
+pass:v,q[one or both characters that follow are not]
+pass:v,q[valid hexadecimal digits. This is usually an]
+pass:v,q[unrecoverable error.]
+
+

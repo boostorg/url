@@ -1,0 +1,54 @@
+:relfileprefix: ../../../
+[#36FF449B2EACA482CB23F9AAC88CF6B913412615]
+== host_type
+
+pass:v,q[Return the host type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/host_type.adoc[host_type]
+host_type() const noexcept;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 975
+
+=== Description
+
+pass:v,q[This function returns one of the] pass:v,q[following constants representing the]
+pass:v,q[type of host present.]
+
+* xref:reference/boost/urls/host_type/ipv4.adoc[host_type::ipv4]
+
+* xref:reference/boost/urls/host_type/ipv6.adoc[host_type::ipv6]
+
+* xref:reference/boost/urls/host_type/ipvfuture.adoc[host_type::ipvfuture]
+
+* xref:reference/boost/urls/host_type/name.adoc[host_type::name]
+
+* xref:reference/boost/urls/host_type/none.adoc[host_type::none]
+pass:v,q[When]
+xref:reference/boost/urls/url_view_base/has_authority.adoc[has_authority]
+pass:v,q[is false, the]
+pass:v,q[host type is]
+xref:reference/boost/urls/host_type/none.adoc[host_type::none.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "https://192.168.0.1/local.htm" ).host_type() == host_type::ipv4 );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

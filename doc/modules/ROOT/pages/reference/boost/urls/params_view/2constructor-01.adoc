@@ -1,0 +1,45 @@
+:relfileprefix: ../../../
+[#1E0763EFAEB7E47149CA8AB98F6BA29E9C47FBF7]
+== params_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+params_view(
+    const xref:reference/boost/urls/params_view.adoc[params_view]& other,
+    xref:reference/boost/urls/encoding_opts.adoc[encoding_opts] opt) noexcept;
+----
+
+Declared in file <include/boost/url/params_view.hpp> on line 130
+
+Defined in file <src/params_view.cpp> on line 31
+
+=== Description
+
+pass:v,q[After construction both views will] pass:v,q[reference the same character buffer]
+pass:v,q[but this instance will use the specified]
+xref:reference/boost/urls/encoding_opts.adoc[encoding_opts]
+pass:v,q[when the values]
+pass:v,q[are decoded.]
+pass:v,q[Ownership is not transferred; the caller]
+pass:v,q[is responsible for ensuring the lifetime]
+pass:v,q[of the buffer extends until it is no]
+pass:v,q[longer referenced.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() == other.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing]
+
+

@@ -1,0 +1,24 @@
+:relfileprefix: ../../../
+[#1C1F0DBB391D2677B4267B9A9A5233C957C6DB3E]
+== Enum condition
+
+pass:v,q[Error conditions for errors received from rules]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+enum condition;
+----
+
+Defined in file <include/boost/url/grammar/error.hpp> on line 114
+
+=== Members
+[,cols=2]
+|===
+|Name |Description
+|fatal |pass:v,q[A fatal error in syntax was encountered.]
+
+|===
+

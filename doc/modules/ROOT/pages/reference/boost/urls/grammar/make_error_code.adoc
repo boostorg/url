@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#D2A13625925706675E4E87983C5F76194E02E0CE]
+== make_error_code
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+error_code
+make_error_code(xref:reference/boost/urls/grammar/error.adoc[error] ev) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/impl/error.hpp> on line 97
+

@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#D66432B47BBE4A98076F16932FF52ACD5F167C70]
+== append_to
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class Alloc = allocator<char>>
+xref:reference/boost/urls/string_token/append_to_t.adoc[append_to_t]<Alloc>
+append_to(basic_string<char, char_traits<char>, Alloc>& s);
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 195
+

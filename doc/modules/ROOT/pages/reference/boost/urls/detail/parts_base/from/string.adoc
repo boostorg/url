@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#BE9570980702E8E5DDAEC66155FD419A75999E62]
+== string
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string = 0
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 38
+

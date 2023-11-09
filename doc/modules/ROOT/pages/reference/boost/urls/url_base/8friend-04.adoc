@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#4B9600E85979E239745B946370B6DD18A26B24A4]
+== Friend resolve
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+result<void>
+resolve(
+    const xref:reference/boost/urls/url_view_base.adoc[url_view_base]& base,
+    const xref:reference/boost/urls/url_view_base.adoc[url_view_base]& ref,
+    xref:reference/boost/urls/url_base.adoc[url_base]& dest);
+----
+
+Defined in file <include/boost/url/url_base.hpp> on line 2744
+

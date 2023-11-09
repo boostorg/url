@@ -1,0 +1,18 @@
+:relfileprefix: ../../
+[#DDBF0BB5625DC9FD80505803F3C8FAF3F2E04FBB]
+== operator==
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+operator==(
+    const xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]& it0,
+    const xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]& it1) noexcept;
+----
+
+Defined in file <include/boost/url/impl/params_encoded_base.hpp> on line 97
+

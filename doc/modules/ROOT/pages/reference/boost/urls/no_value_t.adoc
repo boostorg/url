@@ -1,0 +1,19 @@
+:relfileprefix: ../../
+[#E75AD5DB17E1455F7A87D2F6DFEABC94F8B0E31F]
+== Class no_value_t
+
+pass:v,q[The type of no_value]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct no_value_t;
+----
+
+Declared in file <include/boost/url/detail/optional_string.hpp> on line 20
+
+Defined in file <include/boost/url/param.hpp> on line 30
+
+

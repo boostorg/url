@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#016572D4CAD4C7BCA175BC615EBF17BBD71FD0EE]
+== assign_to
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class Alloc = allocator<char>>
+xref:reference/boost/urls/string_token/assign_to_t.adoc[assign_to_t]<Alloc>
+assign_to(basic_string<char, char_traits<char>, Alloc>& s);
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 258
+

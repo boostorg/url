@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#374BB00998A29922D66ADE2B64D2DE489227DCBB]
+== Friend segments_encoded_ref
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend xref:reference/boost/urls/segments_encoded_ref.adoc[segments_encoded_ref];
+----
+
+Defined in file <include/boost/url/impl/segments_encoded_base.hpp> on line 26
+

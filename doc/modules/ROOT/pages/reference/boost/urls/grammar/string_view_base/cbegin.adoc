@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#C612D193667EDE527434A57F6731B439B744E157]
+== cbegin
+
+pass:v,q[Return an iterator to the beginning]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/const_iterator.adoc[const_iterator]
+cbegin() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 175
+
+=== Description
+
+pass:v,q[See `core::string_view::cbegin`]
+
+

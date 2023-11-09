@@ -1,0 +1,15 @@
+:relfileprefix: ../../
+[#611324D7F1D8C6F7695FC0B6AECFCA75AD1F4CFE]
+== hash
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+hash(const xref:reference/std/hash-06.adoc[hash]&) = default;
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 450
+

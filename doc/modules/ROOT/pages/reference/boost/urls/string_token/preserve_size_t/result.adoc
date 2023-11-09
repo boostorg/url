@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#B4749E11C13F670171C5D1F8015770DBF5F7D1BB]
+== result
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/string_token/preserve_size_t/result_type.adoc[result_type]
+result() noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 312
+

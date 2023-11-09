@@ -1,0 +1,23 @@
+:relfileprefix: ../../../
+[#86BA49DECCA15CCF53C41C1D01665C4D8815D4C3]
+== operator<<
+
+pass:v,q[Format a string to an output stream]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/grammar/string_view_base.adoc[string_view_base]& s);
+----
+
+Declared in file <include/boost/url/grammar/string_view_base.hpp> on line 843
+
+Declared in file <include/boost/url/grammar/string_view_base.hpp> on line 855
+
+Defined in file <src/grammar/string_view_base.cpp> on line 21
+

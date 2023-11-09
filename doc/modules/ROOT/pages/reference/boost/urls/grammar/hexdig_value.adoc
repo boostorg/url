@@ -1,0 +1,32 @@
+:relfileprefix: ../../../
+[#12EAA76EB6E2BFA59C1F282C8C941D699D6B9E18]
+== hexdig_value
+
+pass:v,q[Return the decimal value of a hex character]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+signed char
+hexdig_value(char ch) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/hexdig_chars.hpp> on line 123
+
+=== Description
+
+pass:v,q[This function returns the decimal] pass:v,q[value of a hexadecimal character,]
+pass:v,q[or -1 if the argument is not a]
+pass:v,q[valid hexadecimal digit.]
+
+=== BNF
+[,cpp]
+----
+HEXDIG      = DIGIT
+            / "A" / "B" / "C" / "D" / "E" / "F"
+            / "a" / "b" / "c" / "d" / "e" / "f"
+----
+
+

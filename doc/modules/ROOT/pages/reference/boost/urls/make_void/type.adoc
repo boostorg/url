@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#C0CE5926FA5D348CF2EFB76BB2D26ACCD98E7F1D]
+== type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef void type;
+----
+
+Defined in file <include/boost/url/detail/config.hpp> on line 138
+

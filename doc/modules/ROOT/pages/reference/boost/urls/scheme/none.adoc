@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#56EA626AE5415E5650F148B1FAF93C91297E7CCF]
+== none
+
+pass:v,q[Indicates that no scheme is present]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+none = 0
+----
+
+Defined in file <include/boost/url/scheme.hpp> on line 37
+

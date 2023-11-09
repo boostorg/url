@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#00D33BD248D21E7A4DCFCDD4025BBB3539583DA0]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/query_rule_t/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* end) const noexcept;
+----
+
+Declared in file <include/boost/url/rfc/query_rule.hpp> on line 65
+
+Defined in file <src/rfc/query_rule.cpp> on line 22
+

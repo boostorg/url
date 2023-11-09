@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#48C1C2BE8F3399859768C470A486F62E4C919891]
+== relative_ref_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/relative_ref_rule_t.adoc[relative_ref_rule_t] relative_ref_rule;
+----
+
+Defined in file <include/boost/url/rfc/relative_ref_rule.hpp> on line 63
+

@@ -1,0 +1,30 @@
+:relfileprefix: ../../../../
+[#1B6087A1BEACFB012D7294CB18724B9FAE3B67A1]
+== range
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+range(const xref:reference/boost/urls/grammar/range.adoc[range]&) noexcept;
+----
+
+Declared in file <include/boost/url/grammar/range_rule.hpp> on line 206
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 533
+
+=== Description
+
+pass:v,q[The copy references the same] pass:v,q[underlying character buffer.] pass:v,q[Ownership is not transferred; the]
+pass:v,q[caller is responsible for ensuring]
+pass:v,q[that the lifetime of the buffer]
+pass:v,q[extends until it is no longer]
+pass:v,q[referenced.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

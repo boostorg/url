@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#6C567763D2C7346C94C2B852CDA016A70BB9FDDA]
+== leftover
+
+pass:v,q[Leftover input remaining after match.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+leftover
+----
+
+Defined in file <include/boost/url/grammar/error.hpp> on line 76
+

@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#E019A3F7ABA9B9D71C48D7B9850037A9BACEB4E6]
+== operator params_encoded_view
+
+pass:v,q[Conversion]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+operator xref:reference/boost/urls/params_encoded_view.adoc[params_encoded_view]() const noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_ref.hpp> on line 191
+
+Defined in file <src/params_encoded_ref.cpp> on line 59
+
+=== Description
+
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

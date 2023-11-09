@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#DC9B33DD9C043EDE4FBAC0F9980DC2434D895515]
+== squelch
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class Rule>
+constexpr
+squelch_rule_t<Rule>
+squelch(const Rule& r) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/tuple_rule.hpp> on line 231
+

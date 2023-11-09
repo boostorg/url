@@ -1,0 +1,53 @@
+:relfileprefix: ../../../
+[#FCCB394C4ED4B2BD2FCB3588A5B896C308C79AC4]
+== Class arg
+
+pass:v,q[Base class for string tokens, and algorithm parameters]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct arg;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 49
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/string_token/arg/prepare.adoc[`pass:v[prepare]`] |pass:v,q[Return a modifiable character buffer]
+
+|xref:reference/boost/urls/string_token/arg/2destructor.adoc[`pass:v[~arg]`] |
+|xref:reference/boost/urls/string_token/arg/2constructor-01.adoc[`pass:v[arg]`] |
+|xref:reference/boost/urls/string_token/arg/2constructor-0c.adoc[`pass:v[arg]`] |
+|xref:reference/boost/urls/string_token/arg/2constructor-05.adoc[`pass:v[arg]`] |
+|xref:reference/boost/urls/string_token/arg/operator_assign-0f.adoc[`pass:v[operator=]`] |
+|xref:reference/boost/urls/string_token/arg/operator_assign-01.adoc[`pass:v[operator=]`] |
+|===
+
+=== Description
+
+pass:v,q[This abstract interface provides a means] pass:v,q[for an algorithm to generically obtain a]
+pass:v,q[modifiable, contiguous character buffer]
+pass:v,q[of prescribed size. As the author of an]
+pass:v,q[algorithm simply declare an rvalue]
+pass:v,q[reference as a parameter type.]
+pass:v,q[Instances of this type are intended only]
+pass:v,q[to be used once and then destroyed.]
+
+=== Example
+pass:v,q[The declared function accepts any]
+pass:v,q[temporary instance of `arg` to be]
+pass:v,q[used for writing:]
+[,cpp]
+----
+void algorithm( string_token::arg&& dest );
+----
+pass:v,q[To implement the interface for your type]
+pass:v,q[or use-case, derive from the class and]
+pass:v,q[implement the prepare function.]
+
+

@@ -1,0 +1,55 @@
+:relfileprefix: ../../../
+[#69491CBCBA788F3DD5A5723A58A4A081AEC6D971]
+== params
+
+pass:v,q[Return the query as a container of parameters]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_view.adoc[params_view]
+params() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 1997
+
+Defined in file <src/url_view_base.cpp> on line 542
+
+=== Description
+
+pass:v,q[This function returns a bidirectional] pass:v,q[view of key/value pairs over the query.]
+pass:v,q[The returned view references the same]
+pass:v,q[underlying character buffer; ownership]
+pass:v,q[is not transferred.]
+pass:v,q[Any percent-escapes in strings returned]
+pass:v,q[when iterating the view are decoded first.]
+
+=== Example
+[,cpp]
+----
+params_view pv = url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).params();
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+query           = *( pchar / "/" / "?" )
+
+query-param     = key [ "=" value ]
+query-params    = [ query-param ] *( "&" query-param )
+----
+
+=== Specification
+
+* pass:v,q[://en.wikipedia.org/wiki/Query_string"]
+pass:v,q[>Query string (Wikipedia)]
+
+

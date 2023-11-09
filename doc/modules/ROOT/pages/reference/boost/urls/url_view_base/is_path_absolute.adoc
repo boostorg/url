@@ -1,0 +1,54 @@
+:relfileprefix: ../../../
+[#7A1E417876CB8CBDC1B8463B6A8DED6C40199D3C]
+== is_path_absolute
+
+pass:v,q[Return true if the path is absolute]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+is_path_absolute() const noexcept;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 1611
+
+=== Description
+
+pass:v,q[This function returns true if the path] pass:v,q[begins with a forward slash ('/').]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "/path/to/file.txt" ).is_path_absolute() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+path          = path-abempty    ; begins with "/" or is empty
+              / path-absolute   ; begins with "/" but not "//"
+              / path-noscheme   ; begins with a non-colon segment
+              / path-rootless   ; begins with a segment
+              / path-empty      ; zero characters
+
+path-abempty  = *( "/" segment )
+path-absolute = "/" [ segment-nz *( "/" segment ) ]
+path-noscheme = segment-nz-nc *( "/" segment )
+path-rootless = segment-nz *( "/" segment )
+path-empty    = 0<pchar>
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3.  Path (rfc3986)]
+
+

@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#A7ED8BD9AB17506A44EDE7B2D68B91BC55CA0F58]
+== compare
+
+pass:v,q[Return the result of comparing this with another url]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+int
+compare(const xref:reference/boost/urls/url_view_base.adoc[url_view_base]& other) const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 2359
+
+Defined in file <src/url_view_base.cpp> on line 660
+
+=== Description
+
+pass:v,q[This function compares two URLs] pass:v,q[according to Syntax-Based comparison]
+pass:v,q[algorithm.]
+
+=== Complexity
+pass:v,q[Linear in `min( u0.size(), u1.size() )`]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2[6.2.2 Syntax-Based Normalization (rfc3986)]
+
+

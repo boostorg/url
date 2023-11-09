@@ -1,0 +1,56 @@
+:relfileprefix: ../../../
+[#E33A22988633AD555D9ECF7B071614B476643FCC]
+== set_query
+
+pass:v,q[Set the query]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/static_url.adoc[static_url]&
+set_query(string_view s);
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 406
+
+=== Description
+
+pass:v,q[This sets the query to the string, which] pass:v,q[can be empty.] pass:v,q[An empty query is distinct from having]
+pass:v,q[no query.]
+pass:v,q[Reserved characters in the string are]
+pass:v,q[percent-escaped in the result.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://example.com" ).set_query( "id=42" ).query() == "id=42" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_query() == true && this->query() == s
+----
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+query           = *( pchar / "/" / "?" )
+
+query-param     = key [ "=" value ]
+query-params    = [ query-param ] *( "&" query-param )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.4[3.4.  Query (rfc3986)]
+
+* link:https://en.wikipedia.org/wiki/Query_string[Query string (Wikipedia)]
+
+

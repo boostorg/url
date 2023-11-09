@@ -1,0 +1,25 @@
+:relfileprefix: ../../../
+[#E79CF7488A5B3E193270C1AB46EF0DC65CF72908]
+== Class alpha_chars_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct alpha_chars_t;
+----
+
+Defined in file <include/boost/url/grammar/alpha_chars.hpp> on line 48
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/alpha_chars_t/2constructor.adoc[`pass:v[alpha_chars_t]`] |
+|xref:reference/boost/urls/grammar/alpha_chars_t/operator_call.adoc[`pass:v[operator()]`] |
+|xref:reference/boost/urls/grammar/alpha_chars_t/find_if.adoc[`pass:v[find_if]`] |
+|xref:reference/boost/urls/grammar/alpha_chars_t/find_if_not.adoc[`pass:v[find_if_not]`] |
+|===
+

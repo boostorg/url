@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#B39370771C184A0E7F5610B9E9CAFAC343ACA5A6]
+== id_port
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+id_port
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 29
+

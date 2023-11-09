@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#4DC609693C0316CC7ED12D8292F1C7011702A967]
+== ipvfuture
+
+pass:v,q[A host is specified by IPvFuture.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ipvfuture
+----
+
+Defined in file <include/boost/url/host_type.hpp> on line 52
+

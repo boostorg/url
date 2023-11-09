@@ -1,0 +1,26 @@
+:relfileprefix: ../../
+[#010AEED721145608997CB29C8C59952DC3A63A29]
+== operator<<
+
+pass:v,q[Format the address to an output stream]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/ipv6_address.adoc[ipv6_address]& addr);
+----
+
+Declared in file <include/boost/url/ipv6_address.hpp> on line 368
+
+Defined in file <include/boost/url/ipv6_address.hpp> on line 329
+
+=== Description
+
+pass:v,q[This function writes the address to an] pass:v,q[output stream using standard notation.]
+
+

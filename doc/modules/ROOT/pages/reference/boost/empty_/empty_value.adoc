@@ -1,0 +1,32 @@
+:relfileprefix: ../../
+[#E8EE5A40F5D28003F672F0B26F4D3A82387D6699]
+== Class empty_value
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class empty_value;
+----
+
+Defined in file </home/runner/work/mrdocs/mrdocs/boost/libs/core/include/boost/core/empty_value.hpp> on line 52
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/empty_/empty_value/type.adoc[`pass:v[type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/empty_/empty_value/2constructor-01.adoc[`pass:v[empty_value]`] |
+|xref:reference/boost/empty_/empty_value/2constructor-0c.adoc[`pass:v[empty_value]`] |
+|xref:reference/boost/empty_/empty_value/2constructor-0b.adoc[`pass:v[empty_value]`] |
+|xref:reference/boost/empty_/empty_value/get-0f.adoc[`pass:v[get]`] |
+|xref:reference/boost/empty_/empty_value/get-0b.adoc[`pass:v[get]`] |
+|===
+

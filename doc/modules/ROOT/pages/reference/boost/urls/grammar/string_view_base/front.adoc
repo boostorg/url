@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#182B4B7C304DFD3EAC9F292D51A8B2E97105F73D]
+== front
+
+pass:v,q[Return the first character]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/const_reference.adoc[const_reference]
+front() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 301
+
+=== Description
+
+pass:v,q[See `core::string_view::front`]
+
+

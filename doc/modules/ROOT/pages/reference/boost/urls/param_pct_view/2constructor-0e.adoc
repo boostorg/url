@@ -1,0 +1,49 @@
+:relfileprefix: ../../../
+[#E8600DE3D7386D7D8722310B1F0B4B487B5AFA7E]
+== param_pct_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+param_pct_view(
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] key,
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] value) noexcept;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 725
+
+=== Description
+
+pass:v,q[This constructs a parameter with a key] pass:v,q[and value, which may both contain percent]
+pass:v,q[escapes.]
+pass:v,q[The new key and value reference]
+pass:v,q[the same corresponding underlying]
+pass:v,q[character buffers.]
+pass:v,q[Ownership of the buffers is not transferred;]
+pass:v,q[the caller is responsible for ensuring that]
+pass:v,q[the assigned buffers remain valid until]
+pass:v,q[they are no longer referenced.]
+
+=== Example
+[,cpp]
+----
+param_pct_view qp( "key", "value" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->key.data() == key.data() && this->value.data() == value.data() && this->has_value == true
+----
+
+=== Complexity
+pass:v,q[Linear in `key.size() + value.size()`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+

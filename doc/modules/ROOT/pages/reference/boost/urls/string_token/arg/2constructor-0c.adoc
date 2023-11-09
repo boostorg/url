@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#CF804E8C074EB1F474ED0E16D98305BE92C9A7AE]
+== arg
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+arg(xref:reference/boost/urls/string_token/arg.adoc[arg]&&) = default;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 73
+

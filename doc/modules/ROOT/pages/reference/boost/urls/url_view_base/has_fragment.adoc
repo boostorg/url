@@ -1,0 +1,49 @@
+:relfileprefix: ../../../
+[#6625AC41A4020227FDE0A74FE865C7F7E1791A63]
+== has_fragment
+
+pass:v,q[Return true if a fragment is present]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+has_fragment() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 2090
+
+Defined in file <src/url_view_base.cpp> on line 565
+
+=== Description
+
+pass:v,q[This function returns true if the url] pass:v,q[contains a fragment.] pass:v,q[An empty fragment is distinct from]
+pass:v,q[no fragment.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://www.example.com/index.htm#anchor" ).has_fragment() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.5[3.5. Fragment (rfc3986)]
+
+

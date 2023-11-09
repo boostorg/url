@@ -1,0 +1,51 @@
+:relfileprefix: ../../../
+[#98492060701CFC760294EC97705F674C47E96CFE]
+== static_url
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+static_url() noexcept;
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 165
+
+=== Description
+
+pass:v,q[Default constructed urls contain] pass:v,q[a zero-length string. This matches]
+pass:v,q[the grammar for a relative-ref with]
+pass:v,q[an empty path and no query or]
+pass:v,q[fragment.]
+
+=== Example
+[,cpp]
+----
+static_url< 1024 > u;
+----
+
+=== Postconditions
+[,cpp]
+----
+this->empty() == true
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+----
+
+=== Specification
+link:https://datatracker.ietf.org/doc/html/rfc3986#section-4.2[4.2. Relative Reference (rfc3986)]
+
+

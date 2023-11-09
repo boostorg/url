@@ -1,0 +1,50 @@
+:relfileprefix: ../../../
+[#5B0D38BCB03693B07072DBB235E3F72B0A0DAF83]
+== encoded_authority
+
+pass:v,q[Return the authority.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+encoded_authority() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 551
+
+Defined in file <src/url_view_base.cpp> on line 177
+
+=== Description
+
+pass:v,q[If present, this function returns a] pass:v,q[string representing the authority (which]
+pass:v,q[may be empty).]
+pass:v,q[Otherwise it returns an empty string.]
+pass:v,q[The returned string may contain]
+pass:v,q[percent escapes.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "file://Network%20Drive/My%2DFiles" ).encoded_authority() == "Network%20Drive" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+authority   = [ userinfo "@" ] host [ ":" port ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2[3.2. Authority (rfc3986)]
+
+

@@ -1,0 +1,148 @@
+:relfileprefix: ../../
+[#E0704372732366D8535C59E1A52EF3F948433630]
+== Class static_url
+
+pass:v,q[A modifiable container for a URL.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<size_t Capacity>
+class static_url
+    : public xref:reference/boost/urls/static_url_base.adoc[static_url_base];
+----
+
+Declared in file <include/boost/url/static_url.hpp> on line 24
+
+Defined in file <include/boost/url/static_url.hpp> on line 107
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/static_url/2destructor.adoc[`pass:v[~static_url]`] |pass:v,q[Destructor]
+
+|xref:reference/boost/urls/static_url/2constructor-098.adoc[`pass:v[static_url]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/static_url/2constructor-08.adoc[`pass:v[static_url]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/static_url/2constructor-09f.adoc[`pass:v[static_url]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/static_url/2constructor-0b.adoc[`pass:v[static_url]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/static_url/operator_assign-06.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/static_url/operator_assign-0c.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/static_url/set_scheme.adoc[`pass:v[set_scheme]`] |pass:v,q[Set the scheme]
+
+|xref:reference/boost/urls/static_url/set_scheme_id.adoc[`pass:v[set_scheme_id]`] |xref:reference/boost/urls/url_base/set_scheme_id.adoc[url_base::set_scheme_id]
+
+|xref:reference/boost/urls/static_url/remove_scheme.adoc[`pass:v[remove_scheme]`] |pass:v,q[Remove the scheme]
+
+|xref:reference/boost/urls/static_url/set_encoded_authority.adoc[`pass:v[set_encoded_authority]`] |pass:v,q[Set the authority]
+
+|xref:reference/boost/urls/static_url/remove_authority.adoc[`pass:v[remove_authority]`] |pass:v,q[Remove the authority]
+
+|xref:reference/boost/urls/static_url/set_userinfo.adoc[`pass:v[set_userinfo]`] |pass:v,q[Set the userinfo]
+
+|xref:reference/boost/urls/static_url/set_encoded_userinfo.adoc[`pass:v[set_encoded_userinfo]`] |pass:v,q[Set the userinfo.]
+
+|xref:reference/boost/urls/static_url/remove_userinfo.adoc[`pass:v[remove_userinfo]`] |pass:v,q[Remove the userinfo]
+
+|xref:reference/boost/urls/static_url/set_user.adoc[`pass:v[set_user]`] |pass:v,q[Set the user]
+
+|xref:reference/boost/urls/static_url/set_encoded_user.adoc[`pass:v[set_encoded_user]`] |pass:v,q[Set the user]
+
+|xref:reference/boost/urls/static_url/set_password.adoc[`pass:v[set_password]`] |pass:v,q[Set the password.]
+
+|xref:reference/boost/urls/static_url/set_encoded_password.adoc[`pass:v[set_encoded_password]`] |pass:v,q[Set the password.]
+
+|xref:reference/boost/urls/static_url/remove_password.adoc[`pass:v[remove_password]`] |pass:v,q[Remove the password]
+
+|xref:reference/boost/urls/static_url/set_host.adoc[`pass:v[set_host]`] |pass:v,q[Set the host]
+
+|xref:reference/boost/urls/static_url/set_encoded_host.adoc[`pass:v[set_encoded_host]`] |pass:v,q[Set the host]
+
+|xref:reference/boost/urls/static_url/set_host_address.adoc[`pass:v[set_host_address]`] |pass:v,q[Set the host to an address]
+
+|xref:reference/boost/urls/static_url/set_encoded_host_address.adoc[`pass:v[set_encoded_host_address]`] |pass:v,q[Set the host to an address]
+
+|xref:reference/boost/urls/static_url/set_host_ipv4.adoc[`pass:v[set_host_ipv4]`] |pass:v,q[Set the host to an address]
+
+|xref:reference/boost/urls/static_url/set_host_ipv6.adoc[`pass:v[set_host_ipv6]`] |pass:v,q[Set the host to an address]
+
+|xref:reference/boost/urls/static_url/set_host_ipvfuture.adoc[`pass:v[set_host_ipvfuture]`] |pass:v,q[Set the host to an address]
+
+|xref:reference/boost/urls/static_url/set_host_name.adoc[`pass:v[set_host_name]`] |pass:v,q[Set the host to a name]
+
+|xref:reference/boost/urls/static_url/set_encoded_host_name.adoc[`pass:v[set_encoded_host_name]`] |pass:v,q[Set the host to a name]
+
+|xref:reference/boost/urls/static_url/set_port_number.adoc[`pass:v[set_port_number]`] |pass:v,q[Set the port]
+
+|xref:reference/boost/urls/static_url/set_port.adoc[`pass:v[set_port]`] |pass:v,q[Set the port]
+
+|xref:reference/boost/urls/static_url/remove_port.adoc[`pass:v[remove_port]`] |pass:v,q[Remove the port]
+
+|xref:reference/boost/urls/static_url/set_path.adoc[`pass:v[set_path]`] |pass:v,q[Set the path.]
+
+|xref:reference/boost/urls/static_url/set_encoded_path.adoc[`pass:v[set_encoded_path]`] |pass:v,q[Set the path.]
+
+|xref:reference/boost/urls/static_url/set_query.adoc[`pass:v[set_query]`] |pass:v,q[Set the query]
+
+|xref:reference/boost/urls/static_url/set_encoded_query.adoc[`pass:v[set_encoded_query]`] |pass:v,q[Set the query]
+
+|xref:reference/boost/urls/static_url/remove_query.adoc[`pass:v[remove_query]`] |pass:v,q[Remove the query]
+
+|xref:reference/boost/urls/static_url/remove_fragment.adoc[`pass:v[remove_fragment]`] |pass:v,q[Remove the fragment]
+
+|xref:reference/boost/urls/static_url/set_fragment.adoc[`pass:v[set_fragment]`] |pass:v,q[Set the fragment.]
+
+|xref:reference/boost/urls/static_url/set_encoded_fragment.adoc[`pass:v[set_encoded_fragment]`] |pass:v,q[Set the fragment.]
+
+|xref:reference/boost/urls/static_url/remove_origin.adoc[`pass:v[remove_origin]`] |pass:v,q[Remove the origin component]
+
+|xref:reference/boost/urls/static_url/normalize.adoc[`pass:v[normalize]`] |pass:v,q[Normalize the URL components]
+
+|xref:reference/boost/urls/static_url/normalize_scheme.adoc[`pass:v[normalize_scheme]`] |pass:v,q[Normalize the URL scheme]
+
+|xref:reference/boost/urls/static_url/normalize_authority.adoc[`pass:v[normalize_authority]`] |pass:v,q[Normalize the URL authority]
+
+|xref:reference/boost/urls/static_url/normalize_path.adoc[`pass:v[normalize_path]`] |pass:v,q[Normalize the URL path]
+
+|xref:reference/boost/urls/static_url/normalize_query.adoc[`pass:v[normalize_query]`] |pass:v,q[Normalize the URL query]
+
+|xref:reference/boost/urls/static_url/normalize_fragment.adoc[`pass:v[normalize_fragment]`] |pass:v,q[Normalize the URL fragment]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/static_url/8friend.adoc[`pass:v[hash]`] |
+|===
+
+=== Description
+
+pass:v,q[This container owns a url, represented] pass:v,q[by an inline, null-terminated character]
+pass:v,q[buffer with fixed capacity.]
+pass:v,q[The contents may be inspected and modified,]
+pass:v,q[and the implementation maintains a useful]
+pass:v,q[invariant: changes to the url always]
+pass:v,q[leave it in a valid state.]
+
+=== Example
+[,cpp]
+----
+static_url< 1024 > u( "https://www.example.com" );
+----
+
+=== Invariants
+[,cpp]
+----
+this->capacity() == Capacity
+----
+
+

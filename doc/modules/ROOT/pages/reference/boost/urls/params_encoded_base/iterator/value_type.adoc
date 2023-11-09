@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#B93BFD4BE4BBBD692BDD998BAFE6D176302D7147]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/value_type.adoc[value_type];
+----
+
+Defined in file <include/boost/url/impl/params_encoded_base.hpp> on line 41
+

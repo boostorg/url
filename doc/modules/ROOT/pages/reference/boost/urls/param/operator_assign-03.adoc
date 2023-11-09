@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#345B14CB26D88C35B57BA73E60D56F34D872B2A8]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/param.adoc[param]&
+operator=(const xref:reference/boost/urls/param_pct_view.adoc[param_pct_view]& other);
+----
+
+Declared in file <include/boost/url/param.hpp> on line 324
+
+Defined in file <include/boost/url/param.hpp> on line 914
+
+=== Description
+
+pass:v,q[The members of `other` are copied,] pass:v,q[re-using already existing string capacity.]
+
+=== Postconditions
+[,cpp]
+----
+this->key == other.key && this->value == other.value && this->has_value == other.has_value
+----
+
+=== Complexity
+pass:v,q[Linear in `other.key.size() + other.value.size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+

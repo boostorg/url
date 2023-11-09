@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#043D8AC94E7B7989F8E950B9BEC4F8825403F2B7]
+== url_view
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class String,
+    class = enable_if<std::is_convertible<String, core::string_view>::value && !std::is_convertible<String *, url_view_base *>::value>::type>
+url_view(const String& s);
+----
+
+Defined in file <include/boost/url/url_view.hpp> on line 215
+

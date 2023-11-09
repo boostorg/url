@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#3752AFA9A07EF9973B2A7F335BB5C0B4A5CBA871]
+== ref
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class Rule>
+constexpr
+enable_if<is_rule<Rule>::value && !std::is_same<Rule, detail::rule_ref<Rule>>::value, rule_ref<Rule>>::type
+ref(const Rule& r) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/parse.hpp> on line 113
+

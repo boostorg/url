@@ -1,0 +1,50 @@
+:relfileprefix: ../../
+[#4055400AFBD7629BCB684A1C9172EBC3739BF750]
+== encode
+
+pass:v,q[Return a percent-encoded string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class StringToken = xref:reference/boost/urls/string_token.adoc[string_token]::xref:reference/boost/urls/string_token/return_string.adoc[return_string],
+    class CharSet>
+StringToken::result_type
+encode(
+    string_view s,
+    const CharSet& unreserved,
+    xref:reference/boost/urls/encoding_opts.adoc[encoding_opts] opt = = {},
+    StringToken&& token) noexcept;
+----
+
+Declared in file <include/boost/url/encode.hpp> on line 184
+
+Defined in file <include/boost/url/impl/encode.hpp> on line 250
+
+=== Description
+
+pass:v,q[This function applies percent-encoding] pass:v,q[to the string using the given options and]
+pass:v,q[character set, and returns the result as]
+pass:v,q[a string when called with default arguments.]
+
+=== Example
+[,cpp]
+----
+encoding_opts opt;
+opt.space_as_plus = true;
+std::string s = encode( "My Stuff", opt, pchars );
+
+assert( s == "My+Stuff" );
+----
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-2.1[2.1. Percent-Encoding (rfc3986)]
+
+

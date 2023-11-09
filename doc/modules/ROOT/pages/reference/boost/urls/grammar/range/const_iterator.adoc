@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#059FAFAA67159D849AED554C1546BDEA6BCA3BCD]
+== const_iterator
+
+pass:v,q[A constant, forward iterator to elements of the range]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using const_iterator = xref:reference/boost/urls/grammar/range/iterator.adoc[iterator];
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 161
+

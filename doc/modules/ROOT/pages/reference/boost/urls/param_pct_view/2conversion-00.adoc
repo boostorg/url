@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#01977A33F5B72D2632B42A505611EE74C8C2CDD3]
+== operator param
+
+pass:v,q[Conversion]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+operator xref:reference/boost/urls/param.adoc[param]() const;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 840
+
+=== Description
+
+pass:v,q[This function performs a conversion from] pass:v,q[a reference-like query parameter to one]
+pass:v,q[retaining ownership of the strings by]
+pass:v,q[making a copy.]
+
+=== Complexity
+pass:v,q[Linear in `this->key.size() + this->value.size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+

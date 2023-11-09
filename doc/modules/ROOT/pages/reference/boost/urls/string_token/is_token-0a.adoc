@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#AB671BE2A2346B8BAE8DBFA65D3303D3F6EB035C]
+== Class is_token
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class T,
+    class = void>
+struct is_token
+    : xref:reference/std.adoc[std]::xref:reference/std/false_type.adoc[false_type];
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 88
+
+

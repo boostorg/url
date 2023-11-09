@@ -1,0 +1,24 @@
+:relfileprefix: ../../../
+[#D30F50DDD115C19D81FA985ADCB0D769C19A37C5]
+== key
+
+pass:v,q[The key]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string_view key;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 414
+
+=== Description
+
+pass:v,q[For most usages, key comparisons are] pass:v,q[case-sensitive and duplicate keys in]
+pass:v,q[a query are possible. However, it is]
+pass:v,q[the authority that has final control]
+pass:v,q[over how the query is interpreted.]
+
+

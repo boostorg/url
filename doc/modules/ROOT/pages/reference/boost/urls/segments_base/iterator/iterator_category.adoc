@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#60F1B46F263C7635253CD09C711D98456AA8E26B]
+== iterator_category
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using iterator_category = bidirectional_iterator_tag;
+----
+
+Defined in file <include/boost/url/impl/segments_base.hpp> on line 43
+

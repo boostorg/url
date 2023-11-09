@@ -1,0 +1,41 @@
+:relfileprefix: ../../../
+[#BF632F9CB7A33826DCEC608C7B84940AA61DCEEC]
+== back
+
+pass:v,q[Return the last character]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/decode_view/reference.adoc[reference]
+back() const noexcept;
+----
+
+Declared in file <include/boost/url/decode_view.hpp> on line 340
+
+Defined in file <include/boost/url/impl/decode_view.hpp> on line 159
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( decode_view( "Program%20Files" ).back() == 's' );
+----
+
+=== Preconditions
+[,cpp]
+----
+not this->empty()
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

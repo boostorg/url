@@ -1,0 +1,19 @@
+:relfileprefix: ../../../../
+[#25BEF92102AD6C4DCCCA95E8E46D9E236378007F]
+== move
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+move(
+    char* dest,
+    const char* src,
+    size_t n) noexcept;
+----
+
+Defined in file <src/url_base.cpp> on line 77
+

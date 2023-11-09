@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#4FEDAB8FD2F53A6370F87BD4A2F9631435BEFDE4]
+== pointer
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using pointer = const void*;
+----
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 367
+

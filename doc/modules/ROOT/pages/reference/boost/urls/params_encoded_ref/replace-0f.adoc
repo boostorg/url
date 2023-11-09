@@ -1,0 +1,51 @@
+:relfileprefix: ../../../
+[#F28B9F260B53F7C9A88D955BF9053CCDE8701D3C]
+== replace
+
+pass:v,q[Replace params]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+replace(
+    xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator] pos,
+    const xref:reference/boost/urls/param_pct_view.adoc[param_pct_view]& p);
+----
+
+Declared in file <include/boost/url/params_encoded_ref.hpp> on line 705
+
+Defined in file <src/params_encoded_ref.cpp> on line 139
+
+=== Description
+
+pass:v,q[This function replaces the contents] pass:v,q[of the element at `pos` with the]
+pass:v,q[specified param.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`pos` or come after are invalidated.]
+[NOTE]
+pass:v,q[The strings passed in must not come]
+pass:v,q[from the element being replaced,]
+pass:v,q[or else the behavior is undefined.]
+
+=== Example
+[,cpp]
+----
+url u( "?first=John&last=Doe" );
+
+u.encoded_params().replace( u.encoded_params().begin(), { "title", "Mr" });
+
+assert( u.encoded_query() == "title=Mr&last=Doe" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+

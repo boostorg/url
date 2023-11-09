@@ -1,0 +1,100 @@
+:relfileprefix: ../../
+[#FD6A69DD9643A779141F36D42DE0E868E1219D5B]
+== Class ipv4_address
+
+pass:v,q[An IP version 4 style address.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class ipv4_address;
+----
+
+Declared in file <include/boost/url/ipv6_address.hpp> on line 27
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 53
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv4_address/uint_type.adoc[`pass:v[uint_type]`] |pass:v,q[The type used to represent an address as an unsigned integer]
+
+|xref:reference/boost/urls/ipv4_address/bytes_type.adoc[`pass:v[bytes_type]`] |pass:v,q[The type used to represent an address as an array of bytes]
+
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv4_address/2constructor-0c.adoc[`pass:v[ipv4_address]`] |pass:v,q[Constructor.]
+
+|xref:reference/boost/urls/ipv4_address/2constructor-0d.adoc[`pass:v[ipv4_address]`] |pass:v,q[Constructor.]
+
+|xref:reference/boost/urls/ipv4_address/operator_assign.adoc[`pass:v[operator=]`] |pass:v,q[Copy Assignment.]
+
+|xref:reference/boost/urls/ipv4_address/2constructor-06.adoc[`pass:v[ipv4_address]`] |pass:v,q[Construct from an unsigned integer.]
+
+|xref:reference/boost/urls/ipv4_address/2constructor-0f.adoc[`pass:v[ipv4_address]`] |pass:v,q[Construct from an array of bytes.]
+
+|xref:reference/boost/urls/ipv4_address/2constructor-08.adoc[`pass:v[ipv4_address]`] |pass:v,q[Construct from a string.]
+
+|xref:reference/boost/urls/ipv4_address/to_bytes.adoc[`pass:v[to_bytes]`] |pass:v,q[Return the address as bytes, in network byte order.]
+
+|xref:reference/boost/urls/ipv4_address/to_uint.adoc[`pass:v[to_uint]`] |pass:v,q[Return the address as an unsigned integer.]
+
+|xref:reference/boost/urls/ipv4_address/to_string.adoc[`pass:v[to_string]`] |pass:v,q[Return the address as a string in dotted decimal format]
+
+|xref:reference/boost/urls/ipv4_address/to_buffer.adoc[`pass:v[to_buffer]`] |pass:v,q[Write a dotted decimal string representing the address to a buffer]
+
+|xref:reference/boost/urls/ipv4_address/is_loopback.adoc[`pass:v[is_loopback]`] |pass:v,q[Return true if the address is a loopback address]
+
+|xref:reference/boost/urls/ipv4_address/is_unspecified.adoc[`pass:v[is_unspecified]`] |pass:v,q[Return true if the address is unspecified]
+
+|xref:reference/boost/urls/ipv4_address/is_multicast.adoc[`pass:v[is_multicast]`] |pass:v,q[Return true if the address is a multicast address]
+
+|===
+=== Static Data Members
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv4_address/max_str_len.adoc[`pass:v[max_str_len]`] |pass:v,q[The number of characters in the longest possible IPv4 string.]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv4_address/8friend-01.adoc[`pass:v[operator==]`] |pass:v,q[Return true if two addresses are equal]
+
+|xref:reference/boost/urls/ipv4_address/8friend-08.adoc[`pass:v[operator!=]`] |pass:v,q[Return true if two addresses are not equal]
+
+|xref:reference/boost/urls/ipv4_address/8friend-05.adoc[`pass:v[operator<<]`] |
+|xref:reference/boost/urls/ipv4_address/8friend-0a.adoc[`pass:v[ipv6_address]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type are used to construct,] pass:v,q[parse, and manipulate IP version 6 addresses.]
+
+=== BNF
+[,cpp]
+----
+IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+dec-octet   = DIGIT                 ; 0-9
+            / %x31-39 DIGIT         ; 10-99
+            / "1" 2DIGIT            ; 100-199
+            / "2" %x30-34 DIGIT     ; 200-249
+            / "25" %x30-35          ; 250-255
+----
+
+=== Specification
+
+* link:https://en.wikipedia.org/wiki/IPv4[IPv4 (Wikipedia)]
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

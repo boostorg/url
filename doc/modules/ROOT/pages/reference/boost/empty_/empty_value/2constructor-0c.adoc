@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#C8A3FF7310E2B1C0A16452811D856E022232068F]
+== empty_value
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+empty_value(empty_init_t);
+----
+
+Defined in file </home/runner/work/mrdocs/mrdocs/boost/libs/core/include/boost/core/empty_value.hpp> on line 62
+

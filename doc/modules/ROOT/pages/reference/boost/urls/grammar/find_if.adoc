@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#B58BBE75B8509F926DFA852FD50981433F99E0C9]
+== find_if
+
+pass:v,q[Find the first character in the string that is in the set.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet>
+const char*
+find_if(
+    const char* const first,
+    const char* const last,
+    const CharSet& cs) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/charset.hpp> on line 86
+
+=== Description
+
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#22653075907C625451181A13E082315D47BFC1DF]
+== to_bytes
+
+pass:v,q[Return the address as bytes, in network byte order]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/ipv6_address/bytes_type.adoc[bytes_type]
+to_bytes() const noexcept;
+----
+
+Defined in file <include/boost/url/ipv6_address.hpp> on line 175
+

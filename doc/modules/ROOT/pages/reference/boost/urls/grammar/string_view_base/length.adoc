@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#1E5E02E1F6C8BA057DE600A7B4F092735BD6061D]
+== length
+
+pass:v,q[Return the size]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type]
+length() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 252
+
+=== Description
+
+pass:v,q[See `core::string_view::length`]
+
+

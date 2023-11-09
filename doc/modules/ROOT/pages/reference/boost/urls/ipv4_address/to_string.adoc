@@ -1,0 +1,44 @@
+:relfileprefix: ../../../
+[#8AE9EA46602740D74608042E3C4796AC5E282933]
+== to_string
+
+pass:v,q[Return the address as a string in dotted decimal format]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class StringToken = xref:reference/boost/urls/string_token.adoc[string_token]::xref:reference/boost/urls/string_token/return_string.adoc[return_string]>
+StringToken::result_type
+to_string(StringToken&& token) const;
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 196
+
+=== Description
+
+pass:v,q[When called with no arguments, the] pass:v,q[return type is `std::string`.]
+pass:v,q[Otherwise, the return type and style]
+pass:v,q[of output is determined by which string]
+pass:v,q[token is passed.]
+
+=== Example
+[,cpp]
+----
+assert( ipv4_address(0x01020304).to_string() == "1.2.3.4" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[String tokens may throw exceptions.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc4291#section-2.2[            2.2. Text Representation of Addresses (rfc4291)]
+
+

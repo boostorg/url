@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#B917B05AB0CAD3B93C653D7508BDEC34A0EA878B]
+== ci_is_equal
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+ci_is_equal(
+    string_view s0,
+    string_view s1) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/ci_string.hpp> on line 192
+

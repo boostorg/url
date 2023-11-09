@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#B033AF402600125F981775CFA5020B3B9D16A586]
+== get
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+T&
+get() noexcept;
+----
+
+Defined in file </home/runner/work/mrdocs/mrdocs/boost/libs/core/include/boost/core/empty_value.hpp> on line 89
+

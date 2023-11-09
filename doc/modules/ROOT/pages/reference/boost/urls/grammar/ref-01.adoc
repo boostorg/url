@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#19140440CA153DC837516C9780AB844E50057FAC]
+== ref
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+void
+ref() = delete;
+----
+
+Defined in file <include/boost/url/grammar/parse.hpp> on line 133
+

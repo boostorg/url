@@ -1,0 +1,18 @@
+:relfileprefix: ../../../../
+[#A0BE2BA4D8B46A3F37BCC211D3206DAC11943563]
+== operator()
+
+pass:v,q[Return true if c is in the character set.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+bool
+operator()(char c) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/hexdig_chars.hpp> on line 65
+

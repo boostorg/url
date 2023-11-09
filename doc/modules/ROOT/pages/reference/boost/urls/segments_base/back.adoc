@@ -1,0 +1,53 @@
+:relfileprefix: ../../../
+[#4A251B015BDB8B3B6A26622863076F9284328BDD]
+== back
+
+pass:v,q[Return the last segment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string
+back() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_base.hpp> on line 272
+
+Defined in file <include/boost/url/impl/segments_base.hpp> on line 114
+
+=== Description
+
+
+=== Preconditions
+[,cpp]
+----
+this->empty() == false
+----
+
+=== Example
+[,cpp]
+----
+assert( url_view( "/path/to/file.txt" ).segments().back() == "file.txt" );
+----
+
+=== Preconditions
+[,cpp]
+----
+this->empty() == false
+----
+
+=== Effects
+[,cpp]
+----
+return *--end();
+----
+
+=== Complexity
+pass:v,q[Linear in `this->back().size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+

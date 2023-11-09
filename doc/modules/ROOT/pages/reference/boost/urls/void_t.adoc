@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#F166B1B690E96FE90455E4B1D24A4404BFCD4611]
+== void_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class... Ts>
+using void_t = xref:reference/boost/urls/make_void.adoc[make_void]<Ts...>::type;
+----
+
+Defined in file <include/boost/url/detail/config.hpp> on line 139
+

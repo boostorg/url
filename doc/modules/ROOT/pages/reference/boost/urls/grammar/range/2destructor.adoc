@@ -1,0 +1,18 @@
+:relfileprefix: ../../../../
+[#1B0CD40944EBA0E15D14BC7E35F19EE868E284D0]
+== ~range
+
+pass:v,q[Destructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+~range();
+----
+
+Declared in file <include/boost/url/grammar/range_rule.hpp> on line 165
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 502
+

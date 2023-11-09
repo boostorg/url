@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#577BB52332A34EF514B2822094DE2A500CE00F89]
+== params
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_view.adoc[params_view]
+params(xref:reference/boost/urls/encoding_opts.adoc[encoding_opts] opt) const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 2000
+
+Defined in file <src/url_view_base.cpp> on line 552
+

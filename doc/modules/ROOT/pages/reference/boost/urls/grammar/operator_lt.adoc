@@ -1,0 +1,22 @@
+:relfileprefix: ../../../
+[#6B07E55C4B568E41BD1D2775A45E56D562E509F0]
+== operator<
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class S0,
+    class S1>
+constexpr
+enable_if<is_match<S0, S1>::value, bool>::type
+operator<(
+    const S0& s0,
+    const S1& s1) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 794
+

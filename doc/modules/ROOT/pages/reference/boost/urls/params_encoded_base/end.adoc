@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#3132864DE6FB38B078B32BF72A3655F4DB1D4AE0]
+== end
+
+pass:v,q[Return an iterator to the end]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+end() const noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_base.hpp> on line 230
+
+Defined in file <src/params_encoded_base.cpp> on line 87
+
+=== Description
+
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

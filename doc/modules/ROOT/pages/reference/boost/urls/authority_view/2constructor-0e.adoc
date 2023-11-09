@@ -1,0 +1,30 @@
+:relfileprefix: ../../../
+[#EE17324AB33CE00A3B91F053DED22796B144DA69]
+== authority_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+authority_view() noexcept;
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 121
+
+Defined in file <src/authority_view.cpp> on line 54
+
+=== Description
+
+pass:v,q[Default constructed authorities] pass:v,q[refer to a string with zero length,]
+pass:v,q[which is always valid. This matches]
+pass:v,q[the grammar for a zero-length host.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== Specification
+
+

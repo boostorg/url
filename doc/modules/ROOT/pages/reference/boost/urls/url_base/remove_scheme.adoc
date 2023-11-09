@@ -1,0 +1,52 @@
+:relfileprefix: ../../../
+[#D4DD93B750E891CCF01DD460019899CE13D0AF81]
+== remove_scheme
+
+pass:v,q[Remove the scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_base.adoc[url_base]&
+remove_scheme();
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 316
+
+Defined in file <src/url_base.cpp> on line 169
+
+=== Description
+
+pass:v,q[This function removes the scheme if it] pass:v,q[is present.]
+
+=== Example
+[,cpp]
+----
+assert( url("http://www.example.com/index.htm" ).remove_scheme().buffer() == "//www.example.com/index.htm" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_scheme() == false && this->scheme_id() == scheme::none
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.1[            3.1. Scheme (rfc3986)]
+
+

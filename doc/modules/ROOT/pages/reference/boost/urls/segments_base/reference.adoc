@@ -1,0 +1,21 @@
+:relfileprefix: ../../../
+[#C9E9C5A847EAA8AD8DAD9FB686CD489741A483F4]
+== reference
+
+pass:v,q[The reference type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using reference = string;
+----
+
+Defined in file <include/boost/url/segments_base.hpp> on line 100
+
+=== Description
+
+pass:v,q[This is the type of value returned when] pass:v,q[iterators of the view are dereferenced.]
+
+

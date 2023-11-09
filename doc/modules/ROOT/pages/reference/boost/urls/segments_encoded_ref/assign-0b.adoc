@@ -1,0 +1,50 @@
+:relfileprefix: ../../../
+[#B02E31CC34D52D8251316A6BC2183F2F79E785F0]
+== assign
+
+pass:v,q[Assign segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class FwdIt>
+void
+assign(
+    FwdIt first,
+    FwdIt last);
+----
+
+Declared in file <include/boost/url/segments_encoded_ref.hpp> on line 362
+
+Defined in file <include/boost/url/impl/segments_encoded_ref.hpp> on line 37
+
+=== Description
+
+pass:v,q[The existing contents are replaced] pass:v,q[by a copy of the contents of the range.]
+pass:v,q[Reserved characters in the range are]
+pass:v,q[automatically escaped.]
+pass:v,q[Escapes in the range are preserved.]
+pass:v,q[All iterators are invalidated.]
+[NOTE]
+pass:v,q[None of the character buffers referenced]
+pass:v,q[by the range may overlap the character]
+pass:v,q[buffer of the underlying url, or else]
+pass:v,q[the behavior is undefined.]
+
+=== Mandates
+[,cpp]
+----
+std::is_convertible< std::iterator_traits< FwdIt >::reference_type, pct_string_view >::value == true
+----
+
+=== Complexity
+pass:v,q[Linear in `std::distance( first, last ) + this->url().encoded_query().size() + this->url().encoded_fragment().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+

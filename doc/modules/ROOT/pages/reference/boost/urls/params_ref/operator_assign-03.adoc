@@ -1,0 +1,44 @@
+:relfileprefix: ../../../
+[#33925500CEFE4534D24B6AC04A7B08E44513DE71]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_ref.adoc[params_ref]&
+operator=(initializer_list<xref:reference/boost/urls/param_view.adoc[param_view]> init);
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 214
+
+Defined in file <include/boost/url/impl/params_ref.hpp> on line 48
+
+=== Description
+
+pass:v,q[After assignment, the previous contents] pass:v,q[of the query parameters are replaced by]
+pass:v,q[the contents of the initializer-list.]
+
+=== Preconditions
+pass:v,q[None of character buffers referenced by]
+pass:v,q[`init` may overlap the character buffer of]
+pass:v,q[the underlying url, or else the behavior]
+pass:v,q[is undefined.]
+
+=== Effects
+[,cpp]
+----
+this->assign( init );
+----
+
+=== Complexity
+pass:v,q[Linear in `init.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

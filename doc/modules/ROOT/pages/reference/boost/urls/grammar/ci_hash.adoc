@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#2832BC46D6A793473489E6FDDA1F885F1EAF0202]
+== Class ci_hash
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct ci_hash;
+----
+
+Defined in file <include/boost/url/grammar/ci_string.hpp> on line 261
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/ci_hash/is_transparent.adoc[`pass:v[is_transparent]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/ci_hash/operator_call.adoc[`pass:v[operator()]`] |
+|===
+

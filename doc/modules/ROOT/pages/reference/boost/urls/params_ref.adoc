@@ -1,0 +1,134 @@
+:relfileprefix: ../../
+[#F12F3704ABD60420DD4E4B6563C5FDDCC968F44D]
+== Class params_ref
+
+pass:v,q[A view representing query parameters in a URL]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class params_ref
+    : public xref:reference/boost/urls/params_base.adoc[params_base];
+----
+
+Declared in file <include/boost/url/impl/params_encoded_base.hpp> on line 20
+
+Defined in file <include/boost/url/params_ref.hpp> on line 80
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/params_ref/2constructor-0b.adoc[`pass:v[params_ref]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/params_ref/2constructor-09.adoc[`pass:v[params_ref]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/params_ref/operator_assign-0c.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/params_ref/operator_assign-03.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/params_ref/2conversion.adoc[`pass:v[operator params_view]`] |pass:v,q[Conversion]
+
+|xref:reference/boost/urls/params_ref/url.adoc[`pass:v[url]`] |pass:v,q[Return the referenced url]
+
+|xref:reference/boost/urls/params_ref/clear.adoc[`pass:v[clear]`] |pass:v,q[Clear the contents of the container]
+
+|xref:reference/boost/urls/params_ref/assign-09.adoc[`pass:v[assign]`] |pass:v,q[Assign elements]
+
+|xref:reference/boost/urls/params_ref/assign-02.adoc[`pass:v[assign]`] |pass:v,q[Assign elements]
+
+|xref:reference/boost/urls/params_ref/append-0f.adoc[`pass:v[append]`] |pass:v,q[Append elements]
+
+|xref:reference/boost/urls/params_ref/append-07.adoc[`pass:v[append]`] |pass:v,q[Append elements]
+
+|xref:reference/boost/urls/params_ref/append-0c.adoc[`pass:v[append]`] |pass:v,q[Append elements]
+
+|xref:reference/boost/urls/params_ref/insert-08.adoc[`pass:v[insert]`] |pass:v,q[Insert elements]
+
+|xref:reference/boost/urls/params_ref/insert-02.adoc[`pass:v[insert]`] |pass:v,q[Insert elements]
+
+|xref:reference/boost/urls/params_ref/insert-05.adoc[`pass:v[insert]`] |pass:v,q[Insert elements]
+
+|xref:reference/boost/urls/params_ref/erase-05.adoc[`pass:v[erase]`] |pass:v,q[Erase elements]
+
+|xref:reference/boost/urls/params_ref/erase-0f.adoc[`pass:v[erase]`] |pass:v,q[Erase elements]
+
+|xref:reference/boost/urls/params_ref/erase-00.adoc[`pass:v[erase]`] |pass:v,q[Erase elements]
+
+|xref:reference/boost/urls/params_ref/replace-0d.adoc[`pass:v[replace]`] |pass:v,q[Replace elements]
+
+|xref:reference/boost/urls/params_ref/replace-0b.adoc[`pass:v[replace]`] |pass:v,q[Replace elements]
+
+|xref:reference/boost/urls/params_ref/replace-01.adoc[`pass:v[replace]`] |pass:v,q[Replace elements]
+
+|xref:reference/boost/urls/params_ref/unset.adoc[`pass:v[unset]`] |pass:v,q[Remove the value on an element]
+
+|xref:reference/boost/urls/params_ref/set-09.adoc[`pass:v[set]`] |pass:v,q[Set a value]
+
+|xref:reference/boost/urls/params_ref/set-01.adoc[`pass:v[set]`] |pass:v,q[Set a value]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/params_ref/8friend.adoc[`pass:v[url_base]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type are used to interpret] pass:v,q[the query parameters as a bidirectional view]
+pass:v,q[of key/value pairs.]
+pass:v,q[The view does not retain ownership of the]
+pass:v,q[elements and instead references the original]
+pass:v,q[url. The caller is responsible for ensuring]
+pass:v,q[that the lifetime of the referenced url]
+pass:v,q[extends until it is no longer referenced.]
+pass:v,q[The view is modifiable; calling non-const]
+pass:v,q[members causes changes to the referenced]
+pass:v,q[url.]
+pass:v,q[Percent escapes in strings returned when]
+pass:v,q[dereferencing iterators are automatically]
+pass:v,q[decoded.]
+pass:v,q[Reserved characters in strings supplied]
+pass:v,q[to modifier functions are automatically]
+pass:v,q[percent-escaped.]
+
+=== Example
+[,cpp]
+----
+url u( "?first=John&last=Doe" );
+
+params_ref p = u.params();
+----
+
+=== Iterator Invalidation
+pass:v,q[Changes to the underlying character buffer]
+pass:v,q[can invalidate iterators which reference it.]
+pass:v,q[Modifications made through the container]
+pass:v,q[invalidate some or all iterators:]
+
+* xref:reference/boost/urls/params_ref/append-0f.adoc[append]
+pass:v,q[: Only `end()`.]
+
+* xref:reference/boost/urls/params_ref/assign-09.adoc[assign,]
+xref:reference/boost/urls/params_ref/clear.adoc[clear,]
+pass:v,q[`operator=` : All elements.]
+
+* xref:reference/boost/urls/params_ref/erase-05.adoc[erase]
+pass:v,q[: Erased elements and all]
+pass:v,q[elements after (including `end()`).]
+
+* xref:reference/boost/urls/params_ref/insert-08.adoc[insert]
+pass:v,q[: All elements at or after]
+pass:v,q[the insertion point (including `end()`).]
+
+* xref:reference/boost/urls/params_ref/replace-0d.adoc[replace,]
+xref:reference/boost/urls/params_ref/set-01.adoc[set]
+pass:v,q[: Modified]
+pass:v,q[elements and all elements]
+pass:v,q[after (including `end()`).]
+
+

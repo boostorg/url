@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#A7E0C1659BB742E7AC0FF7A412EC8C8D3A2B1111]
+== push_back
+
+pass:v,q[Append a segment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+push_back(string_view s);
+----
+
+Declared in file <include/boost/url/segments_ref.hpp> on line 693
+
+Defined in file <include/boost/url/impl/segments_ref.hpp> on line 130
+
+=== Description
+
+pass:v,q[This function appends a segment to] pass:v,q[the end of the path.] pass:v,q[Reserved characters in the string are]
+pass:v,q[automatically escaped.]
+pass:v,q[All end iterators are invalidated.]
+
+=== Postconditions
+[,cpp]
+----
+this->back() == s
+----
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

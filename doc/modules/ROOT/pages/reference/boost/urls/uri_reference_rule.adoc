@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#4B5A8876DCB60734221F77080F03F5B5CFD12733]
+== uri_reference_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/uri_reference_rule_t.adoc[uri_reference_rule_t] uri_reference_rule;
+----
+
+Defined in file <include/boost/url/rfc/uri_reference_rule.hpp> on line 66
+

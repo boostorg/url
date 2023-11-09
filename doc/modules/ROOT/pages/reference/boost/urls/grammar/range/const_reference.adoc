@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#C247702893393669E117B59F76E8E09698960DEC]
+== const_reference
+
+pass:v,q[The type of each element of the range]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using const_reference = const T&;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 141
+

@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#C2A1BBA1E01AACE90FC5D429DBCDAC88BB98B203]
+== literal_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+literal_rule(const char* s) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/literal_rule.hpp> on line 67
+

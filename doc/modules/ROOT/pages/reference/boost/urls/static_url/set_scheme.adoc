@@ -1,0 +1,50 @@
+:relfileprefix: ../../../
+[#2DCE5707366CFDACB1535F038DDE90D011C55AFE]
+== set_scheme
+
+pass:v,q[Set the scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/static_url.adoc[static_url]&
+set_scheme(string_view s);
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 345
+
+=== Description
+
+pass:v,q[The scheme is set to the specified] pass:v,q[string, which must contain a valid]
+pass:v,q[scheme without any trailing colon]
+pass:v,q[(':').]
+pass:v,q[Note that schemes are case-insensitive,]
+pass:v,q[and the canonical form is lowercased.]
+
+=== Example
+[,cpp]
+----
+assert( url( "http://www.example.com" ).set_scheme( "https" ).scheme_id() == scheme::https );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size() + s.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+scheme        = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.1[            3.1. Scheme (rfc3986)]
+
+

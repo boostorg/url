@@ -1,0 +1,34 @@
+:relfileprefix: ../../
+[#EB6C3772F675B922ADFFB5562DEA6655236A6F9B]
+== operator<<
+
+pass:v,q[Format the encoded authority to the output stream]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/authority_view.adoc[authority_view]& a);
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 1386
+
+Defined in file <include/boost/url/authority_view.hpp> on line 1358
+
+=== Description
+
+pass:v,q[This function serializes the encoded URL] pass:v,q[to the output stream.]
+
+=== Example
+[,cpp]
+----
+authority_view a( "www.example.com" );
+
+std::cout << a << std::endl;
+----
+
+

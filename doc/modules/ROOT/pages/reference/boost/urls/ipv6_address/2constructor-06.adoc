@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#6A45C5F879608845736B06C9556FA44DF755C7C0]
+== ipv6_address
+
+pass:v,q[Constructor.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+ipv6_address(const xref:reference/boost/urls/ipv6_address.adoc[ipv6_address]&) = default;
+----
+
+Defined in file <include/boost/url/ipv6_address.hpp> on line 107
+

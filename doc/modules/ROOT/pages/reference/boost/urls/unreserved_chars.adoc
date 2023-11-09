@@ -1,0 +1,41 @@
+:relfileprefix: ../../
+[#B0FB7E975E9642424B8AA33E9BE07A779B3D780D]
+== unreserved_chars
+
+pass:v,q[The unreserved character set]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/grammar.adoc[grammar]::xref:reference/boost/urls/grammar/lut_chars.adoc[lut_chars] unreserved_chars;
+----
+
+Defined in file <include/boost/url/rfc/unreserved_chars.hpp> on line 44
+
+=== Description
+
+
+=== Example
+pass:v,q[Character sets are used with rules and] pass:v,q[the functions]
+xref:reference/boost/urls/grammar/find_if.adoc[grammar::find_if]
+pass:v,q[and]
+xref:reference/boost/urls/grammar/find_if_not.adoc[grammar::find_if_not.]
+[,cpp]
+----
+system::result< decode_view > rv = grammar::parse( "Program%20Files", pct_encoded_rule( unreserved_chars ) );
+----
+
+=== BNF
+[,cpp]
+----
+unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-2.3[2.3. Unreserved Characters (rfc3986)]
+
+

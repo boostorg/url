@@ -1,0 +1,24 @@
+:relfileprefix: ../../../../
+[#5C1B0E04009B7AFEDE6E735EDDE3CF6BA8F81B9F]
+== Enum from
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+enum from;
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 36
+
+=== Members
+[,cols=2]
+|===
+|Name |Description
+|string |
+|url |
+|authority |
+|===
+

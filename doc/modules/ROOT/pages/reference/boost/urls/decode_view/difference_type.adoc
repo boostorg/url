@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#21304A9E39DBFAEF528EDA8405FDD91A180F32E8]
+== difference_type
+
+pass:v,q[The signed integer type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using difference_type = ptrdiff_t;
+----
+
+Defined in file <include/boost/url/decode_view.hpp> on line 128
+

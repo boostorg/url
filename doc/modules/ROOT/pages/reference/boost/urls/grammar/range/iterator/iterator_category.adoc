@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#C288456B59A99EADC2548AEA4FD1E3F86DCA1C3A]
+== iterator_category
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using iterator_category = forward_iterator_tag;
+----
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 370
+

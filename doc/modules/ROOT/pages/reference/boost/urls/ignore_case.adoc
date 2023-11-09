@@ -1,0 +1,16 @@
+:relfileprefix: ../../
+[#38235263F28493F1B3515C8A980BF905C07E9A3C]
+== ignore_case
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/ignore_case_t.adoc[ignore_case_t] ignore_case;
+----
+
+Defined in file <include/boost/url/ignore_case.hpp> on line 31
+

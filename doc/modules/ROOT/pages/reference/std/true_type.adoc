@@ -1,0 +1,15 @@
+:relfileprefix: ../
+[#77FCEDB1679725E78C6B7B3393B7A3815C210970]
+== true_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using true_type = xref:reference/std/integral_constant.adoc[integral_constant]<bool, true>;
+----
+
+Defined in file </usr/include/c++/13/type_traits> on line 82
+

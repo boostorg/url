@@ -1,0 +1,25 @@
+:relfileprefix: ../../../../
+[#0197924FA782C3DAE643D99489508C63C6327E35]
+== find_last_of
+
+pass:v,q[Return the position of the last match]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type]
+find_last_of(
+    string_view str,
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] pos = core::string_view::npos) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 609
+
+=== Description
+
+pass:v,q[See `core::string_view::find_last_of`]
+
+

@@ -1,0 +1,170 @@
+:relfileprefix: ../../
+[#0787516925CC1B77C39AE34A316DCA39E46EEA40]
+== Class url
+
+pass:v,q[A modifiable container for a URL.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class url
+    : public xref:reference/boost/urls/url_base.adoc[url_base];
+----
+
+Defined in file <include/boost/url/url.hpp> on line 63
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/url/2destructor.adoc[`pass:v[~url]`] |pass:v,q[Destructor]
+
+|xref:reference/boost/urls/url/2constructor-0f0.adoc[`pass:v[url]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/url/2constructor-002.adoc[`pass:v[url]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/url/2constructor-01.adoc[`pass:v[url]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/url/2constructor-001.adoc[`pass:v[url]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/url/2constructor-0f7.adoc[`pass:v[url]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/url/operator_assign-09.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/url/operator_assign-0b.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/url/operator_assign-06.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/url/swap.adoc[`pass:v[swap]`] |pass:v,q[Swap the contents.]
+
+|xref:reference/boost/urls/url/set_scheme.adoc[`pass:v[set_scheme]`] |pass:v,q[Set the scheme]
+
+|xref:reference/boost/urls/url/set_scheme_id.adoc[`pass:v[set_scheme_id]`] |xref:reference/boost/urls/url_base/set_scheme_id.adoc[url_base::set_scheme_id]
+
+|xref:reference/boost/urls/url/remove_scheme.adoc[`pass:v[remove_scheme]`] |pass:v,q[Remove the scheme]
+
+|xref:reference/boost/urls/url/set_encoded_authority.adoc[`pass:v[set_encoded_authority]`] |pass:v,q[Set the authority]
+
+|xref:reference/boost/urls/url/remove_authority.adoc[`pass:v[remove_authority]`] |pass:v,q[Remove the authority]
+
+|xref:reference/boost/urls/url/set_userinfo.adoc[`pass:v[set_userinfo]`] |pass:v,q[Set the userinfo]
+
+|xref:reference/boost/urls/url/set_encoded_userinfo.adoc[`pass:v[set_encoded_userinfo]`] |pass:v,q[Set the userinfo.]
+
+|xref:reference/boost/urls/url/remove_userinfo.adoc[`pass:v[remove_userinfo]`] |pass:v,q[Remove the userinfo]
+
+|xref:reference/boost/urls/url/set_user.adoc[`pass:v[set_user]`] |pass:v,q[Set the user]
+
+|xref:reference/boost/urls/url/set_encoded_user.adoc[`pass:v[set_encoded_user]`] |pass:v,q[Set the user]
+
+|xref:reference/boost/urls/url/set_password.adoc[`pass:v[set_password]`] |pass:v,q[Set the password.]
+
+|xref:reference/boost/urls/url/set_encoded_password.adoc[`pass:v[set_encoded_password]`] |pass:v,q[Set the password.]
+
+|xref:reference/boost/urls/url/remove_password.adoc[`pass:v[remove_password]`] |pass:v,q[Remove the password]
+
+|xref:reference/boost/urls/url/set_host.adoc[`pass:v[set_host]`] |pass:v,q[Set the host]
+
+|xref:reference/boost/urls/url/set_encoded_host.adoc[`pass:v[set_encoded_host]`] |pass:v,q[Set the host]
+
+|xref:reference/boost/urls/url/set_host_address.adoc[`pass:v[set_host_address]`] |pass:v,q[Set the host to an address]
+
+|xref:reference/boost/urls/url/set_encoded_host_address.adoc[`pass:v[set_encoded_host_address]`] |pass:v,q[Set the host to an address]
+
+|xref:reference/boost/urls/url/set_host_ipv4.adoc[`pass:v[set_host_ipv4]`] |pass:v,q[Set the host to an address]
+
+|xref:reference/boost/urls/url/set_host_ipv6.adoc[`pass:v[set_host_ipv6]`] |pass:v,q[Set the host to an address]
+
+|xref:reference/boost/urls/url/set_host_ipvfuture.adoc[`pass:v[set_host_ipvfuture]`] |pass:v,q[Set the host to an address]
+
+|xref:reference/boost/urls/url/set_host_name.adoc[`pass:v[set_host_name]`] |pass:v,q[Set the host to a name]
+
+|xref:reference/boost/urls/url/set_encoded_host_name.adoc[`pass:v[set_encoded_host_name]`] |pass:v,q[Set the host to a name]
+
+|xref:reference/boost/urls/url/set_port_number.adoc[`pass:v[set_port_number]`] |pass:v,q[Set the port]
+
+|xref:reference/boost/urls/url/set_port.adoc[`pass:v[set_port]`] |pass:v,q[Set the port]
+
+|xref:reference/boost/urls/url/remove_port.adoc[`pass:v[remove_port]`] |pass:v,q[Remove the port]
+
+|xref:reference/boost/urls/url/set_path.adoc[`pass:v[set_path]`] |pass:v,q[Set the path.]
+
+|xref:reference/boost/urls/url/set_encoded_path.adoc[`pass:v[set_encoded_path]`] |pass:v,q[Set the path.]
+
+|xref:reference/boost/urls/url/set_query.adoc[`pass:v[set_query]`] |pass:v,q[Set the query]
+
+|xref:reference/boost/urls/url/set_encoded_query.adoc[`pass:v[set_encoded_query]`] |pass:v,q[Set the query]
+
+|xref:reference/boost/urls/url/set_params.adoc[`pass:v[set_params]`] |pass:v,q[Set the query params]
+
+|xref:reference/boost/urls/url/set_encoded_params.adoc[`pass:v[set_encoded_params]`] |pass:v,q[Set the query params]
+
+|xref:reference/boost/urls/url/remove_query.adoc[`pass:v[remove_query]`] |pass:v,q[Remove the query]
+
+|xref:reference/boost/urls/url/remove_fragment.adoc[`pass:v[remove_fragment]`] |pass:v,q[Remove the fragment]
+
+|xref:reference/boost/urls/url/set_fragment.adoc[`pass:v[set_fragment]`] |pass:v,q[Set the fragment.]
+
+|xref:reference/boost/urls/url/set_encoded_fragment.adoc[`pass:v[set_encoded_fragment]`] |pass:v,q[Set the fragment.]
+
+|xref:reference/boost/urls/url/remove_origin.adoc[`pass:v[remove_origin]`] |pass:v,q[Remove the origin component]
+
+|xref:reference/boost/urls/url/normalize.adoc[`pass:v[normalize]`] |pass:v,q[Normalize the URL components]
+
+|xref:reference/boost/urls/url/normalize_scheme.adoc[`pass:v[normalize_scheme]`] |pass:v,q[Normalize the URL scheme]
+
+|xref:reference/boost/urls/url/normalize_authority.adoc[`pass:v[normalize_authority]`] |pass:v,q[Normalize the URL authority]
+
+|xref:reference/boost/urls/url/normalize_path.adoc[`pass:v[normalize_path]`] |pass:v,q[Normalize the URL path]
+
+|xref:reference/boost/urls/url/normalize_query.adoc[`pass:v[normalize_query]`] |pass:v,q[Normalize the URL query]
+
+|xref:reference/boost/urls/url/normalize_fragment.adoc[`pass:v[normalize_fragment]`] |pass:v,q[Normalize the URL fragment]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/url/8friend-02.adoc[`pass:v[hash]`] |
+|xref:reference/boost/urls/url/8friend-0c.adoc[`pass:v[swap]`] |pass:v,q[Swap]
+
+|===
+
+=== Description
+
+pass:v,q[This container owns a url, represented] pass:v,q[by a null-terminated character buffer]
+pass:v,q[which is managed by performing dymamic]
+pass:v,q[memory allocations as needed.]
+pass:v,q[The contents may be inspected and modified,]
+pass:v,q[and the implementation maintains a useful]
+pass:v,q[invariant: changes to the url always]
+pass:v,q[leave it in a valid state.]
+
+=== Exception Safety
+
+* pass:v,q[Functions marked `noexcept` provide the]
+pass:v,q[no-throw guarantee, otherwise:]
+
+* pass:v,q[Functions which throw offer the strong]
+pass:v,q[exception safety guarantee.]
+
+=== BNF
+[,cpp]
+----
+URI-reference = URI / relative-ref
+
+URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+
+absolute-URI  = scheme ":" hier-part [ "?" query ]
+----
+
+=== Specification
+
+* link:https://tools.ietf.org/html/rfc3986[Uniform Resource Identifier (URI): Generic Syntax (rfc3986)]
+
+

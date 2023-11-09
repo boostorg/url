@@ -1,0 +1,20 @@
+:relfileprefix: ../../../../
+[#E9231C134DA05A21218502CB85A1B14400829E80]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/grammar/optional_rule_t/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* end) const;
+----
+
+Declared in file <include/boost/url/grammar/optional_rule.hpp> on line 71
+
+Defined in file <include/boost/url/grammar/impl/optional_rule.hpp> on line 19
+

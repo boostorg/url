@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#FAD7D9B6A21CE601C4126782FFC94880962AE1F2]
+== traits_type
+
+pass:v,q[The character traits]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef char_traits<char> traits_type;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 87
+

@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#DDE4BD3204D80F0410CCA6BB79CD2ED350002A59]
+== operator=
+
+pass:v,q[Copy Assignment.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]&
+operator=(const xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]&) = default;
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 85
+

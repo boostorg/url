@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#44F36C367A321F09B2C31B8FC67E2CC87DDB5DE9]
+== const_pointer
+
+pass:v,q[The const pointer type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef const char* const_pointer;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 93
+

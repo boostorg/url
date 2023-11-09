@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#421DE41A12019D6C02E4E76D0571C45FBA3193D8]
+== authority_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+authority_view(const xref:reference/boost/urls/authority_view.adoc[authority_view]&) noexcept = default;
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 163
+
+Defined in file <src/authority_view.cpp> on line 69
+

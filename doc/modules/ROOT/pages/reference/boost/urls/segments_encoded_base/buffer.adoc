@@ -1,0 +1,38 @@
+:relfileprefix: ../../../
+[#EFBFD3ADB6B1692DDD756690B2AB2BC5981FAED8]
+== buffer
+
+pass:v,q[Return the referenced character buffer.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+buffer() const noexcept;
+----
+
+Declared in file <include/boost/url/segments_encoded_base.hpp> on line 158
+
+Defined in file <src/segments_encoded_base.cpp> on line 58
+
+=== Description
+
+pass:v,q[This function returns the character] pass:v,q[buffer referenced by the view.]
+pass:v,q[The returned string may contain]
+pass:v,q[percent escapes.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "/path/to/file.txt" ).encoded_segments().buffer() == "/path/to/file.txt" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,33 @@
+:relfileprefix: ../../../
+[#B7EED1590A282ABB495C629026EEF41CD7ECE55D]
+== url
+
+pass:v,q[Return the referenced url]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_base.adoc[url_base]&
+url() const noexcept;
+----
+
+Defined in file <include/boost/url/segments_ref.hpp> on line 238
+
+=== Description
+
+pass:v,q[This function returns the url referenced] pass:v,q[by the view.]
+
+=== Example
+[,cpp]
+----
+url u( "/path/to/file.txt" );
+
+assert( &u.segments().url() == &u );
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,181 @@
+:relfileprefix: ../../
+[#77F84C972C82DC0BDEE8BF4C7140FB0784F010D0]
+== Class authority_view
+
+pass:v,q[A non-owning reference to a valid authority]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class authority_view
+    : xref:reference/boost/urls/detail.adoc[detail]::xref:reference/boost/urls/detail/parts_base.adoc[parts_base];
+----
+
+Declared in file <include/boost/url/detail/url_impl.hpp> on line 25
+
+Defined in file <include/boost/url/authority_view.hpp> on line 82
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/authority_view/2destructor.adoc[`pass:v[~authority_view]`] |pass:v,q[Destructor]
+
+|xref:reference/boost/urls/authority_view/2constructor-0e.adoc[`pass:v[authority_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/authority_view/2constructor-03.adoc[`pass:v[authority_view]`] |pass:v,q[Construct from a string.]
+
+|xref:reference/boost/urls/authority_view/2constructor-04.adoc[`pass:v[authority_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/authority_view/operator_assign.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/authority_view/size.adoc[`pass:v[size]`] |pass:v,q[Return the number of characters in the authority]
+
+|xref:reference/boost/urls/authority_view/empty.adoc[`pass:v[empty]`] |pass:v,q[Return true if the authority is empty]
+
+|xref:reference/boost/urls/authority_view/data.adoc[`pass:v[data]`] |pass:v,q[Return a pointer to the first character]
+
+|xref:reference/boost/urls/authority_view/buffer.adoc[`pass:v[buffer]`] |pass:v,q[Return the complete authority]
+
+|xref:reference/boost/urls/authority_view/has_userinfo.adoc[`pass:v[has_userinfo]`] |pass:v,q[Return true if a userinfo is present]
+
+|xref:reference/boost/urls/authority_view/userinfo.adoc[`pass:v[userinfo]`] |pass:v,q[Return the userinfo]
+
+|xref:reference/boost/urls/authority_view/encoded_userinfo.adoc[`pass:v[encoded_userinfo]`] |pass:v,q[Return the userinfo]
+
+|xref:reference/boost/urls/authority_view/user.adoc[`pass:v[user]`] |pass:v,q[Return the user]
+
+|xref:reference/boost/urls/authority_view/encoded_user.adoc[`pass:v[encoded_user]`] |pass:v,q[Return the user]
+
+|xref:reference/boost/urls/authority_view/has_password.adoc[`pass:v[has_password]`] |pass:v,q[Return true if a password is present]
+
+|xref:reference/boost/urls/authority_view/password.adoc[`pass:v[password]`] |pass:v,q[Return the password]
+
+|xref:reference/boost/urls/authority_view/encoded_password.adoc[`pass:v[encoded_password]`] |pass:v,q[Return the password]
+
+|xref:reference/boost/urls/authority_view/host_type.adoc[`pass:v[host_type]`] |pass:v,q[Return the host type]
+
+|xref:reference/boost/urls/authority_view/host.adoc[`pass:v[host]`] |pass:v,q[Return the host]
+
+|xref:reference/boost/urls/authority_view/encoded_host.adoc[`pass:v[encoded_host]`] |pass:v,q[Return the host]
+
+|xref:reference/boost/urls/authority_view/host_address.adoc[`pass:v[host_address]`] |pass:v,q[Return the host]
+
+|xref:reference/boost/urls/authority_view/encoded_host_address.adoc[`pass:v[encoded_host_address]`] |pass:v,q[Return the host]
+
+|xref:reference/boost/urls/authority_view/host_ipv4_address.adoc[`pass:v[host_ipv4_address]`] |pass:v,q[Return the host IPv4 address]
+
+|xref:reference/boost/urls/authority_view/host_ipv6_address.adoc[`pass:v[host_ipv6_address]`] |pass:v,q[Return the host IPv6 address]
+
+|xref:reference/boost/urls/authority_view/host_ipvfuture.adoc[`pass:v[host_ipvfuture]`] |pass:v,q[Return the host IPvFuture address]
+
+|xref:reference/boost/urls/authority_view/host_name.adoc[`pass:v[host_name]`] |pass:v,q[Return the host name]
+
+|xref:reference/boost/urls/authority_view/encoded_host_name.adoc[`pass:v[encoded_host_name]`] |pass:v,q[Return the host name]
+
+|xref:reference/boost/urls/authority_view/has_port.adoc[`pass:v[has_port]`] |pass:v,q[Return true if a port is present]
+
+|xref:reference/boost/urls/authority_view/port.adoc[`pass:v[port]`] |pass:v,q[Return the port]
+
+|xref:reference/boost/urls/authority_view/port_number.adoc[`pass:v[port_number]`] |pass:v,q[Return the port]
+
+|xref:reference/boost/urls/authority_view/encoded_host_and_port.adoc[`pass:v[encoded_host_and_port]`] |pass:v,q[Return the host and port]
+
+|xref:reference/boost/urls/authority_view/compare.adoc[`pass:v[compare]`] |pass:v,q[Return the result of comparing this with another authority]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/authority_view/8friend-0f.adoc[`pass:v[url_impl]`] |
+|xref:reference/boost/urls/authority_view/8friend-00c.adoc[`pass:v[operator==]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/authority_view/8friend-0c.adoc[`pass:v[operator!=]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/authority_view/8friend-076.adoc[`pass:v[operator<]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/authority_view/8friend-007.adoc[`pass:v[operator<=]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/authority_view/8friend-0d.adoc[`pass:v[operator>]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/authority_view/8friend-072.adoc[`pass:v[operator>=]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/authority_view/8friend-0a.adoc[`pass:v[operator<<]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type represent valid authority] pass:v,q[strings constructed from a parsed, external]
+pass:v,q[character buffer whose storage is managed]
+pass:v,q[by the caller. That is, it acts like a]
+pass:v,q[`core::string_view` in terms of ownership.]
+pass:v,q[The caller is responsible for ensuring]
+pass:v,q[that the lifetime of the underlying]
+pass:v,q[character buffer extends until it is no]
+pass:v,q[longer referenced.]
+
+=== Example 1
+pass:v,q[Construction from a string parses the input]
+pass:v,q[as an]
+pass:v,q[authority]
+pass:v,q[and throws an]
+pass:v,q[exception on error. Upon success, the]
+pass:v,q[constructed object points to the passed]
+pass:v,q[character buffer; ownership is not]
+pass:v,q[transferred.]
+[,cpp]
+----
+authority_view a( "user:pass@www.example.com:8080" );
+----
+
+=== Example 2
+pass:v,q[The parsing function]
+xref:reference/boost/urls/parse_authority.adoc[parse_authority]
+pass:v,q[returns]
+pass:v,q[a]
+pass:v,q[result]
+pass:v,q[containing either a valid]
+xref:reference/boost/urls/authority_view/2constructor-0e.adoc[authority_view]
+pass:v,q[upon succcess, otherwise it]
+pass:v,q[contain an error. The error can be converted to]
+pass:v,q[an exception by the caller if desired:]
+[,cpp]
+----
+system::result< authority_view > rv = parse_authority( "user:pass@www.example.com:8080" );
+----
+
+=== BNF
+[,cpp]
+----
+authority     = [ userinfo "@" ] host [ ":" port ]
+
+userinfo      = user [ ":" [ password ] ]
+
+user          = *( unreserved / pct-encoded / sub-delims )
+password      = *( unreserved / pct-encoded / sub-delims / ":" )
+
+host          = IP-literal / IPv4address / reg-name
+
+port          = *DIGIT
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2[3.2. Authority (rfc3986)]
+
+

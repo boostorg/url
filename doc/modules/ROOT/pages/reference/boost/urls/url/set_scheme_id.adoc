@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#ACE687DA825E28EF815374C1F74422B85D05442C]
+== set_scheme_id
+
+xref:reference/boost/urls/url_base/set_scheme_id.adoc[url_base::set_scheme_id]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+set_scheme_id(xref:reference/boost/urls/scheme.adoc[scheme] id);
+----
+
+Defined in file <include/boost/url/url.hpp> on line 411
+

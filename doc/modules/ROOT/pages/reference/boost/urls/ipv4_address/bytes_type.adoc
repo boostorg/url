@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#2B511CD83AAC035B0FF7F6625ABF715F12D35A67]
+== bytes_type
+
+pass:v,q[The type used to represent an address as an array of bytes]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using bytes_type = array<unsigned char, 4>;
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 71
+

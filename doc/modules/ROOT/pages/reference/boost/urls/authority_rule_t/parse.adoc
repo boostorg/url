@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#96BDD8B3C183C50124E71ED9D3662F9EB18B025D]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/authority_rule_t/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* end) const noexcept;
+----
+
+Declared in file <include/boost/url/rfc/authority_rule.hpp> on line 55
+
+Defined in file <src/rfc/authority_rule.cpp> on line 26
+

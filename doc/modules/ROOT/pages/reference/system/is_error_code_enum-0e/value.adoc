@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#1E33317679F4E3492D85582AE651AEDB19B4632A]
+== value
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+static
+const bool value;
+----
+
+Declared in file <include/boost/url/grammar/impl/error.hpp> on line 21
+
+

@@ -1,0 +1,27 @@
+:relfileprefix: ../../../../
+[#A580521833AE2748643EF961367C992AAA978B51]
+== operator*
+
+pass:v,q[Return the referenced object]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+T&
+operator*() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/recycled.hpp> on line 467
+
+=== Description
+
+
+=== Preconditions
+[,cpp]
+----
+not this->empty()
+----
+
+

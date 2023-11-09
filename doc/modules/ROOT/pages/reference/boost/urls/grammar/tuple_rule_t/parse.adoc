@@ -1,0 +1,20 @@
+:relfileprefix: ../../../../
+[#9FABC1802F9AAD454986927591E16B1FD8D82DC8]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/grammar/tuple_rule_t/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* end) const;
+----
+
+Declared in file <include/boost/url/grammar/tuple_rule.hpp> on line 117
+
+Defined in file <include/boost/url/grammar/impl/tuple_rule.hpp> on line 265
+

@@ -1,0 +1,34 @@
+:relfileprefix: ../../../
+[#F70CD60B81261B09A9576AD32E294224B8FDE110]
+== url
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+url(const xref:reference/boost/urls/url.adoc[url]& u);
+----
+
+Defined in file <include/boost/url/url.hpp> on line 243
+
+=== Description
+
+pass:v,q[The newly constructed object] pass:v,q[contains a copy of `u`.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer() == u.buffer() && this->buffer().data() != u.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Linear in `u.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

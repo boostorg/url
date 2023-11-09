@@ -1,0 +1,38 @@
+:relfileprefix: ../../../
+[#00EAE4954C90B7A626D466A0004891B544BCD55A]
+== erase
+
+pass:v,q[Erase params]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+erase(
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] key,
+    xref:reference/boost/urls/ignore_case_param.adoc[ignore_case_param] ic = = {}) noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_ref.hpp> on line 657
+
+Defined in file <src/params_encoded_ref.cpp> on line 108
+
+=== Description
+
+pass:v,q[All iterators are invalidated.]
+
+=== Postconditions
+[,cpp]
+----
+this->count( key, ic ) == 0
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+

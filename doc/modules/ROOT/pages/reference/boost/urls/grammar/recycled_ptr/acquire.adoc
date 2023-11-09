@@ -1,0 +1,32 @@
+:relfileprefix: ../../../../
+[#1FB2D8B77EC0A957E1B198C70860D01089288EA3]
+== acquire
+
+pass:v,q[Return the referenced object]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+T&
+acquire();
+----
+
+Declared in file <include/boost/url/grammar/recycled.hpp> on line 484
+
+Defined in file <include/boost/url/grammar/impl/recycled.hpp> on line 195
+
+=== Description
+
+pass:v,q[If this references an object, it is] pass:v,q[returned. Otherwise, exclusive ownership]
+pass:v,q[of a new object of type `T` is acquired]
+pass:v,q[and returned.]
+
+=== Postconditions
+[,cpp]
+----
+not this->empty()
+----
+
+

@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#C09F005DE770948FAB82A2FA8F293C22C43C9733]
+== to_upper
+
+pass:v,q[Return c converted to uppercase]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+char
+to_upper(char c) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/ci_string.hpp> on line 83
+
+=== Description
+
+pass:v,q[This function returns the character,] pass:v,q[converting it to uppercase if it is]
+pass:v,q[lowercase.]
+pass:v,q[The function is defined only for]
+pass:v,q[low-ASCII characters.]
+
+=== Example
+[,cpp]
+----
+assert( to_upper( 'a' ) == 'A' );
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

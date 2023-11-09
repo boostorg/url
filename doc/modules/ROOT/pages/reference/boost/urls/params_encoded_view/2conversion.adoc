@@ -1,0 +1,48 @@
+:relfileprefix: ../../../
+[#3CAB04366C0FB164E244FE84644267C373E70898]
+== operator params_view
+
+pass:v,q[Conversion]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+operator xref:reference/boost/urls/params_view.adoc[params_view]() const noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_view.hpp> on line 223
+
+Defined in file <src/params_encoded_view.cpp> on line 37
+
+=== Description
+
+pass:v,q[This conversion returns a new view which] pass:v,q[references the same underlying character]
+pass:v,q[buffer, and whose iterators and members]
+pass:v,q[return ordinary strings with decoding]
+pass:v,q[applied to any percent escapes.]
+pass:v,q[Ownership is not transferred; the caller]
+pass:v,q[is responsible for ensuring the lifetime]
+pass:v,q[of the buffer extends until it is no]
+pass:v,q[longer referenced.]
+
+=== Example
+[,cpp]
+----
+params_view qp = parse_path( "/path/to/file.txt" ).value();
+----
+
+=== Postconditions
+[,cpp]
+----
+params_view( *this ).buffer().data() == this->buffer().data()
+----
+
+=== Complexity
+pass:v,q[Constant]
+
+=== Exception Safety
+pass:v,q[Throws nothing]
+
+

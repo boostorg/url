@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#3F9990991AAD441CCA0F6B55E072848203E0048D]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/relative_ref_rule_t/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* end) const noexcept;
+----
+
+Declared in file <include/boost/url/rfc/relative_ref_rule.hpp> on line 55
+
+Defined in file <src/rfc/relative_ref_rule.cpp> on line 27
+

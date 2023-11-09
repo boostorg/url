@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#826AC717CF161BCB2B94F1CC479A70A33A0D8EE3]
+== operator--
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_base/iterator.adoc[iterator]
+operator--(int) noexcept;
+----
+
+Defined in file <include/boost/url/impl/params_base.hpp> on line 83
+

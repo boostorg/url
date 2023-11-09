@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#EEE8F4CF7FF66C44FA1003F56FA5E4D95170DD2B]
+== preserve_size_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+preserve_size_t(xref:reference/boost/urls/string_token/preserve_size_t/string_type.adoc[string_type]& s) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 294
+

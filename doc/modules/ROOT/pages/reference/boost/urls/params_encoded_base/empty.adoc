@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#1409D46CCDE8AD0F044376C0E9C33430F2AA9F3B]
+== empty
+
+pass:v,q[Return true if there are no params]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+empty() const noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_base.hpp> on line 192
+
+Defined in file <src/params_encoded_base.cpp> on line 65
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( ! url_view( "?key=value" ).encoded_params().empty() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

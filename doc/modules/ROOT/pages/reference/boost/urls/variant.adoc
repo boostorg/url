@@ -1,0 +1,17 @@
+:relfileprefix: ../../
+[#1615409D4851D55E1C0D0B7A4CF4171B26A44077]
+== variant
+
+pass:v,q[The type of variant used by the library]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class... Ts>
+using variant = variant<Ts...>;
+----
+
+Defined in file <include/boost/url/variant.hpp> on line 22
+

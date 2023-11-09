@@ -1,0 +1,28 @@
+:relfileprefix: ../../
+[#EF9156C9BEF0586DFFABDD932F9603F16178A41B]
+== Class authority_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct authority_rule_t;
+----
+
+Defined in file <include/boost/url/rfc/authority_rule.hpp> on line 50
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/authority_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/authority_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+

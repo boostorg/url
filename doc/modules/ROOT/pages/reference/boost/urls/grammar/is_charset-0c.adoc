@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#CA3B12F07F972E911529AC55DCD0162DB49E2849]
+== Class is_charset
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class T>
+struct xref:reference/boost/urls/grammar/is_charset-06.adoc[is_charset]<T, xref:reference/boost/urls/void_t.adoc[void_t]<decltype(std::declval<bool &>() = std::declval<const T &>().operator()(std::declval<char>()))>>
+    : xref:reference/std.adoc[std]::xref:reference/std/true_type.adoc[true_type];
+----
+
+Defined in file <include/boost/url/grammar/charset.hpp> on line 53
+
+

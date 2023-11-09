@@ -1,0 +1,47 @@
+:relfileprefix: ../../../
+[#5D5B2089C9F1773A7FD1F0CA5E7FC5DAB105353B]
+== find_last
+
+pass:v,q[Find a matching key]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+find_last(
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] key,
+    xref:reference/boost/urls/ignore_case_param.adoc[ignore_case_param] ic = = {}) const noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_base.hpp> on line 456
+
+Defined in file <include/boost/url/impl/params_encoded_base.hpp> on line 158
+
+=== Description
+
+pass:v,q[This function examines the parameters] pass:v,q[in the container to find a match for]
+pass:v,q[the specified key, which may contain]
+pass:v,q[percent escapes.]
+pass:v,q[The comparison is performed as if all]
+pass:v,q[escaped characters were decoded first.]
+pass:v,q[The search starts from the last param]
+pass:v,q[and proceeds backwards until either the]
+pass:v,q[key is found or the beginning of the]
+pass:v,q[range is reached, in which case `end()`]
+pass:v,q[is returned.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "?first=John&last=Doe" ).encoded_params().find_last( "last" )->value == "Doe" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->buffer().size()`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+

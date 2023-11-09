@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#F4D37ECEF555509146CD83E0D85B996E7BFB151F]
+== append_to_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+append_to_t(xref:reference/boost/urls/string_token/append_to_t/string_type.adoc[string_type]& s) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 165
+

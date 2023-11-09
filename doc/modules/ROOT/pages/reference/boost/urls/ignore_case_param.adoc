@@ -1,0 +1,37 @@
+:relfileprefix: ../../
+[#4404DC7846DE6CC5AB8455C6906D910C58BEED66]
+== Class ignore_case_param
+
+pass:v,q[An optional parameter to determine case-sensitivity]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class ignore_case_param;
+----
+
+Defined in file <include/boost/url/ignore_case.hpp> on line 46
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ignore_case_param/2constructor-03.adoc[`pass:v[ignore_case_param]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/ignore_case_param/2constructor-01.adoc[`pass:v[ignore_case_param]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/ignore_case_param/2conversion.adoc[`pass:v[operator bool]`] |pass:v,q[True if an algorithm should ignore case]
+
+|===
+
+=== Description
+
+pass:v,q[Functions may use parameters of this type] pass:v,q[to allow the user to optionally indicate]
+pass:v,q[that comparisons should be case-insensitive]
+pass:v,q[when the value]
+xref:reference/boost/urls/ignore_case.adoc[ignore_case]
+pass:v,q[is passed.]
+
+

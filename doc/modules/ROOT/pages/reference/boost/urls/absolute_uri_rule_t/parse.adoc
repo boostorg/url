@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#66C421074067C525E44F3E15565D35A221BF7CDF]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/absolute_uri_rule_t/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* end) const noexcept;
+----
+
+Declared in file <include/boost/url/rfc/absolute_uri_rule.hpp> on line 60
+
+Defined in file <src/rfc/absolute_uri_rule.cpp> on line 27
+

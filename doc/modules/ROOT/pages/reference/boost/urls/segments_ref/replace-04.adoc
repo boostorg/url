@@ -1,0 +1,38 @@
+:relfileprefix: ../../../
+[#4B614AD779165837DC3F13A08F16E2DE1D9296DC]
+== replace
+
+pass:v,q[Replace segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator]
+replace(
+    xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator] from,
+    xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator] to,
+    string_view s);
+----
+
+Declared in file <include/boost/url/segments_ref.hpp> on line 585
+
+Defined in file <src/segments_ref.cpp> on line 141
+
+=== Description
+
+pass:v,q[This function replaces a range of] pass:v,q[segments with one segment.]
+pass:v,q[Reserved characters in the string are]
+pass:v,q[automatically escaped.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`from` or come after are invalidated.]
+
+=== Complexity
+pass:v,q[Linear in `s.size() + this->url().encoded_resouce().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

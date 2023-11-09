@@ -1,0 +1,21 @@
+:relfileprefix: ../../../
+[#A3E938FF9B990E6EF0008A19AF0A9022903D6D30]
+== bad_pct_hexdig
+
+pass:v,q[Bad hexadecimal digit.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bad_pct_hexdig
+----
+
+Defined in file <include/boost/url/error.hpp> on line 54
+
+=== Description
+
+pass:v,q[This error condition is fatal.]
+
+

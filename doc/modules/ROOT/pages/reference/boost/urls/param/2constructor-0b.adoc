@@ -1,0 +1,61 @@
+:relfileprefix: ../../../
+[#BAC57C288C40243B978B4564FAB69440E9AE8E6A]
+== param
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class OptionalString>
+param(
+    string_view key,
+    const OptionalString& value);
+----
+
+Defined in file <include/boost/url/param.hpp> on line 278
+
+=== Description
+
+pass:v,q[This constructs a parameter with a key] pass:v,q[and value.]
+pass:v,q[No validation is performed on the strings.]
+pass:v,q[Ownership of the key and value is acquired]
+pass:v,q[by making copies.]
+
+=== Example
+[,cpp]
+----
+param qp( "key", "value" );
+----
+[,cpp]
+----
+param qp( "key", optional<core::string_view>("value") );
+----
+[,cpp]
+----
+param qp( "key", boost::none );
+----
+[,cpp]
+----
+param qp( "key", nullptr );
+----
+[,cpp]
+----
+param qp( "key", no_value );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->key == key && this->value == value && this->has_value == true
+----
+
+=== Complexity
+pass:v,q[Linear in `key.size() + value.size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+

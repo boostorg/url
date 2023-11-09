@@ -1,0 +1,36 @@
+:relfileprefix: ../../../
+[#7AE26581C5E08193970258FF3AFB411C9818AA7D]
+== pct_string_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+pct_string_view(const xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]& other) = default;
+----
+
+Defined in file <include/boost/url/pct_string_view.hpp> on line 138
+
+=== Description
+
+pass:v,q[The copy references the same] pass:v,q[underlying character buffer.] pass:v,q[Ownership is not transferred.]
+
+=== Postconditions
+[,cpp]
+----
+this->data() == other.data()
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== other The string to copy.
+
+

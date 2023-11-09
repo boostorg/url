@@ -1,0 +1,145 @@
+:relfileprefix: ../../
+[#22113F575E9BDB0057DAAFACE10B65833A335A54]
+== Class decode_view
+
+pass:v,q[A reference to a valid, percent-encoded string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class decode_view;
+----
+
+Declared in file <include/boost/url/decode_view.hpp> on line 27
+
+Declared in file <include/boost/url/pct_string_view.hpp> on line 31
+
+Defined in file <include/boost/url/decode_view.hpp> on line 87
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/decode_view/iterator.adoc[`pass:v[iterator]`] |
+|===
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/decode_view/value_type.adoc[`pass:v[value_type]`] |pass:v,q[The value type]
+
+|xref:reference/boost/urls/decode_view/reference.adoc[`pass:v[reference]`] |pass:v,q[The reference type]
+
+|xref:reference/boost/urls/decode_view/const_reference.adoc[`pass:v[const_reference]`] |pass:v,q[The reference type]
+
+|xref:reference/boost/urls/decode_view/size_type.adoc[`pass:v[size_type]`] |pass:v,q[The unsigned integer type]
+
+|xref:reference/boost/urls/decode_view/difference_type.adoc[`pass:v[difference_type]`] |pass:v,q[The signed integer type]
+
+|xref:reference/boost/urls/decode_view/const_iterator.adoc[`pass:v[const_iterator]`] |xref:reference/boost/urls/decode_view/iterator.adoc[iterator]
+
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/decode_view/2constructor-07.adoc[`pass:v[decode_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/decode_view/2constructor-03.adoc[`pass:v[decode_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/decode_view/empty.adoc[`pass:v[empty]`] |pass:v,q[Return true if the string is empty]
+
+|xref:reference/boost/urls/decode_view/size.adoc[`pass:v[size]`] |pass:v,q[Return the number of decoded characters]
+
+|xref:reference/boost/urls/decode_view/begin.adoc[`pass:v[begin]`] |pass:v,q[Return an iterator to the beginning]
+
+|xref:reference/boost/urls/decode_view/end.adoc[`pass:v[end]`] |pass:v,q[Return an iterator to the end]
+
+|xref:reference/boost/urls/decode_view/front.adoc[`pass:v[front]`] |pass:v,q[Return the first character]
+
+|xref:reference/boost/urls/decode_view/back.adoc[`pass:v[back]`] |pass:v,q[Return the last character]
+
+|xref:reference/boost/urls/decode_view/starts_with-01.adoc[`pass:v[starts_with]`] |pass:v,q[Checks if the string begins with the given prefix]
+
+|xref:reference/boost/urls/decode_view/ends_with-04.adoc[`pass:v[ends_with]`] |pass:v,q[Checks if the string ends with the given prefix]
+
+|xref:reference/boost/urls/decode_view/starts_with-0b.adoc[`pass:v[starts_with]`] |pass:v,q[Checks if the string begins with the given prefix]
+
+|xref:reference/boost/urls/decode_view/ends_with-0d.adoc[`pass:v[ends_with]`] |pass:v,q[Checks if the string ends with the given prefix]
+
+|xref:reference/boost/urls/decode_view/find.adoc[`pass:v[find]`] |pass:v,q[Finds the first occurrence of character in this view]
+
+|xref:reference/boost/urls/decode_view/rfind.adoc[`pass:v[rfind]`] |pass:v,q[Finds the first occurrence of character in this view]
+
+|xref:reference/boost/urls/decode_view/remove_prefix.adoc[`pass:v[remove_prefix]`] |pass:v,q[Remove the first characters]
+
+|xref:reference/boost/urls/decode_view/remove_suffix.adoc[`pass:v[remove_suffix]`] |pass:v,q[Remove the last characters]
+
+|xref:reference/boost/urls/decode_view/options.adoc[`pass:v[options]`] |pass:v,q[Return the decoding options]
+
+|xref:reference/boost/urls/decode_view/compare-02.adoc[`pass:v[compare]`] |pass:v,q[Return the result of comparing to another string]
+
+|xref:reference/boost/urls/decode_view/compare-01.adoc[`pass:v[compare]`] |pass:v,q[Return the result of comparing to another string]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/decode_view/8friend-0f.adoc[`pass:v[]`] |
+|xref:reference/boost/urls/decode_view/8friend-0aa.adoc[`pass:v[operator==]`] |
+|xref:reference/boost/urls/decode_view/8friend-04.adoc[`pass:v[operator!=]`] |
+|xref:reference/boost/urls/decode_view/8friend-0e.adoc[`pass:v[operator<]`] |
+|xref:reference/boost/urls/decode_view/8friend-0c.adoc[`pass:v[operator<=]`] |
+|xref:reference/boost/urls/decode_view/8friend-07.adoc[`pass:v[operator>]`] |
+|xref:reference/boost/urls/decode_view/8friend-01.adoc[`pass:v[operator>=]`] |
+|xref:reference/boost/urls/decode_view/8friend-0a1.adoc[`pass:v[operator<<]`] |
+|===
+
+=== Description
+
+pass:v,q[These views reference strings in parts of URLs] pass:v,q[or other components that are percent-encoded.]
+pass:v,q[The special characters (those not in the]
+pass:v,q[allowed character set) are stored as three]
+pass:v,q[character escapes that consist of a percent]
+pass:v,q[sign ('%%') followed by a two-digit hexadecimal]
+pass:v,q[number of the corresponding unescaped character]
+pass:v,q[code, which may be part of a UTF-8 code point]
+pass:v,q[depending on the context.]
+pass:v,q[The view refers to the original character]
+pass:v,q[buffer and only decodes escaped sequences when]
+pass:v,q[needed. In particular these operations perform]
+pass:v,q[percent-decoding automatically without the]
+pass:v,q[need to allocate memory:]
+
+* pass:v,q[Iteration of the string]
+
+* pass:v,q[Accessing the encoded character buffer]
+
+* pass:v,q[Comparison to encoded or plain strings]
+pass:v,q[These objects can only be constructed from]
+pass:v,q[strings that have a valid percent-encoding,]
+pass:v,q[otherwise construction fails. The caller is]
+pass:v,q[responsible for ensuring that the lifetime]
+pass:v,q[of the character buffer from which the view]
+pass:v,q[is constructed extends unmodified until the]
+pass:v,q[view is no longer accessed.]
+
+=== Operators
+pass:v,q[The following operators are supported between]
+xref:reference/boost/urls/decode_view/2constructor-07.adoc[decode_view]
+pass:v,q[and any object that is convertible]
+pass:v,q[to `core::string_view`]
+[,cpp]
+----
+bool operator==( decode_view, decode_view ) noexcept;
+bool operator!=( decode_view, decode_view ) noexcept;
+bool operator<=( decode_view, decode_view ) noexcept;
+bool operator< ( decode_view, decode_view ) noexcept;
+bool operator> ( decode_view, decode_view ) noexcept;
+bool operator>=( decode_view, decode_view ) noexcept;
+----
+
+

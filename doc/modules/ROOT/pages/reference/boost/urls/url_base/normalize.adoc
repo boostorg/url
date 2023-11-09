@@ -1,0 +1,32 @@
+:relfileprefix: ../../../
+[#95D526413A09346439F23DF732D8BCE5C95C19B3]
+== normalize
+
+pass:v,q[Normalize the URL components]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_base.adoc[url_base]&
+normalize();
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 2539
+
+Defined in file <src/url_base.cpp> on line 1926
+
+=== Description
+
+pass:v,q[Applies Syntax-based normalization to] pass:v,q[all components of the URL.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2[6.2.2 Syntax-Based Normalization (rfc3986)]
+
+

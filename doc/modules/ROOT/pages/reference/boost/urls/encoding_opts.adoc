@@ -1,0 +1,30 @@
+:relfileprefix: ../../
+[#05BD38A4DC04C729C9933958F5AF4609E781D779]
+== Class encoding_opts
+
+pass:v,q[Percent-encoding options]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct encoding_opts;
+----
+
+Defined in file <include/boost/url/encoding_opts.hpp> on line 31
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/encoding_opts/2constructor.adoc[`pass:v[encoding_opts]`] |
+|===
+
+=== Description
+
+pass:v,q[These options are used to customize] pass:v,q[the behavior of algorithms which use]
+pass:v,q[percent escapes, such as encoding]
+pass:v,q[or decoding.]
+
+

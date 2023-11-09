@@ -1,0 +1,38 @@
+:relfileprefix: ../../../
+[#91BC988F058A40C1950B3F73E49E9CB9AC53DF02]
+== params_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+params_view(const xref:reference/boost/urls/params_view.adoc[params_view]& other) = default;
+----
+
+Defined in file <include/boost/url/params_view.hpp> on line 103
+
+=== Description
+
+pass:v,q[After construction both views reference] pass:v,q[the same character buffer.]
+pass:v,q[Ownership is not transferred; the caller]
+pass:v,q[is responsible for ensuring the lifetime]
+pass:v,q[of the buffer extends until it is no]
+pass:v,q[longer referenced.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() == other.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing]
+
+

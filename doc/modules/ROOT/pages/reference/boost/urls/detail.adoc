@@ -1,0 +1,9 @@
+:relfileprefix: ../../
+[#3746B43DC581CDE58F65CBBB453EDD6D4B8EBF05]
+== Namespace detail
+
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/detail/parts_base.adoc[`pass:v[parts_base]`] |
+|===

@@ -1,0 +1,37 @@
+:relfileprefix: ../../../
+[#75D74AF14E350955C201C400F070BA32E7537BEE]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]&
+operator=(const xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]& other) = default;
+----
+
+Defined in file <include/boost/url/pct_string_view.hpp> on line 263
+
+=== Description
+
+pass:v,q[The copy references the same] pass:v,q[underlying character buffer.] pass:v,q[Ownership is not transferred.]
+
+=== Postconditions
+[,cpp]
+----
+this->data() == other.data()
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== other The string to copy.
+
+

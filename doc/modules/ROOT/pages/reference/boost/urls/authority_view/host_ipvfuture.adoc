@@ -1,0 +1,51 @@
+:relfileprefix: ../../../
+[#848025E5F213783A8F58F3E3195952CF6CE26E00]
+== host_ipvfuture
+
+pass:v,q[Return the host IPvFuture address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string_view
+host_ipvfuture() const noexcept;
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 975
+
+Defined in file <src/authority_view.cpp> on line 260
+
+=== Description
+
+pass:v,q[If the host type is] xref:reference/boost/urls/host_type/ipvfuture.adoc[host_type::ipvfuture,]
+pass:v,q[this function returns the address as]
+pass:v,q[a string.]
+pass:v,q[Otherwise, if the host type is not an]
+pass:v,q[IPvFuture address, it returns an]
+pass:v,q[empty string.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://[v1fe.d:9]/index.htm" ).host_ipvfuture() == "v1fe.d:9" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+IPvFuture  = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

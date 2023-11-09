@@ -1,0 +1,19 @@
+:relfileprefix: ../../../../
+[#9ED51251D739CA175C1921A81A9D60F2E3EFF486]
+== Friend operator==
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+bool
+operator==(
+    const xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]& it0,
+    const xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]& it1) noexcept;
+----
+
+Defined in file <include/boost/url/impl/params_encoded_base.hpp> on line 97
+

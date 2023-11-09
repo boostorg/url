@@ -1,0 +1,33 @@
+:relfileprefix: ../../../
+[#D71D666F2A9FF7065613549F1487EACC9156AF5D]
+== Class preserve_size_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class Alloc>
+struct preserve_size_t
+    : xref:reference/boost/urls/string_token/arg.adoc[arg];
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 285
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/string_token/preserve_size_t/result_type.adoc[`pass:v[result_type]`] |
+|xref:reference/boost/urls/string_token/preserve_size_t/string_type.adoc[`pass:v[string_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/string_token/preserve_size_t/2constructor.adoc[`pass:v[preserve_size_t]`] |
+|xref:reference/boost/urls/string_token/preserve_size_t/prepare.adoc[`pass:v[prepare]`] |
+|xref:reference/boost/urls/string_token/preserve_size_t/result.adoc[`pass:v[result]`] |
+|===
+

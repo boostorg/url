@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#0D594BD0DC9FFD7A2CAD5E386616BA15F08954C4]
+== Friend recycled
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend xref:reference/boost/urls/grammar/recycled.adoc[recycled]<T>;
+----
+
+Defined in file <include/boost/url/grammar/recycled.hpp> on line 157
+

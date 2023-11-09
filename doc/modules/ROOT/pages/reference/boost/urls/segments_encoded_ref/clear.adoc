@@ -1,0 +1,42 @@
+:relfileprefix: ../../../
+[#28A630F95BCACB5B26F7D8A7B8F9FDD0A14737B9]
+== clear
+
+pass:v,q[Clear the contents of the container]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+clear() noexcept;
+----
+
+Declared in file <include/boost/url/segments_encoded_ref.hpp> on line 279
+
+Defined in file <include/boost/url/impl/segments_encoded_ref.hpp> on line 28
+
+=== Description
+
+pass:v,q[All iterators are invalidated.]
+
+=== Effects
+[,cpp]
+----
+this->url().set_encoded_path( "" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->empty() == true
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size() + this->url().encoded_fragment().size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

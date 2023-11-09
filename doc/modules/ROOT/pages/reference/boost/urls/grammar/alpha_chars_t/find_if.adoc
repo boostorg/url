@@ -1,0 +1,18 @@
+:relfileprefix: ../../../../
+[#29181C5413B49882D5AA79FF5C7490D97711B41C]
+== find_if
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+const char*
+find_if(
+    const char* first,
+    const char* last) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/alpha_chars.hpp> on line 63
+

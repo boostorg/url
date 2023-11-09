@@ -1,0 +1,48 @@
+:relfileprefix: ../../../
+[#93517234A5CCA4156DE867DBA08024B87ABEFF72]
+== port
+
+pass:v,q[Return the port]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string_view
+port() const noexcept;
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 1133
+
+Defined in file <src/authority_view.cpp> on line 303
+
+=== Description
+
+pass:v,q[If present, this function returns a] pass:v,q[string representing the port (which]
+pass:v,q[may be empty).]
+pass:v,q[Otherwise it returns an empty string.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://localhost.com:8080" ).port() == "8080" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+port        = *DIGIT
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3[3.2.3. Port (rfc3986)]
+
+

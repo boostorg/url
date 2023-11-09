@@ -1,0 +1,19 @@
+:relfileprefix: ../../../../
+[#B5BF77D7AB0CB018451A785CF74B5608A7570D13]
+== Friend token_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet_>
+friend
+constexpr
+xref:reference/boost/urls/grammar/token_rule_t.adoc[token_rule_t]<CharSet_>
+token_rule(const CharSet_&) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/token_rule.hpp> on line 73
+

@@ -1,0 +1,41 @@
+:relfileprefix: ../../../
+[#93D7747E7FA1CB9F051A3D06577FFB7F95607367]
+== Class range_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class R0,
+    class R1 = void>
+struct range_rule_t;
+----
+
+Declared in file <include/boost/url/grammar/range_rule.hpp> on line 99
+
+Declared in file <include/boost/url/grammar/range_rule.hpp> on line 279
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 504
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/range_rule_t-09/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/range_rule_t-09/parse.adoc[`pass:v[parse]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/range_rule_t-09/8friend.adoc[`pass:v[range_rule]`] |
+|===
+

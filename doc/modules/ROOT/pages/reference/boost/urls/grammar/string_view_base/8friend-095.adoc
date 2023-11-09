@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#958C4B8B81E323556A97ACA2771D92B46CBB829F]
+== Friend operator==
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class S0,
+    class S1>
+friend
+constexpr
+enable_if<is_match<S0, S1>::value, bool>::type
+operator==(
+    const S0& s0,
+    const S1& s1) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 775
+

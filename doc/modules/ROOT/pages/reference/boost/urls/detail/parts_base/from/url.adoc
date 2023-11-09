@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#F257457A72AB66C005A02355DF22031851187C8A]
+== url
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+url = 1
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 42
+

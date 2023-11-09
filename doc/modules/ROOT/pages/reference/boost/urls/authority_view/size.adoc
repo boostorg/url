@@ -1,0 +1,31 @@
+:relfileprefix: ../../../
+[#42838E01A4DF05D82A5EC3960FDD17DED96D7C5E]
+== size
+
+pass:v,q[Return the number of characters in the authority]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+size() const noexcept;
+----
+
+Defined in file <include/boost/url/authority_view.hpp> on line 191
+
+=== Description
+
+pass:v,q[This function returns the number of] pass:v,q[characters in the authority.]
+
+=== Example
+[,cpp]
+----
+assert( authority_view( "user:pass@www.example.com:8080" ).size() == 30 );
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

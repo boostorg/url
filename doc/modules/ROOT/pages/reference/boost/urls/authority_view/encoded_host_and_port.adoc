@@ -1,0 +1,52 @@
+:relfileprefix: ../../../
+[#E4DD7A06A774F998091D1D4D89928024AF44AB05]
+== encoded_host_and_port
+
+pass:v,q[Return the host and port]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+encoded_host_and_port() const noexcept;
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 1207
+
+Defined in file <src/authority_view.cpp> on line 324
+
+=== Description
+
+pass:v,q[If an authority is present, this] pass:v,q[function returns the host and optional]
+pass:v,q[port as a string, which may be empty.]
+pass:v,q[Otherwise it returns an empty string.]
+pass:v,q[The returned string may contain]
+pass:v,q[percent escapes.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://www.example.com:8080/index.htm" ).encoded_host_and_port() == "www.example.com:8080" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+authority   = [ userinfo "@" ] host [ ":" port ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2.  Host (rfc3986)]
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3[3.2.3. Port (rfc3986)]
+
+

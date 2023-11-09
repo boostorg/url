@@ -1,0 +1,24 @@
+:relfileprefix: ../../../../
+[#96B097F7864B746328B48D282292AED2D88D646E]
+== bin
+
+pass:v,q[Return the referenced recycle bin]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/grammar/recycled.adoc[recycled]<T>&
+bin() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/recycled.hpp> on line 430
+
+=== Description
+
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

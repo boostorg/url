@@ -1,0 +1,31 @@
+:relfileprefix: ../../../
+[#46E4E00C82CD88E335A96A1D648AA1DE2FA88E3B]
+== error_category
+
+pass:v,q[The type of error category used by the library]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using error_category = error_category;
+----
+
+Defined in file <include/boost/url/error_types.hpp> on line 43
+
+=== Description
+
+[NOTE]
+pass:v,q[This alias is no longer supported and] pass:v,q[should not be used in new code. Please use]
+pass:v,q[`system::error_category` instead.]
+pass:v,q[This alias is included for backwards]
+pass:v,q[compatibility with earlier versions of the]
+pass:v,q[library.]
+pass:v,q[However, it will be removed in future releases,]
+pass:v,q[and using it in new code is not recommended.]
+pass:v,q[Please use the updated version instead to]
+pass:v,q[ensure compatibility with future versions of]
+pass:v,q[the library.]
+
+

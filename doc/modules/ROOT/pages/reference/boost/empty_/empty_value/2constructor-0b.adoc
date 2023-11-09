@@ -1,0 +1,22 @@
+:relfileprefix: ../../../
+[#B3FABF50D6FD292E6B620E14F73DE1CC9FA945CB]
+== empty_value
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class U,
+    class... Args>
+constexpr
+empty_value(
+    empty_init_t,
+    U&& value,
+    Args&&... args);
+----
+
+Defined in file </home/runner/work/mrdocs/mrdocs/boost/libs/core/include/boost/core/empty_value.hpp> on line 68
+

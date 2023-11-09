@@ -1,0 +1,223 @@
+:relfileprefix: ../
+[#7679395CF7D1D8E68CA4261A1F77164B17137727]
+== Namespace urls
+
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/make_void.adoc[`pass:v[make_void]`] |
+|xref:reference/boost/urls/void_t.adoc[`pass:v[void_t]`] |
+|xref:reference/boost/urls/encoding_opts.adoc[`pass:v[encoding_opts]`] |pass:v,q[Percent-encoding options]
+
+|xref:reference/boost/urls/error_types.adoc[`pass:v[error_types]`] |
+|xref:reference/boost/urls/string_token.adoc[`pass:v[string_token]`] |
+|xref:reference/boost/urls/grammar.adoc[`pass:v[grammar]`] |
+|xref:reference/boost/urls/decode_view.adoc[`pass:v[decode_view]`] |pass:v,q[A reference to a valid, percent-encoded string]
+
+|xref:reference/boost/urls/pct_string_view.adoc[`pass:v[pct_string_view]`] |pass:v,q[A reference to a valid percent-encoded string]
+
+|xref:reference/boost/urls/make_pct_string_view_unsafe.adoc[`pass:v[make_pct_string_view_unsafe]`] |
+|xref:reference/boost/urls/make_pct_string_view.adoc[`pass:v[make_pct_string_view]`] |pass:v,q[Return a valid percent-encoded string]
+
+|xref:reference/boost/urls/operator_eq-0e.adoc[`pass:v[operator==]`] |
+|xref:reference/boost/urls/operator_not_eq-03b.adoc[`pass:v[operator!=]`] |
+|xref:reference/boost/urls/operator_lt-0b.adoc[`pass:v[operator<]`] |
+|xref:reference/boost/urls/operator_le-06.adoc[`pass:v[operator<=]`] |
+|xref:reference/boost/urls/operator_gt-02.adoc[`pass:v[operator>]`] |
+|xref:reference/boost/urls/operator_ge-01.adoc[`pass:v[operator>=]`] |
+|xref:reference/boost/urls/operator_lshift-04.adoc[`pass:v[operator<<]`] |pass:v,q[Format the string with percent-decoding applied to the output stream]
+
+|xref:reference/boost/urls/host_type.adoc[`pass:v[host_type]`] |pass:v,q[Identifies the type of host in a URL.]
+
+|xref:reference/boost/urls/error.adoc[`pass:v[error]`] |pass:v,q[Error codes returned the library]
+
+|xref:reference/boost/urls/make_error_code.adoc[`pass:v[make_error_code]`] |
+|xref:reference/boost/urls/ipv4_address.adoc[`pass:v[ipv4_address]`] |pass:v,q[An IP version 4 style address.]
+
+|xref:reference/boost/urls/operator_eq-0f2.adoc[`pass:v[operator==]`] |pass:v,q[Return true if two addresses are equal]
+
+|xref:reference/boost/urls/operator_not_eq-02.adoc[`pass:v[operator!=]`] |pass:v,q[Return true if two addresses are not equal]
+
+|xref:reference/boost/urls/operator_lshift-008.adoc[`pass:v[operator<<]`] |pass:v,q[Format the address to an output stream.]
+
+|xref:reference/boost/urls/parse_ipv4_address.adoc[`pass:v[parse_ipv4_address]`] |pass:v,q[Return an IPv4 address from an IP address string in dotted decimal form]
+
+|xref:reference/boost/urls/ipv6_address.adoc[`pass:v[ipv6_address]`] |pass:v,q[An IP version 6 style address.]
+
+|xref:reference/boost/urls/operator_eq-0fd.adoc[`pass:v[operator==]`] |pass:v,q[Return true if two addresses are equal]
+
+|xref:reference/boost/urls/operator_not_eq-07.adoc[`pass:v[operator!=]`] |pass:v,q[Return true if two addresses are not equal]
+
+|xref:reference/boost/urls/operator_lshift-001.adoc[`pass:v[operator<<]`] |pass:v,q[Format the address to an output stream]
+
+|xref:reference/boost/urls/parse_ipv6_address.adoc[`pass:v[parse_ipv6_address]`] |pass:v,q[Parse a string containing an IPv6 address.]
+
+|xref:reference/boost/urls/scheme.adoc[`pass:v[scheme]`] |pass:v,q[Identifies a known URL scheme]
+
+|xref:reference/boost/urls/string_to_scheme.adoc[`pass:v[string_to_scheme]`] |pass:v,q[Return the known scheme for a non-normalized string, if known]
+
+|xref:reference/boost/urls/to_string.adoc[`pass:v[to_string]`] |pass:v,q[Return the normalized string for a known scheme]
+
+|xref:reference/boost/urls/default_port.adoc[`pass:v[default_port]`] |pass:v,q[Return the default port for a known scheme]
+
+|xref:reference/boost/urls/url_view.adoc[`pass:v[url_view]`] |pass:v,q[A non-owning reference to a valid URL]
+
+|xref:reference/boost/urls/authority_view.adoc[`pass:v[authority_view]`] |pass:v,q[A non-owning reference to a valid authority]
+
+|xref:reference/boost/urls/operator_eq-09.adoc[`pass:v[operator==]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/operator_not_eq-037.adoc[`pass:v[operator!=]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/operator_lt-0a.adoc[`pass:v[operator<]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/operator_le-01.adoc[`pass:v[operator<=]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/operator_gt-08.adoc[`pass:v[operator>]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/operator_ge-08.adoc[`pass:v[operator>=]`] |pass:v,q[Return the result of comparing two authorities] pass:v,q[The authorities are compared component]
+pass:v,q[by component as if they were first]
+pass:v,q[normalized.]
+
+|xref:reference/boost/urls/operator_lshift-0e.adoc[`pass:v[operator<<]`] |pass:v,q[Format the encoded authority to the output stream]
+
+|xref:reference/boost/urls/parse_authority.adoc[`pass:v[parse_authority]`] |pass:v,q[Parse an authority]
+
+|xref:reference/boost/urls/ignore_case_t.adoc[`pass:v[ignore_case_t]`] |
+|xref:reference/boost/urls/ignore_case.adoc[`pass:v[ignore_case]`] |
+|xref:reference/boost/urls/ignore_case_param.adoc[`pass:v[ignore_case_param]`] |pass:v,q[An optional parameter to determine case-sensitivity]
+
+|xref:reference/boost/urls/segments_encoded_base.adoc[`pass:v[segments_encoded_base]`] |pass:v,q[Common functionality for containers]
+
+|xref:reference/boost/urls/operator_lshift-01.adoc[`pass:v[operator<<]`] |pass:v,q[Format to an output stream]
+
+|xref:reference/boost/urls/segments_base.adoc[`pass:v[segments_base]`] |pass:v,q[Common functionality for containers]
+
+|xref:reference/boost/urls/operator_lshift-0b9.adoc[`pass:v[operator<<]`] |pass:v,q[Format to an output stream]
+
+|xref:reference/boost/urls/segments_view.adoc[`pass:v[segments_view]`] |pass:v,q[A view representing path segments in a URL]
+
+|xref:reference/boost/urls/segments_encoded_view.adoc[`pass:v[segments_encoded_view]`] |pass:v,q[A view representing path segments in a URL]
+
+|xref:reference/boost/urls/parse_path.adoc[`pass:v[parse_path]`] |pass:v,q[Parse a string and return an encoded segment view]
+
+|xref:reference/boost/urls/authority_rule_t.adoc[`pass:v[authority_rule_t]`] |
+|xref:reference/boost/urls/authority_rule.adoc[`pass:v[authority_rule]`] |
+|xref:reference/boost/urls/pct_encoded_rule_t.adoc[`pass:v[pct_encoded_rule_t]`] |
+|xref:reference/boost/urls/pct_encoded_rule-09.adoc[`pass:v[pct_encoded_rule]`] |
+|xref:reference/boost/urls/pct_encoded_rule-08.adoc[`pass:v[pct_encoded_rule]`] |
+|xref:reference/boost/urls/detail.adoc[`pass:v[detail]`] |
+|xref:reference/boost/urls/no_value_t.adoc[`pass:v[no_value_t]`] |pass:v,q[The type of no_value]
+
+|xref:reference/boost/urls/param_pct_view.adoc[`pass:v[param_pct_view]`] |pass:v,q[A query parameter]
+
+|xref:reference/boost/urls/param_view.adoc[`pass:v[param_view]`] |pass:v,q[A query parameter]
+
+|xref:reference/boost/urls/no_value.adoc[`pass:v[no_value]`] |pass:v,q[Constant indicating no value in a param]
+
+|xref:reference/boost/urls/param.adoc[`pass:v[param]`] |pass:v,q[A query parameter]
+
+|xref:reference/boost/urls/encoded_size.adoc[`pass:v[encoded_size]`] |pass:v,q[Return the buffer size needed for percent-encoding]
+
+|xref:reference/boost/urls/encode-09.adoc[`pass:v[encode]`] |pass:v,q[Apply percent-encoding to a string]
+
+|xref:reference/boost/urls/encode_unsafe.adoc[`pass:v[encode_unsafe]`] |
+|xref:reference/boost/urls/encode-04.adoc[`pass:v[encode]`] |pass:v,q[Return a percent-encoded string]
+
+|xref:reference/boost/urls/sub_delim_chars.adoc[`pass:v[sub_delim_chars]`] |pass:v,q[The sub-delims character set]
+
+|xref:reference/boost/urls/unreserved_chars.adoc[`pass:v[unreserved_chars]`] |pass:v,q[The unreserved character set]
+
+|xref:reference/boost/urls/pchars.adoc[`pass:v[pchars]`] |pass:v,q[The path character set]
+
+|xref:reference/boost/urls/variant.adoc[`pass:v[variant]`] |pass:v,q[The type of variant used by the library]
+
+|xref:reference/boost/urls/optional.adoc[`pass:v[optional]`] |
+|xref:reference/boost/urls/params_encoded_base.adoc[`pass:v[params_encoded_base]`] |pass:v,q[Common functionality for containers]
+
+|xref:reference/boost/urls/operator_lshift-0b8.adoc[`pass:v[operator<<]`] |pass:v,q[Format to an output stream]
+
+|xref:reference/boost/urls/params_ref.adoc[`pass:v[params_ref]`] |pass:v,q[A view representing query parameters in a URL]
+
+|xref:reference/boost/urls/operator_eq-0d.adoc[`pass:v[operator==]`] |
+|xref:reference/boost/urls/operator_not_eq-0f.adoc[`pass:v[operator!=]`] |
+|xref:reference/boost/urls/params_base.adoc[`pass:v[params_base]`] |pass:v,q[Common functionality for containers]
+
+|xref:reference/boost/urls/operator_lshift-0c.adoc[`pass:v[operator<<]`] |pass:v,q[Format to an output stream]
+
+|xref:reference/boost/urls/params_view.adoc[`pass:v[params_view]`] |pass:v,q[A view representing query parameters in a URL]
+
+|xref:reference/boost/urls/params_encoded_view.adoc[`pass:v[params_encoded_view]`] |pass:v,q[A view representing query parameters in a URL]
+
+|xref:reference/boost/urls/parse_query.adoc[`pass:v[parse_query]`] |pass:v,q[Parse a string and return an encoded params view]
+
+|xref:reference/boost/urls/url_base.adoc[`pass:v[url_base]`] |pass:v,q[Common functionality for containers]
+
+|xref:reference/boost/urls/params_encoded_ref.adoc[`pass:v[params_encoded_ref]`] |pass:v,q[A view representing query parameters in a URL]
+
+|xref:reference/boost/urls/segments_encoded_ref.adoc[`pass:v[segments_encoded_ref]`] |pass:v,q[A view representing path segments in a URL]
+
+|xref:reference/boost/urls/segments_ref.adoc[`pass:v[segments_ref]`] |pass:v,q[A view representing path segments in a URL]
+
+|xref:reference/boost/urls/url_view_base.adoc[`pass:v[url_view_base]`] |pass:v,q[Common functionality for containers]
+
+|xref:reference/boost/urls/operator_eq-01.adoc[`pass:v[operator==]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/operator_not_eq-04.adoc[`pass:v[operator!=]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/operator_lt-04.adoc[`pass:v[operator<]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/operator_le-0a.adoc[`pass:v[operator<=]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/operator_gt-09.adoc[`pass:v[operator>]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/operator_ge-00.adoc[`pass:v[operator>=]`] |pass:v,q[Return the result of comparing two URLs]
+
+|xref:reference/boost/urls/operator_lshift-05.adoc[`pass:v[operator<<]`] |pass:v,q[Format the url to the output stream]
+
+|xref:reference/boost/urls/resolve.adoc[`pass:v[resolve]`] |pass:v,q[Resolve a URL reference against a base URL]
+
+|xref:reference/boost/urls/url.adoc[`pass:v[url]`] |pass:v,q[A modifiable container for a URL.]
+
+|xref:reference/boost/urls/swap.adoc[`pass:v[swap]`] |pass:v,q[Swap]
+
+|xref:reference/boost/urls/ipv4_address_rule_t.adoc[`pass:v[ipv4_address_rule_t]`] |
+|xref:reference/boost/urls/ipv4_address_rule.adoc[`pass:v[ipv4_address_rule]`] |
+|xref:reference/boost/urls/ipv6_address_rule_t.adoc[`pass:v[ipv6_address_rule_t]`] |
+|xref:reference/boost/urls/ipv6_address_rule.adoc[`pass:v[ipv6_address_rule]`] |
+|xref:reference/boost/urls/parse_absolute_uri.adoc[`pass:v[parse_absolute_uri]`] |pass:v,q[Return a reference to a parsed URL string]
+
+|xref:reference/boost/urls/parse_origin_form.adoc[`pass:v[parse_origin_form]`] |pass:v,q[Return a reference to a parsed URL string]
+
+|xref:reference/boost/urls/parse_relative_ref.adoc[`pass:v[parse_relative_ref]`] |pass:v,q[Return a reference to a parsed URL string]
+
+|xref:reference/boost/urls/parse_uri.adoc[`pass:v[parse_uri]`] |pass:v,q[Return a reference to a parsed URL string]
+
+|xref:reference/boost/urls/parse_uri_reference.adoc[`pass:v[parse_uri_reference]`] |pass:v,q[Return a reference to a parsed URL string]
+
+|xref:reference/boost/urls/absolute_uri_rule_t.adoc[`pass:v[absolute_uri_rule_t]`] |
+|xref:reference/boost/urls/absolute_uri_rule.adoc[`pass:v[absolute_uri_rule]`] |
+|xref:reference/boost/urls/relative_ref_rule_t.adoc[`pass:v[relative_ref_rule_t]`] |
+|xref:reference/boost/urls/relative_ref_rule.adoc[`pass:v[relative_ref_rule]`] |
+|xref:reference/boost/urls/uri_rule_t.adoc[`pass:v[uri_rule_t]`] |
+|xref:reference/boost/urls/uri_rule.adoc[`pass:v[uri_rule]`] |
+|xref:reference/boost/urls/uri_reference_rule_t.adoc[`pass:v[uri_reference_rule_t]`] |
+|xref:reference/boost/urls/uri_reference_rule.adoc[`pass:v[uri_reference_rule]`] |
+|xref:reference/boost/urls/origin_form_rule_t.adoc[`pass:v[origin_form_rule_t]`] |
+|xref:reference/boost/urls/origin_form_rule.adoc[`pass:v[origin_form_rule]`] |
+|xref:reference/boost/urls/query_rule_t.adoc[`pass:v[query_rule_t]`] |
+|xref:reference/boost/urls/query_rule.adoc[`pass:v[query_rule]`] |
+|xref:reference/boost/urls/static_url.adoc[`pass:v[static_url]`] |pass:v,q[A modifiable container for a URL.]
+
+|xref:reference/boost/urls/static_url_base.adoc[`pass:v[static_url_base]`] |pass:v,q[Common implementation for all static URLs]
+
+|===

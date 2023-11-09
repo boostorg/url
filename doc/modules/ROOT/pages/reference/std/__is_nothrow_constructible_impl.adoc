@@ -1,0 +1,18 @@
+:relfileprefix: ../
+[#D3F8F39DDCA874772469239E4CF86DB3B3A23BAD]
+== __is_nothrow_constructible_impl
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    typename _Tp,
+    typename... _Args>
+using __is_nothrow_constructible_impl = __bool_constant<__is_nothrow_constructible(_Tp, _Args...)>;
+----
+
+Defined in file </usr/include/c++/13/type_traits> on line 1107
+

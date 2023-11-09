@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#DC200863044BFE53976D53EF543006D709B007AA]
+== is_loopback
+
+pass:v,q[Return true if the address is a loopback address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+is_loopback() const noexcept;
+----
+
+Declared in file <include/boost/url/ipv6_address.hpp> on line 275
+
+Defined in file <src/ipv6_address.cpp> on line 64
+
+=== Description
+
+pass:v,q[The unicast address 0:0:0:0:0:0:0:1 is called] pass:v,q[the loopback address. It may be used by a node]
+pass:v,q[to send an IPv6 packet to itself.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.3[            2.5.3. The Loopback Address (rfc4291)]
+
+

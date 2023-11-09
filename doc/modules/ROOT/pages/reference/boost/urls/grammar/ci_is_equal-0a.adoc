@@ -1,0 +1,21 @@
+:relfileprefix: ../../../
+[#A4113A561B0A4FA63B4AACBD9962AE3318A1D6EB]
+== ci_is_equal
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class String0,
+    class String1>
+enable_if<!std::is_convertible<String0, core::string_view>::value || !std::is_convertible<String1, core::string_view>::value, bool>::type
+ci_is_equal(
+    const String0& s0,
+    const String1& s1);
+----
+
+Defined in file <include/boost/url/grammar/ci_string.hpp> on line 173
+

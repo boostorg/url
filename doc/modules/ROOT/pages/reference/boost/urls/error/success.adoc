@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#4BBF02D212731244F89D296D0812DA7D302AEBE4]
+== success
+
+pass:v,q[The operation completed successfully.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+success = 0
+----
+
+Defined in file <include/boost/url/error.hpp> on line 30
+

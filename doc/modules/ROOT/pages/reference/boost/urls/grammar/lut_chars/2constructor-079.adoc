@@ -1,0 +1,35 @@
+:relfileprefix: ../../../../
+[#79E8023B5CFE4BB2921B56B02572B58E8FAAE38A]
+== lut_chars
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+lut_chars(char ch) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/lut_chars.hpp> on line 157
+
+=== Description
+
+pass:v,q[This function constructs a character] pass:v,q[set which has as a single member,]
+pass:v,q[the character `ch`.]
+
+=== Example
+[,cpp]
+----
+constexpr lut_chars asterisk( '*' );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

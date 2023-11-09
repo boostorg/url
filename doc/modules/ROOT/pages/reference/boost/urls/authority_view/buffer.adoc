@@ -1,0 +1,41 @@
+:relfileprefix: ../../../
+[#3F5D4D3F83FB60E71134ADE4662B002E952A0844]
+== buffer
+
+pass:v,q[Return the complete authority]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string_view
+buffer() const noexcept;
+----
+
+Defined in file <include/boost/url/authority_view.hpp> on line 253
+
+=== Description
+
+pass:v,q[This function returns the authority] pass:v,q[as a percent-encoded string.]
+
+=== Example
+[,cpp]
+----
+assert( parse_authority( "www.example.com" ).value().buffer() == "www.example.com" );
+----
+
+=== BNF
+[,cpp]
+----
+authority   = [ userinfo "@" ] host [ ":" port ]
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2[3.2. Authority (rfc3986)]
+
+

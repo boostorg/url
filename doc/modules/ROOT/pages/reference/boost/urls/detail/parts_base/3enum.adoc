@@ -1,0 +1,30 @@
+:relfileprefix: ../../../../
+[#D493AC66F82AAAB3DDEC02B08ED0070DF43689C0]
+== Unnamed enum
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+enum ;
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 23
+
+=== Members
+[,cols=2]
+|===
+|Name |Description
+|id_scheme |
+|id_user |
+|id_pass |
+|id_host |
+|id_port |
+|id_path |
+|id_query |
+|id_frag |
+|id_end |
+|===
+

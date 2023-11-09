@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#D96141CC725336582FC418EA115498AFAF4F1941]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/url_view.adoc[url_view];
+----
+
+Defined in file <include/boost/url/rfc/origin_form_rule.hpp> on line 55
+

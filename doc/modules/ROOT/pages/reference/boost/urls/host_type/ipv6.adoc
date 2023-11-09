@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#8D387F37937E073E75719A363309A1EADCF13CE7]
+== ipv6
+
+pass:v,q[A host is specified by] xref:reference/boost/urls/ipv6_address.adoc[ipv6_address.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ipv6
+----
+
+Defined in file <include/boost/url/host_type.hpp> on line 47
+

@@ -1,0 +1,17 @@
+:relfileprefix: ../../../../
+[#9972660018C0CBDF2CAE40B12498B71460A39C36]
+== empty
+
+pass:v,q[Return true if the range is empty]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+empty() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 250
+

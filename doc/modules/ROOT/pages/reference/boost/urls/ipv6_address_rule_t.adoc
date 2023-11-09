@@ -1,0 +1,28 @@
+:relfileprefix: ../../
+[#5E982D6F0916CE0F851785D631B2B7AD37235AD2]
+== Class ipv6_address_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct ipv6_address_rule_t;
+----
+
+Defined in file <include/boost/url/rfc/ipv6_address_rule.hpp> on line 66
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv6_address_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/ipv6_address_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+

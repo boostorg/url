@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#CB7EEBCB15D8AE39711A956C4235CAC6FB1B2CBB]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = Unsigned;
+----
+
+Defined in file <include/boost/url/grammar/unsigned_rule.hpp> on line 65
+

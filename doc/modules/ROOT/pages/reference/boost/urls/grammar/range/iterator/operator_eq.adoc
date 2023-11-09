@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../../
+[#F6C23D9E142A0BBAD537F3F462D6552858018B6E]
+== operator==
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+operator==(const xref:reference/boost/urls/grammar/range/iterator.adoc[iterator]& other) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 385
+

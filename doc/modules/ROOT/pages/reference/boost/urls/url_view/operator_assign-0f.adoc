@@ -1,0 +1,37 @@
+:relfileprefix: ../../../
+[#FE8606BBCEBCB99C5632BEDB5A7BB84946E273B3]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_view.adoc[url_view]&
+operator=(const xref:reference/boost/urls/url_view_base.adoc[url_view_base]& other) noexcept;
+----
+
+Declared in file <include/boost/url/url_view.hpp> on line 310
+
+Defined in file <src/url_view.cpp> on line 61
+
+=== Description
+
+pass:v,q[After assignment, both views] pass:v,q[reference the same underlying character]
+pass:v,q[buffer. Ownership is not transferred.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() == other.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,68 @@
+:relfileprefix: ../../../
+[#257389321BA00C2233B66CB2B2A5C2A497B8FBA4]
+== set_host_ipv6
+
+pass:v,q[Set the host to an address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+set_host_ipv6(const xref:reference/boost/urls/ipv6_address.adoc[ipv6_address]& addr);
+----
+
+Defined in file <include/boost/url/url.hpp> on line 448
+
+=== Description
+
+pass:v,q[The host is set to the specified IPv6] pass:v,q[address.] pass:v,q[The host type is]
+xref:reference/boost/urls/host_type/ipv6.adoc[host_type::ipv6.]
+
+=== Example
+[,cpp]
+----
+assert( url().set_host_ipv6( ipv6_address( "1::6:c0a8:1" ) ).authority().buffer() == "[1::6:c0a8:1]" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_authority() == true && this->host_ipv6_address() == addr && this->host_type() == host_type::ipv6
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+IPv6address =                            6( h16 ":" ) ls32
+            /                       "::" 5( h16 ":" ) ls32
+            / [               h16 ] "::" 4( h16 ":" ) ls32
+            / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+            / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+            / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+            / [ *4( h16 ":" ) h16 ] "::"              ls32
+            / [ *5( h16 ":" ) h16 ] "::"              h16
+            / [ *6( h16 ":" ) h16 ] "::"
+
+ls32        = ( h16 ":" h16 ) / IPv4address
+            ; least-significant 32 bits of address
+
+h16         = 1*4HEXDIG
+            ; 16 bits of address represented in hexadecimal
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc4291[IP Version 6 Addressing Architecture (rfc4291)]
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[            3.2.2. Host (rfc3986)]
+
+

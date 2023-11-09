@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#CA5D14387B92C47A26D3AA9AD1BF257DC95DE838]
+== ipv4_address
+
+pass:v,q[Constructor.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+ipv4_address() = default;
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 76
+

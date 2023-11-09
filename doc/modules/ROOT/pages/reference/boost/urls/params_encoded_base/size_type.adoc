@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#1AA015D4B864E594323FE6F98C12BE0130593CAA]
+== size_type
+
+pass:v,q[An unsigned integer type to represent sizes.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using size_type = size_t;
+----
+
+Defined in file <include/boost/url/params_encoded_base.hpp> on line 117
+

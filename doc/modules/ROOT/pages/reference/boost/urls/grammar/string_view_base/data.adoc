@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#1D371D9D5D5A8997AB8D813723A291E46ABB71FD]
+== data
+
+pass:v,q[Return a pointer to the character buffer]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/const_pointer.adoc[const_pointer]
+data() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 321
+
+=== Description
+
+pass:v,q[See `core::string_view::data`]
+
+

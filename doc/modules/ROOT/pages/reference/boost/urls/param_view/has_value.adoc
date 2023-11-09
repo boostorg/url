@@ -1,0 +1,22 @@
+:relfileprefix: ../../../
+[#E6A769DEE84D449426382CBDD487B5AFD5A877C7]
+== has_value
+
+pass:v,q[True if a value is present]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool has_value;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 430
+
+=== Description
+
+pass:v,q[The presence of a value is indicated by] pass:v,q[`has_value == true`.]
+pass:v,q[An empty value is distinct from no value.]
+
+

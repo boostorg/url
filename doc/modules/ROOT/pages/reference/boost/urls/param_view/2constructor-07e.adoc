@@ -1,0 +1,46 @@
+:relfileprefix: ../../../
+[#7E3E6037495D42D624014BF122BBA370555A7420]
+== param_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+param_view(const xref:reference/boost/urls/param.adoc[param]& other) noexcept;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 531
+
+=== Description
+
+pass:v,q[This function constructs a param] pass:v,q[which references the character buffers]
+pass:v,q[representing the key and value in another]
+pass:v,q[container.]
+pass:v,q[Ownership of the buffers is not transferred;]
+pass:v,q[the caller is responsible for ensuring that]
+pass:v,q[the assigned buffers remain valid until]
+pass:v,q[they are no longer referenced.]
+
+=== Example
+[,cpp]
+----
+param qp( "key", "value" );
+param_view qpv( qp );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->key == key && this->value == value && this->has_value == other.has_value
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

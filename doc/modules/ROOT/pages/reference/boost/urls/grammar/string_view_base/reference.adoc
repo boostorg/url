@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#D81314E7063056E697955A94A49BE47BEECC3023]
+== reference
+
+pass:v,q[The reference type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef char& reference;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 95
+

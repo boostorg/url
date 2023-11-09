@@ -1,0 +1,56 @@
+:relfileprefix: ../../../
+[#E1444A9EE3FE82F214563224CB0BFFA577858EFE]
+== encoded_host_name
+
+pass:v,q[Return the host name]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+encoded_host_name() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 1368
+
+Defined in file <src/url_view_base.cpp> on line 408
+
+=== Description
+
+pass:v,q[If the host type is] xref:reference/boost/urls/host_type/name.adoc[host_type::name,]
+pass:v,q[this function returns the name as]
+pass:v,q[a string.]
+pass:v,q[Otherwise, if the host type is not an]
+pass:v,q[name, it returns an empty string.]
+pass:v,q[The returned string may contain]
+pass:v,q[percent escapes.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "https://www%2droot.example.com/" ).encoded_host_name() == "www%2droot.example.com" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+host        = IP-literal / IPv4address / reg-name
+
+IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+
+reg-name    = *( unreserved / pct-encoded / "-" / ".")
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

@@ -1,0 +1,26 @@
+:relfileprefix: ../../../
+[#BBCCDB058FA38A84D8784F0CCC08BD4BB2FBB265]
+== file
+
+pass:v,q[File URI Scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+file
+----
+
+Defined in file <include/boost/url/scheme.hpp> on line 68
+
+=== Description
+
+pass:v,q[The File URI Scheme is typically used] pass:v,q[to retrieve files from within one's]
+pass:v,q[own computer.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc8089[           The "file" URI Scheme (rfc8089)]
+
+

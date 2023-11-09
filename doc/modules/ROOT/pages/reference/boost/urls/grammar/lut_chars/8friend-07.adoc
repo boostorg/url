@@ -1,0 +1,39 @@
+:relfileprefix: ../../../../
+[#7959759509D8F8470BBB3DED31B97D5FC0389D01]
+== Friend operator-
+
+pass:v,q[Return a new character set by subtracting]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+constexpr
+xref:reference/boost/urls/grammar/lut_chars.adoc[lut_chars]
+operator-(
+    const xref:reference/boost/urls/grammar/lut_chars.adoc[lut_chars]& cs0,
+    const xref:reference/boost/urls/grammar/lut_chars.adoc[lut_chars]& cs1) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/lut_chars.hpp> on line 328
+
+=== Description
+
+pass:v,q[This function returns a new character] pass:v,q[set which is formed from all of the]
+pass:v,q[characters in `cs0` which are not in `cs`.]
+
+=== Example
+pass:v,q[This statement declares a character set]
+pass:v,q[containing all the lowercase letters]
+pass:v,q[which are not vowels:]
+[,cpp]
+----
+constexpr lut_chars consonants = lut_chars("abcdefghijklmnopqrstuvwxyz") - "aeiou";
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+

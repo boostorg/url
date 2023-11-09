@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#7DFA27C61A2B0A881126528DA284A459BA8077B8]
+== is_transparent
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using is_transparent = void;
+----
+
+Defined in file <include/boost/url/grammar/ci_string.hpp> on line 340
+

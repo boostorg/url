@@ -1,0 +1,17 @@
+:relfileprefix: ../../../../
+[#27DA9B982125ABE74A6BFB23CBE9D910D3357E3D]
+== size
+
+pass:v,q[Return the number of elements in the range]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+size() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 258
+

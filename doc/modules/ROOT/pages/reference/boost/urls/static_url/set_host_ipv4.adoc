@@ -1,0 +1,60 @@
+:relfileprefix: ../../../
+[#276C98E6CDBDFD59B490BFB1B6F19931F9487642]
+== set_host_ipv4
+
+pass:v,q[Set the host to an address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/static_url.adoc[static_url]&
+set_host_ipv4(const xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]& addr);
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 382
+
+=== Description
+
+pass:v,q[The host is set to the specified IPv4] pass:v,q[address.] pass:v,q[The host type is]
+xref:reference/boost/urls/host_type/ipv4.adoc[host_type::ipv4.]
+
+=== Example
+[,cpp]
+----
+assert( url("http://www.example.com").set_host_ipv4( ipv4_address( "127.0.0.1" ) ).buffer() == "http://127.0.0.1" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size()`.]
+
+=== Postconditions
+[,cpp]
+----
+this->has_authority() == true && this->host_ipv4_address() == addr && this->host_type() == host_type::ipv4
+----
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+dec-octet   = DIGIT                 ; 0-9
+            / %x31-39 DIGIT         ; 10-99
+            / "1" 2DIGIT            ; 100-199
+            / "2" %x30-34 DIGIT     ; 200-249
+            / "25" %x30-35          ; 250-255
+----
+
+=== Specification
+
+* link:https://en.wikipedia.org/wiki/IPv4[IPv4 (Wikipedia)]
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[            3.2.2. Host (rfc3986)]
+
+

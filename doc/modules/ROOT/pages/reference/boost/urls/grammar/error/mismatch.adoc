@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#6B450E4E576F52962678F5894FAFA2139AA4E431]
+== mismatch
+
+pass:v,q[The rule did not match the input.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+mismatch
+----
+
+Defined in file <include/boost/url/grammar/error.hpp> on line 58
+
+=== Description
+
+pass:v,q[This error is returned when a rule fails] pass:v,q[to match the input. The error is recoverable;]
+pass:v,q[the caller may rewind the input pointer and]
+pass:v,q[attempt to parse again using a different rule.]
+
+

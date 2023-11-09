@@ -1,0 +1,26 @@
+:relfileprefix: ../../../
+[#C59AE9E0974141FB6BD637C42687003B2CCDDF67]
+== data
+
+pass:v,q[Return a pointer to the first character]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+const char*
+data() const noexcept;
+----
+
+Defined in file <include/boost/url/authority_view.hpp> on line 225
+
+=== Description
+
+pass:v,q[This function returns a pointer to the] pass:v,q[beginning of the view, which is not]
+pass:v,q[guaranteed to be null-terminated.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

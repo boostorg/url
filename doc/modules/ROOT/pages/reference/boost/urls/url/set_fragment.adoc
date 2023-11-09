@@ -1,0 +1,55 @@
+:relfileprefix: ../../../
+[#974C15A34E00EB5C641D90AB694F0145DA7C153D]
+== set_fragment
+
+pass:v,q[Set the fragment.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+set_fragment(string_view s);
+----
+
+Defined in file <include/boost/url/url.hpp> on line 483
+
+=== Description
+
+pass:v,q[This function sets the fragment to the] pass:v,q[specified string, which may be empty.]
+pass:v,q[An empty fragment is distinct from]
+pass:v,q[having no fragment.]
+pass:v,q[Reserved characters in the string are]
+pass:v,q[percent-escaped in the result.]
+
+=== Example
+[,cpp]
+----
+assert( url("?first=john&last=doe" ).set_encoded_fragment( "john doe" ).encoded_fragment() == "john%20doe" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_fragment() == true && this->fragment() == s
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size() + s.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+fragment    = *( pchar / "/" / "?" )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.5[3.5.  Fragment]
+
+

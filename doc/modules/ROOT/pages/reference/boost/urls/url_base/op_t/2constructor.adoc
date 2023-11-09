@@ -1,0 +1,18 @@
+:relfileprefix: ../../../../
+[#0FF2D473BDBA60D52B83CE339EB7558B17ABF473]
+== op_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+op_t(
+    xref:reference/boost/urls/url_base.adoc[url_base]& impl_,
+    string_view* s0_ = nullptr,
+    string_view* s1_ = nullptr) noexcept;
+----
+
+Defined in file <src/url_base.cpp> on line 64
+

@@ -1,0 +1,23 @@
+:relfileprefix: ../../../
+[#894FBC7BAF95E6C646D6EED2244882EE6F575FB6]
+== value
+
+pass:v,q[The value]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] value;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 656
+
+=== Description
+
+pass:v,q[The presence of a value is indicated by] xref:reference/boost/urls/param_pct_view/has_value.adoc[has_value]
+pass:v,q[equal to true.]
+pass:v,q[An empty value is distinct from no value.]
+
+

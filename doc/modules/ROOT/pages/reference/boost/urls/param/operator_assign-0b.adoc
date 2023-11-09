@@ -1,0 +1,33 @@
+:relfileprefix: ../../../
+[#B3EED6A849DC73180D895EB1E4A775D764686768]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/param.adoc[param]&
+operator=(xref:reference/boost/urls/param.adoc[param]&& other) noexcept;
+----
+
+Defined in file <include/boost/url/param.hpp> on line 191
+
+=== Description
+
+pass:v,q[Upon assignment, this acquires] pass:v,q[ownership of the members of other]
+pass:v,q[via move assignment. The moved]
+pass:v,q[from object is as if default]
+pass:v,q[constructed.]
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== other The object to assign from.
+
+

@@ -1,0 +1,30 @@
+:relfileprefix: ../../
+[#6C4C3FA9A02535F672D50ADA113C79762A6817E2]
+== parse_ipv6_address
+
+pass:v,q[Parse a string containing an IPv6 address.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/ipv6_address.adoc[ipv6_address]>
+parse_ipv6_address(string_view s) noexcept;
+----
+
+Declared in file <include/boost/url/ipv6_address.hpp> on line 391
+
+Defined in file <src/ipv6_address.cpp> on line 242
+
+=== Description
+
+pass:v,q[This function attempts to parse the string] pass:v,q[as an IPv6 address and returns a result]
+pass:v,q[containing the address upon success, or]
+pass:v,q[an error code if the string does not contain]
+pass:v,q[a valid IPv6 address.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,34 @@
+:relfileprefix: ../../../
+[#AF5813C9114390D86588590B7A005555E4ECA973]
+== erase
+
+pass:v,q[Erase segments]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator]
+erase(
+    xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator] first,
+    xref:reference/boost/urls/segments_base.adoc[segments_base]::xref:reference/boost/urls/segments_base/iterator.adoc[iterator] last) noexcept;
+----
+
+Declared in file <include/boost/url/segments_ref.hpp> on line 523
+
+Defined in file <src/segments_ref.cpp> on line 112
+
+=== Description
+
+pass:v,q[This function removes a range of segments.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`first` or come after are invalidated.]
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_resource().size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,26 @@
+:relfileprefix: ../../
+[#46ADDD45730638CD737E683BDAE75D82356D56A4]
+== operator<<
+
+pass:v,q[Format the string with percent-decoding applied to the output stream]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/decode_view.adoc[decode_view]& s);
+----
+
+Declared in file <include/boost/url/decode_view.hpp> on line 662
+
+Defined in file <include/boost/url/decode_view.hpp> on line 634
+
+=== Description
+
+pass:v,q[This function serializes the decoded view] pass:v,q[to the output stream.]
+
+

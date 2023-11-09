@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#3B392E76120994DCA35744C998B94CD519C51157]
+== empty
+
+pass:v,q[Return true if the string is empty]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+bool
+empty() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 270
+
+=== Description
+
+pass:v,q[See `core::string_view::size`]
+
+

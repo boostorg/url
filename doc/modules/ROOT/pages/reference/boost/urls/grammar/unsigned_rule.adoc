@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#4710E733BA48C3F6A113F401103BBB4F5E2FB53B]
+== Class unsigned_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class Unsigned>
+struct unsigned_rule;
+----
+
+Defined in file <include/boost/url/grammar/unsigned_rule.hpp> on line 57
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/unsigned_rule/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/unsigned_rule/parse.adoc[`pass:v[parse]`] |
+|===
+

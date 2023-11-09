@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../../
+[#B489A3B80923683CCCF02863E0E84F339E549B40]
+== operator*
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/grammar/range/iterator/reference.adoc[reference]
+operator*() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 379
+

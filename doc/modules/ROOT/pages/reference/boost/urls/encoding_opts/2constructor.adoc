@@ -1,0 +1,20 @@
+:relfileprefix: ../../../
+[#D95BDD3D5C0DFE8A0B7CF1C9309EAEDB2EF0ADDF]
+== encoding_opts
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+encoding_opts(
+    bool space_as_plus_ = false,
+    bool lower_case_ = false,
+    bool disallow_null_ = false) noexcept;
+----
+
+Declared in file <include/boost/url/encoding_opts.hpp> on line 71
+
+Defined in file <src/encoding_opts.cpp> on line 19
+

@@ -1,0 +1,58 @@
+:relfileprefix: ../../../
+[#9BBD8C90810462DF07D46568C6F4191C1C166350]
+== set_encoded_fragment
+
+pass:v,q[Set the fragment.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/static_url.adoc[static_url]&
+set_encoded_fragment(xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] s);
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 417
+
+=== Description
+
+pass:v,q[This function sets the fragment to the] pass:v,q[specified string, which may contain]
+pass:v,q[percent-escapes and which may be empty.]
+pass:v,q[An empty fragment is distinct from]
+pass:v,q[having no fragment.]
+pass:v,q[Escapes in the string are preserved,]
+pass:v,q[and reserved characters in the string]
+pass:v,q[are percent-escaped in the result.]
+
+=== Example
+[,cpp]
+----
+assert( url("?first=john&last=doe" ).set_encoded_fragment( "john%2Ddoe" ).fragment() == "john-doe" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->has_fragment() == true && this->fragment() == decode_view( s )
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size() + s.size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+fragment    = *( pchar / "/" / "?" )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.5[3.5.  Fragment]
+
+

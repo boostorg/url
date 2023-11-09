@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#BD8E992042FA858A49EB44DC4F2A09E0E2A42052]
+== Class ch_delim_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct ch_delim_rule;
+----
+
+Defined in file <include/boost/url/grammar/delim_rule.hpp> on line 61
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/ch_delim_rule/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/ch_delim_rule/2constructor.adoc[`pass:v[ch_delim_rule]`] |
+|xref:reference/boost/urls/grammar/ch_delim_rule/parse.adoc[`pass:v[parse]`] |
+|===
+

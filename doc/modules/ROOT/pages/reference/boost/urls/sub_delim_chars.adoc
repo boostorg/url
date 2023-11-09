@@ -1,0 +1,42 @@
+:relfileprefix: ../../
+[#5B9667126E56AF668D5129CCC2504719FA911E06]
+== sub_delim_chars
+
+pass:v,q[The sub-delims character set]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/grammar.adoc[grammar]::xref:reference/boost/urls/grammar/lut_chars.adoc[lut_chars] sub_delim_chars;
+----
+
+Defined in file <include/boost/url/rfc/sub_delim_chars.hpp> on line 45
+
+=== Description
+
+
+=== Example
+pass:v,q[Character sets are used with rules and] pass:v,q[the functions]
+xref:reference/boost/urls/grammar/find_if.adoc[grammar::find_if]
+pass:v,q[and]
+xref:reference/boost/urls/grammar/find_if_not.adoc[grammar::find_if_not.]
+[,cpp]
+----
+system::result< decode_view > = grammar::parse( "Program%20Files", pct_encoded_rule( sub_delim_chars ) );
+----
+
+=== BNF
+[,cpp]
+----
+sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
+              / "*" / "+" / "," / ";" / "="
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-2.2[2.2. Reserved Characters (rfc3986)]
+
+

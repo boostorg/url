@@ -1,0 +1,20 @@
+:relfileprefix: ../../../../
+[#AC30F38142DCC8A79656FE80AF04BD7A2D3A9BC1]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/grammar/unsigned_rule/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* end) const noexcept;
+----
+
+Declared in file <include/boost/url/grammar/unsigned_rule.hpp> on line 67
+
+Defined in file <include/boost/url/grammar/impl/unsigned_rule.hpp> on line 21
+

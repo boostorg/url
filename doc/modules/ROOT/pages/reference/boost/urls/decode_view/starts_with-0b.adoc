@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#B45AD34AB5893E6E31E7BB6F32B88CFE1378BAE5]
+== starts_with
+
+pass:v,q[Checks if the string begins with the given prefix]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+starts_with(char ch) const noexcept;
+----
+
+Declared in file <include/boost/url/decode_view.hpp> on line 391
+
+Defined in file <src/decode_view.cpp> on line 179
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( decode_view( "Program%20Files" ).starts_with('P') );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

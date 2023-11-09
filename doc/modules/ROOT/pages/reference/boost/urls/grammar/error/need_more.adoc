@@ -1,0 +1,28 @@
+:relfileprefix: ../../../../
+[#6BF4C74D2BFA93B9E3BDB87EF3504DCAED69A65F]
+== need_more
+
+pass:v,q[More input is needed to match the rule]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+need_more = 1
+----
+
+Defined in file <include/boost/url/grammar/error.hpp> on line 48
+
+=== Description
+
+pass:v,q[A rule reached the end of the input,] pass:v,q[resulting in a partial match. The error]
+pass:v,q[is recoverable; the caller may obtain]
+pass:v,q[more input if possible and attempt to]
+pass:v,q[parse the character buffer again.]
+pass:v,q[Custom rules should only return this]
+pass:v,q[error if it is completely unambiguous]
+pass:v,q[that the rule cannot be matched without]
+pass:v,q[more input.]
+
+

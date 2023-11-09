@@ -1,0 +1,18 @@
+:relfileprefix: ../../../../
+[#6FD830EAEE1FD6996CD483EA8B1EBE08FA774073]
+== find_if
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+const char*
+find_if(
+    const char* first,
+    const char* last) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/hexdig_chars.hpp> on line 76
+

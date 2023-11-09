@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#6840A80E0663A08714976BA2A1CD2B7FAB9130C7]
+== size_type
+
+pass:v,q[The size type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef size_t size_type;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 108
+

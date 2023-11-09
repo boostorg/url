@@ -1,0 +1,41 @@
+:relfileprefix: ../../
+[#D95F99F5E71EA6A6D94676BA185706AF2D5DCC3B]
+== pchars
+
+pass:v,q[The path character set]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar.adoc[grammar]::xref:reference/boost/urls/grammar/lut_chars.adoc[lut_chars] pchars;
+----
+
+Defined in file <include/boost/url/rfc/pchars.hpp> on line 45
+
+=== Description
+
+
+=== Example
+pass:v,q[Character sets are used with rules and] pass:v,q[the functions]
+xref:reference/boost/urls/grammar/find_if.adoc[grammar::find_if]
+pass:v,q[and]
+xref:reference/boost/urls/grammar/find_if_not.adoc[grammar::find_if_not.]
+[,cpp]
+----
+system::result< decode_view > rv = grammar::parse( "Program%20Files", pchars );
+----
+
+=== BNF
+[,cpp]
+----
+pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3. Path (rfc3986)]
+
+

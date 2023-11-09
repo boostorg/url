@@ -27,3 +27,4 @@
 ** xref:examples/router.adoc[]
 ** xref:examples/sanitize.adoc[]
 * xref:HelpCard.adoc[]
+* xref:reference/index.adoc[Reference]

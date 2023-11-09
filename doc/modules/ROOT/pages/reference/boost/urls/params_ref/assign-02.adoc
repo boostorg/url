@@ -1,0 +1,46 @@
+:relfileprefix: ../../../
+[#2F066AA6BAA6895675021150018B3A90F8131663]
+== assign
+
+pass:v,q[Assign elements]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class FwdIt>
+void
+assign(
+    FwdIt first,
+    FwdIt last);
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 350
+
+Defined in file <include/boost/url/impl/params_ref.hpp> on line 76
+
+=== Description
+
+pass:v,q[This function replaces the entire] pass:v,q[contents of the view with the params]
+pass:v,q[in the range.]
+pass:v,q[All iterators are invalidated.]
+[NOTE]
+pass:v,q[The strings referenced by the inputs]
+pass:v,q[must not come from the underlying url,]
+pass:v,q[or else the behavior is undefined.]
+
+=== Mandates
+[,cpp]
+----
+std::is_convertible< std::iterator_traits< FwdIt >::reference_type, param_view >::value == true
+----
+
+=== Complexity
+pass:v,q[Linear in the size of the range.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

@@ -1,0 +1,38 @@
+:relfileprefix: ../../../
+[#07603B6E749A2A4542239CDDF600750EE925AA92]
+== erase
+
+pass:v,q[Erase elements]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+size_t
+erase(
+    string_view key,
+    xref:reference/boost/urls/ignore_case_param.adoc[ignore_case_param] ic = = {}) noexcept;
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 652
+
+Defined in file <src/params_ref.cpp> on line 93
+
+=== Description
+
+pass:v,q[All iterators are invalidated.]
+
+=== Postconditions
+[,cpp]
+----
+this->count( key, ic ) == 0
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

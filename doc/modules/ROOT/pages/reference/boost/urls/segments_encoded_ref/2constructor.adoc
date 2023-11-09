@@ -1,0 +1,38 @@
+:relfileprefix: ../../../
+[#A49B98DAB4A71F07B9596869439742A408225158]
+== segments_encoded_ref
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+segments_encoded_ref(const xref:reference/boost/urls/segments_encoded_ref.adoc[segments_encoded_ref]& other) = default;
+----
+
+Defined in file <include/boost/url/segments_encoded_ref.hpp> on line 127
+
+=== Description
+
+pass:v,q[After construction, both views] pass:v,q[reference the same url. Ownership is not]
+pass:v,q[transferred; the caller is responsible]
+pass:v,q[for ensuring the lifetime of the url]
+pass:v,q[extends until it is no longer]
+pass:v,q[referenced.]
+
+=== Postconditions
+[,cpp]
+----
+&this->url() == &other.url();
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

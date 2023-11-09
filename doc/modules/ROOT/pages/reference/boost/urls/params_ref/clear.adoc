@@ -1,0 +1,42 @@
+:relfileprefix: ../../../
+[#FD91FF07F51EEEB32E459E353A238BF690A78139]
+== clear
+
+pass:v,q[Clear the contents of the container]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+clear() noexcept;
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 280
+
+Defined in file <include/boost/url/impl/params_ref.hpp> on line 65
+
+=== Description
+
+pass:v,q[All iterators are invalidated.]
+
+=== Effects
+[,cpp]
+----
+this->url().remove_query();
+----
+
+=== Postconditions
+[,cpp]
+----
+this->empty() == true && this->url().has_query() == false
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

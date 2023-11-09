@@ -1,0 +1,47 @@
+:relfileprefix: ../../../
+[#BC4ECA8583ADCA9516347068D911826F3B9DB8D7]
+== set_encoded_authority
+
+pass:v,q[Set the authority]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+set_encoded_authority(xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] s);
+----
+
+Defined in file <include/boost/url/url.hpp> on line 416
+
+=== Description
+
+pass:v,q[This function sets the authority] pass:v,q[to the specified string.] pass:v,q[The string may contain percent-escapes.]
+
+=== Example
+[,cpp]
+----
+assert( url().set_encoded_authority( "My%20Computer" ).has_authority() );
+----
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+authority     = [ userinfo "@" ] host [ ":" port ]
+
+userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
+host          = IP-literal / IPv4address / reg-name
+port          = *DIGIT
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2[            3.2. Authority (rfc3986)]
+
+

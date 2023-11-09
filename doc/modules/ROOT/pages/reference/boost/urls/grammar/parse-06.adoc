@@ -1,0 +1,23 @@
+:relfileprefix: ../../../
+[#66E75396D9A59A4D1C384A96A582D7DBD25BDDCF]
+== parse
+
+pass:v,q[Parse a character buffer using a rule]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class R>
+result<Rule::value_type>
+parse(
+    const char*& it,
+    const char* end,
+    const Rule& r);
+----
+
+Declared in file <include/boost/url/grammar/parse.hpp> on line 41
+
+Defined in file <include/boost/url/grammar/impl/parse.hpp> on line 22
+

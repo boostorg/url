@@ -1,0 +1,19 @@
+:relfileprefix: ../../
+[#96AA6037EE1E60E11A15D931D191FB4BB67F94A8]
+== pct_encoded_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet_>
+constexpr
+xref:reference/boost/urls/pct_encoded_rule_t.adoc[pct_encoded_rule_t]<CharSet_>
+pct_encoded_rule(const CharSet_& cs) noexcept;
+----
+
+Declared in file <include/boost/url/rfc/pct_encoded_rule.hpp> on line 74
+
+

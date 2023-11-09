@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#2E4C91D61AE7105A46D8A3716D5CAEBF3534AFCC]
+== parse
+
+pass:v,q[Parse a character buffer using a rule]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class R>
+result<Rule::value_type>
+parse(
+    string_view s,
+    const Rule& r);
+----
+
+Declared in file <include/boost/url/grammar/parse.hpp> on line 65
+
+Defined in file <include/boost/url/grammar/impl/parse.hpp> on line 41
+
+=== Description
+
+pass:v,q[This function parses a complete string into] pass:v,q[the specified sequence of rules. If the]
+pass:v,q[string is not completely consumed, an]
+pass:v,q[error is returned instead.]
+
+

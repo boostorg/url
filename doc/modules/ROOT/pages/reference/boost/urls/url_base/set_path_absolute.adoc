@@ -1,0 +1,66 @@
+:relfileprefix: ../../../
+[#0470C741E7F493FF2F77742C90BC93AECBFBF831]
+== set_path_absolute
+
+pass:v,q[Set if the path is absolute]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+set_path_absolute(bool absolute);
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 1665
+
+Defined in file <src/url_base.cpp> on line 1011
+
+=== Description
+
+pass:v,q[This function adjusts the path to make] pass:v,q[it absolute or not, depending on the]
+pass:v,q[parameter.]
+[NOTE]
+pass:v,q[If an authority is present, the path]
+pass:v,q[is always absolute. In this case, the]
+pass:v,q[function has no effect.]
+
+=== Example
+[,cpp]
+----
+url u( "path/to/file.txt" );
+assert( u.set_path_absolute( true ) );
+assert( u.buffer() == "/path/to/file.txt" );
+----
+
+=== Postconditions
+[,cpp]
+----
+this->is_path_absolute() == true && this->encoded_path().front() == '/'
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size()`.]
+
+=== BNF
+[,cpp]
+----
+path          = path-abempty    ; begins with "/" or is empty
+              / path-absolute   ; begins with "/" but not "//"
+              / path-noscheme   ; begins with a non-colon segment
+              / path-rootless   ; begins with a segment
+              / path-empty      ; zero characters
+
+path-abempty  = *( "/" segment )
+path-absolute = "/" [ segment-nz *( "/" segment ) ]
+path-noscheme = segment-nz-nc *( "/" segment )
+path-rootless = segment-nz *( "/" segment )
+path-empty    = 0<pchar>
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3.  Path (rfc3986)]
+
+

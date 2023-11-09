@@ -1,0 +1,67 @@
+:relfileprefix: ../../../
+[#0AFA118762295A0E108B19E05700E348AA1E4156]
+== host_ipv6_address
+
+pass:v,q[Return the host IPv6 address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/ipv6_address.adoc[ipv6_address]
+host_ipv6_address() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 1256
+
+Defined in file <src/url_view_base.cpp> on line 380
+
+=== Description
+
+pass:v,q[If the host type is] xref:reference/boost/urls/host_type/ipv6.adoc[host_type::ipv6,]
+pass:v,q[this function returns the address as]
+pass:v,q[a value of type]
+xref:reference/boost/urls/ipv6_address.adoc[ipv6_address.]
+pass:v,q[Otherwise, if the host type is not an IPv6]
+pass:v,q[address, it returns a default-constructed]
+pass:v,q[value which is equal to the unspecified]
+pass:v,q[address "0:0:0:0:0:0:0:0".]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "ftp://[::1]/" ).host_ipv6_address() == ipv6_address( "::1" ) );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+IPv6address =                            6( h16 ":" ) ls32
+            /                       "::" 5( h16 ":" ) ls32
+            / [               h16 ] "::" 4( h16 ":" ) ls32
+            / [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+            / [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+            / [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+            / [ *4( h16 ":" ) h16 ] "::"              ls32
+            / [ *5( h16 ":" ) h16 ] "::"              h16
+            / [ *6( h16 ":" ) h16 ] "::"
+
+ls32        = ( h16 ":" h16 ) / IPv4address
+            ; least-significant 32 bits of address
+
+h16         = 1*4HEXDIG
+            ; 16 bits of address represented in hexadecimal
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

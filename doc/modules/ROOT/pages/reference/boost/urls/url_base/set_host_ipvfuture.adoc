@@ -1,0 +1,55 @@
+:relfileprefix: ../../../
+[#050C4F1E107652FD0EC956D67F77BBFEC797557F]
+== set_host_ipvfuture
+
+pass:v,q[Set the host to an address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url_base.adoc[url_base]&
+set_host_ipvfuture(string_view s);
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 1378
+
+Defined in file <src/url_base.cpp> on line 850
+
+=== Description
+
+pass:v,q[The host is set to the specified IPvFuture] pass:v,q[string.] pass:v,q[The host type is]
+xref:reference/boost/urls/host_type/ipvfuture.adoc[host_type::ipvfuture.]
+
+=== Example
+[,cpp]
+----
+assert( url().set_host_ipvfuture( "v42.bis" ).buffer() == "//[v42.bis]" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->size() + s.size()`.]
+
+=== Postconditions
+[,cpp]
+----
+this->has_authority() == true && this->host_ipvfuture) == s && this->host_type() == host_type::ipvfuture
+----
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+=== BNF
+[,cpp]
+----
+IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[            3.2.2. Host (rfc3986)]
+
+

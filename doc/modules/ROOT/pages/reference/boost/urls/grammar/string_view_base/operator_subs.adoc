@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#F185AC7C9598DA14D88C593D2E5CA0DDA255D619]
+== operator[]
+
+pass:v,q[Access a character]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/const_reference.adoc[const_reference]
+operator[](xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] pos) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 281
+
+=== Description
+
+pass:v,q[See `core::string_view::operator[]`]
+
+

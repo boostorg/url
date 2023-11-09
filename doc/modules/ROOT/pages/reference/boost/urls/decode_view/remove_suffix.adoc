@@ -1,0 +1,40 @@
+:relfileprefix: ../../../
+[#D51E0352FB90C0ABFA5A51F1C988EBF772A4B1CC]
+== remove_suffix
+
+pass:v,q[Remove the last characters]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+void
+remove_suffix(xref:reference/boost/urls/decode_view/size_type.adoc[size_type] n);
+----
+
+Declared in file <include/boost/url/decode_view.hpp> on line 474
+
+Defined in file <src/decode_view.cpp> on line 122
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+decode_view d( "Program%20Files" );
+d.remove_prefix( 6 );
+assert( d == "Program" );
+----
+
+=== Preconditions
+[,cpp]
+----
+not this->empty()
+----
+
+=== Complexity
+pass:v,q[Linear.]
+
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#B3A06811E0B8A5C58BF6FAA1C5CBEF05AC01AE61]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = xref:reference/boost/urls/params_encoded_view.adoc[params_encoded_view];
+----
+
+Defined in file <include/boost/url/rfc/query_rule.hpp> on line 62
+

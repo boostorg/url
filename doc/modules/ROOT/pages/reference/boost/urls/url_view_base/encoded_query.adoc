@@ -1,0 +1,53 @@
+:relfileprefix: ../../../
+[#B2E538FCC8912134D361FEB5045C36688E96C5D2]
+== encoded_query
+
+pass:v,q[Return the query]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+encoded_query() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 1953
+
+Defined in file <src/url_view_base.cpp> on line 523
+
+=== Description
+
+pass:v,q[If this contains a query, it is returned] pass:v,q[as a string (which may be empty).]
+pass:v,q[Otherwise, an empty string is returned.]
+pass:v,q[The returned string may contain]
+pass:v,q[percent escapes.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "/sql?id=42&name=jane%2Ddoe&page+size=20" ).encoded_query() == "id=42&name=jane%2Ddoe&page+size=20" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+query           = *( pchar / "/" / "?" )
+
+query-param     = key [ "=" value ]
+query-params    = [ query-param ] *( "&" query-param )
+----
+
+=== Specification
+
+* pass:v,q[://en.wikipedia.org/wiki/Query_string"]
+pass:v,q[>Query string (Wikipedia)]
+
+

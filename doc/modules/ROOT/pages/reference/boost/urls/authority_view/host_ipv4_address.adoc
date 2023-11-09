@@ -1,0 +1,59 @@
+:relfileprefix: ../../../
+[#91595B129AFAA1AE5BCB7F9A990F0F04D29A6630]
+== host_ipv4_address
+
+pass:v,q[Return the host IPv4 address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]
+host_ipv4_address() const noexcept;
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 896
+
+Defined in file <src/authority_view.cpp> on line 234
+
+=== Description
+
+pass:v,q[If the host type is] xref:reference/boost/urls/host_type/ipv4.adoc[host_type::ipv4,]
+pass:v,q[this function returns the address as]
+pass:v,q[a value of type]
+xref:reference/boost/urls/ipv4_address.adoc[ipv4_address.]
+pass:v,q[Otherwise, if the host type is not an IPv4]
+pass:v,q[address, it returns a default-constructed]
+pass:v,q[value which is equal to the unspecified]
+pass:v,q[address "0.0.0.0".]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://127.0.0.1/index.htm?user=win95" ).host_ipv4_address() == ipv4_address( "127.0.0.1" ) );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
+
+dec-octet   = DIGIT                 ; 0-9
+            / %x31-39 DIGIT         ; 10-99
+            / "1" 2DIGIT            ; 100-199
+            / "2" %x30-34 DIGIT     ; 200-249
+            / "25" %x30-35          ; 250-255
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

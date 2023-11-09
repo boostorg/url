@@ -1,0 +1,27 @@
+:relfileprefix: ../
+[#6898C583A1F8360FAD5497800588DCB59A3E8927]
+== Class hash
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<size_t N>
+struct hash<xref:reference/boost.adoc[boost]::xref:reference/boost/urls.adoc[urls]::xref:reference/boost/urls/static_url.adoc[static_url]<N>>;
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 446
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/std/hash-06/2constructor-0c.adoc[`pass:v[hash]`] |
+|xref:reference/std/hash-06/2constructor-06.adoc[`pass:v[hash]`] |
+|xref:reference/std/hash-06/operator_assign.adoc[`pass:v[operator=]`] |
+|xref:reference/std/hash-06/2constructor-0f.adoc[`pass:v[hash]`] |
+|xref:reference/std/hash-06/operator_call.adoc[`pass:v[operator()]`] |
+|===
+

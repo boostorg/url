@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#2C9C53C90E79A2DD5660B1FB7F8EA766F74653BF]
+== unknown
+
+pass:v,q[Indicates the scheme is not a well-known scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+unknown
+----
+
+Defined in file <include/boost/url/scheme.hpp> on line 41
+

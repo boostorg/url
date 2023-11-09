@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#C873F0E59399EAEC5CB51F1ED4043ACCEB8C781C]
+== assign_to_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+assign_to_t(xref:reference/boost/urls/string_token/assign_to_t/string_type.adoc[string_type]& s) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 231
+

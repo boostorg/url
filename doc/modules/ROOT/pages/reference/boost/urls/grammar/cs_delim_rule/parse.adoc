@@ -1,0 +1,18 @@
+:relfileprefix: ../../../../
+[#23166E5BA13AF83567286F32FD8386234D7ADB83]
+== parse
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/grammar/cs_delim_rule/value_type.adoc[value_type]>
+parse(
+    const char*& it,
+    const char* end) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/delim_rule.hpp> on line 138
+

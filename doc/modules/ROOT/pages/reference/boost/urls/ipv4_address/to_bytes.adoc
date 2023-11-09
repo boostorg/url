@@ -1,0 +1,19 @@
+:relfileprefix: ../../../
+[#846F876A7DE9FDBA67DD70E3CC9784A27D96CB7D]
+== to_bytes
+
+pass:v,q[Return the address as bytes, in network byte order.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/ipv4_address/bytes_type.adoc[bytes_type]
+to_bytes() const noexcept;
+----
+
+Declared in file <include/boost/url/ipv4_address.hpp> on line 153
+
+Defined in file <src/ipv4_address.cpp> on line 50
+

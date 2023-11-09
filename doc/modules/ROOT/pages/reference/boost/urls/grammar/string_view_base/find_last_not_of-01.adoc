@@ -1,0 +1,26 @@
+:relfileprefix: ../../../../
+[#1AEE400DFFDD4DD0A69E2B1BBBF0DA0B916D9434]
+== find_last_not_of
+
+pass:v,q[Return the position of the last non-match]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type]
+find_last_not_of(
+    const char* s,
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] pos,
+    xref:reference/boost/urls/grammar/string_view_base/size_type.adoc[size_type] n) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 713
+
+=== Description
+
+pass:v,q[See `core::string_view::find_last_not_of`]
+
+

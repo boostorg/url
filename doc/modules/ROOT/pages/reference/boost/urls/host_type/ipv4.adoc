@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#E3D17AE1D0228E2F4755B3FA3312D08AAA2DEC06]
+== ipv4
+
+pass:v,q[A host is specified by] xref:reference/boost/urls/ipv4_address.adoc[ipv4_address.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ipv4
+----
+
+Defined in file <include/boost/url/host_type.hpp> on line 42
+

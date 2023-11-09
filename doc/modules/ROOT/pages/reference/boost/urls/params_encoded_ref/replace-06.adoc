@@ -1,0 +1,49 @@
+:relfileprefix: ../../../
+[#6FD23EFEA67123213AE8701992B0DE428F809A08]
+== replace
+
+pass:v,q[Replace params]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class FwdIt>
+xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+replace(
+    xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator] from,
+    xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator] to,
+    FwdIt first,
+    FwdIt last);
+----
+
+Declared in file <include/boost/url/params_encoded_ref.hpp> on line 793
+
+Defined in file <include/boost/url/impl/params_encoded_ref.hpp> on line 130
+
+=== Description
+
+pass:v,q[This function replaces a range of] pass:v,q[params with a range of params.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`from` or come after are invalidated.]
+[NOTE]
+pass:v,q[The strings referenced by the inputs]
+pass:v,q[must not come from the underlying url,]
+pass:v,q[or else the behavior is undefined.]
+
+=== Mandates
+[,cpp]
+----
+std::is_convertible< std::iterator_traits< FwdIt >::reference_type, param_pct_view >::value == true
+----
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+pass:v,q[Exceptions thrown on invalid input.]
+
+

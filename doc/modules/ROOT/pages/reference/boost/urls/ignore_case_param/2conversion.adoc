@@ -1,0 +1,25 @@
+:relfileprefix: ../../../
+[#957A4062C888446A198377C034224621AD44D1B6]
+== operator bool
+
+pass:v,q[True if an algorithm should ignore case]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+operator bool() const noexcept;
+----
+
+Defined in file <include/boost/url/ignore_case.hpp> on line 108
+
+=== Description
+
+pass:v,q[Values of type `ignore_case_param`] pass:v,q[evaluate to true when constructed]
+pass:v,q[with the constant]
+xref:reference/boost/urls/ignore_case.adoc[ignore_case.]
+pass:v,q[Otherwise, they are default-constructed]
+pass:v,q[and evaluate to `false`.]
+
+

@@ -1,0 +1,21 @@
+:relfileprefix: ../../../
+[#A94877B53CABF41CAFE4D671BA38EB67D2CA0D0D]
+== incomplete_encoding
+
+pass:v,q[The percent-encoded sequence is incomplete.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+incomplete_encoding
+----
+
+Defined in file <include/boost/url/error.hpp> on line 61
+
+=== Description
+
+pass:v,q[This error condition is fatal.]
+
+

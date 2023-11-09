@@ -1,0 +1,23 @@
+:relfileprefix: ../../
+[#F26723E8AD9074A0AC63BBAC518674C2F30895A8]
+== Class make_void
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class...>
+struct make_void;
+----
+
+Defined in file <include/boost/url/detail/config.hpp> on line 138
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/make_void/type.adoc[`pass:v[type]`] |
+|===
+

@@ -1,0 +1,19 @@
+:relfileprefix: ../../../
+[#914CA0374EEAACACF3EB1AAC0F624EEAD35B5D12]
+== ~authority_view
+
+pass:v,q[Destructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+virtual
+~authority_view();
+----
+
+Declared in file <include/boost/url/authority_view.hpp> on line 106
+
+Defined in file <src/authority_view.cpp> on line 49
+

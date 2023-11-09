@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#BED959FB6CAC4EB5B34037C1E546F6C1A12C10A3]
+== Class is_token
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class T>
+struct xref:reference/boost/urls/string_token/is_token-0a.adoc[is_token]<T, xref:reference/boost/urls/void_t.adoc[void_t]<decltype(std::declval<T &>().prepare(std::declval<std::size_t>())), decltype(std::declval<T &>().result())>>
+    : xref:reference/std.adoc[std]::xref:reference/std/integral_constant.adoc[integral_constant]<bool, std::is_convertible<decltype(std::declval<T &>().result()), typename T::result_type>::value && std::is_same<decltype(std::declval<T &>().prepare(0)), char *>::value && std::is_base_of<arg, T>::value && std::is_convertible<const volatile T *, const volatile arg *>::value>;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 90
+
+

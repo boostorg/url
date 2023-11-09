@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#1D4ABBE6E6772C13D6DF2BD401FA5D373A9C7E37]
+== name
+
+pass:v,q[A host is specified by reg-name.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+name
+----
+
+Defined in file <include/boost/url/host_type.hpp> on line 37
+

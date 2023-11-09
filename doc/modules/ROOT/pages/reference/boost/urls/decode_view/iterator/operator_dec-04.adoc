@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#485EB3F2CAE3D4A6AA9539C79B1B044AD21ACC1A]
+== operator--
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/decode_view/iterator.adoc[iterator]&
+operator--() noexcept;
+----
+
+Defined in file <include/boost/url/impl/decode_view.hpp> on line 80
+

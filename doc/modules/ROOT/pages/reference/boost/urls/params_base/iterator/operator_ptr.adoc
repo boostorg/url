@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#EED3598E7905AA916009EF8CD8E6F1FAC635EDFC]
+== operator->
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_base/iterator/pointer.adoc[pointer]
+operator->() const = delete;
+----
+
+Defined in file <include/boost/url/impl/params_base.hpp> on line 95
+

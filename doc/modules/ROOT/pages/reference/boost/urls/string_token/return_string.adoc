@@ -1,0 +1,30 @@
+:relfileprefix: ../../../
+[#19604A5246C3E08AD125AAF8CBF9E2AEC580EA33]
+== Class return_string
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct return_string
+    : xref:reference/boost/urls/string_token/arg.adoc[arg];
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 117
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/string_token/return_string/result_type.adoc[`pass:v[result_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/string_token/return_string/prepare.adoc[`pass:v[prepare]`] |
+|xref:reference/boost/urls/string_token/return_string/result.adoc[`pass:v[result]`] |
+|===
+

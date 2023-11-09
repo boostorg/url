@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#B60AFC894C9B39E19ACC52CE8547CCA5DFEA7B9F]
+== Friend parse_query
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+result<xref:reference/boost/urls/params_encoded_view.adoc[params_encoded_view]>
+parse_query(string_view s) noexcept;
+----
+
+Defined in file <include/boost/url/params_encoded_view.hpp> on line 228
+

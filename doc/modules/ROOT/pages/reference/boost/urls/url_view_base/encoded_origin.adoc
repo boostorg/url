@@ -1,0 +1,41 @@
+:relfileprefix: ../../../
+[#C06E9ECB5EF6EC7223D745A1F8E0FFB3C92E3A3A]
+== encoded_origin
+
+pass:v,q[Return the origin]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+encoded_origin() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 2267
+
+Defined in file <src/url_view_base.cpp> on line 608
+
+=== Description
+
+pass:v,q[If an authority is present, this] pass:v,q[function returns the scheme and]
+pass:v,q[authority portion of the url.]
+pass:v,q[Otherwise, an empty string is]
+pass:v,q[returned.]
+pass:v,q[The returned string may contain]
+pass:v,q[percent escapes.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://www.example.com:8080/index.htm?text=none#h1" ).encoded_origin() == "http://www.example.com:8080" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

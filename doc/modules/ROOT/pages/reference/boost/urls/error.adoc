@@ -1,0 +1,40 @@
+:relfileprefix: ../../
+[#D02205F907A28549A483F48CFC998D1ED8555147]
+== Enum error
+
+pass:v,q[Error codes returned the library]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+enum error;
+----
+
+Defined in file <include/boost/url/error.hpp> on line 22
+
+=== Members
+[,cols=2]
+|===
+|Name |Description
+|success |pass:v,q[The operation completed successfully.]
+
+|illegal_null |pass:v,q[Null encountered in pct-encoded.]
+
+|illegal_reserved_char |pass:v,q[Illegal reserved character in encoded string.]
+
+|non_canonical |pass:v,q[A grammar element was not in canonical form.]
+
+|bad_pct_hexdig |pass:v,q[Bad hexadecimal digit.]
+
+|incomplete_encoding |pass:v,q[The percent-encoded sequence is incomplete.]
+
+|missing_pct_hexdig |pass:v,q[Missing hexadecimal digit.]
+
+|no_space |pass:v,q[No space in output buffer]
+
+|not_a_base |pass:v,q[The URL is not a base URL]
+
+|===
+

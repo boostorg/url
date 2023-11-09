@@ -1,0 +1,36 @@
+:relfileprefix: ../../
+[#5624456C086AC9FCEBCB6A8C414C4A252BEC1105]
+== string_to_scheme
+
+pass:v,q[Return the known scheme for a non-normalized string, if known]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/scheme.adoc[scheme]
+string_to_scheme(string_view s) noexcept;
+----
+
+Declared in file <include/boost/url/scheme.hpp> on line 141
+
+Defined in file <src/scheme.cpp> on line 20
+
+=== Description
+
+pass:v,q[If the string does not identify a known] pass:v,q[scheme, the value] xref:reference/boost/urls/scheme/unknown.adoc[scheme::unknown]
+pass:v,q[is]
+pass:v,q[returned.]
+
+=== BNF
+[,cpp]
+----
+scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.1[3.1. Scheme (rfc3986)]
+
+

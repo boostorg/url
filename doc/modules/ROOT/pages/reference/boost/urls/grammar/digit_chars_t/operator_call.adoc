@@ -1,0 +1,17 @@
+:relfileprefix: ../../../../
+[#215697D2124C7693864ACB1087916405062A5077]
+== operator()
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+bool
+operator()(char c) const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/digit_chars.hpp> on line 50
+

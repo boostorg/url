@@ -1,0 +1,26 @@
+:relfileprefix: ../../
+[#083E0F4863A6DF28BAAC79A6212EB0109BA35CA6]
+== operator<<
+
+pass:v,q[Format the address to an output stream.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+ostream&
+operator<<(
+    ostream& os,
+    const xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]& addr);
+----
+
+Declared in file <include/boost/url/ipv4_address.hpp> on line 327
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 291
+
+=== Description
+
+pass:v,q[IPv4 addresses written to output streams] pass:v,q[are written in their dotted decimal format.]
+
+

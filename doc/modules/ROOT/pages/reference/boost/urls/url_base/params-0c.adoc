@@ -1,0 +1,61 @@
+:relfileprefix: ../../../
+[#C8E01C04AE75744D4426AB0117A6464D2127A1C0]
+== params
+
+pass:v,q[Return the query as a container of parameters]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_ref.adoc[params_ref]
+params(xref:reference/boost/urls/encoding_opts.adoc[encoding_opts] opt) noexcept;
+----
+
+Declared in file <include/boost/url/url_base.hpp> on line 2136
+
+Defined in file <src/url_base.cpp> on line 1424
+
+=== Description
+
+pass:v,q[This function returns a bidirectional] pass:v,q[view of key/value pairs over the query.]
+pass:v,q[The returned view references the same]
+pass:v,q[underlying character buffer; ownership]
+pass:v,q[is not transferred.]
+pass:v,q[Any percent-escapes in strings returned]
+pass:v,q[when iterating the view are decoded first.]
+pass:v,q[The container is modifiable; changes]
+pass:v,q[to the container are reflected in the]
+pass:v,q[underlying URL.]
+
+=== Example
+[,cpp]
+----
+encoding_opts opt;
+opt.space_as_plus = true;
+params_ref pv = url( "/sql?id=42&name=jane+doe&page+size=20" ).params(opt);
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+query           = *( pchar / "/" / "?" )
+
+query-param     = key [ "=" value ]
+query-params    = [ query-param ] *( "&" query-param )
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.4[3.4.  Query (rfc3986)]
+
+* link:https://en.wikipedia.org/wiki/Query_string[Query string (Wikipedia)]
+
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#9A815D4DD2CB718C42B5107031716F7AFD030915]
+== ~op_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+~op_t();
+----
+
+Defined in file <src/url_base.cpp> on line 55
+

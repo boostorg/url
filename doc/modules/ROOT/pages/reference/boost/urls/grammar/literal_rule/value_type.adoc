@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#51A84B11C5C699154E87F7976DCD3398B3D7CEF6]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = string_view;
+----
+
+Defined in file <include/boost/url/grammar/literal_rule.hpp> on line 65
+

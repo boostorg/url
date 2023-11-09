@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#B2C85C41D556C243BD5C226521271BA609C0B46C]
+== id_query
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+id_query
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 31
+

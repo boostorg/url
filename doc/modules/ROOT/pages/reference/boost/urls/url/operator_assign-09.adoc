@@ -1,0 +1,40 @@
+:relfileprefix: ../../../
+[#92B82BCF2B2CDCC7518C894C3FC35EF9AEA4DD5D]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+operator=(xref:reference/boost/urls/url.adoc[url]&& u) noexcept;
+----
+
+Declared in file <include/boost/url/url.hpp> on line 271
+
+Defined in file <src/url.cpp> on line 57
+
+=== Description
+
+pass:v,q[The contents of `u` are transferred to] pass:v,q[`this`, including the underlying]
+pass:v,q[character buffer. The previous contents]
+pass:v,q[of `this` are destroyed.]
+pass:v,q[After assignment, the moved-from]
+pass:v,q[object is as if default constructed.]
+
+=== Postconditions
+[,cpp]
+----
+u.empty() == true
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

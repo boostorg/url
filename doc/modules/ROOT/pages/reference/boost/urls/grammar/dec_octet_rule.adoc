@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#C06404DCEDCFDA48A3A3313540F2B3F2974DB334]
+== dec_octet_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/grammar/dec_octet_rule_t.adoc[dec_octet_rule_t] dec_octet_rule;
+----
+
+Defined in file <include/boost/url/grammar/dec_octet_rule.hpp> on line 69
+

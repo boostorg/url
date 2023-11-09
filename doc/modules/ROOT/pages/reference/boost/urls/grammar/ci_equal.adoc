@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#F2B2F8502D33A867B627752F9A0E1A7791A17352]
+== Class ci_equal
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct ci_equal;
+----
+
+Defined in file <include/boost/url/grammar/ci_string.hpp> on line 297
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/ci_equal/is_transparent.adoc[`pass:v[is_transparent]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/ci_equal/operator_call.adoc[`pass:v[operator()]`] |
+|===
+

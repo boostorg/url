@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#304B029EA93BA5E0D5720ACCB0ABE1F8599E58EA]
+== iterator
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+iterator(const xref:reference/boost/urls/grammar/range/iterator.adoc[iterator]&) = default;
+----
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 374
+

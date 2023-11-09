@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#DB7FB1B6C061C20F92CFC7C5E35A9A44228B3CBC]
+== loopback
+
+pass:v,q[Return an address object that represents the loopback address]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+static
+xref:reference/boost/urls/ipv4_address.adoc[ipv4_address]
+loopback() noexcept;
+----
+
+Defined in file <include/boost/url/ipv4_address.hpp> on line 274
+

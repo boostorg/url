@@ -1,0 +1,40 @@
+:relfileprefix: ../../../
+[#2DE8EF803820A3FBD1FA9172BBF02562C5E92DA4]
+== params_encoded_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+params_encoded_view() = default;
+----
+
+Defined in file <include/boost/url/params_encoded_view.hpp> on line 87
+
+=== Description
+
+pass:v,q[Default-constructed params have] pass:v,q[zero elements.]
+
+=== Example
+[,cpp]
+----
+params_encoded_view qp;
+----
+
+=== Effects
+[,cpp]
+----
+return params_encoded_view( "" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

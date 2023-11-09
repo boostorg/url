@@ -1,0 +1,51 @@
+:relfileprefix: ../../../
+[#A5707BC78B551EF73059BC5ECC501D6B9B207472]
+== buffer
+
+pass:v,q[Return the query corresponding to these params]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+buffer() const noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_base.hpp> on line 176
+
+Defined in file <src/params_encoded_base.cpp> on line 58
+
+=== Description
+
+pass:v,q[This function returns the query string] pass:v,q[referenced by the container.]
+pass:v,q[The returned string may contain]
+pass:v,q[percent escapes.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "?first=John&last=Doe" ).encoded_params().buffer() == "first=John&last=Doe" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+query-params    = query-param *( "&" query-param )
+query-param     = key [ "=" value ]
+key             = *qpchar
+value           = *( qpchar / "=" )
+----
+
+=== Specification
+
+* link:https://en.wikipedia.org/wiki/Query_string[Query string (Wikipedia)]
+
+

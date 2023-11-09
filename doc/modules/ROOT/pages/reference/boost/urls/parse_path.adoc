@@ -1,0 +1,40 @@
+:relfileprefix: ../../
+[#5064F661E47427BCF465CC86F3F552B659AD1A15]
+== parse_path
+
+pass:v,q[Parse a string and return an encoded segment view]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/segments_encoded_view.adoc[segments_encoded_view]>
+parse_path(string_view s) noexcept;
+----
+
+Declared in file <include/boost/url/parse_path.hpp> on line 48
+
+Declared in file <include/boost/url/segments_encoded_view.hpp> on line 232
+
+Defined in file <src/parse_path.cpp> on line 24
+
+=== Description
+
+pass:v,q[This function parses the string and returns the] pass:v,q[corresponding path object if the string is valid,]
+pass:v,q[otherwise returns an error.]
+
+=== BNF
+[,cpp]
+----
+path          = [ "/" ] segment *( "/" segment )
+----
+
+=== Exception Safety
+pass:v,q[No-throw guarantee.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3.  Path (rfc3986)]
+
+

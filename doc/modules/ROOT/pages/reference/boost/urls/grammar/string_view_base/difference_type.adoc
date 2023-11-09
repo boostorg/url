@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#766A4894CB2D0F3A4660C4C1E81FA1BAB07E9AA2]
+== difference_type
+
+pass:v,q[The difference type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef ptrdiff_t difference_type;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 110
+

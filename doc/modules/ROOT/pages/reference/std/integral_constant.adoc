@@ -1,0 +1,36 @@
+:relfileprefix: ../
+[#DCD99CC522B9E872B3084A5B891004AFE72394D9]
+== Class integral_constant
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct integral_constant;
+----
+
+Defined in file </usr/include/c++/13/type_traits> on line 62
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/std/integral_constant/value_type.adoc[`pass:v[value_type]`] |
+|xref:reference/std/integral_constant/type.adoc[`pass:v[type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/std/integral_constant/2conversion.adoc[`pass:v[operator value_type]`] |
+|xref:reference/std/integral_constant/operator_call.adoc[`pass:v[operator()]`] |
+|===
+=== Static Data Members
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/std/integral_constant/value.adoc[`pass:v[value]`] |
+|===
+

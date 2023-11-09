@@ -1,0 +1,35 @@
+:relfileprefix: ../../
+[#491F37FFF7A62B6BD7D7DBEF7D1F353EF7C4E5D5]
+== Class pct_encoded_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class CharSet>
+struct pct_encoded_rule_t;
+----
+
+Defined in file <include/boost/url/rfc/pct_encoded_rule.hpp> on line 69
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/pct_encoded_rule_t/value_type.adoc[`pass:v[value_type]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/pct_encoded_rule_t/parse.adoc[`pass:v[parse]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/pct_encoded_rule_t/8friend.adoc[`pass:v[pct_encoded_rule]`] |
+|===
+

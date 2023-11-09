@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#6126E84BE97B0E965E9835476E116C1B4C746052]
+== value_type
+
+pass:v,q[The type of each element of the range]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = T;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 133
+

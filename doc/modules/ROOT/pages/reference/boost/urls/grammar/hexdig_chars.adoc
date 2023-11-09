@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#0CBEA01689A0867DB88E6684E82069BD77BB0BA9]
+== hexdig_chars
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/grammar/hexdig_chars_t.adoc[hexdig_chars_t] hexdig_chars;
+----
+
+Defined in file <include/boost/url/grammar/hexdig_chars.hpp> on line 96
+

@@ -1,0 +1,52 @@
+:relfileprefix: ../../../
+[#4498DA18E1AB0D78A1CC1C90E520940CE32F2544]
+== Class iterator
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class iterator;
+----
+
+Declared in file <include/boost/url/decode_view.hpp> on line 141
+
+Defined in file <include/boost/url/impl/decode_view.hpp> on line 19
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/decode_view/iterator/value_type.adoc[`pass:v[value_type]`] |
+|xref:reference/boost/urls/decode_view/iterator/reference.adoc[`pass:v[reference]`] |
+|xref:reference/boost/urls/decode_view/iterator/pointer.adoc[`pass:v[pointer]`] |
+|xref:reference/boost/urls/decode_view/iterator/const_reference.adoc[`pass:v[const_reference]`] |
+|xref:reference/boost/urls/decode_view/iterator/size_type.adoc[`pass:v[size_type]`] |
+|xref:reference/boost/urls/decode_view/iterator/difference_type.adoc[`pass:v[difference_type]`] |
+|xref:reference/boost/urls/decode_view/iterator/iterator_category.adoc[`pass:v[iterator_category]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/decode_view/iterator/2constructor-05.adoc[`pass:v[iterator]`] |
+|xref:reference/boost/urls/decode_view/iterator/2constructor-07.adoc[`pass:v[iterator]`] |
+|xref:reference/boost/urls/decode_view/iterator/operator_assign.adoc[`pass:v[operator=]`] |
+|xref:reference/boost/urls/decode_view/iterator/operator_star.adoc[`pass:v[operator*]`] |
+|xref:reference/boost/urls/decode_view/iterator/operator_inc-0a.adoc[`pass:v[operator++]`] |
+|xref:reference/boost/urls/decode_view/iterator/operator_dec-04.adoc[`pass:v[operator--]`] |
+|xref:reference/boost/urls/decode_view/iterator/operator_inc-07.adoc[`pass:v[operator++]`] |
+|xref:reference/boost/urls/decode_view/iterator/operator_dec-0a.adoc[`pass:v[operator--]`] |
+|xref:reference/boost/urls/decode_view/iterator/base.adoc[`pass:v[base]`] |
+|xref:reference/boost/urls/decode_view/iterator/operator_eq.adoc[`pass:v[operator==]`] |
+|xref:reference/boost/urls/decode_view/iterator/operator_not_eq.adoc[`pass:v[operator!=]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/decode_view/iterator/8friend.adoc[`pass:v[decode_view]`] |
+|===
+

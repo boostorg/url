@@ -1,0 +1,34 @@
+:relfileprefix: ../../../
+[#A6FA49039B2AEF62F687BE8AA2C4AAAC9D8871C3]
+== ci_is_less
+
+pass:v,q[Return true if s0 is less than s1 using case-insensitive comparison]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+ci_is_less(
+    string_view s0,
+    string_view s1) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/ci_string.hpp> on line 224
+
+=== Description
+
+pass:v,q[The comparison algorithm implements a] pass:v,q[case-insensitive total order on the set]
+pass:v,q[of all strings; however, it is not a]
+pass:v,q[lexicographical comparison.]
+pass:v,q[The function is defined only for strings]
+pass:v,q[containing low-ASCII characters.]
+
+=== Example
+[,cpp]
+----
+assert( ! ci_is_less( "Boost", "boost" ) );
+----
+
+

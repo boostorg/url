@@ -1,0 +1,23 @@
+:relfileprefix: ../../
+[#A0269BF4D34307C5BBEBBF56634ADF76606281D0]
+== Class is_error_condition_enum
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<>
+struct is_error_condition_enum<xref:reference/boost/urls.adoc[urls]::xref:reference/boost/urls/grammar.adoc[grammar]::xref:reference/boost/urls/grammar/condition.adoc[condition]>;
+----
+
+Defined in file <include/boost/url/grammar/impl/error.hpp> on line 23
+
+=== Static Data Members
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/system/is_error_condition_enum/value.adoc[`pass:v[value]`] |
+|===
+

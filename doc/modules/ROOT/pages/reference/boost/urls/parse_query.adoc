@@ -1,0 +1,37 @@
+:relfileprefix: ../../
+[#B8D4FC8557771483912678A183E6B105BC8E9C11]
+== parse_query
+
+pass:v,q[Parse a string and return an encoded params view]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+result<xref:reference/boost/urls/params_encoded_view.adoc[params_encoded_view]>
+parse_query(string_view s) noexcept;
+----
+
+Declared in file <include/boost/url/parse_query.hpp> on line 46
+
+Declared in file <include/boost/url/params_encoded_view.hpp> on line 228
+
+Defined in file <src/parse_query.cpp> on line 24
+
+=== Description
+
+pass:v,q[This function parses the string and returns the] pass:v,q[corresponding params object if the string is valid,]
+pass:v,q[otherwise returns an error.]
+
+=== BNF
+[,cpp]
+----
+----
+
+=== Exception Safety
+pass:v,q[No-throw guarantee.]
+
+=== Specification
+
+

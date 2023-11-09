@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#23C30F94E68D63AEE1420B2CC394D6854E927F57]
+== id_frag
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+id_frag
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 32
+

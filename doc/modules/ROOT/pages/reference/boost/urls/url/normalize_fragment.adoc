@@ -1,0 +1,34 @@
+:relfileprefix: ../../../
+[#D55D9AAD32CB7478DE5F7B7C04F4B4D0D8546EEC]
+== normalize_fragment
+
+pass:v,q[Normalize the URL fragment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/url.adoc[url]&
+normalize_fragment();
+----
+
+Defined in file <include/boost/url/url.hpp> on line 501
+
+=== Description
+
+pass:v,q[Applies Syntax-based normalization to the] pass:v,q[URL fragment.]
+pass:v,q[Percent-encoding triplets are normalized]
+pass:v,q[to uppercase letters. Percent-encoded]
+pass:v,q[octets that correspond to unreserved]
+pass:v,q[characters are decoded.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2[6.2.2 Syntax-Based Normalization (rfc3986)]
+
+

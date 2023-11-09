@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#F0AB6B4B02236B701489E06AF67A79249FF78A88]
+== Friend hash
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend hash<xref:reference/boost/urls/static_url.adoc[static_url]>;
+----
+
+Defined in file <include/boost/url/static_url.hpp> on line 112
+

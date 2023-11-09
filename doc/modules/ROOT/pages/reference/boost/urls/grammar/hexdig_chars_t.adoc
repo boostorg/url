@@ -1,0 +1,25 @@
+:relfileprefix: ../../../
+[#A94693D888FCEDFA8FD1DB46BB95E493BC2A721F]
+== Class hexdig_chars_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct hexdig_chars_t;
+----
+
+Defined in file <include/boost/url/grammar/hexdig_chars.hpp> on line 61
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/grammar/hexdig_chars_t/operator_call.adoc[`pass:v[operator()]`] |pass:v,q[Return true if c is in the character set.]
+
+|xref:reference/boost/urls/grammar/hexdig_chars_t/find_if.adoc[`pass:v[find_if]`] |
+|xref:reference/boost/urls/grammar/hexdig_chars_t/find_if_not.adoc[`pass:v[find_if_not]`] |
+|===
+

@@ -1,0 +1,37 @@
+:relfileprefix: ../../../
+[#BA81C12459B08646E23FCC315229F4B1945197C7]
+== ci_compare
+
+pass:v,q[Return the case-insensitive comparison of s0 and s1]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+int
+ci_compare(
+    string_view s0,
+    string_view s1) noexcept;
+----
+
+Declared in file <include/boost/url/grammar/ci_string.hpp> on line 120
+
+Defined in file <src/grammar/ci_string.cpp> on line 82
+
+=== Description
+
+pass:v,q[This returns the lexicographical comparison] pass:v,q[of two strings, ignoring case.]
+pass:v,q[The function is defined only for strings]
+pass:v,q[containing low-ASCII characters.]
+
+=== Example
+[,cpp]
+----
+assert( ci_compare( "boost", "Boost" ) == 0 );
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

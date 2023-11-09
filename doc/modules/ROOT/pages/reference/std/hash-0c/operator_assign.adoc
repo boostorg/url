@@ -1,0 +1,17 @@
+:relfileprefix: ../../
+[#47693FB072280FEF1F9CB46059066BE27408228F]
+== operator=
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/std/hash-0c.adoc[hash]<xref:reference/boost.adoc[boost]::xref:reference/boost/urls.adoc[urls]::xref:reference/boost/urls/url_view.adoc[url_view]>&
+operator=(const xref:reference/std/hash-0c.adoc[hash]<xref:reference/boost.adoc[boost]::xref:reference/boost/urls.adoc[urls]::xref:reference/boost/urls/url_view.adoc[url_view]>&) = default;
+----
+
+Defined in file <include/boost/url/url_view.hpp> on line 353
+

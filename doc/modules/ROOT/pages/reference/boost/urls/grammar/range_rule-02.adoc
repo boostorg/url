@@ -1,0 +1,24 @@
+:relfileprefix: ../../../
+[#250B751DF090E46144E2F4FC13C73209DC8FD262]
+== range_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class Rule1,
+    class Rule2>
+constexpr
+enable_if<!std::is_integral<Rule2>::value, xref:reference/boost/urls/grammar/range_rule_t-09.adoc[range_rule_t]<Rule1, Rule2>>::type
+range_rule(
+    const Rule1& first,
+    const Rule2& next,
+    size_t N = 0,
+    size_t M = std::size_t(-1)) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 554
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#FAC2921F5A080BF4F2CA530DE050AE1724C850E1]
+== Friend decode_view
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend xref:reference/boost/urls/decode_view.adoc[decode_view];
+----
+
+Defined in file <include/boost/url/impl/decode_view.hpp> on line 25
+

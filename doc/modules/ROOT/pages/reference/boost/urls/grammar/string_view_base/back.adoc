@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#18F4819BEE440ED51392CC7CF1C91ED6EFAAF5F0]
+== back
+
+pass:v,q[Return the last character]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/string_view_base/const_reference.adoc[const_reference]
+back() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 311
+
+=== Description
+
+pass:v,q[See `core::string_view::back`]
+
+

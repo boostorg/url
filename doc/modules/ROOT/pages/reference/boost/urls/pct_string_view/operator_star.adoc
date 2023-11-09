@@ -1,0 +1,29 @@
+:relfileprefix: ../../../
+[#43FFE8EAF2B5E8E99FC5D40A7AC3478CC6A8E225]
+== operator*
+
+pass:v,q[Return the string as a range of decoded characters]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/decode_view.adoc[decode_view]
+operator*() const noexcept;
+----
+
+Declared in file <include/boost/url/pct_string_view.hpp> on line 304
+
+Defined in file <include/boost/url/decode_view.hpp> on line 670
+
+=== Description
+
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

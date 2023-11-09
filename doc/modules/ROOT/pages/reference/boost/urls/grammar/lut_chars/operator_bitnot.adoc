@@ -1,0 +1,38 @@
+:relfileprefix: ../../../../
+[#CDD7E910AB63DFF4DF5E304F3C5B82E49FBC37E2]
+== operator~
+
+pass:v,q[Return a new character set which is the complement of another character set.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/grammar/lut_chars.adoc[lut_chars]
+operator~() const noexcept;
+----
+
+Defined in file <include/boost/url/grammar/lut_chars.hpp> on line 363
+
+=== Description
+
+pass:v,q[This function returns a new character] pass:v,q[set which contains all of the characters]
+pass:v,q[that are not in `*this`.]
+
+=== Example
+pass:v,q[This statement declares a character set]
+pass:v,q[containing everything but vowels:]
+[,cpp]
+----
+constexpr lut_chars not_vowels = ~lut_chars( "AEIOU" "aeiou" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

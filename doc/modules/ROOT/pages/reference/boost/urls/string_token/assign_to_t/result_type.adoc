@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#268C78C1AF2F2C35090B66019A23689EE06127A9]
+== result_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using result_type = xref:reference/boost/urls/string_token/assign_to_t/string_type.adoc[string_type]&;
+----
+
+Defined in file <include/boost/url/grammar/string_token.hpp> on line 229
+

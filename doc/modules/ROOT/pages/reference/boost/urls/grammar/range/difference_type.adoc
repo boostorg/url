@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#C3574B81A9067615039CDEE2B6B42C37A9A4C2AD]
+== difference_type
+
+pass:v,q[The type used to represent signed integers]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using difference_type = ptrdiff_t;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 153
+

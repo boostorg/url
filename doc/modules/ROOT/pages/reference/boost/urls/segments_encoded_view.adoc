@@ -1,0 +1,75 @@
+:relfileprefix: ../../
+[#12F697DD298D4C0B5A8B629FE8A99ADDF5244E44]
+== Class segments_encoded_view
+
+pass:v,q[A view representing path segments in a URL]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class segments_encoded_view
+    : public xref:reference/boost/urls/segments_encoded_base.adoc[segments_encoded_base];
+----
+
+Declared in file <include/boost/url/segments_encoded_ref.hpp> on line 24
+
+Defined in file <include/boost/url/segments_encoded_view.hpp> on line 61
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_encoded_view/2constructor-0c.adoc[`pass:v[segments_encoded_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/segments_encoded_view/2constructor-0b.adoc[`pass:v[segments_encoded_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/segments_encoded_view/2constructor-02.adoc[`pass:v[segments_encoded_view]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/segments_encoded_view/operator_assign.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/segments_encoded_view/2conversion.adoc[`pass:v[operator segments_view]`] |pass:v,q[Conversion]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_encoded_view/8friend-0d.adoc[`pass:v[url_view_base]`] |
+|xref:reference/boost/urls/segments_encoded_view/8friend-0a.adoc[`pass:v[segments_encoded_ref]`] |
+|xref:reference/boost/urls/segments_encoded_view/8friend-01.adoc[`pass:v[parse_path]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type are used to interpret] pass:v,q[the path as a bidirectional view of segment]
+pass:v,q[strings.]
+pass:v,q[The view does not retain ownership of the]
+pass:v,q[elements and instead references the original]
+pass:v,q[character buffer. The caller is responsible]
+pass:v,q[for ensuring that the lifetime of the buffer]
+pass:v,q[extends until it is no longer referenced.]
+
+=== Example
+[,cpp]
+----
+url_view u( "/path/to/file.txt" );
+
+segments_encoded_view ps = u.encoded_segments();
+
+assert( ps.buffer().data() == u.buffer().data() );
+----
+pass:v,q[Strings produced when elements are returned]
+pass:v,q[have type]
+xref:reference/boost/urls/param_pct_view.adoc[param_pct_view]
+pass:v,q[and represent]
+pass:v,q[encoded strings. Strings passed to member]
+pass:v,q[functions may contain percent escapes, and]
+pass:v,q[throw exceptions on invalid inputs.]
+
+=== Iterator Invalidation
+pass:v,q[Changes to the underlying character buffer]
+pass:v,q[can invalidate iterators which reference it.]
+
+

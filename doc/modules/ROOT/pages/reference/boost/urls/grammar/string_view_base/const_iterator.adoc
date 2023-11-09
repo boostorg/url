@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#33D9EB46AE793D56535A2824A1FEE1946AA1490B]
+== const_iterator
+
+pass:v,q[The const iterator type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef const char* const_iterator;
+----
+
+Defined in file <include/boost/url/grammar/string_view_base.hpp> on line 99
+

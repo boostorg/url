@@ -1,0 +1,34 @@
+:relfileprefix: ../../../
+[#A033673F18CFDF81D8868532C9DB963197EA66CE]
+== buffer
+
+pass:v,q[Return the url string]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+string_view
+buffer() const noexcept;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 241
+
+=== Description
+
+pass:v,q[This function returns the entire url,] pass:v,q[which may contain percent escapes.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "http://www.example.com" ).buffer() == "http://www.example.com" );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

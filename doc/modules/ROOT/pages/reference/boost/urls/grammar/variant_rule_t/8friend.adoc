@@ -1,0 +1,23 @@
+:relfileprefix: ../../../../
+[#FBE49FC517102F8AC3CF4BEBC10B130987DDDDDE]
+== Friend variant_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class R0_,
+    class... Rn_>
+friend
+constexpr
+xref:reference/boost/urls/grammar/variant_rule_t.adoc[variant_rule_t]<R0_, Rn_...>
+variant_rule(
+    const R0_& r0,
+    const Rn_&... rn) noexcept;
+----
+
+Defined in file <include/boost/url/grammar/variant_rule.hpp> on line 91
+

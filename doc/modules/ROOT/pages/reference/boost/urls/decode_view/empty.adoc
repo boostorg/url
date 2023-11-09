@@ -1,0 +1,33 @@
+:relfileprefix: ../../../
+[#4133FEB262B2E36217DB7FDB85AD3F94266E2AF0]
+== empty
+
+pass:v,q[Return true if the string is empty]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+empty() const noexcept;
+----
+
+Defined in file <include/boost/url/decode_view.hpp> on line 239
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( decode_view( "" ).empty() );
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../../
+[#4AA7A98891455011DD766B6D554E226655E56B42]
+== difference_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using difference_type = ptrdiff_t;
+----
+
+Defined in file <include/boost/url/grammar/impl/range_rule.hpp> on line 368
+

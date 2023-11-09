@@ -1,0 +1,51 @@
+:relfileprefix: ../../../
+[#99A25C6E9E7785F850368BC18BC4042BFF874F3C]
+== Class iterator
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class iterator;
+----
+
+Declared in file <include/boost/url/params_base.hpp> on line 91
+
+Defined in file <include/boost/url/impl/params_base.hpp> on line 22
+
+=== Types
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/params_base/iterator/value_type.adoc[`pass:v[value_type]`] |
+|xref:reference/boost/urls/params_base/iterator/reference.adoc[`pass:v[reference]`] |
+|xref:reference/boost/urls/params_base/iterator/pointer.adoc[`pass:v[pointer]`] |
+|xref:reference/boost/urls/params_base/iterator/difference_type.adoc[`pass:v[difference_type]`] |
+|xref:reference/boost/urls/params_base/iterator/iterator_category.adoc[`pass:v[iterator_category]`] |
+|===
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/params_base/iterator/2constructor-0c.adoc[`pass:v[iterator]`] |
+|xref:reference/boost/urls/params_base/iterator/2constructor-00.adoc[`pass:v[iterator]`] |
+|xref:reference/boost/urls/params_base/iterator/operator_assign.adoc[`pass:v[operator=]`] |
+|xref:reference/boost/urls/params_base/iterator/operator_inc-01.adoc[`pass:v[operator++]`] |
+|xref:reference/boost/urls/params_base/iterator/operator_inc-09.adoc[`pass:v[operator++]`] |
+|xref:reference/boost/urls/params_base/iterator/operator_dec-0c.adoc[`pass:v[operator--]`] |
+|xref:reference/boost/urls/params_base/iterator/operator_dec-08.adoc[`pass:v[operator--]`] |
+|xref:reference/boost/urls/params_base/iterator/operator_star.adoc[`pass:v[operator*]`] |
+|xref:reference/boost/urls/params_base/iterator/operator_ptr.adoc[`pass:v[operator->]`] |
+|xref:reference/boost/urls/params_base/iterator/operator_eq.adoc[`pass:v[operator==]`] |
+|xref:reference/boost/urls/params_base/iterator/operator_not_eq.adoc[`pass:v[operator!=]`] |
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/params_base/iterator/8friend-0b.adoc[`pass:v[params_base]`] |
+|xref:reference/boost/urls/params_base/iterator/8friend-06.adoc[`pass:v[params_ref]`] |
+|===
+

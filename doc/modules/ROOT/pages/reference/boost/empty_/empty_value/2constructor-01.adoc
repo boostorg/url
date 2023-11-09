@@ -1,0 +1,15 @@
+:relfileprefix: ../../../
+[#1637FC4D3E472BA85D46EB3FB7FCF1E4236ED1F3]
+== empty_value
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+empty_value() = default;
+----
+
+Defined in file </home/runner/work/mrdocs/mrdocs/boost/libs/core/include/boost/core/empty_value.hpp> on line 57
+

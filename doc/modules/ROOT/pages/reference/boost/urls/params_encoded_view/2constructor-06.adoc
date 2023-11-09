@@ -1,0 +1,38 @@
+:relfileprefix: ../../../
+[#6BFCBFF424AADBFE50D068D13DA3F9BE55A3B8F2]
+== params_encoded_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+params_encoded_view(const xref:reference/boost/urls/params_encoded_view.adoc[params_encoded_view]& other) = default;
+----
+
+Defined in file <include/boost/url/params_encoded_view.hpp> on line 110
+
+=== Description
+
+pass:v,q[After construction both views] pass:v,q[reference the same character buffer.]
+pass:v,q[Ownership is not transferred; the caller]
+pass:v,q[is responsible for ensuring the lifetime]
+pass:v,q[of the buffer extends until it is no]
+pass:v,q[longer referenced.]
+
+=== Postconditions
+[,cpp]
+----
+this->buffer().data() == other.buffer().data()
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing]
+
+

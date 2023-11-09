@@ -1,0 +1,22 @@
+:relfileprefix: ../../../
+[#43DF86C60C553C11094B2F4D36E474F473F07636]
+== no_space
+
+pass:v,q[No space in output buffer]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+no_space
+----
+
+Defined in file <include/boost/url/error.hpp> on line 77
+
+=== Description
+
+pass:v,q[This error is returned when a provided] pass:v,q[output buffer was too small to hold]
+pass:v,q[the complete result of an algorithm.]
+
+

@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#A7C4C54FC226594FFE02C716A0C76C26531172AA]
+== iterator
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+iterator() = default;
+----
+
+Defined in file <include/boost/url/impl/segments_base.hpp> on line 46
+

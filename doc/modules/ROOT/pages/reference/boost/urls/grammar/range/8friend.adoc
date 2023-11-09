@@ -1,0 +1,18 @@
+:relfileprefix: ../../../../
+[#DBCD42D4BC719B5E47FCE98E2A1C01B1427DEEE7]
+== Friend range_rule_t
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class R0,
+    class R1 = void>
+friend struct range_rule_t;
+----
+
+Defined in file <include/boost/url/grammar/range_rule.hpp> on line 97
+

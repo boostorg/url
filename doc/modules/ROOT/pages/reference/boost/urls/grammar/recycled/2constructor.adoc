@@ -1,0 +1,17 @@
+:relfileprefix: ../../../../
+[#78C40B48104D265FF6438796F7F3B125C621EA74]
+== recycled
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+recycled() = default;
+----
+
+Defined in file <include/boost/url/grammar/recycled.hpp> on line 87
+

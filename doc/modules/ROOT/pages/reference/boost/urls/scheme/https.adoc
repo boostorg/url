@@ -1,0 +1,26 @@
+:relfileprefix: ../../../
+[#28498262ADF4E932221883B31D76CAD3F8C40833]
+== https
+
+pass:v,q[The Secure Hypertext Transfer Protocol URI Scheme]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+https
+----
+
+Defined in file <include/boost/url/scheme.hpp> on line 93
+
+=== Description
+
+pass:v,q[URLs of this type indicate a resource which] pass:v,q[is interacted with using the Secure HTTP]
+pass:v,q[protocol.]
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc7230[            Hypertext Transfer Protocol (HTTP/1.1) (rfc7230)]
+
+

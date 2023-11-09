@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#1409C377A38F5C54DF7EC0633A5183F68E231EB0]
+== Friend recycled_ptr
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class T>
+friend class recycled_ptr;
+----
+
+Defined in file <include/boost/url/grammar/recycled.hpp> on line 90
+

@@ -1,0 +1,75 @@
+:relfileprefix: ../../../
+[#174458CCBC143FC89E77A977CE62AFA268051DA8]
+== host_address
+
+pass:v,q[Return the host]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class StringToken = xref:reference/boost/urls/string_token.adoc[string_token]::xref:reference/boost/urls/string_token/return_string.adoc[return_string]>
+StringToken::result_type
+host_address(StringToken&& token) const;
+----
+
+Defined in file <include/boost/url/url_view_base.hpp> on line 1109
+
+=== Description
+
+pass:v,q[The value returned by this function] pass:v,q[depends on the type of host returned]
+pass:v,q[from the function]
+xref:reference/boost/urls/url_view_base/host_type.adoc[host_type.]
+
+* pass:v,q[If the type is]
+xref:reference/boost/urls/host_type/ipv4.adoc[host_type::ipv4,]
+pass:v,q[then the IPv4 address string is returned.]
+
+* pass:v,q[If the type is]
+xref:reference/boost/urls/host_type/ipv6.adoc[host_type::ipv6,]
+pass:v,q[then the IPv6 address string is returned,]
+pass:v,q[without any enclosing brackets.]
+
+* pass:v,q[If the type is]
+xref:reference/boost/urls/host_type/ipvfuture.adoc[host_type::ipvfuture,]
+pass:v,q[then the IPvFuture address string is returned,]
+pass:v,q[without any enclosing brackets.]
+
+* pass:v,q[If the type is]
+xref:reference/boost/urls/host_type/name.adoc[host_type::name,]
+pass:v,q[then the host name string is returned.]
+pass:v,q[Any percent-escapes in the string are]
+pass:v,q[decoded first.]
+
+* pass:v,q[If the type is]
+xref:reference/boost/urls/host_type/none.adoc[host_type::none,]
+pass:v,q[then an empty string is returned.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "https://[1::6:c0a8:1]/" ).host_address() == "1::6:c0a8:1" );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->host_address().size()`.]
+
+=== Exception Safety
+pass:v,q[Calls to allocate may throw.]
+
+=== BNF
+[,cpp]
+----
+host        = IP-literal / IPv4address / reg-name
+
+IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+
+reg-name    = *( unreserved / pct-encoded / "-" / ".")
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2[3.2.2. Host (rfc3986)]
+
+

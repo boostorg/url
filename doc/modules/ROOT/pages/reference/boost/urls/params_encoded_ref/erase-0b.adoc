@@ -1,0 +1,34 @@
+:relfileprefix: ../../../
+[#B4311A57D241486C72032A8D47DDA07E764C79E0]
+== erase
+
+pass:v,q[Erase params]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+erase(
+    xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator] first,
+    xref:reference/boost/urls/params_encoded_base.adoc[params_encoded_base]::xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator] last) noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_ref.hpp> on line 621
+
+Defined in file <src/params_encoded_ref.cpp> on line 233
+
+=== Description
+
+pass:v,q[This function removes a range of params] pass:v,q[from the container.]
+pass:v,q[All iterators that are equal to]
+pass:v,q[`first` or come after are invalidated.]
+
+=== Complexity
+pass:v,q[Linear in `this->url().encoded_query().size()`.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

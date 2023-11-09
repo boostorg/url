@@ -1,0 +1,15 @@
+:relfileprefix: ../../../../
+[#1FB68448F90F8577E574DBD27597C7DAEA892524]
+== difference_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using difference_type = ptrdiff_t;
+----
+
+Defined in file <include/boost/url/impl/params_encoded_base.hpp> on line 46
+

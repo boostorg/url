@@ -1,0 +1,31 @@
+:relfileprefix: ../../../../
+[#7D86806B536CE710D89DB4439295E0FEF82E315F]
+== ~recycled_ptr
+
+pass:v,q[Destructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+~recycled_ptr();
+----
+
+Declared in file <include/boost/url/grammar/recycled.hpp> on line 178
+
+Defined in file <include/boost/url/grammar/impl/recycled.hpp> on line 94
+
+=== Description
+
+pass:v,q[If this is not empty, shared ownership] pass:v,q[of the pointee is released. If this was]
+pass:v,q[the last reference, the object is]
+pass:v,q[returned to the original recycle bin.]
+
+=== Effects
+[,cpp]
+----
+this->release();
+----
+
+

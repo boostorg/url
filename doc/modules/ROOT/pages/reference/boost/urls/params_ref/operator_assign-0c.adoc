@@ -1,0 +1,42 @@
+:relfileprefix: ../../../
+[#CBB95C4AA66064CD9D12A3AF73D0967B5385D747]
+== operator=
+
+pass:v,q[Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_ref.adoc[params_ref]&
+operator=(const xref:reference/boost/urls/params_ref.adoc[params_ref]& other);
+----
+
+Declared in file <include/boost/url/params_ref.hpp> on line 184
+
+Defined in file <src/params_ref.cpp> on line 32
+
+=== Description
+
+pass:v,q[The previous contents of this are] pass:v,q[replaced by the contents of `other.]
+pass:v,q[All iterators are invalidated.]
+[NOTE]
+pass:v,q[The strings referenced by `other`]
+pass:v,q[must not come from the underlying url,]
+pass:v,q[or else the behavior is undefined.]
+
+=== Effects
+[,cpp]
+----
+this->assign( other.begin(), other.end() );
+----
+
+=== Complexity
+pass:v,q[Linear in `other.buffer().size()`.]
+
+=== Exception Safety
+pass:v,q[Strong guarantee.]
+pass:v,q[Calls to allocate may throw.]
+
+

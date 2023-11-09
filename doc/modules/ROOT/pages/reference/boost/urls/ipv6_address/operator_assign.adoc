@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#9ABB35FAEF6EC7F6ACD525A9C6DE5A70FF36C542]
+== operator=
+
+pass:v,q[Copy Assignment]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+xref:reference/boost/urls/ipv6_address.adoc[ipv6_address]&
+operator=(const xref:reference/boost/urls/ipv6_address.adoc[ipv6_address]&) = default;
+----
+
+Defined in file <include/boost/url/ipv6_address.hpp> on line 112
+

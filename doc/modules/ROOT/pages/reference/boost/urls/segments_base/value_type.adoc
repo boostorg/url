@@ -1,0 +1,28 @@
+:relfileprefix: ../../../
+[#DBCB041756209452A693E29C978CA61C1774D8C2]
+== value_type
+
+pass:v,q[The value type]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+using value_type = string;
+----
+
+Defined in file <include/boost/url/segments_base.hpp> on line 93
+
+=== Description
+
+pass:v,q[Values of this type represent a segment] pass:v,q[where unique ownership is retained by]
+pass:v,q[making a copy.]
+
+=== Example
+[,cpp]
+----
+segments_base::value_type ps( url_view( "/path/to/file.txt" ).segments().back() );
+----
+
+

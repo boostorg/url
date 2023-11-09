@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#C7208135C6274DE5F5D9092C7494952E08554745]
+== pct_string_view
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<
+    class String,
+    class = enable_if<std::is_convertible<String, core::string_view>::value>::type>
+pct_string_view(const String& s);
+----
+
+Defined in file <include/boost/url/pct_string_view.hpp> on line 176
+

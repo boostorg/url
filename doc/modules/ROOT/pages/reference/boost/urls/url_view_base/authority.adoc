@@ -1,0 +1,46 @@
+:relfileprefix: ../../../
+[#BF9FD1F4B23488A243881ACD52DEE4F2AAD505D3]
+== authority
+
+pass:v,q[Return the authority]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/authority_view.adoc[authority_view]
+authority() const noexcept;
+----
+
+Declared in file <include/boost/url/url_view_base.hpp> on line 515
+
+Defined in file <src/url_view_base.cpp> on line 147
+
+=== Description
+
+pass:v,q[This function returns the authority as] pass:v,q[an] xref:reference/boost/urls/authority_view.adoc[authority_view.]
+
+=== Example
+[,cpp]
+----
+authority_view a = url_view( "https://www.example.com:8080/index.htm" ).authority();
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+authority   = [ userinfo "@" ] host [ ":" port ]
+----
+
+=== Specification
+
+* link:https://datatracker.ietf.org/doc/html/rfc3986#section-3.2[3.2. Authority (rfc3986)]
+
+

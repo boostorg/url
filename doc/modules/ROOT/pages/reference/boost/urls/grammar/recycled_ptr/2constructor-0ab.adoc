@@ -1,0 +1,35 @@
+:relfileprefix: ../../../../
+[#ABDEE1A0C212F3D1CA1B9D142A05CE7800ED1277]
+== recycled_ptr
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+recycled_ptr(const xref:reference/boost/urls/grammar/recycled_ptr.adoc[recycled_ptr]& other) noexcept;
+----
+
+Declared in file <include/boost/url/grammar/recycled.hpp> on line 322
+
+Defined in file <include/boost/url/grammar/impl/recycled.hpp> on line 141
+
+=== Description
+
+pass:v,q[If `other` references an object, the] pass:v,q[newly constructed pointer acquires]
+pass:v,q[shared ownership. Otherwise this is]
+pass:v,q[empty. The new pointer references]
+pass:v,q[the same recycle bin as `other`.]
+
+=== Postconditions
+[,cpp]
+----
+&this->bin() == &other->bin() && this->get() == other.get()
+----
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#4488B70A18C8A2E31361A304F39DB0D305F64BFE]
+== syntax
+
+pass:v,q[An unspecified syntax error was found.]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+syntax
+----
+
+Defined in file <include/boost/url/grammar/error.hpp> on line 103
+

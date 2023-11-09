@@ -1,0 +1,23 @@
+:relfileprefix: ../../../
+[#736A0791D64A5C0DACC2CD6EAEA6E93AC47D2B1F]
+== Class parts_base
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+struct parts_base;
+----
+
+Defined in file <include/boost/url/detail/parts_base.hpp> on line 21
+
+=== Enums
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/detail/parts_base/3enum.adoc[`pass:v[]`] |
+|xref:reference/boost/urls/detail/parts_base/from.adoc[`pass:v[from]`] |
+|===
+

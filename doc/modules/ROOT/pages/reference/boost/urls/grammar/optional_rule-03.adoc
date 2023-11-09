@@ -1,0 +1,18 @@
+:relfileprefix: ../../../
+[#34ECF5D7E50506F83CBB36179139274B1E9D1E09]
+== optional_rule
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+template<class Rule>
+constexpr
+xref:reference/boost/urls/grammar/optional_rule_t.adoc[optional_rule_t]<Rule>
+optional_rule(const Rule& r);
+----
+
+Defined in file <include/boost/url/grammar/optional_rule.hpp> on line 96
+

@@ -1,0 +1,15 @@
+:relfileprefix: ../../
+[#110D23271F9A0F2645D53D820591FDAE4C54729E]
+== value_type
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+typedef _Tp value_type;
+----
+
+Defined in file </usr/include/c++/13/type_traits> on line 65
+

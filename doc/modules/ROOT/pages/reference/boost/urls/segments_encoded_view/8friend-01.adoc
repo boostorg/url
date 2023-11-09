@@ -1,0 +1,17 @@
+:relfileprefix: ../../../
+[#12580915D3CC0BCE18E1111492C2532E71607C52]
+== Friend parse_path
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+friend
+result<xref:reference/boost/urls/segments_encoded_view.adoc[segments_encoded_view]>
+parse_path(string_view s) noexcept;
+----
+
+Defined in file <include/boost/url/segments_encoded_view.hpp> on line 232
+

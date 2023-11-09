@@ -1,0 +1,54 @@
+:relfileprefix: ../../../
+[#CBC0B857F27378CC87813EA35D0C9E0D20E28CE5]
+== url_view
+
+pass:v,q[Constructor]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+url_view() noexcept = default;
+----
+
+Declared in file <include/boost/url/url_view.hpp> on line 146
+
+Defined in file <src/url_view.cpp> on line 35
+
+=== Description
+
+pass:v,q[Default constructed views refer to] pass:v,q[a string with zero length, which]
+pass:v,q[always remains valid. This matches]
+pass:v,q[the grammar for a relative-ref with]
+pass:v,q[an empty path and no query or]
+pass:v,q[fragment.]
+
+=== Example
+[,cpp]
+----
+url_view u;
+----
+
+=== Postconditions
+[,cpp]
+----
+this->empty() == true
+----
+
+=== Complexity
+pass:v,q[Constant.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+=== BNF
+[,cpp]
+----
+relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+----
+
+=== Specification
+link:https://datatracker.ietf.org/doc/html/rfc3986#section-4.2[4.2. Relative Reference (rfc3986)]
+
+

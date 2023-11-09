@@ -1,0 +1,53 @@
+:relfileprefix: ../../../
+[#3A496EFBBBC783143A70E106E051C19A3FA6333A]
+== find
+
+pass:v,q[Find a matching key]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+xref:reference/boost/urls/params_encoded_base/iterator.adoc[iterator]
+find(
+    xref:reference/boost/urls/pct_string_view.adoc[pct_string_view] key,
+    xref:reference/boost/urls/ignore_case_param.adoc[ignore_case_param] ic = = {}) const noexcept;
+----
+
+Declared in file <include/boost/url/params_encoded_base.hpp> on line 356
+
+Defined in file <include/boost/url/impl/params_encoded_base.hpp> on line 133
+
+=== Description
+
+pass:v,q[This function examines the parameters] pass:v,q[in the container to find a match for]
+pass:v,q[the specified key,]
+pass:v,q[which may contain percent escapes.]
+pass:v,q[The comparison is performed as if all]
+pass:v,q[escaped characters were decoded first.]
+pass:v,q[The search starts from the first param]
+pass:v,q[and proceeds forward until either the]
+pass:v,q[key is found or the end of the range is]
+pass:v,q[reached, in which case `end()` is]
+pass:v,q[returned.]
+
+=== Example
+[,cpp]
+----
+assert( url_view( "?first=John&last=Doe" ).encoded_params().find( "First", ignore_case )->value == "John" );
+----
+
+=== Effects
+[,cpp]
+----
+return this->find( this->begin(), key, ic );
+----
+
+=== Complexity
+pass:v,q[Linear in `this->buffer().size()`.]
+
+=== Exception Safety
+pass:v,q[Exceptions thrown on invalid input.]
+
+

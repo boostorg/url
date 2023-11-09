@@ -1,0 +1,16 @@
+:relfileprefix: ../../../../
+[#072AA949A47970D9C7325C54515C2D3D247738C7]
+== iterator
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+iterator(const xref:reference/boost/urls/segments_base/iterator.adoc[iterator]&) = default;
+----
+
+Defined in file <include/boost/url/impl/segments_base.hpp> on line 47
+

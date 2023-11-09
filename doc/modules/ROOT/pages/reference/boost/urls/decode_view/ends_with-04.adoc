@@ -1,0 +1,35 @@
+:relfileprefix: ../../../
+[#483E0AA5F0ED813847724A7873C34F81724A3649]
+== ends_with
+
+pass:v,q[Checks if the string ends with the given prefix]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+bool
+ends_with(string_view s) const noexcept;
+----
+
+Declared in file <include/boost/url/decode_view.hpp> on line 374
+
+Defined in file <src/decode_view.cpp> on line 157
+
+=== Description
+
+
+=== Example
+[,cpp]
+----
+assert( decode_view( "Program%20Files" ).ends_with("Files") );
+----
+
+=== Complexity
+pass:v,q[Linear.]
+
+=== Exception Safety
+pass:v,q[Throws nothing.]
+
+

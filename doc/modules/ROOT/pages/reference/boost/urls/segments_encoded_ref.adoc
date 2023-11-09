@@ -1,0 +1,126 @@
+:relfileprefix: ../../
+[#4C25147D18AA6635FADA4B7BB4AD9FB3FFD55ABD]
+== Class segments_encoded_ref
+
+pass:v,q[A view representing path segments in a URL]
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+class segments_encoded_ref
+    : public xref:reference/boost/urls/segments_encoded_base.adoc[segments_encoded_base];
+----
+
+Defined in file <include/boost/url/segments_encoded_ref.hpp> on line 88
+
+=== Member Functions
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_encoded_ref/2constructor.adoc[`pass:v[segments_encoded_ref]`] |pass:v,q[Constructor]
+
+|xref:reference/boost/urls/segments_encoded_ref/operator_assign-02c.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/segments_encoded_ref/operator_assign-02e.adoc[`pass:v[operator=]`] |
+|xref:reference/boost/urls/segments_encoded_ref/operator_assign-08.adoc[`pass:v[operator=]`] |pass:v,q[Assignment]
+
+|xref:reference/boost/urls/segments_encoded_ref/2conversion.adoc[`pass:v[operator segments_encoded_view]`] |pass:v,q[Conversion]
+
+|xref:reference/boost/urls/segments_encoded_ref/url.adoc[`pass:v[url]`] |pass:v,q[Return the referenced url]
+
+|xref:reference/boost/urls/segments_encoded_ref/clear.adoc[`pass:v[clear]`] |pass:v,q[Clear the contents of the container]
+
+|xref:reference/boost/urls/segments_encoded_ref/assign-0e.adoc[`pass:v[assign]`] |pass:v,q[Assign segments]
+
+|xref:reference/boost/urls/segments_encoded_ref/assign-0b.adoc[`pass:v[assign]`] |pass:v,q[Assign segments]
+
+|xref:reference/boost/urls/segments_encoded_ref/insert-04.adoc[`pass:v[insert]`] |pass:v,q[Insert segments]
+
+|xref:reference/boost/urls/segments_encoded_ref/insert-0d.adoc[`pass:v[insert]`] |pass:v,q[Insert segments]
+
+|xref:reference/boost/urls/segments_encoded_ref/insert-07.adoc[`pass:v[insert]`] |pass:v,q[Insert segments]
+
+|xref:reference/boost/urls/segments_encoded_ref/erase-006.adoc[`pass:v[erase]`] |pass:v,q[Erase segments]
+
+|xref:reference/boost/urls/segments_encoded_ref/erase-00a.adoc[`pass:v[erase]`] |pass:v,q[Erase segments]
+
+|xref:reference/boost/urls/segments_encoded_ref/replace-07.adoc[`pass:v[replace]`] |pass:v,q[Replace segments]
+
+|xref:reference/boost/urls/segments_encoded_ref/replace-06.adoc[`pass:v[replace]`] |pass:v,q[Replace segments]
+
+|xref:reference/boost/urls/segments_encoded_ref/replace-08.adoc[`pass:v[replace]`] |pass:v,q[Replace segments]
+
+|xref:reference/boost/urls/segments_encoded_ref/replace-0f.adoc[`pass:v[replace]`] |pass:v,q[Replace segments]
+
+|xref:reference/boost/urls/segments_encoded_ref/push_back.adoc[`pass:v[push_back]`] |pass:v,q[Append a segment]
+
+|xref:reference/boost/urls/segments_encoded_ref/pop_back.adoc[`pass:v[pop_back]`] |pass:v,q[Remove the last segment]
+
+|===
+=== Friends
+[,cols=2]
+|===
+|Name |Description
+|xref:reference/boost/urls/segments_encoded_ref/8friend.adoc[`pass:v[url_base]`] |
+|===
+
+=== Description
+
+pass:v,q[Objects of this type are used to interpret] pass:v,q[the path as a bidirectional view of segments,]
+pass:v,q[where each segment is a string which may]
+pass:v,q[contain percent-escapes.]
+pass:v,q[The view does not retain ownership of the]
+pass:v,q[elements and instead references the original]
+pass:v,q[character buffer. The caller is responsible]
+pass:v,q[for ensuring that the lifetime of the buffer]
+pass:v,q[extends until it is no longer referenced.]
+pass:v,q[The view is modifiable; calling non-const]
+pass:v,q[members causes changes to the referenced]
+pass:v,q[url.]
+
+=== Example
+[,cpp]
+----
+url u( "/path/to/file.txt" );
+
+segments_encoded_ref ps = u.encoded_segments();
+----
+pass:v,q[The strings returned when iterators are]
+pass:v,q[dereferenced have type]
+xref:reference/boost/urls/pct_string_view.adoc[pct_string_view]
+pass:v,q[and may contain percent-escapes.]
+pass:v,q[Reserved characters in inputs are]
+pass:v,q[automatically escaped.]
+pass:v,q[Escapes in inputs are preserved.]
+pass:v,q[Exceptions are thrown on invalid inputs.]
+
+=== Iterator Invalidation
+pass:v,q[Changes to the underlying character buffer]
+pass:v,q[can invalidate iterators which reference it.]
+pass:v,q[Modifications made through the container]
+pass:v,q[invalidate some or all iterators:]
+
+* xref:reference/boost/urls/segments_encoded_ref/push_back.adoc[push_back]
+pass:v,q[: Only `end()`.]
+
+* xref:reference/boost/urls/segments_encoded_ref/assign-0e.adoc[assign,]
+xref:reference/boost/urls/segments_encoded_ref/clear.adoc[clear,]
+xref:reference/boost/urls/segments_encoded_ref/operator_assign-02c.adoc[operator=]
+pass:v,q[: All elements.]
+
+* xref:reference/boost/urls/segments_encoded_ref/erase-006.adoc[erase]
+pass:v,q[: Erased elements and all]
+pass:v,q[elements after (including `end()`).]
+
+* xref:reference/boost/urls/segments_encoded_ref/insert-04.adoc[insert]
+pass:v,q[: All elements at or after]
+pass:v,q[the insertion point (including `end()`).]
+
+* xref:reference/boost/urls/segments_encoded_ref/replace-07.adoc[replace]
+pass:v,q[: Modified]
+pass:v,q[elements and all elements]
+pass:v,q[after (including `end()`).]
+
+

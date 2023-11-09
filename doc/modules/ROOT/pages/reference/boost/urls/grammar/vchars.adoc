@@ -1,0 +1,16 @@
+:relfileprefix: ../../../
+[#E4400E78C8C68DC97D1EB62B9141E9C735F66693]
+== vchars
+
+
+
+=== Synopsis
+
+[source,cpp,subs="verbatim,macros,-callouts"]
+----
+constexpr
+const xref:reference/boost/urls/grammar/vchars_t.adoc[vchars_t] vchars;
+----
+
+Defined in file <include/boost/url/grammar/vchars.hpp> on line 78
+
