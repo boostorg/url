@@ -33,6 +33,7 @@ antora:
   extensions:
     - require: '@antora/lunr-extension' # https://gitlab.com/antora/antora-lunr-extension
       index_latest_only: true
+    - '@antora/collector-extension'
 asciidoc:
   extensions:
     - ./lib/boost-link-inline-macro.js

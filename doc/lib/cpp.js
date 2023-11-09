@@ -93,6 +93,8 @@ module.exports = function (registry) {
     registry.inlineMacro('cpp', function () {
         const self = this;
         self.process(function (parent, target, attr) {
+            // const DEFAULT_BOOST_BRANCH = 'master'
+            // const branch = parent.getDocument().getAttribute('page-boost-branch', DEFAULT_BOOST_BRANCH)
             for (const [tag, doc] of Object.entries(tagDocs)) {
                 const link = getSymbolLink(doc, target)
                 if (link) {
