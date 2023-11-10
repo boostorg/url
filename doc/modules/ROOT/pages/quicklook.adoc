@@ -52,7 +52,7 @@ include::example$unit/snippets.cpp[tag=code_urls_parsing_1,indent=0]
 ----
 
 In this example, `string_view` is an alias to `boost::core::string_view`, a
-`string_view` implementation that is implicitly convertible to `std::string_view`.
+`string_view` implementation that is implicitly convertible to cpp:std::string_view[].
 The library namespace includes the aliases `string_view`, `error_code`, and
 `result`.
 
@@ -389,7 +389,7 @@ include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_1b,indent=0]
 ----
 
 Objects of type `url` are https://en.cppreference.com/w/cpp/concepts/regular[std::regular,window=blank_].
-Similarly to built-in types, such as `int`, a `url` is copyable, movable, assignable, default constructible, and equality comparable.
+Similarly to built-in types, such as cpp:int[], a `url` is copyable, movable, assignable, default constructible, and equality comparable.
 They support all the inspection functions of
 `url_view`, and also provide functions to modify all components of the URL.
 

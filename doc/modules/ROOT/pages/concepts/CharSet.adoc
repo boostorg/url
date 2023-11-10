@@ -43,7 +43,7 @@ In this table:
 // Row 1, Column 1
 |`t(c)`
 // Row 1, Column 2
-|`bool`
+|cpp:bool[]
 // Row 1, Column 3
 |This function returns `true` if `c` is a member of
 the character set, otherwise it returns `false`.

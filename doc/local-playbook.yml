@@ -36,4 +36,5 @@ antora:
 asciidoc:
   extensions:
     - ./lib/boost-link-inline-macro.js
+    - ./lib/cpp.js
     - '@asciidoctor/tabs'

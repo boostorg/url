@@ -27,7 +27,7 @@ facilities for processing low-ASCII character strings, and makes
 public the interface to useful rules found in rfc3986. The design
 goals of these facilities are:
 
-* No use of `std::locale` or `std::char_traits`
+* No use of cpp:std::locale[] or cpp:std::char_traits[]
 * No exotic character types, just low-ASCII `char`
 * No memory allocation (or bounded allocation)
 * Flexible composition with non-terminal rules

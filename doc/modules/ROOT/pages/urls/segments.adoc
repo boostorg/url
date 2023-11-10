@@ -53,8 +53,8 @@ First we observe these invariants about paths and segments:
 * A path is absolute, relative, or empty
 * Paths starting with "/" are absolute
 * A relative path can never follow an authority
-* Every path maps to a unique range of segments, plus a `bool` indicating if the path is absolute.
-* Every range of segments, plus a `bool` indicating if the path is absolute, maps to a unique path.
+* Every path maps to a unique range of segments, plus a cpp:bool[] indicating if the path is absolute.
+* Every range of segments, plus a cpp:bool[] indicating if the path is absolute, maps to a unique path.
 
 The following URL contains a path with three segments: "path", "to", and "file.txt":
 
