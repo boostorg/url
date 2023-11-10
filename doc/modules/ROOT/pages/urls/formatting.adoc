@@ -20,7 +20,7 @@ function to construct an absolute URL:
 include::example$unit/snippets.cpp[tag=snippet_format_1,indent=0]
 ----
 
-The rules for a format URL string are the same as for a https://en.cppreference.com/w/cpp/utility/format/basic_format_string[`std::format_string`,window=blank_], where replacement fields are delimited by curly braces.
+The rules for a format URL string are the same as for a cpp:std::format_string[], where replacement fields are delimited by curly braces.
 The URL type is inferred from the format string.
 
 The URL components to which replacement fields belong are identified before replacement is applied and any invalid characters for that formatted argument are percent-escaped:
@@ -55,7 +55,7 @@ The function `format_to` can be used to format URLs into any modifiable URL cont
 include::example$unit/snippets.cpp[tag=snippet_format_4,indent=0]
 ----
 
-As with https://en.cppreference.com/w/cpp/utility/format/format[`std::format`,window=blank_], positional and named arguments are supported.
+As with cpp:std::format[], positional and named arguments are supported.
 
 
 [source,cpp]
@@ -71,7 +71,7 @@ The `arg` function can be used to associate names with arguments:
 include::example$unit/snippets.cpp[tag=snippet_format_5b,indent=0]
 ----
 
-A second overload based on https://en.cppreference.com/w/cpp/utility/initializer_list[`std::initializer_list`,window=blank_]
+A second overload based on cpp:std::initializer_list[]
 is provided for both `format` and `format_to`.
 These overloads can help with lists of named arguments:
 

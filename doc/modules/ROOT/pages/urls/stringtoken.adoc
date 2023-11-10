@@ -9,8 +9,7 @@
 
 = String Token
 
-Functions which perform percent-decoding return values using
-https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_] when called without special arguments.
+Functions which perform percent-decoding return values using cpp:std::string[] when called without special arguments.
 This is the best default for ergonomics, and a good enough default for performance considering that many decoded strings fit in the small buffer available to most standard implementations.
 Some use-cases may desire more control over how these algorithms acquire and store data in strings, for example:
 

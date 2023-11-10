@@ -68,7 +68,7 @@ These members are used to inspect and modify the scheme:
 // Row 1, Column 1
 |`has_scheme`
 // Row 1, Column 2
-|`bool`
+|cpp:bool[]
 // Row 1, Column 3
 |Return `true` if a scheme is present.
 
@@ -140,7 +140,7 @@ These members are used to inspect and modify the authority as a whole string:
 // Row 1, Column 1
 |`has_authority`
 // Row 1, Column 2
-|`bool`
+|cpp:bool[]
 // Row 1, Column 3
 |Return `true` if an authority is present.
 
@@ -270,35 +270,35 @@ These members are used to inspect and modify the userinfo:
 // Row 1, Column 1
 |`has_userinfo`
 // Row 1, Column 2
-|`bool`
+|cpp:bool[]
 // Row 1, Column 3
 |Return `true` if a userinfo is present.
 
 // Row 2, Column 1
 |`has_password`
 // Row 2, Column 2
-|`bool`
+|cpp:bool[]
 // Row 2, Column 3
 |Return `true` if a password is present.
 
 // Row 3, Column 1
 |`user`
 // Row 3, Column 2
-|https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_]
+|cpp:std::string[]
 // Row 3, Column 3
 |Return the user as a decoded string.
 
 // Row 4, Column 1
 |`password`
 // Row 4, Column 2
-|https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_]
+|cpp:std::string[]
 // Row 4, Column 3
 |Return the password as a decoded string.
 
 // Row 5, Column 1
 |`userinfo`
 // Row 5, Column 2
-|https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_]
+|cpp:std::string[]
 // Row 5, Column 3
 |Return the userinfo as a decoded string.
 
@@ -421,7 +421,7 @@ If there is no authority, this is the value
 // Row 2, Column 1
 |`host`
 // Row 2, Column 2
-|https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_]
+|cpp:std::string[]
 // Row 2, Column 3
 |Return the host as a decoded string, or an empty string if there is
 no authority.
@@ -429,7 +429,7 @@ no authority.
 // Row 3, Column 1
 |`host_address`
 // Row 3, Column 2
-|https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_]
+|cpp:std::string[]
 // Row 3, Column 3
 |Return the host as a decoded string.
 If the host type is
@@ -440,7 +440,7 @@ the enclosing brackets are removed.
 // Row 4, Column 1
 |`host_name`
 // Row 4, Column 2
-|https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_]
+|cpp:std::string[]
 // Row 4, Column 3
 |Return the host name as a decoded string, or the empty string if
 the host type is not
@@ -644,7 +644,7 @@ These members are used to inspect and modify the port:
 // Row 1, Column 1
 |`has_port`
 // Row 1, Column 2
-|`bool`
+|cpp:bool[]
 // Row 1, Column 3
 |Return `true` if a port is present.
 
@@ -658,7 +658,7 @@ These members are used to inspect and modify the port:
 // Row 3, Column 1
 |`port_number`
 // Row 3, Column 2
-|`std::uint16_t`
+|cpp:std::uint16_t[]
 // Row 3, Column 3
 |Return the port as an unsigned integer. If the number would be
 greater than 65535, then zero is returned.
@@ -682,7 +682,7 @@ an exception is thrown.
 // Row 2, Column 1
 |`set_port_number`
 // Row 2, Column 2
-|`std::uint16_t`
+|cpp:std::uint16_t[]
 // Row 2, Column 3
 |Set the port to a number.
 
@@ -711,14 +711,14 @@ These members are used to inspect and modify the path:
 // Row 1, Column 1
 |`is_path_absolute`
 // Row 1, Column 2
-|`bool`
+|cpp:bool[]
 // Row 1, Column 3
 |Return `true` if the path starts with a forward slash ("/").
 
 // Row 2, Column 1
 |`path`
 // Row 2, Column 2
-|https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_]
+|cpp:std::string[]
 // Row 2, Column 3
 |Return the path as a decoded string.
 
@@ -761,7 +761,7 @@ Reserved characters are percent-escaped automatically.
 // Row 2, Column 1
 |`set_path_absolute`
 // Row 2, Column 2
-|`bool`
+|cpp:bool[]
 // Row 2, Column 3
 |Set whether the path is absolute.
 
@@ -809,14 +809,14 @@ These members are used to inspect and modify the query:
 // Row 1, Column 1
 |`has_query`
 // Row 1, Column 2
-|`bool`
+|cpp:bool[]
 // Row 1, Column 3
 |Return `true` if a query is present.
 
 // Row 2, Column 1
 |`query`
 // Row 2, Column 2
-|https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_]
+|cpp:std::string[]
 // Row 2, Column 3
 |Return the query as a decoded string.
 
@@ -907,14 +907,14 @@ These members are used to inspect and modify the fragment:
 // Row 1, Column 1
 |`has_fragment`
 // Row 1, Column 2
-|`bool`
+|cpp:bool[]
 // Row 1, Column 3
 |Return `true` if a fragment is present.
 
 // Row 2, Column 1
 |`fragment`
 // Row 2, Column 2
-|https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_]
+|cpp:std::string[]
 // Row 2, Column 3
 |Return the fragment as a decoded string.
 

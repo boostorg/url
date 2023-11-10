@@ -80,7 +80,7 @@ To represent individual params the library uses these types, distinguished by th
 // Row 1, Column 1
 |`param`
 // Row 1, Column 2
-|https://en.cppreference.com/w/cpp/string/basic_string[`std::string`,window=blank_]
+|cpp:std::string[]
 // Row 1, Column 3
 |A key-value pair with ownership of the strings.
 This can be used to hold decoded strings, or to

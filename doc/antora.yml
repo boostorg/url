@@ -8,8 +8,8 @@
 #
 
 name: url
-title: Boost.URL
 version: ~
+title: Boost.URL
 start_page: index.adoc
 asciidoc:
   attributes:

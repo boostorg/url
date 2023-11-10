@@ -33,7 +33,7 @@ invalid URL.
 The caller is responsible for ensuring that the lifetime
 of the character buffer extends until it is no longer
 referenced by the view. These are the same semantics
-as that of `std::string_view`.
+as that of cpp:std::string_view[].
 ====
 
 For convenience, a URL view can be constructed directly from the character

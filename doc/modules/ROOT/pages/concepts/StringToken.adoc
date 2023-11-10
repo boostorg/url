@@ -19,7 +19,7 @@ In this table:
 
 * `T` is a type meeting the requirements of __StringToken__
 * `t` is an rvalue reference of type T
-* `n` is a value of type `std::size_t`
+* `n` is a value of type cpp:std::size_t[]
 
 [cols="1,1,3"]
 |===
@@ -28,7 +28,7 @@ In this table:
 
 // Row 1, Column 1
 |
-`std::derived_from<T,string_token::arg>`
+cpp:std::derived_from<T,string_token::arg>[]
 
 // Row 1, Column 2
 |`true`
@@ -123,7 +123,7 @@ void algorithm_impl( string_token::arg& token )
 } // detail
 
 // public interface is a function template,
-// defaulting to return `std::string`.
+// defaulting to return cpp:std::string[].
 
 template< class StringToken = string_token::return_string >
 auto
