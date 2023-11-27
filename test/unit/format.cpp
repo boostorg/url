@@ -673,6 +673,21 @@ struct format_test
         BOOST_TEST_CSTR_EQ(format("user/{}", static_cast<long long int>(-1)).buffer(), "user/-1");
         BOOST_TEST_CSTR_EQ(format("{}", X{}).buffer(), "X");
 
+        // const& arg
+        {
+            const unsigned short int port{80};
+            url u = format("{}://{}:{}", "http", "a.b", port);
+            BOOST_TEST_CSTR_EQ(u.buffer(), "http://a.b:80");
+            BOOST_TEST_CSTR_EQ( u.scheme(), "http" );
+            BOOST_TEST( u.has_authority() );
+            BOOST_TEST_CSTR_EQ( u.encoded_host(), "a.b" );
+            BOOST_TEST( u.has_port() );
+            BOOST_TEST_CSTR_EQ( u.port(), "80" );
+            BOOST_TEST_EQ( u.port_number(), 80 );
+            BOOST_TEST( u.encoded_path().empty() );
+            BOOST_TEST_NOT( u.has_query() );
+        }
+
         // first segment contains ':'
         BOOST_TEST_CSTR_EQ(format("{}:{}", "http", "joe:").buffer(), "http:joe:");
         {
