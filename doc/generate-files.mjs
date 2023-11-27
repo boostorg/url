@@ -39,8 +39,7 @@ function findExecutable(executableName) {
     try {
         const whichCommand = (process.platform === 'win32') ? 'where' : 'which';
         const cmd = `${whichCommand} ${executableName}`
-        const res = execSync(cmd, {encoding: 'utf-8'}).trim();
-        return res
+        return execSync(cmd, {encoding: 'utf-8'}).trim()
     } catch (error) {
         return undefined
     }
@@ -69,8 +68,6 @@ function mkTmpDir() {
     return tempDir
 }
 
-let tempDir = undefined
-
 function downloadAndDecompress(downloadUrl, downloadPath, extractPath) {
     try {
         console.log(`Downloading ${downloadUrl} to ${downloadPath}...`);
@@ -97,6 +94,7 @@ function downloadAndDecompress(downloadUrl, downloadPath, extractPath) {
     Find C++ compilers
     Clang++ is preferred over g++ and cl for MrDocs
  */
+const cwd = process.cwd()
 let cxxCompiler = findExecutable(['clang++', 'g++', 'cl']) || process.env.CXX_COMPILER || process.env.CXX
 if (cxxCompiler && process.platform === "win32") {
     // Replace "\" with "/" in CXX_COMPILER
@@ -116,39 +114,27 @@ console.log(`C compiler: ${cCompilerName} (${cCompiler})`)
 /*
     Extract CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES
  */
-const cwd = process.cwd()
-const buildDirectory = path.join(cwd, 'doc', 'build')
-const implicitTestDir = path.join(buildDirectory, `__implicit_dirs_${process.platform}_${cCompilerName || 'default'}_test__`)
-const implicitTestCMakeList = path.join(implicitTestDir, 'CMakeLists.txt')
-const outputFilePath = path.join(implicitTestDir, 'include_dirs.txt')
-const implicitTestBuildDir = path.join(implicitTestDir, '__build__')
 
-mkdirp(implicitTestDir)
-fs.writeFileSync(implicitTestCMakeList, 'cmake_minimum_required(VERSION 3.22)\nproject(get_implicit_dirs)\nfile(WRITE "include_dirs.txt" "\${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}")\n')
-mkdirp(implicitTestBuildDir)
-let implicitCmakeConfigureCmd = 'cmake'
-if (process.platform === "win32") {
-    // The default generator for cl.exe is Visual Studio, but it doesn't create compile_commands.json
-    // To use the ninja generator, you'll need to add
-    // C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\bin\Hostx64\x64
-    // to your PATH
-    implicitCmakeConfigureCmd += ' -G "Ninja"'
-}
-if (cxxCompiler) {
-    implicitCmakeConfigureCmd += ` -D CMAKE_CXX_COMPILER="${cxxCompiler}"`
-}
-if (cCompiler) {
-    implicitCmakeConfigureCmd += ` -D CMAKE_C_COMPILER="${cCompiler}"`
-}
-implicitCmakeConfigureCmd += ' ..'
-console.log(`Extracting implicit include dirs with: ${implicitCmakeConfigureCmd}`)
-execSync(implicitCmakeConfigureCmd, {cwd: implicitTestBuildDir})
-const defaultIncludes = fs.readFileSync(outputFilePath, 'utf-8').trim()
-console.log(`Default includes: ${defaultIncludes}`)
 
 /*
     Download Boost
  */
+
+function isBoostDir(dir) {
+    if (!fs.existsSync(dir)) {
+        return false
+    }
+    console.log(`Checking if ${dir} is a Boost source directory`)
+    const boostFiles = ['CMakeLists.txt', 'Jamroot', 'boost-build.jam', 'bootstrap.sh', 'libs']
+    for (const file of boostFiles) {
+        const filePath = path.join(cwdParentParent, file)
+        console.log(`Checking if ${filePath} exists`)
+        if (!fs.existsSync(filePath)) {
+            return false
+        }
+    }
+    return true
+}
 
 // Check if we need to download boost. This is usually the case in CI, but we want to reuse the local boost directory
 // in local builds.
@@ -157,34 +143,19 @@ const librariesJson = JSON.parse(fs.readFileSync(librariesJsonPath, 'utf-8'))
 const module = librariesJson['key']
 const self = module || path.basename(cwd)
 console.log(`self: ${self}`)
-// Go two levels up from cwd
-const cwdParent = path.dirname(cwd)
-const cwdParentParent = path.dirname(cwdParent)
 
 // Check if cwdParentParent contains the files "CMakeLists.txt" "Jamroot" "boost-build.jam" "bootstrap.sh" "libs"
-const boostFiles = ['CMakeLists.txt', 'Jamroot', 'boost-build.jam', 'bootstrap.sh', 'libs']
-let boostDirExists = true
-for (const file of boostFiles) {
-    const filePath = path.join(cwdParentParent, file)
-    console.log(`Checking if ${filePath} exists`)
-    if (!fs.existsSync(filePath)) {
-        boostDirExists = false
-        break
-    }
-}
+let tempDir = undefined
 let boostDir = undefined
-if (boostDirExists) {
+const cwdParentParent = path.dirname(path.dirname(cwd))
+if (isBoostDir(cwdParentParent)) {
     boostDir = cwdParentParent
     console.log(`Found Boost at ${cwdParentParent}`)
 } else {
-    // Identify branch of this git repository
-    let boostBranch = 'develop'
     const branch = execSync('git rev-parse --abbrev-ref HEAD', {encoding: 'utf-8'}).trim()
-    // Check if branch matches the boost-1.\d+.\d+ pattern
     const boostBranchRegex = /^boost-1\.\d+\.\d+$/
-    if (branch === 'master' || branch === 'develop' || boostBranchRegex.test(branch)) {
-        boostBranch = branch
-    }
+    const isValidBoostBranch = branch === 'master' || branch === 'develop' || boostBranchRegex.test(branch);
+    const boostBranch = isValidBoostBranch ? branch : 'develop'
 
     // Clone boost in a temporary directory
     if (!tempDir) {
@@ -197,44 +168,17 @@ if (boostDirExists) {
     console.log(`Initializing submodules in ${boostDir}`)
     execSync('git submodule update --init --recursive', {cwd: boostDir})
     console.log(`Cloned Boost to ${boostDir}`)
-}
 
-/*
-    Configure Boost.URL with CMAKE_EXPORT_COMPILE_COMMANDS=ON
- */
-const compileCommandsDir = path.join(buildDirectory, `__compile_commands_${process.platform}_${cCompilerName || 'default'}__`)
-const compileCommandsPath = path.join(compileCommandsDir, 'compile_commands.json')
-const SELF = self.toUpperCase()
-const SELFDir = cwd
-let cmakeConfigureCmd = `cmake`
-if (process.platform === "win32") {
-    // The default generator for cl.exe is Visual Studio, but it doesn't create compile_commands.json
-    cmakeConfigureCmd += ' -G "Ninja"'
+    // Delete `self` from boost/libs
+    const selfDir = path.join(boostDir, 'libs', self)
+    console.log(`Deleting ${selfDir}`)
+    execSync(`rm -rf ${selfDir}`)
+
+    // Copy contents of cwd to boost/libs/self
+    const selfDirParent = path.join(boostDir, 'libs')
+    console.log(`Copying ${cwd} to ${selfDirParent}`)
+    execSync(`cp -r ${cwd} ${selfDirParent}`)
 }
-cmakeConfigureCmd += ` -D BOOST_${SELF}_BUILD_TESTS=OFF -D BOOST_${SELF}_BUILD_EXAMPLES=OFF -D BUILD_TESTING=OFF`
-if (defaultIncludes) {
-    // On Linux compilers, we need the implicit directories made explicit so that they are
-    // reflected in the compile commands or mrdocs later find the headers it needs
-    cmakeConfigureCmd += ` -D CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES="${defaultIncludes}"`
-}
-if (cxxCompiler) {
-    cmakeConfigureCmd += ` -D CMAKE_CXX_COMPILER="${cxxCompiler}"`
-}
-if (cCompiler) {
-    cmakeConfigureCmd += ` -D CMAKE_C_COMPILER="${cCompiler}"`
-}
-cmakeConfigureCmd += ` -D CMAKE_EXPORT_COMPILE_COMMANDS=ON`
-cmakeConfigureCmd += ` -D BOOST_SRC_DIR="${boostDir}"`
-mkdirp(compileCommandsDir)
-const SELFDirRelative = path.relative(compileCommandsDir, SELFDir)
-cmakeConfigureCmd += ` "${SELFDirRelative}"`
-console.log(`Configuring Boost.${SELF} with command: ${cmakeConfigureCmd}`)
-execSync(cmakeConfigureCmd, {cwd: compileCommandsDir})
-if (!fs.existsSync(compileCommandsPath)) {
-    console.error(`Could not find ${compileCommandsPath}`)
-    process.exit(1)
-}
-console.log(`Configure commands written to ${compileCommandsPath}`)
 
 /*
     Find and run MrDocs to generate the documentation
@@ -249,39 +193,66 @@ console.log(`Configure commands written to ${compileCommandsPath}`)
             ( Adapt the destination path as needed )
 
  */
-let mrDocsExec = findExecutable(['mrdocs', 'mrdox'])
+// https://github.com/terascope/fetch-github-release
+let mrDocsExec = findExecutable('mrdocs')
 if (!mrDocsExec) {
     console.log(`Could not find MrDocs. Downloading...`)
     if (!tempDir) {
         tempDir = mkTmpDir()
     }
-    const downloadFilename = process.platform === "win32" ? 'MrDocs-1.0.0-win64.7z' : 'MrDocs-1.0.0-Linux.tar.gz'
-    const downloadExtractDir = process.platform === "win32" ? 'MrDocs-1.0.0-win64' : 'MrDocs-1.0.0-Linux'
-    const downloadExtractBinFilename = process.platform === "win32" ? 'mrdocs.exe' : 'mrdocs'
+    const releasesResponse = request('GET', 'https://api.github.com/repos/cppalliance/mrdocs/releases', {
+        headers: {
+            'User-Agent': 'request'
+        }
+    })
+    const releasesInfo = JSON.parse(releasesResponse.getBody('utf-8'))
+    console.log(`Found ${releasesInfo.length} MrDocs releases`)
+    const latestRelease = releasesInfo[0]
+    console.log(`Latest release: ${latestRelease['tag_name']}`)
+    const latestAssets = latestRelease['assets'].map(asset => asset['browser_download_url'])
+    console.log(`Latest assets: ${latestAssets}`)
+    const downloadUrl = process.platform === "win32" ? latestAssets.find(asset => asset.endsWith('win64.7z')) : latestAssets.find(asset => asset.endsWith('Linux.tar.gz'))
+    const downloadFilename = path.basename(downloadUrl)
+    console.log(`Downloading ${downloadUrl} to ${path.join(tempDir, downloadFilename)}...`)
     downloadAndDecompress(
-        `https://github.com/cppalliance/mrdocs/releases/download/develop-release/${downloadFilename}`,
+        downloadUrl,
         path.join(tempDir, downloadFilename),
         path.join(tempDir, 'MrDocs')
     )
+    console.log(`Extracted ${downloadFilename} to ${path.join(tempDir, 'MrDocs')}`)
+    const downloadExtractDir = downloadFilename.replace(/\.(7z|tar\.gz)$/, '')
+    const downloadExtractBinFilename = process.platform === "win32" ? 'mrdocs.exe' : 'mrdocs'
     mrDocsExec = path.join(tempDir, 'MrDocs', downloadExtractDir, 'bin', downloadExtractBinFilename)
     if (!fs.existsSync(mrDocsExec)) {
         console.error(`Could not find MrDocs at ${mrDocsExec}`)
         process.exit(1)
+    } else {
+        console.log(`Found MrDocs executable at ${mrDocsExec}`)
     }
 }
 console.log(`Found MrDocs at ${mrDocsExec}`)
-const mrDocsBinDir = path.dirname(mrDocsExec)
-const mrDocsShareDir = path.join(mrDocsBinDir, '..', 'share')
-let mrDocsAddonsDir = [
-    path.join(mrDocsShareDir, 'mrdocs', 'addons'),
-    path.join(mrDocsShareDir, 'mrdocs', 'mrdocs', 'addons'),
-    path.join(mrDocsShareDir, 'mrdox', 'addons'),
-    path.join(mrDocsShareDir, 'mrdox', 'mrdox', 'addons')].find(fs.existsSync)
+
 // Reference goes to another module so that its relative links work
 // Antora does not support relative xrefs: https://gitlab.com/antora/antora/-/issues/428
+const buildDirectory = path.join(cwd, 'doc', 'build')
 const mrDocsOutputDir = path.join(buildDirectory, 'generated-files', 'modules', 'reference', 'pages')
-const mrDocsConfigPath = path.join(cwd, 'doc', 'mrdocs.yml')
-const mrDocsCmd = `${mrDocsExec} --config="${mrDocsConfigPath}" "${compileCommandsPath}" --addons="${mrDocsAddonsDir}" --output="${mrDocsOutputDir}"`
+const mrDocsProjectPath = path.join(boostDir, 'libs', 'url')
+const mrDocsConfigPath = path.join(mrDocsProjectPath, 'doc', 'mrdocs.yml')
+const mrDocsCmd = `${mrDocsExec} --config="${mrDocsConfigPath}" "${mrDocsProjectPath}" --output="${mrDocsOutputDir}"`
 console.log(`Generating documentation with command: ${mrDocsCmd}`)
-execSync(mrDocsCmd)
-
+// Execute mrDocsCmd with execSync, get output and print it to stdout. Also get return code.
+// If return code is not 0, print output to stderr and exit with return code.
+let mrDocsExitCode = 0
+try {
+    const mrDocsOutput = execSync(mrDocsCmd)
+    console.log(mrDocsOutput.toString())
+} catch (error) {
+    console.error(error.stdout.toString())
+    mrDocsExitCode = error.status
+}
+if (tempDir) {
+    console.log(`Deleting temporary directory ${tempDir}`)
+    execSync(`rm -rf ${tempDir}`)
+}
+console.log(`Generated documentation at ${mrDocsOutputDir}`)
+process.exit(mrDocsExitCode)

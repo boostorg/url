@@ -1,9 +1,11 @@
 verbose: true
 multipage: true
 inaccessible-members: never
+inaccessible-bases: never
 include:
   - ../include
 source-root: ..
+base-url: https://www.github.com/boostorg/url/blob/develop/include/ # boost/url/url_view.hpp
 generate: adoc
 filters:
   symbols:
@@ -11,3 +13,5 @@ filters:
       - 'boost::urls::detail'
       - 'boost::urls::*::detail'
       - 'boost::empty_'
+# BUILD_TESTING is required for header-only functionality to be extracted
+cmake: '-D BUILD_TESTING=ON -D BOOST_URL_BUILD_EXAMPLES=OFF'
