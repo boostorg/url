@@ -31,7 +31,12 @@ set(__ignore__ ${CMAKE_C_COMPILER})
 # Options
 #
 #-------------------------------------------------
-option(BOOST_URL_BUILD_TESTS "Build boost::url tests" ${BUILD_TESTING})
+if(BOOST_URL_IS_ROOT OR BOOST_SUPERPROJECT_VERSION)
+  option(BOOST_URL_BUILD_TESTS "Build boost::url tests" ${BUILD_TESTING})
+else()
+  option(BOOST_URL_BUILD_TESTS "Build boost::url tests" OFF)
+endif()
+
 option(BOOST_URL_BUILD_FUZZERS "Build boost::url fuzzers" OFF)
 option(BOOST_URL_BUILD_EXAMPLES "Build boost::url examples" ${BOOST_URL_IS_ROOT})
 option(BOOST_URL_DISABLE_THREADS "Disable threads" OFF)
@@ -77,7 +82,7 @@ set(BOOST_EXCLUDE_LIBRARIES url)
 # Add Boost Subdirectory
 #
 #-------------------------------------------------
-if (NOT BOOST_SUPERPROJECT_VERSION)
+if (BOOST_URL_IS_ROOT)
     set(CMAKE_FOLDER Dependencies)
     # Find absolute BOOST_SRC_DIR
     if (NOT IS_ABSOLUTE ${BOOST_SRC_DIR})
