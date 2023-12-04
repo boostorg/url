@@ -14,8 +14,37 @@ set(__ignore__ ${CMAKE_C_FLAGS})
 if(BOOST_CI_INSTALL_TEST)
     find_package(Boost CONFIG REQUIRED COMPONENTS url)
 else()
-    set(BOOST_URL_BUILD_TESTS OFF CACHE BOOL "Build the tests." FORCE)
     add_subdirectory(../.. boostorg/url)
+
+    set(deps
+        # Primary dependencies
+
+        align
+        assert
+        config
+        core
+        mp11
+        optional
+        static_assert
+        system
+        throw_exception
+        type_traits
+        variant2
+
+        # Secondary dependencies
+
+        detail
+        move
+        predef
+        utility
+        winapi
+        preprocessor
+        io
+    )
+
+  foreach(dep IN LISTS deps)
+      add_subdirectory(../../../${dep} boostorg/${dep} EXCLUDE_FROM_ALL)
+  endforeach()
 endif()
 
 add_executable(main main.cpp)
